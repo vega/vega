@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Vega Scenegraph Arc Test</title/>
+    <link rel="stylesheet" href="vega.css"/>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="../vega.js"></script>
+  </head>
+  <body>
+    <div id="vis">
+    </div>
+<script type="text/javascript">
+  vg.parse.spec("vega/arc.json", function(chart) {
+    var view = (self.view = chart("#vis"));
+    view.update()
+      .on("mouseover", function(evt, item) {
+        view.update("hover", item);
+      })
+      .on("mouseout", function(evt, item) {
+        view.update("update", item);
+      });   
+  });
+</script>
+  </body>
+</html>

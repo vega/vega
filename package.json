@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "name": "vega",
+  "version": "0.0.1",
+  "description": "Vega Runtime",
+  "keywords": [
+    "vega",
+    "visualization",
+    "grammar",
+    "d3"
+  ],
+  "homepage": "http://github.com/trifacta/vega/",
+  "author": {
+    "name": "Trifacta Inc.",
+    "url": "http://trifacta.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/trifacta/vega.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "uglify-js": "1.3.4"
+  }
+}

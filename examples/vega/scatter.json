@@ -1,0 +1,48 @@
+{
+  "width": 400,
+  "height": 400,
+  "padding": {"top":50, "left":50, "bottom":50, "right":50},
+  "data": [
+    {"name": "table"}
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "nice": true,
+      "range": [0, 400],
+      "domain": {"data": "table", "field": ["data", "x"]}
+    },
+    {
+      "name": "y",
+      "nice": true,
+      "range": [400, 0],
+      "domain": {"data": "table", "field": ["data", "y"]}
+    }
+  ],
+  "axes": [
+    {"type": "x", "scale": "x"},
+    {"type": "y", "scale": "y"}
+  ],
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "table"},
+      "properties": {
+        "enter": {
+          "x": {"scale": "x", "field": ["data", "x"]},
+          "y": {"scale": "y", "field": ["data", "y"]},
+          "stroke": {"value": "steelblue"},
+          "fillOpacity": {"value": 0.5}
+        },
+        "update": {
+          "fill": {"value": "none"},
+          "size": {"value": 100}
+        },
+        "hover": {
+          "fill": {"value": "pink"},
+          "size": {"value": 300}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>Vega Scenegraph Scatter Test</title/>
+    <link rel="stylesheet" href="vega.css"/>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="../vega.js"></script>
+  </head>
+  <body>
+    <div id="vis">
+    </div>
+<script type="text/javascript">
+  var N = 1000;
+  var data = {
+    table: d3.range(N)
+      .map(function() {
+        return {x: Math.random(), y: Math.random()};
+      })
+  };
+  
+  vg.parse.spec("vega/scatter.json", function(chart) {
+    var view = (self.view = chart("#vis", data));
+    view.update()
+      .on("mouseover", function(evt, item) {
+        view.update("hover", item);
+        console.log(item);
+      })
+      .on("mouseout", function(evt, item) {
+        view.update("update", item);
+      });   
+  });
+</script>
+  </body>
+</html>

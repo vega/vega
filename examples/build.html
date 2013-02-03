@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <title>Vega Scenegraph Build Test</title/>
+    <link rel="stylesheet" href="vega.css"/>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="../vega.js"></script>
+  </head>
+  <body>
+    <div id="vis">
+    </div>
+<script type="text/javascript">
+function datum(i, l) {
+  return {
+    id: "k"+l+","+i,
+    index: i,
+    group: l
+  };
+}
+function data() {
+  return {
+    "flat": d3.range(3).map(function(i) { return datum(i,0); }),
+    "nest": d3.range(2).map(function(l) {
+      return d3.range(3).map(function(i) { return datum(i,l); });
+    })
+  };
+}
+function updateFlat(db) {
+  db.flat.shift();
+  db.flat.push(datum(4,0));
+  return db;
+}
+function updateNest(db) {
+  db.nest.forEach(function(d,l) {
+    d.shift();
+    d.push(datum(4,l));
+  });
+  return db;
+}
+
+var modelFlat = {
+  type: "rect",
+  from: function(db) { return db.flat; }
+};
+var modelNest = {
+  type: "group",
+  from: function(db) { return db.nest; },
+  marks: [{type: "rect"}]
+};
+function addKeyFlat(model) {
+  model.key = "id";
+  return model;
+}
+function addKeyNest(model) {
+  model.marks[0].key = "id";
+  return model;
+}
+
+function prepareScene(scene) {
+  var colors = [
+    "lightgreen",
+    "steelblue",
+    "firebrick"
+  ];
+  if (scene.marktype === "rect") {
+    scene.items.forEach(function(item) {
+      item.x = item.datum.index * 50;
+      item.y = item.datum.group * 50;
+      item.width = 20;
+      item.height = 20;
+      item.fill = colors[item._status];
+      item.fillOpacity = 0.5;
+    });
+  }
+  if (scene.marktype === vg.scene.GROUP) {
+    scene.items.forEach(function(group) {
+      group.items.forEach(prepareScene);
+    });
+  }
+}
+
+function build(model, db, update) {
+  var scene = vg.scene.build(model, db);
+  console.log("ROUND 1");
+  console.log(JSON.stringify(scene, null, 2));
+  
+  scene = vg.scene.build(model, update(db), scene);
+  console.log("ROUND 2");
+  console.log(JSON.stringify(scene, null, 2));
+  
+  self.scene = scene;
+  prepareScene(scene);
+  new vg.View("#vis", 960, 500)
+    .scene(new vg.Scene().root(scene))
+    .render()
+    .on("mouseover", function(evt, item) {
+      console.log(item);
+    });
+}
+
+function test(model, addKey, update) {
+//  console.log("NO KEY");
+//  build(model, data(), update);
+
+  console.log("WITH KEY");
+  build(addKey(model), data(), update);
+}
+
+//test(modelFlat, addKeyFlat, updateFlat);
+test(modelNest, addKeyNest, updateNest);
+
+</script>
+  </body>
+</html>
