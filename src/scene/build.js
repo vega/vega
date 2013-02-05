@@ -21,8 +21,9 @@ vg.scene.build = (function() {
   
   function buildNode(model, node) {
     node = node || {};
-    node.marktype = model.type;
     node.def = model;
+    node.marktype = model.type;
+    node.interactive = !(model.interactive === false);
     return node;
   }
   

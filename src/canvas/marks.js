@@ -263,7 +263,7 @@ vg.canvas.marks = (function() {
       g.translate(dx, dy);
       for (var j=0, llen=group.items.length; j<llen; ++j) {
         subscene = group.items[j];
-        if (subscene.pickable === false) continue;
+        if (subscene.interactive === false) continue;
         hit = handler.pick(subscene, x, y, gx-dx, gy-dy);
         if (hit) {
           g.restore();
