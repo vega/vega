@@ -14,6 +14,14 @@
         {"type":"geopath", "field":"data", "projection":"albersUsa"},
         {"type":"zip", "with":"unemp", "as":"value", "keys":["id",0]}
       ]
+    },
+    {
+      "name": "states",
+      "url": "data/us-states.json",
+      "format": {"type": "json", "property": "features"},
+      "transform": [
+        {"type":"geopath", "field":"data", "projection":"albersUsa"}
+      ]
     }
   ],
   "scales": [
@@ -38,6 +46,17 @@
         },
         "hover": {
           "fill": {"value": "red"}
+        }
+      }
+    },
+    {
+      "type": "path",
+      "from": {"data": "states"},
+      "properties": {
+        "enter": {
+          "stroke": {"value": "#fff"},
+          "strokeWidth": {"value": 1.5},
+          "path": {"field": "path"}
         }
       }
     }
