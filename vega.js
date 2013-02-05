@@ -1665,7 +1665,13 @@ vg.data.json = function(data, format) {
         .initialize(el)
         .model(model)
         .data(model.data.load)
-        .data(input);
+        .data(input)
+        .on("mouseover", function(evt, item) {
+          view.update("hover", item);
+        })
+        .on("mouseout", function(evt, item) {
+          view.update("update", item);
+        });
     };
   }
   

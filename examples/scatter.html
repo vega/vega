@@ -18,15 +18,7 @@
   };
   
   vg.parse.spec("vega/scatter.json", function(chart) {
-    var view = (self.view = chart("#vis", data));
-    view.update()
-      .on("mouseover", function(evt, item) {
-        view.update("hover", item);
-        console.log(item);
-      })
-      .on("mouseout", function(evt, item) {
-        view.update("update", item);
-      });   
+    self.view = chart("#vis", data).update(); 
   });
 </script>
   </body>

@@ -10,14 +10,7 @@
     </div>
 <script type="text/javascript">  
   vg.parse.spec("vega/map.json", function(chart) {
-    var view = (self.view = chart("#vis"));
-    view.update()
-      .on("mouseover", function(evt, item) {
-        view.update("hover", item);
-      })
-      .on("mouseout", function(evt, item) {
-        view.update("update", item);
-      });   
+    self.view = chart("#vis").update();
   });
 </script>
   </body>
