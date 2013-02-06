@@ -1,0 +1,53 @@
+vg.data.facet = function() {
+
+  var keys = [],
+      sort = null;
+
+  function facet(data) {
+    var result = {
+          key: "",
+          keys: [],
+          values: []
+        },
+        map = {"": result}, 
+        vals = result.values,
+        obj, klist, kstr, len, i, j, k, kv, cmp;
+
+    for (i=0, len=data.length; i<len; ++i) {
+      for (k=0, klist=[], kstr=""; k<keys.length; ++k) {
+        kv = keys[k](data[i]);
+        klist.push(kv);
+        kstr += (k>0 ? "|" : "") + String(kv);
+      }
+      obj = map[kstr];
+      if (obj === undefined) {
+        result.values.push(obj = map[kstr] = {
+          key: kstr,
+          keys: klist,
+          values: []
+        });
+      }
+      obj.values.push(data[i]);
+    }
+
+    if (sort) {
+      for (i=0, len=vals.length; i<len; ++i) {
+        vals[i].values.sort(sort);
+      }
+    }
+
+    return result;
+  }
+  
+  facet.keys = function(k) {
+    keys = vg.array(k).map(vg.accessor);
+    return facet;
+  };
+  
+  facet.sort = function(s) {
+    sort = vg.comparator(s);
+    return facet;
+  };
+
+  return facet;
+};

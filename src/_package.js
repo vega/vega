@@ -18,8 +18,32 @@ vg.accessor = function(f) {
     : function(x) { return x[f]; };
 };
 
+vg.comparator = function(sort) {
+  var sign = [];
+  if (sort === undefined) sort = [];
+  sort = vg.array(sort).map(function(f) {
+    var s = 1;
+    if (f[0] === "-") {
+      s = -1; f = f.slice(1);
+    } else if (field[0] === "+") {
+      f = f.slice(1);
+    }
+    sign.push(s);
+    return f;
+  });
+  return function(a,b) {
+    var i, s;
+    for (i=0; i<sort.length; ++i) {
+      s = sort[i];
+      if (a[s] < b[s]) return -1 * sign[i];
+      if (a[s] > b[s]) return sign[i];
+    }
+    return 0;
+  };
+};
+
 vg.array = function(x) {
-  return Array.isArray(x) ? x : [x];
+  return x != null ? (Array.isArray(x) ? x : [x]) : [];
 };
 
 vg.str = function(str) {

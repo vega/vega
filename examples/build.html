@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Vega Scenegraph Build Test</title/>
+    <title>Vega Build (Enter/Update/Exit) Test</title/>
     <link rel="stylesheet" href="vega.css"/>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="../vega.js"></script>
@@ -67,7 +67,7 @@ function prepareScene(scene) {
       item.y = item.datum.group * 50;
       item.width = 20;
       item.height = 20;
-      item.fill = colors[item._status];
+      item.fill = colors[item.status];
       item.fillOpacity = 0.5;
     });
   }

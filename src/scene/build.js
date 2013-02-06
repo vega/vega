@@ -6,6 +6,7 @@ vg.scene.build = (function() {
   
   function build(model, db, node, parentData) {
     var data = model.from ? model.from(db) : parentData || [1];
+    if (vg.isObject(data) && data.values) data = data.values;
     
     // build node and items
     node = buildNode(model, node);
@@ -36,7 +37,7 @@ vg.scene.build = (function() {
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
-      item._status = EXIT;
+      item.status = EXIT;
       if (keyf) map[item.key] = item;
     }
     
@@ -45,7 +46,7 @@ vg.scene.build = (function() {
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
       enter = item ? false : (item = {}, true);
-      item._status = enter ? ENTER : UPDATE;
+      item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
       next.push(item);
@@ -53,7 +54,7 @@ vg.scene.build = (function() {
     
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
-      if (item._status === EXIT) {
+      if (item.status === EXIT) {
         item.key = keyf ? item.key : next.length;
         next.push(item);
       }

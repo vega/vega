@@ -50,7 +50,7 @@ vg.scene.encode = (function() {
     if (enter) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
-        if (item._status !== ENTER) continue;
+        if (item.status !== ENTER) continue;
         enter.call(this, item, trans);
       }
     }
@@ -58,7 +58,7 @@ vg.scene.encode = (function() {
     if (update) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
-        if (item._status === EXIT) continue;
+        if (item.status === EXIT) continue;
         update.call(this, item, trans);
       }
     }
@@ -66,7 +66,7 @@ vg.scene.encode = (function() {
     if (exit) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
-        if (item._status !== EXIT) continue;
+        if (item.status !== EXIT) continue;
         exit.call(this, item, trans);
       }
     }

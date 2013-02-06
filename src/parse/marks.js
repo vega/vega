@@ -10,11 +10,13 @@ vg.parse.marks = (function() {
     });
         
     // parse mark data definition
-    var name = mark.from.data,
-        tx = vg.parse.dataflow(mark.from);
-    mark.from = function(db) {
-      return tx(db[name]);
-    };
+    if (mark.from) {
+      var name = mark.from.data,
+          tx = vg.parse.dataflow(mark.from);
+      mark.from = function(db) {
+        return tx(db[name]);
+      };
+    }
     
     // recurse if group type
     if (group) {

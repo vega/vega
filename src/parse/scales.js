@@ -32,7 +32,7 @@ vg.parse.scales = (function() {
     }
 
     // range
-    str = typeof range[0] === 'string';
+    str = typeof rng[0] === 'string';
     if (def.reverse) rng = rng.reverse();
     if (str) {
       scale.range(rng); // color or shape values

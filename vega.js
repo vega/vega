@@ -18,8 +18,32 @@ vg.accessor = function(f) {
     : function(x) { return x[f]; };
 };
 
+vg.comparator = function(sort) {
+  var sign = [];
+  if (sort === undefined) sort = [];
+  sort = vg.array(sort).map(function(f) {
+    var s = 1;
+    if (f[0] === "-") {
+      s = -1; f = f.slice(1);
+    } else if (field[0] === "+") {
+      f = f.slice(1);
+    }
+    sign.push(s);
+    return f;
+  });
+  return function(a,b) {
+    var i, s;
+    for (i=0; i<sort.length; ++i) {
+      s = sort[i];
+      if (a[s] < b[s]) return -1 * sign[i];
+      if (a[s] > b[s]) return sign[i];
+    }
+    return 0;
+  };
+};
+
 vg.array = function(x) {
-  return Array.isArray(x) ? x : [x];
+  return x != null ? (Array.isArray(x) ? x : [x]) : [];
 };
 
 vg.str = function(str) {
@@ -694,7 +718,7 @@ vg.error = function(msg) {
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lw, text, ta, tb, w, h;
+        o, ob, fill, stroke, opac, lw, text, ta, tb, w, h, dx, dy;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -706,22 +730,24 @@ vg.error = function(msg) {
       g.textBaseline = o.textBaseline;
       w = g.measureText(o.text).width;
       h = 13;  // TODO get text height
+      x = o.x + (o.dx || 0);
+      y = o.y + (o.dy || 0);
 
       o.bounds = (o.bounds || new vg.Bounds())
-        .set(o.x, o.y, o.x+o.width, o.y+o.height)
+        .set(x, y, o.x+o.width, o.y+o.height)
         .expand(2);
 
       if (fill = o.fill) {
         g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
         g.fillStyle = fill;
-        g.fillText(o.text, o.x, o.y);
+        g.fillText(o.text, x, y);
       }
       
       if (stroke = o.stroke) {
         g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
         g.strokeStyle = stroke;
         g.lineWidth = (w = o.strokeWidth) != undefined ? w : 1;
-        g.strokeText(o.text, o.x, o.y);
+        g.strokeText(o.text, x, y);
       }
     }
   }
@@ -810,15 +836,7 @@ vg.error = function(msg) {
     b = items[0].bounds;
     if (b && !b.contains(gx, gy)) return false;
     if (!hitTests.area(g, items, x, y)) return false;
-
-    // return nearest point along x-dimension
-    // (areas are by assumption horizontal)
-    for (i=items.length, dd=1e20; --i >= 0;) {
-      o = items[i];
-      od = (dx = (o.x-x)) * dx;
-      if (od < dd) { dd = od; di = i; }
-    }
-    return [items[di]];
+    return [items[0]];
   }
   
   function pickLine(g, scene, x, y, gx, gy) {
@@ -993,6 +1011,7 @@ vg.error = function(msg) {
     };
   });
   events.push("mousemove");
+  events.push("mouseout");
 
   function eventName(name) {
     var i = name.indexOf(".");
@@ -1026,6 +1045,13 @@ vg.error = function(msg) {
     if (p) {
       this.fire("mouseover", evt);
     }
+  };
+  
+  prototype.mouseout = function(evt) {
+    if (this._active) {
+      this.fire("mouseout", evt);
+    }
+    this._active = null;
   };
 
   // to keep firefox happy
@@ -1108,6 +1134,75 @@ vg.data.mapper = function(func) {
 vg.data.json = function(data, format) {
   var d = JSON.parse(data);
   return (format && format.property) ? d[format.property] : d;
+};vg.data.facet = function() {
+
+  var keys = [],
+      sort = null;
+
+  function facet(data) {
+    var result = {
+          key: "",
+          keys: [],
+          values: []
+        },
+        map = {"": result}, 
+        vals = result.values,
+        obj, klist, kstr, len, i, j, k, kv, cmp;
+
+    for (i=0, len=data.length; i<len; ++i) {
+      for (k=0, klist=[], kstr=""; k<keys.length; ++k) {
+        kv = keys[k](data[i]);
+        klist.push(kv);
+        kstr += (k>0 ? "|" : "") + String(kv);
+      }
+      obj = map[kstr];
+      if (obj === undefined) {
+        result.values.push(obj = map[kstr] = {
+          key: kstr,
+          keys: klist,
+          values: []
+        });
+      }
+      obj.values.push(data[i]);
+    }
+
+    if (sort) {
+      for (i=0, len=vals.length; i<len; ++i) {
+        vals[i].values.sort(sort);
+      }
+    }
+
+    return result;
+  }
+  
+  facet.keys = function(k) {
+    keys = vg.array(k).map(vg.accessor);
+    return facet;
+  };
+  
+  facet.sort = function(s) {
+    sort = vg.comparator(s);
+    return facet;
+  };
+
+  return facet;
+};vg.data.filter = function() {
+
+  var test = null;
+
+  function filter(data) {
+    return test ? data.filter(test) : data;
+  }
+  
+  filter.test = function(t) {
+    // TODO security check
+    test = (typeof t === 'function')
+      ? t
+      : new Function("d", "return " + t);
+    return filter;
+  };
+
+  return filter;
 };vg.data.geo = (function() {
   var params = [
     "center",
@@ -1227,7 +1322,7 @@ vg.data.json = function(data, format) {
 
   return map;
 };vg.data.pie = function() {
-  var value = vg.identity,
+  var value = vg.accessor("data"),
       start = 0,
       end = 2 * Math.PI,
       sort = false,
@@ -1277,6 +1372,112 @@ vg.data.json = function(data, format) {
   };
 
   return pie;
+};vg.data.stack = function() {
+  var layout = d3.layout.stack()
+                 .values(function(d) { return d.values; }),
+      point = null,
+      height = null,
+      params = ["offset", "order"],
+      output = {
+        "y0": "y2",
+        "y1": "y"
+      };
+
+  function stack(data) {
+    var out_y0 = output["y0"],
+        out_y1 = output["y1"];
+    
+    return layout
+      .x(point)
+      .y(height)
+      .out(function(d, y0, y) {
+        d[out_y0] = y0;
+        d[out_y1] = y + y0;
+      })
+      (data.values);
+  }
+       
+  stack.point = function(field) {
+    point = vg.accessor(field);
+    return stack;
+  };
+  
+  stack.height = function(field) {
+    height = vg.accessor(field);
+    return stack;
+  };
+
+  params.forEach(function(name) {
+    stack[name] = function(x) {
+      layout[name](x);
+      return stack;
+    }
+  });
+
+  stack.output = function(map) {
+    d3.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
+    return stack;
+  };
+
+  return stack;
+};vg.data.treemap = function() {
+  var layout = d3.layout.treemap()
+                 .children(function(d) { return d.values; }),
+      value = vg.accessor("data"),
+      params = ["round", "sticky", "ratio", "padding", "size"],
+      output = {
+        "x": "x",
+        "y": "y",
+        "dx": "width",
+        "dy": "height"
+      };
+
+  function treemap(data) {
+    data = layout.value(value).nodes(data);
+    
+    var keys = vg.keys(output),
+        len = keys.length;
+    data.forEach(function(d) {
+      var key, val;
+      for (var i=0; i<len; ++i) {
+        key = keys[i];
+        if (key !== output[key]) {
+          val = d[key];
+          delete d[key];
+          d[output[key]] = val;
+        }
+      }
+    });
+    
+    return data;
+  }
+       
+  treemap.value = function(field) {
+    value = vg.accessor(field);
+    return treemap;
+  };
+
+  params.forEach(function(name) {
+    treemap[name] = function(x) {
+      layout[name](x);
+      return treemap;
+    }
+  });
+
+  treemap.output = function(map) {
+    d3.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
+    return treemap;
+  };
+
+  return treemap;
 };vg.data.zip = function() {
   var z = null,
       as = "zip",
@@ -1379,7 +1580,7 @@ vg.data.json = function(data, format) {
 
     // tick arguments
     if (def.ticks !== undefined) {
-      var ticks = vg.isArray(def.ticks) ? def.ticks : [def.ticks];
+      var ticks = Array.isArray(def.ticks) ? def.ticks : [def.ticks];
       axis.ticks.apply(axis, ticks);
     }
 
@@ -1445,11 +1646,13 @@ vg.data.json = function(data, format) {
     });
         
     // parse mark data definition
-    var name = mark.from.data,
-        tx = vg.parse.dataflow(mark.from);
-    mark.from = function(db) {
-      return tx(db[name]);
-    };
+    if (mark.from) {
+      var name = mark.from.data,
+          tx = vg.parse.dataflow(mark.from);
+      mark.from = function(db) {
+        return tx(db[name]);
+      };
+    }
     
     // recurse if group type
     if (group) {
@@ -1557,7 +1760,7 @@ vg.data.json = function(data, format) {
     }
 
     // range
-    str = typeof range[0] === 'string';
+    str = typeof rng[0] === 'string';
     if (def.reverse) rng = rng.reverse();
     if (str) {
       scale.range(rng); // color or shape values
@@ -1702,6 +1905,7 @@ vg.scene.build = (function() {
   
   function build(model, db, node, parentData) {
     var data = model.from ? model.from(db) : parentData || [1];
+    if (vg.isObject(data) && data.values) data = data.values;
     
     // build node and items
     node = buildNode(model, node);
@@ -1732,7 +1936,7 @@ vg.scene.build = (function() {
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
-      item._status = EXIT;
+      item.status = EXIT;
       if (keyf) map[item.key] = item;
     }
     
@@ -1741,7 +1945,7 @@ vg.scene.build = (function() {
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
       enter = item ? false : (item = {}, true);
-      item._status = enter ? ENTER : UPDATE;
+      item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
       next.push(item);
@@ -1749,7 +1953,7 @@ vg.scene.build = (function() {
     
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
-      if (item._status === EXIT) {
+      if (item.status === EXIT) {
         item.key = keyf ? item.key : next.length;
         next.push(item);
       }
@@ -1829,7 +2033,7 @@ vg.scene.build = (function() {
     if (enter) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
-        if (item._status !== ENTER) continue;
+        if (item.status !== ENTER) continue;
         enter.call(this, item, trans);
       }
     }
@@ -1837,7 +2041,7 @@ vg.scene.build = (function() {
     if (update) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
-        if (item._status === EXIT) continue;
+        if (item.status === EXIT) continue;
         update.call(this, item, trans);
       }
     }
@@ -1845,7 +2049,7 @@ vg.scene.build = (function() {
     if (exit) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
-        if (item._status !== EXIT) continue;
+        if (item.status !== EXIT) continue;
         exit.call(this, item, trans);
       }
     }

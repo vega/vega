@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>Vega Examples</title/>
+    <link rel="stylesheet" href="vega.css"/>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="../vega.js"></script>
+    <style>
+* { font-family: Helvetica Neue, Arial, sans-serif; font-size: 14px; }
+#ctrl { margin-bottom: 1em; }
+    </style>
+  </head>
+  <body>
+    <div id="ctrl">
+      Vega Spec:
+      <select id="specs">
+      </select>
+    </div>
+    <div id="vis"></div>
+<script type="text/javascript">
+var data = {
+  points: d3.range(1000)
+    .map(function() { return {x:Math.random(), y:Math.random()}; })
+};
+
+var specs = [
+  "-----",
+  "arc",
+  "area",
+  "bar",
+  "choropleth",
+  "map",
+  "scatter",
+  "stacked_area",
+  "stacked_bar",
+  "treemap"
+];
+
+// initialize spec drop-down menu
+d3.select("#specs")
+  .on("change", function() {
+    d3.select("#vis").selectAll("*").remove();
+    var idx = this.selectedIndex;
+    if (idx > 0) parse("vega/" + specs[idx] + ".json");
+  })
+  .selectAll("option")
+  .data(specs)
+ .enter().append("option")
+  .attr("value", function(d) { return d; })
+  .text(function(d) { return d; });  
+
+// parse a spec and create a visualization view
+function parse(spec) {
+  vg.parse.spec(spec, function(chart) {
+    self.view = chart("#vis", data).update();
+  });
+}
+</script>
+  </body>
+</html>

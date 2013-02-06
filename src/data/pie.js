@@ -1,5 +1,5 @@
 vg.data.pie = function() {
-  var value = vg.identity,
+  var value = vg.accessor("data"),
       start = 0,
       end = 2 * Math.PI,
       sort = false,

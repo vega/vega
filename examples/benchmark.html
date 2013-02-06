@@ -1,12 +1,11 @@
 <html>
   <head>
-    <title>Vega Scenegraph Benchmark</title/>
+    <title>Vega Benchmark</title/>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="../vega.js"></script>
   </head>
   <body>
-    <div id="vis">
-    </div>
+    <div id="vis"></div>
 <script type="text/javascript">
 function params() {
   return location.search.slice(1)
@@ -17,56 +16,57 @@ function params() {
     }, {});
 }
 
-function buildScene(N, type, w, h) {
-  var marks = d3.range(N).map(function(i) {
-    return {
-      x: ~~(w * Math.random()),
-      y: ~~(h * Math.random()),
-      size: Math.PI * 25,
-      width: 10,
-      height: 10,
-      fill: "steelblue",
-      fillOpacity: 0.3
-    };
-  });
-  self.marks = marks;
-  return {
-    marktype: "group",
-    items: [{x: 10, y: 10, items: [{
-      marktype: type,
-      items: marks
-    }] }]
-  };
-}
-
-function draw(scene, w, h) {
- return new vg.View("#vis", w+20, h+20)
-    .scene(new vg.Scene().root(scene))
-    .render()
-    .on("mouseover", function(evt, item) {
-      console.log(item);
-    });
-}
-
 var p = params(),
     N = (~~p.N) || 10000,
     type = p.type || "symbol",
+    ticks = p.ticks || 100,
     w = (~~p.width) || 960,
-    h = (~~p.height) || 500;
+    h = (~~p.height) || 500,
+    spec = {
+      width: w,
+      height: h,
+      padding: {top:10, left:10, bottom:10, right:10},
+      data: [{
+        name: "points",
+        values: d3.range(N).map(function(i) {
+          return [Math.random(), Math.random()];
+        })
+      }],
+      scales: [
+        {name:"x", domain:[0,1], range:[0,w]},
+        {name:"y", domain:[0,1], range:[0,h]}
+      ],
+      marks: [{
+        type: type,
+        from: {data: "points"},
+        properties: {
+          enter: {
+            x: {scale:"x", field:["data",0]},
+            y: {scale:"y", field:["data",1]},
+            size: {value: Math.PI*25},
+            width: {value: 10},
+            height: {value: 10},
+            fill: {value:"steelblue"},
+            fillOpacity: {value:0.5}
+          }
+        }
+      }]
+    };
 
-var scene = buildScene(N, type, w, h),
-    view = draw(scene, w, h);
-
-var count = 0;
-d3.timer(function() {
-  var marks = scene.items[0].items[0].items;
-  for (var i=0; i<marks.length; ++i) {
-    marks[i].x += ~~(2 * (2*Math.random() - 1));
-    marks[i].y += ~~(2 * (2*Math.random() - 1));
-  }
-  view.render();
-  return (++count > 100);
+vg.parse.spec(spec, function(chart) {
+  self.view = chart("#vis").update();
+  var count = 0;
+  d3.timer(function() {
+    var marks = view.scene()._root.items[0].items[0].items;
+    for (var i=0; i<marks.length; ++i) {
+      marks[i].x += ~~(2 * (2*Math.random() - 1));
+      marks[i].y += ~~(2 * (2*Math.random() - 1));
+    }
+    view.render();
+    return (++count > ticks);
+  });
 });
+
 
 </script>
   </body>

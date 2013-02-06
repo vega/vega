@@ -3,20 +3,20 @@
   "height": 400,
   "padding": {"top":50, "left":50, "bottom":50, "right":50},
   "data": [
-    {"name": "table"}
+    {"name": "points"}
   ],
   "scales": [
     {
       "name": "x",
       "nice": true,
       "range": [0, 400],
-      "domain": {"data": "table", "field": ["data", "x"]}
+      "domain": {"data": "points", "field": ["data", "x"]}
     },
     {
       "name": "y",
       "nice": true,
       "range": [400, 0],
-      "domain": {"data": "table", "field": ["data", "y"]}
+      "domain": {"data": "points", "field": ["data", "y"]}
     }
   ],
   "axes": [
@@ -26,7 +26,7 @@
   "marks": [
     {
       "type": "symbol",
-      "from": {"data": "table"},
+      "from": {"data": "points"},
       "properties": {
         "enter": {
           "x": {"scale": "x", "field": ["data", "x"]},

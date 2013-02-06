@@ -182,7 +182,7 @@ vg.canvas.marks = (function() {
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lw, text, ta, tb, w, h;
+        o, ob, fill, stroke, opac, lw, text, ta, tb, w, h, dx, dy;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -194,22 +194,24 @@ vg.canvas.marks = (function() {
       g.textBaseline = o.textBaseline;
       w = g.measureText(o.text).width;
       h = 13;  // TODO get text height
+      x = o.x + (o.dx || 0);
+      y = o.y + (o.dy || 0);
 
       o.bounds = (o.bounds || new vg.Bounds())
-        .set(o.x, o.y, o.x+o.width, o.y+o.height)
+        .set(x, y, o.x+o.width, o.y+o.height)
         .expand(2);
 
       if (fill = o.fill) {
         g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
         g.fillStyle = fill;
-        g.fillText(o.text, o.x, o.y);
+        g.fillText(o.text, x, y);
       }
       
       if (stroke = o.stroke) {
         g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
         g.strokeStyle = stroke;
         g.lineWidth = (w = o.strokeWidth) != undefined ? w : 1;
-        g.strokeText(o.text, o.x, o.y);
+        g.strokeText(o.text, x, y);
       }
     }
   }
@@ -298,15 +300,7 @@ vg.canvas.marks = (function() {
     b = items[0].bounds;
     if (b && !b.contains(gx, gy)) return false;
     if (!hitTests.area(g, items, x, y)) return false;
-
-    // return nearest point along x-dimension
-    // (areas are by assumption horizontal)
-    for (i=items.length, dd=1e20; --i >= 0;) {
-      o = items[i];
-      od = (dx = (o.x-x)) * dx;
-      if (od < dd) { dd = od; di = i; }
-    }
-    return [items[di]];
+    return [items[0]];
   }
   
   function pickLine(g, scene, x, y, gx, gy) {

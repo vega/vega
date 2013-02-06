@@ -48,6 +48,7 @@ vg.canvas.Handler = (function() {
     };
   });
   events.push("mousemove");
+  events.push("mouseout");
 
   function eventName(name) {
     var i = name.indexOf(".");
@@ -81,6 +82,13 @@ vg.canvas.Handler = (function() {
     if (p) {
       this.fire("mouseover", evt);
     }
+  };
+  
+  prototype.mouseout = function(evt) {
+    if (this._active) {
+      this.fire("mouseout", evt);
+    }
+    this._active = null;
   };
 
   // to keep firefox happy
