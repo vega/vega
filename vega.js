@@ -1133,7 +1133,10 @@ vg.data.mapper = function(func) {
 
 vg.data.json = function(data, format) {
   var d = JSON.parse(data);
-  return (format && format.property) ? d[format.property] : d;
+  if (format && format.property) {
+    d = vg.accessor(format.property)(d);
+  }
+  return d;
 };vg.data.facet = function() {
 
   var keys = [],
