@@ -13,7 +13,7 @@ vg.isObject = function(obj) {
 };
 
 vg.accessor = function(f) {
-  return (typeof f === "function") ? f : Array.isArray(f)
+  return (typeof f === "function" || f == null) ? f : Array.isArray(f)
     ? function(x) { return f.reduce(function(x,f) { return x[f]; }, x); }
     : function(x) { return x[f]; };
 };
@@ -1484,20 +1484,20 @@ vg.data.json = function(data, format) {
 };vg.data.zip = function() {
   var z = null,
       as = "zip",
-      keys = null;
+      key = vg.accessor("data"),
+      withKey = null;
 
   function zip(data) {
-    var src = this[z], k, d, i, len, map;
+    var zdata = this[z], d, i, len, map;
     
-    if (keys) {
+    if (withKey) {
       map = {};
-      k = keys[1];
-      src.forEach(function(s) { map[s.data[k]] = s; });
+      zdata.forEach(function(s) { map[withKey(s)] = s; });
     }
     
-    for (k=keys[0], i=0, len=data.length; i<len; ++i) {
+    for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
-      d[as] = map ? map[d.data[k]] : src[i];
+      d[as] = map ? map[key(d)] : zdata[i];
     }
     
     return data;
@@ -1512,9 +1512,14 @@ vg.data.json = function(data, format) {
     as = name;
     return zip;
   };
-       
-  zip.keys = function(k) {
-    keys = k;//k ? k.map(vg.accessor) : null;
+
+  zip.key = function(k) {
+    key = vg.accessor(k);
+    return zip;
+  };
+
+  zip.withKey = function(k) {
+    withKey = vg.accessor(k);
     return zip;
   };
 

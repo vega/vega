@@ -13,7 +13,7 @@ vg.isObject = function(obj) {
 };
 
 vg.accessor = function(f) {
-  return (typeof f === "function") ? f : Array.isArray(f)
+  return (typeof f === "function" || f == null) ? f : Array.isArray(f)
     ? function(x) { return f.reduce(function(x,f) { return x[f]; }, x); }
     : function(x) { return x[f]; };
 };

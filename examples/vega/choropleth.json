@@ -11,8 +11,12 @@
       "url": "data/us-counties.json",
       "format": {"type": "json", "property": "features"},
       "transform": [
-        {"type":"geopath", "field":"data", "projection":"albersUsa"},
-        {"type":"zip", "with":"unemp", "as":"value", "keys":["id",0]}
+        {"type": "geopath", "field": "data", "projection": "albersUsa"},
+        {
+          "type": "zip",
+          "key": ["data","id"],
+          "with": "unemp", "withKey":["data",0], "as":"value"
+        }
       ]
     },
     {
