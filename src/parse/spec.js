@@ -1,7 +1,7 @@
 vg.parse.spec = function(spec, callback) {
   
   function parse(spec) {
-    var model = {
+    var defs = {
       scales: spec.scales,
       axes: spec.axes,
       marks: vg.parse.marks(spec.marks),
@@ -15,8 +15,8 @@ vg.parse.spec = function(spec, callback) {
         .padding(spec.padding || {top:20, left:20, right:20, bottom:20})
         .viewport(spec.viewport || null)
         .initialize(el)
-        .model(model)
-        .data(model.data.load)
+        .defs(defs)
+        .data(defs.data.load)
         .data(input)
         .on("mouseover", function(evt, item) {
           view.update("hover", item);

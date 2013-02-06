@@ -17,7 +17,7 @@ function params() {
 }
 
 var p = params(),
-    N = (~~p.N) || 10000,
+    N = (~~p.N) || 5000,
     type = p.type || "symbol",
     ticks = p.ticks || 100,
     w = (~~p.width) || 960,
@@ -57,7 +57,7 @@ vg.parse.spec(spec, function(chart) {
   self.view = chart("#vis").update();
   var count = 0;
   d3.timer(function() {
-    var marks = view.scene()._root.items[0].items[0].items;
+    var marks = view.model().scene().items[0].items[0].items;
     for (var i=0; i<marks.length; ++i) {
       marks[i].x += ~~(2 * (2*Math.random() - 1));
       marks[i].y += ~~(2 * (2*Math.random() - 1));

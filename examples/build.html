@@ -90,7 +90,7 @@ function build(model, db, update) {
   self.scene = scene;
   prepareScene(scene);
   new vg.View("#vis", 960, 500)
-    .scene(new vg.Scene().root(scene))
+    .model(new vg.Model().scene(scene))
     .render()
     .on("mouseover", function(evt, item) {
       console.log(item);

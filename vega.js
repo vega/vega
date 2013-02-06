@@ -962,11 +962,11 @@ vg.error = function(msg) {
   
   return renderer;
 })();vg.canvas.Handler = (function() {
-  var handler = function(el, scene) {
+  var handler = function(el, model) {
     this._active = null;
     this._handlers = {};
     if (el) this.initialize(el);
-    if (scene) this.scene(scene);
+    if (model) this.model(model);
   };
   
   var prototype = handler.prototype;
@@ -987,9 +987,9 @@ vg.error = function(msg) {
     return this;
   };
   
-  prototype.scene = function(scene) {
-    if (!arguments.length) return this._scene;
-    this._scene = scene;
+  prototype.model = function(model) {
+    if (!arguments.length) return this._model;
+    this._model = model;
     return this;
   };
 
@@ -1033,7 +1033,7 @@ vg.error = function(msg) {
         x = evt.clientX - b.left,
         y = evt.clientY - b.top,
         a = this._active,
-        p = this.pick(this._scene.root(), x, y, x-pad.left, y-pad.top);
+        p = this.pick(this._model.scene(), x, y, x-pad.left, y-pad.top);
 
     if (arrayEquals(p, a)) {
       this.fire("mousemove", evt);
@@ -1860,7 +1860,7 @@ vg.data.json = function(data, format) {
 })();vg.parse.spec = function(spec, callback) {
   
   function parse(spec) {
-    var model = {
+    var defs = {
       scales: spec.scales,
       axes: spec.axes,
       marks: vg.parse.marks(spec.marks),
@@ -1874,8 +1874,8 @@ vg.data.json = function(data, format) {
         .padding(spec.padding || {top:20, left:20, right:20, bottom:20})
         .viewport(spec.viewport || null)
         .initialize(el)
-        .model(model)
-        .data(model.data.load)
+        .defs(defs)
+        .data(defs.data.load)
         .data(input)
         .on("mouseover", function(evt, item) {
           view.update("hover", item);
@@ -2258,63 +2258,63 @@ vg.scene.build = (function() {
   };
   
   return axes;
-})();vg.Scene = (function() {
-  function scene() {
-    this._model = null;
-    this._scales = {};
+})();vg.Model = (function() {
+  function model() {
+    this._defs = null;
     this._axes = [];
     this._data = {};
-    this._root = null;
+    this._scales = {};
+    this._scene = null;
   }
   
-  var prototype = scene.prototype;
+  var prototype = model.prototype;
   
-  prototype.model = function(model) {
-    if (!arguments.length) return this._model;
-    this._model = model;
+  prototype.defs = function(defs) {
+    if (!arguments.length) return this._defs;
+    this._defs = defs;
     return this;
   };
   
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
     var dat = this._data,
-        tx = this._model ? this._model.data.flow : {};
+        tx = this._defs ? this._defs.data.flow : {};
     vg.keys(data).forEach(function(k) {
       dat[k] = tx[k] ? tx[k].call(dat, data[k]) : data[k];
     });
     return this;
   };
   
-  prototype.root = function(node) {
-    if (!arguments.length) return this._root;
-    this._root = node;
+  prototype.scene = function(node) {
+    if (!arguments.length) return this._scene;
+    this._scene = node;
     return this;
   };
   
   prototype.build = function() {
-    this._root = vg.scene.build.call(this,
-      this._model.marks, this._data, this._root);
-    vg.parse.scales(this._model.scales, this._scales, this._data);
-    vg.parse.axes(this._model.axes, this._axes, this._scales);
+    this._scene = vg.scene.build.call(this,
+      this._defs.marks, this._data, this._scene);
+    vg.parse.scales(this._defs.scales, this._scales, this._data);
+    vg.parse.axes(this._defs.axes, this._axes, this._scales);
     return this;
   };
   
   prototype.encode = function(request, item) {
-    vg.scene.encode.call(this, this._root,
-      this._model.marks, null, request, item);
+    vg.scene.encode.call(this, this._scene,
+      this._defs.marks, null, request, item);
     return this;
   };
   
   prototype.visit = function(pre, post) {
-    return vg.scene.visit(this._root, pre, post);
+    return vg.scene.visit(this._scene, pre, post);
   };
   
-  return scene;
+  return model;
 })();vg.View = (function() {
   var view = function(el, width, height) {
     this._el = null;
     this._build = false;
-    this._scene = new vg.Scene();
+    this._model = new vg.Model();
     this._width = width || 500;
     this._height = height || 500;
     this._padding = {top:0, left:0, bottom:0, right:0};
@@ -2360,26 +2360,26 @@ vg.scene.build = (function() {
     return this;
   };
 
-  prototype.model = function(model) {
-    if (!arguments.length) return this._scene.model();
-    this._scene.model(model);
+  prototype.defs = function(defs) {
+    if (!arguments.length) return this._model.defs();
+    this._model.defs(defs);
     return this;
   };
 
   prototype.data = function(data) {
-    if (!arguments.length) return this._scene.data();
+    if (!arguments.length) return this._model.data();
     var ingest = vg.keys(data).reduce(function(d, k) {
       return (d[k] = data[k].map(vg.data.ingest), d);
     }, {});
-    this._scene.data(ingest);
+    this._model.data(ingest);
     return this;
   };
 
-  prototype.scene = function(scene) {
-    if (!arguments.length) return this._scene;
-    if (this._scene !== scene) {
-      this._scene = scene;
-      if (this._handler) this._handler.scene(scene);
+  prototype.model = function(model) {
+    if (!arguments.length) return this._model;
+    if (this._model !== model) {
+      this._model = model;
+      if (this._handler) this._handler.model(model);
     }
     return this;
   };
@@ -2410,16 +2410,16 @@ vg.scene.build = (function() {
     if (!this._handler) {
       this._handler = new vg.canvas.Handler()
         .initialize(this._el, this._padding)
-        .scene(this._scene);
+        .model(this._model);
     }
     
     return this;
   };
   
   prototype.render = function(bounds) {
-    var s = this._scene;
-    this._axes.update(s._axes, s._scales);
-    this._renderer.render(s.root(), bounds);
+    var m = this._model;
+    this._axes.update(m._axes, m._scales);
+    this._renderer.render(m.scene(), bounds);
     return this;
   };
   
@@ -2434,8 +2434,8 @@ vg.scene.build = (function() {
   };
   
   prototype.update = function(request, items) {
-    this._build = this._build || (this._scene.build(), true);
-    this._scene.encode(request, items);
+    this._build = this._build || (this._model.build(), true);
+    this._model.encode(request, items);
     
     function bounds() {
       return !items ? null :

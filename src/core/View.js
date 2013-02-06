@@ -2,7 +2,7 @@ vg.View = (function() {
   var view = function(el, width, height) {
     this._el = null;
     this._build = false;
-    this._scene = new vg.Scene();
+    this._model = new vg.Model();
     this._width = width || 500;
     this._height = height || 500;
     this._padding = {top:0, left:0, bottom:0, right:0};
@@ -48,26 +48,26 @@ vg.View = (function() {
     return this;
   };
 
-  prototype.model = function(model) {
-    if (!arguments.length) return this._scene.model();
-    this._scene.model(model);
+  prototype.defs = function(defs) {
+    if (!arguments.length) return this._model.defs();
+    this._model.defs(defs);
     return this;
   };
 
   prototype.data = function(data) {
-    if (!arguments.length) return this._scene.data();
+    if (!arguments.length) return this._model.data();
     var ingest = vg.keys(data).reduce(function(d, k) {
       return (d[k] = data[k].map(vg.data.ingest), d);
     }, {});
-    this._scene.data(ingest);
+    this._model.data(ingest);
     return this;
   };
 
-  prototype.scene = function(scene) {
-    if (!arguments.length) return this._scene;
-    if (this._scene !== scene) {
-      this._scene = scene;
-      if (this._handler) this._handler.scene(scene);
+  prototype.model = function(model) {
+    if (!arguments.length) return this._model;
+    if (this._model !== model) {
+      this._model = model;
+      if (this._handler) this._handler.model(model);
     }
     return this;
   };
@@ -98,16 +98,16 @@ vg.View = (function() {
     if (!this._handler) {
       this._handler = new vg.canvas.Handler()
         .initialize(this._el, this._padding)
-        .scene(this._scene);
+        .model(this._model);
     }
     
     return this;
   };
   
   prototype.render = function(bounds) {
-    var s = this._scene;
-    this._axes.update(s._axes, s._scales);
-    this._renderer.render(s.root(), bounds);
+    var m = this._model;
+    this._axes.update(m._axes, m._scales);
+    this._renderer.render(m.scene(), bounds);
     return this;
   };
   
@@ -122,8 +122,8 @@ vg.View = (function() {
   };
   
   prototype.update = function(request, items) {
-    this._build = this._build || (this._scene.build(), true);
-    this._scene.encode(request, items);
+    this._build = this._build || (this._model.build(), true);
+    this._model.encode(request, items);
     
     function bounds() {
       return !items ? null :

@@ -41,7 +41,7 @@ vega.js: \
 	src/scene/visit.js \
 	src/core/Bounds.js \
 	src/core/Axes.js \
-	src/core/Scene.js \
+	src/core/Model.js \
 	src/core/View.js \
 	src/core/_end.js
 

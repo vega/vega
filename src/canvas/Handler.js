@@ -1,9 +1,9 @@
 vg.canvas.Handler = (function() {
-  var handler = function(el, scene) {
+  var handler = function(el, model) {
     this._active = null;
     this._handlers = {};
     if (el) this.initialize(el);
-    if (scene) this.scene(scene);
+    if (model) this.model(model);
   };
   
   var prototype = handler.prototype;
@@ -24,9 +24,9 @@ vg.canvas.Handler = (function() {
     return this;
   };
   
-  prototype.scene = function(scene) {
-    if (!arguments.length) return this._scene;
-    this._scene = scene;
+  prototype.model = function(model) {
+    if (!arguments.length) return this._model;
+    this._model = model;
     return this;
   };
 
@@ -70,7 +70,7 @@ vg.canvas.Handler = (function() {
         x = evt.clientX - b.left,
         y = evt.clientY - b.top,
         a = this._active,
-        p = this.pick(this._scene.root(), x, y, x-pad.left, y-pad.top);
+        p = this.pick(this._model.scene(), x, y, x-pad.left, y-pad.top);
 
     if (arrayEquals(p, a)) {
       this.fire("mousemove", evt);
