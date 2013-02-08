@@ -171,6 +171,35 @@ vg.canvas.marks = (function() {
     }
   }
   
+  function drawImage(g, scene, bounds) {
+    if (!scene.items.length) return;
+    var renderer = this,
+        items = scene.items, o;
+
+    for (var i=0, len=items.length; i<len; ++i) {
+      o = items[i];
+      if (bounds && !bounds.intersects(o.bounds))
+        continue; // bounds check
+
+      if (!(o.image && o.image.url === o.url)) {
+        o.image = renderer.loadImage(o.url);
+        o.image.url = o.url;
+      }
+
+      var x, y, w, h, opac;
+      w = o.width || (o.image && o.image.width) || 0;
+      h = o.height || (o.image && o.image.height) || 0;
+      x = o.x - (o.align === "center"
+        ? w/2 : (o.align === "right" ? w : 0));
+      y = o.y - (o.baseline === "middle"
+        ? h/2 : (o.baseline === "bottom" ? h : 0));
+      o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
+
+      g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+      g.drawImage(o.image, x, y, w, h);
+    }
+  }
+  
   function fontString(o) {
     return o.font ? o.font : ""
       + (o.fontStyle ? o.fontStyle + " " : "")
@@ -315,11 +344,12 @@ vg.canvas.marks = (function() {
   }
 
   var hitTests = {
-    rect: function(g,o,x,y) { return true; }, // bounds test is sufficient
-    text: function(g,o,x,y) { return true; }, // use bounds test for now
-    arc:  function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
-    area: function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
-    path: function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
+    rect:  function(g,o,x,y) { return true; }, // bounds test is sufficient
+    image: function(g,o,x,y) { return true; }, // bounds test is sufficient
+    text:  function(g,o,x,y) { return true; }, // use bounds test for now
+    arc:   function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
+    area:  function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
+    path:  function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
     symbol: function(g,o,x,y) {symbolPath(g,o); return g.isPointInPath(x,y);},
   };
   
@@ -333,6 +363,7 @@ vg.canvas.marks = (function() {
       symbol:  drawAll(symbolPath),
       rect:    drawRect,
       text:    drawText,
+      image:   drawImage,
       drawOne: drawOne, // expose for extensibility
       drawAll: drawAll  // expose for extensibility
     },
@@ -345,6 +376,7 @@ vg.canvas.marks = (function() {
       symbol:  pick(hitTests.symbol),
       rect:    pick(hitTests.rect),
       text:    pick(hitTests.text),
+      image:   pick(hitTests.image),
       pickAll: pickAll  // expose for extensibility
     }
   };

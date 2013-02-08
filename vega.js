@@ -707,6 +707,35 @@ vg.error = function(msg) {
     }
   }
   
+  function drawImage(g, scene, bounds) {
+    if (!scene.items.length) return;
+    var renderer = this,
+        items = scene.items, o;
+
+    for (var i=0, len=items.length; i<len; ++i) {
+      o = items[i];
+      if (bounds && !bounds.intersects(o.bounds))
+        continue; // bounds check
+
+      if (!(o.image && o.image.url === o.url)) {
+        o.image = renderer.loadImage(o.url);
+        o.image.url = o.url;
+      }
+
+      var x, y, w, h, opac;
+      w = o.width || (o.image && o.image.width) || 0;
+      h = o.height || (o.image && o.image.height) || 0;
+      x = o.x - (o.align === "center"
+        ? w/2 : (o.align === "right" ? w : 0));
+      y = o.y - (o.baseline === "middle"
+        ? h/2 : (o.baseline === "bottom" ? h : 0));
+      o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
+
+      g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+      g.drawImage(o.image, x, y, w, h);
+    }
+  }
+  
   function fontString(o) {
     return o.font ? o.font : ""
       + (o.fontStyle ? o.fontStyle + " " : "")
@@ -851,11 +880,12 @@ vg.error = function(msg) {
   }
 
   var hitTests = {
-    rect: function(g,o,x,y) { return true; }, // bounds test is sufficient
-    text: function(g,o,x,y) { return true; }, // use bounds test for now
-    arc:  function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
-    area: function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
-    path: function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
+    rect:  function(g,o,x,y) { return true; }, // bounds test is sufficient
+    image: function(g,o,x,y) { return true; }, // bounds test is sufficient
+    text:  function(g,o,x,y) { return true; }, // use bounds test for now
+    arc:   function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
+    area:  function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
+    path:  function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
     symbol: function(g,o,x,y) {symbolPath(g,o); return g.isPointInPath(x,y);},
   };
   
@@ -869,6 +899,7 @@ vg.error = function(msg) {
       symbol:  drawAll(symbolPath),
       rect:    drawRect,
       text:    drawText,
+      image:   drawImage,
       drawOne: drawOne, // expose for extensibility
       drawAll: drawAll  // expose for extensibility
     },
@@ -881,6 +912,7 @@ vg.error = function(msg) {
       symbol:  pick(hitTests.symbol),
       rect:    pick(hitTests.rect),
       text:    pick(hitTests.text),
+      image:   pick(hitTests.image),
       pickAll: pickAll  // expose for extensibility
     }
   };
@@ -934,8 +966,9 @@ vg.error = function(msg) {
         pad = this._padding,
         w = this._width + pad.left + pad.right,
         h = this._width + pad.top + pad.bottom;
-    
+        
     // setup
+    this._scene = scene;
     g.save();
     if (bounds) {
       g.beginPath();
@@ -949,6 +982,7 @@ vg.error = function(msg) {
     
     // takedown
     g.restore();
+    this._scene = null;
     
     var t1 = Date.now();
     vg.log("RENDER TIME: " + (t1-t0));
@@ -958,6 +992,31 @@ vg.error = function(msg) {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+  };
+  
+  prototype.renderAsync = function(scene) {
+    // TODO make safe for multiple scene rendering?
+    var renderer = this;
+    if (renderer._async_id) {
+      clearTimeout(renderer._async_id);
+    }
+    renderer._async_id = setTimeout(function() {
+      renderer.render(scene);
+      delete renderer._async_id;
+    }, 50);
+  };
+  
+  prototype.loadImage = function(uri) {
+    var renderer = this,
+        scene = this._scene;
+    
+    var image = new Image();
+    image.onload = function() {
+      vg.log("LOAD IMAGE: "+this.src);
+      renderer.renderAsync(scene);
+    };
+    image.src = uri;
+    return image;
   };
   
   return renderer;
@@ -1908,15 +1967,25 @@ vg.scene.GROUP  = "group",
 vg.scene.ENTER  = 0,
 vg.scene.UPDATE = 1,
 vg.scene.EXIT   = 2;
+
+vg.scene.bounds = function(path) {
+  var b = new vg.Bounds(path[0].bounds), i, len;
+  for (i=2, len=path.length; i<len; ++i) {
+    b.translate(path[i].x || 0, path[i].y || 0);
+  }
+  return b;
+};
 vg.scene.build = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
-      EXIT   = vg.scene.EXIT;
+      EXIT   = vg.scene.EXIT,
+      DEFAULT= {"sentinel":1}
   
   function build(model, db, node, parentData) {
-    var data = model.from ? model.from(db) : parentData || [1];
+    var data = model.from ? model.from(db) : parentData || [DEFAULT];
     if (vg.isObject(data) && data.values) data = data.values;
+    if (data === DEFAULT) data = [DEFAULT];
     
     // build node and items
     node = buildNode(model, node);
@@ -2125,6 +2194,14 @@ vg.scene.build = (function() {
     if (y < this.y1) this.y1 = y;
     if (x > this.x2) this.x2 = x;
     if (y > this.y2) this.y2 = y;
+    return this;
+  };
+
+  prototype.translate = function(dx, dy) {
+    this.x1 += dx;
+    this.x2 += dx;
+    this.y1 += dy;
+    this.y2 += dy;
     return this;
   };
 
@@ -2443,14 +2520,14 @@ vg.scene.build = (function() {
     function bounds() {
       return !items ? null :
         vg.array(items).reduce(function(b, x) {
-          return b.union(x.item.bounds);
+          return b.union(vg.scene.bounds(x.path));
         }, new vg.Bounds());  
     }
     
     this.render(bounds());
     return items ? this.render(bounds()) : this;
   };
-  
+    
   return view;
 })();
 })();

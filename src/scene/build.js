@@ -2,11 +2,13 @@ vg.scene.build = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
-      EXIT   = vg.scene.EXIT;
+      EXIT   = vg.scene.EXIT,
+      DEFAULT= {"sentinel":1}
   
   function build(model, db, node, parentData) {
-    var data = model.from ? model.from(db) : parentData || [1];
+    var data = model.from ? model.from(db) : parentData || [DEFAULT];
     if (vg.isObject(data) && data.values) data = data.values;
+    if (data === DEFAULT) data = [DEFAULT];
     
     // build node and items
     node = buildNode(model, node);

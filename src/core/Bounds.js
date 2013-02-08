@@ -30,6 +30,14 @@ vg.Bounds = (function() {
     return this;
   };
 
+  prototype.translate = function(dx, dy) {
+    this.x1 += dx;
+    this.x2 += dx;
+    this.y1 += dy;
+    this.y2 += dy;
+    return this;
+  };
+
   prototype.expand = function(d) {
     this.x1 -= d;
     this.y1 -= d;

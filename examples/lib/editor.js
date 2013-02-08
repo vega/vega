@@ -33,7 +33,7 @@ ved.parse = function() {
   
   vg.parse.spec(spec, function(chart) {
     d3.select("#vis").selectAll("*").remove();
-    (ved.vis = chart("#vis")).update();
+    (ved.view = chart("#vis")).update();
   });
 };
 
@@ -44,6 +44,7 @@ ved.init = function() {
     "area",
     "bar",
     "choropleth",
+    "image",
     "map",
     "scatter",
     "stacked_area",

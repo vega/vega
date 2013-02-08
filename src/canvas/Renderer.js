@@ -47,8 +47,9 @@ vg.canvas.Renderer = (function() {
         pad = this._padding,
         w = this._width + pad.left + pad.right,
         h = this._width + pad.top + pad.bottom;
-    
+        
     // setup
+    this._scene = scene;
     g.save();
     if (bounds) {
       g.beginPath();
@@ -62,6 +63,7 @@ vg.canvas.Renderer = (function() {
     
     // takedown
     g.restore();
+    this._scene = null;
     
     var t1 = Date.now();
     vg.log("RENDER TIME: " + (t1-t0));
@@ -71,6 +73,31 @@ vg.canvas.Renderer = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+  };
+  
+  prototype.renderAsync = function(scene) {
+    // TODO make safe for multiple scene rendering?
+    var renderer = this;
+    if (renderer._async_id) {
+      clearTimeout(renderer._async_id);
+    }
+    renderer._async_id = setTimeout(function() {
+      renderer.render(scene);
+      delete renderer._async_id;
+    }, 50);
+  };
+  
+  prototype.loadImage = function(uri) {
+    var renderer = this,
+        scene = this._scene;
+    
+    var image = new Image();
+    image.onload = function() {
+      vg.log("LOAD IMAGE: "+this.src);
+      renderer.renderAsync(scene);
+    };
+    image.src = uri;
+    return image;
   };
   
   return renderer;

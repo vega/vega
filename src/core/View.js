@@ -128,13 +128,13 @@ vg.View = (function() {
     function bounds() {
       return !items ? null :
         vg.array(items).reduce(function(b, x) {
-          return b.union(x.item.bounds);
+          return b.union(vg.scene.bounds(x.path));
         }, new vg.Bounds());  
     }
     
     this.render(bounds());
     return items ? this.render(bounds()) : this;
   };
-  
+    
   return view;
 })();
