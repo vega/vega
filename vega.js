@@ -1738,6 +1738,8 @@ vg.data.json = function(data, format) {
 })();vg.parse.scales = (function() {
   var LINEAR = "linear",
       ORDINAL = "ordinal",
+      LOG = "log",
+      POWER = "pow",
       KEYWORD = {width: 1, height: 1};
 
   function scales(spec, scales, db) {
@@ -1815,7 +1817,7 @@ vg.data.json = function(data, format) {
         domain[1] = def.domainMax;
       }
     }
-    if (def.zero || def.zero===undefined) {
+    if (def.type !== LOG && (def.zero || def.zero===undefined)) {
       domain[0] = Math.min(0, domain[0]);
       domain[1] = Math.max(0, domain[1]);
     }
@@ -1828,7 +1830,7 @@ vg.data.json = function(data, format) {
 
     if (def.clamp) scale.clamp(true);
     if (def.nice) scale.nice();
-    if (def.exponent && def.type==="pow") scale.exponent(def.exponent);
+    if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
   }
   
   function range(def) {
