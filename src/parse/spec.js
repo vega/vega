@@ -19,10 +19,10 @@ vg.parse.spec = function(spec, callback) {
         .data(defs.data.load)
         .data(input)
         .on("mouseover", function(evt, item) {
-          view.update("hover", item);
+          this.update("hover", item);
         })
         .on("mouseout", function(evt, item) {
-          view.update("update", item);
+          this.update("update", item);
         });
     };
   }

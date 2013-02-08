@@ -3,7 +3,10 @@
   "height": 400,
   "padding": {"top":50, "left":50, "bottom":50, "right":50},
   "data": [
-    {"name": "points"}
+    {
+      "name": "points",
+      "url": "data/points.json"
+    }
   ],
   "scales": [
     {

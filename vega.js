@@ -971,10 +971,11 @@ vg.error = function(msg) {
   
   var prototype = handler.prototype;
 
-  prototype.initialize = function(el, pad) {
+  prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
     this._canvas = d3.select(el).select("canvas").node();
     this._padding = pad;
+    this._obj = obj || null;
     
     // add event listeners
     var canvas = this._canvas, that = this;
@@ -1066,7 +1067,7 @@ vg.error = function(msg) {
     if (a && h) {
       a = a ? {item: a[0], path: a} : a;
       for (var i=0, len=h.length; i<len; ++i) {
-        h[i].handler.call(null, evt, a);
+        h[i].handler.call(this._obj, evt, a);
       }
     }
   };
@@ -1878,10 +1879,10 @@ vg.data.json = function(data, format) {
         .data(defs.data.load)
         .data(input)
         .on("mouseover", function(evt, item) {
-          view.update("hover", item);
+          this.update("hover", item);
         })
         .on("mouseout", function(evt, item) {
-          view.update("update", item);
+          this.update("update", item);
         });
     };
   }
@@ -2409,7 +2410,7 @@ vg.scene.build = (function() {
     // input handler
     if (!this._handler) {
       this._handler = new vg.canvas.Handler()
-        .initialize(this._el, this._padding)
+        .initialize(this._el, this._padding, this)
         .model(this._model);
     }
     

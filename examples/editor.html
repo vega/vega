@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title>Vega Live Editor</title>
+    <link rel="stylesheet" type="text/css" href="css/vega.css"/>
+    <link rel="stylesheet" type="text/css" href="css/editor.css"/>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script type="text/javascript" src="../vega.js"></script>
+    <script type="text/javascript" src="lib/editor.js"></script>
+  </head>
+  <body>    
+    <div id="content">
+      <div id="mod_spec" class="mod">
+        <div class="mod_header">
+          <div class="mod_ctrls">
+            <select id="sel_spec"></select>
+            <input type="button" id="btn_spec_format" value="Format"</input>
+            <input type="button" id="btn_spec_parse" value="Parse"</input>
+          </div>
+          <div class="mod_title">
+            <a id="link_spec" class="active">Vega</a>         
+          </div>
+        </div>
+        <textarea id="spec" class="pre" spellcheck="false"></textarea>
+        <textarea id="code" class="pre" spellcheck="false"></textarea>
+      </div>
+      <div id="mod_vis" class="mod">
+        <div class="mod_header">
+          <div class="mod_title">Visualization</div>
+        </div>
+        <div id="vis"></div>
+      </div>
+      <br clear="all"/>
+    </div>
+  </body>
+</html>

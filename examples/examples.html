@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>Vega Examples</title/>
-    <link rel="stylesheet" href="vega.css"/>
+    <link rel="stylesheet" href="css/vega.css"/>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript" src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
     <script src="../vega.js"></script>
@@ -18,11 +18,6 @@
     </div>
     <div id="vis"></div>
 <script type="text/javascript">
-var data = {
-  points: d3.range(1000)
-    .map(function() { return {x:Math.random(), y:Math.random()}; })
-};
-
 var specs = [
   "-----",
   "arc",
@@ -52,7 +47,7 @@ d3.select("#specs")
 // parse a spec and create a visualization view
 function parse(spec) {
   vg.parse.spec(spec, function(chart) {
-    self.view = chart("#vis", data).update();
+    self.view = chart("#vis").update();
   });
 }
 </script>

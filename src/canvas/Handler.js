@@ -8,10 +8,11 @@ vg.canvas.Handler = (function() {
   
   var prototype = handler.prototype;
 
-  prototype.initialize = function(el, pad) {
+  prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
     this._canvas = d3.select(el).select("canvas").node();
     this._padding = pad;
+    this._obj = obj || null;
     
     // add event listeners
     var canvas = this._canvas, that = this;
@@ -103,7 +104,7 @@ vg.canvas.Handler = (function() {
     if (a && h) {
       a = a ? {item: a[0], path: a} : a;
       for (var i=0, len=h.length; i<len; ++i) {
-        h[i].handler.call(null, evt, a);
+        h[i].handler.call(this._obj, evt, a);
       }
     }
   };

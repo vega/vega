@@ -97,7 +97,7 @@ vg.View = (function() {
     // input handler
     if (!this._handler) {
       this._handler = new vg.canvas.Handler()
-        .initialize(this._el, this._padding)
+        .initialize(this._el, this._padding, this)
         .model(this._model);
     }
     
