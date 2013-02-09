@@ -43,7 +43,7 @@ vg.data.treemap = function() {
   });
 
   treemap.output = function(map) {
-    d3.keys(output).forEach(function(k) {
+    vg.keys(output).forEach(function(k) {
       if (map[k] !== undefined) {
         output[k] = map[k];
       }

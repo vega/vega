@@ -11,6 +11,7 @@ all: \
 vega.js: \
 	src/core/_start.js \
 	src/_package.js \
+	src/core/Bounds.js \
 	src/canvas/_package.js \
 	src/canvas/path.js \
 	src/canvas/marks.js \
@@ -25,6 +26,7 @@ vega.js: \
 	src/data/pie.js \
 	src/data/stack.js \
 	src/data/treemap.js \
+	src/data/wordcloud.js \
 	src/data/zip.js \
 	src/parse/_package.js \
 	src/parse/axes.js \
@@ -39,7 +41,6 @@ vega.js: \
 	src/scene/build.js \
 	src/scene/encode.js \
 	src/scene/visit.js \
-	src/core/Bounds.js \
 	src/core/Axes.js \
 	src/core/Model.js \
 	src/core/View.js \

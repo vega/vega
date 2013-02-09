@@ -4,7 +4,8 @@ vg.canvas.marks = (function() {
       renderPath = vg.canvas.path.render,
       arc_path = d3.svg.arc(),
       sqrt3 = Math.sqrt(3),
-      tan30 = Math.tan(30 * Math.PI / 180); 
+      tan30 = Math.tan(30 * Math.PI / 180),
+      tmpBounds = new vg.Bounds();
 
   // path generators
  
@@ -201,17 +202,16 @@ vg.canvas.marks = (function() {
   }
   
   function fontString(o) {
-    return o.font ? o.font : ""
-      + (o.fontStyle ? o.fontStyle + " " : "")
+    return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + o.fontSize + " " + o.fontFamily;
+      + o.fontSize + "px " + o.fontFamily;
   }
   
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lw, text, ta, tb, w, h, dx, dy;
+        o, ob, fill, stroke, opac, lw, text, ta, tb;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -219,16 +219,20 @@ vg.canvas.marks = (function() {
         continue; // bounds check
 
       g.font = fontString(o);
-      g.textAlign = o.textAlign;
-      g.textBaseline = o.textBaseline;
-      w = g.measureText(o.text).width;
-      h = 13;  // TODO get text height
-      x = o.x + (o.dx || 0);
-      y = o.y + (o.dy || 0);
-
-      o.bounds = (o.bounds || new vg.Bounds())
-        .set(x, y, o.x+o.width, o.y+o.height)
-        .expand(2);
+      g.textAlign = o.align || "left";
+      g.textBaseline = o.baseline || "alphabetic";
+      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds())).expand(1);
+            
+      if (o.angle) {
+        g.save();
+        g.translate(o.x, o.y);
+        g.rotate(o.angle * Math.PI/180);
+        x = o.dx || 0;
+        y = o.dy || 0;
+      } else {
+        x = o.x + (o.dx || 0);
+        y = o.y + (o.dy || 0);
+      }
 
       if (fill = o.fill) {
         g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
@@ -242,7 +246,51 @@ vg.canvas.marks = (function() {
         g.lineWidth = (w = o.strokeWidth) != undefined ? w : 1;
         g.strokeText(o.text, x, y);
       }
+      
+      if (o.angle) {
+        g.restore();
+      }
     }
+  }
+  
+  function textBounds(g, o, bounds, noRotate) {
+    var x = o.x + (o.dx || 0),
+        y = o.y + (o.dy || 0),
+        w = g.measureText(o.text).width,
+        h = o.fontSize,
+        a = o.align,
+        b = o.baseline,
+        angle, cos, sin, cx, cy;
+    
+    // horizontal
+    if (a === "center") {
+      x = x - (w / 2);
+    } else if (a === "right") {
+      x = x - w;
+    } else {
+      // left by default, do nothing
+    }
+    
+    /// TODO find a robust solution for heights!
+    /// These offsets work for some but not all fonts.
+    
+    // vertical
+    if (b === "top") {
+      y = y + (h/5);
+    } else if (b === "bottom") {
+      y = y - h;
+    } else if (b === "middle") {
+      y = y - (h/2) + (h/10);
+    } else {
+      // alphabetic by default
+      y = y - 4*h/5;
+    }
+    
+    bounds.set(x, y, x+w, y+h);
+    if (!noRotate && o.angle) {
+      bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
+    }
+    return bounds;
   }
   
   function drawAll(pathFunc) {
@@ -316,7 +364,7 @@ vg.canvas.marks = (function() {
       // first hit test against bounding box
       if (b && !b.contains(gx, gy)) continue;
       // if in bounding box, perform more careful test
-      if (test(g, o, x, y)) return [o];
+      if (test(g, o, x, y, gx, gy)) return [o];
     }
     return false;
   }
@@ -344,14 +392,32 @@ vg.canvas.marks = (function() {
   }
 
   var hitTests = {
-    rect:  function(g,o,x,y) { return true; }, // bounds test is sufficient
-    image: function(g,o,x,y) { return true; }, // bounds test is sufficient
-    text:  function(g,o,x,y) { return true; }, // use bounds test for now
-    arc:   function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
-    area:  function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
-    path:  function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
+    text:   hitTestText,
+    rect:   function(g,o,x,y) { return true; }, // bounds test is sufficient
+    image:  function(g,o,x,y) { return true; }, // bounds test is sufficient
+    arc:    function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
+    area:   function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
+    path:   function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
     symbol: function(g,o,x,y) {symbolPath(g,o); return g.isPointInPath(x,y);},
   };
+  
+  function hitTestText(g, o, x, y, gx, gy) {
+    if (!o.angle)
+      return true; // bounds sufficient if no rotation
+
+    g.font = fontString(o);
+    
+    var b = textBounds(g, o, tmpBounds, true),
+        a = -o.angle * Math.PI / 180,
+        cos = Math.cos(a),
+        sin = Math.sin(a),
+        x = o.x,
+        y = o.y,
+        px = cos*gx - sin*gy + (x - x*cos + y*sin),
+        py = sin*gx + cos*gy + (y - x*sin - y*cos);
+        
+    return b.contains(px, py);
+  }
   
   return {
     draw: {

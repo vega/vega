@@ -75,7 +75,105 @@ vg.log = function(msg) {
 vg.error = function(msg) {
   console.log(msg);
   alert(msg);
-};vg.canvas = {};vg.canvas.path = (function() {
+};vg.Bounds = (function() {
+  var bounds = function(b) {
+    this.clear();
+    if (b) this.union(b);
+  };
+  
+  var prototype = bounds.prototype;
+  
+  prototype.clear = function() {
+    this.x1 = +Number.MAX_VALUE;
+    this.y1 = +Number.MAX_VALUE;
+    this.x2 = -Number.MAX_VALUE;
+    this.y2 = -Number.MAX_VALUE;
+    return this;
+  };
+  
+  prototype.set = function(x1, y1, x2, y2) {
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    return this;
+  };
+
+  prototype.add = function(x, y) {
+    if (x < this.x1) this.x1 = x;
+    if (y < this.y1) this.y1 = y;
+    if (x > this.x2) this.x2 = x;
+    if (y > this.y2) this.y2 = y;
+    return this;
+  };
+
+  prototype.expand = function(d) {
+    this.x1 -= d;
+    this.y1 -= d;
+    this.x2 += d;
+    this.y2 += d;
+    return this;
+  };
+
+  prototype.translate = function(dx, dy) {
+    this.x1 += dx;
+    this.x2 += dx;
+    this.y1 += dy;
+    this.y2 += dy;
+    return this;
+  };
+  
+  prototype.rotate = function(angle, x, y) {
+    var cos = Math.cos(angle),
+        sin = Math.sin(angle),
+        cx = x - x*cos + y*sin,
+        cy = y - x*sin - y*cos,
+        x1 = this.x1, x2 = this.x2,
+        y1 = this.y1, y2 = this.y2;
+
+    return this.clear()
+      .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
+      .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
+      .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
+      .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
+  }
+
+  prototype.union = function(b) {
+    if (b.x1 < this.x1) this.x1 = b.x1;
+    if (b.y1 < this.y1) this.y1 = b.y1;
+    if (b.x2 > this.x2) this.x2 = b.x2;
+    if (b.y2 > this.y2) this.y2 = b.y2;
+    return this;
+  };
+
+  prototype.intersects = function(b) {
+    return b && !(
+      this.x2 < b.x1 ||
+      this.x1 > b.x2 ||
+      this.y2 < b.y1 ||
+      this.y1 > b.y2
+    );
+  };
+
+  prototype.contains = function(x, y) {
+    return !(
+      x < this.x1 ||
+      x > this.x2 ||
+      y < this.y1 ||
+      y > this.y2
+    );
+  };
+
+  prototype.width = function() {
+    return this.x2 - this.x1;
+  };
+
+  prototype.height = function() {
+    return this.y2 - this.y1;
+  };
+
+  return bounds;
+})();vg.canvas = {};vg.canvas.path = (function() {
 
   // Path parsing and rendering code taken from fabric.js -- Thanks!
   var cmdLength = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
@@ -540,7 +638,8 @@ vg.error = function(msg) {
       renderPath = vg.canvas.path.render,
       arc_path = d3.svg.arc(),
       sqrt3 = Math.sqrt(3),
-      tan30 = Math.tan(30 * Math.PI / 180); 
+      tan30 = Math.tan(30 * Math.PI / 180),
+      tmpBounds = new vg.Bounds();
 
   // path generators
  
@@ -737,17 +836,16 @@ vg.error = function(msg) {
   }
   
   function fontString(o) {
-    return o.font ? o.font : ""
-      + (o.fontStyle ? o.fontStyle + " " : "")
+    return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + o.fontSize + " " + o.fontFamily;
+      + o.fontSize + "px " + o.fontFamily;
   }
   
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lw, text, ta, tb, w, h, dx, dy;
+        o, ob, fill, stroke, opac, lw, text, ta, tb;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -755,16 +853,20 @@ vg.error = function(msg) {
         continue; // bounds check
 
       g.font = fontString(o);
-      g.textAlign = o.textAlign;
-      g.textBaseline = o.textBaseline;
-      w = g.measureText(o.text).width;
-      h = 13;  // TODO get text height
-      x = o.x + (o.dx || 0);
-      y = o.y + (o.dy || 0);
-
-      o.bounds = (o.bounds || new vg.Bounds())
-        .set(x, y, o.x+o.width, o.y+o.height)
-        .expand(2);
+      g.textAlign = o.align || "left";
+      g.textBaseline = o.baseline || "alphabetic";
+      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds())).expand(1);
+            
+      if (o.angle) {
+        g.save();
+        g.translate(o.x, o.y);
+        g.rotate(o.angle * Math.PI/180);
+        x = o.dx || 0;
+        y = o.dy || 0;
+      } else {
+        x = o.x + (o.dx || 0);
+        y = o.y + (o.dy || 0);
+      }
 
       if (fill = o.fill) {
         g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
@@ -778,7 +880,51 @@ vg.error = function(msg) {
         g.lineWidth = (w = o.strokeWidth) != undefined ? w : 1;
         g.strokeText(o.text, x, y);
       }
+      
+      if (o.angle) {
+        g.restore();
+      }
     }
+  }
+  
+  function textBounds(g, o, bounds, noRotate) {
+    var x = o.x + (o.dx || 0),
+        y = o.y + (o.dy || 0),
+        w = g.measureText(o.text).width,
+        h = o.fontSize,
+        a = o.align,
+        b = o.baseline,
+        angle, cos, sin, cx, cy;
+    
+    // horizontal
+    if (a === "center") {
+      x = x - (w / 2);
+    } else if (a === "right") {
+      x = x - w;
+    } else {
+      // left by default, do nothing
+    }
+    
+    /// TODO find a robust solution for heights!
+    /// These offsets work for some but not all fonts.
+    
+    // vertical
+    if (b === "top") {
+      y = y + (h/5);
+    } else if (b === "bottom") {
+      y = y - h;
+    } else if (b === "middle") {
+      y = y - (h/2) + (h/10);
+    } else {
+      // alphabetic by default
+      y = y - 4*h/5;
+    }
+    
+    bounds.set(x, y, x+w, y+h);
+    if (!noRotate && o.angle) {
+      bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
+    }
+    return bounds;
   }
   
   function drawAll(pathFunc) {
@@ -852,7 +998,7 @@ vg.error = function(msg) {
       // first hit test against bounding box
       if (b && !b.contains(gx, gy)) continue;
       // if in bounding box, perform more careful test
-      if (test(g, o, x, y)) return [o];
+      if (test(g, o, x, y, gx, gy)) return [o];
     }
     return false;
   }
@@ -880,14 +1026,32 @@ vg.error = function(msg) {
   }
 
   var hitTests = {
-    rect:  function(g,o,x,y) { return true; }, // bounds test is sufficient
-    image: function(g,o,x,y) { return true; }, // bounds test is sufficient
-    text:  function(g,o,x,y) { return true; }, // use bounds test for now
-    arc:   function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
-    area:  function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
-    path:  function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
+    text:   hitTestText,
+    rect:   function(g,o,x,y) { return true; }, // bounds test is sufficient
+    image:  function(g,o,x,y) { return true; }, // bounds test is sufficient
+    arc:    function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
+    area:   function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
+    path:   function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
     symbol: function(g,o,x,y) {symbolPath(g,o); return g.isPointInPath(x,y);},
   };
+  
+  function hitTestText(g, o, x, y, gx, gy) {
+    if (!o.angle)
+      return true; // bounds sufficient if no rotation
+
+    g.font = fontString(o);
+    
+    var b = textBounds(g, o, tmpBounds, true),
+        a = -o.angle * Math.PI / 180,
+        cos = Math.cos(a),
+        sin = Math.sin(a),
+        x = o.x,
+        y = o.y,
+        px = cos*gx - sin*gy + (x - x*cos + y*sin),
+        py = sin*gx + cos*gy + (y - x*sin - y*cos);
+        
+    return b.contains(px, py);
+  }
   
   return {
     draw: {
@@ -1532,7 +1696,7 @@ vg.data.json = function(data, format) {
   });
 
   treemap.output = function(map) {
-    d3.keys(output).forEach(function(k) {
+    vg.keys(output).forEach(function(k) {
       if (map[k] !== undefined) {
         output[k] = map[k];
       }
@@ -1541,6 +1705,107 @@ vg.data.json = function(data, format) {
   };
 
   return treemap;
+};vg.data.wordcloud = function() {
+  var layout = d3.layout.cloud().size([900, 500]),
+      text = vg.accessor("data"),
+      fontSize = function() { return 14; },
+      rotate =
+        function(d) { return ~~(Math.random()*5)*30 - 60; },
+//        function() { return 0; },
+      params = ["size", "font", "fontStyle", "fontWeight", "padding"];
+
+//   0   1   2   3   4
+//   0  30  60  90 120 (-60)
+// -60 -30   0  30  60
+  
+  var output = {
+    "x": "x",
+    "y": "y",
+    "size": "fontSize",
+    "font": "fontFamily",
+    "rotate": "angle"
+  };
+  
+  function cloud(data) {
+    function finish(tags, bounds) {
+      var size = layout.size(),
+          dx = size[0] / 2,
+          dy = size[1] / 2,
+          keys = vg.keys(output), key, d;
+
+      // sort data to match wordcloud order
+      data.sort(function(a,b) {
+        return fontSize(b) - fontSize(a);
+      });
+
+      for (var i=0; i<tags.length; ++i) {
+        d = data[i];
+        for (var k=0; k<keys.length; ++k) {
+          key = keys[k];
+          d[output[key]] = tags[i][key];
+          if (key === "x") d[output.x] += dx;
+          if (key === "y") d[output.y] += dy;
+        }
+      }
+    }
+    
+    layout
+      .text(text)
+      .fontSize(fontSize)
+      .rotate(rotate)
+      .words(data)
+      .on("end", finish)
+      .start();
+    return data;
+  }
+
+  cloud.text = function(field) {
+    text = vg.accessor(field);
+    return cloud;
+  };
+         
+  cloud.fontSize = function(field) {
+    fontSize = vg.accessor(field);
+    return cloud;
+  };
+  
+  cloud.rotate = function(x) {
+    var v;
+    if (vg.isObject(x) && !Array.isArray(x)) {
+      if (x.random !== undefined) {
+        v = (v = x.random) ? vg.array(v) : [0];
+        rotate = function() {
+          return v[~~(Math.random()*v.length-0.00001)];
+        };
+      } else if (x.alternate !== undefined) {
+        v = (v = x.alternate) ? vg.array(v) : [0];
+        rotate = function(d, i) {
+          return v[i % v.length];
+        };
+      }
+    } else {
+      rotate = vg.accessor(field);
+    }
+    return cloud;
+  };
+
+  params.forEach(function(name) {
+    cloud[name] = function(x) {
+      layout[name](x);
+      return cloud;
+    }
+  });
+
+  cloud.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
+    return cloud;
+  };
+  
+  return cloud;
 };vg.data.zip = function() {
   var z = null,
       as = "zip",
@@ -2165,97 +2430,6 @@ vg.scene.build = (function() {
   }
   
   return visit;
-})();vg.Bounds = (function() {
-  var bounds = function(b) {
-    this.clear();
-    if (b) this.union(b);
-  };
-  
-  var prototype = bounds.prototype;
-  
-  prototype.clear = function() {
-    this.x1 = +Number.MAX_VALUE;
-    this.y1 = +Number.MAX_VALUE;
-    this.x2 = -Number.MAX_VALUE;
-    this.y2 = -Number.MAX_VALUE;
-    return this;
-  };
-  
-  prototype.set = function(x1, y1, x2, y2) {
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
-    return this;
-  };
-
-  prototype.add = function(x, y) {
-    if (x < this.x1) this.x1 = x;
-    if (y < this.y1) this.y1 = y;
-    if (x > this.x2) this.x2 = x;
-    if (y > this.y2) this.y2 = y;
-    return this;
-  };
-
-  prototype.translate = function(dx, dy) {
-    this.x1 += dx;
-    this.x2 += dx;
-    this.y1 += dy;
-    this.y2 += dy;
-    return this;
-  };
-
-  prototype.expand = function(d) {
-    this.x1 -= d;
-    this.y1 -= d;
-    this.x2 += d;
-    this.y2 += d;
-    return this;
-  };
-  
-  prototype.translate = function(x, y) {
-    this.x1 += x;
-    this.x2 += x;
-    this.y1 += y;
-    this.y2 += y;
-    return this;
-  };
-
-  prototype.union = function(b) {
-    if (b.x1 < this.x1) this.x1 = b.x1;
-    if (b.y1 < this.y1) this.y1 = b.y1;
-    if (b.x2 > this.x2) this.x2 = b.x2;
-    if (b.y2 > this.y2) this.y2 = b.y2;
-    return this;
-  };
-
-  prototype.intersects = function(b) {
-    return b && !(
-      this.x2 < b.x1 ||
-      this.x1 > b.x2 ||
-      this.y2 < b.y1 ||
-      this.y1 > b.y2
-    );
-  };
-
-  prototype.contains = function(x, y) {
-    return !(
-      x < this.x1 ||
-      x > this.x2 ||
-      y < this.y1 ||
-      y > this.y2
-    );
-  };
-
-  prototype.width = function() {
-    return this.x2 - this.x1;
-  };
-
-  prototype.height = function() {
-    return this.y2 - this.y1;
-  };
-
-  return bounds;
 })();vg.Axes = (function() {  
   var axes = function() {
     this._svg = null;

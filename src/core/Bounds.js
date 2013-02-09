@@ -30,14 +30,6 @@ vg.Bounds = (function() {
     return this;
   };
 
-  prototype.translate = function(dx, dy) {
-    this.x1 += dx;
-    this.x2 += dx;
-    this.y1 += dy;
-    this.y2 += dy;
-    return this;
-  };
-
   prototype.expand = function(d) {
     this.x1 -= d;
     this.y1 -= d;
@@ -45,14 +37,29 @@ vg.Bounds = (function() {
     this.y2 += d;
     return this;
   };
-  
-  prototype.translate = function(x, y) {
-    this.x1 += x;
-    this.x2 += x;
-    this.y1 += y;
-    this.y2 += y;
+
+  prototype.translate = function(dx, dy) {
+    this.x1 += dx;
+    this.x2 += dx;
+    this.y1 += dy;
+    this.y2 += dy;
     return this;
   };
+  
+  prototype.rotate = function(angle, x, y) {
+    var cos = Math.cos(angle),
+        sin = Math.sin(angle),
+        cx = x - x*cos + y*sin,
+        cy = y - x*sin - y*cos,
+        x1 = this.x1, x2 = this.x2,
+        y1 = this.y1, y2 = this.y2;
+
+    return this.clear()
+      .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
+      .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
+      .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
+      .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
+  }
 
   prototype.union = function(b) {
     if (b.x1 < this.x1) this.x1 = b.x1;

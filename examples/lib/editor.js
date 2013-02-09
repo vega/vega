@@ -49,7 +49,8 @@ ved.init = function() {
     "scatter",
     "stacked_area",
     "stacked_bar",
-    "treemap"
+    "treemap",
+    "wordcloud"
   ];
                
   var sel = d3.select("#sel_spec");
