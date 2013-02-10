@@ -19,8 +19,11 @@ vega.js: \
 	src/canvas/Handler.js \
 	src/data/_package.js \
 	src/data/read.js \
+	src/data/array.js \
+	src/data/copy.js \
 	src/data/facet.js \
 	src/data/filter.js \
+	src/data/force.js \
 	src/data/geo.js \
 	src/data/geopath.js \
 	src/data/pie.js \

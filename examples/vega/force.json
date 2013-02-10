@@ -1,0 +1,71 @@
+{
+  "name": "force",
+  "width": 500,
+  "height": 500,
+  "padding": {"top":0, "bottom":0, "left":0, "right":0},
+  "data": [
+    {
+      "name": "edges",
+      "url": "data/miserables.json",
+      "format": {"type": "json", "property": "links"},
+      "transform": [
+        {"type": "copy", "from": "data", "fields": ["source", "target"]}
+      ]
+    },
+    {
+      "name": "nodes",
+      "url": "data/miserables.json",
+      "format": {"type": "json", "property": "nodes"},
+      "transform": [
+        {
+          "type": "force",
+          "links": "edges",
+          "linkDistance": 70,
+          "charge": -100,
+          "size": [500, 500],
+          "iterations": 1000
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "data": "edges",
+        "transform": [
+          {"type": "array", "fields": ["source", "target"]}
+        ]
+      },
+      "marks": [{
+        "type": "line",
+        "properties": {
+          "update": {
+            "x": {"field": "x"},
+            "y": {"field": "y"},
+            "stroke": {"value": "#ccc"},
+            "strokeWidth": {"value": 0.5}
+          }
+        }
+      }]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "nodes"},
+      "properties": {
+        "enter": {
+          "fillOpacity": {"value": 0.3},
+          "stroke": {"value": "steelblue"}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "fill": {"value": "steelblue"}
+        },
+        "hover": {
+          "fill": {"value": "#f00"}
+        }
+      }
+    }
+  ]
+}

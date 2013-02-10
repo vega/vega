@@ -302,6 +302,8 @@ vg.canvas.marks = (function() {
   function drawOne(pathFunc) {
     return function(g, scene, bounds) {
       if (!scene.items.length) return;
+      if (bounds && !bounds.intersects(scene.items[0].bounds))
+        return; // bounds check
       drawPathOne(pathFunc, g, scene.items[0], scene.items);
     }
   }

@@ -936,6 +936,8 @@ vg.error = function(msg) {
   function drawOne(pathFunc) {
     return function(g, scene, bounds) {
       if (!scene.items.length) return;
+      if (bounds && !bounds.intersects(scene.items[0].bounds))
+        return; // bounds check
       drawPathOne(pathFunc, g, scene.items[0], scene.items);
     }
   }
@@ -1361,6 +1363,48 @@ vg.data.json = function(data, format) {
     d = vg.accessor(format.property)(d);
   }
   return d;
+};vg.data.array = function() {
+  var fields = [];
+   
+  function array(data) {
+    return data.map(function(d) {      
+      var list = [];
+      for (var i=0, len=fields.length; i<len; ++i) {
+        list.push(fields[i](d));
+      }
+      return list;
+    });
+  }
+  
+  array.fields = function(fieldList) {
+    fields = vg.array(fieldList).map(vg.accessor);
+    return array;
+  };
+  
+  return array;
+};vg.data.copy = function() {
+  var from = vg.accessor("data"),
+      fields = [];
+  
+  var copy = vg.data.mapper(function(d) {
+    var src = from(d), i, len;
+    for (i=0, len=fields.length; i<len; ++i) {
+      d[fields[i]] = src[fields[i]];
+    }
+    return d;
+  });
+
+  copy.from = function(field) {
+    from = vg.accessor(field);
+    return copy;
+  };
+  
+  copy.fields = function(fieldList) {
+    fields = vg.array(fieldList);
+    return copy;
+  };
+
+  return copy;
 };vg.data.facet = function() {
 
   var keys = [],
@@ -1430,6 +1474,76 @@ vg.data.json = function(data, format) {
   };
 
   return filter;
+};vg.data.force = function() {
+  var layout = d3.layout.force(),
+      links = [],
+      linkDistance = 20,
+      linkStrength = 1,
+      charge = -30,
+      iterations = 500,
+      params = [
+        "size",
+        "friction",
+        "theta",
+        "gravity",
+        "alpha"
+      ];
+
+  function force(data) {
+    // links [source, target] (can be integer indices)
+    layout.nodes(data).links(this[links]);
+
+    layout.start();      
+    for (var i=0; i<iterations; ++i) {
+      layout.tick();
+    }
+    layout.stop();
+    
+    return data;
+  }
+
+  force.links = function(dataSetName) {
+    links = dataSetName;
+    return force;
+  };
+       
+  force.linkDistance = function(field) {
+    linkDistance = typeof field === 'number'
+      ? field
+      : vg.accessor(field);
+    layout.linkDistance(linkDistance);
+    return force;
+  };
+
+  force.linkStrength = function(field) {
+    linkStrength = typeof field === 'number'
+      ? field
+      : vg.accessor(field);
+    layout.linkStrength(linkStrength);
+    return force;
+  };
+  
+  force.charge = function(field) {
+    charge = typeof field === 'number'
+      ? field
+      : vg.accessor(field);
+    layout.charge(charge);
+    return force;
+  };
+  
+  force.iterations = function(iter) {
+    iterations = iter;
+    return force;
+  };
+
+  params.forEach(function(name) {
+    force[name] = function(x) {
+      layout[name](x);
+      return force;
+    }
+  });
+
+  return force;
 };vg.data.geo = (function() {
   var params = [
     "center",
