@@ -26,6 +26,7 @@ vega.js: \
 	src/data/force.js \
 	src/data/geo.js \
 	src/data/geopath.js \
+	src/data/link.js \
 	src/data/pie.js \
 	src/data/stack.js \
 	src/data/treemap.js \

@@ -30,24 +30,20 @@
   ],
   "marks": [
     {
-      "type": "group",
+      "type": "path",
       "from": {
         "data": "edges",
         "transform": [
-          {"type": "array", "fields": ["source", "target"]}
+          {"type": "link", "shape": "line"}
         ]
       },
-      "marks": [{
-        "type": "line",
-        "properties": {
-          "update": {
-            "x": {"field": "x"},
-            "y": {"field": "y"},
-            "stroke": {"value": "#ccc"},
-            "strokeWidth": {"value": 0.5}
-          }
+      "properties": {
+        "update": {
+          "path": {"field": "path"},
+          "stroke": {"value": "#ccc"},
+          "strokeWidth": {"value": 0.5}
         }
-      }]
+      }
     },
     {
       "type": "symbol",
