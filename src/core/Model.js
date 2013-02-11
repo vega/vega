@@ -19,13 +19,20 @@ vg.Model = (function() {
     if (!arguments.length) return this._data;
 
     var tx = this._defs ? this._defs.data.flow : {},
-        keys = vg.keys(data), i, len, k;
+        keys = vg.keys(data), i, j, len, k, src;
         
     for (i=0, len=keys.length; i<len; ++i) {
       k = keys[i];
       this._data[k] = tx[k]
         ? tx[k](data[k], this._data, this._defs.marks)
         : data[k];
+      
+      src = this._defs.data.source[k] || [];
+      for (j=0; j<src.length; ++j) {
+        this._data[src[j]] = tx[src[j]]
+          ? tx[src[j]](data[k], this._data, this._defs.marks)
+          : data[k]
+      }
     }
 
     return this;

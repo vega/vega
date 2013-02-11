@@ -1,7 +1,8 @@
 vg.parse.data = function(spec, callback) {
   var model = {
     load: {},
-    flow: {}
+    flow: {},
+    source: {}
   };
   var count = 0;
   
@@ -25,6 +26,11 @@ vg.parse.data = function(spec, callback) {
      
     if (d.values) {
       model.load[d.name] = d.values;
+    }
+    
+    if (d.source) {
+      var list = model.source[d.source] || (model.source[d.source] = []);
+      list.push(d.name);
     }
     
     if (d.transform) {

@@ -17,6 +17,15 @@
         {"x": 8, "y": 68, "c":0}, {"x": 8, "y": 16, "c":1},
         {"x": 9, "y": 49, "c":0}, {"x": 9, "y": 15, "c":1}
       ]
+    },
+    {
+      "name": "stats",
+      "source": "table",
+      "transform": [
+        {"type": "facet", "keys": [["data","x"]]},
+        {"type": "stats", "value": ["data","y"]},
+        {"type": "stats", "value": "sum"}
+      ]
     }
   ],
   "scales": [
@@ -32,7 +41,7 @@
       "type": "linear",
       "range": "height",
       "nice": true,
-      "domain": [0, 150]
+      "domain": {"data": "stats", "field": "max"}
     },
     {
       "name": "color",

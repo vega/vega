@@ -29,6 +29,7 @@ vega.js: \
 	src/data/link.js \
 	src/data/pie.js \
 	src/data/stack.js \
+	src/data/stats.js \
 	src/data/treemap.js \
 	src/data/wordcloud.js \
 	src/data/zip.js \
