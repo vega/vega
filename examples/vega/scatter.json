@@ -12,13 +12,13 @@
     {
       "name": "x",
       "nice": true,
-      "range": [0, 400],
+      "range": "width",
       "domain": {"data": "points", "field": ["data", "x"]}
     },
     {
       "name": "y",
       "nice": true,
-      "range": [400, 0],
+      "range": "height",
       "domain": {"data": "points", "field": ["data", "y"]}
     }
   ],

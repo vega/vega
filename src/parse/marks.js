@@ -13,8 +13,8 @@ vg.parse.marks = (function() {
     if (mark.from) {
       var name = mark.from.data,
           tx = vg.parse.dataflow(mark.from);
-      mark.from = function(db) {
-        return tx(db[name]);
+      mark.from = function(db, group) {
+        return tx(db[name], db, group);
       };
     }
     
@@ -26,10 +26,12 @@ vg.parse.marks = (function() {
     return mark;
   }
   
-  return function(marks) {
+  return function(spec) {
     return {
       type: "group",
-      marks: vg.duplicate(marks).map(parse)
+      width: spec.width,
+      height: spec.height,
+      marks: vg.duplicate(spec.marks).map(parse)
     };
   };
 })();

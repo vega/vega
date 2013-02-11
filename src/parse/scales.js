@@ -5,17 +5,17 @@ vg.parse.scales = (function() {
       POWER = "pow",
       KEYWORD = {width: 1, height: 1};
 
-  function scales(spec, scales, db) {
+  function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
-      o[def.name] = scale(def, o[def.name], db);
+      o[def.name] = scale(def, o[def.name], db, group);
       return o;
     }, scales || {});
   }
 
-  function scale(def, scale, db) {
+  function scale(def, scale, db, group) {
     var type = def.type || LINEAR,
         s = scale || d3.scale[type](),
-        rng = range(def, s);
+        rng = range(def, group);
     (type===ORDINAL ? ordinal : quantitative)(def, s, rng, db);
     return s;
   }
@@ -96,13 +96,13 @@ vg.parse.scales = (function() {
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
   }
   
-  function range(def) {
+  function range(def, group) {
     var rng = [null, null];
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
         if (KEYWORD[def.range]) {
-          rng = [0, def.range]
+          rng = [0, group[def.range]]
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;

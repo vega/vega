@@ -5,17 +5,19 @@ vg.data.force = function() {
       linkStrength = 1,
       charge = -30,
       iterations = 500,
+      size = ["width", "height"],
       params = [
-        "size",
         "friction",
         "theta",
         "gravity",
         "alpha"
       ];
 
-  function force(data) {
-    // links [source, target] (can be integer indices)
-    layout.nodes(data).links(this[links]);
+  function force(data, db, group) {    
+    layout
+      .size(vg.data.size(size, group))
+      .nodes(data)
+      .links(db[links])
 
     layout.start();      
     for (var i=0; i<iterations; ++i) {
@@ -28,6 +30,11 @@ vg.data.force = function() {
 
   force.links = function(dataSetName) {
     links = dataSetName;
+    return force;
+  };
+  
+  force.size = function(sz) {
+    size = sz;
     return force;
   };
        

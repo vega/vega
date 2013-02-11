@@ -4,8 +4,8 @@ vg.data.zip = function() {
       key = vg.accessor("data"),
       withKey = null;
 
-  function zip(data) {
-    var zdata = this[z], d, i, len, map;
+  function zip(data, db) {
+    var zdata = db[z], d, i, len, map;
     
     if (withKey) {
       map = {};

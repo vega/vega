@@ -14,8 +14,8 @@
     }
   ],
   "scales": [
-    {"name": "x", "domain": [0, 3], "range": [0, 200]},
-    {"name": "y", "domain": [0, 3], "range": [200, 0]}
+    {"name": "x", "domain": [0, 3], "range": "width"},
+    {"name": "y", "domain": [0, 3], "range": "height"}
   ],
   "axes": [
     {"type": "x", "scale": "x"},

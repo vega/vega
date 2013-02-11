@@ -23,7 +23,6 @@
       "transform": [
         {
           "type": "wordcloud",
-          "size": [400, 400],
           "text": ["data", "text"],
           "font": "Helvetica Neue",
           "fontSize": ["data", "value"],

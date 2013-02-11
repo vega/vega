@@ -17,11 +17,17 @@ vg.Model = (function() {
   
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
-    var dat = this._data,
-        tx = this._defs ? this._defs.data.flow : {};
-    vg.keys(data).forEach(function(k) {
-      dat[k] = tx[k] ? tx[k].call(dat, data[k]) : data[k];
-    });
+
+    var tx = this._defs ? this._defs.data.flow : {},
+        keys = vg.keys(data), i, len, k;
+        
+    for (i=0, len=keys.length; i<len; ++i) {
+      k = keys[i];
+      this._data[k] = tx[k]
+        ? tx[k](data[k], this._data, this._defs.marks)
+        : data[k];
+    }
+
     return this;
   };
   
@@ -32,10 +38,16 @@ vg.Model = (function() {
   };
   
   prototype.build = function() {
-    this._scene = vg.scene.build.call(this,
-      this._defs.marks, this._data, this._scene);
-    vg.parse.scales(this._defs.scales, this._scales, this._data);
-    vg.parse.axes(this._defs.axes, this._axes, this._scales);
+    var m = this,
+        scales = m._scales,
+        scene = m._scene,
+        axes = m._axes,
+        data = m._data,
+        defs = m._defs;
+
+    m._scene = vg.scene.build.call(m, defs.marks, data, scene);
+    vg.parse.scales(defs.scales, scales, data, defs.marks);
+    vg.parse.axes(defs.axes, axes, scales);
     return this;
   };
   

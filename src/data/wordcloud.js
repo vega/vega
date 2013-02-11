@@ -1,15 +1,10 @@
 vg.data.wordcloud = function() {
   var layout = d3.layout.cloud().size([900, 500]),
       text = vg.accessor("data"),
+      size = ["width", "height"],
       fontSize = function() { return 14; },
-      rotate =
-        function(d) { return ~~(Math.random()*5)*30 - 60; },
-//        function() { return 0; },
-      params = ["size", "font", "fontStyle", "fontWeight", "padding"];
-
-//   0   1   2   3   4
-//   0  30  60  90 120 (-60)
-// -60 -30   0  30  60
+      rotate = function() { return 0; },
+      params = ["font", "fontStyle", "fontWeight", "padding"];
   
   var output = {
     "x": "x",
@@ -19,7 +14,7 @@ vg.data.wordcloud = function() {
     "rotate": "angle"
   };
   
-  function cloud(data) {
+  function cloud(data, db, group) {
     function finish(tags, bounds) {
       var size = layout.size(),
           dx = size[0] / 2,
@@ -43,6 +38,7 @@ vg.data.wordcloud = function() {
     }
     
     layout
+      .size(vg.data.size(size, group))
       .text(text)
       .fontSize(fontSize)
       .rotate(rotate)
@@ -54,6 +50,11 @@ vg.data.wordcloud = function() {
 
   cloud.text = function(field) {
     text = vg.accessor(field);
+    return cloud;
+  };
+  
+  cloud.size = function(sz) {
+    size = sz;
     return cloud;
   };
          

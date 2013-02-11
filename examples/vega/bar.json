@@ -23,12 +23,12 @@
     {
       "name": "x",
       "type": "ordinal",
-      "range": [0, 400],
+      "range": "width",
       "domain": {"data": "table", "field": ["data","x"]}
     },
     {
       "name": "y",
-      "range": [200, 0],
+      "range": "height",
       "nice": true,
       "domain": {"data": "table", "field": ["data","y"]}
     }

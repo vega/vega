@@ -23,14 +23,14 @@
     {
       "name": "x",
       "type": "linear",
-      "range": [0, 500],
+      "range": "width",
       "zero": false,
       "domain": {"data": "table", "field": ["data","x"]}
     },
     {
       "name": "y",
       "type": "linear",
-      "range": [200, 0],
+      "range": "height",
       "nice": true,
       "domain": [0, 150]
     },

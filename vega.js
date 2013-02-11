@@ -1352,6 +1352,14 @@ vg.data.mapper = function(func) {
     data.forEach(func);
     return data;
   }
+};
+
+vg.data.size = function(size, group) {
+  size = Array.isArray(size) ? size : [0, size];
+  size = size.map(function(d) {
+    return (typeof d === 'string') ? group[d] : d;
+  });
+  return size;
 };vg.data.read = function(data, format) {
   // TODO read formats other than JSON
   return vg.data.json(data, format);
@@ -1481,17 +1489,19 @@ vg.data.json = function(data, format) {
       linkStrength = 1,
       charge = -30,
       iterations = 500,
+      size = ["width", "height"],
       params = [
-        "size",
         "friction",
         "theta",
         "gravity",
         "alpha"
       ];
 
-  function force(data) {
-    // links [source, target] (can be integer indices)
-    layout.nodes(data).links(this[links]);
+  function force(data, db, group) {    
+    layout
+      .size(vg.data.size(size, group))
+      .nodes(data)
+      .links(db[links])
 
     layout.start();      
     for (var i=0; i<iterations; ++i) {
@@ -1504,6 +1514,11 @@ vg.data.json = function(data, format) {
 
   force.links = function(dataSetName) {
     links = dataSetName;
+    return force;
+  };
+  
+  force.size = function(sz) {
+    size = sz;
     return force;
   };
        
@@ -1866,7 +1881,8 @@ vg.data.json = function(data, format) {
   var layout = d3.layout.treemap()
                  .children(function(d) { return d.values; }),
       value = vg.accessor("data"),
-      params = ["round", "sticky", "ratio", "padding", "size"],
+      size = ["width", "height"],
+      params = ["round", "sticky", "ratio", "padding"],
       output = {
         "x": "x",
         "y": "y",
@@ -1874,8 +1890,11 @@ vg.data.json = function(data, format) {
         "dy": "height"
       };
 
-  function treemap(data) {
-    data = layout.value(value).nodes(data);
+  function treemap(data, db, group) {
+    data = layout
+      .size(vg.data.size(size, group))
+      .value(value)
+      .nodes(data);
     
     var keys = vg.keys(output),
         len = keys.length;
@@ -1893,7 +1912,12 @@ vg.data.json = function(data, format) {
     
     return data;
   }
-       
+
+  treemap.size = function(sz) {
+    size = sz;
+    return treemap;
+  };
+
   treemap.value = function(field) {
     value = vg.accessor(field);
     return treemap;
@@ -1919,15 +1943,10 @@ vg.data.json = function(data, format) {
 };vg.data.wordcloud = function() {
   var layout = d3.layout.cloud().size([900, 500]),
       text = vg.accessor("data"),
+      size = ["width", "height"],
       fontSize = function() { return 14; },
-      rotate =
-        function(d) { return ~~(Math.random()*5)*30 - 60; },
-//        function() { return 0; },
-      params = ["size", "font", "fontStyle", "fontWeight", "padding"];
-
-//   0   1   2   3   4
-//   0  30  60  90 120 (-60)
-// -60 -30   0  30  60
+      rotate = function() { return 0; },
+      params = ["font", "fontStyle", "fontWeight", "padding"];
   
   var output = {
     "x": "x",
@@ -1937,7 +1956,7 @@ vg.data.json = function(data, format) {
     "rotate": "angle"
   };
   
-  function cloud(data) {
+  function cloud(data, db, group) {
     function finish(tags, bounds) {
       var size = layout.size(),
           dx = size[0] / 2,
@@ -1961,6 +1980,7 @@ vg.data.json = function(data, format) {
     }
     
     layout
+      .size(vg.data.size(size, group))
       .text(text)
       .fontSize(fontSize)
       .rotate(rotate)
@@ -1972,6 +1992,11 @@ vg.data.json = function(data, format) {
 
   cloud.text = function(field) {
     text = vg.accessor(field);
+    return cloud;
+  };
+  
+  cloud.size = function(sz) {
+    size = sz;
     return cloud;
   };
          
@@ -2023,8 +2048,8 @@ vg.data.json = function(data, format) {
       key = vg.accessor("data"),
       withKey = null;
 
-  function zip(data) {
-    var zdata = this[z], d, i, len, map;
+  function zip(data, db) {
+    var zdata = db[z], d, i, len, map;
     
     if (withKey) {
       map = {};
@@ -2174,9 +2199,8 @@ vg.data.json = function(data, format) {
 };vg.parse.dataflow = function(def) {
   var tx = (def.transform || []).map(vg.parse.transform);
   return !tx.length ? vg.identity :
-    function(data) {
-      var that = this;
-      return tx.reduce(function(d,t) { return t.call(that, d); }, data);
+    function(data, db, group) {
+      return tx.reduce(function(d,t) { return t(d, db, group); }, data);
     };
 };vg.parse.marks = (function() {
   
@@ -2193,8 +2217,8 @@ vg.data.json = function(data, format) {
     if (mark.from) {
       var name = mark.from.data,
           tx = vg.parse.dataflow(mark.from);
-      mark.from = function(db) {
-        return tx(db[name]);
+      mark.from = function(db, group) {
+        return tx(db[name], db, group);
       };
     }
     
@@ -2206,10 +2230,12 @@ vg.data.json = function(data, format) {
     return mark;
   }
   
-  return function(marks) {
+  return function(spec) {
     return {
       type: "group",
-      marks: vg.duplicate(marks).map(parse)
+      width: spec.width,
+      height: spec.height,
+      marks: vg.duplicate(spec.marks).map(parse)
     };
   };
 })();vg.parse.properties = (function() {
@@ -2277,17 +2303,17 @@ vg.data.json = function(data, format) {
       POWER = "pow",
       KEYWORD = {width: 1, height: 1};
 
-  function scales(spec, scales, db) {
+  function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
-      o[def.name] = scale(def, o[def.name], db);
+      o[def.name] = scale(def, o[def.name], db, group);
       return o;
     }, scales || {});
   }
 
-  function scale(def, scale, db) {
+  function scale(def, scale, db, group) {
     var type = def.type || LINEAR,
         s = scale || d3.scale[type](),
-        rng = range(def, s);
+        rng = range(def, group);
     (type===ORDINAL ? ordinal : quantitative)(def, s, rng, db);
     return s;
   }
@@ -2368,13 +2394,13 @@ vg.data.json = function(data, format) {
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
   }
   
-  function range(def) {
+  function range(def, group) {
     var rng = [null, null];
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
         if (KEYWORD[def.range]) {
-          rng = [0, def.range]
+          rng = [0, group[def.range]]
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;
@@ -2401,7 +2427,7 @@ vg.data.json = function(data, format) {
     var defs = {
       scales: spec.scales,
       axes: spec.axes,
-      marks: vg.parse.marks(spec.marks),
+      marks: vg.parse.marks(spec),
       data: vg.parse.data(spec.data, function() { callback(chart); })
     };
 
@@ -2459,7 +2485,9 @@ vg.scene.build = (function() {
       DEFAULT= {"sentinel":1}
   
   function build(model, db, node, parentData) {
-    var data = model.from ? model.from(db) : parentData || [DEFAULT];
+    var data = model.from
+      ? model.from(db)
+      : parentData || [DEFAULT];
     if (vg.isObject(data) && data.values) data = data.values;
     if (data === DEFAULT) data = [DEFAULT];
     
@@ -2742,11 +2770,17 @@ vg.scene.build = (function() {
   
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
-    var dat = this._data,
-        tx = this._defs ? this._defs.data.flow : {};
-    vg.keys(data).forEach(function(k) {
-      dat[k] = tx[k] ? tx[k].call(dat, data[k]) : data[k];
-    });
+
+    var tx = this._defs ? this._defs.data.flow : {},
+        keys = vg.keys(data), i, len, k;
+        
+    for (i=0, len=keys.length; i<len; ++i) {
+      k = keys[i];
+      this._data[k] = tx[k]
+        ? tx[k](data[k], this._data, this._defs.marks)
+        : data[k];
+    }
+
     return this;
   };
   
@@ -2757,10 +2791,16 @@ vg.scene.build = (function() {
   };
   
   prototype.build = function() {
-    this._scene = vg.scene.build.call(this,
-      this._defs.marks, this._data, this._scene);
-    vg.parse.scales(this._defs.scales, this._scales, this._data);
-    vg.parse.axes(this._defs.axes, this._axes, this._scales);
+    var m = this,
+        scales = m._scales,
+        scene = m._scene,
+        axes = m._axes,
+        data = m._data,
+        defs = m._defs;
+
+    m._scene = vg.scene.build.call(m, defs.marks, data, scene);
+    vg.parse.scales(defs.scales, scales, data, defs.marks);
+    vg.parse.axes(defs.axes, axes, scales);
     return this;
   };
   

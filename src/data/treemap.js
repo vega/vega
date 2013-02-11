@@ -2,7 +2,8 @@ vg.data.treemap = function() {
   var layout = d3.layout.treemap()
                  .children(function(d) { return d.values; }),
       value = vg.accessor("data"),
-      params = ["round", "sticky", "ratio", "padding", "size"],
+      size = ["width", "height"],
+      params = ["round", "sticky", "ratio", "padding"],
       output = {
         "x": "x",
         "y": "y",
@@ -10,8 +11,11 @@ vg.data.treemap = function() {
         "dy": "height"
       };
 
-  function treemap(data) {
-    data = layout.value(value).nodes(data);
+  function treemap(data, db, group) {
+    data = layout
+      .size(vg.data.size(size, group))
+      .value(value)
+      .nodes(data);
     
     var keys = vg.keys(output),
         len = keys.length;
@@ -29,7 +33,12 @@ vg.data.treemap = function() {
     
     return data;
   }
-       
+
+  treemap.size = function(sz) {
+    size = sz;
+    return treemap;
+  };
+
   treemap.value = function(field) {
     value = vg.accessor(field);
     return treemap;

@@ -9,7 +9,7 @@
       "values": [12, 23, 47, 6, 52, 19],
       "transform": [
         {"type": "facet"},
-        {"type": "treemap", "size": [900, 500]},
+        {"type": "treemap"},
         {"type": "filter", "test": "d.depth"}
       ]
     }

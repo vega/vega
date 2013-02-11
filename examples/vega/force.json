@@ -22,7 +22,6 @@
           "links": "edges",
           "linkDistance": 70,
           "charge": -100,
-          "size": [500, 500],
           "iterations": 1000
         }
       ]
