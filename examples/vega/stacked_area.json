@@ -23,8 +23,7 @@
       "source": "table",
       "transform": [
         {"type": "facet", "keys": [["data","x"]]},
-        {"type": "stats", "value": ["data","y"]},
-        {"type": "stats", "value": "sum"}
+        {"type": "stats", "value": ["data","y"]}
       ]
     }
   ],
@@ -41,7 +40,7 @@
       "type": "linear",
       "range": "height",
       "nice": true,
-      "domain": {"data": "stats", "field": "max"}
+      "domain": {"data": "stats", "field": "sum"}
     },
     {
       "name": "color",
