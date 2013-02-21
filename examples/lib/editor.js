@@ -44,6 +44,7 @@ ved.init = function() {
     "area",
     "bar",
     "choropleth",
+    "error",
     "force",
     "image",
     "map",
