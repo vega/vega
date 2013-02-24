@@ -37,6 +37,11 @@ ved.parse = function() {
   });
 };
 
+ved.resize = function(event) {
+  var h = window.innerHeight - 30;
+  d3.select("#spec").style("height", h+"px");
+};
+
 ved.init = function() {
   // Specification drop-down menu
   var specs = [
@@ -66,6 +71,8 @@ ved.init = function() {
 
   d3.select("#btn_spec_format").on("click", ved.format);
   d3.select("#btn_spec_parse").on("click", ved.parse);
+  d3.select(window).on("resize", ved.resize);
+  ved.resize();
 };
 
 window.onload = ved.init;
