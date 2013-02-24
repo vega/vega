@@ -123,12 +123,15 @@ vg.canvas.marks = (function() {
     }
 
     if (stroke) {
-      g.globalAlpha = (opac=o.strokeOpacity) != undefined ? opac : 1;
-      g.strokeStyle = stroke;
-      g.lineWidth = (lw = o.strokeWidth) != undefined ? lw : 1;
-      g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
-      g.stroke();
-      o.bounds.expand(2 + (lw||0));
+      lw = (lw = o.strokeWidth) != undefined ? lw : 1;
+      if (lw > 0) {
+        g.globalAlpha = (opac=o.strokeOpacity) != undefined ? opac : 1;
+        g.strokeStyle = stroke;
+        g.lineWidth = lw;
+        g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
+        g.stroke();
+        o.bounds.expand(lw);
+      }
     }
   }
 
@@ -162,12 +165,15 @@ vg.canvas.marks = (function() {
       }
 
       if (stroke = o.stroke) {
-        g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
-        g.strokeStyle = stroke;
-        g.lineWidth = (lw = o.strokeWidth) != undefined ? lw : 1;
-        g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
-        g.strokeRect(o.x, o.y, o.width, o.height);
-        o.bounds.expand(2 + (lw||0));
+        lw = (lw = o.strokeWidth) != undefined ? lw : 1;
+        if (lw > 0) {
+          g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
+          g.strokeStyle = stroke;
+          g.lineWidth = lw;
+          g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
+          g.strokeRect(o.x, o.y, o.width, o.height);
+          o.bounds.expand(lw);
+        }
       }
     }
   }
@@ -241,10 +247,13 @@ vg.canvas.marks = (function() {
       }
       
       if (stroke = o.stroke) {
-        g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
-        g.strokeStyle = stroke;
-        g.lineWidth = (w = o.strokeWidth) != undefined ? w : 1;
-        g.strokeText(o.text, x, y);
+        lw = (lw = o.strokeWidth) != undefined ? lw : 1;
+        if (lw > 0) {
+          g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
+          g.strokeStyle = stroke;
+          g.lineWidth = lw;
+          g.strokeText(o.text, x, y);
+        }
       }
       
       if (o.angle) {
