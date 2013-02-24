@@ -28,6 +28,7 @@ vega.js: \
 	src/data/geopath.js \
 	src/data/link.js \
 	src/data/pie.js \
+	src/data/sort.js \
 	src/data/stack.js \
 	src/data/stats.js \
 	src/data/treemap.js \

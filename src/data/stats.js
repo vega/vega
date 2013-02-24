@@ -1,5 +1,6 @@
 vg.data.stats = function() {
-  var value = vg.accessor("data");
+  var value = vg.accessor("data"),
+      median = false;
   
   function reduce(data) {
     var min = +Infinity,
@@ -9,11 +10,11 @@ vg.data.stats = function() {
         M2 = 0,
         i, len, v, delta;
 
-    data = Array.isArray(data) ? data : data.values || [];
+    var list = (vg.isArray(data) ? data : data.values || []).map(value);
     
     // compute aggregates
-    for (i=0, len=data.length; i<len; ++i) {
-      v = value(data[i]);
+    for (i=0, len=list.length; i<len; ++i) {
+      v = list[i];
       if (v < min) min = v;
       if (v > max) max = v;
       sum += v;
@@ -23,21 +24,31 @@ vg.data.stats = function() {
     }
     M2 = M2 / (len - 1);
     
-    return {
-      count: len,
-      min: min,
-      max: max,
-      sum: sum,
-      mean: mean,
-      variance: M2,
-      stdev: Math.sqrt(M2)
-    };
+    var o = vg.isArray(data) ? {} : data;
+    if (median) {
+      list.sort(vg.numcmp);
+      i = list.length >> 1;
+      o.median = list.length % 2 ? list[i] : (list[i-1] + list[i])/2;
+    }
+    o.count = len;
+    o.min = min;
+    o.max = max;
+    o.sum = sum;
+    o.mean = mean;
+    o.variance = M2;
+    o.stdev = Math.sqrt(M2);
+    return o;
   }
   
   function stats(data) {
     return (Array.isArray(data) ? [data] : data.values || [])
       .map(reduce); // no pun intended
   }
+  
+  stats.median = function(bool) {
+    median = bool || false;
+    return stats;
+  };
   
   stats.value = function(field) {
     value = vg.accessor(field);

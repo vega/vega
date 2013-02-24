@@ -1,15 +1,41 @@
 if (typeof vg === 'undefined') { vg = {}; }
 
-vg.version = '1.0.0'; // semantic versioning
+// semantic versioning
+vg.version = '1.0.0';
+
+// type checking functions
+var toString = Object.prototype.toString;
+
+vg.isObject = function(obj) {
+  return obj === Object(obj);
+};
+
+vg.isFunction = function(obj) {
+  return toString.call(obj) == '[object Function]';
+};
+
+vg.isString = function(obj) {
+  return toString.call(obj) == '[object String]';
+};
+  
+vg.isArray = Array.isArray || function(obj) {
+  return toString.call(obj) == '[object Array]';
+};
+
+vg.isNumber = function(obj) {
+  return toString.call(obj) == '[object Number]';
+};
+
+vg.isBoolean = function(obj) {
+  return toString.call(obj) == '[object Boolean]';
+};
+
+// utility functions
 
 vg.identity = function(x) { return x; };
 
 vg.duplicate = function(obj) {
   return JSON.parse(JSON.stringify(obj));
-};
-
-vg.isObject = function(obj) {
-  return obj === Object(obj);
 };
 
 vg.accessor = function(f) {
@@ -42,6 +68,10 @@ vg.comparator = function(sort) {
   };
 };
 
+vg.numcmp = function(a, b) {
+  return a - b;
+};
+
 vg.array = function(x) {
   return x != null ? (Array.isArray(x) ? x : [x]) : [];
 };
@@ -68,6 +98,45 @@ vg.unique = function(data, f) {
   return results;
 };
 
+// Colors
+
+vg.category10 = [
+	"#1f77b4",
+	"#ff7f0e",
+	"#2ca02c",
+	"#d62728",
+	"#9467bd",
+	"#8c564b",
+	"#e377c2",
+	"#7f7f7f",
+	"#bcbd22",
+	"#17becf"
+];
+
+vg.category20 = [
+	"#1f77b4",
+	"#aec7e8",
+	"#ff7f0e",
+	"#ffbb78",
+	"#2ca02c",
+	"#98df8a",
+	"#d62728",
+	"#ff9896",
+	"#9467bd",
+	"#c5b0d5",
+	"#8c564b",
+	"#c49c94",
+	"#e377c2",
+	"#f7b6d2",
+	"#7f7f7f",
+	"#c7c7c7",
+	"#bcbd22",
+	"#dbdb8d",
+	"#17becf",
+	"#9edae5"
+];
+
+// Logging
 vg.log = function(msg) {
   console.log(msg);
 };

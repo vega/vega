@@ -1,15 +1,41 @@
 (function(){if (typeof vg === 'undefined') { vg = {}; }
 
-vg.version = '1.0.0'; // semantic versioning
+// semantic versioning
+vg.version = '1.0.0';
+
+// type checking functions
+var toString = Object.prototype.toString;
+
+vg.isObject = function(obj) {
+  return obj === Object(obj);
+};
+
+vg.isFunction = function(obj) {
+  return toString.call(obj) == '[object Function]';
+};
+
+vg.isString = function(obj) {
+  return toString.call(obj) == '[object String]';
+};
+  
+vg.isArray = Array.isArray || function(obj) {
+  return toString.call(obj) == '[object Array]';
+};
+
+vg.isNumber = function(obj) {
+  return toString.call(obj) == '[object Number]';
+};
+
+vg.isBoolean = function(obj) {
+  return toString.call(obj) == '[object Boolean]';
+};
+
+// utility functions
 
 vg.identity = function(x) { return x; };
 
 vg.duplicate = function(obj) {
   return JSON.parse(JSON.stringify(obj));
-};
-
-vg.isObject = function(obj) {
-  return obj === Object(obj);
 };
 
 vg.accessor = function(f) {
@@ -42,6 +68,10 @@ vg.comparator = function(sort) {
   };
 };
 
+vg.numcmp = function(a, b) {
+  return a - b;
+};
+
 vg.array = function(x) {
   return x != null ? (Array.isArray(x) ? x : [x]) : [];
 };
@@ -68,6 +98,45 @@ vg.unique = function(data, f) {
   return results;
 };
 
+// Colors
+
+vg.category10 = [
+	"#1f77b4",
+	"#ff7f0e",
+	"#2ca02c",
+	"#d62728",
+	"#9467bd",
+	"#8c564b",
+	"#e377c2",
+	"#7f7f7f",
+	"#bcbd22",
+	"#17becf"
+];
+
+vg.category20 = [
+	"#1f77b4",
+	"#aec7e8",
+	"#ff7f0e",
+	"#ffbb78",
+	"#2ca02c",
+	"#98df8a",
+	"#d62728",
+	"#ff9896",
+	"#9467bd",
+	"#c5b0d5",
+	"#8c564b",
+	"#c49c94",
+	"#e377c2",
+	"#f7b6d2",
+	"#7f7f7f",
+	"#c7c7c7",
+	"#bcbd22",
+	"#dbdb8d",
+	"#17becf",
+	"#9edae5"
+];
+
+// Logging
 vg.log = function(msg) {
   console.log(msg);
 };
@@ -853,8 +922,8 @@ vg.error = function(msg) {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != undefined ? o.fontSize + "px " : "")
-      + o.font;
+      + (o.fontSize != undefined ? o.fontSize + "px " : "11px ")
+      + (o.font || "sans-serif");
   }
   
   function drawText(g, scene, bounds) {
@@ -1847,6 +1916,20 @@ vg.data.json = function(data, format) {
   };
 
   return pie;
+};vg.data.sort = function() {
+  var by = null;
+
+  function sort(data) {
+    (vg.isArray(data) ? data : data.values || []).sort(by);
+    return data;
+  }
+  
+  sort.by = function(s) {
+    by = vg.comparator(s);
+    return sort;
+  };
+
+  return sort;
 };vg.data.stack = function() {
   var layout = d3.layout.stack()
                  .values(function(d) { return d.values; }),
@@ -1900,7 +1983,8 @@ vg.data.json = function(data, format) {
 
   return stack;
 };vg.data.stats = function() {
-  var value = vg.accessor("data");
+  var value = vg.accessor("data"),
+      median = false;
   
   function reduce(data) {
     var min = +Infinity,
@@ -1910,11 +1994,11 @@ vg.data.json = function(data, format) {
         M2 = 0,
         i, len, v, delta;
 
-    data = Array.isArray(data) ? data : data.values || [];
+    var list = (vg.isArray(data) ? data : data.values || []).map(value);
     
     // compute aggregates
-    for (i=0, len=data.length; i<len; ++i) {
-      v = value(data[i]);
+    for (i=0, len=list.length; i<len; ++i) {
+      v = list[i];
       if (v < min) min = v;
       if (v > max) max = v;
       sum += v;
@@ -1924,21 +2008,31 @@ vg.data.json = function(data, format) {
     }
     M2 = M2 / (len - 1);
     
-    return {
-      count: len,
-      min: min,
-      max: max,
-      sum: sum,
-      mean: mean,
-      variance: M2,
-      stdev: Math.sqrt(M2)
-    };
+    var o = vg.isArray(data) ? {} : data;
+    if (median) {
+      list.sort(vg.numcmp);
+      i = list.length >> 1;
+      o.median = list.length % 2 ? list[i] : (list[i-1] + list[i])/2;
+    }
+    o.count = len;
+    o.min = min;
+    o.max = max;
+    o.sum = sum;
+    o.mean = mean;
+    o.variance = M2;
+    o.stdev = Math.sqrt(M2);
+    return o;
   }
   
   function stats(data) {
     return (Array.isArray(data) ? [data] : data.values || [])
       .map(reduce); // no pun intended
   }
+  
+  stats.median = function(bool) {
+    median = bool || false;
+    return stats;
+  };
   
   stats.value = function(field) {
     value = vg.accessor(field);
@@ -2293,8 +2387,9 @@ vg.data.json = function(data, format) {
     if (mark.from) {
       var name = mark.from.data,
           tx = vg.parse.dataflow(mark.from);
-      mark.from = function(db, group) {
-        return tx(db[name], db, group);
+      mark.from = function(db, group, parentData) {
+        var data = vg.scene.data(name ? db[name] : null, parentData);
+        return tx(data, db, group);
       };
     }
     
@@ -2377,7 +2472,8 @@ vg.data.json = function(data, format) {
       ORDINAL = "ordinal",
       LOG = "log",
       POWER = "pow",
-      KEYWORD = {width: 1, height: 1};
+      VARIABLE = {width: 1, height: 1},
+      PREDEFINED = {category10: 1, category20: 1};
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
@@ -2475,8 +2571,10 @@ vg.data.json = function(data, format) {
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
-        if (KEYWORD[def.range]) {
-          rng = [0, group[def.range]]
+        if (VARIABLE[def.range]) {
+          rng = [0, group[def.range]];
+        } else if (PREDEFINED[def.range]) {
+          rng = vg[def.range];
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;
@@ -2546,6 +2644,8 @@ vg.scene.ENTER  = 0,
 vg.scene.UPDATE = 1,
 vg.scene.EXIT   = 2;
 
+vg.scene.DEFAULT_DATA = {"sentinel":1}
+
 vg.scene.bounds = function(path) {
   var b = new vg.Bounds(path[0].bounds), i, len;
   for (i=2, len=path.length; i<len; ++i) {
@@ -2553,7 +2653,23 @@ vg.scene.bounds = function(path) {
   }
   return b;
 };
-vg.scene.build = (function() {
+
+vg.scene.data = function(data, parentData) {
+  var DEFAULT = vg.scene.DEFAULT_DATA;
+
+  // if data is undefined, inherit or use default
+  data = data || parentData || [DEFAULT];
+
+  // if data is an object, look for a values array
+  if (vg.isObject(data) && !vg.isArray(data) && data.values) {
+    data = data.values;
+  }
+
+  // if inheriting default data, ensure its in an array
+  if (data === DEFAULT) data = [DEFAULT];
+  
+  return data;
+};vg.scene.build = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
@@ -2561,11 +2677,9 @@ vg.scene.build = (function() {
       DEFAULT= {"sentinel":1}
   
   function build(model, db, node, parentData) {
-    var data = model.from
-      ? model.from(db)
-      : parentData || [DEFAULT];
-    if (vg.isObject(data) && data.values) data = data.values;
-    if (data === DEFAULT) data = [DEFAULT];
+    var data = vg.scene.data(
+      model.from ? model.from(db, node, parentData) : null,
+      parentData);
     
     // build node and items
     node = buildNode(model, node);

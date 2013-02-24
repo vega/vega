@@ -48,6 +48,7 @@ ved.init = function() {
     "arc",
     "area",
     "bar",
+    "barley",
     "choropleth",
     "error",
     "force",

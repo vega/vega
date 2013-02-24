@@ -6,11 +6,9 @@ vg.scene.build = (function() {
       DEFAULT= {"sentinel":1}
   
   function build(model, db, node, parentData) {
-    var data = model.from
-      ? model.from(db)
-      : parentData || [DEFAULT];
-    if (vg.isObject(data) && data.values) data = data.values;
-    if (data === DEFAULT) data = [DEFAULT];
+    var data = vg.scene.data(
+      model.from ? model.from(db, node, parentData) : null,
+      parentData);
     
     // build node and items
     node = buildNode(model, node);

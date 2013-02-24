@@ -45,8 +45,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "domain": {"data": "table", "field": ["data","c"]},
-      "range": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]
+      "range": "category10"
     }
   ],
   "axes": [

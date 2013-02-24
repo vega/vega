@@ -13,8 +13,9 @@ vg.parse.marks = (function() {
     if (mark.from) {
       var name = mark.from.data,
           tx = vg.parse.dataflow(mark.from);
-      mark.from = function(db, group) {
-        return tx(db[name], db, group);
+      mark.from = function(db, group, parentData) {
+        var data = vg.scene.data(name ? db[name] : null, parentData);
+        return tx(data, db, group);
       };
     }
     

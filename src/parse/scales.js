@@ -3,7 +3,8 @@ vg.parse.scales = (function() {
       ORDINAL = "ordinal",
       LOG = "log",
       POWER = "pow",
-      KEYWORD = {width: 1, height: 1};
+      VARIABLE = {width: 1, height: 1},
+      PREDEFINED = {category10: 1, category20: 1};
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
@@ -101,8 +102,10 @@ vg.parse.scales = (function() {
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
-        if (KEYWORD[def.range]) {
-          rng = [0, group[def.range]]
+        if (VARIABLE[def.range]) {
+          rng = [0, group[def.range]];
+        } else if (PREDEFINED[def.range]) {
+          rng = vg[def.range];
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;
