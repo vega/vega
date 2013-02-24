@@ -1,5 +1,6 @@
 vg.parse.data = function(spec, callback) {
   var model = {
+    defs: spec,
     load: {},
     flow: {},
     source: {}

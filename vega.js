@@ -1493,7 +1493,7 @@ vg.data.json = function(data, format) {
   return filter;
 };vg.data.force = function() {
   var layout = d3.layout.force(),
-      links = [],
+      links = null,
       linkDistance = 20,
       linkStrength = 1,
       charge = -30,
@@ -1509,8 +1509,11 @@ vg.data.json = function(data, format) {
   function force(data, db, group) {    
     layout
       .size(vg.data.size(size, group))
-      .nodes(data)
-      .links(db[links])
+      .nodes(data);
+      
+    if (links && db[links]) {
+      layout.links(db[links]);
+    }
 
     layout.start();      
     for (var i=0; i<iterations; ++i) {
@@ -2218,6 +2221,7 @@ vg.data.json = function(data, format) {
   return axes;
 })();vg.parse.data = function(spec, callback) {
   var model = {
+    defs: spec,
     load: {},
     flow: {},
     source: {}
@@ -2833,11 +2837,13 @@ vg.scene.build = (function() {
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
 
-    var tx = this._defs ? this._defs.data.flow : {},
-        keys = vg.keys(data), i, j, len, k, src;
+    var tx = this._defs.data.flow || {},
+        keys = this._defs.data.defs.map(vg.accessor("name")),
+        i, j, len, k, src;
         
     for (i=0, len=keys.length; i<len; ++i) {
-      k = keys[i];
+      if (!data[k=keys[i]]) continue;
+      
       this._data[k] = tx[k]
         ? tx[k](data[k], this._data, this._defs.marks)
         : data[k];

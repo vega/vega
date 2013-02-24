@@ -1,6 +1,6 @@
 vg.data.force = function() {
   var layout = d3.layout.force(),
-      links = [],
+      links = null,
       linkDistance = 20,
       linkStrength = 1,
       charge = -30,
@@ -16,8 +16,11 @@ vg.data.force = function() {
   function force(data, db, group) {    
     layout
       .size(vg.data.size(size, group))
-      .nodes(data)
-      .links(db[links])
+      .nodes(data);
+      
+    if (links && db[links]) {
+      layout.links(db[links]);
+    }
 
     layout.start();      
     for (var i=0; i<iterations; ++i) {

@@ -18,11 +18,13 @@ vg.Model = (function() {
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
 
-    var tx = this._defs ? this._defs.data.flow : {},
-        keys = vg.keys(data), i, j, len, k, src;
+    var tx = this._defs.data.flow || {},
+        keys = this._defs.data.defs.map(vg.accessor("name")),
+        i, j, len, k, src;
         
     for (i=0, len=keys.length; i<len; ++i) {
-      k = keys[i];
+      if (!data[k=keys[i]]) continue;
+      
       this._data[k] = tx[k]
         ? tx[k](data[k], this._data, this._defs.marks)
         : data[k];
