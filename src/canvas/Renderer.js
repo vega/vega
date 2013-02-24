@@ -52,6 +52,7 @@ vg.canvas.Renderer = (function() {
     this._scene = scene;
     g.save();
     if (bounds) {
+      bounds = (new vg.Bounds(bounds)).round();
       g.beginPath();
       g.rect(bounds.x1, bounds.y1, bounds.width(), bounds.height());
       g.clip();

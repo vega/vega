@@ -37,6 +37,14 @@ vg.Bounds = (function() {
     this.y2 += d;
     return this;
   };
+  
+  prototype.round = function() {
+    this.x1 = Math.floor(this.x1);
+    this.y1 = Math.floor(this.y1);
+    this.x2 = Math.ceil(this.x2);
+    this.y2 = Math.ceil(this.y2);
+    return this;
+  };
 
   prototype.translate = function(dx, dy) {
     this.x1 += dx;

@@ -38,7 +38,7 @@
           "fillOpacity": {"value": 0.5}
         },
         "update": {
-          "fill": {"value": "none"},
+          "fill": {"value": "transparent"},
           "size": {"value": 100}
         },
         "hover": {
