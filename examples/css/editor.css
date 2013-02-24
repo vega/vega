@@ -41,7 +41,6 @@ body {
 .mod_header {
   padding: 4px 4px 4px 4px;
   background: #eee;
-/*  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddd), to(#fff)); */
 }
 
 .mod_title {
@@ -77,8 +76,9 @@ body {
   width: 500px;
 }
 
-#code {
-  display: none;
+#spec {
+  width: 498px;
+  min-height: 500px;
 }
 
 #vis div {
