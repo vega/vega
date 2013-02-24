@@ -42,7 +42,7 @@
           "angle": {"field": "angle"},
           "align": {"value": "center"},
           "baseline": {"value": "alphabetic"},
-          "fontFamily": {"field": "fontFamily"},
+          "font": {"field": "font"},
           "fontSize": {"field": "fontSize"},
           "text": {"field": ["data", "text"]}
         },

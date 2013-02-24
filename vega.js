@@ -853,7 +853,8 @@ vg.error = function(msg) {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + o.fontSize + "px " + o.fontFamily;
+      + (o.fontSize != undefined ? o.fontSize + "px " : "")
+      + o.font;
   }
   
   function drawText(g, scene, bounds) {
@@ -2020,7 +2021,7 @@ vg.data.json = function(data, format) {
     "x": "x",
     "y": "y",
     "size": "fontSize",
-    "font": "fontFamily",
+    "font": "font",
     "rotate": "angle"
   };
   

@@ -43,7 +43,7 @@
           "baseline": {"value": "middle"},
           "fill": {"value": "#000"},
           "text": {"field": ["data", "label"]},
-          "fontFamily": {"value": "Helvetica Neue"},
+          "font": {"value": "Helvetica Neue"},
           "fontSize": {"value": 13}
         }
       }

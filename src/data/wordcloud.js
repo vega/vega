@@ -10,7 +10,7 @@ vg.data.wordcloud = function() {
     "x": "x",
     "y": "y",
     "size": "fontSize",
-    "font": "fontFamily",
+    "font": "font",
     "rotate": "angle"
   };
   

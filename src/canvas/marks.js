@@ -211,7 +211,8 @@ vg.canvas.marks = (function() {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + o.fontSize + "px " + o.fontFamily;
+      + (o.fontSize != undefined ? o.fontSize + "px " : "")
+      + o.font;
   }
   
   function drawText(g, scene, bounds) {
