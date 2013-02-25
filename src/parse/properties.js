@@ -23,7 +23,7 @@ vg.parse.properties = (function() {
       code += "\n  item.height = (item.y2 - item.y);"
     }
 
-    return Function("item", code);
+    return Function("item", "group", code);
   }
 
   // TODO security check for strings emitted into code
@@ -34,16 +34,16 @@ vg.parse.properties = (function() {
               ? vg.str(ref.value)
               : "item.datum['data']";
 
-    // pull value from data field?
+    // get data field value
     if (ref.field !== undefined) {
       val = "item.datum["
           + vg.array(ref.field).map(vg.str).join("][")
           + "]";
     }
     
-    // run through scale function?
+    // run through scale function
     if (ref.scale !== undefined) {
-      var scale = "this._scales['"+ref.scale+"']";
+      var scale = "group.scales['"+ref.scale+"']";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {

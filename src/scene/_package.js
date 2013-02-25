@@ -19,12 +19,7 @@ vg.scene.data = function(data, parentData) {
   var DEFAULT = vg.scene.DEFAULT_DATA;
 
   // if data is undefined, inherit or use default
-  data = data || parentData || [DEFAULT];
-
-  // if data is an object, look for a values array
-  if (vg.isObject(data) && !vg.isArray(data) && data.values) {
-    data = data.values;
-  }
+  data = vg.values(data || parentData || [DEFAULT]);
 
   // if inheriting default data, ensure its in an array
   if (data === DEFAULT) data = [DEFAULT];

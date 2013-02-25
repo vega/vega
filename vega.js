@@ -34,6 +34,14 @@ vg.isBoolean = function(obj) {
 
 vg.identity = function(x) { return x; };
 
+vg.extend = function(obj) {
+  for (var x, name, i=1, len=arguments.length; i<len; ++i) {
+    x = arguments[i];
+    for (name in x) { obj[name] = x[name]; }
+  }
+  return obj;
+};
+
 vg.duplicate = function(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
@@ -68,12 +76,14 @@ vg.comparator = function(sort) {
   };
 };
 
-vg.numcmp = function(a, b) {
-  return a - b;
-};
+vg.numcmp = function(a, b) { return a - b; };
 
 vg.array = function(x) {
   return x != null ? (Array.isArray(x) ? x : [x]) : [];
+};
+
+vg.values = function(x) {
+  return (vg.isObject(x) && !vg.isArray(x) && x.values) ? x.values : x;
 };
 
 vg.str = function(str) {
@@ -1032,16 +1042,21 @@ vg.error = function(msg) {
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items, group,
-        renderer = this;
+        renderer = this, gx, gy;
     
     for (var i=0, len=items.length; i<len; ++i) {
       group = items[i];
+      gx = group.x || 0;
+      gy = group.y || 0;
+      
       // render group contents
       g.save();
-      g.translate(group.x, group.y);
+      g.translate(gx, gy);
+      if (bounds) bounds.translate(-gx, -gy);
       for (var j=0, llen=group.items.length; j<llen; ++j) {
         renderer.draw(g, group.items[j], bounds);
       }
+      if (bounds) bounds.translate(gx, gy);
       g.restore(); 
     }
   }
@@ -1524,9 +1539,10 @@ vg.data.json = function(data, format) {
       }
       obj = map[kstr];
       if (obj === undefined) {
-        result.values.push(obj = map[kstr] = {
+        vals.push(obj = map[kstr] = {
           key: kstr,
           keys: klist,
+          index: vals.length,
           values: []
         });
       }
@@ -2103,6 +2119,31 @@ vg.data.json = function(data, format) {
   };
 
   return treemap;
+};vg.data.unique = function() {
+
+  var field = null,
+      as = "field";
+
+  function unique(data) {
+    return vg.unique(data, field)
+      .map(function(x) {
+        var o = {};
+        o[as] = x;
+        return o;
+      });
+  }
+  
+  unique.field = function(f) {
+    field = vg.accessor(f);
+    return unique;
+  };
+  
+  unique.as = function(x) {
+    as = x;
+    return unique;
+  };
+
+  return unique;
 };vg.data.wordcloud = function() {
   var layout = d3.layout.cloud().size([900, 500]),
       text = vg.accessor("data"),
@@ -2434,7 +2475,7 @@ vg.data.json = function(data, format) {
       code += "\n  item.height = (item.y2 - item.y);"
     }
 
-    return Function("item", code);
+    return Function("item", "group", code);
   }
 
   // TODO security check for strings emitted into code
@@ -2445,16 +2486,16 @@ vg.data.json = function(data, format) {
               ? vg.str(ref.value)
               : "item.datum['data']";
 
-    // pull value from data field?
+    // get data field value
     if (ref.field !== undefined) {
       val = "item.datum["
           + vg.array(ref.field).map(vg.str).join("][")
           + "]";
     }
     
-    // run through scale function?
+    // run through scale function
     if (ref.scale !== undefined) {
-      var scale = "this._scales['"+ref.scale+"']";
+      var scale = "group.scales['"+ref.scale+"']";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {
@@ -2485,27 +2526,29 @@ vg.data.json = function(data, format) {
   function scale(def, scale, db, group) {
     var type = def.type || LINEAR,
         s = scale || d3.scale[type](),
-        rng = range(def, group);
-    (type===ORDINAL ? ordinal : quantitative)(def, s, rng, db);
+        rng = range(def, group),
+        m = (type===ORDINAL ? ordinal : quantitative),
+        data = vg.values(group.datum);
+    
+    m(def, s, rng, db, data);
     return s;
   }
   
-  function ordinal(def, scale, rng, db) {
-    var domain, data, get, str;
+  function ordinal(def, scale, rng, db, data) {
+    var domain, dat, get, str;
     
     // domain
     domain = def.domain;
     if (Array.isArray(domain)) {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
-      data = db[domain.data];
+      dat = db[domain.data] || data;
       get = vg.accessor(domain.field);      
-      scale.domain(vg.unique(data, get));
+      scale.domain(vg.unique(dat, get));
     }
 
     // range
     str = typeof rng[0] === 'string';
-    if (def.reverse) rng = rng.reverse();
     if (str) {
       scale.range(rng); // color or shape values
     } else if (def.round || def.round===undefined) {
@@ -2515,8 +2558,8 @@ vg.data.json = function(data, format) {
     }
   }
   
-  function quantitative(def, scale, rng, db) {
-    var domain, data, get;
+  function quantitative(def, scale, rng, db, data) {
+    var domain, dat, get;
     
     // domain
     domain = [null, null];
@@ -2524,28 +2567,28 @@ vg.data.json = function(data, format) {
       if (Array.isArray(def.domain)) {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
-        data = db[def.domain.data];
+        dat = db[def.domain.data] || data;
         get = vg.accessor(def.domain.field);
-        domain[0] = d3.min(data, get);
-        domain[1] = d3.max(data, get);
+        domain[0] = d3.min(dat, get);
+        domain[1] = d3.max(dat, get);
       } else {
         domain = def.domain;
       }
     }
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
-        data = db[def.domainMin.data];
+        dat = db[def.domainMin.data] || data;
         get = vg.accessor(def.domainMin.field);
-        domain[0] = d3.min(data, get);
+        domain[0] = d3.min(dat, get);
       } else {
         domain[0] = def.domainMin;
       }
     }
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
-        data = db[def.domainMax.data];
+        dat = db[def.domainMax.data] || data;
         get = vg.accessor(def.domainMax.field);
-        domain[1] = d3.max(data, get);
+        domain[1] = d3.max(dat, get);
       } else {
         domain[1] = def.domainMax;
       }
@@ -2558,7 +2601,7 @@ vg.data.json = function(data, format) {
 
     // range
     // vertical scales should flip by default, so use XOR here
-    rng = (!!def.reverse) != (def.range=='height') ? rng.reverse() : rng;
+    if (def.range=='height') rng = rng.reverse();
     scale[def.round ? "rangeRound" : "range"](rng);
 
     if (def.clamp) scale.clamp(true);
@@ -2591,6 +2634,15 @@ vg.data.json = function(data, format) {
     if (def.rangeMax !== undefined) {
       rng[1] = def.rangeMax;
     }
+    
+    if (def.reverse !== undefined) {
+      var rev = def.reverse;
+      if (vg.isObject(rev)) {
+        rev = vg.accessor(rev.field)(group.datum);
+      }
+      if (rev) rng = rng.reverse();
+    }
+    
     return rng;
   }
   
@@ -2658,12 +2710,7 @@ vg.scene.data = function(data, parentData) {
   var DEFAULT = vg.scene.DEFAULT_DATA;
 
   // if data is undefined, inherit or use default
-  data = data || parentData || [DEFAULT];
-
-  // if data is an object, look for a values array
-  if (vg.isObject(data) && !vg.isArray(data) && data.values) {
-    data = data.values;
-  }
+  data = vg.values(data || parentData || [DEFAULT]);
 
   // if inheriting default data, ensure its in an array
   if (data === DEFAULT) data = [DEFAULT];
@@ -2764,38 +2811,56 @@ vg.scene.data = function(data, parentData) {
   function main(scene, enc, trans, request, items) {
     request
       ? update.call(this, scene, enc, trans, request, items)
-      : encode.call(this, scene, enc, trans);
+      : encode.call(this, scene, scene, enc, trans);
     return scene;
   }
   
   function update(scene, enc, trans, request, items) {
     items = vg.array(items);
-    var i, len, item, prop;
+    var i, len, item, group, prop;
     for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
+      group = item.path[2] || null;
       prop = item.path[1].def.properties[request];
-      if (prop) prop.call(this, item.item, trans);
+      if (prop) prop.call(this, item.item, group, trans);
     }
   }
   
-  function encode(scene, enc, trans) {
-    encodeItems.call(this, scene.items, enc, trans);
+  function encode(group, scene, enc, trans) {
+    encodeItems.call(this, group, scene.items, enc, trans);
     if (scene.marktype === GROUP) {
-      encodeGroup.apply(this, arguments);
+      encodeGroup.call(this, scene, enc, trans);
     }
   }
   
   function encodeGroup(scene, enc, trans) {
-    var i, len, m, mlen, group;
+    var i, len, m, mlen, group, scales, axes;
+
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
+
+      // TODO cascade scales recursively
+      scales = group.scales || (group.scales = vg.extend({}, this._scales));    
+      
+      // update group-level scales
+      if (enc.scales) {
+        vg.parse.scales(enc.scales, scales, this._data, group);
+      }
+      
+      // update group-level axes
+      if (enc.axes) {
+        axes = group.axes || (group.axes = []);
+        vg.parse.axes(enc.axes, axes, group.scales);
+      }
+      
+      // encode children marks
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
-        encode.call(this, group.items[m], enc.marks[m], trans);
+        encode.call(this, group, group.items[m], enc.marks[m], trans);
       }
     }
   }
   
-  function encodeItems(items, enc, trans) {
+  function encodeItems(group, items, enc, trans) {
     if (enc.properties == null) return;
     
     var props  = enc.properties,
@@ -2808,7 +2873,7 @@ vg.scene.data = function(data, parentData) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
         if (item.status !== ENTER) continue;
-        enter.call(this, item, trans);
+        enter.call(this, item, group, trans);
       }
     }
     
@@ -2816,7 +2881,7 @@ vg.scene.data = function(data, parentData) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
         if (item.status === EXIT) continue;
-        update.call(this, item, trans);
+        update.call(this, item, group, trans);
       }
     }
     
@@ -2824,7 +2889,7 @@ vg.scene.data = function(data, parentData) {
       for (i=0, len=items.length; i<len; ++i) {
         item = items[i];
         if (item.status !== EXIT) continue;
-        exit.call(this, item, trans);
+        exit.call(this, item, group, trans);
       }
     }
   }
@@ -2903,10 +2968,11 @@ vg.scene.data = function(data, parentData) {
     return this._el;
   };
   
-  prototype.update = function(axes, scales, duration) {
+  prototype.update = function(model, duration) {
     duration = duration || 0;
     var init = this._init; this._init = true;
     var dom = d3.selectAll("svg.axes").select("g");
+    var axes = collect(model);
     
     if (!init) {
       dom.selectAll('g.axis')
@@ -2916,29 +2982,76 @@ vg.scene.data = function(data, parentData) {
     }
     
     var sel = duration && init ? dom.transition(duration) : dom,
-        width = this._width,
-        height = this._height;
+        w = this._width,
+        h = this._height;
 
     sel.selectAll('g.axis')
-      .attr('transform', function(axis,i) {
-        var offset = axis.offset || 0, xy;
-        switch(axis.orient()) {
+      .attr('transform', function(a, i) {
+        var offset = a.axis.offset || 0,
+            width  = a.group.width || w,
+            height = a.group.height || h,
+            xy;
+
+        switch(a.axis.orient()) {
           case 'left':   xy = [     -offset,  0]; break;
           case 'right':  xy = [width+offset,  0]; break;
           case 'bottom': xy = [0, height+offset]; break;
           case 'top':    xy = [0,       -offset]; break;
           default: xy = [0,0];
         }
-        return 'translate('+xy[0]+', '+xy[1]+')';
+        return 'translate('+(xy[0]+a.x)+', '+(xy[1]+a.y)+')';
       })
-      .each(function(axis) {
-        axis.scale(scales[axis.scaleName]);
+      .each(function(a) {
+        a.axis.scale(a.group.scales[a.axis.scaleName]);
         var s = d3.select(this);
         (duration && init
           ? s.transition().duration(duration)
-          : s).call(axis);
+          : s).call(a.axis);
       });    
   };
+  
+  function collect(model) {
+    var group = {
+      scales: model._scales,
+      width: this._width,
+      height: this._height
+    };
+    var axes = model._axes.map(function(axis) {
+      return {axis: axis, group: group, x: 0, y: 0};
+    });
+    return collectAxes(model.scene(), 0, 0, axes);
+  }
+  
+  function collectAxes(scene, x, y, list) {
+    var i, j, len, axes, group, items, xx, yy;
+
+    for (i=0, len=scene.items.length; i<len; ++i) {
+      group = scene.items[i];
+      xx = x + (group.x || 0);
+      yy = y + (group.y || 0);
+
+      // collect axis
+      if (axes = group.axes) {
+        for (j=0; j<axes.length; ++j) {
+          list.push({
+            axis: axes[j],
+            group: group,
+            x: xx,
+            y: yy
+          });
+        }
+      }
+
+      // recurse
+      for (items=group.items, j=0; j<items.length; ++j) {
+        if (items[j].marktype === vg.scene.GROUP) {
+          collectAxes(items[j], xx, yy, list);
+        }
+      }
+    }
+
+    return list;
+  }
   
   return axes;
 })();vg.Model = (function() {
@@ -2990,6 +3103,12 @@ vg.scene.data = function(data, parentData) {
   };
   
   prototype.build = function() {
+    var m = this, data = m._data, marks = m._defs.marks;
+    m._scene = vg.scene.build.call(m, marks, data, m._scene);
+    return this;
+  };
+  
+  prototype.encode = function(request, item) {
     var m = this,
         scales = m._scales,
         scene = m._scene,
@@ -2997,15 +3116,9 @@ vg.scene.data = function(data, parentData) {
         data = m._data,
         defs = m._defs;
 
-    m._scene = vg.scene.build.call(m, defs.marks, data, scene);
     vg.parse.scales(defs.scales, scales, data, defs.marks);
     vg.parse.axes(defs.axes, axes, scales);
-    return this;
-  };
-  
-  prototype.encode = function(request, item) {
-    vg.scene.encode.call(this, this._scene,
-      this._defs.marks, null, request, item);
+    vg.scene.encode.call(m, scene, defs.marks, null, request, item);
     return this;
   };
   
@@ -3121,9 +3234,8 @@ vg.scene.data = function(data, parentData) {
   };
   
   prototype.render = function(bounds) {
-    var m = this._model;
-    this._axes.update(m._axes, m._scales);
-    this._renderer.render(m.scene(), bounds);
+    this._axes.update(this._model);
+    this._renderer.render(this._model.scene(), bounds);
     return this;
   };
   

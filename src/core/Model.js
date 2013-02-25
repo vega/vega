@@ -47,6 +47,12 @@ vg.Model = (function() {
   };
   
   prototype.build = function() {
+    var m = this, data = m._data, marks = m._defs.marks;
+    m._scene = vg.scene.build.call(m, marks, data, m._scene);
+    return this;
+  };
+  
+  prototype.encode = function(request, item) {
     var m = this,
         scales = m._scales,
         scene = m._scene,
@@ -54,15 +60,9 @@ vg.Model = (function() {
         data = m._data,
         defs = m._defs;
 
-    m._scene = vg.scene.build.call(m, defs.marks, data, scene);
     vg.parse.scales(defs.scales, scales, data, defs.marks);
     vg.parse.axes(defs.axes, axes, scales);
-    return this;
-  };
-  
-  prototype.encode = function(request, item) {
-    vg.scene.encode.call(this, this._scene,
-      this._defs.marks, null, request, item);
+    vg.scene.encode.call(m, scene, defs.marks, null, request, item);
     return this;
   };
   

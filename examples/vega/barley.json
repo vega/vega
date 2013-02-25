@@ -53,7 +53,7 @@
     }
   ],
   "axes": [
-    {"type": "x", "scale": "x", "tickStroke": "#888", "offset": -1}
+    {"type": "x", "scale": "x", "offset": -1}
   ],
   "marks": [
     {

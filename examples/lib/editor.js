@@ -43,29 +43,12 @@ ved.resize = function(event) {
 };
 
 ved.init = function() {
-  // Specification drop-down menu
-  var specs = [
-    "arc",
-    "area",
-    "bar",
-    "barley",
-    "choropleth",
-    "error",
-    "force",
-    "image",
-    "map",
-    "scatter",
-    "stacked_area",
-    "stacked_bar",
-    "treemap",
-    "wordcloud"
-  ];
-               
+  // Specification drop-down menu               
   var sel = d3.select("#sel_spec");
   sel.on("change", ved.select);
   sel.append("option").text("Custom");
   sel.selectAll("option.spec")
-    .data(specs)
+    .data(SPECS)
    .enter().append("option")
     .attr("value", function(d) { return "vega/"+d+".json"; })
     .text(function(d) { return d; });

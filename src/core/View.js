@@ -105,9 +105,8 @@ vg.View = (function() {
   };
   
   prototype.render = function(bounds) {
-    var m = this._model;
-    this._axes.update(m._axes, m._scales);
-    this._renderer.render(m.scene(), bounds);
+    this._axes.update(this._model);
+    this._renderer.render(this._model.scene(), bounds);
     return this;
   };
   

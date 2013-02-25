@@ -16,27 +16,29 @@ vg.parse.scales = (function() {
   function scale(def, scale, db, group) {
     var type = def.type || LINEAR,
         s = scale || d3.scale[type](),
-        rng = range(def, group);
-    (type===ORDINAL ? ordinal : quantitative)(def, s, rng, db);
+        rng = range(def, group),
+        m = (type===ORDINAL ? ordinal : quantitative),
+        data = vg.values(group.datum);
+    
+    m(def, s, rng, db, data);
     return s;
   }
   
-  function ordinal(def, scale, rng, db) {
-    var domain, data, get, str;
+  function ordinal(def, scale, rng, db, data) {
+    var domain, dat, get, str;
     
     // domain
     domain = def.domain;
     if (Array.isArray(domain)) {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
-      data = db[domain.data];
+      dat = db[domain.data] || data;
       get = vg.accessor(domain.field);      
-      scale.domain(vg.unique(data, get));
+      scale.domain(vg.unique(dat, get));
     }
 
     // range
     str = typeof rng[0] === 'string';
-    if (def.reverse) rng = rng.reverse();
     if (str) {
       scale.range(rng); // color or shape values
     } else if (def.round || def.round===undefined) {
@@ -46,8 +48,8 @@ vg.parse.scales = (function() {
     }
   }
   
-  function quantitative(def, scale, rng, db) {
-    var domain, data, get;
+  function quantitative(def, scale, rng, db, data) {
+    var domain, dat, get;
     
     // domain
     domain = [null, null];
@@ -55,28 +57,28 @@ vg.parse.scales = (function() {
       if (Array.isArray(def.domain)) {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
-        data = db[def.domain.data];
+        dat = db[def.domain.data] || data;
         get = vg.accessor(def.domain.field);
-        domain[0] = d3.min(data, get);
-        domain[1] = d3.max(data, get);
+        domain[0] = d3.min(dat, get);
+        domain[1] = d3.max(dat, get);
       } else {
         domain = def.domain;
       }
     }
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
-        data = db[def.domainMin.data];
+        dat = db[def.domainMin.data] || data;
         get = vg.accessor(def.domainMin.field);
-        domain[0] = d3.min(data, get);
+        domain[0] = d3.min(dat, get);
       } else {
         domain[0] = def.domainMin;
       }
     }
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
-        data = db[def.domainMax.data];
+        dat = db[def.domainMax.data] || data;
         get = vg.accessor(def.domainMax.field);
-        domain[1] = d3.max(data, get);
+        domain[1] = d3.max(dat, get);
       } else {
         domain[1] = def.domainMax;
       }
@@ -89,7 +91,7 @@ vg.parse.scales = (function() {
 
     // range
     // vertical scales should flip by default, so use XOR here
-    rng = (!!def.reverse) != (def.range=='height') ? rng.reverse() : rng;
+    if (def.range=='height') rng = rng.reverse();
     scale[def.round ? "rangeRound" : "range"](rng);
 
     if (def.clamp) scale.clamp(true);
@@ -122,6 +124,15 @@ vg.parse.scales = (function() {
     if (def.rangeMax !== undefined) {
       rng[1] = def.rangeMax;
     }
+    
+    if (def.reverse !== undefined) {
+      var rev = def.reverse;
+      if (vg.isObject(rev)) {
+        rev = vg.accessor(rev.field)(group.datum);
+      }
+      if (rev) rng = rng.reverse();
+    }
+    
     return rng;
   }
   

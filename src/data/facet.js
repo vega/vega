@@ -21,9 +21,10 @@ vg.data.facet = function() {
       }
       obj = map[kstr];
       if (obj === undefined) {
-        result.values.push(obj = map[kstr] = {
+        vals.push(obj = map[kstr] = {
           key: kstr,
           keys: klist,
+          index: vals.length,
           values: []
         });
       }

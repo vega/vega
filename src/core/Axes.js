@@ -42,10 +42,11 @@ vg.Axes = (function() {
     return this._el;
   };
   
-  prototype.update = function(axes, scales, duration) {
+  prototype.update = function(model, duration) {
     duration = duration || 0;
     var init = this._init; this._init = true;
     var dom = d3.selectAll("svg.axes").select("g");
+    var axes = collect(model);
     
     if (!init) {
       dom.selectAll('g.axis')
@@ -55,29 +56,76 @@ vg.Axes = (function() {
     }
     
     var sel = duration && init ? dom.transition(duration) : dom,
-        width = this._width,
-        height = this._height;
+        w = this._width,
+        h = this._height;
 
     sel.selectAll('g.axis')
-      .attr('transform', function(axis,i) {
-        var offset = axis.offset || 0, xy;
-        switch(axis.orient()) {
+      .attr('transform', function(a, i) {
+        var offset = a.axis.offset || 0,
+            width  = a.group.width || w,
+            height = a.group.height || h,
+            xy;
+
+        switch(a.axis.orient()) {
           case 'left':   xy = [     -offset,  0]; break;
           case 'right':  xy = [width+offset,  0]; break;
           case 'bottom': xy = [0, height+offset]; break;
           case 'top':    xy = [0,       -offset]; break;
           default: xy = [0,0];
         }
-        return 'translate('+xy[0]+', '+xy[1]+')';
+        return 'translate('+(xy[0]+a.x)+', '+(xy[1]+a.y)+')';
       })
-      .each(function(axis) {
-        axis.scale(scales[axis.scaleName]);
+      .each(function(a) {
+        a.axis.scale(a.group.scales[a.axis.scaleName]);
         var s = d3.select(this);
         (duration && init
           ? s.transition().duration(duration)
-          : s).call(axis);
+          : s).call(a.axis);
       });    
   };
+  
+  function collect(model) {
+    var group = {
+      scales: model._scales,
+      width: this._width,
+      height: this._height
+    };
+    var axes = model._axes.map(function(axis) {
+      return {axis: axis, group: group, x: 0, y: 0};
+    });
+    return collectAxes(model.scene(), 0, 0, axes);
+  }
+  
+  function collectAxes(scene, x, y, list) {
+    var i, j, len, axes, group, items, xx, yy;
+
+    for (i=0, len=scene.items.length; i<len; ++i) {
+      group = scene.items[i];
+      xx = x + (group.x || 0);
+      yy = y + (group.y || 0);
+
+      // collect axis
+      if (axes = group.axes) {
+        for (j=0; j<axes.length; ++j) {
+          list.push({
+            axis: axes[j],
+            group: group,
+            x: xx,
+            y: yy
+          });
+        }
+      }
+
+      // recurse
+      for (items=group.items, j=0; j<items.length; ++j) {
+        if (items[j].marktype === vg.scene.GROUP) {
+          collectAxes(items[j], xx, yy, list);
+        }
+      }
+    }
+
+    return list;
+  }
   
   return axes;
 })();

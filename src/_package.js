@@ -34,6 +34,14 @@ vg.isBoolean = function(obj) {
 
 vg.identity = function(x) { return x; };
 
+vg.extend = function(obj) {
+  for (var x, name, i=1, len=arguments.length; i<len; ++i) {
+    x = arguments[i];
+    for (name in x) { obj[name] = x[name]; }
+  }
+  return obj;
+};
+
 vg.duplicate = function(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
@@ -68,12 +76,14 @@ vg.comparator = function(sort) {
   };
 };
 
-vg.numcmp = function(a, b) {
-  return a - b;
-};
+vg.numcmp = function(a, b) { return a - b; };
 
 vg.array = function(x) {
   return x != null ? (Array.isArray(x) ? x : [x]) : [];
+};
+
+vg.values = function(x) {
+  return (vg.isObject(x) && !vg.isArray(x) && x.values) ? x.values : x;
 };
 
 vg.str = function(str) {

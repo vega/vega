@@ -321,16 +321,21 @@ vg.canvas.marks = (function() {
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items, group,
-        renderer = this;
+        renderer = this, gx, gy;
     
     for (var i=0, len=items.length; i<len; ++i) {
       group = items[i];
+      gx = group.x || 0;
+      gy = group.y || 0;
+      
       // render group contents
       g.save();
-      g.translate(group.x, group.y);
+      g.translate(gx, gy);
+      if (bounds) bounds.translate(-gx, -gy);
       for (var j=0, llen=group.items.length; j<llen; ++j) {
         renderer.draw(g, group.items[j], bounds);
       }
+      if (bounds) bounds.translate(gx, gy);
       g.restore(); 
     }
   }
