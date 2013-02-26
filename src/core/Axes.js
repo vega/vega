@@ -46,7 +46,7 @@ vg.Axes = (function() {
     duration = duration || 0;
     var init = this._init; this._init = true;
     var dom = d3.selectAll("svg.axes").select("g");
-    var axes = collect(model);
+    var axes = collectAxes(model.scene(), 0, 0, []);
     
     if (!init) {
       dom.selectAll('g.axis')
@@ -84,18 +84,6 @@ vg.Axes = (function() {
       });    
   };
   
-  function collect(model) {
-    var group = {
-      scales: model._scales,
-      width: this._width,
-      height: this._height
-    };
-    var axes = model._axes.map(function(axis) {
-      return {axis: axis, group: group, x: 0, y: 0};
-    });
-    return collectAxes(model.scene(), 0, 0, axes);
-  }
-  
   function collectAxes(scene, x, y, list) {
     var i, j, len, axes, group, items, xx, yy;
 
@@ -107,12 +95,7 @@ vg.Axes = (function() {
       // collect axis
       if (axes = group.axes) {
         for (j=0; j<axes.length; ++j) {
-          list.push({
-            axis: axes[j],
-            group: group,
-            x: xx,
-            y: yy
-          });
+          list.push({axis: axes[j], group: group, x: xx, y: yy});
         }
       }
 

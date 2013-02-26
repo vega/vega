@@ -2447,6 +2447,8 @@ vg.data.json = function(data, format) {
       type: "group",
       width: spec.width,
       height: spec.height,
+      axes: spec.axes,
+      scales: spec.scales,
       marks: vg.duplicate(spec.marks).map(parse)
     };
   };
@@ -2651,8 +2653,6 @@ vg.data.json = function(data, format) {
   
   function parse(spec) {
     var defs = {
-      scales: spec.scales,
-      axes: spec.axes,
       marks: vg.parse.marks(spec),
       data: vg.parse.data(spec.data, function() { callback(chart); })
     };
@@ -2829,18 +2829,18 @@ vg.scene.data = function(data, parentData) {
   function encode(group, scene, enc, trans) {
     encodeItems.call(this, group, scene.items, enc, trans);
     if (scene.marktype === GROUP) {
-      encodeGroup.call(this, scene, enc, trans);
+      encodeGroup.call(this, scene, enc, group, trans);
     }
   }
   
-  function encodeGroup(scene, enc, trans) {
+  function encodeGroup(scene, enc, parent, trans) {
     var i, len, m, mlen, group, scales, axes;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
 
       // TODO cascade scales recursively
-      scales = group.scales || (group.scales = vg.extend({}, this._scales));    
+      scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
       
       // update group-level scales
       if (enc.scales) {
@@ -2972,7 +2972,7 @@ vg.scene.data = function(data, parentData) {
     duration = duration || 0;
     var init = this._init; this._init = true;
     var dom = d3.selectAll("svg.axes").select("g");
-    var axes = collect(model);
+    var axes = collectAxes(model.scene(), 0, 0, []);
     
     if (!init) {
       dom.selectAll('g.axis')
@@ -3010,18 +3010,6 @@ vg.scene.data = function(data, parentData) {
       });    
   };
   
-  function collect(model) {
-    var group = {
-      scales: model._scales,
-      width: this._width,
-      height: this._height
-    };
-    var axes = model._axes.map(function(axis) {
-      return {axis: axis, group: group, x: 0, y: 0};
-    });
-    return collectAxes(model.scene(), 0, 0, axes);
-  }
-  
   function collectAxes(scene, x, y, list) {
     var i, j, len, axes, group, items, xx, yy;
 
@@ -3033,12 +3021,7 @@ vg.scene.data = function(data, parentData) {
       // collect axis
       if (axes = group.axes) {
         for (j=0; j<axes.length; ++j) {
-          list.push({
-            axis: axes[j],
-            group: group,
-            x: xx,
-            y: yy
-          });
+          list.push({axis: axes[j], group: group, x: xx, y: yy});
         }
       }
 
@@ -3057,9 +3040,7 @@ vg.scene.data = function(data, parentData) {
 })();vg.Model = (function() {
   function model() {
     this._defs = null;
-    this._axes = [];
     this._data = {};
-    this._scales = {};
     this._scene = null;
   }
   
@@ -3105,19 +3086,15 @@ vg.scene.data = function(data, parentData) {
   prototype.build = function() {
     var m = this, data = m._data, marks = m._defs.marks;
     m._scene = vg.scene.build.call(m, marks, data, m._scene);
+    m._scene.items[0].width = marks.width;
+    m._scene.items[0].height = marks.height;
     return this;
   };
   
   prototype.encode = function(request, item) {
     var m = this,
-        scales = m._scales,
         scene = m._scene,
-        axes = m._axes,
-        data = m._data,
         defs = m._defs;
-
-    vg.parse.scales(defs.scales, scales, data, defs.marks);
-    vg.parse.axes(defs.axes, axes, scales);
     vg.scene.encode.call(m, scene, defs.marks, null, request, item);
     return this;
   };

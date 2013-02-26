@@ -32,6 +32,8 @@ vg.parse.marks = (function() {
       type: "group",
       width: spec.width,
       height: spec.height,
+      axes: spec.axes,
+      scales: spec.scales,
       marks: vg.duplicate(spec.marks).map(parse)
     };
   };

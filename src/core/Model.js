@@ -1,9 +1,7 @@
 vg.Model = (function() {
   function model() {
     this._defs = null;
-    this._axes = [];
     this._data = {};
-    this._scales = {};
     this._scene = null;
   }
   
@@ -49,19 +47,15 @@ vg.Model = (function() {
   prototype.build = function() {
     var m = this, data = m._data, marks = m._defs.marks;
     m._scene = vg.scene.build.call(m, marks, data, m._scene);
+    m._scene.items[0].width = marks.width;
+    m._scene.items[0].height = marks.height;
     return this;
   };
   
   prototype.encode = function(request, item) {
     var m = this,
-        scales = m._scales,
         scene = m._scene,
-        axes = m._axes,
-        data = m._data,
         defs = m._defs;
-
-    vg.parse.scales(defs.scales, scales, data, defs.marks);
-    vg.parse.axes(defs.axes, axes, scales);
     vg.scene.encode.call(m, scene, defs.marks, null, request, item);
     return this;
   };

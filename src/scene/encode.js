@@ -25,18 +25,18 @@ vg.scene.encode = (function() {
   function encode(group, scene, enc, trans) {
     encodeItems.call(this, group, scene.items, enc, trans);
     if (scene.marktype === GROUP) {
-      encodeGroup.call(this, scene, enc, trans);
+      encodeGroup.call(this, scene, enc, group, trans);
     }
   }
   
-  function encodeGroup(scene, enc, trans) {
+  function encodeGroup(scene, enc, parent, trans) {
     var i, len, m, mlen, group, scales, axes;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
 
       // TODO cascade scales recursively
-      scales = group.scales || (group.scales = vg.extend({}, this._scales));    
+      scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
       
       // update group-level scales
       if (enc.scales) {

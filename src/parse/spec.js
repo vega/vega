@@ -2,8 +2,6 @@ vg.parse.spec = function(spec, callback) {
   
   function parse(spec) {
     var defs = {
-      scales: spec.scales,
-      axes: spec.axes,
       marks: vg.parse.marks(spec),
       data: vg.parse.data(spec.data, function() { callback(chart); })
     };
