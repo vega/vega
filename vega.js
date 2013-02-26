@@ -3181,12 +3181,13 @@ vg.scene.data = function(data, parentData) {
   prototype.initialize = function(el) {
     // div container
     this._el = d3.select(el)
+      .append("div")
       .style("position", "relative")
       .node();
     if (this._viewport) {
       var vw = this._viewport[0] || this._width,
           vh = this._viewport[1] || this._height;
-      d3.select(el)
+      d3.select(this._el)
         .style("width", vw+"px")
         .style("height", vh+"px")
         .style("overflow", "auto");
