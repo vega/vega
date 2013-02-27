@@ -30,6 +30,10 @@ vg.isBoolean = function(obj) {
   return toString.call(obj) == '[object Boolean]';
 };
 
+vg.number = function(s) { return +s; }
+
+vg.boolean = function(s) { return !!s; }
+
 // utility functions
 
 vg.identity = function(x) { return x; };

@@ -30,6 +30,10 @@ vg.isBoolean = function(obj) {
   return toString.call(obj) == '[object Boolean]';
 };
 
+vg.number = function(s) { return +s; }
+
+vg.boolean = function(s) { return !!s; }
+
 // utility functions
 
 vg.identity = function(x) { return x; };
@@ -1463,18 +1467,54 @@ vg.data.size = function(size, group) {
     return (typeof d === 'string') ? group[d] : d;
   });
   return size;
-};vg.data.read = function(data, format) {
-  // TODO read formats other than JSON
-  return vg.data.json(data, format);
-};
+};vg.data.read = (function() {
+  var formats = {},
+      parsers = {
+        "number": vg.number,
+        "boolean": vg.boolean
+      };
 
-vg.data.json = function(data, format) {
-  var d = JSON.parse(data);
-  if (format && format.property) {
-    d = vg.accessor(format.property)(d);
+  function read(data, format) {
+    var type = (format && format.type) || "json";
+    return formats[type](data, format);
   }
-  return d;
-};vg.data.array = function() {
+
+  formats.json = function(data, format) {
+    var d = JSON.parse(data);
+    if (format && format.property) {
+      d = vg.accessor(format.property)(d);
+    }
+    return d;
+  };
+
+  formats.csv = function(data, format) {
+    var d = d3.csv.parse(data);
+    if (format.parse) parseValues(d, format.parse);
+    return d;
+  };
+
+  formats.tsv = function(data, format) {
+    var d = d3.tsv.parse(data);
+    if (format.parse) parseValues(d, format.parse);
+    return d;
+  };
+  
+  function parseValues(data, types) {
+    var cols = vg.keys(types),
+        p = cols.map(function(col) { return parsers[types[col]]; }),
+        d, i, j, len, clen;
+
+    for (i=0, len=data.length; i<len; ++i) {
+      d = data[i];
+      for (j=0, clen=cols.length; j<clen; ++j) {
+        d[cols[j]] = p[j](d[cols[j]]);
+      }
+    }
+  }
+
+  read.formats = formats;
+  return read;
+})();vg.data.array = function() {
   var fields = [];
    
   function array(data) {

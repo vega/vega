@@ -12,6 +12,7 @@ var SPECS = [
   "scatter",
   "stacked_area",
   "stacked_bar",
+  "stocks",
   "treemap",
   "wordcloud"
 ];
