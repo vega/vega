@@ -49,6 +49,7 @@ vg.Model = (function() {
     m._scene = vg.scene.build.call(m, marks, data, m._scene);
     m._scene.items[0].width = marks.width;
     m._scene.items[0].height = marks.height;
+    m._scene.interactive = false;
     return this;
   };
   

@@ -13,11 +13,12 @@ vg.scene.encode = (function() {
   
   function update(scene, enc, trans, request, items) {
     items = vg.array(items);
-    var i, len, item, group, prop;
+    var i, len, item, group, props, prop;
     for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
       group = item.path[2] || null;
-      prop = item.path[1].def.properties[request];
+      props = item.path[1].def.properties;
+      prop = props && props[request];
       if (prop) prop.call(this, item.item, group, trans);
     }
   }

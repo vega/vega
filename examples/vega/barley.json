@@ -43,7 +43,7 @@
     {
       "name": "y",
       "type": "ordinal",
-      "range": [0, 100],
+      "range": [2, 101], "points": true, "padding": 0.9,
       "domain": {"data": "variety", "field": "key"}
     },
     {
@@ -56,21 +56,6 @@
     {"type": "x", "scale": "x", "offset": -1}
   ],
   "marks": [
-    {
-      "type": "rect",
-      "interactive": false,
-      "from": {"data": "site"},
-      "properties": {
-        "update": {
-          "x": {"value": 0.5},
-          "y": {"scale": "g", "field": "key", "offset": 15.5},
-          "width": {"value": 200},
-          "height": {"value": 103},
-          "stroke": {"value": "#ccc"},
-          "strokeWidth": {"value": 1}
-        }
-      }
-    },
     {
       "type": "text",
       "from": {"data": "site"},
@@ -91,8 +76,12 @@
       "from": {"data": "site"},
       "properties": {
         "update": {
-          "x": {"value": 0},
-          "y": {"scale": "g", "field": "key", "offset": 22}
+          "x": {"value": 0.5},
+          "y": {"scale": "g", "field": "key", "offset": 15.5},
+          "width": {"value": 200},
+          "height": {"value": 103},
+          "stroke": {"value": "#ccc"},
+          "strokeWidth": {"value": 1}
         }
       },
       "marks": [

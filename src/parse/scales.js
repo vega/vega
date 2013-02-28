@@ -39,8 +39,10 @@ vg.parse.scales = (function() {
 
     // range
     str = typeof rng[0] === 'string';
-    if (str) {
+    if (str || rng.length > 2) {
       scale.range(rng); // color or shape values
+    } else if (def.points) {
+      scale.rangePoints(rng, def.padding||0);
     } else if (def.round || def.round===undefined) {
       scale.rangeRoundBands(rng, def.padding||0);
     } else {

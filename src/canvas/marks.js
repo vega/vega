@@ -148,20 +148,22 @@ vg.canvas.marks = (function() {
   function drawRect(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lc, lw;
+        o, ob, fill, stroke, opac, lc, lw, x, y;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
       if (bounds && !bounds.intersects(o.bounds))
         continue; // bounds check
 
+      x = o.x || 0;
+      y = o.y || 0;
       o.bounds = (o.bounds || new vg.Bounds())
-        .set(o.x, o.y, o.x+o.width, o.y+o.height);
+        .set(x, y, x+o.width, y+o.height);
 
       if (fill = o.fill) {
         g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
         g.fillStyle = fill;
-        g.fillRect(o.x, o.y, o.width, o.height);
+        g.fillRect(x, y, o.width, o.height);
       }
 
       if (stroke = o.stroke) {
@@ -171,7 +173,7 @@ vg.canvas.marks = (function() {
           g.strokeStyle = stroke;
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
-          g.strokeRect(o.x, o.y, o.width, o.height);
+          g.strokeRect(x, y, o.width, o.height);
           o.bounds.expand(lw);
         }
       }
@@ -323,6 +325,8 @@ vg.canvas.marks = (function() {
     var items = scene.items, group,
         renderer = this, gx, gy;
     
+    drawRect(g, scene, bounds);
+    
     for (var i=0, len=items.length; i<len; ++i) {
       group = items[i];
       gx = group.x || 0;
@@ -369,7 +373,10 @@ vg.canvas.marks = (function() {
       }
       g.restore();
     }
-    return false; // TODO allow groups to be pickable
+    
+    return scene.interactive
+      ? pickAll(hitTests.rect, g, scene, x, y, gx, gy)
+      : false;
   }
   
   function pickAll(test, g, scene, x, y, gx, gy) {
@@ -379,7 +386,7 @@ vg.canvas.marks = (function() {
     for (i=scene.items.length; --i >= 0;) {
       o = scene.items[i]; b = o.bounds;
       // first hit test against bounding box
-      if (b && !b.contains(gx, gy)) continue;
+      if ((b && !b.contains(gx, gy)) || !b) continue;
       // if in bounding box, perform more careful test
       if (test(g, o, x, y, gx, gy)) return [o];
     }

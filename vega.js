@@ -873,20 +873,22 @@ vg.error = function(msg) {
   function drawRect(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lc, lw;
+        o, ob, fill, stroke, opac, lc, lw, x, y;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
       if (bounds && !bounds.intersects(o.bounds))
         continue; // bounds check
 
+      x = o.x || 0;
+      y = o.y || 0;
       o.bounds = (o.bounds || new vg.Bounds())
-        .set(o.x, o.y, o.x+o.width, o.y+o.height);
+        .set(x, y, x+o.width, y+o.height);
 
       if (fill = o.fill) {
         g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
         g.fillStyle = fill;
-        g.fillRect(o.x, o.y, o.width, o.height);
+        g.fillRect(x, y, o.width, o.height);
       }
 
       if (stroke = o.stroke) {
@@ -896,7 +898,7 @@ vg.error = function(msg) {
           g.strokeStyle = stroke;
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
-          g.strokeRect(o.x, o.y, o.width, o.height);
+          g.strokeRect(x, y, o.width, o.height);
           o.bounds.expand(lw);
         }
       }
@@ -1048,6 +1050,8 @@ vg.error = function(msg) {
     var items = scene.items, group,
         renderer = this, gx, gy;
     
+    drawRect(g, scene, bounds);
+    
     for (var i=0, len=items.length; i<len; ++i) {
       group = items[i];
       gx = group.x || 0;
@@ -1094,7 +1098,10 @@ vg.error = function(msg) {
       }
       g.restore();
     }
-    return false; // TODO allow groups to be pickable
+    
+    return scene.interactive
+      ? pickAll(hitTests.rect, g, scene, x, y, gx, gy)
+      : false;
   }
   
   function pickAll(test, g, scene, x, y, gx, gy) {
@@ -1104,7 +1111,7 @@ vg.error = function(msg) {
     for (i=scene.items.length; --i >= 0;) {
       o = scene.items[i]; b = o.bounds;
       // first hit test against bounding box
-      if (b && !b.contains(gx, gy)) continue;
+      if ((b && !b.contains(gx, gy)) || !b) continue;
       // if in bounding box, perform more careful test
       if (test(g, o, x, y, gx, gy)) return [o];
     }
@@ -2593,6 +2600,8 @@ vg.data.size = function(size, group) {
     str = typeof rng[0] === 'string';
     if (str) {
       scale.range(rng); // color or shape values
+    } else if (def.points) {
+      scale.rangePoints(rng, def.padding||0);
     } else if (def.round || def.round===undefined) {
       scale.rangeRoundBands(rng, def.padding||0);
     } else {
@@ -2857,11 +2866,12 @@ vg.scene.data = function(data, parentData) {
   
   function update(scene, enc, trans, request, items) {
     items = vg.array(items);
-    var i, len, item, group, prop;
+    var i, len, item, group, props, prop;
     for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
       group = item.path[2] || null;
-      prop = item.path[1].def.properties[request];
+      props = item.path[1].def.properties;
+      prop = props && props[request];
       if (prop) prop.call(this, item.item, group, trans);
     }
   }
@@ -3128,6 +3138,7 @@ vg.scene.data = function(data, parentData) {
     m._scene = vg.scene.build.call(m, marks, data, m._scene);
     m._scene.items[0].width = marks.width;
     m._scene.items[0].height = marks.height;
+    m._scene.interactive = false;
     return this;
   };
   
