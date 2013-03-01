@@ -4,7 +4,7 @@ vg.parse.scales = (function() {
       LOG = "log",
       POWER = "pow",
       VARIABLE = {width: 1, height: 1},
-      PREDEFINED = {category10: 1, category20: 1};
+      PREDEFINED = {category10: 1, category20: 1, shapes: 1};
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {

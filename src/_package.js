@@ -150,6 +150,15 @@ vg.category20 = [
 	"#9edae5"
 ];
 
+vg.shapes = [
+  "circle",
+  "cross",
+  "diamond",
+  "square",
+  "triangle-down",
+  "triangle-up"
+];
+
 // Logging
 vg.log = function(msg) {
   console.log(msg);

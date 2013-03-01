@@ -150,6 +150,15 @@ vg.category20 = [
 	"#9edae5"
 ];
 
+vg.shapes = [
+  "circle",
+  "cross",
+  "diamond",
+  "square",
+  "triangle-down",
+  "triangle-up"
+];
+
 // Logging
 vg.log = function(msg) {
   console.log(msg);
@@ -2563,7 +2572,7 @@ vg.data.size = function(size, group) {
       LOG = "log",
       POWER = "pow",
       VARIABLE = {width: 1, height: 1},
-      PREDEFINED = {category10: 1, category20: 1};
+      PREDEFINED = {category10: 1, category20: 1, shapes: 1};
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
@@ -2598,7 +2607,7 @@ vg.data.size = function(size, group) {
 
     // range
     str = typeof rng[0] === 'string';
-    if (str) {
+    if (str || rng.length > 2) {
       scale.range(rng); // color or shape values
     } else if (def.points) {
       scale.rangePoints(rng, def.padding||0);
