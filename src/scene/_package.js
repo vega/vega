@@ -7,10 +7,10 @@ vg.scene.EXIT   = 2;
 
 vg.scene.DEFAULT_DATA = {"sentinel":1}
 
-vg.scene.bounds = function(path) {
-  var b = new vg.Bounds(path[0].bounds), i, len;
-  for (i=2, len=path.length; i<len; ++i) {
-    b.translate(path[i].x || 0, path[i].y || 0);
+vg.scene.bounds = function(item) {
+  var b = new vg.Bounds(item.bounds);
+  for (item = item.mark.group; item != null; item = item.mark.group) {
+    b.translate(item.x||0, item.y||0);
   }
   return b;
 };

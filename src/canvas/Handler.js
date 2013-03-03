@@ -10,7 +10,7 @@ vg.canvas.Handler = (function() {
 
   prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
-    this._canvas = d3.select(el).select("canvas").node();
+    this._canvas = d3.select(el).select("canvas.vega").node();
     this._padding = pad;
     this._obj = obj || null;
     
@@ -55,15 +55,6 @@ vg.canvas.Handler = (function() {
     var i = name.indexOf(".");
     return i < 0 ? name : name.slice(0,i);
   }
-  
-  function arrayEquals(a, b) {
-    if (a == null || b == null || a.length !== b.length)
-      return false;
-    for (var i=0, len=a.length; i<len; ++i) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
-  }
 
   prototype.mousemove = function(evt) {
     var pad = this._padding,
@@ -73,7 +64,7 @@ vg.canvas.Handler = (function() {
         a = this._active,
         p = this.pick(this._model.scene(), x, y, x-pad.left, y-pad.top);
 
-    if (arrayEquals(p, a)) {
+    if (p === a) {
       this.fire("mousemove", evt);
       return;
     } else if (a) {
@@ -102,7 +93,6 @@ vg.canvas.Handler = (function() {
     var a = this._active,
         h = this._handlers[type];
     if (a && h) {
-      a = a ? {item: a[0], path: a} : a;
       for (var i=0, len=h.length; i<len; ++i) {
         h[i].handler.call(this._obj, evt, a);
       }

@@ -14,12 +14,13 @@ vg.canvas.Renderer = (function() {
 
     // select canvas element
     var canvas = d3.select(el)
-      .selectAll("canvas")
+      .selectAll("canvas.vega")
       .data([1]);
     
     // create new canvas element if needed
     canvas.enter()
-      .append("canvas");
+      .append("canvas")
+      .attr("class", "vega");
     
     // initialize canvas attributes
     canvas
@@ -40,27 +41,50 @@ vg.canvas.Renderer = (function() {
   prototype.element = function() {
     return this._el;
   };
+    
+  function getBounds(items) {
+    return !items ? null :
+      vg.array(items).reduce(function(b, item) {
+        return b.union(vg.scene.bounds(item));
+      }, new vg.Bounds());  
+  }
   
-  prototype.render = function(scene, bounds) {
+  function setBounds(g, bounds) {
+    var bbox = null;
+    if (bounds) {
+      bbox = (new vg.Bounds(bounds)).round();
+      g.beginPath();
+      g.rect(bbox.x1, bbox.y1, bbox.width(), bbox.height());
+      g.clip();
+    }
+    return bbox;
+  }
+  
+  prototype.render = function(scene, items) {
     var t0 = Date.now();
     var g = this._ctx,
         pad = this._padding,
         w = this._width + pad.left + pad.right,
-        h = this._width + pad.top + pad.bottom;
-        
+        h = this._width + pad.top + pad.bottom,
+        bb = null;
+
     // setup
     this._scene = scene;
     g.save();
-    if (bounds) {
-      bounds = (new vg.Bounds(bounds)).round();
-      g.beginPath();
-      g.rect(bounds.x1, bounds.y1, bounds.width(), bounds.height());
-      g.clip();
-    }
+    bb = setBounds(g, getBounds(items));
     g.clearRect(-pad.left, -pad.top, w, h);
     
     // render
-    this.draw(g, scene, bounds);
+    this.draw(g, scene, bb);
+
+    // render again to handle possible bounds change
+    if (items) {
+      g.restore();
+      g.save();
+      bb = setBounds(g, getBounds(items));
+      g.clearRect(-pad.left, -pad.top, w, h);
+      this.draw(g, scene, bb);
+    }
     
     // takedown
     g.restore();

@@ -367,7 +367,6 @@ vg.canvas.marks = (function() {
         hit = handler.pick(subscene, x, y, gx-dx, gy-dy);
         if (hit) {
           g.restore();
-          hit.push(subscene, group, scene);
           return hit;
         }
       }
@@ -388,7 +387,7 @@ vg.canvas.marks = (function() {
       // first hit test against bounding box
       if ((b && !b.contains(gx, gy)) || !b) continue;
       // if in bounding box, perform more careful test
-      if (test(g, o, x, y, gx, gy)) return [o];
+      if (test(g, o, x, y, gx, gy)) return o;
     }
     return false;
   }
@@ -401,7 +400,7 @@ vg.canvas.marks = (function() {
     b = items[0].bounds;
     if (b && !b.contains(gx, gy)) return false;
     if (!hitTests.area(g, items, x, y)) return false;
-    return [items[0]];
+    return items[0];
   }
   
   function pickLine(g, scene, x, y, gx, gy) {

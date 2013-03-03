@@ -6,12 +6,13 @@ vg.parse.spec = function(spec, callback) {
       data: vg.parse.data(spec.data, function() { callback(chart); })
     };
 
-    var chart = function(el, input) {
+    var chart = function(el, input, renderer) {
       return new vg.View()
         .width(spec.width || 500)
         .height(spec.height || 500)
         .padding(spec.padding || {top:20, left:20, right:20, bottom:20})
         .viewport(spec.viewport || null)
+        .renderer(renderer || "canvas")
         .initialize(el)
         .defs(defs)
         .data(defs.data.load)

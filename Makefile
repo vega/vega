@@ -17,6 +17,10 @@ vega.js: \
 	src/canvas/marks.js \
 	src/canvas/Renderer.js \
 	src/canvas/Handler.js \
+	src/svg/_package.js \
+	src/svg/marks.js \
+	src/svg/Renderer.js \
+	src/svg/Handler.js \
 	src/data/_package.js \
 	src/data/read.js \
 	src/data/array.js \

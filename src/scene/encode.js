@@ -16,10 +16,10 @@ vg.scene.encode = (function() {
     var i, len, item, group, props, prop;
     for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
-      group = item.path[2] || null;
-      props = item.path[1].def.properties;
+      group = item.mark.group || null;
+      props = item.mark.def.properties;
       prop = props && props[request];
-      if (prop) prop.call(this, item.item, group, trans);
+      if (prop) prop.call(this, item, group, trans);
     }
   }
   
@@ -36,7 +36,7 @@ vg.scene.encode = (function() {
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
 
-      // TODO cascade scales recursively
+      // cascade scales recursively
       scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
       
       // update group-level scales

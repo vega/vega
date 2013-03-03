@@ -1101,7 +1101,6 @@ vg.error = function(msg) {
         hit = handler.pick(subscene, x, y, gx-dx, gy-dy);
         if (hit) {
           g.restore();
-          hit.push(subscene, group, scene);
           return hit;
         }
       }
@@ -1122,7 +1121,7 @@ vg.error = function(msg) {
       // first hit test against bounding box
       if ((b && !b.contains(gx, gy)) || !b) continue;
       // if in bounding box, perform more careful test
-      if (test(g, o, x, y, gx, gy)) return [o];
+      if (test(g, o, x, y, gx, gy)) return o;
     }
     return false;
   }
@@ -1135,7 +1134,7 @@ vg.error = function(msg) {
     b = items[0].bounds;
     if (b && !b.contains(gx, gy)) return false;
     if (!hitTests.area(g, items, x, y)) return false;
-    return [items[0]];
+    return items[0];
   }
   
   function pickLine(g, scene, x, y, gx, gy) {
@@ -1221,12 +1220,13 @@ vg.error = function(msg) {
 
     // select canvas element
     var canvas = d3.select(el)
-      .selectAll("canvas")
+      .selectAll("canvas.vega")
       .data([1]);
     
     // create new canvas element if needed
     canvas.enter()
-      .append("canvas");
+      .append("canvas")
+      .attr("class", "vega");
     
     // initialize canvas attributes
     canvas
@@ -1247,27 +1247,50 @@ vg.error = function(msg) {
   prototype.element = function() {
     return this._el;
   };
+    
+  function getBounds(items) {
+    return !items ? null :
+      vg.array(items).reduce(function(b, item) {
+        return b.union(vg.scene.bounds(item));
+      }, new vg.Bounds());  
+  }
   
-  prototype.render = function(scene, bounds) {
+  function setBounds(g, bounds) {
+    var bbox = null;
+    if (bounds) {
+      bbox = (new vg.Bounds(bounds)).round();
+      g.beginPath();
+      g.rect(bbox.x1, bbox.y1, bbox.width(), bbox.height());
+      g.clip();
+    }
+    return bbox;
+  }
+  
+  prototype.render = function(scene, items) {
     var t0 = Date.now();
     var g = this._ctx,
         pad = this._padding,
         w = this._width + pad.left + pad.right,
-        h = this._width + pad.top + pad.bottom;
-        
+        h = this._width + pad.top + pad.bottom,
+        bb = null;
+
     // setup
     this._scene = scene;
     g.save();
-    if (bounds) {
-      bounds = (new vg.Bounds(bounds)).round();
-      g.beginPath();
-      g.rect(bounds.x1, bounds.y1, bounds.width(), bounds.height());
-      g.clip();
-    }
+    bb = setBounds(g, getBounds(items));
     g.clearRect(-pad.left, -pad.top, w, h);
     
     // render
-    this.draw(g, scene, bounds);
+    this.draw(g, scene, bb);
+
+    // render again to handle possible bounds change
+    if (items) {
+      g.restore();
+      g.save();
+      bb = setBounds(g, getBounds(items));
+      g.clearRect(-pad.left, -pad.top, w, h);
+      this.draw(g, scene, bb);
+    }
     
     // takedown
     g.restore();
@@ -1321,7 +1344,7 @@ vg.error = function(msg) {
 
   prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
-    this._canvas = d3.select(el).select("canvas").node();
+    this._canvas = d3.select(el).select("canvas.vega").node();
     this._padding = pad;
     this._obj = obj || null;
     
@@ -1366,15 +1389,6 @@ vg.error = function(msg) {
     var i = name.indexOf(".");
     return i < 0 ? name : name.slice(0,i);
   }
-  
-  function arrayEquals(a, b) {
-    if (a == null || b == null || a.length !== b.length)
-      return false;
-    for (var i=0, len=a.length; i<len; ++i) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
-  }
 
   prototype.mousemove = function(evt) {
     var pad = this._padding,
@@ -1384,7 +1398,7 @@ vg.error = function(msg) {
         a = this._active,
         p = this.pick(this._model.scene(), x, y, x-pad.left, y-pad.top);
 
-    if (arrayEquals(p, a)) {
+    if (p === a) {
       this.fire("mousemove", evt);
       return;
     } else if (a) {
@@ -1413,7 +1427,6 @@ vg.error = function(msg) {
     var a = this._active,
         h = this._handlers[type];
     if (a && h) {
-      a = a ? {item: a[0], path: a} : a;
       for (var i=0, len=h.length; i<len; ++i) {
         h[i].handler.call(this._obj, evt, a);
       }
@@ -1458,6 +1471,368 @@ vg.error = function(msg) {
         marktype = scene.marktype,
         picker = vg.canvas.marks.pick[marktype];
     return picker.call(this, g, scene, x, y, gx, gy);
+  };
+
+  return handler;
+})();vg.svg = {};vg.svg.marks = (function() {
+
+  function x(o)     { return o.x || 0; }
+  function y(o)     { return o.y || 0; }
+  function yh(o)    { return o.y + o.height || 0; }
+  function key(o)   { return o.key; }
+  function size(o)  { return o.size==null ? 100 : o.size; }
+  function shape(o) { return o.shape || "circle"; }
+      
+  var arc_path    = d3.svg.arc(),
+      area_path   = d3.svg.area().x(x).y1(y).y0(yh),
+      line_path   = d3.svg.line().x(x).y(y),
+      symbol_path = d3.svg.symbol().type(shape).size(size);
+  
+  var textAlign = {
+    "left":   "start",
+    "center": "middle",
+    "right":  "end"
+  };
+  
+  var styles = {
+    "fill":          "fill",
+    "fillOpacity":   "fill-opacity",
+    "stroke":        "stroke",
+    "strokeWidth":   "stroke-width",
+    "strokeOpacity": "stroke-opacity",
+    "opacity":       "opacity"
+  };
+  
+  var styleProps = vg.keys(styles);
+  
+  function style(d) {
+    var o = d.mark ? d : d[0],
+        i, n, prop, name, value;
+    for (i=0, n=styleProps.length; i<n; ++i) {
+      prop = styleProps[i];
+      name = styles[prop];
+      value = o[prop];
+      if (value == null) {
+        if (name === "fill") this.style.setProperty(name, "none", null);
+        else this.style.removeProperty(name);
+      }
+      else this.style.setProperty(name, value, null);
+    }
+  }
+  
+  function arc(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    this.setAttribute("transform", "translate("+x+","+y+")");
+    this.setAttribute("d", arc_path(o));
+  }
+  
+  function area(items) {
+    var o = items[0];
+    area_path
+      .interpolate(o.interpolate || "linear")
+      .tension(o.tension == undefined ? 0.7 : o.tension);
+    this.setAttribute("d", area_path(items));
+  }
+  
+  function line(items) {
+    var o = items[0];
+    line_path
+      .interpolate(o.interpolate || "linear")
+      .tension(o.tension == undefined ? 0.7 : o.tension);
+    this.setAttribute("d", line_path(items));
+  }
+  
+  function path(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    this.setAttribute("transform", "translate("+x+","+y+")");
+    this.setAttribute("d", o.path);
+  }
+
+  function rect(o) {
+    this.setAttribute("x", o.x || 0);
+    this.setAttribute("y", o.y || 0);
+    this.setAttribute("width", o.width || 0);
+    this.setAttribute("height", o.height || 0);
+  }
+  
+  function symbol(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    this.setAttribute("transform", "translate("+x+","+y+")");
+    this.setAttribute("d", symbol_path(o));
+  }
+  
+  function image(o) {
+    var w = o.width || (o.image && o.image.width) || 0,
+        h = o.height || (o.image && o.image.height) || 0,
+        x = o.x - (o.align === "center"
+          ? w/2 : (o.align === "right" ? w : 0)),
+        y = o.y - (o.baseline === "middle"
+          ? h/2 : (o.baseline === "bottom" ? h : 0));
+    
+    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", o.url);
+    this.setAttribute("x", x);
+    this.setAttribute("y", y);
+    this.setAttribute("width", w);
+    this.setAttribute("height", h);
+  }
+    
+  function fontString(o) {
+    return (o.fontStyle ? o.fontStyle + " " : "")
+      + (o.fontVariant ? o.fontVariant + " " : "")
+      + (o.fontWeight ? o.fontWeight + " " : "")
+      + (o.fontSize != undefined ? o.fontSize + "px " : "11px ")
+      + (o.font || "sans-serif");
+  }
+  
+  function text(o) {
+    var x = o.x || 0,
+        y = o.y || 0,
+        dx = o.dx || 0,
+        dy = o.dy || 0,
+        a = o.angle || 0,
+        align = textAlign[o.align || "left"],
+        base = o.baseline==="top" ? ".9em"
+             : o.baseline==="middle" ? ".35em" : 0;
+  
+    this.setAttribute("x", x + dx);
+    this.setAttribute("y", y + dy);
+    this.setAttribute("dy", dy);
+    this.setAttribute("text-anchor", align);
+    
+    if (a) this.setAttribute("transform", "rotate("+a+" "+x+","+y+")");
+    else this.removeAttribute("transform");
+    
+    if (base) this.setAttribute("dy", base);
+    else this.removeAttribute("dy");
+    
+    this.textContent = o.text;
+    this.style.setProperty("font", fontString(o), null);
+  }
+  
+  function group(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    this.setAttribute("transform", "translate("+x+","+y+")");
+  }
+
+  function draw(tag, attr, nest) {
+    return function(g, scene, index) {
+      drawMark(g, scene, index, "mark_", tag, attr, nest);
+    };
+  }
+  
+  var mark_id = 0;
+  
+  function drawMark(g, scene, index, prefix, tag, attr, nest) {
+    var className = prefix + index,
+        data = nest ? [scene.items] : scene.items,
+        p = g.select("."+className);
+
+    if (p.empty()) p = g.append("g")
+      .attr("id", "g"+(++mark_id))
+      .attr("class", className);
+
+    var id = "#" + p.attr("id");
+    var m = p.selectAll(id+" > "+tag).data(data);  
+    var e = m.enter().append(tag);
+    if (tag !== "g") e.each(function(d) {
+      (d.mark ? d : d[0])._svg = this;
+    });
+    
+    m.exit().remove();
+    m.each(attr);
+    if (tag !== "g") m.each(style);
+  }
+
+  function drawGroup(g, scene, index) {
+    var renderer = this;
+        
+    drawMark(g, scene, index, "mark_", "rect", rect);
+    drawMark(g, scene, index, "group_", "g", group);
+
+    var x = g.select(".group_"+index).node(), i, n, j, m;
+    for (var i=0, n=x.childNodes.length; i<n; ++i) {
+      var sel = d3.select(x.childNodes[i]),
+          items = x.childNodes[i].__data__.items;
+      for (var j=0, m=items.length; j<m; ++j) {
+        renderer.draw(sel, items[j], j);
+      }
+    }
+  }
+
+  return {
+    update: {
+      group:   rect,
+      area:    area,
+      line:    line,
+      arc:     arc,
+      path:    path,
+      symbol:  symbol,
+      rect:    rect,
+      text:    text,
+      image:   image
+    },
+    nested: {
+      "area": true,
+      "line": true
+    },
+    style: style,
+    draw: {
+      group:   drawGroup,
+      area:    draw("path", area, true),
+      line:    draw("path", line, true),
+      arc:     draw("path", arc),
+      path:    draw("path", path),
+      symbol:  draw("path", symbol),
+      rect:    draw("rect", rect),
+      text:    draw("text", text),
+      image:   draw("image", image),
+      draw:    draw // expose for extensibility
+    }
+  };
+  
+})();vg.svg.Renderer = (function() {  
+  var renderer = function() {
+    this._ctx = null;
+    this._el = null;
+  };
+  
+  var prototype = renderer.prototype;
+  
+  prototype.initialize = function(el, width, height, pad) {
+    this._el = el;
+    this._width = width;
+    this._height = height;
+    this._padding = pad;
+
+    // remove any existing svg element
+    d3.select(el).select("svg.vega").remove();
+
+    // create svg element and initialize attributes
+    var svg = d3.select(el)
+      .append("svg")
+      .attr("class", "vega")
+      .attr("width", width + pad.left + pad.right)
+      .attr("height", height + pad.top + pad.bottom);
+    
+    // set the svg root group
+    this._ctx = svg.append("g")
+      .attr("transform", "translate("+pad.left+","+pad.top+")");
+    
+    return this;
+  };
+  
+  prototype.context = function() {
+    return this._ctx;
+  };
+  
+  prototype.element = function() {
+    return this._el;
+  };
+  
+  prototype.render = function(scene, items) {
+    if (items) this.renderItems(vg.array(items));
+    else this.draw(this._ctx, scene, 0);
+  };
+  
+  prototype.renderItems = function(items) {
+    var item, node, type, nest, i, n,
+        marks = vg.svg.marks;
+
+    for (i=0, n=items.length; i<n; ++i) {
+      item = items[i];
+      node = item._svg;
+      type = item.mark.marktype;
+
+      item = marks.nested[type] ? item.mark.items : item;
+      marks.update[type].call(node, item);
+      marks.style.call(node, item);
+    }
+  }
+  
+  prototype.draw = function(ctx, scene, index) {
+    var marktype = scene.marktype,
+        renderer = vg.svg.marks.draw[marktype];
+    renderer.call(this, ctx, scene, index);
+  };
+  
+  return renderer;
+})();vg.svg.Handler = (function() {
+  var handler = function(el, model) {
+    this._active = null;
+    this._handlers = {};
+    if (el) this.initialize(el);
+    if (model) this.model(model);
+  };
+  
+  function svgHandler(handler) {
+    var that = this;
+    return function(evt) {
+      var target = evt.target,
+          item = target.__data__;
+      if (item) {
+        item = item.mark ? item : item[0];
+        handler.call(that._obj, evt, item);
+      }
+    };
+  }
+  
+  function eventName(name) {
+    var i = name.indexOf(".");
+    return i < 0 ? name : name.slice(0,i);
+  }
+  
+  var prototype = handler.prototype;
+
+  prototype.initialize = function(el, pad, obj) {
+    this._el = d3.select(el).node();
+    this._svg = d3.select(el).select("svg.vega").node();
+    this._padding = pad;
+    this._obj = obj || null;
+    return this;
+  };
+  
+  prototype.model = function(model) {
+    if (!arguments.length) return this._model;
+    this._model = model;
+    return this;
+  };
+
+  // add an event handler
+  prototype.on = function(type, handler) {
+    var name = eventName(type),
+        h = this._handlers,
+        dom = d3.select(this._svg).node();
+        
+    var x = {
+      type: type,
+      handler: handler,
+      svg: svgHandler.call(this, handler)
+    };
+    h = h[name] || (h[name] = []);
+    h.push(x);
+
+    dom.addEventListener(name, x.svg);
+    return this;
+  };
+
+  // remove an event handler
+  prototype.off = function(type, handler) {
+    var name = eventName(type),
+        h = this._handlers[name],
+        dom = d3.select(this._svg).node();
+    if (!h) return;
+    for (var i=h.length; --i>=0;) {
+      if (h[i].type !== type) continue;
+      if (!handler || h[i].handler === handler) {
+        dom.removeEventListener(name, h[i].svg);
+        h.splice(i, 1);
+      }
+    }
+    return this;
   };
 
   return handler;
@@ -2715,12 +3090,13 @@ vg.data.size = function(size, group) {
       data: vg.parse.data(spec.data, function() { callback(chart); })
     };
 
-    var chart = function(el, input) {
+    var chart = function(el, input, renderer) {
       return new vg.View()
         .width(spec.width || 500)
         .height(spec.height || 500)
         .padding(spec.padding || {top:20, left:20, right:20, bottom:20})
         .viewport(spec.viewport || null)
+        .renderer(renderer || "canvas")
         .initialize(el)
         .defs(defs)
         .data(defs.data.load)
@@ -2756,10 +3132,10 @@ vg.scene.EXIT   = 2;
 
 vg.scene.DEFAULT_DATA = {"sentinel":1}
 
-vg.scene.bounds = function(path) {
-  var b = new vg.Bounds(path[0].bounds), i, len;
-  for (i=2, len=path.length; i<len; ++i) {
-    b.translate(path[i].x || 0, path[i].y || 0);
+vg.scene.bounds = function(item) {
+  var b = new vg.Bounds(item.bounds);
+  for (item = item.mark.group; item != null; item = item.mark.group) {
+    b.translate(item.x||0, item.y||0);
   }
   return b;
 };
@@ -2823,7 +3199,7 @@ vg.scene.data = function(data, parentData) {
       datum = data[i];
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
-      enter = item ? false : (item = {}, true);
+      enter = item ? false : (item = {mark:node}, true);
       item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
@@ -2851,6 +3227,7 @@ vg.scene.data = function(data, parentData) {
       group.items = group.items || [];
       for (m=0, mlen=marks.length; m<mlen; ++m) {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);
+        group.items[m].group = group;
       }
     }
   }
@@ -2878,10 +3255,10 @@ vg.scene.data = function(data, parentData) {
     var i, len, item, group, props, prop;
     for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
-      group = item.path[2] || null;
-      props = item.path[1].def.properties;
+      group = item.mark.group || null;
+      props = item.mark.def.properties;
       prop = props && props[request];
-      if (prop) prop.call(this, item.item, group, trans);
+      if (prop) prop.call(this, item, group, trans);
     }
   }
   
@@ -2898,7 +3275,7 @@ vg.scene.data = function(data, parentData) {
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
 
-      // TODO cascade scales recursively
+      // cascade scales recursively
       scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
       
       // update group-level scales
@@ -3173,6 +3550,7 @@ vg.scene.data = function(data, parentData) {
     this._height = height || 500;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
+    this._io = vg.canvas;
     if (el) this.initialize(el);
   };
   
@@ -3213,6 +3591,17 @@ vg.scene.data = function(data, parentData) {
     }
     return this;
   };
+  
+  prototype.renderer = function(type) {
+    if (!arguments.length) return this._io;
+    if (type === "canvas") type = vg.canvas;
+    if (type === "svg") type = vg.svg;
+    if (this._io !== type) {
+      this._io = type;
+      if (this._el) this.initialize(this._el);
+    }
+    return this;
+  };
 
   prototype.defs = function(defs) {
     if (!arguments.length) return this._model.defs();
@@ -3239,9 +3628,13 @@ vg.scene.data = function(data, parentData) {
   };
 
   prototype.initialize = function(el) {
-    // div container
+    // clear pre-existing container
+    d3.select(el).select("div.vega").remove();
+    
+    // add div container
     this._el = d3.select(el)
       .append("div")
+      .attr("class", "vega")
       .style("position", "relative")
       .node();
     if (this._viewport) {
@@ -3258,12 +3651,12 @@ vg.scene.data = function(data, parentData) {
       .initialize(this._el, this._width, this._height, this._padding);
     
     // renderer
-    this._renderer = (this._renderer || new vg.canvas.Renderer())
+    this._renderer = (this._renderer || new this._io.Renderer())
       .initialize(this._el, this._width, this._height, this._padding);
     
     // input handler
     if (!this._handler) {
-      this._handler = new vg.canvas.Handler()
+      this._handler = new this._io.Handler()
         .initialize(this._el, this._padding, this)
         .model(this._model);
     }
@@ -3271,9 +3664,9 @@ vg.scene.data = function(data, parentData) {
     return this;
   };
   
-  prototype.render = function(bounds) {
+  prototype.render = function(items) {
     this._axes.update(this._model);
-    this._renderer.render(this._model.scene(), bounds);
+    this._renderer.render(this._model.scene(), items);
     return this;
   };
   
@@ -3290,16 +3683,7 @@ vg.scene.data = function(data, parentData) {
   prototype.update = function(request, items) {
     this._build = this._build || (this._model.build(), true);
     this._model.encode(request, items);
-    
-    function bounds() {
-      return !items ? null :
-        vg.array(items).reduce(function(b, x) {
-          return b.union(vg.scene.bounds(x.path));
-        }, new vg.Bounds());  
-    }
-    
-    this.render(bounds());
-    return items ? this.render(bounds()) : this;
+    return this.render(items);
   };
     
   return view;

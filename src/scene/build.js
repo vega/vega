@@ -47,7 +47,7 @@ vg.scene.build = (function() {
       datum = data[i];
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
-      enter = item ? false : (item = {}, true);
+      enter = item ? false : (item = {mark:node}, true);
       item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
@@ -75,6 +75,7 @@ vg.scene.build = (function() {
       group.items = group.items || [];
       for (m=0, mlen=marks.length; m<mlen; ++m) {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);
+        group.items[m].group = group;
       }
     }
   }

@@ -7,6 +7,7 @@ vg.View = (function() {
     this._height = height || 500;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
+    this._io = vg.canvas;
     if (el) this.initialize(el);
   };
   
@@ -47,6 +48,17 @@ vg.View = (function() {
     }
     return this;
   };
+  
+  prototype.renderer = function(type) {
+    if (!arguments.length) return this._io;
+    if (type === "canvas") type = vg.canvas;
+    if (type === "svg") type = vg.svg;
+    if (this._io !== type) {
+      this._io = type;
+      if (this._el) this.initialize(this._el);
+    }
+    return this;
+  };
 
   prototype.defs = function(defs) {
     if (!arguments.length) return this._model.defs();
@@ -73,9 +85,13 @@ vg.View = (function() {
   };
 
   prototype.initialize = function(el) {
-    // div container
+    // clear pre-existing container
+    d3.select(el).select("div.vega").remove();
+    
+    // add div container
     this._el = d3.select(el)
       .append("div")
+      .attr("class", "vega")
       .style("position", "relative")
       .node();
     if (this._viewport) {
@@ -92,12 +108,12 @@ vg.View = (function() {
       .initialize(this._el, this._width, this._height, this._padding);
     
     // renderer
-    this._renderer = (this._renderer || new vg.canvas.Renderer())
+    this._renderer = (this._renderer || new this._io.Renderer())
       .initialize(this._el, this._width, this._height, this._padding);
     
     // input handler
     if (!this._handler) {
-      this._handler = new vg.canvas.Handler()
+      this._handler = new this._io.Handler()
         .initialize(this._el, this._padding, this)
         .model(this._model);
     }
@@ -105,9 +121,9 @@ vg.View = (function() {
     return this;
   };
   
-  prototype.render = function(bounds) {
+  prototype.render = function(items) {
     this._axes.update(this._model);
-    this._renderer.render(this._model.scene(), bounds);
+    this._renderer.render(this._model.scene(), items);
     return this;
   };
   
@@ -124,16 +140,7 @@ vg.View = (function() {
   prototype.update = function(request, items) {
     this._build = this._build || (this._model.build(), true);
     this._model.encode(request, items);
-    
-    function bounds() {
-      return !items ? null :
-        vg.array(items).reduce(function(b, x) {
-          return b.union(vg.scene.bounds(x.path));
-        }, new vg.Bounds());  
-    }
-    
-    this.render(bounds());
-    return items ? this.render(bounds()) : this;
+    return this.render(items);
   };
     
   return view;
