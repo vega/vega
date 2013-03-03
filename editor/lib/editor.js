@@ -1,4 +1,8 @@
-var ved = {};
+var ved = {
+  version: 0.1,
+  data: undefined,
+  renderType: "canvas"
+};
 
 ved.select = function() {
   var sel = document.getElementById("sel_spec"),
@@ -13,6 +17,15 @@ ved.select = function() {
   } else {
     d3.select("#spec").property("value", "");
   }
+};
+
+ved.renderer = function() {
+  var sel = document.getElementById("sel_render"),
+      idx = sel.selectedIndex,
+      ren = sel.options[idx].value;
+
+  ved.renderType = ren;
+  ved.parse();
 };
 
 ved.format = function(event) {
@@ -33,7 +46,8 @@ ved.parse = function() {
   
   vg.parse.spec(spec, function(chart) {
     d3.select("#vis").selectAll("*").remove();
-    (ved.view = chart("#vis")).update();
+    var view = chart("#vis", ved.data, ved.renderType);
+    (ved.view = view).update();
   });
 };
 
@@ -51,6 +65,15 @@ ved.init = function() {
     .data(SPECS)
    .enter().append("option")
     .attr("value", function(d) { return "vega/"+d+".json"; })
+    .text(function(d) { return d; });
+
+  // Renderer drop-down menu
+  var ren = d3.select("#sel_render");
+  ren.on("change", ved.renderer)
+  ren.selectAll("option")
+    .data(["Canvas", "SVG"])
+   .enter().append("option")
+    .attr("value", function(d) { return d.toLowerCase(); })
     .text(function(d) { return d; });
 
   d3.select("#btn_spec_format").on("click", ved.format);
