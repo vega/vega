@@ -1,0 +1,36 @@
+* {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+body {
+  padding: 15px;
+  max-width: 550px;
+}
+
+a {
+  color: #0ac04a;
+}
+
+a:hover {
+  color: #f05a00;
+}
+
+.content {
+  margin-top: 0.5em;
+}
+
+.credits {
+  margin-top: 2.0em;
+  text-align: left;
+}
+
+.credits a img {
+  border: 1px solid #fff;
+  margin-right: 0.5em;
+}
+
+.credits a:hover img {
+  border: 1px solid #f05a00;
+}
