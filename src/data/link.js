@@ -3,9 +3,7 @@ vg.data.link = function() {
       source = vg.accessor("source"),
       target = vg.accessor("target"),
       tension = 0.2,
-      output = {
-        "path": "path"
-      };
+      output = {"path": "path"};
   
   function line(d) {
     var s = source(d),

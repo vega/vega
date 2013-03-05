@@ -3,7 +3,7 @@ vg.data.geopath = function() {
       projection = "mercator",
       geojson = vg.identity,
       opt = {},
-      path = "path";
+      output = {"path": "path"};
 
   var map = vg.data.mapper(function(d) {
     d[path] = geopath(geojson(d));
@@ -30,13 +30,17 @@ vg.data.geopath = function() {
     }
   });
    
-  map.field = function(field) {
+  map.value = function(field) {
     geojson = vg.accessor(field);
     return map;
   };
 
-  map.path = function(field) {
-    path = field;
+  map.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
     return map;
   };
 

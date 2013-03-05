@@ -3,8 +3,10 @@ vg.data.pie = function() {
       start = 0,
       end = 2 * Math.PI,
       sort = false,
-      startAngle = "startAngle",
-      endAngle = "endAngle";
+      output = {
+        "startAngle": "startAngle",
+        "endAngle": "endAngle"
+      };
 
   function pie(data) {
     var values = data.map(function(d, i) { return +value(d); }),
@@ -38,13 +40,12 @@ vg.data.pie = function() {
     return pie;
   };
 
-  pie.startAngle = function(field) {
-    startAngle = field;
-    return pie;
-  };
-  
-  pie.endAngle = function(field) {
-    endAngle = field;
+  pie.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
     return pie;
   };
 

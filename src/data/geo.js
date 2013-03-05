@@ -14,8 +14,10 @@ vg.data.geo = (function() {
         func = d3.geo[projection](),
         lat = vg.identity,
         lon = vg.identity,
-        x = "x",
-        y = "y";
+        output = {
+          "x": "x",
+          "y": "y"
+        };
     
     var map = vg.data.mapper(function(d) {
       var ll = [lon(d), lat(d)],
@@ -58,15 +60,15 @@ vg.data.geo = (function() {
       return map;
     };
     
-    map.x = function(field) {
-      x = field;
+    map.output = function(map) {
+      vg.keys(output).forEach(function(k) {
+        if (map[k] !== undefined) {
+          output[k] = map[k];
+        }
+      });
       return map;
     };
-
-    map.y = function(field) {
-      y = field;
-      return map;
-    };    
+    
     
     return map;
   };

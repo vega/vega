@@ -1,6 +1,16 @@
 vg.data.stats = function() {
   var value = vg.accessor("data"),
-      median = false;
+      median = false,
+      output = {
+        "count":    "count",
+        "min":      "min",
+        "max":      "max",
+        "sum":      "sum",
+        "mean":     "mean",
+        "variance": "variance",
+        "stdev":    "stdev"
+        "median":   "median"
+      };
   
   function reduce(data) {
     var min = +Infinity,
@@ -28,15 +38,17 @@ vg.data.stats = function() {
     if (median) {
       list.sort(vg.numcmp);
       i = list.length >> 1;
-      o.median = list.length % 2 ? list[i] : (list[i-1] + list[i])/2;
+      o[output.median] = list.length % 2
+        ? list[i]
+        : (list[i-1] + list[i])/2;
     }
-    o.count = len;
-    o.min = min;
-    o.max = max;
-    o.sum = sum;
-    o.mean = mean;
-    o.variance = M2;
-    o.stdev = Math.sqrt(M2);
+    o[output.count] = len;
+    o[output.min] = min;
+    o[output.max] = max;
+    o[output.sum] = sum;
+    o[output.mean] = mean;
+    o[output.variance] = M2;
+    o[output.stdev] = Math.sqrt(M2);
     return o;
   }
   
@@ -52,6 +64,15 @@ vg.data.stats = function() {
   
   stats.value = function(field) {
     value = vg.accessor(field);
+    return stats;
+  };
+  
+  stats.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
     return stats;
   };
   
