@@ -16,7 +16,7 @@
         "data": "world",
         "transform": [{
           "type": "geopath",
-          "field": "data",
+          "value": "data",
           "projection": "winkel3",
           "scale": 300,
           "translate": [960, 500]
