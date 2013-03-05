@@ -22,8 +22,8 @@ vg.data.geo = (function() {
     var map = vg.data.mapper(function(d) {
       var ll = [lon(d), lat(d)],
           xy = func(ll);
-      d[x] = xy[0];
-      d[y] = xy[1];
+      d[output.x] = xy[0];
+      d[output.y] = xy[1];
       return d;
     });
 

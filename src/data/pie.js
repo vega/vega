@@ -23,8 +23,8 @@ vg.data.pie = function() {
     index.forEach(function(i) {
       var d;
       data[i].value = (d = values[i]);
-      data[i][startAngle] = a;
-      data[i][endAngle] = (a += d * k);
+      data[i][output.startAngle] = a;
+      data[i][output.endAngle] = (a += d * k);
     });
     
     return data;

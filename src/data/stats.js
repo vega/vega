@@ -8,7 +8,7 @@ vg.data.stats = function() {
         "sum":      "sum",
         "mean":     "mean",
         "variance": "variance",
-        "stdev":    "stdev"
+        "stdev":    "stdev",
         "median":   "median"
       };
   

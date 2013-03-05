@@ -6,7 +6,7 @@ vg.data.geopath = function() {
       output = {"path": "path"};
 
   var map = vg.data.mapper(function(d) {
-    d[path] = geopath(geojson(d));
+    d[output.path] = geopath(geojson(d));
     return d;
   });
   

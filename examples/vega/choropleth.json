@@ -24,7 +24,7 @@
       "url": "data/us-states.json",
       "format": {"type": "json", "property": "features"},
       "transform": [
-        {"type":"geopath", "field":"data", "projection":"albersUsa"}
+        {"type":"geopath", "value":"data", "projection":"albersUsa"}
       ]
     }
   ],

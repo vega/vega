@@ -2121,14 +2121,16 @@ vg.data.size = function(size, group) {
         func = d3.geo[projection](),
         lat = vg.identity,
         lon = vg.identity,
-        x = "x",
-        y = "y";
+        output = {
+          "x": "x",
+          "y": "y"
+        };
     
     var map = vg.data.mapper(function(d) {
       var ll = [lon(d), lat(d)],
           xy = func(ll);
-      d[x] = xy[0];
-      d[y] = xy[1];
+      d[output.x] = xy[0];
+      d[output.y] = xy[1];
       return d;
     });
 
@@ -2165,15 +2167,15 @@ vg.data.size = function(size, group) {
       return map;
     };
     
-    map.x = function(field) {
-      x = field;
+    map.output = function(map) {
+      vg.keys(output).forEach(function(k) {
+        if (map[k] !== undefined) {
+          output[k] = map[k];
+        }
+      });
       return map;
     };
-
-    map.y = function(field) {
-      y = field;
-      return map;
-    };    
+    
     
     return map;
   };
@@ -2185,10 +2187,10 @@ vg.data.size = function(size, group) {
       projection = "mercator",
       geojson = vg.identity,
       opt = {},
-      path = "path";
+      output = {"path": "path"};
 
   var map = vg.data.mapper(function(d) {
-    d[path] = geopath(geojson(d));
+    d[output.path] = geopath(geojson(d));
     return d;
   });
   
@@ -2212,13 +2214,17 @@ vg.data.size = function(size, group) {
     }
   });
    
-  map.field = function(field) {
+  map.value = function(field) {
     geojson = vg.accessor(field);
     return map;
   };
 
-  map.path = function(field) {
-    path = field;
+  map.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
     return map;
   };
 
@@ -2228,9 +2234,7 @@ vg.data.size = function(size, group) {
       source = vg.accessor("source"),
       target = vg.accessor("target"),
       tension = 0.2,
-      output = {
-        "path": "path"
-      };
+      output = {"path": "path"};
   
   function line(d) {
     var s = source(d),
@@ -2325,8 +2329,10 @@ vg.data.size = function(size, group) {
       start = 0,
       end = 2 * Math.PI,
       sort = false,
-      startAngle = "startAngle",
-      endAngle = "endAngle";
+      output = {
+        "startAngle": "startAngle",
+        "endAngle": "endAngle"
+      };
 
   function pie(data) {
     var values = data.map(function(d, i) { return +value(d); }),
@@ -2343,8 +2349,8 @@ vg.data.size = function(size, group) {
     index.forEach(function(i) {
       var d;
       data[i].value = (d = values[i]);
-      data[i][startAngle] = a;
-      data[i][endAngle] = (a += d * k);
+      data[i][output.startAngle] = a;
+      data[i][output.endAngle] = (a += d * k);
     });
     
     return data;
@@ -2360,13 +2366,12 @@ vg.data.size = function(size, group) {
     return pie;
   };
 
-  pie.startAngle = function(field) {
-    startAngle = field;
-    return pie;
-  };
-  
-  pie.endAngle = function(field) {
-    endAngle = field;
+  pie.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
     return pie;
   };
 
@@ -2439,7 +2444,17 @@ vg.data.size = function(size, group) {
   return stack;
 };vg.data.stats = function() {
   var value = vg.accessor("data"),
-      median = false;
+      median = false,
+      output = {
+        "count":    "count",
+        "min":      "min",
+        "max":      "max",
+        "sum":      "sum",
+        "mean":     "mean",
+        "variance": "variance",
+        "stdev":    "stdev",
+        "median":   "median"
+      };
   
   function reduce(data) {
     var min = +Infinity,
@@ -2467,15 +2482,17 @@ vg.data.size = function(size, group) {
     if (median) {
       list.sort(vg.numcmp);
       i = list.length >> 1;
-      o.median = list.length % 2 ? list[i] : (list[i-1] + list[i])/2;
+      o[output.median] = list.length % 2
+        ? list[i]
+        : (list[i-1] + list[i])/2;
     }
-    o.count = len;
-    o.min = min;
-    o.max = max;
-    o.sum = sum;
-    o.mean = mean;
-    o.variance = M2;
-    o.stdev = Math.sqrt(M2);
+    o[output.count] = len;
+    o[output.min] = min;
+    o[output.max] = max;
+    o[output.sum] = sum;
+    o[output.mean] = mean;
+    o[output.variance] = M2;
+    o[output.stdev] = Math.sqrt(M2);
     return o;
   }
   
@@ -2491,6 +2508,15 @@ vg.data.size = function(size, group) {
   
   stats.value = function(field) {
     value = vg.accessor(field);
+    return stats;
+  };
+  
+  stats.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
     return stats;
   };
   
