@@ -54,7 +54,7 @@ vg.field = function(f) {
   return f.split("\\.")
     .map(function(d) { return d.split("."); })
     .reduce(function(a, b) {
-      if (a.length) { a[a.length-1] += "\\." + b.shift(); }
+      if (a.length) { a[a.length-1] += "." + b.shift(); }
       a.push.apply(a, b);
       return a;
     }, []);
