@@ -17,7 +17,8 @@ vg.View = (function() {
     if (!arguments.length) return this._width;
     if (this._width !== width) {
       this._width = width;
-      if (this._el) this.initialize(this._el);
+      if (this._el) this.initialize(this._el.parentNode);
+      this._model.width(width);
     }
     return this;
   };
@@ -26,7 +27,8 @@ vg.View = (function() {
     if (!arguments.length) return this._height;
     if (this._height !== height) {
       this._height = height;
-      if (this._el) this.initialize(this._el);
+      if (this._el) this.initialize(this._el.parentNode);
+      this._model.height(this._height);
     }
     return this;
   };
@@ -35,7 +37,7 @@ vg.View = (function() {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
       this._padding = pad;
-      if (this._el) this.initialize(this._el);
+      if (this._el) this.initialize(this._el.parentNode);
     }
     return this;
   };
@@ -44,7 +46,7 @@ vg.View = (function() {
     if (!arguments.length) return this._viewport;
     if (this._viewport !== size) {
       this._viewport = size;
-      if (this._el) this.initialize(this._el);
+      if (this._el) this.initialize(this._el.parentNode);
     }
     return this;
   };
@@ -55,7 +57,8 @@ vg.View = (function() {
     if (type === "svg") type = vg.svg;
     if (this._io !== type) {
       this._io = type;
-      if (this._el) this.initialize(this._el);
+      if (this._el) this.initialize(this._el.parentNode);
+      if (this._build) this.render();
     }
     return this;
   };
@@ -86,12 +89,12 @@ vg.View = (function() {
 
   prototype.initialize = function(el) {
     // clear pre-existing container
-    d3.select(el).select("div.vega").remove();
+    d3.select(el).select("div.vega-root").remove();
     
     // add div container
     this._el = d3.select(el)
       .append("div")
-      .attr("class", "vega")
+      .attr("class", "vega-root")
       .style("position", "relative")
       .node();
     if (this._viewport) {
@@ -113,6 +116,7 @@ vg.View = (function() {
     
     // input handler
     if (!this._handler) {
+      // TODO preserve handlers across re-initialization
       this._handler = new this._io.Handler()
         .initialize(this._el, this._padding, this)
         .model(this._model);
