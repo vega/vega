@@ -24,13 +24,13 @@
       "name": "x",
       "type": "ordinal",
       "range": "width",
-      "domain": {"data": "table", "field": ["data","x"]}
+      "domain": {"data": "table", "field": "data.x"}
     },
     {
       "name": "y",
       "range": "height",
       "nice": true,
-      "domain": {"data": "table", "field": ["data","y"]}
+      "domain": {"data": "table", "field": "data.y"}
     }
   ],
   "axes": [
@@ -43,9 +43,9 @@
       "from": {"data": "table"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": ["data", "x"]},
+          "x": {"scale": "x", "field": "data.x"},
           "width": {"scale": "x", "band": true, "offset": -1},
-          "y": {"scale": "y", "field": ["data", "y"]},
+          "y": {"scale": "y", "field": "data.y"},
           "y2": {"scale": "y", "value": 0}
         },
         "update": {

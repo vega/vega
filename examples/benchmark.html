@@ -18,7 +18,7 @@ function params() {
 }
 
 var p = params(),
-    N = (~~p.N) || 5000,
+    N = (~~p.N) || 10000,
     type = p.type || "symbol",
     ticks = p.ticks || 100,
     w = (~~p.width) || 960,
@@ -42,8 +42,8 @@ var p = params(),
         from: {data: "points"},
         properties: {
           enter: {
-            x: {scale:"x", field:["data",0]},
-            y: {scale:"y", field:["data",1]},
+            x: {scale:"x", field:"data.0"},
+            y: {scale:"y", field:"data.1"},
             size: {value: Math.PI*25},
             width: {value: 10},
             height: {value: 10},

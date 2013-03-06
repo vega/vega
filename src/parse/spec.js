@@ -10,7 +10,7 @@ vg.parse.spec = function(spec, callback) {
       return new vg.View()
         .width(spec.width || 500)
         .height(spec.height || 500)
-        .padding(spec.padding || {top:20, left:20, right:20, bottom:20})
+        .padding(parsePadding(spec.padding))
         .viewport(spec.viewport || null)
         .renderer(renderer || "canvas")
         .initialize(el)
@@ -24,6 +24,12 @@ vg.parse.spec = function(spec, callback) {
           this.update("update", item);
         });
     };
+  }
+  
+  function parsePadding(pad) {
+    if (vg.isObject(pad)) return pad;
+    var p = vg.isNumber(pad) ? pad : 20;
+    return {top:p, left:p, right:p, bottom:p};
   }
   
   vg.isObject(spec) ? parse(spec) :

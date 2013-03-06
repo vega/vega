@@ -26,7 +26,7 @@
       "range": [100, 400],
       "nice": true,
       "zero": true,
-      "domain": {"data": "stats", "field": ["data","hi"]}
+      "domain": {"data": "stats", "field": "data.hi"}
     }
   ],
   "axes": [
@@ -42,7 +42,7 @@
           "y": {"scale": "y", "field": "index"},
           "baseline": {"value": "middle"},
           "fill": {"value": "#000"},
-          "text": {"field": ["data", "label"]},
+          "text": {"field": "data.label"},
           "font": {"value": "Helvetica Neue"},
           "fontSize": {"value": 13}
         }
@@ -53,8 +53,8 @@
       "from": {"data": "stats"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": ["data", "lo"]},
-          "x2": {"scale": "x", "field": ["data", "hi"]},
+          "x": {"scale": "x", "field": "data.lo"},
+          "x2": {"scale": "x", "field": "data.hi"},
           "y": {"scale": "y", "field": "index", "offset": -1},
           "height": {"value": 1},
           "fill": {"value": "#888"}
@@ -66,7 +66,7 @@
       "from": {"data": "stats"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": ["data", "mean"]},
+          "x": {"scale": "x", "field": "data.mean"},
           "y": {"scale": "y", "field": "index"},
           "size": {"value": 40},
           "fill": {"value": "#000"}

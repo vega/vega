@@ -13,13 +13,13 @@
       "name": "x",
       "nice": true,
       "range": "width",
-      "domain": {"data": "points", "field": ["data", "x"]}
+      "domain": {"data": "points", "field": "data.x"}
     },
     {
       "name": "y",
       "nice": true,
       "range": "height",
-      "domain": {"data": "points", "field": ["data", "y"]}
+      "domain": {"data": "points", "field": "data.y"}
     }
   ],
   "axes": [
@@ -32,8 +32,8 @@
       "from": {"data": "points"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": ["data", "x"]},
-          "y": {"scale": "y", "field": ["data", "y"]},
+          "x": {"scale": "x", "field": "data.x"},
+          "y": {"scale": "y", "field": "data.y"},
           "stroke": {"value": "steelblue"},
           "fillOpacity": {"value": 0.5}
         },

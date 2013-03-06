@@ -32,12 +32,12 @@ vg.parse.properties = (function() {
 
     var val = ref.value !== undefined
               ? vg.str(ref.value)
-              : "item.datum['data']";
+              : "item.datum.data";
 
     // get data field value
     if (ref.field !== undefined) {
       val = "item.datum["
-          + vg.array(ref.field).map(vg.str).join("][")
+          + vg.field(ref.field).map(vg.str).join("][")
           + "]";
     }
     
