@@ -50,9 +50,21 @@ vg.duplicate = function(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
+vg.field = function(f) {
+  return f.split("\\.")
+    .map(function(d) { return d.split("."); })
+    .reduce(function(a, b) {
+      if (a.length) { a[a.length-1] += "\\." + b.shift(); }
+      a.push.apply(a, b);
+      return a;
+    }, []);
+}
+
 vg.accessor = function(f) {
-  return (typeof f === "function" || f == null) ? f : Array.isArray(f)
-    ? function(x) { return f.reduce(function(x,f) { return x[f]; }, x); }
+  var s;
+  return (vg.isFunction(f) || f==null)
+    ? f : vg.isString(f) && (s=vg.field(f)).length > 1
+    ? function(x) { return s.reduce(function(x,f) { return x[f]; }, x); }
     : function(x) { return x[f]; };
 };
 
@@ -61,20 +73,17 @@ vg.comparator = function(sort) {
   if (sort === undefined) sort = [];
   sort = vg.array(sort).map(function(f) {
     var s = 1;
-    if (f[0] === "-") {
-      s = -1; f = f.slice(1);
-    } else if (field[0] === "+") {
-      f = f.slice(1);
-    }
+    if      (f[0] === "-") { s = -1; f = f.slice(1); }
+    else if (f[0] === "+") { s = +1; f = f.slice(1); }
     sign.push(s);
-    return f;
+    return vg.accessor(f);
   });
   return function(a,b) {
-    var i, s;
-    for (i=0; i<sort.length; ++i) {
-      s = sort[i];
-      if (a[s] < b[s]) return -1 * sign[i];
-      if (a[s] > b[s]) return sign[i];
+    var i, n, f, x, y;
+    for (i=0, n=sort.length; i<n; ++i) {
+      f = sort[i], x = f(a), y = f(b);
+      if (x < y) return -1 * sign[i];
+      if (x > y) return sign[i];
     }
     return 0;
   };
@@ -83,7 +92,7 @@ vg.comparator = function(sort) {
 vg.numcmp = function(a, b) { return a - b; };
 
 vg.array = function(x) {
-  return x != null ? (Array.isArray(x) ? x : [x]) : [];
+  return x != null ? (vg.isArray(x) ? x : [x]) : [];
 };
 
 vg.values = function(x) {
@@ -91,9 +100,9 @@ vg.values = function(x) {
 };
 
 vg.str = function(str) {
-  return Array.isArray(str)
+  return vg.isArray(str)
     ? "[" + str.map(vg.str) + "]"
-    : (typeof str === 'string') ? ("'"+str+"'") : str;
+    : vg.isString(str) ? ("'"+str+"'") : str;
 };
 
 vg.keys = function(x) {
@@ -2951,12 +2960,12 @@ vg.data.size = function(size, group) {
 
     var val = ref.value !== undefined
               ? vg.str(ref.value)
-              : "item.datum['data']";
+              : "item.datum.data";
 
     // get data field value
     if (ref.field !== undefined) {
       val = "item.datum["
-          + vg.array(ref.field).map(vg.str).join("][")
+          + vg.field(ref.field).map(vg.str).join("][")
           + "]";
     }
     
@@ -3128,7 +3137,7 @@ vg.data.size = function(size, group) {
       return new vg.View()
         .width(spec.width || 500)
         .height(spec.height || 500)
-        .padding(spec.padding || {top:20, left:20, right:20, bottom:20})
+        .padding(parsePadding(spec.padding))
         .viewport(spec.viewport || null)
         .renderer(renderer || "canvas")
         .initialize(el)
@@ -3142,6 +3151,12 @@ vg.data.size = function(size, group) {
           this.update("update", item);
         });
     };
+  }
+  
+  function parsePadding(pad) {
+    if (vg.isObject(pad)) return pad;
+    var p = vg.isNumber(pad) ? pad : 20;
+    return {top:p, left:p, right:p, bottom:p};
   }
   
   vg.isObject(spec) ? parse(spec) :

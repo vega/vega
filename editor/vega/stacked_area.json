@@ -22,8 +22,8 @@
       "name": "stats",
       "source": "table",
       "transform": [
-        {"type": "facet", "keys": [["data","x"]]},
-        {"type": "stats", "value": ["data","y"]}
+        {"type": "facet", "keys": ["data.x"]},
+        {"type": "stats", "value": "data.y"}
       ]
     }
   ],
@@ -33,7 +33,7 @@
       "type": "linear",
       "range": "width",
       "zero": false,
-      "domain": {"data": "table", "field": ["data","x"]}
+      "domain": {"data": "table", "field": "data.x"}
     },
     {
       "name": "y",
@@ -58,8 +58,8 @@
       "from": {
         "data": "table",
         "transform": [
-          {"type": "facet", "keys": [["data","c"]]},
-          {"type": "stack", "point": ["data","x"], "height": ["data","y"]}
+          {"type": "facet", "keys": ["data.c"]},
+          {"type": "stack", "point": "data.x", "height": "data.y"}
         ]
       },
       "marks": [
@@ -68,10 +68,10 @@
           "properties": {
             "enter": {
               "interpolate": {"value": "monotone"},
-              "x": {"scale": "x", "field": ["data", "x"]},
+              "x": {"scale": "x", "field": "data.x"},
               "y": {"scale": "y", "field": "y"},
               "y2": {"scale": "y", "field": "y2"},
-              "fill": {"scale": "color", "field": ["data", "c"]}
+              "fill": {"scale": "color", "field": "data.c"}
             },
             "update": {
               "fillOpacity": {"value": 1}

@@ -11,8 +11,8 @@
       "name": "variety",
       "source": "barley",
       "transform": [
-        {"type": "facet", "keys": [["data", "variety"]]},
-        {"type": "stats", "value": ["data", "yield"], "median": true},
+        {"type": "facet", "keys": ["data.variety"]},
+        {"type": "stats", "value": "data.yield", "median": true},
         {"type": "sort", "by": "-median"}
       ]
     },
@@ -20,8 +20,8 @@
       "name": "site",
       "source": "barley",
       "transform": [
-        {"type": "facet", "keys": [["data", "site"]]},
-        {"type": "stats", "value": ["data", "yield"], "median": true},
+        {"type": "facet", "keys": ["data.site"]},
+        {"type": "stats", "value": "data.yield", "median": true},
         {"type": "sort", "by": "-median"}
       ]
     }
@@ -38,7 +38,7 @@
       "type": "linear",
       "nice": true,
       "range": "width",
-      "domain": {"data": "barley", "field": ["data","yield"]}
+      "domain": {"data": "barley", "field": "data.yield"}
     },
     {
       "name": "y",
@@ -103,10 +103,10 @@
           "type": "symbol",
           "properties": {
             "update": {
-              "x": {"scale": "x", "field": ["data", "yield"]},
-              "y": {"scale": "y", "field": ["data", "variety"]},
+              "x": {"scale": "x", "field": "data.yield"},
+              "y": {"scale": "y", "field": "data.variety"},
               "size": {"value": 50},
-              "stroke": {"scale": "c", "field": ["data", "year"]},
+              "stroke": {"scale": "c", "field": "data.year"},
               "strokeWidth": {"value": 2}
             }
           }

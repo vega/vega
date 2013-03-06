@@ -27,11 +27,11 @@
       "from": {"data": "data"},
       "properties": {
         "enter": {
-          "url": {"field": ["data", "img"]},
+          "url": {"field": "data.img"},
           "width": {"value": 50},
           "height": {"value": 50},
-          "x": {"scale": "x", "field": ["data", "x"]},
-          "y": {"scale": "y", "field": ["data", "y"]},
+          "x": {"scale": "x", "field": "data.x"},
+          "y": {"scale": "y", "field": "data.y"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"}
         },

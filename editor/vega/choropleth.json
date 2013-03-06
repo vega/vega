@@ -14,8 +14,10 @@
         {"type": "geopath", "value": "data", "projection": "albersUsa"},
         {
           "type": "zip",
-          "key": ["data","id"],
-          "with": "unemp", "withKey":["data",0], "as":"value"
+          "key": "data.id",
+          "with": "unemp",
+          "withKey": "data.0",
+          "as": "value"
         }
       ]
     },
@@ -31,7 +33,7 @@
   "scales": [
     {
       "name": "color",
-      "domain": {"data": "unemp", "field": ["data",1]},
+      "domain": {"data": "unemp", "field": "data.1"},
       "range": ["#f5f5f5","#00b"]
     }
   ],
@@ -46,7 +48,7 @@
           "path": {"field": "path"}
         },
         "update": {
-          "fill": {"scale": "color", "field": ["value","data",1]}
+          "fill": {"scale": "color", "field": "value.data.1"}
         },
         "hover": {
           "fill": {"value": "red"}

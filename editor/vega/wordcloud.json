@@ -23,9 +23,9 @@
       "transform": [
         {
           "type": "wordcloud",
-          "text": ["data", "text"],
+          "text": "data.text",
           "font": "Helvetica Neue",
-          "fontSize": ["data", "value"],
+          "fontSize": "data.value",
           "rotate": {"random": [-60,-30,0,30,60]}
         }
       ]
@@ -44,7 +44,7 @@
           "baseline": {"value": "alphabetic"},
           "font": {"field": "font"},
           "fontSize": {"field": "fontSize"},
-          "text": {"field": ["data", "text"]}
+          "text": {"field": "data.text"}
         },
         "update": {
           "fill": {"value": "steelblue"}

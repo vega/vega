@@ -22,7 +22,7 @@
       "type": "ordinal",
       "range": "height",
       "reverse": true,
-      "domain": {"data": "pop2000", "field": ["data","age"]}
+      "domain": {"data": "pop2000", "field": "data.age"}
     },
     {
       "name": "c",
@@ -37,7 +37,7 @@
       "interactive": false,
       "from": {
         "data": "pop2000",
-        "transform": [{"type":"unique", "field":["data","age"], "as":"age"}]
+        "transform": [{"type":"unique", "field":"data.age", "as":"age"}]
       },
       "properties": {
         "enter": {
@@ -55,7 +55,7 @@
       "from": {
         "data": "pop2000",
         "transform": [
-          {"type":"facet", "keys":[["data","sex"]]}
+          {"type":"facet", "keys":["data.sex"]}
         ]
       },
       "properties": {
@@ -73,23 +73,23 @@
           "range": "width",
           "reverse": {"field": "index"},
           "nice": true,
-          "domain": {"data": "pop2000", "field": ["data","people"]}
+          "domain": {"data": "pop2000", "field": "data.people"}
         }
       ],
       "axes": [
-        {"type": "x", "scale": "x", "format":"s"}
+        {"type": "x", "scale": "x", "format": "s"}
       ],
       "marks": [
         {
           "type": "rect",
           "properties": {
             "enter": {
-              "x": {"scale": "x", "field": ["data", "people"]},
+              "x": {"scale": "x", "field": "data.people"},
               "x2": {"scale": "x", "value": 0},
-              "y": {"scale": "y", "field": ["data", "age"]},
+              "y": {"scale": "y", "field": "data.age"},
               "height": {"scale": "y", "band": true, "offset": -1},
               "fillOpacity": {"value": 0.6},
-              "fill": {"scale": "c", "field": ["data", "sex"]}
+              "fill": {"scale": "c", "field": "data.sex"}
             }
           }
         }
