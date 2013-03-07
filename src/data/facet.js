@@ -11,7 +11,6 @@ vg.data.facet = function() {
         },
         map = {"": result}, 
         vals = result.values,
-        data = (vg.isArray(data) ? data : data.values),
         obj, klist, kstr, len, i, j, k, kv, cmp;
 
     for (i=0, len=data.length; i<len; ++i) {
