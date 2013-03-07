@@ -5,9 +5,9 @@ vg.scene.encode = (function() {
       EXIT   = vg.scene.EXIT;
 
   function main(scene, enc, trans, request, items) {
-    request
+    (request && items)
       ? update.call(this, scene, enc, trans, request, items)
-      : encode.call(this, scene, scene, enc, trans);
+      : encode.call(this, scene, scene, enc, trans, request);
     return scene;
   }
   
@@ -23,14 +23,14 @@ vg.scene.encode = (function() {
     }
   }
   
-  function encode(group, scene, enc, trans) {
-    encodeItems.call(this, group, scene.items, enc, trans);
+  function encode(group, scene, enc, trans, request) {
+    encodeItems.call(this, group, scene.items, enc, trans, request);
     if (scene.marktype === GROUP) {
-      encodeGroup.call(this, scene, enc, group, trans);
+      encodeGroup.call(this, scene, enc, group, trans, request);
     }
   }
   
-  function encodeGroup(scene, enc, parent, trans) {
+  function encodeGroup(scene, enc, parent, trans, request) {
     var i, len, m, mlen, group, scales, axes;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
@@ -52,19 +52,26 @@ vg.scene.encode = (function() {
       
       // encode children marks
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
-        encode.call(this, group, group.items[m], enc.marks[m], trans);
+        encode.call(this, group, group.items[m], enc.marks[m], trans, request);
       }
     }
   }
   
-  function encodeItems(group, items, enc, trans) {
+  function encodeItems(group, items, enc, trans, request) {
     if (enc.properties == null) return;
     
     var props  = enc.properties,
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,
-        i, len, item;
+        i, len, item, prop;
+    
+    if (request && (prop = props[request])) {
+      for (i=0, len=items.length; i<len; ++i) {
+        prop.call(this, items[i], group, trans);
+      }
+      return; // exit early if given request
+    }
     
     if (enter) {
       for (i=0, len=items.length; i<len; ++i) {
