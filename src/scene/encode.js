@@ -71,6 +71,7 @@ vg.scene.encode = (function() {
         item = items[i];
         if (item.status !== ENTER) continue;
         enter.call(this, item, group, trans);
+        item.status = UPDATE;
       }
     }
     

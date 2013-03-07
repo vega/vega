@@ -3359,6 +3359,7 @@ vg.scene.data = function(data, parentData) {
         item = items[i];
         if (item.status !== ENTER) continue;
         enter.call(this, item, group, trans);
+        item.status = UPDATE;
       }
     }
     
