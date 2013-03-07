@@ -7,14 +7,6 @@ vg.scene.EXIT   = 2;
 
 vg.scene.DEFAULT_DATA = {"sentinel":1}
 
-vg.scene.bounds = function(item) {
-  var b = new vg.Bounds(item.bounds);
-  for (item = item.mark.group; item != null; item = item.mark.group) {
-    b.translate(item.x||0, item.y||0);
-  }
-  return b;
-};
-
 vg.scene.data = function(data, parentData) {
   var DEFAULT = vg.scene.DEFAULT_DATA;
 

@@ -1256,11 +1256,19 @@ vg.error = function(msg) {
   prototype.element = function() {
     return this._el;
   };
+
+  function translatedBounds(item) {
+    var b = new vg.Bounds(item.bounds);
+    while ((item = item.mark.group) != null) {
+      b.translate(item.x || 0, item.y || 0);
+    }
+    return b;
+  }
     
   function getBounds(items) {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
-        return b.union(vg.scene.bounds(item));
+        return b.union(translatedBounds(item));
       }, new vg.Bounds());  
   }
   
@@ -3180,14 +3188,6 @@ vg.scene.UPDATE = 1,
 vg.scene.EXIT   = 2;
 
 vg.scene.DEFAULT_DATA = {"sentinel":1}
-
-vg.scene.bounds = function(item) {
-  var b = new vg.Bounds(item.bounds);
-  for (item = item.mark.group; item != null; item = item.mark.group) {
-    b.translate(item.x||0, item.y||0);
-  }
-  return b;
-};
 
 vg.scene.data = function(data, parentData) {
   var DEFAULT = vg.scene.DEFAULT_DATA;
