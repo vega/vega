@@ -8,11 +8,23 @@ vg.canvas.marks = (function() {
       tmpBounds = new vg.Bounds();
 
   // path generators
- 
+
   function arcPath(g, o) {
-    return renderPath(g, parsePath(arc_path(o)), o.x, o.y);
+    var x = o.x || 0,
+        y = o.y || 0,
+        ir = o.innerRadius || 0,
+        or = o.outerRadius || 0,
+        sa = (o.startAngle || 0) - Math.PI/2,
+        ea = (o.endAngle || 0) - Math.PI/2;
+    g.beginPath();
+    if (ir === 0) g.moveTo(x, y);
+    else g.arc(x, y, ir, sa, ea, 0);
+    g.arc(x, y, or, ea, sa, 1);
+    g.closePath();
+    return new vg.Bounds()
+      .set(x-or, y-or, x+or, y+or);
   }
-  
+
   function pathPath(g, o) {
     return renderPath(g, parsePath(o.path), o.x, o.y);
   }

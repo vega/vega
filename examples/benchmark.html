@@ -47,7 +47,7 @@ d3.select("#data")
 d3.select("#type")
   .on("change", function() { type = this.options[this.selectedIndex].value; })
   .selectAll("option")
-    .data(["symbol", "rect", "arc", "text"])
+    .data(["symbol", "rect", "arc", "path", "text"])
   .enter().append("option")
     .attr("value", vg.identity)
     .text(String);
@@ -123,6 +123,7 @@ function spec() {
           endAngle: {value: 5*Math.PI/6},
           innerRadius: {value: 5},
           outerRadius: {value: 10},
+          path: {value: "M-5,5L-5,-5L0,-1L5,-5L5,5L0,1Z"},
           fillOpacity: {value: Math.min(0.5, 50/Math.sqrt(N))}
         }
       }

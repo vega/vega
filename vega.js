@@ -419,14 +419,20 @@ vg.error = function(msg) {
     var a10 = sin_th * rx;
     var a11 = cos_th * ry;
 
+    var cos_th0 = Math.cos(th0);
+    var sin_th0 = Math.sin(th0);
+    var cos_th1 = Math.cos(th1);
+    var sin_th1 = Math.sin(th1);
+
     var th_half = 0.5 * (th1 - th0);
-    var t = (8/3) * Math.sin(th_half * 0.5) * Math.sin(th_half * 0.5) / Math.sin(th_half);
-    var x1 = cx + Math.cos(th0) - t * Math.sin(th0);
-    var y1 = cy + Math.sin(th0) + t * Math.cos(th0);
-    var x3 = cx + Math.cos(th1);
-    var y3 = cy + Math.sin(th1);
-    var x2 = x3 + t * Math.sin(th1);
-    var y2 = y3 - t * Math.cos(th1);
+    var sin_th_h2 = Math.sin(th_half * 0.5);
+    var t = (8/3) * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
+    var x1 = cx + cos_th0 - t * sin_th0;
+    var y1 = cy + sin_th0 + t * cos_th0;
+    var x3 = cx + cos_th1;
+    var y3 = cy + sin_th1;
+    var x2 = x3 + t * sin_th1;
+    var y2 = y3 - t * cos_th1;
 
     return (segmentToBezierCache[argsStr] = [
       a00 * x1 + a01 * y1,  a10 * x1 + a11 * y1,
@@ -751,11 +757,23 @@ vg.error = function(msg) {
       tmpBounds = new vg.Bounds();
 
   // path generators
- 
+
   function arcPath(g, o) {
-    return renderPath(g, parsePath(arc_path(o)), o.x, o.y);
+    var x = o.x || 0,
+        y = o.y || 0,
+        ir = o.innerRadius || 0,
+        or = o.outerRadius || 0,
+        sa = (o.startAngle || 0) - Math.PI/2,
+        ea = (o.endAngle || 0) - Math.PI/2;
+    g.beginPath();
+    if (ir === 0) g.moveTo(x, y);
+    else g.arc(x, y, ir, sa, ea, 0);
+    g.arc(x, y, or, ea, sa, 1);
+    g.closePath();
+    return new vg.Bounds()
+      .set(x-or, y-or, x+or, y+or);
   }
-  
+
   function pathPath(g, o) {
     return renderPath(g, parsePath(o.path), o.x, o.y);
   }
