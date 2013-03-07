@@ -1229,13 +1229,13 @@ vg.error = function(msg) {
 
     // select canvas element
     var canvas = d3.select(el)
-      .selectAll("canvas.vega")
+      .selectAll("canvas.marks")
       .data([1]);
     
     // create new canvas element if needed
     canvas.enter()
       .append("canvas")
-      .attr("class", "vega");
+      .attr("class", "marks");
     
     // initialize canvas attributes
     canvas
@@ -1284,7 +1284,6 @@ vg.error = function(msg) {
   }
   
   prototype.render = function(scene, items) {
-    var t0 = Date.now();
     var g = this._ctx,
         pad = this._padding,
         w = this._width + pad.left + pad.right,
@@ -1312,9 +1311,6 @@ vg.error = function(msg) {
     // takedown
     g.restore();
     this._scene = null;
-    
-    var t1 = Date.now();
-    vg.log("RENDER TIME: " + (t1-t0));
   };
   
   prototype.draw = function(ctx, scene, bounds) {
@@ -1361,7 +1357,7 @@ vg.error = function(msg) {
 
   prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
-    this._canvas = d3.select(el).select("canvas.vega").node();
+    this._canvas = d3.select(el).select("canvas.marks").node();
     this._padding = pad;
     this._obj = obj || null;
     
@@ -1380,6 +1376,13 @@ vg.error = function(msg) {
     if (!arguments.length) return this._model;
     this._model = model;
     return this;
+  };
+
+  prototype.handlers = function() {
+    var h = this._handlers;
+    return vg.keys(h).reduce(function(a, k) {
+      return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
+    }, []);
   };
 
   // setup events
@@ -1726,12 +1729,12 @@ vg.error = function(msg) {
     this._padding = pad;
 
     // remove any existing svg element
-    d3.select(el).select("svg.vega").remove();
+    d3.select(el).select("svg.marks").remove();
 
     // create svg element and initialize attributes
     var svg = d3.select(el)
       .append("svg")
-      .attr("class", "vega")
+      .attr("class", "marks")
       .attr("width", width + pad.left + pad.right)
       .attr("height", height + pad.top + pad.bottom);
     
@@ -1806,7 +1809,7 @@ vg.error = function(msg) {
 
   prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
-    this._svg = d3.select(el).select("svg.vega").node();
+    this._svg = d3.select(el).select("svg.marks").node();
     this._padding = pad;
     this._obj = obj || null;
     return this;
@@ -1816,6 +1819,13 @@ vg.error = function(msg) {
     if (!arguments.length) return this._model;
     this._model = model;
     return this;
+  };
+  
+  prototype.handlers = function() {
+    var h = this._handlers;
+    return vg.keys(h).reduce(function(a, k) {
+      return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
+    }, []);
   };
 
   // add an event handler
@@ -3612,6 +3622,8 @@ vg.scene.data = function(data, parentData) {
     this._height = height || 500;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
+    this._renderer = null;
+    this._handler = null;
     this._io = vg.canvas;
     if (el) this.initialize(el);
   };
@@ -3662,6 +3674,7 @@ vg.scene.data = function(data, parentData) {
     if (type === "svg") type = vg.svg;
     if (this._io !== type) {
       this._io = type;
+      this._renderer = null;
       if (this._el) this.initialize(this._el.parentNode);
       if (this._build) this.render();
     }
@@ -3693,38 +3706,43 @@ vg.scene.data = function(data, parentData) {
   };
 
   prototype.initialize = function(el) {
+    var v = this, prevHandler,
+        w = v._width, h = v._height, pad = v._padding;
+    
     // clear pre-existing container
-    d3.select(el).select("div.vega-root").remove();
+    d3.select(el).select("div.vega").remove();
     
     // add div container
-    this._el = d3.select(el)
+    this._el = el = d3.select(el)
       .append("div")
-      .attr("class", "vega-root")
+      .attr("class", "vega")
       .style("position", "relative")
       .node();
-    if (this._viewport) {
-      var vw = this._viewport[0] || this._width,
-          vh = this._viewport[1] || this._height;
-      d3.select(this._el)
-        .style("width", vw+"px")
-        .style("height", vh+"px")
+    if (v._viewport) {
+      d3.select(el)
+        .style("width",  (v._viewport[0] || w)+"px")
+        .style("height", (v._viewport[1] || h)+"px")
         .style("overflow", "auto");
     }
     
     // axis container
-    this._axes = (this._axes || new vg.Axes)
-      .initialize(this._el, this._width, this._height, this._padding);
+    v._axes = (v._axes || new vg.Axes)
+      .initialize(el, w, h, pad);
     
     // renderer
-    this._renderer = (this._renderer || new this._io.Renderer())
-      .initialize(this._el, this._width, this._height, this._padding);
+    v._renderer = (v._renderer || new this._io.Renderer())
+      .initialize(el, w, h, pad);
     
     // input handler
-    if (!this._handler) {
-      // TODO preserve handlers across re-initialization
-      this._handler = new this._io.Handler()
-        .initialize(this._el, this._padding, this)
-        .model(this._model);
+    prevHandler = v._handler;
+    v._handler = new this._io.Handler()
+      .initialize(el, pad, v)
+      .model(v._model);
+
+    if (prevHandler) {
+      prevHandler.handlers().forEach(function(h) {
+        v._handler.on(h.type, h.handler);
+      });
     }
     
     return this;

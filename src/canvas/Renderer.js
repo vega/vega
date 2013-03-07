@@ -14,13 +14,13 @@ vg.canvas.Renderer = (function() {
 
     // select canvas element
     var canvas = d3.select(el)
-      .selectAll("canvas.vega")
+      .selectAll("canvas.marks")
       .data([1]);
     
     // create new canvas element if needed
     canvas.enter()
       .append("canvas")
-      .attr("class", "vega");
+      .attr("class", "marks");
     
     // initialize canvas attributes
     canvas
@@ -69,7 +69,6 @@ vg.canvas.Renderer = (function() {
   }
   
   prototype.render = function(scene, items) {
-    var t0 = Date.now();
     var g = this._ctx,
         pad = this._padding,
         w = this._width + pad.left + pad.right,
@@ -97,9 +96,6 @@ vg.canvas.Renderer = (function() {
     // takedown
     g.restore();
     this._scene = null;
-    
-    var t1 = Date.now();
-    vg.log("RENDER TIME: " + (t1-t0));
   };
   
   prototype.draw = function(ctx, scene, bounds) {

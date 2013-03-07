@@ -27,7 +27,7 @@ vg.svg.Handler = (function() {
 
   prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
-    this._svg = d3.select(el).select("svg.vega").node();
+    this._svg = d3.select(el).select("svg.marks").node();
     this._padding = pad;
     this._obj = obj || null;
     return this;
@@ -37,6 +37,13 @@ vg.svg.Handler = (function() {
     if (!arguments.length) return this._model;
     this._model = model;
     return this;
+  };
+  
+  prototype.handlers = function() {
+    var h = this._handlers;
+    return vg.keys(h).reduce(function(a, k) {
+      return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
+    }, []);
   };
 
   // add an event handler

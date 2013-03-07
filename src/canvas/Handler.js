@@ -10,7 +10,7 @@ vg.canvas.Handler = (function() {
 
   prototype.initialize = function(el, pad, obj) {
     this._el = d3.select(el).node();
-    this._canvas = d3.select(el).select("canvas.vega").node();
+    this._canvas = d3.select(el).select("canvas.marks").node();
     this._padding = pad;
     this._obj = obj || null;
     
@@ -29,6 +29,13 @@ vg.canvas.Handler = (function() {
     if (!arguments.length) return this._model;
     this._model = model;
     return this;
+  };
+
+  prototype.handlers = function() {
+    var h = this._handlers;
+    return vg.keys(h).reduce(function(a, k) {
+      return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
+    }, []);
   };
 
   // setup events

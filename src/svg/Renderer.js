@@ -13,12 +13,12 @@ vg.svg.Renderer = (function() {
     this._padding = pad;
 
     // remove any existing svg element
-    d3.select(el).select("svg.vega").remove();
+    d3.select(el).select("svg.marks").remove();
 
     // create svg element and initialize attributes
     var svg = d3.select(el)
       .append("svg")
-      .attr("class", "vega")
+      .attr("class", "marks")
       .attr("width", width + pad.left + pad.right)
       .attr("height", height + pad.top + pad.bottom);
     
