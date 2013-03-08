@@ -1,5 +1,6 @@
 vg.data.pie = function() {
-  var value = vg.accessor("data"),
+  var one = function() { return 1; },
+      value = one,
       start = 0,
       end = 2 * Math.PI,
       sort = false,
@@ -36,7 +37,17 @@ vg.data.pie = function() {
   };
        
   pie.value = function(field) {
-    value = vg.accessor(field);
+    value = field ? vg.accessor(field) : one;
+    return pie;
+  };
+  
+  pie.startAngle = function(startAngle) {
+    start = Math.PI * startAngle / 180;
+    return pie;
+  };
+  
+  pie.endAngle = function(endAngle) {
+    end = Math.PI * endAngle / 180;
     return pie;
   };
 
