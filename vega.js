@@ -2554,7 +2554,6 @@ vg.data.size = function(size, group) {
         i, len, v, delta;
 
     var list = (vg.isArray(data) ? data : data.values || []).map(value);
-    console.log(data);
     
     // compute aggregates
     for (i=0, len=list.length; i<len; ++i) {
