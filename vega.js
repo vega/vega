@@ -419,14 +419,20 @@ vg.error = function(msg) {
     var a10 = sin_th * rx;
     var a11 = cos_th * ry;
 
+    var cos_th0 = Math.cos(th0);
+    var sin_th0 = Math.sin(th0);
+    var cos_th1 = Math.cos(th1);
+    var sin_th1 = Math.sin(th1);
+
     var th_half = 0.5 * (th1 - th0);
-    var t = (8/3) * Math.sin(th_half * 0.5) * Math.sin(th_half * 0.5) / Math.sin(th_half);
-    var x1 = cx + Math.cos(th0) - t * Math.sin(th0);
-    var y1 = cy + Math.sin(th0) + t * Math.cos(th0);
-    var x3 = cx + Math.cos(th1);
-    var y3 = cy + Math.sin(th1);
-    var x2 = x3 + t * Math.sin(th1);
-    var y2 = y3 - t * Math.cos(th1);
+    var sin_th_h2 = Math.sin(th_half * 0.5);
+    var t = (8/3) * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
+    var x1 = cx + cos_th0 - t * sin_th0;
+    var y1 = cy + sin_th0 + t * cos_th0;
+    var x3 = cx + cos_th1;
+    var y3 = cy + sin_th1;
+    var x2 = x3 + t * sin_th1;
+    var y2 = y3 - t * cos_th1;
 
     return (segmentToBezierCache[argsStr] = [
       a00 * x1 + a01 * y1,  a10 * x1 + a11 * y1,
@@ -751,11 +757,23 @@ vg.error = function(msg) {
       tmpBounds = new vg.Bounds();
 
   // path generators
- 
+
   function arcPath(g, o) {
-    return renderPath(g, parsePath(arc_path(o)), o.x, o.y);
+    var x = o.x || 0,
+        y = o.y || 0,
+        ir = o.innerRadius || 0,
+        or = o.outerRadius || 0,
+        sa = (o.startAngle || 0) - Math.PI/2,
+        ea = (o.endAngle || 0) - Math.PI/2;
+    g.beginPath();
+    if (ir === 0) g.moveTo(x, y);
+    else g.arc(x, y, ir, sa, ea, 0);
+    g.arc(x, y, or, ea, sa, 1);
+    g.closePath();
+    return new vg.Bounds()
+      .set(x-or, y-or, x+or, y+or);
   }
-  
+
   function pathPath(g, o) {
     return renderPath(g, parsePath(o.path), o.x, o.y);
   }
@@ -2052,6 +2070,50 @@ vg.data.size = function(size, group) {
   };
 
   return filter;
+};vg.data.fold = function() {
+  var fields = [],
+      accessors = [],
+      output = {
+        key: "key",
+        value: "value"
+      };
+
+  function fold(data) {
+    var values = [],
+        item, i, j, n, m = fields.length;
+
+    for (i=0, n=data.length; i<n; ++i) {
+      item = data[i];
+      for (j=0; j<m; ++j) {
+        var o = {
+          index: values.length,
+          data: item.data
+        };
+        o[output.key] = fields[j];
+        o[output.value] = accessors[j](item);
+        values.push(o);
+      }
+    }
+
+    return values;
+  }  
+
+  fold.fields = function(f) {
+    fields = vg.array(f);
+    accessors = fields.map(vg.accessor);
+    return fold;
+  };
+
+  fold.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
+    return fold;
+  };
+
+  return fold;
 };vg.data.force = function() {
   var layout = d3.layout.force(),
       links = null,
@@ -2352,7 +2414,8 @@ vg.data.size = function(size, group) {
   
   return link;
 };vg.data.pie = function() {
-  var value = vg.accessor("data"),
+  var one = function() { return 1; },
+      value = one,
       start = 0,
       end = 2 * Math.PI,
       sort = false,
@@ -2389,7 +2452,17 @@ vg.data.size = function(size, group) {
   };
        
   pie.value = function(field) {
-    value = vg.accessor(field);
+    value = field ? vg.accessor(field) : one;
+    return pie;
+  };
+  
+  pie.startAngle = function(startAngle) {
+    start = Math.PI * startAngle / 180;
+    return pie;
+  };
+  
+  pie.endAngle = function(endAngle) {
+    end = Math.PI * endAngle / 180;
     return pie;
   };
 
@@ -2657,16 +2730,17 @@ vg.data.size = function(size, group) {
       var size = layout.size(),
           dx = size[0] / 2,
           dy = size[1] / 2,
-          keys = vg.keys(output), key, d;
+          keys = vg.keys(output),
+          key, d, i, n, k, m = keys.length;
 
       // sort data to match wordcloud order
       data.sort(function(a,b) {
         return fontSize(b) - fontSize(a);
       });
 
-      for (var i=0; i<tags.length; ++i) {
+      for (i=0, n=tags.length; i<n; ++i) {
         d = data[i];
-        for (var k=0; k<keys.length; ++k) {
+        for (k=0; k<m; ++k) {
           key = keys[k];
           d[output[key]] = tags[i][key];
           if (key === "x") d[output.x] += dx;
@@ -3303,9 +3377,9 @@ vg.scene.data = function(data, parentData) {
       EXIT   = vg.scene.EXIT;
 
   function main(scene, enc, trans, request, items) {
-    request
+    (request && items)
       ? update.call(this, scene, enc, trans, request, items)
-      : encode.call(this, scene, scene, enc, trans);
+      : encode.call(this, scene, scene, enc, trans, request);
     return scene;
   }
   
@@ -3321,14 +3395,14 @@ vg.scene.data = function(data, parentData) {
     }
   }
   
-  function encode(group, scene, enc, trans) {
-    encodeItems.call(this, group, scene.items, enc, trans);
+  function encode(group, scene, enc, trans, request) {
+    encodeItems.call(this, group, scene.items, enc, trans, request);
     if (scene.marktype === GROUP) {
-      encodeGroup.call(this, scene, enc, group, trans);
+      encodeGroup.call(this, scene, enc, group, trans, request);
     }
   }
   
-  function encodeGroup(scene, enc, parent, trans) {
+  function encodeGroup(scene, enc, parent, trans, request) {
     var i, len, m, mlen, group, scales, axes;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
@@ -3350,19 +3424,26 @@ vg.scene.data = function(data, parentData) {
       
       // encode children marks
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
-        encode.call(this, group, group.items[m], enc.marks[m], trans);
+        encode.call(this, group, group.items[m], enc.marks[m], trans, request);
       }
     }
   }
   
-  function encodeItems(group, items, enc, trans) {
+  function encodeItems(group, items, enc, trans, request) {
     if (enc.properties == null) return;
     
     var props  = enc.properties,
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,
-        i, len, item;
+        i, len, item, prop;
+    
+    if (request && (prop = props[request])) {
+      for (i=0, len=items.length; i<len; ++i) {
+        prop.call(this, items[i], group, trans);
+      }
+      return; // exit early if given request
+    }
     
     if (enter) {
       for (i=0, len=items.length; i<len; ++i) {
@@ -3565,8 +3646,8 @@ vg.scene.data = function(data, parentData) {
       src = this._defs.data.source[k] || [];
       for (j=0; j<src.length; ++j) {
         this._data[src[j]] = tx[src[j]]
-          ? tx[src[j]](data[k], this._data, this._defs.marks)
-          : data[k]
+          ? tx[src[j]](this._data[k], this._data, this._defs.marks)
+          : this._data[k]
       }
     }
 
