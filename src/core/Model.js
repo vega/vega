@@ -30,8 +30,8 @@ vg.Model = (function() {
       src = this._defs.data.source[k] || [];
       for (j=0; j<src.length; ++j) {
         this._data[src[j]] = tx[src[j]]
-          ? tx[src[j]](data[k], this._data, this._defs.marks)
-          : data[k]
+          ? tx[src[j]](this._data[k], this._data, this._defs.marks)
+          : this._data[k]
       }
     }
 

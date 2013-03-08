@@ -2070,6 +2070,50 @@ vg.data.size = function(size, group) {
   };
 
   return filter;
+};vg.data.fold = function() {
+  var fields = [],
+      accessors = [],
+      output = {
+        key: "key",
+        value: "value"
+      };
+
+  function fold(data) {
+    var values = [],
+        item, i, j, n, m = fields.length;
+
+    for (i=0, n=data.length; i<n; ++i) {
+      item = data[i];
+      for (j=0; j<m; ++j) {
+        var o = {
+          index: values.length,
+          data: item.data
+        };
+        o[output.key] = fields[j];
+        o[output.value] = accessors[j](item);
+        values.push(o);
+      }
+    }
+
+    return values;
+  }  
+
+  fold.fields = function(f) {
+    fields = vg.array(f);
+    accessors = fields.map(vg.accessor);
+    return fold;
+  };
+
+  fold.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) {
+        output[k] = map[k];
+      }
+    });
+    return fold;
+  };
+
+  return fold;
 };vg.data.force = function() {
   var layout = d3.layout.force(),
       links = null,
@@ -2510,6 +2554,7 @@ vg.data.size = function(size, group) {
         i, len, v, delta;
 
     var list = (vg.isArray(data) ? data : data.values || []).map(value);
+    console.log(data);
     
     // compute aggregates
     for (i=0, len=list.length; i<len; ++i) {
@@ -2675,16 +2720,17 @@ vg.data.size = function(size, group) {
       var size = layout.size(),
           dx = size[0] / 2,
           dy = size[1] / 2,
-          keys = vg.keys(output), key, d;
+          keys = vg.keys(output),
+          key, d, i, n, k, m = keys.length;
 
       // sort data to match wordcloud order
       data.sort(function(a,b) {
         return fontSize(b) - fontSize(a);
       });
 
-      for (var i=0; i<tags.length; ++i) {
+      for (i=0, n=tags.length; i<n; ++i) {
         d = data[i];
-        for (var k=0; k<keys.length; ++k) {
+        for (k=0; k<m; ++k) {
           key = keys[k];
           d[output[key]] = tags[i][key];
           if (key === "x") d[output.x] += dx;
@@ -3590,8 +3636,8 @@ vg.scene.data = function(data, parentData) {
       src = this._defs.data.source[k] || [];
       for (j=0; j<src.length; ++j) {
         this._data[src[j]] = tx[src[j]]
-          ? tx[src[j]](data[k], this._data, this._defs.marks)
-          : data[k]
+          ? tx[src[j]](this._data[k], this._data, this._defs.marks)
+          : this._data[k]
       }
     }
 

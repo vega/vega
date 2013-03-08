@@ -19,16 +19,17 @@ vg.data.wordcloud = function() {
       var size = layout.size(),
           dx = size[0] / 2,
           dy = size[1] / 2,
-          keys = vg.keys(output), key, d;
+          keys = vg.keys(output),
+          key, d, i, n, k, m = keys.length;
 
       // sort data to match wordcloud order
       data.sort(function(a,b) {
         return fontSize(b) - fontSize(a);
       });
 
-      for (var i=0; i<tags.length; ++i) {
+      for (i=0, n=tags.length; i<n; ++i) {
         d = data[i];
-        for (var k=0; k<keys.length; ++k) {
+        for (k=0; k<m; ++k) {
           key = keys[k];
           d[output[key]] = tags[i][key];
           if (key === "x") d[output.x] += dx;
