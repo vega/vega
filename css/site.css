@@ -11,6 +11,7 @@ strong {
 
 body {
   margin: 0 auto;
+  margin-top: 20px;
   padding: 15px;
   max-width: 700px;
 }
