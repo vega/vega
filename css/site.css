@@ -1,17 +1,23 @@
 * {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-weight: 300;
+  font-size: 17px;
   line-height: 24px;
+}
+
+strong {
+  font-weight: 400;
 }
 
 body {
   margin: 0 auto;
   padding: 15px;
-  max-width: 750px;
+  max-width: 700px;
 }
 
 a {
   color: #0ac04a;
+  text-decoration: none;
 }
 
 a:hover {
@@ -25,7 +31,6 @@ a:hover {
 
 #main {
   margin-left: 160px;
-  margin-top: 6px;
 }
 
 .example img {
@@ -42,7 +47,7 @@ a:hover {
 }
 
 .credits {
-  margin-top: 2.0em;
+  margin-top: 1.3em;
   text-align: left;
 }
 
