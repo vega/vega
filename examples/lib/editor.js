@@ -4,6 +4,15 @@ var ved = {
   renderType: "canvas"
 };
 
+ved.params = function() {
+  return location.search.slice(1)
+    .split("&")
+    .map(function(x) { return x.split("="); })
+    .reduce(function(a, b) {
+      a[b[0]] = b[1]; return a;
+    }, {});
+};
+
 ved.select = function() {
   var sel = document.getElementById("sel_spec"),
       idx = sel.selectedIndex,
@@ -76,10 +85,21 @@ ved.init = function() {
     .attr("value", function(d) { return d.toLowerCase(); })
     .text(function(d) { return d; });
 
+  // Initialize application
   d3.select("#btn_spec_format").on("click", ved.format);
   d3.select("#btn_spec_parse").on("click", ved.parse);
   d3.select(window).on("resize", ved.resize);
   ved.resize();
+  
+  // Handle application parameters
+  var p = ved.params();
+  if (p.spec) {
+    var idx = SPECS.indexOf(p.spec) + 1;
+    if (idx > 0) {
+      sel.node().selectedIndex = idx;
+      ved.select();
+    }
+  }
 };
 
 window.onload = ved.init;
