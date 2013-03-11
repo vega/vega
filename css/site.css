@@ -7,7 +7,7 @@
 body {
   margin: 0 auto;
   padding: 15px;
-  max-width: 550px;
+  max-width: 750px;
 }
 
 a {
@@ -16,6 +16,25 @@ a {
 
 a:hover {
   color: #f05a00;
+}
+
+#side {
+  float: left;
+  width: 130px;
+}
+
+#main {
+  margin-left: 160px;
+  margin-top: 6px;
+}
+
+.example img {
+  width: 120px;
+  border: 1px solid #ccc;
+}
+
+.example img:hover {
+  border: 1px solid #f05a00;
 }
 
 .content {
