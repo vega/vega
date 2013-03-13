@@ -437,8 +437,8 @@ vg.canvas.marks = (function() {
   };
   
   function hitTestText(g, o, x, y, gx, gy) {
-    if (!o.angle)
-      return true; // bounds sufficient if no rotation
+    if (!o.fontSize) return false;
+    if (!o.angle) return true; // bounds sufficient if no rotation
 
     g.font = fontString(o);
     
