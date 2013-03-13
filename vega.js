@@ -3283,12 +3283,42 @@ vg.scene.data = function(data, parentData) {
   if (data === DEFAULT) data = [DEFAULT];
   
   return data;
+};vg.scene.Item = (function() {
+  function item(mark) {
+    this.mark = mark;
+  }
+  
+  var prototype = item.prototype;
+
+  prototype.cousin = function(offset, index) {
+    if (offset === 0) return this;
+    offset = offset || -1;
+    var mark = this.mark,
+        group = mark.group,
+        iidx = index==null ? mark.items.indexOf(this) : index,
+        midx = group.items.indexOf(mark) + offset;
+    return group.items[midx].items[iidx];
+  };
+  
+  prototype.sibling = function(offset) {
+    if (offset === 0) return this;
+    offset = offset || -1;
+    var mark = this.mark,
+        iidx = mark.items.indexOf(this) + offset;
+    return mark.items[iidx];
+  };
+  
+  return item;
+})();
+
+vg.scene.item = function(mark) {
+  return new vg.scene.Item(mark);
 };vg.scene.build = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
       EXIT   = vg.scene.EXIT,
-      DEFAULT= {"sentinel":1}
+      DEFAULT= {"sentinel":1};
   
   function build(model, db, node, parentData) {
     var data = vg.scene.data(
@@ -3332,7 +3362,7 @@ vg.scene.data = function(data, parentData) {
       datum = data[i];
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
-      enter = item ? false : (item = {mark:node}, true);
+      enter = item ? false : (item = vg.scene.item(node), true);
       item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
@@ -3853,4 +3883,97 @@ vg.scene.data = function(data, parentData) {
     
   return view;
 })();
+vg.Spec = (function() {
+  var spec = function(s) {
+    this.spec = {
+      width: 500,
+      height: 500,
+      padding: 0,
+      data: [],
+      scales: [],
+      axes: [],
+      marks: []
+    };
+    if (s) vg.extend(this.spec, s);
+  };
+  
+  var prototype = spec.prototype;
+
+  prototype.width = function(w) {
+    this.spec.width = w;
+    return this;
+  };
+  
+  prototype.height = function(h) {
+    this.spec.height = h;
+    return this;
+  };
+  
+  prototype.padding = function(p) {
+    this.spec.padding = p;
+    return this;
+  };
+  
+  prototype.viewport = function(v) {
+    this.spec.viewport = v;
+    return this;
+  };
+
+  prototype.data = function(name, params) {
+    if (!params) params = vg.isString(name) ? {name: name} : name;
+    else params.name = name;
+    this.spec.data.push(params);
+    return this;
+  };
+  
+  prototype.scale = function(name, params) {
+    if (!params) params = vg.isString(name) ? {name: name} : name;
+    else params.name = name;
+    this.spec.scales.push(params);
+    return this;
+  };
+  
+  prototype.axis = function(params) {
+    this.spec.axes.push(params);
+    return this;
+  };
+  
+  prototype.mark = function(type, mark) {
+    if (!mark) mark = {type: type};
+    else mark.type = type;
+    mark.properties = {};
+    this.spec.marks.push(mark);
+    
+    var that = this;
+    return {
+      from: function(name, obj) {
+              mark.from = obj
+                ? (obj.data = name, obj)
+                : vg.isString(name) ? {data: name} : name;
+              return this;
+            },
+      prop: function(name, obj) {
+              mark.properties[name] = vg.keys(obj).reduce(function(o,k) {
+                var v = obj[k];
+                return (o[k] = vg.isObject(v) ? v : {value: v}, o);
+              }, {});
+              return this;
+            },
+      done: function() { return that; }
+    };
+  };
+
+  prototype.parse = function(callback) {
+    vg.parse.spec(this.spec, callback);
+  };
+
+  prototype.json = function() {
+    return this.spec;
+  };
+
+  return spec;
 })();
+
+vg.spec = function(s) {
+  return new vg.Spec(s);
+}})();

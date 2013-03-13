@@ -50,12 +50,14 @@ vega.js: \
 	src/parse/spec.js \
 	src/parse/transform.js \
 	src/scene/_package.js \
+	src/scene/Item.js \
 	src/scene/build.js \
 	src/scene/encode.js \
 	src/scene/visit.js \
 	src/core/Axes.js \
 	src/core/Model.js \
 	src/core/View.js \
+	src/core/Spec.js \
 	src/core/_end.js
 
 %.min.js: %.js Makefile

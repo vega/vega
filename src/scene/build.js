@@ -3,7 +3,7 @@ vg.scene.build = (function() {
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
       EXIT   = vg.scene.EXIT,
-      DEFAULT= {"sentinel":1}
+      DEFAULT= {"sentinel":1};
   
   function build(model, db, node, parentData) {
     var data = vg.scene.data(
@@ -47,7 +47,7 @@ vg.scene.build = (function() {
       datum = data[i];
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
-      enter = item ? false : (item = {mark:node}, true);
+      enter = item ? false : (item = vg.scene.item(node), true);
       item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
