@@ -57,7 +57,7 @@ var spec1 = {
 };
 
 var spec2 = vg.duplicate(spec1);
-spec2.marks[0].key = "data.x"; // test with explicit key!
+spec2.marks[0].key = "data.x"; // test with explicit key
   
 var table = [
   {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
@@ -72,7 +72,7 @@ var table = [
   {"x": 19, "y": 49}, {"x": 20, "y": 75}
 ];
 var data = {table: table}, id = 20, timer = null;
-var renderer = "svg";
+var renderer = "canvas";
 
 function timestep() {
   id = (id % 100) + 1;
