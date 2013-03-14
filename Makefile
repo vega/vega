@@ -54,7 +54,6 @@ vega.js: \
 	src/scene/build.js \
 	src/scene/encode.js \
 	src/scene/transition.js \
-	src/scene/visit.js \
 	src/core/Axes.js \
 	src/core/Model.js \
 	src/core/View.js \

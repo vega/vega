@@ -71,9 +71,5 @@ vg.Model = (function() {
     return this;
   };
   
-  prototype.visit = function(pre, post) {
-    return vg.scene.visit(this._scene, pre, post);
-  };
-  
   return model;
 })();
