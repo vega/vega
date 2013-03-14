@@ -78,6 +78,7 @@ vg.View = (function() {
       return (d[k] = data[k].map(vg.data.ingest), d);
     }, {});
     this._model.data(ingest);
+    this._build = false;
     return this;
   };
 

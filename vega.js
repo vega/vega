@@ -3475,29 +3475,24 @@ vg.scene.item = function(mark) {
       return; // exit early if given request
     }
     
-    if (enter) {
-      for (i=0, len=items.length; i<len; ++i) {
-        item = items[i];
-        if (item.status !== ENTER) continue;
-        enter.call(this, item, group, trans);
+    for (i=0; i<items.length; ++i) {
+      item = items[i];
+      
+      // enter set
+      if (item.status === ENTER) {
+        if (enter) enter.call(this, item, group);
         item.status = UPDATE;
       }
-    }
-    
-    if (update) {
-      for (i=0, len=items.length; i<len; ++i) {
-        item = items[i];
-        if (item.status === EXIT) continue;
+
+      // update set      
+      if (item.status !== EXIT && update) {
         update.call(this, item, group, trans);
       }
-    }
-    
-    if (exit) {
-      for (i=0, len=items.length; i<len; ++i) {
-        item = items[i];
-        if (item.status !== EXIT) continue;
-        exit.call(this, item, group, trans);
-      }
+      
+      // exit set
+      if (item.status === EXIT) (exit && trans) 
+        ? exit.call(this, item, group, trans)
+        : items.splice(i--, 1);
     }
   }
   
@@ -3804,6 +3799,7 @@ vg.scene.item = function(mark) {
       return (d[k] = data[k].map(vg.data.ingest), d);
     }, {});
     this._model.data(ingest);
+    this._build = false;
     return this;
   };
 
