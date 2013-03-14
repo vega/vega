@@ -23,6 +23,14 @@ vg.scene.Item = (function() {
     return mark.items[iidx];
   };
   
+  prototype.remove = function() {
+    var item = this,
+        list = item.mark.items,
+        i = list.indexOf(item);
+    if (i >= 0) (i===list.length-1) ? list.pop() : list.splice(i, 1);
+    return item;
+  };
+  
   return item;
 })();
 

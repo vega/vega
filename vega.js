@@ -751,7 +751,6 @@ vg.error = function(msg) {
   
   var parsePath = vg.canvas.path.parse,
       renderPath = vg.canvas.path.render,
-      arc_path = d3.svg.arc(),
       sqrt3 = Math.sqrt(3),
       tan30 = Math.tan(30 * Math.PI / 180),
       tmpBounds = new vg.Bounds();
@@ -3023,27 +3022,31 @@ vg.data.size = function(size, group) {
     var code = "",
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
+        
+    code += "var o = trans ? {} : item;\n"
     
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
       code += (i > 0) ? "\n  " : "  ";
-      code += "item."+name+" = "+valueRef(ref)+";";
+      code += "o."+name+" = "+valueRef(ref)+";";
       vars[name] = true;
     }
     
     if (vars.x2) {
-      code += "\n  if (item.x > item.x2) { "
-            + "var t = item.x; item.x = item.x2; item.x2 = t; };"
-      code += "\n  item.width = (item.x2 - item.x);"
+      code += "\n  if (o.x > o.x2) { "
+            + "var t = o.x; o.x = o.x2; o.x2 = t; };"
+      code += "\n  o.width = (o.x2 - o.x);"
     }
     
     if (vars.y2) {
-      code += "\n  if (item.y > item.y2) { "
-            + "var t = item.y; item.y = item.y2; item.y2 = t; };"
-      code += "\n  item.height = (item.y2 - item.y);"
+      code += "\n  if (o.y > o.y2) { "
+            + "var t = o.y; o.y = o.y2; o.y2 = t; };"
+      code += "\n  o.height = (o.y2 - o.y);"
     }
+    
+    code += "if (trans) trans.interpolate(item, o);";
 
-    return Function("item", "group", code);
+    return Function("item", "group", "trans", code);
   }
 
   // TODO security check for strings emitted into code
@@ -3308,6 +3311,14 @@ vg.scene.data = function(data, parentData) {
     return mark.items[iidx];
   };
   
+  prototype.remove = function() {
+    var item = this,
+        list = item.mark.items,
+        i = list.indexOf(item);
+    if (i >= 0) (i===list.length-1) ? list.pop() : list.splice(i, 1);
+    return item;
+  };
+  
   return item;
 })();
 
@@ -3490,14 +3501,90 @@ vg.scene.item = function(mark) {
       }
       
       // exit set
-      if (item.status === EXIT) (exit && trans) 
-        ? exit.call(this, item, group, trans)
-        : items.splice(i--, 1);
+      if (item.status === EXIT) {
+        if (exit && trans) exit.call(this, item, group, trans);
+        (trans ? trans.remove(item) : items[i--].remove());
+      }
     }
   }
   
   return main;
-})();vg.scene.visit = (function() {
+})();vg.scene.Transition = (function() {
+  function trans(duration, ease) {
+    this.duration = duration || 500;
+    this.ease = ease || d3.ease("cubic-in-out");
+    this.updates = [];
+    this.exits = [];
+  }
+  
+  var prototype = trans.prototype;
+  
+  prototype.interpolate = function(item, values) {
+    var key, curr, next, interp, list = null;
+
+    for (key in values) {
+      curr = item[key];
+      next = values[key];
+      if (curr !== next) {
+        interp = d3.interpolate(curr, next);
+        interp.property = key;
+        (list || (list=[])).push(interp);
+      }
+    }
+
+    if (interp) {
+      list.item = item;
+      list.ease = this.ease; // TODO parametrize
+      this.updates.push(list);
+    }
+    return this;
+  };
+  
+  prototype.remove = function(item) {
+    this.exits.push(item);
+    return this;
+  };
+
+  prototype.start = function(callback) {
+    var t = this, duration = t.duration;
+    d3.timer(function(elapsed) {
+      if (elapsed >= duration) {
+        return (t.stop(), callback(), true);
+      } else {
+        (t.step(elapsed, duration), callback());
+      }
+    });
+  };
+
+  prototype.step = function(elapsed, duration) {
+    var updates = this.updates,
+        frac = elapsed / duration,
+        list, item, f, i, j, n, m;
+
+    for (i=0, n=updates.length; i<n; ++i) {
+      list = updates[i];
+      item = list.item;
+      f = list.ease(frac);
+      for (j=0, m=list.length; j<m; ++j) {
+        item[list[j].property] = list[j](f);
+      }
+    }
+    return this;
+  };
+  
+  prototype.stop = function() {
+    this.step(1, 1);
+    for (var e=this.exits, i=e.length; --i>=0;) e[i].remove();
+    return this;
+  };
+  
+  return trans;
+  
+})();
+
+vg.scene.transition = function(dur, ease) {
+  return new vg.scene.Transition(dur, ease);
+};vg.scene.visit = (function() {
   function visit(scene, pre, post) {
     var i, j, len, llen, mark, retval,
         items = scene.items,
@@ -3573,7 +3660,7 @@ vg.scene.item = function(mark) {
   prototype.update = function(model, duration) {
     duration = duration || 0;
     var init = this._init; this._init = true;
-    var dom = d3.selectAll("svg.axes").select("g");
+    var dom = d3.select(this._el).selectAll("svg.axes").select("g");
     var axes = collectAxes(model.scene(), 0, 0, []);
     
     if (!init) {
@@ -3706,11 +3793,9 @@ vg.scene.item = function(mark) {
     return this;
   };
   
-  prototype.encode = function(request, item) {
-    var m = this,
-        scene = m._scene,
-        defs = m._defs;
-    vg.scene.encode.call(m, scene, defs.marks, null, request, item);
+  prototype.encode = function(trans, request, item) {
+    var m = this, scene = m._scene, defs = m._defs;
+    vg.scene.encode.call(m, scene, defs.marks, trans, request, item);
     return this;
   };
   
@@ -3871,10 +3956,26 @@ vg.scene.item = function(mark) {
     return this;
   };
   
-  prototype.update = function(request, items) {
-    this._build = this._build || (this._model.build(), true);
-    this._model.encode(request, items);
-    return this.render(items);
+  prototype.update = function(duration, request, items) {
+    if (arguments.length && vg.isString(duration)) {
+      items = request;
+      request = duration;
+      duration = 0;
+    }
+    var view = this;
+    var trans = duration ? vg.scene.transition(duration) : null;
+
+    view._build = view._build || (view._model.build(), true);
+    view._model.encode(trans, request, items);
+    
+    if (trans) {
+      trans.start(function(items) {
+        view._renderer.render(view._model.scene(), items);
+      });
+      this._axes.update(this._model, duration);
+    }
+    else view.render(items);
+    return view;
   };
     
   return view;

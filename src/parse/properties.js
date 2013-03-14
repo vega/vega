@@ -3,27 +3,31 @@ vg.parse.properties = (function() {
     var code = "",
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
+        
+    code += "var o = trans ? {} : item;\n"
     
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
       code += (i > 0) ? "\n  " : "  ";
-      code += "item."+name+" = "+valueRef(ref)+";";
+      code += "o."+name+" = "+valueRef(ref)+";";
       vars[name] = true;
     }
     
     if (vars.x2) {
-      code += "\n  if (item.x > item.x2) { "
-            + "var t = item.x; item.x = item.x2; item.x2 = t; };"
-      code += "\n  item.width = (item.x2 - item.x);"
+      code += "\n  if (o.x > o.x2) { "
+            + "var t = o.x; o.x = o.x2; o.x2 = t; };"
+      code += "\n  o.width = (o.x2 - o.x);"
     }
     
     if (vars.y2) {
-      code += "\n  if (item.y > item.y2) { "
-            + "var t = item.y; item.y = item.y2; item.y2 = t; };"
-      code += "\n  item.height = (item.y2 - item.y);"
+      code += "\n  if (o.y > o.y2) { "
+            + "var t = o.y; o.y = o.y2; o.y2 = t; };"
+      code += "\n  o.height = (o.y2 - o.y);"
     }
+    
+    code += "if (trans) trans.interpolate(item, o);";
 
-    return Function("item", "group", code);
+    return Function("item", "group", "trans", code);
   }
 
   // TODO security check for strings emitted into code

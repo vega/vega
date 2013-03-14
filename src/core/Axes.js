@@ -45,7 +45,7 @@ vg.Axes = (function() {
   prototype.update = function(model, duration) {
     duration = duration || 0;
     var init = this._init; this._init = true;
-    var dom = d3.selectAll("svg.axes").select("g");
+    var dom = d3.select(this._el).selectAll("svg.axes").select("g");
     var axes = collectAxes(model.scene(), 0, 0, []);
     
     if (!init) {

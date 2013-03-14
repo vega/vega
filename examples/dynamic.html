@@ -8,15 +8,21 @@
 * { font-family: Helvetica Neue, Helvetica, Arial, sans-serif; }
 .view { display: block; }
 input[type="range"] { width: 280px; }
+.ctrl { display: inline-block; width: 90px; font-weight: bold; }
     </style>
   </head>
   <body>
     <div>No Key   <div id="view1" class="view"></div></div>
     <div>With Key <div id="view2" class="view"></div></div>
     <div>
-      <b>Timestep</b> &nbsp;
-      5ms <input type="range" min="5" max="1000" value="1000"/> 1s
-      <br/><br/>
+      <span class="ctrl">Duration</span>
+      0s
+      <input id="timestep" type="range" min="0" max="1000" value="1000"/>
+      1s
+      <br/>
+      <span class="ctrl">Animation</span>
+      <input id="animate" type="checkbox"/>
+      <label id="alabel" for="animate">Off</label>
     </div>
   </body>
   <script type="text/javascript">
@@ -44,12 +50,25 @@ var spec1 = {
       "type": "rect",
       "from": {"data": "table"},
       "properties": {
+        "enter": {
+          "x": {"value": 400},
+          "width": {"scale": "x", "band": true, "offset": -1},
+          "y": {"scale": "y", "field": "data.y"},
+          "y2": {"scale": "y", "value": 0},
+          "fill": {"value": "steelblue"},
+          "fillOpacity": {"value": 0}
+        },
         "update": {
           "x": {"scale": "x", "field": "data.x"},
           "width": {"scale": "x", "band": true, "offset": -1},
           "y": {"scale": "y", "field": "data.y"},
           "y2": {"scale": "y", "value": 0},
-          "fill": {"value": "steelblue"}
+          "fill": {"value": "steelblue"},
+          "fillOpacity": {"value": 1}
+        },
+        "exit": {
+          "x": {"value": -20},
+          "fillOpacity": {"value": 0}
         }
       }
     }
@@ -72,14 +91,14 @@ var table = [
   {"x": 19, "y": 49}, {"x": 20, "y": 75}
 ];
 var data = {table: table}, id = 20, timer = null;
-var renderer = "canvas";
+var renderer = "canvas", animate = false, dur = 1000;
 
 function timestep() {
   id = (id % 100) + 1;
   table.shift();
   table.push({x: id, y: ~~(100 * Math.random())});
-  self.view1.data(data).update();
-  self.view2.data(data).update();
+  self.view1.data(data).update(animate ? dur : null);
+  self.view2.data(data).update(animate ? dur : null);
 }
 
 function run(step) {
@@ -94,8 +113,14 @@ vg.parse.spec(spec2, function(chart) {
   self.view2 = chart("#view2", data, renderer).update();
 });
 
-d3.select("input").on("change", function() { run(+this.value); });
-run(1000);
+d3.select("#timestep").on("change", function() {
+  run(dur = +this.value);
+});
+d3.select("#animate").on("change", function() {
+  animate = this.checked;
+  d3.select("#alabel").text(animate ? "On" : "Off");
+});
+run(dur);
 
   </script>
 </html>

@@ -88,9 +88,10 @@ vg.scene.encode = (function() {
       }
       
       // exit set
-      if (item.status === EXIT) (exit && trans) 
-        ? exit.call(this, item, group, trans)
-        : items.splice(i--, 1);
+      if (item.status === EXIT) {
+        if (exit && trans) exit.call(this, item, group, trans);
+        (trans ? trans.remove(item) : items[i--].remove());
+      }
     }
   }
   

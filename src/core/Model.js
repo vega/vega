@@ -65,11 +65,9 @@ vg.Model = (function() {
     return this;
   };
   
-  prototype.encode = function(request, item) {
-    var m = this,
-        scene = m._scene,
-        defs = m._defs;
-    vg.scene.encode.call(m, scene, defs.marks, null, request, item);
+  prototype.encode = function(trans, request, item) {
+    var m = this, scene = m._scene, defs = m._defs;
+    vg.scene.encode.call(m, scene, defs.marks, trans, request, item);
     return this;
   };
   

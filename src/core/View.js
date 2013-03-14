@@ -150,10 +150,26 @@ vg.View = (function() {
     return this;
   };
   
-  prototype.update = function(request, items) {
-    this._build = this._build || (this._model.build(), true);
-    this._model.encode(request, items);
-    return this.render(items);
+  prototype.update = function(duration, request, items) {
+    if (arguments.length && vg.isString(duration)) {
+      items = request;
+      request = duration;
+      duration = 0;
+    }
+    var view = this;
+    var trans = duration ? vg.scene.transition(duration) : null;
+
+    view._build = view._build || (view._model.build(), true);
+    view._model.encode(trans, request, items);
+    
+    if (trans) {
+      trans.start(function(items) {
+        view._renderer.render(view._model.scene(), items);
+      });
+      this._axes.update(this._model, duration);
+    }
+    else view.render(items);
+    return view;
   };
     
   return view;

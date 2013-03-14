@@ -2,7 +2,6 @@ vg.canvas.marks = (function() {
   
   var parsePath = vg.canvas.path.parse,
       renderPath = vg.canvas.path.render,
-      arc_path = d3.svg.arc(),
       sqrt3 = Math.sqrt(3),
       tan30 = Math.tan(30 * Math.PI / 180),
       tmpBounds = new vg.Bounds();
