@@ -123,12 +123,13 @@ vg.canvas.marks = (function() {
   
   function drawPathOne(path, g, o, items) {
     var fill = o.fill, stroke = o.stroke, opac, lc, lw;
-    if (!fill && !stroke) return;
-
     o.bounds = path(g, items);
+    
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac == 0 || !fill && !stroke) return;
 
     if (fill) {
-      g.globalAlpha = (opac=o.fillOpacity) != undefined ? opac : 1;
+      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
       g.fillStyle = fill;
       g.fill();
     }
@@ -136,7 +137,7 @@ vg.canvas.marks = (function() {
     if (stroke) {
       lw = (lw = o.strokeWidth) != undefined ? lw : 1;
       if (lw > 0) {
-        g.globalAlpha = (opac=o.strokeOpacity) != undefined ? opac : 1;
+        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
         g.strokeStyle = stroke;
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
@@ -171,8 +172,11 @@ vg.canvas.marks = (function() {
       o.bounds = (o.bounds || new vg.Bounds())
         .set(x, y, x+o.width, y+o.height);
 
+      opac = o.opacity == null ? 1 : o.opacity;
+      if (opac == 0) return;
+
       if (fill = o.fill) {
-        g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+        g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
         g.fillStyle = fill;
         g.fillRect(x, y, o.width, o.height);
       }
@@ -180,7 +184,7 @@ vg.canvas.marks = (function() {
       if (stroke = o.stroke) {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
-          g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
+          g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
           g.strokeStyle = stroke;
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
@@ -215,7 +219,7 @@ vg.canvas.marks = (function() {
         ? h/2 : (o.baseline === "bottom" ? h : 0));
       o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
 
-      g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+      g.globalAlpha = (opac = o.opacity) != undefined ? opac : 1;
       g.drawImage(o.image, x, y, w, h);
     }
   }
@@ -242,7 +246,10 @@ vg.canvas.marks = (function() {
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
       o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds())).expand(1);
-            
+
+      opac = o.opacity == null ? 1 : o.opacity;
+      if (opac == 0) return;
+
       if (o.angle) {
         g.save();
         g.translate(o.x, o.y);
@@ -255,7 +262,7 @@ vg.canvas.marks = (function() {
       }
 
       if (fill = o.fill) {
-        g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+        g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
         g.fillStyle = fill;
         g.fillText(o.text, x, y);
       }
@@ -263,7 +270,7 @@ vg.canvas.marks = (function() {
       if (stroke = o.stroke) {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
-          g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
+          g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
           g.strokeStyle = stroke;
           g.lineWidth = lw;
           g.strokeText(o.text, x, y);

@@ -36,10 +36,10 @@
           "baseline": {"value": "middle"}
         },
         "update": {
-          "fillOpacity": {"value": 1.0}
+          "opacity": {"value": 1.0}
         },
         "hover": {
-          "fillOpacity": {"value": 0.5}
+          "opacity": {"value": 0.5}
         }
       }
     }
