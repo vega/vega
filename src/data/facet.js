@@ -3,15 +3,25 @@ vg.data.facet = function() {
   var keys = [],
       sort = null;
 
-  function facet(data) {
+  function facet(data) {    
     var result = {
           key: "",
           keys: [],
           values: []
         },
-        map = {"": result}, 
+        map = {}, 
         vals = result.values,
         obj, klist, kstr, len, i, j, k, kv, cmp;
+
+    if (keys.length === 0) {
+      // if no keys, skip collation step
+      vals.push(obj = {
+        key: "", keys: [],
+        values: sort ? data : data.slice()
+      });
+      if (sort) obj.values.sort(sort);
+      return result;
+    }
 
     for (i=0, len=data.length; i<len; ++i) {
       for (k=0, klist=[], kstr=""; k<keys.length; ++k) {

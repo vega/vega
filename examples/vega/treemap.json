@@ -10,7 +10,7 @@
       "transform": [
         {"type": "facet"},
         {"type": "treemap"},
-        {"type": "filter", "test": "d.depth"}
+        {"type": "filter", "test": "!d.children"}
       ]
     }
   ],

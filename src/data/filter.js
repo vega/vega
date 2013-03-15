@@ -8,7 +8,7 @@ vg.data.filter = function() {
   
   filter.test = function(t) {
     // TODO security check
-    test = (typeof t === 'function')
+    test = vg.isFunction(t)
       ? t
       : new Function("d", "return " + t);
     return filter;
