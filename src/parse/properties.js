@@ -55,8 +55,9 @@ vg.parse.properties = (function() {
       }
     }
     
-    // add offset, return value
-    return val + (ref.offset ? " + "+ref.offset : "");
+    // multiply, offset, return value
+    return "(" + (ref.mult ? (ref.mult+" * ") : "") + val + ")"
+      + (ref.offset ? " + "+ref.offset : "");
   }
   
   return compile;

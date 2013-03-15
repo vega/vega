@@ -16,7 +16,7 @@ vg.data.facet = function() {
     if (keys.length === 0) {
       // if no keys, skip collation step
       vals.push(obj = {
-        key: "", keys: [],
+        key: "", keys: [], index: 0,
         values: sort ? data : data.slice()
       });
       if (sort) obj.values.sort(sort);

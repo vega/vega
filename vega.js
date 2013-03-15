@@ -2017,7 +2017,7 @@ vg.data.size = function(size, group) {
     if (keys.length === 0) {
       // if no keys, skip collation step
       vals.push(obj = {
-        key: "", keys: [],
+        key: "", keys: [], index: 0,
         values: sort ? data : data.slice()
       });
       if (sort) obj.values.sort(sort);
@@ -2489,7 +2489,9 @@ vg.data.size = function(size, group) {
   var by = null;
 
   function sort(data) {
-    (vg.isArray(data) ? data : data.values || []).sort(by);
+    data = (vg.isArray(data) ? data : data.values || []);
+    data.sort(by);
+    for (var i=0, n=data.length; i<n; ++i) data[i].index = i; // re-index
     return data;
   }
   
@@ -3084,8 +3086,9 @@ vg.data.size = function(size, group) {
       }
     }
     
-    // add offset, return value
-    return val + (ref.offset ? " + "+ref.offset : "");
+    // multiply, offset, return value
+    return "(" + (ref.mult ? (ref.mult+" * ") : "") + val + ")"
+      + (ref.offset ? " + "+ref.offset : "");
   }
   
   return compile;
