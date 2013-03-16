@@ -90,7 +90,7 @@ vg.scene.encode = (function() {
       // exit set
       if (item.status === EXIT) {
         if (exit && trans) exit.call(this, item, group, trans);
-        (trans ? trans.remove(item) : items[i--].remove());
+        if (!trans) items[i--].remove();
       }
     }
   }

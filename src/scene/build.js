@@ -35,7 +35,7 @@ vg.scene.build = (function() {
         prev = node.items || [],
         next = [],
         map = {},
-        i, key, len, item, datum;
+        i, key, len, item, datum, enter;
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];

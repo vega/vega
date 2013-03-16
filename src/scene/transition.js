@@ -2,8 +2,7 @@ vg.scene.Transition = (function() {
   function trans(duration, ease) {
     this.duration = duration || 500;
     this.ease = ease || d3.ease("cubic-in-out");
-    this.updates = [];
-    this.exits = [];
+    this.updates = {next: null};
   }
   
   var prototype = trans.prototype;
@@ -23,48 +22,51 @@ vg.scene.Transition = (function() {
 
     if (interp) {
       list.item = item;
-      list.ease = this.ease; // TODO parametrize
-      this.updates.push(list);
+      list.ease = item.ease || this.ease;
+      list.next = this.updates.next;
+      this.updates.next = list;
     }
     return this;
   };
   
-  prototype.remove = function(item) {
-    this.exits.push(item);
-    return this;
-  };
-
   prototype.start = function(callback) {
-    var t = this, duration = t.duration;
-    d3.timer(function(elapsed) {
-      if (elapsed >= duration) {
-        return (t.stop(), callback(), true);
-      } else {
-        (t.step(elapsed, duration), callback());
-      }
-    });
+    var t = this, prev = t.updates, curr = prev.next;
+    for (; curr!=null; prev=curr, curr=prev.next) {
+      if (curr.item.status === vg.scene.EXIT) curr.remove = true;
+    }
+    t.callback = callback;
+    d3.timer(function(elapsed) { return step.call(t, elapsed); });
   };
 
-  prototype.step = function(elapsed, duration) {
-    var updates = this.updates,
-        frac = elapsed / duration,
-        list, item, f, i, j, n, m;
+  function step(elapsed) {
+    var list = this.updates, prev = list, curr = prev.next,
+        duration = this.duration,
+        item, delay, f, e, i, n, stop = true;
 
-    for (i=0, n=updates.length; i<n; ++i) {
-      list = updates[i];
-      item = list.item;
-      f = list.ease(frac);
-      for (j=0, m=list.length; j<m; ++j) {
-        item[list[j].property] = list[j](f);
+    for (; curr!=null; prev=curr, curr=prev.next) {
+      item = curr.item;
+      delay = item.delay || 0;
+
+      f = (elapsed - delay) / duration;
+      if (f < 0) { stop = false; continue; }
+      if (f > 1) f = 1;
+      e = curr.ease(f);
+
+      for (i=0, n=curr.length; i<n; ++i) {
+        item[curr[i].property] = curr[i](e);
+      }
+
+      if (f === 1) {
+        if (curr.remove) item.remove();
+        prev.next = curr.next;
+        curr = prev;
+      } else {
+        stop = false;
       }
     }
-    return this;
-  };
-  
-  prototype.stop = function() {
-    this.step(1, 1);
-    for (var e=this.exits, i=e.length; --i>=0;) e[i].remove();
-    return this;
+
+    this.callback();
+    return stop;
   };
   
   return trans;
