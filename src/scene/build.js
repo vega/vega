@@ -13,6 +13,7 @@ vg.scene.build = (function() {
     // build node and items
     node = buildNode(model, node);
     node.items = buildItems(model, data, node);
+    buildTrans(model, node);
     
     // recurse if group
     if (model.type === GROUP) {
@@ -77,6 +78,15 @@ vg.scene.build = (function() {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);
         group.items[m].group = group;
       }
+    }
+  }
+
+  function buildTrans(model, node) {
+    if (model.duration) node.duration = model.duration;
+    if (model.ease) node.ease = d3.ease(model.ease)
+    if (model.delay) {
+      var items = node.items, group = node.group, n = items.length, i;
+      for (i=0; i<n; ++i) model.delay.call(this, items[i], group);
     }
   }
   

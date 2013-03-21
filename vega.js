@@ -3007,6 +3007,8 @@ vg.data.size = function(size, group) {
     vg.keys(props).forEach(function(k) {
       props[k] = vg.parse.properties(props[k]);
     });
+    // parse delay function
+    if (mark.delay) mark.delay = vg.parse.properties({delay: mark.delay});
         
     // parse mark data definition
     if (mark.from) {
@@ -3359,6 +3361,7 @@ vg.scene.item = function(mark) {
     // build node and items
     node = buildNode(model, node);
     node.items = buildItems(model, data, node);
+    buildTrans(model, node);
     
     // recurse if group
     if (model.type === GROUP) {
@@ -3423,6 +3426,15 @@ vg.scene.item = function(mark) {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);
         group.items[m].group = group;
       }
+    }
+  }
+
+  function buildTrans(model, node) {
+    if (model.duration) node.duration = model.duration;
+    if (model.ease) node.ease = d3.ease(model.ease)
+    if (model.delay) {
+      var items = node.items, group = node.group, n = items.length, i;
+      for (i=0; i<n; ++i) model.delay.call(this, items[i], group);
     }
   }
   
@@ -3532,7 +3544,7 @@ vg.scene.item = function(mark) {
 })();vg.scene.Transition = (function() {
   function trans(duration, ease) {
     this.duration = duration || 500;
-    this.ease = ease || d3.ease("cubic-in-out");
+    this.ease = ease && d3.ease(ease) || d3.ease("cubic-in-out");
     this.updates = {next: null};
   }
   
@@ -3553,7 +3565,7 @@ vg.scene.item = function(mark) {
 
     if (interp) {
       list.item = item;
-      list.ease = item.ease || this.ease;
+      list.ease = item.mark.ease || this.ease;
       list.next = this.updates.next;
       this.updates.next = list;
     }
@@ -3650,8 +3662,9 @@ vg.scene.transition = function(dur, ease) {
     return this._el;
   };
   
-  prototype.update = function(model, duration) {
+  prototype.update = function(model, duration, ease) {
     duration = duration || 0;
+    ease = ease || "cubic-in-out";
     var init = this._init; this._init = true;
     var dom = d3.select(this._el).selectAll("svg.axes").select("g");
     var axes = collectAxes(model.scene(), 0, 0, []);
@@ -3663,7 +3676,7 @@ vg.scene.transition = function(dur, ease) {
         .attr('class', function(d, i) { return 'axis axis-'+i; });
     }
     
-    var sel = duration && init ? dom.transition(duration) : dom,
+    var sel = duration && init ? dom.transition(duration).ease(ease) : dom,
         w = this._width,
         h = this._height;
 
@@ -3945,14 +3958,23 @@ vg.scene.transition = function(dur, ease) {
     return this;
   };
   
-  prototype.update = function(duration, request, items) {
-    if (arguments.length && vg.isString(duration)) {
-      items = request;
-      request = duration;
-      duration = 0;
+  prototype.update = function() {
+    var duration = 0, ease = null, request = null, items = null,
+        len = arguments.length, idx = 0;
+
+    if (len) { // parse parameters
+      if (vg.isString(arguments[idx])) { // request and items
+        request = arguments[idx++];
+        if (len>idx && !vg.isNumber(arguments[idx])) items = arguments[idx++];
+      }
+      if (len>idx && vg.isNumber(arguments[idx])) { // duration and easing
+        duration = arguments[idx++];
+        if (len>idx) ease = arguments[idx];
+      }
     }
+
     var view = this;
-    var trans = duration ? vg.scene.transition(duration) : null;
+    var trans = duration ? vg.scene.transition(duration, ease) : null;
 
     view._build = view._build || (view._model.build(), true);
     view._model.encode(trans, request, items);
@@ -3961,7 +3983,7 @@ vg.scene.transition = function(dur, ease) {
       trans.start(function(items) {
         view._renderer.render(view._model.scene(), items);
       });
-      this._axes.update(this._model, duration);
+      this._axes.update(this._model, duration, ease);
     }
     else view.render(items);
     return view;

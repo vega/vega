@@ -150,14 +150,23 @@ vg.View = (function() {
     return this;
   };
   
-  prototype.update = function(duration, request, items) {
-    if (arguments.length && vg.isString(duration)) {
-      items = request;
-      request = duration;
-      duration = 0;
+  prototype.update = function() {
+    var duration = 0, ease = null, request = null, items = null,
+        len = arguments.length, idx = 0;
+
+    if (len) { // parse parameters
+      if (vg.isString(arguments[idx])) { // request and items
+        request = arguments[idx++];
+        if (len>idx && !vg.isNumber(arguments[idx])) items = arguments[idx++];
+      }
+      if (len>idx && vg.isNumber(arguments[idx])) { // duration and easing
+        duration = arguments[idx++];
+        if (len>idx) ease = arguments[idx];
+      }
     }
+
     var view = this;
-    var trans = duration ? vg.scene.transition(duration) : null;
+    var trans = duration ? vg.scene.transition(duration, ease) : null;
 
     view._build = view._build || (view._model.build(), true);
     view._model.encode(trans, request, items);
@@ -166,7 +175,7 @@ vg.View = (function() {
       trans.start(function(items) {
         view._renderer.render(view._model.scene(), items);
       });
-      this._axes.update(this._model, duration);
+      this._axes.update(this._model, duration, ease);
     }
     else view.render(items);
     return view;

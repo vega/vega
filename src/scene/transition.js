@@ -1,7 +1,7 @@
 vg.scene.Transition = (function() {
   function trans(duration, ease) {
     this.duration = duration || 500;
-    this.ease = ease || d3.ease("cubic-in-out");
+    this.ease = ease && d3.ease(ease) || d3.ease("cubic-in-out");
     this.updates = {next: null};
   }
   
@@ -22,7 +22,7 @@ vg.scene.Transition = (function() {
 
     if (interp) {
       list.item = item;
-      list.ease = item.ease || this.ease;
+      list.ease = item.mark.ease || this.ease;
       list.next = this.updates.next;
       this.updates.next = list;
     }

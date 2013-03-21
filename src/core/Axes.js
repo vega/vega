@@ -42,8 +42,9 @@ vg.Axes = (function() {
     return this._el;
   };
   
-  prototype.update = function(model, duration) {
+  prototype.update = function(model, duration, ease) {
     duration = duration || 0;
+    ease = ease || "cubic-in-out";
     var init = this._init; this._init = true;
     var dom = d3.select(this._el).selectAll("svg.axes").select("g");
     var axes = collectAxes(model.scene(), 0, 0, []);
@@ -55,7 +56,7 @@ vg.Axes = (function() {
         .attr('class', function(d, i) { return 'axis axis-'+i; });
     }
     
-    var sel = duration && init ? dom.transition(duration) : dom,
+    var sel = duration && init ? dom.transition(duration).ease(ease) : dom,
         w = this._width,
         h = this._height;
 

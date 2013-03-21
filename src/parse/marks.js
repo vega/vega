@@ -8,6 +8,8 @@ vg.parse.marks = (function() {
     vg.keys(props).forEach(function(k) {
       props[k] = vg.parse.properties(props[k]);
     });
+    // parse delay function
+    if (mark.delay) mark.delay = vg.parse.properties({delay: mark.delay});
         
     // parse mark data definition
     if (mark.from) {

@@ -95,8 +95,8 @@ function timestep() {
   id = (id % 100) + 1;
   table.shift();
   table.push({x: id, y: ~~(100 * Math.random())});
-  self.view1.data(data).update(animate ? dur : null);
-  self.view2.data(data).update(animate ? dur : null);
+  self.view1.data(data).update(animate ? dur : 0);
+  self.view2.data(data).update(animate ? dur : 0);
 }
 
 function run(step) {
