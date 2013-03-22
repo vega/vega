@@ -1682,9 +1682,10 @@ vg.error = function(msg) {
     var id = "#" + p.attr("id");
     var m = p.selectAll(id+" > "+tag).data(data);  
     var e = m.enter().append(tag);
-    if (tag !== "g") e.each(function(d) {
-      (d.mark ? d : d[0])._svg = this;
-    });
+    if (tag !== "g") {
+      p.style("pointer-events", scene.interactive===false ? "none" : null);
+      e.each(function(d) { (d.mark ? d : d[0])._svg = this; });
+    }
     
     m.exit().remove();
     m.each(attr);

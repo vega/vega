@@ -9,11 +9,19 @@
 .view { display: block; }
 input[type="range"] { width: 280px; }
 .ctrl { display: inline-block; width: 90px; font-weight: bold; }
+.flash { display: none; font-style: italic; }
     </style>
   </head>
   <body>
-    <div>No Key   <div id="view1" class="view"></div></div>
-    <div>With Key <div id="view2" class="view"></div></div>
+    <div><strong>Vega Dynamic Data Test</strong></div>
+    <div>
+      <p>Without "key" Property Definition (No Data Join)</p>
+      <div id="view1" class="view"></div>
+    </div>
+    <div>
+      <p>With "key" Property Definition (Uses Data Join)</p>
+      <div id="view2" class="view"></div>
+    </div>
     <div>
       <span class="ctrl">Duration</span>
       0s
@@ -24,6 +32,7 @@ input[type="range"] { width: 280px; }
       <input id="animate" type="checkbox"/>
       <label id="alabel" for="animate">Off</label>
     </div>
+    <p class="flash">Whoaaaaa!</p>
   </body>
   <script type="text/javascript">
 var spec1 = {
@@ -56,7 +65,7 @@ var spec1 = {
           "y": {"scale": "y", "field": "data.y"},
           "y2": {"scale": "y", "value": 0},
           "fill": {"value": "steelblue"},
-          "fillOpacity": {"value": 0}
+          "fillOpacity": {"value": 1e-6}
         },
         "update": {
           "x": {"scale": "x", "field": "data.x"},
@@ -66,7 +75,7 @@ var spec1 = {
         },
         "exit": {
           "x": {"value": -20},
-          "fillOpacity": {"value": 0}
+          "fillOpacity": {"value": 1e-6}
         }
       }
     }
@@ -89,7 +98,7 @@ var table = [
   {"x": 19, "y": 49}, {"x": 20, "y": 75}
 ];
 var data = {table: table}, id = 20, timer = null;
-var renderer = "canvas", animate = false, dur = 1000;
+var renderer = "svg", animate = false, dur = 1000;
 
 function timestep() {
   id = (id % 100) + 1;
@@ -113,6 +122,7 @@ vg.parse.spec(spec2, function(chart) {
 
 d3.select("#timestep").on("change", function() {
   run(dur = +this.value);
+  d3.select(".flash").style("display", dur==0 ? "block" : "none");
 });
 d3.select("#animate").on("change", function() {
   animate = this.checked;
