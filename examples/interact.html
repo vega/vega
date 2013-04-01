@@ -99,11 +99,19 @@ vg.parse.spec(spec, function(chart) {
   var view = chart("#view", data)
     .on("mouseover", function(event, item) {
       // invoke hover properties on cousin one hop forward in scenegraph
-      view.update("hover", item.cousin(1));
+      view.update({
+        props: "hover",
+        items: item.cousin(1)
+      });
     })
     .on("mouseout", function(event, item) {
       // reset cousin item, using animated transition
-      view.update("update", item.cousin(1), 250, "linear");
+      view.update({
+        props: "update",
+        items: item.cousin(1),
+        duration: 250,
+        ease: "linear"
+      });
     })
     .update();
 });

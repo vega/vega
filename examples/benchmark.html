@@ -31,7 +31,7 @@ function params() {
 var p = params(),
     N = (~~p.N) || 1000,
     type = p.type || "symbol",
-    ticks = p.ticks || 100,
+    ticks = p.ticks || 20,
     w = (~~p.width) || 960,
     h = (~~p.height) || 500,
     renderer = p.renderer || "canvas";
@@ -63,7 +63,7 @@ d3.select("#rend")
 d3.select("#iter")
   .on("change", function() { ticks = ~~this.options[this.selectedIndex].value; })
   .selectAll("option")
-    .data([100, 200, 500, 1000])
+    .data([20, 100, 200, 500, 1000])
   .enter().append("option")
     .attr("value", vg.identity)
     .text(String);
