@@ -91,4 +91,4 @@ vg.Spec = (function() {
 
 vg.spec = function(s) {
   return new vg.Spec(s);
-}
+};

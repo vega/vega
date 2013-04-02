@@ -1,4 +1,4 @@
-if (typeof vg === 'undefined') { vg = {}; }
+var vg = {};
 
 // semantic versioning
 vg.version = '1.0.0';

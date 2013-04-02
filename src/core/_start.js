@@ -1,1 +1,1 @@
-(function(){
+vg = (function(){

@@ -1,4 +1,5 @@
-(function(){if (typeof vg === 'undefined') { vg = {}; }
+vg = (function(){
+var vg = {};
 
 // semantic versioning
 vg.version = '1.0.0';
@@ -4079,4 +4080,6 @@ vg.Spec = (function() {
 
 vg.spec = function(s) {
   return new vg.Spec(s);
-}})();
+};
+return vg;
+})();
