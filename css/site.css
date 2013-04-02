@@ -17,7 +17,7 @@ body {
 }
 
 a {
-  color: #0ac04a;
+  color: #0aa84a;
   text-decoration: none;
 }
 
@@ -32,6 +32,25 @@ a:hover {
 
 #main {
   margin-left: 160px;
+}
+
+#links {
+  float: right;
+  margin: 11px 12px 0 0;
+  text-align: left;
+  line-height: 26px;
+}
+
+#links strong {
+  font-weight: bold;
+}
+
+#links a {
+  color: #0aa84a;
+}
+
+#links a:hover {
+  color: #f05a00;
 }
 
 .example img {
