@@ -37,7 +37,7 @@ d3.select("#specs")
 // parse a spec and create a visualization view
 function parse(spec) {
   vg.parse.spec(spec, function(chart) {
-    self.view = chart("#vis").update();
+    self.view = chart({el:"#vis"}).update();
   });
 }
 </script>

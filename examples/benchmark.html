@@ -72,7 +72,7 @@ d3.select("#run").on("click", function() { run(); });
 
 function run() {
   vg.parse.spec(spec(), function(chart) {
-    self.view = chart("#vis", null, renderer).update();
+    self.view = chart({el:"#vis", renderer:renderer}).update();
     var count = 0, t0 = Date.now();
     d3.timer(function() {
       var marks = view.model().scene().items[0].items[0].items;

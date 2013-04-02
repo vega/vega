@@ -55,7 +55,11 @@ ved.parse = function() {
   
   vg.parse.spec(spec, function(chart) {
     d3.select("#vis").selectAll("*").remove();
-    var view = chart("#vis", ved.data, ved.renderType);
+    var view = chart({
+      el: "#vis",
+      data: ved.data,
+      renderer: ved.renderType
+    });
     (ved.view = view).update();
   });
 };

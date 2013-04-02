@@ -96,7 +96,7 @@ var data = {table: [
 
 
 vg.parse.spec(spec, function(chart) {
-  var view = chart("#view", data)
+  var view = chart({el:"#view", data:data})
     .on("mouseover", function(event, item) {
       // invoke hover properties on cousin one hop forward in scenegraph
       view.update({
