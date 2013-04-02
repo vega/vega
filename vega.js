@@ -751,7 +751,6 @@ vg.error = function(msg) {
   
   var parsePath = vg.canvas.path.parse,
       renderPath = vg.canvas.path.render,
-      arc_path = d3.svg.arc(),
       sqrt3 = Math.sqrt(3),
       tan30 = Math.tan(30 * Math.PI / 180),
       tmpBounds = new vg.Bounds();
@@ -873,12 +872,13 @@ vg.error = function(msg) {
   
   function drawPathOne(path, g, o, items) {
     var fill = o.fill, stroke = o.stroke, opac, lc, lw;
-    if (!fill && !stroke) return;
-
     o.bounds = path(g, items);
+    
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac == 0 || !fill && !stroke) return;
 
     if (fill) {
-      g.globalAlpha = (opac=o.fillOpacity) != undefined ? opac : 1;
+      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
       g.fillStyle = fill;
       g.fill();
     }
@@ -886,7 +886,7 @@ vg.error = function(msg) {
     if (stroke) {
       lw = (lw = o.strokeWidth) != undefined ? lw : 1;
       if (lw > 0) {
-        g.globalAlpha = (opac=o.strokeOpacity) != undefined ? opac : 1;
+        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
         g.strokeStyle = stroke;
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
@@ -921,8 +921,11 @@ vg.error = function(msg) {
       o.bounds = (o.bounds || new vg.Bounds())
         .set(x, y, x+o.width, y+o.height);
 
+      opac = o.opacity == null ? 1 : o.opacity;
+      if (opac == 0) return;
+
       if (fill = o.fill) {
-        g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+        g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
         g.fillStyle = fill;
         g.fillRect(x, y, o.width, o.height);
       }
@@ -930,7 +933,7 @@ vg.error = function(msg) {
       if (stroke = o.stroke) {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
-          g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
+          g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
           g.strokeStyle = stroke;
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
@@ -965,7 +968,7 @@ vg.error = function(msg) {
         ? h/2 : (o.baseline === "bottom" ? h : 0));
       o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
 
-      g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+      g.globalAlpha = (opac = o.opacity) != undefined ? opac : 1;
       g.drawImage(o.image, x, y, w, h);
     }
   }
@@ -992,7 +995,10 @@ vg.error = function(msg) {
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
       o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds())).expand(1);
-            
+
+      opac = o.opacity == null ? 1 : o.opacity;
+      if (opac == 0) return;
+
       if (o.angle) {
         g.save();
         g.translate(o.x, o.y);
@@ -1005,7 +1011,7 @@ vg.error = function(msg) {
       }
 
       if (fill = o.fill) {
-        g.globalAlpha = (opac = o.fillOpacity) != undefined ? opac : 1;
+        g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
         g.fillStyle = fill;
         g.fillText(o.text, x, y);
       }
@@ -1013,7 +1019,7 @@ vg.error = function(msg) {
       if (stroke = o.stroke) {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
-          g.globalAlpha = (opac = o.strokeOpacity) != undefined ? opac : 1;
+          g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
           g.strokeStyle = stroke;
           g.lineWidth = lw;
           g.strokeText(o.text, x, y);
@@ -1186,8 +1192,8 @@ vg.error = function(msg) {
   };
   
   function hitTestText(g, o, x, y, gx, gy) {
-    if (!o.angle)
-      return true; // bounds sufficient if no rotation
+    if (!o.fontSize) return false;
+    if (!o.angle) return true; // bounds sufficient if no rotation
 
     g.font = fontString(o);
     
@@ -1676,9 +1682,10 @@ vg.error = function(msg) {
     var id = "#" + p.attr("id");
     var m = p.selectAll(id+" > "+tag).data(data);  
     var e = m.enter().append(tag);
-    if (tag !== "g") e.each(function(d) {
-      (d.mark ? d : d[0])._svg = this;
-    });
+    if (tag !== "g") {
+      p.style("pointer-events", scene.interactive===false ? "none" : null);
+      e.each(function(d) { (d.mark ? d : d[0])._svg = this; });
+    }
     
     m.exit().remove();
     m.each(attr);
@@ -2005,15 +2012,25 @@ vg.data.size = function(size, group) {
   var keys = [],
       sort = null;
 
-  function facet(data) {
+  function facet(data) {    
     var result = {
           key: "",
           keys: [],
           values: []
         },
-        map = {"": result}, 
+        map = {}, 
         vals = result.values,
         obj, klist, kstr, len, i, j, k, kv, cmp;
+
+    if (keys.length === 0) {
+      // if no keys, skip collation step
+      vals.push(obj = {
+        key: "", keys: [], index: 0,
+        values: sort ? data : data.slice()
+      });
+      if (sort) obj.values.sort(sort);
+      return result;
+    }
 
     for (i=0, len=data.length; i<len; ++i) {
       for (k=0, klist=[], kstr=""; k<keys.length; ++k) {
@@ -2063,7 +2080,7 @@ vg.data.size = function(size, group) {
   
   filter.test = function(t) {
     // TODO security check
-    test = (typeof t === 'function')
+    test = vg.isFunction(t)
       ? t
       : new Function("d", "return " + t);
     return filter;
@@ -2480,7 +2497,9 @@ vg.data.size = function(size, group) {
   var by = null;
 
   function sort(data) {
-    (vg.isArray(data) ? data : data.values || []).sort(by);
+    data = (vg.isArray(data) ? data : data.values || []);
+    data.sort(by);
+    for (var i=0, n=data.length; i<n; ++i) data[i].index = i; // re-index
     return data;
   }
   
@@ -2989,6 +3008,8 @@ vg.data.size = function(size, group) {
     vg.keys(props).forEach(function(k) {
       props[k] = vg.parse.properties(props[k]);
     });
+    // parse delay function
+    if (mark.delay) mark.delay = vg.parse.properties({delay: mark.delay});
         
     // parse mark data definition
     if (mark.from) {
@@ -3023,27 +3044,31 @@ vg.data.size = function(size, group) {
     var code = "",
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
+        
+    code += "var o = trans ? {} : item;\n"
     
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
       code += (i > 0) ? "\n  " : "  ";
-      code += "item."+name+" = "+valueRef(ref)+";";
+      code += "o."+name+" = "+valueRef(ref)+";";
       vars[name] = true;
     }
     
     if (vars.x2) {
-      code += "\n  if (item.x > item.x2) { "
-            + "var t = item.x; item.x = item.x2; item.x2 = t; };"
-      code += "\n  item.width = (item.x2 - item.x);"
+      code += "\n  if (o.x > o.x2) { "
+            + "var t = o.x; o.x = o.x2; o.x2 = t; };"
+      code += "\n  o.width = (o.x2 - o.x);"
     }
     
     if (vars.y2) {
-      code += "\n  if (item.y > item.y2) { "
-            + "var t = item.y; item.y = item.y2; item.y2 = t; };"
-      code += "\n  item.height = (item.y2 - item.y);"
+      code += "\n  if (o.y > o.y2) { "
+            + "var t = o.y; o.y = o.y2; o.y2 = t; };"
+      code += "\n  o.height = (o.y2 - o.y);"
     }
+    
+    code += "if (trans) trans.interpolate(item, o);";
 
-    return Function("item", "group", code);
+    return Function("item", "group", "trans", code);
   }
 
   // TODO security check for strings emitted into code
@@ -3071,8 +3096,9 @@ vg.data.size = function(size, group) {
       }
     }
     
-    // add offset, return value
-    return val + (ref.offset ? " + "+ref.offset : "");
+    // multiply, offset, return value
+    return "(" + (ref.mult ? (ref.mult+" * ") : "") + val + ")"
+      + (ref.offset ? " + "+ref.offset : "");
   }
   
   return compile;
@@ -3225,23 +3251,28 @@ vg.data.size = function(size, group) {
       data: vg.parse.data(spec.data, function() { callback(chart); })
     };
 
-    var chart = function(el, input, renderer) {
-      return new vg.View()
+    var chart = function(opt) {
+      var view = new vg.View()
         .width(spec.width || 500)
         .height(spec.height || 500)
         .padding(parsePadding(spec.padding))
         .viewport(spec.viewport || null)
-        .renderer(renderer || "canvas")
-        .initialize(el)
+        .renderer(opt.renderer || "canvas")
+        .initialize(opt.el)
         .defs(defs)
         .data(defs.data.load)
-        .data(input)
-        .on("mouseover", function(evt, item) {
-          this.update("hover", item);
+        .data(opt.data);
+      
+      if (opt.hover !== false) {
+        view.on("mouseover", function(evt, item) {
+          this.update({props:"hover", items:item});
         })
         .on("mouseout", function(evt, item) {
-          this.update("update", item);
+          this.update({props:"update", items:item});
         });
+      }
+      
+      return view;
     };
   }
   
@@ -3283,12 +3314,50 @@ vg.scene.data = function(data, parentData) {
   if (data === DEFAULT) data = [DEFAULT];
   
   return data;
+};vg.scene.Item = (function() {
+  function item(mark) {
+    this.mark = mark;
+  }
+  
+  var prototype = item.prototype;
+
+  prototype.cousin = function(offset, index) {
+    if (offset === 0) return this;
+    offset = offset || -1;
+    var mark = this.mark,
+        group = mark.group,
+        iidx = index==null ? mark.items.indexOf(this) : index,
+        midx = group.items.indexOf(mark) + offset;
+    return group.items[midx].items[iidx];
+  };
+  
+  prototype.sibling = function(offset) {
+    if (offset === 0) return this;
+    offset = offset || -1;
+    var mark = this.mark,
+        iidx = mark.items.indexOf(this) + offset;
+    return mark.items[iidx];
+  };
+  
+  prototype.remove = function() {
+    var item = this,
+        list = item.mark.items,
+        i = list.indexOf(item);
+    if (i >= 0) (i===list.length-1) ? list.pop() : list.splice(i, 1);
+    return item;
+  };
+  
+  return item;
+})();
+
+vg.scene.item = function(mark) {
+  return new vg.scene.Item(mark);
 };vg.scene.build = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
       EXIT   = vg.scene.EXIT,
-      DEFAULT= {"sentinel":1}
+      DEFAULT= {"sentinel":1};
   
   function build(model, db, node, parentData) {
     var data = vg.scene.data(
@@ -3298,6 +3367,7 @@ vg.scene.data = function(data, parentData) {
     // build node and items
     node = buildNode(model, node);
     node.items = buildItems(model, data, node);
+    buildTrans(model, node);
     
     // recurse if group
     if (model.type === GROUP) {
@@ -3320,7 +3390,7 @@ vg.scene.data = function(data, parentData) {
         prev = node.items || [],
         next = [],
         map = {},
-        i, key, len, item, datum;
+        i, key, len, item, datum, enter;
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
@@ -3332,7 +3402,7 @@ vg.scene.data = function(data, parentData) {
       datum = data[i];
       key = i;
       item = keyf ? map[key = keyf(datum)] : prev[i];
-      enter = item ? false : (item = {mark:node}, true);
+      enter = item ? false : (item = vg.scene.item(node), true);
       item.status = enter ? ENTER : UPDATE;
       item.datum = datum;
       item.key = key;
@@ -3362,6 +3432,15 @@ vg.scene.data = function(data, parentData) {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);
         group.items[m].group = group;
       }
+    }
+  }
+
+  function buildTrans(model, node) {
+    if (model.duration) node.duration = model.duration;
+    if (model.ease) node.ease = d3.ease(model.ease)
+    if (model.delay) {
+      var items = node.items, group = node.group, n = items.length, i;
+      for (i=0; i<n; ++i) model.delay.call(this, items[i], group);
     }
   }
   
@@ -3445,63 +3524,107 @@ vg.scene.data = function(data, parentData) {
       return; // exit early if given request
     }
     
-    if (enter) {
-      for (i=0, len=items.length; i<len; ++i) {
-        item = items[i];
-        if (item.status !== ENTER) continue;
-        enter.call(this, item, group, trans);
+    for (i=0; i<items.length; ++i) {
+      item = items[i];
+      
+      // enter set
+      if (item.status === ENTER) {
+        if (enter) enter.call(this, item, group);
         item.status = UPDATE;
       }
-    }
-    
-    if (update) {
-      for (i=0, len=items.length; i<len; ++i) {
-        item = items[i];
-        if (item.status === EXIT) continue;
+
+      // update set      
+      if (item.status !== EXIT && update) {
         update.call(this, item, group, trans);
       }
-    }
-    
-    if (exit) {
-      for (i=0, len=items.length; i<len; ++i) {
-        item = items[i];
-        if (item.status !== EXIT) continue;
-        exit.call(this, item, group, trans);
+      
+      // exit set
+      if (item.status === EXIT) {
+        if (exit && trans) exit.call(this, item, group, trans);
+        if (!trans) items[i--].remove();
       }
     }
   }
   
   return main;
-})();vg.scene.visit = (function() {
-  function visit(scene, pre, post) {
-    var i, j, len, llen, mark, retval,
-        items = scene.items,
-        isGroup = scene.marktype === vg.scene.GROUP;
-
-    for (i=0, len=items.length; i<len; ++i) {
-      mark = items[i];
-      
-      if (pre) {
-        retval = pre.call(this, mark);
-        if (retval) return retval;
-      }
-      
-      if (isGroup) {
-        for (j=0, llen=mark.items.length; j<llen; ++j) {
-          retval = visit.call(this, mark.items[j], pre, post);
-          if (retval) return retval;
-        }
-      }
-      
-      if (post) {
-        retval = post.call(this, mark);
-        if (retval) return retval;
-      }
-    }
+})();vg.scene.Transition = (function() {
+  function trans(duration, ease) {
+    this.duration = duration || 500;
+    this.ease = ease && d3.ease(ease) || d3.ease("cubic-in-out");
+    this.updates = {next: null};
   }
   
-  return visit;
-})();vg.Axes = (function() {  
+  var prototype = trans.prototype;
+  
+  prototype.interpolate = function(item, values) {
+    var key, curr, next, interp, list = null;
+
+    for (key in values) {
+      curr = item[key];
+      next = values[key];
+      if (curr !== next) {
+        interp = d3.interpolate(curr, next);
+        interp.property = key;
+        (list || (list=[])).push(interp);
+      }
+    }
+
+    if (interp) {
+      list.item = item;
+      list.ease = item.mark.ease || this.ease;
+      list.next = this.updates.next;
+      this.updates.next = list;
+    }
+    return this;
+  };
+  
+  prototype.start = function(callback) {
+    var t = this, prev = t.updates, curr = prev.next;
+    for (; curr!=null; prev=curr, curr=prev.next) {
+      if (curr.item.status === vg.scene.EXIT) curr.remove = true;
+    }
+    t.callback = callback;
+    d3.timer(function(elapsed) { return step.call(t, elapsed); });
+  };
+
+  function step(elapsed) {
+    var list = this.updates, prev = list, curr = prev.next,
+        duration = this.duration,
+        item, delay, f, e, i, n, stop = true;
+
+    for (; curr!=null; prev=curr, curr=prev.next) {
+      item = curr.item;
+      delay = item.delay || 0;
+
+      f = (elapsed - delay) / duration;
+      if (f < 0) { stop = false; continue; }
+      if (f > 1) f = 1;
+      e = curr.ease(f);
+
+      for (i=0, n=curr.length; i<n; ++i) {
+        item[curr[i].property] = curr[i](e);
+      }
+
+      if (f === 1) {
+        if (curr.remove) item.remove();
+        prev.next = curr.next;
+        curr = prev;
+      } else {
+        stop = false;
+      }
+    }
+
+    this.callback();
+    return stop;
+  };
+  
+  return trans;
+  
+})();
+
+vg.scene.transition = function(dur, ease) {
+  return new vg.scene.Transition(dur, ease);
+};vg.Axes = (function() {  
   var axes = function() {
     this._svg = null;
     this._el = null;
@@ -3545,10 +3668,11 @@ vg.scene.data = function(data, parentData) {
     return this._el;
   };
   
-  prototype.update = function(model, duration) {
+  prototype.update = function(model, duration, ease) {
     duration = duration || 0;
+    ease = ease || "cubic-in-out";
     var init = this._init; this._init = true;
-    var dom = d3.selectAll("svg.axes").select("g");
+    var dom = d3.select(this._el).selectAll("svg.axes").select("g");
     var axes = collectAxes(model.scene(), 0, 0, []);
     
     if (!init) {
@@ -3558,7 +3682,7 @@ vg.scene.data = function(data, parentData) {
         .attr('class', function(d, i) { return 'axis axis-'+i; });
     }
     
-    var sel = duration && init ? dom.transition(duration) : dom,
+    var sel = duration && init ? dom.transition(duration).ease(ease) : dom,
         w = this._width,
         h = this._height;
 
@@ -3681,16 +3805,10 @@ vg.scene.data = function(data, parentData) {
     return this;
   };
   
-  prototype.encode = function(request, item) {
-    var m = this,
-        scene = m._scene,
-        defs = m._defs;
-    vg.scene.encode.call(m, scene, defs.marks, null, request, item);
+  prototype.encode = function(trans, request, item) {
+    var m = this, scene = m._scene, defs = m._defs;
+    vg.scene.encode.call(m, scene, defs.marks, trans, request, item);
     return this;
-  };
-  
-  prototype.visit = function(pre, post) {
-    return vg.scene.visit(this._scene, pre, post);
   };
   
   return model;
@@ -3774,6 +3892,7 @@ vg.scene.data = function(data, parentData) {
       return (d[k] = data[k].map(vg.data.ingest), d);
     }, {});
     this._model.data(ingest);
+    this._build = false;
     return this;
   };
 
@@ -3845,12 +3964,119 @@ vg.scene.data = function(data, parentData) {
     return this;
   };
   
-  prototype.update = function(request, items) {
-    this._build = this._build || (this._model.build(), true);
-    this._model.encode(request, items);
-    return this.render(items);
+  prototype.update = function(opt) {
+    opt = opt || {};
+    var view = this,
+        trans = opt.duration
+          ? vg.scene.transition(opt.duration, opt.ease)
+          : null;
+
+    view._build = view._build || (view._model.build(), true);
+    view._model.encode(trans, opt.props, opt.items);
+    
+    if (trans) {
+      trans.start(function(items) {
+        view._renderer.render(view._model.scene(), items);
+      });
+      this._axes.update(this._model, opt.duration, opt.ease);
+    }
+    else view.render(opt.items);
+    return view;
   };
     
   return view;
 })();
+vg.Spec = (function() {
+  var spec = function(s) {
+    this.spec = {
+      width: 500,
+      height: 500,
+      padding: 0,
+      data: [],
+      scales: [],
+      axes: [],
+      marks: []
+    };
+    if (s) vg.extend(this.spec, s);
+  };
+  
+  var prototype = spec.prototype;
+
+  prototype.width = function(w) {
+    this.spec.width = w;
+    return this;
+  };
+  
+  prototype.height = function(h) {
+    this.spec.height = h;
+    return this;
+  };
+  
+  prototype.padding = function(p) {
+    this.spec.padding = p;
+    return this;
+  };
+  
+  prototype.viewport = function(v) {
+    this.spec.viewport = v;
+    return this;
+  };
+
+  prototype.data = function(name, params) {
+    if (!params) params = vg.isString(name) ? {name: name} : name;
+    else params.name = name;
+    this.spec.data.push(params);
+    return this;
+  };
+  
+  prototype.scale = function(name, params) {
+    if (!params) params = vg.isString(name) ? {name: name} : name;
+    else params.name = name;
+    this.spec.scales.push(params);
+    return this;
+  };
+  
+  prototype.axis = function(params) {
+    this.spec.axes.push(params);
+    return this;
+  };
+  
+  prototype.mark = function(type, mark) {
+    if (!mark) mark = {type: type};
+    else mark.type = type;
+    mark.properties = {};
+    this.spec.marks.push(mark);
+    
+    var that = this;
+    return {
+      from: function(name, obj) {
+              mark.from = obj
+                ? (obj.data = name, obj)
+                : vg.isString(name) ? {data: name} : name;
+              return this;
+            },
+      prop: function(name, obj) {
+              mark.properties[name] = vg.keys(obj).reduce(function(o,k) {
+                var v = obj[k];
+                return (o[k] = vg.isObject(v) ? v : {value: v}, o);
+              }, {});
+              return this;
+            },
+      done: function() { return that; }
+    };
+  };
+
+  prototype.parse = function(callback) {
+    vg.parse.spec(this.spec, callback);
+  };
+
+  prototype.json = function() {
+    return this.spec;
+  };
+
+  return spec;
 })();
+
+vg.spec = function(s) {
+  return new vg.Spec(s);
+}})();
