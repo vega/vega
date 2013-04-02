@@ -1,7 +1,6 @@
 {
-  "private": true,
   "name": "vega",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Vega Runtime",
   "keywords": [
     "vega",
@@ -11,8 +10,8 @@
   ],
   "homepage": "http://github.com/trifacta/vega/",
   "author": {
-    "name": "Trifacta Inc.",
-    "url": "http://trifacta.com"
+    "name": "Jeffrey Heer",
+    "url": "http://jheer.org"
   },
   "repository": {
     "type": "git",
