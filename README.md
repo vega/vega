@@ -2,7 +2,9 @@ Vega: A Visualization Grammar
 ====
 
 **Vega** is a _visualization grammar_, a declarative format for creating and 
-saving visualization designs - without programming.
+saving visualization designs - without programming. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG.
+
+To learn more, [visit the wiki](https://github.com/trifacta/vega/wiki).
 
 ## The Vega Runtime
 
