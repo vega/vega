@@ -2,7 +2,7 @@ vg = (function(){
 var vg = {};
 
 // semantic versioning
-vg.version = '1.0.0';
+vg.version = '1.1.0';
 
 // type checking functions
 var toString = Object.prototype.toString;
@@ -125,39 +125,39 @@ vg.unique = function(data, f) {
 // Colors
 
 vg.category10 = [
-	"#1f77b4",
-	"#ff7f0e",
-	"#2ca02c",
-	"#d62728",
-	"#9467bd",
-	"#8c564b",
-	"#e377c2",
-	"#7f7f7f",
-	"#bcbd22",
-	"#17becf"
+  "#1f77b4",
+  "#ff7f0e",
+  "#2ca02c",
+  "#d62728",
+  "#9467bd",
+  "#8c564b",
+  "#e377c2",
+  "#7f7f7f",
+  "#bcbd22",
+  "#17becf"
 ];
 
 vg.category20 = [
-	"#1f77b4",
-	"#aec7e8",
-	"#ff7f0e",
-	"#ffbb78",
-	"#2ca02c",
-	"#98df8a",
-	"#d62728",
-	"#ff9896",
-	"#9467bd",
-	"#c5b0d5",
-	"#8c564b",
-	"#c49c94",
-	"#e377c2",
-	"#f7b6d2",
-	"#7f7f7f",
-	"#c7c7c7",
-	"#bcbd22",
-	"#dbdb8d",
-	"#17becf",
-	"#9edae5"
+  "#1f77b4",
+  "#aec7e8",
+  "#ff7f0e",
+  "#ffbb78",
+  "#2ca02c",
+  "#98df8a",
+  "#d62728",
+  "#ff9896",
+  "#9467bd",
+  "#c5b0d5",
+  "#8c564b",
+  "#c49c94",
+  "#e377c2",
+  "#f7b6d2",
+  "#7f7f7f",
+  "#c7c7c7",
+  "#bcbd22",
+  "#dbdb8d",
+  "#17becf",
+  "#9edae5"
 ];
 
 vg.shapes = [
@@ -1251,6 +1251,8 @@ vg.error = function(msg) {
     this._width = width;
     this._height = height;
     this._padding = pad;
+    
+    if (!el) return this; // early exit if no DOM element
 
     // select canvas element
     var canvas = d3.select(el)
@@ -1274,8 +1276,9 @@ vg.error = function(msg) {
     return this;
   };
   
-  prototype.context = function() {
-    return this._ctx;
+  prototype.context = function(ctx) {
+    if (ctx) { this._ctx = ctx; return this; }
+    else return this._ctx;
   };
   
   prototype.element = function() {
@@ -1915,12 +1918,15 @@ vg.data.size = function(size, group) {
   var formats = {},
       parsers = {
         "number": vg.number,
-        "boolean": vg.boolean
+        "boolean": vg.boolean,
+        "date": Date.parse
       };
 
   function read(data, format) {
     var type = (format && format.type) || "json";
-    return formats[type](data, format);
+    data = formats[type](data, format);
+    if (format && format.parse) parseValues(data, format.parse);
+    return data;
   }
 
   formats.json = function(data, format) {
@@ -1933,20 +1939,18 @@ vg.data.size = function(size, group) {
 
   formats.csv = function(data, format) {
     var d = d3.csv.parse(data);
-    if (format.parse) parseValues(d, format.parse);
     return d;
   };
 
   formats.tsv = function(data, format) {
     var d = d3.tsv.parse(data);
-    if (format.parse) parseValues(d, format.parse);
     return d;
   };
   
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),
-        d, i, j, len, clen;
+        d, i, j, len, clen;        
 
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
@@ -1957,6 +1961,7 @@ vg.data.size = function(size, group) {
   }
 
   read.formats = formats;
+  read.parse = parseValues;
   return read;
 })();vg.data.array = function() {
   var fields = [];
@@ -2978,6 +2983,10 @@ vg.data.size = function(size, group) {
     }
      
     if (d.values) {
+      if (d.format && d.format.parse) {
+        // run specified value parsers
+        vg.data.read.parse(d.values, d.format.parse);
+      }
       model.load[d.name] = d.values;
     }
     
@@ -3030,17 +3039,22 @@ vg.data.size = function(size, group) {
     return mark;
   }
   
-  return function(spec) {
+  return function(spec, width, height) {
     return {
       type: "group",
-      width: spec.width,
-      height: spec.height,
+      width: width,
+      height: height,
       axes: spec.axes,
       scales: spec.scales,
       marks: vg.duplicate(spec.marks).map(parse)
     };
   };
-})();vg.parse.properties = (function() {
+})();vg.parse.padding = function(pad) {
+  if (vg.isObject(pad)) return pad;
+  var p = vg.isNumber(pad) ? pad : 20;
+  return {top:p, left:p, right:p, bottom:p};
+};
+vg.parse.properties = (function() {
   function compile(spec) {
     var code = "",
         names = vg.keys(spec),
@@ -3108,8 +3122,14 @@ vg.data.size = function(size, group) {
       ORDINAL = "ordinal",
       LOG = "log",
       POWER = "pow",
+      TIME = "time",
       VARIABLE = {width: 1, height: 1},
-      PREDEFINED = {category10: 1, category20: 1, shapes: 1};
+      CONSTANT = {category10: 1, category20: 1, shapes: 1};
+
+  var SCALES = {
+    "time": d3.time.scale,
+    "utc":  d3.time.scale.utc
+  };
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
@@ -3120,13 +3140,22 @@ vg.data.size = function(size, group) {
 
   function scale(def, scale, db, group) {
     var type = def.type || LINEAR,
-        s = scale || d3.scale[type](),
         rng = range(def, group),
-        m = (type===ORDINAL ? ordinal : quantitative),
+        s = instance(type, scale),
+        m = type===ORDINAL ? ordinal : quantitative,
         data = vg.values(group.datum);
     
     m(def, s, rng, db, data);
     return s;
+  }
+  
+  function instance(type, scale) {
+    if (!scale || type !== scale.type) {
+      var ctor = SCALES[type] || d3.scale[type];
+      if (!ctor) vg.error("Unrecognized scale type: " + type);
+      (scale = ctor()).type = type;
+    }
+    return scale;
   }
   
   function ordinal(def, scale, rng, db, data) {
@@ -3156,41 +3185,49 @@ vg.data.size = function(size, group) {
   }
   
   function quantitative(def, scale, rng, db, data) {
-    var domain, dat, get;
-    
+    var domain, dat, interval;
+
     // domain
     domain = [null, null];
     if (def.domain !== undefined) {
-      if (Array.isArray(def.domain)) {
+      if (vg.isArray(def.domain)) {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
         dat = db[def.domain.data] || data;
-        get = vg.accessor(def.domain.field);
-        domain[0] = d3.min(dat, get);
-        domain[1] = d3.max(dat, get);
+        vg.array(def.domain.field).forEach(function(f,i) {
+          f = vg.accessor(f);
+          domain[0] = d3.min([domain[0], d3.min(dat, f)]);
+          domain[1] = d3.max([domain[1], d3.max(dat, f)]);
+        });
       } else {
         domain = def.domain;
       }
     }
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
+        domain[0] = null;
         dat = db[def.domainMin.data] || data;
-        get = vg.accessor(def.domainMin.field);
-        domain[0] = d3.min(dat, get);
+        vg.array(def.domainMin.field).forEach(function(f,i) {
+          f = vg.accessor(f);
+          domain[0] = d3.min([domain[0], d3.min(dat, f)]);
+        });
       } else {
         domain[0] = def.domainMin;
       }
     }
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
+        domain[1] = null;
         dat = db[def.domainMax.data] || data;
-        get = vg.accessor(def.domainMax.field);
-        domain[1] = d3.max(dat, get);
+        vg.array(def.domainMax.field).forEach(function(f,i) {
+          f = vg.accessor(f);
+          domain[1] = d3.max([domain[1], d3.max(dat, f)]);
+        });
       } else {
         domain[1] = def.domainMax;
       }
     }
-    if (def.type !== LOG && (def.zero || def.zero===undefined)) {
+    if (def.type !== LOG && def.type !== TIME && (def.zero || def.zero===undefined)) {
       domain[0] = Math.min(0, domain[0]);
       domain[1] = Math.max(0, domain[1]);
     }
@@ -3201,9 +3238,17 @@ vg.data.size = function(size, group) {
     if (def.range=='height') rng = rng.reverse();
     scale[def.round ? "rangeRound" : "range"](rng);
 
-    if (def.clamp) scale.clamp(true);
-    if (def.nice) scale.nice();
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
+    if (def.clamp) scale.clamp(true);
+    if (def.nice) {
+      if (def.type === TIME) {
+        interval = d3.time[def.nice];
+        if (!interval) vg.error("Unrecognized interval: " + interval);
+        scale.nice(interval);
+      } else {
+        scale.nice();
+      }
+    }
   }
   
   function range(def, group) {
@@ -3213,7 +3258,7 @@ vg.data.size = function(size, group) {
       if (typeof def.range === 'string') {
         if (VARIABLE[def.range]) {
           rng = [0, group[def.range]];
-        } else if (PREDEFINED[def.range]) {
+        } else if (CONSTANT[def.range]) {
           rng = vg[def.range];
         } else {
           vg.error("Unrecogized range: "+def.range);
@@ -3244,43 +3289,25 @@ vg.data.size = function(size, group) {
   }
   
   return scales;
-})();vg.parse.spec = function(spec, callback) {
+})();vg.parse.spec = function(spec, callback, viewFactory) {
+  
+  viewFactory = viewFactory || vg.ViewFactory;
   
   function parse(spec) {
+    var width = spec.width || 500,
+        height = spec.height || 500,
+        viewport = spec.viewport || null;
+    
     var defs = {
-      marks: vg.parse.marks(spec),
-      data: vg.parse.data(spec.data, function() { callback(chart); })
+      width: width,
+      height: height,
+      viewport: viewport,
+      padding: vg.parse.padding(spec.padding),
+      marks: vg.parse.marks(spec, width, height),
+      data: vg.parse.data(spec.data, function() { callback(viewConstructor); })
     };
-
-    var chart = function(opt) {
-      var view = new vg.View()
-        .width(spec.width || 500)
-        .height(spec.height || 500)
-        .padding(parsePadding(spec.padding))
-        .viewport(spec.viewport || null)
-        .renderer(opt.renderer || "canvas")
-        .initialize(opt.el)
-        .defs(defs)
-        .data(defs.data.load)
-        .data(opt.data);
-      
-      if (opt.hover !== false) {
-        view.on("mouseover", function(evt, item) {
-          this.update({props:"hover", items:item});
-        })
-        .on("mouseout", function(evt, item) {
-          this.update({props:"update", items:item});
-        });
-      }
-      
-      return view;
-    };
-  }
-  
-  function parsePadding(pad) {
-    if (vg.isObject(pad)) return pad;
-    var p = vg.isNumber(pad) ? pad : 20;
-    return {top:p, left:p, right:p, bottom:p};
+    
+    var viewConstructor = viewFactory(defs);
   }
   
   vg.isObject(spec) ? parse(spec) :
@@ -3780,12 +3807,14 @@ vg.scene.transition = function(dur, ease) {
   };
   
   prototype.width = function(width) {
+    if (this._defs) this._defs.width = width;
     if (this._defs && this._defs.marks) this._defs.marks.width = width;
     if (this._scene) this._scene.items[0].width = width;
     return this;
   };
   
   prototype.height = function(height) {
+    if (this._defs) this._defs.height = height;
     if (this._defs && this._defs.marks) this._defs.marks.height = height;
     if (this._scene) this._scene.items[0].height = height;
     return this;
@@ -3984,9 +4013,39 @@ vg.scene.transition = function(dur, ease) {
     else view.render(opt.items);
     return view;
   };
-    
+      
   return view;
 })();
+
+// view constructor factory
+// takes definitions from parsed specification as input
+// returns a view constructor
+vg.ViewFactory = function(defs) {
+  return function(opt) {
+    var v = new vg.View()
+      .width(defs.width)
+      .height(defs.height)
+      .padding(defs.padding)
+      .viewport(defs.viewport)
+      .renderer(opt.renderer || "canvas")
+      .defs(defs);
+
+    if (defs.data.load) v.data(defs.data.load);
+    if (opt.data) v.data(opt.data);
+    if (opt.el) v.initialize(opt.el);
+
+    if (opt.hover !== false) {
+      v.on("mouseover", function(evt, item) {
+        this.update({props:"hover", items:item});
+      })
+      .on("mouseout", function(evt, item) {
+        this.update({props:"update", items:item});
+      });
+    }
+  
+    return v;
+  };
+};
 vg.Spec = (function() {
   var spec = function(s) {
     this.spec = {
