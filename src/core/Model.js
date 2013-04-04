@@ -39,12 +39,14 @@ vg.Model = (function() {
   };
   
   prototype.width = function(width) {
+    if (this._defs) this._defs.width = width;
     if (this._defs && this._defs.marks) this._defs.marks.width = width;
     if (this._scene) this._scene.items[0].width = width;
     return this;
   };
   
   prototype.height = function(height) {
+    if (this._defs) this._defs.height = height;
     if (this._defs && this._defs.marks) this._defs.marks.height = height;
     if (this._scene) this._scene.items[0].height = height;
     return this;

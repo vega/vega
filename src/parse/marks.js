@@ -29,11 +29,11 @@ vg.parse.marks = (function() {
     return mark;
   }
   
-  return function(spec) {
+  return function(spec, width, height) {
     return {
       type: "group",
-      width: spec.width,
-      height: spec.height,
+      width: width,
+      height: height,
       axes: spec.axes,
       scales: spec.scales,
       marks: vg.duplicate(spec.marks).map(parse)

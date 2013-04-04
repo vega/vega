@@ -169,6 +169,36 @@ vg.View = (function() {
     else view.render(opt.items);
     return view;
   };
-    
+      
   return view;
 })();
+
+// view constructor factory
+// takes definitions from parsed specification as input
+// returns a view constructor
+vg.ViewFactory = function(defs) {
+  return function(opt) {
+    var v = new vg.View()
+      .width(defs.width)
+      .height(defs.height)
+      .padding(defs.padding)
+      .viewport(defs.viewport)
+      .renderer(opt.renderer || "canvas")
+      .defs(defs);
+
+    if (defs.data.load) v.data(defs.data.load);
+    if (opt.data) v.data(opt.data);
+    if (opt.el) v.initialize(opt.el);
+
+    if (opt.hover !== false) {
+      v.on("mouseover", function(evt, item) {
+        this.update({props:"hover", items:item});
+      })
+      .on("mouseout", function(evt, item) {
+        this.update({props:"update", items:item});
+      });
+    }
+  
+    return v;
+  };
+};
