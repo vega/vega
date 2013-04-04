@@ -7,6 +7,7 @@ var SPECS = [
   "error",
   "force",
   "image",
+  "lifelines",
   "map",
   "population",
   "scatter",
