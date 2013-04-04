@@ -11,6 +11,8 @@ vg.canvas.Renderer = (function() {
     this._width = width;
     this._height = height;
     this._padding = pad;
+    
+    if (!el) return this; // early exit if no DOM element
 
     // select canvas element
     var canvas = d3.select(el)
@@ -34,8 +36,9 @@ vg.canvas.Renderer = (function() {
     return this;
   };
   
-  prototype.context = function() {
-    return this._ctx;
+  prototype.context = function(ctx) {
+    if (ctx) { this._ctx = ctx; return this; }
+    else return this._ctx;
   };
   
   prototype.element = function() {
