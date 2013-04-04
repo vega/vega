@@ -26,6 +26,10 @@ vg.parse.data = function(spec, callback) {
     }
      
     if (d.values) {
+      if (d.format && d.format.parse) {
+        // run specified value parsers
+        vg.data.read.parse(d.values, d.format.parse);
+      }
       model.load[d.name] = d.values;
     }
     

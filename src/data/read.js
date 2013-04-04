@@ -2,12 +2,15 @@ vg.data.read = (function() {
   var formats = {},
       parsers = {
         "number": vg.number,
-        "boolean": vg.boolean
+        "boolean": vg.boolean,
+        "date": Date.parse
       };
 
   function read(data, format) {
     var type = (format && format.type) || "json";
-    return formats[type](data, format);
+    data = formats[type](data, format);
+    if (format && format.parse) parseValues(data, format.parse);
+    return data;
   }
 
   formats.json = function(data, format) {
@@ -20,20 +23,18 @@ vg.data.read = (function() {
 
   formats.csv = function(data, format) {
     var d = d3.csv.parse(data);
-    if (format.parse) parseValues(d, format.parse);
     return d;
   };
 
   formats.tsv = function(data, format) {
     var d = d3.tsv.parse(data);
-    if (format.parse) parseValues(d, format.parse);
     return d;
   };
   
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),
-        d, i, j, len, clen;
+        d, i, j, len, clen;        
 
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
@@ -44,5 +45,6 @@ vg.data.read = (function() {
   }
 
   read.formats = formats;
+  read.parse = parseValues;
   return read;
 })();
