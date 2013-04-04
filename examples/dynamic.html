@@ -114,10 +114,20 @@ function run(step) {
 }
 
 vg.parse.spec(spec1, function(chart) {
-  self.view1 = chart({el:"#view1", data:data, renderer:renderer}).update();
+  self.view1 = chart({
+    el: "#view1",
+    data: data,
+    renderer: renderer,
+    hover: false
+  }).update();
 });
 vg.parse.spec(spec2, function(chart) {
-  self.view2 = chart({el:"#view2", data:data, renderer:renderer}).update();
+  self.view2 = chart({
+    el: "#view2",
+    data: data,
+    renderer: renderer,
+    hover: false
+  }).update();
 });
 
 d3.select("#timestep").on("change", function() {
