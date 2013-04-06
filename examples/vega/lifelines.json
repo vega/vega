@@ -7,7 +7,7 @@
     {
       "name": "people",
       "values": [
-        {"label":"Washington", "born":-7506057600000, "died":-5365324800000, 
+        {"label":"Washington", "born":-7506057600000, "died":-5366196000000, 
          "enter":-5701424400000, "leave":-5453884800000},
         {"label":"Adams",      "born":-7389766800000, "died":-4528285200000, 
          "enter":-5453884800000, "leave":-5327740800000},
