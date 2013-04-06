@@ -1,8 +1,8 @@
-vg = (function(){
+vg = (function(d3){ // take d3 instance as sole import
 var vg = {};
 
 // semantic versioning
-vg.version = '1.1.0';
+vg.version = '1.1.1';
 
 // type checking functions
 var toString = Object.prototype.toString;
@@ -4141,4 +4141,4 @@ vg.spec = function(s) {
   return new vg.Spec(s);
 };
 return vg;
-})();
+})(d3); // assumes availability of D3 in global namespace
