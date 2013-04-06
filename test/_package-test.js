@@ -86,6 +86,24 @@ suite.addBatch({
       'should return a number argument': function (vg) {
         assert.equal(vg.values(2.2), 2.2);
       }
+    },
+    'str': {
+      'should return String argument wrapped in single quotation marks': function (vg) {
+        assert.strictEqual(vg.str('test'), "'test'");
+      },
+      'should return argument if is neither String nor Array': function (vg) {
+        var arg = {};
+        assert.strictEqual(vg.str(arg), arg);
+      },
+      'should wrap an array in square brackets': function (vg) {
+        assert.equal(vg.str(['1', '2']), "['1','2']");
+      },
+      'should recursively wrap an array in square brackets': function (vg) {
+        assert.equal(vg.str([
+          ['1','3'],
+          '2'
+        ]), "[['1','3'],'2']");
+      }
     }
   }
 });
