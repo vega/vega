@@ -256,6 +256,15 @@ vg.error = function(msg) {
     return this;
   };
 
+  prototype.encloses = function(b) {
+    return b && (
+      this.x1 <= b.x1 &&
+      this.x2 >= b.x2 &&
+      this.y1 <= b.y1 &&
+      this.y2 >= b.y2
+    );
+  };
+
   prototype.intersects = function(b) {
     return b && !(
       this.x2 < b.x1 ||
@@ -1315,15 +1324,15 @@ vg.error = function(msg) {
     var g = this._ctx,
         pad = this._padding,
         w = this._width + pad.left + pad.right,
-        h = this._width + pad.top + pad.bottom,
-        bb = null;
+        h = this._height + pad.top + pad.bottom,
+        bb = null, bb2;
 
     // setup
     this._scene = scene;
     g.save();
     bb = setBounds(g, getBounds(items));
     g.clearRect(-pad.left, -pad.top, w, h);
-    
+
     // render
     this.draw(g, scene, bb);
 
@@ -1331,9 +1340,11 @@ vg.error = function(msg) {
     if (items) {
       g.restore();
       g.save();
-      bb = setBounds(g, getBounds(items));
-      g.clearRect(-pad.left, -pad.top, w, h);
-      this.draw(g, scene, bb);
+      bb2 = setBounds(g, getBounds(items));
+      if (!bb.encloses(bb2)) {
+        g.clearRect(-pad.left, -pad.top, w, h);
+        this.draw(g, scene, bb2);
+      }
     }
     
     // takedown

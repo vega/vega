@@ -77,6 +77,15 @@ vg.Bounds = (function() {
     return this;
   };
 
+  prototype.encloses = function(b) {
+    return b && (
+      this.x1 <= b.x1 &&
+      this.x2 >= b.x2 &&
+      this.y1 <= b.y1 &&
+      this.y2 >= b.y2
+    );
+  };
+
   prototype.intersects = function(b) {
     return b && !(
       this.x2 < b.x1 ||
