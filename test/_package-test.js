@@ -53,10 +53,10 @@ suite.addBatch({
       }
     },
     "keys": {
-      "enumerates every defined key": function (vg) {
+      "should enumerate every defined key": function (vg) {
         assert.deepEqual(vg.keys({a: 1, b: 1}), ["a", "b"]);
       },
-      "includes keys defined on prototypes": function (vg) {
+      "should include keys defined on prototypes": function (vg) {
         function Abc() {
           this.a = 1;
           this.b = 2;
@@ -65,7 +65,7 @@ suite.addBatch({
         Abc.prototype.c = 3;
         assert.deepEqual(vg.keys(new Abc()), ["a", "b", "c"]);
       },
-      "includes keys with null or undefined values": function (vg) {
+      "should include keys with null or undefined values": function (vg) {
         assert.deepEqual(vg.keys({a: undefined, b: null, c: NaN}), ["a", "b", "c"]);
       }
     }
