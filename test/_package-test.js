@@ -68,6 +68,24 @@ suite.addBatch({
       "should include keys with null or undefined values": function (vg) {
         assert.deepEqual(vg.keys({a: undefined, b: null, c: NaN}), ["a", "b", "c"]);
       }
+    },
+    'values': {
+      'should return "values" property of an object argument that has a "values" property': function (vg) {
+        var testValues = [1];
+        assert.strictEqual(vg.values({'values': testValues}), testValues);
+      },
+      'should return the argument itself if it is an object, but has no "values" property': function (vg) {
+        var object = {};
+        assert.strictEqual(vg.values(object), object);
+      },
+      'should return an array argument, even if it has a "values" property': function (vg) {
+        var array = [];
+        array.values = {};
+        assert.strictEqual(vg.values(array), array);
+      },
+      'should return a number argument': function (vg) {
+        assert.equal(vg.values(2.2), 2.2);
+      }
     }
   }
 });
