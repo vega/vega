@@ -5,6 +5,7 @@ JS_COMPILER = $(NODE_PATH)/uglify-js/bin/uglifyjs
 JS_TESTER = $(NODE_PATH)/vows/bin/vows
 LOCALE ?= en_US
 
+
 all: \
 	vega.js \
 	vega.min.js
