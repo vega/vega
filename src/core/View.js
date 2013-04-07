@@ -192,10 +192,14 @@ vg.ViewFactory = function(defs) {
 
     if (opt.hover !== false) {
       v.on("mouseover", function(evt, item) {
-        this.update({props:"hover", items:item});
+        if (item.hasPropertySet("hover")) {
+          this.update({props:"hover", items:item});
+        }
       })
       .on("mouseout", function(evt, item) {
-        this.update({props:"update", items:item});
+        if (item.hasPropertySet("hover")) {
+          this.update({props:"update", items:item});
+        }
       });
     }
   

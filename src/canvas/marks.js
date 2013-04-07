@@ -400,6 +400,11 @@ vg.canvas.marks = (function() {
     if (!scene.items.length) return false;
     var o, b, i;
 
+    if (g._ratio !== 1) {
+      x *= g._ratio;
+      y *= g._ratio;
+    }
+
     for (i=scene.items.length; --i >= 0;) {
       o = scene.items[i]; b = o.bounds;
       // first hit test against bounding box
@@ -417,6 +422,10 @@ vg.canvas.marks = (function() {
 
     b = items[0].bounds;
     if (b && !b.contains(gx, gy)) return false;
+    if (g._ratio !== 1) {
+      x *= g._ratio;
+      y *= g._ratio;
+    }
     if (!hitTests.area(g, items, x, y)) return false;
     return items[0];
   }

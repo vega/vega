@@ -30,11 +30,35 @@ vg.canvas.Renderer = (function() {
       .attr("height", height + pad.top + pad.bottom);
     
     // get the canvas graphics context
+    var s;
     this._ctx = canvas.node().getContext("2d");
-    this._ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
+    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
+    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     
     return this;
   };
+  
+  function scaleCanvas(canvas, ctx) {
+    // get canvas pixel data
+    var devicePixelRatio = window.devicePixelRatio || 1,
+        backingStoreRatio = (
+          ctx.webkitBackingStorePixelRatio ||
+          ctx.mozBackingStorePixelRatio ||
+          ctx.msBackingStorePixelRatio ||
+          ctx.oBackingStorePixelRatio ||
+          ctx.backingStorePixelRatio) || 1,
+        ratio = devicePixelRatio / backingStoreRatio;
+
+    if (devicePixelRatio !== backingStoreRatio) {
+      var w = canvas.width, h = canvas.height;
+      // set actual and visible canvas size
+      canvas.setAttribute("width", w * ratio);
+      canvas.setAttribute("height", h * ratio);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+    }
+    return ratio;
+  }
   
   prototype.context = function(ctx) {
     if (ctx) { this._ctx = ctx; return this; }
@@ -75,15 +99,15 @@ vg.canvas.Renderer = (function() {
     var g = this._ctx,
         pad = this._padding,
         w = this._width + pad.left + pad.right,
-        h = this._width + pad.top + pad.bottom,
-        bb = null;
+        h = this._height + pad.top + pad.bottom,
+        bb = null, bb2;
 
     // setup
     this._scene = scene;
     g.save();
     bb = setBounds(g, getBounds(items));
     g.clearRect(-pad.left, -pad.top, w, h);
-    
+
     // render
     this.draw(g, scene, bb);
 
@@ -91,9 +115,11 @@ vg.canvas.Renderer = (function() {
     if (items) {
       g.restore();
       g.save();
-      bb = setBounds(g, getBounds(items));
-      g.clearRect(-pad.left, -pad.top, w, h);
-      this.draw(g, scene, bb);
+      bb2 = setBounds(g, getBounds(items));
+      if (!bb.encloses(bb2)) {
+        g.clearRect(-pad.left, -pad.top, w, h);
+        this.draw(g, scene, bb2);
+      }
     }
     
     // takedown
