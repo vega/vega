@@ -29,6 +29,7 @@ vega.js: \
 	src/data/filter.js \
 	src/data/fold.js \
 	src/data/force.js \
+	src/data/formula.js \
 	src/data/geo.js \
 	src/data/geopath.js \
 	src/data/link.js \
