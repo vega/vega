@@ -3360,6 +3360,11 @@ vg.scene.data = function(data, parentData) {
   
   var prototype = item.prototype;
 
+  prototype.hasPropertySet = function(name) {
+    var props = this.mark.def.properties;
+    return props && props[name] != null;
+  };
+
   prototype.cousin = function(offset, index) {
     if (offset === 0) return this;
     offset = offset || -1;
@@ -4047,10 +4052,14 @@ vg.ViewFactory = function(defs) {
 
     if (opt.hover !== false) {
       v.on("mouseover", function(evt, item) {
-        this.update({props:"hover", items:item});
+        if (item.hasPropertySet("hover")) {
+          this.update({props:"hover", items:item});
+        }
       })
       .on("mouseout", function(evt, item) {
-        this.update({props:"update", items:item});
+        if (item.hasPropertySet("hover")) {
+          this.update({props:"update", items:item});
+        }
       });
     }
   
