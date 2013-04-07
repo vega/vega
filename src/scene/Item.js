@@ -5,6 +5,11 @@ vg.scene.Item = (function() {
   
   var prototype = item.prototype;
 
+  prototype.hasPropertySet = function(name) {
+    var props = this.mark.def.properties;
+    return props && props[name] != null;
+  };
+
   prototype.cousin = function(offset, index) {
     if (offset === 0) return this;
     offset = offset || -1;
