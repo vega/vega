@@ -1,16 +1,18 @@
-var smash = require("smash");
+var smash = require("smash"),
+  d3 = require('d3');
 
 module.exports = function () {
   var files = [].slice.call(arguments).map(function (d) {
       return "src/" + d;
     }),
-    expression = "d3";
+    expression = "vg",
+    sandbox = { 'd3': d3 };
 
   files.unshift("src/core/_start");
   files.push("src/core/_end");
 
   function topic() {
-    smash.load(files, expression, null, this.callback);
+    smash.load(files, expression, sandbox, this.callback);
   }
 
   topic.expression = function (_) {
