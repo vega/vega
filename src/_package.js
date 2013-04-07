@@ -30,9 +30,9 @@ vg.isBoolean = function(obj) {
   return toString.call(obj) == '[object Boolean]';
 };
 
-vg.number = function(s) { return +s; }
+vg.number = function(s) { return +s; };
 
-vg.boolean = function(s) { return !!s; }
+vg.boolean = function(s) { return !!s; };
 
 // utility functions
 
@@ -58,7 +58,7 @@ vg.field = function(f) {
       a.push.apply(a, b);
       return a;
     }, []);
-}
+};
 
 vg.accessor = function(f) {
   var s;
@@ -81,7 +81,7 @@ vg.comparator = function(sort) {
   return function(a,b) {
     var i, n, f, x, y;
     for (i=0, n=sort.length; i<n; ++i) {
-      f = sort[i], x = f(a), y = f(b);
+      f = sort[i]; x = f(a); y = f(b);
       if (x < y) return -1 * sign[i];
       if (x > y) return sign[i];
     }
