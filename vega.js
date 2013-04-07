@@ -2,7 +2,7 @@ vg = (function(d3){ // take d3 instance as sole import
 var vg = {};
 
 // semantic versioning
-vg.version = '1.1.1';
+vg.version = '1.2.0';
 
 // type checking functions
 var toString = Object.prototype.toString;
@@ -1159,6 +1159,11 @@ vg.error = function(msg) {
     if (!scene.items.length) return false;
     var o, b, i;
 
+    if (g._ratio !== 1) {
+      x *= g._ratio;
+      y *= g._ratio;
+    }
+
     for (i=scene.items.length; --i >= 0;) {
       o = scene.items[i]; b = o.bounds;
       // first hit test against bounding box
@@ -1176,6 +1181,10 @@ vg.error = function(msg) {
 
     b = items[0].bounds;
     if (b && !b.contains(gx, gy)) return false;
+    if (g._ratio !== 1) {
+      x *= g._ratio;
+      y *= g._ratio;
+    }
     if (!hitTests.area(g, items, x, y)) return false;
     return items[0];
   }
@@ -1251,6 +1260,7 @@ vg.error = function(msg) {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._ratio = null;
   };
   
   var prototype = renderer.prototype;
@@ -1279,11 +1289,35 @@ vg.error = function(msg) {
       .attr("height", height + pad.top + pad.bottom);
     
     // get the canvas graphics context
+    var s;
     this._ctx = canvas.node().getContext("2d");
-    this._ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
+    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
+    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     
     return this;
   };
+  
+  function scaleCanvas(canvas, ctx) {
+    // get canvas pixel data
+    var devicePixelRatio = window.devicePixelRatio || 1,
+        backingStoreRatio = (
+          ctx.webkitBackingStorePixelRatio ||
+          ctx.mozBackingStorePixelRatio ||
+          ctx.msBackingStorePixelRatio ||
+          ctx.oBackingStorePixelRatio ||
+          ctx.backingStorePixelRatio) || 1,
+        ratio = devicePixelRatio / backingStoreRatio;
+
+    if (devicePixelRatio !== backingStoreRatio) {
+      var w = canvas.width, h = canvas.height;
+      // set actual and visible canvas size
+      canvas.setAttribute("width", w * ratio);
+      canvas.setAttribute("height", h * ratio);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+    }
+    return ratio;
+  }
   
   prototype.context = function(ctx) {
     if (ctx) { this._ctx = ctx; return this; }

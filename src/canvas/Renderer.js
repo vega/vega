@@ -2,6 +2,7 @@ vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._ratio = null;
   };
   
   var prototype = renderer.prototype;
@@ -30,11 +31,35 @@ vg.canvas.Renderer = (function() {
       .attr("height", height + pad.top + pad.bottom);
     
     // get the canvas graphics context
+    var s;
     this._ctx = canvas.node().getContext("2d");
-    this._ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
+    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
+    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     
     return this;
   };
+  
+  function scaleCanvas(canvas, ctx) {
+    // get canvas pixel data
+    var devicePixelRatio = window.devicePixelRatio || 1,
+        backingStoreRatio = (
+          ctx.webkitBackingStorePixelRatio ||
+          ctx.mozBackingStorePixelRatio ||
+          ctx.msBackingStorePixelRatio ||
+          ctx.oBackingStorePixelRatio ||
+          ctx.backingStorePixelRatio) || 1,
+        ratio = devicePixelRatio / backingStoreRatio;
+
+    if (devicePixelRatio !== backingStoreRatio) {
+      var w = canvas.width, h = canvas.height;
+      // set actual and visible canvas size
+      canvas.setAttribute("width", w * ratio);
+      canvas.setAttribute("height", h * ratio);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+    }
+    return ratio;
+  }
   
   prototype.context = function(ctx) {
     if (ctx) { this._ctx = ctx; return this; }
