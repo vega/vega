@@ -2,7 +2,6 @@ vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
-    this._ratio = null;
   };
   
   var prototype = renderer.prototype;

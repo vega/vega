@@ -1260,7 +1260,6 @@ vg.error = function(msg) {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
-    this._ratio = null;
   };
   
   var prototype = renderer.prototype;
