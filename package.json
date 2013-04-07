@@ -13,6 +13,12 @@
     "name": "Jeffrey Heer",
     "url": "http://trifacta.com"
   },
+  "contributors": [
+    {
+      "name": "Marc Prud'hommeaux",
+      "url": "http://glimpse.io"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "http://github.com/trifacta/vega.git"
@@ -22,6 +28,11 @@
     "d3": "3.1.4"
   },
   "devDependencies": {
-    "uglify-js": "1.3.4"
+    "uglify-js": "1.3.4",
+    "vows": "0.7.x",
+    "jsdom": "0.5.5"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/vows; echo"
   }
 }
