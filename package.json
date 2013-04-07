@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "uglify-js": "1.3.4",
+    "smash": "~0.0.8",
     "vows": "0.7.x"
   },
   "scripts": {
