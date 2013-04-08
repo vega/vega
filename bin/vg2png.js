@@ -1,20 +1,24 @@
 #!/usr/bin/env node
 // Render a Vega specification to PNG, using node canvas
 
+var helpText =
+  "Render a Vega specification to PNG.\n" +
+  "Usage: vg2png vega_json_file [output_png_file]\n" +
+  " If no output_png_file is given, writes to stdout.";
+
 // import required libraries
 var path = require("path");
 var fs = require("fs");
 var vg = require("../index");
 
-// process arguments
-var args = process.argv.slice(2),
-    specFile = args[0],
-    outputFile = args[1] || null;
-    
-if (specFile == null) {
-  console.log("Missing arguments.");
-  process.exit(1);
-}
+// arguments
+var args = require("optimist")
+  .usage(helpText)
+  .demand(1)
+  .argv;
+
+var specFile = args._[0],
+    outputFile = args._[1] || null;
 
 // load spec, render to png
 fs.readFile(specFile, "utf8", function(err, text) {
