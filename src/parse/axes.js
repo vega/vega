@@ -50,7 +50,8 @@ vg.parse.axes = (function() {
     if (def.tickSize !== undefined) {
       for (var i=0; i<3; ++i) size.push(def.tickSize);
     } else {
-      size = [6, 6, 6];
+      var ts = vg.config.axis.tickSize;
+      size = [ts, ts, ts];
     }
     if (def.tickSizeMajor !== undefined) size[0] = def.tickSizeMajor;
     if (def.tickSizeMinor !== undefined) size[1] = def.tickSizeMinor;

@@ -11,6 +11,7 @@ all: \
 vega.js: \
 	src/core/_start.js \
 	src/_package.js \
+	src/_config.js \
 	src/core/Bounds.js \
 	src/canvas/_package.js \
 	src/canvas/path.js \

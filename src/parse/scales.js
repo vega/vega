@@ -4,8 +4,7 @@ vg.parse.scales = (function() {
       LOG = "log",
       POWER = "pow",
       TIME = "time",
-      VARIABLE = {width: 1, height: 1},
-      CONSTANT = {category10: 1, category20: 1, shapes: 1};
+      GROUP_PROPERTY = {width: 1, height: 1};
 
   var SCALES = {
     "time": d3.time.scale,
@@ -140,10 +139,10 @@ vg.parse.scales = (function() {
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
-        if (VARIABLE[def.range]) {
+        if (GROUP_PROPERTY[def.range]) {
           rng = [0, group[def.range]];
-        } else if (CONSTANT[def.range]) {
-          rng = vg[def.range];
+        } else if (vg.config.range[def.range]) {
+          rng = vg.config.range[def.range];
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;

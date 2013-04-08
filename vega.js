@@ -122,53 +122,6 @@ vg.unique = function(data, f) {
   return results;
 };
 
-// Colors
-
-vg.category10 = [
-  "#1f77b4",
-  "#ff7f0e",
-  "#2ca02c",
-  "#d62728",
-  "#9467bd",
-  "#8c564b",
-  "#e377c2",
-  "#7f7f7f",
-  "#bcbd22",
-  "#17becf"
-];
-
-vg.category20 = [
-  "#1f77b4",
-  "#aec7e8",
-  "#ff7f0e",
-  "#ffbb78",
-  "#2ca02c",
-  "#98df8a",
-  "#d62728",
-  "#ff9896",
-  "#9467bd",
-  "#c5b0d5",
-  "#8c564b",
-  "#c49c94",
-  "#e377c2",
-  "#f7b6d2",
-  "#7f7f7f",
-  "#c7c7c7",
-  "#bcbd22",
-  "#dbdb8d",
-  "#17becf",
-  "#9edae5"
-];
-
-vg.shapes = [
-  "circle",
-  "cross",
-  "diamond",
-  "square",
-  "triangle-down",
-  "triangle-up"
-];
-
 // Logging
 vg.log = function(msg) {
   console.log(msg);
@@ -177,6 +130,66 @@ vg.log = function(msg) {
 vg.error = function(msg) {
   console.log(msg);
   alert(msg);
+};vg.config = {};
+
+// Default axis properties
+vg.config.axis = {
+  ticks: 10,
+  padding: 3,
+  axisColor: "#000",
+  tickColor: "#000",
+  tickLabelColor: "#000",
+  axisWidth: 1,
+  tickWidth: 1,
+  tickSize: 6,
+  tickLabelFontSize: 11,
+  tickLabelFont: "sans-serif"
+};
+
+// Default scale ranges
+vg.config.range = {
+  category10: [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf"
+  ],
+  category20: [
+    "#1f77b4",
+    "#aec7e8",
+    "#ff7f0e",
+    "#ffbb78",
+    "#2ca02c",
+    "#98df8a",
+    "#d62728",
+    "#ff9896",
+    "#9467bd",
+    "#c5b0d5",
+    "#8c564b",
+    "#c49c94",
+    "#e377c2",
+    "#f7b6d2",
+    "#7f7f7f",
+    "#c7c7c7",
+    "#bcbd22",
+    "#dbdb8d",
+    "#17becf",
+    "#9edae5"
+  ],
+  shapes: [
+    "circle",
+    "cross",
+    "diamond",
+    "square",
+    "triangle-down",
+    "triangle-up"
+  ]
 };vg.Bounds = (function() {
   var bounds = function(b) {
     this.clear();
@@ -3032,7 +3045,8 @@ vg.data.size = function(size, group) {
     if (def.tickSize !== undefined) {
       for (var i=0; i<3; ++i) size.push(def.tickSize);
     } else {
-      size = [6, 6, 6];
+      var ts = vg.config.axis.tickSize;
+      size = [ts, ts, ts];
     }
     if (def.tickSizeMajor !== undefined) size[0] = def.tickSizeMajor;
     if (def.tickSizeMinor !== undefined) size[1] = def.tickSizeMinor;
@@ -3233,8 +3247,7 @@ vg.parse.properties = (function() {
       LOG = "log",
       POWER = "pow",
       TIME = "time",
-      VARIABLE = {width: 1, height: 1},
-      CONSTANT = {category10: 1, category20: 1, shapes: 1};
+      GROUP_PROPERTY = {width: 1, height: 1};
 
   var SCALES = {
     "time": d3.time.scale,
@@ -3369,10 +3382,10 @@ vg.parse.properties = (function() {
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
-        if (VARIABLE[def.range]) {
+        if (GROUP_PROPERTY[def.range]) {
           rng = [0, group[def.range]];
-        } else if (CONSTANT[def.range]) {
-          rng = vg[def.range];
+        } else if (vg.config.range[def.range]) {
+          rng = vg.config.range[def.range];
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;
@@ -3790,14 +3803,14 @@ vg.scene.transition = function(dur, ease) {
       orient = vg_axisDefaultOrient,
       offset = 0,
       axisModel = null,
-      tickMajorSize = 6,
-      tickMinorSize = 6,
-      tickEndSize = 6,
-      tickPadding = 3,
+      tickMajorSize = vg.config.axis.tickSize,
+      tickMinorSize = vg.config.axis.tickSize,
+      tickEndSize = vg.config.axis.tickSize,
+      tickPadding = vg.config.axis.padding,
       tickValues = null,
       tickFormat = null,
       tickSubdivide = 0,
-      tickArguments = [10],
+      tickArguments = [vg.config.axis.ticks],
       tickLabelStyle = {},
       majorTickStyle = {},
       minorTickStyle = {},
@@ -3866,7 +3879,7 @@ vg.scene.transition = function(dur, ease) {
           x:  oldScale,
           y:  {value: 0},
           y2: {value: tickMajorSize},
-          width: {value: 1}
+          width: {value: vg.config.axis.tickWidth}
         });
         vg.extend(majorTicks.properties.update, {
           x:  newScale,
@@ -3882,7 +3895,7 @@ vg.scene.transition = function(dur, ease) {
           x:  oldScale,
           y:  {value: 0},
           y2: {value: tickMinorSize},
-          width: {value: 1}
+          width: {value: vg.config.axis.tickWidth}
         });
         vg.extend(minorTicks.properties.update, {
           x:  newScale,
@@ -3918,7 +3931,7 @@ vg.scene.transition = function(dur, ease) {
           x:  oldScale,
           y:  {value: 0},
           y2: {value: -tickMajorSize},
-          width: {value: 1}
+          width: {value: vg.config.axis.tickWidth}
         });
         vg.extend(majorTicks.properties.update, {
           x:  newScale,
@@ -3931,7 +3944,7 @@ vg.scene.transition = function(dur, ease) {
           x:  oldScale,
           y:  {value: 0},
           y2: {value: -tickMinorSize},
-          width: {value: 1}
+          width: {value: vg.config.axis.tickWidth}
         });
         vg.extend(minorTicks.properties.update, {
           x:  newScale,
@@ -3967,7 +3980,7 @@ vg.scene.transition = function(dur, ease) {
           x:  {value: 0},
           x2: {value: -tickMajorSize},
           y:  oldScale,
-          height: {value: 1}
+          height: {value: vg.config.axis.tickWidth}
         });
         vg.extend(majorTicks.properties.update, {
           x:  {value: 0},
@@ -3983,7 +3996,7 @@ vg.scene.transition = function(dur, ease) {
           x:  {value: 0},
           x2: {value: -tickMinorSize},
           y:  oldScale,
-          height: {value: 1}
+          height: {value: vg.config.axis.tickWidth}
         });
         vg.extend(minorTicks.properties.update, {
           x:  {value: 0},
@@ -4019,7 +4032,7 @@ vg.scene.transition = function(dur, ease) {
           x:  {value: 0},
           x2: {value: tickMajorSize},
           y:  oldScale,
-          height: {value: 1}
+          height: {value: vg.config.axis.tickWidth}
         });
         vg.extend(majorTicks.properties.update, {
           x:  {value: 0},
@@ -4035,7 +4048,7 @@ vg.scene.transition = function(dur, ease) {
           x:  {value: 0},
           x2: {value: tickMinorSize},
           y:  oldScale,
-          height: {value: 1}
+          height: {value: vg.config.axis.tickWidth}
         });
         vg.extend(minorTicks.properties.update, {
           x:  {value: 0},
@@ -4185,7 +4198,9 @@ function vg_axisScaleExtent(domain) {
 }
 
 function vg_axisScaleRange(scale) {
-  return scale.rangeExtent ? scale.rangeExtent() : vg_axisScaleExtent(scale.range());
+  return scale.rangeExtent
+    ? scale.rangeExtent()
+    : vg_axisScaleExtent(scale.range());
 }
 
 function vg_axisUpdate(item, group, trans) {
@@ -4196,29 +4211,11 @@ function vg_axisUpdate(item, group, trans) {
       height = group.height; // TODO fallback to global w,h?
 
   switch(orient) {
-    case "left": {
-      o.x = -offset;
-      o.y = 0;
-      break;
-    }
-    case "right": {
-      o.x = width + offset;
-      o.y = 0;
-      break;
-    }
-    case "bottom": {
-      o.x = 0;
-      o.y = height + offset;
-      break;
-    }
-    case "top": {
-      o.x = 0;
-      o.y = -offset;
-    }
-    default: {
-      o.x = 0;
-      o.y = 0;
-    }
+    case "left":   { o.x = -offset; o.y = 0; break; }
+    case "right":  { o.x = width + offset; o.y = 0; break; }
+    case "bottom": { o.x = 0; o.y = height + offset; break; }
+    case "top":    { o.x = 0; o.y = -offset; break; }
+    default:       { o.x = 0; o.y = 0; }
   }
   if (trans) trans.interpolate(item, o);
 }
@@ -4230,15 +4227,11 @@ function vg_axisTicks() {
     key: "data",
     properties: {
       enter: {
-        fill: {value: "#000"},
+        fill: {value: vg.config.axis.tickColor},
         opacity: {value: 1e-6}
       },
-      exit: {
-        opacity: {value: 1e-6}
-      },
-      update: {
-        opacity: {value: 1}
-      }
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
     }
   };
 }
@@ -4250,18 +4243,14 @@ function vg_axisTickLabels() {
     key: "data",
     properties: {
       enter: {
+        fill: {value: vg.config.axis.tickLabelColor},
+        font: {value: vg.config.axis.tickLabelFont},
+        fontSize: {value: vg.config.axis.tickLabelFontSize},
         opacity: {value: 1e-6},
-        fill: {value: "#000"},
-        font: {value: "sans-serif"},
-        fontSize: {value: 11},
         text: {field: "label"}
       },
-      exit: {
-        opacity: {value: 1e-6}
-      },
-      update: {
-        opacity: {value: 1}
-      }
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
     }
   };
 }
@@ -4274,8 +4263,8 @@ function vg_axisDomain() {
       enter: {
         x: {value: 0.5},
         y: {value: 0.5},
-        stroke: {value: "#000"},
-        strokeWidth: {value: 1}
+        stroke: {value: vg.config.axis.axisColor},
+        strokeWidth: {value: vg.config.axis.axisWidth}
       },
       update: {}
     }
