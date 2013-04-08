@@ -69,10 +69,19 @@ vg.scene.build = (function() {
   function buildGroup(model, db, node) {
     var groups = node.items,
         marks = model.marks,
-        i, len, m, mlen, group;
+        i, len, m, mlen, name, group;
 
     for (i=0, len=groups.length; i<len; ++i) {
       group = groups[i];
+      
+      // update scales
+      if (group.scales) for (name in group.scales) {
+        if (name.indexOf(":prev") < 0) {
+          group.scales[name+":prev"] = group.scales[name].copy();
+        }
+      }
+
+      // build items
       group.items = group.items || [];
       for (m=0, mlen=marks.length; m<mlen; ++m) {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);

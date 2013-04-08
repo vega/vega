@@ -81,6 +81,11 @@ vg.svg.marks = (function() {
     this.setAttribute("height", o.height || 0);
   }
   
+  function group_bg(o) {
+    this.setAttribute("width", o.width || 0);
+    this.setAttribute("height", o.height || 0);
+  }
+  
   function symbol(o) {
     var x = o.x || 0,
         y = o.y || 0;
@@ -153,37 +158,52 @@ vg.svg.marks = (function() {
   function drawMark(g, scene, index, prefix, tag, attr, nest) {
     var className = prefix + index,
         data = nest ? [scene.items] : scene.items,
+        evts = scene.interactive===false ? "none" : null,
         p = g.select("."+className);
 
     if (p.empty()) p = g.append("g")
       .attr("id", "g"+(++mark_id))
       .attr("class", className);
 
-    var id = "#" + p.attr("id");
-    var m = p.selectAll(id+" > "+tag).data(data);  
-    var e = m.enter().append(tag);
+    var id = "#" + p.attr("id"),
+        m = p.selectAll(id+" > "+tag).data(data),
+        e = m.enter().append(tag);
+
     if (tag !== "g") {
-      p.style("pointer-events", scene.interactive===false ? "none" : null);
+      p.style("pointer-events", evts);
       e.each(function(d) { (d.mark ? d : d[0])._svg = this; });
+    } else {
+      e.append("rect")
+        .attr("class", "background")
+        .style("pointer-events", evts);
     }
     
     m.exit().remove();
     m.each(attr);
-    if (tag !== "g") m.each(style);
+    if (tag !== "g") {
+      m.each(style);
+    } else {
+      p.selectAll(id+" > "+tag+" > rect.background")
+        .each(group_bg).each(style);
+    }
   }
 
   function drawGroup(g, scene, index) {
     var renderer = this;
-        
-    drawMark(g, scene, index, "mark_", "rect", rect);
+
     drawMark(g, scene, index, "group_", "g", group);
 
     var x = g.select(".group_"+index).node(), i, n, j, m;
-    for (var i=0, n=x.childNodes.length; i<n; ++i) {
+    for (i=0, n=x.childNodes.length; i<n; ++i) {
       var sel = d3.select(x.childNodes[i]),
-          items = x.childNodes[i].__data__.items;
-      for (var j=0, m=items.length; j<m; ++j) {
+          data = x.childNodes[i].__data__,
+          axis = data.axis || [],
+          items = data.items;
+      for (j=0, m=items.length; j<m; ++j) {
         renderer.draw(sel, items[j], j);
+      }
+      for (j=0, m=axis.length; j<m; ++j) {
+        renderer.draw(sel, axis[j], j + items.length);
       }
     }
   }

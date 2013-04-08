@@ -111,10 +111,6 @@ vg.View = (function() {
         .style("overflow", "auto");
     }
     
-    // axis container
-    v._axes = (v._axes || new vg.Axes)
-      .initialize(el, w, h, pad);
-    
     // renderer
     v._renderer = (v._renderer || new this._io.Renderer())
       .initialize(el, w, h, pad);
@@ -135,7 +131,6 @@ vg.View = (function() {
   };
   
   prototype.render = function(items) {
-    this._axes.update(this._model);
     this._renderer.render(this._model.scene(), items);
     return this;
   };
@@ -164,7 +159,6 @@ vg.View = (function() {
       trans.start(function(items) {
         view._renderer.render(view._model.scene(), items);
       });
-      this._axes.update(this._model, opt.duration, opt.ease);
     }
     else view.render(opt.items);
     return view;

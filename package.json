@@ -8,7 +8,7 @@
     "grammar",
     "d3"
   ],
-  "homepage": "http://github.com/trifacta/vega/",
+  "homepage": "http://trifacta.github.io/vega/",
   "author": {
     "name": "Jeffrey Heer",
     "url": "http://trifacta.com"
@@ -18,8 +18,13 @@
     "url": "http://github.com/trifacta/vega.git"
   },
   "main": "index.js",
+  "bin": {
+    "vg2png": "./bin/vg2png.js",
+    "vg2svg": "./bin/vg2svg.js"
+  },
   "dependencies": {
-    "d3": "3.1.4"
+    "d3": "3.1.4",
+    "canvas": "1.0.2"
   },
   "devDependencies": {
     "uglify-js": "1.3.4",

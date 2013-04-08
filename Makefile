@@ -45,6 +45,7 @@ vega.js: \
 	src/parse/axes.js \
 	src/parse/data.js \
 	src/parse/dataflow.js \
+	src/parse/mark.js \
 	src/parse/marks.js \
 	src/parse/padding.js \
 	src/parse/properties.js \
@@ -56,10 +57,12 @@ vega.js: \
 	src/scene/build.js \
 	src/scene/encode.js \
 	src/scene/transition.js \
-	src/core/Axes.js \
+	src/scene/axis.js \
 	src/core/Model.js \
 	src/core/View.js \
 	src/core/Spec.js \
+	src/headless/_package.js \
+	src/headless/HeadlessView.js \
 	src/core/_end.js
 
 %.min.js: %.js Makefile

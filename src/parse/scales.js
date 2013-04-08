@@ -14,27 +14,30 @@ vg.parse.scales = (function() {
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
-      o[def.name] = scale(def, o[def.name], db, group);
+      var name = def.name, prev = name + ":prev";
+      o[name] = scale(def, o[name], db, group);
+      o[prev] = o[prev] || o[name];
       return o;
     }, scales || {});
   }
 
   function scale(def, scale, db, group) {
-    var type = def.type || LINEAR,
+    var s = instance(def, scale),
+        m = s.type===ORDINAL ? ordinal : quantitative,
         rng = range(def, group),
-        s = instance(type, scale),
-        m = type===ORDINAL ? ordinal : quantitative,
         data = vg.values(group.datum);
-    
+
     m(def, s, rng, db, data);
     return s;
   }
   
-  function instance(type, scale) {
+  function instance(def, scale) {
+    var type = def.type || LINEAR;
     if (!scale || type !== scale.type) {
       var ctor = SCALES[type] || d3.scale[type];
       if (!ctor) vg.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = type;
+      scale.scaleName = def.name;
     }
     return scale;
   }

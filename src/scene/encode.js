@@ -47,7 +47,13 @@ vg.scene.encode = (function() {
       // update group-level axes
       if (enc.axes) {
         axes = group.axes || (group.axes = []);
+        axis = group.axis || (group.axis = []);
         vg.parse.axes(enc.axes, axes, group.scales);
+        axes.forEach(function(a, i) {
+          var axisModel = a.model();
+          group.axis[i] = vg.scene.build(axisModel, this._data, group.axis[i]);
+          encode.call(this, group, group.axis[i], axisModel, trans);
+        });
       }
       
       // encode children marks

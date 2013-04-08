@@ -10,7 +10,7 @@ vg.parse.axes = (function() {
 
   function axes(spec, axes, scales) {
     (spec || []).forEach(function(def, index) {
-      axes[index] = axes[index] || d3.svg.axis();
+      axes[index] = axes[index] || vg.scene.axis();
       axis(def, index, axes[index], scales);
     });
   };
@@ -19,7 +19,6 @@ vg.parse.axes = (function() {
     // axis scale
     if (def.scale !== undefined) {
       axis.scale(scales[def.scale]);
-      axis.scaleName = def.scale;  // cache scale name
     }
 
     // axis orientation
@@ -67,8 +66,24 @@ vg.parse.axes = (function() {
     }
 
     // axis offset
-    if (def.offset) {
-      axis.offset = def.offset;
+    if (def.offset) axis.offset(def.offset);
+    
+    // style properties
+    if (def.tickProperties) {
+      axis.majorTickProperties(def.tickProperties);
+      axis.minorTickProperties(def.tickProperties);
+    }
+    if (def.majorTickProperties) {
+      axis.majorTickProperties(def.majorTickProperties);
+    }
+    if (def.minorTickProperties) {
+      axis.minorTickProperties(def.minorTickProperties);
+    }
+    if (def.tickLabelProperties) {
+      axis.tickLabelProperties(def.tickLabelProperties);
+    }
+    if (def.domainProperties) {
+      axis.domainProperties(def.domainProperties);
     }
   }
   

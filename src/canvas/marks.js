@@ -341,11 +341,11 @@ vg.canvas.marks = (function() {
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items, group,
-        renderer = this, gx, gy;
+        renderer = this, gx, gy, i, n, j, m;
     
     drawRect(g, scene, bounds);
     
-    for (var i=0, len=items.length; i<len; ++i) {
+    for (i=0, n=items.length; i<n; ++i) {
       group = items[i];
       gx = group.x || 0;
       gy = group.y || 0;
@@ -353,9 +353,14 @@ vg.canvas.marks = (function() {
       // render group contents
       g.save();
       g.translate(gx, gy);
-      if (bounds) bounds.translate(-gx, -gy);
-      for (var j=0, llen=group.items.length; j<llen; ++j) {
+      if (bounds) bounds.translate(-gx, -gy);      
+      for (j=0, m=group.items.length; j<m; ++j) {
         renderer.draw(g, group.items[j], bounds);
+      }
+      if (group.axis) {
+        for (j=0, m=group.axis.length; j<m; ++j) {
+          renderer.draw(g, group.axis[j], bounds);
+        }
       }
       if (bounds) bounds.translate(gx, gy);
       g.restore(); 
