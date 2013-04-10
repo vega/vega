@@ -33,16 +33,15 @@ function vg_load_file(file, callback) {
   vg.log("LOAD FILE: " + file);
   var idx = file.indexOf(vg_load_fileProtocol);
   if (idx >= 0) file = file.slice(vg_load_fileProtocol.length);
-	require("fs").readFile(file, {encoding:"utf8"}, callback);
+  require("fs").readFile(file, callback);
 }
 
 function vg_load_http(url, callback) {
   vg.log("LOAD HTTP: " + url);
 	var req = require("http").request(url, function(res) {
-    var data = "";
-    res.setEncoding("utf8");
+    var pos=0, data = new Buffer(parseInt(res.headers['content-length'],10));
 		res.on("error", function(err) { callback(err, null); });
-		res.on("data", function(chunk) { data += chunk; });
+		res.on("data", function(x) { x.copy(data, pos); pos += x.length; });
 		res.on("end", function() { callback(null, data); });
 	});
 	req.on("error", function(err) { callback(err); });

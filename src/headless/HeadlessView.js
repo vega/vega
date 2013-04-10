@@ -59,6 +59,10 @@ vg.HeadlessView = (function() {
     return this;
   };
 
+  prototype.renderer = function() {
+    return this._renderer;
+  };
+
   prototype.canvas = function() {
     return this._canvas;
   };

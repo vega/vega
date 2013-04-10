@@ -1,18 +1,7 @@
 vg.headless = (function() {
-
-  var styles = {
-    "fill": 1,
-    "fill-opacity": 1,
-    "stroke": 1,
-    "stroke-opacity": 1,
-    "stroke-width": 1,
-    "opacity": 1,
-    "font": 1,
-    "font-family": 1,
-    "font-size": 1,
-    "font-style": 1,
-    "text-anchor": 1
-  };
+  
+  var svgNS = 'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
+    'xmlns:xlink="http://www.w3.org/1999/xlink"';
 
   function extractSVG(view) {
     var p = view.padding(),
@@ -20,39 +9,17 @@ vg.headless = (function() {
         h = view.height() + (p ? p.top + p.bottom : 0),
         svg = "";
 
-    // set axis styles
-    d3.selectAll(".axis path, .axis line").attr({
-      "fill": "none",
-      "stroke": "black",
-      "stroke-width": "1px"
-    });
-    d3.selectAll(".axis text").attr({
-      "font-family": "Helvetica Neue, Helvetica, Arial, sans-serif",
-      "font-size": "10px"
-    });
-
-    // map styles to attrs for backward compatibility
-    d3.selectAll("svg").selectAll("*").each(function() {
-      var i, n, s;
-      for (i=0, n=this.style.length; i<n; ++i) {
-        s = this.style[i];
-        if (styles[s]) this.setAttribute(s, this.style.getPropertyValue(s));
-      }
-      this.setAttribute("style", "");
-    });
-
     // build svg text
     d3.selectAll("svg").each(function() {
       svg = this.innerHTML + svg;
     });
-    // removing the style attribute in jsdom is error prone, hence the hack
-    svg = svg.replace(/ style=""/g, "");
+    svg = svg.replace(/ href=/g, " xlink:href="); // requires a hack. sigh.
 
     return {
       svg : '<svg '
             + 'width="' + w + '" '
-            + 'height="' + h + '"'
-          + '>' + svg + '</svg>'
+            + 'height="' + h + '" '
+          + svgNS + '>' + svg + '</svg>'
     };
   }
 
@@ -63,13 +30,32 @@ vg.headless = (function() {
   function render(opt, callback) {
     function draw(chart) {
       try {
+        // create and render view
         var view = chart({
           data: opt.data,
           renderer: opt.renderer
         }).update();
-      
-        var extract = opt.renderer==="svg" ? extractSVG : extractCanvas;
-        callback(null, extract(view));
+
+        if (opt.renderer === "svg") {
+          // extract rendered svg
+          callback(null, extractSVG(view));
+        } else {
+          // extract rendered canvas
+          var r = view.renderer();
+          if (r.pendingImages() === 0) {
+            // if no images loading, return now
+            callback(null, extractCanvas(view));
+          } else {
+            // if images loading, poll until ready
+            function wait() {
+              if (r.pendingImages() === 0) {
+                view.render(); // re-render with all images
+                callback(null, extractCanvas(view));
+              } else setTimeout(wait, 10);
+            }
+            wait();
+          }
+        }
       } catch (err) {
         callback(err, null);
       }

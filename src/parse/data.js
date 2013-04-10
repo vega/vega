@@ -13,7 +13,7 @@ vg.parse.data = function(spec, callback) {
       if (error) {
         vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(data, d.format);
+        model.load[d.name] = vg.data.read(data.toString(), d.format);
       }
       if (--count === 0) callback();
     }

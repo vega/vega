@@ -1044,8 +1044,10 @@ vg.config.range = {
         ? h/2 : (o.baseline === "bottom" ? h : 0));
       o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
 
-      g.globalAlpha = (opac = o.opacity) != undefined ? opac : 1;
-      g.drawImage(o.image, x, y, w, h);
+      if (o.image.loaded) {
+        g.globalAlpha = (opac = o.opacity) != undefined ? opac : 1;
+        g.drawImage(o.image, x, y, w, h);
+      }
     }
   }
   
@@ -1338,6 +1340,7 @@ vg.config.range = {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._imgload = 0;
   };
   
   var prototype = renderer.prototype;
@@ -1403,6 +1406,10 @@ vg.config.range = {
   
   prototype.element = function() {
     return this._el;
+  };
+  
+  prototype.pendingImages = function() {
+    return this._imgload;
   };
 
   function translatedBounds(item) {
@@ -1483,14 +1490,29 @@ vg.config.range = {
   
   prototype.loadImage = function(uri) {
     var renderer = this,
-        scene = this._scene;
-    
-    var image = new Image();
-    image.onload = function() {
-      vg.log("LOAD IMAGE: "+this.src);
-      renderer.renderAsync(scene);
-    };
-    image.src = uri;
+        scene = renderer._scene,
+        image = null;
+
+    renderer._imgload += 1;
+    if (vg.config.isNode) {
+      image = new (require("canvas").Image)();
+      vg.data.load(uri, function(err, data) {
+        if (err) { vg.error(err); return; }
+        image.src = data;
+        image.loaded = true;
+        renderer._imgload -= 1;
+      });
+    } else {
+      image = new Image();
+      image.onload = function() {
+        vg.log("LOAD IMAGE: "+uri);
+        image.loaded = true;
+        renderer._imgload -= 1;
+        renderer.renderAsync(scene);
+      };
+      image.src = uri;
+    }
+
     return image;
   };
   
@@ -2102,16 +2124,15 @@ function vg_load_file(file, callback) {
   vg.log("LOAD FILE: " + file);
   var idx = file.indexOf(vg_load_fileProtocol);
   if (idx >= 0) file = file.slice(vg_load_fileProtocol.length);
-	require("fs").readFile(file, {encoding:"utf8"}, callback);
+  require("fs").readFile(file, callback);
 }
 
 function vg_load_http(url, callback) {
   vg.log("LOAD HTTP: " + url);
 	var req = require("http").request(url, function(res) {
-    var data = "";
-    res.setEncoding("utf8");
+    var pos=0, data = new Buffer(parseInt(res.headers['content-length'],10));
 		res.on("error", function(err) { callback(err, null); });
-		res.on("data", function(chunk) { data += chunk; });
+		res.on("data", function(x) { x.copy(data, pos); pos += x.length; });
 		res.on("end", function() { callback(null, data); });
 	});
 	req.on("error", function(err) { callback(err); });
@@ -3217,7 +3238,7 @@ function vg_load_http(url, callback) {
       if (error) {
         vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(data, d.format);
+        model.load[d.name] = vg.data.read(data.toString(), d.format);
       }
       if (--count === 0) callback();
     }
@@ -4753,20 +4774,9 @@ vg.spec = function(s) {
   return new vg.Spec(s);
 };
 vg.headless = (function() {
-
-  var styles = {
-    "fill": 1,
-    "fill-opacity": 1,
-    "stroke": 1,
-    "stroke-opacity": 1,
-    "stroke-width": 1,
-    "opacity": 1,
-    "font": 1,
-    "font-family": 1,
-    "font-size": 1,
-    "font-style": 1,
-    "text-anchor": 1
-  };
+  
+  var svgNS = 'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
+    'xmlns:xlink="http://www.w3.org/1999/xlink"';
 
   function extractSVG(view) {
     var p = view.padding(),
@@ -4774,39 +4784,17 @@ vg.headless = (function() {
         h = view.height() + (p ? p.top + p.bottom : 0),
         svg = "";
 
-    // set axis styles
-    d3.selectAll(".axis path, .axis line").attr({
-      "fill": "none",
-      "stroke": "black",
-      "stroke-width": "1px"
-    });
-    d3.selectAll(".axis text").attr({
-      "font-family": "Helvetica Neue, Helvetica, Arial, sans-serif",
-      "font-size": "10px"
-    });
-
-    // map styles to attrs for backward compatibility
-    d3.selectAll("svg").selectAll("*").each(function() {
-      var i, n, s;
-      for (i=0, n=this.style.length; i<n; ++i) {
-        s = this.style[i];
-        if (styles[s]) this.setAttribute(s, this.style.getPropertyValue(s));
-      }
-      this.setAttribute("style", "");
-    });
-
     // build svg text
     d3.selectAll("svg").each(function() {
       svg = this.innerHTML + svg;
     });
-    // removing the style attribute in jsdom is error prone, hence the hack
-    svg = svg.replace(/ style=""/g, "");
+    svg = svg.replace(/ href=/g, " xlink:href="); // requires a hack. sigh.
 
     return {
       svg : '<svg '
             + 'width="' + w + '" '
-            + 'height="' + h + '"'
-          + '>' + svg + '</svg>'
+            + 'height="' + h + '" '
+          + svgNS + '>' + svg + '</svg>'
     };
   }
 
@@ -4817,13 +4805,32 @@ vg.headless = (function() {
   function render(opt, callback) {
     function draw(chart) {
       try {
+        // create and render view
         var view = chart({
           data: opt.data,
           renderer: opt.renderer
         }).update();
-      
-        var extract = opt.renderer==="svg" ? extractSVG : extractCanvas;
-        callback(null, extract(view));
+
+        if (opt.renderer === "svg") {
+          // extract rendered svg
+          callback(null, extractSVG(view));
+        } else {
+          // extract rendered canvas
+          var r = view.renderer();
+          if (r.pendingImages() === 0) {
+            // if no images loading, return now
+            callback(null, extractCanvas(view));
+          } else {
+            // if images loading, poll until ready
+            function wait() {
+              if (r.pendingImages() === 0) {
+                view.render(); // re-render with all images
+                callback(null, extractCanvas(view));
+              } else setTimeout(wait, 10);
+            }
+            wait();
+          }
+        }
       } catch (err) {
         callback(err, null);
       }
@@ -4905,6 +4912,10 @@ vg.headless = (function() {
     this._model.data(ingest);
     this._build = false;
     return this;
+  };
+
+  prototype.renderer = function() {
+    return this._renderer;
   };
 
   prototype.canvas = function() {

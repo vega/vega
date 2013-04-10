@@ -2,6 +2,7 @@ vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._imgload = 0;
   };
   
   var prototype = renderer.prototype;
@@ -67,6 +68,10 @@ vg.canvas.Renderer = (function() {
   
   prototype.element = function() {
     return this._el;
+  };
+  
+  prototype.pendingImages = function() {
+    return this._imgload;
   };
 
   function translatedBounds(item) {
@@ -147,14 +152,29 @@ vg.canvas.Renderer = (function() {
   
   prototype.loadImage = function(uri) {
     var renderer = this,
-        scene = this._scene;
-    
-    var image = new Image();
-    image.onload = function() {
-      vg.log("LOAD IMAGE: "+this.src);
-      renderer.renderAsync(scene);
-    };
-    image.src = uri;
+        scene = renderer._scene,
+        image = null;
+
+    renderer._imgload += 1;
+    if (vg.config.isNode) {
+      image = new (require("canvas").Image)();
+      vg.data.load(uri, function(err, data) {
+        if (err) { vg.error(err); return; }
+        image.src = data;
+        image.loaded = true;
+        renderer._imgload -= 1;
+      });
+    } else {
+      image = new Image();
+      image.onload = function() {
+        vg.log("LOAD IMAGE: "+uri);
+        image.loaded = true;
+        renderer._imgload -= 1;
+        renderer.renderAsync(scene);
+      };
+      image.src = uri;
+    }
+
     return image;
   };
   

@@ -256,8 +256,10 @@ vg.canvas.marks = (function() {
         ? h/2 : (o.baseline === "bottom" ? h : 0));
       o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
 
-      g.globalAlpha = (opac = o.opacity) != undefined ? opac : 1;
-      g.drawImage(o.image, x, y, w, h);
+      if (o.image.loaded) {
+        g.globalAlpha = (opac = o.opacity) != undefined ? opac : 1;
+        g.drawImage(o.image, x, y, w, h);
+      }
     }
   }
   
