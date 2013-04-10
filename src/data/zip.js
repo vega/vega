@@ -5,7 +5,7 @@ vg.data.zip = function() {
       withKey = null;
 
   function zip(data, db) {
-    var zdata = db[z], d, i, len, map;
+    var zdata = db[z], zlen = zdata.length, d, i, len, map;
     
     if (withKey) {
       map = {};
@@ -14,7 +14,7 @@ vg.data.zip = function() {
     
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
-      d[as] = map ? map[key(d)] : zdata[i];
+      d[as] = map ? map[key(d)] : zdata[i % zlen];
     }
     
     return data;
