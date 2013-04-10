@@ -70,21 +70,19 @@ vg.parse.axes = (function() {
     if (def.offset) axis.offset(def.offset);
     
     // style properties
-    if (def.tickProperties) {
-      axis.majorTickProperties(def.tickProperties);
-      axis.minorTickProperties(def.tickProperties);
-    }
-    if (def.majorTickProperties) {
-      axis.majorTickProperties(def.majorTickProperties);
-    }
-    if (def.minorTickProperties) {
-      axis.minorTickProperties(def.minorTickProperties);
-    }
-    if (def.tickLabelProperties) {
-      axis.tickLabelProperties(def.tickLabelProperties);
-    }
-    if (def.domainProperties) {
-      axis.domainProperties(def.domainProperties);
+    if (def.properties) {
+      var p = def.properties;
+      if (p.ticks) {
+        axis.majorTickProperties(p.majorTicks
+          ? vg.extend({}, p.ticks, p.majorTicks) : p.ticks);
+        axis.minorTickProperties(p.minorTicks
+          ? vg.extend({}, p.ticks, p.minorTicks) : p.ticks);
+      } else {
+        if (p.majorTicks) axis.majorTickProperties(p.majorTicks);
+        if (p.minorTicks) axis.minorTickProperties(p.minorTicks);
+      }
+      if (p.labels) axis.tickLabelProperties(p.labels);
+      if (p.axis) axis.domainProperties(p.axis);
     }
   }
   

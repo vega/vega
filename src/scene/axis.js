@@ -18,9 +18,9 @@ vg.scene.axis = function() {
 
   var axis = {};
 
-  axis.model = function() { // TODO pass in scale here?
-    // TODO: further generate spec as-needed; use dirty bit?
-    var model = axisModel = axis_model(scale); // TODO prev scale
+  axis.model = function() {
+    // TODO: only generate model as-needed; use dirty bit?
+    var model = axisModel = axis_model(scale);
     
     // generate data
     var major = tickValues == null

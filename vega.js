@@ -3130,21 +3130,19 @@ function vg_load_http(url, callback) {
     if (def.offset) axis.offset(def.offset);
     
     // style properties
-    if (def.tickProperties) {
-      axis.majorTickProperties(def.tickProperties);
-      axis.minorTickProperties(def.tickProperties);
-    }
-    if (def.majorTickProperties) {
-      axis.majorTickProperties(def.majorTickProperties);
-    }
-    if (def.minorTickProperties) {
-      axis.minorTickProperties(def.minorTickProperties);
-    }
-    if (def.tickLabelProperties) {
-      axis.tickLabelProperties(def.tickLabelProperties);
-    }
-    if (def.domainProperties) {
-      axis.domainProperties(def.domainProperties);
+    if (def.properties) {
+      var p = def.properties;
+      if (p.ticks) {
+        axis.majorTickProperties(p.majorTicks
+          ? vg.extend({}, p.ticks, p.majorTicks) : p.ticks);
+        axis.minorTickProperties(p.minorTicks
+          ? vg.extend({}, p.ticks, p.minorTicks) : p.ticks);
+      } else {
+        if (p.majorTicks) axis.majorTickProperties(p.majorTicks);
+        if (p.minorTicks) axis.minorTickProperties(p.minorTicks);
+      }
+      if (p.labels) axis.tickLabelProperties(p.labels);
+      if (p.axis) axis.domainProperties(p.axis);
     }
   }
   
@@ -3883,9 +3881,9 @@ vg.scene.transition = function(dur, ease) {
 
   var axis = {};
 
-  axis.model = function() { // TODO pass in scale here?
-    // TODO: further generate spec as-needed; use dirty bit?
-    var model = axisModel = axis_model(scale); // TODO prev scale
+  axis.model = function() {
+    // TODO: only generate model as-needed; use dirty bit?
+    var model = axisModel = axis_model(scale);
     
     // generate data
     var major = tickValues == null
