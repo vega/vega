@@ -160,7 +160,7 @@ vg.canvas.marks = (function() {
   function drawRect(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lc, lw, x, y;
+        o, fill, stroke, opac, lc, lw, x, y;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -189,6 +189,43 @@ vg.canvas.marks = (function() {
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
           g.strokeRect(x, y, o.width, o.height);
+          o.bounds.expand(lw);
+        }
+      }
+    }
+  }
+
+  function drawRule(g, scene, bounds) {
+    if (!scene.items.length) return;
+    var items = scene.items,
+        o, stroke, opac, lc, lw, x1, y1, x2, y2;
+
+    for (var i=0, len=items.length; i<len; ++i) {
+      o = items[i];
+      if (bounds && !bounds.intersects(o.bounds))
+        continue; // bounds check
+
+      x1 = o.x || 0;
+      y1 = o.y || 0;
+      x2 = o.x2 !== undefined ? o.x2 : x1;
+      y2 = o.y2 !== undefined ? o.y2 : y1;
+      o.bounds = (o.bounds || new vg.Bounds())
+        .set(x1, y1, x2, y2);
+
+      opac = o.opacity == null ? 1 : o.opacity;
+      if (opac == 0) return;
+
+      if (stroke = o.stroke) {
+        lw = (lw = o.strokeWidth) != undefined ? lw : 1;
+        if (lw > 0) {
+          g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+          g.strokeStyle = stroke;
+          g.lineWidth = lw;
+          g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
+          g.beginPath();
+          g.moveTo(x1, y1);
+          g.lineTo(x2, y2);
+          g.stroke();
           o.bounds.expand(lw);
         }
       }
@@ -235,7 +272,7 @@ vg.canvas.marks = (function() {
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lw, text, ta, tb;
+        o, fill, stroke, opac, lw, text, ta, tb;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -440,6 +477,11 @@ vg.canvas.marks = (function() {
     return false;
   }
   
+  function pickRule(g, scene, x, y, gx, gy) {
+    // TODO...
+    return false;
+  }
+  
   function pick(test) {
     return function (g, scene, x, y, gx, gy) {
       return pickAll(test, g, scene, x, y, gx, gy);
@@ -483,6 +525,7 @@ vg.canvas.marks = (function() {
       path:    drawAll(pathPath),
       symbol:  drawAll(symbolPath),
       rect:    drawRect,
+      rule:    drawRule,
       text:    drawText,
       image:   drawImage,
       drawOne: drawOne, // expose for extensibility
@@ -496,6 +539,7 @@ vg.canvas.marks = (function() {
       path:    pick(hitTests.path),
       symbol:  pick(hitTests.symbol),
       rect:    pick(hitTests.rect),
+      rule:    pickRule,
       text:    pick(hitTests.text),
       image:   pick(hitTests.image),
       pickAll: pickAll  // expose for extensibility

@@ -948,7 +948,7 @@ vg.config.range = {
   function drawRect(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lc, lw, x, y;
+        o, fill, stroke, opac, lc, lw, x, y;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -977,6 +977,43 @@ vg.config.range = {
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
           g.strokeRect(x, y, o.width, o.height);
+          o.bounds.expand(lw);
+        }
+      }
+    }
+  }
+
+  function drawRule(g, scene, bounds) {
+    if (!scene.items.length) return;
+    var items = scene.items,
+        o, stroke, opac, lc, lw, x1, y1, x2, y2;
+
+    for (var i=0, len=items.length; i<len; ++i) {
+      o = items[i];
+      if (bounds && !bounds.intersects(o.bounds))
+        continue; // bounds check
+
+      x1 = o.x || 0;
+      y1 = o.y || 0;
+      x2 = o.x2 !== undefined ? o.x2 : x1;
+      y2 = o.y2 !== undefined ? o.y2 : y1;
+      o.bounds = (o.bounds || new vg.Bounds())
+        .set(x1, y1, x2, y2);
+
+      opac = o.opacity == null ? 1 : o.opacity;
+      if (opac == 0) return;
+
+      if (stroke = o.stroke) {
+        lw = (lw = o.strokeWidth) != undefined ? lw : 1;
+        if (lw > 0) {
+          g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+          g.strokeStyle = stroke;
+          g.lineWidth = lw;
+          g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
+          g.beginPath();
+          g.moveTo(x1, y1);
+          g.lineTo(x2, y2);
+          g.stroke();
           o.bounds.expand(lw);
         }
       }
@@ -1023,7 +1060,7 @@ vg.config.range = {
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, ob, fill, stroke, opac, lw, text, ta, tb;
+        o, fill, stroke, opac, lw, text, ta, tb;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -1228,6 +1265,11 @@ vg.config.range = {
     return false;
   }
   
+  function pickRule(g, scene, x, y, gx, gy) {
+    // TODO...
+    return false;
+  }
+  
   function pick(test) {
     return function (g, scene, x, y, gx, gy) {
       return pickAll(test, g, scene, x, y, gx, gy);
@@ -1271,6 +1313,7 @@ vg.config.range = {
       path:    drawAll(pathPath),
       symbol:  drawAll(symbolPath),
       rect:    drawRect,
+      rule:    drawRule,
       text:    drawText,
       image:   drawImage,
       drawOne: drawOne, // expose for extensibility
@@ -1284,6 +1327,7 @@ vg.config.range = {
       path:    pick(hitTests.path),
       symbol:  pick(hitTests.symbol),
       rect:    pick(hitTests.rect),
+      rule:    pickRule,
       text:    pick(hitTests.text),
       image:   pick(hitTests.image),
       pickAll: pickAll  // expose for extensibility
@@ -1682,6 +1726,15 @@ vg.config.range = {
     this.setAttribute("width", o.width || 0);
     this.setAttribute("height", o.height || 0);
   }
+
+  function rule(o) {
+    var x1 = o.x || 0,
+        y1 = o.y || 0;
+    this.setAttribute("x1", x1);
+    this.setAttribute("y1", y1);
+    this.setAttribute("x2", o.x2 !== undefined ? o.x2 : x1);
+    this.setAttribute("y2", o.y2 !== undefined ? o.y2 : y1);
+  }
   
   function group_bg(o) {
     this.setAttribute("width", o.width || 0);
@@ -1819,6 +1872,7 @@ vg.config.range = {
       path:    path,
       symbol:  symbol,
       rect:    rect,
+      rule:    rule,
       text:    text,
       image:   image
     },
@@ -1835,6 +1889,7 @@ vg.config.range = {
       path:    draw("path", path),
       symbol:  draw("path", symbol),
       rect:    draw("rect", rect),
+      rule:    draw("line", rule),
       text:    draw("text", text),
       image:   draw("image", image),
       draw:    draw // expose for extensibility
@@ -3908,11 +3963,11 @@ vg.scene.transition = function(dur, ease) {
     // setup scale mapping
     var newScale, oldScale, range;
     if (scale.type === "ordinal") {
-      newScale = {scale: scale.scaleName, offset: scale.rangeBand()/2};
+      newScale = {scale: scale.scaleName, offset: 0.5 + scale.rangeBand()/2};
       oldScale = newScale;
     } else {
-      newScale = {scale: scale.scaleName};
-      oldScale = {scale: scale.scaleName+":prev"};
+      newScale = {scale: scale.scaleName, offset: 0.5};
+      oldScale = {scale: scale.scaleName+":prev", offset: 0.5};
     }
     range = vg_axisScaleRange(scale);
 
@@ -3941,8 +3996,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(majorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: tickMajorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: tickMajorSize}
         });
         vg.extend(majorTicks.properties.update, {
           x:  newScale,
@@ -3957,8 +4011,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(minorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: tickMinorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: tickMinorSize}
         });
         vg.extend(minorTicks.properties.update, {
           x:  newScale,
@@ -3993,8 +4046,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(majorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: -tickMajorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: -tickMajorSize}
         });
         vg.extend(majorTicks.properties.update, {
           x:  newScale,
@@ -4006,8 +4058,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(minorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: -tickMinorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: -tickMinorSize}
         });
         vg.extend(minorTicks.properties.update, {
           x:  newScale,
@@ -4042,8 +4093,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(majorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: -tickMajorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(majorTicks.properties.update, {
           x:  {value: 0},
@@ -4058,8 +4108,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(minorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: -tickMinorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(minorTicks.properties.update, {
           x:  {value: 0},
@@ -4094,8 +4143,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(majorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: tickMajorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(majorTicks.properties.update, {
           x:  {value: 0},
@@ -4110,8 +4158,7 @@ vg.scene.transition = function(dur, ease) {
         vg.extend(minorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: tickMinorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(minorTicks.properties.update, {
           x:  {value: 0},
@@ -4285,12 +4332,13 @@ function vg_axisUpdate(item, group, trans) {
 
 function vg_axisTicks() {
   return {
-    type: "rect",
+    type: "rule",
     interactive: false,
     key: "data",
     properties: {
       enter: {
-        fill: {value: vg.config.axis.tickColor},
+        stroke: {value: vg.config.axis.tickColor},
+        strokeWidth: {value: vg.config.axis.tickWidth},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },

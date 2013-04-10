@@ -45,11 +45,11 @@ vg.scene.axis = function() {
     // setup scale mapping
     var newScale, oldScale, range;
     if (scale.type === "ordinal") {
-      newScale = {scale: scale.scaleName, offset: scale.rangeBand()/2};
+      newScale = {scale: scale.scaleName, offset: 0.5 + scale.rangeBand()/2};
       oldScale = newScale;
     } else {
-      newScale = {scale: scale.scaleName};
-      oldScale = {scale: scale.scaleName+":prev"};
+      newScale = {scale: scale.scaleName, offset: 0.5};
+      oldScale = {scale: scale.scaleName+":prev", offset: 0.5};
     }
     range = vg_axisScaleRange(scale);
 
@@ -78,8 +78,7 @@ vg.scene.axis = function() {
         vg.extend(majorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: tickMajorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: tickMajorSize}
         });
         vg.extend(majorTicks.properties.update, {
           x:  newScale,
@@ -94,8 +93,7 @@ vg.scene.axis = function() {
         vg.extend(minorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: tickMinorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: tickMinorSize}
         });
         vg.extend(minorTicks.properties.update, {
           x:  newScale,
@@ -130,8 +128,7 @@ vg.scene.axis = function() {
         vg.extend(majorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: -tickMajorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: -tickMajorSize}
         });
         vg.extend(majorTicks.properties.update, {
           x:  newScale,
@@ -143,8 +140,7 @@ vg.scene.axis = function() {
         vg.extend(minorTicks.properties.enter, {
           x:  oldScale,
           y:  {value: 0},
-          y2: {value: -tickMinorSize},
-          width: {value: vg.config.axis.tickWidth}
+          y2: {value: -tickMinorSize}
         });
         vg.extend(minorTicks.properties.update, {
           x:  newScale,
@@ -179,8 +175,7 @@ vg.scene.axis = function() {
         vg.extend(majorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: -tickMajorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(majorTicks.properties.update, {
           x:  {value: 0},
@@ -195,8 +190,7 @@ vg.scene.axis = function() {
         vg.extend(minorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: -tickMinorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(minorTicks.properties.update, {
           x:  {value: 0},
@@ -231,8 +225,7 @@ vg.scene.axis = function() {
         vg.extend(majorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: tickMajorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(majorTicks.properties.update, {
           x:  {value: 0},
@@ -247,8 +240,7 @@ vg.scene.axis = function() {
         vg.extend(minorTicks.properties.enter, {
           x:  {value: 0},
           x2: {value: tickMinorSize},
-          y:  oldScale,
-          height: {value: vg.config.axis.tickWidth}
+          y:  oldScale
         });
         vg.extend(minorTicks.properties.update, {
           x:  {value: 0},
@@ -422,12 +414,13 @@ function vg_axisUpdate(item, group, trans) {
 
 function vg_axisTicks() {
   return {
-    type: "rect",
+    type: "rule",
     interactive: false,
     key: "data",
     properties: {
       enter: {
-        fill: {value: vg.config.axis.tickColor},
+        stroke: {value: vg.config.axis.tickColor},
+        strokeWidth: {value: vg.config.axis.tickWidth},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },

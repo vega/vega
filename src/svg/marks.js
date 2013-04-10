@@ -80,6 +80,15 @@ vg.svg.marks = (function() {
     this.setAttribute("width", o.width || 0);
     this.setAttribute("height", o.height || 0);
   }
+
+  function rule(o) {
+    var x1 = o.x || 0,
+        y1 = o.y || 0;
+    this.setAttribute("x1", x1);
+    this.setAttribute("y1", y1);
+    this.setAttribute("x2", o.x2 !== undefined ? o.x2 : x1);
+    this.setAttribute("y2", o.y2 !== undefined ? o.y2 : y1);
+  }
   
   function group_bg(o) {
     this.setAttribute("width", o.width || 0);
@@ -217,6 +226,7 @@ vg.svg.marks = (function() {
       path:    path,
       symbol:  symbol,
       rect:    rect,
+      rule:    rule,
       text:    text,
       image:   image
     },
@@ -233,6 +243,7 @@ vg.svg.marks = (function() {
       path:    draw("path", path),
       symbol:  draw("path", symbol),
       rect:    draw("rect", rect),
+      rule:    draw("line", rule),
       text:    draw("text", text),
       image:   draw("image", image),
       draw:    draw // expose for extensibility
