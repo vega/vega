@@ -123,16 +123,32 @@ vg.unique = function(data, f) {
 };
 
 // Logging
+
+function vg_write(msg) {
+  vg.config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.log(msg);
+}
+
 vg.log = function(msg) {
-  console.log(msg);
+  vg_write("[Vega Log] " + msg);
 };
 
 vg.error = function(msg) {
-  console.log(msg);
-  alert(msg);
+  msg = "[Vega Err] " + msg;
+  vg_write(msg);
+  if (typeof alert !== "undefined") alert(msg);
 };vg.config = {};
 
-// Default axis properties
+// are we running in node.js?
+// via timetler.com/2012/10/13/environment-detection-in-javascript/
+vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
+
+// base url for loading external data files
+// used only for server-side operation
+vg.config.baseURL = "";
+
+// default axis properties
 vg.config.axis = {
   ticks: 10,
   padding: 3,
@@ -146,7 +162,7 @@ vg.config.axis = {
   tickLabelFont: "sans-serif"
 };
 
-// Default scale ranges
+// default scale ranges
 vg.config.range = {
   category10: [
     "#1f77b4",
@@ -1996,7 +2012,56 @@ vg.data.size = function(size, group) {
     return (typeof d === 'string') ? group[d] : d;
   });
   return size;
-};vg.data.read = (function() {
+};vg.data.load = function(uri, callback) {
+  if (vg.config.isNode) {
+    // in node.js, consult base url and select file or http
+    var url = vg_load_hasProtocol(uri) ? uri : vg.config.baseURL + uri,
+        get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
+    get(url, callback);
+  } else {
+    // in browser, use xhr
+    vg_load_xhr(uri, callback);
+  }  
+};
+
+var vg_load_protocolRE = /^[A-Za-z]+\:\/\//;
+var vg_load_fileProtocol = "file://";
+
+function vg_load_hasProtocol(url) {
+  return vg_load_protocolRE.test(url);
+}
+
+function vg_load_isFile(url) {
+  return url.indexOf(vg_load_fileProtocol) === 0;
+}
+
+function vg_load_xhr(url, callback) {
+  vg.log("LOAD: " + url);
+  d3.xhr(url, function(err, resp) {
+    if (resp) resp = resp.responseText;
+    callback(err, resp);
+  });
+}
+
+function vg_load_file(file, callback) {
+  vg.log("LOAD FILE: " + file);
+  var idx = file.indexOf(vg_load_fileProtocol);
+  if (idx >= 0) file = file.slice(vg_load_fileProtocol.length);
+	require("fs").readFile(file, {encoding:"utf8"}, callback);
+}
+
+function vg_load_http(url, callback) {
+  vg.log("LOAD HTTP: " + url);
+	var req = require("http").request(url, function(res) {
+    var data = "";
+    res.setEncoding("utf8");
+		res.on("error", function(err) { callback(err, null); });
+		res.on("data", function(chunk) { data += chunk; });
+		res.on("end", function() { callback(null, data); });
+	});
+	req.on("error", function(err) { callback(err); });
+	req.end();
+}vg.data.read = (function() {
   var formats = {},
       parsers = {
         "number": vg.number,
@@ -2957,7 +3022,7 @@ vg.data.size = function(size, group) {
       withKey = null;
 
   function zip(data, db) {
-    var zdata = db[z], d, i, len, map;
+    var zdata = db[z], zlen = zdata.length, d, i, len, map;
     
     if (withKey) {
       map = {};
@@ -2966,7 +3031,7 @@ vg.data.size = function(size, group) {
     
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
-      d[as] = map ? map[key(d)] : zdata[i];
+      d[as] = map ? map[key(d)] : zdata[i % zlen];
     }
     
     return data;
@@ -3091,14 +3156,15 @@ vg.data.size = function(size, group) {
     flow: {},
     source: {}
   };
+
   var count = 0;
   
   function load(d) {
-    return function(error, resp) {
+    return function(error, data) {
       if (error) {
-        vg.error("LOADING ERROR: " + d.url);
+        vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(resp.responseText, d.format);
+        model.load[d.name] = vg.data.read(data, d.format);
       }
       if (--count === 0) callback();
     }
@@ -3107,8 +3173,7 @@ vg.data.size = function(size, group) {
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
-      vg.log("LOADING: " + d.url);
-      d3.xhr(d.url, load(d)); 
+      vg.data.load(d.url, load(d)); 
     }
      
     if (d.values) {
@@ -4657,10 +4722,10 @@ vg.headless = (function() {
     "text-anchor": 1
   };
 
-  function extractSVG(spec, view) {
-    var p = spec.padding,
-        w = spec.width  + (p ? p.left + p.right : 0),
-        h = spec.height + (p ? p.top + p.bottom : 0),
+  function extractSVG(view) {
+    var p = view.padding(),
+        w = view.width()  + (p ? p.left + p.right : 0),
+        h = view.height() + (p ? p.top + p.bottom : 0),
         svg = "";
 
     // set axis styles
@@ -4699,7 +4764,7 @@ vg.headless = (function() {
     };
   }
 
-  function extractCanvas(spec, view) {
+  function extractCanvas(view) {
     return {canvas: view.canvas()};
   }
 
@@ -4711,8 +4776,8 @@ vg.headless = (function() {
           renderer: opt.renderer
         }).update();
       
-        var extract = opt.renderer === "svg" ? extractSVG : extractCanvas;
-        callback(null, extract(opt.spec, view));
+        var extract = opt.renderer==="svg" ? extractSVG : extractCanvas;
+        callback(null, extract(view));
       } catch (err) {
         callback(err, null);
       }
@@ -4750,7 +4815,36 @@ vg.headless = (function() {
   };
   
   var prototype = view.prototype;
-  
+
+  prototype.width = function(width) {
+    if (!arguments.length) return this._width;
+    if (this._width !== width) {
+      this._width = width;
+      this.initialize();
+      this._model.width(width);
+    }
+    return this;
+  };
+
+  prototype.height = function(height) {
+    if (!arguments.length) return this._height;
+    if (this._height !== height) {
+      this._height = height;
+      this.initialize();
+      this._model.height(this._height);
+    }
+    return this;
+  };
+
+  prototype.padding = function(pad) {
+    if (!arguments.length) return this._padding;
+    if (this._padding !== pad) {
+      this._padding = pad;
+      this.initialize();
+    }
+    return this;
+  };
+
   prototype.defs = function(defs) {
     if (!arguments.length) return this._model.defs();
     this._model.defs(defs);
@@ -4812,7 +4906,6 @@ vg.headless = (function() {
   }
   
   prototype.render = function(items) {
-    if (this._axes) this._axes.update(this._model);
     this._renderer.render(this._model.scene(), items);
     return this;
   };

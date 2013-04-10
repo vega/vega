@@ -1,6 +1,14 @@
 vg.config = {};
 
-// Default axis properties
+// are we running in node.js?
+// via timetler.com/2012/10/13/environment-detection-in-javascript/
+vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
+
+// base url for loading external data files
+// used only for server-side operation
+vg.config.baseURL = "";
+
+// default axis properties
 vg.config.axis = {
   ticks: 10,
   padding: 3,
@@ -14,7 +22,7 @@ vg.config.axis = {
   tickLabelFont: "sans-serif"
 };
 
-// Default scale ranges
+// default scale ranges
 vg.config.range = {
   category10: [
     "#1f77b4",

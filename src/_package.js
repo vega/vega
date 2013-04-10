@@ -122,11 +122,19 @@ vg.unique = function(data, f) {
 };
 
 // Logging
+
+function vg_write(msg) {
+  vg.config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.log(msg);
+}
+
 vg.log = function(msg) {
-  console.log(msg);
+  vg_write("[Vega Log] " + msg);
 };
 
 vg.error = function(msg) {
-  console.log(msg);
-  alert(msg);
+  msg = "[Vega Err] " + msg;
+  vg_write(msg);
+  if (typeof alert !== "undefined") alert(msg);
 };

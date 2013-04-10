@@ -2,9 +2,13 @@
 // Render a Vega specification to SVG
 
 var helpText =
-  "Render a Vega specification to SVG.\n" +
-  "Usage: vg2svg vega_json_file [output_svg_file]\n" +
-  " If no output_svg_file is given, writes to stdout.";
+  "Render a Vega specification to SVG.\n\n" +
+  "Usage:\n" +
+  "  vg2svg vega_json_file [output_svg_file]\n" +
+  "  If output_svg_file is not provided, writes to stdout.\n\n" +
+  "To load data, you may need to set a base directory:\n" +
+  "  For web retrieval, use `-b http://host/data/`. \n" +
+  "  For files, use `-b file:///dir/data/` (absolute) or `-b data/` (relative).";
 
 var svgHeader =
   '<?xml version="1.0" encoding="utf-8"?>\n' +
@@ -20,10 +24,22 @@ var vg = require("../index");
 var args = require("optimist")
   .usage(helpText)
   .demand(1)
+  .string('b').alias('b', 'base')
+  .describe('b', 'Base directory for data loading.')
   .boolean('h').alias('h', 'header')
   .describe('h', 'Include XML header and SVG doctype.')
   .argv;
 
+// set baseURL if provided on command line
+var base = "file://" + process.cwd() + path.sep;
+if (args.b) {
+  // if no protocol, assume files, relative to current dir
+  base = /^[A-Za-z]+\:\/\//.test(args.b) ? args.b + path.sep
+    : "file://" + process.cwd() + path.sep + args.b + path.sep;
+}
+vg.config.baseURL = base;
+
+// input / output files
 var header = args.h ? svgHeader : "",
     specFile = args._[0],
     outputFile = args._[1] || null;
@@ -39,12 +55,9 @@ fs.readFile(specFile, "utf8", function(err, text) {
 
 function writeSVG(svg, file) {
   svg = header + svg;
-  if (file) {
-    // write to file
-    fs.writeFile(file, svg, function(err) {
-      if (err) throw err;
-    });
-  } else {
+  if (file) { // write to file
+    fs.writeFile(file, svg, function(err) { if (err) throw err; });
+  } else {    // write to stdout
     process.stdout.write(svg);
   }
 }

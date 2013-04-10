@@ -14,10 +14,10 @@ vg.headless = (function() {
     "text-anchor": 1
   };
 
-  function extractSVG(spec, view) {
-    var p = spec.padding,
-        w = spec.width  + (p ? p.left + p.right : 0),
-        h = spec.height + (p ? p.top + p.bottom : 0),
+  function extractSVG(view) {
+    var p = view.padding(),
+        w = view.width()  + (p ? p.left + p.right : 0),
+        h = view.height() + (p ? p.top + p.bottom : 0),
         svg = "";
 
     // set axis styles
@@ -56,7 +56,7 @@ vg.headless = (function() {
     };
   }
 
-  function extractCanvas(spec, view) {
+  function extractCanvas(view) {
     return {canvas: view.canvas()};
   }
 
@@ -68,8 +68,8 @@ vg.headless = (function() {
           renderer: opt.renderer
         }).update();
       
-        var extract = opt.renderer === "svg" ? extractSVG : extractCanvas;
-        callback(null, extract(opt.spec, view));
+        var extract = opt.renderer==="svg" ? extractSVG : extractCanvas;
+        callback(null, extract(view));
       } catch (err) {
         callback(err, null);
       }

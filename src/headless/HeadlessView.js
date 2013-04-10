@@ -13,7 +13,36 @@ vg.HeadlessView = (function() {
   };
   
   var prototype = view.prototype;
-  
+
+  prototype.width = function(width) {
+    if (!arguments.length) return this._width;
+    if (this._width !== width) {
+      this._width = width;
+      this.initialize();
+      this._model.width(width);
+    }
+    return this;
+  };
+
+  prototype.height = function(height) {
+    if (!arguments.length) return this._height;
+    if (this._height !== height) {
+      this._height = height;
+      this.initialize();
+      this._model.height(this._height);
+    }
+    return this;
+  };
+
+  prototype.padding = function(pad) {
+    if (!arguments.length) return this._padding;
+    if (this._padding !== pad) {
+      this._padding = pad;
+      this.initialize();
+    }
+    return this;
+  };
+
   prototype.defs = function(defs) {
     if (!arguments.length) return this._model.defs();
     this._model.defs(defs);
@@ -75,7 +104,6 @@ vg.HeadlessView = (function() {
   }
   
   prototype.render = function(items) {
-    if (this._axes) this._axes.update(this._model);
     this._renderer.render(this._model.scene(), items);
     return this;
   };

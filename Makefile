@@ -23,6 +23,7 @@ vega.js: \
 	src/svg/Renderer.js \
 	src/svg/Handler.js \
 	src/data/_package.js \
+	src/data/load.js \
 	src/data/read.js \
 	src/data/array.js \
 	src/data/copy.js \
