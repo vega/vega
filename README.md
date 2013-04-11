@@ -37,9 +37,8 @@ node_modules folder if it does not exist.
 ## Vega Server-Side and Command Line Tools
 
 Vega can also be run server-side using node.js. When running in "headless"
-mode, Vega can be used to render specifications directly to PNG or SVG.
-
-In addition to the summary below, [see the Headless Mode wiki
+mode, Vega can be used to render specifications directly to PNG or SVG. In
+addition to the summary below, [see the Headless Mode wiki
 documentation](https://github.com/trifacta/vega/wiki/Headless-Mode) for more
 information.
 
