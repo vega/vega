@@ -4,14 +4,14 @@ vg.scene.encode = (function() {
       UPDATE = vg.scene.UPDATE,
       EXIT   = vg.scene.EXIT;
 
-  function main(scene, enc, trans, request, items) {
+  function main(scene, def, trans, request, items) {
     (request && items)
-      ? update.call(this, scene, enc, trans, request, items)
-      : encode.call(this, scene, scene, enc, trans, request);
+      ? update.call(this, scene, def, trans, request, items)
+      : encode.call(this, scene, scene, def, trans, request);
     return scene;
   }
   
-  function update(scene, enc, trans, request, items) {
+  function update(scene, def, trans, request, items) {
     items = vg.array(items);
     var i, len, item, group, props, prop;
     for (i=0, len=items.length; i<len; ++i) {
@@ -23,15 +23,15 @@ vg.scene.encode = (function() {
     }
   }
   
-  function encode(group, scene, enc, trans, request) {
-    encodeItems.call(this, group, scene.items, enc, trans, request);
+  function encode(group, scene, def, trans, request) {
+    encodeItems.call(this, group, scene.items, def, trans, request);
     if (scene.marktype === GROUP) {
-      encodeGroup.call(this, scene, enc, group, trans, request);
+      encodeGroup.call(this, scene, def, group, trans, request);
     }
   }
   
-  function encodeGroup(scene, enc, parent, trans, request) {
-    var i, len, m, mlen, group, scales, axes;
+  function encodeGroup(scene, def, parent, trans, request) {
+    var i, len, m, mlen, group, scales, axes, axisItems, axisDef;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
@@ -40,33 +40,33 @@ vg.scene.encode = (function() {
       scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
       
       // update group-level scales
-      if (enc.scales) {
-        vg.parse.scales(enc.scales, scales, this._data, group);
+      if (def.scales) {
+        vg.parse.scales(def.scales, scales, this._data, group);
       }
       
       // update group-level axes
-      if (enc.axes) {
+      if (def.axes) {
         axes = group.axes || (group.axes = []);
-        axis = group.axis || (group.axis = []);
-        vg.parse.axes(enc.axes, axes, group.scales);
+        axisItems = group.axisItems || (group.axisItems = []);
+        vg.parse.axes(def.axes, axes, group.scales);
         axes.forEach(function(a, i) {
-          var axisModel = a.model();
-          group.axis[i] = vg.scene.build(axisModel, this._data, group.axis[i]);
-          encode.call(this, group, group.axis[i], axisModel, trans);
+          axisDef = a.def();
+          axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i]);
+          encode.call(this, group, group.axisItems[i], axisDef, trans);
         });
       }
       
       // encode children marks
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
-        encode.call(this, group, group.items[m], enc.marks[m], trans, request);
+        encode.call(this, group, group.items[m], def.marks[m], trans, request);
       }
     }
   }
   
-  function encodeItems(group, items, enc, trans, request) {
-    if (enc.properties == null) return;
+  function encodeItems(group, items, def, trans, request) {
+    if (def.properties == null) return;
     
-    var props  = enc.properties,
+    var props  = def.properties,
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,

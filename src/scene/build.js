@@ -5,34 +5,34 @@ vg.scene.build = (function() {
       EXIT   = vg.scene.EXIT,
       DEFAULT= {"sentinel":1};
   
-  function build(model, db, node, parentData) {
+  function build(def, db, node, parentData) {
     var data = vg.scene.data(
-      model.from ? model.from(db, node, parentData) : null,
+      def.from ? def.from(db, node, parentData) : null,
       parentData);
     
     // build node and items
-    node = buildNode(model, node);
-    node.items = buildItems(model, data, node);
-    buildTrans(model, node);
+    node = buildNode(def, node);
+    node.items = buildItems(def, data, node);
+    buildTrans(def, node);
     
     // recurse if group
-    if (model.type === GROUP) {
-      buildGroup(model, db, node);
+    if (def.type === GROUP) {
+      buildGroup(def, db, node);
     }
     
     return node;
   };
   
-  function buildNode(model, node) {
+  function buildNode(def, node) {
     node = node || {};
-    node.def = model;
-    node.marktype = model.type;
-    node.interactive = !(model.interactive === false);
+    node.def = def;
+    node.marktype = def.type;
+    node.interactive = !(def.interactive === false);
     return node;
   }
   
-  function buildItems(model, data, node) {
-    var keyf = keyFunction(model.key),
+  function buildItems(def, data, node) {
+    var keyf = keyFunction(def.key),
         prev = node.items || [],
         next = [],
         map = {},
@@ -66,9 +66,9 @@ vg.scene.build = (function() {
     return next;
   }
   
-  function buildGroup(model, db, node) {
+  function buildGroup(def, db, node) {
     var groups = node.items,
-        marks = model.marks,
+        marks = def.marks,
         i, len, m, mlen, name, group;
 
     for (i=0, len=groups.length; i<len; ++i) {
@@ -90,12 +90,12 @@ vg.scene.build = (function() {
     }
   }
 
-  function buildTrans(model, node) {
-    if (model.duration) node.duration = model.duration;
-    if (model.ease) node.ease = d3.ease(model.ease)
-    if (model.delay) {
+  function buildTrans(def, node) {
+    if (def.duration) node.duration = def.duration;
+    if (def.ease) node.ease = d3.ease(def.ease)
+    if (def.delay) {
       var items = node.items, group = node.group, n = items.length, i;
-      for (i=0; i<n; ++i) model.delay.call(this, items[i], group);
+      for (i=0; i<n; ++i) def.delay.call(this, items[i], group);
     }
   }
   

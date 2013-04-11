@@ -2,7 +2,7 @@ vg.scene.axis = function() {
   var scale,
       orient = vg_axisDefaultOrient,
       offset = 0,
-      axisModel = null,
+      axisDef = null,
       tickMajorSize = vg.config.axis.tickSize,
       tickMinorSize = vg.config.axis.tickSize,
       tickEndSize = vg.config.axis.tickSize,
@@ -18,9 +18,9 @@ vg.scene.axis = function() {
 
   var axis = {};
 
-  axis.model = function() {
-    // TODO: only generate model as-needed; use dirty bit?
-    var model = axisModel = axis_model(scale);
+  axis.def = function() {
+    // TODO: only generate def as-needed; use dirty bit?
+    var def = axisDef = axis_def(scale);
     
     // generate data
     var major = tickValues == null
@@ -31,17 +31,17 @@ vg.scene.axis = function() {
     var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
     major.forEach(function(d) { d.label = fmt(d.data); });
     
-    // update axis model
-    model.marks[0].from = function() { return major; };
-    model.marks[1].from = function() { return minor; };
-    model.marks[2].from = model.marks[0].from;
-    model.marks[3].from = function() { return [1]; };
-    model.offset = offset;
-    model.orient = orient;
-    return model;
+    // update axis def
+    def.marks[0].from = function() { return major; };
+    def.marks[1].from = function() { return minor; };
+    def.marks[2].from = def.marks[0].from;
+    def.marks[3].from = function() { return [1]; };
+    def.offset = offset;
+    def.orient = orient;
+    return def;
   };
 
-  function axis_model(scale) {
+  function axis_def(scale) {
     // setup scale mapping
     var newScale, oldScale, range;
     if (scale.type === "ordinal") {

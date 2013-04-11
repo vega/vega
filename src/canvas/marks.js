@@ -396,9 +396,9 @@ vg.canvas.marks = (function() {
       for (j=0, m=group.items.length; j<m; ++j) {
         renderer.draw(g, group.items[j], bounds);
       }
-      if (group.axis) {
-        for (j=0, m=group.axis.length; j<m; ++j) {
-          renderer.draw(g, group.axis[j], bounds);
+      if (group.axisItems) {
+        for (j=0, m=group.axisItems.length; j<m; ++j) {
+          renderer.draw(g, group.axisItems[j], bounds);
         }
       }
       if (bounds) bounds.translate(gx, gy);

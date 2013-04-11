@@ -206,7 +206,7 @@ vg.svg.marks = (function() {
     for (i=0, n=x.childNodes.length; i<n; ++i) {
       var sel = d3.select(x.childNodes[i]),
           data = x.childNodes[i].__data__,
-          axis = data.axis || [],
+          axis = data.axisItems || [],
           items = data.items;
       for (j=0, m=items.length; j<m; ++j) {
         renderer.draw(sel, items[j], j);

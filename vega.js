@@ -1184,9 +1184,9 @@ vg.config.range = {
       for (j=0, m=group.items.length; j<m; ++j) {
         renderer.draw(g, group.items[j], bounds);
       }
-      if (group.axis) {
-        for (j=0, m=group.axis.length; j<m; ++j) {
-          renderer.draw(g, group.axis[j], bounds);
+      if (group.axisItems) {
+        for (j=0, m=group.axisItems.length; j<m; ++j) {
+          renderer.draw(g, group.axisItems[j], bounds);
         }
       }
       if (bounds) bounds.translate(gx, gy);
@@ -1874,7 +1874,7 @@ vg.config.range = {
     for (i=0, n=x.childNodes.length; i<n; ++i) {
       var sel = d3.select(x.childNodes[i]),
           data = x.childNodes[i].__data__,
-          axis = data.axis || [],
+          axis = data.axisItems || [],
           items = data.items;
       for (j=0, m=items.length; j<m; ++j) {
         renderer.draw(sel, items[j], j);
@@ -3657,34 +3657,34 @@ vg.scene.item = function(mark) {
       EXIT   = vg.scene.EXIT,
       DEFAULT= {"sentinel":1};
   
-  function build(model, db, node, parentData) {
+  function build(def, db, node, parentData) {
     var data = vg.scene.data(
-      model.from ? model.from(db, node, parentData) : null,
+      def.from ? def.from(db, node, parentData) : null,
       parentData);
     
     // build node and items
-    node = buildNode(model, node);
-    node.items = buildItems(model, data, node);
-    buildTrans(model, node);
+    node = buildNode(def, node);
+    node.items = buildItems(def, data, node);
+    buildTrans(def, node);
     
     // recurse if group
-    if (model.type === GROUP) {
-      buildGroup(model, db, node);
+    if (def.type === GROUP) {
+      buildGroup(def, db, node);
     }
     
     return node;
   };
   
-  function buildNode(model, node) {
+  function buildNode(def, node) {
     node = node || {};
-    node.def = model;
-    node.marktype = model.type;
-    node.interactive = !(model.interactive === false);
+    node.def = def;
+    node.marktype = def.type;
+    node.interactive = !(def.interactive === false);
     return node;
   }
   
-  function buildItems(model, data, node) {
-    var keyf = keyFunction(model.key),
+  function buildItems(def, data, node) {
+    var keyf = keyFunction(def.key),
         prev = node.items || [],
         next = [],
         map = {},
@@ -3718,9 +3718,9 @@ vg.scene.item = function(mark) {
     return next;
   }
   
-  function buildGroup(model, db, node) {
+  function buildGroup(def, db, node) {
     var groups = node.items,
-        marks = model.marks,
+        marks = def.marks,
         i, len, m, mlen, name, group;
 
     for (i=0, len=groups.length; i<len; ++i) {
@@ -3742,12 +3742,12 @@ vg.scene.item = function(mark) {
     }
   }
 
-  function buildTrans(model, node) {
-    if (model.duration) node.duration = model.duration;
-    if (model.ease) node.ease = d3.ease(model.ease)
-    if (model.delay) {
+  function buildTrans(def, node) {
+    if (def.duration) node.duration = def.duration;
+    if (def.ease) node.ease = d3.ease(def.ease)
+    if (def.delay) {
       var items = node.items, group = node.group, n = items.length, i;
-      for (i=0; i<n; ++i) model.delay.call(this, items[i], group);
+      for (i=0; i<n; ++i) def.delay.call(this, items[i], group);
     }
   }
   
@@ -3762,14 +3762,14 @@ vg.scene.item = function(mark) {
       UPDATE = vg.scene.UPDATE,
       EXIT   = vg.scene.EXIT;
 
-  function main(scene, enc, trans, request, items) {
+  function main(scene, def, trans, request, items) {
     (request && items)
-      ? update.call(this, scene, enc, trans, request, items)
-      : encode.call(this, scene, scene, enc, trans, request);
+      ? update.call(this, scene, def, trans, request, items)
+      : encode.call(this, scene, scene, def, trans, request);
     return scene;
   }
   
-  function update(scene, enc, trans, request, items) {
+  function update(scene, def, trans, request, items) {
     items = vg.array(items);
     var i, len, item, group, props, prop;
     for (i=0, len=items.length; i<len; ++i) {
@@ -3781,15 +3781,15 @@ vg.scene.item = function(mark) {
     }
   }
   
-  function encode(group, scene, enc, trans, request) {
-    encodeItems.call(this, group, scene.items, enc, trans, request);
+  function encode(group, scene, def, trans, request) {
+    encodeItems.call(this, group, scene.items, def, trans, request);
     if (scene.marktype === GROUP) {
-      encodeGroup.call(this, scene, enc, group, trans, request);
+      encodeGroup.call(this, scene, def, group, trans, request);
     }
   }
   
-  function encodeGroup(scene, enc, parent, trans, request) {
-    var i, len, m, mlen, group, scales, axes;
+  function encodeGroup(scene, def, parent, trans, request) {
+    var i, len, m, mlen, group, scales, axes, axisItems, axisDef;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
@@ -3798,33 +3798,33 @@ vg.scene.item = function(mark) {
       scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
       
       // update group-level scales
-      if (enc.scales) {
-        vg.parse.scales(enc.scales, scales, this._data, group);
+      if (def.scales) {
+        vg.parse.scales(def.scales, scales, this._data, group);
       }
       
       // update group-level axes
-      if (enc.axes) {
+      if (def.axes) {
         axes = group.axes || (group.axes = []);
-        axis = group.axis || (group.axis = []);
-        vg.parse.axes(enc.axes, axes, group.scales);
+        axisItems = group.axisItems || (group.axisItems = []);
+        vg.parse.axes(def.axes, axes, group.scales);
         axes.forEach(function(a, i) {
-          var axisModel = a.model();
-          group.axis[i] = vg.scene.build(axisModel, this._data, group.axis[i]);
-          encode.call(this, group, group.axis[i], axisModel, trans);
+          axisDef = a.def();
+          axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i]);
+          encode.call(this, group, group.axisItems[i], axisDef, trans);
         });
       }
       
       // encode children marks
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
-        encode.call(this, group, group.items[m], enc.marks[m], trans, request);
+        encode.call(this, group, group.items[m], def.marks[m], trans, request);
       }
     }
   }
   
-  function encodeItems(group, items, enc, trans, request) {
-    if (enc.properties == null) return;
+  function encodeItems(group, items, def, trans, request) {
+    if (def.properties == null) return;
     
-    var props  = enc.properties,
+    var props  = def.properties,
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,
@@ -3941,7 +3941,7 @@ vg.scene.transition = function(dur, ease) {
   var scale,
       orient = vg_axisDefaultOrient,
       offset = 0,
-      axisModel = null,
+      axisDef = null,
       tickMajorSize = vg.config.axis.tickSize,
       tickMinorSize = vg.config.axis.tickSize,
       tickEndSize = vg.config.axis.tickSize,
@@ -3957,9 +3957,9 @@ vg.scene.transition = function(dur, ease) {
 
   var axis = {};
 
-  axis.model = function() {
-    // TODO: only generate model as-needed; use dirty bit?
-    var model = axisModel = axis_model(scale);
+  axis.def = function() {
+    // TODO: only generate def as-needed; use dirty bit?
+    var def = axisDef = axis_def(scale);
     
     // generate data
     var major = tickValues == null
@@ -3970,17 +3970,17 @@ vg.scene.transition = function(dur, ease) {
     var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
     major.forEach(function(d) { d.label = fmt(d.data); });
     
-    // update axis model
-    model.marks[0].from = function() { return major; };
-    model.marks[1].from = function() { return minor; };
-    model.marks[2].from = model.marks[0].from;
-    model.marks[3].from = function() { return [1]; };
-    model.offset = offset;
-    model.orient = orient;
-    return model;
+    // update axis def
+    def.marks[0].from = function() { return major; };
+    def.marks[1].from = function() { return minor; };
+    def.marks[2].from = def.marks[0].from;
+    def.marks[3].from = function() { return [1]; };
+    def.offset = offset;
+    def.orient = orient;
+    return def;
   };
 
-  function axis_model(scale) {
+  function axis_def(scale) {
     // setup scale mapping
     var newScale, oldScale, range;
     if (scale.type === "ordinal") {
