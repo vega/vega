@@ -157,7 +157,7 @@ suite.addBatch({
           vg.duplicate(function () {
           });
         },
-        'should throw SyntaxError': function(topic) {
+        'should throw SyntaxError': function (topic) {
           assert.equal(topic.toString().substring(0, 11), 'SyntaxError');
         }
       },
@@ -167,7 +167,7 @@ suite.addBatch({
           o1['o2'] = o2;
           vg.duplicate(o1);
         },
-        'should throw TypeError': function(topic) {
+        'should throw TypeError': function (topic) {
           assert.equal(topic, 'TypeError: Converting circular structure to JSON');
         }
       }
