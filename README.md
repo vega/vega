@@ -52,7 +52,7 @@ to rendered PNG or SVG:
 
 Within the Vega project directories, you can invoke these utilities using
 `./bin/vg2png` or `./bin/vg2svg`. If you import Vega using npm, these commands
-are accessible either locally (`./node_modules/bin/vg2png`) or globally
+are accessible either locally (`node_modules/.bin/vg2png`) or globally
 (`vg2png`) depending on how you install the Vega package.
 
 ### Using Vega in node.js Projects
