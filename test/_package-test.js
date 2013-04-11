@@ -12,6 +12,38 @@ suite.addBatch({
         assert.equal(vg.isNumber(0), true);
       }
     },
+    'number': {
+      'should convert String containing int to number': function (vg) {
+        assert.strictEqual(vg.number('2.2'), 2.2);
+      },
+      'should return NaN for unparseable Strings': function (vg) {
+        assert.isNaN(vg.number('not a number'));
+      },
+      'should return NaN for objects': function (vg) {
+        assert.isNaN(vg.number({}));
+      },
+      'should return 0 for empty arrays': function (vg) {
+        assert.strictEqual(vg.number([]), 0);
+      },
+      'should return value of single-item numerical arrays': function (vg) {
+        assert.strictEqual(vg.number([2.2]), 2.2);
+      },
+      'should return value of single-item String arrays if it can be converted': function (vg) {
+        assert.strictEqual(vg.number(['2.2']), 2.2);
+      },
+      'should return NaN for single-item String arrays that cannot be parsed': function (vg) {
+        assert.isNaN(vg.number(['not a number']));
+      },
+      'should return NaN for arrays with several elements': function (vg) {
+        assert.isNaN(vg.number([5, 2]));
+      },
+      'should return NaN for functions': function (vg) {
+        assert.isNaN(vg.number(function() {}));
+      },
+      'should return number argument': function (vg) {
+        assert.strictEqual(vg.number(2.2), 2.2);
+      }
+    },
     'array': {
       'array(null) should return an empty array': function (vg) {
         assert.deepEqual(vg.array(null), []);
