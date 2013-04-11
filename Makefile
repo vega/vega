@@ -47,6 +47,7 @@ vega.js: \
 	src/parse/axes.js \
 	src/parse/data.js \
 	src/parse/dataflow.js \
+	src/parse/expr.js \
 	src/parse/mark.js \
 	src/parse/marks.js \
 	src/parse/padding.js \

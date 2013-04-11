@@ -53,7 +53,7 @@ vg.data.stats = function() {
   }
   
   function stats(data) {
-    return (Array.isArray(data) ? [data] : data.values || [])
+    return (vg.isArray(data) ? [data] : data.values || [])
       .map(reduce); // no pun intended
   }
   

@@ -2084,7 +2084,7 @@ vg.data.mapper = function(func) {
 };
 
 vg.data.size = function(size, group) {
-  size = Array.isArray(size) ? size : [0, size];
+  size = vg.isArray(size) ? size : [0, size];
   size = size.map(function(d) {
     return (typeof d === 'string') ? group[d] : d;
   });
@@ -2307,11 +2307,8 @@ function vg_load_http(url, callback) {
     return test ? data.filter(test) : data;
   }
   
-  filter.test = function(t) {
-    // TODO security check
-    test = vg.isFunction(t)
-      ? t
-      : new Function("d", "return " + t);
+  filter.test = function(func) {
+    test = vg.isFunction(func) ? func : vg.parse.expr(func);
     return filter;
   };
 
@@ -2441,12 +2438,6 @@ function vg_load_http(url, callback) {
 
   return force;
 };vg.data.formula = (function() {
-
-  // TODO security check
-  // TODO remove with, perform parse?
-  function code(str) {
-    return "with (Math) { return ("+str+"); }";
-  }
   
   return function() {
     var field = null,
@@ -2463,9 +2454,7 @@ function vg_load_http(url, callback) {
     };
   
     formula.expr = function(func) {
-      expr = vg.isFunction(func)
-        ? func
-        : new Function("d", code(func));
+      expr = vg.isFunction(func) ? func : vg.parse.expr(func);
       return formula;
     };
 
@@ -2876,7 +2865,7 @@ function vg_load_http(url, callback) {
   }
   
   function stats(data) {
-    return (Array.isArray(data) ? [data] : data.values || [])
+    return (vg.isArray(data) ? [data] : data.values || [])
       .map(reduce); // no pun intended
   }
   
@@ -3198,7 +3187,7 @@ function vg_load_http(url, callback) {
 
     // tick arguments
     if (def.ticks !== undefined) {
-      var ticks = Array.isArray(def.ticks) ? def.ticks : [def.ticks];
+      var ticks = vg.isArray(def.ticks) ? def.ticks : [def.ticks];
       axis.ticks.apply(axis, ticks);
     }
 
@@ -3276,7 +3265,64 @@ function vg_load_http(url, callback) {
     function(data, db, group) {
       return tx.reduce(function(d,t) { return t(d, db, group); }, data);
     };
-};vg.parse.mark = function(mark) {
+};vg.parse.expr = (function() {
+  
+  var CONSTANT = {
+  	"E":       "Math.E",
+  	"LN2":     "Math.LN2",
+  	"LN10":    "Math.LN10",
+  	"LOG2E":   "Math.LOG2E",
+  	"LOG10E":  "Math.LOG10E",
+  	"PI":      "Math.PI",
+  	"SQRT1_2": "Math.SQRT1_2",
+  	"SQRT2":   "Math.SQRT2"
+  };
+
+  var FUNCTION = {
+  	"abs":    "Math.abs",
+  	"acos":   "Math.acos",
+  	"asin":   "Math.asin",
+  	"atan":   "Math.atan",
+  	"atan2":  "Math.atan2",
+  	"ceil":   "Math.ceil",
+  	"cos":    "Math.cos",
+  	"exp":    "Math.exp",
+  	"floor":  "Math.floor",
+  	"log":    "Math.log",
+  	"max":    "Math.max",
+  	"min":    "Math.min",
+  	"pow":    "Math.pow",
+  	"random": "Math.random",
+  	"round":  "Math.round",
+  	"sin":    "Math.sin",
+  	"sqrt":   "Math.sqrt",
+  	"tan":    "Math.tan"
+  };
+  
+  var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
+      
+  return function(x) {
+    var tokens = x.split(lexer),
+        t, v, i, n, sq, dq;
+
+    for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
+      var t = tokens[i];
+      if (t==="'") { if (!dq) sq = !sq; continue; }
+      if (t==='"') { if (!sq) dq = !dq; continue; }
+      if (dq || sq) continue;
+      if (CONSTANT[t]) {
+        tokens[i] = CONSTANT[t];
+      }
+      if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
+        tokens[i] = FUNCTION[t];
+      }
+    }
+    
+    // TODO security check
+    return Function("d", "return ("+tokens.join("")+");");
+  };
+  
+})();vg.parse.mark = function(mark) {
   var props = mark.properties,
       group = mark.marks;
   
@@ -3428,7 +3474,7 @@ vg.parse.properties = (function() {
     
     // domain
     domain = def.domain;
-    if (Array.isArray(domain)) {
+    if (vg.isArray(domain)) {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
       dat = db[domain.data] || data;
@@ -3529,7 +3575,7 @@ vg.parse.properties = (function() {
           vg.error("Unrecogized range: "+def.range);
           return rng;
         }
-      } else if (Array.isArray(def.range)) {
+      } else if (vg.isArray(def.range)) {
         rng = def.range;
       } else {
         rng = [0, def.range];

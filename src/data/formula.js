@@ -1,10 +1,4 @@
 vg.data.formula = (function() {
-
-  // TODO security check
-  // TODO remove with, perform parse?
-  function code(str) {
-    return "with (Math) { return ("+str+"); }";
-  }
   
   return function() {
     var field = null,
@@ -21,9 +15,7 @@ vg.data.formula = (function() {
     };
   
     formula.expr = function(func) {
-      expr = vg.isFunction(func)
-        ? func
-        : new Function("d", code(func));
+      expr = vg.isFunction(func) ? func : vg.parse.expr(func);
       return formula;
     };
 

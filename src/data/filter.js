@@ -6,11 +6,8 @@ vg.data.filter = function() {
     return test ? data.filter(test) : data;
   }
   
-  filter.test = function(t) {
-    // TODO security check
-    test = vg.isFunction(t)
-      ? t
-      : new Function("d", "return " + t);
+  filter.test = function(func) {
+    test = vg.isFunction(func) ? func : vg.parse.expr(func);
     return filter;
   };
 

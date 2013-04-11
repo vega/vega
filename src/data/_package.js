@@ -15,7 +15,7 @@ vg.data.mapper = function(func) {
 };
 
 vg.data.size = function(size, group) {
-  size = Array.isArray(size) ? size : [0, size];
+  size = vg.isArray(size) ? size : [0, size];
   size = size.map(function(d) {
     return (typeof d === 'string') ? group[d] : d;
   });

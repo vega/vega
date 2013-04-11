@@ -46,7 +46,7 @@ vg.parse.scales = (function() {
     
     // domain
     domain = def.domain;
-    if (Array.isArray(domain)) {
+    if (vg.isArray(domain)) {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
       dat = db[domain.data] || data;
@@ -147,7 +147,7 @@ vg.parse.scales = (function() {
           vg.error("Unrecogized range: "+def.range);
           return rng;
         }
-      } else if (Array.isArray(def.range)) {
+      } else if (vg.isArray(def.range)) {
         rng = def.range;
       } else {
         rng = [0, def.range];

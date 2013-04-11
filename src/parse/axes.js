@@ -62,7 +62,7 @@ vg.parse.axes = (function() {
 
     // tick arguments
     if (def.ticks !== undefined) {
-      var ticks = Array.isArray(def.ticks) ? def.ticks : [def.ticks];
+      var ticks = vg.isArray(def.ticks) ? def.ticks : [def.ticks];
       axis.ticks.apply(axis, ticks);
     }
 
