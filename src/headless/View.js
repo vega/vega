@@ -1,8 +1,9 @@
-vg.HeadlessView = (function() {
+vg.headless.View = (function() {
   
   var view = function(width, height, pad, type) {
     this._canvas = null;
     this._type = type;
+    this._el = "body";
     this._build = false;
     this._model = new vg.Model();
     this._width = width || 500;
@@ -13,6 +14,15 @@ vg.HeadlessView = (function() {
   };
   
   var prototype = view.prototype;
+
+  prototype.el = function(el) {
+    if (!arguments.length) return this._el;
+    if (this._el !== el) {
+      this._el = el;
+      this.initialize();
+    }
+    return this;
+  };
 
   prototype.width = function(width) {
     if (!arguments.length) return this._width;
@@ -66,6 +76,40 @@ vg.HeadlessView = (function() {
   prototype.canvas = function() {
     return this._canvas;
   };
+  
+  prototype.canvasAsync = function(callback) {
+    var r = this._renderer;
+    
+    function wait() {
+      if (r.pendingImages() === 0) {
+        this.render(); // re-render with all images
+        callback(this._canvas);
+      } else {
+        setTimeout(wait, 10);
+      }
+    }
+
+    // if images loading, poll until ready
+    (r.pendingImages() > 0) ? wait() : callback(this._canvas);
+  };
+  
+  prototype.svg = function() {
+    if (this._type !== "svg") return null;
+
+    var p = this._padding,
+        w = this._width  + (p ? p.left + p.right : 0),
+        h = this._height + (p ? p.top + p.bottom : 0);
+
+      // build svg text
+    var svg = d3.select(this._el)
+      .select("svg").node().innerHTML
+      .replace(/ href=/g, " xlink:href="); // ns hack. sigh.
+
+    return '<svg '
+      + 'width="' + w + '" '
+      + 'height="' + h + '" '
+      + vg.config.svgNamespace + '>' + svg + '</svg>'
+  };
 
   prototype.initialize = function() {    
     var w = this._width,
@@ -100,11 +144,8 @@ vg.HeadlessView = (function() {
     var tw = w + pad.left + pad.right,
         th = h + pad.top + pad.bottom;
 
-    // the "dom" element
-    var el = "body";
-    
     // configure renderer
-    this._renderer.initialize(el, w, h, pad);
+    this._renderer.initialize(this._el, w, h, pad);
   }
   
   prototype.render = function(items) {
@@ -127,13 +168,13 @@ vg.HeadlessView = (function() {
 // headless view constructor factory
 // takes definitions from parsed specification as input
 // returns a view constructor
-vg.HeadlessView.Factory = function(defs) {
+vg.headless.View.Factory = function(defs) {
   return function(opt) {
     var w = defs.width,
         h = defs.height,
         p = defs.padding,
         r = opt.renderer || "canvas",
-        v = new vg.HeadlessView(w, h, p, r).defs(defs);
+        v = new vg.headless.View(w, h, p, r).defs(defs);
     if (defs.data.load) v.data(defs.data.load);
     if (opt.data) v.data(opt.data);
     return v;

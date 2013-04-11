@@ -48,7 +48,7 @@ var header = args.h ? svgHeader : "",
 fs.readFile(specFile, "utf8", function(err, text) {
   if (err) throw err;
   var spec = JSON.parse(text);
-  convert(spec);
+  render(spec);
 });
 
 // ---
@@ -62,9 +62,12 @@ function writeSVG(svg, file) {
   }
 }
 
-function convert(spec) {
-  vg.headless.convert(spec, "svg", function(err, data) {
-    if (err) throw err;
-    writeSVG(data.svg, outputFile);
-  });
+function render(spec) {
+  vg.headless.render(
+    {spec: spec, renderer:"svg"},
+    function(err, data) {
+      if (err) throw err;
+      writeSVG(data.svg, outputFile);
+    }
+  );
 }

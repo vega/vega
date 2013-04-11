@@ -65,7 +65,8 @@ vega.js: \
 	src/core/View.js \
 	src/core/Spec.js \
 	src/headless/_package.js \
-	src/headless/HeadlessView.js \
+	src/headless/View.js \
+	src/headless/render.js \
 	src/core/_end.js
 
 %.min.js: %.js Makefile

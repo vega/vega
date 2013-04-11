@@ -8,6 +8,11 @@ vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
 // used only for server-side operation
 vg.config.baseURL = "";
 
+// version and namepsaces for exported svg
+vg.config.svgNamespace =
+  'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
+  'xmlns:xlink="http://www.w3.org/1999/xlink"';
+
 // default axis properties
 vg.config.axis = {
   ticks: 10,
