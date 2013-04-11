@@ -100,6 +100,78 @@ suite.addBatch({
         assert.equal(topic['override_1'], 'overridden');
       }
     },
+    'duplicate': {
+      topic: function (vg) {
+        return vg;
+      },
+      'should perform a deep clone of the argument': {
+        topic: function (vg) {
+          return function () {
+            var original = {
+              'number': -3.452,
+              'string': 'text',
+              'boolean': true,
+              'array': [ 'arrayvalue' ],
+              'child': { 'value': 'original value' }
+            };
+
+            return {
+              'original': original,
+              'clone': vg.duplicate(original)
+            };
+          }
+        },
+        'changing clone child objects should not change original child objects': function (createTopic) {
+          var topic = createTopic();
+          topic.clone.child.value = 'changed value'
+          assert.equal(topic.original.child.value, 'original value');
+        },
+        'changing original child objects should not change clone child objects': function (createTopic) {
+          var topic = createTopic();
+          topic.original.child.value = 'changed value'
+          assert.equal(topic.clone.child.value, 'original value');
+        },
+        'should clone all values': {
+          topic: function (createTopic) {
+            return createTopic().clone;
+          },
+          'should clone child value': function (clone) {
+            assert.strictEqual(clone.child.value, 'original value');
+          },
+          'should clone Number values': function (clone) {
+            assert.strictEqual(clone.number, -3.452);
+          },
+          'should clone String values': function (clone) {
+            assert.strictEqual(clone.string, 'text');
+          },
+          'should clone Boolean values': function (clone) {
+            assert.strictEqual(clone.boolean, true);
+          },
+          'should clone Array values': function (clone) {
+            assert.deepEqual(clone.array, [ 'arrayvalue' ]);
+          }
+        }
+      },
+      'duplicating functions': {
+        topic: function (vg) {
+          vg.duplicate(function () {
+          });
+        },
+        'should throw SyntaxError': function(topic) {
+          assert.equal(topic.toString().substring(0, 11), 'SyntaxError');
+        }
+      },
+      'duplicating objects with circular dependencies': {
+        topic: function (vg) {
+          var o1 = {}, o2 = { 'o1': o1 };
+          o1['o2'] = o2;
+          vg.duplicate(o1);
+        },
+        'should throw TypeError': function(topic) {
+          assert.equal(topic, 'TypeError: Converting circular structure to JSON');
+        }
+      }
+    },
     'array': {
       'array(null) should return an empty array': function (vg) {
         assert.deepEqual(vg.array(null), []);
