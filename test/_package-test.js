@@ -38,10 +38,66 @@ suite.addBatch({
         assert.isNaN(vg.number([5, 2]));
       },
       'should return NaN for functions': function (vg) {
-        assert.isNaN(vg.number(function() {}));
+        assert.isNaN(vg.number(function () {
+        }));
       },
       'should return number argument': function (vg) {
         assert.strictEqual(vg.number(2.2), 2.2);
+      }
+    },
+    'extend': {
+      topic: function (vg) {
+        function createChild(o) {
+          var F = function () {
+          };
+          F.prototype = o;
+          return new F();
+        }
+
+        var grandParent = { 'p2_1': 'vp2_1', 'p2_2': 'vp2_2' },
+          parent = createChild(grandParent),
+          object1 = createChild(parent),
+          object2 = { 'o2_1': 'vo2_1', 'override_1': 'overridden' };
+
+        object1['o1_1'] = 'vo1_1';
+        object1['o1_2'] = 'vo1_2';
+        object1['override_1'] = 'x';
+        parent['p1_1'] = 'vp1_1';
+
+        return vg.extend({ 'c1': 'vc1', 'p2_2': 'x', 'o1_1': 'y'}, object1, object2);
+      },
+      'object should inherit all direct properties': {
+        '1st object 1st property': function (topic) {
+          assert.equal(topic['o1_1'], 'vo1_1');
+        },
+        '1st object 2nd property': function (topic) {
+          assert.equal(topic['o1_2'], 'vo1_2');
+        },
+        '2nd object 1st property': function (topic) {
+          assert.equal(topic['o2_1'], 'vo2_1');
+        }
+      },
+      'object should inherit all parent properties': {
+        'parent 1st property': function (topic) {
+          assert.equal(topic['p1_1'], 'vp1_1');
+        },
+        'grandparent 1st property': function (topic) {
+          assert.equal(topic['p2_1'], 'vp2_1');
+        },
+        'grandparent 2nd property': function (topic) {
+          assert.equal(topic ['p2_2'], 'vp2_2');
+        }
+      },
+      'object properties should be overridden': {
+        'by arguments properties': function (topic) {
+          assert.equal(topic['o1_1'], 'vo1_1');
+        },
+        'by argument parent properties': function (topic) {
+          assert.equal(topic['p2_2'], 'vp2_2');
+        }
+      },
+      'later arguments override values from previous arguments': function (topic) {
+        assert.equal(topic['override_1'], 'overridden');
       }
     },
     'array': {
@@ -153,6 +209,7 @@ suite.addBatch({
       }
     }
   }
-});
+})
+;
 
 suite.export(module);
