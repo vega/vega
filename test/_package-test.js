@@ -185,6 +185,25 @@ suite.addBatch({
           ['a.b.c', 'a2.b2', 'a3.b3.c3' ]);
       }
     },
+    'accessor': {
+      'should return null argument': function (vg) {
+        assert.isNull(vg.accessor(null));
+      },
+      'should return function argument': function (vg) {
+        var f = function () {
+        };
+        assert.strictEqual(vg.accessor(f), f);
+      },
+      'should return accessor function for property of simple String argument': function (vg) {
+        assert.equal(vg.accessor('test')({ 'test': 'value'}), 'value');
+      },
+      'should return accessor function that resolves property paths for String arguments with .': function (vg) {
+        assert.equal(vg.accessor('a\\.b.c.d')({ 'a.b': { 'c': { 'd': 'value'}}}), 'value');
+      },
+      'should return accessor function for number arguments': function (vg) {
+        assert.equal(vg.accessor(1)(['a', 'b']), 'b');
+      }
+    },
     'array': {
       'array(null) should return an empty array': function (vg) {
         assert.deepEqual(vg.array(null), []);
