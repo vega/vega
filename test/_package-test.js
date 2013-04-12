@@ -172,6 +172,19 @@ suite.addBatch({
         }
       }
     },
+    'field': {
+      'should treat \\. as . in field name': function (vg) {
+        assert.deepEqual(vg.field('a\\.b\\.c'), ['a.b.c' ]);
+      },
+      'should separate fields on .': function (vg) {
+        assert.deepEqual(vg.field('a.b.c'), ['a', 'b', 'c' ]);
+      },
+      'should support mix of \\. and .': function (vg) {
+        assert.deepEqual(
+          vg.field('a\\.b\\.c.a2\\.b2.a3\\.b3\\.c3'),
+          ['a.b.c', 'a2.b2', 'a3.b3.c3' ]);
+      }
+    },
     'array': {
       'array(null) should return an empty array': function (vg) {
         assert.deepEqual(vg.array(null), []);
