@@ -148,6 +148,11 @@ vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
 // used only for server-side operation
 vg.config.baseURL = "";
 
+// version and namepsaces for exported svg
+vg.config.svgNamespace =
+  'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
+  'xmlns:xlink="http://www.w3.org/1999/xlink"';
+
 // default axis properties
 vg.config.axis = {
   ticks: 10,
@@ -4819,91 +4824,12 @@ vg.Spec = (function() {
 vg.spec = function(s) {
   return new vg.Spec(s);
 };
-vg.headless = (function() {
-  
-  var svgNS = 'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
-    'xmlns:xlink="http://www.w3.org/1999/xlink"';
-
-  function extractSVG(view) {
-    var p = view.padding(),
-        w = view.width()  + (p ? p.left + p.right : 0),
-        h = view.height() + (p ? p.top + p.bottom : 0),
-        svg = "";
-
-    // build svg text
-    d3.selectAll("svg").each(function() {
-      svg = this.innerHTML + svg;
-    });
-    svg = svg.replace(/ href=/g, " xlink:href="); // requires a hack. sigh.
-
-    return {
-      svg : '<svg '
-            + 'width="' + w + '" '
-            + 'height="' + h + '" '
-          + svgNS + '>' + svg + '</svg>'
-    };
-  }
-
-  function extractCanvas(view) {
-    return {canvas: view.canvas()};
-  }
-
-  function render(opt, callback) {
-    function draw(chart) {
-      try {
-        // create and render view
-        var view = chart({
-          data: opt.data,
-          renderer: opt.renderer
-        }).update();
-
-        if (opt.renderer === "svg") {
-          // extract rendered svg
-          callback(null, extractSVG(view));
-        } else {
-          // extract rendered canvas
-          var r = view.renderer();
-          if (r.pendingImages() === 0) {
-            // if no images loading, return now
-            callback(null, extractCanvas(view));
-          } else {
-            // if images loading, poll until ready
-            function wait() {
-              if (r.pendingImages() === 0) {
-                view.render(); // re-render with all images
-                callback(null, extractCanvas(view));
-              } else setTimeout(wait, 10);
-            }
-            wait();
-          }
-        }
-      } catch (err) {
-        callback(err, null);
-      }
-    }
-    vg.parse.spec(opt.spec, draw, vg.HeadlessView.Factory);
-  }
-
-  function convert(spec, type, callback) {
-    type = type || "canvas";
-    var opt = {
-      renderer: type,
-      spec:     spec,
-      data:     null
-    };
-    render(opt, callback);
-  }
-
-  return {
-    convert: convert,
-    render:  render
-  };
-
-})();vg.HeadlessView = (function() {
+vg.headless = {};vg.headless.View = (function() {
   
   var view = function(width, height, pad, type) {
     this._canvas = null;
     this._type = type;
+    this._el = "body";
     this._build = false;
     this._model = new vg.Model();
     this._width = width || 500;
@@ -4914,6 +4840,15 @@ vg.headless = (function() {
   };
   
   var prototype = view.prototype;
+
+  prototype.el = function(el) {
+    if (!arguments.length) return this._el;
+    if (this._el !== el) {
+      this._el = el;
+      this.initialize();
+    }
+    return this;
+  };
 
   prototype.width = function(width) {
     if (!arguments.length) return this._width;
@@ -4967,6 +4902,40 @@ vg.headless = (function() {
   prototype.canvas = function() {
     return this._canvas;
   };
+  
+  prototype.canvasAsync = function(callback) {
+    var r = this._renderer;
+    
+    function wait() {
+      if (r.pendingImages() === 0) {
+        this.render(); // re-render with all images
+        callback(this._canvas);
+      } else {
+        setTimeout(wait, 10);
+      }
+    }
+
+    // if images loading, poll until ready
+    (r.pendingImages() > 0) ? wait() : callback(this._canvas);
+  };
+  
+  prototype.svg = function() {
+    if (this._type !== "svg") return null;
+
+    var p = this._padding,
+        w = this._width  + (p ? p.left + p.right : 0),
+        h = this._height + (p ? p.top + p.bottom : 0);
+
+      // build svg text
+    var svg = d3.select(this._el)
+      .select("svg").node().innerHTML
+      .replace(/ href=/g, " xlink:href="); // ns hack. sigh.
+
+    return '<svg '
+      + 'width="' + w + '" '
+      + 'height="' + h + '" '
+      + vg.config.svgNamespace + '>' + svg + '</svg>'
+  };
 
   prototype.initialize = function() {    
     var w = this._width,
@@ -5001,11 +4970,8 @@ vg.headless = (function() {
     var tw = w + pad.left + pad.right,
         th = h + pad.top + pad.bottom;
 
-    // the "dom" element
-    var el = "body";
-    
     // configure renderer
-    this._renderer.initialize(el, w, h, pad);
+    this._renderer.initialize(this._el, w, h, pad);
   }
   
   prototype.render = function(items) {
@@ -5028,16 +4994,40 @@ vg.headless = (function() {
 // headless view constructor factory
 // takes definitions from parsed specification as input
 // returns a view constructor
-vg.HeadlessView.Factory = function(defs) {
+vg.headless.View.Factory = function(defs) {
   return function(opt) {
     var w = defs.width,
         h = defs.height,
         p = defs.padding,
         r = opt.renderer || "canvas",
-        v = new vg.HeadlessView(w, h, p, r).defs(defs);
+        v = new vg.headless.View(w, h, p, r).defs(defs);
     if (defs.data.load) v.data(defs.data.load);
     if (opt.data) v.data(opt.data);
     return v;
   };
+};vg.headless.render = function(opt, callback) {
+  function draw(chart) {
+    try {
+      // create and render view
+      var view = chart({
+        data: opt.data,
+        renderer: opt.renderer
+      }).update();
+
+      if (opt.renderer === "svg") {
+        // extract rendered svg
+        callback(null, {svg: view.svg()});
+      } else {
+        // extract rendered canvas, waiting for any images to load
+        view.canvasAsync(function(canvas) {
+          callback(null, {canvas: canvas});
+        });
+      }
+    } catch (err) {
+      callback(err, null);
+    }
+  }
+
+  vg.parse.spec(opt.spec, draw, vg.headless.View.Factory);
 };return vg;
 })(d3); // assumes availability of D3 in global namespace

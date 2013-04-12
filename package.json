@@ -19,8 +19,8 @@
   },
   "main": "index.js",
   "bin": {
-    "vg2png": "./bin/vg2png.js",
-    "vg2svg": "./bin/vg2svg.js"
+    "vg2png": "./bin/vg2png",
+    "vg2svg": "./bin/vg2svg"
   },
   "dependencies": {
     "d3": "3.1.4",

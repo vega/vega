@@ -40,7 +40,7 @@ var specFile = args._[0],
 fs.readFile(specFile, "utf8", function(err, text) {
   if (err) throw err;
   var spec = JSON.parse(text);
-  convert(spec);
+  render(spec);
 });
 
 // ---
@@ -51,9 +51,12 @@ function writePNG(canvas, file) {
   stream.on("data", function(chunk) { out.write(chunk); });
 }
 
-function convert(spec) {
-  vg.headless.convert(spec, "canvas", function(err, data) {
-    if (err) throw err;
-    writePNG(data.canvas, outputFile);
-  });
+function render(spec) {
+  vg.headless.render(
+    {spec: spec, renderer: "canvas"},
+    function(err, data) {
+      if (err) throw err;
+      writePNG(data.canvas, outputFile);
+    }
+  );
 }
