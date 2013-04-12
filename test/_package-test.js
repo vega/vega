@@ -204,6 +204,77 @@ suite.addBatch({
         assert.equal(vg.accessor(1)(['a', 'b']), 'b');
       }
     },
+    'comparator': {
+      'when called without argument, the comparator': {
+        'should always return 0': function (vg) {
+          assert.equal(vg.comparator()('a', 'b'), 0);
+        }
+      },
+      'when sort argument contains single String without prefix, the comparator': {
+        topic: function (vg) {
+          return vg.comparator(['p']);
+        },
+        'should return 1 if resolved property of 1st arg is greater than resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 0}), 1);
+        },
+        'should return 1 if resolved property of 2nd arg is greater than resolved property of 1st arg': function (comparator) {
+          assert.equal(comparator({'p': 0}, {'p': 1}), -1);
+        },
+        'should return 0 if resolved property of 1st arg is equal to resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 1}), 0);
+        }
+      },
+      'when sort argument contains single String with "+" prefix, the comparator': {
+        topic: function (vg) {
+          return vg.comparator(['+p']);
+        },
+        'should return 1 if resolved property of 1st arg is greater than resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 0}), 1);
+        },
+        'should return 1 if resolved property of 2nd arg is greater than resolved property of 1st arg': function (comparator) {
+          assert.equal(comparator({'p': 0}, {'p': 1}), -1);
+        },
+        'should return 0 if resolved property of 1st arg is equal to resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 1}), 0);
+        }
+      },
+      'when sort argument contains single String with "-" prefix, the comparator': {
+        topic: function (vg) {
+          return vg.comparator(['-p']);
+        },
+        'should return -1 if resolved property of 1st arg is greater than resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 0}), -1);
+        },
+        'should return 1 if resolved property of 2nd arg is greater than resolved property of 1st arg': function (comparator) {
+          assert.equal(comparator({'p': 0}, {'p': 1}), 1);
+        },
+        'should return 0 if resolved property of 1st arg is equal to resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 1}), 0);
+        }
+      },
+      'when sort argument contains two Strings (without prefix), the comparator': {
+        topic: function (vg) {
+          return vg.comparator(['p', 'q']);
+        },
+        'should return 1 if 1st resolved property of 1st arg is greater than 1st resolved property of 2nd arg': function (comparator) {
+          assert.equal(comparator({'p': 1}, {'p': 0}), 1);
+        },
+        'should return -1 if 1st resolved property of 2nd arg is greater than 1st resolved property of 1st arg': function (comparator) {
+          assert.equal(comparator({'p': 0}, {'p': 1}), -1);
+        },
+        'when 1st resolved properties of both arguments are equal': {
+          'should return 1 if 2nd resolved property of 1st arg is greater than 2nd resolved property of 2nd arg': function (comparator) {
+            assert.equal(comparator({'p': 1, 'q': 2}, {'p': 1, 'q': -2}), 1);
+          },
+          'should return -1 1st if 2nd resolved property of 2nd arg is greater than 2nd resolved property of 1st arg': function (comparator) {
+            assert.equal(comparator({'p': 1, 'q': -2}, {'p': 1, 'q': 2}), -1);
+          },
+          'should return 0 if both 2nd resolved properties are equal': function (comparator) {
+            assert.equal(comparator({'p': 1, 'q': 5}, {'p': 1, 'q': 5}), 0);
+          }
+        }
+      }
+    },
     'array': {
       'array(null) should return an empty array': function (vg) {
         assert.deepEqual(vg.array(null), []);
