@@ -170,6 +170,7 @@ vg.headless.View = (function() {
 // returns a view constructor
 vg.headless.View.Factory = function(defs) {
   return function(opt) {
+    opt = opt || {};
     var w = defs.width,
         h = defs.height,
         p = defs.padding,

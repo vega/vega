@@ -2,7 +2,7 @@ vg = (function(d3){ // take d3 instance as sole import
 var vg = {};
 
 // semantic versioning
-vg.version = '1.2.0';
+vg.version = '1.2.1';
 
 // type checking functions
 var toString = Object.prototype.toString;
@@ -3359,9 +3359,9 @@ function vg_load_http(url, callback) {
     type: "group",
     width: width,
     height: height,
-    axes: spec.axes,
-    scales: spec.scales,
-    marks: vg.duplicate(spec.marks).map(vg.parse.mark)
+    axes: spec.axes || [],
+    scales: spec.scales || [],
+    marks: (spec.marks || []).map(vg.parse.mark)
   };
 };vg.parse.padding = function(pad) {
   if (vg.isObject(pad)) return pad;
@@ -3610,6 +3610,9 @@ vg.parse.properties = (function() {
   viewFactory = viewFactory || vg.ViewFactory;
   
   function parse(spec) {
+    // protect against subsequent spec modification
+    spec = vg.duplicate(spec);
+    
     var width = spec.width || 500,
         height = spec.height || 500,
         viewport = spec.viewport || null;
@@ -4702,6 +4705,7 @@ function vg_axisDomain() {
 // returns a view constructor
 vg.ViewFactory = function(defs) {
   return function(opt) {
+    opt = opt || {};
     var v = new vg.View()
       .width(defs.width)
       .height(defs.height)
@@ -4996,6 +5000,7 @@ vg.headless = {};vg.headless.View = (function() {
 // returns a view constructor
 vg.headless.View.Factory = function(defs) {
   return function(opt) {
+    opt = opt || {};
     var w = defs.width,
         h = defs.height,
         p = defs.padding,

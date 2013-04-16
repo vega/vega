@@ -172,6 +172,7 @@ vg.View = (function() {
 // returns a view constructor
 vg.ViewFactory = function(defs) {
   return function(opt) {
+    opt = opt || {};
     var v = new vg.View()
       .width(defs.width)
       .height(defs.height)

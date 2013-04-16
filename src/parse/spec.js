@@ -3,6 +3,9 @@ vg.parse.spec = function(spec, callback, viewFactory) {
   viewFactory = viewFactory || vg.ViewFactory;
   
   function parse(spec) {
+    // protect against subsequent spec modification
+    spec = vg.duplicate(spec);
+    
     var width = spec.width || 500,
         height = spec.height || 500,
         viewport = spec.viewport || null;

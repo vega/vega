@@ -3,8 +3,8 @@ vg.parse.marks = function(spec, width, height) {
     type: "group",
     width: width,
     height: height,
-    axes: spec.axes,
-    scales: spec.scales,
-    marks: vg.duplicate(spec.marks).map(vg.parse.mark)
+    axes: spec.axes || [],
+    scales: spec.scales || [],
+    marks: (spec.marks || []).map(vg.parse.mark)
   };
 };
