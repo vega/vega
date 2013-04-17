@@ -38,6 +38,11 @@ vg.parse.properties = (function() {
               ? vg.str(ref.value)
               : "item.datum.data";
 
+    // get value from enclosing group
+    if (ref.group !== undefined) {
+      val = "group." + ref.group;
+    }
+
     // get data field value
     if (ref.field !== undefined) {
       val = "item.datum["

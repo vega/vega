@@ -68,6 +68,12 @@ vg.parse.axes = (function() {
 
     // axis offset
     if (def.offset) axis.offset(def.offset);
+
+    // axis layer
+    if (def.layer) axis.layer(def.layer);
+
+    // axis grid lines
+    if (def.grid) axis.grid(def.grid);
     
     // style properties
     if (def.properties) {
@@ -82,6 +88,7 @@ vg.parse.axes = (function() {
         if (p.minorTicks) axis.minorTickProperties(p.minorTicks);
       }
       if (p.labels) axis.tickLabelProperties(p.labels);
+      if (p.grid) axis.gridLineProperties(p.grid);
       if (p.axis) axis.domainProperties(p.axis);
     }
   }

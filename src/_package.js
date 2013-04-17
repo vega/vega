@@ -1,7 +1,7 @@
 var vg = {};
 
 // semantic versioning
-vg.version = '1.2.1';
+vg.version = '1.3.0';
 
 // type checking functions
 var toString = Object.prototype.toString;

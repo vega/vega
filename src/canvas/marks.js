@@ -379,26 +379,32 @@ vg.canvas.marks = (function() {
   
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
-    var items = scene.items, group,
+    var items = scene.items, group, axes,
         renderer = this, gx, gy, i, n, j, m;
     
     drawRect(g, scene, bounds);
     
     for (i=0, n=items.length; i<n; ++i) {
       group = items[i];
+      axes = group.axisItems || [];
       gx = group.x || 0;
       gy = group.y || 0;
       
       // render group contents
       g.save();
       g.translate(gx, gy);
-      if (bounds) bounds.translate(-gx, -gy);      
+      if (bounds) bounds.translate(-gx, -gy);
+      for (j=0, m=axes.length; j<m; ++j) {
+        if (axes[j].def.layer === "back") {
+          renderer.draw(g, axes[j], bounds);
+        }
+      }
       for (j=0, m=group.items.length; j<m; ++j) {
         renderer.draw(g, group.items[j], bounds);
       }
-      if (group.axisItems) {
-        for (j=0, m=group.axisItems.length; j<m; ++j) {
-          renderer.draw(g, group.axisItems[j], bounds);
+      for (j=0, m=axes.length; j<m; ++j) {
+        if (axes[j].def.layer !== "back") {
+          renderer.draw(g, axes[j], bounds);
         }
       }
       if (bounds) bounds.translate(gx, gy);

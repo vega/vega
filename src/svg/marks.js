@@ -90,11 +90,6 @@ vg.svg.marks = (function() {
     this.setAttribute("y2", o.y2 !== undefined ? o.y2 : y1);
   }
   
-  function group_bg(o) {
-    this.setAttribute("width", o.width || 0);
-    this.setAttribute("height", o.height || 0);
-  }
-  
   function symbol(o) {
     var x = o.x || 0,
         y = o.y || 0;
@@ -156,6 +151,13 @@ vg.svg.marks = (function() {
     this.setAttribute("transform", "translate("+x+","+y+")");
   }
 
+  function group_bg(o) {
+    var w = o.width || 0,
+        h = o.height || 0;
+    this.setAttribute("width", w);
+    this.setAttribute("height", h);
+  }
+
   function draw(tag, attr, nest) {
     return function(g, scene, index) {
       drawMark(g, scene, index, "mark_", tag, attr, nest);
@@ -165,54 +167,56 @@ vg.svg.marks = (function() {
   var mark_id = 0;
   
   function drawMark(g, scene, index, prefix, tag, attr, nest) {
-    var className = prefix + index,
-        data = nest ? [scene.items] : scene.items,
+    var data = nest ? [scene.items] : scene.items,
         evts = scene.interactive===false ? "none" : null,
-        p = g.select("."+className);
-
-    if (p.empty()) p = g.append("g")
-      .attr("id", "g"+(++mark_id))
-      .attr("class", className);
+        grps = g.node().childNodes,
+        notG = (tag !== "g"),
+        p = grps[index+1] // +1 to skip group background rect
+          ? d3.select(grps[index+1])
+          : g.append("g").attr("id","g"+(++mark_id));
 
     var id = "#" + p.attr("id"),
-        m = p.selectAll(id+" > "+tag).data(data),
+        s = id + " > " + tag,
+        m = p.selectAll(s).data(data),
         e = m.enter().append(tag);
 
-    if (tag !== "g") {
+    if (notG) {
       p.style("pointer-events", evts);
       e.each(function(d) { (d.mark ? d : d[0])._svg = this; });
     } else {
-      e.append("rect")
-        .attr("class", "background")
-        .style("pointer-events", evts);
+      e.append("rect").attr("class","background").style("pointer-events",evts);
     }
     
     m.exit().remove();
     m.each(attr);
-    if (tag !== "g") {
-      m.each(style);
-    } else {
-      p.selectAll(id+" > "+tag+" > rect.background")
-        .each(group_bg).each(style);
-    }
+    if (notG) m.each(style);
+    else p.selectAll(s+" > rect.background").each(group_bg).each(style);
+    
+    return p;
   }
 
-  function drawGroup(g, scene, index) {
-    var renderer = this;
+  function drawGroup(g, scene, index, prefix) {
+    var p = drawMark(g, scene, index, prefix || "group_", "g", group),
+        c = p.node().childNodes, n = c.length, i, j, m;
+    
+    for (i=0; i<n; ++i) {
+      var items = c[i].__data__.items,
+          axes = c[i].__data__.axisItems || [],
+          sel = d3.select(c[i])
+          idx = 0;
 
-    drawMark(g, scene, index, "group_", "g", group);
-
-    var x = g.select(".group_"+index).node(), i, n, j, m;
-    for (i=0, n=x.childNodes.length; i<n; ++i) {
-      var sel = d3.select(x.childNodes[i]),
-          data = x.childNodes[i].__data__,
-          axis = data.axisItems || [],
-          items = data.items;
-      for (j=0, m=items.length; j<m; ++j) {
-        renderer.draw(sel, items[j], j);
+      for (j=0, m=axes.length; j<m; ++j) {
+        if (axes[j].def.layer === "back") {
+          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+        }
       }
-      for (j=0, m=axis.length; j<m; ++j) {
-        renderer.draw(sel, axis[j], j + items.length);
+      for (j=0, m=items.length; j<m; ++j) {
+        this.draw(sel, items[j], idx++);
+      }
+      for (j=0, m=axes.length; j<m; ++j) {
+        if (axes[j].def.layer !== "back") {
+          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+        }
       }
     }
   }
