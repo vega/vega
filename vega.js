@@ -3100,6 +3100,7 @@ function vg_load_http(url, callback) {
   var z = null,
       as = "zip",
       key = vg.accessor("data"),
+      defaultVal = undefined,
       withKey = null;
 
   function zip(data, db) {
@@ -3112,7 +3113,7 @@ function vg_load_http(url, callback) {
     
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
-      d[as] = map ? map[key(d)] : zdata[i % zlen];
+      d[as] = map ? (map[key(d)] || defaultVal) : zdata[i % zlen];
     }
     
     return data;
@@ -3120,6 +3121,11 @@ function vg_load_http(url, callback) {
 
   zip["with"] = function(d) {
     z = d;
+    return zip;
+  };
+  
+  zip["default"] = function(d) {
+    defaultVal = d;
     return zip;
   };
 
