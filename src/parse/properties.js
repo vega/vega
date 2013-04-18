@@ -34,7 +34,9 @@ vg.parse.properties = (function() {
   function valueRef(ref) {
     if (ref == null) return null;
 
-    if (ref.h || ref.s) {
+    if (ref.c) {
+      return colorRef("hcl", ref.h, ref.c, ref.l);
+    } else if (ref.h || ref.s) {
       return colorRef("hsl", ref.h, ref.s, ref.l);
     } else if (ref.l || ref.a) {
       return colorRef("lab", ref.l, ref.a, ref.b);

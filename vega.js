@@ -195,7 +195,8 @@ vg.config.axis = {
 vg.config.color = {
   rgb: [128, 128, 128],
   lab: [50, 0, 0],
-  hsl: [0, 0.5, 0.5]
+  hcl: [0, 0, 50],
+  hsl: [0, 0, 0.5]
 };
 
 // default scale ranges
@@ -3495,7 +3496,9 @@ vg.parse.properties = (function() {
   function valueRef(ref) {
     if (ref == null) return null;
 
-    if (ref.h || ref.s) {
+    if (ref.c) {
+      return colorRef("hcl", ref.h, ref.c, ref.l);
+    } else if (ref.h || ref.s) {
       return colorRef("hsl", ref.h, ref.s, ref.l);
     } else if (ref.l || ref.a) {
       return colorRef("lab", ref.l, ref.a, ref.b);
