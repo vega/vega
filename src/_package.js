@@ -112,13 +112,36 @@ vg.keys = function(x) {
 };
 
 vg.unique = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return [];
   f = f || vg.identity;
   var results = [], v;
-  for (var i=0; i<data.length; ++i) {
+  for (var i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
     if (results.indexOf(v) < 0) results.push(v);
   }
   return results;
+};
+
+vg.minIndex = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return -1;
+  f = f || vg.identity;
+  var idx = 0, min = f(data[0]), v = min;
+  for (var i=1, n=data.length; i<n; ++i) {
+    v = f(data[i]);
+    if (v < min) { min = v; idx = i; }
+  }
+  return idx;
+};
+
+vg.maxIndex = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return -1;
+  f = f || vg.identity;
+  var idx = 0, max = f(data[0]), v = max;
+  for (var i=1, n=data.length; i<n; ++i) {
+    v = f(data[i]);
+    if (v > max) { max = v; idx = i; }
+  }
+  return idx;
 };
 
 // Logging

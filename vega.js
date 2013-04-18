@@ -113,13 +113,36 @@ vg.keys = function(x) {
 };
 
 vg.unique = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return [];
   f = f || vg.identity;
   var results = [], v;
-  for (var i=0; i<data.length; ++i) {
+  for (var i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
     if (results.indexOf(v) < 0) results.push(v);
   }
   return results;
+};
+
+vg.minIndex = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return -1;
+  f = f || vg.identity;
+  var idx = 0, min = f(data[0]), v = min;
+  for (var i=1, n=data.length; i<n; ++i) {
+    v = f(data[i]);
+    if (v < min) { min = v; idx = i; }
+  }
+  return idx;
+};
+
+vg.maxIndex = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return -1;
+  f = f || vg.identity;
+  var idx = 0, max = f(data[0]), v = max;
+  for (var i=1, n=data.length; i<n; ++i) {
+    v = f(data[i]);
+    if (v > max) { max = v; idx = i; }
+  }
+  return idx;
 };
 
 // Logging
@@ -2758,6 +2781,41 @@ function vg_load_http(url, callback) {
   };
 
   return pie;
+};vg.data.slice = function() {
+  var by = null,
+      field = vg.accessor("data");
+
+  function slice(data) {
+    data = vg.values(data);
+    
+    if (by === "min") {
+      data = [data[vg.minIndex(data, field)]];
+    } else if (by === "max") {
+      data = [data[vg.maxIndex(data, field)]];
+    } else if (by === "median") {
+      var list = data.slice().sort(function(a,b) {
+        a = field(a); b = field(b);
+        return a < b ? -1 : a > b ? 1 : 0;
+      });
+      data = [data[~~(list.length/2)]];
+    } else {
+      var idx = vg.array(by);
+      data = data.slice(idx[0], idx[1]);
+    }
+    return data;
+  }
+  
+  slice.by = function(x) {
+    by = x;
+    return slice;
+  };
+  
+  slice.field = function(f) {
+    field = vg.accessor(f);
+    return slice;
+  };
+
+  return slice;
 };vg.data.sort = function() {
   var by = null;
 
@@ -3100,11 +3158,11 @@ function vg_load_http(url, callback) {
   var z = null,
       as = "zip",
       key = vg.accessor("data"),
-      defaultVal = undefined,
+      defaultValue = undefined,
       withKey = null;
 
   function zip(data, db) {
-    var zdata = db[z], zlen = zdata.length, d, i, len, map;
+    var zdata = db[z], zlen = zdata.length, v, d, i, len, map;
     
     if (withKey) {
       map = {};
@@ -3113,7 +3171,9 @@ function vg_load_http(url, callback) {
     
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
-      d[as] = map ? (map[key(d)] || defaultVal) : zdata[i % zlen];
+      d[as] = map
+        ? ((v=map[key(d)]) != null ? v : defaultValue)
+        : zdata[i % zlen];
     }
     
     return data;
@@ -3125,7 +3185,7 @@ function vg_load_http(url, callback) {
   };
   
   zip["default"] = function(d) {
-    defaultVal = d;
+    defaultValue = d;
     return zip;
   };
 
@@ -3912,7 +3972,7 @@ vg.scene.item = function(mark) {
         update = props.update,
         exit   = props.exit,
         i, len, item, prop;
-    
+
     if (request && (prop = props[request])) {
       for (i=0, len=items.length; i<len; ++i) {
         prop.call(this, items[i], group, trans);
@@ -3920,7 +3980,7 @@ vg.scene.item = function(mark) {
       return; // exit early if given request
     }
     
-    for (i=0; i<items.length; ++i) {
+    for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
       
       // enter set

@@ -71,7 +71,7 @@ vg.scene.encode = (function() {
         update = props.update,
         exit   = props.exit,
         i, len, item, prop;
-    
+
     if (request && (prop = props[request])) {
       for (i=0, len=items.length; i<len; ++i) {
         prop.call(this, items[i], group, trans);
@@ -79,7 +79,7 @@ vg.scene.encode = (function() {
       return; // exit early if given request
     }
     
-    for (i=0; i<items.length; ++i) {
+    for (i=0, len=items.length; i<len; ++i) {
       item = items[i];
       
       // enter set

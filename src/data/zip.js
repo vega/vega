@@ -2,11 +2,11 @@ vg.data.zip = function() {
   var z = null,
       as = "zip",
       key = vg.accessor("data"),
-      defaultVal = undefined,
+      defaultValue = undefined,
       withKey = null;
 
   function zip(data, db) {
-    var zdata = db[z], zlen = zdata.length, d, i, len, map;
+    var zdata = db[z], zlen = zdata.length, v, d, i, len, map;
     
     if (withKey) {
       map = {};
@@ -15,7 +15,9 @@ vg.data.zip = function() {
     
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
-      d[as] = map ? (map[key(d)] || defaultVal) : zdata[i % zlen];
+      d[as] = map
+        ? ((v=map[key(d)]) != null ? v : defaultValue)
+        : zdata[i % zlen];
     }
     
     return data;
@@ -27,7 +29,7 @@ vg.data.zip = function() {
   };
   
   zip["default"] = function(d) {
-    defaultVal = d;
+    defaultValue = d;
     return zip;
   };
 
