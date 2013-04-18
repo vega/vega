@@ -191,6 +191,13 @@ vg.config.axis = {
   tickLabelFont: "sans-serif"
 };
 
+// default color values
+vg.config.color = {
+  rgb: [128, 128, 128],
+  lab: [50, 0, 0],
+  hsl: [0, 0.5, 0.5]
+};
+
 // default scale ranges
 vg.config.range = {
   category10: [
@@ -3488,6 +3495,14 @@ vg.parse.properties = (function() {
   function valueRef(ref) {
     if (ref == null) return null;
 
+    if (ref.h || ref.s) {
+      return colorRef("hsl", ref.h, ref.s, ref.l);
+    } else if (ref.l || ref.a) {
+      return colorRef("lab", ref.l, ref.a, ref.b);
+    } else if (ref.r || ref.g || ref.b) {
+      return colorRef("rgb", ref.r, ref.g, ref.b);
+    }
+
     var val = ref.value !== undefined
               ? vg.str(ref.value)
               : "item.datum.data";
@@ -3517,6 +3532,13 @@ vg.parse.properties = (function() {
     // multiply, offset, return value
     return "(" + (ref.mult ? (ref.mult+" * ") : "") + val + ")"
       + (ref.offset ? " + "+ref.offset : "");
+  }
+  
+  function colorRef(type, x, y, z) {
+    var xx = x ? valueRef(x) : vg.config.color[type][0],
+        yy = y ? valueRef(y) : vg.config.color[type][1],
+        zz = z ? valueRef(z) : vg.config.color[type][2];
+    return "(d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
   
   return compile;

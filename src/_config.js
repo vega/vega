@@ -28,6 +28,13 @@ vg.config.axis = {
   tickLabelFont: "sans-serif"
 };
 
+// default color values
+vg.config.color = {
+  rgb: [128, 128, 128],
+  lab: [50, 0, 0],
+  hsl: [0, 0.5, 0.5]
+};
+
 // default scale ranges
 vg.config.range = {
   category10: [
