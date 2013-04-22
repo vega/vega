@@ -99,10 +99,10 @@ vg.values = function(x) {
   return (vg.isObject(x) && !vg.isArray(x) && x.values) ? x.values : x;
 };
 
-vg.str = function(str) {
-  return vg.isArray(str)
-    ? "[" + str.map(vg.str) + "]"
-    : vg.isString(str) ? ("'"+str+"'") : str;
+vg.str = function(x) {
+  return vg.isArray(x) ? "[" + str.map(x) + "]"
+    : vg.isObject(x) ? JSON.stringify(x)
+    : vg.isString(x) ? ("'"+x+"'") : x;
 };
 
 vg.keys = function(x) {

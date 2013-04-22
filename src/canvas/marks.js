@@ -130,7 +130,7 @@ vg.canvas.marks = (function() {
 
     if (fill) {
       g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-      g.fillStyle = fill;
+      g.fillStyle = color(g, o, fill);
       g.fill();
     }
 
@@ -138,7 +138,7 @@ vg.canvas.marks = (function() {
       lw = (lw = o.strokeWidth) != undefined ? lw : 1;
       if (lw > 0) {
         g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = stroke;
+        g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
         g.stroke();
@@ -177,7 +177,7 @@ vg.canvas.marks = (function() {
 
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-        g.fillStyle = fill;
+        g.fillStyle = color(g, o, fill);
         g.fillRect(x, y, o.width, o.height);
       }
 
@@ -185,7 +185,7 @@ vg.canvas.marks = (function() {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-          g.strokeStyle = stroke;
+          g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
           g.strokeRect(x, y, o.width, o.height);
@@ -219,7 +219,7 @@ vg.canvas.marks = (function() {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-          g.strokeStyle = stroke;
+          g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
           g.beginPath();
@@ -284,7 +284,7 @@ vg.canvas.marks = (function() {
       g.font = fontString(o);
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
-      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds())).expand(1);
+      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds()));
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -302,7 +302,7 @@ vg.canvas.marks = (function() {
 
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-        g.fillStyle = fill;
+        g.fillStyle = color(g, o, fill);
         g.fillText(o.text, x, y);
       }
       
@@ -310,26 +310,27 @@ vg.canvas.marks = (function() {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-          g.strokeStyle = stroke;
+          g.strokeStyle = color(o, stroke);
           g.lineWidth = lw;
           g.strokeText(o.text, x, y);
         }
       }
       
       if (o.angle) {
+        o.bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
         g.restore();
       }
+      o.bounds.expand(1);
     }
   }
   
-  function textBounds(g, o, bounds, noRotate) {
+  function textBounds(g, o, bounds) {
     var x = o.x + (o.dx || 0),
         y = o.y + (o.dy || 0),
         w = g.measureText(o.text).width,
-        h = o.fontSize,
+        h = o.fontSize || 11,
         a = o.align,
-        b = o.baseline,
-        angle, cos, sin, cx, cy;
+        b = o.baseline;
     
     // horizontal
     if (a === "center") {
@@ -340,7 +341,7 @@ vg.canvas.marks = (function() {
       // left by default, do nothing
     }
     
-    /// TODO find a robust solution for heights!
+    /// TODO find a robust solution for heights.
     /// These offsets work for some but not all fonts.
     
     // vertical
@@ -355,11 +356,7 @@ vg.canvas.marks = (function() {
       y = y - 4*h/5;
     }
     
-    bounds.set(x, y, x+w, y+h);
-    if (!noRotate && o.angle) {
-      bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
-    }
-    return bounds;
+    return bounds.set(x, y, x+w, y+h);
   }
   
   function drawAll(pathFunc) {
@@ -379,7 +376,7 @@ vg.canvas.marks = (function() {
   
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
-    var items = scene.items, group, axes,
+    var items = scene.items, group, axes, legends,
         renderer = this, gx, gy, i, n, j, m;
     
     drawRect(g, scene, bounds);
@@ -387,6 +384,7 @@ vg.canvas.marks = (function() {
     for (i=0, n=items.length; i<n; ++i) {
       group = items[i];
       axes = group.axisItems || [];
+      legends = group.legendItems || [];
       gx = group.x || 0;
       gy = group.y || 0;
       
@@ -407,9 +405,35 @@ vg.canvas.marks = (function() {
           renderer.draw(g, axes[j], bounds);
         }
       }
+      for (j=0, m=legends.length; j<m; ++j) {
+        renderer.draw(g, legends[j], bounds);
+      }
       if (bounds) bounds.translate(gx, gy);
       g.restore(); 
     }
+  }
+
+  function color(g, o, value) {
+    return (value.id)
+      ? gradient(g, value, o.bounds)
+      : value;
+  }
+  
+  function gradient(g, p, b) {
+    var w = b.width(),
+        h = b.height(),
+        x1 = b.x1 + p.x1 * w,
+        y1 = b.y1 + p.y1 * h,
+        x2 = b.x1 + p.x2 * w,
+        y2 = b.y1 + p.y2 * h,
+        grad = g.createLinearGradient(x1, y1, x2, y2),
+        stop = p.stops,
+        i, n;
+
+    for (i=0, n=stop.length; i<n; ++i) {
+      grad.addColorStop(stop[i].offset, stop[i].color);
+    }
+    return grad;
   }
   
   // hit testing
@@ -512,7 +536,7 @@ vg.canvas.marks = (function() {
 
     g.font = fontString(o);
     
-    var b = textBounds(g, o, tmpBounds, true),
+    var b = textBounds(g, o, tmpBounds),
         a = -o.angle * Math.PI / 180,
         cos = Math.cos(a),
         sin = Math.sin(a),

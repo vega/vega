@@ -12,6 +12,8 @@ vg.svg.marks = (function() {
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
+  var mark_id = 0;
+  
   var textAlign = {
     "left":   "start",
     "center": "middle",
@@ -26,21 +28,28 @@ vg.svg.marks = (function() {
     "strokeOpacity": "stroke-opacity",
     "opacity":       "opacity"
   };
-  
   var styleProps = vg.keys(styles);
-  
+
   function style(d) {
     var o = d.mark ? d : d[0],
         i, n, prop, name, value;
+
     for (i=0, n=styleProps.length; i<n; ++i) {
       prop = styleProps[i];
       name = styles[prop];
       value = o[prop];
+
       if (value == null) {
         if (name === "fill") this.style.setProperty(name, "none", null);
         else this.style.removeProperty(name);
+      } else {
+        if (value.id) {
+          // ensure definition is included
+          vg.svg._cur._defs[value.id] = value;
+          value = "url(#" + value.id + ")";
+        }
+        this.style.setProperty(name, value, null);
       }
-      else this.style.setProperty(name, value, null);
     }
   }
   
@@ -164,16 +173,14 @@ vg.svg.marks = (function() {
     };
   }
   
-  var mark_id = 0;
-  
   function drawMark(g, scene, index, prefix, tag, attr, nest) {
     var data = nest ? [scene.items] : scene.items,
         evts = scene.interactive===false ? "none" : null,
         grps = g.node().childNodes,
         notG = (tag !== "g"),
-        p = grps[index+1] // +1 to skip group background rect
-          ? d3.select(grps[index+1])
-          : g.append("g").attr("id","g"+(++mark_id));
+        p = (p = grps[index+1]) // +1 to skip group background rect
+          ? d3.select(p)
+          : g.append("g").attr("id", "g"+(++mark_id));
 
     var id = "#" + p.attr("id"),
         s = id + " > " + tag,
@@ -195,14 +202,15 @@ vg.svg.marks = (function() {
     return p;
   }
 
-  function drawGroup(g, scene, index, prefix) {
+  function drawGroup(g, scene, index, prefix) {    
     var p = drawMark(g, scene, index, prefix || "group_", "g", group),
         c = p.node().childNodes, n = c.length, i, j, m;
     
     for (i=0; i<n; ++i) {
       var items = c[i].__data__.items,
+          legends = c[i].__data__.legendItems || [],
           axes = c[i].__data__.axisItems || [],
-          sel = d3.select(c[i])
+          sel = d3.select(c[i]),
           idx = 0;
 
       for (j=0, m=axes.length; j<m; ++j) {
@@ -217,6 +225,9 @@ vg.svg.marks = (function() {
         if (axes[j].def.layer !== "back") {
           drawGroup.call(this, sel, axes[j], idx++, "axis_");
         }
+      }
+      for (j=0, m=legends.length; j<m; ++j) {
+        drawGroup.call(this, sel, legends[j], idx++, "legend_");
       }
     }
   }

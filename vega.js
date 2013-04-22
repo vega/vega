@@ -100,10 +100,10 @@ vg.values = function(x) {
   return (vg.isObject(x) && !vg.isArray(x) && x.values) ? x.values : x;
 };
 
-vg.str = function(str) {
-  return vg.isArray(str)
-    ? "[" + str.map(vg.str) + "]"
-    : vg.isString(str) ? ("'"+str+"'") : str;
+vg.str = function(x) {
+  return vg.isArray(x) ? "[" + str.map(x) + "]"
+    : vg.isObject(x) ? JSON.stringify(x)
+    : vg.isString(x) ? ("'"+x+"'") : x;
 };
 
 vg.keys = function(x) {
@@ -178,6 +178,7 @@ vg.config.svgNamespace =
 
 // default axis properties
 vg.config.axis = {
+  orient: "bottom",
   ticks: 10,
   padding: 3,
   axisColor: "#000",
@@ -189,6 +190,31 @@ vg.config.axis = {
   tickSize: 6,
   tickLabelFontSize: 11,
   tickLabelFont: "sans-serif"
+};
+
+// default legend properties
+vg.config.legend = {
+  orient: "right",
+  offset: 10,
+  padding: 3,
+  gradientStrokeColor: "#888",
+  gradientStrokeWidth: 1,
+  gradientHeight: 16,
+  gradientWidth: 100,
+  labelColor: "#000",
+  labelFontSize: 10,
+  labelFont: "sans-serif",
+  labelAlign: "left",
+  labelBaseline: "middle",
+  labelOffset: 8,
+  symbolShape: "circle",
+  symbolSize: 50,
+  symbolColor: "#888",
+  symbolStrokeWidth: 1,
+  titleColor: "#000",
+  titleFont: "sans-serif",
+  titleFontSize: 11,
+  titleFontWeight: "bold"
 };
 
 // default color values
@@ -358,7 +384,32 @@ vg.config.range = {
   };
 
   return bounds;
-})();vg.canvas = {};vg.canvas.path = (function() {
+})();vg.Gradient = (function() {
+
+  function gradient(type) {
+    this.id = "grad_" + (vg_gradient_id++);
+    this.type = type || "linear";
+    this.stops = [];
+    this.x1 = 0;
+    this.x2 = 1;
+    this.y1 = 0;
+    this.y2 = 0;
+  };
+
+  var prototype = gradient.prototype;
+
+  prototype.stop = function(offset, color) {
+    this.stops.push({
+      offset: offset,
+      color: color
+    });
+    return this;
+  };
+  
+  return gradient;
+})();
+
+var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
   // Path parsing and rendering code taken from fabric.js -- Thanks!
   var cmdLength = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
@@ -955,7 +1006,7 @@ vg.config.range = {
 
     if (fill) {
       g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-      g.fillStyle = fill;
+      g.fillStyle = color(g, o, fill);
       g.fill();
     }
 
@@ -963,7 +1014,7 @@ vg.config.range = {
       lw = (lw = o.strokeWidth) != undefined ? lw : 1;
       if (lw > 0) {
         g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = stroke;
+        g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
         g.stroke();
@@ -1002,7 +1053,7 @@ vg.config.range = {
 
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-        g.fillStyle = fill;
+        g.fillStyle = color(g, o, fill);
         g.fillRect(x, y, o.width, o.height);
       }
 
@@ -1010,7 +1061,7 @@ vg.config.range = {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-          g.strokeStyle = stroke;
+          g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
           g.strokeRect(x, y, o.width, o.height);
@@ -1044,7 +1095,7 @@ vg.config.range = {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-          g.strokeStyle = stroke;
+          g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != undefined ? lc : "butt";
           g.beginPath();
@@ -1109,7 +1160,7 @@ vg.config.range = {
       g.font = fontString(o);
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
-      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds())).expand(1);
+      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds()));
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -1127,7 +1178,7 @@ vg.config.range = {
 
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-        g.fillStyle = fill;
+        g.fillStyle = color(g, o, fill);
         g.fillText(o.text, x, y);
       }
       
@@ -1135,26 +1186,27 @@ vg.config.range = {
         lw = (lw = o.strokeWidth) != undefined ? lw : 1;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-          g.strokeStyle = stroke;
+          g.strokeStyle = color(o, stroke);
           g.lineWidth = lw;
           g.strokeText(o.text, x, y);
         }
       }
       
       if (o.angle) {
+        o.bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
         g.restore();
       }
+      o.bounds.expand(1);
     }
   }
   
-  function textBounds(g, o, bounds, noRotate) {
+  function textBounds(g, o, bounds) {
     var x = o.x + (o.dx || 0),
         y = o.y + (o.dy || 0),
         w = g.measureText(o.text).width,
-        h = o.fontSize,
+        h = o.fontSize || 11,
         a = o.align,
-        b = o.baseline,
-        angle, cos, sin, cx, cy;
+        b = o.baseline;
     
     // horizontal
     if (a === "center") {
@@ -1165,7 +1217,7 @@ vg.config.range = {
       // left by default, do nothing
     }
     
-    /// TODO find a robust solution for heights!
+    /// TODO find a robust solution for heights.
     /// These offsets work for some but not all fonts.
     
     // vertical
@@ -1180,11 +1232,7 @@ vg.config.range = {
       y = y - 4*h/5;
     }
     
-    bounds.set(x, y, x+w, y+h);
-    if (!noRotate && o.angle) {
-      bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
-    }
-    return bounds;
+    return bounds.set(x, y, x+w, y+h);
   }
   
   function drawAll(pathFunc) {
@@ -1204,7 +1252,7 @@ vg.config.range = {
   
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
-    var items = scene.items, group, axes,
+    var items = scene.items, group, axes, legends,
         renderer = this, gx, gy, i, n, j, m;
     
     drawRect(g, scene, bounds);
@@ -1212,6 +1260,7 @@ vg.config.range = {
     for (i=0, n=items.length; i<n; ++i) {
       group = items[i];
       axes = group.axisItems || [];
+      legends = group.legendItems || [];
       gx = group.x || 0;
       gy = group.y || 0;
       
@@ -1232,9 +1281,35 @@ vg.config.range = {
           renderer.draw(g, axes[j], bounds);
         }
       }
+      for (j=0, m=legends.length; j<m; ++j) {
+        renderer.draw(g, legends[j], bounds);
+      }
       if (bounds) bounds.translate(gx, gy);
       g.restore(); 
     }
+  }
+
+  function color(g, o, value) {
+    return (value.id)
+      ? gradient(g, value, o.bounds)
+      : value;
+  }
+  
+  function gradient(g, p, b) {
+    var w = b.width(),
+        h = b.height(),
+        x1 = b.x1 + p.x1 * w,
+        y1 = b.y1 + p.y1 * h,
+        x2 = b.x1 + p.x2 * w,
+        y2 = b.y1 + p.y2 * h,
+        grad = g.createLinearGradient(x1, y1, x2, y2),
+        stop = p.stops,
+        i, n;
+
+    for (i=0, n=stop.length; i<n; ++i) {
+      grad.addColorStop(stop[i].offset, stop[i].color);
+    }
+    return grad;
   }
   
   // hit testing
@@ -1337,7 +1412,7 @@ vg.config.range = {
 
     g.font = fontString(o);
     
-    var b = textBounds(g, o, tmpBounds, true),
+    var b = textBounds(g, o, tmpBounds),
         a = -o.angle * Math.PI / 180,
         cos = Math.cos(a),
         sin = Math.sin(a),
@@ -1723,6 +1798,8 @@ vg.config.range = {
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
+  var mark_id = 0;
+  
   var textAlign = {
     "left":   "start",
     "center": "middle",
@@ -1737,21 +1814,28 @@ vg.config.range = {
     "strokeOpacity": "stroke-opacity",
     "opacity":       "opacity"
   };
-  
   var styleProps = vg.keys(styles);
-  
+
   function style(d) {
     var o = d.mark ? d : d[0],
         i, n, prop, name, value;
+
     for (i=0, n=styleProps.length; i<n; ++i) {
       prop = styleProps[i];
       name = styles[prop];
       value = o[prop];
+
       if (value == null) {
         if (name === "fill") this.style.setProperty(name, "none", null);
         else this.style.removeProperty(name);
+      } else {
+        if (value.id) {
+          // ensure definition is included
+          vg.svg._cur._defs[value.id] = value;
+          value = "url(#" + value.id + ")";
+        }
+        this.style.setProperty(name, value, null);
       }
-      else this.style.setProperty(name, value, null);
     }
   }
   
@@ -1875,16 +1959,14 @@ vg.config.range = {
     };
   }
   
-  var mark_id = 0;
-  
   function drawMark(g, scene, index, prefix, tag, attr, nest) {
     var data = nest ? [scene.items] : scene.items,
         evts = scene.interactive===false ? "none" : null,
         grps = g.node().childNodes,
         notG = (tag !== "g"),
-        p = grps[index+1] // +1 to skip group background rect
-          ? d3.select(grps[index+1])
-          : g.append("g").attr("id","g"+(++mark_id));
+        p = (p = grps[index+1]) // +1 to skip group background rect
+          ? d3.select(p)
+          : g.append("g").attr("id", "g"+(++mark_id));
 
     var id = "#" + p.attr("id"),
         s = id + " > " + tag,
@@ -1906,14 +1988,15 @@ vg.config.range = {
     return p;
   }
 
-  function drawGroup(g, scene, index, prefix) {
+  function drawGroup(g, scene, index, prefix) {    
     var p = drawMark(g, scene, index, prefix || "group_", "g", group),
         c = p.node().childNodes, n = c.length, i, j, m;
     
     for (i=0; i<n; ++i) {
       var items = c[i].__data__.items,
+          legends = c[i].__data__.legendItems || [],
           axes = c[i].__data__.axisItems || [],
-          sel = d3.select(c[i])
+          sel = d3.select(c[i]),
           idx = 0;
 
       for (j=0, m=axes.length; j<m; ++j) {
@@ -1928,6 +2011,9 @@ vg.config.range = {
         if (axes[j].def.layer !== "back") {
           drawGroup.call(this, sel, axes[j], idx++, "axis_");
         }
+      }
+      for (j=0, m=legends.length; j<m; ++j) {
+        drawGroup.call(this, sel, legends[j], idx++, "legend_");
       }
     }
   }
@@ -1967,8 +2053,10 @@ vg.config.range = {
   
 })();vg.svg.Renderer = (function() {  
   var renderer = function() {
+    this._svg = null;
     this._ctx = null;
     this._el = null;
+    this._defs = {};
   };
   
   var prototype = renderer.prototype;
@@ -1983,14 +2071,14 @@ vg.config.range = {
     d3.select(el).select("svg.marks").remove();
 
     // create svg element and initialize attributes
-    var svg = d3.select(el)
+    this._svg = d3.select(el)
       .append("svg")
       .attr("class", "marks")
       .attr("width", width + pad.left + pad.right)
       .attr("height", height + pad.top + pad.bottom);
     
     // set the svg root group
-    this._ctx = svg.append("g")
+    this._ctx = this._svg.append("g")
       .attr("transform", "translate("+pad.left+","+pad.top+")");
     
     return this;
@@ -2003,10 +2091,44 @@ vg.config.range = {
   prototype.element = function() {
     return this._el;
   };
+
+  prototype.updateDefs = function() {
+    var svg = this._svg,
+        all = this._defs,
+        ids = vg.keys(all),
+        defs = svg.select("defs"), grds;
+  
+    // get or create svg defs block
+    if (ids.length===0) { defs.remove(); return; }
+    if (defs.empty()) defs = svg.insert("defs", ":first-child");
+    
+    grds = defs.selectAll("linearGradient").data(ids, vg.identity);
+    grds.enter().append("linearGradient").attr("id", vg.identity);
+    grds.exit().remove();
+    grds.each(function(id) {
+      var def = all[id],
+          grd = d3.select(this);
+  
+      // set gradient coordinates
+      grd.attr({x1: def.x1, x2: def.x2, y1: def.y1, y2: def.y2});
+  
+      // set gradient stops
+      stop = grd.selectAll("stop").data(def.stops);
+      stop.enter().append("stop");
+      stop.exit().remove();
+      stop.attr("offset", function(d) { return d.offset; })
+          .attr("stop-color", function(d) { return d.color; });
+    });
+  };
   
   prototype.render = function(scene, items) {
+    vg.svg._cur = this;
+
     if (items) this.renderItems(vg.array(items));
-    else this.draw(this._ctx, scene, 0);
+    else this.draw(this._ctx, scene, -1);
+    this.updateDefs();
+
+   delete vg.svg._cur;
   };
   
   prototype.renderItems = function(items) {
@@ -3419,6 +3541,47 @@ function vg_load_http(url, callback) {
     return Function("d", "return ("+tokens.join("")+");");
   };
   
+})();vg.parse.legends = (function() {
+
+  function legends(spec, legends, scales) {
+    (spec || []).forEach(function(def, index) {
+      legends[index] = legends[index] || vg.scene.legend();
+      legend(def, index, legends[index], scales);
+    });
+  };
+
+  function legend(def, index, legend, scales) {
+    // legend scales
+    legend.size  (def.size   ? scales[def.size]   : null);
+    legend.shape (def.shape  ? scales[def.shape]  : null);
+    legend.fill  (def.fill   ? scales[def.fill]   : null);
+    legend.stroke(def.stroke ? scales[def.stroke] : null);
+
+    // legend orientation
+    if (def.orient) legend.orient(def.orient);
+
+    // legend offset
+    if (def.offset != null) legend.offset(def.offset);
+
+    // legend title
+    legend.title(def.title || null);
+
+    // legend values
+    legend.values(def.values || null);
+
+    // legend label formatting
+    legend.format(def.format !== undefined ? d3.format(def.format) : null);
+
+    // style properties
+    var p = def.properties;
+    legend.titleProperties(p && p.title || {});
+    legend.labelProperties(p && p.labels || {});
+    legend.legendProperties(p && p.legend || {});
+    legend.symbolProperties(p && p.symbols || {});
+    legend.gradientProperties(p && p.gradient || {});
+  }
+  
+  return legends;
 })();vg.parse.mark = function(mark) {
   var props = mark.properties,
       group = mark.marks;
@@ -3451,8 +3614,9 @@ function vg_load_http(url, callback) {
     type: "group",
     width: width,
     height: height,
-    axes: spec.axes || [],
     scales: spec.scales || [],
+    axes: spec.axes || [],
+    legends: spec.legends || [],
     marks: (spec.marks || []).map(vg.parse.mark)
   };
 };vg.parse.padding = function(pad) {
@@ -3666,7 +3830,7 @@ vg.parse.properties = (function() {
     // range
     // vertical scales should flip by default, so use XOR here
     if (def.range=='height') rng = rng.reverse();
-    scale[def.round ? "rangeRound" : "range"](rng);
+    scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
 
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
     if (def.clamp) scale.clamp(true);
@@ -3957,7 +4121,8 @@ vg.scene.item = function(mark) {
   }
   
   function encodeGroup(scene, def, parent, trans, request) {
-    var i, len, m, mlen, group, scales, axes, axisItems, axisDef;
+    var i, len, m, mlen, group, scales,
+        axes, axisItems, axisDef, leg, legItems, legDef;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
@@ -3986,6 +4151,18 @@ vg.scene.item = function(mark) {
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
         encode.call(this, group, group.items[m], def.marks[m], trans, request);
       }
+      
+      // update group-level legends
+      if (def.legends) {
+        leg = group.legends || (group.legends = []);
+        legItems = group.legendItems || (group.legendItems = []);
+        vg.parse.legends(def.legends, leg, group.scales);
+        leg.forEach(function(l, i) {
+          legDef = l.def();
+          legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
+          encode.call(this, group, group.legendItems[i], legDef, trans);
+        });
+      }
     }
   }
   
@@ -4004,10 +4181,10 @@ vg.scene.item = function(mark) {
       }
       return; // exit early if given request
     }
-    
-    for (i=0, len=items.length; i<len; ++i) {
+
+    for (i=0; i<items.length; ++i) {
       item = items[i];
-      
+
       // enter set
       if (item.status === ENTER) {
         if (enter) enter.call(this, item, group);
@@ -4107,7 +4284,7 @@ vg.scene.transition = function(dur, ease) {
   return new vg.scene.Transition(dur, ease);
 };vg.scene.axis = function() {
   var scale,
-      orient = vg_axisDefaultOrient,
+      orient = vg.config.axis.orient,
       offset = 0,
       axisDef = null,
       layer = "front",
@@ -4204,7 +4381,7 @@ vg.scene.transition = function(dur, ease) {
 
   axis.orient = function(x) {
     if (!arguments.length) return orient;
-    orient = x in vg_axisOrients ? x + "" : vg_axisDefaultOrient;
+    orient = x in vg_axisOrients ? x + "" : vg.config.axis.orient;
     return axis;
   };
 
@@ -4298,8 +4475,7 @@ vg.scene.transition = function(dur, ease) {
   return axis;
 };
 
-var vg_axisDefaultOrient = "bottom",
-    vg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
+var vg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
 
 function vg_axisSubdivide(scale, ticks, m) {
   subticks = [];
@@ -4501,6 +4677,457 @@ function vg_axisDomain() {
         strokeWidth: {value: vg.config.axis.axisWidth}
       },
       update: {}
+    }
+  };
+}vg.scene.legend = function() {
+  var size = null,
+      shape = null,
+      fill = null,
+      stroke = null,
+      spacing = null,
+      values = null,
+      format = null,
+      title = undefined,
+      orient = "right",
+      offset = vg.config.legend.offset,
+      padding = vg.config.legend.padding,
+      legendDef,
+      tickArguments = [5],
+      legendStyle = {},
+      symbolStyle = {},
+      gradientStyle = {},
+      titleStyle = {},
+      labelStyle = {};
+
+  var legend = {},
+      legendDef = null;
+
+  legend.def = function() {
+    var scale = size || shape || fill || stroke;
+
+    // TODO: only generate def as-needed; use dirty bit?
+    legendDef = (scale === fill || scale === stroke) && !discrete(scale.type)
+      ? quantDef(scale) : ordinalDef(scale);
+    legendDef.orient = orient;
+    legendDef.offset = offset;
+    return legendDef;
+  };
+
+  function discrete(type) {
+    return type==="ordinal" || type==="quantize"
+      || type==="quantile" || type==="threshold";
+  }
+
+  function ordinalDef(scale) {
+    var def = o_legend_def(size, shape, fill, stroke);
+
+    // generate data
+    var data = (values == null
+      ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
+      : values).map(vg.data.ingest);
+    var fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
+    
+    // determine spacing between legend entries
+    var fs, range, offset, pad=5, domain = d3.range(data.length);
+    if (size) {
+      range = data.map(function(x) { return Math.sqrt(size(x.data)); });
+      offset = d3.max(range);
+      range = range.reduce(function(a,b,i,z) {
+          if (i > 0) a[i] = a[i-1] + z[i-1]/2 + pad;
+          return (a[i] += b/2, a); }, [0]).map(Math.round);
+    } else {
+      offset = Math.round(Math.sqrt(vg.config.legend.symbolSize));
+      range = spacing
+        || (fs = labelStyle.fontSize) && (fs.value + pad)
+        || (vg.config.legend.labelFontSize + pad);
+      range = domain.map(function(d,i) {
+        return Math.round(offset/2 + i*range);
+      });
+    }
+
+    // account for padding and title size
+    var sz = padding, ts;
+    if (title) {
+      ts = titleStyle.fontSize;
+      sz += 5 + ((ts && ts.value) || vg.config.legend.titleFontSize);
+    }
+    for (var i=0, n=range.length; i<n; ++i) range[i] += sz;
+    
+    // build scale for label layout
+    var scale = {
+      name: "legend",
+      type: "ordinal",
+      domain: domain,
+      range: range
+    };
+    
+    // update legend def
+    var tdata = (title ? [title] : []).map(vg.data.ingest);
+    data.forEach(function(d) {
+      d.label = fmt(d.data);
+      d.offset = offset;
+    });
+    def.scales = [ scale ];
+    def.marks[0].from = function() { return tdata; };
+    def.marks[1].from = function() { return data; };
+    def.marks[2].from = def.marks[1].from;
+    return def;
+  }
+
+  function o_legend_def(size, shape, fill, stroke) {    
+    // setup legend marks
+    var titles = vg_legendTitle(),
+        symbols = vg_legendSymbols(),
+        labels = vg_vLegendLabels();
+
+    // extend legend marks
+    vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
+    
+    // add / override custom style properties
+    vg.extend(titles.properties.update, titleStyle);
+    vg.extend(symbols.properties.update, symbolStyle);
+    vg.extend(labels.properties.update, labelStyle);
+
+    // padding from legend border
+    titles.properties.enter.x.value += padding;
+    titles.properties.enter.y.value += padding;
+    labels.properties.enter.x.offset += padding + 1;
+    symbols.properties.enter.x.offset = padding + 1;
+
+    return {
+      type: "group",
+      interactive: false,
+      properties: {
+        enter: vg.parse.properties(legendStyle),
+        update: vg_legendUpdate
+      },
+      marks: [titles, symbols, labels].map(vg.parse.mark)
+    };
+  }
+
+  function quantDef(scale) {
+    var def = q_legend_def(scale),
+        dom = scale.domain(),
+        data = dom.map(vg.data.ingest),
+        width = (gradientStyle.width && gradientStyle.width.value) || vg.config.legend.gradientWidth,
+        fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
+
+    // build scale for label layout
+    var layout = {
+      name: "legend",
+      type: scale.type,
+      round: true,
+      zero: false,
+      domain: [dom[0], dom[dom.length-1]],
+      range: [padding, width+padding]
+    };
+    if (scale.type==="pow") layout.exponent = scale.exponent();
+    
+    // update legend def
+    var tdata = (title ? [title] : []).map(vg.data.ingest);
+    data.forEach(function(d,i) {
+      d.label = fmt(d.data);
+      d.align = i==(data.length-1) ? "right" : i==0 ? "left" : "center";
+    });
+    def.scales = [ layout ];
+    def.marks[0].from = function() { return tdata; };
+    def.marks[1].from = function() { return [1]; };
+    def.marks[2].from = function() { return data; };
+    return def;
+  }
+  
+  function q_legend_def(scale) {    
+    // setup legend marks
+    var titles = vg_legendTitle(),
+        gradient = vg_legendGradient(),
+        labels = vg_hLegendLabels(),
+        grad = new vg.Gradient();
+
+    // setup color gradient
+    var dom = scale.domain(),
+        min = dom[0],
+        max = dom[dom.length-1],
+        f = scale.copy().domain([min, max]).range([0,1]);
+        
+    var stops = (scale.type !== "linear" && scale.ticks)
+      ? scale.ticks.call(scale, 15) : dom;
+    if (min !== stops[0]) stops.unshift(min);
+    if (max !== stops[stops.length-1]) stops.push(max);
+
+    for (var i=0, n=stops.length; i<n; ++i) {
+      grad.stop(f(stops[i]), scale(stops[i]));
+    }
+    gradient.properties.enter.fill = {value: grad};
+
+    // add / override custom style properties
+    vg.extend(titles.properties.update, titleStyle);
+    vg.extend(gradient.properties.update, gradientStyle);
+    vg.extend(labels.properties.update, labelStyle);
+
+    // account for gradient size
+    var gp = gradient.properties, gh = gradientStyle.height,
+        hh = (gh && gh.value) || gp.enter.height.value;
+    labels.properties.enter.y.value = hh;
+
+    // account for title size as needed
+    if (title) {
+      var tp = titles.properties, fs = titleStyle.fontSize,
+          sz = 4 + ((fs && fs.value) || tp.enter.fontSize.value);
+      gradient.properties.enter.y.value += sz;
+      labels.properties.enter.y.value += sz;
+    }
+    
+    // padding from legend border
+    titles.properties.enter.x.value += padding;
+    titles.properties.enter.y.value += padding;
+    gradient.properties.enter.x.value += padding;
+    gradient.properties.enter.y.value += padding;
+    labels.properties.enter.y.value += padding;
+
+    return {
+      type: "group",
+      interactive: false,
+      properties: {
+        enter: vg.parse.properties(legendStyle),
+        update: vg_legendUpdate
+      },
+      marks: [titles, gradient, labels].map(vg.parse.mark)
+    };
+  }
+
+  legend.size = function(x) {
+    if (!arguments.length) return size;
+    size = x;
+    return legend;
+  };
+
+  legend.shape = function(x) {
+    if (!arguments.length) return shape;
+    shape = x;
+    return legend;
+  };
+
+  legend.fill = function(x) {
+    if (!arguments.length) return fill;
+    fill = x;
+    return legend;
+  };
+  
+  legend.stroke = function(x) {
+    if (!arguments.length) return stroke;
+    stroke = x;
+    return legend;
+  };
+
+  legend.title = function(x) {
+    if (!arguments.length) return title;
+    title = x;
+    return legend;
+  };
+
+  legend.format = function(x) {
+    if (!arguments.length) return format;
+    format = x;
+    return legend;
+  };
+
+  legend.spacing = function(x) {
+    if (!arguments.length) return spacing;
+    spacing = +x;
+    return legend;
+  };
+
+  legend.orient = function(x) {
+    if (!arguments.length) return orient;
+    orient = x in vg_legendOrients ? x + "" : vg.config.legend.orient;
+    return legend;
+  };
+
+  legend.offset = function(x) {
+    if (!arguments.length) return offset;
+    offset = +x;
+    return legend;
+  };
+
+  legend.values = function(x) {
+    if (!arguments.length) return values;
+    values = x;
+    return legend;
+  };
+
+  legend.legendProperties = function(x) {
+    if (!arguments.length) return legendStyle;
+    legendStyle = x;
+    return legend;
+  };
+
+  legend.symbolProperties = function(x) {
+    if (!arguments.length) return symbolStyle;
+    symbolStyle = x;
+    return legend;
+  };
+
+  legend.gradientProperties = function(x) {
+    if (!arguments.length) return gradientStyle;
+    gradientStyle = x;
+    return legend;
+  };
+
+  legend.labelProperties = function(x) {
+    if (!arguments.length) return labelStyle;
+    labelStyle = x;
+    return legend;
+  };
+  
+  legend.titleProperties = function(x) {
+    if (!arguments.length) return titleStyle;
+    titleStyle = x;
+    return legend;
+  };
+
+  return legend;
+};
+
+var vg_legendOrients = {right: 1, left: 1};
+
+function vg_legendUpdate(item, group, trans) {
+  var o = trans ? {} : item,
+      offset = item.mark.def.offset,
+      orient = item.mark.def.orient,
+      width  = group.width,
+      lw     = 100; // legend width (TODO)
+
+  o.x = 0.5;
+  o.y = 0.5;
+
+  switch(orient) {
+    case "left":   { o.x += -offset - lw; break; }
+    case "right":  { o.x += width + offset; break; }
+  }
+  
+  if (trans) trans.interpolate(item, o);
+}
+
+function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
+  var props = mark.properties.enter;
+  if (size)   props.size   = {scale: size.scaleName,   field: "data"};
+  if (shape)  props.shape  = {scale: shape.scaleName,  field: "data"};
+  if (fill)   props.fill   = {scale: fill.scaleName,   field: "data"};
+  if (stroke) props.stroke = {scale: stroke.scaleName, field: "data"};
+}
+
+function vg_legendTitle() {
+  var cfg = vg.config.legend;
+  return {
+    type: "text",
+    interactive: false,
+    key: "data",
+    properties: {
+      enter: {
+        x: {value: 0},
+        y: {value: 0},
+        fill: {value: cfg.titleColor},
+        font: {value: cfg.titleFont},
+        fontSize: {value: cfg.titleFontSize},
+        fontWeight: {value: cfg.titleFontWeight},
+        baseline: {value: "top"},
+        text: {field: "data"},
+        opacity: {value: 1e-6}
+      },
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
+    }
+  };
+}
+
+function vg_legendSymbols() {
+  var cfg = vg.config.legend;
+  return {
+    type: "symbol",
+    interactive: false,
+    key: "data",
+    properties: {
+      enter: {
+        x: {field: "offset", mult: 0.5},
+        y: {scale: "legend", field: "index"},
+        shape: {value: cfg.symbolShape},
+        size: {value: cfg.symbolSize},
+        stroke: {value: cfg.symbolColor},
+        strokeWidth: {value: cfg.symbolStrokeWidth},
+        opacity: {value: 1e-6}
+      },
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
+    }
+  };
+}
+
+function vg_vLegendLabels() {
+  var cfg = vg.config.legend;
+  return {
+    type: "text",
+    interactive: false,
+    key: "data",
+    properties: {
+      enter: {
+        x: {field: "offset", offset: 5},
+        y: {scale: "legend", field: "index"},
+        fill: {value: cfg.labelColor},
+        font: {value: cfg.labelFont},
+        fontSize: {value: cfg.labelFontSize},
+        align: {value: cfg.labelAlign},
+        baseline: {value: cfg.labelBaseline},
+        text: {field: "label"},
+        opacity: {value: 1e-6}
+      },
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
+    }
+  };
+}
+
+function vg_legendGradient() {
+  var cfg = vg.config.legend;
+  return {
+    type: "rect",
+    interactive: false,
+    properties: {
+      enter: {
+        x: {value: 0},
+        y: {value: 0},
+        width: {value: cfg.gradientWidth},
+        height: {value: cfg.gradientHeight},
+        stroke: {value: cfg.gradientStrokeColor},
+        strokeWidth: {value: cfg.gradientStrokeWidth},
+        opacity: {value: 1e-6}
+      },
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
+    }
+  };
+}
+
+function vg_hLegendLabels() {
+  var cfg = vg.config.legend;
+  return {
+    type: "text",
+    interactive: false,
+    key: "data",
+    properties: {
+      enter: {
+        x: {scale: "legend", field: "data"},
+        y: {value: 20},
+        dy: {value: 2},
+        fill: {value: cfg.labelColor},
+        font: {value: cfg.labelFont},
+        fontSize: {value: cfg.labelFontSize},
+        align: {field: "align"},
+        baseline: {value: "top"},
+        text: {field: "label"},
+        opacity: {value: 1e-6}
+      },
+      exit: { opacity: {value: 1e-6} },
+      update: { opacity: {value: 1} }
     }
   };
 }vg.Model = (function() {

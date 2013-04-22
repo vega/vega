@@ -13,6 +13,7 @@ vega.js: \
 	src/_package.js \
 	src/_config.js \
 	src/core/Bounds.js \
+	src/core/Gradient.js \
 	src/canvas/_package.js \
 	src/canvas/path.js \
 	src/canvas/marks.js \
@@ -49,6 +50,7 @@ vega.js: \
 	src/parse/data.js \
 	src/parse/dataflow.js \
 	src/parse/expr.js \
+	src/parse/legends.js \
 	src/parse/mark.js \
 	src/parse/marks.js \
 	src/parse/padding.js \
@@ -62,6 +64,7 @@ vega.js: \
 	src/scene/encode.js \
 	src/scene/transition.js \
 	src/scene/axis.js \
+	src/scene/legend.js \
 	src/core/Model.js \
 	src/core/View.js \
 	src/core/Spec.js \

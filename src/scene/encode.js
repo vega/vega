@@ -31,7 +31,8 @@ vg.scene.encode = (function() {
   }
   
   function encodeGroup(scene, def, parent, trans, request) {
-    var i, len, m, mlen, group, scales, axes, axisItems, axisDef;
+    var i, len, m, mlen, group, scales,
+        axes, axisItems, axisDef, leg, legItems, legDef;
 
     for (i=0, len=scene.items.length; i<len; ++i) {
       group = scene.items[i];
@@ -60,6 +61,18 @@ vg.scene.encode = (function() {
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
         encode.call(this, group, group.items[m], def.marks[m], trans, request);
       }
+      
+      // update group-level legends
+      if (def.legends) {
+        leg = group.legends || (group.legends = []);
+        legItems = group.legendItems || (group.legendItems = []);
+        vg.parse.legends(def.legends, leg, group.scales);
+        leg.forEach(function(l, i) {
+          legDef = l.def();
+          legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
+          encode.call(this, group, group.legendItems[i], legDef, trans);
+        });
+      }
     }
   }
   
@@ -78,10 +91,10 @@ vg.scene.encode = (function() {
       }
       return; // exit early if given request
     }
-    
-    for (i=0, len=items.length; i<len; ++i) {
+
+    for (i=0; i<items.length; ++i) {
       item = items[i];
-      
+
       // enter set
       if (item.status === ENTER) {
         if (enter) enter.call(this, item, group);

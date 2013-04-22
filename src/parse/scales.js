@@ -119,7 +119,7 @@ vg.parse.scales = (function() {
     // range
     // vertical scales should flip by default, so use XOR here
     if (def.range=='height') rng = rng.reverse();
-    scale[def.round ? "rangeRound" : "range"](rng);
+    scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
 
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
     if (def.clamp) scale.clamp(true);

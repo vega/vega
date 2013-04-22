@@ -1,6 +1,6 @@
 vg.scene.axis = function() {
   var scale,
-      orient = vg_axisDefaultOrient,
+      orient = vg.config.axis.orient,
       offset = 0,
       axisDef = null,
       layer = "front",
@@ -97,7 +97,7 @@ vg.scene.axis = function() {
 
   axis.orient = function(x) {
     if (!arguments.length) return orient;
-    orient = x in vg_axisOrients ? x + "" : vg_axisDefaultOrient;
+    orient = x in vg_axisOrients ? x + "" : vg.config.axis.orient;
     return axis;
   };
 
@@ -191,8 +191,7 @@ vg.scene.axis = function() {
   return axis;
 };
 
-var vg_axisDefaultOrient = "bottom",
-    vg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
+var vg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
 
 function vg_axisSubdivide(scale, ticks, m) {
   subticks = [];

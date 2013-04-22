@@ -15,6 +15,7 @@ vg.config.svgNamespace =
 
 // default axis properties
 vg.config.axis = {
+  orient: "bottom",
   ticks: 10,
   padding: 3,
   axisColor: "#000",
@@ -26,6 +27,31 @@ vg.config.axis = {
   tickSize: 6,
   tickLabelFontSize: 11,
   tickLabelFont: "sans-serif"
+};
+
+// default legend properties
+vg.config.legend = {
+  orient: "right",
+  offset: 10,
+  padding: 3,
+  gradientStrokeColor: "#888",
+  gradientStrokeWidth: 1,
+  gradientHeight: 16,
+  gradientWidth: 100,
+  labelColor: "#000",
+  labelFontSize: 10,
+  labelFont: "sans-serif",
+  labelAlign: "left",
+  labelBaseline: "middle",
+  labelOffset: 8,
+  symbolShape: "circle",
+  symbolSize: 50,
+  symbolColor: "#888",
+  symbolStrokeWidth: 1,
+  titleColor: "#000",
+  titleFont: "sans-serif",
+  titleFontSize: 11,
+  titleFontWeight: "bold"
 };
 
 // default color values
