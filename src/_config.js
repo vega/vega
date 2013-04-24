@@ -26,7 +26,12 @@ vg.config.axis = {
   tickWidth: 1,
   tickSize: 6,
   tickLabelFontSize: 11,
-  tickLabelFont: "sans-serif"
+  tickLabelFont: "sans-serif",
+  titleColor: "#000",
+  titleFont: "sans-serif",
+  titleFontSize: 11,
+  titleFontWeight: "bold",
+  titleOffset: 35
 };
 
 // default legend properties
