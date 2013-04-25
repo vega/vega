@@ -2,6 +2,7 @@ vg.canvas.marks = (function() {
   
   var parsePath = vg.canvas.path.parse,
       renderPath = vg.canvas.path.render,
+      halfpi = Math.PI / 2,
       sqrt3 = Math.sqrt(3),
       tan30 = Math.tan(30 * Math.PI / 180),
       tmpBounds = new vg.Bounds();
@@ -20,8 +21,32 @@ vg.canvas.marks = (function() {
     else g.arc(x, y, ir, sa, ea, 0);
     g.arc(x, y, or, ea, sa, 1);
     g.closePath();
+    return arcBounds(sa, ea, ir, or, x, y);
+  }
+  
+  function arcBounds(sa, ea, ir, or, cx, cy) {
+    var a, i, n, x, y, ix, iy, ox, oy,
+        xmin = Infinity, xmax = -Infinity,
+        ymin = Infinity, ymax = -Infinity;
+    
+    var angles = [sa, ea],
+        s = sa - (sa%halfpi) + halfpi;
+    for (var i=0; i<4 && s<ea; ++i, s+=halfpi) {
+      angles.push(s);
+    }
+
+    for (i=0, n=angles.length; i<n; ++i) {
+      a = angles[i];
+      x = Math.cos(a); ix = ir*x; ox = or*x;
+      y = Math.sin(a); iy = ir*y; oy = or*y;
+      xmin = Math.min(xmin, ix, ox);
+      xmax = Math.max(xmax, ix, ox);
+      ymin = Math.min(ymin, iy, oy);
+      ymax = Math.max(ymax, iy, oy);
+    }
+   
     return new vg.Bounds()
-      .set(x-or, y-or, x+or, y+or);
+      .set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
   }
 
   function pathPath(g, o) {
