@@ -90,6 +90,8 @@ vg.comparator = function(sort) {
   };
 };
 
+vg.cmp = function(a, b) { return a<b ? -1 : a>b ? 1 : 0; };
+
 vg.numcmp = function(a, b) { return a - b; };
 
 vg.array = function(x) {
@@ -112,11 +114,11 @@ vg.keys = function(x) {
   return keys;
 };
 
-vg.unique = function(data, f) {
+vg.unique = function(data, f, results) {
   if (!vg.isArray(data) || data.length==0) return [];
   f = f || vg.identity;
-  var results = [], v;
-  for (var i=0, n=data.length; i<n; ++i) {
+  results = results || [];
+  for (var v, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
     if (results.indexOf(v) < 0) results.push(v);
   }
@@ -3773,16 +3775,21 @@ vg.parse.properties = (function() {
   }
   
   function ordinal(def, scale, rng, db, data) {
-    var domain, dat, get, str;
+    var domain, refs, values, str;
     
     // domain
     domain = def.domain;
     if (vg.isArray(domain)) {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
-      dat = db[domain.data] || data;
-      get = vg.accessor(domain.field);      
-      scale.domain(vg.unique(dat, get));
+      refs = def.domain.fields || vg.array(def.domain);
+      values = refs.reduce(function(values, r) {
+        var dat = db[r.data] || data,
+            get = vg.accessor(r.field);
+        return vg.unique(dat, get, values);
+      }, []);
+      if (def.sort) values.sort(vg.cmp);
+      scale.domain(values);
     }
 
     // range
@@ -3799,20 +3806,24 @@ vg.parse.properties = (function() {
   }
   
   function quantitative(def, scale, rng, db, data) {
-    var domain, dat, interval;
+    var domain, refs, interval;
 
     // domain
     domain = [null, null];
+    function extract(ref, min, max) {
+      var dat = db[ref.data] || data;
+      vg.array(ref.field).forEach(function(f,i) {
+        f = vg.accessor(f);
+        if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
+        if (max) domain[1] = d3.max([domain[1], d3.max(dat, f)]);
+      });
+    }
     if (def.domain !== undefined) {
       if (vg.isArray(def.domain)) {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
-        dat = db[def.domain.data] || data;
-        vg.array(def.domain.field).forEach(function(f,i) {
-          f = vg.accessor(f);
-          domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-          domain[1] = d3.max([domain[1], d3.max(dat, f)]);
-        });
+        refs = def.domain.fields || vg.array(def.domain);
+        refs.forEach(function(r) { extract(r,1,1); });
       } else {
         domain = def.domain;
       }
@@ -3820,11 +3831,8 @@ vg.parse.properties = (function() {
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
         domain[0] = null;
-        dat = db[def.domainMin.data] || data;
-        vg.array(def.domainMin.field).forEach(function(f,i) {
-          f = vg.accessor(f);
-          domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-        });
+        refs = def.domainMin.fields || vg.array(def.domainMin);
+        refs.forEach(function(r) { extract(r,1,0); });
       } else {
         domain[0] = def.domainMin;
       }
@@ -3832,11 +3840,8 @@ vg.parse.properties = (function() {
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
         domain[1] = null;
-        dat = db[def.domainMax.data] || data;
-        vg.array(def.domainMax.field).forEach(function(f,i) {
-          f = vg.accessor(f);
-          domain[1] = d3.max([domain[1], d3.max(dat, f)]);
-        });
+        refs = def.domainMax.fields || vg.array(def.domainMax);
+        refs.forEach(function(r) { extract(r,0,1); });
       } else {
         domain[1] = def.domainMax;
       }
@@ -3849,7 +3854,7 @@ vg.parse.properties = (function() {
 
     // range
     // vertical scales should flip by default, so use XOR here
-    if (def.range=='height') rng = rng.reverse();
+    if (def.range === "height") rng = rng.reverse();
     scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
 
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);

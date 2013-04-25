@@ -89,6 +89,8 @@ vg.comparator = function(sort) {
   };
 };
 
+vg.cmp = function(a, b) { return a<b ? -1 : a>b ? 1 : 0; };
+
 vg.numcmp = function(a, b) { return a - b; };
 
 vg.array = function(x) {
@@ -111,11 +113,11 @@ vg.keys = function(x) {
   return keys;
 };
 
-vg.unique = function(data, f) {
+vg.unique = function(data, f, results) {
   if (!vg.isArray(data) || data.length==0) return [];
   f = f || vg.identity;
-  var results = [], v;
-  for (var i=0, n=data.length; i<n; ++i) {
+  results = results || [];
+  for (var v, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
     if (results.indexOf(v) < 0) results.push(v);
   }
