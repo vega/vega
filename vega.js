@@ -182,7 +182,7 @@ vg.config.axis = {
   ticks: 10,
   padding: 3,
   axisColor: "#000",
-  gridColor: "#ccc",
+  gridColor: "#d8d8d8",
   tickColor: "#000",
   tickLabelColor: "#000",
   axisWidth: 1,
