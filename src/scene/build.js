@@ -100,7 +100,15 @@ vg.scene.build = (function() {
   }
   
   function keyFunction(key) {
-    return key ? vg.accessor(key) : null;
+    if (key == null) return null;
+    var f = vg.array(key).map(vg.accessor);
+    return function(d) {
+      for (var s="", i=0, n=f.length; i<n; ++i) {
+        if (i>0) s += "|";
+        s += String(f[i](d));
+      }
+      return s;
+    }
   }
   
   return build;
