@@ -42,6 +42,7 @@ vega.js: \
 	src/data/stack.js \
 	src/data/stats.js \
 	src/data/treemap.js \
+	src/data/truncate.js \
 	src/data/unique.js \
 	src/data/wordcloud.js \
 	src/data/zip.js \

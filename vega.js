@@ -147,6 +147,39 @@ vg.maxIndex = function(data, f) {
   return idx;
 };
 
+vg.truncate = function(s, length, pos, word, ellipsis) {
+  var len = s.length;
+  if (len <= length) return s;
+  ellipsis = ellipsis || "...";
+  var l = Math.max(0, length - ellipsis.length);
+
+  switch (pos) {
+    case "left":
+      return ellipsis + (word ? vg_truncateOnWord(s,l,1) : s.slice(len-l));
+    case "middle":
+    case "center":
+      var l1 = Math.ceil(l/2), l2 = Math.floor(l/2);
+      return (word ? vg_truncateOnWord(s,l1) : s.slice(0,l1)) + ellipsis
+        + (word ? vg_truncateOnWord(s,l2,1) : s.slice(len-l2));
+    default:
+      return (word ? vg_truncateOnWord(s,l) : s.slice(0,l)) + ellipsis;
+  }
+}
+
+function vg_truncateOnWord(s, len, rev) {
+  var cnt = 0, tok = s.split(vg_truncate_word_re);
+  if (rev) {
+    s = (tok = tok.reverse())
+      .filter(function(w) { cnt += w.length; return cnt <= len; })
+      .reverse();
+  } else {
+    s = tok.filter(function(w) { cnt += w.length; return cnt <= len; });
+  }
+  return s.length ? s.join("").trim() : tok[0].slice(0, len);
+}
+
+var vg_truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u2028\u2029\u3000\uFEFF])/;
+
 // Logging
 
 function vg_write(msg) {
@@ -1172,10 +1205,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
   
   function fontString(o) {
+    // TODO config
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != undefined ? o.fontSize + "px " : "11px ")
+      + (o.fontSize != null ? o.fontSize + "px " : "11px ")
       + (o.font || "sans-serif");
   }
   
@@ -3188,6 +3222,50 @@ function vg_load_http(url, callback) {
   };
 
   return treemap;
+};vg.data.truncate = function() {
+  var value = vg.accessor("data"),
+      as = "truncate",
+      position = "right",
+      ellipsis = "...",
+      wordBreak = true,
+      limit = 100;
+  
+  var truncate = vg.data.mapper(function(d) {
+    var text = vg.truncate(value(d), limit, position, wordBreak, ellipsis);
+    return (d[as] = text, d);
+  });
+
+  truncate.value = function(field) {
+    value = vg.accessor(field);
+    return truncate;
+  };
+  
+  truncate.as = function(field) {
+    as = field;
+    return truncate;
+  };
+
+  truncate.limit = function(len) {
+    limit = +len;
+    return truncate;
+  };
+  
+  truncate.position = function(pos) {
+    position = pos;
+    return truncate;
+  };
+
+  truncate.ellipsis = function(str) {
+    ellipsis = str+"";
+    return truncate;
+  };
+
+  truncate.wordBreak = function(b) {
+    wordBreak = !!b;
+    return truncate;
+  };
+
+  return truncate;
 };vg.data.unique = function() {
 
   var field = null,
