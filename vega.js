@@ -2,7 +2,7 @@ vg = (function(d3){ // take d3 instance as sole import
 var vg = {};
 
 // semantic versioning
-vg.version = '1.2.0';
+vg.version = '1.2.1';
 
 // type checking functions
 var toString = Object.prototype.toString;
@@ -2543,7 +2543,7 @@ function vg_load_http(url, callback) {
   geo.params = params;
   return geo;
 })();vg.data.geopath = function() {
-  var geopath = d3.geo.path(),
+  var geopath = d3.geo.path().projection(d3.geo.mercator()),
       projection = "mercator",
       geojson = vg.identity,
       opt = {},
