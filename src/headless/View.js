@@ -53,6 +53,11 @@ vg.headless.View = (function() {
     return this;
   };
 
+  prototype.viewport = function() {
+    if (!arguments.length) return null;
+    return this;
+  };
+
   prototype.defs = function(defs) {
     if (!arguments.length) return this._model.defs();
     this._model.defs(defs);
