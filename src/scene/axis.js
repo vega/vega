@@ -411,7 +411,7 @@ function vg_axisTicks() {
 function vg_axisTickLabels() {
   return {
     type: "text",
-    interactive: false,
+    interactive: true,
     key: "data",
     properties: {
       enter: {
@@ -430,7 +430,7 @@ function vg_axisTickLabels() {
 function vg_axisTitle() {
   return {
     type: "text",
-    interactive: false,
+    interactive: true,
     properties: {
       enter: {
         font: {value: vg.config.axis.titleFont},
