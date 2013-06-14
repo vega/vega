@@ -85,7 +85,14 @@
         }
       },
       "axes": [
-        {"type": "y", "scale": "y"}
+        {
+          "type": "y",
+          "scale": "y",
+          "tickSize": 0,
+          "properties": {
+            "axis": {"stroke": {"value": "none"}}
+          }
+        }
       ],
       "marks": [
         {
