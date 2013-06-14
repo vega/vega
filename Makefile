@@ -30,6 +30,7 @@ vega.js: \
 	src/data/copy.js \
 	src/data/facet.js \
 	src/data/filter.js \
+	src/data/flatten.js \
 	src/data/fold.js \
 	src/data/force.js \
 	src/data/formula.js \
