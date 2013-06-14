@@ -78,27 +78,16 @@
         "update": {
           "x": {"value": 0.5},
           "y": {"scale": "g", "field": "key", "offset": 15.5},
-          "width": {"value": 200},
+          "width": {"group": "width"},
           "height": {"value": 103},
           "stroke": {"value": "#ccc"},
           "strokeWidth": {"value": 1}
         }
       },
+      "axes": [
+        {"type": "y", "scale": "y"}
+      ],
       "marks": [
-        {
-          "type": "text",
-          "from": {"data": "variety"},
-          "properties": {
-            "update": {
-              "x": {"value": -4},
-              "y": {"scale": "y", "field": "key"},
-              "text": {"field": "key"},
-              "align": {"value": "right"},
-              "baseline": {"value": "middle"},
-              "fill": {"value": "#000"}
-            }
-          }
-        },
         {
           "type": "symbol",
           "properties": {
