@@ -60,7 +60,7 @@
       "type": "text",
       "from": {"data": "site"},
       "properties": {
-        "update": {
+        "enter": {
           "x": {"value": 100},
           "y": {"scale": "g", "field": "key"},
           "dy": {"value": 12},
@@ -75,7 +75,7 @@
       "type": "group",
       "from": {"data": "site"},
       "properties": {
-        "update": {
+        "enter": {
           "x": {"value": 0.5},
           "y": {"scale": "g", "field": "key", "offset": 15.5},
           "width": {"group": "width"},
@@ -98,7 +98,7 @@
         {
           "type": "symbol",
           "properties": {
-            "update": {
+            "enter": {
               "x": {"scale": "x", "field": "data.yield"},
               "y": {"scale": "y", "field": "data.variety"},
               "size": {"value": 50},
