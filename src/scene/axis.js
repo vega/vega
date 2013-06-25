@@ -93,7 +93,7 @@ vg.scene.axis = function() {
     return {
       type: "group",
       interactive: false,
-      properties: { update: vg_axisUpdate },
+      properties: { enter: vg_axisUpdate, update: vg_axisUpdate },
       marks: marks.map(vg.parse.mark)
     };
   }
