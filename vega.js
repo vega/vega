@@ -2548,6 +2548,24 @@ function vg_load_http(url, callback) {
   };
 
   return filter;
+};vg.data.flatten = function() {
+    
+  function flatten(data) {
+    return flat(data, []);
+  }
+  
+  function flat(data, list) {
+    if (data.values) {
+      for (var i=0, n=data.values.length; i<n; ++i) {
+        flat(data.values[i], list);
+      }
+    } else {
+      list.push(data);
+    }
+    return list;
+  }
+  
+  return flatten;
 };vg.data.fold = function() {
   var fields = [],
       accessors = [],
@@ -3881,7 +3899,7 @@ vg.parse.properties = (function() {
     if (!scale || type !== scale.type) {
       var ctor = SCALES[type] || d3.scale[type];
       if (!ctor) vg.error("Unrecognized scale type: " + type);
-      (scale = ctor()).type = type;
+      (scale = ctor()).type = scale.type || type;
       scale.scaleName = def.name;
     }
     return scale;
@@ -4021,7 +4039,8 @@ vg.parse.properties = (function() {
   }
   
   return scales;
-})();vg.parse.spec = function(spec, callback, viewFactory) {
+})();
+vg.parse.spec = function(spec, callback, viewFactory) {
   
   viewFactory = viewFactory || vg.ViewFactory;
   
@@ -4841,7 +4860,7 @@ function vg_axisTicks() {
 function vg_axisTickLabels() {
   return {
     type: "text",
-    interactive: false,
+    interactive: true,
     key: "data",
     properties: {
       enter: {
@@ -4860,7 +4879,7 @@ function vg_axisTickLabels() {
 function vg_axisTitle() {
   return {
     type: "text",
-    interactive: false,
+    interactive: true,
     properties: {
       enter: {
         font: {value: vg.config.axis.titleFont},
@@ -4890,7 +4909,8 @@ function vg_axisDomain() {
       update: {}
     }
   };
-}vg.scene.legend = function() {
+}
+vg.scene.legend = function() {
   var size = null,
       shape = null,
       fill = null,
