@@ -35,7 +35,7 @@ vg.parse.scales = (function() {
     if (!scale || type !== scale.type) {
       var ctor = SCALES[type] || d3.scale[type];
       if (!ctor) vg.error("Unrecognized scale type: " + type);
-      (scale = ctor()).type = type;
+      (scale = ctor()).type = scale.type || type;
       scale.scaleName = def.name;
     }
     return scale;
