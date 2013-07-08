@@ -20,7 +20,11 @@ vg.scene.Transition = (function() {
       }
     }
 
-    if (interp) {
+    if (list === null && item.status === vg.scene.EXIT) {
+      list = []; // ensure exiting items are included
+    }
+
+    if (list != null) {
       list.item = item;
       list.ease = item.mark.ease || this.ease;
       list.next = this.updates.next;

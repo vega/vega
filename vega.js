@@ -211,6 +211,13 @@ vg.config.svgNamespace =
   'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
   'xmlns:xlink="http://www.w3.org/1999/xlink"';
 
+// extensible scale lookup table
+// all d3.scale.* instances also supported
+vg.config.scale = {
+  "time": d3.time.scale,
+  "utc":  d3.time.scale.utc
+};
+
 // default axis properties
 vg.config.axis = {
   orient: "bottom",
@@ -3870,11 +3877,6 @@ vg.parse.properties = (function() {
       TIME = "time",
       GROUP_PROPERTY = {width: 1, height: 1};
 
-  var SCALES = {
-    "time": d3.time.scale,
-    "utc":  d3.time.scale.utc
-  };
-
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
       var name = def.name, prev = name + ":prev";
@@ -3893,18 +3895,18 @@ vg.parse.properties = (function() {
     m(def, s, rng, db, data);
     return s;
   }
-  
+
   function instance(def, scale) {
     var type = def.type || LINEAR;
     if (!scale || type !== scale.type) {
-      var ctor = SCALES[type] || d3.scale[type];
+      var ctor = vg.config.scale[type] || d3.scale[type];
       if (!ctor) vg.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = scale.type || type;
       scale.scaleName = def.name;
     }
     return scale;
   }
-  
+
   function ordinal(def, scale, rng, db, data) {
     var domain, refs, values, str;
     
@@ -3935,18 +3937,18 @@ vg.parse.properties = (function() {
       scale.rangeBands(rng, def.padding||0);
     }
   }
-  
+
   function quantitative(def, scale, rng, db, data) {
-    var domain, refs, interval;
+    var domain, refs, interval, z;
 
     // domain
     domain = [null, null];
-    function extract(ref, min, max) {
+    function extract(ref, min, max, z) {
       var dat = db[ref.data] || data;
       vg.array(ref.field).forEach(function(f,i) {
         f = vg.accessor(f);
         if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-        if (max) domain[1] = d3.max([domain[1], d3.max(dat, f)]);
+        if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
       });
     }
     if (def.domain !== undefined) {
@@ -3954,32 +3956,33 @@ vg.parse.properties = (function() {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
         refs = def.domain.fields || vg.array(def.domain);
-        refs.forEach(function(r) { extract(r,1,1); });
+        refs.forEach(function(r) { extract(r,1,1,1); });
       } else {
         domain = def.domain;
       }
     }
+    z = domain.length - 1;
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
         domain[0] = null;
         refs = def.domainMin.fields || vg.array(def.domainMin);
-        refs.forEach(function(r) { extract(r,1,0); });
+        refs.forEach(function(r) { extract(r,1,0,z); });
       } else {
         domain[0] = def.domainMin;
       }
     }
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
-        domain[1] = null;
+        domain[z] = null;
         refs = def.domainMax.fields || vg.array(def.domainMax);
-        refs.forEach(function(r) { extract(r,0,1); });
+        refs.forEach(function(r) { extract(r,0,1,z); });
       } else {
-        domain[1] = def.domainMax;
+        domain[z] = def.domainMax;
       }
     }
     if (def.type !== LOG && def.type !== TIME && (def.zero || def.zero===undefined)) {
       domain[0] = Math.min(0, domain[0]);
-      domain[1] = Math.max(0, domain[1]);
+      domain[z] = Math.max(0, domain[z]);
     }
     scale.domain(domain);
 
@@ -4000,7 +4003,7 @@ vg.parse.properties = (function() {
       }
     }
   }
-  
+
   function range(def, group) {
     var rng = [null, null];
 
@@ -4024,7 +4027,7 @@ vg.parse.properties = (function() {
       rng[0] = def.rangeMin;
     }
     if (def.rangeMax !== undefined) {
-      rng[1] = def.rangeMax;
+      rng[rng.length-1] = def.rangeMax;
     }
     
     if (def.reverse !== undefined) {
@@ -4037,7 +4040,7 @@ vg.parse.properties = (function() {
     
     return rng;
   }
-  
+
   return scales;
 })();
 vg.parse.spec = function(spec, callback, viewFactory) {
@@ -4257,7 +4260,8 @@ vg.scene.item = function(mark) {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
-      EXIT   = vg.scene.EXIT;
+      EXIT   = vg.scene.EXIT,
+      EMPTY  = {};
 
   function main(scene, def, trans, request, items) {
     (request && items)
@@ -4364,7 +4368,8 @@ vg.scene.item = function(mark) {
       // exit set
       if (item.status === EXIT) {
         if (exit && trans) exit.call(this, item, group, trans);
-        if (!trans) items[i--].remove();
+        else if (trans) trans.interpolate(item, EMPTY);
+        else items[i--].remove();
       }
     }
   }
@@ -4392,7 +4397,11 @@ vg.scene.item = function(mark) {
       }
     }
 
-    if (interp) {
+    if (list === null && item.status === vg.scene.EXIT) {
+      list = []; // ensure exiting items are included
+    }
+
+    if (list != null) {
       list.item = item;
       list.ease = item.mark.ease || this.ease;
       list.next = this.updates.next;
@@ -4542,7 +4551,7 @@ vg.scene.transition = function(dur, ease) {
     return {
       type: "group",
       interactive: false,
-      properties: { update: vg_axisUpdate },
+      properties: { enter: vg_axisUpdate, update: vg_axisUpdate },
       marks: marks.map(vg.parse.mark)
     };
   }

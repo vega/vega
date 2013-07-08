@@ -2,7 +2,8 @@ vg.scene.encode = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
       UPDATE = vg.scene.UPDATE,
-      EXIT   = vg.scene.EXIT;
+      EXIT   = vg.scene.EXIT,
+      EMPTY  = {};
 
   function main(scene, def, trans, request, items) {
     (request && items)
@@ -109,7 +110,8 @@ vg.scene.encode = (function() {
       // exit set
       if (item.status === EXIT) {
         if (exit && trans) exit.call(this, item, group, trans);
-        if (!trans) items[i--].remove();
+        else if (trans) trans.interpolate(item, EMPTY);
+        else items[i--].remove();
       }
     }
   }
