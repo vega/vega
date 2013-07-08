@@ -12,11 +12,17 @@ vg.scene.Transition = (function() {
 
     for (key in values) {
       curr = item[key];
-      next = values[key];
+      next = values[key];      
       if (curr !== next) {
-        interp = d3.interpolate(curr, next);
-        interp.property = key;
-        (list || (list=[])).push(interp);
+        if (key === "text") {
+          // skip interpolation for text labels
+          item[key] = next;
+        } else {
+          // otherwise lookup interpolator
+          interp = d3.interpolate(curr, next);
+          interp.property = key;
+          (list || (list=[])).push(interp);
+        }
       }
     }
 
