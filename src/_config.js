@@ -13,6 +13,13 @@ vg.config.svgNamespace =
   'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
   'xmlns:xlink="http://www.w3.org/1999/xlink"';
 
+// extensible scale lookup table
+// all d3.scale.* instances also supported
+vg.config.scale = {
+  "time": d3.time.scale,
+  "utc":  d3.time.scale.utc
+};
+
 // default axis properties
 vg.config.axis = {
   orient: "bottom",

@@ -6,11 +6,6 @@ vg.parse.scales = (function() {
       TIME = "time",
       GROUP_PROPERTY = {width: 1, height: 1};
 
-  var SCALES = {
-    "time": d3.time.scale,
-    "utc":  d3.time.scale.utc
-  };
-
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
       var name = def.name, prev = name + ":prev";
@@ -29,18 +24,18 @@ vg.parse.scales = (function() {
     m(def, s, rng, db, data);
     return s;
   }
-  
+
   function instance(def, scale) {
     var type = def.type || LINEAR;
     if (!scale || type !== scale.type) {
-      var ctor = SCALES[type] || d3.scale[type];
+      var ctor = vg.config.scale[type] || d3.scale[type];
       if (!ctor) vg.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = scale.type || type;
       scale.scaleName = def.name;
     }
     return scale;
   }
-  
+
   function ordinal(def, scale, rng, db, data) {
     var domain, refs, values, str;
     
@@ -71,18 +66,18 @@ vg.parse.scales = (function() {
       scale.rangeBands(rng, def.padding||0);
     }
   }
-  
+
   function quantitative(def, scale, rng, db, data) {
-    var domain, refs, interval;
+    var domain, refs, interval, z;
 
     // domain
     domain = [null, null];
-    function extract(ref, min, max) {
+    function extract(ref, min, max, z) {
       var dat = db[ref.data] || data;
       vg.array(ref.field).forEach(function(f,i) {
         f = vg.accessor(f);
         if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-        if (max) domain[1] = d3.max([domain[1], d3.max(dat, f)]);
+        if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
       });
     }
     if (def.domain !== undefined) {
@@ -90,32 +85,33 @@ vg.parse.scales = (function() {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
         refs = def.domain.fields || vg.array(def.domain);
-        refs.forEach(function(r) { extract(r,1,1); });
+        refs.forEach(function(r) { extract(r,1,1,1); });
       } else {
         domain = def.domain;
       }
     }
+    z = domain.length - 1;
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
         domain[0] = null;
         refs = def.domainMin.fields || vg.array(def.domainMin);
-        refs.forEach(function(r) { extract(r,1,0); });
+        refs.forEach(function(r) { extract(r,1,0,z); });
       } else {
         domain[0] = def.domainMin;
       }
     }
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
-        domain[1] = null;
+        domain[z] = null;
         refs = def.domainMax.fields || vg.array(def.domainMax);
-        refs.forEach(function(r) { extract(r,0,1); });
+        refs.forEach(function(r) { extract(r,0,1,z); });
       } else {
-        domain[1] = def.domainMax;
+        domain[z] = def.domainMax;
       }
     }
     if (def.type !== LOG && def.type !== TIME && (def.zero || def.zero===undefined)) {
       domain[0] = Math.min(0, domain[0]);
-      domain[1] = Math.max(0, domain[1]);
+      domain[z] = Math.max(0, domain[z]);
     }
     scale.domain(domain);
 
@@ -136,7 +132,7 @@ vg.parse.scales = (function() {
       }
     }
   }
-  
+
   function range(def, group) {
     var rng = [null, null];
 
@@ -160,7 +156,7 @@ vg.parse.scales = (function() {
       rng[0] = def.rangeMin;
     }
     if (def.rangeMax !== undefined) {
-      rng[1] = def.rangeMax;
+      rng[rng.length-1] = def.rangeMax;
     }
     
     if (def.reverse !== undefined) {
@@ -173,6 +169,6 @@ vg.parse.scales = (function() {
     
     return rng;
   }
-  
+
   return scales;
 })();
