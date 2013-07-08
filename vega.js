@@ -1890,8 +1890,9 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   var styleProps = vg.keys(styles);
 
   function style(d) {
-    var o = d.mark ? d : d[0],
-        i, n, prop, name, value;
+    var i, n, prop, name, value,
+        o = d.mark ? d : d.length ? d[0] : null;
+    if (o === null) return;
 
     for (i=0, n=styleProps.length; i<n; ++i) {
       prop = styleProps[i];
@@ -1920,6 +1921,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
   
   function area(items) {
+    if (!items.length) return;
     var o = items[0];
     area_path
       .interpolate(o.interpolate || "linear")
@@ -1928,6 +1930,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
   
   function line(items) {
+    if (!items.length) return;
     var o = items[0];
     line_path
       .interpolate(o.interpolate || "linear")
@@ -2048,7 +2051,10 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
     if (notG) {
       p.style("pointer-events", evts);
-      e.each(function(d) { (d.mark ? d : d[0])._svg = this; });
+      e.each(function(d) {
+        if (d.mark) d._svg = this;
+        else if (d.length) d[0]._svg = this;
+      });
     } else {
       e.append("rect").attr("class","background").style("pointer-events",evts);
     }
