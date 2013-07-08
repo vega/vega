@@ -16,8 +16,16 @@ vg.config.svgNamespace =
 // extensible scale lookup table
 // all d3.scale.* instances also supported
 vg.config.scale = {
-  "time": d3.time.scale,
-  "utc":  d3.time.scale.utc
+  time: d3.time.scale,
+  utc:  d3.time.scale.utc
+};
+
+// default rendering settings
+vg.config.render = {
+  lineWidth: 1,
+  lineCap:   "butt",
+  font:      "sans-serif",
+  fontSize:  11
 };
 
 // default axis properties
