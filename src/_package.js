@@ -104,8 +104,14 @@ vg.values = function(x) {
 vg.str = function(x) {
   return vg.isArray(x) ? "[" + str.map(x) + "]"
     : vg.isObject(x) ? JSON.stringify(x)
-    : vg.isString(x) ? ("'"+x+"'") : x;
+    : vg.isString(x) ? ("'"+vg_escape_str(x)+"'") : x;
 };
+
+var escape_str_re = /(^|[^\\])'/g;
+
+function vg_escape_str(x) {
+  return x.replace(escape_str_re, "$1\\'");
+}
 
 vg.keys = function(x) {
   var keys = [];

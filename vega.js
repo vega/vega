@@ -105,8 +105,14 @@ vg.values = function(x) {
 vg.str = function(x) {
   return vg.isArray(x) ? "[" + str.map(x) + "]"
     : vg.isObject(x) ? JSON.stringify(x)
-    : vg.isString(x) ? ("'"+x+"'") : x;
+    : vg.isString(x) ? ("'"+vg_escape_str(x)+"'") : x;
 };
+
+var escape_str_re = /(^|[^\\])'/g;
+
+function vg_escape_str(x) {
+  return x.replace(escape_str_re, "$1\\'");
+}
 
 vg.keys = function(x) {
   var keys = [];
@@ -3945,7 +3951,6 @@ function vg_load_http(url, callback) {
       }
     }
     
-    // TODO security check
     return Function("d", "return ("+tokens.join("")+");");
   };
   
@@ -4073,7 +4078,6 @@ vg.parse.properties = (function() {
     return Function("item", "group", "trans", code);
   }
 
-  // TODO security check for strings emitted into code
   function valueRef(ref) {
     if (ref == null) return null;
 
@@ -4087,13 +4091,15 @@ vg.parse.properties = (function() {
       return colorRef("rgb", ref.r, ref.g, ref.b);
     }
 
-    var val = ref.value !== undefined
-              ? vg.str(ref.value)
-              : "item.datum.data";
+    // initialize value
+    var val = "item.datum.data";
+    if (ref.value !== undefined) {
+      val = vg.str(ref.value);
+    }
 
     // get value from enclosing group
     if (ref.group !== undefined) {
-      val = "group." + ref.group;
+      val = "group["+vg.str(ref.group)+"]";
     }
 
     // get data field value
@@ -4105,7 +4111,7 @@ vg.parse.properties = (function() {
     
     // run through scale function
     if (ref.scale !== undefined) {
-      var scale = "group.scales['"+ref.scale+"']";
+      var scale = "group.scales["+vg.str(ref.scale)+"]";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {
@@ -4114,8 +4120,8 @@ vg.parse.properties = (function() {
     }
     
     // multiply, offset, return value
-    return "(" + (ref.mult ? (ref.mult+" * ") : "") + val + ")"
-      + (ref.offset ? " + "+ref.offset : "");
+    return "(" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
+      + (ref.offset ? " + " + vg.number(ref.offset) : "");
   }
   
   function colorRef(type, x, y, z) {

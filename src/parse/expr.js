@@ -51,7 +51,6 @@ vg.parse.expr = (function() {
       }
     }
     
-    // TODO security check
     return Function("d", "return ("+tokens.join("")+");");
   };
   
