@@ -66,7 +66,7 @@ vg.svg.marks = (function() {
     var o = items[0];
     area_path
       .interpolate(o.interpolate || "linear")
-      .tension(o.tension == undefined ? 0.7 : o.tension);
+      .tension(o.tension == null ? 0.7 : o.tension);
     this.setAttribute("d", area_path(items));
   }
   
@@ -75,7 +75,7 @@ vg.svg.marks = (function() {
     var o = items[0];
     line_path
       .interpolate(o.interpolate || "linear")
-      .tension(o.tension == undefined ? 0.7 : o.tension);
+      .tension(o.tension == null ? 0.7 : o.tension);
     this.setAttribute("d", line_path(items));
   }
   
@@ -98,8 +98,8 @@ vg.svg.marks = (function() {
         y1 = o.y || 0;
     this.setAttribute("x1", x1);
     this.setAttribute("y1", y1);
-    this.setAttribute("x2", o.x2 !== undefined ? o.x2 : x1);
-    this.setAttribute("y2", o.y2 !== undefined ? o.y2 : y1);
+    this.setAttribute("x2", o.x2 != null ? o.x2 : x1);
+    this.setAttribute("y2", o.y2 != null ? o.y2 : y1);
   }
   
   function symbol(o) {
@@ -128,8 +128,8 @@ vg.svg.marks = (function() {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != undefined ? o.fontSize + "px " : "11px ")
-      + (o.font || "sans-serif");
+      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
+      + (o.font || vg.config.render.font);
   }
   
   function text(o) {

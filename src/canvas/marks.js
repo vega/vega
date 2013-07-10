@@ -21,32 +21,6 @@ vg.canvas.marks = (function() {
     else g.arc(x, y, ir, sa, ea, 0);
     g.arc(x, y, or, ea, sa, 1);
     g.closePath();
-    return arcBounds(sa, ea, ir, or, x, y);
-  }
-
-  function arcBounds(sa, ea, ir, or, cx, cy) {
-    var a, i, n, x, y, ix, iy, ox, oy,
-        xmin = Infinity, xmax = -Infinity,
-        ymin = Infinity, ymax = -Infinity;
-
-    var angles = [sa, ea],
-        s = sa - (sa%halfpi) + halfpi;
-    for (var i=0; i<4 && s<ea; ++i, s+=halfpi) {
-      angles.push(s);
-    }
-
-    for (i=0, n=angles.length; i<n; ++i) {
-      a = angles[i];
-      x = Math.cos(a); ix = ir*x; ox = or*x;
-      y = Math.sin(a); iy = ir*y; oy = or*y;
-      xmin = Math.min(xmin, ix, ox);
-      xmax = Math.max(xmax, ix, ox);
-      ymin = Math.min(ymin, iy, oy);
-      ymax = Math.max(ymax, iy, oy);
-    }
-
-    return new vg.Bounds()
-      .set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
   }
 
   function pathPath(g, o) {
@@ -56,14 +30,12 @@ vg.canvas.marks = (function() {
   function symbolPath(g, o) {
     g.beginPath();
     var size = o.size != null ? o.size : 100,
-        x = o.x, y = o.y, r, t, rx, ry,
-        bounds = new vg.Bounds();
+        x = o.x, y = o.y, r, t, rx, ry;
 
     if (o.shape == null || o.shape === "circle") {
       r = Math.sqrt(size/Math.PI);
       g.arc(x, y, r, 0, 2*Math.PI, 0);
       g.closePath();
-      return bounds.set(x-r, y-r, x+r, y+r);
     }
 
     switch (o.shape) {
@@ -82,7 +54,6 @@ vg.canvas.marks = (function() {
         g.lineTo(x-r, y+t);
         g.lineTo(x-r, y+r);
         g.lineTo(x-t, y+r);
-        bounds.set(x-t, y-t, x+y, y+t);
         break;
 
       case "diamond":
@@ -92,14 +63,12 @@ vg.canvas.marks = (function() {
         g.lineTo(x+rx, y);
         g.lineTo(x, y+ry);
         g.lineTo(x-rx, y);
-        bounds.set(x-rx, y-ry, x+rx, y+ry);
         break;
 
       case "square":
         t = Math.sqrt(size);
         r = t / 2;
         g.rect(x-r, y-r, t, t);
-        bounds.set(x-r, y-r, x+r, y+r);
         break;
 
       case "triangle-down":
@@ -108,7 +77,6 @@ vg.canvas.marks = (function() {
         g.moveTo(x, y+ry);
         g.lineTo(x+rx, y-ry);
         g.lineTo(x-rx, y-ry);
-        bounds.set(x-rx, y-ry, x+rx, y+ry);
         break;
 
       case "triangle-up":
@@ -117,10 +85,8 @@ vg.canvas.marks = (function() {
         g.moveTo(x, y-ry);
         g.lineTo(x+rx, y+ry);
         g.lineTo(x-rx, y+ry);
-        bounds.set(x-rx, y-ry, x+rx, y+ry);
     }
     g.closePath();
-    return bounds;
   }
 
   function areaPath(g, items) {
@@ -131,7 +97,7 @@ vg.canvas.marks = (function() {
     var o = items[0];
     if (o.interpolate) area.interpolate(o.interpolate);
     if (o.tension != undefined) area.tension(o.tension);
-    return renderPath(g, parsePath(area(items)));
+    renderPath(g, parsePath(area(items)));
   }
 
   function linePath(g, items) {
@@ -141,7 +107,7 @@ vg.canvas.marks = (function() {
     var o = items[0];
     if (o.interpolate) line.interpolate(o.interpolate);
     if (o.tension != undefined) line.tension(o.tension);
-    return renderPath(g, parsePath(line(items)));
+    renderPath(g, parsePath(line(items)));
   }
 
   function lineStroke(g, items) {
@@ -172,7 +138,8 @@ vg.canvas.marks = (function() {
 
   function drawPathOne(path, g, o, items) {
     var fill = o.fill, stroke = o.stroke, opac, lc, lw;
-    o.bounds = path(g, items);
+
+    path(g, items);
 
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac == 0 || !fill && !stroke) return;
@@ -191,7 +158,6 @@ vg.canvas.marks = (function() {
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
         g.stroke();
-        o.bounds.expand(lw);
       }
     }
   }
@@ -209,7 +175,7 @@ vg.canvas.marks = (function() {
   function drawRect(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, fill, stroke, opac, lc, lw, x, y;
+        o, fill, stroke, opac, lc, lw, x, y, w, h;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -218,8 +184,8 @@ vg.canvas.marks = (function() {
 
       x = o.x || 0;
       y = o.y || 0;
-      o.bounds = (o.bounds || new vg.Bounds())
-        .set(x, y, x+o.width, y+o.height);
+      w = o.width || 0;
+      h = o.height || 0;
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -227,7 +193,7 @@ vg.canvas.marks = (function() {
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
         g.fillStyle = color(g, o, fill);
-        g.fillRect(x, y, o.width, o.height);
+        g.fillRect(x, y, w, h);
       }
 
       if (stroke = o.stroke) {
@@ -237,8 +203,7 @@ vg.canvas.marks = (function() {
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
-          g.strokeRect(x, y, o.width, o.height);
-          o.bounds.expand(lw);
+          g.strokeRect(x, y, w, h);
         }
       }
     }
@@ -258,8 +223,6 @@ vg.canvas.marks = (function() {
       y1 = o.y || 0;
       x2 = o.x2 != null ? o.x2 : x1;
       y2 = o.y2 != null ? o.y2 : y1;
-      o.bounds = (o.bounds || new vg.Bounds())
-        .set(x1, y1, x2, y2);
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -275,7 +238,6 @@ vg.canvas.marks = (function() {
           g.moveTo(x1, y1);
           g.lineTo(x2, y2);
           g.stroke();
-          o.bounds.expand(lw);
         }
       }
     }
@@ -303,21 +265,12 @@ vg.canvas.marks = (function() {
         ? w/2 : (o.align === "right" ? w : 0));
       y = o.y - (o.baseline === "middle"
         ? h/2 : (o.baseline === "bottom" ? h : 0));
-      o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
 
       if (o.image.loaded) {
         g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
         g.drawImage(o.image, x, y, w, h);
       }
     }
-  }
-
-  function fontString(o) {
-    return (o.fontStyle ? o.fontStyle + " " : "")
-      + (o.fontVariant ? o.fontVariant + " " : "")
-      + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
-      + (o.font || vg.config.render.font);
   }
 
   function drawText(g, scene, bounds) {
@@ -330,10 +283,9 @@ vg.canvas.marks = (function() {
       if (bounds && !bounds.intersects(o.bounds))
         continue; // bounds check
 
-      g.font = fontString(o);
+      g.font = vg.scene.fontString(o);
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
-      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds()));
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -365,47 +317,8 @@ vg.canvas.marks = (function() {
         }
       }
 
-      if (o.angle) {
-        o.bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
-        g.restore();
-      }
-      o.bounds.expand(1);
+      if (o.angle) g.restore();
     }
-  }
-
-  function textBounds(g, o, bounds) {
-    var x = o.x + (o.dx || 0),
-        y = o.y + (o.dy || 0),
-        w = g.measureText(o.text).width,
-        h = o.fontSize || 11,
-        a = o.align,
-        b = o.baseline;
-
-    // horizontal
-    if (a === "center") {
-      x = x - (w / 2);
-    } else if (a === "right") {
-      x = x - w;
-    } else {
-      // left by default, do nothing
-    }
-
-    /// TODO find a robust solution for heights.
-    /// These offsets work for some but not all fonts.
-
-    // vertical
-    if (b === "top") {
-      y = y + (h/5);
-    } else if (b === "bottom") {
-      y = y - h;
-    } else if (b === "middle") {
-      y = y - (h/2) + (h/10);
-    } else {
-      // alphabetic by default
-      y = y - 4*h/5;
-    }
-
-    return bounds.set(x, y, x+w, y+h);
   }
 
   function drawAll(pathFunc) {
@@ -426,7 +339,7 @@ vg.canvas.marks = (function() {
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items, group, axes, legends,
-        renderer = this, gx, gy, i, n, j, m;
+        renderer = this, gx, gy, gb, i, n, j, m;
 
     drawRect(g, scene, bounds);
 
@@ -458,7 +371,7 @@ vg.canvas.marks = (function() {
         renderer.draw(g, legends[j], bounds);
       }
       if (bounds) bounds.translate(gx, gy);
-      g.restore(); 
+      g.restore();
     }
   }
 
@@ -578,9 +491,7 @@ vg.canvas.marks = (function() {
     if (!o.fontSize) return false;
     if (!o.angle) return true; // bounds sufficient if no rotation
 
-    g.font = fontString(o);
-
-    var b = textBounds(g, o, tmpBounds),
+    var b = vg.scene.bounds.text(o, tmpBounds, true),
         a = -o.angle * Math.PI / 180,
         cos = Math.cos(a),
         sin = Math.sin(a),

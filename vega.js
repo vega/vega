@@ -526,6 +526,23 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
   }
 
+  function boundsArc(x, y, coords, bounds) {
+    var rx = coords[0];
+    var ry = coords[1];
+    var rot = coords[2];
+    var large = coords[3];
+    var sweep = coords[4];
+    var ex = coords[5];
+    var ey = coords[6];
+    var segs = arcToSegments(ex, ey, rx, ry, large, sweep, rot, x, y);
+    for (var i=0; i<segs.length; i++) {
+      var bez = segmentToBezier.apply(null, segs[i]);
+      bounds.add(bez[0]-l, bez[1]-t);
+      bounds.add(bez[2]-l, bez[3]-t);
+      bounds.add(bez[4]-l, bez[5]-t);
+    }
+  }
+
   var arcToSegmentsCache = { },
       segmentToBezierCache = { },
       join = Array.prototype.join,
@@ -923,10 +940,243 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
     return bounds.translate(l, t);
   };
+
+  function bounds(path, bounds) {
+    var current, // current instruction
+        previous = null,
+        x = 0, // current x
+        y = 0, // current y
+        controlX = 0, // current control point x
+        controlY = 0, // current control point y
+        tempX,
+        tempY,
+        tempControlX,
+        tempControlY;
+  
+    for (var i=0, len=path.length; i<len; ++i) {
+      current = path[i];
+
+      switch (current[0]) { // first letter
+
+        case 'l': // lineto, relative
+          x += current[1];
+          y += current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'L': // lineto, absolute
+          x = current[1];
+          y = current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'h': // horizontal lineto, relative
+          x += current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'H': // horizontal lineto, absolute
+          x = current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'v': // vertical lineto, relative
+          y += current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'V': // verical lineto, absolute
+          y = current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'm': // moveTo, relative
+          x += current[1];
+          y += current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'M': // moveTo, absolute
+          x = current[1];
+          y = current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'c': // bezierCurveTo, relative
+          tempX = x + current[5];
+          tempY = y + current[6];
+          controlX = x + current[3];
+          controlY = y + current[4];
+          bounds.add(x + current[1], y + current[2]);
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          x = tempX;
+          y = tempY;
+          break;
+
+        case 'C': // bezierCurveTo, absolute
+          x = current[5];
+          y = current[6];
+          controlX = current[3];
+          controlY = current[4];
+          bounds.add(current[1], current[2]);
+          bounds.add(controlX, controlY);
+          bounds.add(x, y);
+          break;
+
+        case 's': // shorthand cubic bezierCurveTo, relative
+          // transform to absolute x,y
+          tempX = x + current[3];
+          tempY = y + current[4];
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+          bounds.add(controlX, controlY);
+          bounds.add(x + current[1], y + current[2]);
+          bounds.add(tempX, tempY);
+
+          // set control point to 2nd one of this command
+          // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
+          controlX = x + current[1];
+          controlY = y + current[2];
+
+          x = tempX;
+          y = tempY;
+          break;
+
+        case 'S': // shorthand cubic bezierCurveTo, absolute
+          tempX = current[3];
+          tempY = current[4];
+          // calculate reflection of previous control points
+          controlX = 2*x - controlX;
+          controlY = 2*y - controlY;
+          x = tempX;
+          y = tempY;
+          bounds.add(current[1], current[2]);
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          // set control point to 2nd one of this command
+          // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
+          controlX = current[1];
+          controlY = current[2];
+
+          break;
+
+        case 'q': // quadraticCurveTo, relative
+          // transform to absolute x,y
+          tempX = x + current[3];
+          tempY = y + current[4];
+
+          controlX = x + current[1];
+          controlY = y + current[2];
+
+          x = tempX;
+          y = tempY;
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 'Q': // quadraticCurveTo, absolute
+          tempX = current[3];
+          tempY = current[4];
+
+          x = tempX;
+          y = tempY;
+          controlX = current[1];
+          controlY = current[2];
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 't': // shorthand quadraticCurveTo, relative
+
+          // transform to absolute x,y
+          tempX = x + current[1];
+          tempY = y + current[2];
+
+          if (previous[0].match(/[QqTt]/) === null) {
+            // If there is no previous command or if the previous command was not a Q, q, T or t,
+            // assume the control point is coincident with the current point
+            controlX = x;
+            controlY = y;
+          }
+          else if (previous[0] === 't') {
+            // calculate reflection of previous control points for t
+            controlX = 2 * x - tempControlX;
+            controlY = 2 * y - tempControlY;
+          }
+          else if (previous[0] === 'q') {
+            // calculate reflection of previous control points for q
+            controlX = 2 * x - controlX;
+            controlY = 2 * y - controlY;
+          }
+
+          tempControlX = controlX;
+          tempControlY = controlY;
+
+          x = tempX;
+          y = tempY;
+          controlX = x + current[1];
+          controlY = y + current[2];
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 'T':
+          tempX = current[1];
+          tempY = current[2];
+
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+
+          x = tempX;
+          y = tempY;
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 'a':
+          drawArc(g, x, y, [
+            current[1],
+            current[2],
+            current[3],
+            current[4],
+            current[5],
+            current[6] + x,
+            current[7] + y
+          ], bounds);
+          x += current[6];
+          y += current[7];
+          break;
+
+        case 'A':
+          drawArc(g, x, y, [
+            current[1],
+            current[2],
+            current[3],
+            current[4],
+            current[5],
+            current[6],
+            current[7]
+          ], bounds);
+          x = current[6];
+          y = current[7];
+          break;
+
+        case 'z':
+        case 'Z':
+          break;
+      }
+      previous = current;
+    }
+    return bounds;
+  };
   
   return {
-    parse: parse,
-    render: render
+    parse:  parse,
+    render: render,
+    bounds: bounds
   };
   
 })();vg.canvas.marks = (function() {
@@ -952,32 +1202,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     else g.arc(x, y, ir, sa, ea, 0);
     g.arc(x, y, or, ea, sa, 1);
     g.closePath();
-    return arcBounds(sa, ea, ir, or, x, y);
-  }
-
-  function arcBounds(sa, ea, ir, or, cx, cy) {
-    var a, i, n, x, y, ix, iy, ox, oy,
-        xmin = Infinity, xmax = -Infinity,
-        ymin = Infinity, ymax = -Infinity;
-
-    var angles = [sa, ea],
-        s = sa - (sa%halfpi) + halfpi;
-    for (var i=0; i<4 && s<ea; ++i, s+=halfpi) {
-      angles.push(s);
-    }
-
-    for (i=0, n=angles.length; i<n; ++i) {
-      a = angles[i];
-      x = Math.cos(a); ix = ir*x; ox = or*x;
-      y = Math.sin(a); iy = ir*y; oy = or*y;
-      xmin = Math.min(xmin, ix, ox);
-      xmax = Math.max(xmax, ix, ox);
-      ymin = Math.min(ymin, iy, oy);
-      ymax = Math.max(ymax, iy, oy);
-    }
-
-    return new vg.Bounds()
-      .set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
   }
 
   function pathPath(g, o) {
@@ -987,14 +1211,12 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function symbolPath(g, o) {
     g.beginPath();
     var size = o.size != null ? o.size : 100,
-        x = o.x, y = o.y, r, t, rx, ry,
-        bounds = new vg.Bounds();
+        x = o.x, y = o.y, r, t, rx, ry;
 
     if (o.shape == null || o.shape === "circle") {
       r = Math.sqrt(size/Math.PI);
       g.arc(x, y, r, 0, 2*Math.PI, 0);
       g.closePath();
-      return bounds.set(x-r, y-r, x+r, y+r);
     }
 
     switch (o.shape) {
@@ -1013,7 +1235,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.lineTo(x-r, y+t);
         g.lineTo(x-r, y+r);
         g.lineTo(x-t, y+r);
-        bounds.set(x-t, y-t, x+y, y+t);
         break;
 
       case "diamond":
@@ -1023,14 +1244,12 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.lineTo(x+rx, y);
         g.lineTo(x, y+ry);
         g.lineTo(x-rx, y);
-        bounds.set(x-rx, y-ry, x+rx, y+ry);
         break;
 
       case "square":
         t = Math.sqrt(size);
         r = t / 2;
         g.rect(x-r, y-r, t, t);
-        bounds.set(x-r, y-r, x+r, y+r);
         break;
 
       case "triangle-down":
@@ -1039,7 +1258,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.moveTo(x, y+ry);
         g.lineTo(x+rx, y-ry);
         g.lineTo(x-rx, y-ry);
-        bounds.set(x-rx, y-ry, x+rx, y+ry);
         break;
 
       case "triangle-up":
@@ -1048,10 +1266,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.moveTo(x, y-ry);
         g.lineTo(x+rx, y+ry);
         g.lineTo(x-rx, y+ry);
-        bounds.set(x-rx, y-ry, x+rx, y+ry);
     }
     g.closePath();
-    return bounds;
   }
 
   function areaPath(g, items) {
@@ -1062,7 +1278,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var o = items[0];
     if (o.interpolate) area.interpolate(o.interpolate);
     if (o.tension != undefined) area.tension(o.tension);
-    return renderPath(g, parsePath(area(items)));
+    renderPath(g, parsePath(area(items)));
   }
 
   function linePath(g, items) {
@@ -1072,7 +1288,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var o = items[0];
     if (o.interpolate) line.interpolate(o.interpolate);
     if (o.tension != undefined) line.tension(o.tension);
-    return renderPath(g, parsePath(line(items)));
+    renderPath(g, parsePath(line(items)));
   }
 
   function lineStroke(g, items) {
@@ -1103,7 +1319,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
   function drawPathOne(path, g, o, items) {
     var fill = o.fill, stroke = o.stroke, opac, lc, lw;
-    o.bounds = path(g, items);
+
+    path(g, items);
 
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac == 0 || !fill && !stroke) return;
@@ -1122,7 +1339,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
         g.stroke();
-        o.bounds.expand(lw);
       }
     }
   }
@@ -1140,7 +1356,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function drawRect(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, fill, stroke, opac, lc, lw, x, y;
+        o, fill, stroke, opac, lc, lw, x, y, w, h;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -1149,8 +1365,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
       x = o.x || 0;
       y = o.y || 0;
-      o.bounds = (o.bounds || new vg.Bounds())
-        .set(x, y, x+o.width, y+o.height);
+      w = o.width || 0;
+      h = o.height || 0;
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -1158,7 +1374,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
         g.fillStyle = color(g, o, fill);
-        g.fillRect(x, y, o.width, o.height);
+        g.fillRect(x, y, w, h);
       }
 
       if (stroke = o.stroke) {
@@ -1168,8 +1384,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
-          g.strokeRect(x, y, o.width, o.height);
-          o.bounds.expand(lw);
+          g.strokeRect(x, y, w, h);
         }
       }
     }
@@ -1189,8 +1404,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       y1 = o.y || 0;
       x2 = o.x2 != null ? o.x2 : x1;
       y2 = o.y2 != null ? o.y2 : y1;
-      o.bounds = (o.bounds || new vg.Bounds())
-        .set(x1, y1, x2, y2);
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -1206,7 +1419,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           g.moveTo(x1, y1);
           g.lineTo(x2, y2);
           g.stroke();
-          o.bounds.expand(lw);
         }
       }
     }
@@ -1234,21 +1446,12 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         ? w/2 : (o.align === "right" ? w : 0));
       y = o.y - (o.baseline === "middle"
         ? h/2 : (o.baseline === "bottom" ? h : 0));
-      o.bounds = (o.bounds || new vg.Bounds()).set(x, y, x+w, y+h);
 
       if (o.image.loaded) {
         g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
         g.drawImage(o.image, x, y, w, h);
       }
     }
-  }
-
-  function fontString(o) {
-    return (o.fontStyle ? o.fontStyle + " " : "")
-      + (o.fontVariant ? o.fontVariant + " " : "")
-      + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
-      + (o.font || vg.config.render.font);
   }
 
   function drawText(g, scene, bounds) {
@@ -1261,10 +1464,9 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       if (bounds && !bounds.intersects(o.bounds))
         continue; // bounds check
 
-      g.font = fontString(o);
+      g.font = vg.scene.fontString(o);
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
-      o.bounds = textBounds(g, o, (o.bounds || new vg.Bounds()));
 
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) return;
@@ -1296,47 +1498,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         }
       }
 
-      if (o.angle) {
-        o.bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
-        g.restore();
-      }
-      o.bounds.expand(1);
+      if (o.angle) g.restore();
     }
-  }
-
-  function textBounds(g, o, bounds) {
-    var x = o.x + (o.dx || 0),
-        y = o.y + (o.dy || 0),
-        w = g.measureText(o.text).width,
-        h = o.fontSize || 11,
-        a = o.align,
-        b = o.baseline;
-
-    // horizontal
-    if (a === "center") {
-      x = x - (w / 2);
-    } else if (a === "right") {
-      x = x - w;
-    } else {
-      // left by default, do nothing
-    }
-
-    /// TODO find a robust solution for heights.
-    /// These offsets work for some but not all fonts.
-
-    // vertical
-    if (b === "top") {
-      y = y + (h/5);
-    } else if (b === "bottom") {
-      y = y - h;
-    } else if (b === "middle") {
-      y = y - (h/2) + (h/10);
-    } else {
-      // alphabetic by default
-      y = y - 4*h/5;
-    }
-
-    return bounds.set(x, y, x+w, y+h);
   }
 
   function drawAll(pathFunc) {
@@ -1357,7 +1520,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function drawGroup(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items, group, axes, legends,
-        renderer = this, gx, gy, i, n, j, m;
+        renderer = this, gx, gy, gb, i, n, j, m;
 
     drawRect(g, scene, bounds);
 
@@ -1389,7 +1552,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         renderer.draw(g, legends[j], bounds);
       }
       if (bounds) bounds.translate(gx, gy);
-      g.restore(); 
+      g.restore();
     }
   }
 
@@ -1509,9 +1672,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     if (!o.fontSize) return false;
     if (!o.angle) return true; // bounds sufficient if no rotation
 
-    g.font = fontString(o);
-
-    var b = textBounds(g, o, tmpBounds),
+    var b = vg.scene.bounds.text(o, tmpBounds, true),
         a = -o.angle * Math.PI / 180,
         cos = Math.cos(a),
         sin = Math.sin(a),
@@ -1598,11 +1759,17 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       .append("canvas")
       .attr("class", "marks");
     
+    return this.padding(pad);
+  };
+  
+  prototype.padding = function(pad) {
+    var canvas = d3.select(this._el).select("canvas.marks");
+
     // initialize canvas attributes
     canvas
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
-    
+      .attr("width", this._width + pad.left + pad.right)
+      .attr("height", this._height + pad.top + pad.bottom);
+
     // get the canvas graphics context
     var s;
     this._ctx = canvas.node().getContext("2d");
@@ -1647,8 +1814,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     return this._imgload;
   };
 
-  function translatedBounds(item) {
-    var b = new vg.Bounds(item.bounds);
+  function translatedBounds(item, bounds) {
+    var b = new vg.Bounds(bounds);
     while ((item = item.mark.group) != null) {
       b.translate(item.x || 0, item.y || 0);
     }
@@ -1658,7 +1825,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function getBounds(items) {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
-        return b.union(translatedBounds(item));
+        return b.union(translatedBounds(item, item.bounds))
+                .union(translatedBounds(item, item.bounds_prev));
       }, new vg.Bounds());  
   }
   
@@ -1709,6 +1877,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+
+    // compute mark-level bounds
+    scene.bounds = scene.items.reduce(function(b, item) {
+      return item.bounds ? b.union(item.bounds) : b;
+    }, scene.bounds || new vg.Bounds());
   };
   
   prototype.renderAsync = function(scene) {
@@ -1776,6 +1949,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       });
     });
     
+    return this;
+  };
+  
+  prototype.padding = function(pad) {
+    this._padding = pad;
     return this;
   };
   
@@ -1969,7 +2147,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var o = items[0];
     area_path
       .interpolate(o.interpolate || "linear")
-      .tension(o.tension == undefined ? 0.7 : o.tension);
+      .tension(o.tension == null ? 0.7 : o.tension);
     this.setAttribute("d", area_path(items));
   }
   
@@ -1978,7 +2156,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var o = items[0];
     line_path
       .interpolate(o.interpolate || "linear")
-      .tension(o.tension == undefined ? 0.7 : o.tension);
+      .tension(o.tension == null ? 0.7 : o.tension);
     this.setAttribute("d", line_path(items));
   }
   
@@ -2001,8 +2179,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         y1 = o.y || 0;
     this.setAttribute("x1", x1);
     this.setAttribute("y1", y1);
-    this.setAttribute("x2", o.x2 !== undefined ? o.x2 : x1);
-    this.setAttribute("y2", o.y2 !== undefined ? o.y2 : y1);
+    this.setAttribute("x2", o.x2 != null ? o.x2 : x1);
+    this.setAttribute("y2", o.y2 != null ? o.y2 : y1);
   }
   
   function symbol(o) {
@@ -2031,8 +2209,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != undefined ? o.fontSize + "px " : "11px ")
-      + (o.font || "sans-serif");
+      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
+      + (o.font || vg.config.render.font);
   }
   
   function text(o) {
@@ -2188,7 +2366,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._el = el;
     this._width = width;
     this._height = height;
-    this._padding = pad;
 
     // remove any existing svg element
     d3.select(el).select("svg.marks").remove();
@@ -2196,14 +2373,24 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     // create svg element and initialize attributes
     this._svg = d3.select(el)
       .append("svg")
-      .attr("class", "marks")
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
+      .attr("class", "marks");
     
     // set the svg root group
-    this._ctx = this._svg.append("g")
-      .attr("transform", "translate("+pad.left+","+pad.top+")");
+    this._ctx = this._svg.append("g");
     
+    return this.padding(pad);
+  };
+  
+  prototype.padding = function(pad) {
+    this._padding = pad;
+    
+    this._svg
+      .attr("width", this._width + pad.left + pad.right)
+      .attr("height", this._height + pad.top + pad.bottom);
+      
+    this._ctx
+      .attr("transform", "translate("+pad.left+","+pad.top+")");
+
     return this;
   };
   
@@ -2308,6 +2495,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._svg = d3.select(el).select("svg.marks").node();
     this._padding = pad;
     this._obj = obj || null;
+    return this;
+  };
+  
+  prototype.padding = function(pad) {
+    this._padding = pad;
     return this;
   };
   
@@ -4157,6 +4349,14 @@ vg.scene.data = function(data, parentData) {
   if (data === DEFAULT) data = [DEFAULT];
   
   return data;
+};
+
+vg.scene.fontString = function(o) {
+  return (o.fontStyle ? o.fontStyle + " " : "")
+    + (o.fontVariant ? o.fontVariant + " " : "")
+    + (o.fontWeight ? o.fontWeight + " " : "")
+    + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
+    + (o.font || vg.config.render.font);
 };vg.scene.Item = (function() {
   function item(mark) {
     this.mark = mark;
@@ -4314,6 +4514,283 @@ vg.scene.item = function(mark) {
   }
   
   return build;
+})();vg.scene.bounds = (function() {
+
+  var parsePath = vg.canvas.path.parse,
+      boundPath = vg.canvas.path.bounds,
+      halfpi = Math.PI / 2,
+      gfx = null;
+
+  function context() {
+    return gfx || (gfx = (vg.config.isNode
+      ? new Canvas(0, 0)
+      : d3.select("body").append("canvas")
+          .style("display", "none")
+          .attr("class", "vega_hidden")
+          .attr("width", 0)
+          .attr("height", 0)
+          .node())
+      .getContext("2d"));
+  }
+
+  function pathBounds(o, path, bounds) {
+    boundPath(parsePath(path), bounds);
+    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+      bounds.expand(o.strokeWidth);
+    }
+    return bounds;
+  }
+
+  function path(o, bounds) {
+    return pathBounds(o, o.path, bounds);
+  }
+  
+  function area(o, bounds) {
+    var items = o.mark.items;
+    var area = d3.svg.area()
+     .x(function(d) { return d.x; })
+     .y1(function(d) { return d.y; })
+     .y0(function(d) { return d.y + d.height; });
+    o = items[0];
+    if (o.interpolate) area.interpolate(o.interpolate);
+    if (o.tension != undefined) area.tension(o.tension);
+    return pathBounds(o, area(items), bounds);
+  }
+
+  function line(o, bounds) {
+    var items = o.mark.items;
+    var line = d3.svg.line()
+     .x(function(d) { return d.x; })
+     .y(function(d) { return d.y; });
+    o = items[0];
+    if (o.interpolate) line.interpolate(o.interpolate);
+    if (o.tension != undefined) line.tension(o.tension);
+    return pathBounds(o, line(items), bounds);
+  }
+
+  function rect(o, bounds) {
+    bounds.set(
+      o.x || 0,
+      o.y || 0,
+      (o.x + o.width) || 0,
+      (o.y + o.height) || 0
+    );
+    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+      bounds.expand(o.strokeWidth);
+    }
+    return bounds;
+  }
+
+  function image(o, bounds) {
+    var w = o.width || 0,
+        h = o.height || 0,
+        x = o.x - (o.align === "center"
+            ? w/2 : (o.align === "right" ? w : 0)),
+        y = o.y - (o.baseline === "middle"
+            ? h/2 : (o.baseline === "bottom" ? h : 0));
+    return bounds.set(x, y, x+w, y+h);
+  }
+
+  function rule(o, bounds) {
+    var x1, y1;
+    bounds.set(
+      x1 = o.x || 0,
+      y1 = o.y || 0,
+      o.x2 != null ? o.x2 : x1,
+      o.y2 != null ? o.y2 : y1
+    );
+    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+      bounds.expand(o.strokeWidth);
+    }
+    return bounds;
+  }
+  
+  function arc(o, bounds) {
+    var cx = o.x || 0,
+        cy = o.y || 0,
+        ir = o.innerRadius || 0,
+        or = o.outerRadius || 0,
+        sa = (o.startAngle || 0) - halfpi,
+        ea = (o.endAngle || 0) - halfpi,
+        xmin = Infinity, xmax = -Infinity,
+        ymin = Infinity, ymax = -Infinity,
+        a, i, n, x, y, ix, iy, ox, oy;
+
+    var angles = [sa, ea],
+        s = sa - (sa%halfpi) + halfpi;
+    for (var i=0; i<4 && s<ea; ++i, s+=halfpi) {
+      angles.push(s);
+    }
+
+    for (i=0, n=angles.length; i<n; ++i) {
+      a = angles[i];
+      x = Math.cos(a); ix = ir*x; ox = or*x;
+      y = Math.sin(a); iy = ir*y; oy = or*y;
+      xmin = Math.min(xmin, ix, ox);
+      xmax = Math.max(xmax, ix, ox);
+      ymin = Math.min(ymin, iy, oy);
+      ymax = Math.max(ymax, iy, oy);
+    }
+
+    bounds.set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
+    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+      bounds.expand(o.strokeWidth);
+    }
+    return bounds;
+  }
+
+  function symbol(o, bounds) {
+    var size = o.size != null ? o.size : 100,
+        x = o.x, y = o.y, r, t, rx, ry;
+
+    if (o.shape == null || o.shape === "circle") {
+      r = Math.sqrt(size/Math.PI);
+      return bounds.set(x-r, y-r, x+r, y+r);
+    }
+
+    switch (o.shape) {
+      case "cross":
+        r = Math.sqrt(size / 5) / 2;
+        t = 3*r;
+        bounds.set(x-t, y-t, x+y, y+t);
+        break;
+
+      case "diamond":
+        ry = Math.sqrt(size / (2 * tan30));
+        rx = ry * tan30;
+        bounds.set(x-rx, y-ry, x+rx, y+ry);
+        break;
+
+      case "square":
+        t = Math.sqrt(size);
+        r = t / 2;
+        bounds.set(x-r, y-r, x+r, y+r);
+        break;
+
+      case "triangle-down":
+        rx = Math.sqrt(size / sqrt3);
+        ry = rx * sqrt3 / 2;
+        bounds.set(x-rx, y-ry, x+rx, y+ry);
+        break;
+
+      case "triangle-up":
+        rx = Math.sqrt(size / sqrt3);
+        ry = rx * sqrt3 / 2;
+        bounds.set(x-rx, y-ry, x+rx, y+ry);
+    }
+    
+    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+      bounds.expand(o.strokeWidth);
+    }
+    return bounds;
+  }
+
+  function text(o, bounds, noRotate) {
+    var x = o.x + (o.dx || 0),
+        y = o.y + (o.dy || 0),
+        h = o.fontSize || vg.config.render.fontSize,
+        a = o.align,
+        b = o.baseline,
+        g = context(), w;
+
+    g.font = vg.scene.fontString(o);
+    g.textAlign = o.align || "left";
+    g.textBaseline = o.baseline || "alphabetic";
+    w = g.measureText(o.text).width;
+
+    // horizontal
+    if (a === "center") {
+      x = x - (w / 2);
+    } else if (a === "right") {
+      x = x - w;
+    } else {
+      // left by default, do nothing
+    }
+
+    /// TODO find a robust solution for heights.
+    /// These offsets work for some but not all fonts.
+
+    // vertical
+    if (b === "top") {
+      y = y + (h/5);
+    } else if (b === "bottom") {
+      y = y - h;
+    } else if (b === "middle") {
+      y = y - (h/2) + (h/10);
+    } else {
+      y = y - 4*h/5; // alphabetic by default
+    }
+    
+    bounds.set(x, y, x+w, y+h);
+    if (o.angle && !noRotate) {
+      bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
+    }
+    return bounds.expand(noRotate ? 0 : 1);
+  }
+
+  function group(g, bounds) {
+    var axes = g.axisItems || [],
+        legends = g.legendItems || [], j, m;
+
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].def.layer === "back") bounds.union(axes[j].bounds);
+    }
+    for (j=0, m=g.items.length; j<m; ++j) {
+      bounds.union(g.items[j].bounds);
+    }
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].def.layer !== "back") bounds.union(axes[j].bounds);
+    }
+    
+    return bounds.translate(g.x||0, g.y||0);
+  }
+
+  var methods = {
+    group:  group,
+    symbol: symbol,
+    image:  image,
+    rect:   rect,
+    rule:   rule,
+    arc:    arc,
+    text:   text,
+    path:   path,
+    area:   area,
+    line:   line
+  };
+
+  function itemBounds(item, func) {
+    func = func || methods[item.mark.marktype];
+    if (!item.bounds_prev) item.bounds_prev = new vg.Bounds();
+    var b = item.bounds, pb = item.bounds_prev;
+    if (b) pb.clear().union(b);
+    item.bounds = func(item, b || new vg.Bounds());
+    if (!b) pb.clear().union(item.bounds);
+    return item.bounds;
+  }
+
+  function markBounds(mark, bounds) {
+    bounds = bounds || new vg.Bounds();
+    var type  = mark.marktype,
+        func  = methods[type],
+        items = mark.items,
+        item, i, len;
+        
+    if (type==="area" || type==="line") {
+      items[0].bounds = func(items[0], bounds);
+    } else {
+      for (i=0, len=items.length; i<len; ++i) {
+        bounds.union(itemBounds(items[i], func));
+      }
+    }
+    mark.bounds = bounds;
+  }
+  
+  return {
+    mark: markBounds,
+    item: itemBounds,
+    text: text
+  };
+
 })();vg.scene.encode = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
@@ -4336,7 +4813,10 @@ vg.scene.item = function(mark) {
       group = item.mark.group || null;
       props = item.mark.def.properties;
       prop = props && props[request];
-      if (prop) prop.call(this, item, group, trans);
+      if (prop) {
+        prop.call(this, item, group, trans);
+        vg.scene.bounds.item(item);
+      }
     }
   }
   
@@ -4344,7 +4824,14 @@ vg.scene.item = function(mark) {
     encodeItems.call(this, group, scene.items, def, trans, request);
     if (scene.marktype === GROUP) {
       encodeGroup.call(this, scene, def, group, trans, request);
+    } else {
+      vg.scene.bounds.mark(scene);
     }
+  }
+  
+  function encodeLegend(group, scene, def, trans, request) {
+    encodeGroup.call(this, scene, def, group, trans, request);
+    encodeItems.call(this, group, scene.items, def, trans, request);
   }
   
   function encodeGroup(scene, def, parent, trans, request) {
@@ -4378,17 +4865,26 @@ vg.scene.item = function(mark) {
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
         encode.call(this, group, group.items[m], def.marks[m], trans, request);
       }
-      
-      // update group-level legends
-      if (def.legends) {
+    }
+    
+    // compute bounds
+    vg.scene.bounds.mark(scene);
+    
+    // update legends
+    if (def.legends) {
+      for (i=0, len=scene.items.length; i<len; ++i) {
+        group = scene.items[i];
         leg = group.legends || (group.legends = []);
         legItems = group.legendItems || (group.legendItems = []);
         vg.parse.legends(def.legends, leg, group.scales);
         leg.forEach(function(l, i) {
           legDef = l.def();
           legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
-          encode.call(this, group, group.legendItems[i], legDef, trans);
+          encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });
+      }
+      for (i=0, len=group.legendItems.length; i<len; ++i) {
+        scene.bounds.union(group.legendItems[i].bounds);
       }
     }
   }
@@ -4499,6 +4995,7 @@ vg.scene.item = function(mark) {
 
       for (i=0, n=curr.length; i<n; ++i) {
         item[curr[i].property] = curr[i](e);
+        vg.scene.bounds.item(item);
       }
 
       if (f === 1) {
@@ -4900,9 +5397,6 @@ function vg_axisUpdate(item, group, trans) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  item.width = width;
-  item.height = height;
-
   switch(orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }
     case "right":  { o.x = width + offset; o.y = 0; break; }
@@ -5014,6 +5508,7 @@ vg.scene.legend = function() {
       ? quantDef(scale) : ordinalDef(scale);
     legendDef.orient = orient;
     legendDef.offset = offset;
+    legendDef.padding = padding;
     return legendDef;
   };
 
@@ -5078,7 +5573,7 @@ vg.scene.legend = function() {
     return def;
   }
 
-  function o_legend_def(size, shape, fill, stroke) {    
+  function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
     var titles = vg_legendTitle(),
         symbols = vg_legendSymbols(),
@@ -5140,7 +5635,7 @@ vg.scene.legend = function() {
     return def;
   }
   
-  function q_legend_def(scale) {    
+  function q_legend_def(scale) {
     // setup legend marks
     var titles = vg_legendTitle(),
         gradient = vg_legendGradient(),
@@ -5298,18 +5793,23 @@ function vg_legendUpdate(item, group, trans) {
   var o = trans ? {} : item,
       offset = item.mark.def.offset,
       orient = item.mark.def.orient,
-      width  = group.width,
-      lw     = 100; // legend width (TODO)
+      pad    = item.mark.def.padding * 2,
+      gx1    = group.bounds && group.bounds.x1 || 0,
+      gx2    = group.bounds && group.bounds.x2 || group.width,
+      lw     = ~~item.bounds.width() + pad,
+      lh     = ~~item.bounds.height() + pad;
 
   o.x = 0.5;
   o.y = 0.5;
+  o.width = lw;
+  o.height = lh;
 
   switch(orient) {
-    case "left":   { o.x += -offset - lw; break; }
-    case "right":  { o.x += width + offset; break; }
+    case "left":   o.x += gx1 - offset - lw; break;
+    case "right":  o.x += gx2 + offset;      break;
   }
   
-  if (trans) trans.interpolate(item, o);
+  item.mark.def.properties.enter(item, group, trans);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
@@ -5551,7 +6051,10 @@ function vg_hLegendLabels() {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
       this._padding = pad;
-      if (this._el) this.initialize(this._el.parentNode);
+      if (this._el) {
+        this._renderer.padding(pad);
+        this._handler.padding(pad);
+      }
     }
     return this;
   };

@@ -63,6 +63,7 @@ vega.js: \
 	src/scene/_package.js \
 	src/scene/Item.js \
 	src/scene/build.js \
+	src/scene/bounds.js \
 	src/scene/encode.js \
 	src/scene/transition.js \
 	src/scene/axis.js \

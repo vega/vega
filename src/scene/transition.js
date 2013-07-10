@@ -64,6 +64,7 @@ vg.scene.Transition = (function() {
 
       for (i=0, n=curr.length; i<n; ++i) {
         item[curr[i].property] = curr[i](e);
+        vg.scene.bounds.item(item);
       }
 
       if (f === 1) {

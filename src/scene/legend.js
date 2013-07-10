@@ -29,6 +29,7 @@ vg.scene.legend = function() {
       ? quantDef(scale) : ordinalDef(scale);
     legendDef.orient = orient;
     legendDef.offset = offset;
+    legendDef.padding = padding;
     return legendDef;
   };
 
@@ -93,7 +94,7 @@ vg.scene.legend = function() {
     return def;
   }
 
-  function o_legend_def(size, shape, fill, stroke) {    
+  function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
     var titles = vg_legendTitle(),
         symbols = vg_legendSymbols(),
@@ -155,7 +156,7 @@ vg.scene.legend = function() {
     return def;
   }
   
-  function q_legend_def(scale) {    
+  function q_legend_def(scale) {
     // setup legend marks
     var titles = vg_legendTitle(),
         gradient = vg_legendGradient(),
@@ -313,18 +314,23 @@ function vg_legendUpdate(item, group, trans) {
   var o = trans ? {} : item,
       offset = item.mark.def.offset,
       orient = item.mark.def.orient,
-      width  = group.width,
-      lw     = 100; // legend width (TODO)
+      pad    = item.mark.def.padding * 2,
+      gx1    = group.bounds && group.bounds.x1 || 0,
+      gx2    = group.bounds && group.bounds.x2 || group.width,
+      lw     = ~~item.bounds.width() + pad,
+      lh     = ~~item.bounds.height() + pad;
 
   o.x = 0.5;
   o.y = 0.5;
+  o.width = lw;
+  o.height = lh;
 
   switch(orient) {
-    case "left":   { o.x += -offset - lw; break; }
-    case "right":  { o.x += width + offset; break; }
+    case "left":   o.x += gx1 - offset - lw; break;
+    case "right":  o.x += gx2 + offset;      break;
   }
   
-  if (trans) trans.interpolate(item, o);
+  item.mark.def.properties.enter(item, group, trans);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {

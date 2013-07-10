@@ -39,7 +39,10 @@ vg.View = (function() {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
       this._padding = pad;
-      if (this._el) this.initialize(this._el.parentNode);
+      if (this._el) {
+        this._renderer.padding(pad);
+        this._handler.padding(pad);
+      }
     }
     return this;
   };

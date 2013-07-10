@@ -25,11 +25,17 @@ vg.canvas.Renderer = (function() {
       .append("canvas")
       .attr("class", "marks");
     
+    return this.padding(pad);
+  };
+  
+  prototype.padding = function(pad) {
+    var canvas = d3.select(this._el).select("canvas.marks");
+
     // initialize canvas attributes
     canvas
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
-    
+      .attr("width", this._width + pad.left + pad.right)
+      .attr("height", this._height + pad.top + pad.bottom);
+
     // get the canvas graphics context
     var s;
     this._ctx = canvas.node().getContext("2d");
@@ -74,8 +80,8 @@ vg.canvas.Renderer = (function() {
     return this._imgload;
   };
 
-  function translatedBounds(item) {
-    var b = new vg.Bounds(item.bounds);
+  function translatedBounds(item, bounds) {
+    var b = new vg.Bounds(bounds);
     while ((item = item.mark.group) != null) {
       b.translate(item.x || 0, item.y || 0);
     }
@@ -85,7 +91,8 @@ vg.canvas.Renderer = (function() {
   function getBounds(items) {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
-        return b.union(translatedBounds(item));
+        return b.union(translatedBounds(item, item.bounds))
+                .union(translatedBounds(item, item.bounds_prev));
       }, new vg.Bounds());  
   }
   
@@ -136,6 +143,11 @@ vg.canvas.Renderer = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+
+    // compute mark-level bounds
+    scene.bounds = scene.items.reduce(function(b, item) {
+      return item.bounds ? b.union(item.bounds) : b;
+    }, scene.bounds || new vg.Bounds());
   };
   
   prototype.renderAsync = function(scene) {

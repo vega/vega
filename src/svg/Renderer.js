@@ -12,7 +12,6 @@ vg.svg.Renderer = (function() {
     this._el = el;
     this._width = width;
     this._height = height;
-    this._padding = pad;
 
     // remove any existing svg element
     d3.select(el).select("svg.marks").remove();
@@ -20,14 +19,24 @@ vg.svg.Renderer = (function() {
     // create svg element and initialize attributes
     this._svg = d3.select(el)
       .append("svg")
-      .attr("class", "marks")
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
+      .attr("class", "marks");
     
     // set the svg root group
-    this._ctx = this._svg.append("g")
-      .attr("transform", "translate("+pad.left+","+pad.top+")");
+    this._ctx = this._svg.append("g");
     
+    return this.padding(pad);
+  };
+  
+  prototype.padding = function(pad) {
+    this._padding = pad;
+    
+    this._svg
+      .attr("width", this._width + pad.left + pad.right)
+      .attr("height", this._height + pad.top + pad.bottom);
+      
+    this._ctx
+      .attr("transform", "translate("+pad.left+","+pad.top+")");
+
     return this;
   };
   

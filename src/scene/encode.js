@@ -20,7 +20,10 @@ vg.scene.encode = (function() {
       group = item.mark.group || null;
       props = item.mark.def.properties;
       prop = props && props[request];
-      if (prop) prop.call(this, item, group, trans);
+      if (prop) {
+        prop.call(this, item, group, trans);
+        vg.scene.bounds.item(item);
+      }
     }
   }
   
@@ -28,7 +31,14 @@ vg.scene.encode = (function() {
     encodeItems.call(this, group, scene.items, def, trans, request);
     if (scene.marktype === GROUP) {
       encodeGroup.call(this, scene, def, group, trans, request);
+    } else {
+      vg.scene.bounds.mark(scene);
     }
+  }
+  
+  function encodeLegend(group, scene, def, trans, request) {
+    encodeGroup.call(this, scene, def, group, trans, request);
+    encodeItems.call(this, group, scene.items, def, trans, request);
   }
   
   function encodeGroup(scene, def, parent, trans, request) {
@@ -62,17 +72,26 @@ vg.scene.encode = (function() {
       for (m=0, mlen=group.items.length; m<mlen; ++m) {
         encode.call(this, group, group.items[m], def.marks[m], trans, request);
       }
-      
-      // update group-level legends
-      if (def.legends) {
+    }
+    
+    // compute bounds
+    vg.scene.bounds.mark(scene);
+    
+    // update legends
+    if (def.legends) {
+      for (i=0, len=scene.items.length; i<len; ++i) {
+        group = scene.items[i];
         leg = group.legends || (group.legends = []);
         legItems = group.legendItems || (group.legendItems = []);
         vg.parse.legends(def.legends, leg, group.scales);
         leg.forEach(function(l, i) {
           legDef = l.def();
           legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
-          encode.call(this, group, group.legendItems[i], legDef, trans);
+          encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });
+      }
+      for (i=0, len=group.legendItems.length; i<len; ++i) {
+        scene.bounds.union(group.legendItems[i].bounds);
       }
     }
   }
