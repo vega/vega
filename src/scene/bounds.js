@@ -127,11 +127,6 @@ vg.scene.bounds = (function() {
     var size = o.size != null ? o.size : 100,
         x = o.x, y = o.y, r, t, rx, ry;
 
-    if (o.shape == null || o.shape === "circle") {
-      r = Math.sqrt(size/Math.PI);
-      return bounds.set(x-r, y-r, x+r, y+r);
-    }
-
     switch (o.shape) {
       case "cross":
         r = Math.sqrt(size / 5) / 2;
@@ -161,8 +156,12 @@ vg.scene.bounds = (function() {
         rx = Math.sqrt(size / sqrt3);
         ry = rx * sqrt3 / 2;
         bounds.set(x-rx, y-ry, x+rx, y+ry);
+        break;
+
+      default:
+        r = Math.sqrt(size/Math.PI);
+        bounds.set(x-r, y-r, x+r, y+r);
     }
-    
     if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
       bounds.expand(o.strokeWidth);
     }
@@ -212,21 +211,29 @@ vg.scene.bounds = (function() {
     return bounds.expand(noRotate ? 0 : 1);
   }
 
-  function group(g, bounds) {
+  function group(g, bounds, includeLegends) {
     var axes = g.axisItems || [],
         legends = g.legendItems || [], j, m;
 
     for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].def.layer === "back") bounds.union(axes[j].bounds);
+      bounds.union(axes[j].bounds);
     }
     for (j=0, m=g.items.length; j<m; ++j) {
       bounds.union(g.items[j].bounds);
     }
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].def.layer !== "back") bounds.union(axes[j].bounds);
+    if (includeLegends) {
+      for (j=0, m=legends.length; j<m; ++j) {
+        bounds.union(legends[j].bounds);
+      }
+      if (g.width != null && g.height != null) {
+        bounds.add(g.width, g.height);
+      }
+      if (g.x != null && g.y != null) {
+        bounds.add(0, 0);
+      }
     }
-    
-    return bounds.translate(g.x||0, g.y||0);
+    bounds.translate(g.x||0, g.y||0);
+    return bounds;
   }
 
   var methods = {
@@ -242,18 +249,18 @@ vg.scene.bounds = (function() {
     line:   line
   };
 
-  function itemBounds(item, func) {
+  function itemBounds(item, func, opt) {
     func = func || methods[item.mark.marktype];
     if (!item.bounds_prev) item.bounds_prev = new vg.Bounds();
     var b = item.bounds, pb = item.bounds_prev;
     if (b) pb.clear().union(b);
-    item.bounds = func(item, b || new vg.Bounds());
+    item.bounds = func(item, b ? b.clear() : new vg.Bounds(), opt);
     if (!b) pb.clear().union(item.bounds);
     return item.bounds;
   }
 
-  function markBounds(mark, bounds) {
-    bounds = bounds || new vg.Bounds();
+  function markBounds(mark, bounds, opt) {
+    bounds = bounds || mark.bounds && mark.bounds.clear() || new vg.Bounds();
     var type  = mark.marktype,
         func  = methods[type],
         items = mark.items,
@@ -263,16 +270,17 @@ vg.scene.bounds = (function() {
       items[0].bounds = func(items[0], bounds);
     } else {
       for (i=0, len=items.length; i<len; ++i) {
-        bounds.union(itemBounds(items[i], func));
+        bounds.union(itemBounds(items[i], func, opt));
       }
     }
     mark.bounds = bounds;
   }
   
   return {
-    mark: markBounds,
-    item: itemBounds,
-    text: text
+    mark:  markBounds,
+    item:  itemBounds,
+    text:  text,
+    group: group
   };
 
 })();

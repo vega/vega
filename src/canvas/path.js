@@ -60,7 +60,7 @@ vg.canvas.path = (function() {
     }
   }
 
-  function boundsArc(x, y, coords, bounds) {
+  function boundArc(x, y, coords, bounds) {
     var rx = coords[0];
     var ry = coords[1];
     var rot = coords[2];
@@ -486,7 +486,7 @@ vg.canvas.path = (function() {
         tempY,
         tempControlX,
         tempControlY;
-  
+
     for (var i=0, len=path.length; i<len; ++i) {
       current = path[i];
 
@@ -671,7 +671,7 @@ vg.canvas.path = (function() {
           break;
 
         case 'a':
-          drawArc(g, x, y, [
+          boundArc(g, x, y, [
             current[1],
             current[2],
             current[3],
@@ -685,7 +685,7 @@ vg.canvas.path = (function() {
           break;
 
         case 'A':
-          drawArc(g, x, y, [
+          boundArc(g, x, y, [
             current[1],
             current[2],
             current[3],

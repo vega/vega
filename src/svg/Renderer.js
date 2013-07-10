@@ -10,8 +10,6 @@ vg.svg.Renderer = (function() {
   
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    this._width = width;
-    this._height = height;
 
     // remove any existing svg element
     d3.select(el).select("svg.marks").remove();
@@ -24,15 +22,17 @@ vg.svg.Renderer = (function() {
     // set the svg root group
     this._ctx = this._svg.append("g");
     
-    return this.padding(pad);
+    return this.resize(width, height, pad);
   };
   
-  prototype.padding = function(pad) {
+  prototype.resize = function(width, height, pad) {
+    this._width = width;
+    this._height = height;
     this._padding = pad;
     
     this._svg
-      .attr("width", this._width + pad.left + pad.right)
-      .attr("height", this._height + pad.top + pad.bottom);
+      .attr("width", width + pad.left + pad.right)
+      .attr("height", height + pad.top + pad.bottom);
       
     this._ctx
       .attr("transform", "translate("+pad.left+","+pad.top+")");

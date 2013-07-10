@@ -5,6 +5,7 @@ vg.View = (function() {
     this._model = new vg.Model();
     this._width = width || 500;
     this._height = height || 500;
+    this._autopad = 1;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
     this._renderer = null;
@@ -38,13 +39,39 @@ vg.View = (function() {
   prototype.padding = function(pad) {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
-      this._padding = pad;
+      if (pad === "auto") {
+        this._autopad = 1;
+        this._padding = {top:0, left:0, bottom:0, right:0};
+      } else {
+        this._autopad = 0;
+        this._padding = pad;
+      }
       if (this._el) {
-        this._renderer.padding(pad);
+        this._renderer.resize(this._width, this._height, pad);
         this._handler.padding(pad);
       }
     }
     return this;
+  };
+  
+  prototype.autopad = function(opt) {
+    if (this._autopad < 1) return this;
+    else this._autopad = 0;
+
+    var pad = this._padding,
+        bounds = this.model().scene().bounds,
+        l = -bounds.x1,
+        t = -bounds.y1,
+        r = +bounds.x2 - this._width,
+        b = +bounds.y2 - this._height,
+        inset = vg.config.autopadInset;
+
+    this.padding({
+      left:   pad && pad.left   > l ? pad.left   : l+inset,
+      right:  pad && pad.right  > r ? pad.right  : r+inset,
+      top:    pad && pad.top    > t ? pad.top    : t+inset,
+      bottom: pad && pad.bottom > b ? pad.bottom : b+inset
+    }).update(opt);
   };
 
   prototype.viewport = function(size) {
@@ -164,7 +191,8 @@ vg.View = (function() {
       });
     }
     else view.render(opt.items);
-    return view;
+
+    return view.autopad(opt);
   };
       
   return view;

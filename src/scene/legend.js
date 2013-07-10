@@ -77,6 +77,7 @@ vg.scene.legend = function() {
     var scale = {
       name: "legend",
       type: "ordinal",
+      points: true,
       domain: domain,
       range: range
     };
@@ -315,19 +316,19 @@ function vg_legendUpdate(item, group, trans) {
       offset = item.mark.def.offset,
       orient = item.mark.def.orient,
       pad    = item.mark.def.padding * 2,
-      gx1    = group.bounds && group.bounds.x1 || 0,
-      gx2    = group.bounds && group.bounds.x2 || group.width,
-      lw     = ~~item.bounds.width() + pad,
-      lh     = ~~item.bounds.height() + pad;
+      gx1    = group.bounds ? group.bounds.x1 : 0,
+      gx2    = group.bounds ? group.bounds.x2 : group.width,
+      lw     = ~~item.bounds.width() + (o.width ? 0 : pad),
+      lh     = ~~item.bounds.height() + (o.height ? 0 : pad);
 
   o.x = 0.5;
   o.y = 0.5;
   o.width = lw;
   o.height = lh;
 
-  switch(orient) {
-    case "left":   o.x += gx1 - offset - lw; break;
-    case "right":  o.x += gx2 + offset;      break;
+  switch (orient) {
+    case "left":  { o.x += gx1 - offset - lw; break; };
+    case "right": { o.x += gx2 + offset; break; };
   }
   
   item.mark.def.properties.enter(item, group, trans);

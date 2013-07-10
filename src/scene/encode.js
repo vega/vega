@@ -39,6 +39,7 @@ vg.scene.encode = (function() {
   function encodeLegend(group, scene, def, trans, request) {
     encodeGroup.call(this, scene, def, group, trans, request);
     encodeItems.call(this, group, scene.items, def, trans, request);
+    vg.scene.bounds.mark(scene, null, true);
   }
   
   function encodeGroup(scene, def, parent, trans, request) {
@@ -74,8 +75,8 @@ vg.scene.encode = (function() {
       }
     }
     
-    // compute bounds
-    vg.scene.bounds.mark(scene);
+    // compute bounds (without legend)
+    vg.scene.bounds.mark(scene, null, !def.legends);
     
     // update legends
     if (def.legends) {
@@ -90,9 +91,7 @@ vg.scene.encode = (function() {
           encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });
       }
-      for (i=0, len=group.legendItems.length; i<len; ++i) {
-        scene.bounds.union(group.legendItems[i].bounds);
-      }
+      vg.scene.bounds.mark(scene, null, true);
     }
   }
   

@@ -36,6 +36,7 @@ vg.canvas.marks = (function() {
       r = Math.sqrt(size/Math.PI);
       g.arc(x, y, r, 0, 2*Math.PI, 0);
       g.closePath();
+      return;
     }
 
     switch (o.shape) {
@@ -372,7 +373,7 @@ vg.canvas.marks = (function() {
       }
       if (bounds) bounds.translate(gx, gy);
       g.restore();
-    }
+    }    
   }
 
   function color(g, o, value) {

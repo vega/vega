@@ -9,8 +9,6 @@ vg.canvas.Renderer = (function() {
   
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    this._width = width;
-    this._height = height;
     this._padding = pad;
     
     if (!el) return this; // early exit if no DOM element
@@ -25,16 +23,20 @@ vg.canvas.Renderer = (function() {
       .append("canvas")
       .attr("class", "marks");
     
-    return this.padding(pad);
+    return this.resize(width, height, pad);
   };
   
-  prototype.padding = function(pad) {
+  prototype.resize = function(width, height, pad) {
+    this._width = width;
+    this._height = height;
+    this._padding = pad;
+    
     var canvas = d3.select(this._el).select("canvas.marks");
 
     // initialize canvas attributes
     canvas
-      .attr("width", this._width + pad.left + pad.right)
-      .attr("height", this._height + pad.top + pad.bottom);
+      .attr("width", width + pad.left + pad.right)
+      .attr("height", height + pad.top + pad.bottom);
 
     // get the canvas graphics context
     var s;
