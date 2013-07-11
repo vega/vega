@@ -28,6 +28,7 @@ vega.js: \
 	src/data/read.js \
 	src/data/array.js \
 	src/data/copy.js \
+	src/data/cross.js \
 	src/data/facet.js \
 	src/data/filter.js \
 	src/data/flatten.js \

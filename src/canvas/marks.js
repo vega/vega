@@ -24,6 +24,7 @@ vg.canvas.marks = (function() {
   }
 
   function pathPath(g, o) {
+    if (o.path == null) return;
     return renderPath(g, parsePath(o.path), o.x, o.y);
   }
 

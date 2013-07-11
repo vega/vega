@@ -4,11 +4,12 @@
   "data": [
     {
       "name": "unemp",
-      "url": "data/unemployment.json"
+      "url": "data/unemployment.tsv",
+      "format": {"type":"tsv", "parse":{"rate":"number"}}
     },
     {
       "name": "counties",
-      "url": "data/us-counties.json",
+      "url": "data/us-counties.geojson",
       "format": {"type": "json", "property": "features"},
       "transform": [
         {"type": "geopath", "value": "data", "projection": "albersUsa"},
@@ -16,25 +17,20 @@
           "type": "zip",
           "key": "data.id",
           "with": "unemp",
-          "withKey": "data.0",
-          "as": "value"
+          "withKey": "data.id",
+          "as": "value",
+          "default": {"data":{"id":0,"rate":0}}
         }
-      ]
-    },
-    {
-      "name": "states",
-      "url": "data/us-states.json",
-      "format": {"type": "json", "property": "features"},
-      "transform": [
-        {"type":"geopath", "value":"data", "projection":"albersUsa"}
       ]
     }
   ],
   "scales": [
     {
       "name": "color",
-      "domain": {"data": "unemp", "field": "data.1"},
-      "range": ["#f5f5f5","#00b"]
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6",
+                "#4292c6", "#2171b5", "#08519c", "#08306b"]
     }
   ],
   "marks": [
@@ -43,26 +39,13 @@
       "from": {"data": "counties"},
       "properties": {
         "enter": {
-          "stroke": {"value": "#fff"},
-          "strokeWidth": {"value": 0.25},
           "path": {"field": "path"}
         },
         "update": {
-          "fill": {"scale": "color", "field": "value.data.1"}
+          "fill": {"scale": "color", "field": "value.data.rate"}
         },
         "hover": {
           "fill": {"value": "red"}
-        }
-      }
-    },
-    {
-      "type": "path",
-      "from": {"data": "states"},
-      "properties": {
-        "enter": {
-          "stroke": {"value": "#fff"},
-          "strokeWidth": {"value": 1.5},
-          "path": {"field": "path"}
         }
       }
     }

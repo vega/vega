@@ -45,9 +45,11 @@ vg.parse.scales = (function() {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
       refs = def.domain.fields || vg.array(def.domain);
-      values = refs.reduce(function(values, r) {
+      values = refs.reduce(function(values, r) {        
         var dat = db[r.data] || data,
-            get = vg.accessor(r.field);
+            get = vg.accessor(r.fieldref
+                ? "data."+vg.accessor(r.fieldref)(data)
+                : r.field);
         return vg.unique(dat, get, values);
       }, []);
       if (def.sort) values.sort(vg.cmp);
@@ -74,7 +76,13 @@ vg.parse.scales = (function() {
     domain = [null, null];
     function extract(ref, min, max, z) {
       var dat = db[ref.data] || data;
-      vg.array(ref.field).forEach(function(f,i) {
+      var fields = ref.fieldref
+          ? vg.array(ref.fieldref).map(function(x) {
+              return "data." + vg.accessor(x)(data);
+            })
+          : vg.array(ref.field);
+      
+      fields.forEach(function(f,i) {
         f = vg.accessor(f);
         if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
         if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);

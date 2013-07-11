@@ -9,7 +9,7 @@ vg.parse.properties = (function() {
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
       code += (i > 0) ? "\n  " : "  ";
-      code += "o."+name+" = "+valueRef(ref)+";";
+      code += "o."+name+" = "+valueRef(name, ref)+";";
       vars[name] = true;
     }
     
@@ -38,17 +38,20 @@ vg.parse.properties = (function() {
     return Function("item", "group", "trans", code);
   }
 
-  function valueRef(ref) {
+  function valueRef(name, ref) {
     if (ref == null) return null;
+    var isColor = name==="fill" || name==="stroke";
 
-    if (ref.c) {
-      return colorRef("hcl", ref.h, ref.c, ref.l);
-    } else if (ref.h || ref.s) {
-      return colorRef("hsl", ref.h, ref.s, ref.l);
-    } else if (ref.l || ref.a) {
-      return colorRef("lab", ref.l, ref.a, ref.b);
-    } else if (ref.r || ref.g || ref.b) {
-      return colorRef("rgb", ref.r, ref.g, ref.b);
+    if (isColor) {
+      if (ref.c) {
+        return colorRef("hcl", ref.h, ref.c, ref.l);
+      } else if (ref.h || ref.s) {
+        return colorRef("hsl", ref.h, ref.s, ref.l);
+      } else if (ref.l || ref.a) {
+        return colorRef("lab", ref.l, ref.a, ref.b);
+      } else if (ref.r || ref.g || ref.b) {
+        return colorRef("rgb", ref.r, ref.g, ref.b);
+      }
     }
 
     // initialize value
@@ -57,21 +60,30 @@ vg.parse.properties = (function() {
       val = vg.str(ref.value);
     }
 
-    // get value from enclosing group
-    if (ref.group !== undefined) {
-      val = "group["+vg.str(ref.group)+"]";
+    // get field reference for enclosing group
+    if (ref.group != null) {
+      var grp = vg.isString(ref.group) ? "["+vg.str(ref.group)+"]" : "";
     }
 
     // get data field value
-    if (ref.field !== undefined) {
-      val = "item.datum["
-          + vg.field(ref.field).map(vg.str).join("][")
-          + "]";
+    if (ref.fieldref != null) {
+      val = "vg.accessor(group.datum["
+          + vg.field(ref.fieldref).map(vg.str).join("][")
+          + "])(item.datum.data)";
+    } else if (ref.field != null) {
+      val = vg.field(ref.field).map(vg.str).join("][");
+      val = ref.group != null
+        ? "group.datum" + grp + "[item.datum[" + val + "]]"
+        : "item.datum[" + val + "]";
+    } else if (ref.group != null) {
+      val = "group[" + grp + "]";
     }
     
     // run through scale function
-    if (ref.scale !== undefined) {
-      var scale = "group.scales["+vg.str(ref.scale)+"]";
+    if (ref.scaleref != null || ref.scale != null) {
+      var scale = ref.scaleref != null
+        ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
+        : "group.scales["+vg.str(ref.scale)+"]";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {
@@ -80,8 +92,9 @@ vg.parse.properties = (function() {
     }
     
     // multiply, offset, return value
-    return "(" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
-      + (ref.offset ? " + " + vg.number(ref.offset) : "");
+    return "((" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
+      + (ref.offset ? " + " + vg.number(ref.offset) : "") + ")"
+      + (isColor ? '+""' : "");
   }
   
   function colorRef(type, x, y, z) {

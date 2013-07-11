@@ -23,12 +23,12 @@
     "vg2svg": "./bin/vg2svg"
   },
   "dependencies": {
-    "d3": "3.1.4",
-    "canvas": "1.0.2",
-    "optimist": "0.3.7"
+    "d3": "3.2.4",
+    "canvas": "1.0.3",
+    "optimist": "0.6.0"
   },
   "devDependencies": {
-    "uglify-js": "1.3.4",
+    "uglify-js": "2.3.6",
     "smash": "~0.0.8",
     "vows": "0.7.x"
   },

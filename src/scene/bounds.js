@@ -18,6 +18,7 @@ vg.scene.bounds = (function() {
   }
 
   function pathBounds(o, path, bounds) {
+    if (path == null) return bounds.set(0, 0, 0, 0);
     boundPath(parsePath(path), bounds);
     if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
       bounds.expand(o.strokeWidth);

@@ -157,7 +157,7 @@ vg.scene.axis = function() {
   
   axis.offset = function(x) {
     if (!arguments.length) return tickValues;
-    offset = +x;
+    offset = vg.isObject(x) ? x : +x;
     return axis;
   };
 
@@ -378,13 +378,18 @@ function vg_axisUpdate(item, group, trans) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  switch(orient) {
+  if (vg.isObject(offset)) {
+    offset = -group.scales[offset.scale](offset.value);
+  }
+
+  switch (orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }
     case "right":  { o.x = width + offset; o.y = 0; break; }
     case "bottom": { o.x = 0; o.y = height + offset; break; }
     case "top":    { o.x = 0; o.y = -offset; break; }
     default:       { o.x = 0; o.y = 0; }
   }
+
   if (trans) trans.interpolate(item, o);
 }
 

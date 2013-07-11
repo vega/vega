@@ -671,7 +671,7 @@ vg.canvas.path = (function() {
           break;
 
         case 'a':
-          boundArc(g, x, y, [
+          boundArc(x, y, [
             current[1],
             current[2],
             current[3],
@@ -685,7 +685,7 @@ vg.canvas.path = (function() {
           break;
 
         case 'A':
-          boundArc(g, x, y, [
+          boundArc(x, y, [
             current[1],
             current[2],
             current[3],

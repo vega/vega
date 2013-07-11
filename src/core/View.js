@@ -175,7 +175,7 @@ vg.View = (function() {
     return this;
   };
   
-  prototype.update = function(opt) {
+  prototype.update = function(opt) {    
     opt = opt || {};
     var view = this,
         trans = opt.duration

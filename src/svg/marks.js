@@ -49,7 +49,7 @@ vg.svg.marks = (function() {
           vg.svg._cur._defs[value.id] = value;
           value = "url(#" + value.id + ")";
         }
-        this.style.setProperty(name, value, null);
+        this.style.setProperty(name, value+"", null);
       }
     }
   }
@@ -83,7 +83,7 @@ vg.svg.marks = (function() {
     var x = o.x || 0,
         y = o.y || 0;
     this.setAttribute("transform", "translate("+x+","+y+")");
-    this.setAttribute("d", o.path);
+    if (o.path != null) this.setAttribute("d", o.path);
   }
 
   function rect(o) {

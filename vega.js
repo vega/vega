@@ -1146,7 +1146,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           break;
 
         case 'a':
-          boundArc(g, x, y, [
+          boundArc(x, y, [
             current[1],
             current[2],
             current[3],
@@ -1160,7 +1160,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           break;
 
         case 'A':
-          boundArc(g, x, y, [
+          boundArc(x, y, [
             current[1],
             current[2],
             current[3],
@@ -1214,6 +1214,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
 
   function pathPath(g, o) {
+    if (o.path == null) return;
     return renderPath(g, parsePath(o.path), o.x, o.y);
   }
 
@@ -2142,7 +2143,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           vg.svg._cur._defs[value.id] = value;
           value = "url(#" + value.id + ")";
         }
-        this.style.setProperty(name, value, null);
+        this.style.setProperty(name, value+"", null);
       }
     }
   }
@@ -2176,7 +2177,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var x = o.x || 0,
         y = o.y || 0;
     this.setAttribute("transform", "translate("+x+","+y+")");
-    this.setAttribute("d", o.path);
+    if (o.path != null) this.setAttribute("d", o.path);
   }
 
   function rect(o) {
@@ -2732,6 +2733,39 @@ function vg_load_http(url, callback) {
   };
 
   return copy;
+};vg.data.cross = function() {
+  var other = null,
+      nodiag = false,
+      output = {left:"a", right:"b"};
+
+  function cross(data) {
+    var result = [],
+        data2 = other || data,
+        o, i, j, n = data.length;
+
+    for (i=0; i<n; ++i) {
+      for (j=0; j<n; ++j) {
+        if (nodiag && i===j) continue;
+        o = {};
+        o[output.left] = data[i];
+        o[output.right] = data2[j];
+        result.push(o);
+      }
+    }
+    return result;
+  }
+
+  cross["with"] = function(d) {
+    other = d;
+    return cross;
+  };
+  
+  cross.diagonal = function(x) {
+    nodiag = !x;
+    return cross;
+  };
+
+  return cross;
 };vg.data.facet = function() {
 
   var keys = [],
@@ -4049,7 +4083,7 @@ vg.parse.properties = (function() {
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
       code += (i > 0) ? "\n  " : "  ";
-      code += "o."+name+" = "+valueRef(ref)+";";
+      code += "o."+name+" = "+valueRef(name, ref)+";";
       vars[name] = true;
     }
     
@@ -4078,17 +4112,20 @@ vg.parse.properties = (function() {
     return Function("item", "group", "trans", code);
   }
 
-  function valueRef(ref) {
+  function valueRef(name, ref) {
     if (ref == null) return null;
+    var isColor = name==="fill" || name==="stroke";
 
-    if (ref.c) {
-      return colorRef("hcl", ref.h, ref.c, ref.l);
-    } else if (ref.h || ref.s) {
-      return colorRef("hsl", ref.h, ref.s, ref.l);
-    } else if (ref.l || ref.a) {
-      return colorRef("lab", ref.l, ref.a, ref.b);
-    } else if (ref.r || ref.g || ref.b) {
-      return colorRef("rgb", ref.r, ref.g, ref.b);
+    if (isColor) {
+      if (ref.c) {
+        return colorRef("hcl", ref.h, ref.c, ref.l);
+      } else if (ref.h || ref.s) {
+        return colorRef("hsl", ref.h, ref.s, ref.l);
+      } else if (ref.l || ref.a) {
+        return colorRef("lab", ref.l, ref.a, ref.b);
+      } else if (ref.r || ref.g || ref.b) {
+        return colorRef("rgb", ref.r, ref.g, ref.b);
+      }
     }
 
     // initialize value
@@ -4097,21 +4134,30 @@ vg.parse.properties = (function() {
       val = vg.str(ref.value);
     }
 
-    // get value from enclosing group
-    if (ref.group !== undefined) {
-      val = "group["+vg.str(ref.group)+"]";
+    // get field reference for enclosing group
+    if (ref.group != null) {
+      var grp = vg.isString(ref.group) ? "["+vg.str(ref.group)+"]" : "";
     }
 
     // get data field value
-    if (ref.field !== undefined) {
-      val = "item.datum["
-          + vg.field(ref.field).map(vg.str).join("][")
-          + "]";
+    if (ref.fieldref != null) {
+      val = "vg.accessor(group.datum["
+          + vg.field(ref.fieldref).map(vg.str).join("][")
+          + "])(item.datum.data)";
+    } else if (ref.field != null) {
+      val = vg.field(ref.field).map(vg.str).join("][");
+      val = ref.group != null
+        ? "group.datum" + grp + "[item.datum[" + val + "]]"
+        : "item.datum[" + val + "]";
+    } else if (ref.group != null) {
+      val = "group[" + grp + "]";
     }
     
     // run through scale function
-    if (ref.scale !== undefined) {
-      var scale = "group.scales["+vg.str(ref.scale)+"]";
+    if (ref.scaleref != null || ref.scale != null) {
+      var scale = ref.scaleref != null
+        ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
+        : "group.scales["+vg.str(ref.scale)+"]";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {
@@ -4120,8 +4166,9 @@ vg.parse.properties = (function() {
     }
     
     // multiply, offset, return value
-    return "(" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
-      + (ref.offset ? " + " + vg.number(ref.offset) : "");
+    return "((" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
+      + (ref.offset ? " + " + vg.number(ref.offset) : "") + ")"
+      + (isColor ? '+""' : "");
   }
   
   function colorRef(type, x, y, z) {
@@ -4179,9 +4226,11 @@ vg.parse.properties = (function() {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
       refs = def.domain.fields || vg.array(def.domain);
-      values = refs.reduce(function(values, r) {
+      values = refs.reduce(function(values, r) {        
         var dat = db[r.data] || data,
-            get = vg.accessor(r.field);
+            get = vg.accessor(r.fieldref
+                ? "data."+vg.accessor(r.fieldref)(data)
+                : r.field);
         return vg.unique(dat, get, values);
       }, []);
       if (def.sort) values.sort(vg.cmp);
@@ -4208,7 +4257,13 @@ vg.parse.properties = (function() {
     domain = [null, null];
     function extract(ref, min, max, z) {
       var dat = db[ref.data] || data;
-      vg.array(ref.field).forEach(function(f,i) {
+      var fields = ref.fieldref
+          ? vg.array(ref.fieldref).map(function(x) {
+              return "data." + vg.accessor(x)(data);
+            })
+          : vg.array(ref.field);
+      
+      fields.forEach(function(f,i) {
         f = vg.accessor(f);
         if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
         if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
@@ -4547,6 +4602,7 @@ vg.scene.item = function(mark) {
   }
 
   function pathBounds(o, path, bounds) {
+    if (path == null) return bounds.set(0, 0, 0, 0);
     boundPath(parsePath(path), bounds);
     if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
       bounds.expand(o.strokeWidth);
@@ -5196,7 +5252,7 @@ vg.scene.transition = function(dur, ease) {
   
   axis.offset = function(x) {
     if (!arguments.length) return tickValues;
-    offset = +x;
+    offset = vg.isObject(x) ? x : +x;
     return axis;
   };
 
@@ -5417,13 +5473,18 @@ function vg_axisUpdate(item, group, trans) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  switch(orient) {
+  if (vg.isObject(offset)) {
+    offset = -group.scales[offset.scale](offset.value);
+  }
+
+  switch (orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }
     case "right":  { o.x = width + offset; o.y = 0; break; }
     case "bottom": { o.x = 0; o.y = height + offset; break; }
     case "top":    { o.x = 0; o.y = -offset; break; }
     default:       { o.x = 0; o.y = 0; }
   }
+
   if (trans) trans.interpolate(item, o);
 }
 
@@ -6208,7 +6269,7 @@ function vg_hLegendLabels() {
     return this;
   };
   
-  prototype.update = function(opt) {
+  prototype.update = function(opt) {    
     opt = opt || {};
     var view = this,
         trans = opt.duration
