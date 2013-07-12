@@ -21,12 +21,15 @@ vg.scene.legend = function() {
   var legend = {},
       legendDef = null;
 
-  legend.def = function() {
-    var scale = size || shape || fill || stroke;
+  function reset() { legendDef = null; }
 
-    // TODO: only generate def as-needed; use dirty bit?
-    legendDef = (scale === fill || scale === stroke) && !discrete(scale.type)
-      ? quantDef(scale) : ordinalDef(scale);
+  legend.def = function() {
+    var scale = size || shape || fill || stroke; 
+    if (!legendDef) {
+      legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
+        ? quantDef(scale)
+        : ordinalDef(scale);      
+    }
     legendDef.orient = orient;
     legendDef.offset = offset;
     legendDef.padding = padding;
@@ -218,43 +221,43 @@ vg.scene.legend = function() {
 
   legend.size = function(x) {
     if (!arguments.length) return size;
-    size = x;
+    if (size !== x) { size = x; reset(); }
     return legend;
   };
 
   legend.shape = function(x) {
     if (!arguments.length) return shape;
-    shape = x;
+    if (shape !== x) { shape = x; reset(); }
     return legend;
   };
 
   legend.fill = function(x) {
     if (!arguments.length) return fill;
-    fill = x;
+    if (fill !== x) { fill = x; reset(); }
     return legend;
   };
   
   legend.stroke = function(x) {
     if (!arguments.length) return stroke;
-    stroke = x;
+    if (stroke !== x) { stroke = x; reset(); }
     return legend;
   };
 
   legend.title = function(x) {
     if (!arguments.length) return title;
-    title = x;
+    if (title !== x) { title = x; reset(); }
     return legend;
   };
 
   legend.format = function(x) {
     if (!arguments.length) return format;
-    format = x;
+    if (format !== x) { format = x; reset(); }
     return legend;
   };
 
   legend.spacing = function(x) {
     if (!arguments.length) return spacing;
-    spacing = +x;
+    if (spacing !== +x) { spacing = +x; reset(); }
     return legend;
   };
 
@@ -272,39 +275,41 @@ vg.scene.legend = function() {
 
   legend.values = function(x) {
     if (!arguments.length) return values;
-    values = x;
+    if (values !== x) { values = x; reset(); }
     return legend;
   };
 
   legend.legendProperties = function(x) {
     if (!arguments.length) return legendStyle;
-    legendStyle = x;
+    if (legendStyle !== x) { legendStyle = x; reset(); }
     return legend;
   };
 
   legend.symbolProperties = function(x) {
     if (!arguments.length) return symbolStyle;
-    symbolStyle = x;
+    if (symbolStyle !== x) { symbolStyle = x; reset(); }
     return legend;
   };
 
   legend.gradientProperties = function(x) {
     if (!arguments.length) return gradientStyle;
-    gradientStyle = x;
+    if (gradientStyle !== x) { gradientStyle = x; reset(); }
     return legend;
   };
 
   legend.labelProperties = function(x) {
     if (!arguments.length) return labelStyle;
-    labelStyle = x;
+    if (labelStyle !== x) { labelStyle = x; reset(); }
     return legend;
   };
   
   legend.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    titleStyle = x;
+    if (titleStyle !== x) { titleStyle = x; reset(); }
     return legend;
   };
+
+  legend.reset = function() { reset(); };
 
   return legend;
 };

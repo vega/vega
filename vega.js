@@ -1,4 +1,4 @@
-vg = (function(d3){ // take d3 instance as sole import
+vg = (function(d3, topojson){ // take d3 & topojson as imports
 var vg = {};
 
 // semantic versioning
@@ -2667,6 +2667,27 @@ function vg_load_http(url, callback) {
     return d;
   };
   
+  formats.topojson = function(data, format) {
+    if (topojson == null) {
+      vg.error("TopoJSON library not loaded.");
+      return [];
+    }    
+    var t = JSON.parse(data), obj = [];
+
+    if (format && format.feature) {
+      obj = (obj = t.objects[format.feature])
+        ? topojson.feature(t, obj).features
+        : (vg.error("Invalid TopoJSON object: "+format.feature), []);
+    } else if (format && format.mesh) {
+      obj = (obj = t.objects[format.mesh])
+        ? [topojson.mesh(t, t.objects[format.mesh])]
+        : (vg.error("Invalid TopoJSON object: " + format.mesh), []);
+    }
+    else { vg.error("Missing TopoJSON feature or mesh parameter."); }
+
+    return obj;
+  };
+  
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),
@@ -2991,8 +3012,8 @@ function vg_load_http(url, callback) {
     var field = null,
         expr = vg.identity;
   
-    var formula = vg.data.mapper(function(d) {
-      if (field) d[field] = expr.call(null, d);
+    var formula = vg.data.mapper(function(d, i, list) {
+      if (field) d[field] = expr.call(null, d, i, list);
       return d;
     });
 
@@ -3985,7 +4006,7 @@ function vg_load_http(url, callback) {
       }
     }
     
-    return Function("d", "return ("+tokens.join("")+");");
+    return Function("d", "index", "data", "return ("+tokens.join("")+");");
   };
   
 })();vg.parse.legends = (function() {
@@ -5119,9 +5140,10 @@ vg.scene.transition = function(dur, ease) {
 
   var axis = {};
 
+  function reset() { axisDef = null; }
+
   axis.def = function() {
-    // TODO: only generate def as-needed; use dirty bit?
-    var def = axisDef = axis_def(scale);
+    var def = axisDef ? axisDef : (axisDef = axis_def(scale));
     
     // generate data
     var major = tickValues == null
@@ -5195,19 +5217,22 @@ vg.scene.transition = function(dur, ease) {
 
   axis.scale = function(x) {
     if (!arguments.length) return scale;
-    scale = x;
+    if (scale !== x) { scale = x; reset(); }
     return axis;
   };
 
   axis.orient = function(x) {
     if (!arguments.length) return orient;
-    orient = x in vg_axisOrients ? x + "" : vg.config.axis.orient;
+    if (orient !== x) {
+      orient = x in vg_axisOrients ? x + "" : vg.config.axis.orient;
+      reset();
+    }
     return axis;
   };
 
   axis.title = function(x) {
     if (!arguments.length) return title;
-    title = x;
+    if (title !== x) { title = x; reset(); }
     return axis;
   };
 
@@ -5231,16 +5256,20 @@ vg.scene.transition = function(dur, ease) {
   
   axis.tickSize = function(x, y) {
     if (!arguments.length) return tickMajorSize;
-    var n = arguments.length - 1;
-    tickMajorSize = +x;
-    tickMinorSize = n > 1 ? +y : tickMajorSize;
-    tickEndSize = n > 0 ? +arguments[n] : tickMajorSize;
-    return axis;
-  };
+    var n = arguments.length - 1,
+        major = +x,
+        minor = n > 1 ? +y : tickMajorSize,
+        end   = n > 0 ? +arguments[n] : tickMajorSize;
 
-  axis.tickPadding = function(x) {
-    if (!arguments.length) return tickPadding;
-    tickPadding = +x;
+    if (tickMajorSize !== major ||
+        tickMinorSize !== minor ||
+        tickEndSize !== end) {
+      reset();
+    }
+
+    tickMajorSize = major;
+    tickMinorSize = minor;
+    tickEndSize = end;
     return axis;
   };
 
@@ -5256,59 +5285,67 @@ vg.scene.transition = function(dur, ease) {
     return axis;
   };
 
+  axis.tickPadding = function(x) {
+    if (!arguments.length) return tickPadding;
+    if (tickPadding !== +x) { tickPadding = +x; reset(); }
+    return axis;
+  };
+
   axis.titleOffset = function(x) {
     if (!arguments.length) return titleOffset;
-    titleOffset = +x;
+    if (titleOffset !== +x) { titleOffset = +x; reset(); }
     return axis;
   };
 
   axis.layer = function(x) {
     if (!arguments.length) return layer;
-    layer = x;
+    if (layer !== x) { layer = x; reset(); }
     return axis;
   };
 
   axis.grid = function(x) {
     if (!arguments.length) return grid;
-    grid = x;
+    if (grid !== x) { grid = x; reset(); }
     return axis;
   };
 
   axis.gridLineProperties = function(x) {
     if (!arguments.length) return gridLineStyle;
-    gridLineStyle = x;
+    if (gridLineStyle !== x) { gridLineStyle = x; reset(); }
     return axis;
   };
 
   axis.majorTickProperties = function(x) {
     if (!arguments.length) return majorTickStyle;
-    majorTickStyle = x;
+    if (majorTickStyle !== x) { majorTickStyle = x; reset(); }
     return axis;
   };
 
   axis.minorTickProperties = function(x) {
     if (!arguments.length) return minorTickStyle;
-    minorTickStyle = x;
+    if (minorTickStyle !== x) { minorTickStyle = x; reset(); }
     return axis;
   };
 
   axis.tickLabelProperties = function(x) {
     if (!arguments.length) return tickLabelStyle;
-    tickLabelStyle = x;
+    if (tickLabelStyle !== x) { tickLabelStyle = x; reset(); }
     return axis;
   };
 
   axis.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    titleStyle = x;
+    if (titleStyle !== x) { titleStyle = x; reset(); }
     return axis;
   };
 
   axis.domainProperties = function(x) {
     if (!arguments.length) return domainStyle;
-    domainStyle = x;
+    if (domainStyle !== x) { domainStyle = x; reset(); }
     return axis;
   };
+  
+  axis.reset = function() { reset(); };
 
   return axis;
 };
@@ -5581,12 +5618,15 @@ vg.scene.legend = function() {
   var legend = {},
       legendDef = null;
 
-  legend.def = function() {
-    var scale = size || shape || fill || stroke;
+  function reset() { legendDef = null; }
 
-    // TODO: only generate def as-needed; use dirty bit?
-    legendDef = (scale === fill || scale === stroke) && !discrete(scale.type)
-      ? quantDef(scale) : ordinalDef(scale);
+  legend.def = function() {
+    var scale = size || shape || fill || stroke; 
+    if (!legendDef) {
+      legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
+        ? quantDef(scale)
+        : ordinalDef(scale);      
+    }
     legendDef.orient = orient;
     legendDef.offset = offset;
     legendDef.padding = padding;
@@ -5778,43 +5818,43 @@ vg.scene.legend = function() {
 
   legend.size = function(x) {
     if (!arguments.length) return size;
-    size = x;
+    if (size !== x) { size = x; reset(); }
     return legend;
   };
 
   legend.shape = function(x) {
     if (!arguments.length) return shape;
-    shape = x;
+    if (shape !== x) { shape = x; reset(); }
     return legend;
   };
 
   legend.fill = function(x) {
     if (!arguments.length) return fill;
-    fill = x;
+    if (fill !== x) { fill = x; reset(); }
     return legend;
   };
   
   legend.stroke = function(x) {
     if (!arguments.length) return stroke;
-    stroke = x;
+    if (stroke !== x) { stroke = x; reset(); }
     return legend;
   };
 
   legend.title = function(x) {
     if (!arguments.length) return title;
-    title = x;
+    if (title !== x) { title = x; reset(); }
     return legend;
   };
 
   legend.format = function(x) {
     if (!arguments.length) return format;
-    format = x;
+    if (format !== x) { format = x; reset(); }
     return legend;
   };
 
   legend.spacing = function(x) {
     if (!arguments.length) return spacing;
-    spacing = +x;
+    if (spacing !== +x) { spacing = +x; reset(); }
     return legend;
   };
 
@@ -5832,39 +5872,41 @@ vg.scene.legend = function() {
 
   legend.values = function(x) {
     if (!arguments.length) return values;
-    values = x;
+    if (values !== x) { values = x; reset(); }
     return legend;
   };
 
   legend.legendProperties = function(x) {
     if (!arguments.length) return legendStyle;
-    legendStyle = x;
+    if (legendStyle !== x) { legendStyle = x; reset(); }
     return legend;
   };
 
   legend.symbolProperties = function(x) {
     if (!arguments.length) return symbolStyle;
-    symbolStyle = x;
+    if (symbolStyle !== x) { symbolStyle = x; reset(); }
     return legend;
   };
 
   legend.gradientProperties = function(x) {
     if (!arguments.length) return gradientStyle;
-    gradientStyle = x;
+    if (gradientStyle !== x) { gradientStyle = x; reset(); }
     return legend;
   };
 
   legend.labelProperties = function(x) {
     if (!arguments.length) return labelStyle;
-    labelStyle = x;
+    if (labelStyle !== x) { labelStyle = x; reset(); }
     return legend;
   };
   
   legend.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    titleStyle = x;
+    if (titleStyle !== x) { titleStyle = x; reset(); }
     return legend;
   };
+
+  legend.reset = function() { reset(); };
 
   return legend;
 };
@@ -6632,4 +6674,5 @@ vg.headless.View.Factory = function(defs) {
 
   vg.parse.spec(opt.spec, draw, vg.headless.View.Factory);
 };return vg;
-})(d3); // assumes availability of D3 in global namespace
+})(d3, typeof topojson === "undefined" ? null : topojson);
+// assumes D3 and topojson in global namespace
