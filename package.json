@@ -25,7 +25,8 @@
   "dependencies": {
     "d3": "3.2.4",
     "canvas": "1.0.3",
-    "optimist": "0.6.0"
+    "optimist": "0.6.0",
+    "topojson": "1.0.0"
   },
   "devDependencies": {
     "uglify-js": "2.3.6",

@@ -1,1 +1,1 @@
-vg = (function(d3){ // take d3 instance as sole import
+vg = (function(d3, topojson){ // take d3 & topojson as imports

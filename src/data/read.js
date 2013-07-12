@@ -31,6 +31,27 @@ vg.data.read = (function() {
     return d;
   };
   
+  formats.topojson = function(data, format) {
+    if (topojson == null) {
+      vg.error("TopoJSON library not loaded.");
+      return [];
+    }    
+    var t = JSON.parse(data), obj = [];
+
+    if (format && format.feature) {
+      obj = (obj = t.objects[format.feature])
+        ? topojson.feature(t, obj).features
+        : (vg.error("Invalid TopoJSON object: "+format.feature), []);
+    } else if (format && format.mesh) {
+      obj = (obj = t.objects[format.mesh])
+        ? [topojson.mesh(t, t.objects[format.mesh])]
+        : (vg.error("Invalid TopoJSON object: " + format.mesh), []);
+    }
+    else { vg.error("Missing TopoJSON feature or mesh parameter."); }
+
+    return obj;
+  };
+  
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),
