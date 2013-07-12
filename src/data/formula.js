@@ -4,8 +4,8 @@ vg.data.formula = (function() {
     var field = null,
         expr = vg.identity;
   
-    var formula = vg.data.mapper(function(d) {
-      if (field) d[field] = expr.call(null, d);
+    var formula = vg.data.mapper(function(d, i, list) {
+      if (field) d[field] = expr.call(null, d, i, list);
       return d;
     });
 

@@ -51,7 +51,7 @@ vg.parse.expr = (function() {
       }
     }
     
-    return Function("d", "return ("+tokens.join("")+");");
+    return Function("d", "index", "data", "return ("+tokens.join("")+");");
   };
   
 })();
