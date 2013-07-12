@@ -4614,10 +4614,11 @@ vg.scene.item = function(mark) {
     return gfx || (gfx = (vg.config.isNode
       ? new Canvas(0, 0)
       : d3.select("body").append("canvas")
-          .style("display", "none")
           .attr("class", "vega_hidden")
           .attr("width", 0)
           .attr("height", 0)
+          .style("position", "absolute")
+          .style("display", "none")
           .node())
       .getContext("2d"));
   }
@@ -5311,37 +5312,37 @@ vg.scene.transition = function(dur, ease) {
 
   axis.gridLineProperties = function(x) {
     if (!arguments.length) return gridLineStyle;
-    if (gridLineStyle !== x) { gridLineStyle = x; reset(); }
+    if (gridLineStyle !== x) { gridLineStyle = x; }
     return axis;
   };
 
   axis.majorTickProperties = function(x) {
     if (!arguments.length) return majorTickStyle;
-    if (majorTickStyle !== x) { majorTickStyle = x; reset(); }
+    if (majorTickStyle !== x) { majorTickStyle = x; }
     return axis;
   };
 
   axis.minorTickProperties = function(x) {
     if (!arguments.length) return minorTickStyle;
-    if (minorTickStyle !== x) { minorTickStyle = x; reset(); }
+    if (minorTickStyle !== x) { minorTickStyle = x; }
     return axis;
   };
 
   axis.tickLabelProperties = function(x) {
     if (!arguments.length) return tickLabelStyle;
-    if (tickLabelStyle !== x) { tickLabelStyle = x; reset(); }
+    if (tickLabelStyle !== x) { tickLabelStyle = x; }
     return axis;
   };
 
   axis.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    if (titleStyle !== x) { titleStyle = x; reset(); }
+    if (titleStyle !== x) { titleStyle = x; }
     return axis;
   };
 
   axis.domainProperties = function(x) {
     if (!arguments.length) return domainStyle;
-    if (domainStyle !== x) { domainStyle = x; reset(); }
+    if (domainStyle !== x) { domainStyle = x; }
     return axis;
   };
   
@@ -5872,37 +5873,37 @@ vg.scene.legend = function() {
 
   legend.values = function(x) {
     if (!arguments.length) return values;
-    if (values !== x) { values = x; reset(); }
+    values = x;
     return legend;
   };
 
   legend.legendProperties = function(x) {
     if (!arguments.length) return legendStyle;
-    if (legendStyle !== x) { legendStyle = x; reset(); }
+    legendStyle = x;
     return legend;
   };
 
   legend.symbolProperties = function(x) {
     if (!arguments.length) return symbolStyle;
-    if (symbolStyle !== x) { symbolStyle = x; reset(); }
+    symbolStyle = x;
     return legend;
   };
 
   legend.gradientProperties = function(x) {
     if (!arguments.length) return gradientStyle;
-    if (gradientStyle !== x) { gradientStyle = x; reset(); }
+    gradientStyle = x;
     return legend;
   };
 
   legend.labelProperties = function(x) {
     if (!arguments.length) return labelStyle;
-    if (labelStyle !== x) { labelStyle = x; reset(); }
+    labelStyle = x;
     return legend;
   };
   
   legend.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    if (titleStyle !== x) { titleStyle = x; reset(); }
+    titleStyle = x;
     return legend;
   };
 

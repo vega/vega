@@ -9,10 +9,11 @@ vg.scene.bounds = (function() {
     return gfx || (gfx = (vg.config.isNode
       ? new Canvas(0, 0)
       : d3.select("body").append("canvas")
-          .style("display", "none")
           .attr("class", "vega_hidden")
           .attr("width", 0)
           .attr("height", 0)
+          .style("position", "absolute")
+          .style("display", "none")
           .node())
       .getContext("2d"));
   }

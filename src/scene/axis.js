@@ -195,37 +195,37 @@ vg.scene.axis = function() {
 
   axis.gridLineProperties = function(x) {
     if (!arguments.length) return gridLineStyle;
-    if (gridLineStyle !== x) { gridLineStyle = x; reset(); }
+    if (gridLineStyle !== x) { gridLineStyle = x; }
     return axis;
   };
 
   axis.majorTickProperties = function(x) {
     if (!arguments.length) return majorTickStyle;
-    if (majorTickStyle !== x) { majorTickStyle = x; reset(); }
+    if (majorTickStyle !== x) { majorTickStyle = x; }
     return axis;
   };
 
   axis.minorTickProperties = function(x) {
     if (!arguments.length) return minorTickStyle;
-    if (minorTickStyle !== x) { minorTickStyle = x; reset(); }
+    if (minorTickStyle !== x) { minorTickStyle = x; }
     return axis;
   };
 
   axis.tickLabelProperties = function(x) {
     if (!arguments.length) return tickLabelStyle;
-    if (tickLabelStyle !== x) { tickLabelStyle = x; reset(); }
+    if (tickLabelStyle !== x) { tickLabelStyle = x; }
     return axis;
   };
 
   axis.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    if (titleStyle !== x) { titleStyle = x; reset(); }
+    if (titleStyle !== x) { titleStyle = x; }
     return axis;
   };
 
   axis.domainProperties = function(x) {
     if (!arguments.length) return domainStyle;
-    if (domainStyle !== x) { domainStyle = x; reset(); }
+    if (domainStyle !== x) { domainStyle = x; }
     return axis;
   };
   

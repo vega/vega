@@ -275,37 +275,37 @@ vg.scene.legend = function() {
 
   legend.values = function(x) {
     if (!arguments.length) return values;
-    if (values !== x) { values = x; reset(); }
+    values = x;
     return legend;
   };
 
   legend.legendProperties = function(x) {
     if (!arguments.length) return legendStyle;
-    if (legendStyle !== x) { legendStyle = x; reset(); }
+    legendStyle = x;
     return legend;
   };
 
   legend.symbolProperties = function(x) {
     if (!arguments.length) return symbolStyle;
-    if (symbolStyle !== x) { symbolStyle = x; reset(); }
+    symbolStyle = x;
     return legend;
   };
 
   legend.gradientProperties = function(x) {
     if (!arguments.length) return gradientStyle;
-    if (gradientStyle !== x) { gradientStyle = x; reset(); }
+    gradientStyle = x;
     return legend;
   };
 
   legend.labelProperties = function(x) {
     if (!arguments.length) return labelStyle;
-    if (labelStyle !== x) { labelStyle = x; reset(); }
+    labelStyle = x;
     return legend;
   };
   
   legend.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
-    if (titleStyle !== x) { titleStyle = x; reset(); }
+    titleStyle = x;
     return legend;
   };
 
