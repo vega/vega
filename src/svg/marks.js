@@ -26,6 +26,7 @@ vg.svg.marks = (function() {
     "stroke":        "stroke",
     "strokeWidth":   "stroke-width",
     "strokeOpacity": "stroke-opacity",
+    "strokeCap":     "stroke-linecap",
     "opacity":       "opacity"
   };
   var styleProps = vg.keys(styles);

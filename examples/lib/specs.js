@@ -10,6 +10,7 @@ var SPECS = [
   "image",
   "lifelines",
   "map",
+  "napoleon",
   "parallel_coords",
   "population",
   "scatter",

@@ -2120,6 +2120,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     "stroke":        "stroke",
     "strokeWidth":   "stroke-width",
     "strokeOpacity": "stroke-opacity",
+    "strokeCap":     "stroke-linecap",
     "opacity":       "opacity"
   };
   var styleProps = vg.keys(styles);
@@ -3660,6 +3661,32 @@ function vg_load_http(url, callback) {
   };
 
   return unique;
+};vg.data.window = function() {
+
+  var count = 2,
+      overlap = 0;
+  
+  function win(data) {
+    data = vg.isArray(data) ? data : data.values || [];
+    var runs = [], i, j, n=data.length-overlap, curr;
+    for (i=0; i<n; ++i) {
+      for (j=0, curr=[]; j<count; ++j) curr.push(data[i+j]);
+      runs.push({key: i, values: curr});
+    }
+    return {values: runs};
+  }
+  
+  win.count = function(n) {
+    count = n;
+    return win;
+  };
+  
+  win.overlap = function(n) {
+    overlap = n;
+    return win;
+  };
+
+  return win;
 };vg.data.wordcloud = function() {
   var layout = d3.layout.cloud().size([900, 500]),
       text = vg.accessor("data"),
@@ -4171,7 +4198,7 @@ vg.parse.properties = (function() {
         ? "group.datum" + grp + "[item.datum[" + val + "]]"
         : "item.datum[" + val + "]";
     } else if (ref.group != null) {
-      val = "group[" + grp + "]";
+      val = "group" + grp;
     }
     
     // run through scale function
@@ -4187,9 +4214,10 @@ vg.parse.properties = (function() {
     }
     
     // multiply, offset, return value
-    return "((" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
-      + (ref.offset ? " + " + vg.number(ref.offset) : "") + ")"
-      + (isColor ? '+""' : "");
+    val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
+      + (ref.offset ? " + " + vg.number(ref.offset) : "");
+    if (isColor) val = '('+val+')+""';
+    return val;
   }
   
   function colorRef(type, x, y, z) {
@@ -5514,6 +5542,8 @@ function vg_axisUpdate(item, group, trans) {
   if (vg.isObject(offset)) {
     offset = -group.scales[offset.scale](offset.value);
   }
+  o.width = width;
+  o.height = height;
 
   switch (orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }

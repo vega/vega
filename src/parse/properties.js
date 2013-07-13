@@ -76,7 +76,7 @@ vg.parse.properties = (function() {
         ? "group.datum" + grp + "[item.datum[" + val + "]]"
         : "item.datum[" + val + "]";
     } else if (ref.group != null) {
-      val = "group[" + grp + "]";
+      val = "group" + grp;
     }
     
     // run through scale function
@@ -92,9 +92,10 @@ vg.parse.properties = (function() {
     }
     
     // multiply, offset, return value
-    return "((" + (ref.mult ? (vg.number(ref.mult)+" * ") : "") + val + ")"
-      + (ref.offset ? " + " + vg.number(ref.offset) : "") + ")"
-      + (isColor ? '+""' : "");
+    val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
+      + (ref.offset ? " + " + vg.number(ref.offset) : "");
+    if (isColor) val = '('+val+')+""';
+    return val;
   }
   
   function colorRef(type, x, y, z) {

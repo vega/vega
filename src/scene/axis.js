@@ -397,6 +397,8 @@ function vg_axisUpdate(item, group, trans) {
   if (vg.isObject(offset)) {
     offset = -group.scales[offset.scale](offset.value);
   }
+  o.width = width;
+  o.height = height;
 
   switch (orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }

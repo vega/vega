@@ -46,6 +46,7 @@ vega.js: \
 	src/data/treemap.js \
 	src/data/truncate.js \
 	src/data/unique.js \
+	src/data/window.js \
 	src/data/wordcloud.js \
 	src/data/zip.js \
 	src/parse/_package.js \
