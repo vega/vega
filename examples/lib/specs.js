@@ -19,5 +19,6 @@ var SPECS = [
   "stacked_bar",
   "stocks",
   "treemap",
+  "weather",
   "wordcloud"
 ];
