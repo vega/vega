@@ -28,8 +28,8 @@
     }
   ],
   "axes": [
-    {"type": "x", "scale": "x", "offset": 5, "ticks": 5},
-    {"type": "y", "scale": "y", "offset": 5, "ticks": 5}
+    {"type": "x", "scale": "x", "offset": 5, "ticks": 5, "title": "Sepal Width"},
+    {"type": "y", "scale": "y", "offset": 5, "ticks": 5, "title": "Petal Length"}
   ],
   "legends": [
     {

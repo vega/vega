@@ -47,9 +47,8 @@ vg.parse.scales = (function() {
       refs = def.domain.fields || vg.array(def.domain);
       values = refs.reduce(function(values, r) {        
         var dat = db[r.data] || data,
-            get = vg.accessor(r.fieldref
-                ? "data."+vg.accessor(r.fieldref)(data)
-                : r.field);
+            get = vg.accessor(vg.isString(r.field)
+              ? r.field : "data." + vg.accessor(r.field.group)(data));
         return vg.unique(dat, get, values);
       }, []);
       if (def.sort) values.sort(vg.cmp);
@@ -76,11 +75,10 @@ vg.parse.scales = (function() {
     domain = [null, null];
     function extract(ref, min, max, z) {
       var dat = db[ref.data] || data;
-      var fields = ref.fieldref
-          ? vg.array(ref.fieldref).map(function(x) {
-              return "data." + vg.accessor(x)(data);
-            })
-          : vg.array(ref.field);
+      var fields = vg.array(ref.field).map(function(f) {
+        return vg.isString(f) ? f
+          : "data." + vg.accessor(f.group)(data);
+      });
       
       fields.forEach(function(f,i) {
         f = vg.accessor(f);

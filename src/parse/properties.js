@@ -66,24 +66,32 @@ vg.parse.properties = (function() {
     }
 
     // get data field value
-    if (ref.fieldref != null) {
-      val = "vg.accessor(group.datum["
-          + vg.field(ref.fieldref).map(vg.str).join("][")
-          + "])(item.datum.data)";
-    } else if (ref.field != null) {
-      val = vg.field(ref.field).map(vg.str).join("][");
-      val = ref.group != null
-        ? "group.datum" + grp + "[item.datum[" + val + "]]"
-        : "item.datum[" + val + "]";
+    if (ref.field != null) {
+      if (vg.isString(ref.field)) {
+        val = vg.field(ref.field).map(vg.str).join("][");
+        val = ref.group != null
+          ? "group.datum" + grp + "[item.datum[" + val + "]]"
+          : "item.datum[" + val + "]";
+      } else {
+        val = "vg.accessor(group.datum["
+            + vg.field(ref.field.group).map(vg.str).join("][")
+            + "])(item.datum.data)";
+      }
     } else if (ref.group != null) {
       val = "group" + grp;
     }
-    
+
     // run through scale function
-    if (ref.scaleref != null || ref.scale != null) {
-      var scale = ref.scaleref != null
-        ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
-        : "group.scales["+vg.str(ref.scale)+"]";
+    if (ref.scale != null) {
+      var scale = vg.isString(ref.scale)
+        ? vg.str(ref.scale)
+        : (ref.scale.group ? "group" : "item")
+          + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
+      scale = "group.scales[" + scale + "]";
+
+      // var scale = ref.scaleref != null
+      //   ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
+      //   : "group.scales["+vg.str(ref.scale)+"]";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {

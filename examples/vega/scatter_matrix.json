@@ -68,14 +68,14 @@
           "range": "width",
           "zero": false,
           "round": true,
-          "domain": {"data": "iris", "fieldref": "a.data"}
+          "domain": {"data": "iris", "field": {"group": "a.data"}}
         },
         {
           "name": "y",
           "range": "height",
           "zero": false,
           "round": true,
-          "domain": {"data": "iris", "fieldref": "b.data"}
+          "domain": {"data": "iris", "field": {"group": "b.data"}}
         }
       ],
       "axes": [
@@ -88,8 +88,8 @@
           "from": {"data": "iris"},
           "properties": {
             "enter": {
-              "x": {"scale": "x", "fieldref": "a.data"},
-              "y": {"scale": "y", "fieldref": "b.data"},
+              "x": {"scale": "x", "field": {"group": "a.data"}},
+              "y": {"scale": "y", "field": {"group": "b.data"}},
               "fill": {"scale": "c", "field": "data.species"},
               "fillOpacity": {"value": 0.5}
             },

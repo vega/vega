@@ -4188,24 +4188,32 @@ vg.parse.properties = (function() {
     }
 
     // get data field value
-    if (ref.fieldref != null) {
-      val = "vg.accessor(group.datum["
-          + vg.field(ref.fieldref).map(vg.str).join("][")
-          + "])(item.datum.data)";
-    } else if (ref.field != null) {
-      val = vg.field(ref.field).map(vg.str).join("][");
-      val = ref.group != null
-        ? "group.datum" + grp + "[item.datum[" + val + "]]"
-        : "item.datum[" + val + "]";
+    if (ref.field != null) {
+      if (vg.isString(ref.field)) {
+        val = vg.field(ref.field).map(vg.str).join("][");
+        val = ref.group != null
+          ? "group.datum" + grp + "[item.datum[" + val + "]]"
+          : "item.datum[" + val + "]";
+      } else {
+        val = "vg.accessor(group.datum["
+            + vg.field(ref.field.group).map(vg.str).join("][")
+            + "])(item.datum.data)";
+      }
     } else if (ref.group != null) {
       val = "group" + grp;
     }
-    
+
     // run through scale function
-    if (ref.scaleref != null || ref.scale != null) {
-      var scale = ref.scaleref != null
-        ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
-        : "group.scales["+vg.str(ref.scale)+"]";
+    if (ref.scale != null) {
+      var scale = vg.isString(ref.scale)
+        ? vg.str(ref.scale)
+        : (ref.scale.group ? "group" : "item")
+          + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
+      scale = "group.scales[" + scale + "]";
+
+      // var scale = ref.scaleref != null
+      //   ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
+      //   : "group.scales["+vg.str(ref.scale)+"]";
       if (ref.band) {
         val = scale + ".rangeBand()";
       } else {
@@ -4277,9 +4285,8 @@ vg.parse.properties = (function() {
       refs = def.domain.fields || vg.array(def.domain);
       values = refs.reduce(function(values, r) {        
         var dat = db[r.data] || data,
-            get = vg.accessor(r.fieldref
-                ? "data."+vg.accessor(r.fieldref)(data)
-                : r.field);
+            get = vg.accessor(vg.isString(r.field)
+              ? r.field : "data." + vg.accessor(r.field.group)(data));
         return vg.unique(dat, get, values);
       }, []);
       if (def.sort) values.sort(vg.cmp);
@@ -4306,11 +4313,10 @@ vg.parse.properties = (function() {
     domain = [null, null];
     function extract(ref, min, max, z) {
       var dat = db[ref.data] || data;
-      var fields = ref.fieldref
-          ? vg.array(ref.fieldref).map(function(x) {
-              return "data." + vg.accessor(x)(data);
-            })
-          : vg.array(ref.field);
+      var fields = vg.array(ref.field).map(function(f) {
+        return vg.isString(f) ? f
+          : "data." + vg.accessor(f.group)(data);
+      });
       
       fields.forEach(function(f,i) {
         f = vg.accessor(f);
