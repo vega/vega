@@ -65,6 +65,7 @@ vg.scene.encode = (function() {
         axes.forEach(function(a, i) {
           axisDef = a.def();
           axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i]);
+          axisItems[i].group = group;
           encode.call(this, group, group.axisItems[i], axisDef, trans);
         });
       }
@@ -88,6 +89,7 @@ vg.scene.encode = (function() {
         leg.forEach(function(l, i) {
           legDef = l.def();
           legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
+          legItems[i].group = group;
           encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });
       }

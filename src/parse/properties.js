@@ -62,7 +62,9 @@ vg.parse.properties = (function() {
 
     // get field reference for enclosing group
     if (ref.group != null) {
-      var grp = vg.isString(ref.group) ? "["+vg.str(ref.group)+"]" : "";
+      var grp = vg.isString(ref.group)
+        ? "[" + vg.field(ref.group).map(vg.str).join("][") + "]"
+        : "";
     }
 
     // get data field value
@@ -88,15 +90,7 @@ vg.parse.properties = (function() {
         : (ref.scale.group ? "group" : "item")
           + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
       scale = "group.scales[" + scale + "]";
-
-      // var scale = ref.scaleref != null
-      //   ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
-      //   : "group.scales["+vg.str(ref.scale)+"]";
-      if (ref.band) {
-        val = scale + ".rangeBand()";
-      } else {
-        val = scale + "(" + val + ")";
-      }
+      val = scale + (ref.band ? ".rangeBand()" : "("+val+")");
     }
     
     // multiply, offset, return value

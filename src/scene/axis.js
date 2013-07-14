@@ -319,8 +319,8 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
   var sign = (orient === "left" || orient === "top") ? -1 : 1;
   if (size === Infinity) {
     size = (orient === "top" || orient === "bottom")
-      ? {group: "height", mult: -sign}
-      : {group: "width", mult: -sign};
+      ? {group: "mark.group.height", mult: -sign}
+      : {group: "mark.group.width", mult: -sign};
   } else {
     size = {value: sign * size};
   }
@@ -397,8 +397,6 @@ function vg_axisUpdate(item, group, trans) {
   if (vg.isObject(offset)) {
     offset = -group.scales[offset.scale](offset.value);
   }
-  o.width = width;
-  o.height = height;
 
   switch (orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }

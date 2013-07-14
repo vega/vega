@@ -4184,7 +4184,9 @@ vg.parse.properties = (function() {
 
     // get field reference for enclosing group
     if (ref.group != null) {
-      var grp = vg.isString(ref.group) ? "["+vg.str(ref.group)+"]" : "";
+      var grp = vg.isString(ref.group)
+        ? "[" + vg.field(ref.group).map(vg.str).join("][") + "]"
+        : "";
     }
 
     // get data field value
@@ -4210,15 +4212,7 @@ vg.parse.properties = (function() {
         : (ref.scale.group ? "group" : "item")
           + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
       scale = "group.scales[" + scale + "]";
-
-      // var scale = ref.scaleref != null
-      //   ? "group.scales[item.datum["+vg.str(ref.scaleref)+"]]"
-      //   : "group.scales["+vg.str(ref.scale)+"]";
-      if (ref.band) {
-        val = scale + ".rangeBand()";
-      } else {
-        val = scale + "(" + val + ")";
-      }
+      val = scale + (ref.band ? ".rangeBand()" : "("+val+")");
     }
     
     // multiply, offset, return value
@@ -4991,6 +4985,7 @@ vg.scene.item = function(mark) {
         axes.forEach(function(a, i) {
           axisDef = a.def();
           axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i]);
+          axisItems[i].group = group;
           encode.call(this, group, group.axisItems[i], axisDef, trans);
         });
       }
@@ -5014,6 +5009,7 @@ vg.scene.item = function(mark) {
         leg.forEach(function(l, i) {
           legDef = l.def();
           legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
+          legItems[i].group = group;
           encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });
       }
@@ -5470,8 +5466,8 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
   var sign = (orient === "left" || orient === "top") ? -1 : 1;
   if (size === Infinity) {
     size = (orient === "top" || orient === "bottom")
-      ? {group: "height", mult: -sign}
-      : {group: "width", mult: -sign};
+      ? {group: "mark.group.height", mult: -sign}
+      : {group: "mark.group.width", mult: -sign};
   } else {
     size = {value: sign * size};
   }
@@ -5548,8 +5544,6 @@ function vg_axisUpdate(item, group, trans) {
   if (vg.isObject(offset)) {
     offset = -group.scales[offset.scale](offset.value);
   }
-  o.width = width;
-  o.height = height;
 
   switch (orient) {
     case "left":   { o.x = -offset; o.y = 0; break; }
