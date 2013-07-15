@@ -8,6 +8,7 @@ var SPECS = [
   "error",
   "force",
   "image",
+  "jobs",
   "lifelines",
   "map",
   "napoleon",

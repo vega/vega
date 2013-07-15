@@ -97,18 +97,18 @@ vg.scene.encode = (function() {
     }
   }
   
-  function encodeItems(group, items, def, trans, request) {
-    if (def.properties == null) return;
-    
-    var props  = def.properties,
+  function encodeItems(group, items, def, trans, request) {    
+    var props  = def.properties || EMPTY,
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,
         i, len, item, prop;
 
-    if (request && (prop = props[request])) {
-      for (i=0, len=items.length; i<len; ++i) {
-        prop.call(this, items[i], group, trans);
+    if (request) {
+      if (prop = props[request]) {
+        for (i=0, len=items.length; i<len; ++i) {
+          prop.call(this, items[i], group, trans);
+        }
       }
       return; // exit early if given request
     }
@@ -129,9 +129,9 @@ vg.scene.encode = (function() {
       
       // exit set
       if (item.status === EXIT) {
-        if (exit && trans) exit.call(this, item, group, trans);
-        else if (trans) trans.interpolate(item, EMPTY);
-        else items[i--].remove();
+        if (exit) exit.call(this, item, group, trans);
+        if (trans && !exit) trans.interpolate(item, EMPTY);
+        else if (!trans) items[i--].remove();
       }
     }
   }

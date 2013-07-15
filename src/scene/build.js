@@ -54,7 +54,7 @@ vg.scene.build = (function() {
       item.key = key;
       next.push(item);
     }
-    
+
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
       if (item.status === EXIT) {
