@@ -263,9 +263,9 @@ vg.canvas.marks = (function() {
       var x, y, w, h, opac;
       w = o.width || (o.image && o.image.width) || 0;
       h = o.height || (o.image && o.image.height) || 0;
-      x = o.x - (o.align === "center"
+      x = (o.x||0) - (o.align === "center"
         ? w/2 : (o.align === "right" ? w : 0));
-      y = o.y - (o.baseline === "middle"
+      y = (o.y||0) - (o.baseline === "middle"
         ? h/2 : (o.baseline === "bottom" ? h : 0));
 
       if (o.image.loaded) {
@@ -294,13 +294,13 @@ vg.canvas.marks = (function() {
 
       if (o.angle) {
         g.save();
-        g.translate(o.x, o.y);
+        g.translate(o.x || 0, o.y || 0);
         g.rotate(o.angle * Math.PI/180);
         x = o.dx || 0;
         y = o.dy || 0;
       } else {
-        x = o.x + (o.dx || 0);
-        y = o.y + (o.dy || 0);
+        x = (o.x || 0) + (o.dx || 0);
+        y = (o.y || 0) + (o.dy || 0);
       }
 
       if (fill = o.fill) {

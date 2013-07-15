@@ -55,12 +55,11 @@ vg.scene.bounds = (function() {
   }
 
   function rect(o, bounds) {
-    bounds.set(
-      o.x || 0,
-      o.y || 0,
-      (o.x + o.width) || 0,
-      (o.y + o.height) || 0
-    );
+    var x = o.x || 0,
+        y = o.y || 0,
+        w = (x + o.width) || 0,
+        h = (y + o.height) || 0;
+    bounds.set(x, y, w, h);
     if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
       bounds.expand(o.strokeWidth);
     }
@@ -70,9 +69,9 @@ vg.scene.bounds = (function() {
   function image(o, bounds) {
     var w = o.width || 0,
         h = o.height || 0,
-        x = o.x - (o.align === "center"
+        x = (o.x||0) - (o.align === "center"
             ? w/2 : (o.align === "right" ? w : 0)),
-        y = o.y - (o.baseline === "middle"
+        y = (o.y||0) - (o.baseline === "middle"
             ? h/2 : (o.baseline === "bottom" ? h : 0));
     return bounds.set(x, y, x+w, y+h);
   }
@@ -127,7 +126,9 @@ vg.scene.bounds = (function() {
 
   function symbol(o, bounds) {
     var size = o.size != null ? o.size : 100,
-        x = o.x, y = o.y, r, t, rx, ry;
+        x = o.x || 0,
+        y = o.y || 0,
+        r, t, rx, ry;
 
     switch (o.shape) {
       case "cross":
@@ -171,17 +172,17 @@ vg.scene.bounds = (function() {
   }
 
   function text(o, bounds, noRotate) {
-    var x = o.x + (o.dx || 0),
-        y = o.y + (o.dy || 0),
+    var x = (o.x || 0) + (o.dx || 0),
+        y = (o.y || 0) + (o.dy || 0),
         h = o.fontSize || vg.config.render.fontSize,
         a = o.align,
         b = o.baseline,
         g = context(), w;
 
     g.font = vg.scene.fontString(o);
-    g.textAlign = o.align || "left";
-    g.textBaseline = o.baseline || "alphabetic";
-    w = g.measureText(o.text).width;
+    g.textAlign = a || "left";
+    g.textBaseline = b || "alphabetic";
+    w = g.measureText(o.text || "").width;
 
     // horizontal
     if (a === "center") {
@@ -208,7 +209,7 @@ vg.scene.bounds = (function() {
     
     bounds.set(x, y, x+w, y+h);
     if (o.angle && !noRotate) {
-      bounds.rotate(o.angle*Math.PI/180, o.x, o.y);
+      bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
     }
     return bounds.expand(noRotate ? 0 : 1);
   }
