@@ -5007,7 +5007,9 @@ vg.scene.item = function(mark) {
       group = scene.items[i];
 
       // cascade scales recursively
-      scales = group.scales || (group.scales = vg.extend({}, parent.scales));    
+      // use parent scales if there are no group-level scale defs
+      scales = group.scales || (group.scales =
+        def.scales ? vg.extend({}, parent.scales) : parent.scales);
       
       // update group-level scales
       if (def.scales) {
