@@ -4187,6 +4187,13 @@ vg.parse.properties = (function() {
       vg.log(code);
     }
   }
+  
+  var GROUP_VARS = {
+    "width": 1,
+    "height": 1,
+    "mark.group.width": 1,
+    "mark.group.height": 1
+  };
 
   function valueRef(name, ref) {
     if (ref == null) return null;
@@ -4212,25 +4219,26 @@ vg.parse.properties = (function() {
 
     // get field reference for enclosing group
     if (ref.group != null) {
-      var grp = vg.isString(ref.group)
-        ? "[" + vg.field(ref.group).map(vg.str).join("][") + "]"
-        : "";
+      var grp = "";
+      if (vg.isString(ref.group)) {
+        grp = GROUP_VARS[ref.group]
+          ? "group." + ref.group
+          : "group.datum["+vg.field(ref.group).map(vg.str).join("][")+"]";
+      }
     }
 
     // get data field value
     if (ref.field != null) {
       if (vg.isString(ref.field)) {
-        val = vg.field(ref.field).map(vg.str).join("][");
-        val = ref.group != null
-          ? "group.datum" + grp + "[item.datum[" + val + "]]"
-          : "item.datum[" + val + "]";
+        val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
+        if (ref.group != null) { val = grp+"["+val+"]"; }
       } else {
         val = "vg.accessor(group.datum["
             + vg.field(ref.field.group).map(vg.str).join("][")
             + "])(item.datum.data)";
       }
     } else if (ref.group != null) {
-      val = "group" + grp;
+      val = grp;
     }
 
     // run through scale function
