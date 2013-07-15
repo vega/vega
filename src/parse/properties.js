@@ -35,7 +35,12 @@ vg.parse.properties = (function() {
     
     code += "if (trans) trans.interpolate(item, o);";
 
-    return Function("item", "group", "trans", code);
+    try {
+      return Function("item", "group", "trans", code);
+    } catch (e) {
+      vg.error(e);
+      vg.log(code);
+    }
   }
 
   function valueRef(name, ref) {
@@ -101,9 +106,9 @@ vg.parse.properties = (function() {
   }
   
   function colorRef(type, x, y, z) {
-    var xx = x ? valueRef(x) : vg.config.color[type][0],
-        yy = y ? valueRef(y) : vg.config.color[type][1],
-        zz = z ? valueRef(z) : vg.config.color[type][2];
+    var xx = x ? valueRef("", x) : vg.config.color[type][0],
+        yy = y ? valueRef("", y) : vg.config.color[type][1],
+        zz = z ? valueRef("", z) : vg.config.color[type][2];
     return "(d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
   

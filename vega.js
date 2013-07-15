@@ -3452,6 +3452,7 @@ function vg_load_http(url, callback) {
   return stack;
 };vg.data.stats = function() {
   var value = vg.accessor("data"),
+      assign = false,
       median = false,
       output = {
         "count":    "count",
@@ -3501,6 +3502,23 @@ function vg_load_http(url, callback) {
     o[output.mean] = mean;
     o[output.variance] = M2;
     o[output.stdev] = Math.sqrt(M2);
+    
+    if (assign) {
+      list = (vg.isArray(data) ? data : data.values);
+      v = {};
+      v[output.count] = len;
+      v[output.min] = min;
+      v[output.max] = max;
+      v[output.sum] = sum;
+      v[output.mean] = mean;
+      v[output.variance] = M2;
+      v[output.stdev] = Math.sqrt(M2);
+      if (median) v[output.median] = o[output.median];
+      for (i=0, len=list.length; i<len; ++i) {
+        list[i].stats = v;
+      }
+    }
+    
     return o;
   }
   
@@ -3516,6 +3534,11 @@ function vg_load_http(url, callback) {
   
   stats.value = function(field) {
     value = vg.accessor(field);
+    return stats;
+  };
+
+  stats.assign = function(b) {
+    assign = b;
     return stats;
   };
   
@@ -4157,7 +4180,12 @@ vg.parse.properties = (function() {
     
     code += "if (trans) trans.interpolate(item, o);";
 
-    return Function("item", "group", "trans", code);
+    try {
+      return Function("item", "group", "trans", code);
+    } catch (e) {
+      vg.error(e);
+      vg.log(code);
+    }
   }
 
   function valueRef(name, ref) {
@@ -4223,9 +4251,9 @@ vg.parse.properties = (function() {
   }
   
   function colorRef(type, x, y, z) {
-    var xx = x ? valueRef(x) : vg.config.color[type][0],
-        yy = y ? valueRef(y) : vg.config.color[type][1],
-        zz = z ? valueRef(z) : vg.config.color[type][2];
+    var xx = x ? valueRef("", x) : vg.config.color[type][0],
+        yy = y ? valueRef("", y) : vg.config.color[type][1],
+        zz = z ? valueRef("", z) : vg.config.color[type][2];
     return "(d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
   
