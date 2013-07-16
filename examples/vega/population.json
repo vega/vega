@@ -63,7 +63,7 @@
           "x": {"scale": "g", "field": "index"},
           "y": {"value": 0},
           "width": {"value": 300},
-          "height": {"value": 400}
+          "height": {"group": "height"}
         }
       },
       "scales": [

@@ -3,8 +3,8 @@ vg.View = (function() {
     this._el = null;
     this._build = false;
     this._model = new vg.Model();
-    this._width = width || 500;
-    this._height = height || 500;
+    this._width = this.__width = width || 500;
+    this._height = this.__height = height || 500;
     this._autopad = 1;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
@@ -17,21 +17,23 @@ vg.View = (function() {
   var prototype = view.prototype;
   
   prototype.width = function(width) {
-    if (!arguments.length) return this._width;
-    if (this._width !== width) {
-      this._width = width;
+    if (!arguments.length) return this.__width;
+    if (this.__width !== width) {
+      this._width = this.__width = width;
       if (this._el) this.initialize(this._el.parentNode);
       this._model.width(width);
+      if (this._strict) this._autopad = 1;
     }
     return this;
   };
 
   prototype.height = function(height) {
-    if (!arguments.length) return this._height;
-    if (this._height !== height) {
-      this._height = height;
+    if (!arguments.length) return this.__height;
+    if (this.__height !== height) {
+      this._height = this.__height = height;
       if (this._el) this.initialize(this._el.parentNode);
       this._model.height(this._height);
+      if (this._strict) this._autopad = 1;
     }
     return this;
   };
@@ -39,12 +41,14 @@ vg.View = (function() {
   prototype.padding = function(pad) {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
-      if (pad === "auto") {
+      if (vg.isString(pad)) {
         this._autopad = 1;
         this._padding = {top:0, left:0, bottom:0, right:0};
+        this._strict = (pad === "strict");
       } else {
         this._autopad = 0;
         this._padding = pad;
+        this._strict = false;
       }
       if (this._el) {
         this._renderer.resize(this._width, this._height, pad);
@@ -59,19 +63,26 @@ vg.View = (function() {
     else this._autopad = 0;
 
     var pad = this._padding,
-        bounds = this.model().scene().bounds,
-        l = Math.ceil(-bounds.x1),
-        t = Math.ceil(-bounds.y1),
-        r = Math.ceil(+bounds.x2 - this._width),
-        b = Math.ceil(+bounds.y2 - this._height),
-        inset = vg.config.autopadInset;
+        b = this.model().scene().bounds,
+        inset = vg.config.autopadInset,
+        l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
+        t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
+        r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
+        b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+    pad = {left:l, top:t, right:r, bottom:b};
 
-    this.padding({
-      left:   pad && pad.left   >= l ? pad.left   : l+inset,
-      right:  pad && pad.right  >= r ? pad.right  : r+inset,
-      top:    pad && pad.top    >= t ? pad.top    : t+inset,
-      bottom: pad && pad.bottom >= b ? pad.bottom : b+inset
-    }).update(opt);
+    if (this._strict) {
+      this._autopad = 0;
+      this._padding = pad;
+      this._width = Math.max(0, this.__width - (l+r));
+      this._height = Math.max(0, this.__height - (t+b));
+      this._model.width(this._width);
+      this._model.height(this._height);
+      if (this._el) this.initialize(this._el.parentNode);
+      this.update({props:"enter"}).update({props:"update"});
+    } else {
+      this.padding(pad).update(opt);
+    }
   };
 
   prototype.viewport = function(size) {

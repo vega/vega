@@ -64,6 +64,7 @@ vega.js: \
 	src/parse/transform.js \
 	src/scene/_package.js \
 	src/scene/Item.js \
+	src/scene/visit.js \
 	src/scene/build.js \
 	src/scene/bounds.js \
 	src/scene/encode.js \

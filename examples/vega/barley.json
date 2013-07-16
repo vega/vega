@@ -55,7 +55,7 @@
       "from": {"data": "site"},
       "properties": {
         "enter": {
-          "x": {"value": 100},
+          "x": {"group": "width", "mult": 0.5},
           "y": {"scale": "g", "field": "key", "offset": -2},
           "fontWeight": {"value": "bold"},
           "text": {"field": "key"},

@@ -78,8 +78,8 @@ vg.scene.axis = function() {
     vg_axisTicksExtend(orient, majorTicks, oldScale, newScale, tickMajorSize);
     vg_axisTicksExtend(orient, minorTicks, oldScale, newScale, tickMinorSize);
     vg_axisLabelExtend(orient, tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
+
     vg_axisDomainExtend(orient, domain, range, tickEndSize);
-    
     vg_axisTitleExtend(orient, title, range, titleOffset); // TODO get offset
     
     // add / override custom style properties

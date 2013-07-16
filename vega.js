@@ -4188,8 +4188,9 @@ function vg_load_http(url, callback) {
     marks: (spec.marks || []).map(vg.parse.mark)
   };
 };vg.parse.padding = function(pad) {
-  if (vg.isString(pad) || pad == null) return "auto";
-  if (vg.isObject(pad)) return pad;
+  if (pad == null) return "auto";
+  else if (vg.isString(pad)) return pad==="strict" ? "strict" : "auto";
+  else if (vg.isObject(pad)) return pad;
   var p = vg.isNumber(pad) ? pad : 20;
   return {top:p, left:p, right:p, bottom:p};
 };
@@ -4614,6 +4615,14 @@ vg.scene.fontString = function(o) {
 
 vg.scene.item = function(mark) {
   return new vg.scene.Item(mark);
+};vg.scene.visit = function(node, func) {
+  var i, n, items;
+  if (func(node)) return true;
+  if (items = node.items) {
+    for (i=0, n=items.length; i<n; ++i) {
+      if (vg.scene.visit(items[i], func)) return true;
+    }
+  }
 };vg.scene.build = (function() {
   var GROUP  = vg.scene.GROUP,
       ENTER  = vg.scene.ENTER,
@@ -5321,8 +5330,8 @@ vg.scene.transition = function(dur, ease) {
     vg_axisTicksExtend(orient, majorTicks, oldScale, newScale, tickMajorSize);
     vg_axisTicksExtend(orient, minorTicks, oldScale, newScale, tickMinorSize);
     vg_axisLabelExtend(orient, tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
+
     vg_axisDomainExtend(orient, domain, range, tickEndSize);
-    
     vg_axisTitleExtend(orient, title, range, titleOffset); // TODO get offset
     
     // add / override custom style properties
@@ -6190,6 +6199,7 @@ function vg_hLegendLabels() {
     this._defs = null;
     this._data = {};
     this._scene = null;
+    this._reset = false;
   }
   
   var prototype = model.prototype;
@@ -6229,6 +6239,7 @@ function vg_hLegendLabels() {
     if (this._defs) this._defs.width = width;
     if (this._defs && this._defs.marks) this._defs.marks.width = width;
     if (this._scene) this._scene.items[0].width = width;
+    this._reset = true;
     return this;
   };
   
@@ -6236,6 +6247,7 @@ function vg_hLegendLabels() {
     if (this._defs) this._defs.height = height;
     if (this._defs && this._defs.marks) this._defs.marks.height = height;
     if (this._scene) this._scene.items[0].height = height;
+    this._reset = true;
     return this;
   };
   
@@ -6255,19 +6267,29 @@ function vg_hLegendLabels() {
   };
   
   prototype.encode = function(trans, request, item) {
+    if (this._reset) { this.reset(); this._reset = false; }
     var m = this, scene = m._scene, defs = m._defs;
     vg.scene.encode.call(m, scene, defs.marks, trans, request, item);
     return this;
   };
-  
+
+  prototype.reset = function() {
+    if (this._scene) {
+      vg.scene.visit(this._scene, function(item) {
+        if (item.axes) item.axes.forEach(function(s) { s.reset(); });
+      });
+    }
+    return this;
+  };
+
   return model;
 })();vg.View = (function() {
   var view = function(el, width, height) {
     this._el = null;
     this._build = false;
     this._model = new vg.Model();
-    this._width = width || 500;
-    this._height = height || 500;
+    this._width = this.__width = width || 500;
+    this._height = this.__height = height || 500;
     this._autopad = 1;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
@@ -6280,21 +6302,23 @@ function vg_hLegendLabels() {
   var prototype = view.prototype;
   
   prototype.width = function(width) {
-    if (!arguments.length) return this._width;
-    if (this._width !== width) {
-      this._width = width;
+    if (!arguments.length) return this.__width;
+    if (this.__width !== width) {
+      this._width = this.__width = width;
       if (this._el) this.initialize(this._el.parentNode);
       this._model.width(width);
+      if (this._strict) this._autopad = 1;
     }
     return this;
   };
 
   prototype.height = function(height) {
-    if (!arguments.length) return this._height;
-    if (this._height !== height) {
-      this._height = height;
+    if (!arguments.length) return this.__height;
+    if (this.__height !== height) {
+      this._height = this.__height = height;
       if (this._el) this.initialize(this._el.parentNode);
       this._model.height(this._height);
+      if (this._strict) this._autopad = 1;
     }
     return this;
   };
@@ -6302,12 +6326,14 @@ function vg_hLegendLabels() {
   prototype.padding = function(pad) {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
-      if (pad === "auto") {
+      if (vg.isString(pad)) {
         this._autopad = 1;
         this._padding = {top:0, left:0, bottom:0, right:0};
+        this._strict = (pad === "strict");
       } else {
         this._autopad = 0;
         this._padding = pad;
+        this._strict = false;
       }
       if (this._el) {
         this._renderer.resize(this._width, this._height, pad);
@@ -6322,19 +6348,26 @@ function vg_hLegendLabels() {
     else this._autopad = 0;
 
     var pad = this._padding,
-        bounds = this.model().scene().bounds,
-        l = Math.ceil(-bounds.x1),
-        t = Math.ceil(-bounds.y1),
-        r = Math.ceil(+bounds.x2 - this._width),
-        b = Math.ceil(+bounds.y2 - this._height),
-        inset = vg.config.autopadInset;
+        b = this.model().scene().bounds,
+        inset = vg.config.autopadInset,
+        l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
+        t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
+        r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
+        b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+    pad = {left:l, top:t, right:r, bottom:b};
 
-    this.padding({
-      left:   pad && pad.left   >= l ? pad.left   : l+inset,
-      right:  pad && pad.right  >= r ? pad.right  : r+inset,
-      top:    pad && pad.top    >= t ? pad.top    : t+inset,
-      bottom: pad && pad.bottom >= b ? pad.bottom : b+inset
-    }).update(opt);
+    if (this._strict) {
+      this._autopad = 0;
+      this._padding = pad;
+      this._width = Math.max(0, this.__width - (l+r));
+      this._height = Math.max(0, this.__height - (t+b));
+      this._model.width(this._width);
+      this._model.height(this._height);
+      if (this._el) this.initialize(this._el.parentNode);
+      this.update({props:"enter"}).update({props:"update"});
+    } else {
+      this.padding(pad).update(opt);
+    }
   };
 
   prototype.viewport = function(size) {
