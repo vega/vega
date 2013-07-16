@@ -1,9 +1,5 @@
-vg = (function(d3, topojson){ // take d3 & topojson as imports
-var vg = {};
-
-// semantic versioning
-vg.version = '1.3.0';
-
+vg = (function(d3, topojson) { // take d3 & topojson as imports
+  var vg = {version: "1.3.0"}; // semantic versioning
 // type checking functions
 var toString = Object.prototype.toString;
 
@@ -6833,6 +6829,6 @@ vg.headless.View.Factory = function(defs) {
   }
 
   vg.parse.spec(opt.spec, draw, vg.headless.View.Factory);
-};return vg;
+};  return vg;
 })(d3, typeof topojson === "undefined" ? null : topojson);
 // assumes D3 and topojson in global namespace

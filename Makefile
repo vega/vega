@@ -4,6 +4,8 @@ NODE_PATH ?= ./node_modules
 JS_COMPILER = $(NODE_PATH)/uglify-js/bin/uglifyjs
 LOCALE ?= en_US
 
+.PHONY: all test clean install
+
 all: \
 	vega.js \
 	vega.min.js
@@ -92,5 +94,8 @@ install:
 	mkdir -p node_modules
 	npm install
 
+test:
+	@npm test
+
 clean:
-	rm -f tv*.js package.json
+	rm -f vega*.js

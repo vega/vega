@@ -1,12 +1,11 @@
 var vows = require('vows'),
-  assert = require('assert'),
-  setup = require('./setup');
+    assert = require('assert');
 
 var suite = vows.describe('_package');
 
 suite.addBatch({
   '_package': {
-    topic: setup("_package").expression("vg"),
+    topic: require('../index.js'),
     'isNumber': {
       'isNumber(0) should be true': function (vg) {
         assert.equal(vg.isNumber(0), true);
