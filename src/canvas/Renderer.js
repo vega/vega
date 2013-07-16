@@ -9,7 +9,6 @@ vg.canvas.Renderer = (function() {
   
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    this._padding = pad;
     
     if (!el) return this; // early exit if no DOM element
 
@@ -22,6 +21,9 @@ vg.canvas.Renderer = (function() {
     canvas.enter()
       .append("canvas")
       .attr("class", "marks");
+    
+    // remove extraneous canvas if needed
+    canvas.exit().remove();
     
     return this.resize(width, height, pad);
   };
@@ -44,6 +46,7 @@ vg.canvas.Renderer = (function() {
     this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
     this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     
+    initializeLineDash(this._ctx);
     return this;
   };
   
@@ -67,6 +70,24 @@ vg.canvas.Renderer = (function() {
       canvas.style.height = h + 'px';
     }
     return ratio;
+  }
+
+  function initializeLineDash(ctx) {
+    if (ctx.vgLineDash) return; // already set
+
+    if (ctx.setLineDash) {
+      ctx.vgLineDash = function(dash) { this.setLineDash(dash); };
+      ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
+    } else if (ctx.webkitLineDash !== undefined) {
+    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash; };
+      ctx.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
+    } else if (ctx.mozDash !== undefined) {
+      ctx.vgLineDash = function(dash) { this.mozDash = dash; };
+      ctx.vgLineDashOffset = function(off) { /* unsupported */ };
+    } else {
+      ctx.vgLineDash = function(dash) { /* unsupported */ };
+      ctx.vgLineDashOffset = function(off) { /* unsupported */ };
+    }
   }
   
   prototype.context = function(ctx) {

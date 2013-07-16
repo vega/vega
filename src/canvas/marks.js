@@ -155,6 +155,8 @@ vg.canvas.marks = (function() {
         g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+        g.vgLineDash(o.strokeDash || null);
+        g.vgLineDashOffset(o.strokeDashOffset || 0);
         g.stroke();
       }
     }
@@ -201,6 +203,8 @@ vg.canvas.marks = (function() {
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+          g.vgLineDash(o.strokeDash || null);
+          g.vgLineDashOffset(o.strokeDashOffset || 0);
           g.strokeRect(x, y, w, h);
         }
       }
@@ -232,6 +236,8 @@ vg.canvas.marks = (function() {
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+          g.vgLineDash(o.strokeDash || null);
+          g.vgLineDashOffset(o.strokeDashOffset || 0);
           g.beginPath();
           g.moveTo(x1, y1);
           g.lineTo(x2, y2);

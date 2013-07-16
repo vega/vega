@@ -12,9 +12,8 @@ vg.scene.bounds = (function() {
       ? new Canvas(0, 0)
       : d3.select("body").append("canvas")
           .attr("class", "vega_hidden")
-          .attr("width", 0)
-          .attr("height", 0)
-          .style("position", "absolute")
+          .attr("width", 1)
+          .attr("height", 1)
           .style("display", "none")
           .node())
       .getContext("2d"));

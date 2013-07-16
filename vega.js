@@ -103,7 +103,7 @@ vg.values = function(x) {
 };
 
 vg.str = function(x) {
-  return vg.isArray(x) ? "[" + str.map(x) + "]"
+  return vg.isArray(x) ? "[" + x.map(vg.str) + "]"
     : vg.isObject(x) ? JSON.stringify(x)
     : vg.isString(x) ? ("'"+vg_escape_str(x)+"'") : x;
 };
@@ -1368,6 +1368,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
         g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+        g.vgLineDash(o.strokeDash || null);
+        g.vgLineDashOffset(o.strokeDashOffset || 0);
         g.stroke();
       }
     }
@@ -1414,6 +1416,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+          g.vgLineDash(o.strokeDash || null);
+          g.vgLineDashOffset(o.strokeDashOffset || 0);
           g.strokeRect(x, y, w, h);
         }
       }
@@ -1445,6 +1449,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
           g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+          g.vgLineDash(o.strokeDash || null);
+          g.vgLineDashOffset(o.strokeDashOffset || 0);
           g.beginPath();
           g.moveTo(x1, y1);
           g.lineTo(x2, y2);
@@ -1773,7 +1779,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    this._padding = pad;
     
     if (!el) return this; // early exit if no DOM element
 
@@ -1786,6 +1791,9 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     canvas.enter()
       .append("canvas")
       .attr("class", "marks");
+    
+    // remove extraneous canvas if needed
+    canvas.exit().remove();
     
     return this.resize(width, height, pad);
   };
@@ -1808,6 +1816,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
     this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     
+    initializeLineDash(this._ctx);
     return this;
   };
   
@@ -1831,6 +1840,24 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       canvas.style.height = h + 'px';
     }
     return ratio;
+  }
+
+  function initializeLineDash(ctx) {
+    if (ctx.vgLineDash) return; // already set
+
+    if (ctx.setLineDash) {
+      ctx.vgLineDash = function(dash) { this.setLineDash(dash); };
+      ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
+    } else if (ctx.webkitLineDash !== undefined) {
+    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash; };
+      ctx.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
+    } else if (ctx.mozDash !== undefined) {
+      ctx.vgLineDash = function(dash) { this.mozDash = dash; };
+      ctx.vgLineDashOffset = function(off) { /* unsupported */ };
+    } else {
+      ctx.vgLineDash = function(dash) { /* unsupported */ };
+      ctx.vgLineDashOffset = function(off) { /* unsupported */ };
+    }
   }
   
   prototype.context = function(ctx) {
@@ -2134,13 +2161,15 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   };
   
   var styles = {
-    "fill":          "fill",
-    "fillOpacity":   "fill-opacity",
-    "stroke":        "stroke",
-    "strokeWidth":   "stroke-width",
-    "strokeOpacity": "stroke-opacity",
-    "strokeCap":     "stroke-linecap",
-    "opacity":       "opacity"
+    "fill":             "fill",
+    "fillOpacity":      "fill-opacity",
+    "stroke":           "stroke",
+    "strokeWidth":      "stroke-width",
+    "strokeOpacity":    "stroke-opacity",
+    "strokeCap":        "stroke-linecap",
+    "strokeDash":       "stroke-dasharray",
+    "strokeDashOffset": "stroke-dashoffset",
+    "opacity":          "opacity"
   };
   var styleProps = vg.keys(styles);
 
@@ -4713,9 +4742,8 @@ vg.scene.item = function(mark) {
       ? new Canvas(0, 0)
       : d3.select("body").append("canvas")
           .attr("class", "vega_hidden")
-          .attr("width", 0)
-          .attr("height", 0)
-          .style("position", "absolute")
+          .attr("width", 1)
+          .attr("height", 1)
           .style("display", "none")
           .node())
       .getContext("2d"));

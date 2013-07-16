@@ -102,7 +102,7 @@ vg.values = function(x) {
 };
 
 vg.str = function(x) {
-  return vg.isArray(x) ? "[" + str.map(x) + "]"
+  return vg.isArray(x) ? "[" + x.map(vg.str) + "]"
     : vg.isObject(x) ? JSON.stringify(x)
     : vg.isString(x) ? ("'"+vg_escape_str(x)+"'") : x;
 };
