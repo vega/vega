@@ -1,7 +1,9 @@
 vg.scene.bounds = (function() {
 
-  var parsePath = vg.canvas.path.parse,
+  var parse = vg.canvas.path.parse,
       boundPath = vg.canvas.path.bounds,
+      areaPath = vg.canvas.path.area,
+      linePath = vg.canvas.path.line,
       halfpi = Math.PI / 2,
       gfx = null;
 
@@ -19,39 +21,34 @@ vg.scene.bounds = (function() {
   }
 
   function pathBounds(o, path, bounds) {
-    if (path == null) return bounds.set(0, 0, 0, 0);
-    boundPath(parsePath(path), bounds);
-    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-      bounds.expand(o.strokeWidth);
+    if (path == null) {
+      bounds.set(0, 0, 0, 0);
+    } else {
+      boundPath(path, bounds);
+      if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+        bounds.expand(o.strokeWidth);
+      }
     }
     return bounds;
   }
 
   function path(o, bounds) {
-    return pathBounds(o, o.path, bounds);
+    var p = o.path
+      ? o["path:parsed"] || (o["path:parsed"] = parse(o.path))
+      : null;
+    return pathBounds(o, p, bounds);
   }
   
   function area(o, bounds) {
-    var items = o.mark.items;
-    var area = d3.svg.area()
-     .x(function(d) { return d.x; })
-     .y1(function(d) { return d.y; })
-     .y0(function(d) { return d.y + d.height; });
-    o = items[0];
-    if (o.interpolate) area.interpolate(o.interpolate);
-    if (o.tension != undefined) area.tension(o.tension);
-    return pathBounds(o, area(items), bounds);
+    var items = o.mark.items, o = items[0];
+    var p = o["path:parsed"] || (o["path:parsed"]=parse(areaPath(items)));
+    return pathBounds(items[0], p, bounds);
   }
 
   function line(o, bounds) {
-    var items = o.mark.items;
-    var line = d3.svg.line()
-     .x(function(d) { return d.x; })
-     .y(function(d) { return d.y; });
-    o = items[0];
-    if (o.interpolate) line.interpolate(o.interpolate);
-    if (o.tension != undefined) line.tension(o.tension);
-    return pathBounds(o, line(items), bounds);
+    var items = o.mark.items, o = items[0];
+    var p = o["path:parsed"] || (o["path:parsed"]=parse(linePath(items)));
+    return pathBounds(items[0], p, bounds);
   }
 
   function rect(o, bounds) {
@@ -254,8 +251,8 @@ vg.scene.bounds = (function() {
 
   function itemBounds(item, func, opt) {
     func = func || methods[item.mark.marktype];
-    if (!item.bounds_prev) item.bounds_prev = new vg.Bounds();
-    var b = item.bounds, pb = item.bounds_prev;
+    if (!item.bounds_prev) item['bounds:prev'] = new vg.Bounds();
+    var b = item.bounds, pb = item['bounds:prev'];
     if (b) pb.clear().union(b);
     item.bounds = func(item, b ? b.clear() : new vg.Bounds(), opt);
     if (!b) pb.clear().union(item.bounds);

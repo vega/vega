@@ -94,7 +94,7 @@ vg.canvas.Renderer = (function() {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
         return b.union(translatedBounds(item, item.bounds))
-                .union(translatedBounds(item, item.bounds_prev));
+                .union(translatedBounds(item, item['bounds:prev']));
       }, new vg.Bounds());  
   }
   

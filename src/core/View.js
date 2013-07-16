@@ -60,17 +60,17 @@ vg.View = (function() {
 
     var pad = this._padding,
         bounds = this.model().scene().bounds,
-        l = -bounds.x1,
-        t = -bounds.y1,
-        r = +bounds.x2 - this._width,
-        b = +bounds.y2 - this._height,
+        l = Math.ceil(-bounds.x1),
+        t = Math.ceil(-bounds.y1),
+        r = Math.ceil(+bounds.x2 - this._width),
+        b = Math.ceil(+bounds.y2 - this._height),
         inset = vg.config.autopadInset;
 
     this.padding({
-      left:   pad && pad.left   > l ? pad.left   : l+inset,
-      right:  pad && pad.right  > r ? pad.right  : r+inset,
-      top:    pad && pad.top    > t ? pad.top    : t+inset,
-      bottom: pad && pad.bottom > b ? pad.bottom : b+inset
+      left:   pad && pad.left   >= l ? pad.left   : l+inset,
+      right:  pad && pad.right  >= r ? pad.right  : r+inset,
+      top:    pad && pad.top    >= t ? pad.top    : t+inset,
+      bottom: pad && pad.bottom >= b ? pad.bottom : b+inset
     }).update(opt);
   };
 

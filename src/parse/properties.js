@@ -1,5 +1,5 @@
 vg.parse.properties = (function() {
-  function compile(spec) {
+  function compile(mark, spec) {
     var code = "",
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
@@ -33,7 +33,10 @@ vg.parse.properties = (function() {
       }
     }
     
-    code += "if (trans) trans.interpolate(item, o);";
+    if (hasPath(mark, vars)) {
+      code += "\n  if (o['path:parsed']) o['path:parsed'] = null;"
+    }
+    code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
       return Function("item", "group", "trans", code);
@@ -41,6 +44,14 @@ vg.parse.properties = (function() {
       vg.error(e);
       vg.log(code);
     }
+  }
+  
+  function hasPath(mark, vars) {
+    return vars.path ||
+      ((mark==="area" || mark==="line") &&
+        (vars.x || vars.x2 || vars.width ||
+         vars.y || vars.y2 || vars.height ||
+         vars.tension || vars.interpolate));
   }
   
   var GROUP_VARS = {

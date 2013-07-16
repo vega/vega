@@ -122,7 +122,7 @@ vg.scene.legend = function() {
       type: "group",
       interactive: false,
       properties: {
-        enter: vg.parse.properties(legendStyle),
+        enter: vg.parse.properties("group", legendStyle),
         update: vg_legendUpdate
       },
       marks: [titles, symbols, labels].map(vg.parse.mark)
@@ -212,7 +212,7 @@ vg.scene.legend = function() {
       type: "group",
       interactive: false,
       properties: {
-        enter: vg.parse.properties(legendStyle),
+        enter: vg.parse.properties("group", legendStyle),
         update: vg_legendUpdate
       },
       marks: [titles, gradient, labels].map(vg.parse.mark)

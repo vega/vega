@@ -25,7 +25,10 @@ vg.canvas.marks = (function() {
 
   function pathPath(g, o) {
     if (o.path == null) return;
-    return renderPath(g, parsePath(o.path), o.x, o.y);
+    if (!o["path:parsed"]) {
+      o["path:parsed"] = parsePath(o.path);
+    }
+    return renderPath(g, o["path:parsed"], o.x, o.y);
   }
 
   function symbolPath(g, o) {
@@ -92,24 +95,17 @@ vg.canvas.marks = (function() {
   }
 
   function areaPath(g, items) {
-    var area = d3.svg.area()
-     .x(function(d) { return d.x; })
-     .y1(function(d) { return d.y; })
-     .y0(function(d) { return d.y + d.height; });
-    var o = items[0];
-    if (o.interpolate) area.interpolate(o.interpolate);
-    if (o.tension != undefined) area.tension(o.tension);
-    renderPath(g, parsePath(area(items)));
+    var o = items[0],
+        p = o["path:parsed"] ||
+           (o["path:parsed"] = parsePath(vg.canvas.path.area(items)));
+    renderPath(g, p);
   }
 
   function linePath(g, items) {
-    var line = d3.svg.line()
-     .x(function(d) { return d.x; })
-     .y(function(d) { return d.y; });
-    var o = items[0];
-    if (o.interpolate) line.interpolate(o.interpolate);
-    if (o.tension != undefined) line.tension(o.tension);
-    renderPath(g, parsePath(line(items)));
+    var o = items[0],
+        p = o["path:parsed"] ||
+           (o["path:parsed"] = parsePath(vg.canvas.path.line(items)));
+    renderPath(g, p);
   }
 
   function lineStroke(g, items) {

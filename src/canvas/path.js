@@ -473,7 +473,7 @@ vg.canvas.path = (function() {
       previous = current;
     }
     return bounds.translate(l, t);
-  };
+  }
 
   function bounds(path, bounds) {
     var current, // current instruction
@@ -705,12 +705,35 @@ vg.canvas.path = (function() {
       previous = current;
     }
     return bounds;
-  };
+  }
+  
+  function area(items) {
+    var o = items[0];
+    var area = d3.svg.area()
+      .x(function(d) { return d.x; })
+      .y1(function(d) { return d.y; })
+      .y0(function(d) { return d.y + d.height; });
+    if (o.interpolate) area.interpolate(o.interpolate);
+    if (o.tension != null) area.tension(o.tension);
+    return area(items);
+  }
+
+  function line(items) {
+    var o = items[0];
+    var line = d3.svg.line()
+     .x(function(d) { return d.x; })
+     .y(function(d) { return d.y; });
+    if (o.interpolate) line.interpolate(o.interpolate);
+    if (o.tension != null) line.tension(o.tension);
+    return line(items);
+  }
   
   return {
     parse:  parse,
     render: render,
-    bounds: bounds
+    bounds: bounds,
+    area:   area,
+    line:   line
   };
   
 })();

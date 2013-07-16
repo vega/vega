@@ -4,10 +4,12 @@ vg.parse.mark = function(mark) {
   
   // parse mark property definitions
   vg.keys(props).forEach(function(k) {
-    props[k] = vg.parse.properties(props[k]);
+    props[k] = vg.parse.properties(mark.type, props[k]);
   });
   // parse delay function
-  if (mark.delay) mark.delay = vg.parse.properties({delay: mark.delay});
+  if (mark.delay) {
+    mark.delay = vg.parse.properties(mark.type, {delay: mark.delay});
+  }
       
   // parse mark data definition
   if (mark.from) {

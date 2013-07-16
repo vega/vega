@@ -948,7 +948,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       previous = current;
     }
     return bounds.translate(l, t);
-  };
+  }
 
   function bounds(path, bounds) {
     var current, // current instruction
@@ -1180,12 +1180,35 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       previous = current;
     }
     return bounds;
-  };
+  }
+  
+  function area(items) {
+    var o = items[0];
+    var area = d3.svg.area()
+      .x(function(d) { return d.x; })
+      .y1(function(d) { return d.y; })
+      .y0(function(d) { return d.y + d.height; });
+    if (o.interpolate) area.interpolate(o.interpolate);
+    if (o.tension != null) area.tension(o.tension);
+    return area(items);
+  }
+
+  function line(items) {
+    var o = items[0];
+    var line = d3.svg.line()
+     .x(function(d) { return d.x; })
+     .y(function(d) { return d.y; });
+    if (o.interpolate) line.interpolate(o.interpolate);
+    if (o.tension != null) line.tension(o.tension);
+    return line(items);
+  }
   
   return {
     parse:  parse,
     render: render,
-    bounds: bounds
+    bounds: bounds,
+    area:   area,
+    line:   line
   };
   
 })();vg.canvas.marks = (function() {
@@ -1215,7 +1238,10 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
   function pathPath(g, o) {
     if (o.path == null) return;
-    return renderPath(g, parsePath(o.path), o.x, o.y);
+    if (!o["path:parsed"]) {
+      o["path:parsed"] = parsePath(o.path);
+    }
+    return renderPath(g, o["path:parsed"], o.x, o.y);
   }
 
   function symbolPath(g, o) {
@@ -1282,24 +1308,17 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
 
   function areaPath(g, items) {
-    var area = d3.svg.area()
-     .x(function(d) { return d.x; })
-     .y1(function(d) { return d.y; })
-     .y0(function(d) { return d.y + d.height; });
-    var o = items[0];
-    if (o.interpolate) area.interpolate(o.interpolate);
-    if (o.tension != undefined) area.tension(o.tension);
-    renderPath(g, parsePath(area(items)));
+    var o = items[0],
+        p = o["path:parsed"] ||
+           (o["path:parsed"] = parsePath(vg.canvas.path.area(items)));
+    renderPath(g, p);
   }
 
   function linePath(g, items) {
-    var line = d3.svg.line()
-     .x(function(d) { return d.x; })
-     .y(function(d) { return d.y; });
-    var o = items[0];
-    if (o.interpolate) line.interpolate(o.interpolate);
-    if (o.tension != undefined) line.tension(o.tension);
-    renderPath(g, parsePath(line(items)));
+    var o = items[0],
+        p = o["path:parsed"] ||
+           (o["path:parsed"] = parsePath(vg.canvas.path.line(items)));
+    renderPath(g, p);
   }
 
   function lineStroke(g, items) {
@@ -1839,7 +1858,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
         return b.union(translatedBounds(item, item.bounds))
-                .union(translatedBounds(item, item.bounds_prev));
+                .union(translatedBounds(item, item['bounds:prev']));
       }, new vg.Bounds());  
   }
   
@@ -4106,10 +4125,12 @@ function vg_load_http(url, callback) {
   
   // parse mark property definitions
   vg.keys(props).forEach(function(k) {
-    props[k] = vg.parse.properties(props[k]);
+    props[k] = vg.parse.properties(mark.type, props[k]);
   });
   // parse delay function
-  if (mark.delay) mark.delay = vg.parse.properties({delay: mark.delay});
+  if (mark.delay) {
+    mark.delay = vg.parse.properties(mark.type, {delay: mark.delay});
+  }
       
   // parse mark data definition
   if (mark.from) {
@@ -4144,7 +4165,7 @@ function vg_load_http(url, callback) {
   return {top:p, left:p, right:p, bottom:p};
 };
 vg.parse.properties = (function() {
-  function compile(spec) {
+  function compile(mark, spec) {
     var code = "",
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
@@ -4178,7 +4199,10 @@ vg.parse.properties = (function() {
       }
     }
     
-    code += "if (trans) trans.interpolate(item, o);";
+    if (hasPath(mark, vars)) {
+      code += "\n  if (o['path:parsed']) o['path:parsed'] = null;"
+    }
+    code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
       return Function("item", "group", "trans", code);
@@ -4186,6 +4210,14 @@ vg.parse.properties = (function() {
       vg.error(e);
       vg.log(code);
     }
+  }
+  
+  function hasPath(mark, vars) {
+    return vars.path ||
+      ((mark==="area" || mark==="line") &&
+        (vars.x || vars.x2 || vars.width ||
+         vars.y || vars.y2 || vars.height ||
+         vars.tension || vars.interpolate));
   }
   
   var GROUP_VARS = {
@@ -4669,8 +4701,10 @@ vg.scene.item = function(mark) {
   return build;
 })();vg.scene.bounds = (function() {
 
-  var parsePath = vg.canvas.path.parse,
+  var parse = vg.canvas.path.parse,
       boundPath = vg.canvas.path.bounds,
+      areaPath = vg.canvas.path.area,
+      linePath = vg.canvas.path.line,
       halfpi = Math.PI / 2,
       gfx = null;
 
@@ -4688,39 +4722,34 @@ vg.scene.item = function(mark) {
   }
 
   function pathBounds(o, path, bounds) {
-    if (path == null) return bounds.set(0, 0, 0, 0);
-    boundPath(parsePath(path), bounds);
-    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-      bounds.expand(o.strokeWidth);
+    if (path == null) {
+      bounds.set(0, 0, 0, 0);
+    } else {
+      boundPath(path, bounds);
+      if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+        bounds.expand(o.strokeWidth);
+      }
     }
     return bounds;
   }
 
   function path(o, bounds) {
-    return pathBounds(o, o.path, bounds);
+    var p = o.path
+      ? o["path:parsed"] || (o["path:parsed"] = parse(o.path))
+      : null;
+    return pathBounds(o, p, bounds);
   }
   
   function area(o, bounds) {
-    var items = o.mark.items;
-    var area = d3.svg.area()
-     .x(function(d) { return d.x; })
-     .y1(function(d) { return d.y; })
-     .y0(function(d) { return d.y + d.height; });
-    o = items[0];
-    if (o.interpolate) area.interpolate(o.interpolate);
-    if (o.tension != undefined) area.tension(o.tension);
-    return pathBounds(o, area(items), bounds);
+    var items = o.mark.items, o = items[0];
+    var p = o["path:parsed"] || (o["path:parsed"]=parse(areaPath(items)));
+    return pathBounds(items[0], p, bounds);
   }
 
   function line(o, bounds) {
-    var items = o.mark.items;
-    var line = d3.svg.line()
-     .x(function(d) { return d.x; })
-     .y(function(d) { return d.y; });
-    o = items[0];
-    if (o.interpolate) line.interpolate(o.interpolate);
-    if (o.tension != undefined) line.tension(o.tension);
-    return pathBounds(o, line(items), bounds);
+    var items = o.mark.items, o = items[0];
+    var p = o["path:parsed"] || (o["path:parsed"]=parse(linePath(items)));
+    return pathBounds(items[0], p, bounds);
   }
 
   function rect(o, bounds) {
@@ -4923,8 +4952,8 @@ vg.scene.item = function(mark) {
 
   function itemBounds(item, func, opt) {
     func = func || methods[item.mark.marktype];
-    if (!item.bounds_prev) item.bounds_prev = new vg.Bounds();
-    var b = item.bounds, pb = item.bounds_prev;
+    if (!item.bounds_prev) item['bounds:prev'] = new vg.Bounds();
+    var b = item.bounds, pb = item['bounds:prev'];
     if (b) pb.clear().union(b);
     item.bounds = func(item, b ? b.clear() : new vg.Bounds(), opt);
     if (!b) pb.clear().union(item.bounds);
@@ -5789,7 +5818,7 @@ vg.scene.legend = function() {
       type: "group",
       interactive: false,
       properties: {
-        enter: vg.parse.properties(legendStyle),
+        enter: vg.parse.properties("group", legendStyle),
         update: vg_legendUpdate
       },
       marks: [titles, symbols, labels].map(vg.parse.mark)
@@ -5879,7 +5908,7 @@ vg.scene.legend = function() {
       type: "group",
       interactive: false,
       properties: {
-        enter: vg.parse.properties(legendStyle),
+        enter: vg.parse.properties("group", legendStyle),
         update: vg_legendUpdate
       },
       marks: [titles, gradient, labels].map(vg.parse.mark)
@@ -6266,17 +6295,17 @@ function vg_hLegendLabels() {
 
     var pad = this._padding,
         bounds = this.model().scene().bounds,
-        l = -bounds.x1,
-        t = -bounds.y1,
-        r = +bounds.x2 - this._width,
-        b = +bounds.y2 - this._height,
+        l = Math.ceil(-bounds.x1),
+        t = Math.ceil(-bounds.y1),
+        r = Math.ceil(+bounds.x2 - this._width),
+        b = Math.ceil(+bounds.y2 - this._height),
         inset = vg.config.autopadInset;
 
     this.padding({
-      left:   pad && pad.left   > l ? pad.left   : l+inset,
-      right:  pad && pad.right  > r ? pad.right  : r+inset,
-      top:    pad && pad.top    > t ? pad.top    : t+inset,
-      bottom: pad && pad.bottom > b ? pad.bottom : b+inset
+      left:   pad && pad.left   >= l ? pad.left   : l+inset,
+      right:  pad && pad.right  >= r ? pad.right  : r+inset,
+      top:    pad && pad.top    >= t ? pad.top    : t+inset,
+      bottom: pad && pad.bottom >= b ? pad.bottom : b+inset
     }).update(opt);
   };
 
