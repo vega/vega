@@ -83,6 +83,7 @@ vg.View = (function() {
     } else {
       this.padding(pad).update(opt);
     }
+    return this;
   };
 
   prototype.viewport = function(size) {

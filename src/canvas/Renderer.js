@@ -33,18 +33,20 @@ vg.canvas.Renderer = (function() {
     this._height = height;
     this._padding = pad;
     
-    var canvas = d3.select(this._el).select("canvas.marks");
+    if (this._el) {
+      var canvas = d3.select(this._el).select("canvas.marks");
 
-    // initialize canvas attributes
-    canvas
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
+      // initialize canvas attributes
+      canvas
+        .attr("width", width + pad.left + pad.right)
+        .attr("height", height + pad.top + pad.bottom);
 
-    // get the canvas graphics context
-    var s;
-    this._ctx = canvas.node().getContext("2d");
-    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
-    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
+      // get the canvas graphics context
+      var s;
+      this._ctx = canvas.node().getContext("2d");
+      this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
+      this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
+    }
     
     initializeLineDash(this._ctx);
     return this;

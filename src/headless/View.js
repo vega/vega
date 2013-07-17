@@ -6,8 +6,9 @@ vg.headless.View = (function() {
     this._el = "body";
     this._build = false;
     this._model = new vg.Model();
-    this._width = width || 500;
-    this._height = height || 500;
+    this._width = this.__width = width || 500;
+    this._height = this.__height = height || 500;
+    this._autopad = 1;
     this._padding = pad || {top:0, left:0, bottom:0, right:0};
     this._renderer = new vg[type].Renderer();
     this.initialize();
@@ -47,8 +48,44 @@ vg.headless.View = (function() {
   prototype.padding = function(pad) {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
-      this._padding = pad;
+      if (vg.isString(pad)) {
+        this._autopad = 1;
+        this._padding = {top:0, left:0, bottom:0, right:0};
+        this._strict = (pad === "strict");
+      } else {
+        this._autopad = 0;
+        this._padding = pad;
+        this._strict = false;
+      }
       this.initialize();
+    }
+    return this;
+  };
+
+  prototype.autopad = function(opt) {
+    if (this._autopad < 1) return this;
+    else this._autopad = 0;
+
+    var pad = this._padding,
+        b = this._model.scene().bounds,
+        inset = vg.config.autopadInset,
+        l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
+        t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
+        r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
+        b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+    pad = {left:l, top:t, right:r, bottom:b};
+
+    if (this._strict) {
+      this._autopad = 0;
+      this._padding = pad;
+      this._width = Math.max(0, this.__width - (l+r));
+      this._height = Math.max(0, this.__height - (t+b));
+      this._model.width(this._width);
+      this._model.height(this._height);
+      if (this._el) this.initialize();
+      this.update({props:"enter"}).update({props:"update"});
+    } else {
+      this.padding(pad).update(opt);
     }
     return this;
   };
@@ -83,12 +120,12 @@ vg.headless.View = (function() {
   };
   
   prototype.canvasAsync = function(callback) {
-    var r = this._renderer;
+    var r = this._renderer, view = this;
     
     function wait() {
       if (r.pendingImages() === 0) {
-        this.render(); // re-render with all images
-        callback(this._canvas);
+        view.render(); // re-render with all images
+        callback(view._canvas);
       } else {
         setTimeout(wait, 10);
       }
@@ -141,8 +178,8 @@ vg.headless.View = (function() {
     ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
 
     // configure renderer
-    this._renderer.initialize(null, w, h, pad);
     this._renderer.context(ctx);
+    this._renderer.resize(w, h, pad);
   };
   
   prototype.initSVG = function(w, h, pad) {
@@ -164,7 +201,7 @@ vg.headless.View = (function() {
     view._build = view._build || (view._model.build(), true);
     view._model.encode(null, opt.props, opt.items);
     view.render(opt.items);
-    return view;
+    return view.autopad(opt);
   };
     
   return view;

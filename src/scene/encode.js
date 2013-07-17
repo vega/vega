@@ -21,7 +21,7 @@ vg.scene.encode = (function() {
       props = item.mark.def.properties;
       prop = props && props[request];
       if (prop) {
-        prop.call(this, item, group, trans);
+        prop.call(vg, item, group, trans);
         vg.scene.bounds.item(item);
       }
     }
@@ -109,7 +109,7 @@ vg.scene.encode = (function() {
     if (request) {
       if (prop = props[request]) {
         for (i=0, len=items.length; i<len; ++i) {
-          prop.call(this, items[i], group, trans);
+          prop.call(vg, items[i], group, trans);
         }
       }
       return; // exit early if given request
@@ -120,18 +120,18 @@ vg.scene.encode = (function() {
 
       // enter set
       if (item.status === ENTER) {
-        if (enter) enter.call(this, item, group);
+        if (enter) enter.call(vg, item, group);
         item.status = UPDATE;
       }
 
       // update set      
       if (item.status !== EXIT && update) {
-        update.call(this, item, group, trans);
+        update.call(vg, item, group, trans);
       }
       
       // exit set
       if (item.status === EXIT) {
-        if (exit) exit.call(this, item, group, trans);
+        if (exit) exit.call(vg, item, group, trans);
         if (trans && !exit) trans.interpolate(item, EMPTY);
         else if (!trans) items[i--].remove();
       }

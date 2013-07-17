@@ -1,5 +1,9 @@
 vg = (function(d3, topojson) { // take d3 & topojson as imports
-  var vg = {version: "1.3.0"}; // semantic versioning
+  var vg = {
+    version:  "1.3.0", // semantic versioning
+    d3:       d3,      // stash d3 for use in property functions
+    topojson: topojson // stash topojson similarly
+  };
 // type checking functions
 var toString = Object.prototype.toString;
 
@@ -1799,18 +1803,20 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._height = height;
     this._padding = pad;
     
-    var canvas = d3.select(this._el).select("canvas.marks");
+    if (this._el) {
+      var canvas = d3.select(this._el).select("canvas.marks");
 
-    // initialize canvas attributes
-    canvas
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
+      // initialize canvas attributes
+      canvas
+        .attr("width", width + pad.left + pad.right)
+        .attr("height", height + pad.top + pad.bottom);
 
-    // get the canvas graphics context
-    var s;
-    this._ctx = canvas.node().getContext("2d");
-    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
-    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
+      // get the canvas graphics context
+      var s;
+      this._ctx = canvas.node().getContext("2d");
+      this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
+      this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
+    }
     
     initializeLineDash(this._ctx);
     return this;
@@ -4291,7 +4297,7 @@ vg.parse.properties = (function() {
         val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
         if (ref.group != null) { val = grp+"["+val+"]"; }
       } else {
-        val = "vg.accessor(group.datum["
+        val = "this.accessor(group.datum["
             + vg.field(ref.field.group).map(vg.str).join("][")
             + "])(item.datum.data)";
       }
@@ -4320,7 +4326,7 @@ vg.parse.properties = (function() {
     var xx = x ? valueRef("", x) : vg.config.color[type][0],
         yy = y ? valueRef("", y) : vg.config.color[type][1],
         zz = z ? valueRef("", z) : vg.config.color[type][2];
-    return "(d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
+    return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
   
   return compile;
@@ -4744,7 +4750,7 @@ vg.scene.item = function(mark) {
 
   function context() {
     return gfx || (gfx = (vg.config.isNode
-      ? new Canvas(0, 0)
+      ? new (require("canvas"))(1,1)
       : d3.select("body").append("canvas")
           .attr("class", "vega_hidden")
           .attr("width", 1)
@@ -5040,7 +5046,7 @@ vg.scene.item = function(mark) {
       props = item.mark.def.properties;
       prop = props && props[request];
       if (prop) {
-        prop.call(this, item, group, trans);
+        prop.call(vg, item, group, trans);
         vg.scene.bounds.item(item);
       }
     }
@@ -5128,7 +5134,7 @@ vg.scene.item = function(mark) {
     if (request) {
       if (prop = props[request]) {
         for (i=0, len=items.length; i<len; ++i) {
-          prop.call(this, items[i], group, trans);
+          prop.call(vg, items[i], group, trans);
         }
       }
       return; // exit early if given request
@@ -5139,18 +5145,18 @@ vg.scene.item = function(mark) {
 
       // enter set
       if (item.status === ENTER) {
-        if (enter) enter.call(this, item, group);
+        if (enter) enter.call(vg, item, group);
         item.status = UPDATE;
       }
 
       // update set      
       if (item.status !== EXIT && update) {
-        update.call(this, item, group, trans);
+        update.call(vg, item, group, trans);
       }
       
       // exit set
       if (item.status === EXIT) {
-        if (exit) exit.call(this, item, group, trans);
+        if (exit) exit.call(vg, item, group, trans);
         if (trans && !exit) trans.interpolate(item, EMPTY);
         else if (!trans) items[i--].remove();
       }
@@ -6364,6 +6370,7 @@ function vg_hLegendLabels() {
     } else {
       this.padding(pad).update(opt);
     }
+    return this;
   };
 
   prototype.viewport = function(size) {
@@ -6626,8 +6633,9 @@ vg.headless = {};vg.headless.View = (function() {
     this._el = "body";
     this._build = false;
     this._model = new vg.Model();
-    this._width = width || 500;
-    this._height = height || 500;
+    this._width = this.__width = width || 500;
+    this._height = this.__height = height || 500;
+    this._autopad = 1;
     this._padding = pad || {top:0, left:0, bottom:0, right:0};
     this._renderer = new vg[type].Renderer();
     this.initialize();
@@ -6667,8 +6675,44 @@ vg.headless = {};vg.headless.View = (function() {
   prototype.padding = function(pad) {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
-      this._padding = pad;
+      if (vg.isString(pad)) {
+        this._autopad = 1;
+        this._padding = {top:0, left:0, bottom:0, right:0};
+        this._strict = (pad === "strict");
+      } else {
+        this._autopad = 0;
+        this._padding = pad;
+        this._strict = false;
+      }
       this.initialize();
+    }
+    return this;
+  };
+
+  prototype.autopad = function(opt) {
+    if (this._autopad < 1) return this;
+    else this._autopad = 0;
+
+    var pad = this._padding,
+        b = this._model.scene().bounds,
+        inset = vg.config.autopadInset,
+        l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
+        t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
+        r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
+        b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+    pad = {left:l, top:t, right:r, bottom:b};
+
+    if (this._strict) {
+      this._autopad = 0;
+      this._padding = pad;
+      this._width = Math.max(0, this.__width - (l+r));
+      this._height = Math.max(0, this.__height - (t+b));
+      this._model.width(this._width);
+      this._model.height(this._height);
+      if (this._el) this.initialize();
+      this.update({props:"enter"}).update({props:"update"});
+    } else {
+      this.padding(pad).update(opt);
     }
     return this;
   };
@@ -6703,12 +6747,12 @@ vg.headless = {};vg.headless.View = (function() {
   };
   
   prototype.canvasAsync = function(callback) {
-    var r = this._renderer;
+    var r = this._renderer, view = this;
     
     function wait() {
       if (r.pendingImages() === 0) {
-        this.render(); // re-render with all images
-        callback(this._canvas);
+        view.render(); // re-render with all images
+        callback(view._canvas);
       } else {
         setTimeout(wait, 10);
       }
@@ -6761,8 +6805,8 @@ vg.headless = {};vg.headless.View = (function() {
     ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
 
     // configure renderer
-    this._renderer.initialize(null, w, h, pad);
     this._renderer.context(ctx);
+    this._renderer.resize(w, h, pad);
   };
   
   prototype.initSVG = function(w, h, pad) {
@@ -6784,7 +6828,7 @@ vg.headless = {};vg.headless.View = (function() {
     view._build = view._build || (view._model.build(), true);
     view._model.encode(null, opt.props, opt.items);
     view.render(opt.items);
-    return view;
+    return view.autopad(opt);
   };
     
   return view;

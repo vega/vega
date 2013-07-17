@@ -99,7 +99,7 @@ vg.parse.properties = (function() {
         val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
         if (ref.group != null) { val = grp+"["+val+"]"; }
       } else {
-        val = "vg.accessor(group.datum["
+        val = "this.accessor(group.datum["
             + vg.field(ref.field.group).map(vg.str).join("][")
             + "])(item.datum.data)";
       }
@@ -128,7 +128,7 @@ vg.parse.properties = (function() {
     var xx = x ? valueRef("", x) : vg.config.color[type][0],
         yy = y ? valueRef("", y) : vg.config.color[type][1],
         zz = z ? valueRef("", z) : vg.config.color[type][2];
-    return "(d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
+    return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
   
   return compile;
