@@ -4420,7 +4420,7 @@ vg.parse.properties = (function() {
     } else if (vg.isObject(domain)) {
       refs = def.domain.fields || vg.array(def.domain);
       values = refs.reduce(function(values, r) {        
-        var dat = db[r.data] || data,
+        var dat = vg.values(db[r.data] || data),
             get = vg.accessor(vg.isString(r.field)
               ? r.field : "data." + vg.accessor(r.field.group)(data));
         return vg.unique(dat, get, values);
@@ -4448,7 +4448,7 @@ vg.parse.properties = (function() {
     // domain
     domain = [null, null];
     function extract(ref, min, max, z) {
-      var dat = db[ref.data] || data;
+      var dat = vg.values(db[ref.data] || data);
       var fields = vg.array(ref.field).map(function(f) {
         return vg.isString(f) ? f
           : "data." + vg.accessor(f.group)(data);
