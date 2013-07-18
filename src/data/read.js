@@ -52,6 +52,13 @@ vg.data.read = (function() {
     return obj;
   };
   
+  formats.treejson = function(data, format) {
+    var d = [JSON.parse(data)];
+    d.__vgtree__ = true;
+    d.children = format.children || "children";
+    return d;
+  };
+  
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),

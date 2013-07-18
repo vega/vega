@@ -104,7 +104,7 @@ vg.headless.View = (function() {
   prototype.data = function(data) {
     if (!arguments.length) return this._model.data();
     var ingest = vg.keys(data).reduce(function(d, k) {
-      return (d[k] = data[k].map(vg.data.ingest), d);
+      return (d[k] = vg.data.ingestAll(data[k]), d);
     }, {});
     this._model.data(ingest);
     this._build = false;

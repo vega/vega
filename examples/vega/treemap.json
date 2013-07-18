@@ -1,23 +1,66 @@
 {
   "name": "treemap",
-  "width": 900,
+  "width": 960,
   "height": 500,
-  "padding": {"top":0, "bottom":0, "left":0, "right":0},
+  "padding": 2.5,
   "data": [
     {
-      "name": "table",
-      "values": [12, 23, 47, 6, 52, 19],
+      "name": "tree",
+      "url": "data/flare.json",
+      "format": {"type": "treejson"},
       "transform": [
-        {"type": "facet"},
-        {"type": "treemap"},
-        {"type": "filter", "test": "!d.children"}
+        {"type": "treemap", "value": "data.size"}
       ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": [
+        "#3182bd", "#6baed6", "#9ecae1", "#c6dbef", "#e6550d",
+        "#fd8d3c", "#fdae6b", "#fdd0a2", "#31a354", "#74c476",
+        "#a1d99b", "#c7e9c0", "#756bb1", "#9e9ac8", "#bcbddc",
+        "#dadaeb", "#636363", "#969696", "#bdbdbd", "#d9d9d9"
+      ]
+    },
+    {
+      "name": "size",
+      "type": "ordinal",
+      "domain": [0, 1, 2, 3],
+      "range": [256, 28, 20, 14]
+    },
+    {
+      "name": "opacity",
+      "type": "ordinal",
+      "domain": [0, 1, 2, 3],
+      "range": [0.15, 0.5, 0.8, 1.0]
     }
   ],
   "marks": [
     {
       "type": "rect",
-      "from": {"data": "table"},
+      "from": {
+        "data": "tree",
+        "transform": [{"type":"filter", "test":"d.values"}]
+      },
+      "interactive": false,
+      "properties": {
+        "enter": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "width": {"field": "width"},
+          "height": {"field": "height"},
+          "fill": {"scale": "color", "field": "data.name"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {
+        "data": "tree",
+        "transform": [{"type":"filter", "test":"!d.values"}]
+      },
       "properties": {
         "enter": {
           "x": {"field": "x"},
@@ -27,29 +70,33 @@
           "stroke": {"value": "#fff"}
         },
         "update": {
-          "fill": {"value": "#ccc"}
+          "fill": {"value": "transparent"}
         },
         "hover": {
-          "fill": {"value": "pink"}
+          "fill": {"value": "red"}
         }
       }
     },
     {
       "type": "text",
-      "from": {"data": "table"},
+      "from": {
+        "data": "tree",
+        "transform": [{"type":"filter", "test":"d.values"}]
+      },
       "interactive": false,
       "properties": {
         "enter": {
           "x": {"field": "x"},
           "y": {"field": "y"},
-          "dx": {"value": 4},
-          "dy": {"value": 4},
+          "dx": {"field": "width", "mult": 0.5},
+          "dy": {"field": "height", "mult": 0.5},
           "font": {"value": "Helvetica Neue"},
-          "fontSize": {"value": 14},
-          "align": {"value": "left"},
-          "baseline": {"value": "top"},
+          "fontSize": {"scale": "size", "field": "depth"},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
           "fill": {"value": "#000"},
-          "text": {"field": "data"}
+          "fillOpacity": {"scale": "opacity", "field": "depth"},
+          "text": {"field": "data.name"}
         }
       }
     }

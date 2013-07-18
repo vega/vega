@@ -25,6 +25,10 @@ vg.isBoolean = function(obj) {
   return toString.call(obj) == '[object Boolean]';
 };
 
+vg.isTree = function(obj) {
+  return vg.isArray(obj) && obj.__vgtree__;
+};
+
 vg.number = function(s) { return +s; };
 
 vg.boolean = function(s) { return !!s; };

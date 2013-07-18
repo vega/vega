@@ -31,6 +31,10 @@ vg.isBoolean = function(obj) {
   return toString.call(obj) == '[object Boolean]';
 };
 
+vg.isTree = function(obj) {
+  return vg.isArray(obj) && obj.__vgtree__;
+};
+
 vg.number = function(s) { return +s; };
 
 vg.boolean = function(s) { return !!s; };
@@ -2617,11 +2621,42 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   return handler;
 })();vg.data = {};
 
+vg.data.ingestAll = function(data) {
+  if (vg.isTree(data)) {
+    var t = vg.data.ingestTree(data[0], data.children);
+    t.__vgtree__ = true;
+    t.nodes = function() { return vg_tree_nodes(this, []); }
+    return t;
+  } else {
+    return data.map(vg.data.ingest);
+  }
+};
+
 vg.data.ingest = function(datum, index) {
   return {
     data: datum,
     index: index
   };
+};
+
+vg.data.ingestTree = function(node, children) {
+  var d = vg.data.ingest(node),
+      c = node[children], n, i;
+  if (c && (n = c.length)) {
+    d.values = Array(n);
+    for (i=0; i<n; ++i) {
+      d.values[i] = vg.data.ingestTree(c[i], children);
+    }
+  }
+  return d;
+};
+
+function vg_tree_nodes(root, nodes) {
+  var c = root.values,
+      n = c ? c.length : 0, i;
+  nodes.push(root);
+  for (i=0; i<n; ++i) { vg_tree_nodes(c[i], nodes); }
+  return nodes;
 };
 
 vg.data.mapper = function(func) {
@@ -2737,6 +2772,13 @@ function vg_load_http(url, callback) {
     else { vg.error("Missing TopoJSON feature or mesh parameter."); }
 
     return obj;
+  };
+  
+  formats.treejson = function(data, format) {
+    var d = [JSON.parse(data)];
+    d.__vgtree__ = true;
+    d.children = format.children || "children";
+    return d;
   };
   
   function parseValues(data, types) {
@@ -3619,7 +3661,7 @@ function vg_load_http(url, callback) {
     data = layout
       .size(vg.data.size(size, group))
       .value(value)
-      .nodes(data);
+      .nodes(vg.isTree(data) ? data.nodes() : data);
     
     var keys = vg.keys(output),
         len = keys.length;
@@ -6404,7 +6446,7 @@ function vg_hLegendLabels() {
   prototype.data = function(data) {
     if (!arguments.length) return this._model.data();
     var ingest = vg.keys(data).reduce(function(d, k) {
-      return (d[k] = data[k].map(vg.data.ingest), d);
+      return (d[k] = vg.data.ingestAll(data[k]), d);
     }, {});
     this._model.data(ingest);
     this._build = false;
@@ -6731,7 +6773,7 @@ vg.headless = {};vg.headless.View = (function() {
   prototype.data = function(data) {
     if (!arguments.length) return this._model.data();
     var ingest = vg.keys(data).reduce(function(d, k) {
-      return (d[k] = data[k].map(vg.data.ingest), d);
+      return (d[k] = vg.data.ingestAll(data[k]), d);
     }, {});
     this._model.data(ingest);
     this._build = false;
