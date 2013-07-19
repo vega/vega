@@ -2784,13 +2784,18 @@ function vg_load_http(url, callback) {
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),
-        d, i, j, len, clen;        
-
+        tree = vg.isTree(data);
+    vg_parseArray(tree ? [data] : data, cols, p, tree);
+  }
+  
+  function vg_parseArray(data, cols, p, tree) {
+    var d, i, j, len, clen;
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
       for (j=0, clen=cols.length; j<clen; ++j) {
         d[cols[j]] = p[j](d[cols[j]]);
       }
+      if (tree && d.values) parseCollection(d, cols, p, true);
     }
   }
 
@@ -3725,7 +3730,7 @@ function vg_load_http(url, callback) {
     return truncate;
   };
   
-  truncate.as = function(field) {
+  truncate.output = function(field) {
     as = field;
     return truncate;
   };
@@ -3745,7 +3750,7 @@ function vg_load_http(url, callback) {
     return truncate;
   };
 
-  truncate.wordBreak = function(b) {
+  truncate.wordbreak = function(b) {
     wordBreak = !!b;
     return truncate;
   };
@@ -3778,26 +3783,26 @@ function vg_load_http(url, callback) {
   return unique;
 };vg.data.window = function() {
 
-  var count = 2,
-      overlap = 0;
+  var size = 2,
+      step = 1;
   
   function win(data) {
     data = vg.isArray(data) ? data : data.values || [];
-    var runs = [], i, j, n=data.length-overlap, curr;
-    for (i=0; i<n; ++i) {
-      for (j=0, curr=[]; j<count; ++j) curr.push(data[i+j]);
+    var runs = [], i, j, n=data.length-size, curr;
+    for (i=0; i<=n; i+=step) {
+      for (j=0, curr=[]; j<size; ++j) curr.push(data[i+j]);
       runs.push({key: i, values: curr});
     }
     return {values: runs};
   }
   
-  win.count = function(n) {
-    count = n;
+  win.size = function(n) {
+    size = n;
     return win;
   };
   
-  win.overlap = function(n) {
-    overlap = n;
+  win.step = function(n) {
+    step = n;
     return win;
   };
 

@@ -139,7 +139,7 @@
           "type": "group",
           "from": {
             "transform": [
-              {"type": "window", "count": 2, "overlap": 1}
+              {"type": "window", "size": 2, "step": 1}
             ]
           },
           "marks": [

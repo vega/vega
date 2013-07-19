@@ -10,9 +10,9 @@
       "name": "series",
       "source": "jobs",
       "transform": [
-        {"type":"facet", "keys":["data.job", "data.sex"]},
-        {"type":"stats", "value":"data.perc", "assign":true},
-        {"type":"stack", "point":"data.year", "height":"data.perc", "order":"reverse"}
+        {"type": "facet", "keys": ["data.job", "data.sex"]},
+        {"type": "stats", "value": "data.perc"},
+        {"type": "stack", "point": "data.year", "height": "data.perc", "order": "reverse"}
       ]
     },
     {
@@ -110,7 +110,9 @@
         {
           "type": "text",
           "from": {
-            "transform": [{"type": "filter", "test": "d.data.perc===d.stats.max"}]
+            "transform": [
+              {"type":"slice", "by":"max", "field":"data.perc"}
+            ]
            },
           "interactive": false,
           "properties": {

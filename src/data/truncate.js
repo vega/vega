@@ -16,7 +16,7 @@ vg.data.truncate = function() {
     return truncate;
   };
   
-  truncate.as = function(field) {
+  truncate.output = function(field) {
     as = field;
     return truncate;
   };
@@ -36,7 +36,7 @@ vg.data.truncate = function() {
     return truncate;
   };
 
-  truncate.wordBreak = function(b) {
+  truncate.wordbreak = function(b) {
     wordBreak = !!b;
     return truncate;
   };

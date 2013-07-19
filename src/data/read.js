@@ -62,13 +62,18 @@ vg.data.read = (function() {
   function parseValues(data, types) {
     var cols = vg.keys(types),
         p = cols.map(function(col) { return parsers[types[col]]; }),
-        d, i, j, len, clen;        
-
+        tree = vg.isTree(data);
+    vg_parseArray(tree ? [data] : data, cols, p, tree);
+  }
+  
+  function vg_parseArray(data, cols, p, tree) {
+    var d, i, j, len, clen;
     for (i=0, len=data.length; i<len; ++i) {
       d = data[i];
       for (j=0, clen=cols.length; j<clen; ++j) {
         d[cols[j]] = p[j](d[cols[j]]);
       }
+      if (tree && d.values) parseCollection(d, cols, p, true);
     }
   }
 
