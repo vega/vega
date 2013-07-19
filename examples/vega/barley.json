@@ -83,7 +83,7 @@
           "type": "y",
           "scale": "y",
           "tickSize": 0,
-          "properties": {"axis": {"stroke": {"value": "none"}}}
+          "properties": {"axis": {"stroke": {"value": "transparent"}}}
         }
       ],
       "properties": {

@@ -70,7 +70,7 @@
           "stroke": {"value": "#fff"}
         },
         "update": {
-          "fill": {"value": "transparent"}
+          "fill": {"value": "rgba(0,0,0,0)"}
         },
         "hover": {
           "fill": {"value": "red"}
