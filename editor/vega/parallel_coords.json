@@ -1,0 +1,102 @@
+{
+  "width": 700,
+  "height": 400,
+  "data": [
+    {
+      "name": "cars",
+      "url": "data/cars.json"
+    },
+    {
+      "name": "fields",
+      "values": ["cyl", "dsp", "lbs", "hp", "acc", "mpg", "year"]
+    }
+  ],
+  "scales": [
+    {
+      "name": "ord",
+      "type": "ordinal",
+      "range": "width", "points": true,
+      "domain": {"data": "fields", "field": "data"}
+    },    
+    {
+      "name": "cyl",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.cyl"}
+    },
+    {
+      "name": "dsp",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.dsp"}
+    },
+    {
+      "name": "lbs",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.lbs"}
+    },
+    {
+      "name": "hp",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.hp"}
+    },
+    {
+      "name": "acc",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.acc"}
+    },
+    {
+      "name": "mpg",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.mpg"}
+    },
+    {
+      "name": "year",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "data.year"}
+    }
+  ],
+  "axes": [
+    {"type":"y", "scale":"cyl",  "offset":{"scale":"ord", "value":"cyl"}},
+    {"type":"y", "scale":"dsp",  "offset":{"scale":"ord", "value":"dsp"}},
+    {"type":"y", "scale":"lbs",  "offset":{"scale":"ord", "value":"lbs"}},
+    {"type":"y", "scale":"hp",   "offset":{"scale":"ord", "value":"hp"}},
+    {"type":"y", "scale":"acc",  "offset":{"scale":"ord", "value":"acc"}},
+    {"type":"y", "scale":"mpg",  "offset":{"scale":"ord", "value":"mpg"}},
+    {"type":"y", "scale":"year", "offset":{"scale":"ord", "value":"year"}}
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "from": {"data": "cars"},
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "fields"},
+          "properties": {
+            "enter": {
+              "x": {"scale": "ord", "field": "data"},
+              "y": {"scale": {"field": "data"}, "group": "data", "field": "data"},
+              "stroke": {"value": "steelblue"},
+              "strokeWidth": {"value": 1},
+              "strokeOpacity": {"value": 0.3}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "from": {"data": "fields"},
+      "properties": {
+        "enter": {
+          "x": {"scale": "ord", "field": "data", "offset":-8},
+          "y": {"group": "height", "offset": 6},
+          "fontWeight": {"value": "bold"},
+          "fill": {"value": "black"},
+          "text": {"field": "data"},
+          "align": {"value": "right"},
+          "baseline": {"value": "top"}
+        }
+      }
+    } 
+  ]
+}

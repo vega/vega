@@ -2,7 +2,6 @@
   "name": "lifelines",
   "width": 400,
   "height": 100,
-  "padding": {"top": 60, "left": 5, "bottom": 30, "right": 30},
   "data": [
     {
       "name": "people",
@@ -41,7 +40,7 @@
     {
       "name": "x",
       "type": "time",
-      "range": [0, 400],
+      "range": "width",
       "round": true,
       "nice": "year",
       "domain": {"data": "people", "field": ["data.born", "data.died"]}
@@ -74,7 +73,7 @@
           "x": {"scale": "x", "field": "data.when"},
           "y": {"value": -8},
           "width": {"value": 1},
-          "height": {"value": 108},
+          "height": {"group": "height", "offset": 8},
           "fill": {"value": "#888"}
         }
       }

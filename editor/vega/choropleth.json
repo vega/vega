@@ -4,37 +4,34 @@
   "data": [
     {
       "name": "unemp",
-      "url": "data/unemployment.json"
+      "url": "data/unemployment.tsv",
+      "format": {"type": "tsv", "parse": {"rate":"number"}}
     },
     {
       "name": "counties",
-      "url": "data/us-counties.json",
-      "format": {"type": "json", "property": "features"},
+      "url": "data/us-10m.json",
+      "format": {"type": "topojson", "feature": "counties"},
       "transform": [
         {"type": "geopath", "value": "data", "projection": "albersUsa"},
         {
           "type": "zip",
           "key": "data.id",
           "with": "unemp",
-          "withKey": "data.0",
-          "as": "value"
-        }
-      ]
-    },
-    {
-      "name": "states",
-      "url": "data/us-states.json",
-      "format": {"type": "json", "property": "features"},
-      "transform": [
-        {"type":"geopath", "value":"data", "projection":"albersUsa"}
+          "withKey": "data.id",
+          "as": "value",
+          "default": null
+        },
+        {"type":"filter", "test":"d.path!=null && d.value!=null"}
       ]
     }
   ],
   "scales": [
     {
       "name": "color",
-      "domain": {"data": "unemp", "field": "data.1"},
-      "range": ["#f5f5f5","#00b"]
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6",
+                "#4292c6", "#2171b5", "#08519c", "#08306b"]
     }
   ],
   "marks": [
@@ -42,28 +39,9 @@
       "type": "path",
       "from": {"data": "counties"},
       "properties": {
-        "enter": {
-          "stroke": {"value": "#fff"},
-          "strokeWidth": {"value": 0.25},
-          "path": {"field": "path"}
-        },
-        "update": {
-          "fill": {"scale": "color", "field": "value.data.1"}
-        },
-        "hover": {
-          "fill": {"value": "red"}
-        }
-      }
-    },
-    {
-      "type": "path",
-      "from": {"data": "states"},
-      "properties": {
-        "enter": {
-          "stroke": {"value": "#fff"},
-          "strokeWidth": {"value": 1.5},
-          "path": {"field": "path"}
-        }
+        "enter": { "path": {"field": "path"} },
+        "update": { "fill": {"scale":"color", "field":"value.data.rate"} },
+        "hover": { "fill": {"value": "red"} }
       }
     }
   ]

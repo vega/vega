@@ -1,0 +1,211 @@
+{
+  "width": 760,
+  "height": 260,
+  "data": [
+    {
+      "name": "temp",
+      "url": "data/napoleon.json",
+      "format": {"type": "json", "property": "temp"},
+      "transform": [
+        {"type": "formula", "field": "lat", "expr": "55"},
+        {
+          "type": "geo",
+          "lat": "lat",
+          "lon": "data.lon",
+          "center": [32.52, 53.3],
+          "scale": 3000
+        }
+      ]
+    },
+    {
+      "name": "army",
+      "url": "data/napoleon.json",
+      "format": {"type": "json", "property": "army"},
+      "transform": [
+        {
+          "type": "geo",
+          "lat": "data.lat",
+          "lon": "data.lon",
+          "center": [32.52, 53.3],
+          "scale": 3000
+        }
+      ]
+    },
+    {
+      "name": "cities",
+      "url": "data/napoleon.json",
+      "format": {"type": "json", "property": "cities"},
+      "transform": [
+        {
+          "type": "geo",
+          "lat": "data.lat",
+          "lon": "data.lon",
+          "center": [32.52, 53.3],
+          "scale": 3000
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "army", "field": "data.dir" },
+      "range": ["brown", "black"]
+    },
+    {
+      "name": "lw",
+      "type": "linear", "zero": false,
+      "domain": {"data": "army", "field": "data.size"},
+      "range": [1, 50]
+    }
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 200},
+          "width": {"group": "width"},
+          "height": {"value": 60}
+        }
+      },
+      "scales": [
+        {
+          "name": "y",
+          "type": "linear", "zero": false, "round": true,
+          "domain": {"data": "temp", "field": "data.temp"},
+          "range": "height"
+        }
+      ],
+      "axes": [
+        {"type": "y", "scale": "y", "ticks": 4, "orient": "right",
+         "grid": true, "layer": "back"}
+      ],
+      "marks": [
+       {
+          "type": "rule",
+          "from": {"data": "temp"},
+          "properties": {
+            "enter": {
+              "x": {"field": "x"},
+              "y1": 0,
+              "y2": {"scale": "y", "field": "data.temp"},
+              "stroke": {"value": "#ccc"}
+            }
+          }
+        },
+       {
+          "type": "line",
+          "from": {"data": "temp"},
+          "properties": {
+            "enter": {
+              "x": {"field": "x"},
+              "y": {"scale": "y", "field": "data.temp"},
+              "stroke": {"value": "#000"},
+              "strokeWidth": {"value": 2}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": {"data": "temp"},
+          "properties": {
+            "enter": {
+              "x": {"field": "x", "offset": -2},
+              "y": {"scale": "y", "field": "data.temp", "offset": 6},
+              "fill": {"value": "#000"},
+              "text": {"field": "data.date"},
+              "font": {"value": "Georgia"},
+              "fontSize": {"value": 10},
+              "align": {"value": "center"},
+              "baseline": {"value": "top"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "from": {
+        "data": "army",
+        "transform": [
+          {"type": "facet", "keys": ["data.group", "data.dir"]}
+        ]
+      },
+      "marks": [
+        {
+          "type": "group",
+          "from": {
+            "transform": [
+              {"type": "window", "size": 2, "step": 1}
+            ]
+          },
+          "marks": [
+            {
+              "type": "line",
+              "properties": {
+                "enter": {
+                  "x": {"field": "x"},
+                  "y": {"field": "y"},
+                  "stroke": {"scale": "color", "field": "data.dir"},
+                  "strokeWidth": {"scale": "lw", "field": "data.size"},
+                  "strokeCap": {"value": "round"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "cities"},
+      "properties": {
+        "enter": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "size": {"value": 25},
+          "fill": {"value": "brown"},
+          "stroke": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "cities"},
+      "properties": {
+        "enter": {
+          "x": {"field": "x", "offset": 1},
+          "y": {"field": "y", "offset": -4},
+          "fill": {"value": "#fff"},
+          "fillOpacity": {"value": 0.8},
+          "text": {"field": "data.city"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "font": {"value": "Georgia"},
+          "fontSize": {"value": 9},
+          "fontStyle": {"value": "italic"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "cities"},
+      "properties": {
+        "enter": {
+          "x": {"field": "x"},
+          "y": {"field": "y", "offset": -5},
+          "fill": {"value": "#000"},
+          "text": {"field": "data.city"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "font": {"value": "Georgia"},
+          "fontSize": {"value": 9},
+          "fontStyle": {"value": "italic"}
+        }
+      }
+    }
+  ]
+}
