@@ -1,14 +1,9 @@
 vg.data = {};
 
 vg.data.ingestAll = function(data) {
-  if (vg.isTree(data)) {
-    var t = vg.data.ingestTree(data[0], data.children);
-    t.__vgtree__ = true;
-    t.nodes = function() { return vg_tree_nodes(this, []); }
-    return t;
-  } else {
-    return data.map(vg.data.ingest);
-  }
+  return vg.isTree(data)
+    ? vg_make_tree(vg.data.ingestTree(data[0], data.children))
+    : data.map(vg.data.ingest);
 };
 
 vg.data.ingest = function(datum, index) {
@@ -30,13 +25,36 @@ vg.data.ingestTree = function(node, children) {
   return d;
 };
 
+
+function vg_make_tree(d) {
+  d.__vgtree__ = true;
+  d.nodes = function() { return vg_tree_nodes(this, []); };
+  return d;
+}
+
 function vg_tree_nodes(root, nodes) {
   var c = root.values,
       n = c ? c.length : 0, i;
   nodes.push(root);
   for (i=0; i<n; ++i) { vg_tree_nodes(c[i], nodes); }
   return nodes;
-};
+}
+
+function vg_data_duplicate(d) {
+  var x=d, i, n;
+  if (vg.isArray(d)) {
+    x = [];
+    for (i=0, n=d.length; i<n; ++i) {
+      x.push(vg_data_duplicate(d[i]));
+    }
+  } else if (vg.isObject(d)) {
+    x = {};
+    for (i in d) {
+      x[i] = vg_data_duplicate(d[i]);
+    }
+  }
+  return x;
+}
 
 vg.data.mapper = function(func) {
   return function(data) {

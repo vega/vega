@@ -2622,14 +2622,9 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 })();vg.data = {};
 
 vg.data.ingestAll = function(data) {
-  if (vg.isTree(data)) {
-    var t = vg.data.ingestTree(data[0], data.children);
-    t.__vgtree__ = true;
-    t.nodes = function() { return vg_tree_nodes(this, []); }
-    return t;
-  } else {
-    return data.map(vg.data.ingest);
-  }
+  return vg.isTree(data)
+    ? vg_make_tree(vg.data.ingestTree(data[0], data.children))
+    : data.map(vg.data.ingest);
 };
 
 vg.data.ingest = function(datum, index) {
@@ -2651,13 +2646,36 @@ vg.data.ingestTree = function(node, children) {
   return d;
 };
 
+
+function vg_make_tree(d) {
+  d.__vgtree__ = true;
+  d.nodes = function() { return vg_tree_nodes(this, []); };
+  return d;
+}
+
 function vg_tree_nodes(root, nodes) {
   var c = root.values,
       n = c ? c.length : 0, i;
   nodes.push(root);
   for (i=0; i<n; ++i) { vg_tree_nodes(c[i], nodes); }
   return nodes;
-};
+}
+
+function vg_data_duplicate(d) {
+  var x=d, i, n;
+  if (vg.isArray(d)) {
+    x = [];
+    for (i=0, n=d.length; i<n; ++i) {
+      x.push(vg_data_duplicate(d[i]));
+    }
+  } else if (vg.isObject(d)) {
+    x = {};
+    for (i in d) {
+      x[i] = vg_data_duplicate(d[i]);
+    }
+  }
+  return x;
+}
 
 vg.data.mapper = function(func) {
   return function(data) {
@@ -2906,7 +2924,7 @@ function vg_load_http(url, callback) {
         key: "", keys: [], index: 0,
         values: sort ? data.slice() : data
       });
-      if (sort) obj.values.sort(sort);
+      if (sort) sort(obj.values);
       return result;
     }
 
@@ -2930,7 +2948,7 @@ function vg_load_http(url, callback) {
 
     if (sort) {
       for (i=0, len=vals.length; i<len; ++i) {
-        vals[i].values.sort(sort);
+        sort(vals[i].values);
       }
     }
 
@@ -2943,7 +2961,7 @@ function vg_load_http(url, callback) {
   };
   
   facet.sort = function(s) {
-    sort = vg.comparator(s);
+    sort = vg.data.sort().by(s);
     return facet;
   };
 
@@ -6264,24 +6282,32 @@ function vg_hLegendLabels() {
 
     var tx = this._defs.data.flow || {},
         keys = this._defs.data.defs.map(vg.accessor("name")),
-        i, j, len, k, src;
-        
-    for (i=0, len=keys.length; i<len; ++i) {
+        len = keys.length, i, k;
+
+    for (i=0; i<len; ++i) {
       if (!data[k=keys[i]]) continue;
-      
-      this._data[k] = tx[k]
-        ? tx[k](data[k], this._data, this._defs.marks)
-        : data[k];
-      
-      src = this._defs.data.source[k] || [];
-      for (j=0; j<src.length; ++j) {
-        this._data[src[j]] = tx[src[j]]
-          ? tx[src[j]](this._data[k], this._data, this._defs.marks)
-          : this._data[k]
-      }
+      this.ingest(k, tx, data[k]);
     }
 
     return this;
+  };
+  
+  prototype.ingest = function(name, tx, input) {
+    this._data[name] = tx[name]
+      ? tx[name](input, this._data, this._defs.marks)
+      : input;
+    this.dependencies(name, tx);
+  };
+  
+  prototype.dependencies = function(name, tx) {
+    var source = this._defs.data.source[name],
+        data = this._data[name],
+        n = source ? source.length : 0, i, x;
+    for (i=0; i<n; ++i) {
+      x = vg_data_duplicate(data);
+      if (vg.isTree(data)) vg_make_tree(x);
+      this.ingest(source[i], tx, x);
+    }
   };
   
   prototype.width = function(width) {
@@ -6325,7 +6351,7 @@ function vg_hLegendLabels() {
   prototype.reset = function() {
     if (this._scene) {
       vg.scene.visit(this._scene, function(item) {
-        if (item.axes) item.axes.forEach(function(s) { s.reset(); });
+        if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
       });
     }
     return this;
