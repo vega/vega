@@ -4258,7 +4258,7 @@ vg.parse.properties = (function() {
       vars[name] = true;
     }
     
-    if (vars.x2) {
+    if (vars.x2 && !(vars.width && vars.x)) {
       if (vars.width) {
         code += "\n  o.x = (o.x2 - o.width);";
       } else if (vars.x) {
@@ -4268,7 +4268,7 @@ vg.parse.properties = (function() {
       }
     }
 
-    if (vars.y2) {
+    if (vars.y2 && !(vars.height && vars.y)) {
       if (vars.height) {
         code += "\n  o.y = (o.y2 - o.height);";
       } else if (vars.y) {
