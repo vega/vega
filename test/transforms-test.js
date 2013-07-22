@@ -30,7 +30,6 @@ suite.addBatch({
         assert.isNull(err, "render error: " + err);
 
         var data = view._model._data.table;
-        // console.log("result: " + JSON.stringify(data));
 
         assert.isNotNull(data, "no data");
 
@@ -67,54 +66,25 @@ suite.addBatch({
         assert.isNull(err, "render error: " + err);
 
         var data = view._model._data.table;
-        // console.log("result: " + JSON.stringify(data));
-
         assert.isNotNull(data, "no data");
 
-        var i = -1;
-        var diag = false;
+        assert.equal(data[0].a.data, "x");
+        assert.equal(data[0].b.data, "y");
 
-        if (diag) {
-          i++;
-          assert.equal(data[i].a.data, "x");
-          assert.equal(data[i].b.data, "x");
-        }
+        assert.equal(data[1].a.data, "x");
+        assert.equal(data[1].b.data, "z");
 
-        i++;
-        assert.equal(data[i].a.data, "x");
-        assert.equal(data[i].b.data, "y");
+        assert.equal(data[2].a.data, "y");
+        assert.equal(data[2].b.data, "x");
 
-        i++;
-        assert.equal(data[i].a.data, "x");
-        assert.equal(data[i].b.data, "z");
+        assert.equal(data[3].a.data, "y");
+        assert.equal(data[3].b.data, "z");
 
-        i++;
-        assert.equal(data[i].a.data, "y");
-        assert.equal(data[i].b.data, "x");
+        assert.equal(data[4].a.data, "z");
+        assert.equal(data[4].b.data, "x");
 
-        if (diag) {
-          i++;
-          assert.equal(data[i].a.data, "y");
-          assert.equal(data[i].b.data, "y");
-        }
-
-        i++;
-        assert.equal(data[i].a.data, "y");
-        assert.equal(data[i].b.data, "z");
-
-        i++;
-        assert.equal(data[i].a.data, "z");
-        assert.equal(data[i].b.data, "x");
-
-        i++;
-        assert.equal(data[i].a.data, "z");
-        assert.equal(data[i].b.data, "y");
-
-        if (diag) {
-          i++;
-          assert.equal(data[i].a.data, "z");
-          assert.equal(data[i].b.data, "z");
-        }
+        assert.equal(data[5].a.data, "z");
+        assert.equal(data[5].b.data, "y");
       },
     },
     'cross transform with output': {
@@ -145,7 +115,6 @@ suite.addBatch({
         assert.equal(typeof(view._model), "object");
 
         var data = view._model._data.table;
-        // console.log("result: " + JSON.stringify(data));
 
         assert.isNotNull(data, "no data");
 

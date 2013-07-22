@@ -2884,8 +2884,10 @@ function vg_load_http(url, callback) {
     return cross;
   };
 
-  cross.output = function(x) {
-    output = x;
+  cross.output = function(map) {
+    vg.keys(output).forEach(function(k) {
+      if (map[k] !== undefined) { output[k] = map[k]; }
+    });
     return cross;
   };
 
