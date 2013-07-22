@@ -94,7 +94,7 @@ install:
 	mkdir -p node_modules
 	npm install
 
-test:
+test: all
 	@npm test
 
 clean:
