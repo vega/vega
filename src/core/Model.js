@@ -3,6 +3,7 @@ vg.Model = (function() {
     this._defs = null;
     this._data = {};
     this._scene = null;
+    this._reset = false;
   }
   
   var prototype = model.prototype;
@@ -42,6 +43,7 @@ vg.Model = (function() {
     if (this._defs) this._defs.width = width;
     if (this._defs && this._defs.marks) this._defs.marks.width = width;
     if (this._scene) this._scene.items[0].width = width;
+    this._reset = true;
     return this;
   };
   
@@ -49,6 +51,7 @@ vg.Model = (function() {
     if (this._defs) this._defs.height = height;
     if (this._defs && this._defs.marks) this._defs.marks.height = height;
     if (this._scene) this._scene.items[0].height = height;
+    this._reset = true;
     return this;
   };
   
@@ -68,10 +71,20 @@ vg.Model = (function() {
   };
   
   prototype.encode = function(trans, request, item) {
+    if (this._reset) { this.reset(); this._reset = false; }
     var m = this, scene = m._scene, defs = m._defs;
     vg.scene.encode.call(m, scene, defs.marks, trans, request, item);
     return this;
   };
-  
+
+  prototype.reset = function() {
+    if (this._scene) {
+      vg.scene.visit(this._scene, function(item) {
+        if (item.axes) item.axes.forEach(function(s) { s.reset(); });
+      });
+    }
+    return this;
+  };
+
   return model;
 })();

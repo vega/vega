@@ -12,6 +12,8 @@ vg.svg.marks = (function() {
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
+  var mark_id = 0;
+  
   var textAlign = {
     "left":   "start",
     "center": "middle",
@@ -19,28 +21,39 @@ vg.svg.marks = (function() {
   };
   
   var styles = {
-    "fill":          "fill",
-    "fillOpacity":   "fill-opacity",
-    "stroke":        "stroke",
-    "strokeWidth":   "stroke-width",
-    "strokeOpacity": "stroke-opacity",
-    "opacity":       "opacity"
+    "fill":             "fill",
+    "fillOpacity":      "fill-opacity",
+    "stroke":           "stroke",
+    "strokeWidth":      "stroke-width",
+    "strokeOpacity":    "stroke-opacity",
+    "strokeCap":        "stroke-linecap",
+    "strokeDash":       "stroke-dasharray",
+    "strokeDashOffset": "stroke-dashoffset",
+    "opacity":          "opacity"
   };
-  
   var styleProps = vg.keys(styles);
-  
+
   function style(d) {
-    var o = d.mark ? d : d[0],
-        i, n, prop, name, value;
+    var i, n, prop, name, value,
+        o = d.mark ? d : d.length ? d[0] : null;
+    if (o === null) return;
+
     for (i=0, n=styleProps.length; i<n; ++i) {
       prop = styleProps[i];
       name = styles[prop];
       value = o[prop];
+
       if (value == null) {
         if (name === "fill") this.style.setProperty(name, "none", null);
         else this.style.removeProperty(name);
+      } else {
+        if (value.id) {
+          // ensure definition is included
+          vg.svg._cur._defs[value.id] = value;
+          value = "url(#" + value.id + ")";
+        }
+        this.style.setProperty(name, value+"", null);
       }
-      else this.style.setProperty(name, value, null);
     }
   }
   
@@ -52,18 +65,20 @@ vg.svg.marks = (function() {
   }
   
   function area(items) {
+    if (!items.length) return;
     var o = items[0];
     area_path
       .interpolate(o.interpolate || "linear")
-      .tension(o.tension == undefined ? 0.7 : o.tension);
+      .tension(o.tension == null ? 0.7 : o.tension);
     this.setAttribute("d", area_path(items));
   }
   
   function line(items) {
+    if (!items.length) return;
     var o = items[0];
     line_path
       .interpolate(o.interpolate || "linear")
-      .tension(o.tension == undefined ? 0.7 : o.tension);
+      .tension(o.tension == null ? 0.7 : o.tension);
     this.setAttribute("d", line_path(items));
   }
   
@@ -71,7 +86,7 @@ vg.svg.marks = (function() {
     var x = o.x || 0,
         y = o.y || 0;
     this.setAttribute("transform", "translate("+x+","+y+")");
-    this.setAttribute("d", o.path);
+    if (o.path != null) this.setAttribute("d", o.path);
   }
 
   function rect(o) {
@@ -79,6 +94,15 @@ vg.svg.marks = (function() {
     this.setAttribute("y", o.y || 0);
     this.setAttribute("width", o.width || 0);
     this.setAttribute("height", o.height || 0);
+  }
+
+  function rule(o) {
+    var x1 = o.x || 0,
+        y1 = o.y || 0;
+    this.setAttribute("x1", x1);
+    this.setAttribute("y1", y1);
+    this.setAttribute("x2", o.x2 != null ? o.x2 : x1);
+    this.setAttribute("y2", o.y2 != null ? o.y2 : y1);
   }
   
   function symbol(o) {
@@ -107,8 +131,8 @@ vg.svg.marks = (function() {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != undefined ? o.fontSize + "px " : "11px ")
-      + (o.font || "sans-serif");
+      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
+      + (o.font || vg.config.render.font);
   }
   
   function text(o) {
@@ -142,48 +166,77 @@ vg.svg.marks = (function() {
     this.setAttribute("transform", "translate("+x+","+y+")");
   }
 
+  function group_bg(o) {
+    var w = o.width || 0,
+        h = o.height || 0;
+    this.setAttribute("width", w);
+    this.setAttribute("height", h);
+  }
+
   function draw(tag, attr, nest) {
     return function(g, scene, index) {
       drawMark(g, scene, index, "mark_", tag, attr, nest);
     };
   }
   
-  var mark_id = 0;
-  
   function drawMark(g, scene, index, prefix, tag, attr, nest) {
-    var className = prefix + index,
-        data = nest ? [scene.items] : scene.items,
-        p = g.select("."+className);
+    var data = nest ? [scene.items] : scene.items,
+        evts = scene.interactive===false ? "none" : null,
+        grps = g.node().childNodes,
+        notG = (tag !== "g"),
+        p = (p = grps[index+1]) // +1 to skip group background rect
+          ? d3.select(p)
+          : g.append("g").attr("id", "g"+(++mark_id));
 
-    if (p.empty()) p = g.append("g")
-      .attr("id", "g"+(++mark_id))
-      .attr("class", className);
+    var id = "#" + p.attr("id"),
+        s = id + " > " + tag,
+        m = p.selectAll(s).data(data),
+        e = m.enter().append(tag);
 
-    var id = "#" + p.attr("id");
-    var m = p.selectAll(id+" > "+tag).data(data);  
-    var e = m.enter().append(tag);
-    if (tag !== "g") {
-      p.style("pointer-events", scene.interactive===false ? "none" : null);
-      e.each(function(d) { (d.mark ? d : d[0])._svg = this; });
+    if (notG) {
+      p.style("pointer-events", evts);
+      e.each(function(d) {
+        if (d.mark) d._svg = this;
+        else if (d.length) d[0]._svg = this;
+      });
+    } else {
+      e.append("rect").attr("class","background").style("pointer-events",evts);
     }
     
     m.exit().remove();
     m.each(attr);
-    if (tag !== "g") m.each(style);
+    if (notG) m.each(style);
+    else p.selectAll(s+" > rect.background").each(group_bg).each(style);
+    
+    return p;
   }
 
-  function drawGroup(g, scene, index) {
-    var renderer = this;
-        
-    drawMark(g, scene, index, "mark_", "rect", rect);
-    drawMark(g, scene, index, "group_", "g", group);
+  function drawGroup(g, scene, index, prefix) {    
+    var p = drawMark(g, scene, index, prefix || "group_", "g", group),
+        c = p.node().childNodes, n = c.length, i, j, m;
+    
+    for (i=0; i<n; ++i) {
+      var items = c[i].__data__.items,
+          legends = c[i].__data__.legendItems || [],
+          axes = c[i].__data__.axisItems || [],
+          sel = d3.select(c[i]),
+          idx = 0;
 
-    var x = g.select(".group_"+index).node(), i, n, j, m;
-    for (var i=0, n=x.childNodes.length; i<n; ++i) {
-      var sel = d3.select(x.childNodes[i]),
-          items = x.childNodes[i].__data__.items;
-      for (var j=0, m=items.length; j<m; ++j) {
-        renderer.draw(sel, items[j], j);
+      for (j=0, m=axes.length; j<m; ++j) {
+        if (axes[j].def.layer === "back") {
+          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+        }
+      }
+      for (j=0, m=items.length; j<m; ++j) {
+        this.draw(sel, items[j], idx++);
+      }
+      for (j=0, m=axes.length; j<m; ++j) {
+        if (axes[j].def.layer !== "back") {
+          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+        }
+      }
+      for (j=0, m=legends.length; j<m; ++j) {
+        drawGroup.call(this, sel, legends[j], idx++, "legend_");
       }
     }
   }
@@ -197,6 +250,7 @@ vg.svg.marks = (function() {
       path:    path,
       symbol:  symbol,
       rect:    rect,
+      rule:    rule,
       text:    text,
       image:   image
     },
@@ -213,6 +267,7 @@ vg.svg.marks = (function() {
       path:    draw("path", path),
       symbol:  draw("path", symbol),
       rect:    draw("rect", rect),
+      rule:    draw("line", rule),
       text:    draw("text", text),
       image:   draw("image", image),
       draw:    draw // expose for extensibility

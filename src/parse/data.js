@@ -5,14 +5,15 @@ vg.parse.data = function(spec, callback) {
     flow: {},
     source: {}
   };
+
   var count = 0;
   
   function load(d) {
-    return function(error, resp) {
+    return function(error, data) {
       if (error) {
-        vg.error("LOADING ERROR: " + d.url);
+        vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(resp.responseText, d.format);
+        model.load[d.name] = vg.data.read(data.toString(), d.format);
       }
       if (--count === 0) callback();
     }
@@ -21,8 +22,7 @@ vg.parse.data = function(spec, callback) {
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
-      vg.log("LOADING: " + d.url);
-      d3.xhr(d.url, load(d)); 
+      vg.data.load(d.url, load(d)); 
     }
      
     if (d.values) {

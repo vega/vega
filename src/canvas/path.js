@@ -60,6 +60,23 @@ vg.canvas.path = (function() {
     }
   }
 
+  function boundArc(x, y, coords, bounds) {
+    var rx = coords[0];
+    var ry = coords[1];
+    var rot = coords[2];
+    var large = coords[3];
+    var sweep = coords[4];
+    var ex = coords[5];
+    var ey = coords[6];
+    var segs = arcToSegments(ex, ey, rx, ry, large, sweep, rot, x, y);
+    for (var i=0; i<segs.length; i++) {
+      var bez = segmentToBezier.apply(null, segs[i]);
+      bounds.add(bez[0]-l, bez[1]-t);
+      bounds.add(bez[2]-l, bez[3]-t);
+      bounds.add(bez[4]-l, bez[5]-t);
+    }
+  }
+
   var arcToSegmentsCache = { },
       segmentToBezierCache = { },
       join = Array.prototype.join,
@@ -456,11 +473,267 @@ vg.canvas.path = (function() {
       previous = current;
     }
     return bounds.translate(l, t);
-  };
+  }
+
+  function bounds(path, bounds) {
+    var current, // current instruction
+        previous = null,
+        x = 0, // current x
+        y = 0, // current y
+        controlX = 0, // current control point x
+        controlY = 0, // current control point y
+        tempX,
+        tempY,
+        tempControlX,
+        tempControlY;
+
+    for (var i=0, len=path.length; i<len; ++i) {
+      current = path[i];
+
+      switch (current[0]) { // first letter
+
+        case 'l': // lineto, relative
+          x += current[1];
+          y += current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'L': // lineto, absolute
+          x = current[1];
+          y = current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'h': // horizontal lineto, relative
+          x += current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'H': // horizontal lineto, absolute
+          x = current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'v': // vertical lineto, relative
+          y += current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'V': // verical lineto, absolute
+          y = current[1];
+          bounds.add(x, y);
+          break;
+
+        case 'm': // moveTo, relative
+          x += current[1];
+          y += current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'M': // moveTo, absolute
+          x = current[1];
+          y = current[2];
+          bounds.add(x, y);
+          break;
+
+        case 'c': // bezierCurveTo, relative
+          tempX = x + current[5];
+          tempY = y + current[6];
+          controlX = x + current[3];
+          controlY = y + current[4];
+          bounds.add(x + current[1], y + current[2]);
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          x = tempX;
+          y = tempY;
+          break;
+
+        case 'C': // bezierCurveTo, absolute
+          x = current[5];
+          y = current[6];
+          controlX = current[3];
+          controlY = current[4];
+          bounds.add(current[1], current[2]);
+          bounds.add(controlX, controlY);
+          bounds.add(x, y);
+          break;
+
+        case 's': // shorthand cubic bezierCurveTo, relative
+          // transform to absolute x,y
+          tempX = x + current[3];
+          tempY = y + current[4];
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+          bounds.add(controlX, controlY);
+          bounds.add(x + current[1], y + current[2]);
+          bounds.add(tempX, tempY);
+
+          // set control point to 2nd one of this command
+          // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
+          controlX = x + current[1];
+          controlY = y + current[2];
+
+          x = tempX;
+          y = tempY;
+          break;
+
+        case 'S': // shorthand cubic bezierCurveTo, absolute
+          tempX = current[3];
+          tempY = current[4];
+          // calculate reflection of previous control points
+          controlX = 2*x - controlX;
+          controlY = 2*y - controlY;
+          x = tempX;
+          y = tempY;
+          bounds.add(current[1], current[2]);
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          // set control point to 2nd one of this command
+          // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
+          controlX = current[1];
+          controlY = current[2];
+
+          break;
+
+        case 'q': // quadraticCurveTo, relative
+          // transform to absolute x,y
+          tempX = x + current[3];
+          tempY = y + current[4];
+
+          controlX = x + current[1];
+          controlY = y + current[2];
+
+          x = tempX;
+          y = tempY;
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 'Q': // quadraticCurveTo, absolute
+          tempX = current[3];
+          tempY = current[4];
+
+          x = tempX;
+          y = tempY;
+          controlX = current[1];
+          controlY = current[2];
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 't': // shorthand quadraticCurveTo, relative
+
+          // transform to absolute x,y
+          tempX = x + current[1];
+          tempY = y + current[2];
+
+          if (previous[0].match(/[QqTt]/) === null) {
+            // If there is no previous command or if the previous command was not a Q, q, T or t,
+            // assume the control point is coincident with the current point
+            controlX = x;
+            controlY = y;
+          }
+          else if (previous[0] === 't') {
+            // calculate reflection of previous control points for t
+            controlX = 2 * x - tempControlX;
+            controlY = 2 * y - tempControlY;
+          }
+          else if (previous[0] === 'q') {
+            // calculate reflection of previous control points for q
+            controlX = 2 * x - controlX;
+            controlY = 2 * y - controlY;
+          }
+
+          tempControlX = controlX;
+          tempControlY = controlY;
+
+          x = tempX;
+          y = tempY;
+          controlX = x + current[1];
+          controlY = y + current[2];
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 'T':
+          tempX = current[1];
+          tempY = current[2];
+
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+
+          x = tempX;
+          y = tempY;
+          bounds.add(controlX, controlY);
+          bounds.add(tempX, tempY);
+          break;
+
+        case 'a':
+          boundArc(x, y, [
+            current[1],
+            current[2],
+            current[3],
+            current[4],
+            current[5],
+            current[6] + x,
+            current[7] + y
+          ], bounds);
+          x += current[6];
+          y += current[7];
+          break;
+
+        case 'A':
+          boundArc(x, y, [
+            current[1],
+            current[2],
+            current[3],
+            current[4],
+            current[5],
+            current[6],
+            current[7]
+          ], bounds);
+          x = current[6];
+          y = current[7];
+          break;
+
+        case 'z':
+        case 'Z':
+          break;
+      }
+      previous = current;
+    }
+    return bounds;
+  }
+  
+  function area(items) {
+    var o = items[0];
+    var area = d3.svg.area()
+      .x(function(d) { return d.x; })
+      .y1(function(d) { return d.y; })
+      .y0(function(d) { return d.y + d.height; });
+    if (o.interpolate) area.interpolate(o.interpolate);
+    if (o.tension != null) area.tension(o.tension);
+    return area(items);
+  }
+
+  function line(items) {
+    var o = items[0];
+    var line = d3.svg.line()
+     .x(function(d) { return d.x; })
+     .y(function(d) { return d.y; });
+    if (o.interpolate) line.interpolate(o.interpolate);
+    if (o.tension != null) line.tension(o.tension);
+    return line(items);
+  }
   
   return {
-    parse: parse,
-    render: render
+    parse:  parse,
+    render: render,
+    bounds: bounds,
+    area:   area,
+    line:   line
   };
   
 })();

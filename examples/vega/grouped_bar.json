@@ -1,0 +1,86 @@
+{
+  "width": 300,
+  "height": 240,
+  "data": [
+    {
+      "name": "table",
+      "url": "data/groups.json"
+    }
+  ],
+  "scales": [
+    {
+      "name": "cat",
+      "type": "ordinal",
+      "range": "height",
+      "padding": 0.2,
+      "domain": {"data": "table", "field": "data.category"}
+    },
+    {
+      "name": "val",
+      "range": "width",
+      "round": true,
+      "nice": true,
+      "domain": {"data": "table", "field": "data.value"}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category20"
+    }
+  ],
+  "axes": [
+    {"type": "y", "scale": "cat", "tickSize": 0, "tickPadding": 8},
+    {"type": "x", "scale": "val"}
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "data": "table",
+        "transform": [{"type":"facet", "keys":["data.category"]}]
+      },
+      "properties": {
+        "enter": {
+          "y": {"scale": "cat", "field": "key"},
+          "height": {"scale": "cat", "band": true}
+        }
+      },
+      "scales": [
+        {
+          "name": "pos",
+          "type": "ordinal",
+          "range": "height",
+          "domain": {"field": "data.position"}
+        }
+      ],
+      "marks": [
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "y": {"scale": "pos", "field": "data.position"},
+              "height": {"scale": "pos", "band": true},
+              "x": {"scale": "val", "field": "data.value"},
+              "x2": {"scale": "val", "value": 0},
+              "fill": {"scale": "color", "field": "data.position"}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "y": {"scale": "pos", "field": "data.position"},
+              "dy": {"scale": "pos", "band": true, "mult": 0.5},
+              "x": {"scale": "val", "field": "data.value", "offset": -4},
+              "fill": {"value": "white"},
+              "align": {"value": "right"},
+              "baseline": {"value": "middle"},
+              "text": {"field": "data.value"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

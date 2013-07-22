@@ -1,8 +1,3 @@
-var vg = {};
-
-// semantic versioning
-vg.version = '1.2.0';
-
 // type checking functions
 var toString = Object.prototype.toString;
 
@@ -28,6 +23,10 @@ vg.isNumber = function(obj) {
 
 vg.isBoolean = function(obj) {
   return toString.call(obj) == '[object Boolean]';
+};
+
+vg.isTree = function(obj) {
+  return vg.isArray(obj) && obj.__vgtree__;
 };
 
 vg.number = function(s) { return +s; };
@@ -89,6 +88,8 @@ vg.comparator = function(sort) {
   };
 };
 
+vg.cmp = function(a, b) { return a<b ? -1 : a>b ? 1 : 0; };
+
 vg.numcmp = function(a, b) { return a - b; };
 
 vg.array = function(x) {
@@ -99,11 +100,17 @@ vg.values = function(x) {
   return (vg.isObject(x) && !vg.isArray(x) && x.values) ? x.values : x;
 };
 
-vg.str = function(str) {
-  return vg.isArray(str)
-    ? "[" + str.map(vg.str) + "]"
-    : vg.isString(str) ? ("'"+str+"'") : str;
+vg.str = function(x) {
+  return vg.isArray(x) ? "[" + x.map(vg.str) + "]"
+    : vg.isObject(x) ? JSON.stringify(x)
+    : vg.isString(x) ? ("'"+vg_escape_str(x)+"'") : x;
 };
+
+var escape_str_re = /(^|[^\\])'/g;
+
+function vg_escape_str(x) {
+  return x.replace(escape_str_re, "$1\\'");
+}
 
 vg.keys = function(x) {
   var keys = [];
@@ -111,69 +118,86 @@ vg.keys = function(x) {
   return keys;
 };
 
-vg.unique = function(data, f) {
+vg.unique = function(data, f, results) {
+  if (!vg.isArray(data) || data.length==0) return [];
   f = f || vg.identity;
-  var results = [], v;
-  for (var i=0; i<data.length; ++i) {
+  results = results || [];
+  for (var v, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
     if (results.indexOf(v) < 0) results.push(v);
   }
   return results;
 };
 
-// Colors
+vg.minIndex = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return -1;
+  f = f || vg.identity;
+  var idx = 0, min = f(data[0]), v = min;
+  for (var i=1, n=data.length; i<n; ++i) {
+    v = f(data[i]);
+    if (v < min) { min = v; idx = i; }
+  }
+  return idx;
+};
 
-vg.category10 = [
-  "#1f77b4",
-  "#ff7f0e",
-  "#2ca02c",
-  "#d62728",
-  "#9467bd",
-  "#8c564b",
-  "#e377c2",
-  "#7f7f7f",
-  "#bcbd22",
-  "#17becf"
-];
+vg.maxIndex = function(data, f) {
+  if (!vg.isArray(data) || data.length==0) return -1;
+  f = f || vg.identity;
+  var idx = 0, max = f(data[0]), v = max;
+  for (var i=1, n=data.length; i<n; ++i) {
+    v = f(data[i]);
+    if (v > max) { max = v; idx = i; }
+  }
+  return idx;
+};
 
-vg.category20 = [
-  "#1f77b4",
-  "#aec7e8",
-  "#ff7f0e",
-  "#ffbb78",
-  "#2ca02c",
-  "#98df8a",
-  "#d62728",
-  "#ff9896",
-  "#9467bd",
-  "#c5b0d5",
-  "#8c564b",
-  "#c49c94",
-  "#e377c2",
-  "#f7b6d2",
-  "#7f7f7f",
-  "#c7c7c7",
-  "#bcbd22",
-  "#dbdb8d",
-  "#17becf",
-  "#9edae5"
-];
+vg.truncate = function(s, length, pos, word, ellipsis) {
+  var len = s.length;
+  if (len <= length) return s;
+  ellipsis = ellipsis || "...";
+  var l = Math.max(0, length - ellipsis.length);
 
-vg.shapes = [
-  "circle",
-  "cross",
-  "diamond",
-  "square",
-  "triangle-down",
-  "triangle-up"
-];
+  switch (pos) {
+    case "left":
+      return ellipsis + (word ? vg_truncateOnWord(s,l,1) : s.slice(len-l));
+    case "middle":
+    case "center":
+      var l1 = Math.ceil(l/2), l2 = Math.floor(l/2);
+      return (word ? vg_truncateOnWord(s,l1) : s.slice(0,l1)) + ellipsis
+        + (word ? vg_truncateOnWord(s,l2,1) : s.slice(len-l2));
+    default:
+      return (word ? vg_truncateOnWord(s,l) : s.slice(0,l)) + ellipsis;
+  }
+}
+
+function vg_truncateOnWord(s, len, rev) {
+  var cnt = 0, tok = s.split(vg_truncate_word_re);
+  if (rev) {
+    s = (tok = tok.reverse())
+      .filter(function(w) { cnt += w.length; return cnt <= len; })
+      .reverse();
+  } else {
+    s = tok.filter(function(w) { cnt += w.length; return cnt <= len; });
+  }
+  return s.length ? s.join("").trim() : tok[0].slice(0, len);
+}
+
+var vg_truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u2028\u2029\u3000\uFEFF])/;
 
 // Logging
+
+function vg_write(msg) {
+  vg.config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.log(msg);
+}
+
 vg.log = function(msg) {
-  console.log(msg);
+  vg_write("[Vega Log] " + msg);
 };
 
 vg.error = function(msg) {
-  console.log(msg);
-  alert(msg);
+  msg = "[Vega Err] " + msg;
+  vg_write(msg);
+  if (typeof alert !== "undefined") alert(msg);
 };

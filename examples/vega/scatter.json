@@ -1,11 +1,10 @@
 {
-  "width": 400,
-  "height": 400,
-  "padding": {"top":50, "left":50, "bottom":50, "right":50},
+  "width": 200,
+  "height": 200,
   "data": [
     {
-      "name": "points",
-      "url": "data/points.json"
+      "name": "iris",
+      "url": "data/iris.json"
     }
   ],
   "scales": [
@@ -13,37 +12,56 @@
       "name": "x",
       "nice": true,
       "range": "width",
-      "domain": {"data": "points", "field": "data.x"}
+      "domain": {"data": "iris", "field": "data.sepalWidth"}
     },
     {
       "name": "y",
       "nice": true,
       "range": "height",
-      "domain": {"data": "points", "field": "data.y"}
+      "domain": {"data": "iris", "field": "data.petalLength"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "iris", "field": "data.species"},
+      "range": ["#800", "#080", "#008"]
     }
   ],
   "axes": [
-    {"type": "x", "scale": "x"},
-    {"type": "y", "scale": "y"}
+    {"type": "x", "scale": "x", "offset": 5, "ticks": 5, "title": "Sepal Width"},
+    {"type": "y", "scale": "y", "offset": 5, "ticks": 5, "title": "Petal Length"}
+  ],
+  "legends": [
+    {
+      "fill": "c",
+      "title": "Species",
+      "offset": 0,
+      "properties": {
+        "symbols": {
+          "fillOpacity": {"value": 0.5},
+          "stroke": {"value": "transparent"}
+        }
+      }
+    }
   ],
   "marks": [
     {
       "type": "symbol",
-      "from": {"data": "points"},
+      "from": {"data": "iris"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "data.x"},
-          "y": {"scale": "y", "field": "data.y"},
-          "stroke": {"value": "steelblue"},
+          "x": {"scale": "x", "field": "data.sepalWidth"},
+          "y": {"scale": "y", "field": "data.petalLength"},
+          "fill": {"scale": "c", "field": "data.species"},
           "fillOpacity": {"value": 0.5}
         },
         "update": {
-          "fill": {"value": "transparent"},
-          "size": {"value": 100}
+          "size": {"value": 100},
+          "stroke": {"value": "transparent"}
         },
         "hover": {
-          "fill": {"value": "pink"},
-          "size": {"value": 300}
+          "size": {"value": 300},
+          "stroke": {"value": "white"}
         }
       }
     }

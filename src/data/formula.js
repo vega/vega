@@ -1,17 +1,11 @@
 vg.data.formula = (function() {
-
-  // TODO security check
-  // TODO remove with, perform parse?
-  function code(str) {
-    return "with (Math) { return ("+str+"); }";
-  }
   
   return function() {
     var field = null,
         expr = vg.identity;
   
-    var formula = vg.data.mapper(function(d) {
-      if (field) d[field] = expr.call(null, d);
+    var formula = vg.data.mapper(function(d, i, list) {
+      if (field) d[field] = expr.call(null, d, i, list);
       return d;
     });
 
@@ -21,9 +15,7 @@ vg.data.formula = (function() {
     };
   
     formula.expr = function(func) {
-      expr = vg.isFunction(func)
-        ? func
-        : new Function("d", code(func));
+      expr = vg.isFunction(func) ? func : vg.parse.expr(func);
       return formula;
     };
 

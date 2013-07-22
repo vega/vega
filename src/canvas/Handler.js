@@ -25,6 +25,11 @@ vg.canvas.Handler = (function() {
     return this;
   };
   
+  prototype.padding = function(pad) {
+    this._padding = pad;
+    return this;
+  };
+  
   prototype.model = function(model) {
     if (!arguments.length) return this._model;
     this._model = model;

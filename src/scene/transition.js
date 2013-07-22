@@ -12,15 +12,25 @@ vg.scene.Transition = (function() {
 
     for (key in values) {
       curr = item[key];
-      next = values[key];
+      next = values[key];      
       if (curr !== next) {
-        interp = d3.interpolate(curr, next);
-        interp.property = key;
-        (list || (list=[])).push(interp);
+        if (key === "text") {
+          // skip interpolation for text labels
+          item[key] = next;
+        } else {
+          // otherwise lookup interpolator
+          interp = d3.interpolate(curr, next);
+          interp.property = key;
+          (list || (list=[])).push(interp);
+        }
       }
     }
 
-    if (interp) {
+    if (list === null && item.status === vg.scene.EXIT) {
+      list = []; // ensure exiting items are included
+    }
+
+    if (list != null) {
       list.item = item;
       list.ease = item.mark.ease || this.ease;
       list.next = this.updates.next;
@@ -54,6 +64,7 @@ vg.scene.Transition = (function() {
 
       for (i=0, n=curr.length; i<n; ++i) {
         item[curr[i].property] = curr[i](e);
+        vg.scene.bounds.item(item);
       }
 
       if (f === 1) {

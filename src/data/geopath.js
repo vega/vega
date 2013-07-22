@@ -1,5 +1,5 @@
 vg.data.geopath = function() {
-  var geopath = d3.geo.path(),
+  var geopath = d3.geo.path().projection(d3.geo.mercator()),
       projection = "mercator",
       geojson = vg.identity,
       opt = {},

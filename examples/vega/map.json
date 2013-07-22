@@ -5,8 +5,8 @@
   "data": [
     {
       "name": "world",
-      "url": "data/world-countries.json",
-      "format": {"type": "json", "property": "features"} 
+      "url": "data/world-110m.json",
+      "format": {"type": "topojson", "feature": "countries"} 
     }
   ],
   "marks": [

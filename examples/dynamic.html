@@ -1,7 +1,6 @@
 <html>
   <head>
     <title>Vega Dynamic Data Test</title/>
-    <link rel="stylesheet" href="css/vega.css"/>
     <script src="lib/d3.v3.min.js"></script>
     <script src="../vega.js"></script>
     <style>
@@ -42,11 +41,11 @@ var spec1 = {
   "data": [{"name": "table"}],
   "scales": [
     {
-      "name": "x", "type": "ordinal", "range": "width",
+      "name": "x", "type": "ordinal", "range": "width", "round": true,
       "domain": {"data": "table", "field": "data.x"}
     },
     {
-      "name": "y", "range": "height", "nice": true,
+      "name": "y", "range": "height", "nice": true, "round": true,
       "domain": {"data": "table", "field": "data.y"}
     }
   ],
@@ -62,8 +61,8 @@ var spec1 = {
         "enter": {
           "x": {"value": 400},
           "width": {"scale": "x", "band": true, "offset": -1},
-          "y": {"scale": "y", "field": "data.y"},
-          "y2": {"scale": "y", "value": 0},
+          "y": {"scale": "y:prev", "field": "data.y"},
+          "y2": {"scale": "y:prev", "value": 0},
           "fill": {"value": "steelblue"},
           "fillOpacity": {"value": 1e-6}
         },
@@ -75,6 +74,8 @@ var spec1 = {
         },
         "exit": {
           "x": {"value": -20},
+          "y": {"scale": "y", "field": "data.y"},
+          "y2": {"scale": "y", "value": 0},
           "fillOpacity": {"value": 1e-6}
         }
       }
@@ -98,7 +99,7 @@ var table = [
   {"x": 19, "y": 49}, {"x": 20, "y": 75}
 ];
 var data = {table: table}, id = 20, timer = null;
-var renderer = "svg", animate = false, dur = 1000;
+var renderer = "canvas", animate = false, dur = 1000;
 
 function timestep() {
   id = (id % 100) + 1;

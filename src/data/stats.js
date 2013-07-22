@@ -1,5 +1,6 @@
 vg.data.stats = function() {
   var value = vg.accessor("data"),
+      assign = false,
       median = false,
       output = {
         "count":    "count",
@@ -49,11 +50,28 @@ vg.data.stats = function() {
     o[output.mean] = mean;
     o[output.variance] = M2;
     o[output.stdev] = Math.sqrt(M2);
+    
+    if (assign) {
+      list = (vg.isArray(data) ? data : data.values);
+      v = {};
+      v[output.count] = len;
+      v[output.min] = min;
+      v[output.max] = max;
+      v[output.sum] = sum;
+      v[output.mean] = mean;
+      v[output.variance] = M2;
+      v[output.stdev] = Math.sqrt(M2);
+      if (median) v[output.median] = o[output.median];
+      for (i=0, len=list.length; i<len; ++i) {
+        list[i].stats = v;
+      }
+    }
+    
     return o;
   }
   
   function stats(data) {
-    return (Array.isArray(data) ? [data] : data.values || [])
+    return (vg.isArray(data) ? [data] : data.values || [])
       .map(reduce); // no pun intended
   }
   
@@ -64,6 +82,11 @@ vg.data.stats = function() {
   
   stats.value = function(field) {
     value = vg.accessor(field);
+    return stats;
+  };
+
+  stats.assign = function(b) {
+    assign = b;
     return stats;
   };
   

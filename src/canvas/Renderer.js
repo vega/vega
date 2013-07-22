@@ -2,15 +2,13 @@ vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._imgload = 0;
   };
   
   var prototype = renderer.prototype;
   
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    this._width = width;
-    this._height = height;
-    this._padding = pad;
     
     if (!el) return this; // early exit if no DOM element
 
@@ -24,17 +22,33 @@ vg.canvas.Renderer = (function() {
       .append("canvas")
       .attr("class", "marks");
     
-    // initialize canvas attributes
-    canvas
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
+    // remove extraneous canvas if needed
+    canvas.exit().remove();
     
-    // get the canvas graphics context
-    var s;
-    this._ctx = canvas.node().getContext("2d");
-    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
-    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
+    return this.resize(width, height, pad);
+  };
+  
+  prototype.resize = function(width, height, pad) {
+    this._width = width;
+    this._height = height;
+    this._padding = pad;
     
+    if (this._el) {
+      var canvas = d3.select(this._el).select("canvas.marks");
+
+      // initialize canvas attributes
+      canvas
+        .attr("width", width + pad.left + pad.right)
+        .attr("height", height + pad.top + pad.bottom);
+
+      // get the canvas graphics context
+      var s;
+      this._ctx = canvas.node().getContext("2d");
+      this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
+      this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
+    }
+    
+    initializeLineDash(this._ctx);
     return this;
   };
   
@@ -59,6 +73,24 @@ vg.canvas.Renderer = (function() {
     }
     return ratio;
   }
+
+  function initializeLineDash(ctx) {
+    if (ctx.vgLineDash) return; // already set
+
+    if (ctx.setLineDash) {
+      ctx.vgLineDash = function(dash) { this.setLineDash(dash); };
+      ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
+    } else if (ctx.webkitLineDash !== undefined) {
+    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash; };
+      ctx.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
+    } else if (ctx.mozDash !== undefined) {
+      ctx.vgLineDash = function(dash) { this.mozDash = dash; };
+      ctx.vgLineDashOffset = function(off) { /* unsupported */ };
+    } else {
+      ctx.vgLineDash = function(dash) { /* unsupported */ };
+      ctx.vgLineDashOffset = function(off) { /* unsupported */ };
+    }
+  }
   
   prototype.context = function(ctx) {
     if (ctx) { this._ctx = ctx; return this; }
@@ -68,9 +100,13 @@ vg.canvas.Renderer = (function() {
   prototype.element = function() {
     return this._el;
   };
+  
+  prototype.pendingImages = function() {
+    return this._imgload;
+  };
 
-  function translatedBounds(item) {
-    var b = new vg.Bounds(item.bounds);
+  function translatedBounds(item, bounds) {
+    var b = new vg.Bounds(bounds);
     while ((item = item.mark.group) != null) {
       b.translate(item.x || 0, item.y || 0);
     }
@@ -80,7 +116,8 @@ vg.canvas.Renderer = (function() {
   function getBounds(items) {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
-        return b.union(translatedBounds(item));
+        return b.union(translatedBounds(item, item.bounds))
+                .union(translatedBounds(item, item['bounds:prev']));
       }, new vg.Bounds());  
   }
   
@@ -131,6 +168,11 @@ vg.canvas.Renderer = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+
+    // compute mark-level bounds
+    scene.bounds = scene.items.reduce(function(b, item) {
+      return item.bounds ? b.union(item.bounds) : b;
+    }, scene.bounds || new vg.Bounds());
   };
   
   prototype.renderAsync = function(scene) {
@@ -147,14 +189,29 @@ vg.canvas.Renderer = (function() {
   
   prototype.loadImage = function(uri) {
     var renderer = this,
-        scene = this._scene;
-    
-    var image = new Image();
-    image.onload = function() {
-      vg.log("LOAD IMAGE: "+this.src);
-      renderer.renderAsync(scene);
-    };
-    image.src = uri;
+        scene = renderer._scene,
+        image = null;
+
+    renderer._imgload += 1;
+    if (vg.config.isNode) {
+      image = new (require("canvas").Image)();
+      vg.data.load(uri, function(err, data) {
+        if (err) { vg.error(err); return; }
+        image.src = data;
+        image.loaded = true;
+        renderer._imgload -= 1;
+      });
+    } else {
+      image = new Image();
+      image.onload = function() {
+        vg.log("LOAD IMAGE: "+uri);
+        image.loaded = true;
+        renderer._imgload -= 1;
+        renderer.renderAsync(scene);
+      };
+      image.src = uri;
+    }
+
     return image;
   };
   

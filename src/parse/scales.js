@@ -4,52 +4,55 @@ vg.parse.scales = (function() {
       LOG = "log",
       POWER = "pow",
       TIME = "time",
-      VARIABLE = {width: 1, height: 1},
-      CONSTANT = {category10: 1, category20: 1, shapes: 1};
-
-  var SCALES = {
-    "time": d3.time.scale,
-    "utc":  d3.time.scale.utc
-  };
+      GROUP_PROPERTY = {width: 1, height: 1};
 
   function scales(spec, scales, db, group) {
     return (spec || []).reduce(function(o, def) {
-      o[def.name] = scale(def, o[def.name], db, group);
+      var name = def.name, prev = name + ":prev";
+      o[name] = scale(def, o[name], db, group);
+      o[prev] = o[prev] || o[name];
       return o;
     }, scales || {});
   }
 
   function scale(def, scale, db, group) {
-    var type = def.type || LINEAR,
+    var s = instance(def, scale),
+        m = s.type===ORDINAL ? ordinal : quantitative,
         rng = range(def, group),
-        s = instance(type, scale),
-        m = type===ORDINAL ? ordinal : quantitative,
         data = vg.values(group.datum);
-    
+
     m(def, s, rng, db, data);
     return s;
   }
-  
-  function instance(type, scale) {
+
+  function instance(def, scale) {
+    var type = def.type || LINEAR;
     if (!scale || type !== scale.type) {
-      var ctor = SCALES[type] || d3.scale[type];
+      var ctor = vg.config.scale[type] || d3.scale[type];
       if (!ctor) vg.error("Unrecognized scale type: " + type);
-      (scale = ctor()).type = type;
+      (scale = ctor()).type = scale.type || type;
+      scale.scaleName = def.name;
     }
     return scale;
   }
-  
+
   function ordinal(def, scale, rng, db, data) {
-    var domain, dat, get, str;
+    var domain, refs, values, str;
     
     // domain
     domain = def.domain;
-    if (Array.isArray(domain)) {
+    if (vg.isArray(domain)) {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
-      dat = db[domain.data] || data;
-      get = vg.accessor(domain.field);      
-      scale.domain(vg.unique(dat, get));
+      refs = def.domain.fields || vg.array(def.domain);
+      values = refs.reduce(function(values, r) {        
+        var dat = vg.values(db[r.data] || data),
+            get = vg.accessor(vg.isString(r.field)
+              ? r.field : "data." + vg.accessor(r.field.group)(data));
+        return vg.unique(dat, get, values);
+      }, []);
+      if (def.sort) values.sort(vg.cmp);
+      scale.domain(values);
     }
 
     // range
@@ -64,60 +67,64 @@ vg.parse.scales = (function() {
       scale.rangeBands(rng, def.padding||0);
     }
   }
-  
+
   function quantitative(def, scale, rng, db, data) {
-    var domain, dat, interval;
+    var domain, refs, interval, z;
 
     // domain
     domain = [null, null];
+    function extract(ref, min, max, z) {
+      var dat = vg.values(db[ref.data] || data);
+      var fields = vg.array(ref.field).map(function(f) {
+        return vg.isString(f) ? f
+          : "data." + vg.accessor(f.group)(data);
+      });
+      
+      fields.forEach(function(f,i) {
+        f = vg.accessor(f);
+        if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
+        if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
+      });
+    }
     if (def.domain !== undefined) {
       if (vg.isArray(def.domain)) {
         domain = def.domain.slice();
       } else if (vg.isObject(def.domain)) {
-        dat = db[def.domain.data] || data;
-        vg.array(def.domain.field).forEach(function(f,i) {
-          f = vg.accessor(f);
-          domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-          domain[1] = d3.max([domain[1], d3.max(dat, f)]);
-        });
+        refs = def.domain.fields || vg.array(def.domain);
+        refs.forEach(function(r) { extract(r,1,1,1); });
       } else {
         domain = def.domain;
       }
     }
+    z = domain.length - 1;
     if (def.domainMin !== undefined) {
       if (vg.isObject(def.domainMin)) {
         domain[0] = null;
-        dat = db[def.domainMin.data] || data;
-        vg.array(def.domainMin.field).forEach(function(f,i) {
-          f = vg.accessor(f);
-          domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-        });
+        refs = def.domainMin.fields || vg.array(def.domainMin);
+        refs.forEach(function(r) { extract(r,1,0,z); });
       } else {
         domain[0] = def.domainMin;
       }
     }
     if (def.domainMax !== undefined) {
       if (vg.isObject(def.domainMax)) {
-        domain[1] = null;
-        dat = db[def.domainMax.data] || data;
-        vg.array(def.domainMax.field).forEach(function(f,i) {
-          f = vg.accessor(f);
-          domain[1] = d3.max([domain[1], d3.max(dat, f)]);
-        });
+        domain[z] = null;
+        refs = def.domainMax.fields || vg.array(def.domainMax);
+        refs.forEach(function(r) { extract(r,0,1,z); });
       } else {
-        domain[1] = def.domainMax;
+        domain[z] = def.domainMax;
       }
     }
     if (def.type !== LOG && def.type !== TIME && (def.zero || def.zero===undefined)) {
       domain[0] = Math.min(0, domain[0]);
-      domain[1] = Math.max(0, domain[1]);
+      domain[z] = Math.max(0, domain[z]);
     }
     scale.domain(domain);
 
     // range
     // vertical scales should flip by default, so use XOR here
-    if (def.range=='height') rng = rng.reverse();
-    scale[def.round ? "rangeRound" : "range"](rng);
+    if (def.range === "height") rng = rng.reverse();
+    scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
 
     if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
     if (def.clamp) scale.clamp(true);
@@ -131,21 +138,21 @@ vg.parse.scales = (function() {
       }
     }
   }
-  
+
   function range(def, group) {
     var rng = [null, null];
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
-        if (VARIABLE[def.range]) {
+        if (GROUP_PROPERTY[def.range]) {
           rng = [0, group[def.range]];
-        } else if (CONSTANT[def.range]) {
-          rng = vg[def.range];
+        } else if (vg.config.range[def.range]) {
+          rng = vg.config.range[def.range];
         } else {
           vg.error("Unrecogized range: "+def.range);
           return rng;
         }
-      } else if (Array.isArray(def.range)) {
+      } else if (vg.isArray(def.range)) {
         rng = def.range;
       } else {
         rng = [0, def.range];
@@ -155,7 +162,7 @@ vg.parse.scales = (function() {
       rng[0] = def.rangeMin;
     }
     if (def.rangeMax !== undefined) {
-      rng[1] = def.rangeMax;
+      rng[rng.length-1] = def.rangeMax;
     }
     
     if (def.reverse !== undefined) {
@@ -168,6 +175,6 @@ vg.parse.scales = (function() {
     
     return rng;
   }
-  
+
   return scales;
 })();

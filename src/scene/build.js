@@ -5,34 +5,34 @@ vg.scene.build = (function() {
       EXIT   = vg.scene.EXIT,
       DEFAULT= {"sentinel":1};
   
-  function build(model, db, node, parentData) {
+  function build(def, db, node, parentData) {
     var data = vg.scene.data(
-      model.from ? model.from(db, node, parentData) : null,
+      def.from ? def.from(db, node, parentData) : null,
       parentData);
     
     // build node and items
-    node = buildNode(model, node);
-    node.items = buildItems(model, data, node);
-    buildTrans(model, node);
+    node = buildNode(def, node);
+    node.items = buildItems(def, data, node);
+    buildTrans(def, node);
     
     // recurse if group
-    if (model.type === GROUP) {
-      buildGroup(model, db, node);
+    if (def.type === GROUP) {
+      buildGroup(def, db, node);
     }
     
     return node;
   };
   
-  function buildNode(model, node) {
+  function buildNode(def, node) {
     node = node || {};
-    node.def = model;
-    node.marktype = model.type;
-    node.interactive = !(model.interactive === false);
+    node.def = def;
+    node.marktype = def.type;
+    node.interactive = !(def.interactive === false);
     return node;
   }
   
-  function buildItems(model, data, node) {
-    var keyf = keyFunction(model.key),
+  function buildItems(def, data, node) {
+    var keyf = keyFunction(def.key),
         prev = node.items || [],
         next = [],
         map = {},
@@ -54,7 +54,7 @@ vg.scene.build = (function() {
       item.key = key;
       next.push(item);
     }
-    
+
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
       if (item.status === EXIT) {
@@ -66,13 +66,22 @@ vg.scene.build = (function() {
     return next;
   }
   
-  function buildGroup(model, db, node) {
+  function buildGroup(def, db, node) {
     var groups = node.items,
-        marks = model.marks,
-        i, len, m, mlen, group;
+        marks = def.marks,
+        i, len, m, mlen, name, group;
 
     for (i=0, len=groups.length; i<len; ++i) {
       group = groups[i];
+      
+      // update scales
+      if (group.scales) for (name in group.scales) {
+        if (name.indexOf(":prev") < 0) {
+          group.scales[name+":prev"] = group.scales[name].copy();
+        }
+      }
+
+      // build items
       group.items = group.items || [];
       for (m=0, mlen=marks.length; m<mlen; ++m) {
         group.items[m] = build(marks[m], db, group.items[m], group.datum);
@@ -81,17 +90,25 @@ vg.scene.build = (function() {
     }
   }
 
-  function buildTrans(model, node) {
-    if (model.duration) node.duration = model.duration;
-    if (model.ease) node.ease = d3.ease(model.ease)
-    if (model.delay) {
+  function buildTrans(def, node) {
+    if (def.duration) node.duration = def.duration;
+    if (def.ease) node.ease = d3.ease(def.ease)
+    if (def.delay) {
       var items = node.items, group = node.group, n = items.length, i;
-      for (i=0; i<n; ++i) model.delay.call(this, items[i], group);
+      for (i=0; i<n; ++i) def.delay.call(this, items[i], group);
     }
   }
   
   function keyFunction(key) {
-    return key ? vg.accessor(key) : null;
+    if (key == null) return null;
+    var f = vg.array(key).map(vg.accessor);
+    return function(d) {
+      for (var s="", i=0, n=f.length; i<n; ++i) {
+        if (i>0) s += "|";
+        s += String(f[i](d));
+      }
+      return s;
+    }
   }
   
   return build;
