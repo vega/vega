@@ -5,6 +5,8 @@ vg.scene.bounds = (function() {
       areaPath = vg.canvas.path.area,
       linePath = vg.canvas.path.line,
       halfpi = Math.PI / 2,
+      sqrt3 = Math.sqrt(3),
+      tan30 = Math.tan(30 * Math.PI / 180),
       gfx = null;
 
   function context() {

@@ -19,7 +19,7 @@ vg.data.facet = function() {
         key: "", keys: [], index: 0,
         values: sort ? data.slice() : data
       });
-      if (sort) obj.values.sort(sort);
+      if (sort) sort(obj.values);
       return result;
     }
 
@@ -43,7 +43,7 @@ vg.data.facet = function() {
 
     if (sort) {
       for (i=0, len=vals.length; i<len; ++i) {
-        vals[i].values.sort(sort);
+        sort(vals[i].values);
       }
     }
 
@@ -56,7 +56,7 @@ vg.data.facet = function() {
   };
   
   facet.sort = function(s) {
-    sort = vg.comparator(s);
+    sort = vg.data.sort().by(s);
     return facet;
   };
 
