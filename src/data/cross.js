@@ -30,5 +30,10 @@ vg.data.cross = function() {
     return cross;
   };
 
+  cross.output = function(x) {
+    output = x;
+    return cross;
+  };
+
   return cross;
 };

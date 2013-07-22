@@ -2884,8 +2884,14 @@ function vg_load_http(url, callback) {
     return cross;
   };
 
+  cross.output = function(x) {
+    output = x;
+    return cross;
+  };
+
   return cross;
-};vg.data.facet = function() {
+};
+vg.data.facet = function() {
 
   var keys = [],
       sort = null;
