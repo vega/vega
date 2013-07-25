@@ -14,13 +14,16 @@ vg.data.stack = function() {
         out_y1 = output["y1"],
         out_cy = output["cy"];
     
+    var series = stacks(data);
+    if (series.length === 0) return data;
+    
     layout.out(function(d, y0, y) {
       if (d.datum) {
         d.datum[out_y0] = y0;
         d.datum[out_y1] = y + y0;
         d.datum[out_cy] = y0 + y/2;
       }
-    })(stacks(data));
+    })(series);
     
     return data;
   }
@@ -29,6 +32,9 @@ vg.data.stack = function() {
     var values = vg.values(data),
         points = [], series = [],
         a, i, n, j, m, k, p, v, x;
+
+    // exit early if no data
+    if (values.length === 0) return series;
 
     // collect and sort data points
     for (i=0, n=values.length; i<n; ++i) {
