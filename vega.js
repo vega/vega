@@ -1627,16 +1627,16 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       return false;
     }
     var items = scene.items, subscene, group, hit, dx, dy,
-        handler = this;
+        handler = this, i, j;
 
-    for (var i=0, len=items.length; i<len; ++i) {
+    for (i=items.length; --i>=0;) {
       group = items[i];
       dx = group.x || 0;
       dy = group.y || 0;
 
       g.save();
       g.translate(dx, dy);
-      for (var j=0, llen=group.items.length; j<llen; ++j) {
+      for (j=group.items.length; --j >= 0;) {
         subscene = group.items[j];
         if (subscene.interactive === false) continue;
         hit = handler.pick(subscene, x, y, gx-dx, gy-dy);
@@ -2691,14 +2691,14 @@ vg.data.size = function(size, group) {
   });
   return size;
 };vg.data.load = function(uri, callback) {
+  var url = vg_load_hasProtocol(uri) ? uri : vg.config.baseURL + uri;
   if (vg.config.isNode) {
-    // in node.js, consult base url and select file or http
-    var url = vg_load_hasProtocol(uri) ? uri : vg.config.baseURL + uri,
-        get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
+    // in node.js, consult url and select file or http
+    var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
     get(url, callback);
   } else {
     // in browser, use xhr
-    vg_load_xhr(uri, callback);
+    vg_load_xhr(url, callback);
   }  
 };
 
@@ -3502,13 +3502,16 @@ vg.data.facet = function() {
         out_y1 = output["y1"],
         out_cy = output["cy"];
     
+    var series = stacks(data);
+    if (series.length === 0) return data;
+    
     layout.out(function(d, y0, y) {
       if (d.datum) {
         d.datum[out_y0] = y0;
         d.datum[out_y1] = y + y0;
         d.datum[out_cy] = y0 + y/2;
       }
-    })(stacks(data));
+    })(series);
     
     return data;
   }
@@ -3517,6 +3520,9 @@ vg.data.facet = function() {
     var values = vg.values(data),
         points = [], series = [],
         a, i, n, j, m, k, p, v, x;
+
+    // exit early if no data
+    if (values.length === 0) return series;
 
     // collect and sort data points
     for (i=0, n=values.length; i<n; ++i) {

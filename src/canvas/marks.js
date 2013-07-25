@@ -410,16 +410,16 @@ vg.canvas.marks = (function() {
       return false;
     }
     var items = scene.items, subscene, group, hit, dx, dy,
-        handler = this;
+        handler = this, i, j;
 
-    for (var i=0, len=items.length; i<len; ++i) {
+    for (i=items.length; --i>=0;) {
       group = items[i];
       dx = group.x || 0;
       dy = group.y || 0;
 
       g.save();
       g.translate(dx, dy);
-      for (var j=0, llen=group.items.length; j<llen; ++j) {
+      for (j=group.items.length; --j >= 0;) {
         subscene = group.items[j];
         if (subscene.interactive === false) continue;
         hit = handler.pick(subscene, x, y, gx-dx, gy-dy);
