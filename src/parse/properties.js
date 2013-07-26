@@ -85,7 +85,7 @@ vg.parse.properties = (function() {
 
     // get field reference for enclosing group
     if (ref.group != null) {
-      var grp = "";
+      var grp = "group.datum";
       if (vg.isString(ref.group)) {
         grp = GROUP_VARS[ref.group]
           ? "group." + ref.group
@@ -97,7 +97,7 @@ vg.parse.properties = (function() {
     if (ref.field != null) {
       if (vg.isString(ref.field)) {
         val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
-        if (ref.group != null) { val = grp+"["+val+"]"; }
+        if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
       } else {
         val = "this.accessor(group.datum["
             + vg.field(ref.field.group).map(vg.str).join("][")

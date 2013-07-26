@@ -1,6 +1,6 @@
 vg = (function(d3, topojson) { // take d3 & topojson as imports
   var vg = {
-    version:  "1.3.2", // semantic versioning
+    version:  "1.3.3", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -4129,11 +4129,14 @@ vg.data.facet = function() {
   if (count === 0) setTimeout(callback, 1);
   return model;
 };vg.parse.dataflow = function(def) {
-  var tx = (def.transform || []).map(vg.parse.transform);
-  return !tx.length ? vg.identity :
-    function(data, db, group) {
-      return tx.reduce(function(d,t) { return t(d, db, group); }, data);
-    };
+  var tx = (def.transform || []).map(vg.parse.transform),
+      df = tx.length
+        ? function(data, db, group) {
+            return tx.reduce(function(d,t) { return t(d,db,group); }, data);
+          }
+        : vg.identity;
+  df.transforms = tx;
+  return df;
 };vg.parse.expr = (function() {
   
   var CONSTANT = {
@@ -4364,7 +4367,7 @@ vg.parse.properties = (function() {
 
     // get field reference for enclosing group
     if (ref.group != null) {
-      var grp = "";
+      var grp = "group.datum";
       if (vg.isString(ref.group)) {
         grp = GROUP_VARS[ref.group]
           ? "group." + ref.group
@@ -4376,7 +4379,7 @@ vg.parse.properties = (function() {
     if (ref.field != null) {
       if (vg.isString(ref.field)) {
         val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
-        if (ref.group != null) { val = grp+"["+val+"]"; }
+        if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
       } else {
         val = "this.accessor(group.datum["
             + vg.field(ref.field.group).map(vg.str).join("][")
