@@ -1,6 +1,7 @@
 {
   "width": 800,
   "height": 500,
+  "padding": {"left": 15, "right": 65, "top": 10, "bottom": 20},
   "data": [
     {
       "name": "jobs",

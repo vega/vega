@@ -52,7 +52,8 @@ ved.parse = function() {
     console.log(e);
     return;
   }
-  
+
+  ved.spec = spec;
   vg.parse.spec(spec, function(chart) {
     d3.select("#vis").selectAll("*").remove();
     var view = chart({
@@ -70,6 +71,9 @@ ved.resize = function(event) {
 };
 
 ved.init = function() {
+  // Set base directory
+  vg.config.baseURL = "../";
+  
   // Specification drop-down menu               
   var sel = d3.select("#sel_spec");
   sel.on("change", ved.select);
@@ -77,7 +81,7 @@ ved.init = function() {
   sel.selectAll("option.spec")
     .data(SPECS)
    .enter().append("option")
-    .attr("value", function(d) { return "vega/"+d+".json"; })
+    .attr("value", function(d) { return "../spec/"+d+".json"; })
     .text(function(d) { return d; });
 
   // Renderer drop-down menu
