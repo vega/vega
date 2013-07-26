@@ -190,7 +190,7 @@ vg.canvas.Renderer = (function() {
   prototype.loadImage = function(uri) {
     var renderer = this,
         scene = renderer._scene,
-        image = null;
+        image = null, url;
 
     renderer._imgload += 1;
     if (vg.config.isNode) {
@@ -203,13 +203,14 @@ vg.canvas.Renderer = (function() {
       });
     } else {
       image = new Image();
+      url = vg.config.baseURL + uri;
       image.onload = function() {
-        vg.log("LOAD IMAGE: "+uri);
+        vg.log("LOAD IMAGE: "+url);
         image.loaded = true;
         renderer._imgload -= 1;
         renderer.renderAsync(scene);
       };
-      image.src = uri;
+      image.src = url;
     }
 
     return image;

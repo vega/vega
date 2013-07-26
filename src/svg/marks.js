@@ -118,9 +118,10 @@ vg.svg.marks = (function() {
         x = o.x - (o.align === "center"
           ? w/2 : (o.align === "right" ? w : 0)),
         y = o.y - (o.baseline === "middle"
-          ? h/2 : (o.baseline === "bottom" ? h : 0));
+          ? h/2 : (o.baseline === "bottom" ? h : 0)),
+        url = vg.config.baseURL + o.url;
     
-    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", o.url);
+    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
     this.setAttribute("x", x);
     this.setAttribute("y", y);
     this.setAttribute("width", w);

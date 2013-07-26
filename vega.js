@@ -1964,7 +1964,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   prototype.loadImage = function(uri) {
     var renderer = this,
         scene = renderer._scene,
-        image = null;
+        image = null, url;
 
     renderer._imgload += 1;
     if (vg.config.isNode) {
@@ -1977,13 +1977,14 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       });
     } else {
       image = new Image();
+      url = vg.config.baseURL + uri;
       image.onload = function() {
-        vg.log("LOAD IMAGE: "+uri);
+        vg.log("LOAD IMAGE: "+url);
         image.loaded = true;
         renderer._imgload -= 1;
         renderer.renderAsync(scene);
       };
-      image.src = uri;
+      image.src = url;
     }
 
     return image;
@@ -2264,9 +2265,10 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         x = o.x - (o.align === "center"
           ? w/2 : (o.align === "right" ? w : 0)),
         y = o.y - (o.baseline === "middle"
-          ? h/2 : (o.baseline === "bottom" ? h : 0));
+          ? h/2 : (o.baseline === "bottom" ? h : 0)),
+        url = vg.config.baseURL + o.url;
     
-    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", o.url);
+    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
     this.setAttribute("x", x);
     this.setAttribute("y", y);
     this.setAttribute("width", w);
