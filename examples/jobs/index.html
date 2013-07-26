@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>Job Voyager Example</title/>
+    <script src="../lib/d3.v3.min.js"></script>
+    <script src="../../vega.js"></script>
+    <style>
+* { font-family: Helvetica Neue, Arial, sans-serif; font-size: 16px; }
+body {
+  width: 880px;
+  margin: 10px auto;
+}
+#ctrl {
+  line-height: 32px;
+  margin-bottom: 0.5em;
+  padding: 0 65px 0 15px;
+}
+#query {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px;
+  width: 400px;
+}
+    </style>
+  </head>
+  <body>
+    <div id="ctrl">
+      <div style="float: right;">
+        <strong>Gender</strong> &nbsp;
+        <input type="radio" name="gender" id="m" onchange="update(sex='men');">
+        <label for="m">Men</label>
+        <input type="radio" name="gender" id="w" onchange="update(sex='women');">
+        <label for="w">Women</label>
+        <input type="radio" name="gender" id="a" onchange="update(sex=0);" checked>
+        <label for="a">All</label>
+      </div>
+      <strong>Search</strong> &nbsp;
+      <input id="query" type="text" onkeyup="search(this.value)"/>
+    </div>
+    <div id="vis"></div>
+    
+<script type="text/javascript">
+var sex = 0,
+    regexp = "",
+    view = null,
+    data = null;
+
+function search(text) {
+  if (text != regexp) {
+    if (query.value != text) {
+      query.value = text;
+      query.focus();
+    }
+    regexp = new RegExp(text, "i");
+    update();
+  }
+}
+
+function test(d) {
+  return (!sex || d.sex===sex) && d.job.match(regexp);
+}
+
+function update() {
+  var filter = data.filter(test);
+  view.data({jobs: filter}).update();
+}
+
+d3.json("../data/jobs.json", function(err, jobs) {
+  data = jobs;
+  vg.config.baseURL = "../";
+  vg.parse.spec("../spec/jobs.json", function(chart) {
+    view = chart({el: "#vis", renderer: "svg"})
+      .on("click", function(evt, item) { search("^"+item.datum.data.job+"$"); })
+      .update();
+  });
+});
+</script>
+  </body>
+</html>
