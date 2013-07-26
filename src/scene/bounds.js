@@ -100,8 +100,8 @@ vg.scene.bounds = (function() {
         a, i, n, x, y, ix, iy, ox, oy;
 
     var angles = [sa, ea],
-        s = sa - (sa%halfpi) + halfpi;
-    for (var i=0; i<4 && s<ea; ++i, s+=halfpi) {
+        s = sa - (sa%halfpi);
+    for (i=0; i<4 && s<ea; ++i, s+=halfpi) {
       angles.push(s);
     }
 

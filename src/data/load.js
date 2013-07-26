@@ -1,12 +1,12 @@
 vg.data.load = function(uri, callback) {
+  var url = vg_load_hasProtocol(uri) ? uri : vg.config.baseURL + uri;
   if (vg.config.isNode) {
-    // in node.js, consult base url and select file or http
-    var url = vg_load_hasProtocol(uri) ? uri : vg.config.baseURL + uri,
-        get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
+    // in node.js, consult url and select file or http
+    var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
     get(url, callback);
   } else {
     // in browser, use xhr
-    vg_load_xhr(uri, callback);
+    vg_load_xhr(url, callback);
   }  
 };
 
