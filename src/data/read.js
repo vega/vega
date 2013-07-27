@@ -53,10 +53,7 @@ vg.data.read = (function() {
   };
   
   formats.treejson = function(data, format) {
-    var d = [JSON.parse(data)];
-    d.__vgtree__ = true;
-    d.children = format.children || "children";
-    return d;
+    return vg.tree(JSON.parse(data), format.children);
   };
   
   function parseValues(data, types) {

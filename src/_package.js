@@ -29,6 +29,13 @@ vg.isTree = function(obj) {
   return vg.isArray(obj) && obj.__vgtree__;
 };
 
+vg.tree = function(obj, children) {
+  var d = [obj];
+  d.__vgtree__ = true;
+  d.children = children || "children";
+  return d;
+};
+
 vg.number = function(s) { return +s; };
 
 vg.boolean = function(s) { return !!s; };
