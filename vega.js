@@ -2655,7 +2655,6 @@ vg.data.ingestTree = function(node, children) {
   return d;
 };
 
-
 function vg_make_tree(d) {
   d.__vgtree__ = true;
   d.nodes = function() { return vg_tree_nodes(this, []); };
@@ -2763,7 +2762,7 @@ function vg_load_http(url, callback) {
   }
 
   formats.json = function(data, format) {
-    var d = JSON.parse(data);
+    var d = vg.isObject(data) ? data : JSON.parse(data);
     if (format && format.property) {
       d = vg.accessor(format.property)(d);
     }
@@ -2785,7 +2784,8 @@ function vg_load_http(url, callback) {
       vg.error("TopoJSON library not loaded.");
       return [];
     }    
-    var t = JSON.parse(data), obj = [];
+    var t = vg.isObject(data) ? data : JSON.parse(data),
+        obj = [];
 
     if (format && format.feature) {
       obj = (obj = t.objects[format.feature])
@@ -2802,7 +2802,8 @@ function vg_load_http(url, callback) {
   };
   
   formats.treejson = function(data, format) {
-    return vg.tree(JSON.parse(data), format.children);
+    data = vg.isObject(data) ? data : JSON.parse(data);
+    return vg.tree(data, format.children);
   };
   
   function parseValues(data, types) {
@@ -2819,7 +2820,7 @@ function vg_load_http(url, callback) {
       for (j=0, clen=cols.length; j<clen; ++j) {
         d[cols[j]] = p[j](d[cols[j]]);
       }
-      if (tree && d.values) parseCollection(d, cols, p, true);
+      if (tree && d.values) parseValues(d, cols, p, true);
     }
   }
 
@@ -4110,17 +4111,9 @@ vg.data.facet = function() {
     if (d.url) {
       count += 1;
       vg.data.load(d.url, load(d)); 
-    }
-     
-    if (d.values) {
-      if (d.format && d.format.parse) {
-        // run specified value parsers
-        vg.data.read.parse(d.values, d.format.parse);
-      }
-      model.load[d.name] = d.values;
-    }
-    
-    if (d.source) {
+    } else if (d.values) {
+      model.load[d.name] = vg.data.read(d.values, d.format);
+    } else if (d.source) {
       var list = model.source[d.source] || (model.source[d.source] = []);
       list.push(d.name);
     }

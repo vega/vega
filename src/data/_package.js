@@ -25,7 +25,6 @@ vg.data.ingestTree = function(node, children) {
   return d;
 };
 
-
 function vg_make_tree(d) {
   d.__vgtree__ = true;
   d.nodes = function() { return vg_tree_nodes(this, []); };

@@ -23,17 +23,9 @@ vg.parse.data = function(spec, callback) {
     if (d.url) {
       count += 1;
       vg.data.load(d.url, load(d)); 
-    }
-     
-    if (d.values) {
-      if (d.format && d.format.parse) {
-        // run specified value parsers
-        vg.data.read.parse(d.values, d.format.parse);
-      }
-      model.load[d.name] = d.values;
-    }
-    
-    if (d.source) {
+    } else if (d.values) {
+      model.load[d.name] = vg.data.read(d.values, d.format);
+    } else if (d.source) {
       var list = model.source[d.source] || (model.source[d.source] = []);
       list.push(d.name);
     }
