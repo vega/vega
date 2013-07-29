@@ -188,7 +188,7 @@ vg.canvas.marks = (function() {
       h = o.height || 0;
 
       opac = o.opacity == null ? 1 : o.opacity;
-      if (opac == 0) return;
+      if (opac == 0) continue;
 
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
@@ -227,7 +227,7 @@ vg.canvas.marks = (function() {
       y2 = o.y2 != null ? o.y2 : y1;
 
       opac = o.opacity == null ? 1 : o.opacity;
-      if (opac == 0) return;
+      if (opac == 0) continue;
       
       if (stroke = o.stroke) {
         lw = (lw = o.strokeWidth) != null ? lw : vg.config.render.lineWidth;
@@ -292,7 +292,7 @@ vg.canvas.marks = (function() {
       g.textBaseline = o.baseline || "alphabetic";
 
       opac = o.opacity == null ? 1 : o.opacity;
-      if (opac == 0) return;
+      if (opac == 0) continue;
 
       if (o.angle) {
         g.save();
