@@ -168,11 +168,6 @@ vg.canvas.Renderer = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
-
-    // compute mark-level bounds
-    scene.bounds = scene.items.reduce(function(b, item) {
-      return item.bounds ? b.union(item.bounds) : b;
-    }, scene.bounds || new vg.Bounds());
   };
   
   prototype.renderAsync = function(scene) {
