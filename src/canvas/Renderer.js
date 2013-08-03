@@ -78,7 +78,7 @@ vg.canvas.Renderer = (function() {
     if (ctx.vgLineDash) return; // already set
 
     if (ctx.setLineDash) {
-      ctx.vgLineDash = function(dash) { this.setLineDash(dash); };
+      ctx.vgLineDash = function(dash) { this.lineDash = dash; };
       ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
     } else if (ctx.webkitLineDash !== undefined) {
     	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash; };
