@@ -4394,7 +4394,6 @@ vg.parse.properties = (function() {
     // multiply, offset, return value
     val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
       + (ref.offset ? " + " + vg.number(ref.offset) : "");
-    if (isColor) val = '('+val+')+""';
     return val;
   }
   
