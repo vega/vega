@@ -18,9 +18,11 @@ vg.parse.properties = (function() {
         code += "\n  if (o.x > o.x2) { "
               + "var t = o.x; o.x = o.x2; o.x2 = t; };";
         code += "\n  o.width = (o.x2 - o.x);";
-      } else if (vars.width && !vars.x1) {
+      } else if (vars.width) {
         code += "\n  o.x = (o.x2 - o.width);";
-      } 
+      } else {
+        code += "\n  o.x = o.x2;"
+      }
     }
 
     if (vars.y2) {
@@ -28,8 +30,10 @@ vg.parse.properties = (function() {
         code += "\n  if (o.y > o.y2) { "
               + "var t = o.y; o.y = o.y2; o.y2 = t; };";
         code += "\n  o.height = (o.y2 - o.y);";
-      } else if (vars.height && !vars.y1) {
+      } else if (vars.height) {
         code += "\n  o.y = (o.y2 - o.height);";
+      } else {
+        code += "\n  o.y = o.y2;"
       }
     }
     
