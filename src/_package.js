@@ -26,7 +26,7 @@ vg.isBoolean = function(obj) {
 };
 
 vg.isTree = function(obj) {
-  return vg.isArray(obj) && obj.__vgtree__;
+  return obj && obj.__vgtree__;
 };
 
 vg.tree = function(obj, children) {

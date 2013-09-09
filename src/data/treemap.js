@@ -15,7 +15,7 @@ vg.data.treemap = function() {
     data = layout
       .size(vg.data.size(size, group))
       .value(value)
-      .nodes(vg.isTree(data) ? data.nodes() : data);
+      .nodes(vg.isTree(data) ? data : {values: data});
     
     var keys = vg.keys(output),
         len = keys.length;

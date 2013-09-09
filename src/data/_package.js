@@ -13,13 +13,13 @@ vg.data.ingest = function(datum, index) {
   };
 };
 
-vg.data.ingestTree = function(node, children) {
-  var d = vg.data.ingest(node),
+vg.data.ingestTree = function(node, children, index) {
+  var d = vg.data.ingest(node, index || 0),
       c = node[children], n, i;
   if (c && (n = c.length)) {
     d.values = Array(n);
     for (i=0; i<n; ++i) {
-      d.values[i] = vg.data.ingestTree(c[i], children);
+      d.values[i] = vg.data.ingestTree(c[i], children, i);
     }
   }
   return d;
