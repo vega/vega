@@ -1581,7 +1581,14 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       // render group contents
       g.save();
       g.translate(gx, gy);
+      if (group.clip) {
+        g.beginPath();
+        g.rect(0, 0, group.width || 0, group.height || 0);
+        g.clip();
+      }
+      
       if (bounds) bounds.translate(-gx, -gy);
+      
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer === "back") {
           renderer.draw(g, axes[j], bounds);
@@ -1598,6 +1605,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       for (j=0, m=legends.length; j<m; ++j) {
         renderer.draw(g, legends[j], bounds);
       }
+      
       if (bounds) bounds.translate(gx, gy);
       g.restore();
     }    
@@ -2161,7 +2169,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
-  var mark_id = 0;
+  var mark_id = 0,
+      clip_id = 0;
   
   var textAlign = {
     "left":   "start",
@@ -2198,7 +2207,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       } else {
         if (value.id) {
           // ensure definition is included
-          vg.svg._cur._defs[value.id] = value;
+          vg.svg._cur._defs.gradient[value.id] = value;
           value = "url(#" + value.id + ")";
         }
         this.style.setProperty(name, value+"", null);
@@ -2314,6 +2323,13 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var x = o.x || 0,
         y = o.y || 0;
     this.setAttribute("transform", "translate("+x+","+y+")");
+
+    if (o.clip) {
+      var c = {width: o.width || 0, height: o.height || 0},
+          id = o.clip_id || (o.clip_id = "clip" + clip_id++);
+      vg.svg._cur._defs.clipping[id] = c;
+      this.setAttribute("clip-path", "url(#"+id+")");
+    }
   }
 
   function group_bg(o) {
@@ -2338,8 +2354,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           ? d3.select(p)
           : g.append("g").attr("id", "g"+(++mark_id));
 
-    var id = "#" + p.attr("id"),
-        s = id + " > " + tag,
+    var id = p.attr("id"),
+        s = "#" + id + " > " + tag,
         m = p.selectAll(s).data(data),
         e = m.enter().append(tag);
 
@@ -2429,7 +2445,10 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._svg = null;
     this._ctx = null;
     this._el = null;
-    this._defs = {};
+    this._defs = {
+      gradient: {},
+      clipping: {}
+    };
   };
   
   var prototype = renderer.prototype;
@@ -2477,18 +2496,19 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   prototype.updateDefs = function() {
     var svg = this._svg,
         all = this._defs,
-        ids = vg.keys(all),
-        defs = svg.select("defs"), grds;
+        dgrad = vg.keys(all.gradient),
+        dclip = vg.keys(all.clipping),
+        defs = svg.select("defs"), grad, clip;
   
     // get or create svg defs block
-    if (ids.length===0) { defs.remove(); return; }
+    if (dgrad.length===0 && dclip.length==0) { defs.remove(); return; }
     if (defs.empty()) defs = svg.insert("defs", ":first-child");
     
-    grds = defs.selectAll("linearGradient").data(ids, vg.identity);
-    grds.enter().append("linearGradient").attr("id", vg.identity);
-    grds.exit().remove();
-    grds.each(function(id) {
-      var def = all[id],
+    grad = defs.selectAll("linearGradient").data(dgrad, vg.identity);
+    grad.enter().append("linearGradient").attr("id", vg.identity);
+    grad.exit().remove();
+    grad.each(function(id) {
+      var def = all.gradient[id],
           grd = d3.select(this);
   
       // set gradient coordinates
@@ -2501,13 +2521,29 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       stop.attr("offset", function(d) { return d.offset; })
           .attr("stop-color", function(d) { return d.color; });
     });
+    
+    clip = defs.selectAll("clipPath").data(dclip, vg.identity);
+    clip.enter().append("clipPath").attr("id", vg.identity);
+    clip.exit().remove();
+    clip.each(function(id) {
+      var def = all.clipping[id],
+          cr = d3.select(this).selectAll("rect").data([1]);
+      cr.enter().append("rect");
+      cr.attr("x", 0)
+        .attr("y", 0)
+        .attr("width", def.width)
+        .attr("height", def.height);
+    });
   };
   
   prototype.render = function(scene, items) {
     vg.svg._cur = this;
 
-    if (items) this.renderItems(vg.array(items));
-    else this.draw(this._ctx, scene, -1);
+    if (items) {
+      this.renderItems(vg.array(items));
+    } else {
+      this.draw(this._ctx, scene, -1);
+    }
     this.updateDefs();
 
    delete vg.svg._cur;

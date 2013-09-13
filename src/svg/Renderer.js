@@ -3,7 +3,10 @@ vg.svg.Renderer = (function() {
     this._svg = null;
     this._ctx = null;
     this._el = null;
-    this._defs = {};
+    this._defs = {
+      gradient: {},
+      clipping: {}
+    };
   };
   
   var prototype = renderer.prototype;
@@ -51,18 +54,19 @@ vg.svg.Renderer = (function() {
   prototype.updateDefs = function() {
     var svg = this._svg,
         all = this._defs,
-        ids = vg.keys(all),
-        defs = svg.select("defs"), grds;
+        dgrad = vg.keys(all.gradient),
+        dclip = vg.keys(all.clipping),
+        defs = svg.select("defs"), grad, clip;
   
     // get or create svg defs block
-    if (ids.length===0) { defs.remove(); return; }
+    if (dgrad.length===0 && dclip.length==0) { defs.remove(); return; }
     if (defs.empty()) defs = svg.insert("defs", ":first-child");
     
-    grds = defs.selectAll("linearGradient").data(ids, vg.identity);
-    grds.enter().append("linearGradient").attr("id", vg.identity);
-    grds.exit().remove();
-    grds.each(function(id) {
-      var def = all[id],
+    grad = defs.selectAll("linearGradient").data(dgrad, vg.identity);
+    grad.enter().append("linearGradient").attr("id", vg.identity);
+    grad.exit().remove();
+    grad.each(function(id) {
+      var def = all.gradient[id],
           grd = d3.select(this);
   
       // set gradient coordinates
@@ -75,13 +79,29 @@ vg.svg.Renderer = (function() {
       stop.attr("offset", function(d) { return d.offset; })
           .attr("stop-color", function(d) { return d.color; });
     });
+    
+    clip = defs.selectAll("clipPath").data(dclip, vg.identity);
+    clip.enter().append("clipPath").attr("id", vg.identity);
+    clip.exit().remove();
+    clip.each(function(id) {
+      var def = all.clipping[id],
+          cr = d3.select(this).selectAll("rect").data([1]);
+      cr.enter().append("rect");
+      cr.attr("x", 0)
+        .attr("y", 0)
+        .attr("width", def.width)
+        .attr("height", def.height);
+    });
   };
   
   prototype.render = function(scene, items) {
     vg.svg._cur = this;
 
-    if (items) this.renderItems(vg.array(items));
-    else this.draw(this._ctx, scene, -1);
+    if (items) {
+      this.renderItems(vg.array(items));
+    } else {
+      this.draw(this._ctx, scene, -1);
+    }
     this.updateDefs();
 
    delete vg.svg._cur;

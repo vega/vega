@@ -357,7 +357,14 @@ vg.canvas.marks = (function() {
       // render group contents
       g.save();
       g.translate(gx, gy);
+      if (group.clip) {
+        g.beginPath();
+        g.rect(0, 0, group.width || 0, group.height || 0);
+        g.clip();
+      }
+      
       if (bounds) bounds.translate(-gx, -gy);
+      
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer === "back") {
           renderer.draw(g, axes[j], bounds);
@@ -374,6 +381,7 @@ vg.canvas.marks = (function() {
       for (j=0, m=legends.length; j<m; ++j) {
         renderer.draw(g, legends[j], bounds);
       }
+      
       if (bounds) bounds.translate(gx, gy);
       g.restore();
     }    
