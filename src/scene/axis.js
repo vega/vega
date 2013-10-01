@@ -164,7 +164,7 @@ vg.scene.axis = function() {
   };
   
   axis.offset = function(x) {
-    if (!arguments.length) return tickValues;
+    if (!arguments.length) return offset;
     offset = vg.isObject(x) ? x : +x;
     return axis;
   };
