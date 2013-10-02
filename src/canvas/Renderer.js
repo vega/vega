@@ -77,11 +77,12 @@ vg.canvas.Renderer = (function() {
   function initializeLineDash(ctx) {
     if (ctx.vgLineDash) return; // already set
 
+    var NODASH = [];
     if (ctx.setLineDash) {
-      ctx.vgLineDash = function(dash) { this.setLineDash(dash); };
+      ctx.vgLineDash = function(dash) { this.setLineDash(dash || NODASH); };
       ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
     } else if (ctx.webkitLineDash !== undefined) {
-    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash; };
+    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash || NODASH; };
       ctx.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
     } else if (ctx.mozDash !== undefined) {
       ctx.vgLineDash = function(dash) { this.mozDash = dash; };
