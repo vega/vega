@@ -23,12 +23,24 @@ vg.canvas.marks = (function() {
     g.closePath();
   }
 
+  function areaPath(g, items) {
+    var o = items[0],
+        m = o.mark,
+        p = m.cache || (m.cache = parsePath(vg.canvas.path.area(items)));
+    renderPath(g, p);
+  }
+
+  function linePath(g, items) {
+    var o = items[0],
+        m = o.mark,
+        p = m.cache || (m.cache = parsePath(vg.canvas.path.line(items)));
+    renderPath(g, p);
+  }
+
   function pathPath(g, o) {
     if (o.path == null) return;
-    if (!o["path:parsed"]) {
-      o["path:parsed"] = parsePath(o.path);
-    }
-    return renderPath(g, o["path:parsed"], o.x, o.y);
+    var p = o.cache || (o.cache = parsePath(o.path));
+    return renderPath(g, p, o.x, o.y);
   }
 
   function symbolPath(g, o) {
@@ -92,20 +104,6 @@ vg.canvas.marks = (function() {
         g.lineTo(x-rx, y+ry);
     }
     g.closePath();
-  }
-
-  function areaPath(g, items) {
-    var o = items[0],
-        p = o["path:parsed"] ||
-           (o["path:parsed"] = parsePath(vg.canvas.path.area(items)));
-    renderPath(g, p);
-  }
-
-  function linePath(g, items) {
-    var o = items[0],
-        p = o["path:parsed"] ||
-           (o["path:parsed"] = parsePath(vg.canvas.path.line(items)));
-    renderPath(g, p);
   }
 
   function lineStroke(g, items) {

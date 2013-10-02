@@ -1247,12 +1247,24 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     g.closePath();
   }
 
+  function areaPath(g, items) {
+    var o = items[0],
+        m = o.mark,
+        p = m.cache || (m.cache = parsePath(vg.canvas.path.area(items)));
+    renderPath(g, p);
+  }
+
+  function linePath(g, items) {
+    var o = items[0],
+        m = o.mark,
+        p = m.cache || (m.cache = parsePath(vg.canvas.path.line(items)));
+    renderPath(g, p);
+  }
+
   function pathPath(g, o) {
     if (o.path == null) return;
-    if (!o["path:parsed"]) {
-      o["path:parsed"] = parsePath(o.path);
-    }
-    return renderPath(g, o["path:parsed"], o.x, o.y);
+    var p = o.cache || (o.cache = parsePath(o.path));
+    return renderPath(g, p, o.x, o.y);
   }
 
   function symbolPath(g, o) {
@@ -1316,20 +1328,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         g.lineTo(x-rx, y+ry);
     }
     g.closePath();
-  }
-
-  function areaPath(g, items) {
-    var o = items[0],
-        p = o["path:parsed"] ||
-           (o["path:parsed"] = parsePath(vg.canvas.path.area(items)));
-    renderPath(g, p);
-  }
-
-  function linePath(g, items) {
-    var o = items[0],
-        p = o["path:parsed"] ||
-           (o["path:parsed"] = parsePath(vg.canvas.path.line(items)));
-    renderPath(g, p);
   }
 
   function lineStroke(g, items) {
@@ -4348,9 +4346,7 @@ vg.parse.properties = (function() {
       }
     }
     
-    if (hasPath(mark, vars)) {
-      code += "\n  if (o['path:parsed']) o['path:parsed'] = null;"
-    }
+    if (hasPath(mark, vars)) code += "\n  item.touch();";
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
@@ -4726,6 +4722,11 @@ vg.scene.fontString = function(o) {
         i = list.indexOf(item);
     if (i >= 0) (i===list.length-1) ? list.pop() : list.splice(i, 1);
     return item;
+  };
+  
+  prototype.touch = function() {
+    if (this.cache) this.cache = null;
+    if (this.mark.cache) this.mark.cache = null;
   };
   
   return item;
@@ -5348,8 +5349,9 @@ vg.scene.item = function(mark) {
 
       for (i=0, n=curr.length; i<n; ++i) {
         item[curr[i].property] = curr[i](e);
-        vg.scene.bounds.item(item);
       }
+      item.touch();
+      vg.scene.bounds.item(item);
 
       if (f === 1) {
         if (curr.remove) item.remove();
