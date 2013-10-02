@@ -18,9 +18,11 @@ vg.parse.properties = (function() {
         code += "\n  if (o.x > o.x2) { "
               + "var t = o.x; o.x = o.x2; o.x2 = t; };";
         code += "\n  o.width = (o.x2 - o.x);";
-      } else if (vars.width && !vars.x1) {
+      } else if (vars.width) {
         code += "\n  o.x = (o.x2 - o.width);";
-      } 
+      } else {
+        code += "\n  o.x = o.x2;"
+      }
     }
 
     if (vars.y2) {
@@ -28,14 +30,14 @@ vg.parse.properties = (function() {
         code += "\n  if (o.y > o.y2) { "
               + "var t = o.y; o.y = o.y2; o.y2 = t; };";
         code += "\n  o.height = (o.y2 - o.y);";
-      } else if (vars.height && !vars.y1) {
+      } else if (vars.height) {
         code += "\n  o.y = (o.y2 - o.height);";
+      } else {
+        code += "\n  o.y = o.y2;"
       }
     }
     
-    if (hasPath(mark, vars)) {
-      code += "\n  if (o['path:parsed']) o['path:parsed'] = null;"
-    }
+    if (hasPath(mark, vars)) code += "\n  item.touch();";
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
@@ -85,7 +87,7 @@ vg.parse.properties = (function() {
 
     // get field reference for enclosing group
     if (ref.group != null) {
-      var grp = "";
+      var grp = "group.datum";
       if (vg.isString(ref.group)) {
         grp = GROUP_VARS[ref.group]
           ? "group." + ref.group
@@ -97,7 +99,7 @@ vg.parse.properties = (function() {
     if (ref.field != null) {
       if (vg.isString(ref.field)) {
         val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
-        if (ref.group != null) { val = grp+"["+val+"]"; }
+        if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
       } else {
         val = "this.accessor(group.datum["
             + vg.field(ref.field.group).map(vg.str).join("][")
@@ -120,7 +122,6 @@ vg.parse.properties = (function() {
     // multiply, offset, return value
     val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
       + (ref.offset ? " + " + vg.number(ref.offset) : "");
-    if (isColor) val = '('+val+')+""';
     return val;
   }
   

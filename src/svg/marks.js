@@ -12,7 +12,8 @@ vg.svg.marks = (function() {
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
-  var mark_id = 0;
+  var mark_id = 0,
+      clip_id = 0;
   
   var textAlign = {
     "left":   "start",
@@ -49,7 +50,7 @@ vg.svg.marks = (function() {
       } else {
         if (value.id) {
           // ensure definition is included
-          vg.svg._cur._defs[value.id] = value;
+          vg.svg._cur._defs.gradient[value.id] = value;
           value = "url(#" + value.id + ")";
         }
         this.style.setProperty(name, value+"", null);
@@ -165,6 +166,13 @@ vg.svg.marks = (function() {
     var x = o.x || 0,
         y = o.y || 0;
     this.setAttribute("transform", "translate("+x+","+y+")");
+
+    if (o.clip) {
+      var c = {width: o.width || 0, height: o.height || 0},
+          id = o.clip_id || (o.clip_id = "clip" + clip_id++);
+      vg.svg._cur._defs.clipping[id] = c;
+      this.setAttribute("clip-path", "url(#"+id+")");
+    }
   }
 
   function group_bg(o) {
@@ -189,8 +197,8 @@ vg.svg.marks = (function() {
           ? d3.select(p)
           : g.append("g").attr("id", "g"+(++mark_id));
 
-    var id = "#" + p.attr("id"),
-        s = id + " > " + tag,
+    var id = p.attr("id"),
+        s = "#" + id + " > " + tag,
         m = p.selectAll(s).data(data),
         e = m.enter().append(tag);
 

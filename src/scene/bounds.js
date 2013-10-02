@@ -132,7 +132,7 @@ vg.scene.bounds = (function() {
       case "cross":
         r = Math.sqrt(size / 5) / 2;
         t = 3*r;
-        bounds.set(x-t, y-t, x+y, y+t);
+        bounds.set(x-t, y-r, x+t, y+r);
         break;
 
       case "diamond":
