@@ -14,7 +14,7 @@ vg.data.read = (function() {
   }
 
   formats.json = function(data, format) {
-    var d = JSON.parse(data);
+    var d = vg.isObject(data) ? data : JSON.parse(data);
     if (format && format.property) {
       d = vg.accessor(format.property)(d);
     }
@@ -36,7 +36,8 @@ vg.data.read = (function() {
       vg.error("TopoJSON library not loaded.");
       return [];
     }    
-    var t = JSON.parse(data), obj = [];
+    var t = vg.isObject(data) ? data : JSON.parse(data),
+        obj = [];
 
     if (format && format.feature) {
       obj = (obj = t.objects[format.feature])
@@ -53,10 +54,8 @@ vg.data.read = (function() {
   };
   
   formats.treejson = function(data, format) {
-    var d = [JSON.parse(data)];
-    d.__vgtree__ = true;
-    d.children = format.children || "children";
-    return d;
+    data = vg.isObject(data) ? data : JSON.parse(data);
+    return vg.tree(data, format.children);
   };
   
   function parseValues(data, types) {
@@ -73,7 +72,7 @@ vg.data.read = (function() {
       for (j=0, clen=cols.length; j<clen; ++j) {
         d[cols[j]] = p[j](d[cols[j]]);
       }
-      if (tree && d.values) parseCollection(d, cols, p, true);
+      if (tree && d.values) parseValues(d, cols, p, true);
     }
   }
 

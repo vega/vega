@@ -77,11 +77,12 @@ vg.canvas.Renderer = (function() {
   function initializeLineDash(ctx) {
     if (ctx.vgLineDash) return; // already set
 
+    var NODASH = [];
     if (ctx.setLineDash) {
-      ctx.vgLineDash = function(dash) { this.setLineDash(dash); };
+      ctx.vgLineDash = function(dash) { this.setLineDash(dash || NODASH); };
       ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
     } else if (ctx.webkitLineDash !== undefined) {
-    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash; };
+    	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash || NODASH; };
       ctx.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
     } else if (ctx.mozDash !== undefined) {
       ctx.vgLineDash = function(dash) { this.mozDash = dash; };
@@ -168,11 +169,6 @@ vg.canvas.Renderer = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
-
-    // compute mark-level bounds
-    scene.bounds = scene.items.reduce(function(b, item) {
-      return item.bounds ? b.union(item.bounds) : b;
-    }, scene.bounds || new vg.Bounds());
   };
   
   prototype.renderAsync = function(scene) {

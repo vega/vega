@@ -23,12 +23,24 @@ vg.canvas.marks = (function() {
     g.closePath();
   }
 
+  function areaPath(g, items) {
+    var o = items[0],
+        m = o.mark,
+        p = m.cache || (m.cache = parsePath(vg.canvas.path.area(items)));
+    renderPath(g, p);
+  }
+
+  function linePath(g, items) {
+    var o = items[0],
+        m = o.mark,
+        p = m.cache || (m.cache = parsePath(vg.canvas.path.line(items)));
+    renderPath(g, p);
+  }
+
   function pathPath(g, o) {
     if (o.path == null) return;
-    if (!o["path:parsed"]) {
-      o["path:parsed"] = parsePath(o.path);
-    }
-    return renderPath(g, o["path:parsed"], o.x, o.y);
+    var p = o.cache || (o.cache = parsePath(o.path));
+    return renderPath(g, p, o.x, o.y);
   }
 
   function symbolPath(g, o) {
@@ -92,20 +104,6 @@ vg.canvas.marks = (function() {
         g.lineTo(x-rx, y+ry);
     }
     g.closePath();
-  }
-
-  function areaPath(g, items) {
-    var o = items[0],
-        p = o["path:parsed"] ||
-           (o["path:parsed"] = parsePath(vg.canvas.path.area(items)));
-    renderPath(g, p);
-  }
-
-  function linePath(g, items) {
-    var o = items[0],
-        p = o["path:parsed"] ||
-           (o["path:parsed"] = parsePath(vg.canvas.path.line(items)));
-    renderPath(g, p);
   }
 
   function lineStroke(g, items) {
@@ -188,7 +186,7 @@ vg.canvas.marks = (function() {
       h = o.height || 0;
 
       opac = o.opacity == null ? 1 : o.opacity;
-      if (opac == 0) return;
+      if (opac == 0) continue;
 
       if (fill = o.fill) {
         g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
@@ -227,7 +225,7 @@ vg.canvas.marks = (function() {
       y2 = o.y2 != null ? o.y2 : y1;
 
       opac = o.opacity == null ? 1 : o.opacity;
-      if (opac == 0) return;
+      if (opac == 0) continue;
       
       if (stroke = o.stroke) {
         lw = (lw = o.strokeWidth) != null ? lw : vg.config.render.lineWidth;
@@ -292,7 +290,7 @@ vg.canvas.marks = (function() {
       g.textBaseline = o.baseline || "alphabetic";
 
       opac = o.opacity == null ? 1 : o.opacity;
-      if (opac == 0) return;
+      if (opac == 0) continue;
 
       if (o.angle) {
         g.save();
@@ -357,7 +355,14 @@ vg.canvas.marks = (function() {
       // render group contents
       g.save();
       g.translate(gx, gy);
+      if (group.clip) {
+        g.beginPath();
+        g.rect(0, 0, group.width || 0, group.height || 0);
+        g.clip();
+      }
+      
       if (bounds) bounds.translate(-gx, -gy);
+      
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer === "back") {
           renderer.draw(g, axes[j], bounds);
@@ -374,6 +379,7 @@ vg.canvas.marks = (function() {
       for (j=0, m=legends.length; j<m; ++j) {
         renderer.draw(g, legends[j], bounds);
       }
+      
       if (bounds) bounds.translate(gx, gy);
       g.restore();
     }    

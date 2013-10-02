@@ -117,6 +117,8 @@ vg.scene.legend = function() {
     titles.properties.enter.y.value += padding;
     labels.properties.enter.x.offset += padding + 1;
     symbols.properties.enter.x.offset = padding + 1;
+    labels.properties.update.x.offset += padding + 1;
+    symbols.properties.update.x.offset = padding + 1;
 
     return {
       type: "group",
@@ -192,6 +194,7 @@ vg.scene.legend = function() {
     var gp = gradient.properties, gh = gradientStyle.height,
         hh = (gh && gh.value) || gp.enter.height.value;
     labels.properties.enter.y.value = hh;
+    labels.properties.update.y.value = hh;
 
     // account for title size as needed
     if (title) {
@@ -199,6 +202,9 @@ vg.scene.legend = function() {
           sz = 4 + ((fs && fs.value) || tp.enter.fontSize.value);
       gradient.properties.enter.y.value += sz;
       labels.properties.enter.y.value += sz;
+      gradient.properties.update.y.value += sz;
+      labels.properties.update.y.value += sz;
+
     }
     
     // padding from legend border
@@ -207,6 +213,9 @@ vg.scene.legend = function() {
     gradient.properties.enter.x.value += padding;
     gradient.properties.enter.y.value += padding;
     labels.properties.enter.y.value += padding;
+    gradient.properties.update.x.value += padding;
+    gradient.properties.update.y.value += padding;
+    labels.properties.update.y.value += padding;
 
     return {
       type: "group",
@@ -340,11 +349,12 @@ function vg_legendUpdate(item, group, trans) {
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
-  var props = mark.properties.enter;
-  if (size)   props.size   = {scale: size.scaleName,   field: "data"};
-  if (shape)  props.shape  = {scale: shape.scaleName,  field: "data"};
-  if (fill)   props.fill   = {scale: fill.scaleName,   field: "data"};
-  if (stroke) props.stroke = {scale: stroke.scaleName, field: "data"};
+  var e = mark.properties.enter,
+      u = mark.properties.update;
+  if (size)   e.size   = u.size   = {scale: size.scaleName,   field: "data"};
+  if (shape)  e.shape  = u.shape  = {scale: shape.scaleName,  field: "data"};
+  if (fill)   e.fill   = u.fill   = {scale: fill.scaleName,   field: "data"};
+  if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: "data"};
 }
 
 function vg_legendTitle() {
@@ -388,7 +398,11 @@ function vg_legendSymbols() {
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
-      update: { opacity: {value: 1} }
+      update: {
+        x: {field: "offset", mult: 0.5},
+        y: {scale: "legend", field: "index"},
+        opacity: {value: 1}
+      }
     }
   };
 }
@@ -412,7 +426,11 @@ function vg_vLegendLabels() {
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
-      update: { opacity: {value: 1} }
+      update: {
+        opacity: {value: 1},
+        x: {field: "offset", offset: 5},
+        y: {scale: "legend", field: "index"},
+      }
     }
   };
 }
@@ -433,7 +451,11 @@ function vg_legendGradient() {
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
-      update: { opacity: {value: 1} }
+      update: {
+        x: {value: 0},
+        y: {value: 0},
+        opacity: {value: 1}
+      }
     }
   };
 }
@@ -458,7 +480,11 @@ function vg_hLegendLabels() {
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
-      update: { opacity: {value: 1} }
+      update: {
+        x: {scale: "legend", field: "data"},
+        y: {value: 20},
+        opacity: {value: 1}
+      }
     }
   };
 }
