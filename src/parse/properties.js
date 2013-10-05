@@ -37,7 +37,10 @@ vg.parse.properties = (function() {
       }
     }
     
-    if (hasPath(mark, vars)) code += "\n  item.touch();";
+    if (hasPath(mark, vars)) {
+      code += "\n  item.touch();";
+      code += "\n  if (o['path:parsed']) o['path:parsed'] = null;"
+    }
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
