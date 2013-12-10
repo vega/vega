@@ -37,7 +37,22 @@ vg.parse.scales = (function() {
   }
 
   function ordinal(def, scale, rng, db, data) {
-    var domain, refs, values, str;
+    var domain, refs, values, str, range, range_refs, dataDrivenRange=false;
+    
+    var fieldsToArray = function(values, r) {        
+        var dat = vg.values(db[r.data] || data),
+            get = vg.accessor(vg.isString(r.field)
+              ? r.field : "data." + vg.accessor(r.field.group)(data));
+        return vg.unique(dat, get, values);
+    };
+    
+    // range pre-processing for data-driven ranges
+    range = def.range;
+    if (vg.isObject(range)) {
+      range_refs = def.range.fields || vg.array(def.range);
+      rng = range_refs.reduce(fieldsToArray, []);    
+      dataDrivenRange = true; 
+    }
     
     // domain
     domain = def.domain;
@@ -45,19 +60,14 @@ vg.parse.scales = (function() {
       scale.domain(domain);
     } else if (vg.isObject(domain)) {
       refs = def.domain.fields || vg.array(def.domain);
-      values = refs.reduce(function(values, r) {        
-        var dat = vg.values(db[r.data] || data),
-            get = vg.accessor(vg.isString(r.field)
-              ? r.field : "data." + vg.accessor(r.field.group)(data));
-        return vg.unique(dat, get, values);
-      }, []);
-      if (def.sort) values.sort(vg.cmp);
+      values = refs.reduce(fieldsToArray, []);
+      if (def.sort && !dataDrivenRange) values.sort(vg.cmp);
       scale.domain(values);
     }
 
     // range
     str = typeof rng[0] === 'string';
-    if (str || rng.length > 2) {
+    if (str || rng.length > 2 || dataDrivenRange) {
       scale.range(rng); // color or shape values
     } else if (def.points) {
       scale.rangePoints(rng, def.padding||0);
