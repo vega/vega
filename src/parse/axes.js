@@ -37,7 +37,7 @@ vg.parse.axes = (function() {
     // axis values
     axis.tickValues(def.values || null);
     // axis label formatting
-    axis.tickFormat(def.format ? d3.format(def.format) : null);
+    axis.tickFormat(def.format || null);
     // axis tick subdivision
     axis.tickSubdivide(def.subdivide || 0);
     // axis tick padding
@@ -65,7 +65,7 @@ vg.parse.axes = (function() {
     } else {
       axis.ticks(vg.config.axis.ticks);
     }
-    
+
     // style properties
     var p = def.properties;
     if (p && p.ticks) {
@@ -82,6 +82,6 @@ vg.parse.axes = (function() {
     axis.gridLineProperties(p && p.grid || {});
     axis.domainProperties(p && p.axis || {});
   }
-  
+
   return axes;
 })();

@@ -4069,7 +4069,7 @@ vg.data.facet = function() {
     // axis values
     axis.tickValues(def.values || null);
     // axis label formatting
-    axis.tickFormat(def.format ? d3.format(def.format) : null);
+    axis.tickFormat(def.format || null);
     // axis tick subdivision
     axis.tickSubdivide(def.subdivide || 0);
     // axis tick padding
@@ -4097,7 +4097,7 @@ vg.data.facet = function() {
     } else {
       axis.ticks(vg.config.axis.ticks);
     }
-    
+
     // style properties
     var p = def.properties;
     if (p && p.ticks) {
@@ -4114,9 +4114,10 @@ vg.data.facet = function() {
     axis.gridLineProperties(p && p.grid || {});
     axis.domainProperties(p && p.axis || {});
   }
-  
+
   return axes;
-})();vg.parse.data = function(spec, callback) {
+})();
+vg.parse.data = function(spec, callback) {
   var model = {
     defs: spec,
     load: {},
@@ -5402,7 +5403,6 @@ vg.scene.transition = function(dur, ease) {
 
   axis.def = function() {
     var def = axisDef ? axisDef : (axisDef = axis_def(scale));
-    
     // generate data
     var major = tickValues == null
       ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
@@ -5508,7 +5508,7 @@ vg.scene.transition = function(dur, ease) {
 
   axis.tickFormat = function(x) {
     if (!arguments.length) return tickFormat;
-    tickFormat = x;
+    tickFormat = x ? ((scale.type === 'time') ? d3.time.format(x) : d3.format(x)) : null;
     return axis;
   };
   
