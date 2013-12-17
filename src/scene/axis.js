@@ -28,7 +28,6 @@ vg.scene.axis = function() {
 
   axis.def = function() {
     var def = axisDef ? axisDef : (axisDef = axis_def(scale));
-    
     // generate data
     var major = tickValues == null
       ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
@@ -134,7 +133,7 @@ vg.scene.axis = function() {
 
   axis.tickFormat = function(x) {
     if (!arguments.length) return tickFormat;
-    tickFormat = x;
+    tickFormat = x ? ((scale.type === 'time') ? d3.time.format(x) : d3.format(x)) : null;
     return axis;
   };
   
