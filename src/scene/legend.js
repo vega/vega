@@ -323,7 +323,7 @@ vg.scene.legend = function() {
   return legend;
 };
 
-var vg_legendOrients = {right: 1, left: 1};
+var vg_legendOrients = {right: 1, left: 1, top: 1, bottom: 1};
 
 function vg_legendUpdate(item, group, trans) {
   var o = trans ? {} : item,
@@ -332,6 +332,8 @@ function vg_legendUpdate(item, group, trans) {
       pad    = item.mark.def.padding * 2,
       gx1    = group.bounds ? group.bounds.x1 : 0,
       gx2    = group.bounds ? group.bounds.x2 : group.width,
+      gy1    = group.bounds ? group.bounds.y1 : 0,
+      gy2    = group.bounds ? group.bounds.y2 : group.height,
       lw     = ~~item.bounds.width() + (o.width ? 0 : pad),
       lh     = ~~item.bounds.height() + (o.height ? 0 : pad);
 
@@ -343,6 +345,8 @@ function vg_legendUpdate(item, group, trans) {
   switch (orient) {
     case "left":  { o.x += gx1 - offset - lw; break; };
     case "right": { o.x += gx2 + offset; break; };
+    case "bottom": { o.x = 0; o.y = height + offset; break; }
+    case "top":    { o.x = 0; o.y = -offset; break; }
   }
   
   item.mark.def.properties.enter(item, group, trans);
