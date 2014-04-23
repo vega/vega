@@ -11,7 +11,6 @@ all: \
 	vega.min.js
 
 vega.js: \
-	src/core/_umdPrefix.js \
 	src/core/_start.js \
 	src/_package.js \
 	src/_config.js \
@@ -80,8 +79,7 @@ vega.js: \
 	src/headless/_package.js \
 	src/headless/View.js \
 	src/headless/render.js \
-	src/core/_end.js \
-	src/core/_umdSuffix.js
+	src/core/_end.js
 
 %.min.js: %.js Makefile
 	@rm -f $@

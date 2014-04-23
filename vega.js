@@ -1,7 +1,7 @@
 // Define module using Universal Module Definition pattern
 // https://github.com/umdjs/umd/blob/master/amdWeb.js
 
-(function (root, factory) {
+(function (factory) {
   if (typeof define === 'function' && define.amd) {
     // Support AMD. Register as an anonymous module.
     // EDIT: List all dependencies in AMD style
@@ -9,17 +9,16 @@
   } else {
     // No AMD. Set module as a global variable
     // EDIT: Pass dependencies to factory function
-    root.vg = factory(root.d3, root.topojson);
+    vg = factory(d3, topojson);
   }
-}(this,
+}(
 //EDIT: The dependencies are passed to this function
 function (d3, topojson) {
 //---------------------------------------------------
 // BEGIN code for this module
 //---------------------------------------------------
+  topojson = typeof topojson === "undefined" ? null : topojson;
 
-var vg;
-vg = (function(d3, topojson) { // take d3 & topojson as imports
   var vg = {
     version:  "1.3.3", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
@@ -7056,12 +7055,8 @@ vg.headless.View.Factory = function(defs) {
   }
 
   vg.parse.spec(opt.spec, draw, vg.headless.View.Factory);
-};  return vg;
-})(d3, typeof topojson === "undefined" ? null : topojson);
-// assumes D3 and topojson in global namespace
-
-// return module
-return vg;
+};  // return module
+  return vg;
 
 //---------------------------------------------------
 // END code for this module
