@@ -4,20 +4,20 @@
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     // Support AMD. Register as an anonymous module.
-    // EDIT: List all dependencies in AMD style
+    // NOTE: List all dependencies in AMD style
     define(['d3', 'topojson'], factory);
   } else {
     // No AMD. Set module as a global variable
-    // EDIT: Pass dependencies to factory function
+    // NOTE: Pass dependencies to factory function
+    // (assume that both d3 and topojson are also global.)
     vg = factory(d3, topojson);
   }
 }(
-//EDIT: The dependencies are passed to this function
+//NOTE: The dependencies are passed to this function
 function (d3, topojson) {
 //---------------------------------------------------
 // BEGIN code for this module
 //---------------------------------------------------
-  topojson = typeof topojson === "undefined" ? null : topojson;
 
   var vg = {
     version:  "1.3.3", // semantic versioning

@@ -18,7 +18,6 @@ function (d3, topojson) {
 //---------------------------------------------------
 // BEGIN code for this module
 //---------------------------------------------------
-  topojson = typeof topojson === "undefined" ? null : topojson;
 
   var vg = {
     version:  "1.3.3", // semantic versioning
