@@ -65,14 +65,18 @@ vg.data.stats = function() {
       for (i=0, len=list.length; i<len; ++i) {
         list[i].stats = v;
       }
+      o = list;
     }
     
     return o;
   }
   
   function stats(data) {
-    return (vg.isArray(data) ? [data] : data.values || [])
-      .map(reduce); // no pun intended
+    if (vg.isArray(data)) {
+      return reduce(data);
+    } else {
+      return (data.values || []).map(reduce);
+    }
   }
   
   stats.median = function(bool) {
