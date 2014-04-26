@@ -147,6 +147,13 @@ vg.svg.marks = (function() {
         base = o.baseline==="top" ? ".9em"
              : o.baseline==="middle" ? ".35em" : 0;
   
+    if (o.radius) {
+      x = o.radius * Math.cos(o.ang);
+      y = o.radius * Math.sin(o.ang);
+    }
+    if (o.origin_x) { x = (x || 0) + o.origin_x }
+    if (o.origin_y) { y = (y || 0) + o.origin_y }
+      
     this.setAttribute("x", x + dx);
     this.setAttribute("y", y + dy);
     this.setAttribute("dy", dy);
