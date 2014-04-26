@@ -292,6 +292,13 @@ vg.canvas.marks = (function() {
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) continue;
 
+      if (o.radius) {
+        o.x = o.radius * Math.cos(o.ang);
+        o.y = o.radius * Math.sin(o.ang);
+      }
+      if (o.origin_x) { o.x = (o.x || 0) + o.origin_x }
+      if (o.origin_y) { o.y = (o.y || 0) + o.origin_y }
+        
       if (o.angle) {
         g.save();
         g.translate(o.x || 0, o.y || 0);
