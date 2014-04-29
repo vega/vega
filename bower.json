@@ -1,0 +1,25 @@
+{
+  "name": "vega",
+  "version": "1.3.3",
+  "main": "vega.js",
+  "scripts": [
+    "vega.js"
+  ],
+  "ignore": [
+    ".DS_Store",
+    ".git",
+    ".gitignore",
+    ".npmignore",
+    "Makefile",
+    "bin",
+    "examples",
+    "index.js",
+    "node_modules",
+    "package.json",
+    "src",
+    "test"
+  ],
+  "dependencies": {
+    "d3": "3.2.4"
+  }
+}
