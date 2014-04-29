@@ -141,7 +141,6 @@ vg.canvas.Handler = (function() {
   };
   
   // find the scenegraph item at the current mouse position
-  // returns an array of scenegraph items, from leaf node up to the root
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
   prototype.pick = function(scene, x, y, gx, gy) {

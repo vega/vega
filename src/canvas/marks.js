@@ -446,7 +446,7 @@ vg.canvas.marks = (function() {
     }
 
     return scene.interactive
-      ? pickAll(hitTests.rect, g, scene, x, y, gx, gy)
+      ? pickAll(hitTests.group, g, scene, x, y, gx, gy)
       : false;
   }
 
@@ -525,6 +525,7 @@ vg.canvas.marks = (function() {
     text:   textHit,
     rect:   function(g,o,x,y) { return true; }, // bounds test is sufficient
     image:  function(g,o,x,y) { return true; }, // bounds test is sufficient
+    group:  function(g,o,x,y) { return o.fill || o.stroke; },
     rule:   function(g,o,x,y) {
               if (!g.isPointInStroke) return false;
               ruleStroke(g,o); return g.isPointInStroke(x,y);

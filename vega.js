@@ -1691,7 +1691,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
 
     return scene.interactive
-      ? pickAll(hitTests.rect, g, scene, x, y, gx, gy)
+      ? pickAll(hitTests.group, g, scene, x, y, gx, gy)
       : false;
   }
 
@@ -1770,6 +1770,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     text:   textHit,
     rect:   function(g,o,x,y) { return true; }, // bounds test is sufficient
     image:  function(g,o,x,y) { return true; }, // bounds test is sufficient
+    group:  function(g,o,x,y) { return o.fill || o.stroke; },
     rule:   function(g,o,x,y) {
               if (!g.isPointInStroke) return false;
               ruleStroke(g,o); return g.isPointInStroke(x,y);
@@ -2172,7 +2173,6 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   };
   
   // find the scenegraph item at the current mouse position
-  // returns an array of scenegraph items, from leaf node up to the root
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
   prototype.pick = function(scene, x, y, gx, gy) {
