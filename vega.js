@@ -1250,20 +1250,20 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function areaPath(g, items) {
     var o = items[0],
         m = o.mark,
-        p = m.cache || (m.cache = parsePath(vg.canvas.path.area(items)));
+        p = m.pathCache || (m.pathCache = parsePath(vg.canvas.path.area(items)));
     renderPath(g, p);
   }
 
   function linePath(g, items) {
     var o = items[0],
         m = o.mark,
-        p = m.cache || (m.cache = parsePath(vg.canvas.path.line(items)));
+        p = m.pathCache || (m.pathCache = parsePath(vg.canvas.path.line(items)));
     renderPath(g, p);
   }
 
   function pathPath(g, o) {
     if (o.path == null) return;
-    var p = o.cache || (o.cache = parsePath(o.path));
+    var p = o.pathCache || (o.pathCache = parsePath(o.path));
     return renderPath(g, p, o.x, o.y);
   }
 
@@ -4725,8 +4725,8 @@ vg.scene.fontString = function(o) {
   };
   
   prototype.touch = function() {
-    if (this.cache) this.cache = null;
-    if (this.mark.cache) this.mark.cache = null;
+    if (this.pathCache) this.pathCache = null;
+    if (this.mark.pathCache) this.mark.pathCache = null;
   };
   
   return item;
@@ -4893,20 +4893,20 @@ vg.scene.item = function(mark) {
 
   function path(o, bounds) {
     var p = o.path
-      ? o["path:parsed"] || (o["path:parsed"] = parse(o.path))
+      ? o.pathCache || (o.pathCache = parse(o.path))
       : null;
     return pathBounds(o, p, bounds);
   }
   
   function area(o, bounds) {
     var items = o.mark.items, o = items[0];
-    var p = o["path:parsed"] || (o["path:parsed"]=parse(areaPath(items)));
+    var p = o.pathCache || (o.pathCache = parse(areaPath(items)));
     return pathBounds(items[0], p, bounds);
   }
 
   function line(o, bounds) {
     var items = o.mark.items, o = items[0];
-    var p = o["path:parsed"] || (o["path:parsed"]=parse(linePath(items)));
+    var p = o.pathCache || (o.pathCache = parse(linePath(items)));
     return pathBounds(items[0], p, bounds);
   }
 

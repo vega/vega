@@ -35,20 +35,20 @@ vg.scene.bounds = (function() {
 
   function path(o, bounds) {
     var p = o.path
-      ? o["path:parsed"] || (o["path:parsed"] = parse(o.path))
+      ? o.pathCache || (o.pathCache = parse(o.path))
       : null;
     return pathBounds(o, p, bounds);
   }
   
   function area(o, bounds) {
     var items = o.mark.items, o = items[0];
-    var p = o["path:parsed"] || (o["path:parsed"]=parse(areaPath(items)));
+    var p = o.pathCache || (o.pathCache = parse(areaPath(items)));
     return pathBounds(items[0], p, bounds);
   }
 
   function line(o, bounds) {
     var items = o.mark.items, o = items[0];
-    var p = o["path:parsed"] || (o["path:parsed"]=parse(linePath(items)));
+    var p = o.pathCache || (o.pathCache = parse(linePath(items)));
     return pathBounds(items[0], p, bounds);
   }
 

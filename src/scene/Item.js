@@ -37,8 +37,8 @@ vg.scene.Item = (function() {
   };
   
   prototype.touch = function() {
-    if (this.cache) this.cache = null;
-    if (this.mark.cache) this.mark.cache = null;
+    if (this.pathCache) this.pathCache = null;
+    if (this.mark.pathCache) this.mark.pathCache = null;
   };
   
   return item;

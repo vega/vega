@@ -26,20 +26,20 @@ vg.canvas.marks = (function() {
   function areaPath(g, items) {
     var o = items[0],
         m = o.mark,
-        p = m.cache || (m.cache = parsePath(vg.canvas.path.area(items)));
+        p = m.pathCache || (m.pathCache = parsePath(vg.canvas.path.area(items)));
     renderPath(g, p);
   }
 
   function linePath(g, items) {
     var o = items[0],
         m = o.mark,
-        p = m.cache || (m.cache = parsePath(vg.canvas.path.line(items)));
+        p = m.pathCache || (m.pathCache = parsePath(vg.canvas.path.line(items)));
     renderPath(g, p);
   }
 
   function pathPath(g, o) {
     if (o.path == null) return;
-    var p = o.cache || (o.cache = parsePath(o.path));
+    var p = o.pathCache || (o.pathCache = parsePath(o.path));
     return renderPath(g, p, o.x, o.y);
   }
 
