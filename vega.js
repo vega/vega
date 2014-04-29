@@ -10,7 +10,8 @@
     // No AMD. Set module as a global variable
     // NOTE: Pass dependencies to factory function
     // (assume that both d3 and topojson are also global.)
-    vg = factory(d3, topojson);
+    var tj = (typeof topojson === 'undefined') ? null : topojson;
+    vg = factory(d3, tj);
   }
 }(
 //NOTE: The dependencies are passed to this function
@@ -3703,14 +3704,20 @@ vg.data.facet = function() {
       for (i=0, len=list.length; i<len; ++i) {
         list[i].stats = v;
       }
+      o = list;
     }
     
     return o;
   }
   
   function stats(data) {
-    return (vg.isArray(data) ? [data] : data.values || [])
-      .map(reduce); // no pun intended
+    if (vg.isArray(data)) {
+      return reduce(data);
+    } else {
+      return (data.values || []).map(reduce);
+    }
+    // return (vg.isArray(data) ? [data] : data.values || [])
+    //   .map(reduce); // no pun intended
   }
   
   stats.median = function(bool) {

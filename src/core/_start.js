@@ -10,7 +10,8 @@
     // No AMD. Set module as a global variable
     // NOTE: Pass dependencies to factory function
     // (assume that both d3 and topojson are also global.)
-    vg = factory(d3, topojson);
+    var tj = (typeof topojson === 'undefined') ? null : topojson;
+    vg = factory(d3, tj);
   }
 }(
 //NOTE: The dependencies are passed to this function
