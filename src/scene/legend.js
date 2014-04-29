@@ -6,6 +6,7 @@ vg.scene.legend = function() {
       spacing = null,
       values = null,
       format = null,
+      formatString = null,
       title = undefined,
       orient = "right",
       offset = vg.config.legend.offset,
@@ -24,7 +25,12 @@ vg.scene.legend = function() {
   function reset() { legendDef = null; }
 
   legend.def = function() {
-    var scale = size || shape || fill || stroke; 
+    var scale = size || shape || fill || stroke;
+    
+    format = !formatString ? null : ((scale.type === 'time')
+      ? d3.time.format(formatString)
+      : d3.format(formatString));
+    
     if (!legendDef) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
         ? quantDef(scale)
@@ -259,8 +265,11 @@ vg.scene.legend = function() {
   };
 
   legend.format = function(x) {
-    if (!arguments.length) return format;
-    if (format !== x) { format = x; reset(); }
+    if (!arguments.length) return formatString;
+    if (formatString !== x) {
+      formatString = x;
+      reset();
+    }
     return legend;
   };
 

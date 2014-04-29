@@ -4069,7 +4069,7 @@ vg.data.facet = function() {
     // axis values
     axis.tickValues(def.values || null);
     // axis label formatting
-    axis.tickFormat(def.format ? d3.format(def.format) : null);
+    axis.tickFormat(def.format || null);
     // axis tick subdivision
     axis.tickSubdivide(def.subdivide || 0);
     // axis tick padding
@@ -4097,7 +4097,7 @@ vg.data.facet = function() {
     } else {
       axis.ticks(vg.config.axis.ticks);
     }
-    
+
     // style properties
     var p = def.properties;
     if (p && p.ticks) {
@@ -4114,9 +4114,10 @@ vg.data.facet = function() {
     axis.gridLineProperties(p && p.grid || {});
     axis.domainProperties(p && p.axis || {});
   }
-  
+
   return axes;
-})();vg.parse.data = function(spec, callback) {
+})();
+vg.parse.data = function(spec, callback) {
   var model = {
     defs: spec,
     load: {},
@@ -4249,7 +4250,7 @@ vg.data.facet = function() {
     legend.values(def.values || null);
 
     // legend label formatting
-    legend.format(def.format !== undefined ? d3.format(def.format) : null);
+    legend.format(def.format !== undefined ? def.format : null);
 
     // style properties
     var p = def.properties;
@@ -5396,6 +5397,7 @@ vg.scene.transition = function(dur, ease) {
       tickEndSize = vg.config.axis.tickSize,
       tickPadding = vg.config.axis.padding,
       tickValues = null,
+      tickFormatString = null,
       tickFormat = null,
       tickSubdivide = 0,
       tickArguments = [vg.config.axis.ticks],
@@ -5408,11 +5410,18 @@ vg.scene.transition = function(dur, ease) {
 
   var axis = {};
 
-  function reset() { axisDef = null; }
+  function reset() {
+    axisDef = null;
+  }
 
   axis.def = function() {
     var def = axisDef ? axisDef : (axisDef = axis_def(scale));
-    
+
+    // tick format
+    tickFormat = !tickFormatString ? null : ((scale.type === 'time')
+      ? d3.time.format(tickFormatString)
+      : d3.format(tickFormatString));
+
     // generate data
     var major = tickValues == null
       ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
@@ -5517,8 +5526,11 @@ vg.scene.transition = function(dur, ease) {
   };
 
   axis.tickFormat = function(x) {
-    if (!arguments.length) return tickFormat;
-    tickFormat = x;
+    if (!arguments.length) return tickFormatString;
+    if (tickFormatString !== x) {
+      tickFormatString = x;
+      reset();
+    }
     return axis;
   };
   
@@ -5871,6 +5883,7 @@ vg.scene.legend = function() {
       spacing = null,
       values = null,
       format = null,
+      formatString = null,
       title = undefined,
       orient = "right",
       offset = vg.config.legend.offset,
@@ -5889,7 +5902,12 @@ vg.scene.legend = function() {
   function reset() { legendDef = null; }
 
   legend.def = function() {
-    var scale = size || shape || fill || stroke; 
+    var scale = size || shape || fill || stroke;
+    
+    format = !formatString ? null : ((scale.type === 'time')
+      ? d3.time.format(formatString)
+      : d3.format(formatString));
+    
     if (!legendDef) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
         ? quantDef(scale)
@@ -6124,8 +6142,11 @@ vg.scene.legend = function() {
   };
 
   legend.format = function(x) {
-    if (!arguments.length) return format;
-    if (format !== x) { format = x; reset(); }
+    if (!arguments.length) return formatString;
+    if (formatString !== x) {
+      formatString = x;
+      reset();
+    }
     return legend;
   };
 
