@@ -6,7 +6,8 @@ vg.data.pie = function() {
       sort = false,
       output = {
         "startAngle": "startAngle",
-        "endAngle": "endAngle"
+        "endAngle": "endAngle",
+        "midAngle": "midAngle"
       };
 
   function pie(data) {
@@ -25,6 +26,7 @@ vg.data.pie = function() {
       var d;
       data[i].value = (d = values[i]);
       data[i][output.startAngle] = a;
+      data[i][output.midAngle] = (a + 0.5 * d * k);
       data[i][output.endAngle] = (a += d * k);
     });
     

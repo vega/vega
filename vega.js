@@ -1523,7 +1523,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, fill, stroke, opac, lw, text, ta, tb;
+        o, fill, stroke, opac, lw, x, y, r, t;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -1537,15 +1537,23 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) continue;
 
+      x = o.x || 0;
+      y = o.y || 0;
+      if (r = o.radius) {
+        t = (o.theta || 0) - Math.PI/2;
+        x += r * Math.cos(t);
+        y += r * Math.sin(t);
+      }
+
       if (o.angle) {
         g.save();
-        g.translate(o.x || 0, o.y || 0);
+        g.translate(x, y);
         g.rotate(o.angle * Math.PI/180);
         x = o.dx || 0;
         y = o.dy || 0;
       } else {
-        x = (o.x || 0) + (o.dx || 0);
-        y = (o.y || 0) + (o.dy || 0);
+        x += (o.dx || 0);
+        y += (o.dy || 0);
       }
 
       if (fill = o.fill) {
@@ -2320,13 +2328,19 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         dx = o.dx || 0,
         dy = o.dy || 0,
         a = o.angle || 0,
+        r = o.radius || 0,
         align = textAlign[o.align || "left"],
         base = o.baseline==="top" ? ".9em"
              : o.baseline==="middle" ? ".35em" : 0;
-  
+
+    if (r) {
+      var t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
+
     this.setAttribute("x", x + dx);
     this.setAttribute("y", y + dy);
-    this.setAttribute("dy", dy);
     this.setAttribute("text-anchor", align);
     
     if (a) this.setAttribute("transform", "rotate("+a+" "+x+","+y+")");
@@ -3438,7 +3452,8 @@ vg.data.facet = function() {
       sort = false,
       output = {
         "startAngle": "startAngle",
-        "endAngle": "endAngle"
+        "endAngle": "endAngle",
+        "midAngle": "midAngle"
       };
 
   function pie(data) {
@@ -3457,6 +3472,7 @@ vg.data.facet = function() {
       var d;
       data[i].value = (d = values[i]);
       data[i][output.startAngle] = a;
+      data[i][output.midAngle] = (a + 0.5 * d * k);
       data[i][output.endAngle] = (a += d * k);
     });
     
@@ -5069,12 +5085,19 @@ vg.scene.item = function(mark) {
         h = o.fontSize || vg.config.render.fontSize,
         a = o.align,
         b = o.baseline,
-        g = context(), w;
+        r = o.radius || 0,
+        g = context(), w, t;
 
     g.font = vg.scene.fontString(o);
     g.textAlign = a || "left";
     g.textBaseline = b || "alphabetic";
     w = g.measureText(o.text || "").width;
+
+    if (r) {
+      t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
 
     // horizontal
     if (a === "center") {

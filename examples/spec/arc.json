@@ -40,6 +40,22 @@
           "fill": {"value": "pink"}
         }
       }
+    },
+    {
+      "type": "text",
+      "from": {"data": "table"},
+      "properties": {
+        "enter": {
+          "x": {"group": "width", "mult": 0.5},
+          "y": {"group": "height", "mult": 0.5},
+          "radius": {"scale": "r", "offset": 8},
+          "theta": {"field": "midAngle"},
+          "fill": {"value": "#000"},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
+          "text": {"field": "data"}
+        }
+      }
     }
   ]
 }

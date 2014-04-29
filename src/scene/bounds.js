@@ -175,12 +175,19 @@ vg.scene.bounds = (function() {
         h = o.fontSize || vg.config.render.fontSize,
         a = o.align,
         b = o.baseline,
-        g = context(), w;
+        r = o.radius || 0,
+        g = context(), w, t;
 
     g.font = vg.scene.fontString(o);
     g.textAlign = a || "left";
     g.textBaseline = b || "alphabetic";
     w = g.measureText(o.text || "").width;
+
+    if (r) {
+      t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
 
     // horizontal
     if (a === "center") {

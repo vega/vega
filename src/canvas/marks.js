@@ -278,7 +278,7 @@ vg.canvas.marks = (function() {
   function drawText(g, scene, bounds) {
     if (!scene.items.length) return;
     var items = scene.items,
-        o, fill, stroke, opac, lw, text, ta, tb;
+        o, fill, stroke, opac, lw, x, y, r, t;
 
     for (var i=0, len=items.length; i<len; ++i) {
       o = items[i];
@@ -292,15 +292,23 @@ vg.canvas.marks = (function() {
       opac = o.opacity == null ? 1 : o.opacity;
       if (opac == 0) continue;
 
+      x = o.x || 0;
+      y = o.y || 0;
+      if (r = o.radius) {
+        t = (o.theta || 0) - Math.PI/2;
+        x += r * Math.cos(t);
+        y += r * Math.sin(t);
+      }
+
       if (o.angle) {
         g.save();
-        g.translate(o.x || 0, o.y || 0);
+        g.translate(x, y);
         g.rotate(o.angle * Math.PI/180);
         x = o.dx || 0;
         y = o.dy || 0;
       } else {
-        x = (o.x || 0) + (o.dx || 0);
-        y = (o.y || 0) + (o.dy || 0);
+        x += (o.dx || 0);
+        y += (o.dy || 0);
       }
 
       if (fill = o.fill) {
