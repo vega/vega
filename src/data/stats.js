@@ -77,8 +77,6 @@ vg.data.stats = function() {
     } else {
       return (data.values || []).map(reduce);
     }
-    // return (vg.isArray(data) ? [data] : data.values || [])
-    //   .map(reduce); // no pun intended
   }
   
   stats.median = function(bool) {
