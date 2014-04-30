@@ -66,7 +66,7 @@ vg.scene.encode = (function() {
         vg.parse.axes(def.axes, axes, group.scales);
         axes.forEach(function(a, i) {
           axisDef = a.def();
-          axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i]);
+          axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i], null, 1);
           axisItems[i].group = group;
           encode.call(this, group, group.axisItems[i], axisDef, trans);
         });
@@ -90,7 +90,7 @@ vg.scene.encode = (function() {
         vg.parse.legends(def.legends, leg, group.scales);
         leg.forEach(function(l, i) {
           legDef = l.def();
-          legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
+          legItems[i] = vg.scene.build(legDef, this._data, legItems[i], null, 1);
           legItems[i].group = group;
           encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });

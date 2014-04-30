@@ -4820,7 +4820,7 @@ vg.scene.item = function(mark) {
       EXIT   = vg.scene.EXIT,
       DEFAULT= {"sentinel":1};
   
-  function build(def, db, node, parentData) {
+  function build(def, db, node, parentData, reentrant) {
     var data = vg.scene.data(
       def.from ? def.from(db, node, parentData) : null,
       parentData);
@@ -4832,7 +4832,7 @@ vg.scene.item = function(mark) {
     
     // recurse if group
     if (def.type === GROUP) {
-      buildGroup(def, db, node);
+      buildGroup(def, db, node, reentrant);
     }
     
     return node;
@@ -4874,14 +4874,14 @@ vg.scene.item = function(mark) {
       item = prev[i];
       if (item.status === EXIT) {
         item.key = keyf ? item.key : next.length;
-        next.push(item);
+        next.splice(item.index, 0, item);
       }
     }
     
     return next;
   }
   
-  function buildGroup(def, db, node) {
+  function buildGroup(def, db, node, reentrant) {
     var groups = node.items,
         marks = def.marks,
         i, len, m, mlen, name, group;
@@ -4890,7 +4890,7 @@ vg.scene.item = function(mark) {
       group = groups[i];
       
       // update scales
-      if (group.scales) for (name in group.scales) {
+      if (!reentrant && group.scales) for (name in group.scales) {
         if (name.indexOf(":prev") < 0) {
           group.scales[name+":prev"] = group.scales[name].copy();
         }
@@ -5288,7 +5288,7 @@ vg.scene.item = function(mark) {
         vg.parse.axes(def.axes, axes, group.scales);
         axes.forEach(function(a, i) {
           axisDef = a.def();
-          axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i]);
+          axisItems[i] = vg.scene.build(axisDef, this._data, axisItems[i], null, 1);
           axisItems[i].group = group;
           encode.call(this, group, group.axisItems[i], axisDef, trans);
         });
@@ -5312,7 +5312,7 @@ vg.scene.item = function(mark) {
         vg.parse.legends(def.legends, leg, group.scales);
         leg.forEach(function(l, i) {
           legDef = l.def();
-          legItems[i] = vg.scene.build(legDef, this._data, legItems[i]);
+          legItems[i] = vg.scene.build(legDef, this._data, legItems[i], null, 1);
           legItems[i].group = group;
           encodeLegend.call(this, group, group.legendItems[i], legDef, trans);
         });
