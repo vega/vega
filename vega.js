@@ -5800,7 +5800,7 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
 }
 
 function vg_axisTitleExtend(orient, title, range, offset) {
-  var mid = ~~((range[1] - range[0]) / 2),
+  var mid = ~~((range[0] + range[1]) / 2),
       sign = (orient === "top" || orient === "left") ? -1 : 1;
   
   if (orient === "bottom" || orient === "top") {
