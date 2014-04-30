@@ -57,10 +57,12 @@ vg.parse.scales = (function() {
     // domain
     domain = def.domain;
     if (vg.isArray(domain)) {
-      scale.domain(domain);
+      values = def.sort ? domain.slice() : domain;
     } else if (vg.isObject(domain)) {
       refs = def.domain.fields || vg.array(def.domain);
       values = refs.reduce(fieldsToArray, []);
+    }
+    if (values) {
       if (def.sort && !dataDrivenRange) values.sort(vg.cmp);
       scale.domain(values);
     }
