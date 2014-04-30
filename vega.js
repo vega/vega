@@ -6901,7 +6901,7 @@ vg.spec = function(s) {
 };
 vg.headless = {};vg.headless.View = (function() {
   
-  var view = function(width, height, pad, type) {
+  var view = function(width, height, pad, type, vp) {
     this._canvas = null;
     this._type = type;
     this._el = "body";
@@ -6909,9 +6909,10 @@ vg.headless = {};vg.headless.View = (function() {
     this._model = new vg.Model();
     this._width = this.__width = width || 500;
     this._height = this.__height = height || 500;
-    this._autopad = 1;
     this._padding = pad || {top:0, left:0, bottom:0, right:0};
+    this._autopad = vg.isString(this._padding) ? 1 : 0;
     this._renderer = new vg[type].Renderer();
+    this._viewport = vp || null;
     this.initialize();
   };
   
@@ -6991,8 +6992,10 @@ vg.headless = {};vg.headless.View = (function() {
     return this;
   };
 
-  prototype.viewport = function() {
-    if (!arguments.length) return null;
+  prototype.viewport = function(vp) {
+    if (!arguments.length) return _viewport;
+    this._viewport = vp;
+    this.initialize();
     return this;
   };
 
@@ -7043,6 +7046,11 @@ vg.headless = {};vg.headless.View = (function() {
         w = this._width  + (p ? p.left + p.right : 0),
         h = this._height + (p ? p.top + p.bottom : 0);
 
+    if (this._viewport) {
+      w = this._viewport[0] - (p ? p.left + p.right : 0);
+      h = this._viewport[1] - (p ? p.top + p.bottom : 0);
+    }
+
       // build svg text
     var svg = d3.select(this._el)
       .select("svg").node().innerHTML
@@ -7058,6 +7066,11 @@ vg.headless = {};vg.headless.View = (function() {
     var w = this._width,
         h = this._height,
         pad = this._padding;
+
+    if (this._viewport) {
+      w = this._viewport[0] - (pad ? pad.left + pad.right : 0);
+      h = this._viewport[1] - (pad ? pad.top + pad.bottom : 0);
+    }
     
     if (this._type === "svg") {
       this.initSVG(w, h, pad);
@@ -7117,8 +7130,9 @@ vg.headless.View.Factory = function(defs) {
     var w = defs.width,
         h = defs.height,
         p = defs.padding,
+        vp = defs.viewport,
         r = opt.renderer || "canvas",
-        v = new vg.headless.View(w, h, p, r).defs(defs);
+        v = new vg.headless.View(w, h, p, r, vp).defs(defs);
     if (defs.data.load) v.data(defs.data.load);
     if (opt.data) v.data(opt.data);
     return v;
