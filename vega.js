@@ -4490,6 +4490,7 @@ vg.parse.properties = (function() {
       LOG = "log",
       POWER = "pow",
       TIME = "time",
+      QUANTILE = "quantile",
       GROUP_PROPERTY = {width: 1, height: 1};
 
   function scales(spec, scales, db, group) {
@@ -4523,35 +4524,19 @@ vg.parse.properties = (function() {
   }
 
   function ordinal(def, scale, rng, db, data) {
-    var domain, refs, values, str, range, range_refs, dataDrivenRange=false;
-    
-    var fieldsToArray = function(values, r) {        
-      var dat = vg.values(db[r.data] || data),
-          get = vg.accessor(vg.isString(r.field)
-              ? r.field : "data." + vg.accessor(r.field.group)(data));
-      return vg.unique(dat, get, values);
-    };
+    var domain, sort, str, refs, dataDrivenRange = false;
     
     // range pre-processing for data-driven ranges
-    range = def.range;
-    if (vg.isObject(range) && !vg.isArray(range)) {
-      range_refs = def.range.fields || vg.array(def.range);
-      rng = range_refs.reduce(fieldsToArray, []);    
-      dataDrivenRange = true; 
+    if (vg.isObject(def.range) && !vg.isArray(def.range)) {
+      dataDrivenRange = true;
+      refs = def.range.fields || vg.array(def.range);
+      rng = extract(refs, db, data);
     }
     
     // domain
-    domain = def.domain;
-    if (vg.isArray(domain)) {
-      values = def.sort ? domain.slice() : domain;
-    } else if (vg.isObject(domain)) {
-      refs = def.domain.fields || vg.array(def.domain);
-      values = refs.reduce(fieldsToArray, []);
-    }
-    if (values) {
-      if (def.sort && !dataDrivenRange) values.sort(vg.cmp);
-      scale.domain(values);
-    }
+    sort = def.sort && !dataDrivenRange;
+    domain = domainValues(def, db, data, sort);
+    if (domain) scale.domain(domain);
 
     // range
     str = typeof rng[0] === 'string';
@@ -4567,10 +4552,56 @@ vg.parse.properties = (function() {
   }
 
   function quantitative(def, scale, rng, db, data) {
-    var domain, refs, interval, z;
+    var domain, interval;
 
     // domain
-    domain = [null, null];
+    domain = (def.type === QUANTILE)
+      ? domainValues(def, db, data, false)
+      : domainMinMax(def, db, data);
+    scale.domain(domain);
+
+    // range
+    // vertical scales should flip by default, so use XOR here
+    if (def.range === "height") rng = rng.reverse();
+    scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
+
+    if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
+    if (def.clamp) scale.clamp(true);
+    if (def.nice) {
+      if (def.type === TIME) {
+        interval = d3.time[def.nice];
+        if (!interval) vg.error("Unrecognized interval: " + interval);
+        scale.nice(interval);
+      } else {
+        scale.nice();
+      }
+    }
+  }
+  
+  function extract(refs, db, data) {
+    return refs.reduce(function(values, r) {        
+      var dat = vg.values(db[r.data] || data),
+          get = vg.accessor(vg.isString(r.field)
+              ? r.field : "data." + vg.accessor(r.field.group)(data));
+      return vg.unique(dat, get, values);
+    }, []);
+  }
+  
+  function domainValues(def, db, data, sort) {
+    var domain = def.domain, values, refs;
+    if (vg.isArray(domain)) {
+      values = sort ? domain.slice() : domain;
+    } else if (vg.isObject(domain)) {
+      refs = domain.fields || vg.array(domain);
+      values = extract(refs, db, data);
+    }
+    if (values && sort) values.sort(vg.cmp);
+    return values;
+  }
+  
+  function domainMinMax(def, db, data) {
+    var domain = [null, null], refs, z;
+    
     function extract(ref, min, max, z) {
       var dat = vg.values(db[ref.data] || data);
       var fields = vg.array(ref.field).map(function(f) {
@@ -4584,6 +4615,7 @@ vg.parse.properties = (function() {
         if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
       });
     }
+
     if (def.domain !== undefined) {
       if (vg.isArray(def.domain)) {
         domain = def.domain.slice();
@@ -4617,24 +4649,7 @@ vg.parse.properties = (function() {
       domain[0] = Math.min(0, domain[0]);
       domain[z] = Math.max(0, domain[z]);
     }
-    scale.domain(domain);
-
-    // range
-    // vertical scales should flip by default, so use XOR here
-    if (def.range === "height") rng = rng.reverse();
-    scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
-
-    if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
-    if (def.clamp) scale.clamp(true);
-    if (def.nice) {
-      if (def.type === TIME) {
-        interval = d3.time[def.nice];
-        if (!interval) vg.error("Unrecognized interval: " + interval);
-        scale.nice(interval);
-      } else {
-        scale.nice();
-      }
-    }
+    return domain;
   }
 
   function range(def, group) {
@@ -4652,6 +4667,8 @@ vg.parse.properties = (function() {
         }
       } else if (vg.isArray(def.range)) {
         rng = def.range;
+      } else if (vg.isObject(def.range)) {
+        return null; // early exit
       } else {
         rng = [0, def.range];
       }

@@ -75,6 +75,84 @@ suite.addBatch({
         assert.isNotNull(textMark);
         assert.equal(textMark.firstChild.nodeValue, "Key1");
       },
+    },
+    'discrete quantitative scales use appropriate domains': {
+      topic: function(vg) {
+        var values = [1, 3, 6, 7, 30, 50, 100, 120, 150, 500, 550, 1000];
+        var spec = {
+          "data": [
+            {
+              "name": "test",
+              "format": {"type": "json" },
+              "values": values
+            }
+          ],
+          "scales": [
+            { 
+              "name": "s1",
+              "type": "quantize",
+              "domain": [0, 1000],
+              "range": ["a", "b", "c", "d", "e"]
+            },
+            { 
+              "name": "s2",
+              "type": "quantize",
+              "domain": {"data":"test", "field": "data"},
+              "range": ["a", "b", "c", "d", "e"]
+            },
+            { 
+              "name": "s3",
+              "type": "quantile",
+              "domain": [0, 1000],
+              "range": ["a", "b", "c", "d", "e"]
+            },
+            { 
+              "name": "s4",
+              "type": "quantile",
+              "domain": {"data":"test", "field": "data"},
+              "range": ["a", "b", "c", "d", "e"]
+            },
+          ]
+        };
+        var cb = this.callback;
+        return vg.parse.spec(spec, function(chart) {
+          try {
+            var view = chart().update();
+            var scales = view._model._scene.items[0].scales;
+            cb(null, scales);
+          } catch (err) {
+            cb(err, null);
+          }
+        }, vg.headless.View.Factory);
+      },
+      'quantize scale with fixed domain is correct': function (err, scales) {
+        assert.isNull(err);
+        assert.isNotNull(scales);
+        var values = [1, 3, 6, 7, 30, 50, 100, 120, 150, 500, 550, 1000];
+        var scaled = values.map(scales.s1);
+        assert.deepEqual(["a","a","a","a","a","a","a","a","a","c","c","e"], scaled);
+      },
+      'quantize scale with data domain is correct': function (err, scales) {
+        assert.isNull(err);
+        assert.isNotNull(scales);
+        var values = [1, 3, 6, 7, 30, 50, 100, 120, 150, 500, 550, 1000];
+        var scaled = values.map(scales.s2);
+        assert.deepEqual(["a","a","a","a","a","a","a","a","a","c","c","e"], scaled);
+      },
+      'quantile scale with fixed domain is correct': function (err, scales) {
+        assert.isNull(err);
+        assert.isNotNull(scales);
+        var values = [1, 3, 6, 7, 30, 50, 100, 120, 150, 500, 550, 1000];
+        var scaled = values.map(scales.s3);
+        assert.deepEqual(["a","a","a","a","a","a","a","a","a","c","c","e"], scaled);
+      },
+      'quantile scale with data domain is correct': function (err, scales) {
+        assert.isNull(err);
+        assert.isNotNull(scales);
+        var values = [1, 3, 6, 7, 30, 50, 100, 120, 150, 500, 550, 1000];
+        var scaled = values.map(scales.s4);
+        assert.deepEqual(["a","a","a","b","b","c","c","d","d","e","e","e"], scaled);
+      }
     }
   }
 });
