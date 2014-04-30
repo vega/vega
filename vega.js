@@ -4553,7 +4553,7 @@ vg.parse.properties = (function() {
 
     // range
     str = typeof rng[0] === 'string';
-    if (str || rng.length > 2 || dataDrivenRange) {
+    if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
       scale.range(rng); // color or shape values
     } else if (def.points) {
       scale.rangePoints(rng, def.padding||0);
@@ -6135,7 +6135,6 @@ vg.scene.legend = function() {
       labels.properties.enter.y.value += sz;
       gradient.properties.update.y.value += sz;
       labels.properties.update.y.value += sz;
-
     }
     
     // padding from legend border

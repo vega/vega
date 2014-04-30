@@ -210,7 +210,6 @@ vg.scene.legend = function() {
       labels.properties.enter.y.value += sz;
       gradient.properties.update.y.value += sz;
       labels.properties.update.y.value += sz;
-
     }
     
     // padding from legend border
