@@ -19,6 +19,7 @@ vg.scene.Transition = (function() {
           item[key] = next;
         } else {
           // otherwise lookup interpolator
+          if (curr === undefined) curr = next;
           interp = d3.interpolate(curr, next);
           interp.property = key;
           (list || (list=[])).push(interp);
