@@ -5377,12 +5377,11 @@ vg.scene.item = function(mark) {
       curr = item[key];
       next = values[key];      
       if (curr !== next) {
-        if (key === "text") {
-          // skip interpolation for text labels
+        if (key === "text" || curr === undefined) {
+          // skip interpolation for text labels or undefined start values
           item[key] = next;
         } else {
           // otherwise lookup interpolator
-          if (curr === undefined) curr = next;
           interp = d3.interpolate(curr, next);
           interp.property = key;
           (list || (list=[])).push(interp);
