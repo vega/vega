@@ -12,6 +12,7 @@ vg.scene.axis = function() {
       tickEndSize = vg.config.axis.tickSize,
       tickPadding = vg.config.axis.padding,
       tickValues = null,
+      tickFormatString = null,
       tickFormat = null,
       tickSubdivide = 0,
       tickArguments = [vg.config.axis.ticks],
@@ -24,11 +25,18 @@ vg.scene.axis = function() {
 
   var axis = {};
 
-  function reset() { axisDef = null; }
+  function reset() {
+    axisDef = null;
+  }
 
   axis.def = function() {
     var def = axisDef ? axisDef : (axisDef = axis_def(scale));
-    
+
+    // tick format
+    tickFormat = !tickFormatString ? null : ((scale.type === 'time')
+      ? d3.time.format(tickFormatString)
+      : d3.format(tickFormatString));
+
     // generate data
     var major = tickValues == null
       ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
@@ -133,8 +141,11 @@ vg.scene.axis = function() {
   };
 
   axis.tickFormat = function(x) {
-    if (!arguments.length) return tickFormat;
-    tickFormat = x;
+    if (!arguments.length) return tickFormatString;
+    if (tickFormatString !== x) {
+      tickFormatString = x;
+      reset();
+    }
     return axis;
   };
   
@@ -356,7 +367,7 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
 }
 
 function vg_axisTitleExtend(orient, title, range, offset) {
-  var mid = ~~((range[1] - range[0]) / 2),
+  var mid = ~~((range[0] + range[1]) / 2),
       sign = (orient === "top" || orient === "left") ? -1 : 1;
   
   if (orient === "bottom" || orient === "top") {

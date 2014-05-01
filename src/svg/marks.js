@@ -143,13 +143,19 @@ vg.svg.marks = (function() {
         dx = o.dx || 0,
         dy = o.dy || 0,
         a = o.angle || 0,
+        r = o.radius || 0,
         align = textAlign[o.align || "left"],
         base = o.baseline==="top" ? ".9em"
              : o.baseline==="middle" ? ".35em" : 0;
-  
+
+    if (r) {
+      var t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
+
     this.setAttribute("x", x + dx);
     this.setAttribute("y", y + dy);
-    this.setAttribute("dy", dy);
     this.setAttribute("text-anchor", align);
     
     if (a) this.setAttribute("transform", "rotate("+a+" "+x+","+y+")");

@@ -27,7 +27,7 @@ vg.parse.legends = (function() {
     legend.values(def.values || null);
 
     // legend label formatting
-    legend.format(def.format !== undefined ? d3.format(def.format) : null);
+    legend.format(def.format !== undefined ? def.format : null);
 
     // style properties
     var p = def.properties;

@@ -17,35 +17,32 @@ vg.Model = (function() {
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
 
-    var tx = this._defs.data.flow || {},
-        keys = this._defs.data.defs.map(vg.accessor("name")),
-        len = keys.length, i, k;
+    var deps = {},
+        defs = this._defs,
+        src  = defs.data.source,
+        tx   = defs.data.flow || {},
+        keys = defs.data.sorted,
+        len  = keys.length, i, k, x;
 
+    // collect source data set dependencies
+    function sources(k) {
+      (src[k] || []).forEach(function(s) { deps[s] = k; sources(s); });
+    }
+    vg.keys(data).forEach(sources);
+    
+    // update data sets in dependency-aware order
     for (i=0; i<len; ++i) {
-      if (!data[k=keys[i]]) continue;
-      this.ingest(k, tx, data[k]);
+      if (data[k=keys[i]]) {
+        x = data[k];
+      } else if (deps[k]) {
+        x = vg_data_duplicate(data[deps[k]]);
+        if (vg.isTree(data)) vg_make_tree(x);
+      } else continue;
+      this._data[k] = tx[k] ? tx[k](x, this._data, defs.marks) : x;
     }
 
     this._reset.legends = true;
     return this;
-  };
-
-  prototype.ingest = function(name, tx, input) {
-    this._data[name] = tx[name]
-      ? tx[name](input, this._data, this._defs.marks)
-      : input;
-    this.dependencies(name, tx);
-  };
-
-  prototype.dependencies = function(name, tx) {
-    var source = this._defs.data.source[name],
-        data = this._data[name],
-        n = source ? source.length : 0, i, x;
-    for (i=0; i<n; ++i) {
-      x = vg_data_duplicate(data);
-      if (vg.isTree(data)) vg_make_tree(x);
-      this.ingest(source[i], tx, x);
-    }
   };
 
   prototype.width = function(width) {

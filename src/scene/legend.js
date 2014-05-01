@@ -6,6 +6,7 @@ vg.scene.legend = function() {
       spacing = null,
       values = null,
       format = null,
+      formatString = null,
       title = undefined,
       orient = "right",
       offset = vg.config.legend.offset,
@@ -24,7 +25,12 @@ vg.scene.legend = function() {
   function reset() { legendDef = null; }
 
   legend.def = function() {
-    var scale = size || shape || fill || stroke; 
+    var scale = size || shape || fill || stroke;
+    
+    format = !formatString ? null : ((scale.type === 'time')
+      ? d3.time.format(formatString)
+      : d3.format(formatString));
+    
     if (!legendDef) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
         ? quantDef(scale)
@@ -204,7 +210,6 @@ vg.scene.legend = function() {
       labels.properties.enter.y.value += sz;
       gradient.properties.update.y.value += sz;
       labels.properties.update.y.value += sz;
-
     }
     
     // padding from legend border
@@ -259,8 +264,11 @@ vg.scene.legend = function() {
   };
 
   legend.format = function(x) {
-    if (!arguments.length) return format;
-    if (format !== x) { format = x; reset(); }
+    if (!arguments.length) return formatString;
+    if (formatString !== x) {
+      formatString = x;
+      reset();
+    }
     return legend;
   };
 
@@ -326,25 +334,40 @@ vg.scene.legend = function() {
 var vg_legendOrients = {right: 1, left: 1};
 
 function vg_legendUpdate(item, group, trans) {
-  var o = trans ? {} : item,
+  var o = trans ? {} : item, gx,
       offset = item.mark.def.offset,
       orient = item.mark.def.orient,
       pad    = item.mark.def.padding * 2,
-      gx1    = group.bounds ? group.bounds.x1 : 0,
-      gx2    = group.bounds ? group.bounds.x2 : group.width,
-      lw     = ~~item.bounds.width() + (o.width ? 0 : pad),
-      lh     = ~~item.bounds.height() + (o.height ? 0 : pad);
+      lw     = ~~item.bounds.width() + (item.width ? 0 : pad),
+      lh     = ~~item.bounds.height() + (item.height ? 0 : pad);
 
   o.x = 0.5;
   o.y = 0.5;
   o.width = lw;
   o.height = lh;
 
+  // HACK: use to estimate group bounds during animated transition
+  if (!trans && group.bounds) {
+    group.bounds.delta = group.bounds.x2 - group.width;
+  }
+
   switch (orient) {
-    case "left":  { o.x += gx1 - offset - lw; break; };
-    case "right": { o.x += gx2 + offset; break; };
+    case "left":  {
+      gx = group.bounds ? group.bounds.x1 : 0;
+      o.x += gx - offset - lw;
+      break;
+    };
+    case "right": {
+      gx = group.width;
+      if (group.bounds) gx = trans
+        ? group.width + group.bounds.delta
+        : group.bounds.x2;
+      o.x += gx + offset;
+      break;
+    };
   }
   
+  if (trans) trans.interpolate(item, o);
   item.mark.def.properties.enter(item, group, trans);
 }
 

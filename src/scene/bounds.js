@@ -35,20 +35,20 @@ vg.scene.bounds = (function() {
 
   function path(o, bounds) {
     var p = o.path
-      ? o["path:parsed"] || (o["path:parsed"] = parse(o.path))
+      ? o.pathCache || (o.pathCache = parse(o.path))
       : null;
     return pathBounds(o, p, bounds);
   }
   
   function area(o, bounds) {
     var items = o.mark.items, o = items[0];
-    var p = o["path:parsed"] || (o["path:parsed"]=parse(areaPath(items)));
+    var p = o.pathCache || (o.pathCache = parse(areaPath(items)));
     return pathBounds(items[0], p, bounds);
   }
 
   function line(o, bounds) {
     var items = o.mark.items, o = items[0];
-    var p = o["path:parsed"] || (o["path:parsed"]=parse(linePath(items)));
+    var p = o.pathCache || (o.pathCache = parse(linePath(items)));
     return pathBounds(items[0], p, bounds);
   }
 
@@ -175,12 +175,19 @@ vg.scene.bounds = (function() {
         h = o.fontSize || vg.config.render.fontSize,
         a = o.align,
         b = o.baseline,
-        g = context(), w;
+        r = o.radius || 0,
+        g = context(), w, t;
 
     g.font = vg.scene.fontString(o);
     g.textAlign = a || "left";
     g.textBaseline = b || "alphabetic";
     w = g.measureText(o.text || "").width;
+
+    if (r) {
+      t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
 
     // horizontal
     if (a === "center") {

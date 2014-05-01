@@ -50,3 +50,5 @@ vg.data.zip = function() {
 
   return zip;
 };
+
+vg.data.zip.dependencies = ["with"];

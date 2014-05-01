@@ -5,7 +5,7 @@ vg.scene.build = (function() {
       EXIT   = vg.scene.EXIT,
       DEFAULT= {"sentinel":1};
   
-  function build(def, db, node, parentData) {
+  function build(def, db, node, parentData, reentrant) {
     var data = vg.scene.data(
       def.from ? def.from(db, node, parentData) : null,
       parentData);
@@ -17,7 +17,7 @@ vg.scene.build = (function() {
     
     // recurse if group
     if (def.type === GROUP) {
-      buildGroup(def, db, node);
+      buildGroup(def, db, node, reentrant);
     }
     
     return node;
@@ -59,14 +59,14 @@ vg.scene.build = (function() {
       item = prev[i];
       if (item.status === EXIT) {
         item.key = keyf ? item.key : next.length;
-        next.push(item);
+        next.splice(item.index, 0, item);
       }
     }
     
     return next;
   }
   
-  function buildGroup(def, db, node) {
+  function buildGroup(def, db, node, reentrant) {
     var groups = node.items,
         marks = def.marks,
         i, len, m, mlen, name, group;
@@ -75,7 +75,7 @@ vg.scene.build = (function() {
       group = groups[i];
       
       // update scales
-      if (group.scales) for (name in group.scales) {
+      if (!reentrant && group.scales) for (name in group.scales) {
         if (name.indexOf(":prev") < 0) {
           group.scales[name+":prev"] = group.scales[name].copy();
         }
