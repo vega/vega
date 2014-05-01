@@ -189,7 +189,7 @@ vg.svg.marks = (function() {
   }
 
   function cssClass(def) {
-    var cls = "type:" + def.type;
+    var cls = "type-" + def.type;
     if (def.name) cls += " " + def.name;
     return cls;
   }

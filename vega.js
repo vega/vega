@@ -2374,7 +2374,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
 
   function cssClass(def) {
-    var cls = "type:" + def.type;
+    var cls = "type-" + def.type;
     if (def.name) cls += " " + def.name;
     return cls;
   }
