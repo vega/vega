@@ -188,6 +188,12 @@ vg.svg.marks = (function() {
     this.setAttribute("height", h);
   }
 
+  function cssClass(def) {
+    var cls = "type-" + def.type;
+    if (def.name) cls += " " + def.name;
+    return cls;
+  }
+
   function draw(tag, attr, nest) {
     return function(g, scene, index) {
       drawMark(g, scene, index, "mark_", tag, attr, nest);
@@ -201,7 +207,9 @@ vg.svg.marks = (function() {
         notG = (tag !== "g"),
         p = (p = grps[index+1]) // +1 to skip group background rect
           ? d3.select(p)
-          : g.append("g").attr("id", "g"+(++mark_id));
+          : g.append("g")
+             .attr("id", "g"+(++mark_id))
+             .attr("class", cssClass(scene.def));
 
     var id = p.attr("id"),
         s = "#" + id + " > " + tag,

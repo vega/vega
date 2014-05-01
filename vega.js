@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.3.4", // semantic versioning
+    version:  "1.4.0", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -2373,6 +2373,12 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this.setAttribute("height", h);
   }
 
+  function cssClass(def) {
+    var cls = "type-" + def.type;
+    if (def.name) cls += " " + def.name;
+    return cls;
+  }
+
   function draw(tag, attr, nest) {
     return function(g, scene, index) {
       drawMark(g, scene, index, "mark_", tag, attr, nest);
@@ -2386,7 +2392,9 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         notG = (tag !== "g"),
         p = (p = grps[index+1]) // +1 to skip group background rect
           ? d3.select(p)
-          : g.append("g").attr("id", "g"+(++mark_id));
+          : g.append("g")
+             .attr("id", "g"+(++mark_id))
+             .attr("class", cssClass(scene.def));
 
     var id = p.attr("id"),
         s = "#" + id + " > " + tag,
@@ -4340,16 +4348,17 @@ vg.parse.data = function(spec, callback) {
 })();vg.parse.mark = function(mark) {
   var props = mark.properties,
       group = mark.marks;
-  
+
   // parse mark property definitions
   vg.keys(props).forEach(function(k) {
     props[k] = vg.parse.properties(mark.type, props[k]);
   });
+
   // parse delay function
   if (mark.delay) {
     mark.delay = vg.parse.properties(mark.type, {delay: mark.delay});
   }
-      
+
   // parse mark data definition
   if (mark.from) {
     var name = mark.from.data,
@@ -4359,12 +4368,12 @@ vg.parse.data = function(spec, callback) {
       return tx(data, db, group);
     };
   }
-  
+
   // recurse if group type
   if (group) {
     mark.marks = group.map(vg.parse.mark);
   }
-      
+    
   return mark;
 };vg.parse.marks = function(spec, width, height) {
   return {
