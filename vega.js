@@ -3202,7 +3202,9 @@ vg.data.facet = function() {
   });
 
   return force;
-};vg.data.formula = (function() {
+};
+
+vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
   
   return function() {
     var field = null,
@@ -4071,7 +4073,9 @@ vg.data.facet = function() {
   };
 
   return zip;
-};vg.parse = {};vg.parse.axes = (function() {
+};
+
+vg.data.zip.dependencies = ["with"];vg.parse = {};vg.parse.axes = (function() {
   var ORIENT = {
     "x":      "bottom",
     "y":      "left",
@@ -4163,7 +4167,9 @@ vg.parse.data = function(spec, callback) {
     defs: spec,
     load: {},
     flow: {},
-    source: {}
+    deps: {},
+    source: {},
+    sorted: null
   };
 
   var count = 0;
@@ -4179,6 +4185,7 @@ vg.parse.data = function(spec, callback) {
     }
   }
   
+  // process each data set definition
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
@@ -4186,14 +4193,33 @@ vg.parse.data = function(spec, callback) {
     } else if (d.values) {
       model.load[d.name] = vg.data.read(d.values, d.format);
     } else if (d.source) {
-      var list = model.source[d.source] || (model.source[d.source] = []);
-      list.push(d.name);
+      (model.source[d.source] || (model.source[d.source] = [])).push(d.name);
     }
     
     if (d.transform) {
-      model.flow[d.name] = vg.parse.dataflow(d);
+      var flow = vg.parse.dataflow(d);
+      model.flow[d.name] = flow;
+      flow.dependencies.forEach(function(dep) {
+        (model.deps[dep] || (model.deps[dep] = [])).push(d.name);
+      });
     }
   });
+  
+  // topological sort by dependencies
+  var names = (spec || []).map(vg.accessor("name")),
+      order = [], v = {}, n;
+  function visit(n) {
+    if (v[n] === 1) return; // not a DAG!
+    if (!v[n]) {
+      v[n] = 1;
+      (model.source[n] || []).forEach(visit);
+      (model.deps[n] || []).forEach(visit);
+      v[n] = 2;
+      order.push(n);
+    }
+  }
+  while (names.length) { if (v[n=names.pop()] !== 2) visit(n); }
+  model.sorted = order.reverse();
   
   if (count === 0) setTimeout(callback, 1);
   return model;
@@ -4205,6 +4231,14 @@ vg.parse.data = function(spec, callback) {
           }
         : vg.identity;
   df.transforms = tx;
+  df.dependencies = vg.keys((def.transform || [])
+    .reduce(function(map, tdef) {
+      var deps = vg.data[tdef.type].dependencies;
+      if (deps) deps.forEach(function(d) {
+        if (tdef[d]) map[tdef[d]] = 1;
+      });
+      return map;
+    }, {}));
   return df;
 };vg.parse.expr = (function() {
   
@@ -6473,35 +6507,32 @@ function vg_hLegendLabels() {
   prototype.data = function(data) {
     if (!arguments.length) return this._data;
 
-    var tx = this._defs.data.flow || {},
-        keys = this._defs.data.defs.map(vg.accessor("name")),
-        len = keys.length, i, k;
+    var deps = {},
+        defs = this._defs,
+        src  = defs.data.source,
+        tx   = defs.data.flow || {},
+        keys = defs.data.sorted,
+        len  = keys.length, i, k, x;
 
+    // collect source data set dependencies
+    function sources(k) {
+      (src[k] || []).forEach(function(s) { deps[s] = k; sources(s); });
+    }
+    vg.keys(data).forEach(sources);
+    
+    // update data sets in dependency-aware order
     for (i=0; i<len; ++i) {
-      if (!data[k=keys[i]]) continue;
-      this.ingest(k, tx, data[k]);
+      if (data[k=keys[i]]) {
+        x = data[k];
+      } else if (deps[k]) {
+        x = vg_data_duplicate(data[deps[k]]);
+        if (vg.isTree(data)) vg_make_tree(x);
+      } else continue;
+      this._data[k] = tx[k] ? tx[k](x, this._data, defs.marks) : x;
     }
 
     this._reset.legends = true;
     return this;
-  };
-
-  prototype.ingest = function(name, tx, input) {
-    this._data[name] = tx[name]
-      ? tx[name](input, this._data, this._defs.marks)
-      : input;
-    this.dependencies(name, tx);
-  };
-
-  prototype.dependencies = function(name, tx) {
-    var source = this._defs.data.source[name],
-        data = this._data[name],
-        n = source ? source.length : 0, i, x;
-    for (i=0; i<n; ++i) {
-      x = vg_data_duplicate(data);
-      if (vg.isTree(data)) vg_make_tree(x);
-      this.ingest(source[i], tx, x);
-    }
   };
 
   prototype.width = function(width) {

@@ -3,7 +3,9 @@ vg.parse.data = function(spec, callback) {
     defs: spec,
     load: {},
     flow: {},
-    source: {}
+    deps: {},
+    source: {},
+    sorted: null
   };
 
   var count = 0;
@@ -19,6 +21,7 @@ vg.parse.data = function(spec, callback) {
     }
   }
   
+  // process each data set definition
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
@@ -26,14 +29,33 @@ vg.parse.data = function(spec, callback) {
     } else if (d.values) {
       model.load[d.name] = vg.data.read(d.values, d.format);
     } else if (d.source) {
-      var list = model.source[d.source] || (model.source[d.source] = []);
-      list.push(d.name);
+      (model.source[d.source] || (model.source[d.source] = [])).push(d.name);
     }
     
     if (d.transform) {
-      model.flow[d.name] = vg.parse.dataflow(d);
+      var flow = vg.parse.dataflow(d);
+      model.flow[d.name] = flow;
+      flow.dependencies.forEach(function(dep) {
+        (model.deps[dep] || (model.deps[dep] = [])).push(d.name);
+      });
     }
   });
+  
+  // topological sort by dependencies
+  var names = (spec || []).map(vg.accessor("name")),
+      order = [], v = {}, n;
+  function visit(n) {
+    if (v[n] === 1) return; // not a DAG!
+    if (!v[n]) {
+      v[n] = 1;
+      (model.source[n] || []).forEach(visit);
+      (model.deps[n] || []).forEach(visit);
+      v[n] = 2;
+      order.push(n);
+    }
+  }
+  while (names.length) { if (v[n=names.pop()] !== 2) visit(n); }
+  model.sorted = order.reverse();
   
   if (count === 0) setTimeout(callback, 1);
   return model;

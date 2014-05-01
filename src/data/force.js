@@ -79,3 +79,5 @@ vg.data.force = function() {
 
   return force;
 };
+
+vg.data.force.dependencies = ["links"];
