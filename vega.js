@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.4.0", // semantic versioning
+    version:  "1.4.1", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -4849,11 +4849,15 @@ vg.scene.fontString = function(o) {
 vg.scene.item = function(mark) {
   return new vg.scene.Item(mark);
 };vg.scene.visit = function(node, func) {
-  var i, n, items;
+  var i, n, s, m, items;
   if (func(node)) return true;
-  if (items = node.items) {
-    for (i=0, n=items.length; i<n; ++i) {
-      if (vg.scene.visit(items[i], func)) return true;
+
+  var sets = ["items", "axisItems", "legendItems"];
+  for (s=0, m=sets.length; s<m; ++s) {
+    if (items = node[sets[s]]) {
+      for (i=0, n=items.length; i<n; ++i) {
+        if (vg.scene.visit(items[i], func)) return true;
+      }
     }
   }
 };vg.scene.build = (function() {
