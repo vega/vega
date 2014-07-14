@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "vega.js",
   "scripts": [
     "vega.js"
@@ -20,6 +20,6 @@
     "test"
   ],
   "dependencies": {
-    "d3": "3.4.6"
+    "d3": "3.4.10"
   }
 }

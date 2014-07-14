@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.4.0", // semantic versioning
+    version:  "1.4.1", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -578,9 +578,9 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var segs = arcToSegments(ex, ey, rx, ry, large, sweep, rot, x, y);
     for (var i=0; i<segs.length; i++) {
       var bez = segmentToBezier.apply(null, segs[i]);
-      bounds.add(bez[0]-l, bez[1]-t);
-      bounds.add(bez[2]-l, bez[3]-t);
-      bounds.add(bez[4]-l, bez[5]-t);
+      bounds.add(bez[0], bez[1]);
+      bounds.add(bez[2], bez[3]);
+      bounds.add(bez[4], bez[5]);
     }
   }
 
@@ -4849,11 +4849,15 @@ vg.scene.fontString = function(o) {
 vg.scene.item = function(mark) {
   return new vg.scene.Item(mark);
 };vg.scene.visit = function(node, func) {
-  var i, n, items;
+  var i, n, s, m, items;
   if (func(node)) return true;
-  if (items = node.items) {
-    for (i=0, n=items.length; i<n; ++i) {
-      if (vg.scene.visit(items[i], func)) return true;
+
+  var sets = ["items", "axisItems", "legendItems"];
+  for (s=0, m=sets.length; s<m; ++s) {
+    if (items = node[sets[s]]) {
+      for (i=0, n=items.length; i<n; ++i) {
+        if (vg.scene.visit(items[i], func)) return true;
+      }
     }
   }
 };vg.scene.build = (function() {
@@ -5413,6 +5417,11 @@ vg.scene.item = function(mark) {
   
   var prototype = trans.prototype;
   
+  var skip = {
+    "text": 1,
+    "url":  1
+  };
+  
   prototype.interpolate = function(item, values) {
     var key, curr, next, interp, list = null;
 
@@ -5420,8 +5429,11 @@ vg.scene.item = function(mark) {
       curr = item[key];
       next = values[key];      
       if (curr !== next) {
-        if (key === "text" || curr === undefined) {
-          // skip interpolation for text labels or undefined start values
+        if (skip[key] || curr === undefined) {
+          // skip interpolation for specific keys or undefined start values
+          item[key] = next;
+        } else if (typeof curr === "number" && !isFinite(curr)) {
+          // for NaN or infinite numeric values, skip to final value
           item[key] = next;
         } else {
           // otherwise lookup interpolator

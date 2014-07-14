@@ -7,6 +7,11 @@ vg.scene.Transition = (function() {
   
   var prototype = trans.prototype;
   
+  var skip = {
+    "text": 1,
+    "url":  1
+  };
+  
   prototype.interpolate = function(item, values) {
     var key, curr, next, interp, list = null;
 
@@ -14,8 +19,11 @@ vg.scene.Transition = (function() {
       curr = item[key];
       next = values[key];      
       if (curr !== next) {
-        if (key === "text" || curr === undefined) {
-          // skip interpolation for text labels or undefined start values
+        if (skip[key] || curr === undefined) {
+          // skip interpolation for specific keys or undefined start values
+          item[key] = next;
+        } else if (typeof curr === "number" && !isFinite(curr)) {
+          // for NaN or infinite numeric values, skip to final value
           item[key] = next;
         } else {
           // otherwise lookup interpolator

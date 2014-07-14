@@ -10,6 +10,7 @@ globals.forEach(function(g) {
 // NOTE: will "pollute" namespace with jsdom window, etc
 d3 = require("d3");
 topojson = require("topojson");
+require("d3-geo-projection")(d3);
 
 // load and export vega
 require("./vega");

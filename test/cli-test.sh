@@ -26,6 +26,8 @@ echo "JOBS"
 ./bin/vg2png examples/spec/jobs.json -b examples output/jobs.png
 echo "LIFELINES"
 ./bin/vg2png examples/spec/lifelines.json -b examples output/lifelines.png
+echo "MAP"
+./bin/vg2png examples/spec/map.json -b examples output/map.png
 echo "NAPOLEON"
 ./bin/vg2png examples/spec/napoleon.json -b examples output/napoleon.png
 echo "PARALLEL_COORDINATES"
@@ -72,6 +74,8 @@ echo "JOBS"
 ./bin/vg2svg examples/spec/jobs.json -b examples output/jobs.svg
 echo "LIFELINES"
 ./bin/vg2svg examples/spec/lifelines.json -b examples output/lifelines.svg
+echo "MAP"
+./bin/vg2svg examples/spec/map.json -b examples output/map.svg
 echo "NAPOLEON"
 ./bin/vg2svg examples/spec/napoleon.json -b examples output/napoleon.svg
 echo "PARALLEL_COORDINATES"
