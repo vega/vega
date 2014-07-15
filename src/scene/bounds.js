@@ -275,7 +275,9 @@ vg.scene.bounds = (function() {
         item, i, len;
         
     if (type==="area" || type==="line") {
-      items[0].bounds = func(items[0], bounds);
+      if (items.length) {
+        items[0].bounds = func(items[0], bounds);
+      }
     } else {
       for (i=0, len=items.length; i<len; ++i) {
         bounds.union(itemBounds(items[i], func, opt));

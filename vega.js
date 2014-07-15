@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.4.1", // semantic versioning
+    version:  "1.4.2", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -5251,7 +5251,9 @@ vg.scene.item = function(mark) {
         item, i, len;
         
     if (type==="area" || type==="line") {
-      items[0].bounds = func(items[0], bounds);
+      if (items.length) {
+        items[0].bounds = func(items[0], bounds);
+      }
     } else {
       for (i=0, len=items.length; i<len; ++i) {
         bounds.union(itemBounds(items[i], func, opt));
