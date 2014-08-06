@@ -1,6 +1,7 @@
 vg.canvas.Handler = (function() {
   var handler = function(el, model) {
     this._active = null;
+    this._down   = null;
     this._handlers = {};
     if (el) this.initialize(el);
     if (model) this.model(model);
