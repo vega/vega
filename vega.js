@@ -3730,7 +3730,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       for (i=0, len=list.length; i<len; ++i) {
         list[i].stats = v;
       }
-      o = list;
+      if(vg.isArray(data)) o = list;
     }
     
     return o;
