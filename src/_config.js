@@ -4,6 +4,17 @@ vg.config = {};
 // via timetler.com/2012/10/13/environment-detection-in-javascript/
 vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
 
+// Allows domain restriction when using data loading via XHR.
+// To enable, set it to a list of allowed domains
+// e.g. ['wikipedia.org', 'eff.org']
+// Domains must not end in a '.'
+vg.config.domainWhitelist = false;
+
+// If true, the data is assumed to be from a trusted source, thus allowing
+// any potentially unsafe operations, such as test="alert(document.cookie)"
+// TODO: handling needs to be implemented in the data layer
+vg.config.trustData = true;
+
 // base url for loading external data files
 // used only for server-side operation
 vg.config.baseURL = "";
