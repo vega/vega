@@ -23,6 +23,26 @@ function vg_load_isFile(url) {
 
 function vg_load_xhr(url, callback) {
   vg.log("LOAD: " + url);
+  if (vg.config.domainWhitelist) {
+    // parse url to get hostname
+    var a = document.createElement('a');
+    a.href = url;
+    var hostname = a.hostname.toLowerCase();
+    if (hostname.charAt(hostname.length-1) === '.') {
+      hostname = hostname.substring(0, hostname.length-1);
+    }
+    if (vg.config.domainWhitelist.every(function(domain) {
+        // returns false if hostname either equals to domain,
+        // or hostname ends with ".domain"
+        var d = domain.toLowerCase(),
+          pos = hostname.length - d.length;
+        return hostname.indexOf(d, pos) === -1 ||  // !hostname.endsWith(d)
+          (pos > 0 && hostname.charAt(pos-1) !== '.'); })
+    ) {
+      vg.error("URL's domain is not white-listed");
+      return;
+    }
+  }
   d3.xhr(url, function(err, resp) {
     if (resp) resp = resp.responseText;
     callback(err, resp);
