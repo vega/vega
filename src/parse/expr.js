@@ -35,6 +35,11 @@ vg.parse.expr = (function() {
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
       
   return function(x) {
+    if (vg.config.safeMode) {
+      vg.error("Safe mode: Expression parsing disabled.");
+      return vg.true;
+    }
+    
     var tokens = x.split(lexer),
         t, v, i, n, sq, dq;
 

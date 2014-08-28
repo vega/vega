@@ -44,6 +44,8 @@ vg.boolean = function(s) { return !!s; };
 
 vg.identity = function(x) { return x; };
 
+vg.true = function() { return true; };
+
 vg.extend = function(obj) {
   for (var x, name, i=1, len=arguments.length; i<len; ++i) {
     x = arguments[i];

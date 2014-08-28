@@ -71,6 +71,8 @@ vg.boolean = function(s) { return !!s; };
 
 vg.identity = function(x) { return x; };
 
+vg.true = function() { return true; };
+
 vg.extend = function(obj) {
   for (var x, name, i=1, len=arguments.length; i<len; ++i) {
     x = arguments[i];
@@ -239,6 +241,15 @@ vg.error = function(msg) {
 // are we running in node.js?
 // via timetler.com/2012/10/13/environment-detection-in-javascript/
 vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
+
+// Allows domain restriction when using data loading via XHR.
+// To enable, set it to a list of allowed domains
+// e.g., ['wikipedia.org', 'eff.org']
+vg.config.domainWhiteList = false;
+
+// If true, disable potentially unsafe transforms (filter, formula)
+// involving possible JavaScript injection attacks.
+vg.config.safeMode = false;
 
 // base url for loading external data files
 // used only for server-side operation
@@ -2796,9 +2807,23 @@ function vg_load_isFile(url) {
 
 function vg_load_xhr(url, callback) {
   vg.log("LOAD: " + url);
+  if (!vg_url_check(url)) {
+    vg.error("URL is not whitelisted: " + url);
+    return;
+  }
   d3.xhr(url, function(err, resp) {
     if (resp) resp = resp.responseText;
     callback(err, resp);
+  });
+}
+
+function vg_url_check(url) {
+  if (!vg.config.domainWhiteList) return true;
+  var a = document.createElement("a"); a.href = url;
+  var domain = a.hostname.toLowerCase();
+  return vg.config.domainWhiteList.some(function(d) {
+    return d === domain ||
+      domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
   });
 }
 
@@ -4285,6 +4310,11 @@ vg.parse.data = function(spec, callback) {
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
       
   return function(x) {
+    if (vg.config.safeMode) {
+      vg.error("Safe mode: Expression parsing disabled.");
+      return vg.true;
+    }
+    
     var tokens = x.split(lexer),
         t, v, i, n, sq, dq;
 
