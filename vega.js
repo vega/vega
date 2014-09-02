@@ -2819,7 +2819,8 @@ function vg_load_xhr(url, callback) {
 
 function vg_url_check(url) {
   if (!vg.config.domainWhiteList) return true;
-  var a = document.createElement("a"); a.href = url;
+  var a = document.createElement("a");
+  a.href = url;
   var domain = a.hostname.toLowerCase();
   return vg.config.domainWhiteList.some(function(d) {
     return d === domain ||
@@ -3702,7 +3703,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
         "stdev":    "stdev",
         "median":   "median"
       };
-  
+
   function reduce(data) {
     var min = +Infinity,
         max = -Infinity,
@@ -3712,7 +3713,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
         i, len, v, delta;
 
     var list = (vg.isArray(data) ? data : data.values || []).map(value);
-    
+
     // compute aggregates
     for (i=0, len=list.length; i<len; ++i) {
       v = list[i];
@@ -3724,7 +3725,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       M2 = M2 + delta * (v - mean);
     }
     M2 = M2 / (len - 1);
-    
+
     var o = vg.isArray(data) ? {} : data;
     if (median) {
       list.sort(vg.numcmp);
@@ -3740,7 +3741,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     o[output.mean] = mean;
     o[output.variance] = M2;
     o[output.stdev] = Math.sqrt(M2);
-    
+
     if (assign) {
       list = (vg.isArray(data) ? data : data.values);
       v = {};
@@ -3757,10 +3758,10 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       }
       if (vg.isArray(data)) o = list;
     }
-    
+
     return o;
   }
-  
+
   function stats(data) {
     if (vg.isArray(data)) {
       return reduce(data);
@@ -3768,12 +3769,12 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       return (data.values || []).map(reduce);
     }
   }
-  
+
   stats.median = function(bool) {
     median = bool || false;
     return stats;
   };
-  
+
   stats.value = function(field) {
     value = vg.accessor(field);
     return stats;
@@ -3783,7 +3784,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     assign = b;
     return stats;
   };
-  
+
   stats.output = function(map) {
     vg.keys(output).forEach(function(k) {
       if (map[k] !== undefined) {
@@ -3792,7 +3793,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     });
     return stats;
   };
-  
+
   return stats;
 };vg.data.treemap = function() {
   var layout = d3.layout.treemap()
@@ -4274,7 +4275,7 @@ vg.parse.data = function(spec, callback) {
     }, {}));
   return df;
 };vg.parse.expr = (function() {
-  
+
   var CONSTANT = {
   	"E":       "Math.E",
   	"LN2":     "Math.LN2",
@@ -4306,15 +4307,15 @@ vg.parse.data = function(spec, callback) {
   	"sqrt":   "Math.sqrt",
   	"tan":    "Math.tan"
   };
-  
+
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
-      
+
   return function(x) {
     if (vg.config.safeMode) {
       vg.error("Safe mode: Expression parsing disabled.");
       return vg.true;
     }
-    
+
     var tokens = x.split(lexer),
         t, v, i, n, sq, dq;
 
@@ -4330,10 +4331,10 @@ vg.parse.data = function(spec, callback) {
         tokens[i] = FUNCTION[t];
       }
     }
-    
+
     return Function("d", "index", "data", "return ("+tokens.join("")+");");
   };
-  
+
 })();vg.parse.legends = (function() {
 
   function legends(spec, legends, scales) {
