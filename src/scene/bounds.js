@@ -12,13 +12,7 @@ vg.scene.bounds = (function() {
   function context() {
     return gfx || (gfx = (vg.config.isNode
       ? new (require("canvas"))(1,1)
-      : d3.select("body").append("canvas")
-          .attr("class", "vega_hidden")
-          .attr("width", 1)
-          .attr("height", 1)
-          .style("display", "none")
-          .node())
-      .getContext("2d"));
+      : d3.select(document.createElement("canvas")).node().getContext("2d")));
   }
 
   function pathBounds(o, path, bounds) {
