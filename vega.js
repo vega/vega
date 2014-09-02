@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.4.1", // semantic versioning
+    version:  "1.4.2", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -70,6 +70,8 @@ vg.boolean = function(s) { return !!s; };
 // utility functions
 
 vg.identity = function(x) { return x; };
+
+vg.true = function() { return true; };
 
 vg.extend = function(obj) {
   for (var x, name, i=1, len=arguments.length; i<len; ++i) {
@@ -239,6 +241,15 @@ vg.error = function(msg) {
 // are we running in node.js?
 // via timetler.com/2012/10/13/environment-detection-in-javascript/
 vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
+
+// Allows domain restriction when using data loading via XHR.
+// To enable, set it to a list of allowed domains
+// e.g., ['wikipedia.org', 'eff.org']
+vg.config.domainWhiteList = false;
+
+// If true, disable potentially unsafe transforms (filter, formula)
+// involving possible JavaScript injection attacks.
+vg.config.safeMode = false;
 
 // base url for loading external data files
 // used only for server-side operation
@@ -2796,9 +2807,24 @@ function vg_load_isFile(url) {
 
 function vg_load_xhr(url, callback) {
   vg.log("LOAD: " + url);
+  if (!vg_url_check(url)) {
+    vg.error("URL is not whitelisted: " + url);
+    return;
+  }
   d3.xhr(url, function(err, resp) {
     if (resp) resp = resp.responseText;
     callback(err, resp);
+  });
+}
+
+function vg_url_check(url) {
+  if (!vg.config.domainWhiteList) return true;
+  var a = document.createElement("a");
+  a.href = url;
+  var domain = a.hostname.toLowerCase();
+  return vg.config.domainWhiteList.some(function(d) {
+    return d === domain ||
+      domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
   });
 }
 
@@ -3677,7 +3703,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
         "stdev":    "stdev",
         "median":   "median"
       };
-  
+
   function reduce(data) {
     var min = +Infinity,
         max = -Infinity,
@@ -3687,7 +3713,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
         i, len, v, delta;
 
     var list = (vg.isArray(data) ? data : data.values || []).map(value);
-    
+
     // compute aggregates
     for (i=0, len=list.length; i<len; ++i) {
       v = list[i];
@@ -3699,7 +3725,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       M2 = M2 + delta * (v - mean);
     }
     M2 = M2 / (len - 1);
-    
+
     var o = vg.isArray(data) ? {} : data;
     if (median) {
       list.sort(vg.numcmp);
@@ -3715,7 +3741,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     o[output.mean] = mean;
     o[output.variance] = M2;
     o[output.stdev] = Math.sqrt(M2);
-    
+
     if (assign) {
       list = (vg.isArray(data) ? data : data.values);
       v = {};
@@ -3730,12 +3756,12 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       for (i=0, len=list.length; i<len; ++i) {
         list[i].stats = v;
       }
-      o = list;
+      if (vg.isArray(data)) o = list;
     }
-    
+
     return o;
   }
-  
+
   function stats(data) {
     if (vg.isArray(data)) {
       return reduce(data);
@@ -3743,12 +3769,12 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       return (data.values || []).map(reduce);
     }
   }
-  
+
   stats.median = function(bool) {
     median = bool || false;
     return stats;
   };
-  
+
   stats.value = function(field) {
     value = vg.accessor(field);
     return stats;
@@ -3758,7 +3784,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     assign = b;
     return stats;
   };
-  
+
   stats.output = function(map) {
     vg.keys(output).forEach(function(k) {
       if (map[k] !== undefined) {
@@ -3767,7 +3793,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     });
     return stats;
   };
-  
+
   return stats;
 };vg.data.treemap = function() {
   var layout = d3.layout.treemap()
@@ -4249,7 +4275,7 @@ vg.parse.data = function(spec, callback) {
     }, {}));
   return df;
 };vg.parse.expr = (function() {
-  
+
   var CONSTANT = {
   	"E":       "Math.E",
   	"LN2":     "Math.LN2",
@@ -4281,10 +4307,15 @@ vg.parse.data = function(spec, callback) {
   	"sqrt":   "Math.sqrt",
   	"tan":    "Math.tan"
   };
-  
+
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
-      
+
   return function(x) {
+    if (vg.config.safeMode) {
+      vg.error("Safe mode: Expression parsing disabled.");
+      return vg.true;
+    }
+
     var tokens = x.split(lexer),
         t, v, i, n, sq, dq;
 
@@ -4300,10 +4331,10 @@ vg.parse.data = function(spec, callback) {
         tokens[i] = FUNCTION[t];
       }
     }
-    
+
     return Function("d", "index", "data", "return ("+tokens.join("")+");");
   };
-  
+
 })();vg.parse.legends = (function() {
 
   function legends(spec, legends, scales) {
@@ -5251,7 +5282,9 @@ vg.scene.item = function(mark) {
         item, i, len;
         
     if (type==="area" || type==="line") {
-      items[0].bounds = func(items[0], bounds);
+      if (items.length) {
+        items[0].bounds = func(items[0], bounds);
+      }
     } else {
       for (i=0, len=items.length; i<len; ++i) {
         bounds.union(itemBounds(items[i], func, opt));

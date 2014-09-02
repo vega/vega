@@ -23,9 +23,24 @@ function vg_load_isFile(url) {
 
 function vg_load_xhr(url, callback) {
   vg.log("LOAD: " + url);
+  if (!vg_url_check(url)) {
+    vg.error("URL is not whitelisted: " + url);
+    return;
+  }
   d3.xhr(url, function(err, resp) {
     if (resp) resp = resp.responseText;
     callback(err, resp);
+  });
+}
+
+function vg_url_check(url) {
+  if (!vg.config.domainWhiteList) return true;
+  var a = document.createElement("a");
+  a.href = url;
+  var domain = a.hostname.toLowerCase();
+  return vg.config.domainWhiteList.some(function(d) {
+    return d === domain ||
+      domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
   });
 }
 
