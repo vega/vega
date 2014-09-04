@@ -7,7 +7,7 @@ vg.data.load = function(uri, callback) {
   } else {
     // in browser, use xhr
     vg_load_xhr(url, callback);
-  }  
+  }
 };
 
 var vg_load_protocolRE = /^[A-Za-z]+\:\/\//;
@@ -38,10 +38,11 @@ function vg_url_check(url) {
   var a = document.createElement("a");
   a.href = url;
   var domain = a.hostname.toLowerCase();
-  return vg.config.domainWhiteList.some(function(d) {
-    return d === domain ||
-      domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
-  });
+  return window.location.hostname === domain ||
+    vg.config.domainWhiteList.some(function(d) {
+      return d === domain ||
+        domain.lastIndexOf("." + d) === (domain.length - d.length - 1);
+    });
 }
 
 function vg_load_file(file, callback) {
