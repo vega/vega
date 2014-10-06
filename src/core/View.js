@@ -1,10 +1,13 @@
-vg.View = (function() {
-  var view = function(el, width, height) {
-    this._el = null;
-    this._build = false;
-    this._model = new vg.Model();
+define(function(require, exports, module) {
+  var vg = require('vega'), 
+      d3 = require('d3'),
+      parseStreams = require('../parse/streams');
+
+  var View = function(el, width, height, model) {
+    this._el    = null;
+    this._model = null;
     this._width = this.__width = width || 500;
-    this._height = this.__height = height || 500;
+    this._height = this.__height = height || 300;
     this._autopad = 1;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
@@ -13,88 +16,18 @@ vg.View = (function() {
     this._io = vg.canvas;
     if (el) this.initialize(el);
   };
-  
-  var prototype = view.prototype;
-  
-  prototype.width = function(width) {
-    if (!arguments.length) return this.__width;
-    if (this.__width !== width) {
-      this._width = this.__width = width;
-      if (this._el) this.initialize(this._el.parentNode);
-      this._model.width(width);
-      if (this._strict) this._autopad = 1;
+
+  var prototype = View.prototype;
+
+  prototype.model = function(model) {
+    if (!arguments.length) return this._model;
+    if (this._model !== model) {
+      this._model = model;
+      if (this._handler) this._handler.model(model);
     }
     return this;
   };
 
-  prototype.height = function(height) {
-    if (!arguments.length) return this.__height;
-    if (this.__height !== height) {
-      this._height = this.__height = height;
-      if (this._el) this.initialize(this._el.parentNode);
-      this._model.height(this._height);
-      if (this._strict) this._autopad = 1;
-    }
-    return this;
-  };
-
-  prototype.padding = function(pad) {
-    if (!arguments.length) return this._padding;
-    if (this._padding !== pad) {
-      if (vg.isString(pad)) {
-        this._autopad = 1;
-        this._padding = {top:0, left:0, bottom:0, right:0};
-        this._strict = (pad === "strict");
-      } else {
-        this._autopad = 0;
-        this._padding = pad;
-        this._strict = false;
-      }
-      if (this._el) {
-        this._renderer.resize(this._width, this._height, pad);
-        this._handler.padding(pad);
-      }
-    }
-    return this;
-  };
-  
-  prototype.autopad = function(opt) {
-    if (this._autopad < 1) return this;
-    else this._autopad = 0;
-
-    var pad = this._padding,
-        b = this.model().scene().bounds,
-        inset = vg.config.autopadInset,
-        l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
-        t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
-        r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
-        b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
-    pad = {left:l, top:t, right:r, bottom:b};
-
-    if (this._strict) {
-      this._autopad = 0;
-      this._padding = pad;
-      this._width = Math.max(0, this.__width - (l+r));
-      this._height = Math.max(0, this.__height - (t+b));
-      this._model.width(this._width);
-      this._model.height(this._height);
-      if (this._el) this.initialize(this._el.parentNode);
-      this.update({props:"enter"}).update({props:"update"});
-    } else {
-      this.padding(pad).update(opt);
-    }
-    return this;
-  };
-
-  prototype.viewport = function(size) {
-    if (!arguments.length) return this._viewport;
-    if (this._viewport !== size) {
-      this._viewport = size;
-      if (this._el) this.initialize(this._el.parentNode);
-    }
-    return this;
-  };
-  
   prototype.renderer = function(type) {
     if (!arguments.length) return this._io;
     if (type === "canvas") type = vg.canvas;
@@ -107,32 +40,7 @@ vg.View = (function() {
     }
     return this;
   };
-
-  prototype.defs = function(defs) {
-    if (!arguments.length) return this._model.defs();
-    this._model.defs(defs);
-    return this;
-  };
-
-  prototype.data = function(data) {
-    if (!arguments.length) return this._model.data();
-    var ingest = vg.keys(data).reduce(function(d, k) {
-      return (d[k] = vg.data.ingestAll(data[k]), d);
-    }, {});
-    this._model.data(ingest);
-    this._build = false;
-    return this;
-  };
-
-  prototype.model = function(model) {
-    if (!arguments.length) return this._model;
-    if (this._model !== model) {
-      this._model = model;
-      if (this._handler) this._handler.model(model);
-    }
-    return this;
-  };
-
+  
   prototype.initialize = function(el) {
     var v = this, prevHandler,
         w = v._width, h = v._height, pad = v._padding;
@@ -167,16 +75,43 @@ vg.View = (function() {
       prevHandler.handlers().forEach(function(h) {
         v._handler.on(h.type, h.handler);
       });
+    } else {
+      // Register event listeners for signal stream definitions.
+      parseStreams(this);
     }
     
     return this;
   };
-  
-  prototype.render = function(items) {
-    this._renderer.render(this._model.scene(), items);
+
+  prototype.update = function(opt) {    
+    opt = opt || {};
+    var v = this,
+        trans = opt.duration
+          ? vg.scene.transition(opt.duration, opt.ease)
+          : null;
+
+    if(v._build) {
+      // TODO: only fire branches of the dataflow corresponding to opt.items
+    } else {
+      // Build the entire scene, and pulse the entire model
+      // (Datasources + scene).
+      v._renderNode = new v._model.Node(function(input) {
+        global.debug(input, ["rendering"]);
+
+        if(input.add.length) v._renderer.render(v._model.scene());
+        if(input.mod.length) v._renderer.render(v._model.scene());
+        return input;
+      });
+      v._renderNode._router = true;
+      v._renderNode._type = 'renderer';
+
+      v._model.scene(v._renderNode).fire();
+      v._build = true;
+    }
+
     return this;
   };
-  
+
   prototype.on = function() {
     this._handler.on.apply(this._handler, arguments);
     return this;
@@ -186,61 +121,19 @@ vg.View = (function() {
     this._handler.off.apply(this._handler, arguments);
     return this;
   };
-  
-  prototype.update = function(opt) {    
-    opt = opt || {};
-    var view = this,
-        trans = opt.duration
-          ? vg.scene.transition(opt.duration, opt.ease)
-          : null;
 
-    view._build = view._build || (view._model.build(), true);
-    view._model.encode(trans, opt.props, opt.items);
+  View.factory = function(model) {
+    return function(opt) {
+      opt = opt || {};
+      var v = new View()
+        .model(model)
+        .renderer(opt.renderer || "canvas");
+
+      if (opt.el) v.initialize(opt.el);
     
-    if (trans) {
-      trans.start(function(items) {
-        view._renderer.render(view._model.scene(), items);
-      });
-    }
-    else view.render(opt.items);
-
-    return view.autopad(opt);
+      return v;
+    };    
   };
-      
-  return view;
-})();
 
-// view constructor factory
-// takes definitions from parsed specification as input
-// returns a view constructor
-vg.ViewFactory = function(defs) {
-  return function(opt) {
-    opt = opt || {};
-    var v = new vg.View()
-      .width(defs.width)
-      .height(defs.height)
-      .padding(defs.padding)
-      .viewport(defs.viewport)
-      .renderer(opt.renderer || "canvas")
-      .defs(defs);
-
-    if (defs.data.load) v.data(defs.data.load);
-    if (opt.data) v.data(opt.data);
-    if (opt.el) v.initialize(opt.el);
-
-    if (opt.hover !== false) {
-      v.on("mouseover", function(evt, item) {
-        if (item.hasPropertySet("hover")) {
-          this.update({props:"hover", items:item});
-        }
-      })
-      .on("mouseout", function(evt, item) {
-        if (item.hasPropertySet("hover")) {
-          this.update({props:"update", items:item});
-        }
-      });
-    }
-  
-    return v;
-  };
-};
+  return View;
+})

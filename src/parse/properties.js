@@ -1,39 +1,62 @@
-vg.parse.properties = (function() {
-  function compile(mark, spec) {
+define(function(require, exports, module) {
+  var vg = require('vega'),
+      tuple = require('../core/tuple');
+
+  function compile(model, mark, spec) {
     var code = "",
         names = vg.keys(spec),
-        i, len, name, ref, vars = {};
+        i, len, name, ref, vars = {}, 
+        deps = {
+          signals: {},
+          scales: {}
+        };
         
     code += "var o = trans ? {} : item;\n"
     
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
       code += (i > 0) ? "\n  " : "  ";
-      code += "o."+name+" = "+valueRef(name, ref)+";";
+      if(ref.rule) {
+        ref = rule(model, name, ref.rule);
+        code += "\n  " + ref.code
+      } else {
+        ref = valueRef(name, ref);
+        code += "this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);";
+      }
+
       vars[name] = true;
+      ['signals', 'scales'].forEach(function(p) {
+        if(ref[p] != null) vg.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
+      });
     }
-    
+
     if (vars.x2) {
       if (vars.x) {
         code += "\n  if (o.x > o.x2) { "
-              + "var t = o.x; o.x = o.x2; o.x2 = t; };";
-        code += "\n  o.width = (o.x2 - o.x);";
+              + "var t = o.x;"
+              + "this.tpl.set(o, 'x', o.x2, stamp);"
+              + "this.tpl.set(o, 'x2', t, stamp); "
+              + "};";
+        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x), stamp);";
       } else if (vars.width) {
-        code += "\n  o.x = (o.x2 - o.width);";
+        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width), stamp);";
       } else {
-        code += "\n  o.x = o.x2;"
+        code += "\n  this.tpl.set(o, 'x', o.x2, stamp);"
       }
     }
 
     if (vars.y2) {
       if (vars.y) {
         code += "\n  if (o.y > o.y2) { "
-              + "var t = o.y; o.y = o.y2; o.y2 = t; };";
-        code += "\n  o.height = (o.y2 - o.y);";
+              + "var t = o.y;"
+              + "this.tpl.set(o, 'y', o.y2, stamp);"
+              + "this.tpl.set(o, 'y2', t, stamp);"
+              + "};";
+        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y), stamp);";
       } else if (vars.height) {
-        code += "\n  o.y = (o.y2 - o.height);";
+        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height), stamp);";
       } else {
-        code += "\n  o.y = o.y2;"
+        code += "\n  this.tpl.set(o, 'y', o.y2, stamp);"
       }
     }
     
@@ -41,13 +64,20 @@ vg.parse.properties = (function() {
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
-      return Function("item", "group", "trans", code);
+      var encoder = Function("item", "group", "trans", 
+        "stamp", "signals", "predicates", code);
+      encoder.tpl = tuple;
+      return {
+        encode: encoder,
+        signals: vg.keys(deps.signals),
+        scales: vg.keys(deps.scales)
+      }
     } catch (e) {
       vg.error(e);
       vg.log(code);
     }
   }
-  
+
   function hasPath(mark, vars) {
     return vars.path ||
       ((mark==="area" || mark==="line") &&
@@ -55,7 +85,7 @@ vg.parse.properties = (function() {
          vars.y || vars.y2 || vars.height ||
          vars.tension || vars.interpolate));
   }
-  
+
   var GROUP_VARS = {
     "width": 1,
     "height": 1,
@@ -63,9 +93,47 @@ vg.parse.properties = (function() {
     "mark.group.height": 1
   };
 
+  function rule(model, name, rules) {
+    var signals = [], scales = [],
+        inputs = [], code = "";
+
+    (rules||[]).forEach(function(r, i) {
+      var pred = r.predicate,
+          input = [], args = name+"_arg"+i,
+          ref;
+
+      vg.keys(r.input).forEach(function(k) {
+        var ref = valueRef(i, r.input[k]);
+        input.push(vg.str(k)+": "+ref.val);
+        signals.concat(ref.signals);
+        scales.concat(ref.scales);
+      });
+
+      ref = valueRef(name, r);
+      signals.concat(ref.signals);
+      scales.concat(ref.scales);
+
+      if(pred) {
+        signals.push.apply(signals, model.predicate(pred).signals);
+        inputs.push(args+" = {"+input.join(', ')+"}");
+        code += "if(predicates["+vg.str(pred)+"]("+args+", signals, predicates)) {\n" +
+          "    this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);\n";
+        code += rules[i+1] ? "  } else " : "  }";
+      } else {
+        code += "{\n" + 
+          "    this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);\n"+
+          "  }";
+      }
+    });
+
+    code = "var " + inputs.join(",\n      ") + ";\n  " + code;
+    return {code: code, signals: signals, scales: scales};
+  }
+
   function valueRef(name, ref) {
     if (ref == null) return null;
     var isColor = name==="fill" || name==="stroke";
+    var signalName = null;
 
     if (isColor) {
       if (ref.c) {
@@ -83,6 +151,12 @@ vg.parse.properties = (function() {
     var val = "item.datum.data";
     if (ref.value !== undefined) {
       val = vg.str(ref.value);
+    }
+
+    if (ref.signal !== undefined) {
+      var signalRef = vg.field(ref.signal);
+      val = "signals["+signalRef.map(vg.str).join("][")+"]"; 
+      signalName = signalRef.shift();
     }
 
     // get field reference for enclosing group
@@ -115,22 +189,23 @@ vg.parse.properties = (function() {
         ? vg.str(ref.scale)
         : (ref.scale.group ? "group" : "item")
           + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
-      scale = "group.scales[" + scale + "]";
-      val = scale + (ref.band ? ".rangeBand()" : "("+val+")");
+      scale = "group.scale(" + scale + ")";
+      val = scale + (ref.band ? ".rangeBand()" : 
+        (ref.invert ? ".invert(" : "(")+val+")"); // TODO: ordinal scales
     }
     
     // multiply, offset, return value
     val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
       + (ref.offset ? " + " + vg.number(ref.offset) : "");
-    return val;
+    return {val: val, signals: signalName, scales: ref.scale};
   }
-  
+
   function colorRef(type, x, y, z) {
     var xx = x ? valueRef("", x) : vg.config.color[type][0],
         yy = y ? valueRef("", y) : vg.config.color[type][1],
         zz = z ? valueRef("", z) : vg.config.color[type][2];
     return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
-  
+
   return compile;
-})();
+});

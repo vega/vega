@@ -1,45 +1,15 @@
 {
-  "name": "vega",
-  "version": "1.4.2",
-  "description": "Vega Runtime",
-  "keywords": [
-    "vega",
-    "visualization",
-    "grammar",
-    "d3"
-  ],
-  "homepage": "http://trifacta.github.io/vega/",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://trifacta.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/trifacta/vega.git"
-  },
-  "main": "index.js",
-  "bin": {
-    "vg2png": "./bin/vg2png",
-    "vg2svg": "./bin/vg2svg"
-  },
+  "name": "abhijit",
+  "version": "2.0.0",
   "dependencies": {
-    "d3": "3.4.10",
-    "canvas": "1.1.3",
-    "optimist": "0.6.1",
-    "topojson": "1.6.14",
-    "d3-geo-projection": "0.2.10"
+    "d3": "3.4.x",
+    "vega": "1.4.2",
+    "js-priority-queue": "*",
+    "requirejs": "2.1.x"
   },
   "devDependencies": {
-    "uglify-js": "2.4.13",
-    "vows": "0.7"
-  },
-  "scripts": {
-    "test": "node_modules/.bin/vows; echo"
-  },
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "https://github.com/trifacta/vega/blob/master/LICENSE"
-    }
-  ]
+    "grunt": "0.4.x",
+    "ascii-tree": "0.1.x",
+    "pegjs": "0.8.x"
+  }
 }

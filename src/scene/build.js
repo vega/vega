@@ -1,115 +1,187 @@
-vg.scene.build = (function() {
-  var GROUP  = vg.scene.GROUP,
-      ENTER  = vg.scene.ENTER,
-      UPDATE = vg.scene.UPDATE,
-      EXIT   = vg.scene.EXIT,
-      DEFAULT= {"sentinel":1};
-  
-  function build(def, db, node, parentData, reentrant) {
-    var data = vg.scene.data(
-      def.from ? def.from(db, node, parentData) : null,
-      parentData);
-    
-    // build node and items
-    node = buildNode(def, node);
-    node.items = buildItems(def, data, node);
-    buildTrans(def, node);
-    
-    // recurse if group
-    if (def.type === GROUP) {
-      buildGroup(def, db, node, reentrant);
-    }
-    
-    return node;
+define(function(require, exports, module) {
+  var vg = require('vega'), 
+      tuple = require('../core/tuple'), 
+      changeset = require('../core/changeset'), 
+      collector = require('../transforms/collector'), 
+      encode = require('./encode'), 
+      bounds = require('./bounds'), 
+      scalefn = require('./scale');
+
+  var DEFAULT = {"sentinel":1};
+
+  function ids(a) {
+    return a.reduce(function(m,x) {
+      return (m[x._id] = 1, m);
+    }, {});
   };
-  
-  function buildNode(def, node) {
-    node = node || {};
-    node.def = def;
-    node.marktype = def.type;
-    node.interactive = !(def.interactive === false);
-    return node;
-  }
-  
-  function buildItems(def, data, node) {
-    var keyf = keyFunction(def.key),
-        prev = node.items || [],
-        next = [],
-        map = {},
-        i, key, len, item, datum, enter;
 
-    for (i=0, len=prev.length; i<len; ++i) {
-      item = prev[i];
-      item.status = EXIT;
-      if (keyf) map[item.key] = item;
+  // Recurse up to look for scales.
+  function scale(name) {
+    var group = this, scale = null;
+    while(scale == null) {
+      scale = group.scales[name];
+      group = group.mark ? group.mark.group : group.parent;
+      if(!group) break;
     }
-    
-    for (i=0, len=data.length; i<len; ++i) {
-      datum = data[i];
-      key = i;
-      item = keyf ? map[key = keyf(datum)] : prev[i];
-      enter = item ? false : (item = vg.scene.item(node), true);
-      item.status = enter ? ENTER : UPDATE;
-      item.datum = datum;
-      item.key = key;
-      next.push(item);
+    return scale;
+  };
+
+  function pipelines() {
+    var b = this, sc = Object.keys(b.scales), 
+        p = [b, b.encoder],
+        pipelines = [p.concat([b.collector, b.bounder, b.renderer])];
+
+    return pipelines.concat(sc.map(function(s) { return p.concat(b.scales[s])}));
+  };
+
+  function connect(model) { 
+    var b = this;
+    if(b.encoder._deps.scales.length) {
+      b.encoder._deps.scales.forEach(function(s) {
+        b.parent.scale(s).addListener(b);
+      });
     }
 
-    for (i=0, len=prev.length; i<len; ++i) {
-      item = prev[i];
-      if (item.status === EXIT) {
-        item.key = keyf ? item.key : next.length;
-        next.splice(item.index, 0, item);
-      }
+    if(b.parent) {
+      b.bounder.addListener(b.parent.collector);
+      b.parent.addListener(b); // Temp connection to propagate initial pulse.
     }
-    
-    return next;
-  }
-  
-  function buildGroup(def, db, node, reentrant) {
-    var groups = node.items,
-        marks = def.marks,
-        i, len, m, mlen, name, group;
 
-    for (i=0, len=groups.length; i<len; ++i) {
-      group = groups[i];
-      
-      // update scales
-      if (!reentrant && group.scales) for (name in group.scales) {
-        if (name.indexOf(":prev") < 0) {
-          group.scales[name+":prev"] = group.scales[name].copy();
+    pipelines.call(b).forEach(function(p) { model.graph.connect(p) });
+  };
+
+  function disconnect(model) { 
+    var b = this;
+    if(b.encoder._deps.scales.length) {
+      b.encoder._deps.scales.forEach(function(s) {
+        b.parent.scale(s).removeListener(b);
+      });
+    }
+
+    pipelines.call(b).forEach(function(p) { model.graph.disconnect(p) }); 
+  };
+
+  return function build(model, renderer, def, mark, parent, inheritFrom) {
+    var items = [],     // Item nodes in the scene graph
+        children = [],  // Group's children dataflow graph nodes
+        scales = {},    // Scale nodes in the dataflow graph
+        f = def._from || inheritFrom,
+        from = model.data(f),
+        builder, lastBuild = 0;  
+
+    function init() {
+      mark.def = def;
+      mark.marktype = def.type;
+      mark.interactive = !(def.interactive === false);
+      mark.items = items; 
+
+      builder = new model.Node(function(input) {
+        global.debug(input, ["building", f, def.type]);
+
+        // Only the first pulse should come from the parent.
+        // Future pulses will propagate from dependencies.
+        if(builder.parent && !lastBuild) builder.parent.removeListener(builder);
+
+        return buildItems(input);
+      });
+      builder._router = true;
+      builder._touchable = true;
+      if(from) builder._deps.data.push(f);
+
+      builder.parent    = parent; // Parent builder (dataflow graph node)
+      builder.encoder   = encode(model, mark);
+      builder.collector = collector(model);
+      builder.bounder   = bounds(model, mark);
+      builder.renderer  = renderer;
+      builder.scales    = scales;
+      builder.scale     = scale.bind(builder);
+      (def.scales||[]).forEach(function(s) { scales[s.name] = scalefn(model, s); });
+
+      if(from) builder.encoder._deps.data.push(f); 
+      connect.call(builder, model);
+
+      return builder;
+    };
+
+    function newItem(d, stamp) {
+      var item = tuple.create(null);
+      tuple.set(item, "mark", mark);
+      tuple.set(item, "datum", d);
+
+      // For the root node's item
+      if(def.width)  tuple.set(item, "width",  def.width);
+      if(def.height) tuple.set(item, "height", def.height);
+
+      items.push(item); 
+
+      if(def.type == vg.scene.GROUP) buildGroup(item);
+
+      return item;
+    };
+
+    function buildItems(input) {
+      var fcs, output = changeset.create(input),
+          props = def.properties || {},
+          update = props.update,
+          sg = update ? update.signals : [],
+          scales = update ? update.scales : [],
+          updatedSg = sg.some(function(s) { return !!input.signals[s] }),
+          updatedScales = scales.some(function(s) { return !!input.scales[s] }),
+          fullUpdate = updatedSg || updatedScales;
+
+      // If a scale or signal in the update propset has been updated, 
+      // send forward all items for reencoding.
+      if(fullUpdate) output.mod = items.slice();
+
+      if(from) {
+        fcs = from._output;
+        if(!fcs) return output.touch = true, output;
+        if(fcs.stamp <= lastBuild) return output;
+
+        var mod = ids(fcs.mod), rem = ids(fcs.rem),
+            i, d, item, c;
+
+        for(var i = items.length-1; i >= 0; i--) {
+          item = items[i], d = item.datum;
+
+          if(mod[d._id] === 1 && !fullUpdate) output.mod.push(item);
+          else if(rem[d._id] === 1) {
+            output.rem.push.apply(output.rem, items.splice(i, 1)[0]);
+
+            // Facet's disconnect will remove Graph.db listener, but we 
+            // should disconnect the scenegraph builder pipelines.
+            if(def.type == vg.scene.GROUP) 
+              disconnect.call(children.splice(i, 1)[0], model);
+          }
         }
+
+        output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });        
+        lastBuild = fcs.stamp;
+      } else {
+        if(!items.length) output.add.push(newItem(DEFAULT, input.stamp));
+        else if(!fullUpdate) output.mod.push(items[0]);
       }
 
-      // build items
+      // TODO: any need to respect input.sort with items?
+
+      return output;
+    };
+
+    function buildGroup(group) {
+      var marks = def.marks,
+          i, m, b;
+
+      group.scales = group.scales || {};    
+      group.scale = scale.bind(group);
+
       group.items = group.items || [];
-      for (m=0, mlen=marks.length; m<mlen; ++m) {
-        group.items[m] = build(marks[m], db, group.items[m], group.datum);
-        group.items[m].group = group;
+      for(i = 0; i < marks.length; i++) {
+        m = group.items[i] = {group: group};
+        b = build(model, renderer, marks[i], m, builder, "vg_"+group.datum._id);
+        children.push(b);
       }
-    }
-  }
+    };
 
-  function buildTrans(def, node) {
-    if (def.duration) node.duration = def.duration;
-    if (def.ease) node.ease = d3.ease(def.ease)
-    if (def.delay) {
-      var items = node.items, group = node.group, n = items.length, i;
-      for (i=0; i<n; ++i) def.delay.call(this, items[i], group);
-    }
-  }
-  
-  function keyFunction(key) {
-    if (key == null) return null;
-    var f = vg.array(key).map(vg.accessor);
-    return function(d) {
-      for (var s="", i=0, n=f.length; i<n; ++i) {
-        if (i>0) s += "|";
-        s += String(f[i](d));
-      }
-      return s;
-    }
-  }
-  
-  return build;
-})();
+    return init();
+  };
+});

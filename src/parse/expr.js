@@ -1,5 +1,6 @@
-vg.parse.expr = (function() {
-
+define(function(require, exports, module) {
+  var vg = require('vega');
+  
   var CONSTANT = {
   	"E":       "Math.E",
   	"LN2":     "Math.LN2",
@@ -31,17 +32,13 @@ vg.parse.expr = (function() {
   	"sqrt":   "Math.sqrt",
   	"tan":    "Math.tan"
   };
-
+  
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
-
-  return function(x) {
-    if (vg.config.safeMode) {
-      vg.error("Safe mode: Expression parsing disabled.");
-      return vg.true;
-    }
-
+      
+  function expr(model, x) {
     var tokens = x.split(lexer),
-        t, v, i, n, sq, dq;
+        t, v, i, n, sq, dq, sg = {}, fd = {},
+        args = ["vg", "d", "e", "i"];
 
     for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
       var t = tokens[i];
@@ -54,9 +51,24 @@ vg.parse.expr = (function() {
       if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
         tokens[i] = FUNCTION[t];
       }
+      if(model.signal((v = vg.field(t))[0])) {
+        sg[v[0]] = 1;
+        tokens[i] = tokens[i].replace(v[0], "sg["+vg.str(v[0])+"]");
+      }
+      if(v[0] == "d") fd[v.splice(1).join("")] = 1;
     }
 
-    return Function("d", "index", "data", "return ("+tokens.join("")+");");
+    return {
+      fn: Function("d", "e", "i", "sg", "return ("+tokens.join("")+");"),
+      signals: vg.keys(sg),
+      fields: vg.keys(fd)
+    };
   };
 
-})();
+  expr.eval = function(model, fn, d, e, i, sg) {
+    sg = model.signal(vg.array(sg));
+    return fn.call(null, d, e, i, sg);
+  };
+
+  return expr;
+});
