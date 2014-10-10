@@ -5,7 +5,7 @@ vg.data.flatten = function() {
   }
   
   function flat(data, list) {
-    if (data.values) {
+    if (vg.isArray(data.values)) {
       for (var i=0, n=data.values.length; i<n; ++i) {
         flat(data.values[i], list);
       }
