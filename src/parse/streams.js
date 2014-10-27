@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
+  var d3 = require('d3'),
+      vg = require('vega'),
       changset = require('../core/changeset'),
       selector = require('./events'),
       expr = require('./expr');
@@ -48,10 +49,13 @@ define(function(require, exports, module) {
       view.on(r, function(evt, item) {
         var cs = changset.create({}, true),
             n = new model.Node(null, h.map(function(h) { return h.signal.node() })),
-            val, i;
+            val, i, m, p = {};
+
+        // Stash event in d3.event so we can calculate relative positions
+        d3.event = evt, m = d3.mouse(view._el), p.x = m[0], p.y = m[1];
 
         for(i = 0; i < h.length; i++) {
-          val = expr.eval(model, h[i].exp.fn, item.datum, evt, item, h[i].exp.signals); 
+          val = expr.eval(model, h[i].exp.fn, item.datum, evt, item, p, h[i].exp.signals); 
           h[i].signal.value(val);
           cs.signals[h[i].signal.name()] = 1;
         }

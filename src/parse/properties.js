@@ -8,7 +8,8 @@ define(function(require, exports, module) {
         i, len, name, ref, vars = {}, 
         deps = {
           signals: {},
-          scales: {}
+          scales: {},
+          db: {}
         };
         
     code += "var o = trans ? {} : item;\n"
@@ -25,7 +26,7 @@ define(function(require, exports, module) {
       }
 
       vars[name] = true;
-      ['signals', 'scales'].forEach(function(p) {
+      ['signals', 'scales', 'db'].forEach(function(p) {
         if(ref[p] != null) vg.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
       });
     }
@@ -64,13 +65,14 @@ define(function(require, exports, module) {
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
-      var encoder = Function("item", "group", "trans", 
-        "stamp", "signals", "predicates", code);
+      var encoder = Function("stamp", "item", "group", "trans", 
+        "db", "signals", "predicates", code);
       encoder.tpl = tuple;
       return {
         encode: encoder,
         signals: vg.keys(deps.signals),
-        scales: vg.keys(deps.scales)
+        scales: vg.keys(deps.scales),
+        db: vg.keys(deps.db)
       }
     } catch (e) {
       vg.error(e);
@@ -94,11 +96,12 @@ define(function(require, exports, module) {
   };
 
   function rule(model, name, rules) {
-    var signals = [], scales = [],
+    var signals = [], scales = [], db = [],
         inputs = [], code = "";
 
     (rules||[]).forEach(function(r, i) {
-      var pred = r.predicate,
+      var predName = r.predicate,
+          pred = model.predicate(predName),
           input = [], args = name+"_arg"+i,
           ref;
 
@@ -113,10 +116,11 @@ define(function(require, exports, module) {
       signals.concat(ref.signals);
       scales.concat(ref.scales);
 
-      if(pred) {
-        signals.push.apply(signals, model.predicate(pred).signals);
+      if(predName) {
+        signals.push.apply(signals, pred.signals);
+        db.push.apply(db, pred.db);
         inputs.push(args+" = {"+input.join(', ')+"}");
-        code += "if(predicates["+vg.str(pred)+"]("+args+", signals, predicates)) {\n" +
+        code += "if(predicates["+vg.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
           "    this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);\n";
         code += rules[i+1] ? "  } else " : "  }";
       } else {
@@ -127,7 +131,7 @@ define(function(require, exports, module) {
     });
 
     code = "var " + inputs.join(",\n      ") + ";\n  " + code;
-    return {code: code, signals: signals, scales: scales};
+    return {code: code, signals: signals, scales: scales, db: db};
   }
 
   function valueRef(name, ref) {
@@ -148,7 +152,7 @@ define(function(require, exports, module) {
     }
 
     // initialize value
-    var val = "item.datum.data";
+    var val = null;
     if (ref.value !== undefined) {
       val = vg.str(ref.value);
     }
@@ -183,15 +187,21 @@ define(function(require, exports, module) {
       val = grp;
     }
 
-    // run through scale function
     if (ref.scale != null) {
       var scale = vg.isString(ref.scale)
         ? vg.str(ref.scale)
         : (ref.scale.group ? "group" : "item")
           + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
       scale = "group.scale(" + scale + ")";
-      val = scale + (ref.band ? ".rangeBand()" : 
-        (ref.invert ? ".invert(" : "(")+val+")"); // TODO: ordinal scales
+
+      // run through scale function if val specified.
+      // if no val, scale function is predicate arg.
+      if(val !== null || ref.band) {
+        val = scale + (ref.band ? ".rangeBand()" : 
+          (ref.invert ? ".invert(" : "(")+val+")"); // TODO: ordinal scales
+      } else {
+        val = scale;     
+      }
     }
     
     // multiply, offset, return value

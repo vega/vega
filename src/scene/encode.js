@@ -9,8 +9,13 @@ define(function(require, exports, module) {
       i, len, item, prop;
 
     function encodeProp(prop, item, trans, stamp) {
-      var sg = model.signal(prop.signals||[]);
-      prop.encode.call(prop.encode, item, item.mark.group||item, trans, stamp, sg, model._predicates);
+      var sg = model.signal(prop.signals||[]),
+          db = {};
+
+      (prop.db||[]).forEach(function(d) { db[d] = model.data(d).data(); });
+
+      prop.encode.call(prop.encode, stamp, item, item.mark.group||item, trans, 
+        db, sg, model._predicates);
     }
 
     var node = new model.Node(function(input) {

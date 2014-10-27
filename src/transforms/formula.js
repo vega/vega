@@ -7,7 +7,7 @@ define(function(require, exports, module) {
     var field = null, fn = vg.identity;
 
     function f(x, stamp) { 
-      var val = expr.eval(model, fn, x, null, null, node._deps.signals);
+      var val = expr.eval(model, fn, x, null, null, null, node._deps.signals);
       tuple.set(x, field, val, stamp); 
     }
 

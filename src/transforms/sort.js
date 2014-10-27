@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 
     function comparator() {
       if(!isExpr) return fn; 
-      var by = expr.eval(model, fn, null, null, null, node._deps.signals);
+      var by = expr.eval(model, fn, null, null, null, null, node._deps.signals);
       return vg.comparator(by);
     };
 

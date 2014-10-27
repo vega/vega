@@ -10,7 +10,7 @@ define(function(require, exports, module) {
       if(s.expr) {
         exp = expr(model, s.expr);
         node = new model.Node(function(input) {
-          var value = expr.eval(model, exp.fn, null, null, null, exp.signals);
+          var value = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
           signal.value(value);          
           input.signals[s.name] = 1;
           return input;

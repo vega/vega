@@ -8,7 +8,7 @@ define(function(require, exports, module) {
     var test = null,
         skip = {}; // TODO: remove by recourse to prev values?
 
-    function f(x) { return expr.eval(model, test, x, null, null, node._deps.signals); }
+    function f(x) { return expr.eval(model, test, x, null, null, null, node._deps.signals); }
 
     var node = new model.Node(function(input) {
       global.debug(input, ["filtering"]);

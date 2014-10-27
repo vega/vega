@@ -59,15 +59,15 @@ define(function(require, exports, module) {
     }
 
     return {
-      fn: Function("d", "e", "i", "sg", "return ("+tokens.join("")+");"),
+      fn: Function("d", "e", "i", "p", "sg", "return ("+tokens.join("")+");"),
       signals: vg.keys(sg),
       fields: vg.keys(fd)
     };
   };
 
-  expr.eval = function(model, fn, d, e, i, sg) {
+  expr.eval = function(model, fn, d, e, i, p, sg) {
     sg = model.signal(vg.array(sg));
-    return fn.call(null, d, e, i, sg);
+    return fn.call(null, d, e, i, p, sg);
   };
 
   return expr;
