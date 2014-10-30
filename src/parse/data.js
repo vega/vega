@@ -23,8 +23,7 @@ define(function(require, exports, module) {
           ds = model.data(d.name, pipeline);
 
       if(d.values) ds.data(d.values);
-
-      // TODO: if d.source
+      else if(d.source) model.data(d.source).addListener(ds);
 
       return ds;
     }

@@ -125,6 +125,15 @@ define(function(require, exports, module) {
     };
 
     Datasource.prototype.addListener = function(l) {
+      if(l instanceof Datasource) {
+        var source = this, dest = l;
+        l = new model.Node(function(input) {
+          dest._input = source._output;
+          return input;
+        });
+        l.addListener(dest._pipeline[0]);
+      }
+
       this._pipeline[this._pipeline.length-1].addListener(l);
     };
 

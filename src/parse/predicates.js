@@ -113,7 +113,6 @@ define(function(require, exports, module) {
     (spec || []).forEach(function(s) {
       var parse = types[s.type](s),
           pred = Function("args", "db", "signals", "predicates", parse.code);
-      console.log(s.name, parse.code);
       pred.signals = parse.signals;
       pred.db = parse.db;
       model.predicate(s.name, pred);
