@@ -31,13 +31,13 @@ define(function(require, exports, module) {
       vg.array(operands).forEach(function(o, i) {
         var signal, name = "o"+i, def = "";
         
-        if(o.value)       def = vg.str(o.value);
+        if(o.value !== undefined) def = vg.str(o.value);
         else if(o.arg)    def = "args["+vg.str(o.arg)+"]";
         else if(o.signal) def = parseSignal(o.signal, signals);
         else if(o.predicate) {
           var pred = model.predicate(o.predicate);
           pred.signals.forEach(function(s) { signals[s] = 1; });
-          pred.db.forEach(function(d) { db[d] = 1 });
+          pred.data.forEach(function(d) { db[d] = 1 });
 
           vg.keys(o.input).forEach(function(k) {
             var i = o.input[k], signal;
@@ -57,7 +57,7 @@ define(function(require, exports, module) {
       return {
         code: "var " + decl.join(", ") + ";\n" + defs.join(";\n") + ";\n",
         signals: vg.keys(signals),
-        db: vg.keys(db)
+        data: vg.keys(db)
       }
     };
 
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
       return {
         code: ops.code + "return " + ["o0", "o1"].join(spec.type) + ";",
         signals: ops.signals,
-        db: ops.db
+        data: ops.data
       };
     };
 
@@ -83,7 +83,7 @@ define(function(require, exports, module) {
       return {
         code: ops.code + "return " + o.join(spec.type) + ";",
         signals: ops.signals,
-        db: ops.db
+        data: ops.data
       };
     };
 
@@ -95,26 +95,29 @@ define(function(require, exports, module) {
       var ops = parseOperands(o),
           code = ops.code;
 
-      if(spec.data) code += "return db["+vg.str(spec.data)+"].indexOf(o1) !== -1";
-      else if(spec.range) {
+      if(spec.data) {
+        var field = vg.field(spec.field).map(vg.str);
+        code += "var where = function(d) { return d["+field.join("][")+"] == o0 };\n";
+        code += "return db["+vg.str(spec.data)+"].filter(where).length > 0;";
+      } else if(spec.range) {
         // TODO: inclusive/exclusive range?
         // TODO: inverting ordinal scales
-        if(spec.scale) code += "o1 = o3.invert(o1);\no2 = o3.invert(o2);\n";
+        if(spec.scale) code += "o1 = o3(o1);\no2 = o3(o2);\n";
         code += "return o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1";
       }
 
       return {
         code: code, 
         signals: ops.signals, 
-        db: ops.db.concat(spec.data ? [spec.data] : [])
+        data: ops.data.concat(spec.data ? [spec.data] : [])
       };
     };
 
     (spec || []).forEach(function(s) {
-      var parse = types[s.type](s),
-          pred = Function("args", "db", "signals", "predicates", parse.code);
+      var parse = types[s.type](s);
+      var pred = Function("args", "db", "signals", "predicates", parse.code);
       pred.signals = parse.signals;
-      pred.db = parse.db;
+      pred.data = parse.data;
       model.predicate(s.name, pred);
     });
 

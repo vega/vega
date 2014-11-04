@@ -12,7 +12,7 @@ define(function(require, exports, module) {
       var sg = model.signal(prop.signals||[]),
           db = {};
 
-      (prop.db||[]).forEach(function(d) { db[d] = model.data(d).data(); });
+      (prop.data||[]).forEach(function(d) { db[d] = model.data(d).data(); });
 
       prop.encode.call(prop.encode, stamp, item, item.mark.group||item, trans, 
         db, sg, model._predicates);
@@ -34,12 +34,13 @@ define(function(require, exports, module) {
       return input;
     });
 
-    var sg = node._deps.signals, sc = node._deps.scales;
-    [enter, update, exit].forEach(function(prop) {
-      if(!prop) return;
-      sg.push.apply(sg, prop.signals||[]);
-      sc.push.apply(sc, prop.scales||[]);
-    });
+    var deps = node._deps;
+    if(update) {
+      deps.signals = update.signals;
+      deps.scales  = update.scales;
+      deps.data    = update.data;
+    }
+
     return node;
   }; 
 });

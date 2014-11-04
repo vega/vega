@@ -121,13 +121,7 @@ define(function(require, exports, module) {
 
     function buildItems(input) {
       var fcs, output = changeset.create(input),
-          props = def.properties || {},
-          update = props.update,
-          sg = update ? update.signals : [],
-          scales = update ? update.scales : [],
-          updatedSg = sg.some(function(s) { return !!input.signals[s] }),
-          updatedScales = scales.some(function(s) { return !!input.scales[s] }),
-          fullUpdate = updatedSg || updatedScales;
+          fullUpdate = builder.encoder.reevaluate(input);
 
       // If a scale or signal in the update propset has been updated, 
       // send forward all items for reencoding.

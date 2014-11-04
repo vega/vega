@@ -1,10 +1,10 @@
 define(function(require, exports, module) {
   var vg = require('vega'),
-      transforms = require('./transforms');
+      parseTransforms = require('./transforms'),
+      parseModify = require('../transforms/modify');
 
   return function parseData(model, spec, callback) {
-    var count = 0,
-        parseTransforms = transforms(model);
+    var count = 0;
 
     function load(d) {
       return function(error, data) {
@@ -19,8 +19,9 @@ define(function(require, exports, module) {
     }
 
     function datasource(d) {
-      var pipeline = (d.transform||[]).map(parseTransforms),
-          ds = model.data(d.name, pipeline);
+      var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
+          mod = (d.modify||[]).map(function(m) { return parseModify(model, m) }),
+          ds = model.data(d.name, mod.concat(transform));
 
       if(d.values) ds.data(d.values);
       else if(d.source) model.data(d.source).addListener(ds);

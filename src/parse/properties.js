@@ -9,7 +9,7 @@ define(function(require, exports, module) {
         deps = {
           signals: {},
           scales: {},
-          db: {}
+          data: {}
         };
         
     code += "var o = trans ? {} : item;\n"
@@ -26,7 +26,7 @@ define(function(require, exports, module) {
       }
 
       vars[name] = true;
-      ['signals', 'scales', 'db'].forEach(function(p) {
+      ['signals', 'scales', 'data'].forEach(function(p) {
         if(ref[p] != null) vg.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
       });
     }
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
         encode: encoder,
         signals: vg.keys(deps.signals),
         scales: vg.keys(deps.scales),
-        db: vg.keys(deps.db)
+        data: vg.keys(deps.data)
       }
     } catch (e) {
       vg.error(e);
@@ -118,7 +118,7 @@ define(function(require, exports, module) {
 
       if(predName) {
         signals.push.apply(signals, pred.signals);
-        db.push.apply(db, pred.db);
+        db.push.apply(db, pred.data);
         inputs.push(args+" = {"+input.join(', ')+"}");
         code += "if(predicates["+vg.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
           "    this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);\n";
@@ -131,7 +131,7 @@ define(function(require, exports, module) {
     });
 
     code = "var " + inputs.join(",\n      ") + ";\n  " + code;
-    return {code: code, signals: signals, scales: scales, db: db};
+    return {code: code, signals: signals, scales: scales, data: db};
   }
 
   function valueRef(name, ref) {
@@ -194,11 +194,12 @@ define(function(require, exports, module) {
           + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
       scale = "group.scale(" + scale + ")";
 
+      if(ref.invert) scale += ".invert";  // TODO: ordinal scales
+
       // run through scale function if val specified.
       // if no val, scale function is predicate arg.
       if(val !== null || ref.band) {
-        val = scale + (ref.band ? ".rangeBand()" : 
-          (ref.invert ? ".invert(" : "(")+val+")"); // TODO: ordinal scales
+        val = scale + (ref.band ? ".rangeBand()" : "("+val+")");
       } else {
         val = scale;     
       }

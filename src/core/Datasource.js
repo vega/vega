@@ -76,7 +76,7 @@ define(function(require, exports, module) {
         out.facet = ds._facet;
 
         if(input.touch) {
-          out.mod = ds._data.slice();
+          out.mod = ds.data().slice();
         } else {
           // update data
           var delta = ds._input;
