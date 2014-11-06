@@ -5,6 +5,8 @@ define(function(require, exports, module) {
       selector = require('./events'),
       expr = require('./expr');
 
+  var START = "start", MIDDLE = "middle", END = "end";
+
   return function(view) {
     var model = view.model(),
         spec  = model._defs.signals,
@@ -19,7 +21,40 @@ define(function(require, exports, module) {
     };
 
     function orderedStream(signal, selector, exp) {
-      // TODO
+      var name = signal.name(), 
+          trueFn = expr(model, "true"),
+          s = {};
+
+      s[START]  = model.signal(name + START,  false);
+      s[MIDDLE] = model.signal(name + MIDDLE, false);
+      s[END]    = model.signal(name + END,    false);
+
+      var router = new model.Node(function(input) {
+        if(s[START].value() === true && s[END].value() === false) {
+          // TODO: Expand selector syntax to allow start/end signals into stream.
+          // Until then, prevent old middles entering stream on new start.
+          if(input.signals[name+START]) return model.graph.doNotPropagate;
+
+          signal.value(s[MIDDLE].value());
+          input.signals[name] = 1;
+          return input;
+        }
+
+        if(s[END].value() === true) {
+          s[START].value(false);
+          s[END].value(false);
+        }
+
+        return model.graph.doNotPropagate;
+      });
+      router.addListener(signal.node());
+
+      [START, MIDDLE, END].forEach(function(x) {
+        var val = x == MIDDLE ? exp : trueFn
+        if(selector[x].event) event(s[x], selector[x], val);
+        else if(selector[x].stream) mergedStream(s[x], selector[x], val);
+        s[x].addListener(router);
+      });
     };
 
     function mergedStream(signal, selector, exp) {

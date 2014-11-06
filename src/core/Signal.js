@@ -28,8 +28,15 @@ define(function(require, exports, module) {
       model.graph.propagate(c, this._node);
     };
 
-    Signal.prototype.addListener = function(l) { this._node.addListener(l); };
-    Signal.prototype.removeListener = function(l) { this._node.removeListener(l); };
+    Signal.prototype.addListener = function(l) { 
+      if(l instanceof Signal) l = l.node();
+      this._node.addListener(l); 
+    };
+
+    Signal.prototype.removeListener = function(l) { 
+      if(l instanceof Signal) l = l.node();
+      this._node.removeListener(l); 
+    };
 
     return Signal;
   };

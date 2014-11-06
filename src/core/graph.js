@@ -90,6 +90,7 @@ define(function(require, exports, module) {
 
     return {
       propagate: propagate,
+      doNotPropagate: doNotPropagate,
       connect: connect,
       disconnect: disconnect
     };

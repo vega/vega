@@ -23,6 +23,13 @@ define({
       "name": "itemFill",
       "init": "steelblue",
       "streams": [{"type": "click", "expr": "i.fill"}]
+    },
+    {
+      "name": "dragging",
+      "init": 0,
+      "streams": [
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "d.x"}
+      ]
     }
   ],
 
@@ -136,7 +143,7 @@ define({
       "type": "text",
       "properties": {
         "update": {
-          "x": {"value": 30},
+          "x": {"value": 40},
           "y": {"scale": "y", "value": 0},
           "fill": {"value": "black"},
           "text": {"signal": "mouse.pageY"}
@@ -147,7 +154,7 @@ define({
       "type": "text",
       "properties": {
         "update": {
-          "x": {"value": 50},
+          "x": {"value": 60},
           "y": {"scale": "y", "value": 0},
           "fill": {"value": "black"},
           "text": {"signal": "mouse2x"}
@@ -158,10 +165,21 @@ define({
       "type": "text",
       "properties": {
         "update": {
-          "x": {"value": 150},
+          "x": {"value": 100},
           "y": {"scale": "y", "value": 0},
           "fill": {"signal": "itemFill"},
           "text": {"signal": "itemFill"}
+        }
+      }
+    },
+        {
+      "type": "text",
+      "properties": {
+        "update": {
+          "x": {"value": 150},
+          "y": {"scale": "y", "value": 0},
+          "fill": {"value": "black"},
+          "text": {"signal": "dragging"}
         }
       }
     }
