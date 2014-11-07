@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
   var vg = require('vega'), 
       d3 = require('d3'),
-      parseStreams = require('../parse/streams');
+      parseStreams = require('../parse/streams'),
+      canvas = require('../canvas/index');
 
   var View = function(el, width, height, model) {
     this._el    = null;
@@ -13,7 +14,7 @@ define(function(require, exports, module) {
     this._viewport = null;
     this._renderer = null;
     this._handler = null;
-    this._io = vg.canvas;
+    this._io = canvas;
     if (el) this.initialize(el);
   };
 
@@ -30,7 +31,7 @@ define(function(require, exports, module) {
 
   prototype.renderer = function(type) {
     if (!arguments.length) return this._io;
-    if (type === "canvas") type = vg.canvas;
+    if (type === "canvas") type = canvas;
     if (type === "svg") type = vg.svg;
     if (this._io !== type) {
       this._io = type;

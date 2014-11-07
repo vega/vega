@@ -40,7 +40,7 @@
                 d3.select('#task_label').text(task.label);
               };
 
-              view = chart({ el: '#vis', renderer: 'svg' });
+              view = chart({ el: '#vis', renderer: 'canvas' });
               view.update();
 
               runTask = runner(view.model(), name, spec, suite, cb);

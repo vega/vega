@@ -79,6 +79,8 @@ define(function(require, exports, module) {
     // We register the event listeners all together so that if multiple
     // signals are registered on the same event, they will receive the
     // new value on the same pulse. 
+
+    // TODO: Filters, time intervals, target selectors
     vg.keys(register).forEach(function(r) {
       var h = register[r];
       view.on(r, function(evt, item) {
@@ -90,7 +92,7 @@ define(function(require, exports, module) {
         d3.event = evt, m = d3.mouse(view._el), p.x = m[0], p.y = m[1];
 
         for(i = 0; i < h.length; i++) {
-          val = expr.eval(model, h[i].exp.fn, item.datum, evt, item, p, h[i].exp.signals); 
+          val = expr.eval(model, h[i].exp.fn, item.datum||{}, evt, item||{}, p||{}, h[i].exp.signals); 
           h[i].signal.value(val);
           cs.signals[h[i].signal.name()] = 1;
         }

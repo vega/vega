@@ -20,7 +20,7 @@ stream
 eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout"
 
 filter = "[" sep a:accessor field:value sep o:op sep v:value sep "]" { return a + field + o + v }
-accessor = "e." / "i." / "d."
+accessor = "e." / "i." / "d." / "p."
 op = "==" / "!=" / ">" / ">=" / "<" / "<="
 value = v:[a-zA-Z0-9_-]+ { return v.join("") }
 

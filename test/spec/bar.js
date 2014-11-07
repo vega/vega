@@ -154,7 +154,7 @@ define({
       "type": "text",
       "properties": {
         "update": {
-          "x": {"value": 60},
+          "x": {"value": 70},
           "y": {"scale": "y", "value": 0},
           "fill": {"value": "black"},
           "text": {"signal": "mouse2x"}

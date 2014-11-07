@@ -12,7 +12,7 @@ define({
     {
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
-      "streams": [{"type": "mouseup", "expr": "p"}]
+      "streams": [{"type": "[mousedown, mouseup] > mousemove", "expr": "p"}]
     }
   ],
 
