@@ -90,9 +90,10 @@ define(function(require, exports, module) {
 
         // Stash event in d3.event so we can calculate relative positions
         d3.event = evt, m = d3.mouse(view._el), p.x = m[0], p.y = m[1];
+        item = item||{};
 
         for(i = 0; i < h.length; i++) {
-          val = expr.eval(model, h[i].exp.fn, item.datum||{}, evt, item||{}, p||{}, h[i].exp.signals); 
+          val = expr.eval(model, h[i].exp.fn, item.datum||{}, evt, item, p||{}, h[i].exp.signals); 
           h[i].signal.value(val);
           cs.signals[h[i].signal.name()] = 1;
         }
