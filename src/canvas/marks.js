@@ -1,7 +1,7 @@
 define(function(require, module, exports) {
-  var vg = require('vega'),
-      Bounds = require('../core/Bounds'),
+  var Bounds = require('../core/Bounds'),
       boundsCalc = require('../util/bounds'),
+      util = require('../util/index'),
       config = require('../util/config'),
       path = require('./path');
 
@@ -290,7 +290,7 @@ define(function(require, module, exports) {
       if (bounds && !bounds.intersects(o.bounds))
         continue; // bounds check
 
-      g.font = vg.scene.fontString(o);
+      g.font = util.fontString(o);
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
 

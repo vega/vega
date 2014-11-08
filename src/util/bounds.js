@@ -1,7 +1,7 @@
 define(function(require, module, exports) {
-  var vg = require('vega'),
-      Bounds = require('../core/Bounds'),
+  var Bounds = require('../core/Bounds'),
       canvas = require('../canvas/path'),
+      util = require('./index'),
       config = require('./config');
 
   var parse = canvas.parse,
@@ -183,7 +183,7 @@ define(function(require, module, exports) {
         r = o.radius || 0,
         g = context(), w, t;
 
-    g.font = vg.scene.fontString(o);
+    g.font = util.fontString(o);
     g.textAlign = a || "left";
     g.textBaseline = b || "alphabetic";
     w = g.measureText(o.text || "").width;
