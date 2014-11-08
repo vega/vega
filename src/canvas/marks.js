@@ -1,6 +1,7 @@
 define(function(require, module, exports) {
   var vg = require('vega'),
       Bounds = require('../core/Bounds'),
+      config = require('../util/config'),
       path = require('./path');
 
   var parsePath = path.parse,
@@ -113,8 +114,8 @@ define(function(require, module, exports) {
     var o = items[0],
         lw = o.strokeWidth,
         lc = o.strokeCap;
-    g.lineWidth = lw != null ? lw : vg.config.render.lineWidth;
-    g.lineCap   = lc != null ? lc : vg.config.render.lineCap;
+    g.lineWidth = lw != null ? lw : config.render.lineWidth;
+    g.lineCap   = lc != null ? lc : config.render.lineCap;
     linePath(g, items);
   }
 
@@ -126,8 +127,8 @@ define(function(require, module, exports) {
         lw = o.strokeWidth,
         lc = o.strokeCap;
 
-    g.lineWidth = lw != null ? lw : vg.config.render.lineWidth;
-    g.lineCap   = lc != null ? lc : vg.config.render.lineCap;
+    g.lineWidth = lw != null ? lw : config.render.lineWidth;
+    g.lineCap   = lc != null ? lc : config.render.lineCap;
     g.beginPath();
     g.moveTo(x1, y1);
     g.lineTo(x2, y2);
@@ -150,12 +151,12 @@ define(function(require, module, exports) {
     }
 
     if (stroke) {
-      lw = (lw = o.strokeWidth) != null ? lw : vg.config.render.lineWidth;
+      lw = (lw = o.strokeWidth) != null ? lw : config.render.lineWidth;
       if (lw > 0) {
         g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
         g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
-        g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+        g.lineCap = (lc = o.strokeCap) != null ? lc : config.render.lineCap;
         g.vgLineDash(o.strokeDash || null);
         g.vgLineDashOffset(o.strokeDashOffset || 0);
         g.stroke();
@@ -198,12 +199,12 @@ define(function(require, module, exports) {
       }
 
       if (stroke = o.stroke) {
-        lw = (lw = o.strokeWidth) != null ? lw : vg.config.render.lineWidth;
+        lw = (lw = o.strokeWidth) != null ? lw : config.render.lineWidth;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
-          g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+          g.lineCap = (lc = o.strokeCap) != null ? lc : config.render.lineCap;
           g.vgLineDash(o.strokeDash || null);
           g.vgLineDashOffset(o.strokeDashOffset || 0);
           g.strokeRect(x, y, w, h);
@@ -231,12 +232,12 @@ define(function(require, module, exports) {
       if (opac == 0) continue;
       
       if (stroke = o.stroke) {
-        lw = (lw = o.strokeWidth) != null ? lw : vg.config.render.lineWidth;
+        lw = (lw = o.strokeWidth) != null ? lw : config.render.lineWidth;
         if (lw > 0) {
           g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
           g.strokeStyle = color(g, o, stroke);
           g.lineWidth = lw;
-          g.lineCap = (lc = o.strokeCap) != null ? lc : vg.config.render.lineCap;
+          g.lineCap = (lc = o.strokeCap) != null ? lc : config.render.lineCap;
           g.vgLineDash(o.strokeDash || null);
           g.vgLineDashOffset(o.strokeDashOffset || 0);
           g.beginPath();

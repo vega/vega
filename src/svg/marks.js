@@ -1,7 +1,7 @@
 define(function(require, module, exports) {
-  var vg = require('vega'),
-      d3 = require('d3'),
-      util = require('../util/index');
+  var d3 = require('d3'),
+      util = require('../util/index'),
+      config = require('../util/config');
 
   function x(o)     { return o.x || 0; }
   function y(o)     { return o.y || 0; }
@@ -123,7 +123,7 @@ define(function(require, module, exports) {
           ? w/2 : (o.align === "right" ? w : 0)),
         y = o.y - (o.baseline === "middle"
           ? h/2 : (o.baseline === "bottom" ? h : 0)),
-        url = vg.config.baseURL + o.url;
+        url = config.baseURL + o.url;
     
     this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
     this.setAttribute("x", x);
@@ -136,8 +136,8 @@ define(function(require, module, exports) {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
-      + (o.font || vg.config.render.font);
+      + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
+      + (o.font || config.render.font);
   }
   
   function text(o) {

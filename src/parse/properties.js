@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
-      tuple = require('../core/tuple'),
-      util = require('../util/index');
+  var tuple = require('../core/tuple'),
+      util = require('../util/index'),
+      config = require('../util/config');
 
   function compile(model, mark, spec) {
     var code = "",
@@ -213,9 +213,9 @@ define(function(require, exports, module) {
   }
 
   function colorRef(type, x, y, z) {
-    var xx = x ? valueRef("", x) : vg.config.color[type][0],
-        yy = y ? valueRef("", y) : vg.config.color[type][1],
-        zz = z ? valueRef("", z) : vg.config.color[type][2];
+    var xx = x ? valueRef("", x) : config.color[type][0],
+        yy = y ? valueRef("", y) : config.color[type][1],
+        zz = z ? valueRef("", z) : config.color[type][2];
     return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
   }
 

@@ -1,5 +1,5 @@
 define(function(require, module, exports) {
-  var vg = require('vega'),
+  var config = require('./config'),
       util = {};
 
   // type checking functions
@@ -200,7 +200,7 @@ define(function(require, module, exports) {
   // Logging
 
   function vg_write(msg) {
-    vg.config.isNode
+    config.isNode
       ? process.stderr.write(msg + "\n")
       : console.log(msg);
   }

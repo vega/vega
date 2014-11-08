@@ -2,6 +2,7 @@ define(function(require, exports, module) {
   var vg = require('vega'),
       d3 = require('d3'),
       Bounds = require('../core/Bounds'),
+      config = require('../util/config'),
       marks = require('./marks');
 
   var renderer = function() {
@@ -194,18 +195,18 @@ define(function(require, exports, module) {
         image = null, url;
 
     renderer._imgload += 1;
-    if (vg.config.isNode) {
+    if (config.isNode) {
       // TODO
       // image = new (require('canvas').Image)();
       // vg.data.load(uri, function(err, data) {
-      //   if (err) { vg.error(err); return; }
+      //   if (err) { util.error(err); return; }
       //   image.src = data;
       //   image.loaded = true;
       //   renderer._imgload -= 1;
       // });
     } else {
       image = new Image();
-      url = vg.config.baseURL + uri;
+      url = config.baseURL + uri;
       image.onload = function() {
         util.log("LOAD IMAGE: "+url);
         image.loaded = true;
