@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
   var vg = require('vega'),
       parseTransforms = require('./transforms'),
-      parseModify = require('../transforms/modify');
+      parseModify = require('../transforms/modify'),
+      util = require('../util/index');
 
   return function parseData(model, spec, callback) {
     var count = 0;
@@ -9,7 +10,7 @@ define(function(require, exports, module) {
     function load(d) {
       return function(error, data) {
         if (error) {
-          vg.error("LOADING FAILED: " + d.url);
+          util.error("LOADING FAILED: " + d.url);
         } else {
           d.values = vg.data.read(data.toString(), d.format);
           datasource(d);

@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
+  var util = require('../util/index'),
       transforms = require('../transforms/index');
 
   return function parseTransforms(model, def) {
@@ -10,7 +10,7 @@ define(function(require, exports, module) {
       tx.pipeline(pipeline);
     }
 
-    vg.keys(def).forEach(function(k) {
+    util.keys(def).forEach(function(k) {
       if(k === 'type') return;
       if(k === 'transform' && def.type === 'facet') return;
       (tx[k])(def[k]);

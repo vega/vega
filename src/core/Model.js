@@ -1,11 +1,11 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
-      Datasource = require('./Datasource'), 
+  var Datasource = require('./Datasource'), 
       Signal = require('./Signal'),
       Node = require('./Node'),
       graph = require('./graph'), 
       changeset = require('./changeset'), 
-      scene = require('../scene/index');
+      scene = require('../scene/index'),
+      util = require('../util/index');
 
   function Model() {
     this._stamp = 0;
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 
   function signals(name) {
     var m = this, signals = {};
-    if(!vg.isArray(name)) return this._signals[name];
+    if(!util.isArray(name)) return this._signals[name];
     name.forEach(function(n) { signals[n] = m._signals[n].value() });
     return signals;
   }
@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 
   function predicates(name) {
     var m = this, predicates = {};
-    if(!vg.isArray(name)) return this._predicates[name];
+    if(!util.isArray(name)) return this._predicates[name];
     name.forEach(function(n) { predicates[n] = m._predicates[n] });
     return predicates;
   }

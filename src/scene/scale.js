@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
   var vg = require('vega'), 
+      util = require('../util/index'),
       changeset = require('../core/changeset');
 
   var ORDINAL = "ordinal";
@@ -8,7 +9,7 @@ define(function(require, exports, module) {
     var domain = def.domain;
 
     function reeval(group, input) {
-      if(vg.isArray(domain)) return false;
+      if(util.isArray(domain)) return false;
 
       var from = domain.data || "vg_"+group.datum._id,
           fcs = model.data(from)._output,

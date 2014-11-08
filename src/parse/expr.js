@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega');
+  var util = require('../util/index');
   
   var CONSTANT = {
   	"E":       "Math.E",
@@ -51,22 +51,22 @@ define(function(require, exports, module) {
       if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
         tokens[i] = FUNCTION[t];
       }
-      if(model.signal((v = vg.field(t))[0])) {
+      if(model.signal((v = util.field(t))[0])) {
         sg[v[0]] = 1;
-        tokens[i] = tokens[i].replace(v[0], "sg["+vg.str(v[0])+"]");
+        tokens[i] = tokens[i].replace(v[0], "sg["+util.str(v[0])+"]");
       }
       if(v[0] == "d") fd[v.splice(1).join("")] = 1;
     }
 
     return {
       fn: Function("d", "e", "i", "p", "sg", "return ("+tokens.join("")+");"),
-      signals: vg.keys(sg),
-      fields: vg.keys(fd)
+      signals: util.keys(sg),
+      fields: util.keys(fd)
     };
   };
 
   expr.eval = function(model, fn, d, e, i, p, sg) {
-    sg = model.signal(vg.array(sg));
+    sg = model.signal(util.array(sg));
     return fn.call(null, d, e, i, p, sg);
   };
 

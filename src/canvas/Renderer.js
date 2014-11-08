@@ -121,7 +121,7 @@ define(function(require, exports, module) {
     
   function getBounds(items) {
     return !items ? null :
-      vg.array(items).reduce(function(b, item) {
+      util.array(items).reduce(function(b, item) {
         return b.union(translatedBounds(item, item.bounds))
                 .union(translatedBounds(item, item['bounds:prev']));
       }, new Bounds());  
@@ -207,7 +207,7 @@ define(function(require, exports, module) {
       image = new Image();
       url = vg.config.baseURL + uri;
       image.onload = function() {
-        vg.log("LOAD IMAGE: "+url);
+        util.log("LOAD IMAGE: "+url);
         image.loaded = true;
         renderer._imgload -= 1;
         renderer.renderAsync(scene);

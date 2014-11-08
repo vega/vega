@@ -1,10 +1,11 @@
 define(function(require, exports, module) {
   var vg = require('vega'),
-      tuple = require('../core/tuple');
+      tuple = require('../core/tuple'),
+      util = require('../util/index');
 
   function compile(model, mark, spec) {
     var code = "",
-        names = vg.keys(spec),
+        names = util.keys(spec),
         i, len, name, ref, vars = {}, 
         deps = {
           signals: {},
@@ -22,12 +23,12 @@ define(function(require, exports, module) {
         code += "\n  " + ref.code
       } else {
         ref = valueRef(name, ref);
-        code += "this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);";
+        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);";
       }
 
       vars[name] = true;
       ['signals', 'scales', 'data'].forEach(function(p) {
-        if(ref[p] != null) vg.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
+        if(ref[p] != null) util.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
       });
     }
 
@@ -70,13 +71,13 @@ define(function(require, exports, module) {
       encoder.tpl = tuple;
       return {
         encode: encoder,
-        signals: vg.keys(deps.signals),
-        scales: vg.keys(deps.scales),
-        data: vg.keys(deps.data)
+        signals: util.keys(deps.signals),
+        scales: util.keys(deps.scales),
+        data: util.keys(deps.data)
       }
     } catch (e) {
-      vg.error(e);
-      vg.log(code);
+      util.error(e);
+      util.log(code);
     }
   }
 
@@ -105,9 +106,9 @@ define(function(require, exports, module) {
           input = [], args = name+"_arg"+i,
           ref;
 
-      vg.keys(r.input).forEach(function(k) {
+      util.keys(r.input).forEach(function(k) {
         var ref = valueRef(i, r.input[k]);
-        input.push(vg.str(k)+": "+ref.val);
+        input.push(util.str(k)+": "+ref.val);
         signals.concat(ref.signals);
         scales.concat(ref.scales);
       });
@@ -120,12 +121,12 @@ define(function(require, exports, module) {
         signals.push.apply(signals, pred.signals);
         db.push.apply(db, pred.data);
         inputs.push(args+" = {"+input.join(', ')+"}");
-        code += "if(predicates["+vg.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
-          "    this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);\n";
+        code += "if(predicates["+util.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n";
         code += rules[i+1] ? "  } else " : "  }";
       } else {
         code += "{\n" + 
-          "    this.tpl.set(o, "+vg.str(name)+", "+ref.val+", stamp);\n"+
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n"+
           "  }";
       }
     });
@@ -154,33 +155,33 @@ define(function(require, exports, module) {
     // initialize value
     var val = null;
     if (ref.value !== undefined) {
-      val = vg.str(ref.value);
+      val = util.str(ref.value);
     }
 
     if (ref.signal !== undefined) {
-      var signalRef = vg.field(ref.signal);
-      val = "signals["+signalRef.map(vg.str).join("][")+"]"; 
+      var signalRef = util.field(ref.signal);
+      val = "signals["+signalRef.map(util.str).join("][")+"]"; 
       signalName = signalRef.shift();
     }
 
     // get field reference for enclosing group
     if (ref.group != null) {
       var grp = "group.datum";
-      if (vg.isString(ref.group)) {
+      if (util.isString(ref.group)) {
         grp = GROUP_VARS[ref.group]
           ? "group." + ref.group
-          : "group.datum["+vg.field(ref.group).map(vg.str).join("][")+"]";
+          : "group.datum["+util.field(ref.group).map(util.str).join("][")+"]";
       }
     }
 
     // get data field value
     if (ref.field != null) {
-      if (vg.isString(ref.field)) {
-        val = "item.datum["+vg.field(ref.field).map(vg.str).join("][")+"]";
+      if (util.isString(ref.field)) {
+        val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
         if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
       } else {
         val = "this.accessor(group.datum["
-            + vg.field(ref.field.group).map(vg.str).join("][")
+            + util.field(ref.field.group).map(util.str).join("][")
             + "])(item.datum.data)";
       }
     } else if (ref.group != null) {
@@ -188,10 +189,10 @@ define(function(require, exports, module) {
     }
 
     if (ref.scale != null) {
-      var scale = vg.isString(ref.scale)
-        ? vg.str(ref.scale)
+      var scale = util.isString(ref.scale)
+        ? util.str(ref.scale)
         : (ref.scale.group ? "group" : "item")
-          + ".datum[" + vg.str(ref.scale.group || ref.scale.field) + "]";
+          + ".datum[" + util.str(ref.scale.group || ref.scale.field) + "]";
       scale = "group.scale(" + scale + ")";
 
       if(ref.invert) scale += ".invert";  // TODO: ordinal scales
@@ -206,8 +207,8 @@ define(function(require, exports, module) {
     }
     
     // multiply, offset, return value
-    val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
-      + (ref.offset ? " + " + vg.number(ref.offset) : "");
+    val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")"
+      + (ref.offset ? " + " + util.number(ref.offset) : "");
     return {val: val, signals: signalName, scales: ref.scale};
   }
 

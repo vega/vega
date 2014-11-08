@@ -1,11 +1,11 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
+  var util = require('../util/index'), 
       collector = require('../transforms/collector');
 
   return function zip(model) {
     var z = null,
         as = "zip",
-        key = vg.accessor("data"),
+        key = util.accessor("data"),
         defaultValue = undefined,
         withKey = null;
 
@@ -83,12 +83,12 @@ define(function(require, exports, module) {
     };
 
     node.key = function(k) {
-      key = vg.accessor(k);
+      key = util.accessor(k);
       return node;
     };
 
     node.withKey = function(k) {
-      withKey = vg.accessor(k);
+      withKey = util.accessor(k);
       return node;
     };
 

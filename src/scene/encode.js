@@ -1,6 +1,4 @@
 define(function(require, exports, module) {
-  var vg = require('vega');
-
   return function encode(model, mark) {
     var props = mark.def.properties || {},
       enter  = props.enter,

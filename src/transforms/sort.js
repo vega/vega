@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
+  var util = require('../util/index'), 
       expr = require('../parse/expr');
 
   return function sort(model) {
@@ -8,7 +8,7 @@ define(function(require, exports, module) {
     function comparator() {
       if(!isExpr) return fn; 
       var by = expr.eval(model, fn, null, null, null, null, node._deps.signals);
-      return vg.comparator(by);
+      return util.comparator(by);
     };
 
     var node = new model.Node(function(input) {
@@ -22,7 +22,7 @@ define(function(require, exports, module) {
     node._router = true;
 
     node.by = function(s) {
-      if(vg.isFunction(s)) f = s;
+      if(util.isFunction(s)) f = s;
       else {
         s = expr(model, s);
         fn = s.fn;

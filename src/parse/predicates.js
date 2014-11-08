@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega');
+  var util = require('../util/index');
 
   return function parsePredicate(model, spec) {
     var types = {
@@ -18,8 +18,8 @@ define(function(require, exports, module) {
     };
 
     function parseSignal(signal, signals) {
-      var s = vg.field(signal),
-          code = "signals["+s.map(vg.str).join("][")+"]";
+      var s = util.field(signal),
+          code = "signals["+s.map(util.str).join("][")+"]";
       signals[s.shift()] = 1;
       return code;
     };
@@ -28,26 +28,26 @@ define(function(require, exports, module) {
       var decl = [], defs = [],
           signals = {}, db = {};
 
-      vg.array(operands).forEach(function(o, i) {
+      util.array(operands).forEach(function(o, i) {
         var signal, name = "o"+i, def = "";
         
-        if(o.value !== undefined) def = vg.str(o.value);
-        else if(o.arg)    def = "args["+vg.str(o.arg)+"]";
+        if(o.value !== undefined) def = util.str(o.value);
+        else if(o.arg)    def = "args["+util.str(o.arg)+"]";
         else if(o.signal) def = parseSignal(o.signal, signals);
         else if(o.predicate) {
           var pred = model.predicate(o.predicate);
           pred.signals.forEach(function(s) { signals[s] = 1; });
           pred.data.forEach(function(d) { db[d] = 1 });
 
-          vg.keys(o.input).forEach(function(k) {
+          util.keys(o.input).forEach(function(k) {
             var i = o.input[k], signal;
-            def += "args["+vg.str(k)+"] = ";
+            def += "args["+util.str(k)+"] = ";
             if(i.signal)   def += parseSignal(i.signal, signals);
-            else if(i.arg) def += "args["+vg.str(i.arg)+"]";
+            else if(i.arg) def += "args["+util.str(i.arg)+"]";
             def+=", ";
           });
 
-          def+= "predicates["+vg.str(o.predicate)+"](args, db, signals, predicates)";
+          def+= "predicates["+util.str(o.predicate)+"](args, db, signals, predicates)";
         }
 
         decl.push(name);
@@ -56,8 +56,8 @@ define(function(require, exports, module) {
 
       return {
         code: "var " + decl.join(", ") + ";\n" + defs.join(";\n") + ";\n",
-        signals: vg.keys(signals),
-        data: vg.keys(db)
+        signals: util.keys(signals),
+        data: util.keys(db)
       }
     };
 
@@ -96,9 +96,9 @@ define(function(require, exports, module) {
           code = ops.code;
 
       if(spec.data) {
-        var field = vg.field(spec.field).map(vg.str);
+        var field = util.field(spec.field).map(util.str);
         code += "var where = function(d) { return d["+field.join("][")+"] == o0 };\n";
-        code += "return db["+vg.str(spec.data)+"].filter(where).length > 0;";
+        code += "return db["+util.str(spec.data)+"].filter(where).length > 0;";
       } else if(spec.range) {
         // TODO: inclusive/exclusive range?
         // TODO: inverting ordinal scales

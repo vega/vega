@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
-      d3 = require('d3'),
+  var d3 = require('d3'),
+      util = require('../util/index'),
       marks = require('./marks');
 
   var handler = function(el, model) {
@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 
   prototype.handlers = function() {
     var h = this._handlers;
-    return vg.keys(h).reduce(function(a, k) {
+    return util.keys(h).reduce(function(a, k) {
       return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
     }, []);
   };

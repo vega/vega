@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
+  var util = require('../util/index'), 
       tuple = require('../core/tuple'), 
       changeset = require('../core/changeset');
 
@@ -43,13 +43,13 @@ define(function(require, exports, module) {
     node._router = true;
 
     node.fields = function(f) {
-      fields = vg.array(f);
-      accessors = fields.map(vg.accessor);
+      fields = util.array(f);
+      accessors = fields.map(util.accessor);
       return node;
     };
 
     node.output = function(map) {
-      vg.keys(output).forEach(function(k) {
+      util.keys(output).forEach(function(k) {
         if (map[k] !== undefined) {
           output[k] = map[k];
         }

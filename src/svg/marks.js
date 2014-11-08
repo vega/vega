@@ -1,6 +1,7 @@
 define(function(require, module, exports) {
   var vg = require('vega'),
-      d3 = require('d3');
+      d3 = require('d3'),
+      util = require('../util/index');
 
   function x(o)     { return o.x || 0; }
   function y(o)     { return o.y || 0; }
@@ -34,7 +35,7 @@ define(function(require, module, exports) {
     "strokeDashOffset": "stroke-dashoffset",
     "opacity":          "opacity"
   };
-  var styleProps = vg.keys(styles);
+  var styleProps = util.keys(styles);
 
   function style(d) {
     var i, n, prop, name, value,

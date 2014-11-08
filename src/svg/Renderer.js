@@ -1,5 +1,5 @@
 define(function(require, module, exports) {
-  var vg = require('vega'),
+  var util = require('../util/index'),
       marks = require('./marks');
 
   var renderer = function() {
@@ -57,16 +57,16 @@ define(function(require, module, exports) {
   prototype.updateDefs = function() {
     var svg = this._svg,
         all = this._defs,
-        dgrad = vg.keys(all.gradient),
-        dclip = vg.keys(all.clipping),
+        dgrad = util.keys(all.gradient),
+        dclip = util.keys(all.clipping),
         defs = svg.select("defs"), grad, clip;
   
     // get or create svg defs block
     if (dgrad.length===0 && dclip.length==0) { defs.remove(); return; }
     if (defs.empty()) defs = svg.insert("defs", ":first-child");
     
-    grad = defs.selectAll("linearGradient").data(dgrad, vg.identity);
-    grad.enter().append("linearGradient").attr("id", vg.identity);
+    grad = defs.selectAll("linearGradient").data(dgrad, util.identity);
+    grad.enter().append("linearGradient").attr("id", util.identity);
     grad.exit().remove();
     grad.each(function(id) {
       var def = all.gradient[id],
@@ -83,8 +83,8 @@ define(function(require, module, exports) {
           .attr("stop-color", function(d) { return d.color; });
     });
     
-    clip = defs.selectAll("clipPath").data(dclip, vg.identity);
-    clip.enter().append("clipPath").attr("id", vg.identity);
+    clip = defs.selectAll("clipPath").data(dclip, util.identity);
+    clip.enter().append("clipPath").attr("id", util.identity);
     clip.exit().remove();
     clip.each(function(id) {
       var def = all.clipping[id],
@@ -101,7 +101,7 @@ define(function(require, module, exports) {
     marks.current = this;
 
     if (items) {
-      this.renderItems(vg.array(items));
+      this.renderItems(util.array(items));
     } else {
       this.draw(this._ctx, scene, -1);
     }

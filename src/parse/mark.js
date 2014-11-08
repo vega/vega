@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
+  var util = require('../util/index'),
       parseProperties = require('./properties');
 
   return function parseMark(model, mark) {
@@ -7,7 +7,7 @@ define(function(require, exports, module) {
         group = mark.marks;
 
     // parse mark property definitions
-    vg.keys(props).forEach(function(k) {
+    util.keys(props).forEach(function(k) {
       props[k] = parseProperties(model, mark.type, props[k]);
     });
 

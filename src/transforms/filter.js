@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
+  var util = require('../util/index'), 
       tuple = require('../core/tuple'), 
       changeset = require('../core/changeset'), 
       expr = require('../parse/expr');
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
     });
     
     node.test = function(pred) { 
-      if(vg.isFunction(pred)) test = pred;
+      if(util.isFunction(pred)) test = pred;
       else {
         pred = expr(model, pred);
         test = pred.fn;

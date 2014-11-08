@@ -5,11 +5,12 @@ define(function(require, exports, module) {
       parseMarks = require('../parse/marks'),
       parseSignals = require('../parse/signals'),
       parsePredicates = require('../parse/predicates'),
-      parseData = require('../parse/data');
+      parseData = require('../parse/data'),
+      util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
     // protect against subsequent spec modification
-    spec = vg.duplicate(spec);
+    spec = util.duplicate(spec);
 
     viewFactory = viewFactory || View.factory;
 

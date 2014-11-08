@@ -1,9 +1,9 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
-      vg = require('vega'),
       changset = require('../core/changeset'),
       selector = require('./events'),
-      expr = require('./expr');
+      expr = require('./expr'),
+      util = require('../util/index');
 
   var START = "start", MIDDLE = "middle", END = "end";
 
@@ -81,7 +81,7 @@ define(function(require, exports, module) {
     // new value on the same pulse. 
 
     // TODO: Filters, time intervals, target selectors
-    vg.keys(register).forEach(function(r) {
+    util.keys(register).forEach(function(r) {
       var h = register[r];
       view.on(r, function(evt, item) {
         var cs = changset.create({}, true),

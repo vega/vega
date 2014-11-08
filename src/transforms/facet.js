@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
+  var util = require('../util/index'), 
       tuple = require('../core/tuple'), 
       changeset = require('../core/changeset');
 
@@ -110,7 +110,7 @@ define(function(require, exports, module) {
     };
 
     node.keys = function(k) {
-      groupby = vg.array(k).map(vg.accessor);
+      groupby = util.array(k).map(util.accessor);
       return node;
     };
 

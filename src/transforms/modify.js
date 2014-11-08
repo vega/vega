@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
+  var util = require('../util/index'),
       tuple = require('../core/tuple');
 
   var ADD = "add", 
@@ -15,7 +15,7 @@ define(function(require, exports, module) {
   };      
 
   return function parseModify(model, def) {
-    var signal = def.signal ? vg.field(def.signal) : null, 
+    var signal = def.signal ? util.field(def.signal) : null, 
         signalName = signal ? signal.shift() : null,
         predicate = def.predicate ? model.predicate(def.predicate) : null,
         reeval = (predicate === null);
@@ -36,7 +36,7 @@ define(function(require, exports, module) {
       if(signal) {
         value = model.signal(signalName).value();
         if(signal.length > 0) {
-          var fn = Function("s", "return s["+signal.map(vg.str).join("][")+"]");
+          var fn = Function("s", "return s["+signal.map(util.str).join("][")+"]");
           value = fn.call(null, value);
         }
       }
@@ -57,12 +57,12 @@ define(function(require, exports, module) {
         input.add.push.apply(input.add, add);
         input.rem.push.apply(input.rem, rem);
       } else if(def.type == CLEAR) {
-        console.log('clearing', vg.duplicate(input));
+        console.log('clearing', util.duplicate(input));
         input.rem.push.apply(input.rem, input.add);
         input.rem.push.apply(input.rem, input.mod);
         input.add = [];
         input.mod = [];
-        console.log('clearing', vg.duplicate(input));
+        console.log('clearing', util.duplicate(input));
       } 
 
       input.fields[def.field] = 1;

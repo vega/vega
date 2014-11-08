@@ -1,10 +1,10 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
+  var util = require('../util/index'), 
       tuple = require('../core/tuple'), 
       expr = require('../parse/expr');
 
   return function formula(model) {
-    var field = null, fn = vg.identity;
+    var field = null, fn = util.identity;
 
     function f(x, stamp) { 
       var val = expr.eval(model, fn, x, null, null, null, node._deps.signals);
@@ -26,7 +26,7 @@ define(function(require, exports, module) {
     };
 
     node.expr = function(s) { 
-      if(vg.isFunction(s)) f = s;
+      if(util.isFunction(s)) f = s;
       else {
         s = expr(model, s);
         fn = s.fn;
