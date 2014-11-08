@@ -1,7 +1,7 @@
 define(function(require, exports, module) {  
-  var vg = require('vega'),
-      d3 = require('d3'),
+  var d3 = require('d3'),
       Bounds = require('../core/Bounds'),
+      load = require('../util/load'),
       config = require('../util/config'),
       marks = require('./marks');
 
@@ -196,9 +196,9 @@ define(function(require, exports, module) {
 
     renderer._imgload += 1;
     if (config.isNode) {
-      // TODO
+      // TODO: how to check if nodeJS in requireJS?
       // image = new (require('canvas').Image)();
-      // vg.data.load(uri, function(err, data) {
+      // load(uri, function(err, data) {
       //   if (err) { util.error(err); return; }
       //   image.src = data;
       //   image.loaded = true;

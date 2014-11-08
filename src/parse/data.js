@@ -1,18 +1,19 @@
 define(function(require, exports, module) {
-  var vg = require('vega'),
-      parseTransforms = require('./transforms'),
+  var parseTransforms = require('./transforms'),
       parseModify = require('../transforms/modify'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      load = require('../util/load'),
+      read = require('../util/read');
 
   return function parseData(model, spec, callback) {
     var count = 0;
 
-    function load(d) {
+    function loaded(d) {
       return function(error, data) {
         if (error) {
           util.error("LOADING FAILED: " + d.url);
         } else {
-          d.values = vg.data.read(data.toString(), d.format);
+          d.values = read(data.toString(), d.format);
           datasource(d);
         }
         if (--count === 0) callback();
@@ -34,7 +35,7 @@ define(function(require, exports, module) {
     (spec || []).forEach(function(d) {
       if (d.url) {
         count += 1;
-        vg.data.load(d.url, load(d)); 
+        load(d.url, loaded(d)); 
       }
       else datasource(d);
     });
