@@ -1,6 +1,7 @@
 define(function(require, module, exports) {
   var vg = require('vega'),
       Bounds = require('../core/Bounds'),
+      boundsCalc = require('../util/bounds'),
       config = require('../util/config'),
       path = require('./path');
 
@@ -513,7 +514,7 @@ define(function(require, module, exports) {
     if (!o.fontSize) return false;
     if (!o.angle) return true; // bounds sufficient if no rotation
 
-    var b = vg.scene.bounds.text(o, tmpBounds, true),
+    var b = boundsCalc.text(o, tmpBounds, true),
         a = -o.angle * Math.PI / 180,
         cos = Math.cos(a),
         sin = Math.sin(a),
