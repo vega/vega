@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
-      Model = require('../core/Model'), 
+  var Model = require('../core/Model'), 
       View = require('../core/View'), 
+      parsePadding = require('../parse/padding'),
       parseMarks = require('../parse/marks'),
       parseSignals = require('../parse/signals'),
       parsePredicates = require('../parse/predicates'),
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
       width: width,
       height: height,
       viewport: viewport,
-      padding: vg.parse.padding(spec.padding),
+      padding: parsePadding(spec.padding),
       signals: parseSignals(model, spec.signals),
       predicates: parsePredicates(model, spec.predicates),
       marks: parseMarks(model, spec, width, height),
