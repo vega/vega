@@ -1,13 +1,11 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
-      tuple = require('../core/tuple'), 
+  var tuple = require('../core/tuple'), 
       changeset = require('../core/changeset'), 
       collector = require('../transforms/collector'), 
       encode = require('./encode'), 
       bounds = require('./bounds'), 
-      scalefn = require('./scale');
-
-  var DEFAULT = {"sentinel":1};
+      scalefn = require('./scale'),
+      constants = require('../util/constants');
 
   function ids(a) {
     return a.reduce(function(m,x) {
@@ -114,7 +112,7 @@ define(function(require, exports, module) {
 
       items.push(item); 
 
-      if(def.type == vg.scene.GROUP) buildGroup(item);
+      if(def.type == constants.GROUP) buildGroup(item);
 
       return item;
     };
@@ -144,7 +142,7 @@ define(function(require, exports, module) {
 
             // Facet's disconnect will remove Graph.db listener, but we 
             // should disconnect the scenegraph builder pipelines.
-            if(def.type == vg.scene.GROUP) 
+            if(def.type == constants.GROUP) 
               disconnect.call(children.splice(i, 1)[0], model);
           }
         }
@@ -152,7 +150,7 @@ define(function(require, exports, module) {
         output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });        
         lastBuild = fcs.stamp;
       } else {
-        if(!items.length) output.add.push(newItem(DEFAULT, input.stamp));
+        if(!items.length) output.add.push(newItem(constants.DEFAULT_DATA, input.stamp));
         else if(!fullUpdate) output.mod.push(items[0]);
       }
 

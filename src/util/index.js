@@ -201,8 +201,8 @@ define(function(require, module, exports) {
     return (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
-      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
-      + (o.font || vg.config.render.font);
+      + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
+      + (o.font || config.render.font);
   };
 
   // Logging

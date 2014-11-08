@@ -1,18 +1,19 @@
 define(function(require, exports, module) {
-  var util = require('../util/index'),
-      tuple = require('../core/tuple');
+  var tuple = require('../core/tuple'),
+      util = require('../util/index'),
+      constants = require('../util/constants');
 
-  var ADD = "add", 
-      REMOVE = "remove", 
-      TOGGLE = "toggle", 
-      CLEAR = "clear";
+  var ADD = constants.MODIFY_ADD, 
+      REMOVE = constants.MODIFY_REMOVE, 
+      TOGGLE = constants.MODIFY_TOGGLE, 
+      CLEAR = constants.MODIFY_CLEAR;
 
   var filter = function(field, value, src, dest) {
     for(var i = src.length-1; i >= 0; --i) {
       if(src[i][field] == value)
         dest.push.apply(dest, src.splice(i, 1));
     }
-  };      
+  };
 
   return function parseModify(model, def) {
     var signal = def.signal ? util.field(def.signal) : null, 
