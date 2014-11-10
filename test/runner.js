@@ -1,7 +1,4 @@
 define(function(require, exports, module) {
-  // Run compatibility layer to override vg1 functions.
-  require('./compat')();  
-
   var DEBUG = false;
   global.debug = function(input, args) {
     if(!DEBUG) return;

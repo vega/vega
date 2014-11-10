@@ -2,8 +2,7 @@
   "name": "abhijit",
   "version": "2.0.0",
   "dependencies": {
-    "d3": "3.4.x",
-    "vega": "1.4.2"
+    "d3": "3.4.x"
   },
   "devDependencies": {
     "almond": "0.3.x",
