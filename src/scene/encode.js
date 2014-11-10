@@ -1,4 +1,6 @@
 define(function(require, exports, module) {
+  var util = require('../util/index');
+  
   return function encode(model, mark) {
     var props = mark.def.properties || {},
       enter  = props.enter,
@@ -17,7 +19,7 @@ define(function(require, exports, module) {
     }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["encoding", mark.def.type]);
+      util.debug(input, ["encoding", mark.def.type]);
 
       if(enter || update) {
         input.add.forEach(function(i) { 

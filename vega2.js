@@ -8,7 +8,7 @@
     } else {
         //Browser globals case. Just assign the
         //result to a property on the global.
-        root.vg2 = factory();
+        root.vg = factory();
     }
 }(this, function () {
     //almond, and your modules will be inlined here
@@ -476,6 +476,8 @@ define('core/changeset',[],function() {
 define('util/config',['require','exports','module'],function(require, module, exports) {
   var config = {};
 
+  config.debug = false;
+
   // are we running in node.js?
   // via timetler.com/2012/10/13/environment-detection-in-javascript/
   // TODO: how does this work with requirejs?
@@ -846,6 +848,14 @@ define('util/index',['require','exports','module','./config'],function(require, 
     if (typeof alert !== "undefined") alert(msg);
   };
 
+  util.debug = function(input, args) {
+    if(!config.debug) return;
+    var log = Function.prototype.bind.call(console.log, console);
+    args.unshift(input.stamp||-1);
+    if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.touch);
+    log.apply(console, args);
+  };
+
   return util;
 });
 define('core/tuple',['require','exports','module','../util/index'],function(require, module, exports) {
@@ -884,8 +894,9 @@ define('core/tuple',['require','exports','module','../util/index'],function(requ
     reset:  reset
   };
 });
-define('transforms/collector',['require','exports','module','../core/changeset'],function(require, exports, module) {
-  var changeset = require('../core/changeset');
+define('transforms/collector',['require','exports','module','../core/changeset','../util/index'],function(require, exports, module) {
+  var changeset = require('../core/changeset'),
+      util = require('../util/index');
 
   return function collector(model, pipeline) {
     var data = [];
@@ -902,7 +913,7 @@ define('transforms/collector',['require','exports','module','../core/changeset']
     }
    
     var node = new model.Node(function(input) {
-      global.debug(input, ["collecting"]);
+      util.debug(input, ["collecting"]);
 
       // Output/signal nodes issue touches, but touches shouldn't be issued if
       // one output node is pulsing another (e.g. facet pipelines -> main pipeline).
@@ -966,10 +977,11 @@ define('transforms/collector',['require','exports','module','../core/changeset']
     return node;
   };
 });
-define('core/Datasource',['require','exports','module','./changeset','./tuple','../transforms/collector'],function(require, exports, module) {
+define('core/Datasource',['require','exports','module','./changeset','./tuple','../transforms/collector','../util/index'],function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
-      collector = require('../transforms/collector');
+      collector = require('../transforms/collector'),
+      util = require('../util/index');
 
   return function(model) {
     function Datasource(name, facet) {
@@ -1038,7 +1050,7 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
       // Input node applies the datasource's delta, and propagates it to 
       // the rest of the pipeline. It receives touches to propagate data.
       var input = new model.Node(function(input) {
-        global.debug(input, ["input", ds._name]);
+        util.debug(input, ["input", ds._name]);
 
         var delta = ds._input, out = changeset.create(input);
         out.facet = ds._facet;
@@ -1074,7 +1086,7 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
       // Downstream nodes will pull from there. This is important to prevent
       // glitches. 
       var output = new model.Node(function(input) {
-        global.debug(input, ["output", ds._name]);
+        util.debug(input, ["output", ds._name]);
 
         ds._output = input;
 
@@ -1599,9 +1611,10 @@ module.exports = BinaryHeapStrategy = (function() {
 
 },{}]},{},[1])(1)
 });
-define('core/graph',['require','exports','module','./changeset','js-priority-queue'],function(require, exports, module) {
+define('core/graph',['require','exports','module','./changeset','js-priority-queue','../util/index'],function(require, exports, module) {
   var changeset = require('./changeset'),
-      PriorityQueue = require('js-priority-queue');
+      PriorityQueue = require('js-priority-queue'),
+      util = require('../util/index');
 
   return function(model) {
     var doNotPropagate = {};
@@ -1663,7 +1676,7 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
     }
 
     function connect(pipeline) {
-      global.debug({}, ['connecting']);
+      util.debug({}, ['connecting']);
 
       traversePipeline(pipeline, function(n, c, i) {
         if(n._deps.data.length > 0 || n._deps.signals.length > 0) {
@@ -1678,7 +1691,7 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
     }
 
     function disconnect(pipeline) {
-      global.debug({}, ['disconnecting']);
+      util.debug({}, ['disconnecting']);
 
       traversePipeline(pipeline, function(n, c, i) {
         n._listeners.forEach(function(l) { n.removeListener(l); });
@@ -1697,7 +1710,9 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
     };
   }
 });
-define('scene/encode',['require','exports','module'],function(require, exports, module) {
+define('scene/encode',['require','exports','module','../util/index'],function(require, exports, module) {
+  var util = require('../util/index');
+  
   return function encode(model, mark) {
     var props = mark.def.properties || {},
       enter  = props.enter,
@@ -1716,7 +1731,7 @@ define('scene/encode',['require','exports','module'],function(require, exports, 
     }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["encoding", mark.def.type]);
+      util.debug(input, ["encoding", mark.def.type]);
 
       if(enter || update) {
         input.add.forEach(function(i) { 
@@ -2923,13 +2938,14 @@ define('util/constants',['require','exports','module'],function(require, module,
     QUANTILE: "quantile",
   }
 });
-define('scene/bounds',['require','exports','module','../util/bounds','../util/constants'],function(require, exports, module) {
+define('scene/bounds',['require','exports','module','../util/bounds','../util/constants','../util/index'],function(require, exports, module) {
   var boundsCalc = require('../util/bounds'),
-      constants = require('../util/constants');
+      constants = require('../util/constants'),
+      util = require('../util/index');
 
   return function bounds(model, mark) {
     var node = new model.Node(function(input) {
-      global.debug(input, ["bounds", mark.marktype]);
+      util.debug(input, ["bounds", mark.marktype]);
 
       boundsCalc.mark(mark);
       if(mark.marktype === constants.GROUP) 
@@ -3204,7 +3220,7 @@ define('scene/scale',['require','exports','module','../parse/scale','../util/ind
     }
 
     function scale(group) {
-      global.debug({}, ["rescaling", group.datum._id]);
+      util.debug({}, ["rescaling", group.datum._id]);
 
       var k = def.name, 
           scale = parseScale(model, def, group);
@@ -3219,7 +3235,7 @@ define('scene/scale',['require','exports','module','../parse/scale','../util/ind
     }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["scaling", def.name]);
+      util.debug(input, ["scaling", def.name]);
 
       input.add.forEach(scale);
       input.mod.forEach(function(group) {
@@ -4192,7 +4208,7 @@ define('scene/build',['require','exports','module','../core/tuple','../core/chan
       mark.items = items; 
 
       builder = new model.Node(function(input) {
-        global.debug(input, ["building", f, def.type]);
+        util.debug(input, ["building", f, def.type]);
 
         // Only the first pulse should come from the parent.
         // Future pulses will propagate from dependencies.
@@ -4309,7 +4325,7 @@ define('scene/build',['require','exports','module','../core/tuple','../core/chan
     function buildAxes() {
       var node;
       return node = new model.Node(function(input) {
-        global.debug(input, ["building axes"]);
+        util.debug(input, ["building axes"]);
         if(!def.axes) return input;
 
         input.add.forEach(function(group) {
@@ -7290,7 +7306,7 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
       // Build the entire scene, and pulse the entire model
       // (Datasources + scene).
       v._renderNode = new v._model.Node(function(input) {
-        global.debug(input, ["rendering"]);
+        util.debug(input, ["rendering"]);
 
         if(input.add.length) v._renderer.render(v._model.scene());
         if(input.mod.length) v._renderer.render(v._model.scene());
@@ -7303,7 +7319,7 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
       v._build = true;
     }
 
-    return view.autopad(opt);
+    return v.autopad(opt);
   };
 
   prototype.on = function() {
@@ -7650,10 +7666,11 @@ define('transforms/measures',['require','exports','module','../core/tuple','../u
   types.create = compile;
   return types;
 });
-define('transforms/aggregate',['require','exports','module','../core/tuple','../core/changeset','./measures'],function(require, exports, module) {
+define('transforms/aggregate',['require','exports','module','../core/tuple','../core/changeset','./measures','../util/index'],function(require, exports, module) {
   var tuple = require('../core/tuple'), 
       changeset = require('../core/changeset'), 
-      meas = require('./measures');
+      meas = require('./measures'),
+      util = require('../util/index');
 
   return function aggregate(model) {
     var Measures = null, aggrs = {}, field = null;
@@ -7669,7 +7686,7 @@ define('transforms/aggregate',['require','exports','module','../core/tuple','../
     }
     
     var node = new model.Node(function(input) {
-      global.debug(input, ["aggregating"]);
+      util.debug(input, ["aggregating"]);
 
       var k = input.facet ? input.facet.key : "",
           a = aggr(input), x,
@@ -7767,7 +7784,7 @@ define('transforms/facet',['require','exports','module','../util/index','../core
       cp[cp.length-1].addListener(node.parentCollector);
 
       var del = function() {
-        global.debug({}, ["deleting cell", k, cp[0]._type]);
+        util.debug({}, ["deleting cell", k, cp[0]._type]);
 
         node.removeListener(cp[0]);
         model.graph.disconnect(cp);
@@ -7778,7 +7795,7 @@ define('transforms/facet',['require','exports','module','../util/index','../core
     };
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["faceting"]);
+      util.debug(input, ["faceting"]);
 
       var output = changeset.create(input);
       var k, c, x, d;
@@ -7865,7 +7882,7 @@ define('transforms/filter',['require','exports','module','../util/index','../cor
     function f(x) { return expr.eval(model, test, x, null, null, null, node._deps.signals); }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["filtering"]);
+      util.debug(input, ["filtering"]);
 
       var output = changeset.create(input);
 
@@ -7940,7 +7957,7 @@ define('transforms/fold',['require','exports','module','../util/index','../core/
     }
     
     var node = new model.Node(function(input) {
-      global.debug(input, ["folding"]);
+      util.debug(input, ["folding"]);
 
       var out = changeset.create(input);
       fn(input.add, out.add, input.stamp);
@@ -7989,7 +8006,7 @@ define('transforms/formula',['require','exports','module','../util/index','../co
     }
 
     var node = new model.Node(function(input) {  
-      global.debug(input, ["formulating"]);  
+      util.debug(input, ["formulating"]);  
 
       input.add.forEach(function(x) { f(x, input.stamp) });;
       input.mod.forEach(function(x) { f(x, input.stamp) });
@@ -8030,7 +8047,7 @@ define('transforms/sort',['require','exports','module','../util/index','../parse
     };
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["sorting"]);
+      util.debug(input, ["sorting"]);
 
       if(input.add.length || input.mod.length || input.rem.length)
         input.sort = comparator();
@@ -8073,7 +8090,7 @@ define('transforms/zip',['require','exports','module','../util/index','../transf
     }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["zipping", z]);
+      util.debug(input, ["zipping", z]);
 
       var zds = model.data(z), zinput = zds._output, zdata = zds.values();
 
@@ -8216,7 +8233,7 @@ define('transforms/modify',['require','exports','module','../core/tuple','../uti
         reeval = predicate({}, db, model.signal(predicate.signals||[]), model._predicates);
       }
 
-      global.debug(input, [def.type+"ing", reeval]);
+      util.debug(input, [def.type+"ing", reeval]);
       if(!reeval) return input;
 
       var datum = {}, 
@@ -8430,6 +8447,7 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
     return {
       parse: {
         spec: require('parse/spec')
-      }
+      },
+      config: require('util/config')
     }
 }));

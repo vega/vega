@@ -16,7 +16,7 @@ define(function(require, exports, module) {
     }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["zipping", z]);
+      util.debug(input, ["zipping", z]);
 
       var zds = model.data(z), zinput = zds._output, zdata = zds.values();
 

@@ -36,7 +36,7 @@ define(function(require, exports, module) {
       cp[cp.length-1].addListener(node.parentCollector);
 
       var del = function() {
-        global.debug({}, ["deleting cell", k, cp[0]._type]);
+        util.debug({}, ["deleting cell", k, cp[0]._type]);
 
         node.removeListener(cp[0]);
         model.graph.disconnect(cp);
@@ -47,7 +47,7 @@ define(function(require, exports, module) {
     };
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["faceting"]);
+      util.debug(input, ["faceting"]);
 
       var output = changeset.create(input);
       var k, c, x, d;

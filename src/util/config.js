@@ -1,6 +1,8 @@
 define(function(require, module, exports) {
   var config = {};
 
+  config.debug = false;
+
   // are we running in node.js?
   // via timetler.com/2012/10/13/environment-detection-in-javascript/
   // TODO: how does this work with requirejs?

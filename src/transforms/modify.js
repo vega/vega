@@ -30,7 +30,7 @@ define(function(require, exports, module) {
         reeval = predicate({}, db, model.signal(predicate.signals||[]), model._predicates);
       }
 
-      global.debug(input, [def.type+"ing", reeval]);
+      util.debug(input, [def.type+"ing", reeval]);
       if(!reeval) return input;
 
       var datum = {}, 

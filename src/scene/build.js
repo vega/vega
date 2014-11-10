@@ -87,7 +87,7 @@ define(function(require, exports, module) {
       mark.items = items; 
 
       builder = new model.Node(function(input) {
-        global.debug(input, ["building", f, def.type]);
+        util.debug(input, ["building", f, def.type]);
 
         // Only the first pulse should come from the parent.
         // Future pulses will propagate from dependencies.
@@ -204,7 +204,7 @@ define(function(require, exports, module) {
     function buildAxes() {
       var node;
       return node = new model.Node(function(input) {
-        global.debug(input, ["building axes"]);
+        util.debug(input, ["building axes"]);
         if(!def.axes) return input;
 
         input.add.forEach(function(group) {

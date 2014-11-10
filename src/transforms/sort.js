@@ -12,7 +12,7 @@ define(function(require, exports, module) {
     };
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["sorting"]);
+      util.debug(input, ["sorting"]);
 
       if(input.add.length || input.mod.length || input.rem.length)
         input.sort = comparator();

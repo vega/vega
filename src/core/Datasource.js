@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
-      collector = require('../transforms/collector');
+      collector = require('../transforms/collector'),
+      util = require('../util/index');
 
   return function(model) {
     function Datasource(name, facet) {
@@ -70,7 +71,7 @@ define(function(require, exports, module) {
       // Input node applies the datasource's delta, and propagates it to 
       // the rest of the pipeline. It receives touches to propagate data.
       var input = new model.Node(function(input) {
-        global.debug(input, ["input", ds._name]);
+        util.debug(input, ["input", ds._name]);
 
         var delta = ds._input, out = changeset.create(input);
         out.facet = ds._facet;
@@ -106,7 +107,7 @@ define(function(require, exports, module) {
       // Downstream nodes will pull from there. This is important to prevent
       // glitches. 
       var output = new model.Node(function(input) {
-        global.debug(input, ["output", ds._name]);
+        util.debug(input, ["output", ds._name]);
 
         ds._output = input;
 

@@ -39,7 +39,7 @@ define(function(require, exports, module) {
     }
 
     function scale(group) {
-      global.debug({}, ["rescaling", group.datum._id]);
+      util.debug({}, ["rescaling", group.datum._id]);
 
       var k = def.name, 
           scale = parseScale(model, def, group);
@@ -54,7 +54,7 @@ define(function(require, exports, module) {
     }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["scaling", def.name]);
+      util.debug(input, ["scaling", def.name]);
 
       input.add.forEach(scale);
       input.mod.forEach(function(group) {

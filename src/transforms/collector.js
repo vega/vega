@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var changeset = require('../core/changeset');
+  var changeset = require('../core/changeset'),
+      util = require('../util/index');
 
   return function collector(model, pipeline) {
     var data = [];
@@ -16,7 +17,7 @@ define(function(require, exports, module) {
     }
    
     var node = new model.Node(function(input) {
-      global.debug(input, ["collecting"]);
+      util.debug(input, ["collecting"]);
 
       // Output/signal nodes issue touches, but touches shouldn't be issued if
       // one output node is pulsing another (e.g. facet pipelines -> main pipeline).

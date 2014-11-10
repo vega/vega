@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
   var tuple = require('../core/tuple'), 
       changeset = require('../core/changeset'), 
-      meas = require('./measures');
+      meas = require('./measures'),
+      util = require('../util/index');
 
   return function aggregate(model) {
     var Measures = null, aggrs = {}, field = null;
@@ -17,7 +18,7 @@ define(function(require, exports, module) {
     }
     
     var node = new model.Node(function(input) {
-      global.debug(input, ["aggregating"]);
+      util.debug(input, ["aggregating"]);
 
       var k = input.facet ? input.facet.key : "",
           a = aggr(input), x,

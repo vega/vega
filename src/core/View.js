@@ -177,7 +177,7 @@ define(function(require, exports, module) {
       // Build the entire scene, and pulse the entire model
       // (Datasources + scene).
       v._renderNode = new v._model.Node(function(input) {
-        global.debug(input, ["rendering"]);
+        util.debug(input, ["rendering"]);
 
         if(input.add.length) v._renderer.render(v._model.scene());
         if(input.mod.length) v._renderer.render(v._model.scene());
@@ -190,7 +190,7 @@ define(function(require, exports, module) {
       v._build = true;
     }
 
-    return view.autopad(opt);
+    return v.autopad(opt);
   };
 
   prototype.on = function() {

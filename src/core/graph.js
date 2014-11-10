@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
   var changeset = require('./changeset'),
-      PriorityQueue = require('js-priority-queue');
+      PriorityQueue = require('js-priority-queue'),
+      util = require('../util/index');
 
   return function(model) {
     var doNotPropagate = {};
@@ -62,7 +63,7 @@ define(function(require, exports, module) {
     }
 
     function connect(pipeline) {
-      global.debug({}, ['connecting']);
+      util.debug({}, ['connecting']);
 
       traversePipeline(pipeline, function(n, c, i) {
         if(n._deps.data.length > 0 || n._deps.signals.length > 0) {
@@ -77,7 +78,7 @@ define(function(require, exports, module) {
     }
 
     function disconnect(pipeline) {
-      global.debug({}, ['disconnecting']);
+      util.debug({}, ['disconnecting']);
 
       traversePipeline(pipeline, function(n, c, i) {
         n._listeners.forEach(function(l) { n.removeListener(l); });

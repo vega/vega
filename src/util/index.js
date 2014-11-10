@@ -225,5 +225,13 @@ define(function(require, module, exports) {
     if (typeof alert !== "undefined") alert(msg);
   };
 
+  util.debug = function(input, args) {
+    if(!config.debug) return;
+    var log = Function.prototype.bind.call(console.log, console);
+    args.unshift(input.stamp||-1);
+    if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.touch);
+    log.apply(console, args);
+  };
+
   return util;
 });

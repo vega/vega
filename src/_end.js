@@ -11,6 +11,7 @@
     return {
       parse: {
         spec: require('parse/spec')
-      }
+      },
+      config: require('util/config')
     }
 }));

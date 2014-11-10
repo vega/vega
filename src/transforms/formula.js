@@ -12,7 +12,7 @@ define(function(require, exports, module) {
     }
 
     var node = new model.Node(function(input) {  
-      global.debug(input, ["formulating"]);  
+      util.debug(input, ["formulating"]);  
 
       input.add.forEach(function(x) { f(x, input.stamp) });;
       input.mod.forEach(function(x) { f(x, input.stamp) });

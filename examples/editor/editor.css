@@ -1,0 +1,86 @@
+* {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+
+#content {
+  height: 100%;
+  vertical-align: bottom;
+}
+
+.pre {
+  position: absolute;
+  font-family: Monaco, Courier New;
+  font-size: 10px;
+  white-space: pre;
+  overflow: auto;
+  border: none;
+  resize: none;
+  left: 2px;
+  right: 2px;
+  top: 28px;
+  bottom: 2px;
+}
+
+.mod {
+  position: relative;
+  vertical-align: top;
+  height: 100%;
+  border-bottom: 2px dashed #f00;
+}
+
+.mod_header {
+  padding: 4px 4px 4px 4px;
+  background: #eee;
+}
+
+.mod_title {
+  line-height: 14pt;
+}
+
+.mod_title a {
+  color: #aaa; 
+  cursor: pointer;
+  margin-right: 5px;
+}
+.mod_title a.active {
+  color: #000;
+}
+.mod_title a:hover {
+  color: #b00;
+}
+
+.mod_ctrls {
+  position: absolute;
+  right: 2px;
+  top: 1px;
+}
+
+#mod_vis {
+  margin-left: 516px;
+}
+
+#mod_spec {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 500px;
+}
+
+#spec {
+  width: 498px;
+  min-height: 200px;
+}
+
+#vis div {
+  border: 1px dashed #ccc;
+}

@@ -25,7 +25,7 @@ define(function(require, exports, module) {
     }
     
     var node = new model.Node(function(input) {
-      global.debug(input, ["folding"]);
+      util.debug(input, ["folding"]);
 
       var out = changeset.create(input);
       fn(input.add, out.add, input.stamp);

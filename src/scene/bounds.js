@@ -1,10 +1,11 @@
 define(function(require, exports, module) {
   var boundsCalc = require('../util/bounds'),
-      constants = require('../util/constants');
+      constants = require('../util/constants'),
+      util = require('../util/index');
 
   return function bounds(model, mark) {
     var node = new model.Node(function(input) {
-      global.debug(input, ["bounds", mark.marktype]);
+      util.debug(input, ["bounds", mark.marktype]);
 
       boundsCalc.mark(mark);
       if(mark.marktype === constants.GROUP) 

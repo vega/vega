@@ -11,7 +11,7 @@ define(function(require, exports, module) {
     function f(x) { return expr.eval(model, test, x, null, null, null, node._deps.signals); }
 
     var node = new model.Node(function(input) {
-      global.debug(input, ["filtering"]);
+      util.debug(input, ["filtering"]);
 
       var output = changeset.create(input);
 
