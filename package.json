@@ -3,13 +3,14 @@
   "version": "2.0.0",
   "dependencies": {
     "d3": "3.4.x",
-    "vega": "1.4.2",
-    "js-priority-queue": "*",
-    "requirejs": "2.1.x"
+    "vega": "1.4.2"
   },
   "devDependencies": {
-    "grunt": "0.4.x",
+    "almond": "0.3.x",
     "ascii-tree": "0.1.x",
-    "pegjs": "0.8.x"
+    "grunt": "0.4.x",
+    "js-priority-queue": "*",
+    "pegjs": "0.8.x",
+    "requirejs": "2.1.x"
   }
 }

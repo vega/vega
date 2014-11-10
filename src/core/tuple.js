@@ -1,8 +1,9 @@
-define(function() {
-  var tuple_id = 1;
+define(function(require, module, exports) {
+  var util = require('../util/index'),
+      tuple_id = 1;
 
   function create(d, p) {
-    var o = Object.create(d);
+    var o = Object.create(util.isObject(d) ? d : {data: d});
     o._id = ++tuple_id;
     o._prev = p ? Object.create(p) : {};
     return o;
@@ -12,8 +13,8 @@ define(function() {
   function set(t, k, v, stamp) {
     var prev = t[k];
     if(prev === v) return;
-    if(t._prev[k] && t._prev[k].stamp >= stamp) 
-      throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
+    // if(t._prev[k] && t._prev[k].stamp >= stamp) 
+      // throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
 
     if(prev) {
       t._prev[k] = {

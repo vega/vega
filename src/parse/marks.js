@@ -7,7 +7,7 @@ define(function(require, exports, module) {
       width: width,
       height: height,
       scales: spec.scales || [],
-      // axes: spec.axes || [],
+      axes: spec.axes || [],
       // legends: spec.legends || [],
       marks: (spec.marks || []).map(function(m) { return parseMark(model, m); })
     };

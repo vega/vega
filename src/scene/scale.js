@@ -33,6 +33,7 @@ define(function(require, exports, module) {
           scales = vg.parse.scales([def], {}, model._data, group), 
           scale  = scales[k];
 
+      group.scales[k+":prev"] = group.scales[k] || scale;
       group.scales[k] = scale;
 
       var deps = node._deps.data, 

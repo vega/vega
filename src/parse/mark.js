@@ -16,6 +16,12 @@ define(function(require, exports, module) {
       mark.delay = parseProperties(model, mark.type, {delay: mark.delay});
     }
 
+    // parse mark data definition
+    if(mark.from) {
+      // TODO: support mark.from.transform
+      mark.from = mark.from.data;
+    }
+
     // recurse if group type
     if (group) {
       mark.marks = group.map(function(g) { return parseMark(model, g); });

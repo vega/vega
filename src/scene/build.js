@@ -5,7 +5,9 @@ define(function(require, exports, module) {
       encode = require('./encode'), 
       bounds = require('./bounds'), 
       scalefn = require('./scale'),
-      constants = require('../util/constants');
+      parseAxes = require('../parse/axes'),
+      constants = require('../util/constants'),
+      util = require('../util/index');
 
   function ids(a) {
     return a.reduce(function(m,x) {
@@ -27,9 +29,20 @@ define(function(require, exports, module) {
   function pipelines() {
     var b = this, sc = Object.keys(b.scales), 
         p = [b, b.encoder],
-        pipelines = [p.concat([b.collector, b.bounder, b.renderer])];
+        pipelines = [];
 
-    return pipelines.concat(sc.map(function(s) { return p.concat(b.scales[s])}));
+    // Add scale recalculators after the group is encoded
+    sc = sc.map(function(s) { return p.concat(b.scales[s]); });
+    pipelines.push.apply(pipelines, sc);
+
+    // Add axes builders once the scales have been recalculated
+    if(b.def.type == constants.GROUP) {
+      pipelines.push(p.concat([b.axes, b.collector, b.bounder, b.renderer]));
+    } else {
+      pipelines.push(p.concat([b.collector, b.bounder, b.renderer]));
+    }
+
+    return pipelines;
   };
 
   function connect(model) { 
@@ -63,8 +76,8 @@ define(function(require, exports, module) {
     var items = [],     // Item nodes in the scene graph
         children = [],  // Group's children dataflow graph nodes
         scales = {},    // Scale nodes in the dataflow graph
-        f = def._from || inheritFrom,
-        from = model.data(f),
+        f = def.from || inheritFrom,
+        from = util.isString(f) ? model.data(f) : null,
         builder, lastBuild = 0;  
 
     function init() {
@@ -86,6 +99,7 @@ define(function(require, exports, module) {
       builder._touchable = true;
       if(from) builder._deps.data.push(f);
 
+      builder.def       = def;
       builder.parent    = parent; // Parent builder (dataflow graph node)
       builder.encoder   = encode(model, mark);
       builder.collector = collector(model);
@@ -94,6 +108,7 @@ define(function(require, exports, module) {
       builder.scales    = scales;
       builder.scale     = scale.bind(builder);
       (def.scales||[]).forEach(function(s) { scales[s.name] = scalefn(model, s); });
+      builder.axes = buildAxes();
 
       if(from) builder.encoder._deps.data.push(f); 
       connect.call(builder, model);
@@ -105,6 +120,11 @@ define(function(require, exports, module) {
       var item = tuple.create(null);
       tuple.set(item, "mark", mark);
       tuple.set(item, "datum", d);
+
+      item.touch = function() {
+        if (this.pathCache) this.pathCache = null;
+        if (this.mark.pathCache) this.mark.pathCache = null;
+      };
 
       // For the root node's item
       if(def.width)  tuple.set(item, "width",  def.width);
@@ -150,8 +170,13 @@ define(function(require, exports, module) {
         output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });        
         lastBuild = fcs.stamp;
       } else {
-        if(!items.length) output.add.push(newItem(constants.DEFAULT_DATA, input.stamp));
-        else if(!fullUpdate) output.mod.push(items[0]);
+        if(util.isFunction(f)) {
+          output.rem = items.splice(0);
+          f().forEach(function(d) { output.add.push(newItem(d, input.stamp)); });
+        } else {
+          if(!items.length) output.add.push(newItem(constants.DEFAULT_DATA, input.stamp));
+          else if(!fullUpdate) output.mod.push(items[0]);
+        }
       }
 
       // TODO: any need to respect input.sort with items?
@@ -161,6 +186,7 @@ define(function(require, exports, module) {
 
     function buildGroup(group) {
       var marks = def.marks,
+          axex = null,
           i, m, b;
 
       group.scales = group.scales || {};    
@@ -168,10 +194,34 @@ define(function(require, exports, module) {
 
       group.items = group.items || [];
       for(i = 0; i < marks.length; i++) {
-        m = group.items[i] = {group: group};
-        b = build(model, renderer, marks[i], m, builder, "vg_"+group.datum._id);
+        group.items[i] = {group: group};
+        b = build(model, renderer, marks[i], group.items[i], builder, "vg_"+group.datum._id);
         children.push(b);
       }
+    };
+
+    function buildAxes() {
+      var node;
+      return node = new model.Node(function(input) {
+        global.debug(input, ["building axes"]);
+        if(!def.axes) return input;
+
+        input.add.forEach(function(group) {
+          axes = group.axes || (group.axes = []);
+          axisItems = group.axisItems || (group.axisItems = []);
+          parseAxes(def.axes, axes, group);
+          axes.forEach(function(a, i) {
+            axisDef = a.def();
+            axisItems[i] = {group: group};
+            b = build(model, renderer, axisDef, axisItems[i], builder);
+            b._deps.scales.push(def.axes[i].scale);
+            node.addListener(b);
+            children.push(b);
+          });
+        });
+
+        return input;
+      });
     };
 
     return init();

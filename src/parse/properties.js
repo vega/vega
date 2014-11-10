@@ -199,10 +199,11 @@ define(function(require, exports, module) {
 
       // run through scale function if val specified.
       // if no val, scale function is predicate arg.
-      if(val !== null || ref.band) {
-        val = scale + (ref.band ? ".rangeBand()" : "("+val+")");
+      if(val !== null || ref.band || ref.mult || ref.offset) {
+        val = scale + (ref.band ? ".rangeBand()" : 
+          "("+(val !== null ? val : "item.datum.data")+")");
       } else {
-        val = scale;     
+        val = scale;
       }
     }
     

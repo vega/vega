@@ -83,6 +83,7 @@ define({
       "source": "raw" 
     }
   ],
+
   "scales": [
     {
       "name": "x",
@@ -98,16 +99,21 @@ define({
     }
   ],
 
+  "axes": [
+    {"type": "x", "scale": "x"},
+    {"type": "y", "scale": "y"}
+  ],
+
   "marks": [
     {
       "type": "rect",
-      "_from": "bar",
+      "from": {"data": "bar"},
       "properties": {
         "enter": {
           "x": {"scale": "x", "field": "x"},
           "width": {"scale": "x", "band": true, "offset": -1},
           "y": {"scale": "y", "field": "y"},
-          "y2": {"scale": "y", "value": 10}
+          "y2": {"scale": "y", "value": 0}
         },
         "update": {
           "fill": {
@@ -133,7 +139,7 @@ define({
       "properties": {
         "update": {
           "x": {"value": 10},
-          "y": {"scale": "y", "value": 0},
+          "y": {"scale": "y", "value": 100},
           "fill": {"value": "black"},
           "text": {"signal": "mouse.pageX"}
         }
@@ -144,7 +150,7 @@ define({
       "properties": {
         "update": {
           "x": {"value": 40},
-          "y": {"scale": "y", "value": 0},
+          "y": {"scale": "y", "value": 100},
           "fill": {"value": "black"},
           "text": {"signal": "mouse.pageY"}
         }
@@ -155,7 +161,7 @@ define({
       "properties": {
         "update": {
           "x": {"value": 70},
-          "y": {"scale": "y", "value": 0},
+          "y": {"scale": "y", "value": 100},
           "fill": {"value": "black"},
           "text": {"signal": "mouse2x"}
         }
@@ -166,7 +172,7 @@ define({
       "properties": {
         "update": {
           "x": {"value": 100},
-          "y": {"scale": "y", "value": 0},
+          "y": {"scale": "y", "value": 100},
           "fill": {"signal": "itemFill"},
           "text": {"signal": "itemFill"}
         }
@@ -177,7 +183,7 @@ define({
       "properties": {
         "update": {
           "x": {"value": 150},
-          "y": {"scale": "y", "value": 0},
+          "y": {"scale": "y", "value": 100},
           "fill": {"value": "black"},
           "text": {"signal": "dragging"}
         }

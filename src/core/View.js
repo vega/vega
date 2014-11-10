@@ -30,6 +30,83 @@ define(function(require, exports, module) {
     return this;
   };
 
+  prototype.width = function(width) {
+    if (!arguments.length) return this.__width;
+    if (this.__width !== width) {
+      this._width = this.__width = width;
+      if (this._el) this.initialize(this._el.parentNode);
+      if (this._strict) this._autopad = 1;
+    }
+    return this;
+  };
+
+  prototype.height = function(height) {
+    if (!arguments.length) return this.__height;
+    if (this.__height !== height) {
+      this._height = this.__height = height;
+      if (this._el) this.initialize(this._el.parentNode);
+      if (this._strict) this._autopad = 1;
+    }
+    return this;
+  };
+
+  prototype.padding = function(pad) {
+    if (!arguments.length) return this._padding;
+    if (this._padding !== pad) {
+      if (vg.isString(pad)) {
+        this._autopad = 1;
+        this._padding = {top:0, left:0, bottom:0, right:0};
+        this._strict = (pad === "strict");
+      } else {
+        this._autopad = 0;
+        this._padding = pad;
+        this._strict = false;
+      }
+      if (this._el) {
+        this._renderer.resize(this._width, this._height, pad);
+        this._handler.padding(pad);
+      }
+    }
+    return this;
+  };
+  
+  prototype.autopad = function(opt) {
+    if (this._autopad < 1) return this;
+    else this._autopad = 0;
+
+    var pad = this._padding,
+        b = this.model().scene().bounds,
+        inset = vg.config.autopadInset,
+        l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
+        t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
+        r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
+        b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+    pad = {left:l, top:t, right:r, bottom:b};
+
+    if (this._strict) {
+      this._autopad = 0;
+      this._padding = pad;
+      this._width = Math.max(0, this.__width - (l+r));
+      this._height = Math.max(0, this.__height - (t+b));
+      this._model.width(this._width);
+      this._model.height(this._height);
+      if (this._el) this.initialize(this._el.parentNode);
+      this.update({props:"enter"}).update({props:"update"});
+    } else {
+      this.padding(pad).update(opt);
+    }
+    return this;
+  };
+
+  prototype.viewport = function(size) {
+    if (!arguments.length) return this._viewport;
+    if (this._viewport !== size) {
+      this._viewport = size;
+      if (this._el) this.initialize(this._el.parentNode);
+    }
+    return this;
+  };
+
   prototype.renderer = function(type) {
     if (!arguments.length) return this._io;
     if (type === "canvas") type = canvas;
@@ -111,7 +188,7 @@ define(function(require, exports, module) {
       v._build = true;
     }
 
-    return this;
+    return view.autopad(opt);
   };
 
   prototype.on = function() {
@@ -127,8 +204,12 @@ define(function(require, exports, module) {
   View.factory = function(model) {
     return function(opt) {
       opt = opt || {};
+      var defs = model._defs;
       var v = new View()
         .model(model)
+        .width(defs.width)
+        .height(defs.height)
+        .padding(defs.padding)
         .renderer(opt.renderer || "canvas");
 
       if (opt.el) v.initialize(opt.el);

@@ -79,7 +79,7 @@ define({
   "marks": [
     {
       "type": "symbol",
-      "_from": "points",
+      "from": {"data": "points"},
       "properties": {
         "enter": {
           "x": {"scale": "x", "field": "x"},

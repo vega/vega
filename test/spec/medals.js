@@ -66,7 +66,7 @@ define({
   "marks": [
     {
       "type": "text", 
-      "_from": "zip",
+      "from": {"data": "zip"},
       
       "properties": {
         "enter": {
@@ -81,7 +81,7 @@ define({
     },
     {
       "type": "group", 
-      "_from": "medals",
+      "from": {"data": "medals"},
 
       "properties": {
         "enter": {
