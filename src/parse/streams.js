@@ -100,10 +100,11 @@ define(function(require, exports, module) {
       view.on(r, function(evt, item) {
         var cs = changset.create({}, true),
             n = new model.Node(null, h.map(function(h) { return h.signal.node() })),
+            pad = view.padding(),
             val, i, m, p = {};
 
         // Stash event in d3.event so we can calculate relative positions
-        d3.event = evt, m = d3.mouse(view._el), p.x = m[0], p.y = m[1];
+        d3.event = evt, m = d3.mouse(view._el), p.x = m[0] - pad.left, p.y = m[1] - pad.top;
         item = item||{};
 
         for(i = 0; i < h.length; i++) {
