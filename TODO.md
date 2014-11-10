@@ -9,3 +9,5 @@ An incomplete, unordered list of things left to do:
   - rebinding signals
 - Interactors
 - Headless/node rendering
+- Mark-level transforms
+- Top-level scales as inversions to signals/predicates
