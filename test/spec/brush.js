@@ -1,5 +1,5 @@
 define({
-  "width": 400,
+  "width": 200,
   "height": 200,
   // "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10},
 
@@ -12,7 +12,10 @@ define({
     {
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
-      "streams": [{"type": "[mousedown, mouseup] > mousemove", "expr": "p"}]
+      "streams": [
+        {"type": "mousedown", "expr": "p"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "p"}
+      ]
     }
   ],
 
@@ -43,45 +46,46 @@ define({
     }
   ],
 
-  "data": [
-    {
-      "name": "points",
-      "values": [
-        {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
-        {"x": 3,  "y": 43}, {"x": 4,  "y": 91},
-        {"x": 5,  "y": 81}, {"x": 6,  "y": 53},
-        {"x": 7,  "y": 19}, {"x": 8,  "y": 87},
-        {"x": 9,  "y": 52}, {"x": 10, "y": 48},
-        {"x": 11, "y": 24}, {"x": 12, "y": 49},
-        {"x": 13, "y": 87}, {"x": 14, "y": 66},
-        {"x": 15, "y": 17}, {"x": 16, "y": 27},
-        {"x": 17, "y": 68}, {"x": 18, "y": 16},
-        {"x": 19, "y": 49}, {"x": 20, "y": 15}
-      ]
-    }
-  ],
+  "data": [{
+    "name": "iris",
+    "url": "data/iris.json"
+  }],
+
   "scales": [
     {
       "name": "x",
-      "range": "width",
-      "domain": {"data": "points", "field": "x"}
+      "range": "width", "zero": false,
+      "domain": {"data": "iris", "field": "sepalWidth"}
     },
     {
       "name": "y",
       "range": "height",
-      "nice": true,
-      "domain": {"data": "points", "field": "y"}
+      "nice": true, "zero": false,
+      "domain": {"data": "iris", "field": "petalLength"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "iris", "field": "species"},
+      "range": ["#800", "#080", "#008"]
     }
+  ],
+
+  "axes": [
+    {"type": "x", "scale": "x", "offset": 5, "ticks": 5, "title": "Sepal Width"},
+    {"type": "y", "scale": "y", "offset": 5, "ticks": 5, "title": "Petal Length"}
   ],
 
   "marks": [
     {
       "type": "symbol",
-      "from": {"data": "points"},
+      "from": {"data": "iris"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "x"},
-          "y": {"scale": "y", "field": "y"},
+          "x": {"scale": "x", "field": "sepalWidth"},
+          "y": {"scale": "y", "field": "petalLength"},
+          "fill": {"scale": "c", "field": "species"},
+          "fillOpacity": {"value": 0.5},
           "size": {"value": 100}
         },
         "update": {
@@ -90,13 +94,14 @@ define({
               {
                 "predicate": "inRange",
                 "input": {
-                  "x": {"field": "x"},
-                  "y": {"field": "y"},
+                  "x": {"field": "sepalWidth"},
+                  "y": {"field": "petalLength"},
                   "xScale": {"scale": "x", "invert": true},
                   "yScale": {"scale": "y", "invert": true}
                 },
 
-                "value": "steelblue"
+                "scale": "c", 
+                "field": "species"
               },
               {"value": "grey"}
             ]
