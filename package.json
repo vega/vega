@@ -1,5 +1,5 @@
 {
-  "name": "abhijit",
+  "name": "vega",
   "version": "2.0.0",
   "dependencies": {
     "d3": "3.4.x"
@@ -8,6 +8,8 @@
     "almond": "0.3.x",
     "ascii-tree": "0.1.x",
     "grunt": "0.4.x",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-uglify": "^0.6.0",
     "js-priority-queue": "*",
     "pegjs": "0.8.x",
     "requirejs": "2.1.x"
