@@ -58,13 +58,13 @@ define(function(require, module, exports) {
 
   return function load(uri, callback) {
     var url = vg_load_hasProtocol(uri) ? uri : config.baseURL + uri;
-    if (config.isNode) {
-      // in node.js, consult url and select file or http
-      var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
-      get(url, callback);
-    } else {
+    // if (config.isNode) {
+    //   // in node.js, consult url and select file or http
+    //   var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
+    //   get(url, callback);
+    // } else {
       // in browser, use xhr
       vg_load_xhr(url, callback);
-    }  
+    // }  
   };
 })

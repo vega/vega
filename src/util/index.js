@@ -209,9 +209,10 @@ define(function(require, module, exports) {
   // Logging
 
   function vg_write(msg) {
-    config.isNode
-      ? process.stderr.write(msg + "\n")
-      : console.log(msg);
+    // config.isNode
+      // ? process.stderr.write(msg + "\n")
+      // : console.log(msg);
+    console.log(msg);
   }
 
   util.log = function(msg) {

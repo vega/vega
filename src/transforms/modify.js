@@ -52,12 +52,10 @@ define(function(require, exports, module) {
         input.add.push.apply(input.add, add);
         input.rem.push.apply(input.rem, rem);
       } else if(def.type == CLEAR) {
-        console.log('clearing', util.duplicate(input));
         input.rem.push.apply(input.rem, input.add);
         input.rem.push.apply(input.rem, input.mod);
         input.add = [];
         input.mod = [];
-        console.log('clearing', util.duplicate(input));
       } 
 
       input.fields[def.field] = 1;
