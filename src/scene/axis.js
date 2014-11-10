@@ -127,7 +127,7 @@ define(function(require, module, exports) {
 
     axis.scale = function(x) {
       if (!arguments.length) return scale;
-      if (scale !== x) { scale = x; reset(); }
+      if (scale !== x) { scale = x; /* reset(); */ }
       return axis;
     };
 

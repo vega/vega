@@ -15,6 +15,7 @@ filtered
 
 stream
   = e:eventType { return { event: e } }
+  / s:value { return { signal: s }}
   / "(" m:merged ")" { return { stream: m }}
 
 eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout"

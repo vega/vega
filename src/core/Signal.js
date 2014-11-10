@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var changeset = require('./changeset');
+  var changeset = require('./changeset'),
+      util = require('../util/index');
 
   return function(model) {
     function Signal(name, init) {
@@ -20,6 +21,17 @@ define(function(require, exports, module) {
       if(!arguments.length) return this._value;
       this._value = val;
       return this;
+    };
+
+    Signal.prototype.refValue = function(ref) {
+      var value = this.value();
+      if(!util.isArray(ref)) ref = util.field(ref);
+      if(ref.shift(), ref.length > 0) {
+        var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
+        value = fn.call(null, value);
+      }
+
+      return value;
     };
 
     Signal.prototype.fire = function() {

@@ -3,6 +3,7 @@ define(function(require, exports, module) {
     medals: require('./medals'),
     bar: require('./bar'),
     brush: require('./brush'),
-    select: require('./select')
+    select: require('./select'),
+    panzoom_points: require('./panzoom_points')
   };
 });

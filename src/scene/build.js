@@ -91,7 +91,8 @@ define(function(require, exports, module) {
 
         // Only the first pulse should come from the parent.
         // Future pulses will propagate from dependencies.
-        if(builder.parent && !lastBuild) builder.parent.removeListener(builder);
+        if(builder.parent && !lastBuild && from) 
+          builder.parent.removeListener(builder);
 
         return buildItems(input);
       });
@@ -170,9 +171,9 @@ define(function(require, exports, module) {
         output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });        
         lastBuild = fcs.stamp;
       } else {
-        if(util.isFunction(f)) {
+        if(util.isFunction(def.from)) {
           output.rem = items.splice(0);
-          f().forEach(function(d) { output.add.push(newItem(d, input.stamp)); });
+          def.from().forEach(function(d) { output.add.push(newItem(d, input.stamp)); });
         } else {
           if(!items.length) output.add.push(newItem(constants.DEFAULT_DATA, input.stamp));
           else if(!fullUpdate) output.mod.push(items[0]);
@@ -211,14 +212,24 @@ define(function(require, exports, module) {
           axisItems = group.axisItems || (group.axisItems = []);
           parseAxes(def.axes, axes, group);
           axes.forEach(function(a, i) {
-            axisDef = a.def();
-            axisItems[i] = {group: group};
-            b = build(model, renderer, axisDef, axisItems[i], builder);
+            axisItems[i] = {group: group, axisDef: a.def()};
+            b = build(model, renderer, axisItems[i].axisDef, axisItems[i], builder);
             b._deps.scales.push(def.axes[i].scale);
             node.addListener(b);
             children.push(b);
           });
         });
+
+        input.mod.forEach(function(group) {
+          // Reparse axes to feed them new data from reevaluated scales
+          parseAxes(def.axes, group.axes, group);
+          group.axes.forEach(function(a) { a.def() });
+        });
+
+        var scales = (def.axes||[]).reduce(function(acc, x) {
+          return (acc[x.scale] = 1, acc);
+        }, {});
+        node._deps.scales = util.keys(scales);
 
         return input;
       });

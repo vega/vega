@@ -12,16 +12,28 @@ define(function(require, exports, module) {
         spec  = model._defs.signals,
         register = {};
 
-    function event(signal, selector, exp) {
+    function signal(sig, selector, exp) {
+      var n = new model.Node(function(input) {
+        var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
+        sig.value(val);
+        input.signals[sig.name()] = 1;
+        return input;  
+      });
+      n._deps.signals = [selector.signal];
+      n.addListener(sig.node());
+      model.signal(selector.signal).addListener(n);
+    };
+
+    function event(sig, selector, exp) {
       register[selector.event] = register[selector.event] || [];
       register[selector.event].push({
-        signal: signal,
+        signal: sig,
         exp: exp
       });
     };
 
-    function orderedStream(signal, selector, exp) {
-      var name = signal.name(), 
+    function orderedStream(sig, selector, exp) {
+      var name = sig.name(), 
           trueFn = expr(model, "true"),
           s = {};
 
@@ -35,7 +47,7 @@ define(function(require, exports, module) {
           // Until then, prevent old middles entering stream on new start.
           if(input.signals[name+START]) return model.graph.doNotPropagate;
 
-          signal.value(s[MIDDLE].value());
+          sig.value(s[MIDDLE].value());
           input.signals[name] = 1;
           return input;
         }
@@ -47,21 +59,23 @@ define(function(require, exports, module) {
 
         return model.graph.doNotPropagate;
       });
-      router.addListener(signal.node());
+      router.addListener(sig.node());
 
       [START, MIDDLE, END].forEach(function(x) {
         var val = x == MIDDLE ? exp : trueFn
         if(selector[x].event) event(s[x], selector[x], val);
+        else if(selector[x].signal) signal(s[x], selector[x], val);
         else if(selector[x].stream) mergedStream(s[x], selector[x], val);
         s[x].addListener(router);
       });
     };
 
-    function mergedStream(signal, selector, exp) {
+    function mergedStream(sig, selector, exp) {
       selector.forEach(function(s) {
-        if(s.event)       event(signal, s, exp);
-        else if(s.start)  orderedStream(signal, s, exp);
-        else if(s.stream) mergedStream(signal, s.stream, exp);
+        if(s.event)       event(sig, s, exp);
+        else if(s.signal) signal(sig, s, exp);
+        else if(s.start)  orderedStream(sig, s, exp);
+        else if(s.stream) mergedStream(sig, s.stream, exp);
       });
     };
 

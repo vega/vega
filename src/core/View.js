@@ -1,9 +1,10 @@
 define(function(require, exports, module) {
-  var vg = require('vega'), 
-      d3 = require('d3'),
+  var d3 = require('d3'),
       parseStreams = require('../parse/streams'),
       canvas = require('../canvas/index'),
-      svg = require('../svg/index');
+      svg = require('../svg/index'),
+      config = require('../util/config'),
+      util = require('../util/index');
 
   var View = function(el, width, height, model) {
     this._el    = null;
@@ -53,7 +54,7 @@ define(function(require, exports, module) {
   prototype.padding = function(pad) {
     if (!arguments.length) return this._padding;
     if (this._padding !== pad) {
-      if (vg.isString(pad)) {
+      if (util.isString(pad)) {
         this._autopad = 1;
         this._padding = {top:0, left:0, bottom:0, right:0};
         this._strict = (pad === "strict");
@@ -76,7 +77,7 @@ define(function(require, exports, module) {
 
     var pad = this._padding,
         b = this.model().scene().bounds,
-        inset = vg.config.autopadInset,
+        inset = config.autopadInset,
         l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
         t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
         r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
@@ -164,10 +165,11 @@ define(function(require, exports, module) {
 
   prototype.update = function(opt) {    
     opt = opt || {};
-    var v = this,
-        trans = opt.duration
-          ? vg.scene.transition(opt.duration, opt.ease)
-          : null;
+    var v = this;
+    // TODO: transitions
+        // trans = opt.duration
+          // ? vg.scene.transition(opt.duration, opt.ease)
+          // : null;
 
     if(v._build) {
       // TODO: only fire branches of the dataflow corresponding to opt.items

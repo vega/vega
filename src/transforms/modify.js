@@ -17,14 +17,14 @@ define(function(require, exports, module) {
 
   return function parseModify(model, def) {
     var signal = def.signal ? util.field(def.signal) : null, 
-        signalName = signal ? signal.shift() : null,
+        signalName = signal ? signal[0] : null,
         predicate = def.predicate ? model.predicate(def.predicate) : null,
         reeval = (predicate === null);
 
     var node = new model.Node(function(input) {
       if(predicate !== null) {
         var db = {};
-        (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).data(); });
+        (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
 
         // TODO: input
         reeval = predicate({}, db, model.signal(predicate.signals||[]), model._predicates);
@@ -33,14 +33,8 @@ define(function(require, exports, module) {
       global.debug(input, [def.type+"ing", reeval]);
       if(!reeval) return input;
 
-      var datum = {}, value = null;
-      if(signal) {
-        value = model.signal(signalName).value();
-        if(signal.length > 0) {
-          var fn = Function("s", "return s["+signal.map(util.str).join("][")+"]");
-          value = fn.call(null, value);
-        }
-      }
+      var datum = {}, 
+          value = signal ? model.signal(signalName).refValue(signal) : null;
 
       datum[def.field] = value;
 

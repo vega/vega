@@ -95,7 +95,7 @@ define(function(require, exports, module) {
     node.data = function() {
       var k, t, d, data = [];
       for(k in cells) {
-        t = cells[k].t, d = model.data("vg_"+t._id).data();
+        t = cells[k].t, d = model.data("vg_"+t._id).values();
         // console.log("facet data", t._id, d);
         data.push({_id: t._id, values: d });
       }

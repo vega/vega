@@ -110,7 +110,8 @@ define(function(require, module, exports) {
   };
 
   util.values = function(x) {
-    return (util.isObject(x) && !util.isArray(x) && x.values) ? x.values : x;
+    return (util.isObject(x) && !util.isArray(x) && x.values) ? 
+      (util.isFunction(x.values) ? x.values() : x.values) : x;
   };
 
   util.str = function(x) {

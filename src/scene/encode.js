@@ -10,7 +10,7 @@ define(function(require, exports, module) {
       var sg = model.signal(prop.signals||[]),
           db = {};
 
-      (prop.data||[]).forEach(function(d) { db[d] = model.data(d).data(); });
+      (prop.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
 
       prop.encode.call(prop.encode, stamp, item, item.mark.group||item, trans, 
         db, sg, model._predicates);

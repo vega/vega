@@ -11,6 +11,13 @@ define(function(require, module, exports) {
     MODIFY_ADD: "add",
     MODIFY_REMOVE: "remove",
     MODIFY_TOGGLE: "toggle",
-    MODIFY_CLEAR: "clear"
+    MODIFY_CLEAR: "clear",
+
+    LINEAR: "linear",
+    ORDINAL: "ordinal",
+    LOG: "log",
+    POWER: "pow",
+    TIME: "time",
+    QUANTILE: "quantile",
   }
 });

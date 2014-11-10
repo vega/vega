@@ -18,7 +18,7 @@ define(function(require, exports, module) {
     var node = new model.Node(function(input) {
       global.debug(input, ["zipping", z]);
 
-      var zds = model.data(z), zinput = zds._output, zdata = zds.data();
+      var zds = model.data(z), zinput = zds._output, zdata = zds.values();
 
       if(withKey) {
         if(zinput && zinput.stamp > lastZip) {

@@ -43,7 +43,7 @@ define(function(require, exports, module) {
       return this;
     };
 
-    Datasource.prototype.data = function(data) {
+    Datasource.prototype.values = function(data) {
       if(!arguments.length)
         return this._collector ? this._collector.data() : this._data;
 
@@ -76,7 +76,7 @@ define(function(require, exports, module) {
         out.facet = ds._facet;
 
         if(input.touch) {
-          out.mod = ds.data().slice();
+          out.mod = ds.values().slice();
         } else {
           // update data
           var delta = ds._input;
