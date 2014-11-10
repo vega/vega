@@ -108,7 +108,7 @@ define(function(require, module, exports) {
     var domain = def.domain, values, refs;
     if (util.isArray(domain)) {
       values = sort ? domain.slice() : domain;
-      values = values.map(signal.bind(model));
+      values = values.map(signal.bind(null, model));
     } else if (util.isObject(domain)) {
       refs = domain.fields || util.array(domain);
       values = extract(model, refs, data);
@@ -136,7 +136,7 @@ define(function(require, module, exports) {
 
     if (def.domain !== undefined) {
       if (util.isArray(def.domain)) {
-        domain = def.domain.slice().map(signal.bind(model));
+        domain = def.domain.slice().map(signal.bind(null, model));
       } else if (util.isObject(def.domain)) {
         refs = def.domain.fields || util.array(def.domain);
         refs.forEach(function(r) { extract(r,1,1,1); });
@@ -192,7 +192,7 @@ define(function(require, module, exports) {
           return rng;
         }
       } else if (util.isArray(def.range)) {
-        rng = def.range.map(signal.bind(model));
+        rng = def.range.map(signal.bind(null, model));
       } else if (util.isObject(def.range)) {
         return null; // early exit
       } else {
