@@ -30,7 +30,8 @@ define(function(require, exports, module) {
   	"round":  "Math.round",
   	"sin":    "Math.sin",
   	"sqrt":   "Math.sqrt",
-  	"tan":    "Math.tan"
+  	"tan":    "Math.tan",
+    "date":   "Date.parse"
   };
   
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;

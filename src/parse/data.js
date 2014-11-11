@@ -13,8 +13,7 @@ define(function(require, exports, module) {
         if (error) {
           util.error("LOADING FAILED: " + d.url);
         } else {
-          d.values = read(data.toString(), d.format);
-          datasource(d);
+          model.data(d.name).values(read(data.toString(), d.format));
         }
         if (--count === 0) callback();
       }
@@ -26,7 +25,10 @@ define(function(require, exports, module) {
           ds = model.data(d.name, mod.concat(transform));
 
       if(d.values) ds.values(d.values);
-      else if(d.source) model.data(d.source).addListener(ds);
+      else if(d.source) {
+        ds.source(d.source);
+        model.data(d.source).addListener(ds);
+      }
 
       return ds;
     }
@@ -37,7 +39,7 @@ define(function(require, exports, module) {
         count += 1;
         load(d.url, loaded(d)); 
       }
-      else datasource(d);
+      datasource(d);
     });
 
     if (count === 0) setTimeout(callback, 1);

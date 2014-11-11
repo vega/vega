@@ -23,17 +23,6 @@ define(function(require, exports, module) {
       return this;
     };
 
-    Signal.prototype.refValue = function(ref) {
-      var value = this.value();
-      if(!util.isArray(ref)) ref = util.field(ref);
-      if(ref.shift(), ref.length > 0) {
-        var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
-        value = fn.call(null, value);
-      }
-
-      return value;
-    };
-
     Signal.prototype.fire = function() {
       var c = changeset.create({}, true);
       c.signals[this._name] = 1;

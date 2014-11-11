@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 
       if(domain.field) reeval = reeval || fcs.fields[domain.field];
       reeval = reeval || fcs ? !!fcs.sort && def.type === ORDINAL : false;
-      reeval = reeval || node._deps.signals.some(function(s) { return !!input.signals[s]; });
+      reeval = reeval || node.reevaluate(input);
       reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
       reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
 

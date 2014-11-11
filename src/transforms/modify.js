@@ -34,7 +34,7 @@ define(function(require, exports, module) {
       if(!reeval) return input;
 
       var datum = {}, 
-          value = signal ? model.signal(signalName).refValue(signal) : null;
+          value = signal ? model.signalRef(def.signal) : null;
 
       datum[def.field] = value;
 

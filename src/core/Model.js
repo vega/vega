@@ -44,6 +44,17 @@ define(function(require, exports, module) {
     return this._signals[name] = new this.Signal(name, init);
   };
 
+  Model.prototype.signalRef = function(ref) {
+    if(!util.isArray(ref)) ref = util.field(ref);
+    var value = this.signal(ref.shift()).value();
+    if(ref.length > 0) {
+      var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
+      value = fn.call(null, value);
+    }
+
+    return value;
+  };
+
   function predicates(name) {
     var m = this, predicates = {};
     if(!util.isArray(name)) return this._predicates[name];

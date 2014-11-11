@@ -9,15 +9,24 @@ define(function(require, exports, module) {
       if(!arguments.length) return tree;
       node = build(model, renderer, model._defs.marks, tree={});
       model.addListener(node);
+
+      tree.fire = function() {
+        var c = changeset.create({}, true);
+        model.graph.propagate(c, node);
+      };
+
+      // Scale/invert a value using a top-level scale
+      tree.scale = function(spec, value) {
+        if(!spec.scale) return value;
+        var scale = tree.items[0].scale(spec.scale);
+        if(!scale) return value;
+
+        return spec.invert ? scale.invert(value) : scale(value);
+      };
+
       return model;
-    };
+    };    
 
-    function fire() {
-      var c = changeset.create({}, true);
-      model.graph.propagate(c, node);
-    };  
-
-    scene.fire = fire;
     return scene;
   };
 });

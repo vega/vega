@@ -44,7 +44,7 @@ define(function(require, module, exports) {
         : d3.format(tickFormatString));
 
       // generate data
-      var create = function(d) { return tpl.create(d); };
+      var create = function(d) { return tpl.create({data: d}); };
       var major = tickValues == null
         ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
         : tickValues;

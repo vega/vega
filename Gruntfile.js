@@ -29,11 +29,19 @@ module.exports = function(grunt) {
         src: "vega2.js",
         dest: "vega2.min.js"
       }
+    },
+
+    watch: {
+      src: {
+        files: ['src/**/*.js'],
+        tasks: ['requirejs:compile']
+      }
     }
   });
 
   grunt.loadNpmTasks("grunt-contrib-requirejs");
   grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-watch");
 
   grunt.registerTask("default", ["requirejs", "uglify"]);
 };

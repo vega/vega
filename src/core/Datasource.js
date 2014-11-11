@@ -8,6 +8,7 @@ define(function(require, exports, module) {
     function Datasource(name, facet) {
       this._name = name;
       this._data = [];
+      this._source = null;
       this._facet = facet;
       this._input = changeset.create();
       this._output = null;    // Output changeset
@@ -54,6 +55,12 @@ define(function(require, exports, module) {
       return this;
     };
 
+    Datasource.prototype.source = function(src) {
+      if(!arguments.length) return this._source;
+      this._source = model.data(src);
+      return this;
+    }
+
     Datasource.prototype.fire = function() {
       model.graph.propagate(this._input, this._pipeline[0]); 
     };
@@ -77,7 +84,7 @@ define(function(require, exports, module) {
         out.facet = ds._facet;
 
         if(input.touch) {
-          out.mod = ds.values().slice();
+          out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
         } else {
           // update data
           var delta = ds._input;

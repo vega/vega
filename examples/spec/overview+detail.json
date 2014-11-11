@@ -1,0 +1,161 @@
+{
+  "width": 720,
+  "height": 480,
+
+  "signals": [
+    {
+      "name": "brush_start",
+      "streams": [
+        {"type": "mousedown", "expr": "p.x", "scale": "xContext", "invert": true}
+      ]
+    },
+    {
+      "name": "brush_end",
+      "streams": [{
+        "type": "mousedown, [mousedown,mouseup] > mousemove",
+        "expr": "p.x", "scale": "xContext", "invert": true
+      }]
+    },
+
+    {
+      "name": "date_start",
+      "init": 946713600000,
+      "streams": [
+        {"type": "brush_start", "expr": "date(brush_start)"}
+      ]
+    },
+    {
+      "name": "date_end",
+      "init": 1267430400000,
+      "streams": [
+        {"type": "brush_end", "expr": "date(brush_end)"}
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "sp500", 
+      "url": "data/sp500.csv",
+      "format": {"type": "csv", "parse": {"price": "number", "date": "date"}}
+    },
+    {
+      "name": "sp500_filtered",
+      "source": "sp500",
+      "transform": [
+        {
+          "type": "filter", 
+          "test": "min(date_start, date_end) <= d.date <= max(date_start, date_end)"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xContext",
+      "type": "time",
+      "range": [0, 720],
+      "domain": {"data": "sp500", "field": "date"}
+    },
+    {
+      "name": "yContext",
+      "type": "linear",
+      "range": [70, 0],
+      "nice": true,
+      "domain": {"data": "sp500", "field": "price"}
+    },
+    {
+      "name": "xFocus",
+      "type": "time",
+      "range": [0, 720],
+      "domain": {"data": "sp500_filtered", "field": "date"}
+    },
+    {
+      "name": "yFocus",
+      "type": "linear",
+      "range": [390, 0],
+      "nice": true,
+      "domain": {"data": "sp500_filtered", "field": "price"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 0},
+          "height": {"value": 390},
+          "width": {"value": 720}
+        }
+      },
+      "axes": [
+        {"type": "x", "scale": "xFocus"},
+        {"type": "y", "scale": "yFocus"}
+      ],
+      "marks": [
+        {
+          "type": "area",
+          "from": {"data": "sp500_filtered"},
+          "properties": {
+            "update": {
+              "x": {"scale": "xFocus", "field": "date"},
+              "y": {"scale": "yFocus", "field": "price"},
+              "y2": {"scale": "yFocus", "value": 0},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 430},
+          "height": {"value": 70},
+          "width": {"value": 720}
+        }
+      },
+      "axes": [
+        {"type": "x", "scale": "xContext"}
+      ],
+      "marks": [
+        {
+          "type": "area",
+          "from": {"data": "sp500"},
+          "properties": {
+            "update": {
+              "x": {"scale": "xContext", "field": "date"},
+              "y": {"scale": "yContext", "field": "price"},
+              "y2": {"scale": "yContext", "value": 0},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties":{
+            "enter":{
+              "y": {"value": 0},
+              "height": {"value":70},
+              "fill": {"value": "#333"},
+              "fillOpacity": {"value":0.2},
+              "stroke":{"value":"white"},
+              "strokeOpacity":{"value":0.5}
+            },
+            "update":{
+              "x": {"scale": "xContext", "signal": "date_start"},
+              "x2": {"scale": "xContext", "signal": "date_end"}
+            }
+          }
+        }
+      ]
+    }
+
+  ]
+}

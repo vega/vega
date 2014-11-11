@@ -987,6 +987,7 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
     function Datasource(name, facet) {
       this._name = name;
       this._data = [];
+      this._source = null;
       this._facet = facet;
       this._input = changeset.create();
       this._output = null;    // Output changeset
@@ -1033,6 +1034,12 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
       return this;
     };
 
+    Datasource.prototype.source = function(src) {
+      if(!arguments.length) return this._source;
+      this._source = model.data(src);
+      return this;
+    }
+
     Datasource.prototype.fire = function() {
       model.graph.propagate(this._input, this._pipeline[0]); 
     };
@@ -1056,7 +1063,7 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
         out.facet = ds._facet;
 
         if(input.touch) {
-          out.mod = ds.values().slice();
+          out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
         } else {
           // update data
           var delta = ds._input;
@@ -1147,17 +1154,6 @@ define('core/Signal',['require','exports','module','./changeset','../util/index'
       if(!arguments.length) return this._value;
       this._value = val;
       return this;
-    };
-
-    Signal.prototype.refValue = function(ref) {
-      var value = this.value();
-      if(!util.isArray(ref)) ref = util.field(ref);
-      if(ref.shift(), ref.length > 0) {
-        var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
-        value = fn.call(null, value);
-      }
-
-      return value;
     };
 
     Signal.prototype.fire = function() {
@@ -3059,8 +3055,7 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
 
   function signal(model, v) {
     if(!v.signal) return v;
-    var s = util.field(v.signal)[0];
-    return model.signal(s).refValue(s);
+    return model.signalRef(v.signal);
   }
   
   function domainValues(model, def, data, sort) {
@@ -3212,7 +3207,7 @@ define('scene/scale',['require','exports','module','../parse/scale','../util/ind
 
       if(domain.field) reeval = reeval || fcs.fields[domain.field];
       reeval = reeval || fcs ? !!fcs.sort && def.type === ORDINAL : false;
-      reeval = reeval || node._deps.signals.some(function(s) { return !!input.signals[s]; });
+      reeval = reeval || node.reevaluate(input);
       reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
       reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
 
@@ -3559,7 +3554,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
         : d3.format(tickFormatString));
 
       // generate data
-      var create = function(d) { return tpl.create(d); };
+      var create = function(d) { return tpl.create({data: d}); };
       var major = tickValues == null
         ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
         : tickValues;
@@ -4370,15 +4365,24 @@ define('scene/index',['require','exports','module','../core/changeset','./build'
       if(!arguments.length) return tree;
       node = build(model, renderer, model._defs.marks, tree={});
       model.addListener(node);
+
+      tree.fire = function() {
+        var c = changeset.create({}, true);
+        model.graph.propagate(c, node);
+      };
+
+      // Scale/invert a value using a top-level scale
+      tree.scale = function(spec, value) {
+        if(!spec.scale) return value;
+        var scale = tree.items[0].scale(spec.scale);
+        if(!scale) return value;
+
+        return spec.invert ? scale.invert(value) : scale(value);
+      };
+
       return model;
-    };
+    };    
 
-    function fire() {
-      var c = changeset.create({}, true);
-      model.graph.propagate(c, node);
-    };  
-
-    scene.fire = fire;
     return scene;
   };
 });
@@ -4426,6 +4430,17 @@ define('core/Model',['require','exports','module','./Datasource','./Signal','./N
     var m = this;
     if(arguments.length === 1) return signals.call(this, name);
     return this._signals[name] = new this.Signal(name, init);
+  };
+
+  Model.prototype.signalRef = function(ref) {
+    if(!util.isArray(ref)) ref = util.field(ref);
+    var value = this.signal(ref.shift()).value();
+    if(ref.length > 0) {
+      var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
+      value = fn.call(null, value);
+    }
+
+    return value;
   };
 
   function predicates(name) {
@@ -5395,7 +5410,8 @@ define('parse/expr',['require','exports','module','../util/index'],function(requ
   	"round":  "Math.round",
   	"sin":    "Math.sin",
   	"sqrt":   "Math.sqrt",
-  	"tan":    "Math.tan"
+  	"tan":    "Math.tan",
+    "date":   "Date.parse"
   };
   
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
@@ -5451,11 +5467,13 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
         spec  = model._defs.signals,
         register = {};
 
-    function signal(sig, selector, exp) {
+    function signal(sig, selector, exp, spec) {
       var n = new model.Node(function(input) {
         var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
+        if(spec.scale) val = model.scene().scale(spec, val);
         sig.value(val);
         input.signals[sig.name()] = 1;
+        input.touch = true;
         return input;  
       });
       n._deps.signals = [selector.signal];
@@ -5463,15 +5481,16 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
       model.signal(selector.signal).addListener(n);
     };
 
-    function event(sig, selector, exp) {
+    function event(sig, selector, exp, spec) {
       register[selector.event] = register[selector.event] || [];
       register[selector.event].push({
         signal: sig,
-        exp: exp
+        exp: exp,
+        spec: spec
       });
     };
 
-    function orderedStream(sig, selector, exp) {
+    function orderedStream(sig, selector, exp, spec) {
       var name = sig.name(), 
           trueFn = expr(model, "true"),
           s = {};
@@ -5501,20 +5520,22 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
       router.addListener(sig.node());
 
       [START, MIDDLE, END].forEach(function(x) {
-        var val = x == MIDDLE ? exp : trueFn
-        if(selector[x].event) event(s[x], selector[x], val);
-        else if(selector[x].signal) signal(s[x], selector[x], val);
-        else if(selector[x].stream) mergedStream(s[x], selector[x], val);
+        var val = (x == MIDDLE) ? exp : trueFn,
+            sp = (x == MIDDLE) ? spec : {};
+
+        if(selector[x].event) event(s[x], selector[x], val, sp);
+        else if(selector[x].signal) signal(s[x], selector[x], val, sp);
+        else if(selector[x].stream) mergedStream(s[x], selector[x], val, sp);
         s[x].addListener(router);
       });
     };
 
-    function mergedStream(sig, selector, exp) {
+    function mergedStream(sig, selector, exp, spec) {
       selector.forEach(function(s) {
-        if(s.event)       event(sig, s, exp);
-        else if(s.signal) signal(sig, s, exp);
-        else if(s.start)  orderedStream(sig, s, exp);
-        else if(s.stream) mergedStream(sig, s.stream, exp);
+        if(s.event)       event(sig, s, exp, spec);
+        else if(s.signal) signal(sig, s, exp, spec);
+        else if(s.start)  orderedStream(sig, s, exp, spec);
+        else if(s.stream) mergedStream(sig, s.stream, exp, spec);
       });
     };
 
@@ -5525,7 +5546,7 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
       (sig.streams || []).forEach(function(stream) {
         var sel = selector.parse(stream.type),
             exp = expr(model, stream.expr);
-        mergedStream(signal, sel, exp);
+        mergedStream(signal, sel, exp, stream);
       });
     });
 
@@ -5548,6 +5569,7 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
 
         for(i = 0; i < h.length; i++) {
           val = expr.eval(model, h[i].exp.fn, item.datum||{}, evt, item, p||{}, h[i].exp.signals); 
+          if(h[i].spec.scale) val = model.scene().scale(h[i].spec, val);
           h[i].signal.value(val);
           cs.signals[h[i].signal.name()] = 1;
         }
@@ -7390,7 +7412,8 @@ define('parse/signals',['require','exports','module','./expr'],function(require,
         exp = expr(model, s.expr);
         node = new model.Node(function(input) {
           var value = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
-          signal.value(value);          
+          if(spec.scale) value = model.scene().scale(spec, value);
+          signal.value(value);
           input.signals[s.name] = 1;
           return input;
         });
@@ -8237,7 +8260,7 @@ define('transforms/modify',['require','exports','module','../core/tuple','../uti
       if(!reeval) return input;
 
       var datum = {}, 
-          value = signal ? model.signal(signalName).refValue(signal) : null;
+          value = signal ? model.signalRef(def.signal) : null;
 
       datum[def.field] = value;
 
@@ -8370,8 +8393,7 @@ define('parse/data',['require','exports','module','./transforms','../transforms/
         if (error) {
           util.error("LOADING FAILED: " + d.url);
         } else {
-          d.values = read(data.toString(), d.format);
-          datasource(d);
+          model.data(d.name).values(read(data.toString(), d.format));
         }
         if (--count === 0) callback();
       }
@@ -8383,7 +8405,10 @@ define('parse/data',['require','exports','module','./transforms','../transforms/
           ds = model.data(d.name, mod.concat(transform));
 
       if(d.values) ds.values(d.values);
-      else if(d.source) model.data(d.source).addListener(ds);
+      else if(d.source) {
+        ds.source(d.source);
+        model.data(d.source).addListener(ds);
+      }
 
       return ds;
     }
@@ -8394,7 +8419,7 @@ define('parse/data',['require','exports','module','./transforms','../transforms/
         count += 1;
         load(d.url, loaded(d)); 
       }
-      else datasource(d);
+      datasource(d);
     });
 
     if (count === 0) setTimeout(callback, 1);
@@ -8448,6 +8473,7 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
       parse: {
         spec: require('parse/spec')
       },
+      util: require('util/index'),
       config: require('util/config')
     }
 }));

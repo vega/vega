@@ -100,8 +100,7 @@ define(function(require, module, exports) {
 
   function signal(model, v) {
     if(!v.signal) return v;
-    var s = util.field(v.signal)[0];
-    return model.signal(s).refValue(s);
+    return model.signalRef(v.signal);
   }
   
   function domainValues(model, def, data, sort) {

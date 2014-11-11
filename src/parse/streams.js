@@ -12,11 +12,13 @@ define(function(require, exports, module) {
         spec  = model._defs.signals,
         register = {};
 
-    function signal(sig, selector, exp) {
+    function signal(sig, selector, exp, spec) {
       var n = new model.Node(function(input) {
         var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
+        if(spec.scale) val = model.scene().scale(spec, val);
         sig.value(val);
         input.signals[sig.name()] = 1;
+        input.touch = true;
         return input;  
       });
       n._deps.signals = [selector.signal];
@@ -24,15 +26,16 @@ define(function(require, exports, module) {
       model.signal(selector.signal).addListener(n);
     };
 
-    function event(sig, selector, exp) {
+    function event(sig, selector, exp, spec) {
       register[selector.event] = register[selector.event] || [];
       register[selector.event].push({
         signal: sig,
-        exp: exp
+        exp: exp,
+        spec: spec
       });
     };
 
-    function orderedStream(sig, selector, exp) {
+    function orderedStream(sig, selector, exp, spec) {
       var name = sig.name(), 
           trueFn = expr(model, "true"),
           s = {};
@@ -62,20 +65,22 @@ define(function(require, exports, module) {
       router.addListener(sig.node());
 
       [START, MIDDLE, END].forEach(function(x) {
-        var val = x == MIDDLE ? exp : trueFn
-        if(selector[x].event) event(s[x], selector[x], val);
-        else if(selector[x].signal) signal(s[x], selector[x], val);
-        else if(selector[x].stream) mergedStream(s[x], selector[x], val);
+        var val = (x == MIDDLE) ? exp : trueFn,
+            sp = (x == MIDDLE) ? spec : {};
+
+        if(selector[x].event) event(s[x], selector[x], val, sp);
+        else if(selector[x].signal) signal(s[x], selector[x], val, sp);
+        else if(selector[x].stream) mergedStream(s[x], selector[x], val, sp);
         s[x].addListener(router);
       });
     };
 
-    function mergedStream(sig, selector, exp) {
+    function mergedStream(sig, selector, exp, spec) {
       selector.forEach(function(s) {
-        if(s.event)       event(sig, s, exp);
-        else if(s.signal) signal(sig, s, exp);
-        else if(s.start)  orderedStream(sig, s, exp);
-        else if(s.stream) mergedStream(sig, s.stream, exp);
+        if(s.event)       event(sig, s, exp, spec);
+        else if(s.signal) signal(sig, s, exp, spec);
+        else if(s.start)  orderedStream(sig, s, exp, spec);
+        else if(s.stream) mergedStream(sig, s.stream, exp, spec);
       });
     };
 
@@ -86,7 +91,7 @@ define(function(require, exports, module) {
       (sig.streams || []).forEach(function(stream) {
         var sel = selector.parse(stream.type),
             exp = expr(model, stream.expr);
-        mergedStream(signal, sel, exp);
+        mergedStream(signal, sel, exp, stream);
       });
     });
 
@@ -109,6 +114,7 @@ define(function(require, exports, module) {
 
         for(i = 0; i < h.length; i++) {
           val = expr.eval(model, h[i].exp.fn, item.datum||{}, evt, item, p||{}, h[i].exp.signals); 
+          if(h[i].spec.scale) val = model.scene().scale(h[i].spec, val);
           h[i].signal.value(val);
           cs.signals[h[i].signal.name()] = 1;
         }

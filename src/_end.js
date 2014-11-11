@@ -12,6 +12,7 @@
       parse: {
         spec: require('parse/spec')
       },
+      util: require('util/index'),
       config: require('util/config')
     }
 }));

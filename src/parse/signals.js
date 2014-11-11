@@ -11,7 +11,8 @@ define(function(require, exports, module) {
         exp = expr(model, s.expr);
         node = new model.Node(function(input) {
           var value = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
-          signal.value(value);          
+          if(spec.scale) value = model.scene().scale(spec, value);
+          signal.value(value);
           input.signals[s.name] = 1;
           return input;
         });
