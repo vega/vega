@@ -7,9 +7,9 @@ var express = require('express'),
 var port = process.argv[2] || 8888,
   app = express(),
   svgHeader =
-	  '<?xml version="1.0" encoding="utf-8"?>\n' +
-	  '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
-	  '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n';
+      '<?xml version="1.0" encoding="utf-8"?>\n' +
+      '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
+      '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n';
 
 app.use(function(req, res, next) {
     var data = '';
@@ -27,31 +27,30 @@ app.use(function(req, res, next) {
 // Render vega specification as PNG.
 app.post('/vg2png', function (req, res) {
   console.log("Rendering a PNG");
+  res.set('Content-Type', 'image/png');
 
   var spec = JSON.parse(req.body);
-
-  res.set('Content-Type', 'image/png');
 
   vg.headless.render(
     {spec: spec, renderer: "canvas"},
     function(err, data) {
       if (err) throw err;
       var stream = data.canvas.createPNGStream();
-  	  stream.on("data", function(chunk) { res.write(chunk); }).on("end", function() { res.end(); });
+      stream
+        .on("data", function(chunk) { res.write(chunk); })
+        .on("end", function() { res.end(); });
     }
   );
 });
 
-// Render vega specification as SVG. Set header to true to include XML header and SVG doctype
+// Render vega specification as SVG.
+// Set `header` to `true` to include XML header and SVG doctype
 app.post('/vg2svg', function (req, res) {
   console.log("Rendering an SVG");
-
-  var spec = JSON.parse(req.body);
-
   res.set('Content-Type', 'image/svg+xml');
 
-  // include xml header
-  var header = req.param("header", "false") === "true";
+  var spec = JSON.parse(req.body),
+    header = req.param("header", "false") === "true";
 
   vg.headless.render(
     {spec: spec, renderer:"svg"},
