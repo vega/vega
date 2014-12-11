@@ -14,15 +14,18 @@ filtered
   / s:stream { return s }
 
 stream
-  = e:eventType { return { event: e } }
+  = t:(class / id)? e:eventType { return { event: e, target: t } }
   / s:value { return { signal: s }}
   / "(" m:merged ")" { return { stream: m }}
 
-eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout"
+class = "." c:value ":" { return { type:'class', value: c } }
+id = "#" id: value ":" { return { type:'id', value: id } }
+
+eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter"
 
 filter = "[" sep a:accessor field:value sep o:op sep v:value sep "]" { return a + field + o + v }
 accessor = "e." / "i." / "d." / "p."
 op = "==" / "!=" / ">" / ">=" / "<" / "<="
-value = v:[a-zA-Z0-9_-]+ { return v.join("") }
+value = v:['"a-zA-Z0-9_-]+ { return v.join("") }
 
 sep = [ \t\r\n]*

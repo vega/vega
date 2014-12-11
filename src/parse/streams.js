@@ -27,10 +27,16 @@ define(function(require, exports, module) {
     };
 
     function event(sig, selector, exp, spec) {
+      var filters = selector.filters || [],
+          target = selector.target;
+
+      if(target) filters.push("i."+target.type+"=="+util.str(target.value));
+
       register[selector.event] = register[selector.event] || [];
       register[selector.event].push({
         signal: sig,
         exp: exp,
+        filters: filters.map(function(f) { return expr(model, f); }),
         spec: spec
       });
     };
@@ -101,22 +107,30 @@ define(function(require, exports, module) {
 
     // TODO: Filters, time intervals, target selectors
     util.keys(register).forEach(function(r) {
-      var h = register[r];
+      var handlers = register[r];
       view.on(r, function(evt, item) {
         var cs = changset.create({}, true),
-            n = new model.Node(null, h.map(function(h) { return h.signal.node() })),
+            n = new model.Node(null, handlers.map(function(handlers) { return handlers.signal.node() })),
             pad = view.padding(),
-            val, i, m, p = {};
+            filtered = false,
+            val, h, i, m, d, p = {};
 
         // Stash event in d3.event so we can calculate relative positions
         d3.event = evt, m = d3.mouse(view._el), p.x = m[0] - pad.left, p.y = m[1] - pad.top;
         item = item||{};
+        d = item.datum||{};
 
-        for(i = 0; i < h.length; i++) {
-          val = expr.eval(model, h[i].exp.fn, item.datum||{}, evt, item, p||{}, h[i].exp.signals); 
-          if(h[i].spec.scale) val = model.scene().scale(h[i].spec, val);
-          h[i].signal.value(val);
-          cs.signals[h[i].signal.name()] = 1;
+        for(i = 0; i < handlers.length; i++) {
+          h = handlers[i];
+          filtered = h.filters.some(function(f) {
+            return !expr.eval(model, f.fn, d, evt, item, p, f.signals);
+          });
+          if(filtered) continue;
+          
+          val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
+          if(h.spec.scale) val = model.scene().scale(h.spec, val);
+          h.signal.value(val);
+          cs.signals[h.signal.name()] = 1;
         }
 
         model.graph.propagate(cs, n);
