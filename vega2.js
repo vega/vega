@@ -8241,7 +8241,7 @@ define('transforms/modify',['require','exports','module','../core/tuple','../uti
     }
   };
 
-  return function parseModify(model, def) {
+  return function parseModify(model, def, ds) {
     var signal = def.signal ? util.field(def.signal) : null, 
         signalName = signal ? signal[0] : null,
         predicate = def.predicate ? model.predicate(def.predicate) : null,
@@ -8260,28 +8260,40 @@ define('transforms/modify',['require','exports','module','../core/tuple','../uti
       if(!reeval) return input;
 
       var datum = {}, 
-          value = signal ? model.signalRef(def.signal) : null;
+          value = signal ? model.signalRef(def.signal) : null,
+          d = model.data(ds.name),
+          t = null;
 
       datum[def.field] = value;
 
+      // We have to modify ds._data so that subsequent pulses contain
+      // our dynamic data. W/o modifying ds._data, only the output
+      // collector will contain dynamic tuples. 
       if(def.type == ADD) {
-        input.add.push(tuple.create(datum));
+        t = tuple.create(datum);
+        input.add.push(t);
+        d._data.push(t);
       } else if(def.type == REMOVE) {
         filter(def.field, value, input.add, input.rem);
         filter(def.field, value, input.mod, input.rem);
+        d._data = d._data.filter(function(x) { return x[def.field] !== value });
       } else if(def.type == TOGGLE) {
         var add = [], rem = [];
         filter(def.field, value, input.rem, add);
         filter(def.field, value, input.add, rem);
         filter(def.field, value, input.mod, rem);
         if(add.length == 0 && rem.length == 0) add.push(tuple.create(datum));
+
         input.add.push.apply(input.add, add);
+        d._data.push.apply(d._data, add);
         input.rem.push.apply(input.rem, rem);
+        d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1 });
       } else if(def.type == CLEAR) {
         input.rem.push.apply(input.rem, input.add);
         input.rem.push.apply(input.rem, input.mod);
         input.add = [];
         input.mod = [];
+        d._data  = [];
       } 
 
       input.fields[def.field] = 1;
@@ -8401,7 +8413,7 @@ define('parse/data',['require','exports','module','./transforms','../transforms/
 
     function datasource(d) {
       var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
-          mod = (d.modify||[]).map(function(m) { return parseModify(model, m) }),
+          mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
           ds = model.data(d.name, mod.concat(transform));
 
       if(d.values) ds.values(d.values);

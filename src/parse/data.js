@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 
     function datasource(d) {
       var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
-          mod = (d.modify||[]).map(function(m) { return parseModify(model, m) }),
+          mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
           ds = model.data(d.name, mod.concat(transform));
 
       if(d.values) ds.values(d.values);
