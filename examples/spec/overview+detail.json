@@ -45,7 +45,7 @@
       "transform": [
         {
           "type": "filter", 
-          "test": "min(date_start, date_end) <= d.date <= max(date_start, date_end)"
+          "test": "min(date_start, date_end) <= d.date && d.date <= max(date_start, date_end)"
         }
       ]
     }
