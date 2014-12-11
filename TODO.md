@@ -1,14 +1,13 @@
-An incomplete, unordered list of things left to do:
+An incomplete, list of things left to do ordered by scope:
 
 - Inverting ordinal scales
-- Transitions
-- Breaking apart renderers to respect changeset inputs
 - Porting over Vega 1 data transforms + layouts
+- Mark-level transforms
 - Support opts in view.update
   - loading/streaming data
   - rebinding signals
+- Legends
+- Transitions
+- Breaking apart renderers to respect changeset inputs
 - Interactors
 - Headless/node rendering
-- Mark-level transforms
-- Top-level scales as inversions to signals/predicates
-- Legends
