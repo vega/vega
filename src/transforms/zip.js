@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   var util = require('../util/index'), 
-      collector = require('../transforms/collector');
+      collector = require('../core/collector');
 
   return function zip(model) {
     var z = null,

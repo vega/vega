@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
-      collector = require('../transforms/collector'),
+      collector = require('./collector'),
       util = require('../util/index');
 
   return function(model) {
