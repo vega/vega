@@ -5597,7 +5597,7 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
   return function(view) {
     var model = view.model(),
         spec  = model._defs.signals,
-        register = {};
+        register = {}, nodes = {};
 
     function signal(sig, selector, exp, spec) {
       var n = new model.Node(function(input) {
@@ -5626,6 +5626,9 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
         filters: filters.map(function(f) { return expr(model, f); }),
         spec: spec
       });
+
+      nodes[selector.event] = nodes[selector.event] || new model.Node();
+      nodes[selector.event].addListener(sig.node());
     };
 
     function orderedStream(sig, selector, exp, spec) {
@@ -5694,10 +5697,11 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
 
     // TODO: Filters, time intervals, target selectors
     util.keys(register).forEach(function(r) {
-      var handlers = register[r];
+      var handlers = register[r], 
+          node = nodes[r];
+
       view.on(r, function(evt, item) {
         var cs = changset.create({}, true),
-            n = new model.Node(null, handlers.map(function(handlers) { return handlers.signal.node() })),
             pad = view.padding(),
             filtered = false,
             val, h, i, m, d, p = {};
@@ -5720,7 +5724,7 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
           cs.signals[h.signal.name()] = 1;
         }
 
-        model.graph.propagate(cs, n);
+        model.graph.propagate(cs, node);
       });
     })
   };
