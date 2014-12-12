@@ -70,6 +70,7 @@ define(function(require, exports, module) {
       builder.encoder._deps.scales.forEach(function(s) {
         parent.group.scale(s).removeListener(builder);
       });
+      if(builder.group) builder.group.disconnect();
     };
 
     function newItem(d, stamp) {

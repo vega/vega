@@ -136,7 +136,6 @@ define(function(require, exports, module) {
           if(c.type != constants.AXIS) continue;
           axesNode.removeListener(c.builder);
           c.builder.disconnect();
-          c.builder.group.disconnect();
           children[group._id].splice(i, 1);
         }
 

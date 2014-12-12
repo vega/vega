@@ -119,6 +119,8 @@ define(function(require, exports, module) {
             filtered = false,
             val, h, i, m, d, p = {};
 
+        evt.preventDefault(); // Stop text selection
+
         // Stash event in d3.event so we can calculate relative positions
         d3.event = evt, m = d3.mouse(view._el), p.x = m[0] - pad.left, p.y = m[1] - pad.top;
         item = item||{};

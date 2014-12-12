@@ -4263,7 +4263,6 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
           if(c.type != constants.AXIS) continue;
           axesNode.removeListener(c.builder);
           c.builder.disconnect();
-          c.builder.group.disconnect();
           children[group._id].splice(i, 1);
         }
 
@@ -4354,6 +4353,7 @@ define('scene/build',['require','exports','module','./encode','../core/collector
       builder.encoder._deps.scales.forEach(function(s) {
         parent.group.scale(s).removeListener(builder);
       });
+      if(builder.group) builder.group.disconnect();
     };
 
     function newItem(d, stamp) {
@@ -5774,6 +5774,8 @@ define('parse/streams',['require','exports','module','d3','../core/changeset','.
             pad = view.padding(),
             filtered = false,
             val, h, i, m, d, p = {};
+
+        evt.preventDefault(); // Stop text selection
 
         // Stash event in d3.event so we can calculate relative positions
         d3.event = evt, m = d3.mouse(view._el), p.x = m[0] - pad.left, p.y = m[1] - pad.top;
