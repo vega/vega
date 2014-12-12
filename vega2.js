@@ -1616,28 +1616,32 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
     var doNotPropagate = {};
 
     function propagate(pulse, node) {
-      var v, l, n, p,
+      var v, l, n, p, r,
         q = new PriorityQueue({ 
           comparator: function(a, b) { 
             // If the nodes are equal, propagate the non-touch pulse first,
-            // so that we can ignore subsequent touch pulses. Also, if we're
-            // hitting the renderer, render top down
-            if(a.dest == b.dest) {
-              if(a.dest._type == 'renderer' && b.dest._type == 'renderer') 
-                return b.src._rank - a.src._rank; // children bounds nodes are lowest ranked.
-              else return a.pulse.touch ? 1 : -1;
-            }
-            else return a.dest._rank - b.dest._rank; 
+            // so that we can ignore subsequent touch pulses.
+            if(a.node == b.node) return a.pulse.touch ? 1 : -1;
+            else return a.rank - b.rank; 
           } 
         });
 
       if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
       pulse.stamp = ++model._stamp;
-      q.queue({ dest: node, pulse: pulse });
+      q.queue({ node: node, pulse: pulse, rank: node._rank });
 
       while (q.length > 0) {
-        v = q.dequeue(), n = v.dest, l = n._listeners, p = v.pulse;
+        v = q.dequeue(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
+
+        // A node's rank might change during a propagation (e.g. instantiating
+        // a group's dataflow branch). Re-queue if it has.
+        if(r != n._rank) {
+          util.debug(p, ['Rank mismatch', r, n._rank]);
+          q.queue({ node: n, pulse: p, rank: n._rank });
+          continue;
+        }
+
         var touched = p.touch && n._stamp >= p.stamp/* && !(n._type == 'renderer')*/;
         if(touched) continue; // Don't needlessly touch ops.
 
@@ -1654,7 +1658,7 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
         // the pulse. 
         if (pulse != doNotPropagate || !run) {
           for (var i = 0; i < l.length; i++) {
-            q.queue({ src: n, dest: l[i], pulse: pulse });
+            q.queue({ node: l[i], pulse: pulse, rank: l[i]._rank });
           }
         }
       }
