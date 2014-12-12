@@ -34,7 +34,7 @@ module.exports = function(grunt) {
     watch: {
       src: {
         files: ['src/**/*.js'],
-        tasks: ['requirejs:compile']
+        tasks: ['requirejs:compile', 'uglify']
       }
     }
   });
