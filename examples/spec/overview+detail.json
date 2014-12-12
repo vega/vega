@@ -30,7 +30,9 @@
       "streams": [
         {"type": "brush_end", "expr": "date(brush_end)"}
       ]
-    }
+    },
+    {"name": "min_date", "expr": "min(date_start, date_end)"},
+    {"name": "max_date", "expr": "max(date_start, date_end)"}
   ],
 
   "data": [
@@ -45,7 +47,7 @@
       "transform": [
         {
           "type": "filter", 
-          "test": "min(date_start, date_end) <= d.date && d.date <= max(date_start, date_end)"
+          "test": "min_date == max_date || min(date_start, date_end) <= d.date && d.date <= max(date_start, date_end)"
         }
       ]
     }
