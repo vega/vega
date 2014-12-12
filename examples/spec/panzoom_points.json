@@ -112,15 +112,29 @@
   ],
   "marks": [
     {
-      "type": "symbol",
-      "from": {"data": "points"},
+      "type": "group",
       "properties": {
-        "update": {
-          "x": {"scale": "x", "field": "x"},
-          "y": {"scale": "y", "field": "y"},
-          "fill": {"value": "steelblue"}
+        "enter": {
+          "x": {"value": 0},
+          "width": {"value": 800},
+          "y": {"value": 0},
+          "height": {"value": 500},
+          "clip": {"value": true}
         }
-      }
+      },
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "points"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        }
+      ]
     }
   ]
 }
