@@ -26,7 +26,7 @@
     },
     {
       "name": "date_end",
-      "init": 1267430400000,
+      "init": 946713600000,
       "streams": [
         {"type": "brush_end", "expr": "date(brush_end)"}
       ]

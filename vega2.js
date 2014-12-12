@@ -737,6 +737,12 @@ define('util/index',['require','exports','module','./config'],function(require, 
       (util.isFunction(x.values) ? x.values() : x.values) : x;
   };
 
+  util.tuple_ids = function(a) {
+    return a.reduce(function(m,x) {
+      return (m[x._id] = 1, m);
+    }, {});
+  };
+
   util.str = function(x) {
     return util.isArray(x) ? "[" + x.map(util.str) + "]"
       : util.isObject(x) ? JSON.stringify(x)
@@ -894,7 +900,7 @@ define('core/tuple',['require','exports','module','../util/index'],function(requ
     reset:  reset
   };
 });
-define('transforms/collector',['require','exports','module','../core/changeset','../util/index'],function(require, exports, module) {
+define('core/collector',['require','exports','module','../core/changeset','../util/index'],function(require, exports, module) {
   var changeset = require('../core/changeset'),
       util = require('../util/index');
 
@@ -977,10 +983,10 @@ define('transforms/collector',['require','exports','module','../core/changeset',
     return node;
   };
 });
-define('core/Datasource',['require','exports','module','./changeset','./tuple','../transforms/collector','../util/index'],function(require, exports, module) {
+define('core/Datasource',['require','exports','module','./changeset','./tuple','./collector','../util/index'],function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
-      collector = require('../transforms/collector'),
+      collector = require('./collector'),
       util = require('../util/index');
 
   return function(model) {
@@ -1067,9 +1073,7 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
         } else {
           // update data
           var delta = ds._input;
-          var ids = delta.rem.reduce(function(m,x) {
-            return (m[x._id] = 1, m);
-          }, {});
+          var ids = util.tuple_ids(delta.rem);
 
           ds._data = ds._data
             .filter(function(x) { return ids[x._id] !== 1; })
@@ -2936,6 +2940,9 @@ define('util/constants',['require','exports','module'],function(require, module,
     POWER: "pow",
     TIME: "time",
     QUANTILE: "quantile",
+
+    MARK: "mark",
+    AXIS: "axis"
   }
 });
 define('scene/bounds',['require','exports','module','../util/bounds','../util/constants','../util/index'],function(require, exports, module) {
@@ -3233,7 +3240,7 @@ define('scene/scale',['require','exports','module','../parse/scale','../util/ind
       if(inherit && deps.indexOf(inherit) === -1) deps.push(inherit);
     }
 
-    var node = new model.Node(function(input) {
+    var node = new model.Node(function scaling(input) {
       util.debug(input, ["scaling", def.name]);
 
       input.add.forEach(scale);
@@ -3518,7 +3525,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
       util = require('../util/index'),
       parseMark = require('../parse/mark');
 
-  function axis(model) {
+  function axs(model) {
     var scale,
         orient = config.axis.orient,
         offset = 0,
@@ -3641,7 +3648,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
 
     axis.scale = function(x) {
       if (!arguments.length) return scale;
-      if (scale !== x) { scale = x; /* reset(); */ }
+      if (scale !== x) { scale = x; reset(); }
       return axis;
     };
 
@@ -3973,7 +3980,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
     return {
       type: "text",
       interactive: true,
-      // key: "data",
+      key: "data",
       properties: {
         enter: {
           fill: {value: config.axis.tickLabelColor},
@@ -4023,7 +4030,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
     };
   }
 
-  return axis;
+  return axs;
 });
 
 define('parse/axes',['require','exports','module','../scene/axis','../util/config','../util/index'],function(require, module, exports) {
@@ -4040,9 +4047,9 @@ define('parse/axes',['require','exports','module','../scene/axis','../util/confi
     "right":  "right"
   };
 
-  function axes(spec, axes, group) {
+  function axes(model, spec, axes, group) {
     (spec || []).forEach(function(def, index) {
-      axes[index] = axes[index] || axs();
+      axes[index] = axes[index] || axs(model);
       axis(def, index, axes[index], group);
     });
   };
@@ -4118,87 +4125,152 @@ define('parse/axes',['require','exports','module','../scene/axis','../util/confi
   return axes;
 });
 
-define('scene/build',['require','exports','module','../core/tuple','../core/changeset','../transforms/collector','./encode','./bounds','./scale','../parse/axes','../util/constants','../util/index'],function(require, exports, module) {
-  var tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset'), 
-      collector = require('../transforms/collector'), 
-      encode = require('./encode'), 
-      bounds = require('./bounds'), 
-      scalefn = require('./scale'),
+define('scene/group',['require','exports','module','./scale','../parse/axes','../util/index','../util/constants','./build','./build'],function(require, exports, module) {
+  var scalefn = require('./scale'),
       parseAxes = require('../parse/axes'),
-      constants = require('../util/constants'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      constants = require('../util/constants');
 
-  function ids(a) {
-    return a.reduce(function(m,x) {
-      return (m[x._id] = 1, m);
-    }, {});
-  };
-
-  // Recurse up to look for scales.
-  function scale(name) {
+  function lookupScale(name) {
     var group = this, scale = null;
     while(scale == null) {
       scale = group.scales[name];
-      group = group.mark ? group.mark.group : group.parent;
+      group = group.mark ? group.mark.group : (group.parent||{}).group;
       if(!group) break;
     }
     return scale;
   };
 
-  function pipelines() {
-    var b = this, sc = Object.keys(b.scales), 
-        p = [b, b.encoder],
-        pipelines = [];
+  return function group(model, def, mark, builder, renderer) {
+    var children = {},
+        node = new model.Node(buildGroup),
+        marksNode, axesNode;
 
-    // Add scale recalculators after the group is encoded
-    sc = sc.map(function(s) { return p.concat(b.scales[s]); });
-    pipelines.push.apply(pipelines, sc);
+    node.parent = builder.parent;
+    node.scales = {};
+    node.scale  = lookupScale.bind(node);
+    (def.scales||[]).forEach(function(s) { 
+      s = node.scales[s.name] = scalefn(model, s);
+      var dt = s._deps.data, sg = s._deps.signals;
+      if(dt) dt.forEach(function(d) { model.data(d).addListener(builder); });
+      if(sg) sg.forEach(function(s) { model.signal(s).addListener(builder); });
+      node.addListener(s);
+    });
 
-    // Add axes builders once the scales have been recalculated
-    if(b.def.type == constants.GROUP) {
-      pipelines.push(p.concat([b.axes, b.collector, b.bounder, b.renderer]));
-    } else {
-      pipelines.push(p.concat([b.collector, b.bounder, b.renderer]));
-    }
+    node.addListener(marksNode = new model.Node(buildMarks));
+    node.addListener(axesNode  = new model.Node(buildAxes));
 
-    return pipelines;
-  };
+    function buildGroup(input) {
+      util.debug(input, ["building group", def]);
 
-  function connect(model) { 
-    var b = this;
-    if(b.encoder._deps.scales.length) {
-      b.encoder._deps.scales.forEach(function(s) {
-        b.parent.scale(s).addListener(b);
+      input.add.forEach(function(group) {
+        group.scales = group.scales || {};    
+        group.scale  = lookupScale.bind(group);
+
+        group.items = group.items || [];
+        children[group._id] = children[group._id] || [];
+
+        group.axes = group.axes || [];
+        group.axisItems = group.axisItems || [];
       });
-    }
 
-    if(b.parent) {
-      b.bounder.addListener(b.parent.collector);
-      b.parent.addListener(b); // Temp connection to propagate initial pulse.
-    }
+      return input;
+    };
 
-    pipelines.call(b).forEach(function(p) { model.graph.connect(p) });
-  };
+    function buildMarks(input) {
+      util.debug(input, ["building marks", def.marks]);
 
-  function disconnect(model) { 
-    var b = this;
-    if(b.encoder._deps.scales.length) {
-      b.encoder._deps.scales.forEach(function(s) {
-        b.parent.scale(s).removeListener(b);
+      input.add.forEach(function(group) {
+        var marks = def.marks,
+            inherit, i, m, b;
+
+        for(i = 0; i < marks.length; i++) {
+          inherit = "vg_"+group.datum._id;
+          group.items[i] = {group: group};
+          b = require('./build')(model, renderer, marks[i], group.items[i], builder, inherit);
+
+          // Temporary connection to propagate initial pulse. 
+          marksNode.addListener(b);
+          children[group._id].push({ 
+            builder: b, 
+            from: marks[i].from || inherit, 
+            type: constants.MARK 
+          });
+        }
       });
-    }
 
-    pipelines.call(b).forEach(function(p) { model.graph.disconnect(p) }); 
-  };
+      input.mod.forEach(function(group) {
+        // Remove temporary connection for marks that draw from a source
+        children[group._id].forEach(function(c) {
+          if(c.type == constants.MARK && model.data(c.from) !== undefined) {
+            marksNode.removeListener(c.builder);
+          }
+        });
+      });
 
+      input.rem.forEach(function(group) {
+        // For deleted groups, disconnect their children
+        children[group._id].forEach(function(c) { c.builder.disconnect(); });
+      });
+
+      return input;
+    };
+
+    function buildAxes(input) {
+      util.debug(input, ["building axes", def.axes]);
+
+      input.add.forEach(function(group) {
+        var axes = group.axes,
+            axisItems = group.axisItems,
+            b = null;
+
+        parseAxes(model, def.axes, axes, group);
+        axes.forEach(function(a, i) {
+          axisItems[i] = {group: group, axisDef: a.def()};
+          b = require('./build')(model, renderer, axisItems[i].axisDef, axisItems[i], builder);
+          b._deps.scales.push(def.axes[i].scale);
+          axesNode.addListener(b);
+          children[group._id].push({ builder: b, type: constants.AXIS });
+        });
+      });
+
+      input.mod.forEach(function(group) {
+        // Reparse axes to feed them new data from reevaluated scales
+        parseAxes(model, def.axes, group.axes, group);
+        group.axes.forEach(function(a) { a.def() });
+      });
+
+      var scales = (def.axes||[]).reduce(function(acc, x) {
+        return (acc[x.scale] = 1, acc);
+      }, {});
+      axesNode._deps.scales = util.keys(scales);
+
+      return input;
+    };    
+
+    return node;
+  }
+
+});
+define('scene/build',['require','exports','module','./encode','../core/collector','./bounds','./group','../core/tuple','../core/changeset','../util/index','../util/constants'],function(require, exports, module) {
+  var encode  = require('./encode'),
+      collect = require('../core/collector'),
+      bounds  = require('./bounds'),
+      group   = require('./group'),
+      tuple = require('../core/tuple'),
+      changeset = require('../core/changeset'),
+      util = require('../util/index'),
+      constants = require('../util/constants');
+
+  // def is from the spec
+  // mark is the scenegraph node to build out
+  // parent is the dataflow builder node corresponding to the mark's group.
   return function build(model, renderer, def, mark, parent, inheritFrom) {
-    var items = [],     // Item nodes in the scene graph
-        children = [],  // Group's children dataflow graph nodes
-        scales = {},    // Scale nodes in the dataflow graph
+    var items = [], // Item nodes in the scene graph
         f = def.from || inheritFrom,
         from = util.isString(f) ? model.data(f) : null,
-        builder, lastBuild = 0;  
+        lastBuild = 0,
+        builder;
 
     function init() {
       mark.def = def;
@@ -4206,35 +4278,52 @@ define('scene/build',['require','exports','module','../core/tuple','../core/chan
       mark.interactive = !(def.interactive === false);
       mark.items = items; 
 
-      builder = new model.Node(function(input) {
-        util.debug(input, ["building", f, def.type]);
-
-        // Only the first pulse should come from the parent.
-        // Future pulses will propagate from dependencies.
-        if(builder.parent && !lastBuild && from) 
-          builder.parent.removeListener(builder);
-
-        return buildItems(input);
-      });
+      builder = new model.Node(buildItems);
+      builder._type = 'builder';
       builder._router = true;
       builder._touchable = true;
-      if(from) builder._deps.data.push(f);
 
-      builder.def       = def;
-      builder.parent    = parent; // Parent builder (dataflow graph node)
-      builder.encoder   = encode(model, mark);
-      builder.collector = collector(model);
-      builder.bounder   = bounds(model, mark);
-      builder.renderer  = renderer;
-      builder.scales    = scales;
-      builder.scale     = scale.bind(builder);
-      (def.scales||[]).forEach(function(s) { scales[s.name] = scalefn(model, s); });
-      builder.axes = buildAxes();
+      builder.def = def;
+      builder.encoder = encode(model, mark);
+      builder.collector = collect(model);
+      builder.bounder = bounds(model, mark);
+      builder.parent = parent;
 
-      if(from) builder.encoder._deps.data.push(f); 
-      connect.call(builder, model);
+      if(def.type === constants.GROUP){ 
+        builder.group = group(model, def, mark, builder, renderer);
+      }
+
+      if(from) {
+        builder._deps.data.push(f);
+        builder.encoder._deps.data.push(f);
+      }
+
+      connect();
+      builder.disconnect = disconnect;      
 
       return builder;
+    };
+
+    function pipeline() {
+      var pipeline = [builder, builder.encoder];
+      if(builder.group) pipeline.push(builder.group);
+      pipeline.push(builder.collector, builder.bounder, renderer);
+      return pipeline;
+    };
+
+    function connect() {
+      model.graph.connect(pipeline());
+      builder.encoder._deps.scales.forEach(function(s) {
+        parent.group.scale(s).addListener(builder);
+      });
+      if(parent) builder.bounder.addListener(parent.collector);
+    };
+
+    function disconnect() {
+      model.graph.disconnect(pipeline());
+      builder.encoder._deps.scales.forEach(function(s) {
+        parent.group.scale(s).removeListener(builder);
+      });
     };
 
     function newItem(d, stamp) {
@@ -4252,15 +4341,15 @@ define('scene/build',['require','exports','module','../core/tuple','../core/chan
       if(def.height) tuple.set(item, "height", def.height);
 
       items.push(item); 
-
-      if(def.type == constants.GROUP) buildGroup(item);
-
       return item;
     };
 
     function buildItems(input) {
-      var fcs, output = changeset.create(input),
-          fullUpdate = builder.encoder.reevaluate(input);
+      util.debug(input, ["building", f, def.type]);
+
+      var output = changeset.create(input),
+          fullUpdate = builder.encoder.reevaluate(input),
+          fcs;
 
       // If a scale or signal in the update propset has been updated, 
       // send forward all items for reencoding.
@@ -4271,24 +4360,20 @@ define('scene/build',['require','exports','module','../core/tuple','../core/chan
         if(!fcs) return output.touch = true, output;
         if(fcs.stamp <= lastBuild) return output;
 
-        var mod = ids(fcs.mod), rem = ids(fcs.rem),
-            i, d, item, c;
+        var mod = util.tuple_ids(fcs.mod),
+            rem = util.tuple_ids(fcs.rem),
+            item, i, d;
 
-        for(var i = items.length-1; i >= 0; i--) {
+        for(i = items.length-1; i >=0; i--) {
           item = items[i], d = item.datum;
-
-          if(mod[d._id] === 1 && !fullUpdate) output.mod.push(item);
-          else if(rem[d._id] === 1) {
+          if(mod[d._id] === 1 && !fullUpdate) {
+            output.mod.push(item);
+          } else if(rem[d._id] === 1) {
             output.rem.push.apply(output.rem, items.splice(i, 1)[0]);
-
-            // Facet's disconnect will remove Graph.db listener, but we 
-            // should disconnect the scenegraph builder pipelines.
-            if(def.type == constants.GROUP) 
-              disconnect.call(children.splice(i, 1)[0], model);
           }
         }
 
-        output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });        
+        output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });
         lastBuild = fcs.stamp;
       } else {
         if(util.isFunction(def.from)) {
@@ -4305,58 +4390,8 @@ define('scene/build',['require','exports','module','../core/tuple','../core/chan
       return output;
     };
 
-    function buildGroup(group) {
-      var marks = def.marks,
-          axex = null,
-          i, m, b;
-
-      group.scales = group.scales || {};    
-      group.scale = scale.bind(group);
-
-      group.items = group.items || [];
-      for(i = 0; i < marks.length; i++) {
-        group.items[i] = {group: group};
-        b = build(model, renderer, marks[i], group.items[i], builder, "vg_"+group.datum._id);
-        children.push(b);
-      }
-    };
-
-    function buildAxes() {
-      var node;
-      return node = new model.Node(function(input) {
-        util.debug(input, ["building axes"]);
-        if(!def.axes) return input;
-
-        input.add.forEach(function(group) {
-          axes = group.axes || (group.axes = []);
-          axisItems = group.axisItems || (group.axisItems = []);
-          parseAxes(def.axes, axes, group);
-          axes.forEach(function(a, i) {
-            axisItems[i] = {group: group, axisDef: a.def()};
-            b = build(model, renderer, axisItems[i].axisDef, axisItems[i], builder);
-            b._deps.scales.push(def.axes[i].scale);
-            node.addListener(b);
-            children.push(b);
-          });
-        });
-
-        input.mod.forEach(function(group) {
-          // Reparse axes to feed them new data from reevaluated scales
-          parseAxes(def.axes, group.axes, group);
-          group.axes.forEach(function(a) { a.def() });
-        });
-
-        var scales = (def.axes||[]).reduce(function(acc, x) {
-          return (acc[x.scale] = 1, acc);
-        }, {});
-        node._deps.scales = util.keys(scales);
-
-        return input;
-      });
-    };
-
     return init();
-  };
+  }
 });
 define('scene/index',['require','exports','module','../core/changeset','./build'],function(require, exports, module) {
   var changeset = require('../core/changeset'), 
@@ -7479,9 +7514,7 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
       // (Datasources + scene).
       v._renderNode = new v._model.Node(function(input) {
         util.debug(input, ["rendering"]);
-
-        if(input.add.length) v._renderer.render(v._model.scene());
-        if(input.mod.length) v._renderer.render(v._model.scene());
+        v._renderer.render(v._model.scene());
         return input;
       });
       v._renderNode._router = true;
@@ -8245,9 +8278,9 @@ define('transforms/sort',['require','exports','module','../util/index','../parse
     return node;
   };
 });
-define('transforms/zip',['require','exports','module','../util/index','../transforms/collector'],function(require, exports, module) {
+define('transforms/zip',['require','exports','module','../util/index','../core/collector'],function(require, exports, module) {
   var util = require('../util/index'), 
-      collector = require('../transforms/collector');
+      collector = require('../core/collector');
 
   return function zip(model) {
     var z = null,

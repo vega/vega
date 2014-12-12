@@ -19,5 +19,8 @@ define(function(require, module, exports) {
     POWER: "pow",
     TIME: "time",
     QUANTILE: "quantile",
+
+    MARK: "mark",
+    AXIS: "axis"
   }
 });

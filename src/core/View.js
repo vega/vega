@@ -178,9 +178,7 @@ define(function(require, exports, module) {
       // (Datasources + scene).
       v._renderNode = new v._model.Node(function(input) {
         util.debug(input, ["rendering"]);
-
-        if(input.add.length) v._renderer.render(v._model.scene());
-        if(input.mod.length) v._renderer.render(v._model.scene());
+        v._renderer.render(v._model.scene());
         return input;
       });
       v._renderNode._router = true;

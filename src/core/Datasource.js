@@ -88,9 +88,7 @@ define(function(require, exports, module) {
         } else {
           // update data
           var delta = ds._input;
-          var ids = delta.rem.reduce(function(m,x) {
-            return (m[x._id] = 1, m);
-          }, {});
+          var ids = util.tuple_ids(delta.rem);
 
           ds._data = ds._data
             .filter(function(x) { return ids[x._id] !== 1; })

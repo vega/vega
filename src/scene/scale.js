@@ -53,7 +53,7 @@ define(function(require, exports, module) {
       if(inherit && deps.indexOf(inherit) === -1) deps.push(inherit);
     }
 
-    var node = new model.Node(function(input) {
+    var node = new model.Node(function scaling(input) {
       util.debug(input, ["scaling", def.name]);
 
       input.add.forEach(scale);

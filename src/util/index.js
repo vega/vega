@@ -114,6 +114,12 @@ define(function(require, module, exports) {
       (util.isFunction(x.values) ? x.values() : x.values) : x;
   };
 
+  util.tuple_ids = function(a) {
+    return a.reduce(function(m,x) {
+      return (m[x._id] = 1, m);
+    }, {});
+  };
+
   util.str = function(x) {
     return util.isArray(x) ? "[" + x.map(util.str) + "]"
       : util.isObject(x) ? JSON.stringify(x)

@@ -4,7 +4,7 @@ define(function(require, module, exports) {
       util = require('../util/index'),
       parseMark = require('../parse/mark');
 
-  function axis(model) {
+  function axs(model) {
     var scale,
         orient = config.axis.orient,
         offset = 0,
@@ -127,7 +127,7 @@ define(function(require, module, exports) {
 
     axis.scale = function(x) {
       if (!arguments.length) return scale;
-      if (scale !== x) { scale = x; /* reset(); */ }
+      if (scale !== x) { scale = x; reset(); }
       return axis;
     };
 
@@ -459,7 +459,7 @@ define(function(require, module, exports) {
     return {
       type: "text",
       interactive: true,
-      // key: "data",
+      key: "data",
       properties: {
         enter: {
           fill: {value: config.axis.tickLabelColor},
@@ -509,5 +509,5 @@ define(function(require, module, exports) {
     };
   }
 
-  return axis;
+  return axs;
 });

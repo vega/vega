@@ -12,9 +12,9 @@ define(function(require, module, exports) {
     "right":  "right"
   };
 
-  function axes(spec, axes, group) {
+  function axes(model, spec, axes, group) {
     (spec || []).forEach(function(def, index) {
-      axes[index] = axes[index] || axs();
+      axes[index] = axes[index] || axs(model);
       axis(def, index, axes[index], group);
     });
   };
