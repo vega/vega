@@ -124,11 +124,9 @@ define(function(require, exports, module) {
 
         // Sort items according to how data is sorted, or by _id. The else 
         // condition is important to ensure lines and areas are drawn correctly.
-        if(fcs.sort) {
-          items.sort(function(a, b) { return fcs.sort(a.datum, b.datum); });
-        } else {
-          items.sort(function(a, b) { return a.datum._id - b.datum._id });
-        }
+        items.sort(function(a, b) { 
+          return fcs.sort ? fcs.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
+        });
       } else {
         if(util.isFunction(def.from)) {
           output.rem = items.splice(0);
