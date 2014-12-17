@@ -2,13 +2,15 @@ vg.svg.marks = (function() {
 
   function x(o)     { return o.x || 0; }
   function y(o)     { return o.y || 0; }
+  function xw(o)    { return o.x + o.width || 0; }
   function yh(o)    { return o.y + o.height || 0; }
   function key(o)   { return o.key; }
   function size(o)  { return o.size==null ? 100 : o.size; }
   function shape(o) { return o.shape || "circle"; }
       
   var arc_path    = d3.svg.arc(),
-      area_path   = d3.svg.area().x(x).y1(y).y0(yh),
+      area_path_v = d3.svg.area().x(x).y1(y).y0(yh),
+      area_path_h = d3.svg.area().y(y).x0(xw).x1(x),
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
@@ -67,11 +69,12 @@ vg.svg.marks = (function() {
   
   function area(items) {
     if (!items.length) return;
-    var o = items[0];
-    area_path
+    var o = items[0],
+        path = o.orient === "horizontal" ? area_path_h : area_path_v;
+    path
       .interpolate(o.interpolate || "linear")
       .tension(o.tension == null ? 0.7 : o.tension);
-    this.setAttribute("d", area_path(items));
+    this.setAttribute("d", path(items));
   }
   
   function line(items) {
@@ -234,7 +237,7 @@ vg.svg.marks = (function() {
     return p;
   }
 
-  function drawGroup(g, scene, index, prefix) {    
+  function drawGroup(g, scene, index, prefix) {
     var p = drawMark(g, scene, index, prefix || "group_", "g", group),
         c = p.node().childNodes, n = c.length, i, j, m;
     

@@ -35,7 +35,7 @@ vg.Model = (function() {
       if (data[k=keys[i]]) {
         x = data[k];
       } else if (deps[k]) {
-        x = vg_data_duplicate(data[deps[k]]);
+        x = vg_data_duplicate(this._data[deps[k]]);
         if (vg.isTree(data)) vg_make_tree(x);
       } else continue;
       this._data[k] = tx[k] ? tx[k](x, this._data, defs.marks) : x;

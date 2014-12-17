@@ -405,17 +405,30 @@ function vg_axisUpdate(item, group, trans) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  if (vg.isObject(offset)) {
-    offset = -group.scales[offset.scale](offset.value);
-  }
+    if (vg.isArray(offset)) {
+      var ofx = offset[0],
+          ofy = offset[1];
 
-  switch (orient) {
-    case "left":   { o.x = -offset; o.y = 0; break; }
-    case "right":  { o.x = width + offset; o.y = 0; break; }
-    case "bottom": { o.x = 0; o.y = height + offset; break; }
-    case "top":    { o.x = 0; o.y = -offset; break; }
-    default:       { o.x = 0; o.y = 0; }
-  }
+      switch (orient) {
+        case "left":   { o.x = -ofx; o.y = ofy; break; }
+        case "right":  { o.x = width + ofx; o.y = ofy; break; }
+        case "bottom": { o.x = ofx; o.y = height + ofy; break; }
+        case "top":    { o.x = ofx; o.y = -ofy; break; }
+        default:       { o.x = ofx; o.y = ofy; }
+      }
+    } else {
+      if (vg.isObject(offset)) {
+        offset = -group.scales[offset.scale](offset.value);
+      }
+
+      switch (orient) {
+        case "left":   { o.x = -offset; o.y = 0; break; }
+        case "right":  { o.x = width + offset; o.y = 0; break; }
+        case "bottom": { o.x = 0; o.y = height + offset; break; }
+        case "top":    { o.x = 0; o.y = -offset; break; }
+        default:       { o.x = 0; o.y = 0; }
+      }
+    }
 
   if (trans) trans.interpolate(item, o);
 }

@@ -34,7 +34,7 @@ vg.scene.legend = function() {
     if (!legendDef) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
         ? quantDef(scale)
-        : ordinalDef(scale);      
+        : ordinalDef(scale);
     }
     legendDef.orient = orient;
     legendDef.offset = offset;
