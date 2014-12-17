@@ -34,14 +34,23 @@ function vg_load_xhr(url, callback) {
 }
 
 function vg_url_check(url) {
-  if (!vg.config.domainWhiteList) return true;
+  // If vg.config.domainWhiteList is set, only allows url, whose hostname
+  // * Is the same as the origin (window.location.hostname)
+  // * Equals one of the values in the whitelist
+  // * Is a proper subdomain of one of the values in the whitelist
+  if (!vg.config.domainWhiteList)
+    return true;
+
   var a = document.createElement("a");
   a.href = url;
   var domain = a.hostname.toLowerCase();
-  return vg.config.domainWhiteList.some(function(d) {
-    return d === domain ||
-      domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
-  });
+
+  return window.location.hostname === domain ||
+    vg.config.domainWhiteList.some(function(d) {
+      var ind = domain.length - d.length;
+      return d === domain ||
+        (ind > 1 && domain[ind-1] === '.' && domain.lastIndexOf(d) === ind);
+    });
 }
 
 function vg_load_file(file, callback) {
