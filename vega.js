@@ -2272,7 +2272,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         if (value.id) {
           // ensure definition is included
           vg.svg._cur._defs.gradient[value.id] = value;
-          value = "url(#" + value.id + ")";
+          value = "url(" + window.location.href + "#" + value.id + ")";
         }
         this.style.setProperty(name, value+"", null);
       }
