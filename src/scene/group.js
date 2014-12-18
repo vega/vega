@@ -2,7 +2,7 @@ define(function(require, exports, module) {
   var scalefn = require('./scale'),
       parseAxes = require('../parse/axes'),
       util = require('../util/index'),
-      constants = require('../util/constants');
+      C = require('../util/constants');
 
   function lookupScale(name) {
     var group = this, scale = null;
@@ -36,8 +36,8 @@ define(function(require, exports, module) {
     node.disconnect = function() {
       util.keys(children).forEach(function(group_id) {
         children[group_id].forEach(function(c) {
-          if(c.type == constants.MARK) marksNode.removeListener(c.builder);
-          else if(c.type == constants.AXIS) axesNode.removeListener(c.builder);
+          if(c.type == C.MARK) marksNode.removeListener(c.builder);
+          else if(c.type == C.AXIS) axesNode.removeListener(c.builder);
           c.builder.disconnect();
         })
       });
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
           children[group._id].push({ 
             builder: b, 
             from: marks[i].from || inherit, 
-            type: constants.MARK 
+            type: C.MARK 
           });
         }
       });
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
       input.mod.forEach(function(group) {
         // Remove temporary connection for marks that draw from a source
         children[group._id].forEach(function(c) {
-          if(c.type == constants.MARK && model.data(c.from) !== undefined) {
+          if(c.type == C.MARK && model.data(c.from) !== undefined) {
             marksNode.removeListener(c.builder);
           }
         });
@@ -121,7 +121,7 @@ define(function(require, exports, module) {
           b = require('./build')(model, renderer, axisItems[i].axisDef, axisItems[i], builder);
           b._deps.scales.push(scale);
           axesNode.addListener(b);
-          children[group._id].push({ builder: b, type: constants.AXIS, scale: scale });
+          children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
         });
       };
 
@@ -133,7 +133,7 @@ define(function(require, exports, module) {
         // TODO: optimize this w/references for defs.
         for(i = children[group._id].length-1; i >= 0; i--) {
           c = children[group._id][i];
-          if(c.type != constants.AXIS) continue;
+          if(c.type != C.AXIS) continue;
           axesNode.removeListener(c.builder);
           c.builder.disconnect();
           children[group._id].splice(i, 1);

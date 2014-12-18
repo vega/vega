@@ -6,6 +6,7 @@ define(function(require, exports, module) {
       parseSignals = require('../parse/signals'),
       parsePredicates = require('../parse/predicates'),
       parseData = require('../parse/data'),
+      parseInteractors = require('../parse/interactors'),
       util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
@@ -19,15 +20,17 @@ define(function(require, exports, module) {
         viewport = spec.viewport || null,
         model = new Model();
 
-    model._defs = {
-      width: width,
-      height: height,
-      viewport: viewport,
-      padding: parsePadding(spec.padding),
-      signals: parseSignals(model, spec.signals),
-      predicates: parsePredicates(model, spec.predicates),
-      marks: parseMarks(model, spec, width, height),
-      data: parseData(model, spec.data, function() { callback(viewFactory(model)); })
-    };
+    parseInteractors(model, spec, function() {
+      model._defs = {
+        width: width,
+        height: height,
+        viewport: viewport,
+        padding: parsePadding(spec.padding),
+        signals: parseSignals(model, spec.signals),
+        predicates: parsePredicates(model, spec.predicates),
+        marks: parseMarks(model, spec, width, height),
+        data: parseData(model, spec.data, function() { callback(viewFactory(model)); })
+      };
+    });
   }
 });

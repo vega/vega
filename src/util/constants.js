@@ -2,9 +2,9 @@ define(function(require, module, exports) {
   return {
     GROUP: "group",
     
-    ENTER: 0,
-    UPDATE: 1,
-    EXIT: 2,
+    ENTER: "enter",
+    UPDATE: "update",
+    EXIT: "exit",
 
     DEFAULT_DATA: {"sentinel": 1},
 

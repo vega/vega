@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   var boundsCalc = require('../util/bounds'),
-      constants = require('../util/constants'),
+      C = require('../util/constants'),
       util = require('../util/index');
 
   return function bounds(model, mark) {
@@ -8,7 +8,7 @@ define(function(require, exports, module) {
       util.debug(input, ["bounds", mark.marktype]);
 
       boundsCalc.mark(mark);
-      if(mark.marktype === constants.GROUP) 
+      if(mark.marktype === C.GROUP) 
         boundsCalc.mark(mark, null, false);
 
       input.touch = true;

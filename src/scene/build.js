@@ -6,7 +6,7 @@ define(function(require, exports, module) {
       tuple = require('../core/tuple'),
       changeset = require('../core/changeset'),
       util = require('../util/index'),
-      constants = require('../util/constants');
+      C = require('../util/constants');
 
   // def is from the spec
   // mark is the scenegraph node to build out
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
       bounder = bounds(model, mark);
       builder.collector = collect(model);
 
-      if(def.type === constants.GROUP){ 
+      if(def.type === C.GROUP){ 
         builder.group = group(model, def, mark, builder, parent, renderer);
       }
 
@@ -131,7 +131,7 @@ define(function(require, exports, module) {
           output.rem = items.splice(0);
           def.from().forEach(function(d) { output.add.push(newItem(d, input.stamp)); });
         } else {
-          if(!items.length) output.add.push(newItem(constants.DEFAULT_DATA, input.stamp));
+          if(!items.length) output.add.push(newItem(C.DEFAULT_DATA, input.stamp));
           else if(!fullUpdate) output.mod.push(items[0]);
         }
       }

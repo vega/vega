@@ -15,7 +15,7 @@ filtered
 
 stream
   = t:(class / id)? e:eventType { return { event: e, target: t } }
-  / s:value { return { signal: s }}
+  / s:[:a-zA-z0-9_-]+ { return { signal: s.join("") }}
   / "(" m:merged ")" { return { stream: m }}
 
 class = "." c:value ":" { return { type:'class', value: c } }

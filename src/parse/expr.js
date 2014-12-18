@@ -38,7 +38,7 @@ define(function(require, exports, module) {
       
   function expr(model, x) {
     var tokens = x.split(lexer),
-        t, v, i, n, sq, dq, sg = {}, fd = {},
+        t, v, i, n, sq, dq, ns, sg = {}, fd = {},
         args = ["vg", "d", "e", "i"];
 
     for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
@@ -51,6 +51,16 @@ define(function(require, exports, module) {
       }
       if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
         tokens[i] = FUNCTION[t];
+      }
+      if(tokens[i+1] == ":") {  // Namespace signal
+        ns = t+":"+tokens[i+2];
+        if(model.signal((ns = util.field(ns))[0])) {
+          sg[ns[0]] = 1;
+          v = util.field(tokens[i+2]);
+          tokens[i] = "sg['"+tokens[i];
+          tokens[i+2] = tokens[i+2].replace(v[0], v[0]+"']");
+          i+=2;
+        }
       }
       if(model.signal((v = util.field(t))[0])) {
         sg[v[0]] = 1;

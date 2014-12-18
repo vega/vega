@@ -2,14 +2,14 @@ define(function(require, module, exports) {
   var d3 = require('d3'),
       config = require('../util/config'),
       util = require('../util/index'),
-      constants = require('../util/constants');
+      C = require('../util/constants');
 
-  var LINEAR = constants.LINEAR,
-      ORDINAL = constants.ORDINAL,
-      LOG = constants.LOG,
-      POWER = constants.POWER,
-      TIME = constants.TIME,
-      QUANTILE = constants.QUANTILE,
+  var LINEAR = C.LINEAR,
+      ORDINAL = C.ORDINAL,
+      LOG = C.LOG,
+      POWER = C.POWER,
+      TIME = C.TIME,
+      QUANTILE = C.QUANTILE,
       GROUP_PROPERTY = {width: 1, height: 1};
 
   function scale(model, def, group) {

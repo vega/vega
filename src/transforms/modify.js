@@ -1,12 +1,12 @@
 define(function(require, exports, module) {
   var tuple = require('../core/tuple'),
       util = require('../util/index'),
-      constants = require('../util/constants');
+      C = require('../util/constants');
 
-  var ADD = constants.MODIFY_ADD, 
-      REMOVE = constants.MODIFY_REMOVE, 
-      TOGGLE = constants.MODIFY_TOGGLE, 
-      CLEAR = constants.MODIFY_CLEAR;
+  var ADD = C.MODIFY_ADD, 
+      REMOVE = C.MODIFY_REMOVE, 
+      TOGGLE = C.MODIFY_TOGGLE, 
+      CLEAR = C.MODIFY_CLEAR;
 
   var filter = function(field, value, src, dest) {
     for(var i = src.length-1; i >= 0; --i) {
