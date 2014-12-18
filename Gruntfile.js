@@ -16,7 +16,7 @@ module.exports = function(grunt) {
           optimize: "none",
           paths: {
             d3: "../node_modules/d3/d3.min",
-            topojson: "../node_modules/vega/node_modules/topojson/topojson.min",
+            topojson: "../node_modules/topojson/topojson.min",
             "js-priority-queue": "../node_modules/js-priority-queue/priority-queue"
           },
           exclude: ["d3", "topojson"]
