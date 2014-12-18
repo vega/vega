@@ -72,8 +72,21 @@ vg.accessor = function(f) {
   var s;
   return (vg.isFunction(f) || f==null)
     ? f : vg.isString(f) && (s=vg.field(f)).length > 1
-    ? function(x) { return s.reduce(function(x,f) { return x[f]; }, x); }
+    ? function(x) { return s.reduce(function(x,f) {
+          return x[f];
+        }, x);
+      }
     : function(x) { return x[f]; };
+};
+
+vg.mutator = function(f) {
+  var s;
+  return vg.isString(f) && (s=vg.field(f)).length > 1
+    ? function(x, v) {
+        for (var i=0; i<s.length-1; ++i) x = x[s[i]];
+        x[s[i]] = v;
+      }
+    : function(x, v) { x[f] = v; };
 };
 
 vg.comparator = function(sort) {

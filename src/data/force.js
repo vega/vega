@@ -13,21 +13,21 @@ vg.data.force = function() {
         "alpha"
       ];
 
-  function force(data, db, group) {    
+  function force(data, db, group) {
     layout
       .size(vg.data.size(size, group))
       .nodes(data);
-      
+
     if (links && db[links]) {
       layout.links(db[links]);
     }
 
-    layout.start();      
+    layout.start();
     for (var i=0; i<iterations; ++i) {
       layout.tick();
     }
     layout.stop();
-    
+  
     return data;
   }
 
@@ -35,12 +35,12 @@ vg.data.force = function() {
     links = dataSetName;
     return force;
   };
-  
+
   force.size = function(sz) {
     size = sz;
     return force;
   };
-       
+
   force.linkDistance = function(field) {
     linkDistance = typeof field === 'number'
       ? field
@@ -56,7 +56,7 @@ vg.data.force = function() {
     layout.linkStrength(linkStrength);
     return force;
   };
-  
+
   force.charge = function(field) {
     charge = typeof field === 'number'
       ? field
@@ -64,7 +64,7 @@ vg.data.force = function() {
     layout.charge(charge);
     return force;
   };
-  
+
   force.iterations = function(iter) {
     iterations = iter;
     return force;

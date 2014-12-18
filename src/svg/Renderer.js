@@ -1,4 +1,4 @@
-vg.svg.Renderer = (function() {  
+vg.svg.Renderer = (function() {
   var renderer = function() {
     this._svg = null;
     this._ctx = null;

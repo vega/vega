@@ -28,7 +28,9 @@ vega.js: \
 	src/data/_package.js \
 	src/data/load.js \
 	src/data/read.js \
+	src/data/aggregate.js \
 	src/data/array.js \
+	src/data/bin.js \
 	src/data/copy.js \
 	src/data/cross.js \
 	src/data/facet.js \

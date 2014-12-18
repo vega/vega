@@ -153,8 +153,12 @@ suite.addBatch({
       },
       'duplicating functions': {
         topic: function (vg) {
-          vg.duplicate(function () {
-          });
+          try {
+            vg.duplicate(function () {
+            });
+          } catch (err) {
+            return err;
+          }
         },
         'should throw SyntaxError': function (topic) {
           assert.equal(topic.toString().substring(0, 11), 'SyntaxError');
@@ -162,9 +166,13 @@ suite.addBatch({
       },
       'duplicating objects with circular dependencies': {
         topic: function (vg) {
-          var o1 = {}, o2 = { 'o1': o1 };
-          o1['o2'] = o2;
-          vg.duplicate(o1);
+          try {
+            var o1 = {}, o2 = { 'o1': o1 };
+            o1['o2'] = o2;
+            vg.duplicate(o1);
+          } catch (err) {
+            return err;
+          }
         },
         'should throw TypeError': function (topic) {
           assert.equal(topic, 'TypeError: Converting circular structure to JSON');

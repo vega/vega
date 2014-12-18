@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.4.2", // semantic versioning
+    version:  "1.4.3", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -99,8 +99,21 @@ vg.accessor = function(f) {
   var s;
   return (vg.isFunction(f) || f==null)
     ? f : vg.isString(f) && (s=vg.field(f)).length > 1
-    ? function(x) { return s.reduce(function(x,f) { return x[f]; }, x); }
+    ? function(x) { return s.reduce(function(x,f) {
+          return x[f];
+        }, x);
+      }
     : function(x) { return x[f]; };
+};
+
+vg.mutator = function(f) {
+  var s;
+  return vg.isString(f) && (s=vg.field(f)).length > 1
+    ? function(x, v) {
+        for (var i=0; i<s.length-1; ++i) x = x[s[i]];
+        x[s[i]] = v;
+      }
+    : function(x, v) { x[f] = v; };
 };
 
 vg.comparator = function(sort) {
@@ -1227,10 +1240,20 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   
   function area(items) {
     var o = items[0];
-    var area = d3.svg.area()
-      .x(function(d) { return d.x; })
-      .y1(function(d) { return d.y; })
-      .y0(function(d) { return d.y + d.height; });
+    var area;
+    
+    if (o.orient === "horizontal") {
+      area = d3.svg.area()
+        .y(function(d) { return d.y; })
+        .x0(function(d) { return d.x; })
+        .x1(function(d) { return d.x + d.width; });
+    } else {
+      area = d3.svg.area()
+        .x(function(d) { return d.x; })
+        .y1(function(d) { return d.y; })
+        .y0(function(d) { return d.y + d.height; });
+    }
+
     if (o.interpolate) area.interpolate(o.interpolate);
     if (o.tension != null) area.tension(o.tension);
     return area(items);
@@ -1826,41 +1849,41 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
   };
 
-})();vg.canvas.Renderer = (function() {  
+})();vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
     this._imgload = 0;
   };
-  
+
   var prototype = renderer.prototype;
-  
+
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    
+  
     if (!el) return this; // early exit if no DOM element
 
     // select canvas element
     var canvas = d3.select(el)
       .selectAll("canvas.marks")
       .data([1]);
-    
+
     // create new canvas element if needed
     canvas.enter()
       .append("canvas")
       .attr("class", "marks");
-    
+
     // remove extraneous canvas if needed
     canvas.exit().remove();
-    
+
     return this.resize(width, height, pad);
   };
-  
+
   prototype.resize = function(width, height, pad) {
     this._width = width;
     this._height = height;
     this._padding = pad;
-    
+
     if (this._el) {
       var canvas = d3.select(this._el).select("canvas.marks");
 
@@ -1875,11 +1898,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
       this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     }
-    
+
     initializeLineDash(this._ctx);
     return this;
   };
-  
+
   function scaleCanvas(canvas, ctx) {
     // get canvas pixel data
     var devicePixelRatio = window.devicePixelRatio || 1,
@@ -1920,16 +1943,16 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       ctx.vgLineDashOffset = function(off) { /* unsupported */ };
     }
   }
-  
+
   prototype.context = function(ctx) {
     if (ctx) { this._ctx = ctx; return this; }
     else return this._ctx;
   };
-  
+
   prototype.element = function() {
     return this._el;
   };
-  
+
   prototype.pendingImages = function() {
     return this._imgload;
   };
@@ -1941,15 +1964,15 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
     return b;
   }
-    
+
   function getBounds(items) {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
         return b.union(translatedBounds(item, item.bounds))
                 .union(translatedBounds(item, item['bounds:prev']));
-      }, new vg.Bounds());  
+      }, new vg.Bounds());
   }
-  
+
   function setBounds(g, bounds) {
     var bbox = null;
     if (bounds) {
@@ -1960,7 +1983,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
     return bbox;
   }
-  
+
   prototype.render = function(scene, items) {
     var g = this._ctx,
         pad = this._padding,
@@ -1987,18 +2010,18 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         this.draw(g, scene, bb2);
       }
     }
-    
+
     // takedown
     g.restore();
     this._scene = null;
   };
-  
+
   prototype.draw = function(ctx, scene, bounds) {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
   };
-  
+
   prototype.renderAsync = function(scene) {
     // TODO make safe for multiple scene rendering?
     var renderer = this;
@@ -2010,7 +2033,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       delete renderer._async_id;
     }, 50);
   };
-  
+
   prototype.loadImage = function(uri) {
     var renderer = this,
         scene = renderer._scene,
@@ -2039,7 +2062,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
     return image;
   };
-  
+
   return renderer;
 })();vg.canvas.Handler = (function() {
   var handler = function(el, model) {
@@ -2198,13 +2221,15 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
   function x(o)     { return o.x || 0; }
   function y(o)     { return o.y || 0; }
+  function xw(o)    { return o.x + o.width || 0; }
   function yh(o)    { return o.y + o.height || 0; }
   function key(o)   { return o.key; }
   function size(o)  { return o.size==null ? 100 : o.size; }
   function shape(o) { return o.shape || "circle"; }
       
   var arc_path    = d3.svg.arc(),
-      area_path   = d3.svg.area().x(x).y1(y).y0(yh),
+      area_path_v = d3.svg.area().x(x).y1(y).y0(yh),
+      area_path_h = d3.svg.area().y(y).x0(xw).x1(x),
       line_path   = d3.svg.line().x(x).y(y),
       symbol_path = d3.svg.symbol().type(shape).size(size);
   
@@ -2247,7 +2272,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         if (value.id) {
           // ensure definition is included
           vg.svg._cur._defs.gradient[value.id] = value;
-          value = "url(#" + value.id + ")";
+          value = "url(" + window.location.href + "#" + value.id + ")";
         }
         this.style.setProperty(name, value+"", null);
       }
@@ -2263,11 +2288,12 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   
   function area(items) {
     if (!items.length) return;
-    var o = items[0];
-    area_path
+    var o = items[0],
+        path = o.orient === "horizontal" ? area_path_h : area_path_v;
+    path
       .interpolate(o.interpolate || "linear")
       .tension(o.tension == null ? 0.7 : o.tension);
-    this.setAttribute("d", area_path(items));
+    this.setAttribute("d", path(items));
   }
   
   function line(items) {
@@ -2430,7 +2456,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     return p;
   }
 
-  function drawGroup(g, scene, index, prefix) {    
+  function drawGroup(g, scene, index, prefix) {
     var p = drawMark(g, scene, index, prefix || "group_", "g", group),
         c = p.node().childNodes, n = c.length, i, j, m;
     
@@ -2493,7 +2519,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
   };
   
-})();vg.svg.Renderer = (function() {  
+})();vg.svg.Renderer = (function() {
   var renderer = function() {
     this._svg = null;
     this._ctx = null;
@@ -2818,14 +2844,23 @@ function vg_load_xhr(url, callback) {
 }
 
 function vg_url_check(url) {
-  if (!vg.config.domainWhiteList) return true;
+  // If vg.config.domainWhiteList is set, only allows url, whose hostname
+  // * Is the same as the origin (window.location.hostname)
+  // * Equals one of the values in the whitelist
+  // * Is a proper subdomain of one of the values in the whitelist
+  if (!vg.config.domainWhiteList)
+    return true;
+
   var a = document.createElement("a");
   a.href = url;
   var domain = a.hostname.toLowerCase();
-  return vg.config.domainWhiteList.some(function(d) {
-    return d === domain ||
-      domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
-  });
+
+  return window.location.hostname === domain ||
+    vg.config.domainWhiteList.some(function(d) {
+      var ind = domain.length - d.length;
+      return d === domain ||
+        (ind > 1 && domain[ind-1] === '.' && domain.lastIndexOf(d) === ind);
+    });
 }
 
 function vg_load_file(file, callback) {
@@ -2926,7 +2961,101 @@ function vg_load_http(url, callback) {
   read.formats = formats;
   read.parse = parseValues;
   return read;
-})();vg.data.array = function() {
+})();vg.data.aggregate = function() {
+  var groupby = [],
+      fields = [],
+      gaccess,
+      faccess;
+
+  var OPS = {
+    "count": function() {},
+		"sum": function(c, s, x) { return s + x; },
+		"avg": function(c, s, x) { return s + (x-s)/c.count; },
+		"min": function(c, s, x) { return x < s ? x : s; },
+		"max": function(c, s, x) { return x > s ? x : s; }
+	};
+	OPS.min.init = function() { return +Infinity; }
+	OPS.max.init = function() { return -Infinity; }
+
+	function fkey(x) {
+		return x.op + "_" + x.field;
+	}
+
+	var cells = {};
+
+  function cell(x) {
+    // consider other key constructions...
+    var k = gaccess.reduce(function(v,f) {
+      return (v.push(f(x)), v);
+    }, []).join("|");
+    return cells[k] || (cells[k] = new_cell(x));
+  }
+
+  function new_cell(x) {
+    var o = {};
+    // dimensions
+    for (var i=0, f; i<groupby.length; ++i) {
+      o[groupby[i]] = gaccess[i](x);
+    }
+    // measures
+    o.count = 0;
+		for (i=0; i<fields.length; ++i) {
+		  if (fields[i].op === "count") continue;
+		  var op = OPS[fields[i].op];
+			o[fkey(fields[i])] = op.init ? op.init() : 0;
+		}
+    return o;
+  }
+
+  function aggregate(input) {
+    var output = [], k;
+		var keys = fields.map(fkey);
+		var ops = fields.map(function(x) { return OPS[x.op]; });
+
+    // compute aggregates
+    input.forEach(function(x) {
+      var c = cell(x);
+
+			// compute aggregates...
+      c.count += 1;
+			for (var i=0; i<fields.length; ++i) {
+				c[keys[i]] = ops[i](c, c[keys[i]], faccess[i](x));
+			}
+    });
+    // collect output tuples
+    var index = 0;
+    for (k in cells) {
+      output.push({index:index++, data:cells[k]});
+    }
+    cells = {}; // clear internal state
+    return output;
+  };
+
+  aggregate.fields = function(f) {
+    fields = vg.array(f);
+    faccess = fields.map(function(x,i) {
+      var xf = x.field;
+      if (xf.indexOf("data.") === 0) {
+        fields[i] = {op:x.op, field:xf.slice(5)};
+      }
+      return vg.accessor(xf);
+    });
+    return aggregate;
+  };
+
+  aggregate.groupby = function(f) {
+    groupby = vg.array(f);
+    gaccess = groupby.map(function(x,i) {
+      if (x.indexOf("data.") === 0) {
+        groupby[i] = x.slice(5);
+      }
+      return vg.accessor(x);
+    });
+    return aggregate;
+  };
+
+  return aggregate;
+};vg.data.array = function() {
   var fields = [];
    
   function array(data) {
@@ -2945,6 +3074,146 @@ function vg_load_http(url, callback) {
   };
   
   return array;
+};vg.data.bin = function() {
+
+  var field,
+      accessor,
+      setter,
+      min = undefined,
+      max = undefined,
+      step = undefined,
+      maxbins = 20,
+      output = "bin";
+
+  function compare(a, b) {
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  }
+
+  function bisectLeft(a, x, lo, hi) {
+    if (arguments.length < 3) { lo = 0; }
+    if (arguments.length < 4) { hi = a.length; }
+    while (lo < hi) {
+      var mid = lo + hi >>> 1;
+      if (compare(a[mid], x) < 0) { lo = mid + 1; }
+      else { hi = mid; }
+    }
+    return lo;
+  }
+
+  function bins(opt) {
+    opt = opt || {};
+
+    // determine range
+    var maxb = opt.maxbins || 1024,
+        base = opt.base || 10,
+        div = opt.div || [5, 2],
+        mins = opt.minstep || 0,
+        logb = Math.log(base),
+        level = Math.ceil(Math.log(maxb) / logb),
+        min = opt.min,
+        max = opt.max,
+        span = max - min,
+        step = Math.max(mins, Math.pow(base, Math.round(Math.log(span) / logb) - level)),
+        nbins = Math.ceil(span / step),
+        precision, v, i, eps;
+
+    if (opt.step != null) {
+      step = opt.step;
+    } else if (opt.steps) {
+      // if provided, limit choice to acceptable step sizes
+      step = opt.steps[Math.min(
+          opt.steps.length - 1,
+          bisectLeft(opt.steps, span / maxb)
+      )];
+    } else {
+      // increase step size if too many bins
+      do {
+        step *= base;
+        nbins = Math.ceil(span / step);
+      } while (nbins > maxb);
+
+      // decrease step size if allowed
+      for (i = 0; i < div.length; ++i) {
+        v = step / div[i];
+        if (v >= mins && span / v <= maxb) {
+          step = v;
+          nbins = Math.ceil(span / step);
+        }
+      }
+    }
+
+    // update precision, min and max
+    v = Math.log(step);
+    precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
+    eps = Math.pow(base, -precision - 1);
+
+    // outer Math.min to remove some rounding errors:
+    min = Math.min(min, Math.floor(min / step + eps) * step);
+    max = Math.ceil(max / step) * step;
+
+    return {
+      start: min,
+      stop: max,
+      step: step,
+      unit: precision
+    };
+  }
+
+  function bin(input) {
+    var opt = {
+      min: min != null ? min : +Infinity,
+      max: max != null ? max : -Infinity,
+      step: step != null ? step : null,
+      maxbins: maxbins
+    };
+    if (min == null || max == null) {
+      input.forEach(function(d) {
+        var v = accessor(d);
+        if (min == null && v > opt.max) opt.max = v;
+        if (max == null && v < opt.min) opt.min = v;
+      });
+    }
+    var b = bins(opt);
+    input.forEach(function(d) {
+      var v = accessor(d);
+      setter(d, b.start + b.step * ~~((v - b.start) / b.step));
+    });
+    return input;
+  }
+
+  bin.min = function(x) {
+    min = x;
+    return bin;
+  };
+
+  bin.max = function(x) {
+    max = x;
+    return bin;
+  };
+
+  bin.step = function(x) {
+    step = x;
+    return bin;
+  };
+
+  bin.maxbins = function(x) {
+    maxbins = x;
+    return bin;
+  };
+
+  bin.field = function(f) {
+    field = f;
+    accessor = vg.accessor(f);
+    return bin;
+  };
+
+  bin.output = function(f) {
+    output = f;
+    setter = vg.mutator(f);
+    return bin;
+  };
+
+  return bin;
 };vg.data.copy = function() {
   var from = vg.accessor("data"),
       fields = [],
@@ -3022,13 +3291,13 @@ vg.data.facet = function() {
   var keys = [],
       sort = null;
 
-  function facet(data) {    
+  function facet(data) {
     var result = {
           key: "",
           keys: [],
           values: []
         },
-        map = {}, 
+        map = {},
         vals = result.values,
         obj, klist, kstr, len, i, j, k, kv, cmp;
 
@@ -3068,12 +3337,12 @@ vg.data.facet = function() {
 
     return result;
   }
-  
+
   facet.keys = function(k) {
     keys = vg.array(k).map(vg.accessor);
     return facet;
   };
-  
+
   facet.sort = function(s) {
     sort = vg.data.sort().by(s);
     return facet;
@@ -3171,21 +3440,21 @@ vg.data.facet = function() {
         "alpha"
       ];
 
-  function force(data, db, group) {    
+  function force(data, db, group) {
     layout
       .size(vg.data.size(size, group))
       .nodes(data);
-      
+
     if (links && db[links]) {
       layout.links(db[links]);
     }
 
-    layout.start();      
+    layout.start();
     for (var i=0; i<iterations; ++i) {
       layout.tick();
     }
     layout.stop();
-    
+  
     return data;
   }
 
@@ -3193,12 +3462,12 @@ vg.data.facet = function() {
     links = dataSetName;
     return force;
   };
-  
+
   force.size = function(sz) {
     size = sz;
     return force;
   };
-       
+
   force.linkDistance = function(field) {
     linkDistance = typeof field === 'number'
       ? field
@@ -3214,7 +3483,7 @@ vg.data.facet = function() {
     layout.linkStrength(linkStrength);
     return force;
   };
-  
+
   force.charge = function(field) {
     charge = typeof field === 'number'
       ? field
@@ -3222,7 +3491,7 @@ vg.data.facet = function() {
     layout.charge(charge);
     return force;
   };
-  
+
   force.iterations = function(iter) {
     iterations = iter;
     return force;
@@ -4449,6 +4718,13 @@ vg.parse.properties = (function() {
         code += "\n  o.x = o.x2;"
       }
     }
+    if (vars.xc) {
+      if (vars.width) {
+        code += "\n  o.x = (o.xc - o.width/2);";
+      } else {
+        code += "\n  o.x = o.xc;"
+      }
+    }
 
     if (vars.y2) {
       if (vars.y) {
@@ -4459,6 +4735,13 @@ vg.parse.properties = (function() {
         code += "\n  o.y = (o.y2 - o.height);";
       } else {
         code += "\n  o.y = o.y2;"
+      }
+    }
+    if (vars.yc) {
+      if (vars.height) {
+        code += "\n  o.y = (o.yc - o.height/2);";
+      } else {
+        code += "\n  o.y = o.yc;"
       }
     }
     
@@ -4598,30 +4881,42 @@ vg.parse.properties = (function() {
   }
 
   function ordinal(def, scale, rng, db, data) {
-    var domain, sort, str, refs, dataDrivenRange = false;
-    
+    var dataDrivenRange = false,
+        pad = def.padding || 0,
+        outer = def.outerPadding || 0,
+        domain, sort, str, refs;
+
     // range pre-processing for data-driven ranges
     if (vg.isObject(def.range) && !vg.isArray(def.range)) {
       dataDrivenRange = true;
       refs = def.range.fields || vg.array(def.range);
       rng = extract(refs, db, data);
     }
-    
+
     // domain
     sort = def.sort && !dataDrivenRange;
     domain = domainValues(def, db, data, sort);
     if (domain) scale.domain(domain);
+
+    // width-defined range
+    if (def.bandWidth) {
+      var bw = def.bandWidth,
+          len = domain.length,
+          start = rng[0] || 0,
+          space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
+      rng = [start, start + (bw * len + space)];
+    }
 
     // range
     str = typeof rng[0] === 'string';
     if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
       scale.range(rng); // color or shape values
     } else if (def.points) {
-      scale.rangePoints(rng, def.padding||0);
+      scale.rangePoints(rng, pad);
     } else if (def.round || def.round===undefined) {
-      scale.rangeRoundBands(rng, def.padding||0);
+      scale.rangeRoundBands(rng, pad, outer);
     } else {
-      scale.rangeBands(rng, def.padding||0);
+      scale.rangeBands(rng, pad, outer);
     }
   }
 
@@ -5945,17 +6240,30 @@ function vg_axisUpdate(item, group, trans) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  if (vg.isObject(offset)) {
-    offset = -group.scales[offset.scale](offset.value);
-  }
+    if (vg.isArray(offset)) {
+      var ofx = offset[0],
+          ofy = offset[1];
 
-  switch (orient) {
-    case "left":   { o.x = -offset; o.y = 0; break; }
-    case "right":  { o.x = width + offset; o.y = 0; break; }
-    case "bottom": { o.x = 0; o.y = height + offset; break; }
-    case "top":    { o.x = 0; o.y = -offset; break; }
-    default:       { o.x = 0; o.y = 0; }
-  }
+      switch (orient) {
+        case "left":   { o.x = -ofx; o.y = ofy; break; }
+        case "right":  { o.x = width + ofx; o.y = ofy; break; }
+        case "bottom": { o.x = ofx; o.y = height + ofy; break; }
+        case "top":    { o.x = ofx; o.y = -ofy; break; }
+        default:       { o.x = ofx; o.y = ofy; }
+      }
+    } else {
+      if (vg.isObject(offset)) {
+        offset = -group.scales[offset.scale](offset.value);
+      }
+
+      switch (orient) {
+        case "left":   { o.x = -offset; o.y = 0; break; }
+        case "right":  { o.x = width + offset; o.y = 0; break; }
+        case "bottom": { o.x = 0; o.y = height + offset; break; }
+        case "top":    { o.x = 0; o.y = -offset; break; }
+        default:       { o.x = 0; o.y = 0; }
+      }
+    }
 
   if (trans) trans.interpolate(item, o);
 }
@@ -6066,7 +6374,7 @@ vg.scene.legend = function() {
     if (!legendDef) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
         ? quantDef(scale)
-        : ordinalDef(scale);      
+        : ordinalDef(scale);
     }
     legendDef.orient = orient;
     legendDef.offset = offset;
@@ -6579,7 +6887,7 @@ function vg_hLegendLabels() {
       if (data[k=keys[i]]) {
         x = data[k];
       } else if (deps[k]) {
-        x = vg_data_duplicate(data[deps[k]]);
+        x = vg_data_duplicate(this._data[deps[k]]);
         if (vg.isTree(data)) vg_make_tree(x);
       } else continue;
       this._data[k] = tx[k] ? tx[k](x, this._data, defs.marks) : x;

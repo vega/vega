@@ -3,13 +3,13 @@ vg.data.facet = function() {
   var keys = [],
       sort = null;
 
-  function facet(data) {    
+  function facet(data) {
     var result = {
           key: "",
           keys: [],
           values: []
         },
-        map = {}, 
+        map = {},
         vals = result.values,
         obj, klist, kstr, len, i, j, k, kv, cmp;
 
@@ -49,12 +49,12 @@ vg.data.facet = function() {
 
     return result;
   }
-  
+
   facet.keys = function(k) {
     keys = vg.array(k).map(vg.accessor);
     return facet;
   };
-  
+
   facet.sort = function(s) {
     sort = vg.data.sort().by(s);
     return facet;

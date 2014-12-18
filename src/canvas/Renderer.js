@@ -1,38 +1,38 @@
-vg.canvas.Renderer = (function() {  
+vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
     this._imgload = 0;
   };
-  
+
   var prototype = renderer.prototype;
-  
+
   prototype.initialize = function(el, width, height, pad) {
     this._el = el;
-    
+  
     if (!el) return this; // early exit if no DOM element
 
     // select canvas element
     var canvas = d3.select(el)
       .selectAll("canvas.marks")
       .data([1]);
-    
+
     // create new canvas element if needed
     canvas.enter()
       .append("canvas")
       .attr("class", "marks");
-    
+
     // remove extraneous canvas if needed
     canvas.exit().remove();
-    
+
     return this.resize(width, height, pad);
   };
-  
+
   prototype.resize = function(width, height, pad) {
     this._width = width;
     this._height = height;
     this._padding = pad;
-    
+
     if (this._el) {
       var canvas = d3.select(this._el).select("canvas.marks");
 
@@ -47,11 +47,11 @@ vg.canvas.Renderer = (function() {
       this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
       this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
     }
-    
+
     initializeLineDash(this._ctx);
     return this;
   };
-  
+
   function scaleCanvas(canvas, ctx) {
     // get canvas pixel data
     var devicePixelRatio = window.devicePixelRatio || 1,
@@ -92,16 +92,16 @@ vg.canvas.Renderer = (function() {
       ctx.vgLineDashOffset = function(off) { /* unsupported */ };
     }
   }
-  
+
   prototype.context = function(ctx) {
     if (ctx) { this._ctx = ctx; return this; }
     else return this._ctx;
   };
-  
+
   prototype.element = function() {
     return this._el;
   };
-  
+
   prototype.pendingImages = function() {
     return this._imgload;
   };
@@ -113,15 +113,15 @@ vg.canvas.Renderer = (function() {
     }
     return b;
   }
-    
+
   function getBounds(items) {
     return !items ? null :
       vg.array(items).reduce(function(b, item) {
         return b.union(translatedBounds(item, item.bounds))
                 .union(translatedBounds(item, item['bounds:prev']));
-      }, new vg.Bounds());  
+      }, new vg.Bounds());
   }
-  
+
   function setBounds(g, bounds) {
     var bbox = null;
     if (bounds) {
@@ -132,7 +132,7 @@ vg.canvas.Renderer = (function() {
     }
     return bbox;
   }
-  
+
   prototype.render = function(scene, items) {
     var g = this._ctx,
         pad = this._padding,
@@ -159,18 +159,18 @@ vg.canvas.Renderer = (function() {
         this.draw(g, scene, bb2);
       }
     }
-    
+
     // takedown
     g.restore();
     this._scene = null;
   };
-  
+
   prototype.draw = function(ctx, scene, bounds) {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
   };
-  
+
   prototype.renderAsync = function(scene) {
     // TODO make safe for multiple scene rendering?
     var renderer = this;
@@ -182,7 +182,7 @@ vg.canvas.Renderer = (function() {
       delete renderer._async_id;
     }, 50);
   };
-  
+
   prototype.loadImage = function(uri) {
     var renderer = this,
         scene = renderer._scene,
@@ -211,6 +211,6 @@ vg.canvas.Renderer = (function() {
 
     return image;
   };
-  
+
   return renderer;
 })();
