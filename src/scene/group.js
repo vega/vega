@@ -14,12 +14,12 @@ define(function(require, exports, module) {
     return scale;
   };
 
-  return function group(model, def, mark, builder, renderer) {
+  return function group(model, def, mark, builder, parent, renderer) {
     var children = {},
         node = new model.Node(buildGroup),
         marksNode, axesNode;
 
-    node.parent = builder.parent;
+    node.parent = parent;
     node.scales = {};
     node.scale  = lookupScale.bind(node);
     (def.scales||[]).forEach(function(s) { 

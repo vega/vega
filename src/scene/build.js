@@ -16,7 +16,7 @@ define(function(require, exports, module) {
         f = def.from || inheritFrom,
         from = util.isString(f) ? model.data(f) : null,
         lastBuild = 0,
-        builder;
+        builder, encoder, bounder;
 
     function init() {
       mark.def = def;
@@ -29,19 +29,17 @@ define(function(require, exports, module) {
       builder._router = true;
       builder._touchable = true;
 
-      builder.def = def;
-      builder.encoder = encode(model, mark);
+      encoder = encode(model, mark);
+      bounder = bounds(model, mark);
       builder.collector = collect(model);
-      builder.bounder = bounds(model, mark);
-      builder.parent = parent;
 
       if(def.type === constants.GROUP){ 
-        builder.group = group(model, def, mark, builder, renderer);
+        builder.group = group(model, def, mark, builder, parent, renderer);
       }
 
       if(from) {
         builder._deps.data.push(f);
-        builder.encoder._deps.data.push(f);
+        encoder._deps.data.push(f);
       }
 
       connect();
@@ -51,23 +49,23 @@ define(function(require, exports, module) {
     };
 
     function pipeline() {
-      var pipeline = [builder, builder.encoder];
+      var pipeline = [builder, encoder];
       if(builder.group) pipeline.push(builder.group);
-      pipeline.push(builder.collector, builder.bounder, renderer);
+      pipeline.push(builder.collector, bounder, renderer);
       return pipeline;
     };
 
     function connect() {
       model.graph.connect(pipeline());
-      builder.encoder._deps.scales.forEach(function(s) {
+      encoder._deps.scales.forEach(function(s) {
         parent.group.scale(s).addListener(builder);
       });
-      if(parent) builder.bounder.addListener(parent.collector);
+      if(parent) bounder.addListener(parent.collector);
     };
 
     function disconnect() {
       model.graph.disconnect(pipeline());
-      builder.encoder._deps.scales.forEach(function(s) {
+      encoder._deps.scales.forEach(function(s) {
         parent.group.scale(s).removeListener(builder);
       });
       if(builder.group) builder.group.disconnect();
@@ -95,7 +93,7 @@ define(function(require, exports, module) {
       util.debug(input, ["building", f, def.type]);
 
       var output = changeset.create(input),
-          fullUpdate = builder.encoder.reevaluate(input),
+          fullUpdate = encoder.reevaluate(input),
           fcs;
 
       // If a scale or signal in the update propset has been updated, 
