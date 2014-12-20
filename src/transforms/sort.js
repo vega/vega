@@ -3,12 +3,12 @@ define(function(require, exports, module) {
       expr = require('../parse/expr');
 
   return function sort(model) {
-    var fn = null, isExpr = false;
+    var by = null;
 
     function comparator() {
-      if(!isExpr) return fn; 
-      var by = expr.eval(model, fn, null, null, null, null, node._deps.signals);
-      return util.comparator(by);
+      return util.comparator(by.map(function(b) {
+        return model.signal(b) ? model.signal(b).value() : b;
+      }));
     };
 
     var node = new model.Node(function(input) {
@@ -21,16 +21,8 @@ define(function(require, exports, module) {
     });
     node._router = true;
 
-    node.by = function(s) {
-      if(util.isFunction(s)) f = s;
-      else {
-        s = expr(model, s);
-        fn = s.fn;
-        isExpr = true;
-        node._deps.signals = s.signals;
-        node._deps.fields  = s.fields;
-      }
-
+    node.by = function(b) {
+      by = util.array(b);
       return node;
     };
 
