@@ -4,6 +4,40 @@
 
   "signals": [
     {
+      "name": "dragStart",
+      "init": {"x":0, "y":0},
+      "streams":[
+        {
+          "type": ".draggable:mousedown",
+          "expr": "{x:p.x-i.x, y:p.y-i.y}"
+        }
+      ]
+    },
+    {
+      "name": "drag",
+      "init": {"x":10, "y":10},
+      "streams": [
+        {
+          "type": "[.draggable:mousedown,mouseup]>mousemove",
+          "expr": "({x:p.x-dragStart.x, y:p.y-dragStart.y})"
+        }
+      ]
+    },
+    {
+      "name": "dragOverPoint",
+      "init": {"x":0, "y": 0},
+      "streams": [
+        {
+          "type": "[.draggable:mousedown,mouseup]>.point:mouseover",
+          "expr": "i"
+        },
+        {
+          "type": "mouseup",
+          "expr": "({x:0,y:0})"
+        }
+      ]
+    },
+    {
       "name": "handleDragStart",
       "init": {"x":0, "y":0},
       "streams":[{
@@ -82,6 +116,23 @@
   ],
 
   "marks": [
+    { "type": "rect",
+      "from": {"data":"dummy"},
+      "properties": {
+        "enter": {
+          "class": {"value": "draggable"},
+          "width": {"value": 50},
+          "height": {"value": 15},
+          "x": {"value": 10},
+          "y": {"value": 10},
+          "fill": {"value": "red"}
+        },
+        "update": {
+          "x": {"signal": "drag.x"},
+          "y": {"signal": "drag.y"}
+        }
+      }
+    },
     {
       "type": "rect",
       "from": {"data": "iris"},
@@ -127,6 +178,40 @@
         "update": {
           "x": {"signal": "handleBottomRight.x"},
           "y": {"signal": "handleBottomRight.y"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data":"dummy"},
+      "properties": {
+        "enter": {
+          "height": {"value":5},
+          "x": {"value":0},
+          "fill": {"value": "blue"},
+          "fillOpacity": {"value": 0.5}
+        },
+        "update": {
+          "x": {"value": 0},
+          "x2": {"signal": "dragOverPoint.x"},
+          "y": {"signal": "dragOverPoint.y"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data":"dummy"},
+      "properties": {
+        "enter": {
+          "width": {"value":5},
+          "y": {"value":0},
+          "fill": {"value": "blue"},
+          "fillOpacity": {"value": 0.5}
+        },
+        "update": {
+          "y": {"value": 0},
+          "y2": {"signal": "dragOverPoint.y"},
+          "x": {"signal": "dragOverPoint.x"}
         }
       }
     }
