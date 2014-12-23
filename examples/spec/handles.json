@@ -1,0 +1,134 @@
+{
+  "width": 500,
+  "height": 500,
+
+  "signals": [
+    {
+      "name": "handleDragStart",
+      "init": {"x":0, "y":0},
+      "streams":[{
+        "type":".handleBR:mousedown",
+        "expr":"({x:i.x-handleDrag.width, y:i.y-handleDrag.height})"
+      }]
+    },
+    {
+      "name": "handleDrag",
+      "init": {"width":10, "height":10},
+      "streams":[{
+        "type":"[.handleBR:mousedown,mouseup]>mousemove",
+        "expr": "({width:p.x-handleDragStart.x, height:p.y-handleDragStart.y})"
+      }]
+    },
+    {
+      "name":"handleTopLeft",
+      "init": {},
+      "streams":[{"type":".point:click", "expr":"i"}]
+    },
+    {
+      "name": "handleBottomRight",
+      "init": {},
+      "streams":[
+        {
+          "type":".point:click",
+          "expr":"({x:i.x+handleDrag.width,y:i.y+handleDrag.height})"},
+        {
+          "type": "[.handleBR:mousedown,mouseup]>mousemove",
+          "expr": "p"
+        }
+      ]
+    }
+  ],
+
+  "predicates": [
+    {"name": "clear",
+     "type": "==",
+     "operands":[{"value":true}, {"value":true}]
+  }],
+
+  "data": [
+    {
+      "name": "iris",
+      "url": "data/iris.json"
+    },
+    {
+      "name": "dummy",
+      "values":[0]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "range": "width", "zero": false,
+      "domain": {"data": "iris", "field": "sepalWidth"}
+    },
+    {
+      "name": "y",
+      "range": "height",
+      "nice": true, "zero": false,
+      "domain": {"data": "iris", "field": "petalLength"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "iris", "field": "species"},
+      "range": ["#800", "#080", "#008"]
+    }
+  ],
+
+  "axes": [
+    {"type": "x", "scale": "x", "offset": 5, "ticks": 5, "title": "Sepal Width"},
+    {"type": "y", "scale": "y", "offset": 5, "ticks": 5, "title": "Petal Length"}
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "iris"},
+      "properties": {
+        "enter": {
+          "class": {"value":"point"},
+          "x": {"scale": "x", "field": "sepalWidth"},
+          "y": {"scale": "y", "field": "petalLength"},
+          "fillOpacity": {"value": 0.5},
+          "size": {"value": 100},
+          "fill": {"value": "#777"}
+        },
+        "update": {
+          "width": {"signal":"handleDrag.width"},
+          "height": {"signal":"handleDrag.height"}
+        }
+      }
+    },
+    {"type": "symbol",
+      "from": {"data": "dummy"},
+      "properties": {
+        "enter": {
+          "class": {"value": "handle"},
+          "size": {"value": 40},
+          "fill": {"value": "grey"},
+          "fillOpacity": {"value": 1}
+        },
+        "update": {
+          "x": {"signal": "handleTopLeft.x"},
+          "y": {"signal": "handleTopLeft.y"}
+        }
+      }
+    },
+    {"type": "symbol",
+      "from": {"data": "dummy"},
+      "properties": {
+        "enter": {
+          "class": {"value": "handleBR"},
+          "size": {"value": 40},
+          "fill": {"value": "red"},
+          "fillOpacity": {"value": 1}
+        },
+        "update": {
+          "x": {"signal": "handleBottomRight.x"},
+          "y": {"signal": "handleBottomRight.y"}
+        }
+      }
+    }
+  ]
+}
