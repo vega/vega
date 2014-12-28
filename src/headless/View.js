@@ -3,7 +3,7 @@ vg.headless.View = (function() {
   var view = function(width, height, pad, type, vp) {
     this._canvas = null;
     this._type = type;
-    this._el = "body";
+    this._el = d3.select("body").node();
     this._build = false;
     this._model = new vg.Model();
     this._width = this.__width = width || 500;
@@ -197,11 +197,14 @@ vg.headless.View = (function() {
   
   prototype.initSVG = function(w, h, pad) {
     var tw = w + pad.left + pad.right,
-        th = h + pad.top + pad.bottom;
+        th = h + pad.top + pad.bottom,
+        nwmatcher = this._el._ownerDocument._nwmatcher;
+
+    nwmatcher.configure({SIMPLENOT: true}); //empties nwmatcher cache, see #221
 
     // configure renderer
     this._renderer.initialize(this._el, w, h, pad);
-  }
+  };
   
   prototype.render = function(items) {
     this._renderer.render(this._model.scene(), items);
