@@ -24,7 +24,7 @@ define(function(require, exports, module) {
         return spec.invert ? scale.invert(value) : scale(value);
       };
 
-      return model;
+      return tree;
     };    
 
     return scene;

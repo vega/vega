@@ -4461,7 +4461,7 @@ define('scene/index',['require','exports','module','../core/changeset','./build'
         return spec.invert ? scale.invert(value) : scale(value);
       };
 
-      return model;
+      return tree;
     };    
 
     return scene;
@@ -7691,11 +7691,7 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
     var cs = changeset.create({});
     if(trans) cs.trans = trans;
 
-    if(v._build) {
-      v._model.fire(cs);
-    } else {
-      // Build the entire scene, and pulse the entire model
-      // (Datasources + scene).
+    if(!v._build) {
       v._renderNode = new v._model.Node(function(input) {
         util.debug(input, ["rendering"]);
 
@@ -7710,9 +7706,12 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
       v._renderNode._router = true;
       v._renderNode._type = 'renderer';
 
-      v._model.scene(v._renderNode).fire(cs);
+      v._model.scene(v._renderNode);
       v._build = true;
     }
+
+    // Pulse the entire model (Datasources + scene).
+    v._model.fire(cs);
 
     return v.autopad(opt);
   };
