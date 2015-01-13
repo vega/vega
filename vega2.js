@@ -4432,6 +4432,7 @@ define('scene/build',['require','exports','module','./encode','../core/collector
         if(fcs.stamp <= lastBuild) return output;
 
         data = from.values();
+        lastBuild = fcs.stamp;
       } else {
         data = util.isFunction(def.from) ? def.from() : [C.DEFAULT_DATA];
       }

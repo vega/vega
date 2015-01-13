@@ -100,6 +100,7 @@ define(function(require, exports, module) {
         if(fcs.stamp <= lastBuild) return output;
 
         data = from.values();
+        lastBuild = fcs.stamp;
       } else {
         data = util.isFunction(def.from) ? def.from() : [C.DEFAULT_DATA];
       }
