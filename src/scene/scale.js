@@ -35,6 +35,7 @@ define(function(require, exports, module) {
       reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
       reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
 
+      input.scales[def.name] = 1;
       return reeval;
     }
 
@@ -64,9 +65,7 @@ define(function(require, exports, module) {
       // Scales are at the end of an encoding pipeline, so they should forward a
       // touch pulse. Thus, if multiple scales update in the parent group, we don't
       // reevaluate child marks multiple times. 
-      var output = changeset.create(input, true);
-      output.scales[def.name] = 1;
-      return output;
+      return changeset.create(input, true);
     });
 
     if(domain.data) node._deps.data.push(domain.data);

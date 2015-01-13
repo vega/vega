@@ -74,9 +74,9 @@ define(function(require, exports, module) {
 
     function parseLogical(spec) {
       var ops = parseOperands(spec.operands),
-          o = [], i = 0;
+          o = [], i = 0, len = spec.operands.length;
 
-      while(o.push("o"+i++)<spec.operands.length);
+      while(o.push("o"+i++)<len);
       if(spec.type == 'and') spec.type = '&&';
       else if(spec.type == 'or') spec.type = '||';
 

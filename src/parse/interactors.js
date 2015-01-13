@@ -34,10 +34,10 @@ define(function(require, exports, module) {
     }
 
     function injectMarks(marks) {
-      var m, i, r;
+      var m, r, i, len;
       marks = util.array(marks);
 
-      for(i = 0; i < marks.length; i++) {
+      for(i = 0, len = marks.length; i < len; i++) {
         m = marks[i];
         if(r = mk[m.type]) {
           marks[i] = util.duplicate(r);

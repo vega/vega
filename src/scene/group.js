@@ -67,9 +67,9 @@ define(function(require, exports, module) {
 
       input.add.forEach(function(group) {
         var marks = def.marks,
-            inherit, i, m, b;
+            inherit, i, len, m, b;
 
-        for(i = 0; i < marks.length; i++) {
+        for(i = 0, len = marks.length; i < len; i++) {
           inherit = "vg_"+group.datum._id;
           group.items[i] = {group: group};
           b = require('./build')(model, renderer, marks[i], group.items[i], builder, inherit);

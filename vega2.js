@@ -910,7 +910,8 @@ define('core/collector',['require','exports','module','../core/changeset','../ut
     if(!pipeline) pipeline = [];
 
     function pipelines(fn) {
-      for(var i = 0; i < pipeline.length; i++) {
+      var i, len;
+      for(i = 0, len = pipeline.length; i < len; i++) {
         var n = pipeline[i];
         if(n == node) break;
         if(n._type == 'collector' || !n.data) continue;
@@ -950,7 +951,7 @@ define('core/collector',['require','exports','module','../core/changeset','../ut
     });
 
     node.data = function() { 
-      var i, n, k, c, collect = {};
+      var i, len, n, k, c, collect = {};
 
       // More efficient way to merge this? Or, we could just put it
       // in the tuples in the transforms (and ignore nested structure
@@ -963,7 +964,7 @@ define('core/collector',['require','exports','module','../core/changeset','../ut
       });
 
       if(Object.keys(collect).length) {
-        for(i = 0; i < data.length; i++) {
+        for(i = 0, len = data.length; i < len; i++) {
           d = data[i];
           for(k in collect[d._id]) d[k] = collect[d._id][k];        
         }
@@ -1193,7 +1194,7 @@ define('core/Node',[],function() {
       this._touchable = false;
 
       if(listeners)
-        for(var i = 0; i < listeners.length; i++) this.addListener(listeners[i]);
+        for(var i=0,l=listeners.length; i<l; i++) this.addListener(listeners[i]);
     };
 
     Node.prototype.addListener = function(l) {
@@ -1213,7 +1214,7 @@ define('core/Node',[],function() {
 
     Node.prototype.removeListener = function (l) {
       var foundSending = false;
-      for (var i = 0; i < this._listeners.length && !foundSending; i++) {
+      for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
         if (this._listeners[i] === l) {
           this._listeners.splice(i, 1);
           foundSending = true;
@@ -1621,7 +1622,7 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
     var doNotPropagate = {};
 
     function propagate(pulse, node) {
-      var v, l, n, p, r,
+      var v, l, n, p, r, i, len,
         q = new PriorityQueue({ 
           comparator: function(a, b) { 
             // If the nodes are equal, propagate the non-touch pulse first,
@@ -1662,7 +1663,7 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
         // Even if we didn't run the node, we still want to propagate 
         // the pulse. 
         if (pulse != doNotPropagate || !run) {
-          for (var i = 0; i < l.length; i++) {
+          for (i = 0, len = l.length; i < len; i++) {
             q.queue({ node: l[i], pulse: pulse, rank: l[i]._rank });
           }
         }
@@ -1671,8 +1672,8 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
 
     // Connect nodes in the pipeline
     function traversePipeline(pipeline, fn) {
-      var i, c, n;
-      for(i = 0; i < pipeline.length; i++) {
+      var i, len, c, n;
+      for(i = 0, len = pipeline.length; i < len; i++) {
         n = pipeline[i];
         if(n._touchable) c = n;
 
@@ -3231,6 +3232,7 @@ define('scene/scale',['require','exports','module','../parse/scale','../util/ind
       reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
       reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
 
+      input.scales[def.name] = 1;
       return reeval;
     }
 
@@ -3260,9 +3262,7 @@ define('scene/scale',['require','exports','module','../parse/scale','../util/ind
       // Scales are at the end of an encoding pipeline, so they should forward a
       // touch pulse. Thus, if multiple scales update in the parent group, we don't
       // reevaluate child marks multiple times. 
-      var output = changeset.create(input, true);
-      output.scales[def.name] = 1;
-      return output;
+      return changeset.create(input, true);
     });
 
     if(domain.data) node._deps.data.push(domain.data);
@@ -4211,9 +4211,9 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
 
       input.add.forEach(function(group) {
         var marks = def.marks,
-            inherit, i, m, b;
+            inherit, i, len, m, b;
 
-        for(i = 0; i < marks.length; i++) {
+        for(i = 0, len = marks.length; i < len; i++) {
           inherit = "vg_"+group.datum._id;
           group.items[i] = {group: group};
           b = require('./build')(model, renderer, marks[i], group.items[i], builder, inherit);
@@ -7940,9 +7940,9 @@ define('parse/predicates',['require','exports','module','../util/index'],functio
 
     function parseLogical(spec) {
       var ops = parseOperands(spec.operands),
-          o = [], i = 0;
+          o = [], i = 0, len = spec.operands.length;
 
-      while(o.push("o"+i++)<spec.operands.length);
+      while(o.push("o"+i++)<len);
       if(spec.type == 'and') spec.type = '&&';
       else if(spec.type == 'or') spec.type = '||';
 
@@ -8904,10 +8904,10 @@ define('parse/interactors',['require','exports','module','../util/load','../util
     }
 
     function injectMarks(marks) {
-      var m, i, r;
+      var m, r, i, len;
       marks = util.array(marks);
 
-      for(i = 0; i < marks.length; i++) {
+      for(i = 0, len = marks.length; i < len; i++) {
         m = marks[i];
         if(r = mk[m.type]) {
           marks[i] = util.duplicate(r);

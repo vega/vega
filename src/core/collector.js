@@ -7,7 +7,8 @@ define(function(require, exports, module) {
     if(!pipeline) pipeline = [];
 
     function pipelines(fn) {
-      for(var i = 0; i < pipeline.length; i++) {
+      var i, len;
+      for(i = 0, len = pipeline.length; i < len; i++) {
         var n = pipeline[i];
         if(n == node) break;
         if(n._type == 'collector' || !n.data) continue;
@@ -47,7 +48,7 @@ define(function(require, exports, module) {
     });
 
     node.data = function() { 
-      var i, n, k, c, collect = {};
+      var i, len, n, k, c, collect = {};
 
       // More efficient way to merge this? Or, we could just put it
       // in the tuples in the transforms (and ignore nested structure
@@ -60,7 +61,7 @@ define(function(require, exports, module) {
       });
 
       if(Object.keys(collect).length) {
-        for(i = 0; i < data.length; i++) {
+        for(i = 0, len = data.length; i < len; i++) {
           d = data[i];
           for(k in collect[d._id]) d[k] = collect[d._id][k];        
         }

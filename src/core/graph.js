@@ -7,7 +7,7 @@ define(function(require, exports, module) {
     var doNotPropagate = {};
 
     function propagate(pulse, node) {
-      var v, l, n, p, r,
+      var v, l, n, p, r, i, len,
         q = new PriorityQueue({ 
           comparator: function(a, b) { 
             // If the nodes are equal, propagate the non-touch pulse first,
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
         // Even if we didn't run the node, we still want to propagate 
         // the pulse. 
         if (pulse != doNotPropagate || !run) {
-          for (var i = 0; i < l.length; i++) {
+          for (i = 0, len = l.length; i < len; i++) {
             q.queue({ node: l[i], pulse: pulse, rank: l[i]._rank });
           }
         }
@@ -57,8 +57,8 @@ define(function(require, exports, module) {
 
     // Connect nodes in the pipeline
     function traversePipeline(pipeline, fn) {
-      var i, c, n;
-      for(i = 0; i < pipeline.length; i++) {
+      var i, len, c, n;
+      for(i = 0, len = pipeline.length; i < len; i++) {
         n = pipeline[i];
         if(n._touchable) c = n;
 

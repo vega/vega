@@ -11,7 +11,7 @@ define(function() {
       this._touchable = false;
 
       if(listeners)
-        for(var i = 0; i < listeners.length; i++) this.addListener(listeners[i]);
+        for(var i=0,l=listeners.length; i<l; i++) this.addListener(listeners[i]);
     };
 
     Node.prototype.addListener = function(l) {
@@ -31,7 +31,7 @@ define(function() {
 
     Node.prototype.removeListener = function (l) {
       var foundSending = false;
-      for (var i = 0; i < this._listeners.length && !foundSending; i++) {
+      for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
         if (this._listeners[i] === l) {
           this._listeners.splice(i, 1);
           foundSending = true;
