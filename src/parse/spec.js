@@ -7,11 +7,12 @@ define(function(require, exports, module) {
       parsePredicates = require('../parse/predicates'),
       parseData = require('../parse/data'),
       parseInteractors = require('../parse/interactors'),
+      tuple = require('../core/tuple'),
       util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
-    // protect against subsequent spec modification
-    spec = util.duplicate(spec);
+    spec = util.duplicate(spec);  // protect against subsequent spec modification
+    tuple.reset();
 
     viewFactory = viewFactory || View.factory;
 

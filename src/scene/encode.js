@@ -24,19 +24,16 @@ define(function(require, exports, module) {
 
       if(enter || update) {
         input.add.forEach(function(i) {
-          i.status = C.ENTER; // We set the status bit on items for transitions.
           if(enter) encodeProp(enter, i, input.trans, input.stamp); 
           if(update) encodeProp(update, i, input.trans, input.stamp);
         });
       }
 
-      if(update) input.mod.forEach(function(i) { 
-        i.status = C.UPDATE;
+      if(update) input.mod.forEach(function(i) {  
         encodeProp(update, i, input.trans, input.stamp); 
       });
 
       if(exit) input.rem.forEach(function(i) { 
-        i.status = C.EXIT;
         encodeProp(exit, i, input.trans, input.stamp); 
       });
 

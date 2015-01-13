@@ -1767,19 +1767,16 @@ define('scene/encode',['require','exports','module','../util/index','../util/con
 
       if(enter || update) {
         input.add.forEach(function(i) {
-          i.status = C.ENTER; // We set the status bit on items for transitions.
           if(enter) encodeProp(enter, i, input.trans, input.stamp); 
           if(update) encodeProp(update, i, input.trans, input.stamp);
         });
       }
 
-      if(update) input.mod.forEach(function(i) { 
-        i.status = C.UPDATE;
+      if(update) input.mod.forEach(function(i) {  
         encodeProp(update, i, input.trans, input.stamp); 
       });
 
       if(exit) input.rem.forEach(function(i) { 
-        i.status = C.EXIT;
         encodeProp(exit, i, input.trans, input.stamp); 
       });
 
@@ -4288,11 +4285,57 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
   }
 
 });
-define('scene/build',['require','exports','module','./encode','../core/collector','./bounds','./group','../core/tuple','../core/changeset','../util/index','../util/constants'],function(require, exports, module) {
+define('scene/Item',['require','exports','module'],function(require, module, exports) {
+  function item(mark) {
+    this.mark = mark;
+  }
+  
+  var prototype = item.prototype;
+
+  prototype.hasPropertySet = function(name) {
+    var props = this.mark.def.properties;
+    return props && props[name] != null;
+  };
+
+  prototype.cousin = function(offset, index) {
+    if (offset === 0) return this;
+    offset = offset || -1;
+    var mark = this.mark,
+        group = mark.group,
+        iidx = index==null ? mark.items.indexOf(this) : index,
+        midx = group.items.indexOf(mark) + offset;
+    return group.items[midx].items[iidx];
+  };
+  
+  prototype.sibling = function(offset) {
+    if (offset === 0) return this;
+    offset = offset || -1;
+    var mark = this.mark,
+        iidx = mark.items.indexOf(this) + offset;
+    return mark.items[iidx];
+  };
+  
+  prototype.remove = function() {
+    var item = this,
+        list = item.mark.items,
+        i = list.indexOf(item);
+    if (i >= 0) (i===list.length-1) ? list.pop() : list.splice(i, 1);
+    return item;
+  };
+  
+  prototype.touch = function() {
+    if (this.pathCache) this.pathCache = null;
+    if (this.mark.pathCache) this.mark.pathCache = null;
+  };
+  
+  return item;
+});
+define('scene/build',['require','exports','module','./encode','../core/collector','./bounds','./group','./Item','../core/tuple','../core/changeset','../util/index','../util/constants'],function(require, exports, module) {
   var encode  = require('./encode'),
       collect = require('../core/collector'),
       bounds  = require('./bounds'),
       group   = require('./group'),
+      Item  = require('./Item'),
       tuple = require('../core/tuple'),
       changeset = require('../core/changeset'),
       util = require('../util/index'),
@@ -4362,20 +4405,13 @@ define('scene/build',['require','exports','module','./encode','../core/collector
     };
 
     function newItem(d, stamp) {
-      var item = tuple.create(null);
-      tuple.set(item, "mark", mark);
+      var item = tuple.create(new Item(mark));
       tuple.set(item, "datum", d);
-
-      item.touch = function() {
-        if (this.pathCache) this.pathCache = null;
-        if (this.mark.pathCache) this.mark.pathCache = null;
-      };
 
       // For the root node's item
       if(def.width)  tuple.set(item, "width",  def.width);
       if(def.height) tuple.set(item, "height", def.height);
 
-      items.push(item); 
       return item;
     };
 
@@ -4384,49 +4420,76 @@ define('scene/build',['require','exports','module','./encode','../core/collector
 
       var output = changeset.create(input),
           fullUpdate = encoder.reevaluate(input),
-          fcs;
-
-      // If a scale or signal in the update propset has been updated, 
-      // send forward all items for reencoding.
-      if(fullUpdate) output.mod = items.slice();
+          fcs, data;
 
       if(from) {
+        // If a scale or signal in the update propset has been updated, 
+        // send forward all items for reencoding if we do an early return.
+        if(fullUpdate) output.mod = items.slice();
+
         fcs = from._output;
         if(!fcs) return output.touch = true, output;
         if(fcs.stamp <= lastBuild) return output;
 
-        var mod = util.tuple_ids(fcs.mod),
-            rem = util.tuple_ids(fcs.rem),
-            item, i, d;
-
-        for(i = items.length-1; i >=0; i--) {
-          item = items[i], d = item.datum;
-          if(mod[d._id] === 1 && !fullUpdate) {
-            output.mod.push(item);
-          } else if(rem[d._id] === 1) {
-            output.rem.push.apply(output.rem, items.splice(i, 1)[0]);
-          }
-        }
-
-        output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });
-        lastBuild = fcs.stamp;
-
-        // Sort items according to how data is sorted, or by _id. The else 
-        // condition is important to ensure lines and areas are drawn correctly.
-        items.sort(function(a, b) { 
-          return fcs.sort ? fcs.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
-        });
+        data = from.values();
       } else {
-        if(util.isFunction(def.from)) {
-          output.rem = items.splice(0);
-          def.from().forEach(function(d) { output.add.push(newItem(d, input.stamp)); });
+        data = util.isFunction(def.from) ? def.from() : [C.DEFAULT_DATA];
+      }
+
+      return join(input, data);
+    };
+
+    function join(input, data) {
+      var keyf = keyFunction(def.key),
+          prev = items.splice(0),
+          map  = {},
+          output = changeset.create(input),
+          i, key, len, item, datum, enter;
+
+      for (i=0, len=prev.length; i<len; ++i) {
+        item = prev[i];
+        item.status = C.EXIT;
+        if (keyf) map[item.key] = item;
+      }
+      
+      for (i=0, len=data.length; i<len; ++i) {
+        datum = data[i];
+        key = i;
+        item = keyf ? map[key = keyf(datum)] : prev[i];
+        if(!item) {
+          items.push(item = newItem(datum, input.stamp));
+          output.add.push(item);
+          item.key = key;
+          item.status = C.ENTER;
         } else {
-          if(!items.length) output.add.push(newItem(C.DEFAULT_DATA, input.stamp));
-          else if(!fullUpdate) output.mod.push(items[0]);
+          items.push(item);
+          output.mod.push(item);
+          tuple.set(item, "datum", datum);
+          item.key = key;
+          item.status = C.UPDATE;
         }
       }
 
+      for (i=0, len=prev.length; i<len; ++i) {
+        item = prev[i];
+        if (item.status === C.EXIT) {
+          output.rem.push(item);
+        }
+      }
+      
       return output;
+    };
+
+    function keyFunction(key) {
+      if (key == null) return null;
+      var f = util.array(key).map(util.accessor);
+      return function(d) {
+        for (var s="", i=0, n=f.length; i<n; ++i) {
+          if (i>0) s += "|";
+          s += String(f[i](d));
+        }
+        return s;
+      }
     };
 
     return init();
@@ -8933,7 +8996,7 @@ define('parse/interactors',['require','exports','module','../util/load','../util
     return spec;
   }
 });
-define('parse/spec',['require','exports','module','../core/Model','../core/View','../parse/padding','../parse/marks','../parse/signals','../parse/predicates','../parse/data','../parse/interactors','../util/index'],function(require, exports, module) {
+define('parse/spec',['require','exports','module','../core/Model','../core/View','../parse/padding','../parse/marks','../parse/signals','../parse/predicates','../parse/data','../parse/interactors','../core/tuple','../util/index'],function(require, exports, module) {
   var Model = require('../core/Model'), 
       View = require('../core/View'), 
       parsePadding = require('../parse/padding'),
@@ -8942,11 +9005,12 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
       parsePredicates = require('../parse/predicates'),
       parseData = require('../parse/data'),
       parseInteractors = require('../parse/interactors'),
+      tuple = require('../core/tuple'),
       util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
-    // protect against subsequent spec modification
-    spec = util.duplicate(spec);
+    spec = util.duplicate(spec);  // protect against subsequent spec modification
+    tuple.reset();
 
     viewFactory = viewFactory || View.factory;
 

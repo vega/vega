@@ -48,7 +48,8 @@
         {
           "type": "filter", 
           "test": "min_date == max_date || min(date_start, date_end) <= d.date && d.date <= max(date_start, date_end)"
-        }
+        },
+        {"type": "sort", "by": "date"}
       ]
     }
   ],

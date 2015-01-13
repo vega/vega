@@ -3,6 +3,7 @@ define(function(require, exports, module) {
       collect = require('../core/collector'),
       bounds  = require('./bounds'),
       group   = require('./group'),
+      Item  = require('./Item'),
       tuple = require('../core/tuple'),
       changeset = require('../core/changeset'),
       util = require('../util/index'),
@@ -72,20 +73,13 @@ define(function(require, exports, module) {
     };
 
     function newItem(d, stamp) {
-      var item = tuple.create(null);
-      tuple.set(item, "mark", mark);
+      var item = tuple.create(new Item(mark));
       tuple.set(item, "datum", d);
-
-      item.touch = function() {
-        if (this.pathCache) this.pathCache = null;
-        if (this.mark.pathCache) this.mark.pathCache = null;
-      };
 
       // For the root node's item
       if(def.width)  tuple.set(item, "width",  def.width);
       if(def.height) tuple.set(item, "height", def.height);
 
-      items.push(item); 
       return item;
     };
 
@@ -94,49 +88,76 @@ define(function(require, exports, module) {
 
       var output = changeset.create(input),
           fullUpdate = encoder.reevaluate(input),
-          fcs;
-
-      // If a scale or signal in the update propset has been updated, 
-      // send forward all items for reencoding.
-      if(fullUpdate) output.mod = items.slice();
+          fcs, data;
 
       if(from) {
+        // If a scale or signal in the update propset has been updated, 
+        // send forward all items for reencoding if we do an early return.
+        if(fullUpdate) output.mod = items.slice();
+
         fcs = from._output;
         if(!fcs) return output.touch = true, output;
         if(fcs.stamp <= lastBuild) return output;
 
-        var mod = util.tuple_ids(fcs.mod),
-            rem = util.tuple_ids(fcs.rem),
-            item, i, d;
-
-        for(i = items.length-1; i >=0; i--) {
-          item = items[i], d = item.datum;
-          if(mod[d._id] === 1 && !fullUpdate) {
-            output.mod.push(item);
-          } else if(rem[d._id] === 1) {
-            output.rem.push.apply(output.rem, items.splice(i, 1)[0]);
-          }
-        }
-
-        output.add = fcs.add.map(function(d) { return newItem(d, fcs.stamp); });
-        lastBuild = fcs.stamp;
-
-        // Sort items according to how data is sorted, or by _id. The else 
-        // condition is important to ensure lines and areas are drawn correctly.
-        items.sort(function(a, b) { 
-          return fcs.sort ? fcs.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
-        });
+        data = from.values();
       } else {
-        if(util.isFunction(def.from)) {
-          output.rem = items.splice(0);
-          def.from().forEach(function(d) { output.add.push(newItem(d, input.stamp)); });
+        data = util.isFunction(def.from) ? def.from() : [C.DEFAULT_DATA];
+      }
+
+      return join(input, data);
+    };
+
+    function join(input, data) {
+      var keyf = keyFunction(def.key),
+          prev = items.splice(0),
+          map  = {},
+          output = changeset.create(input),
+          i, key, len, item, datum, enter;
+
+      for (i=0, len=prev.length; i<len; ++i) {
+        item = prev[i];
+        item.status = C.EXIT;
+        if (keyf) map[item.key] = item;
+      }
+      
+      for (i=0, len=data.length; i<len; ++i) {
+        datum = data[i];
+        key = i;
+        item = keyf ? map[key = keyf(datum)] : prev[i];
+        if(!item) {
+          items.push(item = newItem(datum, input.stamp));
+          output.add.push(item);
+          item.key = key;
+          item.status = C.ENTER;
         } else {
-          if(!items.length) output.add.push(newItem(C.DEFAULT_DATA, input.stamp));
-          else if(!fullUpdate) output.mod.push(items[0]);
+          items.push(item);
+          output.mod.push(item);
+          tuple.set(item, "datum", datum);
+          item.key = key;
+          item.status = C.UPDATE;
         }
       }
 
+      for (i=0, len=prev.length; i<len; ++i) {
+        item = prev[i];
+        if (item.status === C.EXIT) {
+          output.rem.push(item);
+        }
+      }
+      
       return output;
+    };
+
+    function keyFunction(key) {
+      if (key == null) return null;
+      var f = util.array(key).map(util.accessor);
+      return function(d) {
+        for (var s="", i=0, n=f.length; i<n; ++i) {
+          if (i>0) s += "|";
+          s += String(f[i](d));
+        }
+        return s;
+      }
     };
 
     return init();
