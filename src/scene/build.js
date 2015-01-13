@@ -128,13 +128,13 @@ define(function(require, exports, module) {
         if(!item) {
           items.push(item = newItem(datum, input.stamp));
           output.add.push(item);
-          item.key = key;
+          tuple.set(item, "key", key);
           item.status = C.ENTER;
         } else {
           items.push(item);
           output.mod.push(item);
           tuple.set(item, "datum", datum);
-          item.key = key;
+          tuple.set(item, "key", key);
           item.status = C.UPDATE;
         }
       }
@@ -142,7 +142,9 @@ define(function(require, exports, module) {
       for (i=0, len=prev.length; i<len; ++i) {
         item = prev[i];
         if (item.status === C.EXIT) {
-          output.rem.push(item);
+          tuple.set(item, "key", keyf ? item.key : items.length);
+          items.unshift(item);  // Keep item around for "exit" transition.
+          output.rem.unshift(item);
         }
       }
       

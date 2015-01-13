@@ -1776,8 +1776,10 @@ define('scene/encode',['require','exports','module','../util/index','../util/con
         encodeProp(update, i, input.trans, input.stamp); 
       });
 
-      if(exit) input.rem.forEach(function(i) { 
-        encodeProp(exit, i, input.trans, input.stamp); 
+      input.rem.forEach(function(item, idx) {
+        if(exit) encodeProp(exit, item, input.trans, input.stamp); 
+        if(input.trans && !exit) input.trans.interpolate(item, {});
+        else if(!input.trans) mark.items[idx].remove(); // Exited items are at the head
       });
 
       return input;
@@ -4460,13 +4462,13 @@ define('scene/build',['require','exports','module','./encode','../core/collector
         if(!item) {
           items.push(item = newItem(datum, input.stamp));
           output.add.push(item);
-          item.key = key;
+          tuple.set(item, "key", key);
           item.status = C.ENTER;
         } else {
           items.push(item);
           output.mod.push(item);
           tuple.set(item, "datum", datum);
-          item.key = key;
+          tuple.set(item, "key", key);
           item.status = C.UPDATE;
         }
       }
@@ -4474,7 +4476,9 @@ define('scene/build',['require','exports','module','./encode','../core/collector
       for (i=0, len=prev.length; i<len; ++i) {
         item = prev[i];
         if (item.status === C.EXIT) {
-          output.rem.push(item);
+          tuple.set(item, "key", keyf ? item.key : items.length);
+          items.unshift(item);  // Keep item around for "exit" transition.
+          output.rem.unshift(item);
         }
       }
       

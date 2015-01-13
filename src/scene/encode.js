@@ -33,8 +33,10 @@ define(function(require, exports, module) {
         encodeProp(update, i, input.trans, input.stamp); 
       });
 
-      if(exit) input.rem.forEach(function(i) { 
-        encodeProp(exit, i, input.trans, input.stamp); 
+      input.rem.forEach(function(item, idx) {
+        if(exit) encodeProp(exit, item, input.trans, input.stamp); 
+        if(input.trans && !exit) input.trans.interpolate(item, {});
+        else if(!input.trans) mark.items[idx].remove(); // Exited items are at the head
       });
 
       return input;
