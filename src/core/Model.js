@@ -68,9 +68,9 @@ define(function(require, exports, module) {
   };
 
   Model.prototype.addListener = function(l) { this._node.addListener(l); }
-  Model.prototype.fire = function() {
-    var c = changeset.create({}); 
-    this.graph.propagate(c, this._node);
+  Model.prototype.fire = function(cs) {
+    if(!cs) cs = changeset.create({});
+    this.graph.propagate(cs, this._node);
   };
 
   return Model;

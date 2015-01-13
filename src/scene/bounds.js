@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var boundsCalc = require('../util/bounds'),
+  var calcBounds = require('../util/bounds'),
       C = require('../util/constants'),
       util = require('../util/index');
 
@@ -7,9 +7,9 @@ define(function(require, exports, module) {
     var node = new model.Node(function(input) {
       util.debug(input, ["bounds", mark.marktype]);
 
-      boundsCalc.mark(mark);
+      calcBounds.mark(mark);
       if(mark.marktype === C.GROUP) 
-        boundsCalc.mark(mark, null, false);
+        calcBounds.mark(mark, null, false);
 
       input.touch = true;
       return input;

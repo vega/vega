@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var util = require('../util/index');
+  var util = require('../util/index'),
+      C = require('../util/constants');
   
   return function encode(model, mark) {
     var props = mark.def.properties || {},
@@ -22,14 +23,22 @@ define(function(require, exports, module) {
       util.debug(input, ["encoding", mark.def.type]);
 
       if(enter || update) {
-        input.add.forEach(function(i) { 
-          if(enter) encodeProp(enter, i, null, input.stamp); 
-          if(update) encodeProp(update, i, null, input.stamp);
+        input.add.forEach(function(i) {
+          i.status = C.ENTER; // We set the status bit on items for transitions.
+          if(enter) encodeProp(enter, i, input.trans, input.stamp); 
+          if(update) encodeProp(update, i, input.trans, input.stamp);
         });
       }
 
-      if(update) input.mod.forEach(function(i) { encodeProp(update, i, null, input.stamp); });
-      if(exit) input.rem.forEach(function(i) { encodeProp(exit, i, null, input.stamp); });
+      if(update) input.mod.forEach(function(i) { 
+        i.status = C.UPDATE;
+        encodeProp(update, i, input.trans, input.stamp); 
+      });
+
+      if(exit) input.rem.forEach(function(i) { 
+        i.status = C.EXIT;
+        encodeProp(exit, i, input.trans, input.stamp); 
+      });
 
       return input;
     });

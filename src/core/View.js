@@ -3,8 +3,10 @@ define(function(require, exports, module) {
       parseStreams = require('../parse/streams'),
       canvas = require('../canvas/index'),
       svg = require('../svg/index'),
+      transition = require('../scene/transition'),
       config = require('../util/config'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      changeset = require('../core/changeset');
 
   var View = function(el, width, height, model) {
     this._el    = null;
@@ -28,6 +30,13 @@ define(function(require, exports, module) {
       this._model = model;
       if (this._handler) this._handler.model(model);
     }
+    return this;
+  };
+
+  prototype.data = function(data) {
+    var m = this.model();
+    if (!arguments.length) return m.data();
+    util.keys(data).forEach(function(d) { m.data(d).add(data[d]); });
     return this;
   };
 
@@ -165,26 +174,34 @@ define(function(require, exports, module) {
 
   prototype.update = function(opt) {    
     opt = opt || {};
-    var v = this;
-    // TODO: transitions
-        // trans = opt.duration
-          // ? vg.scene.transition(opt.duration, opt.ease)
-          // : null;
+    var v = this,
+        trans = opt.duration
+          ? new transition(opt.duration, opt.ease)
+          : null;
+
+    var cs = changeset.create({});
+    if(trans) cs.trans = trans;
 
     if(v._build) {
-      // TODO: only fire branches of the dataflow corresponding to opt.items
+      v._model.fire(cs);
     } else {
       // Build the entire scene, and pulse the entire model
       // (Datasources + scene).
       v._renderNode = new v._model.Node(function(input) {
         util.debug(input, ["rendering"]);
-        v._renderer.render(v._model.scene());
+
+        var s = v._model.scene();
+        if(input.trans) {
+          input.trans.start(function(items) { v._renderer.render(s, items); });
+        } else {
+          v._renderer.render(s);
+        }
         return input;
       });
       v._renderNode._router = true;
       v._renderNode._type = 'renderer';
 
-      v._model.scene(v._renderNode).fire();
+      v._model.scene(v._renderNode).fire(cs);
       v._build = true;
     }
 
@@ -213,6 +230,7 @@ define(function(require, exports, module) {
         .renderer(opt.renderer || "canvas");
 
       if (opt.el) v.initialize(opt.el);
+      if (opt.data) v.data(opt.data);
     
       return v;
     };    

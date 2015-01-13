@@ -462,9 +462,10 @@ define('core/changeset',[],function() {
   function copy(a, b) {
     if(!a) a = {};
     b.stamp = a.stamp||0;
-    b.sort = a.sort;
+    if(a.sort)  b.sort  = a.sort;
+    if(a.facet) b.facet = a.facet;
+    if(a.trans) b.trans = a.trans;
     ['signals', 'fields', 'data', 'scales'].forEach(function(k) { b[k] = a[k]||{} });
-    b.facet = a.facet;
   }
 
   return {
@@ -882,7 +883,7 @@ define('core/tuple',['require','exports','module','../util/index'],function(requ
     // if(t._prev[k] && t._prev[k].stamp >= stamp) 
       // throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
 
-    if(prev) {
+    if(prev && t._prev) {
       t._prev[k] = {
         value: prev,
         stamp: stamp
@@ -1004,7 +1005,7 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
 
     Datasource.prototype.add = function(d) {
       var add = this._input.add;
-      add.push.apply(add, d.map(function(d) { return tuple.create(d); }));
+      add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d); }));
       return this;
     };
 
@@ -1714,8 +1715,35 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
     };
   }
 });
-define('scene/encode',['require','exports','module','../util/index'],function(require, exports, module) {
-  var util = require('../util/index');
+define('util/constants',['require','exports','module'],function(require, module, exports) {
+  return {
+    GROUP: "group",
+    
+    ENTER: "enter",
+    UPDATE: "update",
+    EXIT: "exit",
+
+    DEFAULT_DATA: {"sentinel": 1},
+
+    MODIFY_ADD: "add",
+    MODIFY_REMOVE: "remove",
+    MODIFY_TOGGLE: "toggle",
+    MODIFY_CLEAR: "clear",
+
+    LINEAR: "linear",
+    ORDINAL: "ordinal",
+    LOG: "log",
+    POWER: "pow",
+    TIME: "time",
+    QUANTILE: "quantile",
+
+    MARK: "mark",
+    AXIS: "axis"
+  }
+});
+define('scene/encode',['require','exports','module','../util/index','../util/constants'],function(require, exports, module) {
+  var util = require('../util/index'),
+      C = require('../util/constants');
   
   return function encode(model, mark) {
     var props = mark.def.properties || {},
@@ -1738,14 +1766,22 @@ define('scene/encode',['require','exports','module','../util/index'],function(re
       util.debug(input, ["encoding", mark.def.type]);
 
       if(enter || update) {
-        input.add.forEach(function(i) { 
-          if(enter) encodeProp(enter, i, null, input.stamp); 
-          if(update) encodeProp(update, i, null, input.stamp);
+        input.add.forEach(function(i) {
+          i.status = C.ENTER; // We set the status bit on items for transitions.
+          if(enter) encodeProp(enter, i, input.trans, input.stamp); 
+          if(update) encodeProp(update, i, input.trans, input.stamp);
         });
       }
 
-      if(update) input.mod.forEach(function(i) { encodeProp(update, i, null, input.stamp); });
-      if(exit) input.rem.forEach(function(i) { encodeProp(exit, i, null, input.stamp); });
+      if(update) input.mod.forEach(function(i) { 
+        i.status = C.UPDATE;
+        encodeProp(update, i, input.trans, input.stamp); 
+      });
+
+      if(exit) input.rem.forEach(function(i) { 
+        i.status = C.EXIT;
+        encodeProp(exit, i, input.trans, input.stamp); 
+      });
 
       return input;
     });
@@ -2919,34 +2955,8 @@ define('util/bounds',['require','exports','module','../core/Bounds','../canvas/p
     group: group
   };
 });
-define('util/constants',['require','exports','module'],function(require, module, exports) {
-  return {
-    GROUP: "group",
-    
-    ENTER: "enter",
-    UPDATE: "update",
-    EXIT: "exit",
-
-    DEFAULT_DATA: {"sentinel": 1},
-
-    MODIFY_ADD: "add",
-    MODIFY_REMOVE: "remove",
-    MODIFY_TOGGLE: "toggle",
-    MODIFY_CLEAR: "clear",
-
-    LINEAR: "linear",
-    ORDINAL: "ordinal",
-    LOG: "log",
-    POWER: "pow",
-    TIME: "time",
-    QUANTILE: "quantile",
-
-    MARK: "mark",
-    AXIS: "axis"
-  }
-});
 define('scene/bounds',['require','exports','module','../util/bounds','../util/constants','../util/index'],function(require, exports, module) {
-  var boundsCalc = require('../util/bounds'),
+  var calcBounds = require('../util/bounds'),
       C = require('../util/constants'),
       util = require('../util/index');
 
@@ -2954,9 +2964,9 @@ define('scene/bounds',['require','exports','module','../util/bounds','../util/co
     var node = new model.Node(function(input) {
       util.debug(input, ["bounds", mark.marktype]);
 
-      boundsCalc.mark(mark);
+      calcBounds.mark(mark);
       if(mark.marktype === C.GROUP) 
-        boundsCalc.mark(mark, null, false);
+        calcBounds.mark(mark, null, false);
 
       input.touch = true;
       return input;
@@ -4437,9 +4447,9 @@ define('scene/index',['require','exports','module','../core/changeset','./build'
       node = build(model, renderer, model._defs.marks, tree={});
       model.addListener(node);
 
-      tree.fire = function() {
-        var c = changeset.create({}, true);
-        model.graph.propagate(c, node);
+      tree.fire = function(cs) {
+        if(!cs) cs = changeset.create({}, true);
+        model.graph.propagate(cs, node);
       };
 
       // Scale/invert a value using a top-level scale
@@ -4527,9 +4537,9 @@ define('core/Model',['require','exports','module','./Datasource','./Signal','./N
   };
 
   Model.prototype.addListener = function(l) { this._node.addListener(l); }
-  Model.prototype.fire = function() {
-    var c = changeset.create({}); 
-    this.graph.propagate(c, this._node);
+  Model.prototype.fire = function(cs) {
+    if(!cs) cs = changeset.create({});
+    this.graph.propagate(cs, this._node);
   };
 
   return Model;
@@ -7400,13 +7410,112 @@ define('svg/index',['require','exports','module','./Handler','./Renderer'],funct
     Renderer: require('./Renderer')
   };
 });
-define('core/View',['require','exports','module','d3','../parse/streams','../canvas/index','../svg/index','../util/config','../util/index'],function(require, exports, module) {
+define('scene/transition',['require','exports','module','../core/tuple','../util/bounds','../util/constants'],function(require, exports, module) {
+  var tuple = require('../core/tuple'),
+      calcBounds = require('../util/bounds'),
+      C = require('../util/constants');
+
+  function trans(duration, ease) {
+    this.duration = duration || 500;
+    this.ease = ease && d3.ease(ease) || d3.ease("cubic-in-out");
+    this.updates = {next: null};
+  }
+  
+  var prototype = trans.prototype;
+  
+  var skip = {
+    "text": 1,
+    "url":  1
+  };
+  
+  prototype.interpolate = function(item, values, stamp) {
+    var key, curr, next, interp, list = null;
+
+    for (key in values) {
+      curr = item[key];
+      next = values[key];      
+      if (curr !== next) {
+        if (skip[key] || curr === undefined) {
+          // skip interpolation for specific keys or undefined start values
+          tuple.set(item, key, next, stamp);
+        } else if (typeof curr === "number" && !isFinite(curr)) {
+          // for NaN or infinite numeric values, skip to final value
+          tuple.set(item, key, next, stamp);
+        } else {
+          // otherwise lookup interpolator
+          interp = d3.interpolate(curr, next);
+          interp.property = key;
+          (list || (list=[])).push(interp);
+        }
+      }
+    }
+
+    if (list === null && item.status === C.EXIT) {
+      list = []; // ensure exiting items are included
+    }
+
+    if (list != null) {
+      list.item = item;
+      list.ease = item.mark.ease || this.ease;
+      list.next = this.updates.next;
+      this.updates.next = list;
+    }
+    return this;
+  };
+  
+  prototype.start = function(callback) {
+    var t = this, prev = t.updates, curr = prev.next;
+    for (; curr!=null; prev=curr, curr=prev.next) {
+      if (curr.item.status === C.EXIT) curr.remove = true;
+    }
+    t.callback = callback;
+    d3.timer(function(elapsed) { return step.call(t, elapsed); });
+  };
+
+  function step(elapsed) {
+    var list = this.updates, prev = list, curr = prev.next,
+        duration = this.duration,
+        item, delay, f, e, i, n, stop = true;
+
+    for (; curr!=null; prev=curr, curr=prev.next) {
+      item = curr.item;
+      delay = item.delay || 0;
+
+      f = (elapsed - delay) / duration;
+      if (f < 0) { stop = false; continue; }
+      if (f > 1) f = 1;
+      e = curr.ease(f);
+
+      for (i=0, n=curr.length; i<n; ++i) {
+        item[curr[i].property] = curr[i](e);
+      }
+      item.touch();
+      calcBounds.item(item);
+
+      if (f === 1) {
+        if (curr.remove) item.remove();
+        prev.next = curr.next;
+        curr = prev;
+      } else {
+        stop = false;
+      }
+    }
+
+    this.callback();
+    return stop;
+  };
+  
+  return trans;
+});
+define('core/View',['require','exports','module','d3','../parse/streams','../canvas/index','../svg/index','../scene/transition','../util/config','../util/index','../core/changeset'],function(require, exports, module) {
   var d3 = require('d3'),
       parseStreams = require('../parse/streams'),
       canvas = require('../canvas/index'),
       svg = require('../svg/index'),
+      transition = require('../scene/transition'),
       config = require('../util/config'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      changeset = require('../core/changeset');
 
   var View = function(el, width, height, model) {
     this._el    = null;
@@ -7430,6 +7539,13 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
       this._model = model;
       if (this._handler) this._handler.model(model);
     }
+    return this;
+  };
+
+  prototype.data = function(data) {
+    var m = this.model();
+    if (!arguments.length) return m.data();
+    util.keys(data).forEach(function(d) { m.data(d).add(data[d]); });
     return this;
   };
 
@@ -7567,26 +7683,34 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
 
   prototype.update = function(opt) {    
     opt = opt || {};
-    var v = this;
-    // TODO: transitions
-        // trans = opt.duration
-          // ? vg.scene.transition(opt.duration, opt.ease)
-          // : null;
+    var v = this,
+        trans = opt.duration
+          ? new transition(opt.duration, opt.ease)
+          : null;
+
+    var cs = changeset.create({});
+    if(trans) cs.trans = trans;
 
     if(v._build) {
-      // TODO: only fire branches of the dataflow corresponding to opt.items
+      v._model.fire(cs);
     } else {
       // Build the entire scene, and pulse the entire model
       // (Datasources + scene).
       v._renderNode = new v._model.Node(function(input) {
         util.debug(input, ["rendering"]);
-        v._renderer.render(v._model.scene());
+
+        var s = v._model.scene();
+        if(input.trans) {
+          input.trans.start(function(items) { v._renderer.render(s, items); });
+        } else {
+          v._renderer.render(s);
+        }
         return input;
       });
       v._renderNode._router = true;
       v._renderNode._type = 'renderer';
 
-      v._model.scene(v._renderNode).fire();
+      v._model.scene(v._renderNode).fire(cs);
       v._build = true;
     }
 
@@ -7615,6 +7739,7 @@ define('core/View',['require','exports','module','d3','../parse/streams','../can
         .renderer(opt.renderer || "canvas");
 
       if (opt.el) v.initialize(opt.el);
+      if (opt.data) v.data(opt.data);
     
       return v;
     };    

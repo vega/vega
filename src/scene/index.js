@@ -10,9 +10,9 @@ define(function(require, exports, module) {
       node = build(model, renderer, model._defs.marks, tree={});
       model.addListener(node);
 
-      tree.fire = function() {
-        var c = changeset.create({}, true);
-        model.graph.propagate(c, node);
+      tree.fire = function(cs) {
+        if(!cs) cs = changeset.create({}, true);
+        model.graph.propagate(cs, node);
       };
 
       // Scale/invert a value using a top-level scale

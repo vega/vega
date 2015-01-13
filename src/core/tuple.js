@@ -16,7 +16,7 @@ define(function(require, module, exports) {
     // if(t._prev[k] && t._prev[k].stamp >= stamp) 
       // throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
 
-    if(prev) {
+    if(prev && t._prev) {
       t._prev[k] = {
         value: prev,
         stamp: stamp

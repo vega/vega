@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 
     Datasource.prototype.add = function(d) {
       var add = this._input.add;
-      add.push.apply(add, d.map(function(d) { return tuple.create(d); }));
+      add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d); }));
       return this;
     };
 
