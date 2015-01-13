@@ -3540,7 +3540,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
         orient = config.axis.orient,
         offset = 0,
         titleOffset = config.axis.titleOffset,
-        axisDef = null,
+        axisDef = {},
         layer = "front",
         grid = false,
         title = null,
@@ -3558,16 +3558,24 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
         majorTickStyle = {},
         minorTickStyle = {},
         titleStyle = {},
-        domainStyle = {};
+        domainStyle = {},
+        m = { // Axis marks as references for updates
+          gridLines: null,
+          majorTicks: null,
+          minorTicks: null,
+          tickLabels: null,
+          domain: null,
+          title: null
+        };
 
     var axis = {};
 
     function reset() {
-      axisDef = null;
-    }
+      util.keys(axisDef).forEach(function(k) { delete axisDef[k]; });
+    };
 
     axis.def = function() {
-      var def = axisDef ? axisDef : (axisDef = axis_def(scale));
+      if(!axisDef.type) axis_def(scale);
 
       // tick format
       tickFormat = !tickFormatString ? null : ((scale.type === 'time')
@@ -3584,18 +3592,17 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
       var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
       major.forEach(function(d) { d.label = fmt(d.data); });
       var tdata = title ? [title].map(create) : [];
-      
-      // update axis def
-      def.marks[0].from = function() { return grid ? major : []; };
-      def.marks[1].from = function() { return major; };
-      def.marks[2].from = function() { return minor; };
-      def.marks[3].from = def.marks[1].from;
-      def.marks[4].from = function() { return [1]; };
-      def.marks[5].from = function() { return tdata; };
-      def.offset = offset;
-      def.orient = orient;
-      def.layer = layer;
-      return def;
+
+      axisDef.marks[0].from = function() { return grid ? major : []; };
+      axisDef.marks[1].from = function() { return major; };
+      axisDef.marks[2].from = function() { return minor; };
+      axisDef.marks[3].from = axisDef.marks[1].from;
+      axisDef.marks[4].from = function() { return [1]; };
+      axisDef.marks[5].from = function() { return tdata; };
+      axisDef.offset = offset;
+      axisDef.orient = orient;
+      axisDef.layer = layer;
+      return axisDef;
     };
 
     function axis_def(scale) {
@@ -3611,33 +3618,33 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
       range = vg_axisScaleRange(scale);
 
       // setup axis marks
-      var gridLines = vg_axisTicks();
-      var majorTicks = vg_axisTicks();
-      var minorTicks = vg_axisTicks();
-      var tickLabels = vg_axisTickLabels();
-      var domain = vg_axisDomain();
-      var title = vg_axisTitle();
-      gridLines.properties.enter.stroke = {value: config.axis.gridColor};
+      if(!m.gridLines)  m.gridLines  = vg_axisTicks();
+      if(!m.majorTicks) m.majorTicks = vg_axisTicks();
+      if(!m.minorTicks) m.minorTicks = vg_axisTicks();
+      if(!m.tickLabels) m.tickLabels = vg_axisTickLabels();
+      if(!m.domain) m.domain = vg_axisDomain();
+      if(!m.title)  m.title  = vg_axisTitle();
+      m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
 
       // extend axis marks based on axis orientation
-      vg_axisTicksExtend(orient, gridLines, oldScale, newScale, Infinity);
-      vg_axisTicksExtend(orient, majorTicks, oldScale, newScale, tickMajorSize);
-      vg_axisTicksExtend(orient, minorTicks, oldScale, newScale, tickMinorSize);
-      vg_axisLabelExtend(orient, tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
+      vg_axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
+      vg_axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
+      vg_axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
+      vg_axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
-      vg_axisDomainExtend(orient, domain, range, tickEndSize);
-      vg_axisTitleExtend(orient, title, range, titleOffset); // TODO get offset
+      vg_axisDomainExtend(orient, m.domain, range, tickEndSize);
+      vg_axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
       
       // add / override custom style properties
-      util.extend(gridLines.properties.update, gridLineStyle);
-      util.extend(majorTicks.properties.update, majorTickStyle);
-      util.extend(minorTicks.properties.update, minorTickStyle);
-      util.extend(tickLabels.properties.update, tickLabelStyle);
-      util.extend(domain.properties.update, domainStyle);
-      util.extend(title.properties.update, titleStyle);
+      util.extend(m.gridLines.properties.update, gridLineStyle);
+      util.extend(m.majorTicks.properties.update, majorTickStyle);
+      util.extend(m.minorTicks.properties.update, minorTickStyle);
+      util.extend(m.tickLabels.properties.update, tickLabelStyle);
+      util.extend(m.domain.properties.update, domainStyle);
+      util.extend(m.title.properties.update, titleStyle);
 
-      var marks = [gridLines, majorTicks, minorTicks, tickLabels, domain, title];
-      return {
+      var marks = [m.gridLines, m.majorTicks, m.minorTicks, m.tickLabels, m.domain, m.title];
+      util.extend(axisDef, {
         type: "group",
         interactive: false,
         properties: { 
@@ -3651,10 +3658,11 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
             scales: [scale.scaleName],
             signals: [], data: []
           }
-        },
-        marks: marks.map(function(m) { return parseMark(model, m); })
-      };
-    }
+        }
+      });
+
+      axisDef.marks = marks.map(function(m) { return parseMark(model, m); });
+    };
 
     axis.scale = function(x) {
       if (!arguments.length) return scale;
@@ -4233,7 +4241,8 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
       input.rem.forEach(function(group) {
         // For deleted groups, disconnect their children
         children[group._id].forEach(function(c) { 
-          marksNode.removeListener(c.builder);
+          if(c.type === C.MARK) marksNode.removeListener(c.builder);
+          else if(c.type === C.AXIS) axesNode.removeListener(c.builder);
           c.builder.disconnect(); 
         });
         delete children[group._id];
@@ -4246,7 +4255,7 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
       util.debug(input, ["building axes", def.axes]);
       var i, c;
 
-      function axs(group) {
+      input.add.forEach(function(group) {
         var axes = group.axes,
             axisItems = group.axisItems,
             b = null;
@@ -4260,23 +4269,11 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
           axesNode.addListener(b);
           children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
         });
-      };
+      });
 
-      input.add.forEach(axs);
       input.mod.forEach(function(group) {
-        // Reparse axes to feed them new data from reevaluated scales. 
-        // Reparsing creates a new axes def, so we need to remove+disconnect
-        // the old axes dataflow branches.
-        // TODO: optimize this w/references for defs.
-        for(i = children[group._id].length-1; i >= 0; i--) {
-          c = children[group._id][i];
-          if(c.type != C.AXIS) continue;
-          axesNode.removeListener(c.builder);
-          c.builder.disconnect();
-          children[group._id].splice(i, 1);
-        }
-
-        axs(group);
+        parseAxes(model, def.axes, group.axes, group);
+        group.axes.forEach(function(a, i) { a.def() });
       });
 
       var scales = (def.axes||[]).reduce(function(acc, x) {

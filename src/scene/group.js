@@ -96,7 +96,8 @@ define(function(require, exports, module) {
       input.rem.forEach(function(group) {
         // For deleted groups, disconnect their children
         children[group._id].forEach(function(c) { 
-          marksNode.removeListener(c.builder);
+          if(c.type === C.MARK) marksNode.removeListener(c.builder);
+          else if(c.type === C.AXIS) axesNode.removeListener(c.builder);
           c.builder.disconnect(); 
         });
         delete children[group._id];
@@ -109,7 +110,7 @@ define(function(require, exports, module) {
       util.debug(input, ["building axes", def.axes]);
       var i, c;
 
-      function axs(group) {
+      input.add.forEach(function(group) {
         var axes = group.axes,
             axisItems = group.axisItems,
             b = null;
@@ -123,23 +124,11 @@ define(function(require, exports, module) {
           axesNode.addListener(b);
           children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
         });
-      };
+      });
 
-      input.add.forEach(axs);
       input.mod.forEach(function(group) {
-        // Reparse axes to feed them new data from reevaluated scales. 
-        // Reparsing creates a new axes def, so we need to remove+disconnect
-        // the old axes dataflow branches.
-        // TODO: optimize this w/references for defs.
-        for(i = children[group._id].length-1; i >= 0; i--) {
-          c = children[group._id][i];
-          if(c.type != C.AXIS) continue;
-          axesNode.removeListener(c.builder);
-          c.builder.disconnect();
-          children[group._id].splice(i, 1);
-        }
-
-        axs(group);
+        parseAxes(model, def.axes, group.axes, group);
+        group.axes.forEach(function(a, i) { a.def() });
       });
 
       var scales = (def.axes||[]).reduce(function(acc, x) {
