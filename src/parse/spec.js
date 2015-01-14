@@ -11,8 +11,8 @@ define(function(require, exports, module) {
       util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
-    spec = util.duplicate(spec);  // protect against subsequent spec modification
-    tuple.reset();
+    // protect against subsequent spec modification
+    spec = util.duplicate(spec);
 
     viewFactory = viewFactory || View.factory;
 

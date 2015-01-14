@@ -9026,8 +9026,8 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
       util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
-    spec = util.duplicate(spec);  // protect against subsequent spec modification
-    tuple.reset();
+    // protect against subsequent spec modification
+    spec = util.duplicate(spec);
 
     viewFactory = viewFactory || View.factory;
 
