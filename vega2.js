@@ -1780,7 +1780,7 @@ define('scene/encode',['require','exports','module','../util/index','../util/con
       input.rem.forEach(function(item, idx) {
         if(exit) encodeProp(exit, item, input.trans, input.stamp); 
         if(input.trans && !exit) input.trans.interpolate(item, {});
-        else if(!input.trans) mark.items[idx].remove(); // Exited items are at the head
+        else if(!input.trans) mark.items[0].remove(); // Exited items are at the head
       });
 
       return input;
