@@ -1754,7 +1754,7 @@ define('scene/encode',['require','exports','module','../util/index','../util/con
       i, len, item, prop;
 
     function encodeProp(prop, item, trans, stamp) {
-      var sg = model.signal(prop.signals||[]),
+      var sg = model.signalValues(prop.signals||[]),
           db = {};
 
       (prop.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
@@ -4565,17 +4565,29 @@ define('core/Model',['require','exports','module','./Datasource','./Signal','./N
       .pipeline(pipeline);
   };
 
-  function signals(name) {
-    var m = this, signals = {};
+  function signal(name) {
+    var m = this, i, len;
     if(!util.isArray(name)) return this._signals[name];
-    name.forEach(function(n) { signals[n] = m._signals[n].value() });
-    return signals;
+    return name.map(function(n) { m._signals[n]; });
   }
 
   Model.prototype.signal = function(name, init) {
     var m = this;
-    if(arguments.length === 1) return signals.call(this, name);
+    if(arguments.length === 1) return signal.call(this, name);
     return this._signals[name] = new this.Signal(name, init);
+  };
+
+  Model.prototype.signalValues = function(name) {
+    var signals = {},
+        i, len, n;
+
+    if(!util.isArray(name)) return this._signals[name].value();
+    for(i=0, len=name.length; i<len; ++i) {
+      n = name[i];
+      signals[n] = this._signals[n].value();
+    }
+
+    return signals;
   };
 
   Model.prototype.signalRef = function(ref) {
@@ -5753,7 +5765,7 @@ define('parse/expr',['require','exports','module','../util/index'],function(requ
   };
 
   expr.eval = function(model, fn, d, e, i, p, sg) {
-    sg = model.signal(util.array(sg));
+    sg = model.signalValues(util.array(sg));
     return fn.call(null, d, e, i, p, sg);
   };
 
@@ -8683,7 +8695,7 @@ define('transforms/modify',['require','exports','module','../core/tuple','../uti
         (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
 
         // TODO: input
-        reeval = predicate({}, db, model.signal(predicate.signals||[]), model._predicates);
+        reeval = predicate({}, db, model.signalValues(predicate.signals||[]), model._predicates);
       }
 
       util.debug(input, [def.type+"ing", reeval]);

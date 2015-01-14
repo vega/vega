@@ -27,7 +27,7 @@ define(function(require, exports, module) {
         (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
 
         // TODO: input
-        reeval = predicate({}, db, model.signal(predicate.signals||[]), model._predicates);
+        reeval = predicate({}, db, model.signalValues(predicate.signals||[]), model._predicates);
       }
 
       util.debug(input, [def.type+"ing", reeval]);

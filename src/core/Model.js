@@ -31,17 +31,29 @@ define(function(require, exports, module) {
       .pipeline(pipeline);
   };
 
-  function signals(name) {
-    var m = this, signals = {};
+  function signal(name) {
+    var m = this, i, len;
     if(!util.isArray(name)) return this._signals[name];
-    name.forEach(function(n) { signals[n] = m._signals[n].value() });
-    return signals;
+    return name.map(function(n) { m._signals[n]; });
   }
 
   Model.prototype.signal = function(name, init) {
     var m = this;
-    if(arguments.length === 1) return signals.call(this, name);
+    if(arguments.length === 1) return signal.call(this, name);
     return this._signals[name] = new this.Signal(name, init);
+  };
+
+  Model.prototype.signalValues = function(name) {
+    var signals = {},
+        i, len, n;
+
+    if(!util.isArray(name)) return this._signals[name].value();
+    for(i=0, len=name.length; i<len; ++i) {
+      n = name[i];
+      signals[n] = this._signals[n].value();
+    }
+
+    return signals;
   };
 
   Model.prototype.signalRef = function(ref) {

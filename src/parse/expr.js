@@ -77,7 +77,7 @@ define(function(require, exports, module) {
   };
 
   expr.eval = function(model, fn, d, e, i, p, sg) {
-    sg = model.signal(util.array(sg));
+    sg = model.signalValues(util.array(sg));
     return fn.call(null, d, e, i, p, sg);
   };
 

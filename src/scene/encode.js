@@ -10,7 +10,7 @@ define(function(require, exports, module) {
       i, len, item, prop;
 
     function encodeProp(prop, item, trans, stamp) {
-      var sg = model.signal(prop.signals||[]),
+      var sg = model.signalValues(prop.signals||[]),
           db = {};
 
       (prop.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
