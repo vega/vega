@@ -6,7 +6,7 @@ define(function(require, module, exports) {
     UPDATE: "update",
     EXIT: "exit",
 
-    DEFAULT_DATA: {"sentinel": 1},
+    SENTINEL: {"sentinel": 1},
 
     MODIFY_ADD: "add",
     MODIFY_REMOVE: "remove",

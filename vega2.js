@@ -865,14 +865,42 @@ define('util/index',['require','exports','module','./config'],function(require, 
 
   return util;
 });
-define('core/tuple',['require','exports','module','../util/index'],function(require, module, exports) {
+define('util/constants',['require','exports','module'],function(require, module, exports) {
+  return {
+    GROUP: "group",
+    
+    ENTER: "enter",
+    UPDATE: "update",
+    EXIT: "exit",
+
+    SENTINEL: {"sentinel": 1},
+
+    MODIFY_ADD: "add",
+    MODIFY_REMOVE: "remove",
+    MODIFY_TOGGLE: "toggle",
+    MODIFY_CLEAR: "clear",
+
+    LINEAR: "linear",
+    ORDINAL: "ordinal",
+    LOG: "log",
+    POWER: "pow",
+    TIME: "time",
+    QUANTILE: "quantile",
+
+    MARK: "mark",
+    AXIS: "axis"
+  }
+});
+define('core/tuple',['require','exports','module','../util/index','../util/constants'],function(require, module, exports) {
   var util = require('../util/index'),
+      C = require('../util/constants'),
       tuple_id = 1;
 
   function create(d, p) {
     var o = Object.create(util.isObject(d) ? d : {data: d});
     o._id = ++tuple_id;
-    o._prev = p ? Object.create(p) : {};
+    // o._prev = p ? Object.create(p) : C.SENTINEL;
+    o._prev = p || C.SENTINEL;
     return o;
   }
 
@@ -884,6 +912,7 @@ define('core/tuple',['require','exports','module','../util/index'],function(requ
       // throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
 
     if(prev && t._prev) {
+      t._prev = (t._prev == C.SENTINEL) ? {} : t._prev;
       t._prev[k] = {
         value: prev,
         stamp: stamp
@@ -1714,32 +1743,6 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
       connect: connect,
       disconnect: disconnect
     };
-  }
-});
-define('util/constants',['require','exports','module'],function(require, module, exports) {
-  return {
-    GROUP: "group",
-    
-    ENTER: "enter",
-    UPDATE: "update",
-    EXIT: "exit",
-
-    DEFAULT_DATA: {"sentinel": 1},
-
-    MODIFY_ADD: "add",
-    MODIFY_REMOVE: "remove",
-    MODIFY_TOGGLE: "toggle",
-    MODIFY_CLEAR: "clear",
-
-    LINEAR: "linear",
-    ORDINAL: "ordinal",
-    LOG: "log",
-    POWER: "pow",
-    TIME: "time",
-    QUANTILE: "quantile",
-
-    MARK: "mark",
-    AXIS: "axis"
   }
 });
 define('scene/encode',['require','exports','module','../util/index','../util/constants'],function(require, exports, module) {
@@ -4344,6 +4347,7 @@ define('scene/build',['require','exports','module','./encode','../core/collector
       util = require('../util/index'),
       C = require('../util/constants');
 
+
   // def is from the spec
   // mark is the scenegraph node to build out
   // parent is the dataflow builder node corresponding to the mark's group.
@@ -4437,7 +4441,7 @@ define('scene/build',['require','exports','module','./encode','../core/collector
         data = from.values();
         lastBuild = fcs.stamp;
       } else {
-        data = util.isFunction(def.from) ? def.from() : [C.DEFAULT_DATA];
+        data = util.isFunction(def.from) ? def.from() : [C.SENTINEL];
       }
 
       return join(input, data);

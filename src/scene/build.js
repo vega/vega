@@ -9,6 +9,7 @@ define(function(require, exports, module) {
       util = require('../util/index'),
       C = require('../util/constants');
 
+
   // def is from the spec
   // mark is the scenegraph node to build out
   // parent is the dataflow builder node corresponding to the mark's group.
@@ -102,7 +103,7 @@ define(function(require, exports, module) {
         data = from.values();
         lastBuild = fcs.stamp;
       } else {
-        data = util.isFunction(def.from) ? def.from() : [C.DEFAULT_DATA];
+        data = util.isFunction(def.from) ? def.from() : [C.SENTINEL];
       }
 
       return join(input, data);
