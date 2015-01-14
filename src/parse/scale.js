@@ -13,7 +13,7 @@ define(function(require, module, exports) {
       GROUP_PROPERTY = {width: 1, height: 1};
 
   function scale(model, def, group) {
-    var s = instance(def),
+    var s = instance(def, group.scale(def.name)),
         m = s.type===ORDINAL ? ordinal : quantitative,
         rng = range(model, def, group),
         data = util.values(group.datum);
@@ -22,9 +22,8 @@ define(function(require, module, exports) {
     return s;
   }
 
-  function instance(def) {
-    var type = def.type || LINEAR, 
-        scale;
+  function instance(def, scale) {
+    var type = def.type || LINEAR;
     if (!scale || type !== scale.type) {
       var ctor = config.scale[type] || d3.scale[type];
       if (!ctor) util.error("Unrecognized scale type: " + type);
