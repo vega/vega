@@ -78,8 +78,21 @@ ved.init = function() {
   var sel = d3.select("#sel_spec");
   sel.on("change", ved.select);
   sel.append("option").text("Custom");
-  sel.selectAll("option.spec")
-    .data(SPECS)
+
+  var static = sel.append("optgroup")
+    .attr("label", "Static");
+
+  static.selectAll("option.spec")
+    .data(STATIC_SPECS)
+   .enter().append("option")
+    .attr("value", function(d) { return "../spec/"+d+".json"; })
+    .text(function(d) { return d; });
+
+  var interactive = sel.append("optgroup")
+    .attr("label", "Interactive");
+
+  interactive.selectAll("option.spec")
+    .data(INTERACTIVE_SPECS)
    .enter().append("option")
     .attr("value", function(d) { return "../spec/"+d+".json"; })
     .text(function(d) { return d; });
