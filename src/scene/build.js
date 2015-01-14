@@ -133,8 +133,8 @@ define(function(require, exports, module) {
         } else {
           items.push(item);
           output.mod.push(item);
-          tuple.set(item, "datum", datum);
           tuple.set(item, "key", key);
+          item.datum = datum;
           item.status = C.UPDATE;
         }
       }

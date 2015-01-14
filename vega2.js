@@ -3569,7 +3569,7 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
     var axis = {};
 
     function reset() {
-      util.keys(axisDef).forEach(function(k) { delete axisDef[k]; });
+      axisDef.type = null;
     };
 
     axis.def = function() {
@@ -3581,15 +3581,17 @@ define('scene/axis',['require','exports','module','../util/config','../core/tupl
         : d3.format(tickFormatString));
 
       // generate data
-      var create = function(d) { return tpl.create({data: d}); };
+      // We don't _really_ need to model these as tuples as no further
+      // data transformation is done. So we optimize for a high churn rate. 
+      var injest = function(d) { return {data: d}; };
       var major = tickValues == null
         ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
         : tickValues;
-      var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(create);
-      major = major.map(create);
+      var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(injest);
+      major = major.map(injest);
       var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
       major.forEach(function(d) { d.label = fmt(d.data); });
-      var tdata = title ? [title].map(create) : [];
+      var tdata = title ? [title].map(injest) : [];
 
       axisDef.marks[0].from = function() { return grid ? major : []; };
       axisDef.marks[1].from = function() { return major; };
@@ -4466,8 +4468,8 @@ define('scene/build',['require','exports','module','./encode','../core/collector
         } else {
           items.push(item);
           output.mod.push(item);
-          tuple.set(item, "datum", datum);
           tuple.set(item, "key", key);
+          item.datum = datum;
           item.status = C.UPDATE;
         }
       }
