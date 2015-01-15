@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
   var util = require('../util/index'),
-      C = require('../util/constants');
+      C = require('../util/constants'),
+      EMPTY = {};
   
   return function encode(model, mark) {
     var props = mark.def.properties || {},
@@ -21,23 +22,32 @@ define(function(require, exports, module) {
 
     var node = new model.Node(function(input) {
       util.debug(input, ["encoding", mark.def.type]);
+      var items = mark.items,
+          i, item;
 
-      if(enter || update) {
-        input.add.forEach(function(i) {
-          if(enter) encodeProp(enter, i, input.trans, input.stamp); 
-          if(update) encodeProp(update, i, input.trans, input.stamp);
-        });
+      // Only do one traversal of items and use item.status instead
+      // of input.add/mod/rem.
+      for(i=0; i<items.length; ++i) {
+        item = items[i];
+
+        // enter set
+        if(item.status === C.ENTER) {
+          if(enter) encodeProp(enter, item, input.trans, input.stamp);
+          item.status = C.UPDATE;
+        }
+
+        // update set      
+        if (item.status !== C.EXIT && update) {
+          encodeProp(update, item, input.trans, input.stamp);
+        }
+        
+        // exit set
+        if (item.status === C.EXIT) {
+          if (exit) encodeProp(exit, item, input.trans, input.stamp); 
+          if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
+          else if (!input.trans) items[i--].remove();
+        }
       }
-
-      if(update) input.mod.forEach(function(i) {  
-        encodeProp(update, i, input.trans, input.stamp); 
-      });
-
-      input.rem.forEach(function(item, idx) {
-        if(exit) encodeProp(exit, item, input.trans, input.stamp); 
-        if(input.trans && !exit) input.trans.interpolate(item, {});
-        else if(!input.trans) mark.items[0].remove(); // Exited items are at the head
-      });
 
       return input;
     });

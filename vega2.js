@@ -1747,7 +1747,8 @@ define('core/graph',['require','exports','module','./changeset','js-priority-que
 });
 define('scene/encode',['require','exports','module','../util/index','../util/constants'],function(require, exports, module) {
   var util = require('../util/index'),
-      C = require('../util/constants');
+      C = require('../util/constants'),
+      EMPTY = {};
   
   return function encode(model, mark) {
     var props = mark.def.properties || {},
@@ -1768,23 +1769,32 @@ define('scene/encode',['require','exports','module','../util/index','../util/con
 
     var node = new model.Node(function(input) {
       util.debug(input, ["encoding", mark.def.type]);
+      var items = mark.items,
+          i, item;
 
-      if(enter || update) {
-        input.add.forEach(function(i) {
-          if(enter) encodeProp(enter, i, input.trans, input.stamp); 
-          if(update) encodeProp(update, i, input.trans, input.stamp);
-        });
+      // Only do one traversal of items and use item.status instead
+      // of input.add/mod/rem.
+      for(i=0; i<items.length; ++i) {
+        item = items[i];
+
+        // enter set
+        if(item.status === C.ENTER) {
+          if(enter) encodeProp(enter, item, input.trans, input.stamp);
+          item.status = C.UPDATE;
+        }
+
+        // update set      
+        if (item.status !== C.EXIT && update) {
+          encodeProp(update, item, input.trans, input.stamp);
+        }
+        
+        // exit set
+        if (item.status === C.EXIT) {
+          if (exit) encodeProp(exit, item, input.trans, input.stamp); 
+          if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
+          else if (!input.trans) items[i--].remove();
+        }
       }
-
-      if(update) input.mod.forEach(function(i) {  
-        encodeProp(update, i, input.trans, input.stamp); 
-      });
-
-      input.rem.forEach(function(item, idx) {
-        if(exit) encodeProp(exit, item, input.trans, input.stamp); 
-        if(input.trans && !exit) input.trans.interpolate(item, {});
-        else if(!input.trans) mark.items[0].remove(); // Exited items are at the head
-      });
 
       return input;
     });
@@ -4355,6 +4365,7 @@ define('scene/build',['require','exports','module','./encode','../core/collector
     var items = [], // Item nodes in the scene graph
         f = def.from || inheritFrom,
         from = util.isString(f) ? model.data(f) : null,
+        map = {},
         lastBuild = 0,
         builder, encoder, bounder;
 
@@ -4412,12 +4423,12 @@ define('scene/build',['require','exports','module','./encode','../core/collector
     };
 
     function newItem(d, stamp) {
-      var item = tuple.create(new Item(mark));
-      tuple.set(item, "datum", d);
+      var item   = tuple.create(new Item(mark));
+      item.datum = d;
 
       // For the root node's item
-      if(def.width)  tuple.set(item, "width",  def.width);
-      if(def.height) tuple.set(item, "height", def.height);
+      if(def.width)  tuple.set(item, "width",  def.width, stamp);
+      if(def.height) tuple.set(item, "height", def.height, stamp);
 
       return item;
     };
@@ -4425,11 +4436,12 @@ define('scene/build',['require','exports','module','./encode','../core/collector
     function buildItems(input) {
       util.debug(input, ["building", f, def.type]);
 
-      var output = changeset.create(input),
-          fullUpdate = encoder.reevaluate(input),
-          fcs, data;
+      var fullUpdate = encoder.reevaluate(input),
+          output, fcs, data;
 
       if(from) {
+        output = changeset.create(input);
+
         // If a scale or signal in the update propset has been updated, 
         // send forward all items for reencoding if we do an early return.
         if(fullUpdate) output.mod = items.slice();
@@ -4438,19 +4450,60 @@ define('scene/build',['require','exports','module','./encode','../core/collector
         if(!fcs) return output.touch = true, output;
         if(fcs.stamp <= lastBuild) return output;
 
-        data = from.values();
         lastBuild = fcs.stamp;
+        return joinChangeset(fcs);
       } else {
         data = util.isFunction(def.from) ? def.from() : [C.SENTINEL];
+        return joinValues(input, data);
       }
-
-      return join(input, data);
     };
 
-    function join(input, data) {
+    function joinChangeset(input) {
+      var keyf = keyFunction(def.key || "_id"),
+          output = changeset.create(input),
+          add = input.add, 
+          mod = input.mod, 
+          rem = input.rem,
+          stamp = input.stamp,
+          i, key, len, item, datum;
+
+      for(i=0, len=add.length; i<len; ++i) {
+        key = keyf(datum = add[i]);
+        item = newItem(datum, stamp);
+        tuple.set(item, "key", key, stamp);
+        item.status = C.ENTER;
+        map[key] = item;
+        items.push(item);
+        output.add.push(item);
+      }
+
+      for(i=0, len=mod.length; i<len; ++i) {
+        item = map[key = keyf(datum = mod[i])];
+        tuple.set(item, "key", key, stamp);
+        item.datum  = datum;
+        item.status = C.UPDATE;
+        output.mod.push(item);
+      }
+
+      for(i=0, len=rem.length; i<len; ++i) {
+        item = map[key = keyf(rem[i])];
+        item.status = C.EXIT;
+        output.rem.push(item);
+        map[key] = null;
+      }
+
+      // Sort items according to how data is sorted, or by _id. The else 
+      // condition is important to ensure lines and areas are drawn correctly.
+      items.sort(function(a, b) { 
+        return input.sort ? input.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
+      });
+
+      return output;
+    }
+
+    function joinValues(input, data) {
       var keyf = keyFunction(def.key),
           prev = items.splice(0),
-          map  = {},
           output = changeset.create(input),
           i, key, len, item, datum, enter;
 
