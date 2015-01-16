@@ -83,10 +83,6 @@
     {
       "name": "iris",
       "url": "data/iris.json"
-    },
-    {
-      "name": "dummy",
-      "values":[0]
     }
   ],
 
@@ -117,7 +113,6 @@
 
   "marks": [
     { "type": "rect",
-      "from": {"data":"dummy"},
       "properties": {
         "enter": {
           "class": {"value": "draggable"},
@@ -152,7 +147,6 @@
       }
     },
     {"type": "symbol",
-      "from": {"data": "dummy"},
       "properties": {
         "enter": {
           "class": {"value": "handle"},
@@ -167,7 +161,6 @@
       }
     },
     {"type": "symbol",
-      "from": {"data": "dummy"},
       "properties": {
         "enter": {
           "class": {"value": "handleBR"},
@@ -183,7 +176,6 @@
     },
     {
       "type": "rect",
-      "from": {"data":"dummy"},
       "properties": {
         "enter": {
           "height": {"value":5},
@@ -200,7 +192,6 @@
     },
     {
       "type": "rect",
-      "from": {"data":"dummy"},
       "properties": {
         "enter": {
           "width": {"value":5},
