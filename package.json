@@ -12,7 +12,6 @@
     "grunt-contrib-requirejs": "^0.4.4",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
-    "js-priority-queue": "*",
     "pegjs": "0.8.x",
     "requirejs": "2.1.x"
   }

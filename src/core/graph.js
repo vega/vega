@@ -1,35 +1,42 @@
 define(function(require, exports, module) {
-  var changeset = require('./changeset'),
-      PriorityQueue = require('js-priority-queue'),
+  var d3 = require('d3'),
+      changeset = require('./changeset'),
       util = require('../util/index');
 
   return function(model) {
-    var doNotPropagate = {};
+    var doNotPropagate = {},
+        pq = [];
+
+    var schedule = d3.bisector(function(a, b) {
+      // If the nodes are equal, propagate the non-touch pulse first,
+      // so that we can ignore subsequent touch pulses. To efficiently
+      // use the JS array, we want lower ranked nodes on the right so
+      // we can pop them. 
+      if(a.node == b.node) return a.pulse.touch ? -1 : 1;
+      else return b.rank - a.rank; 
+    });
+
+    function enq(x) {
+      var idx = schedule.left(pq, x);
+      pq.splice(idx, 0, x);
+    }
 
     function propagate(pulse, node) {
-      var v, l, n, p, r, i, len,
-        q = new PriorityQueue({ 
-          comparator: function(a, b) { 
-            // If the nodes are equal, propagate the non-touch pulse first,
-            // so that we can ignore subsequent touch pulses.
-            if(a.node == b.node) return a.pulse.touch ? 1 : -1;
-            else return a.rank - b.rank; 
-          } 
-        });
+      var v, l, n, p, r, i, len;
 
       if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
       pulse.stamp = ++model._stamp;
-      q.queue({ node: node, pulse: pulse, rank: node._rank });
+      enq({ node: node, pulse: pulse, rank: node._rank });
 
-      while (q.length > 0) {
-        v = q.dequeue(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
+      while (pq.length > 0) {
+        v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
 
         // A node's rank might change during a propagation (e.g. instantiating
         // a group's dataflow branch). Re-queue if it has.
         if(r != n._rank) {
           util.debug(p, ['Rank mismatch', r, n._rank]);
-          q.queue({ node: n, pulse: p, rank: n._rank });
+          enq({ node: n, pulse: p, rank: n._rank });
           continue;
         }
 
@@ -49,7 +56,7 @@ define(function(require, exports, module) {
         // the pulse. 
         if (pulse != doNotPropagate || !run) {
           for (i = 0, len = l.length; i < len; i++) {
-            q.queue({ node: l[i], pulse: pulse, rank: l[i]._rank });
+            enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
           }
         }
       }
