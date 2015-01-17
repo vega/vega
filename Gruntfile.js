@@ -19,7 +19,7 @@ module.exports = function(grunt) {
           },
           optimize: "none"
         }
-      },
+      }
     },
 
     mochaTest: {
