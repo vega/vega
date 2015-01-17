@@ -9,10 +9,14 @@ define(function(require, exports, module) {
     var ADD = 1, MOD = 2;
     var cells = {};
   
-    function cell(x) {
-      // TODO: consider more efficient key constructions?
-      var keys = groupby.reduce(function(v,f) {
-        return (v.push(f(x)), v);
+    function cell(x, prev, stamp) {
+      var keys = groupby.reduce(function(v, f) {
+        var p = f(x._prev);
+        if(prev && (p = f(x._prev)) !== undefined && p.stamp >= stamp) {
+          return (v.push(p.value), v);
+        } else {
+          return (v.push(f(x)), v);
+        }
       }, []), k = keys.join("|");
 
       if(cells[k]) return cells[k];
@@ -60,9 +64,23 @@ define(function(require, exports, module) {
       });
 
       input.mod.forEach(function(x) {
-        var c = cell(x);
+        var c = cell(x), 
+            prev = cell(x, true, input.stamp);
+
+        if(c !== prev) {
+          prev.count -= 1;
+          prev.s |= MOD;
+          prev.ds._input.rem.push(x);
+        }
+
+        if(c.s & ADD) {
+          c.count += 1;
+          c.ds._input.add.push(x);
+        } else {
+          c.ds._input.mod.push(x);
+        }
+
         c.s |= MOD;
-        c.ds._input.mod.push(x);
       });
 
       input.rem.forEach(function(x) {

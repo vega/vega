@@ -2,7 +2,8 @@ define(function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
       collector = require('./collector'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      C = require('../util/constants');
 
   return function(model) {
     function Datasource(name, facet) {
@@ -79,7 +80,8 @@ define(function(require, exports, module) {
       var input = new model.Node(function(input) {
         util.debug(input, ["input", ds._name]);
 
-        var delta = ds._input, out = changeset.create(input);
+        var delta = ds._input, 
+            out = changeset.create(input);
         out.facet = ds._facet;
 
         if(input.touch) {
@@ -96,7 +98,18 @@ define(function(require, exports, module) {
           // reset change list
           ds._input = changeset.create();
 
-          out.add = delta.add, out.mod = delta.mod, out.rem = delta.rem;
+          out.add = delta.add; 
+          out.rem = delta.rem;
+
+          // Assign a timestamp to any updated tuples
+          out.mod = delta.mod.map(function(x) { 
+            var k;
+            if(x._prev === C.SENTINEL) return x;
+            for(k in x._prev) {
+              if(x._prev[k].stamp === undefined) x._prev[k].stamp = input.stamp;
+            }
+            return x;
+          }); 
         }
 
         return out;
