@@ -1,16 +1,18 @@
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        //Allow using this built library as an AMD module
-        //in another project. That other project will only
-        //see this AMD call, not the internal modules in
-        //the closure below.
-        define([], factory);
-    } else {
-        //Browser globals case. Just assign the
-        //result to a property on the global.
-        root.vg = factory();
-    }
-}(this, function () {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['d3', 'topojson'], factory);
+  } else if(typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory(require('d3'), require('topojson'));
+  } else {
+    // Browser globals (root is window)
+    var tj = (typeof topojson === 'undefined') ? null : topojson;
+    root.vg = factory(d3, tj);
+  }
+}(this, function (d3, topojson) {
     //almond, and your modules will be inlined here
 /**
  * @license almond 0.3.0 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
@@ -474,8 +476,9 @@ define('core/changeset',[],function() {
     copy:    copy
   };
 });
-define('util/config',['require','exports','module'],function(require, module, exports) {
-  var config = {};
+define('util/config',['require','exports','module','d3'],function(require, module, exports) {
+  var d3 = require('d3'),
+      config = {};
 
   config.debug = false;
 
@@ -8749,8 +8752,8 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
     // d3 doesn't expose itself when running under AMD, so
     // we do it manually. 
     // See: https://github.com/mbostock/d3/issues/1693
-    define('d3', [], function() { return window.d3; });
-    define('vega', [], function() { return window.vg; });
+    define('d3', [], function() { return d3 });
+    define('topojson', [], function() { return topojson });
 
     //The modules for your project will be inlined above
     //this snippet. Ask almond to synchronously require the

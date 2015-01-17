@@ -6,21 +6,30 @@ module.exports = function(grunt) {
       compile: {
         options: {
           baseUrl: "src",
-          out: "vega2.js",
-          name: "../node_modules/almond/almond",
-          include: ["parse/spec"],
-          wrap: {
-              startFile: "src/_start.js",
-              endFile: "src/_end.js"
-          },
-          optimize: "none",
           paths: {
             d3: "../node_modules/d3/d3.min",
             topojson: "../node_modules/topojson/topojson.min"
           },
-          exclude: ["d3", "topojson"]
+          include: ["../node_modules/almond/almond", "parse/spec"],
+          exclude: ["d3", "topojson"],
+          out: "vega2.js",
+          wrap: {
+              startFile: "src/_start.js",
+              endFile: "src/_end.js"
+          },
+          optimize: "none"
         }
       },
+    },
+
+    mochaTest: {
+      test: {
+        options: {
+          require: ['expect.js', 'd3', 'amd-loader'],
+          reporter: 'spec',
+        },
+        src: ['test/**/*.js']
+      }
     },
 
     uglify: {
@@ -41,6 +50,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-requirejs");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask("default", ["requirejs", "uglify"]);
+  grunt.registerTask("build", ["default"]);
+  grunt.registerTask("test", ["mochaTest"]);
 };

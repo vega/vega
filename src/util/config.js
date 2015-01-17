@@ -1,5 +1,6 @@
 define(function(require, module, exports) {
-  var config = {};
+  var d3 = require('d3'),
+      config = {};
 
   config.debug = false;
 
