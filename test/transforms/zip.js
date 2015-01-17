@@ -1,5 +1,3 @@
-var util = require('../../src/util/index');
-
 describe('Zip', function() {
 
   describe('Key Join', function() {
@@ -218,6 +216,7 @@ describe('Zip', function() {
         expectUSA(medals);
         expectCanada(medals);
 
+        // Inner mod
         statsDS.update(function(x) { return x.country == "Canada" },
           'athletes', function(x) { return 100; }).fire();
         stats  = statsDS.values(); 
@@ -229,6 +228,26 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[1].country_stats.gdp', 1821);
         expect(medals).to.have.deep.property('[1].country_stats.pop', 34);
         expect(medals).to.have.deep.property('[1].country_stats.athletes', 100);
+
+        // Key mod on joined datasource
+        statsDS.update(function(x) { return x.country == "Canada" },
+          'country', function(x) { return 'Mexico'; }).fire();
+        stats  = statsDS.values(); 
+        medals = medalsDS.values();
+        expect(stats).to.have.length(2);
+        expect(medals).to.have.length(2);
+        expectUSA(medals);
+        expect(medals[1].country_stats).to.be.undefined;
+
+        // Key mod on primary datasource
+        medalsDS.update(function(x) { return x.country == "Canada" },
+          'country', function(x) { return 'Mexico'; }).fire();
+        stats  = statsDS.values(); 
+        medals = medalsDS.values();
+        expect(stats).to.have.length(2);
+        expect(medals).to.have.length(2);
+        expectUSA(medals);
+        expect(medals[1].country_stats).to.not.be.undefined;
 
         done();
       }, viewFactory);

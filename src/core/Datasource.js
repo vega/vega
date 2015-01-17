@@ -38,7 +38,7 @@ define(function(require, exports, module) {
         if (prev !== next) {
           tuple.prev(x, field);
           x.__proto__[field] = next;
-          mod.push(x);
+          if(mod.indexOf(x) < 0) mod.push(x);
         }
       });
       return this;

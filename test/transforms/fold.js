@@ -1,5 +1,3 @@
-var util = require('../../src/util/index');
-
 describe('Fold', function() {
   var values = [
     {"country":"US", "gold":12, "silver":13, "bronze":15},
@@ -22,17 +20,17 @@ describe('Fold', function() {
     if(!key)   key = "key";
     if(!value) value = "value";
 
-    expect(data).to.have.deep.property('['+idx+'].country', val.country);
-    expect(data).to.have.deep.property('['+idx+'].'+key, 'gold');
-    expect(data).to.have.deep.property('['+idx+'].'+value, val.gold);
+    expect(data[idx]).to.have.property('country', val.country);
+    expect(data[idx]).to.have.property(key, 'gold');
+    expect(data[idx]).to.have.property(value, val.gold);
 
-    expect(data).to.have.deep.property('['+(idx+1)+'].country', val.country);
-    expect(data).to.have.deep.property('['+(idx+1)+'].'+key, 'silver');
-    expect(data).to.have.deep.property('['+(idx+1)+'].'+value, val.silver);
+    expect(data[idx+1]).to.have.property('country', val.country);
+    expect(data[idx+1]).to.have.property(key, 'silver');
+    expect(data[idx+1]).to.have.property(value, val.silver);
 
-    expect(data).to.have.deep.property('['+(idx+2)+'].country', val.country);
-    expect(data).to.have.deep.property('['+(idx+2)+'].'+key, 'bronze');
-    expect(data).to.have.deep.property('['+(idx+2)+'].'+value, val.bronze);
+    expect(data[idx+2]).to.have.property('country', val.country);
+    expect(data[idx+2]).to.have.property(key, 'bronze');
+    expect(data[idx+2]).to.have.property(value, val.bronze);
   }
 
 
@@ -197,4 +195,6 @@ describe('Fold', function() {
       done();
     }, viewFactory);
   });
+
+  it('should allow array<signal> for fields?');
 });

@@ -25,10 +25,10 @@ module.exports = function(grunt) {
     mochaTest: {
       test: {
         options: {
-          require: ['d3', 'amd-loader'],
-          reporter: 'spec',
+          require: ["d3", "amd-loader"],
+          reporter: "spec",
         },
-        src: ['test/**/*.js']
+        src: ["test/**/*.js"]
       }
     },
 
@@ -41,8 +41,8 @@ module.exports = function(grunt) {
 
     watch: {
       src: {
-        files: ['src/**/*.js'],
-        tasks: ['requirejs:compile', 'uglify']
+        files: ["src/**/*.js"],
+        tasks: ["build"]
       }
     }
   });
@@ -50,9 +50,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-requirejs");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");
-  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks("grunt-mocha-test");
 
-  grunt.registerTask("default", ["requirejs", "uglify"]);
-  grunt.registerTask("build", ["default"]);
+  grunt.registerTask("default", ["test", "build"]);
+  grunt.registerTask("build", ["requirejs", "uglify"]);
   grunt.registerTask("test", ["mochaTest"]);
 };

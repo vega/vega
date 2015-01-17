@@ -1,5 +1,3 @@
-var util = require('../../src/util/index');
-
 describe('Sort', function() {
   var values = [
     {"x": 1,  "y": 28}, {"x": 1,  "y": 55},

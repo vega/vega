@@ -5,9 +5,9 @@ define(function(require, exports, module) {
   return function zip(model) {
     var z = null,
         as = "zip",
-        key = util.accessor("data"),
+        _key = "data", key = util.accessor("data"),
         defaultValue = undefined,
-        withKey = null;
+        _withKey = null, withKey = null;
 
     var _map = {}, _data = collector(model), lastZip = 0;
 
@@ -32,17 +32,47 @@ define(function(require, exports, module) {
             if(m[0]) m[0][as] = defaultValue;
             m[1] = null;
           });
-          // We shouldn't need to do anything with zinput.mod because references.
+          
+          // Only process zinput.mod tuples if the join key has changed.
+          // Other field updates will auto-propagate via prototype.
+          if(zinput.fields[_withKey]) {
+            zinput.mod.forEach(function(x) {
+              var prev = withKey(x._prev);
+              if(!prev) return;
+              if(prev.stamp < lastZip) return; // Only process new key updates
+
+              var prevm = map(prev.value);
+              if(prevm[0]) prevm[0][as] = defaultValue;
+              prevm[1] = null;
+
+              var m = map(withKey(x));
+              if(m[0]) m[0][as] = x;
+              m[1] = x;
+            });
+          }
+
           lastZip = zinput.stamp;
         }
         
         input.add.forEach(function(x) {
           var m = map(key(x));
           x[as] = m[1] || defaultValue;
-          m[0] = x;
+          m[0]  = x;
         });
         input.rem.forEach(function(x) { map(key(x))[0] = null; });
-        // We shouldn't need to do anything with input.mod.
+
+        if(input.fields[_key]) {
+          input.mod.forEach(function(x) {
+            var prev = key(x._prev);
+            if(!prev) return;
+            if(prev.stamp < input.stamp) return; // Only process new key updates
+
+            map(prev.value)[0] = null;
+            var m = map(key(x));
+            x[as] = m[1] || defaultValue;
+            m[0]  = x;
+          });
+        }
       } else {
         // We only need to run a non-key-join again if we've got any add/rem
         // on input or zinput
@@ -82,12 +112,14 @@ define(function(require, exports, module) {
     };
 
     node.key = function(k) {
-      key = util.accessor(k);
+      _key = k;
+      key  = util.accessor(k);
       return node;
     };
 
     node.withKey = function(k) {
-      withKey = util.accessor(k);
+      _withKey = k
+      withKey  = util.accessor(k);
       return node;
     };
 
