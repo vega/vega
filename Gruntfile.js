@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     mochaTest: {
       test: {
         options: {
-          require: ['expect.js', 'd3', 'amd-loader'],
+          require: ['d3', 'amd-loader'],
           reporter: 'spec',
         },
         src: ['test/**/*.js']
