@@ -13,7 +13,7 @@ describe('Formula', function() {
   ];
 
   it('should work w/a static expr', function(done) {
-    vg.parse.spec({ 
+    parseSpec({ 
       "data": [{ 
         "name": "table", 
         "values": values,
@@ -37,7 +37,7 @@ describe('Formula', function() {
   });
 
   it('should work w/signals in expr', function(done) {
-    vg.parse.spec({ 
+    parseSpec({ 
       "signals":[{"name": "multipler", "init": 2}],
 
       "data": [{ 

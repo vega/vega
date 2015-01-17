@@ -13,7 +13,7 @@ describe('Filter', function() {
   ];
 
   it('should work w/a static expr', function(done) {
-    vg.parse.spec({ 
+    parseSpec({ 
       "data": [{ 
         "name": "table", 
         "values": values,
@@ -34,7 +34,7 @@ describe('Filter', function() {
   });
 
   it('should work w/signals in expr', function(done) {
-    vg.parse.spec({ 
+    parseSpec({ 
       "signals":[{"name": "above", "init": 45}],
 
       "data": [{ 

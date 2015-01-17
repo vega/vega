@@ -43,7 +43,7 @@ describe('Zip', function() {
     }
 
     it('should handle initial datasources', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
             medals, stats, i, len, d;
@@ -61,7 +61,7 @@ describe('Zip', function() {
     });
 
     it('should handle streaming adds w/o default', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
             medals, stats, i, len, d;
@@ -105,7 +105,7 @@ describe('Zip', function() {
       var s = util.duplicate(spec);
       s.data[1].transform[0].default = {"foo": "bar"};
 
-      vg.parse.spec(s, function(model) {
+      parseSpec(s, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
             medals, stats, i, len, d;
@@ -147,7 +147,7 @@ describe('Zip', function() {
     });
 
     it('should handle streaming rems w/o default', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
             medals, stats, i, len, d;
@@ -177,7 +177,7 @@ describe('Zip', function() {
       var s = util.duplicate(spec);
       s.data[1].transform[0].default = {"foo": "bar"};
 
-      vg.parse.spec(s, function(model) {
+      parseSpec(s, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
             medals, stats, i, len, d;
@@ -205,7 +205,7 @@ describe('Zip', function() {
     });
 
     it('should propagate streaming mods', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
             medals, stats, i, len, d;
@@ -260,7 +260,7 @@ describe('Zip', function() {
     };
 
     it('should handle initial datasources', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
             medals, zip, i, len, d;
@@ -278,7 +278,7 @@ describe('Zip', function() {
     });
 
     it('should handle streaming adds', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
             medals, zip, i, len, d;
@@ -314,7 +314,7 @@ describe('Zip', function() {
     });
 
     it('should handle streaming rems', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
             medals, zip, i, len, d;
@@ -340,7 +340,7 @@ describe('Zip', function() {
     });
 
     it('should propagate streaming mods', function(done) {
-      vg.parse.spec(spec, function(model) {
+      parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
             medals, zip, i, len, d;

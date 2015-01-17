@@ -1,4 +1,4 @@
 global.expect = require('chai').expect;
-global.vg = require('../vega2');
+global.parseSpec = require('../src/parse/spec');
 global.viewFactory = function(model) { return model; }
 

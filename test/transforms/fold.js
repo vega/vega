@@ -37,7 +37,7 @@ describe('Fold', function() {
 
 
   it('should handle initial datasource', function(done) {
-    vg.parse.spec(spec, function(model) {
+    parseSpec(spec, function(model) {
       var ds = model.data('table'),
           data, i, len, d;
 
@@ -53,7 +53,7 @@ describe('Fold', function() {
   });
 
   it('should handle streaming adds', function(done) {
-    vg.parse.spec(spec, function(model) {
+    parseSpec(spec, function(model) {
       var ds = model.data('table'),
           mex = {"country": "Mexico", "gold": 3, "silver": 3, "bronze": 2},
           bel = {"country": "Belize", "gold": 0, "silver": 0, "bronze": 0},
@@ -80,7 +80,7 @@ describe('Fold', function() {
   });
 
   it('should handle streaming rems', function(done) {
-    vg.parse.spec(spec, function(model) {
+    parseSpec(spec, function(model) {
       var ds = model.data('table'),
           data, i, len, d;
 
@@ -102,7 +102,7 @@ describe('Fold', function() {
   });
 
   it('should propagate mod tuples if fields updated', function(done) {
-    vg.parse.spec(spec, function(model) {
+    parseSpec(spec, function(model) {
       var ds = model.data('table'),
           data, i, len, d;
 
@@ -138,7 +138,7 @@ describe('Fold', function() {
   });
 
   it('should only propagate mod tuples if fields not updated', function(done) {
-    vg.parse.spec(spec, function(model) {
+    parseSpec(spec, function(model) {
       var ds = model.data('table'),
           data, i, len, d;
 
@@ -164,7 +164,7 @@ describe('Fold', function() {
     var s = util.duplicate(spec);
     s.data[0].transform[0].output = {key: "type"};
 
-    vg.parse.spec(s, function(model) {
+    parseSpec(s, function(model) {
       var ds = model.data('table'),
           data, i, len, d;
 
@@ -183,7 +183,7 @@ describe('Fold', function() {
     var s = util.duplicate(spec);
     s.data[0].transform[0].output = {value: "medals"};
 
-    vg.parse.spec(s, function(model) {
+    parseSpec(s, function(model) {
       var ds = model.data('table'),
           data, i, len, d;
 
