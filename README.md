@@ -1,4 +1,4 @@
-Vega: A Visualization Grammar
+Vega: A Visualization Grammar [![Build Status](https://travis-ci.org/uwdata/vega.svg?branch=v2)](https://travis-ci.org/uwdata/vega)
 ====
 
 **Vega** is a _visualization grammar_, a declarative format for creating and
