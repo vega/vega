@@ -18,5 +18,8 @@
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
     "requirejs": "2.1.x"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
 }
