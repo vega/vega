@@ -36,9 +36,8 @@ define(function(require, exports, module) {
         var prev = x[field],
             next = func(x);
         if (prev !== next) {
+          tuple.prev(x, field);
           x.__proto__[field] = next;
-          x._prev[field] || (x._prev[field] = {});
-          x._prev[field].value = prev;
           mod.push(x);
         }
       });

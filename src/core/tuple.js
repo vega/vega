@@ -15,18 +15,17 @@ define(function(require, module, exports) {
   function set(t, k, v, stamp) {
     var prev = t[k];
     if(prev === v) return;
-    // if(t._prev[k] && t._prev[k].stamp >= stamp) 
-      // throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
 
-    if(prev && t._prev) {
-      t._prev = (t._prev == C.SENTINEL) ? {} : t._prev;
-      t._prev[k] = {
-        value: prev,
-        stamp: stamp
-      };    
-    }
-
+    if(prev && t._prev) set_prev(t, k);
     t[k] = v;
+  }
+
+  function set_prev(t, k, stamp) {
+    t._prev = (t._prev === C.SENTINEL) ? {} : t._prev;
+    t._prev[k] = {
+      value: t[k],
+      stamp: stamp
+    };
   }
 
   function reset() { tuple_id = 1; }
@@ -34,6 +33,7 @@ define(function(require, module, exports) {
   return {
     create: create,
     set:    set,
+    prev:   set_prev,
     reset:  reset
   };
 });
