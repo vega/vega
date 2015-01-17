@@ -911,18 +911,17 @@ define('core/tuple',['require','exports','module','../util/index','../util/const
   function set(t, k, v, stamp) {
     var prev = t[k];
     if(prev === v) return;
-    // if(t._prev[k] && t._prev[k].stamp >= stamp) 
-      // throw "tuple field set on current timestamp " + k + " " + v + " " + stamp;
 
-    if(prev && t._prev) {
-      t._prev = (t._prev == C.SENTINEL) ? {} : t._prev;
-      t._prev[k] = {
-        value: prev,
-        stamp: stamp
-      };    
-    }
-
+    if(prev && t._prev) set_prev(t, k);
     t[k] = v;
+  }
+
+  function set_prev(t, k, stamp) {
+    t._prev = (t._prev === C.SENTINEL) ? {} : t._prev;
+    t._prev[k] = {
+      value: t[k],
+      stamp: stamp
+    };
   }
 
   function reset() { tuple_id = 1; }
@@ -930,6 +929,7 @@ define('core/tuple',['require','exports','module','../util/index','../util/const
   return {
     create: create,
     set:    set,
+    prev:   set_prev,
     reset:  reset
   };
 });
@@ -1055,9 +1055,8 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
         var prev = x[field],
             next = func(x);
         if (prev !== next) {
+          tuple.prev(x, field);
           x.__proto__[field] = next;
-          x._prev[field] || (x._prev[field] = {});
-          x._prev[field].value = prev;
           mod.push(x);
         }
       });
@@ -8230,6 +8229,9 @@ define('transforms/sort',['require','exports','module','../util/index','../parse
 
     node.by = function(b) {
       by = util.array(b);
+      by.forEach(function(s) { 
+        if(model.signal(s)) node._deps.signals.push(s);
+      });
       return node;
     };
 
@@ -8276,7 +8278,6 @@ define('transforms/zip',['require','exports','module','../util/index','../core/c
         
         input.add.forEach(function(x) {
           var m = map(key(x));
-          // console.log(x.key, m, m[1] || defaultValue);
           x[as] = m[1] || defaultValue;
           m[0] = x;
         });

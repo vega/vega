@@ -23,6 +23,9 @@ define(function(require, exports, module) {
 
     node.by = function(b) {
       by = util.array(b);
+      by.forEach(function(s) { 
+        if(model.signal(s)) node._deps.signals.push(s);
+      });
       return node;
     };
 

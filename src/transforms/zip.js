@@ -38,7 +38,6 @@ define(function(require, exports, module) {
         
         input.add.forEach(function(x) {
           var m = map(key(x));
-          // console.log(x.key, m, m[1] || defaultValue);
           x[as] = m[1] || defaultValue;
           m[0] = x;
         });
