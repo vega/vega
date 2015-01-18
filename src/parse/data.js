@@ -37,7 +37,7 @@ define(function(require, exports, module) {
         mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
         ds = model.data(d.name, mod.concat(transform));
 
-    if(d.values) ds.values(d.values);
+    if(d.values) ds.values(read(d.values, d.format));
     else if(d.source) {
       ds.source(d.source);
       model.data(d.source).addListener(ds);

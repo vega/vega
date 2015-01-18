@@ -998,7 +998,7 @@ define('core/collector',['require','exports','module','../core/changeset','../ut
       if(Object.keys(collect).length) {
         for(i = 0, len = data.length; i < len; i++) {
           d = data[i];
-          for(k in collect[d._id]) d[k] = collect[d._id][k];        
+          for(k in collect[d._id]) d[k] = collect[d._id][k];
         }
       }
 
@@ -5068,7 +5068,7 @@ define('parse/data',['require','exports','module','./transforms','../transforms/
         mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
         ds = model.data(d.name, mod.concat(transform));
 
-    if(d.values) ds.values(d.values);
+    if(d.values) ds.values(read(d.values, d.format));
     else if(d.source) {
       ds.source(d.source);
       model.data(d.source).addListener(ds);
