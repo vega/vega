@@ -4210,6 +4210,143 @@ define('transforms/aggregate',['require','exports','module','../core/tuple','../
     return node;
   };
 });
+define('util/bins',['require','exports','module'],function(require, module, exports) {
+
+  function bisect(a, x) {
+    var lo = 0, hi = a.length;
+    while (lo < hi) {
+      var mid = lo + hi >>> 1;
+      if (a[mid] < x) { lo = mid + 1; }
+      else { hi = mid; }
+    }
+    return lo;
+  }
+  
+  function bins(opt) {
+    opt = opt || {};
+
+    // determine range
+    var maxb = opt.maxbins || 1024,
+        base = opt.base || 10,
+        div = opt.div || [5, 2],
+        mins = opt.minstep || 0,
+        logb = Math.log(base),
+        level = Math.ceil(Math.log(maxb) / logb),
+        min = opt.min,
+        max = opt.max,
+        span = max - min,
+        step = Math.max(mins, Math.pow(base, Math.round(Math.log(span) / logb) - level)),
+        nbins = Math.ceil(span / step),
+        precision, v, i, eps;
+
+    if (opt.step != null) {
+      step = opt.step;
+    } else if (opt.steps) {
+      // if provided, limit choice to acceptable step sizes
+      i = bisect(opt.steps, span / maxb);
+      if (i === opt.steps.length) --i;
+      step = opt.steps[i];
+    } else {
+      // increase step size if too many bins
+      do {
+        step *= base;
+        nbins = Math.ceil(span / step);
+      } while (nbins > maxb);
+
+      // decrease step size if allowed
+      for (i = 0; i < div.length; ++i) {
+        v = step / div[i];
+        if (v >= mins && span / v <= maxb) {
+          step = v;
+          nbins = Math.ceil(span / step);
+        }
+      }
+    }
+
+    // update precision, min and max
+    v = Math.log(step);
+    precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
+    eps = (min<0 ? -1 : 1) * Math.pow(base, -precision - 1);
+    min = Math.min(min, Math.floor(min / step + eps) * step);
+    max = Math.ceil(max / step) * step;
+
+    return {
+      start: min,
+      stop: max,
+      step: step,
+      unit: precision
+    };
+  }
+
+  return bins;
+});
+define('transforms/bin',['require','exports','module','../util/index','../util/bins','../core/tuple'],function(require, exports, module) {
+  var util = require('../util/index'),
+      bins = require('../util/bins'),
+      tuple = require('../core/tuple');
+
+  return function bin(model) {
+
+    var field,
+        accessor,
+        setter,
+        min = undefined,
+        max = undefined,
+        step = undefined,
+        maxbins = 20,
+        output = "bin";
+
+    var node = new model.Node(function(input) {
+      var b = bins({
+        min: min,
+        max: max,
+        step: step,
+        maxbins: maxbins
+      });
+
+      function update(d) {
+        var v = accessor(d);
+        v = v == null ? null
+          : b.start + b.step * ~~((v - b.start) / b.step);
+        tuple.set(d, output, v, input.stamp);
+      }
+      input.add.forEach(update);
+      input.mod.forEach(update);
+      input.rem.forEach(update);
+
+      return input;
+    });
+
+    node.min = function(x) {
+      return (min = x, node);
+    };
+
+    node.max = function(x) {
+      return (max = x, node);
+    };
+
+    node.step = function(x) {
+      return (step = x, node);
+    };
+
+    node.maxbins = function(x) {
+      return (maxbins = x, node);
+    };
+
+    node.field = function(f) {
+      field = f;
+      accessor = util.accessor(f);
+      return node;
+    };
+
+    node.output = function(f) {
+      return (output = f, node);
+    };
+
+    return node;
+  };
+
+});
 define('transforms/facet',['require','exports','module','../util/index','../core/tuple','../core/changeset'],function(require, exports, module) {
   var util = require('../util/index'), 
       tuple = require('../core/tuple'), 
@@ -4787,9 +4924,10 @@ define('transforms/zip',['require','exports','module','../util/index','../core/c
     return node;
   };
 });
-define('transforms/index',['require','exports','module','./aggregate','./facet','./filter','./fold','./formula','./sort','./zip'],function(require, exports, module) {
+define('transforms/index',['require','exports','module','./aggregate','./bin','./facet','./filter','./fold','./formula','./sort','./zip'],function(require, exports, module) {
   return {
     aggregate:  require('./aggregate'),
+    bin:        require('./bin'),
     facet:      require('./facet'),
     filter:     require('./filter'),
     fold:       require('./fold'),
