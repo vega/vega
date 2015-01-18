@@ -4,8 +4,7 @@ define(function(require, exports, module) {
       util = require('../util/index');
 
   return function(model) {
-    var doNotPropagate = {},
-        pq = [];
+    var doNotPropagate = {};
 
     var schedule = d3.bisector(function(a, b) {
       // If the nodes are equal, propagate the non-touch pulse first,
@@ -16,18 +15,19 @@ define(function(require, exports, module) {
       else return b.rank - a.rank; 
     });
 
-    function enq(x) {
-      var idx = schedule.left(pq, x);
-      pq.splice(idx, 0, x);
-    }
-
     function propagate(pulse, node) {
       var v, l, n, p, r, i, len;
+
+      var pq = [];
+      pq.enq = function(x) {
+        var idx = schedule.left(this, x);
+        this.splice(idx, 0, x);
+      };
 
       if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
       pulse.stamp = ++model._stamp;
-      enq({ node: node, pulse: pulse, rank: node._rank });
+      pq.enq({ node: node, pulse: pulse, rank: node._rank });
 
       while (pq.length > 0) {
         v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
@@ -36,7 +36,7 @@ define(function(require, exports, module) {
         // a group's dataflow branch). Re-queue if it has.
         if(r != n._rank) {
           util.debug(p, ['Rank mismatch', r, n._rank]);
-          enq({ node: n, pulse: p, rank: n._rank });
+          pq.enq({ node: n, pulse: p, rank: n._rank });
           continue;
         }
 
@@ -56,7 +56,7 @@ define(function(require, exports, module) {
         // the pulse. 
         if (pulse != doNotPropagate || !run) {
           for (i = 0, len = l.length; i < len; i++) {
-            enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
+            pq.enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
           }
         }
       }

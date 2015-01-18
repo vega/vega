@@ -41,7 +41,7 @@ define(function(require, exports, module) {
         m = marks[i];
         if(r = mk[m.type]) {
           marks[i] = util.duplicate(r);
-          if(m.from) marks[i] = m.from;
+          if(m.from) marks[i].from = m.from;
           if(m.properties) {
             [C.ENTER, C.UPDATE, C.EXIT].forEach(function(p) {
               marks[i].properties[p] = util.extend(r.properties[p], m.properties[p]);

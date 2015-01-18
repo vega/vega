@@ -1017,11 +1017,12 @@ define('core/collector',['require','exports','module','../core/changeset','../ut
     return node;
   };
 });
-define('core/Datasource',['require','exports','module','./changeset','./tuple','./collector','../util/index'],function(require, exports, module) {
+define('core/Datasource',['require','exports','module','./changeset','./tuple','./collector','../util/index','../util/constants'],function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
       collector = require('./collector'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      C = require('../util/constants');
 
   return function(model) {
     function Datasource(name, facet) {
@@ -1098,7 +1099,8 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
       var input = new model.Node(function(input) {
         util.debug(input, ["input", ds._name]);
 
-        var delta = ds._input, out = changeset.create(input);
+        var delta = ds._input, 
+            out = changeset.create(input);
         out.facet = ds._facet;
 
         if(input.touch) {
@@ -1115,7 +1117,18 @@ define('core/Datasource',['require','exports','module','./changeset','./tuple','
           // reset change list
           ds._input = changeset.create();
 
-          out.add = delta.add, out.mod = delta.mod, out.rem = delta.rem;
+          out.add = delta.add; 
+          out.rem = delta.rem;
+
+          // Assign a timestamp to any updated tuples
+          out.mod = delta.mod.map(function(x) { 
+            var k;
+            if(x._prev === C.SENTINEL) return x;
+            for(k in x._prev) {
+              if(x._prev[k].stamp === undefined) x._prev[k].stamp = input.stamp;
+            }
+            return x;
+          }); 
         }
 
         return out;
@@ -1281,8 +1294,7 @@ define('core/graph',['require','exports','module','d3','./changeset','../util/in
       util = require('../util/index');
 
   return function(model) {
-    var doNotPropagate = {},
-        pq = [];
+    var doNotPropagate = {};
 
     var schedule = d3.bisector(function(a, b) {
       // If the nodes are equal, propagate the non-touch pulse first,
@@ -1293,18 +1305,19 @@ define('core/graph',['require','exports','module','d3','./changeset','../util/in
       else return b.rank - a.rank; 
     });
 
-    function enq(x) {
-      var idx = schedule.left(pq, x);
-      pq.splice(idx, 0, x);
-    }
-
     function propagate(pulse, node) {
       var v, l, n, p, r, i, len;
+
+      var pq = [];
+      pq.enq = function(x) {
+        var idx = schedule.left(this, x);
+        this.splice(idx, 0, x);
+      };
 
       if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
       pulse.stamp = ++model._stamp;
-      enq({ node: node, pulse: pulse, rank: node._rank });
+      pq.enq({ node: node, pulse: pulse, rank: node._rank });
 
       while (pq.length > 0) {
         v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
@@ -1313,7 +1326,7 @@ define('core/graph',['require','exports','module','d3','./changeset','../util/in
         // a group's dataflow branch). Re-queue if it has.
         if(r != n._rank) {
           util.debug(p, ['Rank mismatch', r, n._rank]);
-          enq({ node: n, pulse: p, rank: n._rank });
+          pq.enq({ node: n, pulse: p, rank: n._rank });
           continue;
         }
 
@@ -1333,7 +1346,7 @@ define('core/graph',['require','exports','module','d3','./changeset','../util/in
         // the pulse. 
         if (pulse != doNotPropagate || !run) {
           for (i = 0, len = l.length; i < len; i++) {
-            enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
+            pq.enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
           }
         }
       }
@@ -3166,12 +3179,6 @@ define('parse/mark',['require','exports','module','../util/index','./properties'
       mark.delay = parseProperties(model, mark.type, {delay: mark.delay});
     }
 
-    // parse mark data definition
-    if(mark.from) {
-      // TODO: support mark.from.transform
-      mark.from = mark.from.data;
-    }
-
     // recurse if group type
     if (group) {
       mark.marks = group.map(function(g) { return parseMark(model, g); });
@@ -3876,7 +3883,7 @@ define('scene/group',['require','exports','module','./scale','../parse/axes','..
           marksNode.addListener(b);
           children[group._id].push({ 
             builder: b, 
-            from: marks[i].from || inherit, 
+            from: ((marks[i].from||{}).data) || inherit, 
             type: C.MARK 
           });
         }
@@ -3986,12 +3993,1099 @@ define('scene/Item',['require','exports','module'],function(require, module, exp
   
   return item;
 });
-define('scene/build',['require','exports','module','./encode','../core/collector','./bounds','./group','./Item','../core/tuple','../core/changeset','../util/index','../util/constants'],function(require, exports, module) {
+define('util/quickselect',[],function() {
+  return function quickselect(k, x) {
+    function swap(a, b) {
+      var t = x[a];
+      x[a] = x[b];
+      x[b] = t;
+    }
+    
+    var left = 0,
+        right = x.length - 1,
+        pos, i, pivot;
+    
+    while (left < right) {
+      pivot = x[k];
+      swap(k, right);
+      for (i = pos = left; i < right; ++i) {
+        if (x[i] < pivot) { swap(i, pos++); }
+      }
+      swap(right, pos);
+      if (pos === k) break;
+      if (pos < k) left = pos + 1;
+      else right = pos - 1;
+    }
+    return x[k];
+  };
+});
+define('transforms/measures',['require','exports','module','../core/tuple','../util/quickselect'],function(require, exports, module) {
+  var tuple = require('../core/tuple'),
+      quickselect = require('../util/quickselect');
+
+  var types = {
+    "count": measure({
+      name: "count",
+      init: "this.cnt = 0;",
+      add:  "this.cnt += 1;",
+      rem:  "this.cnt -= 1;",
+      set:  "this.cnt"
+    }),
+    "sum": measure({
+      name: "sum",
+      init: "this.sum = 0;",
+      add:  "this.sum += v;",
+      rem:  "this.sum -= v;",
+      set:  "this.sum"
+    }),
+    "avg": measure({
+      name: "avg",
+      init: "this.avg = 0;",
+      add:  "var d = v - this.avg; this.avg += d / this.cnt;",
+      rem:  "var d = v - this.avg; this.avg -= d / this.cnt;",
+      set:  "this.avg",
+      req:  ["count"], idx: 1
+    }),
+    "var": measure({
+      name: "var",
+      init: "this.dev = 0;",
+      add:  "this.dev += d * (v - this.avg);",
+      rem:  "this.dev -= d * (v - this.avg);",
+      set:  "this.dev / (this.cnt-1);",
+      req:  ["avg"], idx: 2
+    }),
+    "std": measure({
+      name: "std",
+      init: "",
+      add:  "",
+      rem:  "",
+      set:  "Math.sqrt(this.dev / (this.cnt-1))",
+      req:  ["var"], idx: 3
+    }),
+    "median": measure({
+      name: "median",
+      init: "this.val = [];",
+      add:  "this.val.push(v);",
+      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
+            "this.val.length = this.val.length - 1;",
+      set:  "this.sel(~~(this.cnt/2), this.val)"
+    })
+  };
+
+  function measure(base) {
+    return function(out) {
+      var m = Object.create(base);
+      m.out = out || base.name;
+      if (!m.idx) m.idx = 0;
+      return m;
+    };
+  }
+
+  function resolve(agg) {
+    function collect(m, a) {
+      (a.req || []).forEach(function(r) {
+        if (!m[r]) collect(m, m[r] = types[r]());
+      });
+      return m;
+    }
+    var map = agg.reduce(collect,
+      agg.reduce(function(m, a) { return (m[a.name] = a, m); }, {}));
+    var all = [];
+    for (var k in map) all.push(map[k]);
+    all.sort(function(a,b) { return a.idx - b.idx; });
+    return all;
+  }
+
+  function compile(agg) {
+    var all = resolve(agg),
+        ctr = "this.flag = this.ADD; this.tuple = t;",
+        add = "",
+        rem = "",
+        set = "var t = this.tuple;";
+    
+    all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
+    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+", stamp);"; });
+    add += "this.flag |= this.MOD;"
+    rem += "this.flag |= this.MOD;"
+    set += "return t;"
+
+    ctr = Function("t", ctr);
+    ctr.prototype.ADD = 1;
+    ctr.prototype.MOD = 2;
+    ctr.prototype.add = Function("v", add);
+    ctr.prototype.rem = Function("v", rem);
+    ctr.prototype.set = Function("stamp", set);
+    ctr.prototype.mod = mod;
+    ctr.prototype.tpl = tuple;
+    ctr.prototype.sel = quickselect;
+    return ctr;
+  }
+
+  function mod(v_new, v_old) {
+    if (v_old === undefined || v_old === v_new) return;
+    this.rem(v_old);
+    this.add(v_new);
+  };
+
+  types.create = compile;
+  return types;
+});
+define('transforms/aggregate',['require','exports','module','../core/tuple','../core/changeset','./measures','../util/index'],function(require, exports, module) {
+  var tuple = require('../core/tuple'), 
+      changeset = require('../core/changeset'), 
+      meas = require('./measures'),
+      util = require('../util/index');
+
+  return function aggregate(model) {
+    var Measures = null, aggrs = {}, field = null;
+    
+    function aggr(input) {
+      var k, a, t, i, f;
+      k = input.facet ? input.facet.key : "";
+      if (!(a = aggrs[k])) {
+        t = input.facet ? input.facet : tuple.create(null);
+        aggrs[k] = a = new Measures(t);      
+      }
+      return a;
+    }
+    
+    var node = new model.Node(function(input) {
+      util.debug(input, ["aggregating"]);
+
+      var k = input.facet ? input.facet.key : "",
+          a = aggr(input), x,
+          output = changeset.create();
+
+      input.add.forEach(function(x) { a.add(x[field], 1); });
+      input.mod.forEach(function(x) { 
+        // If it happened on this timestamp, reflect the aggregate
+        if(x._prev[field] && x._prev[field].stamp == input.stamp) {
+          a.mod(x[field], x._prev[field].value); 
+        }
+      });
+      input.rem.forEach(function(x) { 
+        // Handle all these upstream cases:
+        // #1: Add(t) -> Rem(t)
+        // #2: Add(t) -> Mod(t) -> Rem(t)
+        // #3: Add(t) -> Mod(t) -> FilterOut(t)
+        if(x._prev[field] && x._prev[field].stamp == input.stamp) { 
+          a.rem(x._prev[field].value);
+        } else {
+          a.rem(x[field]);
+        }
+      });
+      x = a.set(input.stamp);
+
+      if(input.facet) return input;
+
+      if (a.cnt === 0) {
+        if (a.flag === a.MOD) output.rem.push(x);
+        delete aggrs[k];
+      } else if (a.flag & a.ADD) {
+        output.add.push(x);
+      } else if (a.flag & a.MOD) {
+        output.mod.push(x);
+      }
+      a.flag = 0;
+
+      return output;
+    });
+
+
+    node.field = function(f) { 
+      var deps = node._deps.fields,
+          idx = deps.indexOf(field);
+
+      if(idx > -1) deps.slice(idx, 1);
+      field = f; 
+      deps.push(field);
+      return node;
+    };
+
+    node.stats = function(aggs) {
+      Measures = meas.create(aggs.map(function(a) { return meas[a](); }));
+      return node;
+    };
+
+    return node;
+  };
+});
+define('transforms/facet',['require','exports','module','../util/index','../core/tuple','../core/changeset'],function(require, exports, module) {
+  var util = require('../util/index'), 
+      tuple = require('../core/tuple'), 
+      changeset = require('../core/changeset');
+
+  return function facet(model) {
+    var groupby = [], pipeline = [];
+
+    var ADD = 1, MOD = 2;
+    var cells = {};
+  
+    function cell(x, prev, stamp) {
+      var keys = groupby.reduce(function(v, f) {
+        var p = f(x._prev);
+        if(prev && (p = f(x._prev)) !== undefined && p.stamp >= stamp) {
+          return (v.push(p.value), v);
+        } else {
+          return (v.push(f(x)), v);
+        }
+      }, []), k = keys.join("|");
+
+      if(cells[k]) return cells[k];
+
+      // Rather than sharing the pipeline between all nodes,
+      // give each cell its individual pipeline. This allows
+      // dynamically added collectors to do the right thing
+      // when wiring up the pipelines.
+      var cp = pipeline.map(function(node) {
+        var n = new model.Node();
+        n._fn = node._fn, n._deps = node._deps;
+        // We don't need to transfer over any other properties, because
+        // the nodes in pipeline are unconnected dummy nodes. 
+        return n;
+      });
+
+      var t = tuple.create({keys: keys, key: k}),
+          ds = model.data("vg_"+t._id, cp, t);
+
+      node.addListener(cp[0]);
+      cp[cp.length-1].addListener(node.parentCollector);
+
+      var del = function() {
+        util.debug({}, ["deleting cell", k, cp[0]._type]);
+
+        node.removeListener(cp[0]);
+        model.graph.disconnect(cp);
+        delete cells[k];
+      };
+
+      return cells[k] = {t: t, s: ADD, ds: ds, delete: del, count: 0};
+    };
+
+    var node = new model.Node(function(input) {
+      util.debug(input, ["faceting"]);
+
+      var output = changeset.create(input);
+      var k, c, x, d;
+
+      input.add.forEach(function(x) {
+        var c = cell(x);
+        c.count += 1;
+        c.s |= MOD;
+        c.ds._input.add.push(x);
+      });
+
+      input.mod.forEach(function(x) {
+        var c = cell(x), 
+            prev = cell(x, true, input.stamp);
+
+        if(c !== prev) {
+          prev.count -= 1;
+          prev.s |= MOD;
+          prev.ds._input.rem.push(x);
+        }
+
+        if(c.s & ADD) {
+          c.count += 1;
+          c.ds._input.add.push(x);
+        } else {
+          c.ds._input.mod.push(x);
+        }
+
+        c.s |= MOD;
+      });
+
+      input.rem.forEach(function(x) {
+        var c = cell(x);
+        c.count -= 1;
+        c.s |= MOD;
+        c.ds._input.rem.push(x);
+      });
+
+      for (k in cells) {
+        c = cells[k], x = c.t;
+        // propagate sort, signals, fields, etc.
+        changeset.copy(input, c.ds._input);
+        if (c.count === 0) {
+          if (c.s === MOD) output.rem.push(x);
+          c.delete();
+        } else if (c.s & ADD) {
+          output.add.push(x);
+        } else if (c.s & MOD) {
+          output.mod.push(x);
+        }
+        c.s = 0;
+      }
+
+      return output;
+    });
+
+    node._router = true;
+
+    node.data = function() {
+      var k, t, d, data = [];
+      for(k in cells) {
+        t = cells[k].t, d = model.data("vg_"+t._id).values();
+        data.push({_id: t._id, values: d });
+      }
+
+      return data;
+    };
+
+    node.pipeline = function(p) { 
+      if(!arguments.length) return pipeline; 
+      pipeline = p;
+      return node;
+    };
+
+    node.keys = function(k) {
+      groupby = util.array(k).map(util.accessor);
+      return node;
+    };
+
+    // The output collector in the facet node's pipeline. We hook up the
+    // output nodes of each cell's pipeline to it.
+    node.parentCollector = null;
+
+    return node;
+  }
+});
+define('parse/expr',['require','exports','module','../util/index'],function(require, exports, module) {
+  var util = require('../util/index');
+  
+  var CONSTANT = {
+  	"E":       "Math.E",
+  	"LN2":     "Math.LN2",
+  	"LN10":    "Math.LN10",
+  	"LOG2E":   "Math.LOG2E",
+  	"LOG10E":  "Math.LOG10E",
+  	"PI":      "Math.PI",
+  	"SQRT1_2": "Math.SQRT1_2",
+  	"SQRT2":   "Math.SQRT2"
+  };
+
+  var FUNCTION = {
+  	"abs":    "Math.abs",
+  	"acos":   "Math.acos",
+  	"asin":   "Math.asin",
+  	"atan":   "Math.atan",
+  	"atan2":  "Math.atan2",
+  	"ceil":   "Math.ceil",
+  	"cos":    "Math.cos",
+  	"exp":    "Math.exp",
+  	"floor":  "Math.floor",
+  	"log":    "Math.log",
+  	"max":    "Math.max",
+  	"min":    "Math.min",
+  	"pow":    "Math.pow",
+  	"random": "Math.random",
+  	"round":  "Math.round",
+  	"sin":    "Math.sin",
+  	"sqrt":   "Math.sqrt",
+  	"tan":    "Math.tan",
+    "date":   "Date.parse"
+  };
+  
+  var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
+      
+  function expr(model, x) {
+    var tokens = x.split(lexer),
+        t, v, i, n, sq, dq, ns, sg = {}, fd = {},
+        args = ["vg", "d", "e", "i"];
+
+    for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
+      var t = tokens[i];
+      if (t==="'") { if (!dq) sq = !sq; continue; }
+      if (t==='"') { if (!sq) dq = !dq; continue; }
+      if (dq || sq) continue;
+      if (CONSTANT[t]) {
+        tokens[i] = CONSTANT[t];
+      }
+      if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
+        tokens[i] = FUNCTION[t];
+      }
+      if(tokens[i+1] == ":") {  // Namespace signal
+        ns = t+":"+tokens[i+2];
+        if(model.signal((ns = util.field(ns))[0])) {
+          sg[ns[0]] = 1;
+          v = util.field(tokens[i+2]);
+          tokens[i] = "sg['"+tokens[i];
+          tokens[i+2] = tokens[i+2].replace(v[0], v[0]+"']");
+          i+=2;
+        }
+      }
+      if(model.signal((v = util.field(t))[0])) {
+        sg[v[0]] = 1;
+        tokens[i] = tokens[i].replace(v[0], "sg["+util.str(v[0])+"]");
+      }
+      if(v[0] == "d") fd[v.splice(1).join("")] = 1;
+    }
+
+    return {
+      fn: Function("d", "e", "i", "p", "sg", "return ("+tokens.join("")+");"),
+      signals: util.keys(sg),
+      fields: util.keys(fd)
+    };
+  };
+
+  expr.eval = function(model, fn, d, e, i, p, sg) {
+    sg = model.signalValues(util.array(sg));
+    return fn.call(null, d, e, i, p, sg);
+  };
+
+  return expr;
+});
+define('transforms/filter',['require','exports','module','../util/index','../core/tuple','../core/changeset','../parse/expr'],function(require, exports, module) {
+  var util = require('../util/index'), 
+      tuple = require('../core/tuple'), 
+      changeset = require('../core/changeset'), 
+      expr = require('../parse/expr');
+
+  return function filter(model) {
+    var test = null,
+        skip = {}; // TODO: remove by recourse to prev values?
+
+    function f(x) { return expr.eval(model, test, x, null, null, null, node._deps.signals); }
+
+    var node = new model.Node(function(input) {
+      util.debug(input, ["filtering"]);
+
+      var output = changeset.create(input);
+
+      input.rem.forEach(function(x) {
+        if (skip[x._id] !== 1) output.rem.push(x);
+        else skip[x._id] = 0;
+      });
+
+      input.add.forEach(function(x) {
+        if (f(x)) output.add.push(x);
+        else skip[x._id] = 1;
+      });
+
+      input.mod.forEach(function(x) {
+        var b = f(x),
+            s = (skip[x._id] === 1);
+        if (b && s) {
+          skip[x._id] = 0;
+          output.add.push(x);
+        } else if (b && !s) {
+          output.mod.push(x);
+        } else if (!b && s) {
+          // do nothing, keep skip true
+        } else { // !b && !s
+          output.rem.push(x);
+          skip[x._id] = 1;
+        }
+      });
+
+      return output;
+    });
+    
+    node.test = function(pred) { 
+      if(util.isFunction(pred)) test = pred;
+      else {
+        pred = expr(model, pred);
+        test = pred.fn;
+        node._deps.signals = pred.signals;
+        node._deps.fields  = pred.fields;
+      }
+      
+      return node;
+    };
+
+    return node;
+  };
+});
+define('transforms/fold',['require','exports','module','../util/index','../core/tuple','../core/changeset'],function(require, exports, module) {
+  var util = require('../util/index'), 
+      tuple = require('../core/tuple'), 
+      changeset = require('../core/changeset');
+
+  return function fold(model) {
+    var fields = [], accessors = [],
+      output = {key: "key", value: "value"},
+      cache = {};
+    
+    function get_tuple(x, i) {
+      var list = cache[x._id] || (cache[x._id] = Array(fields.length));
+      return list[i] || (list[i] = tuple.create(x, x._prev));
+    }
+
+    function fn(data, out, stamp) {
+      data.forEach(function(x) {
+        for (var i=0; i<fields.length; ++i) {
+          var o = get_tuple(x, i);
+          tuple.set(o, output.key, fields[i], stamp);
+          tuple.set(o, output.value, accessors[i](x), stamp);
+          out.push(o);
+        }
+      });
+    }
+    
+    var node = new model.Node(function(input) {
+      util.debug(input, ["folding"]);
+
+      var out = changeset.create(input);
+      fn(input.add, out.add, input.stamp);
+      fn(input.mod, out.mod, input.stamp);
+      input.rem.forEach(function(x) {
+        out.rem.push.apply(out.rem, cache[x._id]);
+      });
+
+      // If we're only propagating values, don't mark key/value as updated.
+      if(input.add.length || input.rem.length || 
+        fields.some(function(f) { return !!input.fields[f]; }))
+          out.fields[output.key] = 1, out.fields[output.value] = 1;
+      return out;
+    });
+    node._router = true;
+
+    node.fields = function(f) {
+      fields = util.array(f);
+      accessors = fields.map(util.accessor);
+      return node;
+    };
+
+    node.output = function(map) {
+      util.keys(output).forEach(function(k) {
+        if (map[k] !== undefined) {
+          output[k] = map[k];
+        }
+      });
+      return node;
+    };
+
+    return node;
+  };
+});
+define('transforms/formula',['require','exports','module','../util/index','../core/tuple','../parse/expr'],function(require, exports, module) {
+  var util = require('../util/index'), 
+      tuple = require('../core/tuple'), 
+      expr = require('../parse/expr');
+
+  return function formula(model) {
+    var field = null, fn = util.identity;
+
+    function f(x, stamp) { 
+      var val = expr.eval(model, fn, x, null, null, null, node._deps.signals);
+      tuple.set(x, field, val, stamp); 
+    }
+
+    var node = new model.Node(function(input) {  
+      util.debug(input, ["formulating"]);  
+
+      input.add.forEach(function(x) { f(x, input.stamp) });;
+      input.mod.forEach(function(x) { f(x, input.stamp) });
+      input.fields[field] = 1;
+      return input;
+    });   
+
+    node.field = function(name) {
+      field = name;
+      return node;
+    };
+
+    node.expr = function(s) { 
+      if(util.isFunction(s)) f = s;
+      else {
+        s = expr(model, s);
+        fn = s.fn;
+        node._deps.signals = s.signals;
+        node._deps.fields  = s.fields;
+      }
+      return node;
+    };
+
+    return node;
+  };
+});
+define('transforms/sort',['require','exports','module','../util/index','../parse/expr'],function(require, exports, module) {
+  var util = require('../util/index'), 
+      expr = require('../parse/expr');
+
+  return function sort(model) {
+    var by = null;
+
+    function comparator() {
+      return util.comparator(by.map(function(b) {
+        return model.signal(b) ? model.signal(b).value() : b;
+      }));
+    };
+
+    var node = new model.Node(function(input) {
+      util.debug(input, ["sorting"]);
+
+      if(input.add.length || input.mod.length || input.rem.length)
+        input.sort = comparator();
+      
+      return input;
+    });
+    node._router = true;
+
+    node.by = function(b) {
+      by = util.array(b);
+      by.forEach(function(s) { 
+        if(model.signal(s)) node._deps.signals.push(s);
+      });
+      return node;
+    };
+
+    return node;
+  };
+});
+define('transforms/zip',['require','exports','module','../util/index','../core/collector'],function(require, exports, module) {
+  var util = require('../util/index'), 
+      collector = require('../core/collector');
+
+  return function zip(model) {
+    var z = null,
+        as = "zip",
+        _key = "data", key = util.accessor("data"),
+        defaultValue = undefined,
+        _withKey = null, withKey = null;
+
+    var _map = {}, _data = collector(model), lastZip = 0;
+
+    function map(k) {
+      return map[k] || (map[k] = []);
+    }
+
+    var node = new model.Node(function(input) {
+      util.debug(input, ["zipping", z]);
+
+      var zds = model.data(z), zinput = zds._output, zdata = zds.values();
+
+      if(withKey) {
+        if(zinput && zinput.stamp > lastZip) {
+          zinput.add.forEach(function(x) { 
+            var m = map(withKey(x));
+            if(m[0]) m[0][as] = x;
+            m[1] = x; 
+          });
+          zinput.rem.forEach(function(x) {
+            var m = map(withKey(x));
+            if(m[0]) m[0][as] = defaultValue;
+            m[1] = null;
+          });
+          
+          // Only process zinput.mod tuples if the join key has changed.
+          // Other field updates will auto-propagate via prototype.
+          if(zinput.fields[_withKey]) {
+            zinput.mod.forEach(function(x) {
+              var prev = withKey(x._prev);
+              if(!prev) return;
+              if(prev.stamp < lastZip) return; // Only process new key updates
+
+              var prevm = map(prev.value);
+              if(prevm[0]) prevm[0][as] = defaultValue;
+              prevm[1] = null;
+
+              var m = map(withKey(x));
+              if(m[0]) m[0][as] = x;
+              m[1] = x;
+            });
+          }
+
+          lastZip = zinput.stamp;
+        }
+        
+        input.add.forEach(function(x) {
+          var m = map(key(x));
+          x[as] = m[1] || defaultValue;
+          m[0]  = x;
+        });
+        input.rem.forEach(function(x) { map(key(x))[0] = null; });
+
+        if(input.fields[_key]) {
+          input.mod.forEach(function(x) {
+            var prev = key(x._prev);
+            if(!prev) return;
+            if(prev.stamp < input.stamp) return; // Only process new key updates
+
+            map(prev.value)[0] = null;
+            var m = map(key(x));
+            x[as] = m[1] || defaultValue;
+            m[0]  = x;
+          });
+        }
+      } else {
+        // We only need to run a non-key-join again if we've got any add/rem
+        // on input or zinput
+        if(input.add.length == 0 && input.rem.length == 0 && 
+            zinput.add.length == 0 && zinput.rem.length == 0) return input;
+
+        // If we don't have a key-join, then we need to materialize both
+        // data sources to iterate through them. 
+        _data._fn(input);
+
+        var data = _data.data(), zlen = zdata.length, i;
+
+        for(i = 0; i < data.length; i++) { data[i][as] = zdata[i%zlen]; }
+      }
+
+      return input;
+    });
+
+    node["with"] = function(d) {
+      var deps = node._deps.data,
+          idx = deps.indexOf(z);
+
+      if(idx > -1) deps.splice(idx, 1);
+      z = d;
+      deps.push(z);
+      return node;
+    };
+
+    node["default"] = function(d) {
+      defaultValue = d;
+      return node;
+    };
+
+    node.as = function(name) {
+      as = name;
+      return node;
+    };
+
+    node.key = function(k) {
+      _key = k;
+      key  = util.accessor(k);
+      return node;
+    };
+
+    node.withKey = function(k) {
+      _withKey = k
+      withKey  = util.accessor(k);
+      return node;
+    };
+
+    return node;
+  };
+});
+define('transforms/index',['require','exports','module','./aggregate','./facet','./filter','./fold','./formula','./sort','./zip'],function(require, exports, module) {
+  return {
+    aggregate:  require('./aggregate'),
+    facet:      require('./facet'),
+    filter:     require('./filter'),
+    fold:       require('./fold'),
+    formula:    require('./formula'),
+    sort:       require('./sort'),
+    zip:        require('./zip')
+  };
+});
+define('parse/transforms',['require','exports','module','../util/index','../transforms/index'],function(require, exports, module) {
+  var util = require('../util/index'),
+      transforms = require('../transforms/index');
+
+  return function parseTransforms(model, def) {
+    var tx = transforms[def.type](model);
+    if(def.type == 'facet') {
+      var pipeline = (def.transform||[])
+        .map(function(t) { return parseTransforms(model, t); });
+      tx.pipeline(pipeline);
+    }
+
+    util.keys(def).forEach(function(k) {
+      if(k === 'type') return;
+      if(k === 'transform' && def.type === 'facet') return;
+      (tx[k])(def[k]);
+    });
+
+    return tx;
+  }
+});
+define('transforms/modify',['require','exports','module','../core/tuple','../util/index','../util/constants'],function(require, exports, module) {
+  var tuple = require('../core/tuple'),
+      util = require('../util/index'),
+      C = require('../util/constants');
+
+  var ADD = C.MODIFY_ADD, 
+      REMOVE = C.MODIFY_REMOVE, 
+      TOGGLE = C.MODIFY_TOGGLE, 
+      CLEAR = C.MODIFY_CLEAR;
+
+  var filter = function(field, value, src, dest) {
+    for(var i = src.length-1; i >= 0; --i) {
+      if(src[i][field] == value)
+        dest.push.apply(dest, src.splice(i, 1));
+    }
+  };
+
+  return function parseModify(model, def, ds) {
+    var signal = def.signal ? util.field(def.signal) : null, 
+        signalName = signal ? signal[0] : null,
+        predicate = def.predicate ? model.predicate(def.predicate) : null,
+        reeval = (predicate === null);
+
+    var node = new model.Node(function(input) {
+      if(predicate !== null) {
+        var db = {};
+        (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
+
+        // TODO: input
+        reeval = predicate({}, db, model.signalValues(predicate.signals||[]), model._predicates);
+      }
+
+      util.debug(input, [def.type+"ing", reeval]);
+      if(!reeval) return input;
+
+      var datum = {}, 
+          value = signal ? model.signalRef(def.signal) : null,
+          d = model.data(ds.name),
+          t = null;
+
+      datum[def.field] = value;
+
+      // We have to modify ds._data so that subsequent pulses contain
+      // our dynamic data. W/o modifying ds._data, only the output
+      // collector will contain dynamic tuples. 
+      if(def.type == ADD) {
+        t = tuple.create(datum);
+        input.add.push(t);
+        d._data.push(t);
+      } else if(def.type == REMOVE) {
+        filter(def.field, value, input.add, input.rem);
+        filter(def.field, value, input.mod, input.rem);
+        d._data = d._data.filter(function(x) { return x[def.field] !== value });
+      } else if(def.type == TOGGLE) {
+        var add = [], rem = [];
+        filter(def.field, value, input.rem, add);
+        filter(def.field, value, input.add, rem);
+        filter(def.field, value, input.mod, rem);
+        if(add.length == 0 && rem.length == 0) add.push(tuple.create(datum));
+
+        input.add.push.apply(input.add, add);
+        d._data.push.apply(d._data, add);
+        input.rem.push.apply(input.rem, rem);
+        d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1 });
+      } else if(def.type == CLEAR) {
+        input.rem.push.apply(input.rem, input.add);
+        input.rem.push.apply(input.rem, input.mod);
+        input.add = [];
+        input.mod = [];
+        d._data  = [];
+      } 
+
+      input.fields[def.field] = 1;
+      return input;
+    });
+    
+    var deps = node._deps.signals;
+    if(signalName) deps.push(signalName);
+    if(predicate)  deps.push.apply(deps, predicate.signals);
+    
+    return node;
+  }
+});
+define('util/load',['require','exports','module','./index','./config'],function(require, module, exports) {
+  var util = require('./index'),
+      config = require('./config');
+
+  var vg_load_protocolRE = /^[A-Za-z]+\:\/\//;
+  var vg_load_fileProtocol = "file://";
+
+  function vg_load_hasProtocol(url) {
+    return vg_load_protocolRE.test(url);
+  }
+
+  function vg_load_isFile(url) {
+    return url.indexOf(vg_load_fileProtocol) === 0;
+  }
+
+  function vg_load_xhr(url, callback) {
+    util.log("LOAD: " + url);
+    if (!vg_url_check(url)) {
+      util.error("URL is not whitelisted: " + url);
+      return;
+    }
+    d3.xhr(url, function(err, resp) {
+      if (resp) resp = resp.responseText;
+      callback(err, resp);
+    });
+  }
+
+  function vg_url_check(url) {
+    if (!config.domainWhiteList) return true;
+    var a = document.createElement("a");
+    a.href = url;
+    var domain = a.hostname.toLowerCase();
+    return config.domainWhiteList.some(function(d) {
+      return d === domain ||
+        domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
+    });
+  }
+
+  // TODO: how to check if nodeJS in requireJS?
+  // function vg_load_file(file, callback) {
+  //   util.log("LOAD FILE: " + file);
+  //   var idx = file.indexOf(vg_load_fileProtocol);
+  //   if (idx >= 0) file = file.slice(vg_load_fileProtocol.length);
+  //   require("fs").readFile(file, callback);
+  // }
+
+  // function vg_load_http(url, callback) {
+  //   util.log("LOAD HTTP: " + url);
+  //   var req = require("http").request(url, function(res) {
+  //     var pos=0, data = new Buffer(parseInt(res.headers['content-length'],10));
+  //     res.on("error", function(err) { callback(err, null); });
+  //     res.on("data", function(x) { x.copy(data, pos); pos += x.length; });
+  //     res.on("end", function() { callback(null, data); });
+  //   });
+  //   req.on("error", function(err) { callback(err); });
+  //   req.end();
+  // }
+
+  return function load(uri, callback) {
+    var url = vg_load_hasProtocol(uri) ? uri : config.baseURL + uri;
+    // if (config.isNode) {
+    //   // in node.js, consult url and select file or http
+    //   var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
+    //   get(url, callback);
+    // } else {
+      // in browser, use xhr
+      vg_load_xhr(url, callback);
+    // }  
+  };
+});
+define('util/read',['require','exports','module','./index'],function(require, module, exports) {
+  var util = require('./index'),
+      formats = {},
+      parsers = {
+        "number": util.number,
+        "boolean": util.boolean,
+        "date": Date.parse
+      };
+
+  function read(data, format) {
+    var type = (format && format.type) || "json";
+    data = formats[type](data, format);
+    if (format && format.parse) parseValues(data, format.parse);
+    return data;
+  }
+
+  formats.json = function(data, format) {
+    var d = util.isObject(data) ? data : JSON.parse(data);
+    if (format && format.property) {
+      d = util.accessor(format.property)(d);
+    }
+    return d;
+  };
+
+  formats.csv = function(data, format) {
+    var d = d3.csv.parse(data);
+    return d;
+  };
+
+  formats.tsv = function(data, format) {
+    var d = d3.tsv.parse(data);
+    return d;
+  };
+  
+  formats.topojson = function(data, format) {
+    if (topojson == null) {
+      util.error("TopoJSON library not loaded.");
+      return [];
+    }    
+    var t = util.isObject(data) ? data : JSON.parse(data),
+        obj = [];
+
+    if (format && format.feature) {
+      obj = (obj = t.objects[format.feature])
+        ? topojson.feature(t, obj).features
+        : (util.error("Invalid TopoJSON object: "+format.feature), []);
+    } else if (format && format.mesh) {
+      obj = (obj = t.objects[format.mesh])
+        ? [topojson.mesh(t, t.objects[format.mesh])]
+        : (util.error("Invalid TopoJSON object: " + format.mesh), []);
+    }
+    else { util.error("Missing TopoJSON feature or mesh parameter."); }
+
+    return obj;
+  };
+  
+  formats.treejson = function(data, format) {
+    data = util.isObject(data) ? data : JSON.parse(data);
+    return util.tree(data, format.children);
+  };
+  
+  function parseValues(data, types) {
+    var cols = util.keys(types),
+        p = cols.map(function(col) { return parsers[types[col]]; }),
+        tree = util.isTree(data);
+    vg_parseArray(tree ? [data] : data, cols, p, tree);
+  }
+  
+  function vg_parseArray(data, cols, p, tree) {
+    var d, i, j, len, clen;
+    for (i=0, len=data.length; i<len; ++i) {
+      d = data[i];
+      for (j=0, clen=cols.length; j<clen; ++j) {
+        d[cols[j]] = p[j](d[cols[j]]);
+      }
+      if (tree && d.values) parseValues(d, cols, p, true);
+    }
+  }
+
+  read.formats = formats;
+  read.parse = parseValues;
+  return read;
+});
+define('parse/data',['require','exports','module','./transforms','../transforms/modify','../util/index','../util/load','../util/read'],function(require, exports, module) {
+  var parseTransforms = require('./transforms'),
+      parseModify = require('../transforms/modify'),
+      util = require('../util/index'),
+      load = require('../util/load'),
+      read = require('../util/read');
+
+  var parseData = function(model, spec, callback) {
+    var count = 0;
+
+    function loaded(d) {
+      return function(error, data) {
+        if (error) {
+          util.error("LOADING FAILED: " + d.url);
+        } else {
+          model.data(d.name).values(read(data.toString(), d.format));
+        }
+        if (--count === 0) callback();
+      }
+    }
+
+    // process each data set definition
+    (spec || []).forEach(function(d) {
+      if (d.url) {
+        count += 1;
+        load(d.url, loaded(d)); 
+      }
+      parseData.datasource(model, d);
+    });
+
+    if (count === 0) setTimeout(callback, 1);
+    return spec;
+  };
+
+  parseData.datasource = function(model, d) {
+    var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
+        mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
+        ds = model.data(d.name, mod.concat(transform));
+
+    if(d.values) ds.values(d.values);
+    else if(d.source) {
+      ds.source(d.source);
+      model.data(d.source).addListener(ds);
+    }
+
+    return ds;    
+  };
+
+  return parseData;
+});
+define('scene/build',['require','exports','module','./encode','../core/collector','./bounds','./group','./Item','../parse/data','../core/tuple','../core/changeset','../util/index','../util/constants'],function(require, exports, module) {
   var encode  = require('./encode'),
       collect = require('../core/collector'),
       bounds  = require('./bounds'),
       group   = require('./group'),
       Item  = require('./Item'),
+      parseData = require('../parse/data'),
       tuple = require('../core/tuple'),
       changeset = require('../core/changeset'),
       util = require('../util/index'),
@@ -4003,7 +5097,7 @@ define('scene/build',['require','exports','module','./encode','../core/collector
   // parent is the dataflow builder node corresponding to the mark's group.
   return function build(model, renderer, def, mark, parent, inheritFrom) {
     var items = [], // Item nodes in the scene graph
-        f = def.from || inheritFrom,
+        f = (def.from ? def.from.data : null) || inheritFrom,
         from = util.isString(f) ? model.data(f) : null,
         map = {},
         lastBuild = 0,
@@ -4014,6 +5108,8 @@ define('scene/build',['require','exports','module','./encode','../core/collector
       mark.marktype = def.type;
       mark.interactive = !(def.interactive === false);
       mark.items = items; 
+
+      if(def.from && (def.from.transform || def.from.modify)) datasource();
 
       builder = new model.Node(buildItems);
       builder._type = 'builder';
@@ -4037,6 +5133,33 @@ define('scene/build',['require','exports','module','./encode','../core/collector
       builder.disconnect = disconnect;      
 
       return builder;
+    };
+
+    // Mark-level transformations are handled here because they may be
+    // inheriting from a group's faceted datasource. 
+    function datasource() {
+      var name = [f, def.type, Date.now()].join('_');
+      var spec = {
+        name: name,
+        source: f,
+        transform: def.from.transform,
+        modify: def.from.modify
+      };
+
+      f = name;
+      from = parseData.datasource(model, spec);
+
+      // At this point, we have a new datasource but it is empty as
+      // the propagation cycle has already crossed the datasources. 
+      // So, we repulse just this datasource. This should be safe
+      // as the ds isn't connected to the scenegraph yet.
+      var input, output = from._source._output;
+      input = from._input = changeset.create(output);
+      input.add = output.add;
+      input.mod = output.mod;
+      input.rem = output.rem;
+      input.stamp = null;
+      from.fire();
     };
 
     function pipeline() {
@@ -5384,91 +6507,6 @@ define('parse/events',[],function() {
     parse:       parse
   };
 });
-define('parse/expr',['require','exports','module','../util/index'],function(require, exports, module) {
-  var util = require('../util/index');
-  
-  var CONSTANT = {
-  	"E":       "Math.E",
-  	"LN2":     "Math.LN2",
-  	"LN10":    "Math.LN10",
-  	"LOG2E":   "Math.LOG2E",
-  	"LOG10E":  "Math.LOG10E",
-  	"PI":      "Math.PI",
-  	"SQRT1_2": "Math.SQRT1_2",
-  	"SQRT2":   "Math.SQRT2"
-  };
-
-  var FUNCTION = {
-  	"abs":    "Math.abs",
-  	"acos":   "Math.acos",
-  	"asin":   "Math.asin",
-  	"atan":   "Math.atan",
-  	"atan2":  "Math.atan2",
-  	"ceil":   "Math.ceil",
-  	"cos":    "Math.cos",
-  	"exp":    "Math.exp",
-  	"floor":  "Math.floor",
-  	"log":    "Math.log",
-  	"max":    "Math.max",
-  	"min":    "Math.min",
-  	"pow":    "Math.pow",
-  	"random": "Math.random",
-  	"round":  "Math.round",
-  	"sin":    "Math.sin",
-  	"sqrt":   "Math.sqrt",
-  	"tan":    "Math.tan",
-    "date":   "Date.parse"
-  };
-  
-  var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
-      
-  function expr(model, x) {
-    var tokens = x.split(lexer),
-        t, v, i, n, sq, dq, ns, sg = {}, fd = {},
-        args = ["vg", "d", "e", "i"];
-
-    for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
-      var t = tokens[i];
-      if (t==="'") { if (!dq) sq = !sq; continue; }
-      if (t==='"') { if (!sq) dq = !dq; continue; }
-      if (dq || sq) continue;
-      if (CONSTANT[t]) {
-        tokens[i] = CONSTANT[t];
-      }
-      if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
-        tokens[i] = FUNCTION[t];
-      }
-      if(tokens[i+1] == ":") {  // Namespace signal
-        ns = t+":"+tokens[i+2];
-        if(model.signal((ns = util.field(ns))[0])) {
-          sg[ns[0]] = 1;
-          v = util.field(tokens[i+2]);
-          tokens[i] = "sg['"+tokens[i];
-          tokens[i+2] = tokens[i+2].replace(v[0], v[0]+"']");
-          i+=2;
-        }
-      }
-      if(model.signal((v = util.field(t))[0])) {
-        sg[v[0]] = 1;
-        tokens[i] = tokens[i].replace(v[0], "sg["+util.str(v[0])+"]");
-      }
-      if(v[0] == "d") fd[v.splice(1).join("")] = 1;
-    }
-
-    return {
-      fn: Function("d", "e", "i", "p", "sg", "return ("+tokens.join("")+");"),
-      signals: util.keys(sg),
-      fields: util.keys(fd)
-    };
-  };
-
-  expr.eval = function(model, fn, d, e, i, p, sg) {
-    sg = model.signalValues(util.array(sg));
-    return fn.call(null, d, e, i, p, sg);
-  };
-
-  return expr;
-});
 define('parse/streams',['require','exports','module','d3','../core/changeset','./events','./expr','../util/index'],function(require, exports, module) {
   var d3 = require('d3'),
       changset = require('../core/changeset'),
@@ -6350,76 +7388,6 @@ define('canvas/Handler',['require','exports','module','d3','../util/index','./ma
   };
 
   return handler;
-});
-define('util/load',['require','exports','module','./index','./config'],function(require, module, exports) {
-  var util = require('./index'),
-      config = require('./config');
-
-  var vg_load_protocolRE = /^[A-Za-z]+\:\/\//;
-  var vg_load_fileProtocol = "file://";
-
-  function vg_load_hasProtocol(url) {
-    return vg_load_protocolRE.test(url);
-  }
-
-  function vg_load_isFile(url) {
-    return url.indexOf(vg_load_fileProtocol) === 0;
-  }
-
-  function vg_load_xhr(url, callback) {
-    util.log("LOAD: " + url);
-    if (!vg_url_check(url)) {
-      util.error("URL is not whitelisted: " + url);
-      return;
-    }
-    d3.xhr(url, function(err, resp) {
-      if (resp) resp = resp.responseText;
-      callback(err, resp);
-    });
-  }
-
-  function vg_url_check(url) {
-    if (!config.domainWhiteList) return true;
-    var a = document.createElement("a");
-    a.href = url;
-    var domain = a.hostname.toLowerCase();
-    return config.domainWhiteList.some(function(d) {
-      return d === domain ||
-        domain.lastIndexOf("."+d) === (domain.length - d.length - 1);
-    });
-  }
-
-  // TODO: how to check if nodeJS in requireJS?
-  // function vg_load_file(file, callback) {
-  //   util.log("LOAD FILE: " + file);
-  //   var idx = file.indexOf(vg_load_fileProtocol);
-  //   if (idx >= 0) file = file.slice(vg_load_fileProtocol.length);
-  //   require("fs").readFile(file, callback);
-  // }
-
-  // function vg_load_http(url, callback) {
-  //   util.log("LOAD HTTP: " + url);
-  //   var req = require("http").request(url, function(res) {
-  //     var pos=0, data = new Buffer(parseInt(res.headers['content-length'],10));
-  //     res.on("error", function(err) { callback(err, null); });
-  //     res.on("data", function(x) { x.copy(data, pos); pos += x.length; });
-  //     res.on("end", function() { callback(null, data); });
-  //   });
-  //   req.on("error", function(err) { callback(err); });
-  //   req.end();
-  // }
-
-  return function load(uri, callback) {
-    var url = vg_load_hasProtocol(uri) ? uri : config.baseURL + uri;
-    // if (config.isNode) {
-    //   // in node.js, consult url and select file or http
-    //   var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
-    //   get(url, callback);
-    // } else {
-      // in browser, use xhr
-      vg_load_xhr(url, callback);
-    // }  
-  };
 });
 define('canvas/Renderer',['require','exports','module','d3','../core/Bounds','../util/load','../util/config','./marks'],function(require, exports, module) {  
   var d3 = require('d3'),
@@ -7700,917 +8668,6 @@ define('parse/predicates',['require','exports','module','../util/index'],functio
     return spec;
   }
 });
-define('util/quickselect',[],function() {
-  return function quickselect(k, x) {
-    function swap(a, b) {
-      var t = x[a];
-      x[a] = x[b];
-      x[b] = t;
-    }
-    
-    var left = 0,
-        right = x.length - 1,
-        pos, i, pivot;
-    
-    while (left < right) {
-      pivot = x[k];
-      swap(k, right);
-      for (i = pos = left; i < right; ++i) {
-        if (x[i] < pivot) { swap(i, pos++); }
-      }
-      swap(right, pos);
-      if (pos === k) break;
-      if (pos < k) left = pos + 1;
-      else right = pos - 1;
-    }
-    return x[k];
-  };
-});
-define('transforms/measures',['require','exports','module','../core/tuple','../util/quickselect'],function(require, exports, module) {
-  var tuple = require('../core/tuple'),
-      quickselect = require('../util/quickselect');
-
-  var types = {
-    "count": measure({
-      name: "count",
-      init: "this.cnt = 0;",
-      add:  "this.cnt += 1;",
-      rem:  "this.cnt -= 1;",
-      set:  "this.cnt"
-    }),
-    "sum": measure({
-      name: "sum",
-      init: "this.sum = 0;",
-      add:  "this.sum += v;",
-      rem:  "this.sum -= v;",
-      set:  "this.sum"
-    }),
-    "avg": measure({
-      name: "avg",
-      init: "this.avg = 0;",
-      add:  "var d = v - this.avg; this.avg += d / this.cnt;",
-      rem:  "var d = v - this.avg; this.avg -= d / this.cnt;",
-      set:  "this.avg",
-      req:  ["count"], idx: 1
-    }),
-    "var": measure({
-      name: "var",
-      init: "this.dev = 0;",
-      add:  "this.dev += d * (v - this.avg);",
-      rem:  "this.dev -= d * (v - this.avg);",
-      set:  "this.dev / (this.cnt-1);",
-      req:  ["avg"], idx: 2
-    }),
-    "std": measure({
-      name: "std",
-      init: "",
-      add:  "",
-      rem:  "",
-      set:  "Math.sqrt(this.dev / (this.cnt-1))",
-      req:  ["var"], idx: 3
-    }),
-    "median": measure({
-      name: "median",
-      init: "this.val = [];",
-      add:  "this.val.push(v);",
-      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
-            "this.val.length = this.val.length - 1;",
-      set:  "this.sel(~~(this.cnt/2), this.val)"
-    })
-  };
-
-  function measure(base) {
-    return function(out) {
-      var m = Object.create(base);
-      m.out = out || base.name;
-      if (!m.idx) m.idx = 0;
-      return m;
-    };
-  }
-
-  function resolve(agg) {
-    function collect(m, a) {
-      (a.req || []).forEach(function(r) {
-        if (!m[r]) collect(m, m[r] = types[r]());
-      });
-      return m;
-    }
-    var map = agg.reduce(collect,
-      agg.reduce(function(m, a) { return (m[a.name] = a, m); }, {}));
-    var all = [];
-    for (var k in map) all.push(map[k]);
-    all.sort(function(a,b) { return a.idx - b.idx; });
-    return all;
-  }
-
-  function compile(agg) {
-    var all = resolve(agg),
-        ctr = "this.flag = this.ADD; this.tuple = t;",
-        add = "",
-        rem = "",
-        set = "var t = this.tuple;";
-    
-    all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
-    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+", stamp);"; });
-    add += "this.flag |= this.MOD;"
-    rem += "this.flag |= this.MOD;"
-    set += "return t;"
-
-    ctr = Function("t", ctr);
-    ctr.prototype.ADD = 1;
-    ctr.prototype.MOD = 2;
-    ctr.prototype.add = Function("v", add);
-    ctr.prototype.rem = Function("v", rem);
-    ctr.prototype.set = Function("stamp", set);
-    ctr.prototype.mod = mod;
-    ctr.prototype.tpl = tuple;
-    ctr.prototype.sel = quickselect;
-    return ctr;
-  }
-
-  function mod(v_new, v_old) {
-    if (v_old === undefined || v_old === v_new) return;
-    this.rem(v_old);
-    this.add(v_new);
-  };
-
-  types.create = compile;
-  return types;
-});
-define('transforms/aggregate',['require','exports','module','../core/tuple','../core/changeset','./measures','../util/index'],function(require, exports, module) {
-  var tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset'), 
-      meas = require('./measures'),
-      util = require('../util/index');
-
-  return function aggregate(model) {
-    var Measures = null, aggrs = {}, field = null;
-    
-    function aggr(input) {
-      var k, a, t, i, f;
-      k = input.facet ? input.facet.key : "";
-      if (!(a = aggrs[k])) {
-        t = input.facet ? input.facet : tuple.create(null);
-        aggrs[k] = a = new Measures(t);      
-      }
-      return a;
-    }
-    
-    var node = new model.Node(function(input) {
-      util.debug(input, ["aggregating"]);
-
-      var k = input.facet ? input.facet.key : "",
-          a = aggr(input), x,
-          output = changeset.create();
-
-      input.add.forEach(function(x) { a.add(x[field], 1); });
-      input.mod.forEach(function(x) { 
-        // If it happened on this timestamp, reflect the aggregate
-        if(x._prev[field] && x._prev[field].stamp == input.stamp) {
-          a.mod(x[field], x._prev[field].value); 
-        }
-      });
-      input.rem.forEach(function(x) { 
-        // Handle all these upstream cases:
-        // #1: Add(t) -> Rem(t)
-        // #2: Add(t) -> Mod(t) -> Rem(t)
-        // #3: Add(t) -> Mod(t) -> FilterOut(t)
-        if(x._prev[field] && x._prev[field].stamp == input.stamp) { 
-          a.rem(x._prev[field].value);
-        } else {
-          a.rem(x[field]);
-        }
-      });
-      x = a.set(input.stamp);
-
-      if(input.facet) return input;
-
-      if (a.cnt === 0) {
-        if (a.flag === a.MOD) output.rem.push(x);
-        delete aggrs[k];
-      } else if (a.flag & a.ADD) {
-        output.add.push(x);
-      } else if (a.flag & a.MOD) {
-        output.mod.push(x);
-      }
-      a.flag = 0;
-
-      return output;
-    });
-
-
-    node.field = function(f) { 
-      var deps = node._deps.fields,
-          idx = deps.indexOf(field);
-
-      if(idx > -1) deps.slice(idx, 1);
-      field = f; 
-      deps.push(field);
-      return node;
-    };
-
-    node.stats = function(aggs) {
-      Measures = meas.create(aggs.map(function(a) { return meas[a](); }));
-      return node;
-    };
-
-    return node;
-  };
-});
-define('transforms/facet',['require','exports','module','../util/index','../core/tuple','../core/changeset'],function(require, exports, module) {
-  var util = require('../util/index'), 
-      tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset');
-
-  return function facet(model) {
-    var groupby = [], pipeline = [];
-
-    var ADD = 1, MOD = 2;
-    var cells = {};
-  
-    function cell(x) {
-      // TODO: consider more efficient key constructions?
-      var keys = groupby.reduce(function(v,f) {
-        return (v.push(f(x)), v);
-      }, []), k = keys.join("|");
-
-      if(cells[k]) return cells[k];
-
-      // Rather than sharing the pipeline between all nodes,
-      // give each cell its individual pipeline. This allows
-      // dynamically added collectors to do the right thing
-      // when wiring up the pipelines.
-      var cp = pipeline.map(function(node) {
-        var n = new model.Node();
-        n._fn = node._fn, n._deps = node._deps;
-        // We don't need to transfer over any other properties, because
-        // the nodes in pipeline are unconnected dummy nodes. 
-        return n;
-      });
-
-      var t = tuple.create({keys: keys, key: k}),
-          ds = model.data("vg_"+t._id, cp, t);
-
-      node.addListener(cp[0]);
-      cp[cp.length-1].addListener(node.parentCollector);
-
-      var del = function() {
-        util.debug({}, ["deleting cell", k, cp[0]._type]);
-
-        node.removeListener(cp[0]);
-        model.graph.disconnect(cp);
-        delete cells[k];
-      };
-
-      return cells[k] = {t: t, s: ADD, ds: ds, delete: del, count: 0};
-    };
-
-    var node = new model.Node(function(input) {
-      util.debug(input, ["faceting"]);
-
-      var output = changeset.create(input);
-      var k, c, x, d;
-
-      input.add.forEach(function(x) {
-        var c = cell(x);
-        c.count += 1;
-        c.s |= MOD;
-        c.ds._input.add.push(x);
-      });
-
-      input.mod.forEach(function(x) {
-        var c = cell(x);
-        c.s |= MOD;
-        c.ds._input.mod.push(x);
-      });
-
-      input.rem.forEach(function(x) {
-        var c = cell(x);
-        c.count -= 1;
-        c.s |= MOD;
-        c.ds._input.rem.push(x);
-      });
-
-      for (k in cells) {
-        c = cells[k], x = c.t;
-        // propagate sort, signals, fields, etc.
-        changeset.copy(input, c.ds._input);
-        if (c.count === 0) {
-          if (c.s === MOD) output.rem.push(x);
-          c.delete();
-        } else if (c.s & ADD) {
-          output.add.push(x);
-        } else if (c.s & MOD) {
-          output.mod.push(x);
-        }
-        c.s = 0;
-      }
-
-      return output;
-    });
-
-    node._router = true;
-
-    node.data = function() {
-      var k, t, d, data = [];
-      for(k in cells) {
-        t = cells[k].t, d = model.data("vg_"+t._id).values();
-        data.push({_id: t._id, values: d });
-      }
-
-      return data;
-    };
-
-    node.pipeline = function(p) { 
-      if(!arguments.length) return pipeline; 
-      pipeline = p;
-      return node;
-    };
-
-    node.keys = function(k) {
-      groupby = util.array(k).map(util.accessor);
-      return node;
-    };
-
-    // The output collector in the facet node's pipeline. We hook up the
-    // output nodes of each cell's pipeline to it.
-    node.parentCollector = null;
-
-    return node;
-  }
-});
-define('transforms/filter',['require','exports','module','../util/index','../core/tuple','../core/changeset','../parse/expr'],function(require, exports, module) {
-  var util = require('../util/index'), 
-      tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset'), 
-      expr = require('../parse/expr');
-
-  return function filter(model) {
-    var test = null,
-        skip = {}; // TODO: remove by recourse to prev values?
-
-    function f(x) { return expr.eval(model, test, x, null, null, null, node._deps.signals); }
-
-    var node = new model.Node(function(input) {
-      util.debug(input, ["filtering"]);
-
-      var output = changeset.create(input);
-
-      input.rem.forEach(function(x) {
-        if (skip[x._id] !== 1) output.rem.push(x);
-        else skip[x._id] = 0;
-      });
-
-      input.add.forEach(function(x) {
-        if (f(x)) output.add.push(x);
-        else skip[x._id] = 1;
-      });
-
-      input.mod.forEach(function(x) {
-        var b = f(x),
-            s = (skip[x._id] === 1);
-        if (b && s) {
-          skip[x._id] = 0;
-          output.add.push(x);
-        } else if (b && !s) {
-          output.mod.push(x);
-        } else if (!b && s) {
-          // do nothing, keep skip true
-        } else { // !b && !s
-          output.rem.push(x);
-          skip[x._id] = 1;
-        }
-      });
-
-      return output;
-    });
-    
-    node.test = function(pred) { 
-      if(util.isFunction(pred)) test = pred;
-      else {
-        pred = expr(model, pred);
-        test = pred.fn;
-        node._deps.signals = pred.signals;
-        node._deps.fields  = pred.fields;
-      }
-      
-      return node;
-    };
-
-    return node;
-  };
-});
-define('transforms/fold',['require','exports','module','../util/index','../core/tuple','../core/changeset'],function(require, exports, module) {
-  var util = require('../util/index'), 
-      tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset');
-
-  return function fold(model) {
-    var fields = [], accessors = [],
-      output = {key: "key", value: "value"},
-      cache = {};
-    
-    function get_tuple(x, i) {
-      var list = cache[x._id] || (cache[x._id] = Array(fields.length));
-      return list[i] || (list[i] = tuple.create(x, x._prev));
-    }
-
-    function fn(data, out, stamp) {
-      data.forEach(function(x) {
-        for (var i=0; i<fields.length; ++i) {
-          var o = get_tuple(x, i);
-          tuple.set(o, output.key, fields[i], stamp);
-          tuple.set(o, output.value, accessors[i](x), stamp);
-          out.push(o);
-        }
-      });
-    }
-    
-    var node = new model.Node(function(input) {
-      util.debug(input, ["folding"]);
-
-      var out = changeset.create(input);
-      fn(input.add, out.add, input.stamp);
-      fn(input.mod, out.mod, input.stamp);
-      input.rem.forEach(function(x) {
-        out.rem.push.apply(out.rem, cache[x._id]);
-      });
-
-      // If we're only propagating values, don't mark key/value as updated.
-      if(input.add.length || input.rem.length || 
-        fields.some(function(f) { return !!input.fields[f]; }))
-          out.fields[output.key] = 1, out.fields[output.value] = 1;
-      return out;
-    });
-    node._router = true;
-
-    node.fields = function(f) {
-      fields = util.array(f);
-      accessors = fields.map(util.accessor);
-      return node;
-    };
-
-    node.output = function(map) {
-      util.keys(output).forEach(function(k) {
-        if (map[k] !== undefined) {
-          output[k] = map[k];
-        }
-      });
-      return node;
-    };
-
-    return node;
-  };
-});
-define('transforms/formula',['require','exports','module','../util/index','../core/tuple','../parse/expr'],function(require, exports, module) {
-  var util = require('../util/index'), 
-      tuple = require('../core/tuple'), 
-      expr = require('../parse/expr');
-
-  return function formula(model) {
-    var field = null, fn = util.identity;
-
-    function f(x, stamp) { 
-      var val = expr.eval(model, fn, x, null, null, null, node._deps.signals);
-      tuple.set(x, field, val, stamp); 
-    }
-
-    var node = new model.Node(function(input) {  
-      util.debug(input, ["formulating"]);  
-
-      input.add.forEach(function(x) { f(x, input.stamp) });;
-      input.mod.forEach(function(x) { f(x, input.stamp) });
-      input.fields[field] = 1;
-      return input;
-    });   
-
-    node.field = function(name) {
-      field = name;
-      return node;
-    };
-
-    node.expr = function(s) { 
-      if(util.isFunction(s)) f = s;
-      else {
-        s = expr(model, s);
-        fn = s.fn;
-        node._deps.signals = s.signals;
-        node._deps.fields  = s.fields;
-      }
-      return node;
-    };
-
-    return node;
-  };
-});
-define('transforms/sort',['require','exports','module','../util/index','../parse/expr'],function(require, exports, module) {
-  var util = require('../util/index'), 
-      expr = require('../parse/expr');
-
-  return function sort(model) {
-    var by = null;
-
-    function comparator() {
-      return util.comparator(by.map(function(b) {
-        return model.signal(b) ? model.signal(b).value() : b;
-      }));
-    };
-
-    var node = new model.Node(function(input) {
-      util.debug(input, ["sorting"]);
-
-      if(input.add.length || input.mod.length || input.rem.length)
-        input.sort = comparator();
-      
-      return input;
-    });
-    node._router = true;
-
-    node.by = function(b) {
-      by = util.array(b);
-      by.forEach(function(s) { 
-        if(model.signal(s)) node._deps.signals.push(s);
-      });
-      return node;
-    };
-
-    return node;
-  };
-});
-define('transforms/zip',['require','exports','module','../util/index','../core/collector'],function(require, exports, module) {
-  var util = require('../util/index'), 
-      collector = require('../core/collector');
-
-  return function zip(model) {
-    var z = null,
-        as = "zip",
-        _key = "data", key = util.accessor("data"),
-        defaultValue = undefined,
-        _withKey = null, withKey = null;
-
-    var _map = {}, _data = collector(model), lastZip = 0;
-
-    function map(k) {
-      return map[k] || (map[k] = []);
-    }
-
-    var node = new model.Node(function(input) {
-      util.debug(input, ["zipping", z]);
-
-      var zds = model.data(z), zinput = zds._output, zdata = zds.values();
-
-      if(withKey) {
-        if(zinput && zinput.stamp > lastZip) {
-          zinput.add.forEach(function(x) { 
-            var m = map(withKey(x));
-            if(m[0]) m[0][as] = x;
-            m[1] = x; 
-          });
-          zinput.rem.forEach(function(x) {
-            var m = map(withKey(x));
-            if(m[0]) m[0][as] = defaultValue;
-            m[1] = null;
-          });
-          
-          // Only process zinput.mod tuples if the join key has changed.
-          // Other field updates will auto-propagate via prototype.
-          if(zinput.fields[_withKey]) {
-            zinput.mod.forEach(function(x) {
-              var prev = withKey(x._prev);
-              if(!prev) return;
-              if(prev.stamp < lastZip) return; // Only process new key updates
-
-              var prevm = map(prev.value);
-              if(prevm[0]) prevm[0][as] = defaultValue;
-              prevm[1] = null;
-
-              var m = map(withKey(x));
-              if(m[0]) m[0][as] = x;
-              m[1] = x;
-            });
-          }
-
-          lastZip = zinput.stamp;
-        }
-        
-        input.add.forEach(function(x) {
-          var m = map(key(x));
-          x[as] = m[1] || defaultValue;
-          m[0]  = x;
-        });
-        input.rem.forEach(function(x) { map(key(x))[0] = null; });
-
-        if(input.fields[_key]) {
-          input.mod.forEach(function(x) {
-            var prev = key(x._prev);
-            if(!prev) return;
-            if(prev.stamp < input.stamp) return; // Only process new key updates
-
-            map(prev.value)[0] = null;
-            var m = map(key(x));
-            x[as] = m[1] || defaultValue;
-            m[0]  = x;
-          });
-        }
-      } else {
-        // We only need to run a non-key-join again if we've got any add/rem
-        // on input or zinput
-        if(input.add.length == 0 && input.rem.length == 0 && 
-            zinput.add.length == 0 && zinput.rem.length == 0) return input;
-
-        // If we don't have a key-join, then we need to materialize both
-        // data sources to iterate through them. 
-        _data._fn(input);
-
-        var data = _data.data(), zlen = zdata.length, i;
-
-        for(i = 0; i < data.length; i++) { data[i][as] = zdata[i%zlen]; }
-      }
-
-      return input;
-    });
-
-    node["with"] = function(d) {
-      var deps = node._deps.data,
-          idx = deps.indexOf(z);
-
-      if(idx > -1) deps.splice(idx, 1);
-      z = d;
-      deps.push(z);
-      return node;
-    };
-
-    node["default"] = function(d) {
-      defaultValue = d;
-      return node;
-    };
-
-    node.as = function(name) {
-      as = name;
-      return node;
-    };
-
-    node.key = function(k) {
-      _key = k;
-      key  = util.accessor(k);
-      return node;
-    };
-
-    node.withKey = function(k) {
-      _withKey = k
-      withKey  = util.accessor(k);
-      return node;
-    };
-
-    return node;
-  };
-});
-define('transforms/index',['require','exports','module','./aggregate','./facet','./filter','./fold','./formula','./sort','./zip'],function(require, exports, module) {
-  return {
-    aggregate:  require('./aggregate'),
-    facet:      require('./facet'),
-    filter:     require('./filter'),
-    fold:       require('./fold'),
-    formula:    require('./formula'),
-    sort:       require('./sort'),
-    zip:        require('./zip')
-  };
-});
-define('parse/transforms',['require','exports','module','../util/index','../transforms/index'],function(require, exports, module) {
-  var util = require('../util/index'),
-      transforms = require('../transforms/index');
-
-  return function parseTransforms(model, def) {
-    var tx = transforms[def.type](model);
-    if(def.type == 'facet') {
-      var pipeline = (def.transform||[])
-        .map(function(t) { return parseTransforms(model, t); });
-      tx.pipeline(pipeline);
-    }
-
-    util.keys(def).forEach(function(k) {
-      if(k === 'type') return;
-      if(k === 'transform' && def.type === 'facet') return;
-      (tx[k])(def[k]);
-    });
-
-    return tx;
-  }
-});
-define('transforms/modify',['require','exports','module','../core/tuple','../util/index','../util/constants'],function(require, exports, module) {
-  var tuple = require('../core/tuple'),
-      util = require('../util/index'),
-      C = require('../util/constants');
-
-  var ADD = C.MODIFY_ADD, 
-      REMOVE = C.MODIFY_REMOVE, 
-      TOGGLE = C.MODIFY_TOGGLE, 
-      CLEAR = C.MODIFY_CLEAR;
-
-  var filter = function(field, value, src, dest) {
-    for(var i = src.length-1; i >= 0; --i) {
-      if(src[i][field] == value)
-        dest.push.apply(dest, src.splice(i, 1));
-    }
-  };
-
-  return function parseModify(model, def, ds) {
-    var signal = def.signal ? util.field(def.signal) : null, 
-        signalName = signal ? signal[0] : null,
-        predicate = def.predicate ? model.predicate(def.predicate) : null,
-        reeval = (predicate === null);
-
-    var node = new model.Node(function(input) {
-      if(predicate !== null) {
-        var db = {};
-        (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
-
-        // TODO: input
-        reeval = predicate({}, db, model.signalValues(predicate.signals||[]), model._predicates);
-      }
-
-      util.debug(input, [def.type+"ing", reeval]);
-      if(!reeval) return input;
-
-      var datum = {}, 
-          value = signal ? model.signalRef(def.signal) : null,
-          d = model.data(ds.name),
-          t = null;
-
-      datum[def.field] = value;
-
-      // We have to modify ds._data so that subsequent pulses contain
-      // our dynamic data. W/o modifying ds._data, only the output
-      // collector will contain dynamic tuples. 
-      if(def.type == ADD) {
-        t = tuple.create(datum);
-        input.add.push(t);
-        d._data.push(t);
-      } else if(def.type == REMOVE) {
-        filter(def.field, value, input.add, input.rem);
-        filter(def.field, value, input.mod, input.rem);
-        d._data = d._data.filter(function(x) { return x[def.field] !== value });
-      } else if(def.type == TOGGLE) {
-        var add = [], rem = [];
-        filter(def.field, value, input.rem, add);
-        filter(def.field, value, input.add, rem);
-        filter(def.field, value, input.mod, rem);
-        if(add.length == 0 && rem.length == 0) add.push(tuple.create(datum));
-
-        input.add.push.apply(input.add, add);
-        d._data.push.apply(d._data, add);
-        input.rem.push.apply(input.rem, rem);
-        d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1 });
-      } else if(def.type == CLEAR) {
-        input.rem.push.apply(input.rem, input.add);
-        input.rem.push.apply(input.rem, input.mod);
-        input.add = [];
-        input.mod = [];
-        d._data  = [];
-      } 
-
-      input.fields[def.field] = 1;
-      return input;
-    });
-    
-    var deps = node._deps.signals;
-    if(signalName) deps.push(signalName);
-    if(predicate)  deps.push.apply(deps, predicate.signals);
-    
-    return node;
-  }
-});
-define('util/read',['require','exports','module','./index'],function(require, module, exports) {
-  var util = require('./index'),
-      formats = {},
-      parsers = {
-        "number": util.number,
-        "boolean": util.boolean,
-        "date": Date.parse
-      };
-
-  function read(data, format) {
-    var type = (format && format.type) || "json";
-    data = formats[type](data, format);
-    if (format && format.parse) parseValues(data, format.parse);
-    return data;
-  }
-
-  formats.json = function(data, format) {
-    var d = util.isObject(data) ? data : JSON.parse(data);
-    if (format && format.property) {
-      d = util.accessor(format.property)(d);
-    }
-    return d;
-  };
-
-  formats.csv = function(data, format) {
-    var d = d3.csv.parse(data);
-    return d;
-  };
-
-  formats.tsv = function(data, format) {
-    var d = d3.tsv.parse(data);
-    return d;
-  };
-  
-  formats.topojson = function(data, format) {
-    if (topojson == null) {
-      util.error("TopoJSON library not loaded.");
-      return [];
-    }    
-    var t = util.isObject(data) ? data : JSON.parse(data),
-        obj = [];
-
-    if (format && format.feature) {
-      obj = (obj = t.objects[format.feature])
-        ? topojson.feature(t, obj).features
-        : (util.error("Invalid TopoJSON object: "+format.feature), []);
-    } else if (format && format.mesh) {
-      obj = (obj = t.objects[format.mesh])
-        ? [topojson.mesh(t, t.objects[format.mesh])]
-        : (util.error("Invalid TopoJSON object: " + format.mesh), []);
-    }
-    else { util.error("Missing TopoJSON feature or mesh parameter."); }
-
-    return obj;
-  };
-  
-  formats.treejson = function(data, format) {
-    data = util.isObject(data) ? data : JSON.parse(data);
-    return util.tree(data, format.children);
-  };
-  
-  function parseValues(data, types) {
-    var cols = util.keys(types),
-        p = cols.map(function(col) { return parsers[types[col]]; }),
-        tree = util.isTree(data);
-    vg_parseArray(tree ? [data] : data, cols, p, tree);
-  }
-  
-  function vg_parseArray(data, cols, p, tree) {
-    var d, i, j, len, clen;
-    for (i=0, len=data.length; i<len; ++i) {
-      d = data[i];
-      for (j=0, clen=cols.length; j<clen; ++j) {
-        d[cols[j]] = p[j](d[cols[j]]);
-      }
-      if (tree && d.values) parseValues(d, cols, p, true);
-    }
-  }
-
-  read.formats = formats;
-  read.parse = parseValues;
-  return read;
-});
-define('parse/data',['require','exports','module','./transforms','../transforms/modify','../util/index','../util/load','../util/read'],function(require, exports, module) {
-  var parseTransforms = require('./transforms'),
-      parseModify = require('../transforms/modify'),
-      util = require('../util/index'),
-      load = require('../util/load'),
-      read = require('../util/read');
-
-  return function parseData(model, spec, callback) {
-    var count = 0;
-
-    function loaded(d) {
-      return function(error, data) {
-        if (error) {
-          util.error("LOADING FAILED: " + d.url);
-        } else {
-          model.data(d.name).values(read(data.toString(), d.format));
-        }
-        if (--count === 0) callback();
-      }
-    }
-
-    function datasource(d) {
-      var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
-          mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
-          ds = model.data(d.name, mod.concat(transform));
-
-      if(d.values) ds.values(d.values);
-      else if(d.source) {
-        ds.source(d.source);
-        model.data(d.source).addListener(ds);
-      }
-
-      return ds;
-    }
-
-    // process each data set definition
-    (spec || []).forEach(function(d) {
-      if (d.url) {
-        count += 1;
-        load(d.url, loaded(d)); 
-      }
-      datasource(d);
-    });
-
-    if (count === 0) setTimeout(callback, 1);
-    return spec;
-  };
-});
 define('parse/interactors',['require','exports','module','../util/load','../util/index','../util/constants'],function(require, exports, module) {
   var load = require('../util/load'),
       util = require('../util/index'),
@@ -8654,7 +8711,7 @@ define('parse/interactors',['require','exports','module','../util/load','../util
         m = marks[i];
         if(r = mk[m.type]) {
           marks[i] = util.duplicate(r);
-          if(m.from) marks[i] = m.from;
+          if(m.from) marks[i].from = m.from;
           if(m.properties) {
             [C.ENTER, C.UPDATE, C.EXIT].forEach(function(p) {
               marks[i].properties[p] = util.extend(r.properties[p], m.properties[p]);
