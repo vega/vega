@@ -78,7 +78,7 @@ define(function(require, exports, module) {
           marksNode.addListener(b);
           children[group._id].push({ 
             builder: b, 
-            from: marks[i].from || inherit, 
+            from: ((marks[i].from||{}).data) || inherit, 
             type: C.MARK 
           });
         }

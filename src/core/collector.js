@@ -63,7 +63,7 @@ define(function(require, exports, module) {
       if(Object.keys(collect).length) {
         for(i = 0, len = data.length; i < len; i++) {
           d = data[i];
-          for(k in collect[d._id]) d[k] = collect[d._id][k];        
+          for(k in collect[d._id]) d[k] = collect[d._id][k];
         }
       }
 

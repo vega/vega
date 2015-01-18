@@ -4,6 +4,7 @@ define(function(require, exports, module) {
       bounds  = require('./bounds'),
       group   = require('./group'),
       Item  = require('./Item'),
+      parseData = require('../parse/data'),
       tuple = require('../core/tuple'),
       changeset = require('../core/changeset'),
       util = require('../util/index'),
@@ -15,7 +16,7 @@ define(function(require, exports, module) {
   // parent is the dataflow builder node corresponding to the mark's group.
   return function build(model, renderer, def, mark, parent, inheritFrom) {
     var items = [], // Item nodes in the scene graph
-        f = def.from || inheritFrom,
+        f = (def.from ? def.from.data : null) || inheritFrom,
         from = util.isString(f) ? model.data(f) : null,
         map = {},
         lastBuild = 0,
@@ -26,6 +27,8 @@ define(function(require, exports, module) {
       mark.marktype = def.type;
       mark.interactive = !(def.interactive === false);
       mark.items = items; 
+
+      if(def.from && (def.from.transform || def.from.modify)) datasource();
 
       builder = new model.Node(buildItems);
       builder._type = 'builder';
@@ -49,6 +52,33 @@ define(function(require, exports, module) {
       builder.disconnect = disconnect;      
 
       return builder;
+    };
+
+    // Mark-level transformations are handled here because they may be
+    // inheriting from a group's faceted datasource. 
+    function datasource() {
+      var name = [f, def.type, Date.now()].join('_');
+      var spec = {
+        name: name,
+        source: f,
+        transform: def.from.transform,
+        modify: def.from.modify
+      };
+
+      f = name;
+      from = parseData.datasource(model, spec);
+
+      // At this point, we have a new datasource but it is empty as
+      // the propagation cycle has already crossed the datasources. 
+      // So, we repulse just this datasource. This should be safe
+      // as the ds isn't connected to the scenegraph yet.
+      var input, output = from._source._output;
+      input = from._input = changeset.create(output);
+      input.add = output.add;
+      input.mod = output.mod;
+      input.rem = output.rem;
+      input.stamp = null;
+      from.fire();
     };
 
     function pipeline() {
