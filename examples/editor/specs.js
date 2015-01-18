@@ -4,7 +4,8 @@ var STATIC_SPECS = [
   "error",
   "grouped_bar",
   "lifelines",
-  "stocks"
+  "stocks",
+  "weather"
 ];
 
 var INTERACTIVE_SPECS = [
