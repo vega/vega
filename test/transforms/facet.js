@@ -9,6 +9,8 @@ describe('Facet', function() {
   ];
 
   var spec = {
+    "signals": [{"name": "keys", "init": "country"}],
+
     "data": [{
       "name": "table",
       "values": values,
@@ -122,8 +124,9 @@ describe('Facet', function() {
       expectFacet(facets, 1, 4, 7); // Canada
       expectFacet(facets, 2, 8, 8); // India
 
-      values.splice(3, 1);
-      values.splice(6, 1);
+      values.splice(3, 1); // USA-neon
+      values.splice(6, 1); // Canada-neon
+      values.pop(); // India-neon
       ds.remove(function(x) { return x.type === "neon" }).fire();
       facets = ds.values();
       expect(facets).to.have.length(2);
@@ -134,5 +137,70 @@ describe('Facet', function() {
     }, viewFactory);    
   })
 
-  it('should allow array<signal> for keys?');
+  it('should handle signals as keys', function(done) {
+    var s = util.duplicate(spec);
+    spec.data[0].transform[0].keys = ['keys'];
+
+    parseSpec(spec, function(model) {
+      var ds = model.data('table'),
+          facets, i, len;
+
+      model.fire();
+      facets = ds.values();
+      expect(facets).to.have.length(2);
+      expectFacet(facets, 0, 0, 2); // USA
+      expectFacet(facets, 1, 3, 5); // Canada
+
+      model.signal('keys').value('type').fire();
+      facets = ds.values();
+      expect(facets).to.have.length(3);
+
+      expect(facets[0]).to.have.property('key', 'gold');
+      expect(facets[1]).to.have.property('key', 'silver');
+      expect(facets[2]).to.have.property('key', 'bronze');
+
+      expect(facets[0].values).to.have.length(2);
+      expect(facets[1].values).to.have.length(2);
+      expect(facets[2].values).to.have.length(2);
+
+      done();
+    }, viewFactory);      
+  });
+
+  it('should handle fields+signals as keys', function(done) {
+    var s = util.duplicate(spec);
+    spec.signals[0].init = 'type';
+    spec.data[0].transform[0].keys = ['country', 'keys'];
+
+    parseSpec(spec, function(model) {
+      var ds = model.data('table'),
+          facets, i, len;
+
+      model.fire();
+      facets = ds.values();
+      expect(facets).to.have.length(6);
+
+      expect(facets[0]).to.have.property('key', 'US|gold');
+      expect(facets[1]).to.have.property('key', 'US|silver');
+      expect(facets[2]).to.have.property('key', 'US|bronze');
+      expect(facets[0].keys).to.eql(['US', 'gold']);
+      expect(facets[1].keys).to.eql(['US', 'silver']);
+      expect(facets[2].keys).to.eql(['US', 'bronze']);
+      expect(facets[0].values).to.have.length(1);
+      expect(facets[1].values).to.have.length(1);
+      expect(facets[2].values).to.have.length(1);
+
+      expect(facets[3]).to.have.property('key', 'Canada|gold');
+      expect(facets[4]).to.have.property('key', 'Canada|silver');
+      expect(facets[5]).to.have.property('key', 'Canada|bronze');
+      expect(facets[3].keys).to.eql(['Canada', 'gold']);
+      expect(facets[4].keys).to.eql(['Canada', 'silver']);
+      expect(facets[5].keys).to.eql(['Canada', 'bronze']);
+      expect(facets[3].values).to.have.length(1);
+      expect(facets[4].values).to.have.length(1);
+      expect(facets[5].values).to.have.length(1);
+
+      done();
+    }, viewFactory);      
+  });
 });
