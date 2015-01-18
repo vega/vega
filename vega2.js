@@ -4216,13 +4216,14 @@ define('transforms/facet',['require','exports','module','../util/index','../core
       changeset = require('../core/changeset');
 
   return function facet(model) {
-    var groupby = [], pipeline = [];
-
-    var ADD = 1, MOD = 2;
-    var cells = {};
+    var groupby   = [],   // FieldAccessors | SignalNames
+        accessors = [],
+        pipeline  = [],
+        cells = {},
+        ADD = 1, MOD = 2;
   
     function cell(x, prev, stamp) {
-      var keys = groupby.reduce(function(v, f) {
+      var keys = accessors.reduce(function(v, f) {
         var p = f(x._prev);
         if(prev && (p = f(x._prev)) !== undefined && p.stamp >= stamp) {
           return (v.push(p.value), v);
@@ -4265,8 +4266,23 @@ define('transforms/facet',['require','exports','module','../util/index','../core
     var node = new model.Node(function(input) {
       util.debug(input, ["faceting"]);
 
-      var output = changeset.create(input);
-      var k, c, x, d;
+      var output = changeset.create(input),
+          k, c, x, d, i, len;
+
+      // If a signal specifying keys has changed, invalidate all cells and
+      // recompile accessors based on new signal value. 
+      if(node._deps.signals.some(function(s) { return !!input.signals[s] })) {
+        for(k in cells) {
+          c = cells[k];
+          output.rem.push(c.t);
+          c.delete();
+        }
+
+        for(i=0, len=groupby.length; i<len; ++i) {
+          if(util.isFunction(groupby[i])) continue;
+          accessors[i] = util.accessor(model.signal(groupby[i]).value());
+        }
+      }
 
       input.add.forEach(function(x) {
         var c = cell(x);
@@ -4339,7 +4355,17 @@ define('transforms/facet',['require','exports','module','../util/index','../core
     };
 
     node.keys = function(k) {
-      groupby = util.array(k).map(util.accessor);
+      util.array(k).forEach(function(x) {
+        if(model.signal(x)) {
+          node._deps.signals.push(x);
+          groupby.push(x);
+          accessors.push(util.accessor(model.signal(x).value()));
+        } else {
+          groupby.push(x = util.accessor(x));
+          accessors.push(x);
+        }
+      });
+
       return node;
     };
 
