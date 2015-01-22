@@ -94,7 +94,7 @@ define(function(require, exports, module) {
         continue;
       }
 
-      var touched = p.touch && n._stamp >= p.stamp;
+      var touched = p.touch && n.last() >= p.stamp;
       if(touched) continue; // Don't needlessly touch ops.
 
       var run = !!p.add.length || !!p.rem.length || n.router();
@@ -136,11 +136,11 @@ define(function(require, exports, module) {
       var data = n.dependency(C.DATA),
           signals = n.dependency(C.SIGNALS);
 
-      if(data !== C.SENTINEL) {
+      if(data.length > 0) {
         data.forEach(function(d) { graph.data(d).addListener(c); });
       }
 
-      if(signals !== C.SENTINEL) {
+      if(signals.length > 0) {
         signals.forEach(function(s) { graph.signal(s).addListener(c) });
       }
 
@@ -160,11 +160,11 @@ define(function(require, exports, module) {
       var data = n.dependency(C.DATA),
           signals = n.dependency(C.SIGNALS);
 
-      if(data !== C.SENTINEL) {
+      if(data.length > 0) {
         data.forEach(function(d) { graph.data(d).removeListener(c); });
       }
 
-      if(signals !== C.SENTINEL) {
+      if(signals.length > 0) {
         signals.forEach(function(s) { graph.signal(s).removeListener(c) });
       }
 

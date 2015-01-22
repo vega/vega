@@ -1,4 +1,4 @@
-define(function(require, module, exports) {
+define(function(require, exports, module) {
   var C = require('../util/constants');
 
   function create(cs, reflow) {

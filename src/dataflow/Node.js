@@ -6,13 +6,13 @@ define(function(require, exports, module) {
     this._rank = ++graph._rank; // For topologial sort
     this._stamp = 0;  // Last stamp seen
 
-    this._listeners = C.SENTINEL;
+    this._listeners = [];
 
     this._deps = {
-      data:    C.SENTINEL,
-      fields:  C.SENTINEL,
-      scales:  C.SENTINEL,
-      signals: C.SENTINEL,
+      data:    [],
+      fields:  [],
+      scales:  [],
+      signals: [],
     };
 
     this._router = false; // Responsible for propagating tuples, cannot ever be skipped
@@ -22,10 +22,16 @@ define(function(require, exports, module) {
 
   var proto = Node.prototype;
 
+  proto.last = function() { return this._stamp }
+
   proto.dependency = function(type, deps) {
     var d = this._deps[type];
     if(arguments.length === 1) return d;
-    d.push.apply(d, util.array(deps));
+    if(deps === null) { // Clear dependencies of a certain type
+      while(d.length > 0) d.pop();
+    } else {
+      d.push.apply(d, util.array(deps));
+    }
     return this;
   };
 
@@ -43,7 +49,6 @@ define(function(require, exports, module) {
 
   proto.addListener = function(l) {
     if(!(l instanceof Node)) throw "Listener is not a Node";
-    if(this._listeners == C.SENTINEL) this._listeners = [];
     if(this._listeners.indexOf(l) !== -1) return;
 
     this._listeners.push(l);
