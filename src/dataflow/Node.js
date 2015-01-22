@@ -1,6 +1,5 @@
 define(function(require, exports, module) {
   var C = require('../util/constants');
-  var REEVAL = ['data', 'fields', 'scales', 'signals'];
 
   function Node(graph) {
     this._graph = graph;
@@ -81,7 +80,7 @@ define(function(require, exports, module) {
 
   proto.reevaluate = function(pulse) {
     var node = this, reeval = false;
-    return REEVAL.some(function(prop) {
+    return C.DEPS.some(function(prop) {
       reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
       return reeval;
     });

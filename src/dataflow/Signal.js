@@ -21,7 +21,7 @@ define(function(require, exports, module) {
   };
 
   proto.fire = function(cs) {
-    if(!cs) cs = changeset.create({}, true);
+    if(!cs) cs = changeset.create(null, true);
     cs.signals[this._name] = 1;
     this._graph.propagate(cs, this);
   };
