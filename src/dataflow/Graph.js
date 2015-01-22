@@ -123,7 +123,7 @@ define(function(require, exports, module) {
     for(i=0, len=branch.length; i<len; ++i) {
       node = branch[i];
       if(n.collector()) collector = node;
-      
+
       fn(node, collector, i);
     }
   }
@@ -151,7 +151,6 @@ define(function(require, exports, module) {
 
     return branch;
   };
-
 
   proto.disconnect = function(branch) {
     util.debug({}, ['disconnecting']);

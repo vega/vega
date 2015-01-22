@@ -1,62 +1,94 @@
-define(function() {
-  return function(model) {
-    function Node(fn, listeners) {
-      this._type = 'operator';  // operator || collector
-      this._fn = fn || function(pulse) { return pulse };
-      this._rank = ++model._rank;
-      this._listeners = [];
-      this._deps = dependency();
-      this._stamp = 0;
-      this._router = false;
-      this._touchable = false;
+define(function(require, exports, module) {
+  var C = require('../util/constants');
+  var REEVAL = ['data', 'fields', 'scales', 'signals'];
 
-      if(listeners)
-        for(var i=0,l=listeners.length; i<l; i++) this.addListener(listeners[i]);
+  function Node(graph) {
+    this._graph = graph;
+    this._rank = ++graph._rank; // For topologial sort
+    this._stamp = 0;  // Last stamp seen
+
+    this._listeners = C.SENTINEL;
+
+    this._deps = {
+      data:    C.SENTINEL,
+      fields:  C.SENTINEL,
+      scales:  C.SENTINEL,
+      signals: C.SENTINEL,
     };
 
-    Node.prototype.addListener = function(l) {
-      if(!(l instanceof Node)) throw "Listener is not a Node";
-      if(this._listeners.indexOf(l) !== -1) return;
+    this._router = false; // Responsible for propagating tuples, cannot ever be skipped
+    this._collector = false;  // Holds a materialized dataset, pulse to reflow
+    return this;
+  };
 
-      this._listeners.push(l);
-      if(this._rank > l._rank) {
-        var q = [l];
-        while(q.length) {
-          var cur = q.splice(0,1)[0];
-          cur._rank = ++model._rank;
-          q = q.concat(cur._listeners);
-        }
+  var proto = Node.prototype;
+
+  proto.dependency = function(type, deps) {
+    var d = this._deps[type];
+    if(arguments.length === 1) return d;
+    d.push.apply(d, util.array(deps));
+    return this;
+  };
+
+  proto.router = function(bool) {
+    if(!arguments.length) return this._router;
+    this._router = bool
+    return this;
+  };
+
+  proto.collector = function(bool) {
+    if(!arguments.length) return this._collector;
+    this._collector = bool;
+    return this;
+  };
+
+  proto.addListener = function(l) {
+    if(!(l instanceof Node)) throw "Listener is not a Node";
+    if(this._listeners == C.SENTINEL) this._listeners = [];
+    if(this._listeners.indexOf(l) !== -1) return;
+
+    this._listeners.push(l);
+    if(this._rank > l._rank) {
+      var q = [l];
+      while(q.length) {
+        var cur = q.splice(0,1)[0];
+        cur._rank = ++this._graph._rank;
+        q = q.concat(cur._listeners);
       }
-    };
+    }
 
-    Node.prototype.removeListener = function (l) {
-      var foundSending = false;
-      for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
-        if (this._listeners[i] === l) {
-          this._listeners.splice(i, 1);
-          foundSending = true;
-        }
+    return this;
+  };
+
+  proto.removeListener = function (l) {
+    for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
+      if (this._listeners[i] === l) {
+        this._listeners.splice(i, 1);
       }
-      
-      return foundSending;
-    };
+    }
+    
+    return this;
+  };
 
-    Node.prototype.reevaluate = function(pulse) {
-      var node = this, reeval = false;
-      return ['signals', 'fields', 'data', 'scales'].some(function(prop) {
-        reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
-        return reeval;
-      });
-    };
+  // http://jsperf.com/empty-javascript-array
+  proto.disconnect = function() {
+    while(this._listeners.length > 0) {
+      this._listeners.pop();
+    }
+  };
 
-    function dependency(signals, fields, data, scales) {
-      return {signals: signals||[], fields: fields||[], 
-        data: data||[], scales: scales||[]};
-    };
+  proto.evaluate = function(pulse) { return pulse; }
 
-    Node.dependency = dependency;
-    Node.reset = function() { rank = 0; }
-    return Node;
-  }
+  proto.reevaluate = function(pulse) {
+    var node = this, reeval = false;
+    return REEVAL.some(function(prop) {
+      reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
+      return reeval;
+    });
+
+    return this;
+  };
+
+  return Node;
 });
 
