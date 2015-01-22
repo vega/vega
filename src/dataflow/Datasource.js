@@ -128,18 +128,23 @@ define(function(require, exports, module) {
 
     // Output node captures the last changeset seen by this datasource
     // (needed for joins and builds) and materializes any nested data.
+    // If this datasource is faceted, materializes the values in the facet.
     var output = new Node(this._graph)
       .router(true)
       .collector(true);
 
     output.evaluate = function(input) {
       util.debug(input, ["output", ds._name]);
+      var output = changeset.create(input, true);
+
+      if(ds._facet) {
+        ds._facet.values = ds.values();
+        input.facet = null;
+      }
 
       ds._output = input;
-
-      var out = changeset.create(input, true);
-      out.data[ds._name] = 1;
-      return out;
+      output.data[ds._name] = 1;
+      return output;
     });
 
     pipeline.push(output);
