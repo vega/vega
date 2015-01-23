@@ -6,7 +6,7 @@ define(function(require, exports, module) {
   function Zip(graph) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {
-      with: {type: "string"},
+      with: {type: "data"},
       as:  {type: "string"},
       key: {type: "field", default: "data"},
       withKey: {type: "field", default: null},
@@ -27,17 +27,17 @@ define(function(require, exports, module) {
   };
 
   proto.transform = function(input) {
-    util.debug(input, ["zipping", z]);
-
     var w = this.with.get(this._graph),
-        wds = this._graph.data(w),
+        wds = w.source,
         woutput = wds.last(),
         wdata = wds.values(),
         key = this.key.get(this._graph),
         withKey = this.withKey.get(this._graph),
         as = this.as.get(this._graph),
         dflt = this.default.get(this._graph),
-        map = this.__map;
+        map = this.__map.bind(this);
+
+    util.debug(input, ["zipping", w]);
 
     if(withKey.field) {
       if(woutput && woutput.stamp > this._lastJoin) {
