@@ -8,7 +8,7 @@ define(function(require, exports, module) {
   function Formula(graph) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {
-      field: {type: "string"},
+      field: {type: "value"},
       expr:  {type: "expr"}
     });
 

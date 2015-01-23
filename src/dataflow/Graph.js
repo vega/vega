@@ -20,8 +20,8 @@ define(function(require, exports, module) {
 
   proto.data = function(name, pipeline, facet) {
     if(arguments.length === 1) return this._data[name];
-    return this._data[name] = new Datasource(this, name, facet)
-      .pipeline(pipeline);
+    return (this._data[name] = new Datasource(this, name, facet)
+      .pipeline(pipeline));
   };
 
   function signal(name) {
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
   proto.signal = function(name, init) {
     var m = this;
     if(arguments.length === 1) return signal.call(this, name);
-    return this._signals[name] = new Signal(this, name, init);
+    return (this._signals[name] = new Signal(this, name, init));
   };
 
   proto.signalValues = function(name) {

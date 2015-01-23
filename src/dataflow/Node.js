@@ -26,6 +26,15 @@ define(function(require, exports, module) {
     return this;
   };
 
+  proto.clone = function() {
+    var n = new Node(this._graph);
+    n.evaluate = this.evaluate;
+    n._deps = this._deps;
+    n._router = this._router;
+    n._collector = this._collector;
+    return n;
+  };
+
   proto.last = function() { return this._stamp }
 
   proto.dependency = function(type, deps) {
@@ -41,13 +50,13 @@ define(function(require, exports, module) {
 
   proto.router = function(bool) {
     if(!arguments.length) return this._router;
-    this._router = bool
+    this._router = !!bool
     return this;
   };
 
   proto.collector = function(bool) {
     if(!arguments.length) return this._collector;
-    this._collector = bool;
+    this._collector = !!bool;
     return this;
   };
 
@@ -69,13 +78,15 @@ define(function(require, exports, module) {
   };
 
   proto.removeListener = function (l) {
+    var foundSending = false;
     for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
       if (this._listeners[i] === l) {
         this._listeners.splice(i, 1);
+        foundSending = true;
       }
     }
     
-    return this;
+    return foundSending;
   };
 
   // http://jsperf.com/empty-javascript-array

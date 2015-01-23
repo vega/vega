@@ -38,7 +38,7 @@ define(function(require, exports, module) {
 
   proto.predicate = function(name, predicate) {
     if(arguments.length === 1) return predicates.call(this, name);
-    return this._predicates[name] = predicate;
+    return (this._predicates[name] = predicate);
   };
 
   proto.addListener = function(l) { this._node.addListener(l); }

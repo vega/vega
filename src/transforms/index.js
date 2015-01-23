@@ -2,7 +2,7 @@ define(function(require, exports, module) {
   return {
     // aggregate:  require('./aggregate'),
     // bin:        require('./bin'),
-    // facet:      require('./Facet'),
+    facet:      require('./Facet'),
     filter:     require('./Filter'),
     fold:       require('./Fold'),
     formula:    require('./Formula'),

@@ -7,10 +7,10 @@ define(function(require, exports, module) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {
       with: {type: "data"},
-      as:  {type: "string"},
+      as:  {type: "value"},
       key: {type: "field", default: "data"},
       withKey: {type: "field", default: null},
-      default: {type: "*"}
+      default: {type: "value"}
     });
 
     this._map = {};
@@ -37,7 +37,7 @@ define(function(require, exports, module) {
         dflt = this.default.get(this._graph),
         map = this.__map.bind(this);
 
-    util.debug(input, ["zipping", w]);
+    util.debug(input, ["zipping", w.name]);
 
     if(withKey.field) {
       if(woutput && woutput.stamp > this._lastJoin) {
