@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var expr = require('./expr');
+  var expr = require('./expr'),
+      C = require('../util/constants');
 
   return function parseSignals(model, spec) {
     // process each signal definition
@@ -9,16 +10,15 @@ define(function(require, exports, module) {
 
       if(s.expr) {
         exp = expr(model, s.expr);
-        node = new model.Node(function(input) {
+        signal.evaluate = function(input) {
           var value = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
           if(spec.scale) value = model.scene().scale(spec, value);
           signal.value(value);
           input.signals[s.name] = 1;
           return input;
-        });
-        node._deps.signals = exp.signals;
+        };
+        signal.dependency(C.SIGNALS, exp.signals);
         exp.signals.forEach(function(dep) { model.signal(dep).addListener(node); });
-        signal.node(node);
       }
     });
 
