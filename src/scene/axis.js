@@ -1,6 +1,6 @@
 define(function(require, module, exports) {
   var config = require('../util/config'),
-      tpl = require('../core/tuple'),
+      tpl = require('../dataflow/tuple'),
       util = require('../util/index'),
       parseMark = require('../parse/mark');
 

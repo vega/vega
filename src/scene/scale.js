@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var parseScale = require('../parse/scale'), 
       util = require('../util/index'),
-      changeset = require('../core/changeset');
+      changeset = require('../dataflow/changeset');
 
   var ORDINAL = "ordinal";
 
@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 
     function reeval(group, input) {
       var from = model.data(domain.data || "vg_"+group.datum._id),
-          fcs = from ? from._output : null,
+          fcs = from ? from.last() : null,
           prev = group._prev || {},
           width = prev.width || {}, height = prev.height || {}, 
           reeval = fcs ? !!fcs.add.length || !!fcs.rem.length : false;

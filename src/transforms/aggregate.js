@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
-  var tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset'), 
+  var tuple = require('../dataflow/tuple'), 
+      changeset = require('../dataflow/changeset'), 
       meas = require('./measures'),
       util = require('../util/index');
 

@@ -5,22 +5,22 @@ define(function(require, exports, module) {
       C = require('../util/constants');
 
   function Transform(graph) {
-    Node.prototype.call(this, graph);
+    if(graph) this.init(graph);
+    return this;
   }
 
   Transform.addParameters = function(proto, params) {
     var p;
     for (var name in params) {
       p = params[name];
-      proto[name] = new Parameter(name, p.type, p.default);
+      proto[name] = new Parameter(name, p.type);
+      if(p.default) proto[name].set(p.default);
     }
   };
 
   var proto = (Transform.prototype = new Node());
 
-  proto.reset = function(input) { return input; };
-  proto.transform = function(input) { return input; };
-
+  proto.transform = function(input, reset) { return input; };
   proto.evaluate = function(input) {
     // Many transforms store caches that must be invalidated if
     // a signal value has changed. 
@@ -28,18 +28,19 @@ define(function(require, exports, module) {
       return !!input.signals[s] 
     });
 
-    if(reset) input = this.reset(input);
-
-    return this.transform(input);
+    return this.transform(input, reset);
   };
-  
-  proto.output = function(map) {
-    for (var key in this._output) {
-      if (map[key] !== undefined) {
-        this._output[key] = map[key];
+
+  // Mocking an output parameter.
+  proto.output = {
+    set: function(transform, map) {
+      for (var key in transform._output) {
+        if (map[key] !== undefined) {
+          transform._output[key] = map[key];
+        }
       }
+      return transform;
     }
-    return this;
   };
 
   return Transform;

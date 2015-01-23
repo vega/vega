@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
-  var Graph = require('./graph'), 
-      changeset = require('./changeset'), 
-      scene = require('../scene/index'),
+  var Graph = require('../dataflow/Graph'), 
+      Node  = require('../dataflow/Node'),
+      changeset = require('../dataflow/changeset'), 
+      // scene = require('../scene/index'),
       util = require('../util/index');
 
   function Model() {
@@ -12,7 +13,7 @@ define(function(require, exports, module) {
     this._predicates = {};
 
     this.graph = new Graph();
-    this.scene = scene(this);
+    // this.scene = scene(this);
 
     this._node = new Node(this.graph);
   };

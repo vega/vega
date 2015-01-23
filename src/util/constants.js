@@ -1,5 +1,10 @@
 define(function(require, module, exports) {
   return {
+    DATA: "data",
+    FIELDS:  "fields",
+    SCALES:  "scales",
+    SIGNALS: "signals",
+    
     GROUP: "group",
     
     ENTER: "enter",
@@ -8,10 +13,10 @@ define(function(require, module, exports) {
 
     SENTINEL: {"sentinel": 1},
 
-    MODIFY_ADD: "add",
-    MODIFY_REMOVE: "remove",
-    MODIFY_TOGGLE: "toggle",
-    MODIFY_CLEAR: "clear",
+    ADD: "add",
+    REMOVE: "remove",
+    TOGGLE: "toggle",
+    CLEAR: "clear",
 
     LINEAR: "linear",
     ORDINAL: "ordinal",

@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
-      changset = require('../core/changeset'),
+      changset = require('../dataflow/changeset'),
       selector = require('./events'),
       expr = require('./expr'),
       util = require('../util/index');

@@ -6,7 +6,7 @@ define(function(require, exports, module) {
       transition = require('../scene/transition'),
       config = require('../util/config'),
       util = require('../util/index'),
-      changeset = require('../core/changeset');
+      changeset = require('../dataflow/changeset');
 
   var View = function(el, width, height, model) {
     this._el    = null;
@@ -195,7 +195,6 @@ define(function(require, exports, module) {
         return input;
       });
       v._renderNode._router = true;
-      v._renderNode._type = 'renderer';
 
       v._model.scene(v._renderNode);
       v._build = true;

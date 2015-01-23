@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var util = require('../util/index'),
       bins = require('../util/bins'),
-      tuple = require('../core/tuple');
+      tuple = require('../dataflow/tuple');
 
   return function bin(model) {
 

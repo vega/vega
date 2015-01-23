@@ -108,7 +108,7 @@ define(function(require, exports, module) {
 
       // Even if we didn't run the node, we still want to propagate 
       // the pulse. 
-      if (pulse != doNotPropagate || !run) {
+      if (pulse != this.doNotPropagate || !run) {
         for (i = 0, len = l.length; i < len; i++) {
           pq.enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
         }
@@ -122,7 +122,7 @@ define(function(require, exports, module) {
     var node, collector, i, len;
     for(i=0, len=branch.length; i<len; ++i) {
       node = branch[i];
-      if(n.collector()) collector = node;
+      if(node.collector()) collector = node;
 
       fn(node, collector, i);
     }

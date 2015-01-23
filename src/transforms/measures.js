@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var tuple = require('../core/tuple'),
+  var tuple = require('../dataflow/tuple'),
       quickselect = require('../util/quickselect');
 
   var types = {

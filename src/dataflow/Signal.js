@@ -4,13 +4,13 @@ define(function(require, exports, module) {
       util = require('../util/index');
 
   function Signal(graph, name, init) {
-    Node.prototype.call(this, graph);
-
+    Node.prototype.init.call(this, graph);
     this._name  = name;
     this._value = init;
+    return this.init(graph);
   };
 
-  var proto = (Bin.prototype = new Node());
+  var proto = (Signal.prototype = new Node());
 
   proto.name = function() { return this._name; };
 

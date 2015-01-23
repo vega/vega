@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var util = require('../util/index'), 
-      tuple = require('../core/tuple'), 
-      changeset = require('../core/changeset');
+      tuple = require('../dataflow/tuple'), 
+      changeset = require('../dataflow/changeset');
 
   return function facet(model) {
     var groupby   = [],   // FieldAccessors | SignalNames
@@ -41,7 +41,7 @@ define(function(require, exports, module) {
       cp[cp.length-1].addListener(node.parentCollector);
 
       var del = function() {
-        util.debug({}, ["deleting cell", k, cp[0]._type]);
+        util.debug({}, ["deleting cell", k]);
 
         node.removeListener(cp[0]);
         model.graph.disconnect(cp);

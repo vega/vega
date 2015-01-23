@@ -44,12 +44,17 @@ module.exports = function(grunt) {
         files: ["src/**/*.js"],
         tasks: ["build"]
       }
+    },
+
+    jshint: {
+      src: ["src/dataflow/*.js"],
     }
   });
 
   grunt.loadNpmTasks("grunt-contrib-requirejs");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks("grunt-mocha-test");
 
   grunt.registerTask("default", ["test", "build"]);

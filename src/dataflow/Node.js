@@ -2,6 +2,12 @@ define(function(require, exports, module) {
   var C = require('../util/constants');
 
   function Node(graph) {
+    if(graph) this.init(graph);
+  }
+
+  var proto = Node.prototype;
+
+  proto.init = function(graph) {
     this._graph = graph;
     this._rank = ++graph._rank; // For topologial sort
     this._stamp = 0;  // Last stamp seen
@@ -19,8 +25,6 @@ define(function(require, exports, module) {
     this._collector = false;  // Holds a materialized dataset, pulse to reflow
     return this;
   };
-
-  var proto = Node.prototype;
 
   proto.last = function() { return this._stamp }
 

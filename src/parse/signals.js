@@ -4,7 +4,7 @@ define(function(require, exports, module) {
   return function parseSignals(model, spec) {
     // process each signal definition
     (spec || []).forEach(function(s) {
-      var signal = model.signal(s.name, s.init),
+      var signal = model.graph.signal(s.name, s.init),
           node, exp;
 
       if(s.expr) {

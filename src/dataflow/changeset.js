@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
   var C = require('../util/constants');
+  var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
-  function create(cs, reflow) {
+  function create(cs, touch) {
     var out = {};
     copy(cs, out);
 
@@ -9,7 +10,7 @@ define(function(require, exports, module) {
     out.mod = [];
     out.rem = [];
 
-    out.reflow = reflow;
+    out.touch = touch;
 
     return out;
   }
@@ -23,7 +24,7 @@ define(function(require, exports, module) {
     b.sort  = a ? a.sort  : null;
     b.facet = a ? a.facet : null;
     b.trans = a ? a.trans : null;
-    C.DEPS.forEach(function(d) { b[d] = a ? a[d] : {} });
+    REEVAL.forEach(function(d) { b[d] = a ? a[d] : {}; });
   }
 
   return {

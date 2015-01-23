@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var changeset = require('../core/changeset'), 
+  var changeset = require('../dataflow/changeset'), 
       build = require('./build');
 
   return function(model) {

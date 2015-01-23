@@ -1,18 +1,17 @@
 define(function(require, exports, module) {
   var Node = require('./Node'),
-      changeset = require('../core/changeset'),
+      changeset = require('./changeset'),
       util = require('../util/index'),
-      C = require('../util/collector');
+      C = require('../util/constants');
 
   function Collector(graph) {
-    Node.prototype.call(this, graph);
-
+    Node.prototype.init.call(this, graph);
     this._data = [];
-    this.router(true)
+    return this.router(true)
       .collector(true);
   }
 
-  var proto = (Bin.prototype = new Node());
+  var proto = (Collector.prototype = new Node());
 
   proto.data = function() { return this._data; }
 
@@ -40,4 +39,6 @@ define(function(require, exports, module) {
 
     return input;
   };
+
+  return Collector;
 });

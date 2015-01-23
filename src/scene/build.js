@@ -5,8 +5,8 @@ define(function(require, exports, module) {
       group   = require('./group'),
       Item  = require('./Item'),
       parseData = require('../parse/data'),
-      tuple = require('../core/tuple'),
-      changeset = require('../core/changeset'),
+      tuple = require('../dataflow/tuple'),
+      changeset = require('../dataflow/changeset'),
       util = require('../util/index'),
       C = require('../util/constants');
 
@@ -31,9 +31,8 @@ define(function(require, exports, module) {
       if(def.from && (def.from.transform || def.from.modify)) datasource();
 
       builder = new model.Node(buildItems);
-      builder._type = 'builder';
       builder._router = true;
-      builder._touchable = true;
+      builder._collector = true;
 
       encoder = encode(model, mark);
       bounder = bounds(model, mark);
@@ -72,13 +71,14 @@ define(function(require, exports, module) {
       // the propagation cycle has already crossed the datasources. 
       // So, we repulse just this datasource. This should be safe
       // as the ds isn't connected to the scenegraph yet.
-      var input, output = from._source._output;
-      input = from._input = changeset.create(output);
+      var output = from.source().last(),
+          input  = changeset.create(output);
+
       input.add = output.add;
       input.mod = output.mod;
       input.rem = output.rem;
       input.stamp = null;
-      from.fire();
+      from.fire(input);
     };
 
     function pipeline() {
@@ -128,7 +128,7 @@ define(function(require, exports, module) {
         // send forward all items for reencoding if we do an early return.
         if(fullUpdate) output.mod = items.slice();
 
-        fcs = from._output;
+        fcs = from.last();
         if(!fcs) return output.touch = true, output;
         if(fcs.stamp <= lastBuild) return output;
 

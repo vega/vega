@@ -1,12 +1,7 @@
 define(function(require, exports, module) {
-  var tuple = require('../core/tuple'),
+  var tuple = require('../dataflow/tuple'),
       util = require('../util/index'),
       C = require('../util/constants');
-
-  var ADD = C.MODIFY_ADD, 
-      REMOVE = C.MODIFY_REMOVE, 
-      TOGGLE = C.MODIFY_TOGGLE, 
-      CLEAR = C.MODIFY_CLEAR;
 
   var filter = function(field, value, src, dest) {
     for(var i = src.length-1; i >= 0; --i) {
@@ -43,15 +38,15 @@ define(function(require, exports, module) {
       // We have to modify ds._data so that subsequent pulses contain
       // our dynamic data. W/o modifying ds._data, only the output
       // collector will contain dynamic tuples. 
-      if(def.type == ADD) {
+      if(def.type == C.ADD) {
         t = tuple.create(datum);
         input.add.push(t);
         d._data.push(t);
-      } else if(def.type == REMOVE) {
+      } else if(def.type == C.REMOVE) {
         filter(def.field, value, input.add, input.rem);
         filter(def.field, value, input.mod, input.rem);
         d._data = d._data.filter(function(x) { return x[def.field] !== value });
-      } else if(def.type == TOGGLE) {
+      } else if(def.type == C.TOGGLE) {
         var add = [], rem = [];
         filter(def.field, value, input.rem, add);
         filter(def.field, value, input.add, rem);
@@ -62,7 +57,7 @@ define(function(require, exports, module) {
         d._data.push.apply(d._data, add);
         input.rem.push.apply(input.rem, rem);
         d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1 });
-      } else if(def.type == CLEAR) {
+      } else if(def.type == C.CLEAR) {
         input.rem.push.apply(input.rem, input.add);
         input.rem.push.apply(input.rem, input.mod);
         input.add = [];

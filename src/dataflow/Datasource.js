@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
   var changeset = require('./changeset'), 
       tuple = require('./tuple'), 
-      collector = require('./collector'),
+      Node = require('./Node'),
+      Collector = require('./Collector'),
       util = require('../util/index'),
       C = require('../util/constants');
   
@@ -76,7 +77,7 @@ define(function(require, exports, module) {
     if(pipeline.length) {
       // If we have a pipeline, add a collector to the end to materialize
       // the output.
-      ds._collector = collector(this._graph, pipeline);
+      ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
     }
 
@@ -122,7 +123,7 @@ define(function(require, exports, module) {
       }
 
       return out;
-    });
+    };
 
     pipeline.unshift(input);
 
@@ -145,7 +146,7 @@ define(function(require, exports, module) {
       ds._output = input;
       output.data[ds._name] = 1;
       return output;
-    });
+    };
 
     pipeline.push(output);
 
@@ -161,7 +162,7 @@ define(function(require, exports, module) {
       l.evaluate = function(input) {
         dest._input = source._output;
         return input;
-      });
+      };
       l.addListener(dest._pipeline[0]);
     }
 
