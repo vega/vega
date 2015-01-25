@@ -8,9 +8,9 @@ define(function(require, exports, module) {
 
   function Graph() {
     this._stamp = 0;
-    this._rank = 0;
+    this._rank  = 0;
 
-    this._data  = {};
+    this._data = {};
     this._signals = {};
 
     this.doNotPropagate = {};
@@ -81,16 +81,16 @@ define(function(require, exports, module) {
     if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
     pulse.stamp = ++this._stamp;
-    pq.enq({ node: node, pulse: pulse, rank: node._rank });
+    pq.enq({ node: node, pulse: pulse, rank: node.rank() });
 
     while (pq.length > 0) {
       v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
 
       // A node's rank might change during a propagation (e.g. instantiating
       // a group's dataflow branch). Re-queue if it has.
-      if(r != n._rank) {
-        util.debug(p, ['Rank mismatch', r, n._rank]);
-        pq.enq({ node: n, pulse: p, rank: n._rank });
+      if(r != n.rank()) {
+        util.debug(p, ['Rank mismatch', r, n.rank()]);
+        pq.enq({ node: n, pulse: p, rank: n.rank() });
         continue;
       }
 
@@ -103,12 +103,12 @@ define(function(require, exports, module) {
 
       if(run) {
         pulse = n.evaluate(p);
-        n._stamp = pulse.stamp;
+        n.last(pulse.stamp);
       }
 
       // Even if we didn't run the node, we still want to propagate 
       // the pulse. 
-      if (pulse != this.doNotPropagate || !run) {
+      if (pulse !== this.doNotPropagate || !run) {
         for (i = 0, len = l.length; i < len; i++) {
           pq.enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
         }
@@ -123,7 +123,6 @@ define(function(require, exports, module) {
     for(i=0, len=branch.length; i<len; ++i) {
       node = branch[i];
       if(node.collector()) collector = node;
-
       fn(node, collector, i);
     }
   }
@@ -141,7 +140,7 @@ define(function(require, exports, module) {
       }
 
       if(signals.length > 0) {
-        signals.forEach(function(s) { graph.signal(s).addListener(c) });
+        signals.forEach(function(s) { graph.signal(s).addListener(c); });
       }
 
       if(i > 0) {

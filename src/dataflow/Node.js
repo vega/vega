@@ -35,7 +35,13 @@ define(function(require, exports, module) {
     return n;
   };
 
-  proto.last = function() { return this._stamp }
+  proto.rank = function() { return this._rank; };
+
+  proto.last = function(stamp) { 
+    if(!arguments.length) return this._stamp;
+    this._stamp = stamp;
+    return this;
+  };
 
   proto.dependency = function(type, deps) {
     var d = this._deps[type];

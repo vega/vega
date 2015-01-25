@@ -32,7 +32,8 @@ define(function(require, exports, module) {
   };
 
   proto._cell = function(x, prev, stamp) {
-    var accessors = this.keys.get(this._graph).accessors;
+    var facet = this,
+        accessors = this.keys.get(this._graph).accessors;
 
     var keys = accessors.reduce(function(v, f) {
       var p = null;
@@ -59,12 +60,12 @@ define(function(require, exports, module) {
     var del = function() {
       util.debug({}, ["deleting cell", k]);
 
-      this.removeListener(cp[0]);
-      this._graph.disconnect(cp);
-      delete this._cells[k];
+      facet.removeListener(cp[0]);
+      facet._graph.disconnect(cp);
+      delete facet._cells[k];
     };
 
-    return (this._cells[k] = {t: t, s: ADD, ds: ds, delete: del.bind(this), count: 0});
+    return (this._cells[k] = {t: t, s: ADD, ds: ds, delete: del, count: 0});
   };
 
   proto.transform = function(input, reset) {

@@ -7,7 +7,7 @@ define(function(require, exports, module) {
     Node.prototype.init.call(this, graph);
     this._name  = name;
     this._value = init;
-    return this.init(graph);
+    return this;
   };
 
   var proto = (Signal.prototype = new Node());
