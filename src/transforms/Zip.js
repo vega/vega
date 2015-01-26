@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 
   var proto = (Zip.prototype = new Transform());
 
-  proto.__map = function(k) {
+  function mp(k) {
     return this._map[k] || (this._map[k] = []);
   };
 
@@ -35,7 +35,7 @@ define(function(require, exports, module) {
         withKey = this.withKey.get(this._graph),
         as = this.as.get(this._graph),
         dflt = this.default.get(this._graph),
-        map = this.__map.bind(this);
+        map = mp.bind(this);
 
     util.debug(input, ["zipping", w.name]);
 

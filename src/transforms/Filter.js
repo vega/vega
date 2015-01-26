@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 
   var proto = (Filter.prototype = new Transform());
 
-  proto._test = function(x) {
+  function test(x) {
     return expr.eval(this._graph, this.test.get(this._graph), 
       x, null, null, null, this.dependency(C.SIGNALS));
   };
@@ -32,12 +32,12 @@ define(function(require, exports, module) {
     });
 
     input.add.forEach(function(x) {
-      if (f._test(x)) output.add.push(x);
+      if (test.call(f, x)) output.add.push(x);
       else skip[x._id] = 1;
     });
 
     input.mod.forEach(function(x) {
-      var b = f._test(x),
+      var b = test.call(f, x),
           s = (skip[x._id] === 1);
       if (b && s) {
         skip[x._id] = 0;

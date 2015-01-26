@@ -5,7 +5,7 @@ define(function(require, exports, module) {
       C = require('../util/constants');
 
   function Transform(graph) {
-    if(graph) this.init(graph);
+    if(graph) Node.prototype.init.call(this, graph);
     return this;
   }
 

@@ -23,7 +23,7 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto._reset = function(input, output) {
+  function rst(input, output) {
     for(k in this._cells) {
       c = this._cells[k];
       output.rem.push(c.t);
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
     }
   };
 
-  proto._cell = function(x, prev, stamp) {
+  function cell(x, prev, stamp) {
     var facet = this,
         accessors = this.keys.get(this._graph).accessors;
 
@@ -75,18 +75,18 @@ define(function(require, exports, module) {
         output = changeset.create(input),
         k, c, x, d, i, len;
 
-    if(reset) this._reset(input, output);
+    if(reset) rst.call(this, input, output);
 
     input.add.forEach(function(x) {
-      var c = facet._cell(x);
+      var c = cell.call(facet, x);
       c.count += 1;
       c.s |= MOD;
       c.ds._input.add.push(x);
     });
 
     input.mod.forEach(function(x) {
-      var c = facet._cell(x), 
-          prev = facet._cell(x, true, input.stamp);
+      var c = cell.call(facet, x), 
+          prev = cell.call(facet, x, true, input.stamp);
 
       if(c !== prev) {
         prev.count -= 1;
@@ -105,7 +105,7 @@ define(function(require, exports, module) {
     });
 
     input.rem.forEach(function(x) {
-      var c = facet._cell(x);
+      var c = cell.call(facet, x);
       c.count -= 1;
       c.s |= MOD;
       c.ds._input.rem.push(x);

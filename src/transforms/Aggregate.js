@@ -24,14 +24,14 @@ define(function(require, exports, module) {
     }
   };
 
-  proto._reset = function(input, output) {
+  function rst(input, output) {
     for(var k in this._cache) { 
       if(!input.facet) output.rem.push(this._cache[k].set(input.stamp));
       this._cache[k] = null;
     }
   };
 
-  proto._aggr = function(input) {
+  function aggr(input) {
     var k = input.facet ? input.facet.key : "",
         a = this._cache[k],
         t;
@@ -52,8 +52,8 @@ define(function(require, exports, module) {
         field = this.on.get().accessor,
         a, x;
 
-    if(reset) this._reset(input, output);
-    a = this._aggr(input);
+    if(reset) rst.call(this, input, output);
+    a = aggr.call(this, input);
 
     input.add.forEach(function(x) { a.add(field(x)); });
     input.mod.forEach(function(x) { 

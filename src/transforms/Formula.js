@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 
   var proto = (Formula.prototype = new Transform());
 
-  proto._expr = function(x, field, stamp) {
+  function f(x, field, stamp) {
     var val = expr.eval(this._graph, this.expr.get(this._graph), 
       x, null, null, null, this.dependency(C.SIGNALS));
 
@@ -29,8 +29,8 @@ define(function(require, exports, module) {
     var t = this, 
         field = this.field.get(this._graph);
 
-    input.add.forEach(function(x) { t._expr(x, field, input.stamp) });;
-    input.mod.forEach(function(x) { t._expr(x, field, input.stamp) });
+    input.add.forEach(function(x) { f.call(t, x, field, input.stamp) });;
+    input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
     input.fields[field] = 1;
     return input;
   };
