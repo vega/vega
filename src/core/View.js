@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
       parseStreams = require('../parse/streams'),
-      canvas = require('../canvas/index'),
-      svg = require('../svg/index'),
+      canvas = require('../render/canvas/index'),
+      svg = require('../render/svg/index'),
       transition = require('../scene/transition'),
       config = require('../util/config'),
       util = require('../util/index'),
@@ -219,7 +219,7 @@ define(function(require, exports, module) {
   View.factory = function(model) {
     return function(opt) {
       opt = opt || {};
-      var defs = model._defs;
+      var defs = model.defs();
       var v = new View()
         .model(model)
         .width(defs.width)

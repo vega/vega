@@ -9,7 +9,7 @@ define(function(require, exports, module) {
 
   return function(view) {
     var model = view.model(),
-        spec  = model._defs.signals,
+        spec  = model.defs().signals,
         register = {}, nodes = {};
 
     function signal(sig, selector, exp, spec) {

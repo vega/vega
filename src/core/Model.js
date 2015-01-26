@@ -20,6 +20,12 @@ define(function(require, exports, module) {
 
   var proto = Model.prototype;
 
+  prototype.defs = function(defs) {
+    if (!arguments.length) return this._defs;
+    this._defs = defs;
+    return this;
+  };
+
   proto.data = function() {
     var data = this.graph.data.apply(this.graph, arguments);
     if(arguments.length > 1) {  // new Datasource
