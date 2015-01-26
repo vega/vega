@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
-      util = require('../util/index'),
+      util = require('../../util/index'),
       marks = require('./marks');
 
   var handler = function(el, model) {

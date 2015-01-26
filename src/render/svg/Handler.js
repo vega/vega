@@ -1,5 +1,5 @@
 define(function(require, module, exports) {
-  var util = require('../util/index');
+  var util = require('../../util/index');
 
   var handler = function(el, model) {
     this._active = null;

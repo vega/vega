@@ -1,7 +1,7 @@
 define(function(require, module, exports) {
   var d3 = require('d3'),
-      util = require('../util/index'),
-      config = require('../util/config');
+      util = require('../../util/index'),
+      config = require('../../util/config');
 
   function x(o)     { return o.x || 0; }
   function y(o)     { return o.y || 0; }

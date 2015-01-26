@@ -1,8 +1,8 @@
 define(function(require, module, exports) {
-  var Bounds = require('../core/Bounds'),
-      boundsCalc = require('../util/bounds'),
-      util = require('../util/index'),
-      config = require('../util/config'),
+  var Bounds = require('../../core/Bounds'),
+      boundsCalc = require('../../util/bounds'),
+      util = require('../../util/index'),
+      config = require('../../util/config'),
       path = require('./path');
 
   var parsePath = path.parse,

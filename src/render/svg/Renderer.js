@@ -1,5 +1,5 @@
 define(function(require, module, exports) {
-  var util = require('../util/index'),
+  var util = require('../../util/index'),
       marks = require('./marks');
 
   var renderer = function() {

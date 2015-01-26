@@ -1,8 +1,8 @@
 define(function(require, exports, module) {  
   var d3 = require('d3'),
-      Bounds = require('../core/Bounds'),
-      load = require('../util/load'),
-      config = require('../util/config'),
+      Bounds = require('../../core/Bounds'),
+      load = require('../../util/load'),
+      config = require('../../util/config'),
       marks = require('./marks');
 
   var renderer = function() {
