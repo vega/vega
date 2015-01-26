@@ -30,7 +30,7 @@ define(function(require, exports, module) {
       init: "this.dev = 0;",
       add:  "this.dev += d * (v - this.avg);",
       rem:  "this.dev -= d * (v - this.avg);",
-      set:  "this.dev / (this.cnt-1);",
+      set:  "this.dev / this.cnt",
       req:  ["avg"], idx: 2
     }),
     "std": measure({
@@ -38,7 +38,7 @@ define(function(require, exports, module) {
       init: "",
       add:  "",
       rem:  "",
-      set:  "Math.sqrt(this.dev / (this.cnt-1))",
+      set:  "Math.sqrt(this.dev / this.cnt)",
       req:  ["var"], idx: 3
     }),
     "median": measure({
@@ -47,7 +47,8 @@ define(function(require, exports, module) {
       add:  "this.val.push(v);",
       rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
             "this.val.length = this.val.length - 1;",
-      set:  "this.sel(~~(this.cnt/2), this.val)"
+      set:  "this.sel(~~(this.cnt/2), this.val)",
+      req: ["count"], idx: 4
     })
   };
 

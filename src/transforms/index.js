@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   return {
-    // aggregate:  require('./aggregate'),
+    aggregate:  require('./Aggregate'),
     bin:        require('./Bin'),
     facet:      require('./Facet'),
     filter:     require('./Filter'),

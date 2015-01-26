@@ -203,4 +203,6 @@ describe('Facet', function() {
       done();
     }, viewFactory);      
   });
+
+  it('should transform faceted values');
 });
