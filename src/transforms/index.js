@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   return {
     // aggregate:  require('./aggregate'),
-    // bin:        require('./bin'),
+    bin:        require('./Bin'),
     facet:      require('./Facet'),
     filter:     require('./Filter'),
     fold:       require('./Fold'),
