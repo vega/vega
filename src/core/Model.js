@@ -1,26 +1,24 @@
 define(function(require, exports, module) {
   var Graph = require('../dataflow/Graph'), 
       Node  = require('../dataflow/Node'),
+      Builder = require('../scene/Builder'),
       changeset = require('../dataflow/changeset'), 
-      // scene = require('../scene/index'),
       util = require('../util/index');
 
   function Model() {
-    this._stamp = 0;
-    this._rank  = 0;
-
     this._defs = {};
     this._predicates = {};
+    this._scene = null;
 
     this.graph = new Graph();
-    // this.scene = scene(this);
 
     this._node = new Node(this.graph);
+    this._builder = null; // Top-level scenegraph builder
   };
 
   var proto = Model.prototype;
 
-  prototype.defs = function(defs) {
+  proto.defs = function(defs) {
     if (!arguments.length) return this._defs;
     this._defs = defs;
     return this;
@@ -47,8 +45,26 @@ define(function(require, exports, module) {
     return (this._predicates[name] = predicate);
   };
 
-  proto.addListener = function(l) { this._node.addListener(l); }
-  proto.removeListener = function(l) { this._node.removeListener(l); }
+  proto.predicates = function() { return this._predicates; };
+
+  proto.scene = function(renderer) {
+    if(!arguments.length) return this._scene;
+    if(this._builder) this._node.removeListener(this._builder.disconnect());
+    this._builder = new Builder(this, renderer, this._defs.marks, this._scene={});
+    this._node.addListener(this._builder);
+    return this;
+  };
+
+  // Helper method to run signals through top-level scales
+  proto.scale = function(spec, value) {
+    if(!spec.scale) return value;
+    var scale = this._scene.items[0].scale(spec.scale);
+    if(!scale) return value;
+    return spec.invert ? scale.invert(value) : scale(value);
+  };
+
+  proto.addListener = function(l) { this._node.addListener(l); };
+  proto.removeListener = function(l) { this._node.removeListener(l); };
 
   proto.fire = function(cs) {
     if(!cs) cs = changeset.create();

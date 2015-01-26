@@ -1494,26 +1494,24 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
 define('core/Model',['require','exports','module','../dataflow/Graph','../dataflow/Node','../dataflow/changeset','../util/index'],function(require, exports, module) {
   var Graph = require('../dataflow/Graph'), 
       Node  = require('../dataflow/Node'),
+      // Build = require('../scene/Build'),
       changeset = require('../dataflow/changeset'), 
-      // scene = require('../scene/index'),
       util = require('../util/index');
 
   function Model() {
-    this._stamp = 0;
-    this._rank  = 0;
-
     this._defs = {};
     this._predicates = {};
+    this._scene = null;
 
     this.graph = new Graph();
-    // this.scene = scene(this);
 
     this._node = new Node(this.graph);
+    this._builder = null; // Top-level scenegraph builder
   };
 
   var proto = Model.prototype;
 
-  prototype.defs = function(defs) {
+  proto.defs = function(defs) {
     if (!arguments.length) return this._defs;
     this._defs = defs;
     return this;
@@ -1540,8 +1538,26 @@ define('core/Model',['require','exports','module','../dataflow/Graph','../datafl
     return (this._predicates[name] = predicate);
   };
 
-  proto.addListener = function(l) { this._node.addListener(l); }
-  proto.removeListener = function(l) { this._node.removeListener(l); }
+  proto.predicates = function() { return this._predicates; };
+
+  proto.scene = function(renderer) {
+    if(!arguments.length) return this._scene;
+    if(this._builder) this._node.removeListener(this._builder.disconnect());
+    this._builder = new Builder(this, renderer, this._defs.marks, this._scene={});
+    this._node.addListener(this._builder);
+    return this;
+  };
+
+  // Helper method to run signals through top-level scales
+  proto.scale = function(spec, value) {
+    if(!spec.scale) return value;
+    var scale = this._scene.items[0].scale(spec.scale);
+    if(!scale) return value;
+    return spec.invert ? scale.invert(value) : scale(value);
+  };
+
+  proto.addListener = function(l) { this._node.addListener(l); };
+  proto.removeListener = function(l) { this._node.removeListener(l); };
 
   proto.fire = function(cs) {
     if(!cs) cs = changeset.create();
@@ -6458,7 +6474,7 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
       C = require('../util/constants');
 
   function Transform(graph) {
-    if(graph) this.init(graph);
+    if(graph) Node.prototype.init.call(this, graph);
     return this;
   }
 
@@ -6662,14 +6678,14 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
     }
   };
 
-  proto._reset = function(input, output) {
+  function rst(input, output) {
     for(var k in this._cache) { 
       if(!input.facet) output.rem.push(this._cache[k].set(input.stamp));
       this._cache[k] = null;
     }
   };
 
-  proto._aggr = function(input) {
+  function aggr(input) {
     var k = input.facet ? input.facet.key : "",
         a = this._cache[k],
         t;
@@ -6690,8 +6706,8 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
         field = this.on.get().accessor,
         a, x;
 
-    if(reset) this._reset(input, output);
-    a = this._aggr(input);
+    if(reset) rst.call(this, input, output);
+    a = aggr.call(this, input);
 
     input.add.forEach(function(x) { a.add(field(x)); });
     input.mod.forEach(function(x) { 
@@ -6874,7 +6890,7 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
     return this;
   };
 
-  proto._reset = function(input, output) {
+  function rst(input, output) {
     for(k in this._cells) {
       c = this._cells[k];
       output.rem.push(c.t);
@@ -6882,7 +6898,7 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
     }
   };
 
-  proto._cell = function(x, prev, stamp) {
+  function cell(x, prev, stamp) {
     var facet = this,
         accessors = this.keys.get(this._graph).accessors;
 
@@ -6926,18 +6942,18 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
         output = changeset.create(input),
         k, c, x, d, i, len;
 
-    if(reset) this._reset(input, output);
+    if(reset) rst.call(this, input, output);
 
     input.add.forEach(function(x) {
-      var c = facet._cell(x);
+      var c = cell.call(facet, x);
       c.count += 1;
       c.s |= MOD;
       c.ds._input.add.push(x);
     });
 
     input.mod.forEach(function(x) {
-      var c = facet._cell(x), 
-          prev = facet._cell(x, true, input.stamp);
+      var c = cell.call(facet, x), 
+          prev = cell.call(facet, x, true, input.stamp);
 
       if(c !== prev) {
         prev.count -= 1;
@@ -6956,7 +6972,7 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
     });
 
     input.rem.forEach(function(x) {
-      var c = facet._cell(x);
+      var c = cell.call(facet, x);
       c.count -= 1;
       c.s |= MOD;
       c.ds._input.rem.push(x);
@@ -6999,7 +7015,7 @@ define('transforms/Filter',['require','exports','module','./Transform','../dataf
 
   var proto = (Filter.prototype = new Transform());
 
-  proto._test = function(x) {
+  function test(x) {
     return expr.eval(this._graph, this.test.get(this._graph), 
       x, null, null, null, this.dependency(C.SIGNALS));
   };
@@ -7016,12 +7032,12 @@ define('transforms/Filter',['require','exports','module','./Transform','../dataf
     });
 
     input.add.forEach(function(x) {
-      if (f._test(x)) output.add.push(x);
+      if (test.call(f, x)) output.add.push(x);
       else skip[x._id] = 1;
     });
 
     input.mod.forEach(function(x) {
-      var b = f._test(x),
+      var b = test.call(f, x),
           s = (skip[x._id] === 1);
       if (b && s) {
         skip[x._id] = 0;
@@ -7061,17 +7077,17 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
 
   var proto = (Fold.prototype = new Transform());
 
-  proto._reset = function(input, output) { 
+  function rst(input, output) { 
     for(var id in this._cache) output.rem.push.apply(output.rem, this._cache[id]);
     this._cache = {};
   };
 
-  proto._get_tuple = function(x, i, len) {
+  function get_tuple(x, i, len) {
     var list = this._cache[x._id] || (this._cache[x._id] = Array(len));
     return list[i] || (list[i] = tuple.create(x, x._prev));
   };
 
-  proto._fold = function(data, fields, accessors, out, stamp) {
+  function fn(data, fields, accessors, out, stamp) {
     var i = 0, dlen = data.length,
         j, flen = fields.length,
         d, t;
@@ -7079,7 +7095,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
     for(; i<dlen; ++i) {
       d = data[i];
       for(j=0; j<flen; ++j) {
-        t = this._get_tuple(d, j, flen);  
+        t = get_tuple.call(this, d, j, flen);  
         tuple.set(t, this._output.key, fields[j], stamp);
         tuple.set(t, this._output.value, accessors[j](d), stamp);
         out.push(t);
@@ -7095,10 +7111,10 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
         fields = on.fields, accessors = on.accessors,
         output = changeset.create(input);
 
-    if(reset) this._reset(input, output);
+    if(reset) rst.call(this, input, output);
 
-    this._fold(input.add, fields, accessors, output.add, input.stamp);
-    this._fold(input.mod, fields, accessors, output.mod, input.stamp);
+    fn.call(this, input.add, fields, accessors, output.add, input.stamp);
+    fn.call(this, input.mod, fields, accessors, output.mod, input.stamp);
     input.rem.forEach(function(x) {
       output.rem.push.apply(output.rem, fold._cache[x._id]);
       fold._cache[x._id] = null;
@@ -7132,7 +7148,7 @@ define('transforms/Formula',['require','exports','module','./Transform','../data
 
   var proto = (Formula.prototype = new Transform());
 
-  proto._expr = function(x, field, stamp) {
+  function f(x, field, stamp) {
     var val = expr.eval(this._graph, this.expr.get(this._graph), 
       x, null, null, null, this.dependency(C.SIGNALS));
 
@@ -7144,8 +7160,8 @@ define('transforms/Formula',['require','exports','module','./Transform','../data
     var t = this, 
         field = this.field.get(this._graph);
 
-    input.add.forEach(function(x) { t._expr(x, field, input.stamp) });;
-    input.mod.forEach(function(x) { t._expr(x, field, input.stamp) });
+    input.add.forEach(function(x) { f.call(t, x, field, input.stamp) });;
+    input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
     input.fields[field] = 1;
     return input;
   };
@@ -7201,7 +7217,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
 
   var proto = (Zip.prototype = new Transform());
 
-  proto.__map = function(k) {
+  function mp(k) {
     return this._map[k] || (this._map[k] = []);
   };
 
@@ -7214,7 +7230,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
         withKey = this.withKey.get(this._graph),
         as = this.as.get(this._graph),
         dflt = this.default.get(this._graph),
-        map = this.__map.bind(this);
+        map = mp.bind(this);
 
     util.debug(input, ["zipping", w.name]);
 
