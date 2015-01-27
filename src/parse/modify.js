@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var tuple = require('../dataflow/tuple'),
+  var Node = require('../dataflow/Node'),
+      tuple = require('../dataflow/tuple'),
       util = require('../util/index'),
       C = require('../util/constants');
 
@@ -11,25 +12,27 @@ define(function(require, exports, module) {
   };
 
   return function parseModify(model, def, ds) {
-    var signal = def.signal ? util.field(def.signal) : null, 
+    var graph = model.graph,
+        signal = def.signal ? util.field(def.signal) : null, 
         signalName = signal ? signal[0] : null,
         predicate = def.predicate ? model.predicate(def.predicate) : null,
-        reeval = (predicate === null);
+        reeval = (predicate === null),
+        node = new Node(graph);
 
-    var node = new model.Node(function(input) {
+    node.evaluate = function(input) {
       if(predicate !== null) {
         var db = {};
         (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
 
         // TODO: input
-        reeval = predicate({}, db, model.signalValues(predicate.signals||[]), model._predicates);
+        reeval = predicate({}, db, graph.signalValues(predicate.signals||[]), model._predicates);
       }
 
       util.debug(input, [def.type+"ing", reeval]);
       if(!reeval) return input;
 
       var datum = {}, 
-          value = signal ? model.signalRef(def.signal) : null,
+          value = signal ? graph.signalRef(def.signal) : null,
           d = model.data(ds.name),
           t = null;
 
@@ -67,11 +70,10 @@ define(function(require, exports, module) {
 
       input.fields[def.field] = 1;
       return input;
-    });
-    
-    var deps = node._deps.signals;
-    if(signalName) deps.push(signalName);
-    if(predicate)  deps.push.apply(deps, predicate.signals);
+    };
+
+    if(signalName) node.dependency(C.SIGNALS, signalName);
+    if(predicate)  node.dependency(C.SIGNALS, predicate.signals);
     
     return node;
   }
