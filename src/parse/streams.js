@@ -1,29 +1,33 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
+      Node = require('../dataflow/Node'),
       changset = require('../dataflow/changeset'),
       selector = require('./events'),
       expr = require('./expr'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      C = require('../util/constants');
 
   var START = "start", MIDDLE = "middle", END = "end";
 
   return function(view) {
     var model = view.model(),
+        graph = model.graph,
         spec  = model.defs().signals,
         register = {}, nodes = {};
 
     function signal(sig, selector, exp, spec) {
-      var n = new model.Node(function(input) {
-        var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
-        if(spec.scale) val = model.scene().scale(spec, val);
+      var n = new Node(graph);
+      n.evaluate = function(input) {
+        var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
+        if(spec.scale) val = model.scale(spec, val);
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.touch = true;
         return input;  
-      });
-      n._deps.signals = [selector.signal];
-      n.addListener(sig.node());
-      model.signal(selector.signal).addListener(n);
+      };
+      n.dependency(C.SIGNALS, selector.signal);
+      n.addListener(sig);
+      graph.signal(selector.signal).addListener(n);
     };
 
     function event(sig, selector, exp, spec) {
@@ -36,28 +40,29 @@ define(function(require, exports, module) {
       register[selector.event].push({
         signal: sig,
         exp: exp,
-        filters: filters.map(function(f) { return expr(model, f); }),
+        filters: filters.map(function(f) { return expr(graph, f); }),
         spec: spec
       });
 
-      nodes[selector.event] = nodes[selector.event] || new model.Node();
-      nodes[selector.event].addListener(sig.node());
+      nodes[selector.event] = nodes[selector.event] || new Node(graph);
+      nodes[selector.event].addListener(sig);
     };
 
     function orderedStream(sig, selector, exp, spec) {
       var name = sig.name(), 
-          trueFn = expr(model, "true"),
+          trueFn = expr(graph, "true"),
           s = {};
 
-      s[START]  = model.signal(name + START,  false);
-      s[MIDDLE] = model.signal(name + MIDDLE, false);
-      s[END]    = model.signal(name + END,    false);
+      s[START]  = graph.signal(name + START,  false);
+      s[MIDDLE] = graph.signal(name + MIDDLE, false);
+      s[END]    = graph.signal(name + END,    false);
 
-      var router = new model.Node(function(input) {
+      var router = new Node(graph);
+      router.evaluate = function(input) {
         if(s[START].value() === true && s[END].value() === false) {
           // TODO: Expand selector syntax to allow start/end signals into stream.
           // Until then, prevent old middles entering stream on new start.
-          if(input.signals[name+START]) return model.graph.doNotPropagate;
+          if(input.signals[name+START]) return graph.doNotPropagate;
 
           sig.value(s[MIDDLE].value());
           input.signals[name] = 1;
@@ -69,9 +74,9 @@ define(function(require, exports, module) {
           s[END].value(false);
         }
 
-        return model.graph.doNotPropagate;
-      });
-      router.addListener(sig.node());
+        return graph.doNotPropagate;
+      };
+      router.addListener(sig);
 
       [START, MIDDLE, END].forEach(function(x) {
         var val = (x == MIDDLE) ? exp : trueFn,
@@ -94,12 +99,12 @@ define(function(require, exports, module) {
     };
 
     (spec || []).forEach(function(sig) {
-      var signal = model.signal(sig.name);
+      var signal = graph.signal(sig.name);
       if(sig.expr) return;  // Cannot have an expr and stream definition.
 
       (sig.streams || []).forEach(function(stream) {
         var sel = selector.parse(stream.type),
-            exp = expr(model, stream.expr);
+            exp = expr(graph, stream.expr);
         mergedStream(signal, sel, exp, stream);
       });
     });
@@ -114,7 +119,7 @@ define(function(require, exports, module) {
           node = nodes[r];
 
       view.on(r, function(evt, item) {
-        var cs = changset.create({}, true),
+        var cs = changset.create(null, true),
             pad = view.padding(),
             filtered = false,
             val, h, i, m, d, p = {};
@@ -129,17 +134,17 @@ define(function(require, exports, module) {
         for(i = 0; i < handlers.length; i++) {
           h = handlers[i];
           filtered = h.filters.some(function(f) {
-            return !expr.eval(model, f.fn, d, evt, item, p, f.signals);
+            return !expr.eval(graph, f.fn, d, evt, item, p, f.signals);
           });
           if(filtered) continue;
           
-          val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
-          if(h.spec.scale) val = model.scene().scale(h.spec, val);
+          val = expr.eval(graph, h.exp.fn, d, evt, item, p, h.exp.signals); 
+          if(h.spec.scale) val = model.scale(h.spec, val);
           h.signal.value(val);
           cs.signals[h.signal.name()] = 1;
         }
 
-        model.graph.propagate(cs, node);
+        graph.propagate(cs, node);
       });
     })
   };
