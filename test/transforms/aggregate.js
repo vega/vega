@@ -79,17 +79,18 @@ describe('Aggregate', function() {
             count = values.length
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0);
+            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
+            vr = variance/(count-1);
 
         expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('var', variance/count);
+        expect(data[0]).to.have.property('var', vr);
 
         done();
       }, viewFactory);
     });
 
-    it('should calculate stdev', function(done) {
-      parseSpec(spec(['std']), function(model) {
+    it('should calculate varp', function(done) {
+      parseSpec(spec(['varp']), function(model) {
         model.fire();
 
         var ds = model.data('table'),
@@ -98,16 +99,54 @@ describe('Aggregate', function() {
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            std = Math.sqrt(variance/count);
+            varp = variance/count;
 
         expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('std', std);
+        expect(data[0]).to.have.property('varp', varp);
 
         done();
       }, viewFactory);
     });
 
-    it('should calculate media', function(done) {
+    it('should calculate stdev', function(done) {
+      parseSpec(spec(['stdev']), function(model) {
+        model.fire();
+
+        var ds = model.data('table'),
+            data = ds.values(),
+            count = values.length
+            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
+            avg = sum/count,
+            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
+            stdev = Math.sqrt(variance/(count-1));
+
+        expect(data).to.have.length(1);
+        expect(data[0]).to.have.property('stdev', stdev);
+
+        done();
+      }, viewFactory);
+    });
+
+    it('should calculate stdevp', function(done) {
+      parseSpec(spec(['stdevp']), function(model) {
+        model.fire();
+
+        var ds = model.data('table'),
+            data = ds.values(),
+            count = values.length
+            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
+            avg = sum/count,
+            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
+            stdevp = Math.sqrt(variance/count);
+
+        expect(data).to.have.length(1);
+        expect(data[0]).to.have.property('stdevp', stdevp);
+
+        done();
+      }, viewFactory);
+    });
+
+    it('should calculate median', function(done) {
       parseSpec(spec(['median']), function(model) {
         model.fire();
 
@@ -125,7 +164,7 @@ describe('Aggregate', function() {
     });
 
     it('should handle streaming adds', function(done) {
-      parseSpec(spec(['median', 'std', 'var', 'avg', 'sum', 'count']), function(model) {
+      parseSpec(spec(['median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
         var a1 = {x: 21, y: 21},
             a2 = {x: 22, y: 95},
             a3 = {x: 23, y: 47};
@@ -140,7 +179,10 @@ describe('Aggregate', function() {
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            std = Math.sqrt(variance/count),
+            vr = variance/(count-1),
+            varp = variance/count,
+            stdev = Math.sqrt(vr),
+            stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
             half = ~~(count/2),
             median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2;
@@ -149,8 +191,10 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('count', count);
         expect(data[0]).to.have.property('sum', sum);
         expect(data[0]).to.have.property('avg', avg);
-        expect(data[0]).to.have.property('var', variance/count);
-        expect(data[0]).to.have.property('std', std);
+        expect(data[0]).to.have.property('var', vr);
+        expect(data[0]).to.have.property('varp', varp);
+        expect(data[0]).to.have.property('stdev', stdev);
+        expect(data[0]).to.have.property('stdevp', stdevp);
         expect(data[0]).to.have.property('median', median);
 
         done();
@@ -158,7 +202,7 @@ describe('Aggregate', function() {
     });
 
     it('should handle streaming rems', function(done) {
-      parseSpec(spec(['median', 'std', 'var', 'avg', 'sum', 'count']), function(model) {
+      parseSpec(spec(['median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
         model.fire();
         values = values.filter(function(d) { return d.y < 50 });
         model.data('table').remove(function(d) { return d.y >= 50 }).fire();
@@ -169,7 +213,10 @@ describe('Aggregate', function() {
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            std = Math.sqrt(variance/count),
+            vr = variance/(count-1),
+            varp = variance/count,
+            stdev = Math.sqrt(vr),
+            stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
             half = ~~(count/2),
             median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2;
@@ -178,8 +225,10 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('count', count);
         expect(data[0]).to.have.property('sum', sum);
         expect(data[0]).to.have.property('avg', avg);
-        expect(data[0]).to.have.property('var', variance/count);
-        expect(data[0]).to.have.property('std', std);
+        expect(data[0]).to.have.property('var', vr);
+        expect(data[0]).to.have.property('varp', varp);
+        expect(data[0]).to.have.property('stdev', stdev);
+        expect(data[0]).to.have.property('stdevp', stdevp);
         expect(data[0]).to.have.property('median', median);
 
         done();
