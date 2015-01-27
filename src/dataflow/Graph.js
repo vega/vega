@@ -37,16 +37,11 @@ define(function(require, exports, module) {
   };
 
   proto.signalValues = function(name) {
-    var signals = {},
-        i, len, n;
-
+    var graph = this;
     if(!util.isArray(name)) return this._signals[name].value();
-    for(i=0, len=name.length; i<len; ++i) {
-      n = name[i];
-      signals[n] = this._signals[n].value();
-    }
-
-    return signals;
+    return name.reduce(function(sg, n) {
+      return (sg[n] = graph._signals[n].value(), sg);
+    }, {});
   };
 
   proto.signalRef = function(ref) {

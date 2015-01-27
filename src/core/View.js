@@ -3,7 +3,7 @@ define(function(require, exports, module) {
       parseStreams = require('../parse/streams'),
       canvas = require('../render/canvas/index'),
       svg = require('../render/svg/index'),
-      transition = require('../scene/transition'),
+      Transition = require('../scene/Transition'),
       config = require('../util/config'),
       util = require('../util/index'),
       changeset = require('../dataflow/changeset');
@@ -176,7 +176,7 @@ define(function(require, exports, module) {
     opt = opt || {};
     var v = this,
         trans = opt.duration
-          ? new transition(opt.duration, opt.ease)
+          ? new Transition(opt.duration, opt.ease)
           : null;
 
     var cs = changeset.create({});

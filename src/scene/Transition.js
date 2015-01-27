@@ -3,13 +3,13 @@ define(function(require, exports, module) {
       calcBounds = require('../util/bounds'),
       C = require('../util/constants');
 
-  function trans(duration, ease) {
+  function Transition(duration, ease) {
     this.duration = duration || 500;
     this.ease = ease && d3.ease(ease) || d3.ease("cubic-in-out");
     this.updates = {next: null};
   }
   
-  var prototype = trans.prototype;
+  var prototype = Transition.prototype;
   
   var skip = {
     "text": 1,
@@ -93,5 +93,5 @@ define(function(require, exports, module) {
     return stop;
   };
   
-  return trans;
+  return Transition;
 });

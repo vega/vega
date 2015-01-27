@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
-  var encode  = require('./encode'),
-      collect = require('../dataflow/collector'),
-      bounds  = require('./bounds'),
-      group   = require('./group'),
+  var Node = require('../dataflow/Node'),
+      Collector = require('../dataflow/collector'),
+      Encoder  = require('./Encoder'),
+      Bounder  = require('./Bounder'),
       Item  = require('./Item'),
       parseData = require('../parse/data'),
       tuple = require('../dataflow/tuple'),
@@ -10,7 +10,13 @@ define(function(require, exports, module) {
       util = require('../util/index'),
       C = require('../util/constants');
 
-  function Builder(model, renderer, def, mark, parent, inheritFrom) {
+  function Builder() {    
+    return arguments.length ? this.init.apply(this, arguments) : this;
+  }
+
+  var proto = (Builder.prototype = new Node());
+
+  proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
     this._model = model;
     this._def   = def;
     this._mark  = mark;
@@ -19,20 +25,6 @@ define(function(require, exports, module) {
     this._map   = {};
     this._items = [];
     this._lastBuild = 0;
-    this._parent = parent;
-    this._encoder = null;
-    this._bounder = null;
-    this._collector = null;
-    this._recursor = null;
-    this._renderer = renderer;
-    return this.init();
-  }
-
-  var proto = (Builder.prototype = new Node());
-
-  proto.init = function() {
-    var mark = this._mark,
-        def  = this._def;
 
     mark.def = def;
     mark.marktype = def.type;
@@ -41,13 +33,11 @@ define(function(require, exports, module) {
 
     if(def.from && (def.from.transform || def.from.modify)) inlineDs.call(this);
 
+    this._parent = parent;
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
     this._collector = new Collector(this._model.graph);
-
-    if(def.type === C.GROUP) {
-      this._recursor = new Recursor(this);
-    }
+    this._renderer = renderer;
 
     if(this._ds) {
       this.dependency(C.DATA, this._from);
@@ -97,7 +87,7 @@ define(function(require, exports, module) {
       modify: this._def.from.modify
     };
 
-    this._f = name;
+    this._from = name;
     this._ds = parseData.datasource(this._model, spec);
 
     // At this point, we have a new datasource but it is empty as
@@ -116,7 +106,6 @@ define(function(require, exports, module) {
 
   function pipeline() {
     var pipeline = [this, this._encoder];
-    if(this._recursor) pipeline.push(this._recursor);
     pipeline.push(this._collector, this._bounder, this._renderer);
     return pipeline;
   };
@@ -125,7 +114,7 @@ define(function(require, exports, module) {
     var builder = this;
     this._model.graph.connect(pipeline.call(this));
     this._encoder.dependency(C.SCALES).forEach(function(s) {
-      builder._parent.group.scale(s).addListener(builder);
+      builder._parent.scale(s).addListener(builder);
     });
     if(this._parent) this._bounder.addListener(this._parent._collector);
   };
@@ -134,9 +123,8 @@ define(function(require, exports, module) {
     var builder = this;
     this._model.graph.disconnect(pipeline.call(this));
     this._encoder.dependency(C.SCALES).forEach(function(s) {
-      builder._parent.group.scale(s).removeListener(builder);
+      builder._parent.scale(s).removeListener(builder);
     });
-    if(this._recursor) this._recursor.disconnect();
   };
 
   function newItem(d, stamp) {
