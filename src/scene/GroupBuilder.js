@@ -26,12 +26,17 @@ define(function(require, exports, module) {
     (def.scales||[]).forEach(function(s) { 
       s = builder.scale(s.name, scalefn(model, s));
       s.dependency(C.DATA).forEach(function(d) { model.data(d).addListener(builder); });
-      s.dependency(C.SIGNALS).forEach(function(s) { model.signal(s).addListener(builder); });
+      s.dependency(C.SIGNALS).forEach(function(s) { model.graph.signal(s).addListener(builder); });
       builder._scaler.addListener(s);  // Scales should be computed after group is encoded
     });
 
     this._recursor = new Node(model.graph);
     this._recursor.evaluate = recurse.bind(this);
+
+    var scales = (def.axes||[]).reduce(function(acc, x) {
+      return (acc[x.scale] = 1, acc);
+    }, {});
+    this._recursor.dependency(C.SCALES, util.keys(scales));
 
     return Builder.prototype.init.apply(this, arguments);
   };
