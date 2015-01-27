@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
+      Node = require('../dataflow/Node'),
       parseStreams = require('../parse/streams'),
       canvas = require('../render/canvas/index'),
       svg = require('../render/svg/index'),
@@ -179,11 +180,14 @@ define(function(require, exports, module) {
           ? new Transition(opt.duration, opt.ease)
           : null;
 
-    var cs = changeset.create({});
+    var cs = changeset.create();
     if(trans) cs.trans = trans;
 
     if(!v._build) {
-      v._renderNode = new v._model.Node(function(input) {
+      v._renderNode = new Node(v._model.graph)
+        .router(true);
+
+      v._renderNode.evaluate = function(input) {
         util.debug(input, ["rendering"]);
 
         var s = v._model.scene();
@@ -193,8 +197,7 @@ define(function(require, exports, module) {
           v._renderer.render(s);
         }
         return input;
-      });
-      v._renderNode._router = true;
+      };
 
       v._model.scene(v._renderNode);
       v._build = true;

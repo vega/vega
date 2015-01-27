@@ -1,5 +1,7 @@
 define(function(require, exports, module) {
-  var C = require('../util/constants');
+  var util = require('../util/index'),
+      C = require('../util/constants'),
+      REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
   function Node(graph) {
     if(graph) this.init(graph);
@@ -21,8 +23,8 @@ define(function(require, exports, module) {
       signals: [],
     };
 
-    this._router = false; // Responsible for propagating tuples, cannot ever be skipped
-    this._collector = false;  // Holds a materialized dataset, pulse to reflow
+    this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
+    this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
     return this;
   };
 
@@ -30,8 +32,8 @@ define(function(require, exports, module) {
     var n = new Node(this._graph);
     n.evaluate = this.evaluate;
     n._deps = this._deps;
-    n._router = this._router;
-    n._collector = this._collector;
+    n._isRouter = this._isRouter;
+    n._isCollector = this._isCollector;
     return n;
   };
 
@@ -55,14 +57,14 @@ define(function(require, exports, module) {
   };
 
   proto.router = function(bool) {
-    if(!arguments.length) return this._router;
-    this._router = !!bool
+    if(!arguments.length) return this._isRouter;
+    this._isRouter = !!bool
     return this;
   };
 
   proto.collector = function(bool) {
-    if(!arguments.length) return this._collector;
-    this._collector = !!bool;
+    if(!arguments.length) return this._isCollector;
+    this._isCollector = !!bool;
     return this;
   };
 
@@ -106,7 +108,7 @@ define(function(require, exports, module) {
 
   proto.reevaluate = function(pulse) {
     var node = this, reeval = false;
-    return C.DEPS.some(function(prop) {
+    return REEVAL.some(function(prop) {
       reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
       return reeval;
     });

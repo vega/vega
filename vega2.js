@@ -943,8 +943,10 @@ define('dataflow/tuple',['require','exports','module','../util/index','../util/c
     reset:  reset
   };
 });
-define('dataflow/Node',['require','exports','module','../util/constants'],function(require, exports, module) {
-  var C = require('../util/constants');
+define('dataflow/Node',['require','exports','module','../util/index','../util/constants'],function(require, exports, module) {
+  var util = require('../util/index'),
+      C = require('../util/constants'),
+      REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
   function Node(graph) {
     if(graph) this.init(graph);
@@ -966,8 +968,8 @@ define('dataflow/Node',['require','exports','module','../util/constants'],functi
       signals: [],
     };
 
-    this._router = false; // Responsible for propagating tuples, cannot ever be skipped
-    this._collector = false;  // Holds a materialized dataset, pulse to reflow
+    this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
+    this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
     return this;
   };
 
@@ -975,8 +977,8 @@ define('dataflow/Node',['require','exports','module','../util/constants'],functi
     var n = new Node(this._graph);
     n.evaluate = this.evaluate;
     n._deps = this._deps;
-    n._router = this._router;
-    n._collector = this._collector;
+    n._isRouter = this._isRouter;
+    n._isCollector = this._isCollector;
     return n;
   };
 
@@ -1000,14 +1002,14 @@ define('dataflow/Node',['require','exports','module','../util/constants'],functi
   };
 
   proto.router = function(bool) {
-    if(!arguments.length) return this._router;
-    this._router = !!bool
+    if(!arguments.length) return this._isRouter;
+    this._isRouter = !!bool
     return this;
   };
 
   proto.collector = function(bool) {
-    if(!arguments.length) return this._collector;
-    this._collector = !!bool;
+    if(!arguments.length) return this._isCollector;
+    this._isCollector = !!bool;
     return this;
   };
 
@@ -1051,7 +1053,7 @@ define('dataflow/Node',['require','exports','module','../util/constants'],functi
 
   proto.reevaluate = function(pulse) {
     var node = this, reeval = false;
-    return C.DEPS.some(function(prop) {
+    return REEVAL.some(function(prop) {
       reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
       return reeval;
     });
@@ -1540,6 +1542,8 @@ define('scene/Encoder',['require','exports','module','../dataflow/Node','../util
     var props = mark.def.properties || {},
         update = props.update;
 
+    Node.prototype.init.call(this, model.graph)
+
     this._model = model;
     this._mark  = mark;
 
@@ -1549,14 +1553,18 @@ define('scene/Encoder',['require','exports','module','../dataflow/Node','../util
       this.dependency(C.SIGNALS, update.signals);
     }
 
-    return Node.prototype.init.call(this, model.graph);
+    return this;
   }
 
   var proto = (Encoder.prototype = new Node());
 
   proto.evaluate = function(input) {
-    util.debug(input, ["encoding", mark.def.type]);
+    util.debug(input, ["encoding", this._mark.def.type]);
     var items = this._mark.items,
+        props = this._mark.def.properties || {},
+        enter  = props.enter,
+        update = props.update,
+        exit   = props.exit,
         i, item;
 
     // Only do one traversal of items and use item.status instead
@@ -1589,7 +1597,7 @@ define('scene/Encoder',['require','exports','module','../dataflow/Node','../util
   function encode(prop, item, trans, stamp) {
     var model = this._model,
         enc = prop.encode,
-        sg = model.signalValues(prop.signals||[]),
+        sg = this._graph.signalValues(prop.signals||[]),
         db = (prop.data||[]).reduce(function(db, ds) { 
           return db[ds] = model.data(ds).values(), db;
         }, {});
@@ -2771,11 +2779,11 @@ define('scene/Bounder',['require','exports','module','../dataflow/Node','../util
   var proto = (Bounder.prototype = new Node());
 
   proto.evaluate = function(input) {
-    util.debug(input, ["bounds", mark.marktype]);
+    util.debug(input, ["bounds", this._mark.marktype]);
 
-    bounds.mark(mark);
+    bounds.mark(this._mark);
     if(this._mark.marktype === C.GROUP) 
-      bounds.mark(mark, null, false);
+      bounds.mark(this._mark, null, false);
 
     input.touch = true;
     return input;
@@ -4201,11 +4209,15 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
   var proto = (Builder.prototype = new Node());
 
   proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
+    Node.prototype.init.call(this, model.graph)
+      .router(true)
+      .collector(true);
+
     this._model = model;
     this._def   = def;
     this._mark  = mark;
     this._from  = (def.from ? def.from.data : null) || inheritFrom;
-    this._ds    = util.isString(f) ? model.data(this._from) : null;
+    this._ds    = util.isString(this._from) ? model.data(this._from) : null;
     this._map   = {};
     this._items = [];
     this._lastBuild = 0;
@@ -4228,11 +4240,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
       this._encoder.dependency(C.DATA, this._from);
     }
 
-    this.connect();
-
-    return Node.prototype.init.call(this, this._model.graph)
-      .router(true)
-      .collector(true);
+    return this.connect();
   };
 
   proto.evaluate = function(input) {
@@ -4241,7 +4249,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     var fullUpdate = this._encoder.reevaluate(input),
         output, fcs, data;
 
-    if(from) {
+    if(this._ds) {
       output = changeset.create(input);
 
       // If a scale or signal in the update propset has been updated, 
@@ -4250,7 +4258,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
       fcs = this._ds.last();
       if(!fcs) return output.touch = true, output;
-      if(fcs.stamp <= lastBuild) return output;
+      if(fcs.stamp <= this._lastBuild) return output;
 
       this._lastBuild = fcs.stamp;
       return joinChangeset.call(this, fcs);
@@ -4288,27 +4296,27 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     this._ds.fire(input);
   };
 
-  function pipeline() {
-    var pipeline = [this, this._encoder];
-    pipeline.push(this._collector, this._bounder, this._renderer);
-    return pipeline;
+  proto._pipeline = function() {
+    return [this, this._encoder, this._collector, this._bounder, this._renderer];
   };
 
   proto.connect = function() {
     var builder = this;
-    this._model.graph.connect(pipeline.call(this));
+    this._model.graph.connect(this._pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).addListener(builder);
     });
     if(this._parent) this._bounder.addListener(this._parent._collector);
+    return this;
   };
 
   proto.disconnect = function() {
     var builder = this;
-    this._model.graph.disconnect(pipeline.call(this));
+    this._model.graph.disconnect(this._pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).removeListener(builder);
     });
+    return this;
   };
 
   function newItem(d, stamp) {
@@ -4358,7 +4366,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
     // Sort items according to how data is sorted, or by _id. The else 
     // condition is important to ensure lines and areas are drawn correctly.
-    items.sort(function(a, b) { 
+    this._items.sort(function(a, b) { 
       return input.sort ? input.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
     });
 
@@ -4421,10 +4429,1339 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
   return Builder;
 });
-define('core/Model',['require','exports','module','../dataflow/Graph','../dataflow/Node','../scene/Builder','../dataflow/changeset','../util/index'],function(require, exports, module) {
+define('parse/scale',['require','exports','module','d3','../util/config','../util/index','../util/constants'],function(require, module, exports) {
+  var d3 = require('d3'),
+      config = require('../util/config'),
+      util = require('../util/index'),
+      C = require('../util/constants');
+
+  var LINEAR = C.LINEAR,
+      ORDINAL = C.ORDINAL,
+      LOG = C.LOG,
+      POWER = C.POWER,
+      TIME = C.TIME,
+      QUANTILE = C.QUANTILE,
+      GROUP_PROPERTY = {width: 1, height: 1};
+
+  function scale(model, def, group) {
+    var s = instance(def, group.scale(def.name)),
+        m = s.type===ORDINAL ? ordinal : quantitative,
+        rng = range(model, def, group),
+        data = util.values(group.datum);
+
+    m(model, def, s, rng, data);
+    return s;
+  }
+
+  function instance(def, scale) {
+    var type = def.type || LINEAR;
+    if (!scale || type !== scale.type) {
+      var ctor = config.scale[type] || d3.scale[type];
+      if (!ctor) util.error("Unrecognized scale type: " + type);
+      (scale = ctor()).type = scale.type || type;
+      scale.scaleName = def.name;
+    }
+    return scale;
+  }
+
+  function ordinal(model, def, scale, rng, data) {
+    var domain, sort, str, refs, dataDrivenRange = false;
+    
+    // range pre-processing for data-driven ranges
+    if (util.isObject(def.range) && !util.isArray(def.range)) {
+      dataDrivenRange = true;
+      refs = def.range.fields || util.array(def.range);
+      rng = extract(model, refs, data);
+    }
+    
+    // domain
+    sort = def.sort && !dataDrivenRange;
+    domain = domainValues(model, def, data, sort);
+    if (domain) scale.domain(domain);
+
+    // range
+    str = typeof rng[0] === 'string';
+    if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
+      scale.range(rng); // color or shape values
+    } else if (def.points) {
+      scale.rangePoints(rng, def.padding||0);
+    } else if (def.round || def.round===undefined) {
+      scale.rangeRoundBands(rng, def.padding||0);
+    } else {
+      scale.rangeBands(rng, def.padding||0);
+    }
+  }
+
+  function quantitative(model, def, scale, rng, data) {
+    var domain, interval;
+
+    // domain
+    domain = (def.type === QUANTILE)
+      ? domainValues(model, def, data, false)
+      : domainMinMax(model, def, data);
+    scale.domain(domain);
+
+    // range
+    // vertical scales should flip by default, so use XOR here
+    if (def.range === "height") rng = rng.reverse();
+    scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
+
+    if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
+    if (def.clamp) scale.clamp(true);
+    if (def.nice) {
+      if (def.type === TIME) {
+        interval = d3.time[def.nice];
+        if (!interval) util.error("Unrecognized interval: " + interval);
+        scale.nice(interval);
+      } else {
+        scale.nice();
+      }
+    }
+  }
+  
+  function extract(model, refs, data) {
+    return refs.reduce(function(values, r) {        
+      var dat = util.values(model.data(r.data) || data),
+          get = util.accessor(util.isString(r.field)
+              ? r.field : "data." + util.accessor(r.field.group)(data));
+      return util.unique(dat, get, values);
+    }, []);
+  }
+
+  function signal(model, v) {
+    if(!v.signal) return v;
+    return model.signalRef(v.signal);
+  }
+  
+  function domainValues(model, def, data, sort) {
+    var domain = def.domain, values, refs;
+    if (util.isArray(domain)) {
+      values = sort ? domain.slice() : domain;
+      values = values.map(signal.bind(null, model));
+    } else if (util.isObject(domain)) {
+      refs = domain.fields || util.array(domain);
+      values = extract(model, refs, data);
+    }
+    if (values && sort) values.sort(util.cmp);
+    return values;
+  }
+  
+  function domainMinMax(model, def, data) {
+    var domain = [null, null], refs, z;
+    
+    function extract(ref, min, max, z) {
+      var dat = util.values(model.data(ref.data) || data);
+      var fields = util.array(ref.field).map(function(f) {
+        return util.isString(f) ? f
+          : "data." + util.accessor(f.group)(data);
+      });
+      
+      fields.forEach(function(f,i) {
+        f = util.accessor(f);
+        if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
+        if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
+      });
+    }
+
+    if (def.domain !== undefined) {
+      if (util.isArray(def.domain)) {
+        domain = def.domain.slice().map(signal.bind(null, model));
+      } else if (util.isObject(def.domain)) {
+        refs = def.domain.fields || util.array(def.domain);
+        refs.forEach(function(r) { extract(r,1,1,1); });
+      } else {
+        domain = def.domain;
+      }
+    }
+    z = domain.length - 1;
+    if (def.domainMin !== undefined) {
+      if (util.isObject(def.domainMin)) {
+        if(def.domainMin.signal) {
+          domain[0] = signal(model, def.domainMin);
+        } else {
+          domain[0] = null;
+          refs = def.domainMin.fields || util.array(def.domainMin);
+          refs.forEach(function(r) { extract(r,1,0,z); });
+        }
+      } else {
+        domain[0] = def.domainMin;
+      }
+    }
+    if (def.domainMax !== undefined) {
+      if (util.isObject(def.domainMax)) {
+        if(def.domainMax.signal) {
+          domain[z] = signal(model, def.domainMax);
+        } else {
+          domain[z] = null;
+          refs = def.domainMax.fields || util.array(def.domainMax);
+          refs.forEach(function(r) { extract(r,0,1,z); });
+        }
+      } else {
+        domain[z] = def.domainMax;
+      }
+    }
+    if (def.type !== LOG && def.type !== TIME && (def.zero || def.zero===undefined)) {
+      domain[0] = Math.min(0, domain[0]);
+      domain[z] = Math.max(0, domain[z]);
+    }
+    return domain;
+  }
+
+  function range(model, def, group) {
+    var rng = [null, null];
+
+    if (def.range !== undefined) {
+      if (typeof def.range === 'string') {
+        if (GROUP_PROPERTY[def.range]) {
+          rng = [0, group[def.range]];
+        } else if (config.range[def.range]) {
+          rng = config.range[def.range];
+        } else {
+          util.error("Unrecogized range: "+def.range);
+          return rng;
+        }
+      } else if (util.isArray(def.range)) {
+        rng = def.range.map(signal.bind(null, model));
+      } else if (util.isObject(def.range)) {
+        return null; // early exit
+      } else {
+        rng = [0, def.range];
+      }
+    }
+    if (def.rangeMin !== undefined) {
+      rng[0] = def.rangeMin.signal ? signal(model, def.rangeMin) : def.rangeMin;
+    }
+    if (def.rangeMax !== undefined) {
+      rng[rng.length-1] = def.rangeMax.signal ? signal(model, def.rangeMax) : def.rangeMax;
+    }
+    
+    if (def.reverse !== undefined) {
+      var rev = def.reverse;
+      if (util.isObject(rev)) {
+        rev = util.accessor(rev.field)(group.datum);
+      }
+      if (rev) rng = rng.reverse();
+    }
+    
+    return rng;
+  }
+
+  return scale;
+});
+
+define('scene/scale',['require','exports','module','../dataflow/Node','../parse/scale','../util/index','../dataflow/changeset'],function(require, exports, module) {
+  var Node = require('../dataflow/Node'),
+      parseScale = require('../parse/scale'), 
+      util = require('../util/index'),
+      changeset = require('../dataflow/changeset');
+
+  var ORDINAL = "ordinal";
+
+  return function scale(model, def) {
+    var domain = def.domain||{}; // TODO: support all domain types
+
+    function signals() {
+      var signals = [];
+
+      ['domain', 'range'].forEach(function(t) {
+        if(util.isArray(def[t])) {
+          def[t].forEach(function(v) { if(v.signal) signals.push(v.signal); });
+        }
+        if(def[t+'Min'] && def[t+'Min'].signal) signals.push(def[t+'Min'].signal);
+        if(def[t+'Max'] && def[t+'Max'].signal) signals.push(def[t+'Max'].signal);
+      });
+
+      return signals.map(function(s) { return util.field(s)[0]; });
+    }
+
+    function reeval(group, input) {
+      var from = model.data(domain.data || "vg_"+group.datum._id),
+          fcs = from ? from.last() : null,
+          prev = group._prev || {},
+          width = prev.width || {}, height = prev.height || {}, 
+          reeval = fcs ? !!fcs.add.length || !!fcs.rem.length : false;
+
+      if(domain.field) reeval = reeval || fcs.fields[domain.field];
+      reeval = reeval || fcs ? !!fcs.sort && def.type === ORDINAL : false;
+      reeval = reeval || node.reevaluate(input);
+      reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
+      reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
+
+      input.scales[def.name] = 1;
+      return reeval;
+    }
+
+    function scale(group) {
+      util.debug({}, ["rescaling", group.datum._id]);
+
+      var k = def.name, 
+          scale = parseScale(model, def, group);
+
+      group.scale(k+":prev", group.scale(k) || scale);
+      group.scale(k, scale);
+
+      var deps = node._deps.data, 
+          inherit = domain.data ? false : "vg_"+group.datum._id;
+
+      if(inherit && deps.indexOf(inherit) === -1) deps.push(inherit);
+    }
+
+    var node = new Node(model.graph);
+    node.evaluate = function scaling(input) {
+      util.debug(input, ["scaling", def.name]);
+
+      input.add.forEach(scale);
+      input.mod.forEach(function(group) {
+        if(reeval(group, input)) scale(group);
+      });
+
+      // Scales are at the end of an encoding pipeline, so they should forward a
+      // touch pulse. Thus, if multiple scales update in the parent group, we don't
+      // reevaluate child marks multiple times. 
+      return changeset.create(input, true);
+    };
+
+    if(domain.data) node._deps.data.push(domain.data);
+    if(domain.field) node._deps.fields.push(domain.field);
+    node._deps.signals = signals();
+
+    return node;
+  };
+});
+define('parse/properties',['require','exports','module','../dataflow/tuple','../util/index','../util/config'],function(require, exports, module) {
+  var tuple = require('../dataflow/tuple'),
+      util = require('../util/index'),
+      config = require('../util/config');
+
+  function compile(model, mark, spec) {
+    var code = "",
+        names = util.keys(spec),
+        i, len, name, ref, vars = {}, 
+        deps = {
+          signals: {},
+          scales: {},
+          data: {}
+        };
+        
+    code += "var o = trans ? {} : item;\n"
+    
+    for (i=0, len=names.length; i<len; ++i) {
+      ref = spec[name = names[i]];
+      code += (i > 0) ? "\n  " : "  ";
+      if(ref.rule) {
+        ref = rule(model, name, ref.rule);
+        code += "\n  " + ref.code
+      } else {
+        ref = valueRef(name, ref);
+        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);";
+      }
+
+      vars[name] = true;
+      ['signals', 'scales', 'data'].forEach(function(p) {
+        if(ref[p] != null) util.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
+      });
+    }
+
+    if (vars.x2) {
+      if (vars.x) {
+        code += "\n  if (o.x > o.x2) { "
+              + "var t = o.x;"
+              + "this.tpl.set(o, 'x', o.x2, stamp);"
+              + "this.tpl.set(o, 'x2', t, stamp); "
+              + "};";
+        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x), stamp);";
+      } else if (vars.width) {
+        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width), stamp);";
+      } else {
+        code += "\n  this.tpl.set(o, 'x', o.x2, stamp);"
+      }
+    }
+
+    if (vars.y2) {
+      if (vars.y) {
+        code += "\n  if (o.y > o.y2) { "
+              + "var t = o.y;"
+              + "this.tpl.set(o, 'y', o.y2, stamp);"
+              + "this.tpl.set(o, 'y2', t, stamp);"
+              + "};";
+        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y), stamp);";
+      } else if (vars.height) {
+        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height), stamp);";
+      } else {
+        code += "\n  this.tpl.set(o, 'y', o.y2, stamp);"
+      }
+    }
+    
+    if (hasPath(mark, vars)) code += "\n  item.touch();";
+    code += "\n  if (trans) trans.interpolate(item, o);";
+
+    try {
+      var encoder = Function("stamp", "item", "group", "trans", 
+        "db", "signals", "predicates", code);
+      encoder.tpl = tuple;
+      return {
+        encode: encoder,
+        signals: util.keys(deps.signals),
+        scales: util.keys(deps.scales),
+        data: util.keys(deps.data)
+      }
+    } catch (e) {
+      util.error(e);
+      util.log(code);
+    }
+  }
+
+  function hasPath(mark, vars) {
+    return vars.path ||
+      ((mark==="area" || mark==="line") &&
+        (vars.x || vars.x2 || vars.width ||
+         vars.y || vars.y2 || vars.height ||
+         vars.tension || vars.interpolate));
+  }
+
+  var GROUP_VARS = {
+    "width": 1,
+    "height": 1,
+    "mark.group.width": 1,
+    "mark.group.height": 1
+  };
+
+  function rule(model, name, rules) {
+    var signals = [], scales = [], db = [],
+        inputs = [], code = "";
+
+    (rules||[]).forEach(function(r, i) {
+      var predName = r.predicate,
+          pred = model.predicate(predName),
+          input = [], args = name+"_arg"+i,
+          ref;
+
+      util.keys(r.input).forEach(function(k) {
+        var ref = valueRef(i, r.input[k]);
+        input.push(util.str(k)+": "+ref.val);
+        signals.concat(ref.signals);
+        scales.concat(ref.scales);
+      });
+
+      ref = valueRef(name, r);
+      signals.concat(ref.signals);
+      scales.concat(ref.scales);
+
+      if(predName) {
+        signals.push.apply(signals, pred.signals);
+        db.push.apply(db, pred.data);
+        inputs.push(args+" = {"+input.join(', ')+"}");
+        code += "if(predicates["+util.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n";
+        code += rules[i+1] ? "  } else " : "  }";
+      } else {
+        code += "{\n" + 
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n"+
+          "  }";
+      }
+    });
+
+    code = "var " + inputs.join(",\n      ") + ";\n  " + code;
+    return {code: code, signals: signals, scales: scales, data: db};
+  }
+
+  function valueRef(name, ref) {
+    if (ref == null) return null;
+    var isColor = name==="fill" || name==="stroke";
+    var signalName = null;
+
+    if (isColor) {
+      if (ref.c) {
+        return colorRef("hcl", ref.h, ref.c, ref.l);
+      } else if (ref.h || ref.s) {
+        return colorRef("hsl", ref.h, ref.s, ref.l);
+      } else if (ref.l || ref.a) {
+        return colorRef("lab", ref.l, ref.a, ref.b);
+      } else if (ref.r || ref.g || ref.b) {
+        return colorRef("rgb", ref.r, ref.g, ref.b);
+      }
+    }
+
+    // initialize value
+    var val = null;
+    if (ref.value !== undefined) {
+      val = util.str(ref.value);
+    }
+
+    if (ref.signal !== undefined) {
+      var signalRef = util.field(ref.signal);
+      val = "signals["+signalRef.map(util.str).join("][")+"]"; 
+      signalName = signalRef.shift();
+    }
+
+    // get field reference for enclosing group
+    if (ref.group != null) {
+      var grp = "group.datum";
+      if (util.isString(ref.group)) {
+        grp = GROUP_VARS[ref.group]
+          ? "group." + ref.group
+          : "group.datum["+util.field(ref.group).map(util.str).join("][")+"]";
+      }
+    }
+
+    // get data field value
+    if (ref.field != null) {
+      if (util.isString(ref.field)) {
+        val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
+        if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
+      } else {
+        val = "this.accessor(group.datum["
+            + util.field(ref.field.group).map(util.str).join("][")
+            + "])(item.datum.data)";
+      }
+    } else if (ref.group != null) {
+      val = grp;
+    }
+
+    if (ref.scale != null) {
+      var scale = util.isString(ref.scale)
+        ? util.str(ref.scale)
+        : (ref.scale.group ? "group" : "item")
+          + ".datum[" + util.str(ref.scale.group || ref.scale.field) + "]";
+      scale = "group.scale(" + scale + ")";
+
+      if(ref.invert) scale += ".invert";  // TODO: ordinal scales
+
+      // run through scale function if val specified.
+      // if no val, scale function is predicate arg.
+      if(val !== null || ref.band || ref.mult || ref.offset) {
+        val = scale + (ref.band ? ".rangeBand()" : 
+          "("+(val !== null ? val : "item.datum.data")+")");
+      } else {
+        val = scale;
+      }
+    }
+    
+    // multiply, offset, return value
+    val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")"
+      + (ref.offset ? " + " + util.number(ref.offset) : "");
+    return {val: val, signals: signalName, scales: ref.scale};
+  }
+
+  function colorRef(type, x, y, z) {
+    var xx = x ? valueRef("", x) : config.color[type][0],
+        yy = y ? valueRef("", y) : config.color[type][1],
+        zz = z ? valueRef("", z) : config.color[type][2];
+    return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
+  }
+
+  return compile;
+});
+define('parse/mark',['require','exports','module','../util/index','./properties'],function(require, exports, module) {
+  var util = require('../util/index'),
+      parseProperties = require('./properties');
+
+  return function parseMark(model, mark) {
+    var props = mark.properties,
+        group = mark.marks;
+
+    // parse mark property definitions
+    util.keys(props).forEach(function(k) {
+      props[k] = parseProperties(model, mark.type, props[k]);
+    });
+
+    // parse delay function
+    if (mark.delay) {
+      mark.delay = parseProperties(model, mark.type, {delay: mark.delay});
+    }
+
+    // recurse if group type
+    if (group) {
+      mark.marks = group.map(function(g) { return parseMark(model, g); });
+    }
+      
+    return mark;
+  };
+});
+define('scene/axis',['require','exports','module','../util/config','../dataflow/tuple','../util/index','../parse/mark'],function(require, module, exports) {
+  var config = require('../util/config'),
+      tpl = require('../dataflow/tuple'),
+      util = require('../util/index'),
+      parseMark = require('../parse/mark');
+
+  function axs(model) {
+    var scale,
+        orient = config.axis.orient,
+        offset = 0,
+        titleOffset = config.axis.titleOffset,
+        axisDef = {},
+        layer = "front",
+        grid = false,
+        title = null,
+        tickMajorSize = config.axis.tickSize,
+        tickMinorSize = config.axis.tickSize,
+        tickEndSize = config.axis.tickSize,
+        tickPadding = config.axis.padding,
+        tickValues = null,
+        tickFormatString = null,
+        tickFormat = null,
+        tickSubdivide = 0,
+        tickArguments = [config.axis.ticks],
+        gridLineStyle = {},
+        tickLabelStyle = {},
+        majorTickStyle = {},
+        minorTickStyle = {},
+        titleStyle = {},
+        domainStyle = {},
+        m = { // Axis marks as references for updates
+          gridLines: null,
+          majorTicks: null,
+          minorTicks: null,
+          tickLabels: null,
+          domain: null,
+          title: null
+        };
+
+    var axis = {};
+
+    function reset() {
+      axisDef.type = null;
+    };
+
+    axis.def = function() {
+      if(!axisDef.type) axis_def(scale);
+
+      // tick format
+      tickFormat = !tickFormatString ? null : ((scale.type === 'time')
+        ? d3.time.format(tickFormatString)
+        : d3.format(tickFormatString));
+
+      // generate data
+      // We don't _really_ need to model these as tuples as no further
+      // data transformation is done. So we optimize for a high churn rate. 
+      var injest = function(d) { return {data: d}; };
+      var major = tickValues == null
+        ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
+        : tickValues;
+      var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(injest);
+      major = major.map(injest);
+      var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
+      major.forEach(function(d) { d.label = fmt(d.data); });
+      var tdata = title ? [title].map(injest) : [];
+
+      axisDef.marks[0].from = function() { return grid ? major : []; };
+      axisDef.marks[1].from = function() { return major; };
+      axisDef.marks[2].from = function() { return minor; };
+      axisDef.marks[3].from = axisDef.marks[1].from;
+      axisDef.marks[4].from = function() { return [1]; };
+      axisDef.marks[5].from = function() { return tdata; };
+      axisDef.offset = offset;
+      axisDef.orient = orient;
+      axisDef.layer = layer;
+      return axisDef;
+    };
+
+    function axis_def(scale) {
+      // setup scale mapping
+      var newScale, oldScale, range;
+      if (scale.type === "ordinal") {
+        newScale = {scale: scale.scaleName, offset: 0.5 + scale.rangeBand()/2};
+        oldScale = newScale;
+      } else {
+        newScale = {scale: scale.scaleName, offset: 0.5};
+        oldScale = {scale: scale.scaleName+":prev", offset: 0.5};
+      }
+      range = vg_axisScaleRange(scale);
+
+      // setup axis marks
+      if(!m.gridLines)  m.gridLines  = vg_axisTicks();
+      if(!m.majorTicks) m.majorTicks = vg_axisTicks();
+      if(!m.minorTicks) m.minorTicks = vg_axisTicks();
+      if(!m.tickLabels) m.tickLabels = vg_axisTickLabels();
+      if(!m.domain) m.domain = vg_axisDomain();
+      if(!m.title)  m.title  = vg_axisTitle();
+      m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
+
+      // extend axis marks based on axis orientation
+      vg_axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
+      vg_axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
+      vg_axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
+      vg_axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
+
+      vg_axisDomainExtend(orient, m.domain, range, tickEndSize);
+      vg_axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
+      
+      // add / override custom style properties
+      util.extend(m.gridLines.properties.update, gridLineStyle);
+      util.extend(m.majorTicks.properties.update, majorTickStyle);
+      util.extend(m.minorTicks.properties.update, minorTickStyle);
+      util.extend(m.tickLabels.properties.update, tickLabelStyle);
+      util.extend(m.domain.properties.update, domainStyle);
+      util.extend(m.title.properties.update, titleStyle);
+
+      var marks = [m.gridLines, m.majorTicks, m.minorTicks, m.tickLabels, m.domain, m.title];
+      util.extend(axisDef, {
+        type: "group",
+        interactive: false,
+        properties: { 
+          enter: {
+            encode: vg_axisUpdate,
+            scales: [scale.scaleName],
+            signals: [], data: []
+          },
+          update: {
+            encode: vg_axisUpdate,
+            scales: [scale.scaleName],
+            signals: [], data: []
+          }
+        }
+      });
+
+      axisDef.marks = marks.map(function(m) { return parseMark(model, m); });
+    };
+
+    axis.scale = function(x) {
+      if (!arguments.length) return scale;
+      if (scale !== x) { scale = x; reset(); }
+      return axis;
+    };
+
+    axis.orient = function(x) {
+      if (!arguments.length) return orient;
+      if (orient !== x) {
+        orient = x in vg_axisOrients ? x + "" : config.axis.orient;
+        reset();
+      }
+      return axis;
+    };
+
+    axis.title = function(x) {
+      if (!arguments.length) return title;
+      if (title !== x) { title = x; reset(); }
+      return axis;
+    };
+
+    axis.ticks = function() {
+      if (!arguments.length) return tickArguments;
+      tickArguments = arguments;
+      return axis;
+    };
+
+    axis.tickValues = function(x) {
+      if (!arguments.length) return tickValues;
+      tickValues = x;
+      return axis;
+    };
+
+    axis.tickFormat = function(x) {
+      if (!arguments.length) return tickFormatString;
+      if (tickFormatString !== x) {
+        tickFormatString = x;
+        reset();
+      }
+      return axis;
+    };
+    
+    axis.tickSize = function(x, y) {
+      if (!arguments.length) return tickMajorSize;
+      var n = arguments.length - 1,
+          major = +x,
+          minor = n > 1 ? +y : tickMajorSize,
+          end   = n > 0 ? +arguments[n] : tickMajorSize;
+
+      if (tickMajorSize !== major ||
+          tickMinorSize !== minor ||
+          tickEndSize !== end) {
+        reset();
+      }
+
+      tickMajorSize = major;
+      tickMinorSize = minor;
+      tickEndSize = end;
+      return axis;
+    };
+
+    axis.tickSubdivide = function(x) {
+      if (!arguments.length) return tickSubdivide;
+      tickSubdivide = +x;
+      return axis;
+    };
+    
+    axis.offset = function(x) {
+      if (!arguments.length) return offset;
+      offset = util.isObject(x) ? x : +x;
+      return axis;
+    };
+
+    axis.tickPadding = function(x) {
+      if (!arguments.length) return tickPadding;
+      if (tickPadding !== +x) { tickPadding = +x; reset(); }
+      return axis;
+    };
+
+    axis.titleOffset = function(x) {
+      if (!arguments.length) return titleOffset;
+      if (titleOffset !== +x) { titleOffset = +x; reset(); }
+      return axis;
+    };
+
+    axis.layer = function(x) {
+      if (!arguments.length) return layer;
+      if (layer !== x) { layer = x; reset(); }
+      return axis;
+    };
+
+    axis.grid = function(x) {
+      if (!arguments.length) return grid;
+      if (grid !== x) { grid = x; reset(); }
+      return axis;
+    };
+
+    axis.gridLineProperties = function(x) {
+      if (!arguments.length) return gridLineStyle;
+      if (gridLineStyle !== x) { gridLineStyle = x; }
+      return axis;
+    };
+
+    axis.majorTickProperties = function(x) {
+      if (!arguments.length) return majorTickStyle;
+      if (majorTickStyle !== x) { majorTickStyle = x; }
+      return axis;
+    };
+
+    axis.minorTickProperties = function(x) {
+      if (!arguments.length) return minorTickStyle;
+      if (minorTickStyle !== x) { minorTickStyle = x; }
+      return axis;
+    };
+
+    axis.tickLabelProperties = function(x) {
+      if (!arguments.length) return tickLabelStyle;
+      if (tickLabelStyle !== x) { tickLabelStyle = x; }
+      return axis;
+    };
+
+    axis.titleProperties = function(x) {
+      if (!arguments.length) return titleStyle;
+      if (titleStyle !== x) { titleStyle = x; }
+      return axis;
+    };
+
+    axis.domainProperties = function(x) {
+      if (!arguments.length) return domainStyle;
+      if (domainStyle !== x) { domainStyle = x; }
+      return axis;
+    };
+    
+    axis.reset = function() { reset(); };
+
+    return axis;
+  };
+
+  var vg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
+
+  function vg_axisSubdivide(scale, ticks, m) {
+    subticks = [];
+    if (m && ticks.length > 1) {
+      var extent = vg_axisScaleExtent(scale.domain()),
+          subticks,
+          i = -1,
+          n = ticks.length,
+          d = (ticks[1] - ticks[0]) / ++m,
+          j,
+          v;
+      while (++i < n) {
+        for (j = m; --j > 0;) {
+          if ((v = +ticks[i] - j * d) >= extent[0]) {
+            subticks.push(v);
+          }
+        }
+      }
+      for (--i, j = 0; ++j < m && (v = +ticks[i] + j * d) < extent[1];) {
+        subticks.push(v);
+      }
+    }
+    return subticks;
+  }
+
+  function vg_axisScaleExtent(domain) {
+    var start = domain[0], stop = domain[domain.length - 1];
+    return start < stop ? [start, stop] : [stop, start];
+  }
+
+  function vg_axisScaleRange(scale) {
+    return scale.rangeExtent
+      ? scale.rangeExtent()
+      : vg_axisScaleExtent(scale.range());
+  }
+
+  var vg_axisAlign = {
+    bottom: "center",
+    top: "center",
+    left: "right",
+    right: "left"
+  };
+
+  var vg_axisBaseline = {
+    bottom: "top",
+    top: "bottom",
+    left: "middle",
+    right: "middle"
+  };
+
+  function vg_axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
+    size = Math.max(size, 0) + pad;
+    if (orient === "left" || orient === "top") {
+      size *= -1;
+    }  
+    if (orient === "top" || orient === "bottom") {
+      util.extend(labels.properties.enter, {
+        x: oldScale,
+        y: {value: size},
+      });
+      util.extend(labels.properties.update, {
+        x: newScale,
+        y: {value: size},
+        align: {value: "center"},
+        baseline: {value: vg_axisBaseline[orient]}
+      });
+    } else {
+      util.extend(labels.properties.enter, {
+        x: {value: size},
+        y: oldScale,
+      });
+      util.extend(labels.properties.update, {
+        x: {value: size},
+        y: newScale,
+        align: {value: vg_axisAlign[orient]},
+        baseline: {value: "middle"}
+      });
+    }
+  }
+
+  function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
+    var sign = (orient === "left" || orient === "top") ? -1 : 1;
+    if (size === Infinity) {
+      size = (orient === "top" || orient === "bottom")
+        ? {group: "mark.group.height", mult: -sign}
+        : {group: "mark.group.width", mult: -sign};
+    } else {
+      size = {value: sign * size};
+    }
+    if (orient === "top" || orient === "bottom") {
+      util.extend(ticks.properties.enter, {
+        x:  oldScale,
+        y:  {value: 0},
+        y2: size
+      });
+      util.extend(ticks.properties.update, {
+        x:  newScale,
+        y:  {value: 0},
+        y2: size
+      });
+      util.extend(ticks.properties.exit, {
+        x:  newScale,
+      });        
+    } else {
+      util.extend(ticks.properties.enter, {
+        x:  {value: 0},
+        x2: size,
+        y:  oldScale
+      });
+      util.extend(ticks.properties.update, {
+        x:  {value: 0},
+        x2: size,
+        y:  newScale
+      });
+      util.extend(ticks.properties.exit, {
+        y:  newScale,
+      });
+    }
+  }
+
+  function vg_axisTitleExtend(orient, title, range, offset) {
+    var mid = ~~((range[0] + range[1]) / 2),
+        sign = (orient === "top" || orient === "left") ? -1 : 1;
+    
+    if (orient === "bottom" || orient === "top") {
+      util.extend(title.properties.update, {
+        x: {value: mid},
+        y: {value: sign*offset},
+        angle: {value: 0}
+      });
+    } else {
+      util.extend(title.properties.update, {
+        x: {value: sign*offset},
+        y: {value: mid},
+        angle: {value: -90}
+      });
+    }
+  }
+
+  function vg_axisDomainExtend(orient, domain, range, size) {
+    var path;
+    if (orient === "top" || orient === "left") {
+      size = -1 * size;
+    }
+    if (orient === "bottom" || orient === "top") {
+      path = "M" + range[0] + "," + size + "V0H" + range[1] + "V" + size;
+    } else {
+      path = "M" + size + "," + range[0] + "H0V" + range[1] + "H" + size;
+    }
+    domain.properties.update.path = {value: path};
+  }
+
+  function vg_axisUpdate(stamp, item, group, trans, db, signals, predicates) {
+    var o = trans ? {} : item,
+        offset = item.mark.def.offset,
+        orient = item.mark.def.orient,
+        width  = group.width,
+        height = group.height; // TODO fallback to global w,h?
+
+    if (util.isObject(offset)) {
+      offset = -group.scale(offset.scale)(offset.value);
+    }
+
+    switch (orient) {
+      case "left":   { tpl.set(o, 'x', -offset); tpl.set(o, 'y', 0); break; }
+      case "right":  { tpl.set(o, 'x', width + offset); tpl.set(o, 'y', 0); break; }
+      case "bottom": { tpl.set(o, 'x', 0); tpl.set(o, 'y', height + offset); break; }
+      case "top":    { tpl.set(o, 'x', 0); tpl.set(o, 'y', -offset); break; }
+      default:       { tpl.set(o, 'x', 0); tpl.set(o, 'y', 0); }
+    }
+
+    if (trans) trans.interpolate(item, o);
+  }
+
+  function vg_axisTicks() {
+    return {
+      type: "rule",
+      interactive: false,
+      key: "data",
+      properties: {
+        enter: {
+          stroke: {value: config.axis.tickColor},
+          strokeWidth: {value: config.axis.tickWidth},
+          opacity: {value: 1e-6}
+        },
+        exit: { opacity: {value: 1e-6} },
+        update: { opacity: {value: 1} }
+      }
+    };
+  }
+
+  function vg_axisTickLabels() {
+    return {
+      type: "text",
+      interactive: true,
+      key: "data",
+      properties: {
+        enter: {
+          fill: {value: config.axis.tickLabelColor},
+          font: {value: config.axis.tickLabelFont},
+          fontSize: {value: config.axis.tickLabelFontSize},
+          opacity: {value: 1e-6},
+          text: {field: "label"}
+        },
+        exit: { opacity: {value: 1e-6} },
+        update: { opacity: {value: 1} }
+      }
+    };
+  }
+
+  function vg_axisTitle() {
+    return {
+      type: "text",
+      interactive: true,
+      properties: {
+        enter: {
+          font: {value: config.axis.titleFont},
+          fontSize: {value: config.axis.titleFontSize},
+          fontWeight: {value: config.axis.titleFontWeight},
+          fill: {value: config.axis.titleColor},
+          align: {value: "center"},
+          baseline: {value: "middle"},
+          text: {field: "data"}
+        },
+        update: {}
+      }
+    };
+  }
+
+  function vg_axisDomain() {
+    return {
+      type: "path",
+      interactive: false,
+      properties: {
+        enter: {
+          x: {value: 0.5},
+          y: {value: 0.5},
+          stroke: {value: config.axis.axisColor},
+          strokeWidth: {value: config.axis.axisWidth}
+        },
+        update: {}
+      }
+    };
+  }
+
+  return axs;
+});
+
+define('parse/axes',['require','exports','module','../scene/axis','../util/config','../util/index'],function(require, module, exports) {
+  var axs = require('../scene/axis'),
+      config = require('../util/config'),
+      util = require('../util/index');
+
+  var ORIENT = {
+    "x":      "bottom",
+    "y":      "left",
+    "top":    "top",
+    "bottom": "bottom",
+    "left":   "left",
+    "right":  "right"
+  };
+
+  function axes(model, spec, axes, group) {
+    (spec || []).forEach(function(def, index) {
+      axes[index] = axes[index] || axs(model);
+      axis(def, index, axes[index], group);
+    });
+  };
+
+  function axis(def, index, axis, group) {
+    // axis scale
+    if (def.scale !== undefined) {
+      axis.scale(group.scale(def.scale));
+    }
+
+    // axis orientation
+    axis.orient(def.orient || ORIENT[def.type]);
+    // axis offset
+    axis.offset(def.offset || 0);
+    // axis layer
+    axis.layer(def.layer || "front");
+    // axis grid lines
+    axis.grid(def.grid || false);
+    // axis title
+    axis.title(def.title || null);
+    // axis title offset
+    axis.titleOffset(def.titleOffset != null
+      ? def.titleOffset : config.axis.titleOffset);
+    // axis values
+    axis.tickValues(def.values || null);
+    // axis label formatting
+    axis.tickFormat(def.format || null);
+    // axis tick subdivision
+    axis.tickSubdivide(def.subdivide || 0);
+    // axis tick padding
+    axis.tickPadding(def.tickPadding || config.axis.padding);
+
+    // axis tick size(s)
+    var size = [];
+    if (def.tickSize !== undefined) {
+      for (var i=0; i<3; ++i) size.push(def.tickSize);
+    } else {
+      var ts = config.axis.tickSize;
+      size = [ts, ts, ts];
+    }
+    if (def.tickSizeMajor != null) size[0] = def.tickSizeMajor;
+    if (def.tickSizeMinor != null) size[1] = def.tickSizeMinor;
+    if (def.tickSizeEnd   != null) size[2] = def.tickSizeEnd;
+    if (size.length) {
+      axis.tickSize.apply(axis, size);
+    }
+
+    // tick arguments
+    if (def.ticks != null) {
+      var ticks = util.isArray(def.ticks) ? def.ticks : [def.ticks];
+      axis.ticks.apply(axis, ticks);
+    } else {
+      axis.ticks(config.axis.ticks);
+    }
+
+    // style properties
+    var p = def.properties;
+    if (p && p.ticks) {
+      axis.majorTickProperties(p.majorTicks
+        ? util.extend({}, p.ticks, p.majorTicks) : p.ticks);
+      axis.minorTickProperties(p.minorTicks
+        ? util.extend({}, p.ticks, p.minorTicks) : p.ticks);
+    } else {
+      axis.majorTickProperties(p && p.majorTicks || {});
+      axis.minorTickProperties(p && p.minorTicks || {});
+    }
+    axis.tickLabelProperties(p && p.labels || {});
+    axis.titleProperties(p && p.title || {});
+    axis.gridLineProperties(p && p.grid || {});
+    axis.domainProperties(p && p.axis || {});
+  }
+
+  return axes;
+});
+
+define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./Builder','./scale','../parse/axes','../util/index','../util/constants'],function(require, exports, module) {
+  var Node = require('../dataflow/Node'),
+      Builder = require('./Builder'),
+      scalefn = require('./scale'),
+      parseAxes = require('../parse/axes'),
+      util = require('../util/index'),
+      C = require('../util/constants');
+
+  function GroupBuilder() {
+    this._children = {};
+    this._scaler = null;
+    this._recursor = null;
+
+    this._scales = {};
+    this.scale = scale.bind(this);
+    return arguments.length ? this.init.apply(this, arguments) : this;
+  }
+
+  var proto = (GroupBuilder.prototype = new Builder());
+
+  proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
+    var builder = this;
+
+    this._scaler = new Node(model.graph);
+
+    (def.scales||[]).forEach(function(s) { 
+      s = builder.scale(s.name, scalefn(model, s));
+      s.dependency(C.DATA).forEach(function(d) { model.data(d).addListener(builder); });
+      s.dependency(C.SIGNALS).forEach(function(s) { model.signal(s).addListener(builder); });
+      builder._scaler.addListener(s);  // Scales should be computed after group is encoded
+    });
+
+    this._recursor = new Node(model.graph);
+    this._recursor.evaluate = recurse.bind(this);
+
+    return Builder.prototype.init.apply(this, arguments);
+  };
+
+  proto._pipeline = function() {
+    return [this, this._encoder, this._scaler, this._recursor, this._collector, this._bounder, this._renderer];
+  };
+
+  proto.disconnect = function() {
+    var builder = this;
+    util.keys(builder._children).forEach(function(group_id) {
+      builder._children[group_id].forEach(function(c) {
+        builder._recursor.removeListener(c.builder);
+        c.builder.disconnect();
+      })
+    });
+
+    builder._children = {};
+    return Builder.prototype.disconnect.call(this);
+  };
+
+  proto.evaluate = function(input) {
+    var output = Builder.prototype.evaluate.apply(this, arguments),
+        builder = this;
+
+    output.add.forEach(function(group) { buildGroup.call(builder, output, group); });
+    return output;
+  };
+
+  function recurse(input) {
+    var builder = this;
+
+    input.add.forEach(function(group) {
+      buildMarks.call(builder, input, group);
+      buildAxes.call(builder, input, group);
+    });
+
+    input.mod.forEach(function(group) {
+      // Remove temporary connection for marks that draw from a source
+      builder._children[group._id].forEach(function(c) {
+        if(c.type == C.MARK && builder._model.data(c.from) !== undefined) {
+          builder._recursor.removeListener(c.builder);
+        }
+      });
+
+      // Update axes data defs
+      parseAxes(builder._model, builder._def.axes, group.axes, group);
+      group.axes.forEach(function(a, i) { a.def() });
+    });
+
+    input.rem.forEach(function(group) {
+      // For deleted groups, disconnect their children
+      builder._children[group._id].forEach(function(c) { 
+        builder._recursor.removeListener(c.builder);
+        c.builder.disconnect(); 
+      });
+      delete builder._children[group._id];
+    });
+
+    return input;
+  };
+
+  function scale(name, scale) {
+    var group = this;
+    if(arguments.length === 2) return (group._scales[name] = scale, scale);
+    while(scale == null) {
+      scale = group._scales[name];
+      group = group.mark ? group.mark.group : group._parent;
+      if(!group) break;
+    }
+    return scale;
+  }
+
+  function buildGroup(input, group) {
+    util.debug(input, ["building group", group]);
+
+    group._scales = group._scales || {};    
+    group.scale  = scale.bind(group);
+
+    group.items = group.items || [];
+    this._children[group._id] = this._children[group._id] || [];
+
+    group.axes = group.axes || [];
+    group.axisItems = group.axisItems || [];
+  }
+
+  function buildMarks(input, group) {
+    util.debug(input, ["building marks", this._def.marks]);
+    var marks = this._def.marks,
+        mark, inherit, i, len, m, b;
+
+    for(i=0, len=marks.length; i<len; ++i) {
+      mark = marks[i];
+      inherit = "vg_"+group.datum._id;
+      group.items[i] = {group: group};
+      b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
+      b.init(this._model, this._renderer, mark, group.items[i], this, inherit);
+
+      // Temporary connection to propagate initial pulse. 
+      this._recursor.addListener(b);
+      this._children[group._id].push({ 
+        builder: b, 
+        from: ((mark.from||{}).data) || inherit, 
+        type: C.MARK 
+      });
+    }
+  }
+
+  function buildAxes(input, group) {
+    var axes = group.axes,
+        axisItems = group.axisItems,
+        builder = this;
+
+    parseAxes(this._model, this._def.axes, axes, group);
+    axes.forEach(function(a, i) {
+      var scale = builder._def.axes[i].scale,
+          def = a.def(),
+          b = null;
+
+      axisItems[i] = {group: group, axisDef: def};
+      b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
+      b.init(builder._model, builder._renderer, def, axisItems[i], builder);
+      b.dependency(C.SCALES, scale);
+      builder._recursor.addListener(b);
+      builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
+    });
+  }
+
+  return GroupBuilder;
+});
+define('core/Model',['require','exports','module','../dataflow/Graph','../dataflow/Node','../scene/GroupBuilder','../dataflow/changeset','../util/index'],function(require, exports, module) {
   var Graph = require('../dataflow/Graph'), 
       Node  = require('../dataflow/Node'),
-      Builder = require('../scene/Builder'),
+      GroupBuilder = require('../scene/GroupBuilder'),
       changeset = require('../dataflow/changeset'), 
       util = require('../util/index');
 
@@ -4473,7 +5810,7 @@ define('core/Model',['require','exports','module','../dataflow/Graph','../datafl
   proto.scene = function(renderer) {
     if(!arguments.length) return this._scene;
     if(this._builder) this._node.removeListener(this._builder.disconnect());
-    this._builder = new Builder(this, renderer, this._defs.marks, this._scene={});
+    this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
     this._node.addListener(this._builder);
     return this;
   };
@@ -7304,8 +8641,9 @@ define('scene/Transition',['require','exports','module','../dataflow/tuple','../
   
   return Transition;
 });
-define('core/View',['require','exports','module','d3','../parse/streams','../render/canvas/index','../render/svg/index','../scene/Transition','../util/config','../util/index','../dataflow/changeset'],function(require, exports, module) {
+define('core/View',['require','exports','module','d3','../dataflow/Node','../parse/streams','../render/canvas/index','../render/svg/index','../scene/Transition','../util/config','../util/index','../dataflow/changeset'],function(require, exports, module) {
   var d3 = require('d3'),
+      Node = require('../dataflow/Node'),
       parseStreams = require('../parse/streams'),
       canvas = require('../render/canvas/index'),
       svg = require('../render/svg/index'),
@@ -7485,11 +8823,14 @@ define('core/View',['require','exports','module','d3','../parse/streams','../ren
           ? new Transition(opt.duration, opt.ease)
           : null;
 
-    var cs = changeset.create({});
+    var cs = changeset.create();
     if(trans) cs.trans = trans;
 
     if(!v._build) {
-      v._renderNode = new v._model.Node(function(input) {
+      v._renderNode = new Node(v._model.graph)
+        .router(true);
+
+      v._renderNode.evaluate = function(input) {
         util.debug(input, ["rendering"]);
 
         var s = v._model.scene();
@@ -7499,8 +8840,7 @@ define('core/View',['require','exports','module','d3','../parse/streams','../ren
           v._renderer.render(s);
         }
         return input;
-      });
-      v._renderNode._router = true;
+      };
 
       v._model.scene(v._renderNode);
       v._build = true;
@@ -7552,256 +8892,6 @@ define('parse/padding',['require','exports','module','../util/index'],function(r
     var p = util.isNumber(pad) ? pad : 20;
     return {top:p, left:p, right:p, bottom:p};
   }
-});
-define('parse/properties',['require','exports','module','../dataflow/tuple','../util/index','../util/config'],function(require, exports, module) {
-  var tuple = require('../dataflow/tuple'),
-      util = require('../util/index'),
-      config = require('../util/config');
-
-  function compile(model, mark, spec) {
-    var code = "",
-        names = util.keys(spec),
-        i, len, name, ref, vars = {}, 
-        deps = {
-          signals: {},
-          scales: {},
-          data: {}
-        };
-        
-    code += "var o = trans ? {} : item;\n"
-    
-    for (i=0, len=names.length; i<len; ++i) {
-      ref = spec[name = names[i]];
-      code += (i > 0) ? "\n  " : "  ";
-      if(ref.rule) {
-        ref = rule(model, name, ref.rule);
-        code += "\n  " + ref.code
-      } else {
-        ref = valueRef(name, ref);
-        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);";
-      }
-
-      vars[name] = true;
-      ['signals', 'scales', 'data'].forEach(function(p) {
-        if(ref[p] != null) util.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
-      });
-    }
-
-    if (vars.x2) {
-      if (vars.x) {
-        code += "\n  if (o.x > o.x2) { "
-              + "var t = o.x;"
-              + "this.tpl.set(o, 'x', o.x2, stamp);"
-              + "this.tpl.set(o, 'x2', t, stamp); "
-              + "};";
-        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x), stamp);";
-      } else if (vars.width) {
-        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width), stamp);";
-      } else {
-        code += "\n  this.tpl.set(o, 'x', o.x2, stamp);"
-      }
-    }
-
-    if (vars.y2) {
-      if (vars.y) {
-        code += "\n  if (o.y > o.y2) { "
-              + "var t = o.y;"
-              + "this.tpl.set(o, 'y', o.y2, stamp);"
-              + "this.tpl.set(o, 'y2', t, stamp);"
-              + "};";
-        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y), stamp);";
-      } else if (vars.height) {
-        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height), stamp);";
-      } else {
-        code += "\n  this.tpl.set(o, 'y', o.y2, stamp);"
-      }
-    }
-    
-    if (hasPath(mark, vars)) code += "\n  item.touch();";
-    code += "\n  if (trans) trans.interpolate(item, o);";
-
-    try {
-      var encoder = Function("stamp", "item", "group", "trans", 
-        "db", "signals", "predicates", code);
-      encoder.tpl = tuple;
-      return {
-        encode: encoder,
-        signals: util.keys(deps.signals),
-        scales: util.keys(deps.scales),
-        data: util.keys(deps.data)
-      }
-    } catch (e) {
-      util.error(e);
-      util.log(code);
-    }
-  }
-
-  function hasPath(mark, vars) {
-    return vars.path ||
-      ((mark==="area" || mark==="line") &&
-        (vars.x || vars.x2 || vars.width ||
-         vars.y || vars.y2 || vars.height ||
-         vars.tension || vars.interpolate));
-  }
-
-  var GROUP_VARS = {
-    "width": 1,
-    "height": 1,
-    "mark.group.width": 1,
-    "mark.group.height": 1
-  };
-
-  function rule(model, name, rules) {
-    var signals = [], scales = [], db = [],
-        inputs = [], code = "";
-
-    (rules||[]).forEach(function(r, i) {
-      var predName = r.predicate,
-          pred = model.predicate(predName),
-          input = [], args = name+"_arg"+i,
-          ref;
-
-      util.keys(r.input).forEach(function(k) {
-        var ref = valueRef(i, r.input[k]);
-        input.push(util.str(k)+": "+ref.val);
-        signals.concat(ref.signals);
-        scales.concat(ref.scales);
-      });
-
-      ref = valueRef(name, r);
-      signals.concat(ref.signals);
-      scales.concat(ref.scales);
-
-      if(predName) {
-        signals.push.apply(signals, pred.signals);
-        db.push.apply(db, pred.data);
-        inputs.push(args+" = {"+input.join(', ')+"}");
-        code += "if(predicates["+util.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
-          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n";
-        code += rules[i+1] ? "  } else " : "  }";
-      } else {
-        code += "{\n" + 
-          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n"+
-          "  }";
-      }
-    });
-
-    code = "var " + inputs.join(",\n      ") + ";\n  " + code;
-    return {code: code, signals: signals, scales: scales, data: db};
-  }
-
-  function valueRef(name, ref) {
-    if (ref == null) return null;
-    var isColor = name==="fill" || name==="stroke";
-    var signalName = null;
-
-    if (isColor) {
-      if (ref.c) {
-        return colorRef("hcl", ref.h, ref.c, ref.l);
-      } else if (ref.h || ref.s) {
-        return colorRef("hsl", ref.h, ref.s, ref.l);
-      } else if (ref.l || ref.a) {
-        return colorRef("lab", ref.l, ref.a, ref.b);
-      } else if (ref.r || ref.g || ref.b) {
-        return colorRef("rgb", ref.r, ref.g, ref.b);
-      }
-    }
-
-    // initialize value
-    var val = null;
-    if (ref.value !== undefined) {
-      val = util.str(ref.value);
-    }
-
-    if (ref.signal !== undefined) {
-      var signalRef = util.field(ref.signal);
-      val = "signals["+signalRef.map(util.str).join("][")+"]"; 
-      signalName = signalRef.shift();
-    }
-
-    // get field reference for enclosing group
-    if (ref.group != null) {
-      var grp = "group.datum";
-      if (util.isString(ref.group)) {
-        grp = GROUP_VARS[ref.group]
-          ? "group." + ref.group
-          : "group.datum["+util.field(ref.group).map(util.str).join("][")+"]";
-      }
-    }
-
-    // get data field value
-    if (ref.field != null) {
-      if (util.isString(ref.field)) {
-        val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
-        if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
-      } else {
-        val = "this.accessor(group.datum["
-            + util.field(ref.field.group).map(util.str).join("][")
-            + "])(item.datum.data)";
-      }
-    } else if (ref.group != null) {
-      val = grp;
-    }
-
-    if (ref.scale != null) {
-      var scale = util.isString(ref.scale)
-        ? util.str(ref.scale)
-        : (ref.scale.group ? "group" : "item")
-          + ".datum[" + util.str(ref.scale.group || ref.scale.field) + "]";
-      scale = "group.scale(" + scale + ")";
-
-      if(ref.invert) scale += ".invert";  // TODO: ordinal scales
-
-      // run through scale function if val specified.
-      // if no val, scale function is predicate arg.
-      if(val !== null || ref.band || ref.mult || ref.offset) {
-        val = scale + (ref.band ? ".rangeBand()" : 
-          "("+(val !== null ? val : "item.datum.data")+")");
-      } else {
-        val = scale;
-      }
-    }
-    
-    // multiply, offset, return value
-    val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")"
-      + (ref.offset ? " + " + util.number(ref.offset) : "");
-    return {val: val, signals: signalName, scales: ref.scale};
-  }
-
-  function colorRef(type, x, y, z) {
-    var xx = x ? valueRef("", x) : config.color[type][0],
-        yy = y ? valueRef("", y) : config.color[type][1],
-        zz = z ? valueRef("", z) : config.color[type][2];
-    return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
-  }
-
-  return compile;
-});
-define('parse/mark',['require','exports','module','../util/index','./properties'],function(require, exports, module) {
-  var util = require('../util/index'),
-      parseProperties = require('./properties');
-
-  return function parseMark(model, mark) {
-    var props = mark.properties,
-        group = mark.marks;
-
-    // parse mark property definitions
-    util.keys(props).forEach(function(k) {
-      props[k] = parseProperties(model, mark.type, props[k]);
-    });
-
-    // parse delay function
-    if (mark.delay) {
-      mark.delay = parseProperties(model, mark.type, {delay: mark.delay});
-    }
-
-    // recurse if group type
-    if (group) {
-      mark.marks = group.map(function(g) { return parseMark(model, g); });
-    }
-      
-    return mark;
-  };
 });
 define('parse/marks',['require','exports','module','./mark'],function(require, exports, module) {
   var parseMark = require('./mark');

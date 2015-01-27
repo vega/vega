@@ -8,6 +8,8 @@ define(function(require, exports, module) {
     var props = mark.def.properties || {},
         update = props.update;
 
+    Node.prototype.init.call(this, model.graph)
+
     this._model = model;
     this._mark  = mark;
 
@@ -17,14 +19,18 @@ define(function(require, exports, module) {
       this.dependency(C.SIGNALS, update.signals);
     }
 
-    return Node.prototype.init.call(this, model.graph);
+    return this;
   }
 
   var proto = (Encoder.prototype = new Node());
 
   proto.evaluate = function(input) {
-    util.debug(input, ["encoding", mark.def.type]);
+    util.debug(input, ["encoding", this._mark.def.type]);
     var items = this._mark.items,
+        props = this._mark.def.properties || {},
+        enter  = props.enter,
+        update = props.update,
+        exit   = props.exit,
         i, item;
 
     // Only do one traversal of items and use item.status instead
@@ -57,7 +63,7 @@ define(function(require, exports, module) {
   function encode(prop, item, trans, stamp) {
     var model = this._model,
         enc = prop.encode,
-        sg = model.signalValues(prop.signals||[]),
+        sg = this._graph.signalValues(prop.signals||[]),
         db = (prop.data||[]).reduce(function(db, ds) { 
           return db[ds] = model.data(ds).values(), db;
         }, {});

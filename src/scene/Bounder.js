@@ -12,11 +12,11 @@ define(function(require, exports, module) {
   var proto = (Bounder.prototype = new Node());
 
   proto.evaluate = function(input) {
-    util.debug(input, ["bounds", mark.marktype]);
+    util.debug(input, ["bounds", this._mark.marktype]);
 
-    bounds.mark(mark);
+    bounds.mark(this._mark);
     if(this._mark.marktype === C.GROUP) 
-      bounds.mark(mark, null, false);
+      bounds.mark(this._mark, null, false);
 
     input.touch = true;
     return input;

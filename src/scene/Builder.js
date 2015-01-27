@@ -17,11 +17,15 @@ define(function(require, exports, module) {
   var proto = (Builder.prototype = new Node());
 
   proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
+    Node.prototype.init.call(this, model.graph)
+      .router(true)
+      .collector(true);
+
     this._model = model;
     this._def   = def;
     this._mark  = mark;
     this._from  = (def.from ? def.from.data : null) || inheritFrom;
-    this._ds    = util.isString(f) ? model.data(this._from) : null;
+    this._ds    = util.isString(this._from) ? model.data(this._from) : null;
     this._map   = {};
     this._items = [];
     this._lastBuild = 0;
@@ -44,11 +48,7 @@ define(function(require, exports, module) {
       this._encoder.dependency(C.DATA, this._from);
     }
 
-    this.connect();
-
-    return Node.prototype.init.call(this, this._model.graph)
-      .router(true)
-      .collector(true);
+    return this.connect();
   };
 
   proto.evaluate = function(input) {
@@ -57,7 +57,7 @@ define(function(require, exports, module) {
     var fullUpdate = this._encoder.reevaluate(input),
         output, fcs, data;
 
-    if(from) {
+    if(this._ds) {
       output = changeset.create(input);
 
       // If a scale or signal in the update propset has been updated, 
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 
       fcs = this._ds.last();
       if(!fcs) return output.touch = true, output;
-      if(fcs.stamp <= lastBuild) return output;
+      if(fcs.stamp <= this._lastBuild) return output;
 
       this._lastBuild = fcs.stamp;
       return joinChangeset.call(this, fcs);
@@ -104,27 +104,27 @@ define(function(require, exports, module) {
     this._ds.fire(input);
   };
 
-  function pipeline() {
-    var pipeline = [this, this._encoder];
-    pipeline.push(this._collector, this._bounder, this._renderer);
-    return pipeline;
+  proto._pipeline = function() {
+    return [this, this._encoder, this._collector, this._bounder, this._renderer];
   };
 
   proto.connect = function() {
     var builder = this;
-    this._model.graph.connect(pipeline.call(this));
+    this._model.graph.connect(this._pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).addListener(builder);
     });
     if(this._parent) this._bounder.addListener(this._parent._collector);
+    return this;
   };
 
   proto.disconnect = function() {
     var builder = this;
-    this._model.graph.disconnect(pipeline.call(this));
+    this._model.graph.disconnect(this._pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).removeListener(builder);
     });
+    return this;
   };
 
   function newItem(d, stamp) {
@@ -174,7 +174,7 @@ define(function(require, exports, module) {
 
     // Sort items according to how data is sorted, or by _id. The else 
     // condition is important to ensure lines and areas are drawn correctly.
-    items.sort(function(a, b) { 
+    this._items.sort(function(a, b) { 
       return input.sort ? input.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
     });
 

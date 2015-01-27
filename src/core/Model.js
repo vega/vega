@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var Graph = require('../dataflow/Graph'), 
       Node  = require('../dataflow/Node'),
-      Builder = require('../scene/Builder'),
+      GroupBuilder = require('../scene/GroupBuilder'),
       changeset = require('../dataflow/changeset'), 
       util = require('../util/index');
 
@@ -50,7 +50,7 @@ define(function(require, exports, module) {
   proto.scene = function(renderer) {
     if(!arguments.length) return this._scene;
     if(this._builder) this._node.removeListener(this._builder.disconnect());
-    this._builder = new Builder(this, renderer, this._defs.marks, this._scene={});
+    this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
     this._node.addListener(this._builder);
     return this;
   };
