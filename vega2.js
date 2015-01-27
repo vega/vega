@@ -1488,50 +1488,6 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
 
   return Graph;
 });
-define('dataflow/collector',['require','exports','module','./Node','./changeset','../util/index','../util/constants'],function(require, exports, module) {
-  var Node = require('./Node'),
-      changeset = require('./changeset'),
-      util = require('../util/index'),
-      C = require('../util/constants');
-
-  function Collector(graph) {
-    Node.prototype.init.call(this, graph);
-    this._data = [];
-    return this.router(true)
-      .collector(true);
-  }
-
-  var proto = (Collector.prototype = new Node());
-
-  proto.data = function() { return this._data; }
-
-  proto.evaluate = function(input) {
-    util.debug(input, ["collecting"]);
-
-    if(input.touch) {
-      input = changeset.create(input);
-      input.mod = this._data.slice();
-      return input;
-    }
-
-    if(input.rem.length) {
-      var ids = input.rem.reduce(function(m,x) { return (m[x._id]=1, m); }, {});
-      this._data = this._data.filter(function(x) { return ids[x._id] !== 1; });
-    }
-
-    if(input.add.length) {
-      this._data = this._data.length ? this._data.concat(input.add) : input.add;
-    }
-
-    if(input.sort) {
-      this._data.sort(input.sort);
-    }
-
-    return input;
-  };
-
-  return Collector;
-});
 define('scene/Encoder',['require','exports','module','../dataflow/Node','../util/index','../util/constants'],function(require, exports, module) {
   var Node = require('../dataflow/Node'),
       util = require('../util/index'),
@@ -4192,9 +4148,9 @@ define('parse/data',['require','exports','module','./transforms','./modify','../
 
   return parseData;
 });
-define('scene/Builder',['require','exports','module','../dataflow/Node','../dataflow/collector','./Encoder','./Bounder','./Item','../parse/data','../dataflow/tuple','../dataflow/changeset','../util/index','../util/constants'],function(require, exports, module) {
+define('scene/Builder',['require','exports','module','../dataflow/Node','../dataflow/Collector','./Encoder','./Bounder','./Item','../parse/data','../dataflow/tuple','../dataflow/changeset','../util/index','../util/constants'],function(require, exports, module) {
   var Node = require('../dataflow/Node'),
-      Collector = require('../dataflow/collector'),
+      Collector = require('../dataflow/Collector'),
       Encoder  = require('./Encoder'),
       Bounder  = require('./Bounder'),
       Item  = require('./Item'),

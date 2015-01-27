@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   var Node = require('../dataflow/Node'),
-      Collector = require('../dataflow/collector'),
+      Collector = require('../dataflow/Collector'),
       Encoder  = require('./Encoder'),
       Bounder  = require('./Bounder'),
       Item  = require('./Item'),
