@@ -14,7 +14,7 @@ describe('Facet', function() {
     "data": [{
       "name": "table",
       "values": values,
-      "transform": [{"type": "facet", "keys": ["country"]}]
+      "transform": [{"type": "facet", "keys": [{"field": "country"}]}]
     }]
   };
 
@@ -139,7 +139,7 @@ describe('Facet', function() {
 
   it('should handle signals as keys', function(done) {
     var s = util.duplicate(spec);
-    spec.data[0].transform[0].keys = ['keys'];
+    spec.data[0].transform[0].keys = [{"signal": "keys"}];
 
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
@@ -151,7 +151,7 @@ describe('Facet', function() {
       expectFacet(facets, 0, 0, 2); // USA
       expectFacet(facets, 1, 3, 5); // Canada
 
-      model.signal('keys').value('type').fire();
+      model.graph.signal('keys').value('type').fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
 
@@ -170,7 +170,7 @@ describe('Facet', function() {
   it('should handle fields+signals as keys', function(done) {
     var s = util.duplicate(spec);
     spec.signals[0].init = 'type';
-    spec.data[0].transform[0].keys = ['country', 'keys'];
+    spec.data[0].transform[0].keys = [{"field": "country"}, {"signal": "keys"}];
 
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
@@ -203,4 +203,6 @@ describe('Facet', function() {
       done();
     }, viewFactory);      
   });
+
+  it('should transform faceted values');
 });

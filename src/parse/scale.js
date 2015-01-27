@@ -99,7 +99,7 @@ define(function(require, module, exports) {
 
   function signal(model, v) {
     if(!v.signal) return v;
-    return model.signalRef(v.signal);
+    return model.graph.signalRef(v.signal);
   }
   
   function domainValues(model, def, data, sort) {

@@ -11,6 +11,7 @@
     "ascii-tree": "0.1.x",
     "chai": "^1.10.0",
     "grunt": "0.4.x",
+    "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",

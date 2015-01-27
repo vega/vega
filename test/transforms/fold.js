@@ -10,7 +10,7 @@ describe('Fold', function() {
       "values": values,
       "transform": [{
         "type": "fold", 
-        "fields": ["gold", "silver", "bronze"]
+        "on": [{"field": "gold"}, {"field": "silver"}, {"field": "bronze"}]
       }]
     }] 
   };

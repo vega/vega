@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
-  var parseScale = require('../parse/scale'), 
+  var Node = require('../dataflow/Node'),
+      parseScale = require('../parse/scale'), 
       util = require('../util/index'),
-      changeset = require('../core/changeset');
+      changeset = require('../dataflow/changeset');
 
   var ORDINAL = "ordinal";
 
@@ -24,7 +25,7 @@ define(function(require, exports, module) {
 
     function reeval(group, input) {
       var from = model.data(domain.data || "vg_"+group.datum._id),
-          fcs = from ? from._output : null,
+          fcs = from ? from.last() : null,
           prev = group._prev || {},
           width = prev.width || {}, height = prev.height || {}, 
           reeval = fcs ? !!fcs.add.length || !!fcs.rem.length : false;
@@ -45,8 +46,8 @@ define(function(require, exports, module) {
       var k = def.name, 
           scale = parseScale(model, def, group);
 
-      group.scales[k+":prev"] = group.scales[k] || scale;
-      group.scales[k] = scale;
+      group.scale(k+":prev", group.scale(k) || scale);
+      group.scale(k, scale);
 
       var deps = node._deps.data, 
           inherit = domain.data ? false : "vg_"+group.datum._id;
@@ -54,7 +55,8 @@ define(function(require, exports, module) {
       if(inherit && deps.indexOf(inherit) === -1) deps.push(inherit);
     }
 
-    var node = new model.Node(function scaling(input) {
+    var node = new Node(model.graph);
+    node.evaluate = function scaling(input) {
       util.debug(input, ["scaling", def.name]);
 
       input.add.forEach(scale);
@@ -66,7 +68,7 @@ define(function(require, exports, module) {
       // touch pulse. Thus, if multiple scales update in the parent group, we don't
       // reevaluate child marks multiple times. 
       return changeset.create(input, true);
-    });
+    };
 
     if(domain.data) node._deps.data.push(domain.data);
     if(domain.field) node._deps.fields.push(domain.field);

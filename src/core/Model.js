@@ -1,70 +1,36 @@
 define(function(require, exports, module) {
-  var Datasource = require('./Datasource'), 
-      Signal = require('./Signal'),
-      Node = require('./Node'),
-      graph = require('./graph'), 
-      changeset = require('./changeset'), 
-      scene = require('../scene/index'),
+  var Graph = require('../dataflow/Graph'), 
+      Node  = require('../dataflow/Node'),
+      GroupBuilder = require('../scene/GroupBuilder'),
+      changeset = require('../dataflow/changeset'), 
       util = require('../util/index');
 
   function Model() {
-    this._stamp = 0;
-    this._rank  = 0;
-
     this._defs = {};
-    this._data = {};
-    this._signals = {};
     this._predicates = {};
+    this._scene = null;
 
-    this.Datasource = Datasource(this);
-    this.Signal = Signal(this);
-    this.Node = Node(this);
-    this.graph = graph(this);
-    this.scene = scene(this);
+    this.graph = new Graph();
 
-    this._node = new this.Node();
+    this._node = new Node(this.graph);
+    this._builder = null; // Top-level scenegraph builder
   };
 
-  Model.prototype.data = function(name, pipeline, facet) {
-    if(arguments.length === 1) return this._data[name];
-    return this._data[name] = new this.Datasource(name, facet)
-      .pipeline(pipeline);
+  var proto = Model.prototype;
+
+  proto.defs = function(defs) {
+    if (!arguments.length) return this._defs;
+    this._defs = defs;
+    return this;
   };
 
-  function signal(name) {
-    var m = this, i, len;
-    if(!util.isArray(name)) return this._signals[name];
-    return name.map(function(n) { m._signals[n]; });
-  }
-
-  Model.prototype.signal = function(name, init) {
-    var m = this;
-    if(arguments.length === 1) return signal.call(this, name);
-    return this._signals[name] = new this.Signal(name, init);
-  };
-
-  Model.prototype.signalValues = function(name) {
-    var signals = {},
-        i, len, n;
-
-    if(!util.isArray(name)) return this._signals[name].value();
-    for(i=0, len=name.length; i<len; ++i) {
-      n = name[i];
-      signals[n] = this._signals[n].value();
+  proto.data = function() {
+    var data = this.graph.data.apply(this.graph, arguments);
+    if(arguments.length > 1) {  // new Datasource
+      this._node.addListener(data._pipeline[0]);
     }
 
-    return signals;
-  };
-
-  Model.prototype.signalRef = function(ref) {
-    if(!util.isArray(ref)) ref = util.field(ref);
-    var value = this.signal(ref.shift()).value();
-    if(ref.length > 0) {
-      var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
-      value = fn.call(null, value);
-    }
-
-    return value;
+    return data;
   };
 
   function predicates(name) {
@@ -74,14 +40,34 @@ define(function(require, exports, module) {
     return predicates;
   }
 
-  Model.prototype.predicate = function(name, predicate) {
+  proto.predicate = function(name, predicate) {
     if(arguments.length === 1) return predicates.call(this, name);
-    return this._predicates[name] = predicate;
+    return (this._predicates[name] = predicate);
   };
 
-  Model.prototype.addListener = function(l) { this._node.addListener(l); }
-  Model.prototype.fire = function(cs) {
-    if(!cs) cs = changeset.create({});
+  proto.predicates = function() { return this._predicates; };
+
+  proto.scene = function(renderer) {
+    if(!arguments.length) return this._scene;
+    if(this._builder) this._node.removeListener(this._builder.disconnect());
+    this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
+    this._node.addListener(this._builder);
+    return this;
+  };
+
+  // Helper method to run signals through top-level scales
+  proto.scale = function(spec, value) {
+    if(!spec.scale) return value;
+    var scale = this._scene.items[0].scale(spec.scale);
+    if(!scale) return value;
+    return spec.invert ? scale.invert(value) : scale(value);
+  };
+
+  proto.addListener = function(l) { this._node.addListener(l); };
+  proto.removeListener = function(l) { this._node.removeListener(l); };
+
+  proto.fire = function(cs) {
+    if(!cs) cs = changeset.create();
     this.graph.propagate(cs, this._node);
   };
 

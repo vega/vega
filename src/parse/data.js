@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
   var parseTransforms = require('./transforms'),
-      parseModify = require('../transforms/modify'),
+      parseModify = require('./modify'),
       util = require('../util/index'),
       load = require('../util/load'),
       read = require('../util/read');
