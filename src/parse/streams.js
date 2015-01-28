@@ -22,7 +22,7 @@ define(function(require, exports, module) {
         if(spec.scale) val = model.scale(spec, val);
         sig.value(val);
         input.signals[sig.name()] = 1;
-        input.touch = true;
+        input.reflow = true;
         return input;  
       };
       n.dependency(C.SIGNALS, selector.signal);

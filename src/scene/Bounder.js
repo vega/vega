@@ -18,7 +18,7 @@ define(function(require, exports, module) {
     if(this._mark.marktype === C.GROUP) 
       bounds.mark(this._mark, null, false);
 
-    input.touch = true;
+    input.reflow = true;
     return input;
   };
 

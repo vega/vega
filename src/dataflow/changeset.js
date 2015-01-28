@@ -2,7 +2,7 @@ define(function(require, exports, module) {
   var C = require('../util/constants');
   var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
-  function create(cs, touch) {
+  function create(cs, reflow) {
     var out = {};
     copy(cs, out);
 
@@ -10,7 +10,7 @@ define(function(require, exports, module) {
     out.mod = [];
     out.rem = [];
 
-    out.touch = touch;
+    out.reflow = reflow;
 
     return out;
   }

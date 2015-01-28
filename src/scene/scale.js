@@ -65,7 +65,7 @@ define(function(require, exports, module) {
       });
 
       // Scales are at the end of an encoding pipeline, so they should forward a
-      // touch pulse. Thus, if multiple scales update in the parent group, we don't
+      // reflow pulse. Thus, if multiple scales update in the parent group, we don't
       // reevaluate child marks multiple times. 
       return changeset.create(input, true);
     };

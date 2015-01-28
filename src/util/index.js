@@ -235,7 +235,7 @@ define(function(require, module, exports) {
     if(!config.debug) return;
     var log = Function.prototype.bind.call(console.log, console);
     args.unshift(input.stamp||-1);
-    if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.touch);
+    if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.reflow);
     log.apply(console, args);
   };
 

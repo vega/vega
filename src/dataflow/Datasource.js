@@ -94,7 +94,7 @@ define(function(require, exports, module) {
           out = changeset.create(input);
       out.facet = ds._facet;
 
-      if(input.touch) {
+      if(input.reflow) {
         out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
       } else {
         // update data

@@ -18,7 +18,7 @@ define(function(require, exports, module) {
   proto.evaluate = function(input) {
     util.debug(input, ["collecting"]);
 
-    if(input.touch) {
+    if(input.reflow) {
       input = changeset.create(input);
       input.mod = this._data.slice();
       return input;

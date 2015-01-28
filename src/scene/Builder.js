@@ -65,7 +65,7 @@ define(function(require, exports, module) {
       if(fullUpdate) output.mod = this._items.slice();
 
       fcs = this._ds.last();
-      if(!fcs) return output.touch = true, output;
+      if(!fcs) return (output.reflow = true, output);
       if(fcs.stamp <= this._lastBuild) return output;
 
       this._lastBuild = fcs.stamp;

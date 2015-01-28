@@ -481,7 +481,7 @@ define('dataflow/changeset',['require','exports','module','../util/constants'],f
   var C = require('../util/constants');
   var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
-  function create(cs, touch) {
+  function create(cs, reflow) {
     var out = {};
     copy(cs, out);
 
@@ -489,7 +489,7 @@ define('dataflow/changeset',['require','exports','module','../util/constants'],f
     out.mod = [];
     out.rem = [];
 
-    out.touch = touch;
+    out.reflow = reflow;
 
     return out;
   }
@@ -898,7 +898,7 @@ define('util/index',['require','exports','module','./config'],function(require, 
     if(!config.debug) return;
     var log = Function.prototype.bind.call(console.log, console);
     args.unshift(input.stamp||-1);
-    if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.touch);
+    if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.reflow);
     log.apply(console, args);
   };
 
@@ -1085,7 +1085,7 @@ define('dataflow/Collector',['require','exports','module','./Node','./changeset'
   proto.evaluate = function(input) {
     util.debug(input, ["collecting"]);
 
-    if(input.touch) {
+    if(input.reflow) {
       input = changeset.create(input);
       input.mod = this._data.slice();
       return input;
@@ -1205,7 +1205,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
           out = changeset.create(input);
       out.facet = ds._facet;
 
-      if(input.touch) {
+      if(input.reflow) {
         out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
       } else {
         // update data
@@ -1374,11 +1374,11 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
   };
 
   var schedule = d3.bisector(function(a, b) {
-    // If the nodes are equal, propagate the non-touch pulse first,
-    // so that we can ignore subsequent touch pulses. To efficiently
+    // If the nodes are equal, propagate the non-reflow pulse first,
+    // so that we can ignore subsequent reflow pulses. To efficiently
     // use the JS array, we want lower ranked nodes on the right so
     // we can pop them. 
-    if(a.node == b.node) return a.pulse.touch ? -1 : 1;
+    if(a.node == b.node) return a.pulse.reflow ? -1 : 1;
     else return b.rank - a.rank; 
   }); 
 
@@ -1407,11 +1407,11 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
         continue;
       }
 
-      var touched = p.touch && n.last() >= p.stamp;
-      if(touched) continue; // Don't needlessly touch ops.
+      var reflowed = p.reflow && n.last() >= p.stamp;
+      if(reflowed) continue; // Don't needlessly reflow ops.
 
       var run = !!p.add.length || !!p.rem.length || n.router();
-      run = run || !touched;
+      run = run || !reflowed;
       run = run || n.reevaluate(p);
 
       if(run) {
@@ -2741,7 +2741,7 @@ define('scene/Bounder',['require','exports','module','../dataflow/Node','../util
     if(this._mark.marktype === C.GROUP) 
       bounds.mark(this._mark, null, false);
 
-    input.touch = true;
+    input.reflow = true;
     return input;
   };
 
@@ -3113,7 +3113,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       add:  "",
       rem:  "",
       set:  "Math.sqrt(this.dev / (this.cnt-1))",
-      req:  ["var"], idx: 3
+      req:  ["var"], idx: 4
     }),
     "stdevp": measure({
       name: "stdevp",
@@ -3121,7 +3121,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       add:  "",
       rem:  "",
       set:  "Math.sqrt(this.dev / this.cnt)",
-      req:  ["var"], idx: 4
+      req:  ["var"], idx: 5
     }),
     "median": measure({
       name: "median",
@@ -3130,7 +3130,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
             "this.val.length = this.val.length - 1;",
       set:  "this.sel(~~(this.cnt/2), this.val)",
-      req: ["count"], idx: 5
+      req: ["count"], idx: 6
     })
   };
 
@@ -4231,7 +4231,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
       if(fullUpdate) output.mod = this._items.slice();
 
       fcs = this._ds.last();
-      if(!fcs) return output.touch = true, output;
+      if(!fcs) return (output.reflow = true, output);
       if(fcs.stamp <= this._lastBuild) return output;
 
       this._lastBuild = fcs.stamp;
@@ -4690,7 +4690,7 @@ define('scene/scale',['require','exports','module','../dataflow/Node','../parse/
       });
 
       // Scales are at the end of an encoding pipeline, so they should forward a
-      // touch pulse. Thus, if multiple scales update in the parent group, we don't
+      // reflow pulse. Thus, if multiple scales update in the parent group, we don't
       // reevaluate child marks multiple times. 
       return changeset.create(input, true);
     };
@@ -6901,7 +6901,7 @@ define('parse/streams',['require','exports','module','d3','../dataflow/Node','..
         if(spec.scale) val = model.scale(spec, val);
         sig.value(val);
         input.signals[sig.name()] = 1;
-        input.touch = true;
+        input.reflow = true;
         return input;  
       };
       n.dependency(C.SIGNALS, selector.signal);

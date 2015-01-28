@@ -56,11 +56,11 @@ define(function(require, exports, module) {
   };
 
   var schedule = d3.bisector(function(a, b) {
-    // If the nodes are equal, propagate the non-touch pulse first,
-    // so that we can ignore subsequent touch pulses. To efficiently
+    // If the nodes are equal, propagate the non-reflow pulse first,
+    // so that we can ignore subsequent reflow pulses. To efficiently
     // use the JS array, we want lower ranked nodes on the right so
     // we can pop them. 
-    if(a.node == b.node) return a.pulse.touch ? -1 : 1;
+    if(a.node == b.node) return a.pulse.reflow ? -1 : 1;
     else return b.rank - a.rank; 
   }); 
 
@@ -89,11 +89,11 @@ define(function(require, exports, module) {
         continue;
       }
 
-      var touched = p.touch && n.last() >= p.stamp;
-      if(touched) continue; // Don't needlessly touch ops.
+      var reflowed = p.reflow && n.last() >= p.stamp;
+      if(reflowed) continue; // Don't needlessly reflow ops.
 
       var run = !!p.add.length || !!p.rem.length || n.router();
-      run = run || !touched;
+      run = run || !reflowed;
       run = run || n.reevaluate(p);
 
       if(run) {

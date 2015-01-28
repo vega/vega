@@ -47,7 +47,7 @@ define(function(require, exports, module) {
       add:  "",
       rem:  "",
       set:  "Math.sqrt(this.dev / (this.cnt-1))",
-      req:  ["var"], idx: 3
+      req:  ["var"], idx: 4
     }),
     "stdevp": measure({
       name: "stdevp",
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
       add:  "",
       rem:  "",
       set:  "Math.sqrt(this.dev / this.cnt)",
-      req:  ["var"], idx: 4
+      req:  ["var"], idx: 5
     }),
     "median": measure({
       name: "median",
@@ -64,7 +64,7 @@ define(function(require, exports, module) {
       rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
             "this.val.length = this.val.length - 1;",
       set:  "this.sel(~~(this.cnt/2), this.val)",
-      req: ["count"], idx: 5
+      req: ["count"], idx: 6
     })
   };
 
