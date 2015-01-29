@@ -3,9 +3,11 @@
     <title>Vega Interaction Test</title/>
     <script src="../lib/d3.v3.min.js"></script>
     <script src="../../vega.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <style>
 * { font-family: Helvetica Neue, Helvetica, Arial, sans-serif; }
 body { width: 450px; line-height: 16pt; }
+#tooltip { padding: 0 6px; border: 1px solid #111; border-radius: 4px; display: inline-block; font-size: .75em; color: #fff; background-color: #444; position: absolute; opacity: 0; }
     </style>
   </head>
   <body>
@@ -15,6 +17,7 @@ body { width: 450px; line-height: 16pt; }
     to a Vega view. Here, hovering over one mark (bars) can trigger
     updates to other marks (outlines) in the scene.</p>
     <p>Disclaimer: Not intended as an example of "good" design!</p>
+    <div id="tooltip">Loading...</div>
   </body>
   <script type="text/javascript">
 var spec = {
@@ -97,13 +100,26 @@ var data = {table: [
 vg.parse.spec(spec, function(chart) {
   var view = chart({el:"#view", data:data})
     .on("mouseover", function(event, item) {
+
+      // Show the tooltip and set the tooltip
+      //$('#tooltip').fadeIn();
+      $('#tooltip').css('opacity',1)
+      $('#tooltip').html('Value: ' + item.datum.data.y);
+
       // invoke hover properties on cousin one hop forward in scenegraph
       view.update({
         props: "hover",
-        items: item.cousin(1)
+        items: item.cousin(1),
+        duration: 250,
+        ease: "linear"
       });
     })
     .on("mouseout", function(event, item) {
+      
+      // Hide the tooltip
+      // $('#tooltip').fadeOut();
+      $('#tooltip').css('opacity',0)
+
       // reset cousin item, using animated transition
       view.update({
         props: "update",
@@ -114,5 +130,15 @@ vg.parse.spec(spec, function(chart) {
     })
     .update();
 });
+
+// Track the user's mouse to position our tooltip
+$(document).mousemove(function(event) {
+  $('#tooltip').css('top',function () {
+    return event.pageY - 15 + 'px';
+  }).css('left',function () {
+    return event.pageX + 5 +'px';
+  });
+});
+
   </script>
 </html>
