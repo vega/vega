@@ -163,8 +163,40 @@ describe('Aggregate', function() {
       }, viewFactory);
     });
 
+    it('should calculate min', function(done) {
+      parseSpec(spec(['min']), function(model) {
+        model.fire();
+
+        var ds = model.data('table'),
+            data = ds.values(),
+            vals = values.map(function(d) { return d.y }).sort(),
+            min = vals[0];
+
+        expect(data).to.have.length(1);
+        expect(data[0]).to.have.property('min', min);
+
+        done();
+      }, viewFactory);
+    });
+
+    it('should calculate max', function(done) {
+      parseSpec(spec(['max']), function(model) {
+        model.fire();
+
+        var ds = model.data('table'),
+            data = ds.values(),
+            vals = values.map(function(d) { return d.y }).sort(),
+            max = vals[vals.length-1];
+
+        expect(data).to.have.length(1);
+        expect(data[0]).to.have.property('max', max);
+
+        done();
+      }, viewFactory);
+    });
+
     it('should handle streaming adds', function(done) {
-      parseSpec(spec(['median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
+      parseSpec(spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
         var a1 = {x: 21, y: 21},
             a2 = {x: 22, y: 95},
             a3 = {x: 23, y: 47};
@@ -185,7 +217,9 @@ describe('Aggregate', function() {
             stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
             half = ~~(count/2),
-            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2;
+            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2,
+            min = vals[0],
+            max = vals[vals.length-1];
 
         expect(data).to.have.length(1);
         expect(data[0]).to.have.property('count', count);
@@ -196,13 +230,15 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('stdev', stdev);
         expect(data[0]).to.have.property('stdevp', stdevp);
         expect(data[0]).to.have.property('median', median);
+        expect(data[0]).to.have.property('min', min);
+        expect(data[0]).to.have.property('max', max);
 
         done();
       }, viewFactory);
     });
 
     it('should handle streaming rems', function(done) {
-      parseSpec(spec(['median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
+      parseSpec(spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
         model.fire();
         values = values.filter(function(d) { return d.y < 50 });
         model.data('table').remove(function(d) { return d.y >= 50 }).fire();
@@ -219,7 +255,9 @@ describe('Aggregate', function() {
             stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
             half = ~~(count/2),
-            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2;
+            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2,
+            min = vals[0],
+            max = vals[vals.length-1];
 
         expect(data).to.have.length(1);
         expect(data[0]).to.have.property('count', count);
@@ -230,6 +268,8 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('stdev', stdev);
         expect(data[0]).to.have.property('stdevp', stdevp);
         expect(data[0]).to.have.property('median', median);
+        expect(data[0]).to.have.property('min', min);
+        expect(data[0]).to.have.property('max', max);
 
         done();
       }, viewFactory);

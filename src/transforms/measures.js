@@ -65,6 +65,22 @@ define(function(require, exports, module) {
             "this.val.length = this.val.length - 1;",
       set:  "this.sel(~~(this.cnt/2), this.val)",
       req: ["count"], idx: 6
+    }),
+    "min": measure({
+      name: "min",
+      init: "",
+      add: "",
+      rem: "",
+      set: "this.sel(0, this.val)",
+      req: ["median"]
+    }),
+    "max": measure({
+      name: "max",
+      init: "",
+      add: "",
+      rem: "",
+      set: "this.sel(this.val.length-1, this.val)",
+      req: ["median"]
     })
   };
 
