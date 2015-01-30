@@ -31,16 +31,13 @@ define(function(require, exports, module) {
     return this.transform(input, reset);
   };
 
-  // Mocking an output parameter.
-  proto.output = {
-    set: function(transform, map) {
-      for (var key in transform._output) {
-        if (map[key] !== undefined) {
-          transform._output[key] = map[key];
-        }
+  proto.output = function(map) {
+    for (var key in this._output) {
+      if (map[key] !== undefined) {
+        this._output[key] = map[key];
       }
-      return transform;
     }
+    return this;
   };
 
   return Transform;

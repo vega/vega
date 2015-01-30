@@ -195,6 +195,57 @@ describe('Aggregate', function() {
       }, viewFactory);
     });
 
+    it('should handle renamed output', function(done) {
+      var s = spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']);
+      s.data[0].transform[0].output = {
+          "count":    "a_count",
+          "avg":      "a_avg",
+          "min":      "a_min",
+          "max":      "a_max",
+          "sum":      "a_sum",
+          "mean":     "a_mean",
+          "var":      "a_var",
+          "stdev":    "a_stdev",
+          "varp":     "a_varp",
+          "stdevp":   "a_stdevp",
+          "median":   "a_median"
+        };
+
+      parseSpec(s, function(model) {
+        model.fire();
+
+        var ds = model.data('table'),
+            data = ds.values(),
+            count = values.length
+            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
+            avg = sum/count,
+            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
+            vr = variance/(count-1),
+            varp = variance/count,
+            stdev = Math.sqrt(vr),
+            stdevp = Math.sqrt(varp),
+            vals = values.map(function(d) { return d.y }).sort(),
+            half = ~~(count/2),
+            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2,
+            min = vals[0],
+            max = vals[vals.length-1];
+
+        expect(data).to.have.length(1);
+        expect(data[0]).to.have.property('a_count', count);
+        expect(data[0]).to.have.property('a_sum', sum);
+        expect(data[0]).to.have.property('a_avg', avg);
+        expect(data[0]).to.have.property('a_var', vr);
+        expect(data[0]).to.have.property('a_varp', varp);
+        expect(data[0]).to.have.property('a_stdev', stdev);
+        expect(data[0]).to.have.property('a_stdevp', stdevp);
+        expect(data[0]).to.have.property('a_median', median);
+        expect(data[0]).to.have.property('a_min', min);
+        expect(data[0]).to.have.property('a_max', max);
+
+        done();
+      }, viewFactory);
+    });
+
     it('should handle streaming adds', function(done) {
       parseSpec(spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
         var a1 = {x: 21, y: 21},
@@ -274,7 +325,6 @@ describe('Aggregate', function() {
         done();
       }, viewFactory);
     });
-
   });
 
   it('should set aggregates on facets');

@@ -8,6 +8,20 @@ define(function(require, exports, module) {
   function Aggregate(graph) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {on: {type: "field"} });
+    this._output = {
+      "count":    "count",
+      "avg":      "avg",
+      "min":      "min",
+      "max":      "max",
+      "sum":      "sum",
+      "mean":     "mean",
+      "var":      "var",
+      "stdev":    "stdev",
+      "varp":     "varp",
+      "stdevp":   "stdevp",
+      "median":   "median"
+    };
+
     // Stats parameter handled manually.
 
     this._Measures = null;
@@ -19,7 +33,9 @@ define(function(require, exports, module) {
 
   proto.stats = { 
     set: function(transform, aggs) {
-      transform._Measures = meas.create(aggs.map(function(a) { return meas[a](); }));
+      transform._Measures = meas.create(aggs.map(function(a) { 
+        return meas[a](transform._output[a]); 
+      }));
       return transform;
     }
   };
