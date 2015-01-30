@@ -327,7 +327,57 @@ describe('Aggregate', function() {
     });
   });
 
-  it('should set aggregates on facets');
+  it('should calculate aggregates on facets', function(done) {
+    var values = [
+      {"country":"US", "type": "gold", "count": 12},
+      {"country":"US", "type": "silver", "count": 13},
+      {"country":"US", "type": "bronze", "count": 15},
+      {"country":"Canada", "type": "gold", "count": 5},
+      {"country":"Canada", "type": "silver", "count": 4},
+      {"country":"Canada", "type": "bronze", "count": 3}
+    ];
+
+    var spec = {
+      "data": [{
+        "name": "table",
+        "values": values,
+        "transform": [{
+          "type": "facet", 
+          "keys": [{"field": "country"}],
+          "transform": [{
+            "type": "aggregate", 
+            "on": "count", 
+            "stats": ["min", "max", "median", "stdevp", "stdev", 
+              "varp", "var", "avg", "sum", "count"]}]
+        }]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      model.fire();
+
+      var ds = model.data('table'),
+          data = ds.values();
+
+      expect(data).to.have.length(2);
+
+      expect(data[0]).to.have.property('key', 'US');
+      expect(data[0]).to.have.property('min', 12);
+      expect(data[0]).to.have.property('max', 15);
+      expect(data[0]).to.have.property('median', 13);
+      expect(data[0]).to.have.property('sum', 40);
+      expect(data[0]).to.have.property('count', 3);
+
+      expect(data[1]).to.have.property('key', 'Canada');
+      expect(data[1]).to.have.property('min', 3);
+      expect(data[1]).to.have.property('max', 5);
+      expect(data[1]).to.have.property('median', 4);
+      expect(data[1]).to.have.property('sum', 12);
+      expect(data[1]).to.have.property('count', 3);
+
+      done();
+    }, viewFactory);
+  });
 
   it('should handle filtered tuples');
 

@@ -20,6 +20,16 @@ define(function(require, exports, module) {
 
   var proto = (Transform.prototype = new Node());
 
+  proto.clone = function() {
+    var n = Node.prototype.clone.call(this);
+    n.transform = this.transform;
+    for(var k in this) {
+      if(!this.hasOwnProperty(k)) continue;
+      n[k] = this[k];
+    }
+    return n;
+  };
+
   proto.transform = function(input, reset) { return input; };
   proto.evaluate = function(input) {
     // Many transforms store caches that must be invalidated if
