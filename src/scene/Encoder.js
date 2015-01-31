@@ -68,7 +68,7 @@ define(function(require, exports, module) {
           return db[ds] = model.data(ds).values(), db;
         }, {});
 
-    enc.call(enc, stamp, item, item.mark.group||item, trans, db, sg, model.predicates());
+    enc.call(enc, item, item.mark.group||item, trans, db, sg, model.predicates());
   }
 
   return Encoder;

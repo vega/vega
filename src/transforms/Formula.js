@@ -21,7 +21,7 @@ define(function(require, exports, module) {
     var val = expr.eval(this._graph, this.expr.get(this._graph), 
       x, null, null, null, this.dependency(C.SIGNALS));
 
-    tuple.set(x, field, val, stamp); 
+    tuple.set(x, field, val); 
   };
 
   proto.transform = function(input) {

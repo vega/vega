@@ -426,7 +426,7 @@ define(function(require, module, exports) {
     domain.properties.update.path = {value: path};
   }
 
-  function vg_axisUpdate(stamp, item, group, trans, db, signals, predicates) {
+  function vg_axisUpdate(item, group, trans, db, signals, predicates) {
     var o = trans ? {} : item,
         offset = item.mark.def.offset,
         orient = item.mark.def.orient,

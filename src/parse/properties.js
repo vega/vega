@@ -23,7 +23,7 @@ define(function(require, exports, module) {
         code += "\n  " + ref.code
       } else {
         ref = valueRef(name, ref);
-        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);";
+        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
       }
 
       vars[name] = true;
@@ -36,14 +36,14 @@ define(function(require, exports, module) {
       if (vars.x) {
         code += "\n  if (o.x > o.x2) { "
               + "var t = o.x;"
-              + "this.tpl.set(o, 'x', o.x2, stamp);"
-              + "this.tpl.set(o, 'x2', t, stamp); "
+              + "this.tpl.set(o, 'x', o.x2);"
+              + "this.tpl.set(o, 'x2', t); "
               + "};";
-        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x), stamp);";
+        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x));";
       } else if (vars.width) {
-        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width), stamp);";
+        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width));";
       } else {
-        code += "\n  this.tpl.set(o, 'x', o.x2, stamp);"
+        code += "\n  this.tpl.set(o, 'x', o.x2);"
       }
     }
 
@@ -51,14 +51,14 @@ define(function(require, exports, module) {
       if (vars.y) {
         code += "\n  if (o.y > o.y2) { "
               + "var t = o.y;"
-              + "this.tpl.set(o, 'y', o.y2, stamp);"
-              + "this.tpl.set(o, 'y2', t, stamp);"
+              + "this.tpl.set(o, 'y', o.y2);"
+              + "this.tpl.set(o, 'y2', t);"
               + "};";
-        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y), stamp);";
+        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y));";
       } else if (vars.height) {
-        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height), stamp);";
+        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height));";
       } else {
-        code += "\n  this.tpl.set(o, 'y', o.y2, stamp);"
+        code += "\n  this.tpl.set(o, 'y', o.y2);"
       }
     }
     
@@ -66,8 +66,8 @@ define(function(require, exports, module) {
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
-      var encoder = Function("stamp", "item", "group", "trans", 
-        "db", "signals", "predicates", code);
+      var encoder = Function("item", "group", "trans", "db", 
+        "signals", "predicates", code);
       encoder.tpl = tuple;
       return {
         encode: encoder,
@@ -122,11 +122,11 @@ define(function(require, exports, module) {
         db.push.apply(db, pred.data);
         inputs.push(args+" = {"+input.join(', ')+"}");
         code += "if(predicates["+util.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
-          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n";
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+");\n";
         code += rules[i+1] ? "  } else " : "  }";
       } else {
         code += "{\n" + 
-          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n"+
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+");\n"+
           "  }";
       }
     });

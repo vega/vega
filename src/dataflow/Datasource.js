@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 
     this._pipeline  = null; // Pipeline of transformations.
     this._collector = null; // Collector to materialize output of pipeline
+    this._needsPrev = false; // Does any pipeline operator need to track prev?
   };
 
   var proto = Datasource.prototype;
@@ -28,8 +29,10 @@ define(function(require, exports, module) {
   };
 
   proto.add = function(d) {
-    var add = this._input.add;
-    add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d); }));
+    var add = this._input.add,
+        prev = this._needsPrev ? null : undefined;
+
+    add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d, prev); }));
     return this;
   };
 
@@ -40,12 +43,15 @@ define(function(require, exports, module) {
   };
 
   proto.update = function(where, field, func) {
-    var mod = this._input.mod;
+    var mod = this._input.mod,
+        prev = this._needsPrev ? null : undefined; 
+
     this._input.fields[field] = 1;
     this._data.filter(where).forEach(function(x) {
       var prev = x[field],
           next = func(x);
       if (prev !== next) {
+        if(x._prev === undefined && prev !== undefined) x._prev = C.SENTINEL;
         tuple.prev(x, field);
         x.__proto__[field] = next;
         if(mod.indexOf(x) < 0) mod.push(x);
@@ -109,17 +115,8 @@ define(function(require, exports, module) {
         ds._input = changeset.create();
 
         out.add = delta.add; 
+        out.mod = delta.mod;
         out.rem = delta.rem;
-
-        // Assign a timestamp to any updated tuples
-        out.mod = delta.mod.map(function(x) { 
-          var k;
-          if(x._prev === C.SENTINEL) return x;
-          for(k in x._prev) {
-            if(x._prev[k].stamp === undefined) x._prev[k].stamp = input.stamp;
-          }
-          return x;
-        }); 
       }
 
       return out;

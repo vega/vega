@@ -132,8 +132,8 @@ define(function(require, exports, module) {
     item.datum = d;
 
     // For the root node's item
-    if(this._def.width)  tuple.set(item, "width",  this._def.width, stamp);
-    if(this._def.height) tuple.set(item, "height", this._def.height, stamp);
+    if(this._def.width)  tuple.set(item, "width",  this._def.width);
+    if(this._def.height) tuple.set(item, "height", this._def.height);
 
     return item;
   };
@@ -150,7 +150,7 @@ define(function(require, exports, module) {
     for(i=0, len=add.length; i<len; ++i) {
       key = keyf(datum = add[i]);
       item = newItem.call(this, datum, stamp);
-      tuple.set(item, "key", key, stamp);
+      tuple.set(item, "key", key);
       item.status = C.ENTER;
       this._map[key] = item;
       this._items.push(item);
@@ -159,7 +159,7 @@ define(function(require, exports, module) {
 
     for(i=0, len=mod.length; i<len; ++i) {
       item = this._map[key = keyf(datum = mod[i])];
-      tuple.set(item, "key", key, stamp);
+      tuple.set(item, "key", key);
       item.datum  = datum;
       item.status = C.UPDATE;
       output.mod.push(item);

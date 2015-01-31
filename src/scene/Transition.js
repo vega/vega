@@ -25,10 +25,10 @@ define(function(require, exports, module) {
       if (curr !== next) {
         if (skip[key] || curr === undefined) {
           // skip interpolation for specific keys or undefined start values
-          tuple.set(item, key, next, stamp);
+          tuple.set(item, key, next);
         } else if (typeof curr === "number" && !isFinite(curr)) {
           // for NaN or infinite numeric values, skip to final value
-          tuple.set(item, key, next, stamp);
+          tuple.set(item, key, next);
         } else {
           // otherwise lookup interpolator
           interp = d3.interpolate(curr, next);

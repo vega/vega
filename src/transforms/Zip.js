@@ -17,7 +17,7 @@ define(function(require, exports, module) {
     this._collector = new Collector(graph);
     this._lastJoin = 0;
 
-    return this;
+    return this.prev(true);
   }
 
   var proto = (Zip.prototype = new Transform());
@@ -56,11 +56,9 @@ define(function(require, exports, module) {
         // Other field updates will auto-propagate via prototype.
         if(woutput.fields[withKey.field]) {
           woutput.mod.forEach(function(x) {
-            var prev = withKey.accessor(x._prev);
-            if(!prev) return;
-            if(prev.stamp < this._lastJoin) return; // Only process new key updates
-
-            var prevm = map(prev.value);
+            var prev;
+            if(!x._prev || (prev = withKey.accessor(x._prev)) === undefined) return;
+            var prevm = map(prev);
             if(prevm[0]) prevm[0][as] = dflt;
             prevm[1] = null;
 
@@ -82,11 +80,10 @@ define(function(require, exports, module) {
 
       if(input.fields[key.field]) {
         input.mod.forEach(function(x) {
-          var prev = key.accessor(x._prev);
-          if(!prev) return;
-          if(prev.stamp < input.stamp) return; // Only process new key updates
+          var prev;
+          if(!x._prev || (prev = key.accessor(x._prev)) === undefined) return;
 
-          map(prev.value)[0] = null;
+          map(prev)[0] = null;
           var m = map(key.accessor(x));
           x[as] = m[1] || dflt;
           m[0]  = x;

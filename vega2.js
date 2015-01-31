@@ -494,8 +494,13 @@ define('dataflow/changeset',['require','exports','module','../util/constants'],f
     return out;
   }
 
-  function done(cs) {
-    // nothing for now
+  function finalize(cs) {
+    function rp(x) {
+      x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+    }
+
+    cs.add.forEach(rp);
+    cs.mod.forEach(rp);
   }
 
   function copy(a, b) {
@@ -507,9 +512,9 @@ define('dataflow/changeset',['require','exports','module','../util/constants'],f
   }
 
   return {
-    create:  create,
-    done:    done,
-    copy:    copy
+    create: create,
+    copy: copy,
+    finalize: finalize,
   };
 });
 define('util/config',['require','exports','module','d3'],function(require, module, exports) {
@@ -912,26 +917,24 @@ define('dataflow/tuple',['require','exports','module','../util/index','../util/c
   function create(d, p) {
     var o = Object.create(util.isObject(d) ? d : {data: d});
     o._id = ++tuple_id;
-    // o._prev = p ? Object.create(p) : C.SENTINEL;
-    o._prev = p || C.SENTINEL;
+    // We might not want to track prev state (p == undefined),
+    // or delay prev object creation (p == null).
+    o._prev = p !== undefined ? p || C.SENTINEL : undefined;
     return o;
   }
 
   // WARNING: operators should only call this once per timestamp!
-  function set(t, k, v, stamp) {
+  function set(t, k, v) {
     var prev = t[k];
     if(prev === v) return;
-
-    if(prev && t._prev) set_prev(t, k);
+    set_prev(t, k);
     t[k] = v;
   }
 
-  function set_prev(t, k, stamp) {
+  function set_prev(t, k) {
+    if(t._prev === undefined) return;
     t._prev = (t._prev === C.SENTINEL) ? {} : t._prev;
-    t._prev[k] = {
-      value: t[k],
-      stamp: stamp
-    };
+    t._prev[k] = t[k];
   }
 
   function reset() { tuple_id = 1; }
@@ -970,6 +973,7 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
 
     this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
     this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
+    this._needsPrev = false; // Does the operator require tuples' previous values? 
     return this;
   };
 
@@ -1010,6 +1014,12 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
   proto.collector = function(bool) {
     if(!arguments.length) return this._isCollector;
     this._isCollector = !!bool;
+    return this;
+  };
+
+  proto.prev = function(bool) {
+    if(!arguments.length) return this._needsPrev;
+    this._needsPrev = !!bool;
     return this;
   };
 
@@ -1128,6 +1138,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
 
     this._pipeline  = null; // Pipeline of transformations.
     this._collector = null; // Collector to materialize output of pipeline
+    this._needsPrev = false; // Does any pipeline operator need to track prev?
   };
 
   var proto = Datasource.prototype;
@@ -1139,8 +1150,10 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   };
 
   proto.add = function(d) {
-    var add = this._input.add;
-    add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d); }));
+    var add = this._input.add,
+        prev = this._needsPrev ? null : undefined;
+
+    add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d, prev); }));
     return this;
   };
 
@@ -1151,12 +1164,15 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   };
 
   proto.update = function(where, field, func) {
-    var mod = this._input.mod;
+    var mod = this._input.mod,
+        prev = this._needsPrev ? null : undefined; 
+
     this._input.fields[field] = 1;
     this._data.filter(where).forEach(function(x) {
       var prev = x[field],
           next = func(x);
       if (prev !== next) {
+        if(x._prev === undefined && prev !== undefined) x._prev = C.SENTINEL;
         tuple.prev(x, field);
         x.__proto__[field] = next;
         if(mod.indexOf(x) < 0) mod.push(x);
@@ -1220,17 +1236,8 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
         ds._input = changeset.create();
 
         out.add = delta.add; 
+        out.mod = delta.mod;
         out.rem = delta.rem;
-
-        // Assign a timestamp to any updated tuples
-        out.mod = delta.mod.map(function(x) { 
-          var k;
-          if(x._prev === C.SENTINEL) return x;
-          for(k in x._prev) {
-            if(x._prev[k].stamp === undefined) x._prev[k].stamp = input.stamp;
-          }
-          return x;
-        }); 
       }
 
       return out;
@@ -1443,13 +1450,16 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
   proto.connect = function(branch) {
     util.debug({}, ['connecting']);
     var graph = this;
-
     forEachNode(branch, function(n, c, i) {
       var data = n.dependency(C.DATA),
           signals = n.dependency(C.SIGNALS);
 
       if(data.length > 0) {
-        data.forEach(function(d) { graph.data(d).addListener(c); });
+        data.forEach(function(d) { 
+          var ds = graph.data(d);
+          ds.addListener(c); 
+          ds._needsPrev = ds._needsPrev || n.prev();
+        });
       }
 
       if(signals.length > 0) {
@@ -1558,7 +1568,7 @@ define('scene/Encoder',['require','exports','module','../dataflow/Node','../util
           return db[ds] = model.data(ds).values(), db;
         }, {});
 
-    enc.call(enc, stamp, item, item.mark.group||item, trans, db, sg, model.predicates());
+    enc.call(enc, item, item.mark.group||item, trans, db, sg, model.predicates());
   }
 
   return Encoder;
@@ -3013,6 +3023,16 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
 
   var proto = (Transform.prototype = new Node());
 
+  proto.clone = function() {
+    var n = Node.prototype.clone.call(this);
+    n.transform = this.transform;
+    for(var k in this) {
+      if(!this.hasOwnProperty(k)) continue;
+      n[k] = this[k];
+    }
+    return n;
+  };
+
   proto.transform = function(input, reset) { return input; };
   proto.evaluate = function(input) {
     // Many transforms store caches that must be invalidated if
@@ -3024,16 +3044,13 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
     return this.transform(input, reset);
   };
 
-  // Mocking an output parameter.
-  proto.output = {
-    set: function(transform, map) {
-      for (var key in transform._output) {
-        if (map[key] !== undefined) {
-          transform._output[key] = map[key];
-        }
+  proto.output = function(map) {
+    for (var key in this._output) {
+      if (map[key] !== undefined) {
+        this._output[key] = map[key];
       }
-      return transform;
     }
+    return this;
   };
 
   return Transform;
@@ -3131,6 +3148,22 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
             "this.val.length = this.val.length - 1;",
       set:  "this.sel(~~(this.cnt/2), this.val)",
       req: ["count"], idx: 6
+    }),
+    "min": measure({
+      name: "min",
+      init: "",
+      add: "",
+      rem: "",
+      set: "this.sel(0, this.val)",
+      req: ["median"]
+    }),
+    "max": measure({
+      name: "max",
+      init: "",
+      add: "",
+      rem: "",
+      set: "this.sel(this.val.length-1, this.val)",
+      req: ["median"]
     })
   };
 
@@ -3166,7 +3199,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
         set = "var t = this.tuple;";
     
     all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
-    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+", stamp);"; });
+    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+");"; });
     add += "this.flag |= this.MOD;"
     rem += "this.flag |= this.MOD;"
     set += "return t;"
@@ -3202,18 +3235,34 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
   function Aggregate(graph) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {on: {type: "field"} });
+    this._output = {
+      "count":    "count",
+      "avg":      "avg",
+      "min":      "min",
+      "max":      "max",
+      "sum":      "sum",
+      "mean":     "mean",
+      "var":      "var",
+      "stdev":    "stdev",
+      "varp":     "varp",
+      "stdevp":   "stdevp",
+      "median":   "median"
+    };
+
     // Stats parameter handled manually.
 
     this._Measures = null;
     this._cache = {};
-    return this;
+    return this.prev(true);
   }
 
   var proto = (Aggregate.prototype = new Transform());
 
   proto.stats = { 
     set: function(transform, aggs) {
-      transform._Measures = meas.create(aggs.map(function(a) { return meas[a](); }));
+      transform._Measures = meas.create(aggs.map(function(a) { 
+        return meas[a](transform._output[a]); 
+      }));
       return transform;
     }
   };
@@ -3231,7 +3280,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
         t;
 
     if(!a) {
-      t = input.facet || tuple.create(null);
+      t = input.facet || tuple.create(null, null);
       this._cache[k] = a = new this._Measures(t);
     }
 
@@ -3251,9 +3300,9 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
 
     input.add.forEach(function(x) { a.add(field(x)); });
     input.mod.forEach(function(x) { 
-      var prev = field(x._prev);
-      if(prev && prev.stamp == input.stamp) {
-        a.mod(field(x), prev.value); 
+      var prev;
+      if(x._prev && (prev = field(x._prev)) !== undefined) {
+        a.mod(field(x), prev); 
       }
     });
     input.rem.forEach(function(x) { 
@@ -3261,9 +3310,9 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
       // #1: Add(t) -> Rem(t)
       // #2: Add(t) -> Mod(t) -> Rem(t)
       // #3: Add(t) -> Mod(t) -> FilterOut(t)
-      var prev = field(x._prev);
-      if(prev && prev.stamp == input.stamp) { 
-        a.rem(prev.value);
+      var prev;
+      if(x._prev && (prev = field(x._prev)) !== undefined) {
+        a.rem(prev);
       } else {
         a.rem(field(x));
       }
@@ -3419,7 +3468,7 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
 
     this._cells = {};
     this._pipeline = [];
-    return this.router(true);
+    return this.router(true).prev(true);
   }
 
   var proto = (Facet.prototype = new Transform());
@@ -3438,14 +3487,14 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
     }
   };
 
-  function cell(x, prev, stamp) {
+  function cell(x, prev) {
     var facet = this,
         accessors = this.keys.get(this._graph).accessors;
 
     var keys = accessors.reduce(function(v, f) {
       var p = null;
-      if(prev && (p = f(x._prev)) !== undefined && p.stamp >= stamp) {
-        return (v.push(p.value), v);
+      if(prev && x._prev && (p = f(x._prev)) !== undefined) {
+        return (v.push(p), v);
       } else {
         return (v.push(f(x)), v);
       }
@@ -3458,7 +3507,8 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
     // dynamically added collectors to do the right thing
     // when wiring up the pipelines.
     var cp = this._pipeline.map(function(n) { return n.clone(); }),
-        t  = tuple.create({keys: keys, key: k}),
+        prev = (x._prev !== undefined) ? null : undefined,
+        t  = tuple.create({keys: keys, key: k}, prev),
         ds = this._graph.data("vg_"+t._id, cp, t);
 
     this.addListener(cp[0]);
@@ -3493,7 +3543,7 @@ define('transforms/Facet',['require','exports','module','./Transform','../datafl
 
     input.mod.forEach(function(x) {
       var c = cell.call(facet, x), 
-          prev = cell.call(facet, x, true, input.stamp);
+          prev = cell.call(facet, x, true);
 
       if(c !== prev) {
         prev.count -= 1;
@@ -3612,7 +3662,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
     this._output = {key: "key", value: "value"};
     this._cache = {};
 
-    return this.router(true);
+    return this.router(true).prev(true);
   }
 
   var proto = (Fold.prototype = new Transform());
@@ -3636,8 +3686,8 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
       d = data[i];
       for(j=0; j<flen; ++j) {
         t = get_tuple.call(this, d, j, flen);  
-        tuple.set(t, this._output.key, fields[j], stamp);
-        tuple.set(t, this._output.value, accessors[j](d), stamp);
+        tuple.set(t, this._output.key, fields[j]);
+        tuple.set(t, this._output.value, accessors[j](d));
         out.push(t);
       }      
     }
@@ -3692,7 +3742,7 @@ define('transforms/Formula',['require','exports','module','./Transform','../data
     var val = expr.eval(this._graph, this.expr.get(this._graph), 
       x, null, null, null, this.dependency(C.SIGNALS));
 
-    tuple.set(x, field, val, stamp); 
+    tuple.set(x, field, val); 
   };
 
   proto.transform = function(input) {
@@ -3752,7 +3802,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
     this._collector = new Collector(graph);
     this._lastJoin = 0;
 
-    return this;
+    return this.prev(true);
   }
 
   var proto = (Zip.prototype = new Transform());
@@ -3791,11 +3841,9 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
         // Other field updates will auto-propagate via prototype.
         if(woutput.fields[withKey.field]) {
           woutput.mod.forEach(function(x) {
-            var prev = withKey.accessor(x._prev);
-            if(!prev) return;
-            if(prev.stamp < this._lastJoin) return; // Only process new key updates
-
-            var prevm = map(prev.value);
+            var prev;
+            if(!x._prev || (prev = withKey.accessor(x._prev)) === undefined) return;
+            var prevm = map(prev);
             if(prevm[0]) prevm[0][as] = dflt;
             prevm[1] = null;
 
@@ -3817,11 +3865,10 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
 
       if(input.fields[key.field]) {
         input.mod.forEach(function(x) {
-          var prev = key.accessor(x._prev);
-          if(!prev) return;
-          if(prev.stamp < input.stamp) return; // Only process new key updates
+          var prev;
+          if(!x._prev || (prev = key.accessor(x._prev)) === undefined) return;
 
-          map(prev.value)[0] = null;
+          map(prev)[0] = null;
           var m = map(key.accessor(x));
           x[as] = m[1] || dflt;
           m[0]  = x;
@@ -3872,8 +3919,12 @@ define('parse/transforms',['require','exports','module','../util/index','../tran
       tx.pipeline(pipeline);
     }
 
+    // We want to rename output fields before setting any other properties,
+    // as subsequent properties may require output to be set (e.g. aggregate).
+    if(def.output) tx.output(def.output);
+
     util.keys(def).forEach(function(k) {
-      if(k === 'type') return;
+      if(k === 'type' || k === 'output') return;
       if(k === 'transform' && def.type === 'facet') return;
       (tx[k]).set(tx, def[k]);
     });
@@ -3917,6 +3968,7 @@ define('parse/modify',['require','exports','module','../dataflow/Node','../dataf
       var datum = {}, 
           value = signal ? graph.signalRef(def.signal) : null,
           d = model.data(ds.name),
+          prev = d._needsPrev ? null : undefined,
           t = null;
 
       datum[def.field] = value;
@@ -3925,7 +3977,7 @@ define('parse/modify',['require','exports','module','../dataflow/Node','../dataf
       // our dynamic data. W/o modifying ds._data, only the output
       // collector will contain dynamic tuples. 
       if(def.type == C.ADD) {
-        t = tuple.create(datum);
+        t = tuple.create(datum, prev);
         input.add.push(t);
         d._data.push(t);
       } else if(def.type == C.REMOVE) {
@@ -4298,8 +4350,8 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     item.datum = d;
 
     // For the root node's item
-    if(this._def.width)  tuple.set(item, "width",  this._def.width, stamp);
-    if(this._def.height) tuple.set(item, "height", this._def.height, stamp);
+    if(this._def.width)  tuple.set(item, "width",  this._def.width);
+    if(this._def.height) tuple.set(item, "height", this._def.height);
 
     return item;
   };
@@ -4316,7 +4368,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     for(i=0, len=add.length; i<len; ++i) {
       key = keyf(datum = add[i]);
       item = newItem.call(this, datum, stamp);
-      tuple.set(item, "key", key, stamp);
+      tuple.set(item, "key", key);
       item.status = C.ENTER;
       this._map[key] = item;
       this._items.push(item);
@@ -4325,7 +4377,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
     for(i=0, len=mod.length; i<len; ++i) {
       item = this._map[key = keyf(datum = mod[i])];
-      tuple.set(item, "key", key, stamp);
+      tuple.set(item, "key", key);
       item.datum  = datum;
       item.status = C.UPDATE;
       output.mod.push(item);
@@ -4651,15 +4703,15 @@ define('scene/scale',['require','exports','module','../dataflow/Node','../parse/
     function reeval(group, input) {
       var from = model.data(domain.data || "vg_"+group.datum._id),
           fcs = from ? from.last() : null,
-          prev = group._prev || {},
-          width = prev.width || {}, height = prev.height || {}, 
+          // prev = group._prev || {},
+          // width = prev.width || {}, height = prev.height || {}, 
           reeval = fcs ? !!fcs.add.length || !!fcs.rem.length : false;
 
       if(domain.field) reeval = reeval || fcs.fields[domain.field];
       reeval = reeval || fcs ? !!fcs.sort && def.type === ORDINAL : false;
       reeval = reeval || node.reevaluate(input);
-      reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
-      reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
+      // reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
+      // reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
 
       input.scales[def.name] = 1;
       return reeval;
@@ -4727,7 +4779,7 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
         code += "\n  " + ref.code
       } else {
         ref = valueRef(name, ref);
-        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);";
+        code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
       }
 
       vars[name] = true;
@@ -4740,14 +4792,14 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
       if (vars.x) {
         code += "\n  if (o.x > o.x2) { "
               + "var t = o.x;"
-              + "this.tpl.set(o, 'x', o.x2, stamp);"
-              + "this.tpl.set(o, 'x2', t, stamp); "
+              + "this.tpl.set(o, 'x', o.x2);"
+              + "this.tpl.set(o, 'x2', t); "
               + "};";
-        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x), stamp);";
+        code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x));";
       } else if (vars.width) {
-        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width), stamp);";
+        code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width));";
       } else {
-        code += "\n  this.tpl.set(o, 'x', o.x2, stamp);"
+        code += "\n  this.tpl.set(o, 'x', o.x2);"
       }
     }
 
@@ -4755,14 +4807,14 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
       if (vars.y) {
         code += "\n  if (o.y > o.y2) { "
               + "var t = o.y;"
-              + "this.tpl.set(o, 'y', o.y2, stamp);"
-              + "this.tpl.set(o, 'y2', t, stamp);"
+              + "this.tpl.set(o, 'y', o.y2);"
+              + "this.tpl.set(o, 'y2', t);"
               + "};";
-        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y), stamp);";
+        code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y));";
       } else if (vars.height) {
-        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height), stamp);";
+        code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height));";
       } else {
-        code += "\n  this.tpl.set(o, 'y', o.y2, stamp);"
+        code += "\n  this.tpl.set(o, 'y', o.y2);"
       }
     }
     
@@ -4770,8 +4822,8 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
     code += "\n  if (trans) trans.interpolate(item, o);";
 
     try {
-      var encoder = Function("stamp", "item", "group", "trans", 
-        "db", "signals", "predicates", code);
+      var encoder = Function("item", "group", "trans", "db", 
+        "signals", "predicates", code);
       encoder.tpl = tuple;
       return {
         encode: encoder,
@@ -4826,11 +4878,11 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
         db.push.apply(db, pred.data);
         inputs.push(args+" = {"+input.join(', ')+"}");
         code += "if(predicates["+util.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
-          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n";
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+");\n";
         code += rules[i+1] ? "  } else " : "  }";
       } else {
         code += "{\n" + 
-          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+", stamp);\n"+
+          "    this.tpl.set(o, "+util.str(name)+", "+ref.val+");\n"+
           "  }";
       }
     });
@@ -5380,7 +5432,7 @@ define('scene/axis',['require','exports','module','../util/config','../dataflow/
     domain.properties.update.path = {value: path};
   }
 
-  function vg_axisUpdate(stamp, item, group, trans, db, signals, predicates) {
+  function vg_axisUpdate(item, group, trans, db, signals, predicates) {
     var o = trans ? {} : item,
         offset = item.mark.def.offset,
         orient = item.mark.def.orient,
@@ -8555,10 +8607,10 @@ define('scene/Transition',['require','exports','module','../dataflow/tuple','../
       if (curr !== next) {
         if (skip[key] || curr === undefined) {
           // skip interpolation for specific keys or undefined start values
-          tuple.set(item, key, next, stamp);
+          tuple.set(item, key, next);
         } else if (typeof curr === "number" && !isFinite(curr)) {
           // for NaN or infinite numeric values, skip to final value
-          tuple.set(item, key, next, stamp);
+          tuple.set(item, key, next);
         } else {
           // otherwise lookup interpolator
           interp = d3.interpolate(curr, next);
@@ -8823,6 +8875,12 @@ define('core/View',['require','exports','module','d3','../dataflow/Node','../par
         } else {
           v._renderer.render(s);
         }
+
+        // For all updated datasources, finalize their changesets.
+        for(var ds in input.data) {
+          changeset.finalize(v._model.data(ds).last());
+        }
+
         return input;
       };
 

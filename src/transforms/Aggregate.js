@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 
     this._Measures = null;
     this._cache = {};
-    return this;
+    return this.prev(true);
   }
 
   var proto = (Aggregate.prototype = new Transform());
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
         t;
 
     if(!a) {
-      t = input.facet || tuple.create(null);
+      t = input.facet || tuple.create(null, null);
       this._cache[k] = a = new this._Measures(t);
     }
 
@@ -73,9 +73,9 @@ define(function(require, exports, module) {
 
     input.add.forEach(function(x) { a.add(field(x)); });
     input.mod.forEach(function(x) { 
-      var prev = field(x._prev);
-      if(prev && prev.stamp == input.stamp) {
-        a.mod(field(x), prev.value); 
+      var prev;
+      if(x._prev && (prev = field(x._prev)) !== undefined) {
+        a.mod(field(x), prev); 
       }
     });
     input.rem.forEach(function(x) { 
@@ -83,9 +83,9 @@ define(function(require, exports, module) {
       // #1: Add(t) -> Rem(t)
       // #2: Add(t) -> Mod(t) -> Rem(t)
       // #3: Add(t) -> Mod(t) -> FilterOut(t)
-      var prev = field(x._prev);
-      if(prev && prev.stamp == input.stamp) { 
-        a.rem(prev.value);
+      var prev;
+      if(x._prev && (prev = field(x._prev)) !== undefined) {
+        a.rem(prev);
       } else {
         a.rem(field(x));
       }

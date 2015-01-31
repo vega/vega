@@ -116,7 +116,7 @@ define(function(require, exports, module) {
         set = "var t = this.tuple;";
     
     all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
-    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+", stamp);"; });
+    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+");"; });
     add += "this.flag |= this.MOD;"
     rem += "this.flag |= this.MOD;"
     set += "return t;"

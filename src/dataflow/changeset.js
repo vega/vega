@@ -15,8 +15,13 @@ define(function(require, exports, module) {
     return out;
   }
 
-  function done(cs) {
-    // nothing for now
+  function finalize(cs) {
+    function rp(x) {
+      x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+    }
+
+    cs.add.forEach(rp);
+    cs.mod.forEach(rp);
   }
 
   function copy(a, b) {
@@ -28,8 +33,8 @@ define(function(require, exports, module) {
   }
 
   return {
-    create:  create,
-    done:    done,
-    copy:    copy
+    create: create,
+    copy: copy,
+    finalize: finalize,
   };
 });

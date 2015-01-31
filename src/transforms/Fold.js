@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     this._output = {key: "key", value: "value"};
     this._cache = {};
 
-    return this.router(true);
+    return this.router(true).prev(true);
   }
 
   var proto = (Fold.prototype = new Transform());
@@ -37,8 +37,8 @@ define(function(require, exports, module) {
       d = data[i];
       for(j=0; j<flen; ++j) {
         t = get_tuple.call(this, d, j, flen);  
-        tuple.set(t, this._output.key, fields[j], stamp);
-        tuple.set(t, this._output.value, accessors[j](d), stamp);
+        tuple.set(t, this._output.key, fields[j]);
+        tuple.set(t, this._output.value, accessors[j](d));
         out.push(t);
       }      
     }

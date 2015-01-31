@@ -26,15 +26,15 @@ define(function(require, exports, module) {
     function reeval(group, input) {
       var from = model.data(domain.data || "vg_"+group.datum._id),
           fcs = from ? from.last() : null,
-          prev = group._prev || {},
-          width = prev.width || {}, height = prev.height || {}, 
+          // prev = group._prev || {},
+          // width = prev.width || {}, height = prev.height || {}, 
           reeval = fcs ? !!fcs.add.length || !!fcs.rem.length : false;
 
       if(domain.field) reeval = reeval || fcs.fields[domain.field];
       reeval = reeval || fcs ? !!fcs.sort && def.type === ORDINAL : false;
       reeval = reeval || node.reevaluate(input);
-      reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
-      reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
+      // reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
+      // reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
 
       input.scales[def.name] = 1;
       return reeval;

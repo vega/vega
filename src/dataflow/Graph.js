@@ -125,13 +125,16 @@ define(function(require, exports, module) {
   proto.connect = function(branch) {
     util.debug({}, ['connecting']);
     var graph = this;
-
     forEachNode(branch, function(n, c, i) {
       var data = n.dependency(C.DATA),
           signals = n.dependency(C.SIGNALS);
 
       if(data.length > 0) {
-        data.forEach(function(d) { graph.data(d).addListener(c); });
+        data.forEach(function(d) { 
+          var ds = graph.data(d);
+          ds.addListener(c); 
+          ds._needsPrev = ds._needsPrev || n.prev();
+        });
       }
 
       if(signals.length > 0) {

@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 
     this._cells = {};
     this._pipeline = [];
-    return this.router(true);
+    return this.router(true).prev(true);
   }
 
   var proto = (Facet.prototype = new Transform());
@@ -31,14 +31,14 @@ define(function(require, exports, module) {
     }
   };
 
-  function cell(x, prev, stamp) {
+  function cell(x, prev) {
     var facet = this,
         accessors = this.keys.get(this._graph).accessors;
 
     var keys = accessors.reduce(function(v, f) {
       var p = null;
-      if(prev && (p = f(x._prev)) !== undefined && p.stamp >= stamp) {
-        return (v.push(p.value), v);
+      if(prev && x._prev && (p = f(x._prev)) !== undefined) {
+        return (v.push(p), v);
       } else {
         return (v.push(f(x)), v);
       }
@@ -51,7 +51,8 @@ define(function(require, exports, module) {
     // dynamically added collectors to do the right thing
     // when wiring up the pipelines.
     var cp = this._pipeline.map(function(n) { return n.clone(); }),
-        t  = tuple.create({keys: keys, key: k}),
+        prev = (x._prev !== undefined) ? null : undefined,
+        t  = tuple.create({keys: keys, key: k}, prev),
         ds = this._graph.data("vg_"+t._id, cp, t);
 
     this.addListener(cp[0]);
@@ -86,7 +87,7 @@ define(function(require, exports, module) {
 
     input.mod.forEach(function(x) {
       var c = cell.call(facet, x), 
-          prev = cell.call(facet, x, true, input.stamp);
+          prev = cell.call(facet, x, true);
 
       if(c !== prev) {
         prev.count -= 1;

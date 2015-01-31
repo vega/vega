@@ -196,6 +196,12 @@ define(function(require, exports, module) {
         } else {
           v._renderer.render(s);
         }
+
+        // For all updated datasources, finalize their changesets.
+        for(var ds in input.data) {
+          changeset.finalize(v._model.data(ds).last());
+        }
+
         return input;
       };
 
