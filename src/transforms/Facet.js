@@ -24,6 +24,7 @@ define(function(require, exports, module) {
   };
 
   function rst(input, output) {
+    var k, c;
     for(k in this._cells) {
       c = this._cells[k];
       output.rem.push(c.t);
