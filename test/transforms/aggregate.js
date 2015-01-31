@@ -26,8 +26,6 @@ describe('Aggregate', function() {
 
     it('should calculate count', function(done) {
       parseSpec(spec(['count']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values();
 
@@ -35,13 +33,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('count', values.length);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate sum', function(done) {
       parseSpec(spec(['sum']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0);
@@ -50,13 +46,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('sum', sum);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate avg', function(done) {
       parseSpec(spec(['avg']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length
@@ -67,13 +61,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('avg', avg);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate var', function(done) {
       parseSpec(spec(['var']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length
@@ -86,13 +78,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('var', vr);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate varp', function(done) {
       parseSpec(spec(['varp']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length
@@ -105,13 +95,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('varp', varp);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate stdev', function(done) {
       parseSpec(spec(['stdev']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length
@@ -124,13 +112,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('stdev', stdev);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate stdevp', function(done) {
       parseSpec(spec(['stdevp']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length
@@ -143,13 +129,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('stdevp', stdevp);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate median', function(done) {
       parseSpec(spec(['median']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             vals = values.map(function(d) { return d.y }).sort(),
@@ -160,13 +144,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('median', median);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate min', function(done) {
       parseSpec(spec(['min']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             vals = values.map(function(d) { return d.y }).sort(),
@@ -176,13 +158,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('min', min);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should calculate max', function(done) {
       parseSpec(spec(['max']), function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             vals = values.map(function(d) { return d.y }).sort(),
@@ -192,7 +172,7 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('max', max);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle renamed output', function(done) {
@@ -212,8 +192,6 @@ describe('Aggregate', function() {
         };
 
       parseSpec(s, function(model) {
-        model.fire();
-
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length
@@ -243,7 +221,7 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('a_max', max);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming adds', function(done) {
@@ -252,7 +230,6 @@ describe('Aggregate', function() {
             a2 = {x: 22, y: 95},
             a3 = {x: 23, y: 47};
 
-        model.fire();
         values.push(a1, a2, a3);
         model.data('table').add(a1).add(a2).add(a3).fire();
 
@@ -285,12 +262,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('max', max);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming rems', function(done) {
       parseSpec(spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
-        model.fire();
         values = values.filter(function(d) { return d.y < 50 });
         model.data('table').remove(function(d) { return d.y >= 50 }).fire();
 
@@ -323,7 +299,7 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('max', max);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
   });
 
@@ -354,8 +330,6 @@ describe('Aggregate', function() {
     };
 
     parseSpec(spec, function(model) {
-      model.fire();
-
       var ds = model.data('table'),
           data = ds.values();
 
@@ -376,7 +350,7 @@ describe('Aggregate', function() {
       expect(data[1]).to.have.property('count', 3);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle filtered tuples');

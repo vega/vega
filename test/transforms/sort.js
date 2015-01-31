@@ -28,17 +28,16 @@ describe('Sort', function() {
   it('should sort asc w/a single static fieldName', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
         expect(data[i].y).to.be.at.least(data[i-1].y)
       }
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should sort desc w/a single static fieldName', function(done) {
@@ -47,17 +46,16 @@ describe('Sort', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
         expect(data[i-1].y).to.be.at.least(data[i].y)
       }
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should sort w/a single signal', function(done) {
@@ -66,10 +64,9 @@ describe('Sort', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
         expect(data[i].y).to.be.at.least(data[i-1].y)
@@ -83,7 +80,7 @@ describe('Sort', function() {
       }
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   }); 
 
   it('should sort w/multiple static fieldNames', function(done) {
@@ -92,10 +89,9 @@ describe('Sort', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
         expect(data[i-1].x).to.be.at.least(data[i].x);
@@ -105,7 +101,7 @@ describe('Sort', function() {
       }
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   }); 
 
   it('should sort w/multiple signals', function(done) {
@@ -114,10 +110,9 @@ describe('Sort', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
         expect(data[i-1].x).to.be.at.least(data[i].x);
@@ -147,7 +142,7 @@ describe('Sort', function() {
       }
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });   
 
   it('should sort w/mixed fieldNames+signals', function(done) {
@@ -156,10 +151,9 @@ describe('Sort', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
         expect(data[i-1].x).to.be.at.least(data[i].x);
@@ -179,7 +173,7 @@ describe('Sort', function() {
       }
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });   
 
 });

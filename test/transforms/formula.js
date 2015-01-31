@@ -21,10 +21,9 @@ describe('Formula', function() {
       }] 
     }, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=0, len=data.length; i<len; ++i) {
         d = data[i];
@@ -33,7 +32,7 @@ describe('Formula', function() {
       expect(ds._output.fields).to.have.key('z');
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should work w/signals in expr', function(done) {
@@ -47,10 +46,9 @@ describe('Formula', function() {
       }] 
     }, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(20);
       for(i=0, len=data.length; i<len; ++i) {
         d = data[i];
@@ -77,6 +75,6 @@ describe('Formula', function() {
       expect(ds._output.fields).to.have.key('z');
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 });

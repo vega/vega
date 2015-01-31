@@ -27,7 +27,6 @@ describe('Bin', function() {
 
   it('should handle step definition', function(done) {
     parseSpec(spec({min:0, max:10, step:1}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values(),
           floored = values.map(function(x) { return ~~x; });
@@ -38,12 +37,11 @@ describe('Bin', function() {
       }
   
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle maxbins definition', function(done) {
     parseSpec(spec({min:0, max:10, maxbins: 5}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values(),
           floored = values.map(function(x) { return ~~x - (~~x % 2); });
@@ -54,7 +52,7 @@ describe('Bin', function() {
       }
   
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle nulls', function(done) {
@@ -72,12 +70,11 @@ describe('Bin', function() {
       }
   
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle streaming adds', function(done) {
     parseSpec(spec({min:0, max:10, step: 2}), function(model) {
-      model.fire();
       var ds = model.data('table').add({v:1.1}).add({v:-2.1}).add({v:11.2});
       ds.fire();
       
@@ -91,12 +88,11 @@ describe('Bin', function() {
       }
   
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
   
   it('should handle streaming mods', function(done) {
     parseSpec(spec({min:0, max:10, step: 1}), function(model) {
-      model.fire();
       var ds = model.data('table').update(
         function(d) { return d.v < 2; },
         "v",
@@ -113,7 +109,7 @@ describe('Bin', function() {
       }
   
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
 });

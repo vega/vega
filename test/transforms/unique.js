@@ -22,7 +22,6 @@ describe('Unique', function() {
 
   it('should handle initial datasource', function(done) {
     parseSpec(spec({"field": "country"}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values();
 
@@ -31,12 +30,11 @@ describe('Unique', function() {
       expect(data[1]).to.have.property('unq', 'Canada');
 
       done();
-    }, viewFactory)
+    }, modelFactory)
   });
 
   it('should handle streaming adds', function(done) {
     parseSpec(spec({"field": "country"}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values();
 
@@ -56,12 +54,11 @@ describe('Unique', function() {
       expect(data[2]).to.have.property('unq', 'Mexico');
 
       done();
-    }, viewFactory)
+    }, modelFactory)
   });
 
   it('should handle streaming mods', function(done) {
     parseSpec(spec({"field": "country"}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values();
 
@@ -77,12 +74,11 @@ describe('Unique', function() {
       expect(data[1]).to.have.property('unq', 'Mexico');
 
       done();
-    }, viewFactory)
+    }, modelFactory)
   });
 
   it('should handle streaming rems', function(done) {
     parseSpec(spec({"field": "country"}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values();
 
@@ -96,12 +92,11 @@ describe('Unique', function() {
       expect(data[0]).to.have.property('unq', 'US');
 
       done();
-    }, viewFactory)
+    }, modelFactory)
   });
 
   it('should handle uniques over signal', function(done) {
     parseSpec(spec({"signal": "uniqueOn"}), function(model) {
-      model.fire();
       var ds = model.data('table'),
           data = ds.values();
 
@@ -117,6 +112,6 @@ describe('Unique', function() {
       expect(data[2]).to.have.property('unq', 'bronze');
 
       done();
-    }, viewFactory)
+    }, modelFactory)
   });
 });

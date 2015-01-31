@@ -33,26 +33,23 @@ describe('Facet', function() {
   it('should handle initial datasource', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          facets, i, len;
+          facets = ds.values(), 
+          i, len;
 
-      model.fire();
-      facets = ds.values();
       expect(facets).to.have.length(2);
-
       expectFacet(facets, 0, 0, 2); // USA
       expectFacet(facets, 1, 3, 5); // Canada
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle streaming adds', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          facets, i, len;
+          facets = ds.values(), 
+          i, len;
 
-      model.fire();
-      facets = ds.values();
       expect(facets).to.have.length(2);
       expectFacet(facets, 0, 0, 2); // USA
       expectFacet(facets, 1, 3, 5); // Canada
@@ -71,15 +68,15 @@ describe('Facet', function() {
       expectFacet(facets, 2, 8, 8); // Mexico
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle streaming mods', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          facets, i, len;
+          facets = ds.values(),
+          i, len;
 
-      model.fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
       expectFacet(facets, 0, 0, 3); // USA
@@ -109,16 +106,15 @@ describe('Facet', function() {
       expectFacet(facets, 2, 8, 8); // India
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle streaming rems', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          facets, i, len;
+          facets = ds.values(), 
+          i, len;
 
-      model.fire();
-      facets = ds.values();
       expect(facets).to.have.length(3);
       expectFacet(facets, 0, 0, 3); // USA
       expectFacet(facets, 1, 4, 7); // Canada
@@ -134,7 +130,7 @@ describe('Facet', function() {
       expectFacet(facets, 1, 3, 5); // Canada
 
       done();
-    }, viewFactory);    
+    }, modelFactory);    
   })
 
   it('should handle signals as keys', function(done) {
@@ -143,10 +139,9 @@ describe('Facet', function() {
 
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          facets, i, len;
+          facets = ds.values(), 
+          i, len;
 
-      model.fire();
-      facets = ds.values();
       expect(facets).to.have.length(2);
       expectFacet(facets, 0, 0, 2); // USA
       expectFacet(facets, 1, 3, 5); // Canada
@@ -164,7 +159,7 @@ describe('Facet', function() {
       expect(facets[2].values).to.have.length(2);
 
       done();
-    }, viewFactory);      
+    }, modelFactory);      
   });
 
   it('should handle fields+signals as keys', function(done) {
@@ -174,12 +169,10 @@ describe('Facet', function() {
 
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          facets, i, len;
+          facets = ds.values(), 
+          i, len;
 
-      model.fire();
-      facets = ds.values();
       expect(facets).to.have.length(6);
-
       expect(facets[0]).to.have.property('key', 'US|gold');
       expect(facets[1]).to.have.property('key', 'US|silver');
       expect(facets[2]).to.have.property('key', 'US|bronze');
@@ -201,7 +194,7 @@ describe('Facet', function() {
       expect(facets[5].values).to.have.length(1);
 
       done();
-    }, viewFactory);      
+    }, modelFactory);      
   });
 
   it('should transform faceted values');

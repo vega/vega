@@ -44,29 +44,27 @@ describe('Zip', function() {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
-            medals, stats, i, len, d;
+            medals = medalsDS.values(), 
+            stats  = statsDS.values(), 
+            i, len, d;
 
-        model.fire();
-        stats  = statsDS.values(); 
-        medals = medalsDS.values();
         expect(stats).to.have.length(2);
         expect(medals).to.have.length(2);
         expectUSA(medals);
         expectCanada(medals);      
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming adds w/o default', function(done) {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
-            medals, stats, i, len, d;
+            medals = medalsDS.values(), 
+            stats  = statsDS.values(), 
+            i, len, d;
 
-        model.fire();
-        stats  = statsDS.values(); 
-        medals = medalsDS.values();
         expect(stats).to.have.length(2);
         expect(medals).to.have.length(2);
         expectUSA(medals);
@@ -96,7 +94,7 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[2].country_stats.athletes', 78);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming adds w/default', function(done) {
@@ -106,11 +104,10 @@ describe('Zip', function() {
       parseSpec(s, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
-            medals, stats, i, len, d;
+            medals = medalsDS.values(), 
+            stats  = statsDS.values(), 
+            i, len, d;
 
-        model.fire();
-        stats  = statsDS.values(); 
-        medals = medalsDS.values();
         expect(stats).to.have.length(2);
         expect(medals).to.have.length(2);
         expectUSA(medals);
@@ -141,18 +138,17 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[2].country_stats.athletes', 78);
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming rems w/o default', function(done) {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
-            medals, stats, i, len, d;
+            medals = medalsDS.values(), 
+            stats  = statsDS.values(), 
+            i, len, d;
 
-        model.fire();
-        stats  = statsDS.values(); 
-        medals = medalsDS.values();
         expect(stats).to.have.length(2);
         expect(medals).to.have.length(2);
         expectUSA(medals);
@@ -168,7 +164,7 @@ describe('Zip', function() {
         expect(medals[1].country_stats).to.be.undefined;
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming rems w/default', function(done) {
@@ -178,11 +174,10 @@ describe('Zip', function() {
       parseSpec(s, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
-            medals, stats, i, len, d;
+            medals = medalsDS.values(), 
+            stats  = statsDS.values(), 
+            i, len, d;
 
-        model.fire();
-        stats  = statsDS.values(); 
-        medals = medalsDS.values();
         expect(stats).to.have.length(2);
         expect(medals).to.have.length(2);
         expectUSA(medals);
@@ -199,18 +194,17 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[1].country_stats.foo', 'bar');
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should propagate streaming mods', function(done) {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             statsDS  = model.data('stats'),
-            medals, stats, i, len, d;
+            medals = medalsDS.values(), 
+            stats  = statsDS.values(), 
+            i, len, d;
 
-        model.fire();
-        stats  = statsDS.values(); 
-        medals = medalsDS.values();
         expect(stats).to.have.length(2);
         expect(medals).to.have.length(2);
         expectUSA(medals);
@@ -250,7 +244,7 @@ describe('Zip', function() {
         expect(medals[1].country_stats).to.not.be.undefined;
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
   });
@@ -282,7 +276,9 @@ describe('Zip', function() {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
-            medals, zip, i, len, d;
+            medals = medalsDS.values(),
+            zip = zipDS.values(), 
+            i, len, d;
 
         model.fire();
         zip  = zipDS.values(); 
@@ -293,18 +289,17 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[1].zip.zip2', 'B');
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming adds', function(done) {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
-            medals, zip, i, len, d;
+            medals = medalsDS.values(),
+            zip = zipDS.values(), 
+            i, len, d;
 
-        model.fire();
-        zip  = zipDS.values(); 
-        medals = medalsDS.values();
         expect(zip).to.have.length(3);
         expect(medals).to.have.length(2);
         expect(medals).to.have.deep.property('[0].zip.zip2', 'A');
@@ -329,18 +324,17 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[2].zip.zip2', 'C');
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should handle streaming rems', function(done) {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
-            medals, zip, i, len, d;
+            medals = medalsDS.values(),
+            zip = zipDS.values(), 
+            i, len, d;
 
-        model.fire();
-        zip  = zipDS.values(); 
-        medals = medalsDS.values();
         expect(zip).to.have.length(3);
         expect(medals).to.have.length(2);
         expect(medals).to.have.deep.property('[0].zip.zip2', 'A');
@@ -355,18 +349,17 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[1].zip.zip2', 'C');
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
     it('should propagate streaming mods', function(done) {
       parseSpec(spec, function(model) {
         var medalsDS = model.data('medals'),
             zipDS  = model.data('zip'),
-            medals, zip, i, len, d;
+            medals = medalsDS.values(),
+            zip = zipDS.values(), 
+            i, len, d;
 
-        model.fire();
-        zip  = zipDS.values(); 
-        medals = medalsDS.values();
         expect(zip).to.have.length(3);
         expect(medals).to.have.length(2);
         expect(medals).to.have.deep.property('[0].zip.zip2', 'A');
@@ -382,7 +375,7 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[1].zip.zip2', 'F');
 
         done();
-      }, viewFactory);
+      }, modelFactory);
     });
 
   });

@@ -37,17 +37,16 @@ describe('Fold', function() {
   it('should handle initial datasource', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data);  // USA
       expectFold(values[1], data);  // Canada
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle streaming adds', function(done) {
@@ -55,10 +54,9 @@ describe('Fold', function() {
       var ds = model.data('table'),
           mex = {"country": "Mexico", "gold": 3, "silver": 3, "bronze": 2},
           bel = {"country": "Belize", "gold": 0, "silver": 0, "bronze": 0},
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data);  // USA
       expectFold(values[1], data);  // Canada
@@ -74,16 +72,15 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should handle streaming rems', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data);  // USA
       expectFold(values[1], data);  // Canada
@@ -96,16 +93,15 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should propagate mod tuples if fields updated', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data);  // USA
       expectFold(values[1], data);  // Canada
@@ -132,16 +128,15 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['gold', 'key', 'value']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should only propagate mod tuples if fields not updated', function(done) {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data);  // USA
       expectFold(values[1], data);  // Canada
@@ -155,7 +150,7 @@ describe('Fold', function() {
       expect(ds._output.fields).to.not.have.keys(['key', 'value']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should allow renamed keys', function(done) {
@@ -164,17 +159,16 @@ describe('Fold', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data, null, "type");  // USA
       expectFold(values[1], data, null, "type");  // Canada
       expect(ds._output.fields).to.have.keys(['type', 'value']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should allow renamed values', function(done) {
@@ -183,17 +177,16 @@ describe('Fold', function() {
 
     parseSpec(s, function(model) {
       var ds = model.data('table'),
-          data, i, len, d;
+          data = ds.values(), 
+          i, len, d;
 
-      model.fire();
-      data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[0], data, null, null, "medals");  // USA
       expectFold(values[1], data, null, null, "medals");  // Canada
       expect(ds._output.fields).to.have.keys(['key', 'medals']);
 
       done();
-    }, viewFactory);
+    }, modelFactory);
   });
 
   it('should allow array<signal> for fields?');
