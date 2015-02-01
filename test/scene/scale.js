@@ -812,7 +812,44 @@ describe('Scale', function() {
     });
 
     describe('DataRef', function() {
-      it('should initialize');
+      it('should initialize', function(done) {
+        var spec = {
+          "data": [{
+            "name": "table1", 
+            "values": [{"c": "red"}, {"c": "green"}, {"c": "blue"}]
+          }, {
+            "name": "table2",
+            "values": [{"c": "cyan"}, {"c": "yellow"}, {"c": "magenta"}]
+          }],
+
+          "scales": [{
+            "name": "x", "type": "ordinal",
+            "domain": [0, 1, 2],
+            "range": {"data": "table1", "field": "c"}
+          }, {
+            "name": "y", "type": "ordinal",
+            "domain": [0, 1, 2],
+            "range": {
+              "fields": [
+                {"data": "table1", "field": "c"},
+                {"data": "table2", "field": "c"}  
+              ]
+            }
+          }]
+        };
+
+        parseSpec(spec, function(model) {
+          var group = model.scene().items[0],
+            x = group.scale('x'),
+            y = group.scale('y');
+
+            expect(x.range()).to.eql(['red', 'green', 'blue']);
+            expect(y.range()).to.eql(['red', 'green', 'blue', 'cyan', 'yellow', 'magenta']);
+
+            done();
+        }, viewFactory);
+      });
+
       it('should handle streaming adds');
       it('should handle streaming mods');
       it('should handle streaming rems');
