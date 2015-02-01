@@ -4,17 +4,11 @@ define(function(require, module, exports) {
       util = require('../util/index'),
       C = require('../util/constants');
 
-  var LINEAR = C.LINEAR,
-      ORDINAL = C.ORDINAL,
-      LOG = C.LOG,
-      POWER = C.POWER,
-      TIME = C.TIME,
-      QUANTILE = C.QUANTILE,
-      GROUP_PROPERTY = {width: 1, height: 1};
+  var GROUP_PROPERTY = {width: 1, height: 1};
 
   function scale(model, def, group) {
     var s = instance(def, group.scale(def.name)),
-        m = s.type===ORDINAL ? ordinal : quantitative,
+        m = s.type===C.ORDINAL ? ordinal : quantitative,
         rng = range(model, def, group),
         data = util.values(group.datum);
 
@@ -23,7 +17,7 @@ define(function(require, module, exports) {
   }
 
   function instance(def, scale) {
-    var type = def.type || LINEAR;
+    var type = def.type || C.LINEAR;
     if (!scale || type !== scale.type) {
       var ctor = config.scale[type] || d3.scale[type];
       if (!ctor) util.error("Unrecognized scale type: " + type);
@@ -65,7 +59,7 @@ define(function(require, module, exports) {
     var domain, interval;
 
     // domain
-    domain = (def.type === QUANTILE)
+    domain = (def.type === C.QUANTILE)
       ? domainValues(model, def, data, false)
       : domainMinMax(model, def, data);
     scale.domain(domain);
@@ -75,10 +69,10 @@ define(function(require, module, exports) {
     if (def.range === "height") rng = rng.reverse();
     scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
 
-    if (def.exponent && def.type===POWER) scale.exponent(def.exponent);
+    if (def.exponent && def.type===C.POWER) scale.exponent(def.exponent);
     if (def.clamp) scale.clamp(true);
     if (def.nice) {
-      if (def.type === TIME) {
+      if (def.type === C.TIME) {
         interval = d3.time[def.nice];
         if (!interval) util.error("Unrecognized interval: " + interval);
         scale.nice(interval);
@@ -169,7 +163,7 @@ define(function(require, module, exports) {
         domain[z] = def.domainMax;
       }
     }
-    if (def.type !== LOG && def.type !== TIME && (def.zero || def.zero===undefined)) {
+    if (def.type !== C.LOG && def.type !== C.TIME && (def.zero || def.zero===undefined)) {
       domain[0] = Math.min(0, domain[0]);
       domain[z] = Math.max(0, domain[z]);
     }
