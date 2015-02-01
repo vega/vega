@@ -19,7 +19,7 @@ describe('Aggregate', function() {
         "data": [{ 
           "name": "table", 
           "values": values,
-          "transform": [{"type": "aggregate", "on": "y", "stats": stats }]
+          "transform": [{"type": "stats", "on": "y", "stats": stats }]
         }] 
       };
     }
@@ -303,7 +303,7 @@ describe('Aggregate', function() {
     });
   });
 
-  it('should calculate aggregates on facets', function(done) {
+  it('should calculate stats on facets', function(done) {
     var values = [
       {"country":"US", "type": "gold", "count": 12},
       {"country":"US", "type": "silver", "count": 13},
@@ -321,7 +321,7 @@ describe('Aggregate', function() {
           "type": "facet", 
           "keys": [{"field": "country"}],
           "transform": [{
-            "type": "aggregate", 
+            "type": "stats", 
             "on": "count", 
             "stats": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]

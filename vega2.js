@@ -3055,287 +3055,6 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
 
   return Transform;
 });
-define('util/quickselect',[],function() {
-  return function quickselect(k, x) {
-    function swap(a, b) {
-      var t = x[a];
-      x[a] = x[b];
-      x[b] = t;
-    }
-    
-    var left = 0,
-        right = x.length - 1,
-        pos, i, pivot;
-    
-    while (left < right) {
-      pivot = x[k];
-      swap(k, right);
-      for (i = pos = left; i < right; ++i) {
-        if (x[i] < pivot) { swap(i, pos++); }
-      }
-      swap(right, pos);
-      if (pos === k) break;
-      if (pos < k) left = pos + 1;
-      else right = pos - 1;
-    }
-    return x[k];
-  };
-});
-define('transforms/measures',['require','exports','module','../dataflow/tuple','../util/quickselect'],function(require, exports, module) {
-  var tuple = require('../dataflow/tuple'),
-      quickselect = require('../util/quickselect');
-
-  var types = {
-    "count": measure({
-      name: "count",
-      init: "this.cnt = 0;",
-      add:  "this.cnt += 1;",
-      rem:  "this.cnt -= 1;",
-      set:  "this.cnt"
-    }),
-    "sum": measure({
-      name: "sum",
-      init: "this.sum = 0;",
-      add:  "this.sum += v;",
-      rem:  "this.sum -= v;",
-      set:  "this.sum"
-    }),
-    "avg": measure({
-      name: "avg",
-      init: "this.avg = 0;",
-      add:  "var d = v - this.avg; this.avg += d / this.cnt;",
-      rem:  "var d = v - this.avg; this.avg -= d / this.cnt;",
-      set:  "this.avg",
-      req:  ["count"], idx: 1
-    }),
-    "var": measure({
-      name: "var",
-      init: "this.dev = 0;",
-      add:  "this.dev += d * (v - this.avg);",
-      rem:  "this.dev -= d * (v - this.avg);",
-      set:  "this.dev / (this.cnt-1)",
-      req:  ["avg"], idx: 2
-    }),
-    "varp": measure({
-      name: "varp",
-      init: "",
-      add:  "",
-      rem:  "",
-      set:  "this.dev / this.cnt",
-      req:  ["var"], idx: 3
-    }),
-    "stdev": measure({
-      name: "stdev",
-      init: "",
-      add:  "",
-      rem:  "",
-      set:  "Math.sqrt(this.dev / (this.cnt-1))",
-      req:  ["var"], idx: 4
-    }),
-    "stdevp": measure({
-      name: "stdevp",
-      init: "",
-      add:  "",
-      rem:  "",
-      set:  "Math.sqrt(this.dev / this.cnt)",
-      req:  ["var"], idx: 5
-    }),
-    "median": measure({
-      name: "median",
-      init: "this.val = [];",
-      add:  "this.val.push(v);",
-      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
-            "this.val.length = this.val.length - 1;",
-      set:  "this.sel(~~(this.cnt/2), this.val)",
-      req: ["count"], idx: 6
-    }),
-    "min": measure({
-      name: "min",
-      init: "",
-      add: "",
-      rem: "",
-      set: "this.sel(0, this.val)",
-      req: ["median"]
-    }),
-    "max": measure({
-      name: "max",
-      init: "",
-      add: "",
-      rem: "",
-      set: "this.sel(this.val.length-1, this.val)",
-      req: ["median"]
-    })
-  };
-
-  function measure(base) {
-    return function(out) {
-      var m = Object.create(base);
-      m.out = out || base.name;
-      if (!m.idx) m.idx = 0;
-      return m;
-    };
-  }
-
-  function resolve(agg) {
-    function collect(m, a) {
-      (a.req || []).forEach(function(r) {
-        if (!m[r]) collect(m, m[r] = types[r]());
-      });
-      return m;
-    }
-    var map = agg.reduce(collect,
-      agg.reduce(function(m, a) { return (m[a.name] = a, m); }, {}));
-    var all = [];
-    for (var k in map) all.push(map[k]);
-    all.sort(function(a,b) { return a.idx - b.idx; });
-    return all;
-  }
-
-  function compile(agg) {
-    var all = resolve(agg),
-        ctr = "this.flag = this.ADD; this.tuple = t;",
-        add = "",
-        rem = "",
-        set = "var t = this.tuple;";
-    
-    all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
-    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+");"; });
-    add += "this.flag |= this.MOD;"
-    rem += "this.flag |= this.MOD;"
-    set += "return t;"
-
-    ctr = Function("t", ctr);
-    ctr.prototype.ADD = 1;
-    ctr.prototype.MOD = 2;
-    ctr.prototype.add = Function("v", add);
-    ctr.prototype.rem = Function("v", rem);
-    ctr.prototype.set = Function("stamp", set);
-    ctr.prototype.mod = mod;
-    ctr.prototype.tpl = tuple;
-    ctr.prototype.sel = quickselect;
-    return ctr;
-  }
-
-  function mod(v_new, v_old) {
-    if (v_old === undefined || v_old === v_new) return;
-    this.rem(v_old);
-    this.add(v_new);
-  };
-
-  types.create = compile;
-  return types;
-});
-define('transforms/Aggregate',['require','exports','module','./Transform','../dataflow/tuple','../dataflow/changeset','./measures','../util/index'],function(require, exports, module) {
-  var Transform = require('./Transform'),
-      tuple = require('../dataflow/tuple'), 
-      changeset = require('../dataflow/changeset'), 
-      meas = require('./measures'),
-      util = require('../util/index');
-
-  function Aggregate(graph) {
-    Transform.prototype.init.call(this, graph);
-    Transform.addParameters(this, {on: {type: "field"} });
-    this._output = {
-      "count":    "count",
-      "avg":      "avg",
-      "min":      "min",
-      "max":      "max",
-      "sum":      "sum",
-      "mean":     "mean",
-      "var":      "var",
-      "stdev":    "stdev",
-      "varp":     "varp",
-      "stdevp":   "stdevp",
-      "median":   "median"
-    };
-
-    // Stats parameter handled manually.
-
-    this._Measures = null;
-    this._cache = {};
-    return this.prev(true);
-  }
-
-  var proto = (Aggregate.prototype = new Transform());
-
-  proto.stats = { 
-    set: function(transform, aggs) {
-      transform._Measures = meas.create(aggs.map(function(a) { 
-        return meas[a](transform._output[a]); 
-      }));
-      return transform;
-    }
-  };
-
-  function rst(input, output) {
-    for(var k in this._cache) { 
-      if(!input.facet) output.rem.push(this._cache[k].set(input.stamp));
-      this._cache[k] = null;
-    }
-  };
-
-  function aggr(input) {
-    var k = input.facet ? input.facet.key : "",
-        a = this._cache[k],
-        t;
-
-    if(!a) {
-      t = input.facet || tuple.create(null, null);
-      this._cache[k] = a = new this._Measures(t);
-    }
-
-    return a;
-  };
-
-  proto.transform = function(input, reset) {
-    util.debug(input, ["aggregating"]);
-
-    var k = input.facet ? input.facet.key : "",
-        output = input.facet ? input : changeset.create(),
-        field = this.on.get().accessor,
-        a, x;
-
-    if(reset) rst.call(this, input, output);
-    a = aggr.call(this, input);
-
-    input.add.forEach(function(x) { a.add(field(x)); });
-    input.mod.forEach(function(x) { 
-      var prev;
-      if(x._prev && (prev = field(x._prev)) !== undefined) {
-        a.mod(field(x), prev); 
-      }
-    });
-    input.rem.forEach(function(x) { 
-      // Handle all these upstream cases:
-      // #1: Add(t) -> Rem(t)
-      // #2: Add(t) -> Mod(t) -> Rem(t)
-      // #3: Add(t) -> Mod(t) -> FilterOut(t)
-      var prev;
-      if(x._prev && (prev = field(x._prev)) !== undefined) {
-        a.rem(prev);
-      } else {
-        a.rem(field(x));
-      }
-    });
-
-    x = a.set(input.stamp);
-    if(input.facet) return input;
-
-    if (a.cnt === 0) {
-      if (a.flag === a.MOD) output.rem.push(x);
-      this._cache[k] = null;
-    } else if (a.flag & a.ADD) {
-      output.add.push(x);
-    } else if (a.flag & a.MOD) {
-      output.mod.push(x);
-    }
-    a.flag = 0;
-
-    return output;
-  };
-
-  return Aggregate;
-});
 define('util/bins',['require','exports','module'],function(require, module, exports) {
 
   function bisect(a, x) {
@@ -3784,6 +3503,287 @@ define('transforms/Sort',['require','exports','module','./Transform','../parse/e
 
   return Sort;
 });
+define('util/quickselect',[],function() {
+  return function quickselect(k, x) {
+    function swap(a, b) {
+      var t = x[a];
+      x[a] = x[b];
+      x[b] = t;
+    }
+    
+    var left = 0,
+        right = x.length - 1,
+        pos, i, pivot;
+    
+    while (left < right) {
+      pivot = x[k];
+      swap(k, right);
+      for (i = pos = left; i < right; ++i) {
+        if (x[i] < pivot) { swap(i, pos++); }
+      }
+      swap(right, pos);
+      if (pos === k) break;
+      if (pos < k) left = pos + 1;
+      else right = pos - 1;
+    }
+    return x[k];
+  };
+});
+define('transforms/measures',['require','exports','module','../dataflow/tuple','../util/quickselect'],function(require, exports, module) {
+  var tuple = require('../dataflow/tuple'),
+      quickselect = require('../util/quickselect');
+
+  var types = {
+    "count": measure({
+      name: "count",
+      init: "this.cnt = 0;",
+      add:  "this.cnt += 1;",
+      rem:  "this.cnt -= 1;",
+      set:  "this.cnt"
+    }),
+    "sum": measure({
+      name: "sum",
+      init: "this.sum = 0;",
+      add:  "this.sum += v;",
+      rem:  "this.sum -= v;",
+      set:  "this.sum"
+    }),
+    "avg": measure({
+      name: "avg",
+      init: "this.avg = 0;",
+      add:  "var d = v - this.avg; this.avg += d / this.cnt;",
+      rem:  "var d = v - this.avg; this.avg -= d / this.cnt;",
+      set:  "this.avg",
+      req:  ["count"], idx: 1
+    }),
+    "var": measure({
+      name: "var",
+      init: "this.dev = 0;",
+      add:  "this.dev += d * (v - this.avg);",
+      rem:  "this.dev -= d * (v - this.avg);",
+      set:  "this.dev / (this.cnt-1)",
+      req:  ["avg"], idx: 2
+    }),
+    "varp": measure({
+      name: "varp",
+      init: "",
+      add:  "",
+      rem:  "",
+      set:  "this.dev / this.cnt",
+      req:  ["var"], idx: 3
+    }),
+    "stdev": measure({
+      name: "stdev",
+      init: "",
+      add:  "",
+      rem:  "",
+      set:  "Math.sqrt(this.dev / (this.cnt-1))",
+      req:  ["var"], idx: 4
+    }),
+    "stdevp": measure({
+      name: "stdevp",
+      init: "",
+      add:  "",
+      rem:  "",
+      set:  "Math.sqrt(this.dev / this.cnt)",
+      req:  ["var"], idx: 5
+    }),
+    "median": measure({
+      name: "median",
+      init: "this.val = [];",
+      add:  "this.val.push(v);",
+      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
+            "this.val.length = this.val.length - 1;",
+      set:  "this.sel(~~(this.cnt/2), this.val)",
+      req: ["count"], idx: 6
+    }),
+    "min": measure({
+      name: "min",
+      init: "",
+      add: "",
+      rem: "",
+      set: "this.sel(0, this.val)",
+      req: ["median"]
+    }),
+    "max": measure({
+      name: "max",
+      init: "",
+      add: "",
+      rem: "",
+      set: "this.sel(this.val.length-1, this.val)",
+      req: ["median"]
+    })
+  };
+
+  function measure(base) {
+    return function(out) {
+      var m = Object.create(base);
+      m.out = out || base.name;
+      if (!m.idx) m.idx = 0;
+      return m;
+    };
+  }
+
+  function resolve(agg) {
+    function collect(m, a) {
+      (a.req || []).forEach(function(r) {
+        if (!m[r]) collect(m, m[r] = types[r]());
+      });
+      return m;
+    }
+    var map = agg.reduce(collect,
+      agg.reduce(function(m, a) { return (m[a.name] = a, m); }, {}));
+    var all = [];
+    for (var k in map) all.push(map[k]);
+    all.sort(function(a,b) { return a.idx - b.idx; });
+    return all;
+  }
+
+  function compile(agg) {
+    var all = resolve(agg),
+        ctr = "this.flag = this.ADD; this.tuple = t;",
+        add = "",
+        rem = "",
+        set = "var t = this.tuple;";
+    
+    all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
+    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+");"; });
+    add += "this.flag |= this.MOD;"
+    rem += "this.flag |= this.MOD;"
+    set += "return t;"
+
+    ctr = Function("t", ctr);
+    ctr.prototype.ADD = 1;
+    ctr.prototype.MOD = 2;
+    ctr.prototype.add = Function("v", add);
+    ctr.prototype.rem = Function("v", rem);
+    ctr.prototype.set = Function("stamp", set);
+    ctr.prototype.mod = mod;
+    ctr.prototype.tpl = tuple;
+    ctr.prototype.sel = quickselect;
+    return ctr;
+  }
+
+  function mod(v_new, v_old) {
+    if (v_old === undefined || v_old === v_new) return;
+    this.rem(v_old);
+    this.add(v_new);
+  };
+
+  types.create = compile;
+  return types;
+});
+define('transforms/Stats',['require','exports','module','./Transform','../dataflow/tuple','../dataflow/changeset','./measures','../util/index'],function(require, exports, module) {
+  var Transform = require('./Transform'),
+      tuple = require('../dataflow/tuple'), 
+      changeset = require('../dataflow/changeset'), 
+      meas = require('./measures'),
+      util = require('../util/index');
+
+  function Stats(graph) {
+    Transform.prototype.init.call(this, graph);
+    Transform.addParameters(this, {on: {type: "field"} });
+    this._output = {
+      "count":    "count",
+      "avg":      "avg",
+      "min":      "min",
+      "max":      "max",
+      "sum":      "sum",
+      "mean":     "mean",
+      "var":      "var",
+      "stdev":    "stdev",
+      "varp":     "varp",
+      "stdevp":   "stdevp",
+      "median":   "median"
+    };
+
+    // Stats parameter handled manually.
+
+    this._Measures = null;
+    this._cache = {};
+    return this.prev(true);
+  }
+
+  var proto = (Stats.prototype = new Transform());
+
+  proto.stats = { 
+    set: function(transform, aggs) {
+      transform._Measures = meas.create(aggs.map(function(a) { 
+        return meas[a](transform._output[a]); 
+      }));
+      return transform;
+    }
+  };
+
+  function rst(input, output) {
+    for(var k in this._cache) { 
+      if(!input.facet) output.rem.push(this._cache[k].set(input.stamp));
+      this._cache[k] = null;
+    }
+  };
+
+  function aggr(input) {
+    var k = input.facet ? input.facet.key : "",
+        a = this._cache[k],
+        t;
+
+    if(!a) {
+      t = input.facet || tuple.create(null, null);
+      this._cache[k] = a = new this._Measures(t);
+    }
+
+    return a;
+  };
+
+  proto.transform = function(input, reset) {
+    util.debug(input, ["aggregating"]);
+
+    var k = input.facet ? input.facet.key : "",
+        output = input.facet ? input : changeset.create(),
+        field = this.on.get().accessor,
+        a, x;
+
+    if(reset) rst.call(this, input, output);
+    a = aggr.call(this, input);
+
+    input.add.forEach(function(x) { a.add(field(x)); });
+    input.mod.forEach(function(x) { 
+      var prev;
+      if(x._prev && (prev = field(x._prev)) !== undefined) {
+        a.mod(field(x), prev); 
+      }
+    });
+    input.rem.forEach(function(x) { 
+      // Handle all these upstream cases:
+      // #1: Add(t) -> Rem(t)
+      // #2: Add(t) -> Mod(t) -> Rem(t)
+      // #3: Add(t) -> Mod(t) -> FilterOut(t)
+      var prev;
+      if(x._prev && (prev = field(x._prev)) !== undefined) {
+        a.rem(prev);
+      } else {
+        a.rem(field(x));
+      }
+    });
+
+    x = a.set(input.stamp);
+    if(input.facet) return input;
+
+    if (a.cnt === 0) {
+      if (a.flag === a.MOD) output.rem.push(x);
+      this._cache[k] = null;
+    } else if (a.flag & a.ADD) {
+      output.add.push(x);
+    } else if (a.flag & a.MOD) {
+      output.mod.push(x);
+    }
+    a.flag = 0;
+
+    return output;
+  };
+
+  return Stats;
+});
 define('transforms/Unique',['require','exports','module','d3','./Transform','../dataflow/changeset','../dataflow/tuple','../util/index','../util/constants'],function(require, exports, module) {
   var d3 = require('d3'),
       Transform = require('./Transform'),
@@ -3998,15 +3998,15 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
 
   return Zip;
 });
-define('transforms/index',['require','exports','module','./Aggregate','./Bin','./Facet','./Filter','./Fold','./Formula','./Sort','./Unique','./Zip'],function(require, exports, module) {
+define('transforms/index',['require','exports','module','./Bin','./Facet','./Filter','./Fold','./Formula','./Sort','./Stats','./Unique','./Zip'],function(require, exports, module) {
   return {
-    aggregate:  require('./Aggregate'),
     bin:        require('./Bin'),
     facet:      require('./Facet'),
     filter:     require('./Filter'),
     fold:       require('./Fold'),
     formula:    require('./Formula'),
     sort:       require('./Sort'),
+    stats:      require('./Stats'),
     unique:     require('./Unique'),
     zip:        require('./Zip')
   };

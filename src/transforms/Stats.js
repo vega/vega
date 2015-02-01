@@ -5,7 +5,7 @@ define(function(require, exports, module) {
       meas = require('./measures'),
       util = require('../util/index');
 
-  function Aggregate(graph) {
+  function Stats(graph) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {on: {type: "field"} });
     this._output = {
@@ -29,7 +29,7 @@ define(function(require, exports, module) {
     return this.prev(true);
   }
 
-  var proto = (Aggregate.prototype = new Transform());
+  var proto = (Stats.prototype = new Transform());
 
   proto.stats = { 
     set: function(transform, aggs) {
@@ -107,5 +107,5 @@ define(function(require, exports, module) {
     return output;
   };
 
-  return Aggregate;
+  return Stats;
 });
