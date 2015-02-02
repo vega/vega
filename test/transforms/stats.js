@@ -1,4 +1,4 @@
-describe('Aggregate', function() {
+describe('Stats', function() {
 
   describe('Flat', function() {
     var values = [
@@ -14,12 +14,12 @@ describe('Aggregate', function() {
       {"x": 19, "y": 49}, {"x": 20, "y": 15}
     ];
 
-    function spec(stats) {
+    function spec(meas) {
       return { 
         "data": [{ 
           "name": "table", 
           "values": values,
-          "transform": [{"type": "stats", "on": "y", "stats": stats }]
+          "transform": [{"type": "stats", "on": "y", "measures": meas }]
         }] 
       };
     }
@@ -323,7 +323,7 @@ describe('Aggregate', function() {
           "transform": [{
             "type": "stats", 
             "on": "count", 
-            "stats": ["min", "max", "median", "stdevp", "stdev", 
+            "measures": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]
         }]
       }]

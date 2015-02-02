@@ -85,6 +85,7 @@ define(function(require, exports, module) {
       // the output.
       ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
+      ds._needsPrev = pipeline.some(function(p) { return !!p.prev() });
     }
 
     // Input node applies the datasource's delta, and propagates it to 
@@ -98,7 +99,6 @@ define(function(require, exports, module) {
 
       var delta = ds._input, 
           out = changeset.create(input);
-      out.facet = ds._facet;
 
       if(input.reflow) {
         out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
@@ -119,7 +119,7 @@ define(function(require, exports, module) {
         out.rem = delta.rem;
       }
 
-      return out;
+      return (out.facet = ds._facet, out);
     };
 
     pipeline.unshift(input);

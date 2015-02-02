@@ -1,13 +1,18 @@
 define(function(require, exports, module) {
   var Transform = require('./Transform'),
+      Aggregate = require('./Aggregate'),
       tuple = require('../dataflow/tuple'), 
       changeset = require('../dataflow/changeset'), 
       meas = require('./measures'),
       util = require('../util/index');
 
   function Stats(graph) {
-    Transform.prototype.init.call(this, graph);
-    Transform.addParameters(this, {on: {type: "field"} });
+    Aggregate.prototype.init.call(this, graph);
+    Transform.addParameters(this, {
+      group_by: {type: "array<field>"},
+      on: {type: "field"} 
+    });
+
     this._output = {
       "count":    "count",
       "avg":      "avg",
@@ -22,16 +27,19 @@ define(function(require, exports, module) {
       "median":   "median"
     };
 
-    // Stats parameter handled manually.
-
+    // Measures parameter handled manually.
     this._Measures = null;
-    this._cache = {};
-    return this.prev(true);
+
+    // The group_by might come via the facet. Store that to 
+    // short-circuit usual Aggregate methods.
+    this.__facet = null;
+
+    return this;
   }
 
-  var proto = (Stats.prototype = new Transform());
+  var proto = (Stats.prototype = new Aggregate());
 
-  proto.stats = { 
+  proto.measures = { 
     set: function(transform, aggs) {
       transform._Measures = meas.create(aggs.map(function(a) { 
         return meas[a](transform._output[a]); 
@@ -40,71 +48,66 @@ define(function(require, exports, module) {
     }
   };
 
-  function rst(input, output) {
-    for(var k in this._cache) { 
-      if(!input.facet) output.rem.push(this._cache[k].set(input.stamp));
-      this._cache[k] = null;
+  proto._reset = function(input, output) {
+    for(var k in this._cells) { 
+      if(!input.facet) output.rem.push(this._cells[k].set());
+      this._cells[k] = null;
     }
   };
 
-  function aggr(input) {
-    var k = input.facet ? input.facet.key : "",
-        a = this._cache[k],
-        t;
+  proto._keys = function(x) {
+    if(this.__facet) return this.__facet;
+    else if(this._refs.length) return Aggregate.prototype._keys.call(this, x);
+    return {keys: [], key: ""}; // Stats on a flat datasource
+  };
 
-    if(!a) {
-      t = input.facet || tuple.create(null, null);
-      this._cache[k] = a = new this._Measures(t);
-    }
+  proto._new_cell = function(x, k) {
+    var cell = this.__facet || tuple.create(null, null);
+    return new this._Measures(cell);
+  };
 
-    return a;
+  proto._add = function(x) {
+    var field = this.on.get(this._graph).accessor;
+    this._cell(x).add(field(x));
+  };
+
+  proto._mod = function(x, reset) {
+    var field = this.on.get(this._graph).accessor,
+        cell = this._cell(x);
+
+    if(x._prev) cell.mod(field(x), field(x._prev));
+    else if(reset) cell.add(field(x));
+    return cell;
+  };
+
+  proto._rem = function(x) {
+    var field = this.on.get(this._graph).accessor;
+    this._cell(x).rem(field(x));
   };
 
   proto.transform = function(input, reset) {
-    util.debug(input, ["aggregating"]);
+    util.debug(input, ["stats"]);
 
-    var k = input.facet ? input.facet.key : "",
-        output = input.facet ? input : changeset.create(),
-        field = this.on.get().accessor,
-        a, x;
-
-    if(reset) rst.call(this, input, output);
-    a = aggr.call(this, input);
-
-    input.add.forEach(function(x) { a.add(field(x)); });
-    input.mod.forEach(function(x) { 
-      var prev;
-      if(x._prev && (prev = field(x._prev)) !== undefined) {
-        a.mod(field(x), prev); 
-      }
-    });
-    input.rem.forEach(function(x) { 
-      // Handle all these upstream cases:
-      // #1: Add(t) -> Rem(t)
-      // #2: Add(t) -> Mod(t) -> Rem(t)
-      // #3: Add(t) -> Mod(t) -> FilterOut(t)
-      var prev;
-      if(x._prev && (prev = field(x._prev)) !== undefined) {
-        a.rem(prev);
-      } else {
-        a.rem(field(x));
-      }
-    });
-
-    x = a.set(input.stamp);
-    if(input.facet) return input;
-
-    if (a.cnt === 0) {
-      if (a.flag === a.MOD) output.rem.push(x);
-      this._cache[k] = null;
-    } else if (a.flag & a.ADD) {
-      output.add.push(x);
-    } else if (a.flag & a.MOD) {
-      output.mod.push(x);
+    if(input.facet) {
+      this.__facet = input.facet;
+    } else {
+      this._refs = this.group_by.get(this._graph).accessors;
     }
-    a.flag = 0;
 
-    return output;
+    var output = Aggregate.prototype.transform.call(this, input, reset),
+        k, c;
+
+    if(input.facet) {
+      this._cells[input.facet.key].set();
+      return input;
+    } else {
+      for(k in this._cells) {
+        c = this._cells[k];
+        if(!c) continue;
+        c.set();
+      }
+      return output;
+    }
   };
 
   return Stats;

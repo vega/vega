@@ -1,5 +1,8 @@
 define(function(require, module, exports) {
   return {
+    ADD_CELL: 1,
+    MOD_CELL: 2,
+
     DATA: "data",
     FIELDS:  "fields",
     SCALES:  "scales",

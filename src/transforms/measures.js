@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
   var tuple = require('../dataflow/tuple'),
-      quickselect = require('../util/quickselect');
+      quickselect = require('../util/quickselect'),
+      C = require('../util/constants');
 
   var types = {
     "count": measure({
@@ -110,26 +111,26 @@ define(function(require, exports, module) {
 
   function compile(agg) {
     var all = resolve(agg),
-        ctr = "this.flag = this.ADD; this.tuple = t;",
+        ctr = "this.flg = this.ADD; this.tpl = t;",
         add = "",
         rem = "",
-        set = "var t = this.tuple;";
+        set = "var t = this.tpl;";
     
     all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
-    agg.forEach(function(a) { set += "this.tpl.set(t,'"+a.out+"',"+a.set+");"; });
-    add += "this.flag |= this.MOD;"
-    rem += "this.flag |= this.MOD;"
+    agg.forEach(function(a) { set += "this.tuple.set(t,'"+a.out+"',"+a.set+");"; });
+    add += "this.flg |= this.MOD;"
+    rem += "this.flg |= this.MOD;"
     set += "return t;"
 
     ctr = Function("t", ctr);
-    ctr.prototype.ADD = 1;
-    ctr.prototype.MOD = 2;
+    ctr.prototype.ADD = C.ADD_CELL;
+    ctr.prototype.MOD = C.MOD_CELL;
     ctr.prototype.add = Function("v", add);
     ctr.prototype.rem = Function("v", rem);
     ctr.prototype.set = Function("stamp", set);
     ctr.prototype.mod = mod;
-    ctr.prototype.tpl = tuple;
     ctr.prototype.sel = quickselect;
+    ctr.prototype.tuple = tuple;
     return ctr;
   }
 

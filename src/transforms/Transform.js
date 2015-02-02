@@ -23,10 +23,7 @@ define(function(require, exports, module) {
   proto.clone = function() {
     var n = Node.prototype.clone.call(this);
     n.transform = this.transform;
-    for(var k in this) {
-      if(!this.hasOwnProperty(k)) continue;
-      n[k] = this[k];
-    }
+    for(var k in this) { n[k] = this[k]; }
     return n;
   };
 
