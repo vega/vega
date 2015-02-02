@@ -30,7 +30,7 @@ describe('Unique', function() {
       expect(data[1]).to.have.property('unq', 'Canada');
 
       done();
-    }, modelFactory)
+    }, modelFactory);
   });
 
   it('should handle streaming adds', function(done) {
