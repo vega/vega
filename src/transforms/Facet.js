@@ -29,8 +29,8 @@ define(function(require, exports, module) {
       if(!c) continue;
       output.rem.push(c.tpl);
       c.delete();
-      this._cells[k] = null;
     }
+    this._cells = {};
   };
 
   proto._new_tuple = function(x, k) {

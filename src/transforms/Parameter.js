@@ -11,7 +11,6 @@ define(function(require, exports, module) {
   function Parameter(name, type) {
     this._name = name;
     this._type = type;
-    this._stamp = 0; // Last stamp seen on resolved signals
 
     // If parameter is defined w/signals, it must be resolved
     // on every pulse.
@@ -42,7 +41,7 @@ define(function(require, exports, module) {
   proto.get = function(graph) {
     var isData  = dataType.test(this._type),
         isField = fieldType.test(this._type),
-        s, sg, idx, val, last;
+        s, idx, val;
 
     // If we don't require resolution, return the value immediately.
     if(!this._resolution) return this._get();
@@ -54,17 +53,14 @@ define(function(require, exports, module) {
 
     for(s in this._signals) {
       idx  = this._signals[s];
-      sg   = graph.signal(s); 
-      val  = sg.value();
-      last = sg.last();
+      val  = graph.signalRef(s);
 
       if(isField) {
-        this._accessors[idx] = this._stamp <= last ? 
+        this._accessors[idx] = this._value[idx] != val ? 
           util.accessor(val) : this._accessors[idx];
       }
 
       this._value[idx] = val;
-      this._stamp = Math.max(this._stamp, last);
     }
 
     return this._get();

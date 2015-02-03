@@ -49,10 +49,12 @@ define(function(require, exports, module) {
   };
 
   proto._reset = function(input, output) {
-    for(var k in this._cells) { 
-      if(!input.facet) output.rem.push(this._cells[k].set());
-      this._cells[k] = null;
+    var k, c
+    for(k in this._cells) { 
+      if(!(c = this._cells[k])) continue;
+      if(!input.facet) output.rem.push(c.set());
     }
+    this._cells = {};
   };
 
   proto._keys = function(x) {
