@@ -21,6 +21,7 @@ vg.parse.expr = (function() {
   	"cos":    "Math.cos",
   	"exp":    "Math.exp",
   	"floor":  "Math.floor",
+    "format": "d3.format",
   	"log":    "Math.log",
   	"max":    "Math.max",
   	"min":    "Math.min",

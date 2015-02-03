@@ -3508,21 +3508,24 @@ vg.data.facet = function() {
 };
 
 vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
-  
   return function() {
     var field = null,
-        expr = vg.identity;
-  
+        expr = vg.identity,
+        setter;
+
     var formula = vg.data.mapper(function(d, i, list) {
-      if (field) d[field] = expr.call(null, d, i, list);
+      if (field) {
+        setter(d, expr.call(null, d, i, list));
+      }
       return d;
     });
 
     formula.field = function(name) {
       field = name;
+      setter = vg.mutator(field);
       return formula;
     };
-  
+
     formula.expr = function(func) {
       expr = vg.isFunction(func) ? func : vg.parse.expr(func);
       return formula;
@@ -4133,20 +4136,23 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       position = "right",
       ellipsis = "...",
       wordBreak = true,
-      limit = 100;
-  
+      limit = 100,
+      setter;
+
   var truncate = vg.data.mapper(function(d) {
     var text = vg.truncate(value(d), limit, position, wordBreak, ellipsis);
-    return (d[as] = text, d);
+    setter(d, text);
+    return d;
   });
 
   truncate.value = function(field) {
     value = vg.accessor(field);
     return truncate;
   };
-  
+
   truncate.output = function(field) {
     as = field;
+    setter = vg.mutator(field);
     return truncate;
   };
 
@@ -4154,7 +4160,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     limit = +len;
     return truncate;
   };
-  
+
   truncate.position = function(pos) {
     position = pos;
     return truncate;
@@ -4566,6 +4572,7 @@ vg.parse.data = function(spec, callback) {
   	"cos":    "Math.cos",
   	"exp":    "Math.exp",
   	"floor":  "Math.floor",
+    "format": "d3.format",
   	"log":    "Math.log",
   	"max":    "Math.max",
   	"min":    "Math.min",
