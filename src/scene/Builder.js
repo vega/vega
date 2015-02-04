@@ -28,7 +28,6 @@ define(function(require, exports, module) {
     this._ds    = util.isString(this._from) ? model.data(this._from) : null;
     this._map   = {};
     this._items = [];
-    this._lastBuild = 0;
 
     mark.def = def;
     mark.marktype = def.type;
@@ -66,9 +65,8 @@ define(function(require, exports, module) {
 
       fcs = this._ds.last();
       if(!fcs) return (output.reflow = true, output);
-      if(fcs.stamp <= this._lastBuild) return output;
+      if(fcs.stamp <= this._stamp) return output;
 
-      this._lastBuild = fcs.stamp;
       return joinChangeset.call(this, fcs);
     } else {
       data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];

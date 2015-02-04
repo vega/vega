@@ -16,8 +16,10 @@ define(function(require, exports, module) {
     this._refs  = []; // accessors to groupby fields
     this._cells = {};
     return Transform.prototype.init.call(this, graph)
-      .router(true).prev(true);
+      .router(true).needsPrev(true);
   };
+
+  proto.data = function() { return this._cells; };
 
   proto._reset = function(input, output) {
     var k, c;
@@ -67,7 +69,7 @@ define(function(require, exports, module) {
   };
 
   proto._mod = function(x, reset) {
-    if(x._prev !== C.SENTINEL && this._keys(x._prev) !== undefined) {
+    if(x._prev && x._prev !== C.SENTINEL && this._keys(x._prev) !== undefined) {
       this._rem(x._prev);
       return this._add(x);
     } else if(reset) { // Signal change triggered reflow
@@ -86,7 +88,7 @@ define(function(require, exports, module) {
     input.add.forEach(function(x) { aggregate._add(x); });
     input.mod.forEach(function(x) { aggregate._mod(x, reset); });
     input.rem.forEach(function(x) {
-      if(x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
+      if(x._prev && x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
         aggregate._rem(x._prev)
       } else {
         aggregate._rem(x);

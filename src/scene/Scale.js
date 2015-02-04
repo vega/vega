@@ -1,43 +1,89 @@
-define(function(require, module, exports) {
+define(function(require, exports, module) {
   var d3 = require('d3'),
+      Node = require('../dataflow/Node'),
       Stats = require('../transforms/Stats'),
-      config = require('../util/config'),
+      changeset = require('../dataflow/changeset'),
       util = require('../util/index'),
+      config = require('../util/config'),
       C = require('../util/constants');
 
   var GROUP_PROPERTY = {width: 1, height: 1};
 
-  function scale(model, def, group) {
-    var s = instance(def, group.scale(def.name)),
-        m = s.type===C.ORDINAL ? ordinal : quantitative,
-        rng = range(model, def, group);
+  function Scale(model, def, parent) {
+    this._model = model;
+    this._def = def;
+    this._parent = parent;
+    return Node.prototype.init.call(this, model.graph);
+  }
 
-    m(model, def, s, rng, group);
+  var proto = (Scale.prototype = new Node());
+
+  proto.evaluate = function(input) {
+    var self = this,
+        fn = function(group) { scale.call(self, group); };
+
+    input.add.forEach(fn);
+    input.mod.forEach(fn);
+
+    // Scales are at the end of an encoding pipeline, so they should forward a
+    // reflow pulse. Thus, if multiple scales update in the parent group, we don't
+    // reevaluate child marks multiple times. 
+    return changeset.create(input, true);
+  };
+
+  // All of a scale's dependencies are registered during propagation as we parse
+  // dataRefs. So a scale must be responsible for connecting itself to dependents.
+  proto.dependency = function(type, deps) {
+    Node.prototype.dependency.call(this, type, deps);
+    if(arguments.length === 1) return this._deps[type];
+
+    deps = util.array(deps);
+    for(var i=0, len=deps.length; i<len; ++i) {
+      this._graph[type == C.DATA ? C.DATA : C.SIGNAL](deps[i])
+        .addListener(this._parent);
+    }
+
+    return this;
+  };
+
+  function scale(group) {
+    var name = this._def.name,
+        prev = name + ":prev",
+        s = instance.call(this, group.scale(name)),
+        m = s.type===C.ORDINAL ? ordinal : quantitative,
+        rng = range.call(this, group);
+
+    m.call(this, s, rng, group);
+
+    group.scale(name, s);
+    group.scale(prev, group.scale(prev) || s);
+
     return s;
   }
 
-  function instance(def, scale) {
-    var type = def.type || C.LINEAR;
+  function instance(scale) {
+    var type = this._def.type || C.LINEAR;
     if (!scale || type !== scale.type) {
       var ctor = config.scale[type] || d3.scale[type];
       if (!ctor) util.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = scale.type || type;
-      scale.scaleName = def.name;
+      scale.scaleName = this._def.name;
     }
     return scale;
   }
 
-  function ordinal(model, def, scale, rng, group) {
-    var domain, sort, str, refs, dataDrivenRange = false;
+  function ordinal(scale, rng, group) {
+    var def = this._def,
+        domain, sort, str, refs, dataDrivenRange = false;
     
     // range pre-processing for data-driven ranges
     if (util.isObject(def.range) && !util.isArray(def.range)) {
       dataDrivenRange = true;
-      rng = dataRef(model, C.RANGE, def.range, scale, group);
+      rng = dataRef.call(this, C.RANGE, def.range, scale, group);
     }
     
     // domain
-    domain = dataRef(model, C.DOMAIN, def.domain, scale, group);
+    domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
     if (domain) scale.domain(domain);
 
     // range
@@ -53,13 +99,14 @@ define(function(require, module, exports) {
     }
   }
 
-  function quantitative(model, def, scale, rng, group) {
-    var domain, interval;
+  function quantitative(scale, rng, group) {
+    var def = this._def,
+        domain, interval;
 
     // domain
     domain = (def.type === C.QUANTILE)
-      ? dataRef(model, C.DOMAIN, def.domain, scale, group)
-      : domainMinMax(model, def, scale, group);
+      ? dataRef.call(this, C.DOMAIN, def.domain, scale, group)
+      : domainMinMax.call(this, scale, group);
     scale.domain(domain);
 
     // range
@@ -80,12 +127,11 @@ define(function(require, module, exports) {
     }
   }
 
-  function dataRef(model, which, def, scale, group) {
-    if(util.isArray(def)) return def.map(signal.bind(null, model));
+  function dataRef(which, def, scale, group) {
+    if(util.isArray(def)) return def.map(signal.bind(this));
 
-    var graph = model.graph,
+    var self = this, graph = this._graph,
         refs = def.fields || util.array(def),
-        deps = scale._deps || (scale._deps = []),
         uniques = scale.type === C.ORDINAL || scale.type === C.QUANTILE,
         ck = "_"+which,
         cache = scale[ck],
@@ -102,9 +148,11 @@ define(function(require, module, exports) {
     for(i=0, rlen=refs.length; i<rlen; ++i) {
       r = refs[i];
       from = r.data || "vg_"+group.datum._id;
-      data = model.data(from)
+      data = graph.data(from)
         .needsPrev(true)
         .last();
+
+      if(data.stamp <= this._stamp) continue;
 
       fields = util.array(r.field).map(function(f) {
         if(f.group) return util.accessor(f.group)(group.datum)
@@ -124,7 +172,8 @@ define(function(require, module, exports) {
         }
       }
 
-      if(deps.indexOf(from) < 0) deps.push(from);
+      this.dependency(C.DATA, from);
+      cache.dependency(C.SIGNALS).forEach(function(s) { self.dependency(C.SIGNALS, s) });
     }
 
     data = cache.data();
@@ -144,26 +193,29 @@ define(function(require, module, exports) {
     }
   }
 
-  function signal(model, v) {
-    if(!v.signal) return v;
-    return model.graph.signalRef(v.signal);
+  function signal(v) {
+    var s = v.signal;
+    if(!s) return v;
+    this.dependency(C.SIGNALS, util.field(s).shift());
+    return this._graph.signalRef(s);
   }
-  
-  function domainMinMax(model, def, scale, group) {
-    var domain = [null, null], refs, z;
+
+  function domainMinMax(scale, group) {
+    var def = this._def,
+        domain = [null, null], refs, z;
 
     if (def.domain !== undefined) {
       domain = (!util.isObject(def.domain)) ? domain :
-        dataRef(model, C.DOMAIN, def.domain, scale, group);
+        dataRef.call(this, C.DOMAIN, def.domain, scale, group);
     }
 
     z = domain.length - 1;
     if (def.domainMin !== undefined) {
       if (util.isObject(def.domainMin)) {
         if(def.domainMin.signal) {
-          domain[0] = signal(model, def.domainMin);
+          domain[0] = signal.call(this, def.domainMin);
         } else {
-          domain[0] = dataRef(model, C.DOMAIN+C.MIN, def.domainMin, scale, group)[0];
+          domain[0] = dataRef.call(this, C.DOMAIN+C.MIN, def.domainMin, scale, group)[0];
         }
       } else {
         domain[0] = def.domainMin;
@@ -172,9 +224,9 @@ define(function(require, module, exports) {
     if (def.domainMax !== undefined) {
       if (util.isObject(def.domainMax)) {
         if(def.domainMax.signal) {
-          domain[z] = signal(model, def.domainMax);
+          domain[z] = signal.call(this, def.domainMax);
         } else {
-          domain[z] = dataRef(model, C.DOMAIN+C.MAX, def.domainMax, scale, group)[1];
+          domain[z] = dataRef.call(this, C.DOMAIN+C.MAX, def.domainMax, scale, group)[1];
         }
       } else {
         domain[z] = def.domainMax;
@@ -187,8 +239,9 @@ define(function(require, module, exports) {
     return domain;
   }
 
-  function range(model, def, group) {
-    var rng = [null, null];
+  function range(group) {
+    var def = this._def,
+        rng = [null, null];
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
@@ -201,7 +254,7 @@ define(function(require, module, exports) {
           return rng;
         }
       } else if (util.isArray(def.range)) {
-        rng = def.range.map(signal.bind(null, model));
+        rng = def.range.map(signal.bind(this));
       } else if (util.isObject(def.range)) {
         return null; // early exit
       } else {
@@ -209,10 +262,10 @@ define(function(require, module, exports) {
       }
     }
     if (def.rangeMin !== undefined) {
-      rng[0] = def.rangeMin.signal ? signal(model, def.rangeMin) : def.rangeMin;
+      rng[0] = def.rangeMin.signal ? signal.call(this, def.rangeMin) : def.rangeMin;
     }
     if (def.rangeMax !== undefined) {
-      rng[rng.length-1] = def.rangeMax.signal ? signal(model, def.rangeMax) : def.rangeMax;
+      rng[rng.length-1] = def.rangeMax.signal ? signal.call(this, def.rangeMax) : def.rangeMax;
     }
     
     if (def.reverse !== undefined) {
@@ -226,5 +279,5 @@ define(function(require, module, exports) {
     return rng;
   }
 
-  return scale;
+  return Scale;
 });

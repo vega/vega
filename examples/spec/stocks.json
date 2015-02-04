@@ -23,7 +23,10 @@
       "domain": {"data": "stocks", "field": "price"}
     },
     {
-      "name": "color", "type": "ordinal", "range": "category10"
+      "name": "color", 
+      "type": "ordinal", 
+      "domain": {"data": "stocks", "field": "symbol"},
+      "range": "category10"
     }
   ],
   "axes": [

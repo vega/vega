@@ -6,6 +6,7 @@ define(function(require, module, exports) {
     DATA: "data",
     FIELDS:  "fields",
     SCALES:  "scales",
+    SIGNAL:  "signal",
     SIGNALS: "signals",
     
     GROUP: "group",
@@ -28,7 +29,17 @@ define(function(require, module, exports) {
     TIME: "time",
     QUANTILE: "quantile",
 
+    DOMAIN: "domain",
+    RANGE: "range",
+
     MARK: "mark",
-    AXIS: "axis"
+    AXIS: "axis",
+
+    COUNT: "count",
+    MIN: "min",
+    MAX: "max",
+
+    ASC: "asc",
+    DESC: "desc"
   }
 });

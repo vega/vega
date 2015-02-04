@@ -454,6 +454,7 @@ define('util/constants',['require','exports','module'],function(require, module,
     DATA: "data",
     FIELDS:  "fields",
     SCALES:  "scales",
+    SIGNAL:  "signal",
     SIGNALS: "signals",
     
     GROUP: "group",
@@ -476,8 +477,18 @@ define('util/constants',['require','exports','module'],function(require, module,
     TIME: "time",
     QUANTILE: "quantile",
 
+    DOMAIN: "domain",
+    RANGE: "range",
+
     MARK: "mark",
-    AXIS: "axis"
+    AXIS: "axis",
+
+    COUNT: "count",
+    MIN: "min",
+    MAX: "max",
+
+    ASC: "asc",
+    DESC: "desc"
   }
 });
 define('dataflow/changeset',['require','exports','module','../util/constants'],function(require, exports, module) {
@@ -1003,7 +1014,8 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
     if(deps === null) { // Clear dependencies of a certain type
       while(d.length > 0) d.pop();
     } else {
-      d.push.apply(d, util.array(deps));
+      if(!util.isArray(deps) && d.indexOf(deps) < 0) d.push(deps);
+      else d.push.apply(d, util.array(deps));
     }
     return this;
   };
@@ -1020,7 +1032,7 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
     return this;
   };
 
-  proto.prev = function(bool) {
+  proto.needsPrev = function(bool) {
     if(!arguments.length) return this._needsPrev;
     this._needsPrev = !!bool;
     return this;
@@ -1194,7 +1206,20 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
     return this;
   };
 
-  proto.last = function() { return this._output; }
+  proto.needsPrev = function(p) {
+    // If we've not needed prev in the past, but a new dataflow node needs it now
+    // ensure existing tuples have prev set.
+    if(!this._needsPrev && p) { 
+      this._data.forEach(function(d) { 
+        if(d._prev === undefined) d._prev = C.SENTINEL 
+      });
+    }
+
+    this._needsPrev = this._needsPrev || p;
+    return this;
+  };
+
+  proto.last = function() { return this._output; };
 
   proto.fire = function(input) {
     if(input) this._input = input;
@@ -1209,7 +1234,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
       // the output.
       ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
-      ds._needsPrev = pipeline.some(function(p) { return !!p.prev() });
+      ds._needsPrev = pipeline.some(function(p) { return p.needsPrev(); });
     }
 
     // Input node applies the datasource's delta, and propagates it to 
@@ -1461,7 +1486,7 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
         data.forEach(function(d) { 
           var ds = graph.data(d);
           ds.addListener(c); 
-          ds._needsPrev = ds._needsPrev || n.prev();
+          ds.needsPrev(n.needsPrev());
         });
       }
 
@@ -2903,7 +2928,6 @@ define('transforms/Parameter',['require','exports','module','../parse/expr','../
   function Parameter(name, type) {
     this._name = name;
     this._type = type;
-    this._stamp = 0; // Last stamp seen on resolved signals
 
     // If parameter is defined w/signals, it must be resolved
     // on every pulse.
@@ -2934,7 +2958,7 @@ define('transforms/Parameter',['require','exports','module','../parse/expr','../
   proto.get = function(graph) {
     var isData  = dataType.test(this._type),
         isField = fieldType.test(this._type),
-        s, sg, idx, val, last;
+        s, idx, val;
 
     // If we don't require resolution, return the value immediately.
     if(!this._resolution) return this._get();
@@ -2946,17 +2970,14 @@ define('transforms/Parameter',['require','exports','module','../parse/expr','../
 
     for(s in this._signals) {
       idx  = this._signals[s];
-      sg   = graph.signal(s); 
-      val  = sg.value();
-      last = sg.last();
+      val  = graph.signalRef(s);
 
       if(isField) {
-        this._accessors[idx] = this._stamp <= last ? 
+        this._accessors[idx] = this._value[idx] != val ? 
           util.accessor(val) : this._accessors[idx];
       }
 
       this._value[idx] = val;
-      this._stamp = Math.max(this._stamp, last);
     }
 
     return this._get();
@@ -3191,8 +3212,10 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
     this._refs  = []; // accessors to groupby fields
     this._cells = {};
     return Transform.prototype.init.call(this, graph)
-      .router(true).prev(true);
+      .router(true).needsPrev(true);
   };
+
+  proto.data = function() { return this._cells; };
 
   proto._reset = function(input, output) {
     var k, c;
@@ -3242,7 +3265,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
   };
 
   proto._mod = function(x, reset) {
-    if(x._prev !== C.SENTINEL && this._keys(x._prev) !== undefined) {
+    if(x._prev && x._prev !== C.SENTINEL && this._keys(x._prev) !== undefined) {
       this._rem(x._prev);
       return this._add(x);
     } else if(reset) { // Signal change triggered reflow
@@ -3261,7 +3284,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
     input.add.forEach(function(x) { aggregate._add(x); });
     input.mod.forEach(function(x) { aggregate._mod(x, reset); });
     input.rem.forEach(function(x) {
-      if(x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
+      if(x._prev && x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
         aggregate._rem(x._prev)
       } else {
         aggregate._rem(x);
@@ -3320,8 +3343,8 @@ define('transforms/Facet',['require','exports','module','./Transform','./Aggrega
       if(!c) continue;
       output.rem.push(c.tpl);
       c.delete();
-      this._cells[k] = null;
     }
+    this._cells = {};
   };
 
   proto._new_tuple = function(x, k) {
@@ -3467,7 +3490,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
     this._output = {key: "key", value: "value"};
     this._cache = {};
 
-    return this.router(true).prev(true);
+    return this.router(true).needsPrev(true);
   }
 
   var proto = (Fold.prototype = new Transform());
@@ -3759,13 +3782,14 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
   types.create = compile;
   return types;
 });
-define('transforms/Stats',['require','exports','module','./Transform','./Aggregate','../dataflow/tuple','../dataflow/changeset','./measures','../util/index'],function(require, exports, module) {
+define('transforms/Stats',['require','exports','module','./Transform','./Aggregate','../dataflow/tuple','../dataflow/changeset','./measures','../util/index','../util/constants'],function(require, exports, module) {
   var Transform = require('./Transform'),
       Aggregate = require('./Aggregate'),
       tuple = require('../dataflow/tuple'), 
       changeset = require('../dataflow/changeset'), 
       meas = require('./measures'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      C = require('../util/constants');
 
   function Stats(graph) {
     Aggregate.prototype.init.call(this, graph);
@@ -3802,6 +3826,7 @@ define('transforms/Stats',['require','exports','module','./Transform','./Aggrega
 
   proto.measures = { 
     set: function(transform, aggs) {
+      if(aggs.indexOf(C.COUNT) < 0) aggs.push(C.COUNT); // Need count for correct Aggregate propagation.
       transform._Measures = meas.create(aggs.map(function(a) { 
         return meas[a](transform._output[a]); 
       }));
@@ -3810,10 +3835,12 @@ define('transforms/Stats',['require','exports','module','./Transform','./Aggrega
   };
 
   proto._reset = function(input, output) {
-    for(var k in this._cells) { 
-      if(!input.facet) output.rem.push(this._cells[k].set());
-      this._cells[k] = null;
+    var k, c
+    for(k in this._cells) { 
+      if(!(c = this._cells[k])) continue;
+      if(!input.facet) output.rem.push(c.set());
     }
+    this._cells = {};
   };
 
   proto._keys = function(x) {
@@ -3830,15 +3857,6 @@ define('transforms/Stats',['require','exports','module','./Transform','./Aggrega
   proto._add = function(x) {
     var field = this.on.get(this._graph).accessor;
     this._cell(x).add(field(x));
-  };
-
-  proto._mod = function(x, reset) {
-    var field = this.on.get(this._graph).accessor,
-        cell = this._cell(x);
-
-    if(x._prev) cell.mod(field(x), field(x._prev));
-    else if(reset) cell.add(field(x));
-    return cell;
   };
 
   proto._rem = function(x) {
@@ -3927,7 +3945,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
     this._collector = new Collector(graph);
     this._lastJoin = 0;
 
-    return this.prev(true);
+    return this.needsPrev(true);
   }
 
   var proto = (Zip.prototype = new Transform());
@@ -4094,7 +4112,7 @@ define('parse/modify',['require','exports','module','../dataflow/Node','../dataf
       var datum = {}, 
           value = signal ? graph.signalRef(def.signal) : null,
           d = model.data(ds.name),
-          prev = d._needsPrev ? null : undefined,
+          prev = d.needsPrev() ? null : undefined,
           t = null;
 
       datum[def.field] = value;
@@ -4372,7 +4390,6 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     this._ds    = util.isString(this._from) ? model.data(this._from) : null;
     this._map   = {};
     this._items = [];
-    this._lastBuild = 0;
 
     mark.def = def;
     mark.marktype = def.type;
@@ -4410,9 +4427,8 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
       fcs = this._ds.last();
       if(!fcs) return (output.reflow = true, output);
-      if(fcs.stamp <= this._lastBuild) return output;
+      if(fcs.stamp <= this._stamp) return output;
 
-      this._lastBuild = fcs.stamp;
       return joinChangeset.call(this, fcs);
     } else {
       data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
@@ -4581,48 +4597,92 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
   return Builder;
 });
-define('parse/scale',['require','exports','module','d3','../util/config','../util/index','../util/constants'],function(require, module, exports) {
+define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../transforms/Stats','../dataflow/changeset','../util/index','../util/config','../util/constants'],function(require, exports, module) {
   var d3 = require('d3'),
-      config = require('../util/config'),
+      Node = require('../dataflow/Node'),
+      Stats = require('../transforms/Stats'),
+      changeset = require('../dataflow/changeset'),
       util = require('../util/index'),
+      config = require('../util/config'),
       C = require('../util/constants');
 
   var GROUP_PROPERTY = {width: 1, height: 1};
 
-  function scale(model, def, group) {
-    var s = instance(def, group.scale(def.name)),
-        m = s.type===C.ORDINAL ? ordinal : quantitative,
-        rng = range(model, def, group),
-        data = util.values(group.datum);
+  function Scale(model, def, parent) {
+    this._model = model;
+    this._def = def;
+    this._parent = parent;
+    return Node.prototype.init.call(this, model.graph);
+  }
 
-    m(model, def, s, rng, data);
+  var proto = (Scale.prototype = new Node());
+
+  proto.evaluate = function(input) {
+    var self = this,
+        fn = function(group) { scale.call(self, group); };
+
+    input.add.forEach(fn);
+    input.mod.forEach(fn);
+
+    // Scales are at the end of an encoding pipeline, so they should forward a
+    // reflow pulse. Thus, if multiple scales update in the parent group, we don't
+    // reevaluate child marks multiple times. 
+    return changeset.create(input, true);
+  };
+
+  // All of a scale's dependencies are registered during propagation as we parse
+  // dataRefs. So a scale must be responsible for connecting itself to dependents.
+  proto.dependency = function(type, deps) {
+    Node.prototype.dependency.call(this, type, deps);
+    if(arguments.length === 1) return this._deps[type];
+
+    deps = util.array(deps);
+    for(var i=0, len=deps.length; i<len; ++i) {
+      this._graph[type == C.DATA ? C.DATA : C.SIGNAL](deps[i])
+        .addListener(this._parent);
+    }
+
+    return this;
+  };
+
+  function scale(group) {
+    var name = this._def.name,
+        prev = name + ":prev",
+        s = instance.call(this, group.scale(name)),
+        m = s.type===C.ORDINAL ? ordinal : quantitative,
+        rng = range.call(this, group);
+
+    m.call(this, s, rng, group);
+
+    group.scale(name, s);
+    group.scale(prev, group.scale(prev) || s);
+
     return s;
   }
 
-  function instance(def, scale) {
-    var type = def.type || C.LINEAR;
+  function instance(scale) {
+    var type = this._def.type || C.LINEAR;
     if (!scale || type !== scale.type) {
       var ctor = config.scale[type] || d3.scale[type];
       if (!ctor) util.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = scale.type || type;
-      scale.scaleName = def.name;
+      scale.scaleName = this._def.name;
     }
     return scale;
   }
 
-  function ordinal(model, def, scale, rng, data) {
-    var domain, sort, str, refs, dataDrivenRange = false;
+  function ordinal(scale, rng, group) {
+    var def = this._def,
+        domain, sort, str, refs, dataDrivenRange = false;
     
     // range pre-processing for data-driven ranges
     if (util.isObject(def.range) && !util.isArray(def.range)) {
       dataDrivenRange = true;
-      refs = def.range.fields || util.array(def.range);
-      rng = extract(model, refs, data);
+      rng = dataRef.call(this, C.RANGE, def.range, scale, group);
     }
     
     // domain
-    sort = def.sort && !dataDrivenRange;
-    domain = domainValues(model, def, data, sort);
+    domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
     if (domain) scale.domain(domain);
 
     // range
@@ -4638,13 +4698,14 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
     }
   }
 
-  function quantitative(model, def, scale, rng, data) {
-    var domain, interval;
+  function quantitative(scale, rng, group) {
+    var def = this._def,
+        domain, interval;
 
     // domain
     domain = (def.type === C.QUANTILE)
-      ? domainValues(model, def, data, false)
-      : domainMinMax(model, def, data);
+      ? dataRef.call(this, C.DOMAIN, def.domain, scale, group)
+      : domainMinMax.call(this, scale, group);
     scale.domain(domain);
 
     // range
@@ -4664,70 +4725,96 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
       }
     }
   }
-  
-  function extract(model, refs, data) {
-    return refs.reduce(function(values, r) {        
-      var dat = util.values(model.data(r.data) || data),
-          get = util.accessor(util.isString(r.field)
-              ? r.field : "data." + util.accessor(r.field.group)(data));
-      return util.unique(dat, get, values);
-    }, []);
+
+  function dataRef(which, def, scale, group) {
+    if(util.isArray(def)) return def.map(signal.bind(this));
+
+    var self = this, graph = this._graph,
+        refs = def.fields || util.array(def),
+        uniques = scale.type === C.ORDINAL || scale.type === C.QUANTILE,
+        ck = "_"+which,
+        cache = scale[ck],
+        sort = def.sort,
+        i, rlen, j, flen, r, fields, meas, from, data, keys;
+
+    if(!cache) {
+      cache = scale[ck] = new Stats(graph), meas = [];
+      if(uniques && sort) meas.push(sort.stat);
+      else if(!uniques) meas.push(C.MIN, C.MAX);
+      cache.measures.set(cache, meas);
+    }
+
+    for(i=0, rlen=refs.length; i<rlen; ++i) {
+      r = refs[i];
+      from = r.data || "vg_"+group.datum._id;
+      data = graph.data(from)
+        .needsPrev(true)
+        .last();
+
+      if(data.stamp <= this._stamp) continue;
+
+      fields = util.array(r.field).map(function(f) {
+        if(f.group) return util.accessor(f.group)(group.datum)
+        return f; // String or {"signal"}
+      });
+
+      if(uniques) {
+        cache.on.set(cache, sort ? sort.field : "_id");
+        for(j=0, flen=fields.length; j<flen; ++j) {
+          cache.group_by.set(cache, fields[j])
+            .evaluate(data);
+        }
+      } else {
+        for(j=0, flen=fields.length; j<flen; ++j) {
+          cache.on.set(cache, fields[j])  // Treat as flat datasource
+            .evaluate(data);
+        }
+      }
+
+      this.dependency(C.DATA, from);
+      cache.dependency(C.SIGNALS).forEach(function(s) { self.dependency(C.SIGNALS, s) });
+    }
+
+    data = cache.data();
+    if(uniques) {
+      keys = util.keys(data).filter(function(k) { return data[k] != null; });
+      if(sort) {
+        sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
+        sort = (sort == C.DESC ? "-" : "+") + cache.on.get(graph).field;
+        sort = util.comparator(sort);
+        return keys.map(function(k) { return data[k] }).sort(sort);
+      } else {
+        return keys;
+      }
+    } else {
+      data = data[""]; // Unpack flat aggregation
+      return data == null ? [] : [data.tpl.min, data.tpl.max];
+    }
   }
 
-  function signal(model, v) {
-    if(!v.signal) return v;
-    return model.graph.signalRef(v.signal);
+  function signal(v) {
+    var s = v.signal;
+    if(!s) return v;
+    this.dependency(C.SIGNALS, util.field(s).shift());
+    return this._graph.signalRef(s);
   }
-  
-  function domainValues(model, def, data, sort) {
-    var domain = def.domain, values, refs;
-    if (util.isArray(domain)) {
-      values = sort ? domain.slice() : domain;
-      values = values.map(signal.bind(null, model));
-    } else if (util.isObject(domain)) {
-      refs = domain.fields || util.array(domain);
-      values = extract(model, refs, data);
-    }
-    if (values && sort) values.sort(util.cmp);
-    return values;
-  }
-  
-  function domainMinMax(model, def, data) {
-    var domain = [null, null], refs, z;
-    
-    function extract(ref, min, max, z) {
-      var dat = util.values(model.data(ref.data) || data);
-      var fields = util.array(ref.field).map(function(f) {
-        return util.isString(f) ? f
-          : "data." + util.accessor(f.group)(data);
-      });
-      
-      fields.forEach(function(f,i) {
-        f = util.accessor(f);
-        if (min) domain[0] = d3.min([domain[0], d3.min(dat, f)]);
-        if (max) domain[z] = d3.max([domain[z], d3.max(dat, f)]);
-      });
-    }
+
+  function domainMinMax(scale, group) {
+    var def = this._def,
+        domain = [null, null], refs, z;
 
     if (def.domain !== undefined) {
-      if (util.isArray(def.domain)) {
-        domain = def.domain.slice().map(signal.bind(null, model));
-      } else if (util.isObject(def.domain)) {
-        refs = def.domain.fields || util.array(def.domain);
-        refs.forEach(function(r) { extract(r,1,1,1); });
-      } else {
-        domain = def.domain;
-      }
+      domain = (!util.isObject(def.domain)) ? domain :
+        dataRef.call(this, C.DOMAIN, def.domain, scale, group);
     }
+
     z = domain.length - 1;
     if (def.domainMin !== undefined) {
       if (util.isObject(def.domainMin)) {
         if(def.domainMin.signal) {
-          domain[0] = signal(model, def.domainMin);
+          domain[0] = signal.call(this, def.domainMin);
         } else {
-          domain[0] = null;
-          refs = def.domainMin.fields || util.array(def.domainMin);
-          refs.forEach(function(r) { extract(r,1,0,z); });
+          domain[0] = dataRef.call(this, C.DOMAIN+C.MIN, def.domainMin, scale, group)[0];
         }
       } else {
         domain[0] = def.domainMin;
@@ -4736,11 +4823,9 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
     if (def.domainMax !== undefined) {
       if (util.isObject(def.domainMax)) {
         if(def.domainMax.signal) {
-          domain[z] = signal(model, def.domainMax);
+          domain[z] = signal.call(this, def.domainMax);
         } else {
-          domain[z] = null;
-          refs = def.domainMax.fields || util.array(def.domainMax);
-          refs.forEach(function(r) { extract(r,0,1,z); });
+          domain[z] = dataRef.call(this, C.DOMAIN+C.MAX, def.domainMax, scale, group)[1];
         }
       } else {
         domain[z] = def.domainMax;
@@ -4753,8 +4838,9 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
     return domain;
   }
 
-  function range(model, def, group) {
-    var rng = [null, null];
+  function range(group) {
+    var def = this._def,
+        rng = [null, null];
 
     if (def.range !== undefined) {
       if (typeof def.range === 'string') {
@@ -4767,7 +4853,7 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
           return rng;
         }
       } else if (util.isArray(def.range)) {
-        rng = def.range.map(signal.bind(null, model));
+        rng = def.range.map(signal.bind(this));
       } else if (util.isObject(def.range)) {
         return null; // early exit
       } else {
@@ -4775,10 +4861,10 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
       }
     }
     if (def.rangeMin !== undefined) {
-      rng[0] = def.rangeMin.signal ? signal(model, def.rangeMin) : def.rangeMin;
+      rng[0] = def.rangeMin.signal ? signal.call(this, def.rangeMin) : def.rangeMin;
     }
     if (def.rangeMax !== undefined) {
-      rng[rng.length-1] = def.rangeMax.signal ? signal(model, def.rangeMax) : def.rangeMax;
+      rng[rng.length-1] = def.rangeMax.signal ? signal.call(this, def.rangeMax) : def.rangeMax;
     }
     
     if (def.reverse !== undefined) {
@@ -4792,87 +4878,7 @@ define('parse/scale',['require','exports','module','d3','../util/config','../uti
     return rng;
   }
 
-  return scale;
-});
-
-define('scene/scale',['require','exports','module','../dataflow/Node','../parse/scale','../util/index','../dataflow/changeset'],function(require, exports, module) {
-  var Node = require('../dataflow/Node'),
-      parseScale = require('../parse/scale'), 
-      util = require('../util/index'),
-      changeset = require('../dataflow/changeset');
-
-  var ORDINAL = "ordinal";
-
-  return function scale(model, def) {
-    var domain = def.domain||{}; // TODO: support all domain types
-
-    function signals() {
-      var signals = [];
-
-      ['domain', 'range'].forEach(function(t) {
-        if(util.isArray(def[t])) {
-          def[t].forEach(function(v) { if(v.signal) signals.push(v.signal); });
-        }
-        if(def[t+'Min'] && def[t+'Min'].signal) signals.push(def[t+'Min'].signal);
-        if(def[t+'Max'] && def[t+'Max'].signal) signals.push(def[t+'Max'].signal);
-      });
-
-      return signals.map(function(s) { return util.field(s)[0]; });
-    }
-
-    function reeval(group, input) {
-      var from = model.data(domain.data || "vg_"+group.datum._id),
-          fcs = from ? from.last() : null,
-          // prev = group._prev || {},
-          // width = prev.width || {}, height = prev.height || {}, 
-          reeval = fcs ? !!fcs.add.length || !!fcs.rem.length : false;
-
-      if(domain.field) reeval = reeval || fcs.fields[domain.field];
-      reeval = reeval || fcs ? !!fcs.sort && def.type === ORDINAL : false;
-      reeval = reeval || node.reevaluate(input);
-      // reeval = reeval || def.range == 'width'  && width.stamp  == input.stamp;
-      // reeval = reeval || def.range == 'height' && height.stamp == input.stamp;
-
-      input.scales[def.name] = 1;
-      return reeval;
-    }
-
-    function scale(group) {
-      util.debug({}, ["rescaling", group.datum._id]);
-
-      var k = def.name, 
-          scale = parseScale(model, def, group);
-
-      group.scale(k+":prev", group.scale(k) || scale);
-      group.scale(k, scale);
-
-      var deps = node._deps.data, 
-          inherit = domain.data ? false : "vg_"+group.datum._id;
-
-      if(inherit && deps.indexOf(inherit) === -1) deps.push(inherit);
-    }
-
-    var node = new Node(model.graph);
-    node.evaluate = function scaling(input) {
-      util.debug(input, ["scaling", def.name]);
-
-      input.add.forEach(scale);
-      input.mod.forEach(function(group) {
-        if(reeval(group, input)) scale(group);
-      });
-
-      // Scales are at the end of an encoding pipeline, so they should forward a
-      // reflow pulse. Thus, if multiple scales update in the parent group, we don't
-      // reevaluate child marks multiple times. 
-      return changeset.create(input, true);
-    };
-
-    if(domain.data) node._deps.data.push(domain.data);
-    if(domain.field) node._deps.fields.push(domain.field);
-    node._deps.signals = signals();
-
-    return node;
-  };
+  return Scale;
 });
 define('parse/properties',['require','exports','module','../dataflow/tuple','../util/index','../util/config'],function(require, exports, module) {
   var tuple = require('../dataflow/tuple'),
@@ -5740,10 +5746,10 @@ define('parse/axes',['require','exports','module','../scene/axis','../util/confi
   return axes;
 });
 
-define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./Builder','./scale','../parse/axes','../util/index','../util/constants'],function(require, exports, module) {
+define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./Builder','./Scale','../parse/axes','../util/index','../util/constants'],function(require, exports, module) {
   var Node = require('../dataflow/Node'),
       Builder = require('./Builder'),
-      scalefn = require('./scale'),
+      Scale = require('./Scale'),
       parseAxes = require('../parse/axes'),
       util = require('../util/index'),
       C = require('../util/constants');
@@ -5766,9 +5772,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
     this._scaler = new Node(model.graph);
 
     (def.scales||[]).forEach(function(s) { 
-      s = builder.scale(s.name, scalefn(model, s));
-      s.dependency(C.DATA).forEach(function(d) { model.data(d).addListener(builder); });
-      s.dependency(C.SIGNALS).forEach(function(s) { model.graph.signal(s).addListener(builder); });
+      s = builder.scale(s.name, new Scale(model, s, builder));
       builder._scaler.addListener(s);  // Scales should be computed after group is encoded
     });
 

@@ -38,6 +38,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "table", "field": "position"},
       "range": "category20"
     }
   ],

@@ -17,7 +17,7 @@ define(function(require, exports, module) {
     this._collector = new Collector(graph);
     this._lastJoin = 0;
 
-    return this.prev(true);
+    return this.needsPrev(true);
   }
 
   var proto = (Zip.prototype = new Transform());

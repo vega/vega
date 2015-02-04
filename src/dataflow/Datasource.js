@@ -70,7 +70,20 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.last = function() { return this._output; }
+  proto.needsPrev = function(p) {
+    // If we've not needed prev in the past, but a new dataflow node needs it now
+    // ensure existing tuples have prev set.
+    if(!this._needsPrev && p) { 
+      this._data.forEach(function(d) { 
+        if(d._prev === undefined) d._prev = C.SENTINEL 
+      });
+    }
+
+    this._needsPrev = this._needsPrev || p;
+    return this;
+  };
+
+  proto.last = function() { return this._output; };
 
   proto.fire = function(input) {
     if(input) this._input = input;
@@ -85,7 +98,7 @@ define(function(require, exports, module) {
       // the output.
       ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
-      ds._needsPrev = pipeline.some(function(p) { return !!p.prev() });
+      ds._needsPrev = pipeline.some(function(p) { return p.needsPrev(); });
     }
 
     // Input node applies the datasource's delta, and propagates it to 

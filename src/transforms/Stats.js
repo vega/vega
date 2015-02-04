@@ -4,7 +4,8 @@ define(function(require, exports, module) {
       tuple = require('../dataflow/tuple'), 
       changeset = require('../dataflow/changeset'), 
       meas = require('./measures'),
-      util = require('../util/index');
+      util = require('../util/index'),
+      C = require('../util/constants');
 
   function Stats(graph) {
     Aggregate.prototype.init.call(this, graph);
@@ -41,6 +42,7 @@ define(function(require, exports, module) {
 
   proto.measures = { 
     set: function(transform, aggs) {
+      if(aggs.indexOf(C.COUNT) < 0) aggs.push(C.COUNT); // Need count for correct Aggregate propagation.
       transform._Measures = meas.create(aggs.map(function(a) { 
         return meas[a](transform._output[a]); 
       }));
@@ -71,15 +73,6 @@ define(function(require, exports, module) {
   proto._add = function(x) {
     var field = this.on.get(this._graph).accessor;
     this._cell(x).add(field(x));
-  };
-
-  proto._mod = function(x, reset) {
-    var field = this.on.get(this._graph).accessor,
-        cell = this._cell(x);
-
-    if(x._prev) cell.mod(field(x), field(x._prev));
-    else if(reset) cell.add(field(x));
-    return cell;
   };
 
   proto._rem = function(x) {

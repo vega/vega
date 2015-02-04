@@ -52,7 +52,8 @@ define(function(require, exports, module) {
     if(deps === null) { // Clear dependencies of a certain type
       while(d.length > 0) d.pop();
     } else {
-      d.push.apply(d, util.array(deps));
+      if(!util.isArray(deps) && d.indexOf(deps) < 0) d.push(deps);
+      else d.push.apply(d, util.array(deps));
     }
     return this;
   };
@@ -69,7 +70,7 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.prev = function(bool) {
+  proto.needsPrev = function(bool) {
     if(!arguments.length) return this._needsPrev;
     this._needsPrev = !!bool;
     return this;

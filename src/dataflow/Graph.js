@@ -133,7 +133,7 @@ define(function(require, exports, module) {
         data.forEach(function(d) { 
           var ds = graph.data(d);
           ds.addListener(c); 
-          ds._needsPrev = ds._needsPrev || n.prev();
+          ds.needsPrev(n.needsPrev());
         });
       }
 

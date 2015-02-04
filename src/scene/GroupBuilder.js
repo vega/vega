@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var Node = require('../dataflow/Node'),
       Builder = require('./Builder'),
-      scalefn = require('./scale'),
+      Scale = require('./Scale'),
       parseAxes = require('../parse/axes'),
       util = require('../util/index'),
       C = require('../util/constants');
@@ -24,9 +24,7 @@ define(function(require, exports, module) {
     this._scaler = new Node(model.graph);
 
     (def.scales||[]).forEach(function(s) { 
-      s = builder.scale(s.name, scalefn(model, s));
-      s.dependency(C.DATA).forEach(function(d) { model.data(d).addListener(builder); });
-      s.dependency(C.SIGNALS).forEach(function(s) { model.graph.signal(s).addListener(builder); });
+      s = builder.scale(s.name, new Scale(model, s, builder));
       builder._scaler.addListener(s);  // Scales should be computed after group is encoded
     });
 
