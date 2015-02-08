@@ -168,12 +168,13 @@ vg.keys = function(x) {
 };
 
 vg.unique = function(data, f, results) {
-  if (!vg.isArray(data) || data.length==0) return [];
+  if (!vg.isArray(data) || data.length===0) return [];
   f = f || vg.identity;
   results = results || [];
-  for (var v, i=0, n=data.length; i<n; ++i) {
+  for (var v, idx, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
-    if (results.indexOf(v) < 0) results.push(v);
+    idx = vg_bisectLeft(results, v, 0, results.length);
+    if (results[idx] !== v) results.splice(idx, 0, v);
   }
   return results;
 };
@@ -223,7 +224,7 @@ vg.bins = function(opt) {
     // if provided, limit choice to acceptable step sizes
     step = opt.steps[Math.min(
         opt.steps.length - 1,
-        vg_bisectLeft(opt.steps, span / maxb)
+        vg_bisectLeft(opt.steps, span / maxb, 0, opt.steps.length)
     )];
   } else {
     // increase step size if too many bins
@@ -258,8 +259,6 @@ vg.bins = function(opt) {
 };
 
 function vg_bisectLeft(a, x, lo, hi) {
-  if (arguments.length < 3) { lo = 0; }
-  if (arguments.length < 4) { hi = a.length; }
   while (lo < hi) {
     var mid = lo + hi >>> 1;
     if (vg.cmp(a[mid], x) < 0) { lo = mid + 1; }
