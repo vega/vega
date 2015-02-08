@@ -14,6 +14,7 @@ require("d3-geo-projection")(d3);
 
 // load and export vega
 require("./vega");
+vg.config.isNode = true; // we are running in node.js
 module.exports = vg;
 
 // restore pre-existing global values

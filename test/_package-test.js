@@ -4,6 +4,14 @@ var vows = require('vows'),
 var suite = vows.describe('_package');
 
 suite.addBatch({
+  '_config': {
+    topic: require('../index.js'),
+    'isNode': {
+      'isNode should be true': function (vg) {
+        assert.equal(vg.config.isNode, true);
+      }
+    }
+  },
   '_package': {
     topic: require('../index.js'),
     'isNumber': {

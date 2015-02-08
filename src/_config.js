@@ -1,8 +1,8 @@
 vg.config = {};
 
 // are we running in node.js?
-// via timetler.com/2012/10/13/environment-detection-in-javascript/
-vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
+// false by default, node wrapper should set true as needed
+vg.config.isNode = false;
 
 // Allows domain restriction when using data loading via XHR.
 // To enable, set it to a list of allowed domains
