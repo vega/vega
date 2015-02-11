@@ -4,20 +4,23 @@ vg.data.truncate = function() {
       position = "right",
       ellipsis = "...",
       wordBreak = true,
-      limit = 100;
-  
+      limit = 100,
+      setter;
+
   var truncate = vg.data.mapper(function(d) {
     var text = vg.truncate(value(d), limit, position, wordBreak, ellipsis);
-    return (d[as] = text, d);
+    setter(d, text);
+    return d;
   });
 
   truncate.value = function(field) {
     value = vg.accessor(field);
     return truncate;
   };
-  
+
   truncate.output = function(field) {
     as = field;
+    setter = vg.mutator(field);
     return truncate;
   };
 
@@ -25,7 +28,7 @@ vg.data.truncate = function() {
     limit = +len;
     return truncate;
   };
-  
+
   truncate.position = function(pos) {
     position = pos;
     return truncate;
