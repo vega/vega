@@ -192,7 +192,7 @@ vg.parse.scales = (function() {
           return rng;
         }
       } else if (vg.isArray(def.range)) {
-        rng = def.range;
+        rng = vg.duplicate(def.range);
       } else if (vg.isObject(def.range)) {
         return null; // early exit
       } else {
