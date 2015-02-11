@@ -2134,6 +2134,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 })();vg.canvas.Handler = (function() {
   var handler = function(el, model) {
     this._active = null;
+    this._down = null;
     this._handlers = {};
     if (el) this.initialize(el);
     if (model) this.model(model);
@@ -2178,9 +2179,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
   // setup events
   var events = [
-    "mousedown",
     "mouseup",
-    "click",
     "dblclick",
     "wheel",
     "keydown",
@@ -2193,8 +2192,10 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       this.fire(type, evt);
     };
   });
+  events.push("mousedown");
   events.push("mousemove");
   events.push("mouseout");
+  events.push("click");
 
   function eventName(name) {
     var i = name.indexOf(".");
@@ -2228,6 +2229,18 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._active = null;
   };
 
+  prototype.mousedown = function(evt) {
+    this._down = this._active;
+    this.fire("mousedown", evt);
+  };
+
+  prototype.click = function(evt) {
+    if (this._down === this._active) {
+      this.fire("click", evt);
+      this._down = null;
+    }
+  };
+  
   // to keep firefox happy
   prototype.DOMMouseScroll = function(evt) {
     this.fire("mousewheel", evt);
