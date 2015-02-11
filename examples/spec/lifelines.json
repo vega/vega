@@ -112,7 +112,7 @@
         "enter": {
           "x": {"scale": "x", "field": "data.enter"},
           "x2": {"scale": "x", "field": "data.leave"},
-          "y": {"scale": "y", "field": "data.label", "offset":-1},
+          "y": {"scale": "y", "field": "index", "offset":-1},
           "height": {"value": 4},
           "fill": {"value": "#e44"}
         }
