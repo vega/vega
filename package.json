@@ -18,20 +18,26 @@
     "url": "http://github.com/trifacta/vega.git"
   },
   "main": "index.js",
+  "browser": {
+    "buffer": false,
+    "canvas": false,
+    "fs": false,
+    "http": false
+  },
   "bin": {
     "vg2png": "./bin/vg2png",
     "vg2svg": "./bin/vg2svg"
   },
   "dependencies": {
-    "d3": "3.5.2",
-    "canvas": "1.1.6",
-    "optimist": "0.6.1",
-    "topojson": "1.6.18",
-    "d3-geo-projection": "0.2.12"
+    "d3": "^3.5.5",
+    "d3-geo-projection": "^0.2.13",
+    "canvas": "~1.1.6",
+    "topojson": "^1.6.18",
+    "yargs": "^2.3.0"
   },
   "devDependencies": {
-    "uglify-js": "2.4.16",
-    "vows": "0.8.1"
+    "uglify-js": "^2.4.16",
+    "vows": "^0.8.1"
   },
   "scripts": {
     "test": "node_modules/.bin/vows; echo"

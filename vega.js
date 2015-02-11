@@ -2419,11 +2419,12 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   }
     
   function fontString(o) {
-    return (o.fontStyle ? o.fontStyle + " " : "")
+    var f = (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
       + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
       + (o.font || vg.config.render.font);
+    return f;
   }
   
   function text(o) {
@@ -2485,11 +2486,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
   function draw(tag, attr, nest) {
     return function(g, scene, index) {
-      drawMark(g, scene, index, "mark_", tag, attr, nest);
+      drawMark(g, scene, index, tag, attr, nest);
     };
   }
   
-  function drawMark(g, scene, index, prefix, tag, attr, nest) {
+  function drawMark(g, scene, index, tag, attr, nest) {
     var data = nest ? [scene.items] : scene.items,
         evts = scene.interactive===false ? "none" : null,
         grps = g.node().childNodes,
@@ -2523,8 +2524,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     return p;
   }
 
-  function drawGroup(g, scene, index, prefix) {
-    var p = drawMark(g, scene, index, prefix || "group_", "g", group),
+  function drawGroup(g, scene, index) {
+    var p = drawMark(g, scene, index, "g", group),
         c = p.node().childNodes, n = c.length, i, j, m;
     
     for (i=0; i<n; ++i) {
@@ -2536,7 +2537,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
 
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer === "back") {
-          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+          drawGroup.call(this, sel, axes[j], idx++);
         }
       }
       for (j=0, m=items.length; j<m; ++j) {
@@ -2544,11 +2545,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       }
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer !== "back") {
-          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+          drawGroup.call(this, sel, axes[j], idx++);
         }
       }
       for (j=0, m=legends.length; j<m; ++j) {
-        drawGroup.call(this, sel, legends[j], idx++, "legend_");
+        drawGroup.call(this, sel, legends[j], idx++);
       }
     }
   }
@@ -7285,7 +7286,407 @@ vg.Spec = (function() {
 vg.spec = function(s) {
   return new vg.Spec(s);
 };
-vg.headless = {};vg.headless.View = (function() {
+vg.headless = {};
+
+vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
+  
+  var renderer = function() {
+    this._text = {
+      head: "",
+      root: "",
+      foot: "",
+      defs: "",
+      body: ""
+    };
+    this._defs = {
+      gradient: {},
+      clipping: {}
+    };
+  };
+
+  function open(tag, attr, raw) {
+    var s = "<" + tag;
+    if (attr) {
+      for (var key in attr) {
+        var val = attr[key];
+        if (val != null) {
+          s += " " + key + '="' + val + '"';
+        }
+      }
+    }
+    if (raw) s += " " + raw;
+    return s + ">";
+  }
+
+  function close(tag) {
+    return "</" + tag + ">";
+  }
+
+  var prototype = renderer.prototype;
+  
+  prototype.initialize = function(el, w, h, pad) {
+    var t = this._text;
+
+    t.head = open('svg', {
+      width: w,
+      height: h,
+    }, vg.config.svgNamespace);
+
+    t.root = open('g', {
+      transform: 'translate(' + pad.left + ',' + pad.top + ')'
+    });
+
+    t.foot = close('g') + close('svg');
+  };
+  
+  prototype.svg = function() {
+    var t = this._text;
+    return t.head + t.defs + t.root + t.body + t.foot;
+  };
+  
+  prototype.buildDefs = function() {
+    var all = this._defs,
+        dgrad = vg.keys(all.gradient),
+        dclip = vg.keys(all.clipping),
+        defs = "", grad, clip, i, j;
+
+    for (i=0; i<dgrad.length; ++i) {
+      var id = dgrad[i],
+          def = all.gradient[id],
+          stops = def.stops;
+
+      defs += open("linearGradient", {
+        id: id,
+        x1: def.x1,
+        x2: def.x2,
+        y1: def.y1,
+        y2: def.y2
+      });
+      
+      for (j=0; j<stops.length; ++j) {
+        defs += open("stop", {
+          offset: stops[j].offset,
+          "stop-color": stops[j].color
+        }) + close("stop");
+      }
+      
+      defs += close("linearGradient");
+    }
+    
+    for (i=0; i<dclip.length; ++i) {
+      var id = dclip[i],
+          def = all.clipping[id];
+
+      defs += open("clipPath", {id: id});
+
+      defs += open("rect", {
+        x: 0,
+        y: 0,
+        width: def.width,
+        height: def.height
+      }) + close("rect");
+
+      defs += close("clipPath");
+    }
+    
+    return defs;
+  };
+  
+  prototype.render = function(scene) {
+    this._text.body = this.draw(scene);
+    this._text.defs = this.buildDefs();
+  };
+
+  prototype.draw = function(scene) {
+    var meta = MARKS[scene.marktype],
+        tag  = meta[0],
+        attr = meta[1],
+        nest = meta[2] || false,
+        data = nest ? [scene.items] : scene.items,
+        defs = this._defs,
+        svg = "", i, sty;
+
+    svg += open('g', {'class': cssClass(scene.def)});
+
+    for (i=0; i<data.length; ++i) {
+      sty = tag === 'g' ? null : style(data[i], tag, defs);
+      svg += open(tag, attr(data[i], defs), sty);
+      if (tag === 'text') svg += data[i].text;
+      if (tag === 'g') svg += this.drawGroup(data[i]);
+      svg += close(tag);
+    }
+
+    return svg + close('g');
+  };
+
+  var MARKS = {
+    group:  ['g', group],
+    area:   ['path', area, true],
+    line:   ['path', line, true],
+    arc:    ['path', arc],
+    path:   ['path', path],
+    symbol: ['path', symbol],
+    rect:   ['rect', rect],
+    rule:   ['line', rule],
+    text:   ['text', text],
+    image:  ['image', image]
+  };
+
+  prototype.drawGroup = function(scene) {
+    var svg = "",
+        axes = scene.axisItems || [],
+        items = scene.items,
+        legends = scene.legendItems || [],
+        i, j, m;
+
+    svg += group_bg(scene);
+
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].def.layer === "back") {
+        svg += this.draw(axes[j]);
+      }
+    }
+    for (j=0, m=items.length; j<m; ++j) {
+      svg += this.draw(items[j]);
+    }
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].def.layer !== "back") {
+        svg += this.draw(axes[j]);
+      }
+    }
+    for (j=0, m=legends.length; j<m; ++j) {
+      svg += this.draw(legends[j]);
+    }
+
+    return svg;
+  };
+  
+  ///
+
+  function group_bg(o) {
+    var w = o.width || 0,
+        h = o.height || 0;
+    if (w === 0 && h === 0) return "";
+
+    return open('rect', {
+      'class': 'background',
+      width: w,
+      height: h
+    }, style(o, 'rect')) + close('rect');
+  }
+  
+  function group(o, defs) {
+    var x = o.x || 0,
+        y = o.y || 0,
+        attr = {transform: "translate("+x+","+y+")"};
+
+    if (o.clip) {
+      var c = {width: o.width || 0, height: o.height || 0},
+          id = o.clip_id || (o.clip_id = "clip" + clip_id++);
+      defs.clipping[id] = c;
+      attr["clip-path"] = "url(#"+id+")";
+    }
+
+    return attr;
+  }
+  
+  function arc(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    return {
+      transform: "translate("+x+","+y+")",
+      d: arc_path(o)
+    };
+  }
+  
+  function area(items) {
+    if (!items.length) return;
+    var o = items[0],
+        path = o.orient === "horizontal" ? area_path_h : area_path_v;
+    path
+      .interpolate(o.interpolate || "linear")
+      .tension(o.tension == null ? 0.7 : o.tension);
+    return {d: path(items)};
+  }
+  
+  function line(items) {
+    if (!items.length) return;
+    var o = items[0];
+    line_path
+      .interpolate(o.interpolate || "linear")
+      .tension(o.tension == null ? 0.7 : o.tension);
+    return {d: line_path(items)};
+  }
+  
+  function path(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    return {
+      transform: "translate("+x+","+y+")",
+      d: o.path
+    };
+  }
+
+  function rect(o) {
+    return {
+      x: o.x || 0,
+      y: o.y || 0,
+      width: o.width || 0,
+      height: o.height || 0
+    };
+  }
+
+  function rule(o) {
+    var x1 = o.x || 0,
+        y1 = o.y || 0;
+    return {
+      x1: x1,
+      y1: y1,
+      x2: o.x2 != null ? o.x2 : x1,
+      y2: o.y2 != null ? o.y2 : y1
+    };
+  }
+  
+  function symbol(o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    return {
+      transform: "translate("+x+","+y+")",
+      d: symbol_path(o)
+    };
+  }
+  
+  function image(o) {
+    var w = o.width || (o.image && o.image.width) || 0,
+        h = o.height || (o.image && o.image.height) || 0,
+        x = o.x - (o.align === "center"
+          ? w/2 : (o.align === "right" ? w : 0)),
+        y = o.y - (o.baseline === "middle"
+          ? h/2 : (o.baseline === "bottom" ? h : 0)),
+        url = vg.config.baseURL + o.url;
+    
+    return {
+      "xlink:href": url,
+      x: x,
+      y: y,
+      width: w,
+      height: h
+    };
+  }
+  
+  function text(o) {
+    var x = o.x || 0,
+        y = o.y || 0,
+        dx = o.dx || 0,
+        dy = o.dy || 0,
+        a = o.angle || 0,
+        r = o.radius || 0,
+        align = textAlign[o.align || "left"],
+        base = o.baseline==="top" ? ".9em"
+             : o.baseline==="middle" ? ".35em" : 0;
+
+    if (r) {
+      var t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
+
+    return {
+      x: x + dx,
+      y: y + dy,
+      'text-anchor': align,
+      transform: a ? "rotate("+a+" "+x+","+y+")" : null,
+      dy: base ? base : null
+    };
+  }
+  
+  ///
+
+  function cssClass(def) {
+    var cls = "type-" + def.type;
+    if (def.name) cls += " " + def.name;
+    return cls;
+  }
+
+  function x(o)     { return o.x || 0; }
+  function y(o)     { return o.y || 0; }
+  function xw(o)    { return o.x + o.width || 0; }
+  function yh(o)    { return o.y + o.height || 0; }
+  function key(o)   { return o.key; }
+  function size(o)  { return o.size==null ? 100 : o.size; }
+  function shape(o) { return o.shape || "circle"; }
+
+  var arc_path    = d3.svg.arc(),
+      area_path_v = d3.svg.area().x(x).y1(y).y0(yh),
+      area_path_h = d3.svg.area().y(y).x0(xw).x1(x),
+      line_path   = d3.svg.line().x(x).y(y),
+      symbol_path = d3.svg.symbol().type(shape).size(size);
+
+  var mark_id = 0,
+      clip_id = 0;
+
+  var textAlign = {
+    "left":   "start",
+    "center": "middle",
+    "right":  "end"
+  };
+
+  var styles = {
+    "fill":             "fill",
+    "fillOpacity":      "fill-opacity",
+    "stroke":           "stroke",
+    "strokeWidth":      "stroke-width",
+    "strokeOpacity":    "stroke-opacity",
+    "strokeCap":        "stroke-linecap",
+    "strokeDash":       "stroke-dasharray",
+    "strokeDashOffset": "stroke-dashoffset",
+    "opacity":          "opacity"
+  };
+
+  var styleProps = vg.keys(styles);
+
+  function style(d, tag, defs) {
+    var i, n, prop, name, value,
+        o = d.mark ? d : d.length ? d[0] : null;
+    if (o === null) return null;
+
+    var s = "";
+    for (i=0, n=styleProps.length; i<n; ++i) {
+      prop = styleProps[i];
+      name = styles[prop];
+      value = o[prop];
+
+      if (value == null) {
+        if (name === "fill") s += 'fill:none;';
+      } else {
+        if (value.id) {
+          // ensure definition is included
+          defs.gradient[value.id] = value;
+          value = "url(" + window.location.href + "#" + value.id + ")";
+        }
+        s += name + ':' + value + ';'
+      }
+    }
+    
+    if (tag === 'text') {
+      s += 'font:' + fontString(o); + ';';
+    }
+    
+    return s.length ? 'style="'+s+'"' : null;
+  }
+
+  function fontString(o) {
+    var f = (o.fontStyle ? o.fontStyle + " " : "")
+      + (o.fontVariant ? o.fontVariant + " " : "")
+      + (o.fontWeight ? o.fontWeight + " " : "")
+      + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
+      + (o.font || vg.config.render.font);
+    return f;
+  }
+
+  return renderer;
+
+})();vg.headless.View = (function() {
   
   var view = function(width, height, pad, type, vp) {
     this._canvas = null;
@@ -7297,7 +7698,7 @@ vg.headless = {};vg.headless.View = (function() {
     this._height = this.__height = height || 500;
     this._padding = pad || {top:0, left:0, bottom:0, right:0};
     this._autopad = vg.isString(this._padding) ? 1 : 0;
-    this._renderer = new vg[type].Renderer();
+    this._renderer = new vg.headless[type]();
     this._viewport = vp || null;
     this.initialize();
   };
@@ -7311,6 +7712,10 @@ vg.headless = {};vg.headless.View = (function() {
       this.initialize();
     }
     return this;
+  };
+
+  prototype.model = function() {
+    return this._model;
   };
 
   prototype.width = function(width) {
@@ -7426,26 +7831,9 @@ vg.headless = {};vg.headless.View = (function() {
   };
   
   prototype.svg = function() {
-    if (this._type !== "svg") return null;
-
-    var p = this._padding,
-        w = this._width  + (p ? p.left + p.right : 0),
-        h = this._height + (p ? p.top + p.bottom : 0);
-
-    if (this._viewport) {
-      w = this._viewport[0] - (p ? p.left + p.right : 0);
-      h = this._viewport[1] - (p ? p.top + p.bottom : 0);
-    }
-
-      // build svg text
-    var svg = d3.select(this._el)
-      .select("svg").node().innerHTML
-      .replace(/ href=/g, " xlink:href="); // ns hack. sigh.
-
-    return '<svg '
-      + 'width="' + w + '" '
-      + 'height="' + h + '" '
-      + vg.config.svgNamespace + '>' + svg + '</svg>'
+    return (this._type === "svg")
+      ? this._renderer.svg()
+      : null;
   };
 
   prototype.initialize = function() {    
@@ -7469,8 +7857,8 @@ vg.headless = {};vg.headless.View = (function() {
   
   prototype.initCanvas = function(w, h, pad) {
     var Canvas = require("canvas"),
-        tw = w + pad.left + pad.right,
-        th = h + pad.top + pad.bottom,
+        tw = w + (pad ? pad.left + pad.right : 0),
+        th = h + (pad ? pad.top + pad.bottom : 0),
         canvas = this._canvas = new Canvas(tw, th),
         ctx = canvas.getContext("2d");
     
@@ -7483,11 +7871,11 @@ vg.headless = {};vg.headless.View = (function() {
   };
   
   prototype.initSVG = function(w, h, pad) {
-    var tw = w + pad.left + pad.right,
-        th = h + pad.top + pad.bottom;
+    var tw = w + (pad ? pad.left + pad.right : 0),
+        th = h + (pad ? pad.top + pad.bottom : 0);
 
     // configure renderer
-    this._renderer.initialize(this._el, w, h, pad);
+    this._renderer.initialize(this._el, tw, th, pad);
   }
   
   prototype.render = function(items) {
@@ -7534,11 +7922,11 @@ vg.headless.View.Factory = function(defs) {
 
       if (opt.renderer === "svg") {
         // extract rendered svg
-        callback(null, {svg: view.svg()});
+        callback(null, {svg: view.svg(), view: view});
       } else {
         // extract rendered canvas, waiting for any images to load
         view.canvasAsync(function(canvas) {
-          callback(null, {canvas: canvas});
+          callback(null, {canvas: canvas, view: view});
         });
       }
     } catch (err) {

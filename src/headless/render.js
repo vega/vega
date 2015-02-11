@@ -9,11 +9,11 @@ vg.headless.render = function(opt, callback) {
 
       if (opt.renderer === "svg") {
         // extract rendered svg
-        callback(null, {svg: view.svg()});
+        callback(null, {svg: view.svg(), view: view});
       } else {
         // extract rendered canvas, waiting for any images to load
         view.canvasAsync(function(canvas) {
-          callback(null, {canvas: canvas});
+          callback(null, {canvas: canvas, view: view});
         });
       }
     } catch (err) {

@@ -133,11 +133,12 @@ vg.svg.marks = (function() {
   }
     
   function fontString(o) {
-    return (o.fontStyle ? o.fontStyle + " " : "")
+    var f = (o.fontStyle ? o.fontStyle + " " : "")
       + (o.fontVariant ? o.fontVariant + " " : "")
       + (o.fontWeight ? o.fontWeight + " " : "")
       + (o.fontSize != null ? o.fontSize : vg.config.render.fontSize) + "px "
       + (o.font || vg.config.render.font);
+    return f;
   }
   
   function text(o) {
@@ -199,11 +200,11 @@ vg.svg.marks = (function() {
 
   function draw(tag, attr, nest) {
     return function(g, scene, index) {
-      drawMark(g, scene, index, "mark_", tag, attr, nest);
+      drawMark(g, scene, index, tag, attr, nest);
     };
   }
   
-  function drawMark(g, scene, index, prefix, tag, attr, nest) {
+  function drawMark(g, scene, index, tag, attr, nest) {
     var data = nest ? [scene.items] : scene.items,
         evts = scene.interactive===false ? "none" : null,
         grps = g.node().childNodes,
@@ -237,8 +238,8 @@ vg.svg.marks = (function() {
     return p;
   }
 
-  function drawGroup(g, scene, index, prefix) {
-    var p = drawMark(g, scene, index, prefix || "group_", "g", group),
+  function drawGroup(g, scene, index) {
+    var p = drawMark(g, scene, index, "g", group),
         c = p.node().childNodes, n = c.length, i, j, m;
     
     for (i=0; i<n; ++i) {
@@ -250,7 +251,7 @@ vg.svg.marks = (function() {
 
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer === "back") {
-          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+          drawGroup.call(this, sel, axes[j], idx++);
         }
       }
       for (j=0, m=items.length; j<m; ++j) {
@@ -258,11 +259,11 @@ vg.svg.marks = (function() {
       }
       for (j=0, m=axes.length; j<m; ++j) {
         if (axes[j].def.layer !== "back") {
-          drawGroup.call(this, sel, axes[j], idx++, "axis_");
+          drawGroup.call(this, sel, axes[j], idx++);
         }
       }
       for (j=0, m=legends.length; j<m; ++j) {
-        drawGroup.call(this, sel, legends[j], idx++, "legend_");
+        drawGroup.call(this, sel, legends[j], idx++);
       }
     }
   }

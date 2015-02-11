@@ -79,6 +79,7 @@ vega.js: \
 	src/core/View.js \
 	src/core/Spec.js \
 	src/headless/_package.js \
+	src/headless/svg.js \
 	src/headless/View.js \
 	src/headless/render.js \
 	src/core/_end.js

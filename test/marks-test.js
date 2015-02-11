@@ -32,12 +32,10 @@ suite.addBatch({
         assert.isNotNull(result, "no result");
         assert.isNotNull(result.svg, "no SVG in result");
 
-        var rectMark = d3.select('svg').
-          select('rect:not([class="background"])').node();
-
+        var rectMark = result.view.model().scene().items[0].items[0].items[0];
         assert.isNotNull(rectMark);
-        assert.equal(rectMark.getAttribute("width"), "121");
-        assert.equal(rectMark.getAttribute("height"), "256");
+        assert.equal(rectMark.width, 121);
+        assert.equal(rectMark.height, 256);
       },
     }
   }
