@@ -1307,6 +1307,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
       l = new Node(this._graph);
       l.evaluate = function(input) {
         dest._input = source._output;
+        dest._input.add = dest._input.add.map(function(t) { tuple.create(t, t._prev); });
         return input;
       };
       l.addListener(dest._pipeline[0]);
@@ -4633,16 +4634,15 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
   // All of a scale's dependencies are registered during propagation as we parse
   // dataRefs. So a scale must be responsible for connecting itself to dependents.
   proto.dependency = function(type, deps) {
-    Node.prototype.dependency.call(this, type, deps);
-    if(arguments.length === 1) return this._deps[type];
-
-    deps = util.array(deps);
-    for(var i=0, len=deps.length; i<len; ++i) {
-      this._graph[type == C.DATA ? C.DATA : C.SIGNAL](deps[i])
-        .addListener(this._parent);
+    if(arguments.length == 2) {
+      deps = util.array(deps);
+      for(var i=0, len=deps.length; i<len; ++i) {
+        this._graph[type == C.DATA ? C.DATA : C.SIGNAL](deps[i])
+          .addListener(this._parent);
+      }
     }
 
-    return this;
+    return Node.prototype.dependency.call(this, type, deps);
   };
 
   function scale(group) {
@@ -4793,10 +4793,10 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
   }
 
   function signal(v) {
-    var s = v.signal;
+    var s = v.signal, ref;
     if(!s) return v;
-    this.dependency(C.SIGNALS, util.field(s).shift());
-    return this._graph.signalRef(s);
+    this.dependency(C.SIGNALS, (ref = util.field(s))[0]);
+    return this._graph.signalRef(ref);
   }
 
   function domainMinMax(scale, group) {

@@ -171,6 +171,7 @@ define(function(require, exports, module) {
       l = new Node(this._graph);
       l.evaluate = function(input) {
         dest._input = source._output;
+        dest._input.add = dest._input.add.map(function(t) { tuple.create(t, t._prev); });
         return input;
       };
       l.addListener(dest._pipeline[0]);
