@@ -3053,10 +3053,18 @@ function vg_load_http(url, callback) {
 		"sum": function(c, s, x) { return s + x; },
 		"avg": function(c, s, x) { return s + (x-s)/c.count; },
 		"min": function(c, s, x) { return x < s ? x : s; },
-		"max": function(c, s, x) { return x > s ? x : s; }
+		"max": function(c, s, x) { return x > s ? x : s; },
+		"median": function(c, s, x) { return (s.push(x), s); }
 	};
-	OPS.min.init = function() { return +Infinity; }
-	OPS.max.init = function() { return -Infinity; }
+	OPS.min.init = function() { return +Infinity; };
+	OPS.max.init = function() { return -Infinity; };
+	OPS.median.init = function() { return []; };
+	OPS.median.done = function(s) {
+	  var n = s.length, hn = ~~(n/2);
+	  if (n.length === 0) return 0;
+	  s.sort(vg.numcmp);
+	  return (n % 2 ? s[hn] : 0.5*(s[hn-1] + s[hn]));
+	};
 
 	function fkey(x) {
 		return x.op + "_" + x.field;
@@ -3089,25 +3097,30 @@ function vg_load_http(url, callback) {
   }
 
   function aggregate(input) {
-    var output = [], k;
+    var output = [], index = 0, k, i, j, x, c;
 		var keys = fields.map(fkey);
 		var ops = fields.map(function(x) { return OPS[x.op]; });
 
     // compute aggregates
-    input.forEach(function(x) {
-      var c = cell(x);
-
-			// compute aggregates...
+    for (var i=0; i<input.length; ++i) {
+      x = input[i];
+      c = cell(x);
       c.count += 1;
-			for (var i=0; i<fields.length; ++i) {
-				c[keys[i]] = ops[i](c, c[keys[i]], faccess[i](x));
+      for (j=0; j<ops.length; ++j) {
+				c[k=keys[j]] = ops[j](c, c[k], faccess[j](x));
 			}
-    });
+    }
+
     // collect output tuples
     var index = 0;
     for (k in cells) {
-      output.push({index:index++, data:cells[k]});
+      c = cells[k];
+      for (j=0; j<ops.length; ++j) {
+        if (ops[j].done) c[k=keys[j]] = ops[j].done(c[k]);
+			}
+      output.push({index:index++, data:c});
     }
+
     cells = {}; // clear internal state
     return output;
   };
