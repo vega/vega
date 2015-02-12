@@ -4892,7 +4892,7 @@ vg.parse.properties = (function() {
   function ordinal(def, scale, rng, db, data) {
     var dataDrivenRange = false,
         pad = def.padding || 0,
-        outer = def.outerPadding || 0,
+        outer = def.outerPadding == null ? pad : def.outerPadding,
         domain, sort, str, refs;
 
     // range pre-processing for data-driven ranges
@@ -4920,9 +4920,11 @@ vg.parse.properties = (function() {
     str = typeof rng[0] === 'string';
     if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
       scale.range(rng); // color or shape values
+    } else if (def.points && (def.round || def.round == null)) {
+      scale.rangeRoundPoints(rng, pad);
     } else if (def.points) {
       scale.rangePoints(rng, pad);
-    } else if (def.round || def.round===undefined) {
+    } else if (def.round || def.round == null) {
       scale.rangeRoundBands(rng, pad, outer);
     } else {
       scale.rangeBands(rng, pad, outer);
