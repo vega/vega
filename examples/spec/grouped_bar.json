@@ -69,6 +69,7 @@
       ],
       "marks": [
         {
+          "name": "bars",
           "type": "rect",
           "properties": {
             "enter": {
@@ -82,15 +83,16 @@
         },
         {
           "type": "text",
+          "from": {"mark": "bars"},
           "properties": {
             "enter": {
-              "y": {"scale": "pos", "field": "position"},
-              "dy": {"scale": "pos", "band": true, "mult": 0.5},
-              "x": {"scale": "val", "field": "value", "offset": -4},
+              "x": {"field": "x2", "offset": -5},
+              "y": {"field": "y"},
+              "dy": {"field": "height", "mult": 0.5},              
               "fill": {"value": "white"},
               "align": {"value": "right"},
               "baseline": {"value": "middle"},
-              "text": {"field": "value"}
+              "text": {"field": "datum.value"}
             }
           }
         }

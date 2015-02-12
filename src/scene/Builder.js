@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 
   var proto = (Builder.prototype = new Node());
 
-  proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
+  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
     Node.prototype.init.call(this, model.graph)
       .router(true)
       .collector(true);
@@ -34,9 +34,13 @@ define(function(require, exports, module) {
     mark.interactive = !(def.interactive === false);
     mark.items = this._items;
 
-    if(def.from && (def.from.transform || def.from.modify)) inlineDs.call(this);
-
     this._parent = parent;
+    this._parent_id = parent_id;
+
+    if(def.from && (def.from.mark || def.from.transform || def.from.modify)) {
+      inlineDs.call(this);
+    }
+
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
     this._collector = new Collector(this._model.graph);
@@ -74,33 +78,51 @@ define(function(require, exports, module) {
     }
   };
 
-  // Mark-level transformations are handled here because they may be
-  // inheriting from a group's faceted datasource. 
+  // Reactive geometry and mark-level transformations are handled here 
+  // because they need their group's data-joined context. 
   function inlineDs() {
-    var name = [this._from, this._def.type, Date.now()].join('_');
-    var spec = {
-      name: name,
-      source: this._from,
-      transform: this._def.from.transform,
-      modify: this._def.from.modify
-    };
+    var from = this._def.from,
+        name, spec, sibling, output;
+
+    if(from.mark) {
+      name = ["vg", this._parent_id, from.mark].join("_");
+      spec = {
+        name: name,
+        transform: from.transform, 
+        modify: from.modify
+      };
+    } else {
+      name = ["vg", this._from, this._def.type, Date.now()].join("_");
+      spec = {
+        name: name,
+        source: this._from,
+        transform: from.transform,
+        modify: from.modify
+      };
+    }
 
     this._from = name;
     this._ds = parseData.datasource(this._model, spec);
 
-    // At this point, we have a new datasource but it is empty as
-    // the propagation cycle has already crossed the datasources. 
-    // So, we repulse just this datasource. This should be safe
-    // as the ds isn't connected to the scenegraph yet.
-    var output = this._ds.source().last(),
-        input  = changeset.create(output);
+    if(from.mark) {
+      sibling = this.sibling(from.mark);
+      sibling._bounder.addListener(this._ds.listener());
+    } else {
+      // At this point, we have a new datasource but it is empty as
+      // the propagation cycle has already crossed the datasources. 
+      // So, we repulse just this datasource. This should be safe
+      // as the ds isn't connected to the scenegraph yet.
+      
+      var output = this._ds.source().last();
+          input  = changeset.create(output);
 
-    input.add = output.add;
-    input.mod = output.mod;
-    input.rem = output.rem;
-    input.stamp = null;
-    this._ds.fire(input);
-  };
+      input.add = output.add;
+      input.mod = output.mod;
+      input.rem = output.rem;
+      input.stamp = null;
+      this._ds.fire(input);
+    }
+  }
 
   proto._pipeline = function() {
     return [this, this._encoder, this._collector, this._bounder, this._renderer];
@@ -123,6 +145,10 @@ define(function(require, exports, module) {
       builder._parent.scale(s).removeListener(builder);
     });
     return this;
+  };
+
+  proto.sibling = function(name) {
+    return this._parent.child(name, this._parent_id);
   };
 
   function newItem(d, stamp) {

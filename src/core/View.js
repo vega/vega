@@ -102,7 +102,7 @@ define(function(require, exports, module) {
       this._model.width(this._width);
       this._model.height(this._height);
       if (this._el) this.initialize(this._el.parentNode);
-      this.update({props:"enter"}).update({props:"update"});
+      this.update({ reflow: true });
     } else {
       this.padding(pad).update(opt);
     }
@@ -182,6 +182,7 @@ define(function(require, exports, module) {
 
     var cs = changeset.create();
     if(trans) cs.trans = trans;
+    if(opt.reflow !== undefined) cs.reflow = opt.reflow
 
     if(!v._build) {
       v._renderNode = new Node(v._model.graph)

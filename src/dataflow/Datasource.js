@@ -165,18 +165,34 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.addListener = function(l) {
-    if(l instanceof Datasource) {
-      var source = this, dest = l;
-      l = new Node(this._graph);
-      l.evaluate = function(input) {
-        dest._input = source._output;
-        dest._input.add = dest._input.add.map(function(t) { tuple.create(t, t._prev); });
-        return input;
-      };
-      l.addListener(dest._pipeline[0]);
-    }
+  proto.listener = function() { 
+    var l = new Node(this._graph),
+        dest = this,
+        prev = this._needsPrev ? null : undefined;
 
+    l.evaluate = function(input) {
+      this._cache = this._cache || {};  // to propagate tuples correctly
+      var output  = changeset.create(input);
+
+      output.add = input.add.map(function(t) {
+        return (l._cache[t._id] = tuple.create(t, t._prev !== undefined ? t._prev : prev));
+      });
+      output.mod = input.mod.map(function(t) { return l._cache[t._id]; });
+      output.rem = input.rem.map(function(t) { 
+        var o = l._cache[t._id];
+        l._cache[t._id] = null;
+        return o;
+      });
+
+      return (dest._input = output);
+    };
+
+    l.addListener(this._pipeline[0]);
+    return l;
+  };
+
+  proto.addListener = function(l) {
+    if(l instanceof Datasource) l = l.listener(); 
     this._pipeline[this._pipeline.length-1].addListener(l);
   };
 

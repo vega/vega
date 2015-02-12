@@ -1301,18 +1301,34 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
     return this;
   };
 
-  proto.addListener = function(l) {
-    if(l instanceof Datasource) {
-      var source = this, dest = l;
-      l = new Node(this._graph);
-      l.evaluate = function(input) {
-        dest._input = source._output;
-        dest._input.add = dest._input.add.map(function(t) { tuple.create(t, t._prev); });
-        return input;
-      };
-      l.addListener(dest._pipeline[0]);
-    }
+  proto.listener = function() { 
+    var l = new Node(this._graph),
+        dest = this,
+        prev = this._needsPrev ? null : undefined;
 
+    l.evaluate = function(input) {
+      this._cache = this._cache || {};  // to propagate tuples correctly
+      var output  = changeset.create(input);
+
+      output.add = input.add.map(function(t) {
+        return (l._cache[t._id] = tuple.create(t, t._prev !== undefined ? t._prev : prev));
+      });
+      output.mod = input.mod.map(function(t) { return l._cache[t._id]; });
+      output.rem = input.rem.map(function(t) { 
+        var o = l._cache[t._id];
+        l._cache[t._id] = null;
+        return o;
+      });
+
+      return (dest._input = output);
+    };
+
+    l.addListener(this._pipeline[0]);
+    return l;
+  };
+
+  proto.addListener = function(l) {
+    if(l instanceof Datasource) l = l.listener(); 
     this._pipeline[this._pipeline.length-1].addListener(l);
   };
 
@@ -4379,7 +4395,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
   var proto = (Builder.prototype = new Node());
 
-  proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
+  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
     Node.prototype.init.call(this, model.graph)
       .router(true)
       .collector(true);
@@ -4397,9 +4413,13 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     mark.interactive = !(def.interactive === false);
     mark.items = this._items;
 
-    if(def.from && (def.from.transform || def.from.modify)) inlineDs.call(this);
-
     this._parent = parent;
+    this._parent_id = parent_id;
+
+    if(def.from && (def.from.mark || def.from.transform || def.from.modify)) {
+      inlineDs.call(this);
+    }
+
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
     this._collector = new Collector(this._model.graph);
@@ -4437,33 +4457,51 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
     }
   };
 
-  // Mark-level transformations are handled here because they may be
-  // inheriting from a group's faceted datasource. 
+  // Reactive geometry and mark-level transformations are handled here 
+  // because they need their group's data-joined context. 
   function inlineDs() {
-    var name = [this._from, this._def.type, Date.now()].join('_');
-    var spec = {
-      name: name,
-      source: this._from,
-      transform: this._def.from.transform,
-      modify: this._def.from.modify
-    };
+    var from = this._def.from,
+        name, spec, sibling, output;
+
+    if(from.mark) {
+      name = ["vg", this._parent_id, from.mark].join("_");
+      spec = {
+        name: name,
+        transform: from.transform, 
+        modify: from.modify
+      };
+    } else {
+      name = ["vg", this._from, this._def.type, Date.now()].join("_");
+      spec = {
+        name: name,
+        source: this._from,
+        transform: from.transform,
+        modify: from.modify
+      };
+    }
 
     this._from = name;
     this._ds = parseData.datasource(this._model, spec);
 
-    // At this point, we have a new datasource but it is empty as
-    // the propagation cycle has already crossed the datasources. 
-    // So, we repulse just this datasource. This should be safe
-    // as the ds isn't connected to the scenegraph yet.
-    var output = this._ds.source().last(),
-        input  = changeset.create(output);
+    if(from.mark) {
+      sibling = this.sibling(from.mark);
+      sibling._bounder.addListener(this._ds.listener());
+    } else {
+      // At this point, we have a new datasource but it is empty as
+      // the propagation cycle has already crossed the datasources. 
+      // So, we repulse just this datasource. This should be safe
+      // as the ds isn't connected to the scenegraph yet.
+      
+      var output = this._ds.source().last();
+          input  = changeset.create(output);
 
-    input.add = output.add;
-    input.mod = output.mod;
-    input.rem = output.rem;
-    input.stamp = null;
-    this._ds.fire(input);
-  };
+      input.add = output.add;
+      input.mod = output.mod;
+      input.rem = output.rem;
+      input.stamp = null;
+      this._ds.fire(input);
+    }
+  }
 
   proto._pipeline = function() {
     return [this, this._encoder, this._collector, this._bounder, this._renderer];
@@ -4486,6 +4524,10 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
       builder._parent.scale(s).removeListener(builder);
     });
     return this;
+  };
+
+  proto.sibling = function(name) {
+    return this._parent.child(name, this._parent_id);
   };
 
   function newItem(d, stamp) {
@@ -5766,7 +5808,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
 
   var proto = (GroupBuilder.prototype = new Builder());
 
-  proto.init = function(model, renderer, def, mark, parent, inheritFrom) {
+  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
     var builder = this;
 
     this._scaler = new Node(model.graph);
@@ -5787,6 +5829,14 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
     return Builder.prototype.init.apply(this, arguments);
   };
 
+  proto.evaluate = function(input) {
+    var output = Builder.prototype.evaluate.apply(this, arguments),
+        builder = this;
+
+    output.add.forEach(function(group) { buildGroup.call(builder, output, group); });
+    return output;
+  };
+
   proto._pipeline = function() {
     return [this, this._encoder, this._scaler, this._recursor, this._collector, this._bounder, this._renderer];
   };
@@ -5804,12 +5854,17 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
     return Builder.prototype.disconnect.call(this);
   };
 
-  proto.evaluate = function(input) {
-    var output = Builder.prototype.evaluate.apply(this, arguments),
-        builder = this;
+  proto.child = function(name, group_id) {
+    var children = this._children[group_id],
+        i = 0, len = children.length,
+        child;
 
-    output.add.forEach(function(group) { buildGroup.call(builder, output, group); });
-    return output;
+    for(; i<len; ++i) {
+      child = children[i];
+      if(child.type == C.MARK && child.builder._def.name == name) break;
+    }
+
+    return child.builder;
   };
 
   function recurse(input) {
@@ -5872,20 +5927,21 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
   function buildMarks(input, group) {
     util.debug(input, ["building marks", this._def.marks]);
     var marks = this._def.marks,
-        mark, inherit, i, len, m, b;
+        mark, from, inherit, i, len, m, b;
 
     for(i=0, len=marks.length; i<len; ++i) {
       mark = marks[i];
+      from = mark.from || {};
       inherit = "vg_"+group.datum._id;
       group.items[i] = {group: group};
       b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(this._model, this._renderer, mark, group.items[i], this, inherit);
+      b.init(this._model, this._renderer, mark, group.items[i], this, group._id, inherit);
 
       // Temporary connection to propagate initial pulse. 
       this._recursor.addListener(b);
       this._children[group._id].push({ 
         builder: b, 
-        from: ((mark.from||{}).data) || inherit, 
+        from: from.data || from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit, 
         type: C.MARK 
       });
     }
@@ -8905,7 +8961,7 @@ define('core/View',['require','exports','module','d3','../dataflow/Node','../par
       this._model.width(this._width);
       this._model.height(this._height);
       if (this._el) this.initialize(this._el.parentNode);
-      this.update({props:"enter"}).update({props:"update"});
+      this.update({ reflow: true });
     } else {
       this.padding(pad).update(opt);
     }
@@ -8985,6 +9041,7 @@ define('core/View',['require','exports','module','d3','../dataflow/Node','../par
 
     var cs = changeset.create();
     if(trans) cs.trans = trans;
+    if(opt.reflow !== undefined) cs.reflow = opt.reflow
 
     if(!v._build) {
       v._renderNode = new Node(v._model.graph)
