@@ -4451,13 +4451,8 @@ vg.data.zip.dependencies = ["with"];vg.parse = {};vg.parse.axes = (function() {
       axis.tickSize.apply(axis, size);
     }
 
-    // tick arguments
-    if (def.ticks != null) {
-      var ticks = vg.isArray(def.ticks) ? def.ticks : [def.ticks];
-      axis.ticks.apply(axis, ticks);
-    } else {
-      axis.ticks(vg.config.axis.ticks);
-    }
+    // axis tick count
+    axis.tickCount(def.ticks || vg.config.axis.ticks);
 
     // style properties
     var p = def.properties;
@@ -4578,9 +4573,9 @@ vg.parse.data = function(spec, callback) {
   	"ceil":   "Math.ceil",
   	"cos":    "Math.cos",
   	"exp":    "Math.exp",
-  	"floor":  "Math.floor",
+    "floor":  "Math.floor",
     "format": "d3.format",
-  	"log":    "Math.log",
+    "log":    "Math.log",
   	"max":    "Math.max",
   	"min":    "Math.min",
   	"pow":    "Math.pow",
@@ -5049,7 +5044,7 @@ vg.parse.properties = (function() {
           return rng;
         }
       } else if (vg.isArray(def.range)) {
-        rng = def.range;
+        rng = vg.duplicate(def.range);
       } else if (vg.isObject(def.range)) {
         return null; // early exit
       } else {
@@ -5862,9 +5857,8 @@ vg.scene.transition = function(dur, ease) {
       tickPadding = vg.config.axis.padding,
       tickValues = null,
       tickFormatString = null,
-      tickFormat = null,
       tickSubdivide = 0,
-      tickArguments = [vg.config.axis.ticks],
+      tickCount = vg.config.axis.ticks,
       gridLineStyle = {},
       tickLabelStyle = {},
       majorTickStyle = {},
@@ -5878,28 +5872,55 @@ vg.scene.transition = function(dur, ease) {
     axisDef = null;
   }
 
+  function getTickFormatString() {
+    return tickFormatString || (scale.type === 'log' ? ".1s" : null);
+  }
+
+  function buildTickFormat() {
+    var fmtStr = getTickFormatString();
+    if (scale.tickFormat) {
+      return scale.tickFormat(tickCount, fmtStr);
+    } else if (fmtStr) {
+      return ((scale.type === 'time')
+        ? d3.time.format(fmtStr)
+        : d3.format(fmtStr));
+    } else {
+      return String;
+    }
+  }
+
+  function buildTicks(fmt) {
+    var ticks = {
+      major: tickValues,
+      minor: null
+    };
+    
+    if (ticks.major == null) {
+      ticks.major = scale.ticks
+        ? scale.ticks(tickCount)
+        : scale.domain();
+    }
+
+    ticks.minor = vg_axisSubdivide(scale, ticks.major, tickSubdivide)
+      .map(vg.data.ingest);
+
+    ticks.major = ticks.major.map(function(d) {
+      return (d = vg.data.ingest(d), d.label = fmt(d.data), d);
+    });
+    
+    return ticks;
+  }
+
   axis.def = function() {
     var def = axisDef ? axisDef : (axisDef = axis_def(scale));
-
-    // tick format
-    tickFormat = !tickFormatString ? null : ((scale.type === 'time')
-      ? d3.time.format(tickFormatString)
-      : d3.format(tickFormatString));
-
-    // generate data
-    var major = tickValues == null
-      ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
-      : tickValues;
-    var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(vg.data.ingest);
-    major = major.map(vg.data.ingest);
-    var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
-    major.forEach(function(d) { d.label = fmt(d.data); });
+    var fmt = buildTickFormat();
+    var ticks = buildTicks(fmt);
     var tdata = title ? [title].map(vg.data.ingest) : [];
     
     // update axis def
-    def.marks[0].from = function() { return grid ? major : []; };
-    def.marks[1].from = function() { return major; };
-    def.marks[2].from = function() { return minor; };
+    def.marks[0].from = function() { return grid ? ticks.major : []; };
+    def.marks[1].from = function() { return ticks.major; };
+    def.marks[2].from = function() { return ticks.minor; };
     def.marks[3].from = def.marks[1].from;
     def.marks[4].from = function() { return [1]; };
     def.marks[5].from = function() { return tdata; };
@@ -5977,9 +5998,9 @@ vg.scene.transition = function(dur, ease) {
     return axis;
   };
 
-  axis.ticks = function() {
-    if (!arguments.length) return tickArguments;
-    tickArguments = arguments;
+  axis.tickCount = function(x) {
+    if (!arguments.length) return tickCount;
+    tickCount = x;
     return axis;
   };
 
