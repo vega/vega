@@ -40,7 +40,7 @@ vg.parse.scales = (function() {
   function ordinal(def, scale, rng, db, data) {
     var dataDrivenRange = false,
         pad = def.padding || 0,
-        outer = def.outerPadding || 0,
+        outer = def.outerPadding || pad,
         domain, sort, str, refs;
 
     // range pre-processing for data-driven ranges
