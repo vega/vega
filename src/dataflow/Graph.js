@@ -60,7 +60,7 @@ define(function(require, exports, module) {
     // so that we can ignore subsequent reflow pulses. To efficiently
     // use the JS array, we want lower ranked nodes on the right so
     // we can pop them. 
-    if(a.node == b.node) return a.pulse.reflow ? -1 : 1;
+    if(a.rank == b.rank) return a.pulse.reflow ? -1 : 1;
     else return b.rank - a.rank; 
   }); 
 
