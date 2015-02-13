@@ -5,6 +5,7 @@ var STATIC_SPECS = [
   "error",
   "grouped_bar",
   "lifelines",
+  "parallel_coords",
   "stocks",
   "weather"
 ];
