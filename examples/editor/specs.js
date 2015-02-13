@@ -1,6 +1,7 @@
 var STATIC_SPECS = [
   "area",
   "bar",
+  "barley",
   "error",
   "grouped_bar",
   "lifelines",

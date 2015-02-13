@@ -69,6 +69,7 @@ define(function(require, exports, module) {
       var encoder = Function("item", "group", "trans", "db", 
         "signals", "predicates", code);
       encoder.tpl = tuple;
+      encoder.util = util;
       return {
         encode: encoder,
         signals: util.keys(deps.signals),
@@ -178,9 +179,9 @@ define(function(require, exports, module) {
     if (ref.field != null) {
       if (util.isString(ref.field)) {
         val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
-        if (ref.group != null) { val = "this.accessor("+val+")("+grp+")"; }
+        if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
       } else {
-        val = "this.accessor(group.datum["
+        val = "this.util.accessor(group.datum["
             + util.field(ref.field.group).map(util.str).join("][")
             + "])(item.datum.data)";
       }
