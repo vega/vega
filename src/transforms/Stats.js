@@ -66,7 +66,7 @@ define(function(require, exports, module) {
   };
 
   proto._new_cell = function(x, k) {
-    var cell = this.__facet || tuple.create(null, null);
+    var cell = this.__facet || tuple.create(x, x._prev);
     return new this._Measures(cell);
   };
 

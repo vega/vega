@@ -102,7 +102,7 @@ define(function(require, exports, module) {
       this._model.width(this._width);
       this._model.height(this._height);
       if (this._el) this.initialize(this._el.parentNode);
-      this.update({ reflow: true });
+      this.update();
     } else {
       this.padding(pad).update(opt);
     }

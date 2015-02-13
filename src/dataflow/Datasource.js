@@ -192,8 +192,12 @@ define(function(require, exports, module) {
   };
 
   proto.addListener = function(l) {
-    if(l instanceof Datasource) l = l.listener(); 
-    this._pipeline[this._pipeline.length-1].addListener(l);
+    if(l instanceof Datasource) {
+      if(this._collector) this._collector.addListener(l.listener());
+      else this._pipeline[0].addListener(l.listener());
+    } else {
+      this._pipeline[this._pipeline.length-1].addListener(l);      
+    }
   };
 
   proto.removeListener = function(l) {

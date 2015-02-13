@@ -1328,8 +1328,12 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   };
 
   proto.addListener = function(l) {
-    if(l instanceof Datasource) l = l.listener(); 
-    this._pipeline[this._pipeline.length-1].addListener(l);
+    if(l instanceof Datasource) {
+      if(this._collector) this._collector.addListener(l.listener());
+      else this._pipeline[0].addListener(l.listener());
+    } else {
+      this._pipeline[this._pipeline.length-1].addListener(l);      
+    }
   };
 
   proto.removeListener = function(l) {
@@ -3867,7 +3871,7 @@ define('transforms/Stats',['require','exports','module','./Transform','./Aggrega
   };
 
   proto._new_cell = function(x, k) {
-    var cell = this.__facet || tuple.create(null, null);
+    var cell = this.__facet || tuple.create(x, x._prev);
     return new this._Measures(cell);
   };
 
@@ -4369,7 +4373,10 @@ define('parse/data',['require','exports','module','./transforms','./modify','../
     if(d.values) ds.values(read(d.values, d.format));
     else if(d.source) {
       ds.source(d.source);
+
+      // The derived datasource will be pulsed by its src rather than the model.
       model.data(d.source).addListener(ds);
+      model.removeListener(ds._pipeline[0]); 
     }
 
     return ds;    
@@ -8961,7 +8968,7 @@ define('core/View',['require','exports','module','d3','../dataflow/Node','../par
       this._model.width(this._width);
       this._model.height(this._height);
       if (this._el) this.initialize(this._el.parentNode);
-      this.update({ reflow: true });
+      this.update();
     } else {
       this.padding(pad).update(opt);
     }
