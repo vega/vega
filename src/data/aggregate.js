@@ -1,108 +1,166 @@
-vg.data.aggregate = function() {
-  var groupby = [],
-      fields = [],
-      gaccess,
-      faccess;
+vg.data.aggregate = (function() {
 
-  var OPS = {
-    "count": function() {},
-		"sum": function(c, s, x) { return s + x; },
-		"avg": function(c, s, x) { return s + (x-s)/c.count; },
-		"min": function(c, s, x) { return x < s ? x : s; },
-		"max": function(c, s, x) { return x > s ? x : s; },
-		"median": function(c, s, x) { return (s.push(x), s); }
-	};
-	OPS.min.init = function() { return +Infinity; };
-	OPS.max.init = function() { return -Infinity; };
-	OPS.median.init = function() { return []; };
-	OPS.median.done = function(s) {
-	  var n = s.length, hn = ~~(n/2);
-	  if (n.length === 0) return 0;
-	  s.sort(vg.numcmp);
-	  return (n % 2 ? s[hn] : 0.5*(s[hn-1] + s[hn]));
-	};
+  var SUM = 1,
+      AVG = 2,
+      DEV = 4,
+      MIN = 8,
+      MAX = 16,
+      VAL = 32;
 
-	function fkey(x) {
-		return x.op + "_" + x.field;
-	}
-
-	var cells = {};
-
-  function cell(x) {
-    // consider other key constructions...
-    var k = gaccess.reduce(function(v,f) {
-      return (v.push(f(x)), v);
-    }, []).join("|");
-    return cells[k] || (cells[k] = new_cell(x));
+  function Monoid(field) {
+    this.field = field;
+    this.ops = [];
+    this.flags = 0;
+    this.count = 0;
   }
 
-  function new_cell(x) {
-    var o = {};
-    // dimensions
-    for (var i=0, f; i<groupby.length; ++i) {
-      o[groupby[i]] = gaccess[i](x);
+  Monoid.prototype.clone = function() {
+    var clone = new Monoid(this.field), k, v;
+    for (k in this) {
+      v = this[k];
+      clone[k] = vg.isArray(v) ? v.slice() : v;
     }
-    // measures
-    o.count = 0;
-		for (i=0; i<fields.length; ++i) {
-		  if (fields[i].op === "count") continue;
-		  var op = OPS[fields[i].op];
-			o[fkey(fields[i])] = op.init ? op.init() : 0;
-		}
+    return clone;
+  };
+
+  Monoid.prototype.init = function(op) {
+    if (op === 'sum') {
+      this.flags |= SUM;
+      this.sum = 0;
+    }
+    else if (op === 'avg') {
+      this.flags |= AVG;
+      this.avg = 0;
+    }
+    else if (op === 'var' || op === 'std') {
+      this.flags |= DEV | AVG;
+      this.avg = 0;
+      this.dev = 0;
+    }
+    else if (op === 'min') {
+      this.flags |= MIN;
+      this.min = +Infinity;
+    }
+    else if (op === 'max') {
+      this.flags |= MAX;
+      this.max = -Infinity;
+    }
+    else if (op === 'median') {
+      this.flags |= VAL;
+      this.vals = [];
+    }
+    this.ops.push(op);
+  };
+
+  Monoid.prototype.update = function(v) {
+    var m = this, f = m.flags, d;
+    m.count += 1;
+    if (f & SUM) { m.sum += v; }
+    if (f & AVG) { d = (v - m.avg); m.avg += d / m.count; }
+    if (f & DEV) { m.dev += d * (v - m.avg); }
+    if (f & MIN) { m.min = v < m.min ? v : m.min; }
+    if (f & MAX) { m.max = v > m.max ? v : m.max; }
+    if (f & VAL) { m.vals.push(v); }
+  };
+
+  Monoid.prototype.value = function(op) {
+    switch (op) {
+      case 'sum': return this.sum;
+      case 'avg': return this.avg;
+      case 'var': return this.dev / (this.count - 1);
+      case 'std': return Math.sqrt(this.dev / (this.count - 1));
+      case 'min': return this.min;
+      case 'max': return this.max;
+      case 'median':
+        var v = this.vals, n = v.length, hn = ~~(n/2);
+        return n ? (n % 2 ? v[hn] : 0.5 * (v[hn-1] + v[hn])) : 0;
+    }
+  };
+
+  Monoid.prototype.done = function(o) {
+    if (this.vals) this.vals.sort(vg.numcmp);
+    var ops = this.ops;
+    for (var i=0; i<ops.length; ++i) {
+      o[ops[i] + "_" + this.field] = this.value(ops[i]);
+    }
     return o;
-  }
-
-  function aggregate(input) {
-    var output = [], index = 0, k, i, j, x, c;
-		var keys = fields.map(fkey);
-		var ops = fields.map(function(x) { return OPS[x.op]; });
-
-    // compute aggregates
-    for (var i=0; i<input.length; ++i) {
-      x = input[i];
-      c = cell(x);
-      c.count += 1;
-      for (j=0; j<ops.length; ++j) {
-				c[k=keys[j]] = ops[j](c, c[k], faccess[j](x));
-			}
-    }
-
-    // collect output tuples
-    var index = 0;
-    for (k in cells) {
-      c = cells[k];
-      for (j=0; j<ops.length; ++j) {
-        if (ops[j].done) c[k=keys[j]] = ops[j].done(c[k]);
-			}
-      output.push({index:index++, data:c});
-    }
-
-    cells = {}; // clear internal state
-    return output;
   };
 
-  aggregate.fields = function(f) {
-    fields = vg.array(f);
-    faccess = fields.map(function(x,i) {
-      var xf = x.field;
-      if (xf.indexOf("data.") === 0) {
-        fields[i] = {op:x.op, field:xf.slice(5)};
+  return function() {
+    var groupby = [],
+  	    cells = {},
+  	    monoids, gaccess, faccess;
+
+    function cell(x) {
+      var k = gaccess.reduce(function(v,f) {
+        return (v.push(f(x)), v);
+      }, []).join("|");
+      return cells[k] || (cells[k] = new_cell(x));
+    }
+    
+    function new_cell(x) {
+      var c = monoids.map(function(m) { return m.clone(); });
+      c.data = {};
+      for (i=0; i<groupby.length; ++i) {
+        c.data[groupby[i]] = gaccess[i](x);
       }
-      return vg.accessor(xf);
-    });
+      return c;
+    }
+
+    function aggregate(input) {
+      var k, i, j, x, c;
+
+      // compute aggregates
+      for (i=0; i<input.length; ++i) {
+        x = input[i];
+        c = cell(x);
+        for (j=0; j<c.length; ++j) {
+          c[j].update(faccess[j](x));
+  			}
+      }
+
+      // collect output tuples
+      var output = [], index = 0;
+      for (k in cells) {
+        c = cells[k];
+        for (i=0; i<c.length; ++i) {
+          c[i].done(c.data);
+  			}
+        output.push({index: index++, data: c.data});
+      }
+
+      cells = {}; // clear internal state
+      return output;
+    }
+
+    aggregate.fields = function(f) {
+      var map = {};
+      faccess = [];
+      monoids = vg.array(f).reduce(function(m, x) {
+        var xf = x.field, f;
+        if (!map[xf]) {
+          faccess.push(vg.accessor(xf));
+          f = xf.indexOf("data.") === 0 ? xf.slice(5) : xf;
+          m.push(map[xf] = new Monoid(f));
+        }
+        map[xf].init(x.op);
+        return m;
+      }, []);
+      return aggregate;
+    };
+
+    aggregate.groupby = function(f) {
+      groupby = vg.array(f);
+      gaccess = groupby.map(function(x,i) {
+        if (x.indexOf("data.") === 0) {
+          groupby[i] = x.slice(5);
+        }
+        return vg.accessor(x);
+      });
+      return aggregate;
+    };
+
     return aggregate;
   };
 
-  aggregate.groupby = function(f) {
-    groupby = vg.array(f);
-    gaccess = groupby.map(function(x,i) {
-      if (x.indexOf("data.") === 0) {
-        groupby[i] = x.slice(5);
-      }
-      return vg.accessor(x);
-    });
-    return aggregate;
-  };
-
-  return aggregate;
-};
+})();
