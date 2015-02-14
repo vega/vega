@@ -73,6 +73,16 @@ suite.addBatch({
         f = vg.parse.template("hello {{a|slice:3,-3}}");
         assert.equal("hello there", f({a: "---there---"}));
       },
+      'should handle truncate filter': function(vg) {
+        var f = vg.parse.template("{{a|truncate:5}}");
+        assert.equal("hello", f({a: "hello"}));
+
+        f = vg.parse.template("{{a|truncate:8}}");
+        assert.equal("hello...", f({a: "hello there"}));
+
+        f = vg.parse.template("{{a|truncate:8,left}}");
+        assert.equal("...there", f({a: "hello there"}));
+      },
       'should handle number filter': function(vg) {
         var f = vg.parse.template("hello {{a|number:'.3f'}}");
         assert.equal("hello 1.000", f({a: 1}));

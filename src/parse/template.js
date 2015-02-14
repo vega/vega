@@ -90,6 +90,12 @@ var vg_template_var = function(text, variable) {
         source += '.slice('+ a +
           (args.length > 1 ? ',' + vg.number(args[1]) : '') + ')';
         break;
+      case 'truncate':
+        a = vg.number(args[0]);
+        b = args[1];
+        b = (b!=="left" && b!=="middle" && b!=="center") ? "right" : b;
+        source = 'this.truncate(' + source + ',' + a + ',"' + b + '")';
+        break;
       case 'number':
         a = vg_template_format(args[0], d3.format);
         source = 'this.__formats['+a+']('+source+')';
