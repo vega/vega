@@ -93,6 +93,10 @@ vg.parse.properties = (function() {
       }
     }
 
+    if (ref.template) {
+      return vg.parse.template.source(ref.template, "item.datum");
+    }
+
     // initialize value
     var val = "item.datum.data";
     if (ref.value !== undefined) {

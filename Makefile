@@ -65,6 +65,7 @@ vega.js: \
 	src/parse/properties.js \
 	src/parse/scales.js \
 	src/parse/spec.js \
+	src/parse/template.js \
 	src/parse/transform.js \
 	src/scene/_package.js \
 	src/scene/Item.js \
