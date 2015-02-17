@@ -55,14 +55,6 @@ define(function(require, exports, module) {
     return this;
   };
 
-  // Helper method to run signals through top-level scales
-  proto.scale = function(spec, value) {
-    if(!spec.scale) return value;
-    var scale = this._scene.items[0].scale(spec.scale);
-    if(!scale) return value;
-    return spec.invert ? scale.invert(value) : scale(value);
-  };
-
   proto.addListener = function(l) { this._node.addListener(l); };
   proto.removeListener = function(l) { this._node.removeListener(l); };
 

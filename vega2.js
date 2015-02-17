@@ -6046,14 +6046,6 @@ define('core/Model',['require','exports','module','../dataflow/Graph','../datafl
     return this;
   };
 
-  // Helper method to run signals through top-level scales
-  proto.scale = function(spec, value) {
-    if(!spec.scale) return value;
-    var scale = this._scene.items[0].scale(spec.scale);
-    if(!scale) return value;
-    return spec.invert ? scale.invert(value) : scale(value);
-  };
-
   proto.addListener = function(l) { this._node.addListener(l); };
   proto.removeListener = function(l) { this._node.removeListener(l); };
 
@@ -7146,11 +7138,21 @@ define('parse/streams',['require','exports','module','d3','../dataflow/Node','..
         spec  = model.defs().signals,
         register = {}, nodes = {};
 
+    function scale(def, value, item) {
+      if(!item || !item.scale) {
+        item = (item && item.mark) ? item.mark.group : model.scene().items[0];
+      }
+
+      var scale = item.scale(def.scale.signal || def.scale);
+      if(!scale) return value;
+      return def.invert ? scale.invert(value) : scale(value);
+    }
+
     function signal(sig, selector, exp, spec) {
       var n = new Node(graph);
       n.evaluate = function(input) {
         var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
-        if(spec.scale) val = model.scale(spec, val);
+        if(spec.scale) val = scale(spec, val);
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.reflow = true;
@@ -7253,14 +7255,13 @@ define('parse/streams',['require','exports','module','d3','../dataflow/Node','..
         var cs = changset.create(null, true),
             pad = view.padding(),
             filtered = false,
-            val, h, i, m, d, p = {};
+            val, h, i, m, d;
 
         evt.preventDefault(); // Stop text selection
-
-        // Stash event in d3.event so we can calculate relative positions
-        d3.event = evt, m = d3.mouse(view._el), p.x = m[0] - pad.left, p.y = m[1] - pad.top;
+        m = d3.mouse((d3.event=evt, view._el)); // Relative position within container
         item = item||{};
         d = item.datum||{};
+        var p = {x: m[0] - pad.left, y: m[1] - pad.top};
 
         for(i = 0; i < handlers.length; i++) {
           h = handlers[i];
@@ -7270,7 +7271,7 @@ define('parse/streams',['require','exports','module','d3','../dataflow/Node','..
           if(filtered) continue;
           
           val = expr.eval(graph, h.exp.fn, d, evt, item, p, h.exp.signals); 
-          if(h.spec.scale) val = model.scale(h.spec, val);
+          if(h.spec.scale) val = scale(h.spec, val, item);
           h.signal.value(val);
           cs.signals[h.signal.name()] = 1;
         }
