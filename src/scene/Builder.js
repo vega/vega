@@ -171,6 +171,13 @@ define(function(require, exports, module) {
         stamp = input.stamp,
         i, key, len, item, datum;
 
+    for(i=0, len=rem.length; i<len; ++i) {
+      item = this._map[key = keyf(rem[i])];
+      item.status = C.EXIT;
+      output.rem.push(item);
+      this._map[key] = null;
+    }
+
     for(i=0, len=add.length; i<len; ++i) {
       key = keyf(datum = add[i]);
       item = newItem.call(this, datum, stamp);
@@ -187,13 +194,6 @@ define(function(require, exports, module) {
       item.datum  = datum;
       item.status = C.UPDATE;
       output.mod.push(item);
-    }
-
-    for(i=0, len=rem.length; i<len; ++i) {
-      item = this._map[key = keyf(rem[i])];
-      item.status = C.EXIT;
-      output.rem.push(item);
-      this._map[key] = null;
     }
 
     // Sort items according to how data is sorted, or by _id. The else 

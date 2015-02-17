@@ -114,7 +114,7 @@ define(function(require, exports, module) {
           out = changeset.create(input);
 
       if(input.reflow) {
-        out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
+        out.mod = ds._data.slice();
       } else {
         // update data
         var delta = ds._input;

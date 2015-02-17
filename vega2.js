@@ -1250,7 +1250,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
           out = changeset.create(input);
 
       if(input.reflow) {
-        out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
+        out.mod = ds._data.slice();
       } else {
         // update data
         var delta = ds._input;
@@ -4557,6 +4557,13 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
         stamp = input.stamp,
         i, key, len, item, datum;
 
+    for(i=0, len=rem.length; i<len; ++i) {
+      item = this._map[key = keyf(rem[i])];
+      item.status = C.EXIT;
+      output.rem.push(item);
+      this._map[key] = null;
+    }
+
     for(i=0, len=add.length; i<len; ++i) {
       key = keyf(datum = add[i]);
       item = newItem.call(this, datum, stamp);
@@ -4573,13 +4580,6 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
       item.datum  = datum;
       item.status = C.UPDATE;
       output.mod.push(item);
-    }
-
-    for(i=0, len=rem.length; i<len; ++i) {
-      item = this._map[key = keyf(rem[i])];
-      item.status = C.EXIT;
-      output.rem.push(item);
-      this._map[key] = null;
     }
 
     // Sort items according to how data is sorted, or by _id. The else 
