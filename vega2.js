@@ -5070,7 +5070,7 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
   function valueRef(name, ref) {
     if (ref == null) return null;
     var isColor = name==="fill" || name==="stroke";
-    var signalName = null;
+    var signals = [];
 
     if (isColor) {
       if (ref.c) {
@@ -5085,15 +5085,15 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
     }
 
     // initialize value
-    var val = null;
+    var val = null, signalRef = null;
     if (ref.value !== undefined) {
       val = util.str(ref.value);
     }
 
     if (ref.signal !== undefined) {
-      var signalRef = util.field(ref.signal);
+      signalRef = util.field(ref.signal);
       val = "signals["+signalRef.map(util.str).join("][")+"]"; 
-      signalName = signalRef.shift();
+      signals.push(signalRef.shift());
     }
 
     // get field reference for enclosing group
@@ -5111,6 +5111,11 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
       if (util.isString(ref.field)) {
         val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
         if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
+      } else if(ref.field.signal) {
+        signalRef = util.field(ref.field.signal);
+        val = "signals["+signalRef.map(util.str).join("][")+"]";
+        if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
+        signals.push(signalRef.shift());
       } else {
         val = "this.util.accessor(group.datum["
             + util.field(ref.field.group).map(util.str).join("][")
@@ -5121,12 +5126,19 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
     }
 
     if (ref.scale != null) {
-      var scale = util.isString(ref.scale)
-        ? util.str(ref.scale)
-        : (ref.scale.group ? "group" : "item")
+      var scale = null;
+      if(util.isString(ref.scale)) {
+        scale = util.str(ref.scale);
+      } else if(ref.scale.signal) {
+        signalRef = util.field(ref.scale.signal);
+        scale = "signals["+signalRef.map(util.str).join("][")+"]";
+        signals.push(signalRef.shift());
+      } else {
+        scale = (ref.scale.group ? "group" : "item")
           + ".datum[" + util.str(ref.scale.group || ref.scale.field) + "]";
-      scale = "group.scale(" + scale + ")";
+      }
 
+      scale = "group.scale(" + scale + ")";
       if(ref.invert) scale += ".invert";  // TODO: ordinal scales
 
       // run through scale function if val specified.
@@ -5142,7 +5154,7 @@ define('parse/properties',['require','exports','module','../dataflow/tuple','../
     // multiply, offset, return value
     val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")"
       + (ref.offset ? " + " + util.number(ref.offset) : "");
-    return {val: val, signals: signalName, scales: ref.scale};
+    return {val: val, signals: signals, scales: ref.scale};
   }
 
   function colorRef(type, x, y, z) {
