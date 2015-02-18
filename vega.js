@@ -7681,13 +7681,20 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
     for (i=0; i<data.length; ++i) {
       sty = tag === 'g' ? null : style(data[i], tag, defs);
       svg += open(tag, attr(data[i], defs), sty);
-      if (tag === 'text') svg += data[i].text;
+      if (tag === 'text') svg += escape_text(data[i].text);
       if (tag === 'g') svg += this.drawGroup(data[i]);
       svg += close(tag);
     }
 
     return svg + close('g');
   };
+  
+  function escape_text(s) {
+    s = (s == null ? "" : String(s));
+    return s.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+  }
 
   var MARKS = {
     group:  ['g', group],
