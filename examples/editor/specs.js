@@ -1,6 +1,13 @@
 var STATIC_SPECS = [
   "area",
-  "bar"
+  "bar",
+  "barley",
+  "error",
+  "grouped_bar",
+  "lifelines",
+  "parallel_coords",
+  "stocks",
+  "weather"
 ];
 
 var INTERACTIVE_SPECS = [

@@ -1,6 +1,6 @@
 define(function(require, module, exports) {
   var config = require('../util/config'),
-      tpl = require('../core/tuple'),
+      tpl = require('../dataflow/tuple'),
       util = require('../util/index'),
       parseMark = require('../parse/mark');
 
@@ -40,7 +40,7 @@ define(function(require, module, exports) {
     var axis = {};
 
     function reset() {
-      util.keys(axisDef).forEach(function(k) { delete axisDef[k]; });
+      axisDef.type = null;
     };
 
     axis.def = function() {
@@ -52,15 +52,17 @@ define(function(require, module, exports) {
         : d3.format(tickFormatString));
 
       // generate data
-      var create = function(d) { return tpl.create({data: d}); };
+      // We don't _really_ need to model these as tuples as no further
+      // data transformation is done. So we optimize for a high churn rate. 
+      var injest = function(d) { return {data: d}; };
       var major = tickValues == null
         ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
         : tickValues;
-      var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(create);
-      major = major.map(create);
+      var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(injest);
+      major = major.map(injest);
       var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
       major.forEach(function(d) { d.label = fmt(d.data); });
-      var tdata = title ? [title].map(create) : [];
+      var tdata = title ? [title].map(injest) : [];
 
       axisDef.marks[0].from = function() { return grid ? major : []; };
       axisDef.marks[1].from = function() { return major; };
@@ -424,7 +426,7 @@ define(function(require, module, exports) {
     domain.properties.update.path = {value: path};
   }
 
-  function vg_axisUpdate(stamp, item, group, trans, db, signals, predicates) {
+  function vg_axisUpdate(item, group, trans, db, signals, predicates) {
     var o = trans ? {} : item,
         offset = item.mark.def.offset,
         orient = item.mark.def.orient,

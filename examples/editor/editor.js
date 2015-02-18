@@ -1,7 +1,7 @@
 var ved = {
   version: 0.1,
   data: undefined,
-  renderType: "svg"
+  renderType: "canvas"
 };
 
 ved.params = function() {
@@ -101,7 +101,7 @@ ved.init = function() {
   var ren = d3.select("#sel_render");
   ren.on("change", ved.renderer)
   ren.selectAll("option")
-    .data(["SVG", "Canvas"])
+    .data(["Canvas", "SVG"])
    .enter().append("option")
     .attr("value", function(d) { return d.toLowerCase(); })
     .text(function(d) { return d; });

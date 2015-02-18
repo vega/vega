@@ -1,6 +1,6 @@
 define(function(require, module, exports) {
   var Bounds = require('../core/Bounds'),
-      canvas = require('../canvas/path'),
+      canvas = require('../render/canvas/path'),
       util = require('./index'),
       config = require('./config');
 

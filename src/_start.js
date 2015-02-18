@@ -1,14 +1,16 @@
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        //Allow using this built library as an AMD module
-        //in another project. That other project will only
-        //see this AMD call, not the internal modules in
-        //the closure below.
-        define([], factory);
-    } else {
-        //Browser globals case. Just assign the
-        //result to a property on the global.
-        root.vg = factory();
-    }
-}(this, function () {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['d3', 'topojson'], factory);
+  } else if(typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory(require('d3'), require('topojson'));
+  } else {
+    // Browser globals (root is window)
+    var tj = (typeof topojson === 'undefined') ? null : topojson;
+    root.vg = factory(d3, tj);
+  }
+}(this, function (d3, topojson) {
     //almond, and your modules will be inlined here

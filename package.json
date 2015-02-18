@@ -7,13 +7,20 @@
   },
   "devDependencies": {
     "almond": "0.3.x",
+    "amd-loader": "0.0.5",
     "ascii-tree": "0.1.x",
+    "chai": "^1.10.0",
     "grunt": "0.4.x",
+    "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
-    "js-priority-queue": "*",
+    "grunt-mocha-test": "^0.12.6",
+    "mocha": "^2.1.0",
     "pegjs": "0.8.x",
     "requirejs": "2.1.x"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
 }

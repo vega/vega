@@ -1,12 +1,13 @@
 define(function(require, exports, module) {
   var d3 = require('d3'),
+      Node = require('../dataflow/Node'),
       parseStreams = require('../parse/streams'),
-      canvas = require('../canvas/index'),
-      svg = require('../svg/index'),
-      transition = require('../scene/transition'),
+      canvas = require('../render/canvas/index'),
+      svg = require('../render/svg/index'),
+      Transition = require('../scene/Transition'),
       config = require('../util/config'),
       util = require('../util/index'),
-      changeset = require('../core/changeset');
+      changeset = require('../dataflow/changeset');
 
   var View = function(el, width, height, model) {
     this._el    = null;
@@ -101,7 +102,7 @@ define(function(require, exports, module) {
       this._model.width(this._width);
       this._model.height(this._height);
       if (this._el) this.initialize(this._el.parentNode);
-      this.update({props:"enter"}).update({props:"update"});
+      this.update();
     } else {
       this.padding(pad).update(opt);
     }
@@ -176,14 +177,18 @@ define(function(require, exports, module) {
     opt = opt || {};
     var v = this,
         trans = opt.duration
-          ? new transition(opt.duration, opt.ease)
+          ? new Transition(opt.duration, opt.ease)
           : null;
 
-    var cs = changeset.create({});
+    var cs = changeset.create();
     if(trans) cs.trans = trans;
+    if(opt.reflow !== undefined) cs.reflow = opt.reflow
 
     if(!v._build) {
-      v._renderNode = new v._model.Node(function(input) {
+      v._renderNode = new Node(v._model.graph)
+        .router(true);
+
+      v._renderNode.evaluate = function(input) {
         util.debug(input, ["rendering"]);
 
         var s = v._model.scene();
@@ -192,10 +197,14 @@ define(function(require, exports, module) {
         } else {
           v._renderer.render(s);
         }
+
+        // For all updated datasources, finalize their changesets.
+        for(var ds in input.data) {
+          changeset.finalize(v._model.data(ds).last());
+        }
+
         return input;
-      });
-      v._renderNode._router = true;
-      v._renderNode._type = 'renderer';
+      };
 
       v._model.scene(v._renderNode);
       v._build = true;
@@ -220,7 +229,7 @@ define(function(require, exports, module) {
   View.factory = function(model) {
     return function(opt) {
       opt = opt || {};
-      var defs = model._defs;
+      var defs = model.defs();
       var v = new View()
         .model(model)
         .width(defs.width)

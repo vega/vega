@@ -7,7 +7,6 @@ define(function(require, exports, module) {
       parsePredicates = require('../parse/predicates'),
       parseData = require('../parse/data'),
       parseInteractors = require('../parse/interactors'),
-      tuple = require('../core/tuple'),
       util = require('../util/index');
 
   return function parseSpec(spec, callback, viewFactory) {
@@ -22,7 +21,7 @@ define(function(require, exports, module) {
         model = new Model();
 
     parseInteractors(model, spec, function() {
-      model._defs = {
+      model.defs({
         width: width,
         height: height,
         viewport: viewport,
@@ -31,7 +30,7 @@ define(function(require, exports, module) {
         predicates: parsePredicates(model, spec.predicates),
         marks: parseMarks(model, spec, width, height),
         data: parseData(model, spec.data, function() { callback(viewFactory(model)); })
-      };
+      });
     });
   }
 });

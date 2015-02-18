@@ -36,7 +36,7 @@ define(function(require, exports, module) {
   
   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
       
-  function expr(model, x) {
+  function expr(graph, x) {
     var tokens = x.split(lexer),
         t, v, i, n, sq, dq, ns, sg = {}, fd = {},
         args = ["vg", "d", "e", "i"];
@@ -54,7 +54,7 @@ define(function(require, exports, module) {
       }
       if(tokens[i+1] == ":") {  // Namespace signal
         ns = t+":"+tokens[i+2];
-        if(model.signal((ns = util.field(ns))[0])) {
+        if(graph.signal((ns = util.field(ns))[0])) {
           sg[ns[0]] = 1;
           v = util.field(tokens[i+2]);
           tokens[i] = "sg['"+tokens[i];
@@ -62,7 +62,7 @@ define(function(require, exports, module) {
           i+=2;
         }
       }
-      if(model.signal((v = util.field(t))[0])) {
+      if(graph.signal((v = util.field(t))[0])) {
         sg[v[0]] = 1;
         tokens[i] = tokens[i].replace(v[0], "sg["+util.str(v[0])+"]");
       }
@@ -76,8 +76,8 @@ define(function(require, exports, module) {
     };
   };
 
-  expr.eval = function(model, fn, d, e, i, p, sg) {
-    sg = model.signalValues(util.array(sg));
+  expr.eval = function(graph, fn, d, e, i, p, sg) {
+    sg = graph.signalValues(util.array(sg));
     return fn.call(null, d, e, i, p, sg);
   };
 

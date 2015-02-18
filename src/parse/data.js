@@ -1,11 +1,11 @@
 define(function(require, exports, module) {
   var parseTransforms = require('./transforms'),
-      parseModify = require('../transforms/modify'),
+      parseModify = require('./modify'),
       util = require('../util/index'),
       load = require('../util/load'),
       read = require('../util/read');
 
-  return function parseData(model, spec, callback) {
+  var parseData = function(model, spec, callback) {
     var count = 0;
 
     function loaded(d) {
@@ -19,30 +19,35 @@ define(function(require, exports, module) {
       }
     }
 
-    function datasource(d) {
-      var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
-          mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
-          ds = model.data(d.name, mod.concat(transform));
-
-      if(d.values) ds.values(d.values);
-      else if(d.source) {
-        ds.source(d.source);
-        model.data(d.source).addListener(ds);
-      }
-
-      return ds;
-    }
-
     // process each data set definition
     (spec || []).forEach(function(d) {
       if (d.url) {
         count += 1;
         load(d.url, loaded(d)); 
       }
-      datasource(d);
+      parseData.datasource(model, d);
     });
 
     if (count === 0) setTimeout(callback, 1);
     return spec;
   };
+
+  parseData.datasource = function(model, d) {
+    var transform = (d.transform||[]).map(function(t) { return parseTransforms(model, t) }),
+        mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
+        ds = model.data(d.name, mod.concat(transform));
+
+    if(d.values) ds.values(read(d.values, d.format));
+    else if(d.source) {
+      ds.source(d.source);
+
+      // The derived datasource will be pulsed by its src rather than the model.
+      model.data(d.source).addListener(ds);
+      model.removeListener(ds._pipeline[0]); 
+    }
+
+    return ds;    
+  };
+
+  return parseData;
 });

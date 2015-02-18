@@ -6,22 +6,30 @@ module.exports = function(grunt) {
       compile: {
         options: {
           baseUrl: "src",
+          paths: {
+            d3: "../node_modules/d3/d3.min",
+            topojson: "../node_modules/topojson/topojson.min"
+          },
+          include: ["../node_modules/almond/almond", "parse/spec"],
+          exclude: ["d3", "topojson"],
           out: "vega2.js",
-          name: "../node_modules/almond/almond",
-          include: ["parse/spec"],
           wrap: {
               startFile: "src/_start.js",
               endFile: "src/_end.js"
           },
-          optimize: "none",
-          paths: {
-            d3: "../node_modules/d3/d3.min",
-            topojson: "../node_modules/topojson/topojson.min",
-            "js-priority-queue": "../node_modules/js-priority-queue/priority-queue"
-          },
-          exclude: ["d3", "topojson"]
+          optimize: "none"
         }
-      },
+      }
+    },
+
+    mochaTest: {
+      test: {
+        options: {
+          require: ["d3", "amd-loader"],
+          reporter: "spec",
+        },
+        src: ["test/**/*.js"]
+      }
     },
 
     uglify: {
@@ -33,15 +41,23 @@ module.exports = function(grunt) {
 
     watch: {
       src: {
-        files: ['src/**/*.js'],
-        tasks: ['requirejs:compile', 'uglify']
+        files: ["src/**/*.js"],
+        tasks: ["build"]
       }
+    },
+
+    jshint: {
+      src: ["src/dataflow/*.js"],
     }
   });
 
   grunt.loadNpmTasks("grunt-contrib-requirejs");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks("grunt-mocha-test");
 
-  grunt.registerTask("default", ["requirejs", "uglify"]);
+  grunt.registerTask("default", ["test", "build"]);
+  grunt.registerTask("build", ["requirejs", "uglify"]);
+  grunt.registerTask("test", ["mochaTest"]);
 };

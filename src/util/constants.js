@@ -1,17 +1,26 @@
 define(function(require, module, exports) {
   return {
+    ADD_CELL: 1,
+    MOD_CELL: 2,
+
+    DATA: "data",
+    FIELDS:  "fields",
+    SCALES:  "scales",
+    SIGNAL:  "signal",
+    SIGNALS: "signals",
+    
     GROUP: "group",
     
     ENTER: "enter",
     UPDATE: "update",
     EXIT: "exit",
 
-    DEFAULT_DATA: {"sentinel": 1},
+    SENTINEL: {"sentinel": 1},
 
-    MODIFY_ADD: "add",
-    MODIFY_REMOVE: "remove",
-    MODIFY_TOGGLE: "toggle",
-    MODIFY_CLEAR: "clear",
+    ADD: "add",
+    REMOVE: "remove",
+    TOGGLE: "toggle",
+    CLEAR: "clear",
 
     LINEAR: "linear",
     ORDINAL: "ordinal",
@@ -20,7 +29,17 @@ define(function(require, module, exports) {
     TIME: "time",
     QUANTILE: "quantile",
 
+    DOMAIN: "domain",
+    RANGE: "range",
+
     MARK: "mark",
-    AXIS: "axis"
+    AXIS: "axis",
+
+    COUNT: "count",
+    MIN: "min",
+    MAX: "max",
+
+    ASC: "asc",
+    DESC: "desc"
   }
 });
