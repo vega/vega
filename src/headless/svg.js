@@ -14,13 +14,25 @@ vg.headless.svg = (function() {
     };
   };
 
+  function escapeXML(raw) {
+    if (typeof raw === "string") {
+      return raw.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    } else {
+      return raw; // number, etc.
+    }
+  }
+
   function open(tag, attr, raw) {
     var s = "<" + tag;
     if (attr) {
       for (var key in attr) {
         var val = attr[key];
         if (val != null) {
-          s += " " + key + '="' + val + '"';
+          s += " " + key + '="' + escapeXML(val) + '"';
         }
       }
     }
@@ -121,7 +133,7 @@ vg.headless.svg = (function() {
     for (i=0; i<data.length; ++i) {
       sty = tag === 'g' ? null : style(data[i], tag, defs);
       svg += open(tag, attr(data[i], defs), sty);
-      if (tag === 'text') svg += data[i].text;
+      if (tag === 'text') svg += escapeXML(data[i].text);
       if (tag === 'g') svg += this.drawGroup(data[i]);
       svg += close(tag);
     }
@@ -382,7 +394,7 @@ vg.headless.svg = (function() {
       s += 'font:' + fontString(o); + ';';
     }
     
-    return s.length ? 'style="'+s+'"' : null;
+    return s.length ? 'style="'+escapeXML(s)+'"' : null;
   }
 
   function fontString(o) {
