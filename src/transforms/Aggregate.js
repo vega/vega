@@ -6,7 +6,7 @@ define(function(require, exports, module) {
       C = require('../util/constants');
 
   function Aggregate(graph) {
-    if(graph) Transform.prototype.init.call(this, graph);
+    if(graph) this.init(graph);
     return this; 
   }
 
@@ -16,7 +16,7 @@ define(function(require, exports, module) {
     this._refs  = []; // accessors to groupby fields
     this._cells = {};
     return Transform.prototype.init.call(this, graph)
-      .router(true).needsPrev(true);
+      .router(true).revises(true);
   };
 
   proto.data = function() { return this._cells; };

@@ -148,7 +148,7 @@ define(function(require, exports, module) {
       r = refs[i];
       from = r.data || "vg_"+group.datum._id;
       data = graph.data(from)
-        .needsPrev(true)
+        .revises(true)
         .last();
 
       if(data.stamp <= this._stamp) continue;

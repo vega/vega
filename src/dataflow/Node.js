@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
     this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
     this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
-    this._needsPrev = false; // Does the operator require tuples' previous values? 
+    this._revises = false; // Does the operator require tuples' previous values? 
     return this;
   };
 
@@ -70,9 +70,9 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.needsPrev = function(bool) {
-    if(!arguments.length) return this._needsPrev;
-    this._needsPrev = !!bool;
+  proto.revises = function(bool) {
+    if(!arguments.length) return this._revises;
+    this._revises = !!bool;
     return this;
   };
 

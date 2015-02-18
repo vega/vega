@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     this._output = {key: "key", value: "value"};
     this._cache = {};
 
-    return this.router(true).needsPrev(true);
+    return this.router(true).revises(true);
   }
 
   var proto = (Fold.prototype = new Transform());

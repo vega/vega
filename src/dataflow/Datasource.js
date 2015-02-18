@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 
     this._pipeline  = null; // Pipeline of transformations.
     this._collector = null; // Collector to materialize output of pipeline
-    this._needsPrev = false; // Does any pipeline operator need to track prev?
+    this._revises = false; // Does any pipeline operator need to track prev?
   };
 
   var proto = Datasource.prototype;
@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 
   proto.add = function(d) {
     var add = this._input.add,
-        prev = this._needsPrev ? null : undefined;
+        prev = this._revises ? null : undefined;
 
     add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d, prev); }));
     return this;
@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 
   proto.update = function(where, field, func) {
     var mod = this._input.mod,
-        prev = this._needsPrev ? null : undefined; 
+        prev = this._revises ? null : undefined; 
 
     this._input.fields[field] = 1;
     this._data.filter(where).forEach(function(x) {
@@ -70,16 +70,16 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.needsPrev = function(p) {
+  proto.revises = function(p) {
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
-    if(!this._needsPrev && p) { 
+    if(!this._revises && p) { 
       this._data.forEach(function(d) { 
         if(d._prev === undefined) d._prev = C.SENTINEL 
       });
     }
 
-    this._needsPrev = this._needsPrev || p;
+    this._revises = this._revises || p;
     return this;
   };
 
@@ -98,7 +98,7 @@ define(function(require, exports, module) {
       // the output.
       ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
-      ds._needsPrev = pipeline.some(function(p) { return p.needsPrev(); });
+      ds._revises = pipeline.some(function(p) { return p.revises(); });
     }
 
     // Input node applies the datasource's delta, and propagates it to 
@@ -168,7 +168,7 @@ define(function(require, exports, module) {
   proto.listener = function() { 
     var l = new Node(this._graph),
         dest = this,
-        prev = this._needsPrev ? null : undefined;
+        prev = this._revises ? null : undefined;
 
     l.evaluate = function(input) {
       this._cache = this._cache || {};  // to propagate tuples correctly

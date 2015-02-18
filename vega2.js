@@ -987,7 +987,7 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
 
     this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
     this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
-    this._needsPrev = false; // Does the operator require tuples' previous values? 
+    this._revises = false; // Does the operator require tuples' previous values? 
     return this;
   };
 
@@ -1032,9 +1032,9 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
     return this;
   };
 
-  proto.needsPrev = function(bool) {
-    if(!arguments.length) return this._needsPrev;
-    this._needsPrev = !!bool;
+  proto.revises = function(bool) {
+    if(!arguments.length) return this._revises;
+    this._revises = !!bool;
     return this;
   };
 
@@ -1153,7 +1153,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
 
     this._pipeline  = null; // Pipeline of transformations.
     this._collector = null; // Collector to materialize output of pipeline
-    this._needsPrev = false; // Does any pipeline operator need to track prev?
+    this._revises = false; // Does any pipeline operator need to track prev?
   };
 
   var proto = Datasource.prototype;
@@ -1166,7 +1166,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
 
   proto.add = function(d) {
     var add = this._input.add,
-        prev = this._needsPrev ? null : undefined;
+        prev = this._revises ? null : undefined;
 
     add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d, prev); }));
     return this;
@@ -1180,7 +1180,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
 
   proto.update = function(where, field, func) {
     var mod = this._input.mod,
-        prev = this._needsPrev ? null : undefined; 
+        prev = this._revises ? null : undefined; 
 
     this._input.fields[field] = 1;
     this._data.filter(where).forEach(function(x) {
@@ -1206,16 +1206,16 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
     return this;
   };
 
-  proto.needsPrev = function(p) {
+  proto.revises = function(p) {
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
-    if(!this._needsPrev && p) { 
+    if(!this._revises && p) { 
       this._data.forEach(function(d) { 
         if(d._prev === undefined) d._prev = C.SENTINEL 
       });
     }
 
-    this._needsPrev = this._needsPrev || p;
+    this._revises = this._revises || p;
     return this;
   };
 
@@ -1234,7 +1234,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
       // the output.
       ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
-      ds._needsPrev = pipeline.some(function(p) { return p.needsPrev(); });
+      ds._revises = pipeline.some(function(p) { return p.revises(); });
     }
 
     // Input node applies the datasource's delta, and propagates it to 
@@ -1304,7 +1304,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   proto.listener = function() { 
     var l = new Node(this._graph),
         dest = this,
-        prev = this._needsPrev ? null : undefined;
+        prev = this._revises ? null : undefined;
 
     l.evaluate = function(input) {
       this._cache = this._cache || {};  // to propagate tuples correctly
@@ -1507,7 +1507,7 @@ define('dataflow/Graph',['require','exports','module','d3','./Datasource','./Sig
         data.forEach(function(d) { 
           var ds = graph.data(d);
           ds.addListener(c); 
-          ds.needsPrev(n.needsPrev());
+          ds.revises(n.revises());
         });
       }
 
@@ -3223,7 +3223,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
       C = require('../util/constants');
 
   function Aggregate(graph) {
-    if(graph) Transform.prototype.init.call(this, graph);
+    if(graph) this.init(graph);
     return this; 
   }
 
@@ -3233,7 +3233,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
     this._refs  = []; // accessors to groupby fields
     this._cells = {};
     return Transform.prototype.init.call(this, graph)
-      .router(true).needsPrev(true);
+      .router(true).revises(true);
   };
 
   proto.data = function() { return this._cells; };
@@ -3511,7 +3511,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
     this._output = {key: "key", value: "value"};
     this._cache = {};
 
-    return this.router(true).needsPrev(true);
+    return this.router(true).revises(true);
   }
 
   var proto = (Fold.prototype = new Transform());
@@ -3966,7 +3966,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
     this._collector = new Collector(graph);
     this._lastJoin = 0;
 
-    return this.needsPrev(true);
+    return this.revises(true);
   }
 
   var proto = (Zip.prototype = new Transform());
@@ -4133,7 +4133,7 @@ define('parse/modify',['require','exports','module','../dataflow/Node','../dataf
       var datum = {}, 
           value = signal ? graph.signalRef(def.signal) : null,
           d = model.data(ds.name),
-          prev = d.needsPrev() ? null : undefined,
+          prev = d.revises() ? null : undefined,
           t = null;
 
       datum[def.field] = value;
@@ -4797,7 +4797,7 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
       r = refs[i];
       from = r.data || "vg_"+group.datum._id;
       data = graph.data(from)
-        .needsPrev(true)
+        .revises(true)
         .last();
 
       if(data.stamp <= this._stamp) continue;

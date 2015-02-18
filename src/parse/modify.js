@@ -34,7 +34,7 @@ define(function(require, exports, module) {
       var datum = {}, 
           value = signal ? graph.signalRef(def.signal) : null,
           d = model.data(ds.name),
-          prev = d.needsPrev() ? null : undefined,
+          prev = d.revises() ? null : undefined,
           t = null;
 
       datum[def.field] = value;
