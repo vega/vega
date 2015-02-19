@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var d3 = require('d3'),
+  var Heap = require('heap'),
       Datasource = require('./Datasource'),
       Signal = require('./Signal'),
       changeset = require('./changeset'),
@@ -55,37 +55,34 @@ define(function(require, exports, module) {
     return value;
   };
 
-  var schedule = d3.bisector(function(a, b) {
+  var schedule = function(a, b) {
     // If the nodes are equal, propagate the non-reflow pulse first,
-    // so that we can ignore subsequent reflow pulses. To efficiently
-    // use the JS array, we want lower ranked nodes on the right so
-    // we can pop them. 
-    if(a.rank == b.rank) return a.pulse.reflow ? -1 : 1;
-    else return b.rank - a.rank; 
-  }); 
+    // so that we can ignore subsequent reflow pulses. 
+    if(a.rank == b.rank) return a.pulse.reflow ? 1 : -1;
+    else return a.rank - b.rank; 
+  };
 
   proto.propagate = function(pulse, node) {
     var v, l, n, p, r, i, len;
 
-    var pq = [];
-    pq.enq = function(x) {
-      var idx = schedule.left(this, x);
-      this.splice(idx, 0, x);
-    };
+    // new PQ with each propagation cycle so that we can pulse branches
+    // of the dataflow graph during a propagation (e.g., when creating
+    // a new inline datasource).
+    var pq = new Heap(schedule); 
 
     if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
     pulse.stamp = ++this._stamp;
-    pq.enq({ node: node, pulse: pulse, rank: node.rank() });
+    pq.push({ node: node, pulse: pulse, rank: node.rank() });
 
-    while (pq.length > 0) {
+    while (pq.size() > 0) {
       v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
 
       // A node's rank might change during a propagation (e.g. instantiating
       // a group's dataflow branch). Re-queue if it has.
       if(r != n.rank()) {
         util.debug(p, ['Rank mismatch', r, n.rank()]);
-        pq.enq({ node: n, pulse: p, rank: n.rank() });
+        pq.push({ node: n, pulse: p, rank: n.rank() });
         continue;
       }
 
@@ -105,7 +102,7 @@ define(function(require, exports, module) {
       // the pulse. 
       if (pulse !== this.doNotPropagate || !run) {
         for (i = 0, len = l.length; i < len; i++) {
-          pq.enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
+          pq.push({ node: l[i], pulse: pulse, rank: l[i]._rank });
         }
       }
     }

@@ -8,7 +8,8 @@ module.exports = function(grunt) {
           baseUrl: "src",
           paths: {
             d3: "../node_modules/d3/d3.min",
-            topojson: "../node_modules/topojson/topojson.min"
+            topojson: "../node_modules/topojson/topojson.min",
+            heap: "../node_modules/heap/lib/heap"
           },
           include: ["../node_modules/almond/almond", "parse/spec"],
           exclude: ["d3", "topojson"],

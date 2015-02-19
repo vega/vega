@@ -9,6 +9,9 @@
     //module value for 'main' here and return it as the
     //value to use for the public API for the built file.
     return {
+      dataflow: {
+        Node: require('dataflow/Node')
+      },
       parse: {
         spec: require('parse/spec')
       },
