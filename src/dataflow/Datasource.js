@@ -29,16 +29,16 @@ define(function(require, exports, module) {
   };
 
   proto.add = function(d) {
-    var add = this._input.add,
-        prev = this._revises ? null : undefined;
+    var prev = this._revises ? null : undefined;
 
-    add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d, prev); }));
+    this._input.add = this._input.add
+      .concat(util.array(d).map(function(d) { return tuple.create(d, prev); }));
     return this;
   };
 
   proto.remove = function(where) {
     var d = this._data.filter(where);
-    this._input.rem.push.apply(this._input.rem, d);
+    this._input.rem = this._input.rem.concat(d);
     return this;
   };
 
