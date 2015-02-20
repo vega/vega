@@ -1,6 +1,5 @@
 define(function(require, exports, module) {
   var Node = require('../dataflow/Node'),
-      Collector = require('../dataflow/Collector'),
       Encoder  = require('./Encoder'),
       Bounder  = require('./Bounder'),
       Item  = require('./Item'),
@@ -43,7 +42,6 @@ define(function(require, exports, module) {
 
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
-    this._collector = new Collector(this._model.graph);
     this._renderer = renderer;
 
     if(this._ds) {
@@ -125,7 +123,7 @@ define(function(require, exports, module) {
   }
 
   proto._pipeline = function() {
-    return [this, this._encoder, this._collector, this._bounder, this._renderer];
+    return [this, this._encoder, this._bounder, this._renderer];
   };
 
   proto.connect = function() {

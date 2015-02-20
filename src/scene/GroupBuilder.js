@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
   var Node = require('../dataflow/Node'),
+      Collector = require('../dataflow/Collector'),
       Builder = require('./Builder'),
       Scale = require('./Scale'),
       parseAxes = require('../parse/axes'),
@@ -35,6 +36,10 @@ define(function(require, exports, module) {
       return (acc[x.scale] = 1, acc);
     }, {});
     this._recursor.dependency(C.SCALES, util.keys(scales));
+
+    // We only need a collector for up-propagation of bounds calculation,
+    // so only GroupBuilders, and not regular Builders, have collectors.
+    this._collector = new Collector(model.graph);
 
     return Builder.prototype.init.apply(this, arguments);
   };
@@ -122,7 +127,7 @@ define(function(require, exports, module) {
   }
 
   function buildGroup(input, group) {
-    util.debug(input, ["building group", group]);
+    util.debug(input, ["building group", group._id]);
 
     group._scales = group._scales || {};    
     group.scale  = scale.bind(group);
@@ -135,7 +140,7 @@ define(function(require, exports, module) {
   }
 
   function buildMarks(input, group) {
-    util.debug(input, ["building marks", this._def.marks]);
+    util.debug(input, ["building marks", group._id]);
     var marks = this._def.marks,
         mark, from, inherit, i, len, m, b;
 

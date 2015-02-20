@@ -1,6 +1,10 @@
 var fs  = require('fs'),
     expect = require('chai').expect,
     Q = require('q'),
+    vg1 = require('vega'),
+    vg2 = require('../vega2'),
+    amdLoader = require('amd-loader'),
+    changeset = require('../src/dataflow/changeset'),
     bar1 = JSON.parse(fs.readFileSync('data/bar.vg1.json').toString()),
     bar2 = JSON.parse(fs.readFileSync('data/bar.vg2.json').toString()),
     cars = JSON.parse(fs.readFileSync('data/cars.json').toString()),
@@ -42,10 +46,12 @@ function checkScene(spec, scene) {
   if(spec === bar1 || spec === bar2) {
     expect(scene.items[0].items[0].items[0].x).to.be.at.least(0);
     expect(scene.items[0].items[0].items[0].y).to.be.at.least(0);
+    expect(scene.items[0].items[0].items[0].fill).to.equal("steelblue");
   } else if(spec === pcp1 || spec === pcp2) {
     expect(scene.items[0].items[0].items[0].items).to.have.length.of.at.least(1);
     expect(scene.items[0].items[0].items[0].items[0].items[0].x).to.be.at.least(0);
     expect(scene.items[0].items[0].items[0].items[0].items[0].y).to.be.at.least(0);
+    expect(scene.items[0].items[0].items[0].items[0].items[0].stroke).to.equal("steelblue");
   }
 
   return true;
@@ -59,9 +65,56 @@ function run(specName, N, conditions) {
   }));
 }
 
+function _vg1(spec) {
+  var deferred = Q.defer(),
+      start = Date.now();
+
+  vg1.parse.spec(spec, function(chart) {
+    var view = chart();
+    view.render = function() {};
+    view.update();
+    console.log('vg1', Date.now() - start);
+
+    expect(checkScene(spec, view._model.scene())).to.be.true;
+    deferred.resolve();
+  }, vg1.headless.View.Factory);
+  
+  return deferred.promise;
+}
+
+function _vg2(spec, name, viewFactory, restore) {
+  var deferred = Q.defer(),
+      start = Date.now(), next;
+
+  name = name || 'vg2';
+  viewFactory = viewFactory || function(model) { return model };
+
+  vg2.parse.spec(spec, function(model) {
+    console.log(name, 'inline data ingested', Date.now() - start);
+
+    next = Date.now();
+    model.fire();
+    console.log(name, 'datasources fired', Date.now() - next);
+
+    model.scene(new vg2.dataflow.Node(model.graph));
+    next = Date.now();
+    model.graph.propagate(changeset.create(null, true), model._builder);
+    console.log(name, 'scene built', Date.now() - next);    
+
+    console.log(name, 'total', Date.now() - start);    
+
+    expect(checkScene(spec, model.scene())).to.be.true;
+    if(restore) restore(model);
+    deferred.resolve();
+  }, viewFactory);
+
+  return deferred.promise;
+}
+
 module.exports = {
   specs: specs,
   generate: generate,
   checkScene: checkScene,
-  run: run
+  run: run,
+  tasks: { vg1: _vg1, vg2: _vg2 }
 };

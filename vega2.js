@@ -4764,9 +4764,8 @@ define('parse/data',['require','exports','module','./transforms','./modify','../
 
   return parseData;
 });
-define('scene/Builder',['require','exports','module','../dataflow/Node','../dataflow/Collector','./Encoder','./Bounder','./Item','../parse/data','../dataflow/tuple','../dataflow/changeset','../util/index','../util/constants'],function(require, exports, module) {
+define('scene/Builder',['require','exports','module','../dataflow/Node','./Encoder','./Bounder','./Item','../parse/data','../dataflow/tuple','../dataflow/changeset','../util/index','../util/constants'],function(require, exports, module) {
   var Node = require('../dataflow/Node'),
-      Collector = require('../dataflow/Collector'),
       Encoder  = require('./Encoder'),
       Bounder  = require('./Bounder'),
       Item  = require('./Item'),
@@ -4809,7 +4808,6 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
 
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
-    this._collector = new Collector(this._model.graph);
     this._renderer = renderer;
 
     if(this._ds) {
@@ -4891,7 +4889,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
   }
 
   proto._pipeline = function() {
-    return [this, this._encoder, this._collector, this._bounder, this._renderer];
+    return [this, this._encoder, this._bounder, this._renderer];
   };
 
   proto.connect = function() {
@@ -6188,8 +6186,9 @@ define('parse/axes',['require','exports','module','../scene/axis','../util/confi
   return axes;
 });
 
-define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./Builder','./Scale','../parse/axes','../util/index','../util/constants'],function(require, exports, module) {
+define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','../dataflow/Collector','./Builder','./Scale','../parse/axes','../util/index','../util/constants'],function(require, exports, module) {
   var Node = require('../dataflow/Node'),
+      Collector = require('../dataflow/Collector'),
       Builder = require('./Builder'),
       Scale = require('./Scale'),
       parseAxes = require('../parse/axes'),
@@ -6225,6 +6224,10 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
       return (acc[x.scale] = 1, acc);
     }, {});
     this._recursor.dependency(C.SCALES, util.keys(scales));
+
+    // We only need a collector for up-propagation of bounds calculation,
+    // so only GroupBuilders, and not regular Builders, have collectors.
+    this._collector = new Collector(model.graph);
 
     return Builder.prototype.init.apply(this, arguments);
   };
@@ -6312,7 +6315,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
   }
 
   function buildGroup(input, group) {
-    util.debug(input, ["building group", group]);
+    util.debug(input, ["building group", group._id]);
 
     group._scales = group._scales || {};    
     group.scale  = scale.bind(group);
@@ -6325,7 +6328,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','./
   }
 
   function buildMarks(input, group) {
-    util.debug(input, ["building marks", this._def.marks]);
+    util.debug(input, ["building marks", group._id]);
     var marks = this._def.marks,
         mark, from, inherit, i, len, m, b;
 
