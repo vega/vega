@@ -15,6 +15,10 @@
       parse: {
         spec: require('parse/spec')
       },
+      scene: {
+        Builder: require('scene/Builder'),
+        GroupBuilder: require('scene/GroupBuilder')
+      },
       util: require('util/index'),
       config: require('util/config')
     }

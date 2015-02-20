@@ -199,8 +199,11 @@ define(function(require, exports, module) {
         }
 
         // For all updated datasources, finalize their changesets.
-        for(var ds in input.data) {
-          changeset.finalize(v._model.data(ds).last());
+        var d, ds;
+        for(d in input.data) {
+          ds = v._model.data(d);
+          if(!ds.revises()) continue;
+          changeset.finalize(ds.last());
         }
 
         return input;

@@ -71,6 +71,8 @@ define(function(require, exports, module) {
   };
 
   proto.revises = function(p) {
+    if(!arguments.length) return this._revises;
+    
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
     if(!this._revises && p) { 

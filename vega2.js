@@ -884,13 +884,13 @@ define('dataflow/changeset',['require','exports','module','../util/constants'],f
     return out;
   }
 
-  function finalize(cs) {
-    function rp(x) {
-      x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
-    }
+  function reset_prev(x) {
+    x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+  }
 
-    cs.add.forEach(rp);
-    cs.mod.forEach(rp);
+  function finalize(cs) {
+    for(i=0, len=cs.add.length; i<len; ++i) reset_prev(cs.add[i]);
+    for(i=0, len=cs.mod.length; i<len; ++i) reset_prev(cs.mod[i]);
   }
 
   function copy(a, b) {
@@ -1583,6 +1583,8 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   };
 
   proto.revises = function(p) {
+    if(!arguments.length) return this._revises;
+    
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
     if(!this._revises && p) { 
@@ -9452,8 +9454,11 @@ define('core/View',['require','exports','module','d3','../dataflow/Node','../par
         }
 
         // For all updated datasources, finalize their changesets.
-        for(var ds in input.data) {
-          changeset.finalize(v._model.data(ds).last());
+        var d, ds;
+        for(d in input.data) {
+          ds = v._model.data(d);
+          if(!ds.revises()) continue;
+          changeset.finalize(ds.last());
         }
 
         return input;
@@ -9865,6 +9870,10 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
       },
       parse: {
         spec: require('parse/spec')
+      },
+      scene: {
+        Builder: require('scene/Builder'),
+        GroupBuilder: require('scene/GroupBuilder')
       },
       util: require('util/index'),
       config: require('util/config')
