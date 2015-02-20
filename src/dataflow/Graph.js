@@ -128,9 +128,9 @@ define(function(require, exports, module) {
 
       if(data.length > 0) {
         data.forEach(function(d) { 
-          var ds = graph.data(d);
-          ds.addListener(c); 
-          ds.revises(n.revises());
+          graph.data(d)
+            .revises(n.revises())
+            .addListener(c);
         });
       }
 

@@ -3,13 +3,18 @@ define(function(require, module, exports) {
       C = require('../util/constants'),
       tuple_id = 1;
 
-  function create(d, p) {
-    var o = Object.create(util.isObject(d) ? d : {data: d});
-    o._id = ++tuple_id;
-    // We might not want to track prev state (p == undefined),
-    // or delay prev object creation (p == null).
-    o._prev = p !== undefined ? p || C.SENTINEL : undefined;
-    return o;
+  // Object.create is expensive. So, when ingesting, trust that the
+  // datum is an object that has been appropriately sandboxed from 
+  // the outside environment. 
+  function ingest(datum, prev) {
+    datum = util.isObject(datum) ? datum : {data: datum};
+    datum._id = ++tuple_id;
+    datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
+    return datum;
+  }
+
+  function derive(datum, prev) {
+    return ingest(Object.create(datum), prev);
   }
 
   // WARNING: operators should only call this once per timestamp!
@@ -29,7 +34,8 @@ define(function(require, module, exports) {
   function reset() { tuple_id = 1; }
 
   return {
-    create: create,
+    ingest: ingest,
+    derive: derive,
     set:    set,
     prev:   set_prev,
     reset:  reset

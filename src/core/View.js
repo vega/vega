@@ -180,6 +180,9 @@ define(function(require, exports, module) {
           ? new Transition(opt.duration, opt.ease)
           : null;
 
+    // TODO: with streaming data API, adds should util.duplicate just parseSpec
+    // to prevent Vega from polluting the environment.
+
     var cs = changeset.create();
     if(trans) cs.trans = trans;
     if(opt.reflow !== undefined) cs.reflow = opt.reflow

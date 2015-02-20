@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
   function get_tuple(x, i, len) {
     var list = this._cache[x._id] || (this._cache[x._id] = Array(len));
-    return list[i] || (list[i] = tuple.create(x, x._prev));
+    return list[i] || (list[i] = tuple.derive(x, x._prev));
   };
 
   function fn(data, fields, accessors, out, stamp) {

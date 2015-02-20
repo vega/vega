@@ -34,7 +34,7 @@ define(function(require, exports, module) {
   };
 
   proto._new_tuple = function(x, k) {
-    return tuple.create(k, null);
+    return tuple.ingest(k, null);
   };
 
   proto._new_cell = function(x, k) {

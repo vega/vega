@@ -1304,13 +1304,18 @@ define('dataflow/tuple',['require','exports','module','../util/index','../util/c
       C = require('../util/constants'),
       tuple_id = 1;
 
-  function create(d, p) {
-    var o = Object.create(util.isObject(d) ? d : {data: d});
-    o._id = ++tuple_id;
-    // We might not want to track prev state (p == undefined),
-    // or delay prev object creation (p == null).
-    o._prev = p !== undefined ? p || C.SENTINEL : undefined;
-    return o;
+  // Object.create is expensive. So, when ingesting, trust that the
+  // datum is an object that has been appropriately sandboxed from 
+  // the outside environment. 
+  function ingest(datum, prev) {
+    datum = util.isObject(datum) ? datum : {data: datum};
+    datum._id = ++tuple_id;
+    datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
+    return datum;
+  }
+
+  function derive(datum, prev) {
+    return ingest(Object.create(datum), prev);
   }
 
   // WARNING: operators should only call this once per timestamp!
@@ -1330,7 +1335,8 @@ define('dataflow/tuple',['require','exports','module','../util/index','../util/c
   function reset() { tuple_id = 1; }
 
   return {
-    create: create,
+    ingest: ingest,
+    derive: derive,
     set:    set,
     prev:   set_prev,
     reset:  reset
@@ -1544,7 +1550,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
     var prev = this._revises ? null : undefined;
 
     this._input.add = this._input.add
-      .concat(util.array(d).map(function(d) { return tuple.create(d, prev); }));
+      .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
     return this;
   };
 
@@ -1564,8 +1570,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
           next = func(x);
       if (prev !== next) {
         if(x._prev === undefined && prev !== undefined) x._prev = C.SENTINEL;
-        tuple.prev(x, field);
-        x.__proto__[field] = next;
+        tuple.set(x, field, next);
         if(mod.indexOf(x) < 0) mod.push(x);
       }
     });
@@ -1584,7 +1589,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
 
   proto.revises = function(p) {
     if(!arguments.length) return this._revises;
-    
+
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
     if(!this._revises && p) { 
@@ -1689,7 +1694,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
       var output  = changeset.create(input);
 
       output.add = input.add.map(function(t) {
-        return (l._cache[t._id] = tuple.create(t, t._prev !== undefined ? t._prev : prev));
+        return (l._cache[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
       });
       output.mod = input.mod.map(function(t) { return l._cache[t._id]; });
       output.rem = input.rem.map(function(t) { 
@@ -1880,9 +1885,9 @@ define('dataflow/Graph',['require','exports','module','heap','./Datasource','./S
 
       if(data.length > 0) {
         data.forEach(function(d) { 
-          var ds = graph.data(d);
-          ds.addListener(c); 
-          ds.revises(n.revises());
+          graph.data(d)
+            .revises(n.revises())
+            .addListener(c);
         });
       }
 
@@ -3643,7 +3648,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
   };
 
   proto._new_tuple = function(x, k) {
-    return tuple.create(null, null);
+    return tuple.derive(null, null);
   };
 
   proto._add = function(x) {
@@ -3744,7 +3749,7 @@ define('transforms/Facet',['require','exports','module','./Transform','./Aggrega
   };
 
   proto._new_tuple = function(x, k) {
-    return tuple.create(k, null);
+    return tuple.ingest(k, null);
   };
 
   proto._new_cell = function(x, k) {
@@ -3898,7 +3903,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
 
   function get_tuple(x, i, len) {
     var list = this._cache[x._id] || (this._cache[x._id] = Array(len));
-    return list[i] || (list[i] = tuple.create(x, x._prev));
+    return list[i] || (list[i] = tuple.derive(x, x._prev));
   };
 
   function fn(data, fields, accessors, out, stamp) {
@@ -4246,7 +4251,7 @@ define('transforms/Stats',['require','exports','module','./Transform','./Aggrega
   };
 
   proto._new_cell = function(x, k) {
-    var cell = this.__facet || tuple.create(x, x._prev);
+    var cell = this.__facet || tuple.derive(x, x._prev);
     return new this._Measures(cell);
   };
 
@@ -4311,7 +4316,7 @@ define('transforms/Unique',['require','exports','module','./Transform','./Aggreg
         as = this.as.get(this._graph);
 
     o[as] = on.accessor(x);
-    return tuple.create(o, null);
+    return tuple.ingest(o, null);
   };
 
   proto.transform = function(input, reset) {
@@ -4517,7 +4522,7 @@ define('parse/modify',['require','exports','module','../dataflow/Node','../dataf
       // our dynamic data. W/o modifying ds._data, only the output
       // collector will contain dynamic tuples. 
       if(def.type == C.ADD) {
-        t = tuple.create(datum, prev);
+        t = tuple.ingest(datum, prev);
         input.add.push(t);
         d._data.push(t);
       } else if(def.type == C.REMOVE) {
@@ -4529,7 +4534,7 @@ define('parse/modify',['require','exports','module','../dataflow/Node','../dataf
         filter(def.field, value, input.rem, add);
         filter(def.field, value, input.add, rem);
         filter(def.field, value, input.mod, rem);
-        if(add.length == 0 && rem.length == 0) add.push(tuple.create(datum));
+        if(add.length == 0 && rem.length == 0) add.push(tuple.ingest(datum));
 
         input.add.push.apply(input.add, add);
         d._data.push.apply(d._data, add);
@@ -4913,7 +4918,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','../data
   };
 
   function newItem(d, stamp) {
-    var item   = tuple.create(new Item(this._mark));
+    var item   = tuple.ingest(new Item(this._mark));
     item.datum = d;
 
     // For the root node's item
@@ -9434,6 +9439,9 @@ define('core/View',['require','exports','module','d3','../dataflow/Node','../par
         trans = opt.duration
           ? new Transition(opt.duration, opt.ease)
           : null;
+
+    // TODO: with streaming data API, adds should util.duplicate just parseSpec
+    // to prevent Vega from polluting the environment.
 
     var cs = changeset.create();
     if(trans) cs.trans = trans;

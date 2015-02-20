@@ -51,7 +51,7 @@ define(function(require, exports, module) {
   };
 
   proto._new_tuple = function(x, k) {
-    return tuple.create(null, null);
+    return tuple.derive(null, null);
   };
 
   proto._add = function(x) {

@@ -108,7 +108,7 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       ds.update(function(x) { return x.country == "US" }, 
-        'gold', function(x) { return x.gold = 100, x; }).fire();
+        'gold', function(x) { return 100; }).fire();
       data = ds.values();
       expect(data).to.have.length(6);
       expectFold(values[1], data);  // Canada

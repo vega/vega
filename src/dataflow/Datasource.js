@@ -32,7 +32,7 @@ define(function(require, exports, module) {
     var prev = this._revises ? null : undefined;
 
     this._input.add = this._input.add
-      .concat(util.array(d).map(function(d) { return tuple.create(d, prev); }));
+      .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
     return this;
   };
 
@@ -52,8 +52,7 @@ define(function(require, exports, module) {
           next = func(x);
       if (prev !== next) {
         if(x._prev === undefined && prev !== undefined) x._prev = C.SENTINEL;
-        tuple.prev(x, field);
-        x.__proto__[field] = next;
+        tuple.set(x, field, next);
         if(mod.indexOf(x) < 0) mod.push(x);
       }
     });
@@ -72,7 +71,7 @@ define(function(require, exports, module) {
 
   proto.revises = function(p) {
     if(!arguments.length) return this._revises;
-    
+
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
     if(!this._revises && p) { 
@@ -177,7 +176,7 @@ define(function(require, exports, module) {
       var output  = changeset.create(input);
 
       output.add = input.add.map(function(t) {
-        return (l._cache[t._id] = tuple.create(t, t._prev !== undefined ? t._prev : prev));
+        return (l._cache[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
       });
       output.mod = input.mod.map(function(t) { return l._cache[t._id]; });
       output.rem = input.rem.map(function(t) { 

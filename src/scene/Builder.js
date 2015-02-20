@@ -152,7 +152,7 @@ define(function(require, exports, module) {
   };
 
   function newItem(d, stamp) {
-    var item   = tuple.create(new Item(this._mark));
+    var item   = tuple.ingest(new Item(this._mark));
     item.datum = d;
 
     // For the root node's item
