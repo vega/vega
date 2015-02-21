@@ -63,7 +63,7 @@ define(function(require, exports, module) {
   };
 
   proto.propagate = function(pulse, node) {
-    var v, l, n, p, r, i, len;
+    var v, l, n, p, r, i, len, reflowed;
 
     // new PQ with each propagation cycle so that we can pulse branches
     // of the dataflow graph during a propagation (e.g., when creating
@@ -77,32 +77,26 @@ define(function(require, exports, module) {
 
     while (pq.size() > 0) {
       v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
+      reflowed = p.reflow && n.last() >= p.stamp;
+
+      if(reflowed) continue; // Don't needlessly reflow ops.
 
       // A node's rank might change during a propagation (e.g. instantiating
-      // a group's dataflow branch). Re-queue if it has.
+      // a group's dataflow branch). Re-queue if it has. T
+      // TODO: use pq.replace or pq.poppush?
       if(r != n.rank()) {
         util.debug(p, ['Rank mismatch', r, n.rank()]);
         pq.push({ node: n, pulse: p, rank: n.rank() });
         continue;
       }
 
-      var reflowed = p.reflow && n.last() >= p.stamp;
-      if(reflowed) continue; // Don't needlessly reflow ops.
-
-      var run = !!p.add.length || !!p.rem.length || n.router();
-      run = run || !reflowed;
-      run = run || n.reevaluate(p);
-
-      if(run) {
-        pulse = n.evaluate(p);
-        n.last(pulse.stamp);
-      }
+      p = this.evaluate(n, p);
 
       // Even if we didn't run the node, we still want to propagate 
       // the pulse. 
-      if (pulse !== this.doNotPropagate || !run) {
+      if (p !== this.doNotPropagate) {
         for (i = 0, len = l.length; i < len; i++) {
-          pq.push({ node: l[i], pulse: pulse, rank: l[i]._rank });
+          pq.push({ node: l[i], pulse: p, rank: l[i]._rank });
         }
       }
     }
@@ -166,6 +160,21 @@ define(function(require, exports, module) {
     });
 
     return branch;
+  };
+
+  proto.reevaluate = function(node, pulse) {
+    var reflowed = pulse.reflow && node.last() >= pulse.stamp,
+        run = !!pulse.add.length || !!pulse.rem.length || node.router();
+
+    run = run || !reflowed;
+    return run || node.reevaluate(pulse);
+  };
+
+  proto.evaluate = function(node, pulse) {
+    if(!this.reevaluate(node, pulse)) return pulse;
+    pulse = node.evaluate(pulse);
+    node.last(pulse.stamp);
+    return pulse
   };
 
   return Graph;

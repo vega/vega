@@ -53,7 +53,7 @@ define(function(require, exports, module) {
   };
 
   proto._pipeline = function() {
-    return [this, this._encoder, this._scaler, this._recursor, this._collector, this._bounder, this._renderer];
+    return [this, this._scaler, this._recursor, this._collector, this._bounder, this._renderer];
   };
 
   proto.disconnect = function() {

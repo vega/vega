@@ -61,7 +61,7 @@ function run(specName, N, conditions) {
   return conditions.reduce(Q.when, Q.fcall(function() {
     console.log('\n==', specName.toUpperCase(), '(N = '+N+') ==');
     generate(specName, N);
-    return 10;
+    return;
   }));
 }
 

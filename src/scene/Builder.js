@@ -40,14 +40,20 @@ define(function(require, exports, module) {
       inlineDs.call(this);
     }
 
+    // Non-group mark builders are super nodes. Encoder and Bounder remain 
+    // separate operators but are embedded and called by Builder.evaluate.
+    this._isSuper = (this._def.type !== C.GROUP); 
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
     this._renderer = renderer;
 
-    if(this._ds) {
-      this.dependency(C.DATA, this._from);
-      this._encoder.dependency(C.DATA, this._from);
-    }
+    if(this._ds) { this._encoder.dependency(C.DATA, this._from); }
+
+    // Since Builders are super nodes, copy over encoder dependencies
+    // (bounder has no registered dependencies).
+    this.dependency(C.DATA, this._encoder.dependency(C.DATA));
+    this.dependency(C.SCALES, this._encoder.dependency(C.SCALES));
+    this.dependency(C.SIGNALS, this._encoder.dependency(C.SIGNALS));
 
     return this.connect();
   };
@@ -66,14 +72,18 @@ define(function(require, exports, module) {
       if(fullUpdate) output.mod = this._items.slice();
 
       fcs = this._ds.last();
-      if(!fcs) return (output.reflow = true, output);
-      if(fcs.stamp <= this._stamp) return output;
-
-      return joinChangeset.call(this, fcs);
+      if(!fcs) {
+        output.reflow = true
+      } else if(fcs.stamp > this._stamp) {
+        output = joinChangeset.call(this, fcs);
+      }
     } else {
       data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
-      return joinValues.call(this, input, data);
+      output = joinValues.call(this, input, data);
     }
+
+    output = this._graph.evaluate(this._encoder, output);
+    return this._isSuper ? this._graph.evaluate(this._bounder, output) : output;
   };
 
   // Reactive geometry and mark-level transformations are handled here 
@@ -104,7 +114,8 @@ define(function(require, exports, module) {
 
     if(from.mark) {
       sibling = this.sibling(from.mark);
-      sibling._bounder.addListener(this._ds.listener());
+      if(sibling._isSuper) sibling.addListener(this._ds.listener());
+      else sibling._bounder.addListener(this._ds.listener());
     } else {
       // At this point, we have a new datasource but it is empty as
       // the propagation cycle has already crossed the datasources. 
@@ -123,16 +134,22 @@ define(function(require, exports, module) {
   }
 
   proto._pipeline = function() {
-    return [this, this._encoder, this._bounder, this._renderer];
+    return [this, this._renderer];
   };
 
   proto.connect = function() {
     var builder = this;
+
     this._model.graph.connect(this._pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).addListener(builder);
     });
-    if(this._parent) this._bounder.addListener(this._parent._collector);
+
+    if(this._parent) {
+      if(this._isSuper) this.addListener(this._parent._collector);
+      else this._bounder.addListener(this._parent._collector);
+    }
+
     return this;
   };
 
