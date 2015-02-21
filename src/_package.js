@@ -140,6 +140,12 @@ vg.keys = function(x) {
   return keys;
 };
 
+vg.toMap = function(list) {
+  return list.reduce(function(obj, x) {
+    return (obj[x] = 1, obj);
+  }, {});
+};
+
 vg.unique = function(data, f, results) {
   if (!vg.isArray(data) || data.length===0) return [];
   f = f || vg.identity;

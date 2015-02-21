@@ -53,6 +53,11 @@ vega.js: \
 	src/data/window.js \
 	src/data/wordcloud.js \
 	src/data/zip.js \
+	src/expression/_package.js \
+	src/expression/constants.js \
+	src/expression/functions.js \
+	src/expression/codegen.js \
+	src/expression/parser.js \
 	src/parse/_package.js \
 	src/parse/axes.js \
 	src/parse/data.js \
