@@ -5230,15 +5230,19 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
 
     data = cache.data();
     if(uniques) {
-      keys = util.keys(data).filter(function(k) { return data[k] != null; });
+      keys = util.keys(data)
+        .filter(function(k) { return data[k] != null; })
+        .map(function(k) { return { key: k, tpl: data[k].tpl }});
+
       if(sort) {
         sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-        sort = (sort == C.DESC ? "-" : "+") + cache.on.get(graph).field;
+        sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.on.get(graph).field;
         sort = util.comparator(sort);
-        return keys.map(function(k) { return data[k] }).sort(sort);
-      } else {
-        return keys;
+      } else {  // "First seen" order
+        sort = util.comparator("tpl._id");
       }
+
+      return keys.sort(sort).map(function(k) { return k.key });
     } else {
       data = data[""]; // Unpack flat aggregation
       return data == null ? [] : [data.tpl.min, data.tpl.max];
