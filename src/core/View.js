@@ -37,7 +37,7 @@ define(function(require, exports, module) {
   prototype.data = function(data) {
     var m = this.model();
     if (!arguments.length) return m.data();
-    util.keys(data).forEach(function(d) { m.data(d).add(data[d]); });
+    util.keys(data).forEach(function(d) { m.data(d).add(util.duplicate(data[d])); });
     return this;
   };
 
