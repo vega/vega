@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 
   var proto = (GroupBuilder.prototype = new Builder());
 
-  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
+  proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
     var builder = this;
 
     this._scaler = new Node(model.graph);
@@ -52,8 +52,8 @@ define(function(require, exports, module) {
     return output;
   };
 
-  proto._pipeline = function() {
-    return [this, this._scaler, this._recursor, this._collector, this._bounder, this._renderer];
+  proto.pipeline = function() {
+    return [this, this._scaler, this._recursor, this._collector, this._bounder];
   };
 
   proto.disconnect = function() {
@@ -170,7 +170,7 @@ define(function(require, exports, module) {
       inherit = "vg_"+group.datum._id;
       group.items[i] = {group: group};
       b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(this._model, this._renderer, mark, group.items[i], this, group._id, inherit);
+      b.init(this._model, mark, group.items[i], this, group._id, inherit);
       this._children[group._id].push({ 
         builder: b, 
         from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
@@ -192,7 +192,7 @@ define(function(require, exports, module) {
 
       axisItems[i] = {group: group, axisDef: def};
       b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(builder._model, builder._renderer, def, axisItems[i], builder)
+      b.init(builder._model, def, axisItems[i], builder)
         .dependency(C.SCALES, scale);
       builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
     });

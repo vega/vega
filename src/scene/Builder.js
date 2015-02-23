@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 
   var proto = (Builder.prototype = new Node());
 
-  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
+  proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
     Node.prototype.init.call(this, model.graph)
       .router(true)
       .collector(true);
@@ -45,7 +45,6 @@ define(function(require, exports, module) {
     this._isSuper = (this._def.type !== C.GROUP); 
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
-    this._renderer = renderer;
 
     if(this._ds) { this._encoder.dependency(C.DATA, this._from); }
 
@@ -133,14 +132,14 @@ define(function(require, exports, module) {
     }
   }
 
-  proto._pipeline = function() {
-    return [this, this._renderer];
+  proto.pipeline = function() {
+    return [this];
   };
 
   proto.connect = function() {
     var builder = this;
 
-    this._model.graph.connect(this._pipeline());
+    this._model.graph.connect(this.pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).addListener(builder);
     });
@@ -155,7 +154,7 @@ define(function(require, exports, module) {
 
   proto.disconnect = function() {
     var builder = this;
-    this._model.graph.disconnect(this._pipeline());
+    this._model.graph.disconnect(this.pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).removeListener(builder);
     });

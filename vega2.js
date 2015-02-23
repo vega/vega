@@ -4795,7 +4795,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
 
   var proto = (Builder.prototype = new Node());
 
-  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
+  proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
     Node.prototype.init.call(this, model.graph)
       .router(true)
       .collector(true);
@@ -4825,7 +4825,6 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     this._isSuper = (this._def.type !== C.GROUP); 
     this._encoder = new Encoder(this._model, this._mark);
     this._bounder = new Bounder(this._model, this._mark);
-    this._renderer = renderer;
 
     if(this._ds) { this._encoder.dependency(C.DATA, this._from); }
 
@@ -4913,14 +4912,14 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     }
   }
 
-  proto._pipeline = function() {
-    return [this, this._renderer];
+  proto.pipeline = function() {
+    return [this];
   };
 
   proto.connect = function() {
     var builder = this;
 
-    this._model.graph.connect(this._pipeline());
+    this._model.graph.connect(this.pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).addListener(builder);
     });
@@ -4935,7 +4934,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
 
   proto.disconnect = function() {
     var builder = this;
-    this._model.graph.disconnect(this._pipeline());
+    this._model.graph.disconnect(this.pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).removeListener(builder);
     });
@@ -6242,7 +6241,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
 
   var proto = (GroupBuilder.prototype = new Builder());
 
-  proto.init = function(model, renderer, def, mark, parent, parent_id, inheritFrom) {
+  proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
     var builder = this;
 
     this._scaler = new Node(model.graph);
@@ -6275,8 +6274,8 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
     return output;
   };
 
-  proto._pipeline = function() {
-    return [this, this._scaler, this._recursor, this._collector, this._bounder, this._renderer];
+  proto.pipeline = function() {
+    return [this, this._scaler, this._recursor, this._collector, this._bounder];
   };
 
   proto.disconnect = function() {
@@ -6393,7 +6392,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
       inherit = "vg_"+group.datum._id;
       group.items[i] = {group: group};
       b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(this._model, this._renderer, mark, group.items[i], this, group._id, inherit);
+      b.init(this._model, mark, group.items[i], this, group._id, inherit);
       this._children[group._id].push({ 
         builder: b, 
         from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
@@ -6415,7 +6414,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
 
       axisItems[i] = {group: group, axisDef: def};
       b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(builder._model, builder._renderer, def, axisItems[i], builder)
+      b.init(builder._model, def, axisItems[i], builder)
         .dependency(C.SCALES, scale);
       builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
     });
@@ -6475,8 +6474,10 @@ define('core/Model',['require','exports','module','../dataflow/Graph','../datafl
   proto.scene = function(renderer) {
     if(!arguments.length) return this._scene;
     if(this._builder) this._node.removeListener(this._builder.disconnect());
-    this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
+    this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
     this._node.addListener(this._builder.connect());
+    var p = this._builder.pipeline();
+    p[p.length-1].addListener(renderer);
     return this;
   };
 

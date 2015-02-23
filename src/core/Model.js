@@ -50,8 +50,10 @@ define(function(require, exports, module) {
   proto.scene = function(renderer) {
     if(!arguments.length) return this._scene;
     if(this._builder) this._node.removeListener(this._builder.disconnect());
-    this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
+    this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
     this._node.addListener(this._builder.connect());
+    var p = this._builder.pipeline();
+    p[p.length-1].addListener(renderer);
     return this;
   };
 
