@@ -1309,7 +1309,7 @@ define('dataflow/tuple',['require','exports','module','../util/index','../util/c
   // the outside environment. 
   function ingest(datum, prev) {
     datum = util.isObject(datum) ? datum : {data: datum};
-    datum._id = ++tuple_id;
+    datum._id = tuple_id++;
     datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
     return datum;
   }
@@ -1347,6 +1347,8 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
       C = require('../util/constants'),
       REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
+  var node_id = 1;
+
   function Node(graph) {
     if(graph) this.init(graph);
   }
@@ -1354,11 +1356,13 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
   var proto = Node.prototype;
 
   proto.init = function(graph) {
+    this._id = node_id++;
     this._graph = graph;
     this._rank = ++graph._rank; // For topologial sort
     this._stamp = 0;  // Last stamp seen
 
     this._listeners = [];
+    this._registered = {}; // To prevent duplicate listeners
 
     this._deps = {
       data:    [],
@@ -1422,15 +1426,16 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
 
   proto.addListener = function(l) {
     if(!(l instanceof Node)) throw "Listener is not a Node";
-    if(this._listeners.indexOf(l) !== -1) return;
+    if(this._registered[l._id]) return;
 
     this._listeners.push(l);
+    this._registered[l._id] = 1;
     if(this._rank > l._rank) {
       var q = [l];
       while(q.length) {
         var cur = q.splice(0,1)[0];
         cur._rank = ++this._graph._rank;
-        q = q.concat(cur._listeners);
+        q.push.apply(q, cur._listeners);
       }
     }
 
@@ -1442,6 +1447,7 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
     for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
       if (this._listeners[i] === l) {
         this._listeners.splice(i, 1);
+        this._registered[l._id] = null;
         foundSending = true;
       }
     }
@@ -1451,9 +1457,8 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
 
   // http://jsperf.com/empty-javascript-array
   proto.disconnect = function() {
-    while(this._listeners.length > 0) {
-      this._listeners.pop();
-    }
+    this._listeners = [];
+    this._registered = {};
   };
 
   proto.evaluate = function(pulse) { return pulse; }
@@ -4830,7 +4835,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     this.dependency(C.SCALES, this._encoder.dependency(C.SCALES));
     this.dependency(C.SIGNALS, this._encoder.dependency(C.SIGNALS));
 
-    return this.connect();
+    return this;
   };
 
   proto.evaluate = function(input) {
@@ -6301,34 +6306,53 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
   };
 
   function recurse(input) {
-    var builder = this;
+    var builder = this,
+        hasMarks = this._def.marks && this._def.marks.length > 0,
+        hasAxes = this._def.axes && this._def.axes.length > 0,
+        i, len, group;
 
-    input.add.forEach(function(group) {
-      buildMarks.call(builder, input, group);
-      buildAxes.call(builder, input, group);
-    });
+    for(i=0, len=input.add.length; i<len; ++i) {
+      group = input.add[i];
+      if(hasMarks) buildMarks.call(builder, input, group);
+      if(hasAxes)  buildAxes.call(builder, input, group);
+    }
 
-    input.mod.forEach(function(group) {
+    // Wire up new children builders in reverse to minimize graph rewrites.
+    for (i=input.add.length-1; i>=0; --i) {
+      group = input.add[i];
+      for (j=builder._children[group._id].length-1; j>=0; --j) {
+        c = builder._children[group._id][j];
+        builder._recursor.addListener(c.builder.connect());
+      }
+    }
+
+    for(i=0, len=input.mod.length; i<len; ++i) {
+      group = input.mod[i];
       // Remove temporary connection for marks that draw from a source
-      builder._children[group._id].forEach(function(c) {
-        if(c.type == C.MARK && builder._model.data(c.from) !== undefined) {
-          builder._recursor.removeListener(c.builder);
-        }
-      });
+      if(hasMarks) {
+        builder._children[group._id].forEach(function(c) {
+          if(c.type == C.MARK && builder._model.data(c.from) !== undefined) {
+            builder._recursor.removeListener(c.builder);
+          }
+        });
+      }
 
       // Update axes data defs
-      parseAxes(builder._model, builder._def.axes, group.axes, group);
-      group.axes.forEach(function(a, i) { a.def() });
-    });
+      if(hasAxes) {
+        parseAxes(builder._model, builder._def.axes, group.axes, group);
+        group.axes.forEach(function(a, i) { a.def() });
+      }      
+    }
 
-    input.rem.forEach(function(group) {
+    for(i=0, len=input.rem.length; i<len; ++i) {
+      group = input.rem[i];
       // For deleted groups, disconnect their children
       builder._children[group._id].forEach(function(c) { 
         builder._recursor.removeListener(c.builder);
         c.builder.disconnect(); 
       });
       delete builder._children[group._id];
-    });
+    }
 
     return input;
   };
@@ -6360,6 +6384,7 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
   function buildMarks(input, group) {
     util.debug(input, ["building marks", group._id]);
     var marks = this._def.marks,
+        listeners = [],
         mark, from, inherit, i, len, m, b;
 
     for(i=0, len=marks.length; i<len; ++i) {
@@ -6369,12 +6394,9 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
       group.items[i] = {group: group};
       b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
       b.init(this._model, this._renderer, mark, group.items[i], this, group._id, inherit);
-
-      // Temporary connection to propagate initial pulse. 
-      this._recursor.addListener(b);
       this._children[group._id].push({ 
         builder: b, 
-        from: from.data || from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit, 
+        from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
         type: C.MARK 
       });
     }
@@ -6393,9 +6415,8 @@ define('scene/GroupBuilder',['require','exports','module','../dataflow/Node','..
 
       axisItems[i] = {group: group, axisDef: def};
       b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(builder._model, builder._renderer, def, axisItems[i], builder);
-      b.dependency(C.SCALES, scale);
-      builder._recursor.addListener(b);
+      b.init(builder._model, builder._renderer, def, axisItems[i], builder)
+        .dependency(C.SCALES, scale);
       builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
     });
   }
@@ -6455,7 +6476,7 @@ define('core/Model',['require','exports','module','../dataflow/Graph','../datafl
     if(!arguments.length) return this._scene;
     if(this._builder) this._node.removeListener(this._builder.disconnect());
     this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
-    this._node.addListener(this._builder);
+    this._node.addListener(this._builder.connect());
     return this;
   };
 

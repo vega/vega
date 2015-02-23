@@ -83,34 +83,53 @@ define(function(require, exports, module) {
   };
 
   function recurse(input) {
-    var builder = this;
+    var builder = this,
+        hasMarks = this._def.marks && this._def.marks.length > 0,
+        hasAxes = this._def.axes && this._def.axes.length > 0,
+        i, len, group;
 
-    input.add.forEach(function(group) {
-      buildMarks.call(builder, input, group);
-      buildAxes.call(builder, input, group);
-    });
+    for(i=0, len=input.add.length; i<len; ++i) {
+      group = input.add[i];
+      if(hasMarks) buildMarks.call(builder, input, group);
+      if(hasAxes)  buildAxes.call(builder, input, group);
+    }
 
-    input.mod.forEach(function(group) {
+    // Wire up new children builders in reverse to minimize graph rewrites.
+    for (i=input.add.length-1; i>=0; --i) {
+      group = input.add[i];
+      for (j=builder._children[group._id].length-1; j>=0; --j) {
+        c = builder._children[group._id][j];
+        builder._recursor.addListener(c.builder.connect());
+      }
+    }
+
+    for(i=0, len=input.mod.length; i<len; ++i) {
+      group = input.mod[i];
       // Remove temporary connection for marks that draw from a source
-      builder._children[group._id].forEach(function(c) {
-        if(c.type == C.MARK && builder._model.data(c.from) !== undefined) {
-          builder._recursor.removeListener(c.builder);
-        }
-      });
+      if(hasMarks) {
+        builder._children[group._id].forEach(function(c) {
+          if(c.type == C.MARK && builder._model.data(c.from) !== undefined) {
+            builder._recursor.removeListener(c.builder);
+          }
+        });
+      }
 
       // Update axes data defs
-      parseAxes(builder._model, builder._def.axes, group.axes, group);
-      group.axes.forEach(function(a, i) { a.def() });
-    });
+      if(hasAxes) {
+        parseAxes(builder._model, builder._def.axes, group.axes, group);
+        group.axes.forEach(function(a, i) { a.def() });
+      }      
+    }
 
-    input.rem.forEach(function(group) {
+    for(i=0, len=input.rem.length; i<len; ++i) {
+      group = input.rem[i];
       // For deleted groups, disconnect their children
       builder._children[group._id].forEach(function(c) { 
         builder._recursor.removeListener(c.builder);
         c.builder.disconnect(); 
       });
       delete builder._children[group._id];
-    });
+    }
 
     return input;
   };
@@ -142,6 +161,7 @@ define(function(require, exports, module) {
   function buildMarks(input, group) {
     util.debug(input, ["building marks", group._id]);
     var marks = this._def.marks,
+        listeners = [],
         mark, from, inherit, i, len, m, b;
 
     for(i=0, len=marks.length; i<len; ++i) {
@@ -151,12 +171,9 @@ define(function(require, exports, module) {
       group.items[i] = {group: group};
       b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
       b.init(this._model, this._renderer, mark, group.items[i], this, group._id, inherit);
-
-      // Temporary connection to propagate initial pulse. 
-      this._recursor.addListener(b);
       this._children[group._id].push({ 
         builder: b, 
-        from: from.data || from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit, 
+        from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
         type: C.MARK 
       });
     }
@@ -175,9 +192,8 @@ define(function(require, exports, module) {
 
       axisItems[i] = {group: group, axisDef: def};
       b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
-      b.init(builder._model, builder._renderer, def, axisItems[i], builder);
-      b.dependency(C.SCALES, scale);
-      builder._recursor.addListener(b);
+      b.init(builder._model, builder._renderer, def, axisItems[i], builder)
+        .dependency(C.SCALES, scale);
       builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
     });
   }

@@ -8,7 +8,7 @@ define(function(require, module, exports) {
   // the outside environment. 
   function ingest(datum, prev) {
     datum = util.isObject(datum) ? datum : {data: datum};
-    datum._id = ++tuple_id;
+    datum._id = tuple_id++;
     datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
     return datum;
   }

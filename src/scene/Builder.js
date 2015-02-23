@@ -55,7 +55,7 @@ define(function(require, exports, module) {
     this.dependency(C.SCALES, this._encoder.dependency(C.SCALES));
     this.dependency(C.SIGNALS, this._encoder.dependency(C.SIGNALS));
 
-    return this.connect();
+    return this;
   };
 
   proto.evaluate = function(input) {
