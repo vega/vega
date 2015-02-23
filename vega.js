@@ -2890,7 +2890,7 @@ vg.data.size = function(size, group) {
   }
 
   function load(uri, callback) {
-    var url = sanitizeUrl(uri);
+    var url = vg.data.load.sanitizeUrl(uri); // allow sanitizer override
     if (!url) {
       callback('bad URL', null);
     } else if (!vg.config.isNode) {
