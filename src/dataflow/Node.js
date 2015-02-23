@@ -3,6 +3,8 @@ define(function(require, exports, module) {
       C = require('../util/constants'),
       REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
+  var node_id = 1;
+
   function Node(graph) {
     if(graph) this.init(graph);
   }
@@ -10,11 +12,13 @@ define(function(require, exports, module) {
   var proto = Node.prototype;
 
   proto.init = function(graph) {
+    this._id = node_id++;
     this._graph = graph;
     this._rank = ++graph._rank; // For topologial sort
     this._stamp = 0;  // Last stamp seen
 
     this._listeners = [];
+    this._registered = {}; // To prevent duplicate listeners
 
     this._deps = {
       data:    [],
@@ -78,15 +82,16 @@ define(function(require, exports, module) {
 
   proto.addListener = function(l) {
     if(!(l instanceof Node)) throw "Listener is not a Node";
-    if(this._listeners.indexOf(l) !== -1) return;
+    if(this._registered[l._id]) return;
 
     this._listeners.push(l);
+    this._registered[l._id] = 1;
     if(this._rank > l._rank) {
       var q = [l];
       while(q.length) {
         var cur = q.splice(0,1)[0];
         cur._rank = ++this._graph._rank;
-        q = q.concat(cur._listeners);
+        q.push.apply(q, cur._listeners);
       }
     }
 
@@ -98,6 +103,7 @@ define(function(require, exports, module) {
     for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
       if (this._listeners[i] === l) {
         this._listeners.splice(i, 1);
+        this._registered[l._id] = null;
         foundSending = true;
       }
     }
@@ -107,9 +113,8 @@ define(function(require, exports, module) {
 
   // http://jsperf.com/empty-javascript-array
   proto.disconnect = function() {
-    while(this._listeners.length > 0) {
-      this._listeners.pop();
-    }
+    this._listeners = [];
+    this._registered = {};
   };
 
   proto.evaluate = function(pulse) { return pulse; }
