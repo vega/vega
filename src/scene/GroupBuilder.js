@@ -86,20 +86,33 @@ define(function(require, exports, module) {
     var builder = this,
         hasMarks = this._def.marks && this._def.marks.length > 0,
         hasAxes = this._def.axes && this._def.axes.length > 0,
-        i, len, group;
+        i, len, group, pipeline, def, inline = false;
 
     for(i=0, len=input.add.length; i<len; ++i) {
       group = input.add[i];
-      if(hasMarks) buildMarks.call(builder, input, group);
-      if(hasAxes)  buildAxes.call(builder, input, group);
+      if(hasMarks) buildMarks.call(this, input, group);
+      if(hasAxes)  buildAxes.call(this, input, group);
     }
 
     // Wire up new children builders in reverse to minimize graph rewrites.
     for (i=input.add.length-1; i>=0; --i) {
       group = input.add[i];
-      for (j=builder._children[group._id].length-1; j>=0; --j) {
-        c = builder._children[group._id][j];
-        builder._recursor.addListener(c.builder.connect());
+      for (j=this._children[group._id].length-1; j>=0; --j) {
+        c = this._children[group._id][j];
+        c.builder.connect();
+        pipeline = c.builder.pipeline();
+        def = c.builder._def;
+
+        // This new child needs to be built during this propagation cycle.
+        // We could add its builder as a listener off the _recursor node, 
+        // but try to inline it if we can to minimize graph dispatches.
+        inline = (def.type !== C.GROUP);
+        inline = inline && (this._model.data(c.from) !== undefined); 
+        inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
+        c.inline = inline;
+
+        if(inline) c.builder.evaluate(input);
+        else this._recursor.addListener(c.builder);
       }
     }
 
@@ -108,7 +121,7 @@ define(function(require, exports, module) {
       // Remove temporary connection for marks that draw from a source
       if(hasMarks) {
         builder._children[group._id].forEach(function(c) {
-          if(c.type == C.MARK && builder._model.data(c.from) !== undefined) {
+          if(c.type == C.MARK && !c.inline && builder._model.data(c.from) !== undefined ) {
             builder._recursor.removeListener(c.builder);
           }
         });

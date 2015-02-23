@@ -80,6 +80,10 @@ define(function(require, exports, module) {
     return this;
   };
 
+  proto.listeners = function() {
+    return this._listeners;
+  };
+
   proto.addListener = function(l) {
     if(!(l instanceof Node)) throw "Listener is not a Node";
     if(this._registered[l._id]) return;
