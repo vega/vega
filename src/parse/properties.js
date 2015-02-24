@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var tuple = require('../dataflow/tuple'),
+  var d3 = require('d3'),
+      tuple = require('../dataflow/tuple'),
       util = require('../util/index'),
       config = require('../util/config');
 
@@ -70,6 +71,12 @@ define(function(require, exports, module) {
         "signals", "predicates", code);
       encoder.tpl = tuple;
       encoder.util = util;
+
+      // D3 color spaces
+      encoder.hcl = d3.hcl;
+      encoder.hsl = d3.hsl;
+      encoder.lab = d3.lab;
+      encoder.rgb = d3.rgb;
       return {
         encode: encoder,
         signals: util.keys(deps.signals),
@@ -229,8 +236,22 @@ define(function(require, exports, module) {
   function colorRef(type, x, y, z) {
     var xx = x ? valueRef("", x) : config.color[type][0],
         yy = y ? valueRef("", y) : config.color[type][1],
-        zz = z ? valueRef("", z) : config.color[type][2];
-    return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
+        zz = z ? valueRef("", z) : config.color[type][2]
+        signals = [], scales = [];
+
+    if(xx.signals) signals.push.apply(signals, xx.signals);
+    if(yy.signals) signals.push.apply(signals, yy.signals);
+    if(zz.signals) signals.push.apply(signals, zz.signals);
+
+    if(xx.scales) scales.push(xx.scales);
+    if(yy.scales) scales.push(yy.scales);
+    if(zz.scales) scales.push(zz.scales);
+
+    return {
+      val: "(this." + type + "(" + [xx.val, yy.val, zz.val].join(",") + ') + "")',
+      signals: signals,
+      scales: scales
+    };
   }
 
   return compile;
