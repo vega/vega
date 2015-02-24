@@ -27,7 +27,7 @@ define(function(require, exports, module) {
   proto.data = function() {
     var data = this.graph.data.apply(this.graph, arguments);
     if(arguments.length > 1) {  // new Datasource
-      this._node.addListener(data._pipeline[0]);
+      this._node.addListener(data.pipeline()[0]);
     }
 
     return data;

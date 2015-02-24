@@ -28,6 +28,8 @@ define(function(require, exports, module) {
     this._map   = {};
     this._items = [];
 
+    this._revises = false;  // Should scenegraph items track _prev?
+
     mark.def = def;
     mark.marktype = def.type;
     mark.interactive = !(def.interactive === false);
@@ -54,6 +56,19 @@ define(function(require, exports, module) {
     this.dependency(C.SCALES, this._encoder.dependency(C.SCALES));
     this.dependency(C.SIGNALS, this._encoder.dependency(C.SIGNALS));
 
+    return this;
+  };
+
+  proto.revises = function(p) {
+    if(!arguments.length) return this._revises;
+
+    // If we've not needed prev in the past, but a new inline ds needs it now
+    // ensure existing items have prev set.
+    if(!this._revises && p) {
+      this._items.forEach(function(d) { if(d._prev === undefined) d._prev = C.SENTINEL; });
+    }
+
+    this._revises = this._revises || p;
     return this;
   };
 
@@ -89,10 +104,11 @@ define(function(require, exports, module) {
   // because they need their group's data-joined context. 
   function inlineDs() {
     var from = this._def.from,
+        geom = from.mark,
         name, spec, sibling, output;
 
-    if(from.mark) {
-      name = ["vg", this._parent_id, from.mark].join("_");
+    if(geom) {
+      name = ["vg", this._parent_id, geom].join("_");
       spec = {
         name: name,
         transform: from.transform, 
@@ -110,9 +126,10 @@ define(function(require, exports, module) {
 
     this._from = name;
     this._ds = parseData.datasource(this._model, spec);
+    var revises = this._ds.revises();
 
-    if(from.mark) {
-      sibling = this.sibling(from.mark);
+    if(geom) {
+      sibling = this.sibling(geom).revises(revises);
       if(sibling._isSuper) sibling.addListener(this._ds.listener());
       else sibling._bounder.addListener(this._ds.listener());
     } else {
@@ -121,7 +138,7 @@ define(function(require, exports, module) {
       // So, we repulse just this datasource. This should be safe
       // as the ds isn't connected to the scenegraph yet.
       
-      var output = this._ds.source().last();
+      var output = this._ds.source().revises(revises).last();
           input  = changeset.create(output);
 
       input.add = output.add;
@@ -166,13 +183,13 @@ define(function(require, exports, module) {
   };
 
   function newItem(d, stamp) {
-    var item   = tuple.ingest(new Item(this._mark));
-    item.datum = d;
+    var prev = this._revises ? null : undefined,
+        item = tuple.ingest(new Item(this._mark), prev);
 
+    item.datum = d;
     // For the root node's item
     if(this._def.width)  tuple.set(item, "width",  this._def.width);
     if(this._def.height) tuple.set(item, "height", this._def.height);
-
     return item;
   };
 

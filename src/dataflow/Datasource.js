@@ -24,8 +24,7 @@ define(function(require, exports, module) {
 
   proto.source = function(src) {
     if(!arguments.length) return this._source;
-    this._source = this._graph.data(src);
-    return this;
+    return (this._source = this._graph.data(src));
   };
 
   proto.add = function(d) {
@@ -51,7 +50,6 @@ define(function(require, exports, module) {
       var prev = x[field],
           next = func(x);
       if (prev !== next) {
-        if(x._prev === undefined && prev !== undefined) x._prev = C.SENTINEL;
         tuple.set(x, field, next);
         if(mod.indexOf(x) < 0) mod.push(x);
       }
@@ -69,15 +67,16 @@ define(function(require, exports, module) {
     return this;
   };
 
+  function set_prev(d) { if(d._prev === undefined) d._prev = C.SENTINEL; }
+
   proto.revises = function(p) {
     if(!arguments.length) return this._revises;
 
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
-    if(!this._revises && p) { 
-      this._data.forEach(function(d) { 
-        if(d._prev === undefined) d._prev = C.SENTINEL 
-      });
+    if(!this._revises && p) {
+      this._data.forEach(set_prev);
+      this._input.add.forEach(set_prev); // New tuples that haven't yet been merged into _data
     }
 
     this._revises = this._revises || p;
@@ -93,6 +92,7 @@ define(function(require, exports, module) {
 
   proto.pipeline = function(pipeline) {
     var ds = this, n, c;
+    if(!arguments.length) return this._pipeline;
 
     if(pipeline.length) {
       // If we have a pipeline, add a collector to the end to materialize
@@ -199,6 +199,8 @@ define(function(require, exports, module) {
     } else {
       this._pipeline[this._pipeline.length-1].addListener(l);      
     }
+
+    return this;
   };
 
   proto.removeListener = function(l) {

@@ -39,11 +39,10 @@ define(function(require, exports, module) {
 
     if(d.values) ds.values(read(d.values, d.format));
     else if(d.source) {
-      ds.source(d.source);
-
-      // The derived datasource will be pulsed by its src rather than the model.
-      model.data(d.source).addListener(ds);
-      model.removeListener(ds._pipeline[0]); 
+      ds.source(d.source)
+        .revises(ds.revises()) // If new ds revises, then it's origin must revise too.
+        .addListener(ds);  // Derived ds will be pulsed by its src rather than the model.
+      model.removeListener(ds.pipeline()[0]); 
     }
 
     return ds;    
