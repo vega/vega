@@ -69,14 +69,9 @@ define(function(require, exports, module) {
     try {
       var encoder = Function("item", "group", "trans", "db", 
         "signals", "predicates", code);
-      encoder.tpl = tuple;
+      encoder.tpl  = tuple;
       encoder.util = util;
-
-      // D3 color spaces
-      encoder.hcl = d3.hcl;
-      encoder.hsl = d3.hsl;
-      encoder.lab = d3.lab;
-      encoder.rgb = d3.rgb;
+      encoder.d3   = d3; // For color spaces
       return {
         encode: encoder,
         signals: util.keys(deps.signals),
@@ -239,16 +234,13 @@ define(function(require, exports, module) {
         zz = z ? valueRef("", z) : config.color[type][2]
         signals = [], scales = [];
 
-    if(xx.signals) signals.push.apply(signals, xx.signals);
-    if(yy.signals) signals.push.apply(signals, yy.signals);
-    if(zz.signals) signals.push.apply(signals, zz.signals);
-
-    if(xx.scales) scales.push(xx.scales);
-    if(yy.scales) scales.push(yy.scales);
-    if(zz.scales) scales.push(zz.scales);
+    [xx, yy, zz].forEach(function(v) {
+      if(v.signals) signals.push.apply(signals, v.signals);
+      if(v.scales)  scales.push(v.scales);
+    });
 
     return {
-      val: "(this." + type + "(" + [xx.val, yy.val, zz.val].join(",") + ') + "")',
+      val: "(this.d3." + type + "(" + [xx.val, yy.val, zz.val].join(",") + ') + "")',
       signals: signals,
       scales: scales
     };
