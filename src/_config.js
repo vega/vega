@@ -14,10 +14,15 @@ vg.config.domainWhiteList = false;
 vg.config.safeMode = false;
 
 // base url for loading external data files
-// used only for server-side operation
+// used only if data or image URL is relative
+// For node.js, set this value to convert local URLs to absolute ones.
 vg.config.baseURL = "";
 
-// version and namepsaces for exported svg
+// node.js only: which protocol to use for relative protocol URLs
+// URLs such as  //example.com/...  will be prepended by this value
+vg.config.defaultProtocol = "http:";
+
+// version and namespace for exported svg
 vg.config.svgNamespace =
   'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
   'xmlns:xlink="http://www.w3.org/1999/xlink"';

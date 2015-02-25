@@ -67,6 +67,15 @@ vg.number = function(s) { return +s; };
 
 vg.boolean = function(s) { return !!s; };
 
+// ES6 compatibility per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
+// We could have used the polyfill code, but lets wait until ES6 becomes a standard first
+vg.startsWith = String.prototype.startsWith ?
+  function(string, searchString) {
+    return string.startsWith(searchString);
+  } : function(string, searchString) {
+    return string.lastIndexOf(searchString, 0) === 0;
+  };
+
 // utility functions
 
 vg.identity = function(x) { return x; };
@@ -290,7 +299,7 @@ vg.truncate = function(s, length, pos, word, ellipsis) {
     default:
       return (word ? vg_truncateOnWord(s,l) : s.slice(0,l)) + ellipsis;
   }
-}
+};
 
 function vg_truncateOnWord(s, len, rev) {
   var cnt = 0, tok = s.split(vg_truncate_word_re);
@@ -322,7 +331,8 @@ vg.error = function(msg) {
   msg = "[Vega Err] " + msg;
   vg_write(msg);
   if (typeof alert !== "undefined") alert(msg);
-};vg.config = {};
+};
+vg.config = {};
 
 // are we running in node.js?
 // false by default, node wrapper should set true as needed
@@ -338,10 +348,15 @@ vg.config.domainWhiteList = false;
 vg.config.safeMode = false;
 
 // base url for loading external data files
-// used only for server-side operation
+// used only if data or image URL is relative
+// For node.js, set this value to convert local URLs to absolute ones.
 vg.config.baseURL = "";
 
-// version and namepsaces for exported svg
+// node.js only: which protocol to use for relative protocol URLs
+// URLs such as  //example.com/...  will be prepended by this value
+vg.config.defaultProtocol = "http:";
+
+// version and namespace for exported svg
 vg.config.svgNamespace =
   'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
   'xmlns:xlink="http://www.w3.org/1999/xlink"';
@@ -462,7 +477,8 @@ vg.config.range = {
     "triangle-down",
     "triangle-up"
   ]
-};vg.Bounds = (function() {
+};
+vg.Bounds = (function() {
   var bounds = function(b) {
     this.clear();
     if (b) this.union(b);
@@ -2112,20 +2128,23 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
         scene = renderer._scene,
         image = null, url;
 
-    renderer._imgload += 1;
     if (vg.config.isNode) {
+      renderer._imgload += 1;
       image = new (require("canvas").Image)();
       vg.data.load(uri, function(err, data) {
+        renderer._imgload -= 1;
         if (err) { vg.error(err); return; }
+        vg.log("LOAD IMAGE: " + uri);
         image.src = data;
         image.loaded = true;
-        renderer._imgload -= 1;
       });
     } else {
       image = new Image();
-      url = vg.config.baseURL + uri;
+      url = vg.data.load.sanitizeUrl(uri);
+      if (!url) { return; }
+      renderer._imgload += 1;
       image.onload = function() {
-        vg.log("LOAD IMAGE: "+url);
+        vg.log("LOAD IMAGE: " + url);
         image.loaded = true;
         renderer._imgload -= 1;
         renderer.renderAsync(scene);
@@ -2137,7 +2156,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   };
 
   return renderer;
-})();vg.canvas.Handler = (function() {
+})();
+vg.canvas.Handler = (function() {
   var handler = function(el, model) {
     this._active = null;
     this._down = null;
@@ -2428,9 +2448,10 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
           ? w/2 : (o.align === "right" ? w : 0)),
         y = o.y - (o.baseline === "middle"
           ? h/2 : (o.baseline === "bottom" ? h : 0)),
-        url = vg.config.baseURL + o.url;
-    
-    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
+        url = vg.data.load.sanitizeUrl(o.url);
+    if (url) {
+      this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
+    }
     this.setAttribute("x", x);
     this.setAttribute("y", y);
     this.setAttribute("width", w);
@@ -2606,7 +2627,8 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     }
   };
   
-})();vg.svg.Renderer = (function() {
+})();
+vg.svg.Renderer = (function() {
   var renderer = function() {
     this._svg = null;
     this._ctx = null;
@@ -2895,79 +2917,110 @@ vg.data.size = function(size, group) {
     return (typeof d === 'string') ? group[d] : d;
   });
   return size;
-};vg.data.load = function(uri, callback) {
-  var url = vg_load_hasProtocol(uri) ? uri : vg.config.baseURL + uri;
-  if (vg.config.isNode) {
-    // in node.js, consult url and select file or http
-    var get = vg_load_isFile(url) ? vg_load_file : vg_load_http;
-    get(url, callback);
-  } else {
-    // in browser, use xhr
-    vg_load_xhr(url, callback);
-  }  
-};
+};vg.data.load = (function() {
 
-var vg_load_protocolRE = /^[A-Za-z]+\:\/\//;
-var vg_load_fileProtocol = "file://";
+  // Matches absolute URLs with optional protocol
+  //   https://...    file://...    //...
+  var protocolRE = /^([A-Za-z]+:)?\/\//;
 
-function vg_load_hasProtocol(url) {
-  return vg_load_protocolRE.test(url);
-}
+  // Special treatment in node.js for the file: protocol
+  var fileProtocol = 'file://';
 
-function vg_load_isFile(url) {
-  return url.indexOf(vg_load_fileProtocol) === 0;
-}
+  // Validate and cleanup URL to ensure that it is allowed to be accessed
+  // Returns cleaned up URL, or false if access is not allowed
+  function sanitizeUrl(url) {
+    // In case this is a relative url (has no host), prepend config.baseURL
+    if (vg.config.baseURL && !protocolRE.test(url)) {
+      if (!vg.startsWith(url, '/') && vg.config.baseURL[vg.config.baseURL.length-1] !== '/') {
+        url = '/' + url; // Ensure that there is a slash between the baseURL (e.g. hostname) and url
+      }
+      url = vg.config.baseURL + url;
+    }
+    // relative protocol, starts with '//'
+    if (vg.config.isNode && vg.startsWith(url, '//')) {
+      url = vg.config.defaultProtocol + url;
+    }
+    // If vg.config.domainWhiteList is set, only allows url, whose hostname
+    // * Is the same as the origin (window.location.hostname)
+    // * Equals one of the values in the whitelist
+    // * Is a proper subdomain of one of the values in the whitelist
+    if (vg.config.domainWhiteList) {
+      var domain, origin;
+      if (vg.config.isNode) {
+        // relative protocol is broken: https://github.com/defunctzombie/node-url/issues/5
+        var parts = require('url').parse(url);
+        // In safe mode, make sure url begins with http:// or https://
+        if (vg.config.safeMode && parts.protocol !== 'http:' && parts.protocol !== 'https:') {
+          return false;
+        }
+        domain = parts.hostname;
+        origin = null;
+      } else {
+        var a = document.createElement('a');
+        a.href = url;
+        domain = a.hostname.toLowerCase();
+        origin = window.location.hostname;
+      }
 
-function vg_load_xhr(url, callback) {
-  vg.log("LOAD: " + url);
-  if (!vg_url_check(url)) {
-    vg.error("URL is not whitelisted: " + url);
-    return;
+      if (origin !== domain) {
+        var whiteListed = vg.config.domainWhiteList.some(function (d) {
+          var idx = domain.length - d.length;
+          return d === domain ||
+            (idx > 1 && domain[idx-1] === '.' && domain.lastIndexOf(d) === idx);
+        });
+        if (!whiteListed) {
+          vg.error('URL is not whitelisted: ' + url);
+          url = false;
+        }
+      }
+    }
+    return url;
   }
-  d3.xhr(url, function(err, resp) {
-    if (resp) resp = resp.responseText;
-    callback(err, resp);
-  });
-}
 
-function vg_url_check(url) {
-  // If vg.config.domainWhiteList is set, only allows url, whose hostname
-  // * Is the same as the origin (window.location.hostname)
-  // * Equals one of the values in the whitelist
-  // * Is a proper subdomain of one of the values in the whitelist
-  if (!vg.config.domainWhiteList)
-    return true;
+  function load(uri, callback) {
+    var url = vg.data.load.sanitizeUrl(uri); // allow sanitizer override
+    if (!url) {
+      callback('Bad URL', null);
+    } else if (!vg.config.isNode) {
+      // in browser, use xhr
+      xhr(url, callback);
+    } else if (vg.startsWith(url, fileProtocol)) {
+      // in node.js, if url starts with 'file://', strip it and load from file
+      file(url.slice(fileProtocol.length), callback);
+    } else {
+      // for regular URLs in node.js
+      http(url, callback);
+    }
+  }
 
-  var a = document.createElement("a");
-  a.href = url;
-  var domain = a.hostname.toLowerCase();
-
-  return window.location.hostname === domain ||
-    vg.config.domainWhiteList.some(function(d) {
-      var ind = domain.length - d.length;
-      return d === domain ||
-        (ind > 1 && domain[ind-1] === '.' && domain.lastIndexOf(d) === ind);
+  function xhr(url, callback) {
+    vg.log('LOAD XHR: ' + url);
+    d3.xhr(url, function(err, resp) {
+      if (resp) resp = resp.responseText;
+      callback(err, resp);
     });
-}
+  }
 
-function vg_load_file(file, callback) {
-  vg.log("LOAD FILE: " + file);
-  var idx = file.indexOf(vg_load_fileProtocol);
-  if (idx >= 0) file = file.slice(vg_load_fileProtocol.length);
-  require("fs").readFile(file, callback);
-}
+  function file(file, callback) {
+    vg.log('LOAD FILE: ' + file);
+    require('fs').readFile(file, callback);
+  }
 
-function vg_load_http(url, callback) {
-  vg.log("LOAD HTTP: " + url);
-	var req = require("http").request(url, function(res) {
-    var pos=0, data = new Buffer(parseInt(res.headers['content-length'],10));
-		res.on("error", function(err) { callback(err, null); });
-		res.on("data", function(x) { x.copy(data, pos); pos += x.length; });
-		res.on("end", function() { callback(null, data); });
-	});
-	req.on("error", function(err) { callback(err); });
-	req.end();
-}vg.data.read = (function() {
+  function http(url, callback) {
+    vg.log('LOAD HTTP: ' + url);
+    var req = require('request')(url, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        callback(null, body);
+      } else {
+        callback(error, null);
+      }
+    });
+  }
+
+  load.sanitizeUrl = sanitizeUrl;
+  return load;
+})();
+vg.data.read = (function() {
   var formats = {},
       parsers = {
         "number": vg.number,
@@ -4471,7 +4524,6 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
 vg.data.zip.dependencies = ["with"];vg.expression = {};
 
 vg.expression.parse = function(input, opt) {
-  console.log("PARSE", input);
   return vg_expression_parser.parse("("+input+")", opt);
 };
 
@@ -7198,70 +7250,6 @@ vg.parse.data = function(spec, callback) {
   };
 
 })();
-
-// vg.parse.expr = (function() {
-// 
-//   var CONSTANT = {
-//    "E":       "Math.E",
-//    "LN2":     "Math.LN2",
-//    "LN10":    "Math.LN10",
-//    "LOG2E":   "Math.LOG2E",
-//    "LOG10E":  "Math.LOG10E",
-//    "PI":      "Math.PI",
-//    "SQRT1_2": "Math.SQRT1_2",
-//    "SQRT2":   "Math.SQRT2"
-//   };
-// 
-//   var FUNCTION = {
-//    "abs":    "Math.abs",
-//    "acos":   "Math.acos",
-//    "asin":   "Math.asin",
-//    "atan":   "Math.atan",
-//    "atan2":  "Math.atan2",
-//    "ceil":   "Math.ceil",
-//    "cos":    "Math.cos",
-//    "exp":    "Math.exp",
-//     "floor":  "Math.floor",
-//     "format": "d3.format",
-//     "log":    "Math.log",
-//    "max":    "Math.max",
-//    "min":    "Math.min",
-//    "pow":    "Math.pow",
-//    "random": "Math.random",
-//    "round":  "Math.round",
-//    "sin":    "Math.sin",
-//    "sqrt":   "Math.sqrt",
-//    "tan":    "Math.tan"
-//   };
-// 
-//   var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
-// 
-//   return function(x) {
-//     if (vg.config.safeMode) {
-//       vg.error("Safe mode: Expression parsing disabled.");
-//       return vg.true;
-//     }
-// 
-//     var tokens = x.split(lexer),
-//         t, v, i, n, sq, dq;
-// 
-//     for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
-//       var t = tokens[i];
-//       if (t==="'") { if (!dq) sq = !sq; continue; }
-//       if (t==='"') { if (!sq) dq = !dq; continue; }
-//       if (dq || sq) continue;
-//       if (CONSTANT[t]) {
-//         tokens[i] = CONSTANT[t];
-//       }
-//       if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
-//         tokens[i] = FUNCTION[t];
-//       }
-//     }
-// 
-//     return Function("d", "index", "data", "return ("+tokens.join("")+");");
-//   };
-// 
-// })();
 vg.parse.legends = (function() {
 
   function legends(spec, legends, scales) {
