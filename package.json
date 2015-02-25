@@ -22,7 +22,8 @@
     "buffer": false,
     "canvas": false,
     "fs": false,
-    "http": false
+    "http": false,
+    "request": false
   },
   "bin": {
     "vg2png": "./bin/vg2png",
