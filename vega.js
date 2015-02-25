@@ -3184,7 +3184,11 @@ vg.data.read = (function() {
     if (this.vals) this.vals.sort(vg.numcmp);
     var ops = this.ops;
     for (var i=0; i<ops.length; ++i) {
-      o[ops[i] + "_" + this.field] = this.value(ops[i]);
+      if (ops[i] === 'count') {
+        o["count"] = this.count;
+      } else {
+        o[ops[i] + "_" + this.field] = this.value(ops[i]);
+      }
     }
     return o;
   };
