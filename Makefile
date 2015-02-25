@@ -95,6 +95,7 @@ vega.js: \
 	$(JS_COMPILER) < $< > $@
 
 vega.js: Makefile
+	-@chmod 666 $@ # In Vagrant with Windows as host, can't delete otherwise
 	@rm -f $@
 	cat $(filter %.js,$^) > $@
 	@chmod a-w $@
