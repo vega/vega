@@ -186,10 +186,12 @@ vg.unique = function(data, f, results) {
   if (!vg.isArray(data) || data.length===0) return [];
   f = f || vg.identity;
   results = results || [];
+  var u = {};
   for (var v, idx, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
-    idx = vg_bisectLeft(results, v, 0, results.length);
-    if (results[idx] !== v) results.splice(idx, 0, v);
+    if (v in u) continue;
+    u[v] = true;
+    results.push(v);
   }
   return results;
 };
@@ -343,8 +345,9 @@ vg.config.isNode = false;
 // e.g., ['wikipedia.org', 'eff.org']
 vg.config.domainWhiteList = false;
 
-// If true, disable potentially unsafe transforms (filter, formula)
-// involving possible JavaScript injection attacks.
+// If true, prevent potentially unsafe transforms (filter, formula)
+// involving possible JavaScript injection attacks. If safeMode is enabled
+// expressions are parsed to make sure they are not harmful.
 vg.config.safeMode = false;
 
 // base url for loading external data files
@@ -7247,8 +7250,34 @@ vg.parse.data = function(spec, callback) {
     idWhiteList: ['d', 'index', 'data']
   });
 
+  var lexer = /([\"\']|[\=\<\>\~\&\|\?\:\+\-\/\*\%\!\^\,\;\[\]\{\}\(\) ]+)/;
+
+  var FUNCTION = vg_expression_functions();
+
   return function(expr) {
-    var code = codegen(parse(expr));
+    var code;
+    if (vg.config.safeMode) {
+      code = codegen(parse(expr));
+    } else {
+      var tokens = expr.split(lexer),
+        t, v, i, n, sq, dq;
+
+      for (sq=0, dq=0, i=0, n=tokens.length; i<n; ++i) {
+        var t = tokens[i];
+        if (t==="'") { if (!dq) sq = !sq; continue; }
+        if (t==='"') { if (!sq) dq = !dq; continue; }
+        if (dq || sq) continue;
+        if (vg_expression_constants[t]) {
+          tokens[i] = vg_expression_constants[t];
+        }
+        if (FUNCTION[t] && (v=tokens[i+1]) && v[0]==="(") {
+          tokens[i] = FUNCTION[t];
+        }
+      }
+
+      code = tokens.join("");
+    }
+
     return Function('d', 'index', 'data',
       '"use strict"; return (' + code + ');');
   };
