@@ -40,6 +40,15 @@ vg.number = function(s) { return +s; };
 
 vg.boolean = function(s) { return !!s; };
 
+// ES6 compatibility per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
+// We could have used the polyfill code, but lets wait until ES6 becomes a standard first
+vg.startsWith = String.prototype.startsWith ?
+  function(string, searchString) {
+    return string.startsWith(searchString);
+  } : function(string, searchString) {
+    return string.lastIndexOf(searchString, 0) === 0;
+  };
+
 // utility functions
 
 vg.identity = function(x) { return x; };
@@ -138,6 +147,12 @@ vg.keys = function(x) {
   var keys = [];
   for (var key in x) keys.push(key);
   return keys;
+};
+
+vg.toMap = function(list) {
+  return list.reduce(function(obj, x) {
+    return (obj[x] = 1, obj);
+  }, {});
 };
 
 vg.unique = function(data, f, results) {
@@ -259,7 +274,7 @@ vg.truncate = function(s, length, pos, word, ellipsis) {
     default:
       return (word ? vg_truncateOnWord(s,l) : s.slice(0,l)) + ellipsis;
   }
-}
+};
 
 function vg_truncateOnWord(s, len, rev) {
   var cnt = 0, tok = s.split(vg_truncate_word_re);

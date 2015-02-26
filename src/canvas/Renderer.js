@@ -188,20 +188,23 @@ vg.canvas.Renderer = (function() {
         scene = renderer._scene,
         image = null, url;
 
-    renderer._imgload += 1;
     if (vg.config.isNode) {
+      renderer._imgload += 1;
       image = new (require("canvas").Image)();
       vg.data.load(uri, function(err, data) {
+        renderer._imgload -= 1;
         if (err) { vg.error(err); return; }
+        vg.log("LOAD IMAGE: " + uri);
         image.src = data;
         image.loaded = true;
-        renderer._imgload -= 1;
       });
     } else {
       image = new Image();
-      url = vg.config.baseURL + uri;
+      url = vg.data.load.sanitizeUrl(uri);
+      if (!url) { return; }
+      renderer._imgload += 1;
       image.onload = function() {
-        vg.log("LOAD IMAGE: "+url);
+        vg.log("LOAD IMAGE: " + url);
         image.loaded = true;
         renderer._imgload -= 1;
         renderer.renderAsync(scene);

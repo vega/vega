@@ -22,7 +22,8 @@
     "buffer": false,
     "canvas": false,
     "fs": false,
-    "http": false
+    "http": false,
+    "request": false
   },
   "bin": {
     "vg2png": "./bin/vg2png",
@@ -33,7 +34,8 @@
     "d3-geo-projection": "^0.2.13",
     "canvas": "~1.1.6",
     "topojson": "^1.6.18",
-    "yargs": "^2.3.0"
+    "yargs": "^2.3.0",
+    "request": "2.53.0"
   },
   "devDependencies": {
     "uglify-js": "^2.4.16",
