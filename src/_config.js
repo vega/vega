@@ -9,8 +9,9 @@ vg.config.isNode = false;
 // e.g., ['wikipedia.org', 'eff.org']
 vg.config.domainWhiteList = false;
 
-// If true, disable potentially unsafe transforms (filter, formula)
-// involving possible JavaScript injection attacks.
+// If true, prevent potentially unsafe transforms (filter, formula)
+// involving possible JavaScript injection attacks. If safeMode is enabled
+// expressions are parsed to make sure they are not harmful.
 vg.config.safeMode = false;
 
 // base url for loading external data files
