@@ -159,10 +159,12 @@ vg.unique = function(data, f, results) {
   if (!vg.isArray(data) || data.length===0) return [];
   f = f || vg.identity;
   results = results || [];
+  var u = {};
   for (var v, idx, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
-    idx = vg_bisectLeft(results, v, 0, results.length);
-    if (results[idx] !== v) results.splice(idx, 0, v);
+    if (v in u) continue;
+    u[v] = true;
+    results.push(v);
   }
   return results;
 };
