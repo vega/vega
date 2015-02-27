@@ -60,11 +60,11 @@ define(function(require, exports, module) {
     }),
     "median": measure({
       name: "median",
-      init: "this.val = [];",
-      add:  "this.val.push(v);",
-      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
-            "this.val.length = this.val.length - 1;",
-      set:  "this.sel(~~(this.cnt/2), this.val)",
+      init: "this.val = []; this.cnts = {};",
+      add:  "this.cnts[v] = ++this.cnts[v] || 1; " +
+            "if(this.val) this.val.push(v); ",
+      rem:  "--this.cnts[v]; this.val = null;",
+      set:  "this.sel(~~(this.cnt/2), this.val, this.cnts)",
       req: ["count"], idx: 6
     }),
     "min": measure({
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
       init: "",
       add: "",
       rem: "",
-      set: "this.sel(0, this.val)",
+      set: "this.sel(0, this.val, this.cnts)",
       req: ["median"]
     }),
     "max": measure({
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
       init: "",
       add: "",
       rem: "",
-      set: "this.sel(this.val.length-1, this.val)",
+      set: "this.sel(this.cnt-1, this.val, this.cnts)",
       req: ["median"]
     })
   };

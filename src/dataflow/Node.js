@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 
   function Node(graph) {
     if(graph) this.init(graph);
+    return this;
   }
 
   var proto = Node.prototype;

@@ -1351,6 +1351,7 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
 
   function Node(graph) {
     if(graph) this.init(graph);
+    return this;
   }
 
   var proto = Node.prototype;
@@ -4040,12 +4041,24 @@ define('transforms/Sort',['require','exports','module','./Transform','../parse/e
 
   return Sort;
 });
-define('util/quickselect',[],function() {
-  return function quickselect(k, x) {
+define('util/quickselect',['require','exports','module','./index'],function(require, exports, module) {
+  var util = require('./index');
+
+  return function quickselect(k, x, c) {
     function swap(a, b) {
       var t = x[a];
       x[a] = x[b];
       x[b] = t;
+    }
+
+    // x may be null, in which case assemble an array from c (counts)
+    if(x === null) {
+      x = [];
+      util.keys(c).forEach(function(k) {
+        var i = 0, len = c[k];
+        k = +k || k;
+        for(; i<len; ++i) x.push(k);
+      });
     }
     
     var left = 0,
@@ -4128,11 +4141,11 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
     }),
     "median": measure({
       name: "median",
-      init: "this.val = [];",
-      add:  "this.val.push(v);",
-      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
-            "this.val.length = this.val.length - 1;",
-      set:  "this.sel(~~(this.cnt/2), this.val)",
+      init: "this.val = []; this.cnts = {};",
+      add:  "this.cnts[v] = ++this.cnts[v] || 1; " +
+            "if(this.val) this.val.push(v); ",
+      rem:  "--this.cnts[v]; this.val = null;",
+      set:  "this.sel(~~(this.cnt/2), this.val, this.cnts)",
       req: ["count"], idx: 6
     }),
     "min": measure({
@@ -4140,7 +4153,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       init: "",
       add: "",
       rem: "",
-      set: "this.sel(0, this.val)",
+      set: "this.sel(0, this.val, this.cnts)",
       req: ["median"]
     }),
     "max": measure({
@@ -4148,7 +4161,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       init: "",
       add: "",
       rem: "",
-      set: "this.sel(this.val.length-1, this.val)",
+      set: "this.sel(this.cnt-1, this.val, this.cnts)",
       req: ["median"]
     })
   };
@@ -9985,7 +9998,9 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
     //value to use for the public API for the built file.
     return {
       dataflow: {
+        changeset: require('dataflow/changeset'),
         Datasource: require('dataflow/Datasource'),
+        Graph: require('dataflow/Graph'),
         Node: require('dataflow/Node')
       },
       parse: {

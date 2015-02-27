@@ -10,7 +10,9 @@
     //value to use for the public API for the built file.
     return {
       dataflow: {
+        changeset: require('dataflow/changeset'),
         Datasource: require('dataflow/Datasource'),
+        Graph: require('dataflow/Graph'),
         Node: require('dataflow/Node')
       },
       parse: {
