@@ -21,6 +21,18 @@ var specs = {
   vg2: { bar: bar2, pcp: pcp2 }
 };
 
+function random(N, C) {
+  var out = [];
+  for (var i=0; i<N; ++i) {
+    var o = {};
+    o.idx = i;
+    o.x = "c" + ~~(C*(i/N));
+    o.y = C * Math.random();
+    out.push(o);
+  }
+  return out;
+}
+
 function generate(specName, N) {
   var d1 = specs.vg1[specName].data[0], d2 = specs.vg2[specName].data[0];
   while(d1.values.length < N) {
@@ -104,7 +116,7 @@ function _vg2(spec, name, viewFactory, restore) {
     console.log(name, 'total', Date.now() - start);    
 
     expect(checkScene(spec, model.scene())).to.be.true;
-    if(restore) restore(model);
+    if(restore) restore(model, name, start);
     deferred.resolve();
   }, viewFactory);
 
@@ -113,6 +125,7 @@ function _vg2(spec, name, viewFactory, restore) {
 
 module.exports = {
   specs: specs,
+  random: random,
   generate: generate,
   checkScene: checkScene,
   run: run,

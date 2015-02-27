@@ -1570,6 +1570,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
 
   proto.update = function(where, field, func) {
     var mod = this._input.mod,
+        ids = util.tuple_ids(mod),
         prev = this._revises ? null : undefined; 
 
     this._input.fields[field] = 1;
@@ -1578,7 +1579,10 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
           next = func(x);
       if (prev !== next) {
         tuple.set(x, field, next);
-        if(mod.indexOf(x) < 0) mod.push(x);
+        if(ids[x._id] !== 1) {
+          mod.push(x);
+          ids[x._id] = 1;
+        }
       }
     });
     return this;
@@ -4000,7 +4004,11 @@ define('transforms/Formula',['require','exports','module','./Transform','../data
         field = this.field.get(this._graph);
 
     input.add.forEach(function(x) { f.call(t, x, field, input.stamp) });;
-    input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
+    
+    if(this.reevaluate(input)) {
+      input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
+    }
+
     input.fields[field] = 1;
     return input;
   };
@@ -9977,6 +9985,7 @@ define('parse/spec',['require','exports','module','../core/Model','../core/View'
     //value to use for the public API for the built file.
     return {
       dataflow: {
+        Datasource: require('dataflow/Datasource'),
         Node: require('dataflow/Node')
       },
       parse: {

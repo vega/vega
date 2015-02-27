@@ -43,6 +43,7 @@ define(function(require, exports, module) {
 
   proto.update = function(where, field, func) {
     var mod = this._input.mod,
+        ids = util.tuple_ids(mod),
         prev = this._revises ? null : undefined; 
 
     this._input.fields[field] = 1;
@@ -51,7 +52,10 @@ define(function(require, exports, module) {
           next = func(x);
       if (prev !== next) {
         tuple.set(x, field, next);
-        if(mod.indexOf(x) < 0) mod.push(x);
+        if(ids[x._id] !== 1) {
+          mod.push(x);
+          ids[x._id] = 1;
+        }
       }
     });
     return this;
