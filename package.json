@@ -32,7 +32,7 @@
   "dependencies": {
     "d3": "^3.5.5",
     "d3-geo-projection": "^0.2.13",
-    "canvas": "~1.1.6",
+    "canvas": "^1.2",
     "topojson": "^1.6.18",
     "yargs": "^2.3.0",
     "request": "2.53.0"
