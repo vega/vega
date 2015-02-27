@@ -29,7 +29,7 @@ vg.parse.template.source = function(text, variable) {
         + "))==null?'':__t)+\n'";
     }
 
-    // Adobe VMs need the match returned to produce the correct offest.
+    // Adobe VMs need the match returned to produce the correct offsets.
     return match;
   });
   return source + "'";
@@ -80,6 +80,9 @@ var vg_template_var = function(text, variable) {
         break;
       case 'upper-locale':
         strcall('.toLocaleUpperCase()');
+        break;
+      case 'to-string':
+        source += '.toString()'
         break;
       case 'trim':
         strcall('.trim()');
