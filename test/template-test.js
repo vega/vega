@@ -82,6 +82,9 @@ suite.addBatch({
 
         f = vg.parse.template("{{a|truncate:8,left}}");
         assert.equal("...there", f({a: "hello there"}));
+
+        f = vg.parse.template("hello {{a|truncate:5}}");
+        assert.equal("hello 12...", f({a: 123456}));
       },
       'should handle number filter': function(vg) {
         var f = vg.parse.template("hello {{a|number:'.3f'}}");

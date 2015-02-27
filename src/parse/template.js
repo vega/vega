@@ -39,9 +39,21 @@ var vg_template_var = function(text, variable) {
   var filters = text.split('|');
   var prop = filters.shift().trim();
   var format = [];
+  var stringCast = true;
+  
+  function strcall(fn) {
+    fn = fn || "";
+    if (stringCast) {
+      stringCast = false;
+      source = "String(" + source + ")" + fn;
+    } else {
+      source += fn;
+    }
+    return source;
+  }
   
   var source = vg.field(prop).map(vg.str).join("][");
-  source = "(" + variable + "[" + source + "])";
+  source = variable + "[" + source + "]";
   
   for (var i=0; i<filters.length; ++i) {
     var f = filters[i], args = null, pidx, a, b;
@@ -55,60 +67,63 @@ var vg_template_var = function(text, variable) {
 
     switch (f) {
       case 'length':
-        source += '.length';
+        strcall('.length');
         break;
       case 'lower':
-        source += '.toLowerCase()';
+        strcall('.toLowerCase()');
         break;
       case 'upper':
-        source += '.toUpperCase()';
+        strcall('.toUpperCase()');
         break;
       case 'lower-locale':
-        source += '.toLocaleLowerCase()';
+        strcall('.toLocaleLowerCase()');
         break;
       case 'upper-locale':
-        source += '.toLocaleUpperCase()';
+        strcall('.toLocaleUpperCase()');
         break;
       case 'trim':
-        source += '.trim()';
+        strcall('.trim()');
         break;
       case 'left':
         a = vg.number(args[0]);
-        source += '.slice(0,'+a+')';
+        strcall('.slice(0,' + a + ')');
         break;
       case 'right':
         a = vg.number(args[0]);
-        source += '.slice(-'+a+')';
+        strcall('.slice(-' + a +')');
         break;
       case 'mid':
         a = vg.number(args[0]);
         b = a + vg.number(args[1]);
-        source += '.slice(+'+a+','+b+')';
+        strcall('.slice(+'+a+','+b+')');
         break;
       case 'slice':
         a = vg.number(args[0]);
-        source += '.slice('+ a +
-          (args.length > 1 ? ',' + vg.number(args[1]) : '') + ')';
+        strcall('.slice('+ a
+          + (args.length > 1 ? ',' + vg.number(args[1]) : '')
+          + ')');
         break;
       case 'truncate':
         a = vg.number(args[0]);
         b = args[1];
         b = (b!=="left" && b!=="middle" && b!=="center") ? "right" : b;
-        source = 'this.truncate(' + source + ',' + a + ',"' + b + '")';
+        source = 'this.truncate(' + strcall() + ',' + a + ',"' + b + '")';
         break;
       case 'number':
         a = vg_template_format(args[0], d3.format);
+        stringCast = false;
         source = 'this.__formats['+a+']('+source+')';
         break;
       case 'time':
         a = vg_template_format(args[0], d3.time.format);
+        stringCast = false;
         source = 'this.__formats['+a+']('+source+')';
         break;
       default:
         throw Error("Unrecognized template filter: " + f);
     }
   }
-  
+
   return source;
 }
 
