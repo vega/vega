@@ -69,6 +69,9 @@ var vg_template_var = function(text, variable) {
       case 'upper-locale':
         source += '.toLocaleUpperCase()';
         break;
+      case 'to-string':
+        source += '.toString()'
+        break;
       case 'trim':
         source += '.trim()';
         break;

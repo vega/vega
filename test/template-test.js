@@ -44,6 +44,13 @@ suite.addBatch({
         var f = vg.parse.template("hello {{a|upper}}");
         assert.equal("hello THERE", f({a: "there"}));
       },
+      'should handle to-string filter': function(vg) {
+        var f = vg.parse.template("hello {{a|to-string}}");
+        assert.equal("hello 1234", f({a: 1234}));
+
+        f = vg.parse.template("hello {{a|to-string|truncate:5}}");
+        assert.equal("hello 12...", f({a: 123456}));
+      },
       'should handle trim filter': function(vg) {
         var f = vg.parse.template("hello {{a|trim}}");
         assert.equal("hello there", f({a: " there "}));
