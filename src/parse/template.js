@@ -29,7 +29,7 @@ vg.parse.template.source = function(text, variable) {
         + "))==null?'':__t)+\n'";
     }
 
-    // Adobe VMs need the match returned to produce the correct offest.
+    // Adobe VMs need the match returned to produce the correct offsets.
     return match;
   });
   return source + "'";
