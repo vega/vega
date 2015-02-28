@@ -163,9 +163,8 @@ define(function(require, exports, module) {
   };
 
   proto.reevaluate = function(node, pulse) {
-    var reflowed = pulse.reflow && node.last() >= pulse.stamp,
+    var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
         run = !!pulse.add.length || !!pulse.rem.length || node.router();
-
     run = run || !reflowed;
     return run || node.reevaluate(pulse);
   };
