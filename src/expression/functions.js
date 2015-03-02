@@ -2,11 +2,18 @@ var vg_expression_functions = function(codegen) {
 
   function fncall(name, args, cast, type) {
     var obj = codegen(args[0]);
-    if (cast) obj = cast + "(" + obj + ")";
+    if (cast) {
+      obj = cast + "(" + obj + ")";
+      if (vg.startsWith(cast, "new ")) obj = "(" + obj + ")";
+    }
     return obj + "." + name + (type < 0 ? "" : type === 0
       ? "()"
       : "(" + args.slice(1).map(codegen).join(",") + ")");
   }
+  
+  var DATE = "new Date";
+  var STRING = "String";
+  var REGEXP = "RegExp";
 
   return {
     // MATH functions
@@ -33,7 +40,61 @@ var vg_expression_functions = function(codegen) {
 
     // DATE functions
     "now":      "Date.now",
-    "date":     "new Date",
+    "datetime": "new Date",
+    "date": function(args) {
+        return fncall("getDate", args, DATE, 0);
+      },
+    "day": function(args) {
+        return fncall("getDay", args, DATE, 0);
+      },
+    "year": function(args) {
+        return fncall("getFullYear", args, DATE, 0);
+      },
+    "month": function(args) {
+        return fncall("getMonth", args, DATE, 0);
+      },
+    "hours": function(args) {
+        return fncall("getHours", args, DATE, 0);
+      },
+    "minutes": function(args) {
+        return fncall("getMinutes", args, DATE, 0);
+      },
+    "seconds": function(args) {
+        return fncall("getSeconds", args, DATE, 0);
+      },
+    "milliseconds": function(args) {
+        return fncall("getMilliseconds", args, DATE, 0);
+      },
+    "time": function(args) {
+        return fncall("getTime", args, DATE, 0);
+      },
+    "timezoneoffset": function(args) {
+        return fncall("getTimezoneOffset", args, DATE, 0);
+      },
+    "utcdate": function(args) {
+        return fncall("getUTCDate", args, DATE, 0);
+      },
+    "utcday": function(args) {
+        return fncall("getUTCDay", args, DATE, 0);
+      },
+    "utcyear": function(args) {
+        return fncall("getUTCFullYear", args, DATE, 0);
+      },
+    "utcmonth": function(args) {
+        return fncall("getUTCMonth", args, DATE, 0);
+      },
+    "utchours": function(args) {
+        return fncall("getUTCHours", args, DATE, 0);
+      },
+    "utcminutes": function(args) {
+        return fncall("getUTCMinutes", args, DATE, 0);
+      },
+    "utcseconds": function(args) {
+        return fncall("getUTCSeconds", args, DATE, 0);
+      },
+    "utcmilliseconds": function(args) {
+        return fncall("getUTCMilliseconds", args, DATE, 0);
+      },
 
     // STRING functions
     "parseFloat": "parseFloat",
@@ -42,21 +103,21 @@ var vg_expression_functions = function(codegen) {
         return fncall("length", args, null, -1);
       },
     "upper": function(args) {
-        return fncall("toUpperCase", args, "String", 0);
+        return fncall("toUpperCase", args, STRING, 0);
       },
     "lower": function(args) {
-        return fncall("toLowerCase", args, "String", 0);
+        return fncall("toLowerCase", args, STRING, 0);
       },
     "slice": function(args) {
-        return fncall("slice", args, "String");
+        return fncall("slice", args, STRING);
       },
     "substring": function(args) {
-        return fncall("substring", args, "String");
+        return fncall("substring", args, STRING);
       },
 
     // REGEXP functions
     "test": function(args) {
-        return fncall("test", args, "RegExp");
+        return fncall("test", args, REGEXP);
       },
     
     // Control Flow functions
