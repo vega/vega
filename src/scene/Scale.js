@@ -140,7 +140,7 @@ define(function(require, exports, module) {
     if(!cache) {
       cache = scale[ck] = new Stats(graph), meas = [];
       if(uniques && sort) meas.push(sort.stat);
-      else if(!uniques) meas.push(C.MIN, C.MAX);
+      else if(!uniques)   meas.push(C.MIN, C.MAX);
       cache.measures.set(cache, meas);
     }
 
@@ -178,18 +178,20 @@ define(function(require, exports, module) {
     data = cache.data();
     if(uniques) {
       keys = util.keys(data)
-        .filter(function(k) { return data[k] != null; })
-        .map(function(k) { return { key: k, tpl: data[k].tpl }});
+        .filter(function(k) { return data[k] != null; });
 
       if(sort) {
         sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
         sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.on.get(graph).field;
         sort = util.comparator(sort);
-      } else {  // "First seen" order
-        sort = util.comparator("tpl._id");
+        return keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
+          .sort(sort)
+          .map(function(k) { return k.key });
+      // } else {  // "First seen" order
+      //   sort = util.comparator("tpl._id");
       }
 
-      return keys.sort(sort).map(function(k) { return k.key });
+      return keys;
     } else {
       data = data[""]; // Unpack flat aggregation
       return data == null ? [] : [data.tpl.min, data.tpl.max];
