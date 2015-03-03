@@ -5138,6 +5138,7 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
     // Scales are at the end of an encoding pipeline, so they should forward a
     // reflow pulse. Thus, if multiple scales update in the parent group, we don't
     // reevaluate child marks multiple times. 
+    input.scales[this._def.name] = 1;
     return changeset.create(input, true);
   };
 
