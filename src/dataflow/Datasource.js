@@ -176,16 +176,17 @@ define(function(require, exports, module) {
         prev = this._revises ? null : undefined;
 
     l.evaluate = function(input) {
-      this._cache = this._cache || {};  // to propagate tuples correctly
-      var output  = changeset.create(input);
+      dest._srcMap = dest._srcMap || {};  // to propagate tuples correctly
+      var map = dest._srcMap,
+          output  = changeset.create(input);
 
       output.add = input.add.map(function(t) {
-        return (l._cache[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
+        return (map[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
       });
-      output.mod = input.mod.map(function(t) { return l._cache[t._id]; });
+      output.mod = input.mod.map(function(t) { return map[t._id]; });
       output.rem = input.rem.map(function(t) { 
-        var o = l._cache[t._id];
-        l._cache[t._id] = null;
+        var o = map[t._id];
+        map[t._id] = null;
         return o;
       });
 
