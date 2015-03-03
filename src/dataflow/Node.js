@@ -116,7 +116,6 @@ define(function(require, exports, module) {
     return foundSending;
   };
 
-  // http://jsperf.com/empty-javascript-array
   proto.disconnect = function() {
     this._listeners = [];
     this._registered = {};

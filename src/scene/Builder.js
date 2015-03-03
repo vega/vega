@@ -171,6 +171,9 @@ define(function(require, exports, module) {
 
   proto.disconnect = function() {
     var builder = this;
+    if(!this._listeners.length) return this;
+
+    Node.prototype.disconnect.call(this);
     this._model.graph.disconnect(this.pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).removeListener(builder);

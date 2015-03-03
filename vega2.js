@@ -1460,7 +1460,6 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
     return foundSending;
   };
 
-  // http://jsperf.com/empty-javascript-array
   proto.disconnect = function() {
     this._listeners = [];
     this._registered = {};
@@ -4988,6 +4987,9 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
 
   proto.disconnect = function() {
     var builder = this;
+    if(!this._listeners.length) return this;
+
+    Node.prototype.disconnect.call(this);
     this._model.graph.disconnect(this.pipeline());
     this._encoder.dependency(C.SCALES).forEach(function(s) {
       builder._parent.scale(s).removeListener(builder);
