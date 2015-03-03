@@ -3672,7 +3672,7 @@ define('transforms/Aggregate',['require','exports','module','./Transform','../da
   };
 
   proto._new_tuple = function(x, k) {
-    return tuple.derive(x, x._prev);
+    return tuple.derive(null, null);
   };
 
   proto._add = function(x) {
@@ -4291,8 +4291,19 @@ define('transforms/Stats',['require','exports','module','./Transform','./Aggrega
   };
 
   proto._new_cell = function(x, k) {
-    var cell = this.__facet || tuple.derive(x, x._prev);
-    return new this._Measures(cell);
+    var group_by = this.group_by.get(this._graph),
+        fields = group_by.fields, acc = group_by.accessors,
+        i, len;
+
+    var t = this.__facet || {};
+    if(!this.__facet) {
+      for(i=0, len=fields.length; i<len; ++i) {
+        t[fields[i]] = acc[i](x);
+      }
+      t = tuple.ingest(t, null);
+    }
+
+    return new this._Measures(t);
   };
 
   proto._add = function(x) {
