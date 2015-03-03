@@ -90,7 +90,7 @@ define(function(require, exports, module) {
         continue;
       }
 
-      p = this.evaluate(n, p);
+      p = this.evaluate(p, n);
 
       // Even if we didn't run the node, we still want to propagate 
       // the pulse. 
@@ -162,15 +162,15 @@ define(function(require, exports, module) {
     return branch;
   };
 
-  proto.reevaluate = function(node, pulse) {
+  proto.reevaluate = function(pulse, node) {
     var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
         run = !!pulse.add.length || !!pulse.rem.length || node.router();
     run = run || !reflowed;
     return run || node.reevaluate(pulse);
   };
 
-  proto.evaluate = function(node, pulse) {
-    if(!this.reevaluate(node, pulse)) return pulse;
+  proto.evaluate = function(pulse, node) {
+    if(!this.reevaluate(pulse, node)) return pulse;
     pulse = node.evaluate(pulse);
     node.last(pulse.stamp);
     return pulse

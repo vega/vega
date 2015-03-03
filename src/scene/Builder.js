@@ -96,8 +96,8 @@ define(function(require, exports, module) {
       output = joinValues.call(this, input, data);
     }
 
-    output = this._graph.evaluate(this._encoder, output);
-    return this._isSuper ? this._graph.evaluate(this._bounder, output) : output;
+    output = this._graph.evaluate(output, this._encoder);
+    return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
   };
 
   // Reactive geometry and mark-level transformations are handled here 
@@ -145,7 +145,7 @@ define(function(require, exports, module) {
       input.mod = output.mod;
       input.rem = output.rem;
       input.stamp = null;
-      this._ds.fire(input);
+      this._graph.propagate(input, this._ds.listener());
     }
   }
 

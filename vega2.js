@@ -1863,7 +1863,7 @@ define('dataflow/Graph',['require','exports','module','heap','./Datasource','./S
         continue;
       }
 
-      p = this.evaluate(n, p);
+      p = this.evaluate(p, n);
 
       // Even if we didn't run the node, we still want to propagate 
       // the pulse. 
@@ -1935,15 +1935,15 @@ define('dataflow/Graph',['require','exports','module','heap','./Datasource','./S
     return branch;
   };
 
-  proto.reevaluate = function(node, pulse) {
+  proto.reevaluate = function(pulse, node) {
     var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
         run = !!pulse.add.length || !!pulse.rem.length || node.router();
     run = run || !reflowed;
     return run || node.reevaluate(pulse);
   };
 
-  proto.evaluate = function(node, pulse) {
-    if(!this.reevaluate(node, pulse)) return pulse;
+  proto.evaluate = function(pulse, node) {
+    if(!this.reevaluate(pulse, node)) return pulse;
     pulse = node.evaluate(pulse);
     node.last(pulse.stamp);
     return pulse
@@ -4912,8 +4912,8 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
       output = joinValues.call(this, input, data);
     }
 
-    output = this._graph.evaluate(this._encoder, output);
-    return this._isSuper ? this._graph.evaluate(this._bounder, output) : output;
+    output = this._graph.evaluate(output, this._encoder);
+    return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
   };
 
   // Reactive geometry and mark-level transformations are handled here 
@@ -4961,7 +4961,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
       input.mod = output.mod;
       input.rem = output.rem;
       input.stamp = null;
-      this._ds.fire(input);
+      this._graph.propagate(input, this._ds.listener());
     }
   }
 
