@@ -298,12 +298,16 @@ function vg_write(msg) {
     : console.log(msg);
 }
 
+function vg_error(msg) {
+  vg.config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.error(msg);
+}
+
 vg.log = function(msg) {
   vg_write("[Vega Log] " + msg);
 };
 
 vg.error = function(msg) {
-  msg = "[Vega Err] " + msg;
-  vg_write(msg);
-  if (typeof alert !== "undefined") alert(msg);
+  vg_error("[Vega Err] " + msg);
 };
