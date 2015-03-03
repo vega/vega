@@ -119,7 +119,22 @@ vg.comparator = function(sort) {
   };
 };
 
-vg.cmp = function(a, b) { return a<b ? -1 : a>b ? 1 : a>=b ? 0 : NaN; };
+vg.cmp = function(a, b) {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else if (a >= b) {
+    return 0;
+  } else if (a === null && b === null) {
+    return 0;
+  } else if (a === null) {
+    return -1;
+  } else if (b === null) {
+    return 1;
+  }
+  return NaN;
+}
 
 vg.numcmp = function(a, b) { return a - b; };
 

@@ -19,6 +19,27 @@ suite.addBatch({
         assert.equal(vg.isNumber(0), true);
       }
     },
+    'cmp': {
+      'should compare numbers': function (vg) {
+        assert(vg.cmp(1, 0) > 0);
+        assert(vg.cmp(0, 1) < 0);
+        assert.strictEqual(vg.cmp(12, 12), 0);
+      },
+      'should compare strings': function (vg) {
+        assert(vg.cmp('a', 'b') < 0);
+        assert(vg.cmp('b', 'a') > 0);
+        assert.strictEqual(vg.cmp('foo', 'foo'), 0);
+      },
+      'should compare numbers to null': function (vg) {
+        assert(vg.cmp(1, null) > 0);
+        assert(vg.cmp(null, 1) < 0);
+        assert.strictEqual(vg.cmp(null, null), 0);
+      },
+      'should compare strings to null': function (vg) {
+        assert(vg.cmp(null, 'b') < 0);
+        assert(vg.cmp('b', null) > 0);
+      }
+    },
     'number': {
       'should convert String containing int to number': function (vg) {
         assert.strictEqual(vg.number('2.2'), 2.2);
