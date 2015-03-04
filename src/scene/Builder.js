@@ -230,10 +230,12 @@ define(function(require, exports, module) {
       output.mod.push(item);
     }
 
-    // Sort items according to how data is sorted, or by _id. The else 
-    // condition is important to ensure lines and areas are drawn correctly.
-    this._items.sort(function(a, b) { 
-      return input.sort ? input.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
+    // Exiting items go first, or sort by specified transform. If none of 
+    // the above, sort by _id so that area/lines get drawn correctly.
+    this._items.sort(function(a, b) {
+      if(a.status === C.EXIT) return -1;
+      else if(b.status === C.EXIT) return 1;
+      else return input.sort ? input.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
     });
 
     return output;
