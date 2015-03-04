@@ -180,11 +180,11 @@ vg.canvas.Renderer = (function() {
 
   prototype.clear = function(x, y, w, h) {
     var g = this._ctx;
+
+    g.clearRect(x, y, w, h);
     if (this._bgcolor != null) {
       g.fillStyle = this._bgcolor;
       g.fillRect(x, y, w, h); 
-    } else {
-      g.clearRect(x, y, w, h);
     }
   };
 
