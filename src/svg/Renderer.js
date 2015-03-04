@@ -11,7 +11,7 @@ vg.svg.Renderer = (function() {
   
   var prototype = renderer.prototype;
   
-  prototype.initialize = function(el, width, height, pad) {
+  prototype.initialize = function(el, width, height, pad, bgcolor) {
     this._el = el;
 
     // remove any existing svg element
@@ -21,6 +21,10 @@ vg.svg.Renderer = (function() {
     this._svg = d3.select(el)
       .append("svg")
       .attr("class", "marks");
+
+    if (bgcolor != null) {
+      this._svg.style("background-color", bgcolor);
+    }
     
     // set the svg root group
     this._ctx = this._svg.append("g");

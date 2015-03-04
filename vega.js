@@ -1948,13 +1948,15 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._bgcolor = null;
     this._imgload = 0;
   };
 
   var prototype = renderer.prototype;
 
-  prototype.initialize = function(el, width, height, pad) {
+  prototype.initialize = function(el, width, height, pad, bgcolor) {
     this._el = el;
+    this.background(bgcolor);
   
     if (!el) return this; // early exit if no DOM element
 
@@ -1972,6 +1974,11 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     canvas.exit().remove();
 
     return this.resize(width, height, pad);
+  };
+  
+  prototype.background = function(bgcolor) {
+    this._bgcolor = bgcolor;
+    return this;
   };
 
   prototype.resize = function(width, height, pad) {
@@ -2090,7 +2097,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     this._scene = scene;
     g.save();
     bb = setBounds(g, getBounds(items));
-    g.clearRect(-pad.left, -pad.top, w, h);
+    this.clear(-pad.left, -pad.top, w, h);
 
     // render
     this.draw(g, scene, bb);
@@ -2101,7 +2108,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       g.save();
       bb2 = setBounds(g, getBounds(items));
       if (!bb.encloses(bb2)) {
-        g.clearRect(-pad.left, -pad.top, w, h);
+        this.clear(-pad.left, -pad.top, w, h);
         this.draw(g, scene, bb2);
       }
     }
@@ -2115,6 +2122,16 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+  };
+
+  prototype.clear = function(x, y, w, h) {
+    var g = this._ctx;
+    if (this._bgcolor != null) {
+      g.fillStyle = this._bgcolor;
+      g.fillRect(x, y, w, h); 
+    } else {
+      g.clearRect(x, y, w, h);
+    }
   };
 
   prototype.renderAsync = function(scene) {
@@ -2647,7 +2664,7 @@ vg.svg.Renderer = (function() {
   
   var prototype = renderer.prototype;
   
-  prototype.initialize = function(el, width, height, pad) {
+  prototype.initialize = function(el, width, height, pad, bgcolor) {
     this._el = el;
 
     // remove any existing svg element
@@ -2657,6 +2674,10 @@ vg.svg.Renderer = (function() {
     this._svg = d3.select(el)
       .append("svg")
       .attr("class", "marks");
+
+    if (bgcolor != null) {
+      this._svg.style("background-color", bgcolor);
+    }
     
     // set the svg root group
     this._ctx = this._svg.append("g");
@@ -7795,12 +7816,14 @@ vg.parse.spec = function(spec, callback, viewFactory) {
     
     var width = spec.width || 500,
         height = spec.height || 500,
-        viewport = spec.viewport || null;
+        viewport = spec.viewport || null,
+        background = spec.background ? d3.rgb(spec.background)+"" : null;
     
     var defs = {
       width: width,
       height: height,
       viewport: viewport,
+      background: background,
       padding: vg.parse.padding(spec.padding),
       marks: vg.parse.marks(spec, width, height),
       data: vg.parse.data(spec.data, function() { callback(viewConstructor); })
@@ -9875,6 +9898,7 @@ function vg_hLegendLabels() {
     this._model = new vg.Model();
     this._width = this.__width = width || 500;
     this._height = this.__height = height || 500;
+    this._bgcolor = null;
     this._autopad = 1;
     this._padding = {top:0, left:0, bottom:0, right:0};
     this._viewport = null;
@@ -9904,6 +9928,15 @@ function vg_hLegendLabels() {
       if (this._el) this.initialize(this._el.parentNode);
       this._model.height(this._height);
       if (this._strict) this._autopad = 1;
+    }
+    return this;
+  };
+
+  prototype.background = function(bgcolor) {
+    if (!arguments.length) return this._bgcolor;
+    if (this._bgcolor !== bgcolor) {
+      this._bgcolor = bgcolor;
+      if (this._el) this.initialize(this._el.parentNode);
     }
     return this;
   };
@@ -10005,7 +10038,10 @@ function vg_hLegendLabels() {
 
   prototype.initialize = function(el) {
     var v = this, prevHandler,
-        w = v._width, h = v._height, pad = v._padding;
+        w = v._width,
+        h = v._height,
+        bg = v._bgcolor,
+        pad = v._padding;
     
     // clear pre-existing container
     d3.select(el).select("div.vega").remove();
@@ -10025,7 +10061,7 @@ function vg_hLegendLabels() {
     
     // renderer
     v._renderer = (v._renderer || new this._io.Renderer())
-      .initialize(el, w, h, pad);
+      .initialize(el, w, h, pad, bg);
     
     // input handler
     prevHandler = v._handler;
@@ -10089,6 +10125,7 @@ vg.ViewFactory = function(defs) {
     var v = new vg.View()
       .width(defs.width)
       .height(defs.height)
+      .background(defs.background)
       .padding(defs.padding)
       .viewport(defs.viewport)
       .renderer(opt.renderer || "canvas")
@@ -10246,13 +10283,18 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
 
   var prototype = renderer.prototype;
   
-  prototype.initialize = function(el, w, h, pad) {
+  prototype.initialize = function(el, w, h, pad, bgcolor) {
     var t = this._text;
 
-    t.head = open('svg', {
+    var headAttr = {
       width: w,
-      height: h,
-    }, vg.config.svgNamespace);
+      height: h
+    };
+    if (bgcolor != null) {
+      headAttr.style = 'background-color:' + bgcolor + ';'
+    }
+
+    t.head = open('svg', headAttr, vg.config.svgNamespace);
 
     t.root = open('g', {
       transform: 'translate(' + pad.left + ',' + pad.top + ')'
@@ -10621,7 +10663,7 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
 
 })();vg.headless.View = (function() {
   
-  var view = function(width, height, pad, type, vp) {
+  var view = function(width, height, pad, bgcolor, type, vp) {
     this._canvas = null;
     this._type = type;
     this._el = "body";
@@ -10629,6 +10671,7 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
     this._model = new vg.Model();
     this._width = this.__width = width || 500;
     this._height = this.__height = height || 500;
+    this._bgcolor = bgcolor || null;
     this._padding = pad || {top:0, left:0, bottom:0, right:0};
     this._autopad = vg.isString(this._padding) ? 1 : 0;
     this._renderer = new vg.headless[type]();
@@ -10667,6 +10710,15 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
       this._height = height;
       this.initialize();
       this._model.height(this._height);
+    }
+    return this;
+  };
+
+  prototype.background = function(bgcolor) {
+    if (!arguments.length) return this._bgcolor;
+    if (this._bgcolor !== bgcolor) {
+      this._bgcolor = bgcolor;
+      this.initialize();
     }
     return this;
   };
@@ -10772,6 +10824,7 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
   prototype.initialize = function() {    
     var w = this._width,
         h = this._height,
+        bg = this._bgcolor,
         pad = this._padding;
 
     if (this._viewport) {
@@ -10780,15 +10833,15 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
     }
     
     if (this._type === "svg") {
-      this.initSVG(w, h, pad);
+      this.initSVG(w, h, pad, bg);
     } else {
-      this.initCanvas(w, h, pad);
+      this.initCanvas(w, h, pad, bg);
     }
     
     return this;
   };
   
-  prototype.initCanvas = function(w, h, pad) {
+  prototype.initCanvas = function(w, h, pad, bg) {
     var Canvas = require("canvas"),
         tw = w + (pad ? pad.left + pad.right : 0),
         th = h + (pad ? pad.top + pad.bottom : 0),
@@ -10801,14 +10854,15 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
     // configure renderer
     this._renderer.context(ctx);
     this._renderer.resize(w, h, pad);
+    this._renderer.background(bg);
   };
   
-  prototype.initSVG = function(w, h, pad) {
+  prototype.initSVG = function(w, h, pad, bg) {
     var tw = w + (pad ? pad.left + pad.right : 0),
         th = h + (pad ? pad.top + pad.bottom : 0);
 
     // configure renderer
-    this._renderer.initialize(this._el, tw, th, pad);
+    this._renderer.initialize(this._el, tw, th, pad, bg);
   }
   
   prototype.render = function(items) {
@@ -10837,9 +10891,10 @@ vg.headless.View.Factory = function(defs) {
     var w = defs.width,
         h = defs.height,
         p = defs.padding,
+        bg = defs.background,
         vp = defs.viewport,
         r = opt.renderer || "canvas",
-        v = new vg.headless.View(w, h, p, r, vp).defs(defs);
+        v = new vg.headless.View(w, h, p, bg, r, vp).defs(defs);
     if (defs.data.load) v.data(defs.data.load);
     if (opt.data) v.data(opt.data);
     return v;

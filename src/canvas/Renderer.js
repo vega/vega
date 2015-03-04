@@ -2,13 +2,15 @@ vg.canvas.Renderer = (function() {
   var renderer = function() {
     this._ctx = null;
     this._el = null;
+    this._bgcolor = null;
     this._imgload = 0;
   };
 
   var prototype = renderer.prototype;
 
-  prototype.initialize = function(el, width, height, pad) {
+  prototype.initialize = function(el, width, height, pad, bgcolor) {
     this._el = el;
+    this.background(bgcolor);
   
     if (!el) return this; // early exit if no DOM element
 
@@ -26,6 +28,11 @@ vg.canvas.Renderer = (function() {
     canvas.exit().remove();
 
     return this.resize(width, height, pad);
+  };
+  
+  prototype.background = function(bgcolor) {
+    this._bgcolor = bgcolor;
+    return this;
   };
 
   prototype.resize = function(width, height, pad) {
@@ -144,7 +151,7 @@ vg.canvas.Renderer = (function() {
     this._scene = scene;
     g.save();
     bb = setBounds(g, getBounds(items));
-    g.clearRect(-pad.left, -pad.top, w, h);
+    this.clear(-pad.left, -pad.top, w, h);
 
     // render
     this.draw(g, scene, bb);
@@ -155,7 +162,7 @@ vg.canvas.Renderer = (function() {
       g.save();
       bb2 = setBounds(g, getBounds(items));
       if (!bb.encloses(bb2)) {
-        g.clearRect(-pad.left, -pad.top, w, h);
+        this.clear(-pad.left, -pad.top, w, h);
         this.draw(g, scene, bb2);
       }
     }
@@ -169,6 +176,16 @@ vg.canvas.Renderer = (function() {
     var marktype = scene.marktype,
         renderer = vg.canvas.marks.draw[marktype];
     renderer.call(this, ctx, scene, bounds);
+  };
+
+  prototype.clear = function(x, y, w, h) {
+    var g = this._ctx;
+    if (this._bgcolor != null) {
+      g.fillStyle = this._bgcolor;
+      g.fillRect(x, y, w, h); 
+    } else {
+      g.clearRect(x, y, w, h);
+    }
   };
 
   prototype.renderAsync = function(scene) {

@@ -34,13 +34,18 @@ vg.headless.svg = (function() {
 
   var prototype = renderer.prototype;
   
-  prototype.initialize = function(el, w, h, pad) {
+  prototype.initialize = function(el, w, h, pad, bgcolor) {
     var t = this._text;
 
-    t.head = open('svg', {
+    var headAttr = {
       width: w,
-      height: h,
-    }, vg.config.svgNamespace);
+      height: h
+    };
+    if (bgcolor != null) {
+      headAttr.style = 'background-color:' + bgcolor + ';'
+    }
+
+    t.head = open('svg', headAttr, vg.config.svgNamespace);
 
     t.root = open('g', {
       transform: 'translate(' + pad.left + ',' + pad.top + ')'

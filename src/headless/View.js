@@ -1,6 +1,6 @@
 vg.headless.View = (function() {
   
-  var view = function(width, height, pad, type, vp) {
+  var view = function(width, height, pad, bgcolor, type, vp) {
     this._canvas = null;
     this._type = type;
     this._el = "body";
@@ -8,6 +8,7 @@ vg.headless.View = (function() {
     this._model = new vg.Model();
     this._width = this.__width = width || 500;
     this._height = this.__height = height || 500;
+    this._bgcolor = bgcolor || null;
     this._padding = pad || {top:0, left:0, bottom:0, right:0};
     this._autopad = vg.isString(this._padding) ? 1 : 0;
     this._renderer = new vg.headless[type]();
@@ -46,6 +47,15 @@ vg.headless.View = (function() {
       this._height = height;
       this.initialize();
       this._model.height(this._height);
+    }
+    return this;
+  };
+
+  prototype.background = function(bgcolor) {
+    if (!arguments.length) return this._bgcolor;
+    if (this._bgcolor !== bgcolor) {
+      this._bgcolor = bgcolor;
+      this.initialize();
     }
     return this;
   };
@@ -151,6 +161,7 @@ vg.headless.View = (function() {
   prototype.initialize = function() {    
     var w = this._width,
         h = this._height,
+        bg = this._bgcolor,
         pad = this._padding;
 
     if (this._viewport) {
@@ -159,15 +170,15 @@ vg.headless.View = (function() {
     }
     
     if (this._type === "svg") {
-      this.initSVG(w, h, pad);
+      this.initSVG(w, h, pad, bg);
     } else {
-      this.initCanvas(w, h, pad);
+      this.initCanvas(w, h, pad, bg);
     }
     
     return this;
   };
   
-  prototype.initCanvas = function(w, h, pad) {
+  prototype.initCanvas = function(w, h, pad, bg) {
     var Canvas = require("canvas"),
         tw = w + (pad ? pad.left + pad.right : 0),
         th = h + (pad ? pad.top + pad.bottom : 0),
@@ -180,14 +191,15 @@ vg.headless.View = (function() {
     // configure renderer
     this._renderer.context(ctx);
     this._renderer.resize(w, h, pad);
+    this._renderer.background(bg);
   };
   
-  prototype.initSVG = function(w, h, pad) {
+  prototype.initSVG = function(w, h, pad, bg) {
     var tw = w + (pad ? pad.left + pad.right : 0),
         th = h + (pad ? pad.top + pad.bottom : 0);
 
     // configure renderer
-    this._renderer.initialize(this._el, tw, th, pad);
+    this._renderer.initialize(this._el, tw, th, pad, bg);
   }
   
   prototype.render = function(items) {
@@ -216,9 +228,10 @@ vg.headless.View.Factory = function(defs) {
     var w = defs.width,
         h = defs.height,
         p = defs.padding,
+        bg = defs.background,
         vp = defs.viewport,
         r = opt.renderer || "canvas",
-        v = new vg.headless.View(w, h, p, r, vp).defs(defs);
+        v = new vg.headless.View(w, h, p, bg, r, vp).defs(defs);
     if (defs.data.load) v.data(defs.data.load);
     if (opt.data) v.data(opt.data);
     return v;
