@@ -7272,6 +7272,12 @@ var vg_expression_parser = (function() {
 
   return axes;
 })();
+vg.parse.background = function(bg) {
+  // return null if input is null or undefined
+  if (bg == null) return null;
+  // run through d3 rgb to sanity check
+  return d3.rgb(bg) + "";
+};
 vg.parse.data = function(spec, callback) {
   var model = {
     defs: spec,
@@ -7829,31 +7835,30 @@ vg.parse.properties = (function() {
   return scales;
 })();
 vg.parse.spec = function(spec, callback, viewFactory) {
-  
+
   viewFactory = viewFactory || vg.ViewFactory;
-  
+
   function parse(spec) {
     // protect against subsequent spec modification
     spec = vg.duplicate(spec);
-    
+
     var width = spec.width || 500,
         height = spec.height || 500,
-        viewport = spec.viewport || null,
-        background = spec.background ? d3.rgb(spec.background)+"" : null;
-    
+        viewport = spec.viewport || null;
+
     var defs = {
       width: width,
       height: height,
       viewport: viewport,
-      background: background,
+      background: vg.parse.background(spec.background),
       padding: vg.parse.padding(spec.padding),
       marks: vg.parse.marks(spec, width, height),
       data: vg.parse.data(spec.data, function() { callback(viewConstructor); })
     };
-    
+
     var viewConstructor = viewFactory(defs);
   }
-  
+
   vg.isObject(spec) ? parse(spec) :
     d3.json(spec, function(error, json) {
       error ? vg.error(error) : parse(json);

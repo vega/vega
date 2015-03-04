@@ -60,6 +60,7 @@ vega.js: \
 	src/expression/parser.js \
 	src/parse/_package.js \
 	src/parse/axes.js \
+	src/parse/background.js \
 	src/parse/data.js \
 	src/parse/dataflow.js \
 	src/parse/expr.js \
