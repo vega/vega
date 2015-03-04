@@ -146,7 +146,22 @@ vg.comparator = function(sort) {
   };
 };
 
-vg.cmp = function(a, b) { return a<b ? -1 : a>b ? 1 : a>=b ? 0 : NaN; };
+vg.cmp = function(a, b) {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else if (a >= b) {
+    return 0;
+  } else if (a === null && b === null) {
+    return 0;
+  } else if (a === null) {
+    return -1;
+  } else if (b === null) {
+    return 1;
+  }
+  return NaN;
+}
 
 vg.numcmp = function(a, b) { return a - b; };
 
@@ -2964,6 +2979,13 @@ vg.data.size = function(size, group) {
       } else {
         var a = document.createElement('a');
         a.href = url;
+        // From http://stackoverflow.com/questions/736513/how-do-i-parse-a-url-into-hostname-and-path-in-javascript
+        // IE doesn't populate all link properties when setting .href with a relative URL,
+        // however .href will return an absolute URL which then can be used on itself
+        // to populate these additional fields.
+        if (a.host == "") {
+          a.href = a.href;
+        }
         domain = a.hostname.toLowerCase();
         origin = window.location.hostname;
       }

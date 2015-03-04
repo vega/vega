@@ -39,6 +39,13 @@ vg.data.load = (function() {
       } else {
         var a = document.createElement('a');
         a.href = url;
+        // From http://stackoverflow.com/questions/736513/how-do-i-parse-a-url-into-hostname-and-path-in-javascript
+        // IE doesn't populate all link properties when setting .href with a relative URL,
+        // however .href will return an absolute URL which then can be used on itself
+        // to populate these additional fields.
+        if (a.host == "") {
+          a.href = a.href;
+        }
         domain = a.hostname.toLowerCase();
         origin = window.location.hostname;
       }
