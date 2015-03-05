@@ -171,7 +171,7 @@ define(function(require, exports, module) {
   };
 
   proto.listener = function() { 
-    var l = new Node(this._graph),
+    var l = new Node(this._graph).router(true),
         dest = this,
         prev = this._revises ? null : undefined;
 
