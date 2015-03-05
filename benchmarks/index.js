@@ -11,16 +11,18 @@ var fs  = require('fs'),
     pcp1 = JSON.parse(fs.readFileSync('data/parallel_coords.vg1.json').toString()),
     pcp2 = JSON.parse(fs.readFileSync('data/parallel_coords.vg2.json').toString()),
     sct1 = JSON.parse(fs.readFileSync('data/scatter.vg1.json').toString()),
-    sct2 = JSON.parse(fs.readFileSync('data/scatter.vg2.json').toString());
+    sct2 = JSON.parse(fs.readFileSync('data/scatter.vg2.json').toString()),
+    trl1 = JSON.parse(fs.readFileSync('data/trellis.vg1.json').toString()),
+    trl2 = JSON.parse(fs.readFileSync('data/trellis.vg2.json').toString()),
+    barley = JSON.parse(fs.readFileSync('data/barley.json').toString());
 
-pcp1.data[0].values = cars;
-pcp2.data[0].values = cars;
-delete pcp1.data[0].url;
-delete pcp2.data[0].url;
+pcp1.data[0].values = pcp2.data[0].values = cars;
+trl1.data[0].values = trl2.data[0].values = barley;
 
 var specs = {
-  vg1: { bar: bar1, pcp: pcp1, sct: sct1 },
-  vg2: { bar: bar2, pcp: pcp2, sct: sct2 }
+  vg1: { bar: bar1, pcp: pcp1, sct: sct1, trellis: trl1 },
+  vg2: { bar: bar2, pcp: pcp2, sct: sct2, trellis: trl2 },
+  d3: { sct: require('./data/scatter.d3') }
 };
 
 function random(N, C) {
@@ -41,13 +43,11 @@ function generate(specName, N, C) {
 
   if(d1.values) {
     while(d1.values.length < N) {
-      d1.values = d1.values.concat(d1.values);
-      d2.values = d2.values.concat(d2.values)
+      d1.values = d2.values = d1.values.concat(d1.values);
     }
 
     if(d1.values.length > N) {
-      d1.values = d1.values.slice(0, N);
-      d2.values = d2.values.slice(0, N);
+      d1.values = d2.values = d1.values.slice(0, N);
     }
   } else {
     d1.values = d2.values = random(N, C);
@@ -61,7 +61,10 @@ function generate(specName, N, C) {
 function checkScene(spec, scene) {
   expect(scene.items).to.have.length(1);
   expect(scene.items[0].items).to.have.length.of.at.least(1);
-  expect(scene.items[0].items[0].items).to.have.length(spec.data[0].values.length);
+
+  if(spec != trl1 && spec != trl2) {
+    expect(scene.items[0].items[0].items).to.have.length(spec.data[0].values.length);
+  }
 
   if(spec === bar1 || spec === bar2) {
     expect(scene.items[0].items[0].items[0].x).to.be.at.least(0);
@@ -85,18 +88,34 @@ function run(specName, N, C, conditions) {
   }));
 }
 
-function _vg1(spec, name, viewFactory, restore) {
-  var deferred = Q.defer(),
+function _d3(spec, N, C, name) {
+  var data = random(N, C),
       start = Date.now(),
       messages;
+
+  try {
+    messages = JSON.parse(fs.readFileSync('results.raw/'+name+'.json').toString());
+  } catch(e) {
+    messages = [];
+  }
+
+  spec(data);
+  messages.push({type: 'd3', time: Date.now() - start});
+}
+
+function _vg1(spec, name, viewFactory, restore) {
+  var deferred = Q.defer(),
+      start, messages;
 
   viewFactory = viewFactory || vg1.headless.View.Factory;
 
   try {
-    messages = JSON.parse(fs.readFileSync('results/'+name+'.json').toString());
+    messages = JSON.parse(fs.readFileSync('results.raw/'+name+'.json').toString());
   } catch(e) {
     messages = [];
   }   
+
+  start = Date.now();
 
   vg1.parse.spec(spec, function(chart) {
     var view = chart();
@@ -106,9 +125,9 @@ function _vg1(spec, name, viewFactory, restore) {
     console.log(messages[messages.length-1]);
 
     expect(checkScene(spec, view._model.scene())).to.be.true;
-    if(restore) restore(model, name, start, messages);
+    if(restore) restore(view, name, start, messages);
 
-    fs.writeFileSync('results/'+name+'.json', JSON.stringify(messages, null, 2));
+    fs.writeFileSync('results.raw/'+name+'.json', JSON.stringify(messages, null, 2));
 
     deferred.resolve();
   }, viewFactory);
@@ -118,19 +137,20 @@ function _vg1(spec, name, viewFactory, restore) {
 
 function _vg2(spec, name, viewFactory, restore) {
   var deferred = Q.defer(),
-      start = Date.now(), next,
-      messages;
+      start, next, messages;
 
   name = name || 'vg2';
   viewFactory = viewFactory || function(model) { return model };
 
   try {
-    messages = JSON.parse(fs.readFileSync('results/'+name+'.json').toString());
+    messages = JSON.parse(fs.readFileSync('results.raw/'+name+'.json').toString());
   } catch(e) {
     messages = [];
   }
 
-  // vg2.config.debug = true
+  start = Date.now();
+
+  // vg2.config.debug = vg2.config.trackTime = true
   vg2.parse.spec(spec, function(model) {
     messages.push({type: name + ' inline data ingested', time: Date.now() - start});
     console.log(messages[messages.length-1]);
@@ -152,7 +172,7 @@ function _vg2(spec, name, viewFactory, restore) {
     expect(checkScene(spec, model.scene())).to.be.true;
     if(restore) restore(model, name, start, messages);
 
-    fs.writeFileSync('results/'+name+'.json', JSON.stringify(messages, null, 2));
+    fs.writeFileSync('results.raw/'+name+'.json', JSON.stringify(messages, null, 2));
 
     deferred.resolve();
   }, viewFactory);
@@ -166,5 +186,5 @@ module.exports = {
   generate: generate,
   checkScene: checkScene,
   run: run,
-  tasks: { vg1: _vg1, vg2: _vg2 }
+  tasks: { d3: _d3, vg1: _vg1, vg2: _vg2 }
 };
