@@ -71,34 +71,6 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.evaluate = function(input) {
-    util.debug(input, ["building", this._from, this._def.type]);
-
-    var fullUpdate = this._encoder.reevaluate(input),
-        output, fcs, data;
-
-    if(this._ds) {
-      output = changeset.create(input);
-
-      // If a scale or signal in the update propset has been updated, 
-      // send forward all items for reencoding if we do an early return.
-      if(fullUpdate) output.mod = this._mark.items.slice();
-
-      fcs = this._ds.last();
-      if(!fcs) {
-        output.reflow = true
-      } else if(fcs.stamp > this._stamp) {
-        output = joinDatasource.call(this, fcs, this._ds.values());
-      }
-    } else {
-      data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
-      output = joinValues.call(this, input, data);
-    }
-
-    output = this._graph.evaluate(output, this._encoder);
-    return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
-  };
-
   // Reactive geometry and mark-level transformations are handled here 
   // because they need their group's data-joined context. 
   function inlineDs() {
@@ -184,6 +156,34 @@ define(function(require, exports, module) {
     return this._parent.child(name, this._parent_id);
   };
 
+  proto.evaluate = function(input) {
+    util.debug(input, ["building", this._from, this._def.type]);
+
+    var fullUpdate = this._encoder.reevaluate(input),
+        output, fcs, data;
+
+    if(this._ds) {
+      output = changeset.create(input);
+
+      // If a scale or signal in the update propset has been updated, 
+      // send forward all items for reencoding if we do an early return.
+      if(fullUpdate) output.mod = this._mark.items.slice();
+
+      fcs = this._ds.last();
+      if(!fcs) {
+        output.reflow = true
+      } else if(fcs.stamp > this._stamp) {
+        output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
+      }
+    } else {
+      data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
+      output = joinValues.call(this, input, data);
+    }
+
+    output = this._graph.evaluate(output, this._encoder);
+    return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
+  };
+
   function newItem() {
     var prev = this._revises ? null : undefined,
         item = tuple.ingest(new Item(this._mark), prev);
@@ -211,7 +211,7 @@ define(function(require, exports, module) {
     }
   }
 
-  function joinDatasource(input, data) {
+  function joinDatasource(input, data, fullUpdate) {
     var output = changeset.create(input),
         keyf = keyFunction(this._def.key || "_id"),
         add = input.add, 
@@ -232,7 +232,7 @@ define(function(require, exports, module) {
       this._map[key] = null;
     }
 
-    join.call(this, data, keyf, next, output, null, util.tuple_ids(mod));
+    join.call(this, data, keyf, next, output, null, util.tuple_ids(fullUpdate ? data : mod));
 
     return (this._mark.items = next, output);
   }
