@@ -22,6 +22,11 @@ define(function(require, exports, module) {
 
   var proto = Datasource.prototype;
 
+  proto.name = function(name) {
+    if(!arguments.length) return this._name;
+    return (this._name = name, this);
+  };
+
   proto.source = function(src) {
     if(!arguments.length) return this._source;
     return (this._source = this._graph.data(src));

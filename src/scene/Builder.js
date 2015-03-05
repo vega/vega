@@ -159,11 +159,18 @@ define(function(require, exports, module) {
   proto.evaluate = function(input) {
     util.debug(input, ["building", this._from, this._def.type]);
 
-    var fullUpdate = this._encoder.reevaluate(input),
-        output, fcs, data;
+    var output, fullUpdate, fcs, data;
 
     if(this._ds) {
       output = changeset.create(input);
+
+      // We need to determine if any encoder dependencies have been updated.
+      // However, the encoder's data source will likely be updated, and shouldn't
+      // trigger all items to mod.
+      data = util.duplicate(output.data);
+      delete output.data[this._ds.name()];
+      fullUpdate = this._encoder.reevaluate(output);
+      output.data = data;
 
       // If a scale or signal in the update propset has been updated, 
       // send forward all items for reencoding if we do an early return.

@@ -1120,6 +1120,8 @@ define('util/index',['require','exports','module','./config'],function(require, 
     return JSON.parse(JSON.stringify(obj));
   };
 
+  util.equal = function(a, b) { return JSON.stringify(a) == JSON.stringify(b) };
+
   util.field = function(f) {
     return f.split("\\.")
       .map(function(d) { return d.split("."); })
@@ -1548,6 +1550,11 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   };
 
   var proto = Datasource.prototype;
+
+  proto.name = function(name) {
+    if(!arguments.length) return this._name;
+    return (this._name = name, this);
+  };
 
   proto.source = function(src) {
     if(!arguments.length) return this._source;
@@ -4974,11 +4981,18 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
   proto.evaluate = function(input) {
     util.debug(input, ["building", this._from, this._def.type]);
 
-    var fullUpdate = this._encoder.reevaluate(input),
-        output, fcs, data;
+    var output, fullUpdate, fcs, data;
 
     if(this._ds) {
       output = changeset.create(input);
+
+      // We need to determine if any encoder dependencies have been updated.
+      // However, the encoder's data source will likely be updated, and shouldn't
+      // trigger all items to mod.
+      data = util.duplicate(output.data);
+      delete output.data[this._ds.name()];
+      fullUpdate = this._encoder.reevaluate(output);
+      output.data = data;
 
       // If a scale or signal in the update propset has been updated, 
       // send forward all items for reencoding if we do an early return.
@@ -5105,9 +5119,10 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
   var GROUP_PROPERTY = {width: 1, height: 1};
 
   function Scale(model, def, parent) {
-    this._model = model;
-    this._def = def;
-    this._parent = parent;
+    this._model   = model;
+    this._def     = def;
+    this._parent  = parent;
+    this._updated = false;
     return Node.prototype.init.call(this, model.graph);
   }
 
@@ -5117,13 +5132,14 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
     var self = this,
         fn = function(group) { scale.call(self, group); };
 
+    this._updated = false;
     input.add.forEach(fn);
     input.mod.forEach(fn);
 
     // Scales are at the end of an encoding pipeline, so they should forward a
     // reflow pulse. Thus, if multiple scales update in the parent group, we don't
     // reevaluate child marks multiple times. 
-    input.scales[this._def.name] = 1;
+    if(this._updated) input.scales[this._def.name] = 1;
     return changeset.create(input, true);
   };
 
@@ -5163,12 +5179,14 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
       if (!ctor) util.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = scale.type || type;
       scale.scaleName = this._def.name;
+      scale._prev = {};
     }
     return scale;
   }
 
   function ordinal(scale, rng, group) {
     var def = this._def,
+        prev = scale._prev,
         domain, sort, str, refs, dataDrivenRange = false;
     
     // range pre-processing for data-driven ranges
@@ -5179,9 +5197,15 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
     
     // domain
     domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
-    if (domain) scale.domain(domain);
+    if (domain && !util.equal(prev.domain, domain)) {
+      scale.domain(domain);
+      prev.domain = domain;
+      this._updated = true;
+    } 
 
     // range
+    if(util.equal(prev.range, rng)) return;
+
     str = typeof rng[0] === 'string';
     if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
       scale.range(rng); // color or shape values
@@ -5192,23 +5216,37 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
     } else {
       scale.rangeBands(rng, def.padding||0);
     }
+
+    prev.range = rng;
+    this._updated = true;
   }
 
   function quantitative(scale, rng, group) {
     var def = this._def,
+        prev = scale._prev,
         domain, interval;
 
     // domain
     domain = (def.type === C.QUANTILE)
       ? dataRef.call(this, C.DOMAIN, def.domain, scale, group)
       : domainMinMax.call(this, scale, group);
-    scale.domain(domain);
+    if (domain && !util.equal(prev.domain, domain)) {
+      scale.domain(domain);
+      prev.domain = domain;
+      this._updated = true;
+    } 
 
     // range
     // vertical scales should flip by default, so use XOR here
     if (def.range === "height") rng = rng.reverse();
+    if(util.equal(prev.range, rng)) return;
     scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
+    prev.range = rng;
+    this._updated = true;
 
+    // TODO: Support signals for these properties. Until then, only eval
+    // them once.
+    if(this._stamp > 0) return;
     if (def.exponent && def.type===C.POWER) scale.exponent(def.exponent);
     if (def.clamp) scale.clamp(true);
     if (def.nice) {
@@ -5280,7 +5318,7 @@ define('scene/Scale',['require','exports','module','d3','../dataflow/Node','../t
         sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
         sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.on.get(graph).field;
         sort = util.comparator(sort);
-        return keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
+        keys = keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
           .sort(sort)
           .map(function(k) { return k.key });
       // } else {  // "First seen" order
