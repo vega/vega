@@ -194,7 +194,7 @@ define(function(require, exports, module) {
     return item;
   };
 
-  function join(data, keyf, next, output, prev) {
+  function join(data, keyf, next, output, prev, mod) {
     var i, key, len, item, datum, enter;
 
     for(i=0, len=data.length; i<len; ++i) {
@@ -206,7 +206,8 @@ define(function(require, exports, module) {
       tuple.set(item, "key", key);
       this._map[key] = item;
       next.push(item);
-      output[enter ? "add" : "mod"].push(item);
+      if(enter) output.add.push(item);
+      else if(!mod || (mod && mod[datum._id])) output.mod.push(item);
     }
   }
 
@@ -231,7 +232,7 @@ define(function(require, exports, module) {
       this._map[key] = null;
     }
 
-    join.call(this, data, keyf, next, output);
+    join.call(this, data, keyf, next, output, null, util.tuple_ids(mod));
 
     return (this._mark.items = next, output);
   }
