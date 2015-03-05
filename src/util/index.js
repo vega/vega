@@ -62,6 +62,8 @@ define(function(require, module, exports) {
     return JSON.parse(JSON.stringify(obj));
   };
 
+  util.equal = function(a, b) { return JSON.stringify(a) == JSON.stringify(b) };
+
   util.field = function(f) {
     return f.split("\\.")
       .map(function(d) { return d.split("."); })
