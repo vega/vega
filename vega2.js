@@ -4842,14 +4842,13 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     this._from  = (def.from ? def.from.data : null) || inheritFrom;
     this._ds    = util.isString(this._from) ? model.data(this._from) : null;
     this._map   = {};
-    this._items = [];
 
     this._revises = false;  // Should scenegraph items track _prev?
 
     mark.def = def;
     mark.marktype = def.type;
     mark.interactive = !(def.interactive === false);
-    mark.items = this._items;
+    mark.items = [];
 
     this._parent = parent;
     this._parent_id = parent_id;
@@ -4899,13 +4898,13 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
 
       // If a scale or signal in the update propset has been updated, 
       // send forward all items for reencoding if we do an early return.
-      if(fullUpdate) output.mod = this._items.slice();
+      if(fullUpdate) output.mod = this._mark.items.slice();
 
       fcs = this._ds.last();
       if(!fcs) {
         output.reflow = true
       } else if(fcs.stamp > this._stamp) {
-        output = joinChangeset.call(this, fcs);
+        output = joinDatasource.call(this, fcs, this._ds.values());
       }
     } else {
       data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
@@ -5001,66 +5000,63 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     return this._parent.child(name, this._parent_id);
   };
 
-  function newItem(d, stamp) {
+  function newItem() {
     var prev = this._revises ? null : undefined,
         item = tuple.ingest(new Item(this._mark), prev);
 
-    item.datum = d;
     // For the root node's item
     if(this._def.width)  tuple.set(item, "width",  this._def.width);
     if(this._def.height) tuple.set(item, "height", this._def.height);
     return item;
   };
 
-  function joinChangeset(input) {
-    var keyf = keyFunction(this._def.key || "_id"),
-        output = changeset.create(input),
+  function join(data, keyf, next, output, prev) {
+    var i, key, len, item, datum, enter;
+
+    for(i=0, len=data.length; i<len; ++i) {
+      datum = data[i];
+      item  = keyf ? this._map[key = keyf(datum)] : prev[i];
+      enter = item ? false : (item = newItem.call(this), true);
+      item.status = enter ? C.ENTER : C.UPDATE;
+      item.datum = datum;
+      tuple.set(item, "key", key);
+      this._map[key] = item;
+      next.push(item);
+      output[enter ? "add" : "mod"].push(item);
+    }
+  }
+
+  function joinDatasource(input, data) {
+    var output = changeset.create(input),
+        keyf = keyFunction(this._def.key || "_id"),
         add = input.add, 
         mod = input.mod, 
         rem = input.rem,
-        stamp = input.stamp,
-        i, key, len, item, datum;
+        next = [],
+        i, key, len, item, datum, enter;
+
+    // Build rems first, and put them at the head of the next items
+    // Then build the rest of the data values (which won't contain rem).
+    // This will preserve the sort order without needing anything extra.
 
     for(i=0, len=rem.length; i<len; ++i) {
       item = this._map[key = keyf(rem[i])];
       item.status = C.EXIT;
+      next.push(item);
       output.rem.push(item);
       this._map[key] = null;
     }
 
-    for(i=0, len=add.length; i<len; ++i) {
-      key = keyf(datum = add[i]);
-      item = newItem.call(this, datum, stamp);
-      tuple.set(item, "key", key);
-      item.status = C.ENTER;
-      this._map[key] = item;
-      this._items.push(item);
-      output.add.push(item);
-    }
+    join.call(this, data, keyf, next, output);
 
-    for(i=0, len=mod.length; i<len; ++i) {
-      item = this._map[key = keyf(datum = mod[i])];
-      tuple.set(item, "key", key);
-      item.datum  = datum;
-      item.status = C.UPDATE;
-      output.mod.push(item);
-    }
-
-    // Exiting items go first, or sort by specified transform. If none of 
-    // the above, sort by _id so that area/lines get drawn correctly.
-    this._items.sort(function(a, b) {
-      if(a.status === C.EXIT) return -1;
-      else if(b.status === C.EXIT) return 1;
-      else return input.sort ? input.sort(a.datum, b.datum) : (a.datum._id - b.datum._id);
-    });
-
-    return output;
+    return (this._mark.items = next, output);
   }
 
   function joinValues(input, data) {
-    var keyf = keyFunction(this._def.key),
-        prev = this._items.splice(0),
-        output = changeset.create(input),
+    var output = changeset.create(input),
+        keyf = keyFunction(this._def.key),
+        prev = this._mark.items || [],
+        next = [],
         i, key, len, item, datum, enter;
 
     for (i=0, len=prev.length; i<len; ++i) {
@@ -5069,34 +5065,18 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
       if (keyf) this._map[item.key] = item;
     }
     
-    for (i=0, len=data.length; i<len; ++i) {
-      datum = data[i];
-      key = i;
-      item = keyf ? this._map[key = keyf(datum)] : prev[i];
-      if(!item) {
-        this._items.push(item = newItem.call(this, datum, input.stamp));
-        output.add.push(item);
-        tuple.set(item, "key", key);
-        item.status = C.ENTER;
-      } else {
-        this._items.push(item);
-        output.mod.push(item);
-        tuple.set(item, "key", key);
-        item.datum = datum;
-        item.status = C.UPDATE;
-      }
-    }
+    join.call(this, data, keyf, next, output, prev);
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
       if (item.status === C.EXIT) {
         tuple.set(item, "key", keyf ? item.key : this._items.length);
-        this._items.unshift(item);  // Keep item around for "exit" transition.
-        output.rem.unshift(item);
+        next.splice(0, 0, item);  // Keep item around for "exit" transition.
+        output.rem.push(item);
       }
     }
     
-    return output;
+    return (this._mark.items = next, output);
   };
 
   function keyFunction(key) {
