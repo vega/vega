@@ -1698,7 +1698,7 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
   };
 
   proto.listener = function() { 
-    var l = new Node(this._graph),
+    var l = new Node(this._graph).router(true),
         dest = this,
         prev = this._revises ? null : undefined;
 
@@ -1984,29 +1984,28 @@ define('scene/Encoder',['require','exports','module','../dataflow/Node','../util
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,
-        i, item;
+        i, len, item;
 
-    // Only do one traversal of items and use item.status instead
-    // of input.add/mod/rem.
-    for(i=0; i<items.length; ++i) {
-      item = items[i];
+    // Items marked for removal are at the head of items. Process them first.
+    for(i=0, len=input.rem.length; i<len; ++i) {
+      item = input.rem[i];
+      if(update) encode.call(this, update, item, input.trans);
+      if(exit)   encode.call(this, exit,   item, input.trans); 
+      if(input.trans && !exit) input.trans.interpolate(item, EMPTY);
+      else if(!input.trans) item.remove();
+    }
 
-      // enter set
-      if(item.status === C.ENTER) {
-        if(enter) encode.call(this, enter, item, input.trans, input.stamp);
-        item.status = C.UPDATE;
-      }
+    for(i=0, len=input.add.length; i<len; ++i) {
+      item = input.add[i];
+      if(enter)  encode.call(this, enter,  item, input.trans);
+      if(update) encode.call(this, update, item, input.trans);
+      item.status = C.UPDATE;
+    }
 
-      // update set      
-      if (item.status !== C.EXIT && update) {
-        encode.call(this, update, item, input.trans, input.stamp);
-      }
-      
-      // exit set
-      if (item.status === C.EXIT) {
-        if (exit) encode.call(this, exit, item, input.trans, input.stamp); 
-        if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
-        else if (!input.trans) items[i--].remove();
+    if(update) {
+      for(i=0, len=input.mod.length; i<len; ++i) {
+        item = input.mod[i];
+        encode.call(this, update, item, input.trans);
       }
     }
 
@@ -5010,7 +5009,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     return item;
   };
 
-  function join(data, keyf, next, output, prev) {
+  function join(data, keyf, next, output, prev, mod) {
     var i, key, len, item, datum, enter;
 
     for(i=0, len=data.length; i<len; ++i) {
@@ -5022,7 +5021,8 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
       tuple.set(item, "key", key);
       this._map[key] = item;
       next.push(item);
-      output[enter ? "add" : "mod"].push(item);
+      if(enter) output.add.push(item);
+      else if(!mod || (mod && mod[datum._id])) output.mod.push(item);
     }
   }
 
@@ -5047,7 +5047,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
       this._map[key] = null;
     }
 
-    join.call(this, data, keyf, next, output);
+    join.call(this, data, keyf, next, output, null, util.tuple_ids(mod));
 
     return (this._mark.items = next, output);
   }
