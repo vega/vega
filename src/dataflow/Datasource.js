@@ -121,18 +121,23 @@ define(function(require, exports, module) {
       util.debug(input, ["input", ds._name]);
 
       var delta = ds._input, 
-          out = changeset.create(input);
+          out = changeset.create(input),
+          rem;
+
+      // Delta might contain fields updated through API
+      util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
 
       if(input.reflow) {
         out.mod = ds._data.slice();
       } else {
         // update data
-        var delta = ds._input;
-        var ids = util.tuple_ids(delta.rem);
+        if(delta.rem.length) {
+          rem = util.tuple_ids(delta.rem);
+          ds._data = ds._data
+            .filter(function(x) { return rem[x._id] !== 1 });
+        }
 
-        ds._data = ds._data
-          .filter(function(x) { return ids[x._id] !== 1; })
-          .concat(delta.add);
+        if(delta.add.length) ds._data = ds._data.concat(delta.add);
 
         // reset change list
         ds._input = changeset.create();

@@ -1291,12 +1291,15 @@ define('util/index',['require','exports','module','./config'],function(require, 
     if (typeof alert !== "undefined") alert(msg);
   };
 
+  var ts;
   util.debug = function(input, args) {
     if(!config.debug) return;
     var log = Function.prototype.bind.call(console.log, console);
     args.unshift(input.stamp||-1);
+    args.unshift(Date.now() - ts);
     if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.reflow);
     log.apply(console, args);
+    ts = Date.now();
   };
 
   return util;
@@ -1650,18 +1653,23 @@ define('dataflow/Datasource',['require','exports','module','./changeset','./tupl
       util.debug(input, ["input", ds._name]);
 
       var delta = ds._input, 
-          out = changeset.create(input);
+          out = changeset.create(input),
+          rem;
+
+      // Delta might contain fields updated through API
+      util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
 
       if(input.reflow) {
         out.mod = ds._data.slice();
       } else {
         // update data
-        var delta = ds._input;
-        var ids = util.tuple_ids(delta.rem);
+        if(delta.rem.length) {
+          rem = util.tuple_ids(delta.rem);
+          ds._data = ds._data
+            .filter(function(x) { return rem[x._id] !== 1 });
+        }
 
-        ds._data = ds._data
-          .filter(function(x) { return ids[x._id] !== 1; })
-          .concat(delta.add);
+        if(delta.add.length) ds._data = ds._data.concat(delta.add);
 
         // reset change list
         ds._input = changeset.create();
