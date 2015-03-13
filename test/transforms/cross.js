@@ -100,6 +100,16 @@ describe('Cross', function() {
       expect(data2).to.have.length(4);
       expect(ds2._output.fields).to.have.keys(['a', 'b']);
 
+      // Test that lazy removal is working correctly.
+      ds2.update(function(x) { return x.x == 6; }, 
+        'y', function(x) { return 600; }).fire();
+      data1 = ds1.values(),
+      data2 = ds2.values();
+
+      expect(data1).to.have.length(2);
+      expect(data2).to.have.length(4);
+      expect(ds2._output.fields).to.not.have.keys(['a', 'b']);
+
       done();
     }, modelFactory);
 
