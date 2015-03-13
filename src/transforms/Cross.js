@@ -97,8 +97,6 @@ define(function(require, exports, module) {
 
     input.rem.forEach(r);
     input.add.forEach(add.bind(this, output, true, wdata));
-    input.mod.forEach(mod.bind(this, output, true));
-    upFields.call(this, input, output);
 
     if(!selfCross && woutput.stamp > this._lastWith) {
       woutput.rem.forEach(r);
@@ -107,6 +105,10 @@ define(function(require, exports, module) {
       upFields.call(this, woutput, output);
       this._lastWith = woutput.stamp;
     }
+
+    // Mods need to come after all removals have been run.
+    input.mod.forEach(mod.bind(this, output, true));
+    upFields.call(this, input, output);
 
     return output;
   };
