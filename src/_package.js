@@ -158,6 +158,11 @@ function vg_escape_str(x) {
   return x.replace(escape_str_re, "$1\\'");
 }
 
+vg.keystr = function(values) {
+  // use to ensure consistent key generation across modules
+  return values.join("|");
+};
+
 vg.keys = function(x) {
   var keys = [];
   for (var key in x) keys.push(key);

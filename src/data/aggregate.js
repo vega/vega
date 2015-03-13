@@ -96,9 +96,7 @@ vg.data.aggregate = (function() {
   	    monoids, gaccess, faccess;
 
     function cell(x) {
-      var k = gaccess.reduce(function(v,f) {
-        return (v.push(f(x)), v);
-      }, []).join("|");
+      var k = vg.keystr(gaccess.map(function(f) { return f(x); }));
       return cells[k] || (cells[k] = new_cell(x));
     }
     

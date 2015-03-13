@@ -185,6 +185,11 @@ function vg_escape_str(x) {
   return x.replace(escape_str_re, "$1\\'");
 }
 
+vg.keystr = function(values) {
+  // use to ensure consistent key generation across modules
+  return values.join("|");
+};
+
 vg.keys = function(x) {
   var keys = [];
   for (var key in x) keys.push(key);
@@ -3248,9 +3253,7 @@ vg.data.read = (function() {
   	    monoids, gaccess, faccess;
 
     function cell(x) {
-      var k = gaccess.reduce(function(v,f) {
-        return (v.push(f(x)), v);
-      }, []).join("|");
+      var k = vg.keystr(gaccess.map(function(f) { return f(x); }));
       return cells[k] || (cells[k] = new_cell(x));
     }
     
@@ -3489,12 +3492,14 @@ vg.data.facet = function() {
         },
         map = {},
         vals = result.values,
-        obj, klist, kstr, len, i, j, k, kv, cmp;
+        obj, klist, kstr, len, i;
 
     if (keys.length === 0) {
       // if no keys, skip collation step
       vals.push(obj = {
-        key: "", keys: [], index: 0,
+        key: "",
+        keys: [],
+        index: 0,
         values: sort ? data.slice() : data
       });
       if (sort) sort(obj.values);
@@ -3502,11 +3507,8 @@ vg.data.facet = function() {
     }
 
     for (i=0, len=data.length; i<len; ++i) {
-      for (k=0, klist=[], kstr=""; k<keys.length; ++k) {
-        kv = keys[k](data[i]);
-        klist.push(kv);
-        kstr += (k>0 ? "|" : "") + String(kv);
-      }
+      klist = keys.map(function(f) { return f(data[i]); });
+      kstr = vg.keystr(klist);
       obj = map[kstr];
       if (obj === undefined) {
         vals.push(obj = map[kstr] = {
