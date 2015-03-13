@@ -47,7 +47,7 @@
     }
   ],
   "axes": [
-    {"type": "x", "scale": "x", "offset": -12}
+    {"type": "x", "scale": "x"}
   ],
   "marks": [
     {

@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "name": "table",
+      "values": [1, null, "<>", "&amp;", "PB&J"]
+    }
+  ],
+  "marks": [
+    {
+      "type": "text",
+      "from": {"data": "table"},
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"field": "index", "mult": 12},
+          "fill": {"value": "black"},
+          "text": {"field": "data"}
+        }
+      }
+    }
+  ]
+}

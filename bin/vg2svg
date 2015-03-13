@@ -3,8 +3,7 @@
 
 var helpText =
   "Render a Vega specification to SVG.\n\n" +
-  "Usage:\n" +
-  "  vg2svg vega_json_file [output_svg_file]\n" +
+  "Usage: vg2svg vega_json_file [output_svg_file]\n" +
   "  If output_svg_file is not provided, writes to stdout.\n\n" +
   "To load data, you may need to set a base directory:\n" +
   "  For web retrieval, use `-b http://host/data/`. \n" +
@@ -21,7 +20,7 @@ var fs = require("fs");
 var vg = require("../index");
 
 // arguments
-var args = require("optimist")
+var args = require("yargs")
   .usage(helpText)
   .demand(1)
   .string('b').alias('b', 'base')
@@ -64,7 +63,7 @@ function writeSVG(svg, file) {
 
 function render(spec) {
   vg.headless.render(
-    {spec: spec, renderer:"svg"},
+    {spec: spec, renderer: "svg"},
     function(err, data) {
       if (err) throw err;
       writeSVG(data.svg, outputFile);

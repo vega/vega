@@ -36,9 +36,20 @@ vg.tree = function(obj, children) {
   return d;
 };
 
-vg.number = function(s) { return +s; };
+vg.number = function(s) { return s === null ? null : +s; };
 
-vg.boolean = function(s) { return !!s; };
+vg.boolean = function(s) { return s === null ? null :  !!s; };
+
+vg.date = function(s) {return s === null ? null : Date.parse(s); }
+
+// ES6 compatibility per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
+// We could have used the polyfill code, but lets wait until ES6 becomes a standard first
+vg.startsWith = String.prototype.startsWith ?
+  function(string, searchString) {
+    return string.startsWith(searchString);
+  } : function(string, searchString) {
+    return string.lastIndexOf(searchString, 0) === 0;
+  };
 
 // utility functions
 
@@ -110,7 +121,22 @@ vg.comparator = function(sort) {
   };
 };
 
-vg.cmp = function(a, b) { return a<b ? -1 : a>b ? 1 : 0; };
+vg.cmp = function(a, b) {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else if (a >= b) {
+    return 0;
+  } else if (a === null && b === null) {
+    return 0;
+  } else if (a === null) {
+    return -1;
+  } else if (b === null) {
+    return 1;
+  }
+  return NaN;
+}
 
 vg.numcmp = function(a, b) { return a - b; };
 
@@ -134,19 +160,33 @@ function vg_escape_str(x) {
   return x.replace(escape_str_re, "$1\\'");
 }
 
+vg.keystr = function(values) {
+  // use to ensure consistent key generation across modules
+  return values.join("|");
+};
+
 vg.keys = function(x) {
   var keys = [];
   for (var key in x) keys.push(key);
   return keys;
 };
 
+vg.toMap = function(list) {
+  return list.reduce(function(obj, x) {
+    return (obj[x] = 1, obj);
+  }, {});
+};
+
 vg.unique = function(data, f, results) {
-  if (!vg.isArray(data) || data.length==0) return [];
+  if (!vg.isArray(data) || data.length===0) return [];
   f = f || vg.identity;
   results = results || [];
-  for (var v, i=0, n=data.length; i<n; ++i) {
+  var u = {};
+  for (var v, idx, i=0, n=data.length; i<n; ++i) {
     v = f(data[i]);
-    if (results.indexOf(v) < 0) results.push(v);
+    if (v in u) continue;
+    u[v] = true;
+    results.push(v);
   }
   return results;
 };
@@ -173,6 +213,72 @@ vg.maxIndex = function(data, f) {
   return idx;
 };
 
+vg.bins = function(opt) {
+  opt = opt || {};
+
+  // determine range
+  var maxb = opt.maxbins || 1024,
+      base = opt.base || 10,
+      div = opt.div || [5, 2],
+      mins = opt.minstep || 0,
+      logb = Math.log(base),
+      level = Math.ceil(Math.log(maxb) / logb),
+      min = opt.min,
+      max = opt.max,
+      span = max - min,
+      step = Math.max(mins, Math.pow(base, Math.round(Math.log(span) / logb) - level)),
+      nbins = Math.ceil(span / step),
+      precision, v, i, eps;
+
+  if (opt.step != null) {
+    step = opt.step;
+  } else if (opt.steps) {
+    // if provided, limit choice to acceptable step sizes
+    step = opt.steps[Math.min(
+        opt.steps.length - 1,
+        vg_bisectLeft(opt.steps, span / maxb, 0, opt.steps.length)
+    )];
+  } else {
+    // increase step size if too many bins
+    do {
+      step *= base;
+      nbins = Math.ceil(span / step);
+    } while (nbins > maxb);
+
+    // decrease step size if allowed
+    for (i = 0; i < div.length; ++i) {
+      v = step / div[i];
+      if (v >= mins && span / v <= maxb) {
+        step = v;
+        nbins = Math.ceil(span / step);
+      }
+    }
+  }
+
+  // update precision, min and max
+  v = Math.log(step);
+  precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
+  eps = (min<0 ? -1 : 1) * Math.pow(base, -precision - 1);
+  min = Math.min(min, Math.floor(min / step + eps) * step);
+  max = Math.ceil(max / step) * step;
+
+  return {
+    start: min,
+    stop: max,
+    step: step,
+    unit: precision
+  };
+};
+
+function vg_bisectLeft(a, x, lo, hi) {
+  while (lo < hi) {
+    var mid = lo + hi >>> 1;
+    if (vg.cmp(a[mid], x) < 0) { lo = mid + 1; }
+    else { hi = mid; }
+  }
+  return lo;
+}
+
 vg.truncate = function(s, length, pos, word, ellipsis) {
   var len = s.length;
   if (len <= length) return s;
@@ -190,7 +296,7 @@ vg.truncate = function(s, length, pos, word, ellipsis) {
     default:
       return (word ? vg_truncateOnWord(s,l) : s.slice(0,l)) + ellipsis;
   }
-}
+};
 
 function vg_truncateOnWord(s, len, rev) {
   var cnt = 0, tok = s.split(vg_truncate_word_re);
@@ -214,12 +320,16 @@ function vg_write(msg) {
     : console.log(msg);
 }
 
+function vg_error(msg) {
+  vg.config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.error(msg);
+}
+
 vg.log = function(msg) {
   vg_write("[Vega Log] " + msg);
 };
 
 vg.error = function(msg) {
-  msg = "[Vega Err] " + msg;
-  vg_write(msg);
-  if (typeof alert !== "undefined") alert(msg);
+  vg_error("[Vega Err] " + msg);
 };

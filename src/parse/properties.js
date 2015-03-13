@@ -93,6 +93,10 @@ vg.parse.properties = (function() {
       }
     }
 
+    if (ref.template) {
+      return vg.parse.template.source(ref.template, "item.datum");
+    }
+
     // initialize value
     var val = "item.datum.data";
     if (ref.value !== undefined) {
@@ -134,7 +138,10 @@ vg.parse.properties = (function() {
     }
     
     // multiply, offset, return value
-    val = "(" + (ref.mult?(vg.number(ref.mult)+" * "):"") + val + ")"
+    val = "("
+      + (ref.mult != null ? (vg.number(ref.mult) + " * ") : "")
+      + val
+      + ")"
       + (ref.offset ? " + " + vg.number(ref.offset) : "");
     return val;
   }

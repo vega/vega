@@ -16,7 +16,7 @@
       "name": "ord",
       "type": "ordinal",
       "range": "width", "points": true,
-      "domain": {"data": "fields", "field": "data"}
+      "domain": ["cyl", "dsp", "lbs", "hp", "acc", "mpg", "year"]
     },    
     {
       "name": "cyl",

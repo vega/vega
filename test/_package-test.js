@@ -4,11 +4,40 @@ var vows = require('vows'),
 var suite = vows.describe('_package');
 
 suite.addBatch({
+  '_config': {
+    topic: require('../index.js'),
+    'isNode': {
+      'isNode should be true': function (vg) {
+        assert.equal(vg.config.isNode, true);
+      }
+    }
+  },
   '_package': {
     topic: require('../index.js'),
     'isNumber': {
       'isNumber(0) should be true': function (vg) {
         assert.equal(vg.isNumber(0), true);
+      }
+    },
+    'cmp': {
+      'should compare numbers': function (vg) {
+        assert(vg.cmp(1, 0) > 0);
+        assert(vg.cmp(0, 1) < 0);
+        assert.strictEqual(vg.cmp(12, 12), 0);
+      },
+      'should compare strings': function (vg) {
+        assert(vg.cmp('a', 'b') < 0);
+        assert(vg.cmp('b', 'a') > 0);
+        assert.strictEqual(vg.cmp('foo', 'foo'), 0);
+      },
+      'should compare numbers to null': function (vg) {
+        assert(vg.cmp(1, null) > 0);
+        assert(vg.cmp(null, 1) < 0);
+        assert.strictEqual(vg.cmp(null, null), 0);
+      },
+      'should compare strings to null': function (vg) {
+        assert(vg.cmp(null, 'b') < 0);
+        assert(vg.cmp('b', null) > 0);
       }
     },
     'number': {
@@ -300,7 +329,7 @@ suite.addBatch({
     'unique': {
       'without transformation': {
         'should return all values of an array that contains only unique values in the same order': function (vg) {
-          assert.deepEqual(vg.unique([1, 2, 3]), [1, 2, 3]);
+          assert.deepEqual(vg.unique([3, 1, 2]), [3, 1, 2]);
         },
         'should filter out repeated occurrences of values': function (vg) {
           assert.deepEqual(vg.unique([1, 1, 2, 1, 2, 3, 1, 2, 3, 3, 3]), [1, 2, 3]);

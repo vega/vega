@@ -70,10 +70,11 @@ suite.addBatch({
       },
       'axis is correctly labelled': function (err, result) {
         // should retrieve the first text item of axis x
-        var textMark = d3.select('svg').select('text').node();
+        var axis = result.view.model().scene().items[0].axisItems[0];
+        var textMark = axis.items[0].items[3].items[0];
 
         assert.isNotNull(textMark);
-        assert.equal(textMark.firstChild.nodeValue, "Key1");
+        assert.equal(textMark.text, "Key1");
       },
     },
     'discrete quantitative scales use appropriate domains': {

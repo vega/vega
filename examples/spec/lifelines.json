@@ -35,7 +35,7 @@
       "name": "y",
       "type": "ordinal",
       "range": "height",
-      "domain": {"data": "people", "field": "data.label"}
+      "domain": {"data": "people", "field": "index"}
     },
     {
       "name": "x",
@@ -84,7 +84,7 @@
       "properties": {
         "enter": {
           "x": {"scale": "x", "field": "data.born"},
-          "y": {"scale": "y", "field": "data.label", "offset": -3},
+          "y": {"scale": "y", "field": "index", "offset": -3},
           "fill": {"value": "#000"},
           "text": {"field": "data.label"},
           "font": {"value": "Helvetica Neue"},
@@ -99,7 +99,7 @@
         "enter": {
           "x": {"scale": "x", "field": "data.born"},
           "x2": {"scale": "x", "field": "data.died"},
-          "y": {"scale": "y", "field": "data.label"},
+          "y": {"scale": "y", "field": "index"},
           "height": {"value": 2},
           "fill": {"value": "#557"}
         }
@@ -112,7 +112,7 @@
         "enter": {
           "x": {"scale": "x", "field": "data.enter"},
           "x2": {"scale": "x", "field": "data.leave"},
-          "y": {"scale": "y", "field": "data.label", "offset":-1},
+          "y": {"scale": "y", "field": "index", "offset":-1},
           "height": {"value": 4},
           "fill": {"value": "#e44"}
         }

@@ -58,13 +58,8 @@ vg.parse.axes = (function() {
       axis.tickSize.apply(axis, size);
     }
 
-    // tick arguments
-    if (def.ticks != null) {
-      var ticks = vg.isArray(def.ticks) ? def.ticks : [def.ticks];
-      axis.ticks.apply(axis, ticks);
-    } else {
-      axis.ticks(vg.config.axis.ticks);
-    }
+    // axis tick count
+    axis.tickCount(def.ticks || vg.config.axis.ticks);
 
     // style properties
     var p = def.properties;

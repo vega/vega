@@ -7,13 +7,14 @@ globals.forEach(function(g) {
 });
 
 // ensure availability of d3 and topojson in global namespace
-// NOTE: will "pollute" namespace with jsdom window, etc
 d3 = require("d3");
 topojson = require("topojson");
 require("d3-geo-projection")(d3);
 
 // load and export vega
 require("./vega");
+// check if we are running in node.js
+vg.config.isNode = typeof process !== 'undefined' && process.title === 'node';
 module.exports = vg;
 
 // restore pre-existing global values

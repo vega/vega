@@ -3,7 +3,7 @@ vg.data.read = (function() {
       parsers = {
         "number": vg.number,
         "boolean": vg.boolean,
-        "date": Date.parse
+        "date": vg.date
       };
 
   function read(data, format) {

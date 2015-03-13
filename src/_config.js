@@ -1,8 +1,8 @@
 vg.config = {};
 
 // are we running in node.js?
-// via timetler.com/2012/10/13/environment-detection-in-javascript/
-vg.config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
+// false by default, node wrapper should set true as needed
+vg.config.isNode = false;
 
 // Allows domain restriction when using data loading via XHR.
 // To enable, set it to a list of allowed domains
@@ -14,10 +14,15 @@ vg.config.domainWhiteList = false;
 vg.config.safeMode = false;
 
 // base url for loading external data files
-// used only for server-side operation
+// used only if data or image URL is relative
+// For node.js, set this value to convert local URLs to absolute ones.
 vg.config.baseURL = "";
 
-// version and namepsaces for exported svg
+// node.js only: which protocol to use for relative protocol URLs
+// URLs such as  //example.com/...  will be prepended by this value
+vg.config.defaultProtocol = "http:";
+
+// version and namespace for exported svg
 vg.config.svgNamespace =
   'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
   'xmlns:xlink="http://www.w3.org/1999/xlink"';
