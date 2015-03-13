@@ -36,9 +36,11 @@ vg.tree = function(obj, children) {
   return d;
 };
 
-vg.number = function(s) { return +s; };
+vg.number = function(s) { return s === null ? null : +s; };
 
-vg.boolean = function(s) { return !!s; };
+vg.boolean = function(s) { return s === null ? null :  !!s; };
+
+vg.date = function(s) {return s === null ? null : Date.parse(s); }
 
 // ES6 compatibility per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
 // We could have used the polyfill code, but lets wait until ES6 becomes a standard first
