@@ -26,10 +26,11 @@ define(function(require, exports, module) {
     }
 
     function signal(sig, selector, exp, spec) {
-      var n = new Node(graph);
+      var n = new Node(graph),
+          item = spec.item ? graph.signal(spec.item.signal) : null;
       n.evaluate = function(input) {
         var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
-        if(spec.scale) val = scale(spec, val);
+        if(spec.scale) val = scale(spec, val, item ? item.value() : null);
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.reflow = true;

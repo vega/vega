@@ -5661,13 +5661,13 @@ define('parse/properties',['require','exports','module','d3','../dataflow/tuple'
       util.keys(r.input).forEach(function(k) {
         var ref = valueRef(i, r.input[k]);
         input.push(util.str(k)+": "+ref.val);
-        signals.concat(ref.signals);
-        scales.concat(ref.scales);
+        if(ref.signals) signals.push.apply(signals, util.array(ref.signals));
+        if(ref.scales)  scales.push.apply(scales, util.array(ref.scales));
       });
 
       ref = valueRef(name, r);
-      signals.concat(ref.signals);
-      scales.concat(ref.scales);
+      if(ref.signals) signals.push.apply(signals, util.array(ref.signals));
+      if(ref.scales)  scales.push.apply(scales, util.array(ref.scales));
 
       if(predName) {
         signals.push.apply(signals, pred.signals);
@@ -5733,7 +5733,7 @@ define('parse/properties',['require','exports','module','d3','../dataflow/tuple'
         if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
       } else if(ref.field.signal) {
         signalRef = util.field(ref.field.signal);
-        val = "signals["+signalRef.map(util.str).join("][")+"]";
+        val = "item.datum[signals["+signalRef.map(util.str).join("][")+"]]";
         if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
         signals.push(signalRef.shift());
       } else {
@@ -7816,10 +7816,11 @@ define('parse/streams',['require','exports','module','d3','../dataflow/Node','..
     }
 
     function signal(sig, selector, exp, spec) {
-      var n = new Node(graph);
+      var n = new Node(graph),
+          item = spec.item ? graph.signal(spec.item.signal) : null;
       n.evaluate = function(input) {
         var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
-        if(spec.scale) val = scale(spec, val);
+        if(spec.scale) val = scale(spec, val, item ? item.value() : null);
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.reflow = true;
