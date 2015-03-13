@@ -194,6 +194,42 @@ describe('Cross', function() {
 
   });
 
-  it('should exclude diagonal values');
+  it('should self cross', function(done) {
+    var spec = {
+      "data": [{
+        "name": "table1", 
+        "values": values1,
+        "transform": [{"type": "cross"}]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      var ds1 = model.data('table1'),
+          data1 = ds1.values();
+
+      expect(data1).to.have.length(9);
+
+      done();
+    }, modelFactory);
+  });
+
+  it('should exclude diagonal values', function(done) {
+    var spec = {
+      "data": [{
+        "name": "table1", 
+        "values": values1,
+        "transform": [{"type": "cross", "diagonal": false}]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      var ds1 = model.data('table1'),
+          data1 = ds1.values();
+
+      expect(data1).to.have.length(6);
+
+      done();
+    }, modelFactory);
+  });
   
 });

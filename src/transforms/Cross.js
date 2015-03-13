@@ -9,7 +9,7 @@ define(function(require, exports, module) {
     Transform.prototype.init.call(this, graph);
     Transform.addParameters(this, {
       with: {type: "data"},
-      diagonal: {type: "value", default: true}
+      diagonal: {type: "value", default: "true"}
     });
 
     this._output = {"left": "a", "right": "b"};
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
     c.c.push(t);
   }
 
-  function add(output, left, wdata, x) {
+  function add(output, left, wdata, diag, x) {
     var data = left ? wdata : this._collector.data(), // Left tuples cross w/right.
         i = 0, len = data.length,
         prev  = x._prev !== undefined ? null : undefined, 
@@ -41,6 +41,7 @@ define(function(require, exports, module) {
       y = data[i];
       id = left ? x._id+"_"+y._id : y._id+"_"+x._id;
       if(this._ids[id]) continue;
+      if(x._id == y._id && !diag) continue;
 
       t = tuple.ingest({}, prev);
       t[this._output.left]  = left ? x : y;
@@ -86,8 +87,8 @@ define(function(require, exports, module) {
     // Materialize the current datasource. TODO: share collectors
     this._collector.evaluate(input);
 
-    var diagonal = this.diagonal.get(this._graph),
-        w = this.with.get(this._graph),
+    var w = this.with.get(this._graph),
+        diag = this.diagonal.get(this._graph),
         selfCross = (!w.name),
         data = this._collector.data(),
         woutput = selfCross ? input : w.source.last(),
@@ -96,11 +97,11 @@ define(function(require, exports, module) {
         r = rem.bind(this, output); 
 
     input.rem.forEach(r);
-    input.add.forEach(add.bind(this, output, true, wdata));
+    input.add.forEach(add.bind(this, output, true, wdata, diag));
 
     if(!selfCross && woutput.stamp > this._lastWith) {
       woutput.rem.forEach(r);
-      woutput.add.forEach(add.bind(this, output, false, data));
+      woutput.add.forEach(add.bind(this, output, false, data, diag));
       woutput.mod.forEach(mod.bind(this, output, false));
       upFields.call(this, woutput, output);
       this._lastWith = woutput.stamp;

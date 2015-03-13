@@ -14,7 +14,7 @@ define(function(require, exports, module) {
     for (var name in params) {
       p = params[name];
       proto[name] = new Parameter(name, p.type);
-      if(p.default) proto[name].set(p.default);
+      if(p.default) proto[name].set(proto, p.default);
     }
   };
 
