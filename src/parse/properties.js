@@ -190,7 +190,7 @@ define(function(require, exports, module) {
       } else {
         val = "this.util.accessor(group.datum["
             + util.field(ref.field.group).map(util.str).join("][")
-            + "])(item.datum.data)";
+            + "])(item.datum)";
       }
     } else if (ref.group != null) {
       val = grp;

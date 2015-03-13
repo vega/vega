@@ -6,6 +6,7 @@ var STATIC_SPECS = [
   "grouped_bar",
   "lifelines",
   "parallel_coords",
+  "scatter_matrix",
   "stocks",
   "weather"
 ];
