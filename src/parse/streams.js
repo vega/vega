@@ -95,7 +95,7 @@ define(function(require, exports, module) {
 
         if(selector[x].event) event(s[x], selector[x], val, sp);
         else if(selector[x].signal) signal(s[x], selector[x], val, sp);
-        else if(selector[x].stream) mergedStream(s[x], selector[x], val, sp);
+        else if(selector[x].stream) mergedStream(s[x], selector[x].stream, val, sp);
         s[x].addListener(router);
       });
     };

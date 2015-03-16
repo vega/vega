@@ -17,6 +17,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-test": "^0.12.6",
     "heap": "^0.2.6",
+    "memwatch": "^0.2.2",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
     "q": "^1.1.2",

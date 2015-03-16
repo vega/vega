@@ -3,8 +3,7 @@
   "height": 400,
   "data": [
     {
-      "name": "cars",
-      "url": "data/cars.json"
+      "name": "cars"
     },
     {
       "name": "fields",
@@ -72,7 +71,7 @@
           "type": "line",
           "from": {"data": "fields"},
           "properties": {
-            "enter": {
+            "update": {
               "x": {"scale": "ord", "field": "data"},
               "y": {"scale": {"field": "data"}, "group": "data", "field": "data"},
               "stroke": {"value": "steelblue"},
@@ -87,7 +86,7 @@
       "type": "text",
       "from": {"data": "fields"},
       "properties": {
-        "enter": {
+        "update": {
           "x": {"scale": "ord", "field": "data", "offset":-8},
           "y": {"group": "height", "offset": 6},
           "fontWeight": {"value": "bold"},

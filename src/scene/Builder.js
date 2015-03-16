@@ -183,8 +183,9 @@ define(function(require, exports, module) {
         output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
       }
     } else {
+      fullUpdate = this._encoder.reevaluate(input);
       data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
-      output = joinValues.call(this, input, data);
+      output = joinValues.call(this, input, data, fullUpdate);
     }
 
     output = this._graph.evaluate(output, this._encoder);
@@ -244,7 +245,7 @@ define(function(require, exports, module) {
     return (this._mark.items = next, output);
   }
 
-  function joinValues(input, data) {
+  function joinValues(input, data, fullUpdate) {
     var output = changeset.create(input),
         keyf = keyFunction(this._def.key),
         prev = this._mark.items || [],
@@ -257,7 +258,7 @@ define(function(require, exports, module) {
       if (keyf) this._map[item.key] = item;
     }
     
-    join.call(this, data, keyf, next, output, prev);
+    join.call(this, data, keyf, next, output, prev, fullUpdate ? util.tuple_ids(data) : null);
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];

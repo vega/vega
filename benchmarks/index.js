@@ -14,14 +14,18 @@ var fs  = require('fs'),
     sct2 = JSON.parse(fs.readFileSync('data/scatter.vg2.json').toString()),
     trl1 = JSON.parse(fs.readFileSync('data/trellis.vg1.json').toString()),
     trl2 = JSON.parse(fs.readFileSync('data/trellis.vg2.json').toString()),
-    barley = JSON.parse(fs.readFileSync('data/barley.json').toString());
+    barley = JSON.parse(fs.readFileSync('data/barley.json').toString()),
+    splom1 = JSON.parse(fs.readFileSync('data/splom.vg1.json').toString()),
+    splom2 = JSON.parse(fs.readFileSync('data/splom.vg2.json').toString()),
+    iris = JSON.parse(fs.readFileSync('data/iris.json').toString());
 
 pcp1.data[0].values = pcp2.data[0].values = cars;
 trl1.data[0].values = trl2.data[0].values = barley;
+splom1.data[1].values = splom2.data[1].values = iris;
 
 var specs = {
-  vg1: { bar: bar1, pcp: pcp1, sct: sct1, trellis: trl1 },
-  vg2: { bar: bar2, pcp: pcp2, sct: sct2, trellis: trl2 },
+  vg1: { bar: bar1, pcp: pcp1, sct: sct1, splom: splom1, trellis: trl1 },
+  vg2: { bar: bar2, pcp: pcp2, sct: sct2, splom: splom2, trellis: trl2 },
   d3: { sct: require('./data/scatter.d3') }
 };
 
@@ -42,6 +46,8 @@ function generate(specName, N, C) {
   var d1 = specs.vg1[specName].data[0], d2 = specs.vg2[specName].data[0];
 
   if(d1.values) {
+    if(specName == 'splom') N = Math.floor(Math.sqrt(N)); // Because we're crossing.
+
     while(d1.values.length < N) {
       d1.values = d2.values = d1.values.concat(d1.values);
     }
@@ -62,7 +68,7 @@ function checkScene(spec, scene) {
   expect(scene.items).to.have.length(1);
   expect(scene.items[0].items).to.have.length.of.at.least(1);
 
-  if(spec != trl1 && spec != trl2) {
+  if([splom1, splom2, trl1, trl2].indexOf(spec) < 0) {
     expect(scene.items[0].items[0].items).to.have.length(spec.data[0].values.length);
   }
 

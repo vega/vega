@@ -138,7 +138,7 @@ describe('Stats', function() {
             data = ds.values(),
             vals = values.map(function(d) { return d.y }).sort(),
             half = ~~(vals.length/2),
-            median = vals.length % 2 ? vals[half] : (vals[half-1] + vals[half])/2;
+            median = vals.length % 2 ? vals[half] : 0.5 * (vals[half-1] + vals[half]);
 
         expect(data).to.have.length(1);
         expect(data[0]).to.have.property('median', median);

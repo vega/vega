@@ -3,8 +3,7 @@
   "height": 400,
   "data": [
     {
-      "name": "cars",
-      "url": "data/cars.json"
+      "name": "cars"
     },
     {
       "name": "fields",

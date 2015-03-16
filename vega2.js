@@ -2898,8 +2898,9 @@ define('render/canvas/path',['require','exports','module','d3','../../core/Bound
   };
   
 });
-define('util/bounds',['require','exports','module','../core/Bounds','../render/canvas/path','./index','./config'],function(require, module, exports) {
-  var Bounds = require('../core/Bounds'),
+define('util/bounds',['require','exports','module','d3','../core/Bounds','../render/canvas/path','./index','./config'],function(require, module, exports) {
+  var d3 = require('d3'),
+      Bounds = require('../core/Bounds'),
       canvas = require('../render/canvas/path'),
       util = require('./index'),
       config = require('./config');
@@ -4210,8 +4211,9 @@ define('util/quickselect',['require','exports','module','./index'],function(requ
     return x[k];
   };
 });
-define('transforms/measures',['require','exports','module','../dataflow/tuple','../util/quickselect','../util/constants'],function(require, exports, module) {
+define('transforms/measures',['require','exports','module','../dataflow/tuple','../util/index','../util/quickselect','../util/constants'],function(require, exports, module) {
   var tuple = require('../dataflow/tuple'),
+      util = require('../util/index'),
       quickselect = require('../util/quickselect'),
       C = require('../util/constants');
 
@@ -4222,6 +4224,14 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       add:  "this.cnt += 1;",
       rem:  "this.cnt -= 1;",
       set:  "this.cnt"
+    }),
+    "_counts": measure({
+      name: "_counts",
+      init: "this.cnts = {};",
+      add:  "this.cnts[v] = ++this.cnts[v] || 1;",
+      rem:  "this.cnts[v] = --this.cnts[v] < 0 ? 0 : this.cnts[v];",
+      set:  "",
+      req:  ["count"]
     }),
     "sum": measure({
       name: "sum",
@@ -4270,30 +4280,36 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
       set:  "Math.sqrt(this.dev / this.cnt)",
       req:  ["var"], idx: 5
     }),
-    "median": measure({
-      name: "median",
-      init: "this.val = []; this.cnts = {};",
-      add:  "this.cnts[v] = ++this.cnts[v] || 1; " +
-            "if(this.val) this.val.push(v); ",
-      rem:  "--this.cnts[v]; this.val = null;",
-      set:  "this.sel(~~(this.cnt/2), this.val, this.cnts)",
-      req: ["count"], idx: 6
-    }),
     "min": measure({
       name: "min",
-      init: "",
-      add: "",
-      rem: "",
-      set: "this.sel(0, this.val, this.cnts)",
-      req: ["median"]
+      init: "this.min = +Infinity;",
+      add:  "this.min = v < this.min ? v : this.min;",
+      rem:  "var self = this; this.min = v == this.min " +
+            "? this.keys(this.cnts).reduce(function(m, v) { " +
+            "   return self.cnts[(v = +v)] > 0 && v < m ? v : m }, +Infinity) " + 
+            ": this.min;",
+      set:  "this.min",
+      req: ["_counts"], idx: 6
     }),
     "max": measure({
       name: "max",
-      init: "",
-      add: "",
-      rem: "",
-      set: "this.sel(this.cnt-1, this.val, this.cnts)",
-      req: ["median"]
+      init: "this.max = -Infinity;",
+      add:  "this.max = v > this.max ? v : this.max;",
+      rem:  "var self = this; this.max = v == this.max " +
+            "? this.keys(this.cnts).reduce(function(m, v) { " +
+            "   return self.cnts[(v = +v)] > 0 && v > m ? v : m }, -Infinity) " + 
+            ": this.max;",
+      set:  "this.max",
+      req: ["_counts"], idx: 7
+    }),
+    "median": measure({
+      name: "median",
+      init: "this.vals = []; ",
+      add:  "if(this.vals) this.vals.push(v); ",
+      rem:  "this.vals = null;",
+      set:  "this.cnt % 2 ? this.sel(~~(this.cnt/2), this.vals, this.cnts) : "+
+            "0.5 * (this.sel(~~(this.cnt/2)-1, this.vals, this.cnts) + this.sel(~~(this.cnt/2), this.vals, this.cnts))",
+      req: ["_counts"], idx: 8
     })
   };
 
@@ -4341,6 +4357,7 @@ define('transforms/measures',['require','exports','module','../dataflow/tuple','
     ctr.prototype.rem = Function("v", rem);
     ctr.prototype.set = Function("stamp", set);
     ctr.prototype.mod = mod;
+    ctr.prototype.keys = util.keys;
     ctr.prototype.sel = quickselect;
     ctr.prototype.tuple = tuple;
     return ctr;
@@ -5132,8 +5149,9 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
         output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
       }
     } else {
+      fullUpdate = this._encoder.reevaluate(input);
       data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
-      output = joinValues.call(this, input, data);
+      output = joinValues.call(this, input, data, fullUpdate);
     }
 
     output = this._graph.evaluate(output, this._encoder);
@@ -5193,7 +5211,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
     return (this._mark.items = next, output);
   }
 
-  function joinValues(input, data) {
+  function joinValues(input, data, fullUpdate) {
     var output = changeset.create(input),
         keyf = keyFunction(this._def.key),
         prev = this._mark.items || [],
@@ -5206,7 +5224,7 @@ define('scene/Builder',['require','exports','module','../dataflow/Node','./Encod
       if (keyf) this._map[item.key] = item;
     }
     
-    join.call(this, data, keyf, next, output, prev);
+    join.call(this, data, keyf, next, output, prev, fullUpdate ? util.tuple_ids(data) : null);
 
     for (i=0, len=prev.length; i<len; ++i) {
       item = prev[i];
@@ -7885,7 +7903,7 @@ define('parse/streams',['require','exports','module','d3','../dataflow/Node','..
 
         if(selector[x].event) event(s[x], selector[x], val, sp);
         else if(selector[x].signal) signal(s[x], selector[x], val, sp);
-        else if(selector[x].stream) mergedStream(s[x], selector[x], val, sp);
+        else if(selector[x].stream) mergedStream(s[x], selector[x].stream, val, sp);
         s[x].addListener(router);
       });
     };
