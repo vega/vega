@@ -79,10 +79,10 @@ ved.init = function() {
   sel.on("change", ved.select);
   sel.append("option").text("Custom");
 
-  var static = sel.append("optgroup")
+  var st = sel.append("optgroup")
     .attr("label", "Static");
 
-  static.selectAll("option.spec")
+  st.selectAll("option.spec")
     .data(STATIC_SPECS)
    .enter().append("option")
     .attr("value", function(d) { return "../spec/"+d+".json"; })
@@ -115,7 +115,7 @@ ved.init = function() {
   // Handle application parameters
   var p = ved.params();
   if (p.spec) {
-    var idx = SPECS.indexOf(p.spec) + 1;
+    var idx = STATIC_SPECS.concat(INTERACTIVE_SPECS).indexOf(p.spec) + 1;
     if (idx > 0) {
       sel.node().selectedIndex = idx;
       ved.select();

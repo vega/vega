@@ -21,7 +21,8 @@
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
     "q": "^1.1.2",
-    "requirejs": "2.1.x"
+    "requirejs": "2.1.x",
+    "simulant": "^0.1.3"
   },
   "scripts": {
     "test": "grunt test"

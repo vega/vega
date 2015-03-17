@@ -107,6 +107,9 @@ function _d3(spec, N, C, name) {
 
   spec(data);
   messages.push({type: 'd3', time: Date.now() - start});
+  console.log(messages[messages.length-1]);
+
+  fs.writeFileSync('results.raw/'+name+'.json', JSON.stringify(messages, null, 2));
 }
 
 function _vg1(spec, name, viewFactory, restore) {
