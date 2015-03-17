@@ -156,6 +156,7 @@
           "y": {"scale": "gy", "field": "b.data"},
           "width": {"scale": "gx", "band": true, "offset":-35},
           "height": {"scale": "gy", "band": true, "offset":-35},
+          "fill": {"value": "#fff"},
           "stroke": {"value": "#ddd"}
         }
       },
