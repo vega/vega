@@ -1,0 +1,43 @@
+{
+  "width": 500,
+  "height": 500,
+  "data": [{"name": "table"}],
+  "scales": [
+    {
+      "name": "x",
+      "nice": true,
+      "range": "width",
+      "domain": {"data": "table", "field": "z"}
+    },
+    {
+      "name": "y",
+      "nice": true,
+      "range": "height",
+      "domain": {"data": "table", "field": "y"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "x"},
+      "range": ["#800", "#080", "#008"]
+    }
+  ],
+
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "table"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "z"},
+          "y": {"scale": "y", "field": "y"},
+          "fill": {"scale": "c", "field": "x"},
+          "fillOpacity": {"value": 0.5},
+          "size": {"value": 100},
+          "stroke": {"value": "transparent"}
+        }
+      }
+    }
+  ]
+}

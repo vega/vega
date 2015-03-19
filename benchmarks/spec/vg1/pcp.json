@@ -3,7 +3,8 @@
   "height": 400,
   "data": [
     {
-      "name": "cars"
+      "name": "cars",
+      "url": "data/cars.json"
     },
     {
       "name": "fields",
@@ -20,37 +21,37 @@
     {
       "name": "cyl",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "cyl"}
+      "domain": {"data": "cars", "field": "data.cyl"}
     },
     {
       "name": "dsp",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "dsp"}
+      "domain": {"data": "cars", "field": "data.dsp"}
     },
     {
       "name": "lbs",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "lbs"}
+      "domain": {"data": "cars", "field": "data.lbs"}
     },
     {
       "name": "hp",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "hp"}
+      "domain": {"data": "cars", "field": "data.hp"}
     },
     {
       "name": "acc",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "acc"}
+      "domain": {"data": "cars", "field": "data.acc"}
     },
     {
       "name": "mpg",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "mpg"}
+      "domain": {"data": "cars", "field": "data.mpg"}
     },
     {
       "name": "year",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "year"}
+      "domain": {"data": "cars", "field": "data.year"}
     }
   ],
   "axes": [
@@ -71,9 +72,9 @@
           "type": "line",
           "from": {"data": "fields"},
           "properties": {
-            "enter": {
+            "update": {
               "x": {"scale": "ord", "field": "data"},
-              "y": {"scale": {"field": "data"}, "group": true, "field": "data"},
+              "y": {"scale": {"field": "data"}, "group": "data", "field": "data"},
               "stroke": {"value": "steelblue"},
               "strokeWidth": {"value": 1},
               "strokeOpacity": {"value": 0.3}
@@ -86,7 +87,7 @@
       "type": "text",
       "from": {"data": "fields"},
       "properties": {
-        "enter": {
+        "update": {
           "x": {"scale": "ord", "field": "data", "offset":-8},
           "y": {"group": "height", "offset": 6},
           "fontWeight": {"value": "bold"},

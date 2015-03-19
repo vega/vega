@@ -10,6 +10,7 @@
     "amd-loader": "0.0.5",
     "ascii-tree": "0.1.x",
     "chai": "^1.10.0",
+    "chromedriver": "^2.14.1",
     "grunt": "0.4.x",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
@@ -22,7 +23,8 @@
     "pegjs": "0.8.x",
     "q": "^1.1.2",
     "requirejs": "2.1.x",
-    "simulant": "^0.1.3"
+    "selenium-server-standalone-jar": "^2.45.0",
+    "webdriverio": "^2.4.5"
   },
   "scripts": {
     "test": "grunt test"
