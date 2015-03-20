@@ -24,6 +24,7 @@
     "q": "^1.1.2",
     "requirejs": "2.1.x",
     "selenium-server-standalone-jar": "^2.45.0",
+    "summary": "^0.3.2",
     "webdriverio": "^2.4.5"
   },
   "scripts": {
