@@ -2,5 +2,29 @@
   <head>
     <title>Vega 1 Benchmarks</title>
     <script type="text/javascript" src="../node_modules/vega/node_modules/d3/d3.js" charset="utf8"></script>
+    <style>
+
+    svg {
+      font: 10px sans-serif;
+    }
+
+    path.cars {
+      fill: none;
+      stroke: steelblue;
+      shape-rendering: crispEdges;
+    }
+
+    .axis line,
+    .axis path {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    }
+
+    </style>
   </head>
 </html>

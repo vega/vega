@@ -17,7 +17,8 @@ function saveResults(name, results) {
 
 function run_d3(env, results, done) {
   var runner = this,
-      s0 = 0, 
+      s0 = 0,
+      rendered = false, 
       t;
 
   d3.timer(function() {
@@ -31,8 +32,9 @@ function run_d3(env, results, done) {
       runner.update(runner.data);
       s0 = 2;
     } else if(s0 == 2) {
-      results.push({ type: "d3 rendered", time: Date.now() - t });
+      if(!rendered) results.push({ type: "d3 rendered", time: Date.now() - t });
       t = Date.now();
+      rendered = true;
 
       if(runner.benchmark) s0 = runner.benchmark(s0, results);
       else return done(results), true;
@@ -69,7 +71,8 @@ function run_vega(env, results, done) {
 
 function run(env, spec, N, C, resName, benchmark) {
   console.log(resName, benchmark.name);
-  var results = getResults(resName);
+  var results = getResults(resName),
+      data;
 
   if(env == 'vg1' || env == 'vg2') {
     spec = JSON.parse(fs.readFileSync('spec/'+env+'/'+spec+'.json'));
@@ -81,6 +84,7 @@ function run(env, spec, N, C, resName, benchmark) {
     }    
   } else {
     spec = require('./spec/d3/'+spec);
+    if(spec.data) data = JSON.parse(fs.readFileSync(spec.data));
   }
 
   var client = webdriverio.remote({
@@ -89,7 +93,7 @@ function run(env, spec, N, C, resName, benchmark) {
     .init()
     .url('http://localhost:8000/benchmarks/'+env+'.html')
     .timeoutsAsyncScript(300000)
-    .execute(function(env, spec, N, C) {   
+    .execute(function(env, spec, data, N, C) {   
       // Inject data generation into the browser because Selenium throws an error
       // if we send in a large pre-injected spec
       this.random = function(N, C) {
@@ -116,9 +120,9 @@ function run(env, spec, N, C, resName, benchmark) {
         data.values = data.values ? this.extend(data.values, N) : this.random(N, C);
         this.spec = spec;
       } else {
-        this.data = this.data ? this.extend(this.data, N) : this.random(N, C);
+        this.data = data ? this.extend(data, N) : this.random(N, C);
       }   
-    }, env, spec, N, C, function(err, ret) {
+    }, env, spec, data, N, C, function(err, ret) {
       if(err) console.log('Error w/data injection', err.message);
     })
     // Inject the benchmark into the browser
