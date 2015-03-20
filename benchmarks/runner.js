@@ -15,17 +15,51 @@ function saveResults(name, results) {
   fs.writeFileSync('results.raw/'+name+'.json', JSON.stringify(results, null, 2));
 }
 
+function run_d3(env, results, done) {
+  var runner = this,
+      s0 = 0, 
+      t;
+
+  d3.timer(function() {
+    if(s0 == 0) {
+      t = Date.now();
+      runner.init();
+      s0 = 1;
+    } else if(s0 == 1) {
+      results.push({ type: "d3 parsed", time: Date.now() - t });
+      t = Date.now();
+      runner.update(runner.data);
+      s0 = 2;
+    } else if(s0 == 2) {
+      results.push({ type: "d3 rendered", time: Date.now() - t });
+      t = Date.now();
+
+      if(runner.benchmark) s0 = runner.benchmark(s0, results);
+      else return done(results), true;
+    } else if(s0 == 3) {
+      return done(results), true;
+    }
+  });
+}
+
 function run_vega(env, results, done) {
   d3.select('body').append('div').attr('id', 'vis');
 
-  var t0 = Date.now();
+  var t = Date.now();
   vg.parse.spec(this.spec, function(chart) {
-    results.push({ type: env+" parsed", time: Date.now() - t0 });
+    results.push({ type: env+" parsed", time: Date.now() - t });
 
-    t0 = Date.now();
+    t = Date.now();
     var view = chart({ el: "#vis" });
+
+    // if(env === 'vg1') view.render = function() {};
+    // else if(env === 'vg2') {
+    //   view._build = true;
+    //   view._model.scene(new vg.dataflow.Node(view._model.graph));
+    // }
+
     view.update();
-    results.push({ type: env+" rendered", time: Date.now() - t0 });
+    results.push({ type: env+" rendered", time: Date.now() - t });
 
     if(this.benchmark) this.benchmark(view, results);
 
@@ -35,26 +69,27 @@ function run_vega(env, results, done) {
 
 function run(env, spec, N, C, resName, benchmark) {
   console.log(resName, benchmark.name);
-  spec = JSON.parse(fs.readFileSync('spec/'+env+'/'+spec+'.json'));
-
-  var data = spec.data[0];
-  if(data.url) {
-    data.values = JSON.parse(fs.readFileSync(data.url));
-    delete data.url;
-  }
-
   var results = getResults(resName);
 
-  webdriverio
-    .remote({
+  if(env == 'vg1' || env == 'vg2') {
+    spec = JSON.parse(fs.readFileSync('spec/'+env+'/'+spec+'.json'));
+
+    var data = spec.data[0];
+    if(data.url) {
+      data.values = JSON.parse(fs.readFileSync(data.url));
+      delete data.url;
+    }    
+  } else {
+    spec = require('./spec/d3/'+spec);
+  }
+
+  var client = webdriverio.remote({
       desiredCapabilities: {browserName: 'chrome'}
     })
     .init()
-
     .url('http://localhost:8000/benchmarks/'+env+'.html')
     .timeoutsAsyncScript(300000)
-
-    .execute(function(spec, N, C) {   
+    .execute(function(env, spec, N, C) {   
       // Inject data generation into the browser because Selenium throws an error
       // if we send in a large pre-injected spec
       this.random = function(N, C) {
@@ -76,22 +111,31 @@ function run(env, spec, N, C, resName, benchmark) {
         return data;
       }
 
-      var data = spec.data[0];
-      data.values = data.values ? this.extend(data.values, N) : this.random(N, C);
-      this.spec = spec;
-    }, spec, N, C, function(err, ret) {
+      if(env == 'vg1' || env == 'vg2') {
+        var data = spec.data[0];
+        data.values = data.values ? this.extend(data.values, N) : this.random(N, C);
+        this.spec = spec;
+      } else {
+        this.data = this.data ? this.extend(this.data, N) : this.random(N, C);
+      }   
+    }, env, spec, N, C, function(err, ret) {
       if(err) console.log('Error w/data injection', err.message);
     })
     // Inject the benchmark into the browser
     .execute(benchmark, function(err, ret) { 
       if(err) console.log('loading benchmark', err.message); 
-    })
-    .executeAsync(runners[env], env, results, function(err, ret) {
+    });
+
+  if(env == 'd3') client.execute(spec, function(err, ret) {
+    if(err) console.log('loading d3 spec', err.message); 
+  })
+
+  client.executeAsync(runners[env], env, results, function(err, ret) {
       if(err) console.log('runner', err.message);
       else    saveResults(resName, ret.value);
-    })
+  })
     .end();
 }
 
-var runners = { vg1: run_vega, vg2: run_vega };
+var runners = { d3: run_d3, vg1: run_vega, vg2: run_vega };
 module.exports = run;
