@@ -4697,6 +4697,12 @@ vg.expression.code = function(opt) {
     // STRING functions
     "parseFloat": "parseFloat",
     "parseInt": "parseInt",
+    "indexof": function(args) {
+        return fncall("indexOf", args, STRING);
+      },
+    "lastindexof": function(args) {
+        return fncall("lastIndexOf", args, STRING);
+      },
     "length": function(args) {
         return fncall("length", args, null, -1);
       },

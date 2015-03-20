@@ -339,6 +339,8 @@ suite.addBatch({
       },
       'should eval string functions': function(evaluate) {
         assert.equal("123".length, evaluate('length("123")'));
+        assert.equal("12321".indexOf("2"), evaluate('indexof("12321", "2")'));
+        assert.equal("12321".lastIndexOf("2"), evaluate('lastindexof("12321", "2")'));
         assert.equal("abc".toUpperCase(), evaluate('upper("abc")'));
         assert.equal("abc".toLowerCase(), evaluate('lower("abc")'));
         assert.equal("123".slice(1), evaluate('slice("123",1)'));
