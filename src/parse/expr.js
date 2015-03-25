@@ -66,7 +66,11 @@ define(function(require, exports, module) {
         sg[v[0]] = 1;
         tokens[i] = tokens[i].replace(v[0], "sg["+util.str(v[0])+"]");
       }
-      if(v[0] == "d") fd[v.splice(1).join("")] = 1;
+      if(v[0] == "d") {
+        v = v.splice(1);
+        fd[v[0]] = 1;
+        if(v.length > 1) fd[v.join(".")] = 1;
+      }
     }
 
     return {

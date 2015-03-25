@@ -3338,7 +3338,11 @@ define('parse/expr',['require','exports','module','../util/index'],function(requ
         sg[v[0]] = 1;
         tokens[i] = tokens[i].replace(v[0], "sg["+util.str(v[0])+"]");
       }
-      if(v[0] == "d") fd[v.splice(1).join("")] = 1;
+      if(v[0] == "d") {
+        v = v.splice(1);
+        fd[v[0]] = 1;
+        if(v.length > 1) fd[v.join(".")] = 1;
+      }
     }
 
     return {
@@ -4564,21 +4568,23 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
         withKey = this.withKey.get(this._graph),
         as = this.as.get(this._graph),
         dflt = this.default.get(this._graph),
-        map = mp.bind(this);
+        map = mp.bind(this),
+        rem = {};
 
     util.debug(input, ["zipping", w.name]);
 
     if(withKey.field) {
       if(woutput && woutput.stamp > this._lastJoin) {
-        woutput.add.forEach(function(x) { 
-          var m = map(withKey.accessor(x));
-          if(m[0]) m[0][as] = x;
-          m[1] = x; 
-        });
         woutput.rem.forEach(function(x) {
           var m = map(withKey.accessor(x));
-          if(m[0]) m[0][as] = dflt;
+          if(m[0]) m[0].forEach(function(d) { d[as] = dflt });
           m[1] = null;
+        });
+
+        woutput.add.forEach(function(x) { 
+          var m = map(withKey.accessor(x));
+          if(m[0]) m[0].forEach(function(d) { d[as] = x });
+          m[1] = x;
         });
         
         // Only process woutput.mod tuples if the join key has changed.
@@ -4588,36 +4594,46 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
             var prev;
             if(!x._prev || (prev = withKey.accessor(x._prev)) === undefined) return;
             var prevm = map(prev);
-            if(prevm[0]) prevm[0][as] = dflt;
+            if(prevm[0]) prevm[0].forEach(function(d) { d[as] = dflt });
             prevm[1] = null;
 
             var m = map(withKey.accessor(x));
-            if(m[0]) m[0][as] = x;
+            if(m[0]) m[0].forEach(function(d) { d[as] = x });
             m[1] = x;
           });
         }
 
         this._lastJoin = woutput.stamp;
       }
-      
+    
       input.add.forEach(function(x) {
         var m = map(key.accessor(x));
         x[as] = m[1] || dflt;
-        m[0]  = x;
+        (m[0]=m[0]||[]).push(x);
       });
-      input.rem.forEach(function(x) { map(key.accessor(x))[0] = null; });
+
+      input.rem.forEach(function(x) { 
+        var k = key.accessor(x);
+        (rem[k]=rem[k]||{})[x._id] = 1;
+      });
 
       if(input.fields[key.field]) {
         input.mod.forEach(function(x) {
           var prev;
           if(!x._prev || (prev = key.accessor(x._prev)) === undefined) return;
 
-          map(prev)[0] = null;
           var m = map(key.accessor(x));
           x[as] = m[1] || dflt;
-          m[0]  = x;
+          (m[0]=m[0]||[]).push(x);
+          (rem[prev]=rem[prev]||{})[x._id] = 1;
         });
       }
+
+      util.keys(rem).forEach(function(k) { 
+        var m = map(k);
+        if(!m[0]) return;
+        m[0] = m[0].filter(function(x) { return rem[k][x._id] !== 1 });
+      });
     } else {
       // We only need to run a non-key-join again if we've got any add/rem
       // on input or woutput
@@ -4634,6 +4650,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
       for(i = 0; i < data.length; i++) { data[i][as] = wdata[i%wlen]; }
     }
 
+    input.fields[as] = 1;
     return input;
   };
 
