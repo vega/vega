@@ -1056,7 +1056,7 @@ define('util/config',['require','exports','module','d3'],function(require, modul
 
   return config;
 });
-define('util/index',['require','exports','module','./config'],function(require, module, exports) {
+define('util/index',['require','exports','module','./config','heap'],function(require, module, exports) {
   var config = require('./config'),
       util = {};
 
@@ -1301,6 +1301,8 @@ define('util/index',['require','exports','module','./config'],function(require, 
     log.apply(console, args);
     ts = Date.now();
   };
+
+  util.Heap = require('heap');
 
   return util;
 });

@@ -69,8 +69,8 @@ function run_vega(env, results, done) {
   }, this.viewFactory);
 }
 
-function run(env, spec, N, C, resName, benchmark, viewFactory) {
-  console.log(resName, benchmark.name);
+function run(env, spec, N, C, resName, setup, viewFactory) {
+  console.log(resName, setup.name);
   var results  = getResults(resName),
       specName = spec,
       data;
@@ -99,7 +99,10 @@ function run(env, spec, N, C, resName, benchmark, viewFactory) {
     .init()
     .url('http://localhost:8000/benchmarks/'+env+'.html')
     .timeoutsAsyncScript(300000)
-    .execute(function(env, specName, spec, data, N, C) {   
+    .execute(function(env, specName, spec, data, N, C) {
+      this.N = N;
+      this.C = C;
+      
       // Inject data generation into the browser because Selenium throws an error
       // if we send in a large pre-injected spec
       this.random = function(N, C) {
@@ -133,9 +136,9 @@ function run(env, spec, N, C, resName, benchmark, viewFactory) {
     }, env, specName, spec, data, N, C, function(err, ret) {
       if(err) console.log('Error w/data injection', err.message);
     })
-    // Inject the benchmark into the browser
-    .execute(benchmark, function(err, ret) { 
-      if(err) console.log('loading benchmark', err.message); 
+    // Inject the setup into the browser
+    .execute(setup, function(err, ret) { 
+      if(err) console.log('loading setup', err.message); 
     });
 
   if(viewFactory) client.execute(viewFactory, function(err, ret) {

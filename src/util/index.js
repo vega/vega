@@ -244,5 +244,7 @@ define(function(require, module, exports) {
     ts = Date.now();
   };
 
+  util.Heap = require('heap');
+
   return util;
 });
