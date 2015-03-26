@@ -11,7 +11,7 @@ function noSkips() {
   this.viewFactory = function noSkips(model) {
     runner.noHardSkips(model);
     runner.noSoftSkips(model);
-    return vg.core.View.factory(model);
+    return this.noRenderer(model);
   };
 }
 
@@ -19,7 +19,7 @@ function onlyHardSkips() {
   var runner = this;
   this.viewFactory = function onlyHardSkips(model) {
     runner.noSoftSkips(model);
-    return vg.core.View.factory(model);
+    return this.noRenderer(model);
   };
 }
 
@@ -27,7 +27,7 @@ function onlySoftSkips() {
   var runner = this;
   this.viewFactory = function onlySoftSkips(model) {
     runner.noHardSkips(model);
-    return vg.core.View.factory(model);
+    return this.noRenderer(model);
   };
 }
 
@@ -92,6 +92,15 @@ function setup() {
   this.noSoftSkips = function(model) {
     Graph.reevaluate = function() { return true; };
     return model;
+  };
+
+  this.noRenderer = function(model) {
+    var ctr = vg.core.View.factory(model);
+    return function(opt) {
+      var view = ctr(opt);
+      view._renderer.render = function() {}
+      return view;
+    };
   };
 
   this.benchmark = function(view, results) {

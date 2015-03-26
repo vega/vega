@@ -19,7 +19,7 @@ function alwaysPrev() {
 
     model.data('A').add(vg.util.duplicate(data));
     model.data('B').add(vg.util.duplicate(data));
-    return vg.core.View.factory(model);
+    return this.noRenderer(model);
   };
 }
 
@@ -42,7 +42,7 @@ function neverPrev() {
 
     model.data('A').add(vg.util.duplicate(data));
     model.data('B').add(vg.util.duplicate(data));
-    return vg.core.View.factory(model);
+    return this.noRenderer(model);
   } 
 }
 
@@ -61,12 +61,21 @@ function sometimesPrev() {
   this.viewFactory = function sometimesPrev(model) {
     model.data('A').add(vg.util.duplicate(data));
     model.data('B').add(vg.util.duplicate(data));
-    return vg.core.View.factory(model);
+    return this.noRenderer(model);
   } 
 }
 
-function modifyTuples() {
+function setup() {
   var runner = this;
+
+  this.noRenderer = function(model) {
+    var ctr = vg.core.View.factory(model);
+    return function(opt) {
+      var view = ctr(opt);
+      view._renderer.render = function() {}
+      return view;
+    };
+  };
 
   this.benchmark = function(view, results) {
     var name  = this.viewFactory.name,
@@ -128,7 +137,7 @@ var benchmark = process.argv[2],
     results = [spec, N, C].join('.');
 
 switch(benchmark) {
-  case 'alwaysPrev':     runner('vg2', spec, N, C, results, modifyTuples, alwaysPrev);    break;
-  case 'neverPrev':      runner('vg2', spec, N, C, results, modifyTuples, neverPrev);     break;
-  case 'sometimesPrev':  runner('vg2', spec, N, C, results, modifyTuples, sometimesPrev); break;
+  case 'alwaysPrev':     runner('vg2', spec, N, C, results, setup, alwaysPrev);    break;
+  case 'neverPrev':      runner('vg2', spec, N, C, results, setup, neverPrev);     break;
+  case 'sometimesPrev':  runner('vg2', spec, N, C, results, setup, sometimesPrev); break;
 }
