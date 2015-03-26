@@ -16,6 +16,7 @@ define(function(require, exports, module) {
       proto[name] = new Parameter(name, p.type);
       if(p.default) proto[name].set(proto, p.default);
     }
+    proto._parameters = params;
   };
 
   var proto = (Transform.prototype = new Node());
@@ -23,7 +24,8 @@ define(function(require, exports, module) {
   proto.clone = function() {
     var n = Node.prototype.clone.call(this);
     n.transform = this.transform;
-    for(var k in this) { n[k] = this[k]; }
+    n._parameters = this._parameters;
+    for(var param in this._parameters) { n[param] = this[param]; }
     return n;
   };
 

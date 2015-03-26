@@ -55,7 +55,7 @@ define(function(require, exports, module) {
     if(reset) rst.call(this, input, output);
 
     fn.call(this, input.add, fields, accessors, output.add, input.stamp);
-    fn.call(this, input.mod, fields, accessors, output.mod, input.stamp);
+    fn.call(this, input.mod, fields, accessors, reset ? output.add : output.mod, input.stamp);
     input.rem.forEach(function(x) {
       output.rem.push.apply(output.rem, fold._cache[x._id]);
       fold._cache[x._id] = null;

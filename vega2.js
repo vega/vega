@@ -3489,6 +3489,7 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
       proto[name] = new Parameter(name, p.type);
       if(p.default) proto[name].set(proto, p.default);
     }
+    proto._parameters = params;
   };
 
   var proto = (Transform.prototype = new Node());
@@ -3496,7 +3497,8 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
   proto.clone = function() {
     var n = Node.prototype.clone.call(this);
     n.transform = this.transform;
-    for(var k in this) { n[k] = this[k]; }
+    n._parameters = this._parameters;
+    for(var param in this._parameters) { n[param] = this[param]; }
     return n;
   };
 
@@ -4096,7 +4098,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
     if(reset) rst.call(this, input, output);
 
     fn.call(this, input.add, fields, accessors, output.add, input.stamp);
-    fn.call(this, input.mod, fields, accessors, output.mod, input.stamp);
+    fn.call(this, input.mod, fields, accessors, reset ? output.add : output.mod, input.stamp);
     input.rem.forEach(function(x) {
       output.rem.push.apply(output.rem, fold._cache[x._id]);
       fold._cache[x._id] = null;
