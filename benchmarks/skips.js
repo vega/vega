@@ -31,6 +31,13 @@ function onlySoftSkips() {
   };
 }
 
+function hardSoftSkips() {
+  var runner = this;
+  this.viewFactory = function hardSoftSkips(model) {
+    return this.noRenderer(model);
+  };  
+}
+
 function setup() {
   var runner = this,
       Graph = vg.dataflow.Graph.prototype,
@@ -114,12 +121,12 @@ function setup() {
 
     next = Date.now();
     model.graph.signal('formulaX').value('c1').fire();
-    results.push({type: name + ' one signal', time: Date.now() - next});
+    results.push({type: name + ' formulaX', time: Date.now() - next});
 
     // Only update the other signal
     next = Date.now();
     model.graph.signal('formulaY').value(Math.floor(this.C/5)).fire();
-    results.push({type: name + ' one signal', time: Date.now() - next});
+    results.push({type: name + ' formulaY', time: Date.now() - next});
 
     // Update both
     var node = new vg.dataflow.Node(model.graph)
@@ -139,5 +146,5 @@ switch(benchmark) {
   case 'noSkips':       runner('vg2', spec, N, C, results, setup, noSkips);       break;
   case 'onlyHardSkips': runner('vg2', spec, N, C, results, setup, onlyHardSkips); break;
   case 'onlySoftSkips': runner('vg2', spec, N, C, results, setup, onlySoftSkips); break;
-  case 'hardSoftSkips': runner('vg2', spec, N, C, results, setup); break;
+  case 'hardSoftSkips': runner('vg2', spec, N, C, results, setup, hardSoftSkips); break;
 }
