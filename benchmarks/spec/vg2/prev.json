@@ -1,0 +1,63 @@
+{
+  "data": [
+    {
+      "name": "A",
+      "transform": [
+        {"type": "formula", "field": "z", "expr": "d.y * 2"},
+        {"type": "formula", "field": "a", "expr": "d.z * 2 + d.y"}
+      ] 
+    },
+    {
+      "name": "B",
+      "transform": [
+        {"type": "formula", "field": "z", "expr": "d.y * 2"}, 
+        {"type": "formula", "field": "a", "expr": "d.z * 2 + d.y"},
+        {
+          "type": "stats", 
+          "group_by": "x", 
+          "on": "z", 
+          "measures": ["count", "avg", "min", "max", "sum", "var", "stdev", "varp", "stdevp", "median"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "ordinal",
+      "domain": {"data": "B", "field": "x"},
+      "range": "width"
+    }, 
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "B", "field": "max"},
+      "range": "height", "nice": false, "round": false
+    }
+  ],
+
+  "marks": [{
+    "type": "symbol",
+    "from": {"data": "A"},
+    "properties": {
+      "update": {
+        "x": {"scale": "x", "field": "x"},
+        "y": {"scale": "y", "field": "z"},
+        "size": {"value": 100},
+        "fill": {"value": "red"}
+      }
+    }
+  }, {
+    "type": "symbol",
+    "from": {"data": "B"},
+    "properties": {
+      "update": {
+        "x": {"scale": "x", "field": "x"},
+        "y": {"scale": "y", "field": "avg"},
+        "size": {"value": 100},
+        "fill": {"value": "steelblue"}
+      }
+    }
+  }]
+}

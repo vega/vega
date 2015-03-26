@@ -7,10 +7,10 @@ var fs  = require('fs'),
     conditions = ['100.5', '1000.50', '10000.500', '100000.500'];
 
 benchmarks.forEach(function(b) {
-  var summaries = {};
+  var summaries = [];
 
   conditions.forEach(function(c) {
-    var summary = summaries[c] = {},
+    var summary = {},
         results = JSON.parse(fs.readFileSync('results.raw/'+b+'.'+c+'.json').toString());
 
     // Compile the types + times
@@ -23,7 +23,14 @@ benchmarks.forEach(function(b) {
     // Calculate stats
     Object.keys(summary).forEach(function(s) {
       var data = stats(summary[s]);
-      summary[s] = {mean: data.mean(), sd: data.sd()}
+      summaries.push({
+        condition: s.split(' ')[0],
+        operation: s.split(' ').splice(1).join(' '),
+        N: +c.split('.')[0],
+        C: +c.split('.')[1],
+        mean: data.mean(),
+        sd: data.sd()
+      });
     });
   });
 

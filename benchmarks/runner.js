@@ -66,12 +66,13 @@ function run_vega(env, results, done) {
     if(this.benchmark) this.benchmark(view, results);
 
     done(results);
-  });
+  }, this.viewFactory);
 }
 
-function run(env, spec, N, C, resName, benchmark) {
+function run(env, spec, N, C, resName, benchmark, viewFactory) {
   console.log(resName, benchmark.name);
-  var results = getResults(resName),
+  var results  = getResults(resName),
+      specName = spec,
       data;
 
   if(env == 'vg1' || env == 'vg2') {
@@ -88,15 +89,21 @@ function run(env, spec, N, C, resName, benchmark) {
   }
 
   var client = webdriverio.remote({
-      desiredCapabilities: {browserName: 'chrome'}
+      desiredCapabilities: {
+        browserName: 'chrome',
+        chromeOptions: {
+          args: ['--enable-precise-memory-info']
+        }
+      }
     })
     .init()
     .url('http://localhost:8000/benchmarks/'+env+'.html')
     .timeoutsAsyncScript(300000)
-    .execute(function(env, spec, data, N, C) {   
+    .execute(function(env, specName, spec, data, N, C) {   
       // Inject data generation into the browser because Selenium throws an error
       // if we send in a large pre-injected spec
       this.random = function(N, C) {
+        if(specName == 'splom') N = Math.floor(Math.sqrt(N));
         var out = [];
         for (var i=0; i<N; ++i) {
           var o = {};
@@ -110,6 +117,7 @@ function run(env, spec, N, C, resName, benchmark) {
       };
 
       this.extend = function(data, N) {
+        if(specName == 'splom') N = Math.floor(Math.sqrt(N));
         while(data.length < N) data = data.concat(data);
         if(data.length > N) data = data.slice(0, N);
         return data;
@@ -122,13 +130,17 @@ function run(env, spec, N, C, resName, benchmark) {
       } else {
         this.data = data ? this.extend(data, N) : this.random(N, C);
       }   
-    }, env, spec, data, N, C, function(err, ret) {
+    }, env, specName, spec, data, N, C, function(err, ret) {
       if(err) console.log('Error w/data injection', err.message);
     })
     // Inject the benchmark into the browser
     .execute(benchmark, function(err, ret) { 
       if(err) console.log('loading benchmark', err.message); 
     });
+
+  if(viewFactory) client.execute(viewFactory, function(err, ret) {
+    if(err) console.log('viewFactory', err.message); 
+  });
 
   if(env == 'd3') client.execute(spec, function(err, ret) {
     if(err) console.log('loading d3 spec', err.message); 
