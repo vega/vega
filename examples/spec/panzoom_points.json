@@ -51,7 +51,7 @@
       "init": -1.6, 
       "streams": [
         {"type": "xDelta", "expr": "xMin + xDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMin * 1.05 : xMin / 1.05"}
+        {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMin * 1.015 : xMin / 1.015"}
       ]
     },
     {
@@ -59,7 +59,7 @@
       "init": 1.6, 
       "streams": [
         {"type": "xDelta", "expr": "xMax + xDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMax * 1.05 : xMax / 1.05"}
+        {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMax * 1.015 : xMax / 1.015"}
       ]
     },
     {
@@ -67,7 +67,7 @@
       "init": -1, 
       "streams": [
         {"type": "yDelta", "expr": "yMin + yDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMin * 1.05 : yMin / 1.05"}
+        {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMin * 1.015 : yMin / 1.015"}
       ]
     },
     {
@@ -75,7 +75,7 @@
       "init": 1, 
       "streams": [
         {"type": "yDelta", "expr": "yMax + yDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMax * 1.05 : yMax / 1.05"}
+        {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMax * 1.015 : yMax / 1.015"}
       ]
     }
   ],
