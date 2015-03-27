@@ -3493,12 +3493,15 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
   };
 
   var proto = (Transform.prototype = new Node());
-
+ 
   proto.clone = function() {
     var n = Node.prototype.clone.call(this);
     n.transform = this.transform;
     n._parameters = this._parameters;
-    for(var param in this._parameters) { n[param] = this[param]; }
+    for(var k in this) { 
+      if(n[k]) continue;
+      n[k] = this[k]; 
+    }
     return n;
   };
 
