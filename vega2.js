@@ -1438,7 +1438,7 @@ define('dataflow/Node',['require','exports','module','../util/index','../util/co
 
   proto.addListener = function(l) {
     if(!(l instanceof Node)) throw "Listener is not a Node";
-    if(this._registered[l._id]) return;
+    if(this._registered[l._id]) return this;
 
     this._listeners.push(l);
     this._registered[l._id] = 1;
@@ -3506,7 +3506,7 @@ define('transforms/Transform',['require','exports','module','../dataflow/Node','
   proto.evaluate = function(input) {
     // Many transforms store caches that must be invalidated if
     // a signal value has changed. 
-    var reset = this.dependency(C.SIGNALS).some(function(s) { 
+    var reset = this._stamp < input.stamp && this.dependency(C.SIGNALS).some(function(s) { 
       return !!input.signals[s] 
     });
 

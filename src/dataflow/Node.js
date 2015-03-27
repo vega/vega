@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 
   proto.addListener = function(l) {
     if(!(l instanceof Node)) throw "Listener is not a Node";
-    if(this._registered[l._id]) return;
+    if(this._registered[l._id]) return this;
 
     this._listeners.push(l);
     this._registered[l._id] = 1;

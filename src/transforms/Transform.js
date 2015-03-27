@@ -33,7 +33,7 @@ define(function(require, exports, module) {
   proto.evaluate = function(input) {
     // Many transforms store caches that must be invalidated if
     // a signal value has changed. 
-    var reset = this.dependency(C.SIGNALS).some(function(s) { 
+    var reset = this._stamp < input.stamp && this.dependency(C.SIGNALS).some(function(s) { 
       return !!input.signals[s] 
     });
 
