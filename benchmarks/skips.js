@@ -76,7 +76,7 @@ function setup() {
         // a group's dataflow branch). Re-queue if it has. T
         // TODO: use pq.replace or pq.poppush?
         if(r != n.rank()) {
-          util.debug(p, ['Rank mismatch', r, n.rank()]);
+          vg.util.debug(p, ['Rank mismatch', r, n.rank()]);
           pq.push({ node: n, pulse: p, rank: n.rank() });
           continue;
         }
@@ -120,23 +120,29 @@ function setup() {
     results[results.length-2].type = name+' '+results[results.length-2].type;
 
     next = Date.now();
-    model.graph.signal('formulaX').value('c1').fire();
-    results.push({type: name + ' formulaX', time: Date.now() - next});
+    model.graph.signal('norm1').value('athletes').fire();
+    results.push({type: name + ' norm', time: Date.now() - next});
+
+    next = Date.now();
+    model.graph.signal('norm2').value('gdp').fire();
+    results.push({type: name + ' norm', time: Date.now() - next});
 
     // Only update the other signal
     next = Date.now();
-    model.graph.signal('formulaY').value(Math.floor(this.C/5)).fire();
-    results.push({type: name + ' formulaY', time: Date.now() - next});
+    model.graph.signal('foldField').value('bronze').fire();
+    results.push({type: name + ' foldField', time: Date.now() - next});
 
     // Update both
     var node = new vg.dataflow.Node(model.graph)
-      .addListener(model.graph.signal('formulaX'))
-      .addListener(model.graph.signal('formulaY'));
+      .addListener(model.graph.signal('norm1'))
+      .addListener(model.graph.signal('norm2'))
+      .addListener(model.graph.signal('foldField'));
 
     next = Date.now();
-    cs.signals = {formulaX: 1, formulaY: 1};
-    model.graph.signal('formulaX').value('c2');
-    model.graph.signal('formulaY').value(2*Math.floor(C/5));
+    cs.signals = {norm1: 1, norm: 1, foldField: 1};
+    model.graph.signal('norm1').value('pop');
+    model.graph.signal('norm2').value('athletes');
+    model.graph.signal('foldField').value('silver');
     model.graph.propagate(cs, node);
     results.push({type: name + ' both signals', time: Date.now() - next});
   };
