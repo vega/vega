@@ -1,0 +1,73 @@
+{
+  "width": 800,
+  "height": 500,
+  "padding": {"left": 145, "right": 65, "top": 50, "bottom": 50},
+
+  "data": [
+    {
+      "name": "points", 
+      "url": "data/points.json"
+    },
+    {
+      "name": "xDomain",
+      "values": [{"min": -1.6, "max": 1.6}]
+    },
+    {
+      "name": "yDomain",
+      "values": [{"min": -1, "max": 1}]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width", "zero": false,
+      "domainMin": {"data": "xDomain", "field": "data.min"},
+      "domainMax": {"data": "xDomain", "field": "data.max"}
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height", "zero": false,
+      "domainMin": {"data": "yDomain", "field": "data.min"},
+      "domainMax": {"data": "yDomain", "field": "data.max"}
+    }
+  ],
+  "axes": [
+    {"type": "x", "scale": "x", "grid": true, "layer": "front", "properties": {
+      "labels": { "fontSize": {"value": 14} }
+    }},
+    {"type": "y", "scale": "y", "grid": true, "layer": "front", "properties": {
+      "labels": { "fontSize": {"value": 14} }
+    }}
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "width": {"value": 800},
+          "y": {"value": 0},
+          "height": {"value": 500},
+          "clip": {"value": true},
+          "fill": {"value": "white"}
+        }
+      },
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "points"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "data.x"},
+              "y": {"scale": "y", "field": "data.y"},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

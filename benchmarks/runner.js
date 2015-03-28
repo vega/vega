@@ -63,9 +63,8 @@ function run_vega(env, results, done) {
     view.update();
     results.push({ type: env+" rendered", time: Date.now() - t });
 
-    if(this.benchmark) this.benchmark(view, results);
-
-    done(results);
+    if(this.benchmark) this.benchmark(view, results, done);
+    if(!this.benchmark.async) done(results);
   }, this.viewFactory);
 }
 

@@ -1,0 +1,55 @@
+{
+  "signals": [{
+    "name": "formulaX",
+    "init": "c0"
+  }, {
+    "name": "formulaY",
+    "init": 2
+  }],
+
+  "data": [{"name": "B"}, {
+    "name": "A", "source": "B",
+    "transform": [{
+      "type": "formula",
+      "field": "a",
+      "expr": "d.x + formulaX"
+    }, {
+      "type": "formula",
+      "field": "c",
+      "expr": "d.x + 2* formulaX + d.x"
+    }, {
+      "type": "formula",
+      "field": "b",
+      "expr": "d.y * formulaY + formulaY"
+    },  {
+      "type": "formula",
+      "field": "d",
+      "expr": "d.y * formulaY + formulaY * 2"
+    }]
+  }],
+
+  "scales": [{
+    "name": "x",
+    "type": "ordinal",
+    "domain": {"data": "A", "field": "a"},
+    "range": "width"
+  }, {
+    "name": "y",
+    "type": "linear",
+    "domain": {"data": "A", "field": "b"},
+    "range": "height"
+  }],
+
+  "marks": [{
+    "type": "symbol",
+    "from": {"data": "A"},
+    "properties": {
+      "update": {
+        "x": {"scale": "x", "field": "a"},
+        "y": {"scale": "y", "field": "b"},
+        "size": {"value": 100},
+        "fill": {"value": "steelblue"}
+      }
+    }
+  }]
+}

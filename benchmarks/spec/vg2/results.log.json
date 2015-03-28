@@ -1,0 +1,172 @@
+{
+  "width": 700,
+  "height": 150,
+  "data": [
+    {
+      "name": "table",
+      "url": "../benchmarks/results/scatter.folded.json",
+      "transform": [
+        {"type": "filter", "test": "d.N > 100"},
+        {"type": "filter", "test": "d.operation!='norm' && d.operation.match(/init/) == null"},
+        {"type": "formula", "field": "operation", "expr": "d.operation.replace('parsed', 'parse').replace('rendered', 'render').replace('vg2', '').replace('signals', '').replace('time', '').replace('norm', 'signal').replace('heap', '')"}
+      ]
+    },
+    {
+      "name": "data_sizes",
+      "source": "table",
+      "transform": [{"type": "facet", "keys": ["N"]}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "N",
+      "type": "ordinal",
+      "range": "width",
+      "padding": 0.1,
+      "domain": {"data": "table", "field": "N"}
+    },
+    {
+      "name": "y",
+      "type": "log",
+      "range": "height",
+      "padding": 0.1,
+      "domain": {"data": "table", "field": "mean"}
+    },
+    {
+      "name": "cond",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "condition"},
+      "range": ["#FDCC66", "#5DA2FD", "#CC99CD", "#98C998"]
+    }
+  ],
+
+  "axes": [{
+    "type": "y", 
+    "scale": "y", 
+    "title": "Time Taken (ms)", 
+    "titleOffset": 50, 
+    "ticks": 2, 
+    "grid": true, 
+    "layer": "back",
+    "properties": {
+      "grid": {
+        "stroke": {"value": "#e0e0e0"},
+        "strokeWidth": {"value": 0.5}
+      }
+    }
+  }],
+
+  "marks": [
+    {
+      "name": "groups",
+      "type": "group",
+      "from": {"data": "data_sizes"},
+
+      "properties": {
+        "update": {
+          "x": {"scale": "N", "field": "key", "offset": -10},
+          "width": {"scale": "N", "band": true},
+          "y": {"value": 0.5},
+          "height": {"group": "height"},
+          "stroke": {"value": "#fff"},
+          "strokeWidth": {"value": 0.5}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "op",
+          "type": "ordinal",
+          "range": "width", "padding": 0.2,
+          "domain": {"field": "operation"}
+        }
+      ],
+
+      "axes": [{
+        "type": "x", 
+        "scale": "op", 
+        "ticks": 5,
+        "properties": {
+          "ticks": {
+            "stroke": {"value": "#fff"}
+          }
+        }
+      }],
+
+      "marks": [
+        {
+          "type": "group",
+          "from": {
+            "transform": [{"type": "facet", "keys": ["operation"]}]
+          },
+          "properties": {
+            "update": {
+              "x": {"scale": "op", "field": "key"},
+              "width": {"scale": "op", "band": true}
+            }
+          },
+
+          "scales": [
+            {
+              "name": "x",
+              "type": "ordinal",
+              "range": "width",
+              "domain": {"field": "condition"}
+            }
+          ],
+
+          "marks": [
+            {
+              "type": "rect",
+              "properties": {
+                "update": {
+                  "x": {"scale": "x", "field": "condition"},
+                  "width": {"scale": "x", "band": true},
+                  "y2": {"value": 150},
+                  "y": {"scale": "y", "field": "mean"},
+                  "fill": {"scale": "cond", "field": "condition"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "data_sizes",
+        "transform": [
+          {"type": "formula", "field": "label", "expr": "'N = ' + (+d.key).toLocaleString()"}
+        ]
+      },
+
+      "properties": {
+        "update": {
+          "x": {"scale": "N", "field": "key", "offset": -10},
+          "dx": {"scale": "N", "band": true, "mult": 0.5},
+          "y": {"group": "height", "offset": 40},
+          "text": {"field": "label"},
+          "fontWeight": {"value": "bold"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "update": {
+          "x": {"group": "width", "mult": 0.5},
+          "y": {"value": -10},
+          "text": {"value": "Scatterplot Benchmark Results"},
+          "fontWeight": {"value": "bold"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
+    }
+  ]
+}
