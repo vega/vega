@@ -57,8 +57,8 @@ input[type="range"] { width: 280px; }
         },
         {
           "name": "indexDate",
-          "init": 1104566400000,
-          "streams": [{"type": "xPos", "expr": "date(xPos)"}]
+          "init": Date.now(),
+          "streams": [{"type": "xPos", "expr": "xPos"}]
         }
       ],
 
@@ -165,35 +165,35 @@ input[type="range"] { width: 280px; }
       ]
     };
 
-    var data = {stocks: []};
     var renderer = "canvas";
 
     vg.parse.spec(spec1, function(chart) {
       self.view1 = chart({
         el: "#view1",
-        data: data,
         renderer: renderer,
         hover: false
-      }).update();
+      });
+
+      update();
     });
 
     function update() {
-      var companies = ['AAPL', 'AMZN', 'GOOG', 'IBM', 'MSFT'];
+      var companies = ['AAPL', 'AMZN', 'MSFT', 'GOOG', 'IBM'];
       var numToLoad = companies.length;
       var dataLoaded = [];
       companies.forEach(function(company) {
         d3.jsonp('http://chartapi.finance.yahoo.com/instrument/1.0/'+company+'/chartdata;type=quote;range=1d/json?callback={callback}', function(d) {
           numToLoad--;
-          dataLoaded = dataLoaded.concat(d.series);
+          dataLoaded = dataLoaded.concat(d.series.map(function(pt){
+            return {
+              price: pt.close,
+              symbol: company,
+              date: pt.Timestamp*1000
+            };
+          }));
           if (numToLoad == 0) {
             dataLoaded.forEach(function(pt) {
-              var new_pt = {
-                price: pt.close,
-                symbol: company,
-                date: pt.Timestamp*1000
-              };
-              data.stocks.push(new_pt);
-              self.view1.model().data('stocks').add(new_pt);
+              self.view1.model().data('stocks').add(pt);
             });
             console.log(dataLoaded);
             self.view1.update({duration: 0});
@@ -201,8 +201,6 @@ input[type="range"] { width: 280px; }
         });
       });
     }
-
-    update();
 
   </script>
 </html>
