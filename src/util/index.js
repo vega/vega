@@ -62,6 +62,8 @@ define(function(require, module, exports) {
     return JSON.parse(JSON.stringify(obj));
   };
 
+  util.equal = function(a, b) { return JSON.stringify(a) == JSON.stringify(b) };
+
   util.field = function(f) {
     return f.split("\\.")
       .map(function(d) { return d.split("."); })
@@ -231,13 +233,18 @@ define(function(require, module, exports) {
     if (typeof alert !== "undefined") alert(msg);
   };
 
+  var ts;
   util.debug = function(input, args) {
     if(!config.debug) return;
     var log = Function.prototype.bind.call(console.log, console);
     args.unshift(input.stamp||-1);
+    args.unshift(Date.now() - ts);
     if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.reflow);
     log.apply(console, args);
+    ts = Date.now();
   };
+
+  util.Heap = require('heap');
 
   return util;
 });

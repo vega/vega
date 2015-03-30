@@ -13,7 +13,7 @@
       "type": "ordinal",
       "range": "width",
       "padding": 0.1, "round": true,
-      "domain": {"data": "weather", "field": "_id"}
+      "domain": {"data": "weather", "field": "id"}
     },
     {
       "name": "y",
@@ -40,7 +40,7 @@
       "from": {"data": "weather"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id"},
+          "x": {"scale": "x", "field": "id"},
           "dx": {"scale": "x", "band": true, "mult": 0.5},
           "y": {"value": 0},
           "fill": {"value": "#000"},
@@ -55,7 +55,7 @@
       "from": {"data": "weather"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id"},
+          "x": {"scale": "x", "field": "id"},
           "width": {"scale": "x", "band": true, "offset": -1},
           "y": {"scale": "y", "field": "record.low"},
           "y2": {"scale": "y", "field": "record.high"},
@@ -68,7 +68,7 @@
       "from": {"data": "weather"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id"},
+          "x": {"scale": "x", "field": "id"},
           "width": {"scale": "x", "band": true, "offset": -1},
           "y": {"scale": "y", "field": "normal.low"},
           "y2": {"scale": "y", "field": "normal.high"},
@@ -84,7 +84,7 @@
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id", "offset": 4},
+          "x": {"scale": "x", "field": "id", "offset": 4},
           "width": {"scale": "x", "band": true, "offset": -8},
           "y": {"scale": "y", "field": "actual.low"},
           "y2": {"scale": "y", "field": "actual.high"},
@@ -100,7 +100,7 @@
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id", "offset": 9},
+          "x": {"scale": "x", "field": "id", "offset": 9},
           "width": {"scale": "x", "band": true, "offset": -18},
           "y": {"scale": "y", "field": "forecast.low.low"},
           "y2": {"scale": "y", "field": "forecast.high.high"},
@@ -116,7 +116,7 @@
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id", "offset": 4},
+          "x": {"scale": "x", "field": "id", "offset": 4},
           "width": {"scale": "x", "band": true, "offset": -8},
           "y": {"scale": "y", "field": "forecast.low.low"},
           "y2": {"scale": "y", "field": "forecast.low.high"},
@@ -132,7 +132,7 @@
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "_id", "offset": 4},
+          "x": {"scale": "x", "field": "id", "offset": 4},
           "width": {"scale": "x", "band": true, "offset": -8},
           "y": {"scale": "y", "field": "forecast.high.low"},
           "y2": {"scale": "y", "field": "forecast.high.high"},

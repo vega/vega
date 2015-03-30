@@ -10,9 +10,10 @@ define(function(require, exports, module) {
   var GROUP_PROPERTY = {width: 1, height: 1};
 
   function Scale(model, def, parent) {
-    this._model = model;
-    this._def = def;
-    this._parent = parent;
+    this._model   = model;
+    this._def     = def;
+    this._parent  = parent;
+    this._updated = false;
     return Node.prototype.init.call(this, model.graph);
   }
 
@@ -22,12 +23,14 @@ define(function(require, exports, module) {
     var self = this,
         fn = function(group) { scale.call(self, group); };
 
+    this._updated = false;
     input.add.forEach(fn);
     input.mod.forEach(fn);
 
     // Scales are at the end of an encoding pipeline, so they should forward a
     // reflow pulse. Thus, if multiple scales update in the parent group, we don't
     // reevaluate child marks multiple times. 
+    if(this._updated) input.scales[this._def.name] = 1;
     return changeset.create(input, true);
   };
 
@@ -67,12 +70,14 @@ define(function(require, exports, module) {
       if (!ctor) util.error("Unrecognized scale type: " + type);
       (scale = ctor()).type = scale.type || type;
       scale.scaleName = this._def.name;
+      scale._prev = {};
     }
     return scale;
   }
 
   function ordinal(scale, rng, group) {
     var def = this._def,
+        prev = scale._prev,
         domain, sort, str, refs, dataDrivenRange = false;
     
     // range pre-processing for data-driven ranges
@@ -83,9 +88,15 @@ define(function(require, exports, module) {
     
     // domain
     domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
-    if (domain) scale.domain(domain);
+    if (domain && !util.equal(prev.domain, domain)) {
+      scale.domain(domain);
+      prev.domain = domain;
+      this._updated = true;
+    } 
 
     // range
+    if(util.equal(prev.range, rng)) return;
+
     str = typeof rng[0] === 'string';
     if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
       scale.range(rng); // color or shape values
@@ -96,23 +107,37 @@ define(function(require, exports, module) {
     } else {
       scale.rangeBands(rng, def.padding||0);
     }
+
+    prev.range = rng;
+    this._updated = true;
   }
 
   function quantitative(scale, rng, group) {
     var def = this._def,
+        prev = scale._prev,
         domain, interval;
 
     // domain
     domain = (def.type === C.QUANTILE)
       ? dataRef.call(this, C.DOMAIN, def.domain, scale, group)
       : domainMinMax.call(this, scale, group);
-    scale.domain(domain);
+    if (domain && !util.equal(prev.domain, domain)) {
+      scale.domain(domain);
+      prev.domain = domain;
+      this._updated = true;
+    } 
 
     // range
     // vertical scales should flip by default, so use XOR here
     if (def.range === "height") rng = rng.reverse();
+    if(util.equal(prev.range, rng)) return;
     scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
+    prev.range = rng;
+    this._updated = true;
 
+    // TODO: Support signals for these properties. Until then, only eval
+    // them once.
+    if(this._stamp > 0) return;
     if (def.exponent && def.type===C.POWER) scale.exponent(def.exponent);
     if (def.clamp) scale.clamp(true);
     if (def.nice) {
@@ -140,7 +165,7 @@ define(function(require, exports, module) {
     if(!cache) {
       cache = scale[ck] = new Stats(graph), meas = [];
       if(uniques && sort) meas.push(sort.stat);
-      else if(!uniques) meas.push(C.MIN, C.MAX);
+      else if(!uniques)   meas.push(C.MIN, C.MAX);
       cache.measures.set(cache, meas);
     }
 
@@ -148,7 +173,7 @@ define(function(require, exports, module) {
       r = refs[i];
       from = r.data || "vg_"+group.datum._id;
       data = graph.data(from)
-        .needsPrev(true)
+        .revises(true)
         .last();
 
       if(data.stamp <= this._stamp) continue;
@@ -177,15 +202,21 @@ define(function(require, exports, module) {
 
     data = cache.data();
     if(uniques) {
-      keys = util.keys(data).filter(function(k) { return data[k] != null; });
+      keys = util.keys(data)
+        .filter(function(k) { return data[k] != null; });
+
       if(sort) {
         sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-        sort = (sort == C.DESC ? "-" : "+") + cache.on.get(graph).field;
+        sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.on.get(graph).field;
         sort = util.comparator(sort);
-        return keys.map(function(k) { return data[k] }).sort(sort);
-      } else {
-        return keys;
+        keys = keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
+          .sort(sort)
+          .map(function(k) { return k.key });
+      // } else {  // "First seen" order
+      //   sort = util.comparator("tpl._id");
       }
+
+      return keys;
     } else {
       data = data[""]; // Unpack flat aggregation
       return data == null ? [] : [data.tpl.min, data.tpl.max];

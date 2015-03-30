@@ -6,6 +6,7 @@ var STATIC_SPECS = [
   "grouped_bar",
   "lifelines",
   "parallel_coords",
+  "scatter_matrix",
   "stocks",
   "weather"
 ];
@@ -14,6 +15,8 @@ var INTERACTIVE_SPECS = [
   "shiftclick_select",
   "brush",
   "brush_interactor",
+  "index_chart",
+  "linking",
   "panzoom_points",
   "overview+detail",
   "handles"

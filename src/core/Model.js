@@ -27,7 +27,7 @@ define(function(require, exports, module) {
   proto.data = function() {
     var data = this.graph.data.apply(this.graph, arguments);
     if(arguments.length > 1) {  // new Datasource
-      this._node.addListener(data._pipeline[0]);
+      this._node.addListener(data.pipeline()[0]);
     }
 
     return data;
@@ -50,17 +50,11 @@ define(function(require, exports, module) {
   proto.scene = function(renderer) {
     if(!arguments.length) return this._scene;
     if(this._builder) this._node.removeListener(this._builder.disconnect());
-    this._builder = new GroupBuilder(this, renderer, this._defs.marks, this._scene={});
-    this._node.addListener(this._builder);
+    this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
+    this._node.addListener(this._builder.connect());
+    var p = this._builder.pipeline();
+    p[p.length-1].addListener(renderer);
     return this;
-  };
-
-  // Helper method to run signals through top-level scales
-  proto.scale = function(spec, value) {
-    if(!spec.scale) return value;
-    var scale = this._scene.items[0].scale(spec.scale);
-    if(!scale) return value;
-    return spec.invert ? scale.invert(value) : scale(value);
   };
 
   proto.addListener = function(l) { this._node.addListener(l); };

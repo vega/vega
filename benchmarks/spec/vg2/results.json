@@ -1,0 +1,148 @@
+{
+  "width": 500,
+  "height": 175,
+  "data": [
+    {
+      "name": "table",
+      "url": "../benchmarks/results/trellis.folded.json",
+      "transform": [
+        {"type": "filter", "test": "d.N > 100"},
+        {"type": "filter", "test": "d.operation.match(/parsed|rendered/) == null"}
+      ]
+    },
+    {
+      "name": "data_sizes",
+      "source": "table",
+      "transform": [{"type": "facet", "keys": ["N"]}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "N",
+      "type": "ordinal",
+      "range": "width",
+      "padding": 0.1,
+      "domain": {"data": "table", "field": "N"}
+    },
+    {
+      "name": "op",
+      "type": "ordinal",
+      "range": "height",
+      "padding": 0.1,
+      "domain": {"data": "table", "field": "operation"}
+    },
+    {
+      "name": "cond",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "condition"},
+      "range": ["#FDCC66", "#5DA2FD", "#CC99CD", "#98C998"]
+    }
+  ],
+
+  "axes": [{"type": "y", "scale": "op", "title": "Task", "titleOffset": 40}],
+
+  "marks": [
+    {
+      "name": "groups",
+      "type": "group",
+      "from": {"data": "data_sizes"},
+
+      "properties": {
+        "update": {
+          "x": {"scale": "N", "field": "key", "offset": -10},
+          "width": {"scale": "N", "band": true},
+          "y": {"value": 0.5},
+          "height": {"group": "height"},
+          "stroke": {"value": "#ccc"},
+          "strokeWidth": {"value": 0.5}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": {"field": "mean"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x", "ticks": 5}],
+
+      "marks": [
+        {
+          "type": "group",
+          "from": {
+            "transform": [{"type": "facet", "keys": ["operation"]}]
+          },
+          "properties": {
+            "update": {
+              "y": {"scale": "op", "field": "key"},
+              "height": {"scale": "op", "band": true}
+            }
+          },
+
+          "scales": [
+            {
+              "name": "y",
+              "type": "ordinal",
+              "range": "height",
+              "domain": {"field": "condition"}
+            }
+          ],
+
+          "marks": [
+            {
+              "type": "rect",
+              "properties": {
+                "update": {
+                  "x": {"scale": "x", "value": 0},
+                  "x2": {"scale": "x", "field": "mean"},
+                  "y": {"scale": "y", "field": "condition"},
+                  "height": {"scale": "y", "band": true},
+                  "fill": {"scale": "cond", "field": "condition"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "data_sizes",
+        "transform": [
+          {"type": "formula", "field": "label", "expr": "'N = ' + (+d.key).toLocaleString()"}
+        ]
+      },
+
+      "properties": {
+        "update": {
+          "x": {"scale": "N", "field": "key", "offset": -10},
+          "dx": {"scale": "N", "band": true, "mult": 0.5},
+          "y": {"value": 0},
+          "text": {"field": "label"},
+          "fontWeight": {"value": "bold"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "update": {
+          "x": {"group": "width", "mult": 0.5},
+          "y": {"group": "height", "offset": 40},
+          "text": {"value": "Time Taken (ms)"},
+          "fontWeight": {"value": "bold"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
+    }
+  ]
+}

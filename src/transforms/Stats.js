@@ -66,8 +66,19 @@ define(function(require, exports, module) {
   };
 
   proto._new_cell = function(x, k) {
-    var cell = this.__facet || tuple.create(x, x._prev);
-    return new this._Measures(cell);
+    var group_by = this.group_by.get(this._graph),
+        fields = group_by.fields, acc = group_by.accessors,
+        i, len;
+
+    var t = this.__facet || {};
+    if(!this.__facet) {
+      for(i=0, len=fields.length; i<len; ++i) {
+        t[fields[i]] = acc[i](x);
+      }
+      t = tuple.ingest(t, null);
+    }
+
+    return new this._Measures(t);
   };
 
   proto._add = function(x) {

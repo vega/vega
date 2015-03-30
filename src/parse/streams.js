@@ -15,11 +15,22 @@ define(function(require, exports, module) {
         spec  = model.defs().signals,
         register = {}, nodes = {};
 
+    function scale(def, value, item) {
+      if(!item || !item.scale) {
+        item = (item && item.mark) ? item.mark.group : model.scene().items[0];
+      }
+
+      var scale = item.scale(def.scale.signal || def.scale);
+      if(!scale) return value;
+      return def.invert ? scale.invert(value) : scale(value);
+    }
+
     function signal(sig, selector, exp, spec) {
-      var n = new Node(graph);
+      var n = new Node(graph),
+          item = spec.item ? graph.signal(spec.item.signal) : null;
       n.evaluate = function(input) {
         var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
-        if(spec.scale) val = model.scale(spec, val);
+        if(spec.scale) val = scale(spec, val, item ? item.value() : null);
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.reflow = true;
@@ -84,7 +95,7 @@ define(function(require, exports, module) {
 
         if(selector[x].event) event(s[x], selector[x], val, sp);
         else if(selector[x].signal) signal(s[x], selector[x], val, sp);
-        else if(selector[x].stream) mergedStream(s[x], selector[x], val, sp);
+        else if(selector[x].stream) mergedStream(s[x], selector[x].stream, val, sp);
         s[x].addListener(router);
       });
     };
@@ -122,14 +133,13 @@ define(function(require, exports, module) {
         var cs = changset.create(null, true),
             pad = view.padding(),
             filtered = false,
-            val, h, i, m, d, p = {};
+            val, h, i, m, d;
 
         evt.preventDefault(); // Stop text selection
-
-        // Stash event in d3.event so we can calculate relative positions
-        d3.event = evt, m = d3.mouse(view._el), p.x = m[0] - pad.left, p.y = m[1] - pad.top;
+        m = d3.mouse((d3.event=evt, view._el)); // Relative position within container
         item = item||{};
         d = item.datum||{};
+        var p = {x: m[0] - pad.left, y: m[1] - pad.top};
 
         for(i = 0; i < handlers.length; i++) {
           h = handlers[i];
@@ -139,7 +149,7 @@ define(function(require, exports, module) {
           if(filtered) continue;
           
           val = expr.eval(graph, h.exp.fn, d, evt, item, p, h.exp.signals); 
-          if(h.spec.scale) val = model.scale(h.spec, val);
+          if(h.spec.scale) val = scale(h.spec, val, item);
           h.signal.value(val);
           cs.signals[h.signal.name()] = 1;
         }

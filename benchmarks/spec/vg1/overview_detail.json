@@ -1,0 +1,123 @@
+{
+  "width": 720,
+  "height": 480,
+  "data": [
+    {
+      "name": "sp500",
+      "url": "data/sp500.json",
+      "format": {"parse": {"price": "number", "date": "date"}}
+    },
+    {
+      "name": "sp500_filtered",
+      "source": "sp500"
+    },
+    {
+      "name": "brush",
+      "values": [{"min": 0, "max": 0}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "xContext",
+      "type": "time",
+      "range": [0, 720],
+      "domain": {"data": "sp500", "field": "data.date"}
+    },
+    {
+      "name": "yContext",
+      "type": "linear",
+      "range": [70, 0],
+      "nice": true,
+      "domain": {"data": "sp500", "field": "data.price"}
+    },
+    {
+      "name": "xFocus",
+      "type": "time",
+      "range": [0, 720],
+      "domain": {"data": "sp500_filtered", "field": "data.date"}
+    },
+    {
+      "name": "yFocus",
+      "type": "linear",
+      "range": [390, 0],
+      "nice": true,
+      "domain": {"data": "sp500_filtered", "field": "data.price"}
+    }
+
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 0},
+          "height": {"value": 390},
+          "width": {"value": 720}
+        }
+      },
+      "axes": [
+        {"type": "x", "scale": "xFocus"},
+        {"type": "y", "scale": "yFocus"}
+      ],
+      "marks": [
+        {
+          "type": "area",
+          "from": {"data": "sp500_filtered"},
+          "properties": {
+            "update": {
+              "x": {"scale": "xFocus", "field": "data.date"},
+              "y": {"scale": "yFocus", "field": "data.price"},
+              "y2": {"scale": "yFocus", "value": 0},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 430},
+          "height": {"value": 70},
+          "width": {"value": 720}
+        }
+      },
+      "axes": [
+        {"type": "x", "scale": "xContext"}      
+      ],
+      "marks": [
+        {
+          "type": "area",
+          "from": {"data": "sp500"},
+          "properties": {
+            "update": {
+              "x": {"scale": "xContext", "field": "data.date"},
+              "y": {"scale": "yContext", "field": "data.price"},
+              "y2": {"scale": "yContext", "value": 0},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "brush"},
+          "properties": {
+            "update": {
+              "y": {"value": 0},
+              "height": {"value":70},
+              "x": {"field": "data.min"},
+              "x2": {"field": "data.max"},
+              "fill": {"value": "#333"},
+              "fillOpacity": {"value":0.2},
+              "stroke": {"value":"white"},
+              "strokeOpacity": {"value":0.5}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

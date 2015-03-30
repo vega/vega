@@ -1,0 +1,117 @@
+{
+  "width": 200,
+  "height": 720,
+  "data": [
+    {
+      "name": "barley",
+      "url": "data/barley.json"
+    },
+    {
+      "name": "variety",
+      "source": "barley",
+      "transform": [
+        {
+          "type": "stats", 
+          "on": {"field": "yield"},
+          "group_by": ["variety"],
+          "measures": ["median"]
+        },
+        {"type": "sort", "by": "-median"}
+      ]
+    },
+    {
+      "name": "site",
+      "source": "barley",
+      "transform": [
+        {
+          "type": "stats", 
+          "on": {"field": "yield"},
+          "group_by": ["site"],
+          "measures": ["median"]
+        },
+        {"type": "sort", "by": "-median"}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "g",
+      "type": "ordinal",
+      "range": "height",
+      "padding": 0.15,
+      "domain": {"data": "site", "field": "site"}
+    },
+    {
+      "name": "x",
+      "type": "linear",
+      "nice": true,
+      "range": "width",
+      "domain": {"data": "barley", "field": "yield"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "range": "category10",
+      "domain": {"data": "barley", "field": "year"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "text",
+      "from": {"data": "site"},
+      "properties": {
+        "update": {
+          "x": {"group": "width", "mult": 0.5},
+          "y": {"scale": "g", "field": "site", "offset": -2},
+          "fontWeight": {"value": "bold"},
+          "text": {"field": "site"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "group",
+      "from": {
+        "data": "barley",
+        "transform": [{"type": "facet", "keys": ["site"]}]
+      },
+      "scales": [
+        {
+          "name": "y",
+          "type": "ordinal",
+          "range": "height",
+          "points": true,
+          "padding": 1.2,
+          "domain": {"data": "variety", "field": "variety"}
+        }
+      ],
+
+      "properties": {
+        "update": {
+          "x": {"value": 0.5},
+          "y": {"scale": "g", "field": "key"},
+          "height": {"scale": "g", "band": true},
+          "width": {"group": "width"},
+          "stroke": {"value": "#ccc"}
+        }
+      },
+      "marks": [
+        {
+          "type": "symbol",
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "yield"},
+              "y": {"scale": "y", "field": "variety"},
+              "size": {"value": 50},
+              "stroke": {"scale": "c", "field": "year"},
+              "strokeWidth": {"value": 2}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

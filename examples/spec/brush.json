@@ -12,8 +12,7 @@
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
       "streams": [
-        {"type": "mousedown", "expr": "p"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "p"}
+        {"type": "mousedown, mouseup, [mousedown, mouseup] > mousemove", "expr": "p"}
       ]
     }
   ],
@@ -66,7 +65,7 @@
       "name": "c",
       "type": "ordinal",
       "domain": {"data": "iris", "field": "species"},
-      "range": ["#800", "#080", "#008"]
+      "range": "category10"
     }
   ],
 

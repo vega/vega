@@ -1,0 +1,103 @@
+{
+  "width": 300,
+  "height": 240,
+
+  "signals": [
+    {"name": "foldField", "init": "silver"},
+    {"name": "norm1", "init": "gdp"},
+    {"name": "norm2", "init": "pop"}
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"country":"US",     "gold":12, "silver":13, "bronze":15, "gdp": 15680, "pop": 360,   "athletes": 241},
+        {"country":"Canada", "gold": 5, "silver": 4, "bronze": 3, "gdp": 1821,  "pop": 34,    "athletes": 90},
+        {"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2, "gdp": 1177,  "pop": 120,   "athletes": 78},
+        {"country":"Belize", "gold": 0, "silver": 0, "bronze": 0, "gdp": 1.5,   "pop": 0.324, "athletes": 5}
+      ]
+    },
+    {
+      "name": "countries",
+      "source": "table",
+      "transform": [      
+        {"type": "fold", "on": ["gold", {"signal": "foldField"}]},
+        {"type": "formula", "field": "norm1", "expr": "(d.gold + d.silver + d.bronze)/(d[norm1]||1)"},
+        {"type": "formula", "field": "norm2", "expr": "(d.gold + d.silver + d.bronze)/(d[norm2]||1)"},
+        {
+          "type": "facet", "keys": ["country"],
+          "transform": [
+            {"type": "formula", "field": "norm2", "expr": "(d.gold + d.silver + d.bronze)/(d[norm2]||1)"}
+          ]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "country",
+      "type": "ordinal",
+      "range": "height",
+      "padding": 0.2,
+      "domain": {"data": "table", "field": "country"}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": ["gold", "silver", "bronze"],
+      "range": "category20"
+    }
+  ],
+
+  "axes": [
+    {"type": "y", "scale": "country"}
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {"data": "countries"},
+      "properties": {
+        "update": {
+          "y": {"scale": "country", "field": "key"},
+          "height": {"scale": "country", "band": true}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "val",
+          "range": [0, 300],
+          "round": true,
+          "nice": true,
+          "domain": {"field": "value"}
+        },
+        {
+          "name": "pos",
+          "type": "ordinal",
+          "range": "height",
+          "domain": {"field": "key"}
+        }
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "properties": {
+            "update": {
+              "y": {"scale": "pos", "field": "key"},
+              "height": {"scale": "pos", "band": true},
+              "x": {"scale": "val", "field": "value"},
+              "x2": {"scale": "val", "value": 0},
+              "fill": {"scale": "color", "field": "key"}
+            }
+          }
+        }
+      ]
+
+    }
+  ]
+
+}

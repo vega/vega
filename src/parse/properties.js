@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
-  var tuple = require('../dataflow/tuple'),
+  var d3 = require('d3'),
+      tuple = require('../dataflow/tuple'),
       util = require('../util/index'),
       config = require('../util/config');
 
@@ -68,8 +69,9 @@ define(function(require, exports, module) {
     try {
       var encoder = Function("item", "group", "trans", "db", 
         "signals", "predicates", code);
-      encoder.tpl = tuple;
+      encoder.tpl  = tuple;
       encoder.util = util;
+      encoder.d3   = d3; // For color spaces
       return {
         encode: encoder,
         signals: util.keys(deps.signals),
@@ -110,13 +112,13 @@ define(function(require, exports, module) {
       util.keys(r.input).forEach(function(k) {
         var ref = valueRef(i, r.input[k]);
         input.push(util.str(k)+": "+ref.val);
-        signals.concat(ref.signals);
-        scales.concat(ref.scales);
+        if(ref.signals) signals.push.apply(signals, util.array(ref.signals));
+        if(ref.scales)  scales.push.apply(scales, util.array(ref.scales));
       });
 
       ref = valueRef(name, r);
-      signals.concat(ref.signals);
-      scales.concat(ref.scales);
+      if(ref.signals) signals.push.apply(signals, util.array(ref.signals));
+      if(ref.scales)  scales.push.apply(scales, util.array(ref.scales));
 
       if(predName) {
         signals.push.apply(signals, pred.signals);
@@ -139,7 +141,7 @@ define(function(require, exports, module) {
   function valueRef(name, ref) {
     if (ref == null) return null;
     var isColor = name==="fill" || name==="stroke";
-    var signalName = null;
+    var signals = [];
 
     if (isColor) {
       if (ref.c) {
@@ -154,15 +156,15 @@ define(function(require, exports, module) {
     }
 
     // initialize value
-    var val = null;
+    var val = null, signalRef = null;
     if (ref.value !== undefined) {
       val = util.str(ref.value);
     }
 
     if (ref.signal !== undefined) {
-      var signalRef = util.field(ref.signal);
+      signalRef = util.field(ref.signal);
       val = "signals["+signalRef.map(util.str).join("][")+"]"; 
-      signalName = signalRef.shift();
+      signals.push(signalRef.shift());
     }
 
     // get field reference for enclosing group
@@ -180,22 +182,34 @@ define(function(require, exports, module) {
       if (util.isString(ref.field)) {
         val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
         if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
+      } else if(ref.field.signal) {
+        signalRef = util.field(ref.field.signal);
+        val = "item.datum[signals["+signalRef.map(util.str).join("][")+"]]";
+        if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
+        signals.push(signalRef.shift());
       } else {
         val = "this.util.accessor(group.datum["
             + util.field(ref.field.group).map(util.str).join("][")
-            + "])(item.datum.data)";
+            + "])(item.datum)";
       }
     } else if (ref.group != null) {
       val = grp;
     }
 
     if (ref.scale != null) {
-      var scale = util.isString(ref.scale)
-        ? util.str(ref.scale)
-        : (ref.scale.group ? "group" : "item")
+      var scale = null;
+      if(util.isString(ref.scale)) {
+        scale = util.str(ref.scale);
+      } else if(ref.scale.signal) {
+        signalRef = util.field(ref.scale.signal);
+        scale = "signals["+signalRef.map(util.str).join("][")+"]";
+        signals.push(signalRef.shift());
+      } else {
+        scale = (ref.scale.group ? "group" : "item")
           + ".datum[" + util.str(ref.scale.group || ref.scale.field) + "]";
-      scale = "group.scale(" + scale + ")";
+      }
 
+      scale = "group.scale(" + scale + ")";
       if(ref.invert) scale += ".invert";  // TODO: ordinal scales
 
       // run through scale function if val specified.
@@ -211,14 +225,25 @@ define(function(require, exports, module) {
     // multiply, offset, return value
     val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")"
       + (ref.offset ? " + " + util.number(ref.offset) : "");
-    return {val: val, signals: signalName, scales: ref.scale};
+    return {val: val, signals: signals, scales: ref.scale};
   }
 
   function colorRef(type, x, y, z) {
     var xx = x ? valueRef("", x) : config.color[type][0],
         yy = y ? valueRef("", y) : config.color[type][1],
-        zz = z ? valueRef("", z) : config.color[type][2];
-    return "(this.d3." + type + "(" + [xx,yy,zz].join(",") + ') + "")';
+        zz = z ? valueRef("", z) : config.color[type][2]
+        signals = [], scales = [];
+
+    [xx, yy, zz].forEach(function(v) {
+      if(v.signals) signals.push.apply(signals, v.signals);
+      if(v.scales)  scales.push(v.scales);
+    });
+
+    return {
+      val: "(this.d3." + type + "(" + [xx.val, yy.val, zz.val].join(",") + ') + "")',
+      signals: signals,
+      scales: scales
+    };
   }
 
   return compile;

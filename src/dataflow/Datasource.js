@@ -17,44 +17,50 @@ define(function(require, exports, module) {
 
     this._pipeline  = null; // Pipeline of transformations.
     this._collector = null; // Collector to materialize output of pipeline
-    this._needsPrev = false; // Does any pipeline operator need to track prev?
+    this._revises = false; // Does any pipeline operator need to track prev?
   };
 
   var proto = Datasource.prototype;
 
+  proto.name = function(name) {
+    if(!arguments.length) return this._name;
+    return (this._name = name, this);
+  };
+
   proto.source = function(src) {
     if(!arguments.length) return this._source;
-    this._source = this._graph.data(src);
-    return this;
+    return (this._source = this._graph.data(src));
   };
 
   proto.add = function(d) {
-    var add = this._input.add,
-        prev = this._needsPrev ? null : undefined;
+    var prev = this._revises ? null : undefined;
 
-    add.push.apply(add, util.array(d).map(function(d) { return tuple.create(d, prev); }));
+    this._input.add = this._input.add
+      .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
     return this;
   };
 
   proto.remove = function(where) {
     var d = this._data.filter(where);
-    this._input.rem.push.apply(this._input.rem, d);
+    this._input.rem = this._input.rem.concat(d);
     return this;
   };
 
   proto.update = function(where, field, func) {
     var mod = this._input.mod,
-        prev = this._needsPrev ? null : undefined; 
+        ids = util.tuple_ids(mod),
+        prev = this._revises ? null : undefined; 
 
     this._input.fields[field] = 1;
     this._data.filter(where).forEach(function(x) {
       var prev = x[field],
           next = func(x);
       if (prev !== next) {
-        if(x._prev === undefined && prev !== undefined) x._prev = C.SENTINEL;
-        tuple.prev(x, field);
-        x.__proto__[field] = next;
-        if(mod.indexOf(x) < 0) mod.push(x);
+        tuple.set(x, field, next);
+        if(ids[x._id] !== 1) {
+          mod.push(x);
+          ids[x._id] = 1;
+        }
       }
     });
     return this;
@@ -70,16 +76,19 @@ define(function(require, exports, module) {
     return this;
   };
 
-  proto.needsPrev = function(p) {
+  function set_prev(d) { if(d._prev === undefined) d._prev = C.SENTINEL; }
+
+  proto.revises = function(p) {
+    if(!arguments.length) return this._revises;
+
     // If we've not needed prev in the past, but a new dataflow node needs it now
     // ensure existing tuples have prev set.
-    if(!this._needsPrev && p) { 
-      this._data.forEach(function(d) { 
-        if(d._prev === undefined) d._prev = C.SENTINEL 
-      });
+    if(!this._revises && p) {
+      this._data.forEach(set_prev);
+      this._input.add.forEach(set_prev); // New tuples that haven't yet been merged into _data
     }
 
-    this._needsPrev = this._needsPrev || p;
+    this._revises = this._revises || p;
     return this;
   };
 
@@ -92,13 +101,14 @@ define(function(require, exports, module) {
 
   proto.pipeline = function(pipeline) {
     var ds = this, n, c;
+    if(!arguments.length) return this._pipeline;
 
     if(pipeline.length) {
       // If we have a pipeline, add a collector to the end to materialize
       // the output.
       ds._collector = new Collector(this._graph);
       pipeline.push(ds._collector);
-      ds._needsPrev = pipeline.some(function(p) { return p.needsPrev(); });
+      ds._revises = pipeline.some(function(p) { return p.revises(); });
     }
 
     // Input node applies the datasource's delta, and propagates it to 
@@ -111,18 +121,23 @@ define(function(require, exports, module) {
       util.debug(input, ["input", ds._name]);
 
       var delta = ds._input, 
-          out = changeset.create(input);
+          out = changeset.create(input),
+          rem;
+
+      // Delta might contain fields updated through API
+      util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
 
       if(input.reflow) {
-        out.mod = ds._source ? ds._source.values().slice() : ds._data.slice();
+        out.mod = ds._data.slice();
       } else {
         // update data
-        var delta = ds._input;
-        var ids = util.tuple_ids(delta.rem);
+        if(delta.rem.length) {
+          rem = util.tuple_ids(delta.rem);
+          ds._data = ds._data
+            .filter(function(x) { return rem[x._id] !== 1 });
+        }
 
-        ds._data = ds._data
-          .filter(function(x) { return ids[x._id] !== 1; })
-          .concat(delta.add);
+        if(delta.add.length) ds._data = ds._data.concat(delta.add);
 
         // reset change list
         ds._input = changeset.create();
@@ -166,21 +181,22 @@ define(function(require, exports, module) {
   };
 
   proto.listener = function() { 
-    var l = new Node(this._graph),
+    var l = new Node(this._graph).router(true),
         dest = this,
-        prev = this._needsPrev ? null : undefined;
+        prev = this._revises ? null : undefined;
 
     l.evaluate = function(input) {
-      this._cache = this._cache || {};  // to propagate tuples correctly
-      var output  = changeset.create(input);
+      dest._srcMap = dest._srcMap || {};  // to propagate tuples correctly
+      var map = dest._srcMap,
+          output  = changeset.create(input);
 
       output.add = input.add.map(function(t) {
-        return (l._cache[t._id] = tuple.create(t, t._prev !== undefined ? t._prev : prev));
+        return (map[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
       });
-      output.mod = input.mod.map(function(t) { return l._cache[t._id]; });
+      output.mod = input.mod.map(function(t) { return map[t._id]; });
       output.rem = input.rem.map(function(t) { 
-        var o = l._cache[t._id];
-        l._cache[t._id] = null;
+        var o = map[t._id];
+        map[t._id] = null;
         return o;
       });
 
@@ -198,6 +214,8 @@ define(function(require, exports, module) {
     } else {
       this._pipeline[this._pipeline.length-1].addListener(l);      
     }
+
+    return this;
   };
 
   proto.removeListener = function(l) {

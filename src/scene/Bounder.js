@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 
   function Bounder(model, mark) {
     this._mark = mark;
-    return Node.prototype.init.call(this, model.graph);
+    return Node.prototype.init.call(this, model.graph).router(true);
   }
 
   var proto = (Bounder.prototype = new Node());

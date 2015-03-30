@@ -22,7 +22,7 @@ define(function(require, exports, module) {
         as = this.as.get(this._graph);
 
     o[as] = on.accessor(x);
-    return tuple.create(o, null);
+    return tuple.ingest(o, null);
   };
 
   proto.transform = function(input, reset) {

@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var d3 = require('d3'),
+  var Heap = require('heap'),
       Datasource = require('./Datasource'),
       Signal = require('./Signal'),
       changeset = require('./changeset'),
@@ -55,57 +55,48 @@ define(function(require, exports, module) {
     return value;
   };
 
-  var schedule = d3.bisector(function(a, b) {
+  var schedule = function(a, b) {
     // If the nodes are equal, propagate the non-reflow pulse first,
-    // so that we can ignore subsequent reflow pulses. To efficiently
-    // use the JS array, we want lower ranked nodes on the right so
-    // we can pop them. 
-    if(a.rank == b.rank) return a.pulse.reflow ? -1 : 1;
-    else return b.rank - a.rank; 
-  }); 
+    // so that we can ignore subsequent reflow pulses. 
+    if(a.rank == b.rank) return a.pulse.reflow ? 1 : -1;
+    else return a.rank - b.rank; 
+  };
 
   proto.propagate = function(pulse, node) {
-    var v, l, n, p, r, i, len;
+    var v, l, n, p, r, i, len, reflowed;
 
-    var pq = [];
-    pq.enq = function(x) {
-      var idx = schedule.left(this, x);
-      this.splice(idx, 0, x);
-    };
+    // new PQ with each propagation cycle so that we can pulse branches
+    // of the dataflow graph during a propagation (e.g., when creating
+    // a new inline datasource).
+    var pq = new Heap(schedule); 
 
     if(pulse.stamp) throw "Pulse already has a non-zero stamp"
 
     pulse.stamp = ++this._stamp;
-    pq.enq({ node: node, pulse: pulse, rank: node.rank() });
+    pq.push({ node: node, pulse: pulse, rank: node.rank() });
 
-    while (pq.length > 0) {
+    while (pq.size() > 0) {
       v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
+      reflowed = p.reflow && n.last() >= p.stamp;
+
+      if(reflowed) continue; // Don't needlessly reflow ops.
 
       // A node's rank might change during a propagation (e.g. instantiating
-      // a group's dataflow branch). Re-queue if it has.
+      // a group's dataflow branch). Re-queue if it has. T
+      // TODO: use pq.replace or pq.poppush?
       if(r != n.rank()) {
         util.debug(p, ['Rank mismatch', r, n.rank()]);
-        pq.enq({ node: n, pulse: p, rank: n.rank() });
+        pq.push({ node: n, pulse: p, rank: n.rank() });
         continue;
       }
 
-      var reflowed = p.reflow && n.last() >= p.stamp;
-      if(reflowed) continue; // Don't needlessly reflow ops.
-
-      var run = !!p.add.length || !!p.rem.length || n.router();
-      run = run || !reflowed;
-      run = run || n.reevaluate(p);
-
-      if(run) {
-        pulse = n.evaluate(p);
-        n.last(pulse.stamp);
-      }
+      p = this.evaluate(p, n);
 
       // Even if we didn't run the node, we still want to propagate 
       // the pulse. 
-      if (pulse !== this.doNotPropagate || !run) {
+      if (p !== this.doNotPropagate) {
         for (i = 0, len = l.length; i < len; i++) {
-          pq.enq({ node: l[i], pulse: pulse, rank: l[i]._rank });
+          pq.push({ node: l[i], pulse: p, rank: l[i]._rank });
         }
       }
     }
@@ -131,9 +122,9 @@ define(function(require, exports, module) {
 
       if(data.length > 0) {
         data.forEach(function(d) { 
-          var ds = graph.data(d);
-          ds.addListener(c); 
-          ds.needsPrev(n.needsPrev());
+          graph.data(d)
+            .revises(n.revises())
+            .addListener(c);
         });
       }
 
@@ -169,6 +160,20 @@ define(function(require, exports, module) {
     });
 
     return branch;
+  };
+
+  proto.reevaluate = function(pulse, node) {
+    var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
+        run = !!pulse.add.length || !!pulse.rem.length || node.router();
+    run = run || !reflowed;
+    return run || node.reevaluate(pulse);
+  };
+
+  proto.evaluate = function(pulse, node) {
+    if(!this.reevaluate(pulse, node)) return pulse;
+    pulse = node.evaluate(pulse);
+    node.last(pulse.stamp);
+    return pulse
   };
 
   return Graph;

@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
   var tuple = require('../dataflow/tuple'),
+      util = require('../util/index'),
       quickselect = require('../util/quickselect'),
       C = require('../util/constants');
 
@@ -10,6 +11,14 @@ define(function(require, exports, module) {
       add:  "this.cnt += 1;",
       rem:  "this.cnt -= 1;",
       set:  "this.cnt"
+    }),
+    "_counts": measure({
+      name: "_counts",
+      init: "this.cnts = {};",
+      add:  "this.cnts[v] = ++this.cnts[v] || 1;",
+      rem:  "this.cnts[v] = --this.cnts[v] < 0 ? 0 : this.cnts[v];",
+      set:  "",
+      req:  ["count"]
     }),
     "sum": measure({
       name: "sum",
@@ -58,30 +67,36 @@ define(function(require, exports, module) {
       set:  "Math.sqrt(this.dev / this.cnt)",
       req:  ["var"], idx: 5
     }),
-    "median": measure({
-      name: "median",
-      init: "this.val = [];",
-      add:  "this.val.push(v);",
-      rem:  "this.val[this.val.indexOf(v)] = this.val[this.val.length-1];" +
-            "this.val.length = this.val.length - 1;",
-      set:  "this.sel(~~(this.cnt/2), this.val)",
-      req: ["count"], idx: 6
-    }),
     "min": measure({
       name: "min",
-      init: "",
-      add: "",
-      rem: "",
-      set: "this.sel(0, this.val)",
-      req: ["median"]
+      init: "this.min = +Infinity;",
+      add:  "this.min = v < this.min ? v : this.min;",
+      rem:  "var self = this; this.min = v == this.min " +
+            "? this.keys(this.cnts).reduce(function(m, v) { " +
+            "   return self.cnts[(v = +v)] > 0 && v < m ? v : m }, +Infinity) " + 
+            ": this.min;",
+      set:  "this.min",
+      req: ["_counts"], idx: 6
     }),
     "max": measure({
       name: "max",
-      init: "",
-      add: "",
-      rem: "",
-      set: "this.sel(this.val.length-1, this.val)",
-      req: ["median"]
+      init: "this.max = -Infinity;",
+      add:  "this.max = v > this.max ? v : this.max;",
+      rem:  "var self = this; this.max = v == this.max " +
+            "? this.keys(this.cnts).reduce(function(m, v) { " +
+            "   return self.cnts[(v = +v)] > 0 && v > m ? v : m }, -Infinity) " + 
+            ": this.max;",
+      set:  "this.max",
+      req: ["_counts"], idx: 7
+    }),
+    "median": measure({
+      name: "median",
+      init: "this.vals = []; ",
+      add:  "if(this.vals) this.vals.push(v); ",
+      rem:  "this.vals = null;",
+      set:  "this.cnt % 2 ? this.sel(~~(this.cnt/2), this.vals, this.cnts) : "+
+            "0.5 * (this.sel(~~(this.cnt/2)-1, this.vals, this.cnts) + this.sel(~~(this.cnt/2), this.vals, this.cnts))",
+      req: ["_counts"], idx: 8
     })
   };
 
@@ -129,6 +144,7 @@ define(function(require, exports, module) {
     ctr.prototype.rem = Function("v", rem);
     ctr.prototype.set = Function("stamp", set);
     ctr.prototype.mod = mod;
+    ctr.prototype.keys = util.keys;
     ctr.prototype.sel = quickselect;
     ctr.prototype.tuple = tuple;
     return ctr;

@@ -15,13 +15,13 @@ define(function(require, exports, module) {
     return out;
   }
 
-  function finalize(cs) {
-    function rp(x) {
-      x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
-    }
+  function reset_prev(x) {
+    x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+  }
 
-    cs.add.forEach(rp);
-    cs.mod.forEach(rp);
+  function finalize(cs) {
+    for(i=0, len=cs.add.length; i<len; ++i) reset_prev(cs.add[i]);
+    for(i=0, len=cs.mod.length; i<len; ++i) reset_prev(cs.mod[i]);
   }
 
   function copy(a, b) {

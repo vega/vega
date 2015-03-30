@@ -1,9 +1,21 @@
-define(function() {
-  return function quickselect(k, x) {
+define(function(require, exports, module) {
+  var util = require('./index');
+
+  return function quickselect(k, x, c) {
     function swap(a, b) {
       var t = x[a];
       x[a] = x[b];
       x[b] = t;
+    }
+
+    // x may be null, in which case assemble an array from c (counts)
+    if(x === null) {
+      x = [];
+      util.keys(c).forEach(function(k) {
+        var i = 0, len = c[k];
+        k = +k || k;
+        for(; i<len; ++i) x.push(k);
+      });
     }
     
     var left = 0,

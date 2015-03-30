@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     this._output = {key: "key", value: "value"};
     this._cache = {};
 
-    return this.router(true).needsPrev(true);
+    return this.router(true).revises(true);
   }
 
   var proto = (Fold.prototype = new Transform());
@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
   function get_tuple(x, i, len) {
     var list = this._cache[x._id] || (this._cache[x._id] = Array(len));
-    return list[i] || (list[i] = tuple.create(x, x._prev));
+    return list[i] || (list[i] = tuple.derive(x, x._prev));
   };
 
   function fn(data, fields, accessors, out, stamp) {
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
     if(reset) rst.call(this, input, output);
 
     fn.call(this, input.add, fields, accessors, output.add, input.stamp);
-    fn.call(this, input.mod, fields, accessors, output.mod, input.stamp);
+    fn.call(this, input.mod, fields, accessors, reset ? output.add : output.mod, input.stamp);
     input.rem.forEach(function(x) {
       output.rem.push.apply(output.rem, fold._cache[x._id]);
       fold._cache[x._id] = null;

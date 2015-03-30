@@ -53,7 +53,7 @@ describe('Stats', function() {
       parseSpec(spec(['avg']), function(model) {
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count;
 
@@ -68,7 +68,7 @@ describe('Stats', function() {
       parseSpec(spec(['var']), function(model) {
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
@@ -85,7 +85,7 @@ describe('Stats', function() {
       parseSpec(spec(['varp']), function(model) {
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
@@ -102,7 +102,7 @@ describe('Stats', function() {
       parseSpec(spec(['stdev']), function(model) {
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
@@ -119,7 +119,7 @@ describe('Stats', function() {
       parseSpec(spec(['stdevp']), function(model) {
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
@@ -138,7 +138,7 @@ describe('Stats', function() {
             data = ds.values(),
             vals = values.map(function(d) { return d.y }).sort(),
             half = ~~(vals.length/2),
-            median = vals.length % 2 ? vals[half] : (vals[half-1] + vals[half])/2;
+            median = vals.length % 2 ? vals[half] : 0.5 * (vals[half-1] + vals[half]);
 
         expect(data).to.have.length(1);
         expect(data[0]).to.have.property('median', median);
@@ -194,7 +194,7 @@ describe('Stats', function() {
       parseSpec(s, function(model) {
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
@@ -235,7 +235,7 @@ describe('Stats', function() {
 
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
@@ -272,7 +272,7 @@ describe('Stats', function() {
 
         var ds = model.data('table'),
             data = ds.values(),
-            count = values.length
+            count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
             avg = sum/count,
             variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),

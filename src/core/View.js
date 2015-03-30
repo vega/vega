@@ -37,7 +37,7 @@ define(function(require, exports, module) {
   prototype.data = function(data) {
     var m = this.model();
     if (!arguments.length) return m.data();
-    util.keys(data).forEach(function(d) { m.data(d).add(data[d]); });
+    util.keys(data).forEach(function(d) { m.data(d).add(util.duplicate(data[d])); });
     return this;
   };
 
@@ -180,6 +180,9 @@ define(function(require, exports, module) {
           ? new Transition(opt.duration, opt.ease)
           : null;
 
+    // TODO: with streaming data API, adds should util.duplicate just parseSpec
+    // to prevent Vega from polluting the environment.
+
     var cs = changeset.create();
     if(trans) cs.trans = trans;
     if(opt.reflow !== undefined) cs.reflow = opt.reflow
@@ -199,8 +202,11 @@ define(function(require, exports, module) {
         }
 
         // For all updated datasources, finalize their changesets.
-        for(var ds in input.data) {
-          changeset.finalize(v._model.data(ds).last());
+        var d, ds;
+        for(d in input.data) {
+          ds = v._model.data(d);
+          if(!ds.revises()) continue;
+          changeset.finalize(ds.last());
         }
 
         return input;

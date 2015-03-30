@@ -31,29 +31,28 @@ define(function(require, exports, module) {
         enter  = props.enter,
         update = props.update,
         exit   = props.exit,
-        i, item;
+        i, len, item;
 
-    // Only do one traversal of items and use item.status instead
-    // of input.add/mod/rem.
-    for(i=0; i<items.length; ++i) {
-      item = items[i];
+    // Items marked for removal are at the head of items. Process them first.
+    for(i=0, len=input.rem.length; i<len; ++i) {
+      item = input.rem[i];
+      if(update) encode.call(this, update, item, input.trans);
+      if(exit)   encode.call(this, exit,   item, input.trans); 
+      if(input.trans && !exit) input.trans.interpolate(item, EMPTY);
+      else if(!input.trans) item.remove();
+    }
 
-      // enter set
-      if(item.status === C.ENTER) {
-        if(enter) encode.call(this, enter, item, input.trans, input.stamp);
-        item.status = C.UPDATE;
-      }
+    for(i=0, len=input.add.length; i<len; ++i) {
+      item = input.add[i];
+      if(enter)  encode.call(this, enter,  item, input.trans);
+      if(update) encode.call(this, update, item, input.trans);
+      item.status = C.UPDATE;
+    }
 
-      // update set      
-      if (item.status !== C.EXIT && update) {
-        encode.call(this, update, item, input.trans, input.stamp);
-      }
-      
-      // exit set
-      if (item.status === C.EXIT) {
-        if (exit) encode.call(this, exit, item, input.trans, input.stamp); 
-        if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
-        else if (!input.trans) items[i--].remove();
+    if(update) {
+      for(i=0, len=input.mod.length; i<len; ++i) {
+        item = input.mod[i];
+        encode.call(this, update, item, input.trans);
       }
     }
 

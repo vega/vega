@@ -27,7 +27,7 @@
       "name": "c",
       "type": "ordinal",
       "domain": {"data": "iris", "field": "species"},
-      "range": ["#800", "#080", "#008"]
+      "range": "category10"
     }
   ],
 

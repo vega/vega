@@ -30,7 +30,11 @@ define(function(require, exports, module) {
         field = this.field.get(this._graph);
 
     input.add.forEach(function(x) { f.call(t, x, field, input.stamp) });;
-    input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
+    
+    if(this.reevaluate(input)) {
+      input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
+    }
+
     input.fields[field] = 1;
     return input;
   };

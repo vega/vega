@@ -26,7 +26,7 @@ describe('Facet', function() {
     expect(facets[idx].values).to.have.length(len);
 
     for(i=0; i<len; ++i) {
-      expect(facets[idx].values[i].__proto__).to.deep.eql(values[min+i]);
+      expect(facets[idx].values[i]).to.deep.include(values[min+i]);
     }
   }
 
@@ -60,7 +60,7 @@ describe('Facet', function() {
 
       values.splice(3, 0, a1);
       values.push(a2, a3);
-      ds.add([a1, a2, a3]).fire();
+      ds.add(util.duplicate([a1, a2, a3])).fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
       expectFacet(facets, 0, 0, 3); // USA

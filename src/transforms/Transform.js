@@ -14,16 +14,21 @@ define(function(require, exports, module) {
     for (var name in params) {
       p = params[name];
       proto[name] = new Parameter(name, p.type);
-      if(p.default) proto[name].set(p.default);
+      if(p.default) proto[name].set(proto, p.default);
     }
+    proto._parameters = params;
   };
 
   var proto = (Transform.prototype = new Node());
-
+ 
   proto.clone = function() {
     var n = Node.prototype.clone.call(this);
     n.transform = this.transform;
-    for(var k in this) { n[k] = this[k]; }
+    n._parameters = this._parameters;
+    for(var k in this) { 
+      if(n[k]) continue;
+      n[k] = this[k]; 
+    }
     return n;
   };
 
@@ -31,7 +36,7 @@ define(function(require, exports, module) {
   proto.evaluate = function(input) {
     // Many transforms store caches that must be invalidated if
     // a signal value has changed. 
-    var reset = this.dependency(C.SIGNALS).some(function(s) { 
+    var reset = this._stamp < input.stamp && this.dependency(C.SIGNALS).some(function(s) { 
       return !!input.signals[s] 
     });
 

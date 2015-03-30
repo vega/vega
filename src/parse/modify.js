@@ -34,7 +34,7 @@ define(function(require, exports, module) {
       var datum = {}, 
           value = signal ? graph.signalRef(def.signal) : null,
           d = model.data(ds.name),
-          prev = d.needsPrev() ? null : undefined,
+          prev = d.revises() ? null : undefined,
           t = null;
 
       datum[def.field] = value;
@@ -43,7 +43,7 @@ define(function(require, exports, module) {
       // our dynamic data. W/o modifying ds._data, only the output
       // collector will contain dynamic tuples. 
       if(def.type == C.ADD) {
-        t = tuple.create(datum, prev);
+        t = tuple.ingest(datum, prev);
         input.add.push(t);
         d._data.push(t);
       } else if(def.type == C.REMOVE) {
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
         filter(def.field, value, input.rem, add);
         filter(def.field, value, input.add, rem);
         filter(def.field, value, input.mod, rem);
-        if(add.length == 0 && rem.length == 0) add.push(tuple.create(datum));
+        if(add.length == 0 && rem.length == 0) add.push(tuple.ingest(datum));
 
         input.add.push.apply(input.add, add);
         d._data.push.apply(d._data, add);
