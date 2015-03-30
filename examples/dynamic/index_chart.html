@@ -1,0 +1,208 @@
+<html>
+  <head>
+    <title>Vega Dynamic Data Test</title/>
+    <script src="../lib/d3.v3.min.js"></script>
+    <script src="../../vega2.js"></script>
+    <style>
+* { font-family: Helvetica Neue, Helvetica, Arial, sans-serif; }
+.view { display: block; }
+input[type="range"] { width: 280px; }
+.ctrl { display: inline-block; width: 90px; font-weight: bold; }
+.flash { display: none; font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <div><strong>Vega Dynamic Data Test</strong></div>
+    <div>
+      <div id="view1" class="view"></div>
+    </div>
+  </body>
+  <script>
+    d3.jsonp = function (url, callback) {
+      function rand() {
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+          c = '', i = -1;
+        while (++i < 15) c += chars.charAt(Math.floor(Math.random() * 52));
+        return c;
+      }
+
+      function create(url) {
+        var e = url.match(/callback=d3.jsonp.(\w+)/),
+          c = e ? e[1] : rand();
+        d3.jsonp[c] = function(data) {
+          callback(data);
+          delete d3.jsonp[c];
+          script.remove();
+        };
+        return 'd3.jsonp.' + c;
+      }
+
+      var cb = create(url),
+        script = d3.select('head')
+        .append('script')
+        .attr('type', 'text/javascript')
+        .attr('src', url.replace(/(\{|%7B)callback(\}|%7D)/, cb));
+    };
+  </script>
+  <script type="text/javascript">
+    var spec1 = {
+      "width": 750,
+      "height": 300,
+
+      "signals": [
+        {
+          "name": "xPos",
+          "init": 265,
+          "streams": [{"type": "mousemove", "expr": "p.x", "scale": "x", "invert": "true"}]
+        },
+        {
+          "name": "indexDate",
+          "init": 1104566400000,
+          "streams": [{"type": "xPos", "expr": "date(xPos)"}]
+        }
+      ],
+
+      "data": [
+        {"name": "stocks", "values":[]},
+        {
+          "name": "index",
+          "source": "stocks",
+          "transform": [{
+            "type": "filter",
+            "test": "d.date + 1296000000 >= indexDate && d.date - 1296000000 <= indexDate"
+          }]
+        },
+        {
+          "name": "indexified_stocks",
+          "source": "stocks",
+          "transform": [{
+            "type": "zip",
+            "with": "index",
+            "as": "index_term",
+            "key": "symbol",
+            "withKey": "symbol",
+            "default": {"price": 0}
+          }, {
+            "type": "formula",
+            "field": "indexed_price",
+            "expr": "d.index_term.price > 0 ? (d.price - d.index_term.price)/d.index_term.price : 0"
+          }]
+        }
+      ],
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "stocks", "field": "date"}
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "nice": true,
+          "domain": {"data": "indexified_stocks", "field": "indexed_price"}
+        },
+        {
+          "name": "color",
+          "type": "ordinal",
+          "domain": {"data": "stocks", "field": "symbol"},
+          "range": "category10"
+        }
+      ],
+      "axes": [
+        {"type": "x", "scale": "x", "tickSizeEnd": 0},
+        {"type": "y", "scale": "y", "grid": true, "layer": "back"}
+      ],
+      "marks": [
+        {
+          "type": "group",
+          "from": {
+            "data": "indexified_stocks",
+            "transform": [{"type": "facet", "keys": ["symbol"]}]
+          },
+          "marks": [
+            {
+              "type": "line",
+              "properties": {
+                "update": {
+                  "x": {"scale": "x", "field": "date"},
+                  "y": {"scale": "y", "field": "indexed_price"},
+                  "stroke": {"scale": "color", "field": "symbol"},
+                  "strokeWidth": {"value": 2}
+                }
+              }
+            },
+            {
+              "type": "text",
+              "from": {
+                "transform": [{"type": "filter", "test": "d.date == 1267430400000"}]
+              },
+              "properties": {
+                "update": {
+                  "x": {"scale": "x", "field": "date", "offset": 2},
+                  "y": {"scale": "y", "field": "indexed_price"},
+                  "fill": {"scale": "color", "field": "symbol"},
+                  "text": {"field": "symbol"},
+                  "baseline": {"value": "middle"}
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type":"rule",
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "signal": "indexDate"},
+              "y": {"value": 0},
+              "y2": {"value": 300},
+              "stroke": {"value": "red"}
+            }
+          }
+        }
+      ]
+    };
+
+    var data = {stocks: []};
+    var renderer = "canvas";
+
+    vg.parse.spec(spec1, function(chart) {
+      self.view1 = chart({
+        el: "#view1",
+        data: data,
+        renderer: renderer,
+        hover: false
+      }).update();
+    });
+
+    function update() {
+      var companies = ['AAPL', 'AMZN', 'GOOG', 'IBM', 'MSFT'];
+      var numToLoad = companies.length;
+      var dataLoaded = [];
+      companies.forEach(function(company) {
+        d3.jsonp('http://chartapi.finance.yahoo.com/instrument/1.0/'+company+'/chartdata;type=quote;range=1d/json?callback={callback}', function(d) {
+          numToLoad--;
+          dataLoaded = dataLoaded.concat(d.series);
+          if (numToLoad == 0) {
+            dataLoaded.forEach(function(pt) {
+              var new_pt = {
+                price: pt.close,
+                symbol: company,
+                date: pt.Timestamp*1000
+              };
+              data.stocks.push(new_pt);
+              self.view1.model().data('stocks').add(new_pt);
+            });
+            console.log(dataLoaded);
+            self.view1.update({duration: 0});
+          }
+        });
+      });
+    }
+
+    update();
+
+  </script>
+</html>
