@@ -177,6 +177,7 @@ input[type="range"] { width: 280px; }
       update();
     });
 
+    var firstDone = {};
     function update() {
       var companies = ['AAPL', 'AMZN', 'MSFT', 'GOOG', 'IBM'];
       var numToLoad = companies.length;
@@ -184,6 +185,10 @@ input[type="range"] { width: 280px; }
       companies.forEach(function(company) {
         d3.jsonp('http://chartapi.finance.yahoo.com/instrument/1.0/'+company+'/chartdata;type=quote;range=1d/json?callback={callback}', function(d) {
           numToLoad--;
+          if (firstDone[company]) {
+            d.series = [d.series[d.series.length-1]];
+          }
+          firstDone[company] = true;
           dataLoaded = dataLoaded.concat(d.series.map(function(pt){
             return {
               price: pt.close,
