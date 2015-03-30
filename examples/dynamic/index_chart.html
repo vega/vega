@@ -69,7 +69,7 @@ input[type="range"] { width: 280px; }
           "source": "stocks",
           "transform": [{
             "type": "filter",
-            "test": "d.date + 1296000000 >= indexDate && d.date - 1296000000 <= indexDate"
+            "test": "d.date + 70000 >= indexDate && d.date - 70000 <= indexDate"
           }]
         },
         {
@@ -201,6 +201,8 @@ input[type="range"] { width: 280px; }
         });
       });
     }
+
+    setInterval(update, 60000)
 
   </script>
 </html>
