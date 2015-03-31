@@ -57,7 +57,8 @@ define(function(require, exports, module) {
     "keydown",
     "keypress",
     "keyup",
-    "mousewheel"
+    "mousewheel",
+    "touchstart"
   ];
   events.forEach(function(type) {
     prototype[type] = function(evt) {
@@ -66,13 +67,15 @@ define(function(require, exports, module) {
   });
   events.push("mousemove");
   events.push("mouseout");
+  events.push("touchmove");
+  events.push("touchend");
 
   function eventName(name) {
     var i = name.indexOf(".");
     return i < 0 ? name : name.slice(0,i);
   }
 
-  prototype.mousemove = function(evt) {
+  prototype.touchmove = prototype.mousemove = function(evt) {
     var pad = this._padding,
         b = evt.target.getBoundingClientRect(),
         x = evt.clientX - b.left,
@@ -82,19 +85,23 @@ define(function(require, exports, module) {
 
     if (p === a) {
       this.fire("mousemove", evt);
+      this.fire("touchmove", evt);
       return;
     } else if (a) {
       this.fire("mouseout", evt);
+      this.fire("touchend", evt);
     }
     this._active = p;
     if (p) {
       this.fire("mouseover", evt);
+      this.fire("touchstart", evt);
     }
   };
   
-  prototype.mouseout = function(evt) {
+  prototype.touchend = prototype.mouseout = function(evt) {
     if (this._active) {
       this.fire("mouseout", evt);
+      this.fire("touchend", evt);
     }
     this._active = null;
   };
