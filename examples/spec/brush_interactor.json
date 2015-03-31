@@ -52,7 +52,7 @@
           "fill": {
             "rule": [
               {
-                "predicate": "brush:inRange",
+                "predicate": "brush_inRange",
                 "input": {
                   "x": {"field": "sepalWidth"},
                   "y": {"field": "petalLength"},
@@ -71,7 +71,7 @@
     },
 
     {
-      "type": "brush:brush_rect",
+      "type": "brush_brush_rect",
       "properties": {
         "enter": {"stroke": {"value": "red"}}
       }

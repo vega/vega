@@ -5,7 +5,8 @@ define(function(require, exports, module) {
 
   return function parseInteractors(model, spec, defFactory) {
     var count = 0,
-        sg = {}, pd = {}, mk = {};
+        sg = {}, pd = {}, mk = {},
+        signals = [], predicates = [];
 
     function loaded(i) {
       return function(error, data) {
@@ -21,15 +22,17 @@ define(function(require, exports, module) {
 
     function interactor(name, def) {
       sg = {}, pd = {};
-      spec.signals = util.array(spec.signals);
-      spec.predicates = util.array(spec.predicates);
-      spec.signals.push.apply(spec.signals, nsSignals(name, def.signals));
-      spec.predicates.push.apply(spec.predicates, nsPredicates(name, def.predicates));
+      if(def.signals)    signals.push.apply(signals, nsSignals(name, def.signals));
+      if(def.predicates) predicates.push.apply(predicates, nsPredicates(name, def.predicates));
       nsMarks(name, def.marks);
     }
 
     function inject() {
       if(util.keys(mk).length > 0) injectMarks(spec.marks);
+      spec.signals = util.array(spec.signals);
+      spec.predicates = util.array(spec.predicates);
+      spec.signals.unshift.apply(spec.signals, signals);
+      spec.predicates.unshift.apply(spec.predicates, predicates);
       defFactory();
     }
 
@@ -54,17 +57,22 @@ define(function(require, exports, module) {
     }
 
     function ns(n, s) { 
-      if(util.isString(s)) return s+":"+n;
+      if(util.isString(s)) return s+"_"+n;
       else {
-        util.keys(s).forEach(function(x) { n = n.replace(x, s[x]) });
+        util.keys(s).forEach(function(x) { 
+          var regex = new RegExp('\\b'+x+'\\b', "g");
+          n = n.replace(regex, s[x]) 
+        });
         return n;
       }
     }
 
     function nsSignals(name, signals) {
       signals = util.array(signals);
+      // Two passes to ns all signals, and then overwrite their definitions
+      // in case signal order is important.
+      signals.forEach(function(s) { s.name = sg[s.name] = ns(s.name, name); });
       signals.forEach(function(s) {
-        s.name = sg[s.name] = ns(s.name, name);
         (s.streams || []).forEach(function(t) {
           t.type = ns(t.type, sg);
           t.expr = ns(t.expr, sg);

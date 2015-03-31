@@ -18,6 +18,7 @@ var INTERACTIVE_SPECS = [
   "index_chart",
   "linking",
   "panzoom_points",
+  "panzoom_touch",
   "overview+detail",
-  "handles"
+  "dimpvis"
 ];
