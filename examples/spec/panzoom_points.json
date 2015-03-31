@@ -5,12 +5,21 @@
 
   "data": [
     {
-      "name": "points", 
+      "name": "points",
       "url": "data/points.json"
     }
   ],
 
   "signals": [
+    {"name": "zoomSpeed", "init": 1.015},
+    {
+      "name": "xDelta",
+      "init": 0,
+      "streams": [
+        {"type": "mousedown", "expr": "0"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "xCoord - p.x"}
+      ]
+    },
     {
       "name": "xCoord",
       "init": 0,
@@ -20,14 +29,13 @@
       ]
     },
     {
-      "name": "xDelta",
+      "name": "yDelta",
       "init": 0,
       "streams": [
         {"type": "mousedown", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "xCoord - p.x"}     
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "p.y - yCoord"}
       ]
     },
-
     {
       "name": "yCoord",
       "init": 0,
@@ -37,45 +45,56 @@
       ]
     },
     {
-      "name": "yDelta",
+      "name": "xMin",
+      "init": -1.6,
+      "streams": [
+        {"type": "xDelta", "expr": "xMin + (xMax-xMin)*xDelta/800"},
+        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"}
+      ]
+    },
+    {
+      "name": "xMax",
+      "init": 1.6,
+      "streams": [
+        {"type": "xDelta", "expr": "xMax + (xMax-xMin)*xDelta/800"},
+        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"}
+      ]
+    },
+    {
+      "name": "yMin",
+      "init": -1,
+      "streams": [
+        {"type": "yDelta", "expr": "yMin + (yMax-yMin)*yDelta/500"},
+        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"}
+      ]
+    },
+    {
+      "name": "yMax",
+      "init": 1,
+      "streams": [
+        {"type": "yDelta", "expr": "yMax + (yMax-yMin)*yDelta/500"},
+        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"}
+      ]
+    },
+    {
+      "name": "zoomCenterX",
       "init": 0,
       "streams": [
-        {"type": "mousedown", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "p.y - yCoord"}     
-      ]
-    },
-
-
-    {
-      "name": "xMin", 
-      "init": -1.6, 
-      "streams": [
-        {"type": "xDelta", "expr": "xMin + xDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMin * 1.015 : xMin / 1.015"}
+        {"type": "mousemove", "expr": "p.x", "scale":"x", "invert":true}
       ]
     },
     {
-      "name": "xMax", 
-      "init": 1.6, 
+      "name": "zoomCenterY",
+      "init": 0,
       "streams": [
-        {"type": "xDelta", "expr": "xMax + xDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMax * 1.015 : xMax / 1.015"}
+        {"type": "mousemove", "expr": "p.y", "scale":"y", "invert":true}
       ]
     },
     {
-      "name": "yMin", 
-      "init": -1, 
+      "name": "pointSize",
+      "init": 30,
       "streams": [
-        {"type": "yDelta", "expr": "yMin + yDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMin * 1.015 : yMin / 1.015"}
-      ]
-    },
-    {
-      "name": "yMax", 
-      "init": 1, 
-      "streams": [
-        {"type": "yDelta", "expr": "yMax + yDelta/200"},
-        {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMax * 1.015 : yMax / 1.015"}
+        {"type": "xMin", "expr": "min(max(60/(xMax-xMin), 30),100)"}
       ]
     }
   ],
@@ -130,7 +149,8 @@
             "update": {
               "x": {"scale": "x", "field": "x"},
               "y": {"scale": "y", "field": "y"},
-              "fill": {"value": "steelblue"}
+              "fill": {"value": "steelblue"},
+              "size": {"signal": "pointSize"}
             }
           }
         }
