@@ -59,6 +59,10 @@ input[type="range"] { width: 280px; }
           "name": "indexDate",
           "init": Date.now(),
           "streams": [{"type": "xPos", "expr": "xPos"}]
+        },
+        {
+          "name": "lastTick",
+          "init": Date.now()
         }
       ],
 
@@ -137,7 +141,7 @@ input[type="range"] { width: 280px; }
             {
               "type": "text",
               "from": {
-                "transform": [{"type": "filter", "test": "d.date == 1267430400000"}]
+                "transform": [{"type": "filter", "test": "d.tick == lastTick"}]
               },
               "properties": {
                 "update": {
@@ -178,6 +182,7 @@ input[type="range"] { width: 280px; }
     });
 
     var firstDone = {};
+    var tick = -1;
     function update() {
       var companies = ['AAPL', 'AMZN', 'MSFT', 'GOOG', 'IBM'];
       var numToLoad = companies.length;
@@ -189,8 +194,9 @@ input[type="range"] { width: 280px; }
             d.series = [d.series[d.series.length-1]];
           }
           firstDone[company] = true;
-          dataLoaded = dataLoaded.concat(d.series.map(function(pt){
+          dataLoaded = dataLoaded.concat(d.series.map(function(pt, i){
             return {
+              tick: i == d.series.length-1 ? tick+1 : -1,
               price: pt.close,
               symbol: company,
               date: pt.Timestamp*1000
@@ -201,6 +207,7 @@ input[type="range"] { width: 280px; }
               self.view1.model().data('stocks').add(pt);
             });
             console.log(dataLoaded);
+            self.view1.model().graph.signal('lastTick').value(++tick).fire();
             self.view1.update({duration: 0});
           }
         });
