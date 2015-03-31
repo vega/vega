@@ -1,0 +1,57 @@
+{
+  "signals": [
+    {
+      "name": "onetouch",
+      "init": {"from0":false,"t":0,"active":false},
+      "streams": [
+        {"type":"touchmove,touchstart,touchend", "expr": "onetouch.active=e.touches.length==1,onetouch.from0=onetouch.active&&(onetouch.from0||onetouch.t==0),onetouch.t=e.touches.length,onetouch"}
+      ]
+    },
+    {
+      "name": "twotouchstart",
+      "init": null,
+      "streams": [
+        {"type": "touchmove[touch_count!=2][e.touches.length==2]", "expr":"0"},
+        {"type": "touchstart[touch_count!=2][e.touches.length==2]", "expr":"0"},
+        {"type": "touchend[touch_count!=2][e.touches.length==2]", "expr":"0"}
+      ]
+    },
+    {
+      "name": "count",
+      "init": 0,
+      "streams": [
+        {"type": "touchmove,touchstart,touchend", "expr": "e.touches.length"}
+      ]
+    },
+    {
+      "name": "twotouchmove",
+      "init": [],
+      "streams": [
+        {"type": "touchmove[e.touches.length==2],touchstart[e.touches.length==2],touchend[e.touches.length==2]", "expr":"[{x: p.x-e.changedTouches[0].clientX + e.touches[0].clientX, y: p.y-e.changedTouches[0].clientY + e.touches[0].clientY},{x: p.x-e.changedTouches[0].clientX + e.touches[1].clientX, y: p.y-e.changedTouches[0].clientY + e.touches[1].clientY}]"}
+      ]
+    },
+    {
+      "name": "pinchZoomDelta",
+      "init": 0,
+      "streams": [
+        {"type":"twotouchstart", "expr": "0"},
+        {"type":"twotouchmove", "expr":"sqrt(pow(twotouchmove[0].x-twotouchmove[1].x,2) + pow(twotouchmove[0].y-twotouchmove[1].y,2))-pinchZoomDist"}
+      ]
+    },
+    {
+      "name": "pinchZoomDist",
+      "init": 0,
+      "streams": [
+        {"type":"twotouchmove", "expr":"sqrt(pow(twotouchmove[0].x-twotouchmove[1].x,2) + pow(twotouchmove[0].y-twotouchmove[1].y,2))"}
+      ]
+    },
+    {
+      "name": "pinchZoomFactor",
+      "init": 1,
+      "streams": [
+        {"type":"twotouchmove", "expr":"(pinchZoomDist-pinchZoomDelta)/pinchZoomDist"},
+        {"type":"twotouchstart", "expr":"1"}
+      ]
+    }
+  ]
+}
