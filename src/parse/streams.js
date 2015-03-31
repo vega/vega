@@ -29,6 +29,7 @@ define(function(require, exports, module) {
       var n = new Node(graph),
           item = spec.item ? graph.signal(spec.item.signal) : null;
       n.evaluate = function(input) {
+        if(!input.signals[selector.signal]) return graph.doNotPropagate;
         var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
         if(spec.scale) val = scale(spec, val, item ? item.value() : null);
         sig.value(val);
