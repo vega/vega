@@ -8,12 +8,12 @@ function panzoom() {
 
   this.init = function() {
     x = d3.scale.linear()
-        .domain([-1.5, 1.5])
+        .domain([0, 20])
         .range([0, size.width]);
     
     // y-scale (inverted domain)
     y = d3.scale.linear()
-        .domain([1, -1])
+        .domain([0, 1])
         .range([0, size.height]);
 
     vis = d3.select('body').append("svg")
@@ -45,12 +45,12 @@ function panzoom() {
         .data(data);
    
     circle.enter().append("circle")
-        .attr("cx", function(d) { return x(d.x); })
+        .attr("cx", function(d) { return x(d.z); })
         .attr("cy", function(d) { return y(d.y); })
-        .attr("r", 10.0);
+        .attr("r", 5);
    
     circle
-        .attr("cx", function(d) { return x(d.x); })
+        .attr("cx", function(d) { return x(d.z); })
         .attr("cy", function(d) { return y(d.y); });
    
     circle.exit().remove();
@@ -127,5 +127,4 @@ function panzoom() {
   }
 }
 
-panzoom.data = 'data/points.json';
 module.exports = panzoom;

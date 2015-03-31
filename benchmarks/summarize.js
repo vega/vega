@@ -1,11 +1,15 @@
 var fs  = require('fs'),
     stats = require('summary'),
     benchmarks = [
-      {name: 'prev',  baseline: 'alwaysPrev'}, 
+      {name: 'prev',  baseline: 'neverPrev'}, 
       {name: 'skips', baseline: 'noSkips'},
-      {name: 'scatter', baseline: 'd3'},
-      {name: 'pcp', baseline: 'd3'},
-      {name: 'trellis', baseline: 'd3'}
+      {name: 'superNodes', baseline: 'noInline'}
+      {name: 'scatter', baseline: 'vg1'},
+      {name: 'pcp', baseline: 'vg1'},
+      {name: 'trellis', baseline: 'vg1'},
+      {name: "brushing_linking", baseline: "d3", fps: 1},
+      {name: "overview_detail", baseline: "d3", fps: 1},
+      {name: "panzoom", baseline: "d3", fps: 1}
     ],
     conditions = ['100.5', '1000.50', '10000.500', '100000.5000'];
 
@@ -24,6 +28,8 @@ benchmarks.forEach(function(b) {
     results.forEach(function(r) {
       var type = r.type.replace(n+'.'+c+' ', ''),
           init = type.split(' ')[0] + ' init';
+
+      if(b.fps) r.time = 1/r.time * 1000;
 
       summary[type] = summary[type] || [];
       summary[type].push(r.size ? r.size/(1024*1024) : r.time);

@@ -5,8 +5,7 @@
 
   "data": [
     {
-      "name": "points", 
-      "url": "data/points.json"
+      "name": "points"
     }
   ],
 
@@ -48,7 +47,7 @@
 
     {
       "name": "xMin", 
-      "init": -1.6, 
+      "init": 0, 
       "streams": [
         {"type": "xDelta", "expr": "xMin + xDelta/200"},
         {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMin * 1.015 : xMin / 1.015"}
@@ -56,7 +55,7 @@
     },
     {
       "name": "xMax", 
-      "init": 1.6, 
+      "init": 20, 
       "streams": [
         {"type": "xDelta", "expr": "xMax + xDelta/200"},
         {"type": "wheel", "expr": "e.wheelDelta < 0 ? xMax * 1.015 : xMax / 1.015"}
@@ -64,7 +63,7 @@
     },
     {
       "name": "yMin", 
-      "init": -1, 
+      "init": 0, 
       "streams": [
         {"type": "yDelta", "expr": "yMin + yDelta/200"},
         {"type": "wheel", "expr": "e.wheelDelta < 0 ? yMin * 1.015 : yMin / 1.015"}
@@ -128,7 +127,7 @@
           "from": {"data": "points"},
           "properties": {
             "update": {
-              "x": {"scale": "x", "field": "x"},
+              "x": {"scale": "x", "field": "z"},
               "y": {"scale": "y", "field": "y"},
               "fill": {"value": "steelblue"}
             }

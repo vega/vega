@@ -52,7 +52,7 @@ function run_vega(env, results, done) {
     results.push({ type: env+" parsed", time: Date.now() - t });
 
     t = Date.now();
-    var view = chart({ el: "#vis" });
+    window.view = chart({ el: "#vis" });
 
     // if(env === 'vg1') view.render = function() {};
     // else if(env === 'vg2') {
@@ -60,7 +60,7 @@ function run_vega(env, results, done) {
     //   view._model.scene(new vg.dataflow.Node(view._model.graph));
     // }
 
-    view.update();
+    window.view.update();
     results.push({ type: env+" rendered", time: Date.now() - t });
 
     if(this.benchmark) this.benchmark(view, results, done);
@@ -97,7 +97,7 @@ function run(env, spec, N, C, resName, setup, viewFactory) {
     })
     .init()
     .url('http://localhost:8000/benchmarks/'+env+'.html')
-    .timeoutsAsyncScript(300000)
+    .timeoutsAsyncScript(3000000)
     .execute(function(env, specName, spec, data, N, C) {
       this.N = N;
       this.C = C;
@@ -115,14 +115,14 @@ function run(env, spec, N, C, resName, setup, viewFactory) {
           o.z = o.y + C * Math.random();
           out.push(o);
         }
-        return out;
+        return (this.data=out);
       };
 
       this.extend = function(data, N) {
         if(specName == 'splom') N = Math.floor(Math.sqrt(N));
         while(data.length < N) data = data.concat(data);
         if(data.length > N) data = data.slice(0, N);
-        return data;
+        return (this.data=data);
       }
 
       if(env == 'vg1' || env == 'vg2') {

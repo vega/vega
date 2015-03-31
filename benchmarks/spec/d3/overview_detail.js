@@ -7,8 +7,8 @@ function overviewdetail() {
 
   var parseDate = d3.time.format("%b %Y").parse;
 
-  var x = d3.time.scale().range([0, width]),
-      x2 = d3.time.scale().range([0, width]),
+  var x = d3.scale.linear().range([0, width]),
+      x2 = d3.scale.linear().range([0, width]),
       y = d3.scale.linear().range([height, 0]),
       y2 = d3.scale.linear().range([height2, 0]);
 
@@ -22,15 +22,15 @@ function overviewdetail() {
 
   var area = d3.svg.area()
       .interpolate("monotone")
-      .x(function(d) { return x(d.date); })
+      .x(function(d) { return x(d.z); })
       .y0(height)
-      .y1(function(d) { return y(d.price); });
+      .y1(function(d) { return y(d.y); });
 
   var area2 = d3.svg.area()
       .interpolate("monotone")
-      .x(function(d) { return x2(d.date); })
+      .x(function(d) { return x2(d.z); })
       .y0(height2)
-      .y1(function(d) { return y2(d.price); });
+      .y1(function(d) { return y2(d.y); });
 
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -55,10 +55,9 @@ function overviewdetail() {
   };
 
   this.update = function(data) {
-    data = data.map(type);
-
-    x.domain(d3.extent(data.map(function(d) { return d.date; })));
-    y.domain([0, d3.max(data.map(function(d) { return d.price; }))]);
+    console.log(data);
+    x.domain(d3.extent(data.map(function(d) { return d.z; })));
+    y.domain([0, d3.max(data.map(function(d) { return d.y; }))]);
     x2.domain(x.domain());
     y2.domain(y.domain());
 
@@ -107,5 +106,4 @@ function overviewdetail() {
   }
 }
 
-overviewdetail.data = 'data/sp500.json';
 module.exports = overviewdetail;

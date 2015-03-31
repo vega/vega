@@ -16,19 +16,18 @@
         "expr": "p.x", "scale": "xContext", "invert": true
       }]
     },
-
     {
       "name": "date_start",
-      "init": 946713600000,
+      "init": 0,
       "streams": [
-        {"type": "brush_start", "expr": "date(brush_start)"}
+        {"type": "brush_start", "expr": "(brush_start)"}
       ]
     },
     {
       "name": "date_end",
-      "init": 946713600000,
+      "init": 5,
       "streams": [
-        {"type": "brush_end", "expr": "date(brush_end)"}
+        {"type": "brush_end", "expr": "(brush_end)"}
       ]
     },
     {"name": "min_date", "expr": "min(date_start, date_end)"},
@@ -37,49 +36,37 @@
 
   "data": [
     {
-      "name": "sp500", 
-      "url": "data/sp500.json",
-      "format": {"parse": {"price": "number", "date": "date"}}
-    },
-    {
-      "name": "sp500_filtered",
-      "source": "sp500",
-      "transform": [
-        {
-          "type": "filter", 
-          "test": "min_date == max_date || min(date_start, date_end) <= d.date && d.date <= max(date_start, date_end)"
-        },
-        {"type": "sort", "by": "date"}
-      ]
+      "name": "sp500"
     }
   ],
 
   "scales": [
     {
       "name": "xContext",
-      "type": "time",
+      "type": "linear",
       "range": [0, 720],
-      "domain": {"data": "sp500", "field": "date"}
+      "domain": {"data": "sp500", "field": "z"}
     },
     {
       "name": "yContext",
       "type": "linear",
       "range": [70, 0],
       "nice": true,
-      "domain": {"data": "sp500", "field": "price"}
+      "domain": {"data": "sp500", "field": "y"}
     },
     {
       "name": "xFocus",
-      "type": "time",
+      "type": "linear",
       "range": [0, 720],
-      "domain": {"data": "sp500_filtered", "field": "date"}
+      "domainMin": {"signal": "min_date"},
+      "domainMax": {"signal": "max_date"}
     },
     {
       "name": "yFocus",
       "type": "linear",
       "range": [390, 0],
       "nice": true,
-      "domain": {"data": "sp500_filtered", "field": "price"}
+      "domain": {"data": "sp500", "field": "y"}
     }
   ],
 
@@ -91,7 +78,8 @@
           "x": {"value": 0},
           "y": {"value": 0},
           "height": {"value": 390},
-          "width": {"value": 720}
+          "width": {"value": 720},
+          "clip": {"value": true}
         }
       },
       "axes": [
@@ -101,11 +89,11 @@
       "marks": [
         {
           "type": "area",
-          "from": {"data": "sp500_filtered"},
+          "from": {"data": "sp500"},
           "properties": {
             "update": {
-              "x": {"scale": "xFocus", "field": "date"},
-              "y": {"scale": "yFocus", "field": "price"},
+              "x": {"scale": "xFocus", "field": "z"},
+              "y": {"scale": "yFocus", "field": "y"},
               "y2": {"scale": "yFocus", "value": 0},
               "fill": {"value": "steelblue"}
             }
@@ -133,8 +121,8 @@
           "from": {"data": "sp500"},
           "properties": {
             "update": {
-              "x": {"scale": "xContext", "field": "date"},
-              "y": {"scale": "yContext", "field": "price"},
+              "x": {"scale": "xContext", "field": "z"},
+              "y": {"scale": "yContext", "field": "y"},
               "y2": {"scale": "yContext", "value": 0},
               "fill": {"value": "steelblue"}
             }

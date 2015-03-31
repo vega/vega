@@ -122,7 +122,7 @@ function d3_panzoom() {
 }
 
 function vg_panzoom() {
-  var xMin = -1.6, xMax = 1.6, yMin = -1, yMax = 1;
+  var xMin = 0, xMax = 20, yMin = 0, yMax = 1;
   var startX, endX, startY, endY, isDragged = false;
 
   var i = 0, s = 0, t,
@@ -224,7 +224,7 @@ function vg_panzoom() {
       }
 
       if (++i > 125) {
-        return done(results);
+        return (done(results), true);
       }
     });
   }
@@ -241,47 +241,41 @@ function vg_overview_detail() {
       client, bb, pad;
 
   this.interactivity = function(view) {
-    d3.json('data/sp500.json', function(error, data) {
-      data.forEach(function(d) {
-        d.price = parseFloat(d.price);
-        d.date = Date.parse(d.date);
-      })
+    var isDragged = false;
+    var sp500 = this.data;
+    var extent = d3.extent(sp500, function(d) { return d.z; });
+    var xScale = d3.scale.linear()
+      .domain([0, 720])
+      .range(extent);
 
-      var isDragged = false;
-      var sp500 = data;
-      var extent = d3.extent(sp500, function(d) { return d.date; });
-      var xScale = d3.time.scale()
-        .domain([0, 720])
-        .range(extent);
+    view.on("mousedown", function(evt, item) {
+      view.data({"sp500_filtered": sp500}).update();
+      isDragged = true;
+      x0 = evt.x - OFFSET;
+      view.data({"brush": [{"min": x0, "max": x0}]}).update();
+      view.update();
+    });
 
-      view.on("mousedown", function(evt, item) {
-        view.data({"sp500_filtered": sp500}).update();
-        isDragged = true;
-        x0 = evt.x - OFFSET;
-        view.data({"brush": [{"min": x0, "max": x0}]}).update();
-        view.update();
-      });
+    view.on("mousemove", function(evt, item) {
+      if(isDragged) {
+        x1 = evt.x - OFFSET;
+        var result;
+        var filtered = sp500.filter(function(d) {
+          if (xScale(x0) > xScale(x1)) { 
+            result = [{"min": x1, "max": x0}];
+            return d.z <= xScale(x0) && d.z >= xScale(x1);
+          }
+          result = [{"min": x0, "max": x1}];
+          return d.z >= xScale(x0) && d.z <= xScale(x1);
+        });
+        console.log(filtered);
+        view.data({"sp500_filtered": filtered}).update();
+        view.data({"brush": result}).update();
+      }
+    });
 
-      view.on("mousemove", function(evt, item) {
-        if(isDragged) {
-          x1 = evt.x - OFFSET;
-          var result;
-          var filtered = sp500.filter(function(d) {
-            if (xScale(x0) > xScale(x1)) { 
-              result = [{"min": x1, "max": x0}];
-              return d.date <= xScale(x0) && d.date >= xScale(x1);
-            }
-            result = [{"min": x0, "max": x1}];
-            return d.date >= xScale(x0) && d.date <= xScale(x1);
-          });
-          view.data({"sp500_filtered": filtered}).update();
-          view.data({"brush": result}).update();
-        }
-      });
-
-      view.on("mouseup", function(evt, item) {
-        isDragged = false;
-      });
+    view.on("mouseup", function(evt, item) {
+      isDragged = false;
     });
   }
 
@@ -298,9 +292,11 @@ function vg_overview_detail() {
     d3.timer(function() {
       if(s == 0) {
         t = Date.now();
+        console.log('mousedown');
         mouseEvt('mousedown', random(bb), 500, client);
         s = 1;
       } else if(s == 1) {
+        console.log('mouseup');
         results.push({type: env, time: Date.now() - t})
         t = Date.now();
         mouseEvt('mouseup', random(bb), 500, client);
@@ -312,7 +308,7 @@ function vg_overview_detail() {
       }
 
       if (++i > 100) {
-        return done(results);
+        return (done(results), true);
       }
     });
   }
@@ -333,7 +329,8 @@ function vg_brushing_linking() {
       t;
 
   this.interactivity = function(view) {
-    d3.json("data/iris.json", function(error, data) {
+    data = view.model().data().iris.map(function(d) { return d.data; });
+    // d3.json("data/iris.json", function(error, data) {
       data.forEach(function(d) {
         d.color = "grey";
       });
@@ -354,16 +351,13 @@ function vg_brushing_linking() {
         isDragged = true;
         x = evt.x;
         y = evt.y;
-        view.data({"brush": [{"xmin": x - X_OFFSET, "xmax": x - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y - Y_OFFSET}]}).update();
-        view.update();
+        view.data({"brush": [{"xmin": x - X_OFFSET, "xmax": x - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y - Y_OFFSET}]});
         identify();
 
         data.forEach(function(d) {
           d.color = "grey";
         });
         view.data({"iris": data}).update();
-
-        //console.log("X:", xScale(evt.x), "Y:", yScale(evt.y))
       });
 
       view.on("mousemove", function(evt, item) {
@@ -387,7 +381,7 @@ function vg_brushing_linking() {
               d.color = "grey";
             }
           });
-          view.data({"iris": data}).update();
+          view.data({"iris": data});
 
           var result = [{"xmin": x - X_OFFSET, "xmax": x2 - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y2 - Y_OFFSET}];
           view.data({"brush": result}).update();
@@ -446,7 +440,7 @@ function vg_brushing_linking() {
         }
       }
 
-    });
+    // });
   }
 
   this.benchmark = function(view, results, done) {
@@ -477,7 +471,7 @@ function vg_brushing_linking() {
       }
 
       if (++i > 100) {
-        return done(results);
+        return (done(results), true);
       }
     });
   }

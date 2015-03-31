@@ -2,15 +2,8 @@
   "width": 720,
   "height": 480,
   "data": [
-    {
-      "name": "sp500",
-      "url": "data/sp500.json",
-      "format": {"parse": {"price": "number", "date": "date"}}
-    },
-    {
-      "name": "sp500_filtered",
-      "source": "sp500"
-    },
+    {"name": "sp500"},
+    {"name": "sp500_filtered", "source": "sp500"},
     {
       "name": "brush",
       "values": [{"min": 0, "max": 0}]
@@ -19,29 +12,29 @@
   "scales": [
     {
       "name": "xContext",
-      "type": "time",
+      "type": "linear",
       "range": [0, 720],
-      "domain": {"data": "sp500", "field": "data.date"}
+      "domain": {"data": "sp500", "field": "data.z"}
     },
     {
       "name": "yContext",
       "type": "linear",
       "range": [70, 0],
       "nice": true,
-      "domain": {"data": "sp500", "field": "data.price"}
+      "domain": {"data": "sp500", "field": "data.y"}
     },
     {
       "name": "xFocus",
-      "type": "time",
+      "type": "linear",
       "range": [0, 720],
-      "domain": {"data": "sp500_filtered", "field": "data.date"}
+      "domain": {"data": "sp500_filtered", "field": "data.z"}
     },
     {
       "name": "yFocus",
       "type": "linear",
       "range": [390, 0],
       "nice": true,
-      "domain": {"data": "sp500_filtered", "field": "data.price"}
+      "domain": {"data": "sp500_filtered", "field": "data.y"}
     }
 
   ],
@@ -53,7 +46,8 @@
           "x": {"value": 0},
           "y": {"value": 0},
           "height": {"value": 390},
-          "width": {"value": 720}
+          "width": {"value": 720},
+          "clip": {"value": true}
         }
       },
       "axes": [
@@ -63,11 +57,11 @@
       "marks": [
         {
           "type": "area",
-          "from": {"data": "sp500_filtered"},
+          "from": {"data": "sp500"},
           "properties": {
             "update": {
-              "x": {"scale": "xFocus", "field": "data.date"},
-              "y": {"scale": "yFocus", "field": "data.price"},
+              "x": {"scale": "xFocus", "field": "data.z"},
+              "y": {"scale": "yFocus", "field": "data.y"},
               "y2": {"scale": "yFocus", "value": 0},
               "fill": {"value": "steelblue"}
             }
@@ -94,8 +88,8 @@
           "from": {"data": "sp500"},
           "properties": {
             "update": {
-              "x": {"scale": "xContext", "field": "data.date"},
-              "y": {"scale": "yContext", "field": "data.price"},
+              "x": {"scale": "xContext", "field": "data.z"},
+              "y": {"scale": "yContext", "field": "data.y"},
               "y2": {"scale": "yContext", "value": 0},
               "fill": {"value": "steelblue"}
             }

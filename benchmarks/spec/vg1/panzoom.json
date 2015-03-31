@@ -5,16 +5,15 @@
 
   "data": [
     {
-      "name": "points", 
-      "url": "data/points.json"
+      "name": "points"
     },
     {
       "name": "xDomain",
-      "values": [{"min": -1.6, "max": 1.6}]
+      "values": [{"min": 0, "max": 20}]
     },
     {
       "name": "yDomain",
-      "values": [{"min": -1, "max": 1}]
+      "values": [{"min": 0, "max": 1}]
     }
   ],
 
@@ -61,7 +60,7 @@
           "from": {"data": "points"},
           "properties": {
             "update": {
-              "x": {"scale": "x", "field": "data.x"},
+              "x": {"scale": "x", "field": "data.z"},
               "y": {"scale": "y", "field": "data.y"},
               "fill": {"value": "steelblue"}
             }
