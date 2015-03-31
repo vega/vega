@@ -268,7 +268,6 @@ function vg_overview_detail() {
           result = [{"min": x0, "max": x1}];
           return d.z >= xScale(x0) && d.z <= xScale(x1);
         });
-        console.log(filtered);
         view.data({"sp500_filtered": filtered}).update();
         view.data({"brush": result}).update();
       }
@@ -292,11 +291,9 @@ function vg_overview_detail() {
     d3.timer(function() {
       if(s == 0) {
         t = Date.now();
-        console.log('mousedown');
         mouseEvt('mousedown', random(bb), 500, client);
         s = 1;
       } else if(s == 1) {
-        console.log('mouseup');
         results.push({type: env, time: Date.now() - t})
         t = Date.now();
         mouseEvt('mouseup', random(bb), 500, client);
@@ -329,118 +326,111 @@ function vg_brushing_linking() {
       t;
 
   this.interactivity = function(view) {
-    data = view.model().data().iris.map(function(d) { return d.data; });
-    // d3.json("data/iris.json", function(error, data) {
-      data.forEach(function(d) {
-        d.color = "grey";
-      });
+    data = view.model().data().iris
+      .map(function(d) { return d.data; });
+      .forEach(function(d) { d.color = "grey"; });
 
-      var petalLength = d3.scale.linear()
-          .range(d3.extent(data, function(d) { return d.petalLength }));
-      var petalWidth = d3.scale.linear()
-          .range(d3.extent(data, function(d) { return d.petalWidth }));
-      var sepalLength = d3.scale.linear()
-          .range(d3.extent(data, function(d) { return d.sepalLength }));
-      var sepalWidth = d3.scale.linear()
-          .range(d3.extent(data, function(d) { return d.sepalWidth }));
+    var petalLength = d3.scale.linear()
+        .range(d3.extent(data, function(d) { return d.petalLength }));
+    var petalWidth = d3.scale.linear()
+        .range(d3.extent(data, function(d) { return d.petalWidth }));
+    var sepalLength = d3.scale.linear()
+        .range(d3.extent(data, function(d) { return d.sepalLength }));
+    var sepalWidth = d3.scale.linear()
+        .range(d3.extent(data, function(d) { return d.sepalWidth }));
 
+    view.data({"iris": data}).update();
+
+    view.on("mousedown", function(evt, item) {
+      isDragged = true;
+      x = evt.x;
+      y = evt.y;
+      view.data({"brush": [{"xmin": x - X_OFFSET, "xmax": x - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y - Y_OFFSET}]});
+      identify();
+
+      data.forEach(function(d) { d.color = "grey"; });
       view.data({"iris": data}).update();
+    });
 
-      view.on("mousedown", function(evt, item) {
-        //console.log(evt.x, ",", evt.y)
-        isDragged = true;
-        x = evt.x;
-        y = evt.y;
-        view.data({"brush": [{"xmin": x - X_OFFSET, "xmax": x - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y - Y_OFFSET}]});
-        identify();
+    view.on("mousemove", function(evt, item) {
 
-        data.forEach(function(d) {
-          d.color = "grey";
+      if(isDragged) {
+        x2 = evt.x;
+        y2 = evt.y;
+
+        var xMin = d3.min([xScale(x), xScale(x2)]);
+        var xMax = d3.max([xScale(x), xScale(x2)]);
+        var yMin = d3.min([yScale(y), yScale(y2)]);
+        var yMax = d3.max([yScale(y), yScale(y2)]);
+
+        data.map(function(d) {
+          if(d[xAccess] >= xMin && 
+             d[xAccess] <= xMax &&
+             d[yAccess] >= yMin && 
+             d[yAccess] <= yMax) {
+            d.color = getColor(d.species)
+          } else {
+            d.color = "grey";
+          }
         });
-        view.data({"iris": data}).update();
-      });
+        view.data({"iris": data});
 
-      view.on("mousemove", function(evt, item) {
+        var result = [{"xmin": x - X_OFFSET, "xmax": x2 - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y2 - Y_OFFSET}];
+        view.data({"brush": result}).update();
+      }
+    });
 
-        if(isDragged) {
-          x2 = evt.x;
-          y2 = evt.y;
+    view.on("mouseup", function(evt, item) {
+      isDragged = false;
+    });
 
-          var xMin = d3.min([xScale(x), xScale(x2)]);
-          var xMax = d3.max([xScale(x), xScale(x2)]);
-          var yMin = d3.min([yScale(y), yScale(y2)]);
-          var yMax = d3.max([yScale(y), yScale(y2)]);
-
-          data.map(function(d) {
-            if(d[xAccess] >= xMin && 
-               d[xAccess] <= xMax &&
-               d[yAccess] >= yMin && 
-               d[yAccess] <= yMax) {
-              d.color = getColor(d.species)
-            } else {
-              d.color = "grey";
-            }
-          });
-          view.data({"iris": data});
-
-          var result = [{"xmin": x - X_OFFSET, "xmax": x2 - X_OFFSET, "ymin": y - Y_OFFSET, "ymax": y2 - Y_OFFSET}];
-          view.data({"brush": result}).update();
-        }
-      });
-
-      view.on("mouseup", function(evt, item) {
-        isDragged = false;
-      });
-
-      function identify() {
-        if (x < 167 - X_OFFSET) {
-          xScale = petalWidth;
-          xScale.domain([35,155]);
-          xAccess = "petalWidth";
-        } else if (x < 307 - X_OFFSET){
-          xScale = petalLength;
-          xScale.domain([185,305]);
-          xAccess = "petalLength";
-        } else if (x < 457 - X_OFFSET){
-          xScale = sepalWidth;
-          xScale.domain([335,455]);
-          xAccess = "sepalWidth";
-        } else {
-          xScale = sepalLength;
-          xScale.domain([485,605]);
-          xAccess = "sepalLength";
-        }
-
-        if (y < 155 - Y_OFFSET) {
-          yScale = petalWidth;
-          yScale.domain([140,15]);
-          yAccess = "petalWidth";
-        } else if (y < 305 - Y_OFFSET){
-          yScale = petalLength;
-          yScale.domain([290,165]);
-          yAccess = "petalLength";
-        } else if (y < 455 - Y_OFFSET){
-          yScale = sepalWidth;
-          yScale.domain([440,315]);
-          yAccess = "sepalWidth";
-        } else {
-          yScale = sepalLength;
-          yScale.domain([590,465]);
-          yAccess = "sepalLength";
-        }
+    function identify() {
+      if (x < 167 - X_OFFSET) {
+        xScale = petalWidth;
+        xScale.domain([35,155]);
+        xAccess = "petalWidth";
+      } else if (x < 307 - X_OFFSET){
+        xScale = petalLength;
+        xScale.domain([185,305]);
+        xAccess = "petalLength";
+      } else if (x < 457 - X_OFFSET){
+        xScale = sepalWidth;
+        xScale.domain([335,455]);
+        xAccess = "sepalWidth";
+      } else {
+        xScale = sepalLength;
+        xScale.domain([485,605]);
+        xAccess = "sepalLength";
       }
 
-      function getColor(species) {
-        if(species == "setosa") {
-          return "#1f77b4";
-        } else if (species == "versicolor") {
-          return "#ff7f0e";
-        } else {
-          return "#2ca02c";
-        }
+      if (y < 155 - Y_OFFSET) {
+        yScale = petalWidth;
+        yScale.domain([140,15]);
+        yAccess = "petalWidth";
+      } else if (y < 305 - Y_OFFSET){
+        yScale = petalLength;
+        yScale.domain([290,165]);
+        yAccess = "petalLength";
+      } else if (y < 455 - Y_OFFSET){
+        yScale = sepalWidth;
+        yScale.domain([440,315]);
+        yAccess = "sepalWidth";
+      } else {
+        yScale = sepalLength;
+        yScale.domain([590,465]);
+        yAccess = "sepalLength";
       }
+    }
 
-    // });
+    function getColor(species) {
+      if(species == "setosa") {
+        return "#1f77b4";
+      } else if (species == "versicolor") {
+        return "#ff7f0e";
+      } else {
+        return "#2ca02c";
+      }
+    }
   }
 
   this.benchmark = function(view, results, done) {
