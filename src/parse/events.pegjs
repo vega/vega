@@ -24,6 +24,6 @@ id = "#" id: value ":" { return { type:'id', value: id } }
 eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter" / "touchstart" / "touchmove" / "touchend"
 
 filter = "[" field:value "]" { return field  }
-value = v:['":a-zA-Z0-9_\.\>\<\=\! \t-]+ { return v.join("") }
+value = v:['"a-zA-Z0-9_\.\>\<\=\! \t-]+ { return v.join("") }
 
 sep = [ \t\r\n]*
