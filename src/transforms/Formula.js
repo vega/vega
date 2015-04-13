@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
   var Transform = require('./Transform'),
       tuple = require('../dataflow/tuple'), 
-      expr = require('../parse/expr'),
+      expression = require('../parse/expr'),
       util = require('../util/index'),
       C = require('../util/constants');
 
@@ -17,22 +17,23 @@ define(function(require, exports, module) {
 
   var proto = (Formula.prototype = new Transform());
 
-  function f(x, field, stamp) {
-    var val = expr.eval(this._graph, this.expr.get(this._graph), 
-      x, null, null, null, this.dependency(C.SIGNALS));
-
-    tuple.set(x, field, val); 
-  };
-
   proto.transform = function(input) {
     util.debug(input, ["formulating"]);
     var t = this, 
-        field = this.field.get(this._graph);
-
-    input.add.forEach(function(x) { f.call(t, x, field, input.stamp) });;
+        g = this._graph,
+        field = this.field.get(g),
+        expr = this.expr.get(g),
+        deps = this.dependency(C.SIGNALS);
     
-    if(this.reevaluate(input)) {
-      input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
+    function set(x) {
+      var val = expression.eval(g, expr, x, null, null, null, deps);
+      tuple.set(x, field, val);
+    }
+
+    input.add.forEach(set);
+    
+    if (this.reevaluate(input)) {
+      input.mod.forEach(set);
     }
 
     input.fields[field] = 1;
