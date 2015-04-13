@@ -19,7 +19,7 @@ describe('Aggregate', function() {
         "data": [{ 
           "name": "table", 
           "values": values,
-          "transform": [{"type": "stats", "field": "y", "measures": meas }]
+          "transform": [{"type": "aggregate", "field": "y", "measures": meas }]
         }] 
       };
     }
@@ -321,7 +321,7 @@ describe('Aggregate', function() {
           "type": "facet", 
           "keys": [{"field": "country"}],
           "transform": [{
-            "type": "stats", 
+            "type": "aggregate", 
             "field": "count",
             "measures": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]
