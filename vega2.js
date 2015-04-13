@@ -15,7 +15,7 @@
 }(this, function (d3, topojson) {
     //almond, and your modules will be inlined here
 /**
- * @license almond 0.3.0 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
+ * @license almond 0.3.1 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
  * see: http://github.com/jrburke/almond for details
  */
@@ -60,12 +60,6 @@ var requirejs, require, define;
             //otherwise, assume it is a top-level require that will
             //be relative to baseUrl in the end.
             if (baseName) {
-                //Convert baseName to array, and lop off the last part,
-                //so that . matches that "directory" and not name of the baseName's
-                //module. For instance, baseName of "one/two/three", maps to
-                //"one/two/three.js", but we want the directory, "one/two" for
-                //this normalization.
-                baseParts = baseParts.slice(0, baseParts.length - 1);
                 name = name.split('/');
                 lastIndex = name.length - 1;
 
@@ -74,7 +68,11 @@ var requirejs, require, define;
                     name[lastIndex] = name[lastIndex].replace(jsSuffixRegExp, '');
                 }
 
-                name = baseParts.concat(name);
+                //Lop off the last part of baseParts, so that . matches the
+                //"directory" and not name of the baseName's module. For instance,
+                //baseName of "one/two/three", maps to "one/two/three.js", but we
+                //want the directory, "one/two" for this normalization.
+                name = baseParts.slice(0, baseParts.length - 1).concat(name);
 
                 //start trimDots
                 for (i = 0; i < name.length; i += 1) {
@@ -424,6 +422,9 @@ var requirejs, require, define;
     requirejs._defined = defined;
 
     define = function (name, deps, callback) {
+        if (typeof name !== 'string') {
+            throw new Error('See almond README: incorrect module build, no module name');
+        }
 
         //This module may not have dependencies
         if (!deps.splice) {
@@ -4119,7 +4120,7 @@ define('transforms/Fold',['require','exports','module','./Transform','../util/in
 define('transforms/Formula',['require','exports','module','./Transform','../dataflow/tuple','../parse/expr','../util/index','../util/constants'],function(require, exports, module) {
   var Transform = require('./Transform'),
       tuple = require('../dataflow/tuple'), 
-      expr = require('../parse/expr'),
+      expression = require('../parse/expr'),
       util = require('../util/index'),
       C = require('../util/constants');
 
@@ -4135,22 +4136,23 @@ define('transforms/Formula',['require','exports','module','./Transform','../data
 
   var proto = (Formula.prototype = new Transform());
 
-  function f(x, field, stamp) {
-    var val = expr.eval(this._graph, this.expr.get(this._graph), 
-      x, null, null, null, this.dependency(C.SIGNALS));
-
-    tuple.set(x, field, val); 
-  };
-
   proto.transform = function(input) {
     util.debug(input, ["formulating"]);
     var t = this, 
-        field = this.field.get(this._graph);
-
-    input.add.forEach(function(x) { f.call(t, x, field, input.stamp) });;
+        g = this._graph,
+        field = this.field.get(g),
+        expr = this.expr.get(g),
+        deps = this.dependency(C.SIGNALS);
     
-    if(this.reevaluate(input)) {
-      input.mod.forEach(function(x) { f.call(t, x, field, input.stamp) });
+    function set(x) {
+      var val = expression.eval(g, expr, x, null, null, null, deps);
+      tuple.set(x, field, val);
+    }
+
+    input.add.forEach(set);
+    
+    if (this.reevaluate(input)) {
+      input.mod.forEach(set);
     }
 
     input.fields[field] = 1;
@@ -4183,6 +4185,106 @@ define('transforms/Sort',['require','exports','module','./Transform','../parse/e
   };
 
   return Sort;
+});
+define('transforms/Stack',['require','exports','module','./Transform','../dataflow/Collector','../util/index','../dataflow/tuple','../dataflow/changeset'],function(require, exports, module) {
+  var Transform = require('./Transform'),
+      Collector = require('../dataflow/Collector'),
+      util = require('../util/index'),
+      tuple = require('../dataflow/tuple'),
+      changeset = require('../dataflow/changeset');
+
+  function Stack(graph) {
+    Transform.prototype.init.call(this, graph);
+    Transform.addParameters(this, {
+      groupby: {type: "array<field>"},
+      sortby: {type: "array<field>"},
+      value: {type: "field"},
+      offset: {type: "value", default: "zero"}
+    });
+
+    this._output = {
+      "start": "y2",
+      "stop": "y",
+      "mid": "cy"
+    };
+    this._collector = new Collector(graph);
+
+    return this.router(true);
+  }
+
+  var proto = (Stack.prototype = new Transform());
+
+
+  proto.transform = function(input) {
+    // Materialize the current datasource. TODO: share collectors
+    this._collector.evaluate(input);
+    var data = this._collector.data();
+
+    var g = this._graph,
+        groupby = this.groupby.get(g).accessors,
+        sortby = util.comparator(this.sortby.get(g).fields),
+        value = this.value.get(g).accessor,
+        offset = this.offset.get(g),
+        output = this._output;
+
+    // partition, sum, and sort the stack groups
+    var groups = partition(data, groupby, sortby, value);
+
+    // compute stack layouts per group
+    for (var i=0, max=groups.max; i<groups.length; ++i) {
+      var group = groups[i],
+          sum = group.sum,
+          off = offset==="center" ? (max - sum)/2 : 0,
+          scale = offset==="normalize" ? (1/sum) : 1,
+          i, x, a, b = off, v = 0;
+
+      // set stack coordinates for each datum in group
+      for (j=0; j<group.length; ++j) {
+        x = group[j];
+        a = b; // use previous value for start point
+        v += value(x);
+        b = scale * v + off; // compute end point
+        tuple.set(x, output.start, a);
+        tuple.set(x, output.stop, b);
+        tuple.set(x, output.mid, 0.5 * (a + b));
+      }
+    }
+
+    return input;
+  };
+
+  function partition(data, groupby, sortby, value) {
+    var groups = [],
+        map, i, x, k, g, s, max;
+
+    // partition data points into stack groups
+    if (groupby == null) {
+      groups.push(data.slice());
+    } else {
+      for (map={}, i=0; i<data.length; ++i) {
+        x = data[i];
+        k = (groupby.map(function(f) { return f(x); }));
+        g = map[k] || (groups.push(map[k] = []), map[k]);
+        g.push(x);
+      }
+    }
+
+    // compute sums of groups, sort groups as needed
+    for (k=0, max=0; k<groups.length; ++k) {
+      g = groups[k];
+      for (i=0, s=0; i<g.length; ++i) {
+        s += value(g[i]);
+      }
+      g.sum = s;
+      if (s > max) max = s;
+      if (sortby != null) g.sort(sortby);
+    }
+    groups.max = max;
+
+    return groups;
+  }
+
+  return Stack;
 });
 define('util/quickselect',['require','exports','module','./index'],function(require, exports, module) {
   var util = require('./index');
@@ -4663,7 +4765,7 @@ define('transforms/Zip',['require','exports','module','./Transform','../dataflow
 
   return Zip;
 });
-define('transforms/index',['require','exports','module','./Bin','./Cross','./Facet','./Filter','./Fold','./Formula','./Sort','./Stats','./Unique','./Zip'],function(require, exports, module) {
+define('transforms/index',['require','exports','module','./Bin','./Cross','./Facet','./Filter','./Fold','./Formula','./Sort','./Stack','./Stats','./Unique','./Zip'],function(require, exports, module) {
   return {
     bin:        require('./Bin'),
     cross:      require('./Cross'),
@@ -4672,6 +4774,7 @@ define('transforms/index',['require','exports','module','./Bin','./Cross','./Fac
     fold:       require('./Fold'),
     formula:    require('./Formula'),
     sort:       require('./Sort'),
+    stack:      require('./Stack'),
     stats:      require('./Stats'),
     unique:     require('./Unique'),
     zip:        require('./Zip')

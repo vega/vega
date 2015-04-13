@@ -7,6 +7,7 @@ define(function(require, exports, module) {
     fold:       require('./Fold'),
     formula:    require('./Formula'),
     sort:       require('./Sort'),
+    stack:      require('./Stack'),
     stats:      require('./Stats'),
     unique:     require('./Unique'),
     zip:        require('./Zip')
