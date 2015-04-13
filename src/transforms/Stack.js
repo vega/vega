@@ -20,7 +20,7 @@ function Stack(graph) {
   };
   this._collector = new Collector(graph);
 
-  return this.router(true);
+  return this;
 }
 
 var proto = (Stack.prototype = new Transform());
