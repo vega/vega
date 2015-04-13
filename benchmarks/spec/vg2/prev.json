@@ -13,7 +13,7 @@
         {"type": "formula", "field": "z", "expr": "d.y * 2"}, 
         {"type": "formula", "field": "a", "expr": "d.z * 2 + d.y"},
         {
-          "type": "stats", 
+          "type": "aggregate", 
           "group_by": "x", 
           "on": "z", 
           "measures": ["count", "avg", "min", "max", "sum", "var", "stdev", "varp", "stdevp", "median"]

@@ -11,7 +11,7 @@
       "source": "barley",
       "transform": [
         {
-          "type": "stats", 
+          "type": "aggregate", 
           "on": {"field": "yield"},
           "group_by": ["variety"],
           "measures": ["median"]
@@ -24,7 +24,7 @@
       "source": "barley",
       "transform": [
         {
-          "type": "stats", 
+          "type": "aggregate", 
           "on": {"field": "yield"},
           "group_by": ["site"],
           "measures": ["median"]

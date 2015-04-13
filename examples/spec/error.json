@@ -4,7 +4,7 @@
   "padding": {"top": 30, "left": 30, "bottom": 30, "right": 10},
   "data": [
     {
-      "name": "stats",
+      "name": "aggregate",
       "values": [
         {"label": "Category A", "mean": 1, "lo": 0,   "hi": 2},
         {"label": "Category B", "mean": 2, "lo": 1.5, "hi": 2.5},
@@ -19,14 +19,14 @@
       "name": "y",
       "type": "ordinal",
       "range": "height",
-      "domain": {"data": "stats", "field": "label"}
+      "domain": {"data": "aggregate", "field": "label"}
     },
     {
       "name": "x",
       "range": [100, 400],
       "nice": true,
       "zero": true,
-      "domain": {"data": "stats", "field": "hi"}
+      "domain": {"data": "aggregate", "field": "hi"}
     }
   ],
   "axes": [
@@ -35,7 +35,7 @@
   "marks": [
     {
       "type": "text",
-      "from": {"data": "stats"},
+      "from": {"data": "aggregate"},
       "properties": {
         "enter": {
           "x": {"value": 0},
@@ -50,7 +50,7 @@
     },
     {
       "type": "rect",
-      "from": {"data": "stats"},
+      "from": {"data": "aggregate"},
       "properties": {
         "enter": {
           "x": {"scale": "x", "field": "lo"},
@@ -63,7 +63,7 @@
     },
     {
       "type": "symbol",
-      "from": {"data": "stats"},
+      "from": {"data": "aggregate"},
       "properties": {
         "enter": {
           "x": {"scale": "x", "field": "mean"},
