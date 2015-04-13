@@ -15,6 +15,7 @@ module.exports = {
     Builder: require('./scene/Builder'),
     GroupBuilder: require('./scene/GroupBuilder')
   },
+  transforms: require('./transforms/index'),
   util: require('./util/index'),
   config: require('./util/config')
 };
