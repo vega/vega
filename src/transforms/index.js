@@ -7,7 +7,7 @@ module.exports = {
   formula:    require('./Formula'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
-  stats:      require('./Stats'),
+  aggregate:  require('./Aggregate'),
   unique:     require('./Unique'),
   zip:        require('./Zip')
 };

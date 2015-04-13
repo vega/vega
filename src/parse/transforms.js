@@ -10,7 +10,7 @@ module.exports = function parseTransforms(model, def) {
   }
 
   // We want to rename output fields before setting any other properties,
-  // as subsequent properties may require output to be set (e.g. aggregate).
+  // as subsequent properties may require output to be set (e.g. group by).
   if(def.output) tx.output(def.output);
 
   util.keys(def).forEach(function(k) {

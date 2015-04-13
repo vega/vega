@@ -1,4 +1,4 @@
-describe('Stats', function() {
+describe('Aggregate', function() {
 
   describe('Flat', function() {
     var values = [
@@ -19,7 +19,7 @@ describe('Stats', function() {
         "data": [{ 
           "name": "table", 
           "values": values,
-          "transform": [{"type": "stats", "on": "y", "measures": meas }]
+          "transform": [{"type": "aggregate", "on": "y", "measures": meas }]
         }] 
       };
     }
@@ -321,7 +321,7 @@ describe('Stats', function() {
           "type": "facet", 
           "keys": [{"field": "country"}],
           "transform": [{
-            "type": "stats", 
+            "type": "aggregate", 
             "on": "count", 
             "measures": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]

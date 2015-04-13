@@ -1,10 +1,10 @@
 var Transform = require('./Transform'),
-    Aggregate = require('./Aggregate'),
+    GroupBy = require('./GroupBy'),
     tuple = require('../dataflow/tuple'),
     util = require('../util/index');
 
 function Unique(graph) {
-  Aggregate.prototype.init.call(this, graph);
+  GroupBy.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     on: {type: "field"},
     as: {type: "value"}
@@ -13,7 +13,7 @@ function Unique(graph) {
   return this;
 }
 
-var proto = (Unique.prototype = new Aggregate());
+var proto = (Unique.prototype = new GroupBy());
 
 proto._new_tuple = function(x) {
   var o  = {},
@@ -27,7 +27,7 @@ proto._new_tuple = function(x) {
 proto.transform = function(input, reset) {
   util.debug(input, ["uniques"]);
   this._refs = [this.on.get(this._graph).accessor];
-  return Aggregate.prototype.transform.call(this, input, reset);
+  return GroupBy.prototype.transform.call(this, input, reset);
 };
 
 module.exports = Unique;
