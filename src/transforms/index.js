@@ -4,10 +4,11 @@ module.exports = {
   facet:      require('./Facet'),
   filter:     require('./Filter'),
   fold:       require('./Fold'),
+  force:      require('./Force'),
   formula:    require('./Formula'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
-  stats:      require('./Stats'),
+  aggregate:  require('./Aggregate'),
   unique:     require('./Unique'),
   zip:        require('./Zip')
 };

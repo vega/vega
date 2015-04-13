@@ -1,4 +1,4 @@
-describe('Stats', function() {
+describe('Aggregate', function() {
 
   describe('Flat', function() {
     var values = [
@@ -322,7 +322,7 @@ describe('Stats', function() {
           "keys": [{"field": "country"}],
           "transform": [{
             "type": "stats", 
-            "field": "count", 
+            "field": "count",
             "measures": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]
         }]

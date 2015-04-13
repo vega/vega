@@ -1,117 +1,118 @@
 var Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple'),
-    changeset = require('../dataflow/changeset'),
+    GroupBy = require('./GroupBy'),
+    tuple = require('../dataflow/tuple'), 
+    changeset = require('../dataflow/changeset'), 
+    meas = require('./measures'),
     util = require('../util/index'),
     C = require('../util/constants');
 
 function Aggregate(graph) {
-  if(graph) this.init(graph);
+  GroupBy.prototype.init.call(this, graph);
+  Transform.addParameters(this, {
+    group_by: {type: "array<field>"},
+    on: {type: "field"} 
+  });
+
+  this._output = {
+    "count":    "count",
+    "avg":      "avg",
+    "min":      "min",
+    "max":      "max",
+    "sum":      "sum",
+    "mean":     "mean",
+    "var":      "var",
+    "stdev":    "stdev",
+    "varp":     "varp",
+    "stdevp":   "stdevp",
+    "median":   "median"
+  };
+
+  // Measures parameter handled manually.
+  this._Measures = null;
+
+  // The group_by might come via the facet. Store that to 
+  // short-circuit usual GroupBy methods.
+  this.__facet = null;
+
   return this;
 }
 
-var proto = (Aggregate.prototype = new Transform());
+var proto = (Aggregate.prototype = new GroupBy());
 
-proto.init = function(graph) {
-  this._refs  = []; // accessors to groupby fields
-  this._cells = {};
-  return Transform.prototype.init.call(this, graph)
-    .router(true).revises(true);
+proto.measures = { 
+  set: function(transform, aggs) {
+    if(aggs.indexOf(C.COUNT) < 0) aggs.push(C.COUNT); // Need count for correct GroupBy propagation.
+    transform._Measures = meas.create(aggs.map(function(a) { 
+      return meas[a](transform._output[a]); 
+    }));
+    return transform;
+  }
 };
 
-proto.data = function() { return this._cells; };
-
 proto._reset = function(input, output) {
-  var k, c;
-  for(k in this._cells) {
+  var k, c
+  for(k in this._cells) { 
     if(!(c = this._cells[k])) continue;
-    output.rem.push(c.tpl);
+    if(!input.facet) output.rem.push(c.set());
   }
   this._cells = {};
 };
 
 proto._keys = function(x) {
-  var keys = this._refs.reduce(function(g, f) {
-    return ((v = f(x)) !== undefined) ? (g.push(v), g) : g;
-  }, []), k = keys.join("|"), v;
-  return keys.length > 0 ? {keys: keys, key: k} : undefined;
-};
-
-proto._cell = function(x) {
-  var k = this._keys(x);
-  return this._cells[k.key] || (this._cells[k.key] = this._new_cell(x, k));
+  if(this.__facet) return this.__facet;
+  else if(this._refs.length) return GroupBy.prototype._keys.call(this, x);
+  return {keys: [], key: ""}; // Aggregate on a flat datasource
 };
 
 proto._new_cell = function(x, k) {
-  return {
-    cnt: 0,
-    tpl: this._new_tuple(x, k),
-    flg: C.ADD_CELL
-  };
-};
+  var group_by = this.group_by.get(this._graph),
+      fields = group_by.fields, acc = group_by.accessors,
+      i, len;
 
-proto._new_tuple = function(x, k) {
-  return tuple.derive(null, null);
+  var t = this.__facet || {};
+  if(!this.__facet) {
+    for(i=0, len=fields.length; i<len; ++i) {
+      t[fields[i]] = acc[i](x);
+    }
+    t = tuple.ingest(t, null);
+  }
+
+  return new this._Measures(t);
 };
 
 proto._add = function(x) {
-  var cell = this._cell(x);
-  cell.cnt += 1;
-  cell.flg |= C.MOD_CELL;
-  return cell;
+  var field = this.on.get(this._graph).accessor;
+  this._cell(x).add(field(x));
 };
 
 proto._rem = function(x) {
-  var cell = this._cell(x);
-  cell.cnt -= 1;
-  cell.flg |= C.MOD_CELL;
-  return cell;
-};
-
-proto._mod = function(x, reset) {
-  if(x._prev && x._prev !== C.SENTINEL && this._keys(x._prev) !== undefined) {
-    this._rem(x._prev);
-    return this._add(x);
-  } else if(reset) { // Signal change triggered reflow
-    return this._add(x);
-  }
-  return this._cell(x);
+  var field = this.on.get(this._graph).accessor;
+  this._cell(x).rem(field(x));
 };
 
 proto.transform = function(input, reset) {
-  var aggregate = this,
-      output = changeset.create(input),
-      k, c, f, t;
+  util.debug(input, ["aggregate"]);
 
-  if(reset) this._reset(input, output);
-
-  input.add.forEach(function(x) { aggregate._add(x); });
-  input.mod.forEach(function(x) { aggregate._mod(x, reset); });
-  input.rem.forEach(function(x) {
-    if(x._prev && x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
-      aggregate._rem(x._prev);
-    } else {
-      aggregate._rem(x);
-    }
-  });
-
-  for(k in this._cells) {
-    c = this._cells[k];
-    if(!c) continue;
-    f = c.flg;
-    t = c.tpl;
-
-    if(c.cnt === 0) {
-      if(f === C.MOD_CELL) output.rem.push(t);
-      this._cells[k] = null;
-    } else if(f & C.ADD_CELL) {
-      output.add.push(t);
-    } else if(f & C.MOD_CELL) {
-      output.mod.push(t);
-    }
-    c.flg = 0;
+  if(input.facet) {
+    this.__facet = input.facet;
+  } else {
+    this._refs = this.group_by.get(this._graph).accessors;
   }
 
-  return output;
+  var output = GroupBy.prototype.transform.call(this, input, reset),
+      k, c;
+
+  if(input.facet) {
+    this._cells[input.facet.key].set();
+    return input;
+  } else {
+    for(k in this._cells) {
+      c = this._cells[k];
+      if(!c) continue;
+      c.set();
+    }
+    return output;
+  }
 };
 
 module.exports = Aggregate;

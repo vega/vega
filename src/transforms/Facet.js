@@ -1,19 +1,19 @@
 var Transform = require('./Transform'),
-    Aggregate = require('./Aggregate'),
+    GroupBy = require('./GroupBy'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'),
     util = require('../util/index'),
     C = require('../util/constants');
 
 function Facet(graph) {
-  Aggregate.prototype.init.call(this, graph);
+  GroupBy.prototype.init.call(this, graph);
   Transform.addParameters(this, {keys: {type: "array<field>"} });
 
   this._pipeline = [];
   return this;
 }
 
-var proto = (Facet.prototype = new Aggregate());
+var proto = (Facet.prototype = new GroupBy());
 
 proto.pipeline = function(pipeline) {
   if(!arguments.length) return this._pipeline;
@@ -41,7 +41,7 @@ proto._new_cell = function(x, k) {
   // give each cell its individual pipeline. This allows
   // dynamically added collectors to do the right thing
   // when wiring up the pipelines.
-  var cell = Aggregate.prototype._new_cell.call(this, x, k),
+  var cell = GroupBy.prototype._new_cell.call(this, x, k),
       pipeline = this._pipeline.map(function(n) { return n.clone(); }),
       facet = this,
       t = cell.tpl;
@@ -59,20 +59,20 @@ proto._new_cell = function(x, k) {
 };
 
 proto._add = function(x) {
-  var cell = Aggregate.prototype._add.call(this, x);
+  var cell = GroupBy.prototype._add.call(this, x);
   cell.ds._input.add.push(x);
   return cell;
 };
 
 proto._mod = function(x, reset) {
-  var cell = Aggregate.prototype._mod.call(this, x, reset);
+  var cell = GroupBy.prototype._mod.call(this, x, reset);
   if(!(cell.flg & C.ADD_CELL)) cell.ds._input.mod.push(x); // Propagate tuples
   cell.flg |= C.MOD_CELL;
   return cell;
 };
 
 proto._rem = function(x) {
-  var cell = Aggregate.prototype._rem.call(this, x);
+  var cell = GroupBy.prototype._rem.call(this, x);
   cell.ds._input.rem.push(x);
   return cell;
 };
@@ -82,7 +82,7 @@ proto.transform = function(input, reset) {
 
   this._refs = this.keys.get(this._graph).accessors;
 
-  var output = Aggregate.prototype.transform.call(this, input, reset),
+  var output = GroupBy.prototype.transform.call(this, input, reset),
       k, c;
 
   for(k in this._cells) {
