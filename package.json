@@ -2,6 +2,7 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
+    "canvas": "^1.2.1",
     "d3": "3.4.x",
     "topojson": "^1.6.18"
   },
@@ -28,7 +29,6 @@
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4",
     "heap": "^0.2.6",
-    "memwatch": "^0.2.2",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
     "q": "^1.1.2",
@@ -44,7 +44,9 @@
     "test": "gulp test"
   },
   "browserify": {
-    "transform": [ "browserify-shim" ]
+    "transform": [
+      "browserify-shim"
+    ]
   },
   "browserify-shim": {
     "d3": "global:d3",
