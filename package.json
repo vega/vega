@@ -9,6 +9,9 @@
     "almond": "0.3.x",
     "amd-loader": "0.0.5",
     "ascii-tree": "0.1.x",
+    "browser-sync": "^2.6.0",
+    "browserify": "^9.0.8",
+    "browserify-shim": "^3.8.5",
     "chai": "^1.10.0",
     "chromedriver": "^2.14.1",
     "grunt": "0.4.x",
@@ -17,6 +20,13 @@
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-test": "^0.12.6",
+    "gulp": "^3.8.11",
+    "gulp-rename": "^1.2.2",
+    "gulp-run": "^1.6.7",
+    "gulp-sourcemaps": "^1.5.1",
+    "gulp-spawn-mocha": "^2.0.1",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.4",
     "heap": "^0.2.6",
     "memwatch": "^0.2.2",
     "mocha": "^2.1.0",
@@ -25,9 +35,19 @@
     "requirejs": "2.1.x",
     "selenium-server-standalone-jar": "^2.45.0",
     "summary": "^0.3.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.1.0",
     "webdriverio": "^2.4.5"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "gulp test"
+  },
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "browserify-shim": {
+    "d3": "global:d3",
+    "topojson": "global:topojson"
   }
 }

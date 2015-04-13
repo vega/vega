@@ -1,45 +1,43 @@
-define(function(require, module, exports) {
-  return {
-    ADD_CELL: 1,
-    MOD_CELL: 2,
+module.exports = {
+  ADD_CELL: 1,
+  MOD_CELL: 2,
 
-    DATA: "data",
-    FIELDS:  "fields",
-    SCALES:  "scales",
-    SIGNAL:  "signal",
-    SIGNALS: "signals",
-    
-    GROUP: "group",
-    
-    ENTER: "enter",
-    UPDATE: "update",
-    EXIT: "exit",
+  DATA: "data",
+  FIELDS:  "fields",
+  SCALES:  "scales",
+  SIGNAL:  "signal",
+  SIGNALS: "signals",
 
-    SENTINEL: {"sentinel": 1},
+  GROUP: "group",
 
-    ADD: "add",
-    REMOVE: "remove",
-    TOGGLE: "toggle",
-    CLEAR: "clear",
+  ENTER: "enter",
+  UPDATE: "update",
+  EXIT: "exit",
 
-    LINEAR: "linear",
-    ORDINAL: "ordinal",
-    LOG: "log",
-    POWER: "pow",
-    TIME: "time",
-    QUANTILE: "quantile",
+  SENTINEL: {"sentinel": 1},
 
-    DOMAIN: "domain",
-    RANGE: "range",
+  ADD: "add",
+  REMOVE: "remove",
+  TOGGLE: "toggle",
+  CLEAR: "clear",
 
-    MARK: "mark",
-    AXIS: "axis",
+  LINEAR: "linear",
+  ORDINAL: "ordinal",
+  LOG: "log",
+  POWER: "pow",
+  TIME: "time",
+  QUANTILE: "quantile",
 
-    COUNT: "count",
-    MIN: "min",
-    MAX: "max",
+  DOMAIN: "domain",
+  RANGE: "range",
 
-    ASC: "asc",
-    DESC: "desc"
-  }
-});
+  MARK: "mark",
+  AXIS: "axis",
+
+  COUNT: "count",
+  MIN: "min",
+  MAX: "max",
+
+  ASC: "asc",
+  DESC: "desc"
+};
