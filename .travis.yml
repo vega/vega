@@ -1,7 +1,9 @@
 language: node_js
 node_js:
-  # - "0.11"
+  - "0.12"
   - "0.10"
-before_install: npm install -g gulp
+before_install:
+  - sudo apt-get install libgif-dev
+  - npm install -g gulp
 install: npm install
 before_script: gulp build
