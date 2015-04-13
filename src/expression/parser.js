@@ -1356,6 +1356,9 @@ var vg_expression_parser = (function() {
           this.value = token.value;
           this.raw = source.slice(token.start, token.end);
           if (token.regex) {
+              if (this.raw == '//') {
+                this.raw = '/(?:)/';
+              }
               this.regex = token.regex;
           }
           this.finish();

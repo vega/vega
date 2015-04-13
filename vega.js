@@ -6192,6 +6192,9 @@ var vg_expression_parser = (function() {
           this.value = token.value;
           this.raw = source.slice(token.start, token.end);
           if (token.regex) {
+              if (this.raw == '//') {
+                this.raw = '/(?:)/';
+              }
               this.regex = token.regex;
           }
           this.finish();
@@ -7200,7 +7203,8 @@ var vg_expression_parser = (function() {
     parse: parse
   };
 
-})();vg.parse = {};vg.parse.axes = (function() {
+})();
+vg.parse = {};vg.parse.axes = (function() {
   var ORIENT = {
     "x":      "bottom",
     "y":      "left",
