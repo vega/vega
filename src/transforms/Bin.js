@@ -6,7 +6,7 @@ var Transform = require('./Transform'),
 function Bin(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    on: {type: "field"},
+    field: {type: "field"},
     min: {type: "value"},
     max: {type: "value"},
     step: {type: "value"},
@@ -31,7 +31,7 @@ proto.transform = function(input) {
   });
 
   function update(d) {
-    var v = transform.on.get().accessor(d);
+    var v = transform.field.get().accessor(d);
     v = v == null ? null
       : b.start + b.step * ~~((v - b.start) / b.step);
     tuple.set(d, output, v, input.stamp);

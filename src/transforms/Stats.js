@@ -10,7 +10,7 @@ function Stats(graph) {
   Aggregate.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     group_by: {type: "array<field>"},
-    on: {type: "field"} 
+    field: {type: "field"} 
   });
 
   this._output = {
@@ -81,12 +81,12 @@ proto._new_cell = function(x, k) {
 };
 
 proto._add = function(x) {
-  var field = this.on.get(this._graph).accessor;
+  var field = this.field.get(this._graph).accessor;
   this._cell(x).add(field(x));
 };
 
 proto._rem = function(x) {
-  var field = this.on.get(this._graph).accessor;
+  var field = this.field.get(this._graph).accessor;
   this._cell(x).rem(field(x));
 };
 

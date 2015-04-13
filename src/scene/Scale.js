@@ -183,14 +183,14 @@ function dataRef(which, def, scale, group) {
     });
 
     if(uniques) {
-      cache.on.set(cache, sort ? sort.field : "_id");
+      cache.field.set(cache, sort ? sort.field : "_id");
       for(j=0, flen=fields.length; j<flen; ++j) {
         cache.group_by.set(cache, fields[j])
           .evaluate(data);
       }
     } else {
       for(j=0, flen=fields.length; j<flen; ++j) {
-        cache.on.set(cache, fields[j])  // Treat as flat datasource
+        cache.field.set(cache, fields[j])  // Treat as flat datasource
           .evaluate(data);
       }
     }
@@ -206,7 +206,7 @@ function dataRef(which, def, scale, group) {
 
     if(sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.on.get(graph).field;
+      sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.field.get(graph).field;
       sort = util.comparator(sort);
       keys = keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
         .sort(sort)

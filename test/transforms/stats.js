@@ -19,7 +19,7 @@ describe('Stats', function() {
         "data": [{ 
           "name": "table", 
           "values": values,
-          "transform": [{"type": "stats", "on": "y", "measures": meas }]
+          "transform": [{"type": "stats", "field": "y", "measures": meas }]
         }] 
       };
     }
@@ -322,7 +322,7 @@ describe('Stats', function() {
           "keys": [{"field": "country"}],
           "transform": [{
             "type": "stats", 
-            "on": "count", 
+            "field": "count", 
             "measures": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]
         }]

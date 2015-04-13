@@ -6,7 +6,7 @@ var Transform = require('./Transform'),
 function Unique(graph) {
   Aggregate.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    on: {type: "field"},
+    field: {type: "field"},
     as: {type: "value"}
   });
 
@@ -17,7 +17,7 @@ var proto = (Unique.prototype = new Aggregate());
 
 proto._new_tuple = function(x) {
   var o  = {},
-      on = this.on.get(this._graph),
+      on = this.field.get(this._graph),
       as = this.as.get(this._graph);
 
   o[as] = on.accessor(x);
@@ -26,7 +26,7 @@ proto._new_tuple = function(x) {
 
 proto.transform = function(input, reset) {
   util.debug(input, ["uniques"]);
-  this._refs = [this.on.get(this._graph).accessor];
+  this._refs = [this.field.get(this._graph).accessor];
   return Aggregate.prototype.transform.call(this, input, reset);
 };
 

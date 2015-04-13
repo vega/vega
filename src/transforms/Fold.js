@@ -6,7 +6,7 @@ var Transform = require('./Transform'),
 function Fold(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    on: {type: "array<field>"} 
+    fields: {type: "array<field>"} 
   });
 
   this._output = {key: "key", value: "value"};
@@ -47,7 +47,7 @@ proto.transform = function(input, reset) {
   util.debug(input, ["folding"]);
 
   var fold = this,
-      on = this.on.get(this._graph),
+      on = this.fields.get(this._graph),
       fields = on.fields, accessors = on.accessors,
       output = changeset.create(input);
 

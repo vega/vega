@@ -15,7 +15,7 @@ describe('Unique', function() {
       "data": [{
         "name": "table",
         "values": values,
-        "transform": [{"type": "unique", "on": on, "as": "unq"}]
+        "transform": [{"type": "unique", "field": on, "as": "unq"}]
       }]
     };
   }

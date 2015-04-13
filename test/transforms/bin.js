@@ -14,7 +14,7 @@ describe('Bin', function() {
   ];
   
   function spec(opt) {
-    var bin = {"type": "bin", "on": "v", "output": {"bin": "bin_v"}};
+    var bin = {"type": "bin", "field": "v", "output": {"bin": "bin_v"}};
     for (var name in opt) bin[name] = opt[name];
     return { 
       "data": [{ 
