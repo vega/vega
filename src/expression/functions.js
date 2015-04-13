@@ -96,18 +96,20 @@ var vg_expression_functions = function(codegen) {
         return fncall("getUTCMilliseconds", args, DATE, 0);
       },
 
-    // STRING functions
-    "parseFloat": "parseFloat",
-    "parseInt": "parseInt",
-    "indexof": function(args) {
-        return fncall("indexOf", args, STRING);
-      },
-    "lastindexof": function(args) {
-        return fncall("lastIndexOf", args, STRING);
-      },
+    // shared sequence functions
     "length": function(args) {
         return fncall("length", args, null, -1);
       },
+    "indexof": function(args) {
+        return fncall("indexOf", args, null);
+      },
+    "lastindexof": function(args) {
+        return fncall("lastIndexOf", args, null);
+      },
+
+    // STRING functions
+    "parseFloat": "parseFloat",
+    "parseInt": "parseInt",
     "upper": function(args) {
         return fncall("toUpperCase", args, STRING, 0);
       },
