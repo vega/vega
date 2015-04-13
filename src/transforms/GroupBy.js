@@ -4,12 +4,12 @@ var Transform = require('./Transform'),
     util = require('../util/index'),
     C = require('../util/constants');
 
-function Aggregate(graph) {
+function GroupBy(graph) {
   if(graph) this.init(graph);
   return this;
 }
 
-var proto = (Aggregate.prototype = new Transform());
+var proto = (GroupBy.prototype = new Transform());
 
 proto.init = function(graph) {
   this._refs  = []; // accessors to groupby fields
@@ -78,19 +78,19 @@ proto._mod = function(x, reset) {
 };
 
 proto.transform = function(input, reset) {
-  var aggregate = this,
+  var groupBy = this,
       output = changeset.create(input),
       k, c, f, t;
 
   if(reset) this._reset(input, output);
 
-  input.add.forEach(function(x) { aggregate._add(x); });
-  input.mod.forEach(function(x) { aggregate._mod(x, reset); });
+  input.add.forEach(function(x) { groupBy._add(x); });
+  input.mod.forEach(function(x) { groupBy._mod(x, reset); });
   input.rem.forEach(function(x) {
-    if(x._prev && x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
-      aggregate._rem(x._prev);
+    if(x._prev && x._prev !== C.SENTINEL && groupBy._keys(x._prev) !== undefined) {
+      groupBy._rem(x._prev);
     } else {
-      aggregate._rem(x);
+      groupBy._rem(x);
     }
   });
 
@@ -114,4 +114,4 @@ proto.transform = function(input, reset) {
   return output;
 };
 
-module.exports = Aggregate;
+module.exports = GroupBy;

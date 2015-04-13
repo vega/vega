@@ -1,5 +1,5 @@
 var Transform = require('./Transform'),
-    Aggregate = require('./Aggregate'),
+    GroupBy = require('./GroupBy'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
     meas = require('./measures'),
@@ -7,7 +7,7 @@ var Transform = require('./Transform'),
     C = require('../util/constants');
 
 function Stats(graph) {
-  Aggregate.prototype.init.call(this, graph);
+  GroupBy.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     group_by: {type: "array<field>"},
     on: {type: "field"} 
@@ -31,17 +31,17 @@ function Stats(graph) {
   this._Measures = null;
 
   // The group_by might come via the facet. Store that to 
-  // short-circuit usual Aggregate methods.
+  // short-circuit usual GroupBy methods.
   this.__facet = null;
 
   return this;
 }
 
-var proto = (Stats.prototype = new Aggregate());
+var proto = (Stats.prototype = new GroupBy());
 
 proto.measures = { 
   set: function(transform, aggs) {
-    if(aggs.indexOf(C.COUNT) < 0) aggs.push(C.COUNT); // Need count for correct Aggregate propagation.
+    if(aggs.indexOf(C.COUNT) < 0) aggs.push(C.COUNT); // Need count for correct GroupBy propagation.
     transform._Measures = meas.create(aggs.map(function(a) { 
       return meas[a](transform._output[a]); 
     }));
@@ -60,7 +60,7 @@ proto._reset = function(input, output) {
 
 proto._keys = function(x) {
   if(this.__facet) return this.__facet;
-  else if(this._refs.length) return Aggregate.prototype._keys.call(this, x);
+  else if(this._refs.length) return GroupBy.prototype._keys.call(this, x);
   return {keys: [], key: ""}; // Stats on a flat datasource
 };
 
@@ -99,7 +99,7 @@ proto.transform = function(input, reset) {
     this._refs = this.group_by.get(this._graph).accessors;
   }
 
-  var output = Aggregate.prototype.transform.call(this, input, reset),
+  var output = GroupBy.prototype.transform.call(this, input, reset),
       k, c;
 
   if(input.facet) {
