@@ -6,7 +6,7 @@ var Transform = require('./Transform'),
 
 function Aggregate(graph) {
   if(graph) this.init(graph);
-  return this; 
+  return this;
 }
 
 var proto = (Aggregate.prototype = new Transform());
@@ -88,7 +88,7 @@ proto.transform = function(input, reset) {
   input.mod.forEach(function(x) { aggregate._mod(x, reset); });
   input.rem.forEach(function(x) {
     if(x._prev && x._prev !== C.SENTINEL && aggregate._keys(x._prev) !== undefined) {
-      aggregate._rem(x._prev)
+      aggregate._rem(x._prev);
     } else {
       aggregate._rem(x);
     }
@@ -97,7 +97,8 @@ proto.transform = function(input, reset) {
   for(k in this._cells) {
     c = this._cells[k];
     if(!c) continue;
-    f = c.flg, t = c.tpl;
+    f = c.flg;
+    t = c.tpl;
 
     if(c.cnt === 0) {
       if(f === C.MOD_CELL) output.rem.push(t);
@@ -105,12 +106,12 @@ proto.transform = function(input, reset) {
     } else if(f & C.ADD_CELL) {
       output.add.push(t);
     } else if(f & C.MOD_CELL) {
-      output.mod.push(t)
+      output.mod.push(t);
     }
     c.flg = 0;
   }
 
   return output;
-}
+};
 
 module.exports = Aggregate;
