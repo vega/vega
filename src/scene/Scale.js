@@ -1,6 +1,6 @@
 var d3 = require('d3'),
     Node = require('../dataflow/Node'),
-    Stats = require('../transforms/Stats'),
+    Aggregate = require('../transforms/Aggregate'),
     changeset = require('../dataflow/changeset'),
     util = require('../util/index'),
     config = require('../util/config'),
@@ -162,7 +162,7 @@ function dataRef(which, def, scale, group) {
       i, rlen, j, flen, r, fields, meas, from, data, keys;
 
   if(!cache) {
-    cache = scale[ck] = new Stats(graph), meas = [];
+    cache = scale[ck] = new Aggregate(graph), meas = [];
     if(uniques && sort) meas.push(sort.stat);
     else if(!uniques)   meas.push(C.MIN, C.MAX);
     cache.measures.set(cache, meas);

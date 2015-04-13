@@ -6,7 +6,7 @@ var Transform = require('./Transform'),
     util = require('../util/index'),
     C = require('../util/constants');
 
-function Stats(graph) {
+function Aggregate(graph) {
   GroupBy.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     group_by: {type: "array<field>"},
@@ -37,7 +37,7 @@ function Stats(graph) {
   return this;
 }
 
-var proto = (Stats.prototype = new GroupBy());
+var proto = (Aggregate.prototype = new GroupBy());
 
 proto.measures = { 
   set: function(transform, aggs) {
@@ -61,7 +61,7 @@ proto._reset = function(input, output) {
 proto._keys = function(x) {
   if(this.__facet) return this.__facet;
   else if(this._refs.length) return GroupBy.prototype._keys.call(this, x);
-  return {keys: [], key: ""}; // Stats on a flat datasource
+  return {keys: [], key: ""}; // Aggregate on a flat datasource
 };
 
 proto._new_cell = function(x, k) {
@@ -91,7 +91,7 @@ proto._rem = function(x) {
 };
 
 proto.transform = function(input, reset) {
-  util.debug(input, ["stats"]);
+  util.debug(input, ["aggregate"]);
 
   if(input.facet) {
     this.__facet = input.facet;
@@ -115,4 +115,4 @@ proto.transform = function(input, reset) {
   }
 };
 
-module.exports = Stats;
+module.exports = Aggregate;

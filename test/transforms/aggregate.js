@@ -1,4 +1,4 @@
-describe('Stats', function() {
+describe('Aggregate', function() {
 
   describe('Flat', function() {
     var values = [
