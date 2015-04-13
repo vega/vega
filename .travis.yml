@@ -2,6 +2,6 @@ language: node_js
 node_js:
   # - "0.11"
   - "0.10"
-before_install: npm install -g grunt-cli
+before_install: npm install -g gulp
 install: npm install
-before_script: grunt build
+before_script: gulp build
