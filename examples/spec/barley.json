@@ -12,7 +12,7 @@
       "transform": [
         {
           "type": "aggregate",
-          "on": {"field": "yield"},
+          "field": "yield",
           "group_by": ["variety"],
           "measures": ["median"]
         },
@@ -25,7 +25,7 @@
       "transform": [
         {
           "type": "aggregate",
-          "on": {"field": "yield"},
+          "field": "yield",
           "group_by": ["site"],
           "measures": ["median"]
         },
