@@ -19,7 +19,7 @@ describe('Aggregate', function() {
         "data": [{ 
           "name": "table", 
           "values": values,
-          "transform": [{"type": "aggregate", "on": "y", "measures": meas }]
+          "transform": [{"type": "aggregate", "fields": [{"name": "y", "ops": meas}]}]
         }] 
       };
     }
@@ -303,7 +303,36 @@ describe('Aggregate', function() {
     });
   });
 
-  it('should calculate stats on facets', function(done) {
+  it.only('should calculate multiple aggregations', function(done) {
+    var values = [
+      {"country":"US", "state": "washington", "area": 12, "population": 3},
+      {"country":"US", "state": "california", "area": 13, "population": 12},
+      {"country":"US", "state": "new york", "area": 3, "population": 7},
+      {"country":"Canada", "state": "british area", "count": 4, "population": 4},
+      {"country":"Canada", "state": "yukon", "area": 3, "population": 2}
+    ];
+
+    var spec = {
+      "data": [{
+        "name": "table", 
+        "values": values,
+        "transform": [{"type": "aggregate", "group_by": "country",
+          "fields": [{"name": "area", "ops": ["sum"]}, {"name": "population", "ops": ["sum"]}]}]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      var ds = model.data('table'),
+          data = ds.values();
+
+      expect(data).to.have.length(2);
+
+      console.log(data);
+      done();
+    }, modelFactory);
+  });
+
+  it.skip('should calculate stats on facets', function(done) {
     var values = [
       {"country":"US", "type": "gold", "count": 12},
       {"country":"US", "type": "silver", "count": 13},
