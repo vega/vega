@@ -40,12 +40,14 @@ var proto = (Aggregate.prototype = new GroupBy());
 
 proto.fields = {
   set: function(transform, fields) {
+    var f, measures;
     for (var i = 0; i < fields.length; i++) {
-      var f = fields[i];
-      var measures = f.ops.map(function(a) {
+      f = fields[i];
+      measures = f.ops.map(function(a) {
         return meas[a](f.name + '_' + transform._output[a]);
       });
-      measures.push(meas[C.COUNT](C.COUNT));  // Need count for correct GroupBy propagation.
+      measures.push(meas[C.COUNT](transform._output[C.COUNT]));  // Need count for correct GroupBy propagation.
+      measures.push(meas[C.COUNT]('cnt'));  // Need count for correct GroupBy propagation.
       transform._Aggregators.push({
         accessor: util.accessor(f.name),
         field: f.name,
@@ -57,10 +59,10 @@ proto.fields = {
 };
 
 proto._reset = function(input, output) {
-  var k, c;
+  var k, c, f;
   // rebuild accessors
   for(var i = 0; i < this._Aggregators.length; i++) {
-    var f = this._Aggregators[i];
+    f = this._Aggregators[i];
     f.accessor = util.accessor(f.name);
   }
   for(k in this._cells) {
@@ -77,7 +79,6 @@ proto._keys = function(x) {
 };
 
 proto._new_cell = function(x, k) {
-  // console.log('new', x, k);
   var group_by = this.group_by.get(this._graph),
       fields = group_by.fields, acc = group_by.accessors,
       i, len;
@@ -90,30 +91,37 @@ proto._new_cell = function(x, k) {
     t = tuple.ingest(t, null);
   }
 
-  //console.log("aggs", this._Aggregators[1].measures)
-
   for(i=0; i < this._Aggregators.length; i++) {
     var agg = this._Aggregators[i];
     t[agg.field] = new agg.measures(t);
   }
 
-  // console.log('t', t);
+  t.cnt = 0;
+  t.count = 0;
+  t.tpl = t;
+  t.flg = 1;
 
   return t;
 };
 
 proto._add = function(x) {
+  var c = this._cell(x);
   for(var i = 0; i < this._Aggregators.length; i++) {
     var field = this._Aggregators[i];
-    this._cell(x)[field.field].add(field.accessor(x));
+    c[field.field].add(field.accessor(x));
   }
+  c.cnt++;
+  c.count++;
 };
 
 proto._rem = function(x) {
+  var c = this._cell(x);
   for(var i = 0; i < this._Aggregators.length; i++) {
     var field = this._Aggregators[i];
-    this._cell(x)[field.field].rem(field.accessor(x));
+    c[field.field].rem(field.accessor(x));
   }
+  c.cnt--;
+  c.count--;
 };
 
 proto.transform = function(input, reset) {
@@ -138,7 +146,6 @@ proto.transform = function(input, reset) {
       for(var i = 0; i < this._Aggregators.length; i++) {
         c[this._Aggregators[i].field].set();
       }
-      // console.log(c);
     }
     return output;
   }
