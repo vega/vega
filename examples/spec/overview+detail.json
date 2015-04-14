@@ -21,14 +21,14 @@
       "name": "date_start",
       "init": 946713600000,
       "streams": [
-        {"type": "brush_start", "expr": "date(brush_start)"}
+        {"type": "brush_start", "expr": "datetime(brush_start)"}
       ]
     },
     {
       "name": "date_end",
       "init": 946713600000,
       "streams": [
-        {"type": "brush_end", "expr": "date(brush_end)"}
+        {"type": "brush_end", "expr": "datetime(brush_end)"}
       ]
     },
     {"name": "min_date", "expr": "min(date_start, date_end)"},
