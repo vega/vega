@@ -129,12 +129,12 @@ function compile(agg) {
       add = "",
       rem = "",
       set = "var t = this.tpl;";
-  
+
   all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
   agg.forEach(function(a) { set += "this.tuple.set(t,'"+a.out+"',"+a.set+");"; });
-  add += "this.flg |= this.MOD;"
-  rem += "this.flg |= this.MOD;"
-  set += "return t;"
+  add += "this.flg |= this.MOD;";
+  rem += "this.flg |= this.MOD;";
+  set += "return t;";
 
   ctr = Function("t", ctr);
   ctr.prototype.ADD = C.ADD_CELL;

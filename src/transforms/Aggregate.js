@@ -38,17 +38,18 @@ function Aggregate(graph) {
 
 var proto = (Aggregate.prototype = new GroupBy());
 
-proto.fields = { 
+proto.fields = {
   set: function(transform, fields) {
     for (var i = 0; i < fields.length; i++) {
       var f = fields[i];
-      if(f.ops.indexOf(C.COUNT) < 0) f.ops.push(C.COUNT); // Need count for correct GroupBy propagation.
+      var measures = f.ops.map(function(a) {
+        return meas[a](f.name + '_' + transform._output[a]);
+      });
+      measures.push(meas[C.COUNT](C.COUNT));  // Need count for correct GroupBy propagation.
       transform._Aggregators.push({
         accessor: util.accessor(f.name),
         field: f.name,
-        measures: meas.create(f.ops.map(function(a) { 
-          return meas[a](transform._output[a]);
-        }))
+        measures: meas.create(measures)
       });
     }
     return transform;
@@ -57,7 +58,6 @@ proto.fields = {
 
 proto._reset = function(input, output) {
   var k, c;
-  console.log('reset');
   // rebuild accessors
   for(var i = 0; i < this._Aggregators.length; i++) {
     var f = this._Aggregators[i];
@@ -71,14 +71,13 @@ proto._reset = function(input, output) {
 };
 
 proto._keys = function(x) {
-  console.log('keys', x);
   if(this.__facet) return this.__facet;
   else if(this._refs.length) return GroupBy.prototype._keys.call(this, x);
   return {keys: [], key: ""}; // Aggregate on a flat datasource
 };
 
 proto._new_cell = function(x, k) {
-  console.log('new', x, k);
+  // console.log('new', x, k);
   var group_by = this.group_by.get(this._graph),
       fields = group_by.fields, acc = group_by.accessors,
       i, len;
@@ -91,29 +90,34 @@ proto._new_cell = function(x, k) {
     t = tuple.ingest(t, null);
   }
 
-  console.log(t);
+  //console.log("aggs", this._Aggregators[1].measures)
 
-  return new this._Measures(t);
+  for(i=0; i < this._Aggregators.length; i++) {
+    var agg = this._Aggregators[i];
+    t[agg.field] = new agg.measures(t);
+  }
+
+  // console.log('t', t);
+
+  return t;
 };
 
 proto._add = function(x) {
   for(var i = 0; i < this._Aggregators.length; i++) {
-    var field = this._Aggregators[i].accessor;
-    this._cell(x).add(field(x));
+    var field = this._Aggregators[i];
+    this._cell(x)[field.field].add(field.accessor(x));
   }
 };
 
 proto._rem = function(x) {
   for(var i = 0; i < this._Aggregators.length; i++) {
-    var field = this._Aggregators[i].accessor;
-    this._cell(x).rem(field(x));
+    var field = this._Aggregators[i];
+    this._cell(x)[field.field].rem(field.accessor(x));
   }
 };
 
 proto.transform = function(input, reset) {
   util.debug(input, ["aggregate"]);
-
-  console.log('transform');
 
   if(input.facet) {
     this.__facet = input.facet;
@@ -131,7 +135,10 @@ proto.transform = function(input, reset) {
     for(k in this._cells) {
       c = this._cells[k];
       if(!c) continue;
-      c.set();
+      for(var i = 0; i < this._Aggregators.length; i++) {
+        c[this._Aggregators[i].field].set();
+      }
+      // console.log(c);
     }
     return output;
   }
