@@ -6,10 +6,10 @@ var tuple = require('../dataflow/tuple'),
 var types = {
   "count": measure({
     name: "count",
-    init: "this.cnt = 0;",
-    add:  "this.cnt += 1;",
-    rem:  "this.cnt -= 1;",
-    set:  "this.cnt"
+    init: "",
+    add:  "",
+    rem:  "",
+    set:  "this.tpl.cnt"
   }),
   "_counts": measure({
     name: "_counts",
@@ -29,8 +29,8 @@ var types = {
   "avg": measure({
     name: "avg",
     init: "this.avg = 0;",
-    add:  "var d = v - this.avg; this.avg += d / this.cnt;",
-    rem:  "var d = v - this.avg; this.avg -= d / this.cnt;",
+    add:  "var d = v - this.avg; this.avg += d / this.tpl.cnt;",
+    rem:  "var d = v - this.avg; this.avg -= d / this.tpl.cnt;",
     set:  "this.avg",
     req:  ["count"], idx: 1
   }),
@@ -39,7 +39,7 @@ var types = {
     init: "this.dev = 0;",
     add:  "this.dev += d * (v - this.avg);",
     rem:  "this.dev -= d * (v - this.avg);",
-    set:  "this.dev / (this.cnt-1)",
+    set:  "this.dev / (this.tpl.cnt-1)",
     req:  ["avg"], idx: 2
   }),
   "varp": measure({
@@ -47,7 +47,7 @@ var types = {
     init: "",
     add:  "",
     rem:  "",
-    set:  "this.dev / this.cnt",
+    set:  "this.dev / this.tpl.cnt",
     req:  ["var"], idx: 3
   }),
   "stdev": measure({
@@ -55,7 +55,7 @@ var types = {
     init: "",
     add:  "",
     rem:  "",
-    set:  "Math.sqrt(this.dev / (this.cnt-1))",
+    set:  "Math.sqrt(this.dev / (this.tpl.cnt-1))",
     req:  ["var"], idx: 4
   }),
   "stdevp": measure({
@@ -63,7 +63,7 @@ var types = {
     init: "",
     add:  "",
     rem:  "",
-    set:  "Math.sqrt(this.dev / this.cnt)",
+    set:  "Math.sqrt(this.dev / this.tpl.cnt)",
     req:  ["var"], idx: 5
   }),
   "min": measure({
@@ -93,8 +93,8 @@ var types = {
     init: "this.vals = []; ",
     add:  "if(this.vals) this.vals.push(v); ",
     rem:  "this.vals = null;",
-    set:  "this.cnt % 2 ? this.sel(~~(this.cnt/2), this.vals, this.cnts) : "+
-          "0.5 * (this.sel(~~(this.cnt/2)-1, this.vals, this.cnts) + this.sel(~~(this.cnt/2), this.vals, this.cnts))",
+    set:  "this.tpl.cnt % 2 ? this.sel(~~(this.tpl.cnt/2), this.vals, this.cnts) : "+
+          "0.5 * (this.sel(~~(this.tpl.cnt/2)-1, this.vals, this.cnts) + this.sel(~~(this.tpl.cnt/2), this.vals, this.cnts))",
     req: ["_counts"], idx: 8
   })
 };
@@ -125,20 +125,16 @@ function resolve(agg) {
 
 function compile(agg) {
   var all = resolve(agg),
-      ctr = "this.flg = this.ADD; this.tpl = t;",
+      ctr = "this.tpl = t;",
       add = "",
       rem = "",
       set = "var t = this.tpl;";
 
   all.forEach(function(a) { ctr += a.init; add += a.add; rem += a.rem; });
   agg.forEach(function(a) { set += "this.tuple.set(t,'"+a.out+"',"+a.set+");"; });
-  add += "this.flg |= this.MOD;";
-  rem += "this.flg |= this.MOD;";
   set += "return t;";
 
   ctr = Function("t", ctr);
-  ctr.prototype.ADD = C.ADD_CELL;
-  ctr.prototype.MOD = C.MOD_CELL;
   ctr.prototype.add = Function("v", add);
   ctr.prototype.rem = Function("v", rem);
   ctr.prototype.set = Function("stamp", set);
