@@ -74,7 +74,7 @@ proto.set = function(transform, value) {
   this._value = util.array(value).map(function(v, i) {
     if(util.isString(v)) {
       if(isExpr) {
-        var e = expr(transform._graph, v);
+        var e = expr(/*transform._graph, JH-TODO*/v);
         transform.dependency(C.FIELDS,  e.fields);
         transform.dependency(C.SIGNALS, e.signals);
         return e.fn;

@@ -358,7 +358,7 @@ describe('Aggregate', function() {
           "keys": [{"field": "country"}],
           "transform": [{
             "type": "aggregate", 
-            "on": "count", 
+            "field": "count",
             "measures": ["min", "max", "median", "stdevp", "stdev", 
               "varp", "var", "avg", "sum", "count"]}]
         }]

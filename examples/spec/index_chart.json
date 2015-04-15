@@ -11,7 +11,7 @@
     {
       "name": "indexDate",
       "init": 1104566400000,
-      "streams": [{"type": "xPos", "expr": "date(xPos)"}]
+      "streams": [{"type": "xPos", "expr": "datetime(xPos)"}]
     }
   ],
 

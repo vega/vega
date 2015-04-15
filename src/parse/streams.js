@@ -51,7 +51,7 @@ module.exports = function(view) {
     register[selector.event].push({
       signal: sig,
       exp: exp,
-      filters: filters.map(function(f) { return expr(graph, f); }),
+      filters: filters.map(function(f) { return expr(/*graph, JH_TODO*/f); }),
       spec: spec
     });
 
@@ -61,7 +61,7 @@ module.exports = function(view) {
 
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(), 
-        trueFn = expr(graph, "true"),
+        trueFn = expr(/*graph, JH-TODO*/"true"),
         s = {};
 
     s[START]  = graph.signal(name + START,  false);
@@ -115,7 +115,7 @@ module.exports = function(view) {
 
     (sig.streams || []).forEach(function(stream) {
       var sel = selector.parse(stream.type),
-          exp = expr(graph, stream.expr);
+          exp = expr(/*graph, JH-TODO*/stream.expr);
       mergedStream(signal, sel, exp, stream);
     });
   });

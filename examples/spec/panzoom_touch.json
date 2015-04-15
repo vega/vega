@@ -22,7 +22,7 @@
       "streams": [
         {"type": "touch_twotouchmove", "expr":"xCoord - (touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2"},
         {"type": "mousedown,touchstart, touch_twotouchstart", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_onetouch.from0]", "expr": "xCoord - p.x"}
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "xCoord - p.x"}
       ]
     },
     {
@@ -30,7 +30,7 @@
       "init": 0,
       "streams": [
         {"type": "mousedown,touchstart", "expr": "p.x"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_onetouch.from0]", "expr": "p.x"},
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "p.x"},
         {"type": "touch_twotouchmove", "expr":"(touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2"}
       ]
     },
@@ -40,7 +40,7 @@
       "streams": [
         {"type": "touch_twotouchmove", "expr":"(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2 - yCoord"},
         {"type": "mousedown,touchstart,touch_twotouchstart", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_onetouch.from0]", "expr": "p.y - yCoord"}
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "p.y - yCoord"}
       ]
     },
     {
@@ -48,7 +48,7 @@
       "init": 0,
       "streams": [
         {"type": "mousedown,touchstart", "expr": "p.y"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_onetouch.from0]", "expr": "p.y"},
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "p.y"},
         {"type": "touch_twotouchmove", "expr":"(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2"}
       ]
     },
