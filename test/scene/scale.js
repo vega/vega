@@ -295,7 +295,7 @@ describe('Scale', function() {
           ]
         };
 
-        it('should initialize', function(done) {
+        it.only('should initialize', function(done) {
           parseSpec(spec, function(model) {
             var group = model.scene().items[0],
                 x = group.scale('x'),

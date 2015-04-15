@@ -1,4 +1,4 @@
-describe.only('Aggregate', function() {
+describe('Aggregate', function() {
 
   describe('Flat', function() {
     var values = [
@@ -324,8 +324,6 @@ describe.only('Aggregate', function() {
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
           data = ds.values();
-
-      console.log(data);
 
       expect(data).to.have.length(2);
       expect(data[0]).to.have.property('country', 'US');

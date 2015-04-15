@@ -41,13 +41,14 @@ var proto = (Aggregate.prototype = new GroupBy());
 proto.fields = {
   set: function(transform, fields) {
     var f, measures;
+    console.log("fields", fields);
     for (var i = 0; i < fields.length; i++) {
       f = fields[i];
       measures = f.ops.map(function(a) {
         return meas[a](f.name + '_' + transform._output[a]);
       });
-      measures.push(meas[C.COUNT](transform._output[C.COUNT]));  // Need count for correct GroupBy propagation.
-      measures.push(meas[C.COUNT]('cnt'));  // Need count for correct GroupBy propagation.
+      // measures.push(meas[C.COUNT](transform._output[C.COUNT]));  // Need count for correct GroupBy propagation.
+      // measures.push(meas[C.COUNT]('cnt'));  // Need count for correct GroupBy propagation.
       transform._Aggregators.push({
         accessor: util.accessor(f.name),
         field: f.name,
@@ -64,6 +65,7 @@ proto._reset = function(input, output) {
   for(var i = 0; i < this._Aggregators.length; i++) {
     f = this._Aggregators[i];
     f.accessor = util.accessor(f.name);
+    // TODO: delete old aggregated values
   }
   for(k in this._cells) {
     if(!(c = this._cells[k])) continue;
@@ -97,31 +99,31 @@ proto._new_cell = function(x, k) {
   }
 
   t.cnt = 0;
-  t.count = 0;
   t.tpl = t;
-  t.flg = 1;
+  t.flg = C.ADD_CELL;
 
   return t;
 };
 
 proto._add = function(x) {
   var c = this._cell(x);
+  c.cnt++;
   for(var i = 0; i < this._Aggregators.length; i++) {
     var field = this._Aggregators[i];
+    console.log(c, field)
     c[field.field].add(field.accessor(x));
   }
-  c.cnt++;
-  c.count++;
+  c.flg |= C.MOD_CELL;
 };
 
 proto._rem = function(x) {
   var c = this._cell(x);
+  c.cnt--;
   for(var i = 0; i < this._Aggregators.length; i++) {
     var field = this._Aggregators[i];
     c[field.field].rem(field.accessor(x));
   }
-  c.cnt--;
-  c.count--;
+  c.flg |= C.MOD_CELL;
 };
 
 proto.transform = function(input, reset) {
@@ -146,6 +148,7 @@ proto.transform = function(input, reset) {
       for(var i = 0; i < this._Aggregators.length; i++) {
         c[this._Aggregators[i].field].set();
       }
+      console.log(c)
     }
     return output;
   }

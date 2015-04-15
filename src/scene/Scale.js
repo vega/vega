@@ -158,14 +158,15 @@ function dataRef(which, def, scale, group) {
       uniques = scale.type === C.ORDINAL || scale.type === C.QUANTILE,
       ck = "_"+which,
       cache = scale[ck],
+      cacheField = {ops: []},  // the field and measures in the aggregator
       sort = def.sort,
-      i, rlen, j, flen, r, fields, meas, from, data, keys;
+      i, rlen, j, flen, r, fields, from, data, keys;
 
   if(!cache) {
-    cache = scale[ck] = new Aggregate(graph), meas = [];
-    if(uniques && sort) meas.push(sort.stat);
-    else if(!uniques)   meas.push(C.MIN, C.MAX);
-    cache.measures.set(cache, meas);
+    cache = scale[ck] = new Aggregate(graph), cacheField.ops = [];
+    if(uniques && sort) cacheField.ops.push(sort.stat);
+    else if(!uniques)   cacheField.ops.push(C.MIN, C.MAX);
+    console.log("cf", cacheField);
   }
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
@@ -183,14 +184,16 @@ function dataRef(which, def, scale, group) {
     });
 
     if(uniques) {
-      cache.on.set(cache, sort ? sort.field : "_id");
+      cacheField.name = sort ? sort.field : "_id";
+      cache.fields.set(cache, [cacheField]);
       for(j=0, flen=fields.length; j<flen; ++j) {
         cache.group_by.set(cache, fields[j])
           .evaluate(data);
       }
     } else {
       for(j=0, flen=fields.length; j<flen; ++j) {
-        cache.on.set(cache, fields[j])  // Treat as flat datasource
+        cacheField.name = fields[j];
+        cache.fields.set(cache, [cacheField]) // Treat as flat datasource
           .evaluate(data);
       }
     }
@@ -206,7 +209,7 @@ function dataRef(which, def, scale, group) {
 
     if(sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + "tpl." + cache.on.get(graph).field;
+      sort = (sort == C.DESC ? "-" : "+") + "tpl." + cacheField.name;
       sort = util.comparator(sort);
       keys = keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
         .sort(sort)
@@ -218,7 +221,7 @@ function dataRef(which, def, scale, group) {
     return keys;
   } else {
     data = data[""]; // Unpack flat aggregation
-    return data == null ? [] : [data.tpl.min, data.tpl.max];
+    return data == null ? [] : [data.tpl[cacheField.name + "_min"], data.tpl[cacheField.name + "_max"]];
   }
 }
 
