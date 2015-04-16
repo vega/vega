@@ -40,15 +40,14 @@ var proto = (Aggregate.prototype = new GroupBy());
 
 proto.fields = {
   set: function(transform, fields) {
-    var f, measures;
-    console.log("fields", fields);
-    for (var i = 0; i < fields.length; i++) {
+    var f, measures, i;
+    transform._Aggregators = [];
+    for (i = 0; i < fields.length; i++) {
       f = fields[i];
+      if (f.ops.length === 0) continue;
       measures = f.ops.map(function(a) {
         return meas[a](f.name + '_' + transform._output[a]);
       });
-      // measures.push(meas[C.COUNT](transform._output[C.COUNT]));  // Need count for correct GroupBy propagation.
-      // measures.push(meas[C.COUNT]('cnt'));  // Need count for correct GroupBy propagation.
       transform._Aggregators.push({
         accessor: util.accessor(f.name),
         field: f.name,
@@ -60,11 +59,11 @@ proto.fields = {
 };
 
 proto._reset = function(input, output) {
-  var k, c, f;
+  var k, c, agg;
   // rebuild accessors
   for(var i = 0; i < this._Aggregators.length; i++) {
-    f = this._Aggregators[i];
-    f.accessor = util.accessor(f.name);
+    agg = this._Aggregators[i];
+    agg.accessor = util.accessor(agg.name);
     // TODO: delete old aggregated values
   }
   for(k in this._cells) {
@@ -105,13 +104,21 @@ proto._new_cell = function(x, k) {
   return t;
 };
 
+// Add missing measures, TODO: delete
+proto._add_missing = function(c, agg) {
+  var measure = new agg.measures(c.tpl);
+  c[agg.field] = measure;
+  return measure;
+};
+
 proto._add = function(x) {
   var c = this._cell(x);
   c.cnt++;
   for(var i = 0; i < this._Aggregators.length; i++) {
-    var field = this._Aggregators[i];
-    console.log(c, field)
-    c[field.field].add(field.accessor(x));
+    var agg = this._Aggregators[i];
+    var measure = c[agg.field];
+    if (measure === undefined) measure = this._add_missing(c, agg);
+    measure.add(agg.accessor(x));
   }
   c.flg |= C.MOD_CELL;
 };
@@ -120,8 +127,8 @@ proto._rem = function(x) {
   var c = this._cell(x);
   c.cnt--;
   for(var i = 0; i < this._Aggregators.length; i++) {
-    var field = this._Aggregators[i];
-    c[field.field].rem(field.accessor(x));
+    var agg = this._Aggregators[i];
+    c[agg.field].rem(agg.accessor(x));
   }
   c.flg |= C.MOD_CELL;
 };
@@ -148,7 +155,6 @@ proto.transform = function(input, reset) {
       for(var i = 0; i < this._Aggregators.length; i++) {
         c[this._Aggregators[i].field].set();
       }
-      console.log(c)
     }
     return output;
   }
