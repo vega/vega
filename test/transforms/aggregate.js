@@ -326,10 +326,12 @@ describe('Aggregate', function() {
           data = ds.values();
 
       expect(data).to.have.length(2);
+
       expect(data[0]).to.have.property('country', 'US');
       expect(data[0]).to.have.property('area_sum', 28);
       expect(data[0]).to.have.property('area_count', 3);
       expect(data[0]).to.have.property('population_sum', 22);
+
       expect(data[1]).to.have.property('country', 'Canada');
       expect(data[1]).to.have.property('area_sum', 7);
       expect(data[1]).to.have.property('area_count', 2);
