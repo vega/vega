@@ -15,12 +15,12 @@ describe('Aggregate', function() {
     ];
 
     function spec(meas) {
-      return { 
-        "data": [{ 
-          "name": "table", 
+      return {
+        "data": [{
+          "name": "table",
           "values": values,
           "transform": [{"type": "aggregate", "fields": [{"name": "y", "ops": meas}]}]
-        }] 
+        }]
       };
     }
 
@@ -314,7 +314,7 @@ describe('Aggregate', function() {
 
     var spec = {
       "data": [{
-        "name": "table", 
+        "name": "table",
         "values": values,
         "transform": [{"type": "aggregate", "group_by": "country",
           "fields": [{"name": "area", "ops": ["sum", "count"]}, {"name": "population", "ops": ["sum"]}]}]
@@ -339,7 +339,7 @@ describe('Aggregate', function() {
     }, modelFactory);
   });
 
-  it.skip('should calculate stats on facets', function(done) {
+  it('should calculate stats on facets', function(done) {
     var values = [
       {"country":"US", "type": "gold", "count": 12},
       {"country":"US", "type": "silver", "count": 13},
@@ -354,13 +354,15 @@ describe('Aggregate', function() {
         "name": "table",
         "values": values,
         "transform": [{
-          "type": "facet", 
+          "type": "facet",
           "keys": [{"field": "country"}],
           "transform": [{
-            "type": "aggregate", 
-            "field": "count",
-            "measures": ["min", "max", "median", "stdevp", "stdev", 
-              "varp", "var", "avg", "sum", "count"]}]
+            "type": "aggregate",
+            "fields": [{
+              "name": "count",
+              "ops": ["min", "max", "median", "stdevp", "stdev",
+                      "varp", "var", "avg", "sum", "count"]}],
+            }]
         }]
       }]
     };
@@ -372,18 +374,18 @@ describe('Aggregate', function() {
       expect(data).to.have.length(2);
 
       expect(data[0]).to.have.property('key', 'US');
-      expect(data[0]).to.have.property('min', 12);
-      expect(data[0]).to.have.property('max', 15);
-      expect(data[0]).to.have.property('median', 13);
-      expect(data[0]).to.have.property('sum', 40);
-      expect(data[0]).to.have.property('count', 3);
+      expect(data[0]).to.have.property('count_min', 12);
+      expect(data[0]).to.have.property('count_max', 15);
+      expect(data[0]).to.have.property('count_median', 13);
+      expect(data[0]).to.have.property('count_sum', 40);
+      expect(data[0]).to.have.property('count_count', 3);
 
       expect(data[1]).to.have.property('key', 'Canada');
-      expect(data[1]).to.have.property('min', 3);
-      expect(data[1]).to.have.property('max', 5);
-      expect(data[1]).to.have.property('median', 4);
-      expect(data[1]).to.have.property('sum', 12);
-      expect(data[1]).to.have.property('count', 3);
+      expect(data[1]).to.have.property('count_min', 3);
+      expect(data[1]).to.have.property('count_max', 5);
+      expect(data[1]).to.have.property('count_median', 4);
+      expect(data[1]).to.have.property('count_sum', 12);
+      expect(data[1]).to.have.property('count_count', 3);
 
       done();
     }, modelFactory);

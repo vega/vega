@@ -40,27 +40,18 @@ var proto = (Aggregate.prototype = new GroupBy());
 
 proto.fields = {
   set: function(transform, fields) {
-    var f, i, k, measures, measure, agg, cell;
+    var f, i, k, measures, measure, cell;
     for (i = 0; i < fields.length; i++) {
       f = fields[i];
       if (f.ops.length === 0) continue;
       measures = f.ops.map(function(a) {
         return meas[a](f.name + '_' + transform._output[a]);
       });
-      agg = {
+      transform._Aggregators.push({
         accessor: util.accessor(f.name),
-        field: f.name,
+        field: transform._aggregate_in_one ? '_all' : f.name,
         measures: meas.create(measures)
-      };
-      transform._Aggregators.push(agg);
-
-      // add aggregates to existing cells
-      for (k in transform._cells) {
-        cell = transform._cells[k];
-        if (cell[agg.field]) continue;
-        measure = new agg.measures(cell.tpl);
-        cell[agg.field] = measure;
-      }
+      });
     }
     return transform;
   }
@@ -72,7 +63,6 @@ proto._reset = function(input, output) {
   for(i = 0; i < this._Aggregators.length; i++) {
     agg = this._Aggregators[i];
     agg.accessor = util.accessor(agg.name);
-    // TODO: delete old aggregated values
   }
   for(k in this._cells) {
     if(!(c = this._cells[k])) continue;
@@ -145,7 +135,7 @@ proto.transform = function(input, reset) {
       k, c;
 
   if(input.facet) {
-    this._cells[input.facet.key].set();
+    this._cells[input.facet.key][this._Aggregators[0].field].set();
     return input;
   } else {
     for(k in this._cells) {

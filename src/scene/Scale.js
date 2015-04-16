@@ -158,13 +158,13 @@ function dataRef(which, def, scale, group) {
       uniques = scale.type === C.ORDINAL || scale.type === C.QUANTILE,
       ck = "_"+which,
       cache = scale[ck],
-      cacheField = {ops: [], names: []},  // the field and measures in the aggregator
+      cacheField = {ops: []},  // the field and measures in the aggregator
       sort = def.sort,
       i, rlen, j, flen, r, fields, from, data, keys;
 
   if(!cache) {
     cache = scale[ck] = new Aggregate(graph), cacheField.ops = [];
-    cache._one_tuple = true;  // hack to write to the same tuple
+    cache._aggregate_in_one = true;  // do not separate aggregations for separate fields
     if(uniques && sort) cacheField.ops.push(sort.stat);
     else if(!uniques)   cacheField.ops.push(C.MIN, C.MAX);
   }
@@ -185,7 +185,6 @@ function dataRef(which, def, scale, group) {
 
     if(uniques) {
       cacheField.name = sort ? sort.field : "_id";
-      cacheField.names.push(cacheField.name);
       cache.fields.set(cache, [cacheField]);
       for(j=0, flen=fields.length; j<flen; ++j) {
         cache.group_by.set(cache, fields[j])
@@ -194,7 +193,6 @@ function dataRef(which, def, scale, group) {
     } else {
       for(j=0, flen=fields.length; j<flen; ++j) {
         cacheField.name = fields[j];
-        cacheField.names.push(cacheField.name);
         cache.fields.set(cache, [cacheField]) // Treat as flat datasource
           .evaluate(data);
       }
@@ -223,21 +221,7 @@ function dataRef(which, def, scale, group) {
     return keys;
   } else {
     data = data[""]; // Unpack flat aggregation
-
-    if (data === null) return [];
-
-    // aggregate min and max values from multiple fields
-    var min = +Infinity, max = -Infinity, name, minValue, maxValue;
-    for (i = 0; i < cacheField.names.length; i++) {
-      name = cacheField.names[i];
-
-      minValue = data.tpl[name + "_min"];
-      if (minValue < min) min = minValue;
-
-      maxValue = data.tpl[name + "_max"];
-      if (maxValue > max) max = maxValue;
-    }
-    return [min, max];
+    return (data === null) ? [] : [data.tpl["_all"].min, data.tpl["_all"].max];
   }
 }
 
