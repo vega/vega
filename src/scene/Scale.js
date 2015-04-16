@@ -158,15 +158,15 @@ function dataRef(which, def, scale, group) {
       uniques = scale.type === C.ORDINAL || scale.type === C.QUANTILE,
       ck = "_"+which,
       cache = scale[ck],
-      cacheField = {ops: []},  // the field and measures in the aggregator
+      cacheField = {ops: [], names: []},  // the field and measures in the aggregator
       sort = def.sort,
       i, rlen, j, flen, r, fields, from, data, keys;
 
   if(!cache) {
     cache = scale[ck] = new Aggregate(graph), cacheField.ops = [];
+    cache._one_tuple = true;  // hack to write to the same tuple
     if(uniques && sort) cacheField.ops.push(sort.stat);
     else if(!uniques)   cacheField.ops.push(C.MIN, C.MAX);
-    console.log("cf", cacheField);
   }
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
@@ -185,6 +185,7 @@ function dataRef(which, def, scale, group) {
 
     if(uniques) {
       cacheField.name = sort ? sort.field : "_id";
+      cacheField.names.push(cacheField.name);
       cache.fields.set(cache, [cacheField]);
       for(j=0, flen=fields.length; j<flen; ++j) {
         cache.group_by.set(cache, fields[j])
@@ -193,6 +194,7 @@ function dataRef(which, def, scale, group) {
     } else {
       for(j=0, flen=fields.length; j<flen; ++j) {
         cacheField.name = fields[j];
+        cacheField.names.push(cacheField.name);
         cache.fields.set(cache, [cacheField]) // Treat as flat datasource
           .evaluate(data);
       }
@@ -213,7 +215,7 @@ function dataRef(which, def, scale, group) {
       sort = util.comparator(sort);
       keys = keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
         .sort(sort)
-        .map(function(k) { return k.key });
+        .map(function(k) { return k.key; });
     // } else {  // "First seen" order
     //   sort = util.comparator("tpl._id");
     }
@@ -221,7 +223,21 @@ function dataRef(which, def, scale, group) {
     return keys;
   } else {
     data = data[""]; // Unpack flat aggregation
-    return data == null ? [] : [data.tpl[cacheField.name + "_min"], data.tpl[cacheField.name + "_max"]];
+
+    if (data === null) return [];
+
+    // aggregate min and max values from multiple fields
+    var min = +Infinity, max = -Infinity, name, minValue, maxValue;
+    for (i = 0; i < cacheField.names.length; i++) {
+      name = cacheField.names[i];
+
+      minValue = data.tpl[name + "_min"];
+      if (minValue < min) min = minValue;
+
+      maxValue = data.tpl[name + "_max"];
+      if (maxValue > max) max = maxValue;
+    }
+    return [min, max];
   }
 }
 

@@ -40,28 +40,36 @@ var proto = (Aggregate.prototype = new GroupBy());
 
 proto.fields = {
   set: function(transform, fields) {
-    var f, measures, i;
-    transform._Aggregators = [];
+    var f, i, k, measures, measure, agg, cell;
     for (i = 0; i < fields.length; i++) {
       f = fields[i];
       if (f.ops.length === 0) continue;
       measures = f.ops.map(function(a) {
         return meas[a](f.name + '_' + transform._output[a]);
       });
-      transform._Aggregators.push({
+      agg = {
         accessor: util.accessor(f.name),
         field: f.name,
         measures: meas.create(measures)
-      });
+      };
+      transform._Aggregators.push(agg);
+
+      // add aggregates to existing cells
+      for (k in transform._cells) {
+        cell = transform._cells[k];
+        if (cell[agg.field]) continue;
+        measure = new agg.measures(cell.tpl);
+        cell[agg.field] = measure;
+      }
     }
     return transform;
   }
 };
 
 proto._reset = function(input, output) {
-  var k, c, agg;
+  var k, c, i, agg;
   // rebuild accessors
-  for(var i = 0; i < this._Aggregators.length; i++) {
+  for(i = 0; i < this._Aggregators.length; i++) {
     agg = this._Aggregators[i];
     agg.accessor = util.accessor(agg.name);
     // TODO: delete old aggregated values
@@ -82,9 +90,9 @@ proto._keys = function(x) {
 proto._new_cell = function(x, k) {
   var group_by = this.group_by.get(this._graph),
       fields = group_by.fields, acc = group_by.accessors,
-      i, len;
+      i, len, t;
 
-  var t = this.__facet || {};
+  t = this.__facet || {};
   if(!this.__facet) {
     for(i=0, len=fields.length; i<len; ++i) {
       t[fields[i]] = acc[i](x);
@@ -104,21 +112,12 @@ proto._new_cell = function(x, k) {
   return t;
 };
 
-// Add missing measures, TODO: delete
-proto._add_missing = function(c, agg) {
-  var measure = new agg.measures(c.tpl);
-  c[agg.field] = measure;
-  return measure;
-};
-
 proto._add = function(x) {
   var c = this._cell(x);
   c.cnt++;
   for(var i = 0; i < this._Aggregators.length; i++) {
     var agg = this._Aggregators[i];
-    var measure = c[agg.field];
-    if (measure === undefined) measure = this._add_missing(c, agg);
-    measure.add(agg.accessor(x));
+    c[agg.field].add(agg.accessor(x));
   }
   c.flg |= C.MOD_CELL;
 };
