@@ -80,7 +80,7 @@ proto._rem = function(x) {
 proto.transform = function(input, reset) {
   util.debug(input, ["faceting"]);
 
-  this._refs = this.keys.get(this._graph).accessors;
+  this._gb = this.keys.get(this._graph);
 
   var output = GroupBy.prototype.transform.call(this, input, reset),
       k, c;

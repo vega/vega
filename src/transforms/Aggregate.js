@@ -68,47 +68,47 @@ proto._reset = function(input, output) {
 };
 
 proto._keys = function(x) {
-  return this._refs.length ? 
+  return this._gb.fields.length ? 
     GroupBy.prototype._keys.call(this, x) : {keys: [], key: ""};
 };
 
 proto._new_cell = function(x, k) {
-  var group_by = this.group_by.get(this._graph),
-      fields = group_by.fields, acc = group_by.accessors,
-      t = {}, i, len;
+  var cell = GroupBy.prototype._new_cell.call(this, x, k),
+      aggs = this._Aggregators,
+      i = 0, len = aggs.length, 
+      agg;
 
-  for(i=0, len=fields.length; i<len; ++i) {
-    t[fields[i]] = acc[i](x);
-  }
-  t = tuple.ingest(t, null);
-
-  for(i=0; i < this._Aggregators.length; i++) {
-    var agg = this._Aggregators[i];
-    t[agg.field] = new agg.measures(t);
+  for(; i<len; i++) {
+    agg = aggs[i];
+    cell[agg.field] = new agg.measures(cell, cell.tpl);
   }
 
-  t.cnt = 0;
-  t.tpl = t;
-  t.flg = C.ADD_CELL;
-
-  return t;
+  return cell;
 };
 
 proto._add = function(x) {
-  var c = this._cell(x);
+  var c = this._cell(x),
+      aggs = this._Aggregators,
+      i = 0, len = aggs.length,
+      agg;
+
   c.cnt++;
-  for(var i = 0; i < this._Aggregators.length; i++) {
-    var agg = this._Aggregators[i];
+  for(; i<len; i++) {
+    agg = aggs[i];
     c[agg.field].add(agg.accessor(x));
   }
   c.flg |= C.MOD_CELL;
 };
 
 proto._rem = function(x) {
-  var c = this._cell(x);
+  var c = this._cell(x),
+      aggs = this._Aggregators,
+      i = 0, len = aggs.length,
+      agg;
+
   c.cnt--;
-  for(var i = 0; i < this._Aggregators.length; i++) {
-    var agg = this._Aggregators[i];
+  for(; i<len; i++) {
+    agg = aggs[i];
     c[agg.field].rem(agg.accessor(x));
   }
   c.flg |= C.MOD_CELL;
@@ -117,16 +117,18 @@ proto._rem = function(x) {
 proto.transform = function(input, reset) {
   util.debug(input, ["aggregate"]);
 
-  this._refs = this.group_by.get(this._graph).accessors;
+  this._gb = this.group_by.get(this._graph);
 
   var output = GroupBy.prototype.transform.call(this, input, reset),
-      k, c;
+      aggs = this._Aggregators,
+      len = aggs.length,
+      i, k, c;
 
   for(k in this._cells) {
     c = this._cells[k];
     if(!c) continue;
-    for(var i = 0; i < this._Aggregators.length; i++) {
-      c[this._Aggregators[i].field].set();
+    for(i=0; i<len; i++) {
+      c[aggs[i].field].set();
     }
   }
   return output;
