@@ -1,4 +1,5 @@
 var d3 = require('d3'),
+    dl = require('datalib'),
     Bounds = require('../../core/Bounds'),
     config = require('../../util/config'),
     marks = require('./marks');
@@ -120,7 +121,7 @@ function translatedBounds(item, bounds) {
   
 function getBounds(items) {
   return !items ? null :
-    util.array(items).reduce(function(b, item) {
+    dl.array(items).reduce(function(b, item) {
       return b.union(translatedBounds(item, item.bounds))
               .union(translatedBounds(item, item['bounds:prev']));
     }, new Bounds());  
@@ -196,7 +197,7 @@ prototype.loadImage = function(uri) {
   if (dl.isNode) {
     image = new (require('canvas').Image)();
     dl.load(dl.extend({url: uri}, config.load), function(err, data) {
-      if (err) { util.error(err); return; }
+      if (err) { dl.error(err); return; }
       image.src = data;
       image.loaded = true;
       renderer._imgload -= 1;
