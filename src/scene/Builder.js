@@ -76,7 +76,7 @@ proto.revises = function(p) {
 function inlineDs() {
   var from = this._def.from,
       geom = from.mark,
-      name, spec, sibling, output;
+      src, name, spec, sibling, output;
 
   if(geom) {
     name = ["vg", this._parent_id, geom].join("_");
@@ -86,7 +86,8 @@ function inlineDs() {
       modify: from.modify
     };
   } else {
-    name = ["vg", this._from, this._def.type, Date.now()].join("_");
+    src = this._model.data(this._from);
+    name = ["vg", this._from, this._def.type, src.listeners(true).length].join("_");
     spec = {
       name: name,
       source: this._from,

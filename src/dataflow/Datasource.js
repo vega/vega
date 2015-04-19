@@ -222,4 +222,10 @@ proto.removeListener = function(l) {
   this._pipeline[this._pipeline.length-1].removeListener(l);
 };
 
+proto.listeners = function(ds) {
+  return ds 
+    ? this._collector ? this._collector.listeners() : this._pipeline[0].listeners()
+    : this._pipeline[this._pipeline.length-1].listeners();
+};
+
 module.exports = Datasource;
