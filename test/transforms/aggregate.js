@@ -341,7 +341,7 @@ describe('Aggregate', function() {
     }, modelFactory);
   });
 
-  it('should calculate stats on facets', function(done) {
+  it.skip('should calculate stats on facets', function(done) {
     var values = [
       {"country":"US", "type": "gold", "count": 12},
       {"country":"US", "type": "silver", "count": 13},

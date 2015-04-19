@@ -29,10 +29,6 @@ function Aggregate(graph) {
   // Aggregators parameter handled manually.
   this._Aggregators = [];
 
-  // The group_by might come via the facet. Store that to 
-  // short-circuit usual GroupBy methods.
-  this.__facet = null;
-
   return this;
 }
 
@@ -66,29 +62,25 @@ proto._reset = function(input, output) {
   }
   for(k in this._cells) {
     if(!(c = this._cells[k])) continue;
-    if(!input.facet) output.rem.push(c.set());
+    output.rem.push(c.set());
   }
   this._cells = {};
 };
 
 proto._keys = function(x) {
-  if(this.__facet) return this.__facet;
-  else if(this._refs.length) return GroupBy.prototype._keys.call(this, x);
-  return {keys: [], key: ""}; // Aggregate on a flat datasource
+  return this._refs.length ? 
+    GroupBy.prototype._keys.call(this, x) : {keys: [], key: ""};
 };
 
 proto._new_cell = function(x, k) {
   var group_by = this.group_by.get(this._graph),
       fields = group_by.fields, acc = group_by.accessors,
-      i, len, t;
+      t = {}, i, len;
 
-  t = this.__facet || {};
-  if(!this.__facet) {
-    for(i=0, len=fields.length; i<len; ++i) {
-      t[fields[i]] = acc[i](x);
-    }
-    t = tuple.ingest(t, null);
+  for(i=0, len=fields.length; i<len; ++i) {
+    t[fields[i]] = acc[i](x);
   }
+  t = tuple.ingest(t, null);
 
   for(i=0; i < this._Aggregators.length; i++) {
     var agg = this._Aggregators[i];
@@ -125,28 +117,19 @@ proto._rem = function(x) {
 proto.transform = function(input, reset) {
   util.debug(input, ["aggregate"]);
 
-  if(input.facet) {
-    this.__facet = input.facet;
-  } else {
-    this._refs = this.group_by.get(this._graph).accessors;
-  }
+  this._refs = this.group_by.get(this._graph).accessors;
 
   var output = GroupBy.prototype.transform.call(this, input, reset),
       k, c;
 
-  if(input.facet) {
-    this._cells[input.facet.key][this._Aggregators[0].field].set();
-    return input;
-  } else {
-    for(k in this._cells) {
-      c = this._cells[k];
-      if(!c) continue;
-      for(var i = 0; i < this._Aggregators.length; i++) {
-        c[this._Aggregators[i].field].set();
-      }
+  for(k in this._cells) {
+    c = this._cells[k];
+    if(!c) continue;
+    for(var i = 0; i < this._Aggregators.length; i++) {
+      c[this._Aggregators[i].field].set();
     }
-    return output;
   }
+  return output;
 };
 
 module.exports = Aggregate;
