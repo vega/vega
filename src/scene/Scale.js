@@ -164,9 +164,8 @@ function dataRef(which, def, scale, group) {
 
   if(!cache) {
     cache = scale[ck] = new Aggregate(graph), cacheField.ops = [];
-    cache._aggregate_in_one = true;  // do not separate aggregations for separate fields
+    cache.singleton(true);
     if(uniques && sort) cacheField.ops.push(sort.stat);
-    else if(!uniques)   cacheField.ops.push(C.MIN, C.MAX);
   }
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
@@ -193,6 +192,7 @@ function dataRef(which, def, scale, group) {
     } else {
       for(j=0, flen=fields.length; j<flen; ++j) {
         cacheField.name = fields[j];
+        cacheField.ops  = [C.MIN, C.MAX];
         cache.fields.set(cache, [cacheField]) // Treat as flat datasource
           .evaluate(data);
       }
@@ -221,7 +221,7 @@ function dataRef(which, def, scale, group) {
     return keys;
   } else {
     data = data[""]; // Unpack flat aggregation
-    return (data === null) ? [] : [data.tpl["_all"].min, data.tpl["_all"].max];
+    return (data === null) ? [] : [data[C.SINGLETON].min, data[C.SINGLETON].max];
   }
 }
 

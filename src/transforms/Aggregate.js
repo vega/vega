@@ -29,6 +29,7 @@ function Aggregate(graph) {
   // Aggregators parameter handled manually.
   this._fieldsDef   = null;
   this._Aggregators = null;
+  this._singleton   = false;  // If true, all fields aggregated within a single monoid
 
   return this;
 }
@@ -45,9 +46,17 @@ proto.fields = {
     }
 
     transform._fieldsDef = fields;
+    transform._Aggregators = null;
+    transform.aggs();
     transform.dependency(C.SIGNALS, util.keys(signals));
     return transform;
   }
+};
+
+proto.singleton = function(c) {
+  if(!arguments.length) return this._singleton;
+  this._singleton = c;
+  return this;
 };
 
 proto.aggs = function() {
@@ -64,7 +73,6 @@ proto.aggs = function() {
     f = fields[i];
     if (f.ops.length === 0) continue;
 
-
     name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
     ops  = util.array(f.ops.signal ? graph.signalRef(f.ops.signal) : f.ops);
     measures = ops.map(function(a) {
@@ -73,7 +81,7 @@ proto.aggs = function() {
     });
     aggs.push({
       accessor: util.accessor(name),
-      field: this._aggregate_in_one ? '_all' : name,
+      field: this._singleton ? C.SINGLETON : name,
       measures: meas.create(measures)
     });
   }
@@ -83,6 +91,7 @@ proto.aggs = function() {
 
 proto._reset = function(input, output) {
   this._Aggregators = null; // rebuild aggregators
+  this.aggs();
   return GroupBy.prototype._reset.call(this, input, output);
 };
 
@@ -150,6 +159,7 @@ proto.transform = function(input, reset) {
       c[aggs[i].field].set();
     }
   }
+
   return output;
 };
 

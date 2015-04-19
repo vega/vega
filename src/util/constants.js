@@ -15,6 +15,7 @@ module.exports = {
   EXIT: "exit",
 
   SENTINEL: {"sentinel": 1},
+  SINGLETON: "_singleton",
 
   ADD: "add",
   REMOVE: "remove",
