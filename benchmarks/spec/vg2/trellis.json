@@ -12,9 +12,8 @@
       "transform": [
         {
           "type": "aggregate", 
-          "on": {"field": "yield"},
-          "group_by": ["variety"],
-          "measures": ["median"]
+          "fields": [{"name": "yield", "ops": ["median"]}],
+          "group_by": ["variety"]
         },
         {"type": "sort", "by": "-median"}
       ]
@@ -25,9 +24,8 @@
       "transform": [
         {
           "type": "aggregate", 
-          "on": {"field": "yield"},
-          "group_by": ["site"],
-          "measures": ["median"]
+          "fields": [{"name": "yield", "ops": ["median"]}],
+          "group_by": ["site"]
         },
         {"type": "sort", "by": "-median"}
       ]

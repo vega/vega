@@ -15,8 +15,7 @@
         {
           "type": "aggregate", 
           "group_by": "x", 
-          "on": "z", 
-          "measures": ["count", "avg", "min", "max", "sum", "var", "stdev", "varp", "stdevp", "median"]
+          "fields": [{"name": "z", "ops": ["count", "avg", "min", "max", "sum", "var", "stdev", "varp", "stdevp", "median"]}]
         }
       ]
     }

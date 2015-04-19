@@ -1,4 +1,5 @@
 module.exports = {
+  aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
   cross:      require('./Cross'),
   facet:      require('./Facet'),
@@ -8,7 +9,6 @@ module.exports = {
   formula:    require('./Formula'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
-  aggregate:  require('./Aggregate'),
   unique:     require('./Unique'),
   zip:        require('./Zip')
 };

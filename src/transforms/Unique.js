@@ -26,7 +26,7 @@ proto._new_tuple = function(x) {
 
 proto.transform = function(input, reset) {
   debug(input, ["uniques"]);
-  this._refs = [this.field.get(this._graph).accessor];
+  this._gb = this.field.get(this._graph);
   return GroupBy.prototype.transform.call(this, input, reset);
 };
 
