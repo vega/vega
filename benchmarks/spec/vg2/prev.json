@@ -53,7 +53,7 @@
     "properties": {
       "update": {
         "x": {"scale": "x", "field": "x"},
-        "y": {"scale": "y", "field": "avg"},
+        "y": {"scale": "y", "field": "z_avg"},
         "size": {"value": 100},
         "fill": {"value": "steelblue"}
       }

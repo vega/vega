@@ -15,7 +15,7 @@
           "fields": [{"name": "yield", "ops": ["median"]}],
           "group_by": ["variety"]
         },
-        {"type": "sort", "by": "-median"}
+        {"type": "sort", "by": "-yield_median"}
       ]
     },
     {
@@ -27,7 +27,7 @@
           "fields": [{"name": "yield", "ops": ["median"]}],
           "group_by": ["site"]
         },
-        {"type": "sort", "by": "-median"}
+        {"type": "sort", "by": "-yield_median"}
       ]
     }
   ],
