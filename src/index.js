@@ -15,6 +15,6 @@ module.exports = {
     Builder: require('./scene/Builder'),
     GroupBuilder: require('./scene/GroupBuilder')
   },
-  util: require('./util/index'),
-  config: require('./util/config')
+  config: require('./util/config'),
+  util: require('datalib')
 };

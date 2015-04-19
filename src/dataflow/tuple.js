@@ -1,4 +1,4 @@
-var util = require('../util/index'),
+var dl = require('datalib'),
     C = require('../util/constants'),
     tuple_id = 1;
 
@@ -6,7 +6,7 @@ var util = require('../util/index'),
 // datum is an object that has been appropriately sandboxed from 
 // the outside environment. 
 function ingest(datum, prev) {
-  datum = util.isObject(datum) ? datum : {data: datum};
+  datum = dl.isObject(datum) ? datum : {data: datum};
   datum._id = tuple_id++;
   datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
   return datum;
@@ -32,10 +32,17 @@ function set_prev(t, k) {
 
 function reset() { tuple_id = 1; }
 
+function idMap(a) {
+  return a.reduce(function(m,x) {
+    return (m[x._id] = 1, m);
+  }, {});
+};
+
 module.exports = {
   ingest: ingest,
   derive: derive,
   set:    set,
   prev:   set_prev,
-  reset:  reset
+  reset:  reset,
+  idMap:  idMap
 };

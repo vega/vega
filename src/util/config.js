@@ -3,23 +3,15 @@ var d3 = require('d3'),
 
 config.debug = false;
 
-// are we running in node.js?
-// via timetler.com/2012/10/13/environment-detection-in-javascript/
-// TODO: how does this work with requirejs?
-config.isNode = typeof exports !== 'undefined' && this.exports !== exports;
-
-// Allows domain restriction when using data loading via XHR.
-// To enable, set it to a list of allowed domains
-// e.g., ['wikipedia.org', 'eff.org']
-config.domainWhiteList = false;
-
-// If true, disable potentially unsafe transforms (filter, formula)
-// involving possible JavaScript injection attacks.
-config.safeMode = false;
-
-// base url for loading external data files
-// used only for server-side operation
-config.baseURL = "";
+config.load = {
+  // base url for loading external data files
+  // used only for server-side operation
+  baseURL: "",
+  // Allows domain restriction when using data loading via XHR.
+  // To enable, set it to a list of allowed domains
+  // e.g., ['wikipedia.org', 'eff.org']
+  domainWhiteList: false
+};
 
 // version and namepsaces for exported svg
 config.svgNamespace =

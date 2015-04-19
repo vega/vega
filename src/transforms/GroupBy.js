@@ -1,7 +1,6 @@
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
-    util = require('../util/index'),
     C = require('../util/constants');
 
 function GroupBy(graph) {

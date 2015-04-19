@@ -1,7 +1,6 @@
 var d3 = require('d3'),
     Bounds = require('../core/Bounds'),
     canvas = require('../render/canvas/path'),
-    util = require('./index'),
     config = require('./config');
 
 var parse = canvas.parse,
@@ -12,6 +11,14 @@ var parse = canvas.parse,
     sqrt3 = Math.sqrt(3),
     tan30 = Math.tan(30 * Math.PI / 180),
     gfx = null;
+
+function fontString(o) {
+  return (o.fontStyle ? o.fontStyle + " " : "")
+    + (o.fontVariant ? o.fontVariant + " " : "")
+    + (o.fontWeight ? o.fontWeight + " " : "")
+    + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
+    + (o.font || config.render.font);
+}
 
 function context() {
   // TODO: how to check if nodeJS in requireJS?
@@ -183,7 +190,7 @@ function text(o, bounds, noRotate) {
       r = o.radius || 0,
       g = context(), w, t;
 
-  g.font = util.fontString(o);
+  g.font = fontString(o);
   g.textAlign = a || "left";
   g.textBaseline = b || "alphabetic";
   w = g.measureText(o.text || "").width;

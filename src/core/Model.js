@@ -2,7 +2,7 @@ var Graph = require('../dataflow/Graph'),
     Node  = require('../dataflow/Node'),
     GroupBuilder = require('../scene/GroupBuilder'),
     changeset = require('../dataflow/changeset'), 
-    util = require('../util/index');
+    dl = require('datalib');
 
 function Model() {
   this._defs = {};
@@ -34,7 +34,7 @@ proto.data = function() {
 
 function predicates(name) {
   var m = this, predicates = {};
-  if(!util.isArray(name)) return this._predicates[name];
+  if(!dl.isArray(name)) return this._predicates[name];
   name.forEach(function(n) { predicates[n] = m._predicates[n] });
   return predicates;
 }

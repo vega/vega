@@ -1,11 +1,11 @@
-var d3 = require('d3'),
+var dl = require('datalib'),
+    d3 = require('d3'),
     tuple = require('../dataflow/tuple'),
-    util = require('../util/index'),
     config = require('../util/config');
 
 function compile(model, mark, spec) {
   var code = "",
-      names = util.keys(spec),
+      names = dl.keys(spec),
       i, len, name, ref, vars = {}, 
       deps = {
         signals: {},
@@ -23,12 +23,12 @@ function compile(model, mark, spec) {
       code += "\n  " + ref.code
     } else {
       ref = valueRef(name, ref);
-      code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
+      code += "this.tpl.set(o, "+dl.str(name)+", "+ref.val+");";
     }
 
     vars[name] = true;
     ['signals', 'scales', 'data'].forEach(function(p) {
-      if(ref[p] != null) util.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
+      if(ref[p] != null) dl.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
     });
   }
 
@@ -69,17 +69,17 @@ function compile(model, mark, spec) {
     var encoder = Function("item", "group", "trans", "db", 
       "signals", "predicates", code);
     encoder.tpl  = tuple;
-    encoder.util = util;
+    encoder.util = dl;
     encoder.d3   = d3; // For color spaces
     return {
       encode: encoder,
-      signals: util.keys(deps.signals),
-      scales: util.keys(deps.scales),
-      data: util.keys(deps.data)
+      signals: dl.keys(deps.signals),
+      scales: dl.keys(deps.scales),
+      data: dl.keys(deps.data)
     }
   } catch (e) {
-    util.error(e);
-    util.log(code);
+    dl.error(e);
+    dl.log(code);
   }
 }
 
@@ -108,27 +108,27 @@ function rule(model, name, rules) {
         input = [], args = name+"_arg"+i,
         ref;
 
-    util.keys(r.input).forEach(function(k) {
+    dl.keys(r.input).forEach(function(k) {
       var ref = valueRef(i, r.input[k]);
-      input.push(util.str(k)+": "+ref.val);
-      if(ref.signals) signals.push.apply(signals, util.array(ref.signals));
-      if(ref.scales)  scales.push.apply(scales, util.array(ref.scales));
+      input.push(dl.str(k)+": "+ref.val);
+      if(ref.signals) signals.push.apply(signals, dl.array(ref.signals));
+      if(ref.scales)  scales.push.apply(scales, dl.array(ref.scales));
     });
 
     ref = valueRef(name, r);
-    if(ref.signals) signals.push.apply(signals, util.array(ref.signals));
-    if(ref.scales)  scales.push.apply(scales, util.array(ref.scales));
+    if(ref.signals) signals.push.apply(signals, dl.array(ref.signals));
+    if(ref.scales)  scales.push.apply(scales, dl.array(ref.scales));
 
     if(predName) {
       signals.push.apply(signals, pred.signals);
       db.push.apply(db, pred.data);
       inputs.push(args+" = {"+input.join(', ')+"}");
-      code += "if(predicates["+util.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
-        "    this.tpl.set(o, "+util.str(name)+", "+ref.val+");\n";
+      code += "if(predicates["+dl.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
+        "    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");\n";
       code += rules[i+1] ? "  } else " : "  }";
     } else {
       code += "{\n" + 
-        "    this.tpl.set(o, "+util.str(name)+", "+ref.val+");\n"+
+        "    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");\n"+
         "  }";
     }
   });
@@ -157,38 +157,38 @@ function valueRef(name, ref) {
   // initialize value
   var val = null, signalRef = null;
   if (ref.value !== undefined) {
-    val = util.str(ref.value);
+    val = dl.str(ref.value);
   }
 
   if (ref.signal !== undefined) {
-    signalRef = util.field(ref.signal);
-    val = "signals["+signalRef.map(util.str).join("][")+"]"; 
+    signalRef = dl.field(ref.signal);
+    val = "signals["+signalRef.map(dl.str).join("][")+"]"; 
     signals.push(signalRef.shift());
   }
 
   // get field reference for enclosing group
   if (ref.group != null) {
     var grp = "group.datum";
-    if (util.isString(ref.group)) {
+    if (dl.isString(ref.group)) {
       grp = GROUP_VARS[ref.group]
         ? "group." + ref.group
-        : "group.datum["+util.field(ref.group).map(util.str).join("][")+"]";
+        : "group.datum["+dl.field(ref.group).map(dl.str).join("][")+"]";
     }
   }
 
   // get data field value
   if (ref.field != null) {
-    if (util.isString(ref.field)) {
-      val = "item.datum["+util.field(ref.field).map(util.str).join("][")+"]";
+    if (dl.isString(ref.field)) {
+      val = "item.datum["+dl.field(ref.field).map(dl.str).join("][")+"]";
       if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
     } else if(ref.field.signal) {
-      signalRef = util.field(ref.field.signal);
-      val = "item.datum[signals["+signalRef.map(util.str).join("][")+"]]";
+      signalRef = dl.field(ref.field.signal);
+      val = "item.datum[signals["+signalRef.map(dl.str).join("][")+"]]";
       if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
       signals.push(signalRef.shift());
     } else {
       val = "this.util.accessor(group.datum["
-          + util.field(ref.field.group).map(util.str).join("][")
+          + dl.field(ref.field.group).map(dl.str).join("][")
           + "])(item.datum)";
     }
   } else if (ref.group != null) {
@@ -197,15 +197,15 @@ function valueRef(name, ref) {
 
   if (ref.scale != null) {
     var scale = null;
-    if(util.isString(ref.scale)) {
-      scale = util.str(ref.scale);
+    if(dl.isString(ref.scale)) {
+      scale = dl.str(ref.scale);
     } else if(ref.scale.signal) {
-      signalRef = util.field(ref.scale.signal);
-      scale = "signals["+signalRef.map(util.str).join("][")+"]";
+      signalRef = dl.field(ref.scale.signal);
+      scale = "signals["+signalRef.map(dl.str).join("][")+"]";
       signals.push(signalRef.shift());
     } else {
       scale = (ref.scale.group ? "group" : "item")
-        + ".datum[" + util.str(ref.scale.group || ref.scale.field) + "]";
+        + ".datum[" + dl.str(ref.scale.group || ref.scale.field) + "]";
     }
 
     scale = "group.scale(" + scale + ")";
@@ -222,8 +222,8 @@ function valueRef(name, ref) {
   }
   
   // multiply, offset, return value
-  val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")"
-    + (ref.offset ? " + " + util.number(ref.offset) : "");
+  val = "(" + (ref.mult?(dl.number(ref.mult)+" * "):"") + val + ")"
+    + (ref.offset ? " + " + dl.number(ref.offset) : "");
   return {val: val, signals: signals, scales: ref.scale};
 }
 

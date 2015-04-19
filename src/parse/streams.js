@@ -1,9 +1,9 @@
-var d3 = require('d3'),
+var dl = require('datalib'),
+    d3 = require('d3'),
     Node = require('../dataflow/Node'),
     changset = require('../dataflow/changeset'),
     selector = require('./events'),
     expr = require('./expr'),
-    util = require('../util/index'),
     C = require('../util/constants');
 
 var START = "start", MIDDLE = "middle", END = "end";
@@ -45,13 +45,13 @@ module.exports = function(view) {
     var filters = selector.filters || [],
         target = selector.target;
 
-    if(target) filters.push("i."+target.type+"=="+util.str(target.value));
+    if(target) filters.push("i."+target.type+"=="+dl.str(target.value));
 
     register[selector.event] = register[selector.event] || [];
     register[selector.event].push({
       signal: sig,
       exp: exp,
-      filters: filters.map(function(f) { return expr(/*graph, JH_TODO*/f); }),
+      filters: filters.map(function(f) { return expr(f); }),
       spec: spec
     });
 
@@ -61,7 +61,7 @@ module.exports = function(view) {
 
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(), 
-        trueFn = expr(/*graph, JH-TODO*/"true"),
+        trueFn = expr("true"),
         s = {};
 
     s[START]  = graph.signal(name + START,  false);
@@ -115,7 +115,7 @@ module.exports = function(view) {
 
     (sig.streams || []).forEach(function(stream) {
       var sel = selector.parse(stream.type),
-          exp = expr(/*graph, JH-TODO*/stream.expr);
+          exp = expr(stream.expr);
       mergedStream(signal, sel, exp, stream);
     });
   });
@@ -125,7 +125,7 @@ module.exports = function(view) {
   // new value on the same pulse. 
 
   // TODO: Filters, time intervals, target selectors
-  util.keys(register).forEach(function(r) {
+  dl.keys(register).forEach(function(r) {
     var handlers = register[r], 
         node = nodes[r];
 

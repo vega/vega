@@ -2,6 +2,7 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
+    "datalib": "^1.0.1",
     "canvas": "^1.2.1",
     "d3": "3.4.x",
     "topojson": "^1.6.18"
@@ -10,7 +11,6 @@
     "almond": "0.3.x",
     "amd-loader": "0.0.5",
     "ascii-tree": "0.1.x",
-    "browser-sync": "^2.6.0",
     "browserify": "^9.0.8",
     "browserify-shim": "^3.8.5",
     "chai": "^1.10.0",
@@ -23,7 +23,6 @@
     "grunt-mocha-test": "^0.12.6",
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
-    "gulp-run": "^1.6.7",
     "gulp-sourcemaps": "^1.5.1",
     "gulp-spawn-mocha": "^2.0.1",
     "gulp-uglify": "^1.2.0",
@@ -50,6 +49,7 @@
   },
   "browserify-shim": {
     "d3": "global:d3",
+    "canvas": "global:canvas",
     "topojson": "global:topojson"
   }
 }

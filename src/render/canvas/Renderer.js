@@ -1,6 +1,6 @@
 var d3 = require('d3'),
+    dl = require('datalib'),
     Bounds = require('../../core/Bounds'),
-    load = require('../../util/load'),
     config = require('../../util/config'),
     marks = require('./marks');
 
@@ -121,7 +121,7 @@ function translatedBounds(item, bounds) {
   
 function getBounds(items) {
   return !items ? null :
-    util.array(items).reduce(function(b, item) {
+    dl.array(items).reduce(function(b, item) {
       return b.union(translatedBounds(item, item.bounds))
               .union(translatedBounds(item, item['bounds:prev']));
     }, new Bounds());  
@@ -194,20 +194,18 @@ prototype.loadImage = function(uri) {
       image = null, url;
 
   renderer._imgload += 1;
-  if (config.isNode) {
-    // TODO: how to check if nodeJS in requireJS?
-    // image = new (require('canvas').Image)();
-    // load(uri, function(err, data) {
-    //   if (err) { util.error(err); return; }
-    //   image.src = data;
-    //   image.loaded = true;
-    //   renderer._imgload -= 1;
-    // });
+  if (dl.isNode) {
+    image = new (require('canvas').Image)();
+    dl.load(dl.extend({url: uri}, config.load), function(err, data) {
+      if (err) { dl.error(err); return; }
+      image.src = data;
+      image.loaded = true;
+      renderer._imgload -= 1;
+    });
   } else {
     image = new Image();
     url = config.baseURL + uri;
     image.onload = function() {
-      util.log("LOAD IMAGE: "+url);
       image.loaded = true;
       renderer._imgload -= 1;
       renderer.renderAsync(scene);

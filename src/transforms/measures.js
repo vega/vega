@@ -1,5 +1,5 @@
-var tuple = require('../dataflow/tuple'),
-    util = require('../util/index'),
+var dl = require('datalib'),
+    tuple = require('../dataflow/tuple'),
     quickselect = require('../util/quickselect'),
     C = require('../util/constants');
 
@@ -143,7 +143,7 @@ function compile(agg) {
   ctr.prototype.rem = Function("v", rem);
   ctr.prototype.set = Function("stamp", set);
   ctr.prototype.mod = mod;
-  ctr.prototype.keys = util.keys;
+  ctr.prototype.keys = dl.keys;
   ctr.prototype.sel = quickselect;
   ctr.prototype.tuple = tuple;
   return ctr;

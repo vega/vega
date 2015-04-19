@@ -1,4 +1,4 @@
-var util = require('../util/index'),
+var dl = require('datalib'),
     parseProperties = require('./properties');
 
 module.exports = function parseMark(model, mark) {
@@ -6,7 +6,7 @@ module.exports = function parseMark(model, mark) {
       group = mark.marks;
 
   // parse mark property definitions
-  util.keys(props).forEach(function(k) {
+  dl.keys(props).forEach(function(k) {
     props[k] = parseProperties(model, mark.type, props[k]);
   });
 

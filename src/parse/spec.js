@@ -1,16 +1,16 @@
-var Model = require('../core/Model'), 
+var dl = require('datalib'),
+    Model = require('../core/Model'), 
     View = require('../core/View'), 
     parsePadding = require('../parse/padding'),
     parseMarks = require('../parse/marks'),
     parseSignals = require('../parse/signals'),
     parsePredicates = require('../parse/predicates'),
     parseData = require('../parse/data'),
-    parseInteractors = require('../parse/interactors'),
-    util = require('../util/index');
+    parseInteractors = require('../parse/interactors');
 
 module.exports = function parseSpec(spec, callback, viewFactory) {
   // protect against subsequent spec modification
-  spec = util.duplicate(spec);
+  spec = dl.duplicate(spec);
 
   viewFactory = viewFactory || View.factory;
 

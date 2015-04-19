@@ -10,7 +10,7 @@ module.exports = function parseSignals(model, spec) {
         exp;
 
     if(s.expr) {
-      exp = expr(/*graph, JH-TODO*/s.expr);
+      exp = expr(s.expr);
       signal.evaluate = function(input) {
         var value = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
         if(spec.scale) value = model.scale(spec, value);

@@ -72,7 +72,7 @@ ved.resize = function(event) {
 
 ved.init = function() {
   // Set base directory
-  vg.config.baseURL = "../";
+  vg.config.load.baseURL = "../";
   
   // Specification drop-down menu               
   var sel = d3.select("#sel_spec");

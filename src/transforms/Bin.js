@@ -1,6 +1,5 @@
-var Transform = require('./Transform'),
-    util = require('../util/index'),
-    bins = require('../util/bins'),
+var dl = require('datalib'),
+    Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
 function Bin(graph) {
@@ -23,7 +22,7 @@ proto.transform = function(input) {
   var transform = this,
       output = this._output.bin;
       
-  var b = bins({
+  var b = dl.bin({
     min: this.min.get(),
     max: this.max.get(),
     step: this.step.get(),

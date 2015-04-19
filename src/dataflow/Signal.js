@@ -1,6 +1,5 @@
 var Node = require('./Node'),
-    changeset = require('./changeset'),
-    util = require('../util/index');
+    changeset = require('./changeset');
 
 function Signal(graph, name, init) {
   Node.prototype.init.call(this, graph);

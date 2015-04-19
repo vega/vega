@@ -1,5 +1,5 @@
-var d3 = require('d3'),
-    util = require('../../util/index'),
+var dl = require('datalib'),
+    d3 = require('d3'),
     config = require('../../util/config');
 
 function x(o)     { return o.x || 0; }
@@ -34,7 +34,7 @@ var styles = {
   "strokeDashOffset": "stroke-dashoffset",
   "opacity":          "opacity"
 };
-var styleProps = util.keys(styles);
+var styleProps = dl.keys(styles);
 
 function style(d) {
   var i, n, prop, name, value,

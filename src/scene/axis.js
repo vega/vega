@@ -1,6 +1,6 @@
-var config = require('../util/config'),
+var dl = require('datalib'),
+    config = require('../util/config'),
     tpl = require('../dataflow/tuple'),
-    util = require('../util/index'),
     parseMark = require('../parse/mark');
 
 function axs(model) {
@@ -88,12 +88,12 @@ function axs(model) {
     range = vg_axisScaleRange(scale);
 
     // setup axis marks
-    if(!m.gridLines)  m.gridLines  = vg_axisTicks();
-    if(!m.majorTicks) m.majorTicks = vg_axisTicks();
-    if(!m.minorTicks) m.minorTicks = vg_axisTicks();
-    if(!m.tickLabels) m.tickLabels = vg_axisTickLabels();
-    if(!m.domain) m.domain = vg_axisDomain();
-    if(!m.title)  m.title  = vg_axisTitle();
+    if (!m.gridLines)  m.gridLines  = vg_axisTicks();
+    if (!m.majorTicks) m.majorTicks = vg_axisTicks();
+    if (!m.minorTicks) m.minorTicks = vg_axisTicks();
+    if (!m.tickLabels) m.tickLabels = vg_axisTickLabels();
+    if (!m.domain) m.domain = vg_axisDomain();
+    if (!m.title)  m.title  = vg_axisTitle();
     m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
 
     // extend axis marks based on axis orientation
@@ -106,15 +106,15 @@ function axs(model) {
     vg_axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
     
     // add / override custom style properties
-    util.extend(m.gridLines.properties.update, gridLineStyle);
-    util.extend(m.majorTicks.properties.update, majorTickStyle);
-    util.extend(m.minorTicks.properties.update, minorTickStyle);
-    util.extend(m.tickLabels.properties.update, tickLabelStyle);
-    util.extend(m.domain.properties.update, domainStyle);
-    util.extend(m.title.properties.update, titleStyle);
+    dl.extend(m.gridLines.properties.update, gridLineStyle);
+    dl.extend(m.majorTicks.properties.update, majorTickStyle);
+    dl.extend(m.minorTicks.properties.update, minorTickStyle);
+    dl.extend(m.tickLabels.properties.update, tickLabelStyle);
+    dl.extend(m.domain.properties.update, domainStyle);
+    dl.extend(m.title.properties.update, titleStyle);
 
     var marks = [m.gridLines, m.majorTicks, m.minorTicks, m.tickLabels, m.domain, m.title];
-    util.extend(axisDef, {
+    dl.extend(axisDef, {
       type: "group",
       interactive: false,
       properties: { 
@@ -203,7 +203,7 @@ function axs(model) {
   
   axis.offset = function(x) {
     if (!arguments.length) return offset;
-    offset = util.isObject(x) ? x : +x;
+    offset = dl.isObject(x) ? x : +x;
     return axis;
   };
 
@@ -329,22 +329,22 @@ function vg_axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
     size *= -1;
   }  
   if (orient === "top" || orient === "bottom") {
-    util.extend(labels.properties.enter, {
+    dl.extend(labels.properties.enter, {
       x: oldScale,
       y: {value: size},
     });
-    util.extend(labels.properties.update, {
+    dl.extend(labels.properties.update, {
       x: newScale,
       y: {value: size},
       align: {value: "center"},
       baseline: {value: vg_axisBaseline[orient]}
     });
   } else {
-    util.extend(labels.properties.enter, {
+    dl.extend(labels.properties.enter, {
       x: {value: size},
       y: oldScale,
     });
-    util.extend(labels.properties.update, {
+    dl.extend(labels.properties.update, {
       x: {value: size},
       y: newScale,
       align: {value: vg_axisAlign[orient]},
@@ -363,31 +363,31 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
     size = {value: sign * size};
   }
   if (orient === "top" || orient === "bottom") {
-    util.extend(ticks.properties.enter, {
+    dl.extend(ticks.properties.enter, {
       x:  oldScale,
       y:  {value: 0},
       y2: size
     });
-    util.extend(ticks.properties.update, {
+    dl.extend(ticks.properties.update, {
       x:  newScale,
       y:  {value: 0},
       y2: size
     });
-    util.extend(ticks.properties.exit, {
+    dl.extend(ticks.properties.exit, {
       x:  newScale,
     });        
   } else {
-    util.extend(ticks.properties.enter, {
+    dl.extend(ticks.properties.enter, {
       x:  {value: 0},
       x2: size,
       y:  oldScale
     });
-    util.extend(ticks.properties.update, {
+    dl.extend(ticks.properties.update, {
       x:  {value: 0},
       x2: size,
       y:  newScale
     });
-    util.extend(ticks.properties.exit, {
+    dl.extend(ticks.properties.exit, {
       y:  newScale,
     });
   }
@@ -398,13 +398,13 @@ function vg_axisTitleExtend(orient, title, range, offset) {
       sign = (orient === "top" || orient === "left") ? -1 : 1;
   
   if (orient === "bottom" || orient === "top") {
-    util.extend(title.properties.update, {
+    dl.extend(title.properties.update, {
       x: {value: mid},
       y: {value: sign*offset},
       angle: {value: 0}
     });
   } else {
-    util.extend(title.properties.update, {
+    dl.extend(title.properties.update, {
       x: {value: sign*offset},
       y: {value: mid},
       angle: {value: -90}
@@ -432,7 +432,7 @@ function vg_axisUpdate(item, group, trans, db, signals, predicates) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  if (util.isObject(offset)) {
+  if (dl.isObject(offset)) {
     offset = -group.scale(offset.scale)(offset.value);
   }
 

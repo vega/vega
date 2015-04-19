@@ -3,7 +3,7 @@ var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
     meas = require('./measures'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Aggregate(graph) {
@@ -91,7 +91,7 @@ proto._rem = function(x) {
 };
 
 proto.transform = function(input, reset) {
-  util.debug(input, ["aggregate"]);
+  debug(input, ["aggregate"]);
 
   if(input.facet) {
     this.__facet = input.facet;

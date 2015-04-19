@@ -1,11 +1,12 @@
-var Node = require('../dataflow/Node'),
+var dl = require('datalib'),
+    Node = require('../dataflow/Node'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
     Item  = require('./Item'),
     parseData = require('../parse/data'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Builder() {    
@@ -23,7 +24,7 @@ proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
   this._def   = def;
   this._mark  = mark;
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
-  this._ds    = util.isString(this._from) ? model.data(this._from) : null;
+  this._ds    = dl.isString(this._from) ? model.data(this._from) : null;
   this._map   = {};
 
   this._revises = false;  // Should scenegraph items track _prev?
@@ -156,7 +157,7 @@ proto.sibling = function(name) {
 };
 
 proto.evaluate = function(input) {
-  util.debug(input, ["building", this._from, this._def.type]);
+  debug(input, ["building", this._from, this._def.type]);
 
   var output, fullUpdate, fcs, data;
 
@@ -166,7 +167,7 @@ proto.evaluate = function(input) {
     // We need to determine if any encoder dependencies have been updated.
     // However, the encoder's data source will likely be updated, and shouldn't
     // trigger all items to mod.
-    data = util.duplicate(output.data);
+    data = dl.duplicate(output.data);
     delete output.data[this._ds.name()];
     fullUpdate = this._encoder.reevaluate(output);
     output.data = data;
@@ -183,7 +184,7 @@ proto.evaluate = function(input) {
     }
   } else {
     fullUpdate = this._encoder.reevaluate(input);
-    data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
+    data = dl.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
     output = joinValues.call(this, input, data, fullUpdate);
   }
 
@@ -239,7 +240,7 @@ function joinDatasource(input, data, fullUpdate) {
     this._map[key] = null;
   }
 
-  join.call(this, data, keyf, next, output, null, util.tuple_ids(fullUpdate ? data : mod));
+  join.call(this, data, keyf, next, output, null, tuple.idMap(fullUpdate ? data : mod));
 
   return (this._mark.items = next, output);
 }
@@ -257,7 +258,7 @@ function joinValues(input, data, fullUpdate) {
     if (keyf) this._map[item.key] = item;
   }
   
-  join.call(this, data, keyf, next, output, prev, fullUpdate ? util.tuple_ids(data) : null);
+  join.call(this, data, keyf, next, output, prev, fullUpdate ? tuple.idMap(data) : null);
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
@@ -273,7 +274,7 @@ function joinValues(input, data, fullUpdate) {
 
 function keyFunction(key) {
   if (key == null) return null;
-  var f = util.array(key).map(util.accessor);
+  var f = dl.array(key).map(dl.accessor);
   return function(d) {
     for (var s="", i=0, n=f.length; i<n; ++i) {
       if (i>0) s += "|";

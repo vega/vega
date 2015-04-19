@@ -1,8 +1,9 @@
-var changeset = require('./changeset'), 
+var dl = require('datalib'),
+    changeset = require('./changeset'), 
     tuple = require('./tuple'), 
     Node = require('./Node'),
     Collector = require('./Collector'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Datasource(graph, name, facet) {
@@ -35,7 +36,7 @@ proto.add = function(d) {
   var prev = this._revises ? null : undefined;
 
   this._input.add = this._input.add
-    .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
+    .concat(dl.array(d).map(function(d) { return tuple.ingest(d, prev); }));
   return this;
 };
 
@@ -47,7 +48,7 @@ proto.remove = function(where) {
 
 proto.update = function(where, field, func) {
   var mod = this._input.mod,
-      ids = util.tuple_ids(mod),
+      ids = tuple.idMap(mod),
       prev = this._revises ? null : undefined; 
 
   this._input.fields[field] = 1;
@@ -117,21 +118,21 @@ proto.pipeline = function(pipeline) {
     .collector(true);
 
   input.evaluate = function(input) {
-    util.debug(input, ["input", ds._name]);
+    debug(input, ["input", ds._name]);
 
     var delta = ds._input, 
         out = changeset.create(input),
         rem;
 
     // Delta might contain fields updated through API
-    util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
+    dl.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
 
     if(input.reflow) {
       out.mod = ds._data.slice();
     } else {
       // update data
       if(delta.rem.length) {
-        rem = util.tuple_ids(delta.rem);
+        rem = tuple.idMap(delta.rem);
         ds._data = ds._data
           .filter(function(x) { return rem[x._id] !== 1 });
       }
@@ -159,7 +160,7 @@ proto.pipeline = function(pipeline) {
     .collector(true);
 
   output.evaluate = function(input) {
-    util.debug(input, ["output", ds._name]);
+    debug(input, ["output", ds._name]);
     var output = changeset.create(input, true);
 
     if(ds._facet) {
