@@ -27,7 +27,8 @@ function Aggregate(graph) {
   };
 
   // Aggregators parameter handled manually.
-  this._Aggregators = [];
+  this._fieldsDef   = null;
+  this._Aggregators = null;
 
   return this;
 }
@@ -36,35 +37,53 @@ var proto = (Aggregate.prototype = new GroupBy());
 
 proto.fields = {
   set: function(transform, fields) {
-    var f, i, k, measures, measure, cell;
-    for (i = 0; i < fields.length; i++) {
+    var i, len, f, signals = {};
+    for(i=0, len=fields.length; i<len; ++i) {
       f = fields[i];
-      if (f.ops.length === 0) continue;
-      measures = f.ops.map(function(a) {
-        return meas[a](f.name + '_' + transform._output[a]);
-      });
-      transform._Aggregators.push({
-        accessor: util.accessor(f.name),
-        field: transform._aggregate_in_one ? '_all' : f.name,
-        measures: meas.create(measures)
-      });
+      if(f.name.signal) signals[f.name.signal] = 1;
+      util.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
     }
+
+    transform._fieldsDef = fields;
+    transform.dependency(C.SIGNALS, util.keys(signals));
     return transform;
   }
 };
 
+proto.aggs = function() {
+  var transform = this,
+      graph = this._graph,
+      fields = this._fieldsDef,
+      aggs = this._Aggregators,
+      f, i, k, name, ops, measures;
+
+  if(aggs) return aggs;
+  else aggs = this._Aggregators = []; 
+
+  for (i = 0; i < fields.length; i++) {
+    f = fields[i];
+    if (f.ops.length === 0) continue;
+
+
+    name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
+    ops  = util.array(f.ops.signal ? graph.signalRef(f.ops.signal) : f.ops);
+    measures = ops.map(function(a) {
+      a = a.signal ? graph.signalRef(a.signal) : a;
+      return meas[a](name + '_' + transform._output[a]);
+    });
+    aggs.push({
+      accessor: util.accessor(name),
+      field: this._aggregate_in_one ? '_all' : name,
+      measures: meas.create(measures)
+    });
+  }
+
+  return aggs;
+};
+
 proto._reset = function(input, output) {
-  var k, c, i, agg;
-  // rebuild accessors
-  for(i = 0; i < this._Aggregators.length; i++) {
-    agg = this._Aggregators[i];
-    agg.accessor = util.accessor(agg.name);
-  }
-  for(k in this._cells) {
-    if(!(c = this._cells[k])) continue;
-    output.rem.push(c.set());
-  }
-  this._cells = {};
+  this._Aggregators = null; // rebuild aggregators
+  return GroupBy.prototype._reset.call(this, input, output);
 };
 
 proto._keys = function(x) {
@@ -74,7 +93,7 @@ proto._keys = function(x) {
 
 proto._new_cell = function(x, k) {
   var cell = GroupBy.prototype._new_cell.call(this, x, k),
-      aggs = this._Aggregators,
+      aggs = this.aggs(),
       i = 0, len = aggs.length, 
       agg;
 
@@ -88,7 +107,7 @@ proto._new_cell = function(x, k) {
 
 proto._add = function(x) {
   var c = this._cell(x),
-      aggs = this._Aggregators,
+      aggs = this.aggs(),
       i = 0, len = aggs.length,
       agg;
 
@@ -102,7 +121,7 @@ proto._add = function(x) {
 
 proto._rem = function(x) {
   var c = this._cell(x),
-      aggs = this._Aggregators,
+      aggs = this.aggs(),
       i = 0, len = aggs.length,
       agg;
 
@@ -120,7 +139,7 @@ proto.transform = function(input, reset) {
   this._gb = this.group_by.get(this._graph);
 
   var output = GroupBy.prototype.transform.call(this, input, reset),
-      aggs = this._Aggregators,
+      aggs = this.aggs(),
       len = aggs.length,
       i, k, c;
 

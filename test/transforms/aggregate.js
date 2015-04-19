@@ -303,7 +303,7 @@ describe('Aggregate', function() {
     });
   });
 
-  it('should calculate multiple aggregations', function(done) {
+  describe('Grouped', function() {
     var values = [
       {"country":"US", "state": "washington", "area": 12, "population": 3},
       {"country":"US", "state": "california", "area": 13, "population": 12},
@@ -321,25 +321,65 @@ describe('Aggregate', function() {
       }]
     };
 
-    parseSpec(spec, function(model) {
-      var ds = model.data('table'),
-          data = ds.values();
+    it('should calculate multiple aggregations', function(done) {
+      parseSpec(spec, function(model) {
+        var ds = model.data('table'),
+            data = ds.values();
 
-      expect(data).to.have.length(2);
+        expect(data).to.have.length(2);
 
-      expect(data[0]).to.have.property('country', 'US');
-      expect(data[0]).to.have.property('area_sum', 28);
-      expect(data[0]).to.have.property('area_count', 3);
-      expect(data[0]).to.have.property('population_sum', 22);
+        expect(data[0]).to.have.property('country', 'US');
+        expect(data[0]).to.have.property('area_sum', 28);
+        expect(data[0]).to.have.property('area_count', 3);
+        expect(data[0]).to.have.property('population_sum', 22);
 
-      expect(data[1]).to.have.property('country', 'Canada');
-      expect(data[1]).to.have.property('area_sum', 7);
-      expect(data[1]).to.have.property('area_count', 2);
-      expect(data[1]).to.have.property('population_sum', 6);
+        expect(data[1]).to.have.property('country', 'Canada');
+        expect(data[1]).to.have.property('area_sum', 7);
+        expect(data[1]).to.have.property('area_count', 2);
+        expect(data[1]).to.have.property('population_sum', 6);
 
-      done();
-    }, modelFactory);
+        done();
+      }, modelFactory);
+    });
+
+    it('should handle signals', function(done) {
+      var s = util.duplicate(spec);
+      s.signals = [{"name": "field", "init": "area"}, {"name": "ops", "init": ["sum", "count"]}];
+      s.data[0].transform[0].fields = [{"name": {"signal": "field"}, "ops": {"signal": "ops"}}];
+
+      parseSpec(s, function(model) {
+        var ds = model.data('table'),
+            data = ds.values();
+
+        expect(data).to.have.length(2);
+
+        expect(data[0]).to.have.property('country', 'US');
+        expect(data[0]).to.have.property('area_sum', 28);
+        expect(data[0]).to.have.property('area_count', 3);
+
+        expect(data[1]).to.have.property('country', 'Canada');
+        expect(data[1]).to.have.property('area_sum', 7);
+        expect(data[1]).to.have.property('area_count', 2);
+
+        model.graph.signal('field').value('population').fire();
+        data = ds.values();
+
+        expect(data).to.have.length(2);
+
+        expect(data[0]).to.have.property('country', 'US');
+        expect(data[0]).to.have.property('population_sum', 22);
+        expect(data[0]).to.have.property('population_count', 3);
+
+        expect(data[1]).to.have.property('country', 'Canada');
+        expect(data[1]).to.have.property('population_sum', 6);
+        expect(data[1]).to.have.property('population_count', 2);        
+
+        done();
+      }, modelFactory);
+    });
   });
+
+
 
   it.skip('should calculate stats on facets', function(done) {
     var values = [
