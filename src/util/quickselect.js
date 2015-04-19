@@ -1,4 +1,4 @@
-var util = require('./index');
+var dl = require('datalib');
 
 module.exports = function quickselect(k, x, c) {
   function swap(a, b) {
@@ -10,7 +10,7 @@ module.exports = function quickselect(k, x, c) {
   // x may be null, in which case assemble an array from c (counts)
   if(x === null) {
     x = [];
-    util.keys(c).forEach(function(k) {
+    dl.keys(c).forEach(function(k) {
       var i = 0, len = c[k];
       k = +k || k;
       for(; i<len; ++i) x.push(k);

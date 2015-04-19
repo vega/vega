@@ -1,8 +1,7 @@
-var parseTransforms = require('./transforms'),
-    parseModify = require('./modify'),
-    util = require('../util/index'),
-    load = require('../util/load'),
-    read = require('../util/read');
+var dl = require('datalib'),
+    config = require('../util/config'),
+    parseTransforms = require('./transforms'),
+    parseModify = require('./modify');
 
 var parseData = function(model, spec, callback) {
   var count = 0;
@@ -10,9 +9,9 @@ var parseData = function(model, spec, callback) {
   function loaded(d) {
     return function(error, data) {
       if (error) {
-        util.error("LOADING FAILED: " + d.url);
+        dl.error("LOADING FAILED: " + d.url);
       } else {
-        model.data(d.name).values(read(data.toString(), d.format));
+        model.data(d.name).values(dl.read(data, d.format));
       }
       if (--count === 0) callback();
     }
@@ -22,7 +21,7 @@ var parseData = function(model, spec, callback) {
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
-      load(d.url, loaded(d)); 
+      dl.load(dl.extend({url: d.url}, config.load), loaded(d));
     }
     parseData.datasource(model, d);
   });
@@ -36,8 +35,9 @@ parseData.datasource = function(model, d) {
       mod = (d.modify||[]).map(function(m) { return parseModify(model, m, d) }),
       ds = model.data(d.name, mod.concat(transform));
 
-  if(d.values) ds.values(read(d.values, d.format));
-  else if(d.source) {
+  if (d.values) {
+    ds.values(dl.read(d.values, d.format));
+  } else if (d.source) {
     ds.source(d.source)
       .revises(ds.revises()) // If new ds revises, then it's origin must revise too.
       .addListener(ds);  // Derived ds will be pulsed by its src rather than the model.

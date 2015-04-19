@@ -1,6 +1,6 @@
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset');
 
@@ -81,7 +81,7 @@ function upFields(input, output) {
 }
 
 proto.transform = function(input) {
-  util.debug(input, ["crossing"]);
+  debug(input, ["crossing"]);
 
   // Materialize the current datasource. TODO: share collectors
   this._collector.evaluate(input);

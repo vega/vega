@@ -1,4 +1,4 @@
-var util = require('../util/index');
+var dl = require('datalib');
 
 module.exports = function parsePredicate(model, spec) {
   var types = {
@@ -17,8 +17,8 @@ module.exports = function parsePredicate(model, spec) {
   };
 
   function parseSignal(signal, signals) {
-    var s = util.field(signal),
-        code = "signals["+s.map(util.str).join("][")+"]";
+    var s = dl.field(signal),
+        code = "signals["+s.map(dl.str).join("][")+"]";
     signals[s.shift()] = 1;
     return code;
   };
@@ -27,26 +27,26 @@ module.exports = function parsePredicate(model, spec) {
     var decl = [], defs = [],
         signals = {}, db = {};
 
-    util.array(operands).forEach(function(o, i) {
+    dl.array(operands).forEach(function(o, i) {
       var signal, name = "o"+i, def = "";
       
-      if(o.value !== undefined) def = util.str(o.value);
-      else if(o.arg)    def = "args["+util.str(o.arg)+"]";
+      if(o.value !== undefined) def = dl.str(o.value);
+      else if(o.arg)    def = "args["+dl.str(o.arg)+"]";
       else if(o.signal) def = parseSignal(o.signal, signals);
       else if(o.predicate) {
         var pred = model.predicate(o.predicate);
         pred.signals.forEach(function(s) { signals[s] = 1; });
         pred.data.forEach(function(d) { db[d] = 1 });
 
-        util.keys(o.input).forEach(function(k) {
+        dl.keys(o.input).forEach(function(k) {
           var i = o.input[k], signal;
-          def += "args["+util.str(k)+"] = ";
+          def += "args["+dl.str(k)+"] = ";
           if(i.signal)   def += parseSignal(i.signal, signals);
-          else if(i.arg) def += "args["+util.str(i.arg)+"]";
+          else if(i.arg) def += "args["+dl.str(i.arg)+"]";
           def+=", ";
         });
 
-        def+= "predicates["+util.str(o.predicate)+"](args, db, signals, predicates)";
+        def+= "predicates["+dl.str(o.predicate)+"](args, db, signals, predicates)";
       }
 
       decl.push(name);
@@ -55,8 +55,8 @@ module.exports = function parsePredicate(model, spec) {
 
     return {
       code: "var " + decl.join(", ") + ";\n" + defs.join(";\n") + ";\n",
-      signals: util.keys(signals),
-      data: util.keys(db)
+      signals: dl.keys(signals),
+      data: dl.keys(db)
     }
   };
 
@@ -95,9 +95,9 @@ module.exports = function parsePredicate(model, spec) {
         code = ops.code;
 
     if(spec.data) {
-      var field = util.field(spec.field).map(util.str);
+      var field = dl.field(spec.field).map(dl.str);
       code += "var where = function(d) { return d["+field.join("][")+"] == o0 };\n";
-      code += "return db["+util.str(spec.data)+"].filter(where).length > 0;";
+      code += "return db["+dl.str(spec.data)+"].filter(where).length > 0;";
     } else if(spec.range) {
       // TODO: inclusive/exclusive range?
       // TODO: inverting ordinal scales

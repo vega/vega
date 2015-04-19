@@ -2,7 +2,7 @@ var Transform = require('./Transform'),
     GroupBy = require('./GroupBy'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Facet(graph) {
@@ -48,7 +48,7 @@ proto._new_cell = function(x, k) {
 
   cell.ds = this._graph.data("vg_"+t._id, pipeline, t);
   cell.delete = function() {
-    util.debug({}, ["deleting cell", k.key]);
+    debug({}, ["deleting cell", k.key]);
     facet.removeListener(pipeline[0]);
     facet._graph.disconnect(pipeline);
   };
@@ -78,7 +78,7 @@ proto._rem = function(x) {
 };
 
 proto.transform = function(input, reset) {
-  util.debug(input, ["faceting"]);
+  debug(input, ["faceting"]);
 
   this._refs = this.keys.get(this._graph).accessors;
 

@@ -1,6 +1,5 @@
 var Bounds = require('../../core/Bounds'),
     boundsCalc = require('../../util/bounds'),
-    util = require('../../util/index'),
     config = require('../../util/config'),
     path = require('./path');
 
@@ -10,6 +9,14 @@ var parsePath = path.parse,
     sqrt3 = Math.sqrt(3),
     tan30 = Math.tan(30 * Math.PI / 180),
     tmpBounds = new Bounds();
+
+function fontString(o) {
+  return (o.fontStyle ? o.fontStyle + " " : "")
+    + (o.fontVariant ? o.fontVariant + " " : "")
+    + (o.fontWeight ? o.fontWeight + " " : "")
+    + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
+    + (o.font || config.render.font);
+}
 
 // path generators
 
@@ -289,7 +296,7 @@ function drawText(g, scene, bounds) {
     if (bounds && !bounds.intersects(o.bounds))
       continue; // bounds check
 
-    g.font = util.fontString(o);
+    g.font = fontString(o);
     g.textAlign = o.align || "left";
     g.textBaseline = o.baseline || "alphabetic";
 

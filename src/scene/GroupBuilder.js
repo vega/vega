@@ -1,9 +1,10 @@
-var Node = require('../dataflow/Node'),
+var dl = require('datalib'),
+    Node = require('../dataflow/Node'),
     Collector = require('../dataflow/Collector'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function GroupBuilder() {
@@ -34,7 +35,7 @@ proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
   var scales = (def.axes||[]).reduce(function(acc, x) {
     return (acc[x.scale] = 1, acc);
   }, {});
-  this._recursor.dependency(C.SCALES, util.keys(scales));
+  this._recursor.dependency(C.SCALES, dl.keys(scales));
 
   // We only need a collector for up-propagation of bounds calculation,
   // so only GroupBuilders, and not regular Builders, have collectors.
@@ -57,7 +58,7 @@ proto.pipeline = function() {
 
 proto.disconnect = function() {
   var builder = this;
-  util.keys(builder._children).forEach(function(group_id) {
+  dl.keys(builder._children).forEach(function(group_id) {
     builder._children[group_id].forEach(function(c) {
       builder._recursor.removeListener(c.builder);
       c.builder.disconnect();
@@ -158,7 +159,7 @@ function scale(name, scale) {
 }
 
 function buildGroup(input, group) {
-  util.debug(input, ["building group", group._id]);
+  debug(input, ["building group", group._id]);
 
   group._scales = group._scales || {};    
   group.scale  = scale.bind(group);
@@ -171,7 +172,7 @@ function buildGroup(input, group) {
 }
 
 function buildMarks(input, group) {
-  util.debug(input, ["building marks", group._id]);
+  debug(input, ["building marks", group._id]);
   var marks = this._def.marks,
       listeners = [],
       mark, from, inherit, i, len, m, b;

@@ -1,5 +1,5 @@
-var expr = require('../parse/expr'),
-    util = require('../util/index'),
+var dl = require('datalib'),
+    expr = require('../parse/expr'),
     C = require('../util/constants');
 
 var arrayType = /array/i,
@@ -26,10 +26,10 @@ proto._get = function() {
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
 
-  if(isData) {
+  if (isData) {
     return isArray ? { names: this._value, sources: this._accessors } :
       { name: this._value[0], source: this._accessors[0] };
-  } else if(isField) {
+  } else if (isField) {
     return isArray ? { fields: this._value, accessors: this._accessors } :
       { field: this._value[0], accessor: this._accessors[0] };
   } else {
@@ -43,9 +43,9 @@ proto.get = function(graph) {
       s, idx, val;
 
   // If we don't require resolution, return the value immediately.
-  if(!this._resolution) return this._get();
+  if (!this._resolution) return this._get();
 
-  if(isData) {
+  if (isData) {
     this._accessors = this._value.map(function(v) { return graph.data(v); });
     return this._get(); // TODO: support signal as dataTypes
   }
@@ -54,9 +54,9 @@ proto.get = function(graph) {
     idx  = this._signals[s];
     val  = graph.signalRef(s);
 
-    if(isField) {
+    if (isField) {
       this._accessors[idx] = this._value[idx] != val ? 
-        util.accessor(val) : this._accessors[idx];
+        dl.accessor(val) : this._accessors[idx];
     }
 
     this._value[idx] = val;
@@ -71,28 +71,28 @@ proto.set = function(transform, value) {
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
 
-  this._value = util.array(value).map(function(v, i) {
-    if(util.isString(v)) {
-      if(isExpr) {
-        var e = expr(/*transform._graph, JH-TODO*/v);
+  this._value = dl.array(value).map(function(v, i) {
+    if (dl.isString(v)) {
+      if (isExpr) {
+        var e = expr(v);
         transform.dependency(C.FIELDS,  e.fields);
         transform.dependency(C.SIGNALS, e.signals);
         return e.fn;
-      } else if(isField) {  // Backwards compatibility
-        param._accessors[i] = util.accessor(v);
+      } else if (isField) {  // Backwards compatibility
+        param._accessors[i] = dl.accessor(v);
         transform.dependency(C.FIELDS, v);
-      } else if(isData) {
+      } else if (isData) {
         param._resolution = true;
         transform.dependency(C.DATA, v);
       }
       return v;
-    } else if(v.value !== undefined) {
+    } else if (v.value !== undefined) {
       return v.value;
-    } else if(v.field !== undefined) {
-      param._accessors[i] = util.accessor(v.field);
+    } else if (v.field !== undefined) {
+      param._accessors[i] = dl.accessor(v.field);
       transform.dependency(C.FIELDS, v.field);
       return v.field;
-    } else if(v.signal !== undefined) {
+    } else if (v.signal !== undefined) {
       param._resolution = true;
       param._signals[v.signal] = i;
       transform.dependency(C.SIGNALS, v.signal);

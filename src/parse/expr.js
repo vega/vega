@@ -1,5 +1,5 @@
-var util = require('../util/index');
-var expression = require('../expression/index');
+var dl = require('datalib'),
+    expression = require('../expression');
 
 var expr = (function() {
   var parse = expression.parse;
@@ -16,7 +16,7 @@ var expr = (function() {
 })();
 
 expr.eval = function(graph, fn, d, e, i, p, sg) {
-  sg = graph.signalValues(util.array(sg));
+  sg = graph.signalValues(dl.array(sg));
   return fn.call(null, d, e, i, p, sg);
 };
 

@@ -1,4 +1,4 @@
-var util = require('../util/index'),
+var dl = require('datalib'),
     C = require('../util/constants'),
     REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
@@ -56,8 +56,8 @@ proto.dependency = function(type, deps) {
   if(deps === null) { // Clear dependencies of a certain type
     while(d.length > 0) d.pop();
   } else {
-    if(!util.isArray(deps) && d.indexOf(deps) < 0) d.push(deps);
-    else d.push.apply(d, util.array(deps));
+    if(!dl.isArray(deps) && d.indexOf(deps) < 0) d.push(deps);
+    else d.push.apply(d, dl.array(deps));
   }
   return this;
 };

@@ -1,6 +1,5 @@
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
-    util = require('../util/index'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
     d3 = require('d3');
@@ -102,13 +101,13 @@ proto.transform = function(nodeInput) {
 
   // process removed nodes
   if (nodeInput.rem.length > 0) {
-    var nodeIds = util.tuple_ids(nodeInput.rem);
+    var nodeIds = tuple.idMap(nodeInput.rem);
     this._nodes = nodes.filter(function(n) { return !nodeIds[n.tuple._id]; });
   }
 
   // process removed edges
   if (linkInput.rem.length > 0) {
-    var linkIds = util.tuple_ids(linkInput.rem);
+    var linkIds = tuple.idMap(linkInput.rem);
     this._links = links.filter(function(l) { return !linkIds[l.tuple._id]; });
   }
 

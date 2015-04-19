@@ -1,11 +1,12 @@
 var d3 = require('d3'),
+    dl = require('datalib'),
     Node = require('../dataflow/Node'),
     parseStreams = require('../parse/streams'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg/index'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     changeset = require('../dataflow/changeset');
 
 var View = function(el, width, height, model) {
@@ -36,7 +37,7 @@ prototype.model = function(model) {
 prototype.data = function(data) {
   var m = this.model();
   if (!arguments.length) return m.data();
-  util.keys(data).forEach(function(d) { m.data(d).add(util.duplicate(data[d])); });
+  dl.keys(data).forEach(function(d) { m.data(d).add(dl.duplicate(data[d])); });
   return this;
 };
 
@@ -63,7 +64,7 @@ prototype.height = function(height) {
 prototype.padding = function(pad) {
   if (!arguments.length) return this._padding;
   if (this._padding !== pad) {
-    if (util.isString(pad)) {
+    if (dl.isString(pad)) {
       this._autopad = 1;
       this._padding = {top:0, left:0, bottom:0, right:0};
       this._strict = (pad === "strict");
@@ -179,7 +180,7 @@ prototype.update = function(opt) {
         ? new Transition(opt.duration, opt.ease)
         : null;
 
-  // TODO: with streaming data API, adds should util.duplicate just parseSpec
+  // TODO: with streaming data API, adds should dl.duplicate just parseSpec
   // to prevent Vega from polluting the environment.
 
   var cs = changeset.create();
@@ -191,7 +192,7 @@ prototype.update = function(opt) {
       .router(true);
 
     v._renderNode.evaluate = function(input) {
-      util.debug(input, ["rendering"]);
+      debug(input, ["rendering"]);
 
       var s = v._model.scene();
       if(input.trans) {

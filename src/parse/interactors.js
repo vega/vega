@@ -1,5 +1,5 @@
-var load = require('../util/load'),
-    util = require('../util/index'),
+var dl = require('datalib'),
+    config = require('../util/config'),
     C = require('../util/constants');
 
 module.exports = function parseInteractors(model, spec, defFactory) {
@@ -9,27 +9,27 @@ module.exports = function parseInteractors(model, spec, defFactory) {
 
   function loaded(i) {
     return function(error, data) {
-      if(error) {
-        util.error("LOADING FAILED: " + i.url);
+      if (error) {
+        dl.error("LOADING FAILED: " + i.url);
       } else {
-        var def = util.isObject(data) ? data : JSON.parse(data);
+        var def = dl.isObject(data) ? data : JSON.parse(data);
         interactor(i.name, def);
       }
-      if(--count == 0) inject();
+      if (--count == 0) inject();
     }
   }
 
   function interactor(name, def) {
     sg = {}, pd = {};
-    if(def.signals)    signals.push.apply(signals, nsSignals(name, def.signals));
-    if(def.predicates) predicates.push.apply(predicates, nsPredicates(name, def.predicates));
+    if (def.signals)    signals.push.apply(signals, nsSignals(name, def.signals));
+    if (def.predicates) predicates.push.apply(predicates, nsPredicates(name, def.predicates));
     nsMarks(name, def.marks);
   }
 
   function inject() {
-    if(util.keys(mk).length > 0) injectMarks(spec.marks);
-    spec.signals = util.array(spec.signals);
-    spec.predicates = util.array(spec.predicates);
+    if (dl.keys(mk).length > 0) injectMarks(spec.marks);
+    spec.signals = dl.array(spec.signals);
+    spec.predicates = dl.array(spec.predicates);
     spec.signals.unshift.apply(spec.signals, signals);
     spec.predicates.unshift.apply(spec.predicates, predicates);
     defFactory();
@@ -37,28 +37,29 @@ module.exports = function parseInteractors(model, spec, defFactory) {
 
   function injectMarks(marks) {
     var m, r, i, len;
-    marks = util.array(marks);
+    marks = dl.array(marks);
 
     for(i = 0, len = marks.length; i < len; i++) {
       m = marks[i];
-      if(r = mk[m.type]) {
-        marks[i] = util.duplicate(r);
-        if(m.from) marks[i].from = m.from;
-        if(m.properties) {
+      if (r = mk[m.type]) {
+        marks[i] = dl.duplicate(r);
+        if (m.from) marks[i].from = m.from;
+        if (m.properties) {
           [C.ENTER, C.UPDATE, C.EXIT].forEach(function(p) {
-            marks[i].properties[p] = util.extend(r.properties[p], m.properties[p]);
+            marks[i].properties[p] = dl.extend(r.properties[p], m.properties[p]);
           });
         }
-      } else if(m.marks) {  // TODO how to override properties of nested marks?
+      } else if (m.marks) {  // TODO how to override properties of nested marks?
         injectMarks(m.marks);
       }
     }    
   }
 
   function ns(n, s) { 
-    if(util.isString(s)) return s+"_"+n;
-    else {
-      util.keys(s).forEach(function(x) { 
+    if (dl.isString(s)) {
+      return s + "_" + n;
+    } else {
+      dl.keys(s).forEach(function(x) { 
         var regex = new RegExp('\\b'+x+'\\b', "g");
         n = n.replace(regex, s[x]) 
       });
@@ -67,7 +68,7 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   }
 
   function nsSignals(name, signals) {
-    signals = util.array(signals);
+    signals = dl.array(signals);
     // Two passes to ns all signals, and then overwrite their definitions
     // in case signal order is important.
     signals.forEach(function(s) { s.name = sg[s.name] = ns(s.name, name); });
@@ -81,14 +82,14 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   }
 
   function nsPredicates(name, predicates) {
-    predicates = util.array(predicates);
+    predicates = dl.array(predicates);
     predicates.forEach(function(p) {
       p.name = pd[p.name] = ns(p.name, name);
 
       [p.operands, p.range].forEach(function(x) {
         (x || []).forEach(function(o) {
-          if(o.signal) o.signal = ns(o.signal, sg);
-          else if(o.predicate) nsOperand(o);
+          if (o.signal) o.signal = ns(o.signal, sg);
+          else if (o.predicate) nsOperand(o);
         })
       });
 
@@ -98,39 +99,38 @@ module.exports = function parseInteractors(model, spec, defFactory) {
 
   function nsOperand(o) {
     o.predicate = pd[o.predicate];
-    util.keys(o.input).forEach(function(k) {
+    dl.keys(o.input).forEach(function(k) {
       var i = o.input[k];
-      if(i.signal) i.signal = ns(i.signal, sg);
+      if (i.signal) i.signal = ns(i.signal, sg);
     });
   }
 
   function nsMarks(name, marks) {
-    (marks||[]).forEach(function(m) { 
+    (marks || []).forEach(function(m) { 
       nsProperties(m.properties.enter);
       nsProperties(m.properties.update);
       nsProperties(m.properties.exit);
-
       mk[ns(m.name, name)] = m; 
     });
   }
 
   function nsProperties(propset) {
-    util.keys(propset).forEach(function(k) {
+    dl.keys(propset).forEach(function(k) {
       var p = propset[k];
-      if(p.signal) p.signal = ns(p.signal, sg);
-      else if(p.rule) {
+      if (p.signal) p.signal = ns(p.signal, sg);
+      else if (p.rule) {
         p.rule.forEach(function(r) { 
-          if(r.signal) r.signal = ns(r.signal, sg);
-          if(r.predicate) nsOperand(r); 
+          if (r.signal) r.signal = ns(r.signal, sg);
+          if (r.predicate) nsOperand(r); 
         });
       }
     });
   }
 
   (spec.interactors || []).forEach(function(i) {
-    if(i.url) {
+    if (i.url) {
       count += 1;
-      load(i.url, loaded(i));
+      dl.load(dl.extend({url: i.url}, config.load), loaded(i));
     }
   });
 

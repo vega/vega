@@ -1,6 +1,6 @@
-var Transform = require('./Transform'),
+var dl = require('datalib'),
+    Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
-    util = require('../util/index'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset');
 
@@ -32,7 +32,7 @@ proto.transform = function(input) {
 
   var g = this._graph,
       groupby = this.groupby.get(g).accessors,
-      sortby = util.comparator(this.sortby.get(g).fields),
+      sortby = dl.comparator(this.sortby.get(g).fields),
       value = this.value.get(g).accessor,
       offset = this.offset.get(g),
       output = this._output;

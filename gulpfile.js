@@ -2,12 +2,10 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     buffer = require('vinyl-buffer'),
     rename = require('gulp-rename'),
-    run = require('gulp-run'),
     source = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
     uglify = require('gulp-uglify'),
     watchify = require('watchify'),
-    browserSync = require('browser-sync'),
     gutil = require('gulp-util'),
     mocha = require('gulp-spawn-mocha');
 

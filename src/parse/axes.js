@@ -1,6 +1,6 @@
-var axs = require('../scene/axis'),
-    config = require('../util/config'),
-    util = require('../util/index');
+var dl = require('datalib'),
+    axs = require('../scene/axis'),
+    config = require('../util/config');
 
 var ORIENT = {
   "x":      "bottom",
@@ -63,7 +63,7 @@ function axis(def, index, axis, group) {
 
   // tick arguments
   if (def.ticks != null) {
-    var ticks = util.isArray(def.ticks) ? def.ticks : [def.ticks];
+    var ticks = dl.isArray(def.ticks) ? def.ticks : [def.ticks];
     axis.ticks.apply(axis, ticks);
   } else {
     axis.ticks(config.axis.ticks);
@@ -73,9 +73,9 @@ function axis(def, index, axis, group) {
   var p = def.properties;
   if (p && p.ticks) {
     axis.majorTickProperties(p.majorTicks
-      ? util.extend({}, p.ticks, p.majorTicks) : p.ticks);
+      ? dl.extend({}, p.ticks, p.majorTicks) : p.ticks);
     axis.minorTickProperties(p.minorTicks
-      ? util.extend({}, p.ticks, p.minorTicks) : p.ticks);
+      ? dl.extend({}, p.ticks, p.minorTicks) : p.ticks);
   } else {
     axis.majorTickProperties(p && p.majorTicks || {});
     axis.minorTickProperties(p && p.minorTicks || {});

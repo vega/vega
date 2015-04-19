@@ -1,6 +1,5 @@
 var Node = require('../dataflow/Node'),
     Parameter = require('./Parameter'),
-    util = require('../util/index'),
     C = require('../util/constants');
 
 function Transform(graph) {

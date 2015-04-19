@@ -1,4 +1,4 @@
-var util = require('../../util/index');
+var dl = require('datalib');
 
 var handler = function(el, model) {
   this._active = null;
@@ -46,7 +46,7 @@ prototype.model = function(model) {
 
 prototype.handlers = function() {
   var h = this._handlers;
-  return util.keys(h).reduce(function(a, k) {
+  return dl.keys(h).reduce(function(a, k) {
     return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
   }, []);
 };

@@ -1,6 +1,6 @@
 var Node = require('../dataflow/Node'),
-    util = require('../util/index'),
     C = require('../util/constants'),
+    debug = require('../util/debug'),
     EMPTY = {};
 
 function Encoder(model, mark) {
@@ -24,7 +24,7 @@ function Encoder(model, mark) {
 var proto = (Encoder.prototype = new Node());
 
 proto.evaluate = function(input) {
-  util.debug(input, ["encoding", this._mark.def.type]);
+  debug(input, ["encoding", this._mark.def.type]);
   var items = this._mark.items,
       props = this._mark.def.properties || {},
       enter  = props.enter,

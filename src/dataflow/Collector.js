@@ -1,6 +1,6 @@
 var Node = require('./Node'),
     changeset = require('./changeset'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Collector(graph) {
@@ -15,7 +15,7 @@ var proto = (Collector.prototype = new Node());
 proto.data = function() { return this._data; }
 
 proto.evaluate = function(input) {
-  util.debug(input, ["collecting"]);
+  debug(input, ["collecting"]);
 
   if(input.reflow) {
     input = changeset.create(input);

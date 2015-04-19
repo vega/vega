@@ -1,7 +1,7 @@
 var Transform = require('./Transform'),
     changeset = require('../dataflow/changeset'), 
     expr = require('../parse/expr'),
-    util = require('../util/index'),
+    debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Filter(graph) {
@@ -20,7 +20,7 @@ function test(x) {
 };
 
 proto.transform = function(input) {
-  util.debug(input, ["filtering"]);
+  debug(input, ["filtering"]);
   var output = changeset.create(input),
       skip = this._skip,
       f = this;
