@@ -1,11 +1,11 @@
 var dl = require('datalib'),
     d3 = require('d3'),
     Transform = require('./Transform'),
-    Collector = require('../dataflow/Collector'),
+    BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
 
 function Pie(graph) {
-  Transform.prototype.init.call(this, graph);
+  BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     value:      {type: "field", default: null},
     startAngle: {type: "value", default: 0},
@@ -18,20 +18,15 @@ function Pie(graph) {
     "stop":  "layout:stop",
     "mid":   "layout:mid"
   };
-  this._collector = new Collector(graph);
 
   return this;
 }
 
-var proto = (Pie.prototype = new Transform());
+var proto = (Pie.prototype = new BatchTransform());
 
 function ones() { return 1; }
 
-proto.transform = function(input) {
-  // Materialize the current datasource. TODO: share collectors
-  this._collector.evaluate(input);
-  var data = this._collector.data();
-
+proto.batchTransform = function(input, data) {
   var g = this._graph,
       output = this._output,
       value = this.value.get(g).accessor || ones,

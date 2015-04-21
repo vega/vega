@@ -1,11 +1,11 @@
 var dl = require('datalib'),
+    d3 = require('d3'),
     Transform = require('./Transform'),
-    Collector = require('../dataflow/Collector'),
-    tuple = require('../dataflow/tuple'),
-    d3 = require('d3');
+    BatchTransform = require('./BatchTransform'),
+    tuple = require('../dataflow/tuple');
 
 function Treemap(graph) {
-  Transform.prototype.init.call(this, graph);
+  BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     // hierarchy parameters
     sort: {type: "array<field>", default: ["-value"]},
@@ -28,18 +28,12 @@ function Treemap(graph) {
     "width":  "layout:width",
     "height": "layout:height"
   };
-  this._collector = new Collector(graph);
-
   return this;
 }
 
-var proto = (Treemap.prototype = new Transform());
+var proto = (Treemap.prototype = new BatchTransform());
 
-proto.transform = function(input) {
-  // Materialize the current datasource. TODO: share collectors
-  this._collector.evaluate(input);
-  var data = this._collector.data();
-
+proto.batchTransform = function(input, data) {
   // get variables
   var g = this._graph,
       layout = this._layout,
