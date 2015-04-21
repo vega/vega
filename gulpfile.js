@@ -23,14 +23,10 @@ function watcher() {
   return watchify(browser());
 }
 
-function build(watch) {
-  var b = watch ? watcher() : browser();
-  if(watch) {
-    b.on('update', function() { build(true) });
-    b.on('log', gutil.log); // output build logs to terminal
-  }
-
+function build(b) {
   return b.bundle()
+    // log errors if they happen
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('vega2.js'))
     .pipe(buffer())
     .pipe(gulp.dest('.'))
@@ -42,8 +38,16 @@ function build(watch) {
     .pipe(gulp.dest('.')); 
 }
 
-gulp.task('build', function() { build() });
-gulp.task('watch', function() { build(true); });
+gulp.task('build', function() { 
+  build(browser()); 
+});
+
+gulp.task('watch', function() { 
+  var b = watcher();
+  b.on('update', function() { build(b) });
+  b.on('log', gutil.log); // output build logs to terminal
+  build(b); 
+});
 
 gulp.task('test', function() {
   return gulp.src(['test/**/*.js'], { read: false })
