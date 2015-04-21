@@ -1,0 +1,59 @@
+{
+  "name": "arc",
+  "width": 400,
+  "height": 400,
+  "data": [
+    {
+      "name": "table",
+      "values": [12, 23, 47, 6, 52, 19],
+      "transform": [{"type": "pie", "value": "data"}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "r",
+      "type": "sqrt",
+      "domain": {"data": "table", "field": "data"},
+      "range": [20, 100]
+    }
+  ],
+  "marks": [
+    {
+      "type": "arc",
+      "from": {"data": "table"},
+      "properties": {
+        "enter": {
+          "x": {"group": "width", "mult": 0.5},
+          "y": {"group": "height", "mult": 0.5},
+          "startAngle": {"field": "layout:start"},
+          "endAngle": {"field": "layout:stop"},
+          "innerRadius": {"value": 20},
+          "outerRadius": {"scale": "r", "field": "data"},
+          "stroke": {"value": "#fff"}
+        },
+        "update": {
+          "fill": {"value": "#ccc"}
+        },
+        "hover": {
+          "fill": {"value": "pink"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "table"},
+      "properties": {
+        "enter": {
+          "x": {"group": "width", "mult": 0.5},
+          "y": {"group": "height", "mult": 0.5},
+          "radius": {"scale": "r", "offset": 8},
+          "theta": {"field": "layout:mid"},
+          "fill": {"value": "#000"},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
+          "text": {"field": "data"}
+        }
+      }
+    }
+  ]
+}

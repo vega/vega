@@ -1,4 +1,5 @@
 var STATIC_SPECS = [
+  "arc",
   "area",
   "bar",
   "barley",

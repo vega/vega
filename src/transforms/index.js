@@ -8,6 +8,7 @@ module.exports = {
   fold:       require('./Fold'),
   force:      require('./Force'),
   formula:    require('./Formula'),
+  pie:        require('./Pie'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
   treemap:    require('./Treemap'),
