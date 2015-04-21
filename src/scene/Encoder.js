@@ -25,48 +25,48 @@ var proto = (Encoder.prototype = new Node());
 
 proto.evaluate = function(input) {
   debug(input, ["encoding", this._mark.def.type]);
-  var items = this._mark.items,
+  var graph = this._graph,
+      items = this._mark.items,
       props = this._mark.def.properties || {},
       enter  = props.enter,
       update = props.update,
       exit   = props.exit,
-      i, len, item;
+      sg = graph.signalValues(),  // For expediency, get all signal values
+      db, i, len, item;
+
+  db = graph.data().reduce(function(db, ds) { 
+    return (db[ds.name()] = ds.values(), db);
+  }, {});
 
   // Items marked for removal are at the head of items. Process them first.
   for(i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if(update) encode.call(this, update, item, input.trans);
-    if(exit)   encode.call(this, exit,   item, input.trans); 
+    if(update) encode.call(this, update, item, input.trans, db, sg);
+    if(exit)   encode.call(this, exit,   item, input.trans), db, sg; 
     if(input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if(!input.trans) item.remove();
   }
 
   for(i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
-    if(enter)  encode.call(this, enter,  item, input.trans);
-    if(update) encode.call(this, update, item, input.trans);
+    if(enter)  encode.call(this, enter,  item, input.trans, db, sg);
+    if(update) encode.call(this, update, item, input.trans, db, sg);
     item.status = C.UPDATE;
   }
 
   if(update) {
     for(i=0, len=input.mod.length; i<len; ++i) {
       item = input.mod[i];
-      encode.call(this, update, item, input.trans);
+      encode.call(this, update, item, input.trans, db, sg);
     }
   }
 
   return input;
 };
 
-function encode(prop, item, trans, stamp) {
-  var model = this._model,
-      enc = prop.encode,
-      sg = this._graph.signalValues(prop.signals||[]),
-      db = (prop.data||[]).reduce(function(db, ds) { 
-        return db[ds] = model.data(ds).values(), db;
-      }, {});
-
-  enc.call(enc, item, item.mark.group||item, trans, db, sg, model.predicates());
+function encode(prop, item, trans, db, sg) {
+  var enc = prop.encode;
+  enc.call(enc, item, item.mark.group||item, trans, db, sg, this._model.predicates());
 }
 
 module.exports = Encoder;

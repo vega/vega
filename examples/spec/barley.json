@@ -62,7 +62,7 @@
       "from": {"data": "site"},
       "properties": {
         "enter": {
-          "x": {"group": "width", "mult": 0.5},
+          "x": {"field": {"group": "width"}, "mult": 0.5},
           "y": {"scale": "g", "field": "site", "offset": -2},
           "fontWeight": {"value": "bold"},
           "text": {"field": "site"},
@@ -101,7 +101,7 @@
           "x": {"value": 0.5},
           "y": {"scale": "g", "field": "key"},
           "height": {"scale": "g", "band": true},
-          "width": {"group": "width"},
+          "width": {"field": {"group": "width"}},
           "stroke": {"value": "#ccc"}
         }
       },

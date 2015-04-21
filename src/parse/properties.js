@@ -139,10 +139,8 @@ function rule(model, name, rules) {
 
 function valueRef(name, ref) {
   if (ref == null) return null;
-  var isColor = name==="fill" || name==="stroke";
-  var signals = [];
 
-  if (isColor) {
+  if (name==="fill" || name==="stroke") {
     if (ref.c) {
       return colorRef("hcl", ref.h, ref.c, ref.l);
     } else if (ref.h || ref.s) {
@@ -155,7 +153,11 @@ function valueRef(name, ref) {
   }
 
   // initialize value
-  var val = null, signalRef = null;
+  var val = null, 
+      scale = null, 
+      signalRef = null,
+      signals = [];
+
   if (ref.value !== undefined) {
     val = dl.str(ref.value);
   }
@@ -166,50 +168,13 @@ function valueRef(name, ref) {
     signals.push(signalRef.shift());
   }
 
-  // get field reference for enclosing group
-  if (ref.group != null) {
-    var grp = "group.datum";
-    if (dl.isString(ref.group)) {
-      grp = GROUP_VARS[ref.group]
-        ? "group." + ref.group
-        : "group.datum["+dl.field(ref.group).map(dl.str).join("][")+"]";
-    }
+  if(ref.field !== undefined) {
+    ref.field = dl.isString(ref.field) ? {datum: ref.field} : ref.field;
+    val = fieldRef(ref.field);
   }
 
-  // get data field value
-  if (ref.field != null) {
-    if (dl.isString(ref.field)) {
-      val = "item.datum["+dl.field(ref.field).map(dl.str).join("][")+"]";
-      if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
-    } else if(ref.field.signal) {
-      signalRef = dl.field(ref.field.signal);
-      val = "item.datum[signals["+signalRef.map(dl.str).join("][")+"]]";
-      if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
-      signals.push(signalRef.shift());
-    } else {
-      val = "this.util.accessor(group.datum["
-          + dl.field(ref.field.group).map(dl.str).join("][")
-          + "])(item.datum)";
-    }
-  } else if (ref.group != null) {
-    val = grp;
-  }
-
-  if (ref.scale != null) {
-    var scale = null;
-    if(dl.isString(ref.scale)) {
-      scale = dl.str(ref.scale);
-    } else if(ref.scale.signal) {
-      signalRef = dl.field(ref.scale.signal);
-      scale = "signals["+signalRef.map(dl.str).join("][")+"]";
-      signals.push(signalRef.shift());
-    } else {
-      scale = (ref.scale.group ? "group" : "item")
-        + ".datum[" + dl.str(ref.scale.group || ref.scale.field) + "]";
-    }
-
-    scale = "group.scale(" + scale + ")";
-    if(ref.invert) scale += ".invert";  // TODO: ordinal scales
+  if (ref.scale !== undefined) {
+    scale = scaleRef(ref.scale);
 
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
@@ -243,6 +208,45 @@ function colorRef(type, x, y, z) {
     signals: signals,
     scales: scales
   };
+}
+
+function fieldRef(ref) {
+  if(dl.isString(ref)) {
+    return dl.field(ref).map(dl.str).join("][");
+  } 
+
+  // Resolve nesting/parent lookups
+  var r = fieldRef(ref.datum || ref.group || ref.parent || ref.signal),
+      l = ref.level,
+      nested = (ref.group || ref.parent) && l,
+      scope = nested ? Array(l).join("group.mark.") : "";
+
+  if(ref.datum) {
+    return "item.datum["+r+"]";
+  } else if(ref.group) {
+    return scope+"group["+r+"]";
+  } else if(ref.parent) {
+    return scope+"group.datum["+r+"]";
+  } else if(ref.signal) {
+    return "signals["+r+"]";
+  }
+}
+
+function scaleRef(ref) {
+  var scale = null;
+
+  if(dl.isString(ref)) {
+    scale = dl.str(ref);
+  } else if(ref.name) {
+    scale = dl.isString(ref.name) ? ref.name : fieldRef(ref.name);
+  } else {
+    scale = fieldRef(ref);
+  }
+
+  scale = "group.scale("+scale+")";
+  if(ref.invert) scale += ".invert";  // TODO: ordinal scales
+
+  return scale;
 }
 
 module.exports = compile;

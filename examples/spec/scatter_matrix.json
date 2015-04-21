@@ -69,14 +69,14 @@
           "range": "width",
           "zero": false,
           "round": true,
-          "domain": {"data": "iris", "field": {"group": "a.data"}}
+          "domain": {"data": "iris", "field": {"parent": "a.data"}}
         },
         {
           "name": "y",
           "range": "height",
           "zero": false,
           "round": true,
-          "domain": {"data": "iris", "field": {"group": "b.data"}}
+          "domain": {"data": "iris", "field": {"parent": "b.data"}}
         }
       ],
       "axes": [
@@ -89,8 +89,8 @@
           "from": {"data": "iris"},
           "properties": {
             "enter": {
-              "x": {"scale": "x", "field": {"group": "a.data"}},
-              "y": {"scale": "y", "field": {"group": "b.data"}},
+              "x": {"scale": "x", "field": {"datum": {"parent": "a.data"}}},
+              "y": {"scale": "y", "field": {"datum": {"parent": "b.data"}}},
               "fill": {"scale": "c", "field": "species"},
               "fillOpacity": {"value": 0.5}
             },

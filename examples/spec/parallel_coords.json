@@ -74,7 +74,10 @@
           "properties": {
             "enter": {
               "x": {"scale": "ord", "field": "data"},
-              "y": {"scale": {"field": "data"}, "group": true, "field": "data"},
+              "y": {
+                "scale": {"datum": "data"}, 
+                "field": {"parent": {"datum": "data"}}
+              },
               "stroke": {"value": "steelblue"},
               "strokeWidth": {"value": 1},
               "strokeOpacity": {"value": 0.3}
