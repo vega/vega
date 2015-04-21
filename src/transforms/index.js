@@ -2,6 +2,7 @@ module.exports = {
   aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
   cross:      require('./Cross'),
+  linkpath:   require('./LinkPath'),
   facet:      require('./Facet'),
   filter:     require('./Filter'),
   fold:       require('./Fold'),
@@ -9,6 +10,7 @@ module.exports = {
   formula:    require('./Formula'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
+  treemap:    require('./Treemap'),
   unique:     require('./Unique'),
   zip:        require('./Zip')
 };

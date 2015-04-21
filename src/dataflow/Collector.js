@@ -17,22 +17,22 @@ proto.data = function() { return this._data; }
 proto.evaluate = function(input) {
   debug(input, ["collecting"]);
 
-  if(input.reflow) {
+  if (input.reflow) {
     input = changeset.create(input);
     input.mod = this._data.slice();
     return input;
   }
 
-  if(input.rem.length) {
+  if (input.rem.length) {
     var ids = input.rem.reduce(function(m,x) { return (m[x._id]=1, m); }, {});
     this._data = this._data.filter(function(x) { return ids[x._id] !== 1; });
   }
 
-  if(input.add.length) {
+  if (input.add.length) {
     this._data = this._data.length ? this._data.concat(input.add) : input.add;
   }
 
-  if(input.sort) {
+  if (input.sort) {
     this._data.sort(input.sort);
   }
 

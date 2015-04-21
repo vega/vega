@@ -25,10 +25,10 @@ function Force(graph) {
   this._layout = d3.layout.force();
 
   this._output = {
-    "x": "force:x",
-    "y": "force:y",
-    "source": "force:source",
-    "target": "force:target"
+    "x": "layout:x",
+    "y": "layout:y",
+    "source": "_source",
+    "target": "_target"
   };
 
   return this;

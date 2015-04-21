@@ -46,8 +46,8 @@ describe('Force', function() {
 
         for (var l=0; l<links.length; ++l) {
           var link = links[l];
-          var source = link['force:source'];
-          var target = link['force:target'];
+          var source = link['_source'];
+          var target = link['_target'];
           expect(source).to.have.property('_id', nodes[link.source]['_id']);
           expect(target).to.have.property('_id', nodes[link.target]['_id']);
         }
@@ -68,10 +68,10 @@ describe('Force', function() {
 
           for (var l=0; l<links.length; ++l) {
             var link = links[l];
-            var source = link['force:source'];
-            var target = link['force:target'];  
-            var dx = target['force:x'] - source['force:x'];
-            var dy = target['force:y'] - source['force:y'];
+            var source = link['_source'];
+            var target = link['_target'];  
+            var dx = target['layout:x'] - source['layout:x'];
+            var dy = target['layout:y'] - source['layout:y'];
             var dd = Math.sqrt(dx*dx + dy*dy);
             expect(dd).closeTo(dist, EPSILON * dist);
           }

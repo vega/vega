@@ -14,9 +14,9 @@ function Stack(graph) {
   });
 
   this._output = {
-    "start": "y2",
-    "stop": "y",
-    "mid": "cy"
+    "start": "layout:start",
+    "stop":  "layout:stop",
+    "mid":   "layout:mid"
   };
   this._collector = new Collector(graph);
 

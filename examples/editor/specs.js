@@ -3,10 +3,14 @@ var STATIC_SPECS = [
   "bar",
   "barley",
   "error",
+  "force",
   "grouped_bar",
   "lifelines",
   "parallel_coords",
+  "treemap",
   "scatter_matrix",
+  "stacked_area",
+  "stacked_bar",
   "stocks",
   "weather"
 ];
