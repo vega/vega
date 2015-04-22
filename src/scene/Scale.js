@@ -152,7 +152,7 @@ function quantitative(scale, rng, group) {
 }
 
 function dataRef(which, def, scale, group) {
-  if (def == null) { return []; } // JH-TODO: confirm with Arvind
+  if (def == null) { return []; }
   if (dl.isArray(def)) return def.map(signal.bind(this));
 
   var self = this, graph = this._graph,
