@@ -12,7 +12,7 @@ Transform.addParameters = function(proto, params) {
   for (var name in params) {
     p = params[name];
     proto[name] = new Parameter(name, p.type);
-    if(p.default) proto[name].set(proto, p.default);
+    if (p.default !== undefined) proto[name].set(proto, p.default);
   }
   proto._parameters = params;
 };

@@ -152,6 +152,7 @@ function quantitative(scale, rng, group) {
 }
 
 function dataRef(which, def, scale, group) {
+  if (def == null) { return []; }
   if (dl.isArray(def)) return def.map(signal.bind(this));
 
   var self = this, graph = this._graph,
@@ -163,11 +164,11 @@ function dataRef(which, def, scale, group) {
       sort = def.sort,
       i, rlen, j, flen, r, fields, from, data, keys;
 
-  if(!cache) {
+  if (!cache) {
     cache = scale[ck] = new Aggregate(graph);
     cacheField.ops = [];
     cache.singleton(true);
-    if(uniques && sort) cacheField.ops.push(sort.stat);
+    if (uniques && sort) cacheField.ops.push(sort.stat);
   }
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
@@ -184,15 +185,15 @@ function dataRef(which, def, scale, group) {
       return f; // String or {"signal"}
     });
 
-    if(uniques) {
+    if (uniques) {
       cacheField.name = sort ? sort.field : "_id";
       cache.fields.set(cache, [cacheField]);
-      for(j=0, flen=fields.length; j<flen; ++j) {
+      for (j=0, flen=fields.length; j<flen; ++j) {
         cache.group_by.set(cache, fields[j])
           .evaluate(data);
       }
     } else {
-      for(j=0, flen=fields.length; j<flen; ++j) {
+      for (j=0, flen=fields.length; j<flen; ++j) {
         cacheField.name = fields[j];
         cacheField.ops  = [C.MIN, C.MAX];
         cache.fields.set(cache, [cacheField]) // Treat as flat datasource

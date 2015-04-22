@@ -1,0 +1,104 @@
+{
+  "name": "treemap",
+  "width": 960,
+  "height": 500,
+  "padding": 2.5,
+  "data": [
+    {
+      "name": "tree",
+      "url": "data/flare.json",
+      "format": {"type": "treejson"},
+      "transform": [
+        {"type": "treemap", "value": "size", "size": [960, 500]}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": [
+        "#3182bd", "#6baed6", "#9ecae1", "#c6dbef", "#e6550d",
+        "#fd8d3c", "#fdae6b", "#fdd0a2", "#31a354", "#74c476",
+        "#a1d99b", "#c7e9c0", "#756bb1", "#9e9ac8", "#bcbddc",
+        "#dadaeb", "#636363", "#969696", "#bdbdbd", "#d9d9d9"
+      ]
+    },
+    {
+      "name": "size",
+      "type": "ordinal",
+      "domain": [0, 1, 2, 3],
+      "range": [256, 28, 20, 14]
+    },
+    {
+      "name": "opacity",
+      "type": "ordinal",
+      "domain": [0, 1, 2, 3],
+      "range": [0.15, 0.5, 0.8, 1.0]
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {
+        "data": "tree",
+        "transform": [{"type":"filter", "test":"d.children"}]
+      },
+      "interactive": false,
+      "properties": {
+        "enter": {
+          "x": {"field": "layout:x"},
+          "y": {"field": "layout:y"},
+          "width": {"field": "layout:width"},
+          "height": {"field": "layout:height"},
+          "fill": {"scale": "color", "field": "name"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {
+        "data": "tree",
+        "transform": [{"type":"filter", "test":"!d.children"}]
+      },
+      "properties": {
+        "enter": {
+          "x": {"field": "layout:x"},
+          "y": {"field": "layout:y"},
+          "width": {"field": "layout:width"},
+          "height": {"field": "layout:height"},
+          "stroke": {"value": "#fff"}
+        },
+        "update": {
+          "fill": {"value": "rgba(0,0,0,0)"}
+        },
+        "hover": {
+          "fill": {"value": "red"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "tree",
+        "transform": [{"type":"filter", "test":"d.children"}]
+      },
+      "interactive": false,
+      "properties": {
+        "enter": {
+          "x": {"field": "layout:x"},
+          "y": {"field": "layout:y"},
+          "dx": {"field": "layout:width", "mult": 0.5},
+          "dy": {"field": "layout:height", "mult": 0.5},
+          "font": {"value": "Helvetica Neue"},
+          "fontSize": {"scale": "size", "field": "depth"},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
+          "fill": {"value": "#000"},
+          "fillOpacity": {"scale": "opacity", "field": "depth"},
+          "text": {"field": "name"}
+        }
+      }
+    }
+  ]
+}

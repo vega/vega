@@ -21,7 +21,8 @@ describe('Stack', function() {
       groupby: opt.groupby,
       sortby: opt.sortby,
       value: opt.value,
-      offset: opt.offset
+      offset: opt.offset,
+      output: {start: "y2", stop: "y", mid: "cy"}
     };
     
     return {
