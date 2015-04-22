@@ -8,6 +8,8 @@ module.exports = {
   fold:       require('./Fold'),
   force:      require('./Force'),
   formula:    require('./Formula'),
+  geo:        require('./Geo'),
+  geopath:    require('./GeoPath'),
   pie:        require('./Pie'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
