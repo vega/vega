@@ -4,6 +4,7 @@ var d3 = require('d3'),
     parseStreams = require('../parse/streams'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg/index'),
+    svgx = require('../render/svg-xml/index'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
     debug = require('../util/debug'),
@@ -119,9 +120,13 @@ prototype.viewport = function(size) {
 };
 
 prototype.renderer = function(type) {
-  if (!arguments.length) return this._io;
+  if (!arguments.length) return this._renderer;
   if (type === "canvas") type = canvas;
-  if (type === "svg") type = svg;
+  else if (type === "svg") type = svg;
+  else if (type === "svg-xml") type = svgx;
+  else if (dl.isString(type)) throw new Error("Unknown renderer: " + type);
+  else if (!type) throw new Error("No renderer specified");
+
   if (this._io !== type) {
     this._io = type;
     this._renderer = null;
@@ -135,39 +140,47 @@ prototype.initialize = function(el) {
   var v = this, prevHandler,
       w = v._width, h = v._height, pad = v._padding;
   
-  // clear pre-existing container
-  d3.select(el).select("div.vega").remove();
-  
-  // add div container
-  this._el = el = d3.select(el)
-    .append("div")
-    .attr("class", "vega")
-    .style("position", "relative")
-    .node();
-  if (v._viewport) {
-    d3.select(el)
-      .style("width",  (v._viewport[0] || w)+"px")
-      .style("height", (v._viewport[1] || h)+"px")
-      .style("overflow", "auto");
+  if (!arguments.length || el === null) {
+    el = this._el ? this._el.parentNode : null;
   }
-  
+
+  if (el) {
+    // clear pre-existing container
+    d3.select(el).select("div.vega").remove();
+    
+    // add div container
+    this._el = el = d3.select(el)
+      .append("div")
+      .attr("class", "vega")
+      .style("position", "relative")
+      .node();
+    if (v._viewport) {
+      d3.select(el)
+        .style("width",  (v._viewport[0] || w)+"px")
+        .style("height", (v._viewport[1] || h)+"px")
+        .style("overflow", "auto");
+    }
+  }
+
   // renderer
   v._renderer = (v._renderer || new this._io.Renderer())
     .initialize(el, w, h, pad);
   
-  // input handler
-  prevHandler = v._handler;
-  v._handler = new this._io.Handler()
-    .initialize(el, pad, v)
-    .model(v._model);
+  if (el) {
+    // input handler
+    prevHandler = v._handler;
+    v._handler = new this._io.Handler()
+      .initialize(el, pad, v)
+      .model(v._model);
 
-  if (prevHandler) {
-    prevHandler.handlers().forEach(function(h) {
-      v._handler.on(h.type, h.handler);
-    });
-  } else {
-    // Register event listeners for signal stream definitions.
-    parseStreams(this);
+    if (prevHandler) {
+      prevHandler.handlers().forEach(function(h) {
+        v._handler.on(h.type, h.handler);
+      });
+    } else {
+      // Register event listeners for signal stream definitions.
+      parseStreams(this);
+    }
   }
   
   return this;
@@ -243,7 +256,7 @@ View.factory = function(model) {
       .padding(defs.padding)
       .renderer(opt.renderer || "canvas");
 
-    if (opt.el) v.initialize(opt.el);
+    v.initialize(opt.el);
     if (opt.data) v.data(opt.data);
   
     return v;

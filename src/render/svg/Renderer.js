@@ -1,4 +1,5 @@
-var dl = require('datalib'),
+var d3 = require('d3'),
+    dl = require('datalib'),
     marks = require('./marks');
 
 var renderer = function() {
