@@ -2,12 +2,14 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     buffer = require('vinyl-buffer'),
     rename = require('gulp-rename'),
+    run = require('gulp-run'),
     source = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
     uglify = require('gulp-uglify'),
     watchify = require('watchify'),
     gutil = require('gulp-util'),
-    mocha = require('gulp-spawn-mocha');
+    mocha = require('gulp-spawn-mocha'),
+    argv = require('yargs').argv;
 
 function browser() {
   return browserify({
@@ -51,7 +53,7 @@ gulp.task('watch', function() {
 
 gulp.task('test', function() {
   return gulp.src(['test/**/*.js'], { read: false })
-    .pipe(mocha())
+    .pipe(mocha({ grep: argv.g, timeout: 5000 }))
     .on('error', gutil.log);
 });
 
