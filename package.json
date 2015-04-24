@@ -23,7 +23,6 @@
     "grunt-mocha-test": "^0.12.6",
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
-    "gulp-run": "^1.6.7",
     "gulp-sourcemaps": "^1.5.1",
     "gulp-spawn-mocha": "^2.0.1",
     "gulp-uglify": "^1.2.0",

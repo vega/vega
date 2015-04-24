@@ -4,7 +4,7 @@ var d3 = require('d3'),
     parseStreams = require('../parse/streams'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg/index'),
-    svgx = require('../render/svg-xml/index'),
+    svgx = require('../render/svg-headless/index'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
     debug = require('../util/debug'),
@@ -123,7 +123,7 @@ prototype.renderer = function(type) {
   if (!arguments.length) return this._renderer;
   if (type === "canvas") type = canvas;
   else if (type === "svg") type = svg;
-  else if (type === "svg-xml") type = svgx;
+  else if (type === "svg-headless") type = svgx;
   else if (dl.isString(type)) throw new Error("Unknown renderer: " + type);
   else if (!type) throw new Error("No renderer specified");
 

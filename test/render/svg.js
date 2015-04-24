@@ -61,7 +61,7 @@ describe('SVG', function() {
   function renderSVG(name, spec, validator, done) {
     parseSpec(spec, function(viewFactory) {
       // first use the string renderer
-      var view = viewFactory({ renderer: "svg-xml" });
+      var view = viewFactory({ renderer: "svg-headless" });
       view.update();
       var svg = view.renderer().svg();
 
