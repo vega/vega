@@ -26,17 +26,7 @@ describe('SVG', function() {
       "brush_interactor": "skip",
       "map": "skip",
 
-      // FIXME: JSON URLs fail; https://github.com/uwdata/datalib/pull/4
-      // "barley": "//svg:g[@class='type-symbol']/svg:path[120]",
-      "barley": "skip",
-      "brush": "skip",
-      "choropleth": "skip",
-      "handles": "skip",
-      "linking": "skip",
-      "scatter_matrix": "skip",
-      "shiftclick_select": "skip",
-      "weather": "skip",
-
+      "barley": "//svg:g[@class='type-symbol']/svg:path[120]",
       "area": "//svg:g[@class='type-area']/svg:path",
       "bar": "//svg:g[@class='type-rect']/svg:rect[20]",
     };
