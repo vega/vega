@@ -83,7 +83,13 @@ vg.data.load = (function() {
 
   function xhr(url, callback) {
     vg.log('LOAD XHR: ' + url);
-    d3.xhr(url, function(err, resp) {
+    var xhrReq = d3.xhr(url);
+    if (vg.config.dataHeaders) {
+      vg.keys(vg.config.dataHeaders).forEach(function(k) {
+        xhrReq.header(k, vg.config.dataHeaders[k]);
+      });
+    }
+    xhrReq.get(function(err, resp) {
       if (resp) resp = resp.responseText;
       callback(err, resp);
     });
@@ -96,7 +102,11 @@ vg.data.load = (function() {
 
   function http(url, callback) {
     vg.log('LOAD HTTP: ' + url);
-    var req = require('request')(url, function(error, response, body) {
+    var options = {url: url};
+    if (vg.config.dataHeaders) {
+      options.headers = vg.config.dataHeaders;
+    }
+    var req = require('request')(options, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         callback(null, body);
       } else {

@@ -9,6 +9,12 @@ vg.config.isNode = false;
 // e.g., ['wikipedia.org', 'eff.org']
 vg.config.domainWhiteList = false;
 
+// Allows additional headers to be sent to the server
+// when requesting data. This could be useful when
+// the graph definition is not trusted, and the server
+// needs to be notified of that, e.g. {'Treat-as-Untrusted': 1}
+vg.config.dataHeaders = false;
+
 // If true, disable potentially unsafe transforms (filter, formula)
 // involving possible JavaScript injection attacks.
 vg.config.safeMode = false;
