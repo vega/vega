@@ -67,7 +67,7 @@ vg.Bounds = (function() {
       .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
       .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
       .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
-  }
+  };
 
   prototype.union = function(b) {
     if (b.x1 < this.x1) this.x1 = b.x1;

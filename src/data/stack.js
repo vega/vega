@@ -78,7 +78,7 @@ vg.data.stack = function() {
     stack[name] = function(x) {
       layout[name](x);
       return stack;
-    }
+    };
   });
 
   stack.output = function(map) {

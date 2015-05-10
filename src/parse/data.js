@@ -22,7 +22,7 @@ vg.parse.data = function(spec, callback) {
         }
       }
       if (--count === 0) callback();
-    }
+    };
   }
   
   // process each data set definition

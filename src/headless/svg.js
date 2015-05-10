@@ -42,7 +42,7 @@ vg.headless.svg = (function() {
       height: h
     };
     if (bgcolor != null) {
-      headAttr.style = 'background-color:' + bgcolor + ';'
+      headAttr.style = 'background-color:' + bgcolor + ';';
     }
 
     t.head = open('svg', headAttr, vg.config.svgNamespace);
@@ -390,7 +390,7 @@ vg.headless.svg = (function() {
           defs.gradient[value.id] = value;
           value = "url(" + window.location.href + "#" + value.id + ")";
         }
-        s += name + ':' + value + ';'
+        s += name + ':' + value + ';';
       }
     }
     

@@ -4,7 +4,7 @@ vg.parse.properties = (function() {
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
         
-    code += "var o = trans ? {} : item;\n"
+    code += "var o = trans ? {} : item;\n";
     
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
@@ -21,14 +21,14 @@ vg.parse.properties = (function() {
       } else if (vars.width) {
         code += "\n  o.x = (o.x2 - o.width);";
       } else {
-        code += "\n  o.x = o.x2;"
+        code += "\n  o.x = o.x2;";
       }
     }
     if (vars.xc) {
       if (vars.width) {
         code += "\n  o.x = (o.xc - o.width/2);";
       } else {
-        code += "\n  o.x = o.xc;"
+        code += "\n  o.x = o.xc;";
       }
     }
 
@@ -40,14 +40,14 @@ vg.parse.properties = (function() {
       } else if (vars.height) {
         code += "\n  o.y = (o.y2 - o.height);";
       } else {
-        code += "\n  o.y = o.y2;"
+        code += "\n  o.y = o.y2;";
       }
     }
     if (vars.yc) {
       if (vars.height) {
         code += "\n  o.y = (o.yc - o.height/2);";
       } else {
-        code += "\n  o.y = o.yc;"
+        code += "\n  o.y = o.yc;";
       }
     }
     
