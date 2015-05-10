@@ -21,7 +21,7 @@ vg.scene.build = (function() {
     }
     
     return node;
-  };
+  }
   
   function buildNode(def, node) {
     node = node || {};

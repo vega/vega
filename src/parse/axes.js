@@ -13,7 +13,7 @@ vg.parse.axes = (function() {
       axes[index] = axes[index] || vg.scene.axis();
       axis(def, index, axes[index], scales);
     });
-  };
+  }
 
   function axis(def, index, axis, scales) {
     // axis scale

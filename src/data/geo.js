@@ -71,7 +71,7 @@ vg.data.geo = (function() {
     
     
     return map;
-  };
+  }
   
   geo.params = params;
   return geo;
