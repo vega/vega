@@ -7,7 +7,7 @@ vg.scene.legend = function() {
       values = null,
       format = null,
       formatString = null,
-      title = undefined,
+      title,
       orient = "right",
       offset = vg.config.legend.offset,
       padding = vg.config.legend.padding,
