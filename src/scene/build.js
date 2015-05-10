@@ -27,7 +27,7 @@ vg.scene.build = (function() {
     node = node || {};
     node.def = def;
     node.marktype = def.type;
-    node.interactive = !(def.interactive === false);
+    node.interactive = (def.interactive !== false);
     return node;
   }
   

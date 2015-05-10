@@ -16,7 +16,6 @@
 	// Laxing, because one step at a time
 	"-W004": false,
 	"-W014": false,
-	"-W018": false,
 	"-W030": false,
 	"-W032": false,
 	"-W033": false,
