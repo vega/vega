@@ -16,6 +16,7 @@ function Encoder(model, mark) {
     this.dependency(C.DATA, update.data);
     this.dependency(C.SCALES, update.scales);
     this.dependency(C.SIGNALS, update.signals);
+    this.dependency(C.FIELDS, update.fields);
   }
 
   return this;
@@ -68,5 +69,12 @@ function encode(prop, item, trans, db, sg) {
   var enc = prop.encode;
   enc.call(enc, item, item.mark.group||item, trans, db, sg, this._model.predicates());
 }
+
+// If update property set uses a group property, reevaluate all items.
+proto.reevaluate = function(pulse) {
+  var props = this._mark.def.properties || {},
+      update = props.update;
+  return Node.prototype.reevaluate.call(this, pulse) || (update ? update.group : false);
+};
 
 module.exports = Encoder;

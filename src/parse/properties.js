@@ -3,14 +3,17 @@ var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     config = require('../util/config');
 
+var DEPS = ["signals", "scales", "data", "fields"];
+
 function compile(model, mark, spec) {
   var code = "",
       names = dl.keys(spec),
       i, len, name, ref, vars = {}, 
       deps = {
         signals: {},
-        scales: {},
-        data: {}
+        scales:  {},
+        data:    {},
+        fields:  {}
       };
       
   code += "var o = trans ? {} : item;\n"
@@ -27,7 +30,7 @@ function compile(model, mark, spec) {
     }
 
     vars[name] = true;
-    ['signals', 'scales', 'data'].forEach(function(p) {
+    DEPS.forEach(function(p) {
       if(ref[p] != null) dl.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
     });
   }
@@ -74,8 +77,9 @@ function compile(model, mark, spec) {
     return {
       encode: encoder,
       signals: dl.keys(deps.signals),
-      scales: dl.keys(deps.scales),
-      data: dl.keys(deps.data)
+      scales:  dl.keys(deps.scales),
+      data:    dl.keys(deps.data),
+      fields:  dl.keys(deps.fields)
     }
   } catch (e) {
     dl.error(e);
@@ -90,13 +94,6 @@ function hasPath(mark, vars) {
        vars.y || vars.y2 || vars.height ||
        vars.tension || vars.interpolate));
 }
-
-var GROUP_VARS = {
-  "width": 1,
-  "height": 1,
-  "mark.group.width": 1,
-  "mark.group.height": 1
-};
 
 function rule(model, name, rules) {
   var signals = [], scales = [], db = [],
@@ -155,26 +152,32 @@ function valueRef(name, ref) {
   // initialize value
   var val = null, 
       scale = null, 
-      signalRef = null,
-      signals = [];
+      signals = [],
+      fields  = [],
+      group   = false,
+      sgRef = {},
+      fRef  = {},
+      sRef  = {};
 
   if (ref.value !== undefined) {
     val = dl.str(ref.value);
   }
 
   if (ref.signal !== undefined) {
-    signalRef = dl.field(ref.signal);
-    val = "signals["+signalRef.map(dl.str).join("][")+"]"; 
-    signals.push(signalRef.shift());
+    sgRef = dl.field(ref.signal);
+    val = "signals["+sgRef.map(dl.str).join("][")+"]"; 
+    signals.push(sgRef.shift());
   }
 
   if(ref.field !== undefined) {
     ref.field = dl.isString(ref.field) ? {datum: ref.field} : ref.field;
-    val = fieldRef(ref.field);
+    fRef  = fieldRef(ref.field);
+    val = fRef.val;
   }
 
   if (ref.scale !== undefined) {
-    scale = scaleRef(ref.scale);
+    sRef = scaleRef(ref.scale);
+    scale = sRef.val;
 
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
@@ -189,7 +192,15 @@ function valueRef(name, ref) {
   // multiply, offset, return value
   val = "(" + (ref.mult?(dl.number(ref.mult)+" * "):"") + val + ")"
     + (ref.offset ? " + " + dl.number(ref.offset) : "");
-  return {val: val, signals: signals, scales: ref.scale};
+
+  // Collate dependencies
+  return {
+    val: val,
+    signals: signals.concat(dl.array(fRef.signals)).concat(dl.array(sRef.signals)),
+    fields:  fields.concat(dl.array(fRef.fields)).concat(dl.array(sRef.fields)),
+    scales:  ref.scale ? (ref.scale.name || ref.scale) : null, // TODO: connect sRef'd scale?
+    group:   group || fRef.group || sRef.group
+  };
 }
 
 function colorRef(type, x, y, z) {
@@ -210,43 +221,60 @@ function colorRef(type, x, y, z) {
   };
 }
 
+// {field: {datum: "foo"} }  -> item.datum.foo
+// {field: {group: "foo"} }  -> group.foo
+// {field: {parent: "foo"} } -> group.datum.foo
 function fieldRef(ref) {
   if(dl.isString(ref)) {
-    return dl.field(ref).map(dl.str).join("][");
+    return {val: dl.field(ref).map(dl.str).join("][")};
   } 
 
   // Resolve nesting/parent lookups
-  var r = fieldRef(ref.datum || ref.group || ref.parent || ref.signal),
-      l = ref.level,
+  var l = ref.level,
       nested = (ref.group || ref.parent) && l,
-      scope = nested ? Array(l).join("group.mark.") : "";
+      scope = nested ? Array(l).join("group.mark.") : "",
+      r = fieldRef(ref.datum || ref.group || ref.parent || ref.signal),
+      val = r.val,
+      fields  = r.fields  || [],
+      signals = r.signals || [],
+      group   = r.group   || false;
 
   if(ref.datum) {
-    return "item.datum["+r+"]";
+    fields.push(val);
+    val = "item.datum["+val+"]";
   } else if(ref.group) {
-    return scope+"group["+r+"]";
+    group = true;
+    val = scope+"group["+val+"]";
   } else if(ref.parent) {
-    return scope+"group.datum["+r+"]";
+    group = true;
+    val = scope+"group.datum["+val+"]";
   } else if(ref.signal) {
-    return "signals["+r+"]";
+    val = "signals["+val+"]";
+    signals.push(dl.field(ref.signal)[0]);
   }
+
+  return {val: val, fields: fields, signals: signals, group: group};
 }
 
+// {scale: "x"}
+// {scale: {name: "x"}},
+// {scale: fieldRef}
 function scaleRef(ref) {
-  var scale = null;
+  var scale = null,
+      fr = null;
 
   if(dl.isString(ref)) {
     scale = dl.str(ref);
   } else if(ref.name) {
-    scale = dl.isString(ref.name) ? ref.name : fieldRef(ref.name);
+    scale = dl.isString(ref.name) ? dl.str(ref.name) : (fr = fieldRef(ref.name)).val;
   } else {
-    scale = fieldRef(ref);
+    scale = (fr = fieldRef(ref)).val;
   }
 
   scale = "group.scale("+scale+")";
   if(ref.invert) scale += ".invert";  // TODO: ordinal scales
 
-  return scale;
+  return fr ? (fr.val = scale, fr) : {val: scale};
 }
 
 module.exports = compile;

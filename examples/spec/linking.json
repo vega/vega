@@ -200,8 +200,8 @@
                   {
                     "predicate": "inRange",
                     "input": {
-                      "x": {"field": {"signal": "cell.a"}},
-                      "y": {"field": {"signal": "cell.b"}}
+                      "x": {"field": {"datum": {"signal": "cell.a"}}},
+                      "y": {"field": {"datum": {"signal": "cell.b"}}}
                     },
 
                     "scale": "c", 
