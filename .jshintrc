@@ -1,0 +1,39 @@
+{
+	// Enforcing
+	//"es3": true,
+
+	// Enforcing, but not yet
+	//"bitwise": true,
+	//"eqeqeq": true,
+	//"freeze": true,
+	//"latedef": true,
+	//"noarg": true,
+	//"nonew": true,
+	//"undef": true,
+	//"unused": true,
+	//"strict": false,
+
+	// Laxing, because one step at a time
+	"-W004": false,
+	"-W014": false,
+	"-W018": false,
+	"-W030": false,
+	"-W032": false,
+	"-W033": false,
+	"-W038": false,
+	"-W041": false,
+	"-W048": false,
+	"-W054": false,
+	"-W061": false,
+	"-W069": false,
+	"-W080": false,
+	"-W083": false,
+	"-W084": false,
+
+	// Environment
+	"browser": true,
+
+	"globals": {
+		"vg": true
+	}
+}

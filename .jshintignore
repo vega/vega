@@ -1,0 +1,14 @@
+// incomplete files
+src/core/_start.js
+src/core/_end.js
+
+// concatenated result
+vega.js
+vega.min.js
+
+// Ignoring
+examples
+test
+
+// Environment
+node_modules
