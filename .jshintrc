@@ -26,6 +26,7 @@
 
 	// Environment
 	"browser": true,
+	"node": true,
 
 	"globals": {
 		"vg": true
