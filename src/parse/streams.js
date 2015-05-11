@@ -14,23 +14,26 @@ module.exports = function(view) {
       spec  = model.defs().signals,
       register = {}, nodes = {};
 
-  function scale(def, value, item) {
-    if(!item || !item.scale) {
-      item = (item && item.mark) ? item.mark.group : model.scene().items[0];
+  function scale(spec, value) {
+    var def = spec.scale,
+        name  = def.name || def.signal || def,
+        scope = def.scope ? graph.signalRef(def.scope.signal) : null;
+
+    if(!scope || !scope.scale) {
+      scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
     }
 
-    var scale = item.scale(def.scale.signal || def.scale);
+    var scale = scope.scale(name);
     if(!scale) return value;
     return def.invert ? scale.invert(value) : scale(value);
   }
 
   function signal(sig, selector, exp, spec) {
-    var n = new Node(graph),
-        item = spec.item ? graph.signal(spec.item.signal) : null;
+    var n = new Node(graph);
     n.evaluate = function(input) {
       if(!input.signals[selector.signal]) return graph.doNotPropagate;
       var val = expr.eval(graph, exp.fn, null, null, null, null, exp.signals);
-      if(spec.scale) val = scale(spec, val, item ? item.value() : null);
+      if(spec.scale) val = scale(spec, val);
       sig.value(val);
       input.signals[sig.name()] = 1;
       input.reflow = true;

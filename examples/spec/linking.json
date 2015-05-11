@@ -40,9 +40,7 @@
       "streams": [{
         "type": "brush_start", 
         "expr": "brush_start.x - cell.x", 
-        "item": {"signal": "cell"},
-        "scale": "x", 
-        "invert": true
+        "scale": {"name": "x", "invert": true, "scope": {"signal": "cell"}}
       }]
     },
     {
@@ -51,9 +49,7 @@
       "streams": [{
         "type": "brush_start", 
         "expr": "brush_start.y - cell.y", 
-        "item": {"signal": "cell"},
-        "scale": "y", 
-        "invert": true
+        "scale": {"name": "y", "invert": true, "scope": {"signal": "cell"}}
       }]
     },
     {
@@ -62,9 +58,7 @@
       "streams": [{
         "type": "brush_end", 
         "expr": "brush_end.x - cell.x", 
-        "item": {"signal": "cell"},
-        "scale": "x", 
-        "invert": true
+        "scale": {"name": "x", "invert": true, "scope": {"signal": "cell"}}
       }]
     },
     {
@@ -73,9 +67,7 @@
       "streams": [{
         "type": "brush_end", 
         "expr": "brush_end.y - cell.y", 
-        "item": {"signal": "cell"},
-        "scale": "y", 
-        "invert": true
+        "scale": {"name": "y", "invert": true, "scope": {"signal": "cell"}}
       }]
     }
   ],
