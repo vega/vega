@@ -56,7 +56,7 @@ describe('Formula', function() {
       }
       expect(ds._output.fields).to.have.key('z');
 
-      model.graph.signal('multipler').value(4).fire();
+      model.signal('multipler').value(4).fire();
       data = ds.values();
       expect(data).to.have.length(20);
       for(i=0, len=data.length; i<len; ++i) {
@@ -65,7 +65,7 @@ describe('Formula', function() {
       }
       expect(ds._output.fields).to.have.key('z');
 
-      model.graph.signal('multipler').value(15).fire();
+      model.signal('multipler').value(15).fire();
       data = ds.values();
       expect(data).to.have.length(20);
       for(i=0, len=data.length; i<len; ++i) {

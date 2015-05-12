@@ -188,7 +188,7 @@ prototype.update = function(opt) {
   if(opt.reflow !== undefined) cs.reflow = opt.reflow
 
   if(!v._build) {
-    v._renderNode = new Node(v._model.graph)
+    v._renderNode = new Node(v._model)
       .router(true);
 
     v._renderNode.evaluate = function(input) {

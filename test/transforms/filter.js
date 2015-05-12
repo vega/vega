@@ -50,13 +50,13 @@ describe('Filter', function() {
       expect(data.length).to.be.above(0).and.equal(filtered.length);
       for(i=0, len=data.length; i<len; ++i) expect(data[i].y).to.be.above(45);
 
-      model.graph.signal('above').value(15).fire();
+      model.signal('above').value(15).fire();
       filtered = values.filter(function(d) { return d.y > 15 });
       data = ds.values();
       expect(data.length).to.be.above(0).and.equal(filtered.length);
       for(i=0, len=data.length; i<len; ++i) expect(data[i].y).to.be.above(15);
 
-      model.graph.signal('above').value(30).fire();
+      model.signal('above').value(30).fire();
       filtered = values.filter(function(d) { return d.y > 30 });
       data = ds.values();
       expect(data.length).to.be.above(0).and.equal(filtered.length);

@@ -104,7 +104,7 @@ describe('Unique', function() {
       expect(data[0]).to.have.property('unq', 'US');
       expect(data[1]).to.have.property('unq', 'Canada');
 
-      model.graph.signal('uniqueOn').value('type').fire();
+      model.signal('uniqueOn').value('type').fire();
       data = ds.values();
       expect(data).to.have.length(3);
       expect(data[0]).to.have.property('unq', 'gold');

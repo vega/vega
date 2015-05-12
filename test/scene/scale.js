@@ -46,10 +46,10 @@ describe('Scale', function() {
 
         expect(x.domain()).to.eql([1, 2, 5, 6, 7]);
 
-        model.graph.signal('s1').value(3).fire();
+        model.signal('s1').value(3).fire();
         expect(x.domain()).to.eql([1, 2, 3, 6, 7]);
 
-        model.graph.signal('s2').value(6).fire();
+        model.signal('s2').value(6).fire();
         expect(x.domain()).to.eql([1, 2, 3, 6]);
 
         done();
@@ -96,10 +96,10 @@ describe('Scale', function() {
 
           expect(y.domain()).to.eql([0, 10]);
 
-          model.graph.signal('min').value(5).fire();
+          model.signal('min').value(5).fire();
           expect(y.domain()).to.eql([5, 10]);
 
-          model.graph.signal('max').value(15).fire();
+          model.signal('max').value(15).fire();
           expect(y.domain()).to.eql([5, 15]);
 
           done();
@@ -585,11 +585,11 @@ describe('Scale', function() {
         expect(x.range()).to.eql([5, 23, 7, 51]);
         expect(y.range()).to.eql([5, 23, 7, 51]);
 
-        model.graph.signal('s1').value(10).fire();
+        model.signal('s1').value(10).fire();
         expect(x.range()).to.eql([10, 23, 7, 51]);
         expect(y.range()).to.eql([10, 23, 7, 51]);
 
-        model.graph.signal('s2').value(37).fire();
+        model.signal('s2').value(37).fire();
         expect(x.range()).to.eql([10, 23, 37, 51]);
         expect(y.range()).to.eql([10, 23, 37, 51]);
 
@@ -768,12 +768,12 @@ describe('Scale', function() {
           expect(x.rangeExtent()).to.eql(range);
           expect(y.range()).to.eql(range);
 
-          model.graph.signal('min').value(27).fire();
+          model.signal('min').value(27).fire();
           expect(x.rangeBand()).to.eql(~~((range[1]-27)/2));
           expect(x.rangeExtent()).to.eql([27, range[1]]);
           expect(y.range()).to.eql([27, range[1]]);
 
-          model.graph.signal('max').value(47).fire();
+          model.signal('max').value(47).fire();
           expect(x.rangeBand()).to.eql(10);
           expect(x.rangeExtent()).to.eql([27, 47]);
           expect(y.range()).to.eql([27, 47]);

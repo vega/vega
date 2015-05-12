@@ -7,6 +7,11 @@ var dl = require('datalib'),
     C = require('../util/constants');
 
 function Graph() {
+}
+
+var proto = Graph.prototype;
+
+proto.init = function() {
   this._stamp = 0;
   this._rank  = 0;
 
@@ -14,9 +19,7 @@ function Graph() {
   this._signals = {};
 
   this.doNotPropagate = {};
-}
-
-var proto = Graph.prototype;
+};
 
 proto.data = function(name, pipeline, facet) {
   var db = this._data;

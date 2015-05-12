@@ -3,13 +3,12 @@ var Node = require('../dataflow/Node'),
     debug = require('../util/debug'),
     EMPTY = {};
 
-function Encoder(model, mark) {
+function Encoder(graph, mark) {
   var props = mark.def.properties || {},
       update = props.update;
 
-  Node.prototype.init.call(this, model.graph)
+  Node.prototype.init.call(this, graph)
 
-  this._model = model;
   this._mark  = mark;
 
   if(update) {
@@ -67,7 +66,7 @@ proto.evaluate = function(input) {
 
 function encode(prop, item, trans, db, sg) {
   var enc = prop.encode;
-  enc.call(enc, item, item.mark.group||item, trans, db, sg, this._model.predicates());
+  enc.call(enc, item, item.mark.group||item, trans, db, sg, this._graph.predicates());
 }
 
 // If update property set uses nested fieldrefs, reevaluate all items.
