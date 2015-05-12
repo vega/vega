@@ -13,7 +13,8 @@ function compile(model, mark, spec) {
         signals: {},
         scales:  {},
         data:    {},
-        fields:  {}
+        fields:  {},
+        reflow:  false
       };
       
   code += "var o = trans ? {} : item;\n"
@@ -33,6 +34,7 @@ function compile(model, mark, spec) {
     DEPS.forEach(function(p) {
       if(ref[p] != null) dl.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
     });
+    deps.reflow = deps.reflow || ref.reflow;
   }
 
   if (vars.x2) {
@@ -79,7 +81,8 @@ function compile(model, mark, spec) {
       signals: dl.keys(deps.signals),
       scales:  dl.keys(deps.scales),
       data:    dl.keys(deps.data),
-      fields:  dl.keys(deps.fields)
+      fields:  dl.keys(deps.fields),
+      reflow:  deps.reflow
     }
   } catch (e) {
     dl.error(e);
@@ -153,7 +156,7 @@ function valueRef(name, ref) {
   // initialize value
   var val = null, scale = null, 
       sgRef = {}, fRef = {}, sRef = {},
-      signals = [], fields = [], group = false;
+      signals = [], fields = [], reflow = false;
 
   if (ref.value !== undefined) {
     val = dl.str(ref.value);
@@ -195,7 +198,7 @@ function valueRef(name, ref) {
     signals: signals.concat(dl.array(fRef.signals)).concat(dl.array(sRef.signals)),
     fields:  fields.concat(dl.array(fRef.fields)).concat(dl.array(sRef.fields)),
     scales:  ref.scale ? (ref.scale.name || ref.scale) : null, // TODO: connect sRef'd scale?
-    group:   group || fRef.group || sRef.group
+    reflow:  reflow || fRef.reflow || sRef.reflow
   };
 }
 
@@ -233,23 +236,24 @@ function fieldRef(ref) {
       val = r.val,
       fields  = r.fields  || [],
       signals = r.signals || [],
-      group   = r.group   || false;
+      reflow  = r.reflow  || false; // Nested fieldrefs trigger full reeval of Encoder.
 
   if(ref.datum) {
-    fields.push(val);
     val = "item.datum["+val+"]";
+    fields.push(ref.datum);
   } else if(ref.group) {
-    group = true;
     val = scope+"group["+val+"]";
+    reflow = true;
   } else if(ref.parent) {
-    group = true;
     val = scope+"group.datum["+val+"]";
+    reflow = true;
   } else if(ref.signal) {
     val = "signals["+val+"]";
     signals.push(dl.field(ref.signal)[0]);
+    reflow = true;
   }
 
-  return {val: val, fields: fields, signals: signals, group: group};
+  return {val: val, fields: fields, signals: signals, reflow: reflow};
 }
 
 // {scale: "x"}

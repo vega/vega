@@ -70,11 +70,11 @@ function encode(prop, item, trans, db, sg) {
   enc.call(enc, item, item.mark.group||item, trans, db, sg, this._model.predicates());
 }
 
-// If update property set uses a group property, reevaluate all items.
+// If update property set uses nested fieldrefs, reevaluate all items.
 proto.reevaluate = function(pulse) {
   var props = this._mark.def.properties || {},
       update = props.update;
-  return Node.prototype.reevaluate.call(this, pulse) || (update ? update.group : false);
+  return Node.prototype.reevaluate.call(this, pulse) || (update ? update.reflow : false);
 };
 
 module.exports = Encoder;
