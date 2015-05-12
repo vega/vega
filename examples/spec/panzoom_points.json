@@ -80,14 +80,14 @@
       "name": "zoomCenterX",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.x", "scale":"x", "invert":true}
+        {"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert":true}}
       ]
     },
     {
       "name": "zoomCenterY",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.y", "scale":"y", "invert":true}
+        {"type": "mousemove", "expr": "p.y", "scale": {"name": "y", "invert":true}}
       ]
     },
     {
