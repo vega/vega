@@ -2,7 +2,7 @@ var dl = require('datalib'),
     transforms = require('../transforms/index');
 
 module.exports = function parseTransforms(model, def) {
-  var tx = new transforms[def.type](model.graph);
+  var tx = new transforms[def.type](model);
   if(def.type == 'facet') {
     var pipeline = (def.transform||[])
       .map(function(t) { return parseTransforms(model, t); });

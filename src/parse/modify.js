@@ -12,12 +12,11 @@ var filter = function(field, value, src, dest) {
 };
 
 module.exports = function parseModify(model, def, ds) {
-  var graph = model.graph,
-      signal = def.signal ? dl.field(def.signal) : null, 
+  var signal = def.signal ? dl.field(def.signal) : null, 
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate) : null,
       reeval = (predicate === null),
-      node = new Node(graph);
+      node = new Node(model);
 
   node.evaluate = function(input) {
     if(predicate !== null) {
@@ -25,14 +24,14 @@ module.exports = function parseModify(model, def, ds) {
       (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
 
       // TODO: input
-      reeval = predicate({}, db, graph.signalValues(predicate.signals||[]), model._predicates);
+      reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
     }
 
     debug(input, [def.type+"ing", reeval]);
     if(!reeval) return input;
 
     var datum = {}, 
-        value = signal ? graph.signalRef(def.signal) : null,
+        value = signal ? model.signalRef(def.signal) : null,
         d = model.data(ds.name),
         prev = d.revises() ? null : undefined,
         t = null;

@@ -146,7 +146,7 @@ describe('Facet', function() {
       expectFacet(facets, 0, 0, 2); // USA
       expectFacet(facets, 1, 3, 5); // Canada
 
-      model.graph.signal('keys').value('type').fire();
+      model.signal('keys').value('type').fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
 

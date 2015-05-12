@@ -3,9 +3,9 @@ var Node = require('../dataflow/Node'),
     C = require('../util/constants'),
     debug = require('../util/debug');
 
-function Bounder(model, mark) {
+function Bounder(graph, mark) {
   this._mark = mark;
-  return Node.prototype.init.call(this, model.graph).router(true);
+  return Node.prototype.init.call(this, graph).router(true);
 }
 
 var proto = (Bounder.prototype = new Node());

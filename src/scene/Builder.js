@@ -15,16 +15,15 @@ function Builder() {
 
 var proto = (Builder.prototype = new Node());
 
-proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
-  Node.prototype.init.call(this, model.graph)
+proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
+  Node.prototype.init.call(this, graph)
     .router(true)
     .collector(true);
 
-  this._model = model;
   this._def   = def;
   this._mark  = mark;
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
-  this._ds    = dl.isString(this._from) ? model.data(this._from) : null;
+  this._ds    = dl.isString(this._from) ? graph.data(this._from) : null;
   this._map   = {};
 
   this._revises = false;  // Should scenegraph items track _prev?
@@ -44,8 +43,8 @@ proto.init = function(model, def, mark, parent, parent_id, inheritFrom) {
   // Non-group mark builders are super nodes. Encoder and Bounder remain 
   // separate operators but are embedded and called by Builder.evaluate.
   this._isSuper = (this._def.type !== C.GROUP); 
-  this._encoder = new Encoder(this._model, this._mark);
-  this._bounder = new Bounder(this._model, this._mark);
+  this._encoder = new Encoder(this._graph, this._mark);
+  this._bounder = new Bounder(this._graph, this._mark);
 
   if(this._ds) { this._encoder.dependency(C.DATA, this._from); }
 
@@ -86,7 +85,7 @@ function inlineDs() {
       modify: from.modify
     };
   } else {
-    src = this._model.data(this._from);
+    src = this._graph.data(this._from);
     name = ["vg", this._from, this._def.type, src.listeners(true).length].join("_");
     spec = {
       name: name,
@@ -97,7 +96,7 @@ function inlineDs() {
   }
 
   this._from = name;
-  this._ds = parseData.datasource(this._model, spec);
+  this._ds = parseData.datasource(this._graph, spec);
   var revises = this._ds.revises();
 
   if(geom) {
@@ -128,7 +127,7 @@ proto.pipeline = function() {
 proto.connect = function() {
   var builder = this;
 
-  this._model.graph.connect(this.pipeline());
+  this._graph.connect(this.pipeline());
   this._encoder.dependency(C.SCALES).forEach(function(s) {
     builder._parent.scale(s).addListener(builder);
   });
@@ -146,7 +145,7 @@ proto.disconnect = function() {
   if(!this._listeners.length) return this;
 
   Node.prototype.disconnect.call(this);
-  this._model.graph.disconnect(this.pipeline());
+  this._graph.disconnect(this.pipeline());
   this._encoder.dependency(C.SCALES).forEach(function(s) {
     builder._parent.scale(s).removeListener(builder);
   });
