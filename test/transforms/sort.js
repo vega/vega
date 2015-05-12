@@ -72,7 +72,7 @@ describe('Sort', function() {
         expect(data[i].y).to.be.at.least(data[i-1].y)
       }
 
-      model.graph.signal('sortBy1').value('-y').fire();
+      model.signal('sortBy1').value('-y').fire();
       data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
@@ -121,7 +121,7 @@ describe('Sort', function() {
         }
       }
 
-      model.graph.signal('sortBy0').value('x').fire();
+      model.signal('sortBy0').value('x').fire();
       data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
@@ -131,7 +131,7 @@ describe('Sort', function() {
         }
       }
 
-      model.graph.signal('sortBy1').value('-y').fire();
+      model.signal('sortBy1').value('-y').fire();
       data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {
@@ -162,7 +162,7 @@ describe('Sort', function() {
         }
       }
 
-      model.graph.signal('sortBy1').value('-y').fire();
+      model.signal('sortBy1').value('-y').fire();
       data = ds.values();
       expect(data).to.have.length(20);
       for(i=1, len=data.length; i<len; ++i) {

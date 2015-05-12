@@ -3,14 +3,18 @@ var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     config = require('../util/config');
 
+var DEPS = ["signals", "scales", "data", "fields"];
+
 function compile(model, mark, spec) {
   var code = "",
       names = dl.keys(spec),
       i, len, name, ref, vars = {}, 
       deps = {
         signals: {},
-        scales: {},
-        data: {}
+        scales:  {},
+        data:    {},
+        fields:  {},
+        reflow:  false
       };
       
   code += "var o = trans ? {} : item;\n"
@@ -27,9 +31,10 @@ function compile(model, mark, spec) {
     }
 
     vars[name] = true;
-    ['signals', 'scales', 'data'].forEach(function(p) {
+    DEPS.forEach(function(p) {
       if(ref[p] != null) dl.array(ref[p]).forEach(function(k) { deps[p][k] = 1 });
     });
+    deps.reflow = deps.reflow || ref.reflow;
   }
 
   if (vars.x2) {
@@ -72,10 +77,12 @@ function compile(model, mark, spec) {
     encoder.util = dl;
     encoder.d3   = d3; // For color spaces
     return {
-      encode: encoder,
+      encode:  encoder,
       signals: dl.keys(deps.signals),
-      scales: dl.keys(deps.scales),
-      data: dl.keys(deps.data)
+      scales:  dl.keys(deps.scales),
+      data:    dl.keys(deps.data),
+      fields:  dl.keys(deps.fields),
+      reflow:  deps.reflow
     }
   } catch (e) {
     dl.error(e);
@@ -91,13 +98,6 @@ function hasPath(mark, vars) {
        vars.tension || vars.interpolate));
 }
 
-var GROUP_VARS = {
-  "width": 1,
-  "height": 1,
-  "mark.group.width": 1,
-  "mark.group.height": 1
-};
-
 function rule(model, name, rules) {
   var signals = [], scales = [], db = [],
       inputs = [], code = "";
@@ -105,6 +105,7 @@ function rule(model, name, rules) {
   (rules||[]).forEach(function(r, i) {
     var predName = r.predicate,
         pred = model.predicate(predName),
+        p = "predicates["+dl.str(predName)+"]",
         input = [], args = name+"_arg"+i,
         ref;
 
@@ -123,7 +124,7 @@ function rule(model, name, rules) {
       signals.push.apply(signals, pred.signals);
       db.push.apply(db, pred.data);
       inputs.push(args+" = {"+input.join(', ')+"}");
-      code += "if(predicates["+dl.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
+      code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {\n" +
         "    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");\n";
       code += rules[i+1] ? "  } else " : "  }";
     } else {
@@ -139,10 +140,8 @@ function rule(model, name, rules) {
 
 function valueRef(name, ref) {
   if (ref == null) return null;
-  var isColor = name==="fill" || name==="stroke";
-  var signals = [];
 
-  if (isColor) {
+  if (name==="fill" || name==="stroke") {
     if (ref.c) {
       return colorRef("hcl", ref.h, ref.c, ref.l);
     } else if (ref.h || ref.s) {
@@ -155,61 +154,29 @@ function valueRef(name, ref) {
   }
 
   // initialize value
-  var val = null, signalRef = null;
+  var val = null, scale = null, 
+      sgRef = {}, fRef = {}, sRef = {},
+      signals = [], fields = [], reflow = false;
+
   if (ref.value !== undefined) {
     val = dl.str(ref.value);
   }
 
   if (ref.signal !== undefined) {
-    signalRef = dl.field(ref.signal);
-    val = "signals["+signalRef.map(dl.str).join("][")+"]"; 
-    signals.push(signalRef.shift());
+    sgRef = dl.field(ref.signal);
+    val = "signals["+sgRef.map(dl.str).join("][")+"]"; 
+    signals.push(sgRef.shift());
   }
 
-  // get field reference for enclosing group
-  if (ref.group != null) {
-    var grp = "group.datum";
-    if (dl.isString(ref.group)) {
-      grp = GROUP_VARS[ref.group]
-        ? "group." + ref.group
-        : "group.datum["+dl.field(ref.group).map(dl.str).join("][")+"]";
-    }
+  if(ref.field !== undefined) {
+    ref.field = dl.isString(ref.field) ? {datum: ref.field} : ref.field;
+    fRef  = fieldRef(ref.field);
+    val = fRef.val;
   }
 
-  // get data field value
-  if (ref.field != null) {
-    if (dl.isString(ref.field)) {
-      val = "item.datum["+dl.field(ref.field).map(dl.str).join("][")+"]";
-      if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
-    } else if(ref.field.signal) {
-      signalRef = dl.field(ref.field.signal);
-      val = "item.datum[signals["+signalRef.map(dl.str).join("][")+"]]";
-      if (ref.group != null) { val = "this.util.accessor("+val+")("+grp+")"; }
-      signals.push(signalRef.shift());
-    } else {
-      val = "this.util.accessor(group.datum["
-          + dl.field(ref.field.group).map(dl.str).join("][")
-          + "])(item.datum)";
-    }
-  } else if (ref.group != null) {
-    val = grp;
-  }
-
-  if (ref.scale != null) {
-    var scale = null;
-    if(dl.isString(ref.scale)) {
-      scale = dl.str(ref.scale);
-    } else if(ref.scale.signal) {
-      signalRef = dl.field(ref.scale.signal);
-      scale = "signals["+signalRef.map(dl.str).join("][")+"]";
-      signals.push(signalRef.shift());
-    } else {
-      scale = (ref.scale.group ? "group" : "item")
-        + ".datum[" + dl.str(ref.scale.group || ref.scale.field) + "]";
-    }
-
-    scale = "group.scale(" + scale + ")";
-    if(ref.invert) scale += ".invert";  // TODO: ordinal scales
+  if (ref.scale !== undefined) {
+    sRef = scaleRef(ref.scale);
+    scale = sRef.val;
 
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
@@ -224,7 +191,15 @@ function valueRef(name, ref) {
   // multiply, offset, return value
   val = "(" + (ref.mult?(dl.number(ref.mult)+" * "):"") + val + ")"
     + (ref.offset ? " + " + dl.number(ref.offset) : "");
-  return {val: val, signals: signals, scales: ref.scale};
+
+  // Collate dependencies
+  return {
+    val: val,
+    signals: signals.concat(dl.array(fRef.signals)).concat(dl.array(sRef.signals)),
+    fields:  fields.concat(dl.array(fRef.fields)).concat(dl.array(sRef.fields)),
+    scales:  ref.scale ? (ref.scale.name || ref.scale) : null, // TODO: connect sRef'd scale?
+    reflow:  reflow || fRef.reflow || sRef.reflow
+  };
 }
 
 function colorRef(type, x, y, z) {
@@ -243,6 +218,63 @@ function colorRef(type, x, y, z) {
     signals: signals,
     scales: scales
   };
+}
+
+// {field: {datum: "foo"} }  -> item.datum.foo
+// {field: {group: "foo"} }  -> group.foo
+// {field: {parent: "foo"} } -> group.datum.foo
+function fieldRef(ref) {
+  if(dl.isString(ref)) {
+    return {val: dl.field(ref).map(dl.str).join("][")};
+  } 
+
+  // Resolve nesting/parent lookups
+  var l = ref.level,
+      nested = (ref.group || ref.parent) && l,
+      scope = nested ? Array(l).join("group.mark.") : "",
+      r = fieldRef(ref.datum || ref.group || ref.parent || ref.signal),
+      val = r.val,
+      fields  = r.fields  || [],
+      signals = r.signals || [],
+      reflow  = r.reflow  || false; // Nested fieldrefs trigger full reeval of Encoder.
+
+  if(ref.datum) {
+    val = "item.datum["+val+"]";
+    fields.push(ref.datum);
+  } else if(ref.group) {
+    val = scope+"group["+val+"]";
+    reflow = true;
+  } else if(ref.parent) {
+    val = scope+"group.datum["+val+"]";
+    reflow = true;
+  } else if(ref.signal) {
+    val = "signals["+val+"]";
+    signals.push(dl.field(ref.signal)[0]);
+    reflow = true;
+  }
+
+  return {val: val, fields: fields, signals: signals, reflow: reflow};
+}
+
+// {scale: "x"}
+// {scale: {name: "x"}},
+// {scale: fieldRef}
+function scaleRef(ref) {
+  var scale = null,
+      fr = null;
+
+  if(dl.isString(ref)) {
+    scale = dl.str(ref);
+  } else if(ref.name) {
+    scale = dl.isString(ref.name) ? dl.str(ref.name) : (fr = fieldRef(ref.name)).val;
+  } else {
+    scale = (fr = fieldRef(ref)).val;
+  }
+
+  scale = "group.scale("+scale+")";
+  if(ref.invert) scale += ".invert";  // TODO: ordinal scales
+
+  return fr ? (fr.val = scale, fr) : {val: scale};
 }
 
 module.exports = compile;

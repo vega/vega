@@ -56,8 +56,8 @@
                 "input": {
                   "x": {"field": "sepalWidth"},
                   "y": {"field": "petalLength"},
-                  "xScale": {"scale": "x", "invert": true},
-                  "yScale": {"scale": "y", "invert": true}
+                  "xScale": {"scale": "x"},
+                  "yScale": {"scale": "y"}
                 },
 
                 "scale": "c", 

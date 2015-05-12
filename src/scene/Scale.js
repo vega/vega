@@ -9,12 +9,11 @@ var dl = require('datalib'),
 
 var GROUP_PROPERTY = {width: 1, height: 1};
 
-function Scale(model, def, parent) {
-  this._model   = model;
+function Scale(graph, def, parent) {
   this._def     = def;
   this._parent  = parent;
   this._updated = false;
-  return Node.prototype.init.call(this, model.graph);
+  return Node.prototype.init.call(this, graph);
 }
 
 var proto = (Scale.prototype = new Node());
@@ -181,7 +180,7 @@ function dataRef(which, def, scale, group) {
     if (data.stamp <= this._stamp) continue;
 
     fields = dl.array(r.field).map(function(f) {
-      if (f.group) return dl.accessor(f.group)(group.datum)
+      if (f.parent) return dl.accessor(f.parent)(group.datum)
       return f; // String or {"signal"}
     });
 

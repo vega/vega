@@ -9,13 +9,13 @@ function Model() {
   this._predicates = {};
   this._scene = null;
 
-  this.graph = new Graph();
-
-  this._node = new Node(this.graph);
+  this._node = null;
   this._builder = null; // Top-level scenegraph builder
+
+  Graph.prototype.init.call(this);
 };
 
-var proto = Model.prototype;
+var proto = (Model.prototype = new Graph());
 
 proto.defs = function(defs) {
   if (!arguments.length) return this._defs;
@@ -23,10 +23,14 @@ proto.defs = function(defs) {
   return this;
 };
 
+proto.node = function() {
+  return this._node || (this._node = new Node(this));
+};
+
 proto.data = function() {
-  var data = this.graph.data.apply(this.graph, arguments);
+  var data = Graph.prototype.data.apply(this, arguments);
   if(arguments.length > 1) {  // new Datasource
-    this._node.addListener(data.pipeline()[0]);
+    this.node().addListener(data.pipeline()[0]);
   }
 
   return data;
@@ -48,20 +52,20 @@ proto.predicates = function() { return this._predicates; };
 
 proto.scene = function(renderer) {
   if(!arguments.length) return this._scene;
-  if(this._builder) this._node.removeListener(this._builder.disconnect());
+  if(this._builder) this.node().removeListener(this._builder.disconnect());
   this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
-  this._node.addListener(this._builder.connect());
+  this.node().addListener(this._builder.connect());
   var p = this._builder.pipeline();
   p[p.length-1].addListener(renderer);
   return this;
 };
 
-proto.addListener = function(l) { this._node.addListener(l); };
-proto.removeListener = function(l) { this._node.removeListener(l); };
+proto.addListener = function(l) { this.node().addListener(l); };
+proto.removeListener = function(l) { this.node().removeListener(l); };
 
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create();
-  this.graph.propagate(cs, this._node);
+  this.propagate(cs, this.node());
 };
 
 module.exports = Model;

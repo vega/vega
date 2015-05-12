@@ -6,7 +6,7 @@
     {
       "name": "xPos",
       "init": 265,
-      "streams": [{"type": "mousemove", "expr": "p.x", "scale": "x", "invert": "true"}]
+      "streams": [{"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert": "true"}}]
     },
     {
       "name": "indexDate",

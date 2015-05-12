@@ -6,14 +6,14 @@
     {
       "name": "brush_start",
       "streams": [
-        {"type": "mousedown", "expr": "p.x", "scale": "xContext", "invert": true}
+        {"type": "mousedown", "expr": "p.x", "scale": {"name": "xContext", "invert": true}}
       ]
     },
     {
       "name": "brush_end",
       "streams": [{
         "type": "mousedown, mouseup, [mousedown, mouseup] > mousemove",
-        "expr": "p.x", "scale": "xContext", "invert": true
+        "expr": "p.x", "scale": {"name": "xContext", "invert": true}
       }]
     },
 

@@ -361,7 +361,7 @@ describe('Aggregate', function() {
         expect(data[1]).to.have.property('area_sum', 7);
         expect(data[1]).to.have.property('area_count', 2);
 
-        model.graph.signal('field').value('population').fire();
+        model.signal('field').value('population').fire();
         data = ds.values();
 
         expect(data).to.have.length(2);
