@@ -286,8 +286,7 @@
               },
               {"value": 0.5}
             ]
-          },
-          "inter_year": {"signal": "inter_year"}
+          }
         }
       }
     },

@@ -357,8 +357,8 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
   var sign = (orient === "left" || orient === "top") ? -1 : 1;
   if (size === Infinity) {
     size = (orient === "top" || orient === "bottom")
-      ? {group: "mark.group.height", mult: -sign}
-      : {group: "mark.group.width", mult: -sign};
+      ? {field: {group: "height", level: 2}, mult: -sign}
+      : {field: {group: "width",  level: 2}, mult: -sign};
   } else {
     size = {value: sign * size};
   }

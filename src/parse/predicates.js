@@ -34,7 +34,9 @@ module.exports = function parsePredicate(model, spec) {
       else if(o.arg)    def = "args["+dl.str(o.arg)+"]";
       else if(o.signal) def = parseSignal(o.signal, signals);
       else if(o.predicate) {
-        var pred = model.predicate(o.predicate);
+        var pred = model.predicate(o.predicate),
+            p = "predicates["+dl.str(o.predicate)+"]";
+
         pred.signals.forEach(function(s) { signals[s] = 1; });
         pred.data.forEach(function(d) { db[d] = 1 });
 
@@ -46,7 +48,7 @@ module.exports = function parsePredicate(model, spec) {
           def+=", ";
         });
 
-        def+= "predicates["+dl.str(o.predicate)+"](args, db, signals, predicates)";
+        def+= p+".call("+p+", args, db, signals, predicates)";
       }
 
       decl.push(name);
@@ -87,12 +89,14 @@ module.exports = function parsePredicate(model, spec) {
   };
 
   function parseIn(spec) {
-    var o = [spec.item];
+    var o = [spec.item], code = "";
     if(spec.range) o.push.apply(o, spec.range);
-    if(spec.scale) o.push(spec.scale);
+    if(spec.scale) {
+      code = parseScale(spec.scale, o);
+    }
 
-    var ops = parseOperands(o),
-        code = ops.code;
+    var ops = parseOperands(o);
+    code = ops.code + code;
 
     if(spec.data) {
       var field = dl.field(spec.field).map(dl.str);
@@ -101,7 +105,7 @@ module.exports = function parsePredicate(model, spec) {
     } else if(spec.range) {
       // TODO: inclusive/exclusive range?
       // TODO: inverting ordinal scales
-      if(spec.scale) code += "o1 = o3(o1);\no2 = o3(o2);\n";
+      if(spec.scale) code += "o1 = scale(o1);\no2 = scale(o2);\n";
       code += "return o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1";
     }
 
@@ -112,9 +116,41 @@ module.exports = function parsePredicate(model, spec) {
     };
   };
 
+  // Populate ops such that ultimate scale/inversion function will be in `scale` var. 
+  function parseScale(spec, ops) {
+    var code = "var scale = ", 
+        idx  = ops.length;
+
+    if(dl.isString(spec)) {
+      ops.push({ value: spec });
+      code += "this.root().scale(o"+idx+")";
+    } else if(spec.arg) {  // Scale function is being passed as an arg
+      ops.push(spec);
+      code += "o"+idx;
+    } else if(spec.name) { // Full scale parameter {name: ..}
+      ops.push(dl.isString(spec.name) ? {value: spec.name} : spec.name);
+      code += "(this.isFunction(o"+idx+") ? o"+idx+" : ";
+      if(spec.scope) {
+        ops.push(spec.scope);
+        code += "(o"+(idx+1)+".scale || this.root().scale)(o"+idx+")";
+      } else {
+        code += "this.root().scale(o"+idx+")";
+      }
+      code += ")"
+    }
+
+    if(spec.invert === true) {  // Allow spec.invert.arg?
+      code += ".invert"
+    }
+
+    return code+";\n";
+  }
+
   (spec || []).forEach(function(s) {
-    var parse = types[s.type](s);
-    var pred = Function("args", "db", "signals", "predicates", parse.code);
+    var parse = types[s.type](s),
+        pred  = Function("args", "db", "signals", "predicates", parse.code);
+    pred.root = function() { return model.scene().items[0] }; // For global scales
+    pred.isFunction = dl.isFunction;
     pred.signals = parse.signals;
     pred.data = parse.data;
     model.predicate(s.name, pred);

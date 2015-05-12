@@ -181,7 +181,7 @@ function dataRef(which, def, scale, group) {
     if (data.stamp <= this._stamp) continue;
 
     fields = dl.array(r.field).map(function(f) {
-      if (f.group) return dl.accessor(f.group)(group.datum)
+      if (f.parent) return dl.accessor(f.parent)(group.datum)
       return f; // String or {"signal"}
     });
 

@@ -23,7 +23,7 @@
       "type": "in",
       "item": {"arg": "x"},
       "range": [{"signal": "brush_start.x"}, {"signal": "brush_end.x"}],
-      "scale": {"arg": "xScale"}
+      "scale": {"name": "x", "invert": true}
     },
 
     {
@@ -31,7 +31,7 @@
       "type": "in",
       "item": {"arg": "y"},
       "range": [{"signal": "brush_start.y"}, {"signal": "brush_end.y"}],
-      "scale": {"arg": "yScale"}
+      "scale": {"name": "y", "invert": true}
     },
 
     {
@@ -93,9 +93,7 @@
                 "predicate": "inRange",
                 "input": {
                   "x": {"field": "sepalWidth"},
-                  "y": {"field": "petalLength"},
-                  "xScale": {"scale": "x", "invert": true},
-                  "yScale": {"scale": "y", "invert": true}
+                  "y": {"field": "petalLength"}
                 },
 
                 "scale": "c", 

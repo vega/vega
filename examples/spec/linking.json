@@ -40,9 +40,7 @@
       "streams": [{
         "type": "brush_start", 
         "expr": "brush_start.x - cell.x", 
-        "item": {"signal": "cell"},
-        "scale": "x", 
-        "invert": true
+        "scale": {"name": "x", "invert": true, "scope": {"signal": "cell"}}
       }]
     },
     {
@@ -51,9 +49,7 @@
       "streams": [{
         "type": "brush_start", 
         "expr": "brush_start.y - cell.y", 
-        "item": {"signal": "cell"},
-        "scale": "y", 
-        "invert": true
+        "scale": {"name": "y", "invert": true, "scope": {"signal": "cell"}}
       }]
     },
     {
@@ -62,9 +58,7 @@
       "streams": [{
         "type": "brush_end", 
         "expr": "brush_end.x - cell.x", 
-        "item": {"signal": "cell"},
-        "scale": "x", 
-        "invert": true
+        "scale": {"name": "x", "invert": true, "scope": {"signal": "cell"}}
       }]
     },
     {
@@ -73,9 +67,7 @@
       "streams": [{
         "type": "brush_end", 
         "expr": "brush_end.y - cell.y", 
-        "item": {"signal": "cell"},
-        "scale": "y", 
-        "invert": true
+        "scale": {"name": "y", "invert": true, "scope": {"signal": "cell"}}
       }]
     }
   ],
@@ -167,14 +159,14 @@
           "range": "width",
           "zero": false,
           "round": true,
-          "domain": {"data": "iris", "field": {"group": "a.data"}}
+          "domain": {"data": "iris", "field": {"parent": "a.data"}}
         },
         {
           "name": "y",
           "range": "height",
           "zero": false,
           "round": true,
-          "domain": {"data": "iris", "field": {"group": "b.data"}}
+          "domain": {"data": "iris", "field": {"parent": "b.data"}}
         }
       ],
       "axes": [
@@ -188,8 +180,8 @@
           "properties": {
             "enter": {
               "class": {"value": "symbol"},
-              "x": {"scale": "x", "field": {"group": "a.data"}},
-              "y": {"scale": "y", "field": {"group": "b.data"}},
+              "x": {"scale": "x", "field": {"datum": {"parent": "a.data"}}},
+              "y": {"scale": "y", "field": {"datum": {"parent": "b.data"}}},
               "fill": {"scale": "c", "field": "species"},
               "fillOpacity": {"value": 0.5},
               "size": {"value": 36}
@@ -200,8 +192,8 @@
                   {
                     "predicate": "inRange",
                     "input": {
-                      "x": {"field": {"signal": "cell.a"}},
-                      "y": {"field": {"signal": "cell.b"}}
+                      "x": {"field": {"datum": {"signal": "cell.a"}}},
+                      "y": {"field": {"datum": {"signal": "cell.b"}}}
                     },
 
                     "scale": "c", 

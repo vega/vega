@@ -92,7 +92,7 @@
       "name": "zoomCenterX",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.x", "scale":"x", "invert":true},
+        {"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert":true}},
         {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2", "scale":"x", "invert":true}
       ]
     },
@@ -100,7 +100,7 @@
       "name": "zoomCenterY",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.y", "scale":"y", "invert":true},
+        {"type": "mousemove", "expr": "p.y", "scale": {"name": "y", "invert":true}},
         {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2", "scale":"y", "invert":true}
       ]
     },
