@@ -75,7 +75,7 @@ function compile(model, mark, spec) {
     encoder.util = dl;
     encoder.d3   = d3; // For color spaces
     return {
-      encode: encoder,
+      encode:  encoder,
       signals: dl.keys(deps.signals),
       scales:  dl.keys(deps.scales),
       data:    dl.keys(deps.data),
@@ -102,6 +102,7 @@ function rule(model, name, rules) {
   (rules||[]).forEach(function(r, i) {
     var predName = r.predicate,
         pred = model.predicate(predName),
+        p = "predicates["+dl.str(predName)+"]",
         input = [], args = name+"_arg"+i,
         ref;
 
@@ -120,7 +121,7 @@ function rule(model, name, rules) {
       signals.push.apply(signals, pred.signals);
       db.push.apply(db, pred.data);
       inputs.push(args+" = {"+input.join(', ')+"}");
-      code += "if(predicates["+dl.str(predName)+"]("+args+", db, signals, predicates)) {\n" +
+      code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {\n" +
         "    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");\n";
       code += rules[i+1] ? "  } else " : "  }";
     } else {
@@ -150,14 +151,9 @@ function valueRef(name, ref) {
   }
 
   // initialize value
-  var val = null, 
-      scale = null, 
-      signals = [],
-      fields  = [],
-      group   = false,
-      sgRef = {},
-      fRef  = {},
-      sRef  = {};
+  var val = null, scale = null, 
+      sgRef = {}, fRef = {}, sRef = {},
+      signals = [], fields = [], group = false;
 
   if (ref.value !== undefined) {
     val = dl.str(ref.value);

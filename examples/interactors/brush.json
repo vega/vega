@@ -20,7 +20,7 @@
        "type": "in",
        "item": {"arg": "x"},
        "range": [{"signal": "brush_start.x"}, {"signal": "brush_end.x"}],
-       "scale": {"arg": "xScale"}
+       "scale": {"name": {"arg": "xScale"}, "invert": true}
      },
 
      {
@@ -28,7 +28,7 @@
        "type": "in",
        "item": {"arg": "y"},
        "range": [{"signal": "brush_start.y"}, {"signal": "brush_end.y"}],
-       "scale": {"arg": "yScale"}
+       "scale": {"name": {"arg": "yScale"}, "invert": true}
      },
 
      {
