@@ -17,7 +17,7 @@ function browser() {
       debug: true,
       cache: {}, packageCache: {}
     })
-    .external(['d3', 'topojson']); 
+    .external(['d3', 'topojson', 'canvas']); 
 }
 
 function watcher() {

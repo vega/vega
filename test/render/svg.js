@@ -31,7 +31,7 @@ describe('SVG', function() {
       "bar": "//svg:g[@class='type-rect']/svg:rect[20]",
     };
 
-    files.forEach(function(file) {
+    files.forEach(function(file, idx) {
       var name = path.basename(file, ".json");
       // dynamically generate a test case for each example spec
       if (validation[name] === "skip") {
@@ -51,7 +51,7 @@ describe('SVG', function() {
   function renderSVG(name, spec, validator, done) {
     parseSpec(spec, function(viewFactory) {
       // first use the string renderer
-      var view = viewFactory({ renderer: "svg-headless" });
+      var view = viewFactory({ renderer: "svg" });
       view.update();
       var svg = view.renderer().svg();
 
