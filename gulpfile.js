@@ -12,7 +12,7 @@ var gulp = require('gulp'),
 
 function browser() {
   return browserify({
-      entries: ['./src/'],
+      entries: ['./index'],
       standalone: 'vg',
       debug: true,
       cache: {}, packageCache: {}

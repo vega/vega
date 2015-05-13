@@ -2,10 +2,11 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
-    "datalib": "^1.0.2",
+    "datalib": "^1.0.11",
     "canvas": "^1.2.1",
     "d3": "3.4.x",
-    "topojson": "^1.6.18"
+    "topojson": "^1.6.18",
+    "yargs": "^3.2.1"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
@@ -21,7 +22,6 @@
     "heap": "^0.2.6",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
-    "requirejs": "2.1.x",
     "selenium-server-standalone-jar": "^2.45.0",
     "summary": "^0.3.2",
     "vinyl-buffer": "^1.0.0",
@@ -29,8 +29,7 @@
     "watchify": "^3.1.0",
     "webdriverio": "^2.4.5",
     "xmldom": "^0.1.19",
-    "xpath": "^0.0.9",
-    "yargs": "^3.2.1"
+    "xpath": "^0.0.9"
   },
   "scripts": {
     "test": "gulp test"
