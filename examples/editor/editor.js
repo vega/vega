@@ -121,6 +121,12 @@ ved.init = function() {
       ved.select();
     }
   }
+
+  if (p.renderer) {
+    var ren = document.getElementById("sel_render");
+    ren.selectedIndex = p.renderer === "SVG" || p.renderer === "svg" ? 1 : 0;
+    ved.renderer();
+  }
 };
 
 window.onload = ved.init;

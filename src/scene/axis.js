@@ -1,4 +1,5 @@
-var dl = require('datalib'),
+var d3 = require('d3'),
+    dl = require('datalib'),
     config = require('../util/config'),
     tpl = require('../dataflow/tuple'),
     parseMark = require('../parse/mark');

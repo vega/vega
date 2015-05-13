@@ -7,16 +7,17 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     watchify = require('watchify'),
     gutil = require('gulp-util'),
-    mocha = require('gulp-spawn-mocha');
+    mocha = require('gulp-spawn-mocha'),
+    argv = require('yargs').argv;
 
 function browser() {
   return browserify({
-      entries: ['./src/'],
+      entries: ['./index'],
       standalone: 'vg',
       debug: true,
       cache: {}, packageCache: {}
     })
-    .external(['d3', 'topojson']); 
+    .external(['d3', 'topojson', 'canvas']); 
 }
 
 function watcher() {
@@ -51,7 +52,7 @@ gulp.task('watch', function() {
 
 gulp.task('test', function() {
   return gulp.src(['test/**/*.js'], { read: false })
-    .pipe(mocha())
+    .pipe(mocha({ grep: argv.g, timeout: 5000 }))
     .on('error', gutil.log);
 });
 
