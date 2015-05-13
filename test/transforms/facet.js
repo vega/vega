@@ -60,7 +60,7 @@ describe('Facet', function() {
 
       values.splice(3, 0, a1);
       values.push(a2, a3);
-      ds.add(util.duplicate([a1, a2, a3])).fire();
+      ds.insert(util.duplicate([a1, a2, a3])).fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
       expectFacet(facets, 0, 0, 3); // USA

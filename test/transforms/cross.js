@@ -53,7 +53,7 @@ describe('Cross', function() {
       expect(data2).to.have.length(9);
       expect(ds2._output.fields).to.have.keys(['a', 'b']);
 
-      ds1.add([new1]).fire();
+      ds1.insert([new1]).fire();
       data1 = ds1.values();
       data2 = ds2.values();
 
@@ -61,7 +61,7 @@ describe('Cross', function() {
       expect(data2).to.have.length(12);
       expect(ds2._output.fields).to.have.keys(['a', 'b']);
 
-      ds2.add([new2]).fire();
+      ds2.insert([new2]).fire();
       data1 = ds1.values();
       data2 = ds2.values();
       expect(data1).to.have.length(4);

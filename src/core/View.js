@@ -37,7 +37,7 @@ prototype.model = function(model) {
 prototype.data = function(data) {
   var m = this.model();
   if (!arguments.length) return m.data();
-  dl.keys(data).forEach(function(d) { m.data(d).add(dl.duplicate(data[d])); });
+  dl.keys(data).forEach(function(d) { m.data(d).insert(dl.duplicate(data[d])); });
   return this;
 };
 
