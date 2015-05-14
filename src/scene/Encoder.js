@@ -32,11 +32,8 @@ proto.evaluate = function(input) {
       update = props.update,
       exit   = props.exit,
       sg = graph.signalValues(),  // For expediency, get all signal values
-      db, i, len, item;
-
-  db = graph.data().reduce(function(db, ds) { 
-    return (db[ds.name()] = ds.values(), db);
-  }, {});
+      db = graph.dataValues(), 
+      i, len, item;
 
   // Items marked for removal are at the head of items. Process them first.
   for(i=0, len=input.rem.length; i<len; ++i) {

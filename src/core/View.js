@@ -13,14 +13,17 @@ var View = function(el, width, height, model) {
   this._el    = null;
   this._model = null;
   this._width = this.__width = width || 500;
-  this._height = this.__height = height || 300;
+  this._height  = this.__height = height || 300;
   this._autopad = 1;
   this._padding = {top:0, left:0, bottom:0, right:0};
   this._viewport = null;
   this._renderer = null;
-  this._handler = null;
+  this._handler  = null;
+  this._streamer = null; // Targeted update for streaming changes
+  this._changeset = null;
   this._renderers = {canvas: canvas, svg: svg};
-  this._io = canvas;
+  this._io  = canvas;
+  this._api = {}; // Stash streaming data API sandboxes.
 };
 
 var prototype = View.prototype;
@@ -29,15 +32,91 @@ prototype.model = function(model) {
   if (!arguments.length) return this._model;
   if (this._model !== model) {
     this._model = model;
+    this._streamer = new Node(model);
+    this._changeset = changeset.create();
     if (this._handler) this._handler.model(model);
   }
   return this;
 };
 
+// Sandboxed streaming data API
+function streaming(src) {
+  var view = this,
+      ds = this._model.data(src),
+      listener = ds.pipeline()[0],
+      streamer = this._streamer,
+      cs  = this._changeset,
+      api = {};
+
+  if(dl.keys(cs.signals).length > 0) {
+    throw "New signal values are not reflected in the visualization." +
+      " Please call view.update() before updating data values."
+  }
+
+  // If we have it stashed, don't create a new closure. 
+  if(this._api[src]) return this._api[src];
+
+  api.insert = function(vals) {
+    ds.insert(dl.duplicate(vals));  // Don't pollute the environment
+    streamer.addListener(listener);
+    cs.data[ds.name()] = 1;
+    return api;
+  };
+
+  api.update = function() {
+    streamer.addListener(listener);
+    cs.data[ds.name()] = 1;
+    return (ds.update.apply(ds, arguments), api);
+  };
+
+  api.remove = function() {
+    streamer.addListener(listener);
+    cs.data[ds.name()] = 1;
+    return (ds.remove.apply(ds, arguments), api);
+  };
+
+  api.values = function() { return ds.values() };    
+
+  return (this._api[src] = api);
+};
+
 prototype.data = function(data) {
-  var m = this.model();
-  if (!arguments.length) return m.data();
-  dl.keys(data).forEach(function(d) { m.data(d).insert(dl.duplicate(data[d])); });
+  var v = this;
+  if(!arguments.length) return v._model.dataValues();
+  else if(dl.isString(data)) return streaming.call(v, data);
+  else if(dl.isObject(data)) {
+    dl.keys(data).forEach(function(k) {
+      var api = streaming.call(v, k);
+      data[k](api);
+    });
+  }
+  return this;
+};
+
+prototype.signal = function(name, value) {
+  var m  = this._model,
+      cs = this._changeset,
+      streamer = this._streamer,
+      setter = name; 
+
+  if(!arguments.length) return m.signalValues();
+  else if(arguments.length == 1 && dl.isString(name)) return m.signalValues(name);
+
+  if(dl.keys(cs.data).length > 0) {
+    throw "New data values are not reflected in the visualization." +
+      " Please call view.update() before updating signal values."
+  }
+
+  if(arguments.length == 2) {
+    setter = {};
+    setter[name] = value;
+  }
+
+  dl.keys(setter).forEach(function(k) {
+    streamer.addListener(m.signal(k).value(setter[k]));
+    cs.signals[k] = 1;
+  });
+
   return this;
 };
 
@@ -187,12 +266,9 @@ prototype.update = function(opt) {
         ? new Transition(opt.duration, opt.ease)
         : null;
 
-  // TODO: with streaming data API, adds should dl.duplicate just parseSpec
-  // to prevent Vega from polluting the environment.
-
-  var cs = changeset.create();
+  var cs = v._changeset;
   if(trans) cs.trans = trans;
-  if(opt.reflow !== undefined) cs.reflow = opt.reflow
+  if(opt.reflow !== undefined) cs.reflow = cs.reflow || opt.reflow;
 
   if(!v._build) {
     v._renderNode = new Node(v._model)
@@ -223,8 +299,14 @@ prototype.update = function(opt) {
     v._build = true;
   }
 
-  // Pulse the entire model (Datasources + scene).
-  v._model.fire(cs);
+  if(v._streamer.listeners().length) {    // Evaluate streaming updates if any
+    v._model.propagate(cs, v._streamer);
+    v._streamer.disconnect();
+  } else {                                // Else, pulse full model (Datasources + scene)
+    v._model.fire(cs);
+  }
+
+  v._changeset = changeset.create();
 
   return v.autopad(opt);
 };

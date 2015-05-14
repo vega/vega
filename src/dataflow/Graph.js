@@ -28,6 +28,15 @@ proto.data = function(name, pipeline, facet) {
   return (db[name] = new Datasource(this, name, facet).pipeline(pipeline));
 };
 
+proto.dataValues = function(names) {
+  var graph = this;
+  if (!arguments.length) names = dl.keys(this._data);
+  if (!dl.isArray(names)) return this._data[names].values();
+  return names.reduce(function(db, n) {
+    return (db[n] = graph._data[n].values(), db);
+  }, {});
+};
+
 function signal(name) {
   var m = this, i, len;
   if(!dl.isArray(name)) return this._signals[name];
@@ -40,11 +49,11 @@ proto.signal = function(name, init) {
   return (this._signals[name] = new Signal(this, name, init));
 };
 
-proto.signalValues = function(name) {
+proto.signalValues = function(names) {
   var graph = this;
-  if(!arguments.length) name = dl.keys(this._signals);
-  if(!dl.isArray(name)) return this._signals[name].value();
-  return name.reduce(function(sg, n) {
+  if(!arguments.length) names = dl.keys(this._signals);
+  if(!dl.isArray(names)) return this._signals[names].value();
+  return names.reduce(function(sg, n) {
     return (sg[n] = graph._signals[n].value(), sg);
   }, {});
 };
