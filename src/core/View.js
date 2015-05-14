@@ -321,8 +321,18 @@ prototype.on = function() {
   return this;
 };
 
+prototype.onSignal = function(name, handler) {
+  this._model.signal(name).on(handler);
+  return this;
+};
+
 prototype.off = function() {
   this._handler.off.apply(this._handler, arguments);
+  return this;
+};
+
+prototype.offSignal = function(name, handler) {
+  this._model.signal(name).off(handler);
   return this;
 };
 
