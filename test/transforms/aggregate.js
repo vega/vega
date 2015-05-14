@@ -231,7 +231,7 @@ describe('Aggregate', function() {
             a3 = {x: 23, y: 47};
 
         values.push(a1, a2, a3);
-        model.data('table').add(a1).add(a2).add(a3).fire();
+        model.data('table').insert(a1).insert(a2).insert(a3).fire();
 
         var ds = model.data('table'),
             data = ds.values(),

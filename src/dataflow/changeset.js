@@ -28,6 +28,7 @@ function copy(a, b) {
   b.sort  = a ? a.sort  : null;
   b.facet = a ? a.facet : null;
   b.trans = a ? a.trans : null;
+  b.request = a ? a.request : null;
   REEVAL.forEach(function(d) { b[d] = a ? a[d] : {}; });
 }
 

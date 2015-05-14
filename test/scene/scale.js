@@ -183,7 +183,7 @@ describe('Scale', function() {
 
         it('should handle streaming adds', function(done) {
           parseSpec(spec, function(model) {
-            model.data('table').add([
+            model.data('table').insert([
               {"x": 21, "y": 100}, {"x": 22, "y": 10},
               {"x": 23, "y": 53}
             ]).fire();
@@ -325,7 +325,7 @@ describe('Scale', function() {
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([15, 91]);
 
-            model.data('table1').add([
+            model.data('table1').insert([
               {"x": 21, "y": 100}, {"x": 22, "y": 10},
               {"x": 23, "y": 53}
             ]).fire();
@@ -334,7 +334,7 @@ describe('Scale', function() {
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([10, 100]);
 
-            model.data('table2').add([
+            model.data('table2').insert([
               {"a": 24, "b": 500}, {"a": 25, "b": 1},
               {"a": 26, "b": 523}
             ]).fire();
@@ -467,7 +467,7 @@ describe('Scale', function() {
         it('should handle streaming adds', function(done) {
           parseSpec(spec, function(model) {
             model.data('table')
-              .add([
+              .insert([
                 {"category": "A", "position": 4},
                 {"category": "B", "position": 8},
                 {"category": "C", "position": 12}

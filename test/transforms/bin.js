@@ -57,7 +57,7 @@ describe('Bin', function() {
 
   it('should handle nulls', function(done) {
     parseSpec(spec({min:0, max:10, step: 1}), function(model) {
-      var ds = model.data('table').add([{v: null}, {v: undefined}]);
+      var ds = model.data('table').insert([{v: null}, {v: undefined}]);
       model.fire();
       
       var data = ds.values(),
@@ -75,7 +75,7 @@ describe('Bin', function() {
 
   it('should handle streaming adds', function(done) {
     parseSpec(spec({min:0, max:10, step: 2}), function(model) {
-      var ds = model.data('table').add({v:1.1}).add({v:-2.1}).add({v:11.2});
+      var ds = model.data('table').insert({v:1.1}).insert({v:-2.1}).insert({v:11.2});
       ds.fire();
       
       var data = ds.values(),

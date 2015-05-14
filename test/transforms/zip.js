@@ -70,7 +70,7 @@ describe('Zip', function() {
         expectUSA(medals);
         expectCanada(medals);
 
-        medalsDS.add({"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2}).fire();
+        medalsDS.insert({"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2}).fire();
         stats  = statsDS.values();
         medals = medalsDS.values();
         expect(stats).to.have.length(2);
@@ -80,7 +80,7 @@ describe('Zip', function() {
 
         expect(medals[2].country_stats).to.be.undefined;
 
-        statsDS.add({"country": "Mexico", "gdp": 1177, "pop": 120, "athletes": 78}).fire();
+        statsDS.insert({"country": "Mexico", "gdp": 1177, "pop": 120, "athletes": 78}).fire();
         stats  = statsDS.values();
         medals = medalsDS.values();
         expect(stats).to.have.length(3);
@@ -113,7 +113,7 @@ describe('Zip', function() {
         expectUSA(medals);
         expectCanada(medals);
 
-        medalsDS.add({"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2}).fire();
+        medalsDS.insert({"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2}).fire();
         stats  = statsDS.values();
         medals = medalsDS.values();
         expect(stats).to.have.length(2);
@@ -124,7 +124,7 @@ describe('Zip', function() {
         expect(medals[2].country_stats).to.not.be.undefined;
         expect(medals).to.have.deep.property('[2].country_stats.foo', 'bar');
 
-        statsDS.add({"country": "Mexico", "gdp": 1177, "pop": 120, "athletes": 78}).fire();
+        statsDS.insert({"country": "Mexico", "gdp": 1177, "pop": 120, "athletes": 78}).fire();
         stats  = statsDS.values();
         medals = medalsDS.values();
         expect(stats).to.have.length(3);
@@ -305,7 +305,7 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[0].zip.zip2', 'A');
         expect(medals).to.have.deep.property('[1].zip.zip2', 'B');
 
-        medalsDS.add({"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2}).fire();
+        medalsDS.insert({"country":"Mexico", "gold": 3, "silver": 3, "bronze": 2}).fire();
         zip  = zipDS.values();
         medals = medalsDS.values();
         expect(zip).to.have.length(3);
@@ -314,7 +314,7 @@ describe('Zip', function() {
         expect(medals).to.have.deep.property('[1].zip.zip2', 'B');
         expect(medals).to.have.deep.property('[2].zip.zip2', 'C');
 
-        zipDS.add({"zip2": "D"}).fire();
+        zipDS.insert({"zip2": "D"}).fire();
         zip  = zipDS.values();
         medals = medalsDS.values();
         expect(zip).to.have.length(4);

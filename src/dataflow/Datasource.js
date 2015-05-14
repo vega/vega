@@ -32,7 +32,7 @@ proto.source = function(src) {
   return (this._source = this._graph.data(src));
 };
 
-proto.add = function(d) {
+proto.insert = function(d) {
   var prev = this._revises ? null : undefined;
 
   this._input.add = this._input.add
@@ -72,7 +72,7 @@ proto.values = function(data) {
 
   // Replace backing data
   this._input.rem = this._data.slice();
-  if (data) { this.add(data); }
+  if (data) { this.insert(data); }
   return this;
 };
 

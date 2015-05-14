@@ -62,7 +62,7 @@ describe('Fold', function() {
       expectFold(values[1], data);  // Canada
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
-      ds.add([mex, bel]).fire();
+      ds.insert([mex, bel]).fire();
       data = ds.values();
       expect(data).to.have.length(12);
       expectFold(values[0], data);  // USA

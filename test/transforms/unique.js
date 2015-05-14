@@ -46,7 +46,7 @@ describe('Unique', function() {
           a2 = {"country": "Canada", "type": "platinum", "count": 3},
           a3 = {"country": "Mexico", "type": "platinum", "count": 1};
 
-      ds.add([a1, a2, a3]).fire();
+      ds.insert([a1, a2, a3]).fire();
       data = ds.values();
       expect(data).to.have.length(3);
       expect(data[0]).to.have.property('unq', 'US');
