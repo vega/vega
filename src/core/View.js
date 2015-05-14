@@ -4,6 +4,7 @@ var d3 = require('d3'),
     parseStreams = require('../parse/streams'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg/index'),
+    Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
     debug = require('../util/debug'),
@@ -115,6 +116,7 @@ prototype.signal = function(name, value) {
   dl.keys(setter).forEach(function(k) {
     streamer.addListener(m.signal(k).value(setter[k]));
     cs.signals[k] = 1;
+    cs.reflow = true;
   });
 
   return this;
@@ -259,6 +261,35 @@ prototype.initialize = function(el) {
   return this;
 };
 
+function build() {
+  var v = this;
+  v._renderNode = new Node(v._model)
+    .router(true);
+
+  v._renderNode.evaluate = function(input) {
+    debug(input, ["rendering"]);
+
+    var s = v._model.scene();
+    if(input.trans) {
+      input.trans.start(function(items) { v._renderer.render(s, items); });
+    } else {
+      v._renderer.render(s);
+    }
+
+    // For all updated datasources, finalize their changesets.
+    var d, ds;
+    for(d in input.data) {
+      ds = v._model.data(d);
+      if(!ds.revises()) continue;
+      changeset.finalize(ds.last());
+    }
+
+    return input;
+  };
+
+  return (v._model.scene(v._renderNode), true);  
+}
+
 prototype.update = function(opt) {    
   opt = opt || {};
   var v = this,
@@ -268,41 +299,28 @@ prototype.update = function(opt) {
 
   var cs = v._changeset;
   if(trans) cs.trans = trans;
-  if(opt.reflow !== undefined) cs.reflow = cs.reflow || opt.reflow;
+  if(opt.props !== undefined) {
+    if(dl.keys(cs.data).length > 0) {
+      throw "New data values are not reflected in the visualization." +
+        " Please call view.update() before updating a specified property set."
+    }
 
-  if(!v._build) {
-    v._renderNode = new Node(v._model)
-      .router(true);
-
-    v._renderNode.evaluate = function(input) {
-      debug(input, ["rendering"]);
-
-      var s = v._model.scene();
-      if(input.trans) {
-        input.trans.start(function(items) { v._renderer.render(s, items); });
-      } else {
-        v._renderer.render(s);
-      }
-
-      // For all updated datasources, finalize their changesets.
-      var d, ds;
-      for(d in input.data) {
-        ds = v._model.data(d);
-        if(!ds.revises()) continue;
-        changeset.finalize(ds.last());
-      }
-
-      return input;
-    };
-
-    v._model.scene(v._renderNode);
-    v._build = true;
+    cs.reflow  = true;
+    cs.request = opt.props;
   }
 
-  if(v._streamer.listeners().length) {    // Evaluate streaming updates if any
+  v._build = v._build || build.call(this);
+
+  // If specific items are specified, short-circuit dataflow graph.
+  // Else-If there are streaming updates, perform a targeted propagation.
+  // Otherwise, reevaluate the entire model (datasources + scene).
+  if(opt.items) { 
+    Encoder.update(this._model, opt.trans, opt.props, opt.items);
+    v._renderNode.evaluate(cs);
+  } else if(v._streamer.listeners().length) {
     v._model.propagate(cs, v._streamer);
     v._streamer.disconnect();
-  } else {                                // Else, pulse full model (Datasources + scene)
+  } else {
     v._model.fire(cs);
   }
 

@@ -30,7 +30,7 @@ proto.on = function(handler) {
       node = new Node(this._graph);
 
   node.evaluate = function(input) {
-    return (handler(sg.value()), input);
+    return (handler(sg.name(), sg.value()), input);
   };
 
   this._handlers.push({ handler: handler, node: node });
