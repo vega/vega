@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.5.2", // semantic versioning
+    version:  "1.5.3", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -7327,7 +7327,11 @@ vg.parse.data = function(spec, callback) {
       if (error) {
         vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(data.toString(), d.format);
+        try {
+          model.load[d.name] = vg.data.read(data.toString(), d.format);
+        } catch (err) {
+          vg.error("UNABLE TO PARSE: " + d.url + ' ' + err.toString());
+        }
       }
       if (--count === 0) callback();
     }

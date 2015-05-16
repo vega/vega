@@ -15,7 +15,11 @@ vg.parse.data = function(spec, callback) {
       if (error) {
         vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(data.toString(), d.format);
+        try {
+          model.load[d.name] = vg.data.read(data.toString(), d.format);
+        } catch (err) {
+          vg.error("UNABLE TO PARSE: " + d.url + ' ' + err.toString());
+        }
       }
       if (--count === 0) callback();
     }
