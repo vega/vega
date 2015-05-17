@@ -2,7 +2,7 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
-    "datalib": "^1.0.11",
+    "datalib": "1.1.x",
     "canvas": "^1.2.1",
     "d3": "3.4.x",
     "topojson": "^1.6.18",

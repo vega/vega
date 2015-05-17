@@ -1,45 +1,37 @@
 var dl = require('datalib'),
     Transform = require('./Transform'),
-    GroupBy = require('./GroupBy'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
-    meas = require('./measures'),
     debug = require('../util/debug'),
     C = require('../util/constants');
 
 function Aggregate(graph) {
-  GroupBy.prototype.init.call(this, graph);
+  Transform.prototype.init.call(this, graph)
+    .router(true).revises(true);
+
   Transform.addParameters(this, {
-    group_by: {type: "array<field>"}
+    groupby: {type: "array<field>"}
   });
 
-  this._output = {
-    "count":    "count",
-    "avg":      "avg",
-    "min":      "min",
-    "max":      "max",
-    "sum":      "sum",
-    "mean":     "mean",
-    "var":      "var",
-    "stdev":    "stdev",
-    "varp":     "varp",
-    "stdevp":   "stdevp",
-    "median":   "median"
-  };
-
-  // Aggregators parameter handled manually.
-  this._fieldsDef   = null;
-  this._Aggregators = null;
-  this._singleton   = false;  // If true, all fields aggregated within a single monoid
+  this._fieldsDef = null;
+  this._aggr = null;  // dl.Aggregator
 
   return this;
 }
 
-var proto = (Aggregate.prototype = new GroupBy());
+var proto = (Aggregate.prototype = new Transform());
 
-proto.fields = {
-  set: function(transform, fields) {
-    var i, len, f, signals = {};
+proto.summarize = {
+  set: function(transform, summarize) {
+    var i, len, f, fields, name, ops, signals = {};
+    if(!dl.isArray(fields = summarize)) { // Object syntax from dl
+      fields = [];
+      for (name in summarize) {
+        ops = util.array(summarize[name]);
+        fields.push({name: name, ops: ops});
+      }
+    }
+
     for(i=0, len=fields.length; i<len; ++i) {
       f = fields[i];
       if(f.name.signal) signals[f.name.signal] = 1;
@@ -47,121 +39,96 @@ proto.fields = {
     }
 
     transform._fieldsDef = fields;
-    transform._Aggregators = null;
-    transform.aggs();
+    transform._aggr = null;
     transform.dependency(C.SIGNALS, dl.keys(signals));
     return transform;
   }
 };
 
-proto.singleton = function(c) {
-  if(!arguments.length) return this._singleton;
-  this._singleton = c;
-  return this;
-};
+function ingest(t) { return tuple.ingest(t, null) }
 
-proto.aggs = function() {
-  var transform = this,
-      graph = this._graph,
-      fields = this._fieldsDef,
-      aggs = this._Aggregators,
-      f, i, k, name, ops, measures;
+proto.aggr = function() {
+  if(this._aggr) return this._aggr;
 
-  if(aggs) return aggs;
-  else aggs = this._Aggregators = []; 
+  var graph = this._graph,
+      groupby = this.groupby.get(graph).fields;
 
-  for (i = 0; i < fields.length; i++) {
-    f = fields[i];
-    if (f.ops.length === 0) continue;
-
-    name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
-    ops  = dl.array(f.ops.signal ? graph.signalRef(f.ops.signal) : f.ops);
-    measures = ops.map(function(a) {
-      a = a.signal ? graph.signalRef(a.signal) : a;
-      return meas[a](name + '_' + transform._output[a]);
+  var fields = this._fieldsDef.map(function(field) {
+    var f = dl.duplicate(field);
+    f.name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
+    f.ops  = f.ops.signal ? graph.signalRef(f.ops.signal) : dl.array(f.ops).map(function(o) {
+      return o.signal ? graph.signalRef(o.signal) : o;
     });
-    aggs.push({
-      accessor: dl.accessor(name),
-      field: this._singleton ? C.SINGLETON : name,
-      measures: meas.create(measures)
-    });
-  }
 
-  return aggs;
+    return f;
+  });
+
+  var aggr = this._aggr = dl.groupby(groupby)
+    .stream(true)
+    .summarize(fields);
+
+  aggr._assign = tuple.set;
+  aggr._ingest = ingest;
+
+  return aggr;
 };
 
 proto._reset = function(input, output) {
-  this._Aggregators = null; // rebuild aggregators
-  this.aggs();
-  return GroupBy.prototype._reset.call(this, input, output);
+  output.rem.push.apply(output.rem, this.aggr().result());
+  this._aggr = null;
 };
 
-proto._keys = function(x) {
-  return this._gb.fields.length ? 
-    GroupBy.prototype._keys.call(this, x) : {keys: [], key: ""};
-};
-
-proto._new_cell = function(x, k) {
-  var cell = GroupBy.prototype._new_cell.call(this, x, k),
-      aggs = this.aggs(),
-      i = 0, len = aggs.length, 
-      agg;
-
-  for(; i<len; i++) {
-    agg = aggs[i];
-    cell[agg.field] = new agg.measures(cell, cell.tpl);
-  }
-
-  return cell;
-};
-
-proto._add = function(x) {
-  var c = this._cell(x),
-      aggs = this.aggs(),
-      i = 0, len = aggs.length,
-      agg;
-
-  c.cnt++;
-  for(; i<len; i++) {
-    agg = aggs[i];
-    c[agg.field].add(agg.accessor(x));
-  }
-  c.flg |= C.MOD_CELL;
-};
-
-proto._rem = function(x) {
-  var c = this._cell(x),
-      aggs = this.aggs(),
-      i = 0, len = aggs.length,
-      agg;
-
-  c.cnt--;
-  for(; i<len; i++) {
-    agg = aggs[i];
-    c[agg.field].rem(agg.accessor(x));
-  }
-  c.flg |= C.MOD_CELL;
-};
+function has_prev(aggr, x) {
+  return x._prev && x._prev !== C.SENTINEL && aggr._keys(x._prev).keys.length > 0;
+}
 
 proto.transform = function(input, reset) {
   debug(input, ["aggregate"]);
 
-  this._gb = this.group_by.get(this._graph);
+  var output = changeset.create(input);
+  if(reset) this._reset(input, output);
 
-  var output = GroupBy.prototype.transform.call(this, input, reset),
-      aggs = this.aggs(),
-      len = aggs.length,
-      i, k, c;
+  var aggr = this.aggr(),
+      k, cell, flag, tuple;
 
-  for(k in this._cells) {
-    c = this._cells[k];
-    if(!c) continue;
-    for(i=0; i<len; i++) {
-      c[aggs[i].field].set();
+  input.add.forEach(aggr.add.bind(aggr));
+
+  input.mod.forEach(function(x) {
+    if(has_prev(aggr, x)) {
+      aggr.rem(x._prev);
+      aggr.add(x);
+    } else if(reset) { // Signal change triggered reflow
+      aggr.add(x);
     }
+  });
+
+  input.rem.forEach(function(x) {
+    aggr.rem(has_prev(aggr, x) ? x._prev : x);
+  });
+
+  for (k in aggr._cells) {
+    cell  = aggr._cells[k];
+    flag  = cell.flag;
+    tuple = cell.tuple;
+
+    if (cell.num > 0) {
+      for (i=0; i<aggr._aggr.length; ++i) {
+        cell.aggs[aggr._aggr[i].name].set();
+      }
+    }
+
+    if(cell.num === 0 && flag === C.MOD_CELL) {
+      output.rem.push(tuple);
+    } else if(flag & C.ADD_CELL) {
+      output.add.push(tuple);
+    } else if(flag & C.MOD_CELL) {
+      output.mod.push(tuple);
+    }
+
+    cell.flag = 0;
   }
 
   return output;
-};
+}
 
 module.exports = Aggregate;

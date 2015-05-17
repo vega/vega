@@ -1,3 +1,5 @@
+var dl = require('datalib');
+
 describe('Aggregate', function() {
 
   describe('Flat', function() {
@@ -14,218 +16,64 @@ describe('Aggregate', function() {
       {"x": 19, "y": 49}, {"x": 20, "y": 15}
     ];
 
-    function spec(meas) {
-      return {
-        "data": [{
-          "name": "table",
-          "values": values,
-          "transform": [{"type": "aggregate", "fields": [{"name": "y", "ops": meas}]}]
-        }]
-      };
-    }
+    var spec = {
+      "data": [{
+        "name": "table",
+        "values": values,
+        "transform": [{"type": "aggregate", "summarize": [{
+          "name": "y", 
+          "ops": ["count", "sum", "min", "max"]
+        }]}]
+      }]
+    };
 
-    it('should calculate count', function(done) {
-      parseSpec(spec(['count']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values();
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_count', values.length);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate sum', function(done) {
-      parseSpec(spec(['sum']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            sum = values.reduce(function(sum, d) { return sum+d.y}, 0);
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_sum', sum);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate avg', function(done) {
-      parseSpec(spec(['avg']), function(model) {
+    it('should compute summaries', function(done) {
+      parseSpec(spec, function(model) {
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count;
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_avg', avg);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate var', function(done) {
-      parseSpec(spec(['var']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            count = values.length,
-            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            vr = variance/(count-1);
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_var', vr);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate varp', function(done) {
-      parseSpec(spec(['varp']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            count = values.length,
-            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            varp = variance/count;
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_varp', varp);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate stdev', function(done) {
-      parseSpec(spec(['stdev']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            count = values.length,
-            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            stdev = Math.sqrt(variance/(count-1));
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_stdev', stdev);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate stdevp', function(done) {
-      parseSpec(spec(['stdevp']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            count = values.length,
-            sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            stdevp = Math.sqrt(variance/count);
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_stdevp', stdevp);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate median', function(done) {
-      parseSpec(spec(['median']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
             vals = values.map(function(d) { return d.y }).sort(),
-            half = ~~(vals.length/2),
-            median = vals.length % 2 ? vals[half] : 0.5 * (vals[half-1] + vals[half]);
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_median', median);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate min', function(done) {
-      parseSpec(spec(['min']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            vals = values.map(function(d) { return d.y }).sort(),
-            min = vals[0];
-
-        expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_min', min);
-
-        done();
-      }, modelFactory);
-    });
-
-    it('should calculate max', function(done) {
-      parseSpec(spec(['max']), function(model) {
-        var ds = model.data('table'),
-            data = ds.values(),
-            vals = values.map(function(d) { return d.y }).sort(),
+            min = vals[0],
             max = vals[vals.length-1];
 
         expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_max', max);
+        expect(data[0]).to.have.property('count_y', values.length);
+        expect(data[0]).to.have.property('sum_y', sum);
+        expect(data[0]).to.have.property('min_y', min);
+        expect(data[0]).to.have.property('max_y', max);
+
 
         done();
       }, modelFactory);
     });
 
+    // Assume other measures are being tested in datalib.
     it('should handle renamed output', function(done) {
-      var s = spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']);
-      s.data[0].transform[0].output = {
-          "count":    "a_count",
-          "avg":      "a_avg",
-          "min":      "a_min",
-          "max":      "a_max",
-          "sum":      "a_sum",
-          "mean":     "a_mean",
-          "var":      "a_var",
-          "stdev":    "a_stdev",
-          "varp":     "a_varp",
-          "stdevp":   "a_stdevp",
-          "median":   "a_median"
-        };
+      var s = dl.duplicate(spec);
+      s.data[0].transform[0].summarize[0].as = ["a", "b", "c", "d"];
 
       parseSpec(s, function(model) {
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            vr = variance/(count-1),
-            varp = variance/count,
-            stdev = Math.sqrt(vr),
-            stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
-            half = ~~(count/2),
-            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2,
             min = vals[0],
             max = vals[vals.length-1];
 
         expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_a_count', count);
-        expect(data[0]).to.have.property('y_a_sum', sum);
-        expect(data[0]).to.have.property('y_a_avg', avg);
-        expect(data[0]).to.have.property('y_a_var', vr);
-        expect(data[0]).to.have.property('y_a_varp', varp);
-        expect(data[0]).to.have.property('y_a_stdev', stdev);
-        expect(data[0]).to.have.property('y_a_stdevp', stdevp);
-        expect(data[0]).to.have.property('y_a_median', median);
-        expect(data[0]).to.have.property('y_a_min', min);
-        expect(data[0]).to.have.property('y_a_max', max);
+        expect(data[0]).to.have.property('a', count);
+        expect(data[0]).to.have.property('b', sum);
+        expect(data[0]).to.have.property('c', min);
+        expect(data[0]).to.have.property('d', max);
 
         done();
       }, modelFactory);
     });
 
     it('should handle streaming adds', function(done) {
-      parseSpec(spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
+      parseSpec(spec, function(model) {
         var a1 = {x: 21, y: 21},
             a2 = {x: 22, y: 95},
             a3 = {x: 23, y: 47};
@@ -237,36 +85,22 @@ describe('Aggregate', function() {
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            vr = variance/(count-1),
-            varp = variance/count,
-            stdev = Math.sqrt(vr),
-            stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
-            half = ~~(count/2),
-            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2,
             min = vals[0],
             max = vals[vals.length-1];
 
         expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_count', count);
-        expect(data[0]).to.have.property('y_sum', sum);
-        expect(data[0]).to.have.property('y_avg', avg);
-        expect(data[0]).to.have.property('y_var', vr);
-        expect(data[0]).to.have.property('y_varp', varp);
-        expect(data[0]).to.have.property('y_stdev', stdev);
-        expect(data[0]).to.have.property('y_stdevp', stdevp);
-        expect(data[0]).to.have.property('y_median', median);
-        expect(data[0]).to.have.property('y_min', min);
-        expect(data[0]).to.have.property('y_max', max);
+        expect(data[0]).to.have.property('count_y', count);
+        expect(data[0]).to.have.property('sum_y', sum);
+        expect(data[0]).to.have.property('min_y', min);
+        expect(data[0]).to.have.property('max_y', max);
 
         done();
       }, modelFactory);
     });
 
     it('should handle streaming rems', function(done) {
-      parseSpec(spec(['min', 'max', 'median', 'stdevp', 'stdev', 'varp', 'var', 'avg', 'sum', 'count']), function(model) {
+      parseSpec(spec, function(model) {
         values = values.filter(function(d) { return d.y < 50 });
         model.data('table').remove(function(d) { return d.y >= 50 }).fire();
 
@@ -274,29 +108,15 @@ describe('Aggregate', function() {
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            avg = sum/count,
-            variance = values.reduce(function(variance, d) { return variance + Math.pow(d.y-avg, 2); }, 0),
-            vr = variance/(count-1),
-            varp = variance/count,
-            stdev = Math.sqrt(vr),
-            stdevp = Math.sqrt(varp),
             vals = values.map(function(d) { return d.y }).sort(),
-            half = ~~(count/2),
-            median = count % 2 ? vals[half] : (vals[half-1] + vals[half])/2,
             min = vals[0],
             max = vals[vals.length-1];
 
         expect(data).to.have.length(1);
-        expect(data[0]).to.have.property('y_count', count);
-        expect(data[0]).to.have.property('y_sum', sum);
-        expect(data[0]).to.have.property('y_avg', avg);
-        expect(data[0]).to.have.property('y_var', vr);
-        expect(data[0]).to.have.property('y_varp', varp);
-        expect(data[0]).to.have.property('y_stdev', stdev);
-        expect(data[0]).to.have.property('y_stdevp', stdevp);
-        expect(data[0]).to.have.property('y_median', median);
-        expect(data[0]).to.have.property('y_min', min);
-        expect(data[0]).to.have.property('y_max', max);
+        expect(data[0]).to.have.property('count_y', count);
+        expect(data[0]).to.have.property('sum_y', sum);
+        expect(data[0]).to.have.property('min_y', min);
+        expect(data[0]).to.have.property('max_y', max);
 
         done();
       }, modelFactory);
@@ -316,8 +136,8 @@ describe('Aggregate', function() {
       "data": [{
         "name": "table",
         "values": values,
-        "transform": [{"type": "aggregate", "group_by": "country",
-          "fields": [{"name": "area", "ops": ["sum", "count"]}, {"name": "population", "ops": ["sum"]}]}]
+        "transform": [{"type": "aggregate", "groupby": "country",
+          "summarize": [{"name": "area", "ops": ["sum", "count"]}, {"name": "population", "ops": ["sum"]}]}]
       }]
     };
 
@@ -329,14 +149,14 @@ describe('Aggregate', function() {
         expect(data).to.have.length(2);
 
         expect(data[0]).to.have.property('country', 'US');
-        expect(data[0]).to.have.property('area_sum', 28);
-        expect(data[0]).to.have.property('area_count', 3);
-        expect(data[0]).to.have.property('population_sum', 22);
+        expect(data[0]).to.have.property('sum_area', 28);
+        expect(data[0]).to.have.property('count_area', 3);
+        expect(data[0]).to.have.property('sum_population', 22);
 
         expect(data[1]).to.have.property('country', 'Canada');
-        expect(data[1]).to.have.property('area_sum', 7);
-        expect(data[1]).to.have.property('area_count', 2);
-        expect(data[1]).to.have.property('population_sum', 6);
+        expect(data[1]).to.have.property('sum_area', 7);
+        expect(data[1]).to.have.property('count_area', 2);
+        expect(data[1]).to.have.property('sum_population', 6);
 
         done();
       }, modelFactory);
@@ -345,7 +165,7 @@ describe('Aggregate', function() {
     it('should handle signals', function(done) {
       var s = util.duplicate(spec);
       s.signals = [{"name": "field", "init": "area"}, {"name": "ops", "init": ["sum", "count"]}];
-      s.data[0].transform[0].fields = [{"name": {"signal": "field"}, "ops": {"signal": "ops"}}];
+      s.data[0].transform[0].summarize = [{"name": {"signal": "field"}, "ops": {"signal": "ops"}}];
 
       parseSpec(s, function(model) {
         var ds = model.data('table'),
@@ -354,12 +174,12 @@ describe('Aggregate', function() {
         expect(data).to.have.length(2);
 
         expect(data[0]).to.have.property('country', 'US');
-        expect(data[0]).to.have.property('area_sum', 28);
-        expect(data[0]).to.have.property('area_count', 3);
+        expect(data[0]).to.have.property('sum_area', 28);
+        expect(data[0]).to.have.property('count_area', 3);
 
         expect(data[1]).to.have.property('country', 'Canada');
-        expect(data[1]).to.have.property('area_sum', 7);
-        expect(data[1]).to.have.property('area_count', 2);
+        expect(data[1]).to.have.property('sum_area', 7);
+        expect(data[1]).to.have.property('count_area', 2);
 
         model.signal('field').value('population').fire();
         data = ds.values();
@@ -367,12 +187,12 @@ describe('Aggregate', function() {
         expect(data).to.have.length(2);
 
         expect(data[0]).to.have.property('country', 'US');
-        expect(data[0]).to.have.property('population_sum', 22);
-        expect(data[0]).to.have.property('population_count', 3);
+        expect(data[0]).to.have.property('sum_population', 22);
+        expect(data[0]).to.have.property('count_population', 3);
 
         expect(data[1]).to.have.property('country', 'Canada');
-        expect(data[1]).to.have.property('population_sum', 6);
-        expect(data[1]).to.have.property('population_count', 2);        
+        expect(data[1]).to.have.property('sum_population', 6);
+        expect(data[1]).to.have.property('count_population', 2);        
 
         done();
       }, modelFactory);
@@ -400,7 +220,7 @@ describe('Aggregate', function() {
           "keys": [{"field": "country"}],
           "transform": [{
             "type": "aggregate",
-            "fields": [{
+            "summarize": [{
               "name": "count",
               "ops": ["min", "max", "median", "stdevp", "stdev",
                       "varp", "var", "avg", "sum", "count"]}],
