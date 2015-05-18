@@ -172,7 +172,7 @@ describe('Scale', function() {
                 ord = [],
                 i = 1, len = 20;
 
-            for(; i<=len; ++i) ord.push(i+"");
+            for(; i<=len; ++i) ord.push(i);
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([15, 91]);
@@ -194,7 +194,7 @@ describe('Scale', function() {
                 ord = [],
                 i = 1, len = 23;
 
-            for(; i<=len; ++i) ord.push(i+"");
+            for(; i<=len; ++i) ord.push(i);
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([10, 100]);
@@ -220,7 +220,7 @@ describe('Scale', function() {
 
             for(; i<=len; ++i) {
               v = i%2 ? i*2 : i;
-              if(ord.indexOf(v+"") === -1) ord.push(v+"");
+              if(ord.indexOf(v) === -1) ord.push(v);
             }
 
             expect(x.domain()).to.have.members(ord);
@@ -242,7 +242,7 @@ describe('Scale', function() {
                 ord = [],
                 i = 1, len = 10;
 
-            for(; i<=len; ++i) ord.push(i+"");
+            for(; i<=len; ++i) ord.push(i);
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([19, 91]);
@@ -303,7 +303,7 @@ describe('Scale', function() {
                 ord = [],
                 i = 0, len = 20;
 
-            for(; i<len; ++i) ord.push((i+1)+"");
+            for(; i<len; ++i) ord.push((i+1));
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([15, 91]);
@@ -320,7 +320,7 @@ describe('Scale', function() {
                 ord = [],
                 i = 0, len = 20;
 
-            for(; i<len; ++i) ord.push((i+1)+"");
+            for(; i<len; ++i) ord.push((i+1));
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([15, 91]);
@@ -329,7 +329,7 @@ describe('Scale', function() {
               {"x": 21, "y": 100}, {"x": 22, "y": 10},
               {"x": 23, "y": 53}
             ]).fire();
-            ord.push("21", "22", "23");
+            ord.push(21, 22, 23);
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([10, 100]);
@@ -338,7 +338,7 @@ describe('Scale', function() {
               {"a": 24, "b": 500}, {"a": 25, "b": 1},
               {"a": 26, "b": 523}
             ]).fire();
-            ord.push("24", "25", "26");
+            ord.push(24, 25, 26);
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([1, 523]);
@@ -371,7 +371,7 @@ describe('Scale', function() {
 
             for(; i<=len; ++i) {
               v = i%2 ? i*2 : i;
-              if(ord.indexOf(v+"") === -1) ord.push(v+"");
+              if(ord.indexOf(v) === -1) ord.push(v);
             }
 
             expect(x.domain()).to.have.members(ord);
@@ -397,7 +397,7 @@ describe('Scale', function() {
                 ord = [],
                 i = 1, len = 10;
 
-            for(; i<=len; ++i) ord.push(i+"");
+            for(; i<=len; ++i) ord.push(i);
 
             expect(x.domain()).to.have.members(ord);
             expect(y.domain()).to.eql([19, 91]);
@@ -456,7 +456,7 @@ describe('Scale', function() {
 
             for(; i<len; ++i) {
               pos = groups[i].scale('pos');
-              ord = [num*i, num*i+1, num*i+2, num*i+3].map(function(v) { return v+"" });
+              ord = [num*i, num*i+1, num*i+2, num*i+3].map(function(v) { return v });
               expect(pos.domain()).to.have.members(ord);
             }
 
@@ -481,7 +481,7 @@ describe('Scale', function() {
 
             for(; i<len; ++i) {
               pos = groups[i].scale('pos');
-              ord = [num*i, num*i+1, num*i+2, num*i+3, num*i+4].map(function(v) { return v+"" });
+              ord = [num*i, num*i+1, num*i+2, num*i+3, num*i+4].map(function(v) { return v });
               expect(pos.domain()).to.have.members(ord);
             }
 
@@ -503,7 +503,7 @@ describe('Scale', function() {
 
             for(; i<len; ++i) {
               pos = groups[i].scale('pos');
-              ord = [(num*i)*2, (num*i+1)*2, (num*i+2)*2, (num*i+3)*2].map(function(v) { return v+"" });
+              ord = [(num*i)*2, (num*i+1)*2, (num*i+2)*2, (num*i+3)*2].map(function(v) { return v });
               expect(pos.domain()).to.have.members(ord);
             }
 
@@ -524,7 +524,7 @@ describe('Scale', function() {
 
             for(; i<len; ++i) {
               pos = groups[i].scale('pos');
-              expect(pos.domain()).to.have.members([num*i+1, num*i+3].map(function(v) { return v+""}));
+              expect(pos.domain()).to.have.members([num*i+1, num*i+3].map(function(v) { return v}));
             }
 
             done();

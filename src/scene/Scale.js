@@ -159,15 +159,22 @@ function dataRef(which, def, scale, group) {
       uniques = scale.type === C.ORDINAL || scale.type === C.QUANTILE,
       ck = "_"+which,
       cache = scale[ck],
+      aggr = cache ? cache.aggr() : null,  // dl.Aggregator
       cacheField = {ops: []},  // the field and measures in the aggregator
       sort = def.sort,
       i, rlen, j, flen, r, fields, from, data, keys;
 
   if (!cache) {
-    cache = scale[ck] = new Aggregate(graph);
-    cacheField.ops = [];
-    cache.singleton(true);
-    if (uniques && sort) cacheField.ops.push(sort.stat);
+    cache = scale[ck] = new Aggregate(graph)
+    cache.groupby.set(cache, [])
+      .summarize.set(cache, {});
+
+    aggr = cache.aggr();
+    if(uniques && sort) {
+      aggr.summarize({ "dataref": [sort.stat] })
+    } else if(!uniques) {
+      aggr.summarize({ "dataref": [C.MIN, C.MAX] })
+    }
   }
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
@@ -185,18 +192,15 @@ function dataRef(which, def, scale, group) {
     });
 
     if (uniques) {
-      cacheField.name = sort ? sort.field : "_id";
-      cache.fields.set(cache, [cacheField]);
+      aggr.accessors({ "dataref": sort ? (r.sort || sort.field) : "_id" });
       for (j=0, flen=fields.length; j<flen; ++j) {
-        cache.group_by.set(cache, fields[j])
-          .evaluate(data);
+        aggr.groupby({ name: "key", get: dl.accessor(fields[j]) });
+        cache.evaluate(data);
       }
     } else {
       for (j=0, flen=fields.length; j<flen; ++j) {
-        cacheField.name = fields[j];
-        cacheField.ops  = [C.MIN, C.MAX];
-        cache.fields.set(cache, [cacheField]) // Treat as flat datasource
-          .evaluate(data);
+        aggr.accessors({ "dataref": fields[j] });
+        cache.evaluate(data);
       }
     }
 
@@ -204,26 +208,21 @@ function dataRef(which, def, scale, group) {
     cache.dependency(C.SIGNALS).forEach(function(s) { self.dependency(C.SIGNALS, s) });
   }
 
-  data = cache.data();
+  data = aggr.result();
   if (uniques) {
-    keys = dl.keys(data)
-      .filter(function(k) { return data[k] != null; });
-
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + "tpl." + cacheField.name;
+      sort = (sort == C.DESC ? "-" : "+") + sort.stat + "_dataref";
       sort = dl.comparator(sort);
-      keys = keys.map(function(k) { return { key: k, tpl: data[k].tpl }})
-        .sort(sort)
-        .map(function(k) { return k.key; });
+      data = data.sort(sort);
     // } else {  // "First seen" order
     //   sort = dl.comparator("tpl._id");
     }
 
-    return keys;
+    return data.map(function(d) { return d.key; });
   } else {
-    data = data[""]; // Unpack flat aggregation
-    return (data === null) ? [] : [data[C.SINGLETON].min, data[C.SINGLETON].max];
+    data = data[0];
+    return (data === null) ? [] : [data.min_dataref, data.max_dataref];
   }
 }
 
