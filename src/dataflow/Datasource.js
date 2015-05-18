@@ -96,7 +96,8 @@ proto.last = function() { return this._output; };
 
 proto.fire = function(input) {
   if(input) this._input = input;
-  this._graph.propagate(this._input, this._pipeline[0]); 
+  this._graph.propagate(this._input, this._pipeline[0]);
+  return this;
 };
 
 proto.pipeline = function(pipeline) {

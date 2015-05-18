@@ -1,6 +1,6 @@
 var dl = require('datalib'),
     Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple'), 
+    tpl = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
     debug = require('../util/debug'),
     C = require('../util/constants');
@@ -45,7 +45,7 @@ proto.summarize = {
   }
 };
 
-function ingest(t) { return tuple.ingest(t, null) }
+function ingest(t) { return tpl.ingest(t, null) }
 
 proto.aggr = function() {
   if(this._aggr) return this._aggr;
@@ -67,7 +67,7 @@ proto.aggr = function() {
     .stream(true)
     .summarize(fields);
 
-  aggr._assign = tuple.set;
+  aggr._assign = tpl.set;
   aggr._ingest = ingest;
 
   return aggr;
@@ -77,10 +77,6 @@ proto._reset = function(input, output) {
   output.rem.push.apply(output.rem, this.aggr().result());
   this._aggr = null;
 };
-
-function has_prev(aggr, x) {
-  return x._prev && x._prev !== C.SENTINEL && aggr._keys(x._prev).keys.length > 0;
-}
 
 proto.transform = function(input, reset) {
   debug(input, ["aggregate"]);
@@ -94,16 +90,16 @@ proto.transform = function(input, reset) {
   input.add.forEach(aggr.add.bind(aggr));
 
   input.mod.forEach(function(x) {
-    if(has_prev(aggr, x)) {
-      aggr.rem(x._prev);
-      aggr.add(x);
-    } else if(reset) { // Signal change triggered reflow
+    if(reset) {
+      aggr.add(x);  // Signal change triggered reflow
+    } else if(tpl.has_prev(x)) {
+      aggr.rem(tpl.prev(x));
       aggr.add(x);
     }
   });
 
   input.rem.forEach(function(x) {
-    aggr.rem(has_prev(aggr, x) ? x._prev : x);
+    aggr.rem(tpl.has_prev(x) ? tpl.prev(x) : x);
   });
 
   for (k in aggr._cells) {

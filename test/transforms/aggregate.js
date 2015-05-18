@@ -33,7 +33,7 @@ describe('Aggregate', function() {
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            vals = values.map(function(d) { return d.y }).sort(),
+            vals = values.map(function(d) { return d.y }).sort(dl.numcmp),
             min = vals[0],
             max = vals[vals.length-1];
 
@@ -58,7 +58,7 @@ describe('Aggregate', function() {
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            vals = values.map(function(d) { return d.y }).sort(),
+            vals = values.map(function(d) { return d.y }).sort(dl.numcmp),
             min = vals[0],
             max = vals[vals.length-1];
 
@@ -85,7 +85,32 @@ describe('Aggregate', function() {
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            vals = values.map(function(d) { return d.y }).sort(),
+            vals = values.map(function(d) { return d.y }).sort(dl.numcmp),
+            min = vals[0],
+            max = vals[vals.length-1];
+
+        expect(data).to.have.length(1);
+        expect(data[0]).to.have.property('count_y', count);
+        expect(data[0]).to.have.property('sum_y', sum);
+        expect(data[0]).to.have.property('min_y', min);
+        expect(data[0]).to.have.property('max_y', max);
+
+        done();
+      }, modelFactory);
+    });
+
+    it('should handle streaming mods', function(done) {
+      parseSpec(spec, function(model) {
+        model.data('table')
+          .update(function(d) { return d.x % 2 !== 0 }, "y", 
+            function(d) { return d.y * 2 })
+          .fire();
+
+        var ds = model.data('table'),
+            data = ds.values(),
+            vals = values.map(function(d) { return (d.x%2 !== 0) ? d.y*2 : d.y; }).sort(dl.numcmp),
+            count = vals.length,
+            sum = vals.reduce(function(sum, d) { return sum+d }, 0),
             min = vals[0],
             max = vals[vals.length-1];
 
@@ -108,7 +133,7 @@ describe('Aggregate', function() {
             data = ds.values(),
             count = values.length,
             sum = values.reduce(function(sum, d) { return sum+d.y}, 0),
-            vals = values.map(function(d) { return d.y }).sort(),
+            vals = values.map(function(d) { return d.y }).sort(dl.numcmp),
             min = vals[0],
             max = vals[vals.length-1];
 
@@ -154,6 +179,28 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('sum_population', 22);
 
         expect(data[1]).to.have.property('country', 'Canada');
+        expect(data[1]).to.have.property('sum_area', 7);
+        expect(data[1]).to.have.property('count_area', 2);
+        expect(data[1]).to.have.property('sum_population', 6);
+
+        done();
+      }, modelFactory);
+    });
+
+    it('should handle modified keys', function(done) {
+      parseSpec(spec, function(model) {
+        var ds = model.data('table').update(function(d) { return d.country === "Canada" },
+              "country", function(d) { return "Australia" }).fire(),
+            data = ds.values();
+
+        expect(data).to.have.length(2);
+
+        expect(data[0]).to.have.property('country', 'US');
+        expect(data[0]).to.have.property('sum_area', 28);
+        expect(data[0]).to.have.property('count_area', 3);
+        expect(data[0]).to.have.property('sum_population', 22);
+
+        expect(data[1]).to.have.property('country', 'Australia');
         expect(data[1]).to.have.property('sum_area', 7);
         expect(data[1]).to.have.property('count_area', 2);
         expect(data[1]).to.have.property('sum_population', 6);

@@ -30,6 +30,15 @@ function set_prev(t, k) {
   t._prev[k] = t[k];
 }
 
+// Spoof the previous tuple
+function prev(t) {
+  return dl.extend(dl.duplicate(t), t._prev);
+}
+
+function has_prev(t) {
+  return t._prev && t._prev !== C.SENTINEL;
+}
+
 function reset() { tuple_id = 1; }
 
 function idMap(a) {
@@ -42,7 +51,9 @@ module.exports = {
   ingest: ingest,
   derive: derive,
   set:    set,
-  prev:   set_prev,
+  prev:   prev,
+  set_prev: set_prev,
+  has_prev: has_prev,
   reset:  reset,
   idMap:  idMap
 };
