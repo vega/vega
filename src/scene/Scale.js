@@ -171,9 +171,9 @@ function dataRef(which, def, scale, group) {
 
     aggr = cache.aggr();
     if(uniques && sort) {
-      aggr.summarize({ "dataref": [sort.stat] })
+      aggr.summarize({ "vg_dataref": [sort.stat] })
     } else if(!uniques) {
-      aggr.summarize({ "dataref": [C.MIN, C.MAX] })
+      aggr.summarize({ "vg_dataref": [C.MIN, C.MAX] })
     }
   }
 
@@ -192,14 +192,14 @@ function dataRef(which, def, scale, group) {
     });
 
     if (uniques) {
-      aggr.accessors({ "dataref": sort ? (r.sort || sort.field) : "_id" });
+      aggr.accessors({ "vg_dataref": sort ? (r.sort || sort.field) : "_id" });
       for (j=0, flen=fields.length; j<flen; ++j) {
-        aggr.groupby({ name: "key", get: dl.accessor(fields[j]) });
+        aggr.groupby({ name: "vg_key", get: dl.accessor(fields[j]) });
         cache.evaluate(data);
       }
     } else {
       for (j=0, flen=fields.length; j<flen; ++j) {
-        aggr.accessors({ "dataref": fields[j] });
+        aggr.accessors({ "vg_dataref": fields[j] });
         cache.evaluate(data);
       }
     }
@@ -212,17 +212,17 @@ function dataRef(which, def, scale, group) {
   if (uniques) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + sort.stat + "_dataref";
+      sort = (sort == C.DESC ? "-" : "+") + sort.stat + "_vg_dataref";
       sort = dl.comparator(sort);
       data = data.sort(sort);
     // } else {  // "First seen" order
     //   sort = dl.comparator("tpl._id");
     }
 
-    return data.map(function(d) { return d.key; });
+    return data.map(function(d) { return d.vg_key; });
   } else {
     data = data[0];
-    return (data === null) ? [] : [data.min_dataref, data.max_dataref];
+    return (data === null) ? [] : [data.min_vg_dataref, data.max_vg_dataref];
   }
 }
 

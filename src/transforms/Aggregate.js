@@ -1,5 +1,6 @@
 var dl = require('datalib'),
     Transform = require('./Transform'),
+    Facetor = require('./Facetor'),
     tpl = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
     debug = require('../util/debug'),
@@ -13,7 +14,7 @@ function Aggregate(graph) {
     groupby: {type: "array<field>"}
   });
 
-  this._fieldsDef = null;
+  this._fieldsDef = [];
   this._aggr = null;  // dl.Aggregator
 
   return this;
@@ -45,8 +46,6 @@ proto.summarize = {
   }
 };
 
-function ingest(t) { return tpl.ingest(t, null) }
-
 proto.aggr = function() {
   if(this._aggr) return this._aggr;
 
@@ -63,18 +62,17 @@ proto.aggr = function() {
     return f;
   });
 
-  var aggr = this._aggr = dl.groupby(groupby)
+  var aggr = this._aggr = new Facetor()
+    .groupby(groupby)
     .stream(true)
     .summarize(fields);
-
-  aggr._assign = tpl.set;
-  aggr._ingest = ingest;
 
   return aggr;
 };
 
 proto._reset = function(input, output) {
   output.rem.push.apply(output.rem, this.aggr().result());
+  this.aggr().clear();
   this._aggr = null;
 };
 
@@ -92,8 +90,7 @@ proto.transform = function(input, reset) {
     if(reset) {
       aggr.add(x);  // Signal change triggered reflow
     } else if(tpl.has_prev(x)) {
-      aggr.rem(tpl.prev(x));
-      aggr.add(x);
+      aggr.mod(x);
     }
   });
 
@@ -101,12 +98,7 @@ proto.transform = function(input, reset) {
     aggr.rem(tpl.has_prev(x) ? tpl.prev(x) : x);
   });
 
-  var changes = aggr.changes();
-  output.add.push.apply(output.add, changes.add);
-  output.mod.push.apply(output.mod, changes.mod);
-  output.rem.push.apply(output.rem, changes.rem);
-
-  return output;
+  return aggr.changes(input, output);
 }
 
 module.exports = Aggregate;

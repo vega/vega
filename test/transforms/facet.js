@@ -14,7 +14,7 @@ describe('Facet', function() {
     "data": [{
       "name": "table",
       "values": values,
-      "transform": [{"type": "facet", "keys": [{"field": "country"}]}]
+      "transform": [{"type": "facet", "groupby": [{"field": "country"}]}]
     }]
   };
 
@@ -135,7 +135,7 @@ describe('Facet', function() {
 
   it('should handle signals as keys', function(done) {
     var s = util.duplicate(spec);
-    spec.data[0].transform[0].keys = [{"signal": "keys"}];
+    spec.data[0].transform[0].groupby = [{"signal": "keys"}];
 
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
@@ -165,7 +165,7 @@ describe('Facet', function() {
   it('should handle fields+signals as keys', function(done) {
     var s = util.duplicate(spec);
     spec.signals[0].init = 'type';
-    spec.data[0].transform[0].keys = [{"field": "country"}, {"signal": "keys"}];
+    spec.data[0].transform[0].groupby = [{"field": "country"}, {"signal": "keys"}];
 
     parseSpec(spec, function(model) {
       var ds = model.data('table'),
@@ -195,6 +195,43 @@ describe('Facet', function() {
 
       done();
     }, modelFactory);      
+  });
+
+  it('should compute summaries on facets', function(done) {
+    var spec = {
+      "data": [{
+        "name": "table",
+        "values": values,
+        "transform": [{
+          "type": "facet",
+          "groupby": [{"field": "country"}],
+          "summarize": {
+            "count": ["count", "sum", "min", "max"]
+          }
+        }]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      var ds = model.data('table'),
+          data = ds.values();
+
+      expect(data).to.have.length(2);
+
+      expect(data[0]).to.have.property('key', 'US');
+      expect(data[0]).to.have.property('count_count', 3);
+      expect(data[0]).to.have.property('sum_count', 40);
+      expect(data[0]).to.have.property('min_count', 12);
+      expect(data[0]).to.have.property('max_count', 15);
+
+      expect(data[1]).to.have.property('key', 'Canada');
+      expect(data[1]).to.have.property('count_count', 3);
+      expect(data[1]).to.have.property('sum_count', 12);
+      expect(data[1]).to.have.property('min_count', 3);
+      expect(data[1]).to.have.property('max_count', 5);
+
+      done();
+    }, modelFactory);
   });
 
   it('should transform faceted values');
