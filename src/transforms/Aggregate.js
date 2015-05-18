@@ -84,8 +84,7 @@ proto.transform = function(input, reset) {
   var output = changeset.create(input);
   if(reset) this._reset(input, output);
 
-  var aggr = this.aggr(),
-      k, cell, flag, tuple;
+  var aggr = this.aggr();
 
   input.add.forEach(aggr.add.bind(aggr));
 
@@ -102,27 +101,10 @@ proto.transform = function(input, reset) {
     aggr.rem(tpl.has_prev(x) ? tpl.prev(x) : x);
   });
 
-  for (k in aggr._cells) {
-    cell  = aggr._cells[k];
-    flag  = cell.flag;
-    tuple = cell.tuple;
-
-    if (cell.num > 0) {
-      for (i=0; i<aggr._aggr.length; ++i) {
-        cell.aggs[aggr._aggr[i].name].set();
-      }
-    }
-
-    if(cell.num === 0 && flag === C.MOD_CELL) {
-      output.rem.push(tuple);
-    } else if(flag & C.ADD_CELL) {
-      output.add.push(tuple);
-    } else if(flag & C.MOD_CELL) {
-      output.mod.push(tuple);
-    }
-
-    cell.flag = 0;
-  }
+  var changes = aggr.changes();
+  output.add.push.apply(output.add, changes.add);
+  output.mod.push.apply(output.mod, changes.mod);
+  output.rem.push.apply(output.rem, changes.rem);
 
   return output;
 }
