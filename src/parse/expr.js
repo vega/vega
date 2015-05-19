@@ -9,7 +9,7 @@ var expr = (function() {
 
   return function(expr) {    
     var value = codegen(parse(expr));
-    value.fn = Function('datum', 'event', 'i', 'p', 'sg', 'fns',
+    value.fn = Function('datum', 'event', 'i', 'p', 'sg',
       '"use strict"; return (' + value.fn + ');');
     return value;
   };
