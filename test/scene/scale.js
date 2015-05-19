@@ -432,7 +432,7 @@ describe('Scale', function() {
               {"category":"C", "position":10, "value":0.2},
               {"category":"C", "position":11, "value":0.7}
             ],
-            "transform": [{"type": "facet", "keys": ["category"] }]
+            "transform": [{"type": "facet", "groupby": ["category"] }]
           }],
 
           "marks": [{

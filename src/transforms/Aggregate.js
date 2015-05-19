@@ -63,6 +63,7 @@ proto.aggr = function() {
   });
 
   var aggr = this._aggr = new Facetor()
+    .key("_id")
     .groupby(groupby)
     .stream(true)
     .summarize(fields);
