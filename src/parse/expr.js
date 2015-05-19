@@ -17,7 +17,7 @@ var expr = (function() {
 
 expr.eval = function(graph, fn, d, e, i, p, sg) {
   sg = graph.signalValues(dl.array(sg));
-  return fn.call(null, d, e, i, p, sg, expression.expression_util);
+  return fn.call(null, d, e, i, p, sg);
 };
 
 module.exports = expr;

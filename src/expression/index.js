@@ -3,6 +3,5 @@ var parser = require('./parser'),
     
 module.exports = {
   parse: function(input, opt) { return parser.parse("("+input+")", opt); },
-  code: function(opt) { return codegen(opt); },
-  expression_util: require('./vector2d')
+  code: function(opt) { return codegen(opt); }
 };

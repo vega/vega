@@ -12,7 +12,7 @@ module.exports = function(codegen) {
       ? "()"
       : "(" + args.slice(1).map(codegen).join(",") + ")");
   }
-
+  
   var DATE = "new Date";
   var STRING = "String";
   var REGEXP = "RegExp";
@@ -39,13 +39,6 @@ module.exports = function(codegen) {
     "sin":      "Math.sin",
     "sqrt":     "Math.sqrt",
     "tan":      "Math.tan",
-
-    // Vector 2d functions
-    "vec2d": "fns.vec2d",
-    "dot": "fns.dot",
-    "times": "fns.times",
-    "normalized": "fns.normalized",
-    "veclen": "fns.veclen",
 
     // DATE functions
     "now":      "Date.now",
@@ -136,7 +129,7 @@ module.exports = function(codegen) {
     "test": function(args) {
         return fncall("test", args, REGEXP);
       },
-
+    
     // Control Flow functions
     "if": function(args) {
         if (args.length < 3)
