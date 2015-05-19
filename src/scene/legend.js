@@ -146,10 +146,10 @@ function lgnd(model) {
       interactive: false,
       properties: {
         enter: parseProperties(model, "group", legendStyle),
-        // update: {
-        //   encode: vg_legendUpdate,
-        //   signals: [], scales:[], data: [], fields: []
-        // }
+        vg_legendPosition: {
+          encode: vg_legendPosition,
+          signals: [], scales:[], data: [], fields: []
+        }
       }
     });
 
@@ -247,10 +247,10 @@ function lgnd(model) {
       interactive: false,
       properties: {
         enter: parseProperties(model, "group", legendStyle),
-        // update: {
-        //   encode: vg_legendUpdate,
-        //   signals: [], scales: [], data: [], fields: []
-        // }
+        vg_legendPosition: {
+          encode: vg_legendPosition,
+          signals: [], scales: [], data: [], fields: []
+        }
       }
     });
 
@@ -358,7 +358,7 @@ function lgnd(model) {
 
 var vg_legendOrients = {right: 1, left: 1};
 
-function vg_legendUpdate(item, group, trans, db, signals, predicates) {
+function vg_legendPosition(item, group, trans, db, signals, predicates) {
   var o = trans ? {} : item, gx,
       offset = item.mark.def.offset,
       orient = item.mark.def.orient,
@@ -393,7 +393,8 @@ function vg_legendUpdate(item, group, trans, db, signals, predicates) {
   }
   
   if (trans) trans.interpolate(item, o);
-  item.mark.def.properties.enter(item, group, trans);
+  var enc = item.mark.def.properties.enter.encode;
+  enc.call(enc, item, group, trans);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
