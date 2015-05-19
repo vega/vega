@@ -38,7 +38,7 @@
       "type": "group",
       "from": {
         "data": "stocks",
-        "transform": [{"type": "facet", "keys": ["symbol"]}]
+        "transform": [{"type": "facet", "groupby": ["symbol"]}]
       },
       "marks": [
         {

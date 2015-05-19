@@ -51,7 +51,7 @@
       "type": "group",
       "from": {
         "data": "table",
-        "transform": [{"type":"facet", "keys":["category"]}]
+        "transform": [{"type":"facet", "groupby": ["category"]}]
       },
       "properties": {
         "enter": {

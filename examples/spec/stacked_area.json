@@ -24,8 +24,8 @@
       "transform": [
         {
           "type": "aggregate",
-          "group_by": ["x"],
-          "fields": [{"name": "y", "ops": ["sum"]}]
+          "groupby": ["x"],
+          "summarize": [{"name": "y", "ops": ["sum"]}]
         }
       ]
     }
@@ -43,7 +43,7 @@
       "type": "linear",
       "range": "height",
       "nice": true,
-      "domain": {"data": "stats", "field": "y_sum"}
+      "domain": {"data": "stats", "field": "sum_y"}
     },
     {
       "name": "color",
@@ -63,7 +63,7 @@
         "data": "table",
         "transform": [
           {"type": "stack", "groupby": ["x"], "sortby": ["c"], "value": "y"},
-          {"type": "facet", "keys": ["c"]}
+          {"type": "facet", "groupby": ["c"]}
         ]
       },
       "marks": [
