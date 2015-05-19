@@ -22,7 +22,7 @@ proto.transform = function(input) {
   var transform = this,
       output = this._output.bin;
       
-  var b = dl.bin({
+  var b = dl.bins({
     min: this.min.get(),
     max: this.max.get(),
     step: this.step.get(),

@@ -116,8 +116,6 @@ function lgnd(model) {
     def.marks[1].from = function() { return data; };
     def.marks[2].from = def.marks[1].from;
 
-    console.log(def);
-
     return def;
   }
 
