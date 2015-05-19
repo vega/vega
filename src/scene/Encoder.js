@@ -1,6 +1,6 @@
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
-    bounds = require('../util/bounds'),
+    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     debug = require('../util/debug'),
     EMPTY = {};

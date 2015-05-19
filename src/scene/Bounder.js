@@ -1,5 +1,5 @@
 var Node = require('../dataflow/Node'),
-    bounds = require('../util/bounds'),
+    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     debug = require('../util/debug');
 
@@ -13,10 +13,7 @@ var proto = (Bounder.prototype = new Node());
 proto.evaluate = function(input) {
   debug(input, ["bounds", this._mark.marktype]);
 
-  bounds.mark(this._mark);
-  if (this._mark.marktype === C.GROUP) 
-    bounds.mark(this._mark, null, false);
-
+  bounds.mark(this._mark, null, false);
   input.reflow = true;
   return input;
 };

@@ -1,6 +1,6 @@
 var d3 = require('d3'),
     dl = require('datalib'),
-    Bounds = require('../../core/Bounds'),
+    Bounds = require('../../util/Bounds'),
     config = require('../../util/config'),
     marks = require('./marks');
 

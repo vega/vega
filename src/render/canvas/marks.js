@@ -1,5 +1,5 @@
-var Bounds = require('../../core/Bounds'),
-    boundsCalc = require('../../util/bounds'),
+var Bounds = require('../../util/Bounds'),
+    boundsCalc = require('../../util/boundscalc'),
     config = require('../../util/config'),
     path = require('./path');
 

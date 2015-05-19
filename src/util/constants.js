@@ -34,6 +34,7 @@ module.exports = {
 
   MARK: "mark",
   AXIS: "axis",
+  LEGEND: "legend",
 
   COUNT: "count",
   MIN: "min",
