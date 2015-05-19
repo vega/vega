@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     Transform = require('./Transform'),
     Facetor = require('./Facetor'),
-    tpl = require('../dataflow/tuple'), 
+    tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
     debug = require('../util/debug'),
     C = require('../util/constants');
@@ -53,7 +53,7 @@ proto.aggr = function() {
       groupby = this.groupby.get(graph).fields;
 
   var fields = this._fieldsDef.map(function(field) {
-    var f = dl.duplicate(field);
+    var f  = dl.duplicate(field);
     f.name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
     f.ops  = f.ops.signal ? graph.signalRef(f.ops.signal) : dl.array(f.ops).map(function(o) {
       return o.signal ? graph.signalRef(o.signal) : o;
@@ -63,8 +63,8 @@ proto.aggr = function() {
   });
 
   var aggr = this._aggr = new Facetor()
-    .key("_id")
     .groupby(groupby)
+    .key("_id")
     .stream(true)
     .summarize(fields);
 
@@ -85,18 +85,18 @@ proto.transform = function(input, reset) {
 
   var aggr = this.aggr();
 
-  input.add.forEach(aggr.add.bind(aggr));
+  input.add.forEach(aggr._add.bind(aggr));
 
   input.mod.forEach(function(x) {
     if(reset) {
-      aggr.add(x);  // Signal change triggered reflow
-    } else if(tpl.has_prev(x)) {
-      aggr.mod(x);
+      aggr._add(x);  // Signal change triggered reflow
+    } else if(tuple.has_prev(x)) {
+      aggr._mod(x, tuple.prev(x));
     }
   });
 
   input.rem.forEach(function(x) {
-    aggr.rem(tpl.has_prev(x) ? tpl.prev(x) : x);
+    aggr._rem(tuple.has_prev(x) ? tuple.prev(x) : x);
   });
 
   return aggr.changes(input, output);

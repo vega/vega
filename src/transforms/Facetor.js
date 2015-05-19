@@ -68,30 +68,28 @@ proto.clear = function() {
   return Aggregator.clear.call(this);
 };
 
-proto.add = function(x) {
+proto._add = function(x) {
   var cell = this._cell(x);
-  Aggregator.add.call(this, x);
+  Aggregator._add.call(this, x);
   if(this._facet !== null) cell.ds._input.add.push(x);
 };
 
-proto.mod = function(x) {
-  var prev = tuple.prev(x),
-      prev_cell = this._cell(prev),
+proto._mod = function(x, prev) {
+  var prev_cell = this._cell(prev),
       cell = this._cell(x);
 
   if(prev_cell === cell) {
-    Aggregator.rem.call(this, prev);
-    Aggregator.add.call(this, x);
+    Aggregator._mod.call(this, x, prev);
     if(this._facet !== null) cell.ds._input.mod.push(x); // Propagate tuples
   } else {
-    this.rem(prev);
-    this.add(x);
+    this._rem(prev);
+    this._add(x);
   }
 };
 
-proto.rem = function(x) {
+proto._rem = function(x) {
   var cell = this._cell(x);
-  Aggregator.rem.call(this, x);
+  Aggregator._rem.call(this, x);
   if(this._facet !== null) cell.ds._input.rem.push(x);  
 };
 
