@@ -49,7 +49,7 @@
       "init": -1.6,
       "streams": [
         {"type": "xDelta", "expr": "xMin + (xMax-xMin)*xDelta/800"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"}
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"}
       ]
     },
     {
@@ -57,7 +57,7 @@
       "init": 1.6,
       "streams": [
         {"type": "xDelta", "expr": "xMax + (xMax-xMin)*xDelta/800"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"}
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"}
       ]
     },
     {
@@ -65,7 +65,7 @@
       "init": -1,
       "streams": [
         {"type": "yDelta", "expr": "yMin + (yMax-yMin)*yDelta/500"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"}
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"}
       ]
     },
     {
@@ -73,7 +73,7 @@
       "init": 1,
       "streams": [
         {"type": "yDelta", "expr": "yMax + (yMax-yMin)*yDelta/500"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"}
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"}
       ]
     },
     {

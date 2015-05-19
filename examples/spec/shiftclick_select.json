@@ -7,13 +7,13 @@
       "name": "clickedPt",
       "init": 0,
       "verbose": true,
-      "streams": [{"type": "click", "expr": "d._id"}]
+      "streams": [{"type": "click", "expr": "datum._id"}]
     },
     {
       "name": "shift",
       "init": false,
       "verbose": true,
-      "streams": [{"type": "click", "expr": "e.shiftKey"}]
+      "streams": [{"type": "click", "expr": "event.shiftKey"}]
     }
   ],
 

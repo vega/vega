@@ -24,6 +24,6 @@ module.exports = {
   vec2d: vec2d,
   dot: dot,
   times: times,
-  normalized: normaized,
+  normalized: normalized,
   veclen: veclen
-}
+};

@@ -13,7 +13,7 @@
     "transform": [
       {
         "type": "filter",
-        "test": "d.year == year && d.country == currentCountry && dragging"
+        "test": "datum.year == year && datum.country == currentCountry && dragging"
       }
     ]
   },
@@ -23,27 +23,27 @@
     "transform": [
       {
         "type": "filter",
-        "test": "d.year == year"
+        "test": "datum.year == year"
       },
       {
         "type":"formula",
         "field": "target_fertility",
-        "expr": "inter_year>year?d.n_fertility:(d.p_fertility||d.fertility)"
+        "expr": "inter_year>year?datum.n_fertility:(datum.p_fertility||datum.fertility)"
       },
       {
         "type":"formula",
         "field": "target_life_expect",
-        "expr": "inter_year>year?d.n_life_expect:(d.p_life_expect||d.life_expect)"
+        "expr": "inter_year>year?datum.n_life_expect:(datum.p_life_expect||datum.life_expect)"
       },
       {
         "type": "formula",
         "field": "inter_fertility",
-        "expr": "inter_year==2000?d.fertility:d.fertility+(d.target_fertility-d.fertility)*abs(inter_year-d.year)/5"
+        "expr": "inter_year==2000?datum.fertility:datum.fertility+(datum.target_fertility-datum.fertility)*abs(inter_year-datum.year)/5"
       },
       {
         "type": "formula",
         "field": "inter_life_expect",
-        "expr": "inter_year==2000?d.life_expect:d.life_expect+(d.target_life_expect-d.life_expect)*abs(inter_year-d.year)/5"
+        "expr": "inter_year==2000?datum.life_expect:datum.life_expect+(datum.target_life_expect-datum.life_expect)*abs(inter_year-datum.year)/5"
       }
     ]
   },
@@ -53,7 +53,7 @@
     "transform": [
       {
         "type": "filter",
-        "test": "d.country == currentCountry"
+        "test": "datum.country == currentCountry"
       },
       {
         "type": "sort",
@@ -74,22 +74,22 @@
 
   "signals": [
     {
-      "name": "pX","streams": [{"type":"mousemove[dragging], touchmove", "expr": "d.p_fertility", "scale":"x"}]
+      "name": "pX","streams": [{"type":"mousemove[dragging], touchmove", "expr": "datum.p_fertility", "scale":"x"}]
     },
     {
-      "name": "nX","streams": [{"type":"mousemove[dragging], touchmove", "expr": "d.n_fertility", "scale":"x"}]
+      "name": "nX","streams": [{"type":"mousemove[dragging], touchmove", "expr": "datum.n_fertility", "scale":"x"}]
     },
     {
-      "name": "cX","streams": [{"type":"mousemove[dragging], touchmove", "expr": "d.fertility", "scale":"x"}]
+      "name": "cX","streams": [{"type":"mousemove[dragging], touchmove", "expr": "datum.fertility", "scale":"x"}]
     },
     {
-      "name": "pY","streams": [{"type":"mousemove[dragging], touchmove", "expr": "d.p_life_expect", "scale":"y"}]
+      "name": "pY","streams": [{"type":"mousemove[dragging], touchmove", "expr": "datum.p_life_expect", "scale":"y"}]
     },
     {
-      "name": "nY","streams": [{"type":"mousemove[dragging], touchmove", "expr": "d.n_life_expect", "scale":"y"}]
+      "name": "nY","streams": [{"type":"mousemove[dragging], touchmove", "expr": "datum.n_life_expect", "scale":"y"}]
     },
     {
-      "name": "cY","streams": [{"type":"mousemove[dragging], touchmove", "expr": "d.life_expect", "scale":"y"}]
+      "name": "cY","streams": [{"type":"mousemove[dragging], touchmove", "expr": "datum.life_expect", "scale":"y"}]
     },
     {
       "name": "currDist",
@@ -135,13 +135,13 @@
     {
       "name": "clickedPt",
       "init": 0,
-      "streams": [{"type": "mousedown, touchstart", "expr": "d.country"}]
+      "streams": [{"type": "mousedown, touchstart", "expr": "datum.country"}]
     },
     {
       "name": "currentCountry",
       "init": "",
-      "streams": [{"type": "mousemove[!dragging], touchmove", "expr": "d.country"},
-                  {"type": ".point:touchmove[!dragging]", "expr": "d.country"}]
+      "streams": [{"type": "mousemove[!dragging], touchmove", "expr": "datum.country"},
+                  {"type": ".point:touchmove[!dragging]", "expr": "datum.country"}]
     }
   ],
   "predicates": [

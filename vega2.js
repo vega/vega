@@ -4660,6 +4660,13 @@ module.exports = function(codegen) {
     "sqrt":     "Math.sqrt",
     "tan":      "Math.tan",
 
+    // Vector 2d functions
+    "vec2d": "fns.vec2d",
+    "dot": "fns.dot",
+    "times": "fns.times",
+    "normalized": "fns.normalized",
+    "veclen": "fns.veclen",
+
     // DATE functions
     "now":      "Date.now",
     "datetime": "new Date",
@@ -4758,14 +4765,7 @@ module.exports = function(codegen) {
         throw new Error("Too many arguments to if function.");
         var a = args.map(codegen);
         return a[0]+"?"+a[1]+":"+a[2];
-      },
-
-    // Vector 2d functions
-    vec2d: vec2.vec2d,
-    dot: vec2d.dot,
-    times: vec2d.times,
-    normalized: vec2d.normalized,
-    veclen: vec2d.veclen
+      }
   };
 };
 

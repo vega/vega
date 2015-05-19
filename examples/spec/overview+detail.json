@@ -34,7 +34,7 @@
       "transform": [
         {
           "type": "filter", 
-          "test": "min_date == max_date || min_date <= d.date && d.date <= max_date"
+          "test": "min_date == max_date || min_date <= datum.date && datum.date <= max_date"
         },
         {"type": "sort", "by": "date"}
       ]
