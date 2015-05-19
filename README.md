@@ -1,5 +1,8 @@
 Vega: A Visualization Grammar
 ====
+[![NPM version][npm-image]][npm-url]
+[![Dependency Status][david-image]][david-url]
+
 
 **Vega** is a _visualization grammar_, a declarative format for creating and
 saving visualization designs. With Vega you can describe data visualizations
@@ -66,3 +69,8 @@ When running in node.js, Vega can use a "headless" rendering mode for
 generating visualizations outside the browser. Internally, Vega uses a custom
 view class (`vg.headless.View`) for headless rendering. However, most
 applications can simply use the convenience method `vg.headless.render`.
+
+[npm-image]: https://img.shields.io/npm/v/vega.svg
+[npm-url]: https://npmjs.org/package/vega
+[david-image]: http://img.shields.io/david/trifacta/vega.svg
+[david-url]: https://david-dm.org/trifacta/vega
