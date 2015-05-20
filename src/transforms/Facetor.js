@@ -9,11 +9,6 @@ function Facetor() {
   this._facet = null;
   this._multi = false; // Scales multi-aggregate across different schemas
   this._acc = {groupby: dl.true, value: dl.true} // Standardize w/custom accessors
-
-  // Save object creation cost of standardized schema.
-  // Need two objects for _mod.
-  this._s0  = {groupby: null, value: null, _id: null};
-  this._s1  = {groupby: null, value: null, _id: null};
 }
 
 var Aggregator = dl.groupby();
@@ -79,13 +74,14 @@ proto.clear = function() {
   return Aggregator.clear.call(this);
 };
 
-function standardize(x, prev) {
+function standardize(x) {
   if(!this._multi) return x;
-  var s = prev ? this._s0 : this._s1;
-  s._id = x._id;
-  s.groupby = this._acc.groupby(x);
-  s.value   = this._acc.value(x);
-  return s;
+
+  return {
+    _id: x._id,
+    groupby: this._acc.groupby(x),
+    value: this._acc.value(x),
+  };
 }
 
 proto._add = function(x) {
@@ -97,8 +93,8 @@ proto._add = function(x) {
 };
 
 proto._mod = function(x, prev) {
-  var std0 = standardize.call(this, prev, true),
-      std1 = standardize.call(this, x, false),
+  var std0 = standardize.call(this, prev),
+      std1 = standardize.call(this, x),
       cell0 = this._cell(std0),
       cell1 = this._cell(std1);
 
@@ -158,6 +154,8 @@ proto.changes = function(input, output) {
     cell.flag = 0;
   }
 
+  this._consolidate();
+  this._rems = false;
   return output;
 };
 
