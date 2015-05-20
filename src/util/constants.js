@@ -2,6 +2,8 @@ module.exports = {
   ADD_CELL: 1,
   MOD_CELL: 2,
 
+  ID: "_id",
+
   DATA: "data",
   FIELDS:  "fields",
   SCALES:  "scales",
@@ -36,9 +38,12 @@ module.exports = {
   AXIS: "axis",
 
   COUNT: "count",
+  GROUPBY: "groupby",
   MIN: "min",
   MAX: "max",
+  VALUE: "value",
 
+  SORT: "sort",
   ASC: "asc",
   DESC: "desc"
 };

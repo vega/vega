@@ -162,18 +162,23 @@ function dataRef(which, def, scale, group) {
       aggr = cache ? cache.aggr() : null,  // dl.Aggregator
       cacheField = {ops: []},  // the field and measures in the aggregator
       sort = def.sort,
-      i, rlen, j, flen, r, fields, from, data, keys;
+      i, rlen, j, flen, r, fields, from, data, keys, valAcc;
 
   if (!cache) {
     cache = scale[ck] = new Aggregate(graph)
     cache.groupby.set(cache, [])
       .summarize.set(cache, {});
 
-    aggr = cache.aggr();
-    if(uniques && sort) {
-      aggr.summarize({ "vg_dataref": [sort.stat] })
-    } else if(!uniques) {
-      aggr.summarize({ "vg_dataref": [C.MIN, C.MAX] })
+    aggr = cache.aggr().multi(true);
+    if(uniques) {
+      aggr.groupby(C.GROUPBY)
+        .summarize(sort ? { "value": [sort.stat], as: [C.SORT] } : {"*": "count"});
+    } else {
+      aggr.summarize([{ 
+        name: C.VALUE,
+        ops: [C.MIN, C.MAX],
+        as: [C.MIN, C.MAX]   
+      }]);
     }
   }
 
@@ -192,14 +197,15 @@ function dataRef(which, def, scale, group) {
     });
 
     if (uniques) {
-      aggr.accessors({ "vg_dataref": sort ? (r.sort || sort.field) : "_id" });
+      valAcc = dl.accessor(sort ? (r.sort || sort.field) : C.ID);
+
       for (j=0, flen=fields.length; j<flen; ++j) {
-        aggr.groupby({ name: "vg_key", get: dl.accessor(fields[j]) });
+        aggr.accessors(dl.accessor(fields[j]), valAcc);
         cache.evaluate(data);
       }
     } else {
       for (j=0, flen=fields.length; j<flen; ++j) {
-        aggr.accessors({ "vg_dataref": fields[j] });
+        aggr.accessors(dl.true, dl.accessor(fields[j]));
         cache.evaluate(data);
       }
     }
@@ -212,17 +218,17 @@ function dataRef(which, def, scale, group) {
   if (uniques) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + sort.stat + "_vg_dataref";
+      sort = (sort == C.DESC ? "-" : "+") + C.SORT;
       sort = dl.comparator(sort);
       data = data.sort(sort);
     // } else {  // "First seen" order
     //   sort = dl.comparator("tpl._id");
     }
 
-    return data.map(function(d) { return d.vg_key; });
+    return data.map(function(d) { return d[C.GROUPBY]; });
   } else {
     data = data[0];
-    return (data === null) ? [] : [data.min_vg_dataref, data.max_vg_dataref];
+    return (data === null) ? [] : [data[C.MIN], data[C.MAX]];
   }
 }
 
