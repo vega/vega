@@ -364,12 +364,14 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
       orient = item.mark.def.orient,
       pad    = item.mark.def.padding * 2,
       lw     = ~~item.bounds.width() + (item.width ? 0 : pad),
-      lh     = ~~item.bounds.height() + (item.height ? 0 : pad);
+      lh     = ~~item.bounds.height() + (item.height ? 0 : pad),
+      pos = group._legendPositions || 
+        (group._legendPositions = {right: 0.5, left: 0.5});
 
   o.x = 0.5;
-  o.y = 0.5;
   o.width = lw;
-  o.height = lh;
+  o.y = pos[orient];
+  pos[orient] += (o.height = lh);
 
   // HACK: use to estimate group bounds during animated transition
   if (!trans && group.bounds) {
