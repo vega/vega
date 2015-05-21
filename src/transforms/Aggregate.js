@@ -38,7 +38,7 @@ proto.summarize = {
     if(!dl.isArray(fields = summarize)) { // Object syntax from dl
       fields = [];
       for (name in summarize) {
-        ops = util.array(summarize[name]);
+        ops = dl.array(summarize[name]);
         fields.push({name: name, ops: ops});
       }
     }
