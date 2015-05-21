@@ -17,10 +17,20 @@ function Aggregate(graph) {
   this._fieldsDef = [];
   this._aggr = null;  // dl.Aggregator
 
+  this._type = TYPES.TUPLE; 
+  this._acc = {groupby: dl.true, value: dl.true}
+  this._cache = {};     // And cache them as aggregators expect original tuples.
+
   return this;
 }
 
 var proto = (Aggregate.prototype = new Transform());
+
+var TYPES = Aggregate.TYPES = {
+  VALUE: 1, 
+  TUPLE: 2, 
+  MULTI: 3
+};
 
 proto.summarize = {
   set: function(transform, summarize) {
@@ -46,6 +56,41 @@ proto.summarize = {
   }
 };
 
+proto.type = function(type) { 
+  return (this._type = type, this); 
+};
+
+// Minimize accessor creations by checking names
+function accessor(curr, field) {
+  var cName  = dl.name(curr),
+      isFunc = dl.isFunction(field),
+      fName  = isFunc ? dl.name(field) : field;
+
+  return (cName == fName) ? curr :
+    isFunc ? field : dl.$(field);
+}
+
+proto.accessors = function(groupby, value) {
+  var acc = this._acc;
+  acc.groupby = groupby ? accessor(acc.groupby, groupby) : dl.true;
+  acc.value = value ? accessor(acc.value, value) : dl.true;
+};
+
+function standardize(x) {
+  var acc = this._acc;
+  if(this._type === TYPES.TUPLE) {
+    return x;
+  } else if(this._type === TYPES.VALUE) {
+    return acc.value(x);
+  } else {
+    return this._cache[x._id] || (this._cache[x._id] = {
+      _id: x._id,
+      groupby: acc.groupby(x),
+      value: acc.value(x)
+    });
+  }
+}
+
 proto.aggr = function() {
   if(this._aggr) return this._aggr;
 
@@ -54,6 +99,8 @@ proto.aggr = function() {
 
   var fields = this._fieldsDef.map(function(field) {
     var f  = dl.duplicate(field);
+    if(field.get) f.get = field.get;
+
     f.name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
     f.ops  = f.ops.signal ? graph.signalRef(f.ops.signal) : dl.array(f.ops).map(function(o) {
       return o.signal ? graph.signalRef(o.signal) : o;
@@ -64,10 +111,10 @@ proto.aggr = function() {
 
   var aggr = this._aggr = new Facetor()
     .groupby(groupby)
-    .key("_id")
     .stream(true)
     .summarize(fields);
 
+  if(this._type !== TYPES.VALUE) aggr.key("_id");
   return aggr;
 };
 
@@ -83,20 +130,27 @@ proto.transform = function(input, reset) {
   var output = changeset.create(input);
   if(reset) this._reset(input, output);
 
-  var aggr = this.aggr();
+  var t = this,
+      tpl  = this._type === TYPES.TUPLE, // reduce calls to standardize
+      aggr = this.aggr();
 
-  input.add.forEach(aggr._add.bind(aggr));
+  input.add.forEach(function(x) {
+    aggr._add(tpl ? x : standardize.call(t, x));
+  });
 
   input.mod.forEach(function(x) {
     if(reset) {
-      aggr._add(x);  // Signal change triggered reflow
+      aggr._add(tpl ? x : standardize.call(t, x));  // Signal change triggered reflow
     } else if(tuple.has_prev(x)) {
-      aggr._mod(x, tuple.prev(x));
+      var prev = tuple.prev(x);
+      aggr._mod(tpl ? x : standardize.call(t, x), 
+        tpl ? prev : standardize.call(t, prev));
     }
   });
 
   input.rem.forEach(function(x) {
-    aggr._rem(tuple.has_prev(x) ? tuple.prev(x) : x);
+    var y = tuple.has_prev(x) ? tuple.prev(x) : x;
+    aggr._rem(tpl ? y : standardize.call(t, y));
   });
 
   return aggr.changes(input, output);

@@ -7,8 +7,6 @@ var dl = require('datalib'),
 function Facetor() {
   Aggregator.constructor.call(this);
   this._facet = null;
-  this._multi = false; // Scales multi-aggregate across different schemas
-  this._acc = {groupby: dl.true, value: dl.true} // Standardize w/custom accessors
 }
 
 var Aggregator = dl.groupby();
@@ -17,15 +15,6 @@ var proto = (Facetor.prototype = Object.create(Aggregator));
 proto.facet = function(f) {
   if(!arguments.length) return this._facet;
   return (this._facet = f, this);
-};
-
-proto.multi = function(flag) { 
-  return (this._multi = flag, this); 
-};
-
-proto.accessors = function(groupby, value) {
-  this._acc.groupby = groupby || dl.true;
-  this._acc.value   = value   || dl.true;
 };
 
 proto._ingest = function(t) { 
@@ -41,8 +30,8 @@ function disconnect_cell(facet) {
   facet._graph.disconnect(pipeline);
 }
 
-proto._newcell = function(x, k) {
-  var cell  = Aggregator._newcell.call(this, x, k),
+proto._newcell = function(x) {
+  var cell  = Aggregator._newcell.call(this, x),
       facet = this._facet,
       tuple = cell.tuple,
       graph, pipeline;
@@ -58,11 +47,10 @@ proto._newcell = function(x, k) {
   return cell;
 };
 
-proto._newtuple = function(x, k) {
-  var t = Aggregator._newtuple.call(this, x, k);
+proto._newtuple = function(x) {
+  var t = Aggregator._newtuple.call(this, x);
   if(this._facet !== null) {
-    tuple.set(t, "key", k.key);
-    tuple.set(t, "keys", k.keys);
+    tuple.set(t, "key", this._cellkey(x));
   }
   return t;
 };
@@ -74,32 +62,17 @@ proto.clear = function() {
   return Aggregator.clear.call(this);
 };
 
-function standardize(x) {
-  if(!this._multi) return x;
-
-  return {
-    _id: x._id,
-    groupby: this._acc.groupby(x),
-    value: this._acc.value(x),
-  };
-}
-
 proto._add = function(x) {
-  var std = standardize.call(this, x),
-      cell = this._cell(std);
-
-  Aggregator._add.call(this, std);
+  var cell = this._cell(x);
+  Aggregator._add.call(this, x);
   if(this._facet !== null) cell.ds._input.add.push(x);
 };
 
 proto._mod = function(x, prev) {
-  var std0 = standardize.call(this, prev),
-      std1 = standardize.call(this, x),
-      cell0 = this._cell(std0),
-      cell1 = this._cell(std1);
+  var cell0 = this._cell(prev),
+      cell1 = this._cell(x);
 
-  Aggregator._mod.call(this, std1, std0);
-
+  Aggregator._mod.call(this, x, prev);
   if(this._facet !== null) {  // Propagate tuples
     if(cell0 === cell1) {
       cell0.ds._input.mod.push(x);
@@ -111,10 +84,8 @@ proto._mod = function(x, prev) {
 };
 
 proto._rem = function(x) {
-  var std = standardize.call(this, x),
-      cell = this._cell(std);
-
-  Aggregator._rem.call(this, std);
+  var cell = this._cell(x);
+  Aggregator._rem.call(this, x);
   if(this._facet !== null) cell.ds._input.rem.push(x);  
 };
 
