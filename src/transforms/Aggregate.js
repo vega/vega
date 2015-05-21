@@ -21,6 +21,10 @@ function Aggregate(graph) {
   this._acc = {groupby: dl.true, value: dl.true}
   this._cache = {};     // And cache them as aggregators expect original tuples.
 
+  // Aggregator needs a full instantiation of the previous tuple. 
+  // Cache them to reduce creation costs
+  this._prev = {}; 
+
   return this;
 }
 
@@ -124,6 +128,11 @@ proto._reset = function(input, output) {
   this._aggr = null;
 };
 
+function spoof_prev(x) {
+  var prev = this._prev[x._id] || (this._prev[x._id] = Object.create(x));
+  return dl.extend(prev, x._prev);
+}
+
 proto.transform = function(input, reset) {
   debug(input, ["aggregate"]);
 
@@ -142,14 +151,14 @@ proto.transform = function(input, reset) {
     if(reset) {
       aggr._add(tpl ? x : standardize.call(t, x));  // Signal change triggered reflow
     } else if(tuple.has_prev(x)) {
-      var prev = tuple.prev(x);
+      var prev = spoof_prev.call(t, x);
       aggr._mod(tpl ? x : standardize.call(t, x), 
         tpl ? prev : standardize.call(t, prev));
     }
   });
 
   input.rem.forEach(function(x) {
-    var y = tuple.has_prev(x) ? tuple.prev(x) : x;
+    var y = tuple.has_prev(x) ? spoof_prev.call(t, x) : x;
     aggr._rem(tpl ? y : standardize.call(t, y));
   });
 
