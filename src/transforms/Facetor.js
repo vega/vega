@@ -97,6 +97,11 @@ proto.changes = function(input, output) {
     cell = this._cells[k];
     flag = cell.flag;
 
+    // consolidate collector values
+    if (cell.collect) {
+      cell.data.values();
+    }
+
     // update tuple properties
     for (i=0; i<aggr.length; ++i) {
       cell.aggs[aggr[i].name].set();
@@ -125,7 +130,6 @@ proto.changes = function(input, output) {
     cell.flag = 0;
   }
 
-  this._consolidate();
   this._rems = false;
   return output;
 };

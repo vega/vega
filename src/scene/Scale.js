@@ -285,7 +285,7 @@ function dataRef(which, def, scale, group) {
     return data.map(function(d) { return d[C.GROUPBY]; });
   } else {
     data = data[0];
-    return (data === null) ? [] : [data[C.MIN], data[C.MAX]];
+    return !dl.isValid(data) ? [] : [data[C.MIN], data[C.MAX]];
   }
 }
 
