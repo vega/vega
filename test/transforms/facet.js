@@ -22,7 +22,6 @@ describe('Facet', function() {
     var i, len = max-min+1;
 
     expect(facets[idx]).to.have.property('key', values[min].country);
-    expect(facets[idx].keys).to.eql([values[min].country]);
     expect(facets[idx].values).to.have.length(len);
 
     for(i=0; i<len; ++i) {
@@ -176,9 +175,6 @@ describe('Facet', function() {
       expect(facets[0]).to.have.property('key', 'US|gold');
       expect(facets[1]).to.have.property('key', 'US|silver');
       expect(facets[2]).to.have.property('key', 'US|bronze');
-      expect(facets[0].keys).to.eql(['US', 'gold']);
-      expect(facets[1].keys).to.eql(['US', 'silver']);
-      expect(facets[2].keys).to.eql(['US', 'bronze']);
       expect(facets[0].values).to.have.length(1);
       expect(facets[1].values).to.have.length(1);
       expect(facets[2].values).to.have.length(1);
@@ -186,9 +182,6 @@ describe('Facet', function() {
       expect(facets[3]).to.have.property('key', 'Canada|gold');
       expect(facets[4]).to.have.property('key', 'Canada|silver');
       expect(facets[5]).to.have.property('key', 'Canada|bronze');
-      expect(facets[3].keys).to.eql(['Canada', 'gold']);
-      expect(facets[4].keys).to.eql(['Canada', 'silver']);
-      expect(facets[5].keys).to.eql(['Canada', 'bronze']);
       expect(facets[3].values).to.have.length(1);
       expect(facets[4].values).to.have.length(1);
       expect(facets[5].values).to.have.length(1);

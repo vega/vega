@@ -158,7 +158,7 @@ function getRefs(def) {
   return def.fields || dl.array(def);
 }
 
-function getFields(ref) {
+function getFields(ref, group) {
   return dl.array(ref.field).map(function(f) {
     if (f.parent) return dl.accessor(f.parent)(group.datum)
     return f; // String or {"signal"}
@@ -187,13 +187,13 @@ function aggrType(def, scale) {
   return Aggregate.TYPES.MULTI;
 }
 
-function getCache(which, def, scale) {
+function getCache(which, def, scale, group) {
   var refs = getRefs(def),
       atype = aggrType(def, scale),
       uniques = isUniques(scale),
       sort = def.sort,
       ck = "_"+which,
-      fields = getFields(refs[0]),
+      fields = getFields(refs[0], group),
       singleDomain = refs.length == 1 && fields.length == 1,
       i, rlen, j, flen, ref, field;
 
@@ -240,7 +240,7 @@ function dataRef(which, def, scale, group) {
   var self = this, graph = this._graph,
       refs = getRefs(def),
       atype = aggrType(def, scale),
-      cache = getCache.call(this, which, def, scale),
+      cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
       i, rlen, j, flen, ref, fields, field;
@@ -254,7 +254,7 @@ function dataRef(which, def, scale, group) {
 
     if (data.stamp <= this._stamp) continue;
 
-    fields = getFields(ref);
+    fields = getFields(ref, group);
     for(j=0, flen=fields.length; j<flen; ++j) {
       field = fields[j];
 
