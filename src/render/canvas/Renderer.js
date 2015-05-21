@@ -7,13 +7,16 @@ var d3 = require('d3'),
 var renderer = function() {
   this._ctx = null;
   this._el = null;
+  this._bgcolor = null;
   this._imgload = 0;
 };
 
 var prototype = renderer.prototype;
 
-prototype.initialize = function(el, width, height, pad) {
+prototype.initialize = function(el, width, height, pad, bgcolor) {
   this._el = el;
+
+  this.background(bgcolor);
   
   if (!el) return this; // early exit if no DOM element
 
@@ -31,6 +34,11 @@ prototype.initialize = function(el, width, height, pad) {
   canvas.exit().remove();
   
   return this.resize(width, height, pad);
+};
+
+prototype.background = function(bgcolor) {
+  this._bgcolor = bgcolor;
+  return this;
 };
 
 prototype.resize = function(width, height, pad) {
@@ -149,7 +157,7 @@ prototype.render = function(scene, items) {
   this._scene = scene;
   g.save();
   bb = setBounds(g, getBounds(items));
-  g.clearRect(-pad.left, -pad.top, w, h);
+  this.clear(-pad.left, -pad.top, w, h);
 
   // render
   this.draw(g, scene, bb);
@@ -160,7 +168,7 @@ prototype.render = function(scene, items) {
     g.save();
     bb2 = setBounds(g, getBounds(items));
     if (!bb.encloses(bb2)) {
-      g.clearRect(-pad.left, -pad.top, w, h);
+      this.clear(-pad.left, -pad.top, w, h);
       this.draw(g, scene, bb2);
     }
   }
@@ -174,6 +182,16 @@ prototype.draw = function(ctx, scene, bounds) {
   var marktype = scene.marktype,
       renderer = marks.draw[marktype];
   renderer.call(this, ctx, scene, bounds);
+};
+
+prototype.clear = function(x, y, w, h) {
+  var g = this._ctx;
+
+  g.clearRect(x, y, w, h);
+  if (this._bgcolor != null) {
+    g.fillStyle = this._bgcolor;
+    g.fillRect(x, y, w, h); 
+  }
 };
 
 prototype.renderAsync = function(scene) {
@@ -193,19 +211,23 @@ prototype.loadImage = function(uri) {
       scene = renderer._scene,
       image = null, url;
 
-  renderer._imgload += 1;
   if (dl.isNode) {
+    renderer._imgload += 1;
     image = new (require('canvas').Image)();
     dl.load(dl.extend({url: uri}, config.load), function(err, data) {
+      renderer._imgload -= 1;
       if (err) { dl.error(err); return; }
+      dl.log("LOAD IMAGE: " + uri);
       image.src = data;
       image.loaded = true;
-      renderer._imgload -= 1;
     });
   } else {
     image = new Image();
-    url = config.baseURL + uri;
+    url = dl.load.sanitizeUrl(dl.extend({url: uri}, config.load));
+    if (!url) { return; }
+    renderer._imgload += 1;
     image.onload = function() {
+      dl.log("LOAD IMAGE: " + url);
       image.loaded = true;
       renderer._imgload -= 1;
       renderer.renderAsync(scene);

@@ -77,7 +77,10 @@ function instance(scale) {
 function ordinal(scale, rng, group) {
   var def = this._def,
       prev = scale._prev,
-      domain, sort, str, refs, dataDrivenRange = false;
+      dataDrivenRange = false,
+      pad = def.padding || 0,
+      outer = def.outerPadding == null ? pad : def.outerPadding,
+      domain, sort, str, refs;
   
   // range pre-processing for data-driven ranges
   if (dl.isObject(def.range) && !dl.isArray(def.range)) {
@@ -96,15 +99,26 @@ function ordinal(scale, rng, group) {
   // range
   if (dl.equal(prev.range, rng)) return;
 
+  // width-defined range
+  if (def.bandWidth) {
+    var bw = def.bandWidth,
+        len = domain.length,
+        start = rng[0] || 0,
+        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
+    rng = [start, start + (bw * len + space)];
+  }
+
   str = typeof rng[0] === 'string';
   if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
     scale.range(rng); // color or shape values
+  } else if (def.points && (def.round || def.round == null)) {
+    scale.rangeRoundPoints(rng, pad);
   } else if (def.points) {
-    scale.rangePoints(rng, def.padding||0);
-  } else if (def.round || def.round===undefined) {
-    scale.rangeRoundBands(rng, def.padding||0);
+    scale.rangePoints(rng, pad);
+  } else if (def.round || def.round == null) {
+    scale.rangeRoundBands(rng, pad, outer);
   } else {
-    scale.rangeBands(rng, def.padding||0);
+    scale.rangeBands(rng, pad, outer);
   }
 
   prev.range = rng;
@@ -288,7 +302,7 @@ function range(group) {
         return rng;
       }
     } else if (dl.isArray(def.range)) {
-      rng = def.range.map(signal.bind(this));
+      rng = dl.duplicate(def.range).map(signal.bind(this));
     } else if (dl.isObject(def.range)) {
       return null; // early exit
     } else {

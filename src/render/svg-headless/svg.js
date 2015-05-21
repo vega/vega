@@ -310,7 +310,7 @@ function image(o) {
         ? w/2 : (o.align === "right" ? w : 0)),
       y = o.y - (o.baseline === "middle"
         ? h/2 : (o.baseline === "bottom" ? h : 0)),
-      url = config.baseURL + o.url;
+      url = config.load.baseURL + o.url;
   
   return {
     "xlink:href": url,

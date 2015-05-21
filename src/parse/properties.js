@@ -52,6 +52,14 @@ function compile(model, mark, spec) {
     }
   }
 
+  if (vars.xc) {
+    if (vars.width) {
+      code += "\n  this.tpl.set(o, 'x', (o.xc - o.width/2));";
+    } else {
+      code += "\n  this.tpl.set(o, 'x', o.xc);";
+    }
+  }
+
   if (vars.y2) {
     if (vars.y) {
       code += "\n  if (o.y > o.y2) { "
@@ -64,6 +72,14 @@ function compile(model, mark, spec) {
       code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height));";
     } else {
       code += "\n  this.tpl.set(o, 'y', o.y2);"
+    }
+  }
+
+  if (vars.yc) {
+    if (vars.height) {
+      code += "\n  this.tpl.set(o, 'y', (o.yc - o.height/2));";
+    } else {
+      code += "\n  this.tpl.set(o, 'y', o.yc);";
     }
   }
   
@@ -157,6 +173,10 @@ function valueRef(name, ref) {
   var val = null, scale = null, 
       sgRef = {}, fRef = {}, sRef = {},
       signals = [], fields = [], reflow = false;
+
+  if (ref.template !== undefined) {
+    val = dl.template.source(ref.template, "item.datum");
+  }
 
   if (ref.value !== undefined) {
     val = dl.str(ref.value);

@@ -48,7 +48,8 @@ prototype.svg = function() {
 prototype.initialize = function() {    
   var w = this._width,
       h = this._height,
-      pad = this._padding;
+      pad = this._padding,
+      bg = this._bgcolor;
 
   if (this._viewport) {
     w = this._viewport[0] - (pad ? pad.left + pad.right : 0);
@@ -58,18 +59,18 @@ prototype.initialize = function() {
   this._renderer = this._renderer || new this._io.Renderer();
   
   if (this._type === "svg") {
-    this.initSVG(w, h, pad);
+    this.initSVG(w, h, pad, bg);
   } else {
-    this.initCanvas(w, h, pad);
+    this.initCanvas(w, h, pad, bg);
   }
   
   return this;
 };
 
-prototype.initCanvas = function(w, h, pad) {
+prototype.initCanvas = function(w, h, pad, bg) {
   var Canvas = require("canvas"),
-      tw = w + pad.left + pad.right,
-      th = h + pad.top + pad.bottom,
+      tw = w + (pad ? pad.left + pad.right : 0),
+      th = h + (pad ? pad.top + pad.bottom : 0),
       canvas = this._canvas = dl.isNode ? new Canvas(tw, th) : document.createElement('canvas'),
       ctx = canvas.getContext("2d");
 
@@ -84,11 +85,15 @@ prototype.initCanvas = function(w, h, pad) {
   // configure renderer
   this._renderer.context(ctx);
   this._renderer.resize(w, h, pad);
+  this._renderer.background(bg);
 };
 
-prototype.initSVG = function(w, h, pad) {
+prototype.initSVG = function(w, h, pad, bg) {
+  var tw = w + (pad ? pad.left + pad.right : 0),
+      th = h + (pad ? pad.top + pad.bottom : 0);
+      
   // configure renderer
-  this._renderer.initialize(this._el, w, h, pad);
+  this._renderer.initialize(this._el, tw, th, pad, bg);
 };
 
 module.exports = HeadlessView;
