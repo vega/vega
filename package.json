@@ -2,9 +2,10 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
-    "datalib": "^1.0.11",
-    "canvas": "^1.2.1",
-    "d3": "3.4.x",
+    "datalib": "1.1.x",
+    "d3": "^3.5.5",
+    "d3-geo-projection": "^0.2.13",
+    "canvas": "~1.1.6",
     "topojson": "^1.6.18",
     "yargs": "^3.2.1"
   },
