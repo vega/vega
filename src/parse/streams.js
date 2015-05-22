@@ -1,6 +1,7 @@
 var dl = require('datalib'),
     d3 = require('d3'),
     Node = require('../dataflow/Node'),
+    parseSignals = require('./signals'),
     changset = require('../dataflow/changeset'),
     selector = require('./events'),
     expr = require('./expr'),
@@ -13,26 +14,12 @@ module.exports = function(view) {
       spec  = model.defs().signals,
       register = {}, nodes = {};
 
-  function scale(spec, value) {
-    var def = spec.scale,
-        name  = def.name || def.signal || def,
-        scope = def.scope ? model.signalRef(def.scope.signal) : null;
-
-    if(!scope || !scope.scale) {
-      scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
-    }
-
-    var scale = scope.scale(name);
-    if(!scale) return value;
-    return def.invert ? scale.invert(value) : scale(value);
-  }
-
   function signal(sig, selector, exp, spec) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
       var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
-      if(spec.scale) val = scale(spec, val);
+      if(spec.scale) val = parseSignals.scale(model, spec, val);
       sig.value(val);
       input.signals[sig.name()] = 1;
       input.reflow = true;
@@ -151,7 +138,7 @@ module.exports = function(view) {
         if(filtered) continue;
         
         val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
-        if(h.spec.scale) val = scale(h.spec, val, item);
+        if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
         h.signal.value(val);
         cs.signals[h.signal.name()] = 1;
       }

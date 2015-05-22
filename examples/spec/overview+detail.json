@@ -5,34 +5,21 @@
   "signals": [
     {
       "name": "brush_start",
+      "init": {"expr": "datetime('Jan 1 2000')"},
       "streams": [
         {"type": "mousedown", "expr": "p.x", "scale": {"name": "xContext", "invert": true}}
       ]
     },
     {
       "name": "brush_end",
+      "init": {"expr": "datetime('Jan 1 2000')"},
       "streams": [{
         "type": "mousedown, mouseup, [mousedown, mouseup] > mousemove",
         "expr": "p.x", "scale": {"name": "xContext", "invert": true}
       }]
     },
-
-    {
-      "name": "date_start",
-      "init": 946713600000,
-      "streams": [
-        {"type": "brush_start", "expr": "datetime(brush_start)"}
-      ]
-    },
-    {
-      "name": "date_end",
-      "init": 946713600000,
-      "streams": [
-        {"type": "brush_end", "expr": "datetime(brush_end)"}
-      ]
-    },
-    {"name": "min_date", "expr": "min(date_start, date_end)"},
-    {"name": "max_date", "expr": "max(date_start, date_end)"}
+    {"name": "min_date", "expr": "min(brush_start, brush_end)"},
+    {"name": "max_date", "expr": "max(brush_start, brush_end)"}
   ],
 
   "data": [
@@ -47,7 +34,7 @@
       "transform": [
         {
           "type": "filter", 
-          "test": "min_date == max_date || min(date_start, date_end) <= d.date && d.date <= max(date_start, date_end)"
+          "test": "min_date == max_date || min_date <= d.date && d.date <= max_date"
         },
         {"type": "sort", "by": "date"}
       ]
@@ -152,8 +139,8 @@
               "strokeOpacity":{"value":0.5}
             },
             "update":{
-              "x": {"scale": "xContext", "signal": "date_start"},
-              "x2": {"scale": "xContext", "signal": "date_end"}
+              "x": {"scale": "xContext", "signal": "brush_start"},
+              "x2": {"scale": "xContext", "signal": "brush_end"}
             }
           }
         }
