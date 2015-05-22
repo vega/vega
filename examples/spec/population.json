@@ -37,13 +37,13 @@
       "interactive": false,
       "from": {
         "data": "pop2000",
-        "transform": [{"type":"unique", "field":"age", "as":"bin"}]
+        "transform": [{"type":"aggregate", "groupby":["age"]}]
       },
       "properties": {
         "enter": {
-          "x": {"group": "width", "mult": 0.5, "offset": -15},
-          "y": {"scale": "y", "field": "bin", "offset": 11},
-          "text": {"field": "bin"},
+          "x": {"field": {"group": "width"}, "mult": 0.5, "offset": -15},
+          "y": {"scale": "y", "field": "age", "offset": 11},
+          "text": {"field": "age"},
           "baseline": {"value": "middle"},
           "align": {"value": "center"},
           "fill": {"value": "#000"}
@@ -55,7 +55,7 @@
       "from": {
         "data": "pop2000",
         "transform": [
-          {"type":"facet", "keys":["sex"]},
+          {"type":"facet", "groupby": ["sex"]},
           {"type":"formula", "field":"reverse", "expr":"d.key==2"}
         ]
       },
@@ -64,7 +64,7 @@
           "x": {"scale": "g", "field": "key"},
           "y": {"value": 0},
           "width": {"scale": "g", "band": true, "offset": -30},
-          "height": {"group": "height"}
+          "height": {"field": {"group": "height"}}
         }
       },
       "scales": [

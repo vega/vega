@@ -76,7 +76,7 @@
       "type": "group",
       "from": {
         "data": "indexified_stocks",
-        "transform": [{"type": "facet", "keys": ["symbol"]}]
+        "transform": [{"type": "facet", "groupby": ["symbol"]}]
       },
       "marks": [
         {

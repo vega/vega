@@ -73,7 +73,7 @@
           "x": {"scale": "x", "field": "when"},
           "y": {"value": -8},
           "width": {"value": 1},
-          "height": {"group": "height", "offset": 8},
+          "height": {"field": {"group": "height"}, "offset": 8},
           "fill": {"value": "#888"}
         }
       }

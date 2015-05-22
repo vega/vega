@@ -14,6 +14,5 @@ module.exports = {
   sort:       require('./Sort'),
   stack:      require('./Stack'),
   treemap:    require('./Treemap'),
-  unique:     require('./Unique'),
   zip:        require('./Zip')
 };
