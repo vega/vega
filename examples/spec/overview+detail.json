@@ -5,14 +5,14 @@
   "signals": [
     {
       "name": "brush_start",
-      "init": "datetime('Jan 1 2000')",
+      "init": 946713600000,
       "streams": [
         {"type": "mousedown", "expr": "p.x", "scale": {"name": "xContext", "invert": true}}
       ]
     },
     {
       "name": "brush_end",
-      "init": "datetime('Jan 1 2000')",
+      "init": 946713600000,
       "streams": [{
         "type": "mousedown, mouseup, [mousedown, mouseup] > mousemove",
         "expr": "p.x", "scale": {"name": "xContext", "invert": true}

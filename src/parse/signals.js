@@ -4,8 +4,7 @@ var expr = require('./expr'),
 module.exports = function parseSignals(model, spec) {
   // process each signal definition
   (spec || []).forEach(function(s) {
-    var init = s.init ? expr(s.init).fn() : null,
-        signal = model.signal(s.name, init),
+    var signal = model.signal(s.name, s.init),
         exp;
 
     if(s.expr) {
