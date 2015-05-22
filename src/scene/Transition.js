@@ -1,5 +1,5 @@
 var tuple = require('../dataflow/tuple'),
-    calcBounds = require('../util/bounds'),
+    boundsCalc = require('../util/boundscalc'),
     C = require('../util/constants');
 
 function Transition(duration, ease) {
@@ -77,7 +77,7 @@ function step(elapsed) {
       item[curr[i].property] = curr[i](e);
     }
     item.touch();
-    calcBounds.item(item);
+    boundsCalc.item(item);
 
     if (f === 1) {
       if (curr.remove) item.remove();

@@ -7,7 +7,7 @@ module.exports = function(model, spec, width, height) {
     height: height,
     scales: spec.scales || [],
     axes: spec.axes || [],
-    // legends: spec.legends || [],
+    legends: spec.legends || [],
     marks: (spec.marks || []).map(function(m) { return parseMark(model, m); })
   };
 };

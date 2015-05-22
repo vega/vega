@@ -4,6 +4,7 @@ var dl = require('datalib'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
+    parseLegends = require('../parse/legends'),
     debug = require('../util/debug'),
     C = require('../util/constants');
 
@@ -35,6 +36,11 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   var scales = (def.axes||[]).reduce(function(acc, x) {
     return (acc[x.scale] = 1, acc);
   }, {});
+
+  scales = (def.legends||[]).reduce(function(acc, x) {
+    return (acc[x.size || x.shape || x.fill || x.stroke], acc);
+  }, scales);
+
   this._recursor.dependency(C.SCALES, dl.keys(scales));
 
   // We only need a collector for up-propagation of bounds calculation,
@@ -84,14 +90,16 @@ proto.child = function(name, group_id) {
 
 function recurse(input) {
   var builder = this,
-      hasMarks = this._def.marks && this._def.marks.length > 0,
-      hasAxes = this._def.axes && this._def.axes.length > 0,
+      hasMarks = dl.array(this._def.marks).length > 0,
+      hasAxes = dl.array(this._def.axes).length > 0,
+      hasLegends = dl.array(this._def.legends).length > 0,
       i, len, group, pipeline, def, inline = false;
 
   for(i=0, len=input.add.length; i<len; ++i) {
     group = input.add[i];
     if(hasMarks) buildMarks.call(this, input, group);
     if(hasAxes)  buildAxes.call(this, input, group);
+    if(hasLegends) buildLegends.call(this, input, group);
   }
 
   // Wire up new children builders in reverse to minimize graph rewrites.
@@ -131,7 +139,13 @@ function recurse(input) {
     if(hasAxes) {
       parseAxes(builder._graph, builder._def.axes, group.axes, group);
       group.axes.forEach(function(a, i) { a.def() });
-    }      
+    }
+
+    // Update legend data defs
+    if(hasLegends) {
+      parseLegends(builder._graph, builder._def.legends, group.legends, group);
+      group.legends.forEach(function(l, i) { l.def() });
+    }   
   }
 
   for(i=0, len=input.rem.length; i<len; ++i) {
@@ -169,6 +183,9 @@ function buildGroup(input, group) {
 
   group.axes = group.axes || [];
   group.axisItems = group.axisItems || [];
+
+  group.legends = group.legends || [];
+  group.legendItems = group.legendItems || [];
 }
 
 function buildMarks(input, group) {
@@ -208,6 +225,25 @@ function buildAxes(input, group) {
     b.init(builder._graph, def, axisItems[i], builder)
       .dependency(C.SCALES, scale);
     builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
+  });
+}
+
+function buildLegends(input, group) {
+  var legends = group.legends,
+      legendItems = group.legendItems,
+      builder = this;
+
+  parseLegends(this._graph, this._def.legends, legends, group);
+  legends.forEach(function(l, i) {
+    var scale = l.size() || l.shape() || l.fill() || l.stroke(),
+        def = l.def(),
+        b = null;
+
+    legendItems[i] = {group: group, legendDef: def};
+    b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b.init(builder._graph, def, legendItems[i], builder)
+      .dependency(C.SCALES, scale);
+    builder._children[group._id].push({ builder: b, type: C.LEGEND, scale: scale });
   });
 }
 

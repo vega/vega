@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    Bounds = require('../core/Bounds'),
+    Bounds = require('../util/Bounds'),
     canvas = require('../render/canvas/path'),
     config = require('./config');
 

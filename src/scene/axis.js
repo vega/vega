@@ -29,12 +29,12 @@ function axs(model) {
       titleStyle = {},
       domainStyle = {},
       m = { // Axis marks as references for updates
-        gridLines: null,
+        gridLines:  null,
         majorTicks: null,
         minorTicks: null,
         tickLabels: null,
         domain: null,
-        title: null
+        title:  null
       };
 
   var axis = {};
