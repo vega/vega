@@ -66,8 +66,8 @@ proto.type = function(type) {
 
 proto.accessors = function(groupby, value) {
   var acc = this._acc;
-  acc.groupby = dl.$(groupby) || dl.true;
-  acc.value = dl.$(value) || dl.true;
+  acc.groupby = dl.$(groupby) || acc.groupby || dl.true;
+  acc.value = dl.$(value) || acc.value || dl.true;
 };
 
 function standardize(x) {
