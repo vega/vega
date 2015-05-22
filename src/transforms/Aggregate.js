@@ -64,20 +64,10 @@ proto.type = function(type) {
   return (this._type = type, this); 
 };
 
-// Minimize accessor creations by checking names
-function accessor(curr, field) {
-  var cName  = dl.name(curr),
-      isFunc = dl.isFunction(field),
-      fName  = isFunc ? dl.name(field) : field;
-
-  return (cName == fName) ? curr :
-    isFunc ? field : dl.$(field);
-}
-
 proto.accessors = function(groupby, value) {
   var acc = this._acc;
-  acc.groupby = groupby ? accessor(acc.groupby, groupby) : dl.true;
-  acc.value = value ? accessor(acc.value, value) : dl.true;
+  acc.groupby = dl.$(groupby) || dl.true;
+  acc.value = dl.$(value) || dl.true;
 };
 
 function standardize(x) {
