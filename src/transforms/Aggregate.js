@@ -160,6 +160,7 @@ proto.transform = function(input, reset) {
   input.rem.forEach(function(x) {
     var y = tuple.has_prev(x) ? spoof_prev.call(t, x) : x;
     aggr._rem(tpl ? y : standardize.call(t, y));
+    t._cache[x._id] = t._prev[x._id] = null;
   });
 
   return aggr.changes(input, output);
