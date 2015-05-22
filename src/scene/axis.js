@@ -19,9 +19,8 @@ function axs(model) {
       tickPadding = config.axis.padding,
       tickValues = null,
       tickFormatString = null,
-      tickFormat = null,
       tickSubdivide = 0,
-      tickArguments = [config.axis.ticks],
+      tickCount = config.axis.ticks,
       gridLineStyle = {},
       tickLabelStyle = {},
       majorTickStyle = {},
@@ -41,32 +40,59 @@ function axs(model) {
 
   function reset() {
     axisDef.type = null;
-  };
+  }
+
+  function ingest(d) { return {data: d}; };
+
+  function getTickFormatString() {
+    return tickFormatString || (scale.type === 'log' ? ".1s" : null);
+  }
+  
+  function buildTickFormat() {
+    var fmtStr = getTickFormatString();
+    if (scale.tickFormat) {
+      return scale.tickFormat(tickCount, fmtStr);
+    } else if (fmtStr) {
+      return ((scale.type === 'time')
+        ? d3.time.format(fmtStr)
+        : d3.format(fmtStr));
+    } else {
+      return String;
+    }
+  }
+  
+  function buildTicks(fmt) {
+    var ticks = {
+      major: tickValues,
+      minor: null
+    };
+    
+    if (ticks.major == null) {
+      ticks.major = scale.ticks
+        ? scale.ticks(tickCount)
+        : scale.domain();
+    }
+  
+    ticks.minor = vg_axisSubdivide(scale, ticks.major, tickSubdivide)
+      .map(ingest);
+  
+    ticks.major = ticks.major.map(function(d) {
+      return (d = ingest(d), d.label = fmt(d.data), d);
+    });
+    
+    return ticks;
+  }
 
   axis.def = function() {
     if(!axisDef.type) axis_def(scale);
 
-    // tick format
-    tickFormat = !tickFormatString ? null : ((scale.type === 'time')
-      ? d3.time.format(tickFormatString)
-      : d3.format(tickFormatString));
+    var fmt = buildTickFormat();
+    var ticks = buildTicks(fmt);
+    var tdata = title ? [title].map(ingest) : [];
 
-    // generate data
-    // We don't _really_ need to model these as tuples as no further
-    // data transformation is done. So we optimize for a high churn rate. 
-    var injest = function(d) { return {data: d}; };
-    var major = tickValues == null
-      ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
-      : tickValues;
-    var minor = vg_axisSubdivide(scale, major, tickSubdivide).map(injest);
-    major = major.map(injest);
-    var fmt = tickFormat==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : tickFormat;
-    major.forEach(function(d) { d.label = fmt(d.data); });
-    var tdata = title ? [title].map(injest) : [];
-
-    axisDef.marks[0].from = function() { return grid ? major : []; };
-    axisDef.marks[1].from = function() { return major; };
-    axisDef.marks[2].from = function() { return minor; };
+    axisDef.marks[0].from = function() { return grid ? ticks.major : []; };
+    axisDef.marks[1].from = function() { return ticks.major; };
+    axisDef.marks[2].from = function() { return ticks.minor; };
     axisDef.marks[3].from = axisDef.marks[1].from;
     axisDef.marks[4].from = function() { return [1]; };
     axisDef.marks[5].from = function() { return tdata; };
@@ -156,9 +182,9 @@ function axs(model) {
     return axis;
   };
 
-  axis.ticks = function() {
-    if (!arguments.length) return tickArguments;
-    tickArguments = arguments;
+  axis.tickCount = function(x) {
+    if (!arguments.length) return tickCount;
+    tickCount = x;
     return axis;
   };
 
@@ -433,16 +459,29 @@ function vg_axisUpdate(item, group, trans, db, signals, predicates) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  if (dl.isObject(offset)) {
-    offset = -group.scale(offset.scale)(offset.value);
-  }
+  if (dl.isArray(offset)) {
+    var ofx = offset[0],
+        ofy = offset[1];
 
-  switch (orient) {
-    case "left":   { tpl.set(o, 'x', -offset); tpl.set(o, 'y', 0); break; }
-    case "right":  { tpl.set(o, 'x', width + offset); tpl.set(o, 'y', 0); break; }
-    case "bottom": { tpl.set(o, 'x', 0); tpl.set(o, 'y', height + offset); break; }
-    case "top":    { tpl.set(o, 'x', 0); tpl.set(o, 'y', -offset); break; }
-    default:       { tpl.set(o, 'x', 0); tpl.set(o, 'y', 0); }
+    switch (orient) {
+      case "left":   { tpl.set(o, 'x', -ofx); tpl.set(o, 'y', ofy); break; }
+      case "right":  { tpl.set(o, 'x', width + ofx); tpl.set(o, 'y', ofy); break; }
+      case "bottom": { tpl.set(o, 'x', ofx); tpl.set(o, 'y', height + ofy); break; }
+      case "top":    { tpl.set(o, 'x', ofx); tpl.set(o, 'y', -ofy); break; }
+      default:       { tpl.set(o, 'x', ofx); tpl.set(o, 'y', ofy); }
+    }
+  } else {
+    if (dl.isObject(offset)) {
+      offset = -group.scale(offset.scale)(offset.value);
+    }
+
+    switch (orient) {
+      case "left":   { tpl.set(o, 'x', -offset); tpl.set(o, 'y', 0); break; }
+      case "right":  { tpl.set(o, 'x', width + offset); tpl.set(o, 'y', 0); break; }
+      case "bottom": { tpl.set(o, 'x', 0); tpl.set(o, 'y', height + offset); break; }
+      case "top":    { tpl.set(o, 'x', 0); tpl.set(o, 'y', -offset); break; }
+      default:       { tpl.set(o, 'x', 0); tpl.set(o, 'y', 0); }
+    }
   }
 
   if (trans) trans.interpolate(item, o);

@@ -4,13 +4,15 @@ var dl = require('datalib'),
 
 function x(o)     { return o.x || 0; }
 function y(o)     { return o.y || 0; }
+function xw(o)    { return o.x + o.width || 0; }
 function yh(o)    { return o.y + o.height || 0; }
 function key(o)   { return o.key; }
 function size(o)  { return o.size==null ? 100 : o.size; }
 function shape(o) { return o.shape || "circle"; }
     
 var arc_path    = d3.svg.arc(),
-    area_path   = d3.svg.area().x(x).y1(y).y0(yh),
+    area_path_v = d3.svg.area().x(x).y1(y).y0(yh),
+    area_path_h = d3.svg.area().y(y).x0(xw).x1(x),
     line_path   = d3.svg.line().x(x).y(y),
     symbol_path = d3.svg.symbol().type(shape).size(size);
 
@@ -53,7 +55,7 @@ function style(d) {
       if (value.id) {
         // ensure definition is included
         marks.current._defs.gradient[value.id] = value;
-        value = "url(#" + value.id + ")";
+        value = "url(" + window.location.href + "#" + value.id + ")";
       }
       this.style.setProperty(name, value+"", null);
     }
@@ -69,11 +71,12 @@ function arc(o) {
 
 function area(items) {
   if (!items.length) return;
-  var o = items[0];
-  area_path
+  var o = items[0],
+      path = o.orient === "horizontal" ? area_path_h : area_path_v;
+  path
     .interpolate(o.interpolate || "linear")
     .tension(o.tension == null ? 0.7 : o.tension);
-  this.setAttribute("d", area_path(items));
+  this.setAttribute("d", path(items));
 }
 
 function line(items) {
@@ -122,9 +125,12 @@ function image(o) {
         ? w/2 : (o.align === "right" ? w : 0)),
       y = o.y - (o.baseline === "middle"
         ? h/2 : (o.baseline === "bottom" ? h : 0)),
-      url = config.baseURL + o.url;
+      url = dl.load.sanitizeUrl(dl.extend({url: o.url}, config.load));
   
-  this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
+  if (url) {
+    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
+  }
+
   this.setAttribute("x", x);
   this.setAttribute("y", y);
   this.setAttribute("width", w);
@@ -198,11 +204,11 @@ function cssClass(def) {
 
 function draw(tag, attr, nest) {
   return function(g, scene, index) {
-    drawMark(g, scene, index, "mark_", tag, attr, nest);
+    drawMark(g, scene, index, tag, attr, nest);
   };
 }
 
-function drawMark(g, scene, index, prefix, tag, attr, nest) {
+function drawMark(g, scene, index, tag, attr, nest) {
   var data = nest ? [scene.items] : scene.items,
       evts = scene.interactive===false ? "none" : null,
       grps = g.node().childNodes,
@@ -236,8 +242,8 @@ function drawMark(g, scene, index, prefix, tag, attr, nest) {
   return p;
 }
 
-function drawGroup(g, scene, index, prefix) {    
-  var p = drawMark(g, scene, index, prefix || "group_", "g", group),
+function drawGroup(g, scene, index) {
+  var p = drawMark(g, scene, index, "g", group),
       c = p.node().childNodes, n = c.length, i, j, m;
   
   for (i=0; i<n; ++i) {
@@ -249,7 +255,7 @@ function drawGroup(g, scene, index, prefix) {
 
     for (j=0, m=axes.length; j<m; ++j) {
       if (axes[j].def.layer === "back") {
-        drawGroup.call(this, sel, axes[j], idx++, "axis_");
+        drawGroup.call(this, sel, axes[j], idx++);
       }
     }
     for (j=0, m=items.length; j<m; ++j) {
@@ -257,11 +263,11 @@ function drawGroup(g, scene, index, prefix) {
     }
     for (j=0, m=axes.length; j<m; ++j) {
       if (axes[j].def.layer !== "back") {
-        drawGroup.call(this, sel, axes[j], idx++, "axis_");
+        drawGroup.call(this, sel, axes[j], idx++);
       }
     }
     for (j=0, m=legends.length; j<m; ++j) {
-      drawGroup.call(this, sel, legends[j], idx++, "legend_");
+      drawGroup.call(this, sel, legends[j], idx++);
     }
   }
 }

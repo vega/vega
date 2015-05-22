@@ -1,4 +1,5 @@
 var d3 = require('d3'),
+    dl = require('datalib'),
     Bounds = require('../util/Bounds'),
     canvas = require('../render/canvas/path'),
     config = require('./config');
@@ -21,10 +22,9 @@ function fontString(o) {
 }
 
 function context() {
-  // TODO: how to check if nodeJS in requireJS?
-  return gfx || (gfx = (/*config.isNode
+  return gfx || (gfx = (dl.isNode
     ? new (require("canvas"))(1,1)
-    : */d3.select("body").append("canvas")
+    : d3.select("body").append("canvas")
         .attr("class", "vega_hidden")
         .attr("width", 1)
         .attr("height", 1)

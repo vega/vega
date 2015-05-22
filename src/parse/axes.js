@@ -61,13 +61,8 @@ function axis(def, index, axis, group) {
     axis.tickSize.apply(axis, size);
   }
 
-  // tick arguments
-  if (def.ticks != null) {
-    var ticks = dl.isArray(def.ticks) ? def.ticks : [def.ticks];
-    axis.ticks.apply(axis, ticks);
-  } else {
-    axis.ticks(config.axis.ticks);
-  }
+  // axis tick count
+  axis.tickCount(def.ticks || config.axis.ticks);
 
   // style properties
   var p = def.properties;

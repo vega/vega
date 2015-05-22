@@ -4,6 +4,7 @@ var dl = require('datalib'),
 
 var handler = function(el, model) {
   this._active = null;
+  this._down = null;
   this._handlers = {};
   if (el) this.initialize(el);
   if (model) this.model(model);
@@ -48,9 +49,7 @@ prototype.handlers = function() {
 
 // setup events
 var events = [
-  "mousedown",
   "mouseup",
-  "click",
   "dblclick",
   "wheel",
   "keydown",
@@ -64,8 +63,10 @@ events.forEach(function(type) {
     this.fire(type, evt);
   };
 });
+events.push("mousedown");
 events.push("mousemove");
 events.push("mouseout");
+events.push("click");
 events.push("touchmove");
 events.push("touchend");
 
@@ -103,6 +104,18 @@ prototype.touchend = prototype.mouseout = function(evt) {
     this.fire("touchend", evt);
   }
   this._active = null;
+};
+
+prototype.mousedown = function(evt) {
+  this._down = this._active;
+  this.fire("mousedown", evt);
+};
+
+prototype.click = function(evt) {
+  if (this._down === this._active) {
+    this.fire("click", evt);
+    this._down = null;
+  }
 };
 
 // to keep firefox happy
