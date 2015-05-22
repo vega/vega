@@ -194,7 +194,6 @@ function getCache(which, def, scale, group) {
       sort = def.sort,
       ck = "_"+which,
       fields = getFields(refs[0], group),
-      singleDomain = refs.length == 1 && fields.length == 1,
       i, rlen, j, flen, ref, field;
 
   if(scale[ck]) return scale[ck];
@@ -221,7 +220,7 @@ function getCache(which, def, scale, group) {
     groupby = [];
     summarize = [{
       name: C.VALUE,
-      get:  singleDomain ? dl.$(fields[0]) : dl.identity,
+      get: (atype == Aggregate.TYPES.TUPLE) ? dl.$(fields[0]) : dl.identity,
       ops: [C.MIN, C.MAX],
       as:  [C.MIN, C.MAX]
     }];
