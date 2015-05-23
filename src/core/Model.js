@@ -1,8 +1,9 @@
-var Graph = require('../dataflow/Graph'), 
+var dl = require('datalib'),
+    Graph = require('../dataflow/Graph'), 
     Node  = require('../dataflow/Node'),
     GroupBuilder = require('../scene/GroupBuilder'),
-    changeset = require('../dataflow/changeset'), 
-    dl = require('datalib');
+    changeset = require('../dataflow/changeset'),
+    visit = require('../scene/visit');
 
 function Model() {
   this._defs = {};
@@ -12,6 +13,8 @@ function Model() {
   this._node = null;
   this._builder = null; // Top-level scenegraph builder
 
+  this._reset = {axes: false, legends: false};
+
   Graph.prototype.init.call(this);
 };
 
@@ -20,6 +23,22 @@ var proto = (Model.prototype = new Graph());
 proto.defs = function(defs) {
   if (!arguments.length) return this._defs;
   this._defs = defs;
+  return this;
+};
+
+proto.width = function(width) {
+  if (this._defs) this._defs.width = width;
+  if (this._defs && this._defs.marks) this._defs.marks.width = width;
+  if (this._scene) this._scene.items[0].width = width;
+  this._reset.axes = true;
+  return this;
+};
+
+proto.height = function(height) {
+  if (this._defs) this._defs.height = height;
+  if (this._defs && this._defs.marks) this._defs.marks.height = height;
+  if (this._scene) this._scene.items[0].height = height;
+  this._reset.axes = true;
   return this;
 };
 
@@ -57,6 +76,22 @@ proto.scene = function(renderer) {
   this.node().addListener(this._builder.connect());
   var p = this._builder.pipeline();
   p[p.length-1].addListener(renderer);
+  return this;
+};
+
+proto.reset = function() {
+  if (this._scene && this._reset.axes) {
+    visit(this._scene, function(item) {
+      if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
+    });
+    this._reset.axes = false;
+  }
+  if (this._scene && this._reset.legends) {
+    visit(this._scene, function(item) {
+      if (item.legends) item.legends.forEach(function(l) { l.reset(); });
+    });
+    this._reset.legends = false;
+  }
   return this;
 };
 

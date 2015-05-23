@@ -190,10 +190,12 @@ prototype.autopad = function(opt) {
     this._padding = pad;
     this._width = Math.max(0, this.__width - (l+r));
     this._height = Math.max(0, this.__height - (t+b));
-    this._model.width(this._width);
-    this._model.height(this._height);
-    this.initialize();
-    this.update();
+
+    this._model.width(this._width)
+      .height(this._height).reset();
+
+    this.initialize()
+      .update({props:"enter"}).update({props:"update"});
   } else {
     this.padding(pad).update(opt);
   }

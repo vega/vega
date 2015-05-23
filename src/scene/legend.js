@@ -26,10 +26,10 @@ function lgnd(model) {
       titleStyle = {},
       labelStyle = {},
       m = { // Legend marks as references for updates
-        titles:  null,
-        symbols: null,
-        labels:  null,
-        gradient: null
+        titles:  {},
+        symbols: {},
+        labels:  {},
+        gradient: {}
       };
 
   var legend = {},
@@ -121,9 +121,9 @@ function lgnd(model) {
 
   function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
-    var titles  = m.titles  || (m.titles  = vg_legendTitle()),
-        symbols = m.symbols || (m.symbols = vg_legendSymbols()),
-        labels  = m.labels  || (m.labels  = vg_vLegendLabels());
+    var titles  = dl.extend(m.titles, vg_legendTitle()),
+        symbols = dl.extend(m.symbols, vg_legendSymbols()),
+        labels  = dl.extend(m.labels, vg_vLegendLabels());
 
     // extend legend marks
     vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
@@ -190,9 +190,9 @@ function lgnd(model) {
   
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = m.title || (m.title = vg_legendTitle()),
-        gradient = m.gradient || (m.gradient = vg_legendGradient()),
-        labels = m.labels || (m.labels = vg_hLegendLabels()),
+    var titles = dl.extend(m.title, vg_legendTitle()),
+        gradient = dl.extend(m.gradient, vg_legendGradient()),
+        labels = dl.extend(m.labels, vg_hLegendLabels()),
         grad = new Gradient();
 
     // setup color gradient

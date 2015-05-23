@@ -28,12 +28,12 @@ function axs(model) {
       titleStyle = {},
       domainStyle = {},
       m = { // Axis marks as references for updates
-        gridLines:  null,
-        majorTicks: null,
-        minorTicks: null,
-        tickLabels: null,
-        domain: null,
-        title:  null
+        gridLines:  {},
+        majorTicks: {},
+        minorTicks: {},
+        tickLabels: {},
+        domain: {},
+        title:  {}
       };
 
   var axis = {};
@@ -115,12 +115,12 @@ function axs(model) {
     range = vg_axisScaleRange(scale);
 
     // setup axis marks
-    if (!m.gridLines)  m.gridLines  = vg_axisTicks();
-    if (!m.majorTicks) m.majorTicks = vg_axisTicks();
-    if (!m.minorTicks) m.minorTicks = vg_axisTicks();
-    if (!m.tickLabels) m.tickLabels = vg_axisTickLabels();
-    if (!m.domain) m.domain = vg_axisDomain();
-    if (!m.title)  m.title  = vg_axisTitle();
+    dl.extend(m.gridLines, vg_axisTicks());
+    dl.extend(m.majorTicks, vg_axisTicks());
+    dl.extend(m.minorTicks, vg_axisTicks());
+    dl.extend(m.tickLabels, vg_axisTickLabels());
+    dl.extend(m.domain, vg_axisDomain());
+    dl.extend(m.title, vg_axisTitle());
     m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
 
     // extend axis marks based on axis orientation
