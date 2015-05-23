@@ -8,7 +8,7 @@
     "topojson": "^1.6.18",
     "yargs": "^3.2.1"
   },
-  "optionalDependencies":{
+  "optionalDependencies": {
     "canvas": "~1.1.6"
   },
   "devDependencies": {
@@ -16,6 +16,7 @@
     "browserify-shim": "^3.8.5",
     "chai": "^1.10.0",
     "chromedriver": "^2.14.1",
+    "exorcist": "^0.4.0",
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.5.1",
@@ -29,6 +30,7 @@
     "summary": "^0.3.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
+    "vinyl-transform": "^1.0.0",
     "watchify": "^3.1.0",
     "webdriverio": "^2.4.5",
     "xmldom": "^0.1.19",

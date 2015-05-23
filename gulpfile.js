@@ -2,6 +2,8 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     buffer = require('vinyl-buffer'),
     rename = require('gulp-rename'),
+    exorcist   = require('exorcist'),
+    transform = require('vinyl-transform'),
     source = require('vinyl-source-stream'),
     sourcemaps = require('gulp-sourcemaps'),
     uglify = require('gulp-uglify'),
@@ -30,12 +32,12 @@ function build(b) {
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('vega2.js'))
     .pipe(buffer())
+    // Remove map from vega.js
+    .pipe(transform(function () { return exorcist('./vega2.js.map'); }))
     .pipe(gulp.dest('.'))
-    .pipe(sourcemaps.init({loadMaps: true}))
     // This will minify and rename to vegalite.min.js
     .pipe(uglify())
     .pipe(rename({ extname: '.min.js' }))
-    .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('.')); 
 }
 
