@@ -39,6 +39,9 @@
   "scripts": {
     "test": "gulp test"
   },
+  "browser": {
+    "canvas": false
+  },
   "browserify": {
     "transform": [
       "browserify-shim"
