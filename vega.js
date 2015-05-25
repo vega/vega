@@ -3076,7 +3076,7 @@ vg.data.size = function(size, group) {
 
   function http(url, callback) {
     vg.log('LOAD HTTP: ' + url);
-    var options = {url: url};
+    var options = {url: url, encoding: null};
     if (vg.config.dataHeaders) {
       options.headers = vg.config.dataHeaders;
     }
