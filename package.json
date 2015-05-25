@@ -40,7 +40,13 @@
     "test": "gulp test"
   },
   "browser": {
-    "canvas": false
+    "buffer": false,
+    "canvas": false,
+    "fs": false,
+    "http": false,
+    "request": false,
+    "sync-request": false,
+    "url": false
   },
   "browserify": {
     "transform": [
