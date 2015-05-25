@@ -39,6 +39,15 @@
   "scripts": {
     "test": "gulp test"
   },
+  "browser": {
+    "buffer": false,
+    "canvas": false,
+    "fs": false,
+    "http": false,
+    "request": false,
+    "sync-request": false,
+    "url": false
+  },
   "browserify": {
     "transform": [
       "browserify-shim"
