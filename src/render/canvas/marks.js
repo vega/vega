@@ -332,7 +332,7 @@ function drawText(g, scene, bounds) {
       lw = (lw = o.strokeWidth) != null ? lw : 1;
       if (lw > 0) {
         g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = color(o, stroke);
+        g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
         g.strokeText(o.text, x, y);
       }

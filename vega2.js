@@ -10050,7 +10050,7 @@ function drawText(g, scene, bounds) {
       lw = (lw = o.strokeWidth) != null ? lw : 1;
       if (lw > 0) {
         g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = color(o, stroke);
+        g.strokeStyle = color(g, o, stroke);
         g.lineWidth = lw;
         g.strokeText(o.text, x, y);
       }
@@ -10298,6 +10298,7 @@ module.exports = {
     pickAll: pickAll  // expose for extensibility
   }
 };
+
 },{"../../util/Bounds":103,"../../util/boundscalc":105,"../../util/config":106,"./path":64}],64:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
