@@ -18,7 +18,7 @@ function Force(graph) {
     alpha: {type: "value", default: 0.1}
   });
 
-  this._nodes = [];
+  this._nodes  = [];
   this._links = [];
   this._layout = d3.layout.force();
 
@@ -35,7 +35,7 @@ function Force(graph) {
 var proto = (Force.prototype = new Transform());
 
 function get(transform, name) {
-  var v = transform[name].get(transform._graph);
+  var v = transform.param(name);
   return v.accessor
     ? function(x) { return v.accessor(x.tuple); }
     : v.field;
@@ -43,13 +43,12 @@ function get(transform, name) {
 
 proto.transform = function(nodeInput) {
   // get variables
-  var g = this._graph,
-      linkInput = this.links.get(g).source.last(),
+  var linkInput = this.param("links").source.last(),
       layout = this._layout,
       output = this._output,
       nodes = this._nodes,
       links = this._links,
-      iter = this.iterations.get(g);
+      iter = this.param("iterations");
 
   // process added nodes
   nodeInput.add.forEach(function(n) {
@@ -72,15 +71,15 @@ proto.transform = function(nodeInput) {
 
   // configure layout
   layout
-    .size(this.size.get(g))
+    .size(this.param("size"))
     .linkDistance(get(this, "linkDistance"))
     .linkStrength(get(this, "linkStrength"))
     .charge(get(this, "charge"))
     .chargeDistance(get(this, "chargeDistance"))
-    .friction(this.friction.get(g))
-    .theta(this.theta.get(g))
-    .gravity(this.gravity.get(g))
-    .alpha(this.alpha.get(g))
+    .friction(this.param("friction"))
+    .theta(this.param("theta"))
+    .gravity(this.param("gravity"))
+    .alpha(this.param("alpha"))
     .nodes(nodes)
     .links(links);
 

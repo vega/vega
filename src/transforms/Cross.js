@@ -86,8 +86,8 @@ proto.transform = function(input) {
   // Materialize the current datasource. TODO: share collectors
   this._collector.evaluate(input);
 
-  var w = this.with.get(this._graph),
-      diag = this.diagonal.get(this._graph),
+  var w = this.param("with"),
+      diag = this.param("diagonal"),
       selfCross = (!w.name),
       data = this._collector.data(),
       woutput = selfCross ? input : w.source.last(),

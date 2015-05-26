@@ -15,7 +15,7 @@ function Filter(graph) {
 var proto = (Filter.prototype = new Transform());
 
 function test(x) {
-  return expr.eval(this._graph, this.test.get(this._graph), 
+  return expr.eval(this._graph, this.param("test"), 
     x, null, null, null, this.dependency(C.SIGNALS));
 };
 

@@ -240,8 +240,8 @@ function getCache(which, def, scale, group) {
     }];
   }
 
-  cache.groupby.set(cache, groupby)
-    .summarize.set(cache, summarize);
+  cache.param("groupby", groupby)
+    .param("summarize", summarize);
 
   return cache;
 }

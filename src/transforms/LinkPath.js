@@ -67,14 +67,13 @@ var shapes = {
 };
 
 proto.transform = function(input) {
-  var g = this._graph,
-      output = this._output,
-      shape = shapes[this.shape.get(g)] || shapes.line,
-      source = this.source.get(g).accessor,
-      target = this.target.get(g).accessor,
-      x = this.x.get(g).accessor,
-      y = this.y.get(g).accessor,
-      tension = this.tension.get(g);
+  var output = this._output,
+      shape = shapes[this.param("shape")] || shapes.line,
+      source = this.param("source").accessor,
+      target = this.param("target").accessor,
+      x = this.param("x").accessor,
+      y = this.param("y").accessor,
+      tension = this.param("tension");
   
   function set(t) {
     var path = shape(t, source, target, x, y, tension)

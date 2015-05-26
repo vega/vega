@@ -20,8 +20,8 @@ proto.transform = function(input) {
   debug(input, ["formulating"]);
   var t = this, 
       g = this._graph,
-      field = this.field.get(g),
-      expr = this.expr.get(g),
+      field = this.param("field"),
+      expr = this.param("expr"),
       deps = this.dependency(C.SIGNALS);
   
   function set(x) {

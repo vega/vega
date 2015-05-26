@@ -29,10 +29,10 @@ function ones() { return 1; }
 proto.batchTransform = function(input, data) {
   var g = this._graph,
       output = this._output,
-      value = this.value.get(g).accessor || ones,
-      start = this.startAngle.get(g),
-      stop = this.endAngle.get(g),
-      sort = this.sort.get(g);
+      value = this.param("value").accessor || ones,
+      start = this.param("startAngle"),
+      stop = this.param("endAngle"),
+      sort = this.param("sort");
 
   var values = data.map(value),
       a = start,

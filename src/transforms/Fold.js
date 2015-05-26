@@ -47,14 +47,13 @@ proto.transform = function(input, reset) {
   debug(input, ["folding"]);
 
   var fold = this,
-      on = this.fields.get(this._graph),
-      fields = on.fields, accessors = on.accessors,
+      on = this.param('fields'),
       output = changeset.create(input);
 
   if(reset) rst.call(this, input, output);
 
-  fn.call(this, input.add, fields, accessors, output.add, input.stamp);
-  fn.call(this, input.mod, fields, accessors, reset ? output.add : output.mod, input.stamp);
+  fn.call(this, input.add, on.field, on.accessor, output.add, input.stamp);
+  fn.call(this, input.mod, on.field, on.accessor, reset ? output.add : output.mod, input.stamp);
   input.rem.forEach(function(x) {
     output.rem.push.apply(output.rem, fold._cache[x._id]);
     fold._cache[x._id] = null;
@@ -62,7 +61,7 @@ proto.transform = function(input, reset) {
 
   // If we're only propagating values, don't mark key/value as updated.
   if(input.add.length || input.rem.length || 
-    fields.some(function(f) { return !!input.fields[f]; }))
+    on.field.some(function(f) { return !!input.fields[f]; }))
       output.fields[this._output.key] = 1, output.fields[this._output.value] = 1;
   return output;
 };

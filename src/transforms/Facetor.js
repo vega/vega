@@ -38,7 +38,7 @@ proto._newcell = function(x) {
 
   if(this._facet !== null) {
     graph = facet._graph;
-    pipeline = facet.pipeline.get(graph, facet);
+    pipeline = facet.param("transform");
     cell.ds  = graph.data("vg_"+tuple._id, pipeline, tuple);
     cell.delete = disconnect_cell;
     facet.addListener(pipeline[0]);
