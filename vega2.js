@@ -15097,10 +15097,10 @@ function Force(graph) {
   Transform.addParameters(this, {
     size: {type: "array<value>", default: [500, 500]},
     links: {type: "data"},
-    linkDistance: {type: "field", default: 20},
-    linkStrength: {type: "field", default: 1},
-    charge: {type: "field", default: 30},
-    chargeDistance: {type: "field", default: Infinity},
+    linkDistance: {type: "field|value", default: 20},
+    linkStrength: {type: "field|value", default: 1},
+    charge: {type: "field|value", default: 30},
+    chargeDistance: {type: "field|value", default: Infinity},
     iterations: {type: "value", default: 500},
     friction: {type: "value", default: 0.9},
     theta: {type: "value", default: 0.8},
@@ -15123,13 +15123,6 @@ function Force(graph) {
 }
 
 var proto = (Force.prototype = new Transform());
-
-function get(transform, name) {
-  var v = transform.param(name);
-  return v.accessor
-    ? function(x) { return v.accessor(x.tuple); }
-    : v.field;
-}
 
 proto.transform = function(nodeInput) {
   // get variables
@@ -15162,10 +15155,10 @@ proto.transform = function(nodeInput) {
   // configure layout
   layout
     .size(this.param("size"))
-    .linkDistance(get(this, "linkDistance"))
-    .linkStrength(get(this, "linkStrength"))
-    .charge(get(this, "charge"))
-    .chargeDistance(get(this, "chargeDistance"))
+    .linkDistance(this.param("linkDistance"))
+    .linkStrength(this.param("linkStrength"))
+    .charge(this.param("charge"))
+    .chargeDistance(this.param("chargeDistance"))
     .friction(this.param("friction"))
     .theta(this.param("theta"))
     .gravity(this.param("gravity"))
@@ -15490,7 +15483,8 @@ var dl = require('datalib'),
 var arrayType = /array/i,
     dataType  = /data/i,
     fieldType = /field/i,
-    exprType  = /expr/i;
+    exprType  = /expr/i,
+    valType   = /value/i;
 
 function Parameter(name, type, transform) {
   this._name = name;
@@ -15515,8 +15509,12 @@ function get() {
   var val = isArray ? this._value : this._value[0],
       acc = isArray ? this._accessors : this._accessors[0];
 
-  return isData ? { name: val, source: acc } :
-  isField ? { field: val, accessor: acc } : val;
+  if(!dl.isValid(acc) && valType.test(this._type)) {
+    return val;
+  } else {
+    return isData ? { name: val, source: acc } :
+    isField ? { field: val, accessor: acc } : val;
+  }
 };
 
 proto.get = function() {

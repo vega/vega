@@ -5,7 +5,8 @@ var dl = require('datalib'),
 var arrayType = /array/i,
     dataType  = /data/i,
     fieldType = /field/i,
-    exprType  = /expr/i;
+    exprType  = /expr/i,
+    valType   = /value/i;
 
 function Parameter(name, type, transform) {
   this._name = name;
@@ -30,8 +31,12 @@ function get() {
   var val = isArray ? this._value : this._value[0],
       acc = isArray ? this._accessors : this._accessors[0];
 
-  return isData ? { name: val, source: acc } :
-  isField ? { field: val, accessor: acc } : val;
+  if(!dl.isValid(acc) && valType.test(this._type)) {
+    return val;
+  } else {
+    return isData ? { name: val, source: acc } :
+    isField ? { field: val, accessor: acc } : val;
+  }
 };
 
 proto.get = function() {
