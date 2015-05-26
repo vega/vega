@@ -186,8 +186,6 @@
           "text": {"signal": "year"},
           "x": {"value": 300},
           "y": {"value": 300},
-          "width": {"value": 100},
-          "height": {"value": "auto"},
           "fill": {"value": "grey"},
           "fillOpacity": {"value": 0.25},
           "fontSize": {"value": 100}
