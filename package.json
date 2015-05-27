@@ -16,6 +16,7 @@
     "browserify-shim": "^3.8.5",
     "chai": "^1.10.0",
     "chromedriver": "^2.14.1",
+    "coveralls": "^2.11.2",
     "exorcist": "^0.4.0",
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
