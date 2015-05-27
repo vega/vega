@@ -1,4 +1,4 @@
-Vega: A Visualization Grammar [![npm version](https://img.shields.io/npm/v/vega.svg)](https://www.npmjs.com/package/vega)
+Vega: A Visualization Grammar
 ====
 [![Build Status](https://travis-ci.org/uwdata/vega.svg?branch=v2)](https://travis-ci.org/uwdata/vega) [![Coverage Status](https://coveralls.io/repos/uwdata/vega/badge.svg?branch=v2)](https://coveralls.io/r/uwdata/vega?branch=v2)
 
