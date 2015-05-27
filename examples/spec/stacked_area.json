@@ -74,7 +74,7 @@
               "interpolate": {"value": "monotone"},
               "x": {"scale": "x", "field": "x"},
               "y": {"scale": "y", "field": "layout_start"},
-              "y2": {"scale": "y", "field": "layout_stop"},
+              "y2": {"scale": "y", "field": "layout_end"},
               "fill": {"scale": "color", "field": "c"}
             },
             "update": {

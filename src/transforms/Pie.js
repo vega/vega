@@ -15,7 +15,7 @@ function Pie(graph) {
 
   this._output = {
     "start": "layout_start",
-    "stop":  "layout_stop",
+    "end":   "layout_end",
     "mid":   "layout_mid"
   };
 
@@ -51,11 +51,11 @@ proto.batchTransform = function(input, data) {
     v = values[index[i]];
     tuple.set(t, output.start, a);
     tuple.set(t, output.mid, (a + 0.5 * v * k));
-    tuple.set(t, output.stop, (a += v * k));
+    tuple.set(t, output.end, (a += v * k));
   }
 
   input.fields[output.start] = 1;
-  input.fields[output.stop] = 1;
+  input.fields[output.end] = 1;
   input.fields[output.mid] = 1;
   return input;
 };

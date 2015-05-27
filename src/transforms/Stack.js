@@ -14,7 +14,7 @@ function Stack(graph) {
 
   this._output = {
     "start": "layout_start",
-    "stop":  "layout_stop",
+    "end":   "layout_end",
     "mid":   "layout_mid"
   };
   return this;
@@ -48,13 +48,13 @@ proto.batchTransform = function(input, data) {
       v += value(x);
       b = scale * v + off; // compute end point
       tuple.set(x, output.start, a);
-      tuple.set(x, output.stop, b);
+      tuple.set(x, output.end, b);
       tuple.set(x, output.mid, 0.5 * (a + b));
     }
   }
 
   input.fields[output.start] = 1;
-  input.fields[output.stop] = 1;
+  input.fields[output.end] = 1;
   input.fields[output.mid] = 1;
   return input;
 };

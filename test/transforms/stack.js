@@ -22,7 +22,7 @@ describe('Stack', function() {
       sortby: opt.sortby,
       value: opt.value,
       offset: opt.offset,
-      output: {start: "y2", stop: "y", mid: "cy"}
+      output: {start: "y2", end: "y", mid: "cy"}
     };
     
     return {
