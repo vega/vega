@@ -35,21 +35,20 @@ var proto = (Treemap.prototype = new BatchTransform());
 
 proto.batchTransform = function(input, data) {
   // get variables
-  var g = this._graph,
-      layout = this._layout,
+  var layout = this._layout,
       output = this._output;
 
   // configure layout
   layout
-    .sort(dl.comparator(this.sort.get(g).fields))
-    .children(this.children.get(g).accessor)
-    .value(this.value.get(g).accessor)
-    .size(this.size.get(g))
-    .round(this.round.get(g))
-    .sticky(this.sticky.get(g))
-    .ratio(this.ratio.get(g))
-    .padding(this.padding.get(g))
-    .mode(this.mode.get(g))
+    .sort(dl.comparator(this.param("sort").field))
+    .children(this.param("children").accessor)
+    .value(this.param("value").accessor)
+    .size(this.param("size"))
+    .round(this.param("round"))
+    .sticky(this.param("sticky"))
+    .ratio(this.param("ratio"))
+    .padding(this.param("padding"))
+    .mode(this.param("mode"))
     .nodes(data[0]);
 
   // copy layout values to nodes

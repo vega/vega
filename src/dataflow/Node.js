@@ -33,15 +33,6 @@ proto.init = function(graph) {
   return this;
 };
 
-proto.clone = function() {
-  var n = new Node(this._graph);
-  n.evaluate = this.evaluate;
-  n._deps = this._deps;
-  n._isRouter = this._isRouter;
-  n._isCollector = this._isCollector;
-  return n;
-};
-
 proto.rank = function() { return this._rank; };
 
 proto.last = function(stamp) { 

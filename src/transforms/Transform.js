@@ -8,26 +8,25 @@ function Transform(graph) {
 }
 
 Transform.addParameters = function(proto, params) {
-  var p;
+  proto._parameters = proto._parameters || {};
   for (var name in params) {
-    p = params[name];
-    proto[name] = new Parameter(name, p.type);
-    if (p.hasOwnProperty('default')) proto[name].set(proto, p.default);
+    var p = params[name],
+        param = proto._parameters[name] = new Parameter(name, p.type, proto);
+
+    if (p.type === 'custom') {
+      if (p.set) param.set = p.set.bind(param);
+      if (p.get) param.get = p.get.bind(param);
+    }
+
+    if (p.hasOwnProperty('default')) param.set(p.default);
   }
-  proto._parameters = params;
 };
 
 var proto = (Transform.prototype = new Node());
 
-proto.clone = function() {
-  var n = Node.prototype.clone.call(this);
-  n.transform = this.transform;
-  n._parameters = this._parameters;
-  for(var k in this) { 
-    if(n[k]) continue;
-    n[k] = this[k]; 
-  }
-  return n;
+proto.param = function(name, value) {
+  if(arguments.length === 1) return this._parameters[name].get();
+  return this._parameters[name].set(value);
 };
 
 proto.transform = function(input, reset) { return input; };

@@ -7,10 +7,10 @@ function Force(graph) {
   Transform.addParameters(this, {
     size: {type: "array<value>", default: [500, 500]},
     links: {type: "data"},
-    linkDistance: {type: "field", default: 20},
-    linkStrength: {type: "field", default: 1},
-    charge: {type: "field", default: 30},
-    chargeDistance: {type: "field", default: Infinity},
+    linkDistance: {type: "field|value", default: 20},
+    linkStrength: {type: "field|value", default: 1},
+    charge: {type: "field|value", default: 30},
+    chargeDistance: {type: "field|value", default: Infinity},
     iterations: {type: "value", default: 500},
     friction: {type: "value", default: 0.9},
     theta: {type: "value", default: 0.8},
@@ -18,7 +18,7 @@ function Force(graph) {
     alpha: {type: "value", default: 0.1}
   });
 
-  this._nodes = [];
+  this._nodes  = [];
   this._links = [];
   this._layout = d3.layout.force();
 
@@ -34,22 +34,14 @@ function Force(graph) {
 
 var proto = (Force.prototype = new Transform());
 
-function get(transform, name) {
-  var v = transform[name].get(transform._graph);
-  return v.accessor
-    ? function(x) { return v.accessor(x.tuple); }
-    : v.field;
-}
-
 proto.transform = function(nodeInput) {
   // get variables
-  var g = this._graph,
-      linkInput = this.links.get(g).source.last(),
+  var linkInput = this.param("links").source.last(),
       layout = this._layout,
       output = this._output,
       nodes = this._nodes,
       links = this._links,
-      iter = this.iterations.get(g);
+      iter = this.param("iterations");
 
   // process added nodes
   nodeInput.add.forEach(function(n) {
@@ -72,15 +64,15 @@ proto.transform = function(nodeInput) {
 
   // configure layout
   layout
-    .size(this.size.get(g))
-    .linkDistance(get(this, "linkDistance"))
-    .linkStrength(get(this, "linkStrength"))
-    .charge(get(this, "charge"))
-    .chargeDistance(get(this, "chargeDistance"))
-    .friction(this.friction.get(g))
-    .theta(this.theta.get(g))
-    .gravity(this.gravity.get(g))
-    .alpha(this.alpha.get(g))
+    .size(this.param("size"))
+    .linkDistance(this.param("linkDistance"))
+    .linkStrength(this.param("linkStrength"))
+    .charge(this.param("charge"))
+    .chargeDistance(this.param("chargeDistance"))
+    .friction(this.param("friction"))
+    .theta(this.param("theta"))
+    .gravity(this.param("gravity"))
+    .alpha(this.param("alpha"))
     .nodes(nodes)
     .links(links);
 

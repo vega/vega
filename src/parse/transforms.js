@@ -11,7 +11,7 @@ module.exports = function parseTransforms(model, def) {
   dl.keys(def).forEach(function(k) {
     if(k === 'type' || k === 'output') return;
     if(k === 'transform' && def.type === 'facet') return;
-    (tx[k]).set(tx, def[k]);
+    tx.param(k, def[k]);
   });
 
   return tx;

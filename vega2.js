@@ -4231,15 +4231,6 @@ proto.init = function(graph) {
   return this;
 };
 
-proto.clone = function() {
-  var n = new Node(this._graph);
-  n.evaluate = this.evaluate;
-  n._deps = this._deps;
-  n._isRouter = this._isRouter;
-  n._isCollector = this._isCollector;
-  return n;
-};
-
 proto.rank = function() { return this._rank; };
 
 proto.last = function(stamp) { 
@@ -9280,7 +9271,7 @@ module.exports = function parseTransforms(model, def) {
   dl.keys(def).forEach(function(k) {
     if(k === 'type' || k === 'output') return;
     if(k === 'transform' && def.type === 'facet') return;
-    (tx[k]).set(tx, def[k]);
+    tx.param(k, def[k]);
   });
 
   return tx;
@@ -13072,8 +13063,8 @@ function getCache(which, def, scale, group) {
     }];
   }
 
-  cache.groupby.set(cache, groupby)
-    .summarize.set(cache, summarize);
+  cache.param("groupby", groupby)
+    .param("summarize", summarize);
 
   return cache;
 }
@@ -14460,7 +14451,32 @@ function Aggregate(graph) {
     .router(true).revises(true);
 
   Transform.addParameters(this, {
-    groupby: {type: "array<field>"}
+    groupby: {type: "array<field>"},
+
+    summarize: {
+      type: "custom", 
+      set: function(summarize) {
+        var i, len, f, fields, name, ops, signals = {};
+        if(!dl.isArray(fields = summarize)) { // Object syntax from dl
+          fields = [];
+          for (name in summarize) {
+            ops = dl.array(summarize[name]);
+            fields.push({name: name, ops: ops});
+          }
+        }
+
+        for(i=0, len=fields.length; i<len; ++i) {
+          f = fields[i];
+          if(f.name.signal) signals[f.name.signal] = 1;
+          dl.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
+        }
+
+        this._transform._fieldsDef = fields;
+        this._transform._aggr = null;
+        this._transform.dependency(C.SIGNALS, dl.keys(signals));
+        return this._transform;
+      }
+    }
   });
 
   this._fieldsDef = [];
@@ -14483,30 +14499,6 @@ var TYPES = Aggregate.TYPES = {
   VALUE: 1, 
   TUPLE: 2, 
   MULTI: 3
-};
-
-proto.summarize = {
-  set: function(transform, summarize) {
-    var i, len, f, fields, name, ops, signals = {};
-    if(!dl.isArray(fields = summarize)) { // Object syntax from dl
-      fields = [];
-      for (name in summarize) {
-        ops = dl.array(summarize[name]);
-        fields.push({name: name, ops: ops});
-      }
-    }
-
-    for(i=0, len=fields.length; i<len; ++i) {
-      f = fields[i];
-      if(f.name.signal) signals[f.name.signal] = 1;
-      dl.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
-    }
-
-    transform._fieldsDef = fields;
-    transform._aggr = null;
-    transform.dependency(C.SIGNALS, dl.keys(signals));
-    return transform;
-  }
 };
 
 proto.type = function(type) { 
@@ -14538,7 +14530,7 @@ proto.aggr = function() {
   if(this._aggr) return this._aggr;
 
   var graph = this._graph,
-      groupby = this.groupby.get(graph).fields;
+      groupby = this.param("groupby").field;
 
   var fields = this._fieldsDef.map(function(field) {
     var f  = dl.duplicate(field);
@@ -14660,14 +14652,14 @@ proto.transform = function(input) {
       output = this._output.bin;
       
   var b = dl.bins({
-    min: this.min.get(),
-    max: this.max.get(),
-    step: this.step.get(),
-    maxbins: this.maxbins.get()
+    min: this.param("min"),
+    max: this.param("max"),
+    step: this.param("step"),
+    maxbins: this.param("maxbins")
   });
 
   function update(d) {
-    var v = transform.field.get().accessor(d);
+    var v = transform.param("field").accessor(d);
     v = v == null ? null
       : b.start + b.step * ~~((v - b.start) / b.step);
     tuple.set(d, output, v, input.stamp);
@@ -14770,8 +14762,8 @@ proto.transform = function(input) {
   // Materialize the current datasource. TODO: share collectors
   this._collector.evaluate(input);
 
-  var w = this.with.get(this._graph),
-      diag = this.diagonal.get(this._graph),
+  var w = this.param("with"),
+      diag = this.param("diagonal"),
       selfCross = (!w.name),
       data = this._collector.data(),
       woutput = selfCross ? input : w.source.last(),
@@ -14803,22 +14795,25 @@ var Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
 function Facet(graph) {
+  Transform.addParameters(this, {
+    transform: {
+      type: "custom",
+      set: function(pipeline) {
+        return (this._transform._pipeline = pipeline, this._transform);
+      },
+      get: function() {
+        var parse = require('../parse/transforms'),
+            facet = this._transform;
+        return facet._pipeline.map(function(t) { return parse(facet._graph, t) });
+      }      
+    }
+  });
+
   this._pipeline = [];
   return Aggregate.call(this, graph);
 }
 
 var proto = (Facet.prototype = Object.create(Aggregate.prototype));
-
-proto.pipeline = {
-  set: function(facet, pipeline) {
-    facet._pipeline = pipeline;
-    return facet;
-  },
-  get: function(model, facet) {
-    var parse = require('../parse/transforms');
-    return facet._pipeline.map(function(t) { return parse(model, t) });
-  }
-};
 
 proto.aggr = function() {
   return Aggregate.prototype.aggr.call(this).facet(this);
@@ -14866,7 +14861,7 @@ proto._newcell = function(x) {
 
   if(this._facet !== null) {
     graph = facet._graph;
-    pipeline = facet.pipeline.get(graph, facet);
+    pipeline = facet.param("transform");
     cell.ds  = graph.data("vg_"+tuple._id, pipeline, tuple);
     cell.delete = disconnect_cell;
     facet.addListener(pipeline[0]);
@@ -14981,7 +14976,7 @@ function Filter(graph) {
 var proto = (Filter.prototype = new Transform());
 
 function test(x) {
-  return expr.eval(this._graph, this.test.get(this._graph), 
+  return expr.eval(this._graph, this.param("test"), 
     x, null, null, null, this.dependency(C.SIGNALS));
 };
 
@@ -15071,14 +15066,13 @@ proto.transform = function(input, reset) {
   debug(input, ["folding"]);
 
   var fold = this,
-      on = this.fields.get(this._graph),
-      fields = on.fields, accessors = on.accessors,
+      on = this.param('fields'),
       output = changeset.create(input);
 
   if(reset) rst.call(this, input, output);
 
-  fn.call(this, input.add, fields, accessors, output.add, input.stamp);
-  fn.call(this, input.mod, fields, accessors, reset ? output.add : output.mod, input.stamp);
+  fn.call(this, input.add, on.field, on.accessor, output.add, input.stamp);
+  fn.call(this, input.mod, on.field, on.accessor, reset ? output.add : output.mod, input.stamp);
   input.rem.forEach(function(x) {
     output.rem.push.apply(output.rem, fold._cache[x._id]);
     fold._cache[x._id] = null;
@@ -15086,7 +15080,7 @@ proto.transform = function(input, reset) {
 
   // If we're only propagating values, don't mark key/value as updated.
   if(input.add.length || input.rem.length || 
-    fields.some(function(f) { return !!input.fields[f]; }))
+    on.field.some(function(f) { return !!input.fields[f]; }))
       output.fields[this._output.key] = 1, output.fields[this._output.value] = 1;
   return output;
 };
@@ -15103,10 +15097,10 @@ function Force(graph) {
   Transform.addParameters(this, {
     size: {type: "array<value>", default: [500, 500]},
     links: {type: "data"},
-    linkDistance: {type: "field", default: 20},
-    linkStrength: {type: "field", default: 1},
-    charge: {type: "field", default: 30},
-    chargeDistance: {type: "field", default: Infinity},
+    linkDistance: {type: "field|value", default: 20},
+    linkStrength: {type: "field|value", default: 1},
+    charge: {type: "field|value", default: 30},
+    chargeDistance: {type: "field|value", default: Infinity},
     iterations: {type: "value", default: 500},
     friction: {type: "value", default: 0.9},
     theta: {type: "value", default: 0.8},
@@ -15114,7 +15108,7 @@ function Force(graph) {
     alpha: {type: "value", default: 0.1}
   });
 
-  this._nodes = [];
+  this._nodes  = [];
   this._links = [];
   this._layout = d3.layout.force();
 
@@ -15130,22 +15124,14 @@ function Force(graph) {
 
 var proto = (Force.prototype = new Transform());
 
-function get(transform, name) {
-  var v = transform[name].get(transform._graph);
-  return v.accessor
-    ? function(x) { return v.accessor(x.tuple); }
-    : v.field;
-}
-
 proto.transform = function(nodeInput) {
   // get variables
-  var g = this._graph,
-      linkInput = this.links.get(g).source.last(),
+  var linkInput = this.param("links").source.last(),
       layout = this._layout,
       output = this._output,
       nodes = this._nodes,
       links = this._links,
-      iter = this.iterations.get(g);
+      iter = this.param("iterations");
 
   // process added nodes
   nodeInput.add.forEach(function(n) {
@@ -15168,15 +15154,15 @@ proto.transform = function(nodeInput) {
 
   // configure layout
   layout
-    .size(this.size.get(g))
-    .linkDistance(get(this, "linkDistance"))
-    .linkStrength(get(this, "linkStrength"))
-    .charge(get(this, "charge"))
-    .chargeDistance(get(this, "chargeDistance"))
-    .friction(this.friction.get(g))
-    .theta(this.theta.get(g))
-    .gravity(this.gravity.get(g))
-    .alpha(this.alpha.get(g))
+    .size(this.param("size"))
+    .linkDistance(this.param("linkDistance"))
+    .linkStrength(this.param("linkStrength"))
+    .charge(this.param("charge"))
+    .chargeDistance(this.param("chargeDistance"))
+    .friction(this.param("friction"))
+    .theta(this.param("theta"))
+    .gravity(this.param("gravity"))
+    .alpha(this.param("alpha"))
     .nodes(nodes)
     .links(links);
 
@@ -15237,8 +15223,8 @@ proto.transform = function(input) {
   debug(input, ["formulating"]);
   var t = this, 
       g = this._graph,
-      field = this.field.get(g),
-      expr = this.expr.get(g),
+      field = this.param("field"),
+      expr = this.param("expr"),
       deps = this.dependency(C.SIGNALS);
   
   function set(x) {
@@ -15294,7 +15280,7 @@ Geo.Parameters = {
 
 Geo.d3Projection = function() {
   var g = this._graph,
-      p = this.projection.get(g),
+      p = this.param("projection"),
       param = Geo.Parameters,
       proj, name, value;
 
@@ -15306,7 +15292,7 @@ Geo.d3Projection = function() {
 
   for (name in param) {
     if (name === "projection" || !proj[name]) continue;
-    value = this[name].get(g);
+    value = this.param(name);
     if (value === undefined || (dl.isArray(value) && value.length === 0)) {
       continue;
     }
@@ -15323,8 +15309,8 @@ var proto = (Geo.prototype = new Transform());
 proto.transform = function(input) {
   var g = this._graph,
       output = this._output,
-      lon = this.lon.get(g).accessor,
-      lat = this.lat.get(g).accessor,
+      lon = this.param("lon").accessor,
+      lat = this.param("lat").accessor,
       proj = Geo.d3Projection.call(this);
 
   function set(t) {
@@ -15373,9 +15359,8 @@ function GeoPath(graph) {
 var proto = (GeoPath.prototype = new Transform());
 
 proto.transform = function(input) {
-  var g = this._graph,
-      output = this._output,
-      geojson = this.value.get(g).accessor || dl.identity,
+  var output = this._output,
+      geojson = this.param("value").accessor || dl.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
@@ -15467,14 +15452,13 @@ var shapes = {
 };
 
 proto.transform = function(input) {
-  var g = this._graph,
-      output = this._output,
-      shape = shapes[this.shape.get(g)] || shapes.line,
-      source = this.source.get(g).accessor,
-      target = this.target.get(g).accessor,
-      x = this.x.get(g).accessor,
-      y = this.y.get(g).accessor,
-      tension = this.tension.get(g);
+  var output = this._output,
+      shape = shapes[this.param("shape")] || shapes.line,
+      source = this.param("source").accessor,
+      target = this.param("target").accessor,
+      x = this.param("x").accessor,
+      y = this.param("y").accessor,
+      tension = this.param("tension");
   
   function set(t) {
     var path = shape(t, source, target, x, y, tension)
@@ -15499,11 +15483,13 @@ var dl = require('datalib'),
 var arrayType = /array/i,
     dataType  = /data/i,
     fieldType = /field/i,
-    exprType  = /expr/i;
+    exprType  = /expr/i,
+    valType   = /value/i;
 
-function Parameter(name, type) {
+function Parameter(name, type, transform) {
   this._name = name;
   this._type = type;
+  this._transform = transform;
 
   // If parameter is defined w/signals, it must be resolved
   // on every pulse.
@@ -15515,38 +15501,39 @@ function Parameter(name, type) {
 
 var proto = Parameter.prototype;
 
-proto._get = function() {
+function get() {
   var isArray = arrayType.test(this._type),
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
 
-  if (isData) {
-    return isArray ? { names: this._value, sources: this._accessors } :
-      { name: this._value[0], source: this._accessors[0] };
-  } else if (isField) {
-    return isArray ? { fields: this._value, accessors: this._accessors } :
-      { field: this._value[0], accessor: this._accessors[0] };
+  var val = isArray ? this._value : this._value[0],
+      acc = isArray ? this._accessors : this._accessors[0];
+
+  if(!dl.isValid(acc) && valType.test(this._type)) {
+    return val;
   } else {
-    return isArray ? this._value : this._value[0];
+    return isData ? { name: val, source: acc } :
+    isField ? { field: val, accessor: acc } : val;
   }
 };
 
-proto.get = function(graph) {
-  var isData  = dataType.test(this._type),
+proto.get = function() {
+  var graph = this._transform._graph, 
+      isData  = dataType.test(this._type),
       isField = fieldType.test(this._type),
       s, idx, val;
 
   // If we don't require resolution, return the value immediately.
-  if (!this._resolution) return this._get();
+  if (!this._resolution) return get.call(this);
 
   if (isData) {
     this._accessors = this._value.map(function(v) { return graph.data(v); });
-    return this._get(); // TODO: support signal as dataTypes
+    return get.call(this); // TODO: support signal as dataTypes
   }
 
   for(s in this._signals) {
-    idx  = this._signals[s];
-    val  = graph.signalRef(s);
+    idx = this._signals[s];
+    val = graph.signalRef(s);
 
     if (isField) {
       this._accessors[idx] = this._value[idx] != val ? 
@@ -15556,11 +15543,11 @@ proto.get = function(graph) {
     this._value[idx] = val;
   }
 
-  return this._get();
+  return get.call(this);
 };
 
-proto.set = function(transform, value) {
-  var param = this, 
+proto.set = function(value) {
+  var p = this,
       isExpr = exprType.test(this._type),
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
@@ -15569,34 +15556,34 @@ proto.set = function(transform, value) {
     if (dl.isString(v)) {
       if (isExpr) {
         var e = expr(v);
-        transform.dependency(C.FIELDS,  e.fields);
-        transform.dependency(C.SIGNALS, e.signals);
+        p._transform.dependency(C.FIELDS,  e.fields);
+        p._transform.dependency(C.SIGNALS, e.signals);
         return e.fn;
       } else if (isField) {  // Backwards compatibility
-        param._accessors[i] = dl.accessor(v);
-        transform.dependency(C.FIELDS, v);
+        p._accessors[i] = dl.accessor(v);
+        p._transform.dependency(C.FIELDS, v);
       } else if (isData) {
-        param._resolution = true;
-        transform.dependency(C.DATA, v);
+        p._resolution = true;
+        p._transform.dependency(C.DATA, v);
       }
       return v;
     } else if (v.value !== undefined) {
       return v.value;
     } else if (v.field !== undefined) {
-      param._accessors[i] = dl.accessor(v.field);
-      transform.dependency(C.FIELDS, v.field);
+      p._accessors[i] = dl.accessor(v.field);
+      p._transform.dependency(C.FIELDS, v.field);
       return v.field;
     } else if (v.signal !== undefined) {
-      param._resolution = true;
-      param._signals[v.signal] = i;
-      transform.dependency(C.SIGNALS, v.signal);
+      p._resolution = true;
+      p._signals[v.signal] = i;
+      p._transform.dependency(C.SIGNALS, v.signal);
       return v.signal;
     }
 
     return v;
   });
 
-  return transform;
+  return p._transform;
 };
 
 module.exports = Parameter;
@@ -15633,10 +15620,10 @@ function ones() { return 1; }
 proto.batchTransform = function(input, data) {
   var g = this._graph,
       output = this._output,
-      value = this.value.get(g).accessor || ones,
-      start = this.startAngle.get(g),
-      stop = this.endAngle.get(g),
-      sort = this.sort.get(g);
+      value = this.param("value").accessor || ones,
+      start = this.param("startAngle"),
+      stop = this.param("endAngle"),
+      sort = this.param("sort");
 
   var values = data.map(value),
       a = start,
@@ -15686,7 +15673,7 @@ proto.transform = function(input) {
   debug(input, ["sorting"]);
 
   if(input.add.length || input.mod.length || input.rem.length) {
-    input.sort = dl.comparator(this.by.get(this._graph).fields);
+    input.sort = dl.comparator(this.param("by").field);
   }
 
   return input;
@@ -15720,10 +15707,10 @@ var proto = (Stack.prototype = new BatchTransform());
 
 proto.batchTransform = function(input, data) {
   var g = this._graph,
-      groupby = this.groupby.get(g).accessors,
-      sortby = dl.comparator(this.sortby.get(g).fields),
-      value = this.value.get(g).accessor,
-      offset = this.offset.get(g),
+      groupby = this.param("groupby").accessor,
+      sortby = dl.comparator(this.param("sortby").field),
+      value = this.param("value").accessor,
+      offset = this.param("offset"),
       output = this._output;
 
   // partition, sum, and sort the stack groups
@@ -15798,26 +15785,25 @@ function Transform(graph) {
 }
 
 Transform.addParameters = function(proto, params) {
-  var p;
+  proto._parameters = proto._parameters || {};
   for (var name in params) {
-    p = params[name];
-    proto[name] = new Parameter(name, p.type);
-    if (p.hasOwnProperty('default')) proto[name].set(proto, p.default);
+    var p = params[name],
+        param = proto._parameters[name] = new Parameter(name, p.type, proto);
+
+    if (p.type === 'custom') {
+      if (p.set) param.set = p.set.bind(param);
+      if (p.get) param.get = p.get.bind(param);
+    }
+
+    if (p.hasOwnProperty('default')) param.set(p.default);
   }
-  proto._parameters = params;
 };
 
 var proto = (Transform.prototype = new Node());
 
-proto.clone = function() {
-  var n = Node.prototype.clone.call(this);
-  n.transform = this.transform;
-  n._parameters = this._parameters;
-  for(var k in this) { 
-    if(n[k]) continue;
-    n[k] = this[k]; 
-  }
-  return n;
+proto.param = function(name, value) {
+  if(arguments.length === 1) return this._parameters[name].get();
+  return this._parameters[name].set(value);
 };
 
 proto.transform = function(input, reset) { return input; };
@@ -15880,21 +15866,20 @@ var proto = (Treemap.prototype = new BatchTransform());
 
 proto.batchTransform = function(input, data) {
   // get variables
-  var g = this._graph,
-      layout = this._layout,
+  var layout = this._layout,
       output = this._output;
 
   // configure layout
   layout
-    .sort(dl.comparator(this.sort.get(g).fields))
-    .children(this.children.get(g).accessor)
-    .value(this.value.get(g).accessor)
-    .size(this.size.get(g))
-    .round(this.round.get(g))
-    .sticky(this.sticky.get(g))
-    .ratio(this.ratio.get(g))
-    .padding(this.padding.get(g))
-    .mode(this.mode.get(g))
+    .sort(dl.comparator(this.param("sort").field))
+    .children(this.param("children").accessor)
+    .value(this.param("value").accessor)
+    .size(this.param("size"))
+    .round(this.param("round"))
+    .sticky(this.param("sticky"))
+    .ratio(this.param("ratio"))
+    .padding(this.param("padding"))
+    .mode(this.param("mode"))
     .nodes(data[0]);
 
   // copy layout values to nodes
@@ -15946,14 +15931,14 @@ function mp(k) {
 };
 
 proto.transform = function(input) {
-  var w = this.with.get(this._graph),
+  var w = this.param("with"),
       wds = w.source,
       woutput = wds.last(),
       wdata = wds.values(),
-      key = this.key.get(this._graph),
-      withKey = this.withKey.get(this._graph),
-      as = this.as.get(this._graph),
-      dflt = this.default.get(this._graph),
+      key = this.param("key"),
+      withKey = this.param("withKey"),
+      as = this.param("as"),
+      dflt = this.param("default"),
       map = mp.bind(this),
       rem = {};
 

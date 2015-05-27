@@ -23,14 +23,14 @@ proto.transform = function(input) {
       output = this._output.bin;
       
   var b = dl.bins({
-    min: this.min.get(),
-    max: this.max.get(),
-    step: this.step.get(),
-    maxbins: this.maxbins.get()
+    min: this.param("min"),
+    max: this.param("max"),
+    step: this.param("step"),
+    maxbins: this.param("maxbins")
   });
 
   function update(d) {
-    var v = transform.field.get().accessor(d);
+    var v = transform.param("field").accessor(d);
     v = v == null ? null
       : b.start + b.step * ~~((v - b.start) / b.step);
     tuple.set(d, output, v, input.stamp);

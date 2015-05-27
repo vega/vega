@@ -33,7 +33,7 @@ Geo.Parameters = {
 
 Geo.d3Projection = function() {
   var g = this._graph,
-      p = this.projection.get(g),
+      p = this.param("projection"),
       param = Geo.Parameters,
       proj, name, value;
 
@@ -45,7 +45,7 @@ Geo.d3Projection = function() {
 
   for (name in param) {
     if (name === "projection" || !proj[name]) continue;
-    value = this[name].get(g);
+    value = this.param(name);
     if (value === undefined || (dl.isArray(value) && value.length === 0)) {
       continue;
     }
@@ -62,8 +62,8 @@ var proto = (Geo.prototype = new Transform());
 proto.transform = function(input) {
   var g = this._graph,
       output = this._output,
-      lon = this.lon.get(g).accessor,
-      lat = this.lat.get(g).accessor,
+      lon = this.param("lon").accessor,
+      lat = this.param("lat").accessor,
       proj = Geo.d3Projection.call(this);
 
   function set(t) {

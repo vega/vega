@@ -15,7 +15,7 @@ proto.transform = function(input) {
   debug(input, ["sorting"]);
 
   if(input.add.length || input.mod.length || input.rem.length) {
-    input.sort = dl.comparator(this.by.get(this._graph).fields);
+    input.sort = dl.comparator(this.param("by").field);
   }
 
   return input;

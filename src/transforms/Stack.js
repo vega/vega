@@ -24,10 +24,10 @@ var proto = (Stack.prototype = new BatchTransform());
 
 proto.batchTransform = function(input, data) {
   var g = this._graph,
-      groupby = this.groupby.get(g).accessors,
-      sortby = dl.comparator(this.sortby.get(g).fields),
-      value = this.value.get(g).accessor,
-      offset = this.offset.get(g),
+      groupby = this.param("groupby").accessor,
+      sortby = dl.comparator(this.param("sortby").field),
+      value = this.param("value").accessor,
+      offset = this.param("offset"),
       output = this._output;
 
   // partition, sum, and sort the stack groups

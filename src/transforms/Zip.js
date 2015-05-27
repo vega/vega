@@ -27,14 +27,14 @@ function mp(k) {
 };
 
 proto.transform = function(input) {
-  var w = this.with.get(this._graph),
+  var w = this.param("with"),
       wds = w.source,
       woutput = wds.last(),
       wdata = wds.values(),
-      key = this.key.get(this._graph),
-      withKey = this.withKey.get(this._graph),
-      as = this.as.get(this._graph),
-      dflt = this.default.get(this._graph),
+      key = this.param("key"),
+      withKey = this.param("withKey"),
+      as = this.param("as"),
+      dflt = this.param("default"),
       map = mp.bind(this),
       rem = {};
 

@@ -11,7 +11,32 @@ function Aggregate(graph) {
     .router(true).revises(true);
 
   Transform.addParameters(this, {
-    groupby: {type: "array<field>"}
+    groupby: {type: "array<field>"},
+
+    summarize: {
+      type: "custom", 
+      set: function(summarize) {
+        var i, len, f, fields, name, ops, signals = {};
+        if(!dl.isArray(fields = summarize)) { // Object syntax from dl
+          fields = [];
+          for (name in summarize) {
+            ops = dl.array(summarize[name]);
+            fields.push({name: name, ops: ops});
+          }
+        }
+
+        for(i=0, len=fields.length; i<len; ++i) {
+          f = fields[i];
+          if(f.name.signal) signals[f.name.signal] = 1;
+          dl.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
+        }
+
+        this._transform._fieldsDef = fields;
+        this._transform._aggr = null;
+        this._transform.dependency(C.SIGNALS, dl.keys(signals));
+        return this._transform;
+      }
+    }
   });
 
   this._fieldsDef = [];
@@ -34,30 +59,6 @@ var TYPES = Aggregate.TYPES = {
   VALUE: 1, 
   TUPLE: 2, 
   MULTI: 3
-};
-
-proto.summarize = {
-  set: function(transform, summarize) {
-    var i, len, f, fields, name, ops, signals = {};
-    if(!dl.isArray(fields = summarize)) { // Object syntax from dl
-      fields = [];
-      for (name in summarize) {
-        ops = dl.array(summarize[name]);
-        fields.push({name: name, ops: ops});
-      }
-    }
-
-    for(i=0, len=fields.length; i<len; ++i) {
-      f = fields[i];
-      if(f.name.signal) signals[f.name.signal] = 1;
-      dl.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
-    }
-
-    transform._fieldsDef = fields;
-    transform._aggr = null;
-    transform.dependency(C.SIGNALS, dl.keys(signals));
-    return transform;
-  }
 };
 
 proto.type = function(type) { 
@@ -89,7 +90,7 @@ proto.aggr = function() {
   if(this._aggr) return this._aggr;
 
   var graph = this._graph,
-      groupby = this.groupby.get(graph).fields;
+      groupby = this.param("groupby").field;
 
   var fields = this._fieldsDef.map(function(field) {
     var f  = dl.duplicate(field);

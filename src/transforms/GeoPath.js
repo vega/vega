@@ -20,9 +20,8 @@ function GeoPath(graph) {
 var proto = (GeoPath.prototype = new Transform());
 
 proto.transform = function(input) {
-  var g = this._graph,
-      output = this._output,
-      geojson = this.value.get(g).accessor || dl.identity,
+  var output = this._output,
+      geojson = this.param("value").accessor || dl.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
