@@ -13,9 +13,9 @@ function Stack(graph) {
   });
 
   this._output = {
-    "start": "layout:start",
-    "stop":  "layout:stop",
-    "mid":   "layout:mid"
+    "start": "layout_start",
+    "stop":  "layout_stop",
+    "mid":   "layout_mid"
   };
   return this;
 }

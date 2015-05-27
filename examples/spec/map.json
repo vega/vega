@@ -22,7 +22,7 @@
       "properties": {
         "enter": {
           "stroke": {"value": "#fff"},
-          "path": {"field": "geo:path"}
+          "path": {"field": "layout_path"}
         },
         "update": {"fill": {"value": "#ccc"}},
         "hover": {"fill": {"value": "pink"}}

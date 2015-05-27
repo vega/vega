@@ -70,8 +70,8 @@ describe('Force', function() {
             var link = links[l];
             var source = link['_source'];
             var target = link['_target'];  
-            var dx = target['layout:x'] - source['layout:x'];
-            var dy = target['layout:y'] - source['layout:y'];
+            var dx = target['layout_x'] - source['layout_x'];
+            var dy = target['layout_y'] - source['layout_y'];
             var dd = Math.sqrt(dx*dx + dy*dy);
             expect(dd).closeTo(dist, EPSILON * dist);
           }

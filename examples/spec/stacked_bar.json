@@ -68,8 +68,8 @@
         "enter": {
           "x": {"scale": "x", "field": "x"},
           "width": {"scale": "x", "band": true, "offset": -1},
-          "y": {"scale": "y", "field": "layout:start"},
-          "y2": {"scale": "y", "field": "layout:stop"},
+          "y": {"scale": "y", "field": "layout_start"},
+          "y2": {"scale": "y", "field": "layout_stop"},
           "fill": {"scale": "color", "field": "c"}
         },
         "update": {

@@ -12,7 +12,7 @@ function GeoPath(graph) {
   });
 
   this._output = {
-    "path": "geo:path"
+    "path": "layout_path"
   };
   return this;
 }

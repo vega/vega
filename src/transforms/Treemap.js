@@ -23,10 +23,10 @@ function Treemap(graph) {
   this._layout = d3.layout.treemap();
 
   this._output = {
-    "x":      "layout:x",
-    "y":      "layout:y",
-    "width":  "layout:width",
-    "height": "layout:height"
+    "x":      "layout_x",
+    "y":      "layout_y",
+    "width":  "layout_width",
+    "height": "layout_height"
   };
   return this;
 }

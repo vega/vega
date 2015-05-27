@@ -25,8 +25,8 @@
         "enter": {
           "x": {"group": "width", "mult": 0.5},
           "y": {"group": "height", "mult": 0.5},
-          "startAngle": {"field": "layout:start"},
-          "endAngle": {"field": "layout:stop"},
+          "startAngle": {"field": "layout_start"},
+          "endAngle": {"field": "layout_stop"},
           "innerRadius": {"value": 20},
           "outerRadius": {"scale": "r", "field": "data"},
           "stroke": {"value": "#fff"}
@@ -47,7 +47,7 @@
           "x": {"group": "width", "mult": 0.5},
           "y": {"group": "height", "mult": 0.5},
           "radius": {"scale": "r", "offset": 8},
-          "theta": {"field": "layout:mid"},
+          "theta": {"field": "layout_mid"},
           "fill": {"value": "#000"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"},

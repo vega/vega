@@ -21,7 +21,7 @@
           "as": "unemp",
           "default": null
         },
-        {"type": "filter", "test": "d['geo:path']!=null && d.unemp!=null"}
+        {"type": "filter", "test": "d.layout_path!=null && d.unemp!=null"}
       ]
     }
   ],
@@ -39,7 +39,7 @@
       "type": "path",
       "from": {"data": "counties"},
       "properties": {
-        "enter": { "path": {"field": "geo:path"} },
+        "enter": { "path": {"field": "layout_path"} },
         "update": { "fill": {"scale": "color", "field": "unemp.rate"} },
         "hover": { "fill": {"value": "red"} }
       }

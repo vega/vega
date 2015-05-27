@@ -35,7 +35,7 @@
       },
       "properties": {
         "update": {
-          "path": {"field": "link:path"},
+          "path": {"field": "layout_path"},
           "stroke": {"value": "#ccc"},
           "strokeWidth": {"value": 0.5}
         }
@@ -50,8 +50,8 @@
           "stroke": {"value": "steelblue"}
         },
         "update": {
-          "x": {"field": "layout:x"},
-          "y": {"field": "layout:y"},
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
           "fill": {"value": "steelblue"}
         },
         "hover": {

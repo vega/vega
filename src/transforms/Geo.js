@@ -12,8 +12,8 @@ function Geo(graph) {
   });
 
   this._output = {
-    "x": "geo:x",
-    "y": "geo:y"
+    "x": "layout_x",
+    "y": "layout_y"
   };
   return this;
 }

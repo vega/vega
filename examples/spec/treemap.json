@@ -47,10 +47,10 @@
       "interactive": false,
       "properties": {
         "enter": {
-          "x": {"field": "layout:x"},
-          "y": {"field": "layout:y"},
-          "width": {"field": "layout:width"},
-          "height": {"field": "layout:height"},
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
+          "width": {"field": "layout_width"},
+          "height": {"field": "layout_height"},
           "fill": {"scale": "color", "field": "name"}
         }
       }
@@ -63,10 +63,10 @@
       },
       "properties": {
         "enter": {
-          "x": {"field": "layout:x"},
-          "y": {"field": "layout:y"},
-          "width": {"field": "layout:width"},
-          "height": {"field": "layout:height"},
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
+          "width": {"field": "layout_width"},
+          "height": {"field": "layout_height"},
           "stroke": {"value": "#fff"}
         },
         "update": {
@@ -86,10 +86,10 @@
       "interactive": false,
       "properties": {
         "enter": {
-          "x": {"field": "layout:x"},
-          "y": {"field": "layout:y"},
-          "dx": {"field": "layout:width", "mult": 0.5},
-          "dy": {"field": "layout:height", "mult": 0.5},
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
+          "dx": {"field": "layout_width", "mult": 0.5},
+          "dy": {"field": "layout_height", "mult": 0.5},
           "font": {"value": "Helvetica Neue"},
           "fontSize": {"scale": "size", "field": "depth"},
           "align": {"value": "center"},

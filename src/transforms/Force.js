@@ -23,8 +23,8 @@ function Force(graph) {
   this._layout = d3.layout.force();
 
   this._output = {
-    "x": "layout:x",
-    "y": "layout:y",
+    "x": "layout_x",
+    "y": "layout_y",
     "source": "_source",
     "target": "_target"
   };

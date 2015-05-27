@@ -6,13 +6,13 @@ function LinkPath(graph) {
   Transform.addParameters(this, {
     source:  {type: "field", default: "_source"},
     target:  {type: "field", default: "_target"},
-    x:       {type: "field", default: "layout:x"},
-    y:       {type: "field", default: "layout:y"},
+    x:       {type: "field", default: "layout_x"},
+    y:       {type: "field", default: "layout_y"},
     tension: {type: "value", default: 0.2},
     shape:   {type: "value", default: "line"}
   });
 
-  this._output = {"path": "link:path"};
+  this._output = {"path": "layout_path"};
   return this;
 }
 

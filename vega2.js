@@ -15119,8 +15119,8 @@ function Force(graph) {
   this._layout = d3.layout.force();
 
   this._output = {
-    "x": "layout:x",
-    "y": "layout:y",
+    "x": "layout_x",
+    "y": "layout_y",
     "source": "_source",
     "target": "_target"
   };
@@ -15273,8 +15273,8 @@ function Geo(graph) {
   });
 
   this._output = {
-    "x": "geo:x",
-    "y": "geo:y"
+    "x": "layout_x",
+    "y": "layout_y"
   };
   return this;
 }
@@ -15365,7 +15365,7 @@ function GeoPath(graph) {
   });
 
   this._output = {
-    "path": "geo:path"
+    "path": "layout_path"
   };
   return this;
 }
@@ -15406,13 +15406,13 @@ function LinkPath(graph) {
   Transform.addParameters(this, {
     source:  {type: "field", default: "_source"},
     target:  {type: "field", default: "_target"},
-    x:       {type: "field", default: "layout:x"},
-    y:       {type: "field", default: "layout:y"},
+    x:       {type: "field", default: "layout_x"},
+    y:       {type: "field", default: "layout_y"},
     tension: {type: "value", default: 0.2},
     shape:   {type: "value", default: "line"}
   });
 
-  this._output = {"path": "link:path"};
+  this._output = {"path": "layout_path"};
   return this;
 }
 
@@ -15618,9 +15618,9 @@ function Pie(graph) {
   });
 
   this._output = {
-    "start": "layout:start",
-    "stop":  "layout:stop",
-    "mid":   "layout:mid"
+    "start": "layout_start",
+    "stop":  "layout_stop",
+    "mid":   "layout_mid"
   };
 
   return this;
@@ -15709,9 +15709,9 @@ function Stack(graph) {
   });
 
   this._output = {
-    "start": "layout:start",
-    "stop":  "layout:stop",
-    "mid":   "layout:mid"
+    "start": "layout_start",
+    "stop":  "layout_stop",
+    "mid":   "layout_mid"
   };
   return this;
 }
@@ -15868,10 +15868,10 @@ function Treemap(graph) {
   this._layout = d3.layout.treemap();
 
   this._output = {
-    "x":      "layout:x",
-    "y":      "layout:y",
-    "width":  "layout:width",
-    "height": "layout:height"
+    "x":      "layout_x",
+    "y":      "layout_y",
+    "width":  "layout_width",
+    "height": "layout_height"
   };
   return this;
 }
