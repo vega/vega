@@ -19,7 +19,8 @@ function properties(model, mark, spec) {
         reflow:  false
       };
       
-  code += "var o = trans ? {} : item;\n"
+  code += "var o = trans ? {} : item,\n"
+        + "    dirty = false;\n";
         + "  signals.datum = item.datum;\n";  // Stash for util.template
   
   for (i=0, len=names.length; i<len; ++i) {
@@ -30,7 +31,7 @@ function properties(model, mark, spec) {
       code += "\n  " + ref.code
     } else {
       ref = valueRef(name, ref);
-      code += "this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
+      code += "dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
     }
 
     vars[name] = true;
@@ -44,22 +45,22 @@ function properties(model, mark, spec) {
     if (vars.x) {
       code += "\n  if (o.x > o.x2) { "
             + "\n    var t = o.x;"
-            + "\n    this.tpl.set(o, 'x', o.x2);"
-            + "\n    this.tpl.set(o, 'x2', t); "
+            + "\n    dirty = this.tpl.set(o, 'x', o.x2);"
+            + "\n    dirty = this.tpl.set(o, 'x2', t); "
             + "};";
-      code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x));";
+      code += "\n  dirty = this.tpl.set(o, 'width', (o.x2 - o.x));";
     } else if (vars.width) {
-      code += "\n  this.tpl.set(o, 'x', (o.x2 - o.width));";
+      code += "\n  dirty = this.tpl.set(o, 'x', (o.x2 - o.width));";
     } else {
-      code += "\n  this.tpl.set(o, 'x', o.x2);"
+      code += "\n  dirty = this.tpl.set(o, 'x', o.x2);"
     }
   }
 
   if (vars.xc) {
     if (vars.width) {
-      code += "\n  this.tpl.set(o, 'x', (o.xc - o.width/2));";
+      code += "\n  dirty = this.tpl.set(o, 'x', (o.xc - o.width/2));";
     } else {
-      code += "\n  this.tpl.set(o, 'x', o.xc);";
+      code += "\n  dirty = this.tpl.set(o, 'x', o.xc);";
     }
   }
 
@@ -67,27 +68,28 @@ function properties(model, mark, spec) {
     if (vars.y) {
       code += "\n  if (o.y > o.y2) { "
             + "\n    var t = o.y;"
-            + "\n    this.tpl.set(o, 'y', o.y2);"
-            + "\n    this.tpl.set(o, 'y2', t);"
+            + "\n    dirty = this.tpl.set(o, 'y', o.y2);"
+            + "\n    dirty = this.tpl.set(o, 'y2', t);"
             + "};";
-      code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y));";
+      code += "\n  dirty = this.tpl.set(o, 'height', (o.y2 - o.y));";
     } else if (vars.height) {
-      code += "\n  this.tpl.set(o, 'y', (o.y2 - o.height));";
+      code += "\n  dirty = this.tpl.set(o, 'y', (o.y2 - o.height));";
     } else {
-      code += "\n  this.tpl.set(o, 'y', o.y2);"
+      code += "\n  dirty = this.tpl.set(o, 'y', o.y2);"
     }
   }
 
   if (vars.yc) {
     if (vars.height) {
-      code += "\n  this.tpl.set(o, 'y', (o.yc - o.height/2));";
+      code += "\n  dirty = this.tpl.set(o, 'y', (o.yc - o.height/2));";
     } else {
-      code += "\n  this.tpl.set(o, 'y', o.yc);";
+      code += "\n  dirty = this.tpl.set(o, 'y', o.yc);";
     }
   }
   
   if (hasPath(mark, vars)) code += "\n  item.touch();";
   code += "\n  if (trans) trans.interpolate(item, o);";
+  code += "\n  return dirty;";
 
   try {
     var encoder = Function("item", "group", "trans", "db", 
@@ -149,11 +151,11 @@ function rule(model, name, rules) {
       db.push.apply(db, pred.data);
       inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
       code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {" +
-        "\n    this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
+        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
       code += rules[i+1] ? "\n  } else " : "  }";
     } else {
       code += "{" + 
-        "\n    this.tpl.set(o, "+util.str(name)+", "+ref.val+");"+
+        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");"+
         "\n  }\n";
     }
   });

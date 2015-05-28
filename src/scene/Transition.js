@@ -15,7 +15,7 @@ var skip = {
   "url":  1
 };
 
-prototype.interpolate = function(item, values, stamp) {
+prototype.interpolate = function(item, values) {
   var key, curr, next, interp, list = null;
 
   for (key in values) {
