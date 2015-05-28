@@ -7,7 +7,7 @@ vg.scene.legend = function() {
       values = null,
       format = null,
       formatString = null,
-      title = undefined,
+      title,
       orient = "right",
       offset = vg.config.legend.offset,
       padding = vg.config.legend.padding,
@@ -356,7 +356,7 @@ function vg_legendUpdate(item, group, trans) {
       gx = group.bounds ? group.bounds.x1 : 0;
       o.x += gx - offset - lw;
       break;
-    };
+    }
     case "right": {
       gx = group.width;
       if (group.bounds) gx = trans
@@ -364,7 +364,7 @@ function vg_legendUpdate(item, group, trans) {
         : group.bounds.x2;
       o.x += gx + offset;
       break;
-    };
+    }
   }
   
   if (trans) trans.interpolate(item, o);

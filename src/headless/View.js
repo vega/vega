@@ -200,7 +200,7 @@ vg.headless.View = (function() {
 
     // configure renderer
     this._renderer.initialize(this._el, tw, th, pad, bg);
-  }
+  };
   
   prototype.render = function(items) {
     this._renderer.render(this._model.scene(), items);

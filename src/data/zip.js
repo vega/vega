@@ -2,7 +2,7 @@ vg.data.zip = function() {
   var z = null,
       as = "zip",
       key = vg.accessor("data"),
-      defaultValue = undefined,
+      defaultValue,
       withKey = null;
 
   function zip(data, db) {

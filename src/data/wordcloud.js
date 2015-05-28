@@ -88,7 +88,7 @@ vg.data.wordcloud = function() {
     cloud[name] = function(x) {
       layout[name](x);
       return cloud;
-    }
+    };
   });
 
   cloud.output = function(map) {

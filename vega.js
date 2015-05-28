@@ -21,7 +21,7 @@ function (d3, topojson) {
 //---------------------------------------------------
 
   var vg = {
-    version:  "1.5.0", // semantic versioning
+    version:  "1.5.3", // semantic versioning
     d3:       d3,      // stash d3 for use in property functions
     topojson: topojson // stash topojson similarly
   };
@@ -67,7 +67,7 @@ vg.number = function(s) { return s === null ? null : +s; };
 
 vg.boolean = function(s) { return s === null ? null :  !!s; };
 
-vg.date = function(s) {return s === null ? null : Date.parse(s); }
+vg.date = function(s) {return s === null ? null : Date.parse(s); };
 
 // ES6 compatibility per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
 // We could have used the polyfill code, but lets wait until ES6 becomes a standard first
@@ -163,7 +163,7 @@ vg.cmp = function(a, b) {
     return 1;
   }
   return NaN;
-}
+};
 
 vg.numcmp = function(a, b) { return a - b; };
 
@@ -371,6 +371,12 @@ vg.config.isNode = false;
 // e.g., ['wikipedia.org', 'eff.org']
 vg.config.domainWhiteList = false;
 
+// Allows additional headers to be sent to the server
+// when requesting data. This could be useful when
+// the graph definition is not trusted, and the server
+// needs to be notified of that, e.g. {'Treat-as-Untrusted': 1}
+vg.config.dataHeaders = false;
+
 // If true, disable potentially unsafe transforms (filter, formula)
 // involving possible JavaScript injection attacks.
 vg.config.safeMode = false;
@@ -575,7 +581,7 @@ vg.Bounds = (function() {
       .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
       .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
       .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
-  }
+  };
 
   prototype.union = function(b) {
     if (b.x1 < this.x1) this.x1 = b.x1;
@@ -631,7 +637,7 @@ vg.Bounds = (function() {
     this.x2 = 1;
     this.y1 = 0;
     this.y2 = 0;
-  };
+  }
 
   var prototype = gradient.prototype;
 
@@ -646,7 +652,8 @@ vg.Bounds = (function() {
   return gradient;
 })();
 
-var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
+var vg_gradient_id = 0;
+vg.canvas = {};vg.canvas.path = (function() {
 
   // Path parsing and rendering code taken from fabric.js -- Thanks!
   var cmdLength = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
@@ -1730,7 +1737,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
   function drawAll(pathFunc) {
     return function(g, scene, bounds) {
       drawPathAll(pathFunc, g, scene, bounds);
-    }
+    };
   }
 
   function drawOne(pathFunc) {
@@ -1739,7 +1746,7 @@ var vg_gradient_id = 0;vg.canvas = {};vg.canvas.path = (function() {
       if (bounds && !bounds.intersects(scene.items[0].bounds))
         return; // bounds check
       drawPathOne(pathFunc, g, scene.items[0], scene.items);
-    }
+    };
   }
 
   function drawGroup(g, scene, bounds) {
@@ -2799,7 +2806,7 @@ vg.svg.Renderer = (function() {
       marks.update[type].call(node, item);
       marks.style.call(node, item);
     }
-  }
+  };
   
   prototype.draw = function(ctx, scene, index) {
     var marktype = scene.marktype,
@@ -2957,7 +2964,7 @@ vg.data.mapper = function(func) {
   return function(data) {
     data.forEach(func);
     return data;
-  }
+  };
 };
 
 vg.data.size = function(size, group) {
@@ -3051,7 +3058,13 @@ vg.data.size = function(size, group) {
 
   function xhr(url, callback) {
     vg.log('LOAD XHR: ' + url);
-    d3.xhr(url, function(err, resp) {
+    var xhrReq = d3.xhr(url);
+    if (vg.config.dataHeaders) {
+      vg.keys(vg.config.dataHeaders).forEach(function(k) {
+        xhrReq.header(k, vg.config.dataHeaders[k]);
+      });
+    }
+    xhrReq.get(function(err, resp) {
       if (resp) resp = resp.responseText;
       callback(err, resp);
     });
@@ -3064,7 +3077,11 @@ vg.data.size = function(size, group) {
 
   function http(url, callback) {
     vg.log('LOAD HTTP: ' + url);
-    var req = require('request')(url, function(error, response, body) {
+    var options = {url: url, encoding: null, gzip: true};
+    if (vg.config.dataHeaders) {
+      options.headers = vg.config.dataHeaders;
+    }
+    require('request').get(options, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         callback(null, body);
       } else {
@@ -3241,7 +3258,7 @@ vg.data.read = (function() {
     var ops = this.ops;
     for (var i=0; i<ops.length; ++i) {
       if (ops[i] === 'count') {
-        o["count"] = this.count;
+        o.count = this.count;
       } else {
         o[ops[i] + "_" + this.field] = this.value(ops[i]);
       }
@@ -3348,9 +3365,9 @@ vg.data.read = (function() {
   var field,
       accessor,
       setter,
-      min = undefined,
-      max = undefined,
-      step = undefined,
+      min,
+      max,
+      step,
       maxbins = 20,
       output = "bin";
 
@@ -3695,7 +3712,7 @@ vg.data.facet = function() {
     force[name] = function(x) {
       layout[name](x);
       return force;
-    }
+    };
   });
 
   return force;
@@ -3776,7 +3793,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
         opt[name] = x;
         func[name](x);
         return map;
-      }
+      };
     });
     
     map.lon = function(field) {
@@ -3800,11 +3817,12 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     
     
     return map;
-  };
+  }
   
   geo.params = params;
   return geo;
-})();vg.data.geopath = function() {
+})();
+vg.data.geopath = function() {
   var geopath = d3.geo.path().projection(d3.geo.mercator()),
       projection = "mercator",
       geojson = vg.identity,
@@ -3833,7 +3851,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       opt[name] = x;
       (geopath.projection())[name](x);
       return map;
-    }
+    };
   });
    
   map.value = function(field) {
@@ -4074,9 +4092,9 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
       };
 
   function stack(data) {
-    var out_y0 = output["y0"],
-        out_y1 = output["y1"],
-        out_cy = output["cy"];
+    var out_y0 = output.y0,
+        out_y1 = output.y1,
+        out_cy = output.cy;
     
     var series = stacks(data);
     if (series.length === 0) return data;
@@ -4142,7 +4160,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     stack[name] = function(x) {
       layout[name](x);
       return stack;
-    }
+    };
   });
 
   stack.output = function(map) {
@@ -4311,7 +4329,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     treemap[name] = function(x) {
       layout[name](x);
       return treemap;
-    }
+    };
   });
 
   treemap.output = function(map) {
@@ -4512,7 +4530,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
     cloud[name] = function(x) {
       layout[name](x);
       return cloud;
-    }
+    };
   });
 
   cloud.output = function(map) {
@@ -4529,7 +4547,7 @@ vg.data.force.dependencies = ["links"];vg.data.formula = (function() {
   var z = null,
       as = "zip",
       key = vg.accessor("data"),
-      defaultValue = undefined,
+      defaultValue,
       withKey = null;
 
   function zip(data, db) {
@@ -4694,12 +4712,20 @@ vg.expression.code = function(opt) {
         return fncall("getUTCMilliseconds", args, DATE, 0);
       },
 
-    // STRING functions
-    "parseFloat": "parseFloat",
-    "parseInt": "parseInt",
+    // shared sequence functions
     "length": function(args) {
         return fncall("length", args, null, -1);
       },
+    "indexof": function(args) {
+        return fncall("indexOf", args, null);
+      },
+    "lastindexof": function(args) {
+        return fncall("lastIndexOf", args, null);
+      },
+
+    // STRING functions
+    "parseFloat": "parseFloat",
+    "parseInt": "parseInt",
     "upper": function(args) {
         return fncall("toUpperCase", args, STRING, 0);
       },
@@ -6186,6 +6212,9 @@ var vg_expression_parser = (function() {
           this.value = token.value;
           this.raw = source.slice(token.start, token.end);
           if (token.regex) {
+              if (this.raw == '//') {
+                this.raw = '/(?:)/';
+              }
               this.regex = token.regex;
           }
           this.finish();
@@ -7194,7 +7223,8 @@ var vg_expression_parser = (function() {
     parse: parse
   };
 
-})();vg.parse = {};vg.parse.axes = (function() {
+})();
+vg.parse = {};vg.parse.axes = (function() {
   var ORIENT = {
     "x":      "bottom",
     "y":      "left",
@@ -7209,7 +7239,7 @@ var vg_expression_parser = (function() {
       axes[index] = axes[index] || vg.scene.axis();
       axis(def, index, axes[index], scales);
     });
-  };
+  }
 
   function axis(def, index, axis, scales) {
     // axis scale
@@ -7299,10 +7329,14 @@ vg.parse.data = function(spec, callback) {
       if (error) {
         vg.error("LOADING FAILED: " + d.url);
       } else {
-        model.load[d.name] = vg.data.read(data.toString(), d.format);
+        try {
+          model.load[d.name] = vg.data.read(data.toString(), d.format);
+        } catch (err) {
+          vg.error("UNABLE TO PARSE: " + d.url + ' ' + err.toString());
+        }
       }
       if (--count === 0) callback();
-    }
+    };
   }
   
   // process each data set definition
@@ -7381,7 +7415,7 @@ vg.parse.legends = (function() {
       legends[index] = legends[index] || vg.scene.legend();
       legend(def, index, legends[index], scales);
     });
-  };
+  }
 
   function legend(def, index, legend, scales) {
     // legend scales
@@ -7415,7 +7449,8 @@ vg.parse.legends = (function() {
   }
   
   return legends;
-})();vg.parse.mark = function(mark) {
+})();
+vg.parse.mark = function(mark) {
   var props = mark.properties,
       group = mark.marks;
 
@@ -7468,7 +7503,7 @@ vg.parse.properties = (function() {
         names = vg.keys(spec),
         i, len, name, ref, vars = {};
         
-    code += "var o = trans ? {} : item;\n"
+    code += "var o = trans ? {} : item;\n";
     
     for (i=0, len=names.length; i<len; ++i) {
       ref = spec[name = names[i]];
@@ -7485,14 +7520,14 @@ vg.parse.properties = (function() {
       } else if (vars.width) {
         code += "\n  o.x = (o.x2 - o.width);";
       } else {
-        code += "\n  o.x = o.x2;"
+        code += "\n  o.x = o.x2;";
       }
     }
     if (vars.xc) {
       if (vars.width) {
         code += "\n  o.x = (o.xc - o.width/2);";
       } else {
-        code += "\n  o.x = o.xc;"
+        code += "\n  o.x = o.xc;";
       }
     }
 
@@ -7504,14 +7539,14 @@ vg.parse.properties = (function() {
       } else if (vars.height) {
         code += "\n  o.y = (o.y2 - o.height);";
       } else {
-        code += "\n  o.y = o.y2;"
+        code += "\n  o.y = o.y2;";
       }
     }
     if (vars.yc) {
       if (vars.height) {
         code += "\n  o.y = (o.yc - o.height/2);";
       } else {
-        code += "\n  o.y = o.yc;"
+        code += "\n  o.y = o.yc;";
       }
     }
     
@@ -7997,7 +8032,7 @@ var vg_template_var = function(text, variable) {
   }
 
   return source;
-}
+};
 
 var vg_template_re = /\{\{(.+?)\}\}|$/g;
 
@@ -8053,7 +8088,7 @@ vg.scene.ENTER  = 0,
 vg.scene.UPDATE = 1,
 vg.scene.EXIT   = 2;
 
-vg.scene.DEFAULT_DATA = {"sentinel":1}
+vg.scene.DEFAULT_DATA = {"sentinel":1};
 
 vg.scene.data = function(data, parentData) {
   var DEFAULT = vg.scene.DEFAULT_DATA;
@@ -8156,13 +8191,13 @@ vg.scene.item = function(mark) {
     }
     
     return node;
-  };
+  }
   
   function buildNode(def, node) {
     node = node || {};
     node.def = def;
     node.marktype = def.type;
-    node.interactive = !(def.interactive === false);
+    node.interactive = (def.interactive !== false);
     return node;
   }
   
@@ -8227,7 +8262,7 @@ vg.scene.item = function(mark) {
 
   function buildTrans(def, node) {
     if (def.duration) node.duration = def.duration;
-    if (def.ease) node.ease = d3.ease(def.ease)
+    if (def.ease) node.ease = d3.ease(def.ease);
     if (def.delay) {
       var items = node.items, group = node.group, n = items.length, i;
       for (i=0; i<n; ++i) def.delay.call(this, items[i], group);
@@ -8243,11 +8278,12 @@ vg.scene.item = function(mark) {
         s += String(f[i](d));
       }
       return s;
-    }
+    };
   }
   
   return build;
-})();vg.scene.bounds = (function() {
+})();
+vg.scene.bounds = (function() {
 
   var parse = vg.canvas.path.parse,
       boundPath = vg.canvas.path.bounds,
@@ -8772,7 +8808,7 @@ vg.scene.item = function(mark) {
 
     this.callback();
     return stop;
-  };
+  }
   
   return trans;
   
@@ -8780,7 +8816,8 @@ vg.scene.item = function(mark) {
 
 vg.scene.transition = function(dur, ease) {
   return new vg.scene.Transition(dur, ease);
-};vg.scene.axis = function() {
+};
+vg.scene.axis = function() {
   var scale,
       orient = vg.config.axis.orient,
       offset = 0,
@@ -9320,7 +9357,7 @@ vg.scene.legend = function() {
       values = null,
       format = null,
       formatString = null,
-      title = undefined,
+      title,
       orient = "right",
       offset = vg.config.legend.offset,
       padding = vg.config.legend.padding,
@@ -9669,7 +9706,7 @@ function vg_legendUpdate(item, group, trans) {
       gx = group.bounds ? group.bounds.x1 : 0;
       o.x += gx - offset - lw;
       break;
-    };
+    }
     case "right": {
       gx = group.width;
       if (group.bounds) gx = trans
@@ -9677,7 +9714,7 @@ function vg_legendUpdate(item, group, trans) {
         : group.bounds.x2;
       o.x += gx + offset;
       break;
-    };
+    }
   }
   
   if (trans) trans.interpolate(item, o);
@@ -10325,7 +10362,7 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
       height: h
     };
     if (bgcolor != null) {
-      headAttr.style = 'background-color:' + bgcolor + ';'
+      headAttr.style = 'background-color:' + bgcolor + ';';
     }
 
     t.head = open('svg', headAttr, vg.config.svgNamespace);
@@ -10673,7 +10710,7 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
           defs.gradient[value.id] = value;
           value = "url(" + window.location.href + "#" + value.id + ")";
         }
-        s += name + ':' + value + ';'
+        s += name + ':' + value + ';';
       }
     }
     
@@ -10897,7 +10934,7 @@ vg.headless.canvas = vg.canvas.Renderer;vg.headless.svg = (function() {
 
     // configure renderer
     this._renderer.initialize(this._el, tw, th, pad, bg);
-  }
+  };
   
   prototype.render = function(items) {
     this._renderer.render(this._model.scene(), items);

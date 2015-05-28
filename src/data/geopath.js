@@ -27,7 +27,7 @@ vg.data.geopath = function() {
       opt[name] = x;
       (geopath.projection())[name](x);
       return map;
-    }
+    };
   });
    
   map.value = function(field) {

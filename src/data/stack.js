@@ -10,9 +10,9 @@ vg.data.stack = function() {
       };
 
   function stack(data) {
-    var out_y0 = output["y0"],
-        out_y1 = output["y1"],
-        out_cy = output["cy"];
+    var out_y0 = output.y0,
+        out_y1 = output.y1,
+        out_cy = output.cy;
     
     var series = stacks(data);
     if (series.length === 0) return data;
@@ -78,7 +78,7 @@ vg.data.stack = function() {
     stack[name] = function(x) {
       layout[name](x);
       return stack;
-    }
+    };
   });
 
   stack.output = function(map) {

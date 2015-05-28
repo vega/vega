@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "1.5.0",
+  "version": "1.5.3",
   "description": "Vega Runtime",
   "keywords": [
     "vega",
@@ -32,12 +32,14 @@
   "dependencies": {
     "d3": "^3.5.5",
     "d3-geo-projection": "^0.2.13",
+    "d3.layout.cloud": "^1.0.5",
     "canvas": "~1.1.6",
     "topojson": "^1.6.18",
     "yargs": "^2.3.0",
-    "request": "2.53.0"
+    "request": "^2.55.0"
   },
   "devDependencies": {
+    "jshint": "^2.7.0",
     "uglify-js": "^2.4.16",
     "vows": "^0.8.1"
   },
