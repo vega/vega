@@ -8829,7 +8829,7 @@ function properties(model, mark, spec) {
     }
   }
   
-  if (hasPath(mark, vars)) code += "\n  item.touch();";
+  if (hasPath(mark, vars)) code += "\n  dirty = (item.touch(), true);";
   code += "\n  if (trans) trans.interpolate(item, o);";
   code += "\n  return dirty;";
 
