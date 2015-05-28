@@ -107,7 +107,7 @@ proto.reevaluate = function(pulse) {
 };
 
 // Short-circuit encoder if user specifies items
-Encoder.update = function(graph, trans, request, items) {
+Encoder.update = function(graph, trans, request, items, dirty) {
   items = util.array(items);
   var preds = graph.predicates(), 
       db = graph.dataValues(),
@@ -119,7 +119,7 @@ Encoder.update = function(graph, trans, request, items) {
     props = item.mark.def.properties;
     prop = props && props[request];
     if (prop) {
-      encode.call(null, prop, item, trans, db, sg, preds);
+      encode.call(null, prop, item, trans, db, sg, preds, dirty);
       bounds.item(item);
     }
   }
