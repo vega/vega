@@ -14,9 +14,7 @@ function parseSignals(model, spec) {
     if(s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        var val = exprVal(model, s);
-        if(signal.value() === val) return model.doNotPropagate;
-        signal.value(val);
+        signal.value(exprVal(model, s));
         input.signals[s.name] = 1;
         return input;
       };

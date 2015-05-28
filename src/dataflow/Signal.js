@@ -36,8 +36,7 @@ proto.evaluate = function(input) {
 
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create(null, true);
-  cs.signals[this._name] = this._value;
-  this._value = null;
+  cs.signals[this._name] = 1;
   this._graph.propagate(cs, this);
 };
 

@@ -4361,8 +4361,7 @@ proto.evaluate = function(input) {
 
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create(null, true);
-  cs.signals[this._name] = this._value;
-  this._value = null;
+  cs.signals[this._name] = 1;
   this._graph.propagate(cs, this);
 };
 
@@ -9049,9 +9048,7 @@ function parseSignals(model, spec) {
     if(s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        var val = exprVal(model, s);
-        if(signal.value() === val) return model.doNotPropagate;
-        signal.value(val);
+        signal.value(exprVal(model, s));
         input.signals[s.name] = 1;
         return input;
       };
