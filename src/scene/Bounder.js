@@ -16,14 +16,20 @@ proto.evaluate = function(input) {
   log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
-      group = type === C.GROUP,
+      isGrp = type === C.GROUP,
       items = this._mark.items,
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  bounds.mark(this._mark, null, group && !hasLegends);
+  if(input.add.length || input.rem.length) {
+    bounds.mark(this._mark, null, isGrp && !hasLegends);
+  } else {
+    input.mod.forEach(function(item) {
+      bounds.item(item);
+    });
+  }  
 
-  if(group && hasLegends) {
+  if(isGrp && hasLegends) {
     for(i=0, ilen=this._mark.items.length; i<ilen; ++i) {
       group = this._mark.items[i];
       group._legendPositions = null;

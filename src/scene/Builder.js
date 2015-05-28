@@ -161,7 +161,7 @@ proto.sibling = function(name) {
 proto.evaluate = function(input) {
   log.debug(input, ["building", this._from, this._def.type]);
 
-  var output, fullUpdate, fcs, data, name;
+  var output, fullUpdate, fcs, data, name, dirty;
 
   if(this._ds) {
     output = changeset.create(input);
@@ -191,7 +191,15 @@ proto.evaluate = function(input) {
   }
 
   output = this._graph.evaluate(output, this._encoder);
-  return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
+
+  // Supernodes calculate bounds too, but only on items marked dirty.
+  if(this._isSuper) {
+    dirty = tuple.idMap(output.dirty);
+    output.mod = output.mod.filter(function(x) { return dirty[x._id] === 1 });
+    output = this._graph.evaluate(output, this._bounder);
+  }
+
+  return output;
 };
 
 function newItem() {

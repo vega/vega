@@ -3392,7 +3392,9 @@ function build() {
   v._renderNode.evaluate = function(input) {
     log.debug(input, ["rendering"]);
 
-    var s = v._model.scene();
+    var s = v._model.scene(),
+        ds, d;
+
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
     } else {
@@ -3400,7 +3402,6 @@ function build() {
     }
 
     // For all updated datasources, finalize their changesets.
-    var d, ds;
     for(d in input.data) {
       ds = v._model.data(d);
       if(!ds.revises()) continue;
@@ -12178,14 +12179,20 @@ proto.evaluate = function(input) {
   log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
-      group = type === C.GROUP,
+      isGrp = type === C.GROUP,
       items = this._mark.items,
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  bounds.mark(this._mark, null, group && !hasLegends);
+  if(input.add.length || input.rem.length) {
+    bounds.mark(this._mark, null, isGrp && !hasLegends);
+  } else {
+    input.mod.forEach(function(item) {
+      bounds.item(item);
+    });
+  }  
 
-  if(group && hasLegends) {
+  if(isGrp && hasLegends) {
     for(i=0, ilen=this._mark.items.length; i<ilen; ++i) {
       group = this._mark.items[i];
       group._legendPositions = null;
@@ -12368,7 +12375,7 @@ proto.sibling = function(name) {
 proto.evaluate = function(input) {
   log.debug(input, ["building", this._from, this._def.type]);
 
-  var output, fullUpdate, fcs, data, name;
+  var output, fullUpdate, fcs, data, name, dirty;
 
   if(this._ds) {
     output = changeset.create(input);
@@ -12398,7 +12405,15 @@ proto.evaluate = function(input) {
   }
 
   output = this._graph.evaluate(output, this._encoder);
-  return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
+
+  // Supernodes calculate bounds too, but only on items marked dirty.
+  if(this._isSuper) {
+    dirty = tuple.idMap(output.dirty);
+    output.mod = output.mod.filter(function(x) { return dirty[x._id] === 1 });
+    output = this._graph.evaluate(output, this._bounder);
+  }
+
+  return output;
 };
 
 function newItem() {
