@@ -194,7 +194,7 @@ proto.evaluate = function(input) {
 
   // Supernodes calculate bounds too, but only on items marked dirty.
   if(this._isSuper) {
-    output.mod = output.mod.filter(function(x) { return !!x._dirty });
+    output.mod = output.mod.filter(function(x) { return x._dirty; });
     output = this._graph.evaluate(output, this._bounder);
   }
 
