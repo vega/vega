@@ -19,6 +19,21 @@ proto.value = function(val) {
   return this;
 };
 
+proto.evaluate = function(input) {
+  var n  = this._name,
+      sg = input.signals;
+
+  // Avoid unnecessary propagation from stream updates
+  if(sg[n] === this._value) {
+    return this._graph.doNotPropagate;
+  }
+
+  this._value = sg[n];
+  sg[n] = 1;
+
+  return input;
+};
+
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create(null, true);
   cs.signals[this._name] = 1;

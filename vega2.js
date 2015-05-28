@@ -4344,6 +4344,21 @@ proto.value = function(val) {
   return this;
 };
 
+proto.evaluate = function(input) {
+  var n  = this._name,
+      sg = input.signals;
+
+  // Avoid unnecessary propagation from stream updates
+  if(sg[n] === this._value) {
+    return this._graph.doNotPropagate;
+  }
+
+  this._value = sg[n];
+  sg[n] = 1;
+
+  return input;
+};
+
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create(null, true);
   cs.signals[this._name] = 1;
@@ -9128,8 +9143,7 @@ module.exports = function(view) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
       var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
       if(spec.scale) val = parseSignals.scale(model, spec, val);
-      sig.value(val);
-      input.signals[sig.name()] = 1;
+      input.signals[sig.name()] = val;
       input.reflow = true;
       return input;  
     };
@@ -9171,9 +9185,7 @@ module.exports = function(view) {
         // TODO: Expand selector syntax to allow start/end signals into stream.
         // Until then, prevent old middles entering stream on new start.
         if(input.signals[name+START]) return model.doNotPropagate;
-
-        sig.value(s[MIDDLE].value());
-        input.signals[name] = 1;
+        input.signals[name] = s[MIDDLE].value();
         return input;
       }
 
@@ -9247,8 +9259,7 @@ module.exports = function(view) {
         
         val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
-        h.signal.value(val);
-        cs.signals[h.signal.name()] = 1;
+        cs.signals[h.signal.name()] = val;
       }
 
       model.propagate(cs, node);
