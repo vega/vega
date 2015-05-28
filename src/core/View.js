@@ -330,7 +330,7 @@ prototype.update = function(opt) {
   // Else-If there are streaming updates, perform a targeted propagation.
   // Otherwise, reevaluate the entire model (datasources + scene).
   if(opt.items) { 
-    Encoder.update(this._model, opt.trans, opt.props, opt.items);
+    Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
   } else if(v._streamer.listeners().length) {
     v._model.propagate(cs, v._streamer);
