@@ -14,9 +14,13 @@ function parseSignals(model, spec) {
     if(s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        signal.value(exprVal(model, s));
-        input.signals[s.name] = 1;
-        return input;
+        var val = exprVal(model, s);
+        if(val !== signal.value()) {
+          signal.value(val);
+          input.signals[s.name] = 1;
+          return input;
+        }
+        return model.doNotPropagate;        
       };
       signal.dependency(C.SIGNALS, s.expr.signals);
       s.expr.signals.forEach(function(dep) { model.signal(dep).addListener(signal); });
