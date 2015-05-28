@@ -284,7 +284,9 @@ function build() {
   v._renderNode.evaluate = function(input) {
     log.debug(input, ["rendering"]);
 
-    var s = v._model.scene();
+    var s = v._model.scene(),
+        ds, d;
+
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
     } else {
@@ -292,7 +294,6 @@ function build() {
     }
 
     // For all updated datasources, finalize their changesets.
-    var d, ds;
     for(d in input.data) {
       ds = v._model.data(d);
       if(!ds.revises()) continue;
