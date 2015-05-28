@@ -288,7 +288,7 @@ function build() {
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
     } else {
-      v._renderer.render(s);
+      v._renderer.render(s, input.dirty.length && input.dirty);
     }
 
     // For all updated datasources, finalize their changesets.
