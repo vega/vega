@@ -21,17 +21,15 @@ proto.evaluate = function(input) {
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  if(input.add.length || input.rem.length || !input.mod.length) {
+  if(input.add.length || input.rem.length || !items.length) {
     bounds.mark(this._mark, null, isGrp && !hasLegends);
   } else {
-    input.mod.forEach(function(item) {
-      bounds.item(item);
-    });
+    input.mod.forEach(function(item) { bounds.item(item); });
   }  
 
   if(isGrp && hasLegends) {
-    for(i=0, ilen=this._mark.items.length; i<ilen; ++i) {
-      group = this._mark.items[i];
+    for(i=0, ilen=items.length; i<ilen; ++i) {
+      group = items[i];
       group._legendPositions = null;
       for(j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];

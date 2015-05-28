@@ -92,7 +92,7 @@ function encode(prop, item, trans, db, sg, preds, dirty) {
   var enc = prop.encode,
       isDirty = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
 
-  if (isDirty) dirty.push(item);
+  if (isDirty) dirty.push((item._dirty = isDirty, item));
 }
 
 // If a specified property set called, or update property set 
