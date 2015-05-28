@@ -19,6 +19,10 @@ proto.value = function(val) {
   return this;
 };
 
+proto.evaluate = function(input) {
+  return input.signals[this._name] ? input : this._graph.doNotPropagate;
+};
+
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create(null, true);
   cs.signals[this._name] = 1;
