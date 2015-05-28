@@ -21,7 +21,8 @@ proto.evaluate = function(input) {
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  if(input.add.length || input.rem.length || !items.length) {
+  if(input.add.length || input.rem.length || !items.length || 
+      type === C.AREA || type === C.LINE) {
     bounds.mark(this._mark, null, isGrp && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bounds.item(item); });

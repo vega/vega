@@ -11,6 +11,8 @@ module.exports = {
   SIGNALS: "signals",
 
   GROUP: "group",
+  AREA:  "area",
+  LINE:  "line",
 
   ENTER: "enter",
   UPDATE: "update",
