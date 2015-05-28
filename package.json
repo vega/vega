@@ -32,6 +32,7 @@
   "dependencies": {
     "d3": "^3.5.5",
     "d3-geo-projection": "^0.2.13",
+    "d3.layout.cloud": "^1.0.5",
     "canvas": "~1.1.6",
     "topojson": "^1.6.18",
     "yargs": "^2.3.0",
