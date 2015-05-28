@@ -35,7 +35,7 @@
     "canvas": "~1.1.6",
     "topojson": "^1.6.18",
     "yargs": "^2.3.0",
-    "request": "2.53.0"
+    "request": "^2.55.0"
   },
   "devDependencies": {
     "jshint": "^2.7.0",

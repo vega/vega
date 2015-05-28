@@ -102,13 +102,11 @@ vg.data.load = (function() {
 
   function http(url, callback) {
     vg.log('LOAD HTTP: ' + url);
-    var options = {url: url, encoding: null};
+    var options = {url: url, encoding: null, gzip: true};
     if (vg.config.dataHeaders) {
       options.headers = vg.config.dataHeaders;
     }
-    var request = require('request');
-    request.gzip = true;
-    request(options, function(error, response, body) {
+    require('request').get(options, function(error, response, body) {
       if (!error && response.statusCode === 200) {
         callback(null, body);
       } else {
