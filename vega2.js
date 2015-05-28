@@ -4344,6 +4344,10 @@ proto.value = function(val) {
   return this;
 };
 
+proto.evaluate = function(input) {
+  return input.signals[this._name] ? input : this._graph.doNotPropagate;
+};
+
 proto.fire = function(cs) {
   if(!cs) cs = changeset.create(null, true);
   cs.signals[this._name] = 1;
@@ -8480,12 +8484,11 @@ module.exports = function parseModify(model, def, ds) {
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate) : null,
       reeval = (predicate === null),
-      node = new Node(model);
+      node = new Node(model).router(def.type === C.CLEAR);
 
   node.evaluate = function(input) {
     if(predicate !== null) {
-      var db = {};
-      (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
+      var db = model.dataValues(predicate.data||[]);
 
       // TODO: input
       reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
@@ -8505,15 +8508,15 @@ module.exports = function parseModify(model, def, ds) {
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples. 
-    if(def.type == C.ADD) {
+    if(def.type === C.ADD) {
       t = tuple.ingest(datum, prev);
       input.add.push(t);
       d._data.push(t);
-    } else if(def.type == C.REMOVE) {
+    } else if(def.type === C.REMOVE) {
       filter(def.field, value, input.add, input.rem);
       filter(def.field, value, input.mod, input.rem);
       d._data = d._data.filter(function(x) { return x[def.field] !== value });
-    } else if(def.type == C.TOGGLE) {
+    } else if(def.type === C.TOGGLE) {
       var add = [], rem = [];
       filter(def.field, value, input.rem, add);
       filter(def.field, value, input.add, rem);
@@ -8524,7 +8527,7 @@ module.exports = function parseModify(model, def, ds) {
       d._data.push.apply(d._data, add);
       input.rem.push.apply(input.rem, rem);
       d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1 });
-    } else if(def.type == C.CLEAR) {
+    } else if(def.type === C.CLEAR) {
       input.rem.push.apply(input.rem, input.add);
       input.rem.push.apply(input.rem, input.mod);
       input.add = [];
@@ -9033,9 +9036,13 @@ function parseSignals(model, spec) {
     if(s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        signal.value(exprVal(model, s));
-        input.signals[s.name] = 1;
-        return input;
+        var val = exprVal(model, s);
+        if(val !== signal.value()) {
+          signal.value(val);
+          input.signals[s.name] = 1;
+          return input;
+        }
+        return model.doNotPropagate;        
       };
       signal.dependency(C.SIGNALS, s.expr.signals);
       s.expr.signals.forEach(function(dep) { model.signal(dep).addListener(signal); });
@@ -9128,9 +9135,13 @@ module.exports = function(view) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
       var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
       if(spec.scale) val = parseSignals.scale(model, spec, val);
-      sig.value(val);
-      input.signals[sig.name()] = 1;
-      input.reflow = true;
+
+      if(val !== sig.value()) {
+        sig.value(val);
+        input.signals[sig.name()] = 1;
+        input.reflow = true;        
+      }
+
       return input;  
     };
     n.dependency(C.SIGNALS, selector.signal);
@@ -9172,8 +9183,11 @@ module.exports = function(view) {
         // Until then, prevent old middles entering stream on new start.
         if(input.signals[name+START]) return model.doNotPropagate;
 
-        sig.value(s[MIDDLE].value());
-        input.signals[name] = 1;
+        if(s[MIDDLE].value() !== sig.value()) {
+          sig.value(s[MIDDLE].value());
+          input.signals[name] = 1;
+        }
+
         return input;
       }
 
@@ -9247,8 +9261,11 @@ module.exports = function(view) {
         
         val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
-        h.signal.value(val);
-        cs.signals[h.signal.name()] = 1;
+
+        if(val !== h.signal.value()) {
+          h.signal.value(val);
+          cs.signals[h.signal.name()] = 1;
+        }
       }
 
       model.propagate(cs, node);

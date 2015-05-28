@@ -20,9 +20,13 @@ module.exports = function(view) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
       var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
       if(spec.scale) val = parseSignals.scale(model, spec, val);
-      sig.value(val);
-      input.signals[sig.name()] = 1;
-      input.reflow = true;
+
+      if(val !== sig.value()) {
+        sig.value(val);
+        input.signals[sig.name()] = 1;
+        input.reflow = true;        
+      }
+
       return input;  
     };
     n.dependency(C.SIGNALS, selector.signal);
@@ -64,8 +68,11 @@ module.exports = function(view) {
         // Until then, prevent old middles entering stream on new start.
         if(input.signals[name+START]) return model.doNotPropagate;
 
-        sig.value(s[MIDDLE].value());
-        input.signals[name] = 1;
+        if(s[MIDDLE].value() !== sig.value()) {
+          sig.value(s[MIDDLE].value());
+          input.signals[name] = 1;
+        }
+
         return input;
       }
 
@@ -139,8 +146,11 @@ module.exports = function(view) {
         
         val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
-        h.signal.value(val);
-        cs.signals[h.signal.name()] = 1;
+
+        if(val !== h.signal.value()) {
+          h.signal.value(val);
+          cs.signals[h.signal.name()] = 1;
+        }
       }
 
       model.propagate(cs, node);

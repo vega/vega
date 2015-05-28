@@ -16,12 +16,11 @@ module.exports = function parseModify(model, def, ds) {
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate) : null,
       reeval = (predicate === null),
-      node = new Node(model);
+      node = new Node(model).router(def.type === C.CLEAR);
 
   node.evaluate = function(input) {
     if(predicate !== null) {
-      var db = {};
-      (predicate.data||[]).forEach(function(d) { db[d] = model.data(d).values(); });
+      var db = model.dataValues(predicate.data||[]);
 
       // TODO: input
       reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
@@ -41,15 +40,15 @@ module.exports = function parseModify(model, def, ds) {
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples. 
-    if(def.type == C.ADD) {
+    if(def.type === C.ADD) {
       t = tuple.ingest(datum, prev);
       input.add.push(t);
       d._data.push(t);
-    } else if(def.type == C.REMOVE) {
+    } else if(def.type === C.REMOVE) {
       filter(def.field, value, input.add, input.rem);
       filter(def.field, value, input.mod, input.rem);
       d._data = d._data.filter(function(x) { return x[def.field] !== value });
-    } else if(def.type == C.TOGGLE) {
+    } else if(def.type === C.TOGGLE) {
       var add = [], rem = [];
       filter(def.field, value, input.rem, add);
       filter(def.field, value, input.add, rem);
@@ -60,7 +59,7 @@ module.exports = function parseModify(model, def, ds) {
       d._data.push.apply(d._data, add);
       input.rem.push.apply(input.rem, rem);
       d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1 });
-    } else if(def.type == C.CLEAR) {
+    } else if(def.type === C.CLEAR) {
       input.rem.push.apply(input.rem, input.add);
       input.rem.push.apply(input.rem, input.mod);
       input.add = [];
