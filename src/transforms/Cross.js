@@ -114,3 +114,33 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
+Cross.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Cross transform",
+  "description": "Compute the cross-product of two data sets.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["cross"]},
+    "with": {
+      "type": "string",
+      "description": "The name of the secondary data set to cross with the primary data. " + 
+        "If unspecified, the primary data is crossed with itself."
+    },
+    "diagonal": {
+      "type": "boolean",
+      "description": "If false, items along the \"diagonal\" of the cross-product " +
+        "(those elements with the same index in their respective array) " +
+        "will not be included in the output.",
+      "default": true
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "left": {"type": "string", "default": "a"},
+        "right": {"type": "string", "default": "b"}
+      }
+    }
+  },
+  "required": ["type"]
+};

@@ -1,4 +1,5 @@
-var Transform = require('./Transform'),
+var dl = require('datalib'),
+    Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
 function Facet(graph) {
@@ -27,3 +28,14 @@ proto.aggr = function() {
 };
 
 module.exports = Facet;
+Facet.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Facet transform",
+  "description": "A special aggregate transform that organizes a data set into groups or \"facets\".",
+  "type": "object",
+  "properties": dl.extend({}, Aggregate.schema.properties, {
+    "type": {"enum": ["facet"]},
+    "transform": {"$ref": "#/refs/transform"}
+  }),
+  "required": ["type", "groupby"]
+};

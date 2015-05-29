@@ -9527,7 +9527,7 @@ module.exports = function(view) {
 var dl = require('datalib'),
     transforms = require('../transforms/index');
 
-module.exports = function parseTransforms(model, def) {
+function parseTransforms(model, def) {
   var tx = new transforms[def.type](model);
   
   // We want to rename output fields before setting any other properties,
@@ -9541,6 +9541,18 @@ module.exports = function parseTransforms(model, def) {
   });
 
   return tx;
+};
+
+module.exports = parseTransforms;
+parseTransforms.refSchema = {
+  "transform": {
+    "type": "array",
+    "items": {
+      "oneOf": dl.keys(transforms).map(function(t) {
+        return t.schema;
+      })
+    }
+  }
 };
 },{"../transforms/index":102,"datalib":20}],60:[function(require,module,exports){
 (function (global){
@@ -14335,8 +14347,8 @@ function lgnd(model) {
     var def = q_legend_def(scale),
         dom = scale.domain(),
         data = (values == null
-      ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
-      : values).map(ingest),
+          ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
+          : values).map(ingest),
         width = (gradientStyle.width && gradientStyle.width.value) || config.legend.gradientWidth,
         fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
 
@@ -14896,7 +14908,65 @@ proto.transform = function(input, reset) {
   return aggr.changes(input, output);
 }
 
-module.exports = Aggregate;
+var VALID_OPS = ["values", "count", "valid", "missing", "distinct", 
+                 "sum", "mean", "average", "variance", "variancep", "stdev", 
+                 "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
+                 "argmin", "argmax"];
+
+module.exports   = Aggregate;
+Aggregate.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Aggregate transform",
+  "description": "Compute summary aggregate statistics",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["aggregate"]},
+    "groupby": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to split the data into groups."
+    },
+    "summarize": {
+      "oneOf": [
+        {
+          "type": "object",
+          "patternProperties": {
+            "*": {
+              "type": "array",
+              "description": "An array of aggregate functions.",
+              "items": {"enum": VALID_OPS}
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the field to aggregate."
+              },
+              "ops": {
+                "type": "array",
+                "description": "An array of aggregate functions.",
+                "items": {"enum": VALID_OPS}
+              },
+              "as": {
+                "type": "array",
+                "description": "An optional array of names to use for the output fields.",
+                "items": {"type": "string"}
+              }
+            },
+            "required": ["name", "ops"]
+          }
+        }
+      ]
+    }
+  },
+  "required": ["type", "groupby", "summarize"]
+};
+
 },{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":107,"../util/log":108,"./Facetor":87,"./Transform":99,"datalib":20}],83:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
@@ -14936,8 +15006,12 @@ function Bin(graph) {
     field: {type: "field"},
     min: {type: "value"},
     max: {type: "value"},
+    base: {type: "value", default: 10},
+    maxbins: {type: "value", default: 20},
     step: {type: "value"},
-    maxbins: {type: "value", default: 20}
+    steps: {type: "value"},
+    minstep: {type: "value"},
+    div: {type: "value", default: [5, 2]}
   });
 
   this._output = {"bin": "bin"};
@@ -14953,8 +15027,12 @@ proto.transform = function(input) {
   var b = dl.bins({
     min: this.param("min"),
     max: this.param("max"),
+    base: this.param("base"),
+    maxbins: this.param("maxbins"),
     step: this.param("step"),
-    maxbins: this.param("maxbins")
+    steps: this.param("steps"),
+    minstep: this.param("minstep"),
+    div: this.param("div")
   });
 
   function update(d) {
@@ -14971,6 +15049,57 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
+Bin.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Bin transform",
+  "description": "Bins values into quantitative bins (e.g., for a histogram).",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["bin"]},
+    "field": {
+      "type": "string",
+      "description": "The name of the field to bin values from."
+    },
+    "min": {
+      "type": "number",
+      "description": "The minimum bin value to consider."
+    },
+    "max": {
+      "type": "number",
+      "description": "The maximum bin value to consider."
+    },
+    "base": {
+      "type": "number",
+      "description": "The number base to use for automatic bin determination.",
+      "default": 10
+    },
+    "maxbins": {
+      "type": "number",
+      "description": "The maximum number of allowable bins.",
+      "default": 20
+    },
+    "step": {
+      "type": "number",
+      "description": "An exact step size to use between bins. If provided, options such as maxbins will be ignored."
+    },
+    "steps": {
+      "type": "array",
+      "items": {"type": "number"},
+      "description": "An array of allowable step sizes to choose from."
+    },
+    "minstep": {
+      "type": "number",
+      "description": "A minimum allowable step size (particularly useful for integer values)."
+    },
+    "div": {
+      "type": "array",
+      "items": {"type": "number"},
+      "description": "An array of scale factors indicating allowable subdivisions.",
+      "default": [5, 2]
+    }
+  },
+  "required":["type", "field", "min", "max"]
+};
 
 },{"../dataflow/tuple":37,"./Transform":99,"datalib":20}],85:[function(require,module,exports){
 var Transform = require('./Transform'),
@@ -15089,8 +15218,40 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
+Cross.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Cross transform",
+  "description": "Compute the cross-product of two data sets.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["cross"]},
+    "with": {
+      "type": "string",
+      "description": "The name of the secondary data set to cross with the primary data. " + 
+        "If unspecified, the primary data is crossed with itself."
+    },
+    "diagonal": {
+      "type": "boolean",
+      "description": "If false, items along the \"diagonal\" of the cross-product " +
+        "(those elements with the same index in their respective array) " +
+        "will not be included in the output.",
+      "default": true
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "left": {"type": "string", "default": "a"},
+        "right": {"type": "string", "default": "b"}
+      }
+    }
+  },
+  "required": ["type"]
+};
+
 },{"../dataflow/Collector":31,"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":108,"./Transform":99}],86:[function(require,module,exports){
-var Transform = require('./Transform'),
+var dl = require('datalib'),
+    Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
 function Facet(graph) {
@@ -15119,7 +15280,18 @@ proto.aggr = function() {
 };
 
 module.exports = Facet;
-},{"../parse/transforms":59,"./Aggregate":82,"./Transform":99}],87:[function(require,module,exports){
+Facet.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Facet transform",
+  "description": "A special aggregate transform that organizes a data set into groups or \"facets\".",
+  "type": "object",
+  "properties": dl.extend({}, Aggregate.schema.properties, {
+    "type": {"enum": ["facet"]},
+    "transform": {"$ref": "#/refs/transform"}
+  }),
+  "required": ["type", "groupby"]
+};
+},{"../parse/transforms":59,"./Aggregate":82,"./Transform":99,"datalib":20}],87:[function(require,module,exports){
 var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
@@ -15315,6 +15487,21 @@ proto.transform = function(input) {
 };
 
 module.exports = Filter;
+Filter.schema  = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Filter transform",
+  "description": "Filters elements from a data set to remove unwanted items.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["filter"]},
+    "test": {
+      "type": "string",
+      "description": "A string containing an expression (in JavaScript syntax) for the filter predicate."
+    }
+  },
+  "required": ["type", "test"]
+};
+
 },{"../dataflow/changeset":36,"../parse/expr":47,"../util/constants":107,"../util/log":108,"./Transform":99}],89:[function(require,module,exports){
 var Transform = require('./Transform'),
     log = require('../util/log'), 
@@ -15385,6 +15572,32 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
+Fold.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Fold transform",
+  "description": "Collapse (\"fold\") one or more data properties into two properties.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["fold"]},
+    "fields": {
+      "type": "array",
+      "description": "An array of field references indicating the data properties to fold.",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "key": {"type": "string", "default": "key"},
+        "value": {"type": "string", "default": "value"}
+      }
+    }
+  },
+  "required": ["type", "fields"]
+};
+
 },{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":108,"./Transform":99}],90:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
@@ -15398,7 +15611,7 @@ function Force(graph) {
     links: {type: "data"},
     linkDistance: {type: "field|value", default: 20},
     linkStrength: {type: "field|value", default: 1},
-    charge: {type: "field|value", default: 30},
+    charge: {type: "field|value", default: -30},
     chargeDistance: {type: "field|value", default: Infinity},
     iterations: {type: "value", default: 500},
     friction: {type: "value", default: 0.9},
@@ -15497,6 +15710,83 @@ proto.transform = function(nodeInput) {
 };
 
 module.exports = Force;
+Force.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Force transform",
+  "description": "Performs force-directed layout for network data.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["force"]},
+    "size": {
+      "type": "array",
+      "description": "The dimensions [width, height] of this force layout.",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {"type": "number"},
+      "default": [500, 500]
+    },
+    "links": {
+      "type": "string",
+      "description": "The name of the link (edge) data set."
+    },
+    "linkDistance": {
+      "type": ["number", "string"],
+      "description": "Determines the length of edges, in pixels.",
+      "default": 20
+    },
+    "linkStrength": {
+      "type": ["number", "string"],
+      "description": "Determines the tension of edges (the spring constant).",
+      "default": 1
+    },
+    "charge": {
+      "type": ["number", "string"],
+      "description": "The strength of the charge each node exerts.",
+      "default": -30
+    },
+    "chargeDistance": {
+      "type": ["number", "string"],
+      "description": "The maximum distance over which charge forces are applied.",
+      "default": Infinity
+    },
+    "iterations": {
+      "type": "number",
+      "description": "The number of iterations to run the force directed layout.",
+      "default": 500
+    },
+    "friction": {
+      "type": "number",
+      "description": "The strength of the friction force used to stabilize the layout.",
+      "default": 0.9
+    },
+    "theta": {
+      "type": "number",
+      "description": "The theta parameter for the Barnes-Hut algorithm, which is used to compute charge forces between nodes.",
+      "default": 0.8
+    },
+    "gravity": {
+      "type": "number",
+      "description": "The strength of the pseudo-gravity force that pulls nodes towards the center of the layout area.",
+      "default": 0.1
+    },
+    "alpha": {
+      "type": "number",
+      "description": "A \"temperature\" parameter that determines how much node positions are adjusted at each step.",
+      "default": 0.1
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"},
+        "source": {"type": "string", "default": "_source"},
+        "target": {"type": "string", "default": "_target"}
+      }
+    }
+  },
+  "required": ["type", "links"]
+};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./Transform":99}],91:[function(require,module,exports){
@@ -15542,6 +15832,25 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
+Formula.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Formula transform",
+  "description": "Extends data elements with new values according to a calculation formula.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["formula"]},
+    "field": {
+      "type": "string",
+      "description": "The property name in which to store the computed formula value."
+    },
+    "expr": {
+      "type": "string",
+      "description": "A string containing an expression (in JavaScript syntax) for the formula."
+    }
+  },
+  "required": ["type", "field", "expr"]
+};
+
 },{"../dataflow/tuple":37,"../parse/expr":47,"../util/constants":107,"../util/log":108,"./Transform":99}],92:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
@@ -15630,6 +15939,75 @@ proto.transform = function(input) {
 
 module.exports = Geo;
 
+Geo.baseSchema = {
+  "projection": {
+    "type": "string",
+    "description": "The type of cartographic projection to use.",
+    "default": "mercator"
+  },
+  "center": {
+    "type": "array",
+    "description": "The center of the projection.",
+    "items": {"type": "number"},
+    "minItems": 2,
+    "maxItems": 2
+  },
+  "translate": {
+    "type": "array",
+    "description": "The translation of the projection.",
+    "items": {"type": "number"},
+    "minItems": 2,
+    "maxItems": 2
+  },
+  "rotate": {
+    "type": "number",
+    "description": "The rotation of the projection."
+  },
+  "scale": {
+    "type": "number",
+    "description": "The scale of the projection."
+  },
+  "precision": {
+    "type": "number",
+    "description": "The desired precision of the projection."
+  },
+  "clipAngle": {
+    "type": "number",
+    "description": "The clip angle of the projection."
+  },
+  "clipExtent": {
+    "type": "number",
+    "description": "The clip extent of the projection."
+  }
+};
+
+Geo.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Geo transform",
+  "description": "Performs a cartographic projection. Given longitude and latitude values, sets corresponding x and y properties for a mark.",
+  "type": "object",
+  "properties": dl.extend({
+    "type": {"enum": ["geo"]},
+    "lon": {
+      "type": "string",
+      "description": "The input longitude values."
+    },
+    "lat": {
+      "type": "string",
+      "description": "The input latitude values."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"}
+      }
+    }
+  }, Geo.baseSchema),
+  "required": ["type", "lon", "lat"]
+};
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./Transform":99,"datalib":20}],93:[function(require,module,exports){
@@ -15676,7 +16054,27 @@ proto.transform = function(input) {
 };
 
 module.exports = GeoPath;
-
+GeoPath.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Geopath transform",
+  "description": "Creates paths for geographic regions, such as countries, states and counties.",
+  "type": "object",
+  "properties": dl.extend({
+    "type": {"enum": ["geopath"]},
+    "value": {
+      "type": "string",
+      "description": "The data field containing GeoJSON Feature data."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "path": {"type": "string", "default": "layout_path"}
+      }
+    }
+  }, Geo.baseSchema),
+  "required": ["type", "value"]
+};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./Geo":92,"./Transform":99,"datalib":20}],94:[function(require,module,exports){
@@ -15771,7 +16169,56 @@ proto.transform = function(input) {
   return input;
 };
 
-module.exports = LinkPath;
+module.exports  = LinkPath;
+LinkPath.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "LinkPath transform",
+  "description": "Computes a path definition for connecting nodes within a node-link network or tree diagram.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["linkpath"]},
+    "source": {
+      "type": "string",
+      "description": "The data field that references the source node for this link.",
+      "default": "_source"
+    },
+    "target": {
+      "type": "string",
+      "description": "The data field that references the target node for this link.",
+      "default": "_target"
+    },
+    "x": {
+      "type": "string",
+      "description": "",
+      "default": "layout_x"
+    },
+    "y": {
+      "type": "string",
+      "description": "",
+      "default": "layout_y"
+    },
+    "tension": {
+      "type": "number",
+      "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
+      "default": 0.2,
+      "minimum": 0,
+      "maximum": 1
+    },
+    "shape": {
+      "type": {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+      "description": "The path shape to use",
+      "default": "line"
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "path": {"type": "string", "default": "layout_path"}
+      }
+    }
+  },
+  "required": ["type"]
+}
 },{"../dataflow/tuple":37,"./Transform":99}],95:[function(require,module,exports){
 var dl = require('datalib'),
     expr = require('../parse/expr'),
@@ -15949,7 +16396,47 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
-
+Pie.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Pie transform",
+  "description": "Computes a pie chart layout.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["pie"]},
+    "value": {
+      "type": "string",
+      "description": "The data values to encode as angular spans. " + 
+        "If this property is omitted, all pie slices will have equal spans."
+    },
+    "startAngle": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2 * Math.PI,
+      "default": 0
+    },
+    "endAngle": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2 * Math.PI,
+      "default": 2 * Math.PI,
+    },
+    "sort": {
+      "type": "boolean",
+      "description": " If true, will sort the data prior to computing angles.",
+      "default": false
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "start": {"type": "string", "default": "layout_start"},
+        "end": {"type": "string", "default": "layout_end"},
+        "mid": {"type": "string", "default": "layout_mid"}
+      }
+    }
+  },
+  "required": ["type"]
+};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./BatchTransform":83,"./Transform":99,"datalib":20}],97:[function(require,module,exports){
@@ -15977,6 +16464,24 @@ proto.transform = function(input) {
 };
 
 module.exports = Sort;
+Sort.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Sort transform",
+  "description": "Sorts the values of a data set.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["sort"]},
+    "by": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "array", "items": {"type": "string"}}
+      ],
+      "description": "A list of fields to use as sort criteria."
+    }
+  },
+  "required": ["type", "by"]
+};
+
 },{"../parse/expr":47,"../util/log":108,"./Transform":99,"datalib":20}],98:[function(require,module,exports){
 var dl = require('datalib'),
     Transform = require('./Transform'),
@@ -16071,6 +16576,44 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
+Stack.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Stack transform",
+  "description": "Computes layout values for stacked graphs, as in stacked bar charts or stream graphs.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["stack"]},
+    "groupby": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to split the data into groups (stacks)."
+    },
+    "sortby": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to determine the sort order of stacks."
+    },
+    "value": {
+      "type": "string",
+      "description": "The data field that determines the thickness/height of stacks."
+    },
+    "offset": {
+      "enum": ["zero", "silhouette", "wiggle", "expand"],
+      "description": "The baseline offset",
+      "default": "zero"
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "start": {"type": "string", "default": "layout_start"},
+        "end": {"type": "string", "default": "layout_end"},
+        "mid": {"type": "string", "default": "layout_mid"}
+      }
+    }
+  },
+  "required": ["type", "groupby", "value"]
+};
 },{"../dataflow/tuple":37,"./BatchTransform":83,"./Transform":99,"datalib":20}],99:[function(require,module,exports){
 var Node = require('../dataflow/Node'),
     Parameter = require('./Parameter'),
@@ -16132,6 +16675,8 @@ var dl = require('datalib'),
     BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
 
+var defaultRatio = 0.5 * (1 + Math.sqrt(5));
+
 function Treemap(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
@@ -16143,7 +16688,7 @@ function Treemap(graph) {
     size: {type: "array<value>", default: [500, 500]},
     round: {type: "value", default: true},
     sticky: {type: "value", default: false},
-    ratio: {type: "value", default: 0.5 * (1 + Math.sqrt(5))},
+    ratio: {type: "value", default: defaultRatio},
     padding: {type: "value", default: null},
     mode: {type: "value", default: "squarify"}
   });
@@ -16196,6 +16741,75 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Treemap;
+Treemap.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["treemap"]},
+    "sort": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to use as sort criteria for sibling nodes.",
+      "default": ["-value"]
+    },
+    "children": {
+      "type": "string",
+      "description": "A data field that represents the children array",
+      "default": "children"
+    },
+    "value": {
+      "type": "string",
+      "description": "The values to use to determine the area of each leaf-level treemap cell.",
+      "default": "value"
+    },
+    "size": {
+      "type": "array",
+      "items": {"type": "number"},
+      "description": "The dimensions of the treemap layout",
+      "minItems": 0,
+      "maxItems": 0,
+      "default": [500, 500]
+    },
+    "round": {
+      "type": "boolean",
+      "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
+      "default": true
+    },
+    "sticky": {
+      "type": "boolean",
+      "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
+      "default": false
+    },
+    "ratio": {
+      "type": "number",
+      "description": "The target aspect ratio for the layout to optimize.",
+      "default": defaultRatio
+    },
+    "padding": {
+      "oneOf": [
+        {"type": "number"},
+        {
+          "type": "array", 
+          "items": {"type": "number"},
+          "minItems": 4,
+          "maxItems": 4
+        }
+      ],
+      "description": "he padding (in pixels) to provide around internal nodes in the treemap."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"},
+        "width": {"type": "string", "default": "layout_width"},
+        "height": {"type": "string", "default": "layout_height"}
+      }
+    }
+  },
+  "required": ["type", "groupby", "value"]
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./BatchTransform":83,"./Transform":99,"datalib":20}],101:[function(require,module,exports){
@@ -16323,6 +16937,37 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
+Zip.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Zip transform",
+  "description": "Merges two data sets together.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["zip"]},
+    "with": {
+      "type": "string",
+      "description": "The name of the secondary data set to \"zip\" with the current, primary data set."
+    },
+    "as": {
+      "type": "string",
+      "description": "The name of the field in which to store the secondary data set values."
+    },
+    "key": {
+      "type": "string",
+      "description": "The field in the primary data set to match against the secondary data set."
+    },
+    "withKey": {
+      "type": "string",
+      "description": "The field in the secondary data set to match against the primary data set."
+    },
+    "default": {
+      "type": "any",
+      "description": "A default value to use if no matching key value is found."
+    }
+  },
+  "required": ["type", "with", "as"]
+};
+
 },{"../dataflow/Collector":31,"../util/log":108,"./Transform":99,"datalib":20}],102:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),

@@ -91,3 +91,41 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
+Stack.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Stack transform",
+  "description": "Computes layout values for stacked graphs, as in stacked bar charts or stream graphs.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["stack"]},
+    "groupby": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to split the data into groups (stacks)."
+    },
+    "sortby": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to determine the sort order of stacks."
+    },
+    "value": {
+      "type": "string",
+      "description": "The data field that determines the thickness/height of stacks."
+    },
+    "offset": {
+      "enum": ["zero", "silhouette", "wiggle", "expand"],
+      "description": "The baseline offset",
+      "default": "zero"
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "start": {"type": "string", "default": "layout_start"},
+        "end": {"type": "string", "default": "layout_end"},
+        "mid": {"type": "string", "default": "layout_mid"}
+      }
+    }
+  },
+  "required": ["type", "groupby", "value"]
+};

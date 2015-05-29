@@ -67,3 +67,28 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
+Fold.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Fold transform",
+  "description": "Collapse (\"fold\") one or more data properties into two properties.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["fold"]},
+    "fields": {
+      "type": "array",
+      "description": "An array of field references indicating the data properties to fold.",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "key": {"type": "string", "default": "key"},
+        "value": {"type": "string", "default": "value"}
+      }
+    }
+  },
+  "required": ["type", "fields"]
+};

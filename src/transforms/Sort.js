@@ -22,3 +22,20 @@ proto.transform = function(input) {
 };
 
 module.exports = Sort;
+Sort.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Sort transform",
+  "description": "Sorts the values of a data set.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["sort"]},
+    "by": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "array", "items": {"type": "string"}}
+      ],
+      "description": "A list of fields to use as sort criteria."
+    }
+  },
+  "required": ["type", "by"]
+};

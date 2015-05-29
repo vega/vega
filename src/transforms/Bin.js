@@ -8,8 +8,12 @@ function Bin(graph) {
     field: {type: "field"},
     min: {type: "value"},
     max: {type: "value"},
+    base: {type: "value", default: 10},
+    maxbins: {type: "value", default: 20},
     step: {type: "value"},
-    maxbins: {type: "value", default: 20}
+    steps: {type: "value"},
+    minstep: {type: "value"},
+    div: {type: "value", default: [5, 2]}
   });
 
   this._output = {"bin": "bin"};
@@ -25,8 +29,12 @@ proto.transform = function(input) {
   var b = dl.bins({
     min: this.param("min"),
     max: this.param("max"),
+    base: this.param("base"),
+    maxbins: this.param("maxbins"),
     step: this.param("step"),
-    maxbins: this.param("maxbins")
+    steps: this.param("steps"),
+    minstep: this.param("minstep"),
+    div: this.param("div")
   });
 
   function update(d) {
@@ -43,3 +51,54 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
+Bin.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Bin transform",
+  "description": "Bins values into quantitative bins (e.g., for a histogram).",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["bin"]},
+    "field": {
+      "type": "string",
+      "description": "The name of the field to bin values from."
+    },
+    "min": {
+      "type": "number",
+      "description": "The minimum bin value to consider."
+    },
+    "max": {
+      "type": "number",
+      "description": "The maximum bin value to consider."
+    },
+    "base": {
+      "type": "number",
+      "description": "The number base to use for automatic bin determination.",
+      "default": 10
+    },
+    "maxbins": {
+      "type": "number",
+      "description": "The maximum number of allowable bins.",
+      "default": 20
+    },
+    "step": {
+      "type": "number",
+      "description": "An exact step size to use between bins. If provided, options such as maxbins will be ignored."
+    },
+    "steps": {
+      "type": "array",
+      "items": {"type": "number"},
+      "description": "An array of allowable step sizes to choose from."
+    },
+    "minstep": {
+      "type": "number",
+      "description": "A minimum allowable step size (particularly useful for integer values)."
+    },
+    "div": {
+      "type": "array",
+      "items": {"type": "number"},
+      "description": "An array of scale factors indicating allowable subdivisions.",
+      "default": [5, 2]
+    }
+  },
+  "required":["type", "field", "min", "max"]
+};

@@ -40,3 +40,24 @@ proto.transform = function(input) {
 };
 
 module.exports = GeoPath;
+GeoPath.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Geopath transform",
+  "description": "Creates paths for geographic regions, such as countries, states and counties.",
+  "type": "object",
+  "properties": dl.extend({
+    "type": {"enum": ["geopath"]},
+    "value": {
+      "type": "string",
+      "description": "The data field containing GeoJSON Feature data."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "path": {"type": "string", "default": "layout_path"}
+      }
+    }
+  }, Geo.baseSchema),
+  "required": ["type", "value"]
+};

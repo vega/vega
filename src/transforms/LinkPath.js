@@ -89,4 +89,53 @@ proto.transform = function(input) {
   return input;
 };
 
-module.exports = LinkPath;
+module.exports  = LinkPath;
+LinkPath.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "LinkPath transform",
+  "description": "Computes a path definition for connecting nodes within a node-link network or tree diagram.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["linkpath"]},
+    "source": {
+      "type": "string",
+      "description": "The data field that references the source node for this link.",
+      "default": "_source"
+    },
+    "target": {
+      "type": "string",
+      "description": "The data field that references the target node for this link.",
+      "default": "_target"
+    },
+    "x": {
+      "type": "string",
+      "description": "",
+      "default": "layout_x"
+    },
+    "y": {
+      "type": "string",
+      "description": "",
+      "default": "layout_y"
+    },
+    "tension": {
+      "type": "number",
+      "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
+      "default": 0.2,
+      "minimum": 0,
+      "maximum": 1
+    },
+    "shape": {
+      "type": {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+      "description": "The path shape to use",
+      "default": "line"
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "path": {"type": "string", "default": "layout_path"}
+      }
+    }
+  },
+  "required": ["type"]
+}

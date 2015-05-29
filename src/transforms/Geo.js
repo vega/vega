@@ -83,3 +83,72 @@ proto.transform = function(input) {
 };
 
 module.exports = Geo;
+
+Geo.baseSchema = {
+  "projection": {
+    "type": "string",
+    "description": "The type of cartographic projection to use.",
+    "default": "mercator"
+  },
+  "center": {
+    "type": "array",
+    "description": "The center of the projection.",
+    "items": {"type": "number"},
+    "minItems": 2,
+    "maxItems": 2
+  },
+  "translate": {
+    "type": "array",
+    "description": "The translation of the projection.",
+    "items": {"type": "number"},
+    "minItems": 2,
+    "maxItems": 2
+  },
+  "rotate": {
+    "type": "number",
+    "description": "The rotation of the projection."
+  },
+  "scale": {
+    "type": "number",
+    "description": "The scale of the projection."
+  },
+  "precision": {
+    "type": "number",
+    "description": "The desired precision of the projection."
+  },
+  "clipAngle": {
+    "type": "number",
+    "description": "The clip angle of the projection."
+  },
+  "clipExtent": {
+    "type": "number",
+    "description": "The clip extent of the projection."
+  }
+};
+
+Geo.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Geo transform",
+  "description": "Performs a cartographic projection. Given longitude and latitude values, sets corresponding x and y properties for a mark.",
+  "type": "object",
+  "properties": dl.extend({
+    "type": {"enum": ["geo"]},
+    "lon": {
+      "type": "string",
+      "description": "The input longitude values."
+    },
+    "lat": {
+      "type": "string",
+      "description": "The input latitude values."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"}
+      }
+    }
+  }, Geo.baseSchema),
+  "required": ["type", "lon", "lat"]
+};

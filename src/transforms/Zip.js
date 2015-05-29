@@ -122,3 +122,33 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
+Zip.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Zip transform",
+  "description": "Merges two data sets together.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["zip"]},
+    "with": {
+      "type": "string",
+      "description": "The name of the secondary data set to \"zip\" with the current, primary data set."
+    },
+    "as": {
+      "type": "string",
+      "description": "The name of the field in which to store the secondary data set values."
+    },
+    "key": {
+      "type": "string",
+      "description": "The field in the primary data set to match against the secondary data set."
+    },
+    "withKey": {
+      "type": "string",
+      "description": "The field in the secondary data set to match against the primary data set."
+    },
+    "default": {
+      "type": "any",
+      "description": "A default value to use if no matching key value is found."
+    }
+  },
+  "required": ["type", "with", "as"]
+};

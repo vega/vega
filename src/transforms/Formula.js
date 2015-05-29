@@ -40,3 +40,21 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
+Formula.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Formula transform",
+  "description": "Extends data elements with new values according to a calculation formula.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["formula"]},
+    "field": {
+      "type": "string",
+      "description": "The property name in which to store the computed formula value."
+    },
+    "expr": {
+      "type": "string",
+      "description": "A string containing an expression (in JavaScript syntax) for the formula."
+    }
+  },
+  "required": ["type", "field", "expr"]
+};

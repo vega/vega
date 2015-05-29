@@ -157,4 +157,61 @@ proto.transform = function(input, reset) {
   return aggr.changes(input, output);
 }
 
-module.exports = Aggregate;
+var VALID_OPS = ["values", "count", "valid", "missing", "distinct", 
+                 "sum", "mean", "average", "variance", "variancep", "stdev", 
+                 "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
+                 "argmin", "argmax"];
+
+module.exports   = Aggregate;
+Aggregate.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Aggregate transform",
+  "description": "Compute summary aggregate statistics",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["aggregate"]},
+    "groupby": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to split the data into groups."
+    },
+    "summarize": {
+      "oneOf": [
+        {
+          "type": "object",
+          "patternProperties": {
+            "*": {
+              "type": "array",
+              "description": "An array of aggregate functions.",
+              "items": {"enum": VALID_OPS}
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the field to aggregate."
+              },
+              "ops": {
+                "type": "array",
+                "description": "An array of aggregate functions.",
+                "items": {"enum": VALID_OPS}
+              },
+              "as": {
+                "type": "array",
+                "description": "An optional array of names to use for the output fields.",
+                "items": {"type": "string"}
+              }
+            },
+            "required": ["name", "ops"]
+          }
+        }
+      ]
+    }
+  },
+  "required": ["type", "groupby", "summarize"]
+};

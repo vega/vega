@@ -4,6 +4,8 @@ var dl = require('datalib'),
     BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
 
+var defaultRatio = 0.5 * (1 + Math.sqrt(5));
+
 function Treemap(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
@@ -15,7 +17,7 @@ function Treemap(graph) {
     size: {type: "array<value>", default: [500, 500]},
     round: {type: "value", default: true},
     sticky: {type: "value", default: false},
-    ratio: {type: "value", default: 0.5 * (1 + Math.sqrt(5))},
+    ratio: {type: "value", default: defaultRatio},
     padding: {type: "value", default: null},
     mode: {type: "value", default: "squarify"}
   });
@@ -68,3 +70,72 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Treemap;
+Treemap.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["treemap"]},
+    "sort": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "A list of fields to use as sort criteria for sibling nodes.",
+      "default": ["-value"]
+    },
+    "children": {
+      "type": "string",
+      "description": "A data field that represents the children array",
+      "default": "children"
+    },
+    "value": {
+      "type": "string",
+      "description": "The values to use to determine the area of each leaf-level treemap cell.",
+      "default": "value"
+    },
+    "size": {
+      "type": "array",
+      "items": {"type": "number"},
+      "description": "The dimensions of the treemap layout",
+      "minItems": 0,
+      "maxItems": 0,
+      "default": [500, 500]
+    },
+    "round": {
+      "type": "boolean",
+      "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
+      "default": true
+    },
+    "sticky": {
+      "type": "boolean",
+      "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
+      "default": false
+    },
+    "ratio": {
+      "type": "number",
+      "description": "The target aspect ratio for the layout to optimize.",
+      "default": defaultRatio
+    },
+    "padding": {
+      "oneOf": [
+        {"type": "number"},
+        {
+          "type": "array", 
+          "items": {"type": "number"},
+          "minItems": 4,
+          "maxItems": 4
+        }
+      ],
+      "description": "he padding (in pixels) to provide around internal nodes in the treemap."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"},
+        "width": {"type": "string", "default": "layout_width"},
+        "height": {"type": "string", "default": "layout_height"}
+      }
+    }
+  },
+  "required": ["type", "groupby", "value"]
+}
