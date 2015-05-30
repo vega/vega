@@ -90,8 +90,8 @@
           "fill": {
             "rule": [
               {
-                "predicate": "inRange",
-                "input": {
+                "predicate": {
+                  "name": "inRange",
                   "x": {"field": "sepalWidth"},
                   "y": {"field": "petalLength"}
                 },

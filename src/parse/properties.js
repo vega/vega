@@ -119,18 +119,22 @@ function rule(model, name, rules) {
       inputs = [], code = "";
 
   (rules||[]).forEach(function(r, i) {
-    var predName = r.predicate,
+    var def = r.predicate,
+        predName = def && (def.name || def),
         pred = model.predicate(predName),
         p = "predicates["+dl.str(predName)+"]",
         input = [], args = name+"_arg"+i,
         ref;
 
-    dl.keys(r.input).forEach(function(k) {
-      var ref = valueRef(i, r.input[k]);
-      input.push(dl.str(k)+": "+ref.val);
-      if(ref.signals) signals.push.apply(signals, dl.array(ref.signals));
-      if(ref.scales)  scales.push.apply(scales, dl.array(ref.scales));
-    });
+    if(dl.isObject(def)) {
+      dl.keys(def).forEach(function(k) {
+        if(k === "name") return;
+        var ref = valueRef(i, def[k]);
+        input.push(dl.str(k)+": "+ref.val);
+        if(ref.signals) signals.push.apply(signals, dl.array(ref.signals));
+        if(ref.scales)  scales.push.apply(scales, dl.array(ref.scales));
+      });
+    }
 
     ref = valueRef(name, r);
     if(ref.signals) signals.push.apply(signals, dl.array(ref.signals));

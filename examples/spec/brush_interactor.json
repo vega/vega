@@ -52,8 +52,8 @@
           "fill": {
             "rule": [
               {
-                "predicate": "brush_inRange",
-                "input": {
+                "predicate": {
+                  "name": "brush_inRange",
                   "x": {"field": "sepalWidth"},
                   "y": {"field": "petalLength"},
                   "xScale": {"scale": "x"},

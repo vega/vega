@@ -14,15 +14,13 @@ var filter = function(field, value, src, dest) {
 module.exports = function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null, 
       signalName = signal ? signal[0] : null,
-      predicate = def.predicate ? model.predicate(def.predicate) : null,
+      predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),
       node = new Node(model).router(def.type === C.CLEAR);
 
   node.evaluate = function(input) {
-    if(predicate !== null) {
+    if(predicate !== null) {  // TODO: predicate args
       var db = model.dataValues(predicate.data||[]);
-
-      // TODO: input
       reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
     }
 

@@ -91,8 +91,8 @@
           "fill": {
             "rule": [
               {
-                "predicate": "isSelected",
-                "input": {
+                "predicate": {
+                  "name": "isSelected",
                   "id": {"field": "_id"}
                 },
 
