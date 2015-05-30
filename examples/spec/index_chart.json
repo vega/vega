@@ -1,6 +1,7 @@
 {
-  "width": 750,
+  "width": 650,
   "height": 300,
+  "padding": "strict",
 
   "signals": [
     {
@@ -68,8 +69,7 @@
     }
   ],
   "axes": [
-    {"type": "x", "scale": "x", "tickSizeEnd": 0},
-    {"type": "y", "scale": "y", "grid": true, "layer": "back"}
+    {"type": "y", "scale": "y", "grid": true, "layer": "back", "format": "%"}
   ],
   "marks": [
     {
@@ -111,10 +111,34 @@
       "type":"rule",
       "properties": {
         "update": {
+          "x": {"field": {"group": "x"}},
+          "x2": {"field": {"group": "width"}},
+          "y": {"scale": "y", "value": 0},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1}
+        }
+      }
+    },
+    {
+      "type":"rule",
+      "properties": {
+        "update": {
           "x": {"scale": "x", "signal": "indexDate"},
           "y": {"value": 0},
-          "y2": {"value": 300},
+          "y2": {"field": {"group": "height"}},
           "stroke": {"value": "red"}
+        }
+      }
+    },
+    {
+      "type":"text",
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "signal": "indexDate"},
+          "y2": {"field": {"group": "height"}, "offset": 15},
+          "align": {"value": "center"},
+          "text": {"signal": "indexDate"},
+          "fill": {"value": "red"}
         }
       }
     }

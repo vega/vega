@@ -34,19 +34,24 @@ module.exports = function parsePredicate(model, spec) {
       else if(o.arg)    def = "args["+dl.str(o.arg)+"]";
       else if(o.signal) def = parseSignal(o.signal, signals);
       else if(o.predicate) {
-        var pred = model.predicate(o.predicate),
-            p = "predicates["+dl.str(o.predicate)+"]";
+        var ref  = o.predicate,
+            predName = ref && (ref.name || ref),
+            pred = model.predicate(predName),
+            p = "predicates["+dl.str(predName)+"]";
 
         pred.signals.forEach(function(s) { signals[s] = 1; });
         pred.data.forEach(function(d) { db[d] = 1 });
 
-        dl.keys(o.input).forEach(function(k) {
-          var i = o.input[k], signal;
-          def += "args["+dl.str(k)+"] = ";
-          if(i.signal)   def += parseSignal(i.signal, signals);
-          else if(i.arg) def += "args["+dl.str(i.arg)+"]";
-          def+=", ";
-        });
+        if(dl.isObject(ref)) {
+          dl.keys(ref).forEach(function(k) {
+            if(k === "name") return;
+            var i = ref[k], signal;
+            def += "args["+dl.str(k)+"] = ";
+            if(i.signal)   def += parseSignal(i.signal, signals);
+            else if(i.arg) def += "args["+dl.str(i.arg)+"]";
+            def+=", ";
+          });  
+        } 
 
         def+= p+".call("+p+", args, db, signals, predicates)";
       }

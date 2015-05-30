@@ -234,15 +234,15 @@
           "fillOpacity": {
            "rule": [
               {
-                "predicate": "currentCountry",
-                "input": {
+                "predicate": {
+                  "name": "currentCountry",
                   "country": {"field": "country"}
                 },
                 "value": 0.5
               },
               {
-                "predicate": "isSelected",
-                "input": {
+                "predicate": {
+                  "name": "isSelected",
                   "country": {"field": "country"}
                 },
                 "value": 0.5
@@ -269,15 +269,15 @@
           "fillOpacity": {
            "rule": [
               {
-                "predicate": "currentCountry",
-                "input": {
+                "predicate": {
+                  "name": "currentCountry",
                   "country": {"field": "country"}
                 },
                 "value": 1
               },
               {
-                "predicate": "isSelected",
-                "input": {
+                "predicate": {
+                  "name": "isSelected",
                   "country": {"field": "country"}
                 },
                 "value": 1
