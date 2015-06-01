@@ -6,19 +6,31 @@ var dl = require('datalib'),
     EMPTY = {};
 
 function Encoder(graph, mark) {
-  var props = mark.def.properties || {},
-      update = props.update;
+  var props  = mark.def.properties || {},
+      enter  = props.enter,
+      update = props.update,
+      exit   = props.exit;
 
   Node.prototype.init.call(this, graph)
 
-  this._mark  = mark;
+  this._mark = mark;
+  var s = this._scales = [];
+
+  // Only scales used in the "update" property set are set as
+  // encoder depedencies to have targeted reevaluations. However,
+  // we still want scales in "enter" and "exit" to be evaluated
+  // before the encoder. 
+  if(enter) s.push.apply(s, enter.scales);
 
   if(update) {
     this.dependency(C.DATA, update.data);
-    this.dependency(C.SCALES, update.scales);
     this.dependency(C.SIGNALS, update.signals);
     this.dependency(C.FIELDS, update.fields);
+    this.dependency(C.SCALES, update.scales);
+    s.push.apply(s, update.scales);
   }
+
+  if(exit) s.push.apply(s, exit.scales);
 
   return this;
 }

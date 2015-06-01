@@ -128,8 +128,9 @@ proto.connect = function() {
   var builder = this;
 
   this._graph.connect(this.pipeline());
-  this._encoder.dependency(C.SCALES).forEach(function(s) {
-    builder._parent.scale(s).addListener(builder);
+  this._encoder._scales.forEach(function(s) {
+    if(!(s = builder._parent.scale(s))) return;
+    s.addListener(builder);
   });
 
   if(this._parent) {
@@ -146,8 +147,9 @@ proto.disconnect = function() {
 
   Node.prototype.disconnect.call(this);
   this._graph.disconnect(this.pipeline());
-  this._encoder.dependency(C.SCALES).forEach(function(s) {
-    builder._parent.scale(s).removeListener(builder);
+  this._encoder._scales.forEach(function(s) {
+    if(!(s = builder._parent.scale(s))) return;
+    s.removeListener(builder);
   });
   return this;
 };
@@ -159,7 +161,7 @@ proto.sibling = function(name) {
 proto.evaluate = function(input) {
   debug(input, ["building", this._from, this._def.type]);
 
-  var output, fullUpdate, fcs, data;
+  var output, fullUpdate, fcs, data, name;
 
   if(this._ds) {
     output = changeset.create(input);
@@ -167,10 +169,10 @@ proto.evaluate = function(input) {
     // We need to determine if any encoder dependencies have been updated.
     // However, the encoder's data source will likely be updated, and shouldn't
     // trigger all items to mod.
-    data = dl.duplicate(output.data);
-    delete output.data[this._ds.name()];
+    data = output.data[(name=this._ds.name())];
+    delete output.data[name];
     fullUpdate = this._encoder.reevaluate(output);
-    output.data = data;
+    output.data[name] = data;
 
     // If a scale or signal in the update propset has been updated, 
     // send forward all items for reencoding if we do an early return.

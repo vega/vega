@@ -45,6 +45,7 @@ prototype.model = function(model) {
 function streaming(src) {
   var view = this,
       ds = this._model.data(src),
+      name = ds.name(),
       listener = ds.pipeline()[0],
       streamer = this._streamer,
       cs  = this._changeset,
@@ -61,19 +62,19 @@ function streaming(src) {
   api.insert = function(vals) {
     ds.insert(dl.duplicate(vals));  // Don't pollute the environment
     streamer.addListener(listener);
-    cs.data[ds.name()] = 1;
+    view._changeset.data[name] = 1;
     return api;
   };
 
   api.update = function() {
     streamer.addListener(listener);
-    cs.data[ds.name()] = 1;
+    view._changeset.data[name] = 1;
     return (ds.update.apply(ds, arguments), api);
   };
 
   api.remove = function() {
     streamer.addListener(listener);
-    cs.data[ds.name()] = 1;
+    view._changeset.data[name] = 1;
     return (ds.remove.apply(ds, arguments), api);
   };
 

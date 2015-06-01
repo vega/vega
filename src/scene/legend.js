@@ -351,7 +351,10 @@ function lgnd(model) {
     return legend;
   };
 
-  legend.reset = function() { reset(); };
+  legend.reset = function() { 
+    reset(); 
+    return legend;
+  };
 
   return legend;
 };

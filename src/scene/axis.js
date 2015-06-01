@@ -294,7 +294,10 @@ function axs(model) {
     return axis;
   };
   
-  axis.reset = function() { reset(); };
+  axis.reset = function() { 
+    reset(); 
+    return axis; 
+  };
 
   return axis;
 };

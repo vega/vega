@@ -21,12 +21,13 @@ function GroupBuilder() {
 var proto = (GroupBuilder.prototype = new Builder());
 
 proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
-  var builder = this;
+  var builder = this, name;
 
   this._scaler = new Node(graph);
 
-  (def.scales||[]).forEach(function(s) { 
-    s = builder.scale(s.name, new Scale(graph, s, builder));
+  (def.scales||[]).forEach(function(s) {
+    s = builder.scale((name=s.name), new Scale(graph, s, builder));
+    builder.scale(name+":prev", s);
     builder._scaler.addListener(s);  // Scales should be computed after group is encoded
   });
 
@@ -137,14 +138,20 @@ function recurse(input) {
 
     // Update axes data defs
     if(hasAxes) {
-      parseAxes(builder._graph, builder._def.axes, group.axes, group);
-      group.axes.forEach(function(a, i) { a.def() });
+      group.axes.forEach(function(a, i) { 
+        var scale = a.scale();
+        if(!input.scales[scale.scaleName]) return;
+        a.reset().def();
+      });
     }
 
     // Update legend data defs
     if(hasLegends) {
-      parseLegends(builder._graph, builder._def.legends, group.legends, group);
-      group.legends.forEach(function(l, i) { l.def() });
+      group.legends.forEach(function(l, i) { 
+        var scale = l.size() || l.shape() || l.fill() || l.stroke();
+        if(!input.scales[scale.scaleName]) return;
+        l.reset().def();
+      });
     }   
   }
 
