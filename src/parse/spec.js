@@ -9,7 +9,7 @@ var dl = require('datalib'),
     parseData = require('../parse/data'),
     parseInteractors = require('../parse/interactors');
 
-module.exports = function parseSpec(spec, callback, viewFactory) {
+function parseSpec(spec, callback, viewFactory) {
   // protect against subsequent spec modification
   spec = dl.duplicate(spec);
 
@@ -34,3 +34,16 @@ module.exports = function parseSpec(spec, callback, viewFactory) {
     });
   });
 }
+
+module.exports = parseSpec;
+parseSpec.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Vega visualization specification",
+  "type": "object",
+
+  "properties": {
+    "width": {"type": "number"},
+    "height": {"type": "number"},
+    "data": parseData.schema
+  }
+};

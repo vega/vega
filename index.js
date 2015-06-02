@@ -8,14 +8,13 @@ module.exports = {
     Graph: require('./src/dataflow/Graph'),
     Node: require('./src/dataflow/Node')
   },
-  parse: {
-    spec: require('./src/parse/spec')
-  },
+  parse: require('./src/parse/'),
   scene: {
     Builder: require('./src/scene/Builder'),
     GroupBuilder: require('./src/scene/GroupBuilder')
   },
-  transforms: require('./src/transforms/index'),
+  transforms: require('./src/transforms/'),
   config: require('./src/util/config'),
-  util: require('datalib')
+  util: require('datalib'),
+  schema: require('./src/util/schema')
 };
