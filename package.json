@@ -25,6 +25,7 @@
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4",
     "heap": "^0.2.6",
+    "jsdom": "^3.1.2",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
     "selenium-server-standalone-jar": "^2.45.0",

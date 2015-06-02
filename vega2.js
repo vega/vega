@@ -12705,16 +12705,19 @@ function recurse(input) {
     // Update axes data defs
     if(hasAxes) {
       group.axes.forEach(function(a, i) { 
-        var scale = a.scale().scaleName;
-        if(!input.scales[scale]) return;
-        a.reset().def() ;
+        var scale = a.scale();
+        if(!input.scales[scale.scaleName]) return;
+        a.reset().def();
       });
     }
 
     // Update legend data defs
     if(hasLegends) {
-      parseLegends(builder._graph, builder._def.legends, group.legends, group);
-      group.legends.forEach(function(l, i) { l.def() });
+      group.legends.forEach(function(l, i) { 
+        var scale = l.size() || l.shape() || l.fill() || l.stroke();
+        if(!input.scales[scale.scaleName]) return;
+        l.reset().def();
+      });
     }   
   }
 

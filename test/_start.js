@@ -1,4 +1,5 @@
 var Node = require('../src/dataflow/Node');
+global.d3 = require('d3');
 global.expect = require('chai').expect;
 global.parseSpec = require('../src/parse/spec');
 global.util = require('datalib');

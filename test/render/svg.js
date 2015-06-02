@@ -1,5 +1,6 @@
 var config = require('../../src/util/config'),
   d3 = require('d3'),
+  jsdom = require('jsdom'),
   dl = require('datalib');
 
 describe('SVG', function() {
@@ -24,6 +25,7 @@ describe('SVG', function() {
     var validation = {
       // FIXME: obscure error when trying to render interactors
       "brush_interactor": "skip",
+      "panzoom_touch": "skip",
       "map": "skip",
 
       "barley": "//svg:g[@class='type-symbol']/svg:path[120]",
@@ -38,8 +40,12 @@ describe('SVG', function() {
         // skip, but mark as pending
         it('renders the ' + name + ' example');
       } else {
-        it('renders the ' + name + ' example', function(done) {
-          render(dir + file, validation[name], done);
+        it('renders the ' + name + ' example headless', function(done) {
+          render(dir + file, true, validation[name], done);
+        });
+
+        it('renders the ' + name + ' example jsdom', function(done) {
+          render(dir + file, false, validation[name], done);
         });
       }
     });
@@ -48,17 +54,29 @@ describe('SVG', function() {
   // Render the given spec using both the headless string renderer
   // and the standard SVG renderer (in a fake JSDOM)
   // and compare that the SVG output is identical
-  function renderSVG(name, spec, validator, done) {
+  function renderSVG(name, spec, headless, validator, done) {
     parseSpec(spec, function(viewFactory) {
-      // first use the string renderer
-      var view = viewFactory({ renderer: "svg" });
-      view.update();
-      var svg = view.renderer().svg();
+      if (headless) {
+        var view = viewFactory({ renderer: "svg" }).update();
+        var svg  = view.renderer().svg();
+        validateSVG(svg, name, function(doc, xpath) {
+          validator(doc, xpath);
+          done();
+        });
+      } else {
+        jsdom.env("<html><body></body></html>", function(err, window) {
+          var body = d3.select(window.document).select('body').node();
+          var view = viewFactory({ renderer: "svg", el: body }).update();
+          var svg  = d3.select(body).select('div.vega').node().innerHTML
+            .replace(/ href=/g, " xlink:href=")   // ns hack
+            .replace("<svg", "<svg "+config.svgNamespace);
 
-      validateSVG(svg, name, function(doc, xpath) {
-        validator(doc, xpath);
-        done();
-      });
+            validateSVG(svg, name, function(doc, xpath) {
+              validator(doc, xpath);
+              done();
+            });          
+        });
+      }
     });
   };
 
@@ -84,11 +102,11 @@ describe('SVG', function() {
       if (validator) validator(doc, xpath);
   }
 
-  function render(specFile, validation, done) {
+  function render(specFile, headless, validation, done) {
     fs.readFile(specFile, "utf8", function(err, text) {
       if (err) throw err;
       var spec = JSON.parse(text);
-      renderSVG(path.basename(specFile, ".json"), spec, function(doc, xpath) {
+      renderSVG(path.basename(specFile, ".json"), spec, headless, function(doc, xpath) {
         // make sure the root is an SVG document
         expect(xpath("/svg:svg", doc).length).to.equal(1);
 
