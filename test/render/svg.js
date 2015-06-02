@@ -41,11 +41,11 @@ describe('SVG', function() {
         it('renders the ' + name + ' example');
       } else {
         it('renders the ' + name + ' example headless', function(done) {
-          render(dir + file, true, validation[name], done);
+          render(name, dir + file, true, validation[name], done);
         });
 
         it('renders the ' + name + ' example jsdom', function(done) {
-          render(dir + file, false, validation[name], done);
+          render(name, dir + file, false, validation[name], done);
         });
       }
     });
@@ -54,34 +54,34 @@ describe('SVG', function() {
   // Render the given spec using both the headless string renderer
   // and the standard SVG renderer (in a fake JSDOM)
   // and compare that the SVG output is identical
-  function renderSVG(name, spec, headless, validator, done) {
-    parseSpec(spec, function(viewFactory) {
-      if (headless) {
-        var view = viewFactory({ renderer: "svg" }).update();
-        var svg  = view.renderer().svg();
-        validateSVG(svg, name, function(doc, xpath) {
-          validator(doc, xpath);
+  function render(name, specFile, headless, validation, done) {
+    fs.readFile(specFile, "utf8", function(err, text) {
+      if (err) throw err;
+      var spec = JSON.parse(text);
+
+      parseSpec(spec, function(viewFactory) {
+        if (headless) {
+          var view = viewFactory({ renderer: "svg" }).update();
+          var svg  = view.renderer().svg();
+          validate(svg, name, validation);
           done();
-        });
-      } else {
-        jsdom.env("<html><body></body></html>", function(err, window) {
-          var body = d3.select(window.document).select('body').node();
-          var view = viewFactory({ renderer: "svg", el: body }).update();
-          var svg  = d3.select(body).select('div.vega').node().innerHTML
-            .replace(/ href=/g, " xlink:href=")   // ns hack
-            .replace("<svg", "<svg "+config.svgNamespace);
+        } else {
+          jsdom.env("<html><body></body></html>", function(err, window) {
+            var body = d3.select(window.document).select('body').node();
+            var view = viewFactory({ renderer: "svg", el: body }).update();
+            var svg  = d3.select(body).select('div.vega').node().innerHTML
+              .replace(/ href=/g, " xlink:href=")   // ns hack
+              .replace("<svg", "<svg "+config.svgNamespace);
 
-            validateSVG(svg, name, function(doc, xpath) {
-              validator(doc, xpath);
-              done();
-            });          
-        });
-      }
+            validate(svg, name, validation);
+            done();
+          });
+        }
+      });
     });
-  };
 
-  // Parse the given SVG blob, save it to a file, and run the validator function
-  function validateSVG(svg, saveto, validator) {
+    // Parse the given SVG blob, save it to a file, and run the validator function
+    function validate(svg, saveto, validation) {
       expect(svg).to.not.be.undefined;
       expect(svg).to.not.be.null;
       expect(svg.length).to.be.above(100);
@@ -99,25 +99,16 @@ describe('SVG', function() {
         fs.writeFileSync(dir + "/" + saveto + ".svg", svg);
       }
 
-      if (validator) validator(doc, xpath);
-  }
+      // make sure the root is an SVG document
+      expect(xpath("/svg:svg", doc).length).to.equal(1);
 
-  function render(specFile, headless, validation, done) {
-    fs.readFile(specFile, "utf8", function(err, text) {
-      if (err) throw err;
-      var spec = JSON.parse(text);
-      renderSVG(path.basename(specFile, ".json"), spec, headless, function(doc, xpath) {
-        // make sure the root is an SVG document
-        expect(xpath("/svg:svg", doc).length).to.equal(1);
-
-        if (dl.isString(validation)) {
-          // invoke the custom validation as an xpath if it is a string
-          expect(xpath(validation, doc).length).to.equal(1);
-        } else if (dl.isFunction(validation)) {
-          // invoke the custom validation function
-          validation(doc, xpath);
-        }
-      }, done);
-    });
+      if (dl.isString(validation)) {
+        // invoke the custom validation as an xpath if it is a string
+        expect(xpath(validation, doc).length).to.equal(1);
+      } else if (dl.isFunction(validation)) {
+        // invoke the custom validation function
+        validation(doc, xpath);
+      }
+    }
   }
 })
