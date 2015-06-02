@@ -139,8 +139,10 @@ Cross.schema = {
       "properties": {
         "left": {"type": "string", "default": "a"},
         "right": {"type": "string", "default": "b"}
-      }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["type"]
+  "additionalProperties": false,
+  "required": ["type", "with"]
 };

@@ -190,4 +190,26 @@ describe('Fold', function() {
   });
 
   it('should allow array<signal> for fields?');
+
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.fold.schema);
+
+    expect(validate({ "type": "fold", "fields": ["gold", "silver"] })).to.be.true;
+    expect(validate({ 
+      "type": "fold", 
+      "fields": ["gold", "silver"], 
+      "output": {"key": "k", "value": "v"} 
+    })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "fold" })).to.be.false;
+    expect(validate({ "type": "fold", "foo": "bar" })).to.be.false;
+    expect(validate({ "type": "fold", "fields": "gold" })).to.be.false;
+    expect(validate({ "type": "fold", "fields": ["gold", 1] })).to.be.false;
+    expect(validate({ 
+      "type": "fold", 
+      "fields": ["gold"],
+      "output": {"foo": "bar"}
+    })).to.be.false;
+  });
 });

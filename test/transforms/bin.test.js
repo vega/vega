@@ -112,4 +112,32 @@ describe('Bin', function() {
     }, modelFactory);
   });
 
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.bin.schema);
+
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10 })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "base": 5 })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "maxbins": 5 })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "step": 1 })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "minstep": 2 })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "steps": [1, 2, 3, 4, 5] })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "div": [2, 3, 4] })).to.be.true;
+
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "bin" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1 })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "hello": "world" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": "1", "max": 10 })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": "10" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "base": "5" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "maxbins": "5" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "step": "1" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "minstep": "2" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "steps": "1" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "steps": ["1", 2, 3, 4, 5] })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "div": "2" })).to.be.false;
+    expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "div": ["2", 3] })).to.be.false;
+  });
+
 });

@@ -180,8 +180,10 @@ Force.schema = {
         "y": {"type": "string", "default": "layout_y"},
         "source": {"type": "string", "default": "_source"},
         "target": {"type": "string", "default": "_target"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type", "links"]
 };

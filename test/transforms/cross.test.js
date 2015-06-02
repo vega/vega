@@ -1,5 +1,4 @@
 describe('Cross', function() {
-
   var values1 = [
       {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
       {"x": 3,  "y": 43}]
@@ -230,6 +229,35 @@ describe('Cross', function() {
 
       done();
     }, modelFactory);
+  });
+
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.cross.schema);
+
+    expect(validate({ "type": "cross", "with": "table" })).to.be.true;
+    expect(validate({ "type": "cross", "with": "table", "diagonal": false })).to.be.true;
+    expect(validate({ 
+      "type": "cross", 
+      "with": "table", 
+      "output": {"left": "foo", "right": "bar"} 
+    })).to.be.true;
+
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "cross" })).to.be.false;
+    expect(validate({ "type": "cross", "with": 5 })).to.be.false;
+    expect(validate({ "type": "cross", "with": "table", "diagonal": 1 })).to.be.false;
+    expect(validate({ 
+      "type": "cross", 
+      "with": "table", 
+      "output": {"left": 1, "right": 2} 
+    })).to.be.false;
+
+    expect(validate({ 
+      "type": "cross", 
+      "with": "table", 
+      "output": {"left": "foo", "right": "bar"},
+      "hello": "world"
+    })).to.be.false;
   });
   
 });

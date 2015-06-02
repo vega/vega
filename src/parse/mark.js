@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-module.exports = function parseMark(model, mark) {
+function parseMark(model, mark) {
   var props = mark.properties,
       group = mark.marks;
 
@@ -22,3 +22,5 @@ module.exports = function parseMark(model, mark) {
     
   return mark;
 };
+
+module.exports = parseMark;

@@ -179,12 +179,10 @@ Aggregate.schema = {
       "oneOf": [
         {
           "type": "object",
-          "patternProperties": {
-            "*": {
-              "type": "array",
-              "description": "An array of aggregate functions.",
-              "items": {"enum": VALID_OPS}
-            }
+          "additionalProperties": {
+            "type": "array",
+            "description": "An array of aggregate functions.",
+            "items": {"enum": VALID_OPS}
           }
         },
         {
@@ -207,11 +205,13 @@ Aggregate.schema = {
                 "items": {"type": "string"}
               }
             },
+            "additionalProperties": false,
             "required": ["name", "ops"]
           }
         }
       ]
     }
   },
+  "additionalProperties": false,
   "required": ["type", "groupby", "summarize"]
 };

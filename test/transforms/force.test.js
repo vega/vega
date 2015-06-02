@@ -82,4 +82,39 @@ describe('Force', function() {
     });
   });
 
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.force.schema);
+
+    expect(validate({ "type": "force", "links": "edges" })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "size": [100, 100] })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "linkDistance": 30 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "linkDistance": "foo" })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "linkStrength": 30 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "linkStrength": "foo" })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "charge": 30 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "charge": "foo" })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "chargeDistance": 30 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "chargeDistance": "foo" })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "iterations": 100 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "friction": 0.5 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "theta": 0.4 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "gravity": 0.4 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", "alpha": 0.4 })).to.be.true;
+    expect(validate({ "type": "force", "links": "edges", 
+      "output": {"x": "x", "y": "y", "source": "src", "target": "trgt"} })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "force" })).to.be.false;
+    expect(validate({ "type": "force", "links": true })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "foo": "bar" })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "size": "[100, 100]" })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "size": 100 })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "size": [100, 100, 100] })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "iterations": "100" })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "friction": "0.5" })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "theta": "0.4" })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "gravity": "0.4" })).to.be.false;
+    expect(validate({ "type": "force", "links": "edges", "alpha": "0.4" })).to.be.false;
+  });
+
 });

@@ -67,5 +67,6 @@ Filter.schema  = {
       "description": "A string containing an expression (in JavaScript syntax) for the filter predicate."
     }
   },
+  "additionalProperties": false,
   "required": ["type", "test"]
 };

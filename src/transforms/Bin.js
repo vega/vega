@@ -13,7 +13,7 @@ function Bin(graph) {
     step: {type: "value"},
     steps: {type: "value"},
     minstep: {type: "value"},
-    div: {type: "value", default: [5, 2]}
+    div: {type: "array<value>", default: [5, 2]}
   });
 
   this._output = {"bin": "bin"};
@@ -24,18 +24,22 @@ var proto = (Bin.prototype = new Transform());
 
 proto.transform = function(input) {
   var transform = this,
-      output = this._output.bin;
-      
-  var b = dl.bins({
-    min: this.param("min"),
-    max: this.param("max"),
-    base: this.param("base"),
-    maxbins: this.param("maxbins"),
-    step: this.param("step"),
-    steps: this.param("steps"),
-    minstep: this.param("minstep"),
-    div: this.param("div")
-  });
+      output  = this._output.bin,
+      step    = this.param("step"),
+      steps   = this.param("steps"),
+      minstep = this.param("minstep"),
+      opt = {
+        min: this.param("min"),
+        max: this.param("max"),
+        base: this.param("base"),
+        maxbins: this.param("maxbins"),
+        div: this.param("div")
+      };
+
+  if (step) opt.step = step;
+  if (steps) opt.steps = steps;
+  if (minstep) opt.minstep = minstep;
+  var b = dl.bins(opt);
 
   function update(d) {
     var v = transform.param("field").accessor(d);
@@ -100,5 +104,6 @@ Bin.schema = {
       "default": [5, 2]
     }
   },
+  "additionalProperties": false,
   "required":["type", "field", "min", "max"]
 };

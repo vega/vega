@@ -87,8 +87,10 @@ Fold.schema = {
       "properties": {
         "key": {"type": "string", "default": "key"},
         "value": {"type": "string", "default": "value"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type", "fields"]
 };

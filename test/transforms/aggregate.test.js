@@ -248,4 +248,85 @@ describe('Aggregate', function() {
 
   it('should handle filtered tuples');
 
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.aggregate.schema);
+
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": ["count", "min", "max"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.true;
+
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "medals", "ops": ["count", "min", "max"]},
+        {"name": "gdp", "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.true;
+
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
+        {"name": "gdp", "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.true;
+
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "aggregate" })).to.be.false;
+    expect(validate({ "type": "aggregate", "groupby": ["country"] })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": "country",
+      "summarize": {
+        "medals": ["count", "min", "max"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": 1,
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": ["count", "min", "max", "foo"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": 1, "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "gdp", "ops": ["argmin", "argmax", "foo"]}
+      ]
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
+      ]
+    })).to.be.false;
+
+  });
+
 });

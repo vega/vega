@@ -8678,7 +8678,7 @@ module.exports = legends;
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-module.exports = function parseMark(model, mark) {
+function parseMark(model, mark) {
   var props = mark.properties,
       group = mark.marks;
 
@@ -8699,6 +8699,8 @@ module.exports = function parseMark(model, mark) {
     
   return mark;
 };
+
+module.exports = parseMark;
 },{"./properties":55,"datalib":20}],51:[function(require,module,exports){
 var parseMark = require('./mark');
 
@@ -14991,12 +14993,10 @@ Aggregate.schema = {
       "oneOf": [
         {
           "type": "object",
-          "patternProperties": {
-            "*": {
-              "type": "array",
-              "description": "An array of aggregate functions.",
-              "items": {"enum": VALID_OPS}
-            }
+          "additionalProperties": {
+            "type": "array",
+            "description": "An array of aggregate functions.",
+            "items": {"enum": VALID_OPS}
           }
         },
         {
@@ -15019,12 +15019,14 @@ Aggregate.schema = {
                 "items": {"type": "string"}
               }
             },
+            "additionalProperties": false,
             "required": ["name", "ops"]
           }
         }
       ]
     }
   },
+  "additionalProperties": false,
   "required": ["type", "groupby", "summarize"]
 };
 
@@ -15072,7 +15074,7 @@ function Bin(graph) {
     step: {type: "value"},
     steps: {type: "value"},
     minstep: {type: "value"},
-    div: {type: "value", default: [5, 2]}
+    div: {type: "array<value>", default: [5, 2]}
   });
 
   this._output = {"bin": "bin"};
@@ -15083,18 +15085,22 @@ var proto = (Bin.prototype = new Transform());
 
 proto.transform = function(input) {
   var transform = this,
-      output = this._output.bin;
-      
-  var b = dl.bins({
-    min: this.param("min"),
-    max: this.param("max"),
-    base: this.param("base"),
-    maxbins: this.param("maxbins"),
-    step: this.param("step"),
-    steps: this.param("steps"),
-    minstep: this.param("minstep"),
-    div: this.param("div")
-  });
+      output  = this._output.bin,
+      step    = this.param("step"),
+      steps   = this.param("steps"),
+      minstep = this.param("minstep"),
+      opt = {
+        min: this.param("min"),
+        max: this.param("max"),
+        base: this.param("base"),
+        maxbins: this.param("maxbins"),
+        div: this.param("div")
+      };
+
+  if (step) opt.step = step;
+  if (steps) opt.steps = steps;
+  if (minstep) opt.minstep = minstep;
+  var b = dl.bins(opt);
 
   function update(d) {
     var v = transform.param("field").accessor(d);
@@ -15159,6 +15165,7 @@ Bin.schema = {
       "default": [5, 2]
     }
   },
+  "additionalProperties": false,
   "required":["type", "field", "min", "max"]
 };
 
@@ -15304,12 +15311,13 @@ Cross.schema = {
       "properties": {
         "left": {"type": "string", "default": "a"},
         "right": {"type": "string", "default": "b"}
-      }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["type"]
+  "additionalProperties": false,
+  "required": ["type", "with"]
 };
-
 },{"../dataflow/Collector":31,"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":108,"./Transform":99}],86:[function(require,module,exports){
 var dl = require('datalib'),
     Transform = require('./Transform'),
@@ -15560,6 +15568,7 @@ Filter.schema  = {
       "description": "A string containing an expression (in JavaScript syntax) for the filter predicate."
     }
   },
+  "additionalProperties": false,
   "required": ["type", "test"]
 };
 
@@ -15653,9 +15662,11 @@ Fold.schema = {
       "properties": {
         "key": {"type": "string", "default": "key"},
         "value": {"type": "string", "default": "value"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type", "fields"]
 };
 
@@ -15843,9 +15854,11 @@ Force.schema = {
         "y": {"type": "string", "default": "layout_y"},
         "source": {"type": "string", "default": "_source"},
         "target": {"type": "string", "default": "_target"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type", "links"]
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
@@ -16250,12 +16263,10 @@ LinkPath.schema = {
     },
     "x": {
       "type": "string",
-      "description": "",
       "default": "layout_x"
     },
     "y": {
       "type": "string",
-      "description": "",
       "default": "layout_y"
     },
     "tension": {
@@ -16266,7 +16277,7 @@ LinkPath.schema = {
       "maximum": 1
     },
     "shape": {
-      "type": {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+      "enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"],
       "description": "The path shape to use",
       "default": "line"
     },
@@ -16275,9 +16286,11 @@ LinkPath.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "path": {"type": "string", "default": "layout_path"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type"]
 }
 },{"../dataflow/tuple":37,"./Transform":99}],95:[function(require,module,exports){
@@ -16670,9 +16683,11 @@ Stack.schema = {
         "start": {"type": "string", "default": "layout_start"},
         "end": {"type": "string", "default": "layout_end"},
         "mid": {"type": "string", "default": "layout_mid"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type", "groupby", "value"]
 };
 },{"../dataflow/tuple":37,"./BatchTransform":83,"./Transform":99,"datalib":20}],99:[function(require,module,exports){
@@ -16998,37 +17013,49 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
+Zip.baseSchema = {
+  "type": {"enum": ["zip"]},
+  "with": {
+    "type": "string",
+    "description": "The name of the secondary data set to \"zip\" with the current, primary data set."
+  },
+  "as": {
+    "type": "string",
+    "description": "The name of the field in which to store the secondary data set values."
+  }
+};
+
 Zip.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Zip transform",
   "description": "Merges two data sets together.",
   "type": "object",
-  "properties": {
-    "type": {"enum": ["zip"]},
-    "with": {
-      "type": "string",
-      "description": "The name of the secondary data set to \"zip\" with the current, primary data set."
+  "oneOf": [
+    { 
+      "properties": Zip.baseSchema,
+      "required": ["type", "with", "as"],
+      "additionalProperties": false
     },
-    "as": {
-      "type": "string",
-      "description": "The name of the field in which to store the secondary data set values."
-    },
-    "key": {
-      "type": "string",
-      "description": "The field in the primary data set to match against the secondary data set."
-    },
-    "withKey": {
-      "type": "string",
-      "description": "The field in the secondary data set to match against the primary data set."
-    },
-    "default": {
-      "type": "any",
-      "description": "A default value to use if no matching key value is found."
+    {
+      "properties": dl.extend({
+        "key": {
+          "type": "string",
+          "description": "The field in the primary data set to match against the secondary data set."
+        },
+        "withKey": {
+          "type": "string",
+          "description": "The field in the secondary data set to match against the primary data set."
+        },
+        "default": {
+          // "type": "any",
+          "description": "A default value to use if no matching key value is found."
+        }
+      }, Zip.baseSchema),
+      "required": ["type", "with", "as", "key", "withKey"],
+      "additionalProperties": false
     }
-  },
-  "required": ["type", "with", "as"]
+  ]
 };
-
 },{"../dataflow/Collector":31,"../util/log":108,"./Transform":99,"datalib":20}],102:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),

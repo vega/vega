@@ -174,6 +174,18 @@ describe('Sort', function() {
 
       done();
     }, modelFactory);
-  });   
+  }); 
+
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.sort.schema);
+
+    expect(validate({ "type": "sort", "by": "price" })).to.be.true;
+    expect(validate({ "type": "sort", "by": "-price" })).to.be.true;
+    expect(validate({ "type": "sort", "by": ["price", "gdp"] })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "sort" })).to.be.false;
+    expect(validate({ "type": "sort", "by": true })).to.be.false;
+  });  
 
 });

@@ -77,4 +77,17 @@ describe('Formula', function() {
       done();
     }, modelFactory);
   });
+
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.formula.schema);
+
+    expect(validate({ "type": "formula", "expr": "d.x + d.y", "field": "sum" })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "formula" })).to.be.false;
+    expect(validate({ "type": "formula", "field": "sum" })).to.be.false;
+    expect(validate({ "type": "formula", "expr": "d.x + d.y" })).to.be.false;
+    expect(validate({ "type": "formula", "field": "sum", "expr": 55 })).to.be.false;
+    expect(validate({ "type": "formula", "field": 55, "expr": "d.x + d.y" })).to.be.false;
+  });
 });

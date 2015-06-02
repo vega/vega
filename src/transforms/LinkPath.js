@@ -109,12 +109,10 @@ LinkPath.schema = {
     },
     "x": {
       "type": "string",
-      "description": "",
       "default": "layout_x"
     },
     "y": {
       "type": "string",
-      "description": "",
       "default": "layout_y"
     },
     "tension": {
@@ -125,7 +123,7 @@ LinkPath.schema = {
       "maximum": 1
     },
     "shape": {
-      "type": {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+      "enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"],
       "description": "The path shape to use",
       "default": "line"
     },
@@ -134,8 +132,10 @@ LinkPath.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "path": {"type": "string", "default": "layout_path"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type"]
 }

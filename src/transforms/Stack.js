@@ -124,8 +124,10 @@ Stack.schema = {
         "start": {"type": "string", "default": "layout_start"},
         "end": {"type": "string", "default": "layout_end"},
         "mid": {"type": "string", "default": "layout_mid"}
-      }
+      },
+      "additionalProperties": false
     }
   },
+  "additionalProperties": false,
   "required": ["type", "groupby", "value"]
 };

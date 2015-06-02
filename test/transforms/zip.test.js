@@ -380,4 +380,19 @@ describe('Zip', function() {
 
   });
 
+  it('should validate against the schema', function() {
+    var validate = validator(transforms.zip.schema);
+
+    expect(validate({ "type": "zip", "with": "table", "as": "t" })).to.be.true;
+    expect(validate({ "type": "zip", "with": "table", "as": "t", 
+        "key": "k", "withKey": "k" })).to.be.true;
+    expect(validate({ "type": "zip", "with": "table", "as": "t", 
+        "key": "k", "withKey": "k", "default": 1 })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "zip" })).to.be.false;
+    expect(validate({ "type": "zip", "with": "table" })).to.be.false;
+    expect(validate({ "type": "zip", "with": "table", "as": "t", "key": "k" })).to.be.false;
+  });
+
 });
