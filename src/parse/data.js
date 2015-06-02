@@ -53,20 +53,15 @@ parseData.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Input data sets",
   "type": "object",
-  "properties": {
-    "name": {"type": "string"},
-    "source": {"type": "string"},
-    "values": {
-      "type": "array",
-      "items": {"type": "any"}
-    },
-    "url": {"type": "string"},
-    "transform": {"$ref": "#/refs/transform"},
-    "format": {
-      "type": "object",
-      "properties": {
-        "oneOf": [
-          {
+
+  "allOf": [{
+    "properties": {
+      "name": {"type": "string"},
+      "transform": {"$ref": "#/refs/transform"},
+      "format": {
+        "type": "object",
+        "oneOf": [{
+          "properties": {
             "type": {"enum": ["json"]},
             "parse": {
               "type": "object",
@@ -74,9 +69,11 @@ parseData.schema = {
                 "enum": ["number", "boolean", "date", "string"]
               }
             },
-            "property": {"type": "string"},
+            "property": {"type": "string"}
           },
-          {
+          "additionalProperties": false
+        }, {
+          "properties": {
             "type": {"enum": ["csv", "tsv"]},
             "parse": {
               "type": "object",
@@ -85,12 +82,23 @@ parseData.schema = {
               }
             }
           },
-          {
-            "type": {"enum": ["topojson"]},
-            "feature": {"type": "string"},
-            "mesh": {"type": "string"}
-          },
-          {
+          "additionalProperties": false
+        }, {
+          "oneOf": [{
+            "properties": {
+              "type": {"enum": ["topojson"]},
+              "feature": {"type": "string"}
+            },
+            "additionalProperties": false
+          }, {
+            "properties": {
+              "type": {"enum": ["topojson"]},
+              "mesh": {"type": "string"}
+            },
+            "additionalProperties": false
+          }]
+        }, {
+          "properties": {
             "type": {"enum": ["treejson"]},
             "children": {"type": "string"},
             "parse": {
@@ -99,14 +107,22 @@ parseData.schema = {
                 "enum": ["number", "boolean", "date", "string"]
               }
             }
-          }
-        ]
+          },
+          "additionalProperties": false
+        }]
       }
-    }
-  },
-  "oneOf": [
-    {"required": ["name", "source"]},
-    {"required": ["name", "values"]},
-    {"required": ["name", "url"]}
-  ]
+    },
+    "required": ["name"]
+  }, {
+    "oneOf": [{
+      "properties": {"source": {"type": "string"}},
+      "required": ["source"]
+    }, {
+      "properties": {"values": {"type": "array"}},
+      "required": ["values"]
+    }, {
+      "properties": {"url": {"type": "string"}},
+      "required": ["url"]
+    }]
+  }]
 }
