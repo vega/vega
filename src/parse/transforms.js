@@ -18,7 +18,7 @@ function parseTransforms(model, def) {
 };
 
 module.exports = parseTransforms;
-parseTransforms.refSchema = {
+parseTransforms.schemaRefs = {
   "transform": {
     "type": "array",
     "items": {
