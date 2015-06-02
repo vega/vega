@@ -4,7 +4,7 @@ var dl = require('datalib'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
 
-var parseData = function(model, spec, callback) {
+function parseData(model, spec, callback) {
   var count = 0;
 
   function loaded(d) {
@@ -48,4 +48,65 @@ parseData.datasource = function(model, d) {
   return ds;    
 };
 
-module.exports = parseData;
+module.exports   = parseData;
+parseData.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Input data sets",
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"},
+    "source": {"type": "string"},
+    "values": {
+      "type": "array",
+      "items": {"type": "any"}
+    },
+    "url": {"type": "string"},
+    "transform": {"$ref": "#/refs/transform"},
+    "format": {
+      "type": "object",
+      "properties": {
+        "oneOf": [
+          {
+            "type": {"enum": ["json"]},
+            "parse": {
+              "type": "object",
+              "additionalProperties": {
+                "enum": ["number", "boolean", "date", "string"]
+              }
+            },
+            "property": {"type": "string"},
+          },
+          {
+            "type": {"enum": ["csv", "tsv"]},
+            "parse": {
+              "type": "object",
+              "additionalProperties": {
+                "enum": ["number", "boolean", "date", "string"]
+              }
+            }
+          },
+          {
+            "type": {"enum": ["topojson"]},
+            "feature": {"type": "string"},
+            "mesh": {"type": "string"}
+          },
+          {
+            "type": {"enum": ["treejson"]},
+            "children": {"type": "string"},
+            "parse": {
+              "type": "object",
+              "additionalProperties": {
+                "enum": ["number", "boolean", "date", "string"]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "oneOf": [
+    {"required": ["name", "source"]},
+    {"required": ["name", "values"]},
+    {"required": ["name", "url"]}
+  ]
+}
