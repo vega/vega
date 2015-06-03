@@ -382,12 +382,12 @@ View.factory = function(model) {
       .width(defs.width)
       .height(defs.height)
       .background(defs.background)
-      .padding(defs.padding);
+      .padding(defs.padding)
+      .initialize(opt.el);
 
-    if (opt.el || (!opt.el && v instanceof HeadlessView)) v.initialize(opt.el);
     if (opt.data) v.data(opt.data);
 
-    if (opt.hover !== false) {
+    if (opt.hover !== false && opt.el) {
       v.on("mouseover", function(evt, item) {
         if (item.hasPropertySet("hover")) {
           this.update({props:"hover", items:item});
