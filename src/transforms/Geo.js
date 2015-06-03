@@ -18,8 +18,6 @@ function Geo(graph) {
   return this;
 }
 
-var None
-
 Geo.Parameters = {
   projection: {type: "value", default: "mercator"},
   center:     {type: "array[value]"},
