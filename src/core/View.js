@@ -383,8 +383,21 @@ View.factory = function(model) {
       .background(defs.background)
       .padding(defs.padding);
 
-    if(opt.el || (!opt.el && v instanceof HeadlessView)) v.initialize(opt.el);
-    if(opt.data) v.data(opt.data);
+    if (opt.el || (!opt.el && v instanceof HeadlessView)) v.initialize(opt.el);
+    if (opt.data) v.data(opt.data);
+
+    if (opt.hover !== false) {
+      v.on("mouseover", function(evt, item) {
+        if (item.hasPropertySet("hover")) {
+          this.update({props:"hover", items:item});
+        }
+      })
+      .on("mouseout", function(evt, item) {
+        if (item.hasPropertySet("hover")) {
+          this.update({props:"update", items:item});
+        }
+      });
+    }
   
     return v;
   };    
