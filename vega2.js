@@ -7267,6 +7267,9 @@ axes.schema = {
             "ticks": {"$ref": "#/defs/propset"},
             "majorTicks": {"$ref": "#/defs/propset"},
             "minorTicks": {"$ref": "#/defs/propset"},
+            "labels": {"$ref": "#/defs/propset"},
+            "title": {"$ref": "#/defs/propset"},
+            "grid": {"$ref": "#/defs/propset"},
             "axis": {"$ref": "#/defs/propset"}
           },
           "additionalProperties": false
