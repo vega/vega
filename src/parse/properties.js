@@ -305,134 +305,135 @@ function scaleRef(ref) {
 }
 
 module.exports = properties;
+properties.schema = {
+  "refs": {
+    "signal": {
+      "title": "SignalRef",
+      "type": "object",
+      "properties": {"signal": {"type": "string"}},
+      "required": ["signal"]
+    },
 
-properties.schemaRefs = {
-  "signal": {
-    "title": "SignalRef",
-    "type": "object",
-    "properties": {"signal": {"type": "string"}},
-    "required": ["signal"]
-  },
+    "field": {
+      "title": "FieldRef",
+      "oneOf": [
+        {"type": "string"},
+        {
+          "oneOf": [
+            {"$ref": "#/refs/signal"},
+            {
+              "type": "object", 
+              "properties": {"datum": {"$ref": "#/refs/field"}},
+              "required": ["datum"],
+              "additionalProperties": false
+            },
+            {
+              "type": "object", 
+              "properties": {
+                "group": {"$ref": "#/refs/field"}, 
+                "level": {"type": "number"}
+              },
+              "required": ["group"],
+              "additionalProperties": false
+            },
+            {
+              "type": "object", 
+              "properties": {
+                "parent": {"$ref": "#/refs/field"}, 
+                "level": {"type": "number"}
+              },
+              "required": ["parent"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
 
-  "field": {
-    "title": "FieldRef",
-    "oneOf": [
-      {"type": "string"},
-      {
-        "oneOf": [
-          {"$ref": "#/refs/signal"},
-          {
-            "type": "object", 
-            "properties": {"datum": {"$ref": "#/refs/field"}},
-            "required": ["datum"],
-            "additionalProperties": false
-          },
-          {
-            "type": "object", 
-            "properties": {
-              "group": {"$ref": "#/refs/field"}, 
-              "level": {"type": "number"}
-            },
-            "required": ["group"],
-            "additionalProperties": false
-          },
-          {
-            "type": "object", 
-            "properties": {
-              "parent": {"$ref": "#/refs/field"}, 
-              "level": {"type": "number"}
-            },
-            "required": ["parent"],
-            "additionalProperties": false
+    "scale": {
+      "title": "ScaleRef",
+      "oneOf": [
+        {"$ref": "#/refs/field"},
+        {
+          "type": "object",
+          "properties": {
+            "name": {"$ref": "#/refs/field"},
+            "invert": {"type": "boolean", "default": false}
           }
-        ]
-      }
-    ]
-  },
+        }
+      ]
+    },
 
-  "scale": {
-    "title": "ScaleRef",
-    "oneOf": [
-      {"$ref": "#/refs/field"},
-      {
+    "value": {
+      "title": "ValueRef",
+      "type": "object",
+      "allOf": [{
+        "properties": {
+          "mult": {"type": "number"},
+          "offset": {"type": "number"},
+          "scale": {"$ref": "#/refs/scale"},
+          "band": {"type": "boolean"}
+        }
+      }, {
+        "oneOf": [{
+          "$ref": "#/refs/signal",
+          "required": ["signal"]
+        }, {
+          "properties": {"value": {}},
+          "required": ["value"]
+        }, {
+          "properties": {"field": {"$ref": "#/refs/field"}},
+          "required": ["field"]
+        }]
+      }]
+    },
+
+    "color": {
+      "title": "ColorRef",
+      "oneOf": [{"$ref": "#/refs/value"}, {
         "type": "object",
         "properties": {
-          "name": {"$ref": "#/refs/field"},
-          "invert": {"type": "boolean", "default": false}
-        }
-      }
-    ]
-  },
-
-  "value": {
-    "title": "ValueRef",
-    "type": "object",
-    "allOf": [{
-      "properties": {
-        "mult": {"type": "number"},
-        "offset": {"type": "number"},
-        "scale": {"$ref": "#/refs/scale"},
-        "band": {"type": "boolean"}
-      }
-    }, {
-      "oneOf": [{
-        "$ref": "#/refs/signal",
-        "required": ["signal"]
+          "r": {"$ref": "#/refs/value"},
+          "g": {"$ref": "#/refs/value"},
+          "b": {"$ref": "#/refs/value"}
+        },
+        "required": ["r", "g", "b"]
       }, {
-        "properties": {"value": {}},
-        "required": ["value"]
+        "type": "object",
+        "properties": {
+          "h": {"$ref": "#/refs/value"},
+          "s": {"$ref": "#/refs/value"},
+          "l": {"$ref": "#/refs/value"}
+        },
+        "required": ["h", "s", "l"]
       }, {
-        "properties": {"field": {"$ref": "#/refs/field"}},
-        "required": ["field"]
+        "type": "object",
+        "properties": {
+          "l": {"$ref": "#/refs/value"},
+          "a": {"$ref": "#/refs/value"},
+          "b": {"$ref": "#/refs/value"}
+        },
+        "required": ["l", "a", "b"]
+      }, {
+        "type": "object",
+        "properties": {
+          "h": {"$ref": "#/refs/value"},
+          "c": {"$ref": "#/refs/value"},
+          "l": {"$ref": "#/refs/value"}
+        },
+        "required": ["h", "c", "l"]
       }]
-    }]
+    }
   },
-
-  "color": {
-    "title": "ColorRef",
-    "oneOf": [{"$ref": "#/refs/value"}, {
+  "defs": {
+    "propset": {
+      "title": "Mark property set",
       "type": "object",
       "properties": {
-        "r": {"$ref": "#/refs/value"},
-        "g": {"$ref": "#/refs/value"},
-        "b": {"$ref": "#/refs/value"}
+        "fill": {"$ref": "#/refs/color"},
+        "stroke": {"$ref": "#/refs/color"}
       },
-      "required": ["r", "g", "b"]
-    }, {
-      "type": "object",
-      "properties": {
-        "h": {"$ref": "#/refs/value"},
-        "s": {"$ref": "#/refs/value"},
-        "l": {"$ref": "#/refs/value"}
-      },
-      "required": ["h", "s", "l"]
-    }, {
-      "type": "object",
-      "properties": {
-        "l": {"$ref": "#/refs/value"},
-        "a": {"$ref": "#/refs/value"},
-        "b": {"$ref": "#/refs/value"}
-      },
-      "required": ["l", "a", "b"]
-    }, {
-      "type": "object",
-      "properties": {
-        "h": {"$ref": "#/refs/value"},
-        "c": {"$ref": "#/refs/value"},
-        "l": {"$ref": "#/refs/value"}
-      },
-      "required": ["h", "c", "l"]
-    }]
+      "additionalProperties": {"$ref": "#/refs/value"}
+    }
   }
 };
-
-properties.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Mark property set",
-  "type": "object",
-  "properties": {
-    "fill": {"$ref": "#/refs/color"},
-    "stroke": {"$ref": "#/refs/color"}
-  },
-  "additionalProperties": {"$ref": "#/refs/value"}
-}

@@ -37,16 +37,19 @@ function parseSpec(spec, callback, viewFactory) {
 
 module.exports = parseSpec;
 parseSpec.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Vega visualization specification",
-  "type": "object",
+  "defs": {
+    "spec": {
+      "title": "Vega visualization specification",
+      "type": "object",
 
-  "allOf": [{"$ref": "#/refs/container"}, {
-    "properties": {
-      "data": {
-        "type": "array",
-        "items": parseData.schema
-      }
+      "allOf": [{"$ref": "#/defs/container"}, {
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {"$ref": "#/defs/data"}
+          }
+        }
+      }]
     }
-  }]
+  }
 };

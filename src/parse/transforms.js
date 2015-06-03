@@ -18,13 +18,15 @@ function parseTransforms(model, def) {
 };
 
 module.exports = parseTransforms;
-parseTransforms.schemaRefs = {
-  "transform": {
-    "type": "array",
-    "items": {
-      "oneOf": dl.keys(transforms).map(function(t) {
-        return t.schema;
-      })
+parseTransforms.schema = {
+  "defs": {
+    "transform": {
+      "type": "array",
+      "items": {
+        "oneOf": dl.keys(transforms).map(function(t) {
+          return t.schema;
+        })
+      }
     }
   }
 };

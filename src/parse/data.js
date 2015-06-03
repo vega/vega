@@ -48,81 +48,84 @@ parseData.datasource = function(model, d) {
   return ds;    
 };
 
-module.exports   = parseData;
+module.exports = parseData;
 parseData.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Input data set definition",
-  "type": "object",
+  "defs": {
+    "data": {
+      "title": "Input data set definition",
+      "type": "object",
 
-  "allOf": [{
-    "properties": {
-      "name": {"type": "string"},
-      "transform": {"$ref": "#/refs/transform"},
-      "format": {
-        "type": "object",
+      "allOf": [{
+        "properties": {
+          "name": {"type": "string"},
+          "transform": {"$ref": "#/defs/transform"},
+          "format": {
+            "type": "object",
+            "oneOf": [{
+              "properties": {
+                "type": {"enum": ["json"]},
+                "parse": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "enum": ["number", "boolean", "date", "string"]
+                  }
+                },
+                "property": {"type": "string"}
+              },
+              "additionalProperties": false
+            }, {
+              "properties": {
+                "type": {"enum": ["csv", "tsv"]},
+                "parse": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "enum": ["number", "boolean", "date", "string"]
+                  }
+                }
+              },
+              "additionalProperties": false
+            }, {
+              "oneOf": [{
+                "properties": {
+                  "type": {"enum": ["topojson"]},
+                  "feature": {"type": "string"}
+                },
+                "additionalProperties": false
+              }, {
+                "properties": {
+                  "type": {"enum": ["topojson"]},
+                  "mesh": {"type": "string"}
+                },
+                "additionalProperties": false
+              }]
+            }, {
+              "properties": {
+                "type": {"enum": ["treejson"]},
+                "children": {"type": "string"},
+                "parse": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "enum": ["number", "boolean", "date", "string"]
+                  }
+                }
+              },
+              "additionalProperties": false
+            }]
+          }
+        },
+        "required": ["name"]
+      }, {
         "oneOf": [{
-          "properties": {
-            "type": {"enum": ["json"]},
-            "parse": {
-              "type": "object",
-              "additionalProperties": {
-                "enum": ["number", "boolean", "date", "string"]
-              }
-            },
-            "property": {"type": "string"}
-          },
-          "additionalProperties": false
+          "properties": {"source": {"type": "string"}},
+          "required": ["source"]
         }, {
-          "properties": {
-            "type": {"enum": ["csv", "tsv"]},
-            "parse": {
-              "type": "object",
-              "additionalProperties": {
-                "enum": ["number", "boolean", "date", "string"]
-              }
-            }
-          },
-          "additionalProperties": false
+          "properties": {"values": {"type": "array"}},
+          "required": ["values"]
         }, {
-          "oneOf": [{
-            "properties": {
-              "type": {"enum": ["topojson"]},
-              "feature": {"type": "string"}
-            },
-            "additionalProperties": false
-          }, {
-            "properties": {
-              "type": {"enum": ["topojson"]},
-              "mesh": {"type": "string"}
-            },
-            "additionalProperties": false
-          }]
-        }, {
-          "properties": {
-            "type": {"enum": ["treejson"]},
-            "children": {"type": "string"},
-            "parse": {
-              "type": "object",
-              "additionalProperties": {
-                "enum": ["number", "boolean", "date", "string"]
-              }
-            }
-          },
-          "additionalProperties": false
+          "properties": {"url": {"type": "string"}},
+          "required": ["url"]
         }]
-      }
-    },
-    "required": ["name"]
-  }, {
-    "oneOf": [{
-      "properties": {"source": {"type": "string"}},
-      "required": ["source"]
-    }, {
-      "properties": {"values": {"type": "array"}},
-      "required": ["values"]
-    }, {
-      "properties": {"url": {"type": "string"}},
-      "required": ["url"]
-    }]
-  }]
-}
+      }]
+    }
+  }
+};

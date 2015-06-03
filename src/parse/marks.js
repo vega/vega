@@ -13,26 +13,28 @@ function parseRootMark(model, spec, width, height) {
 };
 
 module.exports = parseRootMark;
-parseRootMark.schemaRefs = {
-  "container": {
-    "type": "object",
-    "properties": {
-      // "scales": TODO
-      // "axes": TODO
-      // "legends": TODO
-      "marks": {
-        "type": "array",
-        "items": {"anyOf":[{"$ref": "#/refs/groupMark"}, {"$ref": "#/refs/mark"}]}
-      }
-    }
-  },
-
-  "groupMark": {
-    "allOf": [{"$ref": "#/refs/mark"}, {"$ref": "#/refs/container"}, {
+parseRootMark.schema = {
+  "defs": {
+    "container": {
+      "type": "object",
       "properties": {
-        "type": {"enum": ["group"]}
-      },
-      "required": ["type"]
-    }]
+        // "scales": TODO
+        // "axes": TODO
+        // "legends": TODO
+        "marks": {
+          "type": "array",
+          "items": {"anyOf":[{"$ref": "#/defs/groupMark"}, {"$ref": "#/defs/mark"}]}
+        }
+      }
+    },
+
+    "groupMark": {
+      "allOf": [{"$ref": "#/defs/mark"}, {"$ref": "#/defs/container"}, {
+        "properties": {
+          "type": {"enum": ["group"]}
+        },
+        "required": ["type"]
+      }]
+    }
   }
 };
