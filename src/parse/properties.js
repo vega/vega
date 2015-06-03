@@ -305,6 +305,26 @@ function scaleRef(ref) {
 }
 
 module.exports = properties;
+
+function valueSchema(type) {
+  type = dl.isArray(type) ? {"enum": type} : {"type": type};
+  return {
+    "type": "object",
+    "allOf": [{"$ref": "#/refs/valueModifiers"}, {
+      "oneOf": [{
+        "$ref": "#/refs/signal",
+        "required": ["signal"]
+      }, {
+        "properties": {"value": type},
+        "required": ["value"]
+      }, {
+        "properties": {"field": {"$ref": "#/refs/field"}},
+        "required": ["field"]
+      }]
+    }]
+  }
+}
+
 properties.schema = {
   "refs": {
     "signal": {
@@ -364,76 +384,118 @@ properties.schema = {
       ]
     },
 
-    "value": {
-      "title": "ValueRef",
-      "type": "object",
-      "allOf": [{
-        "properties": {
-          "mult": {"type": "number"},
-          "offset": {"type": "number"},
-          "scale": {"$ref": "#/refs/scale"},
-          "band": {"type": "boolean"}
-        }
-      }, {
-        "oneOf": [{
-          "$ref": "#/refs/signal",
-          "required": ["signal"]
-        }, {
-          "properties": {"value": {}},
-          "required": ["value"]
-        }, {
-          "properties": {"field": {"$ref": "#/refs/field"}},
-          "required": ["field"]
-        }]
-      }]
+    "valueModifiers": {
+      "properties": {
+        "mult": {"type": "number"},
+        "offset": {"type": "number"},
+        "scale": {"$ref": "#/refs/scale"},
+        "band": {"type": "boolean"}
+      }
     },
 
-    "color": {
+    "value": valueSchema({}),
+    "numberValue": valueSchema("number"),
+    "stringValue": valueSchema("string"),
+    "booleanValue": valueSchema("boolean"),
+    "arrayValue": valueSchema("array"),
+
+    "colorValue": {
       "title": "ColorRef",
-      "oneOf": [{"$ref": "#/refs/value"}, {
+      "oneOf": [{"$ref": "#/refs/stringValue"}, {
         "type": "object",
         "properties": {
-          "r": {"$ref": "#/refs/value"},
-          "g": {"$ref": "#/refs/value"},
-          "b": {"$ref": "#/refs/value"}
+          "r": {"$ref": "#/refs/numberValue"},
+          "g": {"$ref": "#/refs/numberValue"},
+          "b": {"$ref": "#/refs/numberValue"}
         },
         "required": ["r", "g", "b"]
       }, {
         "type": "object",
         "properties": {
-          "h": {"$ref": "#/refs/value"},
-          "s": {"$ref": "#/refs/value"},
-          "l": {"$ref": "#/refs/value"}
+          "h": {"$ref": "#/refs/numberValue"},
+          "s": {"$ref": "#/refs/numberValue"},
+          "l": {"$ref": "#/refs/numberValue"}
         },
         "required": ["h", "s", "l"]
       }, {
         "type": "object",
         "properties": {
-          "l": {"$ref": "#/refs/value"},
-          "a": {"$ref": "#/refs/value"},
-          "b": {"$ref": "#/refs/value"}
+          "l": {"$ref": "#/refs/numberValue"},
+          "a": {"$ref": "#/refs/numberValue"},
+          "b": {"$ref": "#/refs/numberValue"}
         },
         "required": ["l", "a", "b"]
       }, {
         "type": "object",
         "properties": {
-          "h": {"$ref": "#/refs/value"},
-          "c": {"$ref": "#/refs/value"},
-          "l": {"$ref": "#/refs/value"}
+          "h": {"$ref": "#/refs/numberValue"},
+          "c": {"$ref": "#/refs/numberValue"},
+          "l": {"$ref": "#/refs/numberValue"}
         },
         "required": ["h", "c", "l"]
       }]
     }
   },
+
   "defs": {
     "propset": {
       "title": "Mark property set",
       "type": "object",
       "properties": {
-        "fill": {"$ref": "#/refs/color"},
-        "stroke": {"$ref": "#/refs/color"}
+        // Common Properties
+        "x": {"$ref": "#/refs/numberValue"},
+        "x2": {"$ref": "#/refs/numberValue"},
+        "width": {"$ref": "#/refs/numberValue"},
+        "y": {"$ref": "#/refs/numberValue"},
+        "y2": {"$ref": "#/refs/numberValue"},
+        "height": {"$ref": "#/refs/numberValue"},
+        "opacity": {"$ref": "#/refs/numberValue"},
+        "fill": {"$ref": "#/refs/colorValue"},
+        "fillOpacity": {"$ref": "#/refs/numberValue"},
+        "stroke": {"$ref": "#/refs/colorValue"},
+        "strokeWidth": {"$ref": "#/refs/numberValue"},
+        "strokeOpacity": {"$ref": "#/refs/numberValue"},
+        "strokeDash": {"$ref": "#/refs/arrayValue"},
+        "strokeDashOffset": {"$ref": "#/refs/numberValue"},
+
+        // Symbol-mark properties
+        "size": {"$ref": "#/refs/numberValue"},
+        "shape": valueSchema(["circle", "square", 
+          "cross", "diamond", "triangle-up", "triangle-down"]),
+
+        // Path-mark properties
+        "path": {"$ref": "#/refs/stringValue"},
+
+        // Arc-mark properties
+        "innerRadius": {"$ref": "#/refs/numberValue"},
+        "outerRadius": {"$ref": "#/refs/numberValue"},
+        "startAngle": {"$ref": "#/refs/numberValue"},
+        "endAngle": {"$ref": "#/refs/numberValue"},
+
+        // Area- and line-mark properties
+        "interpolate": valueSchema(["linear", "step-before", "step-after", 
+          "basis", "basis-open", "cardinal", "cardinal-open", "monotone"]),
+        "tension": {"$ref": "#/refs/numberValue"},
+
+        // Image-mark properties
+        "url": {"$ref": "#/refs/stringValue"},
+        "align": valueSchema(["left", "right", "center"]),
+        "baseline": valueSchema(["top", "middle", "bottom"]),
+
+        // Text-mark properties
+        "text": {"$ref": "#/refs/stringValue"},
+        "dx": {"$ref": "#/refs/numberValue"},
+        "dy": {"$ref": "#/refs/numberValue"},
+        "radius":{"$ref": "#/refs/numberValue"},
+        "theta": {"$ref": "#/refs/numberValue"},
+        "angle": {"$ref": "#/refs/numberValue"},
+        "font": {"$ref": "#/refs/stringValue"},
+        "fontSize": {"$ref": "#/refs/numberValue"},
+        "fontWeight": {"$ref": "#/refs/numberValue"},
+        "fontStyle": {"$ref": "#/refs/stringValue"}
       },
-      "additionalProperties": {"$ref": "#/refs/value"}
+
+      "additionalProperties": false
     }
   }
 };

@@ -23,8 +23,8 @@ parseTransforms.schema = {
     "transform": {
       "type": "array",
       "items": {
-        "oneOf": dl.keys(transforms).map(function(t) {
-          return t.schema;
+        "oneOf": dl.keys(transforms).map(function(k) {
+          return transforms[k].schema;
         })
       }
     }

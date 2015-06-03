@@ -42,10 +42,11 @@ parseMark.schema = {
             "mark": {"type": "string"},
             "transform": {"$ref": "#/defs/transform"}
           },
-          "oneOf":[{"required": ["data"]}, {"required": ["mark"]}]
+          "oneOf":[{"required": ["data"]}, {"required": ["mark"]}],
+          "additionalProperties": false
         },
 
-        "delay": {"$ref": "#/refs/value"},
+        "delay": {"$ref": "#/refs/numberValue"},
         "ease": {
           "enum": ["linear", "quad", "cubic", "sin", 
             "exp", "circle", "bounce"].reduce(function(acc, e) {
@@ -63,11 +64,12 @@ parseMark.schema = {
             "update": {"$ref": "#/defs/propset"},
             "exit":   {"$ref": "#/defs/propset"}
           },
-          "additionalProperties": {"$ref": "#/defs/propset"},
+          "additionalProperties": false,
           "anyOf": [{"required": ["enter"]}, {"required": ["update"]}]
         }
       },
 
+      "additionalProperties": false,
       "required": ["type"]
     }
   }
