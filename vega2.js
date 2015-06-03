@@ -7226,6 +7226,57 @@ function axis(def, index, axis, group) {
 }
 
 module.exports = axes;
+axes.schema = {
+  "defs": {
+    "axis": {
+      "type": "object",
+      "properties": {
+        "type": {"enum": ["x", "y"]},
+        "scale": {"type": "string"},
+        "orient": {"enum": ["top", "bottom", "left", "right"]},
+        "title": {"type": "string"},
+        "titleOffset": {"type": "number"},
+        "format": {"type": "string"},
+        "ticks": {"type": "number"},
+        "values": {
+          "type": "array", 
+          "items": {"type": ["string", "number"]}
+        },
+        "subdivide": {"type": "number"},
+        "tickPadding": {"type": "number"},
+        "tickSize": {"type": "number"},
+        "tickSizeMajor": {"type": "number"},
+        "tickSizeMinor": {"type": "number"},
+        "tickSizeEnd": {"type": "number"},
+        "offset": {
+          "oneOf": [{"type": "number"}, {
+            "type": "object",
+            "properties": {
+              "scale": {"type": "string"},
+              "value": {"type": ["string", "number"]}
+            },
+            "required": ["scale", "value"],
+            "additionalProperties": false
+          }]
+        },
+        "layer": {"enum": ["front", "back"], "default": "front"},
+        "grid": {"type": "boolean"},
+        "properties": {
+          "type": "object",
+          "properties": {
+            "ticks": {"$ref": "#/defs/propset"},
+            "majorTicks": {"$ref": "#/defs/propset"},
+            "minorTicks": {"$ref": "#/defs/propset"},
+            "axis": {"$ref": "#/defs/propset"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": ["type", "scale"]
+    }
+  }
+}
 },{"../scene/axis":80,"../util/config":107,"datalib":20}],44:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null);
@@ -8712,6 +8763,41 @@ function legend(def, index, legend, group) {
 }
 
 module.exports = legends;
+legends.schema = {
+  "defs": {
+    "legend": {
+      "type": "object",
+      "properties": {
+        "size": {"type": "string"},
+        "shape": {"type": "string"},
+        "fill": {"type": "string"},
+        "stroke": {"type": "string"},
+        "orient": {"enum": ["left", "right"], "default": "right"},
+        "title": {"type": "string"},
+        "format": {"type": "string"},
+        "values": {"type": "array"},
+        "properties": {
+          "type": "object",
+          "properties": {
+            "title": {"$ref": "#/defs/propset"},
+            "labels": {"$ref": "#/defs/propset"},
+            "symbols": {"$ref": "#/defs/propset"},
+            "gradient": {"$ref": "#/defs/propset"},
+            "legend": {"$ref": "#/defs/propset"},
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {"required": "size"},
+        {"required": "shape"},
+        {"required": "fill"},
+        {"required": "stroke"}
+      ]
+    }
+  }
+}
 },{"../scene/legend":81,"../util/config":107}],51:[function(require,module,exports){
 var dl = require('datalib'),
     parseProperties = require('./properties');
@@ -8809,8 +8895,14 @@ parseRootMark.schema = {
       "type": "object",
       "properties": {
         // "scales": TODO
-        // "axes": TODO
-        // "legends": TODO
+        "axes": {
+          "type": "array",
+          "items": {"$ref": "#/defs/axis"}
+        },
+        "legends": {
+          "type": "array",
+          "items": {"$ref": "#/defs/legend"}
+        },
         "marks": {
           "type": "array",
           "items": {"anyOf":[{"$ref": "#/defs/groupMark"}, {"$ref": "#/defs/mark"}]}

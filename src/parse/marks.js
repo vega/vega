@@ -23,7 +23,10 @@ parseRootMark.schema = {
           "type": "array",
           "items": {"$ref": "#/defs/axis"}
         },
-        // "legends": TODO
+        "legends": {
+          "type": "array",
+          "items": {"$ref": "#/defs/legend"}
+        },
         "marks": {
           "type": "array",
           "items": {"anyOf":[{"$ref": "#/defs/groupMark"}, {"$ref": "#/defs/mark"}]}
