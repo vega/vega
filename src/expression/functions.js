@@ -1,4 +1,4 @@
-var datalib = require('datalib');
+var dl = require('datalib');
 
 module.exports = function(codegen) {
 
