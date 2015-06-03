@@ -41,9 +41,12 @@ parseSpec.schema = {
   "title": "Vega visualization specification",
   "type": "object",
 
-  "properties": {
-    "width": {"type": "number"},
-    "height": {"type": "number"},
-    "data": parseData.schema
-  }
+  "allOf": [{"$ref": "#/refs/container"}, {
+    "properties": {
+      "data": {
+        "type": "array",
+        "items": parseData.schema
+      }
+    }
+  }]
 };

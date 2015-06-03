@@ -51,7 +51,7 @@ parseData.datasource = function(model, d) {
 module.exports   = parseData;
 parseData.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Input data sets",
+  "title": "Input data set definition",
   "type": "object",
 
   "allOf": [{

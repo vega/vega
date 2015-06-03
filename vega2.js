@@ -7292,7 +7292,7 @@ parseData.datasource = function(model, d) {
 module.exports   = parseData;
 parseData.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Input data sets",
+  "title": "Input data set definition",
   "type": "object",
 
   "allOf": [{
@@ -8736,10 +8736,56 @@ function parseMark(model, mark) {
 };
 
 module.exports = parseMark;
+parseMark.schemaRefs = {
+  "mark": {
+    "type": "object",
+
+    "properties": {
+      "name": {"type": "string"},
+      "key": {"type": "string"},
+      "type": {"enum": ["rect", "symbol", "path", "arc", 
+        "area", "line", "rule", "image", "text", "group"]},
+
+      "from": {
+        "type": "object",
+        "properties": {
+          "data": {"type": "string"},
+          "mark": {"type": "string"},
+          "transform": {"$ref": "#/refs/transform"}
+        },
+        "oneOf":[{"required": ["data"]}, {"required": ["mark"]}]
+      },
+
+      "delay": {"$ref": "#/refs/value"},
+      "ease": {
+        "enum": ["linear", "quad", "cubic", "sin", 
+          "exp", "circle", "bounce"].reduce(function(acc, e) {
+            ["in", "out", "in-out", "out-in"].forEach(function(m) {
+              acc.push(e+"-"+m);
+            });
+            return acc;
+        }, [])
+      },
+
+      "properties": {
+        "type": "object",
+        "properties": {
+          "enter":  parseProperties.schema,
+          "update": parseProperties.schema,
+          "exit":   parseProperties.schema
+        },
+        "additionalProperties": parseProperties.schema,
+        "anyOf": [{"required": ["enter"]}, {"required": ["update"]}]
+      }
+    },
+
+    "required": ["type"]
+  }
+}
 },{"./properties":56,"datalib":20}],52:[function(require,module,exports){
 var parseMark = require('./mark');
 
-module.exports = function(model, spec, width, height) {
+function parseRootMark(model, spec, width, height) {
   return {
     type: "group",
     width: width,
@@ -8750,6 +8796,32 @@ module.exports = function(model, spec, width, height) {
     marks: (spec.marks || []).map(function(m) { return parseMark(model, m); })
   };
 };
+
+module.exports = parseRootMark;
+parseRootMark.schemaRefs = {
+  "container": {
+    "type": "object",
+    "properties": {
+      // "scales": TODO
+      // "axes": TODO
+      // "legends": TODO
+      "marks": {
+        "type": "array",
+        "items": {"anyOf":[{"$ref": "#/refs/groupMark"}, {"$ref": "#/refs/mark"}]}
+      }
+    }
+  },
+
+  "groupMark": {
+    "allOf": [{"$ref": "#/refs/mark"}, {"$ref": "#/refs/container"}, {
+      "properties": {
+        "type": {"enum": ["group"]}
+      },
+      "required": ["type"]
+    }]
+  }
+};
+
 },{"./mark":51}],53:[function(require,module,exports){
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
@@ -9544,11 +9616,14 @@ parseSpec.schema = {
   "title": "Vega visualization specification",
   "type": "object",
 
-  "properties": {
-    "width": {"type": "number"},
-    "height": {"type": "number"},
-    "data": parseData.schema
-  }
+  "allOf": [{"$ref": "#/refs/container"}, {
+    "properties": {
+      "data": {
+        "type": "array",
+        "items": parseData.schema
+      }
+    }
+  }]
 };
 },{"../core/Model":29,"../core/View":30,"../parse/background":44,"../parse/data":45,"../parse/interactors":49,"../parse/marks":52,"../parse/padding":54,"../parse/predicates":55,"../parse/signals":57,"datalib":20}],59:[function(require,module,exports){
 (function (global){
