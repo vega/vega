@@ -445,9 +445,11 @@ properties.schema = {
         // Common Properties
         "x": {"$ref": "#/refs/numberValue"},
         "x2": {"$ref": "#/refs/numberValue"},
+        "xc": {"$ref": "#/refs/numberValue"},
         "width": {"$ref": "#/refs/numberValue"},
         "y": {"$ref": "#/refs/numberValue"},
         "y2": {"$ref": "#/refs/numberValue"},
+        "yc": {"$ref": "#/refs/numberValue"},
         "height": {"$ref": "#/refs/numberValue"},
         "opacity": {"$ref": "#/refs/numberValue"},
         "fill": {"$ref": "#/refs/colorValue"},
