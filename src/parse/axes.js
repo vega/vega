@@ -82,3 +82,54 @@ function axis(def, index, axis, group) {
 }
 
 module.exports = axes;
+axes.schema = {
+  "defs": {
+    "axis": {
+      "type": "object",
+      "properties": {
+        "type": {"enum": ["x", "y"]},
+        "scale": {"type": "string"},
+        "orient": {"enum": ["top", "bottom", "left", "right"]},
+        "title": {"type": "string"},
+        "titleOffset": {"type": "number"},
+        "format": {"type": "string"},
+        "ticks": {"type": "number"},
+        "values": {
+          "type": "array", 
+          "items": {"type": ["string", "number"]}
+        },
+        "subdivide": {"type": "number"},
+        "tickPadding": {"type": "number"},
+        "tickSize": {"type": "number"},
+        "tickSizeMajor": {"type": "number"},
+        "tickSizeMinor": {"type": "number"},
+        "tickSizeEnd": {"type": "number"},
+        "offset": {
+          "oneOf": [{"type": "number"}, {
+            "type": "object",
+            "properties": {
+              "scale": {"type": "string"},
+              "value": {"type": ["string", "number"]}
+            },
+            "required": ["scale", "value"],
+            "additionalProperties": false
+          }]
+        },
+        "layer": {"enum": ["front", "back"], "default": "front"},
+        "grid": {"type": "boolean"},
+        "properties": {
+          "type": "object",
+          "properties": {
+            "ticks": {"$ref": "#/defs/propset"},
+            "majorTicks": {"$ref": "#/defs/propset"},
+            "minorTicks": {"$ref": "#/defs/propset"},
+            "axis": {"$ref": "#/defs/propset"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": ["type", "scale"]
+    }
+  }
+}
