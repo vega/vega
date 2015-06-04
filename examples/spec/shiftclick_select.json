@@ -6,11 +6,13 @@
     {
       "name": "clickedPt",
       "init": 0,
+      "verbose": true,
       "streams": [{"type": "click", "expr": "d._id"}]
     },
     {
       "name": "shift",
       "init": false,
+      "verbose": true,
       "streams": [{"type": "click", "expr": "e.shiftKey"}]
     }
   ],

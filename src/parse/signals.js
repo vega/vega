@@ -4,7 +4,8 @@ var expr = require('./expr'),
 function parseSignals(model, spec) {
   // process each signal definition
   (spec || []).forEach(function(s) {
-    var signal = model.signal(s.name, s.init);
+    var signal = model.signal(s.name, s.init)
+      .verbose(s.verbose);
 
     if(s.init && s.init.expr) {
       s.init.expr = expr(s.init.expr);
@@ -15,7 +16,7 @@ function parseSignals(model, spec) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
         var val = exprVal(model, s);
-        if(val !== signal.value()) {
+        if(val !== signal.value() || signal.verbose()) {
           signal.value(val);
           input.signals[s.name] = 1;
           return input;

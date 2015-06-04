@@ -147,7 +147,7 @@ module.exports = function(view) {
         val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
-        if(val !== h.signal.value()) {
+        if(val !== h.signal.value() || h.signal.verbose()) {
           h.signal.value(val);
           cs.signals[h.signal.name()] = 1;
         }
