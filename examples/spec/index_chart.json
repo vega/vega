@@ -8,12 +8,15 @@
       "name": "xPos",
       "streams": [{"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert": "true"}}]
     },
+
+    {"name": "minDate", "init": {"expr": "time('Jan 1 2000')"}},
+    {"name": "maxDate", "init": {"expr": "time('Mar 1 2010')"}},
     {
       "name": "indexDate",
-      "init": {"expr": "datetime('Jan 1 2005')"},
+      "init": {"expr": "time('Jan 1 2005')"},
       "streams": [{
         "type": "xPos", 
-        "expr": "min(max(xPos, datetime('Jan 1 2000')), datetime('Mar 1 2010'))"
+        "expr": "min(max(xPos, minDate), maxDate)"
       }]
     }
   ],
@@ -96,7 +99,7 @@
         {
           "type": "text",
           "from": {
-            "transform": [{"type": "filter", "test": "d.date == 1267430400000"}]
+            "transform": [{"type": "filter", "test": "d.date == maxDate"}]
           },
           "properties": {
             "update": {
