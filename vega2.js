@@ -332,9 +332,7 @@ proto.changes = function() {
 
     // organize output tuples
     if (cell.num <= 0) {
-      if (flag === Flags.MOD_CELL) {
-        changes.rem.push(cell.tuple);
-      }
+      changes.rem.push(cell.tuple);
       delete this._cells[k];
     } else if (flag & Flags.ADD_CELL) {
       changes.add.push(cell.tuple);
@@ -475,6 +473,7 @@ proto.min = function(get) {
   var m = this.extent(get)[0];
   return m ? get(m) : +Infinity;
 };
+
 proto.max = function(get) {
   var m = this.extent(get)[1];
   return m ? get(m) : -Infinity;
@@ -549,7 +548,7 @@ var types = {
     name: 'mean',
     init: 'this.mean = 0;',
     add:  'var d = v - this.mean; this.mean += d / this.valid;',
-    rem:  'var d = v - this.mean; this.mean -= d / this.valid;',
+    rem:  'var d = v - this.mean; this.mean -= this.valid ? d / this.valid : this.mean;',
     set:  'this.mean'
   }),
   'average': measure({
@@ -562,22 +561,22 @@ var types = {
     init: 'this.dev = 0;',
     add:  'this.dev += d * (v - this.mean);',
     rem:  'this.dev -= d * (v - this.mean);',
-    set:  'this.dev / (this.valid-1)',
+    set:  'this.valid > 1 ? this.dev / (this.valid-1) : 0',
     req:  ['mean'], idx: 1
   }),
   'variancep': measure({
     name: 'variancep',
-    set:  'this.dev / this.valid',
+    set:  'this.valid > 1 ? this.dev / this.valid : 0',
     req:  ['variance'], idx: 2
   }),
   'stdev': measure({
     name: 'stdev',
-    set:  'Math.sqrt(this.dev / (this.valid-1))',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : 0',
     req:  ['variance'], idx: 2
   }),
   'stdevp': measure({
     name: 'stdevp',
-    set:  'Math.sqrt(this.dev / this.valid)',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : 0',
     req:  ['variance'], idx: 2
   }),
   'median': measure({
@@ -662,8 +661,8 @@ function resolve(agg, stream) {
 function create(agg, stream, accessor, mutator) {
   var all = resolve(agg, stream),
       ctr = 'this.cell = cell; this.tuple = t; this.valid = 0; this.missing = 0;',
-      add = 'if (v==null) this.missing++; if (!this.isValid(v)) return; this.valid++;',
-      rem = 'if (v==null) this.missing--; if (!this.isValid(v)) return; this.valid--;',
+      add = 'if (v==null) this.missing++; if (!this.isValid(v)) return; ++this.valid;',
+      rem = 'if (v==null) this.missing--; if (!this.isValid(v)) return; --this.valid;',
       set = 'var t = this.tuple; var cell = this.cell;';
 
   all.forEach(function(a) {
@@ -691,16 +690,9 @@ function create(agg, stream, accessor, mutator) {
   ctr.prototype.rem = Function('t', 'var v = this.get(t);' + rem);
   ctr.prototype.set = Function(set);
   ctr.prototype.get = accessor;
-  ctr.prototype.mod = mod;
   ctr.prototype.distinct = require('../stats').count.distinct;
   ctr.prototype.isValid = util.isValid;
   return ctr;
-}
-
-function mod(v_new, v_old) {
-  if (v_old === undefined || v_old === v_new) return;
-  this.rem(v_old);
-  this.add(v_new);
 }
 
 types.create = create;
@@ -711,7 +703,7 @@ var units = require('../time-units');
 var EPSILON = 1e-15;
 
 function bins(opt) {
-  opt = opt || {};
+  if (!opt) { throw Error("Missing binning options."); }
 
   // determine range
   var maxb = opt.maxbins || 15,
@@ -794,7 +786,7 @@ function date_index(v) {
 }
 
 bins.date = function(opt) {
-  opt = opt || {};
+  if (!opt) { throw Error("Missing date binning options."); }
 
   // find time step, then bin
   var dmin = opt.min,
@@ -936,7 +928,7 @@ gen.random = {};
 
 gen.random.uniform = function(min, max) {
   if (max === undefined) {
-    max = min;
+    max = min === undefined ? 1 : min;
     min = 0;
   }
   var d = max - min;
@@ -1032,9 +1024,9 @@ module.exports = function(data, format) {
 },{"../../util":25}],14:[function(require,module,exports){
 (function (global){
 var json = require('./json');
-var topojson = (typeof window !== "undefined" ? window.topojson : typeof global !== "undefined" ? global.topojson : null);
 
-module.exports = function(data, format) {
+var reader = function(data, format) {
+  var topojson = reader.topojson;
   if (topojson == null) { throw Error('TopoJSON library not loaded.'); }
 
   var t = json(data, format), obj;
@@ -1043,7 +1035,7 @@ module.exports = function(data, format) {
     if ((obj = t.objects[format.feature])) {
       return topojson.feature(t, obj).features;
     } else {
-      throw Error('Invalid TopoJSON object: '+format.feature);
+      throw Error('Invalid TopoJSON object: ' + format.feature);
     }
   } else if (format && format.mesh) {
     if ((obj = t.objects[format.mesh])) {
@@ -1054,10 +1046,10 @@ module.exports = function(data, format) {
   } else {
     throw Error('Missing TopoJSON feature or mesh parameter.');
   }
-
-  return [];
 };
 
+reader.topojson = (typeof window !== "undefined" ? window.topojson : typeof global !== "undefined" ? global.topojson : null);
+module.exports = reader;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"./json":13}],15:[function(require,module,exports){
@@ -1236,6 +1228,8 @@ function http(url, callback) {
     if (!error && response.statusCode === 200) {
       callback(null, body);
     } else {
+      error = error ||
+        'Load failed with response code ' + response.statusCode + '.';
       callback(error, null);
     }
   });
@@ -1298,7 +1292,7 @@ module.exports = util
 
       // load data
       var data = load(opt, callback ? function(error, data) {
-        if (error) callback(error, null);
+        if (error) { callback(error, null); return; }
         try {
           // data loaded, now parse it (async)
           data = read(data, format);
@@ -1394,8 +1388,7 @@ function infer(values, f) {
 function inferAll(data, fields) {
   fields = fields || util.keys(data[0]);
   return fields.reduce(function(types, f) {
-    var type = infer(data, f);
-    if (PARSERS[type]) types[f] = type;
+    types[f] = infer(data, f);
     return types;
   }, {});
 }
@@ -1475,7 +1468,7 @@ module.exports.table = function(data, opt) {
     return '{{' +
       name +
       (FMT[types[name]] || '') +
-      ('|pad:' + lens[i] + ',' + POS[types[name]] || 'right') +
+      ('|pad:' + lens[i] + ',' + (POS[types[name]] || 'right')) +
       ('|truncate:' + lens[i]) +
     '}}';
   }).join(opt.separator));
@@ -1654,7 +1647,7 @@ stats.mean = function(values, f) {
 // Compute the sample variance of an array of numbers.
 stats.variance = function(values, f) {
   f = util.$(f);
-  if (!util.isArray(values) || values.length===0) return 0;
+  if (!util.isArray(values) || values.length < 2) return 0;
   var mean = 0, M2 = 0, delta, i, c, v;
   for (i=0, c=0; i<values.length; ++i) {
     v = f ? f(values[i]) : values[i];
@@ -1736,14 +1729,14 @@ stats.dot = function(values, a, b) {
     }
     for (i=0; i<values.length; ++i) {
       v = values[i] * a[i];
-      if (!Number.isNaN(v)) sum += v;
+      if (v === v) sum += v;
     }
   } else {
     a = util.$(a);
     b = util.$(b);
     for (i=0; i<values.length; ++i) {
       v = a(values[i]) * b(values[i]);
-      if (!Number.isNaN(v)) sum += v;
+      if (v === v) sum += v;
     }
   }
   return sum;
@@ -2032,16 +2025,12 @@ function template(text) {
   var src = source(text, 'd');
   src = 'var __t; return ' + src + ';';
 
-  try {
-    /* jshint evil: true */
-    return (new Function('d', src)).bind(context);
-  } catch (e) {
-    e.source = src;
-    throw e;
-  }
+  /* jshint evil: true */
+  return (new Function('d', src)).bind(context);
 }
 
 template.source = source;
+template.context = context;
 module.exports = template;
 
 // clear cache of format objects
@@ -2051,7 +2040,11 @@ template.clearFormatCache = function() {
   context.format_map = {};
 };
 
-function source(text, variable) {
+// Generate source code for a template function.
+// text: the template text
+// variable: the name of the data object variable ('obj' by default)
+// properties: optional hash for collecting all accessed properties
+function source(text, variable, properties) {
   variable = variable || 'obj';
   var index = 0;
   var src = '\'';
@@ -2066,7 +2059,7 @@ function source(text, variable) {
 
     if (interpolate) {
       src += '\'\n+((__t=(' +
-        template_var(interpolate, variable) +
+        template_var(interpolate, variable, properties) +
         '))==null?\'\':__t)+\n\'';
     }
 
@@ -2076,11 +2069,11 @@ function source(text, variable) {
   return src + '\'';
 }
 
-function template_var(text, variable) {
+function template_var(text, variable, properties) {
   var filters = text.split('|');
   var prop = filters.shift().trim();
   var stringCast = true;
-  
+
   function strcall(fn) {
     fn = fn || '';
     if (stringCast) {
@@ -2091,14 +2084,15 @@ function template_var(text, variable) {
     }
     return src;
   }
-  
+
   function date() {
     return '(typeof ' + src + '==="number"?new Date('+src+'):'+src+')';
   }
-  
+
+  if (properties) properties[prop] = 1;
   var src = util.field(prop).map(util.str).join('][');
   src = variable + '[' + src + ']';
-  
+
   for (var i=0; i<filters.length; ++i) {
     var f = filters[i], args = null, pidx, a, b;
 
@@ -2418,7 +2412,7 @@ module.exports = units;
 
 },{}],25:[function(require,module,exports){
 (function (process){
-var Buffer = require('buffer').Buffer;
+var buffer = require('buffer');
 var units = require('./time-units');
 var u = module.exports = {};
 
@@ -2522,10 +2516,10 @@ u.isDate = function(obj) {
 };
 
 u.isValid = function(obj) {
-  return obj != null && !Number.isNaN(obj);
+  return obj != null && obj === obj;
 };
 
-u.isBuffer = (Buffer && Buffer.isBuffer) || u.false;
+u.isBuffer = (buffer.Buffer && buffer.Buffer.isBuffer) || u.false;
 
 // type coercion functions
 
@@ -2642,8 +2636,6 @@ u.cmp = function(a, b) {
   } else if (a > b) {
     return 1;
   } else if (a >= b) {
-    return 0;
-  } else if (a === null && b === null) {
     return 0;
   } else if (a === null) {
     return -1;
@@ -4611,7 +4603,7 @@ module.exports = {
   "SQRT2":   "Math.SQRT2"
 };
 },{}],40:[function(require,module,exports){
-var datalib = require('datalib');
+var dl = require('datalib');
 
 module.exports = function(codegen) {
 
@@ -15316,8 +15308,6 @@ function Geo(graph) {
   };
   return this;
 }
-
-var None
 
 Geo.Parameters = {
   projection: {type: "value", default: "mercator"},

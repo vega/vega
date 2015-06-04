@@ -2,7 +2,7 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
-    "datalib": "1.1.x",
+    "datalib": "^1.1.x",
     "d3": "^3.5.5",
     "d3-geo-projection": "^0.2.13",
     "topojson": "^1.6.18",
