@@ -3,7 +3,7 @@ var dl = require('datalib'),
     Datasource = require('./Datasource'),
     Signal = require('./Signal'),
     changeset = require('./changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Graph() {
@@ -99,7 +99,7 @@ proto.propagate = function(pulse, node) {
     // a group's dataflow branch). Re-queue if it has. T
     // TODO: use pq.replace or pq.poppush?
     if(r != n.rank()) {
-      debug(p, ['Rank mismatch', r, n.rank()]);
+      log.debug(p, ['Rank mismatch', r, n.rank()]);
       pq.push({ node: n, pulse: p, rank: n.rank() });
       continue;
     }
@@ -128,7 +128,7 @@ function forEachNode(branch, fn) {
 }
 
 proto.connect = function(branch) {
-  debug({}, ['connecting']);
+  log.debug({}, ['connecting']);
   var graph = this;
   forEachNode(branch, function(n, c, i) {
     var data = n.dependency(C.DATA),
@@ -155,7 +155,7 @@ proto.connect = function(branch) {
 };
 
 proto.disconnect = function(branch) {
-  debug({}, ['disconnecting']);
+  log.debug({}, ['disconnecting']);
   var graph = this;
 
   forEachNode(branch, function(n, c, i) {

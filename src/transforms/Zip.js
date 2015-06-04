@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 function Zip(graph) {
   Transform.prototype.init.call(this, graph);
@@ -38,7 +38,7 @@ proto.transform = function(input) {
       map = mp.bind(this),
       rem = {};
 
-  debug(input, ["zipping", w.name]);
+  log.debug(input, ["zipping", w.name]);
 
   if(withKey.field) {
     if(woutput && woutput.stamp > this._lastJoin) {

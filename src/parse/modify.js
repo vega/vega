@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     tuple = require('../dataflow/tuple'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 var filter = function(field, value, src, dest) {
@@ -24,7 +24,7 @@ module.exports = function parseModify(model, def, ds) {
       reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
     }
 
-    debug(input, [def.type+"ing", reeval]);
+    log.debug(input, [def.type+"ing", reeval]);
     if(!reeval) return input;
 
     var datum = {}, 

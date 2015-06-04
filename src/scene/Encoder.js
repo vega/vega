@@ -2,7 +2,7 @@ var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     EMPTY = {};
 
 function Encoder(graph, mark) {
@@ -38,7 +38,7 @@ function Encoder(graph, mark) {
 var proto = (Encoder.prototype = new Node());
 
 proto.evaluate = function(input) {
-  debug(input, ["encoding", this._mark.def.type]);
+  log.debug(input, ["encoding", this._mark.def.type]);
   var graph = this._graph,
       items = this._mark.items,
       props = this._mark.def.properties || {},

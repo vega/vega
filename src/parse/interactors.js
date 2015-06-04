@@ -1,5 +1,6 @@
 var dl = require('datalib'),
     config = require('../util/config'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 module.exports = function parseInteractors(model, spec, defFactory) {
@@ -10,7 +11,7 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   function loaded(i) {
     return function(error, data) {
       if (error) {
-        dl.error("LOADING FAILED: " + i.url);
+        log.error("LOADING FAILED: " + i.url);
       } else {
         var def = dl.isObject(data) ? data : JSON.parse(data);
         interactor(i.name, def);

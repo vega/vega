@@ -1,5 +1,5 @@
 var Transform = require('./Transform'),
-    debug = require('../util/debug'), 
+    log = require('../util/log'), 
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset');
 
@@ -44,7 +44,7 @@ function fn(data, fields, accessors, out, stamp) {
 };
 
 proto.transform = function(input, reset) {
-  debug(input, ["folding"]);
+  log.debug(input, ["folding"]);
 
   var fold = this,
       on = this.param('fields'),

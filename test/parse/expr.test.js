@@ -130,8 +130,8 @@ describe('Expression', function() {
       expect(parse(" ")).to.throw();
     });
 
-    it('should not allow debugger statements', function() {
-      expect(parse("debugger")).to.throw();
+    it('should not allow log.debugger statements', function() {
+      expect(parse("log.debugger")).to.throw();
     });
 
     it('should not allow continue statements', function() {
@@ -458,8 +458,8 @@ describe('Expression', function() {
       expect(evaluate.fn('Function("1+2")')).to.throw();
     });
 
-    it('should not allow debugger invocation', function() {
-      expect(evaluate.fn('debugger')).to.throw();
+    it('should not allow log.debugger invocation', function() {
+      expect(evaluate.fn('log.debugger')).to.throw();
     });
 
     it('should not allow this reference', function() {

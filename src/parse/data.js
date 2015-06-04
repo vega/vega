@@ -1,5 +1,6 @@
 var dl = require('datalib'),
     config = require('../util/config'),
+    log = require('../util/log'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
 
@@ -9,7 +10,7 @@ var parseData = function(model, spec, callback) {
   function loaded(d) {
     return function(error, data) {
       if (error) {
-        console.log("LOADING FAILED: " + d.url + " " + error);
+        log.error("LOADING FAILED: " + d.url + " " + error);
       } else {
         model.data(d.name).values(dl.read(data, d.format));
       }

@@ -3,7 +3,7 @@ var dl = require('datalib'),
     Facetor = require('./Facetor'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Aggregate(graph) {
@@ -125,7 +125,7 @@ function spoof_prev(x) {
 }
 
 proto.transform = function(input, reset) {
-  debug(input, ["aggregate"]);
+  log.debug(input, ["aggregate"]);
 
   var output = changeset.create(input);
   if(reset) this._reset(input, output);

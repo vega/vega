@@ -7,7 +7,7 @@ var d3 = require('d3'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     changeset = require('../dataflow/changeset');
 
 var View = function(el, width, height, model) {
@@ -282,7 +282,7 @@ function build() {
     .router(true);
 
   v._renderNode.evaluate = function(input) {
-    debug(input, ["rendering"]);
+    log.debug(input, ["rendering"]);
 
     var s = v._model.scene();
     if(input.trans) {

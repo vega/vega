@@ -3125,7 +3125,7 @@ var dl = require('datalib'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg-headless/index'),
     View = require('./View'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 var HeadlessView = function(width, height, model) {
   View.call(null, width, height, model);
@@ -3224,7 +3224,7 @@ module.exports = HeadlessView;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../render/canvas/index":62,"../render/svg-headless/index":66,"../util/debug":108,"./View":30,"datalib":20}],29:[function(require,module,exports){
+},{"../render/canvas/index":62,"../render/svg-headless/index":66,"../util/log":108,"./View":30,"datalib":20}],29:[function(require,module,exports){
 var dl = require('datalib'),
     Graph = require('../dataflow/Graph'), 
     Node  = require('../dataflow/Node'),
@@ -3342,7 +3342,7 @@ var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefin
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     changeset = require('../dataflow/changeset');
 
 var View = function(el, width, height, model) {
@@ -3617,7 +3617,7 @@ function build() {
     .router(true);
 
   v._renderNode.evaluate = function(input) {
-    debug(input, ["rendering"]);
+    log.debug(input, ["rendering"]);
 
     var s = v._model.scene();
     if(input.trans) {
@@ -3728,10 +3728,10 @@ module.exports = View;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":34,"../dataflow/changeset":36,"../parse/streams":58,"../render/canvas/index":62,"../render/svg/index":70,"../scene/Encoder":74,"../scene/Transition":78,"../util/config":106,"../util/debug":108,"./HeadlessView":28,"datalib":20}],31:[function(require,module,exports){
+},{"../dataflow/Node":34,"../dataflow/changeset":36,"../parse/streams":58,"../render/canvas/index":62,"../render/svg/index":70,"../scene/Encoder":74,"../scene/Transition":78,"../util/config":106,"../util/log":108,"./HeadlessView":28,"datalib":20}],31:[function(require,module,exports){
 var Node = require('./Node'),
     changeset = require('./changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Collector(graph) {
@@ -3746,7 +3746,7 @@ var proto = (Collector.prototype = new Node());
 proto.data = function() { return this._data; }
 
 proto.evaluate = function(input) {
-  debug(input, ["collecting"]);
+  log.debug(input, ["collecting"]);
 
   if (input.reflow) {
     input = changeset.create(input);
@@ -3771,13 +3771,13 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Collector;
-},{"../util/constants":107,"../util/debug":108,"./Node":34,"./changeset":36}],32:[function(require,module,exports){
+},{"../util/constants":107,"../util/log":108,"./Node":34,"./changeset":36}],32:[function(require,module,exports){
 var dl = require('datalib'),
     changeset = require('./changeset'), 
     tuple = require('./tuple'), 
     Node = require('./Node'),
     Collector = require('./Collector'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Datasource(graph, name, facet) {
@@ -3893,7 +3893,7 @@ proto.pipeline = function(pipeline) {
     .collector(true);
 
   input.evaluate = function(input) {
-    debug(input, ["input", ds._name]);
+    log.debug(input, ["input", ds._name]);
 
     var delta = ds._input, 
         out = changeset.create(input),
@@ -3935,7 +3935,7 @@ proto.pipeline = function(pipeline) {
     .collector(true);
 
   output.evaluate = function(input) {
-    debug(input, ["output", ds._name]);
+    log.debug(input, ["output", ds._name]);
     var output = changeset.create(input, true);
 
     if(ds._facet) {
@@ -4004,13 +4004,13 @@ proto.listeners = function(ds) {
 };
 
 module.exports = Datasource;
-},{"../util/constants":107,"../util/debug":108,"./Collector":31,"./Node":34,"./changeset":36,"./tuple":37,"datalib":20}],33:[function(require,module,exports){
+},{"../util/constants":107,"../util/log":108,"./Collector":31,"./Node":34,"./changeset":36,"./tuple":37,"datalib":20}],33:[function(require,module,exports){
 var dl = require('datalib'),
     Heap = require('heap'),
     Datasource = require('./Datasource'),
     Signal = require('./Signal'),
     changeset = require('./changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Graph() {
@@ -4106,7 +4106,7 @@ proto.propagate = function(pulse, node) {
     // a group's dataflow branch). Re-queue if it has. T
     // TODO: use pq.replace or pq.poppush?
     if(r != n.rank()) {
-      debug(p, ['Rank mismatch', r, n.rank()]);
+      log.debug(p, ['Rank mismatch', r, n.rank()]);
       pq.push({ node: n, pulse: p, rank: n.rank() });
       continue;
     }
@@ -4135,7 +4135,7 @@ function forEachNode(branch, fn) {
 }
 
 proto.connect = function(branch) {
-  debug({}, ['connecting']);
+  log.debug({}, ['connecting']);
   var graph = this;
   forEachNode(branch, function(n, c, i) {
     var data = n.dependency(C.DATA),
@@ -4162,7 +4162,7 @@ proto.connect = function(branch) {
 };
 
 proto.disconnect = function(branch) {
-  debug({}, ['disconnecting']);
+  log.debug({}, ['disconnecting']);
   var graph = this;
 
   forEachNode(branch, function(n, c, i) {
@@ -4198,7 +4198,7 @@ proto.evaluate = function(pulse, node) {
 };
 
 module.exports = Graph;
-},{"../util/constants":107,"../util/debug":108,"./Datasource":32,"./Signal":35,"./changeset":36,"datalib":20,"heap":26}],34:[function(require,module,exports){
+},{"../util/constants":107,"../util/log":108,"./Datasource":32,"./Signal":35,"./changeset":36,"datalib":20,"heap":26}],34:[function(require,module,exports){
 var dl = require('datalib'),
     C = require('../util/constants'),
     REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
@@ -5028,7 +5028,7 @@ module.exports = (function() {
       case 7:
           return (id === 'default') || (id === 'finally') || (id === 'extends');
       case 8:
-          return (id === 'function') || (id === 'continue') || (id === 'debugger');
+          return (id === 'function') || (id === 'continue') || (id === 'log.debugger');
       case 10:
           return (id === 'instanceof');
       default:
@@ -7236,6 +7236,7 @@ module.exports = function parseBg(bg) {
 },{}],45:[function(require,module,exports){
 var dl = require('datalib'),
     config = require('../util/config'),
+    log = require('../util/log'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
 
@@ -7245,7 +7246,7 @@ var parseData = function(model, spec, callback) {
   function loaded(d) {
     return function(error, data) {
       if (error) {
-        console.log("LOADING FAILED: " + d.url + " " + error);
+        log.error("LOADING FAILED: " + d.url + " " + error);
       } else {
         model.data(d.name).values(dl.read(data, d.format));
       }
@@ -7285,7 +7286,7 @@ parseData.datasource = function(model, d) {
 
 module.exports = parseData;
 
-},{"../util/config":106,"./modify":52,"./transforms":59,"datalib":20}],46:[function(require,module,exports){
+},{"../util/config":106,"../util/log":108,"./modify":52,"./transforms":59,"datalib":20}],46:[function(require,module,exports){
 /*
  * Generated by PEG.js 0.8.0.
  *
@@ -8249,6 +8250,7 @@ module.exports = expr;
 },{"../expression":41,"datalib":20}],48:[function(require,module,exports){
 var dl = require('datalib'),
     config = require('../util/config'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 module.exports = function parseInteractors(model, spec, defFactory) {
@@ -8259,7 +8261,7 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   function loaded(i) {
     return function(error, data) {
       if (error) {
-        dl.error("LOADING FAILED: " + i.url);
+        log.error("LOADING FAILED: " + i.url);
       } else {
         var def = dl.isObject(data) ? data : JSON.parse(data);
         interactor(i.name, def);
@@ -8386,7 +8388,7 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   if (count === 0) setTimeout(inject, 1);
   return spec;
 }
-},{"../util/config":106,"../util/constants":107,"datalib":20}],49:[function(require,module,exports){
+},{"../util/config":106,"../util/constants":107,"../util/log":108,"datalib":20}],49:[function(require,module,exports){
 var lgnd = require('../scene/legend'),
     config = require('../util/config');
 
@@ -8472,7 +8474,7 @@ module.exports = function(model, spec, width, height) {
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     tuple = require('../dataflow/tuple'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 var filter = function(field, value, src, dest) {
@@ -8495,7 +8497,7 @@ module.exports = function parseModify(model, def, ds) {
       reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
     }
 
-    debug(input, [def.type+"ing", reeval]);
+    log.debug(input, [def.type+"ing", reeval]);
     if(!reeval) return input;
 
     var datum = {}, 
@@ -8545,7 +8547,7 @@ module.exports = function parseModify(model, def, ds) {
   
   return node;
 }
-},{"../dataflow/Node":34,"../dataflow/tuple":37,"../util/constants":107,"../util/debug":108,"datalib":20}],53:[function(require,module,exports){
+},{"../dataflow/Node":34,"../dataflow/tuple":37,"../util/constants":107,"../util/log":108,"datalib":20}],53:[function(require,module,exports){
 var dl = require('datalib');
 
 module.exports = function parsePadding(pad) {
@@ -8726,7 +8728,8 @@ module.exports = function parsePredicate(model, spec) {
 var dl = require('datalib'),
     d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     tuple = require('../dataflow/tuple'),
-    config = require('../util/config');
+    config = require('../util/config'),
+    log = require('../util/log');
 
 var DEPS = ["signals", "scales", "data", "fields"];
 
@@ -8826,8 +8829,8 @@ function compile(model, mark, spec) {
       reflow:  deps.reflow
     }
   } catch (e) {
-    dl.error(e);
-    dl.log(code);
+    log.error(e);
+    log.log(code);
   }
 }
 
@@ -9029,7 +9032,7 @@ function scaleRef(ref) {
 module.exports = compile;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":37,"../util/config":106,"datalib":20}],56:[function(require,module,exports){
+},{"../dataflow/tuple":37,"../util/config":106,"../util/log":108,"datalib":20}],56:[function(require,module,exports){
 var expr = require('./expr'),
     C = require('../util/constants');
 
@@ -9489,6 +9492,7 @@ var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefin
     dl = require('datalib'),
     Bounds = require('../../util/Bounds'),
     config = require('../../util/config'),
+    log = require('../../util/log'),
     marks = require('./marks');
 
 var renderer = function() {
@@ -9704,7 +9708,7 @@ prototype.loadImage = function(uri) {
     dl.load(dl.extend({url: uri}, config.load), function(err, data) {
       renderer._imgload -= 1;
       if (err) { dl.error(err); return; }
-      dl.log("LOAD IMAGE: " + uri);
+      log.write("LOAD IMAGE: " + uri);
       image.src = data;
       image.loaded = true;
     });
@@ -9714,7 +9718,7 @@ prototype.loadImage = function(uri) {
     if (!url) { return; }
     renderer._imgload += 1;
     image.onload = function() {
-      dl.log("LOAD IMAGE: " + url);
+      log.write("LOAD IMAGE: " + url);
       image.loaded = true;
       renderer._imgload -= 1;
       renderer.renderAsync(scene);
@@ -9728,7 +9732,7 @@ prototype.loadImage = function(uri) {
 module.exports = renderer;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../../util/Bounds":103,"../../util/config":106,"./marks":63,"datalib":20}],62:[function(require,module,exports){
+},{"../../util/Bounds":103,"../../util/config":106,"../../util/log":108,"./marks":63,"datalib":20}],62:[function(require,module,exports){
 module.exports = {
   Handler:  require('./Handler'),
   Renderer: require('./Renderer')
@@ -12111,7 +12115,7 @@ var dl = require('datalib'),
     Encoder = require('./Encoder'),
     bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 function Bounder(graph, mark) {
   this._mark = mark;
@@ -12121,7 +12125,7 @@ function Bounder(graph, mark) {
 var proto = (Bounder.prototype = new Node());
 
 proto.evaluate = function(input) {
-  debug(input, ["bounds", this._mark.marktype]);
+  log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
       group = type === C.GROUP,
@@ -12150,7 +12154,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"../dataflow/Node":34,"../util/boundscalc":105,"../util/constants":107,"../util/debug":108,"./Encoder":74,"datalib":20}],73:[function(require,module,exports){
+},{"../dataflow/Node":34,"../util/boundscalc":105,"../util/constants":107,"../util/log":108,"./Encoder":74,"datalib":20}],73:[function(require,module,exports){
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     Encoder  = require('./Encoder'),
@@ -12159,7 +12163,7 @@ var dl = require('datalib'),
     parseData = require('../parse/data'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Builder() {    
@@ -12312,7 +12316,7 @@ proto.sibling = function(name) {
 };
 
 proto.evaluate = function(input) {
-  debug(input, ["building", this._from, this._def.type]);
+  log.debug(input, ["building", this._from, this._def.type]);
 
   var output, fullUpdate, fcs, data, name;
 
@@ -12440,12 +12444,12 @@ function keyFunction(key) {
 };
 
 module.exports = Builder;
-},{"../dataflow/Node":34,"../dataflow/changeset":36,"../dataflow/tuple":37,"../parse/data":45,"../util/constants":107,"../util/debug":108,"./Bounder":72,"./Encoder":74,"./Item":76,"datalib":20}],74:[function(require,module,exports){
+},{"../dataflow/Node":34,"../dataflow/changeset":36,"../dataflow/tuple":37,"../parse/data":45,"../util/constants":107,"../util/log":108,"./Bounder":72,"./Encoder":74,"./Item":76,"datalib":20}],74:[function(require,module,exports){
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     EMPTY = {};
 
 function Encoder(graph, mark) {
@@ -12481,7 +12485,7 @@ function Encoder(graph, mark) {
 var proto = (Encoder.prototype = new Node());
 
 proto.evaluate = function(input) {
-  debug(input, ["encoding", this._mark.def.type]);
+  log.debug(input, ["encoding", this._mark.def.type]);
   var graph = this._graph,
       items = this._mark.items,
       props = this._mark.def.properties || {},
@@ -12568,7 +12572,7 @@ Encoder.update = function(graph, trans, request, items) {
 };
 
 module.exports = Encoder;
-},{"../dataflow/Node":34,"../util/boundscalc":105,"../util/constants":107,"../util/debug":108,"datalib":20}],75:[function(require,module,exports){
+},{"../dataflow/Node":34,"../util/boundscalc":105,"../util/constants":107,"../util/log":108,"datalib":20}],75:[function(require,module,exports){
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     Collector = require('../dataflow/Collector'),
@@ -12576,7 +12580,7 @@ var dl = require('datalib'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
     parseLegends = require('../parse/legends'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function GroupBuilder() {
@@ -12751,7 +12755,7 @@ function scale(name, scale) {
 }
 
 function buildGroup(input, group) {
-  debug(input, ["building group", group._id]);
+  log.debug(input, ["building group", group._id]);
 
   group._scales = group._scales || {};    
   group.scale  = scale.bind(group);
@@ -12767,7 +12771,7 @@ function buildGroup(input, group) {
 }
 
 function buildMarks(input, group) {
-  debug(input, ["building children marks #"+group._id]);
+  log.debug(input, ["building children marks #"+group._id]);
   var marks = this._def.marks,
       listeners = [],
       mark, from, inherit, i, len, m, b;
@@ -12826,7 +12830,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../dataflow/Collector":31,"../dataflow/Node":34,"../parse/axes":43,"../parse/legends":49,"../util/constants":107,"../util/debug":108,"./Builder":73,"./Scale":77,"datalib":20}],76:[function(require,module,exports){
+},{"../dataflow/Collector":31,"../dataflow/Node":34,"../parse/axes":43,"../parse/legends":49,"../util/constants":107,"../util/log":108,"./Builder":73,"./Scale":77,"datalib":20}],76:[function(require,module,exports){
 function Item(mark) {
   this.mark = mark;
 }
@@ -12877,7 +12881,7 @@ var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     Aggregate = require('../transforms/Aggregate'),
     changeset = require('../dataflow/changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     config = require('../util/config'),
     C = require('../util/constants');
 
@@ -13030,7 +13034,7 @@ function quantitative(scale, rng, group) {
   if (def.nice) {
     if (def.type === C.TIME) {
       interval = d3.time[def.nice];
-      if (!interval) dl.error("Unrecognized interval: " + interval);
+      if (!interval) log.error("Unrecognized interval: " + interval);
       scale.nice(interval);
     } else {
       scale.nice();
@@ -13233,7 +13237,7 @@ function range(group) {
       } else if (config.range[def.range]) {
         rng = config.range[def.range];
       } else {
-        dl.error("Unrecogized range: "+def.range);
+        log.error("Unrecogized range: "+def.range);
         return rng;
       }
     } else if (dl.isArray(def.range)) {
@@ -13265,7 +13269,7 @@ function range(group) {
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":34,"../dataflow/changeset":36,"../transforms/Aggregate":82,"../util/config":106,"../util/constants":107,"../util/debug":108,"datalib":20}],78:[function(require,module,exports){
+},{"../dataflow/Node":34,"../dataflow/changeset":36,"../transforms/Aggregate":82,"../util/config":106,"../util/constants":107,"../util/log":108,"datalib":20}],78:[function(require,module,exports){
 var tuple = require('../dataflow/tuple'),
     boundsCalc = require('../util/boundscalc'),
     C = require('../util/constants');
@@ -14500,7 +14504,7 @@ var dl = require('datalib'),
     Facetor = require('./Facetor'),
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset'), 
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Aggregate(graph) {
@@ -14622,7 +14626,7 @@ function spoof_prev(x) {
 }
 
 proto.transform = function(input, reset) {
-  debug(input, ["aggregate"]);
+  log.debug(input, ["aggregate"]);
 
   var output = changeset.create(input);
   if(reset) this._reset(input, output);
@@ -14655,7 +14659,7 @@ proto.transform = function(input, reset) {
 }
 
 module.exports = Aggregate;
-},{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":107,"../util/debug":108,"./Facetor":87,"./Transform":99,"datalib":20}],83:[function(require,module,exports){
+},{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":107,"../util/log":108,"./Facetor":87,"./Transform":99,"datalib":20}],83:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
 
@@ -14733,7 +14737,7 @@ module.exports = Bin;
 },{"../dataflow/tuple":37,"./Transform":99,"datalib":20}],85:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset');
 
@@ -14814,7 +14818,7 @@ function upFields(input, output) {
 }
 
 proto.transform = function(input) {
-  debug(input, ["crossing"]);
+  log.debug(input, ["crossing"]);
 
   // Materialize the current datasource. TODO: share collectors
   this._collector.evaluate(input);
@@ -14847,7 +14851,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
-},{"../dataflow/Collector":31,"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/debug":108,"./Transform":99}],86:[function(require,module,exports){
+},{"../dataflow/Collector":31,"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":108,"./Transform":99}],86:[function(require,module,exports){
 var Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
@@ -14881,7 +14885,7 @@ module.exports = Facet;
 var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Facetor() {
@@ -14904,7 +14908,7 @@ proto._ingest = function(t) {
 proto._assign = tuple.set;
 
 function disconnect_cell(facet) {
-  debug({}, ["deleting cell", this.tuple._id]);
+  log.debug({}, ["deleting cell", this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);
@@ -15015,11 +15019,11 @@ proto.changes = function(input, output) {
 };
 
 module.exports = Facetor;
-},{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":107,"../util/debug":108,"datalib":20}],88:[function(require,module,exports){
+},{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":107,"../util/log":108,"datalib":20}],88:[function(require,module,exports){
 var Transform = require('./Transform'),
     changeset = require('../dataflow/changeset'), 
     expr = require('../parse/expr'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Filter(graph) {
@@ -15038,7 +15042,7 @@ function test(x) {
 };
 
 proto.transform = function(input) {
-  debug(input, ["filtering"]);
+  log.debug(input, ["filtering"]);
   var output = changeset.create(input),
       skip = this._skip,
       f = this;
@@ -15073,9 +15077,9 @@ proto.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"../dataflow/changeset":36,"../parse/expr":47,"../util/constants":107,"../util/debug":108,"./Transform":99}],89:[function(require,module,exports){
+},{"../dataflow/changeset":36,"../parse/expr":47,"../util/constants":107,"../util/log":108,"./Transform":99}],89:[function(require,module,exports){
 var Transform = require('./Transform'),
-    debug = require('../util/debug'), 
+    log = require('../util/log'), 
     tuple = require('../dataflow/tuple'), 
     changeset = require('../dataflow/changeset');
 
@@ -15120,7 +15124,7 @@ function fn(data, fields, accessors, out, stamp) {
 };
 
 proto.transform = function(input, reset) {
-  debug(input, ["folding"]);
+  log.debug(input, ["folding"]);
 
   var fold = this,
       on = this.param('fields'),
@@ -15143,7 +15147,7 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/debug":108,"./Transform":99}],90:[function(require,module,exports){
+},{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":108,"./Transform":99}],90:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     Transform = require('./Transform'),
@@ -15261,7 +15265,7 @@ module.exports = Force;
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
     expression = require('../parse/expr'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Formula(graph) {
@@ -15277,7 +15281,7 @@ function Formula(graph) {
 var proto = (Formula.prototype = new Transform());
 
 proto.transform = function(input) {
-  debug(input, ["formulating"]);
+  log.debug(input, ["formulating"]);
   var t = this, 
       g = this._graph,
       field = this.param("field"),
@@ -15300,7 +15304,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"../dataflow/tuple":37,"../parse/expr":47,"../util/constants":107,"../util/debug":108,"./Transform":99}],92:[function(require,module,exports){
+},{"../dataflow/tuple":37,"../parse/expr":47,"../util/constants":107,"../util/log":108,"./Transform":99}],92:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
     d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
@@ -15714,7 +15718,7 @@ module.exports = Pie;
 var dl = require('datalib'),
     Transform = require('./Transform'),
     expr = require('../parse/expr'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 function Sort(graph) {
   Transform.prototype.init.call(this, graph);
@@ -15725,7 +15729,7 @@ function Sort(graph) {
 var proto = (Sort.prototype = new Transform());
 
 proto.transform = function(input) {
-  debug(input, ["sorting"]);
+  log.debug(input, ["sorting"]);
 
   if(input.add.length || input.mod.length || input.rem.length) {
     input.sort = dl.comparator(this.param("by").field);
@@ -15735,7 +15739,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Sort;
-},{"../parse/expr":47,"../util/debug":108,"./Transform":99,"datalib":20}],98:[function(require,module,exports){
+},{"../parse/expr":47,"../util/log":108,"./Transform":99,"datalib":20}],98:[function(require,module,exports){
 var dl = require('datalib'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
@@ -15960,7 +15964,7 @@ module.exports = Treemap;
 var dl = require('datalib'),
     Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 function Zip(graph) {
   Transform.prototype.init.call(this, graph);
@@ -15997,7 +16001,7 @@ proto.transform = function(input) {
       map = mp.bind(this),
       rem = {};
 
-  debug(input, ["zipping", w.name]);
+  log.debug(input, ["zipping", w.name]);
 
   if(withKey.field) {
     if(woutput && woutput.stamp > this._lastJoin) {
@@ -16081,7 +16085,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
-},{"../dataflow/Collector":31,"../util/debug":108,"./Transform":99,"datalib":20}],102:[function(require,module,exports){
+},{"../dataflow/Collector":31,"../util/log":108,"./Transform":99,"datalib":20}],102:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
@@ -16744,18 +16748,53 @@ module.exports = {
   DESC: "desc"
 };
 },{}],108:[function(require,module,exports){
-var config = require('./config');
-var ts;
+(function (process){
+var dl = require('datalib'),
+    config = require('./config'),
+    ts;
 
-module.exports = function(input, args) {
+function write(msg) {
+  msg = "[Vega Log] " + msg;
+  config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.log(msg);
+}
+
+function error(msg) {
+  msg = "[Vega Err] " + msg;
+  config.isNode
+    ? process.stderr.write(msg + "\n")
+    : console.error(msg);
+}
+
+function debug(input, args) {
   if (!config.debug) return;
   var log = Function.prototype.bind.call(console.log, console);
-  args.unshift(input.stamp||-1);
-  args.unshift(Date.now() - ts);
-  if(input.add) args.push(input.add.length, input.mod.length, input.rem.length, !!input.reflow);
-  log.apply(console, args);
+  var state = {
+    prevTime:  Date.now() - ts,
+    stamp: input.stamp
+  };
+
+  if(input.add) {
+    dl.extend(state, {
+      add: input.add.length,
+      mod: input.mod.length,
+      rem: input.rem.length,
+      reflow: !!input.reflow
+    });
+  }
+
+  log.apply(console, (args.push(JSON.stringify(state)), args));
   ts = Date.now();
 };
-},{"./config":106}]},{},[1])(1)
+
+module.exports = {
+  log: write,
+  error: error,
+  debug: debug
+};
+}).call(this,require('_process'))
+
+},{"./config":106,"_process":3,"datalib":20}]},{},[1])(1)
 });
 //# sourceMappingURL=vega2.js.map

@@ -6,7 +6,7 @@ var dl = require('datalib'),
     parseData = require('../parse/data'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Builder() {    
@@ -159,7 +159,7 @@ proto.sibling = function(name) {
 };
 
 proto.evaluate = function(input) {
-  debug(input, ["building", this._from, this._def.type]);
+  log.debug(input, ["building", this._from, this._def.type]);
 
   var output, fullUpdate, fcs, data, name;
 

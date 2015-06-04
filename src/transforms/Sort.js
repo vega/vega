@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     Transform = require('./Transform'),
     expr = require('../parse/expr'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 function Sort(graph) {
   Transform.prototype.init.call(this, graph);
@@ -12,7 +12,7 @@ function Sort(graph) {
 var proto = (Sort.prototype = new Transform());
 
 proto.transform = function(input) {
-  debug(input, ["sorting"]);
+  log.debug(input, ["sorting"]);
 
   if(input.add.length || input.mod.length || input.rem.length) {
     input.sort = dl.comparator(this.param("by").field);

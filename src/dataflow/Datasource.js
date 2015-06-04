@@ -3,7 +3,7 @@ var dl = require('datalib'),
     tuple = require('./tuple'), 
     Node = require('./Node'),
     Collector = require('./Collector'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Datasource(graph, name, facet) {
@@ -119,7 +119,7 @@ proto.pipeline = function(pipeline) {
     .collector(true);
 
   input.evaluate = function(input) {
-    debug(input, ["input", ds._name]);
+    log.debug(input, ["input", ds._name]);
 
     var delta = ds._input, 
         out = changeset.create(input),
@@ -161,7 +161,7 @@ proto.pipeline = function(pipeline) {
     .collector(true);
 
   output.evaluate = function(input) {
-    debug(input, ["output", ds._name]);
+    log.debug(input, ["output", ds._name]);
     var output = changeset.create(input, true);
 
     if(ds._facet) {

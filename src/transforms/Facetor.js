@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Facetor() {
@@ -24,7 +24,7 @@ proto._ingest = function(t) {
 proto._assign = tuple.set;
 
 function disconnect_cell(facet) {
-  debug({}, ["deleting cell", this.tuple._id]);
+  log.debug({}, ["deleting cell", this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);

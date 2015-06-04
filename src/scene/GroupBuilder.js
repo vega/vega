@@ -5,7 +5,7 @@ var dl = require('datalib'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
     parseLegends = require('../parse/legends'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function GroupBuilder() {
@@ -180,7 +180,7 @@ function scale(name, scale) {
 }
 
 function buildGroup(input, group) {
-  debug(input, ["building group", group._id]);
+  log.debug(input, ["building group", group._id]);
 
   group._scales = group._scales || {};    
   group.scale  = scale.bind(group);
@@ -196,7 +196,7 @@ function buildGroup(input, group) {
 }
 
 function buildMarks(input, group) {
-  debug(input, ["building children marks #"+group._id]);
+  log.debug(input, ["building children marks #"+group._id]);
   var marks = this._def.marks,
       listeners = [],
       mark, from, inherit, i, len, m, b;

@@ -1,7 +1,7 @@
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
     expression = require('../parse/expr'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     C = require('../util/constants');
 
 function Formula(graph) {
@@ -17,7 +17,7 @@ function Formula(graph) {
 var proto = (Formula.prototype = new Transform());
 
 proto.transform = function(input) {
-  debug(input, ["formulating"]);
+  log.debug(input, ["formulating"]);
   var t = this, 
       g = this._graph,
       field = this.param("field"),

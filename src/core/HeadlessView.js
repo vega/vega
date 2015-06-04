@@ -2,7 +2,7 @@ var dl = require('datalib'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg-headless/index'),
     View = require('./View'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 var HeadlessView = function(width, height, model) {
   View.call(null, width, height, model);

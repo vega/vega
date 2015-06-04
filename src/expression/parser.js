@@ -260,7 +260,7 @@ module.exports = (function() {
       case 7:
           return (id === 'default') || (id === 'finally') || (id === 'extends');
       case 8:
-          return (id === 'function') || (id === 'continue') || (id === 'debugger');
+          return (id === 'function') || (id === 'continue') || (id === 'log.debugger');
       case 10:
           return (id === 'instanceof');
       default:

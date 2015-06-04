@@ -1,7 +1,8 @@
 var dl = require('datalib'),
     d3 = require('d3'),
     tuple = require('../dataflow/tuple'),
-    config = require('../util/config');
+    config = require('../util/config'),
+    log = require('../util/log');
 
 var DEPS = ["signals", "scales", "data", "fields"];
 
@@ -101,8 +102,8 @@ function compile(model, mark, spec) {
       reflow:  deps.reflow
     }
   } catch (e) {
-    dl.error(e);
-    dl.log(code);
+    log.error(e);
+    log.log(code);
   }
 }
 

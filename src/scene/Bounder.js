@@ -3,7 +3,7 @@ var dl = require('datalib'),
     Encoder = require('./Encoder'),
     bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
-    debug = require('../util/debug');
+    log = require('../util/log');
 
 function Bounder(graph, mark) {
   this._mark = mark;
@@ -13,7 +13,7 @@ function Bounder(graph, mark) {
 var proto = (Bounder.prototype = new Node());
 
 proto.evaluate = function(input) {
-  debug(input, ["bounds", this._mark.marktype]);
+  log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
       group = type === C.GROUP,

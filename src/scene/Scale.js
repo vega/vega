@@ -3,7 +3,7 @@ var dl = require('datalib'),
     Node = require('../dataflow/Node'),
     Aggregate = require('../transforms/Aggregate'),
     changeset = require('../dataflow/changeset'),
-    debug = require('../util/debug'),
+    log = require('../util/log'),
     config = require('../util/config'),
     C = require('../util/constants');
 
@@ -156,7 +156,7 @@ function quantitative(scale, rng, group) {
   if (def.nice) {
     if (def.type === C.TIME) {
       interval = d3.time[def.nice];
-      if (!interval) dl.error("Unrecognized interval: " + interval);
+      if (!interval) log.error("Unrecognized interval: " + interval);
       scale.nice(interval);
     } else {
       scale.nice();
@@ -359,7 +359,7 @@ function range(group) {
       } else if (config.range[def.range]) {
         rng = config.range[def.range];
       } else {
-        dl.error("Unrecogized range: "+def.range);
+        log.error("Unrecogized range: "+def.range);
         return rng;
       }
     } else if (dl.isArray(def.range)) {
