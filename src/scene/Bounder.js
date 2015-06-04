@@ -14,13 +14,16 @@ var proto = (Bounder.prototype = new Node());
 
 proto.evaluate = function(input) {
   debug(input, ["bounds", this._mark.marktype]);
-  var i, ilen, j, jlen, group, legend;
-      hasLegends = this._mark.marktype == C.GROUP 
-        && dl.array(this._mark.def.legends).length > 0;
 
-  bounds.mark(this._mark, null, !hasLegends);
+  var type  = this._mark.marktype,
+      group = type === C.GROUP,
+      items = this._mark.items,
+      hasLegends = dl.array(this._mark.def.legends).length > 0,
+      i, ilen, j, jlen, group, legend;
 
-  if(hasLegends) {
+  bounds.mark(this._mark, null, group && !hasLegends);
+
+  if(group && hasLegends) {
     for(i=0, ilen=this._mark.items.length; i<ilen; ++i) {
       group = this._mark.items[i];
       group._legendPositions = null;
