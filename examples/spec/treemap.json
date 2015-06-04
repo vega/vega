@@ -42,7 +42,7 @@
       "type": "rect",
       "from": {
         "data": "tree",
-        "transform": [{"type":"filter", "test":"d.children"}]
+        "transform": [{"type":"filter", "test":"datum.children"}]
       },
       "interactive": false,
       "properties": {
@@ -59,7 +59,7 @@
       "type": "rect",
       "from": {
         "data": "tree",
-        "transform": [{"type":"filter", "test":"!d.children"}]
+        "transform": [{"type":"filter", "test":"!datum.children"}]
       },
       "properties": {
         "enter": {
@@ -81,7 +81,7 @@
       "type": "text",
       "from": {
         "data": "tree",
-        "transform": [{"type":"filter", "test":"d.children"}]
+        "transform": [{"type":"filter", "test":"datum.children"}]
       },
       "interactive": false,
       "properties": {

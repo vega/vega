@@ -4,20 +4,20 @@ var dl = require('datalib'),
 var expr = (function() {
   var parse = expression.parse;
   var codegen = expression.code({
-    idWhiteList: ['d', 'e', 'i', 'p', 'sg']
+    idWhiteList: ['datum', 'event', 'signals']
   });
 
   return function(expr) {    
     var value = codegen(parse(expr));
-    value.fn = Function('d', 'e', 'i', 'p', 'sg',
+    value.fn = Function('datum', 'event', 'signals',
       '"use strict"; return (' + value.fn + ');');
     return value;
   };
 })();
 
-expr.eval = function(graph, fn, d, e, i, p, sg) {
-  sg = graph.signalValues(dl.array(sg));
-  return fn.call(null, d, e, i, p, sg);
+expr.eval = function(graph, fn, opt) {
+  opt.signals = graph.signalValues(dl.array(opt.signals));
+  return fn.call(fn, opt.datum, opt.event, opt.signals);
 };
 
 module.exports = expr;

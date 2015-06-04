@@ -17,7 +17,7 @@ describe('Filter', function() {
       "data": [{ 
         "name": "table", 
         "values": values,
-        "transform": [{"type": "filter", "test": "d.y > 45"}]
+        "transform": [{"type": "filter", "test": "datum.y > 45"}]
       }] 
     }, function(model) {
       var ds = model.data('table'),
@@ -39,7 +39,7 @@ describe('Filter', function() {
       "data": [{ 
         "name": "table", 
         "values": values,
-        "transform": [{"type": "filter", "test": "d.y > above"}]
+        "transform": [{"type": "filter", "test": "datum.y > above"}]
       }] 
     }, function(model) {
       var ds = model.data('table'),

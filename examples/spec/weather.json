@@ -80,7 +80,7 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.actual"}]
+        "transform": [{"type":"filter", "test":"datum.actual"}]
       },
       "properties": {
         "enter": {
@@ -96,7 +96,7 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.forecast"}]
+        "transform": [{"type":"filter", "test":"datum.forecast"}]
       },
       "properties": {
         "enter": {
@@ -112,7 +112,7 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.forecast"}]
+        "transform": [{"type":"filter", "test":"datum.forecast"}]
       },
       "properties": {
         "enter": {
@@ -128,7 +128,7 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.forecast"}]
+        "transform": [{"type":"filter", "test":"datum.forecast"}]
       },
       "properties": {
         "enter": {

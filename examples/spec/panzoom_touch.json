@@ -22,15 +22,15 @@
       "streams": [
         {"type": "touch_twotouchmove", "expr":"xCoord - (touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2"},
         {"type": "mousedown,touchstart, touch_twotouchstart", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "xCoord - p.x"}
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "xCoord - event.vgX"}
       ]
     },
     {
       "name": "xCoord",
       "init": 0,
       "streams": [
-        {"type": "mousedown,touchstart", "expr": "p.x"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "p.x"},
+        {"type": "mousedown,touchstart", "expr": "event.vgX"},
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "event.vgX"},
         {"type": "touch_twotouchmove", "expr":"(touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2"}
       ]
     },
@@ -40,15 +40,15 @@
       "streams": [
         {"type": "touch_twotouchmove", "expr":"(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2 - yCoord"},
         {"type": "mousedown,touchstart,touch_twotouchstart", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "p.y - yCoord"}
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "event.vgY - yCoord"}
       ]
     },
     {
       "name": "yCoord",
       "init": 0,
       "streams": [
-        {"type": "mousedown,touchstart", "expr": "p.y"},
-        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "p.y"},
+        {"type": "mousedown,touchstart", "expr": "event.vgY"},
+        {"type": "[mousedown, mouseup] > mousemove,touchmove[touch_fromZeroTouches]", "expr": "event.vgY"},
         {"type": "touch_twotouchmove", "expr":"(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2"}
       ]
     },
@@ -57,7 +57,7 @@
       "init": -1.6,
       "streams": [
         {"type": "xDelta", "expr": "xMin + (xMax-xMin)*xDelta/800"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"},
         {"type": "touch_twotouchmove", "expr": "(xMin-zoomCenterX) * touch_pinchZoomFactor + zoomCenterX + (xMax-xMin)/touch_pinchZoomFactor*xDelta/1600"}
       ]
     },
@@ -66,7 +66,7 @@
       "init": 1.6,
       "streams": [
         {"type": "xDelta", "expr": "xMax + (xMax-xMin)*xDelta/800"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"},
         {"type": "touch_twotouchmove", "expr": "(xMax-zoomCenterX) * touch_pinchZoomFactor + zoomCenterX + (xMax-xMin)/touch_pinchZoomFactor*xDelta/1600"}
       ]
     },
@@ -75,7 +75,7 @@
       "init": -1,
       "streams": [
         {"type": "yDelta", "expr": "yMin + (yMax-yMin)*yDelta/500"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"},
         {"type": "touch_twotouchmove", "expr": "(yMin-zoomCenterY) * touch_pinchZoomFactor + zoomCenterY + (yMax-yMin)/touch_pinchZoomFactor*yDelta/1000"}
       ]
     },
@@ -84,7 +84,7 @@
       "init": 1,
       "streams": [
         {"type": "yDelta", "expr": "yMax + (yMax-yMin)*yDelta/500"},
-        {"type": "wheel", "expr": "(e.wheelDelta||-e.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"},
         {"type": "touch_twotouchmove", "expr": "(yMax-zoomCenterY) * touch_pinchZoomFactor + zoomCenterY + (yMax-yMin)/touch_pinchZoomFactor*yDelta/1000"}
       ]
     },
@@ -92,7 +92,7 @@
       "name": "zoomCenterX",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert":true}},
+        {"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert":true}},
         {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2", "scale":"x", "invert":true}
       ]
     },
@@ -100,7 +100,7 @@
       "name": "zoomCenterY",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.y", "scale": {"name": "y", "invert":true}},
+        {"type": "mousemove", "expr": "event.vgY", "scale": {"name": "y", "invert":true}},
         {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2", "scale":"y", "invert":true}
       ]
     },

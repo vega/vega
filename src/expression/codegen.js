@@ -9,8 +9,8 @@ module.exports = function(opt) {
   var memberDepth = 0;
 
   // TODO generalize?
-  var DATUM = 'd';
-  var SIGNAL_PREFIX = 'sg.';
+  var DATUM = 'datum';
+  var SIGNAL_PREFIX = 'signals.';
   var signals = {};
   var fields = {};
 

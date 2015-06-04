@@ -14,12 +14,9 @@ filtered
   / s:stream { return s }
 
 stream
-  = t:(class / id)? e:eventType { return { event: e, target: t } }
+  = t:("@" value ":")? e:eventType { return { event: e, target: t && t[1] } }
   / s:[:a-zA-z0-9_-]+ { return { signal: s.join("") }}
   / "(" m:merged ")" { return { stream: m }}
-
-class = "." c:value ":" { return { type:'class', value: c } }
-id = "#" id: value ":" { return { type:'id', value: id } }
 
 eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter" / "touchstart" / "touchmove" / "touchend"
 

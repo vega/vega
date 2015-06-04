@@ -17,22 +17,27 @@
       "name": "cell",
       "init": {},
       "streams": [
-        {"type": ".cell:mousedown", "expr": "i"},
-        {"type": ".symbol:mousedown", "expr": "i.mark.group"}
+        {"type": "@cell:mousedown, @point:mousedown", "expr": "event.vgCellItem"}
       ]
     },
     {
       "name": "brush_start",
       "init": {"x": 0, "y": 0},
-      "streams": [{"type": ".cell:mousedown, .symbol:mousedown", "expr": "p"}]
+      "streams": [{
+        "type": "@cell:mousedown, @point:mousedown", 
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }]
     },
     {
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
-      "streams": [
-        {"type": ".cell:mousedown, .symbol:mousedown, .cell:mouseup, .symbol:mouseup", "expr": "p"},
-        {"type": "[(.cell:mousedown, .symbol:mousedown), mouseup] > mousemove", "expr": "p"}
-      ]
+      "streams": [{
+        "type": "@cell:mousedown, @point:mousedown, @cell:mouseup, @point:mouseup", 
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }, {
+        "type": "[(@cell:mousedown, @point:mousedown), mouseup] > mousemove", 
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }]
     },
     {
       "name": "start_x",
@@ -135,6 +140,7 @@
   ],
   "marks": [
     {
+      "name": "cell",
       "type": "group",
       "from": {
         "data": "fields",
@@ -142,7 +148,6 @@
       },
       "properties": {
         "enter": {
-          "class": {"value": "cell"},
           "a": {"field": "a.data"},
           "b": {"field": "b.data"},
           "x": {"scale": "gx", "field": "a.data"},
@@ -175,11 +180,11 @@
       ],
       "marks": [
         {
+          "name": "point",
           "type": "symbol",
           "from": {"data": "iris"},
           "properties": {
             "enter": {
-              "class": {"value": "symbol"},
               "x": {"scale": "x", "field": {"datum": {"parent": "a.data"}}},
               "y": {"scale": "y", "field": {"datum": {"parent": "b.data"}}},
               "fill": {"scale": "c", "field": "species"},

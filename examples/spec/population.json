@@ -6,7 +6,7 @@
       "name": "pop2000",
       "url": "data/population.json",
       "transform": [
-        {"type": "filter", "test": "d.year == 2000"}
+        {"type": "filter", "test": "datum.year == 2000"}
       ]
     }
   ],
@@ -56,7 +56,7 @@
         "data": "pop2000",
         "transform": [
           {"type":"facet", "groupby": ["sex"]},
-          {"type":"formula", "field":"reverse", "expr":"d.key==2"}
+          {"type":"formula", "field":"reverse", "expr":"datum.key==2"}
         ]
       },
       "properties": {

@@ -55,7 +55,7 @@
         {
           "type": "text",
           "from": {
-            "transform": [{"type": "filter", "test": "d.date == 1267430400000"}]
+            "transform": [{"type": "filter", "test": "datum.date == 1267430400000"}]
           },
           "properties": {
             "enter": {

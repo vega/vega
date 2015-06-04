@@ -21,7 +21,7 @@
           "as": "unemp",
           "default": null
         },
-        {"type": "filter", "test": "d.layout_path!=null && d.unemp!=null"}
+        {"type": "filter", "test": "datum.layout_path!=null && datum.unemp!=null"}
       ]
     }
   ],

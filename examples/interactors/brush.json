@@ -3,13 +3,13 @@
      {
        "name": "brush_start",
        "init": {"x": 0, "y": 0},
-       "streams": [{"type": "mousedown", "expr": "p"}]
+       "streams": [{"type": "mousedown", "expr": "{x: event.vgX, y: event.vgY}"}]
      },
      {
        "name": "brush_end",
        "init": {"x": 0, "y": 0},
        "streams": [
-         {"type": "mousedown, mouseup, [mousedown, mouseup] > mousemove", "expr": "p"}
+         {"type": "mousedown, mouseup, [mousedown, mouseup] > mousemove", "expr": "{x: event.vgX, y: event.vgY}"}
        ]
      }
    ],

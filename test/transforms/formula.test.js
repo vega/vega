@@ -17,7 +17,7 @@ describe('Formula', function() {
       "data": [{ 
         "name": "table", 
         "values": values,
-        "transform": [{"type": "formula", "field": "z", "expr": "d.x + d.y"}]
+        "transform": [{"type": "formula", "field": "z", "expr": "datum.x + datum.y"}]
       }] 
     }, function(model) {
       var ds = model.data('table'),
@@ -42,7 +42,7 @@ describe('Formula', function() {
       "data": [{ 
         "name": "table", 
         "values": values,
-        "transform": [{"type": "formula", "field": "z", "expr": "multipler * (d.x + d.y)"}]
+        "transform": [{"type": "formula", "field": "z", "expr": "multipler * (datum.x + datum.y)"}]
       }] 
     }, function(model) {
       var ds = model.data('table'),

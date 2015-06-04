@@ -9,6 +9,10 @@ var dl = require('datalib'),
 
 var START = "start", MIDDLE = "middle", END = "end";
 
+function capitalize(str) {
+  return str && str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 module.exports = function(view) {
   var model = view.model(),
       spec  = model.defs().signals,
@@ -18,7 +22,7 @@ module.exports = function(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
+      var val = expr.eval(model, exp.fn, {signals: exp.signals});
       if(spec.scale) val = parseSignals.scale(model, spec, val);
 
       if(val !== sig.value()) {
@@ -38,7 +42,9 @@ module.exports = function(view) {
     var filters = selector.filters || [],
         target = selector.target;
 
-    if(target) filters.push("i."+target.type+"=="+dl.str(target.value));
+    if(target) {
+      filters.push("event.vgItem.mark && event.vgItem.mark.def.name==="+dl.str(target));
+    }
 
     register[selector.event] = register[selector.event] || [];
     register[selector.event].push({
@@ -105,6 +111,22 @@ module.exports = function(view) {
     });
   };
 
+  function groupOffsets(event) {
+    if (!event.vgItem.mark) return;
+    var group = event.vgItem.mark.group,
+        name, prefix;
+
+    while (group) {
+      if (name = capitalize(group.mark.def.name)) {
+        event[(prefix = "vg"+name)+"Item"] = group;
+        if (group.x) event[prefix+"X"] = event.vgX - group.x;
+        if (group.y) event[prefix+"Y"] = event.vgY - group.y;
+      }
+
+      group = group.mark.group;
+    }
+  }
+
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
     if(sig.expr) return;  // Cannot have an expr and stream definition.
@@ -129,25 +151,34 @@ module.exports = function(view) {
       var cs = changset.create(null, true),
           pad = view.padding(),
           filtered = false,
-          val, h, i, m, d;
+          val, mouse, datum, name, h, i, len;
 
       evt.preventDefault(); // Stop text selection
-      m = d3.mouse((d3.event=evt, view._el)); // Relative position within container
-      item = item||{};
-      d = item.datum||{};
-      var p = {x: m[0] - pad.left, y: m[1] - pad.top};
+      mouse = d3.mouse((d3.event=evt, view._el)); // Relative position within container
 
-      for(i = 0; i < handlers.length; i++) {
+      datum = (item && item.datum) || {};
+      evt.vgItem = item || {};
+      evt.vgX = mouse[0] - pad.left;
+      evt.vgY = mouse[1] - pad.top;
+      groupOffsets(evt);
+
+      if (item.mark && (name = item.mark.def.name)) {
+        evt["vg"+capitalize(name)+"Item"] = item;
+      }
+
+      for(i = 0, len=handlers.length; i<len; i++) {
         h = handlers[i];
         filtered = h.filters.some(function(f) {
-          return !expr.eval(model, f.fn, d, evt, item, p, f.signals);
+          return !expr.eval(model, f.fn, 
+            {datum: datum, event: evt, signals: f.signals});
         });
         if(filtered) continue;
         
-        val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
+        val = expr.eval(model, h.exp.fn, 
+          {datum: datum, event: evt, signals: h.exp.signals}); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
-        if(val !== h.signal.value()) {
+        if(val !== h.signal.value() || h.signal.verbose()) {
           h.signal.value(val);
           cs.signals[h.signal.name()] = 1;
         }

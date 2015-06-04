@@ -281,7 +281,7 @@ describe('Expression', function() {
       var data = {a : 2, föö : 5},
           evt  = {type: "mousemove"},
           fn = expr(str).fn;
-      return expr.eval(graph, fn, data, evt);
+      return expr.eval(graph, fn, {datum: data, event: evt});
     }
 
     evaluate.fn = function(str) {
@@ -327,18 +327,18 @@ describe('Expression', function() {
 
     // Evaluation with arguments
     it('should handle data argument', function() {
-      expect(evaluate('d.a')).to.equal(2);
-      expect(evaluate('d["a"]')).to.equal(2);
+      expect(evaluate('datum.a')).to.equal(2);
+      expect(evaluate('datum["a"]')).to.equal(2);
     });
 
     it('should handle event argument', function() {
-      expect(evaluate('e.type')).to.equal("mousemove");
+      expect(evaluate('event.type')).to.equal("mousemove");
     });
 
     it('should handle item argument');
 
     it('should handle unicode', function() {
-      expect(evaluate('d.föö')).to.equal(5);
+      expect(evaluate('datum.föö')).to.equal(5);
     });
 
 
@@ -438,13 +438,13 @@ describe('Expression', function() {
       expect(evaluate('Object')).to.be.undefined;
       expect(evaluate('XMLHttpRequest')).to.be.undefined;
       expect(evaluate('a')).to.be.undefined;
-      expect(evaluate('d[Math]')).to.be.undefined;
+      expect(evaluate('datum[Math]')).to.be.undefined;
     });
 
     it('should allow nested identifiers outside whitelist', function() {
-      expect(evaluate.fn('d.eval')).to.not.throw();
-      expect(evaluate.fn('d.Math')).to.not.throw();
-      expect(evaluate.fn('d.a.eval')).to.not.throw();
+      expect(evaluate.fn('datum.eval')).to.not.throw();
+      expect(evaluate.fn('datum.Math')).to.not.throw();
+      expect(evaluate.fn('datum.a.eval')).to.not.throw();
       expect(evaluate.fn('{eval:0, Math:1}')).to.not.throw();
     });
 
@@ -458,8 +458,8 @@ describe('Expression', function() {
       expect(evaluate.fn('Function("1+2")')).to.throw();
     });
 
-    it('should not allow log.debugger invocation', function() {
-      expect(evaluate.fn('log.debugger')).to.throw();
+    it('should not allow debugger invocation', function() {
+      expect(evaluate.fn('debugger')).to.throw();
     });
 
     it('should not allow this reference', function() {
