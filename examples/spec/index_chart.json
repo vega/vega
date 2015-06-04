@@ -11,7 +11,10 @@
     {
       "name": "indexDate",
       "init": {"expr": "datetime('Jan 1 2005')"},
-      "streams": [{"type": "xPos", "expr": "max(xPos, datetime('Jan 1 2000'))"}]
+      "streams": [{
+        "type": "xPos", 
+        "expr": "min(max(xPos, datetime('Jan 1 2000')), datetime('Mar 1 2010'))"
+      }]
     }
   ],
 
@@ -26,7 +29,7 @@
       "source": "stocks",
       "transform": [{
         "type": "filter",
-        "test": "d.date + 1296000000 >= indexDate && d.date - 1296000000 <= indexDate"
+        "test": "month(d.date) == month(indexDate) && year(d.date) == year(indexDate)"
       }]
     },
     {
