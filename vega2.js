@@ -9091,6 +9091,10 @@ var dl = require('datalib'),
 
 var START = "start", MIDDLE = "middle", END = "end";
 
+function capitalize(str) {
+  return str && str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 module.exports = function(view) {
   var model = view.model(),
       spec  = model.defs().signals,
@@ -9120,7 +9124,9 @@ module.exports = function(view) {
     var filters = selector.filters || [],
         target = selector.target;
 
-    if(target) filters.push("event.vgItem.mark.def.name==="+dl.str(target));
+    if(target) {
+      filters.push("event.vgItem.mark && event.vgItem.mark.def.name==="+dl.str(target));
+    }
 
     register[selector.event] = register[selector.event] || [];
     register[selector.event].push({
@@ -9187,6 +9193,22 @@ module.exports = function(view) {
     });
   };
 
+  function groupOffsets(event) {
+    if (!event.vgItem.mark) return;
+    var group = event.vgItem.mark.group,
+        name, prefix;
+
+    while (group) {
+      if (name = capitalize(group.mark.def.name)) {
+        event[(prefix = "vg"+name)+"Item"] = group;
+        if (group.x) event[prefix+"X"] = event.vgX - group.x;
+        if (group.y) event[prefix+"Y"] = event.vgY - group.y;
+      }
+
+      group = group.mark.group;
+    }
+  }
+
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
     if(sig.expr) return;  // Cannot have an expr and stream definition.
@@ -9211,15 +9233,20 @@ module.exports = function(view) {
       var cs = changset.create(null, true),
           pad = view.padding(),
           filtered = false,
-          val, mouse, datum, h, i, len;
+          val, mouse, datum, name, h, i, len;
 
       evt.preventDefault(); // Stop text selection
       mouse = d3.mouse((d3.event=evt, view._el)); // Relative position within container
 
-      datum = item.datum || {};
+      datum = (item && item.datum) || {};
       evt.vgItem = item || {};
       evt.vgX = mouse[0] - pad.left;
       evt.vgY = mouse[1] - pad.top;
+      groupOffsets(evt);
+
+      if (item.mark && (name = item.mark.def.name)) {
+        evt["vg"+capitalize(name)+"Item"] = item;
+      }
 
       for(i = 0, len=handlers.length; i<len; i++) {
         h = handlers[i];

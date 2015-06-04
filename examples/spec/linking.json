@@ -17,8 +17,7 @@
       "name": "cell",
       "init": {},
       "streams": [
-        {"type": "@cell:mousedown", "expr": "event.vgItem"},
-        {"type": "@point:mousedown", "expr": "event.vgItem.mark.group"}
+        {"type": "@cell:mousedown, @point:mousedown", "expr": "event.vgCellItem"}
       ]
     },
     {
