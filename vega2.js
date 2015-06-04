@@ -4492,7 +4492,7 @@ module.exports = function(opt) {
 
   // TODO generalize?
   var DATUM = 'datum';
-  var SIGNAL_PREFIX = 'sg.';
+  var SIGNAL_PREFIX = 'signals.';
   var signals = {};
   var fields = {};
 
@@ -8236,20 +8236,20 @@ var dl = require('datalib'),
 var expr = (function() {
   var parse = expression.parse;
   var codegen = expression.code({
-    idWhiteList: ['datum', 'event', 'i', 'p', 'sg']
+    idWhiteList: ['datum', 'event', 'signals']
   });
 
   return function(expr) {    
     var value = codegen(parse(expr));
-    value.fn = Function('datum', 'event', 'i', 'p', 'sg',
+    value.fn = Function('datum', 'event', 'signals',
       '"use strict"; return (' + value.fn + ');');
     return value;
   };
 })();
 
-expr.eval = function(graph, fn, d, e, i, p, sg) {
-  sg = graph.signalValues(dl.array(sg));
-  return fn.call(null, d, e, i, p, sg);
+expr.eval = function(graph, fn, opt) {
+  opt.signals = graph.signalValues(dl.array(opt.signals));
+  return fn.call(fn, opt.datum, opt.event, opt.signals);
 };
 
 module.exports = expr;
@@ -9057,7 +9057,7 @@ function parseSignals(model, spec) {
     if(s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        var val = exprVal(model, s);
+        var val = exprVal(model, s, signal.value());
         if(val !== signal.value() || signal.verbose()) {
           signal.value(val);
           input.signals[s.name] = 1;
@@ -9073,9 +9073,9 @@ function parseSignals(model, spec) {
   return spec;
 };
 
-function exprVal(model, spec) {
+function exprVal(model, spec, currentValue) {
   var e = spec.expr,
-      val = expr.eval(model, e.fn, null, null, null, null, e.signals);
+      val = expr.eval(model, e.fn, {signals: e.signals});
   return spec.scale ? scale(model, spec, val) : val;
 }
 
@@ -9154,7 +9154,7 @@ module.exports = function(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
+      var val = expr.eval(model, exp.fn, {signals: exp.signals});
       if(spec.scale) val = parseSignals.scale(model, spec, val);
 
       if(val !== sig.value()) {
@@ -9276,11 +9276,13 @@ module.exports = function(view) {
       for(i = 0; i < handlers.length; i++) {
         h = handlers[i];
         filtered = h.filters.some(function(f) {
-          return !expr.eval(model, f.fn, d, evt, item, p, f.signals);
+          return !expr.eval(model, f.fn, 
+            {datum: d, event: evt, signals: f.signals});
         });
         if(filtered) continue;
         
-        val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
+        val = expr.eval(model, h.exp.fn, 
+          {datum: d, event: evt, signals: h.exp.signals}); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
         if(val !== h.signal.value() || h.signal.verbose()) {
@@ -15046,7 +15048,7 @@ var proto = (Filter.prototype = new Transform());
 
 function test(x) {
   return expr.eval(this._graph, this.param("test"), 
-    x, null, null, null, this.dependency(C.SIGNALS));
+    {datum: x, signals: this.dependency(C.SIGNALS)});
 };
 
 proto.transform = function(input) {
@@ -15294,10 +15296,10 @@ proto.transform = function(input) {
       g = this._graph,
       field = this.param("field"),
       expr = this.param("expr"),
-      deps = this.dependency(C.SIGNALS);
+      signals = this.dependency(C.SIGNALS);
   
   function set(x) {
-    var val = expression.eval(g, expr, x, null, null, null, deps);
+    var val = expression.eval(g, expr, {datum: x, signals: signals});
     tuple.set(x, field, val);
   }
 

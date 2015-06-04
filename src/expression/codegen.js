@@ -10,7 +10,7 @@ module.exports = function(opt) {
 
   // TODO generalize?
   var DATUM = 'datum';
-  var SIGNAL_PREFIX = 'sg.';
+  var SIGNAL_PREFIX = 'signals.';
   var signals = {};
   var fields = {};
 

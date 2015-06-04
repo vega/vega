@@ -18,7 +18,7 @@ module.exports = function(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if(!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, null, null, null, null, exp.signals);
+      var val = expr.eval(model, exp.fn, {signals: exp.signals});
       if(spec.scale) val = parseSignals.scale(model, spec, val);
 
       if(val !== sig.value()) {
@@ -140,11 +140,13 @@ module.exports = function(view) {
       for(i = 0; i < handlers.length; i++) {
         h = handlers[i];
         filtered = h.filters.some(function(f) {
-          return !expr.eval(model, f.fn, d, evt, item, p, f.signals);
+          return !expr.eval(model, f.fn, 
+            {datum: d, event: evt, signals: f.signals});
         });
         if(filtered) continue;
         
-        val = expr.eval(model, h.exp.fn, d, evt, item, p, h.exp.signals); 
+        val = expr.eval(model, h.exp.fn, 
+          {datum: d, event: evt, signals: h.exp.signals}); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
         if(val !== h.signal.value() || h.signal.verbose()) {

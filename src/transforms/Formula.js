@@ -22,10 +22,10 @@ proto.transform = function(input) {
       g = this._graph,
       field = this.param("field"),
       expr = this.param("expr"),
-      deps = this.dependency(C.SIGNALS);
+      signals = this.dependency(C.SIGNALS);
   
   function set(x) {
-    var val = expression.eval(g, expr, x, null, null, null, deps);
+    var val = expression.eval(g, expr, {datum: x, signals: signals});
     tuple.set(x, field, val);
   }
 

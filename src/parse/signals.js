@@ -15,7 +15,7 @@ function parseSignals(model, spec) {
     if(s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        var val = exprVal(model, s);
+        var val = exprVal(model, s, signal.value());
         if(val !== signal.value() || signal.verbose()) {
           signal.value(val);
           input.signals[s.name] = 1;
@@ -31,9 +31,9 @@ function parseSignals(model, spec) {
   return spec;
 };
 
-function exprVal(model, spec) {
+function exprVal(model, spec, currentValue) {
   var e = spec.expr,
-      val = expr.eval(model, e.fn, null, null, null, null, e.signals);
+      val = expr.eval(model, e.fn, {signals: e.signals});
   return spec.scale ? scale(model, spec, val) : val;
 }
 
