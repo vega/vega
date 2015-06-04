@@ -389,12 +389,12 @@ View.factory = function(model) {
 
     if (opt.hover !== false && opt.el) {
       v.on("mouseover", function(evt, item) {
-        if (item.hasPropertySet("hover")) {
+        if (item && item.hasPropertySet("hover")) {
           this.update({props:"hover", items:item});
         }
       })
       .on("mouseout", function(evt, item) {
-        if (item.hasPropertySet("hover")) {
+        if (item && item.hasPropertySet("hover")) {
           this.update({props:"update", items:item});
         }
       });
