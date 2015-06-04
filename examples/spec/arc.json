@@ -23,8 +23,8 @@
       "from": {"data": "table"},
       "properties": {
         "enter": {
-          "x": {"group": "width", "mult": 0.5},
-          "y": {"group": "height", "mult": 0.5},
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
           "startAngle": {"field": "layout_start"},
           "endAngle": {"field": "layout_end"},
           "innerRadius": {"value": 20},
@@ -44,8 +44,8 @@
       "from": {"data": "table"},
       "properties": {
         "enter": {
-          "x": {"group": "width", "mult": 0.5},
-          "y": {"group": "height", "mult": 0.5},
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
           "radius": {"scale": "r", "offset": 8},
           "theta": {"field": "layout_mid"},
           "fill": {"value": "#000"},
