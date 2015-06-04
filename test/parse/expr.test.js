@@ -130,8 +130,8 @@ describe('Expression', function() {
       expect(parse(" ")).to.throw();
     });
 
-    it('should not allow log.debugger statements', function() {
-      expect(parse("log.debugger")).to.throw();
+    it('should not allow debugger statements', function() {
+      expect(parse("debugger")).to.throw();
     });
 
     it('should not allow continue statements', function() {
