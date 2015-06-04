@@ -38,7 +38,7 @@ module.exports = function(view) {
     var filters = selector.filters || [],
         target = selector.target;
 
-    if(target) filters.push("event.vgItem."+target.type+"=="+dl.str(target.value));
+    if(target) filters.push("event.vgItem.mark.def.name==="+dl.str(target));
 
     register[selector.event] = register[selector.event] || [];
     register[selector.event].push({

@@ -129,7 +129,7 @@
     {
       "name": "dragging",
       "init": 0,
-      "streams": [{"type":".point:mousedown, .point:touchstart", "expr":"event.vgX"},
+      "streams": [{"type":"@point:mousedown, @point:touchstart", "expr":"event.vgX"},
                   {"type":"mouseup, touchend", "expr": "0"}]
     },
     {
@@ -141,7 +141,7 @@
       "name": "currentCountry",
       "init": "",
       "streams": [{"type": "mousemove[!dragging], touchmove", "expr": "datum.country"},
-                  {"type": ".point:touchmove[!dragging]", "expr": "datum.country"}]
+                  {"type": "@point:touchmove[!dragging]", "expr": "datum.country"}]
     }
   ],
   "predicates": [
@@ -254,11 +254,11 @@
       }
     },
     {
+      "name": "point",
       "type": "symbol",
       "from": {"data": "countries_year"},
       "properties": {
         "enter": {
-          "class": {"value": "point"},
           "fill": {"value": "steelblue"},
           "fillOpacity": {"value": 0.5},
           "size": {"value": 100}
@@ -289,11 +289,11 @@
       }
     },
     {
+      "name": "overlay",
       "type": "rect",
       "from": {"data":"current_point"},
       "properties": {
         "enter": {
-          "class": {"value":"overlay"},
           "fill": {"value":"red"},
           "fillOpacity": {"value": 0},
           "x":{"value":0},

@@ -17,15 +17,15 @@
       "name": "cell",
       "init": {},
       "streams": [
-        {"type": ".cell:mousedown", "expr": "event.vgItem"},
-        {"type": ".symbol:mousedown", "expr": "event.vgItem.mark.group"}
+        {"type": "@cell:mousedown", "expr": "event.vgItem"},
+        {"type": "@point:mousedown", "expr": "event.vgItem.mark.group"}
       ]
     },
     {
       "name": "brush_start",
       "init": {"x": 0, "y": 0},
       "streams": [{
-        "type": ".cell:mousedown, .symbol:mousedown", 
+        "type": "@cell:mousedown, @point:mousedown", 
         "expr": "{x: event.vgX, y: event.vgY}"
       }]
     },
@@ -33,10 +33,10 @@
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
       "streams": [{
-        "type": ".cell:mousedown, .symbol:mousedown, .cell:mouseup, .symbol:mouseup", 
+        "type": "@cell:mousedown, @point:mousedown, @cell:mouseup, @point:mouseup", 
         "expr": "{x: event.vgX, y: event.vgY}"
       }, {
-        "type": "[(.cell:mousedown, .symbol:mousedown), mouseup] > mousemove", 
+        "type": "[(@cell:mousedown, @point:mousedown), mouseup] > mousemove", 
         "expr": "{x: event.vgX, y: event.vgY}"
       }]
     },
@@ -141,6 +141,7 @@
   ],
   "marks": [
     {
+      "name": "cell",
       "type": "group",
       "from": {
         "data": "fields",
@@ -148,7 +149,6 @@
       },
       "properties": {
         "enter": {
-          "class": {"value": "cell"},
           "a": {"field": "a.data"},
           "b": {"field": "b.data"},
           "x": {"scale": "gx", "field": "a.data"},
@@ -181,11 +181,11 @@
       ],
       "marks": [
         {
+          "name": "point",
           "type": "symbol",
           "from": {"data": "iris"},
           "properties": {
             "enter": {
-              "class": {"value": "symbol"},
               "x": {"scale": "x", "field": {"datum": {"parent": "a.data"}}},
               "y": {"scale": "y", "field": {"datum": {"parent": "b.data"}}},
               "fill": {"scale": "c", "field": "species"},
