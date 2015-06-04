@@ -2033,11 +2033,19 @@ template.source = source;
 template.context = context;
 module.exports = template;
 
-// clear cache of format objects
-// can *break* prior template functions, so invoke with care
+// Clear cache of format objects.
+// This can *break* prior template functions, so invoke with care!
 template.clearFormatCache = function() {
   context.formats = [];
   context.format_map = {};
+};
+
+// Generate property access code for use within template source.
+// object: the name of the object (variable) containing template data
+// property: the property access string, verbatim from template tag
+template.property = function(object, property) {
+  var src = util.field(property).map(util.str).join('][');
+  return object + '[' + src + ']';
 };
 
 // Generate source code for a template function.
@@ -2090,8 +2098,7 @@ function template_var(text, variable, properties) {
   }
 
   if (properties) properties[prop] = 1;
-  var src = util.field(prop).map(util.str).join('][');
-  src = variable + '[' + src + ']';
+  var src = template.property(variable, prop);
 
   for (var i=0; i<filters.length; ++i) {
     var f = filters[i], args = null, pidx, a, b;
@@ -3126,6 +3133,7 @@ var HeadlessView = function(width, height, model) {
   this._type = "canvas";
   this._renderers = {canvas: canvas, svg: svg};
   this._canvas = null;
+  this._headless = true;
 }
 
 var prototype = (HeadlessView.prototype = new View());
@@ -3492,7 +3500,9 @@ prototype.padding = function(pad) {
       this._padding = pad;
       this._strict = false;
     }
-    if (this._el) {
+    if (this._headless) {
+      this.initialize();
+    } else if(this._el) {
       this._renderer.resize(this._width, this._height, pad);
       if(this._handler) this._handler.padding(pad);
     }
@@ -3562,7 +3572,7 @@ prototype.initialize = function(el) {
     el = this._el ? this._el.parentNode : null;
     if(!el) return this;  // This View cannot init w/o an
   }
-  
+
   // clear pre-existing container
   d3.select(el).select("div.vega").remove();
   
@@ -7235,7 +7245,7 @@ var parseData = function(model, spec, callback) {
   function loaded(d) {
     return function(error, data) {
       if (error) {
-        dl.error("LOADING FAILED: " + d.url + " " + error);
+        console.log("LOADING FAILED: " + d.url + " " + error);
       } else {
         model.data(d.name).values(dl.read(data, d.format));
       }
@@ -12754,7 +12764,7 @@ function buildGroup(input, group) {
 }
 
 function buildMarks(input, group) {
-  debug(input, ["building marks", group._id]);
+  debug(input, ["building children marks #"+group._id]);
   var marks = this._def.marks,
       listeners = [],
       mark, from, inherit, i, len, m, b;

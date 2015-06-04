@@ -165,7 +165,9 @@ prototype.padding = function(pad) {
       this._padding = pad;
       this._strict = false;
     }
-    if (this._el) {
+    if (this._headless) {
+      this.initialize();
+    } else if(this._el) {
       this._renderer.resize(this._width, this._height, pad);
       if(this._handler) this._handler.padding(pad);
     }
@@ -235,7 +237,7 @@ prototype.initialize = function(el) {
     el = this._el ? this._el.parentNode : null;
     if(!el) return this;  // This View cannot init w/o an
   }
-  
+
   // clear pre-existing container
   d3.select(el).select("div.vega").remove();
   

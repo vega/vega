@@ -9,7 +9,7 @@ var parseData = function(model, spec, callback) {
   function loaded(d) {
     return function(error, data) {
       if (error) {
-        dl.error("LOADING FAILED: " + d.url + " " + error);
+        console.log("LOADING FAILED: " + d.url + " " + error);
       } else {
         model.data(d.name).values(dl.read(data, d.format));
       }

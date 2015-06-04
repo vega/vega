@@ -10,6 +10,7 @@ var HeadlessView = function(width, height, model) {
   this._type = "canvas";
   this._renderers = {canvas: canvas, svg: svg};
   this._canvas = null;
+  this._headless = true;
 }
 
 var prototype = (HeadlessView.prototype = new View());

@@ -196,7 +196,7 @@ function buildGroup(input, group) {
 }
 
 function buildMarks(input, group) {
-  debug(input, ["building marks", group._id]);
+  debug(input, ["building children marks #"+group._id]);
   var marks = this._def.marks,
       listeners = [],
       mark, from, inherit, i, len, m, b;
