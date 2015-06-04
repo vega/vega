@@ -17,22 +17,28 @@
       "name": "cell",
       "init": {},
       "streams": [
-        {"type": ".cell:mousedown", "expr": "i"},
-        {"type": ".symbol:mousedown", "expr": "i.mark.group"}
+        {"type": ".cell:mousedown", "expr": "event.vgItem"},
+        {"type": ".symbol:mousedown", "expr": "event.vgItem.mark.group"}
       ]
     },
     {
       "name": "brush_start",
       "init": {"x": 0, "y": 0},
-      "streams": [{"type": ".cell:mousedown, .symbol:mousedown", "expr": "p"}]
+      "streams": [{
+        "type": ".cell:mousedown, .symbol:mousedown", 
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }]
     },
     {
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
-      "streams": [
-        {"type": ".cell:mousedown, .symbol:mousedown, .cell:mouseup, .symbol:mouseup", "expr": "p"},
-        {"type": "[(.cell:mousedown, .symbol:mousedown), mouseup] > mousemove", "expr": "p"}
-      ]
+      "streams": [{
+        "type": ".cell:mousedown, .symbol:mousedown, .cell:mouseup, .symbol:mouseup", 
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }, {
+        "type": "[(.cell:mousedown, .symbol:mousedown), mouseup] > mousemove", 
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }]
     },
     {
       "name": "start_x",

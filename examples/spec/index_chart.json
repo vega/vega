@@ -6,7 +6,7 @@
   "signals": [
     {
       "name": "xPos",
-      "streams": [{"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert": "true"}}]
+      "streams": [{"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert": "true"}}]
     },
 
     {"name": "minDate", "init": {"expr": "time('Jan 1 2000')"}},

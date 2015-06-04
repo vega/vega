@@ -6,7 +6,7 @@
       "streams": [
         {
           "type": "touchmove, touchstart, touchend",
-          "expr": "e.touches.length === 1 && (fromZeroTouches || numTouches === 0)"
+          "expr": "event.touches.length === 1 && (fromZeroTouches || numTouches === 0)"
         }
       ]
     },
@@ -14,9 +14,9 @@
       "name": "twotouchstart",
       "init": null,
       "streams": [
-        {"type": "touchmove[numTouches!=2][e.touches.length==2]", "expr":"0"},
-        {"type": "touchstart[numTouches!=2][e.touches.length==2]", "expr":"0"},
-        {"type": "touchend[numTouches!=2][e.touches.length==2]", "expr":"0"}
+        {"type": "touchmove[numTouches!=2][event.touches.length==2]", "expr":"0"},
+        {"type": "touchstart[numTouches!=2][event.touches.length==2]", "expr":"0"},
+        {"type": "touchend[numTouches!=2][event.touches.length==2]", "expr":"0"}
       ]
     },
     {
@@ -25,7 +25,7 @@
       "streams": [
         {
           "type": "touchmove, touchstart, touchend",
-          "expr": "e.touches.length"
+          "expr": "event.touches.length"
         }
       ]
     },
@@ -34,8 +34,8 @@
       "init": [],
       "streams": [
         {
-          "type": "touchmove[e.touches.length==2],touchstart[e.touches.length==2],touchend[e.touches.length==2]",
-          "expr": "[{x: p.x-e.changedTouches[0].clientX + e.touches[0].clientX, y: p.y-e.changedTouches[0].clientY + e.touches[0].clientY},{x: p.x-e.changedTouches[0].clientX + e.touches[1].clientX, y: p.y-e.changedTouches[0].clientY + e.touches[1].clientY}]"
+          "type": "touchmove[event.touches.length==2],touchstart[event.touches.length==2],touchend[event.touches.length==2]",
+          "expr": "[{x: event.vgX-event.changedTouches[0].clientX + event.touches[0].clientX, y: event.vgY-event.changedTouches[0].clientY + event.touches[0].clientY},{x: event.vgX-event.changedTouches[0].clientX + event.touches[1].clientX, y: event.vgY-event.changedTouches[0].clientY + event.touches[1].clientY}]"
         }
       ]
     },

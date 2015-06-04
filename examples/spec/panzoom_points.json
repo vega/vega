@@ -17,15 +17,15 @@
       "init": 0,
       "streams": [
         {"type": "mousedown", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "xCoord - p.x"}
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "xCoord - event.vgX"}
       ]
     },
     {
       "name": "xCoord",
       "init": 0,
       "streams": [
-        {"type": "mousedown", "expr": "p.x"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "p.x"}
+        {"type": "mousedown", "expr": "event.vgX"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgX"}
       ]
     },
     {
@@ -33,15 +33,15 @@
       "init": 0,
       "streams": [
         {"type": "mousedown", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "p.y - yCoord"}
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgY - yCoord"}
       ]
     },
     {
       "name": "yCoord",
       "init": 0,
       "streams": [
-        {"type": "mousedown", "expr": "p.y"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "p.y"}
+        {"type": "mousedown", "expr": "event.vgY"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgY"}
       ]
     },
     {
@@ -80,14 +80,14 @@
       "name": "zoomCenterX",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.x", "scale": {"name": "x", "invert":true}}
+        {"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert":true}}
       ]
     },
     {
       "name": "zoomCenterY",
       "init": 0,
       "streams": [
-        {"type": "mousemove", "expr": "p.y", "scale": {"name": "y", "invert":true}}
+        {"type": "mousemove", "expr": "event.vgY", "scale": {"name": "y", "invert":true}}
       ]
     },
     {

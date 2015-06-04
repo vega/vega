@@ -94,27 +94,27 @@
     {
       "name": "currDist",
       "init": 0,
-      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"sqrt(pow(p.x-cX,2)+pow(p.y-cY,2))"}]
+      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"sqrt(pow(event.vgX-cX,2)+pow(event.vgY-cY,2))"}]
     },
     {
       "name": "prevDist",
       "init": 0,
-      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"sqrt(pow(p.x-pX,2)+pow(p.y-pY,2))"}]
+      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"sqrt(pow(event.vgX-pX,2)+pow(event.vgY-pY,2))"}]
     },
     {
       "name": "nextDist",
       "init": 0,
-      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"sqrt(pow(p.x-nX,2)+pow(p.y-nY,2))"}]
+      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"sqrt(pow(event.vgX-nX,2)+pow(event.vgY-nY,2))"}]
     },
     {
       "name": "prevScore",
       "init": 0,
-      "streams": [{"type":"mousemove[dragging], touchmove", "expr":"((pX-cX)*(p.x-cX)+(pY-cY)*(p.y-cY))/prevDist||-999999"}]
+      "streams": [{"type":"mousemove[dragging], touchmove", "expr":"((pX-cX)*(event.vgX-cX)+(pY-cY)*(event.vgY-cY))/prevDist||-999999"}]
     },
     {
       "name": "nextScore",
       "init": 0,
-      "streams": [{"type":"mousemove[dragging], touchmove", "expr":"((nX-cX)*(p.x-cX)+(nY-cY)*(p.y-cY))/nextDist||-999999"}]
+      "streams": [{"type":"mousemove[dragging], touchmove", "expr":"((nX-cX)*(event.vgX-cX)+(nY-cY)*(event.vgY-cY))/nextDist||-999999"}]
     },
     {
       "name": "inter_year",
@@ -129,7 +129,7 @@
     {
       "name": "dragging",
       "init": 0,
-      "streams": [{"type":".point:mousedown, .point:touchstart", "expr":"p.x"},
+      "streams": [{"type":".point:mousedown, .point:touchstart", "expr":"event.vgX"},
                   {"type":"mouseup, touchend", "expr": "0"}]
     },
     {

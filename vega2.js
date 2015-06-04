@@ -9174,7 +9174,7 @@ module.exports = function(view) {
     var filters = selector.filters || [],
         target = selector.target;
 
-    if(target) filters.push("i."+target.type+"=="+dl.str(target.value));
+    if(target) filters.push("event.vgItem."+target.type+"=="+dl.str(target.value));
 
     register[selector.event] = register[selector.event] || [];
     register[selector.event].push({
@@ -9265,24 +9265,26 @@ module.exports = function(view) {
       var cs = changset.create(null, true),
           pad = view.padding(),
           filtered = false,
-          val, h, i, m, d;
+          val, mouse, datum, h, i, len;
 
       evt.preventDefault(); // Stop text selection
-      m = d3.mouse((d3.event=evt, view._el)); // Relative position within container
-      item = item||{};
-      d = item.datum||{};
-      var p = {x: m[0] - pad.left, y: m[1] - pad.top};
+      mouse = d3.mouse((d3.event=evt, view._el)); // Relative position within container
 
-      for(i = 0; i < handlers.length; i++) {
+      datum = item.datum || {};
+      evt.vgItem = item || {};
+      evt.vgX = mouse[0] - pad.left;
+      evt.vgY = mouse[1] - pad.top;
+
+      for(i = 0, len=handlers.length; i<len; i++) {
         h = handlers[i];
         filtered = h.filters.some(function(f) {
           return !expr.eval(model, f.fn, 
-            {datum: d, event: evt, signals: f.signals});
+            {datum: datum, event: evt, signals: f.signals});
         });
         if(filtered) continue;
         
         val = expr.eval(model, h.exp.fn, 
-          {datum: d, event: evt, signals: h.exp.signals}); 
+          {datum: datum, event: evt, signals: h.exp.signals}); 
         if(h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
         if(val !== h.signal.value() || h.signal.verbose()) {
