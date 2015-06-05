@@ -143,7 +143,7 @@
           "x": {"scale": "x", "signal": "indexDate"},
           "y2": {"field": {"group": "height"}, "offset": 15},
           "align": {"value": "center"},
-          "text": {"signal": "indexDate"},
+          "text": {"template": "{{indexDate | time: '%b %Y'}}"},
           "fill": {"value": "red"}
         }
       }

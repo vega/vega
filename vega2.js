@@ -8874,6 +8874,7 @@ function compile(model, mark, spec) {
       };
       
   code += "var o = trans ? {} : item;\n"
+        + "  signals.datum = item.datum;\n";  // Stash for dl.template
   
   for (i=0, len=names.length; i<len; ++i) {
     ref = spec[name = names[i]];
@@ -8896,9 +8897,9 @@ function compile(model, mark, spec) {
   if (vars.x2) {
     if (vars.x) {
       code += "\n  if (o.x > o.x2) { "
-            + "var t = o.x;"
-            + "this.tpl.set(o, 'x', o.x2);"
-            + "this.tpl.set(o, 'x2', t); "
+            + "\n    var t = o.x;"
+            + "\n    this.tpl.set(o, 'x', o.x2);"
+            + "\n    this.tpl.set(o, 'x2', t); "
             + "};";
       code += "\n  this.tpl.set(o, 'width', (o.x2 - o.x));";
     } else if (vars.width) {
@@ -8919,9 +8920,9 @@ function compile(model, mark, spec) {
   if (vars.y2) {
     if (vars.y) {
       code += "\n  if (o.y > o.y2) { "
-            + "var t = o.y;"
-            + "this.tpl.set(o, 'y', o.y2);"
-            + "this.tpl.set(o, 'y2', t);"
+            + "\n    var t = o.y;"
+            + "\n    this.tpl.set(o, 'y', o.y2);"
+            + "\n    this.tpl.set(o, 'y2', t);"
             + "};";
       code += "\n  this.tpl.set(o, 'height', (o.y2 - o.y));";
     } else if (vars.height) {
@@ -8948,6 +8949,7 @@ function compile(model, mark, spec) {
     encoder.tpl  = tuple;
     encoder.util = dl;
     encoder.d3   = d3; // For color spaces
+    dl.extend(encoder, dl.template.context);
     return {
       encode:  encoder,
       signals: dl.keys(deps.signals),
@@ -8999,14 +9001,14 @@ function rule(model, name, rules) {
     if(predName) {
       signals.push.apply(signals, pred.signals);
       db.push.apply(db, pred.data);
-      inputs.push(args+" = {"+input.join(', ')+"}");
-      code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {\n" +
-        "    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");\n";
-      code += rules[i+1] ? "  } else " : "  }";
+      inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
+      code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {" +
+        "\n    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");";
+      code += rules[i+1] ? "\n  } else " : "  }";
     } else {
-      code += "{\n" + 
-        "    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");\n"+
-        "  }";
+      code += "{" + 
+        "\n    this.tpl.set(o, "+dl.str(name)+", "+ref.val+");"+
+        "\n  }\n";
     }
   });
 
@@ -9035,7 +9037,7 @@ function valueRef(name, ref) {
       signals = [], fields = [], reflow = false;
 
   if (ref.template !== undefined) {
-    val = dl.template.source(ref.template, "item.datum");
+    val = dl.template.source(ref.template, "signals");
   }
 
   if (ref.value !== undefined) {
