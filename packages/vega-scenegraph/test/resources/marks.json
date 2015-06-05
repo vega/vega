@@ -1,0 +1,115 @@
+{
+  "arc": {
+    "marktype": "arc",
+    "items": [
+      {"x":1, "y":2, "startAngle":0.0, "endAngle":0.1, "innerRadius":1, "outerRadius":5},
+      {"x":1, "y":2, "startAngle":0.1, "endAngle":0.2, "innerRadius":2, "outerRadius":6},
+      {"x":1, "y":2, "startAngle":0.2, "endAngle":0.3, "innerRadius":3, "outerRadius":7},
+      {"startAngle":0.3, "endAngle":0.4, "innerRadius":4, "outerRadius":8}
+    ]
+  },
+  "area-h": {
+    "marktype": "area",
+    "items": [
+      {"y":0,   "x":144, "width":56, "orient": "horizontal", "fill": "steelblue"},
+      {"y":100, "x":90,  "width":110},
+      {"y":200, "x":114, "width":86},
+      {"y":300, "x":18,  "width":182},
+      {"y":400, "x":5}
+    ]
+  },
+  "area-v": {
+    "marktype": "area",
+    "items": [
+      {"x":0,   "y":144, "height":56, "interpolate":"monotone", "tension":1.0, "fill": "steelblue"},
+      {"x":100, "y":90,  "height":110},
+      {"x":200, "y":114, "height":86},
+      {"x":300, "y":18,  "height":182},
+      {"x":400, "y":5}
+    ]
+  },
+  "image": {
+    "marktype": "image",
+    "items": [
+      {"x":0,   "y":10,  "width":100, "height":150, "url":"image0.png", "align":"left",   "baseline":"top"},
+      {"x":100, "y":110, "width":100, "height":150, "url":"image1.png", "align":"center", "baseline":"middle"},
+      {"x":200, "y":210, "url":"image2.png", "align":"right",  "baseline":"bottom"}
+    ]
+  },
+  "line-1": {
+    "marktype": "line",
+    "items": [
+      {"x":0,   "y":144, "interpolate":"monotone", "tension":1.0, "stroke": "steelblue"},
+      {"x":100, "y":90},
+      {"x":200, "y":114},
+      {"x":300, "y":18}
+    ]
+  },
+  "line-2": {
+    "marktype": "line",
+    "items": [
+      {"x":0,   "y":144, "stroke": "steelblue"},
+      {"x":100, "y":90},
+      {"x":200, "y":114},
+      {"x":300, "y":18}
+    ]
+  },
+  "path": {
+    "marktype": "path",
+    "items": [
+      {"x":10, "y":20, "path":"M100,100 L200,100 L200,200 L100,200 Z", "fill":"steelblue"},
+      {"path":"M100,100 L200,100 L200,200 L100,200 Z", "fill":"firebrick"}
+    ]
+  },
+  "rect": {
+    "marktype": "rect",
+    "items": [
+      {"x":0,   "y":0,   "width":99, "height":56,  "fill":"steelblue"},
+      {"x":100, "y":90,  "width":99, "height":110, "fill":"steelblue"},
+      {"x":200, "y":114, "width":99, "height":86,  "fill":"steelblue"},
+      {"x":300, "y":18,  "fill":"steelblue"}
+    ]
+  },
+  "rule": {
+    "marktype": "rule",
+    "items": [
+      {"x":0,   "x2":100, "y":0, "stroke":"white"},
+      {"x":0,   "x2":101, "y":5, "stroke":"white"},
+      {"y":100, "y2":90,  "x":0, "stroke":"black"},
+      {"y":200, "y2":114, "x":5, "stroke":"black"},
+      {"x":0, "x2":10, "y":10, "y2":20, "stroke":"red"}
+    ]
+  },
+  "symbol": {
+    "marktype": "symbol",
+    "items": [
+      {"x":0,   "y":0,   "size":64, "shape":"circle",  "stroke":"steelblue"},
+      {"x":100, "y":90,  "size":49, "shape":"square",  "stroke":"steelblue"},
+      {"x":200, "y":114, "size":36, "shape":"cross",   "stroke":"steelblue"},
+      {"x":300, "y":18,  "size":25, "shape":"diamond", "stroke":"steelblue"},
+      {"x":400, "y":63,  "stroke":"steelblue"}
+    ]
+  },
+  "text": {
+    "marktype": "text",
+    "items": [
+      {"x":0, "y":5, "text":"A", "align":"left",   "baseline":"top",    "font":"Helvetica", "fill":"black"},
+      {"x":1, "y":6, "text":"B", "align":"center", "baseline":"middle", "font":"Helvetica", "fill":"black"},
+      {"x":2, "y":7, "text":"C", "align":"right",  "baseline":"bottom", "font":"Helvetica", "fill":"black"},
+      {"x":3, "y":8, "text":"D", "dx":0, "dy":0, "radius":10, "theta":1.57, "angle":45},
+      {"text":"E", "dx":1, "dy":2, "fontSize":14, "radius":5, "fontWeight":"bold", "fontStyle":"italic"},
+      {"x":1, "y":1}
+    ]
+  },
+  "group": {
+    "marktype": "group",
+    "name": "class-name",
+    "items": [
+      {"x":0,   "y":144, "width":99, "height":56,  "fill":"steelblue", "clip":true, "items":[]},
+      {"x":100, "y":90,  "width":99, "height":110, "fill":"steelblue", "items":[]},
+      {"x":200, "y":114, "width":99, "height":86,  "fill":"steelblue", "items":[]},
+      {"x":300, "y":18,  "width":99, "height":182, "fill":"steelblue", "items":[]},
+      {"x":400, "y":55,  "fill":"steelblue", "clip": true, "items":[]}
+    ]
+  }
+}

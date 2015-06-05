@@ -1,0 +1,22 @@
+{
+  "marktype": "group",
+  "interactive": false,
+  "items": [
+    {
+      "width": 400,
+      "height": 200,
+      "items": [
+        {
+          "marktype": "rect",
+          "interactive": true,
+          "items": [
+            {"x": 0,   "y": 144, "width": 99, "height": 56,  "fill": "steelblue"},
+            {"x": 100, "y": 90,  "width": 99, "height": 110, "fill": "steelblue"},
+            {"x": 200, "y": 114, "width": 99, "height": 86,  "fill": "steelblue"},
+            {"x": 300, "y": 18,  "width": 99, "height": 182, "fill": "steelblue"}
+          ]
+        }
+      ]
+    }
+  ]
+}
