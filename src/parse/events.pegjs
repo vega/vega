@@ -15,18 +15,20 @@ filtered
 
 stream
   = "(" m:merged ")" { return { stream: m }}
-  / "@" n:value ":" e:eventType { return {event: e, name: n} }
+  / "@" n:name ":" e:eventType { return {event: e, name: n} }
   / m:markType ":" e:eventType { return {event: e, mark: m} }
-  / t:value ":" e:eventType { return {event: e, target: t} }
+  / t:css ":" e:eventType { return {event: e, target: t} }
   / e:eventType { return {event: e} }
-  / s:[:a-zA-z0-9_-]+ { return { signal: s.join("") }}
+  / s:name { return { signal: s }}
   
 
 markType = m: "rect" / "symbol" / "path" / "arc" / "area" / "line" / "rule" / "image" / "text" / "group"
 
 eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter" / "touchstart" / "touchmove" / "touchend"
 
-filter = "[" field:value "]" { return field  }
-value = v:['"a-zA-Z0-9_\.\>\<\=\! \t-]+ { return v.join("") }
+filter = "[" e:expr "]" { return e  }
 
+name = n:[a-zA-Z0-9_-]+ { return n.join("") }
+css  = c:[a-zA-Z0-9-_  #\.\>\+~\[\]=|\^\$\*]+ { return c.join("") }
+expr = v:['"a-zA-Z0-9_\.\>\<\=\! \t-&|~]+ { return v.join("") }
 sep = [ \t\r\n]*

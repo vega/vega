@@ -2,6 +2,7 @@ var dl = require('datalib'),
     config = require('./config'),
     ts;
 
+/* istanbul ignore next */
 function write(msg) {
   msg = "[Vega Log] " + msg;
   config.isNode
@@ -9,6 +10,7 @@ function write(msg) {
     : console.log(msg);
 }
 
+/* istanbul ignore next */
 function error(msg) {
   msg = "[Vega Err] " + msg;
   config.isNode
@@ -16,6 +18,7 @@ function error(msg) {
     : console.error(msg);
 }
 
+/* istanbul ignore next */
 function debug(input, args) {
   if (!config.debug) return;
   var log = Function.prototype.bind.call(console.log, console);
