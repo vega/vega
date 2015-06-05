@@ -9307,7 +9307,7 @@ module.exports = function(view) {
       evt.vgY = mouse[1] - pad.top;
       groupOffsets(evt);
 
-      if (item.mark && (name = item.mark.def.name)) {
+      if (item && (name = item.mark.def.name)) {
         evt["vg"+capitalize(name)+"Item"] = item;
       }
 
@@ -14519,7 +14519,7 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   
   if (trans) trans.interpolate(item, o);
   var enc = item.mark.def.properties.enter.encode;
-  enc.call(enc, item, group, trans);
+  enc.call(enc, item, group, trans, db, signals, predicates);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {

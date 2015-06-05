@@ -48,7 +48,7 @@ module.exports = function(view) {
       evt.vgY = mouse[1] - pad.top;
       groupOffsets(evt);
 
-      if (item.mark && (name = item.mark.def.name)) {
+      if (item && (name = item.mark.def.name)) {
         evt["vg"+capitalize(name)+"Item"] = item;
       }
 

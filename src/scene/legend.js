@@ -399,7 +399,7 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   
   if (trans) trans.interpolate(item, o);
   var enc = item.mark.def.properties.enter.encode;
-  enc.call(enc, item, group, trans);
+  enc.call(enc, item, group, trans, db, signals, predicates);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
