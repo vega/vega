@@ -14,9 +14,15 @@ filtered
   / s:stream { return s }
 
 stream
-  = t:("@" value ":")? e:eventType { return { event: e, target: t && t[1] } }
+  = "(" m:merged ")" { return { stream: m }}
+  / "@" n:value ":" e:eventType { return {event: e, name: n} }
+  / m:markType ":" e:eventType { return {event: e, mark: m} }
+  / t:value ":" e:eventType { return {event: e, target: t} }
+  / e:eventType { return {event: e} }
   / s:[:a-zA-z0-9_-]+ { return { signal: s.join("") }}
-  / "(" m:merged ")" { return { stream: m }}
+  
+
+markType = m: "rect" / "symbol" / "path" / "arc" / "area" / "line" / "rule" / "image" / "text" / "group"
 
 eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter" / "touchstart" / "touchmove" / "touchend"
 
