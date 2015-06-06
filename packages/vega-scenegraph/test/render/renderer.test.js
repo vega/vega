@@ -16,12 +16,13 @@ describe('base renderer', function() {
   });
 
   it('should initialize', function() {
-    var ctx = {};
+    var el = {};
     var pad = padding(1, 1, 1, 1);
     var r = new Renderer();
-    var s = r.initialize(ctx, 1, 2, pad);
+    var s = r.initialize(el, 1, 2, pad);
     assert.strictEqual(s, r);
-    assert.strictEqual(r._ctx, ctx);
+    assert.strictEqual(r._el, el);
+    assert.strictEqual(r.element(), el);
     assert.strictEqual(r._width, 1);
     assert.strictEqual(r._height, 2);
     assert.deepEqual(r._padding, pad);

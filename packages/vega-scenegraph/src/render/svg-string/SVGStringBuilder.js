@@ -1,7 +1,6 @@
-var d3 = require('d3'),
-    dl = require('datalib'),
-    open = require('../../util/xml').openTag,
-    close = require('../../util/xml').closeTag,
+var dl = require('datalib'),
+    openTag = require('../../util/xml').openTag,
+    closeTag = require('../../util/xml').closeTag,
     fontString = require('../../util/font-string'),
     svg = require('../../util/svg');
 
@@ -18,24 +17,24 @@ function SVGStringBuilder() {
     gradient: {},
     clipping: {}
   };
-};
+}
 
 var prototype = SVGStringBuilder.prototype;
 
 prototype.initialize = function(w, h, pad) {
   var t = this._text;
 
-  t.head = open('svg', dl.extend({
+  t.head = openTag('svg', dl.extend({
     'class':  'marks',
     'width':  w + pad.left + pad.right,
     'height': h + pad.top + pad.bottom
   }, svg.metadata));
 
-  t.root = open('g', {
+  t.root = openTag('g', {
     transform: 'translate(' + pad.left + ',' + pad.top + ')'
   });
 
-  t.foot = close('g') + close('svg');
+  t.foot = closeTag('g') + closeTag('svg');
 };
 
 prototype.svg = function() {
@@ -59,14 +58,15 @@ prototype.buildDefs = function() {
   var all = this._defs,
       dgrad = dl.keys(all.gradient),
       dclip = dl.keys(all.clipping),
-      defs = '', grad, clip, i, j;
+      defs = '',
+      i, j, id, def, stops;
 
   for (i=0; i<dgrad.length; ++i) {
-    var id = dgrad[i],
-        def = all.gradient[id],
-        stops = def.stops;
+    id = dgrad[i];
+    def = all.gradient[id];
+    stops = def.stops;
 
-    defs += open('linearGradient', {
+    defs += openTag('linearGradient', {
       id: id,
       x1: def.x1,
       x2: def.x2,
@@ -75,32 +75,32 @@ prototype.buildDefs = function() {
     });
     
     for (j=0; j<stops.length; ++j) {
-      defs += open('stop', {
+      defs += openTag('stop', {
         offset: stops[j].offset,
         'stop-color': stops[j].color
-      }) + close('stop');
+      }) + closeTag('stop');
     }
     
-    defs += close('linearGradient');
+    defs += closeTag('linearGradient');
   }
   
   for (i=0; i<dclip.length; ++i) {
-    var id = dclip[i],
-        def = all.clipping[id];
+    id = dclip[i];
+    def = all.clipping[id];
 
-    defs += open('clipPath', {id: id});
+    defs += openTag('clipPath', {id: id});
 
-    defs += open('rect', {
+    defs += openTag('rect', {
       x: 0,
       y: 0,
       width: def.width,
       height: def.height
-    }) + close('rect');
+    }) + closeTag('rect');
 
-    defs += close('clipPath');
+    defs += closeTag('clipPath');
   }
   
-  return (defs.length > 0) ? open('defs') + defs + close('defs') : '';
+  return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
 };
 
 prototype.mark = function(scene) {
@@ -113,7 +113,6 @@ prototype.mark = function(scene) {
       data = nest ? [scene.items] : scene.items,
       defs = this._defs,
       className = cssClass(scene),
-      groupStyle = null,
       str = '',
       style, i;
 
@@ -125,26 +124,26 @@ prototype.mark = function(scene) {
   }
 
   // render opening group tag
-  str += open('g', {
-    'id':    'g' + ++this._gid, // d3 dom compat
+  str += openTag('g', {
+    'id':    'g' + (++this._gid), // d3 dom compat
     'class': className
   }, style);
 
   // render contained elements
   for (i=0; i<data.length; ++i) {
     style = (tag === 'g') ? null : styles(data[i], scene, tag, defs);
-    str += open(tag, attr(data[i], defs), style);
+    str += openTag(tag, attr(data[i], defs), style);
     if (tag === 'text') {
       str += escape_text(data[i].text);
     } else if (tag === 'g') {
       str += group_bg(scene, styles(data[i], scene, 'rect', defs));
       str += this.markGroup(data[i]);
     }
-    str += close(tag);
+    str += closeTag(tag);
   }
 
   // render closing group tag
-  return str + close('g');
+  return str + closeTag('g');
 };
 
 prototype.markGroup = function(scene) {
@@ -152,10 +151,10 @@ prototype.markGroup = function(scene) {
       axes = scene.axisItems || [],
       items = scene.items || [],
       legends = scene.legendItems || [],
-      i, j, m;
+      j, m;
 
   for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].def.layer === 'back') {
+    if (axes[j].layer === 'back') {
       str += this.mark(axes[j]);
     }
   }
@@ -163,7 +162,7 @@ prototype.markGroup = function(scene) {
     str += this.mark(items[j]);
   }
   for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].def.layer !== 'back') {
+    if (axes[j].layer !== 'back') {
       str += this.mark(axes[j]);
     }
   }
@@ -217,7 +216,7 @@ function styles(d, mark, tag, defs) {
         defs.gradient[value.id] = value;
         value = 'url(#' + value.id + ')';
       }
-      s += (s.length ? ' ' : '') + name + ': ' + value + ';'
+      s += (s.length ? ' ' : '') + name + ': ' + value + ';';
     }
   }
 
@@ -237,11 +236,11 @@ function escape_text(s) {
 }
 
 function group_bg(o, style) {
-  var w = o.width || 0,
-      h = o.height || 0;
-  return open('rect', {
-    'class': 'background'
-  }, style) + close('rect');
+  return openTag('rect', {
+    'class': 'background',
+    width: o.width || 0,
+    height: o.height || 0
+  }, style) + closeTag('rect');
 }
 
 function group(o, defs) {
@@ -330,14 +329,15 @@ function symbol(o) {
 }
 
 function image(o) {
-  var w = o.width || 0,
+  var x = o.x || 0,
+      y = o.y || 0,
+      w = o.width || 0,
       h = o.height || 0,
-      x = o.x - (o.align === 'center'
-        ? w/2 : (o.align === 'right' ? w : 0)),
-      y = o.y - (o.baseline === 'middle'
-        ? h/2 : (o.baseline === 'bottom' ? h : 0)),
-      url = /* TODO config.load.baseURL + */o.url;
-  
+      url = /* TODO? config.load.baseURL + */o.url;
+
+  x = x - (o.align === 'center' ? w/2 : o.align === 'right' ? w : 0);
+  y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
+
   return {
     'xlink:href': url,
     x: x,
@@ -355,8 +355,7 @@ function text(o) {
       a = o.angle || 0,
       r = o.radius || 0,
       align = svg.textAlign[o.align || 'left'],
-      base = o.baseline==='top' ? '.9em'
-           : o.baseline==='middle' ? '.35em' : 0;
+      base = o.baseline==='top' ? '.9em' : o.baseline==='middle' ? '.35em' : 0;
 
   if (r) {
     var t = (o.theta || 0) - Math.PI/2;

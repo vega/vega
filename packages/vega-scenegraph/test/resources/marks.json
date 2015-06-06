@@ -31,7 +31,7 @@
   "image": {
     "marktype": "image",
     "items": [
-      {"x":0,   "y":10,  "width":100, "height":150, "url":"image0.png", "align":"left",   "baseline":"top"},
+      {"width":100, "height":150, "url":"image0.png", "align":"left", "baseline":"top"},
       {"x":100, "y":110, "width":100, "height":150, "url":"image1.png", "align":"center", "baseline":"middle"},
       {"x":200, "y":210, "url":"image2.png", "align":"right",  "baseline":"bottom"}
     ]

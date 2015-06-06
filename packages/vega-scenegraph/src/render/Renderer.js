@@ -5,9 +5,13 @@ function Renderer() {
 
 var prototype = Renderer.prototype;
 
-prototype.initialize = function(context, width, height, padding) {
-  this._ctx = context;
+prototype.initialize = function(el, width, height, padding) {
+  this._el = el;
   return this.resize(width, height, padding);
+};
+
+prototype.element = function() {
+  return this._el;
 };
 
 prototype.background = function(bgcolor) {
@@ -22,7 +26,7 @@ prototype.resize = function(width, height, padding) {
   return this;
 };
 
-prototype.render = function(scene, items) {
+prototype.render = function(/*scene, items*/) {
   return this;
 };
 

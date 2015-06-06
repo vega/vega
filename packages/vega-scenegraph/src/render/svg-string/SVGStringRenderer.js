@@ -3,24 +3,19 @@ var Renderer = require('../Renderer'),
 
 function SVGStringRenderer() {
   Renderer.call(this);
-  this._builder = null;
+  this._builder = new Builder();
 }
 
-var parent = Renderer.prototype;
-var prototype = (SVGStringRenderer.prototype = Object.create(parent));
-
-prototype.initialize = function(context, width, height, padding) {
-  this._builder = new Builder();
-  return parent.initialize.call(this, null, width, height, padding);
-};
+var base = Renderer.prototype;
+var prototype = (SVGStringRenderer.prototype = Object.create(base));
 
 prototype.resize = function(width, height, padding) {
-  parent.resize.call(this, width, height, padding);
+  base.resize.call(this, width, height, padding);
   this._builder.initialize(this._width, this._height, this._padding);
   return this;
 };
 
-prototype.render = function(scene, items) {
+prototype.render = function(scene) {
   // headless always draws the entire scene, ignoring items
   this._builder.render(scene);
   return this;

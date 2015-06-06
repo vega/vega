@@ -8,7 +8,7 @@ module.exports = function(pathstr) {
       curr,
       chunks,
       parsed, param,
-      cmd, len, i, j, k, n, m;
+      cmd, len, i, j, n, m;
 
   // First, break path into command sequence
   path = pathstr
