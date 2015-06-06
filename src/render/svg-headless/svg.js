@@ -414,7 +414,7 @@ function style(d, tag, defs) {
       if (value.id) {
         // ensure definition is included
         defs.gradient[value.id] = value;
-        value = "url(" + window.location.href + "#" + value.id + ")";
+        value = "url(#" + value.id + ")";
       }
       s += (s.length ? ' ' : '') + name + ': ' + value + ';'
     }

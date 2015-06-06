@@ -55,7 +55,7 @@ function style(d) {
       if (value.id) {
         // ensure definition is included
         marks.current._defs.gradient[value.id] = value;
-        value = "url(" + window.location.href + "#" + value.id + ")";
+        value = "url(#" + value.id + ")";
       }
       this.style.setProperty(name, value+"", null);
     }

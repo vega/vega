@@ -218,7 +218,7 @@ prototype.loadImage = function(uri) {
     dl.load(dl.extend({url: uri}, config.load), function(err, data) {
       renderer._imgload -= 1;
       if (err) { dl.error(err); return; }
-      log.write("LOAD IMAGE: " + uri);
+      log.log("LOAD IMAGE: " + uri);
       image.src = data;
       image.loaded = true;
     });
@@ -228,7 +228,7 @@ prototype.loadImage = function(uri) {
     if (!url) { return; }
     renderer._imgload += 1;
     image.onload = function() {
-      log.write("LOAD IMAGE: " + url);
+      log.log("LOAD IMAGE: " + url);
       image.loaded = true;
       renderer._imgload -= 1;
       renderer.renderAsync(scene);

@@ -9943,7 +9943,7 @@ prototype.loadImage = function(uri) {
     dl.load(dl.extend({url: uri}, config.load), function(err, data) {
       renderer._imgload -= 1;
       if (err) { dl.error(err); return; }
-      log.write("LOAD IMAGE: " + uri);
+      log.log("LOAD IMAGE: " + uri);
       image.src = data;
       image.loaded = true;
     });
@@ -9953,7 +9953,7 @@ prototype.loadImage = function(uri) {
     if (!url) { return; }
     renderer._imgload += 1;
     image.onload = function() {
-      log.write("LOAD IMAGE: " + url);
+      log.log("LOAD IMAGE: " + url);
       image.loaded = true;
       renderer._imgload -= 1;
       renderer.renderAsync(scene);
@@ -11777,7 +11777,7 @@ function style(d, tag, defs) {
       if (value.id) {
         // ensure definition is included
         defs.gradient[value.id] = value;
-        value = "url(" + window.location.href + "#" + value.id + ")";
+        value = "url(#" + value.id + ")";
       }
       s += (s.length ? ' ' : '') + name + ': ' + value + ';'
     }
@@ -12092,7 +12092,7 @@ function style(d) {
       if (value.id) {
         // ensure definition is included
         marks.current._defs.gradient[value.id] = value;
-        value = "url(" + window.location.href + "#" + value.id + ")";
+        value = "url(#" + value.id + ")";
       }
       this.style.setProperty(name, value+"", null);
     }
@@ -14363,7 +14363,7 @@ function lgnd(model) {
   
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = dl.extend(m.title, vg_legendTitle()),
+    var titles = dl.extend(m.titles, vg_legendTitle()),
         gradient = dl.extend(m.gradient, vg_legendGradient()),
         labels = dl.extend(m.labels, vg_hLegendLabels()),
         grad = new Gradient();

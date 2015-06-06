@@ -190,7 +190,7 @@ function lgnd(model) {
   
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = dl.extend(m.title, vg_legendTitle()),
+    var titles = dl.extend(m.titles, vg_legendTitle()),
         gradient = dl.extend(m.gradient, vg_legendGradient()),
         labels = dl.extend(m.labels, vg_hLegendLabels()),
         grad = new Gradient();
