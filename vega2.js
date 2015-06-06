@@ -14333,7 +14333,9 @@ function lgnd(model) {
   function quantDef(scale) {
     var def = q_legend_def(scale),
         dom = scale.domain(),
-        data = dom.map(ingest),
+        data = (values == null
+      ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
+      : values).map(ingest),
         width = (gradientStyle.width && gradientStyle.width.value) || config.legend.gradientWidth,
         fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
 
