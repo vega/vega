@@ -380,6 +380,8 @@ describe('Expression', function() {
       expect(evaluate('substring("123",0,1)')).to.equal("123".substring(0,1));
       expect(evaluate('parseFloat("3.14")')).to.equal(parseFloat("3.14"));
       expect(evaluate('parseInt("42")')).to.equal(parseInt("42"));
+      expect(evaluate('indexof("hello world", "l")')).to.equal(2);
+      expect(evaluate('lastindexof("hello world", "l")')).to.equal(9);
     });
 
     it('should eval regular expression functions', function() {
@@ -395,6 +397,7 @@ describe('Expression', function() {
       expect(evaluate('time(datetime(2001,1,1))')).to.equal(+d);
       expect(evaluate('timezoneoffset(datetime(2001,1,1))')).to.equal(d.getTimezoneOffset());
       
+      expect(evaluate('day(datetime(2001,1,1))')).to.equal(d.getDay());
       expect(evaluate('year(datetime(2001,1,1))')).to.equal(d.getFullYear());
       expect(evaluate('month(datetime(2001,1,1))')).to.equal(d.getMonth());
       expect(evaluate('hours(datetime(2001,1,1))')).to.equal(d.getHours());
@@ -402,6 +405,7 @@ describe('Expression', function() {
       expect(evaluate('seconds(datetime(2001,1,1))')).to.equal(d.getSeconds());  
       expect(evaluate('milliseconds(datetime(2001,1,1))')).to.equal(d.getMilliseconds());
       
+      expect(evaluate('utcday(datetime(2001,1,1))')).to.equal(d.getUTCDay());
       expect(evaluate('utcyear(datetime(2001,1,1))')).to.equal(d.getUTCFullYear());
       expect(evaluate('utcmonth(datetime(2001,1,1))')).to.equal(d.getUTCMonth());
       expect(evaluate('utchours(datetime(2001,1,1))')).to.equal(d.getUTCHours());
@@ -414,6 +418,14 @@ describe('Expression', function() {
         expect(evaluate('date(datetime(2001,1,'+date+'))')).to.equal(d.getDate());
         expect(evaluate('utcdate(datetime(2001,1,'+date+'))')).to.equal(d.getUTCDate());
       }
+    });
+
+    it('should evaluate if statements', function() {
+      expect(evaluate("if(datum.a > 1, 1, 2)")).to.equal(1);
+      expect(evaluate("if(event.type == 'mousedown', 1, 2)")).to.equal(2);
+      expect(evaluate("if(datum.a > 1, if(event.type == 'mousedown', 3, 4), 2)")).to.equal(4);
+      expect(evaluate.fn("if(datum.a > 1, 1)")).to.throw();
+      expect(evaluate.fn("if(datum.a > 1, 1, 2, 3)")).to.throw();
     });
 
     it('should not eval undefined functions', function() {
