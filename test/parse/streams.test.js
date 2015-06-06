@@ -1,43 +1,77 @@
 var dl = require('datalib'),
     jsdom = require('jsdom'),
-    Canvas = require('canvas'),
     canvasIO = require('../../src/render/canvas/'),
-    fs = require('fs'),
-    d3js = fs.readFileSync('./node_modules/d3/d3.min.js', 'utf-8'),
-    vgjs = fs.readFileSync('./vega2.min.js', 'utf-8');
+    parseStreams = require('../../src/parse/streams'),
+    fs = require('fs');
 
 describe('Streams', function() {
+  var renderer = "canvas";
+
   function test(spec, interaction) {
-    parseSpec(spec, function(chart) {  
-      jsdom.env({
-        html: "<html><body></body></html>", 
-        src: [d3js, vgjs], 
-        done: function(err, window) {
-          var document = window.document,
-              d3 = window.d3,
-              vg = window.vg,
-              body = d3.select(document).select('body').node();
-          
-          // node-canvas doesn't support events
-          var view = chart({ renderer: "svg", el: body }).update();
-          interaction(view, d3.select(body).select('.marks').node(), mouseEvt);
-          
-          function mouseEvt(type, x, y, target) {
-            var mm = document.createEvent("MouseEvents");
-            mm.initMouseEvent("mousemove", true, true, window, null, x, y, x, y, false, false, false, false, target);
+    parseSpec(spec, function(chart) { 
+      jsdom.env("<html><body></body></html>", function(err, window) {
+        var document = window.document,
+            body = d3.select(document).select('body').node(),
+            isCanvas = (renderer === "canvas"),
+            opt = {renderer: (renderer = (isCanvas = !isCanvas) ? "canvas" : "svg")};
 
-            var evt;
-            if(type == "wheel") {
-              var delta = Math.floor(Math.random() * 2) ? 1 : -1;
-              var eventInit = { deltaX: -delta, deltaY: -delta, clientX: x, clientY: y, pageX: x, pageY: y }
-              evt = new WheelEvent("wheel", eventInit);
-            } else {
-              var evt = document.createEvent("MouseEvents");
-              evt.initMouseEvent(type, true, true, window, null, x, y, x, y, false, false, false, false, target);
-            }
+        if (!isCanvas) opt.el = body;
+        
+        // HACK due to bug w/node-canvas+jsdom dropping attributes
+        // so d3.select("canvas.marks") within Vega fails. So, 
+        // manually initialize the canvas view handler.
+        var view = chart(opt),
+            w = view.width(),
+            h = view.height(),
+            pad = view.padding(),
+            tw = w + (pad ? pad.left + pad.right : 0),
+            th = h + (pad ? pad.top + pad.bottom : 0),
+            canvas, ctx;
 
-            target.dispatchEvent(mm);
-            target.dispatchEvent(evt);
+        if (isCanvas) {
+          body.innerHTML = "<canvas class=\"marks\"></canvas>";
+          view._el = body;
+          canvas = d3.select(body).select("canvas").node();
+          canvas.width  = tw;
+          canvas.height = th;
+          ctx = canvas.getContext("2d");
+          ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
+          view._renderer.context(ctx);
+
+          // Manually init handler
+          view._handler = new canvasIO.Handler().model(view.model());
+          view._handler.el = body;
+          view._handler._canvas = canvas;
+          view._handler._padding = pad;
+          view._handler._obj = view;
+          parseStreams(view);
+        }
+
+        view.update();
+        interaction(view, d3.select(body).select('.marks').node(), mouseEvt);
+        
+        function mouseEvt(type, x, y, target) {
+          if (isCanvas) target = canvas;
+
+          var mm = document.createEvent("MouseEvents");
+          mm.initMouseEvent("mousemove", true, true, window, null, x, y, x, y, false, false, false, false, target);
+
+          var evt;
+          if (type == "wheel") {
+            var delta = Math.floor(Math.random() * 2) ? 1 : -1;
+            var eventInit = { deltaX: -delta, deltaY: -delta, clientX: x, clientY: y, pageX: x, pageY: y }
+            evt = new WheelEvent("wheel", eventInit);
+          } else {
+            var evt = document.createEvent("MouseEvents");
+            evt.initMouseEvent(type, true, true, window, null, x, y, x, y, false, false, false, false, target);
+          }
+
+          target.dispatchEvent(mm);
+          target.dispatchEvent(evt);
+
+          if (isCanvas) {
+            view._handler.mousemove(mm);
+            view._handler[type](evt);
           }
         }
       });
@@ -83,7 +117,7 @@ describe('Streams', function() {
         streams: [{ type: "rect:mousedown", expr: "event.clientX" }]
       }, {
         name: "signalD",
-        streams: [{ type: "symbol:mousedown", expr: "event.clientY" }]
+        streams: [{ type: "group:mousedown", expr: "event.clientY" }]
       }],
 
       marks: [{
@@ -100,13 +134,14 @@ describe('Streams', function() {
         }
       }, {
         name: "mark2",
-        type: "symbol",
+        type: "group",
         properties: {
           enter: {
             x: {value: 75},
             y: {value: 75},
-            size: {value: 800},
-            fill: {value: "green"}
+            width: {value: 25},
+            height: {value: 25},
+            fill: {value: "red"}
           }
         }
       }]
@@ -118,7 +153,7 @@ describe('Streams', function() {
         expect(view.signal('signalA')).to.equal(50);
         expect(view.signal('signalB')).to.be.undefined;
 
-        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark2 path').node());
+        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark2 rect').node());
         expect(view.signal('signalA')).to.equal(50);
         expect(view.signal('signalB')).to.equal(75);
 
@@ -132,7 +167,7 @@ describe('Streams', function() {
         expect(view.signal('signalC')).to.equal(50);
         expect(view.signal('signalD')).to.be.undefined;
 
-        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark2 path').node());
+        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark2 rect').node());
         expect(view.signal('signalC')).to.equal(50);
         expect(view.signal('signalD')).to.equal(75);
 
