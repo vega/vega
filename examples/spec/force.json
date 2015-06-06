@@ -1,8 +1,8 @@
 {
-  "name": "force",
   "width": 500,
   "height": 500,
   "padding": {"top":0, "bottom":0, "left":0, "right":0},
+
   "data": [
     {
       "name": "edges",
@@ -24,6 +24,16 @@
       ]
     }
   ],
+
+  "scales": [
+    {
+      "name": "shapes",
+      "type": "ordinal",
+      "domain": {"data": "nodes", "field": "group"},
+      "range": "shapes"
+    }
+  ],
+
   "marks": [
     {
       "type": "path",
@@ -46,6 +56,7 @@
       "from": {"data": "nodes"},
       "properties": {
         "enter": {
+          "shape": {"scale": "shapes", "field": "group"},
           "fillOpacity": {"value": 0.3},
           "stroke": {"value": "steelblue"}
         },
