@@ -44,17 +44,17 @@ function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
   var th1 = Math.atan2(y1-yc, x1-xc);
 
   var th_arc = th1-th0;
-  if (th_arc < 0 && sweep == 1){
+  if (th_arc < 0 && sweep === 1){
     th_arc += 2 * Math.PI;
-  } else if (th_arc > 0 && sweep == 0) {
+  } else if (th_arc > 0 && sweep === 0) {
     th_arc -= 2 * Math.PI;
   }
 
-  var segments = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
+  var segs = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
   var result = [];
-  for (var i=0; i<segments; ++i) {
-    var th2 = th0 + i * th_arc / segments;
-    var th3 = th0 + (i+1) * th_arc / segments;
+  for (var i=0; i<segs; ++i) {
+    var th2 = th0 + i * th_arc / segs;
+    var th3 = th0 + (i+1) * th_arc / segs;
     result[i] = [xc, yc, th2, th3, rx, ry, sin_th, cos_th];
   }
 

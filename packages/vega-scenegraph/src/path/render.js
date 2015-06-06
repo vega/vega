@@ -1,4 +1,5 @@
-var Bounds = require('../scene/Bounds');
+var Bounds = require('../util/Bounds'),
+    arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
   var current, // current instruction
