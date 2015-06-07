@@ -34,7 +34,7 @@ function parseSignals(model, spec) {
 function exprVal(model, spec, currentValue) {
   var e = spec.expr,
       val = expr.eval(model, e.fn, {signals: e.signals});
-  return spec.scale ? scale(model, spec, val) : val;
+  return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
 parseSignals.scale = function scale(model, spec, value) {

@@ -196,18 +196,34 @@ describe('Streams', function() {
         streams: [{ type: "mousedown", expr: "event" }]
       }, {
         name: "signalB",
-        streams: [{ type: "signalA", expr: "signalA.clientX" }]
+        streams: [{ 
+          type: "signalA", expr: "signalA.clientX",
+          scale: {name: "x", invert: true}
+        }]
       }, {
         name: "signalC",
-        expr: "signalB + 250"
-      }]
+        expr: "signalA.clientX + 250",
+        scale: {name: "x", invert: true}
+      }],
+
+      scales: [
+        {
+          name: "x",
+          type: "time",
+          domainMin: (new Date("Wed Dec 31 2014 16:00:00 GMT-0800 (PST)")).getTime(),
+          domainMax: (new Date("Wed Dec 30 2015 16:00:00 GMT-0800 (PST)")).getTime(),
+          range: "width"
+        }
+      ]
     };
 
     test(spec, function(view, svg, mouseEvt) {
       mouseEvt('mousedown', 350, 350, svg);
       expect(view.signal('signalA')).to.have.property("type", "mousedown");
-      expect(view.signal('signalB')).to.equal(350);
-      expect(view.signal('signalC')).to.equal(600);
+      expect(view.signal('signalB').getTime())
+        .to.equal(new Date("Sat Sep 12 2015 12:12:00 GMT-0700 (PDT)").getTime());
+      expect(view.signal('signalC').getTime())
+        .to.equal(new Date("Sat Mar 12 2016 11:12:00 GMT-0800 (PST)").getTime());
       done();
     });
   });
