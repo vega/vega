@@ -8,6 +8,7 @@ var config = require('../../src/util/config'),
   examples = "./examples/spec/";
 
 describe('SVG', function() {
+  require('d3-geo-projection')(d3);
 
   describe('Examples', function() {
     // list all the example json spec files
@@ -21,11 +22,6 @@ describe('SVG', function() {
 
     // validation xpaths for rendered SVG DOM; a single match will be expected
     var validation = {
-      // FIXME: obscure error when trying to render interactors
-      "brush_interactor": "skip",
-      "panzoom_touch": "skip",
-      "map": "skip",
-
       "barley": "//svg:g[@class='type-symbol']/svg:path[120]",
       "area": "//svg:g[@class='type-area']/svg:path",
       "bar": "//svg:g[@class='type-rect']/svg:rect[20]",

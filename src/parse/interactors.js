@@ -13,7 +13,8 @@ module.exports = function parseInteractors(model, spec, defFactory) {
       if (error) {
         log.error("LOADING FAILED: " + i.url);
       } else {
-        var def = dl.isObject(data) ? data : JSON.parse(data);
+        var def = dl.isObject(data) && !dl.isBuffer(data) ?
+          data : JSON.parse(data);
         interactor(i.name, def);
       }
       if (--count == 0) inject();

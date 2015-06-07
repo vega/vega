@@ -8,6 +8,7 @@ var config = require('../../src/util/config'),
   examples = "./examples/spec/";
 
 describe('Canvas', function() {
+  require('d3-geo-projection')(d3);
 
   describe('Examples', function() {
     // list all the example json spec files
@@ -19,11 +20,7 @@ describe('Canvas', function() {
 
     config.load.baseURL = 'file://' + examples + "../"; // needed for data loading
 
-    var skip = {
-      "brush_interactor": 1,
-      "panzoom_touch": 1,
-      "map": 1,
-    };
+    var skip = {};
 
     files.forEach(function(file, idx) {
       var name = path.basename(file, ".json");
