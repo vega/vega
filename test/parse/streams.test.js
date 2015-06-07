@@ -402,4 +402,87 @@ describe('Streams', function() {
       done();
     });
   });
+
+  describe('Custom Handlers', function() {
+    var spec = {
+      signals: [{
+        name: "signalA",
+        streams: [{ type: "mouseup", expr: "event" }]
+      }],
+
+      marks: [{
+        name: "mark1",
+        type: "rect",
+        properties: {
+          enter: {
+            x: {value: 25},
+            y: {value: 25},
+            width: {value: 50},
+            height: {value: 50},
+            fill: {value: "red"}
+          }
+        }
+      }]
+    };
+
+    it('should turn on/off svg event handlers', function(done) {
+      var handler = chai.spy();
+
+      test(spec, function(view, svg, mouseEvt) {
+        view.on('mousedown', handler);
+
+        mouseEvt('mousedown', 50, 50, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.once;
+
+        mouseEvt('mousedown', 150, 150, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.twice;
+
+        view.off('mousedown', handler);
+        mouseEvt('mousedown', 200, 200, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.twice;
+
+        done();
+      });
+    });
+
+    it('should turn on/off canvas event handlers', function(done) {
+      var handler = chai.spy();
+
+      test(spec, function(view, svg, mouseEvt) {
+        view.on('mousedown', handler);
+
+        mouseEvt('mousedown', 50, 50, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.once;
+
+        mouseEvt('mousedown', 150, 150, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.twice;
+
+        view.off('mousedown', handler);
+        mouseEvt('mousedown', 200, 200, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.twice;
+
+        done();
+      });
+    });
+
+    it('should turn on/off signal handlers', function(done) {
+      var handler = chai.spy();
+
+      test(spec, function(view, svg, mouseEvt) {
+        view.onSignal('signalA', handler);
+
+        mouseEvt('mouseup', 50, 50, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.once;
+
+        mouseEvt('mouseup', 150, 150, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.twice;
+
+        view.offSignal('signalA', handler);
+        mouseEvt('mouseup', 200, 200, d3.select(svg).select('.mark1 rect').node());
+        expect(handler).to.have.been.called.twice;
+
+        done();
+      });
+    });
+  });
 });

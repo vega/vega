@@ -1,6 +1,10 @@
-var Node = require('../src/dataflow/Node');
+var Node  = require('../src/dataflow/Node'),
+    chai  = require('chai'),
+    spies = require('chai-spies');
+
 global.d3 = require('d3');
-global.expect = require('chai').expect;
+global.chai = chai.use(spies);
+global.expect = chai.expect;
 global.parseSpec = require('../src/parse/spec');
 global.util = require('datalib');
 global.modelFactory = function(model) { return (model.fire(), model); };
