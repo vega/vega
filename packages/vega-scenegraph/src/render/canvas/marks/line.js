@@ -5,8 +5,7 @@ var util = require('./util'),
     
 function path(g, items) {
   var o = items[0],
-      m = o.mark,
-      p = m.pathCache || (m.pathCache = parse(linePath(items)));
+      p = o.pathCache || (o.pathCache = parse(linePath(items)));
   render(g, p);
 }
 
@@ -20,7 +19,7 @@ function stroke(g, items) {
 }
 
 function pick(g, scene, x, y, gx, gy) {
-  if (!scene.items.length) return false;
+  if (!scene.items || !scene.items.length) return false;
 
   var items = scene.items,
       b = items[0].bounds;

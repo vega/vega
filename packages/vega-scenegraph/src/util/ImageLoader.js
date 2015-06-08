@@ -1,14 +1,16 @@
 var dl = require('datalib');
 
 function ImageLoader() {
-  this._loading = 0;
-  this._config = null; // TODO! load config
+  this._pending = 0;
+  this._config = { // TODO! load config
+    baseURL: './test/resources/'
+  }; 
 }
 
 var prototype = ImageLoader.prototype;
 
 prototype.pending = function() {
-  return this._loading;
+  return this._pending;
 };
 
 prototype.params = function(uri) {
@@ -25,10 +27,10 @@ function browser(uri, callback) {
   var loader = this,
       image = new Image();
 
-  loader._loading += 1;
+  loader._pending += 1;
 
   image.onload = function() {
-    loader._loading -= 1;
+    loader._pending -= 1;
     image.loaded = true;
     if (callback) callback(null, image);
   };
@@ -37,14 +39,14 @@ function browser(uri, callback) {
   return image;
 }
 
-function file(uri, callback) {
+function server(uri, callback) {
   var loader = this,
       image = new (require('canvas').Image)();
 
-  loader._loading += 1;
+  loader._pending += 1;
 
   dl.load(this.params(uri), function(err, data) {
-    loader._loading -= 1;
+    loader._pending -= 1;
     if (err) {
       if (callback) callback(err, null);
       return null;
@@ -59,7 +61,7 @@ function file(uri, callback) {
 
 prototype.loadImage = function(uri, callback) {
   return dl.isNode ?
-    file.call(this, uri, callback) :
+    server.call(this, uri, callback) :
     browser.call(this, uri, callback);
 };
 

@@ -11,7 +11,7 @@ var prototype = Handler.prototype;
 prototype.initialize = function(el, pad, obj) {
   this._el = d3.select(el).node();
   this._obj = obj || null;
-  this.padding(pad);
+  return this.padding(pad);
 };
 
 prototype.padding = function(pad) {

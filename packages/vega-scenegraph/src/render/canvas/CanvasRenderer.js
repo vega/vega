@@ -1,4 +1,4 @@
-var d3 = require('d3'),
+var DOM = require('../../util/dom'),
     Bounds = require('../../util/Bounds'),
     ImageLoader = require('../../util/ImageLoader'),
     Canvas = require('../../util/canvas'),
@@ -15,15 +15,7 @@ var prototype = (CanvasRenderer.prototype = Object.create(base));
 
 prototype.initialize = function(el, width, height, padding) {
   this._canvas = Canvas.instance(width, height);
-
-  if (el) {
-    // remove any existing canvas elements
-    var sel = d3.select(el);
-    sel.selectAll('canvas.marks').remove();
-    // add canvas element to the document
-    d3.select(sel.node().appendChild('canvas')).attr('class', 'marks');
-  }
-
+  if (el) DOM.appendUnique(el, 'canvas', 'marks');
   return base.initialize.call(this, el, width, height, padding);
 };
 
@@ -31,6 +23,10 @@ prototype.resize = function(width, height, padding) {
   base.resize.call(this, width, height, padding);
   Canvas.resize(this._canvas, this._width, this._height, this._padding);
   return this;
+};
+
+prototype.canvas = function() {
+  return this._canvas;
 };
 
 prototype.context = function() {
@@ -72,7 +68,7 @@ prototype.render = function(scene, items) {
       p = this._padding,
       w = this._width + p.left + p.right,
       h = this._height + p.top + p.bottom,
-      b, bb;
+      b;
 
   // setup
   this._scene = scene; // cache scene for async redraw
@@ -82,28 +78,17 @@ prototype.render = function(scene, items) {
 
   // render
   this.draw(g, scene, b);
-
-  // render again if the bounds changed
-  // TODO see if we can remove this due to bounds.prev
-  if (items) {
-    g.restore();
-    g.save();
-    bb = clipToBounds(g, items);
-    if (!b.encloses(bb)) {
-      this.clear(-p.left, -p.top, w, h);
-      this.draw(g, scene, bb);
-    }
-  }
   
   // takedown
   g.restore();
   this._scene = null; // clear scene cache
+
+  return this;
 };
 
 prototype.draw = function(ctx, scene, bounds) {
-  var marktype = scene.marktype,
-      renderer = marks.draw[marktype];
-  renderer.call(this, ctx, scene, bounds);
+  var mark = marks[scene.marktype];
+  mark.draw.call(this, ctx, scene, bounds);
 };
 
 prototype.clear = function(x, y, w, h) {

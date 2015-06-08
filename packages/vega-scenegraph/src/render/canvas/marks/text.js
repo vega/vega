@@ -5,7 +5,8 @@ var Bounds = require('../../../util/Bounds'),
     tempBounds = new Bounds();
 
 function draw(g, scene, bounds) {
-  if (!scene.items.length) return;
+  if (!scene.items || !scene.items.length) return;
+
   var items = scene.items,
       o, fill, stroke, opac, lw, x, y, r, t;
 

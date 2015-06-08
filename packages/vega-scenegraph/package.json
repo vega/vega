@@ -13,7 +13,8 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "d3": "^3.5.x",
-    "datalib": "^1.1.x"
+    "datalib": "^1.1.x",
+    "canvas": "^1.2.x"
   },
   "devDependencies": {
     "jshint": "latest",

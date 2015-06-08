@@ -12,7 +12,7 @@ var Bounds = require('../util/Bounds'),
     g2D = null;
 
 function context() {
-  return g2D || (g2D = canvas.create().getContext('2d'));
+  return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
 }
 
 function pathBounds(o, path, bounds) {
@@ -49,9 +49,9 @@ function line(o, bounds) {
 function rect(o, bounds) {
   var x = o.x || 0,
       y = o.y || 0,
-      w = (x + o.width) || 0,
-      h = (y + o.height) || 0;
-  bounds.set(x, y, w, h);
+      u = (x + o.width) || 0,
+      v = (y + o.height) || 0;
+  bounds.set(x, y, u, v);
   if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
     bounds.expand(o.strokeWidth);
   }
@@ -94,7 +94,7 @@ function arc(o, bounds) {
       a, i, n, x, y, ix, iy, ox, oy;
 
   var angles = [sa, ea],
-      s = sa - (sa%halfpi);
+      s = sa - (sa % halfpi);
   for (i=0; i<4 && s<ea; ++i, s+=halfpi) {
     angles.push(s);
   }
@@ -215,27 +215,28 @@ function text(o, bounds, noRotate) {
 
 function group(g, bounds, includeLegends) {
   var axes = g.axisItems || [],
-      legends = g.legendItems || [], j, m;
+      items = g.items || [],
+      legends = g.legendItems || [],
+      j, m;
 
   for (j=0, m=axes.length; j<m; ++j) {
     bounds.union(axes[j].bounds);
   }
-  for (j=0, m=g.items.length; j<m; ++j) {
-    bounds.union(g.items[j].bounds);
+  for (j=0, m=items.length; j<m; ++j) {
+    bounds.union(items[j].bounds);
   }
   if (includeLegends) {
     for (j=0, m=legends.length; j<m; ++j) {
       bounds.union(legends[j].bounds);
     }
-    if (g.width != null && g.height != null) {
-      bounds.add(g.width, g.height);
-    }
-    if (g.x != null && g.y != null) {
-      bounds.add(0, 0);
-    }
   }
-  bounds.translate(g.x||0, g.y||0);
-  return bounds;
+  if (g.width != null && g.height != null) {
+    bounds.add(g.width, g.height);
+  }
+  if (g.x != null && g.y != null) {
+    bounds.add(0, 0);
+  }
+  return bounds.translate(g.x || 0, g.y || 0);
 }
 
 var methods = {
@@ -279,7 +280,7 @@ function markBounds(mark, bounds, opt) {
     if (items.length) {
       items[0].bounds = func(items[0], bounds);
     }
-  } else {
+  } else if (items) {
     for (i=0, n=items.length; i<n; ++i) {
       bounds.union(itemBounds(items[i], func, opt));
     }

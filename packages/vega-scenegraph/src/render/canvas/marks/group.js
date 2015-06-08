@@ -2,16 +2,18 @@ var util = require('./util'),
     rect = require('./rect');
 
 function draw(g, scene, bounds) {
-  if (!scene.items.length) return;
+  if (!scene.items || !scene.items.length) return;
 
-  var items = scene.items, group, axes, legends,
-      renderer = this, gx, gy, i, n, j, m;
+  var groups = scene.items,
+      renderer = this,
+      group, items, axes, legends, gx, gy, i, n, j, m;
 
-  rect.draw(g, scene, bounds);
+  rect.draw.call(renderer, g, scene, bounds);
 
-  for (i=0, n=items.length; i<n; ++i) {
-    group = items[i];
+  for (i=0, n=groups.length; i<n; ++i) {
+    group = groups[i];
     axes = group.axisItems || [];
+    items = group.items || [];
     legends = group.legendItems || [];
     gx = group.x || 0;
     gy = group.y || 0;
@@ -24,19 +26,19 @@ function draw(g, scene, bounds) {
       g.rect(0, 0, group.width || 0, group.height || 0);
       g.clip();
     }
-    
+
     if (bounds) bounds.translate(-gx, -gy);
-    
+
     for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].layer === "back") {
+      if (axes[j].layer === 'back') {
         renderer.draw(g, axes[j], bounds);
       }
     }
-    for (j=0, m=group.items.length; j<m; ++j) {
-      renderer.draw(g, group.items[j], bounds);
+    for (j=0, m=items.length; j<m; ++j) {
+      renderer.draw(g, items[j], bounds);
     }
     for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].layer !== "back") {
+      if (axes[j].layer !== 'back') {
         renderer.draw(g, axes[j], bounds);
       }
     }
@@ -54,7 +56,7 @@ function hit(g, o) {
 }
 
 function pick(g, scene, x, y, gx, gy) {
-  if (scene.items.length === 0 ||
+  if (!scene.items || !scene.items.length ||
       scene.bounds && !scene.bounds.contains(gx, gy)) {
     return false;
   }

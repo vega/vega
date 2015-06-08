@@ -110,7 +110,7 @@ prototype.mark = function(scene) {
   var tag  = meta[0],
       attr = meta[1],
       nest = meta[2] || false,
-      data = nest ? [scene.items] : scene.items,
+      data = nest ? [scene.items] : (scene.items || []),
       defs = this._defs,
       className = cssClass(scene),
       str = '',
@@ -136,7 +136,7 @@ prototype.mark = function(scene) {
     if (tag === 'text') {
       str += escape_text(data[i].text);
     } else if (tag === 'g') {
-      str += group_bg(scene, styles(data[i], scene, 'rect', defs));
+      str += group_bg(data[i], styles(data[i], scene, 'rect', defs));
       str += this.markGroup(data[i]);
     }
     str += closeTag(tag);
@@ -221,7 +221,7 @@ function styles(d, mark, tag, defs) {
   }
 
   if (mark.interactive === false) {
-    s += (s.length ? ' ' : '') + 'pointer-events: none;';
+    s += ' pointer-events: none;';
   }
 
   // we don't exclude blank styles for d3 dom compat

@@ -11,7 +11,7 @@ describe('base renderer', function() {
 
   it('should support argument free constructor', function() {
     var r = new Renderer();
-    assert.equal(r._ctx, null);
+    assert.equal(r._el, null);
     assert.equal(r._bgcolor, null);
   });
 
