@@ -43,7 +43,6 @@ prototype.remove = function() {
 
 prototype.touch = function() {
   if (this.pathCache) this.pathCache = null;
-  if (this.mark.pathCache) this.mark.pathCache = null;
 };
 
 module.exports = Item;

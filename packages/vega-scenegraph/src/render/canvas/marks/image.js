@@ -1,7 +1,7 @@
 var util = require('./util');
 
 function draw(g, scene, bounds) {
-  if (!scene.items.length) return;
+  if (!scene.items || !scene.items.length) return;
 
   var renderer = this,
       items = scene.items, o;

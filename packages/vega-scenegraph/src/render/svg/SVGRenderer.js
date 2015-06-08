@@ -1,4 +1,5 @@
-var d3 = require('d3'),
+var DOM = require('../../util/dom'),
+    d3 = require('d3'),
     dl = require('datalib'),
     util = require('./marks/util'),
     marks = require('./marks'),
@@ -13,11 +14,7 @@ var prototype = (SVGRenderer.prototype = Object.create(base));
 
 prototype.initialize = function(el, width, height, padding) {
   if (el) {
-    // remove any existing svg elements
-    var sel = d3.select(el);
-    sel.selectAll('svg.marks').remove();
-    // create svg element and initialize attributes
-    this._svg = sel.append('svg').attr('class', 'marks');
+    this._svg = DOM.appendUnique(el, 'svg', 'marks');
     // set the svg root group
     this._root = this._svg.append('g');
   }
@@ -115,6 +112,7 @@ prototype.render = function(scene, items) {
   this.updateDefs();
 
   util.defs = null;
+  return this;
 };
 
 prototype.update = function(items) {

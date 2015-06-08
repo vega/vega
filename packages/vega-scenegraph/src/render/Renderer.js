@@ -1,5 +1,5 @@
 function Renderer() {
-  this._ctx = null;
+  this._el = null;
   this._bgcolor = null;
 }
 
