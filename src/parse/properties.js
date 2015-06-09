@@ -320,6 +320,9 @@ function valueSchema(type) {
       }, {
         "properties": {"field": {"$ref": "#/refs/field"}},
         "required": ["field"]
+      }, {
+        "properties": {"band": {"type": "boolean"}},
+        "required": ["band"]
       }]
     }]
   }
@@ -388,8 +391,7 @@ properties.schema = {
       "properties": {
         "mult": {"type": "number"},
         "offset": {"type": "number"},
-        "scale": {"$ref": "#/refs/scale"},
-        "band": {"type": "boolean"}
+        "scale": {"$ref": "#/refs/scale"}
       }
     },
 

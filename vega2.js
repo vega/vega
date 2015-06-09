@@ -9506,6 +9506,9 @@ function valueSchema(type) {
       }, {
         "properties": {"field": {"$ref": "#/refs/field"}},
         "required": ["field"]
+      }, {
+        "properties": {"band": {"type": "boolean"}},
+        "required": ["band"]
       }]
     }]
   }
@@ -9574,8 +9577,7 @@ properties.schema = {
       "properties": {
         "mult": {"type": "number"},
         "offset": {"type": "number"},
-        "scale": {"$ref": "#/refs/scale"},
-        "band": {"type": "boolean"}
+        "scale": {"$ref": "#/refs/scale"}
       }
     },
 
@@ -14015,6 +14017,14 @@ var sortDef = {
   "order": {"enum": [C.ASC, C.DESC]}
 };
 
+var rangeDef = [
+  {"enum": ["width", "height", "shapes", "category10", "category20"]},
+  {
+    "type": "array",
+    "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+  }
+];
+
 module.exports = Scale;
 Scale.schema = {
   "refs": {
@@ -14031,7 +14041,8 @@ Scale.schema = {
                   "type": "array",
                   "items": {"$ref": "#/refs/data"}
                 }
-              }
+              },
+              "required": ["fields"]
             }
           ]
         },
@@ -14059,7 +14070,8 @@ Scale.schema = {
             }
           ]
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
 
@@ -14112,21 +14124,16 @@ Scale.schema = {
 
           "reverse": {"type": "boolean"},
           "round": {"type": "boolean"}
-        }
+        },
+
+        "required": ["name"]
       }, {
         "oneOf": [{
           "properties": {
             "type": {"enum": [C.ORDINAL]},
 
             "range": {
-              "oneOf": [
-                {"type": "string"},
-                {
-                  "type": "array",
-                  "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
-                },
-                {"$ref": "#/refs/data"}
-              ]
+              "oneOf": rangeDef.concat({"$ref": "#/refs/data"})
             },
 
             "points": {"type": "boolean"},
@@ -14137,6 +14144,7 @@ Scale.schema = {
         }, {
           "properties": {
             "type": {"enum": [C.TIME, C.TIME_UTC]},
+            "range": {"oneOf": rangeDef},
             "clamp": {"type": "boolean"},
             "nice": {"enum": ["second", "minute", "hour", 
               "day", "week", "month", "year"]}
@@ -14145,7 +14153,8 @@ Scale.schema = {
           "anyOf": [{
             "properties": {
               "type": {"enum": [C.LINEAR, C.LOG, C.POWER, C.SQRT, 
-                C.QUANTILE, C.QUANTIZE, C.THRESHOLD]},
+                C.QUANTILE, C.QUANTIZE, C.THRESHOLD], "default": C.LINEAR},
+              "range": {"oneOf": rangeDef},
               "clamp": {"type": "boolean"},
               "nice": {"type": "boolean"},
               "zero": {"type": "boolean"}
@@ -14158,7 +14167,7 @@ Scale.schema = {
           }, {
             "properties": {
               "type": {"enum": [C.QUANTILE]},
-              "sort": sortDef       
+              "sort": sortDef
             }
           }]
         }]
@@ -18288,6 +18297,7 @@ module.exports = {
   ORDINAL: "ordinal",
   LOG: "log",
   POWER: "pow",
+  SQRT: "sqrt",
   TIME: "time",
   TIME_UTC: "utc",
   QUANTILE: "quantile",

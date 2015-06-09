@@ -28,6 +28,7 @@ module.exports = {
   ORDINAL: "ordinal",
   LOG: "log",
   POWER: "pow",
+  SQRT: "sqrt",
   TIME: "time",
   TIME_UTC: "utc",
   QUANTILE: "quantile",
