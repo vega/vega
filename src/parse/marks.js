@@ -18,7 +18,10 @@ parseRootMark.schema = {
     "container": {
       "type": "object",
       "properties": {
-        // "scales": TODO
+        "scales": {
+          "type": "array",
+          "items": {"$ref": "#/defs/scale"}
+        },
         "axes": {
           "type": "array",
           "items": {"$ref": "#/defs/axis"}

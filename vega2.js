@@ -8899,7 +8899,10 @@ parseRootMark.schema = {
     "container": {
       "type": "object",
       "properties": {
-        // "scales": TODO
+        "scales": {
+          "type": "array",
+          "items": {"$ref": "#/defs/scale"}
+        },
         "axes": {
           "type": "array",
           "items": {"$ref": "#/defs/axis"}
@@ -14005,7 +14008,164 @@ function range(group) {
   return rng;
 }
 
+var sortDef = {
+  "type": "object",
+  "field": {"type": "string"},
+  "stat": {"enum": require('../transforms/Aggregate').VALID_OPS},
+  "order": {"enum": [C.ASC, C.DESC]}
+};
+
 module.exports = Scale;
+Scale.schema = {
+  "refs": {
+    "data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "oneOf": [
+            {"type": "string"},
+            {
+              "type": "object",
+              "properties": {
+                "fields": {
+                  "type": "array",
+                  "items": {"$ref": "#/refs/data"}
+                }
+              }
+            }
+          ]
+        },
+        "field": {
+          "oneOf": [
+            {"type": "string"},
+            {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            {
+              "type": "object",
+              "properties": {
+                "parent": {"type": "string"}
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parent": {"type": "string"}
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+
+  "defs": {
+    "scale": {
+      "title": "Scale function",
+      "type": "object",
+
+      "allOf": [{
+        "properties": {
+          "name": {"type": "string"},
+
+          "type": {
+            "enum": [C.LINEAR, C.ORDINAL, C.TIME, C.TIME_UTC, C.LOG, 
+              C.POWER, C.SQRT, C.QUANTILE, C.QUANTIZE, C.THRESHOLD],
+            "default": "linear"
+          },
+
+          "domain": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+              },
+              {"$ref": "#/refs/data"}
+            ]
+          },
+
+          "domainMin": {
+            "oneOf": [
+              {"type": "number"},
+              {"$ref": "#/refs/data"}
+            ]
+          },
+
+          "domainMax": {
+            "oneOf": [
+              {"type": "number"},
+              {"$ref": "#/refs/data"}
+            ]
+          },
+
+          "rangeMin": {
+            "oneOf": [{"type": "string"}, {"type": "number"}]
+          },
+
+          "rangeMax": {
+            "oneOf": [{"type": "string"}, {"type": "number"}]
+          },
+
+          "reverse": {"type": "boolean"},
+          "round": {"type": "boolean"}
+        }
+      }, {
+        "oneOf": [{
+          "properties": {
+            "type": {"enum": [C.ORDINAL]},
+
+            "range": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "array",
+                  "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+                },
+                {"$ref": "#/refs/data"}
+              ]
+            },
+
+            "points": {"type": "boolean"},
+            "padding": {"type": "number"},
+
+            "sort": sortDef
+          }
+        }, {
+          "properties": {
+            "type": {"enum": [C.TIME, C.TIME_UTC]},
+            "clamp": {"type": "boolean"},
+            "nice": {"enum": ["second", "minute", "hour", 
+              "day", "week", "month", "year"]}
+          }
+        }, {
+          "anyOf": [{
+            "properties": {
+              "type": {"enum": [C.LINEAR, C.LOG, C.POWER, C.SQRT, 
+                C.QUANTILE, C.QUANTIZE, C.THRESHOLD]},
+              "clamp": {"type": "boolean"},
+              "nice": {"type": "boolean"},
+              "zero": {"type": "boolean"}
+            }
+          }, {
+            "properties": {
+              "type": {"enum": [C.POWER]},
+              "exponent": {"type": "number"}
+            }
+          }, {
+            "properties": {
+              "type": {"enum": [C.QUANTILE]},
+              "sort": sortDef       
+            }
+          }]
+        }]
+      }]
+    }
+  }
+};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/Node":34,"../dataflow/changeset":36,"../transforms/Aggregate":83,"../util/config":107,"../util/constants":108,"../util/log":109,"datalib":20}],79:[function(require,module,exports){
@@ -15399,10 +15559,12 @@ proto.transform = function(input, reset) {
   return aggr.changes(input, output);
 }
 
-var VALID_OPS = ["values", "count", "valid", "missing", "distinct", 
-                 "sum", "mean", "average", "variance", "variancep", "stdev", 
-                 "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
-                 "argmin", "argmax"];
+var VALID_OPS = Aggregate.VALID_OPS = [
+  "values", "count", "valid", "missing", "distinct", 
+  "sum", "mean", "average", "variance", "variancep", "stdev", 
+  "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
+  "argmin", "argmax"
+];
 
 module.exports   = Aggregate;
 Aggregate.schema = {
@@ -18127,7 +18289,10 @@ module.exports = {
   LOG: "log",
   POWER: "pow",
   TIME: "time",
+  TIME_UTC: "utc",
   QUANTILE: "quantile",
+  QUANTIZE: "quantize",
+  THRESHOLD: "threshold",
 
   DOMAIN: "domain",
   RANGE: "range",
@@ -18199,7 +18364,8 @@ module.exports = {
 
 },{"./config":107,"_process":3,"datalib":20}],110:[function(require,module,exports){
 var dl = require('datalib'),
-    parse = require('../parse');
+    parse = require('../parse'),
+    Scale = require('../scene/Scale');
 
 module.exports = function schema(opt) {
   var schema = {defs: {}, refs:{}, "$ref": "#/defs/spec"};
@@ -18212,6 +18378,11 @@ module.exports = function schema(opt) {
     if (s.defs) dl.extend(schema.defs, s.defs);
   });
 
+  // Scales aren't part of the parser, so add their schema manually
+  var ss = Scale.schema;
+  if (ss.refs) dl.extend(schema.refs, ss.refs);
+  if (ss.defs) dl.extend(schema.defs, ss.defs);
+
   // Extend schema to support custom mark properties or property sets.
   if (opt.properties) dl.keys(opt.properties).forEach(function(k) {
     schema.defs.propset.properties[k] = opt.properties;
@@ -18223,6 +18394,6 @@ module.exports = function schema(opt) {
 
   return schema;
 };
-},{"../parse":48,"datalib":20}]},{},[1])(1)
+},{"../parse":48,"../scene/Scale":78,"datalib":20}]},{},[1])(1)
 });
 //# sourceMappingURL=vega2.js.map

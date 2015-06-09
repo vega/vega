@@ -29,7 +29,10 @@ module.exports = {
   LOG: "log",
   POWER: "pow",
   TIME: "time",
+  TIME_UTC: "utc",
   QUANTILE: "quantile",
+  QUANTIZE: "quantize",
+  THRESHOLD: "threshold",
 
   DOMAIN: "domain",
   RANGE: "range",

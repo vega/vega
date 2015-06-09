@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var Node  = require('../src/dataflow/Node'),
     chai  = require('chai'),
     spies = require('chai-spies');

@@ -157,10 +157,12 @@ proto.transform = function(input, reset) {
   return aggr.changes(input, output);
 }
 
-var VALID_OPS = ["values", "count", "valid", "missing", "distinct", 
-                 "sum", "mean", "average", "variance", "variancep", "stdev", 
-                 "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
-                 "argmin", "argmax"];
+var VALID_OPS = Aggregate.VALID_OPS = [
+  "values", "count", "valid", "missing", "distinct", 
+  "sum", "mean", "average", "variance", "variancep", "stdev", 
+  "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
+  "argmin", "argmax"
+];
 
 module.exports   = Aggregate;
 Aggregate.schema = {

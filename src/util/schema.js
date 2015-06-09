@@ -1,5 +1,6 @@
 var dl = require('datalib'),
-    parse = require('../parse');
+    parse = require('../parse'),
+    Scale = require('../scene/Scale');
 
 module.exports = function schema(opt) {
   var schema = {defs: {}, refs:{}, "$ref": "#/defs/spec"};
@@ -11,6 +12,11 @@ module.exports = function schema(opt) {
     if (s.refs) dl.extend(schema.refs, s.refs);
     if (s.defs) dl.extend(schema.defs, s.defs);
   });
+
+  // Scales aren't part of the parser, so add their schema manually
+  var ss = Scale.schema;
+  if (ss.refs) dl.extend(schema.refs, ss.refs);
+  if (ss.defs) dl.extend(schema.defs, ss.defs);
 
   // Extend schema to support custom mark properties or property sets.
   if (opt.properties) dl.keys(opt.properties).forEach(function(k) {

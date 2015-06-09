@@ -388,4 +388,161 @@ function range(group) {
   return rng;
 }
 
+var sortDef = {
+  "type": "object",
+  "field": {"type": "string"},
+  "stat": {"enum": require('../transforms/Aggregate').VALID_OPS},
+  "order": {"enum": [C.ASC, C.DESC]}
+};
+
 module.exports = Scale;
+Scale.schema = {
+  "refs": {
+    "data": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "oneOf": [
+            {"type": "string"},
+            {
+              "type": "object",
+              "properties": {
+                "fields": {
+                  "type": "array",
+                  "items": {"$ref": "#/refs/data"}
+                }
+              }
+            }
+          ]
+        },
+        "field": {
+          "oneOf": [
+            {"type": "string"},
+            {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            {
+              "type": "object",
+              "properties": {
+                "parent": {"type": "string"}
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parent": {"type": "string"}
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+
+  "defs": {
+    "scale": {
+      "title": "Scale function",
+      "type": "object",
+
+      "allOf": [{
+        "properties": {
+          "name": {"type": "string"},
+
+          "type": {
+            "enum": [C.LINEAR, C.ORDINAL, C.TIME, C.TIME_UTC, C.LOG, 
+              C.POWER, C.SQRT, C.QUANTILE, C.QUANTIZE, C.THRESHOLD],
+            "default": "linear"
+          },
+
+          "domain": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+              },
+              {"$ref": "#/refs/data"}
+            ]
+          },
+
+          "domainMin": {
+            "oneOf": [
+              {"type": "number"},
+              {"$ref": "#/refs/data"}
+            ]
+          },
+
+          "domainMax": {
+            "oneOf": [
+              {"type": "number"},
+              {"$ref": "#/refs/data"}
+            ]
+          },
+
+          "rangeMin": {
+            "oneOf": [{"type": "string"}, {"type": "number"}]
+          },
+
+          "rangeMax": {
+            "oneOf": [{"type": "string"}, {"type": "number"}]
+          },
+
+          "reverse": {"type": "boolean"},
+          "round": {"type": "boolean"}
+        }
+      }, {
+        "oneOf": [{
+          "properties": {
+            "type": {"enum": [C.ORDINAL]},
+
+            "range": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "array",
+                  "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+                },
+                {"$ref": "#/refs/data"}
+              ]
+            },
+
+            "points": {"type": "boolean"},
+            "padding": {"type": "number"},
+
+            "sort": sortDef
+          }
+        }, {
+          "properties": {
+            "type": {"enum": [C.TIME, C.TIME_UTC]},
+            "clamp": {"type": "boolean"},
+            "nice": {"enum": ["second", "minute", "hour", 
+              "day", "week", "month", "year"]}
+          }
+        }, {
+          "anyOf": [{
+            "properties": {
+              "type": {"enum": [C.LINEAR, C.LOG, C.POWER, C.SQRT, 
+                C.QUANTILE, C.QUANTIZE, C.THRESHOLD]},
+              "clamp": {"type": "boolean"},
+              "nice": {"type": "boolean"},
+              "zero": {"type": "boolean"}
+            }
+          }, {
+            "properties": {
+              "type": {"enum": [C.POWER]},
+              "exponent": {"type": "number"}
+            }
+          }, {
+            "properties": {
+              "type": {"enum": [C.QUANTILE]},
+              "sort": sortDef       
+            }
+          }]
+        }]
+      }]
+    }
+  }
+};
