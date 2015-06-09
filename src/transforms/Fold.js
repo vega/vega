@@ -75,11 +75,16 @@ Fold.schema = {
   "properties": {
     "type": {"enum": ["fold"]},
     "fields": {
-      "type": "array",
-      "description": "An array of field references indicating the data properties to fold.",
-      "items": {"type": "string"},
-      "minItems": 1,
-      "uniqueItems": true
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "An array of field references indicating the data properties to fold.",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        {"$ref": "#/refs/signal"}
+      ]
     },
     "output": {
       "type": "object",

@@ -63,45 +63,55 @@ Bin.schema = {
   "properties": {
     "type": {"enum": ["bin"]},
     "field": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The name of the field to bin values from."
     },
     "min": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The minimum bin value to consider."
     },
     "max": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum bin value to consider."
     },
     "base": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The number base to use for automatic bin determination.",
       "default": 10
     },
     "maxbins": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum number of allowable bins.",
       "default": 20
     },
     "step": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "An exact step size to use between bins. If provided, options such as maxbins will be ignored."
     },
     "steps": {
-      "type": "array",
-      "items": {"type": "number"},
-      "description": "An array of allowable step sizes to choose from."
+      "description": "An array of allowable step sizes to choose from.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"type": "number"}
+        },
+        {"$ref": "#/refs/signal"}
+      ]
     },
     "minstep": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "A minimum allowable step size (particularly useful for integer values)."
     },
     "div": {
-      "type": "array",
-      "items": {"type": "number"},
       "description": "An array of scale factors indicating allowable subdivisions.",
-      "default": [5, 2]
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"type": "number"},
+          "default": [5, 2]
+        },
+        {"$ref": "#/refs/signal"}
+      ]
     }
   },
   "additionalProperties": false,

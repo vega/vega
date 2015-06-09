@@ -127,7 +127,7 @@ Cross.schema = {
         "If unspecified, the primary data is crossed with itself."
     },
     "diagonal": {
-      "type": "boolean",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "description": "If false, items along the \"diagonal\" of the cross-product " +
         "(those elements with the same index in their respective array) " +
         "will not be included in the output.",

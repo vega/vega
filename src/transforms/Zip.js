@@ -148,12 +148,12 @@ Zip.schema = {
     {
       "properties": dl.extend({
         "key": {
-          "type": "string",
-          "description": "The field in the primary data set to match against the secondary data set."
+          "description": "The field in the primary data set to match against the secondary data set.",
+          "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
         },
         "withKey": {
-          "type": "string",
-          "description": "The field in the secondary data set to match against the primary data set."
+          "description": "The field in the secondary data set to match against the primary data set.",
+          "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
         },
         "default": {
           // "type": "any",

@@ -472,7 +472,13 @@ Scale.schema = {
             "oneOf": [
               {
                 "type": "array",
-                "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+                "items": {
+                  "oneOf": [
+                    {"type":"string"}, 
+                    {"type": "number"}, 
+                    {"$ref": "#/refs/signal"}
+                  ]
+                }
               },
               {"$ref": "#/refs/data"}
             ]
@@ -481,23 +487,33 @@ Scale.schema = {
           "domainMin": {
             "oneOf": [
               {"type": "number"},
-              {"$ref": "#/refs/data"}
+              {"$ref": "#/refs/data"},
+              {"$ref": "#/refs/signal"}
             ]
           },
 
           "domainMax": {
             "oneOf": [
               {"type": "number"},
-              {"$ref": "#/refs/data"}
+              {"$ref": "#/refs/data"},
+              {"$ref": "#/refs/signal"}
             ]
           },
 
           "rangeMin": {
-            "oneOf": [{"type": "string"}, {"type": "number"}]
+            "oneOf": [
+              {"type":"string"}, 
+              {"type": "number"}, 
+              {"$ref": "#/refs/signal"}
+            ]
           },
 
           "rangeMax": {
-            "oneOf": [{"type": "string"}, {"type": "number"}]
+            "oneOf": [
+              {"type":"string"}, 
+              {"type": "number"}, 
+              {"$ref": "#/refs/signal"}
+            ]
           },
 
           "reverse": {"type": "boolean"},

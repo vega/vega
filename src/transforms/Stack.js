@@ -99,22 +99,32 @@ Stack.schema = {
   "properties": {
     "type": {"enum": ["stack"]},
     "groupby": {
-      "type": "array",
-      "items": {"type": "string"},
-      "description": "A list of fields to split the data into groups (stacks)."
+      "description": "A list of fields to split the data into groups (stacks).",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
     },
     "sortby": {
-      "type": "array",
-      "items": {"type": "string"},
-      "description": "A list of fields to determine the sort order of stacks."
+      "description": "A list of fields to determine the sort order of stacks.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
     },
     "value": {
-      "type": "string",
-      "description": "The data field that determines the thickness/height of stacks."
+      "description": "The data field that determines the thickness/height of stacks.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "offset": {
-      "enum": ["zero", "silhouette", "wiggle", "expand"],
       "description": "The baseline offset",
+      "oneOf": [{"enum": ["zero", "silhouette", "wiggle", "expand"]}, {"$ref": "#/refs/signal"}],
       "default": "zero"
     },
     "output": {

@@ -76,42 +76,52 @@ Treemap.schema = {
   "properties": {
     "type": {"enum": ["treemap"]},
     "sort": {
-      "type": "array",
-      "items": {"type": "string"},
       "description": "A list of fields to use as sort criteria for sibling nodes.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
       "default": ["-value"]
     },
     "children": {
-      "type": "string",
       "description": "A data field that represents the children array",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "children"
     },
     "value": {
-      "type": "string",
       "description": "The values to use to determine the area of each leaf-level treemap cell.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "value"
     },
     "size": {
-      "type": "array",
-      "items": {"type": "number"},
       "description": "The dimensions of the treemap layout",
-      "minItems": 0,
-      "maxItems": 0,
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+          "minItems": 0,
+          "maxItems": 0
+        },
+        {"$ref": "#/refs/signal"}
+      ],
       "default": [500, 500]
     },
     "round": {
-      "type": "boolean",
       "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "default": true
     },
     "sticky": {
-      "type": "boolean",
       "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "default": false
     },
     "ratio": {
-      "type": "number",
       "description": "The target aspect ratio for the layout to optimize.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": defaultRatio
     },
     "padding": {
@@ -119,10 +129,11 @@ Treemap.schema = {
         {"type": "number"},
         {
           "type": "array", 
-          "items": {"type": "number"},
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
           "minItems": 4,
           "maxItems": 4
-        }
+        },
+        {"$ref": "#/refs/signal"}
       ],
       "description": "he padding (in pixels) to provide around internal nodes in the treemap."
     },

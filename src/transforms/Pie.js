@@ -69,25 +69,35 @@ Pie.schema = {
   "properties": {
     "type": {"enum": ["pie"]},
     "value": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The data values to encode as angular spans. " + 
         "If this property is omitted, all pie slices will have equal spans."
     },
     "startAngle": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 2 * Math.PI,
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2 * Math.PI
+        }, 
+        {"$ref": "#/refs/signal"}
+      ],
       "default": 0
     },
     "endAngle": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 2 * Math.PI,
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2 * Math.PI
+        }, 
+        {"$ref": "#/refs/signal"}
+      ],
       "default": 2 * Math.PI,
     },
     "sort": {
-      "type": "boolean",
       "description": " If true, will sort the data prior to computing angles.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "default": false
     },
     "output": {

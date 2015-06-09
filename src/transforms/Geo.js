@@ -20,9 +20,9 @@ function Geo(graph) {
 
 Geo.Parameters = {
   projection: {type: "value", default: "mercator"},
-  center:     {type: "array[value]"},
-  translate:  {type: "array[value]"},
-  rotate:     {type: "array[value]"},
+  center:     {type: "array<value>"},
+  translate:  {type: "array<value>"},
+  rotate:     {type: "array<value>"},
   scale:      {type: "value"},
   precision:  {type: "value"},
   clipAngle:  {type: "value"},
@@ -86,43 +86,53 @@ module.exports = Geo;
 
 Geo.baseSchema = {
   "projection": {
-    "type": "string",
     "description": "The type of cartographic projection to use.",
+    "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
     "default": "mercator"
   },
   "center": {
-    "type": "array",
     "description": "The center of the projection.",
-    "items": {"type": "number"},
-    "minItems": 2,
-    "maxItems": 2
+    "oneOf": [
+      {
+        "type": "array",
+        "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+        "minItems": 2,
+        "maxItems": 2
+      },
+      {"$ref": "#/refs/signal"}
+    ]    
   },
   "translate": {
-    "type": "array",
     "description": "The translation of the projection.",
-    "items": {"type": "number"},
-    "minItems": 2,
-    "maxItems": 2
+    "oneOf": [
+      {
+        "type": "array",
+        "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+        "minItems": 2,
+        "maxItems": 2
+      },
+      {"$ref": "#/refs/signal"}
+    ]    
   },
   "rotate": {
-    "type": "number",
-    "description": "The rotation of the projection."
+    "description": "The rotation of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "scale": {
-    "type": "number",
-    "description": "The scale of the projection."
+    "description": "The scale of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "precision": {
-    "type": "number",
-    "description": "The desired precision of the projection."
+    "description": "The desired precision of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "clipAngle": {
-    "type": "number",
-    "description": "The clip angle of the projection."
+    "description": "The clip angle of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "clipExtent": {
-    "type": "number",
-    "description": "The clip extent of the projection."
+    "description": "The clip extent of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   }
 };
 
@@ -134,12 +144,12 @@ Geo.schema = {
   "properties": dl.extend({
     "type": {"enum": ["geo"]},
     "lon": {
-      "type": "string",
-      "description": "The input longitude values."
+      "description": "The input longitude values.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "lat": {
-      "type": "string",
-      "description": "The input latitude values."
+      "description": "The input latitude values.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "output": {
       "type": "object",

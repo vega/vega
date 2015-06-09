@@ -98,33 +98,41 @@ LinkPath.schema = {
   "properties": {
     "type": {"enum": ["linkpath"]},
     "source": {
-      "type": "string",
       "description": "The data field that references the source node for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "_source"
     },
     "target": {
-      "type": "string",
       "description": "The data field that references the target node for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "_target"
     },
     "x": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "layout_x"
     },
     "y": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "layout_y"
     },
     "tension": {
-      "type": "number",
       "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
-      "default": 0.2,
-      "minimum": 0,
-      "maximum": 1
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": 0.2
     },
     "shape": {
-      "enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"],
       "description": "The path shape to use",
+      "oneOf": [
+        {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+        {"$ref": "#/refs/signal"}
+      ],
       "default": "line"
     },
     "output": {

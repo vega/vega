@@ -14163,7 +14163,13 @@ Scale.schema = {
             "oneOf": [
               {
                 "type": "array",
-                "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
+                "items": {
+                  "oneOf": [
+                    {"type":"string"}, 
+                    {"type": "number"}, 
+                    {"$ref": "#/refs/signal"}
+                  ]
+                }
               },
               {"$ref": "#/refs/data"}
             ]
@@ -14172,23 +14178,33 @@ Scale.schema = {
           "domainMin": {
             "oneOf": [
               {"type": "number"},
-              {"$ref": "#/refs/data"}
+              {"$ref": "#/refs/data"},
+              {"$ref": "#/refs/signal"}
             ]
           },
 
           "domainMax": {
             "oneOf": [
               {"type": "number"},
-              {"$ref": "#/refs/data"}
+              {"$ref": "#/refs/data"},
+              {"$ref": "#/refs/signal"}
             ]
           },
 
           "rangeMin": {
-            "oneOf": [{"type": "string"}, {"type": "number"}]
+            "oneOf": [
+              {"type":"string"}, 
+              {"type": "number"}, 
+              {"$ref": "#/refs/signal"}
+            ]
           },
 
           "rangeMax": {
-            "oneOf": [{"type": "string"}, {"type": "number"}]
+            "oneOf": [
+              {"type":"string"}, 
+              {"type": "number"}, 
+              {"$ref": "#/refs/signal"}
+            ]
           },
 
           "reverse": {"type": "boolean"},
@@ -15486,6 +15502,7 @@ var dl = require('datalib'),
     log = require('../util/log'),
     C = require('../util/constants');
 
+
 function Aggregate(graph) {
   Transform.prototype.init.call(this, graph)
     .router(true).revises(true);
@@ -15505,10 +15522,13 @@ function Aggregate(graph) {
           }
         }
 
+        function sg(x) { if (x.signal) signals[x.signal] = 1; }
+
         for(i=0, len=fields.length; i<len; ++i) {
           f = fields[i];
           if(f.name.signal) signals[f.name.signal] = 1;
-          dl.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
+          dl.array(f.ops).forEach(sg);
+          dl.array(f.as).forEach(sg);
         }
 
         this._transform._fieldsDef = fields;
@@ -15654,7 +15674,7 @@ Aggregate.schema = {
     "type": {"enum": ["aggregate"]},
     "groupby": {
       "type": "array",
-      "items": {"type": "string"},
+      "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]},
       "description": "A list of fields to split the data into groups."
     },
     "summarize": {
@@ -15664,7 +15684,7 @@ Aggregate.schema = {
           "additionalProperties": {
             "type": "array",
             "description": "An array of aggregate functions.",
-            "items": {"enum": VALID_OPS}
+            "items": {"oneOf": [{"enum": VALID_OPS}, {"$ref": "#/refs/signal"}]}
           }
         },
         {
@@ -15673,18 +15693,18 @@ Aggregate.schema = {
             "type": "object",
             "properties": {
               "name": {
-                "type": "string",
-                "description": "The name of the field to aggregate."
+                "description": "The name of the field to aggregate.",
+                "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
               },
               "ops": {
                 "type": "array",
                 "description": "An array of aggregate functions.",
-                "items": {"enum": VALID_OPS}
+                "items": {"oneOf": [{"enum": VALID_OPS}, {"$ref": "#/refs/signal"}]}
               },
               "as": {
                 "type": "array",
                 "description": "An optional array of names to use for the output fields.",
-                "items": {"type": "string"}
+                "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
               }
             },
             "additionalProperties": false,
@@ -15792,45 +15812,55 @@ Bin.schema = {
   "properties": {
     "type": {"enum": ["bin"]},
     "field": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The name of the field to bin values from."
     },
     "min": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The minimum bin value to consider."
     },
     "max": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum bin value to consider."
     },
     "base": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The number base to use for automatic bin determination.",
       "default": 10
     },
     "maxbins": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum number of allowable bins.",
       "default": 20
     },
     "step": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "An exact step size to use between bins. If provided, options such as maxbins will be ignored."
     },
     "steps": {
-      "type": "array",
-      "items": {"type": "number"},
-      "description": "An array of allowable step sizes to choose from."
+      "description": "An array of allowable step sizes to choose from.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"type": "number"}
+        },
+        {"$ref": "#/refs/signal"}
+      ]
     },
     "minstep": {
-      "type": "number",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "A minimum allowable step size (particularly useful for integer values)."
     },
     "div": {
-      "type": "array",
-      "items": {"type": "number"},
       "description": "An array of scale factors indicating allowable subdivisions.",
-      "default": [5, 2]
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"type": "number"},
+          "default": [5, 2]
+        },
+        {"$ref": "#/refs/signal"}
+      ]
     }
   },
   "additionalProperties": false,
@@ -15967,7 +15997,7 @@ Cross.schema = {
         "If unspecified, the primary data is crossed with itself."
     },
     "diagonal": {
-      "type": "boolean",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "description": "If false, items along the \"diagonal\" of the cross-product " +
         "(those elements with the same index in their respective array) " +
         "will not be included in the output.",
@@ -16318,11 +16348,16 @@ Fold.schema = {
   "properties": {
     "type": {"enum": ["fold"]},
     "fields": {
-      "type": "array",
-      "description": "An array of field references indicating the data properties to fold.",
-      "items": {"type": "string"},
-      "minItems": 1,
-      "uniqueItems": true
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "An array of field references indicating the data properties to fold.",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        {"$ref": "#/refs/signal"}
+      ]
     },
     "output": {
       "type": "object",
@@ -16458,11 +16493,17 @@ Force.schema = {
   "properties": {
     "type": {"enum": ["force"]},
     "size": {
-      "type": "array",
       "description": "The dimensions [width, height] of this force layout.",
-      "minItems": 2,
-      "maxItems": 2,
-      "items": {"type": "number"},
+      "oneOf": [
+        {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+
       "default": [500, 500]
     },
     "links": {
@@ -16470,48 +16511,48 @@ Force.schema = {
       "description": "The name of the link (edge) data set."
     },
     "linkDistance": {
-      "type": ["number", "string"],
       "description": "Determines the length of edges, in pixels.",
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": 20
     },
     "linkStrength": {
-      "type": ["number", "string"],
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "Determines the tension of edges (the spring constant).",
       "default": 1
     },
     "charge": {
-      "type": ["number", "string"],
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The strength of the charge each node exerts.",
       "default": -30
     },
     "chargeDistance": {
-      "type": ["number", "string"],
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum distance over which charge forces are applied.",
       "default": Infinity
     },
     "iterations": {
-      "type": "number",
       "description": "The number of iterations to run the force directed layout.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 500
     },
     "friction": {
-      "type": "number",
       "description": "The strength of the friction force used to stabilize the layout.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 0.9
     },
     "theta": {
-      "type": "number",
       "description": "The theta parameter for the Barnes-Hut algorithm, which is used to compute charge forces between nodes.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 0.8
     },
     "gravity": {
-      "type": "number",
       "description": "The strength of the pseudo-gravity force that pulls nodes towards the center of the layout area.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 0.1
     },
     "alpha": {
-      "type": "number",
       "description": "A \"temperature\" parameter that determines how much node positions are adjusted at each step.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 0.1
     },
     "output": {
@@ -16617,9 +16658,9 @@ function Geo(graph) {
 
 Geo.Parameters = {
   projection: {type: "value", default: "mercator"},
-  center:     {type: "array[value]"},
-  translate:  {type: "array[value]"},
-  rotate:     {type: "array[value]"},
+  center:     {type: "array<value>"},
+  translate:  {type: "array<value>"},
+  rotate:     {type: "array<value>"},
   scale:      {type: "value"},
   precision:  {type: "value"},
   clipAngle:  {type: "value"},
@@ -16683,43 +16724,53 @@ module.exports = Geo;
 
 Geo.baseSchema = {
   "projection": {
-    "type": "string",
     "description": "The type of cartographic projection to use.",
+    "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
     "default": "mercator"
   },
   "center": {
-    "type": "array",
     "description": "The center of the projection.",
-    "items": {"type": "number"},
-    "minItems": 2,
-    "maxItems": 2
+    "oneOf": [
+      {
+        "type": "array",
+        "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+        "minItems": 2,
+        "maxItems": 2
+      },
+      {"$ref": "#/refs/signal"}
+    ]    
   },
   "translate": {
-    "type": "array",
     "description": "The translation of the projection.",
-    "items": {"type": "number"},
-    "minItems": 2,
-    "maxItems": 2
+    "oneOf": [
+      {
+        "type": "array",
+        "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+        "minItems": 2,
+        "maxItems": 2
+      },
+      {"$ref": "#/refs/signal"}
+    ]    
   },
   "rotate": {
-    "type": "number",
-    "description": "The rotation of the projection."
+    "description": "The rotation of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "scale": {
-    "type": "number",
-    "description": "The scale of the projection."
+    "description": "The scale of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "precision": {
-    "type": "number",
-    "description": "The desired precision of the projection."
+    "description": "The desired precision of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "clipAngle": {
-    "type": "number",
-    "description": "The clip angle of the projection."
+    "description": "The clip angle of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   },
   "clipExtent": {
-    "type": "number",
-    "description": "The clip extent of the projection."
+    "description": "The clip extent of the projection.",
+    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
   }
 };
 
@@ -16731,12 +16782,12 @@ Geo.schema = {
   "properties": dl.extend({
     "type": {"enum": ["geo"]},
     "lon": {
-      "type": "string",
-      "description": "The input longitude values."
+      "description": "The input longitude values.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "lat": {
-      "type": "string",
-      "description": "The input latitude values."
+      "description": "The input latitude values.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "output": {
       "type": "object",
@@ -16804,8 +16855,8 @@ GeoPath.schema = {
   "properties": dl.extend({
     "type": {"enum": ["geopath"]},
     "value": {
-      "type": "string",
-      "description": "The data field containing GeoJSON Feature data."
+      "description": "The data field containing GeoJSON Feature data.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "output": {
       "type": "object",
@@ -16920,33 +16971,41 @@ LinkPath.schema = {
   "properties": {
     "type": {"enum": ["linkpath"]},
     "source": {
-      "type": "string",
       "description": "The data field that references the source node for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "_source"
     },
     "target": {
-      "type": "string",
       "description": "The data field that references the target node for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "_target"
     },
     "x": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "layout_x"
     },
     "y": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "layout_y"
     },
     "tension": {
-      "type": "number",
       "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
-      "default": 0.2,
-      "minimum": 0,
-      "maximum": 1
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": 0.2
     },
     "shape": {
-      "enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"],
       "description": "The path shape to use",
+      "oneOf": [
+        {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+        {"$ref": "#/refs/signal"}
+      ],
       "default": "line"
     },
     "output": {
@@ -17146,25 +17205,35 @@ Pie.schema = {
   "properties": {
     "type": {"enum": ["pie"]},
     "value": {
-      "type": "string",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The data values to encode as angular spans. " + 
         "If this property is omitted, all pie slices will have equal spans."
     },
     "startAngle": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 2 * Math.PI,
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2 * Math.PI
+        }, 
+        {"$ref": "#/refs/signal"}
+      ],
       "default": 0
     },
     "endAngle": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 2 * Math.PI,
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2 * Math.PI
+        }, 
+        {"$ref": "#/refs/signal"}
+      ],
       "default": 2 * Math.PI,
     },
     "sort": {
-      "type": "boolean",
       "description": " If true, will sort the data prior to computing angles.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "default": false
     },
     "output": {
@@ -17326,22 +17395,32 @@ Stack.schema = {
   "properties": {
     "type": {"enum": ["stack"]},
     "groupby": {
-      "type": "array",
-      "items": {"type": "string"},
-      "description": "A list of fields to split the data into groups (stacks)."
+      "description": "A list of fields to split the data into groups (stacks).",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
     },
     "sortby": {
-      "type": "array",
-      "items": {"type": "string"},
-      "description": "A list of fields to determine the sort order of stacks."
+      "description": "A list of fields to determine the sort order of stacks.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
     },
     "value": {
-      "type": "string",
-      "description": "The data field that determines the thickness/height of stacks."
+      "description": "The data field that determines the thickness/height of stacks.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "offset": {
-      "enum": ["zero", "silhouette", "wiggle", "expand"],
       "description": "The baseline offset",
+      "oneOf": [{"enum": ["zero", "silhouette", "wiggle", "expand"]}, {"$ref": "#/refs/signal"}],
       "default": "zero"
     },
     "output": {
@@ -17491,42 +17570,52 @@ Treemap.schema = {
   "properties": {
     "type": {"enum": ["treemap"]},
     "sort": {
-      "type": "array",
-      "items": {"type": "string"},
       "description": "A list of fields to use as sort criteria for sibling nodes.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
       "default": ["-value"]
     },
     "children": {
-      "type": "string",
       "description": "A data field that represents the children array",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "children"
     },
     "value": {
-      "type": "string",
       "description": "The values to use to determine the area of each leaf-level treemap cell.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "value"
     },
     "size": {
-      "type": "array",
-      "items": {"type": "number"},
       "description": "The dimensions of the treemap layout",
-      "minItems": 0,
-      "maxItems": 0,
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+          "minItems": 0,
+          "maxItems": 0
+        },
+        {"$ref": "#/refs/signal"}
+      ],
       "default": [500, 500]
     },
     "round": {
-      "type": "boolean",
       "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "default": true
     },
     "sticky": {
-      "type": "boolean",
       "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
       "default": false
     },
     "ratio": {
-      "type": "number",
       "description": "The target aspect ratio for the layout to optimize.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": defaultRatio
     },
     "padding": {
@@ -17534,10 +17623,11 @@ Treemap.schema = {
         {"type": "number"},
         {
           "type": "array", 
-          "items": {"type": "number"},
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
           "minItems": 4,
           "maxItems": 4
-        }
+        },
+        {"$ref": "#/refs/signal"}
       ],
       "description": "he padding (in pixels) to provide around internal nodes in the treemap."
     },
@@ -17707,12 +17797,12 @@ Zip.schema = {
     {
       "properties": dl.extend({
         "key": {
-          "type": "string",
-          "description": "The field in the primary data set to match against the secondary data set."
+          "description": "The field in the primary data set to match against the secondary data set.",
+          "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
         },
         "withKey": {
-          "type": "string",
-          "description": "The field in the secondary data set to match against the primary data set."
+          "description": "The field in the secondary data set to match against the primary data set.",
+          "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
         },
         "default": {
           // "type": "any",

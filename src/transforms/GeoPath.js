@@ -48,8 +48,8 @@ GeoPath.schema = {
   "properties": dl.extend({
     "type": {"enum": ["geopath"]},
     "value": {
-      "type": "string",
-      "description": "The data field containing GeoJSON Feature data."
+      "description": "The data field containing GeoJSON Feature data.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "output": {
       "type": "object",
