@@ -9516,13 +9516,6 @@ function valueSchema(type) {
 
 properties.schema = {
   "refs": {
-    "signal": {
-      "title": "SignalRef",
-      "type": "object",
-      "properties": {"signal": {"type": "string"}},
-      "required": ["signal"]
-    },
-
     "field": {
       "title": "FieldRef",
       "oneOf": [
@@ -9693,7 +9686,9 @@ properties.schema = {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"../util/config":107,"../util/log":109,"datalib":20}],57:[function(require,module,exports){
-var expr = require('./expr'),
+var dl = require('datalib'),
+    expr = require('./expr'),
+    functions = require('../expression/functions')(),
     C = require('../util/constants');
 
 function parseSignals(model, spec) {
@@ -9747,7 +9742,56 @@ parseSignals.scale = function scale(model, spec, value) {
 }
 
 module.exports = parseSignals;
-},{"../util/constants":108,"./expr":47}],58:[function(require,module,exports){
+parseSignals.schema = {
+  "refs": {
+    "signal": {
+      "title": "SignalRef",
+      "type": "object",
+      "properties": {"signal": {"type": "string"}},
+      "required": ["signal"]
+    },
+
+    "scopedScale": {
+      "oneOf": [
+        {"type": "string"},
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "oneOf": [{"$ref": "#/refs/signal"}, {"type": "string"}]
+            },
+            "scope": {"$ref": "#/refs/signal"},
+            "invert": {"type": "boolean", "default": false}
+          },
+
+          "additionalProperties": false,
+          "required": ["name"]
+        }
+      ]
+    }
+  },
+
+  "defs": {
+    "signal": {
+      "type": "object",
+
+      "properties": {
+        "name": {
+          "type": "string",
+          "not": {"enum": ["datum", "event"].concat(dl.keys(functions))}
+        },
+        "init": {},
+        "expr": {"type": "string"},
+        "scale": {"$ref": "#/refs/scopedScale"},
+        "streams": {"$ref": "#/defs/streams"}
+      },
+
+      "additionalProperties": false,
+      "required": ["name"]
+    }
+  }
+};
+},{"../expression/functions":40,"../util/constants":108,"./expr":47,"datalib":20}],58:[function(require,module,exports){
 var dl = require('datalib'),
     Model = require('../core/Model'), 
     View = require('../core/View'), 
@@ -9797,6 +9841,10 @@ parseSpec.schema = {
           "data": {
             "type": "array",
             "items": {"$ref": "#/defs/data"}
+          },
+          "signals": {
+            "type": "array",
+            "items": {"$ref": "#/defs/signal"}
           }
         }
       }]
@@ -9820,7 +9868,7 @@ function capitalize(str) {
   return str && str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-module.exports = function(view) {
+function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
@@ -10012,6 +10060,27 @@ module.exports = function(view) {
       }
 
       group = group.mark.group;
+    }
+  }
+}
+
+module.exports = parseStreams;
+parseStreams.schema = {
+  "defs": {
+    "streams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+
+        "properties": {
+          "type": {"type": "string"},
+          "expr": {"type": "string"},
+          "scale": {"$ref": "#/refs/scopedScale"}
+        },
+
+        "additionalProperties": false,
+        "required": ["type", "expr"]
+      }
     }
   }
 };

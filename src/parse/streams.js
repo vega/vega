@@ -13,7 +13,7 @@ function capitalize(str) {
   return str && str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-module.exports = function(view) {
+function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
@@ -205,6 +205,27 @@ module.exports = function(view) {
       }
 
       group = group.mark.group;
+    }
+  }
+}
+
+module.exports = parseStreams;
+parseStreams.schema = {
+  "defs": {
+    "streams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+
+        "properties": {
+          "type": {"type": "string"},
+          "expr": {"type": "string"},
+          "scale": {"$ref": "#/refs/scopedScale"}
+        },
+
+        "additionalProperties": false,
+        "required": ["type", "expr"]
+      }
     }
   }
 };

@@ -330,13 +330,6 @@ function valueSchema(type) {
 
 properties.schema = {
   "refs": {
-    "signal": {
-      "title": "SignalRef",
-      "type": "object",
-      "properties": {"signal": {"type": "string"}},
-      "required": ["signal"]
-    },
-
     "field": {
       "title": "FieldRef",
       "oneOf": [
