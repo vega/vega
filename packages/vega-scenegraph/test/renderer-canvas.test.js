@@ -3,7 +3,7 @@
 var fs = require('fs');
 var assert = require('chai').assert;
 var Renderer = require('../src/render/canvas/CanvasRenderer');
-var initialize = require('../src/util/init-scene');
+var initScene = require('../src/util/scene').fromJSON;
 var res = './test/resources/';
 
 var GENERATE_TEST_FILES = false;
@@ -16,11 +16,9 @@ function generate(path, image) {
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
-function json(file) {
-  return JSON.parse(load(file));
-}
+
 function loadScene(file) {
-  return initialize(JSON.parse(load(file)));
+  return initScene(load(file));
 }
 
 function render(scene, w, h) {
@@ -55,8 +53,8 @@ function clearPathCache(mark) {
 }
 
 describe('canvas renderer', function() {
-  var marks = json('marks.json');
-  for (var name in marks) { initialize(marks[name]); }
+  var marks = JSON.parse(load('marks.json'));
+  for (var name in marks) { initScene(marks[name]); }
 
   it('should support argument free constructor', function() {
     var r = new Renderer();
@@ -212,7 +210,7 @@ describe('canvas renderer', function() {
   });
 
   it('should skip invalid image', function() {
-    var scene = initialize({
+    var scene = initScene({
       marktype: 'image',
       items: [{url: 'does_not_exist.png'}]
     });

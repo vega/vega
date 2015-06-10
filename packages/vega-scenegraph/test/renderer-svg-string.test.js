@@ -15,6 +15,7 @@ function generate(path, str) {
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
+
 function json(file) {
   return JSON.parse(load(file));
 }
