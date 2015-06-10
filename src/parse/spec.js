@@ -44,6 +44,14 @@ parseSpec.schema = {
 
       "allOf": [{"$ref": "#/defs/container"}, {
         "properties": {
+          "width": {"type": "number"},
+          "height": {"type": "number"},
+          "viewport": {
+            "type": "array",
+            "items": {"type": "number"},
+            "maxItems": 2
+          },
+
           "background": {"$ref": "#/defs/background"},
           "padding": {"$ref": "#/defs/padding"},
 
