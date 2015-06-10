@@ -124,7 +124,8 @@ describe('Stack', function() {
   });
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.stack.schema);
+    var schema = schemaPath(transforms.stack.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "stack", "groupby": ["country"], "value": "medals" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 

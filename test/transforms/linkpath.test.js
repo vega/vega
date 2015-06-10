@@ -3,7 +3,8 @@ describe('LinkPath', function() {
   it('should route edges');
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.linkpath.schema);
+    var schema = schemaPath(transforms.linkpath.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "linkpath" })).to.be.true;
     expect(validate({ "type": "linkpath", "source": "src" })).to.be.true;

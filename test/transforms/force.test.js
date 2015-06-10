@@ -83,7 +83,8 @@ describe('Force', function() {
   });
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.force.schema);
+    var schema = schemaPath(transforms.force.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "force", "links": "edges" })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "size": [100, 100] })).to.be.true;

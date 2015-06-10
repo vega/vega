@@ -79,7 +79,8 @@ describe('Formula', function() {
   });
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.formula.schema);
+    var schema = schemaPath(transforms.formula.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "formula", "expr": "d.x + d.y", "field": "sum" })).to.be.true;
     

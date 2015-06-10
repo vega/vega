@@ -210,7 +210,7 @@ describe('Aggregate', function() {
     });
 
     it('should handle signals', function(done) {
-      var s = util.duplicate(spec);
+      var s = dl.duplicate(spec);
       s.signals = [{"name": "field", "init": "area"}, {"name": "ops", "init": ["sum", "count"]}];
       s.data[0].transform[0].summarize = [{"name": {"signal": "field"}, "ops": {"signal": "ops"}}];
 
@@ -249,8 +249,10 @@ describe('Aggregate', function() {
   it('should handle filtered tuples');
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.aggregate.schema);
+    var schema = schemaPath(transforms.aggregate.schema),
+        validate = validator(schema);
 
+    expect(validate({ "type": "aggregate", "groupby": ["country"] })).to.be.true;
     expect(validate({ 
       "type": "aggregate",
       "groupby": ["country"],
@@ -280,7 +282,6 @@ describe('Aggregate', function() {
 
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "aggregate" })).to.be.false;
-    expect(validate({ "type": "aggregate", "groupby": ["country"] })).to.be.false;
     expect(validate({ 
       "type": "aggregate",
       "groupby": "country",

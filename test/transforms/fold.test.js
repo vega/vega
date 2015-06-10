@@ -154,7 +154,7 @@ describe('Fold', function() {
   });
 
   it('should allow renamed keys', function(done) {
-    var s = util.duplicate(spec);
+    var s = dl.duplicate(spec);
     s.data[0].transform[0].output = {key: "type"};
 
     parseSpec(s, function(model) {
@@ -172,7 +172,7 @@ describe('Fold', function() {
   });
 
   it('should allow renamed values', function(done) {
-    var s = util.duplicate(spec);
+    var s = dl.duplicate(spec);
     s.data[0].transform[0].output = {value: "medals"};
 
     parseSpec(s, function(model) {
@@ -192,7 +192,8 @@ describe('Fold', function() {
   it('should allow array<signal> for fields?');
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.fold.schema);
+    var schema = schemaPath(transforms.fold.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "fold", "fields": ["gold", "silver"] })).to.be.true;
     expect(validate({ 

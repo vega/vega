@@ -3,12 +3,6 @@ describe('Schema', function() {
     properties: {a: "string", b: "string"}  // Custom properties for linking example
   });
 
-  function path(path) {
-    var s = {refs: schema.refs, defs: schema.defs};
-    s["$ref"] = path;
-    return s;
-  }
-
   describe('Transforms', function() {
     var transforms = require('../src/transforms'),
         keys = Object.keys(transforms),
@@ -22,7 +16,7 @@ describe('Schema', function() {
 
   describe('Defs', function() {
     it('should validate data sets', function() {
-      var validate = validator(path("#/defs/data"));
+      var validate = validator(schemaPath({"$ref": "#/defs/data"}));
 
       expect(validate({ "name": "table", "values": [1, 2, 3] })).to.be.true;
       expect(validate({ "name": "table", "values": [{x: 1}, {x: 2}, {x: 3}] })).to.be.true;

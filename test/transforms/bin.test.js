@@ -113,7 +113,8 @@ describe('Bin', function() {
   });
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.bin.schema);
+    var schema = schemaPath(transforms.bin.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10 })).to.be.true;
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "base": 5 })).to.be.true;

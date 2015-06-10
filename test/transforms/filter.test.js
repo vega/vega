@@ -67,7 +67,8 @@ describe('Filter', function() {
   });
 
   it('should validate against the schema', function() {
-    var validate = validator(transforms.filter.schema);
+    var schema = schemaPath(transforms.filter.schema),
+        validate = validator(schema);
 
     expect(validate({ "type": "filter", "test": "d.x > 5" })).to.be.true;
     
