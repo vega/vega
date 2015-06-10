@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     transforms = require('../transforms/index');
 
-module.exports = function parseTransforms(model, def) {
+function parseTransforms(model, def) {
   var tx = new transforms[def.type](model);
   
   // We want to rename output fields before setting any other properties,
@@ -15,4 +15,18 @@ module.exports = function parseTransforms(model, def) {
   });
 
   return tx;
+};
+
+module.exports = parseTransforms;
+parseTransforms.schema = {
+  "defs": {
+    "transform": {
+      "type": "array",
+      "items": {
+        "oneOf": dl.keys(transforms).map(function(k) {
+          return transforms[k].schema;
+        })
+      }
+    }
+  }
 };

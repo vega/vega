@@ -3,7 +3,7 @@ var dl = require('datalib'),
     log = require('../util/log'),
     C = require('../util/constants');
 
-module.exports = function parseInteractors(model, spec, defFactory) {
+function parseInteractors(model, spec, defFactory) {
   var count = 0,
       sg = {}, pd = {}, mk = {},
       signals = [], predicates = [];
@@ -43,7 +43,7 @@ module.exports = function parseInteractors(model, spec, defFactory) {
 
     for(i = 0, len = marks.length; i < len; i++) {
       m = marks[i];
-      if (r = mk[m.type]) {
+      if (r = mk[m.name]) {
         marks[i] = dl.duplicate(r);
         if (m.from) marks[i].from = m.from;
         if (m.properties) {
@@ -139,3 +139,20 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   if (count === 0) setTimeout(inject, 1);
   return spec;
 }
+
+module.exports = parseInteractors;
+parseInteractors.schema = {
+  "refs": {
+    "interactors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "url": {"type": "string"}
+        },
+        "required": ["name", "url"]
+      }
+    }
+  }
+};

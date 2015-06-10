@@ -55,12 +55,12 @@
 
   "scales": [
     {
-      "name": "x",
+      "name": "x", "type": "linear",
       "range": "width", "zero": false,
       "domain": {"data": "iris", "field": "sepalWidth"}
     },
     {
-      "name": "y",
+      "name": "y", "type": "linear",
       "range": "height",
       "nice": true, "zero": false,
       "domain": {"data": "iris", "field": "petalLength"}

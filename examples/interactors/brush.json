@@ -43,7 +43,7 @@
 
    "marks": [
     {
-      "name": "brush_rect",
+      "name": "brushRect",
       "type": "rect",
       "properties": {
         "enter": {

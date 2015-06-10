@@ -89,4 +89,61 @@ proto.transform = function(input) {
   return input;
 };
 
-module.exports = LinkPath;
+module.exports  = LinkPath;
+LinkPath.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "LinkPath transform",
+  "description": "Computes a path definition for connecting nodes within a node-link network or tree diagram.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["linkpath"]},
+    "source": {
+      "description": "The data field that references the source node for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "_source"
+    },
+    "target": {
+      "description": "The data field that references the target node for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "_target"
+    },
+    "x": {
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "layout_x"
+    },
+    "y": {
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "layout_y"
+    },
+    "tension": {
+      "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": 0.2
+    },
+    "shape": {
+      "description": "The path shape to use",
+      "oneOf": [
+        {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": "line"
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "path": {"type": "string", "default": "layout_path"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": ["type"]
+}

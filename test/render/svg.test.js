@@ -1,7 +1,6 @@
 var config = require('../../src/util/config'),
   jsdom = require('jsdom'),
   d3 = require('d3'),
-  dl = require('datalib'),
   fs = require('fs'),
   path = require('path'),
   output = "output/",

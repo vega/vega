@@ -6,7 +6,11 @@
   "signals": [
     {
       "name": "xPos",
-      "streams": [{"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert": "true"}}]
+      "streams": [{
+        "type": "mousemove", 
+        "expr": "event.vgX", 
+        "scale": {"name": "x", "invert": true}
+      }]
     },
 
     {"name": "minDate", "init": {"expr": "time('Jan 1 2000')"}},
@@ -57,15 +61,15 @@
     {
       "name": "x",
       "type": "time",
-      "range": "width",
-      "domain": {"data": "stocks", "field": "date"}
+      "domain": {"data": "stocks", "field": "date"},
+      "range": "width"
     },
     {
       "name": "y",
       "type": "linear",
+      "domain": {"data": "indexified_stocks", "field": "indexed_price"},
       "range": "height",
-      "nice": true,
-      "domain": {"data": "indexified_stocks", "field": "indexed_price"}
+      "nice": true
     },
     {
       "name": "color", 

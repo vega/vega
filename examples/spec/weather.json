@@ -16,7 +16,8 @@
       "domain": {"data": "weather", "field": "id"}
     },
     {
-      "name": "y",
+      "name": "y", 
+      "type": "linear",
       "range": "height",
       "nice": true, "zero": false, "round": true,
       "domain": {

@@ -4,6 +4,8 @@ var dl = require('datalib'),
     BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
 
+var defaultRatio = 0.5 * (1 + Math.sqrt(5));
+
 function Treemap(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
@@ -15,7 +17,7 @@ function Treemap(graph) {
     size: {type: "array<value>", default: [500, 500]},
     round: {type: "value", default: true},
     sticky: {type: "value", default: false},
-    ratio: {type: "value", default: 0.5 * (1 + Math.sqrt(5))},
+    ratio: {type: "value", default: defaultRatio},
     padding: {type: "value", default: null},
     mode: {type: "value", default: "squarify"}
   });
@@ -68,3 +70,84 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Treemap;
+Treemap.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["treemap"]},
+    "sort": {
+      "description": "A list of fields to use as sort criteria for sibling nodes.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": ["-value"]
+    },
+    "children": {
+      "description": "A data field that represents the children array",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "children"
+    },
+    "value": {
+      "description": "The values to use to determine the area of each leaf-level treemap cell.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "value"
+    },
+    "size": {
+      "description": "The dimensions of the treemap layout",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": [500, 500]
+    },
+    "round": {
+      "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
+      "default": true
+    },
+    "sticky": {
+      "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
+      "default": false
+    },
+    "ratio": {
+      "description": "The target aspect ratio for the layout to optimize.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "default": defaultRatio
+    },
+    "padding": {
+      "oneOf": [
+        {"type": "number"},
+        {
+          "type": "array", 
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+          "minItems": 4,
+          "maxItems": 4
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+      "description": "he padding (in pixels) to provide around internal nodes in the treemap."
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"},
+        "width": {"type": "string", "default": "layout_width"},
+        "height": {"type": "string", "default": "layout_height"}
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": ["type", "value"]
+}

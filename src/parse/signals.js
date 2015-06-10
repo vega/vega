@@ -1,4 +1,6 @@
-var expr = require('./expr'),
+var dl = require('datalib'),
+    expr = require('./expr'),
+    functions = require('../expression/functions')(),
     C = require('../util/constants');
 
 function parseSignals(model, spec) {
@@ -52,3 +54,53 @@ parseSignals.scale = function scale(model, spec, value) {
 }
 
 module.exports = parseSignals;
+parseSignals.schema = {
+  "refs": {
+    "signal": {
+      "title": "SignalRef",
+      "type": "object",
+      "properties": {"signal": {"type": "string"}},
+      "required": ["signal"]
+    },
+
+    "scopedScale": {
+      "oneOf": [
+        {"type": "string"},
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "oneOf": [{"$ref": "#/refs/signal"}, {"type": "string"}]
+            },
+            "scope": {"$ref": "#/refs/signal"},
+            "invert": {"type": "boolean", "default": false}
+          },
+
+          "additionalProperties": false,
+          "required": ["name"]
+        }
+      ]
+    }
+  },
+
+  "defs": {
+    "signal": {
+      "type": "object",
+
+      "properties": {
+        "name": {
+          "type": "string",
+          "not": {"enum": ["datum", "event"].concat(dl.keys(functions))}
+        },
+        "init": {},
+        "verbose": {"type": "boolean", "default": false},
+        "expr": {"type": "string"},
+        "scale": {"$ref": "#/refs/scopedScale"},
+        "streams": {"$ref": "#/defs/streams"}
+      },
+
+      "additionalProperties": false,
+      "required": ["name"]
+    }
+  }
+};

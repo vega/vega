@@ -4,7 +4,7 @@ var dl = require('datalib'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
 
-var parseData = function(model, spec, callback) {
+function parseData(model, spec, callback) {
   var count = 0;
 
   function loaded(d) {
@@ -48,4 +48,86 @@ parseData.datasource = function(model, d) {
   return ds;    
 };
 
+var parseDef = {
+  "oneOf": [
+    {"enum": ["auto"]},
+    {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["number", "boolean", "date", "string"]
+      }
+    }
+  ]
+};
+
 module.exports = parseData;
+parseData.schema = {
+  "defs": {
+    "data": {
+      "title": "Input data set definition",
+      "type": "object",
+
+      "allOf": [{
+        "properties": {
+          "name": {"type": "string"},
+          "transform": {"$ref": "#/defs/transform"},
+          "modify": {"$ref": "#/defs/modify"},
+          "format": {
+            "type": "object",
+            "oneOf": [{
+              "properties": {
+                "type": {"enum": ["json"]},
+                "parse": parseDef,
+                "property": {"type": "string"}
+              },
+              "additionalProperties": false
+            }, {
+              "properties": {
+                "type": {"enum": ["csv", "tsv"]},
+                "parse": parseDef
+              },
+              "additionalProperties": false
+            }, {
+              "oneOf": [{
+                "properties": {
+                  "type": {"enum": ["topojson"]},
+                  "feature": {"type": "string"}
+                },
+                "additionalProperties": false
+              }, {
+                "properties": {
+                  "type": {"enum": ["topojson"]},
+                  "mesh": {"type": "string"}
+                },
+                "additionalProperties": false
+              }]
+            }, {
+              "properties": {
+                "type": {"enum": ["treejson"]},
+                "children": {"type": "string"},
+                "parse": parseDef
+              },
+              "additionalProperties": false
+            }]
+          }
+        },
+        "required": ["name"]
+      }, {
+        "anyOf": [{
+          "required": ["name", "modify"]
+        }, {
+          "oneOf": [{
+            "properties": {"source": {"type": "string"}},
+            "required": ["source"]
+          }, {
+            "properties": {"values": {"type": "array"}},
+            "required": ["values"]
+          }, {
+            "properties": {"url": {"type": "string"}},
+            "required": ["url"]
+          }]
+        }]
+      }]
+    }
+  }
+};

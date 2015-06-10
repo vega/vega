@@ -59,7 +59,7 @@ describe('Facet', function() {
 
       values.splice(3, 0, a1);
       values.push(a2, a3);
-      ds.insert(util.duplicate([a1, a2, a3])).fire();
+      ds.insert(dl.duplicate([a1, a2, a3])).fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
       expectFacet(facets, 0, 0, 3); // USA
@@ -133,7 +133,7 @@ describe('Facet', function() {
   })
 
   it('should handle signals as keys', function(done) {
-    var s = util.duplicate(spec);
+    var s = dl.duplicate(spec);
     spec.data[0].transform[0].groupby = [{"signal": "keys"}];
 
     parseSpec(spec, function(model) {
@@ -162,7 +162,7 @@ describe('Facet', function() {
   });
 
   it('should handle fields+signals as keys', function(done) {
-    var s = util.duplicate(spec);
+    var s = dl.duplicate(spec);
     spec.signals[0].init = 'type';
     spec.data[0].transform[0].groupby = [{"field": "country"}, {"signal": "keys"}];
 
@@ -228,4 +228,87 @@ describe('Facet', function() {
   });
 
   it('should transform faceted values');
+
+  it('should validate against the schema', function() {
+    var schema = schemaPath(transforms.facet.schema),
+        validate = validator(schema);
+
+    expect(validate({ "type": "facet", "groupby": ["country"] })).to.be.true;
+
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": ["count", "min", "max"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.true;
+
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "medals", "ops": ["count", "min", "max"]},
+        {"name": "gdp", "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.true;
+
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
+        {"name": "gdp", "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.true;
+
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "facet" })).to.be.false;
+    expect(validate({ 
+      "type": "facet",
+      "groupby": "country",
+      "summarize": {
+        "medals": ["count", "min", "max"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": 1,
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": ["count", "min", "max", "foo"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": 1, "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.false;
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "gdp", "ops": ["argmin", "argmax", "foo"]}
+      ]
+    })).to.be.false;
+    expect(validate({ 
+      "type": "facet",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
+      ]
+    })).to.be.false;
+
+  });
 });

@@ -123,5 +123,36 @@ describe('Stack', function() {
       modelFactory);
   });
 
+  it('should validate against the schema', function() {
+    var schema = schemaPath(transforms.stack.schema),
+        validate = validator(schema);
 
+    expect(validate({ "type": "stack", "groupby": ["country"], "value": "medals" })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "sortby": ["gdp"] })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "offset": "zero" })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "offset": "silhouette" })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "offset": "wiggle" })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "offset": "expand" })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "output": {"start": "start", "mid": "mid", "end": "end"} })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "stack" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"] })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": "country", "value": "medals" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], "value": ["medals"] })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "sortby": "gdp" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "offset": "foo" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "output": {"foo": "bar"} })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "value": "medals", "bar": "foo" })).to.be.false;
+  });
 });

@@ -14,14 +14,18 @@
   "scales": [
     {
       "name": "x",
-      "range": "width", "zero": false,
-      "domain": {"data": "iris", "field": "sepalWidth"}
+      "type": "linear",
+      "domain": {"data": "iris", "field": "sepalWidth"},
+      "range": "width", 
+      "zero": false
     },
     {
       "name": "y",
+      "type": "linear",
+      "domain": {"data": "iris", "field": "petalLength"},
       "range": "height",
-      "nice": true, "zero": false,
-      "domain": {"data": "iris", "field": "petalLength"}
+      "nice": true, 
+      "zero": false
     },
     {
       "name": "c",
@@ -71,7 +75,7 @@
     },
 
     {
-      "type": "brush_brush_rect",
+      "name": "brush_brushRect",
       "properties": {
         "enter": {"stroke": {"value": "red"}}
       }

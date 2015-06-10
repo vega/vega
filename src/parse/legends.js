@@ -40,3 +40,39 @@ function legend(def, index, legend, group) {
 }
 
 module.exports = legends;
+legends.schema = {
+  "defs": {
+    "legend": {
+      "type": "object",
+      "properties": {
+        "size": {"type": "string"},
+        "shape": {"type": "string"},
+        "fill": {"type": "string"},
+        "stroke": {"type": "string"},
+        "orient": {"enum": ["left", "right"], "default": "right"},
+        "offset": {"type": "number"},
+        "title": {"type": "string"},
+        "values": {"type": "array"},
+        "format": {"type": "string"},
+        "properties": {
+          "type": "object",
+          "properties": {
+            "title": {"$ref": "#/defs/propset"},
+            "labels": {"$ref": "#/defs/propset"},
+            "legend": {"$ref": "#/defs/propset"},
+            "symbols": {"$ref": "#/defs/propset"},
+            "gradient": {"$ref": "#/defs/propset"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {"required": "size"},
+        {"required": "shape"},
+        {"required": "fill"},
+        {"required": "stroke"}
+      ]
+    }
+  }
+}

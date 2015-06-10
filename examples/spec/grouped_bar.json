@@ -24,16 +24,17 @@
     {
       "name": "cat",
       "type": "ordinal",
+      "domain": {"data": "table", "field": "category"},
       "range": "height",
-      "padding": 0.2,
-      "domain": {"data": "table", "field": "category"}
+      "padding": 0.2
     },
     {
       "name": "val",
+      "type": "linear",
+      "domain": {"data": "table", "field": "value"},
       "range": "width",
       "round": true,
-      "nice": true,
-      "domain": {"data": "table", "field": "value"}
+      "nice": true
     },
     {
       "name": "color",

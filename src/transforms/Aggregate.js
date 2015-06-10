@@ -6,6 +6,7 @@ var dl = require('datalib'),
     log = require('../util/log'),
     C = require('../util/constants');
 
+
 function Aggregate(graph) {
   Transform.prototype.init.call(this, graph)
     .router(true).revises(true);
@@ -25,10 +26,13 @@ function Aggregate(graph) {
           }
         }
 
+        function sg(x) { if (x.signal) signals[x.signal] = 1; }
+
         for(i=0, len=fields.length; i<len; ++i) {
           f = fields[i];
           if(f.name.signal) signals[f.name.signal] = 1;
-          dl.array(f.ops).forEach(function(o){ if(o.signal) signals[o.signal] = 1 });
+          dl.array(f.ops).forEach(sg);
+          dl.array(f.as).forEach(sg);
         }
 
         this._transform._fieldsDef = fields;
@@ -157,4 +161,63 @@ proto.transform = function(input, reset) {
   return aggr.changes(input, output);
 }
 
-module.exports = Aggregate;
+var VALID_OPS = Aggregate.VALID_OPS = [
+  "values", "count", "valid", "missing", "distinct", 
+  "sum", "mean", "average", "variance", "variancep", "stdev", 
+  "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
+  "argmin", "argmax"
+];
+
+module.exports   = Aggregate;
+Aggregate.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Aggregate transform",
+  "description": "Compute summary aggregate statistics",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["aggregate"]},
+    "groupby": {
+      "type": "array",
+      "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]},
+      "description": "A list of fields to split the data into groups."
+    },
+    "summarize": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "description": "An array of aggregate functions.",
+            "items": {"oneOf": [{"enum": VALID_OPS}, {"$ref": "#/refs/signal"}]}
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "The name of the field to aggregate.",
+                "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
+              },
+              "ops": {
+                "type": "array",
+                "description": "An array of aggregate functions.",
+                "items": {"oneOf": [{"enum": VALID_OPS}, {"$ref": "#/refs/signal"}]}
+              },
+              "as": {
+                "type": "array",
+                "description": "An optional array of names to use for the output fields.",
+                "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+              }
+            },
+            "additionalProperties": false,
+            "required": ["name", "ops"]
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": ["type", "groupby"]
+};

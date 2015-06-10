@@ -210,7 +210,7 @@ describe('Aggregate', function() {
     });
 
     it('should handle signals', function(done) {
-      var s = util.duplicate(spec);
+      var s = dl.duplicate(spec);
       s.signals = [{"name": "field", "init": "area"}, {"name": "ops", "init": ["sum", "count"]}];
       s.data[0].transform[0].summarize = [{"name": {"signal": "field"}, "ops": {"signal": "ops"}}];
 
@@ -247,5 +247,87 @@ describe('Aggregate', function() {
   });
 
   it('should handle filtered tuples');
+
+  it('should validate against the schema', function() {
+    var schema = schemaPath(transforms.aggregate.schema),
+        validate = validator(schema);
+
+    expect(validate({ "type": "aggregate", "groupby": ["country"] })).to.be.true;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": ["count", "min", "max"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.true;
+
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "medals", "ops": ["count", "min", "max"]},
+        {"name": "gdp", "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.true;
+
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
+        {"name": "gdp", "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.true;
+
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "aggregate" })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": "country",
+      "summarize": {
+        "medals": ["count", "min", "max"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": 1,
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": {
+        "medals": ["count", "min", "max", "foo"],
+        "gdp": ["argmin", "argmax"]
+      }
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": 1, "ops": ["argmin", "argmax"]}
+      ]
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "gdp", "ops": ["argmin", "argmax", "foo"]}
+      ]
+    })).to.be.false;
+    expect(validate({ 
+      "type": "aggregate",
+      "groupby": ["country"],
+      "summarize": [
+        {"name": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
+      ]
+    })).to.be.false;
+
+  });
 
 });

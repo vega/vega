@@ -23,10 +23,11 @@
     },
     {
       "name": "x",
+      "type": "linear",
+      "domain": {"data": "aggregate", "field": "hi"},
       "range": [100, 400],
       "nice": true,
-      "zero": true,
-      "domain": {"data": "aggregate", "field": "hi"}
+      "zero": true
     }
   ],
   "axes": [

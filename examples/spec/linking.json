@@ -161,17 +161,19 @@
       "scales": [
         {
           "name": "x",
+          "type": "linear",
+          "domain": {"data": "iris", "field": {"parent": "a.data"}},
           "range": "width",
           "zero": false,
-          "round": true,
-          "domain": {"data": "iris", "field": {"parent": "a.data"}}
+          "round": true
         },
         {
           "name": "y",
+          "type": "linear",
+          "domain": {"data": "iris", "field": {"parent": "b.data"}},
           "range": "height",
           "zero": false,
-          "round": true,
-          "domain": {"data": "iris", "field": {"parent": "b.data"}}
+          "round": true
         }
       ],
       "axes": [

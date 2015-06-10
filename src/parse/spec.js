@@ -9,7 +9,7 @@ var dl = require('datalib'),
     parseData = require('../parse/data'),
     parseInteractors = require('../parse/interactors');
 
-module.exports = function parseSpec(spec, callback, viewFactory) {
+function parseSpec(spec, callback, viewFactory) {
   // protect against subsequent spec modification
   spec = dl.duplicate(spec);
 
@@ -34,3 +34,45 @@ module.exports = function parseSpec(spec, callback, viewFactory) {
     });
   });
 }
+
+module.exports = parseSpec;
+parseSpec.schema = {
+  "defs": {
+    "spec": {
+      "title": "Vega visualization specification",
+      "type": "object",
+
+      "allOf": [{"$ref": "#/defs/container"}, {
+        "properties": {
+          "width": {"type": "number"},
+          "height": {"type": "number"},
+          "viewport": {
+            "type": "array",
+            "items": {"type": "number"},
+            "maxItems": 2
+          },
+
+          "background": {"$ref": "#/defs/background"},
+          "padding": {"$ref": "#/defs/padding"},
+
+          "interactors": {"$ref": "#/refs/interactors"},
+
+          "signals": {
+            "type": "array",
+            "items": {"$ref": "#/defs/signal"}
+          },
+
+          "predicates": {
+            "type": "array",
+            "items": {"$ref": "#/defs/predicate"}
+          },
+
+          "data": {
+            "type": "array",
+            "items": {"$ref": "#/defs/data"}
+          }
+        }
+      }]
+    }
+  }
+};

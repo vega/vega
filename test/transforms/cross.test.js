@@ -1,5 +1,4 @@
 describe('Cross', function() {
-
   var values1 = [
       {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
       {"x": 3,  "y": 43}]
@@ -176,7 +175,7 @@ describe('Cross', function() {
   });
 
   it('should allow renamed keys', function(done) {
-    var s = util.duplicate(spec);
+    var s = dl.duplicate(spec);
       s.data[1].transform[0].output = {"left": "thing1", "right": "thing2"};
 
     parseSpec(s, function(model) {
@@ -230,6 +229,36 @@ describe('Cross', function() {
 
       done();
     }, modelFactory);
+  });
+
+  it('should validate against the schema', function() {
+    var schema = schemaPath(transforms.cross.schema),
+        validate = validator(schema);
+
+    expect(validate({ "type": "cross" })).to.be.true;
+    expect(validate({ "type": "cross", "with": "table" })).to.be.true;
+    expect(validate({ "type": "cross", "with": "table", "diagonal": false })).to.be.true;
+    expect(validate({ 
+      "type": "cross", 
+      "with": "table", 
+      "output": {"left": "foo", "right": "bar"} 
+    })).to.be.true;
+
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "cross", "with": 5 })).to.be.false;
+    expect(validate({ "type": "cross", "with": "table", "diagonal": 1 })).to.be.false;
+    expect(validate({ 
+      "type": "cross", 
+      "with": "table", 
+      "output": {"left": 1, "right": 2} 
+    })).to.be.false;
+
+    expect(validate({ 
+      "type": "cross", 
+      "with": "table", 
+      "output": {"left": "foo", "right": "bar"},
+      "hello": "world"
+    })).to.be.false;
   });
   
 });

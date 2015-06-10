@@ -61,3 +61,54 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
+Pie.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Pie transform",
+  "description": "Computes a pie chart layout.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["pie"]},
+    "value": {
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "description": "The data values to encode as angular spans. " + 
+        "If this property is omitted, all pie slices will have equal spans."
+    },
+    "startAngle": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2 * Math.PI
+        }, 
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": 0
+    },
+    "endAngle": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2 * Math.PI
+        }, 
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": 2 * Math.PI,
+    },
+    "sort": {
+      "description": " If true, will sort the data prior to computing angles.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
+      "default": false
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "start": {"type": "string", "default": "layout_start"},
+        "end": {"type": "string", "default": "layout_end"},
+        "mid": {"type": "string", "default": "layout_mid"}
+      }
+    }
+  },
+  "required": ["type"]
+};

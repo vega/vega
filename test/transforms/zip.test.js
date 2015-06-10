@@ -98,7 +98,7 @@ describe('Zip', function() {
     });
 
     it('should handle streaming adds w/default', function(done) {
-      var s = util.duplicate(spec);
+      var s = dl.duplicate(spec);
       s.data[1].transform[0].default = {"foo": "bar"};
 
       parseSpec(s, function(model) {
@@ -168,7 +168,7 @@ describe('Zip', function() {
     });
 
     it('should handle streaming rems w/default', function(done) {
-      var s = util.duplicate(spec);
+      var s = dl.duplicate(spec);
       s.data[1].transform[0].default = {"foo": "bar"};
 
       parseSpec(s, function(model) {
@@ -378,6 +378,22 @@ describe('Zip', function() {
       }, modelFactory);
     });
 
+  });
+
+  it('should validate against the schema', function() {
+    var schema = schemaPath(transforms.zip.schema),
+        validate = validator(schema);
+
+    expect(validate({ "type": "zip", "with": "table", "as": "t" })).to.be.true;
+    expect(validate({ "type": "zip", "with": "table", "as": "t", 
+        "key": "k", "withKey": "k" })).to.be.true;
+    expect(validate({ "type": "zip", "with": "table", "as": "t", 
+        "key": "k", "withKey": "k", "default": 1 })).to.be.true;
+    
+    expect(validate({ "type": "foo" })).to.be.false;
+    expect(validate({ "type": "zip" })).to.be.false;
+    expect(validate({ "type": "zip", "with": "table" })).to.be.false;
+    expect(validate({ "type": "zip", "with": "table", "as": "t", "key": "k" })).to.be.false;
   });
 
 });

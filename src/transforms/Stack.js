@@ -91,3 +91,53 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
+Stack.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Stack transform",
+  "description": "Computes layout values for stacked graphs, as in stacked bar charts or stream graphs.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["stack"]},
+    "groupby": {
+      "description": "A list of fields to split the data into groups (stacks).",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+    },
+    "sortby": {
+      "description": "A list of fields to determine the sort order of stacks.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+    },
+    "value": {
+      "description": "The data field that determines the thickness/height of stacks.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
+    },
+    "offset": {
+      "description": "The baseline offset",
+      "oneOf": [{"enum": ["zero", "silhouette", "wiggle", "expand"]}, {"$ref": "#/refs/signal"}],
+      "default": "zero"
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "start": {"type": "string", "default": "layout_start"},
+        "end": {"type": "string", "default": "layout_end"},
+        "mid": {"type": "string", "default": "layout_mid"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": ["type", "groupby", "value"]
+};

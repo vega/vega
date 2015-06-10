@@ -9,7 +9,7 @@ function Force(graph) {
     links: {type: "data"},
     linkDistance: {type: "field|value", default: 20},
     linkStrength: {type: "field|value", default: 1},
-    charge: {type: "field|value", default: 30},
+    charge: {type: "field|value", default: -30},
     chargeDistance: {type: "field|value", default: Infinity},
     iterations: {type: "value", default: 500},
     friction: {type: "value", default: 0.9},
@@ -108,3 +108,88 @@ proto.transform = function(nodeInput) {
 };
 
 module.exports = Force;
+Force.schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Force transform",
+  "description": "Performs force-directed layout for network data.",
+  "type": "object",
+  "properties": {
+    "type": {"enum": ["force"]},
+    "size": {
+      "description": "The dimensions [width, height] of this force layout.",
+      "oneOf": [
+        {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
+        },
+        {"$ref": "#/refs/signal"}
+      ],
+
+      "default": [500, 500]
+    },
+    "links": {
+      "type": "string",
+      "description": "The name of the link (edge) data set."
+    },
+    "linkDistance": {
+      "description": "Determines the length of edges, in pixels.",
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": 20
+    },
+    "linkStrength": {
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "description": "Determines the tension of edges (the spring constant).",
+      "default": 1
+    },
+    "charge": {
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "description": "The strength of the charge each node exerts.",
+      "default": -30
+    },
+    "chargeDistance": {
+      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "description": "The maximum distance over which charge forces are applied.",
+      "default": Infinity
+    },
+    "iterations": {
+      "description": "The number of iterations to run the force directed layout.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "default": 500
+    },
+    "friction": {
+      "description": "The strength of the friction force used to stabilize the layout.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "default": 0.9
+    },
+    "theta": {
+      "description": "The theta parameter for the Barnes-Hut algorithm, which is used to compute charge forces between nodes.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "default": 0.8
+    },
+    "gravity": {
+      "description": "The strength of the pseudo-gravity force that pulls nodes towards the center of the layout area.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "default": 0.1
+    },
+    "alpha": {
+      "description": "A \"temperature\" parameter that determines how much node positions are adjusted at each step.",
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "default": 0.1
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "x": {"type": "string", "default": "layout_x"},
+        "y": {"type": "string", "default": "layout_y"},
+        "source": {"type": "string", "default": "_source"},
+        "target": {"type": "string", "default": "_target"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": ["type", "links"]
+};

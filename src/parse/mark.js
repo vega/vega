@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-module.exports = function parseMark(model, mark) {
+function parseMark(model, mark) {
   var props = mark.properties,
       group = mark.marks;
 
@@ -22,3 +22,56 @@ module.exports = function parseMark(model, mark) {
     
   return mark;
 };
+
+module.exports = parseMark;
+parseMark.schema = {
+  "defs": {
+    "mark": {
+      "type": "object",
+
+      "properties": {
+        "name": {"type": "string"},
+        "key": {"type": "string"},
+        "type": {"enum": ["rect", "symbol", "path", "arc", 
+          "area", "line", "rule", "image", "text", "group"]},
+
+        "from": {
+          "type": "object",
+          "properties": {
+            "data": {"type": "string"},
+            "mark": {"type": "string"},
+            "transform": {"$ref": "#/defs/transform"}
+          },
+          "oneOf":[{"required": ["data"]}, {"required": ["mark"]}],
+          "additionalProperties": false
+        },
+
+        "delay": {"$ref": "#/refs/numberValue"},
+        "ease": {
+          "enum": ["linear", "quad", "cubic", "sin", 
+            "exp", "circle", "bounce"].reduce(function(acc, e) {
+              ["in", "out", "in-out", "out-in"].forEach(function(m) {
+                acc.push(e+"-"+m);
+              });
+              return acc;
+          }, [])
+        },
+
+        "properties": {
+          "type": "object",
+          "properties": {
+            "enter":  {"$ref": "#/defs/propset"},
+            "update": {"$ref": "#/defs/propset"},
+            "exit":   {"$ref": "#/defs/propset"},
+            "hover":  {"$ref": "#/defs/propset"}
+          },
+          "additionalProperties": false,
+          "anyOf": [{"required": ["enter"]}, {"required": ["update"]}]
+        }
+      },
+
+      // "additionalProperties": false,
+      "anyOf": [{"required": ["type"]}, {"required": ["name"]}]
+    }
+  }
+}
