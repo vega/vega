@@ -7284,12 +7284,15 @@ axes.schema = {
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null);
 
-module.exports = function parseBg(bg) {
+function parseBg(bg) {
   // return null if input is null or undefined
   if (bg == null) return null;
   // run through d3 rgb to sanity check
   return d3.rgb(bg) + "";  
 };
+
+module.exports = parseBg;
+parseBg.schema = {"defs": {"background": {"type": "string"}}};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{}],45:[function(require,module,exports){
@@ -9009,13 +9012,35 @@ module.exports = function parseModify(model, def, ds) {
 },{"../dataflow/Node":34,"../dataflow/tuple":37,"../util/constants":108,"../util/log":109,"datalib":20}],54:[function(require,module,exports){
 var dl = require('datalib');
 
-module.exports = function parsePadding(pad) {
+function parsePadding(pad) {
   if (pad == null) return "auto";
   else if (dl.isString(pad)) return pad==="strict" ? "strict" : "auto";
   else if (dl.isObject(pad)) return pad;
   var p = dl.isNumber(pad) ? pad : 20;
   return {top:p, left:p, right:p, bottom:p};
 }
+
+module.exports = parsePadding;
+parsePadding.schema = {
+  "defs": {
+    "padding": {
+      "oneOf": [{
+        "type": {"enum": ["strict", "auto"]}
+      }, {
+        "type": "object",
+        "properties": {
+          "top": {"type": "number"},
+          "bottom": {"type": "number"},
+          "left": {"type": "number"},
+          "right": {"type": "number"}
+        },
+        "additionalProperties": false
+      }, {
+        "type": "number"
+      }]
+    }
+  }
+};
 },{"datalib":20}],55:[function(require,module,exports){
 var dl = require('datalib');
 
@@ -9838,13 +9863,17 @@ parseSpec.schema = {
 
       "allOf": [{"$ref": "#/defs/container"}, {
         "properties": {
-          "data": {
-            "type": "array",
-            "items": {"$ref": "#/defs/data"}
-          },
+          "background": {"$ref": "#/defs/background"},
+          "padding": {"$ref": "#/defs/padding"},
+
           "signals": {
             "type": "array",
             "items": {"$ref": "#/defs/signal"}
+          },
+
+          "data": {
+            "type": "array",
+            "items": {"$ref": "#/defs/data"}
           }
         }
       }]

@@ -44,13 +44,17 @@ parseSpec.schema = {
 
       "allOf": [{"$ref": "#/defs/container"}, {
         "properties": {
-          "data": {
-            "type": "array",
-            "items": {"$ref": "#/defs/data"}
-          },
+          "background": {"$ref": "#/defs/background"},
+          "padding": {"$ref": "#/defs/padding"},
+
           "signals": {
             "type": "array",
             "items": {"$ref": "#/defs/signal"}
+          },
+
+          "data": {
+            "type": "array",
+            "items": {"$ref": "#/defs/data"}
           }
         }
       }]
