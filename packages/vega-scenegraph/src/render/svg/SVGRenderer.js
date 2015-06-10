@@ -1,15 +1,16 @@
 var DOM = require('../../util/dom'),
-    XML = require('../../util/xml'),
-    SVG = require('../../util/svg'),
+    SVG = require('../../util/svg'),    
     ImageLoader = require('../../util/ImageLoader'),
     d3 = require('d3'),
     dl = require('datalib'),
-    util = require('./marks/util'),
     marks = require('./marks'),
     Renderer = require('../Renderer');
 
-function SVGRenderer() {
+var href = (typeof window !== 'undefined' ? window.location.href : '');
+
+function SVGRenderer(loadConfig) {
   Renderer.call(this);
+  this._loader = new ImageLoader(loadConfig);
 }
 
 var base = Renderer.prototype;
@@ -65,13 +66,13 @@ prototype.resize = function(width, height, padding) {
 prototype.svg = function() {
   if (!this._svg) return null;
 
-  var head = XML.openTag('svg', dl.extend({
+  var head = DOM.openTag('svg', dl.extend({
     'class':  'marks',
     'width':  this._width + this._padding.left + this._padding.right,
     'height': this._height + this._padding.top + this._padding.bottom,
   }, SVG.metadata));
 
-  var foot = XML.closeTag('svg');
+  var foot = DOM.closeTag('svg');
 
   return head + this._svg.html() + foot;
 };
@@ -121,8 +122,6 @@ prototype.updateDefs = function() {
 };
 
 prototype.render = function(scene, items) {
-  util.defs = this._defs; // stash definitions
-
   if (items) {
     this.update(dl.array(items));
   } else {
@@ -130,7 +129,6 @@ prototype.render = function(scene, items) {
   }
   this.updateDefs();
 
-  util.defs = null;
   return this;
 };
 
@@ -139,17 +137,44 @@ prototype.update = function(items) {
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
-    mark = marks[item.mark.marktype]
+    mark = marks[item.mark.marktype];
     item = mark.nested ? item.mark.items : item;
     el   = mark.nested ? item[0]._svg : item._svg;
-    mark.update.call(el, item);
-    util.styles.call(el, item);
+    mark.update.call(this, el, item);
+    this.style(el, item);
   }
 };
 
 prototype.draw = function(ctx, scene, index) {
   var mark = marks[scene.marktype];
   mark.draw.call(this, ctx, scene, index);
+};
+
+prototype.style = function(el, d) {
+  var i, n, prop, name, value,
+      o = dl.isArray(d) ? d[0] : d;
+  if (o == null) return;
+
+  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
+    prop = SVG.styleProperties[i];
+    name = SVG.styles[prop];
+    value = o[prop];
+
+    if (value == null) {
+      if (name === 'fill') {
+        el.style.setProperty(name, 'none', null);
+      } else {
+        el.style.removeProperty(name);
+      }
+    } else {
+      if (value.id) {
+        // ensure definition is included
+        this._defs.gradient[value.id] = value;
+        value = 'url(' + href + '#' + value.id + ')';
+      }
+      el.style.setProperty(name, value+'', null);
+    }
+  }
 };
 
 module.exports = SVGRenderer;

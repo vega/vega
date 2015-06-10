@@ -1,10 +1,12 @@
 'use strict';
+
 var assert = require('chai').assert;
+var DOM = require('../src/util/dom');
 
 describe('util', function() {
 
   describe('font-string', function() {
-    var fontString = require('../src/util/font-string');
+    var fontString = DOM.fontString;
     it('should produce default font string', function() {
       assert.equal(fontString({}), '11px sans-serif');
     });
@@ -52,23 +54,22 @@ describe('util', function() {
     });
   });
 
-  describe('xml', function() {
-    var xml = require('../src/util/xml');
+  describe('dom', function() {
     it('should open tag', function() {
-      assert.equal(xml.openTag('g'), '<g>');
+      assert.equal(DOM.openTag('g'), '<g>');
     });
     it('open tag should accept attributes', function() {
-      assert.equal(xml.openTag('g', {
+      assert.equal(DOM.openTag('g', {
         foo: '1',
         bar: null,
         baz: 'a',
       }), '<g foo="1" baz="a">');
     });
     it('open tag accept raw extensions', function() {
-      assert.equal(xml.openTag('g', null, 'foo="1"'), '<g foo="1">');
+      assert.equal(DOM.openTag('g', null, 'foo="1"'), '<g foo="1">');
     });
     it('should close tag', function() {
-      assert.equal(xml.closeTag('g'), '</g>');
+      assert.equal(DOM.closeTag('g'), '</g>');
     });
   });
 

@@ -1,6 +1,6 @@
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
-    fontString = require('../../../util/font-string'),
+    fontString = require('../../../util/dom').fontString,
     util = require('./util'),
     tempBounds = new Bounds();
 

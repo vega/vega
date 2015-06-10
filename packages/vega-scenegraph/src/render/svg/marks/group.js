@@ -1,15 +1,13 @@
 var d3 = require('d3'),
-    util = require('./util'),
-    rect = require('./rect');
+    drawMark = require('./draw');
 
 function draw(g, scene, index) {
   var renderer = this,
-      p = util.drawMark(g, scene, index, 'g', group),
+      p = drawMark.call(this, g, scene, index, groupMark),
       c = p.node().childNodes,
-      n = c.length,
-      i, j, m;
+      i, n, j, m;
 
-  for (i=0; i<n; ++i) {
+  for (i=0, n=c.length; i<n; ++i) {
     var datum = c[i].__data__,
         items = datum.items || [],
         legends = datum.legendItems || [],
@@ -36,25 +34,32 @@ function draw(g, scene, index) {
   }
 }
 
-function group(o) {
+function update(el, o) {
   var x = o.x || 0,
       y = o.y || 0,
       id, c;
 
-  this.setAttribute('transform', 'translate('+x+','+y+')');
+  el.setAttribute('transform', 'translate('+x+','+y+')');
 
   if (o.clip) {
-    id = o.clip_id || (o.clip_id = 'clip' + util.defs.clip_id++);
+    id = o.clip_id || (o.clip_id = 'clip' + this._defs.clip_id++);
     c = {
       width: o.width || 0,
       height: o.height || 0
     };
-    util.defs.clipping[id] = c;
-    this.setAttribute('clip-path', 'url(#'+id+')');
+    this._defs.clipping[id] = c;
+    el.setAttribute('clip-path', 'url(#'+id+')');
   }
+  
+  var bg = el.childNodes[0];
+  var w = o.width || 0,
+      h = o.height || 0;
+  bg.setAttribute('width', w);
+  bg.setAttribute('height', h);
 }
 
-module.exports = {
-  update: rect.update,
+var groupMark = module.exports = {
+  tag:    'g',
+  update: update,
   draw:   draw
 };

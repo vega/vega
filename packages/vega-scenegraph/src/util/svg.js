@@ -1,4 +1,4 @@
-var d3 = require('d3');
+var d3_svg = require('d3').svg;
 
 function x(o)     { return o.x || 0; }
 function y(o)     { return o.y || 0; }
@@ -14,11 +14,11 @@ module.exports = {
     'xmlns:xlink': 'http://www.w3.org/1999/xlink'
   },
   path: {
-    arc:    d3.svg.arc(),
-    areav:  d3.svg.area().x(x).y1(y).y0(yh),
-    areah:  d3.svg.area().y(y).x0(xw).x1(x),
-    line:   d3.svg.line().x(x).y(y),
-    symbol: d3.svg.symbol().type(shape).size(size)
+    arc:    d3_svg.arc(),
+    areav:  d3_svg.area().x(x).y1(y).y0(yh),
+    areah:  d3_svg.area().y(y).x0(xw).x1(x),
+    line:   d3_svg.line().x(x).y(y),
+    symbol: d3_svg.symbol().type(shape).size(size)
   },
   textAlign: {
     'left':   'start',

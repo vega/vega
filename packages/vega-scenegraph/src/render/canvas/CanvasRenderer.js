@@ -5,9 +5,9 @@ var DOM = require('../../util/dom'),
     Renderer = require('../Renderer'),
     marks = require('./marks');
 
-function CanvasRenderer() {
+function CanvasRenderer(loadConfig) {
   Renderer.call(this);
-  this._loader = new ImageLoader();
+  this._loader = new ImageLoader(loadConfig);
 }
 
 var base = Renderer.prototype;

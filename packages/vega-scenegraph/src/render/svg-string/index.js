@@ -1,4 +1,3 @@
 module.exports = {
-  Renderer: require('./SVGStringRenderer'),
-  Builder:  require('./SVGStringBuilder')
+  Renderer: require('./SVGStringRenderer')
 };

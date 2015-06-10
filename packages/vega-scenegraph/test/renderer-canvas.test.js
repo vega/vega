@@ -4,7 +4,6 @@ var fs = require('fs');
 var assert = require('chai').assert;
 var Renderer = require('../src/render/canvas/CanvasRenderer');
 var initialize = require('../src/util/init-scene');
-var ImageLoader = require('../src/util/ImageLoader');
 var res = './test/resources/';
 
 var GENERATE_TEST_FILES = false;
@@ -33,11 +32,7 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  ImageLoader.Config = {
-    baseURL: './test/resources/'
-  };
-
-  var r = new Renderer()
+  var r = new Renderer({baseURL: './test/resources/'})
     .initialize(null, w, h)
     .render(scene);
   

@@ -6,11 +6,9 @@ var assert = require('chai').assert;
 var jsdom = require('jsdom');
 var doc = jsdom.jsdom();
 
-var XML = require('../src/util/xml');
 var SVGUtil = require('../src/util/svg');
 var Renderer = require('../src/render/svg/SVGRenderer');
 var initialize = require('../src/util/init-scene');
-var ImageLoader = require('../src/util/ImageLoader');
 var res = './test/resources/';
 
 function load(file) {
@@ -24,7 +22,6 @@ function loadScene(file) {
 }
 
 function render(scene, w, h) {
-  ImageLoader.Config = null;
   return new Renderer()
     .initialize(doc.body, w, h)
     .render(scene)

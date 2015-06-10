@@ -1,20 +1,12 @@
 var dl = require('datalib');
 
-function ImageLoader() {
+function ImageLoader(loadConfig) {
   this._pending = 0;
-  this._config = ImageLoader.Config; 
+  this._config = loadConfig || ImageLoader.Config; 
 }
 
 // Overridable global default load configuration
 ImageLoader.Config = null;
-
-ImageLoader.imageURL = function(uri) {
-  return dl.load.sanitizeUrl(params(uri, ImageLoader.Config));
-};
-
-function params(uri, config) {
-  return dl.extend({url: uri}, config);
-};
 
 var prototype = ImageLoader.prototype;
 
@@ -22,8 +14,16 @@ prototype.pending = function() {
   return this._pending;
 };
 
+prototype.params = function(uri) {
+  return dl.extend({url: uri}, this._config);
+};
+
+prototype.imageURL = function(uri) {
+  return dl.load.sanitizeUrl(this.params(uri));
+};
+
 function browser(uri, callback) {
-  var url = dl.load.sanitizeUrl(params(uri, this._config));
+  var url = dl.load.sanitizeUrl(this.params(uri));
   if (!url) { // error
     if (callback) callback(uri, null);
     return null;
@@ -50,8 +50,7 @@ function server(uri, callback) {
 
   loader._pending += 1;
 
-  var p = params(uri, this._config);
-  dl.load(p, function(err, data) {
+  dl.load(this.params(uri), function(err, data) {
     loader._pending -= 1;
     if (err) {
       if (callback) callback(err, null);

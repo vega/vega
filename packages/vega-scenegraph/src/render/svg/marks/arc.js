@@ -1,14 +1,12 @@
-var path = require('../../../util/svg').path.arc,
-    util = require('./util');
-
-function draw(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  this.setAttribute('transform', 'translate('+x+','+y+')');
-  this.setAttribute('d', path(o));
-}
+var path = require('../../../util/svg').path.arc;
 
 module.exports = {
-  update: draw,
-  draw:   util.draw('path', draw)
+  tag:    'path',
+  update: function(el, o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    el.setAttribute('transform', 'translate('+x+','+y+')');
+    el.setAttribute('d', path(o));
+  }
+//  draw:   util.draw('path', draw)
 };

@@ -3,8 +3,6 @@
 var fs = require('fs');
 var assert = require('chai').assert;
 var Renderer = require('../src/render/svg-string').Renderer;
-var Builder = require('../src/render/svg-string').Builder;
-var ImageLoader = require('../src/util/ImageLoader');
 var res = './test/resources/';
 
 var GENERATE_TEST_FILES = false;
@@ -22,7 +20,6 @@ function json(file) {
 }
 
 function render(scene, w, h) {
-  ImageLoader.Config = null;
   return new Renderer()
     .initialize(null, w, h)
     .render(scene)
@@ -31,21 +28,21 @@ function render(scene, w, h) {
 
 describe('svg-string renderer', function() {
   var marks = json('marks.json');
-  var sb = new Builder();
+  var r = new Renderer();
 
   it('should return null for invalid mark type', function() {
-    assert.isNull(sb.mark({marktype: 'foo-bar'}));
+    assert.isNull(r.mark({marktype: 'foo-bar'}));
   });
 
   it('should build empty path for item-less area mark', function() {
-    var str = sb.reset().mark({marktype: 'area', items:[]});
+    var str = r.reset().mark({marktype: 'area', items:[]});
     generate('svg/marks-itemless-area.svg', str);
     var test = load('svg/marks-itemless-area.svg');
     assert.strictEqual(str, test);
   });
 
   it('should build empty path for item-less line mark', function() {
-    var str = sb.reset().mark({marktype: 'line', items:[]});
+    var str = r.reset().mark({marktype: 'line', items:[]});
     generate('svg/marks-itemless-line.svg', str);
     var test = load('svg/marks-itemless-line.svg');
     assert.strictEqual(str, test);
