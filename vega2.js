@@ -9563,7 +9563,7 @@ module.exports = properties;
 
 function valueSchema(type) {
   type = dl.isArray(type) ? {"enum": type} : {"type": type};
-  return {
+  var valRef = {
     "type": "object",
     "allOf": [{"$ref": "#/refs/valueModifiers"}, {
       "oneOf": [{
@@ -9580,7 +9580,39 @@ function valueSchema(type) {
         "required": ["band"]
       }]
     }]
-  }
+  };
+
+  return {
+    "oneOf": [{
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "array",
+          "items": {
+            "allOf": [{
+              "type": "object",
+              "properties": {
+                "predicate": {
+                  "oneOf": [
+                    {"type": "string"}, 
+                    {
+                      "type": "object",
+                      "properties": {"name": "string"},
+                      "required": ["name"]
+                    }
+                  ]
+                }
+              }
+            },
+            valRef]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": ["rule"]
+    },
+    valRef]
+  };
 }
 
 properties.schema = {
