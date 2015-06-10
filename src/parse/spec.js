@@ -54,6 +54,11 @@ parseSpec.schema = {
             "items": {"$ref": "#/defs/signal"}
           },
 
+          "predicates": {
+            "type": "array",
+            "items": {"$ref": "#/defs/predicate"}
+          },
+
           "data": {
             "type": "array",
             "items": {"$ref": "#/defs/data"}
