@@ -13769,8 +13769,10 @@ function ordinal(scale, rng, group) {
   var def = this._def,
       prev = scale._prev,
       dataDrivenRange = false,
-      pad = def.padding || 0,
-      outer = def.outerPadding == null ? pad : def.outerPadding,
+      pad = signal.call(this, def.padding) || 0,
+      outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
+      points = def.points && signal.call(this, def.points),
+      round = signal.call(this, def.round) || def.round == null,
       domain, sort, str, refs;
   
   // range pre-processing for data-driven ranges
@@ -13792,21 +13794,21 @@ function ordinal(scale, rng, group) {
 
   // width-defined range
   if (def.bandWidth) {
-    var bw = def.bandWidth,
+    var bw = signal.call(this, def.bandWidth),
         len = domain.length,
         start = rng[0] || 0,
-        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
+        space = points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
     rng = [start, start + (bw * len + space)];
   }
 
   str = typeof rng[0] === 'string';
   if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
     scale.range(rng); // color or shape values
-  } else if (def.points && (def.round || def.round == null)) {
+  } else if (points && round) {
     scale.rangeRoundPoints(rng, pad);
-  } else if (def.points) {
+  } else if (points) {
     scale.rangePoints(rng, pad);
-  } else if (def.round || def.round == null) {
+  } else if (round) {
     scale.rangeRoundBands(rng, pad, outer);
   } else {
     scale.rangeBands(rng, pad, outer);
@@ -13819,6 +13821,10 @@ function ordinal(scale, rng, group) {
 function quantitative(scale, rng, group) {
   var def = this._def,
       prev = scale._prev,
+      round = signal.call(this, def.round),
+      exponent = signal.call(this, def.exponent),
+      clamp = signal.call(this, def.clamp),
+      nice = signal.call(this, def.nice),
       domain, interval;
 
   // domain
@@ -13833,20 +13839,20 @@ function quantitative(scale, rng, group) {
 
   // range
   // vertical scales should flip by default, so use XOR here
-  if (def.range === "height") rng = rng.reverse();
+  if (signal.call(this, def.range) === "height") rng = rng.reverse();
   if (dl.equal(prev.range, rng)) return;
-  scale[def.round && scale.rangeRound ? "rangeRound" : "range"](rng);
+  scale[round && scale.rangeRound ? "rangeRound" : "range"](rng);
   prev.range = rng;
   this._updated = true;
 
   // TODO: Support signals for these properties. Until then, only eval
   // them once.
   if (this._stamp > 0) return;
-  if (def.exponent && def.type===C.POWER) scale.exponent(def.exponent);
-  if (def.clamp) scale.clamp(true);
-  if (def.nice) {
+  if (exponent && def.type===C.POWER) scale.exponent(exponent);
+  if (clamp) scale.clamp(true);
+  if (nice) {
     if (def.type === C.TIME) {
-      interval = d3.time[def.nice];
+      interval = d3.time[nice];
       if (!interval) log.error("Unrecognized interval: " + interval);
       scale.nice(interval);
     } else {
@@ -13994,8 +14000,8 @@ function dataRef(which, def, scale, group) {
 }
 
 function signal(v) {
+  if (!v || !v.signal) return v;
   var s = v.signal, ref;
-  if (!s) return v;
   this.dependency(C.SIGNALS, (ref = dl.field(s))[0]);
   return this._graph.signalRef(ref);
 }
@@ -14041,24 +14047,25 @@ function domainMinMax(scale, group) {
 
 function range(group) {
   var def = this._def,
+      range = signal.call(this, def.range),
       rng = [null, null];
 
-  if (def.range !== undefined) {
-    if (typeof def.range === 'string') {
-      if (GROUP_PROPERTY[def.range]) {
-        rng = [0, group[def.range]];
-      } else if (config.range[def.range]) {
-        rng = config.range[def.range];
+  if (range !== undefined) {
+    if (typeof range === 'string') {
+      if (GROUP_PROPERTY[range]) {
+        rng = [0, group[range]];
+      } else if (config.range[range]) {
+        rng = config.range[range];
       } else {
-        log.error("Unrecogized range: "+def.range);
+        log.error("Unrecogized range: "+range);
         return rng;
       }
-    } else if (dl.isArray(def.range)) {
-      rng = dl.duplicate(def.range).map(signal.bind(this));
-    } else if (dl.isObject(def.range)) {
+    } else if (dl.isArray(range)) {
+      rng = dl.duplicate(range).map(signal.bind(this));
+    } else if (dl.isObject(range)) {
       return null; // early exit
     } else {
-      rng = [0, def.range];
+      rng = [0, range];
     }
   }
   if (def.rangeMin !== undefined) {
@@ -14069,7 +14076,7 @@ function range(group) {
   }
   
   if (def.reverse !== undefined) {
-    var rev = def.reverse;
+    var rev = signal.call(this, def.reverse);
     if (dl.isObject(rev)) {
       rev = dl.accessor(rev.field)(group.datum);
     }
@@ -14090,8 +14097,9 @@ var rangeDef = [
   {"enum": ["width", "height", "shapes", "category10", "category20"]},
   {
     "type": "array",
-    "items": {"oneOf": [{"type":"string"}, {"type": "number"}]}
-  }
+    "items": {"oneOf": [{"type":"string"}, {"type": "number"}, {"$ref": "#/refs/signal"}]}
+  },
+  {"$ref": "#/refs/signal"}
 ];
 
 module.exports = Scale;
@@ -14221,8 +14229,10 @@ Scale.schema = {
               "oneOf": rangeDef.concat({"$ref": "#/refs/data"})
             },
 
-            "points": {"type": "boolean"},
-            "padding": {"type": "number"},
+            "points": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
+            "padding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+            "outerPadding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
+            "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
 
             "sort": sortDef
           }
@@ -14230,9 +14240,9 @@ Scale.schema = {
           "properties": {
             "type": {"enum": [C.TIME, C.TIME_UTC]},
             "range": {"oneOf": rangeDef},
-            "clamp": {"type": "boolean"},
-            "nice": {"enum": ["second", "minute", "hour", 
-              "day", "week", "month", "year"]}
+            "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
+            "nice": {"oneOf": [{"enum": ["second", "minute", "hour", 
+              "day", "week", "month", "year"]}, {"$ref": "#/refs/signal"}]}
           }
         }, {
           "anyOf": [{
@@ -14240,14 +14250,14 @@ Scale.schema = {
               "type": {"enum": [C.LINEAR, C.LOG, C.POWER, C.SQRT, 
                 C.QUANTILE, C.QUANTIZE, C.THRESHOLD], "default": C.LINEAR},
               "range": {"oneOf": rangeDef},
-              "clamp": {"type": "boolean"},
-              "nice": {"type": "boolean"},
-              "zero": {"type": "boolean"}
+              "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
+              "nice": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
+              "zero": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]}
             }
           }, {
             "properties": {
               "type": {"enum": [C.POWER]},
-              "exponent": {"type": "number"}
+              "exponent": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
             }
           }, {
             "properties": {
