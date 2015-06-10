@@ -9052,7 +9052,9 @@ parsePadding.schema = {
   "defs": {
     "padding": {
       "oneOf": [{
-        "type": {"enum": ["strict", "auto"]}
+        "enum": ["strict", "auto"]
+      }, {
+        "type": "number"
       }, {
         "type": "object",
         "properties": {
@@ -9062,8 +9064,6 @@ parsePadding.schema = {
           "right": {"type": "number"}
         },
         "additionalProperties": false
-      }, {
-        "type": "number"
       }]
     }
   }

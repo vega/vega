@@ -86,7 +86,7 @@ parseModify.schema = {
           "properties": {
             "type": {"enum": [C.ADD, C.REMOVE, C.TOGGLE]},
             "signal": {"type": "string"},
-            "field": {"type": "field"}
+            "field": {"type": "string"}
           },
           "required": ["type", "signal", "field"]
         }, {
