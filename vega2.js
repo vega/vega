@@ -8591,7 +8591,7 @@ var dl = require('datalib'),
     log = require('../util/log'),
     C = require('../util/constants');
 
-module.exports = function parseInteractors(model, spec, defFactory) {
+function parseInteractors(model, spec, defFactory) {
   var count = 0,
       sg = {}, pd = {}, mk = {},
       signals = [], predicates = [];
@@ -8631,7 +8631,7 @@ module.exports = function parseInteractors(model, spec, defFactory) {
 
     for(i = 0, len = marks.length; i < len; i++) {
       m = marks[i];
-      if (r = mk[m.type]) {
+      if (r = mk[m.name]) {
         marks[i] = dl.duplicate(r);
         if (m.from) marks[i].from = m.from;
         if (m.properties) {
@@ -8727,6 +8727,23 @@ module.exports = function parseInteractors(model, spec, defFactory) {
   if (count === 0) setTimeout(inject, 1);
   return spec;
 }
+
+module.exports = parseInteractors;
+parseInteractors.schema = {
+  "refs": {
+    "interactors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "url": {"type": "string"}
+        },
+        "required": ["name", "url"]
+      }
+    }
+  }
+};
 },{"../util/config":107,"../util/constants":108,"../util/log":109,"datalib":20}],50:[function(require,module,exports){
 var lgnd = require('../scene/legend'),
     config = require('../util/config');
@@ -8878,7 +8895,7 @@ parseMark.schema = {
       },
 
       "additionalProperties": false,
-      "required": ["type"]
+      "oneOf": [{"required": ["type"]}, {"required": ["name"]}]
     }
   }
 }
@@ -9022,7 +9039,7 @@ parseModify.schema = {
           "properties": {
             "type": {"enum": [C.ADD, C.REMOVE, C.TOGGLE]},
             "signal": {"type": "string"},
-            "field": {"type": "field"}
+            "field": {"type": "string"}
           },
           "required": ["type", "signal", "field"]
         }, {
@@ -9892,6 +9909,8 @@ parseSpec.schema = {
         "properties": {
           "background": {"$ref": "#/defs/background"},
           "padding": {"$ref": "#/defs/padding"},
+
+          "interactors": {"$ref": "#/refs/interactors"},
 
           "signals": {
             "type": "array",

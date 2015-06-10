@@ -47,6 +47,8 @@ parseSpec.schema = {
           "background": {"$ref": "#/defs/background"},
           "padding": {"$ref": "#/defs/padding"},
 
+          "interactors": {"$ref": "#/refs/interactors"},
+
           "signals": {
             "type": "array",
             "items": {"$ref": "#/defs/signal"}

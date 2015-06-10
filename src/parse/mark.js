@@ -70,7 +70,7 @@ parseMark.schema = {
       },
 
       "additionalProperties": false,
-      "required": ["type"]
+      "oneOf": [{"required": ["type"]}, {"required": ["name"]}]
     }
   }
 }

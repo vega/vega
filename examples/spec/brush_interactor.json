@@ -71,7 +71,7 @@
     },
 
     {
-      "type": "brush_brush_rect",
+      "name": "brush_brushRect",
       "properties": {
         "enter": {"stroke": {"value": "red"}}
       }
