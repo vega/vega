@@ -56,7 +56,7 @@ gulp.task('test', function() {
   return gulp.src(['test/**/*.js'], { read: false })
     .pipe(mocha({ 
       grep: argv.g, 
-      timeout: 15000,
+      timeout: 30000,
       istanbul: argv.i !== undefined ? (argv.i === "true") : true
     }))
     .on('error', gutil.log);
