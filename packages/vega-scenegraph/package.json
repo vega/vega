@@ -20,7 +20,8 @@
     "jshint": "latest",
     "chai": "latest",
     "mocha": "latest",
-    "istanbul": "latest"
+    "istanbul": "latest",
+    "jsdom": "3"
   },
   "main": "src/index.js",
   "scripts": {

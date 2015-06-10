@@ -5,6 +5,7 @@
     {
       "width": 400,
       "height": 200,
+      "clip": true,
       "items": [
         {
           "marktype": "rect",

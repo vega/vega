@@ -1,4 +1,7 @@
 var DOM = require('../../util/dom'),
+    XML = require('../../util/xml'),
+    SVG = require('../../util/svg'),
+    ImageLoader = require('../../util/ImageLoader'),
     d3 = require('d3'),
     dl = require('datalib'),
     util = require('./marks/util'),
@@ -21,6 +24,8 @@ prototype.initialize = function(el, width, height, padding) {
 
   // create the svg definitions cache
   this._defs = {
+    group_id: 0,
+    clip_id:  0,
     gradient: {},
     clipping: {}
   };
@@ -32,10 +37,10 @@ prototype.initialize = function(el, width, height, padding) {
 };
 
 prototype.background = function(bgcolor) {
-  if (this._svg) {
+  if (arguments.length && this._svg) {
     this._svg.style('background-color', bgcolor);
   }
-  return base.background.call(this, bgcolor);
+  return base.background.apply(this, arguments);
 };
 
 prototype.resize = function(width, height, padding) {
@@ -55,6 +60,20 @@ prototype.resize = function(width, height, padding) {
   }
 
   return this;
+};
+
+prototype.svg = function() {
+  if (!this._svg) return null;
+
+  var head = XML.openTag('svg', dl.extend({
+    'class':  'marks',
+    'width':  this._width + this._padding.left + this._padding.right,
+    'height': this._height + this._padding.top + this._padding.bottom,
+  }, SVG.metadata));
+
+  var foot = XML.closeTag('svg');
+
+  return head + this._svg.html() + foot;
 };
 
 prototype.updateDefs = function() {
@@ -102,7 +121,7 @@ prototype.updateDefs = function() {
 };
 
 prototype.render = function(scene, items) {
-  util.defs = this._defs; // stash defs to collect clips/gradients
+  util.defs = this._defs; // stash definitions
 
   if (items) {
     this.update(dl.array(items));
@@ -116,16 +135,15 @@ prototype.render = function(scene, items) {
 };
 
 prototype.update = function(items) {
-  var item, node, mark, i, n;
+  var item, mark, el, i, n;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
-    node = item._svg;
-    mark = marks[item.mark.marktype];
-
+    mark = marks[item.mark.marktype]
     item = mark.nested ? item.mark.items : item;
-    mark.update.call(node, item);
-    util.style.call(node, item);
+    el   = mark.nested ? item[0]._svg : item._svg;
+    mark.update.call(el, item);
+    util.styles.call(el, item);
   }
 };
 

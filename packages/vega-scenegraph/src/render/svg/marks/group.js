@@ -1,7 +1,6 @@
 var d3 = require('d3'),
     util = require('./util'),
-    rect = require('./rect'),
-    clip_id = 0;
+    rect = require('./rect');
 
 function draw(g, scene, index) {
   var renderer = this,
@@ -12,7 +11,7 @@ function draw(g, scene, index) {
 
   for (i=0; i<n; ++i) {
     var datum = c[i].__data__,
-        items = datum.items,
+        items = datum.items || [],
         legends = datum.legendItems || [],
         axes = datum.axisItems || [],
         sel = d3.select(c[i]),
@@ -45,7 +44,7 @@ function group(o) {
   this.setAttribute('transform', 'translate('+x+','+y+')');
 
   if (o.clip) {
-    id = o.clip_id || (o.clip_id = 'clip' + clip_id++);
+    id = o.clip_id || (o.clip_id = 'clip' + util.defs.clip_id++);
     c = {
       width: o.width || 0,
       height: o.height || 0

@@ -4,7 +4,7 @@ var d3 = require('d3'),
     styleProperties = svg.styleProperties,
     styles = svg.styles;
 
-var mark_id = 0; // TODO centralize?
+var href = (typeof window !== 'undefined' ? window.location.href : '');
 
 function draw(tag, attr, nest) {
   return function(g, scene, index) {
@@ -17,7 +17,7 @@ function cssClass(mark) {
 }
 
 function drawMark(g, scene, index, tag, attr, nest) {
-  var data = nest ? [scene.items] : scene.items,
+  var data = nest ? [scene.items] : scene.items || [],
       events = scene.interactive === false ? 'none' : null,
       groups = g.node().childNodes,
       isGroup = (tag === 'g');
@@ -25,7 +25,7 @@ function drawMark(g, scene, index, tag, attr, nest) {
   var p = (p = groups[index+1]) ? // +1 to skip group background rect
     d3.select(p) :
     g.append('g')
-      .attr('id', 'g'+(++mark_id))
+      .attr('id', 'g' + (util.defs.group_id++))
       .attr('class', cssClass(scene));
 
   var id = p.attr('id'),
@@ -35,10 +35,12 @@ function drawMark(g, scene, index, tag, attr, nest) {
 
   if (isGroup) {
     e.append('rect')
-      .attr('class','background')
+      .attr('class', 'background')
+      .attr('width', 0)
+      .attr('height', 0)
       .style('pointer-events', events);    
   } else {
-    p.style('pointer-events', events);
+    if (events) p.style('pointer-events', events);
     e.each(function(d) {
       if (d.mark) d._svg = this;
       else if (d.length) d[0]._svg = this;
@@ -48,9 +50,11 @@ function drawMark(g, scene, index, tag, attr, nest) {
   m.exit().remove();
   m.each(attr);
   if (isGroup) {
-    p.selectAll(s+' > rect.background')
-      .each(group_bg)
-      .each(style);
+    m.each(function(o) {
+      var bg = this.childNodes[0];
+      group_bg.call(bg, o);
+      style.call(bg, o);
+    });
   } else {
     m.each(style);
   }
@@ -67,7 +71,7 @@ function group_bg(o) {
 function style(d) {
   var i, n, prop, name, value,
       o = dl.isArray(d) ? d[0] : d;
-  if (o === null) return;
+  if (o == null) return;
 
   for (i=0, n=styleProperties.length; i<n; ++i) {
     prop = styleProperties[i];
@@ -84,7 +88,7 @@ function style(d) {
       if (value.id) {
         // ensure definition is included
         util.defs.gradient[value.id] = value;
-        value = 'url(' + window.location.href + '#' + value.id + ')';
+        value = 'url(' + href + '#' + value.id + ')';
       }
       this.style.setProperty(name, value+'', null);
     }
