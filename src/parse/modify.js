@@ -11,7 +11,7 @@ var filter = function(field, value, src, dest) {
   }
 };
 
-module.exports = function parseModify(model, def, ds) {
+function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null, 
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
@@ -74,3 +74,29 @@ module.exports = function parseModify(model, def, ds) {
   
   return node;
 }
+
+module.exports = parseModify;
+parseModify.schema = {
+  "defs": {
+    "modify": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "oneOf": [{
+          "properties": {
+            "type": {"enum": [C.ADD, C.REMOVE, C.TOGGLE]},
+            "signal": {"type": "string"},
+            "field": {"type": "field"}
+          },
+          "required": ["type", "signal", "field"]
+        }, {
+          "properties": {
+            "type": {"enum": [C.CLEAR]},
+            "predicate": {"type": "string"}  // TODO predicate args
+          },
+          "required": ["type", "predicate"]
+        }]
+      }
+    }
+  }
+};

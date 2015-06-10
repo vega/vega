@@ -7357,6 +7357,7 @@ parseData.schema = {
         "properties": {
           "name": {"type": "string"},
           "transform": {"$ref": "#/defs/transform"},
+          "modify": {"$ref": "#/defs/modify"},
           "format": {
             "type": "object",
             "oneOf": [{
@@ -8946,7 +8947,7 @@ var filter = function(field, value, src, dest) {
   }
 };
 
-module.exports = function parseModify(model, def, ds) {
+function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null, 
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
@@ -9009,6 +9010,32 @@ module.exports = function parseModify(model, def, ds) {
   
   return node;
 }
+
+module.exports = parseModify;
+parseModify.schema = {
+  "defs": {
+    "modify": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "oneOf": [{
+          "properties": {
+            "type": {"enum": [C.ADD, C.REMOVE, C.TOGGLE]},
+            "signal": {"type": "string"},
+            "field": {"type": "field"}
+          },
+          "required": ["type", "signal", "field"]
+        }, {
+          "properties": {
+            "type": {"enum": [C.CLEAR]},
+            "predicate": {"type": "string"}  // TODO predicate args
+          },
+          "required": ["type", "predicate"]
+        }]
+      }
+    }
+  }
+};
 },{"../dataflow/Node":34,"../dataflow/tuple":37,"../util/constants":108,"../util/log":109,"datalib":20}],54:[function(require,module,exports){
 var dl = require('datalib');
 

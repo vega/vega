@@ -59,6 +59,7 @@ parseData.schema = {
         "properties": {
           "name": {"type": "string"},
           "transform": {"$ref": "#/defs/transform"},
+          "modify": {"$ref": "#/defs/modify"},
           "format": {
             "type": "object",
             "oneOf": [{
