@@ -1,15 +1,14 @@
-var util = require('./util'),
-    svg = require('../../../util/svg'),
-    fontString = require('../../../util/font-string');
+var textAlign = require('../../../util/svg').textAlign,
+    fontString = require('../../../util/dom').fontString;
 
-function draw(o) {
+function update(el, o) {
   var x = o.x || 0,
       y = o.y || 0,
       dx = o.dx || 0,
       dy = o.dy || 0,
       a = o.angle || 0,
       r = o.radius || 0,
-      align = svg.textAlign[o.align || 'left'],
+      align = textAlign[o.align || 'left'],
       base = o.baseline==='top' ? '.9em'
            : o.baseline==='middle' ? '.35em' : 0;
 
@@ -19,21 +18,21 @@ function draw(o) {
     y += r * Math.sin(t);
   }
 
-  this.setAttribute('x', x + dx);
-  this.setAttribute('y', y + dy);
-  this.setAttribute('text-anchor', align);
+  el.setAttribute('x', x + dx);
+  el.setAttribute('y', y + dy);
+  el.setAttribute('text-anchor', align);
   
-  if (a) this.setAttribute('transform', 'rotate('+a+' '+x+','+y+')');
-  else this.removeAttribute('transform');
+  if (a) el.setAttribute('transform', 'rotate('+a+' '+x+','+y+')');
+  else el.removeAttribute('transform');
   
-  if (base) this.setAttribute('dy', base);
-  else this.removeAttribute('dy');
+  if (base) el.setAttribute('dy', base);
+  else el.removeAttribute('dy');
   
-  this.textContent = o.text;
-  this.style.setProperty('font', fontString(o), null);
+  el.textContent = o.text;
+  el.style.setProperty('font', fontString(o), null);
 }
 
 module.exports = {
-  update: draw,
-  draw:   util.draw('text', draw)
+  tag:    'text',
+  update: update
 };

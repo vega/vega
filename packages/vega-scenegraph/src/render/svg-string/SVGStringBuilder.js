@@ -5,7 +5,8 @@ var dl = require('datalib'),
     ImageLoader = require('../../util/ImageLoader'),
     svg = require('../../util/svg');
 
-function SVGStringBuilder() {
+function SVGStringBuilder(loadConfig) {
+  this._loader = new ImageLoader(loadConfig);
   this._text = {
     head: '',
     root: '',

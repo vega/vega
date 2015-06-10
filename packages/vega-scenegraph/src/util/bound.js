@@ -1,6 +1,6 @@
 var Bounds = require('../util/Bounds'),
     canvas = require('../util/canvas'),
-    fontString = require('./font-string'),
+    fontString = require('./dom').fontString,
     paths = require('../path'),
     parse = paths.parse,
     boundPath = paths.bounds,
