@@ -48,6 +48,18 @@ parseData.datasource = function(model, d) {
   return ds;    
 };
 
+var parseDef = {
+  "oneOf": [
+    {"enum": ["auto"]},
+    {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["number", "boolean", "date", "string"]
+      }
+    }
+  ]
+};
+
 module.exports = parseData;
 parseData.schema = {
   "defs": {
@@ -65,24 +77,14 @@ parseData.schema = {
             "oneOf": [{
               "properties": {
                 "type": {"enum": ["json"]},
-                "parse": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "enum": ["number", "boolean", "date", "string"]
-                  }
-                },
+                "parse": parseDef,
                 "property": {"type": "string"}
               },
               "additionalProperties": false
             }, {
               "properties": {
                 "type": {"enum": ["csv", "tsv"]},
-                "parse": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "enum": ["number", "boolean", "date", "string"]
-                  }
-                }
+                "parse": parseDef
               },
               "additionalProperties": false
             }, {
@@ -103,12 +105,7 @@ parseData.schema = {
               "properties": {
                 "type": {"enum": ["treejson"]},
                 "children": {"type": "string"},
-                "parse": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "enum": ["number", "boolean", "date", "string"]
-                  }
-                }
+                "parse": parseDef
               },
               "additionalProperties": false
             }]
@@ -116,15 +113,19 @@ parseData.schema = {
         },
         "required": ["name"]
       }, {
-        "oneOf": [{
-          "properties": {"source": {"type": "string"}},
-          "required": ["source"]
+        "anyOf": [{
+          "required": ["name", "modify"]
         }, {
-          "properties": {"values": {"type": "array"}},
-          "required": ["values"]
-        }, {
-          "properties": {"url": {"type": "string"}},
-          "required": ["url"]
+          "oneOf": [{
+            "properties": {"source": {"type": "string"}},
+            "required": ["source"]
+          }, {
+            "properties": {"values": {"type": "array"}},
+            "required": ["values"]
+          }, {
+            "properties": {"url": {"type": "string"}},
+            "required": ["url"]
+          }]
         }]
       }]
     }

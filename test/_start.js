@@ -3,6 +3,7 @@ var Node  = require('../src/dataflow/Node'),
     spies = require('chai-spies');
 
 global.d3 = require('d3');
+global.dl = require('datalib');
 global.chai = chai.use(spies);
 global.expect = chai.expect;
 global.validator  = require('is-my-json-valid')

@@ -28,9 +28,10 @@
     },
     {
       "name": "y",
+      "type": "linear",
       "range": "height",
-      "nice": true,
-      "domain": {"data": "table", "field": "y"}
+      "domain": {"data": "table", "field": "y"},
+      "nice": true
     }
   ],
   "axes": [

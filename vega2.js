@@ -7346,6 +7346,18 @@ parseData.datasource = function(model, d) {
   return ds;    
 };
 
+var parseDef = {
+  "oneOf": [
+    {"enum": ["auto"]},
+    {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["number", "boolean", "date", "string"]
+      }
+    }
+  ]
+};
+
 module.exports = parseData;
 parseData.schema = {
   "defs": {
@@ -7363,24 +7375,14 @@ parseData.schema = {
             "oneOf": [{
               "properties": {
                 "type": {"enum": ["json"]},
-                "parse": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "enum": ["number", "boolean", "date", "string"]
-                  }
-                },
+                "parse": parseDef,
                 "property": {"type": "string"}
               },
               "additionalProperties": false
             }, {
               "properties": {
                 "type": {"enum": ["csv", "tsv"]},
-                "parse": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "enum": ["number", "boolean", "date", "string"]
-                  }
-                }
+                "parse": parseDef
               },
               "additionalProperties": false
             }, {
@@ -7401,12 +7403,7 @@ parseData.schema = {
               "properties": {
                 "type": {"enum": ["treejson"]},
                 "children": {"type": "string"},
-                "parse": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "enum": ["number", "boolean", "date", "string"]
-                  }
-                }
+                "parse": parseDef
               },
               "additionalProperties": false
             }]
@@ -7414,15 +7411,19 @@ parseData.schema = {
         },
         "required": ["name"]
       }, {
-        "oneOf": [{
-          "properties": {"source": {"type": "string"}},
-          "required": ["source"]
+        "anyOf": [{
+          "required": ["name", "modify"]
         }, {
-          "properties": {"values": {"type": "array"}},
-          "required": ["values"]
-        }, {
-          "properties": {"url": {"type": "string"}},
-          "required": ["url"]
+          "oneOf": [{
+            "properties": {"source": {"type": "string"}},
+            "required": ["source"]
+          }, {
+            "properties": {"values": {"type": "array"}},
+            "required": ["values"]
+          }, {
+            "properties": {"url": {"type": "string"}},
+            "required": ["url"]
+          }]
         }]
       }]
     }
@@ -8797,17 +8798,18 @@ legends.schema = {
         "fill": {"type": "string"},
         "stroke": {"type": "string"},
         "orient": {"enum": ["left", "right"], "default": "right"},
+        "offset": {"type": "number"},
         "title": {"type": "string"},
-        "format": {"type": "string"},
         "values": {"type": "array"},
+        "format": {"type": "string"},
         "properties": {
           "type": "object",
           "properties": {
             "title": {"$ref": "#/defs/propset"},
             "labels": {"$ref": "#/defs/propset"},
-            "symbols": {"$ref": "#/defs/propset"},
-            "gradient": {"$ref": "#/defs/propset"},
             "legend": {"$ref": "#/defs/propset"},
+            "symbols": {"$ref": "#/defs/propset"},
+            "gradient": {"$ref": "#/defs/propset"}
           },
           "additionalProperties": false
         }
@@ -8887,15 +8889,16 @@ parseMark.schema = {
           "properties": {
             "enter":  {"$ref": "#/defs/propset"},
             "update": {"$ref": "#/defs/propset"},
-            "exit":   {"$ref": "#/defs/propset"}
+            "exit":   {"$ref": "#/defs/propset"},
+            "hover":  {"$ref": "#/defs/propset"}
           },
           "additionalProperties": false,
           "anyOf": [{"required": ["enter"]}, {"required": ["update"]}]
         }
       },
 
-      "additionalProperties": false,
-      "oneOf": [{"required": ["type"]}, {"required": ["name"]}]
+      // "additionalProperties": false,
+      "anyOf": [{"required": ["type"]}, {"required": ["name"]}]
     }
   }
 }
@@ -9676,6 +9679,13 @@ function valueSchema(type) {
     }]
   };
 
+  if (type.type === "string") {
+    valRef.allOf[1].oneOf.push({
+      "properties": {"template": {"type": "string"}},
+      "required": ["template"]
+    });
+  }
+
   return {
     "oneOf": [{
       "type": "object",
@@ -9836,6 +9846,9 @@ properties.schema = {
         "strokeDash": {"$ref": "#/refs/arrayValue"},
         "strokeDashOffset": {"$ref": "#/refs/numberValue"},
 
+        // Group-mark properties
+        "clip": {"$ref": "#/refs/booleanValue"},
+
         // Symbol-mark properties
         "size": {"$ref": "#/refs/numberValue"},
         "shape": valueSchema(["circle", "square", 
@@ -9869,7 +9882,7 @@ properties.schema = {
         "angle": {"$ref": "#/refs/numberValue"},
         "font": {"$ref": "#/refs/stringValue"},
         "fontSize": {"$ref": "#/refs/numberValue"},
-        "fontWeight": {"$ref": "#/refs/numberValue"},
+        "fontWeight": {"$ref": "#/refs/stringValue"},
         "fontStyle": {"$ref": "#/refs/stringValue"}
       },
 
@@ -9976,6 +9989,7 @@ parseSignals.schema = {
           "not": {"enum": ["datum", "event"].concat(dl.keys(functions))}
         },
         "init": {},
+        "verbose": {"type": "boolean", "default": false},
         "expr": {"type": "string"},
         "scale": {"$ref": "#/refs/scopedScale"},
         "streams": {"$ref": "#/defs/streams"}
@@ -15939,7 +15953,7 @@ Aggregate.schema = {
     }
   },
   "additionalProperties": false,
-  "required": ["type", "groupby", "summarize"]
+  "required": ["type", "groupby"]
 };
 
 },{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":108,"../util/log":109,"./Facetor":88,"./Transform":100,"datalib":20}],84:[function(require,module,exports){
@@ -16238,7 +16252,7 @@ Cross.schema = {
     }
   },
   "additionalProperties": false,
-  "required": ["type", "with"]
+  "required": ["type"]
 };
 },{"../dataflow/Collector":31,"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":109,"./Transform":100}],87:[function(require,module,exports){
 var dl = require('datalib'),
@@ -17090,7 +17104,7 @@ GeoPath.schema = {
       }
     }
   }, Geo.baseSchema),
-  "required": ["type", "value"]
+  "required": ["type"]
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
@@ -17820,8 +17834,8 @@ Treemap.schema = {
         {
           "type": "array",
           "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-          "minItems": 0,
-          "maxItems": 0
+          "minItems": 2,
+          "maxItems": 2
         },
         {"$ref": "#/refs/signal"}
       ],
@@ -17866,7 +17880,8 @@ Treemap.schema = {
       }
     }
   },
-  "required": ["type", "groupby", "value"]
+  "additionalProperties": false,
+  "required": ["type", "value"]
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
@@ -18778,11 +18793,11 @@ module.exports = function schema(opt) {
 
   // Extend schema to support custom mark properties or property sets.
   if (opt.properties) dl.keys(opt.properties).forEach(function(k) {
-    schema.defs.propset.properties[k] = opt.properties;
+    schema.defs.propset.properties[k] = {"$ref": "#/refs/"+opt.properties[k]+"Value"};
   });
 
   if (opt.propertySets) dl.keys(opt.propertySets).forEach(function(k) {
-    schema.defs.mark.properties.properties.properties[k] = opt.propertySets[k];
+    schema.defs.mark.properties.properties.properties[k] = {"$ref": "#/defs/propset"};
   });
 
   return schema;

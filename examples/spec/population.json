@@ -34,7 +34,6 @@
   "marks": [
     {
       "type": "text",
-      "interactive": false,
       "from": {
         "data": "pop2000",
         "transform": [{"type":"aggregate", "groupby":["age"]}]

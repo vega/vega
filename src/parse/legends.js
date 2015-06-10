@@ -50,17 +50,18 @@ legends.schema = {
         "fill": {"type": "string"},
         "stroke": {"type": "string"},
         "orient": {"enum": ["left", "right"], "default": "right"},
+        "offset": {"type": "number"},
         "title": {"type": "string"},
-        "format": {"type": "string"},
         "values": {"type": "array"},
+        "format": {"type": "string"},
         "properties": {
           "type": "object",
           "properties": {
             "title": {"$ref": "#/defs/propset"},
             "labels": {"$ref": "#/defs/propset"},
-            "symbols": {"$ref": "#/defs/propset"},
-            "gradient": {"$ref": "#/defs/propset"},
             "legend": {"$ref": "#/defs/propset"},
+            "symbols": {"$ref": "#/defs/propset"},
+            "gradient": {"$ref": "#/defs/propset"}
           },
           "additionalProperties": false
         }

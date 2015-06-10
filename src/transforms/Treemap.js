@@ -102,8 +102,8 @@ Treemap.schema = {
         {
           "type": "array",
           "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-          "minItems": 0,
-          "maxItems": 0
+          "minItems": 2,
+          "maxItems": 2
         },
         {"$ref": "#/refs/signal"}
       ],
@@ -148,5 +148,6 @@ Treemap.schema = {
       }
     }
   },
-  "required": ["type", "groupby", "value"]
+  "additionalProperties": false,
+  "required": ["type", "value"]
 }

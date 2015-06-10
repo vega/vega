@@ -46,7 +46,7 @@
         "enter": {
           "x": {"field": {"group": "width"}, "mult": 0.5},
           "y": {"field": {"group": "height"}, "mult": 0.5},
-          "radius": {"scale": "r", "offset": 8},
+          "radius": {"scale": "r", "field": "data", "offset": 8},
           "theta": {"field": "layout_mid"},
           "fill": {"value": "#000"},
           "align": {"value": "center"},

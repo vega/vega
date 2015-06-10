@@ -62,15 +62,16 @@ parseMark.schema = {
           "properties": {
             "enter":  {"$ref": "#/defs/propset"},
             "update": {"$ref": "#/defs/propset"},
-            "exit":   {"$ref": "#/defs/propset"}
+            "exit":   {"$ref": "#/defs/propset"},
+            "hover":  {"$ref": "#/defs/propset"}
           },
           "additionalProperties": false,
           "anyOf": [{"required": ["enter"]}, {"required": ["update"]}]
         }
       },
 
-      "additionalProperties": false,
-      "oneOf": [{"required": ["type"]}, {"required": ["name"]}]
+      // "additionalProperties": false,
+      "anyOf": [{"required": ["type"]}, {"required": ["name"]}]
     }
   }
 }

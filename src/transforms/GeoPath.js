@@ -59,5 +59,5 @@ GeoPath.schema = {
       }
     }
   }, Geo.baseSchema),
-  "required": ["type", "value"]
+  "required": ["type"]
 };

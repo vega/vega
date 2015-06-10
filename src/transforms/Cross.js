@@ -144,5 +144,5 @@ Cross.schema = {
     }
   },
   "additionalProperties": false,
-  "required": ["type", "with"]
+  "required": ["type"]
 };

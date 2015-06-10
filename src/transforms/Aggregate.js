@@ -219,5 +219,5 @@ Aggregate.schema = {
     }
   },
   "additionalProperties": false,
-  "required": ["type", "groupby", "summarize"]
+  "required": ["type", "groupby"]
 };

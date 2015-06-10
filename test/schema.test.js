@@ -1,5 +1,7 @@
 describe('Schema', function() {
-  var schema = require('../src/util/schema')();
+  var schema = require('../src/util/schema')({
+    properties: {a: "string", b: "string"}  // Custom properties for linking example
+  });
 
   function path(path) {
     var s = {refs: schema.refs, defs: schema.defs};
@@ -74,5 +76,30 @@ describe('Schema', function() {
     it('should validate predicates');
     it('should validate scales');
     it('should validate marks');
+  });
+  
+  describe('Examples', function() {
+    var fs = require('fs'),
+        path = require('path'),
+        config = require('../src/util/config'),
+        examples = "./examples/spec/",
+        validate = validator(schema);
+
+    expect(fs.statSync(examples).isDirectory()).to.equal(true);
+    var files = fs.readdirSync(examples).filter(function(name) {
+      return path.extname(name) === ".json";
+    });
+
+    config.load.baseURL = 'file://' + examples + "../"; // needed for data loading
+
+    files.forEach(function(file, idx) {
+      var name = path.basename(file, ".json");
+
+      it('should validate the '+ name + ' example', function() {
+        var spec = dl.json(examples + file);
+        expect(validate(spec)).to.be.true;
+      });
+    });
+
   });
 });

@@ -93,7 +93,7 @@
       "init": 0,
       "streams": [
         {"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert":true}},
-        {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2", "scale":"x", "invert":true}
+        {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].x + touch_twotouchmove[1].x)/2", "scale":{"name": "x", "invert":true}}
       ]
     },
     {
@@ -101,7 +101,7 @@
       "init": 0,
       "streams": [
         {"type": "mousemove", "expr": "event.vgY", "scale": {"name": "y", "invert":true}},
-        {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2", "scale":"y", "invert":true}
+        {"type": "touch_twotouchmove", "expr": "(touch_twotouchmove[0].y + touch_twotouchmove[1].y)/2", "scale":{"name": "y", "invert":true}}
       ]
     },
     {

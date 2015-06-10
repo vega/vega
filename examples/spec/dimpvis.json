@@ -13,7 +13,7 @@
     "transform": [
       {
         "type": "filter",
-        "test": "datum.year == year && datum.country == currentCountry && dragging"
+        "test": "datum.year == currentYear && datum.country == currentCountry && dragging"
       }
     ]
   },
@@ -23,17 +23,17 @@
     "transform": [
       {
         "type": "filter",
-        "test": "datum.year == year"
+        "test": "datum.year == currentYear"
       },
       {
         "type":"formula",
         "field": "target_fertility",
-        "expr": "inter_year>year?datum.n_fertility:(datum.p_fertility||datum.fertility)"
+        "expr": "inter_year>currentYear?datum.n_fertility:(datum.p_fertility||datum.fertility)"
       },
       {
         "type":"formula",
         "field": "target_life_expect",
-        "expr": "inter_year>year?datum.n_life_expect:(datum.p_life_expect||datum.life_expect)"
+        "expr": "inter_year>currentYear?datum.n_life_expect:(datum.p_life_expect||datum.life_expect)"
       },
       {
         "type": "formula",
@@ -119,12 +119,12 @@
     {
       "name": "inter_year",
       "init": 1980,
-      "streams": [{"type":"mousemove[dragging], touchmove", "expr":"min(2000,year+5,max(1955,year-5,prevScore>nextScore?(year-2.5*prevScore/sqrt(pow(pX-cX,2)+pow(pY-cY,2))):(year+2.5*nextScore/sqrt(pow(nX-cX,2)+pow(nY-cY,2)))))"}]
+      "streams": [{"type":"mousemove[dragging], touchmove", "expr":"min(2000,currentYear+5,max(1955,currentYear-5,prevScore>nextScore?(currentYear-2.5*prevScore/sqrt(pow(pX-cX,2)+pow(pY-cY,2))):(currentYear+2.5*nextScore/sqrt(pow(nX-cX,2)+pow(nY-cY,2)))))"}]
     },
     {
-      "name": "year",
+      "name": "currentYear",
       "init": 1980,
-      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"min(2000,max(1955,prevScore>nextScore?(currDist<prevDist?year:year-5):(currDist<nextDist?year:year+5)))"}]
+      "streams":[{"type":"mousemove[dragging], touchmove", "expr":"min(2000,max(1955,prevScore>nextScore?(currDist<prevDist?currentYear:currentYear-5):(currDist<nextDist?currentYear:currentYear+5)))"}]
     },
     {
       "name": "dragging",
@@ -162,14 +162,18 @@
   "scales": [
     {
       "name": "x",
-      "range": "width", "zero": false,
-      "domain": {"data": "countries", "field": "fertility"}
+      "type": "linear",
+      "domain": {"data": "countries", "field": "fertility"},
+      "range": "width", 
+      "zero": false
     },
     {
       "name": "y",
+      "type": "linear",
+      "domain": {"data": "countries", "field": "life_expect"},
       "range": "height",
-      "nice": true, "zero": false,
-      "domain": {"data": "countries", "field": "life_expect"}
+      "nice": true, 
+      "zero": false
     }
   ],
 
@@ -183,7 +187,7 @@
       "type": "text",
       "properties": {
         "update": {
-          "text": {"signal": "year"},
+          "text": {"signal": "currentYear"},
           "x": {"value": 300},
           "y": {"value": 300},
           "fill": {"value": "grey"},

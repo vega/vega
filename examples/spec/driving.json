@@ -10,19 +10,21 @@
   "scales": [
     {
       "name": "x",
-      "nice": true,
+      "type": "linear",
+      "domain": {"data": "drive", "field": "miles"},
       "range": "width",
+      "nice": true,
       "zero": false,
-      "round": true,
-      "domain": {"data": "drive", "field": "miles"}
+      "round": true
     },
     {
       "name": "y",
-      "nice": true,
+      "type": "linear",
+      "domain": {"data": "drive", "field": "gas"},
       "range": "height",
+      "nice": true,
       "zero": false,
-      "round": true,
-      "domain": {"data": "drive", "field": "gas"}
+      "round": true
     },
     {
       "name": "align",
@@ -117,7 +119,7 @@
           "x": {"scale": "x", "field": "miles"},
           "y": {"scale": "y", "field": "gas"},
           "fill": {"value": "#fff"},
-          "stroke": {"value": 1},
+          "stroke": {"value": "#000"},
           "strokeWidth": {"value": 1},
           "size": {"value": 49}
         }

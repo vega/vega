@@ -93,6 +93,7 @@ parseSignals.schema = {
           "not": {"enum": ["datum", "event"].concat(dl.keys(functions))}
         },
         "init": {},
+        "verbose": {"type": "boolean", "default": false},
         "expr": {"type": "string"},
         "scale": {"$ref": "#/refs/scopedScale"},
         "streams": {"$ref": "#/defs/streams"}

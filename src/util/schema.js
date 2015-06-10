@@ -20,11 +20,11 @@ module.exports = function schema(opt) {
 
   // Extend schema to support custom mark properties or property sets.
   if (opt.properties) dl.keys(opt.properties).forEach(function(k) {
-    schema.defs.propset.properties[k] = opt.properties;
+    schema.defs.propset.properties[k] = {"$ref": "#/refs/"+opt.properties[k]+"Value"};
   });
 
   if (opt.propertySets) dl.keys(opt.propertySets).forEach(function(k) {
-    schema.defs.mark.properties.properties.properties[k] = opt.propertySets[k];
+    schema.defs.mark.properties.properties.properties[k] = {"$ref": "#/defs/propset"};
   });
 
   return schema;

@@ -327,6 +327,13 @@ function valueSchema(type) {
     }]
   };
 
+  if (type.type === "string") {
+    valRef.allOf[1].oneOf.push({
+      "properties": {"template": {"type": "string"}},
+      "required": ["template"]
+    });
+  }
+
   return {
     "oneOf": [{
       "type": "object",
@@ -487,6 +494,9 @@ properties.schema = {
         "strokeDash": {"$ref": "#/refs/arrayValue"},
         "strokeDashOffset": {"$ref": "#/refs/numberValue"},
 
+        // Group-mark properties
+        "clip": {"$ref": "#/refs/booleanValue"},
+
         // Symbol-mark properties
         "size": {"$ref": "#/refs/numberValue"},
         "shape": valueSchema(["circle", "square", 
@@ -520,7 +530,7 @@ properties.schema = {
         "angle": {"$ref": "#/refs/numberValue"},
         "font": {"$ref": "#/refs/stringValue"},
         "fontSize": {"$ref": "#/refs/numberValue"},
-        "fontWeight": {"$ref": "#/refs/numberValue"},
+        "fontWeight": {"$ref": "#/refs/stringValue"},
         "fontStyle": {"$ref": "#/refs/stringValue"}
       },
 
