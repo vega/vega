@@ -1,4 +1,4 @@
-var path = require('../../../util/svg').path.arc,
+var path = require('../../../util/svg').path.symbol,
     util = require('./util');
 
 function draw(o) {

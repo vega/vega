@@ -6,8 +6,7 @@ function appendUnique(el, tag, className) {
   sel.selectAll(tag + '.' + className).remove();
 
   // add element to the document
-  return d3.select(sel.node().appendChild(tag))
-    .attr('class', className);
+  return sel.append(tag).attr('class', className);
 }
 
 module.exports = {

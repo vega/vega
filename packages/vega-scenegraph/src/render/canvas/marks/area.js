@@ -31,5 +31,6 @@ function hit(g, s, x, y) {
 
 module.exports = {
   draw: util.drawOne(path),
-  pick: pick
+  pick: pick,
+  nested: true
 };

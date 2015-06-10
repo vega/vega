@@ -1,6 +1,7 @@
 'use strict';
+
 var assert = require('chai').assert;
-var Renderer = require('../../src/render/Renderer');
+var Renderer = require('../src/render/Renderer');
 var res = './test/resources/';
 
 function padding(l,t,r,b) {

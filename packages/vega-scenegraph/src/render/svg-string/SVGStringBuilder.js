@@ -2,10 +2,10 @@ var dl = require('datalib'),
     openTag = require('../../util/xml').openTag,
     closeTag = require('../../util/xml').closeTag,
     fontString = require('../../util/font-string'),
+    ImageLoader = require('../../util/ImageLoader'),
     svg = require('../../util/svg');
 
 function SVGStringBuilder() {
-  this._gid = 0; // group id counter for d3 dom compat
   this._text = {
     head: '',
     root: '',
@@ -14,6 +14,8 @@ function SVGStringBuilder() {
     body: ''
   };
   this._defs = {
+    group_id: 0,
+    clip_id:  0,
     gradient: {},
     clipping: {}
   };
@@ -43,14 +45,14 @@ prototype.svg = function() {
 };
 
 prototype.render = function(scene) {
-  this._gid = 0; // reset the group counter
+  this._defs.group_id = 0; // reset the group counter
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
 };
 
 prototype.reset = function() {
-  clip_id = 0;
-  this._gid = 0;
+  this._defs.clip_id = 0;
+  this._defs.group_id = 0;
   return this;
 };
 
@@ -66,7 +68,7 @@ prototype.buildDefs = function() {
     def = all.gradient[id];
     stops = def.stops;
 
-    defs += openTag('linearGradient', {
+    defs += openTag('lineargradient', {
       id: id,
       x1: def.x1,
       x2: def.x2,
@@ -81,14 +83,14 @@ prototype.buildDefs = function() {
       }) + closeTag('stop');
     }
     
-    defs += closeTag('linearGradient');
+    defs += closeTag('lineargradient');
   }
   
   for (i=0; i<dclip.length; ++i) {
     id = dclip[i];
     def = all.clipping[id];
 
-    defs += openTag('clipPath', {id: id});
+    defs += openTag('clippath', {id: id});
 
     defs += openTag('rect', {
       x: 0,
@@ -97,7 +99,7 @@ prototype.buildDefs = function() {
       height: def.height
     }) + closeTag('rect');
 
-    defs += closeTag('clipPath');
+    defs += closeTag('clippath');
   }
   
   return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
@@ -116,16 +118,13 @@ prototype.mark = function(scene) {
       str = '',
       style, i;
 
-  // style literals to exactly match the d3 dom
-  if (className === 'type-rule' || className === 'type-path') {
+  if (tag !== 'g' && scene.interactive === false) {
     style = 'style="pointer-events: none;"';
-  } else if (className !== 'type-group') {
-    style = 'style=""';
   }
 
   // render opening group tag
   str += openTag('g', {
-    'id':    'g' + (++this._gid), // d3 dom compat
+    'id':    'g' + (this._defs.group_id++), // d3 dom compat
     'class': className
   }, style);
 
@@ -136,7 +135,7 @@ prototype.mark = function(scene) {
     if (tag === 'text') {
       str += escape_text(data[i].text);
     } else if (tag === 'g') {
-      str += group_bg(data[i], styles(data[i], scene, 'rect', defs));
+      str += group_bg(data[i], styles(data[i], scene, 'bgrect', defs));
       str += this.markGroup(data[i]);
     }
     str += closeTag(tag);
@@ -173,8 +172,6 @@ prototype.markGroup = function(scene) {
   return str;
 };
 
-var clip_id = 0;
-
 var MARKS = {
   group:  ['g', group],
   area:   ['path', area, true],
@@ -195,12 +192,16 @@ function cssClass(mark) {
 function styles(d, mark, tag, defs) {
   var i, n, prop, name, value,
       o = dl.isArray(d) ? d[0] : d;
-  if (o == null) return 'style=""';
+  if (o == null) return '';
 
   var s = '';
 
+  if (tag === 'bgrect' && mark.interactive === false) {
+    s += 'pointer-events: none;';
+  }
+
   if (tag === 'text') {
-    s += 'font: ' + fontString(o) + ';';
+    s += (s.length ? ' ' : '') + 'font: ' + fontString(o) + ';';
   }
 
   for (i=0, n=svg.styleProperties.length; i<n; ++i) {
@@ -209,7 +210,9 @@ function styles(d, mark, tag, defs) {
     value = o[prop];
 
     if (value == null) {
-      if (name === 'fill') s += 'fill: none;';
+      if (name === 'fill') {
+        s += (s.length ? ' ' : '') + 'fill: none;';
+      }
     } else {
       if (value.id) {
         // ensure definition is included
@@ -220,12 +223,7 @@ function styles(d, mark, tag, defs) {
     }
   }
 
-  if (mark.interactive === false) {
-    s += ' pointer-events: none;';
-  }
-
-  // we don't exclude blank styles for d3 dom compat
-  return 'style="' + s + '"';
+  return s ? 'style="' + s + '"' : null;
 }
 
 function escape_text(s) {
@@ -250,7 +248,7 @@ function group(o, defs) {
       id, c;
 
   if (o.clip) {
-    id = o.clip_id || (o.clip_id = 'clip' + clip_id++);
+    id = o.clip_id || (o.clip_id = 'clip' + defs.clip_id++);
     c = {
       width:  o.width || 0,
       height: o.height || 0
@@ -333,7 +331,7 @@ function image(o) {
       y = o.y || 0,
       w = o.width || 0,
       h = o.height || 0,
-      url = /* TODO? config.load.baseURL + */o.url;
+      url = ImageLoader.imageURL(o.url);
 
   x = x - (o.align === 'center' ? w/2 : o.align === 'right' ? w : 0);
   y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);

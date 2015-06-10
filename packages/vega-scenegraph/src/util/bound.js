@@ -63,8 +63,8 @@ function image(o, bounds) {
       y = o.y || 0,
       w = o.width || 0,
       h = o.height || 0;
-  x = x - (o.align === "center" ? w/2 : (o.align === "right" ? w : 0));
-  y = y - (o.baseline === "middle" ? h/2 : (o.baseline === "bottom" ? h : 0));
+  x = x - (o.align === 'center' ? w/2 : (o.align === 'right' ? w : 0));
+  y = y - (o.baseline === 'middle' ? h/2 : (o.baseline === 'bottom' ? h : 0));
   return bounds.set(x, y, x+w, y+h);
 }
 
@@ -110,8 +110,8 @@ function arc(o, bounds) {
   }
 
   bounds.set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
+  if (o.stroke && o.opacity !== 0 && o.strokeWidth !== 0) {
+    bounds.expand(o.strokeWidth || 1);
   }
   return bounds;
 }
@@ -123,31 +123,31 @@ function symbol(o, bounds) {
       r, t, rx, ry;
 
   switch (o.shape) {
-    case "cross":
+    case 'cross':
       r = Math.sqrt(size / 5) / 2;
       t = 3*r;
       bounds.set(x-t, y-r, x+t, y+r);
       break;
 
-    case "diamond":
+    case 'diamond':
       ry = Math.sqrt(size / (2 * tan30));
       rx = ry * tan30;
       bounds.set(x-rx, y-ry, x+rx, y+ry);
       break;
 
-    case "square":
+    case 'square':
       t = Math.sqrt(size);
       r = t / 2;
       bounds.set(x-r, y-r, x+r, y+r);
       break;
 
-    case "triangle-down":
+    case 'triangle-down':
       rx = Math.sqrt(size / sqrt3);
       ry = rx * sqrt3 / 2;
       bounds.set(x-rx, y-ry, x+rx, y+ry);
       break;
 
-    case "triangle-up":
+    case 'triangle-up':
       rx = Math.sqrt(size / sqrt3);
       ry = rx * sqrt3 / 2;
       bounds.set(x-rx, y-ry, x+rx, y+ry);
@@ -173,9 +173,9 @@ function text(o, bounds, noRotate) {
       g = context(), w, t;
 
   g.font = fontString(o);
-  g.textAlign = a || "left";
-  g.textBaseline = b || "alphabetic";
-  w = g.measureText(o.text || "").width;
+  g.textAlign = a || 'left';
+  g.textBaseline = b || 'alphabetic';
+  w = g.measureText(o.text || '').width;
 
   if (r) {
     t = (o.theta || 0) - Math.PI/2;
@@ -184,9 +184,9 @@ function text(o, bounds, noRotate) {
   }
 
   // horizontal
-  if (a === "center") {
+  if (a === 'center') {
     x = x - (w / 2);
-  } else if (a === "right") {
+  } else if (a === 'right') {
     x = x - w;
   } else {
     // left by default, do nothing
@@ -196,11 +196,11 @@ function text(o, bounds, noRotate) {
   /// These offsets work for some but not all fonts.
 
   // vertical
-  if (b === "top") {
+  if (b === 'top') {
     y = y + (h/5);
-  } else if (b === "bottom") {
+  } else if (b === 'bottom') {
     y = y - h;
-  } else if (b === "middle") {
+  } else if (b === 'middle') {
     y = y - (h/2) + (h/10);
   } else {
     y = y - 4*h/5; // alphabetic by default
@@ -276,10 +276,8 @@ function markBounds(mark, bounds, opt) {
       items = mark.items,
       i, n;
       
-  if (type==="area" || type==="line") {
-    if (items.length) {
-      items[0].bounds = func(items[0], bounds);
-    }
+  if ((type==='area' || type==='line') && items.length) {
+    bounds.union(itemBounds(items[0], func, opt));
   } else if (items) {
     for (i=0, n=items.length; i<n; ++i) {
       bounds.union(itemBounds(items[i], func, opt));

@@ -40,9 +40,11 @@ prototype.pendingImages = function() {
 function clipToBounds(g, items) {
   if (!items) return null;
 
-  var b = new Bounds(), i, n, item;
+  var b = new Bounds(), i, n, mark, item;
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
+    mark = item.mark;
+    item = marks[mark.marktype].nested ? mark.items[0] : item;
     b.union(translate(item.bounds, item))
      .union(translate(item['bounds:prev'], item));
   }
@@ -117,7 +119,7 @@ prototype.renderAsync = function(scene) {
   renderer._async_id = setTimeout(function() {
     renderer.render(scene);
     delete renderer._async_id;
-  }, 50);
+  }, 10);
 };
 
 module.exports = CanvasRenderer;

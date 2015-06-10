@@ -306,13 +306,13 @@ module.exports = function(g, path, l, t) {
 
 function drawArc(g, x, y, coords, bounds, l, t) {
   var seg = arc.segments(
-    coords[5], // ex
-    coords[6], // ey
-    coords[0], // rx
-    coords[1], // ry
-    coords[3], // large
-    coords[4], // sweep
-    coords[2], // rot
+    coords[5], // end x
+    coords[6], // end y
+    coords[0], // radius x
+    coords[1], // radius y
+    coords[3], // large flag
+    coords[4], // sweep flag
+    coords[2], // rotation
     x, y
   );
   for (var i=0; i<seg.length; ++i) {

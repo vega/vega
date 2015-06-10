@@ -15,6 +15,7 @@ prototype.element = function() {
 };
 
 prototype.background = function(bgcolor) {
+  if (arguments.length === 0) return this._bgcolor;
   this._bgcolor = bgcolor;
   return this;
 };
