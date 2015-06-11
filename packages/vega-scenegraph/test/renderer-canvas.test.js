@@ -93,17 +93,27 @@ describe('canvas renderer', function() {
       .background('white')
       .render(scene);
 
-    var rect = scene.items[0].items[0].items[1];
-    rect.fill = 'red';
-    rect.width *= 2;
+    var mark = scene.items[0].items[0].items;
+    var rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
+    mark.push({
+      mark:mark, x:0, y:0, width:10, height:10, fill:'purple'
+    });
     r.render(scene);
 
     var image = r.canvas().toBuffer();
-    generate('png/scenegraph-rect-redraw.png', image);
-    var test = load('png/scenegraph-rect-redraw.png');
+    generate('png/scenegraph-full-redraw.png', image);
+    var test = load('png/scenegraph-full-redraw.png');
+    assert.equal(image, test);
+
+    mark.pop();
+    r.render(scene);
+
+    image = r.canvas().toBuffer();
+    generate('png/scenegraph-single-redraw.png', image);
+    test = load('png/scenegraph-single-redraw.png');
     assert.equal(image, test);
   });
-
+  
   it('should support single-item redraw', function() {
     var scene = loadScene('scenegraph-rect.json');
     var r = new Renderer()
@@ -118,8 +128,8 @@ describe('canvas renderer', function() {
     r.render(scene, [rect]);
 
     var image = r.canvas().toBuffer();
-    generate('png/scenegraph-rect-redraw.png', image);
-    var test = load('png/scenegraph-rect-redraw.png');
+    generate('png/scenegraph-single-redraw.png', image);
+    var test = load('png/scenegraph-single-redraw.png');
     assert.equal(image, test);
   });
 

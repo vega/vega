@@ -1,8 +1,8 @@
 var DOM = require('../../util/dom'),
-    SVG = require('../../util/svg'),    
+    SVG = require('../../util/svg'),
     ImageLoader = require('../../util/ImageLoader'),
-    d3 = require('d3'),
     dl = require('datalib'),
+    ns = SVG.metadata.xmlns,
     marks = require('./marks'),
     Renderer = require('../Renderer');
 
@@ -15,12 +15,13 @@ function SVGRenderer(loadConfig) {
 
 var base = Renderer.prototype;
 var prototype = (SVGRenderer.prototype = Object.create(base));
+prototype.constructor = SVGRenderer;
 
 prototype.initialize = function(el, width, height, padding) {
   if (el) {
-    this._svg = DOM.appendUnique(el, 'svg', 'marks');
+    this._svg = DOM.appendUnique(el, 'svg', ns, 'marks');
     // set the svg root group
-    this._root = this._svg.append('g');
+    this._root = DOM.childAt(this._svg, -1, 'g', ns);
   }
 
   // create the svg definitions cache
@@ -39,7 +40,7 @@ prototype.initialize = function(el, width, height, padding) {
 
 prototype.background = function(bgcolor) {
   if (arguments.length && this._svg) {
-    this._svg.style('background-color', bgcolor);
+    this._svg.style.setProperty('background-color', bgcolor);
   }
   return base.background.apply(this, arguments);
 };
@@ -52,12 +53,10 @@ prototype.resize = function(width, height, padding) {
         h = this._height,
         p = this._padding;
   
-    this._svg
-      .attr('width', w + p.left + p.right)
-      .attr('height', h + p.top + p.bottom);
+    this._svg.setAttribute('width', w + p.left + p.right);
+    this._svg.setAttribute('height', h + p.top + p.bottom);
     
-    this._root
-      .attr('transform', 'translate('+p.left+','+p.top+')');
+    this._root.setAttribute('transform', 'translate('+p.left+','+p.top+')');
   }
 
   return this;
@@ -74,52 +73,70 @@ prototype.svg = function() {
 
   var foot = DOM.closeTag('svg');
 
-  return head + this._svg.html() + foot;
+  return head + this._svg.innerHTML + foot;
 };
 
 prototype.updateDefs = function() {
   var svg = this._svg,
-      all = this._defs,
-      dgrad = dl.keys(all.gradient),
-      dclip = dl.keys(all.clipping),
-      defs = svg.select('defs'), grad, clip;
+      defs = this._defs,
+      grads = dl.keys(defs.gradient),
+      clips = dl.keys(defs.clipping),
+      i, n;
 
-  // get or create svg defs block
-  if (dgrad.length===0 && dclip.length===0) { defs.remove(); return; }
-  if (defs.empty()) defs = svg.insert('defs', ':first-child');
-  
-  grad = defs.selectAll('linearGradient').data(dgrad, dl.identity);
-  grad.enter().append('linearGradient').attr('id', dl.identity);
-  grad.exit().remove();
-  grad.each(function(id) {
-    var def = all.gradient[id],
-        grd = d3.select(this),
-        stop;
+  // get definition counts
+  var el = defs.el;
 
-    // set gradient coordinates
-    grd.attr({x1: def.x1, x2: def.x2, y1: def.y1, y2: def.y2});
+  // generate defs block
+  if (grads.length || clips.length) {
+    el = el || (defs.el = DOM.childAt(svg, 0, 'defs', ns));
+  } else {
+    if (el && el.parentNode) svg.removeChild(el);
+    return; // nothing more to do
+  }
 
-    // set gradient stops
-    stop = grd.selectAll('stop').data(def.stops);
-    stop.enter().append('stop');
-    stop.exit().remove();
-    stop.attr('offset', function(d) { return d.offset; })
-        .attr('stop-color', function(d) { return d.color; });
-  });
-  
-  clip = defs.selectAll('clipPath').data(dclip, dl.identity);
-  clip.enter().append('clipPath').attr('id', dl.identity);
-  clip.exit().remove();
-  clip.each(function(id) {
-    var def = all.clipping[id],
-        cr = d3.select(this).selectAll('rect').data([1]);
-    cr.enter().append('rect');
-    cr.attr('x', 0)
-      .attr('y', 0)
-      .attr('width', def.width)
-      .attr('height', def.height);
-  });
+  for (i=0, n=grads.length; i<n; ++i) {
+    updateGradient(el, defs.gradient[grads[i]], i);
+  }
+  for (i=0, n=clips.length; i<n; ++i) {
+    updateClipping(el, defs.clipping[clips[i]], grads.length + i);
+  }
+  DOM.clearChildren(el, grads.length + i);
 };
+
+function updateGradient(el, grad, index) {
+  var i, n, stop;
+
+  if (!grad.el) {
+    grad.el = DOM.childAt(el, index, 'lineargradient', ns);
+    grad.el.setAttribute('id', grad.id);
+  }
+  grad.el.setAttribute('x1', grad.x1);
+  grad.el.setAttribute('x2', grad.x2);
+  grad.el.setAttribute('y1', grad.y1);
+  grad.el.setAttribute('y2', grad.y2);
+  
+  for (i=0, n=grad.stops.length; i<n; ++i) {
+    stop = DOM.childAt(grad.el, i, 'stop', ns);
+    stop.setAttribute('offset', grad.stops[i].offset);
+    stop.setAttribute('stop-color', grad.stops[i].color);
+  }
+  DOM.clearChildren(grad.el, i);
+}
+
+function updateClipping(el, clip, index) {
+  var rect;
+
+  if (!clip.el) {
+    clip.el = DOM.childAt(el, index, 'clippath', ns);
+    clip.el.setAttribute('id', clip.id);
+    rect = DOM.childAt(clip.el, 0, 'rect', ns);
+    rect.setAttribute('x', 0);
+    rect.setAttribute('y', 0);
+  }
+  rect = rect || clip.el.childNodes[0];
+  rect.setAttribute('width', clip.width);
+  rect.setAttribute('height', clip.height);
+}
 
 prototype.render = function(scene, items) {
   if (items) {
@@ -133,6 +150,7 @@ prototype.render = function(scene, items) {
 };
 
 prototype.update = function(items) {
+  // TODO: what about items not yet in the scene?
   var item, mark, el, i, n;
 
   for (i=0, n=items.length; i<n; ++i) {
@@ -145,9 +163,9 @@ prototype.update = function(items) {
   }
 };
 
-prototype.draw = function(ctx, scene, index) {
+prototype.draw = function(el, scene, index) {
   var mark = marks[scene.marktype];
-  mark.draw.call(this, ctx, scene, index);
+  mark.draw.call(this, el, scene, index);
 };
 
 prototype.style = function(el, d) {

@@ -9,6 +9,7 @@ function CanvasHandler() {
 
 var base = Handler.prototype;
 var prototype = (CanvasHandler.prototype = Object.create(base));
+prototype.constructor = CanvasHandler;
 
 prototype.initialize = function(el, pad, obj) {
   base.initialize.call(this, el, pad, obj);
@@ -27,7 +28,6 @@ prototype.initialize = function(el, pad, obj) {
   });
   return this;
 };
-
 
 // setup events
 var events = [

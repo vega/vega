@@ -12,10 +12,11 @@ function CanvasRenderer(loadConfig) {
 
 var base = Renderer.prototype;
 var prototype = (CanvasRenderer.prototype = Object.create(base));
+prototype.constructor = CanvasRenderer;
 
 prototype.initialize = function(el, width, height, padding) {
   this._canvas = Canvas.instance(width, height);
-  if (el) DOM.appendUnique(el, 'canvas', 'marks');
+  if (el) DOM.appendUnique(el, 'canvas', null, 'marks', this._canvas);
   return base.initialize.call(this, el, width, height, padding);
 };
 

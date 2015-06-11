@@ -1,42 +1,43 @@
-var d3 = require('d3'),
+var dl = require('datalib'),
+    ns = require('../../../util/svg').metadata.xmlns,
     DOM = require('../../../util/dom');
 
-module.exports = function(g, scene, index, mark) {
-  var renderer = this,
-      data = mark.nested ? [scene.items] : scene.items || [],
+module.exports = function(el, scene, index, mark) {
+  var data = mark.nested ? [scene.items] : scene.items || [],
       events = scene.interactive === false ? 'none' : null,
-      groups = g.node().childNodes,
-      isGroup = (mark.tag === 'g');
-  
-  var p = (p = groups[index+1]) ? // +1 to skip group background rect
-    d3.select(p) :
-    g.append('g')
-      .attr('id', 'g' + (renderer._defs.group_id++))
-      .attr('class', DOM.cssClass(scene));
+      isGroup = (mark.tag === 'g'),
+      p, i, n, c, d, bg, o;
 
-  var id = p.attr('id'),
-      s = '#' + id + ' > ' + mark.tag,
-      m = p.selectAll(s).data(data),
-      e = m.enter().append(mark.tag);
-
-  if (isGroup) {
-    e.append('rect')
-      .attr('class', 'background')
-      .attr('width', 0)
-      .attr('height', 0)
-      .style('pointer-events', events);    
-  } else {
-    if (events) p.style('pointer-events', events);
-    e.each(function(d) {
-      if (d.mark) d._svg = this;
-      else if (d.length) d[0]._svg = this;
-    });
+  p = el.childNodes[index+1]; // +1 skips background rect
+  if (!p) {
+    p = DOM.childAt(el, index+1, 'g', ns);
+    p.setAttribute('id', 'g' + (this._defs.group_id++));
+    p.setAttribute('class', DOM.cssClass(scene));
   }
-  
-  m.exit().remove();
-  m.each(function(o) {
-    mark.update.call(renderer, this, o);
-    renderer.style(isGroup ? this.childNodes[0] : this, o);
-  });
+  if (!isGroup && events) {
+    p.style.setProperty('pointer-events', events);
+  }
+
+  for (i=0, n=data.length; i<n; ++i) {
+    c = p.childNodes[i];
+    d = data[i];
+    if (!c) {
+      c = DOM.childAt(p, i, mark.tag, ns);
+      c.__data__ = d;
+      if (isGroup) {
+        bg = DOM.childAt(c, 0, 'rect', ns);
+        bg.setAttribute('class', 'background');
+        bg.setAttribute('width', 0);
+        bg.setAttribute('height', 0);
+        bg.style.setProperty('pointer-events', events);
+      } else {
+        o = (dl.isArray(d) ? d[0] : d);
+        if (o) o._svg = c;
+      }
+    }
+    mark.update.call(this, c, d);
+    this.style(isGroup ? c.childNodes[0] : c, d);
+  }
+  DOM.clearChildren(p, i);
   return p;
 };
