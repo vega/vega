@@ -204,7 +204,7 @@ function buildMarks(input, group) {
   for(i=0, len=marks.length; i<len; ++i) {
     mark = marks[i];
     from = mark.from || {};
-    inherit = "vg_"+group.datum._id;
+    inherit = group.datum._facetID;
     group.items[i] = {group: group};
     b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);

@@ -266,7 +266,7 @@ function dataRef(which, def, scale, group) {
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
     ref = refs[i];
-    from = ref.data || "vg_"+group.datum._id;
+    from = ref.data || group.datum._facetID;
     data = graph.data(from)
       .revises(true)
       .last();

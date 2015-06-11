@@ -4198,9 +4198,8 @@ module.exports = Graph;
 },{"../util/constants":108,"../util/log":109,"./Datasource":32,"./Signal":35,"./changeset":36,"datalib":20,"heap":26}],34:[function(require,module,exports){
 var dl = require('datalib'),
     C = require('../util/constants'),
-    REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
-
-var node_id = 1;
+    REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
+    nodeID = 1;
 
 function Node(graph) {
   if(graph) this.init(graph);
@@ -4210,7 +4209,7 @@ function Node(graph) {
 var proto = Node.prototype;
 
 proto.init = function(graph) {
-  this._id = node_id++;
+  this._id = nodeID++;
   this._graph = graph;
   this._rank = ++graph._rank; // For topologial sort
   this._stamp = 0;  // Last stamp seen
@@ -4425,14 +4424,14 @@ module.exports = {
 },{"../util/constants":108}],37:[function(require,module,exports){
 var dl = require('datalib'),
     C = require('../util/constants'),
-    tuple_id = 1;
+    tupleID = 1;
 
 // Object.create is expensive. So, when ingesting, trust that the
 // datum is an object that has been appropriately sandboxed from 
 // the outside environment. 
 function ingest(datum, prev) {
   datum = dl.isObject(datum) ? datum : {data: datum};
-  datum._id = tuple_id++;
+  datum._id = tupleID++;
   datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
   return datum;
 }
@@ -4459,7 +4458,7 @@ function has_prev(t) {
   return t._prev && t._prev !== C.SENTINEL;
 }
 
-function reset() { tuple_id = 1; }
+function reset() { tupleID = 1; }
 
 function idMap(a) {
   return a.reduce(function(m,x) {
@@ -13055,7 +13054,7 @@ function buildMarks(input, group) {
   for(i=0, len=marks.length; i<len; ++i) {
     mark = marks[i];
     from = mark.from || {};
-    inherit = "vg_"+group.datum._id;
+    inherit = group.datum._facetID;
     group.items[i] = {group: group};
     b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);
@@ -13420,7 +13419,7 @@ function dataRef(which, def, scale, group) {
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
     ref = refs[i];
-    from = ref.data || "vg_"+group.datum._id;
+    from = ref.data || group.datum._facetID;
     data = graph.data(from)
       .revises(true)
       .last();
@@ -15208,7 +15207,8 @@ var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
     log = require('../util/log'),
-    C = require('../util/constants');
+    C = require('../util/constants'),
+    facetID = 1;
 
 function Facetor() {
   Aggregator.constructor.call(this);
@@ -15245,7 +15245,7 @@ proto._newcell = function(x) {
   if(this._facet !== null) {
     graph = facet._graph;
     pipeline = facet.param("transform");
-    cell.ds  = graph.data("vg_"+tuple._id, pipeline, tuple);
+    cell.ds  = graph.data(tuple._facetID, pipeline, tuple);
     cell.delete = disconnect_cell;
     facet.addListener(pipeline[0]);
   }
@@ -15257,6 +15257,7 @@ proto._newtuple = function(x) {
   var t = Aggregator._newtuple.call(this, x);
   if(this._facet !== null) {
     tuple.set(t, "key", this._cellkey(x));
+    tuple.set(t, "_facetID", "vg_"+(facetID++));
   }
   return t;
 };

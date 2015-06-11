@@ -1,8 +1,7 @@
 var dl = require('datalib'),
     C = require('../util/constants'),
-    REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
-
-var node_id = 1;
+    REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
+    nodeID = 1;
 
 function Node(graph) {
   if(graph) this.init(graph);
@@ -12,7 +11,7 @@ function Node(graph) {
 var proto = Node.prototype;
 
 proto.init = function(graph) {
-  this._id = node_id++;
+  this._id = nodeID++;
   this._graph = graph;
   this._rank = ++graph._rank; // For topologial sort
   this._stamp = 0;  // Last stamp seen

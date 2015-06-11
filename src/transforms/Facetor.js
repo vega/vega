@@ -2,7 +2,8 @@ var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
     log = require('../util/log'),
-    C = require('../util/constants');
+    C = require('../util/constants'),
+    facetID = 1;
 
 function Facetor() {
   Aggregator.constructor.call(this);
@@ -39,7 +40,7 @@ proto._newcell = function(x) {
   if(this._facet !== null) {
     graph = facet._graph;
     pipeline = facet.param("transform");
-    cell.ds  = graph.data("vg_"+tuple._id, pipeline, tuple);
+    cell.ds  = graph.data(tuple._facetID, pipeline, tuple);
     cell.delete = disconnect_cell;
     facet.addListener(pipeline[0]);
   }
@@ -51,6 +52,7 @@ proto._newtuple = function(x) {
   var t = Aggregator._newtuple.call(this, x);
   if(this._facet !== null) {
     tuple.set(t, "key", this._cellkey(x));
+    tuple.set(t, "_facetID", "vg_"+(facetID++));
   }
   return t;
 };
