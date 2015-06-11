@@ -1,22 +1,35 @@
 var dl = require('datalib'),
     parse = require('../parse'),
-    Scale = require('../scene/Scale');
+    Scale = require('../scene/Scale'),
+    config = require('../util/config');
+
+function compile(module, opt, schema) {
+  var s = module.schema;
+  if (!s) return;
+  if (s.refs) dl.extend(schema.refs, s.refs);
+  if (s.defs) dl.extend(schema.defs, s.defs);
+}
 
 module.exports = function schema(opt) {
-  var schema = {defs: {}, refs:{}, "$ref": "#/defs/spec"};
+  var schema = null;
   opt = opt || {};
 
-  dl.keys(parse).forEach(function(k) {
-    var s = parse[k].schema;
-    if (!s) return;
-    if (s.refs) dl.extend(schema.refs, s.refs);
-    if (s.defs) dl.extend(schema.defs, s.defs);
-  });
+  // Compile if we're not loading the schema from a URL. 
+  // Load from a URL to extend the existing base schema.
+  if (opt.url) {
+    schema = dl.json(dl.extend({url: opt.url}, config.load));
+  } else {
+    schema = {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Vega Visualization Specification Language",
+      "defs": {}, 
+      "refs": {}, 
+      "$ref": "#/defs/spec"
+    };
 
-  // Scales aren't part of the parser, so add their schema manually
-  var ss = Scale.schema;
-  if (ss.refs) dl.extend(schema.refs, ss.refs);
-  if (ss.defs) dl.extend(schema.defs, ss.defs);
+    dl.keys(parse).forEach(function(k) { compile(parse[k], opt, schema) });
+    compile(Scale, opt, schema);  // Scales aren't in the parser, add schema manually
+  }
 
   // Extend schema to support custom mark properties or property sets.
   if (opt.properties) dl.keys(opt.properties).forEach(function(k) {

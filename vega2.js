@@ -3220,7 +3220,6 @@ prototype.initSVG = function(w, h, pad, bg) {
 };
 
 module.exports = HeadlessView;
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../render/canvas/index":63,"../render/svg-headless/index":67,"../util/log":109,"./View":30,"datalib":20}],29:[function(require,module,exports){
@@ -3724,7 +3723,6 @@ View.factory = function(model) {
 };
 
 module.exports = View;
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/Node":34,"../dataflow/changeset":36,"../parse/streams":59,"../render/canvas/index":63,"../render/svg/index":71,"../scene/Encoder":75,"../scene/Transition":79,"../util/config":107,"../util/log":109,"./HeadlessView":28,"datalib":20}],31:[function(require,module,exports){
@@ -4604,7 +4602,6 @@ module.exports = function(opt) {
   
   return codegen_wrap;
 };
-
 },{"./constants":39,"./functions":40,"datalib":20}],39:[function(require,module,exports){
 module.exports = {
   "NaN":     "NaN",
@@ -4769,7 +4766,6 @@ module.exports = {
   parse: function(input, opt) { return parser.parse("("+input+")", opt); },
   code: function(opt) { return codegen(opt); }
 };
-
 },{"./codegen":38,"./parser":42}],42:[function(require,module,exports){
 /*
   The following expression parser is based on Esprima (http://esprima.org/).
@@ -7226,60 +7222,6 @@ function axis(def, index, axis, group) {
 }
 
 module.exports = axes;
-axes.schema = {
-  "defs": {
-    "axis": {
-      "type": "object",
-      "properties": {
-        "type": {"enum": ["x", "y"]},
-        "scale": {"type": "string"},
-        "orient": {"enum": ["top", "bottom", "left", "right"]},
-        "title": {"type": "string"},
-        "titleOffset": {"type": "number"},
-        "format": {"type": "string"},
-        "ticks": {"type": "number"},
-        "values": {
-          "type": "array", 
-          "items": {"type": ["string", "number"]}
-        },
-        "subdivide": {"type": "number"},
-        "tickPadding": {"type": "number"},
-        "tickSize": {"type": "number"},
-        "tickSizeMajor": {"type": "number"},
-        "tickSizeMinor": {"type": "number"},
-        "tickSizeEnd": {"type": "number"},
-        "offset": {
-          "oneOf": [{"type": "number"}, {
-            "type": "object",
-            "properties": {
-              "scale": {"type": "string"},
-              "value": {"type": ["string", "number"]}
-            },
-            "required": ["scale", "value"],
-            "additionalProperties": false
-          }]
-        },
-        "layer": {"enum": ["front", "back"], "default": "front"},
-        "grid": {"type": "boolean"},
-        "properties": {
-          "type": "object",
-          "properties": {
-            "ticks": {"$ref": "#/defs/propset"},
-            "majorTicks": {"$ref": "#/defs/propset"},
-            "minorTicks": {"$ref": "#/defs/propset"},
-            "labels": {"$ref": "#/defs/propset"},
-            "title": {"$ref": "#/defs/propset"},
-            "grid": {"$ref": "#/defs/propset"},
-            "axis": {"$ref": "#/defs/propset"}
-          },
-          "additionalProperties": false
-        }
-      },
-      "additionalProperties": false,
-      "required": ["type", "scale"]
-    }
-  }
-}
 },{"../scene/axis":80,"../util/config":107,"datalib":20}],44:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null);
@@ -7292,7 +7234,6 @@ function parseBg(bg) {
 };
 
 module.exports = parseBg;
-parseBg.schema = {"defs": {"background": {"type": "string"}}};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{}],45:[function(require,module,exports){
@@ -7359,77 +7300,6 @@ var parseDef = {
 };
 
 module.exports = parseData;
-parseData.schema = {
-  "defs": {
-    "data": {
-      "title": "Input data set definition",
-      "type": "object",
-
-      "allOf": [{
-        "properties": {
-          "name": {"type": "string"},
-          "transform": {"$ref": "#/defs/transform"},
-          "modify": {"$ref": "#/defs/modify"},
-          "format": {
-            "type": "object",
-            "oneOf": [{
-              "properties": {
-                "type": {"enum": ["json"]},
-                "parse": parseDef,
-                "property": {"type": "string"}
-              },
-              "additionalProperties": false
-            }, {
-              "properties": {
-                "type": {"enum": ["csv", "tsv"]},
-                "parse": parseDef
-              },
-              "additionalProperties": false
-            }, {
-              "oneOf": [{
-                "properties": {
-                  "type": {"enum": ["topojson"]},
-                  "feature": {"type": "string"}
-                },
-                "additionalProperties": false
-              }, {
-                "properties": {
-                  "type": {"enum": ["topojson"]},
-                  "mesh": {"type": "string"}
-                },
-                "additionalProperties": false
-              }]
-            }, {
-              "properties": {
-                "type": {"enum": ["treejson"]},
-                "children": {"type": "string"},
-                "parse": parseDef
-              },
-              "additionalProperties": false
-            }]
-          }
-        },
-        "required": ["name"]
-      }, {
-        "anyOf": [{
-          "required": ["name", "modify"]
-        }, {
-          "oneOf": [{
-            "properties": {"source": {"type": "string"}},
-            "required": ["source"]
-          }, {
-            "properties": {"values": {"type": "array"}},
-            "required": ["values"]
-          }, {
-            "properties": {"url": {"type": "string"}},
-            "required": ["url"]
-          }]
-        }]
-      }]
-    }
-  }
-};
-
 },{"../util/config":107,"../util/log":109,"./modify":53,"./transforms":60,"datalib":20}],46:[function(require,module,exports){
 module.exports = (function() {
   /*
@@ -8540,7 +8410,6 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-
 },{}],47:[function(require,module,exports){
 var dl = require('datalib'),
     expression = require('../expression');
@@ -8565,7 +8434,6 @@ expr.eval = function(graph, fn, opt) {
 };
 
 module.exports = expr;
-
 },{"../expression":41,"datalib":20}],48:[function(require,module,exports){
 module.exports = {
   axes: require('./axes'),
@@ -8730,21 +8598,6 @@ function parseInteractors(model, spec, defFactory) {
 }
 
 module.exports = parseInteractors;
-parseInteractors.schema = {
-  "refs": {
-    "interactors": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {"type": "string"},
-          "url": {"type": "string"}
-        },
-        "required": ["name", "url"]
-      }
-    }
-  }
-};
 },{"../util/config":107,"../util/constants":108,"../util/log":109,"datalib":20}],50:[function(require,module,exports){
 var lgnd = require('../scene/legend'),
     config = require('../util/config');
@@ -8788,42 +8641,6 @@ function legend(def, index, legend, group) {
 }
 
 module.exports = legends;
-legends.schema = {
-  "defs": {
-    "legend": {
-      "type": "object",
-      "properties": {
-        "size": {"type": "string"},
-        "shape": {"type": "string"},
-        "fill": {"type": "string"},
-        "stroke": {"type": "string"},
-        "orient": {"enum": ["left", "right"], "default": "right"},
-        "offset": {"type": "number"},
-        "title": {"type": "string"},
-        "values": {"type": "array"},
-        "format": {"type": "string"},
-        "properties": {
-          "type": "object",
-          "properties": {
-            "title": {"$ref": "#/defs/propset"},
-            "labels": {"$ref": "#/defs/propset"},
-            "legend": {"$ref": "#/defs/propset"},
-            "symbols": {"$ref": "#/defs/propset"},
-            "gradient": {"$ref": "#/defs/propset"}
-          },
-          "additionalProperties": false
-        }
-      },
-      "additionalProperties": false,
-      "anyOf": [
-        {"required": "size"},
-        {"required": "shape"},
-        {"required": "fill"},
-        {"required": "stroke"}
-      ]
-    }
-  }
-}
 },{"../scene/legend":81,"../util/config":107}],51:[function(require,module,exports){
 var dl = require('datalib'),
     parseProperties = require('./properties');
@@ -8851,57 +8668,6 @@ function parseMark(model, mark) {
 };
 
 module.exports = parseMark;
-parseMark.schema = {
-  "defs": {
-    "mark": {
-      "type": "object",
-
-      "properties": {
-        "name": {"type": "string"},
-        "key": {"type": "string"},
-        "type": {"enum": ["rect", "symbol", "path", "arc", 
-          "area", "line", "rule", "image", "text", "group"]},
-
-        "from": {
-          "type": "object",
-          "properties": {
-            "data": {"type": "string"},
-            "mark": {"type": "string"},
-            "transform": {"$ref": "#/defs/transform"}
-          },
-          "oneOf":[{"required": ["data"]}, {"required": ["mark"]}],
-          "additionalProperties": false
-        },
-
-        "delay": {"$ref": "#/refs/numberValue"},
-        "ease": {
-          "enum": ["linear", "quad", "cubic", "sin", 
-            "exp", "circle", "bounce"].reduce(function(acc, e) {
-              ["in", "out", "in-out", "out-in"].forEach(function(m) {
-                acc.push(e+"-"+m);
-              });
-              return acc;
-          }, [])
-        },
-
-        "properties": {
-          "type": "object",
-          "properties": {
-            "enter":  {"$ref": "#/defs/propset"},
-            "update": {"$ref": "#/defs/propset"},
-            "exit":   {"$ref": "#/defs/propset"},
-            "hover":  {"$ref": "#/defs/propset"}
-          },
-          "additionalProperties": false,
-          "anyOf": [{"required": ["enter"]}, {"required": ["update"]}]
-        }
-      },
-
-      // "additionalProperties": false,
-      "anyOf": [{"required": ["type"]}, {"required": ["name"]}]
-    }
-  }
-}
 },{"./properties":56,"datalib":20}],52:[function(require,module,exports){
 var parseMark = require('./mark');
 
@@ -8918,41 +8684,6 @@ function parseRootMark(model, spec, width, height) {
 };
 
 module.exports = parseRootMark;
-parseRootMark.schema = {
-  "defs": {
-    "container": {
-      "type": "object",
-      "properties": {
-        "scales": {
-          "type": "array",
-          "items": {"$ref": "#/defs/scale"}
-        },
-        "axes": {
-          "type": "array",
-          "items": {"$ref": "#/defs/axis"}
-        },
-        "legends": {
-          "type": "array",
-          "items": {"$ref": "#/defs/legend"}
-        },
-        "marks": {
-          "type": "array",
-          "items": {"anyOf":[{"$ref": "#/defs/groupMark"}, {"$ref": "#/defs/mark"}]}
-        }
-      }
-    },
-
-    "groupMark": {
-      "allOf": [{"$ref": "#/defs/mark"}, {"$ref": "#/defs/container"}, {
-        "properties": {
-          "type": {"enum": ["group"]}
-        },
-        "required": ["type"]
-      }]
-    }
-  }
-};
-
 },{"./mark":51}],53:[function(require,module,exports){
 var dl = require('datalib'),
     Node = require('../dataflow/Node'),
@@ -9032,30 +8763,6 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-parseModify.schema = {
-  "defs": {
-    "modify": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "oneOf": [{
-          "properties": {
-            "type": {"enum": [C.ADD, C.REMOVE, C.TOGGLE]},
-            "signal": {"type": "string"},
-            "field": {"type": "string"}
-          },
-          "required": ["type", "signal", "field"]
-        }, {
-          "properties": {
-            "type": {"enum": [C.CLEAR]},
-            "predicate": {"type": "string"}  // TODO predicate args
-          },
-          "required": ["type", "predicate"]
-        }]
-      }
-    }
-  }
-};
 },{"../dataflow/Node":34,"../dataflow/tuple":37,"../util/constants":108,"../util/log":109,"datalib":20}],54:[function(require,module,exports){
 var dl = require('datalib');
 
@@ -9068,26 +8775,6 @@ function parsePadding(pad) {
 }
 
 module.exports = parsePadding;
-parsePadding.schema = {
-  "defs": {
-    "padding": {
-      "oneOf": [{
-        "enum": ["strict", "auto"]
-      }, {
-        "type": "number"
-      }, {
-        "type": "object",
-        "properties": {
-          "top": {"type": "number"},
-          "bottom": {"type": "number"},
-          "left": {"type": "number"},
-          "right": {"type": "number"}
-        },
-        "additionalProperties": false
-      }]
-    }
-  }
-};
 },{"datalib":20}],55:[function(require,module,exports){
 var dl = require('datalib');
 
@@ -9256,98 +8943,6 @@ function parseScale(spec, ops) {
 }
 
 module.exports = parsePredicates;
-parsePredicates.schema = {
-  "refs": {
-    "operand": {
-      "type": "object",
-      "oneOf": [
-        {
-          "properties": {"value": {}},
-          "required": ["value"]
-        },
-        {
-          "properties": {"arg": {"type": "string"}},
-          "required": ["arg"]
-        },
-        {"$ref": "#/refs/signal"},
-        {
-          "properties": {
-            "predicate": {
-              "oneOf": [
-                {"type": "string"},
-                {
-                  "type": "object",
-                  "properties": {"name": {"type": "string"}},
-                  "required": ["name"]
-                }
-              ]
-            }
-          },
-          "required": ["predicate"]
-        }
-      ]
-    }
-  },
-
-  "defs": {
-    "predicate": {
-      "type": "object",
-      "oneOf": [{
-        "properties": {
-          "name": {"type": "string"},
-          "type": {"enum": ["==", "!=", ">", "<", ">=", "<="]},
-          "operands": {
-            "type": "array",
-            "items": {"$ref": "#/refs/operand"},
-            "minItems": 2,
-            "maxItems": 2
-          }
-        },
-        "required": ["name", "type", "operands"]
-      }, {
-        "properties": {
-          "name": {"type": "string"},
-          "type": {"enum": ["and", "&&", "or", "||"]},
-          "operands": {
-            "type": "array",
-            "items": {"$ref": "#/refs/operand"},
-            "minItems": 2
-          }
-        },
-        "required": ["name", "type", "operands"]
-      }, {
-        "properties": {
-          "name": {"type": "string"},
-          "type": {"enum": ["in"]},
-          "item": {"$ref": "#/refs/operand"}
-        },
-
-        "oneOf": [
-          {
-            "properties": {
-              "range": {
-                "type": "array",
-                "items": {"$ref": "#/refs/operand"},
-                "minItems": 2
-              },
-              "scale": {"$ref": "#/refs/scopedScale"}
-            },
-            "required": ["range"]
-          },
-          {
-            "properties": {
-              "data": {"type": "string"},
-              "field": {"type": "string"}
-            },
-            "required": ["data", "field"]
-          }
-        ],
-
-        "required": ["name", "type", "item"]
-      }]
-    }
-  }
-};
 },{"datalib":20}],56:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
@@ -9657,240 +9252,6 @@ function scaleRef(ref) {
 }
 
 module.exports = properties;
-
-function valueSchema(type) {
-  type = dl.isArray(type) ? {"enum": type} : {"type": type};
-  var valRef = {
-    "type": "object",
-    "allOf": [{"$ref": "#/refs/valueModifiers"}, {
-      "oneOf": [{
-        "$ref": "#/refs/signal",
-        "required": ["signal"]
-      }, {
-        "properties": {"value": type},
-        "required": ["value"]
-      }, {
-        "properties": {"field": {"$ref": "#/refs/field"}},
-        "required": ["field"]
-      }, {
-        "properties": {"band": {"type": "boolean"}},
-        "required": ["band"]
-      }]
-    }]
-  };
-
-  if (type.type === "string") {
-    valRef.allOf[1].oneOf.push({
-      "properties": {"template": {"type": "string"}},
-      "required": ["template"]
-    });
-  }
-
-  return {
-    "oneOf": [{
-      "type": "object",
-      "properties": {
-        "rule": {
-          "type": "array",
-          "items": {
-            "allOf": [{
-              "type": "object",
-              "properties": {
-                "predicate": {
-                  "oneOf": [
-                    {"type": "string"}, 
-                    {
-                      "type": "object",
-                      "properties": {"name": "string"},
-                      "required": ["name"]
-                    }
-                  ]
-                }
-              }
-            },
-            valRef]
-          }
-        }
-      },
-      "additionalProperties": false,
-      "required": ["rule"]
-    },
-    valRef]
-  };
-}
-
-properties.schema = {
-  "refs": {
-    "field": {
-      "title": "FieldRef",
-      "oneOf": [
-        {"type": "string"},
-        {
-          "oneOf": [
-            {"$ref": "#/refs/signal"},
-            {
-              "type": "object", 
-              "properties": {"datum": {"$ref": "#/refs/field"}},
-              "required": ["datum"],
-              "additionalProperties": false
-            },
-            {
-              "type": "object", 
-              "properties": {
-                "group": {"$ref": "#/refs/field"}, 
-                "level": {"type": "number"}
-              },
-              "required": ["group"],
-              "additionalProperties": false
-            },
-            {
-              "type": "object", 
-              "properties": {
-                "parent": {"$ref": "#/refs/field"}, 
-                "level": {"type": "number"}
-              },
-              "required": ["parent"],
-              "additionalProperties": false
-            }
-          ]
-        }
-      ]
-    },
-
-    "scale": {
-      "title": "ScaleRef",
-      "oneOf": [
-        {"$ref": "#/refs/field"},
-        {
-          "type": "object",
-          "properties": {
-            "name": {"$ref": "#/refs/field"},
-            "invert": {"type": "boolean", "default": false}
-          }
-        }
-      ]
-    },
-
-    "valueModifiers": {
-      "properties": {
-        "mult": {"type": "number"},
-        "offset": {"type": "number"},
-        "scale": {"$ref": "#/refs/scale"}
-      }
-    },
-
-    "value": valueSchema({}),
-    "numberValue": valueSchema("number"),
-    "stringValue": valueSchema("string"),
-    "booleanValue": valueSchema("boolean"),
-    "arrayValue": valueSchema("array"),
-
-    "colorValue": {
-      "title": "ColorRef",
-      "oneOf": [{"$ref": "#/refs/stringValue"}, {
-        "type": "object",
-        "properties": {
-          "r": {"$ref": "#/refs/numberValue"},
-          "g": {"$ref": "#/refs/numberValue"},
-          "b": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["r", "g", "b"]
-      }, {
-        "type": "object",
-        "properties": {
-          "h": {"$ref": "#/refs/numberValue"},
-          "s": {"$ref": "#/refs/numberValue"},
-          "l": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["h", "s", "l"]
-      }, {
-        "type": "object",
-        "properties": {
-          "l": {"$ref": "#/refs/numberValue"},
-          "a": {"$ref": "#/refs/numberValue"},
-          "b": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["l", "a", "b"]
-      }, {
-        "type": "object",
-        "properties": {
-          "h": {"$ref": "#/refs/numberValue"},
-          "c": {"$ref": "#/refs/numberValue"},
-          "l": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["h", "c", "l"]
-      }]
-    }
-  },
-
-  "defs": {
-    "propset": {
-      "title": "Mark property set",
-      "type": "object",
-      "properties": {
-        // Common Properties
-        "x": {"$ref": "#/refs/numberValue"},
-        "x2": {"$ref": "#/refs/numberValue"},
-        "xc": {"$ref": "#/refs/numberValue"},
-        "width": {"$ref": "#/refs/numberValue"},
-        "y": {"$ref": "#/refs/numberValue"},
-        "y2": {"$ref": "#/refs/numberValue"},
-        "yc": {"$ref": "#/refs/numberValue"},
-        "height": {"$ref": "#/refs/numberValue"},
-        "opacity": {"$ref": "#/refs/numberValue"},
-        "fill": {"$ref": "#/refs/colorValue"},
-        "fillOpacity": {"$ref": "#/refs/numberValue"},
-        "stroke": {"$ref": "#/refs/colorValue"},
-        "strokeWidth": {"$ref": "#/refs/numberValue"},
-        "strokeOpacity": {"$ref": "#/refs/numberValue"},
-        "strokeDash": {"$ref": "#/refs/arrayValue"},
-        "strokeDashOffset": {"$ref": "#/refs/numberValue"},
-
-        // Group-mark properties
-        "clip": {"$ref": "#/refs/booleanValue"},
-
-        // Symbol-mark properties
-        "size": {"$ref": "#/refs/numberValue"},
-        "shape": valueSchema(["circle", "square", 
-          "cross", "diamond", "triangle-up", "triangle-down"]),
-
-        // Path-mark properties
-        "path": {"$ref": "#/refs/stringValue"},
-
-        // Arc-mark properties
-        "innerRadius": {"$ref": "#/refs/numberValue"},
-        "outerRadius": {"$ref": "#/refs/numberValue"},
-        "startAngle": {"$ref": "#/refs/numberValue"},
-        "endAngle": {"$ref": "#/refs/numberValue"},
-
-        // Area- and line-mark properties
-        "interpolate": valueSchema(["linear", "step-before", "step-after", 
-          "basis", "basis-open", "cardinal", "cardinal-open", "monotone"]),
-        "tension": {"$ref": "#/refs/numberValue"},
-
-        // Image-mark properties
-        "url": {"$ref": "#/refs/stringValue"},
-        "align": valueSchema(["left", "right", "center"]),
-        "baseline": valueSchema(["top", "middle", "bottom"]),
-
-        // Text-mark properties
-        "text": {"$ref": "#/refs/stringValue"},
-        "dx": {"$ref": "#/refs/numberValue"},
-        "dy": {"$ref": "#/refs/numberValue"},
-        "radius":{"$ref": "#/refs/numberValue"},
-        "theta": {"$ref": "#/refs/numberValue"},
-        "angle": {"$ref": "#/refs/numberValue"},
-        "font": {"$ref": "#/refs/stringValue"},
-        "fontSize": {"$ref": "#/refs/numberValue"},
-        "fontWeight": {"$ref": "#/refs/stringValue"},
-        "fontStyle": {"$ref": "#/refs/stringValue"}
-      },
-
-      "additionalProperties": false
-    }
-  }
-};
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"../util/config":107,"../util/log":109,"datalib":20}],57:[function(require,module,exports){
@@ -9950,56 +9311,6 @@ parseSignals.scale = function scale(model, spec, value) {
 }
 
 module.exports = parseSignals;
-parseSignals.schema = {
-  "refs": {
-    "signal": {
-      "title": "SignalRef",
-      "type": "object",
-      "properties": {"signal": {"type": "string"}},
-      "required": ["signal"]
-    },
-
-    "scopedScale": {
-      "oneOf": [
-        {"type": "string"},
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "oneOf": [{"$ref": "#/refs/signal"}, {"type": "string"}]
-            },
-            "scope": {"$ref": "#/refs/signal"},
-            "invert": {"type": "boolean", "default": false}
-          },
-
-          "additionalProperties": false,
-          "required": ["name"]
-        }
-      ]
-    }
-  },
-
-  "defs": {
-    "signal": {
-      "type": "object",
-
-      "properties": {
-        "name": {
-          "type": "string",
-          "not": {"enum": ["datum", "event"].concat(dl.keys(functions))}
-        },
-        "init": {},
-        "verbose": {"type": "boolean", "default": false},
-        "expr": {"type": "string"},
-        "scale": {"$ref": "#/refs/scopedScale"},
-        "streams": {"$ref": "#/defs/streams"}
-      },
-
-      "additionalProperties": false,
-      "required": ["name"]
-    }
-  }
-};
 },{"../expression/functions":40,"../util/constants":108,"./expr":47,"datalib":20}],58:[function(require,module,exports){
 var dl = require('datalib'),
     Model = require('../core/Model'), 
@@ -10039,46 +9350,6 @@ function parseSpec(spec, callback, viewFactory) {
 }
 
 module.exports = parseSpec;
-parseSpec.schema = {
-  "defs": {
-    "spec": {
-      "title": "Vega visualization specification",
-      "type": "object",
-
-      "allOf": [{"$ref": "#/defs/container"}, {
-        "properties": {
-          "width": {"type": "number"},
-          "height": {"type": "number"},
-          "viewport": {
-            "type": "array",
-            "items": {"type": "number"},
-            "maxItems": 2
-          },
-
-          "background": {"$ref": "#/defs/background"},
-          "padding": {"$ref": "#/defs/padding"},
-
-          "interactors": {"$ref": "#/refs/interactors"},
-
-          "signals": {
-            "type": "array",
-            "items": {"$ref": "#/defs/signal"}
-          },
-
-          "predicates": {
-            "type": "array",
-            "items": {"$ref": "#/defs/predicate"}
-          },
-
-          "data": {
-            "type": "array",
-            "items": {"$ref": "#/defs/data"}
-          }
-        }
-      }]
-    }
-  }
-};
 },{"../core/Model":29,"../core/View":30,"../parse/background":44,"../parse/data":45,"../parse/interactors":49,"../parse/marks":52,"../parse/padding":54,"../parse/predicates":55,"../parse/signals":57,"datalib":20}],59:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
@@ -10293,25 +9564,6 @@ function parseStreams(view) {
 }
 
 module.exports = parseStreams;
-parseStreams.schema = {
-  "defs": {
-    "streams": {
-      "type": "array",
-      "items": {
-        "type": "object",
-
-        "properties": {
-          "type": {"type": "string"},
-          "expr": {"type": "string"},
-          "scale": {"$ref": "#/refs/scopedScale"}
-        },
-
-        "additionalProperties": false,
-        "required": ["type", "expr"]
-      }
-    }
-  }
-};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/Node":34,"../dataflow/changeset":36,"../util/constants":108,"./events":46,"./expr":47,"./signals":57,"datalib":20}],60:[function(require,module,exports){
@@ -10335,18 +9587,6 @@ function parseTransforms(model, def) {
 };
 
 module.exports = parseTransforms;
-parseTransforms.schema = {
-  "defs": {
-    "transform": {
-      "type": "array",
-      "items": {
-        "oneOf": dl.keys(transforms).map(function(k) {
-          return transforms[k].schema;
-        })
-      }
-    }
-  }
-};
 },{"../transforms/index":103,"datalib":20}],61:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
@@ -11361,7 +10601,6 @@ module.exports = {
     pickAll: pickAll  // expose for extensibility
   }
 };
-
 },{"../../util/Bounds":104,"../../util/boundscalc":106,"../../util/config":107,"./path":65}],65:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
@@ -12157,14 +11396,12 @@ prototype.svg = function() {
 };
 
 module.exports = renderer;
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../../util/config":107,"./svg":68,"datalib":20}],67:[function(require,module,exports){
 module.exports = {
   Renderer: require('./Renderer')
 };
-
 },{"./Renderer":66}],68:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
@@ -12603,7 +11840,6 @@ function fontString(o) {
 }
 
 module.exports = renderer;
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../../util/config":107,"datalib":20}],69:[function(require,module,exports){
@@ -12834,7 +12070,6 @@ prototype.draw = function(ctx, scene, index) {
 };
 
 module.exports = renderer;
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"./marks":72,"datalib":20}],71:[function(require,module,exports){
@@ -14331,173 +13566,6 @@ var rangeDef = [
 ];
 
 module.exports = Scale;
-Scale.schema = {
-  "refs": {
-    "data": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "oneOf": [
-            {"type": "string"},
-            {
-              "type": "object",
-              "properties": {
-                "fields": {
-                  "type": "array",
-                  "items": {"$ref": "#/refs/data"}
-                }
-              },
-              "required": ["fields"]
-            }
-          ]
-        },
-        "field": {
-          "oneOf": [
-            {"type": "string"},
-            {
-              "type": "array",
-              "items": {"type": "string"}
-            },
-            {
-              "type": "object",
-              "properties": {
-                "parent": {"type": "string"}
-              }
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "parent": {"type": "string"}
-                }
-              }
-            }
-          ]
-        }
-      },
-      "additionalProperties": false
-    }
-  },
-
-  "defs": {
-    "scale": {
-      "title": "Scale function",
-      "type": "object",
-
-      "allOf": [{
-        "properties": {
-          "name": {"type": "string"},
-
-          "type": {
-            "enum": [C.LINEAR, C.ORDINAL, C.TIME, C.TIME_UTC, C.LOG, 
-              C.POWER, C.SQRT, C.QUANTILE, C.QUANTIZE, C.THRESHOLD],
-            "default": "linear"
-          },
-
-          "domain": {
-            "oneOf": [
-              {
-                "type": "array",
-                "items": {
-                  "oneOf": [
-                    {"type":"string"}, 
-                    {"type": "number"}, 
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
-              },
-              {"$ref": "#/refs/data"}
-            ]
-          },
-
-          "domainMin": {
-            "oneOf": [
-              {"type": "number"},
-              {"$ref": "#/refs/data"},
-              {"$ref": "#/refs/signal"}
-            ]
-          },
-
-          "domainMax": {
-            "oneOf": [
-              {"type": "number"},
-              {"$ref": "#/refs/data"},
-              {"$ref": "#/refs/signal"}
-            ]
-          },
-
-          "rangeMin": {
-            "oneOf": [
-              {"type":"string"}, 
-              {"type": "number"}, 
-              {"$ref": "#/refs/signal"}
-            ]
-          },
-
-          "rangeMax": {
-            "oneOf": [
-              {"type":"string"}, 
-              {"type": "number"}, 
-              {"$ref": "#/refs/signal"}
-            ]
-          },
-
-          "reverse": {"type": "boolean"},
-          "round": {"type": "boolean"}
-        },
-
-        "required": ["name"]
-      }, {
-        "oneOf": [{
-          "properties": {
-            "type": {"enum": [C.ORDINAL]},
-
-            "range": {
-              "oneOf": rangeDef.concat({"$ref": "#/refs/data"})
-            },
-
-            "points": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
-            "padding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-            "outerPadding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-            "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-
-            "sort": sortDef
-          }
-        }, {
-          "properties": {
-            "type": {"enum": [C.TIME, C.TIME_UTC]},
-            "range": {"oneOf": rangeDef},
-            "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
-            "nice": {"oneOf": [{"enum": ["second", "minute", "hour", 
-              "day", "week", "month", "year"]}, {"$ref": "#/refs/signal"}]}
-          }
-        }, {
-          "anyOf": [{
-            "properties": {
-              "type": {"enum": [C.LINEAR, C.LOG, C.POWER, C.SQRT, 
-                C.QUANTILE, C.QUANTIZE, C.THRESHOLD], "default": C.LINEAR},
-              "range": {"oneOf": rangeDef},
-              "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
-              "nice": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
-              "zero": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]}
-            }
-          }, {
-            "properties": {
-              "type": {"enum": [C.POWER]},
-              "exponent": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
-            }
-          }, {
-            "properties": {
-              "type": {"enum": [C.QUANTILE]},
-              "sort": sortDef
-            }
-          }]
-        }]
-      }]
-    }
-  }
-};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/Node":34,"../dataflow/changeset":36,"../transforms/Aggregate":83,"../util/config":107,"../util/constants":108,"../util/log":109,"datalib":20}],79:[function(require,module,exports){
@@ -15162,7 +14230,6 @@ function vg_axisDomain() {
 }
 
 module.exports = axs;
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"../parse/mark":51,"../util/config":107,"datalib":20}],81:[function(require,module,exports){
@@ -15903,59 +14970,6 @@ var VALID_OPS = Aggregate.VALID_OPS = [
 ];
 
 module.exports   = Aggregate;
-Aggregate.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Aggregate transform",
-  "description": "Compute summary aggregate statistics",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["aggregate"]},
-    "groupby": {
-      "type": "array",
-      "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]},
-      "description": "A list of fields to split the data into groups."
-    },
-    "summarize": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": {
-            "type": "array",
-            "description": "An array of aggregate functions.",
-            "items": {"oneOf": [{"enum": VALID_OPS}, {"$ref": "#/refs/signal"}]}
-          }
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "The name of the field to aggregate.",
-                "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-              },
-              "ops": {
-                "type": "array",
-                "description": "An array of aggregate functions.",
-                "items": {"oneOf": [{"enum": VALID_OPS}, {"$ref": "#/refs/signal"}]}
-              },
-              "as": {
-                "type": "array",
-                "description": "An optional array of names to use for the output fields.",
-                "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
-              }
-            },
-            "additionalProperties": false,
-            "required": ["name", "ops"]
-          }
-        }
-      ]
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type", "groupby"]
-};
-
 },{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/constants":108,"../util/log":109,"./Facetor":88,"./Transform":100,"datalib":20}],84:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
@@ -15983,7 +14997,6 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = BatchTransform;
-
 },{"../dataflow/Collector":31,"./Transform":100}],85:[function(require,module,exports){
 var dl = require('datalib'),
     Transform = require('./Transform'),
@@ -16042,69 +15055,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
-Bin.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Bin transform",
-  "description": "Bins values into quantitative bins (e.g., for a histogram).",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["bin"]},
-    "field": {
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "description": "The name of the field to bin values from."
-    },
-    "min": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "description": "The minimum bin value to consider."
-    },
-    "max": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "description": "The maximum bin value to consider."
-    },
-    "base": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "description": "The number base to use for automatic bin determination.",
-      "default": 10
-    },
-    "maxbins": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "description": "The maximum number of allowable bins.",
-      "default": 20
-    },
-    "step": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "description": "An exact step size to use between bins. If provided, options such as maxbins will be ignored."
-    },
-    "steps": {
-      "description": "An array of allowable step sizes to choose from.",
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"type": "number"}
-        },
-        {"$ref": "#/refs/signal"}
-      ]
-    },
-    "minstep": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "description": "A minimum allowable step size (particularly useful for integer values)."
-    },
-    "div": {
-      "description": "An array of scale factors indicating allowable subdivisions.",
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"type": "number"},
-          "default": [5, 2]
-        },
-        {"$ref": "#/refs/signal"}
-      ]
-    }
-  },
-  "additionalProperties": false,
-  "required":["type", "field", "min", "max"]
-};
-
 },{"../dataflow/tuple":37,"./Transform":100,"datalib":20}],86:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
@@ -16222,38 +15172,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
-Cross.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Cross transform",
-  "description": "Compute the cross-product of two data sets.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["cross"]},
-    "with": {
-      "type": "string",
-      "description": "The name of the secondary data set to cross with the primary data. " + 
-        "If unspecified, the primary data is crossed with itself."
-    },
-    "diagonal": {
-      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
-      "description": "If false, items along the \"diagonal\" of the cross-product " +
-        "(those elements with the same index in their respective array) " +
-        "will not be included in the output.",
-      "default": true
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "left": {"type": "string", "default": "a"},
-        "right": {"type": "string", "default": "b"}
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type"]
-};
 },{"../dataflow/Collector":31,"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":109,"./Transform":100}],87:[function(require,module,exports){
 var dl = require('datalib'),
     Transform = require('./Transform'),
@@ -16285,17 +15203,6 @@ proto.aggr = function() {
 };
 
 module.exports = Facet;
-Facet.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Facet transform",
-  "description": "A special aggregate transform that organizes a data set into groups or \"facets\".",
-  "type": "object",
-  "properties": dl.extend({}, Aggregate.schema.properties, {
-    "type": {"enum": ["facet"]},
-    "transform": {"$ref": "#/refs/transform"}
-  }),
-  "required": ["type", "groupby"]
-};
 },{"../parse/transforms":60,"./Aggregate":83,"./Transform":100,"datalib":20}],88:[function(require,module,exports){
 var dl = require('datalib'),
     tuple = require('../dataflow/tuple'),
@@ -16492,22 +15399,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Filter;
-Filter.schema  = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Filter transform",
-  "description": "Filters elements from a data set to remove unwanted items.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["filter"]},
-    "test": {
-      "type": "string",
-      "description": "A string containing an expression (in JavaScript syntax) for the filter predicate."
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type", "test"]
-};
-
 },{"../dataflow/changeset":36,"../parse/expr":47,"../util/constants":108,"../util/log":109,"./Transform":100}],90:[function(require,module,exports){
 var Transform = require('./Transform'),
     log = require('../util/log'), 
@@ -16578,39 +15469,6 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-Fold.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Fold transform",
-  "description": "Collapse (\"fold\") one or more data properties into two properties.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["fold"]},
-    "fields": {
-      "oneOf": [
-        {
-          "type": "array",
-          "description": "An array of field references indicating the data properties to fold.",
-          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]},
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        {"$ref": "#/refs/signal"}
-      ]
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "key": {"type": "string", "default": "key"},
-        "value": {"type": "string", "default": "value"}
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type", "fields"]
-};
-
 },{"../dataflow/changeset":36,"../dataflow/tuple":37,"../util/log":109,"./Transform":100}],91:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
@@ -16723,91 +15581,6 @@ proto.transform = function(nodeInput) {
 };
 
 module.exports = Force;
-Force.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Force transform",
-  "description": "Performs force-directed layout for network data.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["force"]},
-    "size": {
-      "description": "The dimensions [width, height] of this force layout.",
-      "oneOf": [
-        {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-
-      "default": [500, 500]
-    },
-    "links": {
-      "type": "string",
-      "description": "The name of the link (edge) data set."
-    },
-    "linkDistance": {
-      "description": "Determines the length of edges, in pixels.",
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": 20
-    },
-    "linkStrength": {
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
-      "description": "Determines the tension of edges (the spring constant).",
-      "default": 1
-    },
-    "charge": {
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
-      "description": "The strength of the charge each node exerts.",
-      "default": -30
-    },
-    "chargeDistance": {
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
-      "description": "The maximum distance over which charge forces are applied.",
-      "default": Infinity
-    },
-    "iterations": {
-      "description": "The number of iterations to run the force directed layout.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": 500
-    },
-    "friction": {
-      "description": "The strength of the friction force used to stabilize the layout.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": 0.9
-    },
-    "theta": {
-      "description": "The theta parameter for the Barnes-Hut algorithm, which is used to compute charge forces between nodes.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": 0.8
-    },
-    "gravity": {
-      "description": "The strength of the pseudo-gravity force that pulls nodes towards the center of the layout area.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": 0.1
-    },
-    "alpha": {
-      "description": "A \"temperature\" parameter that determines how much node positions are adjusted at each step.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": 0.1
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "x": {"type": "string", "default": "layout_x"},
-        "y": {"type": "string", "default": "layout_y"},
-        "source": {"type": "string", "default": "_source"},
-        "target": {"type": "string", "default": "_target"}
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type", "links"]
-};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./Transform":100}],92:[function(require,module,exports){
@@ -16853,25 +15626,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
-Formula.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Formula transform",
-  "description": "Extends data elements with new values according to a calculation formula.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["formula"]},
-    "field": {
-      "type": "string",
-      "description": "The property name in which to store the computed formula value."
-    },
-    "expr": {
-      "type": "string",
-      "description": "A string containing an expression (in JavaScript syntax) for the formula."
-    }
-  },
-  "required": ["type", "field", "expr"]
-};
-
 },{"../dataflow/tuple":37,"../parse/expr":47,"../util/constants":108,"../util/log":109,"./Transform":100}],93:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
@@ -16959,86 +15713,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Geo;
-
-Geo.baseSchema = {
-  "projection": {
-    "description": "The type of cartographic projection to use.",
-    "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-    "default": "mercator"
-  },
-  "center": {
-    "description": "The center of the projection.",
-    "oneOf": [
-      {
-        "type": "array",
-        "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-        "minItems": 2,
-        "maxItems": 2
-      },
-      {"$ref": "#/refs/signal"}
-    ]    
-  },
-  "translate": {
-    "description": "The translation of the projection.",
-    "oneOf": [
-      {
-        "type": "array",
-        "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-        "minItems": 2,
-        "maxItems": 2
-      },
-      {"$ref": "#/refs/signal"}
-    ]    
-  },
-  "rotate": {
-    "description": "The rotation of the projection.",
-    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
-  },
-  "scale": {
-    "description": "The scale of the projection.",
-    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
-  },
-  "precision": {
-    "description": "The desired precision of the projection.",
-    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
-  },
-  "clipAngle": {
-    "description": "The clip angle of the projection.",
-    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
-  },
-  "clipExtent": {
-    "description": "The clip extent of the projection.",
-    "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
-  }
-};
-
-Geo.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Geo transform",
-  "description": "Performs a cartographic projection. Given longitude and latitude values, sets corresponding x and y properties for a mark.",
-  "type": "object",
-  "properties": dl.extend({
-    "type": {"enum": ["geo"]},
-    "lon": {
-      "description": "The input longitude values.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-    },
-    "lat": {
-      "description": "The input latitude values.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "x": {"type": "string", "default": "layout_x"},
-        "y": {"type": "string", "default": "layout_y"}
-      }
-    }
-  }, Geo.baseSchema),
-  "required": ["type", "lon", "lat"]
-};
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./Transform":100,"datalib":20}],94:[function(require,module,exports){
@@ -17085,27 +15759,6 @@ proto.transform = function(input) {
 };
 
 module.exports = GeoPath;
-GeoPath.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Geopath transform",
-  "description": "Creates paths for geographic regions, such as countries, states and counties.",
-  "type": "object",
-  "properties": dl.extend({
-    "type": {"enum": ["geopath"]},
-    "value": {
-      "description": "The data field containing GeoJSON Feature data.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "path": {"type": "string", "default": "layout_path"}
-      }
-    }
-  }, Geo.baseSchema),
-  "required": ["type"]
-};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./Geo":93,"./Transform":100,"datalib":20}],95:[function(require,module,exports){
@@ -17201,63 +15854,6 @@ proto.transform = function(input) {
 };
 
 module.exports  = LinkPath;
-LinkPath.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "LinkPath transform",
-  "description": "Computes a path definition for connecting nodes within a node-link network or tree diagram.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["linkpath"]},
-    "source": {
-      "description": "The data field that references the source node for this link.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "_source"
-    },
-    "target": {
-      "description": "The data field that references the target node for this link.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "_target"
-    },
-    "x": {
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "layout_x"
-    },
-    "y": {
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "layout_y"
-    },
-    "tension": {
-      "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
-      "oneOf": [
-        {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-      "default": 0.2
-    },
-    "shape": {
-      "description": "The path shape to use",
-      "oneOf": [
-        {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
-        {"$ref": "#/refs/signal"}
-      ],
-      "default": "line"
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "path": {"type": "string", "default": "layout_path"}
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type"]
-}
 },{"../dataflow/tuple":37,"./Transform":100}],96:[function(require,module,exports){
 var dl = require('datalib'),
     expr = require('../parse/expr'),
@@ -17435,57 +16031,6 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
-Pie.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Pie transform",
-  "description": "Computes a pie chart layout.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["pie"]},
-    "value": {
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "description": "The data values to encode as angular spans. " + 
-        "If this property is omitted, all pie slices will have equal spans."
-    },
-    "startAngle": {
-      "oneOf": [
-        {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 2 * Math.PI
-        }, 
-        {"$ref": "#/refs/signal"}
-      ],
-      "default": 0
-    },
-    "endAngle": {
-      "oneOf": [
-        {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 2 * Math.PI
-        }, 
-        {"$ref": "#/refs/signal"}
-      ],
-      "default": 2 * Math.PI,
-    },
-    "sort": {
-      "description": " If true, will sort the data prior to computing angles.",
-      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
-      "default": false
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "start": {"type": "string", "default": "layout_start"},
-        "end": {"type": "string", "default": "layout_end"},
-        "mid": {"type": "string", "default": "layout_mid"}
-      }
-    }
-  },
-  "required": ["type"]
-};
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./BatchTransform":84,"./Transform":100,"datalib":20}],98:[function(require,module,exports){
@@ -17513,24 +16058,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Sort;
-Sort.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Sort transform",
-  "description": "Sorts the values of a data set.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["sort"]},
-    "by": {
-      "oneOf": [
-        {"type": "string"},
-        {"type": "array", "items": {"type": "string"}}
-      ],
-      "description": "A list of fields to use as sort criteria."
-    }
-  },
-  "required": ["type", "by"]
-};
-
 },{"../parse/expr":47,"../util/log":109,"./Transform":100,"datalib":20}],99:[function(require,module,exports){
 var dl = require('datalib'),
     Transform = require('./Transform'),
@@ -17625,56 +16152,6 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
-Stack.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Stack transform",
-  "description": "Computes layout values for stacked graphs, as in stacked bar charts or stream graphs.",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["stack"]},
-    "groupby": {
-      "description": "A list of fields to split the data into groups (stacks).",
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-    },
-    "sortby": {
-      "description": "A list of fields to determine the sort order of stacks.",
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-    },
-    "value": {
-      "description": "The data field that determines the thickness/height of stacks.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-    },
-    "offset": {
-      "description": "The baseline offset",
-      "oneOf": [{"enum": ["zero", "silhouette", "wiggle", "expand"]}, {"$ref": "#/refs/signal"}],
-      "default": "zero"
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "start": {"type": "string", "default": "layout_start"},
-        "end": {"type": "string", "default": "layout_end"},
-        "mid": {"type": "string", "default": "layout_mid"}
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type", "groupby", "value"]
-};
 },{"../dataflow/tuple":37,"./BatchTransform":84,"./Transform":100,"datalib":20}],100:[function(require,module,exports){
 var Node = require('../dataflow/Node'),
     Parameter = require('./Parameter'),
@@ -17802,87 +16279,6 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Treemap;
-Treemap.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "type": {"enum": ["treemap"]},
-    "sort": {
-      "description": "A list of fields to use as sort criteria for sibling nodes.",
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-      "default": ["-value"]
-    },
-    "children": {
-      "description": "A data field that represents the children array",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "children"
-    },
-    "value": {
-      "description": "The values to use to determine the area of each leaf-level treemap cell.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "value"
-    },
-    "size": {
-      "description": "The dimensions of the treemap layout",
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-          "minItems": 2,
-          "maxItems": 2
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-      "default": [500, 500]
-    },
-    "round": {
-      "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
-      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
-      "default": true
-    },
-    "sticky": {
-      "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
-      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
-      "default": false
-    },
-    "ratio": {
-      "description": "The target aspect ratio for the layout to optimize.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": defaultRatio
-    },
-    "padding": {
-      "oneOf": [
-        {"type": "number"},
-        {
-          "type": "array", 
-          "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-          "minItems": 4,
-          "maxItems": 4
-        },
-        {"$ref": "#/refs/signal"}
-      ],
-      "description": "he padding (in pixels) to provide around internal nodes in the treemap."
-    },
-    "output": {
-      "type": "object",
-      "description": "Rename the output data fields",
-      "properties": {
-        "x": {"type": "string", "default": "layout_x"},
-        "y": {"type": "string", "default": "layout_y"},
-        "width": {"type": "string", "default": "layout_width"},
-        "height": {"type": "string", "default": "layout_height"}
-      }
-    }
-  },
-  "additionalProperties": false,
-  "required": ["type", "value"]
-}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"../dataflow/tuple":37,"./BatchTransform":84,"./Transform":100,"datalib":20}],102:[function(require,module,exports){
@@ -18010,49 +16406,6 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
-Zip.baseSchema = {
-  "type": {"enum": ["zip"]},
-  "with": {
-    "type": "string",
-    "description": "The name of the secondary data set to \"zip\" with the current, primary data set."
-  },
-  "as": {
-    "type": "string",
-    "description": "The name of the field in which to store the secondary data set values."
-  }
-};
-
-Zip.schema = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Zip transform",
-  "description": "Merges two data sets together.",
-  "type": "object",
-  "oneOf": [
-    { 
-      "properties": Zip.baseSchema,
-      "required": ["type", "with", "as"],
-      "additionalProperties": false
-    },
-    {
-      "properties": dl.extend({
-        "key": {
-          "description": "The field in the primary data set to match against the secondary data set.",
-          "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-        },
-        "withKey": {
-          "description": "The field in the secondary data set to match against the primary data set.",
-          "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
-        },
-        "default": {
-          // "type": "any",
-          "description": "A default value to use if no matching key value is found."
-        }
-      }, Zip.baseSchema),
-      "required": ["type", "with", "as", "key", "withKey"],
-      "additionalProperties": false
-    }
-  ]
-};
 },{"../dataflow/Collector":31,"../util/log":109,"./Transform":100,"datalib":20}],103:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),
@@ -18773,23 +17126,36 @@ module.exports = {
 },{"./config":107,"_process":3,"datalib":20}],110:[function(require,module,exports){
 var dl = require('datalib'),
     parse = require('../parse'),
-    Scale = require('../scene/Scale');
+    Scale = require('../scene/Scale'),
+    config = require('../util/config');
+
+function compile(module, opt, schema) {
+  var s = module.schema;
+  if (!s) return;
+  if (s.refs) dl.extend(schema.refs, s.refs);
+  if (s.defs) dl.extend(schema.defs, s.defs);
+}
 
 module.exports = function schema(opt) {
-  var schema = {defs: {}, refs:{}, "$ref": "#/defs/spec"};
+  var schema = null;
   opt = opt || {};
 
-  dl.keys(parse).forEach(function(k) {
-    var s = parse[k].schema;
-    if (!s) return;
-    if (s.refs) dl.extend(schema.refs, s.refs);
-    if (s.defs) dl.extend(schema.defs, s.defs);
-  });
+  // Compile if we're not loading the schema from a URL. 
+  // Load from a URL to extend the existing base schema.
+  if (opt.url) {
+    schema = dl.json(dl.extend({url: opt.url}, config.load));
+  } else {
+    schema = {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Vega Visualization Specification Language",
+      "defs": {}, 
+      "refs": {}, 
+      "$ref": "#/defs/spec"
+    };
 
-  // Scales aren't part of the parser, so add their schema manually
-  var ss = Scale.schema;
-  if (ss.refs) dl.extend(schema.refs, ss.refs);
-  if (ss.defs) dl.extend(schema.defs, ss.defs);
+    dl.keys(parse).forEach(function(k) { compile(parse[k], opt, schema) });
+    compile(Scale, opt, schema);  // Scales aren't in the parser, add schema manually
+  }
 
   // Extend schema to support custom mark properties or property sets.
   if (opt.properties) dl.keys(opt.properties).forEach(function(k) {
@@ -18802,6 +17168,6 @@ module.exports = function schema(opt) {
 
   return schema;
 };
-},{"../parse":48,"../scene/Scale":78,"datalib":20}]},{},[1])(1)
+},{"../parse":48,"../scene/Scale":78,"../util/config":107,"datalib":20}]},{},[1])(1)
 });
 //# sourceMappingURL=vega2.js.map

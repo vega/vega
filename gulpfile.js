@@ -1,5 +1,8 @@
-var gulp = require('gulp'),
+var fs = require('fs'),
+    gulp = require('gulp'),
+    stream = require('event-stream'),
     browserify = require('browserify'),
+    through = require('through'),
     buffer = require('vinyl-buffer'),
     rename = require('gulp-rename'),
     exorcist   = require('exorcist'),
@@ -10,6 +13,10 @@ var gulp = require('gulp'),
     watchify = require('watchify'),
     gutil = require('gulp-util'),
     mocha = require('gulp-spawn-mocha'),
+    jstransform = require('jstransform'),
+    jstutils = require('jstransform/src/utils'),
+    Syntax = jstransform.Syntax,
+    schema = require('./src/util/schema'),
     argv = require('yargs').argv;
 
 function browser() {
@@ -19,6 +26,7 @@ function browser() {
       debug: true,
       cache: {}, packageCache: {}
     })
+    .transform(stripSchema)
     .external(['d3', 'topojson', 'canvas']); 
 }
 
@@ -26,7 +34,48 @@ function watcher() {
   return watchify(browser());
 }
 
+function generateSchema() {
+  return stream.readArray(JSON.stringify(schema(), null, 2).split())
+    .on('error', gutil.log.bind(gutil, 'Schema Generation Error'))
+    .pipe(source('vega2.schema.json'))
+    .pipe(gulp.dest('.'))
+}
+
+// Strip schema definitions from source files for smaller
+// built file size. We do this by building an AST of source
+// files and removing everything after the module.exports = (.*) expr.
+
+function stripSchema(file) {
+  var data = '';
+
+  function visitModuleExportsExpr(traverse, node, path, state) {
+    jstutils.catchup(node.range[1]+1, state); // Last line is module.exports = (.*);
+    jstutils.move(data.length, state); // Skip over schema definitions
+  }
+
+  visitModuleExportsExpr.test = function(node, path, state) {
+    if (node.type !== Syntax.AssignmentExpression) return false;
+    if (node.left.type !== Syntax.MemberExpression) return false;
+    if (node.left.object.type !== Syntax.Identifier) return false;
+    if (node.left.property.type !== Syntax.Identifier) return false;
+    if (node.left.object.name !== "module") return false;
+    if (node.left.property.name !== "exports") return false;
+
+    return true;
+  };
+
+  return through(function(buf) { data += buf }, function() {
+    var stripped = jstransform.transform(
+      [visitModuleExportsExpr],
+      data
+    );
+    this.queue(stripped.code);
+    this.queue(null);
+  });
+}
+
 function build(b) {
+  generateSchema();
   return b.bundle()
     // log errors if they happen
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
@@ -62,4 +111,5 @@ gulp.task('test', function() {
     .on('error', gutil.log);
 });
 
+gulp.task('schema', generateSchema);
 gulp.task('default', ['test', 'build']);
