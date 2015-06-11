@@ -56,12 +56,10 @@ function hit(g, o) {
 }
 
 function pick(g, scene, x, y, gx, gy) {
-  if (!scene.items || !scene.items.length ||
-      scene.bounds && !scene.bounds.contains(gx, gy)) {
+  if (scene.bounds && !scene.bounds.contains(gx, gy)) {
     return false;
   }
-  var items = scene.items,
-      handler = this,
+  var items = scene.items || [],
       subscene, group, hits, dx, dy, i, j;
 
   for (i=items.length; --i>=0;) {
@@ -74,7 +72,7 @@ function pick(g, scene, x, y, gx, gy) {
     for (j=group.items.length; --j >= 0;) {
       subscene = group.items[j];
       if (subscene.interactive === false) continue;
-      hits = handler.pick(subscene, x, y, gx-dx, gy-dy);
+      hits = this.pick(subscene, x, y, gx-dx, gy-dy);
       if (hits) {
         g.restore();
         return hits;
@@ -83,7 +81,7 @@ function pick(g, scene, x, y, gx, gy) {
     g.restore();
   }
 
-  return scene.interactive ? pickSelf(g, scene, x, y, gx, gy) : false;
+  return scene.interactive !== false ? pickSelf(g, scene, x, y, gx, gy) : false;
 }
 
 var pickSelf = util.pick(hit);

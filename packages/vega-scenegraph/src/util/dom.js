@@ -15,6 +15,7 @@ module.exports = {
     
     c = child || create(el.ownerDocument, tag, ns);
     c.setAttribute('class', className);
+    el.appendChild(c);
     return c;
   },
   childAt: function(el, index, tag, ns) {

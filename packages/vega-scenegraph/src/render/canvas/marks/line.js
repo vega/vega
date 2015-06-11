@@ -26,7 +26,7 @@ function pick(g, scene, x, y, gx, gy) {
 
   if (b && !b.contains(gx, gy)) return false;
 
-  if (g.pixelratio !== 1) {
+  if (g.pixelratio != null && g.pixelratio !== 1) {
     x *= g.pixelratio;
     y *= g.pixelratio;
   }

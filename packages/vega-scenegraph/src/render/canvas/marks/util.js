@@ -3,7 +3,7 @@ function drawPathOne(path, g, o, items) {
       stroke = o.stroke,
       opac, lc, lw;
 
-  path(g, items);
+  if (path(g, items)) return;
 
   opac = o.opacity == null ? 1 : o.opacity;
   if (opac===0 || !fill && !stroke) return;
@@ -56,12 +56,12 @@ function drawOne(pathFunc) {
 function pick(test) {
   if (!test) test = function() { return true; };
 
-  return function (g, scene, x, y, gx, gy) {
+  return function(g, scene, x, y, gx, gy) {
     if (!scene.items.length) return false;
 
     var o, b, i;
 
-    if (g.pixelratio !== 1) {
+    if (g.pixelratio != null && g.pixelratio !== 1) {
       x *= g.pixelratio;
       y *= g.pixelratio;
     }

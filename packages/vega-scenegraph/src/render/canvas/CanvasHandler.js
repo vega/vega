@@ -15,7 +15,7 @@ prototype.initialize = function(canvas, pad, obj) {
   
   // add event listeners
   var that = this;
-  events.forEach(function(type) {
+  this.events.forEach(function(type) {
     canvas.addEventListener(type, function(evt) {
       if (prototype[type]) {
         prototype[type].call(that, evt);
@@ -27,8 +27,14 @@ prototype.initialize = function(canvas, pad, obj) {
   return this;
 };
 
-// setup events
-var events = [
+prototype.scene = function(scene) {
+  if (!arguments.length) return this._scene;
+  this._scene = scene;
+  return this;
+};
+
+// supported events
+prototype.events = [
   "keydown",
   "keypress",
   "keyup",
@@ -51,7 +57,7 @@ prototype.mousemove = function(evt) {
       x = evt.clientX - b.left,
       y = evt.clientY - b.top,
       a = this._active,
-      p = this.pick(this._model.scene(), x, y, x-pad.left, y-pad.top);
+      p = this.pick(this._scene, x, y, x-pad.left, y-pad.top);
 
   if (p === a) {
     this.fire("mousemove", evt);
@@ -133,7 +139,7 @@ prototype.off = function(type, handler) {
 
 // retrieve the current canvas context
 prototype.context = function() {
-  return this._el.getContext("2d");
+  return this._el.getContext('2d');
 };
 
 // find the scenegraph item at the current mouse position

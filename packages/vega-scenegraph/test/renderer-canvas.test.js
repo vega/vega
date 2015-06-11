@@ -62,6 +62,17 @@ describe('canvas renderer', function() {
     assert.equal(r.context(), null);
   });
 
+  it('should use DOM if available', function() {
+    var jsdom = require('jsdom').jsdom();
+    global.document = jsdom;
+
+    var r = new Renderer().initialize(document.body, 100, 100);
+    assert.strictEqual(r.element(), document.body);
+    assert.strictEqual(r.canvas(), document.body.childNodes[0]);
+    
+    delete global.document;
+  });
+
   it('should render scenegraph to canvas', function() {
     var scene = loadScene('scenegraph-rect.json');
     var image = render(scene, 400, 200);

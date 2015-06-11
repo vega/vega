@@ -29,7 +29,7 @@ function pathBounds(o, path, bounds) {
 
 function path(o, bounds) {
   var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
-  return pathBounds(o, p, bounds);
+  return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
 }
 
 function area(o, bounds) {
