@@ -30,9 +30,8 @@ module.exports = function(el, scene, index, mark) {
         bg.setAttribute('width', 0);
         bg.setAttribute('height', 0);
         bg.style.setProperty('pointer-events', events);
-      } else {
-        o = (dl.isArray(d) ? d[0] : d);
-        if (o) o._svg = c;
+      } else if ((o = dl.isArray(d) ? d[0] : d)) {
+        o._svg = c;
       }
     }
     mark.update.call(this, c, d);

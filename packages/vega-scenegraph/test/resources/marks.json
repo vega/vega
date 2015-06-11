@@ -2,10 +2,10 @@
   "arc": {
     "marktype": "arc",
     "items": [
-      {"x":250, "y":250, "startAngle":0.0, "endAngle":0.1, "innerRadius":1, "outerRadius":5, "stroke":"steelblue", "strokeWidth":2},
-      {"x":250, "y":250, "startAngle":0.1, "endAngle":0.2, "innerRadius":2, "outerRadius":6, "stroke":"steelblue"},
-      {"x":250, "y":250, "startAngle":0.2, "endAngle":0.3, "innerRadius":3, "outerRadius":7},
-      {"startAngle":0.3, "endAngle":0.4, "innerRadius":4, "outerRadius":8},
+      {"x":250, "y":250, "startAngle":0.0, "endAngle":1.0, "innerRadius":0, "outerRadius":50, "stroke":"steelblue", "strokeWidth":2},
+      {"x":250, "y":250, "startAngle":1.0, "endAngle":2.0, "innerRadius":20, "outerRadius":60, "stroke":"steelblue"},
+      {"x":250, "y":250, "startAngle":2.0, "endAngle":3.0, "innerRadius":30, "outerRadius":70, "fill":"firebrick"},
+      {"startAngle":2.0, "endAngle":3.0, "innerRadius":40, "outerRadius":80, "fill":"purple"},
       {"x":250, "y":250}
     ]
   },
@@ -41,7 +41,7 @@
   "line-1": {
     "marktype": "line",
     "items": [
-      {"x":0,   "y":144, "interpolate":"monotone", "tension":1.0, "stroke": "steelblue"},
+      {"x":0,   "y":144, "interpolate":"monotone", "tension":1.0, "stroke": "steelblue", "strokeWidth": 2},
       {"x":100, "y":90},
       {"x":200, "y":114},
       {"x":300, "y":18}
@@ -59,9 +59,9 @@
   "path": {
     "marktype": "path",
     "items": [
-      {"x":10, "y":20, "path":"M100,100 L200,100 L200,200 L100,200 Z", "fill":"steelblue"},
+      {"x":100, "y":100, "path":"M100,100 L200,100 L200,200 Z", "fill":"steelblue"},
       {"path":"M100,100 L200,100 L200,200 L100,200 Z", "fill":"firebrick"},
-      {"x":50, "y":50, "fill":"black", "stroke":"red", "strokeWidth":-1}
+      {"x":400, "y":400, "fill":"black", "stroke":"purple", "strokeWidth":-1}
     ]
   },
   "rect": {
@@ -77,13 +77,13 @@
   "rule": {
     "marktype": "rule",
     "items": [
-      {"x":0,   "x2":100, "y":0, "stroke":"white"},
-      {"x":0,   "x2":101, "y":5, "stroke":"white"},
-      {"y":100, "y2":90,  "x":0, "stroke":"black"},
-      {"y":200, "y2":114, "x":5, "stroke":"black", "strokeOpacity":0.5, "strokeCap":"butt"},
-      {"y":200, "y2":114, "x":5, "stroke":"black", "opacity":0},
+      {"x":0,   "x2":100, "y":0, "stroke":"blue", "strokeWidth":5},
+      {"x":0,   "x2":101, "y":5, "stroke":"blue", "strokeWidth":-1},
+      {"y":100, "y2":50,  "x":0, "stroke":"black"},
+      {"y":100, "y2":114, "x":50, "stroke":"black", "strokeOpacity":0.5, "strokeCap":"butt"},
+      {"y":200, "y2":114, "x":100, "stroke":"black", "opacity":0},
       {"y":200, "y2":114, "x":5},
-      {"x":0, "x2":10, "y":10, "y2":20, "stroke":"red"}
+      {"x":0, "x2":100, "y":100, "y2":200, "stroke":"red"}
     ]
   },
   "symbol": {
@@ -101,13 +101,13 @@
   "text": {
     "marktype": "text",
     "items": [
-      {"x":0, "y":5, "text":"A", "align":"left",   "baseline":"top",    "font":"Helvetica", "fill":"black", "fillOpacity":0.5},
-      {"x":1, "y":6, "text":"B", "align":"center", "baseline":"middle", "font":"Helvetica", "fill":"black"},
-      {"x":2, "y":7, "text":"C", "align":"right",  "baseline":"bottom", "font":"Helvetica", "fill":"black", "angle":90},
-      {"x":3, "y":8, "text":"D", "dx":0, "dy":0, "radius":10, "theta":1.57, "angle":45, "stroke":"blue", "strokeOpacity":0.5},
+      {"x":0,  "y":40, "text":"A", "align":"left",   "baseline":"top",    "font":"Helvetica", "fill":"black", "fillOpacity":0.5},
+      {"x":10, "y":60, "text":"B", "align":"center", "baseline":"middle", "font":"Helvetica", "fill":"black"},
+      {"x":20, "y":80, "text":"C", "align":"right",  "baseline":"bottom", "font":"Helvetica", "fill":"black", "angle":90},
+      {"x":30, "y":120, "text":"D", "dx":0, "dy":0, "radius":10, "theta":1.57, "angle":45, "stroke":"blue", "strokeOpacity":0.5},
       {"text":"E", "dx":1, "dy":2, "fontSize":14, "radius":5, "fontWeight":"bold", "fontStyle":"italic", "stroke":"red"},
-      {"x":1, "y":1, "fill":"green", "opacity":0},
-      {"x":1, "y":1, "stroke":"green", "strokeWidth":0}
+      {"x":10, "y":200, "fill":"green", "opacity":0},
+      {"x":10, "y":200, "stroke":"green", "strokeWidth":0}
     ]
   },
   "group": {

@@ -16,8 +16,8 @@ function path(g, o) {
 }
 
 function hit(g, o, x, y) {
-  path(g, o); 
-  return g.isPointInPath(x,y);
+  path(g, o);
+  return g.isPointInPath(x, y);
 }
 
 module.exports = {

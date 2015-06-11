@@ -62,7 +62,7 @@ function draw(g, scene, bounds) {
 }
 
 function hit(g, o, x, y, gx, gy) {
-  if (!o.fontSize) return false;
+  if (o.fontSize === 0) return false;
   if (!o.angle) return true; // bounds sufficient if no rotation
 
   var b = textBounds(o, tempBounds, true),

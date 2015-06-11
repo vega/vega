@@ -13,14 +13,12 @@ prototype.initialize = function(el, pad, obj) {
   return this.padding(pad);
 };
 
-prototype.padding = function(pad) {
-  this._padding = pad;
-  return this;
+prototype.element = function() {
+  return this._el;
 };
 
-prototype.model = function(model) {
-  if (!arguments.length) return this._model;
-  this._model = model;
+prototype.padding = function(pad) {
+  this._padding = pad || {top:0, left:0, bottom:0, right:0};
   return this;
 };
 

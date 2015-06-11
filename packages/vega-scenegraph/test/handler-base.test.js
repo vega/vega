@@ -19,7 +19,6 @@ describe('base handler', function() {
   it('should initialize', function() {
     var el = {};
     var obj = {};
-    var model = {};
     var pad = padding(1, 1, 1, 1);
     var h = new Handler();
     var s = h.initialize(el, pad, obj);
@@ -48,12 +47,6 @@ describe('base handler', function() {
     h = h.handlers();
     assert.equal(h && h.length, 1);
     assert.strictEqual(h[0], obj);
-  });
-
-  it('should set model', function() {
-    var m = {};
-    var h = new Handler().model(m);
-    assert.strictEqual(h.model(), m);
   });
 
 });
