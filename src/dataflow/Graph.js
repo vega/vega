@@ -2,6 +2,8 @@ var util = require('datalib/src/util'),
     Heap = require('heap'),
     Datasource = require('./Datasource'),
     Signal = require('./Signal'),
+    Collector = require('./Collector'),
+    BatchTransform = require('../transforms/BatchTransform'),
     changeset = require('./changeset'),
     log = require('../util/log'),
     C = require('../util/constants');
@@ -119,10 +121,23 @@ proto.propagate = function(pulse, node) {
 // Connect a branch of dataflow nodes. 
 // Dependencies get wired to the nearest collector. 
 function forEachNode(branch, fn) {
-  var node, collector, i, len;
-  for(i=0, len=branch.length; i<len; ++i) {
+  var node, collector, router, i;
+  for(i=0; i<branch.length; ++i) {
     node = branch[i];
-    if(node.collector()) collector = node;
+
+    // Share collectors between batch transforms. We can reuse an
+    // existing collector unless a router node has come after it,
+    // in which case, we splice in a new collector.
+    if (node instanceof BatchTransform && !node.data) {
+      if (router) {
+        branch.splice(i, 0, (node = new Collector(this)));
+      } else {
+        node.data = collector.data.bind(collector);
+      }
+    } 
+
+    if (node.collector()) collector = node;
+    router = node.router() && !node.collector(); 
     fn(node, collector, i);
   }
 }
@@ -130,7 +145,8 @@ function forEachNode(branch, fn) {
 proto.connect = function(branch) {
   log.debug({}, ['connecting']);
   var graph = this;
-  forEachNode(branch, function(n, c, i) {
+
+  forEachNode.call(this, branch, function(n, c, i) {
     var data = n.dependency(C.DATA),
         signals = n.dependency(C.SIGNALS);
 
@@ -158,7 +174,7 @@ proto.disconnect = function(branch) {
   log.debug({}, ['disconnecting']);
   var graph = this;
 
-  forEachNode(branch, function(n, c, i) {
+  forEachNode.call(this, branch, function(n, c, i) {
     var data = n.dependency(C.DATA),
         signals = n.dependency(C.SIGNALS);
 

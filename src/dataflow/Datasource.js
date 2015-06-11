@@ -104,13 +104,16 @@ proto.pipeline = function(pipeline) {
   var ds = this, n, c;
   if(!arguments.length) return this._pipeline;
 
+  // Add a collector to materialize the output of pipeline operators.
   if(pipeline.length) {
-    // If we have a pipeline, add a collector to the end to materialize
-    // the output.
     ds._collector = new Collector(this._graph);
     pipeline.push(ds._collector);
     ds._revises = pipeline.some(function(p) { return p.revises(); });
   }
+
+  // Input/output nodes masquerade as collector nodes, so they need to
+  // have a `data` function. dsData is used if a collector isn't available.
+  function dsData() { return ds._data; }
 
   // Input node applies the datasource's delta, and propagates it to 
   // the rest of the pipeline. It receives touches to reflow data.
@@ -118,6 +121,7 @@ proto.pipeline = function(pipeline) {
     .router(true)
     .collector(true);
 
+  input.data = dsData;
   input.evaluate = function(input) {
     log.debug(input, ["input", ds._name]);
 
@@ -160,6 +164,7 @@ proto.pipeline = function(pipeline) {
     .router(true)
     .collector(true);
 
+  output.data = ds._collector ? ds._collector.data.bind(ds._collector) : dsData;
   output.evaluate = function(input) {
     log.debug(input, ["output", ds._name]);
     var output = changeset.create(input, true);

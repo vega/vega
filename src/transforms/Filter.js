@@ -9,7 +9,7 @@ function Filter(graph) {
   Transform.addParameters(this, {test: {type: "expr"} });
 
   this._skip = {};
-  return this;
+  return this.router(true);
 }
 
 var proto = (Filter.prototype = new Transform());

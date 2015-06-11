@@ -2,22 +2,20 @@ var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
 
 function BatchTransform() {
+  // Funcptr to nearest shared upstream collector. 
+  // Populated by the dataflow Graph during connection.
+  this.data = null; 
 }
 
 var proto = (BatchTransform.prototype = new Transform());
 
 proto.init = function(graph) {
   Transform.prototype.init.call(this, graph);
-  this._collector = new Collector(graph);
   return this;
 };
 
 proto.transform = function(input) {
-  // Materialize the current datasource.
-  // TODO: efficiently share collectors
-  this._collector.evaluate(input);
-  var data = this._collector.data();
-  return this.batchTransform(input, data);
+  return this.batchTransform(input, this.data());
 };
 
 proto.batchTransform = function(input, data) {

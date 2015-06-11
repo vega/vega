@@ -8,9 +8,7 @@ var util = require('datalib/src/util'),
 
 
 function Aggregate(graph) {
-  Transform.prototype.init.call(this, graph)
-    .router(true).revises(true);
-
+  Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     groupby: {type: "array<field>"},
 
@@ -54,7 +52,7 @@ function Aggregate(graph) {
   // Cache them to reduce creation costs
   this._prev = {}; 
 
-  return this;
+  return this.router(true).revises(true);
 }
 
 var proto = (Aggregate.prototype = new Transform());

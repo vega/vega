@@ -3654,13 +3654,16 @@ proto.pipeline = function(pipeline) {
   var ds = this, n, c;
   if(!arguments.length) return this._pipeline;
 
+  // Add a collector to materialize the output of pipeline operators.
   if(pipeline.length) {
-    // If we have a pipeline, add a collector to the end to materialize
-    // the output.
     ds._collector = new Collector(this._graph);
     pipeline.push(ds._collector);
     ds._revises = pipeline.some(function(p) { return p.revises(); });
   }
+
+  // Input/output nodes masquerade as collector nodes, so they need to
+  // have a `data` function. dsData is used if a collector isn't available.
+  function dsData() { return ds._data; }
 
   // Input node applies the datasource's delta, and propagates it to 
   // the rest of the pipeline. It receives touches to reflow data.
@@ -3668,6 +3671,7 @@ proto.pipeline = function(pipeline) {
     .router(true)
     .collector(true);
 
+  input.data = dsData;
   input.evaluate = function(input) {
     log.debug(input, ["input", ds._name]);
 
@@ -3710,6 +3714,7 @@ proto.pipeline = function(pipeline) {
     .router(true)
     .collector(true);
 
+  output.data = ds._collector ? ds._collector.data.bind(ds._collector) : dsData;
   output.evaluate = function(input) {
     log.debug(input, ["output", ds._name]);
     var output = changeset.create(input, true);
@@ -3785,6 +3790,8 @@ var util = require('datalib/src/util'),
     Heap = require('heap'),
     Datasource = require('./Datasource'),
     Signal = require('./Signal'),
+    Collector = require('./Collector'),
+    BatchTransform = require('../transforms/BatchTransform'),
     changeset = require('./changeset'),
     log = require('../util/log'),
     C = require('../util/constants');
@@ -3902,10 +3909,23 @@ proto.propagate = function(pulse, node) {
 // Connect a branch of dataflow nodes. 
 // Dependencies get wired to the nearest collector. 
 function forEachNode(branch, fn) {
-  var node, collector, i, len;
-  for(i=0, len=branch.length; i<len; ++i) {
+  var node, collector, router, i;
+  for(i=0; i<branch.length; ++i) {
     node = branch[i];
-    if(node.collector()) collector = node;
+
+    // Share collectors between batch transforms. We can reuse an
+    // existing collector unless a router node has come after it,
+    // in which case, we splice in a new collector.
+    if (node instanceof BatchTransform && !node.data) {
+      if (router) {
+        branch.splice(i, 0, (node = new Collector(this)));
+      } else {
+        node.data = collector.data.bind(collector);
+      }
+    } 
+
+    if (node.collector()) collector = node;
+    router = node.router() && !node.collector(); 
     fn(node, collector, i);
   }
 }
@@ -3913,7 +3933,8 @@ function forEachNode(branch, fn) {
 proto.connect = function(branch) {
   log.debug({}, ['connecting']);
   var graph = this;
-  forEachNode(branch, function(n, c, i) {
+
+  forEachNode.call(this, branch, function(n, c, i) {
     var data = n.dependency(C.DATA),
         signals = n.dependency(C.SIGNALS);
 
@@ -3941,7 +3962,7 @@ proto.disconnect = function(branch) {
   log.debug({}, ['disconnecting']);
   var graph = this;
 
-  forEachNode(branch, function(n, c, i) {
+  forEachNode.call(this, branch, function(n, c, i) {
     var data = n.dependency(C.DATA),
         signals = n.dependency(C.SIGNALS);
 
@@ -3974,7 +3995,7 @@ proto.evaluate = function(pulse, node) {
 };
 
 module.exports = Graph;
-},{"../util/constants":104,"../util/log":105,"./Datasource":28,"./Signal":31,"./changeset":32,"datalib/src/util":21,"heap":22}],30:[function(require,module,exports){
+},{"../transforms/BatchTransform":80,"../util/constants":104,"../util/log":105,"./Collector":27,"./Datasource":28,"./Signal":31,"./changeset":32,"datalib/src/util":21,"heap":22}],30:[function(require,module,exports){
 var util = require('datalib/src/util'),
     C = require('../util/constants'),
     REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
@@ -14593,9 +14614,7 @@ var util = require('datalib/src/util'),
 
 
 function Aggregate(graph) {
-  Transform.prototype.init.call(this, graph)
-    .router(true).revises(true);
-
+  Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     groupby: {type: "array<field>"},
 
@@ -14639,7 +14658,7 @@ function Aggregate(graph) {
   // Cache them to reduce creation costs
   this._prev = {}; 
 
-  return this;
+  return this.router(true).revises(true);
 }
 
 var proto = (Aggregate.prototype = new Transform());
@@ -14759,22 +14778,20 @@ var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
 
 function BatchTransform() {
+  // Funcptr to nearest shared upstream collector. 
+  // Populated by the dataflow Graph during connection.
+  this.data = null; 
 }
 
 var proto = (BatchTransform.prototype = new Transform());
 
 proto.init = function(graph) {
   Transform.prototype.init.call(this, graph);
-  this._collector = new Collector(graph);
   return this;
 };
 
 proto.transform = function(input) {
-  // Materialize the current datasource.
-  // TODO: efficiently share collectors
-  this._collector.evaluate(input);
-  var data = this._collector.data();
-  return this.batchTransform(input, data);
+  return this.batchTransform(input, this.data());
 };
 
 proto.batchTransform = function(input, data) {
@@ -15138,7 +15155,7 @@ function Filter(graph) {
   Transform.addParameters(this, {test: {type: "expr"} });
 
   this._skip = {};
-  return this;
+  return this.router(true);
 }
 
 var proto = (Filter.prototype = new Transform());
