@@ -83,6 +83,7 @@
         "data": "tree",
         "transform": [{"type":"filter", "test":"datum.children"}]
       },
+      "interactive": false,
       "properties": {
         "enter": {
           "x": {"field": "layout_x"},

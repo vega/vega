@@ -57,6 +57,8 @@ parseMark.schema = {
           }, [])
         },
 
+        "interactive": {"type": "boolean"},
+
         "properties": {
           "type": "object",
           "properties": {
