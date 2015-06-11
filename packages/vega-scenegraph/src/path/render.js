@@ -1,5 +1,4 @@
-var Bounds = require('../util/Bounds'),
-    arc = require('./arc');
+var arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
   var current, // current instruction
@@ -11,8 +10,7 @@ module.exports = function(g, path, l, t) {
       tempX,
       tempY,
       tempControlX,
-      tempControlY,
-      bounds = new Bounds();
+      tempControlY;
 
   if (l == null) l = 0;
   if (t == null) t = 0;
@@ -28,52 +26,44 @@ module.exports = function(g, path, l, t) {
         x += current[1];
         y += current[2];
         g.lineTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'L': // lineto, absolute
         x = current[1];
         y = current[2];
         g.lineTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'h': // horizontal lineto, relative
         x += current[1];
         g.lineTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'H': // horizontal lineto, absolute
         x = current[1];
         g.lineTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'v': // vertical lineto, relative
         y += current[1];
         g.lineTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'V': // verical lineto, absolute
         y = current[1];
         g.lineTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'm': // moveTo, relative
         x += current[1];
         y += current[2];
         g.moveTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'M': // moveTo, absolute
         x = current[1];
         y = current[2];
         g.moveTo(x + l, y + t);
-        bounds.add(x, y);
         break;
 
       case 'c': // bezierCurveTo, relative
@@ -89,9 +79,6 @@ module.exports = function(g, path, l, t) {
           tempX + l,
           tempY + t
         );
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
         x = tempX;
         y = tempY;
         break;
@@ -109,9 +96,6 @@ module.exports = function(g, path, l, t) {
           x + l,
           y + t
         );
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(x, y);
         break;
 
       case 's': // shorthand cubic bezierCurveTo, relative
@@ -129,9 +113,6 @@ module.exports = function(g, path, l, t) {
           tempX + l,
           tempY + t
         );
-        bounds.add(controlX, controlY);
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(tempX, tempY);
 
         // set control point to 2nd one of this command
         // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
@@ -158,9 +139,6 @@ module.exports = function(g, path, l, t) {
         );
         x = tempX;
         y = tempY;
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
         // set control point to 2nd one of this command
         // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
         controlX = current[1];
@@ -184,8 +162,6 @@ module.exports = function(g, path, l, t) {
         );
         x = tempX;
         y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
         break;
 
       case 'Q': // quadraticCurveTo, absolute
@@ -202,8 +178,6 @@ module.exports = function(g, path, l, t) {
         y = tempY;
         controlX = current[1];
         controlY = current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
         break;
 
       case 't': // shorthand quadraticCurveTo, relative
@@ -242,8 +216,6 @@ module.exports = function(g, path, l, t) {
         y = tempY;
         controlX = x + current[1];
         controlY = y + current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
         break;
 
       case 'T':
@@ -261,8 +233,6 @@ module.exports = function(g, path, l, t) {
         );
         x = tempX;
         y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
         break;
 
       case 'a':
@@ -274,7 +244,7 @@ module.exports = function(g, path, l, t) {
           current[5],
           current[6] + x + l,
           current[7] + y + t
-        ], bounds, l, t);
+        ]);
         x += current[6];
         y += current[7];
         break;
@@ -288,7 +258,7 @@ module.exports = function(g, path, l, t) {
           current[5],
           current[6] + l,
           current[7] + t
-        ], bounds, l, t);
+        ]);
         x = current[6];
         y = current[7];
         break;
@@ -300,11 +270,9 @@ module.exports = function(g, path, l, t) {
     }
     previous = current;
   }
-
-  return bounds.translate(l, t);
 };
 
-function drawArc(g, x, y, coords, bounds, l, t) {
+function drawArc(g, x, y, coords) {
   var seg = arc.segments(
     coords[5], // end x
     coords[6], // end y
@@ -318,8 +286,5 @@ function drawArc(g, x, y, coords, bounds, l, t) {
   for (var i=0; i<seg.length; ++i) {
     var bez = arc.bezier(seg[i]);
     g.bezierCurveTo.apply(g, bez);
-    bounds.add(bez[0]-l, bez[1]-t);
-    bounds.add(bez[2]-l, bez[3]-t);
-    bounds.add(bez[4]-l, bez[5]-t);
   }
 }
