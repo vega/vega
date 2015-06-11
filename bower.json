@@ -1,6 +1,5 @@
 {
   "name": "vega",
-  "version": "1.5.0",
   "main": "vega.js",
   "scripts": [
     "vega.js"
