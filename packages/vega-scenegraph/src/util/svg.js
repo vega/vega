@@ -2,9 +2,9 @@ var d3_svg = require('d3').svg;
 
 function x(o)     { return o.x || 0; }
 function y(o)     { return o.y || 0; }
-function xw(o)    { return o.x + o.width || 0; }
-function yh(o)    { return o.y + o.height || 0; }
-function size(o)  { return o.size==null ? 100 : o.size; }
+function xw(o)    { return (o.x || 0) + (o.width || 0); }
+function yh(o)    { return (o.y || 0) + (o.height || 0); }
+function size(o)  { return o.size == null ? 100 : o.size; }
 function shape(o) { return o.shape || 'circle'; }
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
   path: {
     arc:    d3_svg.arc(),
     areav:  d3_svg.area().x(x).y1(y).y0(yh),
-    areah:  d3_svg.area().y(y).x0(xw).x1(x),
+    areah:  d3_svg.area().y(y).x1(x).x0(xw),
     line:   d3_svg.line().x(x).y(y),
     symbol: d3_svg.symbol().type(shape).size(size)
   },

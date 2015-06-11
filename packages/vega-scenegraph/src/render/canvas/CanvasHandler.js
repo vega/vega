@@ -1,5 +1,4 @@
-var d3 = require('d3'),
-    Handler = require('../Handler'),
+var Handler = require('../Handler'),
     marks = require('./marks');
 
 function CanvasHandler() {
@@ -11,9 +10,8 @@ var base = Handler.prototype;
 var prototype = (CanvasHandler.prototype = Object.create(base));
 prototype.constructor = CanvasHandler;
 
-prototype.initialize = function(el, pad, obj) {
-  base.initialize.call(this, el, pad, obj);
-  var canvas = this._canvas = d3.select(this._el).select("canvas.marks").node();
+prototype.initialize = function(canvas, pad, obj) {
+  base.initialize.call(this, canvas, pad, obj);
   
   // add event listeners
   var that = this;
@@ -135,7 +133,7 @@ prototype.off = function(type, handler) {
 
 // retrieve the current canvas context
 prototype.context = function() {
-  return this._canvas.getContext("2d");
+  return this._el.getContext("2d");
 };
 
 // find the scenegraph item at the current mouse position

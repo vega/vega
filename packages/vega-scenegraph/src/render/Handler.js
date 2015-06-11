@@ -1,5 +1,4 @@
-var d3 = require('d3'),
-    dl = require('datalib');
+var dl = require('datalib');
 
 function Handler() {
   this._active = null;
@@ -9,7 +8,7 @@ function Handler() {
 var prototype = Handler.prototype;
 
 prototype.initialize = function(el, pad, obj) {
-  this._el = d3.select(el).node();
+  this._el = el;
   this._obj = obj || null;
   return this.padding(pad);
 };

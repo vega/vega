@@ -12,21 +12,21 @@
   "area-h": {
     "marktype": "area",
     "items": [
-      {"y":0,   "x":144, "width":56, "orient": "horizontal", "fill": "steelblue", "fillOpacity":0.8},
-      {"y":100, "x":90,  "width":110},
-      {"y":200, "x":114, "width":86},
-      {"y":300, "x":18,  "width":182},
-      {"y":400, "x":5}
+      {"x":0,   "y":144, "height":56, "interpolate":"monotone", "tension":0.8, "fill": "steelblue"},
+      {"x":100, "y":90,  "height":110},
+      {"x":200, "y":114, "height":86},
+      {"x":300, "y":18,  "height":182},
+      {"x":400, "y":200}
     ]
   },
   "area-v": {
     "marktype": "area",
     "items": [
-      {"x":0,   "y":144, "height":56, "interpolate":"monotone", "tension":1.0, "fill": "steelblue"},
-      {"x":100, "y":90,  "height":110},
-      {"x":200, "y":114, "height":86},
-      {"x":300, "y":18,  "height":182},
-      {"x":400, "y":5}
+      {"y":0,   "x":144, "width":56, "orient": "horizontal", "fill": "steelblue", "fillOpacity":0.8},
+      {"y":100, "x":90,  "width":110},
+      {"y":200, "x":114, "width":86},
+      {"y":300, "x":18,  "width":182},
+      {"y":400, "x":200}
     ]
   },
   "image": {

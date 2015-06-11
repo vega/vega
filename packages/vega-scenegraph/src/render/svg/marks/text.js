@@ -4,11 +4,9 @@ var textAlign = require('../../../util/svg').textAlign,
 function update(el, o) {
   var x = o.x || 0,
       y = o.y || 0,
-      dx = o.dx || 0,
-      dy = o.dy || 0,
       a = o.angle || 0,
       r = o.radius || 0,
-      align = textAlign[o.align || 'left'],
+      align = textAlign[o.align] || 'start',
       base = o.baseline==='top' ? '.9em'
            : o.baseline==='middle' ? '.35em' : 0;
 
@@ -18,8 +16,8 @@ function update(el, o) {
     y += r * Math.sin(t);
   }
 
-  el.setAttribute('x', x + dx);
-  el.setAttribute('y', y + dy);
+  el.setAttribute('x', x + (o.dx || 0));
+  el.setAttribute('y', y + (o.dy || 0));
   el.setAttribute('text-anchor', align);
   
   if (a) el.setAttribute('transform', 'rotate('+a+' '+x+','+y+')');

@@ -8,5 +8,4 @@ module.exports = {
     el.setAttribute('transform', 'translate('+x+','+y+')');
     el.setAttribute('d', path(o));
   }
-//  draw:   util.draw('path', draw)
 };

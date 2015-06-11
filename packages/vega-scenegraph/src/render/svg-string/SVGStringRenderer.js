@@ -2,6 +2,8 @@ var dl = require('datalib'),
     Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
+    areaPath = require('../../path/area'),
+    linePath = require('../../path/line'),
     DOM = require('../../util/dom'),
     openTag = DOM.openTag,
     closeTag = DOM.closeTag,
@@ -139,7 +141,7 @@ prototype.mark = function(scene) {
 
   // render opening group tag
   str += openTag('g', {
-    'id':    'g' + (this._defs.group_id++), // d3 dom compat
+    'id':    'g' + (this._defs.group_id++),
     'class': DOM.cssClass(scene)
   }, style);
 
@@ -185,19 +187,6 @@ prototype.markGroup = function(scene) {
   }
 
   return str;
-};
-
-var MARKS = {
-  group:  ['g', group],
-  area:   ['path', area, true],
-  line:   ['path', line, true],
-  arc:    ['path', arc],
-  path:   ['path', path],
-  symbol: ['path', symbol],
-  rect:   ['rect', rect],
-  rule:   ['line', rule],
-  text:   ['text', text],
-  image:  ['image', image]
 };
 
 function styles(d, mark, tag, defs) {
@@ -252,6 +241,21 @@ function group_bg(o, style) {
   }, style) + closeTag('rect');
 }
 
+//
+
+var MARKS = {
+  group:  ['g', group],
+  area:   ['path', area, true],
+  line:   ['path', line, true],
+  arc:    ['path', arc],
+  path:   ['path', path],
+  symbol: ['path', symbol],
+  rect:   ['rect', rect],
+  rule:   ['line', rule],
+  text:   ['text', text],
+  image:  ['image', image]
+};
+
 function group(o, r) {
   var x = o.x || 0,
       y = o.y || 0,
@@ -273,37 +277,23 @@ function group(o, r) {
 }
 
 function arc(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
   return {
-    transform: 'translate('+x+','+y+')',
+    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
     d: SVG.path.arc(o)
   };
 }
 
 function area(items) {
-  if (!items.length) return null;
-  var o = items[0];
-  var path = (o.orient === 'horizontal' ? SVG.path.areah : SVG.path.areav)
-    .interpolate(o.interpolate || 'linear')
-    .tension(o.tension == null ? 0.7 : o.tension);
-  return {d: path(items)};
+  return items.length ? {d: areaPath(items)} : null;
 }
 
 function line(items) {
-  if (!items.length) return null;
-  var o = items[0];
-  SVG.path.line
-    .interpolate(o.interpolate || 'linear')
-    .tension(o.tension == null ? 0.7 : o.tension);
-  return {d: SVG.path.line(items)};
+  return items.length ? {d: linePath(items)} : null;
 }
 
 function path(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
   return {
-    transform: 'translate('+x+','+y+')',
+    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
     d: o.path
   };
 }
@@ -329,10 +319,8 @@ function rule(o) {
 }
 
 function symbol(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
   return {
-    transform: 'translate('+x+','+y+')',
+    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
     d: SVG.path.symbol(o)
   };
 }
@@ -359,11 +347,9 @@ function image(o, r) {
 function text(o) {
   var x = o.x || 0,
       y = o.y || 0,
-      dx = o.dx || 0,
-      dy = o.dy || 0,
       a = o.angle || 0,
       r = o.radius || 0,
-      align = SVG.textAlign[o.align || 'left'],
+      align = SVG.textAlign[o.align] || 'start',
       base = o.baseline==='top' ? '.9em' : o.baseline==='middle' ? '.35em' : 0;
 
   if (r) {
@@ -373,8 +359,8 @@ function text(o) {
   }
 
   return {
-    x: x + dx,
-    y: y + dy,
+    x: x + (o.dx || 0),
+    y: y + (o.dy || 0),
     'text-anchor': align,
     transform: a ? 'rotate('+a+' '+x+','+y+')' : null,
     dy: base ? base : null
