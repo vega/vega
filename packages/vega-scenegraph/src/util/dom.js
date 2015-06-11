@@ -1,13 +1,36 @@
-var d3 = require('d3');
+function create(doc, tag, ns) {
+  return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
+}
 
 module.exports = {
-  appendUnique: function(el, tag, className) {
-    // remove any existing elements
-    var sel = d3.select(el);
-    sel.selectAll(tag + '.' + className).remove();
+  appendUnique: function(el, tag, ns, className, child) {
+    var i, c;
 
-    // add element to the document
-    return sel.append(tag).attr('class', className);
+    for (i=el.childNodes.length-1; i>=0; --i) {
+      c = el.childNodes[i];
+      if (c.tagName.toLowerCase() === tag) {
+        el.removeChild(c);
+      }
+    }
+    
+    c = child || create(el.ownerDocument, tag, ns);
+    c.setAttribute('class', className);
+    return c;
+  },
+  childAt: function(el, index, tag, ns) {
+    var a, b;
+    a = b = el.childNodes[index];
+    if (!a || a.tagName.toLowerCase() !== tag) {
+      a = create(el.ownerDocument, tag, ns);
+      el.insertBefore(a, b);
+    }
+    return a;
+  },
+  clearChildren: function(el, index) {
+    var curr = el.childNodes.length;
+    while (curr > index) {
+      el.removeChild(el.childNodes[--curr]);
+    }
   },
   cssClass: function(mark) {
     return 'type-' + mark.marktype + (mark.name ? ' '+mark.name : '');

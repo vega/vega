@@ -1,10 +1,9 @@
-var d3 = require('d3'),
-    drawMark = require('./draw');
+var drawMark = require('./draw');
 
-function draw(g, scene, index) {
+function draw(el, scene, index) {
   var renderer = this,
-      p = drawMark.call(this, g, scene, index, groupMark),
-      c = p.node().childNodes,
+      p = drawMark.call(this, el, scene, index, groupMark),
+      c = p.childNodes,
       i, n, j, m;
 
   for (i=0, n=c.length; i<n; ++i) {
@@ -12,24 +11,23 @@ function draw(g, scene, index) {
         items = datum.items || [],
         legends = datum.legendItems || [],
         axes = datum.axisItems || [],
-        sel = d3.select(c[i]),
         idx = 0;
 
     for (j=0, m=axes.length; j<m; ++j) {
       if (axes[j].layer === 'back') {
-        draw.call(renderer, sel, axes[j], idx++);
+        draw.call(renderer, c[i], axes[j], idx++);
       }
     }
     for (j=0, m=items.length; j<m; ++j) {
-      renderer.draw(sel, items[j], idx++);
+      renderer.draw(c[i], items[j], idx++);
     }
     for (j=0, m=axes.length; j<m; ++j) {
       if (axes[j].layer !== 'back') {
-        draw.call(renderer, sel, axes[j], idx++);
+        draw.call(renderer, c[i], axes[j], idx++);
       }
     }
     for (j=0, m=legends.length; j<m; ++j) {
-      draw.call(renderer, sel, legends[j], idx++);
+      draw.call(renderer, c[i], legends[j], idx++);
     }
   }
 }
@@ -43,11 +41,9 @@ function update(el, o) {
 
   if (o.clip) {
     id = o.clip_id || (o.clip_id = 'clip' + this._defs.clip_id++);
-    c = {
-      width: o.width || 0,
-      height: o.height || 0
-    };
-    this._defs.clipping[id] = c;
+    c = this._defs.clipping[id] || (this._defs.clipping[id] = {id: id});
+    c.width = o.width || 0;
+    c.height = o.height || 0;
     el.setAttribute('clip-path', 'url(#'+id+')');
   }
   

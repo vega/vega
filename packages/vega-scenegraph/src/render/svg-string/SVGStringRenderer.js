@@ -30,6 +30,7 @@ function SVGStringRenderer(loadConfig) {
 
 var base = Renderer.prototype;
 var prototype = (SVGStringRenderer.prototype = Object.create(base));
+prototype.constructor = SVGStringRenderer;
 
 prototype.resize = function(width, height, padding) {
   base.resize.call(this, width, height, padding);

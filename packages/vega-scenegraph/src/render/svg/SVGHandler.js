@@ -8,6 +8,7 @@ function SVGHandler() {
 
 var base = Handler.prototype;
 var prototype = (SVGHandler.prototype = Object.create(base));
+prototype.constructor = SVGHandler;
 
 prototype.initialize = function(el, pad, obj) {
   this._svg = d3.select(el).select("svg.marks").node();

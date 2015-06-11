@@ -83,14 +83,23 @@ describe('svg renderer', function() {
       .initialize(doc.body, 400, 200)
       .background('white')
       .render(scene);
-  
-    var rect = scene.items[0].items[0].items[1];
-    rect.fill = 'red';
-    rect.width *= 2;
+
+    var mark = scene.items[0].items[0].items;
+    var rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
+    mark.push({
+      mark:mark, x:0, y:0, width:10, height:10, fill:'purple'
+    });
     r.render(scene);
   
     var svg = r.svg();
-    var test = load('svg/scenegraph-rect-redraw.svg');
+    var test = load('svg/scenegraph-full-redraw.svg');
+    assert.equal(svg, test);
+
+    mark.pop();
+    r.render(scene);
+
+    svg = r.svg();
+    test = load('svg/scenegraph-single-redraw.svg');
     assert.equal(svg, test);
   });
 
@@ -108,7 +117,7 @@ describe('svg renderer', function() {
     r.render(scene, [rect]);
   
     var svg = r.svg();
-    var test = load('svg/scenegraph-rect-redraw.svg');
+    var test = load('svg/scenegraph-single-redraw.svg');
     assert.equal(svg, test);
   });
 
