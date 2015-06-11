@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Encoder = require('./Encoder'),
     bounds = require('../util/boundscalc'),
@@ -18,7 +18,7 @@ proto.evaluate = function(input) {
   var type  = this._mark.marktype,
       group = type === C.GROUP,
       items = this._mark.items,
-      hasLegends = dl.array(this._mark.def.legends).length > 0,
+      hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
   bounds.mark(this._mark, null, group && !hasLegends);

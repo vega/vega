@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     expression = require('../expression');
 
 var expr = (function() {
@@ -16,7 +16,7 @@ var expr = (function() {
 })();
 
 expr.eval = function(graph, fn, opt) {
-  opt.signals = graph.signalValues(dl.array(opt.signals));
+  opt.signals = graph.signalValues(util.array(opt.signals));
   return fn.call(fn, opt.datum, opt.event, opt.signals);
 };
 

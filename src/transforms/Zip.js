@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
     log = require('../util/log');
@@ -96,7 +96,7 @@ proto.transform = function(input) {
       });
     }
 
-    dl.keys(rem).forEach(function(k) { 
+    util.keys(rem).forEach(function(k) { 
       var m = map(k);
       if(!m[0]) return;
       m[0] = m[0].filter(function(x) { return rem[k][x._id] !== 1 });
@@ -146,7 +146,7 @@ Zip.schema = {
       "additionalProperties": false
     },
     {
-      "properties": dl.extend({
+      "properties": util.extend({
         "key": {
           "description": "The field in the primary data set to match against the secondary data set.",
           "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]

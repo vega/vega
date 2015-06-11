@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
@@ -23,7 +23,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._def   = def;
   this._mark  = mark;
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
-  this._ds    = dl.isString(this._from) ? graph.data(this._from) : null;
+  this._ds    = util.isString(this._from) ? graph.data(this._from) : null;
   this._map   = {};
 
   this._revises = false;  // Should scenegraph items track _prev?
@@ -186,7 +186,7 @@ proto.evaluate = function(input) {
     }
   } else {
     fullUpdate = this._encoder.reevaluate(input);
-    data = dl.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
+    data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
     output = joinValues.call(this, input, data, fullUpdate);
   }
 
@@ -276,7 +276,7 @@ function joinValues(input, data, fullUpdate) {
 
 function keyFunction(key) {
   if (key == null) return null;
-  var f = dl.array(key).map(dl.accessor);
+  var f = util.array(key).map(util.accessor);
   return function(d) {
     for (var s="", i=0, n=f.length; i<n; ++i) {
       if (i>0) s += "|";

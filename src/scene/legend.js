@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    util = require('datalib/src/util'),
     parseProperties = require('../parse/properties'),
     parseMark = require('../parse/mark'),
     Gradient = require('../util/Gradient'),
@@ -121,17 +121,17 @@ function lgnd(model) {
 
   function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
-    var titles  = dl.extend(m.titles, vg_legendTitle()),
-        symbols = dl.extend(m.symbols, vg_legendSymbols()),
-        labels  = dl.extend(m.labels, vg_vLegendLabels());
+    var titles  = util.extend(m.titles, vg_legendTitle()),
+        symbols = util.extend(m.symbols, vg_legendSymbols()),
+        labels  = util.extend(m.labels, vg_vLegendLabels());
 
     // extend legend marks
     vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
     
     // add / override custom style properties
-    dl.extend(titles.properties.update,  titleStyle);
-    dl.extend(symbols.properties.update, symbolStyle);
-    dl.extend(labels.properties.update,  labelStyle);
+    util.extend(titles.properties.update,  titleStyle);
+    util.extend(symbols.properties.update, symbolStyle);
+    util.extend(labels.properties.update,  labelStyle);
 
     // padding from legend border
     titles.properties.enter.x.value += padding;
@@ -141,7 +141,7 @@ function lgnd(model) {
     labels.properties.update.x.offset += padding + 1;
     symbols.properties.update.x.offset = padding + 1;
 
-    dl.extend(legendDef, {
+    util.extend(legendDef, {
       type: "group",
       interactive: false,
       properties: {
@@ -192,9 +192,9 @@ function lgnd(model) {
   
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = dl.extend(m.titles, vg_legendTitle()),
-        gradient = dl.extend(m.gradient, vg_legendGradient()),
-        labels = dl.extend(m.labels, vg_hLegendLabels()),
+    var titles = util.extend(m.titles, vg_legendTitle()),
+        gradient = util.extend(m.gradient, vg_legendGradient()),
+        labels = util.extend(m.labels, vg_hLegendLabels()),
         grad = new Gradient();
 
     // setup color gradient
@@ -214,9 +214,9 @@ function lgnd(model) {
     gradient.properties.enter.fill = {value: grad};
 
     // add / override custom style properties
-    dl.extend(titles.properties.update, titleStyle);
-    dl.extend(gradient.properties.update, gradientStyle);
-    dl.extend(labels.properties.update, labelStyle);
+    util.extend(titles.properties.update, titleStyle);
+    util.extend(gradient.properties.update, gradientStyle);
+    util.extend(labels.properties.update, labelStyle);
 
     // account for gradient size
     var gp = gradient.properties, gh = gradientStyle.height,
@@ -244,7 +244,7 @@ function lgnd(model) {
     gradient.properties.update.y.value += padding;
     labels.properties.update.y.value += padding;
 
-    dl.extend(legendDef, {
+    util.extend(legendDef, {
       type: "group",
       interactive: false,
       properties: {

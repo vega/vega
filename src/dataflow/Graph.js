@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Heap = require('heap'),
     Datasource = require('./Datasource'),
     Signal = require('./Signal'),
@@ -23,15 +23,15 @@ proto.init = function() {
 
 proto.data = function(name, pipeline, facet) {
   var db = this._data;
-  if(!arguments.length) return dl.keys(db).map(function(d) { return db[d]; });
+  if(!arguments.length) return util.keys(db).map(function(d) { return db[d]; });
   if(arguments.length === 1) return db[name];
   return (db[name] = new Datasource(this, name, facet).pipeline(pipeline));
 };
 
 proto.dataValues = function(names) {
   var graph = this;
-  if (!arguments.length) names = dl.keys(this._data);
-  if (!dl.isArray(names)) return this._data[names].values();
+  if (!arguments.length) names = util.keys(this._data);
+  if (!util.isArray(names)) return this._data[names].values();
   return names.reduce(function(db, n) {
     return (db[n] = graph._data[n].values(), db);
   }, {});
@@ -39,7 +39,7 @@ proto.dataValues = function(names) {
 
 function signal(name) {
   var m = this, i, len;
-  if(!dl.isArray(name)) return this._signals[name];
+  if(!util.isArray(name)) return this._signals[name];
   return name.map(function(n) { m._signals[n]; });
 }
 
@@ -51,18 +51,18 @@ proto.signal = function(name, init) {
 
 proto.signalValues = function(names) {
   var graph = this;
-  if(!arguments.length) names = dl.keys(this._signals);
-  if(!dl.isArray(names)) return this._signals[names].value();
+  if(!arguments.length) names = util.keys(this._signals);
+  if(!util.isArray(names)) return this._signals[names].value();
   return names.reduce(function(sg, n) {
     return (sg[n] = graph._signals[n].value(), sg);
   }, {});
 };
 
 proto.signalRef = function(ref) {
-  if(!dl.isArray(ref)) ref = dl.field(ref);
+  if(!util.isArray(ref)) ref = util.field(ref);
   var value = this.signal(ref.shift()).value();
   if(ref.length > 0) {
-    var fn = Function("s", "return s["+ref.map(dl.str).join("][")+"]");
+    var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
     value = fn.call(null, value);
   }
 

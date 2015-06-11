@@ -1,5 +1,5 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     parseSignals = require('./signals'),
     changeset = require('../dataflow/changeset'),
@@ -17,8 +17,8 @@ function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
-      internal = dl.duplicate(registry),  // Vega internal event processing
-      external = dl.duplicate(registry);  // D3 external event processing
+      internal = util.duplicate(registry),  // Vega internal event processing
+      external = util.duplicate(registry);  // D3 external event processing
 
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
@@ -34,7 +34,7 @@ function parseStreams(view) {
   // We register the event listeners all together so that if multiple
   // signals are registered on the same event, they will receive the
   // new value on the same pulse. 
-  dl.keys(internal.handlers).forEach(function(type) {
+  util.keys(internal.handlers).forEach(function(type) {
     view.on(type, function(evt, item) {
       var pad = view.padding(),
           mouse, datum, name;
@@ -56,7 +56,7 @@ function parseStreams(view) {
     });
   });
 
-  dl.keys(external.handlers).forEach(function(type) {
+  util.keys(external.handlers).forEach(function(type) {
     var sel = type.split(":"); // This means no element pseudo-selectors
 
     d3.selectAll(sel[0]).on(sel[1], function(datum, idx) {
@@ -113,9 +113,9 @@ function parseStreams(view) {
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
-      filters.push("event.vgItem.mark && event.vgItem.mark.def.name==="+dl.str(name));
+      filters.push("event.vgItem.mark && event.vgItem.mark.def.name==="+util.str(name));
     } else if (mark) {
-      filters.push("event.vgItem.mark && event.vgItem.mark.marktype==="+dl.str(mark));
+      filters.push("event.vgItem.mark && event.vgItem.mark.marktype==="+util.str(mark));
     }
 
     handlers.push({

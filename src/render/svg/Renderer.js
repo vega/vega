@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    util = require('datalib/src/util'),
     marks = require('./marks');
 
 var renderer = function() {
@@ -61,16 +61,16 @@ prototype.element = function() {
 prototype.updateDefs = function() {
   var svg = this._svg,
       all = this._defs,
-      dgrad = dl.keys(all.gradient),
-      dclip = dl.keys(all.clipping),
+      dgrad = util.keys(all.gradient),
+      dclip = util.keys(all.clipping),
       defs = svg.select("defs"), grad, clip;
 
   // get or create svg defs block
   if (dgrad.length===0 && dclip.length==0) { defs.remove(); return; }
   if (defs.empty()) defs = svg.insert("defs", ":first-child");
   
-  grad = defs.selectAll("linearGradient").data(dgrad, dl.identity);
-  grad.enter().append("linearGradient").attr("id", dl.identity);
+  grad = defs.selectAll("linearGradient").data(dgrad, util.identity);
+  grad.enter().append("linearGradient").attr("id", util.identity);
   grad.exit().remove();
   grad.each(function(id) {
     var def = all.gradient[id],
@@ -87,8 +87,8 @@ prototype.updateDefs = function() {
         .attr("stop-color", function(d) { return d.color; });
   });
   
-  clip = defs.selectAll("clipPath").data(dclip, dl.identity);
-  clip.enter().append("clipPath").attr("id", dl.identity);
+  clip = defs.selectAll("clipPath").data(dclip, util.identity);
+  clip.enter().append("clipPath").attr("id", util.identity);
   clip.exit().remove();
   clip.each(function(id) {
     var def = all.clipping[id],
@@ -105,7 +105,7 @@ prototype.render = function(scene, items) {
   marks.current = this;
 
   if (items) {
-    this.renderItems(dl.array(items));
+    this.renderItems(util.array(items));
   } else {
     this.draw(this._ctx, scene, -1);
   }

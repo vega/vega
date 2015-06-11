@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     parseStreams = require('../parse/streams'),
     canvas = require('../render/canvas/index'),
@@ -51,7 +51,7 @@ function streaming(src) {
       cs  = this._changeset,
       api = {};
 
-  if(dl.keys(cs.signals).length > 0) {
+  if(util.keys(cs.signals).length > 0) {
     throw "New signal values are not reflected in the visualization." +
       " Please call view.update() before updating data values."
   }
@@ -60,7 +60,7 @@ function streaming(src) {
   if(this._api[src]) return this._api[src];
 
   api.insert = function(vals) {
-    ds.insert(dl.duplicate(vals));  // Don't pollute the environment
+    ds.insert(util.duplicate(vals));  // Don't pollute the environment
     streamer.addListener(listener);
     view._changeset.data[name] = 1;
     return api;
@@ -86,9 +86,9 @@ function streaming(src) {
 prototype.data = function(data) {
   var v = this;
   if(!arguments.length) return v._model.dataValues();
-  else if(dl.isString(data)) return streaming.call(v, data);
-  else if(dl.isObject(data)) {
-    dl.keys(data).forEach(function(k) {
+  else if(util.isString(data)) return streaming.call(v, data);
+  else if(util.isObject(data)) {
+    util.keys(data).forEach(function(k) {
       var api = streaming.call(v, k);
       data[k](api);
     });
@@ -103,9 +103,9 @@ prototype.signal = function(name, value) {
       setter = name; 
 
   if(!arguments.length) return m.signalValues();
-  else if(arguments.length == 1 && dl.isString(name)) return m.signalValues(name);
+  else if(arguments.length == 1 && util.isString(name)) return m.signalValues(name);
 
-  if(dl.keys(cs.data).length > 0) {
+  if(util.keys(cs.data).length > 0) {
     throw "New data values are not reflected in the visualization." +
       " Please call view.update() before updating signal values."
   }
@@ -115,7 +115,7 @@ prototype.signal = function(name, value) {
     setter[name] = value;
   }
 
-  dl.keys(setter).forEach(function(k) {
+  util.keys(setter).forEach(function(k) {
     streamer.addListener(m.signal(k).value(setter[k]));
     cs.signals[k] = 1;
     cs.reflow = true;
@@ -156,7 +156,7 @@ prototype.background = function(bgcolor) {
 prototype.padding = function(pad) {
   if (!arguments.length) return this._padding;
   if (this._padding !== pad) {
-    if (dl.isString(pad)) {
+    if (util.isString(pad)) {
       this._autopad = 1;
       this._padding = {top:0, left:0, bottom:0, right:0};
       this._strict = (pad === "strict");
@@ -217,7 +217,7 @@ prototype.viewport = function(size) {
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderer;
   if (this._renderers[type]) type = this._renderers[type];
-  else if (dl.isString(type)) throw new Error("Unknown renderer: " + type);
+  else if (util.isString(type)) throw new Error("Unknown renderer: " + type);
   else if (!type) throw new Error("No renderer specified");
 
   if (this._io !== type) {
@@ -315,7 +315,7 @@ prototype.update = function(opt) {
   var cs = v._changeset;
   if(trans) cs.trans = trans;
   if(opt.props !== undefined) {
-    if(dl.keys(cs.data).length > 0) {
+    if(util.keys(cs.data).length > 0) {
       throw "New data values are not reflected in the visualization." +
         " Please call view.update() before updating a specified property set."
     }

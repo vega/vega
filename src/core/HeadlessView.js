@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg-headless/index'),
     View = require('./View'),
@@ -72,10 +72,10 @@ prototype.initCanvas = function(w, h, pad, bg) {
   var Canvas = require("canvas"),
       tw = w + (pad ? pad.left + pad.right : 0),
       th = h + (pad ? pad.top + pad.bottom : 0),
-      canvas = this._canvas = dl.isNode ? new Canvas(tw, th) : document.createElement('canvas'),
+      canvas = this._canvas = util.isNode ? new Canvas(tw, th) : document.createElement('canvas'),
       ctx = canvas.getContext("2d");
 
-  if(!dl.isNode) {  // Manually set width/height on DOM elements
+  if(!util.isNode) {  // Manually set width/height on DOM elements
     canvas.setAttribute("width", tw);
     canvas.setAttribute("height", th);
   }

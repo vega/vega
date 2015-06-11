@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
@@ -25,7 +25,7 @@ var proto = (Stack.prototype = new BatchTransform());
 proto.batchTransform = function(input, data) {
   var g = this._graph,
       groupby = this.param("groupby").accessor,
-      sortby = dl.comparator(this.param("sortby").field),
+      sortby = util.comparator(this.param("sortby").field),
       value = this.param("value").accessor,
       offset = this.param("offset"),
       output = this._output;

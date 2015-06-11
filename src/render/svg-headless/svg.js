@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    util = require('datalib/src/util'),
     config = require('../../util/config');
 
 var renderer = function() {
@@ -60,8 +60,8 @@ prototype.svg = function() {
 
 prototype.buildDefs = function() {
   var all = this._defs,
-      dgrad = dl.keys(all.gradient),
-      dclip = dl.keys(all.clipping),
+      dgrad = util.keys(all.gradient),
+      dclip = util.keys(all.clipping),
       defs = "", grad, clip, i, j;
 
   for (i=0; i<dgrad.length; ++i) {
@@ -390,7 +390,7 @@ var styles = {
   "opacity":          "opacity"
 };
 
-var styleProps = dl.keys(styles);
+var styleProps = util.keys(styles);
 
 function style(d, tag, defs) {
   var i, n, prop, name, value,

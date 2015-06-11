@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     tuple = require('../dataflow/tuple'),
     log = require('../util/log'),
@@ -12,7 +12,7 @@ var filter = function(field, value, src, dest) {
 };
 
 function parseModify(model, def, ds) {
-  var signal = def.signal ? dl.field(def.signal) : null, 
+  var signal = def.signal ? util.field(def.signal) : null, 
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),

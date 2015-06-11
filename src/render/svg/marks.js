@@ -1,5 +1,6 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    load = require('datalib/src/import/load'),
+    util = require('datalib/src/util'),
     config = require('../../util/config');
 
 function x(o)     { return o.x || 0; }
@@ -36,7 +37,7 @@ var styles = {
   "strokeDashOffset": "stroke-dashoffset",
   "opacity":          "opacity"
 };
-var styleProps = dl.keys(styles);
+var styleProps = util.keys(styles);
 
 function style(d) {
   var i, n, prop, name, value,
@@ -125,7 +126,7 @@ function image(o) {
         ? w/2 : (o.align === "right" ? w : 0)),
       y = o.y - (o.baseline === "middle"
         ? h/2 : (o.baseline === "bottom" ? h : 0)),
-      url = dl.load.sanitizeUrl(dl.extend({url: o.url}, config.load));
+      url = load.sanitizeUrl(util.extend({url: o.url}, config.load));
   
   if (url) {
     this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);

@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Facetor = require('./Facetor'),
     tuple = require('../dataflow/tuple'), 
@@ -18,10 +18,10 @@ function Aggregate(graph) {
       type: "custom", 
       set: function(summarize) {
         var i, len, f, fields, name, ops, signals = {};
-        if(!dl.isArray(fields = summarize)) { // Object syntax from dl
+        if(!util.isArray(fields = summarize)) { // Object syntax from util
           fields = [];
           for (name in summarize) {
-            ops = dl.array(summarize[name]);
+            ops = util.array(summarize[name]);
             fields.push({name: name, ops: ops});
           }
         }
@@ -31,23 +31,23 @@ function Aggregate(graph) {
         for(i=0, len=fields.length; i<len; ++i) {
           f = fields[i];
           if(f.name.signal) signals[f.name.signal] = 1;
-          dl.array(f.ops).forEach(sg);
-          dl.array(f.as).forEach(sg);
+          util.array(f.ops).forEach(sg);
+          util.array(f.as).forEach(sg);
         }
 
         this._transform._fieldsDef = fields;
         this._transform._aggr = null;
-        this._transform.dependency(C.SIGNALS, dl.keys(signals));
+        this._transform.dependency(C.SIGNALS, util.keys(signals));
         return this._transform;
       }
     }
   });
 
   this._fieldsDef = [];
-  this._aggr = null;  // dl.Aggregator
+  this._aggr = null;  // util.Aggregator
 
   this._type = TYPES.TUPLE; 
-  this._acc = {groupby: dl.true, value: dl.true}
+  this._acc = {groupby: util.true, value: util.true}
   this._cache = {};     // And cache them as aggregators expect original tuples.
 
   // Aggregator needs a full instantiation of the previous tuple. 
@@ -71,8 +71,8 @@ proto.type = function(type) {
 
 proto.accessors = function(groupby, value) {
   var acc = this._acc;
-  acc.groupby = dl.$(groupby) || dl.true;
-  acc.value = dl.$(value) || dl.true;
+  acc.groupby = util.$(groupby) || util.true;
+  acc.value = util.$(value) || util.true;
 };
 
 function standardize(x) {
@@ -97,11 +97,11 @@ proto.aggr = function() {
       groupby = this.param("groupby").field;
 
   var fields = this._fieldsDef.map(function(field) {
-    var f  = dl.duplicate(field);
+    var f  = util.duplicate(field);
     if(field.get) f.get = field.get;
 
     f.name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
-    f.ops  = f.ops.signal ? graph.signalRef(f.ops.signal) : dl.array(f.ops).map(function(o) {
+    f.ops  = f.ops.signal ? graph.signalRef(f.ops.signal) : util.array(f.ops).map(function(o) {
       return o.signal ? graph.signalRef(o.signal) : o;
     });
 
@@ -125,7 +125,7 @@ proto._reset = function(input, output) {
 
 function spoof_prev(x) {
   var prev = this._prev[x._id] || (this._prev[x._id] = Object.create(x));
-  return dl.extend(prev, x._prev);
+  return util.extend(prev, x._prev);
 }
 
 proto.transform = function(input, reset) {

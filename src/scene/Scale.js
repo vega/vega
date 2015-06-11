@@ -1,5 +1,5 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Aggregate = require('../transforms/Aggregate'),
     changeset = require('../dataflow/changeset'),
@@ -37,7 +37,7 @@ proto.evaluate = function(input) {
 // dataRefs. So a scale must be responsible for connecting itself to dependents.
 proto.dependency = function(type, deps) {
   if (arguments.length == 2) {
-    deps = dl.array(deps);
+    deps = util.array(deps);
     for(var i=0, len=deps.length; i<len; ++i) {
       this._graph[type == C.DATA ? C.DATA : C.SIGNAL](deps[i])
         .addListener(this._parent);
@@ -66,7 +66,7 @@ function instance(scale) {
   var type = this._def.type || C.LINEAR;
   if (!scale || type !== scale.type) {
     var ctor = config.scale[type] || d3.scale[type];
-    if (!ctor) dl.error("Unrecognized scale type: " + type);
+    if (!ctor) util.error("Unrecognized scale type: " + type);
     (scale = ctor()).type = scale.type || type;
     scale.scaleName = this._def.name;
     scale._prev = {};
@@ -85,21 +85,21 @@ function ordinal(scale, rng, group) {
       domain, sort, str, refs;
   
   // range pre-processing for data-driven ranges
-  if (dl.isObject(def.range) && !dl.isArray(def.range)) {
+  if (util.isObject(def.range) && !util.isArray(def.range)) {
     dataDrivenRange = true;
     rng = dataRef.call(this, C.RANGE, def.range, scale, group);
   }
   
   // domain
   domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
-  if (domain && !dl.equal(prev.domain, domain)) {
+  if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
     prev.domain = domain;
     this._updated = true;
   } 
 
   // range
-  if (dl.equal(prev.range, rng)) return;
+  if (util.equal(prev.range, rng)) return;
 
   // width-defined range
   if (def.bandWidth) {
@@ -140,7 +140,7 @@ function quantitative(scale, rng, group) {
   domain = (def.type === C.QUANTILE)
     ? dataRef.call(this, C.DOMAIN, def.domain, scale, group)
     : domainMinMax.call(this, scale, group);
-  if (domain && !dl.equal(prev.domain, domain)) {
+  if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
     prev.domain = domain;
     this._updated = true;
@@ -149,7 +149,7 @@ function quantitative(scale, rng, group) {
   // range
   // vertical scales should flip by default, so use XOR here
   if (signal.call(this, def.range) === "height") rng = rng.reverse();
-  if (dl.equal(prev.range, rng)) return;
+  if (util.equal(prev.range, rng)) return;
   scale[round && scale.rangeRound ? "rangeRound" : "range"](rng);
   prev.range = rng;
   this._updated = true;
@@ -175,12 +175,12 @@ function isUniques(scale) {
 }
 
 function getRefs(def) { 
-  return def.fields || dl.array(def);
+  return def.fields || util.array(def);
 }
 
 function getFields(ref, group) {
-  return dl.array(ref.field).map(function(f) {
-    if (f.parent) return dl.accessor(f.parent)(group.datum)
+  return util.array(ref.field).map(function(f) {
+    if (f.parent) return util.accessor(f.parent)(group.datum)
     return f; // String or {"signal"}
   });
 }
@@ -194,7 +194,7 @@ function aggrType(def, scale) {
 
   // If we're operating over only a single domain, send full tuples
   // through for efficiency (fewer accessor creations/calls)
-  if(refs.length == 1 && dl.array(refs[0].field).length == 1) {
+  if(refs.length == 1 && util.array(refs[0].field).length == 1) {
     return Aggregate.TYPES.TUPLE;
   }
 
@@ -223,13 +223,13 @@ function getCache(which, def, scale, group) {
 
   if(uniques) {
     if(atype === Aggregate.TYPES.VALUE) {
-      groupby = [{ name: C.GROUPBY, get: dl.identity }];
+      groupby = [{ name: C.GROUPBY, get: util.identity }];
       summarize = {"*": C.COUNT};
     } else if(atype === Aggregate.TYPES.TUPLE) {
-      groupby = [{ name: C.GROUPBY, get: dl.$(fields[0]) }];
+      groupby = [{ name: C.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
         name: C.VALUE,
-        get:  dl.$(ref.sort || sort.field),
+        get:  util.$(ref.sort || sort.field),
         ops: [sort.stat]
       }] : {"*": C.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
@@ -240,7 +240,7 @@ function getCache(which, def, scale, group) {
     groupby = [];
     summarize = [{
       name: C.VALUE,
-      get: (atype == Aggregate.TYPES.TUPLE) ? dl.$(fields[0]) : dl.identity,
+      get: (atype == Aggregate.TYPES.TUPLE) ? util.$(fields[0]) : util.identity,
       ops: [C.MIN, C.MAX],
       as:  [C.MIN, C.MAX]
     }];
@@ -254,7 +254,7 @@ function getCache(which, def, scale, group) {
 
 function dataRef(which, def, scale, group) {
   if (def == null) { return []; }
-  if (dl.isArray(def)) return def.map(signal.bind(this));
+  if (util.isArray(def)) return def.map(signal.bind(this));
 
   var self = this, graph = this._graph,
       refs = getRefs(def),
@@ -295,23 +295,23 @@ function dataRef(which, def, scale, group) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
       sort = (sort == C.DESC ? "-" : "+") + C.VALUE;
-      sort = dl.comparator(sort);
+      sort = util.comparator(sort);
       data = data.sort(sort);
     // } else {  // "First seen" order
-    //   sort = dl.comparator("tpl._id");
+    //   sort = util.comparator("tpl._id");
     }
 
     return data.map(function(d) { return d[C.GROUPBY]; });
   } else {
     data = data[0];
-    return !dl.isValid(data) ? [] : [data[C.MIN], data[C.MAX]];
+    return !util.isValid(data) ? [] : [data[C.MIN], data[C.MAX]];
   }
 }
 
 function signal(v) {
   if (!v || !v.signal) return v;
   var s = v.signal, ref;
-  this.dependency(C.SIGNALS, (ref = dl.field(s))[0]);
+  this.dependency(C.SIGNALS, (ref = util.field(s))[0]);
   return this._graph.signalRef(ref);
 }
 
@@ -320,13 +320,13 @@ function domainMinMax(scale, group) {
       domain = [null, null], refs, z;
 
   if (def.domain !== undefined) {
-    domain = (!dl.isObject(def.domain)) ? domain :
+    domain = (!util.isObject(def.domain)) ? domain :
       dataRef.call(this, C.DOMAIN, def.domain, scale, group);
   }
 
   z = domain.length - 1;
   if (def.domainMin !== undefined) {
-    if (dl.isObject(def.domainMin)) {
+    if (util.isObject(def.domainMin)) {
       if (def.domainMin.signal) {
         domain[0] = signal.call(this, def.domainMin);
       } else {
@@ -337,7 +337,7 @@ function domainMinMax(scale, group) {
     }
   }
   if (def.domainMax !== undefined) {
-    if (dl.isObject(def.domainMax)) {
+    if (util.isObject(def.domainMax)) {
       if (def.domainMax.signal) {
         domain[z] = signal.call(this, def.domainMax);
       } else {
@@ -369,9 +369,9 @@ function range(group) {
         log.error("Unrecogized range: "+range);
         return rng;
       }
-    } else if (dl.isArray(range)) {
-      rng = dl.duplicate(range).map(signal.bind(this));
-    } else if (dl.isObject(range)) {
+    } else if (util.isArray(range)) {
+      rng = util.duplicate(range).map(signal.bind(this));
+    } else if (util.isObject(range)) {
       return null; // early exit
     } else {
       rng = [0, range];
@@ -386,8 +386,8 @@ function range(group) {
   
   if (def.reverse !== undefined) {
     var rev = signal.call(this, def.reverse);
-    if (dl.isObject(rev)) {
-      rev = dl.accessor(rev.field)(group.datum);
+    if (util.isObject(rev)) {
+      rev = util.accessor(rev.field)(group.datum);
     }
     if (rev) rng = rng.reverse();
   }

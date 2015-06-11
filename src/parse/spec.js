@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Model = require('../core/Model'), 
     View = require('../core/View'), 
     parseBg = require('../parse/background'),
@@ -11,7 +11,7 @@ var dl = require('datalib'),
 
 function parseSpec(spec, callback, viewFactory) {
   // protect against subsequent spec modification
-  spec = dl.duplicate(spec);
+  spec = util.duplicate(spec);
 
   viewFactory = viewFactory || View.factory;
 

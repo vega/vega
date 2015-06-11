@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
@@ -106,7 +106,7 @@ proto.reevaluate = function(pulse) {
 
 // Short-circuit encoder if user specifies items
 Encoder.update = function(graph, trans, request, items) {
-  items = dl.array(items);
+  items = util.array(items);
   var preds = graph.predicates(), 
       db = graph.dataValues(),
       sg = graph.signalValues(),

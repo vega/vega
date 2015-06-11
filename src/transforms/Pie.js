@@ -1,5 +1,6 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    gen  = require('datalib/src/generate'),
+    util = require('datalib/src/util'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
@@ -37,7 +38,7 @@ proto.batchTransform = function(input, data) {
   var values = data.map(value),
       a = start,
       k = (stop - start) / d3.sum(values),
-      index = dl.range(data.length),
+      index = gen.range(data.length),
       i, t, v;
 
   if (sort) {

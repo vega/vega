@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var bins = require('datalib/src/bins/bins'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
@@ -39,7 +39,7 @@ proto.transform = function(input) {
   if (step) opt.step = step;
   if (steps) opt.steps = steps;
   if (minstep) opt.minstep = minstep;
-  var b = dl.bins(opt);
+  var b = bins(opt);
 
   function update(d) {
     var v = transform.param("field").accessor(d);

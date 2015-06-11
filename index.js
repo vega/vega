@@ -15,6 +15,6 @@ module.exports = {
   },
   transforms: require('./src/transforms/'),
   config: require('./src/util/config'),
-  util: require('datalib'),
+  util: require('datalib/src/util'),
   schema: require('./src/util/schema')
 };

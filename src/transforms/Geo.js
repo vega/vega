@@ -1,5 +1,5 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    util = require('datalib/src/util'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
@@ -44,7 +44,7 @@ Geo.d3Projection = function() {
   for (name in param) {
     if (name === "projection" || !proj[name]) continue;
     value = this.param(name);
-    if (value === undefined || (dl.isArray(value) && value.length === 0)) {
+    if (value === undefined || (util.isArray(value) && value.length === 0)) {
       continue;
     }
     if (value !== proj[name]()) {
@@ -141,7 +141,7 @@ Geo.schema = {
   "title": "Geo transform",
   "description": "Performs a cartographic projection. Given longitude and latitude values, sets corresponding x and y properties for a mark.",
   "type": "object",
-  "properties": dl.extend({
+  "properties": util.extend({
     "type": {"enum": ["geo"]},
     "lon": {
       "description": "The input longitude values.",

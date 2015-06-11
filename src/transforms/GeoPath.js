@@ -1,5 +1,5 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    util = require('datalib/src/util'),
     Geo = require('./Geo'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
@@ -21,7 +21,7 @@ var proto = (GeoPath.prototype = new Transform());
 
 proto.transform = function(input) {
   var output = this._output,
-      geojson = this.param("value").accessor || dl.identity,
+      geojson = this.param("value").accessor || util.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
@@ -45,7 +45,7 @@ GeoPath.schema = {
   "title": "Geopath transform",
   "description": "Creates paths for geographic regions, such as countries, states and counties.",
   "type": "object",
-  "properties": dl.extend({
+  "properties": util.extend({
     "type": {"enum": ["geopath"]},
     "value": {
       "description": "The data field containing GeoJSON Feature data.",

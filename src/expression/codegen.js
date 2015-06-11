@@ -1,11 +1,11 @@
-var dl = require('datalib');
+var util = require('datalib/src/util');
 
 module.exports = function(opt) {
   opt = opt || {};
   var constants = opt.constants || require('./constants');
   var functions = (opt.functions || require('./functions'))(codegen);
-  var idWhiteList = opt.idWhiteList ? dl.toMap(opt.idWhiteList) : null;
-  var idBlackList = opt.idBlackList ? dl.toMap(opt.idBlackList) : null;
+  var idWhiteList = opt.idWhiteList ? util.toMap(opt.idWhiteList) : null;
+  var idBlackList = opt.idBlackList ? util.toMap(opt.idBlackList) : null;
   var memberDepth = 0;
 
   // TODO generalize?
@@ -17,8 +17,8 @@ module.exports = function(opt) {
   function codegen_wrap(ast) {    
     var retval = {
       fn: codegen(ast),
-      signals: dl.keys(signals),
-      fields: dl.keys(fields)
+      signals: util.keys(signals),
+      fields: util.keys(fields)
     };
     signals = {};
     fields = {};

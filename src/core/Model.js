@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Graph = require('../dataflow/Graph'), 
     Node  = require('../dataflow/Node'),
     GroupBuilder = require('../scene/GroupBuilder'),
@@ -57,7 +57,7 @@ proto.data = function() {
 
 function predicates(name) {
   var m = this, predicates = {};
-  if(!dl.isArray(name)) return this._predicates[name];
+  if(!util.isArray(name)) return this._predicates[name];
   name.forEach(function(n) { predicates[n] = m._predicates[n] });
   return predicates;
 }

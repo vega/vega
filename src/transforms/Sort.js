@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     expr = require('../parse/expr'),
     log = require('../util/log');
@@ -15,7 +15,7 @@ proto.transform = function(input) {
   log.debug(input, ["sorting"]);
 
   if(input.add.length || input.mod.length || input.rem.length) {
-    input.sort = dl.comparator(this.param("by").field);
+    input.sort = util.comparator(this.param("by").field);
   }
 
   return input;

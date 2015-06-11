@@ -1,5 +1,5 @@
-var dl = require('datalib'),
-    d3 = require('d3'),
+var d3 = require('d3'),
+    util = require('datalib/src/util'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
     tuple = require('../dataflow/tuple');
@@ -42,7 +42,7 @@ proto.batchTransform = function(input, data) {
 
   // configure layout
   layout
-    .sort(dl.comparator(this.param("sort").field))
+    .sort(util.comparator(this.param("sort").field))
     .children(this.param("children").accessor)
     .value(this.param("value").accessor)
     .size(this.param("size"))

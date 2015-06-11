@@ -1,5 +1,6 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    load = require('datalib/src/import/load'),
+    util = require('datalib/src/util'),
     Bounds = require('../../util/Bounds'),
     config = require('../../util/config'),
     log = require('../../util/log'),
@@ -130,7 +131,7 @@ function translatedBounds(item, bounds) {
   
 function getBounds(items) {
   return !items ? null :
-    dl.array(items).reduce(function(b, item) {
+    util.array(items).reduce(function(b, item) {
       return b.union(translatedBounds(item, item.bounds))
               .union(translatedBounds(item, item['bounds:prev']));
     }, new Bounds());  
@@ -212,19 +213,19 @@ prototype.loadImage = function(uri) {
       scene = renderer._scene,
       image = null, url;
 
-  if (dl.isNode) {
+  if (util.isNode) {
     renderer._imgload += 1;
     image = new (require('canvas').Image)();
-    dl.load(dl.extend({url: uri}, config.load), function(err, data) {
+    load(util.extend({url: uri}, config.load), function(err, data) {
       renderer._imgload -= 1;
-      if (err) { dl.error(err); return; }
+      if (err) { util.error(err); return; }
       log.log("LOAD IMAGE: " + uri);
       image.src = data;
       image.loaded = true;
     });
   } else {
     image = new Image();
-    url = dl.load.sanitizeUrl(dl.extend({url: uri}, config.load));
+    url = load.sanitizeUrl(util.extend({url: uri}, config.load));
     if (!url) { return; }
     renderer._imgload += 1;
     image.onload = function() {

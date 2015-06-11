@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     C = require('../util/constants'),
     tupleID = 1;
 
@@ -6,7 +6,7 @@ var dl = require('datalib'),
 // datum is an object that has been appropriately sandboxed from 
 // the outside environment. 
 function ingest(datum, prev) {
-  datum = dl.isObject(datum) ? datum : {data: datum};
+  datum = util.isObject(datum) ? datum : {data: datum};
   datum._id = tupleID++;
   datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
   return datum;

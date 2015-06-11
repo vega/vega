@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    util = require('datalib/src/util'),
     Bounds = require('../util/Bounds'),
     canvas = require('../render/canvas/path'),
     config = require('./config');
@@ -22,7 +22,7 @@ function fontString(o) {
 }
 
 function context() {
-  return gfx || (gfx = (dl.isNode
+  return gfx || (gfx = (util.isNode
     ? new (require("canvas"))(1,1)
     : d3.select("body").append("canvas")
         .attr("class", "vega_hidden")

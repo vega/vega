@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     config = require('./config'),
     ts;
 
@@ -28,7 +28,7 @@ function debug(input, args) {
   };
 
   if(input.add) {
-    dl.extend(state, {
+    util.extend(state, {
       add: input.add.length,
       mod: input.mod.length,
       rem: input.rem.length,

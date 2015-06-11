@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var Aggregator = require('datalib/src/aggregate/aggregator'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
     log = require('../util/log'),
@@ -6,12 +6,11 @@ var dl = require('datalib'),
     facetID = 1;
 
 function Facetor() {
-  Aggregator.constructor.call(this);
+  Aggregator.call(this);
   this._facet = null;
 }
 
-var Aggregator = dl.groupby();
-var proto = (Facetor.prototype = Object.create(Aggregator));
+var proto = (Facetor.prototype = new Aggregator());
 
 proto.facet = function(f) {
   if(!arguments.length) return this._facet;
@@ -32,7 +31,7 @@ function disconnect_cell(facet) {
 }
 
 proto._newcell = function(x) {
-  var cell  = Aggregator._newcell.call(this, x),
+  var cell  = Aggregator.prototype._newcell.call(this, x),
       facet = this._facet,
       tuple = cell.tuple,
       graph, pipeline;
@@ -49,7 +48,7 @@ proto._newcell = function(x) {
 };
 
 proto._newtuple = function(x) {
-  var t = Aggregator._newtuple.call(this, x);
+  var t = Aggregator.prototype._newtuple.call(this, x);
   if(this._facet !== null) {
     tuple.set(t, "key", this._cellkey(x));
     tuple.set(t, "_facetID", "vg_"+(facetID++));
@@ -61,12 +60,12 @@ proto.clear = function() {
   if(this._facet !== null) for (var k in this._cells) {
     this._cells[k].delete(this._facet);
   }
-  return Aggregator.clear.call(this);
+  return Aggregator.prototype.clear.call(this);
 };
 
 proto._add = function(x) {
   var cell = this._cell(x);
-  Aggregator._add.call(this, x);
+  Aggregator.prototype._add.call(this, x);
   if(this._facet !== null) cell.ds._input.add.push(x);
 };
 
@@ -74,7 +73,7 @@ proto._mod = function(x, prev) {
   var cell0 = this._cell(prev),
       cell1 = this._cell(x);
 
-  Aggregator._mod.call(this, x, prev);
+  Aggregator.prototype._mod.call(this, x, prev);
   if(this._facet !== null) {  // Propagate tuples
     if(cell0 === cell1) {
       cell0.ds._input.mod.push(x);
@@ -87,7 +86,7 @@ proto._mod = function(x, prev) {
 
 proto._rem = function(x) {
   var cell = this._cell(x);
-  Aggregator._rem.call(this, x);
+  Aggregator.prototype._rem.call(this, x);
   if(this._facet !== null) cell.ds._input.rem.push(x);  
 };
 

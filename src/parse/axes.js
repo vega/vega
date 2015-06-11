@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     axs = require('../scene/axis'),
     config = require('../util/config');
 
@@ -68,9 +68,9 @@ function axis(def, index, axis, group) {
   var p = def.properties;
   if (p && p.ticks) {
     axis.majorTickProperties(p.majorTicks
-      ? dl.extend({}, p.ticks, p.majorTicks) : p.ticks);
+      ? util.extend({}, p.ticks, p.majorTicks) : p.ticks);
     axis.minorTickProperties(p.minorTicks
-      ? dl.extend({}, p.ticks, p.minorTicks) : p.ticks);
+      ? util.extend({}, p.ticks, p.minorTicks) : p.ticks);
   } else {
     axis.majorTickProperties(p && p.majorTicks || {});
     axis.minorTickProperties(p && p.minorTicks || {});

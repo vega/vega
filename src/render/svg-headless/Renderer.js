@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    dl = require('datalib'),
+    util = require('datalib/src/util'),
     config = require('../../util/config'),
     SVGBuilder = require('./svg');
 
@@ -18,7 +18,7 @@ prototype.resize = function(width, height, pad) {
   this._width = width;
   this._height = height;
   this._padding = pad || {top:0, left:0, bottom:0, right:0};
-  this._autopad = dl.isString(this._padding) ? 1 : 0;
+  this._autopad = util.isString(this._padding) ? 1 : 0;
 
   var w = this._width, h = this._height, pad = this._padding;
   

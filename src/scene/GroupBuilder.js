@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Collector = require('../dataflow/Collector'),
     Builder = require('./Builder'),
@@ -42,7 +42,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
     return (acc[x.size || x.shape || x.fill || x.stroke], acc);
   }, scales);
 
-  this._recursor.dependency(C.SCALES, dl.keys(scales));
+  this._recursor.dependency(C.SCALES, util.keys(scales));
 
   // We only need a collector for up-propagation of bounds calculation,
   // so only GroupBuilders, and not regular Builders, have collectors.
@@ -65,7 +65,7 @@ proto.pipeline = function() {
 
 proto.disconnect = function() {
   var builder = this;
-  dl.keys(builder._children).forEach(function(group_id) {
+  util.keys(builder._children).forEach(function(group_id) {
     builder._children[group_id].forEach(function(c) {
       builder._recursor.removeListener(c.builder);
       c.builder.disconnect();
@@ -91,9 +91,9 @@ proto.child = function(name, group_id) {
 
 function recurse(input) {
   var builder = this,
-      hasMarks = dl.array(this._def.marks).length > 0,
-      hasAxes = dl.array(this._def.axes).length > 0,
-      hasLegends = dl.array(this._def.legends).length > 0,
+      hasMarks = util.array(this._def.marks).length > 0,
+      hasAxes = util.array(this._def.axes).length > 0,
+      hasLegends = util.array(this._def.legends).length > 0,
       i, len, group, pipeline, def, inline = false;
 
   for(i=0, len=input.add.length; i<len; ++i) {

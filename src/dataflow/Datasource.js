@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     changeset = require('./changeset'), 
     tuple = require('./tuple'), 
     Node = require('./Node'),
@@ -36,7 +36,7 @@ proto.insert = function(d) {
   var prev = this._revises ? null : undefined;
 
   this._input.add = this._input.add
-    .concat(dl.array(d).map(function(d) { return tuple.ingest(d, prev); }));
+    .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
   return this;
 };
 
@@ -126,7 +126,7 @@ proto.pipeline = function(pipeline) {
         rem;
 
     // Delta might contain fields updated through API
-    dl.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
+    util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
 
     if(input.reflow) {
       out.mod = ds._data.slice();

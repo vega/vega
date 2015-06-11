@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
@@ -33,7 +33,7 @@ Facet.schema = {
   "title": "Facet transform",
   "description": "A special aggregate transform that organizes a data set into groups or \"facets\".",
   "type": "object",
-  "properties": dl.extend({}, Aggregate.schema.properties, {
+  "properties": util.extend({}, Aggregate.schema.properties, {
     "type": {"enum": ["facet"]},
     "transform": {"$ref": "#/refs/transform"}
   }),

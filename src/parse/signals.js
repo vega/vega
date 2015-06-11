@@ -1,4 +1,4 @@
-var dl = require('datalib'),
+var util = require('datalib/src/util'),
     expr = require('./expr'),
     functions = require('../expression/functions')(),
     C = require('../util/constants');
@@ -90,7 +90,7 @@ parseSignals.schema = {
       "properties": {
         "name": {
           "type": "string",
-          "not": {"enum": ["datum", "event"].concat(dl.keys(functions))}
+          "not": {"enum": ["datum", "event"].concat(util.keys(functions))}
         },
         "init": {},
         "verbose": {"type": "boolean", "default": false},
