@@ -16,8 +16,8 @@ function draw(g, scene, bounds) {
       continue; // bounds check
 
     g.font = fontString(o);
-    g.textAlign = o.align || "left";
-    g.textBaseline = o.baseline || "alphabetic";
+    g.textAlign = o.align || 'left';
+    g.textBaseline = o.baseline || 'alphabetic';
 
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac === 0) continue;

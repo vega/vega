@@ -17,6 +17,8 @@
     "canvas": "^1.2.x"
   },
   "devDependencies": {
+    "browserify": "latest",
+    "browserify-shim": "latest",
     "jshint": "latest",
     "chai": "latest",
     "mocha": "latest",
@@ -26,6 +28,18 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "jshint src/",
-    "test": "istanbul cover _mocha -- --recursive test/"
+    "test": "mocha --recursive test/",
+    "coverage": "istanbul cover _mocha -- --recursive test/",
+    "bundle": "browserify src/index.js --standalone vg.scene -o vega-scenegraph.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "d3": "global:d3",
+    "datalib": "global:dl",
+    "canvas": "global:canvas"
   }
 }

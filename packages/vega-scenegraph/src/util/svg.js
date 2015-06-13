@@ -25,6 +25,11 @@ module.exports = {
     'center': 'middle',
     'right':  'end'
   },
+  textBaseline: {
+    'top':    'before-edge',
+    'bottom': 'after-edge',
+    'middle': 'central'
+  },
   styles: {
     'fill':             'fill',
     'fillOpacity':      'fill-opacity',

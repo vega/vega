@@ -350,7 +350,7 @@ function text(o) {
       a = o.angle || 0,
       r = o.radius || 0,
       align = SVG.textAlign[o.align] || 'start',
-      base = o.baseline==='top' ? '.9em' : o.baseline==='middle' ? '.35em' : 0;
+      base = SVG.textBaseline[o.baseline] || 'alphabetic';
 
   if (r) {
     var t = (o.theta || 0) - Math.PI/2;
@@ -362,8 +362,8 @@ function text(o) {
     x: x + (o.dx || 0),
     y: y + (o.dy || 0),
     'text-anchor': align,
-    transform: a ? 'rotate('+a+' '+x+','+y+')' : null,
-    dy: base ? base : null
+    'alignment-baseline': base,
+    transform: a ? 'rotate('+a+' '+x+','+y+')' : null
   };
 }
 
