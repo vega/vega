@@ -1,4 +1,5 @@
 var textAlign = require('../../../util/svg').textAlign,
+    textBaseline = require('../../../util/svg').textBaseline,
     fontString = require('../../../util/dom').fontString;
 
 function update(el, o) {
@@ -7,8 +8,7 @@ function update(el, o) {
       a = o.angle || 0,
       r = o.radius || 0,
       align = textAlign[o.align] || 'start',
-      base = o.baseline==='top' ? '.9em'
-           : o.baseline==='middle' ? '.35em' : 0;
+      base = textBaseline[o.baseline] || 'alphabetic';
 
   if (r) {
     var t = (o.theta || 0) - Math.PI/2;
@@ -19,13 +19,11 @@ function update(el, o) {
   el.setAttribute('x', x + (o.dx || 0));
   el.setAttribute('y', y + (o.dy || 0));
   el.setAttribute('text-anchor', align);
-  
+  el.setAttribute('alignment-baseline', base);
+
   if (a) el.setAttribute('transform', 'rotate('+a+' '+x+','+y+')');
   else el.removeAttribute('transform');
-  
-  if (base) el.setAttribute('dy', base);
-  else el.removeAttribute('dy');
-  
+
   el.textContent = o.text;
   el.style.setProperty('font', fontString(o), null);
 }

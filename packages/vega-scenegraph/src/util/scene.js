@@ -8,6 +8,7 @@ var keys = dl.toMap([
   'x', 'y', 'width', 'height', 'align', 'baseline',             // layout
   'fill', 'fillOpacity', 'opacity',                             // fill
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
+  'strokeDash', 'strokeDashOffset',                             // stroke dash
   'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
   'interpolate', 'tension', 'orient',                           // area, line
   'url',                                                        // image

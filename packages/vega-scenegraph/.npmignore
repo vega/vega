@@ -2,3 +2,5 @@ test/
 .DS_Store
 temp
 coverage
+demo
+vega-scenegraph.js
