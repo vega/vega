@@ -24,18 +24,6 @@ module.exports = {
   cssClass: function(mark) {
     return 'type-' + mark.marktype + (mark.name ? ' '+mark.name : '');
   },
-  fontString: function(item, quote) {
-    var font = item.font;
-    if (quote && font) {
-      font = String(font).replace(/\"/g, '\'');
-    }
-    return '' +
-      (item.fontStyle ? item.fontStyle + ' ' : '') +
-      (item.fontVariant ? item.fontVariant + ' ' : '') +
-      (item.fontWeight ? item.fontWeight + ' ' : '') +
-      (item.fontSize != null ? item.fontSize : 11) + 'px ' +
-      (font || 'sans-serif');
-  },
   openTag: function(tag, attr, raw) {
     var s = '<' + tag, key, val;
     if (attr) {

@@ -1,6 +1,6 @@
 var Bounds = require('../util/Bounds'),
     canvas = require('../util/canvas'),
-    fontString = require('./dom').fontString,
+    font = require('./font'),
     paths = require('../path'),
     parse = paths.parse,
     boundPath = paths.bounds,
@@ -166,15 +166,12 @@ function symbol(o, bounds) {
 function text(o, bounds, noRotate) {
   var x = (o.x || 0) + (o.dx || 0),
       y = (o.y || 0) + (o.dy || 0),
-      h = o.fontSize || 11,
+      h = font.size(o),
       a = o.align,
-      b = o.baseline,
       r = o.radius || 0,
       g = context(), w, t;
 
-  g.font = fontString(o);
-  g.textAlign = a || 'left';
-  g.textBaseline = b || 'alphabetic';
+  g.font = font.string(o);
   w = g.measureText(o.text || '').width;
 
   if (r) {
@@ -192,19 +189,8 @@ function text(o, bounds, noRotate) {
     // left by default, do nothing
   }
 
-  /// TODO find a robust solution for heights.
-  /// These offsets work for some but not all fonts.
-
   // vertical
-  if (b === 'top') {
-    y = y + (h/5);
-  } else if (b === 'bottom') {
-    y = y - h;
-  } else if (b === 'middle') {
-    y = y - (h/2) + (h/10);
-  } else {
-    y = y - 4*h/5; // alphabetic by default
-  }
+  y += font.offset(o) - Math.round(0.8*h);
   
   bounds.set(x, y, x+w, y+h);
   if (o.angle && !noRotate) {

@@ -5,12 +5,10 @@ var assert = require('chai').assert;
 var Renderer = require('../src/render/canvas/CanvasRenderer');
 var initScene = require('../src/util/scene').fromJSON;
 var res = './test/resources/';
-
-var GENERATE_TEST_FILES = false;
+var GENERATE = require('./resources/generate-tests');
 
 function generate(path, image) {
-  if (!GENERATE_TEST_FILES) return;
-  fs.writeFileSync(res + path, image);
+  if (GENERATE) fs.writeFileSync(res + path, image);
 }
 
 function load(file) {

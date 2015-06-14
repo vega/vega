@@ -1,6 +1,6 @@
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
-    fontString = require('../../../util/dom').fontString,
+    font = require('../../../util/font'),
     util = require('./util'),
     tempBounds = new Bounds();
 
@@ -15,9 +15,8 @@ function draw(g, scene, bounds) {
     if (bounds && !bounds.intersects(o.bounds))
       continue; // bounds check
 
-    g.font = fontString(o);
+    g.font = font.string(o);
     g.textAlign = o.align || 'left';
-    g.textBaseline = o.baseline || 'alphabetic';
 
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac === 0) continue;
@@ -35,10 +34,10 @@ function draw(g, scene, bounds) {
       g.translate(x, y);
       g.rotate(o.angle * Math.PI/180);
       x = o.dx || 0;
-      y = o.dy || 0;
+      y = o.dy || 0 + font.offset(o);
     } else {
       x += (o.dx || 0);
-      y += (o.dy || 0);
+      y += (o.dy || 0) + font.offset(o);
     }
 
     if ((fill = o.fill)) {

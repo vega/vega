@@ -1,42 +1,42 @@
 'use strict';
 
 var assert = require('chai').assert;
+var font = require('../src/util/font');
 var DOM = require('../src/util/dom');
 
 describe('util', function() {
 
   describe('font-string', function() {
-    var fontString = DOM.fontString;
     it('should produce default font string', function() {
-      assert.equal(fontString({}), '11px sans-serif');
+      assert.equal(font.string({}), '11px sans-serif');
     });
     it('should include font style', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         fontStyle: 'italic'
       }), 'italic 11px sans-serif');
     });
     it('should include font variant', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         fontVariant: 'small-caps'
       }), 'small-caps 11px sans-serif');
     });
     it('should include font weight', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         fontWeight: 'bold'
       }), 'bold 11px sans-serif');
     });
     it('should include font size', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         fontSize: 18
       }), '18px sans-serif');
     });
     it('should include font family', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         font: 'Helvetica'
       }), '11px Helvetica');
     });
     it('should include all properties style', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         fontStyle: 'italic',
         fontVariant: 'small-caps',
         fontWeight: 'bold',
@@ -45,10 +45,10 @@ describe('util', function() {
       }), 'italic small-caps bold 18px Helvetica');
     });
     it('should handle quotes if requested', function() {
-      assert.equal(fontString({
+      assert.equal(font.string({
         font: '"Helvetica Neue"'
       }, true), '11px \'Helvetica Neue\'');
-      assert.equal(fontString({
+      assert.equal(font.string({
         font: "'Helvetica Neue'"
       }, true), '11px \'Helvetica Neue\'');
     });
