@@ -111,7 +111,7 @@ function updateGradient(el, grad, index) {
   var i, n, stop;
 
   if (!grad.el) {
-    grad.el = DOM.child(el, index, 'lineargradient', ns);
+    grad.el = DOM.child(el, index, 'linearGradient', ns);
     grad.el.setAttribute('id', grad.id);
   }
   grad.el.setAttribute('x1', grad.x1);
@@ -131,7 +131,7 @@ function updateClipping(el, clip, index) {
   var rect;
 
   if (!clip.el) {
-    clip.el = DOM.child(el, index, 'clippath', ns);
+    clip.el = DOM.child(el, index, 'clipPath', ns);
     clip.el.setAttribute('id', clip.id);
     rect = DOM.child(clip.el, 0, 'rect', ns);
     rect.setAttribute('x', 0);
