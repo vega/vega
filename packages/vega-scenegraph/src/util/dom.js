@@ -22,7 +22,7 @@ module.exports = {
     return el;
   },
   cssClass: function(mark) {
-    return 'type-' + mark.marktype + (mark.name ? ' '+mark.name : '');
+    return 'mark-' + mark.marktype + (mark.name ? ' '+mark.name : '');
   },
   openTag: function(tag, attr, raw) {
     var s = '<' + tag, key, val;
