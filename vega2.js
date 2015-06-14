@@ -15983,8 +15983,9 @@ Transform.addParameters = function(proto, params) {
 var proto = (Transform.prototype = new Node());
 
 proto.param = function(name, value) {
-  if(arguments.length === 1) return this._parameters[name].get();
-  return this._parameters[name].set(value);
+  var param = this._parameters[name];
+  return (param === undefined) ? this :
+    (arguments.length === 1) ? param.get() : param.set(value);
 };
 
 proto.transform = function(input, reset) { return input; };
