@@ -1,4 +1,5 @@
-var drawMark = require('./draw');
+var DOM = require('../../../util/dom'),
+    drawMark = require('./draw');
 
 function draw(el, scene, index) {
   var renderer = this,
@@ -30,12 +31,17 @@ function draw(el, scene, index) {
     for (j=0, m=legends.length; j<m; ++j) {
       draw.call(renderer, g, legends[j], idx++);
     }
+
+    // remove any extraneous DOM elements
+    j = 1 + items.length + legends.length + axes.length;
+    DOM.clear(g, j);
   }
 }
 
 function update(el, o) {
   var w = o.width || 0,
       h = o.height || 0,
+      cp = 'clip-path',
       id, c, bg;
 
   el.setAttribute('transform', 'translate(' + (o.x||0) + ',' + (o.y||0) + ')');
@@ -45,7 +51,11 @@ function update(el, o) {
     c = this._defs.clipping[id] || (this._defs.clipping[id] = {id: id});
     c.width = w;
     c.height = h;
-    el.setAttribute('clip-path', 'url(#'+id+')');
+    el.setAttribute(cp, 'url(#'+id+')');
+  } else if (el.hasAttribute(cp)) {
+    id = el.getAttribute(cp).slice(5, -1);
+    delete this._defs.clipping[id];
+    el.removeAttribute(cp);
   }
 
   bg = el.childNodes[0];

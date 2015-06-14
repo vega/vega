@@ -3,35 +3,23 @@ function create(doc, tag, ns) {
 }
 
 module.exports = {
-  appendUnique: function(el, tag, ns, className, child) {
-    var i, c;
-
-    for (i=el.childNodes.length-1; i>=0; --i) {
-      c = el.childNodes[i];
-      if (c.tagName.toLowerCase() === tag) {
-        el.removeChild(c);
-      }
-    }
-    
-    c = child || create(el.ownerDocument, tag, ns);
-    c.setAttribute('class', className);
-    el.appendChild(c);
-    return c;
-  },
-  childAt: function(el, index, tag, ns) {
+  child: function(el, index, tag, ns, className) {
     var a, b;
     a = b = el.childNodes[index];
-    if (!a || a.tagName.toLowerCase() !== tag) {
+    if (!a || a.tagName.toLowerCase() !== tag ||
+        className && a.getAttribute('class') != className) {
       a = create(el.ownerDocument, tag, ns);
       el.insertBefore(a, b);
+      if (className) a.setAttribute('class', className);
     }
     return a;
   },
-  clearChildren: function(el, index) {
+  clear: function(el, index) {
     var curr = el.childNodes.length;
     while (curr > index) {
       el.removeChild(el.childNodes[--curr]);
     }
+    return el;
   },
   cssClass: function(mark) {
     return 'type-' + mark.marktype + (mark.name ? ' '+mark.name : '');
