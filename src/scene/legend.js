@@ -1,8 +1,8 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
+    Gradient = require('vega-scenegraph/src/util/Gradient'),
     parseProperties = require('../parse/properties'),
     parseMark = require('../parse/mark'),
-    Gradient = require('../util/Gradient'),
     config = require('../util/config');
 
 function lgnd(model) {

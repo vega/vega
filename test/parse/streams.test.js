@@ -1,6 +1,6 @@
 var dl = require('datalib'),
     jsdom = require('jsdom'),
-    canvasIO = require('../../src/render/canvas/'),
+    canvasIO = require('vega-scenegraph/src/render/canvas'),
     parseStreams = require('../../src/parse/streams'),
     fs = require('fs');
 

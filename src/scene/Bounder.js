@@ -1,7 +1,7 @@
 var util = require('datalib/src/util'),
+    bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
     Encoder = require('./Encoder'),
-    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     log = require('../util/log');
 
@@ -23,9 +23,9 @@ proto.evaluate = function(input) {
 
   if(input.add.length || input.rem.length || !items.length || 
       type === C.AREA || type === C.LINE) {
-    bounds.mark(this._mark, null, isGrp && !hasLegends);
+    bound.mark(this._mark, null, isGrp && !hasLegends);
   } else {
-    input.mod.forEach(function(item) { bounds.item(item); });
+    input.mod.forEach(function(item) { bound.item(item); });
   }  
 
   if(isGrp && hasLegends) {
@@ -35,11 +35,11 @@ proto.evaluate = function(input) {
       for(j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];
         Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items);
-        bounds.mark(legend, null, true);
+        bound.mark(legend, null, true);
       }
     }
 
-    bounds.mark(this._mark, null, true);
+    bound.mark(this._mark, null, true);
   }
 
   input.reflow = true;
