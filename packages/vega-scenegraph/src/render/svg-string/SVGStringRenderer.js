@@ -23,8 +23,7 @@ function SVGStringRenderer(loadConfig) {
   };
 
   this._defs = {
-    group_id: 0,
-    clip_id:  0,
+    clip_id:  1,
     gradient: {},
     clipping: {}
   };
@@ -62,7 +61,6 @@ prototype.svg = function() {
 };
 
 prototype.render = function(scene) {
-  this._defs.group_id = 0; // reset the group counter
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
   return this;
@@ -70,7 +68,6 @@ prototype.render = function(scene) {
 
 prototype.reset = function() {
   this._defs.clip_id = 0;
-  this._defs.group_id = 0;
   return this;
 };
 
@@ -141,7 +138,6 @@ prototype.mark = function(scene) {
 
   // render opening group tag
   str += openTag('g', {
-    'id':    'g' + (this._defs.group_id++),
     'class': DOM.cssClass(scene)
   }, style);
 

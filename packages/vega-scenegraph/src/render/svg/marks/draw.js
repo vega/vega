@@ -6,14 +6,11 @@ module.exports = function(el, scene, index, mark) {
   var data = mark.nested ? [scene.items] : scene.items || [],
       events = scene.interactive === false ? 'none' : null,
       isGroup = (mark.tag === 'g'),
+      className = DOM.cssClass(scene),
       p, i, n, c, d, bg, o;
 
-  p = el.childNodes[index+1]; // +1 skips background rect
-  if (!p) {
-    p = DOM.childAt(el, index+1, 'g', ns);
-    p.setAttribute('id', 'g' + (this._defs.group_id++));
-    p.setAttribute('class', DOM.cssClass(scene));
-  }
+  p = DOM.child(el, index+1, 'g', ns, className);
+  p.setAttribute('class', className);
   if (!isGroup && events) {
     p.style.setProperty('pointer-events', events);
   }
@@ -22,14 +19,14 @@ module.exports = function(el, scene, index, mark) {
     c = p.childNodes[i];
     d = data[i];
     if (!c) {
-      c = DOM.childAt(p, i, mark.tag, ns);
+      c = DOM.child(p, i, mark.tag, ns);
       c.__data__ = d;
       if (isGroup) {
-        bg = DOM.childAt(c, 0, 'rect', ns);
-        bg.setAttribute('class', 'background');
+        bg = DOM.child(c, 0, 'rect', ns, 'background');
         bg.setAttribute('width', 0);
         bg.setAttribute('height', 0);
         bg.style.setProperty('pointer-events', events);
+        d._svg = bg;
       } else if ((o = dl.isArray(d) ? d[0] : d)) {
         o._svg = c;
       }
@@ -37,6 +34,6 @@ module.exports = function(el, scene, index, mark) {
     mark.update.call(this, c, d);
     this.style(isGroup ? c.childNodes[0] : c, d);
   }
-  DOM.clearChildren(p, i);
+  DOM.clear(p, i);
   return p;
 };

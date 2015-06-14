@@ -19,15 +19,16 @@ prototype.constructor = SVGRenderer;
 
 prototype.initialize = function(el, width, height, padding) {
   if (el) {
-    this._svg = DOM.appendUnique(el, 'svg', ns, 'marks');
+    this._svg = DOM.child(el, 0, 'svg', ns, 'marks');
+    DOM.clear(el, 1);
     // set the svg root group
-    this._root = DOM.childAt(this._svg, -1, 'g', ns);
+    this._root = DOM.child(this._svg, 0, 'g', ns);
+    DOM.clear(this._svg, 1);
   }
 
   // create the svg definitions cache
   this._defs = {
-    group_id: 0,
-    clip_id:  0,
+    clip_id:  1,
     gradient: {},
     clipping: {}
   };
@@ -88,9 +89,12 @@ prototype.updateDefs = function() {
 
   // generate defs block
   if (grads.length || clips.length) {
-    el = el || (defs.el = DOM.childAt(svg, 0, 'defs', ns));
+    el = el || (defs.el = DOM.child(svg, 0, 'defs', ns));
   } else {
-    if (el && el.parentNode) svg.removeChild(el);
+    if (el && el.parentNode) {
+      svg.removeChild(el);
+      defs.el = null;
+    }
     return; // nothing more to do
   }
 
@@ -100,14 +104,14 @@ prototype.updateDefs = function() {
   for (i=0, n=clips.length; i<n; ++i) {
     updateClipping(el, defs.clipping[clips[i]], grads.length + i);
   }
-  DOM.clearChildren(el, grads.length + i);
+  DOM.clear(el, grads.length + i);
 };
 
 function updateGradient(el, grad, index) {
   var i, n, stop;
 
   if (!grad.el) {
-    grad.el = DOM.childAt(el, index, 'lineargradient', ns);
+    grad.el = DOM.child(el, index, 'lineargradient', ns);
     grad.el.setAttribute('id', grad.id);
   }
   grad.el.setAttribute('x1', grad.x1);
@@ -116,20 +120,20 @@ function updateGradient(el, grad, index) {
   grad.el.setAttribute('y2', grad.y2);
   
   for (i=0, n=grad.stops.length; i<n; ++i) {
-    stop = DOM.childAt(grad.el, i, 'stop', ns);
+    stop = DOM.child(grad.el, i, 'stop', ns);
     stop.setAttribute('offset', grad.stops[i].offset);
     stop.setAttribute('stop-color', grad.stops[i].color);
   }
-  DOM.clearChildren(grad.el, i);
+  DOM.clear(grad.el, i);
 }
 
 function updateClipping(el, clip, index) {
   var rect;
 
   if (!clip.el) {
-    clip.el = DOM.childAt(el, index, 'clippath', ns);
+    clip.el = DOM.child(el, index, 'clippath', ns);
     clip.el.setAttribute('id', clip.id);
-    rect = DOM.childAt(clip.el, 0, 'rect', ns);
+    rect = DOM.child(clip.el, 0, 'rect', ns);
     rect.setAttribute('x', 0);
     rect.setAttribute('y', 0);
   }
@@ -142,7 +146,9 @@ prototype.render = function(scene, items) {
   if (items) {
     this.update(dl.array(items));
   } else {
+    this._defs.gradient = {}; // clear gradient cache
     this.draw(this._root, scene, -1);
+    DOM.clear(this._root, 1);
   }
   this.updateDefs();
 

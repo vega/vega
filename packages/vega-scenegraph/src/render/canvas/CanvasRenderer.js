@@ -16,7 +16,10 @@ prototype.constructor = CanvasRenderer;
 
 prototype.initialize = function(el, width, height, padding) {
   this._canvas = Canvas.instance(width, height);
-  if (el) DOM.appendUnique(el, 'canvas', null, 'marks', this._canvas);
+  if (el) {
+    DOM.clear(el, 0).appendChild(this._canvas);
+    this._canvas.setAttribute('class', 'marks');
+  }
   return base.initialize.call(this, el, width, height, padding);
 };
 
