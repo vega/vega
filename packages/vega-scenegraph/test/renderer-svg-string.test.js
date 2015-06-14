@@ -7,7 +7,7 @@ var res = './test/resources/';
 var GENERATE = require('./resources/generate-tests');
 
 function generate(path, str) {
-  if (!GENERATE) fs.writeFileSync(res + path, str);
+  if (GENERATE) fs.writeFileSync(res + path, str);
 }
 
 function load(file) {
