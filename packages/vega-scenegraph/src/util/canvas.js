@@ -16,17 +16,18 @@ function instance(w, h) {
 }
 
 function resize(canvas, w, h, p) {
+  var g = this._ctx = canvas.getContext('2d'), 
+      s = 1;
+
   canvas.width = w + p.left + p.right;
   canvas.height = h + p.top + p.bottom;
 
   // if browser canvas, attempt to modify for retina display
   if (typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement) {
-    // get the canvas graphics context
-    var g, s;
-    g = this._ctx = canvas.getContext('2d');
     g.pixelratio = (s = pixelRatio(canvas) || 1);
-    g.setTransform(s, 0, 0, s, s*p.left, s*p.top);
   }
+
+  g.setTransform(s, 0, 0, s, s*p.left, s*p.top);
   return canvas;
 }
 
