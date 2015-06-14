@@ -1,5 +1,5 @@
-var tuple = require('../dataflow/tuple'),
-    boundsCalc = require('../util/boundscalc'),
+var bound = require('vega-scenegraph/src/util/bound'),
+    tuple = require('../dataflow/tuple'),
     C = require('../util/constants');
 
 function Transition(duration, ease) {
@@ -77,7 +77,7 @@ function step(elapsed) {
       item[curr[i].property] = curr[i](e);
     }
     item.touch();
-    boundsCalc.item(item);
+    bound.item(item);
 
     if (f === 1) {
       if (curr.remove) item.remove();

@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
+    bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
-    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     log = require('../util/log'),
     EMPTY = {};
@@ -119,7 +119,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
     prop = props && props[request];
     if (prop) {
       encode.call(null, prop, item, trans, db, sg, preds, dirty);
-      bounds.item(item);
+      bound.item(item);
     }
   }
 

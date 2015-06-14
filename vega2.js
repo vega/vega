@@ -19,7 +19,7 @@ module.exports = {
   util: require('datalib/src/util'),
   schema: require('./src/util/schema')
 };
-},{"./src/core/View":26,"./src/dataflow/Datasource":28,"./src/dataflow/Graph":29,"./src/dataflow/Node":30,"./src/dataflow/changeset":32,"./src/parse/":44,"./src/scene/Builder":70,"./src/scene/GroupBuilder":72,"./src/transforms/":99,"./src/util/config":103,"./src/util/schema":106,"datalib/src/util":21}],2:[function(require,module,exports){
+},{"./src/core/View":76,"./src/dataflow/Datasource":78,"./src/dataflow/Graph":79,"./src/dataflow/Node":80,"./src/dataflow/changeset":82,"./src/parse/":94,"./src/scene/Builder":108,"./src/scene/GroupBuilder":110,"./src/transforms/":136,"./src/util/config":137,"./src/util/schema":140,"datalib/src/util":21}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 // shim for using process in browser
@@ -2898,19 +2898,3542 @@ module.exports = require('./lib/heap');
 }).call(this);
 
 },{}],24:[function(require,module,exports){
+var segmentCache = {},
+    bezierCache = {},
+    join = [].join;
+
+// Copied from Inkscape svgtopdf, thanks!
+function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
+  var key = join.call(arguments);
+  if (segmentCache[key]) {
+    return segmentCache[key];
+  }
+
+  var th = rotateX * (Math.PI/180);
+  var sin_th = Math.sin(th);
+  var cos_th = Math.cos(th);
+  rx = Math.abs(rx);
+  ry = Math.abs(ry);
+  var px = cos_th * (ox - x) * 0.5 + sin_th * (oy - y) * 0.5;
+  var py = cos_th * (oy - y) * 0.5 - sin_th * (ox - x) * 0.5;
+  var pl = (px*px) / (rx*rx) + (py*py) / (ry*ry);
+  if (pl > 1) {
+    pl = Math.sqrt(pl);
+    rx *= pl;
+    ry *= pl;
+  }
+
+  var a00 = cos_th / rx;
+  var a01 = sin_th / rx;
+  var a10 = (-sin_th) / ry;
+  var a11 = (cos_th) / ry;
+  var x0 = a00 * ox + a01 * oy;
+  var y0 = a10 * ox + a11 * oy;
+  var x1 = a00 * x + a01 * y;
+  var y1 = a10 * x + a11 * y;
+
+  var d = (x1-x0) * (x1-x0) + (y1-y0) * (y1-y0);
+  var sfactor_sq = 1 / d - 0.25;
+  if (sfactor_sq < 0) sfactor_sq = 0;
+  var sfactor = Math.sqrt(sfactor_sq);
+  if (sweep == large) sfactor = -sfactor;
+  var xc = 0.5 * (x0 + x1) - sfactor * (y1-y0);
+  var yc = 0.5 * (y0 + y1) + sfactor * (x1-x0);
+
+  var th0 = Math.atan2(y0-yc, x0-xc);
+  var th1 = Math.atan2(y1-yc, x1-xc);
+
+  var th_arc = th1-th0;
+  if (th_arc < 0 && sweep === 1){
+    th_arc += 2 * Math.PI;
+  } else if (th_arc > 0 && sweep === 0) {
+    th_arc -= 2 * Math.PI;
+  }
+
+  var segs = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
+  var result = [];
+  for (var i=0; i<segs; ++i) {
+    var th2 = th0 + i * th_arc / segs;
+    var th3 = th0 + (i+1) * th_arc / segs;
+    result[i] = [xc, yc, th2, th3, rx, ry, sin_th, cos_th];
+  }
+
+  return (segmentCache[key] = result);
+}
+
+function bezier(params) {
+  var key = join.call(params);
+  if (bezierCache[key]) {
+    return bezierCache[key];
+  }
+  
+  var cx = params[0],
+      cy = params[1],
+      th0 = params[2],
+      th1 = params[3],
+      rx = params[4],
+      ry = params[5],
+      sin_th = params[6],
+      cos_th = params[7];
+
+  var a00 = cos_th * rx;
+  var a01 = -sin_th * ry;
+  var a10 = sin_th * rx;
+  var a11 = cos_th * ry;
+
+  var cos_th0 = Math.cos(th0);
+  var sin_th0 = Math.sin(th0);
+  var cos_th1 = Math.cos(th1);
+  var sin_th1 = Math.sin(th1);
+
+  var th_half = 0.5 * (th1 - th0);
+  var sin_th_h2 = Math.sin(th_half * 0.5);
+  var t = (8/3) * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
+  var x1 = cx + cos_th0 - t * sin_th0;
+  var y1 = cy + sin_th0 + t * cos_th0;
+  var x3 = cx + cos_th1;
+  var y3 = cy + sin_th1;
+  var x2 = x3 + t * sin_th1;
+  var y2 = y3 - t * cos_th1;
+
+  return (bezierCache[key] = [
+    a00 * x1 + a01 * y1,  a10 * x1 + a11 * y1,
+    a00 * x2 + a01 * y2,  a10 * x2 + a11 * y2,
+    a00 * x3 + a01 * y3,  a10 * x3 + a11 * y3
+  ]);
+}
+
+module.exports = {
+  segments: segments,
+  bezier: bezier,
+  cache: {
+    segments: segmentCache,
+    bezier: bezierCache
+  }
+};
+
+},{}],25:[function(require,module,exports){
+var path = require('../util/svg').path;
+
+module.exports = function(items) {
+  var o = items[0];
+  return (o.orient === 'horizontal' ? path.areah : path.areav)
+    .interpolate(o.interpolate || 'linear')
+    .tension(o.tension || 0.7)
+    (items);
+};
+
+},{"../util/svg":73}],26:[function(require,module,exports){
+var arc = require('./arc');
+
+module.exports = function(path, bounds) {
+  var current, // current instruction
+      previous = null,
+      x = 0, // current x
+      y = 0, // current y
+      controlX = 0, // current control point x
+      controlY = 0, // current control point y
+      tempX,
+      tempY,
+      tempControlX,
+      tempControlY,
+      i, len;
+
+  for (i=0, len=path.length; i<len; ++i) {
+    current = path[i];
+
+    switch (current[0]) { // command
+
+      case 'l': // lineto, relative
+        x += current[1];
+        y += current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'L': // lineto, absolute
+        x = current[1];
+        y = current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'h': // horizontal lineto, relative
+        x += current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'H': // horizontal lineto, absolute
+        x = current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'v': // vertical lineto, relative
+        y += current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'V': // verical lineto, absolute
+        y = current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'm': // moveTo, relative
+        x += current[1];
+        y += current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'M': // moveTo, absolute
+        x = current[1];
+        y = current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'c': // bezierCurveTo, relative
+        tempX = x + current[5];
+        tempY = y + current[6];
+        controlX = x + current[3];
+        controlY = y + current[4];
+        bounds.add(x + current[1], y + current[2]);
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'C': // bezierCurveTo, absolute
+        x = current[5];
+        y = current[6];
+        controlX = current[3];
+        controlY = current[4];
+        bounds.add(current[1], current[2]);
+        bounds.add(controlX, controlY);
+        bounds.add(x, y);
+        break;
+
+      case 's': // shorthand cubic bezierCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        bounds.add(controlX, controlY);
+        bounds.add(x + current[1], y + current[2]);
+        bounds.add(tempX, tempY);
+
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'S': // shorthand cubic bezierCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+        // calculate reflection of previous control points
+        controlX = 2*x - controlX;
+        controlY = 2*y - controlY;
+        x = tempX;
+        y = tempY;
+        bounds.add(current[1], current[2]);
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of 
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = current[1];
+        controlY = current[2];
+
+        break;
+
+      case 'q': // quadraticCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        x = tempX;
+        y = tempY;
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 'Q': // quadraticCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+
+        x = tempX;
+        y = tempY;
+        controlX = current[1];
+        controlY = current[2];
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 't': // shorthand quadraticCurveTo, relative
+
+        // transform to absolute x,y
+        tempX = x + current[1];
+        tempY = y + current[2];
+
+        if (previous[0].match(/[QqTt]/) === null) {
+          // If there is no previous command or if the previous command was not a Q, q, T or t,
+          // assume the control point is coincident with the current point
+          controlX = x;
+          controlY = y;
+        }
+        else if (previous[0] === 't') {
+          // calculate reflection of previous control points for t
+          controlX = 2 * x - tempControlX;
+          controlY = 2 * y - tempControlY;
+        }
+        else if (previous[0] === 'q') {
+          // calculate reflection of previous control points for q
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+        }
+
+        tempControlX = controlX;
+        tempControlY = controlY;
+
+        x = tempX;
+        y = tempY;
+        controlX = x + current[1];
+        controlY = y + current[2];
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 'T':
+        tempX = current[1];
+        tempY = current[2];
+
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+
+        x = tempX;
+        y = tempY;
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 'a':
+        boundArc(x, y, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6] + x,
+          current[7] + y
+        ], bounds);
+        x += current[6];
+        y += current[7];
+        break;
+
+      case 'A':
+        boundArc(x, y, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6],
+          current[7]
+        ], bounds);
+        x = current[6];
+        y = current[7];
+        break;
+
+      case 'z':
+      case 'Z':
+        break;
+    }
+    previous = current;
+  }
+  return bounds;
+};
+
+function boundArc(x, y, coords, bounds) {
+  var seg = arc.segments(
+    coords[5], // ex
+    coords[6], // ey
+    coords[0], // rx
+    coords[1], // ry
+    coords[3], // large
+    coords[4], // sweep
+    coords[2], // rot
+    x, y
+  );
+  for (var i=0; i<seg.length; ++i) {
+    var bez = arc.bezier(seg[i]);
+    bounds.add(bez[0], bez[1]);
+    bounds.add(bez[2], bez[3]);
+    bounds.add(bez[4], bez[5]);
+  }
+}
+
+},{"./arc":24}],27:[function(require,module,exports){
+module.exports = {
+  parse:  require('./parse'),
+  render: require('./render'),
+  bounds: require('./bounds'),
+  area:   require('./area'),
+  line:   require('./line')
+};
+
+},{"./area":25,"./bounds":26,"./line":28,"./parse":29,"./render":30}],28:[function(require,module,exports){
+var line = require('../util/svg').path.line;
+
+module.exports = function(items) {
+  var o = items[0];
+  return line
+    .interpolate(o.interpolate || 'linear')
+    .tension(o.tension || 0.7)
+    (items);
+};
+
+},{"../util/svg":73}],29:[function(require,module,exports){
+// Path parsing and rendering code adapted from fabric.js -- Thanks!
+var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
+    regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)-/g, /\s|,|###/];
+
+module.exports = function(pathstr) {
+  var result = [],
+      path,
+      curr,
+      chunks,
+      parsed, param,
+      cmd, len, i, j, n, m;
+
+  // First, break path into command sequence
+  path = pathstr
+    .slice()
+    .replace(regexp[0], '###$1')
+    .split(regexp[1])
+    .slice(1);
+
+  // Next, parse each command in turn
+  for (i=0, n=path.length; i<n; ++i) {
+    curr = path[i];
+    chunks = curr
+      .slice(1)
+      .trim()
+      .replace(regexp[2],'$1###-')
+      .split(regexp[3]);
+    cmd = curr.charAt(0);
+
+    parsed = [cmd];
+    for (j=0, m=chunks.length; j<m; ++j) {
+      if ((param = +chunks[j]) === param) { // not NaN
+        parsed.push(param);
+      }
+    }
+
+    len = cmdlen[cmd.toLowerCase()];
+    if (parsed.length-1 > len) {
+      for (j=1, m=parsed.length; j<m; j+=len) {
+        result.push([cmd].concat(parsed.slice(j, j+len)));
+      }
+    }
+    else {
+      result.push(parsed);
+    }
+  }
+
+  return result;
+};
+
+},{}],30:[function(require,module,exports){
+var arc = require('./arc');
+
+module.exports = function(g, path, l, t) {
+  var current, // current instruction
+      previous = null,
+      x = 0, // current x
+      y = 0, // current y
+      controlX = 0, // current control point x
+      controlY = 0, // current control point y
+      tempX,
+      tempY,
+      tempControlX,
+      tempControlY;
+
+  if (l == null) l = 0;
+  if (t == null) t = 0;
+
+  g.beginPath();
+
+  for (var i=0, len=path.length; i<len; ++i) {
+    current = path[i];
+
+    switch (current[0]) { // first letter
+
+      case 'l': // lineto, relative
+        x += current[1];
+        y += current[2];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'L': // lineto, absolute
+        x = current[1];
+        y = current[2];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'h': // horizontal lineto, relative
+        x += current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'H': // horizontal lineto, absolute
+        x = current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'v': // vertical lineto, relative
+        y += current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'V': // verical lineto, absolute
+        y = current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'm': // moveTo, relative
+        x += current[1];
+        y += current[2];
+        g.moveTo(x + l, y + t);
+        break;
+
+      case 'M': // moveTo, absolute
+        x = current[1];
+        y = current[2];
+        g.moveTo(x + l, y + t);
+        break;
+
+      case 'c': // bezierCurveTo, relative
+        tempX = x + current[5];
+        tempY = y + current[6];
+        controlX = x + current[3];
+        controlY = y + current[4];
+        g.bezierCurveTo(
+          x + current[1] + l, // x1
+          y + current[2] + t, // y1
+          controlX + l, // x2
+          controlY + t, // y2
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'C': // bezierCurveTo, absolute
+        x = current[5];
+        y = current[6];
+        controlX = current[3];
+        controlY = current[4];
+        g.bezierCurveTo(
+          current[1] + l,
+          current[2] + t,
+          controlX + l,
+          controlY + t,
+          x + l,
+          y + t
+        );
+        break;
+
+      case 's': // shorthand cubic bezierCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        g.bezierCurveTo(
+          controlX + l,
+          controlY + t,
+          x + current[1] + l,
+          y + current[2] + t,
+          tempX + l,
+          tempY + t
+        );
+
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'S': // shorthand cubic bezierCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+        // calculate reflection of previous control points
+        controlX = 2*x - controlX;
+        controlY = 2*y - controlY;
+        g.bezierCurveTo(
+          controlX + l,
+          controlY + t,
+          current[1] + l,
+          current[2] + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = current[1];
+        controlY = current[2];
+
+        break;
+
+      case 'q': // quadraticCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        g.quadraticCurveTo(
+          controlX + l,
+          controlY + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'Q': // quadraticCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+
+        g.quadraticCurveTo(
+          current[1] + l,
+          current[2] + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        controlX = current[1];
+        controlY = current[2];
+        break;
+
+      case 't': // shorthand quadraticCurveTo, relative
+
+        // transform to absolute x,y
+        tempX = x + current[1];
+        tempY = y + current[2];
+
+        if (previous[0].match(/[QqTt]/) === null) {
+          // If there is no previous command or if the previous command was not a Q, q, T or t,
+          // assume the control point is coincident with the current point
+          controlX = x;
+          controlY = y;
+        }
+        else if (previous[0] === 't') {
+          // calculate reflection of previous control points for t
+          controlX = 2 * x - tempControlX;
+          controlY = 2 * y - tempControlY;
+        }
+        else if (previous[0] === 'q') {
+          // calculate reflection of previous control points for q
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+        }
+
+        tempControlX = controlX;
+        tempControlY = controlY;
+
+        g.quadraticCurveTo(
+          controlX + l,
+          controlY + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        controlX = x + current[1];
+        controlY = y + current[2];
+        break;
+
+      case 'T':
+        tempX = current[1];
+        tempY = current[2];
+
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        g.quadraticCurveTo(
+          controlX + l,
+          controlY + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'a':
+        drawArc(g, x + l, y + t, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6] + x + l,
+          current[7] + y + t
+        ]);
+        x += current[6];
+        y += current[7];
+        break;
+
+      case 'A':
+        drawArc(g, x + l, y + t, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6] + l,
+          current[7] + t
+        ]);
+        x = current[6];
+        y = current[7];
+        break;
+
+      case 'z':
+      case 'Z':
+        g.closePath();
+        break;
+    }
+    previous = current;
+  }
+};
+
+function drawArc(g, x, y, coords) {
+  var seg = arc.segments(
+    coords[5], // end x
+    coords[6], // end y
+    coords[0], // radius x
+    coords[1], // radius y
+    coords[3], // large flag
+    coords[4], // sweep flag
+    coords[2], // rotation
+    x, y
+  );
+  for (var i=0; i<seg.length; ++i) {
+    var bez = arc.bezier(seg[i]);
+    g.bezierCurveTo.apply(g, bez);
+  }
+}
+
+},{"./arc":24}],31:[function(require,module,exports){
+function Handler() {
+  this._active = null;
+  this._handlers = {};
+}
+
+var prototype = Handler.prototype;
+
+prototype.initialize = function(el, pad, obj) {
+  this._el = el;
+  this._obj = obj || null;
+  return this.padding(pad);
+};
+
+prototype.element = function() {
+  return this._el;
+};
+
+prototype.padding = function(pad) {
+  this._padding = pad || {top:0, left:0, bottom:0, right:0};
+  return this;
+};
+
+// add an event handler
+// subclasses should override
+prototype.on = function(/*type, handler*/) {};
+
+// remove an event handler
+// subclasses should override
+prototype.off = function(/*type, handler*/) {};
+
+// return an array with all registered event handlers
+prototype.handlers = function() {
+  var h = this._handlers, a = [], k;
+  for (k in h) { a.push.apply(a, h[k]); }
+  return a;
+};
+
+prototype.eventName = function(name) {
+  var i = name.indexOf('.');
+  return i < 0 ? name : name.slice(0,i);
+};
+
+module.exports = Handler;
+},{}],32:[function(require,module,exports){
+function Renderer() {
+  this._el = null;
+  this._bgcolor = null;
+}
+
+var prototype = Renderer.prototype;
+
+prototype.initialize = function(el, width, height, padding) {
+  this._el = el;
+  return this.resize(width, height, padding);
+};
+
+prototype.element = function() {
+  return this._el;
+};
+
+prototype.background = function(bgcolor) {
+  if (arguments.length === 0) return this._bgcolor;
+  this._bgcolor = bgcolor;
+  return this;
+};
+
+prototype.resize = function(width, height, padding) {
+  this._width = width;
+  this._height = height;
+  this._padding = padding || {top:0, left:0, bottom:0, right:0};
+  return this;
+};
+
+prototype.render = function(/*scene, items*/) {
+  return this;
+};
+
+module.exports = Renderer;
+},{}],33:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    Handler = require('../Handler'),
+    marks = require('./marks');
+
+function CanvasHandler() {
+  Handler.call(this);
+  this._down = null;
+}
+
+var base = Handler.prototype;
+var prototype = (CanvasHandler.prototype = Object.create(base));
+prototype.constructor = CanvasHandler;
+
+prototype.initialize = function(el, pad, obj) {
+  // add event listeners
+  var canvas = this._canvas = DOM.find(el, 'canvas'),
+      that = this;
+  this.events.forEach(function(type) {
+    canvas.addEventListener(type, function(evt) {
+      if (prototype[type]) {
+        prototype[type].call(that, evt);
+      } else {
+        that.fire(type, evt);
+      }
+    });
+  });
+
+  return base.initialize.call(this, el, pad, obj);
+};
+
+prototype.canvas = function() {
+  return this._canvas;
+};
+
+prototype.scene = function(scene) {
+  if (!arguments.length) return this._scene;
+  this._scene = scene;
+  return this;
+};
+
+// supported events
+prototype.events = [
+  'keydown',
+  'keypress',
+  'keyup',
+  'mousedown',
+  'mouseup',
+  'mousemove',
+  'mouseout',
+  'click',
+  'dblclick',
+  'wheel',
+  'mousewheel',
+  'touchstart',
+  'touchmove',
+  'touchend'
+];
+
+prototype.mousemove = function(evt) {
+  var pad = this._padding,
+      b = evt.target.getBoundingClientRect(),
+      x = evt.clientX - b.left,
+      y = evt.clientY - b.top,
+      a = this._active,
+      p = this.pick(this._scene, x, y, x-pad.left, y-pad.top);
+
+  if (p === a) {
+    this.fire('mousemove', evt);
+    if (evt.type === 'touchmove') this.fire('touchmove', evt);
+    return;
+  } else if (a) {
+    this.fire('mouseout', evt);
+    if (evt.type === 'touchend') this.fire('touchend', evt);
+  }
+  this._active = p;
+  if (p) {
+    this.fire('mouseover', evt);
+    if (evt.type === 'touchstart') this.fire('touchstart', evt);
+  }
+};
+
+prototype.mouseout = function(evt) {
+  if (this._active) {
+    this.fire('mouseout', evt);
+    this.fire('touchend', evt);
+  }
+  this._active = null;
+};
+
+prototype.mousedown = function(evt) {
+  this._down = this._active;
+  this.fire('mousedown', evt);
+};
+
+prototype.click = function(evt) {
+  if (this._down === this._active) {
+    this.fire('click', evt);
+    this._down = null;
+  }
+};
+
+// to keep firefox happy
+prototype.DOMMouseScroll = function(evt) {
+  this.fire('mousewheel', evt);
+};
+
+prototype.touchmove = prototype.mousemove;
+
+prototype.touchend = prototype.mouseout;
+
+// fire an event
+prototype.fire = function(type, evt) {
+  var a = this._active,
+      h = this._handlers[type], i, len;
+  if (h) {
+    for (i=0, len=h.length; i<len; ++i) {
+      h[i].handler.call(this._obj, evt, a);
+    }
+  }
+};
+
+// add an event handler
+prototype.on = function(type, handler) {
+  var name = this.eventName(type),
+      h = this._handlers;
+  (h[name] || (h[name] = [])).push({
+    type: type,
+    handler: handler
+  });
+  return this;
+};
+
+// remove an event handler
+prototype.off = function(type, handler) {
+  var name = this.eventName(type),
+      h = this._handlers[name], i;
+  if (!h) return;
+  for (i=h.length; --i>=0;) {
+    if (h[i].type !== type) continue;
+    if (!handler || h[i].handler === handler) h.splice(i, 1);
+  }
+  return this;
+};
+
+// retrieve the current canvas context
+prototype.context = function() {
+  return this._canvas.getContext('2d');
+};
+
+// find the scenegraph item at the current mouse position
+// x, y -- the absolute x, y mouse coordinates on the canvas element
+// gx, gy -- the relative coordinates within the current group
+prototype.pick = function(scene, x, y, gx, gy) {
+  var g = this.context(),
+      mark = marks[scene.marktype];
+  return mark.pick.call(this, g, scene, x, y, gx, gy);
+};
+
+module.exports = CanvasHandler;
+
+},{"../../util/dom":71,"../Handler":31,"./marks":40}],34:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    Bounds = require('../../util/Bounds'),
+    ImageLoader = require('../../util/ImageLoader'),
+    Canvas = require('../../util/canvas'),
+    Renderer = require('../Renderer'),
+    marks = require('./marks');
+
+function CanvasRenderer(loadConfig) {
+  Renderer.call(this);
+  this._loader = new ImageLoader(loadConfig);
+}
+
+var base = Renderer.prototype;
+var prototype = (CanvasRenderer.prototype = Object.create(base));
+prototype.constructor = CanvasRenderer;
+
+prototype.initialize = function(el, width, height, padding) {
+  this._canvas = Canvas.instance(width, height);
+  if (el) {
+    DOM.clear(el, 0).appendChild(this._canvas);
+    this._canvas.setAttribute('class', 'marks');
+  }
+  return base.initialize.call(this, el, width, height, padding);
+};
+
+prototype.resize = function(width, height, padding) {
+  base.resize.call(this, width, height, padding);
+  Canvas.resize(this._canvas, this._width, this._height, this._padding);
+  return this;
+};
+
+prototype.canvas = function() {
+  return this._canvas;
+};
+
+prototype.context = function() {
+  return this._canvas ? this._canvas.getContext('2d') : null;
+};
+
+prototype.pendingImages = function() {
+  return this._loader.pending();
+};
+
+function clipToBounds(g, items) {
+  if (!items) return null;
+
+  var b = new Bounds(), i, n, mark, item;
+  for (i=0, n=items.length; i<n; ++i) {
+    item = items[i];
+    mark = item.mark;
+    item = marks[mark.marktype].nested ? mark.items[0] : item;
+    b.union(translate(item.bounds, item))
+     .union(translate(item['bounds:prev'], item));
+  }
+  b.round();
+
+  g.beginPath();
+  g.rect(b.x1, b.y1, b.width(), b.height());
+  g.clip();
+
+  return b;
+}
+
+function translate(bounds, item) {
+  var b = bounds.clone();
+  while ((item = item.mark.group) != null) {
+    b.translate(item.x || 0, item.y || 0);
+  }
+  return b;
+}
+
+prototype.render = function(scene, items) {
+  var g = this.context(),
+      p = this._padding,
+      w = this._width + p.left + p.right,
+      h = this._height + p.top + p.bottom,
+      b;
+
+  // setup
+  this._scene = scene; // cache scene for async redraw
+  g.save();
+  b = clipToBounds(g, items);
+  this.clear(-p.left, -p.top, w, h);
+
+  // render
+  this.draw(g, scene, b);
+  
+  // takedown
+  g.restore();
+  this._scene = null; // clear scene cache
+
+  return this;
+};
+
+prototype.draw = function(ctx, scene, bounds) {
+  var mark = marks[scene.marktype];
+  mark.draw.call(this, ctx, scene, bounds);
+};
+
+prototype.clear = function(x, y, w, h) {
+  var g = this.context();
+  g.clearRect(x, y, w, h);
+  if (this._bgcolor != null) {
+    g.fillStyle = this._bgcolor;
+    g.fillRect(x, y, w, h); 
+  }
+};
+
+prototype.loadImage = function(uri) {
+  var renderer = this,
+      scene = this._scene;
+  return this._loader.loadImage(uri, function() {
+    renderer.renderAsync(scene);
+  });
+};
+
+prototype.renderAsync = function(scene) {
+  // TODO make safe for multiple scene rendering?
+  var renderer = this;
+  if (renderer._async_id) {
+    clearTimeout(renderer._async_id);
+  }
+  renderer._async_id = setTimeout(function() {
+    renderer.render(scene);
+    delete renderer._async_id;
+  }, 10);
+};
+
+module.exports = CanvasRenderer;
+
+},{"../../util/Bounds":65,"../../util/ImageLoader":67,"../../util/canvas":70,"../../util/dom":71,"../Renderer":32,"./marks":40}],35:[function(require,module,exports){
+module.exports = {
+  Handler:  require('./CanvasHandler'),
+  Renderer: require('./CanvasRenderer')
+};
+},{"./CanvasHandler":33,"./CanvasRenderer":34}],36:[function(require,module,exports){
+var util = require('./util');
+var halfpi = Math.PI / 2;
+
+function path(g, o) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      ir = o.innerRadius || 0,
+      or = o.outerRadius || 0,
+      sa = (o.startAngle || 0) - halfpi,
+      ea = (o.endAngle || 0) - halfpi;
+  g.beginPath();
+  if (ir === 0) g.moveTo(x, y);
+  else g.arc(x, y, ir, sa, ea, 0);
+  g.arc(x, y, or, ea, sa, 1);
+  g.closePath();
+}
+
+function hit(g, o, x, y) {
+  path(g, o);
+  return g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawAll(path),
+  pick: util.pick(hit)
+};
+},{"./util":47}],37:[function(require,module,exports){
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render'),
+    areaPath = require('../../../path/area');
+
+function path(g, items) {
+  var o = items[0],
+      p = o.pathCache || (o.pathCache = parse(areaPath(items)));
+  render(g, p);
+}
+
+function pick(g, scene, x, y, gx, gy) {
+  if (!scene.items || !scene.items.length) return false;
+
+  var items = scene.items,
+      b = items[0].bounds;
+
+  if (b && !b.contains(gx, gy)) return false;
+  if (g.pixelratio != null && g.pixelratio !== 1) {
+    x *= g.pixelratio;
+    y *= g.pixelratio;
+  }
+  if (!hit(g, items, x, y)) return false;
+  return items[0];
+}
+
+function hit(g, s, x, y) {
+  path(g, s);
+  return g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawOne(path),
+  pick: pick,
+  nested: true
+};
+
+},{"../../../path/area":25,"../../../path/parse":29,"../../../path/render":30,"./util":47}],38:[function(require,module,exports){
+var util = require('./util'),
+    rect = require('./rect');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var groups = scene.items,
+      renderer = this,
+      group, items, axes, legends, gx, gy, i, n, j, m;
+
+  rect.draw.call(renderer, g, scene, bounds);
+
+  for (i=0, n=groups.length; i<n; ++i) {
+    group = groups[i];
+    axes = group.axisItems || [];
+    items = group.items || [];
+    legends = group.legendItems || [];
+    gx = group.x || 0;
+    gy = group.y || 0;
+
+    // render group contents
+    g.save();
+    g.translate(gx, gy);
+    if (group.clip) {
+      g.beginPath();
+      g.rect(0, 0, group.width || 0, group.height || 0);
+      g.clip();
+    }
+
+    if (bounds) bounds.translate(-gx, -gy);
+
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].layer === 'back') {
+        renderer.draw(g, axes[j], bounds);
+      }
+    }
+    for (j=0, m=items.length; j<m; ++j) {
+      renderer.draw(g, items[j], bounds);
+    }
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].layer !== 'back') {
+        renderer.draw(g, axes[j], bounds);
+      }
+    }
+    for (j=0, m=legends.length; j<m; ++j) {
+      renderer.draw(g, legends[j], bounds);
+    }
+    
+    if (bounds) bounds.translate(gx, gy);
+    g.restore();
+  }    
+}
+
+function hit(g, o) {
+  return o.fill || o.stroke;
+}
+
+function pick(g, scene, x, y, gx, gy) {
+  if (scene.bounds && !scene.bounds.contains(gx, gy)) {
+    return false;
+  }
+  var items = scene.items || [],
+      subscene, group, hits, dx, dy, i, j;
+
+  for (i=items.length; --i>=0;) {
+    group = items[i];
+    dx = group.x || 0;
+    dy = group.y || 0;
+
+    g.save();
+    g.translate(dx, dy);
+    for (j=group.items.length; --j >= 0;) {
+      subscene = group.items[j];
+      if (subscene.interactive === false) continue;
+      hits = this.pick(subscene, x, y, gx-dx, gy-dy);
+      if (hits) {
+        g.restore();
+        return hits;
+      }
+    }
+    g.restore();
+  }
+
+  return scene.interactive !== false ? pickSelf(g, scene, x, y, gx, gy) : false;
+}
+
+var pickSelf = util.pick(hit);
+
+module.exports = {
+  draw: draw,
+  pick: pick
+};
+
+},{"./rect":43,"./util":47}],39:[function(require,module,exports){
+var util = require('./util');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var renderer = this,
+      items = scene.items, o;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    if (!(o.image && o.image.url === o.url)) {
+      o.image = renderer.loadImage(o.url);
+      o.image.url = o.url;
+    }
+
+    var x = o.x || 0,
+        y = o.y || 0,
+        w = o.width || (o.image && o.image.width) || 0,
+        h = o.height || (o.image && o.image.height) || 0,
+        opac;
+    x = x - (o.align==='center' ? w/2 : o.align==='right' ? w : 0);
+    y = y - (o.baseline==='middle' ? h/2 : o.baseline==='bottom' ? h : 0);
+
+    if (o.image.loaded) {
+      g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
+      g.drawImage(o.image, x, y, w, h);
+    }
+  }
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick()
+};
+},{"./util":47}],40:[function(require,module,exports){
+module.exports = {
+  arc:    require('./arc'),
+  area:   require('./area'),
+  group:  require('./group'),
+  image:  require('./image'),
+  line:   require('./line'),
+  path:   require('./path'),
+  rect:   require('./rect'),
+  rule:   require('./rule'),
+  symbol: require('./symbol'),
+  text:   require('./text')
+};
+
+},{"./arc":36,"./area":37,"./group":38,"./image":39,"./line":41,"./path":42,"./rect":43,"./rule":44,"./symbol":45,"./text":46}],41:[function(require,module,exports){
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render'),
+    linePath = require('../../../path/line');
+    
+function path(g, items) {
+  var o = items[0],
+      p = o.pathCache || (o.pathCache = parse(linePath(items)));
+  render(g, p);
+}
+
+function stroke(g, items) {
+  var o = items[0],
+      lw = o.strokeWidth,
+      lc = o.strokeCap;
+  g.lineWidth = lw != null ? lw : 1;
+  g.lineCap   = lc != null ? lc : 'butt';
+  path(g, items);
+}
+
+function pick(g, scene, x, y, gx, gy) {
+  if (!scene.items || !scene.items.length) return false;
+
+  var items = scene.items,
+      b = items[0].bounds;
+
+  if (b && !b.contains(gx, gy)) return false;
+
+  if (g.pixelratio != null && g.pixelratio !== 1) {
+    x *= g.pixelratio;
+    y *= g.pixelratio;
+  }
+  if (!hit(g, items, x, y)) return false;
+  return items[0];
+}
+
+function hit(g, s, x, y) {
+  if (!g.isPointInStroke) return false;
+  stroke(g, s);
+  return g.isPointInStroke(x, y);
+}
+
+module.exports = {
+  draw: util.drawOne(path),
+  pick: pick,
+  nested: true
+};
+
+},{"../../../path/line":28,"../../../path/parse":29,"../../../path/render":30,"./util":47}],42:[function(require,module,exports){
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render');
+
+function path(g, o) {
+  if (o.path == null) return true;
+  var p = o.pathCache || (o.pathCache = parse(o.path));
+  render(g, p, o.x, o.y);
+}
+
+function hit(g, o, x, y) {
+  return path(g, o) ? false : g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawAll(path),
+  pick: util.pick(hit)
+};
+
+},{"../../../path/parse":29,"../../../path/render":30,"./util":47}],43:[function(require,module,exports){
+var util = require('./util');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var items = scene.items,
+      o, fill, stroke, opac, lc, lw, x, y, w, h;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    x = o.x || 0;
+    y = o.y || 0;
+    w = o.width || 0;
+    h = o.height || 0;
+
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac === 0) continue;
+
+    if ((fill = o.fill)) {
+      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
+      g.fillStyle = util.color(g, o, fill);
+      g.fillRect(x, y, w, h);
+    }
+
+    if ((stroke = o.stroke)) {
+      lw = (lw = o.strokeWidth) != null ? lw : 1;
+      if (lw > 0) {
+        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+        g.strokeStyle = util.color(g, o, stroke);
+        g.lineWidth = lw;
+        g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
+        g.vgLineDash(o.strokeDash || null);
+        g.vgLineDashOffset(o.strokeDashOffset || 0);
+        g.strokeRect(x, y, w, h);
+      }
+    }
+  }
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick()
+};
+},{"./util":47}],44:[function(require,module,exports){
+var util = require('./util');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var items = scene.items,
+      o, stroke, opac, lc, lw, x1, y1, x2, y2;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    x1 = o.x || 0;
+    y1 = o.y || 0;
+    x2 = o.x2 != null ? o.x2 : x1;
+    y2 = o.y2 != null ? o.y2 : y1;
+
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac === 0) continue;
+    
+    if ((stroke = o.stroke)) {
+      lw = (lw = o.strokeWidth) != null ? lw : 1;
+      if (lw > 0) {
+        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+        g.strokeStyle = util.color(g, o, stroke);
+        g.lineWidth = lw;
+        g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
+        g.vgLineDash(o.strokeDash || null);
+        g.vgLineDashOffset(o.strokeDashOffset || 0);
+        g.beginPath();
+        g.moveTo(x1, y1);
+        g.lineTo(x2, y2);
+        g.stroke();
+      }
+    }
+  }
+}
+
+function stroke(g, o) {
+  var x1 = o.x || 0,
+      y1 = o.y || 0,
+      x2 = o.x2 != null ? o.x2 : x1,
+      y2 = o.y2 != null ? o.y2 : y1,
+      lw = o.strokeWidth,
+      lc = o.strokeCap;
+
+  g.lineWidth = lw != null ? lw : 1;
+  g.lineCap   = lc != null ? lc : 'butt';
+  g.beginPath();
+  g.moveTo(x1, y1);
+  g.lineTo(x2, y2);
+}
+
+function hit(g, o, x, y) {
+  if (!g.isPointInStroke) return false;
+  stroke(g, o);
+  return g.isPointInStroke(x, y);
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick(hit)
+};
+
+},{"./util":47}],45:[function(require,module,exports){
+var util = require('./util');
+
+var sqrt3 = Math.sqrt(3),
+    tan30 = Math.tan(30 * Math.PI / 180);
+
+function path(g, o) {
+  var size = o.size != null ? o.size : 100,
+      x = o.x, y = o.y, r, t, rx, ry;
+
+  g.beginPath();
+
+  if (o.shape == null || o.shape === 'circle') {
+    r = Math.sqrt(size / Math.PI);
+    g.arc(x, y, r, 0, 2*Math.PI, 0);
+    g.closePath();
+    return;
+  }
+
+  switch (o.shape) {
+    case 'cross':
+      r = Math.sqrt(size / 5) / 2;
+      t = 3*r;
+      g.moveTo(x-t, y-r);
+      g.lineTo(x-r, y-r);
+      g.lineTo(x-r, y-t);
+      g.lineTo(x+r, y-t);
+      g.lineTo(x+r, y-r);
+      g.lineTo(x+t, y-r);
+      g.lineTo(x+t, y+r);
+      g.lineTo(x+r, y+r);
+      g.lineTo(x+r, y+t);
+      g.lineTo(x-r, y+t);
+      g.lineTo(x-r, y+r);
+      g.lineTo(x-t, y+r);
+      break;
+
+    case 'diamond':
+      ry = Math.sqrt(size / (2 * tan30));
+      rx = ry * tan30;
+      g.moveTo(x, y-ry);
+      g.lineTo(x+rx, y);
+      g.lineTo(x, y+ry);
+      g.lineTo(x-rx, y);
+      break;
+
+    case 'square':
+      t = Math.sqrt(size);
+      r = t / 2;
+      g.rect(x-r, y-r, t, t);
+      break;
+
+    case 'triangle-down':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      g.moveTo(x, y+ry);
+      g.lineTo(x+rx, y-ry);
+      g.lineTo(x-rx, y-ry);
+      break;
+
+    case 'triangle-up':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      g.moveTo(x, y-ry);
+      g.lineTo(x+rx, y+ry);
+      g.lineTo(x-rx, y+ry);
+  }
+  g.closePath();
+}
+
+function hit(g, o, x, y) {
+  path(g, o);
+  return g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawAll(path),
+  pick: util.pick(hit)
+};
+},{"./util":47}],46:[function(require,module,exports){
+var Bounds = require('../../../util/Bounds'),
+    textBounds = require('../../../util/bound').text,
+    font = require('../../../util/font'),
+    util = require('./util'),
+    tempBounds = new Bounds();
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var items = scene.items,
+      o, fill, stroke, opac, lw, x, y, r, t;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    g.font = font.string(o);
+    g.textAlign = o.align || 'left';
+
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac === 0) continue;
+
+    x = o.x || 0;
+    y = o.y || 0;
+    if ((r = o.radius)) {
+      t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
+
+    if (o.angle) {
+      g.save();
+      g.translate(x, y);
+      g.rotate(o.angle * Math.PI/180);
+      x = o.dx || 0;
+      y = o.dy || 0 + font.offset(o);
+    } else {
+      x += (o.dx || 0);
+      y += (o.dy || 0) + font.offset(o);
+    }
+
+    if ((fill = o.fill)) {
+      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
+      g.fillStyle = util.color(g, o, fill);
+      g.fillText(o.text, x, y);
+    }
+
+    if ((stroke = o.stroke)) {
+      lw = (lw = o.strokeWidth) != null ? lw : 1;
+      if (lw > 0) {
+        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+        g.strokeStyle = util.color(g, o, stroke);
+        g.lineWidth = lw;
+        g.strokeText(o.text, x, y);
+      }
+    }
+
+    if (o.angle) g.restore();
+  }
+}
+
+function hit(g, o, x, y, gx, gy) {
+  if (o.fontSize <= 0) return false;
+  if (!o.angle) return true; // bounds sufficient if no rotation
+
+  var b = textBounds(o, tempBounds, true),
+      a = -o.angle * Math.PI / 180,
+      cos = Math.cos(a),
+      sin = Math.sin(a),
+      ox = o.x,
+      oy = o.y,
+      px = cos*gx - sin*gy + (ox - ox*cos + oy*sin),
+      py = sin*gx + cos*gy + (oy - ox*sin - oy*cos);
+
+  return b.contains(px, py);
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick(hit)
+};
+
+},{"../../../util/Bounds":65,"../../../util/bound":69,"../../../util/font":72,"./util":47}],47:[function(require,module,exports){
+function drawPathOne(path, g, o, items) {
+  var fill = o.fill,
+      stroke = o.stroke,
+      opac, lc, lw;
+
+  if (path(g, items)) return;
+
+  opac = o.opacity == null ? 1 : o.opacity;
+  if (opac===0 || !fill && !stroke) return;
+
+  if (fill) {
+    g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
+    g.fillStyle = color(g, o, fill);
+    g.fill();
+  }
+
+  if (stroke) {
+    lw = (lw = o.strokeWidth) != null ? lw : 1;
+    if (lw > 0) {
+      g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+      g.strokeStyle = color(g, o, stroke);
+      g.lineWidth = lw;
+      g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
+      g.vgLineDash(o.strokeDash || null);
+      g.vgLineDashOffset(o.strokeDashOffset || 0);
+      g.stroke();
+    }
+  }
+}
+
+function drawPathAll(path, g, scene, bounds) {
+  var i, len, item;
+  for (i=0, len=scene.items.length; i<len; ++i) {
+    item = scene.items[i];
+    if (bounds && !bounds.intersects(item.bounds))
+      continue; // bounds check
+    drawPathOne(path, g, item, item);
+  }
+}
+
+function drawAll(pathFunc) {
+  return function(g, scene, bounds) {
+    drawPathAll(pathFunc, g, scene, bounds);
+  };
+}
+
+function drawOne(pathFunc) {
+  return function(g, scene, bounds) {
+    if (!scene.items.length) return;
+    if (bounds && !bounds.intersects(scene.items[0].bounds))
+      return; // bounds check
+    drawPathOne(pathFunc, g, scene.items[0], scene.items);
+  };
+}
+
+function pick(test) {
+  if (!test) test = function() { return true; };
+
+  return function(g, scene, x, y, gx, gy) {
+    if (!scene.items.length) return false;
+
+    var o, b, i;
+
+    if (g.pixelratio != null && g.pixelratio !== 1) {
+      x *= g.pixelratio;
+      y *= g.pixelratio;
+    }
+
+    for (i=scene.items.length; --i >= 0;) {
+      o = scene.items[i]; b = o.bounds;
+      // first hit test against bounding box
+      if ((b && !b.contains(gx, gy)) || !b) continue;
+      // if in bounding box, perform more careful test
+      if (test(g, o, x, y, gx, gy)) return o;
+    }
+    return false;
+  };
+}
+
+function color(g, o, value) {
+  return (value.id) ?
+    gradient(g, value, o.bounds) :
+    value;
+}
+
+function gradient(g, p, b) {
+  var w = b.width(),
+      h = b.height(),
+      x1 = b.x1 + p.x1 * w,
+      y1 = b.y1 + p.y1 * h,
+      x2 = b.x1 + p.x2 * w,
+      y2 = b.y1 + p.y2 * h,
+      grad = g.createLinearGradient(x1, y1, x2, y2),
+      stop = p.stops,
+      i, n;
+
+  for (i=0, n=stop.length; i<n; ++i) {
+    grad.addColorStop(stop[i].offset, stop[i].color);
+  }
+  return grad;
+}
+
+module.exports = {
+  drawOne:  drawOne,
+  drawAll:  drawAll,
+  pick:     pick,
+  color:    color,
+  gradient: gradient
+};
+
+},{}],48:[function(require,module,exports){
+var Renderer = require('../Renderer'),
+    ImageLoader = require('../../util/ImageLoader'),
+    SVG = require('../../util/svg'),
+    areaPath = require('../../path/area'),
+    linePath = require('../../path/line'),
+    font = require('../../util/font'),
+    DOM = require('../../util/dom'),
+    openTag = DOM.openTag,
+    closeTag = DOM.closeTag;
+
+function SVGStringRenderer(loadConfig) {
+  Renderer.call(this);
+
+  this._loader = new ImageLoader(loadConfig);
+
+  this._text = {
+    head: '',
+    root: '',
+    foot: '',
+    defs: '',
+    body: ''
+  };
+
+  this._defs = {
+    clip_id:  1,
+    gradient: {},
+    clipping: {}
+  };
+}
+
+var base = Renderer.prototype;
+var prototype = (SVGStringRenderer.prototype = Object.create(base));
+prototype.constructor = SVGStringRenderer;
+
+prototype.resize = function(width, height, padding) {
+  base.resize.call(this, width, height, padding);
+  var p = this._padding,
+      t = this._text;
+
+  var attr = {
+    'class':  'marks',
+    'width':  this._width + p.left + p.right,
+    'height': this._height + p.top + p.bottom,
+  };
+  for (var key in SVG.metadata) {
+    attr[key] = SVG.metadata[key];
+  }
+
+  t.head = openTag('svg', attr);
+  t.root = openTag('g', {
+    transform: 'translate(' + p.left + ',' + p.top + ')'
+  });
+  t.foot = closeTag('g') + closeTag('svg');
+
+  return this;
+};
+
+prototype.svg = function() {
+  var t = this._text;
+  return t.head + t.defs + t.root + t.body + t.foot;
+};
+
+prototype.render = function(scene) {
+  this._text.body = this.mark(scene);
+  this._text.defs = this.buildDefs();
+  return this;
+};
+
+prototype.reset = function() {
+  this._defs.clip_id = 0;
+  return this;
+};
+
+prototype.buildDefs = function() {
+  var all = this._defs,
+      defs = '',
+      i, id, def, stops;
+
+  for (id in all.gradient) {
+    def = all.gradient[id];
+    stops = def.stops;
+
+    defs += openTag('linearGradient', {
+      id: id,
+      x1: def.x1,
+      x2: def.x2,
+      y1: def.y1,
+      y2: def.y2
+    });
+    
+    for (i=0; i<stops.length; ++i) {
+      defs += openTag('stop', {
+        offset: stops[i].offset,
+        'stop-color': stops[i].color
+      }) + closeTag('stop');
+    }
+    
+    defs += closeTag('linearGradient');
+  }
+  
+  for (id in all.clipping) {
+    def = all.clipping[id];
+
+    defs += openTag('clipPath', {id: id});
+
+    defs += openTag('rect', {
+      x: 0,
+      y: 0,
+      width: def.width,
+      height: def.height
+    }) + closeTag('rect');
+
+    defs += closeTag('clipPath');
+  }
+  
+  return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
+};
+
+prototype.mark = function(scene) {
+  var meta = MARKS[scene.marktype];
+  if (!meta) return null; // unknown marktype
+
+  var tag  = meta[0],
+      attr = meta[1],
+      nest = meta[2] || false,
+      data = nest ? [scene.items] : (scene.items || []),
+      defs = this._defs,
+      str = '',
+      style, i;
+
+  if (tag !== 'g' && scene.interactive === false) {
+    style = 'style="pointer-events: none;"';
+  }
+
+  // render opening group tag
+  str += openTag('g', {
+    'class': DOM.cssClass(scene)
+  }, style);
+
+  // render contained elements
+  for (i=0; i<data.length; ++i) {
+    style = (tag === 'g') ? null : styles(data[i], scene, tag, defs);
+    str += openTag(tag, attr(data[i], this), style);
+    if (tag === 'text') {
+      str += escape_text(data[i].text);
+    } else if (tag === 'g') {
+      str += group_bg(data[i], styles(data[i], scene, 'bgrect', defs));
+      str += this.markGroup(data[i]);
+    }
+    str += closeTag(tag);
+  }
+
+  // render closing group tag
+  return str + closeTag('g');
+};
+
+prototype.markGroup = function(scene) {
+  var str = '',
+      axes = scene.axisItems || [],
+      items = scene.items || [],
+      legends = scene.legendItems || [],
+      j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer === 'back') {
+      str += this.mark(axes[j]);
+    }
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    str += this.mark(items[j]);
+  }
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer !== 'back') {
+      str += this.mark(axes[j]);
+    }
+  }
+  for (j=0, m=legends.length; j<m; ++j) {
+    str += this.mark(legends[j]);
+  }
+
+  return str;
+};
+
+function styles(d, mark, tag, defs) {
+  var i, n, prop, name, value,
+      o = Array.isArray(d) ? d[0] : d;
+  if (o == null) return '';
+
+  var s = '';
+
+  if (tag === 'bgrect' && mark.interactive === false) {
+    s += 'pointer-events: none;';
+  }
+
+  if (tag === 'text') {
+    s += 'font: ' + font.string(o) + ';';
+  }
+
+  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
+    prop = SVG.styleProperties[i];
+    name = SVG.styles[prop];
+    value = o[prop];
+
+    if (value == null) {
+      if (name === 'fill') {
+        s += (s.length ? ' ' : '') + 'fill: none;';
+      }
+    } else {
+      if (value.id) {
+        // ensure definition is included
+        defs.gradient[value.id] = value;
+        value = 'url(#' + value.id + ')';
+      }
+      s += (s.length ? ' ' : '') + name + ': ' + value + ';';
+    }
+  }
+
+  return s ? 'style="' + s + '"' : null;
+}
+
+function escape_text(s) {
+  s = (s == null ? '' : String(s));
+  return s.replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+}
+
+function group_bg(o, style) {
+  return openTag('rect', {
+    'class': 'background',
+    width: o.width || 0,
+    height: o.height || 0
+  }, style) + closeTag('rect');
+}
+
+//
+
+var MARKS = {
+  group:  ['g', group],
+  area:   ['path', area, true],
+  line:   ['path', line, true],
+  arc:    ['path', arc],
+  path:   ['path', path],
+  symbol: ['path', symbol],
+  rect:   ['rect', rect],
+  rule:   ['line', rule],
+  text:   ['text', text],
+  image:  ['image', image]
+};
+
+function group(o, r) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      attr = {transform: 'translate('+x+','+y+')'},
+      id, c;
+
+  if (o.clip) {
+    id = o.clip_id || (o.clip_id = 'clip' + r._defs.clip_id++);
+    c = {
+      width:  o.width || 0,
+      height: o.height || 0
+    };
+        
+    r._defs.clipping[id] = c;
+    attr['clip-path'] = 'url(#' + id + ')';
+  }
+
+  return attr;
+}
+
+function arc(o) {
+  return {
+    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
+    d: SVG.path.arc(o)
+  };
+}
+
+function area(items) {
+  return items.length ? {d: areaPath(items)} : null;
+}
+
+function line(items) {
+  return items.length ? {d: linePath(items)} : null;
+}
+
+function path(o) {
+  return {
+    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
+    d: o.path
+  };
+}
+
+function rect(o) {
+  return {
+    x: o.x || 0,
+    y: o.y || 0,
+    width: o.width || 0,
+    height: o.height || 0
+  };
+}
+
+function rule(o) {
+  var x1 = o.x || 0,
+      y1 = o.y || 0;
+  return {
+    x1: x1,
+    y1: y1,
+    x2: o.x2 != null ? o.x2 : x1,
+    y2: o.y2 != null ? o.y2 : y1
+  };
+}
+
+function symbol(o) {
+  return {
+    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
+    d: SVG.path.symbol(o)
+  };
+}
+
+function image(o, r) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      w = o.width || 0,
+      h = o.height || 0,
+      url = r._loader.imageURL(o.url);
+
+  x = x - (o.align === 'center' ? w/2 : o.align === 'right' ? w : 0);
+  y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
+
+  return {
+    'xlink:href': url,
+    x: x,
+    y: y,
+    width: w,
+    height: h
+  };
+}
+
+function text(o) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      a = o.angle || 0,
+      r = o.radius || 0,
+      align = SVG.textAlign[o.align] || 'start';
+
+  if (r) {
+    var t = (o.theta || 0) - Math.PI/2;
+    x += r * Math.cos(t);
+    y += r * Math.sin(t);
+  }
+
+  return {
+    x: x + (o.dx || 0),
+    y: y + (o.dy || 0) + font.offset(o),
+    'text-anchor': align,
+    transform: a ? 'rotate('+a+' '+x+','+y+')' : null
+  };
+}
+
+module.exports = SVGStringRenderer;
+
+},{"../../path/area":25,"../../path/line":28,"../../util/ImageLoader":67,"../../util/dom":71,"../../util/font":72,"../../util/svg":73,"../Renderer":32}],49:[function(require,module,exports){
+module.exports = {
+  Renderer: require('./SVGStringRenderer')
+};
+
+},{"./SVGStringRenderer":48}],50:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    Handler = require('../Handler');
+
+function SVGHandler() {
+  Handler.call(this);
+}
+
+var base = Handler.prototype;
+var prototype = (SVGHandler.prototype = Object.create(base));
+prototype.constructor = SVGHandler;
+
+prototype.initialize = function(el, pad, obj) {
+  this._svg = DOM.find(el, 'svg');
+  return base.initialize.call(this, el, pad, obj);
+};
+
+prototype.svg = function() {
+  return this._svg;
+};
+
+// wrap an event listener for the SVG DOM
+prototype.listener = function(handler) {
+  var that = this;
+  return function(evt) {
+    var target = evt.target,
+        item = target.__data__;
+    item = Array.isArray(item) ? item[0] : item;
+    handler.call(that._obj, evt, item);
+  };
+};
+
+// add an event handler
+prototype.on = function(type, handler) {
+  var name = this.eventName(type),
+      svg = this._svg,
+      h = this._handlers,
+      x = {
+        type:     type,
+        handler:  handler,
+        listener: this.listener(handler)
+      };
+
+  (h[name] || (h[name] = [])).push(x);
+  svg.addEventListener(name, x.listener);
+  return this;
+};
+
+// remove an event handler
+prototype.off = function(type, handler) {
+  var name = this.eventName(type),
+      svg = this._svg,
+      h = this._handlers[name], i;
+  if (!h) return;
+  for (i=h.length; --i>=0;) {
+    if (h[i].type === type && !handler || h[i].handler === handler) {
+      svg.removeEventListener(name, h[i].listener);
+      h.splice(i, 1);
+    }
+  }
+  return this;
+};
+
+module.exports = SVGHandler;
+
+},{"../../util/dom":71,"../Handler":31}],51:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    SVG = require('../../util/svg'),
+    ImageLoader = require('../../util/ImageLoader'),
+    ns = SVG.metadata.xmlns,
+    marks = require('./marks'),
+    bind = require('./marks/util').bind,
+    Renderer = require('../Renderer');
+
+var href = (typeof window !== 'undefined' ? window.location.href : '');
+
+function SVGRenderer(loadConfig) {
+  Renderer.call(this);
+  this._loader = new ImageLoader(loadConfig);
+}
+
+var base = Renderer.prototype;
+var prototype = (SVGRenderer.prototype = Object.create(base));
+prototype.constructor = SVGRenderer;
+
+prototype.initialize = function(el, width, height, padding) {
+  if (el) {
+    this._svg = DOM.child(el, 0, 'svg', ns, 'marks');
+    DOM.clear(el, 1);
+    // set the svg root group
+    this._root = DOM.child(this._svg, 0, 'g', ns);
+    DOM.clear(this._svg, 1);
+  }
+
+  // create the svg definitions cache
+  this._defs = {
+    clip_id:  1,
+    gradient: {},
+    clipping: {}
+  };
+
+  // set background color if defined
+  this.background(this._bgcolor);
+
+  return base.initialize.call(this, el, width, height, padding);
+};
+
+prototype.background = function(bgcolor) {
+  if (arguments.length && this._svg) {
+    this._svg.style.setProperty('background-color', bgcolor);
+  }
+  return base.background.apply(this, arguments);
+};
+
+prototype.resize = function(width, height, padding) {
+  base.resize.call(this, width, height, padding);
+  
+  if (this._svg) {
+    var w = this._width,
+        h = this._height,
+        p = this._padding;
+  
+    this._svg.setAttribute('width', w + p.left + p.right);
+    this._svg.setAttribute('height', h + p.top + p.bottom);
+    
+    this._root.setAttribute('transform', 'translate('+p.left+','+p.top+')');
+  }
+
+  return this;
+};
+
+prototype.svg = function() {
+  if (!this._svg) return null;
+
+  var attr = {
+    'class':  'marks',
+    'width':  this._width + this._padding.left + this._padding.right,
+    'height': this._height + this._padding.top + this._padding.bottom,
+  };
+  for (var key in SVG.metadata) {
+    attr[key] = SVG.metadata[key];
+  }
+
+  return DOM.openTag('svg', attr) + this._svg.innerHTML + DOM.closeTag('svg');
+};
+
+prototype.updateDefs = function() {
+  var svg = this._svg,
+      defs = this._defs,
+      el = defs.el,
+      index = 0, id;
+
+  for (id in defs.gradient) {
+    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
+    updateGradient(el, defs.gradient[id], index++);
+  }
+  for (id in defs.clipping) {
+    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
+    updateClipping(el, defs.clipping[id], index++);
+  }
+  
+  // clean-up
+  if (el) {
+    if (index === 0) {
+      svg.removeChild(el);
+      defs.el = null;
+    } else {
+      DOM.clear(el, index);      
+    }
+  }
+};
+
+function updateGradient(el, grad, index) {
+  var i, n, stop;
+
+  if (!grad.el) {
+    grad.el = DOM.child(el, index, 'linearGradient', ns);
+    grad.el.setAttribute('id', grad.id);
+  }
+  grad.el.setAttribute('x1', grad.x1);
+  grad.el.setAttribute('x2', grad.x2);
+  grad.el.setAttribute('y1', grad.y1);
+  grad.el.setAttribute('y2', grad.y2);
+  
+  for (i=0, n=grad.stops.length; i<n; ++i) {
+    stop = DOM.child(grad.el, i, 'stop', ns);
+    stop.setAttribute('offset', grad.stops[i].offset);
+    stop.setAttribute('stop-color', grad.stops[i].color);
+  }
+  DOM.clear(grad.el, i);
+}
+
+function updateClipping(el, clip, index) {
+  var rect;
+
+  if (!clip.el) {
+    clip.el = DOM.child(el, index, 'clipPath', ns);
+    clip.el.setAttribute('id', clip.id);
+    rect = DOM.child(clip.el, 0, 'rect', ns);
+    rect.setAttribute('x', 0);
+    rect.setAttribute('y', 0);
+  }
+  rect = rect || clip.el.childNodes[0];
+  rect.setAttribute('width', clip.width);
+  rect.setAttribute('height', clip.height);
+}
+
+prototype.render = function(scene, items) {
+  if (items) {
+    this.update(items);
+  } else {
+    this._defs.gradient = {}; // clear gradient cache
+    this.draw(this._root, scene, -1);
+    DOM.clear(this._root, 1);
+  }
+  this.updateDefs();
+
+  return this;
+};
+
+prototype.update = function(items) {
+  var item, mark, scene, el, i, n;
+
+  for (i=0, n=items.length; i<n; ++i) {
+    item = items[i];
+    mark = marks[item.mark.marktype];
+    item = (mark.nested ? item.mark.items : item);
+    el   = (mark.nested ? item[0] : item)._svg;
+
+    scene = item.mark;
+    if (!el) {
+      while (scene) {
+        if (scene._svg) {
+          mark = marks[scene.marktype];
+          el = bind(scene._svg, mark, item, scene.items.length);
+          break;
+        }
+        item = scene.group;
+        if (item._svg) {
+          this.draw(item._svg, scene, item.items.length);
+          return;
+        }
+        scene = item.mark;
+      }
+    }
+    mark.update.call(this, el, item);
+    this.style(el, item);
+    if (mark.recurse) mark.recurse.call(this, el, item);
+  }
+};
+
+prototype.draw = function(el, scene, index) {
+  var mark = marks[scene.marktype];
+  mark.draw.call(this, el, scene, index);
+};
+
+prototype.style = function(el, d) {
+  var i, n, prop, name, value,
+      o = Array.isArray(d) ? d[0] : d;
+  if (o == null) return;
+
+  if (o.mark.marktype === 'group') {
+    el = el.childNodes[0]; // set styles on background
+    value = o.mark.interactive === false ? 'none' : null;
+    el.style.setProperty('pointer-events', value);
+  }
+
+  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
+    prop = SVG.styleProperties[i];
+    name = SVG.styles[prop];
+    value = o[prop];
+
+    if (value == null) {
+      if (name === 'fill') {
+        el.style.setProperty(name, 'none', null);
+      } else {
+        el.style.removeProperty(name);
+      }
+    } else {
+      if (value.id) {
+        // ensure definition is included
+        this._defs.gradient[value.id] = value;
+        value = 'url(' + href + '#' + value.id + ')';
+      }
+      el.style.setProperty(name, value+'', null);
+    }
+  }
+};
+
+module.exports = SVGRenderer;
+
+},{"../../util/ImageLoader":67,"../../util/dom":71,"../../util/svg":73,"../Renderer":32,"./marks":57,"./marks/util":64}],52:[function(require,module,exports){
+module.exports = {
+  Handler:  require('./SVGHandler'),
+  Renderer: require('./SVGRenderer')
+};
+},{"./SVGHandler":50,"./SVGRenderer":51}],53:[function(require,module,exports){
+var path = require('../../../util/svg').path.arc;
+
+module.exports = {
+  tag:    'path',
+  update: function(el, o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    el.setAttribute('transform', 'translate('+x+','+y+')');
+    el.setAttribute('d', path(o));
+  }
+};
+
+},{"../../../util/svg":73}],54:[function(require,module,exports){
+var path = require('../../../path/area');
+
+module.exports = {
+  tag:    'path',
+  nested: true,
+  update: function(el, items) {
+    if (!items.length) return;
+    el.setAttribute('d', path(items));
+  }
+};
+
+},{"../../../path/area":25}],55:[function(require,module,exports){
+var DOM = require('../../../util/dom'),
+    drawMark = require('./util').draw;
+
+function draw(el, scene, index) {
+  var p = drawMark.call(this, el, scene, index, groupMark);
+  for (var i=0, n=scene.items.length; i<n; ++i) {
+    recurse.call(this, p.childNodes[i], scene.items[i]);
+  }
+}
+
+function recurse(el, group) {
+  var items = group.items || [],
+      legends = group.legendItems || [],
+      axes = group.axisItems || [],
+      idx = 0, j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer === 'back') {
+      draw.call(this, el, axes[j], idx++);
+    }
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    this.draw(el, items[j], idx++);
+  }
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer !== 'back') {
+      draw.call(this, el, axes[j], idx++);
+    }
+  }
+  for (j=0, m=legends.length; j<m; ++j) {
+    draw.call(this, el, legends[j], idx++);
+  }
+
+  // remove any extraneous DOM elements
+  DOM.clear(el, 1 + idx);
+}
+
+function update(el, o) {
+  var w = o.width || 0,
+      h = o.height || 0,
+      cp = 'clip-path',
+      id, c, bg;
+
+  el.setAttribute('transform', 'translate(' + (o.x||0) + ',' + (o.y||0) + ')');
+
+  if (o.clip) {
+    id = o.clip_id || (o.clip_id = 'clip' + this._defs.clip_id++);
+    c = this._defs.clipping[id] || (this._defs.clipping[id] = {id: id});
+    c.width = w;
+    c.height = h;
+    el.setAttribute(cp, 'url(#'+id+')');
+  } else if (el.hasAttribute(cp)) {
+    // remove expired clip path
+    id = el.getAttribute(cp).slice(5, -1);
+    delete this._defs.clipping[id];
+    el.removeAttribute(cp);
+  }
+
+  bg = el.childNodes[0];
+  bg.setAttribute('width', w);
+  bg.setAttribute('height', h);
+}
+
+var groupMark = module.exports = {
+  tag:     'g',
+  recurse: recurse,
+  update:  update,
+  draw:    draw
+};
+
+},{"../../../util/dom":71,"./util":64}],56:[function(require,module,exports){
+module.exports = {
+  tag:    'image',
+  update: function(el, o) {
+    var x = o.x || 0,
+        y = o.y || 0,
+        w = o.width || 0, // TODO? image loading to determine width/height
+        h = o.height || 0,
+        url = this._loader.imageURL(o.url);
+
+    x = x - (o.align==='center' ? w/2 : (o.align==='right' ? w : 0));
+    y = y - (o.baseline==='middle' ? h/2 : (o.baseline==='bottom' ? h : 0));
+
+    if (url) {
+      el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', url);
+    }
+
+    el.setAttribute('x', x);
+    el.setAttribute('y', y);
+    el.setAttribute('width', w);
+    el.setAttribute('height', h);
+  }
+};
+
+},{}],57:[function(require,module,exports){
+var draw = require('./util').draw;
+
+function init(mark) {
+  mark.draw = function(g, scene, index) {
+    draw.call(this, g, scene, index, mark);
+  };
+  return mark;
+}
+
+module.exports = {
+  arc:    init(require('./arc')),
+  area:   init(require('./area')),
+  group:  require('./group'),
+  image:  init(require('./image')),
+  line:   init(require('./line')),
+  path:   init(require('./path')),
+  rect:   init(require('./rect')),
+  rule:   init(require('./rule')),
+  symbol: init(require('./symbol')),
+  text:   init(require('./text'))
+};
+
+},{"./arc":53,"./area":54,"./group":55,"./image":56,"./line":58,"./path":59,"./rect":60,"./rule":61,"./symbol":62,"./text":63,"./util":64}],58:[function(require,module,exports){
+var path = require('../../../path/line');
+
+module.exports = {
+  tag:    'path',
+  nested: true,
+  update: function(el, items) {
+    if (!items.length) return;
+    el.setAttribute('d', path(items));
+  }
+};
+
+},{"../../../path/line":28}],59:[function(require,module,exports){
+module.exports = {
+  tag:    'path',
+  update: function draw(el, o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    el.setAttribute('transform', 'translate('+x+','+y+')');
+    if (o.path != null) el.setAttribute('d', o.path);
+  }
+};
+
+},{}],60:[function(require,module,exports){
+module.exports = {
+  tag:    'rect',
+  update: function(el, o) {
+    el.setAttribute('x', o.x || 0);
+    el.setAttribute('y', o.y || 0);
+    el.setAttribute('width', o.width || 0);
+    el.setAttribute('height', o.height || 0);
+  }
+};
+
+},{}],61:[function(require,module,exports){
+module.exports = {
+  tag:    'line',
+  update: function(el, o) {
+    var x1 = o.x || 0,
+        y1 = o.y || 0;
+    el.setAttribute('x1', x1);
+    el.setAttribute('y1', y1);
+    el.setAttribute('x2', o.x2 != null ? o.x2 : x1);
+    el.setAttribute('y2', o.y2 != null ? o.y2 : y1);
+  }
+};
+
+},{}],62:[function(require,module,exports){
+var path = require('../../../util/svg').path.symbol;
+
+module.exports = {
+  tag:    'path',
+  update: function draw(el, o) {
+    var x = o.x || 0,
+        y = o.y || 0;
+    el.setAttribute('transform', 'translate(' + x + ',' + y +')');
+    el.setAttribute('d', path(o));
+  }
+};
+
+
+},{"../../../util/svg":73}],63:[function(require,module,exports){
+var textAlign = require('../../../util/svg').textAlign,
+    font = require('../../../util/font');
+
+function update(el, o) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      a = o.angle || 0,
+      r = o.radius || 0,
+      align = textAlign[o.align] || 'start',
+      offset = font.offset(o);
+
+  if (r) {
+    var t = (o.theta || 0) - Math.PI/2;
+    x += r * Math.cos(t);
+    y += r * Math.sin(t);
+  }
+
+  el.setAttribute('x', x + (o.dx || 0));
+  el.setAttribute('y', y + (o.dy || 0) + offset);
+  el.setAttribute('text-anchor', align);
+
+  if (a) el.setAttribute('transform', 'rotate('+a+' '+x+','+y+')');
+  else el.removeAttribute('transform');
+
+  el.textContent = o.text;
+  el.style.setProperty('font', font.string(o), null);
+}
+
+module.exports = {
+  tag:    'text',
+  update: update
+};
+
+},{"../../../util/font":72,"../../../util/svg":73}],64:[function(require,module,exports){
+var ns = require('../../../util/svg').metadata.xmlns,
+    DOM = require('../../../util/dom');
+
+function draw(el, scene, index, mark) {
+  var data = mark.nested ? [scene.items] : scene.items || [],
+      events = scene.interactive === false ? 'none' : null,
+      isGroup = (mark.tag === 'g'),
+      className = DOM.cssClass(scene),
+      p, i, n, c, d;
+
+  p = DOM.child(el, index+1, 'g', ns, className);
+  p.setAttribute('class', className);
+  scene._svg = p;
+  scene.index = index;
+  if (!isGroup && events) {
+    p.style.setProperty('pointer-events', events);
+  }
+
+  for (i=0, n=data.length; i<n; ++i) {
+    d = data[i];
+    c = p.childNodes[i] || bind(p, mark, d, i);
+    mark.update.call(this, c, d);
+    this.style(c, d);
+  }
+  DOM.clear(p, i);
+  return p;
+}
+
+function bind(el, mark, item, index) {
+  // create svg element, bind data for D3 compatibility
+  var node = DOM.child(el, index, mark.tag, ns);
+  node.__data__ = item;
+  // create background rect
+  if (mark.tag === 'g') {
+    DOM.child(node, 0, 'rect', ns, 'background');
+  }
+  // add pointer from scenegraph item to svg element
+  if ((item = Array.isArray(item) ? item[0] : item)) {
+    item._svg = node;
+  }
+  return node;
+}
+
+module.exports = {
+  draw: draw,
+  bind: bind
+};
+
+},{"../../../util/dom":71,"../../../util/svg":73}],65:[function(require,module,exports){
+function Bounds(b) {
+  this.clear();
+  if (b) this.union(b);
+}
+
+var prototype = Bounds.prototype;
+
+prototype.clone = function() {
+  return new Bounds(this);
+};
+
+prototype.clear = function() {
+  this.x1 = +Number.MAX_VALUE;
+  this.y1 = +Number.MAX_VALUE;
+  this.x2 = -Number.MAX_VALUE;
+  this.y2 = -Number.MAX_VALUE;
+  return this;
+};
+
+prototype.set = function(x1, y1, x2, y2) {
+  this.x1 = x1;
+  this.y1 = y1;
+  this.x2 = x2;
+  this.y2 = y2;
+  return this;
+};
+
+prototype.add = function(x, y) {
+  if (x < this.x1) this.x1 = x;
+  if (y < this.y1) this.y1 = y;
+  if (x > this.x2) this.x2 = x;
+  if (y > this.y2) this.y2 = y;
+  return this;
+};
+
+prototype.expand = function(d) {
+  this.x1 -= d;
+  this.y1 -= d;
+  this.x2 += d;
+  this.y2 += d;
+  return this;
+};
+
+prototype.round = function() {
+  this.x1 = Math.floor(this.x1);
+  this.y1 = Math.floor(this.y1);
+  this.x2 = Math.ceil(this.x2);
+  this.y2 = Math.ceil(this.y2);
+  return this;
+};
+
+prototype.translate = function(dx, dy) {
+  this.x1 += dx;
+  this.x2 += dx;
+  this.y1 += dy;
+  this.y2 += dy;
+  return this;
+};
+
+prototype.rotate = function(angle, x, y) {
+  var cos = Math.cos(angle),
+      sin = Math.sin(angle),
+      cx = x - x*cos + y*sin,
+      cy = y - x*sin - y*cos,
+      x1 = this.x1, x2 = this.x2,
+      y1 = this.y1, y2 = this.y2;
+
+  return this.clear()
+    .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
+    .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
+    .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
+    .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
+};
+
+prototype.union = function(b) {
+  if (b.x1 < this.x1) this.x1 = b.x1;
+  if (b.y1 < this.y1) this.y1 = b.y1;
+  if (b.x2 > this.x2) this.x2 = b.x2;
+  if (b.y2 > this.y2) this.y2 = b.y2;
+  return this;
+};
+
+prototype.encloses = function(b) {
+  return b && (
+    this.x1 <= b.x1 &&
+    this.x2 >= b.x2 &&
+    this.y1 <= b.y1 &&
+    this.y2 >= b.y2
+  );
+};
+
+prototype.intersects = function(b) {
+  return b && !(
+    this.x2 < b.x1 ||
+    this.x1 > b.x2 ||
+    this.y2 < b.y1 ||
+    this.y1 > b.y2
+  );
+};
+
+prototype.contains = function(x, y) {
+  return !(
+    x < this.x1 ||
+    x > this.x2 ||
+    y < this.y1 ||
+    y > this.y2
+  );
+};
+
+prototype.width = function() {
+  return this.x2 - this.x1;
+};
+
+prototype.height = function() {
+  return this.y2 - this.y1;
+};
+
+module.exports = Bounds;
+
+},{}],66:[function(require,module,exports){
+var gradient_id = 0;
+
+function Gradient(type) {
+  this.id = 'gradient_' + (gradient_id++);
+  this.type = type || 'linear';
+  this.stops = [];
+  this.x1 = 0;
+  this.x2 = 1;
+  this.y1 = 0;
+  this.y2 = 0;
+}
+
+var prototype = Gradient.prototype;
+
+prototype.stop = function(offset, color) {
+  this.stops.push({
+    offset: offset,
+    color: color
+  });
+  return this;
+};
+
+module.exports = Gradient;
+},{}],67:[function(require,module,exports){
+var dl = (window.dl);
+
+function ImageLoader(loadConfig) {
+  this._pending = 0;
+  this._config = loadConfig || ImageLoader.Config; 
+}
+
+// Overridable global default load configuration
+ImageLoader.Config = null;
+
+var prototype = ImageLoader.prototype;
+
+prototype.pending = function() {
+  return this._pending;
+};
+
+prototype.params = function(uri) {
+  return dl.extend({url: uri}, this._config);
+};
+
+prototype.imageURL = function(uri) {
+  return dl.load.sanitizeUrl(this.params(uri));
+};
+
+function browser(uri, callback) {
+  var url = dl.load.sanitizeUrl(this.params(uri));
+  if (!url) { // error
+    if (callback) callback(uri, null);
+    return null;
+  }
+  
+  var loader = this,
+      image = new Image();
+
+  loader._pending += 1;
+
+  image.onload = function() {
+    loader._pending -= 1;
+    image.loaded = true;
+    if (callback) callback(null, image);
+  };
+  image.src = url;
+
+  return image;
+}
+
+function server(uri, callback) {
+  var loader = this,
+      image = new ((window.canvas).Image)();
+
+  loader._pending += 1;
+
+  dl.load(this.params(uri), function(err, data) {
+    loader._pending -= 1;
+    if (err) {
+      if (callback) callback(err, null);
+      return null;
+    }
+    image.src = data;
+    image.loaded = true;
+    if (callback) callback(null, image);
+  });
+
+  return image;
+}
+
+prototype.loadImage = function(uri, callback) {
+  return dl.isNode ?
+    server.call(this, uri, callback) :
+    browser.call(this, uri, callback);
+};
+
+module.exports = ImageLoader;
+
+},{}],68:[function(require,module,exports){
+function Item(mark) {
+  this.mark = mark;
+}
+
+var prototype = Item.prototype;
+
+prototype.hasPropertySet = function(name) {
+  var props = this.mark.def.properties;
+  return props && props[name] != null;
+};
+
+prototype.cousin = function(offset, index) {
+  if (offset === 0) return this;
+  offset = offset || -1;
+  var mark = this.mark,
+      group = mark.group,
+      iidx = index==null ? mark.items.indexOf(this) : index,
+      midx = group.items.indexOf(mark) + offset;
+  return group.items[midx].items[iidx];
+};
+
+prototype.sibling = function(offset) {
+  if (offset === 0) return this;
+  offset = offset || -1;
+  var mark = this.mark,
+      iidx = mark.items.indexOf(this) + offset;
+  return mark.items[iidx];
+};
+
+prototype.remove = function() {
+  var item = this,
+      list = item.mark.items,
+      i = list.indexOf(item);
+  if (i >= 0) {
+    if (i===list.length-1) {
+      list.pop();
+    } else {
+      list.splice(i, 1);
+    }
+  }
+  return item;
+};
+
+prototype.touch = function() {
+  if (this.pathCache) this.pathCache = null;
+};
+
+module.exports = Item;
+},{}],69:[function(require,module,exports){
+var Bounds = require('../util/Bounds'),
+    canvas = require('../util/canvas'),
+    font = require('./font'),
+    paths = require('../path'),
+    parse = paths.parse,
+    boundPath = paths.bounds,
+    areaPath = paths.area,
+    linePath = paths.line,
+    halfpi = Math.PI / 2,
+    sqrt3 = Math.sqrt(3),
+    tan30 = Math.tan(30 * Math.PI / 180),
+    g2D = null;
+
+function context() {
+  return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
+}
+
+function pathBounds(o, path, bounds) {
+  if (path == null) {
+    bounds.set(0, 0, 0, 0);
+  } else {
+    boundPath(path, bounds);
+    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+      bounds.expand(o.strokeWidth);
+    }
+  }
+  return bounds;
+}
+
+function path(o, bounds) {
+  var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
+  return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
+}
+
+function area(o, bounds) {
+  var items = o.mark.items;
+  o = items[0];
+  var p = o.pathCache || (o.pathCache = parse(areaPath(items)));
+  return pathBounds(items[0], p, bounds);
+}
+
+function line(o, bounds) {
+  var items = o.mark.items;
+  o = items[0];
+  var p = o.pathCache || (o.pathCache = parse(linePath(items)));
+  return pathBounds(items[0], p, bounds);
+}
+
+function rect(o, bounds) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      u = (x + o.width) || 0,
+      v = (y + o.height) || 0;
+  bounds.set(x, y, u, v);
+  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+    bounds.expand(o.strokeWidth);
+  }
+  return bounds;
+}
+
+function image(o, bounds) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      w = o.width || 0,
+      h = o.height || 0;
+  x = x - (o.align === 'center' ? w/2 : (o.align === 'right' ? w : 0));
+  y = y - (o.baseline === 'middle' ? h/2 : (o.baseline === 'bottom' ? h : 0));
+  return bounds.set(x, y, x+w, y+h);
+}
+
+function rule(o, bounds) {
+  var x1, y1;
+  bounds.set(
+    x1 = o.x || 0,
+    y1 = o.y || 0,
+    o.x2 != null ? o.x2 : x1,
+    o.y2 != null ? o.y2 : y1
+  );
+  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+    bounds.expand(o.strokeWidth);
+  }
+  return bounds;
+}
+
+function arc(o, bounds) {
+  var cx = o.x || 0,
+      cy = o.y || 0,
+      ir = o.innerRadius || 0,
+      or = o.outerRadius || 0,
+      sa = (o.startAngle || 0) - halfpi,
+      ea = (o.endAngle || 0) - halfpi,
+      xmin = Infinity, xmax = -Infinity,
+      ymin = Infinity, ymax = -Infinity,
+      a, i, n, x, y, ix, iy, ox, oy;
+
+  var angles = [sa, ea],
+      s = sa - (sa % halfpi);
+  for (i=0; i<4 && s<ea; ++i, s+=halfpi) {
+    angles.push(s);
+  }
+
+  for (i=0, n=angles.length; i<n; ++i) {
+    a = angles[i];
+    x = Math.cos(a); ix = ir*x; ox = or*x;
+    y = Math.sin(a); iy = ir*y; oy = or*y;
+    xmin = Math.min(xmin, ix, ox);
+    xmax = Math.max(xmax, ix, ox);
+    ymin = Math.min(ymin, iy, oy);
+    ymax = Math.max(ymax, iy, oy);
+  }
+
+  bounds.set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
+  if (o.stroke && o.opacity !== 0 && o.strokeWidth !== 0) {
+    bounds.expand(o.strokeWidth || 1);
+  }
+  return bounds;
+}
+
+function symbol(o, bounds) {
+  var size = o.size != null ? o.size : 100,
+      x = o.x || 0,
+      y = o.y || 0,
+      r, t, rx, ry;
+
+  switch (o.shape) {
+    case 'cross':
+      r = Math.sqrt(size / 5) / 2;
+      t = 3*r;
+      bounds.set(x-t, y-r, x+t, y+r);
+      break;
+
+    case 'diamond':
+      ry = Math.sqrt(size / (2 * tan30));
+      rx = ry * tan30;
+      bounds.set(x-rx, y-ry, x+rx, y+ry);
+      break;
+
+    case 'square':
+      t = Math.sqrt(size);
+      r = t / 2;
+      bounds.set(x-r, y-r, x+r, y+r);
+      break;
+
+    case 'triangle-down':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      bounds.set(x-rx, y-ry, x+rx, y+ry);
+      break;
+
+    case 'triangle-up':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      bounds.set(x-rx, y-ry, x+rx, y+ry);
+      break;
+
+    default:
+      r = Math.sqrt(size/Math.PI);
+      bounds.set(x-r, y-r, x+r, y+r);
+  }
+  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
+    bounds.expand(o.strokeWidth);
+  }
+  return bounds;
+}
+
+function text(o, bounds, noRotate) {
+  var x = (o.x || 0) + (o.dx || 0),
+      y = (o.y || 0) + (o.dy || 0),
+      h = font.size(o),
+      a = o.align,
+      r = o.radius || 0,
+      g = context(), w, t;
+
+  g.font = font.string(o);
+  w = g.measureText(o.text || '').width;
+
+  if (r) {
+    t = (o.theta || 0) - Math.PI/2;
+    x += r * Math.cos(t);
+    y += r * Math.sin(t);
+  }
+
+  // horizontal
+  if (a === 'center') {
+    x = x - (w / 2);
+  } else if (a === 'right') {
+    x = x - w;
+  } else {
+    // left by default, do nothing
+  }
+
+  // vertical
+  y += font.offset(o) - Math.round(0.8*h);
+  
+  bounds.set(x, y, x+w, y+h);
+  if (o.angle && !noRotate) {
+    bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
+  }
+  return bounds.expand(noRotate ? 0 : 1);
+}
+
+function group(g, bounds, includeLegends) {
+  var axes = g.axisItems || [],
+      items = g.items || [],
+      legends = g.legendItems || [],
+      j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    bounds.union(axes[j].bounds);
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    bounds.union(items[j].bounds);
+  }
+  if (includeLegends) {
+    for (j=0, m=legends.length; j<m; ++j) {
+      bounds.union(legends[j].bounds);
+    }
+  }
+  if (g.width != null && g.height != null) {
+    bounds.add(g.width, g.height);
+  }
+  if (g.x != null && g.y != null) {
+    bounds.add(0, 0);
+  }
+  return bounds.translate(g.x || 0, g.y || 0);
+}
+
+var methods = {
+  group:  group,
+  symbol: symbol,
+  image:  image,
+  rect:   rect,
+  rule:   rule,
+  arc:    arc,
+  text:   text,
+  path:   path,
+  area:   area,
+  line:   line
+};
+
+function itemBounds(item, func, opt) {
+  func = func || methods[item.mark.marktype];
+  var curr = item.bounds,
+      prev = item['bounds:prev'] || (item['bounds:prev'] = new Bounds());
+
+  if (curr) {
+    prev.clear().union(curr);
+    curr.clear();
+  } else {
+    item.bounds = new Bounds();
+  }
+  func(item, item.bounds, opt);
+  if (!curr) prev.clear().union(item.bounds);
+  return item.bounds;
+}
+
+function markBounds(mark, bounds, opt) {
+  bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
+
+  var type  = mark.marktype,
+      func  = methods[type],
+      items = mark.items,
+      i, n;
+      
+  if ((type==='area' || type==='line') && items.length) {
+    bounds.union(itemBounds(items[0], func, opt));
+  } else if (items) {
+    for (i=0, n=items.length; i<n; ++i) {
+      bounds.union(itemBounds(items[i], func, opt));
+    }
+  }
+  return (mark.bounds = bounds);
+}
+
+module.exports = {
+  mark:  markBounds,
+  item:  itemBounds,
+  text:  text,
+  group: group
+};
+
+},{"../path":27,"../util/Bounds":65,"../util/canvas":70,"./font":72}],70:[function(require,module,exports){
+function instance(w, h) {
+  w = w || 1;
+  h = h || 1;
+  var canvas;
+
+  if (typeof document !== 'undefined' && document.createElement) {
+    canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+  } else {
+    var Canvas = (window.canvas);
+    if (!Canvas.prototype) return null;
+    canvas = new Canvas(w, h);
+  }
+  return lineDash(canvas);
+}
+
+function resize(canvas, w, h, p) {
+  var g = this._ctx = canvas.getContext('2d'), 
+      s = 1;
+
+  canvas.width = w + p.left + p.right;
+  canvas.height = h + p.top + p.bottom;
+
+  // if browser canvas, attempt to modify for retina display
+  if (typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement) {
+    g.pixelratio = (s = pixelRatio(canvas) || 1);
+  }
+
+  g.setTransform(s, 0, 0, s, s*p.left, s*p.top);
+  return canvas;
+}
+
+function pixelRatio(canvas) {
+  var g = canvas.getContext('2d');
+
+  // get canvas pixel data
+  var devicePixelRatio = window && window.devicePixelRatio || 1,
+      backingStoreRatio = (
+        g.webkitBackingStorePixelRatio ||
+        g.mozBackingStorePixelRatio ||
+        g.msBackingStorePixelRatio ||
+        g.oBackingStorePixelRatio ||
+        g.backingStorePixelRatio) || 1,
+      ratio = devicePixelRatio / backingStoreRatio;
+
+  if (devicePixelRatio !== backingStoreRatio) {
+    // set actual and visible canvas size
+    var w = canvas.width,
+        h = canvas.height;
+    canvas.width = w * ratio;
+    canvas.height = h * ratio;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+  }
+
+  return ratio;
+}
+
+function lineDash(canvas) {
+  var g = canvas.getContext('2d');
+  if (g.vgLineDash) return; // already initialized!
+
+  var NOOP = function() {},
+      NODASH = [];
+  
+  if (g.setLineDash) {
+    g.vgLineDash = function(dash) { this.setLineDash(dash || NODASH); };
+    g.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
+  } else if (g.webkitLineDash !== undefined) {
+  	g.vgLineDash = function(dash) { this.webkitLineDash = dash || NODASH; };
+    g.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
+  } else if (g.mozDash !== undefined) {
+    g.vgLineDash = function(dash) { this.mozDash = dash; };
+    g.vgLineDashOffset = NOOP;
+  } else {
+    g.vgLineDash = NOOP;
+    g.vgLineDashOffset = NOOP;
+  }
+  return canvas;
+}
+
+module.exports = {
+  instance:   instance,
+  resize:     resize,
+  pixelRatio: pixelRatio,
+  lineDash:   lineDash
+};
+
+},{}],71:[function(require,module,exports){
+function create(doc, tag, ns) {
+  return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
+}
+
+module.exports = {
+  find: function(el, tag) {
+    for (var i=0, n=el.childNodes.length; i<n; ++i) {
+      if (el.childNodes[i].tagName.toLowerCase() === tag) {
+        return el.childNodes[i];
+      }
+    }
+  },
+  child: function(el, index, tag, ns, className) {
+    var a, b;
+    a = b = el.childNodes[index];
+    if (!a || a.tagName.toLowerCase() !== tag ||
+        className && a.getAttribute('class') != className) {
+      a = create(el.ownerDocument, tag, ns);
+      el.insertBefore(a, b);
+      if (className) a.setAttribute('class', className);
+    }
+    return a;
+  },
+  clear: function(el, index) {
+    var curr = el.childNodes.length;
+    while (curr > index) {
+      el.removeChild(el.childNodes[--curr]);
+    }
+    return el;
+  },
+  cssClass: function(mark) {
+    return 'mark-' + mark.marktype + (mark.name ? ' '+mark.name : '');
+  },
+  openTag: function(tag, attr, raw) {
+    var s = '<' + tag, key, val;
+    if (attr) {
+      for (key in attr) {
+        val = attr[key];
+        if (val != null) {
+          s += ' ' + key + '="' + val + '"';
+        }
+      }
+    }
+    if (raw) s += ' ' + raw;
+    return s + '>';
+  },
+  closeTag: function(tag) {
+    return '</' + tag + '>';
+  }
+};
+
+},{}],72:[function(require,module,exports){
+function size(item) {
+  return item.fontSize != null ? item.fontSize : 11;
+}
+
+module.exports = {
+  size: size,
+  string: function(item, quote) {
+    var font = item.font;
+    if (quote && font) {
+      font = String(font).replace(/\"/g, '\'');
+    }
+    return '' +
+      (item.fontStyle ? item.fontStyle + ' ' : '') +
+      (item.fontVariant ? item.fontVariant + ' ' : '') +
+      (item.fontWeight ? item.fontWeight + ' ' : '') +
+      size(item) + 'px ' +
+      (font || 'sans-serif');
+  },
+  offset: function(item) {
+    // perform our own font baseline calculation
+    // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+    var baseline = item.baseline,
+        h = size(item);
+    return Math.round(
+      baseline === 'top'    ?  0.93*h :
+      baseline === 'middle' ?  0.30*h :
+      baseline === 'bottom' ? -0.21*h : 0
+    );
+  }
+};
+
+},{}],73:[function(require,module,exports){
+var d3_svg = (window.d3).svg;
+
+function x(o)     { return o.x || 0; }
+function y(o)     { return o.y || 0; }
+function xw(o)    { return (o.x || 0) + (o.width || 0); }
+function yh(o)    { return (o.y || 0) + (o.height || 0); }
+function size(o)  { return o.size == null ? 100 : o.size; }
+function shape(o) { return o.shape || 'circle'; }
+
+module.exports = {
+  metadata: {
+    'version': '1.1',
+    'xmlns': 'http://www.w3.org/2000/svg',
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
+  },
+  path: {
+    arc:    d3_svg.arc(),
+    areav:  d3_svg.area().x(x).y1(y).y0(yh),
+    areah:  d3_svg.area().y(y).x1(x).x0(xw),
+    line:   d3_svg.line().x(x).y(y),
+    symbol: d3_svg.symbol().type(shape).size(size)
+  },
+  textAlign: {
+    'left':   'start',
+    'center': 'middle',
+    'right':  'end'
+  },
+  textBaseline: {
+    'top':    'before-edge',
+    'bottom': 'after-edge',
+    'middle': 'central'
+  },
+  styles: {
+    'fill':             'fill',
+    'fillOpacity':      'fill-opacity',
+    'stroke':           'stroke',
+    'strokeWidth':      'stroke-width',
+    'strokeOpacity':    'stroke-opacity',
+    'strokeCap':        'stroke-linecap',
+    'strokeDash':       'stroke-dasharray',
+    'strokeDashOffset': 'stroke-dashoffset',
+    'opacity':          'opacity'
+  },
+  styleProperties: [
+    'fill',
+    'fillOpacity',
+    'stroke',
+    'strokeWidth',
+    'strokeOpacity',
+    'strokeCap',
+    'strokeDash',
+    'strokeDashOffset',
+    'opacity'
+  ]
+};
+
+},{}],74:[function(require,module,exports){
 var util = require('datalib/src/util'),
-    canvas = require('../render/canvas/index'),
-    svg = require('../render/svg-headless/index'),
+    canvas = require('vega-scenegraph/src/render/canvas'),
+    svg = require('vega-scenegraph/src/render/svg-string'),
     View = require('./View'),
     log = require('../util/log');
 
 var HeadlessView = function(width, height, model) {
   View.call(null, width, height, model);
-  this._el = "body";
   this._type = "canvas";
   this._renderers = {canvas: canvas, svg: svg};
-  this._canvas = null;
-  this._headless = true;
 }
 
 var prototype = (HeadlessView.prototype = new View());
@@ -2921,7 +6444,9 @@ prototype.renderer = function(type) {
 };
 
 prototype.canvas = function() {
-  return this._canvas;
+  return (this._type === "canvas")
+    ? this._renderer.canvas()
+    : null;
 };
 
 prototype.canvasAsync = function(callback) {
@@ -2937,7 +6462,8 @@ prototype.canvasAsync = function(callback) {
   }
 
   // if images loading, poll until ready
-  (r.pendingImages() > 0) ? wait() : callback(this._canvas);
+  if (this._type !== "canvas") return null;
+  (r.pendingImages() > 0) ? wait() : callback(this.canvas());
 };
 
 prototype.svg = function() {
@@ -2957,48 +6483,15 @@ prototype.initialize = function() {
     h = this._viewport[1] - (pad ? pad.top + pad.bottom : 0);
   }
 
-  this._renderer = this._renderer || new this._io.Renderer();
-  
-  if (this._type === "svg") {
-    this.initSVG(w, h, pad, bg);
-  } else {
-    this.initCanvas(w, h, pad, bg);
-  }
+  this._renderer = (this._renderer || new this._io.Renderer())
+    .initialize(null, w, h, pad)
+    .background(bg);
   
   return this;
 };
 
-prototype.initCanvas = function(w, h, pad, bg) {
-  var Canvas = (window.canvas),
-      tw = w + (pad ? pad.left + pad.right : 0),
-      th = h + (pad ? pad.top + pad.bottom : 0),
-      canvas = this._canvas = util.isNode ? new Canvas(tw, th) : document.createElement('canvas'),
-      ctx = canvas.getContext("2d");
-
-  if(!util.isNode) {  // Manually set width/height on DOM elements
-    canvas.setAttribute("width", tw);
-    canvas.setAttribute("height", th);
-  }
-  
-  // setup canvas context
-  ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
-
-  // configure renderer
-  this._renderer.context(ctx);
-  this._renderer.resize(w, h, pad);
-  this._renderer.background(bg);
-};
-
-prototype.initSVG = function(w, h, pad, bg) {
-  var tw = w + (pad ? pad.left + pad.right : 0),
-      th = h + (pad ? pad.top + pad.bottom : 0);
-      
-  // configure renderer
-  this._renderer.initialize(this._el, tw, th, pad, bg);
-};
-
 module.exports = HeadlessView;
-},{"../render/canvas/index":59,"../render/svg-headless/index":63,"../util/log":105,"./View":26,"datalib/src/util":21}],25:[function(require,module,exports){
+},{"../util/log":139,"./View":76,"datalib/src/util":21,"vega-scenegraph/src/render/canvas":35,"vega-scenegraph/src/render/svg-string":49}],75:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Graph = require('../dataflow/Graph'), 
     Node  = require('../dataflow/Node'),
@@ -3105,13 +6598,13 @@ proto.fire = function(cs) {
 };
 
 module.exports = Model;
-},{"../dataflow/Graph":29,"../dataflow/Node":30,"../dataflow/changeset":32,"../scene/GroupBuilder":72,"../scene/visit":78,"datalib/src/util":21}],26:[function(require,module,exports){
+},{"../dataflow/Graph":79,"../dataflow/Node":80,"../dataflow/changeset":82,"../scene/GroupBuilder":110,"../scene/visit":115,"datalib/src/util":21}],76:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
+    canvas = require('vega-scenegraph/src/render/canvas'),
+    svg = require('vega-scenegraph/src/render/svg'),
     Node = require('../dataflow/Node'),
     parseStreams = require('../parse/streams'),
-    canvas = require('../render/canvas/index'),
-    svg = require('../render/svg/index'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
@@ -3273,12 +6766,8 @@ prototype.padding = function(pad) {
       this._padding = pad;
       this._strict = false;
     }
-    if (this._headless) {
-      this.initialize();
-    } else if(this._el) {
-      this._renderer.resize(this._width, this._height, pad);
-      if(this._handler) this._handler.padding(pad);
-    }
+    if (this._renderer) this._renderer.resize(this._width, this._height, pad);
+    if (this._handler)  this._handler.padding(pad);
   }
   return this;
 };
@@ -3364,13 +6853,13 @@ prototype.initialize = function(el) {
 
   // renderer
   v._renderer = (v._renderer || new this._io.Renderer())
-    .initialize(el, w, h, pad, bg);
+    .initialize(el, w, h, pad)
+    .background(bg);
   
   // input handler
   prevHandler = v._handler;
   v._handler = new this._io.Handler()
-    .initialize(el, pad, v)
-    .model(v._model);
+    .initialize(el, pad, v);
 
   if (prevHandler) {
     prevHandler.handlers().forEach(function(h) {
@@ -3393,7 +6882,10 @@ function build() {
     log.debug(input, ["rendering"]);
 
     var s = v._model.scene(),
+        h = v._handler,
         ds, d;
+
+    if (h && h.scene) h.scene(s);
 
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
@@ -3491,6 +6983,7 @@ View.factory = function(model) {
       .height(defs.height)
       .background(defs.background)
       .padding(defs.padding)
+      .viewport(defs.viewport)
       .initialize(opt.el);
 
     if (opt.data) v.data(opt.data);
@@ -3513,7 +7006,7 @@ View.factory = function(model) {
 };
 
 module.exports = View;
-},{"../dataflow/Node":30,"../dataflow/changeset":32,"../parse/streams":55,"../render/canvas/index":59,"../render/svg/index":67,"../scene/Encoder":71,"../scene/Transition":75,"../util/config":103,"../util/log":105,"./HeadlessView":24,"datalib/src/util":21}],27:[function(require,module,exports){
+},{"../dataflow/Node":80,"../dataflow/changeset":82,"../parse/streams":105,"../scene/Encoder":109,"../scene/Transition":112,"../util/config":137,"../util/log":139,"./HeadlessView":74,"datalib/src/util":21,"vega-scenegraph/src/render/canvas":35,"vega-scenegraph/src/render/svg":52}],77:[function(require,module,exports){
 var Node = require('./Node'),
     changeset = require('./changeset'),
     log = require('../util/log'),
@@ -3556,7 +7049,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Collector;
-},{"../util/constants":104,"../util/log":105,"./Node":30,"./changeset":32}],28:[function(require,module,exports){
+},{"../util/constants":138,"../util/log":139,"./Node":80,"./changeset":82}],78:[function(require,module,exports){
 var util = require('datalib/src/util'),
     changeset = require('./changeset'), 
     tuple = require('./tuple'), 
@@ -3794,7 +7287,7 @@ proto.listeners = function(ds) {
 };
 
 module.exports = Datasource;
-},{"../util/constants":104,"../util/log":105,"./Collector":27,"./Node":30,"./changeset":32,"./tuple":33,"datalib/src/util":21}],29:[function(require,module,exports){
+},{"../util/constants":138,"../util/log":139,"./Collector":77,"./Node":80,"./changeset":82,"./tuple":83,"datalib/src/util":21}],79:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Heap = require('heap'),
     Datasource = require('./Datasource'),
@@ -4004,7 +7497,7 @@ proto.evaluate = function(pulse, node) {
 };
 
 module.exports = Graph;
-},{"../transforms/BatchTransform":80,"../util/constants":104,"../util/log":105,"./Collector":27,"./Datasource":28,"./Signal":31,"./changeset":32,"datalib/src/util":21,"heap":22}],30:[function(require,module,exports){
+},{"../transforms/BatchTransform":117,"../util/constants":138,"../util/log":139,"./Collector":77,"./Datasource":78,"./Signal":81,"./changeset":82,"datalib/src/util":21,"heap":22}],80:[function(require,module,exports){
 var util = require('datalib/src/util'),
     C = require('../util/constants'),
     REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
@@ -4130,7 +7623,7 @@ proto.reevaluate = function(pulse) {
 };
 
 module.exports = Node;
-},{"../util/constants":104,"datalib/src/util":21}],31:[function(require,module,exports){
+},{"../util/constants":138,"datalib/src/util":21}],81:[function(require,module,exports){
 var Node = require('./Node'),
     changeset = require('./changeset');
 
@@ -4190,7 +7683,7 @@ proto.off = function(handler) {
 };
 
 module.exports = Signal;
-},{"./Node":30,"./changeset":32}],32:[function(require,module,exports){
+},{"./Node":80,"./changeset":82}],82:[function(require,module,exports){
 var C = require('../util/constants');
 var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
@@ -4231,7 +7724,7 @@ module.exports = {
   copy: copy,
   finalize: finalize,
 };
-},{"../util/constants":104}],33:[function(require,module,exports){
+},{"../util/constants":138}],83:[function(require,module,exports){
 var util = require('datalib/src/util'),
     C = require('../util/constants'),
     tupleID = 1;
@@ -4286,7 +7779,7 @@ module.exports = {
   reset:  reset,
   idMap:  idMap
 };
-},{"../util/constants":104,"datalib/src/util":21}],34:[function(require,module,exports){
+},{"../util/constants":138,"datalib/src/util":21}],84:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 module.exports = function(opt) {
@@ -4412,7 +7905,7 @@ module.exports = function(opt) {
   
   return codegen_wrap;
 };
-},{"./constants":35,"./functions":36,"datalib/src/util":21}],35:[function(require,module,exports){
+},{"./constants":85,"./functions":86,"datalib/src/util":21}],85:[function(require,module,exports){
 module.exports = {
   "NaN":     "NaN",
   "E":       "Math.E",
@@ -4424,7 +7917,7 @@ module.exports = {
   "SQRT1_2": "Math.SQRT1_2",
   "SQRT2":   "Math.SQRT2"
 };
-},{}],36:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 module.exports = function(codegen) {
@@ -4568,7 +8061,7 @@ module.exports = function(codegen) {
       }
   };
 };
-},{"datalib/src/util":21}],37:[function(require,module,exports){
+},{"datalib/src/util":21}],87:[function(require,module,exports){
 var parser = require('./parser'),
     codegen = require('./codegen');
     
@@ -4576,7 +8069,7 @@ module.exports = {
   parse: function(input, opt) { return parser.parse("("+input+")", opt); },
   code: function(opt) { return codegen(opt); }
 };
-},{"./codegen":34,"./parser":38}],38:[function(require,module,exports){
+},{"./codegen":84,"./parser":88}],88:[function(require,module,exports){
 /*
   The following expression parser is based on Esprima (http://esprima.org/).
   Original header comment and license for Esprima is included here:
@@ -6947,7 +10440,7 @@ module.exports = (function() {
   };
 
 })();
-},{}],39:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var util = require('datalib/src/util'),
     axs = require('../scene/axis'),
     config = require('../util/config');
@@ -7032,7 +10525,7 @@ function axis(def, index, axis, group) {
 }
 
 module.exports = axes;
-},{"../scene/axis":76,"../util/config":103,"datalib/src/util":21}],40:[function(require,module,exports){
+},{"../scene/axis":113,"../util/config":137,"datalib/src/util":21}],90:[function(require,module,exports){
 var d3 = (window.d3);
 
 function parseBg(bg) {
@@ -7043,7 +10536,7 @@ function parseBg(bg) {
 };
 
 module.exports = parseBg;
-},{}],41:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     read = require('datalib/src/import/read'),
     util = require('datalib/src/util'),
@@ -7109,7 +10602,7 @@ var parseDef = {
 };
 
 module.exports = parseData;
-},{"../util/config":103,"../util/log":105,"./modify":49,"./transforms":56,"datalib/src/import/load":14,"datalib/src/import/read":15,"datalib/src/util":21}],42:[function(require,module,exports){
+},{"../util/config":137,"../util/log":139,"./modify":99,"./transforms":106,"datalib/src/import/load":14,"datalib/src/import/read":15,"datalib/src/util":21}],92:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -8219,7 +11712,7 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],43:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expression = require('../expression');
 
@@ -8243,7 +11736,7 @@ expr.eval = function(graph, fn, opt) {
 };
 
 module.exports = expr;
-},{"../expression":37,"datalib/src/util":21}],44:[function(require,module,exports){
+},{"../expression":87,"datalib/src/util":21}],94:[function(require,module,exports){
 module.exports = {
   axes: require('./axes'),
   background: require('./background'),
@@ -8263,7 +11756,7 @@ module.exports = {
   streams: require('./streams'),
   transforms: require('./transforms')
 };
-},{"./axes":39,"./background":40,"./data":41,"./events":42,"./expr":43,"./interactors":45,"./legends":46,"./mark":47,"./marks":48,"./modify":49,"./padding":50,"./predicates":51,"./properties":52,"./signals":53,"./spec":54,"./streams":55,"./transforms":56}],45:[function(require,module,exports){
+},{"./axes":89,"./background":90,"./data":91,"./events":92,"./expr":93,"./interactors":95,"./legends":96,"./mark":97,"./marks":98,"./modify":99,"./padding":100,"./predicates":101,"./properties":102,"./signals":103,"./spec":104,"./streams":105,"./transforms":106}],95:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     config = require('../util/config'),
@@ -8408,7 +11901,7 @@ function parseInteractors(model, spec, defFactory) {
 }
 
 module.exports = parseInteractors;
-},{"../util/config":103,"../util/constants":104,"../util/log":105,"datalib/src/import/load":14,"datalib/src/util":21}],46:[function(require,module,exports){
+},{"../util/config":137,"../util/constants":138,"../util/log":139,"datalib/src/import/load":14,"datalib/src/util":21}],96:[function(require,module,exports){
 var lgnd = require('../scene/legend'),
     config = require('../util/config');
 
@@ -8451,7 +11944,7 @@ function legend(def, index, legend, group) {
 }
 
 module.exports = legends;
-},{"../scene/legend":77,"../util/config":103}],47:[function(require,module,exports){
+},{"../scene/legend":114,"../util/config":137}],97:[function(require,module,exports){
 var util = require('datalib/src/util'),
     parseProperties = require('./properties');
 
@@ -8478,7 +11971,7 @@ function parseMark(model, mark) {
 };
 
 module.exports = parseMark;
-},{"./properties":52,"datalib/src/util":21}],48:[function(require,module,exports){
+},{"./properties":102,"datalib/src/util":21}],98:[function(require,module,exports){
 var parseMark = require('./mark');
 
 function parseRootMark(model, spec, width, height) {
@@ -8494,7 +11987,7 @@ function parseRootMark(model, spec, width, height) {
 };
 
 module.exports = parseRootMark;
-},{"./mark":47}],49:[function(require,module,exports){
+},{"./mark":97}],99:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     tuple = require('../dataflow/tuple'),
@@ -8573,7 +12066,7 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-},{"../dataflow/Node":30,"../dataflow/tuple":33,"../util/constants":104,"../util/log":105,"datalib/src/util":21}],50:[function(require,module,exports){
+},{"../dataflow/Node":80,"../dataflow/tuple":83,"../util/constants":138,"../util/log":139,"datalib/src/util":21}],100:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 function parsePadding(pad) {
@@ -8585,7 +12078,7 @@ function parsePadding(pad) {
 }
 
 module.exports = parsePadding;
-},{"datalib/src/util":21}],51:[function(require,module,exports){
+},{"datalib/src/util":21}],101:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 var types = {
@@ -8753,7 +12246,7 @@ function parseScale(spec, ops) {
 }
 
 module.exports = parsePredicates;
-},{"datalib/src/util":21}],52:[function(require,module,exports){
+},{"datalib/src/util":21}],102:[function(require,module,exports){
 var d3 = (window.d3),
     template = require('datalib/src/template'),
     util = require('datalib/src/util'),
@@ -9064,7 +12557,7 @@ function scaleRef(ref) {
 }
 
 module.exports = properties;
-},{"../dataflow/tuple":33,"../util/config":103,"../util/log":105,"datalib/src/template":19,"datalib/src/util":21}],53:[function(require,module,exports){
+},{"../dataflow/tuple":83,"../util/config":137,"../util/log":139,"datalib/src/template":19,"datalib/src/util":21}],103:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('./expr'),
     functions = require('../expression/functions')(),
@@ -9121,7 +12614,7 @@ parseSignals.scale = function scale(model, spec, value) {
 }
 
 module.exports = parseSignals;
-},{"../expression/functions":36,"../util/constants":104,"./expr":43,"datalib/src/util":21}],54:[function(require,module,exports){
+},{"../expression/functions":86,"../util/constants":138,"./expr":93,"datalib/src/util":21}],104:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Model = require('../core/Model'), 
     View = require('../core/View'), 
@@ -9160,7 +12653,7 @@ function parseSpec(spec, callback, viewFactory) {
 }
 
 module.exports = parseSpec;
-},{"../core/Model":25,"../core/View":26,"../parse/background":40,"../parse/data":41,"../parse/interactors":45,"../parse/marks":48,"../parse/padding":50,"../parse/predicates":51,"../parse/signals":53,"datalib/src/util":21}],55:[function(require,module,exports){
+},{"../core/Model":75,"../core/View":76,"../parse/background":90,"../parse/data":91,"../parse/interactors":95,"../parse/marks":98,"../parse/padding":100,"../parse/predicates":101,"../parse/signals":103,"datalib/src/util":21}],105:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
@@ -9373,7 +12866,7 @@ function parseStreams(view) {
 }
 
 module.exports = parseStreams;
-},{"../dataflow/Node":30,"../dataflow/changeset":32,"../util/constants":104,"./events":42,"./expr":43,"./signals":53,"datalib/src/util":21}],56:[function(require,module,exports){
+},{"../dataflow/Node":80,"../dataflow/changeset":82,"../util/constants":138,"./events":92,"./expr":93,"./signals":103,"datalib/src/util":21}],106:[function(require,module,exports){
 var util = require('datalib/src/util'),
     transforms = require('../transforms/index');
 
@@ -9394,2790 +12887,11 @@ function parseTransforms(model, def) {
 };
 
 module.exports = parseTransforms;
-},{"../transforms/index":99,"datalib/src/util":21}],57:[function(require,module,exports){
-var d3 = (window.d3),
-    util = require('datalib/src/util'),
-    marks = require('./marks');
-
-var handler = function(el, model) {
-  this._active = null;
-  this._down = null;
-  this._handlers = {};
-  if (el) this.initialize(el);
-  if (model) this.model(model);
-};
-
-var prototype = handler.prototype;
-
-prototype.initialize = function(el, pad, obj) {
-  this._el = d3.select(el).node();
-  this._canvas = d3.select(el).select("canvas.marks").node();
-  this._padding = pad;
-  this._obj = obj || null;
-  
-  // add event listeners
-  var canvas = this._canvas, that = this;
-  events.forEach(function(type) {
-    canvas.addEventListener(type, function(evt) {
-      prototype[type].call(that, evt);
-    });
-  });
-  
-  return this;
-};
-
-prototype.padding = function(pad) {
-  this._padding = pad;
-  return this;
-};
-
-prototype.model = function(model) {
-  if (!arguments.length) return this._model;
-  this._model = model;
-  return this;
-};
-
-prototype.handlers = function() {
-  var h = this._handlers;
-  return util.keys(h).reduce(function(a, k) {
-    return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
-  }, []);
-};
-
-// setup events
-var events = [
-  "mouseup",
-  "dblclick",
-  "wheel",
-  "keydown",
-  "keypress",
-  "keyup",
-  "mousewheel",
-  "touchstart"
-];
-events.forEach(function(type) {
-  prototype[type] = function(evt) {
-    this.fire(type, evt);
-  };
-});
-events.push("mousedown");
-events.push("mousemove");
-events.push("mouseout");
-events.push("click");
-events.push("touchmove");
-events.push("touchend");
-
-function eventName(name) {
-  var i = name.indexOf(".");
-  return i < 0 ? name : name.slice(0,i);
-}
-
-prototype.touchmove = prototype.mousemove = function(evt) {
-  var pad = this._padding,
-      b = evt.target.getBoundingClientRect(),
-      x = evt.clientX - b.left,
-      y = evt.clientY - b.top,
-      a = this._active,
-      p = this.pick(this._model.scene(), x, y, x-pad.left, y-pad.top);
-
-  if (p === a) {
-    this.fire("mousemove", evt);
-    if(evt.type == "touchmove") this.fire("touchmove", evt);
-    return;
-  } else if (a) {
-    this.fire("mouseout", evt);
-    if(evt.type == "touchend") this.fire("touchend", evt);
-  }
-  this._active = p;
-  if (p) {
-    this.fire("mouseover", evt);
-    if(evt.type == "touchstart") this.fire("touchstart", evt);
-  }
-};
-
-prototype.touchend = prototype.mouseout = function(evt) {
-  if (this._active) {
-    this.fire("mouseout", evt);
-    this.fire("touchend", evt);
-  }
-  this._active = null;
-};
-
-prototype.mousedown = function(evt) {
-  this._down = this._active;
-  this.fire("mousedown", evt);
-};
-
-prototype.click = function(evt) {
-  if (this._down === this._active) {
-    this.fire("click", evt);
-    this._down = null;
-  }
-};
-
-// to keep firefox happy
-prototype.DOMMouseScroll = function(evt) {
-  this.fire("mousewheel", evt);
-};
-
-// fire an event
-prototype.fire = function(type, evt) {
-  var a = this._active,
-      h = this._handlers[type];
-  if (h) {
-    for (var i=0, len=h.length; i<len; ++i) {
-      h[i].handler.call(this._obj, evt, a);
-    }
-  }
-};
-
-// add an event handler
-prototype.on = function(type, handler) {
-  var name = eventName(type),
-      h = this._handlers;
-  h = h[name] || (h[name] = []);
-  h.push({
-    type: type,
-    handler: handler
-  });
-  return this;
-};
-
-// remove an event handler
-prototype.off = function(type, handler) {
-  var name = eventName(type),
-      h = this._handlers[name];
-  if (!h) return;
-  for (var i=h.length; --i>=0;) {
-    if (h[i].type !== type) continue;
-    if (!handler || h[i].handler === handler) h.splice(i, 1);
-  }
-  return this;
-};
-
-// retrieve the current canvas context
-prototype.context = function() {
-  return this._canvas.getContext("2d");
-};
-
-// find the scenegraph item at the current mouse position
-// x, y -- the absolute x, y mouse coordinates on the canvas element
-// gx, gy -- the relative coordinates within the current group
-prototype.pick = function(scene, x, y, gx, gy) {
-  var g = this.context(),
-      marktype = scene.marktype,
-      picker = marks.pick[marktype];
-  return picker.call(this, g, scene, x, y, gx, gy);
-};
-
-module.exports = handler;
-},{"./marks":60,"datalib/src/util":21}],58:[function(require,module,exports){
-var d3 = (window.d3),
-    load = require('datalib/src/import/load'),
-    util = require('datalib/src/util'),
-    Bounds = require('../../util/Bounds'),
-    config = require('../../util/config'),
-    log = require('../../util/log'),
-    marks = require('./marks');
-
-var renderer = function() {
-  this._ctx = null;
-  this._el = null;
-  this._bgcolor = null;
-  this._imgload = 0;
-};
-
-var prototype = renderer.prototype;
-
-prototype.initialize = function(el, width, height, pad, bgcolor) {
-  this._el = el;
-
-  this.background(bgcolor);
-  
-  if (!el) return this; // early exit if no DOM element
-
-  // select canvas element
-  var canvas = d3.select(el)
-    .selectAll("canvas.marks")
-    .data([1]);
-  
-  // create new canvas element if needed
-  canvas.enter()
-    .append("canvas")
-    .attr("class", "marks");
-  
-  // remove extraneous canvas if needed
-  canvas.exit().remove();
-  
-  return this.resize(width, height, pad);
-};
-
-prototype.background = function(bgcolor) {
-  this._bgcolor = bgcolor;
-  return this;
-};
-
-prototype.resize = function(width, height, pad) {
-  this._width = width;
-  this._height = height;
-  this._padding = pad;
-  
-  if (this._el) {
-    var canvas = d3.select(this._el).select("canvas.marks");
-
-    // initialize canvas attributes
-    canvas
-      .attr("width", width + pad.left + pad.right)
-      .attr("height", height + pad.top + pad.bottom);
-
-    // get the canvas graphics context
-    var s;
-    this._ctx = canvas.node().getContext("2d");
-    this._ctx._ratio = (s = scaleCanvas(canvas.node(), this._ctx) || 1);
-    this._ctx.setTransform(s, 0, 0, s, s*pad.left, s*pad.top);
-  }
-  
-  initializeLineDash(this._ctx);
-  return this;
-};
-
-function scaleCanvas(canvas, ctx) {
-  // get canvas pixel data
-  var devicePixelRatio = window.devicePixelRatio || 1,
-      backingStoreRatio = (
-        ctx.webkitBackingStorePixelRatio ||
-        ctx.mozBackingStorePixelRatio ||
-        ctx.msBackingStorePixelRatio ||
-        ctx.oBackingStorePixelRatio ||
-        ctx.backingStorePixelRatio) || 1,
-      ratio = devicePixelRatio / backingStoreRatio;
-
-  if (devicePixelRatio !== backingStoreRatio) {
-    var w = canvas.width, h = canvas.height;
-    // set actual and visible canvas size
-    canvas.setAttribute("width", w * ratio);
-    canvas.setAttribute("height", h * ratio);
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-  }
-  return ratio;
-}
-
-function initializeLineDash(ctx) {
-  if (ctx.vgLineDash) return; // already set
-
-  var NODASH = [];
-  if (ctx.setLineDash) {
-    ctx.vgLineDash = function(dash) { this.setLineDash(dash || NODASH); };
-    ctx.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
-  } else if (ctx.webkitLineDash !== undefined) {
-  	ctx.vgLineDash = function(dash) { this.webkitLineDash = dash || NODASH; };
-    ctx.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
-  } else if (ctx.mozDash !== undefined) {
-    ctx.vgLineDash = function(dash) { this.mozDash = dash; };
-    ctx.vgLineDashOffset = function(off) { /* unsupported */ };
-  } else {
-    ctx.vgLineDash = function(dash) { /* unsupported */ };
-    ctx.vgLineDashOffset = function(off) { /* unsupported */ };
-  }
-}
-
-prototype.context = function(ctx) {
-  if (ctx) { this._ctx = ctx; return this; }
-  else return this._ctx;
-};
-
-prototype.element = function() {
-  return this._el;
-};
-
-prototype.pendingImages = function() {
-  return this._imgload;
-};
-
-function translatedBounds(item, bounds) {
-  var b = new Bounds(bounds);
-  while ((item = item.mark.group) != null) {
-    b.translate(item.x || 0, item.y || 0);
-  }
-  return b;
-}
-  
-function getBounds(items) {
-  return !items ? null :
-    util.array(items).reduce(function(b, item) {
-      return b.union(translatedBounds(item, item.bounds))
-              .union(translatedBounds(item, item['bounds:prev']));
-    }, new Bounds());  
-}
-
-function setBounds(g, bounds) {
-  var bbox = null;
-  if (bounds) {
-    bbox = (new Bounds(bounds)).round();
-    g.beginPath();
-    g.rect(bbox.x1, bbox.y1, bbox.width(), bbox.height());
-    g.clip();
-  }
-  return bbox;
-}
-
-prototype.render = function(scene, items) {
-  var g = this._ctx,
-      pad = this._padding,
-      w = this._width + pad.left + pad.right,
-      h = this._height + pad.top + pad.bottom,
-      bb = null, bb2;
-
-  // setup
-  this._scene = scene;
-  g.save();
-  bb = setBounds(g, getBounds(items));
-  this.clear(-pad.left, -pad.top, w, h);
-
-  // render
-  this.draw(g, scene, bb);
-
-  // render again to handle possible bounds change
-  if (items) {
-    g.restore();
-    g.save();
-    bb2 = setBounds(g, getBounds(items));
-    if (!bb.encloses(bb2)) {
-      this.clear(-pad.left, -pad.top, w, h);
-      this.draw(g, scene, bb2);
-    }
-  }
-  
-  // takedown
-  g.restore();
-  this._scene = null;
-};
-
-prototype.draw = function(ctx, scene, bounds) {
-  var marktype = scene.marktype,
-      renderer = marks.draw[marktype];
-  renderer.call(this, ctx, scene, bounds);
-};
-
-prototype.clear = function(x, y, w, h) {
-  var g = this._ctx;
-
-  g.clearRect(x, y, w, h);
-  if (this._bgcolor != null) {
-    g.fillStyle = this._bgcolor;
-    g.fillRect(x, y, w, h); 
-  }
-};
-
-prototype.renderAsync = function(scene) {
-  // TODO make safe for multiple scene rendering?
-  var renderer = this;
-  if (renderer._async_id) {
-    clearTimeout(renderer._async_id);
-  }
-  renderer._async_id = setTimeout(function() {
-    renderer.render(scene);
-    delete renderer._async_id;
-  }, 50);
-};
-
-prototype.loadImage = function(uri) {
-  var renderer = this,
-      scene = renderer._scene,
-      image = null, url;
-
-  if (util.isNode) {
-    renderer._imgload += 1;
-    image = new ((window.canvas).Image)();
-    load(util.extend({url: uri}, config.load), function(err, data) {
-      renderer._imgload -= 1;
-      if (err) { util.error(err); return; }
-      log.log("LOAD IMAGE: " + uri);
-      image.src = data;
-      image.loaded = true;
-    });
-  } else {
-    image = new Image();
-    url = load.sanitizeUrl(util.extend({url: uri}, config.load));
-    if (!url) { return; }
-    renderer._imgload += 1;
-    image.onload = function() {
-      log.log("LOAD IMAGE: " + url);
-      image.loaded = true;
-      renderer._imgload -= 1;
-      renderer.renderAsync(scene);
-    };
-    image.src = url;
-  }
-
-  return image;
-};
-
-module.exports = renderer;
-},{"../../util/Bounds":100,"../../util/config":103,"../../util/log":105,"./marks":60,"datalib/src/import/load":14,"datalib/src/util":21}],59:[function(require,module,exports){
-module.exports = {
-  Handler:  require('./Handler'),
-  Renderer: require('./Renderer')
-};
-},{"./Handler":57,"./Renderer":58}],60:[function(require,module,exports){
-var Bounds = require('../../util/Bounds'),
-    boundsCalc = require('../../util/boundscalc'),
-    config = require('../../util/config'),
-    path = require('./path');
-
-var parsePath = path.parse,
-    renderPath = path.render,
-    halfpi = Math.PI / 2,
-    sqrt3 = Math.sqrt(3),
-    tan30 = Math.tan(30 * Math.PI / 180),
-    tmpBounds = new Bounds();
-
-function fontString(o) {
-  return (o.fontStyle ? o.fontStyle + " " : "")
-    + (o.fontVariant ? o.fontVariant + " " : "")
-    + (o.fontWeight ? o.fontWeight + " " : "")
-    + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
-    + (o.font || config.render.font);
-}
-
-// path generators
-
-function arcPath(g, o) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      ir = o.innerRadius || 0,
-      or = o.outerRadius || 0,
-      sa = (o.startAngle || 0) - Math.PI/2,
-      ea = (o.endAngle || 0) - Math.PI/2;
-  g.beginPath();
-  if (ir === 0) g.moveTo(x, y);
-  else g.arc(x, y, ir, sa, ea, 0);
-  g.arc(x, y, or, ea, sa, 1);
-  g.closePath();
-}
-
-function areaPath(g, items) {
-  var o = items[0],
-      m = o.mark,
-      p = m.pathCache || (m.pathCache = parsePath(path.area(items)));
-  renderPath(g, p);
-}
-
-function linePath(g, items) {
-  var o = items[0],
-      m = o.mark,
-      p = m.pathCache || (m.pathCache = parsePath(path.line(items)));
-  renderPath(g, p);
-}
-
-function pathPath(g, o) {
-  if (o.path == null) return;
-  var p = o.pathCache || (o.pathCache = parsePath(o.path));
-  return renderPath(g, p, o.x, o.y);
-}
-
-function symbolPath(g, o) {
-  g.beginPath();
-  var size = o.size != null ? o.size : 100,
-      x = o.x, y = o.y, r, t, rx, ry;
-
-  if (o.shape == null || o.shape === "circle") {
-    r = Math.sqrt(size/Math.PI);
-    g.arc(x, y, r, 0, 2*Math.PI, 0);
-    g.closePath();
-    return;
-  }
-
-  switch (o.shape) {
-    case "cross":
-      r = Math.sqrt(size / 5) / 2;
-      t = 3*r;
-      g.moveTo(x-t, y-r);
-      g.lineTo(x-r, y-r);
-      g.lineTo(x-r, y-t);
-      g.lineTo(x+r, y-t);
-      g.lineTo(x+r, y-r);
-      g.lineTo(x+t, y-r);
-      g.lineTo(x+t, y+r);
-      g.lineTo(x+r, y+r);
-      g.lineTo(x+r, y+t);
-      g.lineTo(x-r, y+t);
-      g.lineTo(x-r, y+r);
-      g.lineTo(x-t, y+r);
-      break;
-
-    case "diamond":
-      ry = Math.sqrt(size / (2 * tan30));
-      rx = ry * tan30;
-      g.moveTo(x, y-ry);
-      g.lineTo(x+rx, y);
-      g.lineTo(x, y+ry);
-      g.lineTo(x-rx, y);
-      break;
-
-    case "square":
-      t = Math.sqrt(size);
-      r = t / 2;
-      g.rect(x-r, y-r, t, t);
-      break;
-
-    case "triangle-down":
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      g.moveTo(x, y+ry);
-      g.lineTo(x+rx, y-ry);
-      g.lineTo(x-rx, y-ry);
-      break;
-
-    case "triangle-up":
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      g.moveTo(x, y-ry);
-      g.lineTo(x+rx, y+ry);
-      g.lineTo(x-rx, y+ry);
-  }
-  g.closePath();
-}
-
-function lineStroke(g, items) {
-  var o = items[0],
-      lw = o.strokeWidth,
-      lc = o.strokeCap;
-  g.lineWidth = lw != null ? lw : config.render.lineWidth;
-  g.lineCap   = lc != null ? lc : config.render.lineCap;
-  linePath(g, items);
-}
-
-function ruleStroke(g, o) {
-  var x1 = o.x || 0,
-      y1 = o.y || 0,
-      x2 = o.x2 != null ? o.x2 : x1,
-      y2 = o.y2 != null ? o.y2 : y1,
-      lw = o.strokeWidth,
-      lc = o.strokeCap;
-
-  g.lineWidth = lw != null ? lw : config.render.lineWidth;
-  g.lineCap   = lc != null ? lc : config.render.lineCap;
-  g.beginPath();
-  g.moveTo(x1, y1);
-  g.lineTo(x2, y2);
-}
-
-// drawing functions
-
-function drawPathOne(path, g, o, items) {
-  var fill = o.fill, stroke = o.stroke, opac, lc, lw;
-
-  path(g, items);
-
-  opac = o.opacity == null ? 1 : o.opacity;
-  if (opac == 0 || !fill && !stroke) return;
-
-  if (fill) {
-    g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-    g.fillStyle = color(g, o, fill);
-    g.fill();
-  }
-
-  if (stroke) {
-    lw = (lw = o.strokeWidth) != null ? lw : config.render.lineWidth;
-    if (lw > 0) {
-      g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-      g.strokeStyle = color(g, o, stroke);
-      g.lineWidth = lw;
-      g.lineCap = (lc = o.strokeCap) != null ? lc : config.render.lineCap;
-      g.vgLineDash(o.strokeDash || null);
-      g.vgLineDashOffset(o.strokeDashOffset || 0);
-      g.stroke();
-    }
-  }
-}
-
-function drawPathAll(path, g, scene, bounds) {
-  var i, len, item;
-  for (i=0, len=scene.items.length; i<len; ++i) {
-    item = scene.items[i];
-    if (bounds && !bounds.intersects(item.bounds))
-      continue; // bounds check
-    drawPathOne(path, g, item, item);
-  }
-}
-
-function drawRect(g, scene, bounds) {
-  if (!scene.items.length) return;
-  var items = scene.items,
-      o, fill, stroke, opac, lc, lw, x, y, w, h;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    x = o.x || 0;
-    y = o.y || 0;
-    w = o.width || 0;
-    h = o.height || 0;
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac == 0) continue;
-
-    if (fill = o.fill) {
-      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-      g.fillStyle = color(g, o, fill);
-      g.fillRect(x, y, w, h);
-    }
-
-    if (stroke = o.stroke) {
-      lw = (lw = o.strokeWidth) != null ? lw : config.render.lineWidth;
-      if (lw > 0) {
-        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = color(g, o, stroke);
-        g.lineWidth = lw;
-        g.lineCap = (lc = o.strokeCap) != null ? lc : config.render.lineCap;
-        g.vgLineDash(o.strokeDash || null);
-        g.vgLineDashOffset(o.strokeDashOffset || 0);
-        g.strokeRect(x, y, w, h);
-      }
-    }
-  }
-}
-
-function drawRule(g, scene, bounds) {
-  if (!scene.items.length) return;
-  var items = scene.items,
-      o, stroke, opac, lc, lw, x1, y1, x2, y2;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    x1 = o.x || 0;
-    y1 = o.y || 0;
-    x2 = o.x2 != null ? o.x2 : x1;
-    y2 = o.y2 != null ? o.y2 : y1;
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac == 0) continue;
-    
-    if (stroke = o.stroke) {
-      lw = (lw = o.strokeWidth) != null ? lw : config.render.lineWidth;
-      if (lw > 0) {
-        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = color(g, o, stroke);
-        g.lineWidth = lw;
-        g.lineCap = (lc = o.strokeCap) != null ? lc : config.render.lineCap;
-        g.vgLineDash(o.strokeDash || null);
-        g.vgLineDashOffset(o.strokeDashOffset || 0);
-        g.beginPath();
-        g.moveTo(x1, y1);
-        g.lineTo(x2, y2);
-        g.stroke();
-      }
-    }
-  }
-}
-
-function drawImage(g, scene, bounds) {
-  if (!scene.items.length) return;
-  var renderer = this,
-      items = scene.items, o;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    if (!(o.image && o.image.url === o.url)) {
-      o.image = renderer.loadImage(o.url);
-      o.image.url = o.url;
-    }
-
-    var x, y, w, h, opac;
-    w = o.width || (o.image && o.image.width) || 0;
-    h = o.height || (o.image && o.image.height) || 0;
-    x = (o.x||0) - (o.align === "center"
-      ? w/2 : (o.align === "right" ? w : 0));
-    y = (o.y||0) - (o.baseline === "middle"
-      ? h/2 : (o.baseline === "bottom" ? h : 0));
-
-    if (o.image.loaded) {
-      g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
-      g.drawImage(o.image, x, y, w, h);
-    }
-  }
-}
-
-function drawText(g, scene, bounds) {
-  if (!scene.items.length) return;
-  var items = scene.items,
-      o, fill, stroke, opac, lw, x, y, r, t;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    g.font = fontString(o);
-    g.textAlign = o.align || "left";
-    g.textBaseline = o.baseline || "alphabetic";
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac == 0) continue;
-
-    x = o.x || 0;
-    y = o.y || 0;
-    if (r = o.radius) {
-      t = (o.theta || 0) - Math.PI/2;
-      x += r * Math.cos(t);
-      y += r * Math.sin(t);
-    }
-
-    if (o.angle) {
-      g.save();
-      g.translate(x, y);
-      g.rotate(o.angle * Math.PI/180);
-      x = o.dx || 0;
-      y = o.dy || 0;
-    } else {
-      x += (o.dx || 0);
-      y += (o.dy || 0);
-    }
-
-    if (fill = o.fill) {
-      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-      g.fillStyle = color(g, o, fill);
-      g.fillText(o.text, x, y);
-    }
-
-    if (stroke = o.stroke) {
-      lw = (lw = o.strokeWidth) != null ? lw : 1;
-      if (lw > 0) {
-        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = color(g, o, stroke);
-        g.lineWidth = lw;
-        g.strokeText(o.text, x, y);
-      }
-    }
-
-    if (o.angle) g.restore();
-  }
-}
-
-function drawAll(pathFunc) {
-  return function(g, scene, bounds) {
-    drawPathAll(pathFunc, g, scene, bounds);
-  }
-}
-
-function drawOne(pathFunc) {
-  return function(g, scene, bounds) {
-    if (!scene.items.length) return;
-    if (bounds && !bounds.intersects(scene.items[0].bounds))
-      return; // bounds check
-    drawPathOne(pathFunc, g, scene.items[0], scene.items);
-  }
-}
-
-function drawGroup(g, scene, bounds) {
-  if (!scene.items.length) return;
-  var items = scene.items, group, axes, legends,
-      renderer = this, gx, gy, gb, i, n, j, m;
-
-  drawRect(g, scene, bounds);
-
-  for (i=0, n=items.length; i<n; ++i) {
-    group = items[i];
-    axes = group.axisItems || [];
-    legends = group.legendItems || [];
-    gx = group.x || 0;
-    gy = group.y || 0;
-
-    // render group contents
-    g.save();
-    g.translate(gx, gy);
-    if (group.clip) {
-      g.beginPath();
-      g.rect(0, 0, group.width || 0, group.height || 0);
-      g.clip();
-    }
-    
-    if (bounds) bounds.translate(-gx, -gy);
-    
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].def.layer === "back") {
-        renderer.draw(g, axes[j], bounds);
-      }
-    }
-    for (j=0, m=group.items.length; j<m; ++j) {
-      renderer.draw(g, group.items[j], bounds);
-    }
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].def.layer !== "back") {
-        renderer.draw(g, axes[j], bounds);
-      }
-    }
-    for (j=0, m=legends.length; j<m; ++j) {
-      renderer.draw(g, legends[j], bounds);
-    }
-    
-    if (bounds) bounds.translate(gx, gy);
-    g.restore();
-  }    
-}
-
-function color(g, o, value) {
-  return (value.id)
-    ? gradient(g, value, o.bounds)
-    : value;
-}
-
-function gradient(g, p, b) {
-  var w = b.width(),
-      h = b.height(),
-      x1 = b.x1 + p.x1 * w,
-      y1 = b.y1 + p.y1 * h,
-      x2 = b.x1 + p.x2 * w,
-      y2 = b.y1 + p.y2 * h,
-      grad = g.createLinearGradient(x1, y1, x2, y2),
-      stop = p.stops,
-      i, n;
-
-  for (i=0, n=stop.length; i<n; ++i) {
-    grad.addColorStop(stop[i].offset, stop[i].color);
-  }
-  return grad;
-}
-
-// hit testing
-
-function pickGroup(g, scene, x, y, gx, gy) {
-  if (scene.items.length === 0 ||
-      scene.bounds && !scene.bounds.contains(gx, gy)) {
-    return false;
-  }
-  var items = scene.items, subscene, group, hit, dx, dy,
-      handler = this, i, j;
-
-  for (i=items.length; --i>=0;) {
-    group = items[i];
-    dx = group.x || 0;
-    dy = group.y || 0;
-
-    g.save();
-    g.translate(dx, dy);
-    for (j=group.items.length; --j >= 0;) {
-      subscene = group.items[j];
-      if (subscene.interactive === false) continue;
-      hit = handler.pick(subscene, x, y, gx-dx, gy-dy);
-      if (hit) {
-        g.restore();
-        return hit;
-      }
-    }
-    g.restore();
-  }
-
-  return scene.interactive
-    ? pickAll(hitTests.group, g, scene, x, y, gx, gy)
-    : false;
-}
-
-function pickAll(test, g, scene, x, y, gx, gy) {
-  if (!scene.items.length) return false;
-  var o, b, i;
-
-  if (g._ratio !== 1) {
-    x *= g._ratio;
-    y *= g._ratio;
-  }
-
-  for (i=scene.items.length; --i >= 0;) {
-    o = scene.items[i]; b = o.bounds;
-    // first hit test against bounding box
-    if ((b && !b.contains(gx, gy)) || !b) continue;
-    // if in bounding box, perform more careful test
-    if (test(g, o, x, y, gx, gy)) return o;
-  }
-  return false;
-}
-
-function pickArea(g, scene, x, y, gx, gy) {
-  if (!scene.items.length) return false;
-  var items = scene.items,
-      o, b, i, di, dd, od, dx, dy;
-
-  b = items[0].bounds;
-  if (b && !b.contains(gx, gy)) return false;
-  if (g._ratio !== 1) {
-    x *= g._ratio;
-    y *= g._ratio;
-  }
-  if (!hitTests.area(g, items, x, y)) return false;
-  return items[0];
-}
-
-function pickLine(g, scene, x, y, gx, gy) {
-  if (!scene.items.length) return false;
-  var items = scene.items,
-      o, b, i, di, dd, od, dx, dy;
-
-  b = items[0].bounds;
-  if (b && !b.contains(gx, gy)) return false;
-  if (g._ratio !== 1) {
-    x *= g._ratio;
-    y *= g._ratio;
-  }
-  if (!hitTests.line(g, items, x, y)) return false;
-  return items[0];
-}
-
-function pick(test) {
-  return function (g, scene, x, y, gx, gy) {
-    return pickAll(test, g, scene, x, y, gx, gy);
-  };
-}
-
-function textHit(g, o, x, y, gx, gy) {
-  if (!o.fontSize) return false;
-  if (!o.angle) return true; // bounds sufficient if no rotation
-
-  var b = boundsCalc.text(o, tmpBounds, true),
-      a = -o.angle * Math.PI / 180,
-      cos = Math.cos(a),
-      sin = Math.sin(a),
-      x = o.x,
-      y = o.y,
-      px = cos*gx - sin*gy + (x - x*cos + y*sin),
-      py = sin*gx + cos*gy + (y - x*sin - y*cos);
-
-  return b.contains(px, py);
-}
-
-var hitTests = {
-  text:   textHit,
-  rect:   function(g,o,x,y) { return true; }, // bounds test is sufficient
-  image:  function(g,o,x,y) { return true; }, // bounds test is sufficient
-  group:  function(g,o,x,y) { return o.fill || o.stroke; },
-  rule:   function(g,o,x,y) {
-            if (!g.isPointInStroke) return false;
-            ruleStroke(g,o); return g.isPointInStroke(x,y);
-          },
-  line:   function(g,s,x,y) {
-            if (!g.isPointInStroke) return false;
-            lineStroke(g,s); return g.isPointInStroke(x,y);
-          },
-  arc:    function(g,o,x,y) { arcPath(g,o);  return g.isPointInPath(x,y); },
-  area:   function(g,s,x,y) { areaPath(g,s); return g.isPointInPath(x,y); },
-  path:   function(g,o,x,y) { pathPath(g,o); return g.isPointInPath(x,y); },
-  symbol: function(g,o,x,y) { symbolPath(g,o); return g.isPointInPath(x,y); }
-};
-
-module.exports = {
-  draw: {
-    group:   drawGroup,
-    area:    drawOne(areaPath),
-    line:    drawOne(linePath),
-    arc:     drawAll(arcPath),
-    path:    drawAll(pathPath),
-    symbol:  drawAll(symbolPath),
-    rect:    drawRect,
-    rule:    drawRule,
-    text:    drawText,
-    image:   drawImage,
-    drawOne: drawOne, // expose for extensibility
-    drawAll: drawAll  // expose for extensibility
-  },
-  pick: {
-    group:   pickGroup,
-    area:    pickArea,
-    line:    pickLine,
-    arc:     pick(hitTests.arc),
-    path:    pick(hitTests.path),
-    symbol:  pick(hitTests.symbol),
-    rect:    pick(hitTests.rect),
-    rule:    pick(hitTests.rule),
-    text:    pick(hitTests.text),
-    image:   pick(hitTests.image),
-    pickAll: pickAll  // expose for extensibility
-  }
-};
-},{"../../util/Bounds":100,"../../util/boundscalc":102,"../../util/config":103,"./path":61}],61:[function(require,module,exports){
-var d3 = (window.d3),
-    Bounds = require('../../util/Bounds');
-
-// Path parsing and rendering code taken from fabric.js -- Thanks!
-var cmdLength = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
-    re = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)-/g, /\s|,|###/];
-
-function parse(path) {
-  var result = [],
-      currentPath,
-      chunks,
-      parsed;
-
-  // First, break path into command sequence
-  path = path.slice().replace(re[0], '###$1').split(re[1]).slice(1);
-
-  // Next, parse each command in turn
-  for (var i=0, j, chunksParsed, len=path.length; i<len; i++) {
-    currentPath = path[i];
-    chunks = currentPath.slice(1).trim().replace(re[2],'$1###-').split(re[3]);
-    chunksParsed = [currentPath.charAt(0)];
-
-    for (var j = 0, jlen = chunks.length; j < jlen; j++) {
-      parsed = parseFloat(chunks[j]);
-      if (!isNaN(parsed)) {
-        chunksParsed.push(parsed);
-      }
-    }
-
-    var command = chunksParsed[0].toLowerCase(),
-        commandLength = cmdLength[command];
-
-    if (chunksParsed.length - 1 > commandLength) {
-      for (var k = 1, klen = chunksParsed.length; k < klen; k += commandLength) {
-        result.push([ chunksParsed[0] ].concat(chunksParsed.slice(k, k + commandLength)));
-      }
-    }
-    else {
-      result.push(chunksParsed);
-    }
-  }
-
-  return result;
-}
-
-function drawArc(g, x, y, coords, bounds, l, t) {
-  var rx = coords[0];
-  var ry = coords[1];
-  var rot = coords[2];
-  var large = coords[3];
-  var sweep = coords[4];
-  var ex = coords[5];
-  var ey = coords[6];
-  var segs = arcToSegments(ex, ey, rx, ry, large, sweep, rot, x, y);
-  for (var i=0; i<segs.length; i++) {
-    var bez = segmentToBezier.apply(null, segs[i]);
-    g.bezierCurveTo.apply(g, bez);
-    bounds.add(bez[0]-l, bez[1]-t);
-    bounds.add(bez[2]-l, bez[3]-t);
-    bounds.add(bez[4]-l, bez[5]-t);
-  }
-}
-
-function boundArc(x, y, coords, bounds) {
-  var rx = coords[0];
-  var ry = coords[1];
-  var rot = coords[2];
-  var large = coords[3];
-  var sweep = coords[4];
-  var ex = coords[5];
-  var ey = coords[6];
-  var segs = arcToSegments(ex, ey, rx, ry, large, sweep, rot, x, y);
-  for (var i=0; i<segs.length; i++) {
-    var bez = segmentToBezier.apply(null, segs[i]);
-    bounds.add(bez[0], bez[1]);
-    bounds.add(bez[2], bez[3]);
-    bounds.add(bez[4], bez[5]);
-  }
-}
-
-var arcToSegmentsCache = { },
-    segmentToBezierCache = { },
-    join = Array.prototype.join,
-    argsStr;
-
-// Copied from Inkscape svgtopdf, thanks!
-function arcToSegments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
-  argsStr = join.call(arguments);
-  if (arcToSegmentsCache[argsStr]) {
-    return arcToSegmentsCache[argsStr];
-  }
-
-  var th = rotateX * (Math.PI/180);
-  var sin_th = Math.sin(th);
-  var cos_th = Math.cos(th);
-  rx = Math.abs(rx);
-  ry = Math.abs(ry);
-  var px = cos_th * (ox - x) * 0.5 + sin_th * (oy - y) * 0.5;
-  var py = cos_th * (oy - y) * 0.5 - sin_th * (ox - x) * 0.5;
-  var pl = (px*px) / (rx*rx) + (py*py) / (ry*ry);
-  if (pl > 1) {
-    pl = Math.sqrt(pl);
-    rx *= pl;
-    ry *= pl;
-  }
-
-  var a00 = cos_th / rx;
-  var a01 = sin_th / rx;
-  var a10 = (-sin_th) / ry;
-  var a11 = (cos_th) / ry;
-  var x0 = a00 * ox + a01 * oy;
-  var y0 = a10 * ox + a11 * oy;
-  var x1 = a00 * x + a01 * y;
-  var y1 = a10 * x + a11 * y;
-
-  var d = (x1-x0) * (x1-x0) + (y1-y0) * (y1-y0);
-  var sfactor_sq = 1 / d - 0.25;
-  if (sfactor_sq < 0) sfactor_sq = 0;
-  var sfactor = Math.sqrt(sfactor_sq);
-  if (sweep == large) sfactor = -sfactor;
-  var xc = 0.5 * (x0 + x1) - sfactor * (y1-y0);
-  var yc = 0.5 * (y0 + y1) + sfactor * (x1-x0);
-
-  var th0 = Math.atan2(y0-yc, x0-xc);
-  var th1 = Math.atan2(y1-yc, x1-xc);
-
-  var th_arc = th1-th0;
-  if (th_arc < 0 && sweep == 1){
-    th_arc += 2*Math.PI;
-  } else if (th_arc > 0 && sweep == 0) {
-    th_arc -= 2 * Math.PI;
-  }
-
-  var segments = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
-  var result = [];
-  for (var i=0; i<segments; i++) {
-    var th2 = th0 + i * th_arc / segments;
-    var th3 = th0 + (i+1) * th_arc / segments;
-    result[i] = [xc, yc, th2, th3, rx, ry, sin_th, cos_th];
-  }
-
-  return (arcToSegmentsCache[argsStr] = result);
-}
-
-function segmentToBezier(cx, cy, th0, th1, rx, ry, sin_th, cos_th) {
-  argsStr = join.call(arguments);
-  if (segmentToBezierCache[argsStr]) {
-    return segmentToBezierCache[argsStr];
-  }
-
-  var a00 = cos_th * rx;
-  var a01 = -sin_th * ry;
-  var a10 = sin_th * rx;
-  var a11 = cos_th * ry;
-
-  var cos_th0 = Math.cos(th0);
-  var sin_th0 = Math.sin(th0);
-  var cos_th1 = Math.cos(th1);
-  var sin_th1 = Math.sin(th1);
-
-  var th_half = 0.5 * (th1 - th0);
-  var sin_th_h2 = Math.sin(th_half * 0.5);
-  var t = (8/3) * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
-  var x1 = cx + cos_th0 - t * sin_th0;
-  var y1 = cy + sin_th0 + t * cos_th0;
-  var x3 = cx + cos_th1;
-  var y3 = cy + sin_th1;
-  var x2 = x3 + t * sin_th1;
-  var y2 = y3 - t * cos_th1;
-
-  return (segmentToBezierCache[argsStr] = [
-    a00 * x1 + a01 * y1,  a10 * x1 + a11 * y1,
-    a00 * x2 + a01 * y2,  a10 * x2 + a11 * y2,
-    a00 * x3 + a01 * y3,  a10 * x3 + a11 * y3
-  ]);
-}
-
-function render(g, path, l, t) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY,
-      bounds = new Bounds();
-  if (l == undefined) l = 0;
-  if (t == undefined) t = 0;
-
-  g.beginPath();
-
-  for (var i=0, len=path.length; i<len; ++i) {
-    current = path[i];
-
-    switch (current[0]) { // first letter
-
-      case 'l': // lineto, relative
-        x += current[1];
-        y += current[2];
-        g.lineTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'L': // lineto, absolute
-        x = current[1];
-        y = current[2];
-        g.lineTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'h': // horizontal lineto, relative
-        x += current[1];
-        g.lineTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'H': // horizontal lineto, absolute
-        x = current[1];
-        g.lineTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'v': // vertical lineto, relative
-        y += current[1];
-        g.lineTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'V': // verical lineto, absolute
-        y = current[1];
-        g.lineTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'm': // moveTo, relative
-        x += current[1];
-        y += current[2];
-        g.moveTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'M': // moveTo, absolute
-        x = current[1];
-        y = current[2];
-        g.moveTo(x + l, y + t);
-        bounds.add(x, y);
-        break;
-
-      case 'c': // bezierCurveTo, relative
-        tempX = x + current[5];
-        tempY = y + current[6];
-        controlX = x + current[3];
-        controlY = y + current[4];
-        g.bezierCurveTo(
-          x + current[1] + l, // x1
-          y + current[2] + t, // y1
-          controlX + l, // x2
-          controlY + t, // y2
-          tempX + l,
-          tempY + t
-        );
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'C': // bezierCurveTo, absolute
-        x = current[5];
-        y = current[6];
-        controlX = current[3];
-        controlY = current[4];
-        g.bezierCurveTo(
-          current[1] + l,
-          current[2] + t,
-          controlX + l,
-          controlY + t,
-          x + l,
-          y + t
-        );
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(x, y);
-        break;
-
-      case 's': // shorthand cubic bezierCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        g.bezierCurveTo(
-          controlX + l,
-          controlY + t,
-          x + current[1] + l,
-          y + current[2] + t,
-          tempX + l,
-          tempY + t
-        );
-        bounds.add(controlX, controlY);
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(tempX, tempY);
-
-        // set control point to 2nd one of this command
-        // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'S': // shorthand cubic bezierCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-        // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
-        g.bezierCurveTo(
-          controlX + l,
-          controlY + t,
-          current[1] + l,
-          current[2] + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        // set control point to 2nd one of this command
-        // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
-        controlX = current[1];
-        controlY = current[2];
-
-        break;
-
-      case 'q': // quadraticCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        g.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'Q': // quadraticCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-
-        g.quadraticCurveTo(
-          current[1] + l,
-          current[2] + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        controlX = current[1];
-        controlY = current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 't': // shorthand quadraticCurveTo, relative
-
-        // transform to absolute x,y
-        tempX = x + current[1];
-        tempY = y + current[2];
-
-        if (previous[0].match(/[QqTt]/) === null) {
-          // If there is no previous command or if the previous command was not a Q, q, T or t,
-          // assume the control point is coincident with the current point
-          controlX = x;
-          controlY = y;
-        }
-        else if (previous[0] === 't') {
-          // calculate reflection of previous control points for t
-          controlX = 2 * x - tempControlX;
-          controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
-          // calculate reflection of previous control points for q
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-        }
-
-        tempControlX = controlX;
-        tempControlY = controlY;
-
-        g.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        controlX = x + current[1];
-        controlY = y + current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'T':
-        tempX = current[1];
-        tempY = current[2];
-
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        g.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'a':
-        drawArc(g, x + l, y + t, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + x + l,
-          current[7] + y + t
-        ], bounds, l, t);
-        x += current[6];
-        y += current[7];
-        break;
-
-      case 'A':
-        drawArc(g, x + l, y + t, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + l,
-          current[7] + t
-        ], bounds, l, t);
-        x = current[6];
-        y = current[7];
-        break;
-
-      case 'z':
-      case 'Z':
-        g.closePath();
-        break;
-    }
-    previous = current;
-  }
-  return bounds.translate(l, t);
-}
-
-function bounds(path, bounds) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY;
-
-  for (var i=0, len=path.length; i<len; ++i) {
-    current = path[i];
-
-    switch (current[0]) { // first letter
-
-      case 'l': // lineto, relative
-        x += current[1];
-        y += current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'L': // lineto, absolute
-        x = current[1];
-        y = current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'h': // horizontal lineto, relative
-        x += current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'H': // horizontal lineto, absolute
-        x = current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'v': // vertical lineto, relative
-        y += current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'V': // verical lineto, absolute
-        y = current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'm': // moveTo, relative
-        x += current[1];
-        y += current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'M': // moveTo, absolute
-        x = current[1];
-        y = current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'c': // bezierCurveTo, relative
-        tempX = x + current[5];
-        tempY = y + current[6];
-        controlX = x + current[3];
-        controlY = y + current[4];
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'C': // bezierCurveTo, absolute
-        x = current[5];
-        y = current[6];
-        controlX = current[3];
-        controlY = current[4];
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(x, y);
-        break;
-
-      case 's': // shorthand cubic bezierCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        bounds.add(controlX, controlY);
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(tempX, tempY);
-
-        // set control point to 2nd one of this command
-        // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'S': // shorthand cubic bezierCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-        // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
-        x = tempX;
-        y = tempY;
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        // set control point to 2nd one of this command
-        // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
-        controlX = current[1];
-        controlY = current[2];
-
-        break;
-
-      case 'q': // quadraticCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'Q': // quadraticCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-
-        x = tempX;
-        y = tempY;
-        controlX = current[1];
-        controlY = current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 't': // shorthand quadraticCurveTo, relative
-
-        // transform to absolute x,y
-        tempX = x + current[1];
-        tempY = y + current[2];
-
-        if (previous[0].match(/[QqTt]/) === null) {
-          // If there is no previous command or if the previous command was not a Q, q, T or t,
-          // assume the control point is coincident with the current point
-          controlX = x;
-          controlY = y;
-        }
-        else if (previous[0] === 't') {
-          // calculate reflection of previous control points for t
-          controlX = 2 * x - tempControlX;
-          controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
-          // calculate reflection of previous control points for q
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-        }
-
-        tempControlX = controlX;
-        tempControlY = controlY;
-
-        x = tempX;
-        y = tempY;
-        controlX = x + current[1];
-        controlY = y + current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'T':
-        tempX = current[1];
-        tempY = current[2];
-
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'a':
-        boundArc(x, y, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + x,
-          current[7] + y
-        ], bounds);
-        x += current[6];
-        y += current[7];
-        break;
-
-      case 'A':
-        boundArc(x, y, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6],
-          current[7]
-        ], bounds);
-        x = current[6];
-        y = current[7];
-        break;
-
-      case 'z':
-      case 'Z':
-        break;
-    }
-    previous = current;
-  }
-  return bounds;
-}
-
-function area(items) {
-  var o = items[0];
-  var area;
-  
-  if (o.orient === "horizontal") {
-    area = d3.svg.area()
-      .y(function(d) { return d.y; })
-      .x0(function(d) { return d.x; })
-      .x1(function(d) { return d.x + d.width; });
-  } else {
-    area = d3.svg.area()
-      .x(function(d) { return d.x; })
-      .y1(function(d) { return d.y; })
-      .y0(function(d) { return d.y + d.height; });
-  }
-  
-  if (o.interpolate) area.interpolate(o.interpolate);
-  if (o.tension != null) area.tension(o.tension);
-  return area(items);
-}
-
-function line(items) {
-  var o = items[0];
-  var line = d3.svg.line()
-   .x(function(d) { return d.x; })
-   .y(function(d) { return d.y; });
-  if (o.interpolate) line.interpolate(o.interpolate);
-  if (o.tension != null) line.tension(o.tension);
-  return line(items);
-}
-
-module.exports = {
-  parse:  parse,
-  render: render,
-  bounds: bounds,
-  area:   area,
-  line:   line
-};
-},{"../../util/Bounds":100}],62:[function(require,module,exports){
-var d3 = (window.d3),
-    util = require('datalib/src/util'),
-    config = require('../../util/config'),
-    SVGBuilder = require('./svg');
-
-var renderer = function() {
-  this._builder = null;
-};
-
-var prototype = renderer.prototype;
-
-prototype.initialize = function(el, width, height, pad) {
-  this._builder = new SVGBuilder();
-  return this.resize(width, height, pad);
-}
-
-prototype.resize = function(width, height, pad) {
-  this._width = width;
-  this._height = height;
-  this._padding = pad || {top:0, left:0, bottom:0, right:0};
-  this._autopad = util.isString(this._padding) ? 1 : 0;
-
-  var w = this._width, h = this._height, pad = this._padding;
-  
-  // (re-)configure builder size
-  this._builder.initialize(null, w, h, pad);
-
-  return this;
-};
-
-prototype.render = function(scene, items) {
-  // headless always draws the entire scene, ignoring items
-  this._builder.render(scene);
-  return this;
-};
-
-prototype.svg = function() {
-  return this._builder.svg();
-};
-
-module.exports = renderer;
-},{"../../util/config":103,"./svg":64,"datalib/src/util":21}],63:[function(require,module,exports){
-module.exports = {
-  Renderer: require('./Renderer')
-};
-},{"./Renderer":62}],64:[function(require,module,exports){
-var d3 = (window.d3),
-    util = require('datalib/src/util'),
-    config = require('../../util/config');
-
-var renderer = function() {
-  this._gid = 0; // group id counter for d3 dom compat
-  this._text = {
-    head: "",
-    root: "",
-    foot: "",
-    defs: "",
-    body: ""
-  };
-  this._defs = {
-    gradient: {},
-    clipping: {}
-  };
-};
-
-function open(tag, attr, raw) {
-  var s = "<" + tag;
-  if (attr) {
-    for (var key in attr) {
-      var val = attr[key];
-      if (val != null) {
-        s += " " + key + '="' + val + '"';
-      }
-    }
-  }
-  if (raw) s += " " + raw;
-  return s + ">";
-}
-
-function close(tag) {
-  return "</" + tag + ">";
-}
-
-var prototype = renderer.prototype;
-
-prototype.initialize = function(el, w, h, pad) {
-  var t = this._text;
-
-  t.head = open('svg', {
-    "class": 'marks',
-    width: w + pad.left + pad.right,
-    height: h + pad.top + pad.bottom,
-  }, config.svgNamespace);
-
-  t.root = open('g', {
-    transform: 'translate(' + pad.left + ',' + pad.top + ')'
-  });
-
-  t.foot = close('g') + close('svg');
-};
-
-prototype.svg = function() {
-  var t = this._text;
-  return t.head + t.defs + t.root + t.body + t.foot;
-};
-
-prototype.buildDefs = function() {
-  var all = this._defs,
-      dgrad = util.keys(all.gradient),
-      dclip = util.keys(all.clipping),
-      defs = "", grad, clip, i, j;
-
-  for (i=0; i<dgrad.length; ++i) {
-    var id = dgrad[i],
-        def = all.gradient[id],
-        stops = def.stops;
-
-    defs += open("linearGradient", {
-      id: id,
-      x1: def.x1,
-      x2: def.x2,
-      y1: def.y1,
-      y2: def.y2
-    });
-    
-    for (j=0; j<stops.length; ++j) {
-      defs += open("stop", {
-        offset: stops[j].offset,
-        "stop-color": stops[j].color
-      }) + close("stop");
-    }
-    
-    defs += close("linearGradient");
-  }
-  
-  for (i=0; i<dclip.length; ++i) {
-    var id = dclip[i],
-        def = all.clipping[id];
-
-    defs += open("clipPath", {id: id});
-
-    defs += open("rect", {
-      x: 0,
-      y: 0,
-      width: def.width,
-      height: def.height
-    }) + close("rect");
-
-    defs += close("clipPath");
-  }
-  
-  if (defs.length > 0) {
-    return open("defs") + defs + close("defs");
-  } else {
-    return ""
-  }
-  return defs;
-};
-
-prototype.render = function(scene) {
-  this._gid = 0; // reset the group counter
-  this._text.body = this.draw(scene);
-  this._text.defs = this.buildDefs();
-};
-
-prototype.draw = function(scene) {
-  var meta = MARKS[scene.marktype];
-  if (!meta) {
-    return; // no known marktype (e.g., an interactor)
-  }
-  var tag  = meta[0],
-      attr = meta[1],
-      nest = meta[2] || false,
-      data = nest ? [scene.items] : scene.items,
-      defs = this._defs,
-      svg = "", i, sty;
-
-  var cls = cssClass(scene.def);
-
-  // style literals to exactly match the d3 dom
-  var styl = null;
-  if (cls === 'type-rule' || cls === 'type-path')
-    styl = 'style="pointer-events: none;"';
-  else if (cls !== 'type-group')
-    styl = 'style=""';
-
-  svg += open('g', {
-    'id': 'g' + ++this._gid, // d3 dom compat
-    'class': cssClass(scene.def)
-  }, styl);
-
-  for (i=0; i<data.length; ++i) {
-    var sty = tag === 'g' ? null : style(data[i], tag, defs);
-    svg += open(tag, attr(data[i], defs), sty);
-    if (tag === 'text') svg += escape_text(data[i].text);
-    if (tag === 'g') svg += this.drawGroup(data[i]);
-    svg += close(tag);
-  }
-
-  return svg + close('g');
-};
-
-function escape_text(s) {
-  s = (s == null ? "" : String(s));
-  return s.replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-}
-
-function escape_font(s) {
-  return String(s).replace(/\"/g, "'");
-}
-
-var MARKS = {
-  group:  ['g', group],
-  area:   ['path', area, true],
-  line:   ['path', line, true],
-  arc:    ['path', arc],
-  path:   ['path', path],
-  symbol: ['path', symbol],
-  rect:   ['rect', rect],
-  rule:   ['line', rule],
-  text:   ['text', text],
-  image:  ['image', image]
-};
-
-prototype.drawGroup = function(scene) {
-  var svg = "",
-      axes = scene.axisItems || [],
-      items = scene.items,
-      legends = scene.legendItems || [],
-      i, j, m;
-
-  svg += group_bg(scene);
-
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].def.layer === "back") {
-      svg += this.draw(axes[j]);
-    }
-  }
-  for (j=0, m=items.length; j<m; ++j) {
-    svg += this.draw(items[j]);
-  }
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].def.layer !== "back") {
-      svg += this.draw(axes[j]);
-    }
-  }
-  for (j=0, m=legends.length; j<m; ++j) {
-    svg += this.draw(legends[j]);
-  }
-
-  return svg;
-};
-
-///
-
-function group_bg(o) {
-  var w = o.width || 0,
-      h = o.height || 0;
-
-  var styl = o.mark.interactive === false ?
-    'style="pointer-events: none;"' : 
-    'style=""';
-
-  return open('rect', {
-    'class': 'background'
-  }, styl) + close('rect');
-}
-
-function group(o, defs) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      attr = {transform: "translate("+x+","+y+")"};
-
-  if (o.clip) {
-    var c = {width: o.width || 0, height: o.height || 0},
-        id = o.clip_id || (o.clip_id = "clip" + clip_id++);
-    defs.clipping[id] = c;
-    attr["clip-path"] = "url(#"+id+")";
-  }
-
-  return attr;
-}
-
-function arc(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  return {
-    transform: "translate("+x+","+y+")",
-    d: arc_path(o)
-  };
-}
-
-function area(items) {
-  if (!items.length) return;
-  var o = items[0],
-      path = o.orient === "horizontal" ? area_path_h : area_path_v;
-  path
-    .interpolate(o.interpolate || "linear")
-    .tension(o.tension == null ? 0.7 : o.tension);
-  return {d: path(items)};
-}
-
-function line(items) {
-  if (!items.length) return;
-  var o = items[0];
-  line_path
-    .interpolate(o.interpolate || "linear")
-    .tension(o.tension == null ? 0.7 : o.tension);
-  return {d: line_path(items)};
-}
-
-function path(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  return {
-    transform: "translate("+x+","+y+")",
-    d: o.path
-  };
-}
-
-function rect(o) {
-  return {
-    x: o.x || 0,
-    y: o.y || 0,
-    width: o.width || 0,
-    height: o.height || 0
-  };
-}
-
-function rule(o) {
-  var x1 = o.x || 0,
-      y1 = o.y || 0;
-  return {
-    x1: x1,
-    y1: y1,
-    x2: o.x2 != null ? o.x2 : x1,
-    y2: o.y2 != null ? o.y2 : y1
-  };
-}
-
-function symbol(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  return {
-    transform: "translate("+x+","+y+")",
-    d: symbol_path(o)
-  };
-}
-
-function image(o) {
-  var w = o.width || (o.image && o.image.width) || 0,
-      h = o.height || (o.image && o.image.height) || 0,
-      x = o.x - (o.align === "center"
-        ? w/2 : (o.align === "right" ? w : 0)),
-      y = o.y - (o.baseline === "middle"
-        ? h/2 : (o.baseline === "bottom" ? h : 0)),
-      url = config.load.baseURL + o.url;
-  
-  return {
-    "xlink:href": url,
-    x: x,
-    y: y,
-    width: w,
-    height: h
-  };
-}
-
-function text(o) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      dx = o.dx || 0,
-      dy = o.dy || 0,
-      a = o.angle || 0,
-      r = o.radius || 0,
-      align = textAlign[o.align || "left"],
-      base = o.baseline==="top" ? ".9em"
-           : o.baseline==="middle" ? ".35em" : 0;
-
-  if (r) {
-    var t = (o.theta || 0) - Math.PI/2;
-    x += r * Math.cos(t);
-    y += r * Math.sin(t);
-  }
-
-  return {
-    x: x + dx,
-    y: y + dy,
-    'text-anchor': align,
-    transform: a ? "rotate("+a+" "+x+","+y+")" : null,
-    dy: base ? base : null
-  };
-}
-
-///
-
-function cssClass(def) {
-  var cls = "type-" + def.type;
-  if (def.name) cls += " " + def.name;
-  return cls;
-}
-
-function x(o)     { return o.x || 0; }
-function y(o)     { return o.y || 0; }
-function xw(o)    { return o.x + o.width || 0; }
-function yh(o)    { return o.y + o.height || 0; }
-function key(o)   { return o.key; }
-function size(o)  { return o.size==null ? 100 : o.size; }
-function shape(o) { return o.shape || "circle"; }
-
-var arc_path    = d3.svg.arc(),
-    area_path_v = d3.svg.area().x(x).y1(y).y0(yh),
-    area_path_h = d3.svg.area().y(y).x0(xw).x1(x),
-    line_path   = d3.svg.line().x(x).y(y),
-    symbol_path = d3.svg.symbol().type(shape).size(size);
-
-var mark_id = 0,
-    clip_id = 0;
-
-var textAlign = {
-  "left":   "start",
-  "center": "middle",
-  "right":  "end"
-};
-
-var styles = {
-  "fill":             "fill",
-  "fillOpacity":      "fill-opacity",
-  "stroke":           "stroke",
-  "strokeWidth":      "stroke-width",
-  "strokeOpacity":    "stroke-opacity",
-  "strokeCap":        "stroke-linecap",
-  "strokeDash":       "stroke-dasharray",
-  "strokeDashOffset": "stroke-dashoffset",
-  "opacity":          "opacity"
-};
-
-var styleProps = util.keys(styles);
-
-function style(d, tag, defs) {
-  var i, n, prop, name, value,
-      o = d.mark ? d : d.length ? d[0] : null;
-  if (o === null) return null;
-
-  var s = "";
-
-  if (tag === 'text') {
-    s += 'font: ' + fontString(o) + ';';
-  }
-  
-  for (i=0, n=styleProps.length; i<n; ++i) {
-    prop = styleProps[i];
-    name = styles[prop];
-    value = o[prop];
-
-    if (value == null) {
-      if (name === "fill") s += 'fill: none;';
-    } else {
-      if (value.id) {
-        // ensure definition is included
-        defs.gradient[value.id] = value;
-        value = "url(#" + value.id + ")";
-      }
-      s += (s.length ? ' ' : '') + name + ': ' + value + ';'
-    }
-  }
-  
-  // not that we don't exclude blank styles for d3 dom compat
-  return 'style="'+s+'"';
-}
-
-function fontString(o) {
-  var f = (o.fontStyle ? o.fontStyle + " " : "")
-    + (o.fontVariant ? o.fontVariant + " " : "")
-    + (o.fontWeight ? o.fontWeight + " " : "")
-    + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
-    + (o.font && escape_font(o.font) || config.render.font);
-  return f;
-}
-
-module.exports = renderer;
-},{"../../util/config":103,"datalib/src/util":21}],65:[function(require,module,exports){
-var util = require('datalib/src/util');
-
-var handler = function(el, model) {
-  this._active = null;
-  this._handlers = {};
-  if (el) this.initialize(el);
-  if (model) this.model(model);
-};
-
-function svgHandler(handler) {
-  var that = this;
-  return function(evt) {
-    var target = evt.target,
-        item = target.__data__;
-
-    if (item) item = item.mark ? item : item[0];
-    handler.call(that._obj, evt, item);
-  };
-}
-
-function eventName(name) {
-  var i = name.indexOf(".");
-  return i < 0 ? name : name.slice(0,i);
-}
-
-var prototype = handler.prototype;
-
-prototype.initialize = function(el, pad, obj) {
-  this._el = d3.select(el).node();
-  this._svg = d3.select(el).select("svg.marks").node();
-  this._padding = pad;
-  this._obj = obj || null;
-  return this;
-};
-
-prototype.padding = function(pad) {
-  this._padding = pad;
-  return this;
-};
-
-prototype.model = function(model) {
-  if (!arguments.length) return this._model;
-  this._model = model;
-  return this;
-};
-
-prototype.handlers = function() {
-  var h = this._handlers;
-  return util.keys(h).reduce(function(a, k) {
-    return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
-  }, []);
-};
-
-// add an event handler
-prototype.on = function(type, handler) {
-  var name = eventName(type),
-      h = this._handlers,
-      dom = d3.select(this._svg).node();
-      
-  var x = {
-    type: type,
-    handler: handler,
-    svg: svgHandler.call(this, handler)
-  };
-  h = h[name] || (h[name] = []);
-  h.push(x);
-
-  dom.addEventListener(name, x.svg);
-  return this;
-};
-
-// remove an event handler
-prototype.off = function(type, handler) {
-  var name = eventName(type),
-      h = this._handlers[name],
-      dom = d3.select(this._svg).node();
-  if (!h) return;
-  for (var i=h.length; --i>=0;) {
-    if (h[i].type !== type) continue;
-    if (!handler || h[i].handler === handler) {
-      dom.removeEventListener(name, h[i].svg);
-      h.splice(i, 1);
-    }
-  }
-  return this;
-};
-
-module.exports = handler;
-},{"datalib/src/util":21}],66:[function(require,module,exports){
-var d3 = (window.d3),
-    util = require('datalib/src/util'),
-    marks = require('./marks');
-
-var renderer = function() {
-  this._svg = null;
-  this._ctx = null;
-  this._el = null;
-  this._defs = {
-    gradient: {},
-    clipping: {}
-  };
-};
-
-var prototype = renderer.prototype;
-
-prototype.initialize = function(el, width, height, pad, bgcolor) {
-  this._el = el;
-
-  // remove any existing svg element
-  d3.select(el).select("svg.marks").remove();
-
-  // create svg element and initialize attributes
-  this._svg = d3.select(el)
-    .append("svg")
-    .attr("class", "marks");
-
-  if (bgcolor != null) {
-    this._svg.style("background-color", bgcolor);
-  }
-  
-  // set the svg root group
-  this._ctx = this._svg.append("g");
-  
-  return this.resize(width, height, pad);
-};
-
-prototype.resize = function(width, height, pad) {
-  this._width = width;
-  this._height = height;
-  this._padding = pad;
-  
-  this._svg
-    .attr("width", width + pad.left + pad.right)
-    .attr("height", height + pad.top + pad.bottom);
-    
-  this._ctx
-    .attr("transform", "translate("+pad.left+","+pad.top+")");
-
-  return this;
-};
-
-prototype.context = function() {
-  return this._ctx;
-};
-
-prototype.element = function() {
-  return this._el;
-};
-
-prototype.updateDefs = function() {
-  var svg = this._svg,
-      all = this._defs,
-      dgrad = util.keys(all.gradient),
-      dclip = util.keys(all.clipping),
-      defs = svg.select("defs"), grad, clip;
-
-  // get or create svg defs block
-  if (dgrad.length===0 && dclip.length==0) { defs.remove(); return; }
-  if (defs.empty()) defs = svg.insert("defs", ":first-child");
-  
-  grad = defs.selectAll("linearGradient").data(dgrad, util.identity);
-  grad.enter().append("linearGradient").attr("id", util.identity);
-  grad.exit().remove();
-  grad.each(function(id) {
-    var def = all.gradient[id],
-        grd = d3.select(this);
-
-    // set gradient coordinates
-    grd.attr({x1: def.x1, x2: def.x2, y1: def.y1, y2: def.y2});
-
-    // set gradient stops
-    stop = grd.selectAll("stop").data(def.stops);
-    stop.enter().append("stop");
-    stop.exit().remove();
-    stop.attr("offset", function(d) { return d.offset; })
-        .attr("stop-color", function(d) { return d.color; });
-  });
-  
-  clip = defs.selectAll("clipPath").data(dclip, util.identity);
-  clip.enter().append("clipPath").attr("id", util.identity);
-  clip.exit().remove();
-  clip.each(function(id) {
-    var def = all.clipping[id],
-        cr = d3.select(this).selectAll("rect").data([1]);
-    cr.enter().append("rect");
-    cr.attr("x", 0)
-      .attr("y", 0)
-      .attr("width", def.width)
-      .attr("height", def.height);
-  });
-};
-
-prototype.render = function(scene, items) {
-  marks.current = this;
-
-  if (items) {
-    this.renderItems(util.array(items));
-  } else {
-    this.draw(this._ctx, scene, -1);
-  }
-  this.updateDefs();
-
- delete marks.current;
-};
-
-prototype.renderItems = function(items) {
-  var item, node, type, nest, i, n;
-
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    node = item._svg;
-    type = item.mark.marktype;
-
-    item = marks.nested[type] ? item.mark.items : item;
-    marks.update[type].call(node, item);
-    marks.style.call(node, item);
-  }
-}
-
-prototype.draw = function(ctx, scene, index) {
-  var marktype = scene.marktype,
-      renderer = marks.draw[marktype];
-  renderer.call(this, ctx, scene, index);
-};
-
-module.exports = renderer;
-},{"./marks":68,"datalib/src/util":21}],67:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"./Handler":65,"./Renderer":66,"dup":59}],68:[function(require,module,exports){
-var d3 = (window.d3),
-    load = require('datalib/src/import/load'),
-    util = require('datalib/src/util'),
-    config = require('../../util/config');
-
-function x(o)     { return o.x || 0; }
-function y(o)     { return o.y || 0; }
-function xw(o)    { return o.x + o.width || 0; }
-function yh(o)    { return o.y + o.height || 0; }
-function key(o)   { return o.key; }
-function size(o)  { return o.size==null ? 100 : o.size; }
-function shape(o) { return o.shape || "circle"; }
-    
-var arc_path    = d3.svg.arc(),
-    area_path_v = d3.svg.area().x(x).y1(y).y0(yh),
-    area_path_h = d3.svg.area().y(y).x0(xw).x1(x),
-    line_path   = d3.svg.line().x(x).y(y),
-    symbol_path = d3.svg.symbol().type(shape).size(size);
-
-var mark_id = 0,
-    clip_id = 0;
-
-var textAlign = {
-  "left":   "start",
-  "center": "middle",
-  "right":  "end"
-};
-
-var styles = {
-  "fill":             "fill",
-  "fillOpacity":      "fill-opacity",
-  "stroke":           "stroke",
-  "strokeWidth":      "stroke-width",
-  "strokeOpacity":    "stroke-opacity",
-  "strokeCap":        "stroke-linecap",
-  "strokeDash":       "stroke-dasharray",
-  "strokeDashOffset": "stroke-dashoffset",
-  "opacity":          "opacity"
-};
-var styleProps = util.keys(styles);
-
-function style(d) {
-  var i, n, prop, name, value,
-      o = d.mark ? d : d.length ? d[0] : null;
-  if (o === null) return;
-
-  for (i=0, n=styleProps.length; i<n; ++i) {
-    prop = styleProps[i];
-    name = styles[prop];
-    value = o[prop];
-
-    if (value == null) {
-      if (name === "fill") this.style.setProperty(name, "none", null);
-      else this.style.removeProperty(name);
-    } else {
-      if (value.id) {
-        // ensure definition is included
-        marks.current._defs.gradient[value.id] = value;
-        value = "url(#" + value.id + ")";
-      }
-      this.style.setProperty(name, value+"", null);
-    }
-  }
-}
-
-function arc(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  this.setAttribute("transform", "translate("+x+","+y+")");
-  this.setAttribute("d", arc_path(o));
-}
-
-function area(items) {
-  if (!items.length) return;
-  var o = items[0],
-      path = o.orient === "horizontal" ? area_path_h : area_path_v;
-  path
-    .interpolate(o.interpolate || "linear")
-    .tension(o.tension == null ? 0.7 : o.tension);
-  this.setAttribute("d", path(items));
-}
-
-function line(items) {
-  if (!items.length) return;
-  var o = items[0];
-  line_path
-    .interpolate(o.interpolate || "linear")
-    .tension(o.tension == null ? 0.7 : o.tension);
-  this.setAttribute("d", line_path(items));
-}
-
-function path(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  this.setAttribute("transform", "translate("+x+","+y+")");
-  if (o.path != null) this.setAttribute("d", o.path);
-}
-
-function rect(o) {
-  this.setAttribute("x", o.x || 0);
-  this.setAttribute("y", o.y || 0);
-  this.setAttribute("width", o.width || 0);
-  this.setAttribute("height", o.height || 0);
-}
-
-function rule(o) {
-  var x1 = o.x || 0,
-      y1 = o.y || 0;
-  this.setAttribute("x1", x1);
-  this.setAttribute("y1", y1);
-  this.setAttribute("x2", o.x2 != null ? o.x2 : x1);
-  this.setAttribute("y2", o.y2 != null ? o.y2 : y1);
-}
-
-function symbol(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  this.setAttribute("transform", "translate("+x+","+y+")");
-  this.setAttribute("d", symbol_path(o));
-}
-
-function image(o) {
-  var w = o.width || (o.image && o.image.width) || 0,
-      h = o.height || (o.image && o.image.height) || 0,
-      x = o.x - (o.align === "center"
-        ? w/2 : (o.align === "right" ? w : 0)),
-      y = o.y - (o.baseline === "middle"
-        ? h/2 : (o.baseline === "bottom" ? h : 0)),
-      url = load.sanitizeUrl(util.extend({url: o.url}, config.load));
-  
-  if (url) {
-    this.setAttributeNS("http://www.w3.org/1999/xlink", "href", url);
-  }
-
-  this.setAttribute("x", x);
-  this.setAttribute("y", y);
-  this.setAttribute("width", w);
-  this.setAttribute("height", h);
-}
-  
-function fontString(o) {
-  return (o.fontStyle ? o.fontStyle + " " : "")
-    + (o.fontVariant ? o.fontVariant + " " : "")
-    + (o.fontWeight ? o.fontWeight + " " : "")
-    + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
-    + (o.font || config.render.font);
-}
-
-function text(o) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      dx = o.dx || 0,
-      dy = o.dy || 0,
-      a = o.angle || 0,
-      r = o.radius || 0,
-      align = textAlign[o.align || "left"],
-      base = o.baseline==="top" ? ".9em"
-           : o.baseline==="middle" ? ".35em" : 0;
-
-  if (r) {
-    var t = (o.theta || 0) - Math.PI/2;
-    x += r * Math.cos(t);
-    y += r * Math.sin(t);
-  }
-
-  this.setAttribute("x", x + dx);
-  this.setAttribute("y", y + dy);
-  this.setAttribute("text-anchor", align);
-  
-  if (a) this.setAttribute("transform", "rotate("+a+" "+x+","+y+")");
-  else this.removeAttribute("transform");
-  
-  if (base) this.setAttribute("dy", base);
-  else this.removeAttribute("dy");
-  
-  this.textContent = o.text;
-  this.style.setProperty("font", fontString(o), null);
-}
-
-function group(o) {
-  var x = o.x || 0,
-      y = o.y || 0;
-  this.setAttribute("transform", "translate("+x+","+y+")");
-
-  if (o.clip) {
-    var c = {width: o.width || 0, height: o.height || 0},
-        id = o.clip_id || (o.clip_id = "clip" + clip_id++);
-    marks.current._defs.clipping[id] = c;
-    this.setAttribute("clip-path", "url(#"+id+")");
-  }
-}
-
-function group_bg(o) {
-  var w = o.width || 0,
-      h = o.height || 0;
-  this.setAttribute("width", w);
-  this.setAttribute("height", h);
-}
-
-function cssClass(def) {
-  var cls = "type-" + def.type;
-  if (def.name) cls += " " + def.name;
-  return cls;
-}
-
-function draw(tag, attr, nest) {
-  return function(g, scene, index) {
-    drawMark(g, scene, index, tag, attr, nest);
-  };
-}
-
-function drawMark(g, scene, index, tag, attr, nest) {
-  var data = nest ? [scene.items] : scene.items,
-      evts = scene.interactive===false ? "none" : null,
-      grps = g.node().childNodes,
-      notG = (tag !== "g"),
-      p = (p = grps[index+1]) // +1 to skip group background rect
-        ? d3.select(p)
-        : g.append("g")
-           .attr("id", "g"+(++mark_id))
-           .attr("class", cssClass(scene.def));
-
-  var id = p.attr("id"),
-      s = "#" + id + " > " + tag,
-      m = p.selectAll(s).data(data),
-      e = m.enter().append(tag);
-
-  if (notG) {
-    p.style("pointer-events", evts);
-    e.each(function(d) {
-      if (d.mark) d._svg = this;
-      else if (d.length) d[0]._svg = this;
-    });
-  } else {
-    e.append("rect").attr("class","background").style("pointer-events",evts);
-  }
-  
-  m.exit().remove();
-  m.each(attr);
-  if (notG) m.each(style);
-  else p.selectAll(s+" > rect.background").each(group_bg).each(style);
-  
-  return p;
-}
-
-function drawGroup(g, scene, index) {
-  var p = drawMark(g, scene, index, "g", group),
-      c = p.node().childNodes, n = c.length, i, j, m;
-  
-  for (i=0; i<n; ++i) {
-    var items = c[i].__data__.items,
-        legends = c[i].__data__.legendItems || [],
-        axes = c[i].__data__.axisItems || [],
-        sel = d3.select(c[i]),
-        idx = 0;
-
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].def.layer === "back") {
-        drawGroup.call(this, sel, axes[j], idx++);
-      }
-    }
-    for (j=0, m=items.length; j<m; ++j) {
-      this.draw(sel, items[j], idx++);
-    }
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].def.layer !== "back") {
-        drawGroup.call(this, sel, axes[j], idx++);
-      }
-    }
-    for (j=0, m=legends.length; j<m; ++j) {
-      drawGroup.call(this, sel, legends[j], idx++);
-    }
-  }
-}
-
-var marks = module.exports = {
-  update: {
-    group:   rect,
-    area:    area,
-    line:    line,
-    arc:     arc,
-    path:    path,
-    symbol:  symbol,
-    rect:    rect,
-    rule:    rule,
-    text:    text,
-    image:   image
-  },
-  nested: {
-    "area": true,
-    "line": true
-  },
-  style: style,
-  draw: {
-    group:   drawGroup,
-    area:    draw("path", area, true),
-    line:    draw("path", line, true),
-    arc:     draw("path", arc),
-    path:    draw("path", path),
-    symbol:  draw("path", symbol),
-    rect:    draw("rect", rect),
-    rule:    draw("line", rule),
-    text:    draw("text", text),
-    image:   draw("image", image),
-    draw:    draw // expose for extensibility
-  },
-  current: null
-};
-},{"../../util/config":103,"datalib/src/import/load":14,"datalib/src/util":21}],69:[function(require,module,exports){
+},{"../transforms/index":136,"datalib/src/util":21}],107:[function(require,module,exports){
 var util = require('datalib/src/util'),
+    bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
     Encoder = require('./Encoder'),
-    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     log = require('../util/log');
 
@@ -12199,9 +12913,9 @@ proto.evaluate = function(input) {
 
   if(input.add.length || input.rem.length || !items.length || 
       type === C.AREA || type === C.LINE) {
-    bounds.mark(this._mark, null, isGrp && !hasLegends);
+    bound.mark(this._mark, null, isGrp && !hasLegends);
   } else {
-    input.mod.forEach(function(item) { bounds.item(item); });
+    input.mod.forEach(function(item) { bound.item(item); });
   }  
 
   if(isGrp && hasLegends) {
@@ -12211,11 +12925,11 @@ proto.evaluate = function(input) {
       for(j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];
         Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items);
-        bounds.mark(legend, null, true);
+        bound.mark(legend, null, true);
       }
     }
 
-    bounds.mark(this._mark, null, true);
+    bound.mark(this._mark, null, true);
   }
 
   input.reflow = true;
@@ -12223,12 +12937,12 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"../dataflow/Node":30,"../util/boundscalc":102,"../util/constants":104,"../util/log":105,"./Encoder":71,"datalib/src/util":21}],70:[function(require,module,exports){
+},{"../dataflow/Node":80,"../util/constants":138,"../util/log":139,"./Encoder":109,"datalib/src/util":21,"vega-scenegraph/src/util/bound":69}],108:[function(require,module,exports){
 var util = require('datalib/src/util'),
+    Item = require('vega-scenegraph/src/util/Item'),
     Node = require('../dataflow/Node'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
-    Item  = require('./Item'),
     parseData = require('../parse/data'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
@@ -12520,10 +13234,10 @@ function keyFunction(key) {
 };
 
 module.exports = Builder;
-},{"../dataflow/Node":30,"../dataflow/changeset":32,"../dataflow/tuple":33,"../parse/data":41,"../util/constants":104,"../util/log":105,"./Bounder":69,"./Encoder":71,"./Item":73,"datalib/src/util":21}],71:[function(require,module,exports){
+},{"../dataflow/Node":80,"../dataflow/changeset":82,"../dataflow/tuple":83,"../parse/data":91,"../util/constants":138,"../util/log":139,"./Bounder":107,"./Encoder":109,"datalib/src/util":21,"vega-scenegraph/src/util/Item":68}],109:[function(require,module,exports){
 var util = require('datalib/src/util'),
+    bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
-    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     log = require('../util/log'),
     EMPTY = {};
@@ -12642,14 +13356,14 @@ Encoder.update = function(graph, trans, request, items, dirty) {
     prop = props && props[request];
     if (prop) {
       encode.call(null, prop, item, trans, db, sg, preds, dirty);
-      bounds.item(item);
+      bound.item(item);
     }
   }
 
 };
 
 module.exports = Encoder;
-},{"../dataflow/Node":30,"../util/boundscalc":102,"../util/constants":104,"../util/log":105,"datalib/src/util":21}],72:[function(require,module,exports){
+},{"../dataflow/Node":80,"../util/constants":138,"../util/log":139,"datalib/src/util":21,"vega-scenegraph/src/util/bound":69}],110:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Collector = require('../dataflow/Collector'),
@@ -12879,7 +13593,7 @@ function buildAxes(input, group) {
         def = a.def(),
         b = null;
 
-    axisItems[i] = {group: group, axisDef: def};
+    axisItems[i] = {group: group, axisDef: def, layer: def.layer};
     b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, axisItems[i], builder)
       .dependency(C.SCALES, scale);
@@ -12907,51 +13621,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../dataflow/Collector":27,"../dataflow/Node":30,"../parse/axes":39,"../parse/legends":46,"../util/constants":104,"../util/log":105,"./Builder":70,"./Scale":74,"datalib/src/util":21}],73:[function(require,module,exports){
-function Item(mark) {
-  this.mark = mark;
-}
-
-var prototype = Item.prototype;
-
-prototype.hasPropertySet = function(name) {
-  var props = this.mark.def.properties;
-  return props && props[name] != null;
-};
-
-prototype.cousin = function(offset, index) {
-  if (offset === 0) return this;
-  offset = offset || -1;
-  var mark = this.mark,
-      group = mark.group,
-      iidx = index==null ? mark.items.indexOf(this) : index,
-      midx = group.items.indexOf(mark) + offset;
-  return group.items[midx].items[iidx];
-};
-
-prototype.sibling = function(offset) {
-  if (offset === 0) return this;
-  offset = offset || -1;
-  var mark = this.mark,
-      iidx = mark.items.indexOf(this) + offset;
-  return mark.items[iidx];
-};
-
-prototype.remove = function() {
-  var item = this,
-      list = item.mark.items,
-      i = list.indexOf(item);
-  if (i >= 0) (i===list.length-1) ? list.pop() : list.splice(i, 1);
-  return item;
-};
-
-prototype.touch = function() {
-  if (this.pathCache) this.pathCache = null;
-  if (this.mark.pathCache) this.mark.pathCache = null;
-};
-
-module.exports = Item;
-},{}],74:[function(require,module,exports){
+},{"../dataflow/Collector":77,"../dataflow/Node":80,"../parse/axes":89,"../parse/legends":96,"../util/constants":138,"../util/log":139,"./Builder":108,"./Scale":111,"datalib/src/util":21}],111:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
@@ -13366,9 +14036,9 @@ var rangeDef = [
 ];
 
 module.exports = Scale;
-},{"../dataflow/Node":30,"../dataflow/changeset":32,"../transforms/Aggregate":79,"../util/config":103,"../util/constants":104,"../util/log":105,"datalib/src/util":21}],75:[function(require,module,exports){
-var tuple = require('../dataflow/tuple'),
-    boundsCalc = require('../util/boundscalc'),
+},{"../dataflow/Node":80,"../dataflow/changeset":82,"../transforms/Aggregate":116,"../util/config":137,"../util/constants":138,"../util/log":139,"datalib/src/util":21}],112:[function(require,module,exports){
+var bound = require('vega-scenegraph/src/util/bound'),
+    tuple = require('../dataflow/tuple'),
     C = require('../util/constants');
 
 function Transition(duration, ease) {
@@ -13446,7 +14116,7 @@ function step(elapsed) {
       item[curr[i].property] = curr[i](e);
     }
     item.touch();
-    boundsCalc.item(item);
+    bound.item(item);
 
     if (f === 1) {
       if (curr.remove) item.remove();
@@ -13462,7 +14132,7 @@ function step(elapsed) {
 };
 
 module.exports = Transition;
-},{"../dataflow/tuple":33,"../util/boundscalc":102,"../util/constants":104}],76:[function(require,module,exports){
+},{"../dataflow/tuple":83,"../util/constants":138,"vega-scenegraph/src/util/bound":69}],113:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
     config = require('../util/config'),
@@ -14027,12 +14697,12 @@ function vg_axisDomain() {
 }
 
 module.exports = axs;
-},{"../dataflow/tuple":33,"../parse/mark":47,"../util/config":103,"datalib/src/util":21}],77:[function(require,module,exports){
+},{"../dataflow/tuple":83,"../parse/mark":97,"../util/config":137,"datalib/src/util":21}],114:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
+    Gradient = require('vega-scenegraph/src/util/Gradient'),
     parseProperties = require('../parse/properties'),
     parseMark = require('../parse/mark'),
-    Gradient = require('../util/Gradient'),
     config = require('../util/config');
 
 function lgnd(model) {
@@ -14576,7 +15246,7 @@ function vg_hLegendLabels() {
 }
 
 module.exports = lgnd;
-},{"../parse/mark":47,"../parse/properties":52,"../util/Gradient":101,"../util/config":103,"datalib/src/util":21}],78:[function(require,module,exports){
+},{"../parse/mark":97,"../parse/properties":102,"../util/config":137,"datalib/src/util":21,"vega-scenegraph/src/util/Gradient":66}],115:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
   if (func(node)) return true;
@@ -14590,7 +15260,7 @@ module.exports = function visit(node, func) {
     }
   }
 };
-},{}],79:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Facetor = require('./Facetor'),
@@ -14760,7 +15430,7 @@ var VALID_OPS = Aggregate.VALID_OPS = [
 ];
 
 module.exports   = Aggregate;
-},{"../dataflow/changeset":32,"../dataflow/tuple":33,"../util/constants":104,"../util/log":105,"./Facetor":84,"./Transform":96,"datalib/src/util":21}],80:[function(require,module,exports){
+},{"../dataflow/changeset":82,"../dataflow/tuple":83,"../util/constants":138,"../util/log":139,"./Facetor":121,"./Transform":133,"datalib/src/util":21}],117:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
 
@@ -14785,7 +15455,7 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = BatchTransform;
-},{"../dataflow/Collector":27,"./Transform":96}],81:[function(require,module,exports){
+},{"../dataflow/Collector":77,"./Transform":133}],118:[function(require,module,exports){
 var bins = require('datalib/src/bins/bins'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
@@ -14843,7 +15513,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
-},{"../dataflow/tuple":33,"./Transform":96,"datalib/src/bins/bins":7}],82:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./Transform":133,"datalib/src/bins/bins":7}],119:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
     log = require('../util/log'),
@@ -14960,7 +15630,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
-},{"../dataflow/Collector":27,"../dataflow/changeset":32,"../dataflow/tuple":33,"../util/log":105,"./Transform":96}],83:[function(require,module,exports){
+},{"../dataflow/Collector":77,"../dataflow/changeset":82,"../dataflow/tuple":83,"../util/log":139,"./Transform":133}],120:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
@@ -14991,7 +15661,7 @@ proto.aggr = function() {
 };
 
 module.exports = Facet;
-},{"../parse/transforms":56,"./Aggregate":79,"./Transform":96,"datalib/src/util":21}],84:[function(require,module,exports){
+},{"../parse/transforms":106,"./Aggregate":116,"./Transform":133,"datalib/src/util":21}],121:[function(require,module,exports){
 var Aggregator = require('datalib/src/aggregate/aggregator'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
@@ -15130,7 +15800,7 @@ proto.changes = function(input, output) {
 };
 
 module.exports = Facetor;
-},{"../dataflow/changeset":32,"../dataflow/tuple":33,"../util/constants":104,"../util/log":105,"datalib/src/aggregate/aggregator":4}],85:[function(require,module,exports){
+},{"../dataflow/changeset":82,"../dataflow/tuple":83,"../util/constants":138,"../util/log":139,"datalib/src/aggregate/aggregator":4}],122:[function(require,module,exports){
 var Transform = require('./Transform'),
     changeset = require('../dataflow/changeset'), 
     expr = require('../parse/expr'),
@@ -15188,7 +15858,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"../dataflow/changeset":32,"../parse/expr":43,"../util/constants":104,"../util/log":105,"./Transform":96}],86:[function(require,module,exports){
+},{"../dataflow/changeset":82,"../parse/expr":93,"../util/constants":138,"../util/log":139,"./Transform":133}],123:[function(require,module,exports){
 var Transform = require('./Transform'),
     log = require('../util/log'), 
     tuple = require('../dataflow/tuple'), 
@@ -15258,7 +15928,7 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"../dataflow/changeset":32,"../dataflow/tuple":33,"../util/log":105,"./Transform":96}],87:[function(require,module,exports){
+},{"../dataflow/changeset":82,"../dataflow/tuple":83,"../util/log":139,"./Transform":133}],124:[function(require,module,exports){
 var d3 = (window.d3),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
@@ -15369,7 +16039,7 @@ proto.transform = function(nodeInput) {
 };
 
 module.exports = Force;
-},{"../dataflow/tuple":33,"./Transform":96}],88:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./Transform":133}],125:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
     expression = require('../parse/expr'),
@@ -15412,7 +16082,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"../dataflow/tuple":33,"../parse/expr":43,"../util/constants":104,"../util/log":105,"./Transform":96}],89:[function(require,module,exports){
+},{"../dataflow/tuple":83,"../parse/expr":93,"../util/constants":138,"../util/log":139,"./Transform":133}],126:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
     Transform = require('./Transform'),
@@ -15498,7 +16168,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Geo;
-},{"../dataflow/tuple":33,"./Transform":96,"datalib/src/util":21}],90:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./Transform":133,"datalib/src/util":21}],127:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
     Geo = require('./Geo'),
@@ -15541,7 +16211,7 @@ proto.transform = function(input) {
 };
 
 module.exports = GeoPath;
-},{"../dataflow/tuple":33,"./Geo":89,"./Transform":96,"datalib/src/util":21}],91:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./Geo":126,"./Transform":133,"datalib/src/util":21}],128:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
@@ -15634,7 +16304,7 @@ proto.transform = function(input) {
 };
 
 module.exports  = LinkPath;
-},{"../dataflow/tuple":33,"./Transform":96}],92:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./Transform":133}],129:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('../parse/expr'),
     C = require('../util/constants');
@@ -15746,7 +16416,7 @@ proto.set = function(value) {
 };
 
 module.exports = Parameter;
-},{"../parse/expr":43,"../util/constants":104,"datalib/src/util":21}],93:[function(require,module,exports){
+},{"../parse/expr":93,"../util/constants":138,"datalib/src/util":21}],130:[function(require,module,exports){
 var d3 = (window.d3),
     gen  = require('datalib/src/generate'),
     util = require('datalib/src/util'),
@@ -15811,7 +16481,7 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
-},{"../dataflow/tuple":33,"./BatchTransform":80,"./Transform":96,"datalib/src/generate":8,"datalib/src/util":21}],94:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./BatchTransform":117,"./Transform":133,"datalib/src/generate":8,"datalib/src/util":21}],131:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     expr = require('../parse/expr'),
@@ -15836,7 +16506,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Sort;
-},{"../parse/expr":43,"../util/log":105,"./Transform":96,"datalib/src/util":21}],95:[function(require,module,exports){
+},{"../parse/expr":93,"../util/log":139,"./Transform":133,"datalib/src/util":21}],132:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
@@ -15930,7 +16600,7 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
-},{"../dataflow/tuple":33,"./BatchTransform":80,"./Transform":96,"datalib/src/util":21}],96:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./BatchTransform":117,"./Transform":133,"datalib/src/util":21}],133:[function(require,module,exports){
 var Node = require('../dataflow/Node'),
     Parameter = require('./Parameter'),
     C = require('../util/constants');
@@ -15984,7 +16654,7 @@ proto.output = function(map) {
 };
 
 module.exports = Transform;
-},{"../dataflow/Node":30,"../util/constants":104,"./Parameter":92}],97:[function(require,module,exports){
+},{"../dataflow/Node":80,"../util/constants":138,"./Parameter":129}],134:[function(require,module,exports){
 var d3 = (window.d3),
     util = require('datalib/src/util'),
     Transform = require('./Transform'),
@@ -16057,7 +16727,7 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Treemap;
-},{"../dataflow/tuple":33,"./BatchTransform":80,"./Transform":96,"datalib/src/util":21}],98:[function(require,module,exports){
+},{"../dataflow/tuple":83,"./BatchTransform":117,"./Transform":133,"datalib/src/util":21}],135:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
@@ -16182,7 +16852,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
-},{"../dataflow/Collector":27,"../util/log":105,"./Transform":96,"datalib/src/util":21}],99:[function(require,module,exports){
+},{"../dataflow/Collector":77,"../util/log":139,"./Transform":133,"datalib/src/util":21}],136:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
@@ -16201,453 +16871,7 @@ module.exports = {
   treemap:    require('./Treemap'),
   zip:        require('./Zip')
 };
-},{"./Aggregate":79,"./Bin":81,"./Cross":82,"./Facet":83,"./Filter":85,"./Fold":86,"./Force":87,"./Formula":88,"./Geo":89,"./GeoPath":90,"./LinkPath":91,"./Pie":93,"./Sort":94,"./Stack":95,"./Treemap":97,"./Zip":98}],100:[function(require,module,exports){
-var bounds = function(b) {
-  this.clear();
-  if (b) this.union(b);
-};
-
-var prototype = bounds.prototype;
-
-prototype.clear = function() {
-  this.x1 = +Number.MAX_VALUE;
-  this.y1 = +Number.MAX_VALUE;
-  this.x2 = -Number.MAX_VALUE;
-  this.y2 = -Number.MAX_VALUE;
-  return this;
-};
-
-prototype.set = function(x1, y1, x2, y2) {
-  this.x1 = x1;
-  this.y1 = y1;
-  this.x2 = x2;
-  this.y2 = y2;
-  return this;
-};
-
-prototype.add = function(x, y) {
-  if (x < this.x1) this.x1 = x;
-  if (y < this.y1) this.y1 = y;
-  if (x > this.x2) this.x2 = x;
-  if (y > this.y2) this.y2 = y;
-  return this;
-};
-
-prototype.expand = function(d) {
-  this.x1 -= d;
-  this.y1 -= d;
-  this.x2 += d;
-  this.y2 += d;
-  return this;
-};
-
-prototype.round = function() {
-  this.x1 = Math.floor(this.x1);
-  this.y1 = Math.floor(this.y1);
-  this.x2 = Math.ceil(this.x2);
-  this.y2 = Math.ceil(this.y2);
-  return this;
-};
-
-prototype.translate = function(dx, dy) {
-  this.x1 += dx;
-  this.x2 += dx;
-  this.y1 += dy;
-  this.y2 += dy;
-  return this;
-};
-
-prototype.rotate = function(angle, x, y) {
-  var cos = Math.cos(angle),
-      sin = Math.sin(angle),
-      cx = x - x*cos + y*sin,
-      cy = y - x*sin - y*cos,
-      x1 = this.x1, x2 = this.x2,
-      y1 = this.y1, y2 = this.y2;
-
-  return this.clear()
-    .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
-    .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
-    .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
-    .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
-}
-
-prototype.union = function(b) {
-  if (b.x1 < this.x1) this.x1 = b.x1;
-  if (b.y1 < this.y1) this.y1 = b.y1;
-  if (b.x2 > this.x2) this.x2 = b.x2;
-  if (b.y2 > this.y2) this.y2 = b.y2;
-  return this;
-};
-
-prototype.encloses = function(b) {
-  return b && (
-    this.x1 <= b.x1 &&
-    this.x2 >= b.x2 &&
-    this.y1 <= b.y1 &&
-    this.y2 >= b.y2
-  );
-};
-
-prototype.intersects = function(b) {
-  return b && !(
-    this.x2 < b.x1 ||
-    this.x1 > b.x2 ||
-    this.y2 < b.y1 ||
-    this.y1 > b.y2
-  );
-};
-
-prototype.contains = function(x, y) {
-  return !(
-    x < this.x1 ||
-    x > this.x2 ||
-    y < this.y1 ||
-    y > this.y2
-  );
-};
-
-prototype.width = function() {
-  return this.x2 - this.x1;
-};
-
-prototype.height = function() {
-  return this.y2 - this.y1;
-};
-
-module.exports = bounds;
-},{}],101:[function(require,module,exports){
-var vg_gradient_id = 0;
-
-function gradient(type) {
-  this.id = "grad_" + (vg_gradient_id++);
-  this.type = type || "linear";
-  this.stops = [];
-  this.x1 = 0;
-  this.x2 = 1;
-  this.y1 = 0;
-  this.y2 = 0;
-};
-
-var prototype = gradient.prototype;
-
-prototype.stop = function(offset, color) {
-  this.stops.push({
-    offset: offset,
-    color: color
-  });
-  return this;
-};
-
-module.exports = gradient;
-},{}],102:[function(require,module,exports){
-var d3 = (window.d3),
-    util = require('datalib/src/util'),
-    Bounds = require('../util/Bounds'),
-    canvas = require('../render/canvas/path'),
-    config = require('./config');
-
-var parse = canvas.parse,
-    boundPath = canvas.bounds,
-    areaPath = canvas.area,
-    linePath = canvas.line,
-    halfpi = Math.PI / 2,
-    sqrt3 = Math.sqrt(3),
-    tan30 = Math.tan(30 * Math.PI / 180),
-    gfx = null;
-
-function fontString(o) {
-  return (o.fontStyle ? o.fontStyle + " " : "")
-    + (o.fontVariant ? o.fontVariant + " " : "")
-    + (o.fontWeight ? o.fontWeight + " " : "")
-    + (o.fontSize != null ? o.fontSize : config.render.fontSize) + "px "
-    + (o.font || config.render.font);
-}
-
-function context() {
-  return gfx || (gfx = (util.isNode
-    ? new ((window.canvas))(1,1)
-    : d3.select("body").append("canvas")
-        .attr("class", "vega_hidden")
-        .attr("width", 1)
-        .attr("height", 1)
-        .style("display", "none")
-        .node())
-    .getContext("2d"));
-}
-
-function pathBounds(o, path, bounds) {
-  if (path == null) {
-    bounds.set(0, 0, 0, 0);
-  } else {
-    boundPath(path, bounds);
-    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-      bounds.expand(o.strokeWidth);
-    }
-  }
-  return bounds;
-}
-
-function path(o, bounds) {
-  var p = o.path
-    ? o.pathCache || (o.pathCache = parse(o.path))
-    : null;
-  return pathBounds(o, p, bounds);
-}
-
-function area(o, bounds) {
-  var items = o.mark.items, o = items[0];
-  var p = o.pathCache || (o.pathCache = parse(areaPath(items)));
-  return pathBounds(items[0], p, bounds);
-}
-
-function line(o, bounds) {
-  var items = o.mark.items, o = items[0];
-  var p = o.pathCache || (o.pathCache = parse(linePath(items)));
-  return pathBounds(items[0], p, bounds);
-}
-
-function rect(o, bounds) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      w = (x + o.width) || 0,
-      h = (y + o.height) || 0;
-  bounds.set(x, y, w, h);
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
-}
-
-function image(o, bounds) {
-  var w = o.width || 0,
-      h = o.height || 0,
-      x = (o.x||0) - (o.align === "center"
-          ? w/2 : (o.align === "right" ? w : 0)),
-      y = (o.y||0) - (o.baseline === "middle"
-          ? h/2 : (o.baseline === "bottom" ? h : 0));
-  return bounds.set(x, y, x+w, y+h);
-}
-
-function rule(o, bounds) {
-  var x1, y1;
-  bounds.set(
-    x1 = o.x || 0,
-    y1 = o.y || 0,
-    o.x2 != null ? o.x2 : x1,
-    o.y2 != null ? o.y2 : y1
-  );
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
-}
-
-function arc(o, bounds) {
-  var cx = o.x || 0,
-      cy = o.y || 0,
-      ir = o.innerRadius || 0,
-      or = o.outerRadius || 0,
-      sa = (o.startAngle || 0) - halfpi,
-      ea = (o.endAngle || 0) - halfpi,
-      xmin = Infinity, xmax = -Infinity,
-      ymin = Infinity, ymax = -Infinity,
-      a, i, n, x, y, ix, iy, ox, oy;
-
-  var angles = [sa, ea],
-      s = sa - (sa%halfpi);
-  for (i=0; i<4 && s<ea; ++i, s+=halfpi) {
-    angles.push(s);
-  }
-
-  for (i=0, n=angles.length; i<n; ++i) {
-    a = angles[i];
-    x = Math.cos(a); ix = ir*x; ox = or*x;
-    y = Math.sin(a); iy = ir*y; oy = or*y;
-    xmin = Math.min(xmin, ix, ox);
-    xmax = Math.max(xmax, ix, ox);
-    ymin = Math.min(ymin, iy, oy);
-    ymax = Math.max(ymax, iy, oy);
-  }
-
-  bounds.set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
-}
-
-function symbol(o, bounds) {
-  var size = o.size != null ? o.size : 100,
-      x = o.x || 0,
-      y = o.y || 0,
-      r, t, rx, ry;
-
-  switch (o.shape) {
-    case "cross":
-      r = Math.sqrt(size / 5) / 2;
-      t = 3*r;
-      bounds.set(x-t, y-r, x+t, y+r);
-      break;
-
-    case "diamond":
-      ry = Math.sqrt(size / (2 * tan30));
-      rx = ry * tan30;
-      bounds.set(x-rx, y-ry, x+rx, y+ry);
-      break;
-
-    case "square":
-      t = Math.sqrt(size);
-      r = t / 2;
-      bounds.set(x-r, y-r, x+r, y+r);
-      break;
-
-    case "triangle-down":
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      bounds.set(x-rx, y-ry, x+rx, y+ry);
-      break;
-
-    case "triangle-up":
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      bounds.set(x-rx, y-ry, x+rx, y+ry);
-      break;
-
-    default:
-      r = Math.sqrt(size/Math.PI);
-      bounds.set(x-r, y-r, x+r, y+r);
-  }
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
-}
-
-function text(o, bounds, noRotate) {
-  var x = (o.x || 0) + (o.dx || 0),
-      y = (o.y || 0) + (o.dy || 0),
-      h = o.fontSize || config.render.fontSize,
-      a = o.align,
-      b = o.baseline,
-      r = o.radius || 0,
-      g = context(), w, t;
-
-  g.font = fontString(o);
-  g.textAlign = a || "left";
-  g.textBaseline = b || "alphabetic";
-  w = g.measureText(o.text || "").width;
-
-  if (r) {
-    t = (o.theta || 0) - Math.PI/2;
-    x += r * Math.cos(t);
-    y += r * Math.sin(t);
-  }
-
-  // horizontal
-  if (a === "center") {
-    x = x - (w / 2);
-  } else if (a === "right") {
-    x = x - w;
-  } else {
-    // left by default, do nothing
-  }
-
-  /// TODO find a robust solution for heights.
-  /// These offsets work for some but not all fonts.
-
-  // vertical
-  if (b === "top") {
-    y = y + (h/5);
-  } else if (b === "bottom") {
-    y = y - h;
-  } else if (b === "middle") {
-    y = y - (h/2) + (h/10);
-  } else {
-    y = y - 4*h/5; // alphabetic by default
-  }
-  
-  bounds.set(x, y, x+w, y+h);
-  if (o.angle && !noRotate) {
-    bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
-  }
-  return bounds.expand(noRotate ? 0 : 1);
-}
-
-function group(g, bounds, includeLegends) {
-  var axes = g.axisItems || [],
-      legends = g.legendItems || [], j, m;
-
-  for (j=0, m=axes.length; j<m; ++j) {
-    bounds.union(axes[j].bounds);
-  }
-  for (j=0, m=g.items.length; j<m; ++j) {
-    bounds.union(g.items[j].bounds);
-  }
-  if (includeLegends) {
-    for (j=0, m=legends.length; j<m; ++j) {
-      bounds.union(legends[j].bounds);
-    }
-    if (g.width != null && g.height != null) {
-      bounds.add(g.width, g.height);
-    }
-    if (g.x != null && g.y != null) {
-      bounds.add(0, 0);
-    }
-  }
-  bounds.translate(g.x||0, g.y||0);
-  return bounds;
-}
-
-var methods = {
-  group:  group,
-  symbol: symbol,
-  image:  image,
-  rect:   rect,
-  rule:   rule,
-  arc:    arc,
-  text:   text,
-  path:   path,
-  area:   area,
-  line:   line
-};
-
-function itemBounds(item, func, opt) {
-  func = func || methods[item.mark.marktype];
-  if (!item.bounds_prev) item['bounds:prev'] = new Bounds();
-  var b = item.bounds, pb = item['bounds:prev'];
-  if (b) pb.clear().union(b);
-  item.bounds = func(item, b ? b.clear() : new Bounds(), opt);
-  if (!b) pb.clear().union(item.bounds);
-  return item.bounds;
-}
-
-function markBounds(mark, bounds, opt) {
-  bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
-  var type  = mark.marktype,
-      func  = methods[type],
-      items = mark.items,
-      item, i, len;
-      
-  if (type==="area" || type==="line") {
-    if (items.length) {
-      items[0].bounds = func(items[0], bounds);
-    }
-  } else {
-    for (i=0, len=items.length; i<len; ++i) {
-      bounds.union(itemBounds(items[i], func, opt));
-    }
-  }
-  mark.bounds = bounds;
-}
-
-module.exports = {
-  mark:  markBounds,
-  item:  itemBounds,
-  text:  text,
-  group: group
-};
-},{"../render/canvas/path":61,"../util/Bounds":100,"./config":103,"datalib/src/util":21}],103:[function(require,module,exports){
+},{"./Aggregate":116,"./Bin":118,"./Cross":119,"./Facet":120,"./Filter":122,"./Fold":123,"./Force":124,"./Formula":125,"./Geo":126,"./GeoPath":127,"./LinkPath":128,"./Pie":130,"./Sort":131,"./Stack":132,"./Treemap":134,"./Zip":135}],137:[function(require,module,exports){
 var d3 = (window.d3),
     config = {};
 
@@ -16787,7 +17011,7 @@ config.range = {
 };
 
 module.exports = config;
-},{}],104:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 module.exports = {
   ADD_CELL: 1,
   MOD_CELL: 2,
@@ -16844,7 +17068,7 @@ module.exports = {
   ASC: "asc",
   DESC: "desc"
 };
-},{}],105:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 (function (process){
 var util = require('datalib/src/util'),
     config = require('./config'),
@@ -16895,7 +17119,7 @@ module.exports = {
 };
 }).call(this,require('_process'))
 
-},{"./config":103,"_process":3,"datalib/src/util":21}],106:[function(require,module,exports){
+},{"./config":137,"_process":3,"datalib/src/util":21}],140:[function(require,module,exports){
 var util = require('datalib/src/util'),
     load = require('datalib/src/import/readers'),
     parse = require('../parse'),
@@ -16941,6 +17165,6 @@ module.exports = function schema(opt) {
 
   return schema;
 };
-},{"../parse":44,"../scene/Scale":74,"../util/config":103,"datalib/src/import/readers":16,"datalib/src/util":21}]},{},[1])(1)
+},{"../parse":94,"../scene/Scale":111,"../util/config":137,"datalib/src/import/readers":16,"datalib/src/util":21}]},{},[1])(1)
 });
 //# sourceMappingURL=vega2.js.map

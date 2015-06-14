@@ -1,1 +1,0 @@
-TODO items are now being tracked as [GitHub issues](https://github.com/uwdata/vega/issues). If you're interested in contributing, please look for issues labeled [help-wanted](https://github.com/uwdata/vega/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22). 
