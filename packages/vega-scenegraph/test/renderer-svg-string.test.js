@@ -4,12 +4,10 @@ var fs = require('fs');
 var assert = require('chai').assert;
 var Renderer = require('../src/render/svg-string').Renderer;
 var res = './test/resources/';
-
-var GENERATE_TEST_FILES = false;
+var GENERATE = require('./resources/generate-tests');
 
 function generate(path, str) {
-  if (!GENERATE_TEST_FILES) return;
-  fs.writeFileSync(res + path, str);
+  if (!GENERATE) fs.writeFileSync(res + path, str);
 }
 
 function load(file) {

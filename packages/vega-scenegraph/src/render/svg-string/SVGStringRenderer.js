@@ -4,10 +4,10 @@ var dl = require('datalib'),
     SVG = require('../../util/svg'),
     areaPath = require('../../path/area'),
     linePath = require('../../path/line'),
+    font = require('../../util/font'),
     DOM = require('../../util/dom'),
     openTag = DOM.openTag,
-    closeTag = DOM.closeTag,
-    fontString = DOM.fontString;
+    closeTag = DOM.closeTag;
 
 function SVGStringRenderer(loadConfig) {
   Renderer.call(this);
@@ -197,7 +197,7 @@ function styles(d, mark, tag, defs) {
   }
 
   if (tag === 'text') {
-    s += (s.length ? ' ' : '') + 'font: ' + fontString(o) + ';';
+    s += (s.length ? ' ' : '') + 'font: ' + font.string(o) + ';';
   }
 
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
@@ -345,8 +345,7 @@ function text(o) {
       y = o.y || 0,
       a = o.angle || 0,
       r = o.radius || 0,
-      align = SVG.textAlign[o.align] || 'start',
-      base = SVG.textBaseline[o.baseline] || 'alphabetic';
+      align = SVG.textAlign[o.align] || 'start';
 
   if (r) {
     var t = (o.theta || 0) - Math.PI/2;
@@ -356,9 +355,8 @@ function text(o) {
 
   return {
     x: x + (o.dx || 0),
-    y: y + (o.dy || 0),
+    y: y + (o.dy || 0) + font.offset(o),
     'text-anchor': align,
-    'alignment-baseline': base,
     transform: a ? 'rotate('+a+' '+x+','+y+')' : null
   };
 }
