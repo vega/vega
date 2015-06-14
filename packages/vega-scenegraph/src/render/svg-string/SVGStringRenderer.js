@@ -197,7 +197,7 @@ function styles(d, mark, tag, defs) {
   }
 
   if (tag === 'text') {
-    s += (s.length ? ' ' : '') + 'font: ' + font.string(o) + ';';
+    s += 'font: ' + font.string(o) + ';';
   }
 
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
