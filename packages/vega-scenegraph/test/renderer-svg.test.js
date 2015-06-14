@@ -19,11 +19,25 @@ function loadScene(file) {
   return initScene(load(file));
 }
 
+function compensate(svg) {
+  // update font style strings to compensate for JSDOM
+  svg = svg.replace(/font: ([^;]+);/g, replaceFont);
+
+  // update image href namespace to compensate for JSDOM
+  svg = svg.replace(/image href=/g, 'image xlink:href=');
+
+  // correct capitalization to compensate for JSDOM
+  svg = svg.replace(/clippath/g, 'clipPath');
+  svg = svg.replace(/lineargradient/g, 'linearGradient');
+
+  return svg;
+}
+
 function render(scene, w, h) {
-  return new Renderer()
+  return compensate(new Renderer()
     .initialize(doc.body, w, h)
     .render(scene)
-    .svg();
+    .svg());
 }
 
 // workaround for broken jsdom style parser
@@ -71,8 +85,6 @@ describe('svg renderer', function() {
   it('should support axes, legends and sub-groups', function() {
     var scene = loadScene('scenegraph-barley.json');
     var svg = render(scene, 360, 740);
-    // update font style strings to compensate for JSDOM
-    svg = svg.replace(/font: ([^;]+);/g, replaceFont);
     var test = load('svg/scenegraph-barley.svg');
     assert.equal(svg, test);
   });
@@ -91,14 +103,14 @@ describe('svg renderer', function() {
     });
     r.render(scene);
   
-    var svg = r.svg();
+    var svg = compensate(r.svg());
     var test = load('svg/scenegraph-full-redraw.svg');
     assert.equal(svg, test);
 
     mark.pop();
     r.render(scene);
 
-    svg = r.svg();
+    svg = compensate(r.svg());
     test = load('svg/scenegraph-single-redraw.svg');
     assert.equal(svg, test);
   });
@@ -116,7 +128,7 @@ describe('svg renderer', function() {
     rect.bounds.x2 = 2*rect.bounds.x2 - rect.bounds.x1;
     r.render(scene, [rect]);
   
-    var svg = r.svg();
+    var svg = compensate(r.svg());
     var test = load('svg/scenegraph-single-redraw.svg');
     assert.equal(svg, test);
   });
@@ -132,7 +144,7 @@ describe('svg renderer', function() {
     var prev = line.y;
     line.y = 5;
     r.render(scene, [line]);
-    var svg = r.svg();
+    var svg = compensate(r.svg());
     line.y = prev;
     var test = load('svg/scenegraph-line-redraw.svg');
     assert.equal(svg, test);
@@ -188,8 +200,6 @@ describe('svg renderer', function() {
 
   it('should render image mark', function() {
     var svg = render(marks.image, 500, 500);
-    // update image href namespace to compensate for JSDOM
-    svg = svg.replace(/href=/g, 'xlink:href=');
     var test = load('svg/marks-image.svg');
     assert.equal(svg, test);
   });
@@ -230,8 +240,6 @@ describe('svg renderer', function() {
 
   it('should render text mark', function() {
     var svg = render(marks.text, 500, 500);
-    // update font style strings to compensate for JSDOM
-    svg = svg.replace(/font: ([^;]+);/g, replaceFont);
     var test = load('svg/marks-text.svg');
     assert.equal(svg, test);
   });

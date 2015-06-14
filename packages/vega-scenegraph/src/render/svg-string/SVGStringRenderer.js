@@ -83,7 +83,7 @@ prototype.buildDefs = function() {
     def = all.gradient[id];
     stops = def.stops;
 
-    defs += openTag('lineargradient', {
+    defs += openTag('linearGradient', {
       id: id,
       x1: def.x1,
       x2: def.x2,
@@ -98,14 +98,14 @@ prototype.buildDefs = function() {
       }) + closeTag('stop');
     }
     
-    defs += closeTag('lineargradient');
+    defs += closeTag('linearGradient');
   }
   
   for (i=0; i<dclip.length; ++i) {
     id = dclip[i];
     def = all.clipping[id];
 
-    defs += openTag('clippath', {id: id});
+    defs += openTag('clipPath', {id: id});
 
     defs += openTag('rect', {
       x: 0,
@@ -114,7 +114,7 @@ prototype.buildDefs = function() {
       height: def.height
     }) + closeTag('rect');
 
-    defs += closeTag('clippath');
+    defs += closeTag('clipPath');
   }
   
   return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
