@@ -23,6 +23,7 @@ var View = function(el, width, height, model) {
   this._handler  = null;
   this._streamer = null; // Targeted update for streaming changes
   this._changeset = null;
+  this._repaint = true; // Full re-render on every re-init
   this._renderers = {canvas: canvas, svg: svg};
   this._io  = canvas;
   this._api = {}; // Stash streaming data API sandboxes.
@@ -168,7 +169,7 @@ prototype.padding = function(pad) {
     if (this._renderer) this._renderer.resize(this._width, this._height, pad);
     if (this._handler)  this._handler.padding(pad);
   }
-  return this;
+  return (this._repaint = true, this);
 };
 
 prototype.autopad = function(opt) {
@@ -269,7 +270,7 @@ prototype.initialize = function(el) {
     parseStreams(this);
   }
   
-  return this;
+  return (this._repaint = true, this);
 };
 
 function build() {
@@ -288,8 +289,15 @@ function build() {
 
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
-    } else {
-      v._renderer.render(s, input.dirty.length && input.dirty);
+    } else if (v._repaint) {
+      v._renderer.render(s);
+      v._repaint = false;
+    } else if(input.dirty.length) {
+      v._renderer.render(s, input.dirty);
+    }
+
+    if (input.dirty.length) {
+      input.dirty.forEach(function(i) { i._dirty = false; });
     }
 
     // For all updated datasources, finalize their changesets.
