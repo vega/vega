@@ -36,7 +36,7 @@ prototype.handlers = function() {
 };
 
 prototype.eventName = function(name) {
-  var i = name.indexOf(".");
+  var i = name.indexOf('.');
   return i < 0 ? name : name.slice(0,i);
 };
 

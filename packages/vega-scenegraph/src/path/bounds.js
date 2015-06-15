@@ -96,7 +96,9 @@ module.exports = function(path, bounds) {
         bounds.add(tempX, tempY);
 
         // set control point to 2nd one of this command
-        // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
         controlX = x + current[1];
         controlY = y + current[2];
 
@@ -116,7 +118,9 @@ module.exports = function(path, bounds) {
         bounds.add(controlX, controlY);
         bounds.add(tempX, tempY);
         // set control point to 2nd one of this command
-        // "... the first control point is assumed to be the reflection of the second control point on the previous command relative to the current point."
+        // the first control point is assumed to be the reflection of 
+        // the second control point on the previous command relative
+        // to the current point.
         controlX = current[1];
         controlY = current[2];
 
