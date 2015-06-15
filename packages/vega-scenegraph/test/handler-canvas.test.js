@@ -19,23 +19,23 @@ function loadScene(file) {
 
 function render(scene, w, h) {
   global.document = jsdom;
-  return new Renderer()
+  var r = new Renderer()
     .initialize(jsdom.body, w, h)
-    .render(scene)
-    .canvas();
+    .render(scene);
   delete global.document;
+  return r.element();
 }
 
 function renderAsync(scene, w, h, callback) {
   global.document = jsdom;
   var r = new Renderer({baseURL: './test/resources/'})
-    .initialize(null, w, h)
+    .initialize(jsdom.body, w, h)
     .render(scene);
   delete global.document;
   
   function wait() {
     if (r.pendingImages() === 0) {
-      callback(r.canvas());      
+      callback(r.element());      
     } else {
       setTimeout(wait, 100);
     }
@@ -63,7 +63,7 @@ describe('canvas handler', function() {
       .scene(scene);
     assert(handler.scene(), scene);
 
-    var canvas = handler.element();
+    var canvas = handler.canvas();
     var count = 0;
     var increment = function() { count++; };
 
@@ -132,8 +132,8 @@ describe('canvas handler', function() {
 
   it('should pick image mark', function(done) {
     var mark = marks.image;
-    renderAsync(mark, 500, 500, function(canvas) {
-      var handler = new Handler().initialize(canvas);
+    renderAsync(mark, 500, 500, function(el) {
+      var handler = new Handler().initialize(el);
       assert.ok(handler.pick(mark, 250, 150, 250, 150));
       assert.notOk(handler.pick(mark, 100, 305, 100, 305));
       assert.notOk(handler.pick(mark, 800, 800, 800, 800));  

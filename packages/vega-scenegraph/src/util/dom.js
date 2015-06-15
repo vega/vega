@@ -3,6 +3,13 @@ function create(doc, tag, ns) {
 }
 
 module.exports = {
+  find: function(el, tag) {
+    for (var i=0, n=el.childNodes.length; i<n; ++i) {
+      if (el.childNodes[i].tagName.toLowerCase() === tag) {
+        return el.childNodes[i];
+      }
+    }
+  },
   child: function(el, index, tag, ns, className) {
     var a, b;
     a = b = el.childNodes[index];
