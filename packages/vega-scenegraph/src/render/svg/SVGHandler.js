@@ -1,5 +1,4 @@
-var dl = require('datalib'),
-    DOM = require('../../util/dom'),
+var DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
 function SVGHandler() {
@@ -25,7 +24,7 @@ prototype.listener = function(handler) {
   return function(evt) {
     var target = evt.target,
         item = target.__data__;
-    item = dl.isArray(item) ? item[0] : item;
+    item = Array.isArray(item) ? item[0] : item;
     handler.call(that._obj, evt, item);
   };
 };

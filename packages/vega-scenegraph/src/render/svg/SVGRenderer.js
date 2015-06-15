@@ -1,9 +1,9 @@
 var DOM = require('../../util/dom'),
     SVG = require('../../util/svg'),
     ImageLoader = require('../../util/ImageLoader'),
-    dl = require('datalib'),
     ns = SVG.metadata.xmlns,
     marks = require('./marks'),
+    bind = require('./marks/util').bind,
     Renderer = require('../Renderer');
 
 var href = (typeof window !== 'undefined' ? window.location.href : '');
@@ -66,45 +66,42 @@ prototype.resize = function(width, height, padding) {
 prototype.svg = function() {
   if (!this._svg) return null;
 
-  var head = DOM.openTag('svg', dl.extend({
+  var attr = {
     'class':  'marks',
     'width':  this._width + this._padding.left + this._padding.right,
     'height': this._height + this._padding.top + this._padding.bottom,
-  }, SVG.metadata));
+  };
+  for (var key in SVG.metadata) {
+    attr[key] = SVG.metadata[key];
+  }
 
-  var foot = DOM.closeTag('svg');
-
-  return head + this._svg.innerHTML + foot;
+  return DOM.openTag('svg', attr) + this._svg.innerHTML + DOM.closeTag('svg');
 };
 
 prototype.updateDefs = function() {
   var svg = this._svg,
       defs = this._defs,
-      grads = dl.keys(defs.gradient),
-      clips = dl.keys(defs.clipping),
-      i, n;
+      el = defs.el,
+      index = 0, id;
 
-  // get definition counts
-  var el = defs.el;
-
-  // generate defs block
-  if (grads.length || clips.length) {
-    el = el || (defs.el = DOM.child(svg, 0, 'defs', ns));
-  } else {
-    if (el && el.parentNode) {
+  for (id in defs.gradient) {
+    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
+    updateGradient(el, defs.gradient[id], index++);
+  }
+  for (id in defs.clipping) {
+    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
+    updateClipping(el, defs.clipping[id], index++);
+  }
+  
+  // clean-up
+  if (el) {
+    if (index === 0) {
       svg.removeChild(el);
       defs.el = null;
+    } else {
+      DOM.clear(el, index);      
     }
-    return; // nothing more to do
   }
-
-  for (i=0, n=grads.length; i<n; ++i) {
-    updateGradient(el, defs.gradient[grads[i]], i);
-  }
-  for (i=0, n=clips.length; i<n; ++i) {
-    updateClipping(el, defs.clipping[clips[i]], grads.length + i);
-  }
-  DOM.clear(el, grads.length + i);
 };
 
 function updateGradient(el, grad, index) {
@@ -144,7 +141,7 @@ function updateClipping(el, clip, index) {
 
 prototype.render = function(scene, items) {
   if (items) {
-    this.update(dl.array(items));
+    this.update(items);
   } else {
     this._defs.gradient = {}; // clear gradient cache
     this.draw(this._root, scene, -1);
@@ -156,16 +153,33 @@ prototype.render = function(scene, items) {
 };
 
 prototype.update = function(items) {
-  // TODO: what about items not yet in the scene?
-  var item, mark, el, i, n;
+  var item, mark, scene, el, i, n;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
     mark = marks[item.mark.marktype];
-    item = mark.nested ? item.mark.items : item;
-    el   = mark.nested ? item[0]._svg : item._svg;
+    item = (mark.nested ? item.mark.items : item);
+    el   = (mark.nested ? item[0] : item)._svg;
+
+    scene = item.mark;
+    if (!el) {
+      while (scene) {
+        if (scene._svg) {
+          mark = marks[scene.marktype];
+          el = bind(scene._svg, mark, item, scene.items.length);
+          break;
+        }
+        item = scene.group;
+        if (item._svg) {
+          this.draw(item._svg, scene, item.items.length);
+          return;
+        }
+        scene = item.mark;
+      }
+    }
     mark.update.call(this, el, item);
     this.style(el, item);
+    if (mark.recurse) mark.recurse.call(this, el, item);
   }
 };
 
@@ -176,8 +190,14 @@ prototype.draw = function(el, scene, index) {
 
 prototype.style = function(el, d) {
   var i, n, prop, name, value,
-      o = dl.isArray(d) ? d[0] : d;
+      o = Array.isArray(d) ? d[0] : d;
   if (o == null) return;
+
+  if (o.mark.marktype === 'group') {
+    el = el.childNodes[0]; // set styles on background
+    value = o.mark.interactive === false ? 'none' : null;
+    el.style.setProperty('pointer-events', value);
+  }
 
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
     prop = SVG.styleProperties[i];

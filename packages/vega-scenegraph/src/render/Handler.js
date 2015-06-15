@@ -1,5 +1,3 @@
-var dl = require('datalib');
-
 function Handler() {
   this._active = null;
   this._handlers = {};
@@ -32,10 +30,9 @@ prototype.off = function(/*type, handler*/) {};
 
 // return an array with all registered event handlers
 prototype.handlers = function() {
-  var h = this._handlers;
-  return dl.keys(h).reduce(function(a, k) {
-    return h[k].reduce(function(a, x) { return (a.push(x), a); }, a);
-  }, []);
+  var h = this._handlers, a = [], k;
+  for (k in h) { a.push.apply(a, h[k]); }
+  return a;
 };
 
 prototype.eventName = function(name) {

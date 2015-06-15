@@ -12,11 +12,9 @@ var prototype = (CanvasHandler.prototype = Object.create(base));
 prototype.constructor = CanvasHandler;
 
 prototype.initialize = function(el, pad, obj) {
-  base.initialize.call(this, el, pad, obj);
-  var canvas = this._canvas = DOM.find(el, 'canvas');
-  
   // add event listeners
-  var that = this;
+  var canvas = this._canvas = DOM.find(el, 'canvas'),
+      that = this;
   this.events.forEach(function(type) {
     canvas.addEventListener(type, function(evt) {
       if (prototype[type]) {
@@ -26,7 +24,8 @@ prototype.initialize = function(el, pad, obj) {
       }
     });
   });
-  return this;
+
+  return base.initialize.call(this, el, pad, obj);
 };
 
 prototype.canvas = function() {
