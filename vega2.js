@@ -6624,6 +6624,7 @@ var View = function(el, width, height, model) {
   this._handler  = null;
   this._streamer = null; // Targeted update for streaming changes
   this._changeset = null;
+  this._repaint = true; // Full re-render on every re-init
   this._renderers = {canvas: canvas, svg: svg};
   this._io  = canvas;
   this._api = {}; // Stash streaming data API sandboxes.
@@ -6769,7 +6770,7 @@ prototype.padding = function(pad) {
     if (this._renderer) this._renderer.resize(this._width, this._height, pad);
     if (this._handler)  this._handler.padding(pad);
   }
-  return this;
+  return (this._repaint = true, this);
 };
 
 prototype.autopad = function(opt) {
@@ -6870,7 +6871,7 @@ prototype.initialize = function(el) {
     parseStreams(this);
   }
   
-  return this;
+  return (this._repaint = true, this);
 };
 
 function build() {
@@ -6889,8 +6890,15 @@ function build() {
 
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
-    } else {
-      v._renderer.render(s, input.dirty.length && input.dirty);
+    } else if (v._repaint) {
+      v._renderer.render(s);
+      v._repaint = false;
+    } else if(input.dirty.length) {
+      v._renderer.render(s, input.dirty);
+    }
+
+    if (input.dirty.length) {
+      input.dirty.forEach(function(i) { i._dirty = false; });
     }
 
     // For all updated datasources, finalize their changesets.
@@ -12296,7 +12304,7 @@ function properties(model, mark, spec) {
             + "\n    var t = o.x;"
             + "\n    dirty = this.tpl.set(o, 'x', o.x2) || dirty;"
             + "\n    dirty = this.tpl.set(o, 'x2', t) || dirty; "
-            + "};";
+            + "\n  };";
       code += "\n  dirty = this.tpl.set(o, 'width', (o.x2 - o.x)) || dirty;" ;
     } else if (vars.width) {
       code += "\n  dirty = this.tpl.set(o, 'x', (o.x2 - o.width)) || dirty;" ;
@@ -12319,7 +12327,7 @@ function properties(model, mark, spec) {
             + "\n    var t = o.y;"
             + "\n    dirty = this.tpl.set(o, 'y', o.y2) || dirty;"
             + "\n    dirty = this.tpl.set(o, 'y2', t) || dirty;"
-            + "};";
+            + "\n  };";
       code += "\n  dirty = this.tpl.set(o, 'height', (o.y2 - o.y)) || dirty;" ;
     } else if (vars.height) {
       code += "\n  dirty = this.tpl.set(o, 'y', (o.y2 - o.height)) || dirty;" ;
@@ -12400,11 +12408,11 @@ function rule(model, name, rules) {
       db.push.apply(db, pred.data);
       inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
       code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {" +
-        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
+        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;";
       code += rules[i+1] ? "\n  } else " : "  }";
     } else {
       code += "{" + 
-        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");"+
+        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;"+
         "\n  }\n";
     }
   });
@@ -13326,9 +13334,12 @@ proto.evaluate = function(input) {
 };
 
 function encode(prop, item, trans, db, sg, preds, dirty) {
-  var enc = prop.encode;
-  item._dirty = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
-  if (item._dirty) dirty.push(item);
+  var enc = prop.encode,
+      wasDirty = item._dirty,
+      isDirty = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
+
+  item._dirty = isDirty || wasDirty;
+  if (isDirty && !wasDirty) dirty.push(item);
 }
 
 // If a specified property set called, or update property set 

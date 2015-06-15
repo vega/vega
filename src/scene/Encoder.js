@@ -89,9 +89,12 @@ proto.evaluate = function(input) {
 };
 
 function encode(prop, item, trans, db, sg, preds, dirty) {
-  var enc = prop.encode;
-  item._dirty = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
-  if (item._dirty) dirty.push(item);
+  var enc = prop.encode,
+      wasDirty = item._dirty,
+      isDirty = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
+
+  item._dirty = isDirty || wasDirty;
+  if (isDirty && !wasDirty) dirty.push(item);
 }
 
 // If a specified property set called, or update property set 

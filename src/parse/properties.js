@@ -47,7 +47,7 @@ function properties(model, mark, spec) {
             + "\n    var t = o.x;"
             + "\n    dirty = this.tpl.set(o, 'x', o.x2) || dirty;"
             + "\n    dirty = this.tpl.set(o, 'x2', t) || dirty; "
-            + "};";
+            + "\n  };";
       code += "\n  dirty = this.tpl.set(o, 'width', (o.x2 - o.x)) || dirty;" ;
     } else if (vars.width) {
       code += "\n  dirty = this.tpl.set(o, 'x', (o.x2 - o.width)) || dirty;" ;
@@ -70,7 +70,7 @@ function properties(model, mark, spec) {
             + "\n    var t = o.y;"
             + "\n    dirty = this.tpl.set(o, 'y', o.y2) || dirty;"
             + "\n    dirty = this.tpl.set(o, 'y2', t) || dirty;"
-            + "};";
+            + "\n  };";
       code += "\n  dirty = this.tpl.set(o, 'height', (o.y2 - o.y)) || dirty;" ;
     } else if (vars.height) {
       code += "\n  dirty = this.tpl.set(o, 'y', (o.y2 - o.height)) || dirty;" ;
@@ -151,11 +151,11 @@ function rule(model, name, rules) {
       db.push.apply(db, pred.data);
       inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
       code += "if("+p+".call("+p+","+args+", db, signals, predicates)) {" +
-        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");";
+        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;";
       code += rules[i+1] ? "\n  } else " : "  }";
     } else {
       code += "{" + 
-        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+");"+
+        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;"+
         "\n  }\n";
     }
   });
