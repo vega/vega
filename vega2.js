@@ -13336,7 +13336,7 @@ proto.evaluate = function(input) {
 function encode(prop, item, trans, db, sg, preds, dirty) {
   var enc = prop.encode,
       wasDirty = item._dirty,
-      isDirty = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
+      isDirty  = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
 
   item._dirty = isDirty || wasDirty;
   if (isDirty && !wasDirty) dirty.push(item);
