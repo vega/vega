@@ -1,8 +1,8 @@
 var gradient_id = 0;
 
 function Gradient(type) {
-  this.id = "gradient_" + (gradient_id++);
-  this.type = type || "linear";
+  this.id = 'gradient_' + (gradient_id++);
+  this.type = type || 'linear';
   this.stops = [];
   this.x1 = 0;
   this.x2 = 1;

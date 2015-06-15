@@ -40,20 +40,20 @@ prototype.scene = function(scene) {
 
 // supported events
 prototype.events = [
-  "keydown",
-  "keypress",
-  "keyup",
-  "mousedown",
-  "mouseup",
-  "mousemove",
-  "mouseout",
-  "click",
-  "dblclick",
-  "wheel",
-  "mousewheel",
-  "touchstart",
-  "touchmove",
-  "touchend"
+  'keydown',
+  'keypress',
+  'keyup',
+  'mousedown',
+  'mouseup',
+  'mousemove',
+  'mouseout',
+  'click',
+  'dblclick',
+  'wheel',
+  'mousewheel',
+  'touchstart',
+  'touchmove',
+  'touchend'
 ];
 
 prototype.mousemove = function(evt) {
@@ -65,43 +65,43 @@ prototype.mousemove = function(evt) {
       p = this.pick(this._scene, x, y, x-pad.left, y-pad.top);
 
   if (p === a) {
-    this.fire("mousemove", evt);
-    if (evt.type === "touchmove") this.fire("touchmove", evt);
+    this.fire('mousemove', evt);
+    if (evt.type === 'touchmove') this.fire('touchmove', evt);
     return;
   } else if (a) {
-    this.fire("mouseout", evt);
-    if (evt.type === "touchend") this.fire("touchend", evt);
+    this.fire('mouseout', evt);
+    if (evt.type === 'touchend') this.fire('touchend', evt);
   }
   this._active = p;
   if (p) {
-    this.fire("mouseover", evt);
-    if (evt.type === "touchstart") this.fire("touchstart", evt);
+    this.fire('mouseover', evt);
+    if (evt.type === 'touchstart') this.fire('touchstart', evt);
   }
 };
 
 prototype.mouseout = function(evt) {
   if (this._active) {
-    this.fire("mouseout", evt);
-    this.fire("touchend", evt);
+    this.fire('mouseout', evt);
+    this.fire('touchend', evt);
   }
   this._active = null;
 };
 
 prototype.mousedown = function(evt) {
   this._down = this._active;
-  this.fire("mousedown", evt);
+  this.fire('mousedown', evt);
 };
 
 prototype.click = function(evt) {
   if (this._down === this._active) {
-    this.fire("click", evt);
+    this.fire('click', evt);
     this._down = null;
   }
 };
 
 // to keep firefox happy
 prototype.DOMMouseScroll = function(evt) {
-  this.fire("mousewheel", evt);
+  this.fire('mousewheel', evt);
 };
 
 prototype.touchmove = prototype.mousemove;

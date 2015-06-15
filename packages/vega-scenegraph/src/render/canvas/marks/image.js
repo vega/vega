@@ -21,8 +21,8 @@ function draw(g, scene, bounds) {
         w = o.width || (o.image && o.image.width) || 0,
         h = o.height || (o.image && o.image.height) || 0,
         opac;
-    x = x - (o.align==="center" ? w/2 : o.align==="right" ? w : 0);
-    y = y - (o.baseline==="middle" ? h/2 : o.baseline==="bottom" ? h : 0);
+    x = x - (o.align==='center' ? w/2 : o.align==='right' ? w : 0);
+    y = y - (o.baseline==='middle' ? h/2 : o.baseline==='bottom' ? h : 0);
 
     if (o.image.loaded) {
       g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
