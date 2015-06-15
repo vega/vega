@@ -1,8 +1,12 @@
-var dl = require('datalib');
 var bound = require('../util/bound');
-var sets = ["items", "axisItems", "legendItems"];
 
-var keys = dl.toMap([
+var sets = [
+  'items',
+  'axisItems',
+  'legendItems'
+];
+
+var keys = [
   'marktype', 'name', 'interactive', 'clip',
   'items', 'axisItems', 'legendItems', 'layer',
   'x', 'y', 'width', 'height', 'align', 'baseline',             // layout
@@ -17,18 +21,15 @@ var keys = dl.toMap([
   'size', 'shape',                                              // symbol
   'text', 'angle', 'theta', 'radius',                           // text
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
-]);
-
-function replacer(key, value) {
-  if (keys.hasOwnProperty(key)) return value;
-}
+];
 
 function toJSON(scene, indent) {
-  return JSON.stringify(scene, replacer, indent);
+  return JSON.stringify(scene, keys, indent);
 }
 
 function fromJSON(json) {
-  return initialize(dl.isString(json) ? JSON.parse(json) : json);
+  var scene = (typeof json === 'string' ? JSON.parse(json) : json);
+  return initialize(scene);
 }
 
 function initialize(scene) {

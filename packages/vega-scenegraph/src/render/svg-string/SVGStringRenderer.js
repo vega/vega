@@ -1,5 +1,4 @@
-var dl = require('datalib'),
-    Renderer = require('../Renderer'),
+var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
     areaPath = require('../../path/area'),
@@ -35,21 +34,22 @@ prototype.constructor = SVGStringRenderer;
 
 prototype.resize = function(width, height, padding) {
   base.resize.call(this, width, height, padding);
-  var w = this._width,
-      h = this._height,
-      p = this._padding,
+  var p = this._padding,
       t = this._text;
 
-  t.head = openTag('svg', dl.extend({
+  var attr = {
     'class':  'marks',
-    'width':  w + p.left + p.right,
-    'height': h + p.top + p.bottom
-  }, SVG.metadata));
+    'width':  this._width + p.left + p.right,
+    'height': this._height + p.top + p.bottom,
+  };
+  for (var key in SVG.metadata) {
+    attr[key] = SVG.metadata[key];
+  }
 
+  t.head = openTag('svg', attr);
   t.root = openTag('g', {
     transform: 'translate(' + p.left + ',' + p.top + ')'
   });
-
   t.foot = closeTag('g') + closeTag('svg');
 
   return this;
@@ -73,13 +73,10 @@ prototype.reset = function() {
 
 prototype.buildDefs = function() {
   var all = this._defs,
-      dgrad = dl.keys(all.gradient),
-      dclip = dl.keys(all.clipping),
       defs = '',
-      i, j, id, def, stops;
+      i, id, def, stops;
 
-  for (i=0; i<dgrad.length; ++i) {
-    id = dgrad[i];
+  for (id in all.gradient) {
     def = all.gradient[id];
     stops = def.stops;
 
@@ -91,18 +88,17 @@ prototype.buildDefs = function() {
       y2: def.y2
     });
     
-    for (j=0; j<stops.length; ++j) {
+    for (i=0; i<stops.length; ++i) {
       defs += openTag('stop', {
-        offset: stops[j].offset,
-        'stop-color': stops[j].color
+        offset: stops[i].offset,
+        'stop-color': stops[i].color
       }) + closeTag('stop');
     }
     
     defs += closeTag('linearGradient');
   }
   
-  for (i=0; i<dclip.length; ++i) {
-    id = dclip[i];
+  for (id in all.clipping) {
     def = all.clipping[id];
 
     defs += openTag('clipPath', {id: id});
@@ -187,7 +183,7 @@ prototype.markGroup = function(scene) {
 
 function styles(d, mark, tag, defs) {
   var i, n, prop, name, value,
-      o = dl.isArray(d) ? d[0] : d;
+      o = Array.isArray(d) ? d[0] : d;
   if (o == null) return '';
 
   var s = '';

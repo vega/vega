@@ -1,8 +1,8 @@
-var drawMark = require('./draw');
+var draw = require('./util').draw;
 
 function init(mark) {
   mark.draw = function(g, scene, index) {
-    drawMark.call(this, g, scene, index, mark);
+    draw.call(this, g, scene, index, mark);
   };
   return mark;
 }
