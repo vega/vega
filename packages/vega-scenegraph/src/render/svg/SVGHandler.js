@@ -1,4 +1,5 @@
 var dl = require('datalib'),
+    DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
 function SVGHandler() {
@@ -10,7 +11,12 @@ var prototype = (SVGHandler.prototype = Object.create(base));
 prototype.constructor = SVGHandler;
 
 prototype.initialize = function(el, pad, obj) {
+  this._svg = DOM.find(el, 'svg');
   return base.initialize.call(this, el, pad, obj);
+};
+
+prototype.svg = function() {
+  return this._svg;
 };
 
 // wrap an event listener for the SVG DOM
@@ -27,7 +33,7 @@ prototype.listener = function(handler) {
 // add an event handler
 prototype.on = function(type, handler) {
   var name = this.eventName(type),
-      svg = this._el,
+      svg = this._svg,
       h = this._handlers,
       x = {
         type:     type,
@@ -43,7 +49,7 @@ prototype.on = function(type, handler) {
 // remove an event handler
 prototype.off = function(type, handler) {
   var name = this.eventName(type),
-      svg = this._el,
+      svg = this._svg,
       h = this._handlers[name], i;
   if (!h) return;
   for (i=h.length; --i>=0;) {
