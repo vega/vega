@@ -27,6 +27,13 @@ function pathBounds(o, path, bounds) {
   return bounds;
 }
 
+function strokeBounds(o, bounds) {
+  if (o.stroke && o.opacity !== 0 && o.stokeOpacity !== 0) {
+    bounds.expand(o.strokeWidth != null ? o.strokeWidth : 1);
+  }
+  return bounds;
+}
+
 function path(o, bounds) {
   var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
   return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
@@ -51,11 +58,7 @@ function rect(o, bounds) {
       y = o.y || 0,
       u = (x + o.width) || 0,
       v = (y + o.height) || 0;
-  bounds.set(x, y, u, v);
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
+  return strokeBounds(o, bounds.set(x, y, u, v));
 }
 
 function image(o, bounds) {
@@ -76,10 +79,7 @@ function rule(o, bounds) {
     o.x2 != null ? o.x2 : x1,
     o.y2 != null ? o.y2 : y1
   );
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
+  return strokeBounds(o, bounds);
 }
 
 function arc(o, bounds) {
@@ -110,10 +110,7 @@ function arc(o, bounds) {
   }
 
   bounds.set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth !== 0) {
-    bounds.expand(o.strokeWidth || 1);
-  }
-  return bounds;
+  return strokeBounds(o, bounds);
 }
 
 function symbol(o, bounds) {
@@ -157,10 +154,7 @@ function symbol(o, bounds) {
       r = Math.sqrt(size/Math.PI);
       bounds.set(x-r, y-r, x+r, y+r);
   }
-  if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-    bounds.expand(o.strokeWidth);
-  }
-  return bounds;
+  return strokeBounds(o, bounds);
 }
 
 function text(o, bounds, noRotate) {
