@@ -15,21 +15,19 @@ function context() {
   return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
 }
 
+function strokeBounds(o, bounds) {
+  if (o.stroke && o.opacity !== 0 && o.stokeOpacity !== 0) {
+    bounds.expand(o.strokeWidth != null ? o.strokeWidth : 1);
+  }
+  return bounds;
+}
+
 function pathBounds(o, path, bounds) {
   if (path == null) {
     bounds.set(0, 0, 0, 0);
   } else {
     boundPath(path, bounds);
-    if (o.stroke && o.opacity !== 0 && o.strokeWidth > 0) {
-      bounds.expand(o.strokeWidth);
-    }
-  }
-  return bounds;
-}
-
-function strokeBounds(o, bounds) {
-  if (o.stroke && o.opacity !== 0 && o.stokeOpacity !== 0) {
-    bounds.expand(o.strokeWidth != null ? o.strokeWidth : 1);
+    strokeBounds(o, bounds);
   }
   return bounds;
 }
@@ -39,26 +37,28 @@ function path(o, bounds) {
   return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
 }
 
-function area(o, bounds) {
-  var items = o.mark.items;
-  o = items[0];
-  var p = o.pathCache || (o.pathCache = parse(areaPath(items)));
-  return pathBounds(items[0], p, bounds);
+function area(mark, bounds) {
+  var items = mark.items,
+      item = items[0],
+      p = item.pathCache || (item.pathCache = parse(areaPath(items)));
+  return pathBounds(item, p, bounds);
 }
 
-function line(o, bounds) {
-  var items = o.mark.items;
-  o = items[0];
-  var p = o.pathCache || (o.pathCache = parse(linePath(items)));
-  return pathBounds(items[0], p, bounds);
+function line(mark, bounds) {
+  var items = mark.items,
+      item = items[0],
+      p = item.pathCache || (item.pathCache = parse(linePath(items)));
+  return pathBounds(item, p, bounds);
 }
 
 function rect(o, bounds) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      u = (x + o.width) || 0,
-      v = (y + o.height) || 0;
-  return strokeBounds(o, bounds.set(x, y, u, v));
+  var x, y;
+  return strokeBounds(o, bounds.set(
+    x = o.x || 0,
+    y = o.y || 0,
+    (x + o.width) || 0,
+    (y + o.height) || 0
+  ));
 }
 
 function image(o, bounds) {
@@ -73,13 +73,12 @@ function image(o, bounds) {
 
 function rule(o, bounds) {
   var x1, y1;
-  bounds.set(
+  return strokeBounds(o, bounds.set(
     x1 = o.x || 0,
     y1 = o.y || 0,
     o.x2 != null ? o.x2 : x1,
     o.y2 != null ? o.y2 : y1
-  );
-  return strokeBounds(o, bounds);
+  ));
 }
 
 function arc(o, bounds) {
@@ -109,8 +108,12 @@ function arc(o, bounds) {
     ymax = Math.max(ymax, iy, oy);
   }
 
-  bounds.set(cx+xmin, cy+ymin, cx+xmax, cy+ymax);
-  return strokeBounds(o, bounds);
+  return strokeBounds(o, bounds.set(
+    cx + xmin,
+    cy + ymin,
+    cx + xmax,
+    cy + ymax
+  ));
 }
 
 function symbol(o, bounds) {
@@ -154,6 +157,7 @@ function symbol(o, bounds) {
       r = Math.sqrt(size/Math.PI);
       bounds.set(x-r, y-r, x+r, y+r);
   }
+
   return strokeBounds(o, bounds);
 }
 
@@ -233,7 +237,6 @@ var methods = {
 };
 
 function itemBounds(item, func, opt) {
-  func = func || methods[item.mark.marktype];
   var curr = item.bounds,
       prev = item['bounds:prev'] || (item['bounds:prev'] = new Bounds());
 
@@ -257,7 +260,8 @@ function markBounds(mark, bounds, opt) {
       i, n;
       
   if ((type==='area' || type==='line') && items.length) {
-    bounds.union(itemBounds(items[0], func, opt));
+    mark.bounds = bounds;
+    itemBounds(mark, func, opt);
   } else if (items) {
     for (i=0, n=items.length; i<n; ++i) {
       bounds.union(itemBounds(items[i], func, opt));
