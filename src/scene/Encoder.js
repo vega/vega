@@ -65,8 +65,7 @@ proto.evaluate = function(input) {
   // Items marked for removal are at the head of items. Process them first.
   for(i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if(update) encode.call(this, update, item, input.trans, db, sg, preds);
-    if(exit)   encode.call(this, exit,   item, input.trans, db, sg, preds); 
+    if(exit)   encode.call(this, exit, item, input.trans, db, sg, preds); 
     if(input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if(!input.trans) item.remove();
   }

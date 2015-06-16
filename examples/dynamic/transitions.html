@@ -5,21 +5,16 @@
     <script src="../../vega2.js"></script>
     <style>
 * { font-family: Helvetica Neue, Helvetica, Arial, sans-serif; }
-.view { display: block; }
+.view { display: block; margin-bottom: 20px; }
 input[type="range"] { width: 280px; }
 .ctrl { display: inline-block; width: 90px; font-weight: bold; }
 .flash { display: none; font-style: italic; }
     </style>
   </head>
   <body>
-    <div><strong>Vega Transitions Test</strong></div>
+    <div><h2>Vega Transitions Test</h2></div>
     <div>
-      <p>Without "key" Property Definition (No Data Join)</p>
       <div id="view1" class="view"></div>
-    </div>
-    <div>
-      <p>With "key" Property Definition (Uses Data Join)</p>
-      <div id="view2" class="view"></div>
     </div>
     <div>
       <span class="ctrl">Duration</span>
@@ -52,7 +47,7 @@ var spec1 = {
   "width": 400,
   "height": 200,
   "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10},
-  "data": [{ "name": "table" }],
+  "data": [{ "name": "table", "values": table }],
   "scales": [
     {
       "name": "x", "type": "ordinal", "range": "width", "round": true,
@@ -97,27 +92,21 @@ var spec1 = {
   ]
 };
 
-var spec2 = vg.util.duplicate(spec1);
-spec2.marks[0].key = "x"; // test with explicit key
  
-var data = {table: function(ds) { ds.insert(table); }}, id = 20, timer = null;
+var id = 20, timer = null, view = null;
 var renderer = "canvas", animate = false, dur = 1000;
 
 function timestep() {
-  var m1 = self.view1.model(),
-      m2 = self.view2.model(),
-      oid = table.shift().x,
+  var oid = table.shift().x,
       rem = function(t) { return t.x === oid },
       up = {duration: animate ? dur : 0};
 
   id = (id % 100) + 1;
   var t = {x: id, y: ~~(100 * Math.random())};
   table.push(t);
-  m1.data("table").insert(t).remove(rem);
-  m2.data("table").insert(t).remove(rem);
 
-  view1.update(up);
-  view2.update(up);
+  view.data("table").insert(t).remove(rem);
+  view.update(up);
 }
 
 function run(step) {
@@ -126,17 +115,8 @@ function run(step) {
 }
 
 vg.parse.spec(spec1, function(chart) {
-  self.view1 = chart({
+  view = chart({
     el: "#view1",
-    data: data,
-    renderer: renderer,
-    hover: false
-  }).update();
-});
-vg.parse.spec(spec2, function(chart) {
-  self.view2 = chart({
-    el: "#view2",
-    data: data,
     renderer: renderer,
     hover: false
   }).update();
