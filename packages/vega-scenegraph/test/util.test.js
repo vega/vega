@@ -65,7 +65,7 @@ describe('util', function() {
         baz: 'a',
       }), '<g foo="1" baz="a">');
     });
-    it('open tag accept raw extensions', function() {
+    it('open tag should accept raw extensions', function() {
       assert.equal(DOM.openTag('g', null, 'foo="1"'), '<g foo="1">');
     });
     it('should close tag', function() {
