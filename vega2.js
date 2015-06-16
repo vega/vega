@@ -12740,7 +12740,7 @@ function recurse(input) {
       inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
       c.inline = inline;
 
-      if(inline) c.builder.evaluate(input);
+      if(inline) this._graph.evaluate(input, c.builder);
       else this._recursor.addListener(c.builder);
     }
   }
