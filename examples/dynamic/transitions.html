@@ -100,7 +100,7 @@ var spec1 = {
 var spec2 = vg.util.duplicate(spec1);
 spec2.marks[0].key = "x"; // test with explicit key
  
-var db = {table: function(ds) { ds.insert(table); }}, id = 20, timer = null;
+var data = {table: function(ds) { ds.insert(table); }}, id = 20, timer = null;
 var renderer = "canvas", animate = false, dur = 1000;
 
 function timestep() {
@@ -128,7 +128,7 @@ function run(step) {
 vg.parse.spec(spec1, function(chart) {
   self.view1 = chart({
     el: "#view1",
-    data: db,
+    data: data,
     renderer: renderer,
     hover: false
   }).update();
@@ -136,7 +136,7 @@ vg.parse.spec(spec1, function(chart) {
 vg.parse.spec(spec2, function(chart) {
   self.view2 = chart({
     el: "#view2",
-    data: db,
+    data: data,
     renderer: renderer,
     hover: false
   }).update();

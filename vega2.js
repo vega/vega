@@ -13185,7 +13185,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field;
+      i, rlen, j, flen, ref, fields, field, data;
 
   for(i=0, rlen=refs.length; i<rlen; ++i) {
     ref = refs[i];
