@@ -13,7 +13,7 @@ function pick(g, scene, x, y, gx, gy) {
   if (!scene.items || !scene.items.length) return false;
 
   var items = scene.items,
-      b = items[0].bounds;
+      b = scene.bounds;
 
   if (b && !b.contains(gx, gy)) return false;
   if (g.pixelratio != null && g.pixelratio !== 1) {

@@ -44,14 +44,15 @@ prototype.pendingImages = function() {
 function clipToBounds(g, items) {
   if (!items) return null;
 
-  var b = new Bounds(), i, n, mark, item;
+  var b = new Bounds(), i, n, item, mark, group;
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
     mark = item.mark;
-    item = marks[mark.marktype].nested ? mark.items[0] : item;
-    b.union(translate(item.bounds, item));
+    group = mark.group;
+    item = marks[mark.marktype].nested ? mark : item;
+    b.union(translate(item.bounds, group));
     if (item['bounds:prev']) {
-      b.union(translate(item['bounds:prev'], item));
+      b.union(translate(item['bounds:prev'], group));
     }
   }
   b.round();
@@ -63,10 +64,11 @@ function clipToBounds(g, items) {
   return b;
 }
 
-function translate(bounds, item) {
+function translate(bounds, group) {
+  if (group == null) return bounds;
   var b = bounds.clone();
-  while ((item = item.mark.group) != null) {
-    b.translate(item.x || 0, item.y || 0);
+  for (; group != null; group = group.mark.group) {
+    b.translate(group.x || 0, group.y || 0);
   }
   return b;
 }

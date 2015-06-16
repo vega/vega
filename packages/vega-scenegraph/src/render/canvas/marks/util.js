@@ -47,7 +47,7 @@ function drawAll(pathFunc) {
 function drawOne(pathFunc) {
   return function(g, scene, bounds) {
     if (!scene.items.length) return;
-    if (bounds && !bounds.intersects(scene.items[0].bounds))
+    if (bounds && !bounds.intersects(scene.bounds))
       return; // bounds check
     drawPathOne(pathFunc, g, scene.items[0], scene.items);
   };
