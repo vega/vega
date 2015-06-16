@@ -71,7 +71,8 @@
       {"x":100, "y":90,  "width":99, "height":110, "fill":"steelblue", "stroke":"red", "strokeWidth":0},
       {"x":200, "y":114, "width":99, "height":86,  "fill":"steelblue", "fillOpacity": 0.5},
       {"x":300, "y":18,  "fill":"steelblue"},
-      {"x":400, "y":26,  "fill":"steelblue", "opacity": 0}
+      {"x":400, "y":26,  "fill":"steelblue", "opacity": 0},
+      {"x":400, "y":26,  "fill":"steelblue", "fillOpacity": 0, "stroke":"black", "strokeOpacity":0}
     ]
   },
   "rule": {

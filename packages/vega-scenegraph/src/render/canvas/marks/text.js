@@ -8,18 +8,18 @@ function draw(g, scene, bounds) {
   if (!scene.items || !scene.items.length) return;
 
   var items = scene.items,
-      o, fill, stroke, opac, lw, x, y, r, t;
+      o, opac, x, y, r, t;
 
   for (var i=0, len=items.length; i<len; ++i) {
     o = items[i];
     if (bounds && !bounds.intersects(o.bounds))
       continue; // bounds check
 
-    g.font = font.string(o);
-    g.textAlign = o.align || 'left';
-
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac === 0) continue;
+
+    g.font = font.string(o);
+    g.textAlign = o.align || 'left';
 
     x = o.x || 0;
     y = o.y || 0;
@@ -40,22 +40,12 @@ function draw(g, scene, bounds) {
       y += (o.dy || 0) + font.offset(o);
     }
 
-    if ((fill = o.fill)) {
-      g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-      g.fillStyle = util.color(g, o, fill);
+    if (o.fill && util.fill(g, o, opac)) {
       g.fillText(o.text, x, y);
     }
-
-    if ((stroke = o.stroke)) {
-      lw = (lw = o.strokeWidth) != null ? lw : 1;
-      if (lw > 0) {
-        g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-        g.strokeStyle = util.color(g, o, stroke);
-        g.lineWidth = lw;
-        g.strokeText(o.text, x, y);
-      }
+    if (o.stroke && util.stroke(g, o, opac)) {
+      g.strokeText(o.text, x, y);
     }
-
     if (o.angle) g.restore();
   }
 }
