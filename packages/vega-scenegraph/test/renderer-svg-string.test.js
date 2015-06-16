@@ -197,12 +197,12 @@ describe('svg-string renderer', function() {
       .background('white')
       .render(scene);
 
-    var group = JSON.parse(Util.toJSON(scene.items[0])); group.x = 200;
-    scene = JSON.parse(Util.toJSON(scene));
+    var group = Util.fromJSON(Util.toJSON(scene.items[0]));
+    group.x = 200;
+    group.mark = scene;
     scene.items.push(group);
-    scene = Util.fromJSON(scene);
 
-    var str = r.svg();
+    var str = r.render(scene, [group]).svg();
     generate('svg/scenegraph-enter-group-redraw.svg', str);
     var test = load('svg/scenegraph-enter-group-redraw.svg');
     assert.equal(str, test);
