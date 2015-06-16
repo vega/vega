@@ -1,40 +1,20 @@
 function drawPathOne(path, g, o, items) {
-  var fill = o.fill,
-      stroke = o.stroke,
-      opac, lc, lw;
-
   if (path(g, items)) return;
 
-  opac = o.opacity == null ? 1 : o.opacity;
-  if (opac===0 || !fill && !stroke) return;
+  var opac = o.opacity == null ? 1 : o.opacity;
+  if (opac===0) return;
 
-  if (fill) {
-    g.globalAlpha = opac * (o.fillOpacity==null ? 1 : o.fillOpacity);
-    g.fillStyle = color(g, o, fill);
-    g.fill();
-  }
-
-  if (stroke) {
-    lw = (lw = o.strokeWidth) != null ? lw : 1;
-    if (lw > 0) {
-      g.globalAlpha = opac * (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-      g.strokeStyle = color(g, o, stroke);
-      g.lineWidth = lw;
-      g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
-      g.vgLineDash(o.strokeDash || null);
-      g.vgLineDashOffset(o.strokeDashOffset || 0);
-      g.stroke();
-    }
-  }
+  if (o.fill && fill(g, o, opac)) { g.fill(); }
+  if (o.stroke && stroke(g, o, opac)) { g.stroke(); }
 }
 
 function drawPathAll(path, g, scene, bounds) {
   var i, len, item;
   for (i=0, len=scene.items.length; i<len; ++i) {
     item = scene.items[i];
-    if (bounds && !bounds.intersects(item.bounds))
-      continue; // bounds check
-    drawPathOne(path, g, item, item);
+    if (!bounds || bounds.intersects(item.bounds)) {
+      drawPathOne(path, g, item, item);
+    }
   }
 }
 
@@ -47,9 +27,9 @@ function drawAll(pathFunc) {
 function drawOne(pathFunc) {
   return function(g, scene, bounds) {
     if (!scene.items.length) return;
-    if (bounds && !bounds.intersects(scene.bounds))
-      return; // bounds check
-    drawPathOne(pathFunc, g, scene.items[0], scene.items);
+    if (!bounds || bounds.intersects(scene.bounds)) {
+      drawPathOne(pathFunc, g, scene.items[0], scene.items);
+    }
   };
 }
 
@@ -75,6 +55,35 @@ function pick(test) {
     }
     return false;
   };
+}
+
+function fill(g, o, opacity) {
+  opacity *= (o.fillOpacity==null ? 1 : o.fillOpacity);
+  if (opacity > 0) {
+    g.globalAlpha = opacity;
+    g.fillStyle = color(g, o, o.fill);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function stroke(g, o, opacity) {
+  var lw = (lw = o.strokeWidth) != null ? lw : 1, lc;
+  if (lw <= 0) return false;
+
+  opacity *= (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+  if (opacity > 0) {
+    g.globalAlpha = opacity;
+    g.strokeStyle = color(g, o, o.stroke);
+    g.lineWidth = lw;
+    g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
+    g.vgLineDash(o.strokeDash || null);
+    g.vgLineDashOffset(o.strokeDashOffset || 0);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function color(g, o, value) {
@@ -104,6 +113,8 @@ module.exports = {
   drawOne:  drawOne,
   drawAll:  drawAll,
   pick:     pick,
+  stroke:   stroke,
+  fill:     fill,
   color:    color,
   gradient: gradient
 };
