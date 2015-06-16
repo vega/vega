@@ -220,15 +220,14 @@ describe('canvas renderer', function() {
       .initialize(null, 500, 600)
       .background('white')
       .render(scene);
-  
-    var group = JSON.parse(Util.toJSON(scene.items[0])); group.x = 200;
+
+    var group = JSON.parse(Util.toJSON(scene.items[0]));
+    group.x = 200;
     scene = JSON.parse(Util.toJSON(scene));
     scene.items.push(group);
     scene = Util.fromJSON(scene);
 
-    r.render(scene, [group]);
-  
-    var image = r.canvas().toBuffer();
+    var image = r.render(scene, [group]).canvas().toBuffer();
     generate('png/scenegraph-enter-group-redraw.png', image);
     var test = load('png/scenegraph-enter-group-redraw.png');
     assert.equal(image, test);

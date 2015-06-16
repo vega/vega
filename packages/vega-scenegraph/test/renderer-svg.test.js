@@ -209,13 +209,13 @@ describe('svg renderer', function() {
       .initialize(doc.body, 500, 600)
       .background('white')
       .render(scene);
-  
-    var group = JSON.parse(Util.toJSON(scene.items[0])); group.x = 200;
-    scene = JSON.parse(Util.toJSON(scene));
+
+    var group = Util.fromJSON(Util.toJSON(scene.items[0]));
+    group.x = 200;
+    group.mark = scene;
     scene.items.push(group);
-    scene = Util.fromJSON(scene);
-  
-    var svg = compensate(r.svg());
+
+    var svg = compensate(r.render(scene, [group]).svg());
     var test = load('svg/scenegraph-enter-group-redraw.svg');
     assert.equal(svg, test);
   });
