@@ -1053,7 +1053,7 @@ function load(opt, callback) {
   }
 
   if (!url) {
-    error('Invalid URL: ' + url);
+    error('Invalid URL: ' + opt.url);
   } else if (!util.isNode) {
     // in browser, use xhr
     return xhr(url, callback);
@@ -2454,10 +2454,10 @@ u.stablesort = function(array, sortBy, keyFn) {
 // We could have used the polyfill code, but lets wait until ES6 becomes a standard first
 u.startsWith = String.prototype.startsWith ?
   function(string, searchString) {
-    return string.startsWith(searchString);
+    return string == null ? false : string.startsWith(searchString);
   } :
   function(string, searchString) {
-    return string.lastIndexOf(searchString, 0) === 0;
+    return string == null ? false : string.lastIndexOf(searchString, 0) === 0;
   };
 
 u.pad = function(s, length, pos, padchar) {
@@ -2898,7 +2898,6 @@ module.exports = require('./lib/heap');
 }).call(this);
 
 },{}],24:[function(require,module,exports){
-(function (global){
 var util = require('datalib/src/util'),
     canvas = require('../render/canvas/index'),
     svg = require('../render/svg-headless/index'),
@@ -2970,7 +2969,7 @@ prototype.initialize = function() {
 };
 
 prototype.initCanvas = function(w, h, pad, bg) {
-  var Canvas = (typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null),
+  var Canvas = (window.canvas),
       tw = w + (pad ? pad.left + pad.right : 0),
       th = h + (pad ? pad.top + pad.bottom : 0),
       canvas = this._canvas = util.isNode ? new Canvas(tw, th) : document.createElement('canvas'),
@@ -2999,8 +2998,6 @@ prototype.initSVG = function(w, h, pad, bg) {
 };
 
 module.exports = HeadlessView;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../render/canvas/index":59,"../render/svg-headless/index":63,"../util/log":105,"./View":26,"datalib/src/util":21}],25:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Graph = require('../dataflow/Graph'), 
@@ -3109,8 +3106,7 @@ proto.fire = function(cs) {
 
 module.exports = Model;
 },{"../dataflow/Graph":29,"../dataflow/Node":30,"../dataflow/changeset":32,"../scene/GroupBuilder":72,"../scene/visit":78,"datalib/src/util":21}],26:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     parseStreams = require('../parse/streams'),
@@ -3436,15 +3432,16 @@ prototype.update = function(opt) {
     cs.request = opt.props;
   }
 
+  var built = v._build;
   v._build = v._build || build.call(this);
 
   // If specific items are specified, short-circuit dataflow graph.
   // Else-If there are streaming updates, perform a targeted propagation.
   // Otherwise, reevaluate the entire model (datasources + scene).
-  if(opt.items) { 
+  if(opt.items && built) { 
     Encoder.update(this._model, opt.trans, opt.props, opt.items);
     v._renderNode.evaluate(cs);
-  } else if(v._streamer.listeners().length) {
+  } else if(v._streamer.listeners().length && built) {
     v._model.propagate(cs, v._streamer);
     v._streamer.disconnect();
   } else {
@@ -3502,8 +3499,6 @@ View.factory = function(model) {
 };
 
 module.exports = View;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/Node":30,"../dataflow/changeset":32,"../parse/streams":55,"../render/canvas/index":59,"../render/svg/index":67,"../scene/Encoder":71,"../scene/Transition":75,"../util/config":103,"../util/log":105,"./HeadlessView":24,"datalib/src/util":21}],27:[function(require,module,exports){
 var Node = require('./Node'),
     changeset = require('./changeset'),
@@ -7022,8 +7017,7 @@ function axis(def, index, axis, group) {
 
 module.exports = axes;
 },{"../scene/axis":76,"../util/config":103,"datalib/src/util":21}],40:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null);
+var d3 = (window.d3);
 
 function parseBg(bg) {
   // return null if input is null or undefined
@@ -7033,8 +7027,6 @@ function parseBg(bg) {
 };
 
 module.exports = parseBg;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],41:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     read = require('datalib/src/import/read'),
@@ -8746,8 +8738,7 @@ function parseScale(spec, ops) {
 
 module.exports = parsePredicates;
 },{"datalib/src/util":21}],52:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     template = require('datalib/src/template'),
     util = require('datalib/src/util'),
     tuple = require('../dataflow/tuple'),
@@ -9055,8 +9046,6 @@ function scaleRef(ref) {
 }
 
 module.exports = properties;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"../util/config":103,"../util/log":105,"datalib/src/template":19,"datalib/src/util":21}],53:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('./expr'),
@@ -9154,8 +9143,7 @@ function parseSpec(spec, callback, viewFactory) {
 
 module.exports = parseSpec;
 },{"../core/Model":25,"../core/View":26,"../parse/background":40,"../parse/data":41,"../parse/interactors":45,"../parse/marks":48,"../parse/padding":50,"../parse/predicates":51,"../parse/signals":53,"datalib/src/util":21}],55:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     parseSignals = require('./signals'),
@@ -9367,8 +9355,6 @@ function parseStreams(view) {
 }
 
 module.exports = parseStreams;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/Node":30,"../dataflow/changeset":32,"../util/constants":104,"./events":42,"./expr":43,"./signals":53,"datalib/src/util":21}],56:[function(require,module,exports){
 var util = require('datalib/src/util'),
     transforms = require('../transforms/index');
@@ -9391,8 +9377,7 @@ function parseTransforms(model, def) {
 
 module.exports = parseTransforms;
 },{"../transforms/index":99,"datalib/src/util":21}],57:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     marks = require('./marks');
 
@@ -9568,11 +9553,8 @@ prototype.pick = function(scene, x, y, gx, gy) {
 };
 
 module.exports = handler;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./marks":60,"datalib/src/util":21}],58:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     Bounds = require('../../util/Bounds'),
@@ -9789,7 +9771,7 @@ prototype.loadImage = function(uri) {
 
   if (util.isNode) {
     renderer._imgload += 1;
-    image = new ((typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null).Image)();
+    image = new ((window.canvas).Image)();
     load(util.extend({url: uri}, config.load), function(err, data) {
       renderer._imgload -= 1;
       if (err) { util.error(err); return; }
@@ -9815,8 +9797,6 @@ prototype.loadImage = function(uri) {
 };
 
 module.exports = renderer;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../../util/Bounds":100,"../../util/config":103,"../../util/log":105,"./marks":60,"datalib/src/import/load":14,"datalib/src/util":21}],59:[function(require,module,exports){
 module.exports = {
   Handler:  require('./Handler'),
@@ -10406,8 +10386,7 @@ module.exports = {
   }
 };
 },{"../../util/Bounds":100,"../../util/boundscalc":102,"../../util/config":103,"./path":61}],61:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     Bounds = require('../../util/Bounds');
 
 // Path parsing and rendering code taken from fabric.js -- Thanks!
@@ -11155,11 +11134,8 @@ module.exports = {
   area:   area,
   line:   line
 };
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../../util/Bounds":100}],62:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     config = require('../../util/config'),
     SVGBuilder = require('./svg');
@@ -11200,15 +11176,12 @@ prototype.svg = function() {
 };
 
 module.exports = renderer;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../../util/config":103,"./svg":64,"datalib/src/util":21}],63:[function(require,module,exports){
 module.exports = {
   Renderer: require('./Renderer')
 };
 },{"./Renderer":62}],64:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     config = require('../../util/config');
 
@@ -11644,8 +11617,6 @@ function fontString(o) {
 }
 
 module.exports = renderer;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../../util/config":103,"datalib/src/util":21}],65:[function(require,module,exports){
 var util = require('datalib/src/util');
 
@@ -11736,8 +11707,7 @@ prototype.off = function(type, handler) {
 
 module.exports = handler;
 },{"datalib/src/util":21}],66:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     marks = require('./marks');
 
@@ -11874,13 +11844,10 @@ prototype.draw = function(ctx, scene, index) {
 };
 
 module.exports = renderer;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./marks":68,"datalib/src/util":21}],67:[function(require,module,exports){
 arguments[4][59][0].apply(exports,arguments)
 },{"./Handler":65,"./Renderer":66,"dup":59}],68:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     config = require('../../util/config');
@@ -12188,8 +12155,6 @@ var marks = module.exports = {
   },
   current: null
 };
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../../util/config":103,"datalib/src/import/load":14,"datalib/src/util":21}],69:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
@@ -12956,8 +12921,7 @@ prototype.touch = function() {
 
 module.exports = Item;
 },{}],74:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Aggregate = require('../transforms/Aggregate'),
@@ -13371,8 +13335,6 @@ var rangeDef = [
 ];
 
 module.exports = Scale;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/Node":30,"../dataflow/changeset":32,"../transforms/Aggregate":79,"../util/config":103,"../util/constants":104,"../util/log":105,"datalib/src/util":21}],75:[function(require,module,exports){
 var tuple = require('../dataflow/tuple'),
     boundsCalc = require('../util/boundscalc'),
@@ -13470,8 +13432,7 @@ function step(elapsed) {
 
 module.exports = Transition;
 },{"../dataflow/tuple":33,"../util/boundscalc":102,"../util/constants":104}],76:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     config = require('../util/config'),
     tpl = require('../dataflow/tuple'),
@@ -14035,11 +13996,8 @@ function vg_axisDomain() {
 }
 
 module.exports = axs;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"../parse/mark":47,"../util/config":103,"datalib/src/util":21}],77:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     parseProperties = require('../parse/properties'),
     parseMark = require('../parse/mark'),
@@ -14587,8 +14545,6 @@ function vg_hLegendLabels() {
 }
 
 module.exports = lgnd;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../parse/mark":47,"../parse/properties":52,"../util/Gradient":101,"../util/config":103,"datalib/src/util":21}],78:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
@@ -15272,8 +15228,7 @@ proto.transform = function(input, reset) {
 
 module.exports = Fold;
 },{"../dataflow/changeset":32,"../dataflow/tuple":33,"../util/log":105,"./Transform":96}],87:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
@@ -15383,8 +15338,6 @@ proto.transform = function(nodeInput) {
 };
 
 module.exports = Force;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"./Transform":96}],88:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
@@ -15429,8 +15382,7 @@ proto.transform = function(input) {
 
 module.exports = Formula;
 },{"../dataflow/tuple":33,"../parse/expr":43,"../util/constants":104,"../util/log":105,"./Transform":96}],89:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
@@ -15515,11 +15467,8 @@ proto.transform = function(input) {
 };
 
 module.exports = Geo;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"./Transform":96,"datalib/src/util":21}],90:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Geo = require('./Geo'),
     Transform = require('./Transform'),
@@ -15561,8 +15510,6 @@ proto.transform = function(input) {
 };
 
 module.exports = GeoPath;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"./Geo":89,"./Transform":96,"datalib/src/util":21}],91:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
@@ -15769,8 +15716,7 @@ proto.set = function(value) {
 
 module.exports = Parameter;
 },{"../parse/expr":43,"../util/constants":104,"datalib/src/util":21}],93:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     gen  = require('datalib/src/generate'),
     util = require('datalib/src/util'),
     Transform = require('./Transform'),
@@ -15834,8 +15780,6 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"./BatchTransform":80,"./Transform":96,"datalib/src/generate":8,"datalib/src/util":21}],94:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
@@ -16010,8 +15954,7 @@ proto.output = function(map) {
 
 module.exports = Transform;
 },{"../dataflow/Node":30,"../util/constants":104,"./Parameter":92}],97:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
@@ -16083,8 +16026,6 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Treemap;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../dataflow/tuple":33,"./BatchTransform":80,"./Transform":96,"datalib/src/util":21}],98:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
@@ -16369,8 +16310,7 @@ prototype.stop = function(offset, color) {
 
 module.exports = gradient;
 },{}],102:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     util = require('datalib/src/util'),
     Bounds = require('../util/Bounds'),
     canvas = require('../render/canvas/path'),
@@ -16395,7 +16335,7 @@ function fontString(o) {
 
 function context() {
   return gfx || (gfx = (util.isNode
-    ? new ((typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null))(1,1)
+    ? new ((window.canvas))(1,1)
     : d3.select("body").append("canvas")
         .attr("class", "vega_hidden")
         .attr("width", 1)
@@ -16676,11 +16616,8 @@ module.exports = {
   text:  text,
   group: group
 };
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../render/canvas/path":61,"../util/Bounds":100,"./config":103,"datalib/src/util":21}],103:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+var d3 = (window.d3),
     config = {};
 
 config.debug = false;
@@ -16819,8 +16756,6 @@ config.range = {
 };
 
 module.exports = config;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],104:[function(require,module,exports){
 module.exports = {
   ADD_CELL: 1,

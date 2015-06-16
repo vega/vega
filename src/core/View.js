@@ -324,15 +324,16 @@ prototype.update = function(opt) {
     cs.request = opt.props;
   }
 
+  var built = v._build;
   v._build = v._build || build.call(this);
 
   // If specific items are specified, short-circuit dataflow graph.
   // Else-If there are streaming updates, perform a targeted propagation.
   // Otherwise, reevaluate the entire model (datasources + scene).
-  if(opt.items) { 
+  if(opt.items && built) { 
     Encoder.update(this._model, opt.trans, opt.props, opt.items);
     v._renderNode.evaluate(cs);
-  } else if(v._streamer.listeners().length) {
+  } else if(v._streamer.listeners().length && built) {
     v._model.propagate(cs, v._streamer);
     v._streamer.disconnect();
   } else {

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Vega Dynamic Data Test</title/>
+    <title>Vega Transitions Test</title/>
     <script src="../lib/d3.v3.min.js"></script>
     <script src="../../vega2.js"></script>
     <style>
@@ -12,7 +12,7 @@ input[type="range"] { width: 280px; }
     </style>
   </head>
   <body>
-    <div><strong>Vega Dynamic Data Test</strong></div>
+    <div><strong>Vega Transitions Test</strong></div>
     <div>
       <p>Without "key" Property Definition (No Data Join)</p>
       <div id="view1" class="view"></div>
@@ -33,6 +33,7 @@ input[type="range"] { width: 280px; }
     </div>
     <p class="flash">Whoaaaaa!</p>
   </body>
+
   <script type="text/javascript">
   var table = [
     {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
@@ -99,7 +100,7 @@ var spec1 = {
 var spec2 = vg.util.duplicate(spec1);
 spec2.marks[0].key = "x"; // test with explicit key
  
-var data = {table: table}, id = 20, timer = null;
+var db = {table: function(ds) { ds.insert(table); }}, id = 20, timer = null;
 var renderer = "canvas", animate = false, dur = 1000;
 
 function timestep() {
@@ -112,8 +113,8 @@ function timestep() {
   id = (id % 100) + 1;
   var t = {x: id, y: ~~(100 * Math.random())};
   table.push(t);
-  m1.data("table").add(t).remove(rem);
-  m2.data("table").add(t).remove(rem);
+  m1.data("table").insert(t).remove(rem);
+  m2.data("table").insert(t).remove(rem);
 
   view1.update(up);
   view2.update(up);
@@ -127,7 +128,7 @@ function run(step) {
 vg.parse.spec(spec1, function(chart) {
   self.view1 = chart({
     el: "#view1",
-    data: data,
+    data: db,
     renderer: renderer,
     hover: false
   }).update();
@@ -135,7 +136,7 @@ vg.parse.spec(spec1, function(chart) {
 vg.parse.spec(spec2, function(chart) {
   self.view2 = chart({
     el: "#view2",
-    data: data,
+    data: db,
     renderer: renderer,
     hover: false
   }).update();
