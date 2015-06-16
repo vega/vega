@@ -13192,6 +13192,8 @@ function joinDatasource(input, data, fullUpdate) {
   for(i=0, len=rem.length; i<len; ++i) {
     item = this._map[key = keyf(rem[i])];
     item.status = C.EXIT;
+    item._dirty = true;
+    input.dirty.push(item);
     next.push(item);
     output.rem.push(item);
     this._map[key] = null;
@@ -13221,6 +13223,8 @@ function joinValues(input, data, fullUpdate) {
     item = prev[i];
     if (item.status === C.EXIT) {
       tuple.set(item, "key", keyf ? item.key : this._items.length);
+      item._dirty = true;
+      input.dirty.push(item);
       next.splice(0, 0, item);  // Keep item around for "exit" transition.
       output.rem.push(item);
     }
