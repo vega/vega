@@ -2,8 +2,11 @@
 
 var fs = require('fs');
 var assert = require('chai').assert;
+var Bounds = require('../src/util/Bounds');
 var Renderer = require('../src/render/svg-string').Renderer;
+var Util = require('../src/util/scene');
 var res = './test/resources/';
+
 var GENERATE = require('./resources/generate-tests');
 
 function generate(path, str) {
@@ -63,6 +66,14 @@ describe('svg-string renderer', function() {
     generate('svg/scenegraph-defs.svg', str);
     var test = load('svg/scenegraph-defs.svg');
     assert.strictEqual(str, test);
+
+    var scene2 = json('scenegraph-defs.json');
+    delete scene2.items[0].clip;
+    scene2.items[0].fill = 'red';
+    str = render(scene2, 102, 102);
+    generate('svg/scenegraph-defs2.svg', str);
+    test = load('svg/scenegraph-defs2.svg');
+    assert.strictEqual(str, test);
   });
 
   it('should support axes, legends and sub-groups', function() {
@@ -101,6 +112,48 @@ describe('svg-string renderer', function() {
     assert.equal(str, test);
   });
 
+  it('should support enter-item redraw', function() {
+    var scene = json('scenegraph-rect.json');
+    var r = new Renderer()
+      .initialize(null, 400, 200)
+      .background('white')
+      .render(scene);
+
+    var rects = scene.items[0].items[0];
+
+    var rect1 = {x:10, y:10, width:50, height:50, fill:'red'};
+    rect1.mark = rects;
+    rect1.bounds = new Bounds().set(10, 10, 60, 60);
+    rects.items.push(rect1);
+
+    var rect2 = {x:70, y:10, width:50, height:50, fill:'blue'};
+    rect2.mark = rects;
+    rect2.bounds = new Bounds().set(70, 10, 120, 60);
+    rects.items.push(rect2);
+
+    var str = r.render(scene, [rect1, rect2]).svg();
+    generate('svg/scenegraph-enter-redraw.svg', str);
+    var test = load('svg/scenegraph-enter-redraw.svg');
+    assert.equal(str, test);
+  });
+
+  it('should support exit-item redraw', function() {
+    var scene = json('scenegraph-rect.json');
+    var r = new Renderer()
+      .initialize(null, 400, 200)
+      .background('white')
+      .render(scene);
+  
+    var rect = scene.items[0].items[0].items.pop();
+    rect.status = 'exit';
+    r.render(scene, [rect]);
+  
+    var str = r.svg();
+    generate('svg/scenegraph-exit-redraw.svg', str);
+    var test = load('svg/scenegraph-exit-redraw.svg');
+    assert.equal(str, test);
+  });
+
   it('should support single-item redraw', function() {
     var scene = json('scenegraph-rect.json');
     var r = new Renderer()
@@ -120,20 +173,38 @@ describe('svg-string renderer', function() {
   });
 
   it('should support multi-item redraw', function() {
-    var scene = marks['line-1'];
+    var scene = Util.fromJSON(Util.toJSON(marks['line-1']));
     var r = new Renderer()
       .initialize(null, 400, 400)
       .background('white')
       .render(scene);
 
-    var line = scene.items[1];
-    var prev = line.y;
-    line.y = 5;
-    r.render(scene, [line]);
-    var str = r.svg();
-    line.y = prev;
+    var line1 = scene.items[1]; line1.y = 5;                        // update
+    var line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
+    var line3 = {x:400, y:200}; line3.mark = scene;                 // enter
+    scene.items.push(line3);
+
+    var str = r.render(scene, [line1, line2, line3]).svg();
     generate('svg/scenegraph-line-redraw.svg', str);
     var test = load('svg/scenegraph-line-redraw.svg');
+    assert.equal(str, test);
+  });
+
+  it('should support enter-group redraw', function() {
+    var scene = json('scenegraph-barley.json');
+    var r = new Renderer()
+      .initialize(null, 500, 600)
+      .background('white')
+      .render(scene);
+
+    var group = JSON.parse(Util.toJSON(scene.items[0])); group.x = 200;
+    scene = JSON.parse(Util.toJSON(scene));
+    scene.items.push(group);
+    scene = Util.fromJSON(scene);
+
+    var str = r.svg();
+    generate('svg/scenegraph-enter-group-redraw.svg', str);
+    var test = load('svg/scenegraph-enter-group-redraw.svg');
     assert.equal(str, test);
   });
 

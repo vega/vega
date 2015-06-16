@@ -3,7 +3,6 @@ var DOM = require('../../util/dom'),
     ImageLoader = require('../../util/ImageLoader'),
     ns = SVG.metadata.xmlns,
     marks = require('./marks'),
-    bind = require('./marks/util').bind,
     Renderer = require('../Renderer');
 
 var href = (typeof window !== 'undefined' ? window.location.href : '');
@@ -11,6 +10,7 @@ var href = (typeof window !== 'undefined' ? window.location.href : '');
 function SVGRenderer(loadConfig) {
   Renderer.call(this);
   this._loader = new ImageLoader(loadConfig);
+  this._dirtyID = 0;
 }
 
 var base = Renderer.prototype;
@@ -140,47 +140,69 @@ function updateClipping(el, clip, index) {
 }
 
 prototype.render = function(scene, items) {
-  if (items) {
-    this.update(items);
-  } else {
-    this._defs.gradient = {}; // clear gradient cache
+  if (this._dirtyCheck(items)) {
+    if (this._dirtyAll) {
+      this._defs.gradient = {}; // clear gradient cache    
+    }
     this.draw(this._root, scene, -1);
     DOM.clear(this._root, 1);
   }
   this.updateDefs();
-
   return this;
 };
 
-prototype.update = function(items) {
-  var item, mark, scene, el, i, n;
+prototype._dirtyCheck = function(items) {
+  this._dirtyAll = true;
+  if (!items) return true;
+
+  var id = ++this._dirtyID,
+      el, item, mark, i, n;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
     mark = marks[item.mark.marktype];
     item = (mark.nested ? item.mark.items : item);
-    el   = (mark.nested ? item[0] : item)._svg;
+    el = (mark.nested ? item[0] : item)._svg;
 
-    scene = item.mark;
-    if (!el) {
-      while (scene) {
-        if (scene._svg) {
-          mark = marks[scene.marktype];
-          el = bind(scene._svg, mark, item, scene.items.length);
-          break;
-        }
-        item = scene.group;
-        if (item._svg) {
-          this.draw(item._svg, scene, item.items.length);
-          return;
-        }
-        scene = item.mark;
-      }
+    if (item.status === 'exit') { // EXIT
+      item._svg = null;
+      DOM.remove(el);
+    } else if (el) {              // UPDATE
+      mark.update.call(this, el, item);
+      this.style(el, item);
+    } else {                      // ENTER
+      this._dirtyAll = false;
+      dirtyChildren(item, id);
+      dirtyParents(item, id);
     }
-    mark.update.call(this, el, item);
-    this.style(el, item);
-    if (mark.recurse) mark.recurse.call(this, el, item);
   }
+  return !this._dirtyAll;
+};
+
+function dirtyParents(item, id) {
+  for (; item && item.dirty !== id; item=item.mark.group) {
+    item.dirty = id;
+    if (item.mark && item.mark.dirty !== id) {
+      item.mark.dirty = id;
+    } else return;
+  }
+}
+
+function dirtyChildren(item, id) {
+  if (item.items) dirtyItems(item.items, id);
+  if (item.axisItems) dirtyItems(item.axisItems, id);
+  if (item.legendItems) dirtyItems(item.legendItems, id);
+}
+
+function dirtyItems(items, id) {
+  for (var i=0, n=items.length; i<n; ++i) {
+    items[i].dirty = id;
+    dirtyChildren(items[i], id);
+  }
+}
+
+prototype.isDirty = function(item) {
+  return this._dirtyAll || item.dirty === this._dirtyID;
 };
 
 prototype.draw = function(el, scene, index) {

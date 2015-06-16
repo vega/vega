@@ -2,9 +2,13 @@ var DOM = require('../../../util/dom'),
     drawMark = require('./util').draw;
 
 function draw(el, scene, index) {
-  var p = drawMark.call(this, el, scene, index, groupMark);
-  for (var i=0, n=scene.items.length; i<n; ++i) {
-    recurse.call(this, p.childNodes[i], scene.items[i]);
+  if (this.isDirty(scene)) {
+    var p = drawMark.call(this, el, scene, index, groupMark);
+    for (var i=0, n=scene.items.length; i<n; ++i) {
+      if (this.isDirty(scene.items[i])) {
+        recurse.call(this, p.childNodes[i], scene.items[i]);
+      }
+    }
   }
 }
 

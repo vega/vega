@@ -2,9 +2,11 @@
 
 var fs = require('fs');
 var assert = require('chai').assert;
+var Bounds = require('../src/util/Bounds');
 var Renderer = require('../src/render/canvas/CanvasRenderer');
-var initScene = require('../src/util/scene').fromJSON;
+var Util = require('../src/util/scene');
 var res = './test/resources/';
+
 var GENERATE = require('./resources/generate-tests');
 
 function generate(path, image) {
@@ -16,7 +18,7 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return initScene(load(file));
+  return Util.fromJSON(load(file));
 }
 
 function render(scene, w, h) {
@@ -52,7 +54,7 @@ function clearPathCache(mark) {
 
 describe('canvas renderer', function() {
   var marks = JSON.parse(load('marks.json'));
-  for (var name in marks) { initScene(marks[name]); }
+  for (var name in marks) { Util.fromJSON(marks[name]); }
 
   it('should support argument free constructor', function() {
     var r = new Renderer();
@@ -84,6 +86,14 @@ describe('canvas renderer', function() {
     var image = render(scene, 102, 102);
     generate('png/scenegraph-defs.png', image);
     var test = load('png/scenegraph-defs.png');
+    assert.equal(image, test);
+
+    var scene2 = loadScene('scenegraph-defs.json');
+    scene2.items[0].clip = false;
+    scene2.items[0].fill = 'red';
+    image = render(scene2, 102, 102);
+    generate('png/scenegraph-defs2.png', image);
+    test = load('png/scenegraph-defs2.png');
     assert.equal(image, test);
   });
 
@@ -122,6 +132,49 @@ describe('canvas renderer', function() {
     test = load('png/scenegraph-single-redraw.png');
     assert.equal(image, test);
   });
+
+  it('should support enter-item redraw', function() {
+    var scene = loadScene('scenegraph-rect.json');
+    var r = new Renderer()
+      .initialize(null, 400, 200)
+      .background('white')
+      .render(scene);
+
+    var rects = scene.items[0].items[0];
+
+    var rect1 = {x:10, y:10, width:50, height:50, fill:'red'};
+    rect1.mark = rects;
+    rect1.bounds = new Bounds().set(10, 10, 60, 60);
+    rects.items.push(rect1);
+
+    var rect2 = {x:70, y:10, width:50, height:50, fill:'blue'};
+    rect2.mark = rects;
+    rect2.bounds = new Bounds().set(70, 10, 120, 60);
+    rects.items.push(rect2);
+
+    r.render(scene, [rect1, rect2]);
+    var image = r.canvas().toBuffer();
+    generate('png/scenegraph-enter-redraw.png', image);
+    var test = load('png/scenegraph-enter-redraw.png');
+    assert.equal(image, test);
+  });
+
+  it('should support exit-item redraw', function() {
+    var scene = loadScene('scenegraph-rect.json');
+    var r = new Renderer()
+      .initialize(null, 400, 200)
+      .background('white')
+      .render(scene);
+  
+    var rect = scene.items[0].items[0].items.pop();
+    rect.status = 'exit';
+    r.render(scene, [rect]);
+  
+    var image = r.canvas().toBuffer();
+    generate('png/scenegraph-exit-redraw.png', image);
+    var test = load('png/scenegraph-exit-redraw.png');
+    assert.equal(image, test);
+  });
   
   it('should support single-item redraw', function() {
     var scene = loadScene('scenegraph-rect.json');
@@ -143,20 +196,41 @@ describe('canvas renderer', function() {
   });
 
   it('should support multi-item redraw', function() {
-    var scene = marks['line-1'];
+    var scene = Util.fromJSON(Util.toJSON(marks['line-1']));
     var r = new Renderer()
       .initialize(null, 400, 400)
       .background('white')
       .render(scene);
 
-    var line = scene.items[1];
-    var prev = line.y;
-    line.y = 5;
-    r.render(scene, [line]);
+    var line1 = scene.items[1]; line1.y = 5;                        // update
+    var line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
+    var line3 = {x:400, y:200}; line3.mark = scene;                 // enter
+    scene.items.push(line3);
+
+    r.render(scene, [line1, line2, line3]);
     var image = r.canvas().toBuffer();
-    line.y = prev;
     generate('png/scenegraph-line-redraw.png', image);
     var test = load('png/scenegraph-line-redraw.png');
+    assert.equal(image, test);
+  });
+
+  it('should support enter-group redraw', function() {
+    var scene = loadScene('scenegraph-barley.json');
+    var r = new Renderer()
+      .initialize(null, 500, 600)
+      .background('white')
+      .render(scene);
+  
+    var group = JSON.parse(Util.toJSON(scene.items[0])); group.x = 200;
+    scene = JSON.parse(Util.toJSON(scene));
+    scene.items.push(group);
+    scene = Util.fromJSON(scene);
+
+    r.render(scene, [group]);
+  
+    var image = r.canvas().toBuffer();
+    generate('png/scenegraph-enter-group-redraw.png', image);
+    var test = load('png/scenegraph-enter-group-redraw.png');
     assert.equal(image, test);
   });
 
@@ -229,7 +303,7 @@ describe('canvas renderer', function() {
   });
 
   it('should skip invalid image', function() {
-    var scene = initScene({
+    var scene = Util.fromJSON({
       marktype: 'image',
       items: [{url: 'does_not_exist.png'}]
     });
