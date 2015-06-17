@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
     canvas = require('vega-scenegraph/src/render/canvas'),
-    svg = require('vega-scenegraph/src/render/svg-string'),
+    svg = require('vega-scenegraph/src/render/svg').string,
     View = require('./View'),
     log = require('../util/log');
 
