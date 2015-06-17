@@ -207,7 +207,6 @@ prototype._dirtyCheck = function(items) {
       this._update(mdef, el, item);
     } else { // ENTER
       this._dirtyAll = false;
-      dirtyChildren(item, id);
       dirtyParents(item, id);
     }
   }
@@ -220,19 +219,6 @@ function dirtyParents(item, id) {
     if (item.mark && item.mark.dirty !== id) {
       item.mark.dirty = id;
     } else return;
-  }
-}
-
-function dirtyChildren(item, id) {
-  if (item.items) dirtyItems(item.items, id);
-  if (item.axisItems) dirtyItems(item.axisItems, id);
-  if (item.legendItems) dirtyItems(item.legendItems, id);
-}
-
-function dirtyItems(items, id) {
-  for (var i=0, n=items.length; i<n; ++i) {
-    items[i].dirty = id;
-    dirtyChildren(items[i], id);
   }
 }
 
@@ -251,7 +237,7 @@ prototype.drawMark = function(el, scene, index, mdef) {
       events = scene.interactive === false ? 'none' : null,
       isGroup = (mdef.tag === 'g'),
       className = DOM.cssClass(scene),
-      p, i, n, c, d;
+      p, i, n, c, d, insert;
 
   p = DOM.child(el, index+1, 'g', ns, className);
   p.setAttribute('class', className);
@@ -262,18 +248,24 @@ prototype.drawMark = function(el, scene, index, mdef) {
 
   for (i=0, n=items.length; i<n; ++i) {
     if (this.isDirty(d = items[i])) {
-      c = p.childNodes[i] || bind(p, mdef, d, i);
+      insert = !(this._dirtyAll || d._svg);
+      c = insert ? bind(p, mdef, d, i, true)
+        : (p.childNodes[i] || bind(p, mdef, d, i));
       this._update(mdef, c, d);
-      if (isGroup) this._recurse(c, d);
+      if (isGroup) {
+        if (insert) this._dirtyAll = true;
+        this._recurse(c, d);
+        if (insert) this._dirtyAll = false;
+      }
     }
   }
   DOM.clear(p, i);
   return p;
 };
 
-function bind(el, mdef, item, index) {
+function bind(el, mdef, item, index, insert) {
   // create svg element, bind item data for D3 compatibility
-  var node = DOM.child(el, index, mdef.tag, ns);
+  var node = DOM.child(el, index, mdef.tag, ns, null, insert);
   node.__data__ = item;
   // create background rect
   if (mdef.tag === 'g') {

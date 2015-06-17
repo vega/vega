@@ -25,10 +25,11 @@ module.exports = {
   },
   // retrieve child element at given index
   // create & insert if doesn't exist or if tag/className do not match
-  child: function(el, index, tag, ns, className) {
+  child: function(el, index, tag, ns, className, insert) {
     var a, b;
     a = b = el.childNodes[index];
-    if (!a || a.tagName.toLowerCase() !== tag.toLowerCase() ||
+    if (!a || insert ||
+        a.tagName.toLowerCase() !== tag.toLowerCase() ||
         className && a.getAttribute('class') != className) {
       a = create(el.ownerDocument, tag, ns);
       el.insertBefore(a, b);
