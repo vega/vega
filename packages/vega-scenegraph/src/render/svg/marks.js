@@ -16,7 +16,8 @@ module.exports = {
     tag:  'path',
     type: 'area',
     nest: true,
-    attr: function(emit, items) {
+    attr: function(emit, o) {
+      var items = o.mark.items;
       if (items.length) emit('d', path.area(items));
     }
   },
@@ -63,9 +64,10 @@ module.exports = {
   },
   line: {
     tag:  'path',
-    type: 'area',
+    type: 'line',
     nest: true,
-    attr: function(emit, items) {
+    attr: function(emit, o) {
+      var items = o.mark.items;
       if (items.length) emit('d', path.line(items));
     }
   },

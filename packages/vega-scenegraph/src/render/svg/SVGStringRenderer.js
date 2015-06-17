@@ -136,7 +136,9 @@ prototype.mark = function(scene) {
       tag  = mdef.tag,
       attr = mdef.attr,
       nest = mdef.nest || false,
-      data = nest ? [scene.items] : (scene.items || []),
+      data = nest
+          ? (scene.items && scene.items.length ? [scene.items[0]] : [])
+          : (scene.items || []),
       defs = this._defs,
       str = '',
       style, i, item;
@@ -197,12 +199,9 @@ prototype.markGroup = function(scene) {
   return str;
 };
 
-function styles(d, mark, tag, defs) {
-  var i, n, prop, name, value,
-      o = Array.isArray(d) ? d[0] : d;
+function styles(o, mark, tag, defs) {
   if (o == null) return '';
-
-  var s = '';
+  var i, n, prop, name, value, s = '';
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none;';

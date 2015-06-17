@@ -17,6 +17,7 @@ function remove(el) {
 module.exports = {
   // find first child element with matching tag
   find: function(el, tag) {
+    tag = tag.toLowerCase();
     for (var i=0, n=el.childNodes.length; i<n; ++i) {
       if (el.childNodes[i].tagName.toLowerCase() === tag) {
         return el.childNodes[i];
