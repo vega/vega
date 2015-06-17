@@ -192,23 +192,31 @@ prototype._dirtyCheck = function(items) {
   if (!items) return true;
 
   var id = ++this._dirtyID,
-      item, mark, mdef, i, n;
+      item, mark, mdef, i, n, o;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
+    mark = item.mark;
+    mdef = marks[mark.marktype];
 
     if (item.status === 'exit') { // EXIT
       if (item._svg) {
-        DOM.remove(item._svg);
+        if (mdef.nest && item.mark.items.length) {
+          // if nested mark with remaining points, update instead
+          this._update(mdef, item._svg, item.mark.items[0]);
+          o = item.mark.items[0];
+          o._svg = item._svg;
+          o._update = id;
+        } else {
+          // otherwise remove from DOM
+          DOM.remove(item._svg);
+        }
         item._svg = null;
       }
       continue;
     }
-    
-    mark = item.mark;
-    mdef = marks[mark.marktype];
-    item = (mdef.nest ? mark.items[0] : item);
 
+    item = (mdef.nest ? mark.items[0] : item);
     if (item._update === id) { // Already processed
       continue;
     } else if (item._svg) { // UPDATE
