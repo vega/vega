@@ -39,6 +39,7 @@ function path(o, bounds) {
 }
 
 function area(mark, bounds) {
+  if (mark.items.length === 0) return bounds;
   var items = mark.items,
       item = items[0],
       p = item.pathCache || (item.pathCache = parse(areaPath(items)));
@@ -46,6 +47,7 @@ function area(mark, bounds) {
 }
 
 function line(mark, bounds) {
+  if (mark.items.length === 0) return bounds;
   var items = mark.items,
       item = items[0],
       p = item.pathCache || (item.pathCache = parse(linePath(items)));
@@ -258,21 +260,27 @@ function itemBounds(item, func, opt) {
   return item.bounds;
 }
 
-function markBounds(mark, bounds, opt) {
-  bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
+var DUMMY_ITEM = {mark: null};
 
+function markBounds(mark, bounds, opt) {
   var type  = mark.marktype,
       func  = methods[type],
       items = mark.items,
-      i, n;
+      hasi  = items && items.length,
+      i, n, o, b;
 
-  if (items && items.length) {
-    if (func.nest) {
-      bounds = itemBounds(items[0], func, opt);
-    } else {
-      for (i=0, n=items.length; i<n; ++i) {
-        bounds.union(itemBounds(items[i], func, opt));
-      }
+  if (func.nest) {
+    o = hasi ? items[0]
+      : (DUMMY_ITEM.mark = mark, DUMMY_ITEM); // no items, so fake it
+    b = itemBounds(o, func, opt);
+    bounds = bounds && bounds.union(b) || b;
+    return bounds;
+  }
+
+  bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
+  if (hasi) {  
+    for (i=0, n=items.length; i<n; ++i) {
+      bounds.union(itemBounds(items[i], func, opt));
     }
   }
   return (mark.bounds = bounds);
