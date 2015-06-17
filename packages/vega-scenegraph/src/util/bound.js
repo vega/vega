@@ -237,6 +237,7 @@ var methods = {
 };
 
 function itemBounds(item, func, opt) {
+  func = func || methods[item.marktype || item.mark.marktype];
   var curr = item.bounds,
       prev = item['bounds:prev'] || (item['bounds:prev'] = new Bounds());
 
@@ -258,13 +259,15 @@ function markBounds(mark, bounds, opt) {
       func  = methods[type],
       items = mark.items,
       i, n;
-      
-  if ((type==='area' || type==='line') && items.length) {
-    mark.bounds = bounds;
-    itemBounds(mark, func, opt);
-  } else if (items) {
-    for (i=0, n=items.length; i<n; ++i) {
-      bounds.union(itemBounds(items[i], func, opt));
+
+  if (items && items.length) {
+    if (type === 'area' || type === 'line') {
+      mark.bounds = bounds;
+      itemBounds(mark, func, opt);
+    } else {
+      for (i=0, n=items.length; i<n; ++i) {
+        bounds.union(itemBounds(items[i], func, opt));
+      }
     }
   }
   return (mark.bounds = bounds);
