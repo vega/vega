@@ -207,7 +207,7 @@ prototype._dirtyCheck = function(items) {
       item._svg = null;
       if (el) DOM.remove(el);
     } else if (el) { // UPDATE
-      this._update(mdef, el, mdef.nest ? mark.items : item);
+      this._update(mdef, el, item);
     } else { // ENTER
       this._dirtyAll = false;
       dirtyParents(item, id);
@@ -237,7 +237,9 @@ prototype.draw = function(el, scene, index) {
 prototype.drawMark = function(el, scene, index, mdef) {
   if (!this.isDirty(scene)) return;
 
-  var items = mdef.nest ? [scene.items] : scene.items || [],
+  var items = mdef.nest
+        ? (scene.items && scene.items.length ? [scene.items[0]] : [])
+        : scene.items || [],
       events = scene.interactive === false ? 'none' : null,
       isGroup = (mdef.tag === 'g'),
       className = DOM.cssClass(scene),
@@ -276,10 +278,7 @@ function bind(el, mdef, item, index, insert) {
     DOM.child(node, 0, 'rect', ns, 'background');
   }
   // add pointer from scenegraph item to svg element
-  if ((item = Array.isArray(item) ? item[0] : item)) {
-    item._svg = node;
-  }
-  return node;
+  return (item._svg = node);
 }
 
 prototype._recurse = function(el, group) {
@@ -309,10 +308,9 @@ prototype._recurse = function(el, group) {
   DOM.clear(el, 1 + idx);
 };
 
-prototype.style = function(el, d) {
-  var i, n, prop, name, value,
-      o = Array.isArray(d) ? d[0] : d;
+prototype.style = function(el, o) {
   if (o == null) return;
+  var i, n, prop, name, value;
 
   if (o.mark.marktype === 'group') {
     el = el.childNodes[0]; // set styles on background

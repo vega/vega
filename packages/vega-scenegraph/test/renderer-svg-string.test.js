@@ -17,8 +17,8 @@ function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
 
-function json(file) {
-  return JSON.parse(load(file));
+function loadScene(file) {
+  return Util.fromJSON(load(file));
 }
 
 function render(scene, w, h) {
@@ -29,17 +29,18 @@ function render(scene, w, h) {
 }
 
 describe('svg-string renderer', function() {
-  var marks = json('marks.json');
   var r = new Renderer();
+  var marks = JSON.parse(load('marks.json'));
+  for (var name in marks) { Util.fromJSON(marks[name]); }
 
-  it('should build empty path for item-less area mark', function() {
+  it('should build empty group for item-less area mark', function() {
     var str = r.reset().mark({marktype: 'area', items:[]});
     generate('svg/marks-itemless-area.svg', str);
     var test = load('svg/marks-itemless-area.svg');
     assert.strictEqual(str, test);
   });
 
-  it('should build empty path for item-less line mark', function() {
+  it('should build empty group for item-less line mark', function() {
     var str = r.reset().mark({marktype: 'line', items:[]});
     generate('svg/marks-itemless-line.svg', str);
     var test = load('svg/marks-itemless-line.svg');
@@ -49,7 +50,7 @@ describe('svg-string renderer', function() {
   // ----
 
   it('should render scenegraph to SVG string', function() {
-    var scene = json('scenegraph-rect.json');
+    var scene = loadScene('scenegraph-rect.json');
     var str = render(scene, 400, 200);
     generate('svg/scenegraph-rect.svg', str);
     var test = load('svg/scenegraph-rect.svg');
@@ -57,13 +58,13 @@ describe('svg-string renderer', function() {
   });
 
   it('should support clipping and gradients', function() {
-    var scene = json('scenegraph-defs.json');
+    var scene = loadScene('scenegraph-defs.json');
     var str = render(scene, 102, 102);
     generate('svg/scenegraph-defs.svg', str);
     var test = load('svg/scenegraph-defs.svg');
     assert.strictEqual(str, test);
 
-    var scene2 = json('scenegraph-defs.json');
+    var scene2 = loadScene('scenegraph-defs.json');
     delete scene2.items[0].clip;
     scene2.items[0].fill = 'red';
     str = render(scene2, 102, 102);
@@ -73,7 +74,7 @@ describe('svg-string renderer', function() {
   });
 
   it('should support axes, legends and sub-groups', function() {
-    var scene = json('scenegraph-barley.json');
+    var scene = loadScene('scenegraph-barley.json');
     var str = render(scene, 360, 740);
     generate('svg/scenegraph-barley.svg', str);
     var test = load('svg/scenegraph-barley.svg');
@@ -81,7 +82,7 @@ describe('svg-string renderer', function() {
   });
 
   it('should support full redraw', function() {
-    var scene = json('scenegraph-rect.json');
+    var scene = loadScene('scenegraph-rect.json');
     var r = new Renderer()
       .initialize(null, 400, 200)
       .background('white')
@@ -109,7 +110,7 @@ describe('svg-string renderer', function() {
   });
 
   it('should support enter-item redraw', function() {
-    var scene = json('scenegraph-rect.json');
+    var scene = loadScene('scenegraph-rect.json');
     var r = new Renderer()
       .initialize(null, 400, 200)
       .background('white')
@@ -134,7 +135,7 @@ describe('svg-string renderer', function() {
   });
 
   it('should support exit-item redraw', function() {
-    var scene = json('scenegraph-rect.json');
+    var scene = loadScene('scenegraph-rect.json');
     var r = new Renderer()
       .initialize(null, 400, 200)
       .background('white')
@@ -151,7 +152,7 @@ describe('svg-string renderer', function() {
   });
 
   it('should support single-item redraw', function() {
-    var scene = json('scenegraph-rect.json');
+    var scene = loadScene('scenegraph-rect.json');
     var r = new Renderer()
       .initialize(null, 400, 200)
       .background('white')
@@ -187,7 +188,7 @@ describe('svg-string renderer', function() {
   });
 
   it('should support enter-group redraw', function() {
-    var scene = json('scenegraph-barley.json');
+    var scene = loadScene('scenegraph-barley.json');
     var r = new Renderer()
       .initialize(null, 500, 600)
       .background('white')
