@@ -3,7 +3,7 @@
 var fs = require('fs');
 var assert = require('chai').assert;
 var Bounds = require('../src/util/Bounds');
-var Renderer = require('../src/render/svg').StringRenderer;
+var Renderer = require('../src/render/svg').string.Renderer;
 var Util = require('../src/util/scene');
 var res = './test/resources/';
 
