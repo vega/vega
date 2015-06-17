@@ -2,12 +2,29 @@
 
 var fs = require('fs');
 var assert = require('chai').assert;
-var Renderer = require('../src/render/canvas/CanvasRenderer');
-var Handler = require('../src/render/canvas/CanvasHandler');
+var Renderer = require('../src/render/svg/SVGRenderer');
+var Handler = require('../src/render/svg/SVGHandler');
 var initScene = require('../src/util/scene').fromJSON;
 var res = './test/resources/';
 
 var jsdom = require('jsdom').jsdom();
+
+var events = [
+  'keydown',
+  'keypress',
+  'keyup',
+  'mousedown',
+  'mouseup',
+  'mousemove',
+  'mouseout',
+  'click',
+  'dblclick',
+  'wheel',
+  'mousewheel',
+  'touchstart',
+  'touchmove',
+  'touchend'
+];
 
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
@@ -26,24 +43,6 @@ function render(scene, w, h) {
   return r.element();
 }
 
-function renderAsync(scene, w, h, callback) {
-  global.document = jsdom;
-  var r = new Renderer({baseURL: './test/resources/'})
-    .initialize(jsdom.body, w, h)
-    .render(scene);
-  delete global.document;
-  
-  function wait() {
-    if (r.pendingImages() === 0) {
-      callback(r.element());      
-    } else {
-      setTimeout(wait, 100);
-    }
-  }
-
-  wait();
-}
-
 function event(name, x, y) {
   var evt = jsdom.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
@@ -52,7 +51,7 @@ function event(name, x, y) {
   return evt;
 }
 
-describe('canvas handler', function() {
+describe('svg handler', function() {
   var marks = JSON.parse(load('marks.json'));
   for (var name in marks) { initScene(marks[name]); }
 
@@ -63,41 +62,41 @@ describe('canvas handler', function() {
       .scene(scene);
     assert(handler.scene(), scene);
 
-    var canvas = handler.canvas();
+    var svg = handler.svg();
     var count = 0;
     var increment = function() { count++; };
 
-    handler.events.forEach(function(name) {
+    events.forEach(function(name) {
       handler.on(name, increment);
     });
-    assert.equal(handler.handlers().length, handler.events.length);
+    assert.equal(handler.handlers().length, events.length);
 
-    handler.events.forEach(function(name) {
-      canvas.dispatchEvent(event(name));
+    events.forEach(function(name) {
+      svg.dispatchEvent(event(name));
     });
-    handler.DOMMouseScroll(event('mousewheel'));
 
-    canvas.dispatchEvent(event('mousemove', 0, 0));
-    canvas.dispatchEvent(event('mousemove', 50, 150));
-    canvas.dispatchEvent(event('click', 50, 150));
-    canvas.dispatchEvent(event('mousemove', 50, 151));
-    canvas.dispatchEvent(event('mousemove', 50, 1));
-    canvas.dispatchEvent(event('mouseout', 1, 1));
+    svg.dispatchEvent(event('mousemove', 0, 0));
+    svg.dispatchEvent(event('mousemove', 50, 150));
+    svg.dispatchEvent(event('click', 50, 150));
+    svg.dispatchEvent(event('mousemove', 50, 151));
+    svg.dispatchEvent(event('mousemove', 50, 1));
+    svg.dispatchEvent(event('mouseout', 1, 1));
 
-    assert.equal(count, handler.events.length + 4);
+    assert.equal(count, events.length + 6);
 
     handler.off('mousemove', {});
-    assert.equal(handler.handlers().length, handler.events.length);
+    assert.equal(handler.handlers().length, events.length);
 
     handler.off('nonevent');
-    assert.equal(handler.handlers().length, handler.events.length);
+    assert.equal(handler.handlers().length, events.length);
 
-    handler.events.forEach(function(name) {
+    events.forEach(function(name) {
       handler.off(name, increment);
     });
+
     assert.equal(handler.handlers().length, 0);
   });
-
+/*
   it('should pick elements in scenegraph', function() {
     var scene = loadScene('scenegraph-rect.json');
     var handler = new Handler().initialize(render(scene, 400, 200));
@@ -136,37 +135,28 @@ describe('canvas handler', function() {
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
   });
 
-  it('should pick image mark', function(done) {
-    var mark = marks.image;
-    renderAsync(mark, 500, 500, function(el) {
-      var handler = new Handler().initialize(el);
-      assert.ok(handler.pick(mark, 250, 150, 250, 150));
-      assert.notOk(handler.pick(mark, 100, 305, 100, 305));
-      assert.notOk(handler.pick(mark, 800, 800, 800, 800));  
-      done();    
-    });
-  });
+  // it('should pick image mark', function(done) {
+  //   var mark = marks.image;
+  //   renderAsync(mark, 500, 500, function(el) {
+  //     var handler = new Handler().initialize(el);
+  //     assert.ok(handler.pick(mark, 250, 150, 250, 150));
+  //     assert.notOk(handler.pick(mark, 100, 305, 100, 305));
+  //     assert.notOk(handler.pick(mark, 800, 800, 800, 800));  
+  //     done();    
+  //   });
+  // });
 
   it('should pick line mark', function() {
     var mark = marks['line-2'];
     var handler = new Handler().initialize(render(mark, 500, 500));
     assert.notOk(handler.pick(mark, 100, 144, 100, 144));
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
-
-    // fake isPointInStroke until node canvas supports it
-    var g = handler.context();
-    g.pixelratio = 1.1;
-    g.isPointInStroke = function() { return true; };
     assert.ok(handler.pick(mark, 0, 144, 0, 144));
 
     mark = marks['line-1'];
     handler = new Handler().initialize(render(mark, 500, 500));
     assert.notOk(handler.pick(mark, 100, 144, 100, 144));
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
-
-    // fake isPointInStroke until node canvas supports it
-    g = handler.context();
-    g.isPointInStroke = function() { return true; };
     assert.ok(handler.pick(mark, 0, 144, 0, 144));
   });
   
@@ -190,11 +180,6 @@ describe('canvas handler', function() {
     var handler = new Handler().initialize(render(mark, 500, 500));
     assert.notOk(handler.pick(mark, 100, 198, 100, 198));
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
-
-    // fake isPointInStroke until node canvas supports it
-    var g = handler.context();
-    g.pixelratio = 1.1;
-    g.isPointInStroke = function() { return true; };
     assert.ok(handler.pick(mark, 5, 0, 5, 0));
   });
   
@@ -236,5 +221,5 @@ describe('canvas handler', function() {
       assert.isFalse(handler.pick(scene, 0, 0, 0, 0));
     }
   });
-
+*/
 });

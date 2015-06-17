@@ -3,7 +3,7 @@
 var fs = require('fs');
 var assert = require('chai').assert;
 var Bounds = require('../src/util/Bounds');
-var Renderer = require('../src/render/svg-string').Renderer;
+var Renderer = require('../src/render/svg').StringRenderer;
 var Util = require('../src/util/scene');
 var res = './test/resources/';
 
@@ -31,10 +31,6 @@ function render(scene, w, h) {
 describe('svg-string renderer', function() {
   var marks = json('marks.json');
   var r = new Renderer();
-
-  it('should return null for invalid mark type', function() {
-    assert.isNull(r.mark({marktype: 'foo-bar'}));
-  });
 
   it('should build empty path for item-less area mark', function() {
     var str = r.reset().mark({marktype: 'area', items:[]});

@@ -1,9 +1,10 @@
-var DOM = require('../../util/dom'),
+var ImageLoader = require('../../util/ImageLoader'),
+    Renderer = require('../Renderer'),
+    font = require('../../util/font'),
+    DOM = require('../../util/dom'),
     SVG = require('../../util/svg'),
-    ImageLoader = require('../../util/ImageLoader'),
     ns = SVG.metadata.xmlns,
-    marks = require('./marks'),
-    Renderer = require('../Renderer');
+    marks = require('./marks');
 
 var href = (typeof window !== 'undefined' ? window.location.href : '');
 
@@ -88,11 +89,12 @@ prototype.updateDefs = function() {
     if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
     updateGradient(el, defs.gradient[id], index++);
   }
+
   for (id in defs.clipping) {
     if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
     updateClipping(el, defs.clipping[id], index++);
   }
-  
+
   // clean-up
   if (el) {
     if (index === 0) {
@@ -107,43 +109,77 @@ prototype.updateDefs = function() {
 function updateGradient(el, grad, index) {
   var i, n, stop;
 
-  if (!grad.el) {
-    grad.el = DOM.child(el, index, 'linearGradient', ns);
-    grad.el.setAttribute('id', grad.id);
-  }
-  grad.el.setAttribute('x1', grad.x1);
-  grad.el.setAttribute('x2', grad.x2);
-  grad.el.setAttribute('y1', grad.y1);
-  grad.el.setAttribute('y2', grad.y2);
+  el = DOM.child(el, index, 'linearGradient', ns);
+  el.setAttribute('id', grad.id);
+  el.setAttribute('x1', grad.x1);
+  el.setAttribute('x2', grad.x2);
+  el.setAttribute('y1', grad.y1);
+  el.setAttribute('y2', grad.y2);
   
   for (i=0, n=grad.stops.length; i<n; ++i) {
-    stop = DOM.child(grad.el, i, 'stop', ns);
+    stop = DOM.child(el, i, 'stop', ns);
     stop.setAttribute('offset', grad.stops[i].offset);
     stop.setAttribute('stop-color', grad.stops[i].color);
   }
-  DOM.clear(grad.el, i);
+  DOM.clear(el, i);
 }
 
 function updateClipping(el, clip, index) {
   var rect;
 
-  if (!clip.el) {
-    clip.el = DOM.child(el, index, 'clipPath', ns);
-    clip.el.setAttribute('id', clip.id);
-    rect = DOM.child(clip.el, 0, 'rect', ns);
-    rect.setAttribute('x', 0);
-    rect.setAttribute('y', 0);
-  }
-  rect = rect || clip.el.childNodes[0];
+  el = DOM.child(el, index, 'clipPath', ns);
+  el.setAttribute('id', clip.id);
+  rect = DOM.child(el, 0, 'rect', ns);
+  rect.setAttribute('x', 0);
+  rect.setAttribute('y', 0);
   rect.setAttribute('width', clip.width);
   rect.setAttribute('height', clip.height);
 }
 
+prototype._resetDefs = function() {
+  var def = this._defs;
+  def.clip_id = 1;
+  def.gradient = {};
+  def.clipping = {};
+};
+
+prototype.imageURL = function(url) {
+  return this._loader.imageURL(url);
+};
+
+var element = null;
+
+function emit(name, value, ns) {
+  if (value != null) {
+    if (ns) {
+      element.setAttributeNS(ns, name, value);
+    } else {
+      element.setAttribute(name, value);
+    }
+  } else {
+    if (ns) {
+      element.removeAttributeNS(ns, name);
+    } else {
+      element.removeAttribute(name);
+    }
+  }
+}
+
+prototype._update = function(mdef, el, item) {
+  element = el;
+  mdef.attr(emit, item, this);
+  if (mdef.type === 'group') {
+    element = el.childNodes[0];
+    mdef.background(emit, item, this);
+  } else if (mdef.type === 'text') {
+    el.textContent = item.text || '';
+  }
+  this.style(el, item);
+};
+
 prototype.render = function(scene, items) {
   if (this._dirtyCheck(items)) {
-    if (this._dirtyAll) {
-      this._defs.gradient = {}; // clear gradient cache    
-    }
+    if (this._dirtyAll) this._resetDefs();
     this.draw(this._root, scene, -1);
     DOM.clear(this._root, 1);
   }
@@ -156,21 +192,20 @@ prototype._dirtyCheck = function(items) {
   if (!items) return true;
 
   var id = ++this._dirtyID,
-      el, item, mark, i, n;
+      el, item, mdef, i, n;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
-    mark = marks[item.mark.marktype];
-    item = (mark.nested ? item.mark.items : item);
-    el = (mark.nested ? item[0] : item)._svg;
+    mdef = marks[item.mark.marktype];
+    item = (mdef.nest ? item.mark.items : item);
+    el = (mdef.nest ? item[0] : item)._svg;
 
     if (item.status === 'exit') { // EXIT
       item._svg = null;
       DOM.remove(el);
-    } else if (el) {              // UPDATE
-      mark.update.call(this, el, item);
-      this.style(el, item);
-    } else {                      // ENTER
+    } else if (el) { // UPDATE
+      this._update(mdef, el, item);
+    } else { // ENTER
       this._dirtyAll = false;
       dirtyChildren(item, id);
       dirtyParents(item, id);
@@ -206,8 +241,76 @@ prototype.isDirty = function(item) {
 };
 
 prototype.draw = function(el, scene, index) {
-  var mark = marks[scene.marktype];
-  mark.draw.call(this, el, scene, index);
+  this.drawMark(el, scene, index, marks[scene.marktype]);
+};
+
+prototype.drawMark = function(el, scene, index, mdef) {
+  if (!this.isDirty(scene)) return;
+
+  var items = mdef.nest ? [scene.items] : scene.items || [],
+      events = scene.interactive === false ? 'none' : null,
+      isGroup = (mdef.tag === 'g'),
+      className = DOM.cssClass(scene),
+      p, i, n, c, d;
+
+  p = DOM.child(el, index+1, 'g', ns, className);
+  p.setAttribute('class', className);
+  scene._svg = p;
+  if (!isGroup && events) {
+    p.style.setProperty('pointer-events', events);
+  }
+
+  for (i=0, n=items.length; i<n; ++i) {
+    if (this.isDirty(d = items[i])) {
+      c = p.childNodes[i] || bind(p, mdef, d, i);
+      this._update(mdef, c, d);
+      if (isGroup) this._recurse(c, d);
+    }
+  }
+  DOM.clear(p, i);
+  return p;
+};
+
+function bind(el, mdef, item, index) {
+  // create svg element, bind item data for D3 compatibility
+  var node = DOM.child(el, index, mdef.tag, ns);
+  node.__data__ = item;
+  // create background rect
+  if (mdef.tag === 'g') {
+    DOM.child(node, 0, 'rect', ns, 'background');
+  }
+  // add pointer from scenegraph item to svg element
+  if ((item = Array.isArray(item) ? item[0] : item)) {
+    item._svg = node;
+  }
+  return node;
+}
+
+prototype._recurse = function(el, group) {
+  var items = group.items || [],
+      legends = group.legendItems || [],
+      axes = group.axisItems || [],
+      idx = 0, j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer === 'back') {
+      this.drawMark(el, axes[j], idx++, marks.group);
+    }
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    this.draw(el, items[j], idx++);
+  }
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer !== 'back') {
+      this.drawMark(el, axes[j], idx++, marks.group);
+    }
+  }
+  for (j=0, m=legends.length; j<m; ++j) {
+    this.drawMark(el, legends[j], idx++, marks.group);
+  }
+
+  // remove any extraneous DOM elements
+  DOM.clear(el, 1 + idx);
 };
 
 prototype.style = function(el, d) {
@@ -220,6 +323,10 @@ prototype.style = function(el, d) {
     value = o.mark.interactive === false ? 'none' : null;
     el.style.setProperty('pointer-events', value);
   }
+  
+  if (o.mark.marktype === 'text') {
+    el.style.setProperty('font', font.string(o));
+  }
 
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
     prop = SVG.styleProperties[i];
@@ -228,7 +335,7 @@ prototype.style = function(el, d) {
 
     if (value == null) {
       if (name === 'fill') {
-        el.style.setProperty(name, 'none', null);
+        el.style.setProperty(name, 'none');
       } else {
         el.style.removeProperty(name);
       }
@@ -238,7 +345,7 @@ prototype.style = function(el, d) {
         this._defs.gradient[value.id] = value;
         value = 'url(' + href + '#' + value.id + ')';
       }
-      el.style.setProperty(name, value+'', null);
+      el.style.setProperty(name, value+'');
     }
   }
 };
