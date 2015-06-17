@@ -205,6 +205,8 @@ describe('canvas renderer', function() {
     var line1 = scene.items[1]; line1.y = 5;                        // update
     var line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
     var line3 = {x:400, y:200}; line3.mark = scene;                 // enter
+    scene.bounds.set(-1, -1, 401, 201);
+    scene.items[0].pathCache = null;
     scene.items.push(line3);
 
     r.render(scene, [line1, line2, line3]);
