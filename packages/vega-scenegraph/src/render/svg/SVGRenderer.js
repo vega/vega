@@ -200,15 +200,18 @@ prototype._dirtyCheck = function(items) {
     item = (mdef.nest ? item.mark.items : item);
     el = (mdef.nest ? item[0] : item)._svg;
 
-    if (item.status === 'exit') { // EXIT
+    if (item._update === id) {
+      continue; // already processed
+    } else if (item.status === 'exit') { // EXIT
       item._svg = null;
-      DOM.remove(el);
+      if (el) DOM.remove(el);
     } else if (el) { // UPDATE
       this._update(mdef, el, item);
     } else { // ENTER
       this._dirtyAll = false;
       dirtyParents(item, id);
     }
+    item._update = id;
   }
   return !this._dirtyAll;
 };
