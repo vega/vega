@@ -192,22 +192,27 @@ prototype._dirtyCheck = function(items) {
   if (!items) return true;
 
   var id = ++this._dirtyID,
-      el, item, mark, mdef, i, n;
+      item, mark, mdef, i, n;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
+
+    if (item.status === 'exit') { // EXIT
+      if (item._svg) {
+        DOM.remove(item._svg);
+        item._svg = null;
+      }
+      continue;
+    }
+    
     mark = item.mark;
     mdef = marks[mark.marktype];
     item = (mdef.nest ? mark.items[0] : item);
-    el = item._svg;
 
     if (item._update === id) { // Already processed
       continue;
-    } else if (item.status === 'exit') { // EXIT
-      item._svg = null;
-      if (el) DOM.remove(el);
-    } else if (el) { // UPDATE
-      this._update(mdef, el, item);
+    } else if (item._svg) { // UPDATE
+      this._update(mdef, item._svg, item);
     } else { // ENTER
       this._dirtyAll = false;
       dirtyParents(item, id);
