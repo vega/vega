@@ -28,7 +28,7 @@ module.exports = {
   child: function(el, index, tag, ns, className) {
     var a, b;
     a = b = el.childNodes[index];
-    if (!a || a.tagName.toLowerCase() !== tag ||
+    if (!a || a.tagName.toLowerCase() !== tag.toLowerCase() ||
         className && a.getAttribute('class') != className) {
       a = create(el.ownerDocument, tag, ns);
       el.insertBefore(a, b);

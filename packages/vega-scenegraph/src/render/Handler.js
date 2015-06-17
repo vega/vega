@@ -20,6 +20,12 @@ prototype.padding = function(pad) {
   return this;
 };
 
+prototype.scene = function(scene) {
+  if (!arguments.length) return this._scene;
+  this._scene = scene;
+  return this;
+};
+
 // add an event handler
 // subclasses should override
 prototype.on = function(/*type, handler*/) {};

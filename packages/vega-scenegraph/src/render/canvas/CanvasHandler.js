@@ -32,10 +32,9 @@ prototype.canvas = function() {
   return this._canvas;
 };
 
-prototype.scene = function(scene) {
-  if (!arguments.length) return this._scene;
-  this._scene = scene;
-  return this;
+// retrieve the current canvas context
+prototype.context = function() {
+  return this._canvas.getContext('2d');
 };
 
 // supported events
@@ -140,11 +139,6 @@ prototype.off = function(type, handler) {
     if (!handler || h[i].handler === handler) h.splice(i, 1);
   }
   return this;
-};
-
-// retrieve the current canvas context
-prototype.context = function() {
-  return this._canvas.getContext('2d');
 };
 
 // find the scenegraph item at the current mouse position

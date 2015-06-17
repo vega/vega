@@ -1,7 +1,7 @@
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
-    linePath = require('../../../path/line');
+    linePath = require('../../../util/svg').path.line;
     
 function path(g, items) {
   var o = items[0],

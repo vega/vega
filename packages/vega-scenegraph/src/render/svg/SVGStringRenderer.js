@@ -1,12 +1,11 @@
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
-    areaPath = require('../../path/area'),
-    linePath = require('../../path/line'),
     font = require('../../util/font'),
     DOM = require('../../util/dom'),
     openTag = DOM.openTag,
-    closeTag = DOM.closeTag;
+    closeTag = DOM.closeTag,
+    MARKS = require('./marks');
 
 function SVGStringRenderer(loadConfig) {
   Renderer.call(this);
@@ -116,17 +115,31 @@ prototype.buildDefs = function() {
   return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
 };
 
-prototype.mark = function(scene) {
-  var meta = MARKS[scene.marktype];
-  if (!meta) return null; // unknown marktype
+prototype.imageURL = function(url) {
+  return this._loader.imageURL(url);
+};
 
-  var tag  = meta[0],
-      attr = meta[1],
-      nest = meta[2] || false,
+var object;
+
+function emit(name, value, ns, prefixed) {
+  object[prefixed || name] = value;
+}
+
+prototype.attributes = function(attr, item) {
+  object = {};
+  attr(emit, item, this);
+  return object;
+};
+
+prototype.mark = function(scene) {
+  var mdef = MARKS[scene.marktype],
+      tag  = mdef.tag,
+      attr = mdef.attr,
+      nest = mdef.nest || false,
       data = nest ? [scene.items] : (scene.items || []),
       defs = this._defs,
       str = '',
-      style, i;
+      style, i, item;
 
   if (tag !== 'g' && scene.interactive === false) {
     style = 'style="pointer-events: none;"';
@@ -139,13 +152,16 @@ prototype.mark = function(scene) {
 
   // render contained elements
   for (i=0; i<data.length; ++i) {
-    style = (tag === 'g') ? null : styles(data[i], scene, tag, defs);
-    str += openTag(tag, attr(data[i], this), style);
+    item = data[i];
+    style = (tag !== 'g') ? styles(item, scene, tag, defs) : null;
+    str += openTag(tag, this.attributes(attr, item), style);
     if (tag === 'text') {
-      str += escape_text(data[i].text);
+      str += escape_text(item.text);
     } else if (tag === 'g') {
-      str += group_bg(data[i], styles(data[i], scene, 'bgrect', defs));
-      str += this.markGroup(data[i]);
+      str += openTag('rect',
+        this.attributes(mdef.background, item),
+        styles(item, scene, 'bgrect', defs)) + closeTag('rect');
+      str += this.markGroup(item);
     }
     str += closeTag(tag);
   }
@@ -223,138 +239,6 @@ function escape_text(s) {
   return s.replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');
-}
-
-function group_bg(o, style) {
-  return openTag('rect', {
-    'class': 'background',
-    width: o.width || 0,
-    height: o.height || 0
-  }, style) + closeTag('rect');
-}
-
-//
-
-var MARKS = {
-  group:  ['g', group],
-  area:   ['path', area, true],
-  line:   ['path', line, true],
-  arc:    ['path', arc],
-  path:   ['path', path],
-  symbol: ['path', symbol],
-  rect:   ['rect', rect],
-  rule:   ['line', rule],
-  text:   ['text', text],
-  image:  ['image', image]
-};
-
-function group(o, r) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      attr = {transform: 'translate('+x+','+y+')'},
-      id, c;
-
-  if (o.clip) {
-    id = o.clip_id || (o.clip_id = 'clip' + r._defs.clip_id++);
-    c = {
-      width:  o.width || 0,
-      height: o.height || 0
-    };
-        
-    r._defs.clipping[id] = c;
-    attr['clip-path'] = 'url(#' + id + ')';
-  }
-
-  return attr;
-}
-
-function arc(o) {
-  return {
-    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
-    d: SVG.path.arc(o)
-  };
-}
-
-function area(items) {
-  return items.length ? {d: areaPath(items)} : null;
-}
-
-function line(items) {
-  return items.length ? {d: linePath(items)} : null;
-}
-
-function path(o) {
-  return {
-    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
-    d: o.path
-  };
-}
-
-function rect(o) {
-  return {
-    x: o.x || 0,
-    y: o.y || 0,
-    width: o.width || 0,
-    height: o.height || 0
-  };
-}
-
-function rule(o) {
-  var x1 = o.x || 0,
-      y1 = o.y || 0;
-  return {
-    x1: x1,
-    y1: y1,
-    x2: o.x2 != null ? o.x2 : x1,
-    y2: o.y2 != null ? o.y2 : y1
-  };
-}
-
-function symbol(o) {
-  return {
-    transform: 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')',
-    d: SVG.path.symbol(o)
-  };
-}
-
-function image(o, r) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      w = o.width || 0,
-      h = o.height || 0,
-      url = r._loader.imageURL(o.url);
-
-  x = x - (o.align === 'center' ? w/2 : o.align === 'right' ? w : 0);
-  y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
-
-  return {
-    'xlink:href': url,
-    x: x,
-    y: y,
-    width: w,
-    height: h
-  };
-}
-
-function text(o) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      a = o.angle || 0,
-      r = o.radius || 0,
-      align = SVG.textAlign[o.align] || 'start';
-
-  if (r) {
-    var t = (o.theta || 0) - Math.PI/2;
-    x += r * Math.cos(t);
-    y += r * Math.sin(t);
-  }
-
-  return {
-    x: x + (o.dx || 0),
-    y: y + (o.dy || 0) + font.offset(o),
-    'text-anchor': align,
-    transform: a ? 'rotate('+a+' '+x+','+y+')' : null
-  };
 }
 
 module.exports = SVGStringRenderer;
