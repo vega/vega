@@ -136,9 +136,9 @@ prototype.mark = function(scene) {
       tag  = mdef.tag,
       attr = mdef.attr,
       nest = mdef.nest || false,
-      data = nest
-          ? (scene.items && scene.items.length ? [scene.items[0]] : [])
-          : (scene.items || []),
+      data = nest ?
+          (scene.items && scene.items.length ? [scene.items[0]] : []) :
+          (scene.items || []),
       defs = this._defs,
       str = '',
       style, i, item;
