@@ -6,8 +6,6 @@ var ImageLoader = require('../../util/ImageLoader'),
     ns = SVG.metadata.xmlns,
     marks = require('./marks');
 
-var href = (typeof window !== 'undefined' ? window.location.href : '');
-
 function SVGRenderer(loadConfig) {
   Renderer.call(this);
   this._loader = new ImageLoader(loadConfig);
@@ -79,6 +77,30 @@ prototype.svg = function() {
   return DOM.openTag('svg', attr) + this._svg.innerHTML + DOM.closeTag('svg');
 };
 
+prototype.imageURL = function(url) {
+  return this._loader.imageURL(url);
+};
+
+
+// -- Render entry point --
+
+prototype.render = function(scene, items) {
+  if (this._dirtyCheck(items)) {
+    if (this._dirtyAll) this._resetDefs();
+    this.draw(this._root, scene, -1);
+    DOM.clear(this._root, 1);
+  }
+  this.updateDefs();
+  return this;
+};
+
+prototype.draw = function(el, scene, index) {
+  this.drawMark(el, scene, index, marks[scene.marktype]);
+};
+
+
+// -- Manage SVG definitions ('defs') block --
+
 prototype.updateDefs = function() {
   var svg = this._svg,
       defs = this._defs,
@@ -143,18 +165,11 @@ prototype._resetDefs = function() {
   def.clipping = {};
 };
 
-prototype.imageURL = function(url) {
-  return this._loader.imageURL(url);
-};
 
-prototype.render = function(scene, items) {
-  if (this._dirtyCheck(items)) {
-    if (this._dirtyAll) this._resetDefs();
-    this.draw(this._root, scene, -1);
-    DOM.clear(this._root, 1);
-  }
-  this.updateDefs();
-  return this;
+// -- Manage rendering of items marked as dirty --
+
+prototype.isDirty = function(item) {
+  return this._dirtyAll || item.dirty === this._dirtyID;
 };
 
 prototype._dirtyCheck = function(items) {
@@ -209,14 +224,10 @@ function dirtyParents(item, id) {
   }
 }
 
-prototype.isDirty = function(item) {
-  return this._dirtyAll || item.dirty === this._dirtyID;
-};
 
-prototype.draw = function(el, scene, index) {
-  this.drawMark(el, scene, index, marks[scene.marktype]);
-};
+// -- Construct & maintain scenegraph to SVG mapping ---
 
+// Draw a mark container.
 prototype.drawMark = function(el, scene, index, mdef) {
   if (!this.isDirty(scene)) return;
 
@@ -252,6 +263,7 @@ prototype.drawMark = function(el, scene, index, mdef) {
   return p;
 };
 
+// Recursively process group contents.
 prototype._recurse = function(el, group) {
   var items = group.items || [],
       legends = group.legendItems || [],
@@ -279,6 +291,8 @@ prototype._recurse = function(el, group) {
   DOM.clear(el, 1 + idx);
 };
 
+// Bind a scenegraph item to an SVG DOM element.
+// Create new SVG elements as needed.
 function bind(el, mdef, item, index, insert) {
   // create svg element, bind item data for D3 compatibility
   var node = DOM.child(el, index, mdef.tag, ns, null, insert);
@@ -294,10 +308,18 @@ function bind(el, mdef, item, index, insert) {
   return (item._svg = node);
 }
 
+
+// -- Set attributes & styles on SVG elements ---
+
+var href = (typeof window !== 'undefined' ? window.location.href : ''),
+    element = null, // temp var for current SVG element
+    values = null;  // temp var for current values hash
+
+// Extra configuration for certain mark types
 var mark_extras = {
   group: function(mdef, el, item) {
     element = el.childNodes[0];
-    values = el.__values__; // use parent's
+    values = el.__values__; // use parent's values hash
     mdef.background(emit, item, this);
 
     var value = item.mark.interactive === false ? 'none' : null;
@@ -332,24 +354,24 @@ prototype._update = function(mdef, el, item) {
   var extra = mark_extras[mdef.type];
   if (extra) extra(mdef, el, item);
 
-  // element may be reset by extra method!
   // apply svg css styles
+  // note: element may be modified by 'extra' method
   this.style(element, item);
 };
 
-var element = null,
-    values = null;
-
 function emit(name, value, ns) {
+  // early exit if value is unchanged
   if (value === values[name]) return;
 
   if (value != null) {
+    // if value is provided, update DOM attribute
     if (ns) {
       element.setAttributeNS(ns, name, value);
     } else {
       element.setAttribute(name, value);
     }
   } else {
+    // else remove DOM attribute
     if (ns) {
       element.removeAttributeNS(ns, name);
     } else {
@@ -357,6 +379,7 @@ function emit(name, value, ns) {
     }
   }
 
+  // note current value for future comparison
   values[name] = value;
 }
 
