@@ -10,6 +10,7 @@ var STATIC_SPECS = [
   "grouped_bar",
   "heatmap",
   "image",
+  "jobs",
   "lifelines",
   "map",
   "parallel_coords",
