@@ -231,9 +231,9 @@ function dirtyParents(item, id) {
 prototype.drawMark = function(el, scene, index, mdef) {
   if (!this.isDirty(scene)) return;
 
-  var items = mdef.nest
-        ? (scene.items && scene.items.length ? [scene.items[0]] : [])
-        : scene.items || [],
+  var items = mdef.nest ?
+        (scene.items && scene.items.length ? [scene.items[0]] : []) :
+        scene.items || [],
       events = scene.interactive === false ? 'none' : null,
       isGroup = (mdef.tag === 'g'),
       className = DOM.cssClass(scene),
@@ -339,7 +339,7 @@ var mark_extras = {
       values.font = str;
     }
   }
-}
+};
 
 prototype._update = function(mdef, el, item) {
   // set dom element and values cache
