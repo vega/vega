@@ -4,10 +4,10 @@
   "description": "Vega scenegraph and renderers.",
   "repository": {
     "type": "git",
-    "url": "http://github.com/uwdata/vega-scenegraph.git"
+    "url": "http://github.com/vega/vega-scenegraph.git"
   },
   "author": {
-    "name": "UW Interactive Data Lab",
+    "name": "Jeffrey Heer",
     "url": "http://idl.cs.washington.edu"
   },
   "license": "BSD-3-Clause",
