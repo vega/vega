@@ -147,36 +147,6 @@ prototype.imageURL = function(url) {
   return this._loader.imageURL(url);
 };
 
-var element = null;
-
-function emit(name, value, ns) {
-  if (value != null) {
-    if (ns) {
-      element.setAttributeNS(ns, name, value);
-    } else {
-      element.setAttribute(name, value);
-    }
-  } else {
-    if (ns) {
-      element.removeAttributeNS(ns, name);
-    } else {
-      element.removeAttribute(name);
-    }
-  }
-}
-
-prototype._update = function(mdef, el, item) {
-  element = el;
-  mdef.attr(emit, item, this);
-  if (mdef.type === 'group') {
-    element = el.childNodes[0];
-    mdef.background(emit, item, this);
-  } else if (mdef.type === 'text') {
-    el.textContent = item.text || '';
-  }
-  this.style(el, item);
-};
-
 prototype.render = function(scene, items) {
   if (this._dirtyCheck(items)) {
     if (this._dirtyAll) this._resetDefs();
@@ -282,18 +252,6 @@ prototype.drawMark = function(el, scene, index, mdef) {
   return p;
 };
 
-function bind(el, mdef, item, index, insert) {
-  // create svg element, bind item data for D3 compatibility
-  var node = DOM.child(el, index, mdef.tag, ns, null, insert);
-  node.__data__ = item;
-  // create background rect
-  if (mdef.tag === 'g') {
-    DOM.child(node, 0, 'rect', ns, 'background');
-  }
-  // add pointer from scenegraph item to svg element
-  return (item._svg = node);
-}
-
 prototype._recurse = function(el, group) {
   var items = group.items || [],
       legends = group.legendItems || [],
@@ -321,25 +279,97 @@ prototype._recurse = function(el, group) {
   DOM.clear(el, 1 + idx);
 };
 
+function bind(el, mdef, item, index, insert) {
+  // create svg element, bind item data for D3 compatibility
+  var node = DOM.child(el, index, mdef.tag, ns, null, insert);
+  node.__data__ = item;
+  node.__values__ = {fill: 'default'};
+
+  // create background rect
+  if (mdef.tag === 'g') {
+    DOM.child(node, 0, 'rect', ns, 'background');
+  }
+
+  // add pointer from scenegraph item to svg element
+  return (item._svg = node);
+}
+
+var mark_extras = {
+  group: function(mdef, el, item) {
+    element = el.childNodes[0];
+    values = el.__values__; // use parent's
+    mdef.background(emit, item, this);
+
+    var value = item.mark.interactive === false ? 'none' : null;
+    if (value !== values.events) {
+      element.style.setProperty('pointer-events', value);
+      values.events = value;
+    }
+  },
+  text: function(mdef, el, item) {
+    if (item.text !== values.text) {
+      el.textContent = item.text || '';
+      values.text = item.text;
+    }
+    var str = font.string(item);
+    if (str !== values.font) {
+      el.style.setProperty('font', str);
+      values.font = str;
+    }
+  }
+}
+
+prototype._update = function(mdef, el, item) {
+  // set dom element and values cache
+  // provides access to emit method
+  element = el;
+  values = el.__values__;
+
+  // apply svg attributes
+  mdef.attr(emit, item, this);
+
+  // some marks need special treatment
+  var extra = mark_extras[mdef.type];
+  if (extra) extra(mdef, el, item);
+
+  // element may be reset by extra method!
+  // apply svg css styles
+  this.style(element, item);
+};
+
+var element = null,
+    values = null;
+
+function emit(name, value, ns) {
+  if (value === values[name]) return;
+
+  if (value != null) {
+    if (ns) {
+      element.setAttributeNS(ns, name, value);
+    } else {
+      element.setAttribute(name, value);
+    }
+  } else {
+    if (ns) {
+      element.removeAttributeNS(ns, name);
+    } else {
+      element.removeAttribute(name);
+    }
+  }
+
+  values[name] = value;
+}
+
 prototype.style = function(el, o) {
   if (o == null) return;
   var i, n, prop, name, value;
 
-  if (o.mark.marktype === 'group') {
-    el = el.childNodes[0]; // set styles on background
-    value = o.mark.interactive === false ? 'none' : null;
-    el.style.setProperty('pointer-events', value);
-  }
-  
-  if (o.mark.marktype === 'text') {
-    el.style.setProperty('font', font.string(o));
-  }
-
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
     prop = SVG.styleProperties[i];
-    name = SVG.styles[prop];
     value = o[prop];
+    if (value === values[prop]) continue;
 
+    name = SVG.styles[prop];
     if (value == null) {
       if (name === 'fill') {
         el.style.setProperty(name, 'none');
@@ -354,6 +384,8 @@ prototype.style = function(el, o) {
       }
       el.style.setProperty(name, value+'');
     }
+
+    values[prop] = value;
   }
 };
 
