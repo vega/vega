@@ -1,0 +1,8 @@
+_site
+node_modules
+.DS_Store
+.idea
+temp
+coverage
+vega-expression.js
+vega-expression.min.js

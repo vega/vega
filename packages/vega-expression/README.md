@@ -1,2 +1,2 @@
 # vega-expression
-Vega expression parser.
+Vega expression parser and code generator.
