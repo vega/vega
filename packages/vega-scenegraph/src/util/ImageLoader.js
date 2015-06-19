@@ -1,4 +1,4 @@
-var dl = require('datalib');
+var load = require('datalib/src/import/load');
 
 function ImageLoader(loadConfig) {
   this._pending = 0;
@@ -15,20 +15,22 @@ prototype.pending = function() {
 };
 
 prototype.params = function(uri) {
-  return dl.extend({url: uri}, this._config);
+  var p = {url: uri}, k;
+  for (k in this._config) { p[k] = this._config[k]; }
+  return p;
 };
 
 prototype.imageURL = function(uri) {
-  return dl.load.sanitizeUrl(this.params(uri));
+  return load.sanitizeUrl(this.params(uri));
 };
 
 function browser(uri, callback) {
-  var url = dl.load.sanitizeUrl(this.params(uri));
+  var url = load.sanitizeUrl(this.params(uri));
   if (!url) { // error
     if (callback) callback(uri, null);
     return null;
   }
-  
+
   var loader = this,
       image = new Image();
 
@@ -50,7 +52,7 @@ function server(uri, callback) {
 
   loader._pending += 1;
 
-  dl.load(this.params(uri), function(err, data) {
+  load(this.params(uri), function(err, data) {
     loader._pending -= 1;
     if (err) {
       if (callback) callback(err, null);
@@ -65,9 +67,9 @@ function server(uri, callback) {
 }
 
 prototype.loadImage = function(uri, callback) {
-  return dl.isNode ?
-    server.call(this, uri, callback) :
-    browser.call(this, uri, callback);
+  return load.useXHR ?
+    browser.call(this, uri, callback) :
+    server.call(this, uri, callback);
 };
 
 module.exports = ImageLoader;
