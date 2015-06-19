@@ -2,7 +2,7 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
-    "datalib": "^1.1.x",
+    "datalib": "^1.2.x",
     "d3": "^3.5.x",
     "d3-geo-projection": "^0.2.13",
     "topojson": "^1.6.18",
@@ -64,6 +64,7 @@
   "browserify-shim": {
     "d3": "global:d3",
     "canvas": "global:canvas",
-    "topojson": "global:topojson"
+    "topojson": "global:topojson",
+    "vega-scenegraph": {"depends": ["datalib:dl"]}
   }
 }

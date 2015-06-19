@@ -5,17 +5,13 @@ var util = require('datalib/src/util'),
 /* istanbul ignore next */
 function write(msg) {
   msg = "[Vega Log] " + msg;
-  config.isNode
-    ? process.stderr.write(msg + "\n")
-    : console.log(msg);
+  console.log(msg);
 }
 
 /* istanbul ignore next */
 function error(msg) {
   msg = "[Vega Err] " + msg;
-  config.isNode
-    ? process.stderr.write(msg + "\n")
-    : console.error(msg);
+  console.error(msg);
 }
 
 /* istanbul ignore next */
@@ -27,7 +23,7 @@ function debug(input, args) {
     stamp: input.stamp
   };
 
-  if(input.add) {
+  if (input.add) {
     util.extend(state, {
       add: input.add.length,
       mod: input.mod.length,

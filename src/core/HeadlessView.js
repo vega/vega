@@ -2,6 +2,7 @@ var util = require('datalib/src/util'),
     canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg').string,
     View = require('./View'),
+    config = require('../util/config'),
     log = require('../util/log');
 
 var HeadlessView = function(width, height, model) {
@@ -57,7 +58,7 @@ prototype.initialize = function() {
     h = this._viewport[1] - (pad ? pad.top + pad.bottom : 0);
   }
 
-  this._renderer = (this._renderer || new this._io.Renderer())
+  this._renderer = (this._renderer || new this._io.Renderer(config.load))
     .initialize(null, w, h, pad)
     .background(bg);
   

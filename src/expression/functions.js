@@ -1,12 +1,10 @@
-var util = require('datalib/src/util');
-
 module.exports = function(codegen) {
 
   function fncall(name, args, cast, type) {
     var obj = codegen(args[0]);
     if (cast) {
       obj = cast + "(" + obj + ")";
-      if (util.startsWith(cast, "new ")) obj = "(" + obj + ")";
+      if (cast.lastIndexOf("new ", 0) === 0) obj = "(" + obj + ")";
     }
     return obj + "." + name + (type < 0 ? "" : type === 0
       ? "()"
