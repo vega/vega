@@ -1,6 +1,5 @@
-test/
 .DS_Store
+test
 temp
 coverage
 demo
-vega-scenegraph.js

@@ -3,7 +3,7 @@ node_modules
 .DS_Store
 .idea
 temp
-index.html
 coverage
 demo
 vega-scenegraph.js
+vega-scenegraph.min.js

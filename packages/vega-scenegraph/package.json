@@ -12,25 +12,27 @@
   },
   "license": "BSD-3-Clause",
   "dependencies": {
-    "d3": "^3.5.x",
-    "datalib": "^1.1.x",
-    "canvas": "^1.2.x"
+    "d3": "3.5.x",
+    "datalib": "1.1.x",
+    "canvas": "1.2.x"
   },
   "devDependencies": {
     "browserify": "latest",
     "browserify-shim": "latest",
-    "jshint": "latest",
     "chai": "latest",
-    "mocha": "latest",
     "istanbul": "latest",
-    "jsdom": "3"
+    "jsdom": "3",
+    "jshint": "latest",
+    "mocha": "latest",
+    "uglify-js": "latest"
   },
   "main": "src/index.js",
   "scripts": {
     "lint": "jshint src/",
     "test": "mocha --recursive test/",
-    "coverage": "istanbul cover _mocha -- --recursive test/",
-    "bundle": "browserify src/index.js --standalone vg.scene -o vega-scenegraph.js"
+    "cover": "istanbul cover _mocha -- --recursive test/",
+    "build": "browserify src/index.js --debug --standalone vg.scene -o vega-scenegraph.js",
+    "postbuild": "uglifyjs vega-scenegraph.js -c -m -o vega-scenegraph.min.js"
   },
   "browserify": {
     "transform": [
