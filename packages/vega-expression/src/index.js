@@ -10,14 +10,14 @@ var expr = module.exports = {
     },
   compiler: function(args, fieldVar, globalVar) {
       args = args.slice();
-      var codegen = codegen({
+      var generator = codegen({
             idWhiteList: args,
             fieldVar: fieldVar,
             globalVar: globalVar
           }),
           len = args.length;
-      return function(str) {    
-        var value = codegen(expr.parse(str));
+      return function(str) {
+        var value = generator(expr.parse(str));
         args[len] = '"use strict"; return (' + value.code + ');';
         value.fn = Function.apply(null, args);
         return value;
