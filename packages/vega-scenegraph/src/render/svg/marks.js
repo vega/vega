@@ -3,12 +3,16 @@ var font = require('../../util/font'),
     textAlign = SVG.textAlign,
     path = SVG.path;
 
+function translate(o) {
+  return 'translate(' + (o.x || 0) + ',' + (o.y || 0) + ')';
+}
+
 module.exports = {
   arc: {
     tag:  'path',
     type: 'arc',
     attr: function(emit, o) {
-      emit('transform', 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')');
+      emit('transform', translate(o));
       emit('d', path.arc(o));
     }
   },
@@ -26,7 +30,7 @@ module.exports = {
     type: 'group',
     attr: function(emit, o, renderer) {
       var id = null, defs, c;
-      emit('transform', 'translate('+ (o.x||0) + ',' + (o.y||0) + ')');
+      emit('transform', translate(o));
       if (o.clip) {
         defs = renderer._defs;
         id = o.clip_id || (o.clip_id = 'clip' + defs.clip_id++);
@@ -56,8 +60,7 @@ module.exports = {
       y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
 
       emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
-      emit('x', x);
-      emit('y', y);
+      emit('transform', translate(o));
       emit('width', w);
       emit('height', h);
     }
@@ -75,7 +78,7 @@ module.exports = {
     tag:  'path',
     type: 'path',
     attr: function(emit, o) {
-      emit('transform', 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')');
+      emit('transform', translate(o));
       emit('d', o.path);
     }
   },
@@ -84,8 +87,7 @@ module.exports = {
     type: 'rect',
     nest: false,
     attr: function(emit, o) {
-      emit('x', o.x || 0);
-      emit('y', o.y || 0);
+      emit('transform', translate(o));
       emit('width', o.width || 0);
       emit('height', o.height || 0);
     }
@@ -94,18 +96,16 @@ module.exports = {
     tag:  'line',
     type: 'rule',
     attr: function(emit, o) {
-      var x1, y1;
-      emit('x1', x1 = o.x || 0);
-      emit('y1', y1 = o.y || 0);
-      emit('x2', o.x2 != null ? o.x2 : x1);
-      emit('y2', o.y2 != null ? o.y2 : y1);
+      emit('transform', translate(o));
+      emit('x2', o.x2 != null ? o.x2 - (o.x||0) : 0);
+      emit('y2', o.y2 != null ? o.y2 - (o.y||0) : 0);
     }
   },
   symbol: {
     tag:  'path',
     type: 'symbol',
     attr: function(emit, o) {
-      emit('transform', 'translate(' + (o.x || 0) +',' + (o.y || 0) + ')');
+      emit('transform', translate(o));
       emit('d', path.symbol(o));
     }
   },
@@ -125,10 +125,10 @@ module.exports = {
         y += r * Math.sin(t);
       }
 
-      emit('x', x + (o.dx || 0));
-      emit('y', y + (o.dy || 0) + font.offset(o));
+      x += (o.dx || 0);
+      y += (o.dy || 0) + font.offset(o);
       emit('text-anchor', textAlign[o.align] || 'start');
-      emit('transform', a ? 'rotate('+a+' '+x+','+y+')' : null);
+      emit('transform', 'translate('+x+','+y+')' + (a?' rotate('+a+')':''));
     }
   }
 };
