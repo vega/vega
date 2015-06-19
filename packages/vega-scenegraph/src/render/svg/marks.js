@@ -60,7 +60,7 @@ module.exports = {
       y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
 
       emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
-      emit('transform', translate(o));
+      emit('transform', 'translate('+x+','+y+')');
       emit('width', w);
       emit('height', h);
     }
