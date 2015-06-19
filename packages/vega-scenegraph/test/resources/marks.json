@@ -79,7 +79,7 @@
     "marktype": "rule",
     "items": [
       {"x":0,   "x2":100, "y":0, "stroke":"blue", "strokeWidth":5},
-      {"x":0,   "x2":101, "y":5, "stroke":"blue", "strokeWidth":-1},
+      {"x":0,   "x2":101, "y":10, "stroke":"blue", "strokeWidth":-1},
       {"y":100, "y2":50,  "x":0, "stroke":"black"},
       {"y":100, "y2":114, "x":50, "stroke":"black", "strokeOpacity":0.5, "strokeCap":"butt"},
       {"y":200, "y2":114, "x":100, "stroke":"black", "opacity":0},
