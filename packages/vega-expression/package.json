@@ -1,0 +1,30 @@
+{
+  "name": "vega-expression",
+  "version": "1.0.0",
+  "description": "Vega expression parser and code generator.",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/vega/vega-expression.git"
+  },
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "browserify": "latest",
+    "chai": "latest",
+    "istanbul": "latest",
+    "jshint": "latest",
+    "mocha": "latest",
+    "uglify-js": "latest"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "jshint src/",
+    "test": "mocha --recursive test/",
+    "cover": "istanbul cover _mocha -- --recursive test/",
+    "build": "browserify src/index.js --debug --standalone vg.expression -o vega-expression.js",
+    "postbuild": "uglifyjs vega-expression.js -c -m -o vega-expression.min.js"
+  }
+}
