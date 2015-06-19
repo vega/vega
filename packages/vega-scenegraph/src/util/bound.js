@@ -127,9 +127,8 @@ function symbol(o, bounds) {
 
   switch (o.shape) {
     case 'cross':
-      r = Math.sqrt(size / 5) / 2;
-      t = 3*r;
-      bounds.set(x-t, y-r, x+t, y+r);
+      t = 3 * Math.sqrt(size / 5) / 2;
+      bounds.set(x-t, y-t, x+t, y+t);
       break;
 
     case 'diamond':
