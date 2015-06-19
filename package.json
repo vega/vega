@@ -6,6 +6,7 @@
     "d3": "^3.5.x",
     "d3-geo-projection": "^0.2.13",
     "topojson": "^1.6.18",
+    "vega-expression": "vega/vega-expression",
     "vega-scenegraph": "vega/vega-scenegraph",
     "yargs": "^3.2.1"
   },
@@ -64,7 +65,6 @@
   "browserify-shim": {
     "d3": "global:d3",
     "canvas": "global:canvas",
-    "topojson": "global:topojson",
-    "vega-scenegraph": {"depends": ["datalib:dl"]}
+    "topojson": "global:topojson"
   }
 }

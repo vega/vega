@@ -19,7 +19,7 @@ module.exports = {
   util: require('datalib/src/util'),
   schema: require('./src/util/schema')
 };
-},{"./src/core/View":61,"./src/dataflow/Datasource":63,"./src/dataflow/Graph":64,"./src/dataflow/Node":65,"./src/dataflow/changeset":67,"./src/parse/":79,"./src/scene/Builder":93,"./src/scene/GroupBuilder":95,"./src/transforms/":121,"./src/util/config":122,"./src/util/schema":125,"datalib/src/util":20}],2:[function(require,module,exports){
+},{"./src/core/View":66,"./src/dataflow/Datasource":68,"./src/dataflow/Graph":69,"./src/dataflow/Node":70,"./src/dataflow/changeset":72,"./src/parse/":79,"./src/scene/Builder":93,"./src/scene/GroupBuilder":95,"./src/transforms/":121,"./src/util/config":122,"./src/util/schema":125,"datalib/src/util":20}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 var util = require('../util'),
@@ -2824,4890 +2824,59 @@ module.exports = require('./lib/heap');
 }).call(this);
 
 },{}],23:[function(require,module,exports){
-var segmentCache = {},
-    bezierCache = {},
-    join = [].join;
-
-// Copied from Inkscape svgtopdf, thanks!
-function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
-  var key = join.call(arguments);
-  if (segmentCache[key]) {
-    return segmentCache[key];
-  }
-
-  var th = rotateX * (Math.PI/180);
-  var sin_th = Math.sin(th);
-  var cos_th = Math.cos(th);
-  rx = Math.abs(rx);
-  ry = Math.abs(ry);
-  var px = cos_th * (ox - x) * 0.5 + sin_th * (oy - y) * 0.5;
-  var py = cos_th * (oy - y) * 0.5 - sin_th * (ox - x) * 0.5;
-  var pl = (px*px) / (rx*rx) + (py*py) / (ry*ry);
-  if (pl > 1) {
-    pl = Math.sqrt(pl);
-    rx *= pl;
-    ry *= pl;
-  }
-
-  var a00 = cos_th / rx;
-  var a01 = sin_th / rx;
-  var a10 = (-sin_th) / ry;
-  var a11 = (cos_th) / ry;
-  var x0 = a00 * ox + a01 * oy;
-  var y0 = a10 * ox + a11 * oy;
-  var x1 = a00 * x + a01 * y;
-  var y1 = a10 * x + a11 * y;
-
-  var d = (x1-x0) * (x1-x0) + (y1-y0) * (y1-y0);
-  var sfactor_sq = 1 / d - 0.25;
-  if (sfactor_sq < 0) sfactor_sq = 0;
-  var sfactor = Math.sqrt(sfactor_sq);
-  if (sweep == large) sfactor = -sfactor;
-  var xc = 0.5 * (x0 + x1) - sfactor * (y1-y0);
-  var yc = 0.5 * (y0 + y1) + sfactor * (x1-x0);
-
-  var th0 = Math.atan2(y0-yc, x0-xc);
-  var th1 = Math.atan2(y1-yc, x1-xc);
-
-  var th_arc = th1-th0;
-  if (th_arc < 0 && sweep === 1){
-    th_arc += 2 * Math.PI;
-  } else if (th_arc > 0 && sweep === 0) {
-    th_arc -= 2 * Math.PI;
-  }
-
-  var segs = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
-  var result = [];
-  for (var i=0; i<segs; ++i) {
-    var th2 = th0 + i * th_arc / segs;
-    var th3 = th0 + (i+1) * th_arc / segs;
-    result[i] = [xc, yc, th2, th3, rx, ry, sin_th, cos_th];
-  }
-
-  return (segmentCache[key] = result);
-}
-
-function bezier(params) {
-  var key = join.call(params);
-  if (bezierCache[key]) {
-    return bezierCache[key];
-  }
-  
-  var cx = params[0],
-      cy = params[1],
-      th0 = params[2],
-      th1 = params[3],
-      rx = params[4],
-      ry = params[5],
-      sin_th = params[6],
-      cos_th = params[7];
-
-  var a00 = cos_th * rx;
-  var a01 = -sin_th * ry;
-  var a10 = sin_th * rx;
-  var a11 = cos_th * ry;
-
-  var cos_th0 = Math.cos(th0);
-  var sin_th0 = Math.sin(th0);
-  var cos_th1 = Math.cos(th1);
-  var sin_th1 = Math.sin(th1);
-
-  var th_half = 0.5 * (th1 - th0);
-  var sin_th_h2 = Math.sin(th_half * 0.5);
-  var t = (8/3) * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
-  var x1 = cx + cos_th0 - t * sin_th0;
-  var y1 = cy + sin_th0 + t * cos_th0;
-  var x3 = cx + cos_th1;
-  var y3 = cy + sin_th1;
-  var x2 = x3 + t * sin_th1;
-  var y2 = y3 - t * cos_th1;
-
-  return (bezierCache[key] = [
-    a00 * x1 + a01 * y1,  a10 * x1 + a11 * y1,
-    a00 * x2 + a01 * y2,  a10 * x2 + a11 * y2,
-    a00 * x3 + a01 * y3,  a10 * x3 + a11 * y3
-  ]);
-}
-
-module.exports = {
-  segments: segments,
-  bezier: bezier,
-  cache: {
-    segments: segmentCache,
-    bezier: bezierCache
-  }
-};
-
-},{}],24:[function(require,module,exports){
-var arc = require('./arc');
-
-module.exports = function(path, bounds) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY,
-      i, len;
-
-  for (i=0, len=path.length; i<len; ++i) {
-    current = path[i];
-
-    switch (current[0]) { // command
-
-      case 'l': // lineto, relative
-        x += current[1];
-        y += current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'L': // lineto, absolute
-        x = current[1];
-        y = current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'h': // horizontal lineto, relative
-        x += current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'H': // horizontal lineto, absolute
-        x = current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'v': // vertical lineto, relative
-        y += current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'V': // verical lineto, absolute
-        y = current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'm': // moveTo, relative
-        x += current[1];
-        y += current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'M': // moveTo, absolute
-        x = current[1];
-        y = current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'c': // bezierCurveTo, relative
-        tempX = x + current[5];
-        tempY = y + current[6];
-        controlX = x + current[3];
-        controlY = y + current[4];
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'C': // bezierCurveTo, absolute
-        x = current[5];
-        y = current[6];
-        controlX = current[3];
-        controlY = current[4];
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(x, y);
-        break;
-
-      case 's': // shorthand cubic bezierCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        bounds.add(controlX, controlY);
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(tempX, tempY);
-
-        // set control point to 2nd one of this command
-        // the first control point is assumed to be the reflection of
-        // the second control point on the previous command relative
-        // to the current point.
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'S': // shorthand cubic bezierCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-        // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
-        x = tempX;
-        y = tempY;
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        // set control point to 2nd one of this command
-        // the first control point is assumed to be the reflection of 
-        // the second control point on the previous command relative
-        // to the current point.
-        controlX = current[1];
-        controlY = current[2];
-
-        break;
-
-      case 'q': // quadraticCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'Q': // quadraticCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-
-        x = tempX;
-        y = tempY;
-        controlX = current[1];
-        controlY = current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 't': // shorthand quadraticCurveTo, relative
-
-        // transform to absolute x,y
-        tempX = x + current[1];
-        tempY = y + current[2];
-
-        if (previous[0].match(/[QqTt]/) === null) {
-          // If there is no previous command or if the previous command was not a Q, q, T or t,
-          // assume the control point is coincident with the current point
-          controlX = x;
-          controlY = y;
-        }
-        else if (previous[0] === 't') {
-          // calculate reflection of previous control points for t
-          controlX = 2 * x - tempControlX;
-          controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
-          // calculate reflection of previous control points for q
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-        }
-
-        tempControlX = controlX;
-        tempControlY = controlY;
-
-        x = tempX;
-        y = tempY;
-        controlX = x + current[1];
-        controlY = y + current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'T':
-        tempX = current[1];
-        tempY = current[2];
-
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'a':
-        boundArc(x, y, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + x,
-          current[7] + y
-        ], bounds);
-        x += current[6];
-        y += current[7];
-        break;
-
-      case 'A':
-        boundArc(x, y, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6],
-          current[7]
-        ], bounds);
-        x = current[6];
-        y = current[7];
-        break;
-
-      case 'z':
-      case 'Z':
-        break;
-    }
-    previous = current;
-  }
-  return bounds;
-};
-
-function boundArc(x, y, coords, bounds) {
-  var seg = arc.segments(
-    coords[5], // ex
-    coords[6], // ey
-    coords[0], // rx
-    coords[1], // ry
-    coords[3], // large
-    coords[4], // sweep
-    coords[2], // rot
-    x, y
-  );
-  for (var i=0; i<seg.length; ++i) {
-    var bez = arc.bezier(seg[i]);
-    bounds.add(bez[0], bez[1]);
-    bounds.add(bez[2], bez[3]);
-    bounds.add(bez[4], bez[5]);
-  }
-}
-
-},{"./arc":23}],25:[function(require,module,exports){
-module.exports = {
-  parse:  require('./parse'),
-  render: require('./render'),
-  bounds: require('./bounds')
-};
-
-},{"./bounds":24,"./parse":26,"./render":27}],26:[function(require,module,exports){
-// Path parsing and rendering code adapted from fabric.js -- Thanks!
-var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
-    regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)-/g, /\s|,|###/];
-
-module.exports = function(pathstr) {
-  var result = [],
-      path,
-      curr,
-      chunks,
-      parsed, param,
-      cmd, len, i, j, n, m;
-
-  // First, break path into command sequence
-  path = pathstr
-    .slice()
-    .replace(regexp[0], '###$1')
-    .split(regexp[1])
-    .slice(1);
-
-  // Next, parse each command in turn
-  for (i=0, n=path.length; i<n; ++i) {
-    curr = path[i];
-    chunks = curr
-      .slice(1)
-      .trim()
-      .replace(regexp[2],'$1###-')
-      .split(regexp[3]);
-    cmd = curr.charAt(0);
-
-    parsed = [cmd];
-    for (j=0, m=chunks.length; j<m; ++j) {
-      if ((param = +chunks[j]) === param) { // not NaN
-        parsed.push(param);
-      }
-    }
-
-    len = cmdlen[cmd.toLowerCase()];
-    if (parsed.length-1 > len) {
-      for (j=1, m=parsed.length; j<m; j+=len) {
-        result.push([cmd].concat(parsed.slice(j, j+len)));
-      }
-    }
-    else {
-      result.push(parsed);
-    }
-  }
-
-  return result;
-};
-
-},{}],27:[function(require,module,exports){
-var arc = require('./arc');
-
-module.exports = function(g, path, l, t) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY;
-
-  if (l == null) l = 0;
-  if (t == null) t = 0;
-
-  g.beginPath();
-
-  for (var i=0, len=path.length; i<len; ++i) {
-    current = path[i];
-
-    switch (current[0]) { // first letter
-
-      case 'l': // lineto, relative
-        x += current[1];
-        y += current[2];
-        g.lineTo(x + l, y + t);
-        break;
-
-      case 'L': // lineto, absolute
-        x = current[1];
-        y = current[2];
-        g.lineTo(x + l, y + t);
-        break;
-
-      case 'h': // horizontal lineto, relative
-        x += current[1];
-        g.lineTo(x + l, y + t);
-        break;
-
-      case 'H': // horizontal lineto, absolute
-        x = current[1];
-        g.lineTo(x + l, y + t);
-        break;
-
-      case 'v': // vertical lineto, relative
-        y += current[1];
-        g.lineTo(x + l, y + t);
-        break;
-
-      case 'V': // verical lineto, absolute
-        y = current[1];
-        g.lineTo(x + l, y + t);
-        break;
-
-      case 'm': // moveTo, relative
-        x += current[1];
-        y += current[2];
-        g.moveTo(x + l, y + t);
-        break;
-
-      case 'M': // moveTo, absolute
-        x = current[1];
-        y = current[2];
-        g.moveTo(x + l, y + t);
-        break;
-
-      case 'c': // bezierCurveTo, relative
-        tempX = x + current[5];
-        tempY = y + current[6];
-        controlX = x + current[3];
-        controlY = y + current[4];
-        g.bezierCurveTo(
-          x + current[1] + l, // x1
-          y + current[2] + t, // y1
-          controlX + l, // x2
-          controlY + t, // y2
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'C': // bezierCurveTo, absolute
-        x = current[5];
-        y = current[6];
-        controlX = current[3];
-        controlY = current[4];
-        g.bezierCurveTo(
-          current[1] + l,
-          current[2] + t,
-          controlX + l,
-          controlY + t,
-          x + l,
-          y + t
-        );
-        break;
-
-      case 's': // shorthand cubic bezierCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        g.bezierCurveTo(
-          controlX + l,
-          controlY + t,
-          x + current[1] + l,
-          y + current[2] + t,
-          tempX + l,
-          tempY + t
-        );
-
-        // set control point to 2nd one of this command
-        // the first control point is assumed to be the reflection of
-        // the second control point on the previous command relative
-        // to the current point.
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'S': // shorthand cubic bezierCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-        // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
-        g.bezierCurveTo(
-          controlX + l,
-          controlY + t,
-          current[1] + l,
-          current[2] + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        // set control point to 2nd one of this command
-        // the first control point is assumed to be the reflection of
-        // the second control point on the previous command relative
-        // to the current point.
-        controlX = current[1];
-        controlY = current[2];
-
-        break;
-
-      case 'q': // quadraticCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        g.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'Q': // quadraticCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-
-        g.quadraticCurveTo(
-          current[1] + l,
-          current[2] + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        controlX = current[1];
-        controlY = current[2];
-        break;
-
-      case 't': // shorthand quadraticCurveTo, relative
-
-        // transform to absolute x,y
-        tempX = x + current[1];
-        tempY = y + current[2];
-
-        if (previous[0].match(/[QqTt]/) === null) {
-          // If there is no previous command or if the previous command was not a Q, q, T or t,
-          // assume the control point is coincident with the current point
-          controlX = x;
-          controlY = y;
-        }
-        else if (previous[0] === 't') {
-          // calculate reflection of previous control points for t
-          controlX = 2 * x - tempControlX;
-          controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
-          // calculate reflection of previous control points for q
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-        }
-
-        tempControlX = controlX;
-        tempControlY = controlY;
-
-        g.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        controlX = x + current[1];
-        controlY = y + current[2];
-        break;
-
-      case 'T':
-        tempX = current[1];
-        tempY = current[2];
-
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        g.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'a':
-        drawArc(g, x + l, y + t, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + x + l,
-          current[7] + y + t
-        ]);
-        x += current[6];
-        y += current[7];
-        break;
-
-      case 'A':
-        drawArc(g, x + l, y + t, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + l,
-          current[7] + t
-        ]);
-        x = current[6];
-        y = current[7];
-        break;
-
-      case 'z':
-      case 'Z':
-        g.closePath();
-        break;
-    }
-    previous = current;
-  }
-};
-
-function drawArc(g, x, y, coords) {
-  var seg = arc.segments(
-    coords[5], // end x
-    coords[6], // end y
-    coords[0], // radius x
-    coords[1], // radius y
-    coords[3], // large flag
-    coords[4], // sweep flag
-    coords[2], // rotation
-    x, y
-  );
-  for (var i=0; i<seg.length; ++i) {
-    var bez = arc.bezier(seg[i]);
-    g.bezierCurveTo.apply(g, bez);
-  }
-}
-
-},{"./arc":23}],28:[function(require,module,exports){
-function Handler() {
-  this._active = null;
-  this._handlers = {};
-}
-
-var prototype = Handler.prototype;
-
-prototype.initialize = function(el, pad, obj) {
-  this._el = el;
-  this._obj = obj || null;
-  return this.padding(pad);
-};
-
-prototype.element = function() {
-  return this._el;
-};
-
-prototype.padding = function(pad) {
-  this._padding = pad || {top:0, left:0, bottom:0, right:0};
-  return this;
-};
-
-prototype.scene = function(scene) {
-  if (!arguments.length) return this._scene;
-  this._scene = scene;
-  return this;
-};
-
-// add an event handler
-// subclasses should override
-prototype.on = function(/*type, handler*/) {};
-
-// remove an event handler
-// subclasses should override
-prototype.off = function(/*type, handler*/) {};
-
-// return an array with all registered event handlers
-prototype.handlers = function() {
-  var h = this._handlers, a = [], k;
-  for (k in h) { a.push.apply(a, h[k]); }
-  return a;
-};
-
-prototype.eventName = function(name) {
-  var i = name.indexOf('.');
-  return i < 0 ? name : name.slice(0,i);
-};
-
-module.exports = Handler;
-},{}],29:[function(require,module,exports){
-function Renderer() {
-  this._el = null;
-  this._bgcolor = null;
-}
-
-var prototype = Renderer.prototype;
-
-prototype.initialize = function(el, width, height, padding) {
-  this._el = el;
-  return this.resize(width, height, padding);
-};
-
-prototype.element = function() {
-  return this._el;
-};
-
-prototype.background = function(bgcolor) {
-  if (arguments.length === 0) return this._bgcolor;
-  this._bgcolor = bgcolor;
-  return this;
-};
-
-prototype.resize = function(width, height, padding) {
-  this._width = width;
-  this._height = height;
-  this._padding = padding || {top:0, left:0, bottom:0, right:0};
-  return this;
-};
-
-prototype.render = function(/*scene, items*/) {
-  return this;
-};
-
-module.exports = Renderer;
-},{}],30:[function(require,module,exports){
-var DOM = require('../../util/dom'),
-    Handler = require('../Handler'),
-    marks = require('./marks');
-
-function CanvasHandler() {
-  Handler.call(this);
-  this._down = null;
-}
-
-var base = Handler.prototype;
-var prototype = (CanvasHandler.prototype = Object.create(base));
-prototype.constructor = CanvasHandler;
-
-prototype.initialize = function(el, pad, obj) {
-  // add event listeners
-  var canvas = this._canvas = DOM.find(el, 'canvas'),
-      that = this;
-  this.events.forEach(function(type) {
-    canvas.addEventListener(type, function(evt) {
-      if (prototype[type]) {
-        prototype[type].call(that, evt);
-      } else {
-        that.fire(type, evt);
-      }
-    });
-  });
-
-  return base.initialize.call(this, el, pad, obj);
-};
-
-prototype.canvas = function() {
-  return this._canvas;
-};
-
-// retrieve the current canvas context
-prototype.context = function() {
-  return this._canvas.getContext('2d');
-};
-
-// supported events
-prototype.events = [
-  'keydown',
-  'keypress',
-  'keyup',
-  'mousedown',
-  'mouseup',
-  'mousemove',
-  'mouseout',
-  'click',
-  'dblclick',
-  'wheel',
-  'mousewheel',
-  'touchstart',
-  'touchmove',
-  'touchend'
-];
-
-prototype.mousemove = function(evt) {
-  var pad = this._padding,
-      b = evt.target.getBoundingClientRect(),
-      x = evt.clientX - b.left,
-      y = evt.clientY - b.top,
-      a = this._active,
-      p = this.pick(this._scene, x, y, x-pad.left, y-pad.top);
-
-  if (p === a) {
-    this.fire('mousemove', evt);
-    if (evt.type === 'touchmove') this.fire('touchmove', evt);
-    return;
-  } else if (a) {
-    this.fire('mouseout', evt);
-    if (evt.type === 'touchend') this.fire('touchend', evt);
-  }
-  this._active = p;
-  if (p) {
-    this.fire('mouseover', evt);
-    if (evt.type === 'touchstart') this.fire('touchstart', evt);
-  }
-};
-
-prototype.mouseout = function(evt) {
-  if (this._active) {
-    this.fire('mouseout', evt);
-    this.fire('touchend', evt);
-  }
-  this._active = null;
-};
-
-prototype.mousedown = function(evt) {
-  this._down = this._active;
-  this.fire('mousedown', evt);
-};
-
-prototype.click = function(evt) {
-  if (this._down === this._active) {
-    this.fire('click', evt);
-    this._down = null;
-  }
-};
-
-// to keep firefox happy
-prototype.DOMMouseScroll = function(evt) {
-  this.fire('mousewheel', evt);
-};
-
-prototype.touchmove = prototype.mousemove;
-
-prototype.touchend = prototype.mouseout;
-
-// fire an event
-prototype.fire = function(type, evt) {
-  var a = this._active,
-      h = this._handlers[type], i, len;
-  if (h) {
-    for (i=0, len=h.length; i<len; ++i) {
-      h[i].handler.call(this._obj, evt, a);
-    }
-  }
-};
-
-// add an event handler
-prototype.on = function(type, handler) {
-  var name = this.eventName(type),
-      h = this._handlers;
-  (h[name] || (h[name] = [])).push({
-    type: type,
-    handler: handler
-  });
-  return this;
-};
-
-// remove an event handler
-prototype.off = function(type, handler) {
-  var name = this.eventName(type),
-      h = this._handlers[name], i;
-  if (!h) return;
-  for (i=h.length; --i>=0;) {
-    if (h[i].type !== type) continue;
-    if (!handler || h[i].handler === handler) h.splice(i, 1);
-  }
-  return this;
-};
-
-// find the scenegraph item at the current mouse position
-// x, y -- the absolute x, y mouse coordinates on the canvas element
-// gx, gy -- the relative coordinates within the current group
-prototype.pick = function(scene, x, y, gx, gy) {
-  var g = this.context(),
-      mark = marks[scene.marktype];
-  return mark.pick.call(this, g, scene, x, y, gx, gy);
-};
-
-module.exports = CanvasHandler;
-
-},{"../../util/dom":56,"../Handler":28,"./marks":37}],31:[function(require,module,exports){
-var DOM = require('../../util/dom'),
-    Bounds = require('../../util/Bounds'),
-    ImageLoader = require('../../util/ImageLoader'),
-    Canvas = require('../../util/canvas'),
-    Renderer = require('../Renderer'),
-    marks = require('./marks');
-
-function CanvasRenderer(loadConfig) {
-  Renderer.call(this);
-  this._loader = new ImageLoader(loadConfig);
-}
-
-var base = Renderer.prototype;
-var prototype = (CanvasRenderer.prototype = Object.create(base));
-prototype.constructor = CanvasRenderer;
-
-prototype.initialize = function(el, width, height, padding) {
-  this._canvas = Canvas.instance(width, height);
-  if (el) {
-    DOM.clear(el, 0).appendChild(this._canvas);
-    this._canvas.setAttribute('class', 'marks');
-  }
-  return base.initialize.call(this, el, width, height, padding);
-};
-
-prototype.resize = function(width, height, padding) {
-  base.resize.call(this, width, height, padding);
-  Canvas.resize(this._canvas, this._width, this._height, this._padding);
-  return this;
-};
-
-prototype.canvas = function() {
-  return this._canvas;
-};
-
-prototype.context = function() {
-  return this._canvas ? this._canvas.getContext('2d') : null;
-};
-
-prototype.pendingImages = function() {
-  return this._loader.pending();
-};
-
-function clipToBounds(g, items) {
-  if (!items) return null;
-
-  var b = new Bounds(), i, n, item, mark, group;
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    mark = item.mark;
-    group = mark.group;
-    item = marks[mark.marktype].nested ? mark : item;
-    b.union(translate(item.bounds, group));
-    if (item['bounds:prev']) {
-      b.union(translate(item['bounds:prev'], group));
-    }
-  }
-  b.round();
-
-  g.beginPath();
-  g.rect(b.x1, b.y1, b.width(), b.height());
-  g.clip();
-
-  return b;
-}
-
-function translate(bounds, group) {
-  if (group == null) return bounds;
-  var b = bounds.clone();
-  for (; group != null; group = group.mark.group) {
-    b.translate(group.x || 0, group.y || 0);
-  }
-  return b;
-}
-
-prototype.render = function(scene, items) {
-  var g = this.context(),
-      p = this._padding,
-      w = this._width + p.left + p.right,
-      h = this._height + p.top + p.bottom,
-      b;
-
-  // setup
-  this._scene = scene; // cache scene for async redraw
-  g.save();
-  b = clipToBounds(g, items);
-  this.clear(-p.left, -p.top, w, h);
-
-  // render
-  this.draw(g, scene, b);
-  
-  // takedown
-  g.restore();
-  this._scene = null; // clear scene cache
-
-  return this;
-};
-
-prototype.draw = function(ctx, scene, bounds) {
-  var mark = marks[scene.marktype];
-  mark.draw.call(this, ctx, scene, bounds);
-};
-
-prototype.clear = function(x, y, w, h) {
-  var g = this.context();
-  g.clearRect(x, y, w, h);
-  if (this._bgcolor != null) {
-    g.fillStyle = this._bgcolor;
-    g.fillRect(x, y, w, h); 
-  }
-};
-
-prototype.loadImage = function(uri) {
-  var renderer = this,
-      scene = this._scene;
-  return this._loader.loadImage(uri, function() {
-    renderer.renderAsync(scene);
-  });
-};
-
-prototype.renderAsync = function(scene) {
-  // TODO make safe for multiple scene rendering?
-  var renderer = this;
-  if (renderer._async_id) {
-    clearTimeout(renderer._async_id);
-  }
-  renderer._async_id = setTimeout(function() {
-    renderer.render(scene);
-    delete renderer._async_id;
-  }, 10);
-};
-
-module.exports = CanvasRenderer;
-
-},{"../../util/Bounds":50,"../../util/ImageLoader":52,"../../util/canvas":55,"../../util/dom":56,"../Renderer":29,"./marks":37}],32:[function(require,module,exports){
-module.exports = {
-  Handler:  require('./CanvasHandler'),
-  Renderer: require('./CanvasRenderer')
-};
-},{"./CanvasHandler":30,"./CanvasRenderer":31}],33:[function(require,module,exports){
-var util = require('./util');
-var halfpi = Math.PI / 2;
-
-function path(g, o) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      ir = o.innerRadius || 0,
-      or = o.outerRadius || 0,
-      sa = (o.startAngle || 0) - halfpi,
-      ea = (o.endAngle || 0) - halfpi;
-  g.beginPath();
-  if (ir === 0) g.moveTo(x, y);
-  else g.arc(x, y, ir, sa, ea, 0);
-  g.arc(x, y, or, ea, sa, 1);
-  g.closePath();
-}
-
-function hit(g, o, x, y) {
-  path(g, o);
-  return g.isPointInPath(x, y);
-}
-
-module.exports = {
-  draw: util.drawAll(path),
-  pick: util.pick(hit)
-};
-},{"./util":44}],34:[function(require,module,exports){
-var util = require('./util'),
-    parse = require('../../../path/parse'),
-    render = require('../../../path/render'),
-    areaPath = require('../../../util/svg').path.area;
-
-function path(g, items) {
-  var o = items[0],
-      p = o.pathCache || (o.pathCache = parse(areaPath(items)));
-  render(g, p);
-}
-
-function pick(g, scene, x, y, gx, gy) {
-  if (!scene.items || !scene.items.length) return false;
-
-  var items = scene.items,
-      b = scene.bounds;
-
-  if (b && !b.contains(gx, gy)) return false;
-  if (g.pixelratio != null && g.pixelratio !== 1) {
-    x *= g.pixelratio;
-    y *= g.pixelratio;
-  }
-  if (!hit(g, items, x, y)) return false;
-  return items[0];
-}
-
-function hit(g, s, x, y) {
-  path(g, s);
-  return g.isPointInPath(x, y);
-}
-
-module.exports = {
-  draw: util.drawOne(path),
-  pick: pick,
-  nested: true
-};
-
-},{"../../../path/parse":26,"../../../path/render":27,"../../../util/svg":58,"./util":44}],35:[function(require,module,exports){
-var util = require('./util'),
-    rect = require('./rect');
-
-function draw(g, scene, bounds) {
-  if (!scene.items || !scene.items.length) return;
-
-  var groups = scene.items,
-      renderer = this,
-      group, items, axes, legends, gx, gy, i, n, j, m;
-
-  rect.draw.call(renderer, g, scene, bounds);
-
-  for (i=0, n=groups.length; i<n; ++i) {
-    group = groups[i];
-    axes = group.axisItems || [];
-    items = group.items || [];
-    legends = group.legendItems || [];
-    gx = group.x || 0;
-    gy = group.y || 0;
-
-    // render group contents
-    g.save();
-    g.translate(gx, gy);
-    if (group.clip) {
-      g.beginPath();
-      g.rect(0, 0, group.width || 0, group.height || 0);
-      g.clip();
-    }
-
-    if (bounds) bounds.translate(-gx, -gy);
-
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].layer === 'back') {
-        renderer.draw(g, axes[j], bounds);
-      }
-    }
-    for (j=0, m=items.length; j<m; ++j) {
-      renderer.draw(g, items[j], bounds);
-    }
-    for (j=0, m=axes.length; j<m; ++j) {
-      if (axes[j].layer !== 'back') {
-        renderer.draw(g, axes[j], bounds);
-      }
-    }
-    for (j=0, m=legends.length; j<m; ++j) {
-      renderer.draw(g, legends[j], bounds);
-    }
-    
-    if (bounds) bounds.translate(gx, gy);
-    g.restore();
-  }    
-}
-
-function hit(g, o) {
-  return o.fill || o.stroke;
-}
-
-function pick(g, scene, x, y, gx, gy) {
-  if (scene.bounds && !scene.bounds.contains(gx, gy)) {
-    return false;
-  }
-  var items = scene.items || [],
-      subscene, group, hits, dx, dy, i, j;
-
-  for (i=items.length; --i>=0;) {
-    group = items[i];
-    dx = group.x || 0;
-    dy = group.y || 0;
-
-    g.save();
-    g.translate(dx, dy);
-    for (j=group.items.length; --j >= 0;) {
-      subscene = group.items[j];
-      if (subscene.interactive === false) continue;
-      hits = this.pick(subscene, x, y, gx-dx, gy-dy);
-      if (hits) {
-        g.restore();
-        return hits;
-      }
-    }
-    g.restore();
-  }
-
-  return scene.interactive !== false ? pickSelf(g, scene, x, y, gx, gy) : false;
-}
-
-var pickSelf = util.pick(hit);
-
-module.exports = {
-  draw: draw,
-  pick: pick
-};
-
-},{"./rect":40,"./util":44}],36:[function(require,module,exports){
-var util = require('./util');
-
-function draw(g, scene, bounds) {
-  if (!scene.items || !scene.items.length) return;
-
-  var renderer = this,
-      items = scene.items, o;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    if (!(o.image && o.image.url === o.url)) {
-      o.image = renderer.loadImage(o.url);
-      o.image.url = o.url;
-    }
-
-    var x = o.x || 0,
-        y = o.y || 0,
-        w = o.width || (o.image && o.image.width) || 0,
-        h = o.height || (o.image && o.image.height) || 0,
-        opac;
-    x = x - (o.align==='center' ? w/2 : o.align==='right' ? w : 0);
-    y = y - (o.baseline==='middle' ? h/2 : o.baseline==='bottom' ? h : 0);
-
-    if (o.image.loaded) {
-      g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
-      g.drawImage(o.image, x, y, w, h);
-    }
-  }
-}
-
-module.exports = {
-  draw: draw,
-  pick: util.pick()
-};
-},{"./util":44}],37:[function(require,module,exports){
-module.exports = {
-  arc:    require('./arc'),
-  area:   require('./area'),
-  group:  require('./group'),
-  image:  require('./image'),
-  line:   require('./line'),
-  path:   require('./path'),
-  rect:   require('./rect'),
-  rule:   require('./rule'),
-  symbol: require('./symbol'),
-  text:   require('./text')
-};
-
-},{"./arc":33,"./area":34,"./group":35,"./image":36,"./line":38,"./path":39,"./rect":40,"./rule":41,"./symbol":42,"./text":43}],38:[function(require,module,exports){
-var util = require('./util'),
-    parse = require('../../../path/parse'),
-    render = require('../../../path/render'),
-    linePath = require('../../../util/svg').path.line;
-    
-function path(g, items) {
-  var o = items[0],
-      p = o.pathCache || (o.pathCache = parse(linePath(items)));
-  render(g, p);
-}
-
-function stroke(g, items) {
-  var o = items[0],
-      lw = o.strokeWidth,
-      lc = o.strokeCap;
-  g.lineWidth = lw != null ? lw : 1;
-  g.lineCap   = lc != null ? lc : 'butt';
-  path(g, items);
-}
-
-function pick(g, scene, x, y, gx, gy) {
-  if (!scene.items || !scene.items.length) return false;
-
-  var items = scene.items,
-      b = scene.bounds;
-
-  if (b && !b.contains(gx, gy)) return false;
-
-  if (g.pixelratio != null && g.pixelratio !== 1) {
-    x *= g.pixelratio;
-    y *= g.pixelratio;
-  }
-  if (!hit(g, items, x, y)) return false;
-  return items[0];
-}
-
-function hit(g, s, x, y) {
-  if (!g.isPointInStroke) return false;
-  stroke(g, s);
-  return g.isPointInStroke(x, y);
-}
-
-module.exports = {
-  draw: util.drawOne(path),
-  pick: pick,
-  nested: true
-};
-
-},{"../../../path/parse":26,"../../../path/render":27,"../../../util/svg":58,"./util":44}],39:[function(require,module,exports){
-var util = require('./util'),
-    parse = require('../../../path/parse'),
-    render = require('../../../path/render');
-
-function path(g, o) {
-  if (o.path == null) return true;
-  var p = o.pathCache || (o.pathCache = parse(o.path));
-  render(g, p, o.x, o.y);
-}
-
-function hit(g, o, x, y) {
-  return path(g, o) ? false : g.isPointInPath(x, y);
-}
-
-module.exports = {
-  draw: util.drawAll(path),
-  pick: util.pick(hit)
-};
-
-},{"../../../path/parse":26,"../../../path/render":27,"./util":44}],40:[function(require,module,exports){
-var util = require('./util');
-
-function draw(g, scene, bounds) {
-  if (!scene.items || !scene.items.length) return;
-
-  var items = scene.items,
-      o, opac, x, y, w, h;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac === 0) continue;
-
-    x = o.x || 0;
-    y = o.y || 0;
-    w = o.width || 0;
-    h = o.height || 0;
-
-    if (o.fill && util.fill(g, o, opac)) {
-      g.fillRect(x, y, w, h);
-    }
-    if (o.stroke && util.stroke(g, o, opac)) {
-      g.strokeRect(x, y, w, h);
-    }
-  }
-}
-
-module.exports = {
-  draw: draw,
-  pick: util.pick()
-};
-},{"./util":44}],41:[function(require,module,exports){
-var util = require('./util');
-
-function draw(g, scene, bounds) {
-  if (!scene.items || !scene.items.length) return;
-
-  var items = scene.items,
-      o, opac, x1, y1, x2, y2;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac === 0) continue;
-      
-    x1 = o.x || 0;
-    y1 = o.y || 0;
-    x2 = o.x2 != null ? o.x2 : x1;
-    y2 = o.y2 != null ? o.y2 : y1;
-
-    if (o.stroke && util.stroke(g, o, opac)) {
-      g.beginPath();
-      g.moveTo(x1, y1);
-      g.lineTo(x2, y2);
-      g.stroke();
-    }
-  }
-}
-
-function stroke(g, o) {
-  var x1 = o.x || 0,
-      y1 = o.y || 0,
-      x2 = o.x2 != null ? o.x2 : x1,
-      y2 = o.y2 != null ? o.y2 : y1,
-      lw = o.strokeWidth,
-      lc = o.strokeCap;
-
-  g.lineWidth = lw != null ? lw : 1;
-  g.lineCap   = lc != null ? lc : 'butt';
-  g.beginPath();
-  g.moveTo(x1, y1);
-  g.lineTo(x2, y2);
-}
-
-function hit(g, o, x, y) {
-  if (!g.isPointInStroke) return false;
-  stroke(g, o);
-  return g.isPointInStroke(x, y);
-}
-
-module.exports = {
-  draw: draw,
-  pick: util.pick(hit)
-};
-
-},{"./util":44}],42:[function(require,module,exports){
-var util = require('./util');
-
-var sqrt3 = Math.sqrt(3),
-    tan30 = Math.tan(30 * Math.PI / 180);
-
-function path(g, o) {
-  var size = o.size != null ? o.size : 100,
-      x = o.x, y = o.y, r, t, rx, ry;
-
-  g.beginPath();
-
-  if (o.shape == null || o.shape === 'circle') {
-    r = Math.sqrt(size / Math.PI);
-    g.arc(x, y, r, 0, 2*Math.PI, 0);
-    g.closePath();
-    return;
-  }
-
-  switch (o.shape) {
-    case 'cross':
-      r = Math.sqrt(size / 5) / 2;
-      t = 3*r;
-      g.moveTo(x-t, y-r);
-      g.lineTo(x-r, y-r);
-      g.lineTo(x-r, y-t);
-      g.lineTo(x+r, y-t);
-      g.lineTo(x+r, y-r);
-      g.lineTo(x+t, y-r);
-      g.lineTo(x+t, y+r);
-      g.lineTo(x+r, y+r);
-      g.lineTo(x+r, y+t);
-      g.lineTo(x-r, y+t);
-      g.lineTo(x-r, y+r);
-      g.lineTo(x-t, y+r);
-      break;
-
-    case 'diamond':
-      ry = Math.sqrt(size / (2 * tan30));
-      rx = ry * tan30;
-      g.moveTo(x, y-ry);
-      g.lineTo(x+rx, y);
-      g.lineTo(x, y+ry);
-      g.lineTo(x-rx, y);
-      break;
-
-    case 'square':
-      t = Math.sqrt(size);
-      r = t / 2;
-      g.rect(x-r, y-r, t, t);
-      break;
-
-    case 'triangle-down':
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      g.moveTo(x, y+ry);
-      g.lineTo(x+rx, y-ry);
-      g.lineTo(x-rx, y-ry);
-      break;
-
-    case 'triangle-up':
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      g.moveTo(x, y-ry);
-      g.lineTo(x+rx, y+ry);
-      g.lineTo(x-rx, y+ry);
-  }
-  g.closePath();
-}
-
-function hit(g, o, x, y) {
-  path(g, o);
-  return g.isPointInPath(x, y);
-}
-
-module.exports = {
-  draw: util.drawAll(path),
-  pick: util.pick(hit)
-};
-},{"./util":44}],43:[function(require,module,exports){
-var Bounds = require('../../../util/Bounds'),
-    textBounds = require('../../../util/bound').text,
-    font = require('../../../util/font'),
-    util = require('./util'),
-    tempBounds = new Bounds();
-
-function draw(g, scene, bounds) {
-  if (!scene.items || !scene.items.length) return;
-
-  var items = scene.items,
-      o, opac, x, y, r, t;
-
-  for (var i=0, len=items.length; i<len; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds))
-      continue; // bounds check
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac === 0) continue;
-
-    g.font = font.string(o);
-    g.textAlign = o.align || 'left';
-
-    x = o.x || 0;
-    y = o.y || 0;
-    if ((r = o.radius)) {
-      t = (o.theta || 0) - Math.PI/2;
-      x += r * Math.cos(t);
-      y += r * Math.sin(t);
-    }
-
-    if (o.angle) {
-      g.save();
-      g.translate(x, y);
-      g.rotate(o.angle * Math.PI/180);
-      x = o.dx || 0;
-      y = o.dy || 0 + font.offset(o);
-    } else {
-      x += (o.dx || 0);
-      y += (o.dy || 0) + font.offset(o);
-    }
-
-    if (o.fill && util.fill(g, o, opac)) {
-      g.fillText(o.text, x, y);
-    }
-    if (o.stroke && util.stroke(g, o, opac)) {
-      g.strokeText(o.text, x, y);
-    }
-    if (o.angle) g.restore();
-  }
-}
-
-function hit(g, o, x, y, gx, gy) {
-  if (o.fontSize <= 0) return false;
-  if (!o.angle) return true; // bounds sufficient if no rotation
-
-  var b = textBounds(o, tempBounds, true),
-      a = -o.angle * Math.PI / 180,
-      cos = Math.cos(a),
-      sin = Math.sin(a),
-      ox = o.x,
-      oy = o.y,
-      px = cos*gx - sin*gy + (ox - ox*cos + oy*sin),
-      py = sin*gx + cos*gy + (oy - ox*sin - oy*cos);
-
-  return b.contains(px, py);
-}
-
-module.exports = {
-  draw: draw,
-  pick: util.pick(hit)
-};
-
-},{"../../../util/Bounds":50,"../../../util/bound":54,"../../../util/font":57,"./util":44}],44:[function(require,module,exports){
-function drawPathOne(path, g, o, items) {
-  if (path(g, items)) return;
-
-  var opac = o.opacity == null ? 1 : o.opacity;
-  if (opac===0) return;
-
-  if (o.fill && fill(g, o, opac)) { g.fill(); }
-  if (o.stroke && stroke(g, o, opac)) { g.stroke(); }
-}
-
-function drawPathAll(path, g, scene, bounds) {
-  var i, len, item;
-  for (i=0, len=scene.items.length; i<len; ++i) {
-    item = scene.items[i];
-    if (!bounds || bounds.intersects(item.bounds)) {
-      drawPathOne(path, g, item, item);
-    }
-  }
-}
-
-function drawAll(pathFunc) {
-  return function(g, scene, bounds) {
-    drawPathAll(pathFunc, g, scene, bounds);
-  };
-}
-
-function drawOne(pathFunc) {
-  return function(g, scene, bounds) {
-    if (!scene.items.length) return;
-    if (!bounds || bounds.intersects(scene.bounds)) {
-      drawPathOne(pathFunc, g, scene.items[0], scene.items);
-    }
-  };
-}
-
-function pick(test) {
-  if (!test) test = function() { return true; };
-
-  return function(g, scene, x, y, gx, gy) {
-    if (!scene.items.length) return false;
-
-    var o, b, i;
-
-    if (g.pixelratio != null && g.pixelratio !== 1) {
-      x *= g.pixelratio;
-      y *= g.pixelratio;
-    }
-
-    for (i=scene.items.length; --i >= 0;) {
-      o = scene.items[i]; b = o.bounds;
-      // first hit test against bounding box
-      if ((b && !b.contains(gx, gy)) || !b) continue;
-      // if in bounding box, perform more careful test
-      if (test(g, o, x, y, gx, gy)) return o;
-    }
-    return false;
-  };
-}
-
-function fill(g, o, opacity) {
-  opacity *= (o.fillOpacity==null ? 1 : o.fillOpacity);
-  if (opacity > 0) {
-    g.globalAlpha = opacity;
-    g.fillStyle = color(g, o, o.fill);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function stroke(g, o, opacity) {
-  var lw = (lw = o.strokeWidth) != null ? lw : 1, lc;
-  if (lw <= 0) return false;
-
-  opacity *= (o.strokeOpacity==null ? 1 : o.strokeOpacity);
-  if (opacity > 0) {
-    g.globalAlpha = opacity;
-    g.strokeStyle = color(g, o, o.stroke);
-    g.lineWidth = lw;
-    g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
-    g.vgLineDash(o.strokeDash || null);
-    g.vgLineDashOffset(o.strokeDashOffset || 0);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function color(g, o, value) {
-  return (value.id) ?
-    gradient(g, value, o.bounds) :
-    value;
-}
-
-function gradient(g, p, b) {
-  var w = b.width(),
-      h = b.height(),
-      x1 = b.x1 + p.x1 * w,
-      y1 = b.y1 + p.y1 * h,
-      x2 = b.x1 + p.x2 * w,
-      y2 = b.y1 + p.y2 * h,
-      grad = g.createLinearGradient(x1, y1, x2, y2),
-      stop = p.stops,
-      i, n;
-
-  for (i=0, n=stop.length; i<n; ++i) {
-    grad.addColorStop(stop[i].offset, stop[i].color);
-  }
-  return grad;
-}
-
-module.exports = {
-  drawOne:  drawOne,
-  drawAll:  drawAll,
-  pick:     pick,
-  stroke:   stroke,
-  fill:     fill,
-  color:    color,
-  gradient: gradient
-};
-
-},{}],45:[function(require,module,exports){
-var DOM = require('../../util/dom'),
-    Handler = require('../Handler');
-
-function SVGHandler() {
-  Handler.call(this);
-}
-
-var base = Handler.prototype;
-var prototype = (SVGHandler.prototype = Object.create(base));
-prototype.constructor = SVGHandler;
-
-prototype.initialize = function(el, pad, obj) {
-  this._svg = DOM.find(el, 'svg');
-  return base.initialize.call(this, el, pad, obj);
-};
-
-prototype.svg = function() {
-  return this._svg;
-};
-
-// wrap an event listener for the SVG DOM
-prototype.listener = function(handler) {
-  var that = this;
-  return function(evt) {
-    var target = evt.target,
-        item = target.__data__;
-    item = Array.isArray(item) ? item[0] : item;
-    handler.call(that._obj, evt, item);
-  };
-};
-
-// add an event handler
-prototype.on = function(type, handler) {
-  var name = this.eventName(type),
-      svg = this._svg,
-      h = this._handlers,
-      x = {
-        type:     type,
-        handler:  handler,
-        listener: this.listener(handler)
-      };
-
-  (h[name] || (h[name] = [])).push(x);
-  svg.addEventListener(name, x.listener);
-  return this;
-};
-
-// remove an event handler
-prototype.off = function(type, handler) {
-  var name = this.eventName(type),
-      svg = this._svg,
-      h = this._handlers[name], i;
-  if (!h) return;
-  for (i=h.length; --i>=0;) {
-    if (h[i].type === type && !handler || h[i].handler === handler) {
-      svg.removeEventListener(name, h[i].listener);
-      h.splice(i, 1);
-    }
-  }
-  return this;
-};
-
-module.exports = SVGHandler;
-
-},{"../../util/dom":56,"../Handler":28}],46:[function(require,module,exports){
-var ImageLoader = require('../../util/ImageLoader'),
-    Renderer = require('../Renderer'),
-    font = require('../../util/font'),
-    DOM = require('../../util/dom'),
-    SVG = require('../../util/svg'),
-    ns = SVG.metadata.xmlns,
-    marks = require('./marks');
-
-function SVGRenderer(loadConfig) {
-  Renderer.call(this);
-  this._loader = new ImageLoader(loadConfig);
-  this._dirtyID = 0;
-}
-
-var base = Renderer.prototype;
-var prototype = (SVGRenderer.prototype = Object.create(base));
-prototype.constructor = SVGRenderer;
-
-prototype.initialize = function(el, width, height, padding) {
-  if (el) {
-    this._svg = DOM.child(el, 0, 'svg', ns, 'marks');
-    DOM.clear(el, 1);
-    // set the svg root group
-    this._root = DOM.child(this._svg, 0, 'g', ns);
-    DOM.clear(this._svg, 1);
-  }
-
-  // create the svg definitions cache
-  this._defs = {
-    clip_id:  1,
-    gradient: {},
-    clipping: {}
-  };
-
-  // set background color if defined
-  this.background(this._bgcolor);
-
-  return base.initialize.call(this, el, width, height, padding);
-};
-
-prototype.background = function(bgcolor) {
-  if (arguments.length && this._svg) {
-    this._svg.style.setProperty('background-color', bgcolor);
-  }
-  return base.background.apply(this, arguments);
-};
-
-prototype.resize = function(width, height, padding) {
-  base.resize.call(this, width, height, padding);
-  
-  if (this._svg) {
-    var w = this._width,
-        h = this._height,
-        p = this._padding;
-  
-    this._svg.setAttribute('width', w + p.left + p.right);
-    this._svg.setAttribute('height', h + p.top + p.bottom);
-    
-    this._root.setAttribute('transform', 'translate('+p.left+','+p.top+')');
-  }
-
-  return this;
-};
-
-prototype.svg = function() {
-  if (!this._svg) return null;
-
-  var attr = {
-    'class':  'marks',
-    'width':  this._width + this._padding.left + this._padding.right,
-    'height': this._height + this._padding.top + this._padding.bottom,
-  };
-  for (var key in SVG.metadata) {
-    attr[key] = SVG.metadata[key];
-  }
-
-  return DOM.openTag('svg', attr) + this._svg.innerHTML + DOM.closeTag('svg');
-};
-
-prototype.imageURL = function(url) {
-  return this._loader.imageURL(url);
-};
-
-
-// -- Render entry point --
-
-prototype.render = function(scene, items) {
-  if (this._dirtyCheck(items)) {
-    if (this._dirtyAll) this._resetDefs();
-    this.draw(this._root, scene, -1);
-    DOM.clear(this._root, 1);
-  }
-  this.updateDefs();
-  return this;
-};
-
-prototype.draw = function(el, scene, index) {
-  this.drawMark(el, scene, index, marks[scene.marktype]);
-};
-
-
-// -- Manage SVG definitions ('defs') block --
-
-prototype.updateDefs = function() {
-  var svg = this._svg,
-      defs = this._defs,
-      el = defs.el,
-      index = 0, id;
-
-  for (id in defs.gradient) {
-    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
-    updateGradient(el, defs.gradient[id], index++);
-  }
-
-  for (id in defs.clipping) {
-    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
-    updateClipping(el, defs.clipping[id], index++);
-  }
-
-  // clean-up
-  if (el) {
-    if (index === 0) {
-      svg.removeChild(el);
-      defs.el = null;
-    } else {
-      DOM.clear(el, index);      
-    }
-  }
-};
-
-function updateGradient(el, grad, index) {
-  var i, n, stop;
-
-  el = DOM.child(el, index, 'linearGradient', ns);
-  el.setAttribute('id', grad.id);
-  el.setAttribute('x1', grad.x1);
-  el.setAttribute('x2', grad.x2);
-  el.setAttribute('y1', grad.y1);
-  el.setAttribute('y2', grad.y2);
-  
-  for (i=0, n=grad.stops.length; i<n; ++i) {
-    stop = DOM.child(el, i, 'stop', ns);
-    stop.setAttribute('offset', grad.stops[i].offset);
-    stop.setAttribute('stop-color', grad.stops[i].color);
-  }
-  DOM.clear(el, i);
-}
-
-function updateClipping(el, clip, index) {
-  var rect;
-
-  el = DOM.child(el, index, 'clipPath', ns);
-  el.setAttribute('id', clip.id);
-  rect = DOM.child(el, 0, 'rect', ns);
-  rect.setAttribute('x', 0);
-  rect.setAttribute('y', 0);
-  rect.setAttribute('width', clip.width);
-  rect.setAttribute('height', clip.height);
-}
-
-prototype._resetDefs = function() {
-  var def = this._defs;
-  def.clip_id = 1;
-  def.gradient = {};
-  def.clipping = {};
-};
-
-
-// -- Manage rendering of items marked as dirty --
-
-prototype.isDirty = function(item) {
-  return this._dirtyAll || item.dirty === this._dirtyID;
-};
-
-prototype._dirtyCheck = function(items) {
-  this._dirtyAll = true;
-  if (!items) return true;
-
-  var id = ++this._dirtyID,
-      item, mark, type, mdef, i, n, o;
-
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    mark = item.mark;
-    if (mark.marktype !== type) {
-      // memoize mark instance lookup
-      type = mark.marktype;
-      mdef = marks[type];
-    }
-
-    if (item.status === 'exit') { // EXIT
-      if (item._svg) {
-        if (mdef.nest && item.mark.items.length) {
-          // if nested mark with remaining points, update instead
-          this._update(mdef, item._svg, item.mark.items[0]);
-          o = item.mark.items[0];
-          o._svg = item._svg;
-          o._update = id;
-        } else {
-          // otherwise remove from DOM
-          DOM.remove(item._svg);
-        }
-        item._svg = null;
-      }
-      continue;
-    }
-
-    item = (mdef.nest ? mark.items[0] : item);
-    if (item._update === id) { // Already processed
-      continue;
-    } else if (item._svg) { // UPDATE
-      this._update(mdef, item._svg, item);
-    } else { // ENTER
-      this._dirtyAll = false;
-      dirtyParents(item, id);
-    }
-    item._update = id;
-  }
-  return !this._dirtyAll;
-};
-
-function dirtyParents(item, id) {
-  for (; item && item.dirty !== id; item=item.mark.group) {
-    item.dirty = id;
-    if (item.mark && item.mark.dirty !== id) {
-      item.mark.dirty = id;
-    } else return;
-  }
-}
-
-
-// -- Construct & maintain scenegraph to SVG mapping ---
-
-// Draw a mark container.
-prototype.drawMark = function(el, scene, index, mdef) {
-  if (!this.isDirty(scene)) return;
-
-  var items = mdef.nest ?
-        (scene.items && scene.items.length ? [scene.items[0]] : []) :
-        scene.items || [],
-      events = scene.interactive === false ? 'none' : null,
-      isGroup = (mdef.tag === 'g'),
-      className = DOM.cssClass(scene),
-      p, i, n, c, d, insert;
-
-  p = DOM.child(el, index+1, 'g', ns, className);
-  p.setAttribute('class', className);
-  scene._svg = p;
-  if (!isGroup && events) {
-    p.style.setProperty('pointer-events', events);
-  }
-
-  for (i=0, n=items.length; i<n; ++i) {
-    if (this.isDirty(d = items[i])) {
-      insert = !(this._dirtyAll || d._svg);
-      c = insert ? bind(p, mdef, d, i, true)
-        : (p.childNodes[i] || bind(p, mdef, d, i));
-      this._update(mdef, c, d);
-      if (isGroup) {
-        if (insert) this._dirtyAll = true;
-        this._recurse(c, d);
-        if (insert) this._dirtyAll = false;
-      }
-    }
-  }
-  DOM.clear(p, i);
-  return p;
-};
-
-// Recursively process group contents.
-prototype._recurse = function(el, group) {
-  var items = group.items || [],
-      legends = group.legendItems || [],
-      axes = group.axisItems || [],
-      idx = 0, j, m;
-
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer === 'back') {
-      this.drawMark(el, axes[j], idx++, marks.group);
-    }
-  }
-  for (j=0, m=items.length; j<m; ++j) {
-    this.draw(el, items[j], idx++);
-  }
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer !== 'back') {
-      this.drawMark(el, axes[j], idx++, marks.group);
-    }
-  }
-  for (j=0, m=legends.length; j<m; ++j) {
-    this.drawMark(el, legends[j], idx++, marks.group);
-  }
-
-  // remove any extraneous DOM elements
-  DOM.clear(el, 1 + idx);
-};
-
-// Bind a scenegraph item to an SVG DOM element.
-// Create new SVG elements as needed.
-function bind(el, mdef, item, index, insert) {
-  // create svg element, bind item data for D3 compatibility
-  var node = DOM.child(el, index, mdef.tag, ns, null, insert);
-  node.__data__ = item;
-  node.__values__ = {fill: 'default'};
-
-  // create background rect
-  if (mdef.tag === 'g') {
-    DOM.child(node, 0, 'rect', ns, 'background');
-  }
-
-  // add pointer from scenegraph item to svg element
-  return (item._svg = node);
-}
-
-
-// -- Set attributes & styles on SVG elements ---
-
-var href = (typeof window !== 'undefined' ? window.location.href : ''),
-    element = null, // temp var for current SVG element
-    values = null;  // temp var for current values hash
-
-// Extra configuration for certain mark types
-var mark_extras = {
-  group: function(mdef, el, item) {
-    element = el.childNodes[0];
-    values = el.__values__; // use parent's values hash
-    mdef.background(emit, item, this);
-
-    var value = item.mark.interactive === false ? 'none' : null;
-    if (value !== values.events) {
-      element.style.setProperty('pointer-events', value);
-      values.events = value;
-    }
-  },
-  text: function(mdef, el, item) {
-    if (item.text !== values.text) {
-      el.textContent = item.text || '';
-      values.text = item.text;
-    }
-    var str = font.string(item);
-    if (str !== values.font) {
-      el.style.setProperty('font', str);
-      values.font = str;
-    }
-  }
-};
-
-prototype._update = function(mdef, el, item) {
-  // set dom element and values cache
-  // provides access to emit method
-  element = el;
-  values = el.__values__;
-
-  // apply svg attributes
-  mdef.attr(emit, item, this);
-
-  // some marks need special treatment
-  var extra = mark_extras[mdef.type];
-  if (extra) extra(mdef, el, item);
-
-  // apply svg css styles
-  // note: element may be modified by 'extra' method
-  this.style(element, item);
-};
-
-function emit(name, value, ns) {
-  // early exit if value is unchanged
-  if (value === values[name]) return;
-
-  if (value != null) {
-    // if value is provided, update DOM attribute
-    if (ns) {
-      element.setAttributeNS(ns, name, value);
-    } else {
-      element.setAttribute(name, value);
-    }
-  } else {
-    // else remove DOM attribute
-    if (ns) {
-      element.removeAttributeNS(ns, name);
-    } else {
-      element.removeAttribute(name);
-    }
-  }
-
-  // note current value for future comparison
-  values[name] = value;
-}
-
-prototype.style = function(el, o) {
-  if (o == null) return;
-  var i, n, prop, name, value;
-
-  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
-    prop = SVG.styleProperties[i];
-    value = o[prop];
-    if (value === values[prop]) continue;
-
-    name = SVG.styles[prop];
-    if (value == null) {
-      if (name === 'fill') {
-        el.style.setProperty(name, 'none');
-      } else {
-        el.style.removeProperty(name);
-      }
-    } else {
-      if (value.id) {
-        // ensure definition is included
-        this._defs.gradient[value.id] = value;
-        value = 'url(' + href + '#' + value.id + ')';
-      }
-      el.style.setProperty(name, value+'');
-    }
-
-    values[prop] = value;
-  }
-};
-
-module.exports = SVGRenderer;
-
-},{"../../util/ImageLoader":52,"../../util/dom":56,"../../util/font":57,"../../util/svg":58,"../Renderer":29,"./marks":49}],47:[function(require,module,exports){
-var Renderer = require('../Renderer'),
-    ImageLoader = require('../../util/ImageLoader'),
-    SVG = require('../../util/svg'),
-    font = require('../../util/font'),
-    DOM = require('../../util/dom'),
-    openTag = DOM.openTag,
-    closeTag = DOM.closeTag,
-    MARKS = require('./marks');
-
-function SVGStringRenderer(loadConfig) {
-  Renderer.call(this);
-
-  this._loader = new ImageLoader(loadConfig);
-
-  this._text = {
-    head: '',
-    root: '',
-    foot: '',
-    defs: '',
-    body: ''
-  };
-
-  this._defs = {
-    clip_id:  1,
-    gradient: {},
-    clipping: {}
-  };
-}
-
-var base = Renderer.prototype;
-var prototype = (SVGStringRenderer.prototype = Object.create(base));
-prototype.constructor = SVGStringRenderer;
-
-prototype.resize = function(width, height, padding) {
-  base.resize.call(this, width, height, padding);
-  var p = this._padding,
-      t = this._text;
-
-  var attr = {
-    'class':  'marks',
-    'width':  this._width + p.left + p.right,
-    'height': this._height + p.top + p.bottom,
-  };
-  for (var key in SVG.metadata) {
-    attr[key] = SVG.metadata[key];
-  }
-
-  t.head = openTag('svg', attr);
-  t.root = openTag('g', {
-    transform: 'translate(' + p.left + ',' + p.top + ')'
-  });
-  t.foot = closeTag('g') + closeTag('svg');
-
-  return this;
-};
-
-prototype.svg = function() {
-  var t = this._text;
-  return t.head + t.defs + t.root + t.body + t.foot;
-};
-
-prototype.render = function(scene) {
-  this._text.body = this.mark(scene);
-  this._text.defs = this.buildDefs();
-  return this;
-};
-
-prototype.reset = function() {
-  this._defs.clip_id = 0;
-  return this;
-};
-
-prototype.buildDefs = function() {
-  var all = this._defs,
-      defs = '',
-      i, id, def, stops;
-
-  for (id in all.gradient) {
-    def = all.gradient[id];
-    stops = def.stops;
-
-    defs += openTag('linearGradient', {
-      id: id,
-      x1: def.x1,
-      x2: def.x2,
-      y1: def.y1,
-      y2: def.y2
-    });
-    
-    for (i=0; i<stops.length; ++i) {
-      defs += openTag('stop', {
-        offset: stops[i].offset,
-        'stop-color': stops[i].color
-      }) + closeTag('stop');
-    }
-    
-    defs += closeTag('linearGradient');
-  }
-  
-  for (id in all.clipping) {
-    def = all.clipping[id];
-
-    defs += openTag('clipPath', {id: id});
-
-    defs += openTag('rect', {
-      x: 0,
-      y: 0,
-      width: def.width,
-      height: def.height
-    }) + closeTag('rect');
-
-    defs += closeTag('clipPath');
-  }
-  
-  return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
-};
-
-prototype.imageURL = function(url) {
-  return this._loader.imageURL(url);
-};
-
-var object;
-
-function emit(name, value, ns, prefixed) {
-  object[prefixed || name] = value;
-}
-
-prototype.attributes = function(attr, item) {
-  object = {};
-  attr(emit, item, this);
-  return object;
-};
-
-prototype.mark = function(scene) {
-  var mdef = MARKS[scene.marktype],
-      tag  = mdef.tag,
-      attr = mdef.attr,
-      nest = mdef.nest || false,
-      data = nest ?
-          (scene.items && scene.items.length ? [scene.items[0]] : []) :
-          (scene.items || []),
-      defs = this._defs,
-      str = '',
-      style, i, item;
-
-  if (tag !== 'g' && scene.interactive === false) {
-    style = 'style="pointer-events: none;"';
-  }
-
-  // render opening group tag
-  str += openTag('g', {
-    'class': DOM.cssClass(scene)
-  }, style);
-
-  // render contained elements
-  for (i=0; i<data.length; ++i) {
-    item = data[i];
-    style = (tag !== 'g') ? styles(item, scene, tag, defs) : null;
-    str += openTag(tag, this.attributes(attr, item), style);
-    if (tag === 'text') {
-      str += escape_text(item.text);
-    } else if (tag === 'g') {
-      str += openTag('rect',
-        this.attributes(mdef.background, item),
-        styles(item, scene, 'bgrect', defs)) + closeTag('rect');
-      str += this.markGroup(item);
-    }
-    str += closeTag(tag);
-  }
-
-  // render closing group tag
-  return str + closeTag('g');
-};
-
-prototype.markGroup = function(scene) {
-  var str = '',
-      axes = scene.axisItems || [],
-      items = scene.items || [],
-      legends = scene.legendItems || [],
-      j, m;
-
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer === 'back') {
-      str += this.mark(axes[j]);
-    }
-  }
-  for (j=0, m=items.length; j<m; ++j) {
-    str += this.mark(items[j]);
-  }
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer !== 'back') {
-      str += this.mark(axes[j]);
-    }
-  }
-  for (j=0, m=legends.length; j<m; ++j) {
-    str += this.mark(legends[j]);
-  }
-
-  return str;
-};
-
-function styles(o, mark, tag, defs) {
-  if (o == null) return '';
-  var i, n, prop, name, value, s = '';
-
-  if (tag === 'bgrect' && mark.interactive === false) {
-    s += 'pointer-events: none;';
-  }
-
-  if (tag === 'text') {
-    s += 'font: ' + font.string(o) + ';';
-  }
-
-  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
-    prop = SVG.styleProperties[i];
-    name = SVG.styles[prop];
-    value = o[prop];
-
-    if (value == null) {
-      if (name === 'fill') {
-        s += (s.length ? ' ' : '') + 'fill: none;';
-      }
-    } else {
-      if (value.id) {
-        // ensure definition is included
-        defs.gradient[value.id] = value;
-        value = 'url(#' + value.id + ')';
-      }
-      s += (s.length ? ' ' : '') + name + ': ' + value + ';';
-    }
-  }
-
-  return s ? 'style="' + s + '"' : null;
-}
-
-function escape_text(s) {
-  s = (s == null ? '' : String(s));
-  return s.replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
-}
-
-module.exports = SVGStringRenderer;
-
-},{"../../util/ImageLoader":52,"../../util/dom":56,"../../util/font":57,"../../util/svg":58,"../Renderer":29,"./marks":49}],48:[function(require,module,exports){
-module.exports = {
-  Handler:  require('./SVGHandler'),
-  Renderer: require('./SVGRenderer'),
-  string: {
-    Renderer : require('./SVGStringRenderer')
-  }
-};
-},{"./SVGHandler":45,"./SVGRenderer":46,"./SVGStringRenderer":47}],49:[function(require,module,exports){
-var font = require('../../util/font'),
-    SVG = require('../../util/svg'),
-    textAlign = SVG.textAlign,
-    path = SVG.path;
-
-function translate(o) {
-  return 'translate(' + (o.x || 0) + ',' + (o.y || 0) + ')';
-}
-
-module.exports = {
-  arc: {
-    tag:  'path',
-    type: 'arc',
-    attr: function(emit, o) {
-      emit('transform', translate(o));
-      emit('d', path.arc(o));
-    }
-  },
-  area: {
-    tag:  'path',
-    type: 'area',
-    nest: true,
-    attr: function(emit, o) {
-      var items = o.mark.items;
-      if (items.length) emit('d', path.area(items));
-    }
-  },
-  group: {
-    tag:  'g',
-    type: 'group',
-    attr: function(emit, o, renderer) {
-      var id = null, defs, c;
-      emit('transform', translate(o));
-      if (o.clip) {
-        defs = renderer._defs;
-        id = o.clip_id || (o.clip_id = 'clip' + defs.clip_id++);
-        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-        c.width = o.width || 0;
-        c.height = o.height || 0;
-      }
-      emit('clip-path', id ? ('url(#' + id + ')') : null);
-    },
-    background: function(emit, o) {
-      emit('class', 'background');
-      emit('width', o.width || 0);
-      emit('height', o.height || 0);
-    }
-  },
-  image: {
-    tag:  'image',
-    type: 'image',
-    attr: function(emit, o, renderer) {
-      var x = o.x || 0,
-          y = o.y || 0,
-          w = o.width || 0,
-          h = o.height || 0,
-          url = renderer.imageURL(o.url);
-
-      x = x - (o.align === 'center' ? w/2 : o.align === 'right' ? w : 0);
-      y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
-
-      emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
-      emit('transform', 'translate('+x+','+y+')');
-      emit('width', w);
-      emit('height', h);
-    }
-  },
-  line: {
-    tag:  'path',
-    type: 'line',
-    nest: true,
-    attr: function(emit, o) {
-      var items = o.mark.items;
-      if (items.length) emit('d', path.line(items));
-    }
-  },
-  path: {
-    tag:  'path',
-    type: 'path',
-    attr: function(emit, o) {
-      emit('transform', translate(o));
-      emit('d', o.path);
-    }
-  },
-  rect: {
-    tag:  'rect',
-    type: 'rect',
-    nest: false,
-    attr: function(emit, o) {
-      emit('transform', translate(o));
-      emit('width', o.width || 0);
-      emit('height', o.height || 0);
-    }
-  },
-  rule: {
-    tag:  'line',
-    type: 'rule',
-    attr: function(emit, o) {
-      emit('transform', translate(o));
-      emit('x2', o.x2 != null ? o.x2 - (o.x||0) : 0);
-      emit('y2', o.y2 != null ? o.y2 - (o.y||0) : 0);
-    }
-  },
-  symbol: {
-    tag:  'path',
-    type: 'symbol',
-    attr: function(emit, o) {
-      emit('transform', translate(o));
-      emit('d', path.symbol(o));
-    }
-  },
-  text: {
-    tag:  'text',
-    type: 'text',
-    nest: false,
-    attr: function(emit, o) {
-      var x = o.x || 0,
-          y = o.y || 0,
-          a = o.angle || 0,
-          r = o.radius || 0, t;
-
-      if (r) {
-        t = (o.theta || 0) - Math.PI/2;
-        x += r * Math.cos(t);
-        y += r * Math.sin(t);
-      }
-
-      x += (o.dx || 0);
-      y += (o.dy || 0) + font.offset(o);
-      emit('text-anchor', textAlign[o.align] || 'start');
-      emit('transform', 'translate('+x+','+y+')' + (a?' rotate('+a+')':''));
-    }
-  }
-};
-
-},{"../../util/font":57,"../../util/svg":58}],50:[function(require,module,exports){
-function Bounds(b) {
-  this.clear();
-  if (b) this.union(b);
-}
-
-var prototype = Bounds.prototype;
-
-prototype.clone = function() {
-  return new Bounds(this);
-};
-
-prototype.clear = function() {
-  this.x1 = +Number.MAX_VALUE;
-  this.y1 = +Number.MAX_VALUE;
-  this.x2 = -Number.MAX_VALUE;
-  this.y2 = -Number.MAX_VALUE;
-  return this;
-};
-
-prototype.set = function(x1, y1, x2, y2) {
-  this.x1 = x1;
-  this.y1 = y1;
-  this.x2 = x2;
-  this.y2 = y2;
-  return this;
-};
-
-prototype.add = function(x, y) {
-  if (x < this.x1) this.x1 = x;
-  if (y < this.y1) this.y1 = y;
-  if (x > this.x2) this.x2 = x;
-  if (y > this.y2) this.y2 = y;
-  return this;
-};
-
-prototype.expand = function(d) {
-  this.x1 -= d;
-  this.y1 -= d;
-  this.x2 += d;
-  this.y2 += d;
-  return this;
-};
-
-prototype.round = function() {
-  this.x1 = Math.floor(this.x1);
-  this.y1 = Math.floor(this.y1);
-  this.x2 = Math.ceil(this.x2);
-  this.y2 = Math.ceil(this.y2);
-  return this;
-};
-
-prototype.translate = function(dx, dy) {
-  this.x1 += dx;
-  this.x2 += dx;
-  this.y1 += dy;
-  this.y2 += dy;
-  return this;
-};
-
-prototype.rotate = function(angle, x, y) {
-  var cos = Math.cos(angle),
-      sin = Math.sin(angle),
-      cx = x - x*cos + y*sin,
-      cy = y - x*sin - y*cos,
-      x1 = this.x1, x2 = this.x2,
-      y1 = this.y1, y2 = this.y2;
-
-  return this.clear()
-    .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
-    .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
-    .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
-    .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
-};
-
-prototype.union = function(b) {
-  if (b.x1 < this.x1) this.x1 = b.x1;
-  if (b.y1 < this.y1) this.y1 = b.y1;
-  if (b.x2 > this.x2) this.x2 = b.x2;
-  if (b.y2 > this.y2) this.y2 = b.y2;
-  return this;
-};
-
-prototype.encloses = function(b) {
-  return b && (
-    this.x1 <= b.x1 &&
-    this.x2 >= b.x2 &&
-    this.y1 <= b.y1 &&
-    this.y2 >= b.y2
-  );
-};
-
-prototype.intersects = function(b) {
-  return b && !(
-    this.x2 < b.x1 ||
-    this.x1 > b.x2 ||
-    this.y2 < b.y1 ||
-    this.y1 > b.y2
-  );
-};
-
-prototype.contains = function(x, y) {
-  return !(
-    x < this.x1 ||
-    x > this.x2 ||
-    y < this.y1 ||
-    y > this.y2
-  );
-};
-
-prototype.width = function() {
-  return this.x2 - this.x1;
-};
-
-prototype.height = function() {
-  return this.y2 - this.y1;
-};
-
-module.exports = Bounds;
-
-},{}],51:[function(require,module,exports){
-var gradient_id = 0;
-
-function Gradient(type) {
-  this.id = 'gradient_' + (gradient_id++);
-  this.type = type || 'linear';
-  this.stops = [];
-  this.x1 = 0;
-  this.x2 = 1;
-  this.y1 = 0;
-  this.y2 = 0;
-}
-
-var prototype = Gradient.prototype;
-
-prototype.stop = function(offset, color) {
-  this.stops.push({
-    offset: offset,
-    color: color
-  });
-  return this;
-};
-
-module.exports = Gradient;
-},{}],52:[function(require,module,exports){
-(function (global){
-var load = require('datalib/src/import/load');
-
-function ImageLoader(loadConfig) {
-  this._pending = 0;
-  this._config = loadConfig || ImageLoader.Config; 
-}
-
-// Overridable global default load configuration
-ImageLoader.Config = null;
-
-var prototype = ImageLoader.prototype;
-
-prototype.pending = function() {
-  return this._pending;
-};
-
-prototype.params = function(uri) {
-  var p = {url: uri}, k;
-  for (k in this._config) { p[k] = this._config[k]; }
-  return p;
-};
-
-prototype.imageURL = function(uri) {
-  return load.sanitizeUrl(this.params(uri));
-};
-
-function browser(uri, callback) {
-  var url = load.sanitizeUrl(this.params(uri));
-  if (!url) { // error
-    if (callback) callback(uri, null);
-    return null;
-  }
-
-  var loader = this,
-      image = new Image();
-
-  loader._pending += 1;
-
-  image.onload = function() {
-    loader._pending -= 1;
-    image.loaded = true;
-    if (callback) callback(null, image);
-  };
-  image.src = url;
-
-  return image;
-}
-
-function server(uri, callback) {
-  var loader = this,
-      image = new ((typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null).Image)();
-
-  loader._pending += 1;
-
-  load(this.params(uri), function(err, data) {
-    loader._pending -= 1;
-    if (err) {
-      if (callback) callback(err, null);
-      return null;
-    }
-    image.src = data;
-    image.loaded = true;
-    if (callback) callback(null, image);
-  });
-
-  return image;
-}
-
-prototype.loadImage = function(uri, callback) {
-  return load.useXHR ?
-    browser.call(this, uri, callback) :
-    server.call(this, uri, callback);
-};
-
-module.exports = ImageLoader;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{"datalib/src/import/load":13}],53:[function(require,module,exports){
-function Item(mark) {
-  this.mark = mark;
-}
-
-var prototype = Item.prototype;
-
-prototype.hasPropertySet = function(name) {
-  var props = this.mark.def.properties;
-  return props && props[name] != null;
-};
-
-prototype.cousin = function(offset, index) {
-  if (offset === 0) return this;
-  offset = offset || -1;
-  var mark = this.mark,
-      group = mark.group,
-      iidx = index==null ? mark.items.indexOf(this) : index,
-      midx = group.items.indexOf(mark) + offset;
-  return group.items[midx].items[iidx];
-};
-
-prototype.sibling = function(offset) {
-  if (offset === 0) return this;
-  offset = offset || -1;
-  var mark = this.mark,
-      iidx = mark.items.indexOf(this) + offset;
-  return mark.items[iidx];
-};
-
-prototype.remove = function() {
-  var item = this,
-      list = item.mark.items,
-      i = list.indexOf(item);
-  if (i >= 0) {
-    if (i===list.length-1) {
-      list.pop();
-    } else {
-      list.splice(i, 1);
-    }
-  }
-  return item;
-};
-
-prototype.touch = function() {
-  if (this.pathCache) this.pathCache = null;
-};
-
-module.exports = Item;
-},{}],54:[function(require,module,exports){
-var Bounds = require('../util/Bounds'),
-    canvas = require('../util/canvas'),
-    svg = require('../util/svg'),
-    font = require('./font'),
-    paths = require('../path'),
-    parse = paths.parse,
-    boundPath = paths.bounds,
-    areaPath = svg.path.area,
-    linePath = svg.path.line,
-    halfpi = Math.PI / 2,
-    sqrt3 = Math.sqrt(3),
-    tan30 = Math.tan(30 * Math.PI / 180),
-    g2D = null;
-
-function context() {
-  return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
-}
-
-function strokeBounds(o, bounds) {
-  if (o.stroke && o.opacity !== 0 && o.stokeOpacity !== 0) {
-    bounds.expand(o.strokeWidth != null ? o.strokeWidth : 1);
-  }
-  return bounds;
-}
-
-function pathBounds(o, path, bounds) {
-  if (path == null) {
-    bounds.set(0, 0, 0, 0);
-  } else {
-    boundPath(path, bounds);
-    strokeBounds(o, bounds);
-  }
-  return bounds;
-}
-
-function path(o, bounds) {
-  var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
-  return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
-}
-
-function area(mark, bounds) {
-  if (mark.items.length === 0) return bounds;
-  var items = mark.items,
-      item = items[0],
-      p = item.pathCache || (item.pathCache = parse(areaPath(items)));
-  return pathBounds(item, p, bounds);
-}
-
-function line(mark, bounds) {
-  if (mark.items.length === 0) return bounds;
-  var items = mark.items,
-      item = items[0],
-      p = item.pathCache || (item.pathCache = parse(linePath(items)));
-  return pathBounds(item, p, bounds);
-}
-
-function rect(o, bounds) {
-  var x, y;
-  return strokeBounds(o, bounds.set(
-    x = o.x || 0,
-    y = o.y || 0,
-    (x + o.width) || 0,
-    (y + o.height) || 0
-  ));
-}
-
-function image(o, bounds) {
-  var x = o.x || 0,
-      y = o.y || 0,
-      w = o.width || 0,
-      h = o.height || 0;
-  x = x - (o.align === 'center' ? w/2 : (o.align === 'right' ? w : 0));
-  y = y - (o.baseline === 'middle' ? h/2 : (o.baseline === 'bottom' ? h : 0));
-  return bounds.set(x, y, x+w, y+h);
-}
-
-function rule(o, bounds) {
-  var x1, y1;
-  return strokeBounds(o, bounds.set(
-    x1 = o.x || 0,
-    y1 = o.y || 0,
-    o.x2 != null ? o.x2 : x1,
-    o.y2 != null ? o.y2 : y1
-  ));
-}
-
-function arc(o, bounds) {
-  var cx = o.x || 0,
-      cy = o.y || 0,
-      ir = o.innerRadius || 0,
-      or = o.outerRadius || 0,
-      sa = (o.startAngle || 0) - halfpi,
-      ea = (o.endAngle || 0) - halfpi,
-      xmin = Infinity, xmax = -Infinity,
-      ymin = Infinity, ymax = -Infinity,
-      a, i, n, x, y, ix, iy, ox, oy;
-
-  var angles = [sa, ea],
-      s = sa - (sa % halfpi);
-  for (i=0; i<4 && s<ea; ++i, s+=halfpi) {
-    angles.push(s);
-  }
-
-  for (i=0, n=angles.length; i<n; ++i) {
-    a = angles[i];
-    x = Math.cos(a); ix = ir*x; ox = or*x;
-    y = Math.sin(a); iy = ir*y; oy = or*y;
-    xmin = Math.min(xmin, ix, ox);
-    xmax = Math.max(xmax, ix, ox);
-    ymin = Math.min(ymin, iy, oy);
-    ymax = Math.max(ymax, iy, oy);
-  }
-
-  return strokeBounds(o, bounds.set(
-    cx + xmin,
-    cy + ymin,
-    cx + xmax,
-    cy + ymax
-  ));
-}
-
-function symbol(o, bounds) {
-  var size = o.size != null ? o.size : 100,
-      x = o.x || 0,
-      y = o.y || 0,
-      r, t, rx, ry;
-
-  switch (o.shape) {
-    case 'cross':
-      t = 3 * Math.sqrt(size / 5) / 2;
-      bounds.set(x-t, y-t, x+t, y+t);
-      break;
-
-    case 'diamond':
-      ry = Math.sqrt(size / (2 * tan30));
-      rx = ry * tan30;
-      bounds.set(x-rx, y-ry, x+rx, y+ry);
-      break;
-
-    case 'square':
-      t = Math.sqrt(size);
-      r = t / 2;
-      bounds.set(x-r, y-r, x+r, y+r);
-      break;
-
-    case 'triangle-down':
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      bounds.set(x-rx, y-ry, x+rx, y+ry);
-      break;
-
-    case 'triangle-up':
-      rx = Math.sqrt(size / sqrt3);
-      ry = rx * sqrt3 / 2;
-      bounds.set(x-rx, y-ry, x+rx, y+ry);
-      break;
-
-    default:
-      r = Math.sqrt(size/Math.PI);
-      bounds.set(x-r, y-r, x+r, y+r);
-  }
-
-  return strokeBounds(o, bounds);
-}
-
-function text(o, bounds, noRotate) {
-  var x = (o.x || 0) + (o.dx || 0),
-      y = (o.y || 0) + (o.dy || 0),
-      h = font.size(o),
-      a = o.align,
-      r = o.radius || 0,
-      g = context(), w, t;
-
-  g.font = font.string(o);
-  w = g.measureText(o.text || '').width;
-
-  if (r) {
-    t = (o.theta || 0) - Math.PI/2;
-    x += r * Math.cos(t);
-    y += r * Math.sin(t);
-  }
-
-  // horizontal
-  if (a === 'center') {
-    x = x - (w / 2);
-  } else if (a === 'right') {
-    x = x - w;
-  } else {
-    // left by default, do nothing
-  }
-
-  // vertical
-  y += font.offset(o) - Math.round(0.8*h);
-  
-  bounds.set(x, y, x+w, y+h);
-  if (o.angle && !noRotate) {
-    bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
-  }
-  return bounds.expand(noRotate ? 0 : 1);
-}
-
-function group(g, bounds, includeLegends) {
-  var axes = g.axisItems || [],
-      items = g.items || [],
-      legends = g.legendItems || [],
-      j, m;
-
-  for (j=0, m=axes.length; j<m; ++j) {
-    bounds.union(axes[j].bounds);
-  }
-  for (j=0, m=items.length; j<m; ++j) {
-    bounds.union(items[j].bounds);
-  }
-  if (includeLegends) {
-    for (j=0, m=legends.length; j<m; ++j) {
-      bounds.union(legends[j].bounds);
-    }
-  }
-  if (g.width != null && g.height != null) {
-    bounds.add(g.width, g.height);
-  }
-  if (g.x != null && g.y != null) {
-    bounds.add(0, 0);
-  }
-  return bounds.translate(g.x || 0, g.y || 0);
-}
-
-var methods = {
-  group:  group,
-  symbol: symbol,
-  image:  image,
-  rect:   rect,
-  rule:   rule,
-  arc:    arc,
-  text:   text,
-  path:   path,
-  area:   area,
-  line:   line
-};
-methods.area.nest = true;
-methods.line.nest = true;
-
-function itemBounds(item, func, opt) {
-  var type = item.mark.marktype;
-  func = func || methods[type];
-  if (func.nest) item = item.mark;
-
-  var curr = item.bounds,
-      prev = item['bounds:prev'] || (item['bounds:prev'] = new Bounds());
-
-  if (curr) {
-    prev.clear().union(curr);
-    curr.clear();
-  } else {
-    item.bounds = new Bounds();
-  }
-  func(item, item.bounds, opt);
-  if (!curr) prev.clear().union(item.bounds);
-  return item.bounds;
-}
-
-var DUMMY_ITEM = {mark: null};
-
-function markBounds(mark, bounds, opt) {
-  var type  = mark.marktype,
-      func  = methods[type],
-      items = mark.items,
-      hasi  = items && items.length,
-      i, n, o, b;
-
-  if (func.nest) {
-    o = hasi ? items[0]
-      : (DUMMY_ITEM.mark = mark, DUMMY_ITEM); // no items, so fake it
-    b = itemBounds(o, func, opt);
-    bounds = bounds && bounds.union(b) || b;
-    return bounds;
-  }
-
-  bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
-  if (hasi) {  
-    for (i=0, n=items.length; i<n; ++i) {
-      bounds.union(itemBounds(items[i], func, opt));
-    }
-  }
-  return (mark.bounds = bounds);
-}
-
-module.exports = {
-  mark:  markBounds,
-  item:  itemBounds,
-  text:  text,
-  group: group
-};
-
-},{"../path":25,"../util/Bounds":50,"../util/canvas":55,"../util/svg":58,"./font":57}],55:[function(require,module,exports){
-(function (global){
-function instance(w, h) {
-  w = w || 1;
-  h = h || 1;
-  var canvas;
-
-  if (typeof document !== 'undefined' && document.createElement) {
-    canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-  } else {
-    var Canvas = (typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null);
-    if (!Canvas.prototype) return null;
-    canvas = new Canvas(w, h);
-  }
-  return lineDash(canvas);
-}
-
-function resize(canvas, w, h, p) {
-  var g = this._ctx = canvas.getContext('2d'), 
-      s = 1;
-
-  canvas.width = w + p.left + p.right;
-  canvas.height = h + p.top + p.bottom;
-
-  // if browser canvas, attempt to modify for retina display
-  if (typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement) {
-    g.pixelratio = (s = pixelRatio(canvas) || 1);
-  }
-
-  g.setTransform(s, 0, 0, s, s*p.left, s*p.top);
-  return canvas;
-}
-
-function pixelRatio(canvas) {
-  var g = canvas.getContext('2d');
-
-  // get canvas pixel data
-  var devicePixelRatio = window && window.devicePixelRatio || 1,
-      backingStoreRatio = (
-        g.webkitBackingStorePixelRatio ||
-        g.mozBackingStorePixelRatio ||
-        g.msBackingStorePixelRatio ||
-        g.oBackingStorePixelRatio ||
-        g.backingStorePixelRatio) || 1,
-      ratio = devicePixelRatio / backingStoreRatio;
-
-  if (devicePixelRatio !== backingStoreRatio) {
-    // set actual and visible canvas size
-    var w = canvas.width,
-        h = canvas.height;
-    canvas.width = w * ratio;
-    canvas.height = h * ratio;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-  }
-
-  return ratio;
-}
-
-function lineDash(canvas) {
-  var g = canvas.getContext('2d');
-  if (g.vgLineDash) return; // already initialized!
-
-  var NOOP = function() {},
-      NODASH = [];
-  
-  if (g.setLineDash) {
-    g.vgLineDash = function(dash) { this.setLineDash(dash || NODASH); };
-    g.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
-  } else if (g.webkitLineDash !== undefined) {
-  	g.vgLineDash = function(dash) { this.webkitLineDash = dash || NODASH; };
-    g.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
-  } else if (g.mozDash !== undefined) {
-    g.vgLineDash = function(dash) { this.mozDash = dash; };
-    g.vgLineDashOffset = NOOP;
-  } else {
-    g.vgLineDash = NOOP;
-    g.vgLineDashOffset = NOOP;
-  }
-  return canvas;
-}
-
-module.exports = {
-  instance:   instance,
-  resize:     resize,
-  pixelRatio: pixelRatio,
-  lineDash:   lineDash
-};
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{}],56:[function(require,module,exports){
-// create a new DOM element
-function create(doc, tag, ns) {
-  return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
-}
-
-// remove element from DOM
-// recursively remove parent elements if empty
-function remove(el) {
-  if (!el) return;
-  var p = el.parentNode;
-  if (p) {
-    p.removeChild(el);
-    if (!p.childNodes || !p.childNodes.length) remove(p);
-  }
-}
-
-module.exports = {
-  // find first child element with matching tag
-  find: function(el, tag) {
-    tag = tag.toLowerCase();
-    for (var i=0, n=el.childNodes.length; i<n; ++i) {
-      if (el.childNodes[i].tagName.toLowerCase() === tag) {
-        return el.childNodes[i];
-      }
-    }
-  },
-  // retrieve child element at given index
-  // create & insert if doesn't exist or if tag/className do not match
-  child: function(el, index, tag, ns, className, insert) {
-    var a, b;
-    a = b = el.childNodes[index];
-    if (!a || insert ||
-        a.tagName.toLowerCase() !== tag.toLowerCase() ||
-        className && a.getAttribute('class') != className) {
-      a = create(el.ownerDocument, tag, ns);
-      el.insertBefore(a, b);
-      if (className) a.setAttribute('class', className);
-    }
-    return a;
-  },
-  // remove all child elements at or above the given index
-  clear: function(el, index) {
-    var curr = el.childNodes.length;
-    while (curr > index) {
-      el.removeChild(el.childNodes[--curr]);
-    }
-    return el;
-  },
-  remove: remove,
-  // generate css class name for mark
-  cssClass: function(mark) {
-    return 'mark-' + mark.marktype + (mark.name ? ' '+mark.name : '');
-  },
-  // generate string for an opening xml tag
-  // tag: the name of the xml tag
-  // attr: hash of attribute name-value pairs to include
-  // raw: additional raw string to include in tag markup
-  openTag: function(tag, attr, raw) {
-    var s = '<' + tag, key, val;
-    if (attr) {
-      for (key in attr) {
-        val = attr[key];
-        if (val != null) {
-          s += ' ' + key + '="' + val + '"';
-        }
-      }
-    }
-    if (raw) s += ' ' + raw;
-    return s + '>';
-  },
-  // generate string for closing xml tag
-  // tag: the name of the xml tag
-  closeTag: function(tag) {
-    return '</' + tag + '>';
-  }
-};
-
-},{}],57:[function(require,module,exports){
-function size(item) {
-  return item.fontSize != null ? item.fontSize : 11;
-}
-
-module.exports = {
-  size: size,
-  string: function(item, quote) {
-    var font = item.font;
-    if (quote && font) {
-      font = String(font).replace(/\"/g, '\'');
-    }
-    return '' +
-      (item.fontStyle ? item.fontStyle + ' ' : '') +
-      (item.fontVariant ? item.fontVariant + ' ' : '') +
-      (item.fontWeight ? item.fontWeight + ' ' : '') +
-      size(item) + 'px ' +
-      (font || 'sans-serif');
-  },
-  offset: function(item) {
-    // perform our own font baseline calculation
-    // why? not all browsers support SVG 1.1 'alignment-baseline' :(
-    var baseline = item.baseline,
-        h = size(item);
-    return Math.round(
-      baseline === 'top'    ?  0.93*h :
-      baseline === 'middle' ?  0.30*h :
-      baseline === 'bottom' ? -0.21*h : 0
-    );
-  }
-};
-
-},{}],58:[function(require,module,exports){
-(function (global){
-var d3_svg = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null).svg;
-
-function x(o)     { return o.x || 0; }
-function y(o)     { return o.y || 0; }
-function xw(o)    { return (o.x || 0) + (o.width || 0); }
-function yh(o)    { return (o.y || 0) + (o.height || 0); }
-function size(o)  { return o.size == null ? 100 : o.size; }
-function shape(o) { return o.shape || 'circle'; }
-
-var areav = d3_svg.area().x(x).y1(y).y0(yh),
-    areah = d3_svg.area().y(y).x1(x).x0(xw),
-    line  = d3_svg.line().x(x).y(y);
-
-module.exports = {
-  metadata: {
-    'version': '1.1',
-    'xmlns': 'http://www.w3.org/2000/svg',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
-  },
-  path: {
-    arc: d3_svg.arc(),
-    symbol: d3_svg.symbol().type(shape).size(size),
-    area: function(items) {
-      var o = items[0];
-      return (o.orient === 'horizontal' ? areah : areav)
-        .interpolate(o.interpolate || 'linear')
-        .tension(o.tension || 0.7)
-        (items);
-    },
-    line: function(items) {
-      var o = items[0];
-      return line
-        .interpolate(o.interpolate || 'linear')
-        .tension(o.tension || 0.7)
-        (items);
-    }
-  },
-  textAlign: {
-    'left':   'start',
-    'center': 'middle',
-    'right':  'end'
-  },
-  textBaseline: {
-    'top':    'before-edge',
-    'bottom': 'after-edge',
-    'middle': 'central'
-  },
-  styles: {
-    'fill':             'fill',
-    'fillOpacity':      'fill-opacity',
-    'stroke':           'stroke',
-    'strokeWidth':      'stroke-width',
-    'strokeOpacity':    'stroke-opacity',
-    'strokeCap':        'stroke-linecap',
-    'strokeDash':       'stroke-dasharray',
-    'strokeDashOffset': 'stroke-dashoffset',
-    'opacity':          'opacity'
-  },
-  styleProperties: [
-    'fill',
-    'fillOpacity',
-    'stroke',
-    'strokeWidth',
-    'strokeOpacity',
-    'strokeCap',
-    'strokeDash',
-    'strokeDashOffset',
-    'opacity'
-  ]
-};
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{}],59:[function(require,module,exports){
-var util = require('datalib/src/util'),
-    canvas = require('vega-scenegraph/src/render/canvas'),
-    svg = require('vega-scenegraph/src/render/svg').string,
-    View = require('./View'),
-    config = require('../util/config'),
-    log = require('../util/log');
-
-var HeadlessView = function(width, height, model) {
-  View.call(null, width, height, model);
-  this._type = "canvas";
-  this._renderers = {canvas: canvas, svg: svg};
-}
-
-var prototype = (HeadlessView.prototype = new View());
-
-prototype.renderer = function(type) {
-  if(type) this._type = type;
-  return View.prototype.renderer.apply(this, arguments);
-};
-
-prototype.canvas = function() {
-  return (this._type === "canvas")
-    ? this._renderer.canvas()
-    : null;
-};
-
-prototype.canvasAsync = function(callback) {
-  var r = this._renderer, view = this;
-  
-  function wait() {
-    if (r.pendingImages() === 0) {
-      view.render(); // re-render with all images
-      callback(view._canvas);
-    } else {
-      setTimeout(wait, 10);
-    }
-  }
-
-  // if images loading, poll until ready
-  if (this._type !== "canvas") return null;
-  (r.pendingImages() > 0) ? wait() : callback(this.canvas());
-};
-
-prototype.svg = function() {
-  return (this._type === "svg")
-    ? this._renderer.svg()
-    : null;
-};
-
-prototype.initialize = function() {    
-  var w = this._width,
-      h = this._height,
-      pad = this._padding,
-      bg = this._bgcolor;
-
-  if (this._viewport) {
-    w = this._viewport[0] - (pad ? pad.left + pad.right : 0);
-    h = this._viewport[1] - (pad ? pad.top + pad.bottom : 0);
-  }
-
-  this._renderer = (this._renderer || new this._io.Renderer(config.load))
-    .initialize(null, w, h, pad)
-    .background(bg);
-  
-  return this;
-};
-
-module.exports = HeadlessView;
-},{"../util/config":122,"../util/log":124,"./View":61,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":32,"vega-scenegraph/src/render/svg":48}],60:[function(require,module,exports){
-var util = require('datalib/src/util'),
-    Graph = require('../dataflow/Graph'), 
-    Node  = require('../dataflow/Node'),
-    GroupBuilder = require('../scene/GroupBuilder'),
-    changeset = require('../dataflow/changeset'),
-    visit = require('../scene/visit');
-
-function Model() {
-  this._defs = {};
-  this._predicates = {};
-  this._scene = null;
-
-  this._node = null;
-  this._builder = null; // Top-level scenegraph builder
-
-  this._reset = {axes: false, legends: false};
-
-  Graph.prototype.init.call(this);
-};
-
-var proto = (Model.prototype = new Graph());
-
-proto.defs = function(defs) {
-  if (!arguments.length) return this._defs;
-  this._defs = defs;
-  return this;
-};
-
-proto.width = function(width) {
-  if (this._defs) this._defs.width = width;
-  if (this._defs && this._defs.marks) this._defs.marks.width = width;
-  if (this._scene) this._scene.items[0].width = width;
-  this._reset.axes = true;
-  return this;
-};
-
-proto.height = function(height) {
-  if (this._defs) this._defs.height = height;
-  if (this._defs && this._defs.marks) this._defs.marks.height = height;
-  if (this._scene) this._scene.items[0].height = height;
-  this._reset.axes = true;
-  return this;
-};
-
-proto.node = function() {
-  return this._node || (this._node = new Node(this));
-};
-
-proto.data = function() {
-  var data = Graph.prototype.data.apply(this, arguments);
-  if(arguments.length > 1) {  // new Datasource
-    this.node().addListener(data.pipeline()[0]);
-  }
-
-  return data;
-};
-
-function predicates(name) {
-  var m = this, predicates = {};
-  if(!util.isArray(name)) return this._predicates[name];
-  name.forEach(function(n) { predicates[n] = m._predicates[n] });
-  return predicates;
-}
-
-proto.predicate = function(name, predicate) {
-  if(arguments.length === 1) return predicates.call(this, name);
-  return (this._predicates[name] = predicate);
-};
-
-proto.predicates = function() { return this._predicates; };
-
-proto.scene = function(renderer) {
-  if(!arguments.length) return this._scene;
-  if(this._builder) this.node().removeListener(this._builder.disconnect());
-  this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
-  this.node().addListener(this._builder.connect());
-  var p = this._builder.pipeline();
-  p[p.length-1].addListener(renderer);
-  return this;
-};
-
-proto.reset = function() {
-  if (this._scene && this._reset.axes) {
-    visit(this._scene, function(item) {
-      if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
-    });
-    this._reset.axes = false;
-  }
-  if (this._scene && this._reset.legends) {
-    visit(this._scene, function(item) {
-      if (item.legends) item.legends.forEach(function(l) { l.reset(); });
-    });
-    this._reset.legends = false;
-  }
-  return this;
-};
-
-proto.addListener = function(l) { this.node().addListener(l); };
-proto.removeListener = function(l) { this.node().removeListener(l); };
-
-proto.fire = function(cs) {
-  if(!cs) cs = changeset.create();
-  this.propagate(cs, this.node());
-};
-
-module.exports = Model;
-},{"../dataflow/Graph":64,"../dataflow/Node":65,"../dataflow/changeset":67,"../scene/GroupBuilder":95,"../scene/visit":100,"datalib/src/util":20}],61:[function(require,module,exports){
-(function (global){
-var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
-    util = require('datalib/src/util'),
-    canvas = require('vega-scenegraph/src/render/canvas'),
-    svg = require('vega-scenegraph/src/render/svg'),
-    Node = require('../dataflow/Node'),
-    parseStreams = require('../parse/streams'),
-    Encoder = require('../scene/Encoder'),
-    Transition = require('../scene/Transition'),
-    config = require('../util/config'),
-    log = require('../util/log'),
-    changeset = require('../dataflow/changeset');
-
-var View = function(el, width, height, model) {
-  this._el    = null;
-  this._model = null;
-  this._width = this.__width = width || 500;
-  this._height  = this.__height = height || 300;
-  this._bgcolor = null;
-  this._autopad = 1;
-  this._padding = {top:0, left:0, bottom:0, right:0};
-  this._viewport = null;
-  this._renderer = null;
-  this._handler  = null;
-  this._streamer = null; // Targeted update for streaming changes
-  this._changeset = null;
-  this._repaint = true; // Full re-render on every re-init
-  this._renderers = {canvas: canvas, svg: svg};
-  this._io  = canvas;
-  this._api = {}; // Stash streaming data API sandboxes.
-};
-
-var prototype = View.prototype;
-
-prototype.model = function(model) {
-  if (!arguments.length) return this._model;
-  if (this._model !== model) {
-    this._model = model;
-    this._streamer = new Node(model);
-    this._changeset = changeset.create();
-    if (this._handler) this._handler.model(model);
-  }
-  return this;
-};
-
-// Sandboxed streaming data API
-function streaming(src) {
-  var view = this,
-      ds = this._model.data(src),
-      name = ds.name(),
-      listener = ds.pipeline()[0],
-      streamer = this._streamer,
-      cs  = this._changeset,
-      api = {};
-
-  if(util.keys(cs.signals).length > 0) {
-    throw "New signal values are not reflected in the visualization." +
-      " Please call view.update() before updating data values."
-  }
-
-  // If we have it stashed, don't create a new closure. 
-  if(this._api[src]) return this._api[src];
-
-  api.insert = function(vals) {
-    ds.insert(util.duplicate(vals));  // Don't pollute the environment
-    streamer.addListener(listener);
-    view._changeset.data[name] = 1;
-    return api;
-  };
-
-  api.update = function() {
-    streamer.addListener(listener);
-    view._changeset.data[name] = 1;
-    return (ds.update.apply(ds, arguments), api);
-  };
-
-  api.remove = function() {
-    streamer.addListener(listener);
-    view._changeset.data[name] = 1;
-    return (ds.remove.apply(ds, arguments), api);
-  };
-
-  api.values = function() { return ds.values() };    
-
-  return (this._api[src] = api);
-};
-
-prototype.data = function(data) {
-  var v = this;
-  if(!arguments.length) return v._model.dataValues();
-  else if(util.isString(data)) return streaming.call(v, data);
-  else if(util.isObject(data)) {
-    util.keys(data).forEach(function(k) {
-      var api = streaming.call(v, k);
-      data[k](api);
-    });
-  }
-  return this;
-};
-
-prototype.signal = function(name, value) {
-  var m  = this._model,
-      cs = this._changeset,
-      streamer = this._streamer,
-      setter = name; 
-
-  if(!arguments.length) return m.signalValues();
-  else if(arguments.length == 1 && util.isString(name)) return m.signalValues(name);
-
-  if(util.keys(cs.data).length > 0) {
-    throw "New data values are not reflected in the visualization." +
-      " Please call view.update() before updating signal values."
-  }
-
-  if(arguments.length == 2) {
-    setter = {};
-    setter[name] = value;
-  }
-
-  util.keys(setter).forEach(function(k) {
-    streamer.addListener(m.signal(k).value(setter[k]));
-    cs.signals[k] = 1;
-    cs.reflow = true;
-  });
-
-  return this;
-};
-
-prototype.width = function(width) {
-  if (!arguments.length) return this.__width;
-  if (this.__width !== width) {
-    this._width = this.__width = width;
-    this.initialize();
-    if (this._strict) this._autopad = 1;
-  }
-  return this;
-};
-
-prototype.height = function(height) {
-  if (!arguments.length) return this.__height;
-  if (this.__height !== height) {
-    this._height = this.__height = height;
-    this.initialize();
-    if (this._strict) this._autopad = 1;
-  }
-  return this;
-};
-
-prototype.background = function(bgcolor) {
-  if (!arguments.length) return this._bgcolor;
-  if (this._bgcolor !== bgcolor) {
-    this._bgcolor = bgcolor;
-    this.initialize();
-  }
-  return this;
-};
-
-prototype.padding = function(pad) {
-  if (!arguments.length) return this._padding;
-  if (this._padding !== pad) {
-    if (util.isString(pad)) {
-      this._autopad = 1;
-      this._padding = {top:0, left:0, bottom:0, right:0};
-      this._strict = (pad === "strict");
-    } else {
-      this._autopad = 0;
-      this._padding = pad;
-      this._strict = false;
-    }
-    if (this._renderer) this._renderer.resize(this._width, this._height, pad);
-    if (this._handler)  this._handler.padding(pad);
-  }
-  return (this._repaint = true, this);
-};
-
-prototype.autopad = function(opt) {
-  if (this._autopad < 1) return this;
-  else this._autopad = 0;
-
-  var pad = this._padding,
-      b = this.model().scene().bounds,
-      inset = config.autopadInset,
-      l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
-      t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
-      r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
-      b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
-  pad = {left:l, top:t, right:r, bottom:b};
-
-  if (this._strict) {
-    this._autopad = 0;
-    this._padding = pad;
-    this._width = Math.max(0, this.__width - (l+r));
-    this._height = Math.max(0, this.__height - (t+b));
-
-    this._model.width(this._width)
-      .height(this._height).reset();
-
-    this.initialize()
-      .update({props:"enter"}).update({props:"update"});
-  } else {
-    this.padding(pad).update(opt);
-  }
-  return this;
-};
-
-prototype.viewport = function(size) {
-  if (!arguments.length) return this._viewport;
-  if (this._viewport !== size) {
-    this._viewport = size;
-    this.initialize();
-  }
-  return this;
-};
-
-prototype.renderer = function(type) {
-  if (!arguments.length) return this._renderer;
-  if (this._renderers[type]) type = this._renderers[type];
-  else if (util.isString(type)) throw new Error("Unknown renderer: " + type);
-  else if (!type) throw new Error("No renderer specified");
-
-  if (this._io !== type) {
-    this._io = type;
-    this._renderer = null;
-    this.initialize();
-    if (this._build) this.render();
-  }
-  return this;
-};
-
-prototype.initialize = function(el) {
-  var v = this, prevHandler,
-      w = v._width, h = v._height, pad = v._padding, bg = v._bgcolor;
-
-  if (!arguments.length || el === null) {
-    el = this._el ? this._el.parentNode : null;
-    if(!el) return this;  // This View cannot init w/o an
-  }
-
-  // clear pre-existing container
-  d3.select(el).select("div.vega").remove();
-  
-  // add div container
-  this._el = el = d3.select(el)
-    .append("div")
-    .attr("class", "vega")
-    .style("position", "relative")
-    .node();
-  if (v._viewport) {
-    d3.select(el)
-      .style("width",  (v._viewport[0] || w)+"px")
-      .style("height", (v._viewport[1] || h)+"px")
-      .style("overflow", "auto");
-  }
-
-  // renderer
-  v._renderer = (v._renderer || new this._io.Renderer(config.load))
-    .initialize(el, w, h, pad)
-    .background(bg);
-  
-  // input handler
-  prevHandler = v._handler;
-  v._handler = new this._io.Handler()
-    .initialize(el, pad, v);
-
-  if (prevHandler) {
-    prevHandler.handlers().forEach(function(h) {
-      v._handler.on(h.type, h.handler);
-    });
-  } else {
-    // Register event listeners for signal stream definitions.
-    parseStreams(this);
-  }
-  
-  return (this._repaint = true, this);
-};
-
-function build() {
-  var v = this;
-  v._renderNode = new Node(v._model)
-    .router(true);
-
-  v._renderNode.evaluate = function(input) {
-    log.debug(input, ["rendering"]);
-
-    var s = v._model.scene(),
-        h = v._handler,
-        ds, d;
-
-    if (h && h.scene) h.scene(s);
-
-    if(input.trans) {
-      input.trans.start(function(items) { v._renderer.render(s, items); });
-    } else if (v._repaint) {
-      v._renderer.render(s);
-      v._repaint = false;
-    } else if(input.dirty.length) {
-      v._renderer.render(s, input.dirty);
-    }
-
-    if (input.dirty.length) {
-      input.dirty.forEach(function(i) { i._dirty = false; });
-    }
-
-    // For all updated datasources, finalize their changesets.
-    for(d in input.data) {
-      ds = v._model.data(d);
-      if(!ds.revises()) continue;
-      changeset.finalize(ds.last());
-    }
-
-    return input;
-  };
-
-  return (v._model.scene(v._renderNode), true);  
-}
-
-prototype.update = function(opt) {    
-  opt = opt || {};
-  var v = this,
-      trans = opt.duration
-        ? new Transition(opt.duration, opt.ease)
-        : null;
-
-  var cs = v._changeset;
-  if(trans) cs.trans = trans;
-  if(opt.props !== undefined) {
-    if(util.keys(cs.data).length > 0) {
-      throw "New data values are not reflected in the visualization." +
-        " Please call view.update() before updating a specified property set."
-    }
-
-    cs.reflow  = true;
-    cs.request = opt.props;
-  }
-
-  v._build = v._build || build.call(this);
-
-  // If specific items are specified, short-circuit dataflow graph.
-  // Else-If there are streaming updates, perform a targeted propagation.
-  // Otherwise, reevaluate the entire model (datasources + scene).
-  if(opt.items) { 
-    Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
-    v._renderNode.evaluate(cs);
-  } else if(v._streamer.listeners().length) {
-    v._model.propagate(cs, v._streamer);
-    v._streamer.disconnect();
-  } else {
-    v._model.fire(cs);
-  }
-
-  v._changeset = changeset.create();
-
-  return v.autopad(opt);
-};
-
-prototype.render = function(items) {
-  this._renderer.render(this._model.scene(), items);
-  return this;
-};
-
-prototype.on = function() {
-  this._handler.on.apply(this._handler, arguments);
-  return this;
-};
-
-prototype.onSignal = function(name, handler) {
-  this._model.signal(name).on(handler);
-  return this;
-};
-
-prototype.off = function() {
-  this._handler.off.apply(this._handler, arguments);
-  return this;
-};
-
-prototype.offSignal = function(name, handler) {
-  this._model.signal(name).off(handler);
-  return this;
-};
-
-View.factory = function(model) {
-  var HeadlessView = require('./HeadlessView');
-  return function(opt) {
-    opt = opt || {};
-    var defs = model.defs();
-    var v = (opt.el ? new View() : new HeadlessView())
-      .model(model)
-      .renderer(opt.renderer || "canvas")
-      .width(defs.width)
-      .height(defs.height)
-      .background(defs.background)
-      .padding(defs.padding)
-      .viewport(defs.viewport)
-      .initialize(opt.el);
-
-    if (opt.data) v.data(opt.data);
-
-    if (opt.hover !== false && opt.el) {
-      v.on("mouseover", function(evt, item) {
-        if (item && item.hasPropertySet("hover")) {
-          this.update({props:"hover", items:item});
-        }
-      })
-      .on("mouseout", function(evt, item) {
-        if (item && item.hasPropertySet("hover")) {
-          this.update({props:"update", items:item});
-        }
-      });
-    }
-  
-    return v;
-  };    
-};
-
-module.exports = View;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{"../dataflow/Node":65,"../dataflow/changeset":67,"../parse/streams":90,"../scene/Encoder":94,"../scene/Transition":97,"../util/config":122,"../util/log":124,"./HeadlessView":59,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":32,"vega-scenegraph/src/render/svg":48}],62:[function(require,module,exports){
-var Node = require('./Node'),
-    changeset = require('./changeset'),
-    log = require('../util/log'),
-    C = require('../util/constants');
-
-function Collector(graph) {
-  Node.prototype.init.call(this, graph);
-  this._data = [];
-  return this.router(true)
-    .collector(true);
-}
-
-var proto = (Collector.prototype = new Node());
-
-proto.data = function() { return this._data; }
-
-proto.evaluate = function(input) {
-  log.debug(input, ["collecting"]);
-
-  if (input.reflow) {
-    input = changeset.create(input);
-    input.mod = this._data.slice();
-    return input;
-  }
-
-  if (input.rem.length) {
-    var ids = input.rem.reduce(function(m,x) { return (m[x._id]=1, m); }, {});
-    this._data = this._data.filter(function(x) { return ids[x._id] !== 1; });
-  }
-
-  if (input.add.length) {
-    this._data = this._data.length ? this._data.concat(input.add) : input.add;
-  }
-
-  if (input.sort) {
-    this._data.sort(input.sort);
-  }
-
-  return input;
-};
-
-module.exports = Collector;
-},{"../util/constants":123,"../util/log":124,"./Node":65,"./changeset":67}],63:[function(require,module,exports){
-var util = require('datalib/src/util'),
-    changeset = require('./changeset'), 
-    tuple = require('./tuple'), 
-    Node = require('./Node'),
-    Collector = require('./Collector'),
-    log = require('../util/log'),
-    C = require('../util/constants');
-
-function Datasource(graph, name, facet) {
-  this._graph = graph;
-  this._name = name;
-  this._data = [];
-  this._source = null;
-  this._facet = facet;
-  this._input = changeset.create();
-  this._output = null;    // Output changeset
-
-  this._pipeline  = null; // Pipeline of transformations.
-  this._collector = null; // Collector to materialize output of pipeline
-  this._revises = false; // Does any pipeline operator need to track prev?
-};
-
-var proto = Datasource.prototype;
-
-proto.name = function(name) {
-  if(!arguments.length) return this._name;
-  return (this._name = name, this);
-};
-
-proto.source = function(src) {
-  if(!arguments.length) return this._source;
-  return (this._source = this._graph.data(src));
-};
-
-proto.insert = function(d) {
-  var prev = this._revises ? null : undefined;
-
-  this._input.add = this._input.add
-    .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
-  return this;
-};
-
-proto.remove = function(where) {
-  var d = this._data.filter(where);
-  this._input.rem = this._input.rem.concat(d);
-  return this;
-};
-
-proto.update = function(where, field, func) {
-  var mod = this._input.mod,
-      ids = tuple.idMap(mod),
-      prev = this._revises ? null : undefined; 
-
-  this._input.fields[field] = 1;
-  this._data.filter(where).forEach(function(x) {
-    var prev = x[field],
-        next = func(x);
-    if (prev !== next) {
-      tuple.set(x, field, next);
-      if(ids[x._id] !== 1) {
-        mod.push(x);
-        ids[x._id] = 1;
-      }
-    }
-  });
-  return this;
-};
-
-proto.values = function(data) {
-  if(!arguments.length)
-    return this._collector ? this._collector.data() : this._data;
-
-  // Replace backing data
-  this._input.rem = this._data.slice();
-  if (data) { this.insert(data); }
-  return this;
-};
-
-function set_prev(d) { if(d._prev === undefined) d._prev = C.SENTINEL; }
-
-proto.revises = function(p) {
-  if(!arguments.length) return this._revises;
-
-  // If we've not needed prev in the past, but a new dataflow node needs it now
-  // ensure existing tuples have prev set.
-  if(!this._revises && p) {
-    this._data.forEach(set_prev);
-    this._input.add.forEach(set_prev); // New tuples that haven't yet been merged into _data
-  }
-
-  this._revises = this._revises || p;
-  return this;
-};
-
-proto.last = function() { return this._output; };
-
-proto.fire = function(input) {
-  if(input) this._input = input;
-  this._graph.propagate(this._input, this._pipeline[0]);
-  return this;
-};
-
-proto.pipeline = function(pipeline) {
-  var ds = this, n, c;
-  if(!arguments.length) return this._pipeline;
-
-  // Add a collector to materialize the output of pipeline operators.
-  if(pipeline.length) {
-    ds._collector = new Collector(this._graph);
-    pipeline.push(ds._collector);
-    ds._revises = pipeline.some(function(p) { return p.revises(); });
-  }
-
-  // Input/output nodes masquerade as collector nodes, so they need to
-  // have a `data` function. dsData is used if a collector isn't available.
-  function dsData() { return ds._data; }
-
-  // Input node applies the datasource's delta, and propagates it to 
-  // the rest of the pipeline. It receives touches to reflow data.
-  var input = new Node(this._graph)
-    .router(true)
-    .collector(true);
-
-  input.data = dsData;
-  input.evaluate = function(input) {
-    log.debug(input, ["input", ds._name]);
-
-    var delta = ds._input, 
-        out = changeset.create(input),
-        rem;
-
-    // Delta might contain fields updated through API
-    util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
-
-    if(input.reflow) {
-      out.mod = ds._data.slice();
-    } else {
-      // update data
-      if(delta.rem.length) {
-        rem = tuple.idMap(delta.rem);
-        ds._data = ds._data
-          .filter(function(x) { return rem[x._id] !== 1 });
-      }
-
-      if(delta.add.length) ds._data = ds._data.concat(delta.add);
-
-      // reset change list
-      ds._input = changeset.create();
-
-      out.add = delta.add; 
-      out.mod = delta.mod;
-      out.rem = delta.rem;
-    }
-
-    return (out.facet = ds._facet, out);
-  };
-
-  pipeline.unshift(input);
-
-  // Output node captures the last changeset seen by this datasource
-  // (needed for joins and builds) and materializes any nested data.
-  // If this datasource is faceted, materializes the values in the facet.
-  var output = new Node(this._graph)
-    .router(true)
-    .collector(true);
-
-  output.data = ds._collector ? ds._collector.data.bind(ds._collector) : dsData;
-  output.evaluate = function(input) {
-    log.debug(input, ["output", ds._name]);
-    var output = changeset.create(input, true);
-
-    if(ds._facet) {
-      ds._facet.values = ds.values();
-      input.facet = null;
-    }
-
-    ds._output = input;
-    output.data[ds._name] = 1;
-    return output;
-  };
-
-  pipeline.push(output);
-
-  this._pipeline = pipeline;
-  this._graph.connect(ds._pipeline);
-  return this;
-};
-
-proto.listener = function() { 
-  var l = new Node(this._graph).router(true),
-      dest = this,
-      prev = this._revises ? null : undefined;
-
-  l.evaluate = function(input) {
-    dest._srcMap = dest._srcMap || {};  // to propagate tuples correctly
-    var map = dest._srcMap,
-        output  = changeset.create(input);
-
-    output.add = input.add.map(function(t) {
-      return (map[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
-    });
-    output.mod = input.mod.map(function(t) { return map[t._id]; });
-    output.rem = input.rem.map(function(t) { 
-      var o = map[t._id];
-      map[t._id] = null;
-      return o;
-    });
-
-    return (dest._input = output);
-  };
-
-  l.addListener(this._pipeline[0]);
-  return l;
-};
-
-proto.addListener = function(l) {
-  if(l instanceof Datasource) {
-    if(this._collector) this._collector.addListener(l.listener());
-    else this._pipeline[0].addListener(l.listener());
-  } else {
-    this._pipeline[this._pipeline.length-1].addListener(l);      
-  }
-
-  return this;
-};
-
-proto.removeListener = function(l) {
-  this._pipeline[this._pipeline.length-1].removeListener(l);
-};
-
-proto.listeners = function(ds) {
-  return ds 
-    ? this._collector ? this._collector.listeners() : this._pipeline[0].listeners()
-    : this._pipeline[this._pipeline.length-1].listeners();
-};
-
-module.exports = Datasource;
-},{"../util/constants":123,"../util/log":124,"./Collector":62,"./Node":65,"./changeset":67,"./tuple":68,"datalib/src/util":20}],64:[function(require,module,exports){
-var util = require('datalib/src/util'),
-    Heap = require('heap'),
-    Datasource = require('./Datasource'),
-    Signal = require('./Signal'),
-    Collector = require('./Collector'),
-    BatchTransform = require('../transforms/BatchTransform'),
-    changeset = require('./changeset'),
-    log = require('../util/log'),
-    C = require('../util/constants');
-
-function Graph() {
-}
-
-var proto = Graph.prototype;
-
-proto.init = function() {
-  this._stamp = 0;
-  this._rank  = 0;
-
-  this._data = {};
-  this._signals = {};
-
-  this.doNotPropagate = {};
-};
-
-proto.data = function(name, pipeline, facet) {
-  var db = this._data;
-  if(!arguments.length) return util.keys(db).map(function(d) { return db[d]; });
-  if(arguments.length === 1) return db[name];
-  return (db[name] = new Datasource(this, name, facet).pipeline(pipeline));
-};
-
-proto.dataValues = function(names) {
-  var graph = this;
-  if (!arguments.length) names = util.keys(this._data);
-  if (!util.isArray(names)) return this._data[names].values();
-  return names.reduce(function(db, n) {
-    return (db[n] = graph._data[n].values(), db);
-  }, {});
-};
-
-function signal(name) {
-  var m = this, i, len;
-  if(!util.isArray(name)) return this._signals[name];
-  return name.map(function(n) { m._signals[n]; });
-}
-
-proto.signal = function(name, init) {
-  var m = this;
-  if(arguments.length === 1) return signal.call(this, name);
-  return (this._signals[name] = new Signal(this, name, init));
-};
-
-proto.signalValues = function(names) {
-  var graph = this;
-  if(!arguments.length) names = util.keys(this._signals);
-  if(!util.isArray(names)) return this._signals[names].value();
-  return names.reduce(function(sg, n) {
-    return (sg[n] = graph._signals[n].value(), sg);
-  }, {});
-};
-
-proto.signalRef = function(ref) {
-  if(!util.isArray(ref)) ref = util.field(ref);
-  var value = this.signal(ref.shift()).value();
-  if(ref.length > 0) {
-    var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
-    value = fn.call(null, value);
-  }
-
-  return value;
-};
-
-var schedule = function(a, b) {
-  // If the nodes are equal, propagate the non-reflow pulse first,
-  // so that we can ignore subsequent reflow pulses. 
-  if(a.rank == b.rank) return a.pulse.reflow ? 1 : -1;
-  else return a.rank - b.rank; 
-};
-
-proto.propagate = function(pulse, node) {
-  var v, l, n, p, r, i, len, reflowed;
-
-  // new PQ with each propagation cycle so that we can pulse branches
-  // of the dataflow graph during a propagation (e.g., when creating
-  // a new inline datasource).
-  var pq = new Heap(schedule); 
-
-  if(pulse.stamp) throw "Pulse already has a non-zero stamp"
-
-  pulse.stamp = ++this._stamp;
-  pq.push({ node: node, pulse: pulse, rank: node.rank() });
-
-  while (pq.size() > 0) {
-    v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
-    reflowed = p.reflow && n.last() >= p.stamp;
-
-    if(reflowed) continue; // Don't needlessly reflow ops.
-
-    // A node's rank might change during a propagation (e.g. instantiating
-    // a group's dataflow branch). Re-queue if it has. T
-    // TODO: use pq.replace or pq.poppush?
-    if(r != n.rank()) {
-      log.debug(p, ['Rank mismatch', r, n.rank()]);
-      pq.push({ node: n, pulse: p, rank: n.rank() });
-      continue;
-    }
-
-    p = this.evaluate(p, n);
-
-    // Even if we didn't run the node, we still want to propagate 
-    // the pulse. 
-    if (p !== this.doNotPropagate) {
-      for (i = 0, len = l.length; i < len; i++) {
-        pq.push({ node: l[i], pulse: p, rank: l[i]._rank });
-      }
-    }
-  }
-};
-
-// Connect a branch of dataflow nodes. 
-// Dependencies get wired to the nearest collector. 
-function forEachNode(branch, fn) {
-  var node, collector, router, i;
-  for(i=0; i<branch.length; ++i) {
-    node = branch[i];
-
-    // Share collectors between batch transforms. We can reuse an
-    // existing collector unless a router node has come after it,
-    // in which case, we splice in a new collector.
-    if (node instanceof BatchTransform && !node.data) {
-      if (router) {
-        branch.splice(i, 0, (node = new Collector(this)));
-      } else {
-        node.data = collector.data.bind(collector);
-      }
-    } 
-
-    if (node.collector()) collector = node;
-    router = node.router() && !node.collector(); 
-    fn(node, collector, i);
-  }
-}
-
-proto.connect = function(branch) {
-  log.debug({}, ['connecting']);
-  var graph = this;
-
-  forEachNode.call(this, branch, function(n, c, i) {
-    var data = n.dependency(C.DATA),
-        signals = n.dependency(C.SIGNALS);
-
-    if(data.length > 0) {
-      data.forEach(function(d) { 
-        graph.data(d)
-          .revises(n.revises())
-          .addListener(c);
-      });
-    }
-
-    if(signals.length > 0) {
-      signals.forEach(function(s) { graph.signal(s).addListener(c); });
-    }
-
-    if(i > 0) {
-      branch[i-1].addListener(branch[i]);
-    }
-  });
-
-  return branch;
-};
-
-proto.disconnect = function(branch) {
-  log.debug({}, ['disconnecting']);
-  var graph = this;
-
-  forEachNode.call(this, branch, function(n, c, i) {
-    var data = n.dependency(C.DATA),
-        signals = n.dependency(C.SIGNALS);
-
-    if(data.length > 0) {
-      data.forEach(function(d) { graph.data(d).removeListener(c); });
-    }
-
-    if(signals.length > 0) {
-      signals.forEach(function(s) { graph.signal(s).removeListener(c) });
-    }
-
-    n.disconnect();  
-  });
-
-  return branch;
-};
-
-proto.reevaluate = function(pulse, node) {
-  var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
-      run = !!pulse.add.length || !!pulse.rem.length || node.router();
-  run = run || !reflowed;
-  return run || node.reevaluate(pulse);
-};
-
-proto.evaluate = function(pulse, node) {
-  if(!this.reevaluate(pulse, node)) return pulse;
-  pulse = node.evaluate(pulse);
-  node.last(pulse.stamp);
-  return pulse
-};
-
-module.exports = Graph;
-},{"../transforms/BatchTransform":102,"../util/constants":123,"../util/log":124,"./Collector":62,"./Datasource":63,"./Signal":66,"./changeset":67,"datalib/src/util":20,"heap":21}],65:[function(require,module,exports){
-var util = require('datalib/src/util'),
-    C = require('../util/constants'),
-    REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
-    nodeID = 1;
-
-function Node(graph) {
-  if(graph) this.init(graph);
-  return this;
-}
-
-var proto = Node.prototype;
-
-proto.init = function(graph) {
-  this._id = nodeID++;
-  this._graph = graph;
-  this._rank = ++graph._rank; // For topologial sort
-  this._stamp = 0;  // Last stamp seen
-
-  this._listeners = [];
-  this._registered = {}; // To prevent duplicate listeners
-
-  this._deps = {
-    data:    [],
-    fields:  [],
-    scales:  [],
-    signals: [],
-  };
-
-  this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
-  this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
-  this._revises = false; // Does the operator require tuples' previous values? 
-  return this;
-};
-
-proto.rank = function() { return this._rank; };
-
-proto.last = function(stamp) { 
-  if(!arguments.length) return this._stamp;
-  this._stamp = stamp;
-  return this;
-};
-
-proto.dependency = function(type, deps) {
-  var d = this._deps[type];
-  if(arguments.length === 1) return d;
-  if(deps === null) { // Clear dependencies of a certain type
-    while(d.length > 0) d.pop();
-  } else {
-    if(!util.isArray(deps) && d.indexOf(deps) < 0) d.push(deps);
-    else d.push.apply(d, util.array(deps));
-  }
-  return this;
-};
-
-proto.router = function(bool) {
-  if(!arguments.length) return this._isRouter;
-  this._isRouter = !!bool
-  return this;
-};
-
-proto.collector = function(bool) {
-  if(!arguments.length) return this._isCollector;
-  this._isCollector = !!bool;
-  return this;
-};
-
-proto.revises = function(bool) {
-  if(!arguments.length) return this._revises;
-  this._revises = !!bool;
-  return this;
-};
-
-proto.listeners = function() {
-  return this._listeners;
-};
-
-proto.addListener = function(l) {
-  if(!(l instanceof Node)) throw "Listener is not a Node";
-  if(this._registered[l._id]) return this;
-
-  this._listeners.push(l);
-  this._registered[l._id] = 1;
-  if(this._rank > l._rank) {
-    var q = [l];
-    while(q.length) {
-      var cur = q.splice(0,1)[0];
-      cur._rank = ++this._graph._rank;
-      q.push.apply(q, cur._listeners);
-    }
-  }
-
-  return this;
-};
-
-proto.removeListener = function (l) {
-  var foundSending = false;
-  for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
-    if (this._listeners[i] === l) {
-      this._listeners.splice(i, 1);
-      this._registered[l._id] = null;
-      foundSending = true;
-    }
-  }
-  
-  return foundSending;
-};
-
-proto.disconnect = function() {
-  this._listeners = [];
-  this._registered = {};
-};
-
-proto.evaluate = function(pulse) { return pulse; }
-
-proto.reevaluate = function(pulse) {
-  var node = this, reeval = false;
-  return REEVAL.some(function(prop) {
-    reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
-    return reeval;
-  });
-
-  return this;
-};
-
-module.exports = Node;
-},{"../util/constants":123,"datalib/src/util":20}],66:[function(require,module,exports){
-var Node = require('./Node'),
-    changeset = require('./changeset');
-
-function Signal(graph, name, init) {
-  Node.prototype.init.call(this, graph);
-  this._name  = name;
-  this._value = init;
-  this._verbose = false;  // Verbose signals re-pulse the graph even if prev === val.
-  this._handlers = [];
-  return this;
-};
-
-var proto = (Signal.prototype = new Node());
-
-proto.name = function() { return this._name; };
-
-proto.value = function(val) {
-  if (!arguments.length) return this._value;
-  return (this._value = val, this);
-};
-
-proto.verbose = function(v) {
-  if (!arguments.length) return this._verbose;
-  return (this._verbose = !!v, this);
-};
-
-proto.evaluate = function(input) {
-  return input.signals[this._name] ? input : this._graph.doNotPropagate;
-};
-
-proto.fire = function(cs) {
-  if (!cs) cs = changeset.create(null, true);
-  cs.signals[this._name] = 1;
-  this._graph.propagate(cs, this);
-};
-
-proto.on = function(handler) {
-  var sg = this,
-      node = new Node(this._graph);
-
-  node.evaluate = function(input) {
-    return (handler(sg.name(), sg.value()), input);
-  };
-
-  this._handlers.push({ handler: handler, node: node });
-  return this.addListener(node);
-};
-
-proto.off = function(handler) {
-  var sg = this, h = this._handlers;
-  for (var i=h.length; --i>=0;) {
-    if (!handler || h[i].handler === handler) {
-      sg.removeListener(h.splice(i, 1)[0].node);
-    }
-  }
-  return this;
-};
-
-module.exports = Signal;
-},{"./Node":65,"./changeset":67}],67:[function(require,module,exports){
-var C = require('../util/constants');
-var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
-
-function create(cs, reflow) {
-  var out = {};
-  copy(cs, out);
-
-  out.add = [];
-  out.mod = [];
-  out.rem = [];
-
-  out.reflow = reflow;
-
-  return out;
-}
-
-function reset_prev(x) {
-  x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
-}
-
-function finalize(cs) {
-  for(i=0, len=cs.add.length; i<len; ++i) reset_prev(cs.add[i]);
-  for(i=0, len=cs.mod.length; i<len; ++i) reset_prev(cs.mod[i]);
-}
-
-function copy(a, b) {
-  b.stamp = a ? a.stamp : 0;
-  b.sort  = a ? a.sort  : null;
-  b.facet = a ? a.facet : null;
-  b.trans = a ? a.trans : null;
-  b.dirty = a ? a.dirty : [];
-  b.request = a ? a.request : null;
-  REEVAL.forEach(function(d) { b[d] = a ? a[d] : {}; });
-}
-
-module.exports = {
-  create: create,
-  copy: copy,
-  finalize: finalize,
-};
-},{"../util/constants":123}],68:[function(require,module,exports){
-var util = require('datalib/src/util'),
-    C = require('../util/constants'),
-    tupleID = 1;
-
-// Object.create is expensive. So, when ingesting, trust that the
-// datum is an object that has been appropriately sandboxed from 
-// the outside environment. 
-function ingest(datum, prev) {
-  datum = util.isObject(datum) ? datum : {data: datum};
-  datum._id = tupleID++;
-  datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
-  return datum;
+function toMap(list) {
+  var map = {}, i, n;
+  for (i=0, n=list.length; i<n; ++i) map[list[i]] = 1;
+  return map;
 }
 
-function derive(datum, prev) {
-  return ingest(Object.create(datum), prev);
+function keys(object) {
+  var list = [], k;
+  for (k in object) list.push(k);
+  return list;
 }
-
-// WARNING: operators should only call this once per timestamp!
-function set(t, k, v) {
-  var prev = t[k];
-  if(prev === v) return false;
-  set_prev(t, k);
-  t[k] = v;
-  return true;
-}
-
-function set_prev(t, k) {
-  if(t._prev === undefined) return;
-  t._prev = (t._prev === C.SENTINEL) ? {} : t._prev;
-  t._prev[k] = t[k];
-}
-
-function has_prev(t) {
-  return t._prev && t._prev !== C.SENTINEL;
-}
-
-function reset() { tupleID = 1; }
-
-function idMap(a) {
-  return a.reduce(function(m,x) {
-    return (m[x._id] = 1, m);
-  }, {});
-};
-
-module.exports = {
-  ingest: ingest,
-  derive: derive,
-  set:    set,
-  set_prev: set_prev,
-  has_prev: has_prev,
-  reset:  reset,
-  idMap:  idMap
-};
-},{"../util/constants":123,"datalib/src/util":20}],69:[function(require,module,exports){
-var util = require('datalib/src/util');
 
 module.exports = function(opt) {
   opt = opt || {};
-  var constants = opt.constants || require('./constants');
-  var functions = (opt.functions || require('./functions'))(codegen);
-  var idWhiteList = opt.idWhiteList ? util.toMap(opt.idWhiteList) : null;
-  var idBlackList = opt.idBlackList ? util.toMap(opt.idBlackList) : null;
-  var memberDepth = 0;
-
-  // TODO generalize?
-  var DATUM = 'datum';
-  var SIGNAL_PREFIX = 'signals.';
-  var signals = {};
-  var fields = {};
+  var constants = opt.constants || require('./constants'),
+      functions = (opt.functions || require('./functions'))(codegen),
+      idWhiteList = opt.idWhiteList ? toMap(opt.idWhiteList) : null,
+      idBlackList = opt.idBlackList ? toMap(opt.idBlackList) : null,
+      memberDepth = 0,
+      FIELD_VAR = opt.fieldVar || 'datum',
+      GLOBAL_VAR = opt.globalVar || 'signals',
+      globals = {},
+      fields = {};
 
   function codegen_wrap(ast) {    
     var retval = {
-      fn: codegen(ast),
-      signals: util.keys(signals),
-      fields: util.keys(fields)
+      code: codegen(ast),
+      globals: keys(globals),
+      fields: keys(fields)
     };
-    signals = {};
+    globals = {};
     fields = {};
     return retval;
+  }
+
+  function lookupGlobal(id) {
+    return GLOBAL_VAR + '["' + id + '"]';
   }
 
   function codegen(ast) {
     if (ast instanceof String) return ast;
     var generator = CODEGEN_TYPES[ast.type];
     if (generator == null) {
-      throw new Error("Unsupported type: " + ast.type);
+      throw new Error('Unsupported type: ' + ast.type);
     }
     return generator(ast);
   }
 
   var CODEGEN_TYPES = {
-    "Literal": function(n) {
+    'Literal': function(n) {
         return n.raw;
       },
-    "Identifier": function(n) {
+    'Identifier': function(n) {
         var id = n.name;
         if (memberDepth > 0) {
           return id;
@@ -7719,242 +2888,263 @@ module.exports = function(opt) {
           if (idWhiteList.hasOwnProperty(id)) {
             return id;
           } else {
-            signals[id] = 1;
-            return SIGNAL_PREFIX + id; // HACKish...
+            globals[id] = 1;
+            return lookupGlobal(id);
           }
         }
         if (idBlackList && idBlackList.hasOwnProperty(id)) {
-          throw new Error("Illegal identifier: " + id);
+          throw new Error('Illegal identifier: ' + id);
         }
         return id;
       },
-    "Program": function(n) {
-        return n.body.map(codegen).join("\n");
+    'Program': function(n) {
+        return n.body.map(codegen).join('\n');
       },
-    "MemberExpression": function(n) {
+    'MemberExpression': function(n) {
         var d = !n.computed;
         var o = codegen(n.object);
         if (d) memberDepth += 1;
         var p = codegen(n.property);
-        if (o === DATUM) { fields[p] = 1; } // HACKish...
+        if (o === FIELD_VAR) { fields[p] = 1; } // HACKish...
         if (d) memberDepth -= 1;
-        return o + (d ? "."+p : "["+p+"]");
+        return o + (d ? '.'+p : '['+p+']');
       },
-    "CallExpression": function(n) {
-        if (n.callee.type !== "Identifier") {
-          throw new Error("Illegal callee type: " + n.callee.type);
+    'CallExpression': function(n) {
+        if (n.callee.type !== 'Identifier') {
+          throw new Error('Illegal callee type: ' + n.callee.type);
         }
         var callee = n.callee.name;
         var args = n.arguments;
         var fn = functions.hasOwnProperty(callee) && functions[callee];
-        if (!fn) throw new Error("Unrecognized function: " + callee);
-        return fn instanceof Function
-          ? fn(args)
-          : fn + "(" + args.map(codegen).join(",") + ")";
+        if (!fn) throw new Error('Unrecognized function: ' + callee);
+        return fn instanceof Function ?
+          fn(args) :
+          fn + '(' + args.map(codegen).join(',') + ')';
       },
-    "ArrayExpression": function(n) {
-        return "[" + n.elements.map(codegen).join(",") + "]";
+    'ArrayExpression': function(n) {
+        return '[' + n.elements.map(codegen).join(',') + ']';
       },
-    "BinaryExpression": function(n) {
-        return "(" + codegen(n.left) + n.operator + codegen(n.right) + ")";
+    'BinaryExpression': function(n) {
+        return '(' + codegen(n.left) + n.operator + codegen(n.right) + ')';
       },
-    "UnaryExpression": function(n) {
-        return "(" + n.operator + codegen(n.argument) + ")";
+    'UnaryExpression': function(n) {
+        return '(' + n.operator + codegen(n.argument) + ')';
       },
-    "UpdateExpression": function(n) {
-        return "(" + (prefix
-          ? n.operator + codegen(n.argument)
-          : codegen(n.argument) + n.operator
-        ) + ")";
+    'UpdateExpression': function(n) {
+        return '(' + (n.prefix ?
+          n.operator + codegen(n.argument) :
+          codegen(n.argument) + n.operator
+        ) + ')';
       },
-    "ConditionalExpression": function(n) {
-        return "(" + codegen(n.test)
-          + "?" + codegen(n.consequent)
-          + ":" + codegen(n.alternate)
-          + ")";
+    'ConditionalExpression': function(n) {
+        return '(' + codegen(n.test) +
+          '?' + codegen(n.consequent) +
+          ':' + codegen(n.alternate) +
+          ')';
       },
-    "LogicalExpression": function(n) {
-        return "(" + codegen(n.left) + n.operator + codegen(n.right) + ")";
+    'LogicalExpression': function(n) {
+        return '(' + codegen(n.left) + n.operator + codegen(n.right) + ')';
       },
-    "ObjectExpression": function(n) {
-        return "{" + n.properties.map(codegen).join(",") + "}";
+    'ObjectExpression': function(n) {
+        return '{' + n.properties.map(codegen).join(',') + '}';
       },
-    "Property": function(n) {
+    'Property': function(n) {
         memberDepth += 1;
         var k = codegen(n.key);
         memberDepth -= 1;
-        return k + ":" + codegen(n.value);
+        return k + ':' + codegen(n.value);
       },
-    "ExpressionStatement": function(n) {
+    'ExpressionStatement': function(n) {
         return codegen(n.expression);
       }
   };
   
   return codegen_wrap;
 };
-},{"./constants":70,"./functions":71,"datalib/src/util":20}],70:[function(require,module,exports){
+
+},{"./constants":24,"./functions":25}],24:[function(require,module,exports){
 module.exports = {
-  "NaN":     "NaN",
-  "E":       "Math.E",
-  "LN2":     "Math.LN2",
-  "LN10":    "Math.LN10",
-  "LOG2E":   "Math.LOG2E",
-  "LOG10E":  "Math.LOG10E",
-  "PI":      "Math.PI",
-  "SQRT1_2": "Math.SQRT1_2",
-  "SQRT2":   "Math.SQRT2"
+  'NaN':     'NaN',
+  'E':       'Math.E',
+  'LN2':     'Math.LN2',
+  'LN10':    'Math.LN10',
+  'LOG2E':   'Math.LOG2E',
+  'LOG10E':  'Math.LOG10E',
+  'PI':      'Math.PI',
+  'SQRT1_2': 'Math.SQRT1_2',
+  'SQRT2':   'Math.SQRT2'
 };
-},{}],71:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = function(codegen) {
 
   function fncall(name, args, cast, type) {
     var obj = codegen(args[0]);
     if (cast) {
-      obj = cast + "(" + obj + ")";
-      if (cast.lastIndexOf("new ", 0) === 0) obj = "(" + obj + ")";
+      obj = cast + '(' + obj + ')';
+      if (cast.lastIndexOf('new ', 0) === 0) obj = '(' + obj + ')';
     }
-    return obj + "." + name + (type < 0 ? "" : type === 0
-      ? "()"
-      : "(" + args.slice(1).map(codegen).join(",") + ")");
+    return obj + '.' + name + (type < 0 ? '' : type === 0 ?
+      '()' :
+      '(' + args.slice(1).map(codegen).join(',') + ')');
   }
   
-  var DATE = "new Date";
-  var STRING = "String";
-  var REGEXP = "RegExp";
+  var DATE = 'new Date';
+  var STRING = 'String';
+  var REGEXP = 'RegExp';
 
   return {
     // MATH functions
-    "isNaN":    "isNaN",
-    "isFinite": "isFinite",
-    "abs":      "Math.abs",
-    "acos":     "Math.acos",
-    "asin":     "Math.asin",
-    "atan":     "Math.atan",
-    "atan2":    "Math.atan2",
-    "ceil":     "Math.ceil",
-    "cos":      "Math.cos",
-    "exp":      "Math.exp",
-    "floor":    "Math.floor",
-    "log":      "Math.log",
-    "max":      "Math.max",
-    "min":      "Math.min",
-    "pow":      "Math.pow",
-    "random":   "Math.random",
-    "round":    "Math.round",
-    "sin":      "Math.sin",
-    "sqrt":     "Math.sqrt",
-    "tan":      "Math.tan",
+    'isNaN':    'isNaN',
+    'isFinite': 'isFinite',
+    'abs':      'Math.abs',
+    'acos':     'Math.acos',
+    'asin':     'Math.asin',
+    'atan':     'Math.atan',
+    'atan2':    'Math.atan2',
+    'ceil':     'Math.ceil',
+    'cos':      'Math.cos',
+    'exp':      'Math.exp',
+    'floor':    'Math.floor',
+    'log':      'Math.log',
+    'max':      'Math.max',
+    'min':      'Math.min',
+    'pow':      'Math.pow',
+    'random':   'Math.random',
+    'round':    'Math.round',
+    'sin':      'Math.sin',
+    'sqrt':     'Math.sqrt',
+    'tan':      'Math.tan',
 
     // DATE functions
-    "now":      "Date.now",
-    "datetime": "new Date",
-    "date": function(args) {
-        return fncall("getDate", args, DATE, 0);
+    'now':      'Date.now',
+    'datetime': 'new Date',
+    'date': function(args) {
+        return fncall('getDate', args, DATE, 0);
       },
-    "day": function(args) {
-        return fncall("getDay", args, DATE, 0);
+    'day': function(args) {
+        return fncall('getDay', args, DATE, 0);
       },
-    "year": function(args) {
-        return fncall("getFullYear", args, DATE, 0);
+    'year': function(args) {
+        return fncall('getFullYear', args, DATE, 0);
       },
-    "month": function(args) {
-        return fncall("getMonth", args, DATE, 0);
+    'month': function(args) {
+        return fncall('getMonth', args, DATE, 0);
       },
-    "hours": function(args) {
-        return fncall("getHours", args, DATE, 0);
+    'hours': function(args) {
+        return fncall('getHours', args, DATE, 0);
       },
-    "minutes": function(args) {
-        return fncall("getMinutes", args, DATE, 0);
+    'minutes': function(args) {
+        return fncall('getMinutes', args, DATE, 0);
       },
-    "seconds": function(args) {
-        return fncall("getSeconds", args, DATE, 0);
+    'seconds': function(args) {
+        return fncall('getSeconds', args, DATE, 0);
       },
-    "milliseconds": function(args) {
-        return fncall("getMilliseconds", args, DATE, 0);
+    'milliseconds': function(args) {
+        return fncall('getMilliseconds', args, DATE, 0);
       },
-    "time": function(args) {
-        return fncall("getTime", args, DATE, 0);
+    'time': function(args) {
+        return fncall('getTime', args, DATE, 0);
       },
-    "timezoneoffset": function(args) {
-        return fncall("getTimezoneOffset", args, DATE, 0);
+    'timezoneoffset': function(args) {
+        return fncall('getTimezoneOffset', args, DATE, 0);
       },
-    "utcdate": function(args) {
-        return fncall("getUTCDate", args, DATE, 0);
+    'utcdate': function(args) {
+        return fncall('getUTCDate', args, DATE, 0);
       },
-    "utcday": function(args) {
-        return fncall("getUTCDay", args, DATE, 0);
+    'utcday': function(args) {
+        return fncall('getUTCDay', args, DATE, 0);
       },
-    "utcyear": function(args) {
-        return fncall("getUTCFullYear", args, DATE, 0);
+    'utcyear': function(args) {
+        return fncall('getUTCFullYear', args, DATE, 0);
       },
-    "utcmonth": function(args) {
-        return fncall("getUTCMonth", args, DATE, 0);
+    'utcmonth': function(args) {
+        return fncall('getUTCMonth', args, DATE, 0);
       },
-    "utchours": function(args) {
-        return fncall("getUTCHours", args, DATE, 0);
+    'utchours': function(args) {
+        return fncall('getUTCHours', args, DATE, 0);
       },
-    "utcminutes": function(args) {
-        return fncall("getUTCMinutes", args, DATE, 0);
+    'utcminutes': function(args) {
+        return fncall('getUTCMinutes', args, DATE, 0);
       },
-    "utcseconds": function(args) {
-        return fncall("getUTCSeconds", args, DATE, 0);
+    'utcseconds': function(args) {
+        return fncall('getUTCSeconds', args, DATE, 0);
       },
-    "utcmilliseconds": function(args) {
-        return fncall("getUTCMilliseconds", args, DATE, 0);
+    'utcmilliseconds': function(args) {
+        return fncall('getUTCMilliseconds', args, DATE, 0);
       },
 
     // shared sequence functions
-    "length": function(args) {
-        return fncall("length", args, null, -1);
+    'length': function(args) {
+        return fncall('length', args, null, -1);
       },
-    "indexof": function(args) {
-        return fncall("indexOf", args, null);
+    'indexof': function(args) {
+        return fncall('indexOf', args, null);
       },
-    "lastindexof": function(args) {
-        return fncall("lastIndexOf", args, null);
+    'lastindexof': function(args) {
+        return fncall('lastIndexOf', args, null);
       },
 
     // STRING functions
-    "parseFloat": "parseFloat",
-    "parseInt": "parseInt",
-    "upper": function(args) {
-        return fncall("toUpperCase", args, STRING, 0);
+    'parseFloat': 'parseFloat',
+    'parseInt': 'parseInt',
+    'upper': function(args) {
+        return fncall('toUpperCase', args, STRING, 0);
       },
-    "lower": function(args) {
-        return fncall("toLowerCase", args, STRING, 0);
+    'lower': function(args) {
+        return fncall('toLowerCase', args, STRING, 0);
       },
-    "slice": function(args) {
-        return fncall("slice", args, STRING);
+    'slice': function(args) {
+        return fncall('slice', args, STRING);
       },
-    "substring": function(args) {
-        return fncall("substring", args, STRING);
+    'substring': function(args) {
+        return fncall('substring', args, STRING);
       },
 
     // REGEXP functions
-    "test": function(args) {
-        return fncall("test", args, REGEXP);
+    'test': function(args) {
+        return fncall('test', args, REGEXP);
       },
     
     // Control Flow functions
-    "if": function(args) {
+    'if': function(args) {
         if (args.length < 3)
-          throw new Error("Missing arguments to if function.");
+          throw new Error('Missing arguments to if function.');
         if (args.length > 3)
-        throw new Error("Too many arguments to if function.");
+        throw new Error('Too many arguments to if function.');
         var a = args.map(codegen);
-        return a[0]+"?"+a[1]+":"+a[2];
+        return a[0]+'?'+a[1]+':'+a[2];
       }
   };
 };
-},{}],72:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var parser = require('./parser'),
     codegen = require('./codegen');
     
-module.exports = {
-  parse: function(input, opt) { return parser.parse("("+input+")", opt); },
-  code: function(opt) { return codegen(opt); }
+var expr = module.exports = {
+  parse: function(input, opt) {
+      return parser.parse('('+input+')', opt);
+    },
+  code: function(opt) {
+      return codegen(opt);
+    },
+  compiler: function(args, fieldVar, globalVar) {
+      args = args.slice();
+      var generator = codegen({
+            idWhiteList: args,
+            fieldVar: fieldVar,
+            globalVar: globalVar
+          }),
+          len = args.length;
+      return function(str) {
+        var value = generator(expr.parse(str));
+        args[len] = '"use strict"; return (' + value.code + ');';
+        value.fn = Function.apply(null, args);
+        return value;
+      };
+    }
 };
-},{"./codegen":69,"./parser":73}],73:[function(require,module,exports){
+
+},{"./codegen":23,"./parser":27}],27:[function(require,module,exports){
 /*
   The following expression parser is based on Esprima (http://esprima.org/).
   Original header comment and license for Esprima is included here:
@@ -9486,16 +4676,6 @@ module.exports = (function() {
       }
   }
 
-  // Expect the next token to match the specified keyword.
-  // If not, an exception will be thrown.
-
-  function expectKeyword(keyword) {
-      var token = lex();
-      if (token.type !== Token.Keyword || token.value !== keyword) {
-          throwUnexpected(token);
-      }
-  }
-
   // Return true if the next token matches the specified punctuator.
 
   function match(value) {
@@ -9526,12 +4706,6 @@ module.exports = (function() {
       if (lookahead.type !== Token.EOF && !match('}')) {
           throwUnexpected(lookahead);
       }
-  }
-
-  // Return true if provided expression is LeftHandSideExpression
-
-  function isLeftHandSide(expr) {
-      return expr.type === Syntax.Identifier || expr.type === Syntax.MemberExpression;
   }
 
   // 11.1.4 Array Initialiser
@@ -9580,7 +4754,7 @@ module.exports = (function() {
   }
 
   function parseObjectProperty() {
-      var token, key, id, value, param, node = new Node();
+      var token, key, id, value, node = new Node();
 
       token = lookahead;
 
@@ -9601,7 +4775,7 @@ module.exports = (function() {
   }
 
   function parseObjectInitialiser() {
-      var properties = [], token, property, name, key, kind, map = {}, toString = String, node = new Node();
+      var properties = [], property, name, key, kind, map = {}, toString = String, node = new Node();
 
       expect('{');
 
@@ -9795,33 +4969,10 @@ module.exports = (function() {
       return expr;
   }
 
-  function parseLeftHandSideExpression() {
-      var expr, property, startToken;
-      assert(state.allowIn, 'callee of new expression always allow in keyword.');
-
-      startToken = lookahead;
-      expr = parsePrimaryExpression();
-
-      for (;;) {
-          if (match('[')) {
-              property = parseComputedMember();
-              expr = new WrappingNode(startToken).finishMemberExpression('[', expr, property);
-          } else if (match('.')) {
-              property = parseNonComputedMember();
-              expr = new WrappingNode(startToken).finishMemberExpression('.', expr, property);
-          } else {
-              break;
-          }
-      }
-      return expr;
-  }
-
   // 11.3 Postfix Expressions
 
   function parsePostfixExpression() {
-      var expr, token, startToken = lookahead;
-
-      expr = parseLeftHandSideExpressionAllowCall();
+      var expr = parseLeftHandSideExpressionAllowCall();
 
       if (lookahead.type === Token.Punctuator) {
           if ((match('++') || match('--')) && !peekLineTerminator()) {
@@ -10013,7 +5164,7 @@ module.exports = (function() {
   // 11.13 Assignment Operators
 
   function parseAssignmentExpression() {
-      var oldParenthesisCount, token, expr, right, list, startToken;
+      var oldParenthesisCount, token, expr, startToken;
 
       oldParenthesisCount = state.parenthesisCount;
 
@@ -10028,9 +5179,7 @@ module.exports = (function() {
   // 11.14 Comma Operator
 
   function parseExpression() {
-      var expr, startToken = lookahead, expressions;
-
-      expr = parseAssignmentExpression();
+      var expr = parseAssignmentExpression();
 
       if (match(',')) {
           throw new Error("Disabled."); // no sequence expressions
@@ -10052,8 +5201,6 @@ module.exports = (function() {
   function parseStatement() {
       var type = lookahead.type,
           expr,
-          labeledBody,
-          key,
           node;
 
       if (type === Token.EOF) {
@@ -10325,7 +5472,4850 @@ module.exports = (function() {
   };
 
 })();
-},{}],74:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
+var segmentCache = {},
+    bezierCache = {},
+    join = [].join;
+
+// Copied from Inkscape svgtopdf, thanks!
+function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
+  var key = join.call(arguments);
+  if (segmentCache[key]) {
+    return segmentCache[key];
+  }
+
+  var th = rotateX * (Math.PI/180);
+  var sin_th = Math.sin(th);
+  var cos_th = Math.cos(th);
+  rx = Math.abs(rx);
+  ry = Math.abs(ry);
+  var px = cos_th * (ox - x) * 0.5 + sin_th * (oy - y) * 0.5;
+  var py = cos_th * (oy - y) * 0.5 - sin_th * (ox - x) * 0.5;
+  var pl = (px*px) / (rx*rx) + (py*py) / (ry*ry);
+  if (pl > 1) {
+    pl = Math.sqrt(pl);
+    rx *= pl;
+    ry *= pl;
+  }
+
+  var a00 = cos_th / rx;
+  var a01 = sin_th / rx;
+  var a10 = (-sin_th) / ry;
+  var a11 = (cos_th) / ry;
+  var x0 = a00 * ox + a01 * oy;
+  var y0 = a10 * ox + a11 * oy;
+  var x1 = a00 * x + a01 * y;
+  var y1 = a10 * x + a11 * y;
+
+  var d = (x1-x0) * (x1-x0) + (y1-y0) * (y1-y0);
+  var sfactor_sq = 1 / d - 0.25;
+  if (sfactor_sq < 0) sfactor_sq = 0;
+  var sfactor = Math.sqrt(sfactor_sq);
+  if (sweep == large) sfactor = -sfactor;
+  var xc = 0.5 * (x0 + x1) - sfactor * (y1-y0);
+  var yc = 0.5 * (y0 + y1) + sfactor * (x1-x0);
+
+  var th0 = Math.atan2(y0-yc, x0-xc);
+  var th1 = Math.atan2(y1-yc, x1-xc);
+
+  var th_arc = th1-th0;
+  if (th_arc < 0 && sweep === 1){
+    th_arc += 2 * Math.PI;
+  } else if (th_arc > 0 && sweep === 0) {
+    th_arc -= 2 * Math.PI;
+  }
+
+  var segs = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
+  var result = [];
+  for (var i=0; i<segs; ++i) {
+    var th2 = th0 + i * th_arc / segs;
+    var th3 = th0 + (i+1) * th_arc / segs;
+    result[i] = [xc, yc, th2, th3, rx, ry, sin_th, cos_th];
+  }
+
+  return (segmentCache[key] = result);
+}
+
+function bezier(params) {
+  var key = join.call(params);
+  if (bezierCache[key]) {
+    return bezierCache[key];
+  }
+  
+  var cx = params[0],
+      cy = params[1],
+      th0 = params[2],
+      th1 = params[3],
+      rx = params[4],
+      ry = params[5],
+      sin_th = params[6],
+      cos_th = params[7];
+
+  var a00 = cos_th * rx;
+  var a01 = -sin_th * ry;
+  var a10 = sin_th * rx;
+  var a11 = cos_th * ry;
+
+  var cos_th0 = Math.cos(th0);
+  var sin_th0 = Math.sin(th0);
+  var cos_th1 = Math.cos(th1);
+  var sin_th1 = Math.sin(th1);
+
+  var th_half = 0.5 * (th1 - th0);
+  var sin_th_h2 = Math.sin(th_half * 0.5);
+  var t = (8/3) * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
+  var x1 = cx + cos_th0 - t * sin_th0;
+  var y1 = cy + sin_th0 + t * cos_th0;
+  var x3 = cx + cos_th1;
+  var y3 = cy + sin_th1;
+  var x2 = x3 + t * sin_th1;
+  var y2 = y3 - t * cos_th1;
+
+  return (bezierCache[key] = [
+    a00 * x1 + a01 * y1,  a10 * x1 + a11 * y1,
+    a00 * x2 + a01 * y2,  a10 * x2 + a11 * y2,
+    a00 * x3 + a01 * y3,  a10 * x3 + a11 * y3
+  ]);
+}
+
+module.exports = {
+  segments: segments,
+  bezier: bezier,
+  cache: {
+    segments: segmentCache,
+    bezier: bezierCache
+  }
+};
+
+},{}],29:[function(require,module,exports){
+var arc = require('./arc');
+
+module.exports = function(path, bounds) {
+  var current, // current instruction
+      previous = null,
+      x = 0, // current x
+      y = 0, // current y
+      controlX = 0, // current control point x
+      controlY = 0, // current control point y
+      tempX,
+      tempY,
+      tempControlX,
+      tempControlY,
+      i, len;
+
+  for (i=0, len=path.length; i<len; ++i) {
+    current = path[i];
+
+    switch (current[0]) { // command
+
+      case 'l': // lineto, relative
+        x += current[1];
+        y += current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'L': // lineto, absolute
+        x = current[1];
+        y = current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'h': // horizontal lineto, relative
+        x += current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'H': // horizontal lineto, absolute
+        x = current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'v': // vertical lineto, relative
+        y += current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'V': // verical lineto, absolute
+        y = current[1];
+        bounds.add(x, y);
+        break;
+
+      case 'm': // moveTo, relative
+        x += current[1];
+        y += current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'M': // moveTo, absolute
+        x = current[1];
+        y = current[2];
+        bounds.add(x, y);
+        break;
+
+      case 'c': // bezierCurveTo, relative
+        tempX = x + current[5];
+        tempY = y + current[6];
+        controlX = x + current[3];
+        controlY = y + current[4];
+        bounds.add(x + current[1], y + current[2]);
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'C': // bezierCurveTo, absolute
+        x = current[5];
+        y = current[6];
+        controlX = current[3];
+        controlY = current[4];
+        bounds.add(current[1], current[2]);
+        bounds.add(controlX, controlY);
+        bounds.add(x, y);
+        break;
+
+      case 's': // shorthand cubic bezierCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        bounds.add(controlX, controlY);
+        bounds.add(x + current[1], y + current[2]);
+        bounds.add(tempX, tempY);
+
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'S': // shorthand cubic bezierCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+        // calculate reflection of previous control points
+        controlX = 2*x - controlX;
+        controlY = 2*y - controlY;
+        x = tempX;
+        y = tempY;
+        bounds.add(current[1], current[2]);
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of 
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = current[1];
+        controlY = current[2];
+
+        break;
+
+      case 'q': // quadraticCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        x = tempX;
+        y = tempY;
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 'Q': // quadraticCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+
+        x = tempX;
+        y = tempY;
+        controlX = current[1];
+        controlY = current[2];
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 't': // shorthand quadraticCurveTo, relative
+
+        // transform to absolute x,y
+        tempX = x + current[1];
+        tempY = y + current[2];
+
+        if (previous[0].match(/[QqTt]/) === null) {
+          // If there is no previous command or if the previous command was not a Q, q, T or t,
+          // assume the control point is coincident with the current point
+          controlX = x;
+          controlY = y;
+        }
+        else if (previous[0] === 't') {
+          // calculate reflection of previous control points for t
+          controlX = 2 * x - tempControlX;
+          controlY = 2 * y - tempControlY;
+        }
+        else if (previous[0] === 'q') {
+          // calculate reflection of previous control points for q
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+        }
+
+        tempControlX = controlX;
+        tempControlY = controlY;
+
+        x = tempX;
+        y = tempY;
+        controlX = x + current[1];
+        controlY = y + current[2];
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 'T':
+        tempX = current[1];
+        tempY = current[2];
+
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+
+        x = tempX;
+        y = tempY;
+        bounds.add(controlX, controlY);
+        bounds.add(tempX, tempY);
+        break;
+
+      case 'a':
+        boundArc(x, y, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6] + x,
+          current[7] + y
+        ], bounds);
+        x += current[6];
+        y += current[7];
+        break;
+
+      case 'A':
+        boundArc(x, y, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6],
+          current[7]
+        ], bounds);
+        x = current[6];
+        y = current[7];
+        break;
+
+      case 'z':
+      case 'Z':
+        break;
+    }
+    previous = current;
+  }
+  return bounds;
+};
+
+function boundArc(x, y, coords, bounds) {
+  var seg = arc.segments(
+    coords[5], // ex
+    coords[6], // ey
+    coords[0], // rx
+    coords[1], // ry
+    coords[3], // large
+    coords[4], // sweep
+    coords[2], // rot
+    x, y
+  );
+  for (var i=0; i<seg.length; ++i) {
+    var bez = arc.bezier(seg[i]);
+    bounds.add(bez[0], bez[1]);
+    bounds.add(bez[2], bez[3]);
+    bounds.add(bez[4], bez[5]);
+  }
+}
+
+},{"./arc":28}],30:[function(require,module,exports){
+module.exports = {
+  parse:  require('./parse'),
+  render: require('./render'),
+  bounds: require('./bounds')
+};
+
+},{"./bounds":29,"./parse":31,"./render":32}],31:[function(require,module,exports){
+// Path parsing and rendering code adapted from fabric.js -- Thanks!
+var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
+    regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)-/g, /\s|,|###/];
+
+module.exports = function(pathstr) {
+  var result = [],
+      path,
+      curr,
+      chunks,
+      parsed, param,
+      cmd, len, i, j, n, m;
+
+  // First, break path into command sequence
+  path = pathstr
+    .slice()
+    .replace(regexp[0], '###$1')
+    .split(regexp[1])
+    .slice(1);
+
+  // Next, parse each command in turn
+  for (i=0, n=path.length; i<n; ++i) {
+    curr = path[i];
+    chunks = curr
+      .slice(1)
+      .trim()
+      .replace(regexp[2],'$1###-')
+      .split(regexp[3]);
+    cmd = curr.charAt(0);
+
+    parsed = [cmd];
+    for (j=0, m=chunks.length; j<m; ++j) {
+      if ((param = +chunks[j]) === param) { // not NaN
+        parsed.push(param);
+      }
+    }
+
+    len = cmdlen[cmd.toLowerCase()];
+    if (parsed.length-1 > len) {
+      for (j=1, m=parsed.length; j<m; j+=len) {
+        result.push([cmd].concat(parsed.slice(j, j+len)));
+      }
+    }
+    else {
+      result.push(parsed);
+    }
+  }
+
+  return result;
+};
+
+},{}],32:[function(require,module,exports){
+var arc = require('./arc');
+
+module.exports = function(g, path, l, t) {
+  var current, // current instruction
+      previous = null,
+      x = 0, // current x
+      y = 0, // current y
+      controlX = 0, // current control point x
+      controlY = 0, // current control point y
+      tempX,
+      tempY,
+      tempControlX,
+      tempControlY;
+
+  if (l == null) l = 0;
+  if (t == null) t = 0;
+
+  g.beginPath();
+
+  for (var i=0, len=path.length; i<len; ++i) {
+    current = path[i];
+
+    switch (current[0]) { // first letter
+
+      case 'l': // lineto, relative
+        x += current[1];
+        y += current[2];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'L': // lineto, absolute
+        x = current[1];
+        y = current[2];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'h': // horizontal lineto, relative
+        x += current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'H': // horizontal lineto, absolute
+        x = current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'v': // vertical lineto, relative
+        y += current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'V': // verical lineto, absolute
+        y = current[1];
+        g.lineTo(x + l, y + t);
+        break;
+
+      case 'm': // moveTo, relative
+        x += current[1];
+        y += current[2];
+        g.moveTo(x + l, y + t);
+        break;
+
+      case 'M': // moveTo, absolute
+        x = current[1];
+        y = current[2];
+        g.moveTo(x + l, y + t);
+        break;
+
+      case 'c': // bezierCurveTo, relative
+        tempX = x + current[5];
+        tempY = y + current[6];
+        controlX = x + current[3];
+        controlY = y + current[4];
+        g.bezierCurveTo(
+          x + current[1] + l, // x1
+          y + current[2] + t, // y1
+          controlX + l, // x2
+          controlY + t, // y2
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'C': // bezierCurveTo, absolute
+        x = current[5];
+        y = current[6];
+        controlX = current[3];
+        controlY = current[4];
+        g.bezierCurveTo(
+          current[1] + l,
+          current[2] + t,
+          controlX + l,
+          controlY + t,
+          x + l,
+          y + t
+        );
+        break;
+
+      case 's': // shorthand cubic bezierCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        g.bezierCurveTo(
+          controlX + l,
+          controlY + t,
+          x + current[1] + l,
+          y + current[2] + t,
+          tempX + l,
+          tempY + t
+        );
+
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'S': // shorthand cubic bezierCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+        // calculate reflection of previous control points
+        controlX = 2*x - controlX;
+        controlY = 2*y - controlY;
+        g.bezierCurveTo(
+          controlX + l,
+          controlY + t,
+          current[1] + l,
+          current[2] + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        // set control point to 2nd one of this command
+        // the first control point is assumed to be the reflection of
+        // the second control point on the previous command relative
+        // to the current point.
+        controlX = current[1];
+        controlY = current[2];
+
+        break;
+
+      case 'q': // quadraticCurveTo, relative
+        // transform to absolute x,y
+        tempX = x + current[3];
+        tempY = y + current[4];
+
+        controlX = x + current[1];
+        controlY = y + current[2];
+
+        g.quadraticCurveTo(
+          controlX + l,
+          controlY + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'Q': // quadraticCurveTo, absolute
+        tempX = current[3];
+        tempY = current[4];
+
+        g.quadraticCurveTo(
+          current[1] + l,
+          current[2] + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        controlX = current[1];
+        controlY = current[2];
+        break;
+
+      case 't': // shorthand quadraticCurveTo, relative
+
+        // transform to absolute x,y
+        tempX = x + current[1];
+        tempY = y + current[2];
+
+        if (previous[0].match(/[QqTt]/) === null) {
+          // If there is no previous command or if the previous command was not a Q, q, T or t,
+          // assume the control point is coincident with the current point
+          controlX = x;
+          controlY = y;
+        }
+        else if (previous[0] === 't') {
+          // calculate reflection of previous control points for t
+          controlX = 2 * x - tempControlX;
+          controlY = 2 * y - tempControlY;
+        }
+        else if (previous[0] === 'q') {
+          // calculate reflection of previous control points for q
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+        }
+
+        tempControlX = controlX;
+        tempControlY = controlY;
+
+        g.quadraticCurveTo(
+          controlX + l,
+          controlY + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        controlX = x + current[1];
+        controlY = y + current[2];
+        break;
+
+      case 'T':
+        tempX = current[1];
+        tempY = current[2];
+
+        // calculate reflection of previous control points
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        g.quadraticCurveTo(
+          controlX + l,
+          controlY + t,
+          tempX + l,
+          tempY + t
+        );
+        x = tempX;
+        y = tempY;
+        break;
+
+      case 'a':
+        drawArc(g, x + l, y + t, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6] + x + l,
+          current[7] + y + t
+        ]);
+        x += current[6];
+        y += current[7];
+        break;
+
+      case 'A':
+        drawArc(g, x + l, y + t, [
+          current[1],
+          current[2],
+          current[3],
+          current[4],
+          current[5],
+          current[6] + l,
+          current[7] + t
+        ]);
+        x = current[6];
+        y = current[7];
+        break;
+
+      case 'z':
+      case 'Z':
+        g.closePath();
+        break;
+    }
+    previous = current;
+  }
+};
+
+function drawArc(g, x, y, coords) {
+  var seg = arc.segments(
+    coords[5], // end x
+    coords[6], // end y
+    coords[0], // radius x
+    coords[1], // radius y
+    coords[3], // large flag
+    coords[4], // sweep flag
+    coords[2], // rotation
+    x, y
+  );
+  for (var i=0; i<seg.length; ++i) {
+    var bez = arc.bezier(seg[i]);
+    g.bezierCurveTo.apply(g, bez);
+  }
+}
+
+},{"./arc":28}],33:[function(require,module,exports){
+function Handler() {
+  this._active = null;
+  this._handlers = {};
+}
+
+var prototype = Handler.prototype;
+
+prototype.initialize = function(el, pad, obj) {
+  this._el = el;
+  this._obj = obj || null;
+  return this.padding(pad);
+};
+
+prototype.element = function() {
+  return this._el;
+};
+
+prototype.padding = function(pad) {
+  this._padding = pad || {top:0, left:0, bottom:0, right:0};
+  return this;
+};
+
+prototype.scene = function(scene) {
+  if (!arguments.length) return this._scene;
+  this._scene = scene;
+  return this;
+};
+
+// add an event handler
+// subclasses should override
+prototype.on = function(/*type, handler*/) {};
+
+// remove an event handler
+// subclasses should override
+prototype.off = function(/*type, handler*/) {};
+
+// return an array with all registered event handlers
+prototype.handlers = function() {
+  var h = this._handlers, a = [], k;
+  for (k in h) { a.push.apply(a, h[k]); }
+  return a;
+};
+
+prototype.eventName = function(name) {
+  var i = name.indexOf('.');
+  return i < 0 ? name : name.slice(0,i);
+};
+
+module.exports = Handler;
+},{}],34:[function(require,module,exports){
+function Renderer() {
+  this._el = null;
+  this._bgcolor = null;
+}
+
+var prototype = Renderer.prototype;
+
+prototype.initialize = function(el, width, height, padding) {
+  this._el = el;
+  return this.resize(width, height, padding);
+};
+
+prototype.element = function() {
+  return this._el;
+};
+
+prototype.background = function(bgcolor) {
+  if (arguments.length === 0) return this._bgcolor;
+  this._bgcolor = bgcolor;
+  return this;
+};
+
+prototype.resize = function(width, height, padding) {
+  this._width = width;
+  this._height = height;
+  this._padding = padding || {top:0, left:0, bottom:0, right:0};
+  return this;
+};
+
+prototype.render = function(/*scene, items*/) {
+  return this;
+};
+
+module.exports = Renderer;
+},{}],35:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    Handler = require('../Handler'),
+    marks = require('./marks');
+
+function CanvasHandler() {
+  Handler.call(this);
+  this._down = null;
+}
+
+var base = Handler.prototype;
+var prototype = (CanvasHandler.prototype = Object.create(base));
+prototype.constructor = CanvasHandler;
+
+prototype.initialize = function(el, pad, obj) {
+  // add event listeners
+  var canvas = this._canvas = DOM.find(el, 'canvas'),
+      that = this;
+  this.events.forEach(function(type) {
+    canvas.addEventListener(type, function(evt) {
+      if (prototype[type]) {
+        prototype[type].call(that, evt);
+      } else {
+        that.fire(type, evt);
+      }
+    });
+  });
+
+  return base.initialize.call(this, el, pad, obj);
+};
+
+prototype.canvas = function() {
+  return this._canvas;
+};
+
+// retrieve the current canvas context
+prototype.context = function() {
+  return this._canvas.getContext('2d');
+};
+
+// supported events
+prototype.events = [
+  'keydown',
+  'keypress',
+  'keyup',
+  'mousedown',
+  'mouseup',
+  'mousemove',
+  'mouseout',
+  'click',
+  'dblclick',
+  'wheel',
+  'mousewheel',
+  'touchstart',
+  'touchmove',
+  'touchend'
+];
+
+prototype.mousemove = function(evt) {
+  var pad = this._padding,
+      b = evt.target.getBoundingClientRect(),
+      x = evt.clientX - b.left,
+      y = evt.clientY - b.top,
+      a = this._active,
+      p = this.pick(this._scene, x, y, x-pad.left, y-pad.top);
+
+  if (p === a) {
+    this.fire('mousemove', evt);
+    if (evt.type === 'touchmove') this.fire('touchmove', evt);
+    return;
+  } else if (a) {
+    this.fire('mouseout', evt);
+    if (evt.type === 'touchend') this.fire('touchend', evt);
+  }
+  this._active = p;
+  if (p) {
+    this.fire('mouseover', evt);
+    if (evt.type === 'touchstart') this.fire('touchstart', evt);
+  }
+};
+
+prototype.mouseout = function(evt) {
+  if (this._active) {
+    this.fire('mouseout', evt);
+    this.fire('touchend', evt);
+  }
+  this._active = null;
+};
+
+prototype.mousedown = function(evt) {
+  this._down = this._active;
+  this.fire('mousedown', evt);
+};
+
+prototype.click = function(evt) {
+  if (this._down === this._active) {
+    this.fire('click', evt);
+    this._down = null;
+  }
+};
+
+// to keep firefox happy
+prototype.DOMMouseScroll = function(evt) {
+  this.fire('mousewheel', evt);
+};
+
+prototype.touchmove = prototype.mousemove;
+
+prototype.touchend = prototype.mouseout;
+
+// fire an event
+prototype.fire = function(type, evt) {
+  var a = this._active,
+      h = this._handlers[type], i, len;
+  if (h) {
+    for (i=0, len=h.length; i<len; ++i) {
+      h[i].handler.call(this._obj, evt, a);
+    }
+  }
+};
+
+// add an event handler
+prototype.on = function(type, handler) {
+  var name = this.eventName(type),
+      h = this._handlers;
+  (h[name] || (h[name] = [])).push({
+    type: type,
+    handler: handler
+  });
+  return this;
+};
+
+// remove an event handler
+prototype.off = function(type, handler) {
+  var name = this.eventName(type),
+      h = this._handlers[name], i;
+  if (!h) return;
+  for (i=h.length; --i>=0;) {
+    if (h[i].type !== type) continue;
+    if (!handler || h[i].handler === handler) h.splice(i, 1);
+  }
+  return this;
+};
+
+// find the scenegraph item at the current mouse position
+// x, y -- the absolute x, y mouse coordinates on the canvas element
+// gx, gy -- the relative coordinates within the current group
+prototype.pick = function(scene, x, y, gx, gy) {
+  var g = this.context(),
+      mark = marks[scene.marktype];
+  return mark.pick.call(this, g, scene, x, y, gx, gy);
+};
+
+module.exports = CanvasHandler;
+
+},{"../../util/dom":61,"../Handler":33,"./marks":42}],36:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    Bounds = require('../../util/Bounds'),
+    ImageLoader = require('../../util/ImageLoader'),
+    Canvas = require('../../util/canvas'),
+    Renderer = require('../Renderer'),
+    marks = require('./marks');
+
+function CanvasRenderer(loadConfig) {
+  Renderer.call(this);
+  this._loader = new ImageLoader(loadConfig);
+}
+
+var base = Renderer.prototype;
+var prototype = (CanvasRenderer.prototype = Object.create(base));
+prototype.constructor = CanvasRenderer;
+
+prototype.initialize = function(el, width, height, padding) {
+  this._canvas = Canvas.instance(width, height);
+  if (el) {
+    DOM.clear(el, 0).appendChild(this._canvas);
+    this._canvas.setAttribute('class', 'marks');
+  }
+  return base.initialize.call(this, el, width, height, padding);
+};
+
+prototype.resize = function(width, height, padding) {
+  base.resize.call(this, width, height, padding);
+  Canvas.resize(this._canvas, this._width, this._height, this._padding);
+  return this;
+};
+
+prototype.canvas = function() {
+  return this._canvas;
+};
+
+prototype.context = function() {
+  return this._canvas ? this._canvas.getContext('2d') : null;
+};
+
+prototype.pendingImages = function() {
+  return this._loader.pending();
+};
+
+function clipToBounds(g, items) {
+  if (!items) return null;
+
+  var b = new Bounds(), i, n, item, mark, group;
+  for (i=0, n=items.length; i<n; ++i) {
+    item = items[i];
+    mark = item.mark;
+    group = mark.group;
+    item = marks[mark.marktype].nested ? mark : item;
+    b.union(translate(item.bounds, group));
+    if (item['bounds:prev']) {
+      b.union(translate(item['bounds:prev'], group));
+    }
+  }
+  b.round();
+
+  g.beginPath();
+  g.rect(b.x1, b.y1, b.width(), b.height());
+  g.clip();
+
+  return b;
+}
+
+function translate(bounds, group) {
+  if (group == null) return bounds;
+  var b = bounds.clone();
+  for (; group != null; group = group.mark.group) {
+    b.translate(group.x || 0, group.y || 0);
+  }
+  return b;
+}
+
+prototype.render = function(scene, items) {
+  var g = this.context(),
+      p = this._padding,
+      w = this._width + p.left + p.right,
+      h = this._height + p.top + p.bottom,
+      b;
+
+  // setup
+  this._scene = scene; // cache scene for async redraw
+  g.save();
+  b = clipToBounds(g, items);
+  this.clear(-p.left, -p.top, w, h);
+
+  // render
+  this.draw(g, scene, b);
+  
+  // takedown
+  g.restore();
+  this._scene = null; // clear scene cache
+
+  return this;
+};
+
+prototype.draw = function(ctx, scene, bounds) {
+  var mark = marks[scene.marktype];
+  mark.draw.call(this, ctx, scene, bounds);
+};
+
+prototype.clear = function(x, y, w, h) {
+  var g = this.context();
+  g.clearRect(x, y, w, h);
+  if (this._bgcolor != null) {
+    g.fillStyle = this._bgcolor;
+    g.fillRect(x, y, w, h); 
+  }
+};
+
+prototype.loadImage = function(uri) {
+  var renderer = this,
+      scene = this._scene;
+  return this._loader.loadImage(uri, function() {
+    renderer.renderAsync(scene);
+  });
+};
+
+prototype.renderAsync = function(scene) {
+  // TODO make safe for multiple scene rendering?
+  var renderer = this;
+  if (renderer._async_id) {
+    clearTimeout(renderer._async_id);
+  }
+  renderer._async_id = setTimeout(function() {
+    renderer.render(scene);
+    delete renderer._async_id;
+  }, 10);
+};
+
+module.exports = CanvasRenderer;
+
+},{"../../util/Bounds":55,"../../util/ImageLoader":57,"../../util/canvas":60,"../../util/dom":61,"../Renderer":34,"./marks":42}],37:[function(require,module,exports){
+module.exports = {
+  Handler:  require('./CanvasHandler'),
+  Renderer: require('./CanvasRenderer')
+};
+},{"./CanvasHandler":35,"./CanvasRenderer":36}],38:[function(require,module,exports){
+var util = require('./util');
+var halfpi = Math.PI / 2;
+
+function path(g, o) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      ir = o.innerRadius || 0,
+      or = o.outerRadius || 0,
+      sa = (o.startAngle || 0) - halfpi,
+      ea = (o.endAngle || 0) - halfpi;
+  g.beginPath();
+  if (ir === 0) g.moveTo(x, y);
+  else g.arc(x, y, ir, sa, ea, 0);
+  g.arc(x, y, or, ea, sa, 1);
+  g.closePath();
+}
+
+function hit(g, o, x, y) {
+  path(g, o);
+  return g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawAll(path),
+  pick: util.pick(hit)
+};
+},{"./util":49}],39:[function(require,module,exports){
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render'),
+    areaPath = require('../../../util/svg').path.area;
+
+function path(g, items) {
+  var o = items[0],
+      p = o.pathCache || (o.pathCache = parse(areaPath(items)));
+  render(g, p);
+}
+
+function pick(g, scene, x, y, gx, gy) {
+  if (!scene.items || !scene.items.length) return false;
+
+  var items = scene.items,
+      b = scene.bounds;
+
+  if (b && !b.contains(gx, gy)) return false;
+  if (g.pixelratio != null && g.pixelratio !== 1) {
+    x *= g.pixelratio;
+    y *= g.pixelratio;
+  }
+  if (!hit(g, items, x, y)) return false;
+  return items[0];
+}
+
+function hit(g, s, x, y) {
+  path(g, s);
+  return g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawOne(path),
+  pick: pick,
+  nested: true
+};
+
+},{"../../../path/parse":31,"../../../path/render":32,"../../../util/svg":63,"./util":49}],40:[function(require,module,exports){
+var util = require('./util'),
+    rect = require('./rect');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var groups = scene.items,
+      renderer = this,
+      group, items, axes, legends, gx, gy, i, n, j, m;
+
+  rect.draw.call(renderer, g, scene, bounds);
+
+  for (i=0, n=groups.length; i<n; ++i) {
+    group = groups[i];
+    axes = group.axisItems || [];
+    items = group.items || [];
+    legends = group.legendItems || [];
+    gx = group.x || 0;
+    gy = group.y || 0;
+
+    // render group contents
+    g.save();
+    g.translate(gx, gy);
+    if (group.clip) {
+      g.beginPath();
+      g.rect(0, 0, group.width || 0, group.height || 0);
+      g.clip();
+    }
+
+    if (bounds) bounds.translate(-gx, -gy);
+
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].layer === 'back') {
+        renderer.draw(g, axes[j], bounds);
+      }
+    }
+    for (j=0, m=items.length; j<m; ++j) {
+      renderer.draw(g, items[j], bounds);
+    }
+    for (j=0, m=axes.length; j<m; ++j) {
+      if (axes[j].layer !== 'back') {
+        renderer.draw(g, axes[j], bounds);
+      }
+    }
+    for (j=0, m=legends.length; j<m; ++j) {
+      renderer.draw(g, legends[j], bounds);
+    }
+    
+    if (bounds) bounds.translate(gx, gy);
+    g.restore();
+  }    
+}
+
+function hit(g, o) {
+  return o.fill || o.stroke;
+}
+
+function pick(g, scene, x, y, gx, gy) {
+  if (scene.bounds && !scene.bounds.contains(gx, gy)) {
+    return false;
+  }
+  var items = scene.items || [],
+      subscene, group, hits, dx, dy, i, j;
+
+  for (i=items.length; --i>=0;) {
+    group = items[i];
+    dx = group.x || 0;
+    dy = group.y || 0;
+
+    g.save();
+    g.translate(dx, dy);
+    for (j=group.items.length; --j >= 0;) {
+      subscene = group.items[j];
+      if (subscene.interactive === false) continue;
+      hits = this.pick(subscene, x, y, gx-dx, gy-dy);
+      if (hits) {
+        g.restore();
+        return hits;
+      }
+    }
+    g.restore();
+  }
+
+  return scene.interactive !== false ? pickSelf(g, scene, x, y, gx, gy) : false;
+}
+
+var pickSelf = util.pick(hit);
+
+module.exports = {
+  draw: draw,
+  pick: pick
+};
+
+},{"./rect":45,"./util":49}],41:[function(require,module,exports){
+var util = require('./util');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var renderer = this,
+      items = scene.items, o;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    if (!(o.image && o.image.url === o.url)) {
+      o.image = renderer.loadImage(o.url);
+      o.image.url = o.url;
+    }
+
+    var x = o.x || 0,
+        y = o.y || 0,
+        w = o.width || (o.image && o.image.width) || 0,
+        h = o.height || (o.image && o.image.height) || 0,
+        opac;
+    x = x - (o.align==='center' ? w/2 : o.align==='right' ? w : 0);
+    y = y - (o.baseline==='middle' ? h/2 : o.baseline==='bottom' ? h : 0);
+
+    if (o.image.loaded) {
+      g.globalAlpha = (opac = o.opacity) != null ? opac : 1;
+      g.drawImage(o.image, x, y, w, h);
+    }
+  }
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick()
+};
+},{"./util":49}],42:[function(require,module,exports){
+module.exports = {
+  arc:    require('./arc'),
+  area:   require('./area'),
+  group:  require('./group'),
+  image:  require('./image'),
+  line:   require('./line'),
+  path:   require('./path'),
+  rect:   require('./rect'),
+  rule:   require('./rule'),
+  symbol: require('./symbol'),
+  text:   require('./text')
+};
+
+},{"./arc":38,"./area":39,"./group":40,"./image":41,"./line":43,"./path":44,"./rect":45,"./rule":46,"./symbol":47,"./text":48}],43:[function(require,module,exports){
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render'),
+    linePath = require('../../../util/svg').path.line;
+    
+function path(g, items) {
+  var o = items[0],
+      p = o.pathCache || (o.pathCache = parse(linePath(items)));
+  render(g, p);
+}
+
+function stroke(g, items) {
+  var o = items[0],
+      lw = o.strokeWidth,
+      lc = o.strokeCap;
+  g.lineWidth = lw != null ? lw : 1;
+  g.lineCap   = lc != null ? lc : 'butt';
+  path(g, items);
+}
+
+function pick(g, scene, x, y, gx, gy) {
+  if (!scene.items || !scene.items.length) return false;
+
+  var items = scene.items,
+      b = scene.bounds;
+
+  if (b && !b.contains(gx, gy)) return false;
+
+  if (g.pixelratio != null && g.pixelratio !== 1) {
+    x *= g.pixelratio;
+    y *= g.pixelratio;
+  }
+  if (!hit(g, items, x, y)) return false;
+  return items[0];
+}
+
+function hit(g, s, x, y) {
+  if (!g.isPointInStroke) return false;
+  stroke(g, s);
+  return g.isPointInStroke(x, y);
+}
+
+module.exports = {
+  draw: util.drawOne(path),
+  pick: pick,
+  nested: true
+};
+
+},{"../../../path/parse":31,"../../../path/render":32,"../../../util/svg":63,"./util":49}],44:[function(require,module,exports){
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render');
+
+function path(g, o) {
+  if (o.path == null) return true;
+  var p = o.pathCache || (o.pathCache = parse(o.path));
+  render(g, p, o.x, o.y);
+}
+
+function hit(g, o, x, y) {
+  return path(g, o) ? false : g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawAll(path),
+  pick: util.pick(hit)
+};
+
+},{"../../../path/parse":31,"../../../path/render":32,"./util":49}],45:[function(require,module,exports){
+var util = require('./util');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var items = scene.items,
+      o, opac, x, y, w, h;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac === 0) continue;
+
+    x = o.x || 0;
+    y = o.y || 0;
+    w = o.width || 0;
+    h = o.height || 0;
+
+    if (o.fill && util.fill(g, o, opac)) {
+      g.fillRect(x, y, w, h);
+    }
+    if (o.stroke && util.stroke(g, o, opac)) {
+      g.strokeRect(x, y, w, h);
+    }
+  }
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick()
+};
+},{"./util":49}],46:[function(require,module,exports){
+var util = require('./util');
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var items = scene.items,
+      o, opac, x1, y1, x2, y2;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac === 0) continue;
+      
+    x1 = o.x || 0;
+    y1 = o.y || 0;
+    x2 = o.x2 != null ? o.x2 : x1;
+    y2 = o.y2 != null ? o.y2 : y1;
+
+    if (o.stroke && util.stroke(g, o, opac)) {
+      g.beginPath();
+      g.moveTo(x1, y1);
+      g.lineTo(x2, y2);
+      g.stroke();
+    }
+  }
+}
+
+function stroke(g, o) {
+  var x1 = o.x || 0,
+      y1 = o.y || 0,
+      x2 = o.x2 != null ? o.x2 : x1,
+      y2 = o.y2 != null ? o.y2 : y1,
+      lw = o.strokeWidth,
+      lc = o.strokeCap;
+
+  g.lineWidth = lw != null ? lw : 1;
+  g.lineCap   = lc != null ? lc : 'butt';
+  g.beginPath();
+  g.moveTo(x1, y1);
+  g.lineTo(x2, y2);
+}
+
+function hit(g, o, x, y) {
+  if (!g.isPointInStroke) return false;
+  stroke(g, o);
+  return g.isPointInStroke(x, y);
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick(hit)
+};
+
+},{"./util":49}],47:[function(require,module,exports){
+var util = require('./util');
+
+var sqrt3 = Math.sqrt(3),
+    tan30 = Math.tan(30 * Math.PI / 180);
+
+function path(g, o) {
+  var size = o.size != null ? o.size : 100,
+      x = o.x, y = o.y, r, t, rx, ry;
+
+  g.beginPath();
+
+  if (o.shape == null || o.shape === 'circle') {
+    r = Math.sqrt(size / Math.PI);
+    g.arc(x, y, r, 0, 2*Math.PI, 0);
+    g.closePath();
+    return;
+  }
+
+  switch (o.shape) {
+    case 'cross':
+      r = Math.sqrt(size / 5) / 2;
+      t = 3*r;
+      g.moveTo(x-t, y-r);
+      g.lineTo(x-r, y-r);
+      g.lineTo(x-r, y-t);
+      g.lineTo(x+r, y-t);
+      g.lineTo(x+r, y-r);
+      g.lineTo(x+t, y-r);
+      g.lineTo(x+t, y+r);
+      g.lineTo(x+r, y+r);
+      g.lineTo(x+r, y+t);
+      g.lineTo(x-r, y+t);
+      g.lineTo(x-r, y+r);
+      g.lineTo(x-t, y+r);
+      break;
+
+    case 'diamond':
+      ry = Math.sqrt(size / (2 * tan30));
+      rx = ry * tan30;
+      g.moveTo(x, y-ry);
+      g.lineTo(x+rx, y);
+      g.lineTo(x, y+ry);
+      g.lineTo(x-rx, y);
+      break;
+
+    case 'square':
+      t = Math.sqrt(size);
+      r = t / 2;
+      g.rect(x-r, y-r, t, t);
+      break;
+
+    case 'triangle-down':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      g.moveTo(x, y+ry);
+      g.lineTo(x+rx, y-ry);
+      g.lineTo(x-rx, y-ry);
+      break;
+
+    case 'triangle-up':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      g.moveTo(x, y-ry);
+      g.lineTo(x+rx, y+ry);
+      g.lineTo(x-rx, y+ry);
+  }
+  g.closePath();
+}
+
+function hit(g, o, x, y) {
+  path(g, o);
+  return g.isPointInPath(x, y);
+}
+
+module.exports = {
+  draw: util.drawAll(path),
+  pick: util.pick(hit)
+};
+},{"./util":49}],48:[function(require,module,exports){
+var Bounds = require('../../../util/Bounds'),
+    textBounds = require('../../../util/bound').text,
+    font = require('../../../util/font'),
+    util = require('./util'),
+    tempBounds = new Bounds();
+
+function draw(g, scene, bounds) {
+  if (!scene.items || !scene.items.length) return;
+
+  var items = scene.items,
+      o, opac, x, y, r, t;
+
+  for (var i=0, len=items.length; i<len; ++i) {
+    o = items[i];
+    if (bounds && !bounds.intersects(o.bounds))
+      continue; // bounds check
+
+    opac = o.opacity == null ? 1 : o.opacity;
+    if (opac === 0) continue;
+
+    g.font = font.string(o);
+    g.textAlign = o.align || 'left';
+
+    x = o.x || 0;
+    y = o.y || 0;
+    if ((r = o.radius)) {
+      t = (o.theta || 0) - Math.PI/2;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
+
+    if (o.angle) {
+      g.save();
+      g.translate(x, y);
+      g.rotate(o.angle * Math.PI/180);
+      x = o.dx || 0;
+      y = o.dy || 0 + font.offset(o);
+    } else {
+      x += (o.dx || 0);
+      y += (o.dy || 0) + font.offset(o);
+    }
+
+    if (o.fill && util.fill(g, o, opac)) {
+      g.fillText(o.text, x, y);
+    }
+    if (o.stroke && util.stroke(g, o, opac)) {
+      g.strokeText(o.text, x, y);
+    }
+    if (o.angle) g.restore();
+  }
+}
+
+function hit(g, o, x, y, gx, gy) {
+  if (o.fontSize <= 0) return false;
+  if (!o.angle) return true; // bounds sufficient if no rotation
+
+  var b = textBounds(o, tempBounds, true),
+      a = -o.angle * Math.PI / 180,
+      cos = Math.cos(a),
+      sin = Math.sin(a),
+      ox = o.x,
+      oy = o.y,
+      px = cos*gx - sin*gy + (ox - ox*cos + oy*sin),
+      py = sin*gx + cos*gy + (oy - ox*sin - oy*cos);
+
+  return b.contains(px, py);
+}
+
+module.exports = {
+  draw: draw,
+  pick: util.pick(hit)
+};
+
+},{"../../../util/Bounds":55,"../../../util/bound":59,"../../../util/font":62,"./util":49}],49:[function(require,module,exports){
+function drawPathOne(path, g, o, items) {
+  if (path(g, items)) return;
+
+  var opac = o.opacity == null ? 1 : o.opacity;
+  if (opac===0) return;
+
+  if (o.fill && fill(g, o, opac)) { g.fill(); }
+  if (o.stroke && stroke(g, o, opac)) { g.stroke(); }
+}
+
+function drawPathAll(path, g, scene, bounds) {
+  var i, len, item;
+  for (i=0, len=scene.items.length; i<len; ++i) {
+    item = scene.items[i];
+    if (!bounds || bounds.intersects(item.bounds)) {
+      drawPathOne(path, g, item, item);
+    }
+  }
+}
+
+function drawAll(pathFunc) {
+  return function(g, scene, bounds) {
+    drawPathAll(pathFunc, g, scene, bounds);
+  };
+}
+
+function drawOne(pathFunc) {
+  return function(g, scene, bounds) {
+    if (!scene.items.length) return;
+    if (!bounds || bounds.intersects(scene.bounds)) {
+      drawPathOne(pathFunc, g, scene.items[0], scene.items);
+    }
+  };
+}
+
+function pick(test) {
+  if (!test) test = function() { return true; };
+
+  return function(g, scene, x, y, gx, gy) {
+    if (!scene.items.length) return false;
+
+    var o, b, i;
+
+    if (g.pixelratio != null && g.pixelratio !== 1) {
+      x *= g.pixelratio;
+      y *= g.pixelratio;
+    }
+
+    for (i=scene.items.length; --i >= 0;) {
+      o = scene.items[i]; b = o.bounds;
+      // first hit test against bounding box
+      if ((b && !b.contains(gx, gy)) || !b) continue;
+      // if in bounding box, perform more careful test
+      if (test(g, o, x, y, gx, gy)) return o;
+    }
+    return false;
+  };
+}
+
+function fill(g, o, opacity) {
+  opacity *= (o.fillOpacity==null ? 1 : o.fillOpacity);
+  if (opacity > 0) {
+    g.globalAlpha = opacity;
+    g.fillStyle = color(g, o, o.fill);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function stroke(g, o, opacity) {
+  var lw = (lw = o.strokeWidth) != null ? lw : 1, lc;
+  if (lw <= 0) return false;
+
+  opacity *= (o.strokeOpacity==null ? 1 : o.strokeOpacity);
+  if (opacity > 0) {
+    g.globalAlpha = opacity;
+    g.strokeStyle = color(g, o, o.stroke);
+    g.lineWidth = lw;
+    g.lineCap = (lc = o.strokeCap) != null ? lc : 'butt';
+    g.vgLineDash(o.strokeDash || null);
+    g.vgLineDashOffset(o.strokeDashOffset || 0);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function color(g, o, value) {
+  return (value.id) ?
+    gradient(g, value, o.bounds) :
+    value;
+}
+
+function gradient(g, p, b) {
+  var w = b.width(),
+      h = b.height(),
+      x1 = b.x1 + p.x1 * w,
+      y1 = b.y1 + p.y1 * h,
+      x2 = b.x1 + p.x2 * w,
+      y2 = b.y1 + p.y2 * h,
+      grad = g.createLinearGradient(x1, y1, x2, y2),
+      stop = p.stops,
+      i, n;
+
+  for (i=0, n=stop.length; i<n; ++i) {
+    grad.addColorStop(stop[i].offset, stop[i].color);
+  }
+  return grad;
+}
+
+module.exports = {
+  drawOne:  drawOne,
+  drawAll:  drawAll,
+  pick:     pick,
+  stroke:   stroke,
+  fill:     fill,
+  color:    color,
+  gradient: gradient
+};
+
+},{}],50:[function(require,module,exports){
+var DOM = require('../../util/dom'),
+    Handler = require('../Handler');
+
+function SVGHandler() {
+  Handler.call(this);
+}
+
+var base = Handler.prototype;
+var prototype = (SVGHandler.prototype = Object.create(base));
+prototype.constructor = SVGHandler;
+
+prototype.initialize = function(el, pad, obj) {
+  this._svg = DOM.find(el, 'svg');
+  return base.initialize.call(this, el, pad, obj);
+};
+
+prototype.svg = function() {
+  return this._svg;
+};
+
+// wrap an event listener for the SVG DOM
+prototype.listener = function(handler) {
+  var that = this;
+  return function(evt) {
+    var target = evt.target,
+        item = target.__data__;
+    item = Array.isArray(item) ? item[0] : item;
+    handler.call(that._obj, evt, item);
+  };
+};
+
+// add an event handler
+prototype.on = function(type, handler) {
+  var name = this.eventName(type),
+      svg = this._svg,
+      h = this._handlers,
+      x = {
+        type:     type,
+        handler:  handler,
+        listener: this.listener(handler)
+      };
+
+  (h[name] || (h[name] = [])).push(x);
+  svg.addEventListener(name, x.listener);
+  return this;
+};
+
+// remove an event handler
+prototype.off = function(type, handler) {
+  var name = this.eventName(type),
+      svg = this._svg,
+      h = this._handlers[name], i;
+  if (!h) return;
+  for (i=h.length; --i>=0;) {
+    if (h[i].type === type && !handler || h[i].handler === handler) {
+      svg.removeEventListener(name, h[i].listener);
+      h.splice(i, 1);
+    }
+  }
+  return this;
+};
+
+module.exports = SVGHandler;
+
+},{"../../util/dom":61,"../Handler":33}],51:[function(require,module,exports){
+var ImageLoader = require('../../util/ImageLoader'),
+    Renderer = require('../Renderer'),
+    font = require('../../util/font'),
+    DOM = require('../../util/dom'),
+    SVG = require('../../util/svg'),
+    ns = SVG.metadata.xmlns,
+    marks = require('./marks');
+
+function SVGRenderer(loadConfig) {
+  Renderer.call(this);
+  this._loader = new ImageLoader(loadConfig);
+  this._dirtyID = 0;
+}
+
+var base = Renderer.prototype;
+var prototype = (SVGRenderer.prototype = Object.create(base));
+prototype.constructor = SVGRenderer;
+
+prototype.initialize = function(el, width, height, padding) {
+  if (el) {
+    this._svg = DOM.child(el, 0, 'svg', ns, 'marks');
+    DOM.clear(el, 1);
+    // set the svg root group
+    this._root = DOM.child(this._svg, 0, 'g', ns);
+    DOM.clear(this._svg, 1);
+  }
+
+  // create the svg definitions cache
+  this._defs = {
+    clip_id:  1,
+    gradient: {},
+    clipping: {}
+  };
+
+  // set background color if defined
+  this.background(this._bgcolor);
+
+  return base.initialize.call(this, el, width, height, padding);
+};
+
+prototype.background = function(bgcolor) {
+  if (arguments.length && this._svg) {
+    this._svg.style.setProperty('background-color', bgcolor);
+  }
+  return base.background.apply(this, arguments);
+};
+
+prototype.resize = function(width, height, padding) {
+  base.resize.call(this, width, height, padding);
+  
+  if (this._svg) {
+    var w = this._width,
+        h = this._height,
+        p = this._padding;
+  
+    this._svg.setAttribute('width', w + p.left + p.right);
+    this._svg.setAttribute('height', h + p.top + p.bottom);
+    
+    this._root.setAttribute('transform', 'translate('+p.left+','+p.top+')');
+  }
+
+  return this;
+};
+
+prototype.svg = function() {
+  if (!this._svg) return null;
+
+  var attr = {
+    'class':  'marks',
+    'width':  this._width + this._padding.left + this._padding.right,
+    'height': this._height + this._padding.top + this._padding.bottom,
+  };
+  for (var key in SVG.metadata) {
+    attr[key] = SVG.metadata[key];
+  }
+
+  return DOM.openTag('svg', attr) + this._svg.innerHTML + DOM.closeTag('svg');
+};
+
+prototype.imageURL = function(url) {
+  return this._loader.imageURL(url);
+};
+
+
+// -- Render entry point --
+
+prototype.render = function(scene, items) {
+  if (this._dirtyCheck(items)) {
+    if (this._dirtyAll) this._resetDefs();
+    this.draw(this._root, scene, -1);
+    DOM.clear(this._root, 1);
+  }
+  this.updateDefs();
+  return this;
+};
+
+prototype.draw = function(el, scene, index) {
+  this.drawMark(el, scene, index, marks[scene.marktype]);
+};
+
+
+// -- Manage SVG definitions ('defs') block --
+
+prototype.updateDefs = function() {
+  var svg = this._svg,
+      defs = this._defs,
+      el = defs.el,
+      index = 0, id;
+
+  for (id in defs.gradient) {
+    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
+    updateGradient(el, defs.gradient[id], index++);
+  }
+
+  for (id in defs.clipping) {
+    if (!el) el = (defs.el = DOM.child(svg, 0, 'defs', ns));
+    updateClipping(el, defs.clipping[id], index++);
+  }
+
+  // clean-up
+  if (el) {
+    if (index === 0) {
+      svg.removeChild(el);
+      defs.el = null;
+    } else {
+      DOM.clear(el, index);      
+    }
+  }
+};
+
+function updateGradient(el, grad, index) {
+  var i, n, stop;
+
+  el = DOM.child(el, index, 'linearGradient', ns);
+  el.setAttribute('id', grad.id);
+  el.setAttribute('x1', grad.x1);
+  el.setAttribute('x2', grad.x2);
+  el.setAttribute('y1', grad.y1);
+  el.setAttribute('y2', grad.y2);
+  
+  for (i=0, n=grad.stops.length; i<n; ++i) {
+    stop = DOM.child(el, i, 'stop', ns);
+    stop.setAttribute('offset', grad.stops[i].offset);
+    stop.setAttribute('stop-color', grad.stops[i].color);
+  }
+  DOM.clear(el, i);
+}
+
+function updateClipping(el, clip, index) {
+  var rect;
+
+  el = DOM.child(el, index, 'clipPath', ns);
+  el.setAttribute('id', clip.id);
+  rect = DOM.child(el, 0, 'rect', ns);
+  rect.setAttribute('x', 0);
+  rect.setAttribute('y', 0);
+  rect.setAttribute('width', clip.width);
+  rect.setAttribute('height', clip.height);
+}
+
+prototype._resetDefs = function() {
+  var def = this._defs;
+  def.clip_id = 1;
+  def.gradient = {};
+  def.clipping = {};
+};
+
+
+// -- Manage rendering of items marked as dirty --
+
+prototype.isDirty = function(item) {
+  return this._dirtyAll || item.dirty === this._dirtyID;
+};
+
+prototype._dirtyCheck = function(items) {
+  this._dirtyAll = true;
+  if (!items) return true;
+
+  var id = ++this._dirtyID,
+      item, mark, type, mdef, i, n, o;
+
+  for (i=0, n=items.length; i<n; ++i) {
+    item = items[i];
+    mark = item.mark;
+    if (mark.marktype !== type) {
+      // memoize mark instance lookup
+      type = mark.marktype;
+      mdef = marks[type];
+    }
+
+    if (item.status === 'exit') { // EXIT
+      if (item._svg) {
+        if (mdef.nest && item.mark.items.length) {
+          // if nested mark with remaining points, update instead
+          this._update(mdef, item._svg, item.mark.items[0]);
+          o = item.mark.items[0];
+          o._svg = item._svg;
+          o._update = id;
+        } else {
+          // otherwise remove from DOM
+          DOM.remove(item._svg);
+        }
+        item._svg = null;
+      }
+      continue;
+    }
+
+    item = (mdef.nest ? mark.items[0] : item);
+    if (item._update === id) { // Already processed
+      continue;
+    } else if (item._svg) { // UPDATE
+      this._update(mdef, item._svg, item);
+    } else { // ENTER
+      this._dirtyAll = false;
+      dirtyParents(item, id);
+    }
+    item._update = id;
+  }
+  return !this._dirtyAll;
+};
+
+function dirtyParents(item, id) {
+  for (; item && item.dirty !== id; item=item.mark.group) {
+    item.dirty = id;
+    if (item.mark && item.mark.dirty !== id) {
+      item.mark.dirty = id;
+    } else return;
+  }
+}
+
+
+// -- Construct & maintain scenegraph to SVG mapping ---
+
+// Draw a mark container.
+prototype.drawMark = function(el, scene, index, mdef) {
+  if (!this.isDirty(scene)) return;
+
+  var items = mdef.nest ?
+        (scene.items && scene.items.length ? [scene.items[0]] : []) :
+        scene.items || [],
+      events = scene.interactive === false ? 'none' : null,
+      isGroup = (mdef.tag === 'g'),
+      className = DOM.cssClass(scene),
+      p, i, n, c, d, insert;
+
+  p = DOM.child(el, index+1, 'g', ns, className);
+  p.setAttribute('class', className);
+  scene._svg = p;
+  if (!isGroup && events) {
+    p.style.setProperty('pointer-events', events);
+  }
+
+  for (i=0, n=items.length; i<n; ++i) {
+    if (this.isDirty(d = items[i])) {
+      insert = !(this._dirtyAll || d._svg);
+      c = insert ? bind(p, mdef, d, i, true)
+        : (p.childNodes[i] || bind(p, mdef, d, i));
+      this._update(mdef, c, d);
+      if (isGroup) {
+        if (insert) this._dirtyAll = true;
+        this._recurse(c, d);
+        if (insert) this._dirtyAll = false;
+      }
+    }
+  }
+  DOM.clear(p, i);
+  return p;
+};
+
+// Recursively process group contents.
+prototype._recurse = function(el, group) {
+  var items = group.items || [],
+      legends = group.legendItems || [],
+      axes = group.axisItems || [],
+      idx = 0, j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer === 'back') {
+      this.drawMark(el, axes[j], idx++, marks.group);
+    }
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    this.draw(el, items[j], idx++);
+  }
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer !== 'back') {
+      this.drawMark(el, axes[j], idx++, marks.group);
+    }
+  }
+  for (j=0, m=legends.length; j<m; ++j) {
+    this.drawMark(el, legends[j], idx++, marks.group);
+  }
+
+  // remove any extraneous DOM elements
+  DOM.clear(el, 1 + idx);
+};
+
+// Bind a scenegraph item to an SVG DOM element.
+// Create new SVG elements as needed.
+function bind(el, mdef, item, index, insert) {
+  // create svg element, bind item data for D3 compatibility
+  var node = DOM.child(el, index, mdef.tag, ns, null, insert);
+  node.__data__ = item;
+  node.__values__ = {fill: 'default'};
+
+  // create background rect
+  if (mdef.tag === 'g') {
+    DOM.child(node, 0, 'rect', ns, 'background');
+  }
+
+  // add pointer from scenegraph item to svg element
+  return (item._svg = node);
+}
+
+
+// -- Set attributes & styles on SVG elements ---
+
+var href = (typeof window !== 'undefined' ? window.location.href : ''),
+    element = null, // temp var for current SVG element
+    values = null;  // temp var for current values hash
+
+// Extra configuration for certain mark types
+var mark_extras = {
+  group: function(mdef, el, item) {
+    element = el.childNodes[0];
+    values = el.__values__; // use parent's values hash
+    mdef.background(emit, item, this);
+
+    var value = item.mark.interactive === false ? 'none' : null;
+    if (value !== values.events) {
+      element.style.setProperty('pointer-events', value);
+      values.events = value;
+    }
+  },
+  text: function(mdef, el, item) {
+    if (item.text !== values.text) {
+      el.textContent = item.text || '';
+      values.text = item.text;
+    }
+    var str = font.string(item);
+    if (str !== values.font) {
+      el.style.setProperty('font', str);
+      values.font = str;
+    }
+  }
+};
+
+prototype._update = function(mdef, el, item) {
+  // set dom element and values cache
+  // provides access to emit method
+  element = el;
+  values = el.__values__;
+
+  // apply svg attributes
+  mdef.attr(emit, item, this);
+
+  // some marks need special treatment
+  var extra = mark_extras[mdef.type];
+  if (extra) extra(mdef, el, item);
+
+  // apply svg css styles
+  // note: element may be modified by 'extra' method
+  this.style(element, item);
+};
+
+function emit(name, value, ns) {
+  // early exit if value is unchanged
+  if (value === values[name]) return;
+
+  if (value != null) {
+    // if value is provided, update DOM attribute
+    if (ns) {
+      element.setAttributeNS(ns, name, value);
+    } else {
+      element.setAttribute(name, value);
+    }
+  } else {
+    // else remove DOM attribute
+    if (ns) {
+      element.removeAttributeNS(ns, name);
+    } else {
+      element.removeAttribute(name);
+    }
+  }
+
+  // note current value for future comparison
+  values[name] = value;
+}
+
+prototype.style = function(el, o) {
+  if (o == null) return;
+  var i, n, prop, name, value;
+
+  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
+    prop = SVG.styleProperties[i];
+    value = o[prop];
+    if (value === values[prop]) continue;
+
+    name = SVG.styles[prop];
+    if (value == null) {
+      if (name === 'fill') {
+        el.style.setProperty(name, 'none');
+      } else {
+        el.style.removeProperty(name);
+      }
+    } else {
+      if (value.id) {
+        // ensure definition is included
+        this._defs.gradient[value.id] = value;
+        value = 'url(' + href + '#' + value.id + ')';
+      }
+      el.style.setProperty(name, value+'');
+    }
+
+    values[prop] = value;
+  }
+};
+
+module.exports = SVGRenderer;
+
+},{"../../util/ImageLoader":57,"../../util/dom":61,"../../util/font":62,"../../util/svg":63,"../Renderer":34,"./marks":54}],52:[function(require,module,exports){
+var Renderer = require('../Renderer'),
+    ImageLoader = require('../../util/ImageLoader'),
+    SVG = require('../../util/svg'),
+    font = require('../../util/font'),
+    DOM = require('../../util/dom'),
+    openTag = DOM.openTag,
+    closeTag = DOM.closeTag,
+    MARKS = require('./marks');
+
+function SVGStringRenderer(loadConfig) {
+  Renderer.call(this);
+
+  this._loader = new ImageLoader(loadConfig);
+
+  this._text = {
+    head: '',
+    root: '',
+    foot: '',
+    defs: '',
+    body: ''
+  };
+
+  this._defs = {
+    clip_id:  1,
+    gradient: {},
+    clipping: {}
+  };
+}
+
+var base = Renderer.prototype;
+var prototype = (SVGStringRenderer.prototype = Object.create(base));
+prototype.constructor = SVGStringRenderer;
+
+prototype.resize = function(width, height, padding) {
+  base.resize.call(this, width, height, padding);
+  var p = this._padding,
+      t = this._text;
+
+  var attr = {
+    'class':  'marks',
+    'width':  this._width + p.left + p.right,
+    'height': this._height + p.top + p.bottom,
+  };
+  for (var key in SVG.metadata) {
+    attr[key] = SVG.metadata[key];
+  }
+
+  t.head = openTag('svg', attr);
+  t.root = openTag('g', {
+    transform: 'translate(' + p.left + ',' + p.top + ')'
+  });
+  t.foot = closeTag('g') + closeTag('svg');
+
+  return this;
+};
+
+prototype.svg = function() {
+  var t = this._text;
+  return t.head + t.defs + t.root + t.body + t.foot;
+};
+
+prototype.render = function(scene) {
+  this._text.body = this.mark(scene);
+  this._text.defs = this.buildDefs();
+  return this;
+};
+
+prototype.reset = function() {
+  this._defs.clip_id = 0;
+  return this;
+};
+
+prototype.buildDefs = function() {
+  var all = this._defs,
+      defs = '',
+      i, id, def, stops;
+
+  for (id in all.gradient) {
+    def = all.gradient[id];
+    stops = def.stops;
+
+    defs += openTag('linearGradient', {
+      id: id,
+      x1: def.x1,
+      x2: def.x2,
+      y1: def.y1,
+      y2: def.y2
+    });
+    
+    for (i=0; i<stops.length; ++i) {
+      defs += openTag('stop', {
+        offset: stops[i].offset,
+        'stop-color': stops[i].color
+      }) + closeTag('stop');
+    }
+    
+    defs += closeTag('linearGradient');
+  }
+  
+  for (id in all.clipping) {
+    def = all.clipping[id];
+
+    defs += openTag('clipPath', {id: id});
+
+    defs += openTag('rect', {
+      x: 0,
+      y: 0,
+      width: def.width,
+      height: def.height
+    }) + closeTag('rect');
+
+    defs += closeTag('clipPath');
+  }
+  
+  return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
+};
+
+prototype.imageURL = function(url) {
+  return this._loader.imageURL(url);
+};
+
+var object;
+
+function emit(name, value, ns, prefixed) {
+  object[prefixed || name] = value;
+}
+
+prototype.attributes = function(attr, item) {
+  object = {};
+  attr(emit, item, this);
+  return object;
+};
+
+prototype.mark = function(scene) {
+  var mdef = MARKS[scene.marktype],
+      tag  = mdef.tag,
+      attr = mdef.attr,
+      nest = mdef.nest || false,
+      data = nest ?
+          (scene.items && scene.items.length ? [scene.items[0]] : []) :
+          (scene.items || []),
+      defs = this._defs,
+      str = '',
+      style, i, item;
+
+  if (tag !== 'g' && scene.interactive === false) {
+    style = 'style="pointer-events: none;"';
+  }
+
+  // render opening group tag
+  str += openTag('g', {
+    'class': DOM.cssClass(scene)
+  }, style);
+
+  // render contained elements
+  for (i=0; i<data.length; ++i) {
+    item = data[i];
+    style = (tag !== 'g') ? styles(item, scene, tag, defs) : null;
+    str += openTag(tag, this.attributes(attr, item), style);
+    if (tag === 'text') {
+      str += escape_text(item.text);
+    } else if (tag === 'g') {
+      str += openTag('rect',
+        this.attributes(mdef.background, item),
+        styles(item, scene, 'bgrect', defs)) + closeTag('rect');
+      str += this.markGroup(item);
+    }
+    str += closeTag(tag);
+  }
+
+  // render closing group tag
+  return str + closeTag('g');
+};
+
+prototype.markGroup = function(scene) {
+  var str = '',
+      axes = scene.axisItems || [],
+      items = scene.items || [],
+      legends = scene.legendItems || [],
+      j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer === 'back') {
+      str += this.mark(axes[j]);
+    }
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    str += this.mark(items[j]);
+  }
+  for (j=0, m=axes.length; j<m; ++j) {
+    if (axes[j].layer !== 'back') {
+      str += this.mark(axes[j]);
+    }
+  }
+  for (j=0, m=legends.length; j<m; ++j) {
+    str += this.mark(legends[j]);
+  }
+
+  return str;
+};
+
+function styles(o, mark, tag, defs) {
+  if (o == null) return '';
+  var i, n, prop, name, value, s = '';
+
+  if (tag === 'bgrect' && mark.interactive === false) {
+    s += 'pointer-events: none;';
+  }
+
+  if (tag === 'text') {
+    s += 'font: ' + font.string(o) + ';';
+  }
+
+  for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
+    prop = SVG.styleProperties[i];
+    name = SVG.styles[prop];
+    value = o[prop];
+
+    if (value == null) {
+      if (name === 'fill') {
+        s += (s.length ? ' ' : '') + 'fill: none;';
+      }
+    } else {
+      if (value.id) {
+        // ensure definition is included
+        defs.gradient[value.id] = value;
+        value = 'url(#' + value.id + ')';
+      }
+      s += (s.length ? ' ' : '') + name + ': ' + value + ';';
+    }
+  }
+
+  return s ? 'style="' + s + '"' : null;
+}
+
+function escape_text(s) {
+  s = (s == null ? '' : String(s));
+  return s.replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+}
+
+module.exports = SVGStringRenderer;
+
+},{"../../util/ImageLoader":57,"../../util/dom":61,"../../util/font":62,"../../util/svg":63,"../Renderer":34,"./marks":54}],53:[function(require,module,exports){
+module.exports = {
+  Handler:  require('./SVGHandler'),
+  Renderer: require('./SVGRenderer'),
+  string: {
+    Renderer : require('./SVGStringRenderer')
+  }
+};
+},{"./SVGHandler":50,"./SVGRenderer":51,"./SVGStringRenderer":52}],54:[function(require,module,exports){
+var font = require('../../util/font'),
+    SVG = require('../../util/svg'),
+    textAlign = SVG.textAlign,
+    path = SVG.path;
+
+function translate(o) {
+  return 'translate(' + (o.x || 0) + ',' + (o.y || 0) + ')';
+}
+
+module.exports = {
+  arc: {
+    tag:  'path',
+    type: 'arc',
+    attr: function(emit, o) {
+      emit('transform', translate(o));
+      emit('d', path.arc(o));
+    }
+  },
+  area: {
+    tag:  'path',
+    type: 'area',
+    nest: true,
+    attr: function(emit, o) {
+      var items = o.mark.items;
+      if (items.length) emit('d', path.area(items));
+    }
+  },
+  group: {
+    tag:  'g',
+    type: 'group',
+    attr: function(emit, o, renderer) {
+      var id = null, defs, c;
+      emit('transform', translate(o));
+      if (o.clip) {
+        defs = renderer._defs;
+        id = o.clip_id || (o.clip_id = 'clip' + defs.clip_id++);
+        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+        c.width = o.width || 0;
+        c.height = o.height || 0;
+      }
+      emit('clip-path', id ? ('url(#' + id + ')') : null);
+    },
+    background: function(emit, o) {
+      emit('class', 'background');
+      emit('width', o.width || 0);
+      emit('height', o.height || 0);
+    }
+  },
+  image: {
+    tag:  'image',
+    type: 'image',
+    attr: function(emit, o, renderer) {
+      var x = o.x || 0,
+          y = o.y || 0,
+          w = o.width || 0,
+          h = o.height || 0,
+          url = renderer.imageURL(o.url);
+
+      x = x - (o.align === 'center' ? w/2 : o.align === 'right' ? w : 0);
+      y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
+
+      emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
+      emit('transform', 'translate('+x+','+y+')');
+      emit('width', w);
+      emit('height', h);
+    }
+  },
+  line: {
+    tag:  'path',
+    type: 'line',
+    nest: true,
+    attr: function(emit, o) {
+      var items = o.mark.items;
+      if (items.length) emit('d', path.line(items));
+    }
+  },
+  path: {
+    tag:  'path',
+    type: 'path',
+    attr: function(emit, o) {
+      emit('transform', translate(o));
+      emit('d', o.path);
+    }
+  },
+  rect: {
+    tag:  'rect',
+    type: 'rect',
+    nest: false,
+    attr: function(emit, o) {
+      emit('transform', translate(o));
+      emit('width', o.width || 0);
+      emit('height', o.height || 0);
+    }
+  },
+  rule: {
+    tag:  'line',
+    type: 'rule',
+    attr: function(emit, o) {
+      emit('transform', translate(o));
+      emit('x2', o.x2 != null ? o.x2 - (o.x||0) : 0);
+      emit('y2', o.y2 != null ? o.y2 - (o.y||0) : 0);
+    }
+  },
+  symbol: {
+    tag:  'path',
+    type: 'symbol',
+    attr: function(emit, o) {
+      emit('transform', translate(o));
+      emit('d', path.symbol(o));
+    }
+  },
+  text: {
+    tag:  'text',
+    type: 'text',
+    nest: false,
+    attr: function(emit, o) {
+      var x = o.x || 0,
+          y = o.y || 0,
+          a = o.angle || 0,
+          r = o.radius || 0, t;
+
+      if (r) {
+        t = (o.theta || 0) - Math.PI/2;
+        x += r * Math.cos(t);
+        y += r * Math.sin(t);
+      }
+
+      x += (o.dx || 0);
+      y += (o.dy || 0) + font.offset(o);
+      emit('text-anchor', textAlign[o.align] || 'start');
+      emit('transform', 'translate('+x+','+y+')' + (a?' rotate('+a+')':''));
+    }
+  }
+};
+
+},{"../../util/font":62,"../../util/svg":63}],55:[function(require,module,exports){
+function Bounds(b) {
+  this.clear();
+  if (b) this.union(b);
+}
+
+var prototype = Bounds.prototype;
+
+prototype.clone = function() {
+  return new Bounds(this);
+};
+
+prototype.clear = function() {
+  this.x1 = +Number.MAX_VALUE;
+  this.y1 = +Number.MAX_VALUE;
+  this.x2 = -Number.MAX_VALUE;
+  this.y2 = -Number.MAX_VALUE;
+  return this;
+};
+
+prototype.set = function(x1, y1, x2, y2) {
+  this.x1 = x1;
+  this.y1 = y1;
+  this.x2 = x2;
+  this.y2 = y2;
+  return this;
+};
+
+prototype.add = function(x, y) {
+  if (x < this.x1) this.x1 = x;
+  if (y < this.y1) this.y1 = y;
+  if (x > this.x2) this.x2 = x;
+  if (y > this.y2) this.y2 = y;
+  return this;
+};
+
+prototype.expand = function(d) {
+  this.x1 -= d;
+  this.y1 -= d;
+  this.x2 += d;
+  this.y2 += d;
+  return this;
+};
+
+prototype.round = function() {
+  this.x1 = Math.floor(this.x1);
+  this.y1 = Math.floor(this.y1);
+  this.x2 = Math.ceil(this.x2);
+  this.y2 = Math.ceil(this.y2);
+  return this;
+};
+
+prototype.translate = function(dx, dy) {
+  this.x1 += dx;
+  this.x2 += dx;
+  this.y1 += dy;
+  this.y2 += dy;
+  return this;
+};
+
+prototype.rotate = function(angle, x, y) {
+  var cos = Math.cos(angle),
+      sin = Math.sin(angle),
+      cx = x - x*cos + y*sin,
+      cy = y - x*sin - y*cos,
+      x1 = this.x1, x2 = this.x2,
+      y1 = this.y1, y2 = this.y2;
+
+  return this.clear()
+    .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
+    .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
+    .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
+    .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
+};
+
+prototype.union = function(b) {
+  if (b.x1 < this.x1) this.x1 = b.x1;
+  if (b.y1 < this.y1) this.y1 = b.y1;
+  if (b.x2 > this.x2) this.x2 = b.x2;
+  if (b.y2 > this.y2) this.y2 = b.y2;
+  return this;
+};
+
+prototype.encloses = function(b) {
+  return b && (
+    this.x1 <= b.x1 &&
+    this.x2 >= b.x2 &&
+    this.y1 <= b.y1 &&
+    this.y2 >= b.y2
+  );
+};
+
+prototype.intersects = function(b) {
+  return b && !(
+    this.x2 < b.x1 ||
+    this.x1 > b.x2 ||
+    this.y2 < b.y1 ||
+    this.y1 > b.y2
+  );
+};
+
+prototype.contains = function(x, y) {
+  return !(
+    x < this.x1 ||
+    x > this.x2 ||
+    y < this.y1 ||
+    y > this.y2
+  );
+};
+
+prototype.width = function() {
+  return this.x2 - this.x1;
+};
+
+prototype.height = function() {
+  return this.y2 - this.y1;
+};
+
+module.exports = Bounds;
+
+},{}],56:[function(require,module,exports){
+var gradient_id = 0;
+
+function Gradient(type) {
+  this.id = 'gradient_' + (gradient_id++);
+  this.type = type || 'linear';
+  this.stops = [];
+  this.x1 = 0;
+  this.x2 = 1;
+  this.y1 = 0;
+  this.y2 = 0;
+}
+
+var prototype = Gradient.prototype;
+
+prototype.stop = function(offset, color) {
+  this.stops.push({
+    offset: offset,
+    color: color
+  });
+  return this;
+};
+
+module.exports = Gradient;
+},{}],57:[function(require,module,exports){
+(function (global){
+var load = require('datalib/src/import/load');
+
+function ImageLoader(loadConfig) {
+  this._pending = 0;
+  this._config = loadConfig || ImageLoader.Config; 
+}
+
+// Overridable global default load configuration
+ImageLoader.Config = null;
+
+var prototype = ImageLoader.prototype;
+
+prototype.pending = function() {
+  return this._pending;
+};
+
+prototype.params = function(uri) {
+  var p = {url: uri}, k;
+  for (k in this._config) { p[k] = this._config[k]; }
+  return p;
+};
+
+prototype.imageURL = function(uri) {
+  return load.sanitizeUrl(this.params(uri));
+};
+
+function browser(uri, callback) {
+  var url = load.sanitizeUrl(this.params(uri));
+  if (!url) { // error
+    if (callback) callback(uri, null);
+    return null;
+  }
+
+  var loader = this,
+      image = new Image();
+
+  loader._pending += 1;
+
+  image.onload = function() {
+    loader._pending -= 1;
+    image.loaded = true;
+    if (callback) callback(null, image);
+  };
+  image.src = url;
+
+  return image;
+}
+
+function server(uri, callback) {
+  var loader = this,
+      image = new ((typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null).Image)();
+
+  loader._pending += 1;
+
+  load(this.params(uri), function(err, data) {
+    loader._pending -= 1;
+    if (err) {
+      if (callback) callback(err, null);
+      return null;
+    }
+    image.src = data;
+    image.loaded = true;
+    if (callback) callback(null, image);
+  });
+
+  return image;
+}
+
+prototype.loadImage = function(uri, callback) {
+  return load.useXHR ?
+    browser.call(this, uri, callback) :
+    server.call(this, uri, callback);
+};
+
+module.exports = ImageLoader;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"datalib/src/import/load":13}],58:[function(require,module,exports){
+function Item(mark) {
+  this.mark = mark;
+}
+
+var prototype = Item.prototype;
+
+prototype.hasPropertySet = function(name) {
+  var props = this.mark.def.properties;
+  return props && props[name] != null;
+};
+
+prototype.cousin = function(offset, index) {
+  if (offset === 0) return this;
+  offset = offset || -1;
+  var mark = this.mark,
+      group = mark.group,
+      iidx = index==null ? mark.items.indexOf(this) : index,
+      midx = group.items.indexOf(mark) + offset;
+  return group.items[midx].items[iidx];
+};
+
+prototype.sibling = function(offset) {
+  if (offset === 0) return this;
+  offset = offset || -1;
+  var mark = this.mark,
+      iidx = mark.items.indexOf(this) + offset;
+  return mark.items[iidx];
+};
+
+prototype.remove = function() {
+  var item = this,
+      list = item.mark.items,
+      i = list.indexOf(item);
+  if (i >= 0) {
+    if (i===list.length-1) {
+      list.pop();
+    } else {
+      list.splice(i, 1);
+    }
+  }
+  return item;
+};
+
+prototype.touch = function() {
+  if (this.pathCache) this.pathCache = null;
+};
+
+module.exports = Item;
+},{}],59:[function(require,module,exports){
+var Bounds = require('../util/Bounds'),
+    canvas = require('../util/canvas'),
+    svg = require('../util/svg'),
+    font = require('./font'),
+    paths = require('../path'),
+    parse = paths.parse,
+    boundPath = paths.bounds,
+    areaPath = svg.path.area,
+    linePath = svg.path.line,
+    halfpi = Math.PI / 2,
+    sqrt3 = Math.sqrt(3),
+    tan30 = Math.tan(30 * Math.PI / 180),
+    g2D = null;
+
+function context() {
+  return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
+}
+
+function strokeBounds(o, bounds) {
+  if (o.stroke && o.opacity !== 0 && o.stokeOpacity !== 0) {
+    bounds.expand(o.strokeWidth != null ? o.strokeWidth : 1);
+  }
+  return bounds;
+}
+
+function pathBounds(o, path, bounds) {
+  if (path == null) {
+    bounds.set(0, 0, 0, 0);
+  } else {
+    boundPath(path, bounds);
+    strokeBounds(o, bounds);
+  }
+  return bounds;
+}
+
+function path(o, bounds) {
+  var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
+  return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
+}
+
+function area(mark, bounds) {
+  if (mark.items.length === 0) return bounds;
+  var items = mark.items,
+      item = items[0],
+      p = item.pathCache || (item.pathCache = parse(areaPath(items)));
+  return pathBounds(item, p, bounds);
+}
+
+function line(mark, bounds) {
+  if (mark.items.length === 0) return bounds;
+  var items = mark.items,
+      item = items[0],
+      p = item.pathCache || (item.pathCache = parse(linePath(items)));
+  return pathBounds(item, p, bounds);
+}
+
+function rect(o, bounds) {
+  var x, y;
+  return strokeBounds(o, bounds.set(
+    x = o.x || 0,
+    y = o.y || 0,
+    (x + o.width) || 0,
+    (y + o.height) || 0
+  ));
+}
+
+function image(o, bounds) {
+  var x = o.x || 0,
+      y = o.y || 0,
+      w = o.width || 0,
+      h = o.height || 0;
+  x = x - (o.align === 'center' ? w/2 : (o.align === 'right' ? w : 0));
+  y = y - (o.baseline === 'middle' ? h/2 : (o.baseline === 'bottom' ? h : 0));
+  return bounds.set(x, y, x+w, y+h);
+}
+
+function rule(o, bounds) {
+  var x1, y1;
+  return strokeBounds(o, bounds.set(
+    x1 = o.x || 0,
+    y1 = o.y || 0,
+    o.x2 != null ? o.x2 : x1,
+    o.y2 != null ? o.y2 : y1
+  ));
+}
+
+function arc(o, bounds) {
+  var cx = o.x || 0,
+      cy = o.y || 0,
+      ir = o.innerRadius || 0,
+      or = o.outerRadius || 0,
+      sa = (o.startAngle || 0) - halfpi,
+      ea = (o.endAngle || 0) - halfpi,
+      xmin = Infinity, xmax = -Infinity,
+      ymin = Infinity, ymax = -Infinity,
+      a, i, n, x, y, ix, iy, ox, oy;
+
+  var angles = [sa, ea],
+      s = sa - (sa % halfpi);
+  for (i=0; i<4 && s<ea; ++i, s+=halfpi) {
+    angles.push(s);
+  }
+
+  for (i=0, n=angles.length; i<n; ++i) {
+    a = angles[i];
+    x = Math.cos(a); ix = ir*x; ox = or*x;
+    y = Math.sin(a); iy = ir*y; oy = or*y;
+    xmin = Math.min(xmin, ix, ox);
+    xmax = Math.max(xmax, ix, ox);
+    ymin = Math.min(ymin, iy, oy);
+    ymax = Math.max(ymax, iy, oy);
+  }
+
+  return strokeBounds(o, bounds.set(
+    cx + xmin,
+    cy + ymin,
+    cx + xmax,
+    cy + ymax
+  ));
+}
+
+function symbol(o, bounds) {
+  var size = o.size != null ? o.size : 100,
+      x = o.x || 0,
+      y = o.y || 0,
+      r, t, rx, ry;
+
+  switch (o.shape) {
+    case 'cross':
+      t = 3 * Math.sqrt(size / 5) / 2;
+      bounds.set(x-t, y-t, x+t, y+t);
+      break;
+
+    case 'diamond':
+      ry = Math.sqrt(size / (2 * tan30));
+      rx = ry * tan30;
+      bounds.set(x-rx, y-ry, x+rx, y+ry);
+      break;
+
+    case 'square':
+      t = Math.sqrt(size);
+      r = t / 2;
+      bounds.set(x-r, y-r, x+r, y+r);
+      break;
+
+    case 'triangle-down':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      bounds.set(x-rx, y-ry, x+rx, y+ry);
+      break;
+
+    case 'triangle-up':
+      rx = Math.sqrt(size / sqrt3);
+      ry = rx * sqrt3 / 2;
+      bounds.set(x-rx, y-ry, x+rx, y+ry);
+      break;
+
+    default:
+      r = Math.sqrt(size/Math.PI);
+      bounds.set(x-r, y-r, x+r, y+r);
+  }
+
+  return strokeBounds(o, bounds);
+}
+
+function text(o, bounds, noRotate) {
+  var x = (o.x || 0) + (o.dx || 0),
+      y = (o.y || 0) + (o.dy || 0),
+      h = font.size(o),
+      a = o.align,
+      r = o.radius || 0,
+      g = context(), w, t;
+
+  g.font = font.string(o);
+  w = g.measureText(o.text || '').width;
+
+  if (r) {
+    t = (o.theta || 0) - Math.PI/2;
+    x += r * Math.cos(t);
+    y += r * Math.sin(t);
+  }
+
+  // horizontal
+  if (a === 'center') {
+    x = x - (w / 2);
+  } else if (a === 'right') {
+    x = x - w;
+  } else {
+    // left by default, do nothing
+  }
+
+  // vertical
+  y += font.offset(o) - Math.round(0.8*h);
+  
+  bounds.set(x, y, x+w, y+h);
+  if (o.angle && !noRotate) {
+    bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
+  }
+  return bounds.expand(noRotate ? 0 : 1);
+}
+
+function group(g, bounds, includeLegends) {
+  var axes = g.axisItems || [],
+      items = g.items || [],
+      legends = g.legendItems || [],
+      j, m;
+
+  for (j=0, m=axes.length; j<m; ++j) {
+    bounds.union(axes[j].bounds);
+  }
+  for (j=0, m=items.length; j<m; ++j) {
+    bounds.union(items[j].bounds);
+  }
+  if (includeLegends) {
+    for (j=0, m=legends.length; j<m; ++j) {
+      bounds.union(legends[j].bounds);
+    }
+  }
+  if (g.width != null && g.height != null) {
+    bounds.add(g.width, g.height);
+  }
+  if (g.x != null && g.y != null) {
+    bounds.add(0, 0);
+  }
+  return bounds.translate(g.x || 0, g.y || 0);
+}
+
+var methods = {
+  group:  group,
+  symbol: symbol,
+  image:  image,
+  rect:   rect,
+  rule:   rule,
+  arc:    arc,
+  text:   text,
+  path:   path,
+  area:   area,
+  line:   line
+};
+methods.area.nest = true;
+methods.line.nest = true;
+
+function itemBounds(item, func, opt) {
+  var type = item.mark.marktype;
+  func = func || methods[type];
+  if (func.nest) item = item.mark;
+
+  var curr = item.bounds,
+      prev = item['bounds:prev'] || (item['bounds:prev'] = new Bounds());
+
+  if (curr) {
+    prev.clear().union(curr);
+    curr.clear();
+  } else {
+    item.bounds = new Bounds();
+  }
+  func(item, item.bounds, opt);
+  if (!curr) prev.clear().union(item.bounds);
+  return item.bounds;
+}
+
+var DUMMY_ITEM = {mark: null};
+
+function markBounds(mark, bounds, opt) {
+  var type  = mark.marktype,
+      func  = methods[type],
+      items = mark.items,
+      hasi  = items && items.length,
+      i, n, o, b;
+
+  if (func.nest) {
+    o = hasi ? items[0]
+      : (DUMMY_ITEM.mark = mark, DUMMY_ITEM); // no items, so fake it
+    b = itemBounds(o, func, opt);
+    bounds = bounds && bounds.union(b) || b;
+    return bounds;
+  }
+
+  bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
+  if (hasi) {  
+    for (i=0, n=items.length; i<n; ++i) {
+      bounds.union(itemBounds(items[i], func, opt));
+    }
+  }
+  return (mark.bounds = bounds);
+}
+
+module.exports = {
+  mark:  markBounds,
+  item:  itemBounds,
+  text:  text,
+  group: group
+};
+
+},{"../path":30,"../util/Bounds":55,"../util/canvas":60,"../util/svg":63,"./font":62}],60:[function(require,module,exports){
+(function (global){
+function instance(w, h) {
+  w = w || 1;
+  h = h || 1;
+  var canvas;
+
+  if (typeof document !== 'undefined' && document.createElement) {
+    canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+  } else {
+    var Canvas = (typeof window !== "undefined" ? window.canvas : typeof global !== "undefined" ? global.canvas : null);
+    if (!Canvas.prototype) return null;
+    canvas = new Canvas(w, h);
+  }
+  return lineDash(canvas);
+}
+
+function resize(canvas, w, h, p) {
+  var g = this._ctx = canvas.getContext('2d'), 
+      s = 1;
+
+  canvas.width = w + p.left + p.right;
+  canvas.height = h + p.top + p.bottom;
+
+  // if browser canvas, attempt to modify for retina display
+  if (typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement) {
+    g.pixelratio = (s = pixelRatio(canvas) || 1);
+  }
+
+  g.setTransform(s, 0, 0, s, s*p.left, s*p.top);
+  return canvas;
+}
+
+function pixelRatio(canvas) {
+  var g = canvas.getContext('2d');
+
+  // get canvas pixel data
+  var devicePixelRatio = window && window.devicePixelRatio || 1,
+      backingStoreRatio = (
+        g.webkitBackingStorePixelRatio ||
+        g.mozBackingStorePixelRatio ||
+        g.msBackingStorePixelRatio ||
+        g.oBackingStorePixelRatio ||
+        g.backingStorePixelRatio) || 1,
+      ratio = devicePixelRatio / backingStoreRatio;
+
+  if (devicePixelRatio !== backingStoreRatio) {
+    // set actual and visible canvas size
+    var w = canvas.width,
+        h = canvas.height;
+    canvas.width = w * ratio;
+    canvas.height = h * ratio;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+  }
+
+  return ratio;
+}
+
+function lineDash(canvas) {
+  var g = canvas.getContext('2d');
+  if (g.vgLineDash) return; // already initialized!
+
+  var NOOP = function() {},
+      NODASH = [];
+  
+  if (g.setLineDash) {
+    g.vgLineDash = function(dash) { this.setLineDash(dash || NODASH); };
+    g.vgLineDashOffset = function(off) { this.lineDashOffset = off; };
+  } else if (g.webkitLineDash !== undefined) {
+  	g.vgLineDash = function(dash) { this.webkitLineDash = dash || NODASH; };
+    g.vgLineDashOffset = function(off) { this.webkitLineDashOffset = off; };
+  } else if (g.mozDash !== undefined) {
+    g.vgLineDash = function(dash) { this.mozDash = dash; };
+    g.vgLineDashOffset = NOOP;
+  } else {
+    g.vgLineDash = NOOP;
+    g.vgLineDashOffset = NOOP;
+  }
+  return canvas;
+}
+
+module.exports = {
+  instance:   instance,
+  resize:     resize,
+  pixelRatio: pixelRatio,
+  lineDash:   lineDash
+};
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{}],61:[function(require,module,exports){
+// create a new DOM element
+function create(doc, tag, ns) {
+  return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
+}
+
+// remove element from DOM
+// recursively remove parent elements if empty
+function remove(el) {
+  if (!el) return;
+  var p = el.parentNode;
+  if (p) {
+    p.removeChild(el);
+    if (!p.childNodes || !p.childNodes.length) remove(p);
+  }
+}
+
+module.exports = {
+  // find first child element with matching tag
+  find: function(el, tag) {
+    tag = tag.toLowerCase();
+    for (var i=0, n=el.childNodes.length; i<n; ++i) {
+      if (el.childNodes[i].tagName.toLowerCase() === tag) {
+        return el.childNodes[i];
+      }
+    }
+  },
+  // retrieve child element at given index
+  // create & insert if doesn't exist or if tag/className do not match
+  child: function(el, index, tag, ns, className, insert) {
+    var a, b;
+    a = b = el.childNodes[index];
+    if (!a || insert ||
+        a.tagName.toLowerCase() !== tag.toLowerCase() ||
+        className && a.getAttribute('class') != className) {
+      a = create(el.ownerDocument, tag, ns);
+      el.insertBefore(a, b);
+      if (className) a.setAttribute('class', className);
+    }
+    return a;
+  },
+  // remove all child elements at or above the given index
+  clear: function(el, index) {
+    var curr = el.childNodes.length;
+    while (curr > index) {
+      el.removeChild(el.childNodes[--curr]);
+    }
+    return el;
+  },
+  remove: remove,
+  // generate css class name for mark
+  cssClass: function(mark) {
+    return 'mark-' + mark.marktype + (mark.name ? ' '+mark.name : '');
+  },
+  // generate string for an opening xml tag
+  // tag: the name of the xml tag
+  // attr: hash of attribute name-value pairs to include
+  // raw: additional raw string to include in tag markup
+  openTag: function(tag, attr, raw) {
+    var s = '<' + tag, key, val;
+    if (attr) {
+      for (key in attr) {
+        val = attr[key];
+        if (val != null) {
+          s += ' ' + key + '="' + val + '"';
+        }
+      }
+    }
+    if (raw) s += ' ' + raw;
+    return s + '>';
+  },
+  // generate string for closing xml tag
+  // tag: the name of the xml tag
+  closeTag: function(tag) {
+    return '</' + tag + '>';
+  }
+};
+
+},{}],62:[function(require,module,exports){
+function size(item) {
+  return item.fontSize != null ? item.fontSize : 11;
+}
+
+module.exports = {
+  size: size,
+  string: function(item, quote) {
+    var font = item.font;
+    if (quote && font) {
+      font = String(font).replace(/\"/g, '\'');
+    }
+    return '' +
+      (item.fontStyle ? item.fontStyle + ' ' : '') +
+      (item.fontVariant ? item.fontVariant + ' ' : '') +
+      (item.fontWeight ? item.fontWeight + ' ' : '') +
+      size(item) + 'px ' +
+      (font || 'sans-serif');
+  },
+  offset: function(item) {
+    // perform our own font baseline calculation
+    // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+    var baseline = item.baseline,
+        h = size(item);
+    return Math.round(
+      baseline === 'top'    ?  0.93*h :
+      baseline === 'middle' ?  0.30*h :
+      baseline === 'bottom' ? -0.21*h : 0
+    );
+  }
+};
+
+},{}],63:[function(require,module,exports){
+(function (global){
+var d3_svg = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null).svg;
+
+function x(o)     { return o.x || 0; }
+function y(o)     { return o.y || 0; }
+function xw(o)    { return (o.x || 0) + (o.width || 0); }
+function yh(o)    { return (o.y || 0) + (o.height || 0); }
+function size(o)  { return o.size == null ? 100 : o.size; }
+function shape(o) { return o.shape || 'circle'; }
+
+var areav = d3_svg.area().x(x).y1(y).y0(yh),
+    areah = d3_svg.area().y(y).x1(x).x0(xw),
+    line  = d3_svg.line().x(x).y(y);
+
+module.exports = {
+  metadata: {
+    'version': '1.1',
+    'xmlns': 'http://www.w3.org/2000/svg',
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
+  },
+  path: {
+    arc: d3_svg.arc(),
+    symbol: d3_svg.symbol().type(shape).size(size),
+    area: function(items) {
+      var o = items[0];
+      return (o.orient === 'horizontal' ? areah : areav)
+        .interpolate(o.interpolate || 'linear')
+        .tension(o.tension || 0.7)
+        (items);
+    },
+    line: function(items) {
+      var o = items[0];
+      return line
+        .interpolate(o.interpolate || 'linear')
+        .tension(o.tension || 0.7)
+        (items);
+    }
+  },
+  textAlign: {
+    'left':   'start',
+    'center': 'middle',
+    'right':  'end'
+  },
+  textBaseline: {
+    'top':    'before-edge',
+    'bottom': 'after-edge',
+    'middle': 'central'
+  },
+  styles: {
+    'fill':             'fill',
+    'fillOpacity':      'fill-opacity',
+    'stroke':           'stroke',
+    'strokeWidth':      'stroke-width',
+    'strokeOpacity':    'stroke-opacity',
+    'strokeCap':        'stroke-linecap',
+    'strokeDash':       'stroke-dasharray',
+    'strokeDashOffset': 'stroke-dashoffset',
+    'opacity':          'opacity'
+  },
+  styleProperties: [
+    'fill',
+    'fillOpacity',
+    'stroke',
+    'strokeWidth',
+    'strokeOpacity',
+    'strokeCap',
+    'strokeDash',
+    'strokeDashOffset',
+    'opacity'
+  ]
+};
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{}],64:[function(require,module,exports){
+var util = require('datalib/src/util'),
+    canvas = require('vega-scenegraph/src/render/canvas'),
+    svg = require('vega-scenegraph/src/render/svg').string,
+    View = require('./View'),
+    config = require('../util/config'),
+    log = require('../util/log');
+
+var HeadlessView = function(width, height, model) {
+  View.call(null, width, height, model);
+  this._type = "canvas";
+  this._renderers = {canvas: canvas, svg: svg};
+}
+
+var prototype = (HeadlessView.prototype = new View());
+
+prototype.renderer = function(type) {
+  if(type) this._type = type;
+  return View.prototype.renderer.apply(this, arguments);
+};
+
+prototype.canvas = function() {
+  return (this._type === "canvas")
+    ? this._renderer.canvas()
+    : null;
+};
+
+prototype.canvasAsync = function(callback) {
+  var r = this._renderer, view = this;
+  
+  function wait() {
+    if (r.pendingImages() === 0) {
+      view.render(); // re-render with all images
+      callback(view._canvas);
+    } else {
+      setTimeout(wait, 10);
+    }
+  }
+
+  // if images loading, poll until ready
+  if (this._type !== "canvas") return null;
+  (r.pendingImages() > 0) ? wait() : callback(this.canvas());
+};
+
+prototype.svg = function() {
+  return (this._type === "svg")
+    ? this._renderer.svg()
+    : null;
+};
+
+prototype.initialize = function() {    
+  var w = this._width,
+      h = this._height,
+      pad = this._padding,
+      bg = this._bgcolor;
+
+  if (this._viewport) {
+    w = this._viewport[0] - (pad ? pad.left + pad.right : 0);
+    h = this._viewport[1] - (pad ? pad.top + pad.bottom : 0);
+  }
+
+  this._renderer = (this._renderer || new this._io.Renderer(config.load))
+    .initialize(null, w, h, pad)
+    .background(bg);
+  
+  return this;
+};
+
+module.exports = HeadlessView;
+},{"../util/config":122,"../util/log":124,"./View":66,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":37,"vega-scenegraph/src/render/svg":53}],65:[function(require,module,exports){
+var util = require('datalib/src/util'),
+    Graph = require('../dataflow/Graph'), 
+    Node  = require('../dataflow/Node'),
+    GroupBuilder = require('../scene/GroupBuilder'),
+    changeset = require('../dataflow/changeset'),
+    visit = require('../scene/visit');
+
+function Model() {
+  this._defs = {};
+  this._predicates = {};
+  this._scene = null;
+
+  this._node = null;
+  this._builder = null; // Top-level scenegraph builder
+
+  this._reset = {axes: false, legends: false};
+
+  Graph.prototype.init.call(this);
+};
+
+var proto = (Model.prototype = new Graph());
+
+proto.defs = function(defs) {
+  if (!arguments.length) return this._defs;
+  this._defs = defs;
+  return this;
+};
+
+proto.width = function(width) {
+  if (this._defs) this._defs.width = width;
+  if (this._defs && this._defs.marks) this._defs.marks.width = width;
+  if (this._scene) this._scene.items[0].width = width;
+  this._reset.axes = true;
+  return this;
+};
+
+proto.height = function(height) {
+  if (this._defs) this._defs.height = height;
+  if (this._defs && this._defs.marks) this._defs.marks.height = height;
+  if (this._scene) this._scene.items[0].height = height;
+  this._reset.axes = true;
+  return this;
+};
+
+proto.node = function() {
+  return this._node || (this._node = new Node(this));
+};
+
+proto.data = function() {
+  var data = Graph.prototype.data.apply(this, arguments);
+  if(arguments.length > 1) {  // new Datasource
+    this.node().addListener(data.pipeline()[0]);
+  }
+
+  return data;
+};
+
+function predicates(name) {
+  var m = this, predicates = {};
+  if(!util.isArray(name)) return this._predicates[name];
+  name.forEach(function(n) { predicates[n] = m._predicates[n] });
+  return predicates;
+}
+
+proto.predicate = function(name, predicate) {
+  if(arguments.length === 1) return predicates.call(this, name);
+  return (this._predicates[name] = predicate);
+};
+
+proto.predicates = function() { return this._predicates; };
+
+proto.scene = function(renderer) {
+  if(!arguments.length) return this._scene;
+  if(this._builder) this.node().removeListener(this._builder.disconnect());
+  this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
+  this.node().addListener(this._builder.connect());
+  var p = this._builder.pipeline();
+  p[p.length-1].addListener(renderer);
+  return this;
+};
+
+proto.reset = function() {
+  if (this._scene && this._reset.axes) {
+    visit(this._scene, function(item) {
+      if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
+    });
+    this._reset.axes = false;
+  }
+  if (this._scene && this._reset.legends) {
+    visit(this._scene, function(item) {
+      if (item.legends) item.legends.forEach(function(l) { l.reset(); });
+    });
+    this._reset.legends = false;
+  }
+  return this;
+};
+
+proto.addListener = function(l) { this.node().addListener(l); };
+proto.removeListener = function(l) { this.node().removeListener(l); };
+
+proto.fire = function(cs) {
+  if(!cs) cs = changeset.create();
+  this.propagate(cs, this.node());
+};
+
+module.exports = Model;
+},{"../dataflow/Graph":69,"../dataflow/Node":70,"../dataflow/changeset":72,"../scene/GroupBuilder":95,"../scene/visit":100,"datalib/src/util":20}],66:[function(require,module,exports){
+(function (global){
+var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
+    util = require('datalib/src/util'),
+    canvas = require('vega-scenegraph/src/render/canvas'),
+    svg = require('vega-scenegraph/src/render/svg'),
+    Node = require('../dataflow/Node'),
+    parseStreams = require('../parse/streams'),
+    Encoder = require('../scene/Encoder'),
+    Transition = require('../scene/Transition'),
+    config = require('../util/config'),
+    log = require('../util/log'),
+    changeset = require('../dataflow/changeset');
+
+var View = function(el, width, height, model) {
+  this._el    = null;
+  this._model = null;
+  this._width = this.__width = width || 500;
+  this._height  = this.__height = height || 300;
+  this._bgcolor = null;
+  this._autopad = 1;
+  this._padding = {top:0, left:0, bottom:0, right:0};
+  this._viewport = null;
+  this._renderer = null;
+  this._handler  = null;
+  this._streamer = null; // Targeted update for streaming changes
+  this._changeset = null;
+  this._repaint = true; // Full re-render on every re-init
+  this._renderers = {canvas: canvas, svg: svg};
+  this._io  = canvas;
+  this._api = {}; // Stash streaming data API sandboxes.
+};
+
+var prototype = View.prototype;
+
+prototype.model = function(model) {
+  if (!arguments.length) return this._model;
+  if (this._model !== model) {
+    this._model = model;
+    this._streamer = new Node(model);
+    this._changeset = changeset.create();
+    if (this._handler) this._handler.model(model);
+  }
+  return this;
+};
+
+// Sandboxed streaming data API
+function streaming(src) {
+  var view = this,
+      ds = this._model.data(src),
+      name = ds.name(),
+      listener = ds.pipeline()[0],
+      streamer = this._streamer,
+      cs  = this._changeset,
+      api = {};
+
+  if(util.keys(cs.signals).length > 0) {
+    throw "New signal values are not reflected in the visualization." +
+      " Please call view.update() before updating data values."
+  }
+
+  // If we have it stashed, don't create a new closure. 
+  if(this._api[src]) return this._api[src];
+
+  api.insert = function(vals) {
+    ds.insert(util.duplicate(vals));  // Don't pollute the environment
+    streamer.addListener(listener);
+    view._changeset.data[name] = 1;
+    return api;
+  };
+
+  api.update = function() {
+    streamer.addListener(listener);
+    view._changeset.data[name] = 1;
+    return (ds.update.apply(ds, arguments), api);
+  };
+
+  api.remove = function() {
+    streamer.addListener(listener);
+    view._changeset.data[name] = 1;
+    return (ds.remove.apply(ds, arguments), api);
+  };
+
+  api.values = function() { return ds.values() };    
+
+  return (this._api[src] = api);
+};
+
+prototype.data = function(data) {
+  var v = this;
+  if(!arguments.length) return v._model.dataValues();
+  else if(util.isString(data)) return streaming.call(v, data);
+  else if(util.isObject(data)) {
+    util.keys(data).forEach(function(k) {
+      var api = streaming.call(v, k);
+      data[k](api);
+    });
+  }
+  return this;
+};
+
+prototype.signal = function(name, value) {
+  var m  = this._model,
+      cs = this._changeset,
+      streamer = this._streamer,
+      setter = name; 
+
+  if(!arguments.length) return m.signalValues();
+  else if(arguments.length == 1 && util.isString(name)) return m.signalValues(name);
+
+  if(util.keys(cs.data).length > 0) {
+    throw "New data values are not reflected in the visualization." +
+      " Please call view.update() before updating signal values."
+  }
+
+  if(arguments.length == 2) {
+    setter = {};
+    setter[name] = value;
+  }
+
+  util.keys(setter).forEach(function(k) {
+    streamer.addListener(m.signal(k).value(setter[k]));
+    cs.signals[k] = 1;
+    cs.reflow = true;
+  });
+
+  return this;
+};
+
+prototype.width = function(width) {
+  if (!arguments.length) return this.__width;
+  if (this.__width !== width) {
+    this._width = this.__width = width;
+    this.initialize();
+    if (this._strict) this._autopad = 1;
+  }
+  return this;
+};
+
+prototype.height = function(height) {
+  if (!arguments.length) return this.__height;
+  if (this.__height !== height) {
+    this._height = this.__height = height;
+    this.initialize();
+    if (this._strict) this._autopad = 1;
+  }
+  return this;
+};
+
+prototype.background = function(bgcolor) {
+  if (!arguments.length) return this._bgcolor;
+  if (this._bgcolor !== bgcolor) {
+    this._bgcolor = bgcolor;
+    this.initialize();
+  }
+  return this;
+};
+
+prototype.padding = function(pad) {
+  if (!arguments.length) return this._padding;
+  if (this._padding !== pad) {
+    if (util.isString(pad)) {
+      this._autopad = 1;
+      this._padding = {top:0, left:0, bottom:0, right:0};
+      this._strict = (pad === "strict");
+    } else {
+      this._autopad = 0;
+      this._padding = pad;
+      this._strict = false;
+    }
+    if (this._renderer) this._renderer.resize(this._width, this._height, pad);
+    if (this._handler)  this._handler.padding(pad);
+  }
+  return (this._repaint = true, this);
+};
+
+prototype.autopad = function(opt) {
+  if (this._autopad < 1) return this;
+  else this._autopad = 0;
+
+  var pad = this._padding,
+      b = this.model().scene().bounds,
+      inset = config.autopadInset,
+      l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
+      t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
+      r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
+      b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+  pad = {left:l, top:t, right:r, bottom:b};
+
+  if (this._strict) {
+    this._autopad = 0;
+    this._padding = pad;
+    this._width = Math.max(0, this.__width - (l+r));
+    this._height = Math.max(0, this.__height - (t+b));
+
+    this._model.width(this._width)
+      .height(this._height).reset();
+
+    this.initialize()
+      .update({props:"enter"}).update({props:"update"});
+  } else {
+    this.padding(pad).update(opt);
+  }
+  return this;
+};
+
+prototype.viewport = function(size) {
+  if (!arguments.length) return this._viewport;
+  if (this._viewport !== size) {
+    this._viewport = size;
+    this.initialize();
+  }
+  return this;
+};
+
+prototype.renderer = function(type) {
+  if (!arguments.length) return this._renderer;
+  if (this._renderers[type]) type = this._renderers[type];
+  else if (util.isString(type)) throw new Error("Unknown renderer: " + type);
+  else if (!type) throw new Error("No renderer specified");
+
+  if (this._io !== type) {
+    this._io = type;
+    this._renderer = null;
+    this.initialize();
+    if (this._build) this.render();
+  }
+  return this;
+};
+
+prototype.initialize = function(el) {
+  var v = this, prevHandler,
+      w = v._width, h = v._height, pad = v._padding, bg = v._bgcolor;
+
+  if (!arguments.length || el === null) {
+    el = this._el ? this._el.parentNode : null;
+    if(!el) return this;  // This View cannot init w/o an
+  }
+
+  // clear pre-existing container
+  d3.select(el).select("div.vega").remove();
+  
+  // add div container
+  this._el = el = d3.select(el)
+    .append("div")
+    .attr("class", "vega")
+    .style("position", "relative")
+    .node();
+  if (v._viewport) {
+    d3.select(el)
+      .style("width",  (v._viewport[0] || w)+"px")
+      .style("height", (v._viewport[1] || h)+"px")
+      .style("overflow", "auto");
+  }
+
+  // renderer
+  v._renderer = (v._renderer || new this._io.Renderer(config.load))
+    .initialize(el, w, h, pad)
+    .background(bg);
+  
+  // input handler
+  prevHandler = v._handler;
+  v._handler = new this._io.Handler()
+    .initialize(el, pad, v);
+
+  if (prevHandler) {
+    prevHandler.handlers().forEach(function(h) {
+      v._handler.on(h.type, h.handler);
+    });
+  } else {
+    // Register event listeners for signal stream definitions.
+    parseStreams(this);
+  }
+  
+  return (this._repaint = true, this);
+};
+
+function build() {
+  var v = this;
+  v._renderNode = new Node(v._model)
+    .router(true);
+
+  v._renderNode.evaluate = function(input) {
+    log.debug(input, ["rendering"]);
+
+    var s = v._model.scene(),
+        h = v._handler,
+        ds, d;
+
+    if (h && h.scene) h.scene(s);
+
+    if(input.trans) {
+      input.trans.start(function(items) { v._renderer.render(s, items); });
+    } else if (v._repaint) {
+      v._renderer.render(s);
+      v._repaint = false;
+    } else if(input.dirty.length) {
+      v._renderer.render(s, input.dirty);
+    }
+
+    if (input.dirty.length) {
+      input.dirty.forEach(function(i) { i._dirty = false; });
+    }
+
+    // For all updated datasources, finalize their changesets.
+    for(d in input.data) {
+      ds = v._model.data(d);
+      if(!ds.revises()) continue;
+      changeset.finalize(ds.last());
+    }
+
+    return input;
+  };
+
+  return (v._model.scene(v._renderNode), true);  
+}
+
+prototype.update = function(opt) {    
+  opt = opt || {};
+  var v = this,
+      trans = opt.duration
+        ? new Transition(opt.duration, opt.ease)
+        : null;
+
+  var cs = v._changeset;
+  if(trans) cs.trans = trans;
+  if(opt.props !== undefined) {
+    if(util.keys(cs.data).length > 0) {
+      throw "New data values are not reflected in the visualization." +
+        " Please call view.update() before updating a specified property set."
+    }
+
+    cs.reflow  = true;
+    cs.request = opt.props;
+  }
+
+  v._build = v._build || build.call(this);
+
+  // If specific items are specified, short-circuit dataflow graph.
+  // Else-If there are streaming updates, perform a targeted propagation.
+  // Otherwise, reevaluate the entire model (datasources + scene).
+  if(opt.items) { 
+    Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
+    v._renderNode.evaluate(cs);
+  } else if(v._streamer.listeners().length) {
+    v._model.propagate(cs, v._streamer);
+    v._streamer.disconnect();
+  } else {
+    v._model.fire(cs);
+  }
+
+  v._changeset = changeset.create();
+
+  return v.autopad(opt);
+};
+
+prototype.render = function(items) {
+  this._renderer.render(this._model.scene(), items);
+  return this;
+};
+
+prototype.on = function() {
+  this._handler.on.apply(this._handler, arguments);
+  return this;
+};
+
+prototype.onSignal = function(name, handler) {
+  this._model.signal(name).on(handler);
+  return this;
+};
+
+prototype.off = function() {
+  this._handler.off.apply(this._handler, arguments);
+  return this;
+};
+
+prototype.offSignal = function(name, handler) {
+  this._model.signal(name).off(handler);
+  return this;
+};
+
+View.factory = function(model) {
+  var HeadlessView = require('./HeadlessView');
+  return function(opt) {
+    opt = opt || {};
+    var defs = model.defs();
+    var v = (opt.el ? new View() : new HeadlessView())
+      .model(model)
+      .renderer(opt.renderer || "canvas")
+      .width(defs.width)
+      .height(defs.height)
+      .background(defs.background)
+      .padding(defs.padding)
+      .viewport(defs.viewport)
+      .initialize(opt.el);
+
+    if (opt.data) v.data(opt.data);
+
+    if (opt.hover !== false && opt.el) {
+      v.on("mouseover", function(evt, item) {
+        if (item && item.hasPropertySet("hover")) {
+          this.update({props:"hover", items:item});
+        }
+      })
+      .on("mouseout", function(evt, item) {
+        if (item && item.hasPropertySet("hover")) {
+          this.update({props:"update", items:item});
+        }
+      });
+    }
+  
+    return v;
+  };    
+};
+
+module.exports = View;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"../dataflow/Node":70,"../dataflow/changeset":72,"../parse/streams":90,"../scene/Encoder":94,"../scene/Transition":97,"../util/config":122,"../util/log":124,"./HeadlessView":64,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":37,"vega-scenegraph/src/render/svg":53}],67:[function(require,module,exports){
+var Node = require('./Node'),
+    changeset = require('./changeset'),
+    log = require('../util/log'),
+    C = require('../util/constants');
+
+function Collector(graph) {
+  Node.prototype.init.call(this, graph);
+  this._data = [];
+  return this.router(true)
+    .collector(true);
+}
+
+var proto = (Collector.prototype = new Node());
+
+proto.data = function() { return this._data; }
+
+proto.evaluate = function(input) {
+  log.debug(input, ["collecting"]);
+
+  if (input.reflow) {
+    input = changeset.create(input);
+    input.mod = this._data.slice();
+    return input;
+  }
+
+  if (input.rem.length) {
+    var ids = input.rem.reduce(function(m,x) { return (m[x._id]=1, m); }, {});
+    this._data = this._data.filter(function(x) { return ids[x._id] !== 1; });
+  }
+
+  if (input.add.length) {
+    this._data = this._data.length ? this._data.concat(input.add) : input.add;
+  }
+
+  if (input.sort) {
+    this._data.sort(input.sort);
+  }
+
+  return input;
+};
+
+module.exports = Collector;
+},{"../util/constants":123,"../util/log":124,"./Node":70,"./changeset":72}],68:[function(require,module,exports){
+var util = require('datalib/src/util'),
+    changeset = require('./changeset'), 
+    tuple = require('./tuple'), 
+    Node = require('./Node'),
+    Collector = require('./Collector'),
+    log = require('../util/log'),
+    C = require('../util/constants');
+
+function Datasource(graph, name, facet) {
+  this._graph = graph;
+  this._name = name;
+  this._data = [];
+  this._source = null;
+  this._facet = facet;
+  this._input = changeset.create();
+  this._output = null;    // Output changeset
+
+  this._pipeline  = null; // Pipeline of transformations.
+  this._collector = null; // Collector to materialize output of pipeline
+  this._revises = false; // Does any pipeline operator need to track prev?
+};
+
+var proto = Datasource.prototype;
+
+proto.name = function(name) {
+  if(!arguments.length) return this._name;
+  return (this._name = name, this);
+};
+
+proto.source = function(src) {
+  if(!arguments.length) return this._source;
+  return (this._source = this._graph.data(src));
+};
+
+proto.insert = function(d) {
+  var prev = this._revises ? null : undefined;
+
+  this._input.add = this._input.add
+    .concat(util.array(d).map(function(d) { return tuple.ingest(d, prev); }));
+  return this;
+};
+
+proto.remove = function(where) {
+  var d = this._data.filter(where);
+  this._input.rem = this._input.rem.concat(d);
+  return this;
+};
+
+proto.update = function(where, field, func) {
+  var mod = this._input.mod,
+      ids = tuple.idMap(mod),
+      prev = this._revises ? null : undefined; 
+
+  this._input.fields[field] = 1;
+  this._data.filter(where).forEach(function(x) {
+    var prev = x[field],
+        next = func(x);
+    if (prev !== next) {
+      tuple.set(x, field, next);
+      if(ids[x._id] !== 1) {
+        mod.push(x);
+        ids[x._id] = 1;
+      }
+    }
+  });
+  return this;
+};
+
+proto.values = function(data) {
+  if(!arguments.length)
+    return this._collector ? this._collector.data() : this._data;
+
+  // Replace backing data
+  this._input.rem = this._data.slice();
+  if (data) { this.insert(data); }
+  return this;
+};
+
+function set_prev(d) { if(d._prev === undefined) d._prev = C.SENTINEL; }
+
+proto.revises = function(p) {
+  if(!arguments.length) return this._revises;
+
+  // If we've not needed prev in the past, but a new dataflow node needs it now
+  // ensure existing tuples have prev set.
+  if(!this._revises && p) {
+    this._data.forEach(set_prev);
+    this._input.add.forEach(set_prev); // New tuples that haven't yet been merged into _data
+  }
+
+  this._revises = this._revises || p;
+  return this;
+};
+
+proto.last = function() { return this._output; };
+
+proto.fire = function(input) {
+  if(input) this._input = input;
+  this._graph.propagate(this._input, this._pipeline[0]);
+  return this;
+};
+
+proto.pipeline = function(pipeline) {
+  var ds = this, n, c;
+  if(!arguments.length) return this._pipeline;
+
+  // Add a collector to materialize the output of pipeline operators.
+  if(pipeline.length) {
+    ds._collector = new Collector(this._graph);
+    pipeline.push(ds._collector);
+    ds._revises = pipeline.some(function(p) { return p.revises(); });
+  }
+
+  // Input/output nodes masquerade as collector nodes, so they need to
+  // have a `data` function. dsData is used if a collector isn't available.
+  function dsData() { return ds._data; }
+
+  // Input node applies the datasource's delta, and propagates it to 
+  // the rest of the pipeline. It receives touches to reflow data.
+  var input = new Node(this._graph)
+    .router(true)
+    .collector(true);
+
+  input.data = dsData;
+  input.evaluate = function(input) {
+    log.debug(input, ["input", ds._name]);
+
+    var delta = ds._input, 
+        out = changeset.create(input),
+        rem;
+
+    // Delta might contain fields updated through API
+    util.keys(delta.fields).forEach(function(f) { out.fields[f] = 1 });
+
+    if(input.reflow) {
+      out.mod = ds._data.slice();
+    } else {
+      // update data
+      if(delta.rem.length) {
+        rem = tuple.idMap(delta.rem);
+        ds._data = ds._data
+          .filter(function(x) { return rem[x._id] !== 1 });
+      }
+
+      if(delta.add.length) ds._data = ds._data.concat(delta.add);
+
+      // reset change list
+      ds._input = changeset.create();
+
+      out.add = delta.add; 
+      out.mod = delta.mod;
+      out.rem = delta.rem;
+    }
+
+    return (out.facet = ds._facet, out);
+  };
+
+  pipeline.unshift(input);
+
+  // Output node captures the last changeset seen by this datasource
+  // (needed for joins and builds) and materializes any nested data.
+  // If this datasource is faceted, materializes the values in the facet.
+  var output = new Node(this._graph)
+    .router(true)
+    .collector(true);
+
+  output.data = ds._collector ? ds._collector.data.bind(ds._collector) : dsData;
+  output.evaluate = function(input) {
+    log.debug(input, ["output", ds._name]);
+    var output = changeset.create(input, true);
+
+    if(ds._facet) {
+      ds._facet.values = ds.values();
+      input.facet = null;
+    }
+
+    ds._output = input;
+    output.data[ds._name] = 1;
+    return output;
+  };
+
+  pipeline.push(output);
+
+  this._pipeline = pipeline;
+  this._graph.connect(ds._pipeline);
+  return this;
+};
+
+proto.listener = function() { 
+  var l = new Node(this._graph).router(true),
+      dest = this,
+      prev = this._revises ? null : undefined;
+
+  l.evaluate = function(input) {
+    dest._srcMap = dest._srcMap || {};  // to propagate tuples correctly
+    var map = dest._srcMap,
+        output  = changeset.create(input);
+
+    output.add = input.add.map(function(t) {
+      return (map[t._id] = tuple.derive(t, t._prev !== undefined ? t._prev : prev));
+    });
+    output.mod = input.mod.map(function(t) { return map[t._id]; });
+    output.rem = input.rem.map(function(t) { 
+      var o = map[t._id];
+      map[t._id] = null;
+      return o;
+    });
+
+    return (dest._input = output);
+  };
+
+  l.addListener(this._pipeline[0]);
+  return l;
+};
+
+proto.addListener = function(l) {
+  if(l instanceof Datasource) {
+    if(this._collector) this._collector.addListener(l.listener());
+    else this._pipeline[0].addListener(l.listener());
+  } else {
+    this._pipeline[this._pipeline.length-1].addListener(l);      
+  }
+
+  return this;
+};
+
+proto.removeListener = function(l) {
+  this._pipeline[this._pipeline.length-1].removeListener(l);
+};
+
+proto.listeners = function(ds) {
+  return ds 
+    ? this._collector ? this._collector.listeners() : this._pipeline[0].listeners()
+    : this._pipeline[this._pipeline.length-1].listeners();
+};
+
+module.exports = Datasource;
+},{"../util/constants":123,"../util/log":124,"./Collector":67,"./Node":70,"./changeset":72,"./tuple":73,"datalib/src/util":20}],69:[function(require,module,exports){
+var util = require('datalib/src/util'),
+    Heap = require('heap'),
+    Datasource = require('./Datasource'),
+    Signal = require('./Signal'),
+    Collector = require('./Collector'),
+    BatchTransform = require('../transforms/BatchTransform'),
+    changeset = require('./changeset'),
+    log = require('../util/log'),
+    C = require('../util/constants');
+
+function Graph() {
+}
+
+var proto = Graph.prototype;
+
+proto.init = function() {
+  this._stamp = 0;
+  this._rank  = 0;
+
+  this._data = {};
+  this._signals = {};
+
+  this.doNotPropagate = {};
+};
+
+proto.data = function(name, pipeline, facet) {
+  var db = this._data;
+  if(!arguments.length) return util.keys(db).map(function(d) { return db[d]; });
+  if(arguments.length === 1) return db[name];
+  return (db[name] = new Datasource(this, name, facet).pipeline(pipeline));
+};
+
+proto.dataValues = function(names) {
+  var graph = this;
+  if (!arguments.length) names = util.keys(this._data);
+  if (!util.isArray(names)) return this._data[names].values();
+  return names.reduce(function(db, n) {
+    return (db[n] = graph._data[n].values(), db);
+  }, {});
+};
+
+function signal(name) {
+  var m = this, i, len;
+  if(!util.isArray(name)) return this._signals[name];
+  return name.map(function(n) { m._signals[n]; });
+}
+
+proto.signal = function(name, init) {
+  var m = this;
+  if(arguments.length === 1) return signal.call(this, name);
+  return (this._signals[name] = new Signal(this, name, init));
+};
+
+proto.signalValues = function(names) {
+  var graph = this;
+  if(!arguments.length) names = util.keys(this._signals);
+  if(!util.isArray(names)) return this._signals[names].value();
+  return names.reduce(function(sg, n) {
+    return (sg[n] = graph._signals[n].value(), sg);
+  }, {});
+};
+
+proto.signalRef = function(ref) {
+  if(!util.isArray(ref)) ref = util.field(ref);
+  var value = this.signal(ref.shift()).value();
+  if(ref.length > 0) {
+    var fn = Function("s", "return s["+ref.map(util.str).join("][")+"]");
+    value = fn.call(null, value);
+  }
+
+  return value;
+};
+
+var schedule = function(a, b) {
+  // If the nodes are equal, propagate the non-reflow pulse first,
+  // so that we can ignore subsequent reflow pulses. 
+  if(a.rank == b.rank) return a.pulse.reflow ? 1 : -1;
+  else return a.rank - b.rank; 
+};
+
+proto.propagate = function(pulse, node) {
+  var v, l, n, p, r, i, len, reflowed;
+
+  // new PQ with each propagation cycle so that we can pulse branches
+  // of the dataflow graph during a propagation (e.g., when creating
+  // a new inline datasource).
+  var pq = new Heap(schedule); 
+
+  if(pulse.stamp) throw "Pulse already has a non-zero stamp"
+
+  pulse.stamp = ++this._stamp;
+  pq.push({ node: node, pulse: pulse, rank: node.rank() });
+
+  while (pq.size() > 0) {
+    v = pq.pop(), n = v.node, p = v.pulse, r = v.rank, l = n._listeners;
+    reflowed = p.reflow && n.last() >= p.stamp;
+
+    if(reflowed) continue; // Don't needlessly reflow ops.
+
+    // A node's rank might change during a propagation (e.g. instantiating
+    // a group's dataflow branch). Re-queue if it has. T
+    // TODO: use pq.replace or pq.poppush?
+    if(r != n.rank()) {
+      log.debug(p, ['Rank mismatch', r, n.rank()]);
+      pq.push({ node: n, pulse: p, rank: n.rank() });
+      continue;
+    }
+
+    p = this.evaluate(p, n);
+
+    // Even if we didn't run the node, we still want to propagate 
+    // the pulse. 
+    if (p !== this.doNotPropagate) {
+      for (i = 0, len = l.length; i < len; i++) {
+        pq.push({ node: l[i], pulse: p, rank: l[i]._rank });
+      }
+    }
+  }
+};
+
+// Connect a branch of dataflow nodes. 
+// Dependencies get wired to the nearest collector. 
+function forEachNode(branch, fn) {
+  var node, collector, router, i;
+  for(i=0; i<branch.length; ++i) {
+    node = branch[i];
+
+    // Share collectors between batch transforms. We can reuse an
+    // existing collector unless a router node has come after it,
+    // in which case, we splice in a new collector.
+    if (node instanceof BatchTransform && !node.data) {
+      if (router) {
+        branch.splice(i, 0, (node = new Collector(this)));
+      } else {
+        node.data = collector.data.bind(collector);
+      }
+    } 
+
+    if (node.collector()) collector = node;
+    router = node.router() && !node.collector(); 
+    fn(node, collector, i);
+  }
+}
+
+proto.connect = function(branch) {
+  log.debug({}, ['connecting']);
+  var graph = this;
+
+  forEachNode.call(this, branch, function(n, c, i) {
+    var data = n.dependency(C.DATA),
+        signals = n.dependency(C.SIGNALS);
+
+    if(data.length > 0) {
+      data.forEach(function(d) { 
+        graph.data(d)
+          .revises(n.revises())
+          .addListener(c);
+      });
+    }
+
+    if(signals.length > 0) {
+      signals.forEach(function(s) { graph.signal(s).addListener(c); });
+    }
+
+    if(i > 0) {
+      branch[i-1].addListener(branch[i]);
+    }
+  });
+
+  return branch;
+};
+
+proto.disconnect = function(branch) {
+  log.debug({}, ['disconnecting']);
+  var graph = this;
+
+  forEachNode.call(this, branch, function(n, c, i) {
+    var data = n.dependency(C.DATA),
+        signals = n.dependency(C.SIGNALS);
+
+    if(data.length > 0) {
+      data.forEach(function(d) { graph.data(d).removeListener(c); });
+    }
+
+    if(signals.length > 0) {
+      signals.forEach(function(s) { graph.signal(s).removeListener(c) });
+    }
+
+    n.disconnect();  
+  });
+
+  return branch;
+};
+
+proto.reevaluate = function(pulse, node) {
+  var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
+      run = !!pulse.add.length || !!pulse.rem.length || node.router();
+  run = run || !reflowed;
+  return run || node.reevaluate(pulse);
+};
+
+proto.evaluate = function(pulse, node) {
+  if(!this.reevaluate(pulse, node)) return pulse;
+  pulse = node.evaluate(pulse);
+  node.last(pulse.stamp);
+  return pulse
+};
+
+module.exports = Graph;
+},{"../transforms/BatchTransform":102,"../util/constants":123,"../util/log":124,"./Collector":67,"./Datasource":68,"./Signal":71,"./changeset":72,"datalib/src/util":20,"heap":21}],70:[function(require,module,exports){
+var util = require('datalib/src/util'),
+    C = require('../util/constants'),
+    REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
+    nodeID = 1;
+
+function Node(graph) {
+  if(graph) this.init(graph);
+  return this;
+}
+
+var proto = Node.prototype;
+
+proto.init = function(graph) {
+  this._id = nodeID++;
+  this._graph = graph;
+  this._rank = ++graph._rank; // For topologial sort
+  this._stamp = 0;  // Last stamp seen
+
+  this._listeners = [];
+  this._registered = {}; // To prevent duplicate listeners
+
+  this._deps = {
+    data:    [],
+    fields:  [],
+    scales:  [],
+    signals: [],
+  };
+
+  this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
+  this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
+  this._revises = false; // Does the operator require tuples' previous values? 
+  return this;
+};
+
+proto.rank = function() { return this._rank; };
+
+proto.last = function(stamp) { 
+  if(!arguments.length) return this._stamp;
+  this._stamp = stamp;
+  return this;
+};
+
+proto.dependency = function(type, deps) {
+  var d = this._deps[type];
+  if(arguments.length === 1) return d;
+  if(deps === null) { // Clear dependencies of a certain type
+    while(d.length > 0) d.pop();
+  } else {
+    if(!util.isArray(deps) && d.indexOf(deps) < 0) d.push(deps);
+    else d.push.apply(d, util.array(deps));
+  }
+  return this;
+};
+
+proto.router = function(bool) {
+  if(!arguments.length) return this._isRouter;
+  this._isRouter = !!bool
+  return this;
+};
+
+proto.collector = function(bool) {
+  if(!arguments.length) return this._isCollector;
+  this._isCollector = !!bool;
+  return this;
+};
+
+proto.revises = function(bool) {
+  if(!arguments.length) return this._revises;
+  this._revises = !!bool;
+  return this;
+};
+
+proto.listeners = function() {
+  return this._listeners;
+};
+
+proto.addListener = function(l) {
+  if(!(l instanceof Node)) throw "Listener is not a Node";
+  if(this._registered[l._id]) return this;
+
+  this._listeners.push(l);
+  this._registered[l._id] = 1;
+  if(this._rank > l._rank) {
+    var q = [l];
+    while(q.length) {
+      var cur = q.splice(0,1)[0];
+      cur._rank = ++this._graph._rank;
+      q.push.apply(q, cur._listeners);
+    }
+  }
+
+  return this;
+};
+
+proto.removeListener = function (l) {
+  var foundSending = false;
+  for (var i = 0, len = this._listeners.length; i < len && !foundSending; i++) {
+    if (this._listeners[i] === l) {
+      this._listeners.splice(i, 1);
+      this._registered[l._id] = null;
+      foundSending = true;
+    }
+  }
+  
+  return foundSending;
+};
+
+proto.disconnect = function() {
+  this._listeners = [];
+  this._registered = {};
+};
+
+proto.evaluate = function(pulse) { return pulse; }
+
+proto.reevaluate = function(pulse) {
+  var node = this, reeval = false;
+  return REEVAL.some(function(prop) {
+    reeval = reeval || node._deps[prop].some(function(k) { return !!pulse[prop][k] });
+    return reeval;
+  });
+
+  return this;
+};
+
+module.exports = Node;
+},{"../util/constants":123,"datalib/src/util":20}],71:[function(require,module,exports){
+var Node = require('./Node'),
+    changeset = require('./changeset');
+
+function Signal(graph, name, init) {
+  Node.prototype.init.call(this, graph);
+  this._name  = name;
+  this._value = init;
+  this._verbose = false;  // Verbose signals re-pulse the graph even if prev === val.
+  this._handlers = [];
+  return this;
+};
+
+var proto = (Signal.prototype = new Node());
+
+proto.name = function() { return this._name; };
+
+proto.value = function(val) {
+  if (!arguments.length) return this._value;
+  return (this._value = val, this);
+};
+
+proto.verbose = function(v) {
+  if (!arguments.length) return this._verbose;
+  return (this._verbose = !!v, this);
+};
+
+proto.evaluate = function(input) {
+  return input.signals[this._name] ? input : this._graph.doNotPropagate;
+};
+
+proto.fire = function(cs) {
+  if (!cs) cs = changeset.create(null, true);
+  cs.signals[this._name] = 1;
+  this._graph.propagate(cs, this);
+};
+
+proto.on = function(handler) {
+  var sg = this,
+      node = new Node(this._graph);
+
+  node.evaluate = function(input) {
+    return (handler(sg.name(), sg.value()), input);
+  };
+
+  this._handlers.push({ handler: handler, node: node });
+  return this.addListener(node);
+};
+
+proto.off = function(handler) {
+  var sg = this, h = this._handlers;
+  for (var i=h.length; --i>=0;) {
+    if (!handler || h[i].handler === handler) {
+      sg.removeListener(h.splice(i, 1)[0].node);
+    }
+  }
+  return this;
+};
+
+module.exports = Signal;
+},{"./Node":70,"./changeset":72}],72:[function(require,module,exports){
+var C = require('../util/constants');
+var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
+
+function create(cs, reflow) {
+  var out = {};
+  copy(cs, out);
+
+  out.add = [];
+  out.mod = [];
+  out.rem = [];
+
+  out.reflow = reflow;
+
+  return out;
+}
+
+function reset_prev(x) {
+  x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+}
+
+function finalize(cs) {
+  for(i=0, len=cs.add.length; i<len; ++i) reset_prev(cs.add[i]);
+  for(i=0, len=cs.mod.length; i<len; ++i) reset_prev(cs.mod[i]);
+}
+
+function copy(a, b) {
+  b.stamp = a ? a.stamp : 0;
+  b.sort  = a ? a.sort  : null;
+  b.facet = a ? a.facet : null;
+  b.trans = a ? a.trans : null;
+  b.dirty = a ? a.dirty : [];
+  b.request = a ? a.request : null;
+  REEVAL.forEach(function(d) { b[d] = a ? a[d] : {}; });
+}
+
+module.exports = {
+  create: create,
+  copy: copy,
+  finalize: finalize,
+};
+},{"../util/constants":123}],73:[function(require,module,exports){
+var util = require('datalib/src/util'),
+    C = require('../util/constants'),
+    tupleID = 1;
+
+// Object.create is expensive. So, when ingesting, trust that the
+// datum is an object that has been appropriately sandboxed from 
+// the outside environment. 
+function ingest(datum, prev) {
+  datum = util.isObject(datum) ? datum : {data: datum};
+  datum._id = tupleID++;
+  datum._prev = (prev !== undefined) ? (prev || C.SENTINEL) : undefined;
+  return datum;
+}
+
+function derive(datum, prev) {
+  return ingest(Object.create(datum), prev);
+}
+
+// WARNING: operators should only call this once per timestamp!
+function set(t, k, v) {
+  var prev = t[k];
+  if(prev === v) return false;
+  set_prev(t, k);
+  t[k] = v;
+  return true;
+}
+
+function set_prev(t, k) {
+  if(t._prev === undefined) return;
+  t._prev = (t._prev === C.SENTINEL) ? {} : t._prev;
+  t._prev[k] = t[k];
+}
+
+function has_prev(t) {
+  return t._prev && t._prev !== C.SENTINEL;
+}
+
+function reset() { tupleID = 1; }
+
+function idMap(a) {
+  return a.reduce(function(m,x) {
+    return (m[x._id] = 1, m);
+  }, {});
+};
+
+module.exports = {
+  ingest: ingest,
+  derive: derive,
+  set:    set,
+  set_prev: set_prev,
+  has_prev: has_prev,
+  reset:  reset,
+  idMap:  idMap
+};
+},{"../util/constants":123,"datalib/src/util":20}],74:[function(require,module,exports){
 var util = require('datalib/src/util'),
     axs = require('../scene/axis'),
     config = require('../util/config');
@@ -11602,21 +11592,9 @@ module.exports = (function() {
 })();
 },{}],78:[function(require,module,exports){
 var util = require('datalib/src/util'),
-    expression = require('../expression');
-
-var expr = (function() {
-  var parse = expression.parse;
-  var codegen = expression.code({
-    idWhiteList: ['datum', 'event', 'signals']
-  });
-
-  return function(expr) {    
-    var value = codegen(parse(expr));
-    value.fn = Function('datum', 'event', 'signals',
-      '"use strict"; return (' + value.fn + ');');
-    return value;
-  };
-})();
+    expression = require('vega-expression'),
+    args = ['datum', 'event', 'signals'],
+    expr = expression.compiler(args, args[0], args[2]);
 
 expr.eval = function(graph, fn, opt) {
   opt.signals = graph.signalValues(util.array(opt.signals));
@@ -11624,7 +11602,7 @@ expr.eval = function(graph, fn, opt) {
 };
 
 module.exports = expr;
-},{"../expression":72,"datalib/src/util":20}],79:[function(require,module,exports){
+},{"datalib/src/util":20,"vega-expression":26}],79:[function(require,module,exports){
 module.exports = {
   axes: require('./axes'),
   background: require('./background'),
@@ -11954,7 +11932,7 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-},{"../dataflow/Node":65,"../dataflow/tuple":68,"../util/constants":123,"../util/log":124,"datalib/src/util":20}],85:[function(require,module,exports){
+},{"../dataflow/Node":70,"../dataflow/tuple":73,"../util/constants":123,"../util/log":124,"datalib/src/util":20}],85:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 function parsePadding(pad) {
@@ -12448,10 +12426,10 @@ function scaleRef(ref) {
 module.exports = properties;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"../util/config":122,"../util/log":124,"datalib/src/template":18,"datalib/src/util":20}],88:[function(require,module,exports){
+},{"../dataflow/tuple":73,"../util/config":122,"../util/log":124,"datalib/src/template":18,"datalib/src/util":20}],88:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('./expr'),
-    functions = require('../expression/functions')(),
+    functions = require('vega-expression/src/functions')(),
     C = require('../util/constants');
 
 function parseSignals(model, spec) {
@@ -12460,24 +12438,26 @@ function parseSignals(model, spec) {
     var signal = model.signal(s.name, s.init)
       .verbose(s.verbose);
 
-    if(s.init && s.init.expr) {
+    if (s.init && s.init.expr) {
       s.init.expr = expr(s.init.expr);
       signal.value(exprVal(model, s.init));
     }
 
-    if(s.expr) {
+    if (s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
         var val = exprVal(model, s, signal.value());
-        if(val !== signal.value() || signal.verbose()) {
+        if (val !== signal.value() || signal.verbose()) {
           signal.value(val);
           input.signals[s.name] = 1;
           return input;
         }
         return model.doNotPropagate;        
       };
-      signal.dependency(C.SIGNALS, s.expr.signals);
-      s.expr.signals.forEach(function(dep) { model.signal(dep).addListener(signal); });
+      signal.dependency(C.SIGNALS, s.expr.globals);
+      s.expr.globals.forEach(function(dep) {
+        model.signal(dep).addListener(signal);
+      });
     }
   });
 
@@ -12486,7 +12466,7 @@ function parseSignals(model, spec) {
 
 function exprVal(model, spec, currentValue) {
   var e = spec.expr,
-      val = expr.eval(model, e.fn, {signals: e.signals});
+      val = expr.eval(model, e.fn, {signals: e.globals});
   return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
@@ -12495,17 +12475,17 @@ parseSignals.scale = function scale(model, spec, value) {
       name  = def.name || def.signal || def,
       scope = def.scope ? model.signalRef(def.scope.signal) : null;
 
-  if(!scope || !scope.scale) {
+  if (!scope || !scope.scale) {
     scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
   }
 
   var scale = scope.scale(name);
-  if(!scale) return value;
+  if (!scale) return value;
   return def.invert ? scale.invert(value) : scale(value);
 }
 
 module.exports = parseSignals;
-},{"../expression/functions":71,"../util/constants":123,"./expr":78,"datalib/src/util":20}],89:[function(require,module,exports){
+},{"../util/constants":123,"./expr":78,"datalib/src/util":20,"vega-expression/src/functions":25}],89:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Model = require('../core/Model'), 
     View = require('../core/View'), 
@@ -12544,7 +12524,7 @@ function parseSpec(spec, callback, viewFactory) {
 }
 
 module.exports = parseSpec;
-},{"../core/Model":60,"../core/View":61,"../parse/background":75,"../parse/data":76,"../parse/interactors":80,"../parse/marks":83,"../parse/padding":85,"../parse/predicates":86,"../parse/signals":88,"datalib/src/util":20}],90:[function(require,module,exports){
+},{"../core/Model":65,"../core/View":66,"../parse/background":75,"../parse/data":76,"../parse/interactors":80,"../parse/marks":83,"../parse/padding":85,"../parse/predicates":86,"../parse/signals":88,"datalib/src/util":20}],90:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -12623,12 +12603,12 @@ function parseStreams(view) {
       h = handlers[i];
       filtered = h.filters.some(function(f) {
         return !expr.eval(model, f.fn, 
-          {datum: datum, event: evt, signals: f.signals});
+          {datum: datum, event: evt, signals: f.globals});
       });
       if (filtered) continue;
       
       val = expr.eval(model, h.exp.fn, 
-        {datum: datum, event: evt, signals: h.exp.signals}); 
+        {datum: datum, event: evt, signals: h.exp.globals}); 
       if (h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
       if (val !== h.signal.value() || h.signal.verbose()) {
@@ -12680,7 +12660,7 @@ function parseStreams(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, {signals: exp.signals});
+      var val = expr.eval(model, exp.fn, {signals: exp.globals});
       if (spec.scale) val = parseSignals.scale(model, spec, val);
 
       if (val !== sig.value()) {
@@ -12760,7 +12740,7 @@ function parseStreams(view) {
 module.exports = parseStreams;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":65,"../dataflow/changeset":67,"../util/constants":123,"./events":77,"./expr":78,"./signals":88,"datalib/src/util":20}],91:[function(require,module,exports){
+},{"../dataflow/Node":70,"../dataflow/changeset":72,"../util/constants":123,"./events":77,"./expr":78,"./signals":88,"datalib/src/util":20}],91:[function(require,module,exports){
 var util = require('datalib/src/util'),
     transforms = require('../transforms/index');
 
@@ -12831,7 +12811,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"../dataflow/Node":65,"../util/constants":123,"../util/log":124,"./Encoder":94,"datalib/src/util":20,"vega-scenegraph/src/util/bound":54}],93:[function(require,module,exports){
+},{"../dataflow/Node":70,"../util/constants":123,"../util/log":124,"./Encoder":94,"datalib/src/util":20,"vega-scenegraph/src/util/bound":59}],93:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Item = require('vega-scenegraph/src/util/Item'),
     Node = require('../dataflow/Node'),
@@ -13128,7 +13108,7 @@ function keyFunction(key) {
 };
 
 module.exports = Builder;
-},{"../dataflow/Node":65,"../dataflow/changeset":67,"../dataflow/tuple":68,"../parse/data":76,"../util/constants":123,"../util/log":124,"./Bounder":92,"./Encoder":94,"datalib/src/util":20,"vega-scenegraph/src/util/Item":53}],94:[function(require,module,exports){
+},{"../dataflow/Node":70,"../dataflow/changeset":72,"../dataflow/tuple":73,"../parse/data":76,"../util/constants":123,"../util/log":124,"./Bounder":92,"./Encoder":94,"datalib/src/util":20,"vega-scenegraph/src/util/Item":58}],94:[function(require,module,exports){
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
@@ -13261,7 +13241,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
 };
 
 module.exports = Encoder;
-},{"../dataflow/Node":65,"../util/constants":123,"../util/log":124,"datalib/src/util":20,"vega-scenegraph/src/util/bound":54}],95:[function(require,module,exports){
+},{"../dataflow/Node":70,"../util/constants":123,"../util/log":124,"datalib/src/util":20,"vega-scenegraph/src/util/bound":59}],95:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Collector = require('../dataflow/Collector'),
@@ -13519,7 +13499,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../dataflow/Collector":62,"../dataflow/Node":65,"../parse/axes":74,"../parse/legends":81,"../util/constants":123,"../util/log":124,"./Builder":93,"./Scale":96,"datalib/src/util":20}],96:[function(require,module,exports){
+},{"../dataflow/Collector":67,"../dataflow/Node":70,"../parse/axes":74,"../parse/legends":81,"../util/constants":123,"../util/log":124,"./Builder":93,"./Scale":96,"datalib/src/util":20}],96:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -13937,7 +13917,7 @@ var rangeDef = [
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":65,"../dataflow/changeset":67,"../transforms/Aggregate":101,"../util/config":122,"../util/constants":123,"../util/log":124,"datalib/src/util":20}],97:[function(require,module,exports){
+},{"../dataflow/Node":70,"../dataflow/changeset":72,"../transforms/Aggregate":101,"../util/config":122,"../util/constants":123,"../util/log":124,"datalib/src/util":20}],97:[function(require,module,exports){
 var bound = require('vega-scenegraph/src/util/bound'),
     tuple = require('../dataflow/tuple'),
     C = require('../util/constants');
@@ -14033,7 +14013,7 @@ function step(elapsed) {
 };
 
 module.exports = Transition;
-},{"../dataflow/tuple":68,"../util/constants":123,"vega-scenegraph/src/util/bound":54}],98:[function(require,module,exports){
+},{"../dataflow/tuple":73,"../util/constants":123,"vega-scenegraph/src/util/bound":59}],98:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -14601,7 +14581,7 @@ function vg_axisDomain() {
 module.exports = axs;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"../parse/mark":82,"../util/config":122,"datalib/src/util":20}],99:[function(require,module,exports){
+},{"../dataflow/tuple":73,"../parse/mark":82,"../util/config":122,"datalib/src/util":20}],99:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -15153,7 +15133,7 @@ function vg_hLegendLabels() {
 module.exports = lgnd;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/mark":82,"../parse/properties":87,"../util/config":122,"datalib/src/util":20,"vega-scenegraph/src/util/Gradient":51}],100:[function(require,module,exports){
+},{"../parse/mark":82,"../parse/properties":87,"../util/config":122,"datalib/src/util":20,"vega-scenegraph/src/util/Gradient":56}],100:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
   if (func(node)) return true;
@@ -15337,7 +15317,7 @@ var VALID_OPS = Aggregate.VALID_OPS = [
 ];
 
 module.exports   = Aggregate;
-},{"../dataflow/changeset":67,"../dataflow/tuple":68,"../util/constants":123,"../util/log":124,"./Facetor":106,"./Transform":118,"datalib/src/util":20}],102:[function(require,module,exports){
+},{"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/constants":123,"../util/log":124,"./Facetor":106,"./Transform":118,"datalib/src/util":20}],102:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
 
@@ -15362,7 +15342,7 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = BatchTransform;
-},{"../dataflow/Collector":62,"./Transform":118}],103:[function(require,module,exports){
+},{"../dataflow/Collector":67,"./Transform":118}],103:[function(require,module,exports){
 var bins = require('datalib/src/bins/bins'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
@@ -15420,7 +15400,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
-},{"../dataflow/tuple":68,"./Transform":118,"datalib/src/bins/bins":6}],104:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./Transform":118,"datalib/src/bins/bins":6}],104:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
     log = require('../util/log'),
@@ -15537,7 +15517,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
-},{"../dataflow/Collector":62,"../dataflow/changeset":67,"../dataflow/tuple":68,"../util/log":124,"./Transform":118}],105:[function(require,module,exports){
+},{"../dataflow/Collector":67,"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/log":124,"./Transform":118}],105:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
@@ -15707,7 +15687,7 @@ proto.changes = function(input, output) {
 };
 
 module.exports = Facetor;
-},{"../dataflow/changeset":67,"../dataflow/tuple":68,"../util/constants":123,"../util/log":124,"datalib/src/aggregate/aggregator":3}],107:[function(require,module,exports){
+},{"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/constants":123,"../util/log":124,"datalib/src/aggregate/aggregator":3}],107:[function(require,module,exports){
 var Transform = require('./Transform'),
     changeset = require('../dataflow/changeset'), 
     expr = require('../parse/expr'),
@@ -15765,7 +15745,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"../dataflow/changeset":67,"../parse/expr":78,"../util/constants":123,"../util/log":124,"./Transform":118}],108:[function(require,module,exports){
+},{"../dataflow/changeset":72,"../parse/expr":78,"../util/constants":123,"../util/log":124,"./Transform":118}],108:[function(require,module,exports){
 var Transform = require('./Transform'),
     log = require('../util/log'), 
     tuple = require('../dataflow/tuple'), 
@@ -15835,7 +15815,7 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"../dataflow/changeset":67,"../dataflow/tuple":68,"../util/log":124,"./Transform":118}],109:[function(require,module,exports){
+},{"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/log":124,"./Transform":118}],109:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     Transform = require('./Transform'),
@@ -15949,7 +15929,7 @@ proto.transform = function(nodeInput) {
 module.exports = Force;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"./Transform":118}],110:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./Transform":118}],110:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
     expression = require('../parse/expr'),
@@ -15992,7 +15972,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"../dataflow/tuple":68,"../parse/expr":78,"../util/constants":123,"../util/log":124,"./Transform":118}],111:[function(require,module,exports){
+},{"../dataflow/tuple":73,"../parse/expr":78,"../util/constants":123,"../util/log":124,"./Transform":118}],111:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -16081,7 +16061,7 @@ proto.transform = function(input) {
 module.exports = Geo;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"./Transform":118,"datalib/src/util":20}],112:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./Transform":118,"datalib/src/util":20}],112:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -16127,7 +16107,7 @@ proto.transform = function(input) {
 module.exports = GeoPath;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"./Geo":111,"./Transform":118,"datalib/src/util":20}],113:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./Geo":111,"./Transform":118,"datalib/src/util":20}],113:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
@@ -16220,7 +16200,7 @@ proto.transform = function(input) {
 };
 
 module.exports  = LinkPath;
-},{"../dataflow/tuple":68,"./Transform":118}],114:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./Transform":118}],114:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('../parse/expr'),
     C = require('../util/constants');
@@ -16302,7 +16282,7 @@ proto.set = function(value) {
       if (isExpr) {
         var e = expr(v);
         p._transform.dependency(C.FIELDS,  e.fields);
-        p._transform.dependency(C.SIGNALS, e.signals);
+        p._transform.dependency(C.SIGNALS, e.globals);
         return e.fn;
       } else if (isField) {  // Backwards compatibility
         p._accessors[i] = util.accessor(v);
@@ -16400,7 +16380,7 @@ proto.batchTransform = function(input, data) {
 module.exports = Pie;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"./BatchTransform":102,"./Transform":118,"datalib/src/generate":7,"datalib/src/util":20}],116:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./BatchTransform":102,"./Transform":118,"datalib/src/generate":7,"datalib/src/util":20}],116:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     expr = require('../parse/expr'),
@@ -16519,7 +16499,7 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
-},{"../dataflow/tuple":68,"./BatchTransform":102,"./Transform":118,"datalib/src/util":20}],118:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./BatchTransform":102,"./Transform":118,"datalib/src/util":20}],118:[function(require,module,exports){
 var Node = require('../dataflow/Node'),
     Parameter = require('./Parameter'),
     C = require('../util/constants');
@@ -16572,7 +16552,7 @@ proto.output = function(map) {
 };
 
 module.exports = Transform;
-},{"../dataflow/Node":65,"../util/constants":123,"./Parameter":114}],119:[function(require,module,exports){
+},{"../dataflow/Node":70,"../util/constants":123,"./Parameter":114}],119:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -16648,7 +16628,7 @@ proto.batchTransform = function(input, data) {
 module.exports = Treemap;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":68,"./BatchTransform":102,"./Transform":118,"datalib/src/util":20}],120:[function(require,module,exports){
+},{"../dataflow/tuple":73,"./BatchTransform":102,"./Transform":118,"datalib/src/util":20}],120:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
@@ -16773,7 +16753,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
-},{"../dataflow/Collector":62,"../util/log":124,"./Transform":118,"datalib/src/util":20}],121:[function(require,module,exports){
+},{"../dataflow/Collector":67,"../util/log":124,"./Transform":118,"datalib/src/util":20}],121:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
