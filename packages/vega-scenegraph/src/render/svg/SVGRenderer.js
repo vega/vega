@@ -177,12 +177,16 @@ prototype._dirtyCheck = function(items) {
   if (!items) return true;
 
   var id = ++this._dirtyID,
-      item, mark, mdef, i, n, o;
+      item, mark, type, mdef, i, n, o;
 
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
     mark = item.mark;
-    mdef = marks[mark.marktype];
+    if (mark.marktype !== type) {
+      // memoize mark instance lookup
+      type = mark.marktype;
+      mdef = marks[type];
+    }
 
     if (item.status === 'exit') { // EXIT
       if (item._svg) {
