@@ -38,7 +38,7 @@ module.exports = function(opt) {
   }
 
   function codegen(ast) {
-    if (ast instanceof String) return ast;
+    if (typeof ast === 'string') return ast;
     var generator = CODEGEN_TYPES[ast.type];
     if (generator == null) {
       throw new Error('Unsupported type: ' + ast.type);
@@ -103,12 +103,6 @@ module.exports = function(opt) {
       },
     'UnaryExpression': function(n) {
         return '(' + n.operator + codegen(n.argument) + ')';
-      },
-    'UpdateExpression': function(n) {
-        return '(' + (n.prefix ?
-          n.operator + codegen(n.argument) :
-          codegen(n.argument) + n.operator
-        ) + ')';
       },
     'ConditionalExpression': function(n) {
         return '(' + codegen(n.test) +
