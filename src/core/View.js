@@ -252,7 +252,7 @@ prototype.initialize = function(el) {
   }
 
   // renderer
-  v._renderer = (v._renderer || new this._io.Renderer())
+  v._renderer = (v._renderer || new this._io.Renderer(config.load))
     .initialize(el, w, h, pad)
     .background(bg);
   

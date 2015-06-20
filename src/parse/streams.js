@@ -75,12 +75,12 @@ function parseStreams(view) {
       h = handlers[i];
       filtered = h.filters.some(function(f) {
         return !expr.eval(model, f.fn, 
-          {datum: datum, event: evt, signals: f.signals});
+          {datum: datum, event: evt, signals: f.globals});
       });
       if (filtered) continue;
       
       val = expr.eval(model, h.exp.fn, 
-        {datum: datum, event: evt, signals: h.exp.signals}); 
+        {datum: datum, event: evt, signals: h.exp.globals}); 
       if (h.spec.scale) val = parseSignals.scale(model, h.spec, val);
 
       if (val !== h.signal.value() || h.signal.verbose()) {
@@ -132,7 +132,7 @@ function parseStreams(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, {signals: exp.signals});
+      var val = expr.eval(model, exp.fn, {signals: exp.globals});
       if (spec.scale) val = parseSignals.scale(model, spec, val);
 
       if (val !== sig.value()) {
