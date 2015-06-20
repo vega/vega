@@ -11597,8 +11597,9 @@ var util = require('datalib/src/util'),
     expr = expression.compiler(args, args[0], args[2]);
 
 expr.eval = function(graph, fn, opt) {
-  opt.signals = graph.signalValues(util.array(opt.signals));
-  return fn.call(fn, opt.datum, opt.event, opt.signals);
+  // TODO memoize here or elsewhere to avoid repeated signal lookups.
+  var signals = graph.signalValues(util.array(opt.signals));
+  return fn.call(fn, opt.datum, opt.event, signals);
 };
 
 module.exports = expr;
@@ -15704,16 +15705,22 @@ function Filter(graph) {
 
 var proto = (Filter.prototype = new Transform());
 
-function test(x) {
-  return expr.eval(this._graph, this.param("test"), 
-    {datum: x, signals: this.dependency(C.SIGNALS)});
-};
-
 proto.transform = function(input) {
   log.debug(input, ["filtering"]);
   var output = changeset.create(input),
+      graph = this._graph,
       skip = this._skip,
+      testfn = this.param('test'),
+      context = {
+        datum: null,
+        signals: this.dependency(C.SIGNALS)
+      },
       f = this;
+
+  function test(x) {
+    context.datum = x;
+    return expr.eval(graph, testfn, context);
+  }
 
   input.rem.forEach(function(x) {
     if (skip[x._id] !== 1) output.rem.push(x);
@@ -15721,12 +15728,12 @@ proto.transform = function(input) {
   });
 
   input.add.forEach(function(x) {
-    if (test.call(f, x)) output.add.push(x);
+    if (test(x)) output.add.push(x);
     else skip[x._id] = 1;
   });
 
   input.mod.forEach(function(x) {
-    var b = test.call(f, x),
+    var b = test(x),
         s = (skip[x._id] === 1);
     if (b && s) {
       skip[x._id] = 0;
@@ -15948,16 +15955,21 @@ function Formula(graph) {
 
 var proto = (Formula.prototype = new Transform());
 
+
 proto.transform = function(input) {
   log.debug(input, ["formulating"]);
   var t = this, 
       g = this._graph,
       field = this.param("field"),
       expr = this.param("expr"),
-      signals = this.dependency(C.SIGNALS);
-  
+      context = {
+        datum: null,
+        signals: this.dependency(C.SIGNALS) 
+      };
+
   function set(x) {
-    var val = expression.eval(g, expr, {datum: x, signals: signals});
+    context.datum = x;
+    var val = expression.eval(g, expr, context);
     tuple.set(x, field, val);
   }
 

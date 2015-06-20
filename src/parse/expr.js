@@ -4,8 +4,9 @@ var util = require('datalib/src/util'),
     expr = expression.compiler(args, args[0], args[2]);
 
 expr.eval = function(graph, fn, opt) {
-  opt.signals = graph.signalValues(util.array(opt.signals));
-  return fn.call(fn, opt.datum, opt.event, opt.signals);
+  // TODO memoize here or elsewhere to avoid repeated signal lookups.
+  var signals = graph.signalValues(util.array(opt.signals));
+  return fn.call(fn, opt.datum, opt.event, signals);
 };
 
 module.exports = expr;
