@@ -33,6 +33,7 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/* istanbul ignore next */
 module.exports = (function() {
   'use strict';
 
@@ -89,8 +90,7 @@ module.exports = (function() {
       ObjectExpression: 'ObjectExpression',
       Program: 'Program',
       Property: 'Property',
-      UnaryExpression: 'UnaryExpression',
-      UpdateExpression: 'UpdateExpression'
+      UnaryExpression: 'UnaryExpression'
   };
 
   PropertyKind = {
@@ -1398,7 +1398,7 @@ module.exports = (function() {
       },
 
       finishUnaryExpression: function (operator, argument) {
-          this.type = (operator === '++' || operator === '--') ? Syntax.UpdateExpression : Syntax.UnaryExpression;
+          this.type = Syntax.UnaryExpression;
           this.operator = operator;
           this.argument = argument;
           this.prefix = true;
