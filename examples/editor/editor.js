@@ -53,6 +53,7 @@ ved.parse = function() {
     return;
   }
 
+  var start = Date.now();
   ved.spec = spec;
   vg.parse.spec(spec, function(chart) {
     d3.select("#vis").selectAll("*").remove();
@@ -62,6 +63,7 @@ ved.parse = function() {
       renderer: ved.renderType
     });
     (ved.view = view).update();
+    if (vg.config.debug) console.log('ved.parse', Date.now() - start);
   });
 };
 
