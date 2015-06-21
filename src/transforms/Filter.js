@@ -14,16 +14,22 @@ function Filter(graph) {
 
 var proto = (Filter.prototype = new Transform());
 
-function test(x) {
-  return expr.eval(this._graph, this.param("test"), 
-    {datum: x, signals: this.dependency(C.SIGNALS)});
-};
-
 proto.transform = function(input) {
   log.debug(input, ["filtering"]);
   var output = changeset.create(input),
+      graph = this._graph,
       skip = this._skip,
+      testfn = this.param('test'),
+      context = {
+        datum: null,
+        signals: this.dependency(C.SIGNALS)
+      },
       f = this;
+
+  function test(x) {
+    context.datum = x;
+    return expr.eval(graph, testfn, context);
+  }
 
   input.rem.forEach(function(x) {
     if (skip[x._id] !== 1) output.rem.push(x);
@@ -31,12 +37,12 @@ proto.transform = function(input) {
   });
 
   input.add.forEach(function(x) {
-    if (test.call(f, x)) output.add.push(x);
+    if (test(x)) output.add.push(x);
     else skip[x._id] = 1;
   });
 
   input.mod.forEach(function(x) {
-    var b = test.call(f, x),
+    var b = test(x),
         s = (skip[x._id] === 1);
     if (b && s) {
       skip[x._id] = 0;
