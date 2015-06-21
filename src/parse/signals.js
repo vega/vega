@@ -41,10 +41,20 @@ function exprVal(model, spec, currentValue) {
   return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
-parseSignals.scale = function scale(model, spec, value) {
+parseSignals.scale = function scale(model, spec, value, ctx) {
   var def = spec.scale,
       name  = def.name || def.signal || def,
-      scope = def.scope ? model.signalRef(def.scope.signal) : null;
+      scope = def.scope;
+
+  if (scope) {
+    if (scope.signal) scope = model.signalRef(scope.signal);
+    else if (util.isString(scope)) { // Scope is an expression
+      def._expr = def._expr || expr(scope);
+      scope = expr.eval(model, def._expr.fn, util.extend(ctx || {}, {
+        signals: def._expr.globals
+      }));
+    }
+  }
 
   if (!scope || !scope.scale) {
     scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
@@ -74,7 +84,12 @@ parseSignals.schema = {
             "name": {
               "oneOf": [{"$ref": "#/refs/signal"}, {"type": "string"}]
             },
-            "scope": {"$ref": "#/refs/signal"},
+            "scope": {
+              "oneOf": [
+                {"$ref": "#/refs/signal"},
+                {"type": "string"}
+              ]
+            },
             "invert": {"type": "boolean", "default": false}
           },
 

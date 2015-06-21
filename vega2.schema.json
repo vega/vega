@@ -4764,7 +4764,14 @@
               ]
             },
             "scope": {
-              "$ref": "#/refs/signal"
+              "oneOf": [
+                {
+                  "$ref": "#/refs/signal"
+                },
+                {
+                  "type": "string"
+                }
+              ]
             },
             "invert": {
               "type": "boolean",

@@ -67,6 +67,7 @@ function parseStreams(view) {
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
         node = registry.nodes[type],
+        ctx = {datum: datum, event: evt},
         cs = changeset.create(null, true),
         filtered = false,
         val, i, len, h;
@@ -74,14 +75,12 @@ function parseStreams(view) {
     for (i = 0, len=handlers.length; i<len; i++) {
       h = handlers[i];
       filtered = h.filters.some(function(f) {
-        return !expr.eval(model, f.fn, 
-          {datum: datum, event: evt, signals: f.globals});
+        return !expr.eval(model, f.fn, util.extend(ctx, {signals: f.globals}));
       });
       if (filtered) continue;
       
-      val = expr.eval(model, h.exp.fn, 
-        {datum: datum, event: evt, signals: h.exp.globals}); 
-      if (h.spec.scale) val = parseSignals.scale(model, h.spec, val);
+      val = expr.eval(model, h.exp.fn, util.extend(ctx, {signals: h.exp.globals}));
+      if (h.spec.scale) val = parseSignals.scale(model, h.spec, val, ctx);
 
       if (val !== h.signal.value() || h.signal.verbose()) {
         h.signal.value(val);
@@ -113,7 +112,7 @@ function parseStreams(view) {
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
-      filters.push("event.vgItem.mark && event.vgItem.mark.def.name==="+util.str(name));
+      filters.push("!!event.vg"+capitalize(name)+"Item"); // Mimic event bubbling
     } else if (mark) {
       filters.push("event.vgItem.mark && event.vgItem.mark.marktype==="+util.str(mark));
     }
