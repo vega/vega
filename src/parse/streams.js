@@ -49,7 +49,7 @@ function parseStreams(view) {
       groupOffsets(evt);
 
       if (item && (name = item.mark.def.name)) {
-        evt["vg"+capitalize(name)+"Item"] = item;
+        populateEvt(evt, name, item, item.mark.marktype === C.GROUP);
       }
 
       fire(internal, type, datum, evt);
@@ -197,13 +197,16 @@ function parseStreams(view) {
         name, prefix;
 
     while (group) {
-      if (name = capitalize(group.mark.def.name)) {
-        event[(prefix = "vg"+name)+"Item"] = group;
-        if (group.x) event[prefix+"X"] = event.vgX - group.x;
-        if (group.y) event[prefix+"Y"] = event.vgY - group.y;
-      }
-
+      if (name = group.mark.def.name) populateEvt(event, name, group, true);
       group = group.mark.group;
+    }
+  }
+
+  function populateEvt(event, name, item, group) {
+    event[(prefix = "vg"+capitalize(name))+"Item"] = item;
+    if (group) {
+      if (item.x !== undefined) event[prefix+"X"] = event.vgX - item.x;
+      if (item.y !== undefined) event[prefix+"Y"] = event.vgY - item.y;
     }
   }
 }
