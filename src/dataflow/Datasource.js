@@ -186,6 +186,14 @@ proto.pipeline = function(pipeline) {
   return this;
 };
 
+proto.finalize = function() {
+  if (!this._revises) return;
+  for (var i = 0, len = this._data.length; i<len; ++i) {
+    var x = this._data[i];
+    x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+  }
+}
+
 proto.listener = function() { 
   var l = new Node(this._graph).router(true),
       dest = this,

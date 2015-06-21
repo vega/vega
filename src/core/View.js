@@ -300,13 +300,8 @@ function build() {
       input.dirty.forEach(function(i) { i._dirty = false; });
     }
 
-    // For all updated datasources, finalize their changesets.
-    for(d in input.data) {
-      ds = v._model.data(d);
-      if(!ds.revises()) continue;
-      changeset.finalize(ds.last());
-    }
-
+    // For all updated datasources, clear their previous values.
+    for(d in input.data) v._model.data(d).finalize();
     return input;
   };
 

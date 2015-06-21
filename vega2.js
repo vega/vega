@@ -9422,13 +9422,8 @@ function build() {
       input.dirty.forEach(function(i) { i._dirty = false; });
     }
 
-    // For all updated datasources, finalize their changesets.
-    for(d in input.data) {
-      ds = v._model.data(d);
-      if(!ds.revises()) continue;
-      changeset.finalize(ds.last());
-    }
-
+    // For all updated datasources, clear their previous values.
+    for(d in input.data) v._model.data(d).finalize();
     return input;
   };
 
@@ -9768,6 +9763,14 @@ proto.pipeline = function(pipeline) {
   this._graph.connect(ds._pipeline);
   return this;
 };
+
+proto.finalize = function() {
+  if (!this._revises) return;
+  for (var i = 0, len = this._data.length; i<len; ++i) {
+    var x = this._data[i];
+    x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
+  }
+}
 
 proto.listener = function() { 
   var l = new Node(this._graph).router(true),
@@ -10231,15 +10234,6 @@ function create(cs, reflow) {
   return out;
 }
 
-function reset_prev(x) {
-  x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
-}
-
-function finalize(cs) {
-  for(i=0, len=cs.add.length; i<len; ++i) reset_prev(cs.add[i]);
-  for(i=0, len=cs.mod.length; i<len; ++i) reset_prev(cs.mod[i]);
-}
-
 function copy(a, b) {
   b.stamp = a ? a.stamp : 0;
   b.sort  = a ? a.sort  : null;
@@ -10252,8 +10246,7 @@ function copy(a, b) {
 
 module.exports = {
   create: create,
-  copy: copy,
-  finalize: finalize,
+  copy: copy
 };
 },{"../util/constants":123}],73:[function(require,module,exports){
 var util = require('datalib/src/util'),
@@ -15358,7 +15351,8 @@ module.exports = BatchTransform;
 },{"../dataflow/Collector":67,"./Transform":118}],103:[function(require,module,exports){
 var bins = require('datalib/src/bins/bins'),
     Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple');
+    tuple = require('../dataflow/tuple'),
+    log = require('../util/log');
 
 function Bin(graph) {
   Transform.prototype.init.call(this, graph);
@@ -15381,6 +15375,7 @@ function Bin(graph) {
 var proto = (Bin.prototype = new Transform());
 
 proto.transform = function(input) {
+  log.debug(input, ["binning"]);
   var transform = this,
       output  = this._output.bin,
       step    = this.param("step"),
@@ -15413,7 +15408,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
-},{"../dataflow/tuple":73,"./Transform":118,"datalib/src/bins/bins":6}],104:[function(require,module,exports){
+},{"../dataflow/tuple":73,"../util/log":124,"./Transform":118,"datalib/src/bins/bins":6}],104:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
     log = require('../util/log'),

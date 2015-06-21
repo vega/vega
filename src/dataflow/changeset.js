@@ -14,15 +14,6 @@ function create(cs, reflow) {
   return out;
 }
 
-function reset_prev(x) {
-  x._prev = (x._prev === undefined) ? undefined : C.SENTINEL;
-}
-
-function finalize(cs) {
-  for(i=0, len=cs.add.length; i<len; ++i) reset_prev(cs.add[i]);
-  for(i=0, len=cs.mod.length; i<len; ++i) reset_prev(cs.mod[i]);
-}
-
 function copy(a, b) {
   b.stamp = a ? a.stamp : 0;
   b.sort  = a ? a.sort  : null;
@@ -35,6 +26,5 @@ function copy(a, b) {
 
 module.exports = {
   create: create,
-  copy: copy,
-  finalize: finalize,
+  copy: copy
 };
