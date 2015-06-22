@@ -12756,7 +12756,6 @@ function parseTransforms(model, def) {
 
   util.keys(def).forEach(function(k) {
     if(k === 'type' || k === 'output') return;
-    if(k === 'transform' && def.type === 'facet') return;
     tx.param(k, def[k]);
   });
 
