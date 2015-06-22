@@ -27,6 +27,7 @@ var INTERACTIVE_SPECS = [
   "shiftclick_select",
   "brush",
   "brush_interactor",
+  "crossfilter",
   "index_chart",
   "linking",
   "panzoom_points",

@@ -1,7 +1,7 @@
 var util = require('datalib/src/util'),
+    bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
     Encoder = require('./Encoder'),
-    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     log = require('../util/log');
 
@@ -16,25 +16,30 @@ proto.evaluate = function(input) {
   log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
-      group = type === C.GROUP,
+      isGrp = type === C.GROUP,
       items = this._mark.items,
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  bounds.mark(this._mark, null, group && !hasLegends);
+  if(input.add.length || input.rem.length || !items.length || 
+      type === C.AREA || type === C.LINE) {
+    bound.mark(this._mark, null, isGrp && !hasLegends);
+  } else {
+    input.mod.forEach(function(item) { bound.item(item); });
+  }  
 
-  if(group && hasLegends) {
-    for(i=0, ilen=this._mark.items.length; i<ilen; ++i) {
-      group = this._mark.items[i];
+  if(isGrp && hasLegends) {
+    for(i=0, ilen=items.length; i<ilen; ++i) {
+      group = items[i];
       group._legendPositions = null;
       for(j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];
         Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items);
-        bounds.mark(legend, null, true);
+        bound.mark(legend, null, true);
       }
     }
 
-    bounds.mark(this._mark, null, true);
+    bound.mark(this._mark, null, true);
   }
 
   input.reflow = true;

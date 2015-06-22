@@ -16,16 +16,21 @@ function Formula(graph) {
 
 var proto = (Formula.prototype = new Transform());
 
+
 proto.transform = function(input) {
   log.debug(input, ["formulating"]);
   var t = this, 
       g = this._graph,
       field = this.param("field"),
       expr = this.param("expr"),
-      signals = this.dependency(C.SIGNALS);
-  
+      context = {
+        datum: null,
+        signals: this.dependency(C.SIGNALS) 
+      };
+
   function set(x) {
-    var val = expression.eval(g, expr, {datum: x, signals: signals});
+    context.datum = x;
+    var val = expression.eval(g, expr, context);
     tuple.set(x, field, val);
   }
 

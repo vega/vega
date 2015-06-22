@@ -1,6 +1,7 @@
 var bins = require('datalib/src/bins/bins'),
     Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple');
+    tuple = require('../dataflow/tuple'),
+    log = require('../util/log');
 
 function Bin(graph) {
   Transform.prototype.init.call(this, graph);
@@ -23,6 +24,7 @@ function Bin(graph) {
 var proto = (Bin.prototype = new Transform());
 
 proto.transform = function(input) {
+  log.debug(input, ["binning"]);
   var transform = this,
       output  = this._output.bin,
       step    = this.param("step"),

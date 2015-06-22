@@ -1,23 +1,12 @@
 var util = require('datalib/src/util'),
-    expression = require('../expression');
-
-var expr = (function() {
-  var parse = expression.parse;
-  var codegen = expression.code({
-    idWhiteList: ['datum', 'event', 'signals']
-  });
-
-  return function(expr) {    
-    var value = codegen(parse(expr));
-    value.fn = Function('datum', 'event', 'signals',
-      '"use strict"; return (' + value.fn + ');');
-    return value;
-  };
-})();
+    expression = require('vega-expression'),
+    args = ['datum', 'event', 'signals'],
+    expr = expression.compiler(args, args[0], args[2]);
 
 expr.eval = function(graph, fn, opt) {
-  opt.signals = graph.signalValues(util.array(opt.signals));
-  return fn.call(fn, opt.datum, opt.event, opt.signals);
+  // TODO memoize here or elsewhere to avoid repeated signal lookups.
+  var signals = graph.signalValues(util.array(opt.signals));
+  return fn.call(fn, opt.datum, opt.event, signals);
 };
 
 module.exports = expr;

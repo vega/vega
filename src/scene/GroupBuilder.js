@@ -227,7 +227,7 @@ function buildAxes(input, group) {
         def = a.def(),
         b = null;
 
-    axisItems[i] = {group: group, axisDef: def};
+    axisItems[i] = {group: group, axisDef: def, layer: def.layer};
     b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, axisItems[i], builder)
       .dependency(C.SCALES, scale);

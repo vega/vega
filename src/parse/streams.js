@@ -49,7 +49,7 @@ function parseStreams(view) {
       groupOffsets(evt);
 
       if (item && (name = item.mark.def.name)) {
-        evt["vg"+capitalize(name)+"Item"] = item;
+        populateEvt(evt, name, item, item.mark.marktype === C.GROUP);
       }
 
       fire(internal, type, datum, evt);
@@ -67,6 +67,7 @@ function parseStreams(view) {
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
         node = registry.nodes[type],
+        ctx = {datum: datum, event: evt},
         cs = changeset.create(null, true),
         filtered = false,
         val, i, len, h;
@@ -74,14 +75,12 @@ function parseStreams(view) {
     for (i = 0, len=handlers.length; i<len; i++) {
       h = handlers[i];
       filtered = h.filters.some(function(f) {
-        return !expr.eval(model, f.fn, 
-          {datum: datum, event: evt, signals: f.signals});
+        return !expr.eval(model, f.fn, util.extend(ctx, {signals: f.globals}));
       });
       if (filtered) continue;
       
-      val = expr.eval(model, h.exp.fn, 
-        {datum: datum, event: evt, signals: h.exp.signals}); 
-      if (h.spec.scale) val = parseSignals.scale(model, h.spec, val);
+      val = expr.eval(model, h.exp.fn, util.extend(ctx, {signals: h.exp.globals}));
+      if (h.spec.scale) val = parseSignals.scale(model, h.spec, val, ctx);
 
       if (val !== h.signal.value() || h.signal.verbose()) {
         h.signal.value(val);
@@ -113,7 +112,7 @@ function parseStreams(view) {
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
-      filters.push("event.vgItem.mark && event.vgItem.mark.def.name==="+util.str(name));
+      filters.push("!!event.vg"+capitalize(name)+"Item"); // Mimic event bubbling
     } else if (mark) {
       filters.push("event.vgItem.mark && event.vgItem.mark.marktype==="+util.str(mark));
     }
@@ -132,7 +131,7 @@ function parseStreams(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, {signals: exp.signals});
+      var val = expr.eval(model, exp.fn, {signals: exp.globals});
       if (spec.scale) val = parseSignals.scale(model, spec, val);
 
       if (val !== sig.value()) {
@@ -198,13 +197,16 @@ function parseStreams(view) {
         name, prefix;
 
     while (group) {
-      if (name = capitalize(group.mark.def.name)) {
-        event[(prefix = "vg"+name)+"Item"] = group;
-        if (group.x) event[prefix+"X"] = event.vgX - group.x;
-        if (group.y) event[prefix+"Y"] = event.vgY - group.y;
-      }
-
+      if (name = group.mark.def.name) populateEvt(event, name, group, true);
       group = group.mark.group;
+    }
+  }
+
+  function populateEvt(event, name, item, group) {
+    event[(prefix = "vg"+capitalize(name))+"Item"] = item;
+    if (group) {
+      if (item.x !== undefined) event[prefix+"X"] = event.vgX - item.x;
+      if (item.y !== undefined) event[prefix+"Y"] = event.vgY - item.y;
     }
   }
 }

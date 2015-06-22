@@ -1,5 +1,5 @@
-var tuple = require('../dataflow/tuple'),
-    boundsCalc = require('../util/boundscalc'),
+var bound = require('vega-scenegraph/src/util/bound'),
+    tuple = require('../dataflow/tuple'),
     C = require('../util/constants');
 
 function Transition(duration, ease) {
@@ -15,7 +15,7 @@ var skip = {
   "url":  1
 };
 
-prototype.interpolate = function(item, values, stamp) {
+prototype.interpolate = function(item, values) {
   var key, curr, next, interp, list = null;
 
   for (key in values) {
@@ -53,7 +53,10 @@ prototype.interpolate = function(item, values, stamp) {
 prototype.start = function(callback) {
   var t = this, prev = t.updates, curr = prev.next;
   for (; curr!=null; prev=curr, curr=prev.next) {
-    if (curr.item.status === C.EXIT) curr.remove = true;
+    if (curr.item.status === C.EXIT) {
+      curr.item.status = C.UPDATE;  // Only mark item as exited when it is removed.
+      curr.remove = true;
+    }
   }
   t.callback = callback;
   d3.timer(function(elapsed) { return step.call(t, elapsed); });
@@ -77,10 +80,13 @@ function step(elapsed) {
       item[curr[i].property] = curr[i](e);
     }
     item.touch();
-    boundsCalc.item(item);
+    bound.item(item);
 
     if (f === 1) {
-      if (curr.remove) item.remove();
+      if (curr.remove) {
+        item.status = C.EXIT;
+        item.remove();
+      }
       prev.next = curr.next;
       curr = prev;
     } else {

@@ -21,9 +21,9 @@ describe('SVG', function() {
 
     // validation xpaths for rendered SVG DOM; a single match will be expected
     var validation = {
-      "barley": "//svg:g[@class='type-symbol']/svg:path[120]",
-      "area": "//svg:g[@class='type-area']/svg:path",
-      "bar": "//svg:g[@class='type-rect']/svg:rect[20]",
+      "barley": "//svg:g[@class='mark-symbol']/svg:path[120]",
+      "area": "//svg:g[@class='mark-area']/svg:path",
+      "bar": "//svg:g[@class='mark-rect']/svg:rect[20]",
     };
 
     files.forEach(function(file, idx) {

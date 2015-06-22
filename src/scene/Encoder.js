@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
+    bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
-    bounds = require('../util/boundscalc'),
     C = require('../util/constants'),
     log = require('../util/log'),
     EMPTY = {};
@@ -45,6 +45,7 @@ proto.evaluate = function(input) {
       enter  = props.enter,
       update = props.update,
       exit   = props.exit,
+      dirty  = input.dirty,
       preds  = this._graph.predicates(),
       sg = graph.signalValues(),  // For expediency, get all signal values
       db = graph.dataValues(), 
@@ -55,7 +56,7 @@ proto.evaluate = function(input) {
     if(prop = props[req]) {
       for(i=0, len=input.mod.length; i<len; ++i) {
         item = input.mod[i];
-        encode.call(this, prop, item, input.trans, db, sg, preds);
+        encode.call(this, prop, item, input.trans, db, sg, preds, dirty);
       }
     }
 
@@ -65,31 +66,35 @@ proto.evaluate = function(input) {
   // Items marked for removal are at the head of items. Process them first.
   for(i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if(exit)   encode.call(this, exit, item, input.trans, db, sg, preds); 
+    if(exit)   encode.call(this, exit,   item, input.trans, db, sg, preds, dirty); 
     if(input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if(!input.trans) item.remove();
   }
 
   for(i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
-    if(enter)  encode.call(this, enter,  item, input.trans, db, sg, preds);
-    if(update) encode.call(this, update, item, input.trans, db, sg, preds);
+    if(enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
+    if(update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
     item.status = C.UPDATE;
   }
 
   if(update) {
     for(i=0, len=input.mod.length; i<len; ++i) {
       item = input.mod[i];
-      encode.call(this, update, item, input.trans, db, sg, preds);
+      encode.call(this, update, item, input.trans, db, sg, preds, dirty);
     }
   }
 
   return input;
 };
 
-function encode(prop, item, trans, db, sg, preds) {
-  var enc = prop.encode;
-  enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
+function encode(prop, item, trans, db, sg, preds, dirty) {
+  var enc = prop.encode,
+      wasDirty = item._dirty,
+      isDirty  = enc.call(enc, item, item.mark.group||item, trans, db, sg, preds);
+
+  item._dirty = isDirty || wasDirty;
+  if (isDirty && !wasDirty) dirty.push(item);
 }
 
 // If a specified property set called, or update property set 
@@ -104,7 +109,7 @@ proto.reevaluate = function(pulse) {
 };
 
 // Short-circuit encoder if user specifies items
-Encoder.update = function(graph, trans, request, items) {
+Encoder.update = function(graph, trans, request, items, dirty) {
   items = util.array(items);
   var preds = graph.predicates(), 
       db = graph.dataValues(),
@@ -116,8 +121,8 @@ Encoder.update = function(graph, trans, request, items) {
     props = item.mark.def.properties;
     prop = props && props[request];
     if (prop) {
-      encode.call(null, prop, item, trans, db, sg, preds);
-      bounds.item(item);
+      encode.call(null, prop, item, trans, db, sg, preds, dirty);
+      bound.item(item);
     }
   }
 

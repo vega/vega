@@ -1,9 +1,9 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
+    canvas = require('vega-scenegraph/src/render/canvas'),
+    svg = require('vega-scenegraph/src/render/svg'),
     Node = require('../dataflow/Node'),
     parseStreams = require('../parse/streams'),
-    canvas = require('../render/canvas/index'),
-    svg = require('../render/svg/index'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
@@ -23,6 +23,7 @@ var View = function(el, width, height, model) {
   this._handler  = null;
   this._streamer = null; // Targeted update for streaming changes
   this._changeset = null;
+  this._repaint = true; // Full re-render on every re-init
   this._renderers = {canvas: canvas, svg: svg};
   this._io  = canvas;
   this._api = {}; // Stash streaming data API sandboxes.
@@ -165,14 +166,10 @@ prototype.padding = function(pad) {
       this._padding = pad;
       this._strict = false;
     }
-    if (this._headless) {
-      this.initialize();
-    } else if(this._el) {
-      this._renderer.resize(this._width, this._height, pad);
-      if(this._handler) this._handler.padding(pad);
-    }
+    if (this._renderer) this._renderer.resize(this._width, this._height, pad);
+    if (this._handler)  this._handler.padding(pad);
   }
-  return this;
+  return (this._repaint = true, this);
 };
 
 prototype.autopad = function(opt) {
@@ -255,14 +252,14 @@ prototype.initialize = function(el) {
   }
 
   // renderer
-  v._renderer = (v._renderer || new this._io.Renderer())
-    .initialize(el, w, h, pad, bg);
+  v._renderer = (v._renderer || new this._io.Renderer(config.load))
+    .initialize(el, w, h, pad)
+    .background(bg);
   
   // input handler
   prevHandler = v._handler;
   v._handler = new this._io.Handler()
-    .initialize(el, pad, v)
-    .model(v._model);
+    .initialize(el, pad, v);
 
   if (prevHandler) {
     prevHandler.handlers().forEach(function(h) {
@@ -273,7 +270,7 @@ prototype.initialize = function(el) {
     parseStreams(this);
   }
   
-  return this;
+  return (this._repaint = true, this);
 };
 
 function build() {
@@ -284,21 +281,27 @@ function build() {
   v._renderNode.evaluate = function(input) {
     log.debug(input, ["rendering"]);
 
-    var s = v._model.scene();
+    var s = v._model.scene(),
+        h = v._handler,
+        ds, d;
+
+    if (h && h.scene) h.scene(s);
+
     if(input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
-    } else {
+    } else if (v._repaint) {
       v._renderer.render(s);
+      v._repaint = false;
+    } else if(input.dirty.length) {
+      v._renderer.render(s, input.dirty);
     }
 
-    // For all updated datasources, finalize their changesets.
-    var d, ds;
-    for(d in input.data) {
-      ds = v._model.data(d);
-      if(!ds.revises()) continue;
-      changeset.finalize(ds.last());
+    if (input.dirty.length) {
+      input.dirty.forEach(function(i) { i._dirty = false; });
     }
 
+    // For all updated datasources, clear their previous values.
+    for(d in input.data) v._model.data(d).finalize();
     return input;
   };
 
@@ -331,7 +334,7 @@ prototype.update = function(opt) {
   // Else-If there are streaming updates, perform a targeted propagation.
   // Otherwise, reevaluate the entire model (datasources + scene).
   if(opt.items && built) { 
-    Encoder.update(this._model, opt.trans, opt.props, opt.items);
+    Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
   } else if(v._streamer.listeners().length && built) {
     v._model.propagate(cs, v._streamer);
@@ -381,10 +384,24 @@ View.factory = function(model) {
       .width(defs.width)
       .height(defs.height)
       .background(defs.background)
-      .padding(defs.padding);
+      .padding(defs.padding)
+      .viewport(defs.viewport)
+      .initialize(opt.el);
 
-    if(opt.el || (!opt.el && v instanceof HeadlessView)) v.initialize(opt.el);
-    if(opt.data) v.data(opt.data);
+    if (opt.data) v.data(opt.data);
+
+    if (opt.hover !== false && opt.el) {
+      v.on("mouseover", function(evt, item) {
+        if (item && item.hasPropertySet("hover")) {
+          this.update({props:"hover", items:item});
+        }
+      })
+      .on("mouseout", function(evt, item) {
+        if (item && item.hasPropertySet("hover")) {
+          this.update({props:"update", items:item});
+        }
+      });
+    }
   
     return v;
   };    

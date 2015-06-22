@@ -79,7 +79,7 @@ proto.set = function(value) {
       if (isExpr) {
         var e = expr(v);
         p._transform.dependency(C.FIELDS,  e.fields);
-        p._transform.dependency(C.SIGNALS, e.signals);
+        p._transform.dependency(C.SIGNALS, e.globals);
         return e.fn;
       } else if (isField) {  // Backwards compatibility
         p._accessors[i] = util.accessor(v);

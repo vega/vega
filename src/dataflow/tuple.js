@@ -19,9 +19,10 @@ function derive(datum, prev) {
 // WARNING: operators should only call this once per timestamp!
 function set(t, k, v) {
   var prev = t[k];
-  if(prev === v) return;
+  if(prev === v) return false;
   set_prev(t, k);
   t[k] = v;
+  return true;
 }
 
 function set_prev(t, k) {

@@ -1,8 +1,8 @@
 var util = require('datalib/src/util'),
+    Item = require('vega-scenegraph/src/util/Item'),
     Node = require('../dataflow/Node'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
-    Item  = require('./Item'),
     parseData = require('../parse/data'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
@@ -191,7 +191,14 @@ proto.evaluate = function(input) {
   }
 
   output = this._graph.evaluate(output, this._encoder);
-  return this._isSuper ? this._graph.evaluate(output, this._bounder) : output;
+
+  // Supernodes calculate bounds too, but only on items marked dirty.
+  if(this._isSuper) {
+    output.mod = output.mod.filter(function(x) { return x._dirty; });
+    output = this._graph.evaluate(output, this._bounder);
+  }
+
+  return output;
 };
 
 function newItem() {
@@ -237,6 +244,8 @@ function joinDatasource(input, data, fullUpdate) {
   for(i=0, len=rem.length; i<len; ++i) {
     item = this._map[key = keyf(rem[i])];
     item.status = C.EXIT;
+    item._dirty = true;
+    input.dirty.push(item);
     next.push(item);
     output.rem.push(item);
     this._map[key] = null;
@@ -266,6 +275,8 @@ function joinValues(input, data, fullUpdate) {
     item = prev[i];
     if (item.status === C.EXIT) {
       tuple.set(item, "key", keyf ? item.key : this._items.length);
+      item._dirty = true;
+      input.dirty.push(item);
       next.splice(0, 0, item);  // Keep item around for "exit" transition.
       output.rem.push(item);
     }
