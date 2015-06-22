@@ -30,7 +30,7 @@ prototype.canvasAsync = function(callback) {
   function wait() {
     if (r.pendingImages() === 0) {
       view.render(); // re-render with all images
-      callback(view._canvas);
+      callback(view.canvas());
     } else {
       setTimeout(wait, 10);
     }

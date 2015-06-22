@@ -19,7 +19,7 @@ module.exports = {
   util: require('datalib/src/util'),
   schema: require('./src/util/schema')
 };
-},{"./src/core/View":66,"./src/dataflow/Datasource":68,"./src/dataflow/Graph":69,"./src/dataflow/Node":70,"./src/dataflow/changeset":72,"./src/parse/":79,"./src/scene/Builder":93,"./src/scene/GroupBuilder":95,"./src/transforms/":121,"./src/util/config":122,"./src/util/schema":125,"datalib/src/util":20}],2:[function(require,module,exports){
+},{"./src/core/View":67,"./src/dataflow/Datasource":69,"./src/dataflow/Graph":70,"./src/dataflow/Node":71,"./src/dataflow/changeset":73,"./src/parse/":80,"./src/scene/Builder":94,"./src/scene/GroupBuilder":96,"./src/transforms/":122,"./src/util/config":123,"./src/util/schema":126,"datalib/src/util":20}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 var util = require('../util'),
@@ -5467,6 +5467,8 @@ module.exports = (function() {
 
 })();
 },{}],28:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"dup":13,"fs":2,"request":2,"sync-request":2,"url":2}],29:[function(require,module,exports){
 var segmentCache = {},
     bezierCache = {},
     join = [].join;
@@ -5581,7 +5583,7 @@ module.exports = {
   }
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(path, bounds) {
@@ -5840,14 +5842,14 @@ function boundArc(x, y, coords, bounds) {
   }
 }
 
-},{"./arc":28}],30:[function(require,module,exports){
+},{"./arc":29}],31:[function(require,module,exports){
 module.exports = {
   parse:  require('./parse'),
   render: require('./render'),
   bounds: require('./bounds')
 };
 
-},{"./bounds":29,"./parse":31,"./render":32}],31:[function(require,module,exports){
+},{"./bounds":30,"./parse":32,"./render":33}],32:[function(require,module,exports){
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
 var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
     regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)-/g, /\s|,|###/];
@@ -5898,7 +5900,7 @@ module.exports = function(pathstr) {
   return result;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
@@ -6194,7 +6196,7 @@ function drawArc(g, x, y, coords) {
   }
 }
 
-},{"./arc":28}],33:[function(require,module,exports){
+},{"./arc":29}],34:[function(require,module,exports){
 function Handler() {
   this._active = null;
   this._handlers = {};
@@ -6244,7 +6246,7 @@ prototype.eventName = function(name) {
 };
 
 module.exports = Handler;
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 function Renderer() {
   this._el = null;
   this._bgcolor = null;
@@ -6279,7 +6281,7 @@ prototype.render = function(/*scene, items*/) {
 };
 
 module.exports = Renderer;
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler'),
     marks = require('./marks');
@@ -6434,7 +6436,7 @@ prototype.pick = function(scene, x, y, gx, gy) {
 
 module.exports = CanvasHandler;
 
-},{"../../util/dom":61,"../Handler":33,"./marks":42}],36:[function(require,module,exports){
+},{"../../util/dom":62,"../Handler":34,"./marks":43}],37:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Bounds = require('../../util/Bounds'),
     ImageLoader = require('../../util/ImageLoader'),
@@ -6569,12 +6571,12 @@ prototype.renderAsync = function(scene) {
 
 module.exports = CanvasRenderer;
 
-},{"../../util/Bounds":55,"../../util/ImageLoader":57,"../../util/canvas":60,"../../util/dom":61,"../Renderer":34,"./marks":42}],37:[function(require,module,exports){
+},{"../../util/Bounds":56,"../../util/ImageLoader":58,"../../util/canvas":61,"../../util/dom":62,"../Renderer":35,"./marks":43}],38:[function(require,module,exports){
 module.exports = {
   Handler:  require('./CanvasHandler'),
   Renderer: require('./CanvasRenderer')
 };
-},{"./CanvasHandler":35,"./CanvasRenderer":36}],38:[function(require,module,exports){
+},{"./CanvasHandler":36,"./CanvasRenderer":37}],39:[function(require,module,exports){
 var util = require('./util');
 var halfpi = Math.PI / 2;
 
@@ -6601,7 +6603,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pick(hit)
 };
-},{"./util":49}],39:[function(require,module,exports){
+},{"./util":50}],40:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -6639,7 +6641,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":31,"../../../path/render":32,"../../../util/svg":63,"./util":49}],40:[function(require,module,exports){
+},{"../../../path/parse":32,"../../../path/render":33,"../../../util/svg":64,"./util":50}],41:[function(require,module,exports){
 var util = require('./util'),
     rect = require('./rect');
 
@@ -6733,7 +6735,7 @@ module.exports = {
   pick: pick
 };
 
-},{"./rect":45,"./util":49}],41:[function(require,module,exports){
+},{"./rect":46,"./util":50}],42:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -6771,7 +6773,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":49}],42:[function(require,module,exports){
+},{"./util":50}],43:[function(require,module,exports){
 module.exports = {
   arc:    require('./arc'),
   area:   require('./area'),
@@ -6785,7 +6787,7 @@ module.exports = {
   text:   require('./text')
 };
 
-},{"./arc":38,"./area":39,"./group":40,"./image":41,"./line":43,"./path":44,"./rect":45,"./rule":46,"./symbol":47,"./text":48}],43:[function(require,module,exports){
+},{"./arc":39,"./area":40,"./group":41,"./image":42,"./line":44,"./path":45,"./rect":46,"./rule":47,"./symbol":48,"./text":49}],44:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -6834,7 +6836,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":31,"../../../path/render":32,"../../../util/svg":63,"./util":49}],44:[function(require,module,exports){
+},{"../../../path/parse":32,"../../../path/render":33,"../../../util/svg":64,"./util":50}],45:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -6854,7 +6856,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../path/parse":31,"../../../path/render":32,"./util":49}],45:[function(require,module,exports){
+},{"../../../path/parse":32,"../../../path/render":33,"./util":50}],46:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -6889,7 +6891,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":49}],46:[function(require,module,exports){
+},{"./util":50}],47:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -6946,7 +6948,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"./util":49}],47:[function(require,module,exports){
+},{"./util":50}],48:[function(require,module,exports){
 var util = require('./util');
 
 var sqrt3 = Math.sqrt(3),
@@ -7025,7 +7027,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pick(hit)
 };
-},{"./util":49}],48:[function(require,module,exports){
+},{"./util":50}],49:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
     font = require('../../../util/font'),
@@ -7099,7 +7101,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../util/Bounds":55,"../../../util/bound":59,"../../../util/font":62,"./util":49}],49:[function(require,module,exports){
+},{"../../../util/Bounds":56,"../../../util/bound":60,"../../../util/font":63,"./util":50}],50:[function(require,module,exports){
 function drawPathOne(path, g, o, items) {
   if (path(g, items)) return;
 
@@ -7221,7 +7223,7 @@ module.exports = {
   gradient: gradient
 };
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
@@ -7286,7 +7288,7 @@ prototype.off = function(type, handler) {
 
 module.exports = SVGHandler;
 
-},{"../../util/dom":61,"../Handler":33}],51:[function(require,module,exports){
+},{"../../util/dom":62,"../Handler":34}],52:[function(require,module,exports){
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
     font = require('../../util/font'),
@@ -7707,7 +7709,7 @@ prototype.style = function(el, o) {
 
 module.exports = SVGRenderer;
 
-},{"../../util/ImageLoader":57,"../../util/dom":61,"../../util/font":62,"../../util/svg":63,"../Renderer":34,"./marks":54}],52:[function(require,module,exports){
+},{"../../util/ImageLoader":58,"../../util/dom":62,"../../util/font":63,"../../util/svg":64,"../Renderer":35,"./marks":55}],53:[function(require,module,exports){
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
@@ -7952,7 +7954,7 @@ function escape_text(s) {
 
 module.exports = SVGStringRenderer;
 
-},{"../../util/ImageLoader":57,"../../util/dom":61,"../../util/font":62,"../../util/svg":63,"../Renderer":34,"./marks":54}],53:[function(require,module,exports){
+},{"../../util/ImageLoader":58,"../../util/dom":62,"../../util/font":63,"../../util/svg":64,"../Renderer":35,"./marks":55}],54:[function(require,module,exports){
 module.exports = {
   Handler:  require('./SVGHandler'),
   Renderer: require('./SVGRenderer'),
@@ -7960,7 +7962,7 @@ module.exports = {
     Renderer : require('./SVGStringRenderer')
   }
 };
-},{"./SVGHandler":50,"./SVGRenderer":51,"./SVGStringRenderer":52}],54:[function(require,module,exports){
+},{"./SVGHandler":51,"./SVGRenderer":52,"./SVGStringRenderer":53}],55:[function(require,module,exports){
 var font = require('../../util/font'),
     SVG = require('../../util/svg'),
     textAlign = SVG.textAlign,
@@ -8096,7 +8098,7 @@ module.exports = {
   }
 };
 
-},{"../../util/font":62,"../../util/svg":63}],55:[function(require,module,exports){
+},{"../../util/font":63,"../../util/svg":64}],56:[function(require,module,exports){
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
@@ -8216,7 +8218,7 @@ prototype.height = function() {
 
 module.exports = Bounds;
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var gradient_id = 0;
 
 function Gradient(type) {
@@ -8240,7 +8242,7 @@ prototype.stop = function(offset, color) {
 };
 
 module.exports = Gradient;
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function (global){
 var load = require('datalib/src/import/load');
 
@@ -8320,7 +8322,7 @@ module.exports = ImageLoader;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib/src/import/load":13}],58:[function(require,module,exports){
+},{"datalib/src/import/load":28}],59:[function(require,module,exports){
 function Item(mark) {
   this.mark = mark;
 }
@@ -8369,7 +8371,7 @@ prototype.touch = function() {
 };
 
 module.exports = Item;
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 var Bounds = require('../util/Bounds'),
     canvas = require('../util/canvas'),
     svg = require('../util/svg'),
@@ -8664,7 +8666,7 @@ module.exports = {
   group: group
 };
 
-},{"../path":30,"../util/Bounds":55,"../util/canvas":60,"../util/svg":63,"./font":62}],60:[function(require,module,exports){
+},{"../path":31,"../util/Bounds":56,"../util/canvas":61,"../util/svg":64,"./font":63}],61:[function(require,module,exports){
 (function (global){
 function instance(w, h) {
   w = w || 1;
@@ -8757,7 +8759,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 // create a new DOM element
 function create(doc, tag, ns) {
   return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
@@ -8835,7 +8837,7 @@ module.exports = {
   }
 };
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 function size(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
@@ -8867,7 +8869,7 @@ module.exports = {
   }
 };
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (global){
 var d3_svg = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null).svg;
 
@@ -8942,7 +8944,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 var util = require('datalib/src/util'),
     canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg').string,
@@ -8975,7 +8977,7 @@ prototype.canvasAsync = function(callback) {
   function wait() {
     if (r.pendingImages() === 0) {
       view.render(); // re-render with all images
-      callback(view._canvas);
+      callback(view.canvas());
     } else {
       setTimeout(wait, 10);
     }
@@ -9011,7 +9013,7 @@ prototype.initialize = function() {
 };
 
 module.exports = HeadlessView;
-},{"../util/config":122,"../util/log":124,"./View":66,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":37,"vega-scenegraph/src/render/svg":53}],65:[function(require,module,exports){
+},{"../util/config":123,"../util/log":125,"./View":67,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":38,"vega-scenegraph/src/render/svg":54}],66:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Graph = require('../dataflow/Graph'), 
     Node  = require('../dataflow/Node'),
@@ -9118,7 +9120,7 @@ proto.fire = function(cs) {
 };
 
 module.exports = Model;
-},{"../dataflow/Graph":69,"../dataflow/Node":70,"../dataflow/changeset":72,"../scene/GroupBuilder":95,"../scene/visit":100,"datalib/src/util":20}],66:[function(require,module,exports){
+},{"../dataflow/Graph":70,"../dataflow/Node":71,"../dataflow/changeset":73,"../scene/GroupBuilder":96,"../scene/visit":101,"datalib/src/util":20}],67:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -9532,7 +9534,7 @@ View.factory = function(model) {
 module.exports = View;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":70,"../dataflow/changeset":72,"../parse/streams":90,"../scene/Encoder":94,"../scene/Transition":97,"../util/config":122,"../util/log":124,"./HeadlessView":64,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":37,"vega-scenegraph/src/render/svg":53}],67:[function(require,module,exports){
+},{"../dataflow/Node":71,"../dataflow/changeset":73,"../parse/streams":91,"../scene/Encoder":95,"../scene/Transition":98,"../util/config":123,"../util/log":125,"./HeadlessView":65,"datalib/src/util":20,"vega-scenegraph/src/render/canvas":38,"vega-scenegraph/src/render/svg":54}],68:[function(require,module,exports){
 var Node = require('./Node'),
     changeset = require('./changeset'),
     log = require('../util/log'),
@@ -9575,7 +9577,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Collector;
-},{"../util/constants":123,"../util/log":124,"./Node":70,"./changeset":72}],68:[function(require,module,exports){
+},{"../util/constants":124,"../util/log":125,"./Node":71,"./changeset":73}],69:[function(require,module,exports){
 var util = require('datalib/src/util'),
     changeset = require('./changeset'), 
     tuple = require('./tuple'), 
@@ -9821,7 +9823,7 @@ proto.listeners = function(ds) {
 };
 
 module.exports = Datasource;
-},{"../util/constants":123,"../util/log":124,"./Collector":67,"./Node":70,"./changeset":72,"./tuple":73,"datalib/src/util":20}],69:[function(require,module,exports){
+},{"../util/constants":124,"../util/log":125,"./Collector":68,"./Node":71,"./changeset":73,"./tuple":74,"datalib/src/util":20}],70:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Heap = require('heap'),
     Datasource = require('./Datasource'),
@@ -10031,7 +10033,7 @@ proto.evaluate = function(pulse, node) {
 };
 
 module.exports = Graph;
-},{"../transforms/BatchTransform":102,"../util/constants":123,"../util/log":124,"./Collector":67,"./Datasource":68,"./Signal":71,"./changeset":72,"datalib/src/util":20,"heap":21}],70:[function(require,module,exports){
+},{"../transforms/BatchTransform":103,"../util/constants":124,"../util/log":125,"./Collector":68,"./Datasource":69,"./Signal":72,"./changeset":73,"datalib/src/util":20,"heap":21}],71:[function(require,module,exports){
 var util = require('datalib/src/util'),
     C = require('../util/constants'),
     REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS],
@@ -10157,7 +10159,7 @@ proto.reevaluate = function(pulse) {
 };
 
 module.exports = Node;
-},{"../util/constants":123,"datalib/src/util":20}],71:[function(require,module,exports){
+},{"../util/constants":124,"datalib/src/util":20}],72:[function(require,module,exports){
 var Node = require('./Node'),
     changeset = require('./changeset');
 
@@ -10217,7 +10219,7 @@ proto.off = function(handler) {
 };
 
 module.exports = Signal;
-},{"./Node":70,"./changeset":72}],72:[function(require,module,exports){
+},{"./Node":71,"./changeset":73}],73:[function(require,module,exports){
 var C = require('../util/constants');
 var REEVAL = [C.DATA, C.FIELDS, C.SCALES, C.SIGNALS];
 
@@ -10248,7 +10250,7 @@ module.exports = {
   create: create,
   copy: copy
 };
-},{"../util/constants":123}],73:[function(require,module,exports){
+},{"../util/constants":124}],74:[function(require,module,exports){
 var util = require('datalib/src/util'),
     C = require('../util/constants'),
     tupleID = 1;
@@ -10303,7 +10305,7 @@ module.exports = {
   reset:  reset,
   idMap:  idMap
 };
-},{"../util/constants":123,"datalib/src/util":20}],74:[function(require,module,exports){
+},{"../util/constants":124,"datalib/src/util":20}],75:[function(require,module,exports){
 var util = require('datalib/src/util'),
     axs = require('../scene/axis'),
     config = require('../util/config');
@@ -10388,7 +10390,7 @@ function axis(def, index, axis, group) {
 }
 
 module.exports = axes;
-},{"../scene/axis":98,"../util/config":122,"datalib/src/util":20}],75:[function(require,module,exports){
+},{"../scene/axis":99,"../util/config":123,"datalib/src/util":20}],76:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null);
 
@@ -10402,7 +10404,7 @@ function parseBg(bg) {
 module.exports = parseBg;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     read = require('datalib/src/import/read'),
     util = require('datalib/src/util'),
@@ -10468,7 +10470,7 @@ var parseDef = {
 };
 
 module.exports = parseData;
-},{"../util/config":122,"../util/log":124,"./modify":84,"./transforms":91,"datalib/src/import/load":13,"datalib/src/import/read":14,"datalib/src/util":20}],77:[function(require,module,exports){
+},{"../util/config":123,"../util/log":125,"./modify":85,"./transforms":92,"datalib/src/import/load":13,"datalib/src/import/read":14,"datalib/src/util":20}],78:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -11578,7 +11580,7 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expression = require('vega-expression'),
     args = ['datum', 'event', 'signals'],
@@ -11591,7 +11593,7 @@ expr.eval = function(graph, fn, opt) {
 };
 
 module.exports = expr;
-},{"datalib/src/util":20,"vega-expression":26}],79:[function(require,module,exports){
+},{"datalib/src/util":20,"vega-expression":26}],80:[function(require,module,exports){
 module.exports = {
   axes: require('./axes'),
   background: require('./background'),
@@ -11611,7 +11613,7 @@ module.exports = {
   streams: require('./streams'),
   transforms: require('./transforms')
 };
-},{"./axes":74,"./background":75,"./data":76,"./events":77,"./expr":78,"./interactors":80,"./legends":81,"./mark":82,"./marks":83,"./modify":84,"./padding":85,"./predicates":86,"./properties":87,"./signals":88,"./spec":89,"./streams":90,"./transforms":91}],80:[function(require,module,exports){
+},{"./axes":75,"./background":76,"./data":77,"./events":78,"./expr":79,"./interactors":81,"./legends":82,"./mark":83,"./marks":84,"./modify":85,"./padding":86,"./predicates":87,"./properties":88,"./signals":89,"./spec":90,"./streams":91,"./transforms":92}],81:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     config = require('../util/config'),
@@ -11756,7 +11758,7 @@ function parseInteractors(model, spec, defFactory) {
 }
 
 module.exports = parseInteractors;
-},{"../util/config":122,"../util/constants":123,"../util/log":124,"datalib/src/import/load":13,"datalib/src/util":20}],81:[function(require,module,exports){
+},{"../util/config":123,"../util/constants":124,"../util/log":125,"datalib/src/import/load":13,"datalib/src/util":20}],82:[function(require,module,exports){
 var lgnd = require('../scene/legend'),
     config = require('../util/config');
 
@@ -11799,7 +11801,7 @@ function legend(def, index, legend, group) {
 }
 
 module.exports = legends;
-},{"../scene/legend":99,"../util/config":122}],82:[function(require,module,exports){
+},{"../scene/legend":100,"../util/config":123}],83:[function(require,module,exports){
 var util = require('datalib/src/util'),
     parseProperties = require('./properties');
 
@@ -11826,7 +11828,7 @@ function parseMark(model, mark) {
 };
 
 module.exports = parseMark;
-},{"./properties":87,"datalib/src/util":20}],83:[function(require,module,exports){
+},{"./properties":88,"datalib/src/util":20}],84:[function(require,module,exports){
 var parseMark = require('./mark');
 
 function parseRootMark(model, spec, width, height) {
@@ -11842,7 +11844,7 @@ function parseRootMark(model, spec, width, height) {
 };
 
 module.exports = parseRootMark;
-},{"./mark":82}],84:[function(require,module,exports){
+},{"./mark":83}],85:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     tuple = require('../dataflow/tuple'),
@@ -11921,7 +11923,7 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-},{"../dataflow/Node":70,"../dataflow/tuple":73,"../util/constants":123,"../util/log":124,"datalib/src/util":20}],85:[function(require,module,exports){
+},{"../dataflow/Node":71,"../dataflow/tuple":74,"../util/constants":124,"../util/log":125,"datalib/src/util":20}],86:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 function parsePadding(pad) {
@@ -11933,7 +11935,7 @@ function parsePadding(pad) {
 }
 
 module.exports = parsePadding;
-},{"datalib/src/util":20}],86:[function(require,module,exports){
+},{"datalib/src/util":20}],87:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 var types = {
@@ -12101,7 +12103,7 @@ function parseScale(spec, ops) {
 }
 
 module.exports = parsePredicates;
-},{"datalib/src/util":20}],87:[function(require,module,exports){
+},{"datalib/src/util":20}],88:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     template = require('datalib/src/template'),
@@ -12415,7 +12417,7 @@ function scaleRef(ref) {
 module.exports = properties;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"../util/config":122,"../util/log":124,"datalib/src/template":18,"datalib/src/util":20}],88:[function(require,module,exports){
+},{"../dataflow/tuple":74,"../util/config":123,"../util/log":125,"datalib/src/template":18,"datalib/src/util":20}],89:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('./expr'),
     functions = require('vega-expression/src/functions')(),
@@ -12484,7 +12486,7 @@ parseSignals.scale = function scale(model, spec, value, ctx) {
 }
 
 module.exports = parseSignals;
-},{"../util/constants":123,"./expr":78,"datalib/src/util":20,"vega-expression/src/functions":25}],89:[function(require,module,exports){
+},{"../util/constants":124,"./expr":79,"datalib/src/util":20,"vega-expression/src/functions":25}],90:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Model = require('../core/Model'), 
     View = require('../core/View'), 
@@ -12523,7 +12525,7 @@ function parseSpec(spec, callback, viewFactory) {
 }
 
 module.exports = parseSpec;
-},{"../core/Model":65,"../core/View":66,"../parse/background":75,"../parse/data":76,"../parse/interactors":80,"../parse/marks":83,"../parse/padding":85,"../parse/predicates":86,"../parse/signals":88,"datalib/src/util":20}],90:[function(require,module,exports){
+},{"../core/Model":66,"../core/View":67,"../parse/background":76,"../parse/data":77,"../parse/interactors":81,"../parse/marks":84,"../parse/padding":86,"../parse/predicates":87,"../parse/signals":89,"datalib/src/util":20}],91:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -12741,7 +12743,7 @@ function parseStreams(view) {
 module.exports = parseStreams;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":70,"../dataflow/changeset":72,"../util/constants":123,"./events":77,"./expr":78,"./signals":88,"datalib/src/util":20}],91:[function(require,module,exports){
+},{"../dataflow/Node":71,"../dataflow/changeset":73,"../util/constants":124,"./events":78,"./expr":79,"./signals":89,"datalib/src/util":20}],92:[function(require,module,exports){
 var util = require('datalib/src/util'),
     transforms = require('../transforms/index');
 
@@ -12762,7 +12764,7 @@ function parseTransforms(model, def) {
 };
 
 module.exports = parseTransforms;
-},{"../transforms/index":121,"datalib/src/util":20}],92:[function(require,module,exports){
+},{"../transforms/index":122,"datalib/src/util":20}],93:[function(require,module,exports){
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
@@ -12812,7 +12814,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"../dataflow/Node":70,"../util/constants":123,"../util/log":124,"./Encoder":94,"datalib/src/util":20,"vega-scenegraph/src/util/bound":59}],93:[function(require,module,exports){
+},{"../dataflow/Node":71,"../util/constants":124,"../util/log":125,"./Encoder":95,"datalib/src/util":20,"vega-scenegraph/src/util/bound":60}],94:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Item = require('vega-scenegraph/src/util/Item'),
     Node = require('../dataflow/Node'),
@@ -13113,7 +13115,7 @@ function keyFunction(key) {
 };
 
 module.exports = Builder;
-},{"../dataflow/Node":70,"../dataflow/changeset":72,"../dataflow/tuple":73,"../parse/data":76,"../util/constants":123,"../util/log":124,"./Bounder":92,"./Encoder":94,"datalib/src/util":20,"vega-scenegraph/src/util/Item":58}],94:[function(require,module,exports){
+},{"../dataflow/Node":71,"../dataflow/changeset":73,"../dataflow/tuple":74,"../parse/data":77,"../util/constants":124,"../util/log":125,"./Bounder":93,"./Encoder":95,"datalib/src/util":20,"vega-scenegraph/src/util/Item":59}],95:[function(require,module,exports){
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('../dataflow/Node'),
@@ -13245,7 +13247,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
 };
 
 module.exports = Encoder;
-},{"../dataflow/Node":70,"../util/constants":123,"../util/log":124,"datalib/src/util":20,"vega-scenegraph/src/util/bound":59}],95:[function(require,module,exports){
+},{"../dataflow/Node":71,"../util/constants":124,"../util/log":125,"datalib/src/util":20,"vega-scenegraph/src/util/bound":60}],96:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('../dataflow/Node'),
     Collector = require('../dataflow/Collector'),
@@ -13503,7 +13505,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../dataflow/Collector":67,"../dataflow/Node":70,"../parse/axes":74,"../parse/legends":81,"../util/constants":123,"../util/log":124,"./Builder":93,"./Scale":96,"datalib/src/util":20}],96:[function(require,module,exports){
+},{"../dataflow/Collector":68,"../dataflow/Node":71,"../parse/axes":75,"../parse/legends":82,"../util/constants":124,"../util/log":125,"./Builder":94,"./Scale":97,"datalib/src/util":20}],97:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -13921,7 +13923,7 @@ var rangeDef = [
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/Node":70,"../dataflow/changeset":72,"../transforms/Aggregate":101,"../util/config":122,"../util/constants":123,"../util/log":124,"datalib/src/util":20}],97:[function(require,module,exports){
+},{"../dataflow/Node":71,"../dataflow/changeset":73,"../transforms/Aggregate":102,"../util/config":123,"../util/constants":124,"../util/log":125,"datalib/src/util":20}],98:[function(require,module,exports){
 var bound = require('vega-scenegraph/src/util/bound'),
     tuple = require('../dataflow/tuple'),
     C = require('../util/constants');
@@ -14023,7 +14025,7 @@ function step(elapsed) {
 };
 
 module.exports = Transition;
-},{"../dataflow/tuple":73,"../util/constants":123,"vega-scenegraph/src/util/bound":59}],98:[function(require,module,exports){
+},{"../dataflow/tuple":74,"../util/constants":124,"vega-scenegraph/src/util/bound":60}],99:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -14591,7 +14593,7 @@ function vg_axisDomain() {
 module.exports = axs;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"../parse/mark":82,"../util/config":122,"datalib/src/util":20}],99:[function(require,module,exports){
+},{"../dataflow/tuple":74,"../parse/mark":83,"../util/config":123,"datalib/src/util":20}],100:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -15143,7 +15145,7 @@ function vg_hLegendLabels() {
 module.exports = lgnd;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/mark":82,"../parse/properties":87,"../util/config":122,"datalib/src/util":20,"vega-scenegraph/src/util/Gradient":56}],100:[function(require,module,exports){
+},{"../parse/mark":83,"../parse/properties":88,"../util/config":123,"datalib/src/util":20,"vega-scenegraph/src/util/Gradient":57}],101:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
   if (func(node)) return true;
@@ -15157,7 +15159,7 @@ module.exports = function visit(node, func) {
     }
   }
 };
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Facetor = require('./Facetor'),
@@ -15327,7 +15329,7 @@ var VALID_OPS = Aggregate.VALID_OPS = [
 ];
 
 module.exports   = Aggregate;
-},{"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/constants":123,"../util/log":124,"./Facetor":106,"./Transform":118,"datalib/src/util":20}],102:[function(require,module,exports){
+},{"../dataflow/changeset":73,"../dataflow/tuple":74,"../util/constants":124,"../util/log":125,"./Facetor":107,"./Transform":119,"datalib/src/util":20}],103:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector');
 
@@ -15352,7 +15354,7 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = BatchTransform;
-},{"../dataflow/Collector":67,"./Transform":118}],103:[function(require,module,exports){
+},{"../dataflow/Collector":68,"./Transform":119}],104:[function(require,module,exports){
 var bins = require('datalib/src/bins/bins'),
     Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'),
@@ -15412,7 +15414,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
-},{"../dataflow/tuple":73,"../util/log":124,"./Transform":118,"datalib/src/bins/bins":6}],104:[function(require,module,exports){
+},{"../dataflow/tuple":74,"../util/log":125,"./Transform":119,"datalib/src/bins/bins":6}],105:[function(require,module,exports){
 var Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
     log = require('../util/log'),
@@ -15529,7 +15531,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Cross;
-},{"../dataflow/Collector":67,"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/log":124,"./Transform":118}],105:[function(require,module,exports){
+},{"../dataflow/Collector":68,"../dataflow/changeset":73,"../dataflow/tuple":74,"../util/log":125,"./Transform":119}],106:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
@@ -15560,7 +15562,7 @@ proto.aggr = function() {
 };
 
 module.exports = Facet;
-},{"../parse/transforms":91,"./Aggregate":101,"./Transform":118,"datalib/src/util":20}],106:[function(require,module,exports){
+},{"../parse/transforms":92,"./Aggregate":102,"./Transform":119,"datalib/src/util":20}],107:[function(require,module,exports){
 var Aggregator = require('datalib/src/aggregate/aggregator'),
     tuple = require('../dataflow/tuple'),
     changeset = require('../dataflow/changeset'),
@@ -15699,7 +15701,7 @@ proto.changes = function(input, output) {
 };
 
 module.exports = Facetor;
-},{"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/constants":123,"../util/log":124,"datalib/src/aggregate/aggregator":3}],107:[function(require,module,exports){
+},{"../dataflow/changeset":73,"../dataflow/tuple":74,"../util/constants":124,"../util/log":125,"datalib/src/aggregate/aggregator":3}],108:[function(require,module,exports){
 var Transform = require('./Transform'),
     changeset = require('../dataflow/changeset'), 
     expr = require('../parse/expr'),
@@ -15763,7 +15765,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"../dataflow/changeset":72,"../parse/expr":78,"../util/constants":123,"../util/log":124,"./Transform":118}],108:[function(require,module,exports){
+},{"../dataflow/changeset":73,"../parse/expr":79,"../util/constants":124,"../util/log":125,"./Transform":119}],109:[function(require,module,exports){
 var Transform = require('./Transform'),
     log = require('../util/log'), 
     tuple = require('../dataflow/tuple'), 
@@ -15833,7 +15835,7 @@ proto.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"../dataflow/changeset":72,"../dataflow/tuple":73,"../util/log":124,"./Transform":118}],109:[function(require,module,exports){
+},{"../dataflow/changeset":73,"../dataflow/tuple":74,"../util/log":125,"./Transform":119}],110:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     Transform = require('./Transform'),
@@ -15947,7 +15949,7 @@ proto.transform = function(nodeInput) {
 module.exports = Force;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"./Transform":118}],110:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./Transform":119}],111:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple'), 
     expression = require('../parse/expr'),
@@ -15995,7 +15997,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"../dataflow/tuple":73,"../parse/expr":78,"../util/constants":123,"../util/log":124,"./Transform":118}],111:[function(require,module,exports){
+},{"../dataflow/tuple":74,"../parse/expr":79,"../util/constants":124,"../util/log":125,"./Transform":119}],112:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -16084,7 +16086,7 @@ proto.transform = function(input) {
 module.exports = Geo;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"./Transform":118,"datalib/src/util":20}],112:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./Transform":119,"datalib/src/util":20}],113:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -16130,7 +16132,7 @@ proto.transform = function(input) {
 module.exports = GeoPath;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"./Geo":111,"./Transform":118,"datalib/src/util":20}],113:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./Geo":112,"./Transform":119,"datalib/src/util":20}],114:[function(require,module,exports){
 var Transform = require('./Transform'),
     tuple = require('../dataflow/tuple');
 
@@ -16223,7 +16225,7 @@ proto.transform = function(input) {
 };
 
 module.exports  = LinkPath;
-},{"../dataflow/tuple":73,"./Transform":118}],114:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./Transform":119}],115:[function(require,module,exports){
 var util = require('datalib/src/util'),
     expr = require('../parse/expr'),
     C = require('../util/constants');
@@ -16335,7 +16337,7 @@ proto.set = function(value) {
 };
 
 module.exports = Parameter;
-},{"../parse/expr":78,"../util/constants":123,"datalib/src/util":20}],115:[function(require,module,exports){
+},{"../parse/expr":79,"../util/constants":124,"datalib/src/util":20}],116:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     gen  = require('datalib/src/generate'),
@@ -16403,7 +16405,7 @@ proto.batchTransform = function(input, data) {
 module.exports = Pie;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"./BatchTransform":102,"./Transform":118,"datalib/src/generate":7,"datalib/src/util":20}],116:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./BatchTransform":103,"./Transform":119,"datalib/src/generate":7,"datalib/src/util":20}],117:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     expr = require('../parse/expr'),
@@ -16428,7 +16430,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Sort;
-},{"../parse/expr":78,"../util/log":124,"./Transform":118,"datalib/src/util":20}],117:[function(require,module,exports){
+},{"../parse/expr":79,"../util/log":125,"./Transform":119,"datalib/src/util":20}],118:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform'),
@@ -16522,7 +16524,7 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
-},{"../dataflow/tuple":73,"./BatchTransform":102,"./Transform":118,"datalib/src/util":20}],118:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./BatchTransform":103,"./Transform":119,"datalib/src/util":20}],119:[function(require,module,exports){
 var Node = require('../dataflow/Node'),
     Parameter = require('./Parameter'),
     C = require('../util/constants');
@@ -16576,7 +16578,7 @@ proto.output = function(map) {
 };
 
 module.exports = Transform;
-},{"../dataflow/Node":70,"../util/constants":123,"./Parameter":114}],119:[function(require,module,exports){
+},{"../dataflow/Node":71,"../util/constants":124,"./Parameter":115}],120:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -16652,7 +16654,7 @@ proto.batchTransform = function(input, data) {
 module.exports = Treemap;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../dataflow/tuple":73,"./BatchTransform":102,"./Transform":118,"datalib/src/util":20}],120:[function(require,module,exports){
+},{"../dataflow/tuple":74,"./BatchTransform":103,"./Transform":119,"datalib/src/util":20}],121:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
     Collector = require('../dataflow/Collector'),
@@ -16777,7 +16779,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Zip;
-},{"../dataflow/Collector":67,"../util/log":124,"./Transform":118,"datalib/src/util":20}],121:[function(require,module,exports){
+},{"../dataflow/Collector":68,"../util/log":125,"./Transform":119,"datalib/src/util":20}],122:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
@@ -16796,7 +16798,7 @@ module.exports = {
   treemap:    require('./Treemap'),
   zip:        require('./Zip')
 };
-},{"./Aggregate":101,"./Bin":103,"./Cross":104,"./Facet":105,"./Filter":107,"./Fold":108,"./Force":109,"./Formula":110,"./Geo":111,"./GeoPath":112,"./LinkPath":113,"./Pie":115,"./Sort":116,"./Stack":117,"./Treemap":119,"./Zip":120}],122:[function(require,module,exports){
+},{"./Aggregate":102,"./Bin":104,"./Cross":105,"./Facet":106,"./Filter":108,"./Fold":109,"./Force":110,"./Formula":111,"./Geo":112,"./GeoPath":113,"./LinkPath":114,"./Pie":116,"./Sort":117,"./Stack":118,"./Treemap":120,"./Zip":121}],123:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     config = {};
@@ -16939,7 +16941,7 @@ config.range = {
 module.exports = config;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],123:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 module.exports = {
   ADD_CELL: 1,
   MOD_CELL: 2,
@@ -16996,7 +16998,7 @@ module.exports = {
   ASC: "asc",
   DESC: "desc"
 };
-},{}],124:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 var util = require('datalib/src/util'),
     config = require('./config'),
     ts;
@@ -17040,7 +17042,7 @@ module.exports = {
   error: error,
   debug: debug
 };
-},{"./config":122,"datalib/src/util":20}],125:[function(require,module,exports){
+},{"./config":123,"datalib/src/util":20}],126:[function(require,module,exports){
 var util = require('datalib/src/util'),
     load = require('datalib/src/import/readers'),
     parse = require('../parse'),
@@ -17086,6 +17088,6 @@ module.exports = function schema(opt) {
 
   return schema;
 };
-},{"../parse":79,"../scene/Scale":96,"../util/config":122,"datalib/src/import/readers":15,"datalib/src/util":20}]},{},[1])(1)
+},{"../parse":80,"../scene/Scale":97,"../util/config":123,"datalib/src/import/readers":15,"datalib/src/util":20}]},{},[1])(1)
 });
 //# sourceMappingURL=vega2.js.map
