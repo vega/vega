@@ -22,6 +22,7 @@
           "type": "bin",
           "field": "hour",
           "min": 0,
+          "max": 24,
           "step": 1
         },
         {
