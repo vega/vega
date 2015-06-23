@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
-    Node = require('../dataflow/Node'),
-    tuple = require('../dataflow/tuple'),
+    Node = require('vega-dataflow/src/Node'),
+    tuple = require('vega-dataflow/src/Tuple'),
     log = require('../util/log'),
     C = require('../util/constants');
 
@@ -69,8 +69,8 @@ function parseModify(model, def, ds) {
     return input;
   };
 
-  if(signalName) node.dependency(C.SIGNALS, signalName);
-  if(predicate)  node.dependency(C.SIGNALS, predicate.signals);
+  if (signalName) node.dependency(C.SIGNALS, signalName);
+  if (predicate)  node.dependency(C.SIGNALS, predicate.signals);
   
   return node;
 }

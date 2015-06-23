@@ -1,6 +1,6 @@
-var Node = require('../dataflow/Node'),
-    Parameter = require('./Parameter'),
-    C = require('../util/constants');
+var Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    Deps = require('vega-dataflow/src/Dependencies'),
+    Parameter = require('./Parameter');
 
 function Transform(graph) {
   if(graph) Node.prototype.init.call(this, graph);
@@ -34,7 +34,7 @@ proto.transform = function(input, reset) { return input; };
 proto.evaluate = function(input) {
   // Many transforms store caches that must be invalidated if
   // a signal value has changed. 
-  var reset = this._stamp < input.stamp && this.dependency(C.SIGNALS).some(function(s) { 
+  var reset = this._stamp < input.stamp && this.dependency(Deps.SIGNALS).some(function(s) { 
     return !!input.signals[s] 
   });
 

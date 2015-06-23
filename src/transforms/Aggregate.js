@@ -1,11 +1,10 @@
 var util = require('datalib/src/util'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
+    tuple = require('vega-dataflow/src/Tuple'),
+    Deps = require('vega-dataflow/src/Dependencies'),
     Transform = require('./Transform'),
     Facetor = require('./Facetor'),
-    tuple = require('../dataflow/tuple'), 
-    changeset = require('../dataflow/changeset'), 
-    log = require('../util/log'),
-    C = require('../util/constants');
-
+    log = require('../util/log');
 
 function Aggregate(graph) {
   Transform.prototype.init.call(this, graph);
@@ -35,7 +34,7 @@ function Aggregate(graph) {
 
         this._transform._fieldsDef = fields;
         this._transform._aggr = null;
-        this._transform.dependency(C.SIGNALS, util.keys(signals));
+        this._transform.dependency(Deps.SIGNALS, util.keys(signals));
         return this._transform;
       }
     }

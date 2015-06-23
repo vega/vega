@@ -1,5 +1,5 @@
-var Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple');
+var tuple = require('vega-dataflow/src/Tuple'),
+    Transform = require('./Transform');
 
 function LinkPath(graph) {
   Transform.prototype.init.call(this, graph);

@@ -2,13 +2,13 @@ var d3 = require('d3'),
     util = require('datalib/src/util'),
     canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg'),
-    Node = require('../dataflow/Node'),
+    Node = require('vega-dataflow/src/Node'),
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
     log = require('../util/log'),
-    changeset = require('../dataflow/changeset');
+    changeset = require('vega-dataflow/src/ChangeSet');
 
 var View = function(el, width, height, model) {
   this._el    = null;

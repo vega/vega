@@ -1,8 +1,8 @@
-var Transform = require('./Transform'),
-    Collector = require('../dataflow/Collector'),
-    log = require('../util/log'),
-    tuple = require('../dataflow/tuple'),
-    changeset = require('../dataflow/changeset');
+var changeset = require('vega-dataflow/src/ChangeSet');
+    tuple = require('vega-dataflow/src/Tuple'),
+    Collector = require('vega-dataflow/src/Collector'),
+    Transform = require('./Transform'),
+    log = require('../util/log');
 
 function Cross(graph) {
   Transform.prototype.init.call(this, graph);

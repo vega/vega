@@ -1,7 +1,7 @@
 var d3 = require('d3'),
     template = require('datalib/src/template'),
     util = require('datalib/src/util'),
-    tuple = require('../dataflow/tuple'),
+    tuple = require('vega-dataflow/src/Tuple'),
     config = require('../util/config'),
     log = require('../util/log');
 

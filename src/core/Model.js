@@ -1,8 +1,8 @@
 var util = require('datalib/src/util'),
-    Graph = require('../dataflow/Graph'), 
-    Node  = require('../dataflow/Node'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
+    Graph = require('vega-dataflow/src/Graph'), 
+    Node  = require('vega-dataflow/src/Node'),
     GroupBuilder = require('../scene/GroupBuilder'),
-    changeset = require('../dataflow/changeset'),
     visit = require('../scene/visit');
 
 function Model() {

@@ -1,8 +1,9 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
-    Node = require('../dataflow/Node'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
+    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    Deps = require('vega-dataflow/src/Dependencies'),
     parseSignals = require('./signals'),
-    changeset = require('../dataflow/changeset'),
     selector = require('./events'),
     expr = require('./expr'),
     C = require('../util/constants');
@@ -142,7 +143,7 @@ function parseStreams(view) {
 
       return input;  
     };
-    n.dependency(C.SIGNALS, selector.signal);
+    n.dependency(Deps.SIGNALS, selector.signal);
     n.addListener(sig);
     model.signal(selector.signal).addListener(n);
   }

@@ -1,11 +1,11 @@
 var util = require('datalib/src/util'),
     Item = require('vega-scenegraph/src/util/Item'),
-    Node = require('../dataflow/Node'),
+    tuple = require('vega-dataflow/src/Tuple'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
+    Node = require('vega-dataflow/src/Node'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
     parseData = require('../parse/data'),
-    tuple = require('../dataflow/tuple'),
-    changeset = require('../dataflow/changeset'),
     log = require('../util/log'),
     C = require('../util/constants');
 

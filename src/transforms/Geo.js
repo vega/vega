@@ -1,7 +1,7 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
-    Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple');
+    tuple = require('vega-dataflow/src/Tuple'),
+    Transform = require('./Transform');
 
 function Geo(graph) {
   Transform.prototype.init.call(this, graph);

@@ -1,8 +1,8 @@
-var Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple'), 
+var tuple = require('vega-dataflow/src/Tuple'),
+    Deps = require('vega-dataflow/src/Dependencies'),
+    Transform = require('./Transform'),
     expression = require('../parse/expr'),
-    log = require('../util/log'),
-    C = require('../util/constants');
+    log = require('../util/log');
 
 function Formula(graph) {
   Transform.prototype.init.call(this, graph);
@@ -25,7 +25,7 @@ proto.transform = function(input) {
       expr = this.param("expr"),
       context = {
         datum: null,
-        signals: this.dependency(C.SIGNALS) 
+        signals: this.dependency(Deps.SIGNALS) 
       };
 
   function set(x) {

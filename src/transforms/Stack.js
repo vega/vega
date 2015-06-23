@@ -1,7 +1,7 @@
 var util = require('datalib/src/util'),
+    tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform'),
-    tuple = require('../dataflow/tuple');
+    BatchTransform = require('./BatchTransform');
 
 function Stack(graph) {
   BatchTransform.prototype.init.call(this, graph);

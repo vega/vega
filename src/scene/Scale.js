@@ -1,8 +1,9 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
-    Node = require('../dataflow/Node'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
+    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    Deps = require('vega-dataflow/src/Dependencies'),
     Aggregate = require('../transforms/Aggregate'),
-    changeset = require('../dataflow/changeset'),
     log = require('../util/log'),
     config = require('../util/config'),
     C = require('../util/constants');
@@ -37,10 +38,10 @@ proto.evaluate = function(input) {
 // dataRefs. So a scale must be responsible for connecting itself to dependents.
 proto.dependency = function(type, deps) {
   if (arguments.length == 2) {
+    var method = (type === Deps.DATA ? 'data' : 'signal');
     deps = util.array(deps);
-    for(var i=0, len=deps.length; i<len; ++i) {
-      this._graph[type == C.DATA ? C.DATA : C.SIGNAL](deps[i])
-        .addListener(this._parent);
+    for (var i=0, len=deps.length; i<len; ++i) {
+      this._graph[method](deps[i]).addListener(this._parent);
     }
   }
 
@@ -286,8 +287,8 @@ function dataRef(which, def, scale, group) {
       cache.evaluate(data);
     }
 
-    this.dependency(C.DATA, from);
-    cache.dependency(C.SIGNALS).forEach(function(s) { self.dependency(C.SIGNALS, s) });
+    this.dependency(Deps.DATA, from);
+    cache.dependency(Deps.SIGNALS).forEach(function(s) { self.dependency(Deps.SIGNALS, s) });
   }
 
   data = cache.aggr().result();
@@ -311,7 +312,7 @@ function dataRef(which, def, scale, group) {
 function signal(v) {
   if (!v || !v.signal) return v;
   var s = v.signal, ref;
-  this.dependency(C.SIGNALS, (ref = util.field(s))[0]);
+  this.dependency(Deps.SIGNALS, (ref = util.field(s))[0]);
   return this._graph.signalRef(ref);
 }
 

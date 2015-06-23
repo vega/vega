@@ -1,9 +1,9 @@
 var d3 = require('d3'),
     gen  = require('datalib/src/generate'),
     util = require('datalib/src/util'),
+    tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform'),
-    tuple = require('../dataflow/tuple');
+    BatchTransform = require('./BatchTransform');
 
 function Pie(graph) {
   BatchTransform.prototype.init.call(this, graph);

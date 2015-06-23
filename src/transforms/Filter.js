@@ -1,5 +1,6 @@
-var Transform = require('./Transform'),
-    changeset = require('../dataflow/changeset'), 
+var changeset = require('vega-dataflow/src/ChangeSet'),
+    Deps = require('vega-dataflow/src/Dependencies'),
+    Transform = require('./Transform'),
     expr = require('../parse/expr'),
     log = require('../util/log'),
     C = require('../util/constants');
@@ -22,7 +23,7 @@ proto.transform = function(input) {
       testfn = this.param('test'),
       context = {
         datum: null,
-        signals: this.dependency(C.SIGNALS)
+        signals: this.dependency(Deps.SIGNALS)
       },
       f = this;
 

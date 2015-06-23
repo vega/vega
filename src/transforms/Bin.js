@@ -1,6 +1,6 @@
 var bins = require('datalib/src/bins/bins'),
+    tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple'),
     log = require('../util/log');
 
 function Bin(graph) {

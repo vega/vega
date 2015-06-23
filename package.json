@@ -6,6 +6,7 @@
     "d3": "^3.5.x",
     "d3-geo-projection": "^0.2.13",
     "topojson": "^1.6.18",
+    "vega-dataflow": "vega/vega-dataflow",
     "vega-expression": "vega/vega-expression",
     "vega-scenegraph": "vega/vega-scenegraph",
     "yargs": "^3.2.1"
@@ -28,7 +29,6 @@
     "gulp-spawn-mocha": "^2.0.1",
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4",
-    "heap": "^0.2.6",
     "is-my-json-valid": "^2.12.0",
     "jsdom": "^3.1.2",
     "jstransform": "^11.0.1",

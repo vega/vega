@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
-    Node = require('../dataflow/Node'),
+    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Encoder = require('./Encoder'),
     C = require('../util/constants'),
     log = require('../util/log');
