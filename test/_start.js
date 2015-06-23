@@ -1,4 +1,4 @@
-var Node  = require('../src/dataflow/Node'),
+var Node  = require('vega-dataflow/src/Node'),
     chai  = require('chai'),
     spies = require('chai-spies');
 
