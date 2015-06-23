@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
-    expr = require('../parse/expr'),
-    C = require('../util/constants');
+    Deps = require('vega-dataflow/src/Dependencies')
+    expr = require('../parse/expr');
 
 var arrayType = /array/i,
     dataType  = /data/i,
@@ -78,27 +78,27 @@ proto.set = function(value) {
     if (util.isString(v)) {
       if (isExpr) {
         var e = expr(v);
-        p._transform.dependency(C.FIELDS,  e.fields);
-        p._transform.dependency(C.SIGNALS, e.globals);
+        p._transform.dependency(Deps.FIELDS,  e.fields);
+        p._transform.dependency(Deps.SIGNALS, e.globals);
         return e.fn;
       } else if (isField) {  // Backwards compatibility
         p._accessors[i] = util.accessor(v);
-        p._transform.dependency(C.FIELDS, v);
+        p._transform.dependency(Deps.FIELDS, v);
       } else if (isData) {
         p._resolution = true;
-        p._transform.dependency(C.DATA, v);
+        p._transform.dependency(Deps.DATA, v);
       }
       return v;
     } else if (v.value !== undefined) {
       return v.value;
     } else if (v.field !== undefined) {
       p._accessors[i] = util.accessor(v.field);
-      p._transform.dependency(C.FIELDS, v.field);
+      p._transform.dependency(Deps.FIELDS, v.field);
       return v.field;
     } else if (v.signal !== undefined) {
       p._resolution = true;
       p._signals[v.signal] = i;
-      p._transform.dependency(C.SIGNALS, v.signal);
+      p._transform.dependency(Deps.SIGNALS, v.signal);
       return v.signal;
     }
 

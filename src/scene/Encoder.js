@@ -1,6 +1,7 @@
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
-    Node = require('../dataflow/Node'),
+    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    Deps = require('vega-dataflow/src/Dependencies'),
     C = require('../util/constants'),
     log = require('../util/log'),
     EMPTY = {};
@@ -23,10 +24,10 @@ function Encoder(graph, mark) {
   if(enter) s.push.apply(s, enter.scales);
 
   if(update) {
-    this.dependency(C.DATA, update.data);
-    this.dependency(C.SIGNALS, update.signals);
-    this.dependency(C.FIELDS, update.fields);
-    this.dependency(C.SCALES, update.scales);
+    this.dependency(Deps.DATA, update.data);
+    this.dependency(Deps.SIGNALS, update.signals);
+    this.dependency(Deps.FIELDS, update.fields);
+    this.dependency(Deps.SCALES, update.scales);
     s.push.apply(s, update.scales);
   }
 

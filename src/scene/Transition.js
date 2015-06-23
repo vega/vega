@@ -1,5 +1,5 @@
 var bound = require('vega-scenegraph/src/util/bound'),
-    tuple = require('../dataflow/tuple'),
+    tuple = require('vega-dataflow/src/Tuple'),
     C = require('../util/constants');
 
 function Transition(duration, ease) {

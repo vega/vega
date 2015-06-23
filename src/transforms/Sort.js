@@ -1,6 +1,5 @@
 var util = require('datalib/src/util'),
     Transform = require('./Transform'),
-    expr = require('../parse/expr'),
     log = require('../util/log');
 
 function Sort(graph) {

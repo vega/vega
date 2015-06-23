@@ -1,8 +1,8 @@
 var Aggregator = require('datalib/src/aggregate/aggregator'),
-    tuple = require('../dataflow/tuple'),
-    changeset = require('../dataflow/changeset'),
+    Flags = Aggregator.Flags,
+    tuple = require('vega-dataflow/src/Tuple'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
     log = require('../util/log'),
-    C = require('../util/constants'),
     facetID = 1;
 
 function Facetor() {
@@ -110,7 +110,7 @@ proto.changes = function(input, output) {
 
     // organize output tuples
     if (cell.num <= 0) {
-      if (flag === C.MOD_CELL) {
+      if (flag === Flags.MOD_CELL) {
         output.rem.push(cell.tuple);
       }
       if(this._facet !== null) cell.delete(this._facet);
@@ -121,9 +121,9 @@ proto.changes = function(input, output) {
         changeset.copy(input, cell.ds._input);
       }
 
-      if (flag & C.ADD_CELL) {
+      if (flag & Flags.ADD_CELL) {
         output.add.push(cell.tuple);
-      } else if (flag & C.MOD_CELL) {
+      } else if (flag & Flags.MOD_CELL) {
         output.mod.push(cell.tuple);
       }
     }

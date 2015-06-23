@@ -1,6 +1,7 @@
 var util = require('datalib/src/util'),
-    Node = require('../dataflow/Node'),
-    Collector = require('../dataflow/Collector'),
+    Node = require('vega-dataflow/src/Node'),
+    Collector = require('vega-dataflow/src/Collector'),
+    Deps = require('vega-dataflow/src/Dependencies'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
@@ -42,7 +43,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
     return (acc[x.size || x.shape || x.fill || x.stroke], acc);
   }, scales);
 
-  this._recursor.dependency(C.SCALES, util.keys(scales));
+  this._recursor.dependency(Deps.SCALES, util.keys(scales));
 
   // We only need a collector for up-propagation of bounds calculation,
   // so only GroupBuilders, and not regular Builders, have collectors.
@@ -230,7 +231,7 @@ function buildAxes(input, group) {
     axisItems[i] = {group: group, axisDef: def, layer: def.layer};
     b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, axisItems[i], builder)
-      .dependency(C.SCALES, scale);
+      .dependency(Deps.SCALES, scale);
     builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
   });
 }
@@ -249,7 +250,7 @@ function buildLegends(input, group) {
     legendItems[i] = {group: group, legendDef: def};
     b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, legendItems[i], builder)
-      .dependency(C.SCALES, scale);
+      .dependency(Deps.SCALES, scale);
     builder._children[group._id].push({ builder: b, type: C.LEGEND, scale: scale });
   });
 }

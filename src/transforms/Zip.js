@@ -1,6 +1,6 @@
 var util = require('datalib/src/util'),
+    Collector = require('vega-dataflow/src/Collector'),
     Transform = require('./Transform'),
-    Collector = require('../dataflow/Collector'),
     log = require('../util/log');
 
 function Zip(graph) {

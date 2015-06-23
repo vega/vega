@@ -1,7 +1,7 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
+    tpl = require('vega-dataflow/src/Tuple'),
     config = require('../util/config'),
-    tpl = require('../dataflow/tuple'),
     parseMark = require('../parse/mark');
 
 function axs(model) {

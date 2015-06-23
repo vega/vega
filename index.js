@@ -3,10 +3,10 @@ module.exports = {
     View: require('./src/core/View')
   },
   dataflow: {
-    changeset: require('./src/dataflow/changeset'),
-    Datasource: require('./src/dataflow/Datasource'),
-    Graph: require('./src/dataflow/Graph'),
-    Node: require('./src/dataflow/Node')
+    changeset: require('vega-dataflow/src/ChangeSet'),
+    Datasource: require('vega-dataflow/src/DataSource'),
+    Graph: require('vega-dataflow/src/Graph'),
+    Node: require('vega-dataflow/src/Node')
   },
   parse: require('./src/parse/'),
   scene: {

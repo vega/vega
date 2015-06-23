@@ -1,7 +1,7 @@
-var Transform = require('./Transform'),
-    log = require('../util/log'), 
-    tuple = require('../dataflow/tuple'), 
-    changeset = require('../dataflow/changeset');
+var changeset = require('vega-dataflow/src/ChangeSet'),
+    tuple = require('vega-dataflow/src/Tuple'),
+    Transform = require('./Transform'),
+    log = require('../util/log');
 
 function Fold(graph) {
   Transform.prototype.init.call(this, graph);

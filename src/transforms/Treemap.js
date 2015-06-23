@@ -1,8 +1,8 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
+    tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform'),
-    tuple = require('../dataflow/tuple');
+    BatchTransform = require('./BatchTransform');
 
 var defaultRatio = 0.5 * (1 + Math.sqrt(5));
 

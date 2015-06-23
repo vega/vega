@@ -1,6 +1,6 @@
 var d3 = require('d3'),
-    Transform = require('./Transform'),
-    tuple = require('../dataflow/tuple');
+    tuple = require('vega-dataflow/src/Tuple'),
+    Transform = require('./Transform');
 
 function Force(graph) {
   Transform.prototype.init.call(this, graph);
