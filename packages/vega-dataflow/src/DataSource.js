@@ -171,6 +171,7 @@ prototype.pipeline = function(pipeline) {
   // If this datasource is faceted, materializes the values in the facet.
   var output = new Node(this._graph)
     .router(true)
+    .reflows(true)
     .collector(true);
 
   output.data = ds._collector ?
