@@ -29,6 +29,7 @@ proto.init = function(graph) {
   this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
   this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
   this._revises = false; // Does the operator require tuples' previous values? 
+  this._reflows = false; // Does the operator forward a reflow pulse?
   return this;
 };
 
@@ -67,6 +68,12 @@ proto.collector = function(bool) {
 proto.revises = function(bool) {
   if(!arguments.length) return this._revises;
   this._revises = !!bool;
+  return this;
+};
+
+proto.reflows = function(bool) {
+  if(!arguments.length) return this._reflows;
+  this._reflows = !!bool;
   return this;
 };
 

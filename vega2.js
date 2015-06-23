@@ -9743,6 +9743,7 @@ proto.pipeline = function(pipeline) {
   // If this datasource is faceted, materializes the values in the facet.
   var output = new Node(this._graph)
     .router(true)
+    .reflows(true)
     .collector(true);
 
   output.data = ds._collector ? ds._collector.data.bind(ds._collector) : dsData;
@@ -9938,6 +9939,7 @@ proto.propagate = function(pulse, node) {
     // Even if we didn't run the node, we still want to propagate 
     // the pulse. 
     if (p !== this.doNotPropagate) {
+      p.reflow = p.reflow || n.reflows(); // If skipped eval of reflows node
       for (i = 0, len = l.length; i < len; i++) {
         pq.push({ node: l[i], pulse: p, rank: l[i]._rank });
       }
@@ -10066,6 +10068,7 @@ proto.init = function(graph) {
   this._isRouter = false; // Responsible for propagating tuples, cannot ever be skipped
   this._isCollector = false;  // Holds a materialized dataset, pulse to reflow
   this._revises = false; // Does the operator require tuples' previous values? 
+  this._reflows = false; // Does the operator forward a reflow pulse?
   return this;
 };
 
@@ -10104,6 +10107,12 @@ proto.collector = function(bool) {
 proto.revises = function(bool) {
   if(!arguments.length) return this._revises;
   this._revises = !!bool;
+  return this;
+};
+
+proto.reflows = function(bool) {
+  if(!arguments.length) return this._reflows;
+  this._reflows = !!bool;
   return this;
 };
 
@@ -12774,7 +12783,9 @@ var util = require('datalib/src/util'),
 
 function Bounder(graph, mark) {
   this._mark = mark;
-  return Node.prototype.init.call(this, graph).router(true);
+  return Node.prototype.init.call(this, graph)
+    .router(true)
+    .reflows(true);
 }
 
 var proto = (Bounder.prototype = new Node());
@@ -13522,7 +13533,7 @@ function Scale(graph, def, parent) {
   this._def     = def;
   this._parent  = parent;
   this._updated = false;
-  return Node.prototype.init.call(this, graph);
+  return Node.prototype.init.call(this, graph).reflows(true);
 }
 
 var proto = (Scale.prototype = new Node());

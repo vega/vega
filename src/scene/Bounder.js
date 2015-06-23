@@ -7,7 +7,9 @@ var util = require('datalib/src/util'),
 
 function Bounder(graph, mark) {
   this._mark = mark;
-  return Node.prototype.init.call(this, graph).router(true);
+  return Node.prototype.init.call(this, graph)
+    .router(true)
+    .reflows(true);
 }
 
 var proto = (Bounder.prototype = new Node());
