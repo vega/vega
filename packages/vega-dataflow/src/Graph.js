@@ -82,6 +82,7 @@ prototype.signalValues = function(names) {
     for (var i=0, n=names.length; i<n; ++i) {
       values[names[i]] = this._signals[names[i]].value();
     }
+    return values;
   } else {
     return this._signals[names].value();
   }
