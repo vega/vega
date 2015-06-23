@@ -106,6 +106,8 @@ proto.aggr = function() {
     return f;
   });
 
+  if (!fields.length) fields = {'*':'values'};
+
   var aggr = this._aggr = new Facetor()
     .groupby(groupby)
     .stream(true)
@@ -143,10 +145,10 @@ proto.transform = function(input, reset) {
   input.mod.forEach(function(x) {
     if(reset) {
       aggr._add(tpl ? x : standardize.call(t, x));  // Signal change triggered reflow
-    } else if(tuple.has_prev(x)) {
-      var prev = spoof_prev.call(t, x);
+    } else {
+      var y = tuple.has_prev(x) ? spoof_prev.call(t, x) : x;
       aggr._mod(tpl ? x : standardize.call(t, x), 
-        tpl ? prev : standardize.call(t, prev));
+        tpl ? y : standardize.call(t, y));
     }
   });
 
