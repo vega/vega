@@ -305,7 +305,8 @@ function bind(el, mdef, item, index, insert) {
 
   // create background rect
   if (mdef.tag === 'g') {
-    DOM.child(node, 0, 'rect', ns, 'background');
+    var bg = DOM.child(node, 0, 'rect', ns, 'background');
+    bg.__data__ = item;
   }
 
   // add pointer from scenegraph item to svg element
