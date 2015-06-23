@@ -1,6 +1,6 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
-    changeset = require('vega-dataflow/src/changeset'),
+    changeset = require('vega-dataflow/src/ChangeSet'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
     Aggregate = require('../transforms/Aggregate'),
