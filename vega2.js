@@ -3071,6 +3071,7 @@ prototype.pipeline = function(pipeline) {
   // If this datasource is faceted, materializes the values in the facet.
   var output = new Node(this._graph)
     .router(true)
+    .reflows(true)
     .collector(true);
 
   output.data = ds._collector ?
@@ -3319,6 +3320,7 @@ prototype.propagate = function(pulse, node) {
 
     // Even if we didn't run the node, we still want to propagate the pulse. 
     if (p !== this.doNotPropagate) {
+      p.reflow = p.reflow || n.reflows(); // If skipped eval of reflows node
       for (i=0, len=l.length; i<len; ++i) {
         pq.push({node: l[i], pulse: p, rank: l[i]._rank});
       }
@@ -3427,7 +3429,8 @@ var Flags = Node.Flags = {
   Router:     0x01, // Responsible for propagating tuples, cannot be skipped.
   Collector:  0x02, // Holds a materialized dataset, pulse node to reflow.
   Revises:    0x04, // Node requires tuple previous values.
-  Batch:      0x08  // Node performs batch data processing, needs collector.
+  Reflows:    0x08, // Node will forward a reflow pulse.
+  Batch:      0x10  // Node performs batch data processing, needs collector.
 };
 
 var prototype = Node.prototype;
@@ -3483,6 +3486,11 @@ prototype.collector = function(state) {
 prototype.revises = function(state) {
   if (!arguments.length) return (this._flags & Flags.Revises);
   return this._setf(Flags.Revises, state);
+};
+
+prototype.reflows = function(state) {
+  if (!arguments.length) return (this._flags & Flags.Reflows);
+  return this._setf(Flags.Reflows, state);
 };
 
 prototype.batch = function(state) {
@@ -12897,7 +12905,9 @@ var util = require('datalib/src/util'),
 
 function Bounder(graph, mark) {
   this._mark = mark;
-  return Node.prototype.init.call(this, graph).router(true);
+  return Node.prototype.init.call(this, graph)
+    .router(true)
+    .reflows(true);
 }
 
 var proto = (Bounder.prototype = new Node());
@@ -13648,7 +13658,7 @@ function Scale(graph, def, parent) {
   this._def     = def;
   this._parent  = parent;
   this._updated = false;
-  return Node.prototype.init.call(this, graph);
+  return Node.prototype.init.call(this, graph).reflows(true);
 }
 
 var proto = (Scale.prototype = new Node());

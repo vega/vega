@@ -14,7 +14,7 @@ function Scale(graph, def, parent) {
   this._def     = def;
   this._parent  = parent;
   this._updated = false;
-  return Node.prototype.init.call(this, graph);
+  return Node.prototype.init.call(this, graph).reflows(true);
 }
 
 var proto = (Scale.prototype = new Node());
