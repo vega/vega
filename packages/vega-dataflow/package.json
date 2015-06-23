@@ -1,0 +1,41 @@
+{
+  "name": "vega-dataflow",
+  "version": "1.0.0",
+  "description": "Vega streaming dataflow graph.",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/vega/vega-dataflow.git"
+  },
+  "author": {
+    "name": "Arvind Satyanarayan",
+    "url": "http://arvindsatya.com/"
+  },
+  "contributors": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "datalib": "1.2.x",
+    "heap": "0.2.x"
+  },
+  "devDependencies": {
+    "browserify": "latest",
+    "browserify-shim": "latest",
+    "chai": "latest",
+    "istanbul": "latest",
+    "jshint": "latest",
+    "mocha": "latest",
+    "uglify-js": "latest"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "jshint src/",
+    "test": "mocha --recursive test/",
+    "cover": "istanbul cover _mocha -- --recursive test/",
+    "build": "browserify src/index.js --debug --standalone vg.dataflow -o vega-dataflow.js",
+    "postbuild": "uglifyjs vega-dataflow.js -c -m -o vega-dataflow.min.js"
+  },
+  "browserify-shim": {
+  }
+}
