@@ -143,6 +143,7 @@ prototype.propagate = function(pulse, node) {
 
     // Even if we didn't run the node, we still want to propagate the pulse. 
     if (p !== this.doNotPropagate) {
+      p.reflow = p.reflow || n.reflows(); // If skipped eval of reflows node
       for (i=0, len=l.length; i<len; ++i) {
         pq.push({node: l[i], pulse: p, rank: l[i]._rank});
       }
