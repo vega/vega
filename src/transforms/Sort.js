@@ -1,26 +1,24 @@
 var util = require('datalib/src/util'),
-    Transform = require('./Transform'),
-    log = require('../util/log');
+    Transform = require('./Transform');
 
 function Sort(graph) {
   Transform.prototype.init.call(this, graph);
-  Transform.addParameters(this, {by: {type: "array<field>"} });
-  return this.router(true);
+  Transform.addParameters(this, {by: {type: 'array<field>'} });
+  this.router(true);
 }
 
-var proto = (Sort.prototype = new Transform());
+var prototype = (Sort.prototype = Object.create(Transform.prototype));
+prototype.constructor = Sort;
 
-proto.transform = function(input) {
-  log.debug(input, ["sorting"]);
-
-  if(input.add.length || input.mod.length || input.rem.length) {
-    input.sort = util.comparator(this.param("by").field);
+prototype.transform = function(input) {
+  if (input.add.length || input.mod.length || input.rem.length) {
+    input.sort = util.comparator(this.param('by').field);
   }
-
   return input;
 };
 
 module.exports = Sort;
+
 Sort.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Sort transform",

@@ -1,41 +1,40 @@
 var bins = require('datalib/src/bins/bins'),
-    tuple = require('vega-dataflow/src/Tuple'),
-    Transform = require('./Transform'),
-    log = require('../util/log');
+    Tuple = require('vega-dataflow/src/Tuple'),
+    Transform = require('./Transform');
 
 function Bin(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    field: {type: "field"},
-    min: {type: "value"},
-    max: {type: "value"},
-    base: {type: "value", default: 10},
-    maxbins: {type: "value", default: 20},
-    step: {type: "value"},
-    steps: {type: "value"},
-    minstep: {type: "value"},
-    div: {type: "array<value>", default: [5, 2]}
+    field: {type: 'field'},
+    min: {type: 'value'},
+    max: {type: 'value'},
+    base: {type: 'value', default: 10},
+    maxbins: {type: 'value', default: 20},
+    step: {type: 'value'},
+    steps: {type: 'value'},
+    minstep: {type: 'value'},
+    div: {type: 'array<value>', default: [5, 2]}
   });
 
-  this._output = {"bin": "bin"};
+  this._output = {'bin': 'bin'};
   return this;
 }
 
-var proto = (Bin.prototype = new Transform());
+var prototype = (Bin.prototype = Object.create(Transform.prototype));
+prototype.constructor = Bin;
 
-proto.transform = function(input) {
-  log.debug(input, ["binning"]);
-  var transform = this,
-      output  = this._output.bin,
-      step    = this.param("step"),
-      steps   = this.param("steps"),
-      minstep = this.param("minstep"),
+prototype.transform = function(input) {
+  var output  = this._output.bin,
+      step    = this.param('step'),
+      steps   = this.param('steps'),
+      minstep = this.param('minstep'),
+      get     = this.param('field').accessor,
       opt = {
-        min: this.param("min"),
-        max: this.param("max"),
-        base: this.param("base"),
-        maxbins: this.param("maxbins"),
-        div: this.param("div")
+        min: this.param('min'),
+        max: this.param('max'),
+        base: this.param('base'),
+        maxbins: this.param('maxbins'),
+        div: this.param('div')
       };
 
   if (step) opt.step = step;
@@ -44,10 +43,10 @@ proto.transform = function(input) {
   var b = bins(opt);
 
   function update(d) {
-    var v = transform.param("field").accessor(d);
+    var v = get(d);
     v = v == null ? null
       : b.start + b.step * ~~((v - b.start) / b.step);
-    tuple.set(d, output, v, input.stamp);
+    Tuple.set(d, output, v, input.stamp);
   }
   input.add.forEach(update);
   input.mod.forEach(update);
@@ -57,6 +56,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Bin;
+
 Bin.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Bin transform",

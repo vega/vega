@@ -1,21 +1,21 @@
 var d3 = require('d3'),
-    tuple = require('vega-dataflow/src/Tuple'),
+    Tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform');
 
 function Force(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    size: {type: "array<value>", default: [500, 500]},
-    links: {type: "data"},
-    linkDistance: {type: "field|value", default: 20},
-    linkStrength: {type: "field|value", default: 1},
-    charge: {type: "field|value", default: -30},
-    chargeDistance: {type: "field|value", default: Infinity},
-    iterations: {type: "value", default: 500},
-    friction: {type: "value", default: 0.9},
-    theta: {type: "value", default: 0.8},
-    gravity: {type: "value", default: 0.1},
-    alpha: {type: "value", default: 0.1}
+    size: {type: 'array<value>', default: [500, 500]},
+    links: {type: 'data'},
+    linkDistance: {type: 'field|value', default: 20},
+    linkStrength: {type: 'field|value', default: 1},
+    charge: {type: 'field|value', default: -30},
+    chargeDistance: {type: 'field|value', default: Infinity},
+    iterations: {type: 'value', default: 500},
+    friction: {type: 'value', default: 0.9},
+    theta: {type: 'value', default: 0.8},
+    gravity: {type: 'value', default: 0.1},
+    alpha: {type: 'value', default: 0.1}
   });
 
   this._nodes  = [];
@@ -23,25 +23,26 @@ function Force(graph) {
   this._layout = d3.layout.force();
 
   this._output = {
-    "x": "layout_x",
-    "y": "layout_y",
-    "source": "_source",
-    "target": "_target"
+    'x': 'layout_x',
+    'y': 'layout_y',
+    'source': '_source',
+    'target': '_target'
   };
 
   return this;
 }
 
-var proto = (Force.prototype = new Transform());
+var prototype = (Force.prototype = Object.create(Transform.prototype));
+prototype.constructor = Force;
 
-proto.transform = function(nodeInput) {
+prototype.transform = function(nodeInput) {
   // get variables
-  var linkInput = this.param("links").source.last(),
+  var linkInput = this.param('links').source.last(),
       layout = this._layout,
       output = this._output,
       nodes = this._nodes,
       links = this._links,
-      iter = this.param("iterations");
+      iter = this.param('iterations');
 
   // process added nodes
   nodeInput.add.forEach(function(n) {
@@ -55,24 +56,24 @@ proto.transform = function(nodeInput) {
       source: nodes[l.source],
       target: nodes[l.target]
     };
-    tuple.set(l, output.source, link.source.tuple);
-    tuple.set(l, output.target, link.target.tuple);
+    Tuple.set(l, output.source, link.source.tuple);
+    Tuple.set(l, output.target, link.target.tuple);
     links.push(link);
   });
 
-  // TODO process "mod" of edge source or target?
+  // TODO process 'mod' of edge source or target?
 
   // configure layout
   layout
-    .size(this.param("size"))
-    .linkDistance(this.param("linkDistance"))
-    .linkStrength(this.param("linkStrength"))
-    .charge(this.param("charge"))
-    .chargeDistance(this.param("chargeDistance"))
-    .friction(this.param("friction"))
-    .theta(this.param("theta"))
-    .gravity(this.param("gravity"))
-    .alpha(this.param("alpha"))
+    .size(this.param('size'))
+    .linkDistance(this.param('linkDistance'))
+    .linkStrength(this.param('linkStrength'))
+    .charge(this.param('charge'))
+    .chargeDistance(this.param('chargeDistance'))
+    .friction(this.param('friction'))
+    .theta(this.param('theta'))
+    .gravity(this.param('gravity'))
+    .alpha(this.param('alpha'))
     .nodes(nodes)
     .links(links);
 
@@ -85,20 +86,18 @@ proto.transform = function(nodeInput) {
 
   // copy layout values to nodes
   nodes.forEach(function(n) {
-    tuple.set(n.tuple, output.x, n.x);
-    tuple.set(n.tuple, output.y, n.y);
+    Tuple.set(n.tuple, output.x, n.x);
+    Tuple.set(n.tuple, output.y, n.y);
   });
 
   // process removed nodes
   if (nodeInput.rem.length > 0) {
-    var nodeIds = tuple.idMap(nodeInput.rem);
-    this._nodes = nodes.filter(function(n) { return !nodeIds[n.tuple._id]; });
+    this._nodes = Tuple.idFilter(nodes, nodeInput.rem);
   }
 
   // process removed edges
   if (linkInput.rem.length > 0) {
-    var linkIds = tuple.idMap(linkInput.rem);
-    this._links = links.filter(function(l) { return !linkIds[l.tuple._id]; });
+    this.links = Tuple.idFilter(links, linkInput.rem);
   }
 
   // return changeset
@@ -108,6 +107,7 @@ proto.transform = function(nodeInput) {
 };
 
 module.exports = Force;
+
 Force.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Force transform",

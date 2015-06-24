@@ -1,28 +1,29 @@
-var tuple = require('vega-dataflow/src/Tuple'),
+var Tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform');
 
 function LinkPath(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    source:  {type: "field", default: "_source"},
-    target:  {type: "field", default: "_target"},
-    x:       {type: "field", default: "layout_x"},
-    y:       {type: "field", default: "layout_y"},
-    tension: {type: "value", default: 0.2},
-    shape:   {type: "value", default: "line"}
+    source:  {type: 'field', default: '_source'},
+    target:  {type: 'field', default: '_target'},
+    x:       {type: 'field', default: 'layout_x'},
+    y:       {type: 'field', default: 'layout_y'},
+    tension: {type: 'value', default: 0.2},
+    shape:   {type: 'value', default: 'line'}
   });
 
-  this._output = {"path": "layout_path"};
+  this._output = {'path': 'layout_path'};
   return this;
 }
 
-var proto = (LinkPath.prototype = new Transform());
+var prototype = (LinkPath.prototype = Object.create(Transform.prototype));
+prototype.constructor = LinkPath;
 
-function line(d, source, target, x, y, tension) {
+function line(d, source, target, x, y) {
   var s = source(d), sx = x(s), sy = y(s),
       t = target(d), tx = x(t), ty = y(t);
-  return "M" + sx + "," + sy
-       + "L" + tx + "," + ty;
+  return 'M' + sx + ',' + sy +
+         'L' + tx + ',' + ty;
 }
 
 function curve(d, source, target, x, y, tension) {
@@ -32,30 +33,30 @@ function curve(d, source, target, x, y, tension) {
       dy = ty - sy,
       ix = tension * (dx + dy),
       iy = tension * (dy - dx);
-  return "M" + sx + "," + sy
-       + "C" + (sx+ix) + "," + (sy+iy)
-       + " " + (tx+iy) + "," + (ty-ix)
-       + " " + tx + "," + ty;
+  return 'M' + sx + ',' + sy +
+         'C' + (sx+ix) + ',' + (sy+iy) +
+         ' ' + (tx+iy) + ',' + (ty-ix) +
+         ' ' + tx + ',' + ty;
 }
 
-function diagonalX(d, source, target, x, y, tension) {
+function diagonalX(d, source, target, x, y) {
   var s = source(d), sx = x(s), sy = y(s),
       t = target(d), tx = x(t), ty = y(t),
       m = (sx + tx) / 2;
-  return "M" + sx + "," + sy
-       + "C" + m  + "," + sy
-       + " " + m  + "," + ty
-       + " " + tx + "," + ty;
+  return 'M' + sx + ',' + sy +
+         'C' + m  + ',' + sy +
+         ' ' + m  + ',' + ty +
+         ' ' + tx + ',' + ty;
 }
 
-function diagonalY(d, source, target, x, y, tension) {
+function diagonalY(d, source, target, x, y) {
   var s = source(d), sx = x(s), sy = y(s),
       t = target(d), tx = x(t), ty = y(t),
       m = (sy + ty) / 2;
-  return "M" + sx + "," + sy
-       + "C" + sx + "," + m
-       + " " + tx + "," + m
-       + " " + tx + "," + ty;
+  return 'M' + sx + ',' + sy +
+         'C' + sx + ',' + m +
+         ' ' + tx + ',' + m +
+         ' ' + tx + ',' + ty;
 }
 
 var shapes = {
@@ -66,18 +67,18 @@ var shapes = {
   diagonalY: diagonalY
 };
 
-proto.transform = function(input) {
+prototype.transform = function(input) {
   var output = this._output,
-      shape = shapes[this.param("shape")] || shapes.line,
-      source = this.param("source").accessor,
-      target = this.param("target").accessor,
-      x = this.param("x").accessor,
-      y = this.param("y").accessor,
-      tension = this.param("tension");
+      shape = shapes[this.param('shape')] || shapes.line,
+      source = this.param('source').accessor,
+      target = this.param('target').accessor,
+      x = this.param('x').accessor,
+      y = this.param('y').accessor,
+      tension = this.param('tension');
   
   function set(t) {
-    var path = shape(t, source, target, x, y, tension)
-    tuple.set(t, output.path, path);
+    var path = shape(t, source, target, x, y, tension);
+    Tuple.set(t, output.path, path);
   }
 
   input.add.forEach(set);
@@ -89,7 +90,8 @@ proto.transform = function(input) {
   return input;
 };
 
-module.exports  = LinkPath;
+module.exports = LinkPath;
+
 LinkPath.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "LinkPath transform",
@@ -146,4 +148,4 @@ LinkPath.schema = {
   },
   "additionalProperties": false,
   "required": ["type"]
-}
+};

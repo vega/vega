@@ -1,7 +1,7 @@
 var util = require('datalib/src/util'),
-    expr = require('./expr'),
     functions = require('vega-expression/src/functions')(),
-    C = require('../util/constants');
+    Deps = require('vega-dataflow/src/Dependencies'),
+    expr = require('./expr');
 
 function parseSignals(model, spec) {
   // process each signal definition
@@ -17,7 +17,7 @@ function parseSignals(model, spec) {
     if (s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        var val = exprVal(model, s, signal.value());
+        var val = exprVal(model, s);
         if (val !== signal.value() || signal.verbose()) {
           signal.value(val);
           input.signals[s.name] = 1;
@@ -25,7 +25,7 @@ function parseSignals(model, spec) {
         }
         return model.doNotPropagate;        
       };
-      signal.dependency(C.SIGNALS, s.expr.globals);
+      signal.dependency(Deps.SIGNALS, s.expr.globals);
       s.expr.globals.forEach(function(dep) {
         model.signal(dep).addListener(signal);
       });
@@ -35,24 +35,23 @@ function parseSignals(model, spec) {
   return spec;
 };
 
-function exprVal(model, spec, currentValue) {
+function exprVal(model, spec) {
   var e = spec.expr,
-      val = expr.eval(model, e.fn, {signals: e.globals});
+      val = e.fn(null, null, model.signalValues(e.globals));
   return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
-parseSignals.scale = function scale(model, spec, value, ctx) {
+parseSignals.scale = function scale(model, spec, value, datum, evt) {
   var def = spec.scale,
       name  = def.name || def.signal || def,
-      scope = def.scope;
+      scope = def.scope, e
 
   if (scope) {
-    if (scope.signal) scope = model.signalRef(scope.signal);
-    else if (util.isString(scope)) { // Scope is an expression
-      def._expr = def._expr || expr(scope);
-      scope = expr.eval(model, def._expr.fn, util.extend(ctx || {}, {
-        signals: def._expr.globals
-      }));
+    if (scope.signal) {
+      scope = model.signalRef(scope.signal);
+    } else if (util.isString(scope)) { // Scope is an expression
+      e = def._expr = (def._expr || expr(scope));
+      scope = e.fn(datum, evt, model.signalValues(e.globals));
     }
   }
 
@@ -61,8 +60,7 @@ parseSignals.scale = function scale(model, spec, value, ctx) {
   }
 
   var scale = scope.scale(name);
-  if (!scale) return value;
-  return def.invert ? scale.invert(value) : scale(value);
+  return !scale ? value : (def.invert ? scale.invert(value) : scale(value));
 }
 
 module.exports = parseSignals;

@@ -68,20 +68,21 @@ function parseStreams(view) {
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
         node = registry.nodes[type],
-        ctx = {datum: datum, event: evt},
         cs = changeset.create(null, true),
         filtered = false,
-        val, i, len, h;
+        val, i, n, h;
 
-    for (i = 0, len=handlers.length; i<len; i++) {
+    for (i=0, n=handlers.length; i<n; ++i) {
       h = handlers[i];
       filtered = h.filters.some(function(f) {
-        return !expr.eval(model, f.fn, util.extend(ctx, {signals: f.globals}));
+        return !f.fn(datum, evt, model.signalValues(f.globals));
       });
       if (filtered) continue;
       
-      val = expr.eval(model, h.exp.fn, util.extend(ctx, {signals: h.exp.globals}));
-      if (h.spec.scale) val = parseSignals.scale(model, h.spec, val, ctx);
+      val = h.exp.fn(datum, evt, model.signalValues(h.exp.globals));
+      if (h.spec.scale) {
+        val = parseSignals.scale(model, h.spec, val, datum, evt);
+      }
 
       if (val !== h.signal.value() || h.signal.verbose()) {
         h.signal.value(val);
@@ -132,8 +133,10 @@ function parseStreams(view) {
     var n = new Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = expr.eval(model, exp.fn, {signals: exp.globals});
-      if (spec.scale) val = parseSignals.scale(model, spec, val);
+      var val = exp.fn(null, null, model.signalValues(exp.globals));
+      if (spec.scale) {
+        val = parseSignals.scale(model, spec, val);
+      }
 
       if (val !== sig.value()) {
         sig.value(val);

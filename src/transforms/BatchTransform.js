@@ -1,5 +1,4 @@
-var Transform = require('./Transform'),
-    Collector = require('vega-dataflow/src/Collector');
+var Base = require('./Transform').prototype;
 
 function BatchTransform() {
   // Funcptr to nearest shared upstream collector. 
@@ -7,18 +6,19 @@ function BatchTransform() {
   this.data = null; 
 }
 
-var proto = (BatchTransform.prototype = new Transform());
+var prototype = (BatchTransform.prototype = Object.create(Base));
+prototype.constructor = BatchTransform;
 
-proto.init = function(graph) {
-  Transform.prototype.init.call(this, graph);
+prototype.init = function(graph) {
+  Base.init.call(this, graph);
   return this.batch(true);
 };
 
-proto.transform = function(input) {
+prototype.transform = function(input) {
   return this.batchTransform(input, this.data());
 };
 
-proto.batchTransform = function(input, data) {
+prototype.batchTransform = function(/* input, data */) {
 };
 
 module.exports = BatchTransform;

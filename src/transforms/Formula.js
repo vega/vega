@@ -1,37 +1,28 @@
-var tuple = require('vega-dataflow/src/Tuple'),
+var Tuple = require('vega-dataflow/src/Tuple'),
     Deps = require('vega-dataflow/src/Dependencies'),
-    Transform = require('./Transform'),
-    expression = require('../parse/expr'),
-    log = require('../util/log');
+    Transform = require('./Transform');
 
 function Formula(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    field: {type: "value"},
-    expr:  {type: "expr"}
+    field: {type: 'value'},
+    expr:  {type: 'expr'}
   });
 
   return this;
 }
 
-var proto = (Formula.prototype = new Transform());
+var prototype = (Formula.prototype = Object.create(Transform.prototype));
+prototype.constructor = Formula;
 
-
-proto.transform = function(input) {
-  log.debug(input, ["formulating"]);
-  var t = this, 
-      g = this._graph,
-      field = this.param("field"),
-      expr = this.param("expr"),
-      context = {
-        datum: null,
-        signals: this.dependency(Deps.SIGNALS) 
-      };
+prototype.transform = function(input) {
+  var g = this._graph,
+      field = this.param('field'),
+      expr = this.param('expr'),
+      signals = g.signalValues(this.dependency(Deps.SIGNALS));
 
   function set(x) {
-    context.datum = x;
-    var val = expression.eval(g, expr, context);
-    tuple.set(x, field, val);
+    Tuple.set(x, field, expr(x, null, signals));
   }
 
   input.add.forEach(set);
@@ -45,6 +36,7 @@ proto.transform = function(input) {
 };
 
 module.exports = Formula;
+
 Formula.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Formula transform",

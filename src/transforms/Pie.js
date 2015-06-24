@@ -1,7 +1,6 @@
 var d3 = require('d3'),
     gen  = require('datalib/src/generate'),
-    util = require('datalib/src/util'),
-    tuple = require('vega-dataflow/src/Tuple'),
+    Tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
 
@@ -23,13 +22,13 @@ function Pie(graph) {
   return this;
 }
 
-var proto = (Pie.prototype = new BatchTransform());
+var prototype = (Pie.prototype = Object.create(BatchTransform.prototype));
+prototype.constructor = Pie;
 
 function ones() { return 1; }
 
-proto.batchTransform = function(input, data) {
-  var g = this._graph,
-      output = this._output,
+prototype.batchTransform = function(input, data) {
+  var output = this._output,
       value = this.param("value").accessor || ones,
       start = this.param("startAngle"),
       stop = this.param("endAngle"),
@@ -50,9 +49,9 @@ proto.batchTransform = function(input, data) {
   for (i=0; i<index.length; ++i) {
     t = data[index[i]];
     v = values[index[i]];
-    tuple.set(t, output.start, a);
-    tuple.set(t, output.mid, (a + 0.5 * v * k));
-    tuple.set(t, output.end, (a += v * k));
+    Tuple.set(t, output.start, a);
+    Tuple.set(t, output.mid, (a + 0.5 * v * k));
+    Tuple.set(t, output.end, (a += v * k));
   }
 
   input.fields[output.start] = 1;
@@ -62,6 +61,7 @@ proto.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
+
 Pie.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Pie transform",

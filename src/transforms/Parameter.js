@@ -1,5 +1,5 @@
 var util = require('datalib/src/util'),
-    Deps = require('vega-dataflow/src/Dependencies')
+    Deps = require('vega-dataflow/src/Dependencies'),
     expr = require('../parse/expr');
 
 var arrayType = /array/i,
@@ -21,7 +21,7 @@ function Parameter(name, type, transform) {
   this._signals = {};
 }
 
-var proto = Parameter.prototype;
+var prototype = Parameter.prototype;
 
 function get() {
   var isArray = arrayType.test(this._type),
@@ -31,15 +31,15 @@ function get() {
   var val = isArray ? this._value : this._value[0],
       acc = isArray ? this._accessors : this._accessors[0];
 
-  if(!util.isValid(acc) && valType.test(this._type)) {
+  if (!util.isValid(acc) && valType.test(this._type)) {
     return val;
   } else {
     return isData ? { name: val, source: acc } :
     isField ? { field: val, accessor: acc } : val;
   }
-};
+}
 
-proto.get = function() {
+prototype.get = function() {
   var graph = this._transform._graph, 
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type),
@@ -53,7 +53,7 @@ proto.get = function() {
     return get.call(this); // TODO: support signal as dataTypes
   }
 
-  for(s in this._signals) {
+  for (s in this._signals) {
     idx = this._signals[s];
     val = graph.signalRef(s);
 
@@ -68,7 +68,7 @@ proto.get = function() {
   return get.call(this);
 };
 
-proto.set = function(value) {
+prototype.set = function(value) {
   var p = this,
       isExpr = exprType.test(this._type),
       isData  = dataType.test(this._type),

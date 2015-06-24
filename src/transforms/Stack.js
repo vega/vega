@@ -1,33 +1,33 @@
 var util = require('datalib/src/util'),
-    tuple = require('vega-dataflow/src/Tuple'),
+    Tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
 
 function Stack(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    groupby: {type: "array<field>"},
-    sortby: {type: "array<field>"},
-    value: {type: "field"},
-    offset: {type: "value", default: "zero"}
+    groupby: {type: 'array<field>'},
+    sortby: {type: 'array<field>'},
+    value: {type: 'field'},
+    offset: {type: 'value', default: 'zero'}
   });
 
   this._output = {
-    "start": "layout_start",
-    "end":   "layout_end",
-    "mid":   "layout_mid"
+    'start': 'layout_start',
+    'end':   'layout_end',
+    'mid':   'layout_mid'
   };
   return this;
 }
 
-var proto = (Stack.prototype = new BatchTransform());
+var prototype = (Stack.prototype = Object.create(BatchTransform.prototype));
+prototype.constructor = Stack;
 
-proto.batchTransform = function(input, data) {
-  var g = this._graph,
-      groupby = this.param("groupby").accessor,
-      sortby = util.comparator(this.param("sortby").field),
-      value = this.param("value").accessor,
-      offset = this.param("offset"),
+prototype.batchTransform = function(input, data) {
+  var groupby = this.param('groupby').accessor,
+      sortby = util.comparator(this.param('sortby').field),
+      value = this.param('value').accessor,
+      offset = this.param('offset'),
       output = this._output;
 
   // partition, sum, and sort the stack groups
@@ -37,9 +37,9 @@ proto.batchTransform = function(input, data) {
   for (var i=0, max=groups.max; i<groups.length; ++i) {
     var group = groups[i],
         sum = group.sum,
-        off = offset==="center" ? (max - sum)/2 : 0,
-        scale = offset==="normalize" ? (1/sum) : 1,
-        i, x, a, b = off, v = 0;
+        off = offset==='center' ? (max - sum)/2 : 0,
+        scale = offset==='normalize' ? (1/sum) : 1,
+        j, x, a, b = off, v = 0;
 
     // set stack coordinates for each datum in group
     for (j=0; j<group.length; ++j) {
@@ -47,9 +47,9 @@ proto.batchTransform = function(input, data) {
       a = b; // use previous value for start point
       v += value(x);
       b = scale * v + off; // compute end point
-      tuple.set(x, output.start, a);
-      tuple.set(x, output.end, b);
-      tuple.set(x, output.mid, 0.5 * (a + b));
+      Tuple.set(x, output.start, a);
+      Tuple.set(x, output.end, b);
+      Tuple.set(x, output.mid, 0.5 * (a + b));
     }
   }
 
@@ -61,6 +61,7 @@ proto.batchTransform = function(input, data) {
 
 function partition(data, groupby, sortby, value) {
   var groups = [],
+      get = function(f) { return f(x); },
       map, i, x, k, g, s, max;
 
   // partition data points into stack groups
@@ -69,7 +70,7 @@ function partition(data, groupby, sortby, value) {
   } else {
     for (map={}, i=0; i<data.length; ++i) {
       x = data[i];
-      k = (groupby.map(function(f) { return f(x); }));
+      k = groupby.map(get);
       g = map[k] || (groups.push(map[k] = []), map[k]);
       g.push(x);
     }
@@ -91,6 +92,7 @@ function partition(data, groupby, sortby, value) {
 }
 
 module.exports = Stack;
+
 Stack.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Stack transform",

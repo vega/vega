@@ -1,17 +1,18 @@
-var Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+var Base = require('vega-dataflow/src/Node').prototype, // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
     Parameter = require('./Parameter');
 
 function Transform(graph) {
-  if(graph) Node.prototype.init.call(this, graph);
-  return this;
+  if (graph) Base.init.call(this, graph);
 }
 
 Transform.addParameters = function(proto, params) {
   proto._parameters = proto._parameters || {};
   for (var name in params) {
     var p = params[name],
-        param = proto._parameters[name] = new Parameter(name, p.type, proto);
+        param = new Parameter(name, p.type, proto);
+
+    proto._parameters[name] = param;
 
     if (p.type === 'custom') {
       if (p.set) param.set = p.set.bind(param);
@@ -22,26 +23,31 @@ Transform.addParameters = function(proto, params) {
   }
 };
 
-var proto = (Transform.prototype = new Node());
+var prototype = (Transform.prototype = Object.create(Base));
+prototype.constructor = Transform;
 
-proto.param = function(name, value) {
+prototype.param = function(name, value) {
   var param = this._parameters[name];
   return (param === undefined) ? this :
     (arguments.length === 1) ? param.get() : param.set(value);
 };
 
-proto.transform = function(input, reset) { return input; };
-proto.evaluate = function(input) {
+// Perform transformation. Subclasses should override.
+prototype.transform = function(input/*, reset */) {
+  return input;
+};
+
+prototype.evaluate = function(input) {
   // Many transforms store caches that must be invalidated if
   // a signal value has changed. 
-  var reset = this._stamp < input.stamp && this.dependency(Deps.SIGNALS).some(function(s) { 
-    return !!input.signals[s] 
-  });
-
+  var reset = this._stamp < input.stamp &&
+    this.dependency(Deps.SIGNALS).some(function(s) { 
+      return !!input.signals[s];
+    });
   return this.transform(input, reset);
 };
 
-proto.output = function(map) {
+prototype.output = function(map) {
   for (var key in this._output) {
     if (map[key] !== undefined) {
       this._output[key] = map[key];

@@ -1,37 +1,36 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
-    tuple = require('vega-dataflow/src/Tuple'),
+    Tuple = require('vega-dataflow/src/Tuple'),
     Transform = require('./Transform');
 
 function Geo(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, Geo.Parameters);
   Transform.addParameters(this, {
-    lon: {type: "field"},
-    lat: {type: "field"}
+    lon: {type: 'field'},
+    lat: {type: 'field'}
   });
 
   this._output = {
-    "x": "layout_x",
-    "y": "layout_y"
+    'x': 'layout_x',
+    'y': 'layout_y'
   };
   return this;
 }
 
 Geo.Parameters = {
-  projection: {type: "value", default: "mercator"},
-  center:     {type: "array<value>"},
-  translate:  {type: "array<value>"},
-  rotate:     {type: "array<value>"},
-  scale:      {type: "value"},
-  precision:  {type: "value"},
-  clipAngle:  {type: "value"},
-  clipExtent: {type: "value"}
+  projection: {type: 'value', default: 'mercator'},
+  center:     {type: 'array<value>'},
+  translate:  {type: 'array<value>'},
+  rotate:     {type: 'array<value>'},
+  scale:      {type: 'value'},
+  precision:  {type: 'value'},
+  clipAngle:  {type: 'value'},
+  clipExtent: {type: 'value'}
 };
 
 Geo.d3Projection = function() {
-  var g = this._graph,
-      p = this.param("projection"),
+  var p = this.param('projection'),
       param = Geo.Parameters,
       proj, name, value;
 
@@ -42,7 +41,7 @@ Geo.d3Projection = function() {
   proj = this._projection;
 
   for (name in param) {
-    if (name === "projection" || !proj[name]) continue;
+    if (name === 'projection' || !proj[name]) continue;
     value = this.param(name);
     if (value === undefined || (util.isArray(value) && value.length === 0)) {
       continue;
@@ -55,20 +54,20 @@ Geo.d3Projection = function() {
   return proj;
 };
 
-var proto = (Geo.prototype = new Transform());
+var prototype = (Geo.prototype = Object.create(Transform.prototype));
+prototype.constructor = Geo;
 
-proto.transform = function(input) {
-  var g = this._graph,
-      output = this._output,
-      lon = this.param("lon").accessor,
-      lat = this.param("lat").accessor,
+prototype.transform = function(input) {
+  var output = this._output,
+      lon = this.param('lon').accessor,
+      lat = this.param('lat').accessor,
       proj = Geo.d3Projection.call(this);
 
   function set(t) {
     var ll = [lon(t), lat(t)];
     var xy = proj(ll);
-    tuple.set(t, output.x, xy[0]);
-    tuple.set(t, output.y, xy[1]);
+    Tuple.set(t, output.x, xy[0]);
+    Tuple.set(t, output.y, xy[1]);
   }
 
   input.add.forEach(set);
