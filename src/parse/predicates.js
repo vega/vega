@@ -1,18 +1,18 @@
 var util = require('datalib/src/util');
 
 var types = {
-  '=':  parseComparator,
-  '==': parseComparator,
-  '!=': parseComparator,
-  '>':  parseComparator,
-  '>=': parseComparator,
-  '<':  parseComparator,
-  '<=': parseComparator,
+  '=':   parseComparator,
+  '==':  parseComparator,
+  '!=':  parseComparator,
+  '>':   parseComparator,
+  '>=':  parseComparator,
+  '<':   parseComparator,
+  '<=':  parseComparator,
   'and': parseLogical,
   '&&':  parseLogical,
   'or':  parseLogical,
   '||':  parseLogical,
-  'in': parseIn
+  'in':  parseIn
 };
 
 function parsePredicates(model, spec) {
@@ -35,7 +35,7 @@ function parsePredicates(model, spec) {
 function parseSignal(signal, signals) {
   var s = util.field(signal),
       code = "signals["+s.map(util.str).join("][")+"]";
-  signals[s.shift()] = 1;
+  signals[s[0]] = 1;
   return code;
 }
 
@@ -43,9 +43,13 @@ function parseOperands(model, operands) {
   var decl = [], defs = [],
       signals = {}, db = {};
 
+  function setSignal(s) { signals[s] = 1; }
+  function setData(d) { db[d] = 1; }
+
   util.array(operands).forEach(function(o, i) {
-    var name = "o"+i, def = "";
-    
+    var name = "o" + i,
+        def = "";
+
     if (o.value !== undefined) {
       def = util.str(o.value);
     } else if (o.arg) {
@@ -53,13 +57,13 @@ function parseOperands(model, operands) {
     } else if (o.signal) {
       def = parseSignal(o.signal, signals);
     } else if (o.predicate) {
-      var ref  = o.predicate,
+      var ref = o.predicate,
           predName = ref && (ref.name || ref),
           pred = model.predicate(predName),
           p = "predicates["+util.str(predName)+"]";
 
-      pred.signals.forEach(function(s) { signals[s] = 1; });
-      pred.data.forEach(function(d) { db[d] = 1; });
+      pred.signals.forEach(setSignal);
+      pred.data.forEach(setData);
 
       if (util.isObject(ref)) {
         util.keys(ref).forEach(function(k) {
@@ -71,11 +75,11 @@ function parseOperands(model, operands) {
           } else if (i.arg) {
             def += "args["+util.str(i.arg)+"]";
           }
-          def+=", ";
+          def += ", ";
         });  
       } 
 
-      def+= p+".call("+p+", args, db, signals, predicates)";
+      def += p+".call("+p+", args, db, signals, predicates)";
     }
 
     decl.push(name);
@@ -91,7 +95,7 @@ function parseOperands(model, operands) {
 
 function parseComparator(model, spec) {
   var ops = parseOperands(model, spec.operands);
-  if (spec.type == '=') spec.type = '==';
+  if (spec.type === '=') spec.type = '==';
 
   return {
     code: ops.code + "return " + ["o0", "o1"].join(spec.type) + ";",
@@ -104,9 +108,9 @@ function parseLogical(model, spec) {
   var ops = parseOperands(model, spec.operands),
       o = [], i = 0, len = spec.operands.length;
 
-  while(o.push("o"+i++)<len);
-  if (spec.type == 'and') spec.type = '&&';
-  else if (spec.type == 'or') spec.type = '||';
+  while (o.push("o"+i++) < len);
+  if (spec.type === 'and') spec.type = '&&';
+  else if (spec.type === 'or') spec.type = '||';
 
   return {
     code: ops.code + "return " + o.join(spec.type) + ";",
