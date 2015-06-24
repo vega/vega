@@ -1,13 +1,11 @@
-var util = require('datalib/src/util'),
-    canvas = require('vega-scenegraph/src/render/canvas'),
+var canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg').string,
     View = require('./View'),
-    config = require('../util/config'),
-    log = require('../util/log');
+    config = require('../util/config');
 
-var HeadlessView = function(width, height, model) {
+function HeadlessView(width, height, model) {
   View.call(null, width, height, model);
-  this._type = "canvas";
+  this._type = 'canvas';
   this._renderers = {canvas: canvas, svg: svg};
 }
 
@@ -19,9 +17,7 @@ prototype.renderer = function(type) {
 };
 
 prototype.canvas = function() {
-  return (this._type === "canvas")
-    ? this._renderer.canvas()
-    : null;
+  return (this._type === 'canvas') ? this._renderer.canvas() : null;
 };
 
 prototype.canvasAsync = function(callback) {
@@ -37,14 +33,12 @@ prototype.canvasAsync = function(callback) {
   }
 
   // if images loading, poll until ready
-  if (this._type !== "canvas") return null;
-  (r.pendingImages() > 0) ? wait() : callback(this.canvas());
+  if (this._type !== 'canvas') return null;
+  if (r.pendingImages() > 0) { wait(); } else { callback(this.canvas()); }
 };
 
 prototype.svg = function() {
-  return (this._type === "svg")
-    ? this._renderer.svg()
-    : null;
+  return (this._type === 'svg') ? this._renderer.svg() : null;
 };
 
 prototype.initialize = function() {    

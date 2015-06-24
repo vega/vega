@@ -34,7 +34,7 @@ function debug(input, args) {
 
   log.apply(console, (args.push(JSON.stringify(state)), args));
   ts = Date.now();
-};
+}
 
 module.exports = {
   log: write,

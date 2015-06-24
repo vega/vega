@@ -83,7 +83,7 @@ function ordinal(scale, rng, group) {
       outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
-      domain, sort, str, refs;
+      domain, str;
   
   // range pre-processing for data-driven ranges
   if (util.isObject(def.range) && !util.isArray(def.range)) {
@@ -138,9 +138,9 @@ function quantitative(scale, rng, group) {
       domain, interval;
 
   // domain
-  domain = (def.type === C.QUANTILE)
-    ? dataRef.call(this, C.DOMAIN, def.domain, scale, group)
-    : domainMinMax.call(this, scale, group);
+  domain = (def.type === C.QUANTILE) ?
+    dataRef.call(this, C.DOMAIN, def.domain, scale, group) :
+    domainMinMax.call(this, scale, group);
   if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
     prev.domain = domain;
@@ -181,8 +181,9 @@ function getRefs(def) {
 
 function getFields(ref, group) {
   return util.array(ref.field).map(function(f) {
-    if (f.parent) return util.accessor(f.parent)(group.datum)
-    return f; // String or {"signal"}
+    return f.parent ?
+      util.accessor(f.parent)(group.datum) :
+      f; // String or {"signal"}
   });
 }
 
@@ -195,15 +196,15 @@ function aggrType(def, scale) {
 
   // If we're operating over only a single domain, send full tuples
   // through for efficiency (fewer accessor creations/calls)
-  if(refs.length == 1 && util.array(refs[0].field).length == 1) {
+  if (refs.length == 1 && util.array(refs[0].field).length == 1) {
     return Aggregate.TYPES.TUPLE;
   }
 
   // With quantitative scales, we only care about min/max.
-  if(!isUniques(scale)) return Aggregate.TYPES.VALUE;
+  if (!isUniques(scale)) return Aggregate.TYPES.VALUE;
 
   // If we don't sort, then we can send values directly to aggrs as well
-  if(!def.sort) return Aggregate.TYPES.VALUE;
+  if (!def.sort) return Aggregate.TYPES.VALUE;
 
   return Aggregate.TYPES.MULTI;
 }
@@ -215,18 +216,18 @@ function getCache(which, def, scale, group) {
       sort = def.sort,
       ck = "_"+which,
       fields = getFields(refs[0], group),
-      i, rlen, j, flen, ref, field;
+      ref;
 
-  if(scale[ck]) return scale[ck];
+  if (scale[ck]) return scale[ck];
 
   var cache = scale[ck] = new Aggregate(this._graph).type(atype),
       groupby, summarize;
 
-  if(uniques) {
-    if(atype === Aggregate.TYPES.VALUE) {
+  if (uniques) {
+    if (atype === Aggregate.TYPES.VALUE) {
       groupby = [{ name: C.GROUPBY, get: util.identity }];
       summarize = {"*": C.COUNT};
-    } else if(atype === Aggregate.TYPES.TUPLE) {
+    } else if (atype === Aggregate.TYPES.TUPLE) {
       groupby = [{ name: C.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
         name: C.VALUE,
@@ -263,9 +264,13 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data;
+      i, rlen, j, flen, ref, fields, field, data, from;
 
-  for(i=0, rlen=refs.length; i<rlen; ++i) {
+  function addDep(s) {
+    self.dependency(Deps.SIGNALS, s);
+  }
+
+  for (i=0, rlen=refs.length; i<rlen; ++i) {
     ref = refs[i];
     from = ref.data || group.datum._facetID;
     data = graph.data(from)
@@ -275,12 +280,12 @@ function dataRef(which, def, scale, group) {
     if (data.stamp <= this._stamp) continue;
 
     fields = getFields(ref, group);
-    for(j=0, flen=fields.length; j<flen; ++j) {
+    for (j=0, flen=fields.length; j<flen; ++j) {
       field = fields[j];
 
-      if(atype === Aggregate.TYPES.VALUE) {
+      if (atype === Aggregate.TYPES.VALUE) {
         cache.accessors(null, field);
-      } else if(atype === Aggregate.TYPES.MULTI) {
+      } else if (atype === Aggregate.TYPES.MULTI) {
         cache.accessors(field, ref.sort || sort.field);
       } // Else (Tuple-case) is handled by the aggregator accessors by default
 
@@ -288,7 +293,7 @@ function dataRef(which, def, scale, group) {
     }
 
     this.dependency(Deps.DATA, from);
-    cache.dependency(Deps.SIGNALS).forEach(function(s) { self.dependency(Deps.SIGNALS, s) });
+    cache.dependency(Deps.SIGNALS).forEach(addDep);
   }
 
   data = cache.aggr().result();
@@ -318,7 +323,7 @@ function signal(v) {
 
 function domainMinMax(scale, group) {
   var def = this._def,
-      domain = [null, null], refs, z;
+      domain = [null, null], z;
 
   if (def.domain !== undefined) {
     domain = (!util.isObject(def.domain)) ? domain :
@@ -357,32 +362,36 @@ function domainMinMax(scale, group) {
 
 function range(group) {
   var def = this._def,
-      range = signal.call(this, def.range),
+      rangeVal = signal.call(this, def.range),
       rng = [null, null];
 
-  if (range !== undefined) {
-    if (typeof range === 'string') {
-      if (GROUP_PROPERTY[range]) {
-        rng = [0, group[range]];
-      } else if (config.range[range]) {
-        rng = config.range[range];
+  if (rangeVal !== undefined) {
+    if (typeof rangeVal === 'string') {
+      if (GROUP_PROPERTY[rangeVal]) {
+        rng = [0, group[rangeVal]];
+      } else if (config.range[rangeVal]) {
+        rng = config.range[rangeVal];
       } else {
-        log.error("Unrecogized range: "+range);
+        log.error("Unrecogized range: " + rangeVal);
         return rng;
       }
-    } else if (util.isArray(range)) {
-      rng = util.duplicate(range).map(signal.bind(this));
-    } else if (util.isObject(range)) {
+    } else if (util.isArray(rangeVal)) {
+      rng = util.duplicate(rangeVal).map(signal.bind(this));
+    } else if (util.isObject(rangeVal)) {
       return null; // early exit
     } else {
-      rng = [0, range];
+      rng = [0, rangeVal];
     }
   }
   if (def.rangeMin !== undefined) {
-    rng[0] = def.rangeMin.signal ? signal.call(this, def.rangeMin) : def.rangeMin;
+    rng[0] = def.rangeMin.signal ?
+      signal.call(this, def.rangeMin) :
+      def.rangeMin;
   }
   if (def.rangeMax !== undefined) {
-    rng[rng.length-1] = def.rangeMax.signal ? signal.call(this, def.rangeMax) : def.rangeMax;
+    rng[rng.length-1] = def.rangeMax.signal ?
+      signal.call(this, def.rangeMax) :
+      def.rangeMax;
   }
   
   if (def.reverse !== undefined) {

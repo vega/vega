@@ -11,14 +11,14 @@ var ORIENT = {
   "right":  "right"
 };
 
-function axes(model, spec, axes, group) {
+function parseAxes(model, spec, axes, group) {
   (spec || []).forEach(function(def, index) {
     axes[index] = axes[index] || axs(model);
-    axis(def, index, axes[index], group);
+    parseAxis(def, index, axes[index], group);
   });
-};
+}
 
-function axis(def, index, axis, group) {
+function parseAxis(def, index, axis, group) {
   // axis scale
   if (def.scale !== undefined) {
     axis.scale(group.scale(def.scale));
@@ -35,8 +35,8 @@ function axis(def, index, axis, group) {
   // axis title
   axis.title(def.title || null);
   // axis title offset
-  axis.titleOffset(def.titleOffset != null
-    ? def.titleOffset : config.axis.titleOffset);
+  axis.titleOffset(def.titleOffset != null ?
+    def.titleOffset : config.axis.titleOffset);
   // axis values
   axis.tickValues(def.values || null);
   // axis label formatting
@@ -67,10 +67,10 @@ function axis(def, index, axis, group) {
   // style properties
   var p = def.properties;
   if (p && p.ticks) {
-    axis.majorTickProperties(p.majorTicks
-      ? util.extend({}, p.ticks, p.majorTicks) : p.ticks);
-    axis.minorTickProperties(p.minorTicks
-      ? util.extend({}, p.ticks, p.minorTicks) : p.ticks);
+    axis.majorTickProperties(p.majorTicks ?
+      util.extend({}, p.ticks, p.majorTicks) : p.ticks);
+    axis.minorTickProperties(p.minorTicks ?
+      util.extend({}, p.ticks, p.minorTicks) : p.ticks);
   } else {
     axis.majorTickProperties(p && p.majorTicks || {});
     axis.minorTickProperties(p && p.minorTicks || {});
@@ -81,8 +81,9 @@ function axis(def, index, axis, group) {
   axis.domainProperties(p && p.axis || {});
 }
 
-module.exports = axes;
-axes.schema = {
+module.exports = parseAxes;
+
+parseAxes.schema = {
   "defs": {
     "axis": {
       "type": "object",
@@ -135,4 +136,4 @@ axes.schema = {
       "required": ["type", "scale"]
     }
   }
-}
+};

@@ -10,9 +10,10 @@ function parseRootMark(model, spec, width, height) {
     legends: spec.legends || [],
     marks: (spec.marks || []).map(function(m) { return parseMark(model, m); })
   };
-};
+}
 
 module.exports = parseRootMark;
+
 parseRootMark.schema = {
   "defs": {
     "container": {

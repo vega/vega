@@ -14,11 +14,10 @@ function lgnd(model) {
       values = null,
       format = null,
       formatString = null,
-      title = undefined,
+      title,
       orient = "right",
       offset = config.legend.offset,
       padding = config.legend.padding,
-      legendDef,
       tickArguments = [5],
       legendStyle = {},
       symbolStyle = {},
@@ -36,19 +35,17 @@ function lgnd(model) {
       legendDef = {};
 
   function reset() { legendDef.type = null; }
-  function ingest(d, i) { return {data: d, index: i} }
+  function ingest(d, i) { return {data: d, index: i}; }
 
   legend.def = function() {
     var scale = size || shape || fill || stroke;
     
-    format = !formatString ? null : ((scale.type === 'time')
-      ? d3.time.format(formatString)
-      : d3.format(formatString));
+    format = !formatString ? null : ((scale.type === 'time') ?
+      d3.time.format(formatString) : d3.format(formatString));
     
     if (!legendDef.type) {
-      legendDef = (scale===fill || scale===stroke) && !discrete(scale.type)
-        ? quantDef(scale)
-        : ordinalDef(scale);      
+      legendDef = (scale===fill || scale===stroke) && !discrete(scale.type) ?
+        quantDef(scale) : ordinalDef(scale);      
     }
     legendDef.orient = orient;
     legendDef.offset = offset;
@@ -57,17 +54,17 @@ function lgnd(model) {
   };
 
   function discrete(type) {
-    return type==="ordinal" || type==="quantize"
-      || type==="quantile" || type==="threshold";
+    return type==="ordinal" || type==="quantize" ||
+           type==="quantile" || type==="threshold";
   }
 
   function ordinalDef(scale) {
     var def = o_legend_def(size, shape, fill, stroke);
 
     // generate data
-    var data = (values == null
-      ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
-      : values).map(ingest);
+    var data = (values == null ?
+      (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) :
+      values).map(ingest);
     var fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
     
     // determine spacing between legend entries
@@ -80,9 +77,9 @@ function lgnd(model) {
           return (a[i] += b/2, a); }, [0]).map(Math.round);
     } else {
       offset = Math.round(Math.sqrt(config.legend.symbolSize));
-      range = spacing
-        || (fs = labelStyle.fontSize) && (fs.value + pad)
-        || (config.legend.labelFontSize + pad);
+      range = spacing ||
+        (fs = labelStyle.fontSize) && (fs.value + pad) ||
+        (config.legend.labelFontSize + pad);
       range = domain.map(function(d,i) {
         return Math.round(offset/2 + i*range);
       });
@@ -97,7 +94,7 @@ function lgnd(model) {
     for (var i=0, n=range.length; i<n; ++i) range[i] += sz;
     
     // build scale for label layout
-    var scale = {
+    var scaleSpec = {
       name: "legend",
       type: "ordinal",
       points: true,
@@ -111,7 +108,7 @@ function lgnd(model) {
       d.label = fmt(d.data);
       d.offset = offset;
     });
-    def.scales = [ scale ];
+    def.scales = [ scaleSpec ];
     def.marks[0].from = function() { return tdata; };
     def.marks[1].from = function() { return data; };
     def.marks[2].from = def.marks[1].from;
@@ -160,14 +157,14 @@ function lgnd(model) {
   function quantDef(scale) {
     var def = q_legend_def(scale),
         dom = scale.domain(),
-        data = (values == null
-          ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain())
-          : values).map(ingest),
+        data = (values == null ?
+          (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) :
+          values).map(ingest),
         width = (gradientStyle.width && gradientStyle.width.value) || config.legend.gradientWidth,
         fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
 
     // build scale for label layout
-    var layout = {
+    var layoutSpec = {
       name: "legend",
       type: scale.type,
       round: true,
@@ -175,15 +172,15 @@ function lgnd(model) {
       domain: [dom[0], dom[dom.length-1]],
       range: [padding, width+padding]
     };
-    if (scale.type==="pow") layout.exponent = scale.exponent();
+    if (scale.type==="pow") layoutSpec.exponent = scale.exponent();
     
     // update legend def
     var tdata = (title ? [title] : []).map(ingest);
     data.forEach(function(d,i) {
       d.label = fmt(d.data);
-      d.align = i==(data.length-1) ? "right" : i==0 ? "left" : "center";
+      d.align = i==(data.length-1) ? "right" : i===0 ? "left" : "center";
     });
-    def.scales = [ layout ];
+    def.scales = [ layoutSpec ];
     def.marks[0].from = function() { return tdata; };
     def.marks[1].from = function() { return [1]; };
     def.marks[2].from = function() { return data; };
@@ -203,8 +200,8 @@ function lgnd(model) {
         max = dom[dom.length-1],
         f = scale.copy().domain([min, max]).range([0,1]);
         
-    var stops = (scale.type !== "linear" && scale.ticks)
-      ? scale.ticks.call(scale, 15) : dom;
+    var stops = (scale.type !== "linear" && scale.ticks) ?
+      scale.ticks.call(scale, 15) : dom;
     if (min !== stops[0]) stops.unshift(min);
     if (max !== stops[stops.length-1]) stops.push(max);
 
@@ -359,7 +356,7 @@ function lgnd(model) {
   };
 
   return legend;
-};
+}
 
 var vg_legendOrients = {right: 1, left: 1};
 
@@ -388,15 +385,15 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
       gx = group.bounds ? group.bounds.x1 : 0;
       o.x += gx - offset - lw;
       break;
-    };
+    }
     case "right": {
       gx = group.width;
-      if (group.bounds) gx = trans
-        ? group.width + group.bounds.delta
-        : group.bounds.x2;
+      if (group.bounds) gx = trans ?
+        group.width + group.bounds.delta :
+        group.bounds.x2;
       o.x += gx + offset;
       break;
-    };
+    }
   }
   
   if (trans) trans.interpolate(item, o);

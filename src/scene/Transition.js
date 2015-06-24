@@ -1,4 +1,5 @@
-var bound = require('vega-scenegraph/src/util/bound'),
+var d3 = require('d3'),
+    bound = require('vega-scenegraph/src/util/bound'),
     tuple = require('vega-dataflow/src/Tuple'),
     C = require('../util/constants');
 
@@ -96,6 +97,6 @@ function step(elapsed) {
 
   this.callback();
   return stop;
-};
+}
 
 module.exports = Transition;

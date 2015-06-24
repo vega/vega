@@ -2,7 +2,7 @@ var d3 = require('d3'),
     util = require('datalib/src/util'),
     canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg'),
-    Node = require('vega-dataflow/src/Node'),
+    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
@@ -10,7 +10,7 @@ var d3 = require('d3'),
     log = require('../util/log'),
     changeset = require('vega-dataflow/src/ChangeSet');
 
-var View = function(el, width, height, model) {
+function View(el, width, height) {
   this._el    = null;
   this._model = null;
   this._width = this.__width = width || 500;
@@ -27,7 +27,7 @@ var View = function(el, width, height, model) {
   this._renderers = {canvas: canvas, svg: svg};
   this._io  = canvas;
   this._api = {}; // Stash streaming data API sandboxes.
-};
+}
 
 var prototype = View.prototype;
 
@@ -52,13 +52,15 @@ function streaming(src) {
       cs  = this._changeset,
       api = {};
 
-  if(util.keys(cs.signals).length > 0) {
-    throw "New signal values are not reflected in the visualization." +
+  if (util.keys(cs.signals).length > 0) {
+    throw Error(
+      "New signal values are not reflected in the visualization." +
       " Please call view.update() before updating data values."
+    );
   }
 
   // If we have it stashed, don't create a new closure. 
-  if(this._api[src]) return this._api[src];
+  if (this._api[src]) return this._api[src];
 
   api.insert = function(vals) {
     ds.insert(util.duplicate(vals));  // Don't pollute the environment
@@ -79,16 +81,16 @@ function streaming(src) {
     return (ds.remove.apply(ds, arguments), api);
   };
 
-  api.values = function() { return ds.values() };    
+  api.values = function() { return ds.values(); };    
 
   return (this._api[src] = api);
-};
+}
 
 prototype.data = function(data) {
   var v = this;
-  if(!arguments.length) return v._model.dataValues();
-  else if(util.isString(data)) return streaming.call(v, data);
-  else if(util.isObject(data)) {
+  if (!arguments.length) return v._model.dataValues();
+  else if (util.isString(data)) return streaming.call(v, data);
+  else if (util.isObject(data)) {
     util.keys(data).forEach(function(k) {
       var api = streaming.call(v, k);
       data[k](api);
@@ -103,15 +105,17 @@ prototype.signal = function(name, value) {
       streamer = this._streamer,
       setter = name; 
 
-  if(!arguments.length) return m.signalValues();
-  else if(arguments.length == 1 && util.isString(name)) return m.signalValues(name);
+  if (!arguments.length) return m.signalValues();
+  else if (arguments.length == 1 && util.isString(name)) return m.signalValues(name);
 
-  if(util.keys(cs.data).length > 0) {
-    throw "New data values are not reflected in the visualization." +
+  if (util.keys(cs.data).length > 0) {
+    throw Error(
+      "New data values are not reflected in the visualization." +
       " Please call view.update() before updating signal values."
+    );
   }
 
-  if(arguments.length == 2) {
+  if (arguments.length == 2) {
     setter = {};
     setter[name] = value;
   }
@@ -181,8 +185,8 @@ prototype.autopad = function(opt) {
       inset = config.autopadInset,
       l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
       t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
-      r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0,
-      b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
+      r = b.x2 > this._width  ? Math.ceil(+b.x2 - this._width) + inset : 0;
+  b = b.y2 > this._height ? Math.ceil(+b.y2 - this._height) + inset : 0;
   pad = {left:l, top:t, right:r, bottom:b};
 
   if (this._strict) {
@@ -232,7 +236,7 @@ prototype.initialize = function(el) {
 
   if (!arguments.length || el === null) {
     el = this._el ? this._el.parentNode : null;
-    if(!el) return this;  // This View cannot init w/o an
+    if (!el) return this;  // This View cannot init w/o an
   }
 
   // clear pre-existing container
@@ -283,16 +287,16 @@ function build() {
 
     var s = v._model.scene(),
         h = v._handler,
-        ds, d;
+        d;
 
     if (h && h.scene) h.scene(s);
 
-    if(input.trans) {
+    if (input.trans) {
       input.trans.start(function(items) { v._renderer.render(s, items); });
     } else if (v._repaint) {
       v._renderer.render(s);
       v._repaint = false;
-    } else if(input.dirty.length) {
+    } else if (input.dirty.length) {
       v._renderer.render(s, input.dirty);
     }
 
@@ -301,7 +305,7 @@ function build() {
     }
 
     // For all updated datasources, clear their previous values.
-    for(d in input.data) v._model.data(d).finalize();
+    for (d in input.data) v._model.data(d).finalize();
     return input;
   };
 
@@ -311,16 +315,16 @@ function build() {
 prototype.update = function(opt) {    
   opt = opt || {};
   var v = this,
-      trans = opt.duration
-        ? new Transition(opt.duration, opt.ease)
-        : null;
+      trans = opt.duration ? new Transition(opt.duration, opt.ease) : null;
 
   var cs = v._changeset;
-  if(trans) cs.trans = trans;
-  if(opt.props !== undefined) {
-    if(util.keys(cs.data).length > 0) {
-      throw "New data values are not reflected in the visualization." +
+  if (trans) cs.trans = trans;
+  if (opt.props !== undefined) {
+    if (util.keys(cs.data).length > 0) {
+      throw Error(
+        "New data values are not reflected in the visualization." +
         " Please call view.update() before updating a specified property set."
+      );
     }
 
     cs.reflow  = true;
@@ -333,10 +337,10 @@ prototype.update = function(opt) {
   // If specific items are specified, short-circuit dataflow graph.
   // Else-If there are streaming updates, perform a targeted propagation.
   // Otherwise, reevaluate the entire model (datasources + scene).
-  if(opt.items && built) { 
+  if (opt.items && built) { 
     Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
-  } else if(v._streamer.listeners().length && built) {
+  } else if (v._streamer.listeners().length && built) {
     v._model.propagate(cs, v._streamer);
     v._streamer.disconnect();
   } else {

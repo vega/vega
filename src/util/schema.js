@@ -11,7 +11,7 @@ function compile(module, opt, schema) {
   if (s.defs) util.extend(schema.defs, s.defs);
 }
 
-module.exports = function schema(opt) {
+module.exports = function(opt) {
   var schema = null;
   opt = opt || {};
 
@@ -28,8 +28,10 @@ module.exports = function schema(opt) {
       "$ref": "#/defs/spec"
     };
 
-    util.keys(parse).forEach(function(k) { compile(parse[k], opt, schema) });
-    compile(Scale, opt, schema);  // Scales aren't in the parser, add schema manually
+    util.keys(parse).forEach(function(k) { compile(parse[k], opt, schema); });
+
+    // Scales aren't in the parser, add schema manually
+    compile(Scale, opt, schema);
   }
 
   // Extend schema to support custom mark properties or property sets.

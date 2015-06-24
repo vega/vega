@@ -14,7 +14,7 @@ function parseTransforms(model, def) {
   });
 
   return tx;
-};
+}
 
 module.exports = parseTransforms;
 parseTransforms.schema = {

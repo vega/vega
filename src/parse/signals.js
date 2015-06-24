@@ -33,7 +33,7 @@ function parseSignals(model, spec) {
   });
 
   return spec;
-};
+}
 
 function exprVal(model, spec) {
   var e = spec.expr,
@@ -44,7 +44,7 @@ function exprVal(model, spec) {
 parseSignals.scale = function scale(model, spec, value, datum, evt) {
   var def = spec.scale,
       name  = def.name || def.signal || def,
-      scope = def.scope, e
+      scope = def.scope, e;
 
   if (scope) {
     if (scope.signal) {
@@ -59,9 +59,9 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
     scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
   }
 
-  var scale = scope.scale(name);
-  return !scale ? value : (def.invert ? scale.invert(value) : scale(value));
-}
+  var s = scope.scale(name);
+  return !s ? value : (def.invert ? s.invert(value) : s(value));
+};
 
 module.exports = parseSignals;
 parseSignals.schema = {

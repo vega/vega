@@ -18,14 +18,19 @@ function parseInteractors(model, spec, defFactory) {
           data : JSON.parse(data);
         interactor(i.name, def);
       }
-      if (--count == 0) inject();
-    }
+      if (--count === 0) inject();
+    };
   }
 
   function interactor(name, def) {
-    sg = {}, pd = {};
-    if (def.signals)    signals.push.apply(signals, nsSignals(name, def.signals));
-    if (def.predicates) predicates.push.apply(predicates, nsPredicates(name, def.predicates));
+    sg = {};
+    pd = {};
+    if (def.signals) {
+      signals.push.apply(signals, nsSignals(name, def.signals));
+    }
+    if (def.predicates) {
+      predicates.push.apply(predicates, nsPredicates(name, def.predicates));
+    }
     nsMarks(name, def.marks);
   }
 
@@ -42,16 +47,16 @@ function parseInteractors(model, spec, defFactory) {
     var m, r, i, len;
     marks = util.array(marks);
 
-    for(i = 0, len = marks.length; i < len; i++) {
+    function extend(p) {
+      marks[i].properties[p] = util.extend(r.properties[p], m.properties[p]);
+    }
+
+    for (i=0, len=marks.length; i < len; ++i) {
       m = marks[i];
-      if (r = mk[m.name]) {
+      if ((r = mk[m.name])) {
         marks[i] = util.duplicate(r);
         if (m.from) marks[i].from = m.from;
-        if (m.properties) {
-          [C.ENTER, C.UPDATE, C.EXIT].forEach(function(p) {
-            marks[i].properties[p] = util.extend(r.properties[p], m.properties[p]);
-          });
-        }
+        if (m.properties) [C.ENTER, C.UPDATE, C.EXIT].forEach(extend);
       } else if (m.marks) {  // TODO how to override properties of nested marks?
         injectMarks(m.marks);
       }
@@ -64,7 +69,7 @@ function parseInteractors(model, spec, defFactory) {
     } else {
       util.keys(s).forEach(function(x) { 
         var regex = new RegExp('\\b'+x+'\\b', "g");
-        n = n.replace(regex, s[x]) 
+        n = n.replace(regex, s[x]);
       });
       return n;
     }
@@ -93,7 +98,7 @@ function parseInteractors(model, spec, defFactory) {
         (x || []).forEach(function(o) {
           if (o.signal) o.signal = ns(o.signal, sg);
           else if (o.predicate) nsOperand(o);
-        })
+        });
       });
 
     });  

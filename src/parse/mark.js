@@ -21,9 +21,10 @@ function parseMark(model, mark) {
   }
     
   return mark;
-};
+}
 
 module.exports = parseMark;
+
 parseMark.schema = {
   "defs": {
     "mark": {
@@ -76,4 +77,4 @@ parseMark.schema = {
       "anyOf": [{"required": ["type"]}, {"required": ["name"]}]
     }
   }
-}
+};

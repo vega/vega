@@ -17,12 +17,15 @@ var types = {
 
 function parsePredicates(model, spec) {
   (spec || []).forEach(function(s) {
-    var parse = types[s.type](model, s),
-        pred  = Function("args", "db", "signals", "predicates", parse.code);
-    pred.root = function() { return model.scene().items[0] }; // For global scales
+    var parse = types[s.type](model, s);
+    
+    /* jshint evil:true */
+    var pred  = Function("args", "db", "signals", "predicates", parse.code);
+    pred.root = function() { return model.scene().items[0]; }; // For global scales
     pred.isFunction = util.isFunction;
     pred.signals = parse.signals;
     pred.data = parse.data;
+
     model.predicate(s.name, pred);
   });
 
@@ -41,27 +44,33 @@ function parseOperands(model, operands) {
       signals = {}, db = {};
 
   util.array(operands).forEach(function(o, i) {
-    var signal, name = "o"+i, def = "";
+    var name = "o"+i, def = "";
     
-    if(o.value !== undefined) def = util.str(o.value);
-    else if(o.arg)    def = "args["+util.str(o.arg)+"]";
-    else if(o.signal) def = parseSignal(o.signal, signals);
-    else if(o.predicate) {
+    if (o.value !== undefined) {
+      def = util.str(o.value);
+    } else if (o.arg) {
+      def = "args["+util.str(o.arg)+"]";
+    } else if (o.signal) {
+      def = parseSignal(o.signal, signals);
+    } else if (o.predicate) {
       var ref  = o.predicate,
           predName = ref && (ref.name || ref),
           pred = model.predicate(predName),
           p = "predicates["+util.str(predName)+"]";
 
       pred.signals.forEach(function(s) { signals[s] = 1; });
-      pred.data.forEach(function(d) { db[d] = 1 });
+      pred.data.forEach(function(d) { db[d] = 1; });
 
-      if(util.isObject(ref)) {
+      if (util.isObject(ref)) {
         util.keys(ref).forEach(function(k) {
-          if(k === "name") return;
-          var i = ref[k], signal;
+          if (k === "name") return;
+          var i = ref[k];
           def += "args["+util.str(k)+"] = ";
-          if(i.signal)   def += parseSignal(i.signal, signals);
-          else if(i.arg) def += "args["+util.str(i.arg)+"]";
+          if (i.signal) {
+            def += parseSignal(i.signal, signals);
+          } else if (i.arg) {
+            def += "args["+util.str(i.arg)+"]";
+          }
           def+=", ";
         });  
       } 
@@ -77,12 +86,12 @@ function parseOperands(model, operands) {
     code: "var " + decl.join(", ") + ";\n" + defs.join(";\n") + ";\n",
     signals: util.keys(signals),
     data: util.keys(db)
-  }
+  };
 }
 
 function parseComparator(model, spec) {
   var ops = parseOperands(model, spec.operands);
-  if(spec.type == '=') spec.type = '==';
+  if (spec.type == '=') spec.type = '==';
 
   return {
     code: ops.code + "return " + ["o0", "o1"].join(spec.type) + ";",
@@ -96,8 +105,8 @@ function parseLogical(model, spec) {
       o = [], i = 0, len = spec.operands.length;
 
   while(o.push("o"+i++)<len);
-  if(spec.type == 'and') spec.type = '&&';
-  else if(spec.type == 'or') spec.type = '||';
+  if (spec.type == 'and') spec.type = '&&';
+  else if (spec.type == 'or') spec.type = '||';
 
   return {
     code: ops.code + "return " + o.join(spec.type) + ";",
@@ -108,22 +117,22 @@ function parseLogical(model, spec) {
 
 function parseIn(model, spec) {
   var o = [spec.item], code = "";
-  if(spec.range) o.push.apply(o, spec.range);
-  if(spec.scale) {
+  if (spec.range) o.push.apply(o, spec.range);
+  if (spec.scale) {
     code = parseScale(spec.scale, o);
   }
 
   var ops = parseOperands(model, o);
   code = ops.code + code;
 
-  if(spec.data) {
+  if (spec.data) {
     var field = util.field(spec.field).map(util.str);
     code += "var where = function(d) { return d["+field.join("][")+"] == o0 };\n";
     code += "return db["+util.str(spec.data)+"].filter(where).length > 0;";
-  } else if(spec.range) {
+  } else if (spec.range) {
     // TODO: inclusive/exclusive range?
     // TODO: inverting ordinal scales
-    if(spec.scale) code += "o1 = scale(o1);\no2 = scale(o2);\n";
+    if (spec.scale) code += "o1 = scale(o1);\no2 = scale(o2);\n";
     code += "return o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1";
   }
 
@@ -139,26 +148,26 @@ function parseScale(spec, ops) {
   var code = "var scale = ", 
       idx  = ops.length;
 
-  if(util.isString(spec)) {
+  if (util.isString(spec)) {
     ops.push({ value: spec });
     code += "this.root().scale(o"+idx+")";
-  } else if(spec.arg) {  // Scale function is being passed as an arg
+  } else if (spec.arg) {  // Scale function is being passed as an arg
     ops.push(spec);
     code += "o"+idx;
-  } else if(spec.name) { // Full scale parameter {name: ..}
+  } else if (spec.name) { // Full scale parameter {name: ..}
     ops.push(util.isString(spec.name) ? {value: spec.name} : spec.name);
     code += "(this.isFunction(o"+idx+") ? o"+idx+" : ";
-    if(spec.scope) {
+    if (spec.scope) {
       ops.push(spec.scope);
       code += "(o"+(idx+1)+".scale || this.root().scale)(o"+idx+")";
     } else {
       code += "this.root().scale(o"+idx+")";
     }
-    code += ")"
+    code += ")";
   }
 
-  if(spec.invert === true) {  // Allow spec.invert.arg?
-    code += ".invert"
+  if (spec.invert === true) {  // Allow spec.invert.arg?
+    code += ".invert";
   }
 
   return code+";\n";

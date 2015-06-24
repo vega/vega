@@ -5,7 +5,8 @@ function parseBg(bg) {
   if (bg == null) return null;
   // run through d3 rgb to sanity check
   return d3.rgb(bg) + "";  
-};
+}
 
 module.exports = parseBg;
+
 parseBg.schema = {"defs": {"background": {"type": "string"}}};

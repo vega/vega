@@ -60,7 +60,7 @@ function parseStreams(view) {
   util.keys(external.handlers).forEach(function(type) {
     var sel = type.split(":"); // This means no element pseudo-selectors
 
-    d3.selectAll(sel[0]).on(sel[1], function(datum, idx) {
+    d3.selectAll(sel[0]).on(sel[1], function(datum) {
       fire(external, type, datum, d3.event);
     });
   });
@@ -72,11 +72,13 @@ function parseStreams(view) {
         filtered = false,
         val, i, n, h;
 
+    function invoke(f) {
+      return !f.fn(datum, evt, model.signalValues(f.globals));
+    }
+
     for (i=0, n=handlers.length; i<n; ++i) {
       h = handlers[i];
-      filtered = h.filters.some(function(f) {
-        return !f.fn(datum, evt, model.signalValues(f.globals));
-      });
+      filtered = h.filters.some(invoke);
       if (filtered) continue;
       
       val = h.exp.fn(datum, evt, model.signalValues(h.exp.globals));
@@ -110,7 +112,7 @@ function parseStreams(view) {
         filters  = selector.filters || [],
         registry = target ? external : internal,
         type = target ? target+":"+evt : evt,
-        node = registry.nodes[type] || (registry.nodes[type] = new Node(model))
+        node = registry.nodes[type] || (registry.nodes[type] = new Node(model)),
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
@@ -198,15 +200,16 @@ function parseStreams(view) {
   function groupOffsets(event) {
     if (!event.vgItem.mark) return;
     var group = event.vgItem.mark.group,
-        name, prefix;
+        name;
 
     while (group) {
-      if (name = group.mark.def.name) populateEvt(event, name, group, true);
+      if ((name = group.mark.def.name)) populateEvt(event, name, group, true);
       group = group.mark.group;
     }
   }
 
   function populateEvt(event, name, item, group) {
+    var prefix;
     event[(prefix = "vg"+capitalize(name))+"Item"] = item;
     if (group) {
       if (item.x !== undefined) event[prefix+"X"] = event.vgX - item.x;

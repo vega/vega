@@ -1,5 +1,5 @@
 var util = require('datalib/src/util'),
-    Node = require('vega-dataflow/src/Node'),
+    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Collector = require('vega-dataflow/src/Collector'),
     Deps = require('vega-dataflow/src/Dependencies'),
     Builder = require('./Builder'),
@@ -21,7 +21,7 @@ function GroupBuilder() {
 
 var proto = (GroupBuilder.prototype = new Builder());
 
-proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
+proto.init = function(graph, def) {
   var builder = this, name;
 
   this._scaler = new Node(graph);
@@ -52,7 +52,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   return Builder.prototype.init.apply(this, arguments);
 };
 
-proto.evaluate = function(input) {
+proto.evaluate = function() {
   var output = Builder.prototype.evaluate.apply(this, arguments),
       builder = this;
 
@@ -70,7 +70,7 @@ proto.disconnect = function() {
     builder._children[group_id].forEach(function(c) {
       builder._recursor.removeListener(c.builder);
       c.builder.disconnect();
-    })
+    });
   });
 
   builder._children = {};
@@ -82,9 +82,9 @@ proto.child = function(name, group_id) {
       i = 0, len = children.length,
       child;
 
-  for(; i<len; ++i) {
+  for (; i<len; ++i) {
     child = children[i];
-    if(child.type == C.MARK && child.builder._def.name == name) break;
+    if (child.type == C.MARK && child.builder._def.name == name) break;
   }
 
   return child.builder;
@@ -95,13 +95,13 @@ function recurse(input) {
       hasMarks = util.array(this._def.marks).length > 0,
       hasAxes = util.array(this._def.axes).length > 0,
       hasLegends = util.array(this._def.legends).length > 0,
-      i, len, group, pipeline, def, inline = false;
+      i, j, c, len, group, pipeline, def, inline = false;
 
-  for(i=0, len=input.add.length; i<len; ++i) {
+  for (i=0, len=input.add.length; i<len; ++i) {
     group = input.add[i];
-    if(hasMarks) buildMarks.call(this, input, group);
-    if(hasAxes)  buildAxes.call(this, input, group);
-    if(hasLegends) buildLegends.call(this, input, group);
+    if (hasMarks) buildMarks.call(this, input, group);
+    if (hasAxes)  buildAxes.call(this, input, group);
+    if (hasLegends) buildLegends.call(this, input, group);
   }
 
   // Wire up new children builders in reverse to minimize graph rewrites.
@@ -121,63 +121,67 @@ function recurse(input) {
       inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
       c.inline = inline;
 
-      if(inline) this._graph.evaluate(input, c.builder);
+      if (inline) this._graph.evaluate(input, c.builder);
       else this._recursor.addListener(c.builder);
     }
   }
 
-  for(i=0, len=input.mod.length; i<len; ++i) {
-    group = input.mod[i];
-    // Remove temporary connection for marks that draw from a source
-    if(hasMarks) {
-      builder._children[group._id].forEach(function(c) {
-        if(c.type == C.MARK && !c.inline && builder._graph.data(c.from) !== undefined ) {
-          builder._recursor.removeListener(c.builder);
-        }
-      });
+  function removeTemp(c) {
+    if (c.type == C.MARK && !c.inline &&
+        builder._graph.data(c.from) !== undefined) {
+      builder._recursor.removeListener(c.builder);
     }
-
-    // Update axes data defs
-    if(hasAxes) {
-      group.axes.forEach(function(a, i) { 
-        var scale = a.scale();
-        if(!input.scales[scale.scaleName]) return;
-        a.reset().def();
-      });
-    }
-
-    // Update legend data defs
-    if(hasLegends) {
-      group.legends.forEach(function(l, i) { 
-        var scale = l.size() || l.shape() || l.fill() || l.stroke();
-        if(!input.scales[scale.scaleName]) return;
-        l.reset().def();
-      });
-    }   
   }
 
-  for(i=0, len=input.rem.length; i<len; ++i) {
+  function updateAxis(a) { 
+    var scale = a.scale();
+    if (!input.scales[scale.scaleName]) return;
+    a.reset().def();
+  }
+  
+  function updateLegend(l) { 
+    var scale = l.size() || l.shape() || l.fill() || l.stroke();
+    if (!input.scales[scale.scaleName]) return;
+    l.reset().def();
+  }
+
+  for (i=0, len=input.mod.length; i<len; ++i) {
+    group = input.mod[i];
+
+    // Remove temporary connection for marks that draw from a source
+    if (hasMarks) builder._children[group._id].forEach(removeTemp);
+
+    // Update axis data defs
+    if (hasAxes) group.axes.forEach(updateAxis);
+
+    // Update legend data defs
+    if (hasLegends) group.legends.forEach(updateLegend);
+  }
+
+  function disconnectChildren(c) { 
+    builder._recursor.removeListener(c.builder);
+    c.builder.disconnect(); 
+  }
+
+  for (i=0, len=input.rem.length; i<len; ++i) {
     group = input.rem[i];
     // For deleted groups, disconnect their children
-    builder._children[group._id].forEach(function(c) { 
-      builder._recursor.removeListener(c.builder);
-      c.builder.disconnect(); 
-    });
+    builder._children[group._id].forEach(disconnectChildren);
     delete builder._children[group._id];
   }
 
   return input;
-};
+}
 
-function scale(name, scale) {
+function scale(name, s) {
   var group = this;
-  if(arguments.length === 2) return (group._scales[name] = scale, scale);
-  while(scale == null) {
-    scale = group._scales[name];
+  if (arguments.length === 2) return (group._scales[name] = s, s);
+  while (s == null) {
+    s = group._scales[name];
     group = group.mark ? group.mark.group : group._parent;
-    if(!group) break;
+    if (!group) break;
   }
-  return scale;
+  return s;
 }
 
 function buildGroup(input, group) {
@@ -199,10 +203,9 @@ function buildGroup(input, group) {
 function buildMarks(input, group) {
   log.debug(input, ["building children marks #"+group._id]);
   var marks = this._def.marks,
-      listeners = [],
-      mark, from, inherit, i, len, m, b;
+      mark, from, inherit, i, len, b;
 
-  for(i=0, len=marks.length; i<len; ++i) {
+  for (i=0, len=marks.length; i<len; ++i) {
     mark = marks[i];
     from = mark.from || {};
     inherit = group.datum._facetID;

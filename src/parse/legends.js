@@ -1,14 +1,13 @@
-var lgnd = require('../scene/legend'),
-    config = require('../util/config');
+var lgnd = require('../scene/legend');
 
-function legends(model, spec, legends, group) {
+function parseLegends(model, spec, legends, group) {
   (spec || []).forEach(function(def, index) {
     legends[index] = legends[index] || lgnd(model);
-    legend(def, index, legends[index], group);
+    parseLegend(def, index, legends[index], group);
   });
-};
+}
 
-function legend(def, index, legend, group) {
+function parseLegend(def, index, legend, group) {
   // legend scales
   legend.size  (def.size   ? group.scale(def.size)   : null);
   legend.shape (def.shape  ? group.scale(def.shape)  : null);
@@ -39,8 +38,9 @@ function legend(def, index, legend, group) {
   legend.gradientProperties(p && p.gradient || {});
 }
 
-module.exports = legends;
-legends.schema = {
+module.exports = parseLegends;
+
+parseLegends.schema = {
   "defs": {
     "legend": {
       "type": "object",
@@ -75,4 +75,4 @@ legends.schema = {
       ]
     }
   }
-}
+};

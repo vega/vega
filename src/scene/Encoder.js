@@ -12,7 +12,7 @@ function Encoder(graph, mark) {
       update = props.update,
       exit   = props.exit;
 
-  Node.prototype.init.call(this, graph)
+  Node.prototype.init.call(this, graph);
 
   this._mark = mark;
   var s = this._scales = [];
@@ -21,9 +21,9 @@ function Encoder(graph, mark) {
   // encoder depedencies to have targeted reevaluations. However,
   // we still want scales in "enter" and "exit" to be evaluated
   // before the encoder. 
-  if(enter) s.push.apply(s, enter.scales);
+  if (enter) s.push.apply(s, enter.scales);
 
-  if(update) {
+  if (update) {
     this.dependency(Deps.DATA, update.data);
     this.dependency(Deps.SIGNALS, update.signals);
     this.dependency(Deps.FIELDS, update.fields);
@@ -31,7 +31,7 @@ function Encoder(graph, mark) {
     s.push.apply(s, update.scales);
   }
 
-  if(exit) s.push.apply(s, exit.scales);
+  if (exit) s.push.apply(s, exit.scales);
 
   return this;
 }
@@ -41,7 +41,6 @@ var proto = (Encoder.prototype = new Node());
 proto.evaluate = function(input) {
   log.debug(input, ["encoding", this._mark.def.type]);
   var graph = this._graph,
-      items = this._mark.items,
       props = this._mark.def.properties || {},
       enter  = props.enter,
       update = props.update,
@@ -53,9 +52,9 @@ proto.evaluate = function(input) {
       req = input.request,
       i, len, item, prop;
 
-  if(req) {
-    if(prop = props[req]) {
-      for(i=0, len=input.mod.length; i<len; ++i) {
+  if (req) {
+    if ((prop = props[req])) {
+      for (i=0, len=input.mod.length; i<len; ++i) {
         item = input.mod[i];
         encode.call(this, prop, item, input.trans, db, sg, preds, dirty);
       }
@@ -65,22 +64,22 @@ proto.evaluate = function(input) {
   }
 
   // Items marked for removal are at the head of items. Process them first.
-  for(i=0, len=input.rem.length; i<len; ++i) {
+  for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if(exit)   encode.call(this, exit,   item, input.trans, db, sg, preds, dirty); 
-    if(input.trans && !exit) input.trans.interpolate(item, EMPTY);
-    else if(!input.trans) item.remove();
+    if (exit)   encode.call(this, exit,   item, input.trans, db, sg, preds, dirty); 
+    if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
+    else if (!input.trans) item.remove();
   }
 
-  for(i=0, len=input.add.length; i<len; ++i) {
+  for (i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
-    if(enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
-    if(update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
+    if (enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
+    if (update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
     item.status = C.UPDATE;
   }
 
-  if(update) {
-    for(i=0, len=input.mod.length; i<len; ++i) {
+  if (update) {
+    for (i=0, len=input.mod.length; i<len; ++i) {
       item = input.mod[i];
       encode.call(this, update, item, input.trans, db, sg, preds, dirty);
     }

@@ -1,7 +1,7 @@
 var util = require('datalib/src/util'),
-    changeset = require('vega-dataflow/src/ChangeSet'),
-    Graph = require('vega-dataflow/src/Graph'), 
-    Node  = require('vega-dataflow/src/Node'),
+    ChangeSet = require('vega-dataflow/src/ChangeSet'),
+    Base = require('vega-dataflow/src/Graph').prototype,
+    Node  = require('vega-dataflow/src/Node'), // jshint ignore:line
     GroupBuilder = require('../scene/GroupBuilder'),
     visit = require('../scene/visit');
 
@@ -15,18 +15,19 @@ function Model() {
 
   this._reset = {axes: false, legends: false};
 
-  Graph.prototype.init.call(this);
-};
+  Base.init.call(this);
+}
 
-var proto = (Model.prototype = new Graph());
+var prototype = (Model.prototype = Object.create(Base));
+prototype.constructor = Model;
 
-proto.defs = function(defs) {
+prototype.defs = function(defs) {
   if (!arguments.length) return this._defs;
   this._defs = defs;
   return this;
 };
 
-proto.width = function(width) {
+prototype.width = function(width) {
   if (this._defs) this._defs.width = width;
   if (this._defs && this._defs.marks) this._defs.marks.width = width;
   if (this._scene) this._scene.items[0].width = width;
@@ -34,7 +35,7 @@ proto.width = function(width) {
   return this;
 };
 
-proto.height = function(height) {
+prototype.height = function(height) {
   if (this._defs) this._defs.height = height;
   if (this._defs && this._defs.marks) this._defs.marks.height = height;
   if (this._scene) this._scene.items[0].height = height;
@@ -42,13 +43,13 @@ proto.height = function(height) {
   return this;
 };
 
-proto.node = function() {
+prototype.node = function() {
   return this._node || (this._node = new Node(this));
 };
 
-proto.data = function() {
-  var data = Graph.prototype.data.apply(this, arguments);
-  if(arguments.length > 1) {  // new Datasource
+prototype.data = function() {
+  var data = Base.data.apply(this, arguments);
+  if (arguments.length > 1) {  // new Datasource
     this.node().addListener(data.pipeline()[0]);
   }
 
@@ -56,22 +57,22 @@ proto.data = function() {
 };
 
 function predicates(name) {
-  var m = this, predicates = {};
-  if(!util.isArray(name)) return this._predicates[name];
-  name.forEach(function(n) { predicates[n] = m._predicates[n] });
-  return predicates;
+  var m = this, pred = {};
+  if (!util.isArray(name)) return this._predicates[name];
+  name.forEach(function(n) { pred[n] = m._predicates[n]; });
+  return pred;
 }
 
-proto.predicate = function(name, predicate) {
-  if(arguments.length === 1) return predicates.call(this, name);
+prototype.predicate = function(name, predicate) {
+  if (arguments.length === 1) return predicates.call(this, name);
   return (this._predicates[name] = predicate);
 };
 
-proto.predicates = function() { return this._predicates; };
+prototype.predicates = function() { return this._predicates; };
 
-proto.scene = function(renderer) {
-  if(!arguments.length) return this._scene;
-  if(this._builder) this.node().removeListener(this._builder.disconnect());
+prototype.scene = function(renderer) {
+  if (!arguments.length) return this._scene;
+  if (this._builder) this.node().removeListener(this._builder.disconnect());
   this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
   this.node().addListener(this._builder.connect());
   var p = this._builder.pipeline();
@@ -79,7 +80,7 @@ proto.scene = function(renderer) {
   return this;
 };
 
-proto.reset = function() {
+prototype.reset = function() {
   if (this._scene && this._reset.axes) {
     visit(this._scene, function(item) {
       if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
@@ -95,11 +96,16 @@ proto.reset = function() {
   return this;
 };
 
-proto.addListener = function(l) { this.node().addListener(l); };
-proto.removeListener = function(l) { this.node().removeListener(l); };
+prototype.addListener = function(l) {
+  this.node().addListener(l);
+};
 
-proto.fire = function(cs) {
-  if(!cs) cs = changeset.create();
+prototype.removeListener = function(l) {
+  this.node().removeListener(l); 
+};
+
+prototype.fire = function(cs) {
+  if (!cs) cs = ChangeSet.create();
   this.propagate(cs, this.node());
 };
 
