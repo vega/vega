@@ -24,6 +24,8 @@ describe('SVG', function() {
       "barley": "//svg:g[@class='mark-symbol']/svg:path[120]",
       "area": "//svg:g[@class='mark-area']/svg:path",
       "bar": "//svg:g[@class='mark-rect']/svg:rect[20]",
+
+      "heatmap": "skip" // Stress JSDOM out
     };
 
     files.forEach(function(file, idx) {

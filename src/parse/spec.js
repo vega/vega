@@ -13,7 +13,8 @@ function parseSpec(spec, callback) {
   // protect against subsequent spec modification
   spec = util.duplicate(spec);
 
-  var viewFactory = arguments.length > 2 ? arguments[arguments.length-1] : View.factory,
+  var vf = arguments[arguments.length-1],
+      viewFactory = arguments.length > 2 && util.isFunction(vf) ? vf : View.factory,
       config = arguments[2] !== viewFactory ? arguments[2] : {};
 
   var width = spec.width || 500,

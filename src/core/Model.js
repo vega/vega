@@ -31,7 +31,16 @@ prototype.defs = function(defs) {
 
 prototype.config = function(cfg) {
   if (!arguments.length) return this._config;
-  this._config = util.extend({}, config, cfg);
+  this._config = util.extend({}, config);
+  for (var name in cfg) {
+    var x = cfg[name], y = this._config[name];
+    if (util.isObject(x) && util.isObject(y)) {
+      util.extend(y, x);
+    } else {
+      this._config[name] = x;
+    }
+  }
+
   return this;
 };
 

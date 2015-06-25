@@ -105,7 +105,7 @@ function timestep() {
   var t = {x: id, y: ~~(100 * Math.random())};
   table.push(t);
 
-  view.data("table").insert(t).remove(rem);
+  view.data("table").insert([t]).remove(rem);
   view.update(up);
 }
 
