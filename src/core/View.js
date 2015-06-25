@@ -7,7 +7,6 @@ var d3 = require('d3'),
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
-    config = require('../util/config'),
     changeset = require('vega-dataflow/src/ChangeSet');
 
 function View(el, width, height) {
@@ -180,8 +179,9 @@ prototype.autopad = function(opt) {
   if (this._autopad < 1) return this;
   else this._autopad = 0;
 
-  var pad = this._padding,
-      b = this.model().scene().bounds,
+  var b = this.model().scene().bounds,
+      pad = this._padding,
+      config = this.model().config(),
       inset = config.autopadInset,
       l = b.x1 < 0 ? Math.ceil(-b.x1) + inset : 0,
       t = b.y1 < 0 ? Math.ceil(-b.y1) + inset : 0,
@@ -232,7 +232,8 @@ prototype.renderer = function(type) {
 
 prototype.initialize = function(el) {
   var v = this, prevHandler,
-      w = v._width, h = v._height, pad = v._padding, bg = v._bgcolor;
+      w = v._width, h = v._height, pad = v._padding, bg = v._bgcolor,
+      config = this.model().config();
 
   if (!arguments.length || el === null) {
     el = this._el ? this._el.parentNode : null;

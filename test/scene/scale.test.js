@@ -1,4 +1,4 @@
-var config = require('../../src/util/config');
+var config = require('../../src/core/config');
 var range = [10, 120];
 
 describe('Scale', function() {

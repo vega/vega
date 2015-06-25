@@ -2,7 +2,7 @@ var util = require('datalib/src/util'),
     load = require('datalib/src/import/readers'),
     parse = require('../parse'),
     Scale = require('../scene/Scale'),
-    config = require('../util/config');
+    config = require('./config');
 
 function compile(module, opt, schema) {
   var s = module.schema;

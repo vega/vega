@@ -2,13 +2,13 @@ var d3 = require('d3'),
     template = require('datalib/src/template'),
     util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
-    log = require('vega-logging'),
-    config = require('../util/config');
+    log = require('vega-logging');
 
 var DEPS = ["signals", "scales", "data", "fields"];
 
 function properties(model, mark, spec) {
-  var code = "",
+  var config = model.config(),
+      code = "",
       names = util.keys(spec),
       i, len, name, ref, vars = {}, 
       deps = {
@@ -38,7 +38,7 @@ function properties(model, mark, spec) {
       ref = rule(model, name, ref.rule);
       code += "\n  " + ref.code;
     } else {
-      ref = valueRef(name, ref);
+      ref = valueRef(config, name, ref);
       code += "dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;";
     }
 
@@ -128,8 +128,9 @@ function hasPath(mark, vars) {
 }
 
 function rule(model, name, rules) {
-  var signals = [], scales = [], db = [],
-      inputs = [], code = "";
+  var config  = model.config(),
+      signals = [], scales = [], db = [],
+      inputs  = [], code = "";
 
   (rules||[]).forEach(function(r, i) {
     var def = r.predicate,
@@ -142,14 +143,14 @@ function rule(model, name, rules) {
     if (util.isObject(def)) {
       util.keys(def).forEach(function(k) {
         if (k === "name") return;
-        var ref = valueRef(i, def[k]);
+        var ref = valueRef(config, i, def[k]);
         input.push(util.str(k)+": "+ref.val);
         if (ref.signals) signals.push.apply(signals, util.array(ref.signals));
         if (ref.scales)  scales.push.apply(scales, util.array(ref.scales));
       });
     }
 
-    ref = valueRef(name, r);
+    ref = valueRef(config, name, r);
     if (ref.signals) signals.push.apply(signals, util.array(ref.signals));
     if (ref.scales)  scales.push.apply(scales, util.array(ref.scales));
 
@@ -171,18 +172,18 @@ function rule(model, name, rules) {
   return {code: code, signals: signals, scales: scales, data: db};
 }
 
-function valueRef(name, ref) {
+function valueRef(config, name, ref) {
   if (ref == null) return null;
 
   if (name==="fill" || name==="stroke") {
     if (ref.c) {
-      return colorRef("hcl", ref.h, ref.c, ref.l);
+      return colorRef(config, "hcl", ref.h, ref.c, ref.l);
     } else if (ref.h || ref.s) {
-      return colorRef("hsl", ref.h, ref.s, ref.l);
+      return colorRef(config, "hsl", ref.h, ref.s, ref.l);
     } else if (ref.l || ref.a) {
-      return colorRef("lab", ref.l, ref.a, ref.b);
+      return colorRef(config, "lab", ref.l, ref.a, ref.b);
     } else if (ref.r || ref.g || ref.b) {
-      return colorRef("rgb", ref.r, ref.g, ref.b);
+      return colorRef(config, "rgb", ref.r, ref.g, ref.b);
     }
   }
 
@@ -239,10 +240,10 @@ function valueRef(name, ref) {
   };
 }
 
-function colorRef(type, x, y, z) {
-  var xx = x ? valueRef("", x) : config.color[type][0],
-      yy = y ? valueRef("", y) : config.color[type][1],
-      zz = z ? valueRef("", z) : config.color[type][2],
+function colorRef(config, type, x, y, z) {
+  var xx = x ? valueRef(config, "", x) : config.color[type][0],
+      yy = y ? valueRef(config, "", y) : config.color[type][1],
+      zz = z ? valueRef(config, "", z) : config.color[type][2],
       signals = [], scales = [];
 
   [xx, yy, zz].forEach(function(v) {

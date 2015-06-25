@@ -2,8 +2,7 @@ var d3 = require('d3'),
     util = require('datalib/src/util'),
     Gradient = require('vega-scenegraph/src/util/Gradient'),
     parseProperties = require('../parse/properties'),
-    parseMark = require('../parse/mark'),
-    config = require('../util/config');
+    parseMark = require('../parse/mark');
 
 function lgnd(model) {
   var size = null,
@@ -14,6 +13,7 @@ function lgnd(model) {
       values = null,
       format = null,
       formatString = null,
+      config = model.config(),
       title,
       orient = "right",
       offset = config.legend.offset,
@@ -118,9 +118,9 @@ function lgnd(model) {
 
   function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
-    var titles  = util.extend(m.titles, vg_legendTitle()),
-        symbols = util.extend(m.symbols, vg_legendSymbols()),
-        labels  = util.extend(m.labels, vg_vLegendLabels());
+    var titles  = util.extend(m.titles, vg_legendTitle(config)),
+        symbols = util.extend(m.symbols, vg_legendSymbols(config)),
+        labels  = util.extend(m.labels, vg_vLegendLabels(config));
 
     // extend legend marks
     vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
@@ -189,9 +189,9 @@ function lgnd(model) {
   
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = util.extend(m.titles, vg_legendTitle()),
-        gradient = util.extend(m.gradient, vg_legendGradient()),
-        labels = util.extend(m.labels, vg_hLegendLabels()),
+    var titles = util.extend(m.titles, vg_legendTitle(config)),
+        gradient = util.extend(m.gradient, vg_legendGradient(config)),
+        labels = util.extend(m.labels, vg_hLegendLabels(config)),
         grad = new Gradient();
 
     // setup color gradient
@@ -410,7 +410,7 @@ function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
   if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: "data"};
 }
 
-function vg_legendTitle() {
+function vg_legendTitle(config) {
   var cfg = config.legend;
   return {
     type: "text",
@@ -434,7 +434,7 @@ function vg_legendTitle() {
   };
 }
 
-function vg_legendSymbols() {
+function vg_legendSymbols(config) {
   var cfg = config.legend;
   return {
     type: "symbol",
@@ -460,7 +460,7 @@ function vg_legendSymbols() {
   };
 }
 
-function vg_vLegendLabels() {
+function vg_vLegendLabels(config) {
   var cfg = config.legend;
   return {
     type: "text",
@@ -488,7 +488,7 @@ function vg_vLegendLabels() {
   };
 }
 
-function vg_legendGradient() {
+function vg_legendGradient(config) {
   var cfg = config.legend;
   return {
     type: "rect",
@@ -513,7 +513,7 @@ function vg_legendGradient() {
   };
 }
 
-function vg_hLegendLabels() {
+function vg_hLegendLabels(config) {
   var cfg = config.legend;
   return {
     type: "text",

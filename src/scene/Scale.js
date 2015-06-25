@@ -4,8 +4,7 @@ var d3 = require('d3'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
     log = require('vega-logging'),
-    Aggregate = require('../transforms/Aggregate'),
-    config = require('../util/config');
+    Aggregate = require('../transforms/Aggregate');
 
 var Properties = {width: 1, height: 1};
 var Types = {
@@ -89,7 +88,8 @@ function scale(group) {
 }
 
 function instance(scale) {
-  var type = this._def.type || Types.LINEAR;
+  var config = this._graph.config(),
+      type = this._def.type || Types.LINEAR;
   if (!scale || type !== scale.type) {
     var ctor = config.scale[type] || d3.scale[type];
     if (!ctor) util.error("Unrecognized scale type: " + type);
@@ -387,6 +387,7 @@ function domainMinMax(scale, group) {
 
 function range(group) {
   var def = this._def,
+      config = this._graph.config(),
       rangeVal = signal.call(this, def.range),
       rng = [null, null];
 

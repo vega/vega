@@ -1,7 +1,6 @@
 var canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg').string,
-    View = require('./View'),
-    config = require('../util/config');
+    View = require('./View');
 
 function HeadlessView(width, height, model) {
   View.call(null, width, height, model);
@@ -44,8 +43,9 @@ prototype.svg = function() {
 prototype.initialize = function() {    
   var w = this._width,
       h = this._height,
+      bg  = this._bgcolor,
       pad = this._padding,
-      bg = this._bgcolor;
+      config = this.model().config();
 
   if (this._viewport) {
     w = this._viewport[0] - (pad ? pad.left + pad.right : 0);

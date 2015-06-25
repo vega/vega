@@ -1,6 +1,5 @@
 var util = require('datalib/src/util'),
-    axs = require('../scene/axis'),
-    config = require('../util/config');
+    axs = require('../scene/axis');
 
 var ORIENT = {
   "x":      "bottom",
@@ -12,13 +11,14 @@ var ORIENT = {
 };
 
 function parseAxes(model, spec, axes, group) {
+  var config = model.config();
   (spec || []).forEach(function(def, index) {
     axes[index] = axes[index] || axs(model);
-    parseAxis(def, index, axes[index], group);
+    parseAxis(config, def, index, axes[index], group);
   });
 }
 
-function parseAxis(def, index, axis, group) {
+function parseAxis(config, def, index, axis, group) {
   // axis scale
   if (def.scale !== undefined) {
     axis.scale(group.scale(def.scale));

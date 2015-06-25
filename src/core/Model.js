@@ -3,9 +3,10 @@ var util = require('datalib/src/util'),
     Base = require('vega-dataflow/src/Graph').prototype,
     Node  = require('vega-dataflow/src/Node'), // jshint ignore:line
     GroupBuilder = require('../scene/GroupBuilder'),
-    visit = require('../scene/visit');
+    visit = require('../scene/visit'),
+    config = require('./config');
 
-function Model() {
+function Model(cfg) {
   this._defs = {};
   this._predicates = {};
   this._scene = null;
@@ -15,6 +16,7 @@ function Model() {
 
   this._reset = {axes: false, legends: false};
 
+  this.config(cfg);
   Base.init.call(this);
 }
 
@@ -24,6 +26,12 @@ prototype.constructor = Model;
 prototype.defs = function(defs) {
   if (!arguments.length) return this._defs;
   this._defs = defs;
+  return this;
+};
+
+prototype.config = function(cfg) {
+  if (!arguments.length) return this._config;
+  this._config = util.extend({}, config, cfg);
   return this;
 };
 

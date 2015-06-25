@@ -1,11 +1,11 @@
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     log = require('vega-logging'),
-    Status = require('../scene/Builder').STATUS,
-    config = require('../util/config');
+    Status = require('../scene/Builder').STATUS;
 
 function parseInteractors(model, spec, defFactory) {
-  var count = 0,
+  var config = model.config(),
+      count = 0,
       sg = {}, pd = {}, mk = {},
       signals = [], predicates = [];
 

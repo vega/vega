@@ -1,8 +1,6 @@
 var d3 = require('d3'),
     config = {};
 
-config.debug = false;
-
 config.load = {
   // base url for loading external data files
   // used only for server-side operation

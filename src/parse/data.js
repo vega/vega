@@ -2,12 +2,12 @@ var load = require('datalib/src/import/load'),
     read = require('datalib/src/import/read'),
     util = require('datalib/src/util'),
     log = require('vega-logging'),
-    config = require('../util/config'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
 
 function parseData(model, spec, callback) {
-  var count = 0;
+  var config = model.config(),
+      count = 0;
 
   function loaded(d) {
     return function(error, data) {

@@ -7,9 +7,9 @@ module.exports = {
     Encoder: require('./src/scene/Encoder'),
     GroupBuilder: require('./src/scene/GroupBuilder'),
   },
-  transforms: require('./src/transforms/'),
-  config: require('./src/util/config'),
-  util: require('datalib/src/util'),
-  schema: require('./src/util/schema'),
+  transforms: require('./src/transforms'),
+  schema: require('./src/core/schema'),
+  config: require('./src/core/config'),
+  util:  require('datalib/src/util'),
   debug: require('vega-logging').debug
 };

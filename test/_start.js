@@ -9,7 +9,7 @@ global.expect = chai.expect;
 global.validator  = require('is-my-json-valid');
 global.transforms = require('../src/transforms/');
 global.parseSpec = require('../src/parse/spec');
-global.schema = require('../src/util/schema')();
+global.schema = require('../src/core/schema')();
 
 global.schemaPath = function(path) {
   return dl.extend({ refs: schema.refs, defs: schema.defs }, path);

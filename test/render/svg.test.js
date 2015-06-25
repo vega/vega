@@ -1,4 +1,4 @@
-var config = require('../../src/util/config'),
+var config = require('../../src/core/config'),
   jsdom = require('jsdom'),
   d3 = require('d3'),
   fs = require('fs'),

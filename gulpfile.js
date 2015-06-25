@@ -16,7 +16,7 @@ var fs = require('fs'),
     jstransform = require('jstransform'),
     jstutils = require('jstransform/src/utils'),
     Syntax = jstransform.Syntax,
-    schema = require('./src/util/schema'),
+    schema = require('./src/core/schema'),
     argv = require('yargs').argv;
 
 function browser() {

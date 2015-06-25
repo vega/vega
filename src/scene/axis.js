@@ -1,11 +1,11 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
     tpl = require('vega-dataflow/src/Tuple'),
-    config = require('../util/config'),
     parseMark = require('../parse/mark');
 
 function axs(model) {
   var scale,
+      config = model.config(),
       orient = config.axis.orient,
       offset = 0,
       titleOffset = config.axis.titleOffset,
@@ -115,12 +115,12 @@ function axs(model) {
     range = vg_axisScaleRange(scale);
 
     // setup axis marks
-    util.extend(m.gridLines, vg_axisTicks());
-    util.extend(m.majorTicks, vg_axisTicks());
-    util.extend(m.minorTicks, vg_axisTicks());
-    util.extend(m.tickLabels, vg_axisTickLabels());
-    util.extend(m.domain, vg_axisDomain());
-    util.extend(m.title, vg_axisTitle());
+    util.extend(m.gridLines, vg_axisTicks(config));
+    util.extend(m.majorTicks, vg_axisTicks(config));
+    util.extend(m.minorTicks, vg_axisTicks(config));
+    util.extend(m.tickLabels, vg_axisTickLabels(config));
+    util.extend(m.domain, vg_axisDomain(config));
+    util.extend(m.title, vg_axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
 
     // extend axis marks based on axis orientation
@@ -489,7 +489,7 @@ function vg_axisUpdate(item, group, trans) {
   if (trans) trans.interpolate(item, o);
 }
 
-function vg_axisTicks() {
+function vg_axisTicks(config) {
   return {
     type: "rule",
     interactive: false,
@@ -506,7 +506,7 @@ function vg_axisTicks() {
   };
 }
 
-function vg_axisTickLabels() {
+function vg_axisTickLabels(config) {
   return {
     type: "text",
     interactive: true,
@@ -525,7 +525,7 @@ function vg_axisTickLabels() {
   };
 }
 
-function vg_axisTitle() {
+function vg_axisTitle(config) {
   return {
     type: "text",
     interactive: true,
@@ -544,7 +544,7 @@ function vg_axisTitle() {
   };
 }
 
-function vg_axisDomain() {
+function vg_axisDomain(config) {
   return {
     type: "path",
     interactive: false,

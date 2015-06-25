@@ -9,16 +9,17 @@ var util = require('datalib/src/util'),
     parseData = require('../parse/data'),
     parseInteractors = require('../parse/interactors');
 
-function parseSpec(spec, callback, viewFactory) {
+function parseSpec(spec, callback) {
   // protect against subsequent spec modification
   spec = util.duplicate(spec);
 
-  viewFactory = viewFactory || View.factory;
+  var viewFactory = arguments.length > 2 ? arguments[arguments.length-1] : View.factory,
+      config = arguments[2] !== viewFactory ? arguments[2] : {};
 
   var width = spec.width || 500,
       height = spec.height || 500,
       viewport = spec.viewport || null,
-      model = new Model();
+      model = new Model(config);
 
   parseInteractors(model, spec, function() {
     model.defs({
