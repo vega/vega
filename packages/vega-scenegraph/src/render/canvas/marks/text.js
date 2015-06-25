@@ -21,8 +21,8 @@ function draw(g, scene, bounds) {
     g.font = font.string(o);
     g.textAlign = o.align || 'left';
 
-    x = o.x || 0;
-    y = o.y || 0;
+    x = (o.x || 0) + (o.dx || 0);
+    y = (o.y || 0) + (o.dy || 0) + font.offset(o);
     if ((r = o.radius)) {
       t = (o.theta || 0) - Math.PI/2;
       x += r * Math.cos(t);
@@ -33,11 +33,7 @@ function draw(g, scene, bounds) {
       g.save();
       g.translate(x, y);
       g.rotate(o.angle * Math.PI/180);
-      x = o.dx || 0;
-      y = o.dy || 0 + font.offset(o);
-    } else {
-      x += (o.dx || 0);
-      y += (o.dy || 0) + font.offset(o);
+      x = y = 0; // reset x, y
     }
 
     if (o.fill && util.fill(g, o, opac)) {
