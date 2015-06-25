@@ -97,6 +97,9 @@ function parseComparator(model, spec) {
   var ops = parseOperands(model, spec.operands);
   if (spec.type === '=') spec.type = '==';
 
+  ops.code += "o0 = o0 instanceof Date ? o0.getTime() : o0;\n" +
+    "o1 = o1 instanceof Date ? o1.getTime() : o1;\n";
+
   return {
     code: ops.code + "return " + ["o0", "o1"].join(spec.type) + ";",
     signals: ops.signals,

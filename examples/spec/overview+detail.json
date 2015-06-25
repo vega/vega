@@ -23,12 +23,12 @@
     {
       "name": "min_date", 
       "init": {"expr": "datetime('Jan 1 2000')"},
-      "expr": "min(brush_start, brush_end)"
+      "expr": "time(brush_start) === time(brush_end) ? datetime('Jan 1 2000') : min(brush_start, brush_end)"
     },
     {
       "name": "max_date", 
       "init": {"expr": "datetime('Mar 1 2010')"},
-      "expr": "max(brush_start, brush_end)"
+      "expr": "time(brush_start) === time(brush_end) ? datetime('Mar 1 2010') : max(brush_start, brush_end)"
     }
   ],
 

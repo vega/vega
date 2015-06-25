@@ -251,7 +251,7 @@
           "x": {"value": 0},
           "width": {"value": 250},
           "y": {"value": 0},
-          "height": {"value": 150},
+          "height": {"value": 100},
           "fill": {"value": "#fff"}
         }
       },
@@ -336,7 +336,7 @@
           "x": {"value": 290},
           "width": {"value": 210},
           "y": {"value": 0},
-          "height": {"value": 150},
+          "height": {"value": 100},
           "fill": {"value": "#fff"}
         }
       },
@@ -420,7 +420,7 @@
           "x": {"value": 540},
           "width": {"value": 420},
           "y": {"value": 0},
-          "height": {"value": 150},
+          "height": {"value": 100},
           "fill": {"value": "#fff"}
         }
       },
@@ -503,8 +503,8 @@
         "update": {
           "x": {"value": 0},
           "width": {"value": 920},
-          "y": {"value": 200},
-          "height": {"value": 150},
+          "y": {"value": 150},
+          "height": {"value": 100},
           "fill": {"value": "#fff"}
         }
       },
