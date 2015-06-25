@@ -10,14 +10,15 @@
     "name": "Arvind Satyanarayan",
     "url": "http://arvindsatya.com/"
   },
-  "contributors": {
+  "contributors": [{
     "name": "Jeffrey Heer",
     "url": "http://idl.cs.washington.edu"
-  },
+  }],
   "license": "BSD-3-Clause",
   "dependencies": {
     "datalib": "1.2.x",
-    "heap": "0.2.x"
+    "heap": "0.2.x",
+    "vega-logging": "vega/vega-logging"
   },
   "devDependencies": {
     "browserify": "latest",
