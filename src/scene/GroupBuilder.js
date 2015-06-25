@@ -6,8 +6,7 @@ var util = require('datalib/src/util'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
-    parseLegends = require('../parse/legends'),
-    C = require('../util/constants');
+    parseLegends = require('../parse/legends');
 
 function GroupBuilder() {
   this._children = {};
@@ -18,6 +17,13 @@ function GroupBuilder() {
   this.scale = scale.bind(this);
   return arguments.length ? this.init.apply(this, arguments) : this;
 }
+
+var Types = GroupBuilder.TYPES = {
+  GROUP:  "group",
+  MARK:   "mark",
+  AXIS:   "axis",
+  LEGEND: "legend"
+};
 
 var proto = (GroupBuilder.prototype = new Builder());
 
@@ -84,7 +90,7 @@ proto.child = function(name, group_id) {
 
   for (; i<len; ++i) {
     child = children[i];
-    if (child.type == C.MARK && child.builder._def.name == name) break;
+    if (child.type == Types.MARK && child.builder._def.name == name) break;
   }
 
   return child.builder;
@@ -116,7 +122,7 @@ function recurse(input) {
       // This new child needs to be built during this propagation cycle.
       // We could add its builder as a listener off the _recursor node, 
       // but try to inline it if we can to minimize graph dispatches.
-      inline = (def.type !== C.GROUP);
+      inline = (def.type !== Types.GROUP);
       inline = inline && (this._graph.data(c.from) !== undefined); 
       inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
       c.inline = inline;
@@ -127,7 +133,7 @@ function recurse(input) {
   }
 
   function removeTemp(c) {
-    if (c.type == C.MARK && !c.inline &&
+    if (c.type == Types.MARK && !c.inline &&
         builder._graph.data(c.from) !== undefined) {
       builder._recursor.removeListener(c.builder);
     }
@@ -210,12 +216,12 @@ function buildMarks(input, group) {
     from = mark.from || {};
     inherit = group.datum._facetID;
     group.items[i] = {group: group};
-    b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b = (mark.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);
     this._children[group._id].push({ 
       builder: b, 
       from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
-      type: C.MARK 
+      type: Types.MARK 
     });
   }
 }
@@ -232,10 +238,10 @@ function buildAxes(input, group) {
         b = null;
 
     axisItems[i] = {group: group, axisDef: def, layer: def.layer};
-    b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b = (def.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, axisItems[i], builder)
       .dependency(Deps.SCALES, scale);
-    builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
+    builder._children[group._id].push({ builder: b, type: Types.AXIS, scale: scale });
   });
 }
 
@@ -251,10 +257,10 @@ function buildLegends(input, group) {
         b = null;
 
     legendItems[i] = {group: group, legendDef: def};
-    b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b = (def.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, legendItems[i], builder)
       .dependency(Deps.SCALES, scale);
-    builder._children[group._id].push({ builder: b, type: C.LEGEND, scale: scale });
+    builder._children[group._id].push({ builder: b, type: Types.LEGEND, scale: scale });
   });
 }
 

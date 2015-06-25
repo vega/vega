@@ -1,13 +1,12 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  core: {
-    View: require('./src/core/View')
-  },
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
+    Bounder: require('./src/scene/Bounder'),
     Builder: require('./src/scene/Builder'),
-    GroupBuilder: require('./src/scene/GroupBuilder')
+    Encoder: require('./src/scene/Encoder'),
+    GroupBuilder: require('./src/scene/GroupBuilder'),
   },
   transforms: require('./src/transforms/'),
   config: require('./src/util/config'),
@@ -15,7 +14,7 @@ module.exports = {
   schema: require('./src/util/schema'),
   debug: require('vega-logging').debug
 };
-},{"./src/core/View":80,"./src/parse/":86,"./src/scene/Builder":100,"./src/scene/GroupBuilder":102,"./src/transforms/":128,"./src/util/config":129,"./src/util/schema":131,"datalib/src/util":20,"vega-dataflow":34,"vega-logging":40}],2:[function(require,module,exports){
+},{"./src/parse/":86,"./src/scene/Bounder":99,"./src/scene/Builder":100,"./src/scene/Encoder":101,"./src/scene/GroupBuilder":102,"./src/transforms/":128,"./src/util/config":129,"./src/util/schema":130,"datalib/src/util":20,"vega-dataflow":34,"vega-logging":40}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 var util = require('../util'),
@@ -11773,8 +11772,8 @@ module.exports = {
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     log = require('vega-logging'),
-    config = require('../util/config'),
-    C = require('../util/constants');
+    Status = require('../scene/Builder').STATUS,
+    config = require('../util/config');
 
 function parseInteractors(model, spec, defFactory) {
   var count = 0,
@@ -11828,7 +11827,7 @@ function parseInteractors(model, spec, defFactory) {
       if ((r = mk[m.name])) {
         marks[i] = util.duplicate(r);
         if (m.from) marks[i].from = m.from;
-        if (m.properties) [C.ENTER, C.UPDATE, C.EXIT].forEach(extend);
+        if (m.properties) [Status.ENTER, Status.UPDATE, Status.EXIT].forEach(extend);
       } else if (m.marks) {  // TODO how to override properties of nested marks?
         injectMarks(m.marks);
       }
@@ -11919,7 +11918,7 @@ function parseInteractors(model, spec, defFactory) {
 }
 
 module.exports = parseInteractors;
-},{"../util/config":129,"../util/constants":130,"datalib/src/import/load":13,"datalib/src/util":20,"vega-logging":40}],88:[function(require,module,exports){
+},{"../scene/Builder":100,"../util/config":129,"datalib/src/import/load":13,"datalib/src/util":20,"vega-logging":40}],88:[function(require,module,exports){
 var lgnd = require('../scene/legend');
 
 function parseLegends(model, spec, legends, group) {
@@ -12007,9 +12006,16 @@ module.exports = parseRootMark;
 },{"./mark":89}],91:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    tuple = require('vega-dataflow/src/Tuple'),
-    log = require('vega-logging'),
-    C = require('../util/constants');
+    Tuple = require('vega-dataflow/src/Tuple'),
+    Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging');
+
+var Types = {
+  ADD:    "add",
+  REMOVE: "remove",
+  TOGGLE: "toggle",
+  CLEAR:  "clear"
+};
 
 var filter = function(field, value, src, dest) {
   for(var i = src.length-1; i >= 0; --i) {
@@ -12023,7 +12029,7 @@ function parseModify(model, def, ds) {
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),
-      node = new Node(model).router(def.type === C.CLEAR);
+      node = new Node(model).router(def.type === Types.CLEAR);
 
   node.evaluate = function(input) {
     if (predicate !== null) {  // TODO: predicate args
@@ -12045,26 +12051,26 @@ function parseModify(model, def, ds) {
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples. 
-    if (def.type === C.ADD) {
-      t = tuple.ingest(datum, prev);
+    if (def.type === Types.ADD) {
+      t = Tuple.ingest(datum, prev);
       input.add.push(t);
       d._data.push(t);
-    } else if (def.type === C.REMOVE) {
+    } else if (def.type === Types.REMOVE) {
       filter(def.field, value, input.add, input.rem);
       filter(def.field, value, input.mod, input.rem);
       d._data = d._data.filter(function(x) { return x[def.field] !== value; });
-    } else if (def.type === C.TOGGLE) {
+    } else if (def.type === Types.TOGGLE) {
       var add = [], rem = [];
       filter(def.field, value, input.rem, add);
       filter(def.field, value, input.add, rem);
       filter(def.field, value, input.mod, rem);
-      if (!(add.length || rem.length)) add.push(tuple.ingest(datum));
+      if (!(add.length || rem.length)) add.push(Tuple.ingest(datum));
 
       input.add.push.apply(input.add, add);
       d._data.push.apply(d._data, add);
       input.rem.push.apply(input.rem, rem);
       d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1; });
-    } else if (def.type === C.CLEAR) {
+    } else if (def.type === Types.CLEAR) {
       input.rem.push.apply(input.rem, input.add);
       input.rem.push.apply(input.rem, input.mod);
       input.add = [];
@@ -12076,14 +12082,14 @@ function parseModify(model, def, ds) {
     return input;
   };
 
-  if (signalName) node.dependency(C.SIGNALS, signalName);
-  if (predicate)  node.dependency(C.SIGNALS, predicate.signals);
+  if (signalName) node.dependency(Deps.SIGNALS, signalName);
+  if (predicate)  node.dependency(Deps.SIGNALS, predicate.signals);
   
   return node;
 }
 
 module.exports = parseModify;
-},{"../util/constants":130,"datalib/src/util":20,"vega-dataflow/src/Node":30,"vega-dataflow/src/Tuple":33,"vega-logging":40}],92:[function(require,module,exports){
+},{"datalib/src/util":20,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-dataflow/src/Tuple":33,"vega-logging":40}],92:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 function parsePadding(pad) {
@@ -12712,8 +12718,7 @@ var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefin
     Deps = require('vega-dataflow/src/Dependencies'),
     parseSignals = require('./signals'),
     selector = require('./events'),
-    expr = require('./expr'),
-    C = require('../util/constants');
+    expr = require('./expr');
 
 var START = "start", MIDDLE = "middle", END = "end";
 
@@ -12757,7 +12762,7 @@ function parseStreams(view) {
       groupOffsets(evt);
 
       if (item && (name = item.mark.def.name)) {
-        populateEvt(evt, name, item, item.mark.marktype === C.GROUP);
+        populateEvt(evt, name, item, item.mark.marktype === "group");
       }
 
       fire(internal, type, datum, evt);
@@ -12928,7 +12933,7 @@ function parseStreams(view) {
 module.exports = parseStreams;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../util/constants":130,"./events":84,"./expr":85,"./signals":95,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":25,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30}],98:[function(require,module,exports){
+},{"./events":84,"./expr":85,"./signals":95,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":25,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30}],98:[function(require,module,exports){
 var util = require('datalib/src/util'),
     transforms = require('../transforms/index');
 
@@ -12953,8 +12958,7 @@ var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     log = require('vega-logging'),
-    Encoder = require('./Encoder'),
-    C = require('../util/constants');
+    Encoder = require('./Encoder');
 
 function Bounder(graph, mark) {
   this._mark = mark;
@@ -12969,13 +12973,13 @@ proto.evaluate = function(input) {
   log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
-      isGrp = type === C.GROUP,
+      isGrp = type === "group",
       items = this._mark.items,
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
   if(input.add.length || input.rem.length || !items.length || 
-      type === C.AREA || type === C.LINE) {
+      type === "area" || type === "line") {
     bound.mark(this._mark, null, isGrp && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bound.item(item); });
@@ -13000,21 +13004,28 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"../util/constants":130,"./Encoder":101,"datalib/src/util":20,"vega-dataflow/src/Node":30,"vega-logging":40,"vega-scenegraph/src/util/bound":73}],100:[function(require,module,exports){
+},{"./Encoder":101,"datalib/src/util":20,"vega-dataflow/src/Node":30,"vega-logging":40,"vega-scenegraph/src/util/bound":73}],100:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Item = require('vega-scenegraph/src/util/Item'),
     Tuple = require('vega-dataflow/src/Tuple'),
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    Deps = require('vega-dataflow/src/Dependencies'),
+    Sentinel = require('vega-dataflow/src/Sentinel'),
     log = require('vega-logging'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
-    parseData = require('../parse/data'),
-    C = require('../util/constants');
+    parseData = require('../parse/data');
 
 function Builder() {    
   return arguments.length ? this.init.apply(this, arguments) : this;
 }
+
+var Status = Builder.STATUS = {
+  ENTER: "enter",
+  UPDATE: "update",
+  EXIT: "exit"
+};
 
 var proto = (Builder.prototype = new Node());
 
@@ -13045,17 +13056,17 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
 
   // Non-group mark builders are super nodes. Encoder and Bounder remain 
   // separate operators but are embedded and called by Builder.evaluate.
-  this._isSuper = (this._def.type !== C.GROUP); 
+  this._isSuper = (this._def.type !== "group"); 
   this._encoder = new Encoder(this._graph, this._mark);
   this._bounder = new Bounder(this._graph, this._mark);
 
-  if (this._ds) { this._encoder.dependency(C.DATA, this._from); }
+  if (this._ds) { this._encoder.dependency(Deps.DATA, this._from); }
 
   // Since Builders are super nodes, copy over encoder dependencies
   // (bounder has no registered dependencies).
-  this.dependency(C.DATA, this._encoder.dependency(C.DATA));
-  this.dependency(C.SCALES, this._encoder.dependency(C.SCALES));
-  this.dependency(C.SIGNALS, this._encoder.dependency(C.SIGNALS));
+  this.dependency(Deps.DATA, this._encoder.dependency(Deps.DATA));
+  this.dependency(Deps.SCALES, this._encoder.dependency(Deps.SCALES));
+  this.dependency(Deps.SIGNALS, this._encoder.dependency(Deps.SIGNALS));
 
   return this;
 };
@@ -13066,7 +13077,7 @@ proto.revises = function(p) {
   // If we've not needed prev in the past, but a new inline ds needs it now
   // ensure existing items have prev set.
   if (!this._revises && p) {
-    this._items.forEach(function(d) { if (d._prev === undefined) d._prev = C.SENTINEL; });
+    this._items.forEach(function(d) { if (d._prev === undefined) d._prev = Sentinel; });
   }
 
   this._revises = this._revises || p;
@@ -13192,7 +13203,7 @@ proto.evaluate = function(input) {
     }
   } else {
     fullUpdate = this._encoder.reevaluate(input);
-    data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
+    data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
     output = joinValues.call(this, input, data, fullUpdate);
   }
 
@@ -13224,7 +13235,7 @@ function join(data, keyf, next, output, prev, mod) {
     datum = data[i];
     item  = keyf ? this._map[key = keyf(datum)] : prev[i];
     enter = item ? false : (item = newItem.call(this), true);
-    item.status = enter ? C.ENTER : C.UPDATE;
+    item.status = enter ? Status.ENTER : Status.UPDATE;
     item.datum = datum;
     Tuple.set(item, "key", key);
     this._map[key] = item;
@@ -13251,7 +13262,7 @@ function joinDatasource(input, data, fullUpdate) {
 
   for (i=0, len=rem.length; i<len; ++i) {
     item = this._map[key = keyf(rem[i])];
-    item.status = C.EXIT;
+    item.status = Status.EXIT;
     item._dirty = true;
     input.dirty.push(item);
     next.push(item);
@@ -13273,7 +13284,7 @@ function joinValues(input, data, fullUpdate) {
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
-    item.status = C.EXIT;
+    item.status = Status.EXIT;
     if (keyf) this._map[item.key] = item;
   }
   
@@ -13281,7 +13292,7 @@ function joinValues(input, data, fullUpdate) {
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
-    if (item.status === C.EXIT) {
+    if (item.status === Status.EXIT) {
       Tuple.set(item, "key", keyf ? item.key : this._items.length);
       item._dirty = true;
       input.dirty.push(item);
@@ -13306,14 +13317,14 @@ function keyFunction(key) {
 }
 
 module.exports = Builder;
-},{"../parse/data":83,"../util/constants":130,"./Bounder":99,"./Encoder":101,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":25,"vega-dataflow/src/Node":30,"vega-dataflow/src/Tuple":33,"vega-logging":40,"vega-scenegraph/src/util/Item":72}],101:[function(require,module,exports){
+},{"../parse/data":83,"./Bounder":99,"./Encoder":101,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":25,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-dataflow/src/Sentinel":31,"vega-dataflow/src/Tuple":33,"vega-logging":40,"vega-scenegraph/src/util/Item":72}],101:[function(require,module,exports){
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
-    log = require('vega-logging'),
-    C = require('../util/constants'),
-    EMPTY = {};
+    log = require('vega-logging');
+  
+var EMPTY = {};
 
 function Encoder(graph, mark) {
   var props  = mark.def.properties || {},
@@ -13384,7 +13395,7 @@ proto.evaluate = function(input) {
     item = input.add[i];
     if (enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
     if (update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
-    item.status = C.UPDATE;
+    item.status = require('./Builder').STATUS.UPDATE;
   }
 
   if (update) {
@@ -13438,7 +13449,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
 };
 
 module.exports = Encoder;
-},{"../util/constants":130,"datalib/src/util":20,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-logging":40,"vega-scenegraph/src/util/bound":73}],102:[function(require,module,exports){
+},{"./Builder":100,"datalib/src/util":20,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-logging":40,"vega-scenegraph/src/util/bound":73}],102:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Collector = require('vega-dataflow/src/Collector'),
@@ -13447,8 +13458,7 @@ var util = require('datalib/src/util'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
-    parseLegends = require('../parse/legends'),
-    C = require('../util/constants');
+    parseLegends = require('../parse/legends');
 
 function GroupBuilder() {
   this._children = {};
@@ -13459,6 +13469,13 @@ function GroupBuilder() {
   this.scale = scale.bind(this);
   return arguments.length ? this.init.apply(this, arguments) : this;
 }
+
+var Types = GroupBuilder.TYPES = {
+  GROUP:  "group",
+  MARK:   "mark",
+  AXIS:   "axis",
+  LEGEND: "legend"
+};
 
 var proto = (GroupBuilder.prototype = new Builder());
 
@@ -13525,7 +13542,7 @@ proto.child = function(name, group_id) {
 
   for (; i<len; ++i) {
     child = children[i];
-    if (child.type == C.MARK && child.builder._def.name == name) break;
+    if (child.type == Types.MARK && child.builder._def.name == name) break;
   }
 
   return child.builder;
@@ -13557,7 +13574,7 @@ function recurse(input) {
       // This new child needs to be built during this propagation cycle.
       // We could add its builder as a listener off the _recursor node, 
       // but try to inline it if we can to minimize graph dispatches.
-      inline = (def.type !== C.GROUP);
+      inline = (def.type !== Types.GROUP);
       inline = inline && (this._graph.data(c.from) !== undefined); 
       inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
       c.inline = inline;
@@ -13568,7 +13585,7 @@ function recurse(input) {
   }
 
   function removeTemp(c) {
-    if (c.type == C.MARK && !c.inline &&
+    if (c.type == Types.MARK && !c.inline &&
         builder._graph.data(c.from) !== undefined) {
       builder._recursor.removeListener(c.builder);
     }
@@ -13651,12 +13668,12 @@ function buildMarks(input, group) {
     from = mark.from || {};
     inherit = group.datum._facetID;
     group.items[i] = {group: group};
-    b = (mark.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b = (mark.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);
     this._children[group._id].push({ 
       builder: b, 
       from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
-      type: C.MARK 
+      type: Types.MARK 
     });
   }
 }
@@ -13673,10 +13690,10 @@ function buildAxes(input, group) {
         b = null;
 
     axisItems[i] = {group: group, axisDef: def, layer: def.layer};
-    b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b = (def.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, axisItems[i], builder)
       .dependency(Deps.SCALES, scale);
-    builder._children[group._id].push({ builder: b, type: C.AXIS, scale: scale });
+    builder._children[group._id].push({ builder: b, type: Types.AXIS, scale: scale });
   });
 }
 
@@ -13692,15 +13709,15 @@ function buildLegends(input, group) {
         b = null;
 
     legendItems[i] = {group: group, legendDef: def};
-    b = (def.type === C.GROUP) ? new GroupBuilder() : new Builder();
+    b = (def.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, legendItems[i], builder)
       .dependency(Deps.SCALES, scale);
-    builder._children[group._id].push({ builder: b, type: C.LEGEND, scale: scale });
+    builder._children[group._id].push({ builder: b, type: Types.LEGEND, scale: scale });
   });
 }
 
 module.exports = GroupBuilder;
-},{"../parse/axes":81,"../parse/legends":88,"../util/constants":130,"./Builder":100,"./Scale":103,"datalib/src/util":20,"vega-dataflow/src/Collector":26,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-logging":40}],103:[function(require,module,exports){
+},{"../parse/axes":81,"../parse/legends":88,"./Builder":100,"./Scale":103,"datalib/src/util":20,"vega-dataflow/src/Collector":26,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-logging":40}],103:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -13709,10 +13726,35 @@ var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefin
     Deps = require('vega-dataflow/src/Dependencies'),
     log = require('vega-logging'),
     Aggregate = require('../transforms/Aggregate'),
-    config = require('../util/config'),
-    C = require('../util/constants');
+    config = require('../util/config');
 
-var GROUP_PROPERTY = {width: 1, height: 1};
+var Properties = {width: 1, height: 1};
+var Types = {
+  LINEAR: "linear",
+  ORDINAL: "ordinal",
+  LOG: "log",
+  POWER: "pow",
+  SQRT: "sqrt",
+  TIME: "time",
+  TIME_UTC: "utc",
+  QUANTILE: "quantile",
+  QUANTIZE: "quantize",
+  THRESHOLD: "threshold",
+  SQRT: "sqrt"
+};
+var DataRef = {
+  DOMAIN: "domain",
+  RANGE: "range",
+
+  COUNT: "count",
+  GROUPBY: "groupby",
+  MIN: "min",
+  MAX: "max",
+  VALUE: "value",
+
+  ASC: "asc",
+  DESC: "desc"
+};
 
 function Scale(graph, def, parent) {
   this._def     = def;
@@ -13756,7 +13798,7 @@ function scale(group) {
   var name = this._def.name,
       prev = name + ":prev",
       s = instance.call(this, group.scale(name)),
-      m = s.type===C.ORDINAL ? ordinal : quantitative,
+      m = s.type===Types.ORDINAL ? ordinal : quantitative,
       rng = range.call(this, group);
 
   m.call(this, s, rng, group);
@@ -13768,7 +13810,7 @@ function scale(group) {
 }
 
 function instance(scale) {
-  var type = this._def.type || C.LINEAR;
+  var type = this._def.type || Types.LINEAR;
   if (!scale || type !== scale.type) {
     var ctor = config.scale[type] || d3.scale[type];
     if (!ctor) util.error("Unrecognized scale type: " + type);
@@ -13792,11 +13834,11 @@ function ordinal(scale, rng, group) {
   // range pre-processing for data-driven ranges
   if (util.isObject(def.range) && !util.isArray(def.range)) {
     dataDrivenRange = true;
-    rng = dataRef.call(this, C.RANGE, def.range, scale, group);
+    rng = dataRef.call(this, DataRef.RANGE, def.range, scale, group);
   }
   
   // domain
-  domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
+  domain = dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group);
   if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
     prev.domain = domain;
@@ -13842,8 +13884,8 @@ function quantitative(scale, rng, group) {
       domain, interval;
 
   // domain
-  domain = (def.type === C.QUANTILE) ?
-    dataRef.call(this, C.DOMAIN, def.domain, scale, group) :
+  domain = (def.type === Types.QUANTILE) ?
+    dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group) :
     domainMinMax.call(this, scale, group);
   if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
@@ -13862,10 +13904,10 @@ function quantitative(scale, rng, group) {
   // TODO: Support signals for these properties. Until then, only eval
   // them once.
   if (this._stamp > 0) return;
-  if (exponent && def.type===C.POWER) scale.exponent(exponent);
+  if (exponent && def.type===Types.POWER) scale.exponent(exponent);
   if (clamp) scale.clamp(true);
   if (nice) {
-    if (def.type === C.TIME) {
+    if (def.type === Types.TIME) {
       interval = d3.time[nice];
       if (!interval) log.error("Unrecognized interval: " + interval);
       scale.nice(interval);
@@ -13876,7 +13918,7 @@ function quantitative(scale, rng, group) {
 }
 
 function isUniques(scale) { 
-  return scale.type === C.ORDINAL || scale.type === C.QUANTILE; 
+  return scale.type === Types.ORDINAL || scale.type === Types.QUANTILE; 
 }
 
 function getRefs(def) { 
@@ -13929,26 +13971,26 @@ function getCache(which, def, scale, group) {
 
   if (uniques) {
     if (atype === Aggregate.TYPES.VALUE) {
-      groupby = [{ name: C.GROUPBY, get: util.identity }];
-      summarize = {"*": C.COUNT};
+      groupby = [{ name: DataRef.GROUPBY, get: util.identity }];
+      summarize = {"*": DataRef.COUNT};
     } else if (atype === Aggregate.TYPES.TUPLE) {
-      groupby = [{ name: C.GROUPBY, get: util.$(fields[0]) }];
+      groupby = [{ name: DataRef.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
-        name: C.VALUE,
+        name: DataRef.VALUE,
         get:  util.$(ref.sort || sort.field),
         ops: [sort.stat]
-      }] : {"*": C.COUNT};
+      }] : {"*": DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
-      groupby   = C.GROUPBY;
-      summarize = [{ name: C.VALUE, ops: [sort.stat] }]; 
+      groupby   = DataRef.GROUPBY;
+      summarize = [{ name: DataRef.VALUE, ops: [sort.stat] }]; 
     }
   } else {
     groupby = [];
     summarize = [{
-      name: C.VALUE,
+      name: DataRef.VALUE,
       get: (atype == Aggregate.TYPES.TUPLE) ? util.$(fields[0]) : util.identity,
-      ops: [C.MIN, C.MAX],
-      as:  [C.MIN, C.MAX]
+      ops: [DataRef.MIN, DataRef.MAX],
+      as:  [DataRef.MIN, DataRef.MAX]
     }];
   }
 
@@ -14004,17 +14046,17 @@ function dataRef(which, def, scale, group) {
   if (uniques) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + C.VALUE;
+      sort = (sort == DataRef.DESC ? "-" : "+") + DataRef.VALUE;
       sort = util.comparator(sort);
       data = data.sort(sort);
     // } else {  // "First seen" order
     //   sort = util.comparator("tpl._id");
     }
 
-    return data.map(function(d) { return d[C.GROUPBY]; });
+    return data.map(function(d) { return d[DataRef.GROUPBY]; });
   } else {
     data = data[0];
-    return !util.isValid(data) ? [] : [data[C.MIN], data[C.MAX]];
+    return !util.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
   }
 }
 
@@ -14031,7 +14073,7 @@ function domainMinMax(scale, group) {
 
   if (def.domain !== undefined) {
     domain = (!util.isObject(def.domain)) ? domain :
-      dataRef.call(this, C.DOMAIN, def.domain, scale, group);
+      dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group);
   }
 
   z = domain.length - 1;
@@ -14040,7 +14082,7 @@ function domainMinMax(scale, group) {
       if (def.domainMin.signal) {
         domain[0] = signal.call(this, def.domainMin);
       } else {
-        domain[0] = dataRef.call(this, C.DOMAIN+C.MIN, def.domainMin, scale, group)[0];
+        domain[0] = dataRef.call(this, DataRef.DOMAIN+DataRef.MIN, def.domainMin, scale, group)[0];
       }
     } else {
       domain[0] = def.domainMin;
@@ -14051,13 +14093,13 @@ function domainMinMax(scale, group) {
       if (def.domainMax.signal) {
         domain[z] = signal.call(this, def.domainMax);
       } else {
-        domain[z] = dataRef.call(this, C.DOMAIN+C.MAX, def.domainMax, scale, group)[1];
+        domain[z] = dataRef.call(this, DataRef.DOMAIN+DataRef.MAX, def.domainMax, scale, group)[1];
       }
     } else {
       domain[z] = def.domainMax;
     }
   }
-  if (def.type !== C.LOG && def.type !== C.TIME && (def.zero || def.zero===undefined)) {
+  if (def.type !== Types.LOG && def.type !== Types.TIME && (def.zero || def.zero===undefined)) {
     domain[0] = Math.min(0, domain[0]);
     domain[z] = Math.max(0, domain[z]);
   }
@@ -14071,7 +14113,7 @@ function range(group) {
 
   if (rangeVal !== undefined) {
     if (typeof rangeVal === 'string') {
-      if (GROUP_PROPERTY[rangeVal]) {
+      if (Properties[rangeVal]) {
         rng = [0, group[rangeVal]];
       } else if (config.range[rangeVal]) {
         rng = config.range[rangeVal];
@@ -14113,7 +14155,7 @@ var sortDef = {
   "type": "object",
   "field": {"type": "string"},
   "stat": {"enum": require('../transforms/Aggregate').VALID_OPS},
-  "order": {"enum": [C.ASC, C.DESC]}
+  "order": {"enum": [DataRef.ASC, DataRef.DESC]}
 };
 
 var rangeDef = [
@@ -14128,12 +14170,12 @@ var rangeDef = [
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../transforms/Aggregate":108,"../util/config":129,"../util/constants":130,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":25,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-logging":40}],104:[function(require,module,exports){
+},{"../transforms/Aggregate":108,"../util/config":129,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":25,"vega-dataflow/src/Dependencies":28,"vega-dataflow/src/Node":30,"vega-logging":40}],104:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     bound = require('vega-scenegraph/src/util/bound'),
     tuple = require('vega-dataflow/src/Tuple'),
-    C = require('../util/constants');
+    Status = require('./Builder').STATUS;
 
 function Transition(duration, ease) {
   this.duration = duration || 500;
@@ -14170,7 +14212,7 @@ prototype.interpolate = function(item, values) {
     }
   }
 
-  if (list === null && item.status === C.EXIT) {
+  if (list === null && item.status === Status.EXIT) {
     list = []; // ensure exiting items are included
   }
 
@@ -14186,8 +14228,8 @@ prototype.interpolate = function(item, values) {
 prototype.start = function(callback) {
   var t = this, prev = t.updates, curr = prev.next;
   for (; curr!=null; prev=curr, curr=prev.next) {
-    if (curr.item.status === C.EXIT) {
-      curr.item.status = C.UPDATE;  // Only mark item as exited when it is removed.
+    if (curr.item.status === Status.EXIT) {
+      curr.item.status = Status.UPDATE;  // Only mark item as exited when it is removed.
       curr.remove = true;
     }
   }
@@ -14217,7 +14259,7 @@ function step(elapsed) {
 
     if (f === 1) {
       if (curr.remove) {
-        item.status = C.EXIT;
+        item.status = Status.EXIT;
         item.remove();
       }
       prev.next = curr.next;
@@ -14234,7 +14276,7 @@ function step(elapsed) {
 module.exports = Transition;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../util/constants":130,"vega-dataflow/src/Tuple":33,"vega-scenegraph/src/util/bound":73}],105:[function(require,module,exports){
+},{"./Builder":100,"vega-dataflow/src/Tuple":33,"vega-scenegraph/src/util/bound":73}],105:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefined" ? global.d3 : null),
     util = require('datalib/src/util'),
@@ -15808,7 +15850,7 @@ prototype._ingest = function(t) {
 prototype._assign = Tuple.set;
 
 function disconnect_cell(facet) {
-  log.debug(input, ["deleting cell", this.tuple._id]);
+  log.debug({}, ["deleting cell", this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);
@@ -16089,7 +16131,7 @@ var prototype = (Force.prototype = Object.create(Transform.prototype));
 prototype.constructor = Force;
 
 prototype.transform = function(nodeInput) {
-  log.debug(input, ['force']);
+  log.debug(nodeInput, ['force']);
 
   // get variables
   var linkInput = this.param('links').source.last(),
@@ -17181,63 +17223,6 @@ module.exports = config;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{}],130:[function(require,module,exports){
-module.exports = {
-  ADD_CELL: 1,
-  MOD_CELL: 2,
-
-  ID: "_id",
-
-  DATA: "data",
-  FIELDS:  "fields",
-  SCALES:  "scales",
-  SIGNAL:  "signal",
-  SIGNALS: "signals",
-
-  GROUP: "group",
-  AREA:  "area",
-  LINE:  "line",
-
-  ENTER: "enter",
-  UPDATE: "update",
-  EXIT: "exit",
-
-  SENTINEL: {"sentinel": 1},
-  SINGLETON: "_singleton",
-
-  ADD: "add",
-  REMOVE: "remove",
-  TOGGLE: "toggle",
-  CLEAR: "clear",
-
-  LINEAR: "linear",
-  ORDINAL: "ordinal",
-  LOG: "log",
-  POWER: "pow",
-  SQRT: "sqrt",
-  TIME: "time",
-  TIME_UTC: "utc",
-  QUANTILE: "quantile",
-  QUANTIZE: "quantize",
-  THRESHOLD: "threshold",
-
-  DOMAIN: "domain",
-  RANGE: "range",
-
-  MARK: "mark",
-  AXIS: "axis",
-  LEGEND: "legend",
-
-  COUNT: "count",
-  GROUPBY: "groupby",
-  MIN: "min",
-  MAX: "max",
-  VALUE: "value",
-
-  SORT: "sort",
-  ASC: "asc",
-  DESC: "desc"
-};
-},{}],131:[function(require,module,exports){
 var util = require('datalib/src/util'),
     load = require('datalib/src/import/readers'),
     parse = require('../parse'),

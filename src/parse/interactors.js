@@ -1,8 +1,8 @@
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     log = require('vega-logging'),
-    config = require('../util/config'),
-    C = require('../util/constants');
+    Status = require('../scene/Builder').STATUS,
+    config = require('../util/config');
 
 function parseInteractors(model, spec, defFactory) {
   var count = 0,
@@ -56,7 +56,7 @@ function parseInteractors(model, spec, defFactory) {
       if ((r = mk[m.name])) {
         marks[i] = util.duplicate(r);
         if (m.from) marks[i].from = m.from;
-        if (m.properties) [C.ENTER, C.UPDATE, C.EXIT].forEach(extend);
+        if (m.properties) [Status.ENTER, Status.UPDATE, Status.EXIT].forEach(extend);
       } else if (m.marks) {  // TODO how to override properties of nested marks?
         injectMarks(m.marks);
       }

@@ -2,9 +2,9 @@ var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
-    log = require('vega-logging'),
-    C = require('../util/constants'),
-    EMPTY = {};
+    log = require('vega-logging');
+  
+var EMPTY = {};
 
 function Encoder(graph, mark) {
   var props  = mark.def.properties || {},
@@ -75,7 +75,7 @@ proto.evaluate = function(input) {
     item = input.add[i];
     if (enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
     if (update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
-    item.status = C.UPDATE;
+    item.status = require('./Builder').STATUS.UPDATE;
   }
 
   if (update) {

@@ -1,8 +1,15 @@
 var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    tuple = require('vega-dataflow/src/Tuple'),
-    log = require('vega-logging'),
-    C = require('../util/constants');
+    Tuple = require('vega-dataflow/src/Tuple'),
+    Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging');
+
+var Types = {
+  ADD:    "add",
+  REMOVE: "remove",
+  TOGGLE: "toggle",
+  CLEAR:  "clear"
+};
 
 var filter = function(field, value, src, dest) {
   for(var i = src.length-1; i >= 0; --i) {
@@ -16,7 +23,7 @@ function parseModify(model, def, ds) {
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),
-      node = new Node(model).router(def.type === C.CLEAR);
+      node = new Node(model).router(def.type === Types.CLEAR);
 
   node.evaluate = function(input) {
     if (predicate !== null) {  // TODO: predicate args
@@ -38,26 +45,26 @@ function parseModify(model, def, ds) {
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples. 
-    if (def.type === C.ADD) {
-      t = tuple.ingest(datum, prev);
+    if (def.type === Types.ADD) {
+      t = Tuple.ingest(datum, prev);
       input.add.push(t);
       d._data.push(t);
-    } else if (def.type === C.REMOVE) {
+    } else if (def.type === Types.REMOVE) {
       filter(def.field, value, input.add, input.rem);
       filter(def.field, value, input.mod, input.rem);
       d._data = d._data.filter(function(x) { return x[def.field] !== value; });
-    } else if (def.type === C.TOGGLE) {
+    } else if (def.type === Types.TOGGLE) {
       var add = [], rem = [];
       filter(def.field, value, input.rem, add);
       filter(def.field, value, input.add, rem);
       filter(def.field, value, input.mod, rem);
-      if (!(add.length || rem.length)) add.push(tuple.ingest(datum));
+      if (!(add.length || rem.length)) add.push(Tuple.ingest(datum));
 
       input.add.push.apply(input.add, add);
       d._data.push.apply(d._data, add);
       input.rem.push.apply(input.rem, rem);
       d._data = d._data.filter(function(x) { return rem.indexOf(x) === -1; });
-    } else if (def.type === C.CLEAR) {
+    } else if (def.type === Types.CLEAR) {
       input.rem.push.apply(input.rem, input.add);
       input.rem.push.apply(input.rem, input.mod);
       input.add = [];
@@ -69,8 +76,8 @@ function parseModify(model, def, ds) {
     return input;
   };
 
-  if (signalName) node.dependency(C.SIGNALS, signalName);
-  if (predicate)  node.dependency(C.SIGNALS, predicate.signals);
+  if (signalName) node.dependency(Deps.SIGNALS, signalName);
+  if (predicate)  node.dependency(Deps.SIGNALS, predicate.signals);
   
   return node;
 }
@@ -84,14 +91,14 @@ parseModify.schema = {
         "type": "object",
         "oneOf": [{
           "properties": {
-            "type": {"enum": [C.ADD, C.REMOVE, C.TOGGLE]},
+            "type": {"enum": [Types.ADD, Types.REMOVE, Types.TOGGLE]},
             "signal": {"type": "string"},
             "field": {"type": "string"}
           },
           "required": ["type", "signal", "field"]
         }, {
           "properties": {
-            "type": {"enum": [C.CLEAR]},
+            "type": {"enum": [Types.CLEAR]},
             "predicate": {"type": "string"}  // TODO predicate args
           },
           "required": ["type", "predicate"]

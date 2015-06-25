@@ -5,8 +5,7 @@ var d3 = require('d3'),
     Deps = require('vega-dataflow/src/Dependencies'),
     parseSignals = require('./signals'),
     selector = require('./events'),
-    expr = require('./expr'),
-    C = require('../util/constants');
+    expr = require('./expr');
 
 var START = "start", MIDDLE = "middle", END = "end";
 
@@ -50,7 +49,7 @@ function parseStreams(view) {
       groupOffsets(evt);
 
       if (item && (name = item.mark.def.name)) {
-        populateEvt(evt, name, item, item.mark.marktype === C.GROUP);
+        populateEvt(evt, name, item, item.mark.marktype === "group");
       }
 
       fire(internal, type, datum, evt);

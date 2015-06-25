@@ -2,8 +2,7 @@ var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     log = require('vega-logging'),
-    Encoder = require('./Encoder'),
-    C = require('../util/constants');
+    Encoder = require('./Encoder');
 
 function Bounder(graph, mark) {
   this._mark = mark;
@@ -18,13 +17,13 @@ proto.evaluate = function(input) {
   log.debug(input, ["bounds", this._mark.marktype]);
 
   var type  = this._mark.marktype,
-      isGrp = type === C.GROUP,
+      isGrp = type === "group",
       items = this._mark.items,
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
   if(input.add.length || input.rem.length || !items.length || 
-      type === C.AREA || type === C.LINE) {
+      type === "area" || type === "line") {
     bound.mark(this._mark, null, isGrp && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bound.item(item); });

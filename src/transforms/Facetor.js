@@ -26,7 +26,7 @@ prototype._ingest = function(t) {
 prototype._assign = Tuple.set;
 
 function disconnect_cell(facet) {
-  log.debug(input, ["deleting cell", this.tuple._id]);
+  log.debug({}, ["deleting cell", this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);

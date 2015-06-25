@@ -1,7 +1,7 @@
 var d3 = require('d3'),
     bound = require('vega-scenegraph/src/util/bound'),
     tuple = require('vega-dataflow/src/Tuple'),
-    C = require('../util/constants');
+    Status = require('./Builder').STATUS;
 
 function Transition(duration, ease) {
   this.duration = duration || 500;
@@ -38,7 +38,7 @@ prototype.interpolate = function(item, values) {
     }
   }
 
-  if (list === null && item.status === C.EXIT) {
+  if (list === null && item.status === Status.EXIT) {
     list = []; // ensure exiting items are included
   }
 
@@ -54,8 +54,8 @@ prototype.interpolate = function(item, values) {
 prototype.start = function(callback) {
   var t = this, prev = t.updates, curr = prev.next;
   for (; curr!=null; prev=curr, curr=prev.next) {
-    if (curr.item.status === C.EXIT) {
-      curr.item.status = C.UPDATE;  // Only mark item as exited when it is removed.
+    if (curr.item.status === Status.EXIT) {
+      curr.item.status = Status.UPDATE;  // Only mark item as exited when it is removed.
       curr.remove = true;
     }
   }
@@ -85,7 +85,7 @@ function step(elapsed) {
 
     if (f === 1) {
       if (curr.remove) {
-        item.status = C.EXIT;
+        item.status = Status.EXIT;
         item.remove();
       }
       prev.next = curr.next;

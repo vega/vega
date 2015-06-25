@@ -3,15 +3,22 @@ var util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    Deps = require('vega-dataflow/src/Dependencies'),
+    Sentinel = require('vega-dataflow/src/Sentinel'),
     log = require('vega-logging'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
-    parseData = require('../parse/data'),
-    C = require('../util/constants');
+    parseData = require('../parse/data');
 
 function Builder() {    
   return arguments.length ? this.init.apply(this, arguments) : this;
 }
+
+var Status = Builder.STATUS = {
+  ENTER: "enter",
+  UPDATE: "update",
+  EXIT: "exit"
+};
 
 var proto = (Builder.prototype = new Node());
 
@@ -42,17 +49,17 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
 
   // Non-group mark builders are super nodes. Encoder and Bounder remain 
   // separate operators but are embedded and called by Builder.evaluate.
-  this._isSuper = (this._def.type !== C.GROUP); 
+  this._isSuper = (this._def.type !== "group"); 
   this._encoder = new Encoder(this._graph, this._mark);
   this._bounder = new Bounder(this._graph, this._mark);
 
-  if (this._ds) { this._encoder.dependency(C.DATA, this._from); }
+  if (this._ds) { this._encoder.dependency(Deps.DATA, this._from); }
 
   // Since Builders are super nodes, copy over encoder dependencies
   // (bounder has no registered dependencies).
-  this.dependency(C.DATA, this._encoder.dependency(C.DATA));
-  this.dependency(C.SCALES, this._encoder.dependency(C.SCALES));
-  this.dependency(C.SIGNALS, this._encoder.dependency(C.SIGNALS));
+  this.dependency(Deps.DATA, this._encoder.dependency(Deps.DATA));
+  this.dependency(Deps.SCALES, this._encoder.dependency(Deps.SCALES));
+  this.dependency(Deps.SIGNALS, this._encoder.dependency(Deps.SIGNALS));
 
   return this;
 };
@@ -63,7 +70,7 @@ proto.revises = function(p) {
   // If we've not needed prev in the past, but a new inline ds needs it now
   // ensure existing items have prev set.
   if (!this._revises && p) {
-    this._items.forEach(function(d) { if (d._prev === undefined) d._prev = C.SENTINEL; });
+    this._items.forEach(function(d) { if (d._prev === undefined) d._prev = Sentinel; });
   }
 
   this._revises = this._revises || p;
@@ -189,7 +196,7 @@ proto.evaluate = function(input) {
     }
   } else {
     fullUpdate = this._encoder.reevaluate(input);
-    data = util.isFunction(this._def.from) ? this._def.from() : [C.SENTINEL];
+    data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
     output = joinValues.call(this, input, data, fullUpdate);
   }
 
@@ -221,7 +228,7 @@ function join(data, keyf, next, output, prev, mod) {
     datum = data[i];
     item  = keyf ? this._map[key = keyf(datum)] : prev[i];
     enter = item ? false : (item = newItem.call(this), true);
-    item.status = enter ? C.ENTER : C.UPDATE;
+    item.status = enter ? Status.ENTER : Status.UPDATE;
     item.datum = datum;
     Tuple.set(item, "key", key);
     this._map[key] = item;
@@ -248,7 +255,7 @@ function joinDatasource(input, data, fullUpdate) {
 
   for (i=0, len=rem.length; i<len; ++i) {
     item = this._map[key = keyf(rem[i])];
-    item.status = C.EXIT;
+    item.status = Status.EXIT;
     item._dirty = true;
     input.dirty.push(item);
     next.push(item);
@@ -270,7 +277,7 @@ function joinValues(input, data, fullUpdate) {
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
-    item.status = C.EXIT;
+    item.status = Status.EXIT;
     if (keyf) this._map[item.key] = item;
   }
   
@@ -278,7 +285,7 @@ function joinValues(input, data, fullUpdate) {
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
-    if (item.status === C.EXIT) {
+    if (item.status === Status.EXIT) {
       Tuple.set(item, "key", keyf ? item.key : this._items.length);
       item._dirty = true;
       input.dirty.push(item);

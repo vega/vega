@@ -37,7 +37,7 @@ var prototype = (Force.prototype = Object.create(Transform.prototype));
 prototype.constructor = Force;
 
 prototype.transform = function(nodeInput) {
-  log.debug(input, ['force']);
+  log.debug(nodeInput, ['force']);
 
   // get variables
   var linkInput = this.param('links').source.last(),

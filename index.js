@@ -1,12 +1,11 @@
 module.exports = {
-  core: {
-    View: require('./src/core/View')
-  },
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
+    Bounder: require('./src/scene/Bounder'),
     Builder: require('./src/scene/Builder'),
-    GroupBuilder: require('./src/scene/GroupBuilder')
+    Encoder: require('./src/scene/Encoder'),
+    GroupBuilder: require('./src/scene/GroupBuilder'),
   },
   transforms: require('./src/transforms/'),
   config: require('./src/util/config'),

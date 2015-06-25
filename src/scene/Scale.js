@@ -5,10 +5,35 @@ var d3 = require('d3'),
     Deps = require('vega-dataflow/src/Dependencies'),
     log = require('vega-logging'),
     Aggregate = require('../transforms/Aggregate'),
-    config = require('../util/config'),
-    C = require('../util/constants');
+    config = require('../util/config');
 
-var GROUP_PROPERTY = {width: 1, height: 1};
+var Properties = {width: 1, height: 1};
+var Types = {
+  LINEAR: "linear",
+  ORDINAL: "ordinal",
+  LOG: "log",
+  POWER: "pow",
+  SQRT: "sqrt",
+  TIME: "time",
+  TIME_UTC: "utc",
+  QUANTILE: "quantile",
+  QUANTIZE: "quantize",
+  THRESHOLD: "threshold",
+  SQRT: "sqrt"
+};
+var DataRef = {
+  DOMAIN: "domain",
+  RANGE: "range",
+
+  COUNT: "count",
+  GROUPBY: "groupby",
+  MIN: "min",
+  MAX: "max",
+  VALUE: "value",
+
+  ASC: "asc",
+  DESC: "desc"
+};
 
 function Scale(graph, def, parent) {
   this._def     = def;
@@ -52,7 +77,7 @@ function scale(group) {
   var name = this._def.name,
       prev = name + ":prev",
       s = instance.call(this, group.scale(name)),
-      m = s.type===C.ORDINAL ? ordinal : quantitative,
+      m = s.type===Types.ORDINAL ? ordinal : quantitative,
       rng = range.call(this, group);
 
   m.call(this, s, rng, group);
@@ -64,7 +89,7 @@ function scale(group) {
 }
 
 function instance(scale) {
-  var type = this._def.type || C.LINEAR;
+  var type = this._def.type || Types.LINEAR;
   if (!scale || type !== scale.type) {
     var ctor = config.scale[type] || d3.scale[type];
     if (!ctor) util.error("Unrecognized scale type: " + type);
@@ -88,11 +113,11 @@ function ordinal(scale, rng, group) {
   // range pre-processing for data-driven ranges
   if (util.isObject(def.range) && !util.isArray(def.range)) {
     dataDrivenRange = true;
-    rng = dataRef.call(this, C.RANGE, def.range, scale, group);
+    rng = dataRef.call(this, DataRef.RANGE, def.range, scale, group);
   }
   
   // domain
-  domain = dataRef.call(this, C.DOMAIN, def.domain, scale, group);
+  domain = dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group);
   if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
     prev.domain = domain;
@@ -138,8 +163,8 @@ function quantitative(scale, rng, group) {
       domain, interval;
 
   // domain
-  domain = (def.type === C.QUANTILE) ?
-    dataRef.call(this, C.DOMAIN, def.domain, scale, group) :
+  domain = (def.type === Types.QUANTILE) ?
+    dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group) :
     domainMinMax.call(this, scale, group);
   if (domain && !util.equal(prev.domain, domain)) {
     scale.domain(domain);
@@ -158,10 +183,10 @@ function quantitative(scale, rng, group) {
   // TODO: Support signals for these properties. Until then, only eval
   // them once.
   if (this._stamp > 0) return;
-  if (exponent && def.type===C.POWER) scale.exponent(exponent);
+  if (exponent && def.type===Types.POWER) scale.exponent(exponent);
   if (clamp) scale.clamp(true);
   if (nice) {
-    if (def.type === C.TIME) {
+    if (def.type === Types.TIME) {
       interval = d3.time[nice];
       if (!interval) log.error("Unrecognized interval: " + interval);
       scale.nice(interval);
@@ -172,7 +197,7 @@ function quantitative(scale, rng, group) {
 }
 
 function isUniques(scale) { 
-  return scale.type === C.ORDINAL || scale.type === C.QUANTILE; 
+  return scale.type === Types.ORDINAL || scale.type === Types.QUANTILE; 
 }
 
 function getRefs(def) { 
@@ -225,26 +250,26 @@ function getCache(which, def, scale, group) {
 
   if (uniques) {
     if (atype === Aggregate.TYPES.VALUE) {
-      groupby = [{ name: C.GROUPBY, get: util.identity }];
-      summarize = {"*": C.COUNT};
+      groupby = [{ name: DataRef.GROUPBY, get: util.identity }];
+      summarize = {"*": DataRef.COUNT};
     } else if (atype === Aggregate.TYPES.TUPLE) {
-      groupby = [{ name: C.GROUPBY, get: util.$(fields[0]) }];
+      groupby = [{ name: DataRef.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
-        name: C.VALUE,
+        name: DataRef.VALUE,
         get:  util.$(ref.sort || sort.field),
         ops: [sort.stat]
-      }] : {"*": C.COUNT};
+      }] : {"*": DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
-      groupby   = C.GROUPBY;
-      summarize = [{ name: C.VALUE, ops: [sort.stat] }]; 
+      groupby   = DataRef.GROUPBY;
+      summarize = [{ name: DataRef.VALUE, ops: [sort.stat] }]; 
     }
   } else {
     groupby = [];
     summarize = [{
-      name: C.VALUE,
+      name: DataRef.VALUE,
       get: (atype == Aggregate.TYPES.TUPLE) ? util.$(fields[0]) : util.identity,
-      ops: [C.MIN, C.MAX],
-      as:  [C.MIN, C.MAX]
+      ops: [DataRef.MIN, DataRef.MAX],
+      as:  [DataRef.MIN, DataRef.MAX]
     }];
   }
 
@@ -300,17 +325,17 @@ function dataRef(which, def, scale, group) {
   if (uniques) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == C.DESC ? "-" : "+") + C.VALUE;
+      sort = (sort == DataRef.DESC ? "-" : "+") + DataRef.VALUE;
       sort = util.comparator(sort);
       data = data.sort(sort);
     // } else {  // "First seen" order
     //   sort = util.comparator("tpl._id");
     }
 
-    return data.map(function(d) { return d[C.GROUPBY]; });
+    return data.map(function(d) { return d[DataRef.GROUPBY]; });
   } else {
     data = data[0];
-    return !util.isValid(data) ? [] : [data[C.MIN], data[C.MAX]];
+    return !util.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
   }
 }
 
@@ -327,7 +352,7 @@ function domainMinMax(scale, group) {
 
   if (def.domain !== undefined) {
     domain = (!util.isObject(def.domain)) ? domain :
-      dataRef.call(this, C.DOMAIN, def.domain, scale, group);
+      dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group);
   }
 
   z = domain.length - 1;
@@ -336,7 +361,7 @@ function domainMinMax(scale, group) {
       if (def.domainMin.signal) {
         domain[0] = signal.call(this, def.domainMin);
       } else {
-        domain[0] = dataRef.call(this, C.DOMAIN+C.MIN, def.domainMin, scale, group)[0];
+        domain[0] = dataRef.call(this, DataRef.DOMAIN+DataRef.MIN, def.domainMin, scale, group)[0];
       }
     } else {
       domain[0] = def.domainMin;
@@ -347,13 +372,13 @@ function domainMinMax(scale, group) {
       if (def.domainMax.signal) {
         domain[z] = signal.call(this, def.domainMax);
       } else {
-        domain[z] = dataRef.call(this, C.DOMAIN+C.MAX, def.domainMax, scale, group)[1];
+        domain[z] = dataRef.call(this, DataRef.DOMAIN+DataRef.MAX, def.domainMax, scale, group)[1];
       }
     } else {
       domain[z] = def.domainMax;
     }
   }
-  if (def.type !== C.LOG && def.type !== C.TIME && (def.zero || def.zero===undefined)) {
+  if (def.type !== Types.LOG && def.type !== Types.TIME && (def.zero || def.zero===undefined)) {
     domain[0] = Math.min(0, domain[0]);
     domain[z] = Math.max(0, domain[z]);
   }
@@ -367,7 +392,7 @@ function range(group) {
 
   if (rangeVal !== undefined) {
     if (typeof rangeVal === 'string') {
-      if (GROUP_PROPERTY[rangeVal]) {
+      if (Properties[rangeVal]) {
         rng = [0, group[rangeVal]];
       } else if (config.range[rangeVal]) {
         rng = config.range[rangeVal];
@@ -409,7 +434,7 @@ var sortDef = {
   "type": "object",
   "field": {"type": "string"},
   "stat": {"enum": require('../transforms/Aggregate').VALID_OPS},
-  "order": {"enum": [C.ASC, C.DESC]}
+  "order": {"enum": [DataRef.ASC, DataRef.DESC]}
 };
 
 var rangeDef = [
@@ -481,8 +506,8 @@ Scale.schema = {
           "name": {"type": "string"},
 
           "type": {
-            "enum": [C.LINEAR, C.ORDINAL, C.TIME, C.TIME_UTC, C.LOG, 
-              C.POWER, C.SQRT, C.QUANTILE, C.QUANTIZE, C.THRESHOLD],
+            "enum": [Types.LINEAR, Types.ORDINAL, Types.TIME, Types.TIME_UTC, Types.LOG, 
+              Types.POWER, Types.SQRT, Types.QUANTILE, Types.QUANTIZE, Types.THRESHOLD],
             "default": "linear"
           },
 
@@ -542,7 +567,7 @@ Scale.schema = {
       }, {
         "oneOf": [{
           "properties": {
-            "type": {"enum": [C.ORDINAL]},
+            "type": {"enum": [Types.ORDINAL]},
 
             "range": {
               "oneOf": rangeDef.concat({"$ref": "#/refs/data"})
@@ -557,7 +582,7 @@ Scale.schema = {
           }
         }, {
           "properties": {
-            "type": {"enum": [C.TIME, C.TIME_UTC]},
+            "type": {"enum": [Types.TIME, Types.TIME_UTC]},
             "range": {"oneOf": rangeDef},
             "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
             "nice": {"oneOf": [{"enum": ["second", "minute", "hour", 
@@ -566,8 +591,8 @@ Scale.schema = {
         }, {
           "anyOf": [{
             "properties": {
-              "type": {"enum": [C.LINEAR, C.LOG, C.POWER, C.SQRT, 
-                C.QUANTILE, C.QUANTIZE, C.THRESHOLD], "default": C.LINEAR},
+              "type": {"enum": [Types.LINEAR, Types.LOG, Types.POWER, Types.SQRT, 
+                Types.QUANTILE, Types.QUANTIZE, Types.THRESHOLD], "default": Types.LINEAR},
               "range": {"oneOf": rangeDef},
               "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
               "nice": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
@@ -575,12 +600,12 @@ Scale.schema = {
             }
           }, {
             "properties": {
-              "type": {"enum": [C.POWER]},
+              "type": {"enum": [Types.POWER]},
               "exponent": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
             }
           }, {
             "properties": {
-              "type": {"enum": [C.QUANTILE]},
+              "type": {"enum": [Types.QUANTILE]},
               "sort": sortDef
             }
           }]
