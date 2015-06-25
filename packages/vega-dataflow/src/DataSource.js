@@ -1,4 +1,5 @@
-var ChangeSet = require('./ChangeSet'), 
+var log = require('vega-logging'),
+    ChangeSet = require('./ChangeSet'), 
     Collector = require('./Collector'),
     Tuple = require('./Tuple'),
     Node = require('./Node'), // jshint ignore:line
@@ -133,6 +134,8 @@ prototype.pipeline = function(pipeline) {
   input.data = dsData;
 
   input.evaluate = function(input) {
+    log.debug(input, ["input", ds._name]);
+
     var delta = ds._input, 
         out = ChangeSet.create(input), f;
 
@@ -179,6 +182,8 @@ prototype.pipeline = function(pipeline) {
     dsData;
 
   output.evaluate = function(input) {
+    log.debug(input, ["output", ds._name]);
+    
     var output = ChangeSet.create(input, true);
 
     if (ds._facet) {
