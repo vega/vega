@@ -2,12 +2,7 @@ module.exports = {
   core: {
     View: require('./src/core/View')
   },
-  dataflow: {
-    changeset: require('vega-dataflow/src/ChangeSet'),
-    Datasource: require('vega-dataflow/src/DataSource'),
-    Graph: require('vega-dataflow/src/Graph'),
-    Node: require('vega-dataflow/src/Node')
-  },
+  dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
     Builder: require('./src/scene/Builder'),
@@ -16,5 +11,6 @@ module.exports = {
   transforms: require('./src/transforms/'),
   config: require('./src/util/config'),
   util: require('datalib/src/util'),
-  schema: require('./src/util/schema')
+  schema: require('./src/util/schema'),
+  debug: require('vega-logging').debug
 };

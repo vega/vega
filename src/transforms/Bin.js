@@ -1,5 +1,6 @@
 var bins = require('datalib/src/bins/bins'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Bin(graph) {
@@ -24,6 +25,8 @@ var prototype = (Bin.prototype = Object.create(Transform.prototype));
 prototype.constructor = Bin;
 
 prototype.transform = function(input) {
+  log.debug(input, ['binning']);
+
   var output  = this._output.bin,
       step    = this.param('step'),
       steps   = this.param('steps'),

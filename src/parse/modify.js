@@ -1,7 +1,7 @@
 var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     tuple = require('vega-dataflow/src/Tuple'),
-    log = require('../util/log'),
+    log = require('vega-logging'),
     C = require('../util/constants');
 
 var filter = function(field, value, src, dest) {

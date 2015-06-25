@@ -1,5 +1,6 @@
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Filter(graph) {
@@ -14,6 +15,8 @@ var prototype = (Filter.prototype = Object.create(Transform.prototype));
 prototype.constructor = Filter;
 
 prototype.transform = function(input) {
+  log.debug(input, ['filtering']);
+
   var output = ChangeSet.create(input),
       graph = this._graph,
       skip = this._skip,

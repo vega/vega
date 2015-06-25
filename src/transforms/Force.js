@@ -1,5 +1,6 @@
 var d3 = require('d3'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Force(graph) {
@@ -36,6 +37,8 @@ var prototype = (Force.prototype = Object.create(Transform.prototype));
 prototype.constructor = Force;
 
 prototype.transform = function(nodeInput) {
+  log.debug(input, ['force']);
+
   // get variables
   var linkInput = this.param('links').source.last(),
       layout = this._layout,

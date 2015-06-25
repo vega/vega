@@ -2,6 +2,7 @@ var util = require('datalib/src/util'),
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
     Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging'),
     Transform = require('./Transform'),
     Facetor = require('./Facetor');
 
@@ -131,6 +132,8 @@ function spoof_prev(x) {
 }
 
 prototype.transform = function(input, reset) {
+  log.debug(input, ['aggregate']);
+
   var output = ChangeSet.create(input);
   if (reset) this._reset(input, output);
 

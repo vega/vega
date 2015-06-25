@@ -1,6 +1,7 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
 
@@ -37,6 +38,8 @@ var prototype = (Treemap.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Treemap;
 
 prototype.batchTransform = function(input, data) {
+  log.debug(input, ['treemap']);
+
   // get variables
   var layout = this._layout,
       output = this._output;

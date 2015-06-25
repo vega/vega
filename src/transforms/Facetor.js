@@ -3,6 +3,7 @@ var Aggregator = require('datalib/src/aggregate/aggregator'),
     Flags = Aggregator.Flags,
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     facetID = 1;
 
 function Facetor() {
@@ -25,6 +26,7 @@ prototype._ingest = function(t) {
 prototype._assign = Tuple.set;
 
 function disconnect_cell(facet) {
+  log.debug(input, ["deleting cell", this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);

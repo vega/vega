@@ -1,6 +1,7 @@
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
     Collector = require('vega-dataflow/src/Collector'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Cross(graph) {
@@ -81,6 +82,8 @@ function upFields(input, output) {
 }
 
 prototype.transform = function(input) {
+  log.debug(input, ['crossing']);
+
   // Materialize the current datasource. TODO: share collectors
   this._collector.evaluate(input);
 

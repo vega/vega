@@ -1,5 +1,6 @@
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Fold(graph) {
@@ -43,6 +44,8 @@ function fn(data, on, out) {
 }
 
 prototype.transform = function(input, reset) {
+  log.debug(input, ['folding']);
+
   var fold = this,
       on = this.param('fields'),
       output = ChangeSet.create(input);

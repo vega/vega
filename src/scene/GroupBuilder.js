@@ -2,11 +2,11 @@ var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Collector = require('vega-dataflow/src/Collector'),
     Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
     parseAxes = require('../parse/axes'),
     parseLegends = require('../parse/legends'),
-    log = require('../util/log'),
     C = require('../util/constants');
 
 function GroupBuilder() {

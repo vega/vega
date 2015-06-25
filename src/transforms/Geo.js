@@ -1,6 +1,7 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Geo(graph) {
@@ -58,6 +59,8 @@ var prototype = (Geo.prototype = Object.create(Transform.prototype));
 prototype.constructor = Geo;
 
 prototype.transform = function(input) {
+  log.debug(input, ['geo']);
+
   var output = this._output,
       lon = this.param('lon').accessor,
       lat = this.param('lat').accessor,

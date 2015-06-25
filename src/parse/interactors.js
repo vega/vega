@@ -1,7 +1,7 @@
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
+    log = require('vega-logging'),
     config = require('../util/config'),
-    log = require('../util/log'),
     C = require('../util/constants');
 
 function parseInteractors(model, spec, defFactory) {

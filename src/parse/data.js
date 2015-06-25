@@ -1,8 +1,8 @@
 var load = require('datalib/src/import/load'),
     read = require('datalib/src/import/read'),
     util = require('datalib/src/util'),
+    log = require('vega-logging'),
     config = require('../util/config'),
-    log = require('../util/log'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
 

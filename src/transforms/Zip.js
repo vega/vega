@@ -1,5 +1,6 @@
 var util = require('datalib/src/util'),
     Collector = require('vega-dataflow/src/Collector'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Zip(graph) {
@@ -27,6 +28,8 @@ function mp(k) {
 }
 
 prototype.transform = function(input) {
+  log.debug(input, ['zipping']);
+
   var w = this.param('with'),
       wds = w.source,
       woutput = wds.last(),

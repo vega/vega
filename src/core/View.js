@@ -3,11 +3,11 @@ var d3 = require('d3'),
     canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    log = require('vega-logging'),
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition'),
     config = require('../util/config'),
-    log = require('../util/log'),
     changeset = require('vega-dataflow/src/ChangeSet');
 
 function View(el, width, height) {
@@ -283,7 +283,7 @@ function build() {
     .router(true);
 
   v._renderNode.evaluate = function(input) {
-    log.debug(input, ["rendering"]);
+    log.debug(input, ['rendering']);
 
     var s = v._model.scene(),
         h = v._handler,

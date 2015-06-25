@@ -1,5 +1,6 @@
 var util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
 
@@ -24,6 +25,8 @@ var prototype = (Stack.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Stack;
 
 prototype.batchTransform = function(input, data) {
+  log.debug(input, ['stacking']);
+
   var groupby = this.param('groupby').accessor,
       sortby = util.comparator(this.param('sortby').field),
       value = this.param('value').accessor,

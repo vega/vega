@@ -9,6 +9,7 @@
     "vega-dataflow": "vega/vega-dataflow",
     "vega-expression": "vega/vega-expression",
     "vega-scenegraph": "vega/vega-scenegraph",
+    "vega-logging": "vega/vega-logging",
     "yargs": "^3.2.1"
   },
   "optionalDependencies": {

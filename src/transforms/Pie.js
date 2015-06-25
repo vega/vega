@@ -1,6 +1,7 @@
 var d3 = require('d3'),
     gen  = require('datalib/src/generate'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
 
@@ -28,6 +29,8 @@ prototype.constructor = Pie;
 function ones() { return 1; }
 
 prototype.batchTransform = function(input, data) {
+  log.debug(input, ['pie']);
+
   var output = this._output,
       value = this.param("value").accessor || ones,
       start = this.param("startAngle"),

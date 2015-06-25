@@ -1,6 +1,7 @@
 var d3 = require('d3'),
     util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Geo = require('./Geo'),
     Transform = require('./Transform');
 
@@ -21,6 +22,8 @@ var prototype = (GeoPath.prototype = Object.create(Transform.prototype));
 prototype.constructor = GeoPath;
 
 prototype.transform = function(input) {
+  log.debug(input, ['geopath']);
+
   var output = this._output,
       geojson = this.param('value').accessor || util.identity,
       proj = Geo.d3Projection.call(this),

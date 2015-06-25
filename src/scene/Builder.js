@@ -3,10 +3,10 @@ var util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    log = require('vega-logging'),
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
     parseData = require('../parse/data'),
-    log = require('../util/log'),
     C = require('../util/constants');
 
 function Builder() {    

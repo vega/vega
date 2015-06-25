@@ -2,8 +2,8 @@ var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging'),
     C = require('../util/constants'),
-    log = require('../util/log'),
     EMPTY = {};
 
 function Encoder(graph, mark) {

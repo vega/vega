@@ -3,8 +3,8 @@ var d3 = require('d3'),
     changeset = require('vega-dataflow/src/ChangeSet'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging'),
     Aggregate = require('../transforms/Aggregate'),
-    log = require('../util/log'),
     config = require('../util/config'),
     C = require('../util/constants');
 

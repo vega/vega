@@ -1,9 +1,9 @@
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    log = require('vega-logging'),
     Encoder = require('./Encoder'),
-    C = require('../util/constants'),
-    log = require('../util/log');
+    C = require('../util/constants');
 
 function Bounder(graph, mark) {
   this._mark = mark;

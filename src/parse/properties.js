@@ -2,8 +2,8 @@ var d3 = require('d3'),
     template = require('datalib/src/template'),
     util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
-    config = require('../util/config'),
-    log = require('../util/log');
+    log = require('vega-logging'),
+    config = require('../util/config');
 
 var DEPS = ["signals", "scales", "data", "fields"];
 

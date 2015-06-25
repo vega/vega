@@ -1,4 +1,5 @@
 var Tuple = require('vega-dataflow/src/Tuple'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function LinkPath(graph) {
@@ -68,6 +69,8 @@ var shapes = {
 };
 
 prototype.transform = function(input) {
+  log.debug(input, ['linkpath']);
+
   var output = this._output,
       shape = shapes[this.param('shape')] || shapes.line,
       source = this.param('source').accessor,

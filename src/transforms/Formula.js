@@ -1,5 +1,6 @@
 var Tuple = require('vega-dataflow/src/Tuple'),
     Deps = require('vega-dataflow/src/Dependencies'),
+    log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Formula(graph) {
@@ -16,6 +17,8 @@ var prototype = (Formula.prototype = Object.create(Transform.prototype));
 prototype.constructor = Formula;
 
 prototype.transform = function(input) {
+  log.debug(input, ['formulating']);
+
   var g = this._graph,
       field = this.param('field'),
       expr = this.param('expr'),

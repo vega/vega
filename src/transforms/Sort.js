@@ -1,4 +1,5 @@
 var util = require('datalib/src/util'),
+    log  = require('vega-logging'),
     Transform = require('./Transform');
 
 function Sort(graph) {
@@ -11,6 +12,8 @@ var prototype = (Sort.prototype = Object.create(Transform.prototype));
 prototype.constructor = Sort;
 
 prototype.transform = function(input) {
+  log.debug(input, ['sorting']);
+
   if (input.add.length || input.mod.length || input.rem.length) {
     input.sort = util.comparator(this.param('by').field);
   }
