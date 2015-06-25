@@ -114,8 +114,8 @@ module.exports = {
     type: 'text',
     nest: false,
     attr: function(emit, o) {
-      var x = o.x || 0,
-          y = o.y || 0,
+      var x = (o.x || 0) + (o.dx || 0),
+          y = (o.y || 0) + (o.dy || 0) + font.offset(o),
           a = o.angle || 0,
           r = o.radius || 0, t;
 
@@ -125,8 +125,6 @@ module.exports = {
         y += r * Math.sin(t);
       }
 
-      x += (o.dx || 0);
-      y += (o.dy || 0) + font.offset(o);
       emit('text-anchor', textAlign[o.align] || 'start');
       emit('transform', 'translate('+x+','+y+')' + (a?' rotate('+a+')':''));
     }
