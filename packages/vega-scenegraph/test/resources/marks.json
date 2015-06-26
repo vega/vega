@@ -108,7 +108,8 @@
       {"x":30, "y":120, "text":"D", "dx":0, "dy":0, "radius":10, "theta":1.57, "angle":45, "stroke":"blue", "strokeOpacity":0.5},
       {"text":"E", "dx":1, "dy":2, "fontSize":14, "radius":5, "fontWeight":"bold", "fontStyle":"italic", "stroke":"red"},
       {"x":10, "y":200, "fill":"green", "opacity":0},
-      {"x":10, "y":200, "stroke":"green", "strokeWidth":0}
+      {"x":10, "y":200, "stroke":"green", "strokeWidth":0},
+      {"x":100, "y":200, "text":"hello", "dx":50, "angle":-45, "fill":"steelblue"}
     ]
   },
   "group": {

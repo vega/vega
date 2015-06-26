@@ -210,6 +210,7 @@ describe('canvas handler', function() {
     var mark = marks.text;
     var handler = new Handler().initialize(render(mark, 500, 500));
     assert.ok(handler.pick(mark, 3, 45, 3, 45));
+    assert.ok(handler.pick(mark, 140, 160, 140, 160));
     assert.notOk(handler.pick(mark, 50, 120, 50, 120));
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
   });
