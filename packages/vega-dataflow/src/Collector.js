@@ -1,4 +1,5 @@
-var ChangeSet = require('./ChangeSet'),
+var log = require('vega-logging'),
+    ChangeSet = require('./ChangeSet'),
     Tuple = require('./Tuple'),
     Base = require('./Node').prototype;
 
@@ -16,11 +17,7 @@ prototype.data = function() {
 };
 
 prototype.evaluate = function(input) {
-  if (input.reflow) {
-    input = ChangeSet.create(input);
-    input.mod = this._data.slice();
-    return input;
-  }
+  log.debug(input, ["collecting"]);
 
   if (input.rem.length) {
     this._data = Tuple.idFilter(this._data, input.rem);
@@ -32,6 +29,11 @@ prototype.evaluate = function(input) {
 
   if (input.sort) {
     this._data.sort(input.sort);
+  }
+
+  if (input.reflow) {
+    input.mod = input.mod.concat(Tuple.idFilter(this._data, 
+      input.add, input.mod, input.rem));
   }
 
   return input;
