@@ -21,8 +21,8 @@ function draw(g, scene, bounds) {
     g.font = font.string(o);
     g.textAlign = o.align || 'left';
 
-    x = (o.x || 0) + (o.dx || 0);
-    y = (o.y || 0) + (o.dy || 0) + font.offset(o);
+    x = (o.x || 0);
+    y = (o.y || 0) + font.offset(o);
     if ((r = o.radius)) {
       t = (o.theta || 0) - Math.PI/2;
       x += r * Math.cos(t);
@@ -35,6 +35,8 @@ function draw(g, scene, bounds) {
       g.rotate(o.angle * Math.PI/180);
       x = y = 0; // reset x, y
     }
+    x += (o.dx || 0);
+    y += (o.dy || 0);
 
     if (o.fill && util.fill(g, o, opac)) {
       g.fillText(o.text, x, y);
@@ -50,6 +52,7 @@ function hit(g, o, x, y, gx, gy) {
   if (o.fontSize <= 0) return false;
   if (!o.angle) return true; // bounds sufficient if no rotation
 
+  // project point into space of unrotated bounds
   var b = textBounds(o, tempBounds, true),
       a = -o.angle * Math.PI / 180,
       cos = Math.cos(a),

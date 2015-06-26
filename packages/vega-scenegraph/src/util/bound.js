@@ -164,8 +164,10 @@ function symbol(o, bounds) {
 }
 
 function text(o, bounds, noRotate) {
-  var x = (o.x || 0) + (o.dx || 0),
-      y = (o.y || 0) + (o.dy || 0),
+  var dx = (o.dx || 0),
+      dy = (o.dy || 0),
+      x = (o.x || 0) + dx,
+      y = (o.y || 0) + dy,
       h = font.size(o),
       a = o.align,
       r = o.radius || 0,
@@ -180,7 +182,7 @@ function text(o, bounds, noRotate) {
     y += r * Math.sin(t);
   }
 
-  // horizontal
+  // horizontal alignment
   if (a === 'center') {
     x = x - (w / 2);
   } else if (a === 'right') {
@@ -189,12 +191,13 @@ function text(o, bounds, noRotate) {
     // left by default, do nothing
   }
 
-  // vertical
+  // vertical alignment
+  // assume 4/5 (0.8) height offset from alphabetic baseline
   y += font.offset(o) - Math.round(0.8*h);
   
   bounds.set(x, y, x+w, y+h);
   if (o.angle && !noRotate) {
-    bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
+    bounds.rotate(o.angle*Math.PI/180, x-dx, y-dy);
   }
   return bounds.expand(noRotate ? 0 : 1);
 }

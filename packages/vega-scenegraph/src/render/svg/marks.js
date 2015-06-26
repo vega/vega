@@ -3,8 +3,12 @@ var font = require('../../util/font'),
     textAlign = SVG.textAlign,
     path = SVG.path;
 
-function translate(o) {
-  return 'translate(' + (o.x || 0) + ',' + (o.y || 0) + ')';
+function translateItem(o) {
+  return translate(o.x || 0, o.y || 0);
+}
+
+function translate(x, y) {
+  return 'translate(' + x + ',' + y + ')';
 }
 
 module.exports = {
@@ -12,7 +16,7 @@ module.exports = {
     tag:  'path',
     type: 'arc',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('d', path.arc(o));
     }
   },
@@ -30,7 +34,7 @@ module.exports = {
     type: 'group',
     attr: function(emit, o, renderer) {
       var id = null, defs, c;
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       if (o.clip) {
         defs = renderer._defs;
         id = o.clip_id || (o.clip_id = 'clip' + defs.clip_id++);
@@ -60,7 +64,7 @@ module.exports = {
       y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
 
       emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
-      emit('transform', 'translate('+x+','+y+')');
+      emit('transform', translate(x, y));
       emit('width', w);
       emit('height', h);
     }
@@ -78,7 +82,7 @@ module.exports = {
     tag:  'path',
     type: 'path',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('d', o.path);
     }
   },
@@ -87,7 +91,7 @@ module.exports = {
     type: 'rect',
     nest: false,
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('width', o.width || 0);
       emit('height', o.height || 0);
     }
@@ -96,7 +100,7 @@ module.exports = {
     tag:  'line',
     type: 'rule',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('x2', o.x2 != null ? o.x2 - (o.x||0) : 0);
       emit('y2', o.y2 != null ? o.y2 - (o.y||0) : 0);
     }
@@ -105,7 +109,7 @@ module.exports = {
     tag:  'path',
     type: 'symbol',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('d', path.symbol(o));
     }
   },
@@ -114,8 +118,10 @@ module.exports = {
     type: 'text',
     nest: false,
     attr: function(emit, o) {
-      var x = (o.x || 0) + (o.dx || 0),
-          y = (o.y || 0) + (o.dy || 0) + font.offset(o),
+      var dx = (o.dx || 0),
+          dy = (o.dy || 0),
+          x = (o.x || 0),
+          y = (o.y || 0) + font.offset(o),
           a = o.angle || 0,
           r = o.radius || 0, t;
 
@@ -126,7 +132,14 @@ module.exports = {
       }
 
       emit('text-anchor', textAlign[o.align] || 'start');
-      emit('transform', 'translate('+x+','+y+')' + (a?' rotate('+a+')':''));
+      
+      if (a) {
+        t = translate(x, y) + ' rotate('+a+')';
+        if (dx || dy) t += ' ' + translate(dx, dy);
+      } else {
+        t = translate(x+dx, y+dy);
+      }
+      emit('transform', t);
     }
   }
 };
