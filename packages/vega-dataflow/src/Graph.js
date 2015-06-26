@@ -1,9 +1,10 @@
 var Heap = require('heap'),
     util = require('datalib/src/util'),
+    ChangeSet = require('./ChangeSet'),
     DataSource = require('./DataSource'),
     Collector = require('./Collector'),
     Signal = require('./Signal'),
-    DEP = require('./Dependencies');
+    Deps = require('./Dependencies');
 
 function Graph() {
 }
@@ -103,12 +104,29 @@ prototype.signalRef = function(ref) {
 };
 
 var schedule = function(a, b) {
-  // If the nodes are equal, propagate the non-reflow pulse first,
-  // so that we can ignore subsequent reflow pulses. 
-  return (a.rank === b.rank) ? (a.pulse.reflow ? 1 : -1) : (a.rank - b.rank);
+  if (a.rank !== b.rank) {  
+    // Topological sort
+    return a.rank - b.rank;
+  } else {
+    // If queueing multiple pulses to the same node, then there will be
+    // at most one pulse with a changeset (add/mod/rem), and the remainder
+    // will be reflows. Combine the changeset and reflows into a single pulse
+    // and queue that first. Subsequent reflow-only pulses will be pruned.
+    var pa = a.pulse, pb = b.pulse,
+        paCS = pa.add.length || pa.mod.length || pa.rem.length,
+        pbCS = pb.add.length || pb.mod.length || pb.rem.length;
+
+    pa.reflow = pb.reflow = pa.reflow || pb.reflow;
+
+    if (paCS && pbCS) throw Error('Both pulses have changesets.');
+    return paCS ? -1 : 1;
+  }
 };
 
-prototype.propagate = function(pulse, node) {
+// Stamp should be specified with caution. It is necessary for inline datasources,
+// which need to be populated during the same cycle even though propagation has
+// passed that part of the dataflow graph.  
+prototype.propagate = function(pulse, node, stamp) {
   var v, l, n, p, r, i, len, reflowed;
 
   // new PQ with each propagation cycle so that we can pulse branches
@@ -118,7 +136,7 @@ prototype.propagate = function(pulse, node) {
 
   if (pulse.stamp) throw Error('Pulse already has a non-zero stamp.');
 
-  pulse.stamp = ++this._stamp;
+  pulse.stamp = stamp || ++this._stamp;
   pq.push({node: node, pulse: pulse, rank: node.rank()});
 
   while (pq.size() > 0) {
@@ -143,9 +161,12 @@ prototype.propagate = function(pulse, node) {
 
     // Even if we didn't run the node, we still want to propagate the pulse. 
     if (p !== this.doNotPropagate) {
-      p.reflow = p.reflow || n.reflows(); // If skipped eval of reflows node
+      if (!p.reflow && n.reflows()) { // If skipped eval of reflows node
+        p = ChangeSet.create(p, true);
+      }
+
       for (i=0, len=l.length; i<len; ++i) {
-        pq.push({node: l[i], pulse: p, rank: l[i]._rank});
+        pq.push({node: l[i], pulse: p, rank: l[i]._rank, src: n});
       }
     }
   }
@@ -180,8 +201,8 @@ prototype.connect = function(branch) {
   var graph = this;
 
   forEachNode.call(this, branch, function(n, c, i) {
-    var data = n.dependency(DEP.DATA),
-        signals = n.dependency(DEP.SIGNALS);
+    var data = n.dependency(Deps.DATA),
+        signals = n.dependency(Deps.SIGNALS);
 
     if (data.length > 0) {
       data.forEach(function(d) { 
@@ -207,8 +228,8 @@ prototype.disconnect = function(branch) {
   var graph = this;
 
   forEachNode.call(this, branch, function(n, c) {
-    var data = n.dependency(DEP.DATA),
-        signals = n.dependency(DEP.SIGNALS);
+    var data = n.dependency(Deps.DATA),
+        signals = n.dependency(Deps.SIGNALS);
 
     if (data.length > 0) {
       data.forEach(function(d) { graph.data(d).removeListener(c); });

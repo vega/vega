@@ -134,37 +134,39 @@ prototype.pipeline = function(pipeline) {
   input.data = dsData;
 
   input.evaluate = function(input) {
-    log.debug(input, ["input", ds._name]);
+    log.debug(input, ['input', ds._name]);
 
     var delta = ds._input, 
-        out = ChangeSet.create(input), f;
+        out = ChangeSet.create(input), f, ids = {};
 
     // Delta might contain fields updated through API
     for (f in delta.fields) {
       out.fields[f] = 1;
     }
 
-    if (input.reflow) {
-      out.mod = ds._data.slice();
-    } else {
-      // update data
-      if (delta.rem.length) {
-        ds._data = Tuple.idFilter(ds._data, delta.rem);
-      }
-
-      if (delta.add.length) {
-        ds._data = ds._data.concat(delta.add);
-      }
-
-      // reset change list
-      ds._input = ChangeSet.create();
-
-      out.add = delta.add; 
-      out.mod = delta.mod;
-      out.rem = delta.rem;
+    // update data
+    if (delta.rem.length) {
+      ds._data = Tuple.idFilter(ds._data, delta.rem);
     }
 
-    return (out.facet = ds._facet, out);
+    if (delta.add.length) {
+      ds._data = ds._data.concat(delta.add);
+    }
+
+    // if reflowing, add any other tuples not currently in changeset
+    if (input.reflow) {
+      delta.mod = delta.mod.concat(Tuple.idFilter(ds._data,
+        delta.add, delta.mod, delta.rem));
+    }
+
+    // reset change list
+    ds._input = ChangeSet.create();
+
+    out.add = delta.add; 
+    out.mod = delta.mod;
+    out.rem = delta.rem;
+    out.facet = ds._facet;
+    return out;
   };
 
   pipeline.unshift(input);
@@ -182,8 +184,8 @@ prototype.pipeline = function(pipeline) {
     dsData;
 
   output.evaluate = function(input) {
-    log.debug(input, ["output", ds._name]);
-    
+    log.debug(input, ['output', ds._name]);
+
     var output = ChangeSet.create(input, true);
 
     if (ds._facet) {

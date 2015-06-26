@@ -1,4 +1,5 @@
-var SENTINEL = require('./Sentinel'),
+var util = require('datalib/src/util'),
+    SENTINEL = require('./Sentinel'),
     tupleID = 0;
 
 // Object.create is expensive. So, when ingesting, trust that the
@@ -45,9 +46,13 @@ function idMap(a) {
   return ids;
 }
 
-function idFilter(list, rem) {
-  var ids = idMap(rem);
-  return list.filter(function(x) { return !ids[x._id]; });
+function idFilter(data) {
+  var ids = {};
+  for (var i=1, len=arguments.length; i<len; ++i) {
+    util.extend(ids, idMap(arguments[i]));
+  }
+
+  return data.filter(function(x) { return !ids[x._id]; });
 }
 
 module.exports = {
