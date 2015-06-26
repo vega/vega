@@ -124,7 +124,8 @@ function recurse(input) {
       // but try to inline it if we can to minimize graph dispatches.
       inline = (def.type !== Types.GROUP);
       inline = inline && (this._graph.data(c.from) !== undefined); 
-      inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
+      inline = inline && (pipeline[pipeline.length-1].listeners().length === 1); // Reactive geom source
+      inline = inline && (def.from && !def.from.mark); // Reactive geom target
       c.inline = inline;
 
       if (inline) this._graph.evaluate(input, c.builder);

@@ -2892,7 +2892,8 @@ module.exports = {
   copy: copy
 };
 },{"./Dependencies":29}],27:[function(require,module,exports){
-var ChangeSet = require('./ChangeSet'),
+var log = require('vega-logging'),
+    ChangeSet = require('./ChangeSet'),
     Tuple = require('./Tuple'),
     Base = require('./Node').prototype;
 
@@ -2910,11 +2911,7 @@ prototype.data = function() {
 };
 
 prototype.evaluate = function(input) {
-  if (input.reflow) {
-    input = ChangeSet.create(input);
-    input.mod = this._data.slice();
-    return input;
-  }
+  log.debug(input, ["collecting"]);
 
   if (input.rem.length) {
     this._data = Tuple.idFilter(this._data, input.rem);
@@ -2928,12 +2925,16 @@ prototype.evaluate = function(input) {
     this._data.sort(input.sort);
   }
 
+  if (input.reflow) {
+    input.mod = input.mod.concat(Tuple.idFilter(this._data, 
+      input.add, input.mod, input.rem));
+  }
+
   return input;
 };
 
 module.exports = Collector;
-
-},{"./ChangeSet":26,"./Node":31,"./Tuple":34}],28:[function(require,module,exports){
+},{"./ChangeSet":26,"./Node":31,"./Tuple":34,"vega-logging":25}],28:[function(require,module,exports){
 var log = require('vega-logging'),
     ChangeSet = require('./ChangeSet'), 
     Collector = require('./Collector'),
@@ -3073,34 +3074,36 @@ prototype.pipeline = function(pipeline) {
     log.debug(input, ['input', ds._name]);
 
     var delta = ds._input, 
-        out = ChangeSet.create(input), f;
+        out = ChangeSet.create(input), f, ids = {};
 
     // Delta might contain fields updated through API
     for (f in delta.fields) {
       out.fields[f] = 1;
     }
 
-    if (input.reflow) {
-      out.mod = ds._data.slice();
-    } else {
-      // update data
-      if (delta.rem.length) {
-        ds._data = Tuple.idFilter(ds._data, delta.rem);
-      }
-
-      if (delta.add.length) {
-        ds._data = ds._data.concat(delta.add);
-      }
-
-      // reset change list
-      ds._input = ChangeSet.create();
-
-      out.add = delta.add; 
-      out.mod = delta.mod;
-      out.rem = delta.rem;
+    // update data
+    if (delta.rem.length) {
+      ds._data = Tuple.idFilter(ds._data, delta.rem);
     }
 
-    return (out.facet = ds._facet, out);
+    if (delta.add.length) {
+      ds._data = ds._data.concat(delta.add);
+    }
+
+    // if reflowing, add any other tuples not currently in changeset
+    if (input.reflow) {
+      delta.mod = delta.mod.concat(Tuple.idFilter(ds._data,
+        delta.add, delta.mod, delta.rem));
+    }
+
+    // reset change list
+    ds._input = ChangeSet.create();
+
+    out.add = delta.add; 
+    out.mod = delta.mod;
+    out.rem = delta.rem;
+    out.facet = ds._facet;
+    return out;
   };
 
   pipeline.unshift(input);
@@ -3218,10 +3221,11 @@ deps.ALL.forEach(function(k) { deps[k.toUpperCase()] = k; });
 },{}],30:[function(require,module,exports){
 var Heap = require('heap'),
     util = require('datalib/src/util'),
+    ChangeSet = require('./ChangeSet'),
     DataSource = require('./DataSource'),
     Collector = require('./Collector'),
     Signal = require('./Signal'),
-    DEP = require('./Dependencies');
+    Deps = require('./Dependencies');
 
 function Graph() {
 }
@@ -3321,12 +3325,29 @@ prototype.signalRef = function(ref) {
 };
 
 var schedule = function(a, b) {
-  // If the nodes are equal, propagate the non-reflow pulse first,
-  // so that we can ignore subsequent reflow pulses. 
-  return (a.rank === b.rank) ? (a.pulse.reflow ? 1 : -1) : (a.rank - b.rank);
+  if (a.rank !== b.rank) {  
+    // Topological sort
+    return a.rank - b.rank;
+  } else {
+    // If queueing multiple pulses to the same node, then there will be
+    // at most one pulse with a changeset (add/mod/rem), and the remainder
+    // will be reflows. Combine the changeset and reflows into a single pulse
+    // and queue that first. Subsequent reflow-only pulses will be pruned.
+    var pa = a.pulse, pb = b.pulse,
+        paCS = pa.add.length || pa.mod.length || pa.rem.length,
+        pbCS = pb.add.length || pb.mod.length || pb.rem.length;
+
+    pa.reflow = pb.reflow = pa.reflow || pb.reflow;
+
+    if (paCS && pbCS) throw Error('Both pulses have changesets.');
+    return paCS ? -1 : 1;
+  }
 };
 
-prototype.propagate = function(pulse, node) {
+// Stamp should be specified with caution. It is necessary for inline datasources,
+// which need to be populated during the same cycle even though propagation has
+// passed that part of the dataflow graph.  
+prototype.propagate = function(pulse, node, stamp) {
   var v, l, n, p, r, i, len, reflowed;
 
   // new PQ with each propagation cycle so that we can pulse branches
@@ -3336,7 +3357,7 @@ prototype.propagate = function(pulse, node) {
 
   if (pulse.stamp) throw Error('Pulse already has a non-zero stamp.');
 
-  pulse.stamp = ++this._stamp;
+  pulse.stamp = stamp || ++this._stamp;
   pq.push({node: node, pulse: pulse, rank: node.rank()});
 
   while (pq.size() > 0) {
@@ -3361,9 +3382,12 @@ prototype.propagate = function(pulse, node) {
 
     // Even if we didn't run the node, we still want to propagate the pulse. 
     if (p !== this.doNotPropagate) {
-      p.reflow = p.reflow || n.reflows(); // If skipped eval of reflows node
+      if (!p.reflow && n.reflows()) { // If skipped eval of reflows node
+        p = ChangeSet.create(p, true);
+      }
+
       for (i=0, len=l.length; i<len; ++i) {
-        pq.push({node: l[i], pulse: p, rank: l[i]._rank});
+        pq.push({node: l[i], pulse: p, rank: l[i]._rank, src: n});
       }
     }
   }
@@ -3398,8 +3422,8 @@ prototype.connect = function(branch) {
   var graph = this;
 
   forEachNode.call(this, branch, function(n, c, i) {
-    var data = n.dependency(DEP.DATA),
-        signals = n.dependency(DEP.SIGNALS);
+    var data = n.dependency(Deps.DATA),
+        signals = n.dependency(Deps.SIGNALS);
 
     if (data.length > 0) {
       data.forEach(function(d) { 
@@ -3425,8 +3449,8 @@ prototype.disconnect = function(branch) {
   var graph = this;
 
   forEachNode.call(this, branch, function(n, c) {
-    var data = n.dependency(DEP.DATA),
-        signals = n.dependency(DEP.SIGNALS);
+    var data = n.dependency(Deps.DATA),
+        signals = n.dependency(Deps.SIGNALS);
 
     if (data.length > 0) {
       data.forEach(function(d) { graph.data(d).removeListener(c); });
@@ -3458,7 +3482,7 @@ prototype.evaluate = function(pulse, node) {
 
 module.exports = Graph;
 
-},{"./Collector":27,"./DataSource":28,"./Dependencies":29,"./Signal":33,"datalib/src/util":22,"heap":23}],31:[function(require,module,exports){
+},{"./ChangeSet":26,"./Collector":27,"./DataSource":28,"./Dependencies":29,"./Signal":33,"datalib/src/util":22,"heap":23}],31:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL,
     nodeID = 1;
 
@@ -3702,7 +3726,8 @@ prototype.off = function(handler) {
 module.exports = Signal;
 
 },{"./ChangeSet":26,"./Node":31}],34:[function(require,module,exports){
-var SENTINEL = require('./Sentinel'),
+var util = require('datalib/src/util'),
+    SENTINEL = require('./Sentinel'),
     tupleID = 0;
 
 // Object.create is expensive. So, when ingesting, trust that the
@@ -3749,9 +3774,13 @@ function idMap(a) {
   return ids;
 }
 
-function idFilter(list, rem) {
-  var ids = idMap(rem);
-  return list.filter(function(x) { return !ids[x._id]; });
+function idFilter(data) {
+  var ids = {};
+  for (var i=1, len=arguments.length; i<len; ++i) {
+    util.extend(ids, idMap(arguments[i]));
+  }
+
+  return data.filter(function(x) { return !ids[x._id]; });
 }
 
 module.exports = {
@@ -3765,7 +3794,7 @@ module.exports = {
   idFilter: idFilter
 };
 
-},{"./Sentinel":32}],35:[function(require,module,exports){
+},{"./Sentinel":32,"datalib/src/util":22}],35:[function(require,module,exports){
 module.exports = {
   ChangeSet:    require('./ChangeSet'),
   Collector:    require('./Collector'),
@@ -3775,10 +3804,11 @@ module.exports = {
   Node:         require('./Node'),
   Sentinel:     require('./Sentinel'),
   Signal:       require('./Signal'),
-  Tuple:        require('./Tuple')
+  Tuple:        require('./Tuple'),
+  debug:        require('vega-logging').debug
 };
 
-},{"./ChangeSet":26,"./Collector":27,"./DataSource":28,"./Dependencies":29,"./Graph":30,"./Node":31,"./Sentinel":32,"./Signal":33,"./Tuple":34}],36:[function(require,module,exports){
+},{"./ChangeSet":26,"./Collector":27,"./DataSource":28,"./Dependencies":29,"./Graph":30,"./Node":31,"./Sentinel":32,"./Signal":33,"./Tuple":34,"vega-logging":25}],36:[function(require,module,exports){
 function toMap(list) {
   var map = {}, i, n;
   for (i=0, n=list.length; i<n; ++i) map[list[i]] = 1;
@@ -10150,13 +10180,6 @@ function streaming(src) {
       cs  = this._changeset,
       api = {};
 
-  if (util.keys(cs.signals).length > 0) {
-    throw Error(
-      "New signal values are not reflected in the visualization." +
-      " Please call view.update() before updating data values."
-    );
-  }
-
   // If we have it stashed, don't create a new closure. 
   if (this._api[src]) return this._api[src];
 
@@ -10205,13 +10228,6 @@ prototype.signal = function(name, value) {
 
   if (!arguments.length) return m.signalValues();
   else if (arguments.length == 1 && util.isString(name)) return m.signalValues(name);
-
-  if (util.keys(cs.data).length > 0) {
-    throw Error(
-      "New data values are not reflected in the visualization." +
-      " Please call view.update() before updating signal values."
-    );
-  }
 
   if (arguments.length == 2) {
     setter = {};
@@ -13067,7 +13083,7 @@ function parseStreams(view) {
         val = parseSignals.scale(model, spec, val);
       }
 
-      if (val !== sig.value()) {
+      if (val !== sig.value() || sig.verbose()) {
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.reflow = true;        
@@ -13096,7 +13112,7 @@ function parseStreams(view) {
         // Until then, prevent old middles entering stream on new start.
         if (input.signals[name+START]) return model.doNotPropagate;
 
-        if (s[MIDDLE].value() !== sig.value()) {
+        if (s[MIDDLE].value() !== sig.value() || sig.verbose()) {
           sig.value(s[MIDDLE].value());
           input.signals[name] = 1;
         }
@@ -13172,6 +13188,7 @@ module.exports = parseTransforms;
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    ChangeSet = require('vega-dataflow/src/ChangeSet'),
     log = require('vega-logging'),
     Encoder = require('./Encoder');
 
@@ -13214,12 +13231,11 @@ proto.evaluate = function(input) {
     bound.mark(this._mark, null, true);
   }
 
-  input.reflow = true;
-  return input;
+  return ChangeSet.create(input, true);
 };
 
 module.exports = Bounder;
-},{"./Encoder":104,"datalib/src/util":20,"vega-dataflow/src/Node":31,"vega-logging":41,"vega-scenegraph/src/util/bound":74}],103:[function(require,module,exports){
+},{"./Encoder":104,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":26,"vega-dataflow/src/Node":31,"vega-logging":41,"vega-scenegraph/src/util/bound":74}],103:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Item = require('vega-scenegraph/src/util/Item'),
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -13274,6 +13290,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._isSuper = (this._def.type !== "group"); 
   this._encoder = new Encoder(this._graph, this._mark);
   this._bounder = new Bounder(this._graph, this._mark);
+  this._output  = null; // Output changeset for reactive geom as Bounder reflows
 
   if (this._ds) { this._encoder.dependency(Deps.DATA, this._from); }
 
@@ -13326,14 +13343,20 @@ function inlineDs() {
 
   this._from = name;
   this._ds = parseData.datasource(this._graph, spec);
-  var revises = this._ds.revises();
+  var revises = this._ds.revises(), node;
 
   if (geom) {
     sibling = this.sibling(geom).revises(revises);
+
+    // Bounder reflows, so we need an intermediary node to propagate
+    // the output constructed by the Builder.
+    node = new Node(this._graph).addListener(this._ds.listener());
+    node.evaluate = function(input) { return sibling._output; };
+
     if (sibling._isSuper) {
-      sibling.addListener(this._ds.listener());
+      sibling.addListener(node);
     } else {
-      sibling._bounder.addListener(this._ds.listener());
+      sibling._bounder.addListener(node);
     }
   } else {
     // At this point, we have a new datasource but it is empty as
@@ -13348,7 +13371,7 @@ function inlineDs() {
     input.mod = output.mod;
     input.rem = output.rem;
     input.stamp = null;
-    this._graph.propagate(input, this._ds.listener());
+    this._graph.propagate(input, this._ds.listener(), output.stamp);
   }
 }
 
@@ -13391,7 +13414,7 @@ proto.sibling = function(name) {
 };
 
 proto.evaluate = function(input) {
-  log.debug(input, ["building", this._from, this._def.type]);
+  log.debug(input, ["building", (this._from || this._def.from), this._def.type]);
 
   var output, fullUpdate, fcs, data, name;
 
@@ -13411,9 +13434,8 @@ proto.evaluate = function(input) {
     if (fullUpdate) output.mod = this._mark.items.slice();
 
     fcs = this._ds.last();
-    if (!fcs) {
-      output.reflow = true;
-    } else if (fcs.stamp > this._stamp) {
+    if (!fcs) throw Error('Builder evaluated before backing DataSource');
+    if (fcs.stamp > this._stamp) {
       output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
     }
   } else {
@@ -13422,7 +13444,8 @@ proto.evaluate = function(input) {
     output = joinValues.call(this, input, data, fullUpdate);
   }
 
-  output = this._graph.evaluate(output, this._encoder);
+  // Stash output before Bounder for downstream reactive geometry.
+  this._output = output = this._graph.evaluate(output, this._encoder);
 
   // Supernodes calculate bounds too, but only on items marked dirty.
   if (this._isSuper) {
@@ -13502,7 +13525,7 @@ function joinValues(input, data, fullUpdate) {
     item.status = Status.EXIT;
     if (keyf) this._map[item.key] = item;
   }
-  
+
   join.call(this, data, keyf, next, output, prev, fullUpdate ? Tuple.idMap(data) : null);
 
   for (i=0, len=prev.length; i<len; ++i) {
@@ -13515,7 +13538,7 @@ function joinValues(input, data, fullUpdate) {
       output.rem.push(item);
     }
   }
-  
+
   return (this._mark.items = next, output);
 }
 
@@ -13791,7 +13814,8 @@ function recurse(input) {
       // but try to inline it if we can to minimize graph dispatches.
       inline = (def.type !== Types.GROUP);
       inline = inline && (this._graph.data(c.from) !== undefined); 
-      inline = inline && (pipeline[pipeline.length-1].listeners().length == 1); // Reactive geom
+      inline = inline && (pipeline[pipeline.length-1].listeners().length === 1); // Reactive geom source
+      inline = inline && (def.from && !def.from.mark); // Reactive geom target
       c.inline = inline;
 
       if (inline) this._graph.evaluate(input, c.builder);
@@ -13944,30 +13968,30 @@ var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefin
 
 var Properties = {width: 1, height: 1};
 var Types = {
-  LINEAR: "linear",
-  ORDINAL: "ordinal",
-  LOG: "log",
-  POWER: "pow",
-  SQRT: "sqrt",
-  TIME: "time",
-  TIME_UTC: "utc",
-  QUANTILE: "quantile",
-  QUANTIZE: "quantize",
-  THRESHOLD: "threshold",
-  SQRT: "sqrt"
+  LINEAR: 'linear',
+  ORDINAL: 'ordinal',
+  LOG: 'log',
+  POWER: 'pow',
+  SQRT: 'sqrt',
+  TIME: 'time',
+  TIME_UTC: 'utc',
+  QUANTILE: 'quantile',
+  QUANTIZE: 'quantize',
+  THRESHOLD: 'threshold',
+  SQRT: 'sqrt'
 };
 var DataRef = {
-  DOMAIN: "domain",
-  RANGE: "range",
+  DOMAIN: 'domain',
+  RANGE: 'range',
 
-  COUNT: "count",
-  GROUPBY: "groupby",
-  MIN: "min",
-  MAX: "max",
-  VALUE: "value",
+  COUNT: 'count',
+  GROUPBY: 'groupby',
+  MIN: 'min',
+  MAX: 'max',
+  VALUE: 'value',
 
-  ASC: "asc",
-  DESC: "desc"
+  ASC: 'asc',
+  DESC: 'desc'
 };
 
 function Scale(graph, def, parent) {
@@ -14010,7 +14034,7 @@ proto.dependency = function(type, deps) {
 
 function scale(group) {
   var name = this._def.name,
-      prev = name + ":prev",
+      prev = name + ':prev',
       s = instance.call(this, group.scale(name)),
       m = s.type===Types.ORDINAL ? ordinal : quantitative,
       rng = range.call(this, group);
@@ -14028,7 +14052,7 @@ function instance(scale) {
       type = this._def.type || Types.LINEAR;
   if (!scale || type !== scale.type) {
     var ctor = config.scale[type] || d3.scale[type];
-    if (!ctor) util.error("Unrecognized scale type: " + type);
+    if (!ctor) util.error('Unrecognized scale type: ' + type);
     (scale = ctor()).type = scale.type || type;
     scale.scaleName = this._def.name;
     scale._prev = {};
@@ -14110,9 +14134,9 @@ function quantitative(scale, rng, group) {
 
   // range
   // vertical scales should flip by default, so use XOR here
-  if (signal.call(this, def.range) === "height") rng = rng.reverse();
+  if (signal.call(this, def.range) === 'height') rng = rng.reverse();
   if (util.equal(prev.range, rng)) return;
-  scale[round && scale.rangeRound ? "rangeRound" : "range"](rng);
+  scale[round && scale.rangeRound ? 'rangeRound' : 'range'](rng);
   prev.range = rng;
   this._updated = true;
 
@@ -14124,7 +14148,7 @@ function quantitative(scale, rng, group) {
   if (nice) {
     if (def.type === Types.TIME) {
       interval = d3.time[nice];
-      if (!interval) log.error("Unrecognized interval: " + interval);
+      if (!interval) log.error('Unrecognized interval: ' + interval);
       scale.nice(interval);
     } else {
       scale.nice();
@@ -14144,7 +14168,7 @@ function getFields(ref, group) {
   return util.array(ref.field).map(function(f) {
     return f.parent ?
       util.accessor(f.parent)(group.datum) :
-      f; // String or {"signal"}
+      f; // String or {'signal'}
   });
 }
 
@@ -14175,7 +14199,7 @@ function getCache(which, def, scale, group) {
       atype = aggrType(def, scale),
       uniques = isUniques(scale),
       sort = def.sort,
-      ck = "_"+which,
+      ck = '_'+which,
       fields = getFields(refs[0], group),
       ref;
 
@@ -14187,14 +14211,14 @@ function getCache(which, def, scale, group) {
   if (uniques) {
     if (atype === Aggregate.TYPES.VALUE) {
       groupby = [{ name: DataRef.GROUPBY, get: util.identity }];
-      summarize = {"*": DataRef.COUNT};
+      summarize = {'*': DataRef.COUNT};
     } else if (atype === Aggregate.TYPES.TUPLE) {
       groupby = [{ name: DataRef.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
         name: DataRef.VALUE,
         get:  util.$(ref.sort || sort.field),
         ops: [sort.stat]
-      }] : {"*": DataRef.COUNT};
+      }] : {'*': DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
       groupby   = DataRef.GROUPBY;
       summarize = [{ name: DataRef.VALUE, ops: [sort.stat] }]; 
@@ -14209,8 +14233,8 @@ function getCache(which, def, scale, group) {
     }];
   }
 
-  cache.param("groupby", groupby)
-    .param("summarize", summarize);
+  cache.param('groupby', groupby)
+    .param('summarize', summarize);
 
   return cache;
 }
@@ -14261,11 +14285,11 @@ function dataRef(which, def, scale, group) {
   if (uniques) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == DataRef.DESC ? "-" : "+") + DataRef.VALUE;
+      sort = (sort == DataRef.DESC ? '-' : '+') + DataRef.VALUE;
       sort = util.comparator(sort);
       data = data.sort(sort);
-    // } else {  // "First seen" order
-    //   sort = util.comparator("tpl._id");
+    // } else {  // 'First seen' order
+    //   sort = util.comparator('tpl._id');
     }
 
     return data.map(function(d) { return d[DataRef.GROUPBY]; });
@@ -14334,7 +14358,7 @@ function range(group) {
       } else if (config.range[rangeVal]) {
         rng = config.range[rangeVal];
       } else {
-        log.error("Unrecogized range: " + rangeVal);
+        log.error('Unrecogized range: ' + rangeVal);
         return rng;
       }
     } else if (util.isArray(rangeVal)) {

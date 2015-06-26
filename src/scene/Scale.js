@@ -8,30 +8,30 @@ var d3 = require('d3'),
 
 var Properties = {width: 1, height: 1};
 var Types = {
-  LINEAR: "linear",
-  ORDINAL: "ordinal",
-  LOG: "log",
-  POWER: "pow",
-  SQRT: "sqrt",
-  TIME: "time",
-  TIME_UTC: "utc",
-  QUANTILE: "quantile",
-  QUANTIZE: "quantize",
-  THRESHOLD: "threshold",
-  SQRT: "sqrt"
+  LINEAR: 'linear',
+  ORDINAL: 'ordinal',
+  LOG: 'log',
+  POWER: 'pow',
+  SQRT: 'sqrt',
+  TIME: 'time',
+  TIME_UTC: 'utc',
+  QUANTILE: 'quantile',
+  QUANTIZE: 'quantize',
+  THRESHOLD: 'threshold',
+  SQRT: 'sqrt'
 };
 var DataRef = {
-  DOMAIN: "domain",
-  RANGE: "range",
+  DOMAIN: 'domain',
+  RANGE: 'range',
 
-  COUNT: "count",
-  GROUPBY: "groupby",
-  MIN: "min",
-  MAX: "max",
-  VALUE: "value",
+  COUNT: 'count',
+  GROUPBY: 'groupby',
+  MIN: 'min',
+  MAX: 'max',
+  VALUE: 'value',
 
-  ASC: "asc",
-  DESC: "desc"
+  ASC: 'asc',
+  DESC: 'desc'
 };
 
 function Scale(graph, def, parent) {
@@ -74,7 +74,7 @@ proto.dependency = function(type, deps) {
 
 function scale(group) {
   var name = this._def.name,
-      prev = name + ":prev",
+      prev = name + ':prev',
       s = instance.call(this, group.scale(name)),
       m = s.type===Types.ORDINAL ? ordinal : quantitative,
       rng = range.call(this, group);
@@ -92,7 +92,7 @@ function instance(scale) {
       type = this._def.type || Types.LINEAR;
   if (!scale || type !== scale.type) {
     var ctor = config.scale[type] || d3.scale[type];
-    if (!ctor) util.error("Unrecognized scale type: " + type);
+    if (!ctor) util.error('Unrecognized scale type: ' + type);
     (scale = ctor()).type = scale.type || type;
     scale.scaleName = this._def.name;
     scale._prev = {};
@@ -174,9 +174,9 @@ function quantitative(scale, rng, group) {
 
   // range
   // vertical scales should flip by default, so use XOR here
-  if (signal.call(this, def.range) === "height") rng = rng.reverse();
+  if (signal.call(this, def.range) === 'height') rng = rng.reverse();
   if (util.equal(prev.range, rng)) return;
-  scale[round && scale.rangeRound ? "rangeRound" : "range"](rng);
+  scale[round && scale.rangeRound ? 'rangeRound' : 'range'](rng);
   prev.range = rng;
   this._updated = true;
 
@@ -188,7 +188,7 @@ function quantitative(scale, rng, group) {
   if (nice) {
     if (def.type === Types.TIME) {
       interval = d3.time[nice];
-      if (!interval) log.error("Unrecognized interval: " + interval);
+      if (!interval) log.error('Unrecognized interval: ' + interval);
       scale.nice(interval);
     } else {
       scale.nice();
@@ -208,7 +208,7 @@ function getFields(ref, group) {
   return util.array(ref.field).map(function(f) {
     return f.parent ?
       util.accessor(f.parent)(group.datum) :
-      f; // String or {"signal"}
+      f; // String or {'signal'}
   });
 }
 
@@ -239,7 +239,7 @@ function getCache(which, def, scale, group) {
       atype = aggrType(def, scale),
       uniques = isUniques(scale),
       sort = def.sort,
-      ck = "_"+which,
+      ck = '_'+which,
       fields = getFields(refs[0], group),
       ref;
 
@@ -251,14 +251,14 @@ function getCache(which, def, scale, group) {
   if (uniques) {
     if (atype === Aggregate.TYPES.VALUE) {
       groupby = [{ name: DataRef.GROUPBY, get: util.identity }];
-      summarize = {"*": DataRef.COUNT};
+      summarize = {'*': DataRef.COUNT};
     } else if (atype === Aggregate.TYPES.TUPLE) {
       groupby = [{ name: DataRef.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
         name: DataRef.VALUE,
         get:  util.$(ref.sort || sort.field),
         ops: [sort.stat]
-      }] : {"*": DataRef.COUNT};
+      }] : {'*': DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
       groupby   = DataRef.GROUPBY;
       summarize = [{ name: DataRef.VALUE, ops: [sort.stat] }]; 
@@ -273,8 +273,8 @@ function getCache(which, def, scale, group) {
     }];
   }
 
-  cache.param("groupby", groupby)
-    .param("summarize", summarize);
+  cache.param('groupby', groupby)
+    .param('summarize', summarize);
 
   return cache;
 }
@@ -325,11 +325,11 @@ function dataRef(which, def, scale, group) {
   if (uniques) {
     if (sort) {
       sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == DataRef.DESC ? "-" : "+") + DataRef.VALUE;
+      sort = (sort == DataRef.DESC ? '-' : '+') + DataRef.VALUE;
       sort = util.comparator(sort);
       data = data.sort(sort);
-    // } else {  // "First seen" order
-    //   sort = util.comparator("tpl._id");
+    // } else {  // 'First seen' order
+    //   sort = util.comparator('tpl._id');
     }
 
     return data.map(function(d) { return d[DataRef.GROUPBY]; });
@@ -398,7 +398,7 @@ function range(group) {
       } else if (config.range[rangeVal]) {
         rng = config.range[rangeVal];
       } else {
-        log.error("Unrecogized range: " + rangeVal);
+        log.error('Unrecogized range: ' + rangeVal);
         return rng;
       }
     } else if (util.isArray(rangeVal)) {

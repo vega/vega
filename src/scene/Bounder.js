@@ -1,6 +1,7 @@
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    ChangeSet = require('vega-dataflow/src/ChangeSet'),
     log = require('vega-logging'),
     Encoder = require('./Encoder');
 
@@ -43,8 +44,7 @@ proto.evaluate = function(input) {
     bound.mark(this._mark, null, true);
   }
 
-  input.reflow = true;
-  return input;
+  return ChangeSet.create(input, true);
 };
 
 module.exports = Bounder;

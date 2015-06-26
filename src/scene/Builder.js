@@ -52,6 +52,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._isSuper = (this._def.type !== "group"); 
   this._encoder = new Encoder(this._graph, this._mark);
   this._bounder = new Bounder(this._graph, this._mark);
+  this._output  = null; // Output changeset for reactive geom as Bounder reflows
 
   if (this._ds) { this._encoder.dependency(Deps.DATA, this._from); }
 
@@ -104,14 +105,20 @@ function inlineDs() {
 
   this._from = name;
   this._ds = parseData.datasource(this._graph, spec);
-  var revises = this._ds.revises();
+  var revises = this._ds.revises(), node;
 
   if (geom) {
     sibling = this.sibling(geom).revises(revises);
+
+    // Bounder reflows, so we need an intermediary node to propagate
+    // the output constructed by the Builder.
+    node = new Node(this._graph).addListener(this._ds.listener());
+    node.evaluate = function(input) { return sibling._output; };
+
     if (sibling._isSuper) {
-      sibling.addListener(this._ds.listener());
+      sibling.addListener(node);
     } else {
-      sibling._bounder.addListener(this._ds.listener());
+      sibling._bounder.addListener(node);
     }
   } else {
     // At this point, we have a new datasource but it is empty as
@@ -126,7 +133,7 @@ function inlineDs() {
     input.mod = output.mod;
     input.rem = output.rem;
     input.stamp = null;
-    this._graph.propagate(input, this._ds.listener());
+    this._graph.propagate(input, this._ds.listener(), output.stamp);
   }
 }
 
@@ -169,7 +176,7 @@ proto.sibling = function(name) {
 };
 
 proto.evaluate = function(input) {
-  log.debug(input, ["building", this._from, this._def.type]);
+  log.debug(input, ["building", (this._from || this._def.from), this._def.type]);
 
   var output, fullUpdate, fcs, data, name;
 
@@ -189,9 +196,8 @@ proto.evaluate = function(input) {
     if (fullUpdate) output.mod = this._mark.items.slice();
 
     fcs = this._ds.last();
-    if (!fcs) {
-      output.reflow = true;
-    } else if (fcs.stamp > this._stamp) {
+    if (!fcs) throw Error('Builder evaluated before backing DataSource');
+    if (fcs.stamp > this._stamp) {
       output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
     }
   } else {
@@ -200,7 +206,8 @@ proto.evaluate = function(input) {
     output = joinValues.call(this, input, data, fullUpdate);
   }
 
-  output = this._graph.evaluate(output, this._encoder);
+  // Stash output before Bounder for downstream reactive geometry.
+  this._output = output = this._graph.evaluate(output, this._encoder);
 
   // Supernodes calculate bounds too, but only on items marked dirty.
   if (this._isSuper) {
@@ -280,7 +287,7 @@ function joinValues(input, data, fullUpdate) {
     item.status = Status.EXIT;
     if (keyf) this._map[item.key] = item;
   }
-  
+
   join.call(this, data, keyf, next, output, prev, fullUpdate ? Tuple.idMap(data) : null);
 
   for (i=0, len=prev.length; i<len; ++i) {
@@ -293,7 +300,7 @@ function joinValues(input, data, fullUpdate) {
       output.rem.push(item);
     }
   }
-  
+
   return (this._mark.items = next, output);
 }
 

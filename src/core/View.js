@@ -51,13 +51,6 @@ function streaming(src) {
       cs  = this._changeset,
       api = {};
 
-  if (util.keys(cs.signals).length > 0) {
-    throw Error(
-      "New signal values are not reflected in the visualization." +
-      " Please call view.update() before updating data values."
-    );
-  }
-
   // If we have it stashed, don't create a new closure. 
   if (this._api[src]) return this._api[src];
 
@@ -106,13 +99,6 @@ prototype.signal = function(name, value) {
 
   if (!arguments.length) return m.signalValues();
   else if (arguments.length == 1 && util.isString(name)) return m.signalValues(name);
-
-  if (util.keys(cs.data).length > 0) {
-    throw Error(
-      "New data values are not reflected in the visualization." +
-      " Please call view.update() before updating signal values."
-    );
-  }
 
   if (arguments.length == 2) {
     setter = {};
