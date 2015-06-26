@@ -139,7 +139,7 @@ function parseStreams(view) {
         val = parseSignals.scale(model, spec, val);
       }
 
-      if (val !== sig.value()) {
+      if (val !== sig.value() || sig.verbose()) {
         sig.value(val);
         input.signals[sig.name()] = 1;
         input.reflow = true;        
@@ -168,7 +168,7 @@ function parseStreams(view) {
         // Until then, prevent old middles entering stream on new start.
         if (input.signals[name+START]) return model.doNotPropagate;
 
-        if (s[MIDDLE].value() !== sig.value()) {
+        if (s[MIDDLE].value() !== sig.value() || sig.verbose()) {
           sig.value(s[MIDDLE].value());
           input.signals[name] = 1;
         }
