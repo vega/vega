@@ -101,8 +101,7 @@ function timestep() {
       rem = function(t) { return t.x === oid },
       up = {duration: animate ? dur : 0};
 
-  id = (id % 100) + 1;
-  var t = {x: id, y: ~~(100 * Math.random())};
+  var t = {x: ++id, y: ~~(100 * Math.random())};
   table.push(t);
 
   view.data("table").insert([t]).remove(rem);

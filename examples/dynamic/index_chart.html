@@ -53,16 +53,18 @@ input[type="range"] { width: 280px; }
         {
           "name": "xPos",
           "init": 265,
-          "streams": [{"type": "mousemove", "expr": "p.x", "scale": "x", "invert": "true"}]
+          "streams": [{
+            "type": "mousemove", 
+            "expr": "event.vgX", 
+            "scale": {"name": "x", "invert": true}
+          }]
         },
         {
           "name": "indexDate",
-          "init": Date.now(),
           "streams": [{"type": "xPos", "expr": "xPos"}]
         },
         {
-          "name": "lastTick",
-          "init": Date.now()
+          "name": "lastTick"
         }
       ],
 
@@ -73,7 +75,7 @@ input[type="range"] { width: 280px; }
           "source": "stocks",
           "transform": [{
             "type": "filter",
-            "test": "d.date + 70000 >= indexDate && d.date - 70000 <= indexDate"
+            "test": "datum.date + 70000 >= indexDate && datum.date - 70000 <= indexDate"
           }]
         },
         {
@@ -89,7 +91,7 @@ input[type="range"] { width: 280px; }
           }, {
             "type": "formula",
             "field": "indexed_price",
-            "expr": "d.index_term.price > 0 ? (d.price - d.index_term.price)/d.index_term.price : 0"
+            "expr": "datum.index_term.price > 0 ? (datum.price - datum.index_term.price)/datum.index_term.price : 0"
           }]
         }
       ],
@@ -124,7 +126,7 @@ input[type="range"] { width: 280px; }
           "type": "group",
           "from": {
             "data": "indexified_stocks",
-            "transform": [{"type": "facet", "keys": ["symbol"]}]
+            "transform": [{"type": "facet", "groupby": ["symbol"]}]
           },
           "marks": [
             {
@@ -141,7 +143,7 @@ input[type="range"] { width: 280px; }
             {
               "type": "text",
               "from": {
-                "transform": [{"type": "filter", "test": "d.tick == lastTick"}]
+                "transform": [{"type": "filter", "test": "datum.tick == lastTick"}]
               },
               "properties": {
                 "update": {
@@ -204,11 +206,11 @@ input[type="range"] { width: 280px; }
           }));
           if (numToLoad == 0) {
             dataLoaded.forEach(function(pt) {
-              self.view1.model().data('stocks').add(pt);
+              self.view1.data('stocks').insert([pt]);
             });
             console.log(dataLoaded);
-            self.view1.model().graph.signal('lastTick').value(++tick).fire();
             self.view1.update({duration: 0});
+            self.view1.signal('lastTick', ++tick).update();
           }
         });
       });
