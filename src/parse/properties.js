@@ -360,7 +360,7 @@ function valueSchema(type) {
                     {"type": "string"}, 
                     {
                       "type": "object",
-                      "properties": {"name": "string"},
+                      "properties": {"name": { "type": "string" }},
                       "required": ["name"]
                     }
                   ]
