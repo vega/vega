@@ -39,7 +39,7 @@ Facet.schema = {
   "type": "object",
   "properties": util.extend({}, Aggregate.schema.properties, {
     "type": {"enum": ["facet"]},
-    "transform": {"$ref": "#/refs/transform"}
+    "transform": {"$ref": "#/defs/transform"}
   }),
   "required": ["type", "groupby"]
 };
