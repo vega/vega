@@ -391,16 +391,24 @@
       "additionalProperties": false,
       "anyOf": [
         {
-          "required": "size"
+          "required": [
+            "size"
+          ]
         },
         {
-          "required": "shape"
+          "required": [
+            "shape"
+          ]
         },
         {
-          "required": "fill"
+          "required": [
+            "fill"
+          ]
         },
         {
-          "required": "stroke"
+          "required": [
+            "stroke"
+          ]
         }
       ]
     },
@@ -864,7 +872,9 @@
                               {
                                 "type": "object",
                                 "properties": {
-                                  "name": "string"
+                                  "name": {
+                                    "type": "string"
+                                  }
                                 },
                                 "required": [
                                   "name"
@@ -1030,7 +1040,9 @@
                               {
                                 "type": "object",
                                 "properties": {
-                                  "name": "string"
+                                  "name": {
+                                    "type": "string"
+                                  }
                                 },
                                 "required": [
                                   "name"
@@ -1191,7 +1203,9 @@
                               {
                                 "type": "object",
                                 "properties": {
-                                  "name": "string"
+                                  "name": {
+                                    "type": "string"
+                                  }
                                 },
                                 "required": [
                                   "name"
@@ -1336,7 +1350,9 @@
                               {
                                 "type": "object",
                                 "properties": {
-                                  "name": "string"
+                                  "name": {
+                                    "type": "string"
+                                  }
                                 },
                                 "required": [
                                   "name"
@@ -2229,7 +2245,7 @@
                 ]
               },
               "transform": {
-                "$ref": "#/refs/transform"
+                "$ref": "#/defs/transform"
               }
             },
             "required": [
@@ -3964,7 +3980,9 @@
                           {
                             "type": "object",
                             "properties": {
-                              "name": "string"
+                              "name": {
+                                "type": "string"
+                              }
                             },
                             "required": [
                               "name"
@@ -4101,7 +4119,9 @@
                           {
                             "type": "object",
                             "properties": {
-                              "name": "string"
+                              "name": {
+                                "type": "string"
+                              }
                             },
                             "required": [
                               "name"
@@ -4238,7 +4258,9 @@
                           {
                             "type": "object",
                             "properties": {
-                              "name": "string"
+                              "name": {
+                                "type": "string"
+                              }
                             },
                             "required": [
                               "name"
@@ -4395,7 +4417,9 @@
                           {
                             "type": "object",
                             "properties": {
-                              "name": "string"
+                              "name": {
+                                "type": "string"
+                              }
                             },
                             "required": [
                               "name"
@@ -4532,7 +4556,9 @@
                           {
                             "type": "object",
                             "properties": {
-                              "name": "string"
+                              "name": {
+                                "type": "string"
+                              }
                             },
                             "required": [
                               "name"
