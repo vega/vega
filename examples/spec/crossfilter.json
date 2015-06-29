@@ -2,7 +2,7 @@
   "data": [
     {
       "name": "flights",
-      "url": "data/flights.json",
+      "url": "data/flights-2k.json",
       "format": {"type": "json", "parse": {"date": "date"}},
       "transform": [
         {"type": "formula", "field": "hour", "expr": "hours(datum.date)"},
