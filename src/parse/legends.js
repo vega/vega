@@ -68,10 +68,10 @@ parseLegends.schema = {
       },
       "additionalProperties": false,
       "anyOf": [
-        {"required": "size"},
-        {"required": "shape"},
-        {"required": "fill"},
-        {"required": "stroke"}
+        {"required": ["size"]},
+        {"required": ["shape"]},
+        {"required": ["fill"]},
+        {"required": ["stroke"]}
       ]
     }
   }
