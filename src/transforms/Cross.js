@@ -1,18 +1,17 @@
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
-    Collector = require('vega-dataflow/src/Collector'),
     log = require('vega-logging'),
-    Transform = require('./Transform');
+    Transform = require('./Transform'),
+    BatchTransform = require('./BatchTransform');
 
 function Cross(graph) {
-  Transform.prototype.init.call(this, graph);
+  BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     with: {type: 'data'},
     diagonal: {type: 'value', default: 'true'}
   });
 
   this._output = {'left': 'a', 'right': 'b'};
-  this._collector = new Collector(graph);
   this._lastRem  = null; // Most recent stamp that rem occured. 
   this._lastWith = null; // Last time we crossed w/withds.
   this._ids   = {};
@@ -21,7 +20,7 @@ function Cross(graph) {
   return this.router(true);
 }
 
-var prototype = (Cross.prototype = Object.create(Transform.prototype));
+var prototype = (Cross.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Cross;
 
 // Each cached incoming tuple also has a stamp to track if we need to do
@@ -31,10 +30,9 @@ function cache(x, t) {
   c.c.push(t);
 }
 
-function add(output, left, wdata, diag, x) {
-  var data = left ? wdata : this._collector.data(), // Left tuples cross w/right.
-      i = 0, len = data.length,
-      prev  = x._prev !== undefined ? null : undefined, 
+function add(output, left, data, diag, x) {
+  var i = 0, len = data.length,
+      prev = x._prev !== undefined ? null : undefined, 
       t, y, id;
 
   for (; i<len; ++i) {
@@ -81,16 +79,12 @@ function upFields(input, output) {
   }
 }
 
-prototype.transform = function(input) {
+prototype.batchTransform = function(input, data) {
   log.debug(input, ['crossing']);
-
-  // Materialize the current datasource. TODO: share collectors
-  this._collector.evaluate(input);
 
   var w = this.param('with'),
       diag = this.param('diagonal'),
       selfCross = (!w.name),
-      data = this._collector.data(),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
       output  = ChangeSet.create(input),
