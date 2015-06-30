@@ -2928,6 +2928,7 @@ prototype.evaluate = function(input) {
   if (input.reflow) {
     input.mod = input.mod.concat(Tuple.idFilter(this._data, 
       input.add, input.mod, input.rem));
+    input.reflow = false;
   }
 
   return input;
@@ -10045,7 +10046,10 @@ prototype.config = function(cfg) {
 prototype.width = function(width) {
   if (this._defs) this._defs.width = width;
   if (this._defs && this._defs.marks) this._defs.marks.width = width;
-  if (this._scene) this._scene.items[0].width = width;
+  if (this._scene) {
+    this._scene.items[0].width = width;
+    this._scene.items[0]._dirty = true;
+  }
   this._reset.axes = true;
   return this;
 };
@@ -10053,7 +10057,10 @@ prototype.width = function(width) {
 prototype.height = function(height) {
   if (this._defs) this._defs.height = height;
   if (this._defs && this._defs.marks) this._defs.marks.height = height;
-  if (this._scene) this._scene.items[0].height = height;
+  if (this._scene) {
+    this._scene.items[0].height = height;
+    this._scene.items[0]._dirty = true;
+  }
   this._reset.axes = true;
   return this;
 };
@@ -10247,6 +10254,7 @@ prototype.width = function(width) {
   if (!arguments.length) return this.__width;
   if (this.__width !== width) {
     this._width = this.__width = width;
+    this.model().width(width);
     this.initialize();
     if (this._strict) this._autopad = 1;
   }
@@ -10257,6 +10265,7 @@ prototype.height = function(height) {
   if (!arguments.length) return this.__height;
   if (this.__height !== height) {
     this._height = this.__height = height;
+    this.model().height(height);
     this.initialize();
     if (this._strict) this._autopad = 1;
   }
@@ -10418,6 +10427,7 @@ function build() {
 
     if (input.dirty.length) {
       input.dirty.forEach(function(i) { i._dirty = false; });
+      s.items[0]._dirty = false;
     }
 
     // For all updated datasources, clear their previous values.
@@ -13210,18 +13220,19 @@ proto.evaluate = function(input) {
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  if(input.add.length || input.rem.length || !items.length || 
+  if (input.add.length || input.rem.length || !items.length || 
+      input.mod.length === items.length ||
       type === "area" || type === "line") {
     bound.mark(this._mark, null, isGrp && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bound.item(item); });
-  }  
+  }
 
-  if(isGrp && hasLegends) {
-    for(i=0, ilen=items.length; i<ilen; ++i) {
+  if (isGrp && hasLegends) {
+    for (i=0, ilen=items.length; i<ilen; ++i) {
       group = items[i];
       group._legendPositions = null;
-      for(j=0, jlen=group.legendItems.length; j<jlen; ++j) {
+      for (j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];
         Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items);
         bound.mark(legend, null, true);
@@ -13439,9 +13450,8 @@ proto.evaluate = function(input) {
       output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
     }
   } else {
-    fullUpdate = this._encoder.reevaluate(input);
     data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
-    output = joinValues.call(this, input, data, fullUpdate);
+    output = joinValues.call(this, input, data, true);
   }
 
   // Stash output before Bounder for downstream reactive geometry.
@@ -13658,10 +13668,11 @@ function encode(prop, item, trans, db, sg, preds, dirty) {
 // If a specified property set called, or update property set 
 // uses nested fieldrefs, reevaluate all items.
 proto.reevaluate = function(pulse) {
-  var props = this._mark.def.properties || {},
+  var def = this._mark.def,
+      props = def.properties || {},
       update = props.update;
 
-  return pulse.request || 
+  return util.isFunction(def.from) || def.orient || pulse.request || 
     Node.prototype.reevaluate.call(this, pulse) || 
     (update ? update.reflow : false);
 };
@@ -15007,6 +15018,7 @@ function vg_axisUpdate(item, group, trans) {
   }
 
   if (trans) trans.interpolate(item, o);
+  return true;
 }
 
 function vg_axisTicks(config) {
@@ -15484,8 +15496,10 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   }
   
   if (trans) trans.interpolate(item, o);
-  var enc = item.mark.def.properties.enter.encode;
-  enc.call(enc, item, group, trans, db, signals, predicates);
+  var enc = item.mark.def.properties.enter.encode,
+      wasDirty = item._dirty,
+      isDirty  = enc.call(enc, item, group, trans, db, signals, predicates);
+  return (item._dirty = isDirty || wasDirty);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {

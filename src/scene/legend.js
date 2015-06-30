@@ -397,8 +397,10 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   }
   
   if (trans) trans.interpolate(item, o);
-  var enc = item.mark.def.properties.enter.encode;
-  enc.call(enc, item, group, trans, db, signals, predicates);
+  var enc = item.mark.def.properties.enter.encode,
+      wasDirty = item._dirty,
+      isDirty  = enc.call(enc, item, group, trans, db, signals, predicates);
+  return (item._dirty = isDirty || wasDirty);
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {

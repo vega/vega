@@ -100,10 +100,11 @@ function encode(prop, item, trans, db, sg, preds, dirty) {
 // If a specified property set called, or update property set 
 // uses nested fieldrefs, reevaluate all items.
 proto.reevaluate = function(pulse) {
-  var props = this._mark.def.properties || {},
+  var def = this._mark.def,
+      props = def.properties || {},
       update = props.update;
 
-  return pulse.request || 
+  return util.isFunction(def.from) || def.orient || pulse.request || 
     Node.prototype.reevaluate.call(this, pulse) || 
     (update ? update.reflow : false);
 };

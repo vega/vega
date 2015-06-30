@@ -118,6 +118,7 @@ prototype.width = function(width) {
   if (!arguments.length) return this.__width;
   if (this.__width !== width) {
     this._width = this.__width = width;
+    this.model().width(width);
     this.initialize();
     if (this._strict) this._autopad = 1;
   }
@@ -128,6 +129,7 @@ prototype.height = function(height) {
   if (!arguments.length) return this.__height;
   if (this.__height !== height) {
     this._height = this.__height = height;
+    this.model().height(height);
     this.initialize();
     if (this._strict) this._autopad = 1;
   }
@@ -289,6 +291,7 @@ function build() {
 
     if (input.dirty.length) {
       input.dirty.forEach(function(i) { i._dirty = false; });
+      s.items[0]._dirty = false;
     }
 
     // For all updated datasources, clear their previous values.

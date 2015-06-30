@@ -23,18 +23,19 @@ proto.evaluate = function(input) {
       hasLegends = util.array(this._mark.def.legends).length > 0,
       i, ilen, j, jlen, group, legend;
 
-  if(input.add.length || input.rem.length || !items.length || 
+  if (input.add.length || input.rem.length || !items.length || 
+      input.mod.length === items.length ||
       type === "area" || type === "line") {
     bound.mark(this._mark, null, isGrp && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bound.item(item); });
-  }  
+  }
 
-  if(isGrp && hasLegends) {
-    for(i=0, ilen=items.length; i<ilen; ++i) {
+  if (isGrp && hasLegends) {
+    for (i=0, ilen=items.length; i<ilen; ++i) {
       group = items[i];
       group._legendPositions = null;
-      for(j=0, jlen=group.legendItems.length; j<jlen; ++j) {
+      for (j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];
         Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items);
         bound.mark(legend, null, true);

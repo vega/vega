@@ -487,6 +487,7 @@ function vg_axisUpdate(item, group, trans) {
   }
 
   if (trans) trans.interpolate(item, o);
+  return true;
 }
 
 function vg_axisTicks(config) {

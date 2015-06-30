@@ -201,9 +201,8 @@ proto.evaluate = function(input) {
       output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
     }
   } else {
-    fullUpdate = this._encoder.reevaluate(input);
     data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
-    output = joinValues.call(this, input, data, fullUpdate);
+    output = joinValues.call(this, input, data, true);
   }
 
   // Stash output before Bounder for downstream reactive geometry.
