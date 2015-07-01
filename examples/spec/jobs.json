@@ -14,7 +14,7 @@
         {
           "type": "stack",
           "groupby": ["year"],
-          "value": "perc",
+          "field": "perc",
           "sortby": ["-job", "-sex"]
         },
         {

@@ -9,7 +9,7 @@
       "url": "data/flare.json",
       "format": {"type": "treejson"},
       "transform": [
-        {"type": "treemap", "value": "size", "size": [960, 500]}
+        {"type": "treemap", "field": "size", "size": [960, 500]}
       ]
     }
   ],

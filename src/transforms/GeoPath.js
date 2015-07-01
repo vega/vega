@@ -9,7 +9,7 @@ function GeoPath(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, Geo.Parameters);
   Transform.addParameters(this, {
-    value: {type: 'field', default: null},
+    field: {type: 'field', default: null},
   });
 
   this._output = {
@@ -25,7 +25,7 @@ prototype.transform = function(input) {
   log.debug(input, ['geopath']);
 
   var output = this._output,
-      geojson = this.param('value').accessor || util.identity,
+      geojson = this.param('field').accessor || util.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
@@ -52,7 +52,7 @@ GeoPath.schema = {
   "type": "object",
   "properties": util.extend({
     "type": {"enum": ["geopath"]},
-    "value": {
+    "field": {
       "description": "The data field containing GeoJSON Feature data.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },

@@ -20,7 +20,7 @@ describe('Stack', function() {
       type: "stack",
       groupby: opt.groupby,
       sortby: opt.sortby,
-      value: opt.value,
+      field: opt.field,
       offset: opt.offset,
       output: {start: "y2", end: "y", mid: "cy"}
     };
@@ -35,7 +35,7 @@ describe('Stack', function() {
   }
 
   it('should perform flat stack', function(done) {
-    parseSpec(spec({groupby:null, sortby:null, value:"b", offset:"zero"}),
+    parseSpec(spec({groupby:null, sortby:null, field:"b", offset:"zero"}),
       function(model) {
         var ds = model.data('table'),
             data = ds.values(),
@@ -52,7 +52,7 @@ describe('Stack', function() {
   });
 
   it('should perform grouped stack', function(done) {
-    parseSpec(spec({groupby:["a"], sortby:null, value:"b", offset:"zero"}),
+    parseSpec(spec({groupby:["a"], sortby:null, field:"b", offset:"zero"}),
       function(model) {
         var ds = model.data('table'),
             data = ds.values(),
@@ -70,7 +70,7 @@ describe('Stack', function() {
   });
   
   it('should perform grouped stack with offset center', function(done) {
-    parseSpec(spec({groupby:["a"], sortby:null, value:"b", offset:"center"}),
+    parseSpec(spec({groupby:["a"], sortby:null, field:"b", offset:"center"}),
       function(model) {
         var ds = model.data('table'),
             data = ds.values(),
@@ -88,7 +88,7 @@ describe('Stack', function() {
   });
 
   it('should perform grouped stack with offset normalize', function(done) {
-    parseSpec(spec({groupby:["a"], sortby:null, value:"b", offset:"normalize"}),
+    parseSpec(spec({groupby:["a"], sortby:null, field:"b", offset:"normalize"}),
       function(model) {
         var ds = model.data('table'),
             data = ds.values(),
@@ -106,7 +106,7 @@ describe('Stack', function() {
   });
   
   it('should perform grouped sorted stack', function(done) {
-    parseSpec(spec({groupby:["a"], sortby:"c", value:"b", offset:"zero"}),
+    parseSpec(spec({groupby:["a"], sortby:"c", field:"b", offset:"zero"}),
       function(model) {
         var ds = model.data('table'),
             data = ds.values(),
@@ -127,32 +127,32 @@ describe('Stack', function() {
     var schema = schemaPath(transforms.stack.schema),
         validate = validator(schema);
 
-    expect(validate({ "type": "stack", "groupby": ["country"], "value": "medals" })).to.be.true;
+    expect(validate({ "type": "stack", "groupby": ["country"], "field": "medals" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "sortby": ["gdp"] })).to.be.true;
+      "field": "medals", "sortby": ["gdp"] })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "offset": "zero" })).to.be.true;
+      "field": "medals", "offset": "zero" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "offset": "silhouette" })).to.be.true;
+      "field": "medals", "offset": "silhouette" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "offset": "wiggle" })).to.be.true;
+      "field": "medals", "offset": "wiggle" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "offset": "expand" })).to.be.true;
+      "field": "medals", "offset": "expand" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "output": {"start": "start", "mid": "mid", "end": "end"} })).to.be.true;
+      "field": "medals", "output": {"start": "start", "mid": "mid", "end": "end"} })).to.be.true;
     
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "stack" })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"] })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": "country", "value": "medals" })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], "value": ["medals"] })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": "country", "field": "medals" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], "field": ["medals"] })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "sortby": "gdp" })).to.be.false;
+      "field": "medals", "sortby": "gdp" })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "offset": "foo" })).to.be.false;
+      "field": "medals", "offset": "foo" })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "output": {"foo": "bar"} })).to.be.false;
+      "field": "medals", "output": {"foo": "bar"} })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "value": "medals", "bar": "foo" })).to.be.false;
+      "field": "medals", "bar": "foo" })).to.be.false;
   });
 });

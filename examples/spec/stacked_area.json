@@ -62,7 +62,7 @@
       "from": {
         "data": "table",
         "transform": [
-          {"type": "stack", "groupby": ["x"], "sortby": ["c"], "value": "y"},
+          {"type": "stack", "groupby": ["x"], "sortby": ["c"], "field": "y"},
           {"type": "facet", "groupby": ["c"]}
         ]
       },

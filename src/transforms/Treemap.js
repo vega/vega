@@ -13,7 +13,7 @@ function Treemap(graph) {
     // hierarchy parameters
     sort: {type: 'array<field>', default: ['-value']},
     children: {type: 'field', default: 'children'},
-    value: {type: 'field', default: 'value'},
+    field: {type: 'field', default: 'value'},
     // treemap parameters
     size: {type: 'array<value>', default: [500, 500]},
     round: {type: 'value', default: true},
@@ -29,7 +29,8 @@ function Treemap(graph) {
     'x':      'layout_x',
     'y':      'layout_y',
     'width':  'layout_width',
-    'height': 'layout_height'
+    'height': 'layout_height',
+    'depth':  'layout_depth',
   };
   return this;
 }
@@ -48,7 +49,7 @@ prototype.batchTransform = function(input, data) {
   layout
     .sort(util.comparator(this.param('sort').field))
     .children(this.param('children').accessor)
-    .value(this.param('value').accessor)
+    .value(this.param('field').accessor)
     .size(this.param('size'))
     .round(this.param('round'))
     .sticky(this.param('sticky'))
@@ -63,6 +64,7 @@ prototype.batchTransform = function(input, data) {
     Tuple.set(n, output.y, n.y);
     Tuple.set(n, output.width, n.dx);
     Tuple.set(n, output.height, n.dy);
+    Tuple.set(n, output.depth, n.depth);
   });
 
   // return changeset
@@ -93,13 +95,11 @@ Treemap.schema = {
     },
     "children": {
       "description": "A data field that represents the children array",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "children"
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
-    "value": {
+    "field": {
       "description": "The values to use to determine the area of each leaf-level treemap cell.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "value"
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "size": {
       "description": "The dimensions of the treemap layout",
@@ -154,5 +154,5 @@ Treemap.schema = {
     }
   },
   "additionalProperties": false,
-  "required": ["type", "value"]
+  "required": ["type", "field"]
 };

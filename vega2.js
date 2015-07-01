@@ -16374,6 +16374,10 @@ function Force(graph) {
   this._output = {
     'x': 'layout_x',
     'y': 'layout_y',
+    'px': 'layout_px',
+    'py': 'layout_py',
+    'fixed': 'layout_fixed',
+    'weight': 'layout_weight',
     'source': '_source',
     'target': '_target'
   };
@@ -16439,6 +16443,10 @@ prototype.transform = function(nodeInput) {
   nodes.forEach(function(n) {
     Tuple.set(n.tuple, output.x, n.x);
     Tuple.set(n.tuple, output.y, n.y);
+    Tuple.set(n.tuple, output.px, n.px);
+    Tuple.set(n.tuple, output.py, n.py);
+    Tuple.set(n.tuple, output.fixed, n.fixed);
+    Tuple.set(n.tuple, output.weight, n.weight);
   });
 
   // process removed nodes
@@ -16606,7 +16614,7 @@ function GeoPath(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, Geo.Parameters);
   Transform.addParameters(this, {
-    value: {type: 'field', default: null},
+    field: {type: 'field', default: null},
   });
 
   this._output = {
@@ -16622,7 +16630,7 @@ prototype.transform = function(input) {
   log.debug(input, ['geopath']);
 
   var output = this._output,
-      geojson = this.param('value').accessor || util.identity,
+      geojson = this.param('field').accessor || util.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
@@ -16864,7 +16872,7 @@ var d3 = (typeof window !== "undefined" ? window.d3 : typeof global !== "undefin
 function Pie(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    value:      {type: "field", default: null},
+    field:      {type: "field", default: null},
     startAngle: {type: "value", default: 0},
     endAngle:   {type: "value", default: 2 * Math.PI},
     sort:       {type: "value", default: false}
@@ -16888,12 +16896,12 @@ prototype.batchTransform = function(input, data) {
   log.debug(input, ['pie']);
 
   var output = this._output,
-      value = this.param("value").accessor || ones,
+      field = this.param("field").accessor || ones,
       start = this.param("startAngle"),
       stop = this.param("endAngle"),
       sort = this.param("sort");
 
-  var values = data.map(value),
+  var values = data.map(field),
       a = start,
       k = (stop - start) / d3.sum(values),
       index = gen.range(data.length),
@@ -16958,7 +16966,7 @@ function Stack(graph) {
   Transform.addParameters(this, {
     groupby: {type: 'array<field>'},
     sortby: {type: 'array<field>'},
-    value: {type: 'field'},
+    field: {type: 'field'},
     offset: {type: 'value', default: 'zero'}
   });
 
@@ -16978,12 +16986,12 @@ prototype.batchTransform = function(input, data) {
 
   var groupby = this.param('groupby').accessor,
       sortby = util.comparator(this.param('sortby').field),
-      value = this.param('value').accessor,
+      field = this.param('field').accessor,
       offset = this.param('offset'),
       output = this._output;
 
   // partition, sum, and sort the stack groups
-  var groups = partition(data, groupby, sortby, value);
+  var groups = partition(data, groupby, sortby, field);
 
   // compute stack layouts per group
   for (var i=0, max=groups.max; i<groups.length; ++i) {
@@ -16997,7 +17005,7 @@ prototype.batchTransform = function(input, data) {
     for (j=0; j<group.length; ++j) {
       x = group[j];
       a = b; // use previous value for start point
-      v += value(x);
+      v += field(x);
       b = scale * v + off; // compute end point
       Tuple.set(x, output.start, a);
       Tuple.set(x, output.end, b);
@@ -17011,7 +17019,7 @@ prototype.batchTransform = function(input, data) {
   return input;
 };
 
-function partition(data, groupby, sortby, value) {
+function partition(data, groupby, sortby, field) {
   var groups = [],
       get = function(f) { return f(x); },
       map, i, x, k, g, s, max;
@@ -17032,7 +17040,7 @@ function partition(data, groupby, sortby, value) {
   for (k=0, max=0; k<groups.length; ++k) {
     g = groups[k];
     for (i=0, s=0; i<g.length; ++i) {
-      s += value(g[i]);
+      s += field(g[i]);
     }
     g.sum = s;
     if (s > max) max = s;
@@ -17121,7 +17129,7 @@ function Treemap(graph) {
     // hierarchy parameters
     sort: {type: 'array<field>', default: ['-value']},
     children: {type: 'field', default: 'children'},
-    value: {type: 'field', default: 'value'},
+    field: {type: 'field', default: 'value'},
     // treemap parameters
     size: {type: 'array<value>', default: [500, 500]},
     round: {type: 'value', default: true},
@@ -17137,7 +17145,8 @@ function Treemap(graph) {
     'x':      'layout_x',
     'y':      'layout_y',
     'width':  'layout_width',
-    'height': 'layout_height'
+    'height': 'layout_height',
+    'depth':  'layout_depth',
   };
   return this;
 }
@@ -17156,7 +17165,7 @@ prototype.batchTransform = function(input, data) {
   layout
     .sort(util.comparator(this.param('sort').field))
     .children(this.param('children').accessor)
-    .value(this.param('value').accessor)
+    .value(this.param('field').accessor)
     .size(this.param('size'))
     .round(this.param('round'))
     .sticky(this.param('sticky'))
@@ -17171,6 +17180,7 @@ prototype.batchTransform = function(input, data) {
     Tuple.set(n, output.y, n.y);
     Tuple.set(n, output.width, n.dx);
     Tuple.set(n, output.height, n.dy);
+    Tuple.set(n, output.depth, n.depth);
   });
 
   // return changeset

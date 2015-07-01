@@ -8,7 +8,7 @@ var d3 = require('d3'),
 function Pie(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    value:      {type: "field", default: null},
+    field:      {type: "field", default: null},
     startAngle: {type: "value", default: 0},
     endAngle:   {type: "value", default: 2 * Math.PI},
     sort:       {type: "value", default: false}
@@ -32,12 +32,12 @@ prototype.batchTransform = function(input, data) {
   log.debug(input, ['pie']);
 
   var output = this._output,
-      value = this.param("value").accessor || ones,
+      field = this.param("field").accessor || ones,
       start = this.param("startAngle"),
       stop = this.param("endAngle"),
       sort = this.param("sort");
 
-  var values = data.map(value),
+  var values = data.map(field),
       a = start,
       k = (stop - start) / d3.sum(values),
       index = gen.range(data.length),
@@ -72,7 +72,7 @@ Pie.schema = {
   "type": "object",
   "properties": {
     "type": {"enum": ["pie"]},
-    "value": {
+    "field": {
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "The data values to encode as angular spans. " + 
         "If this property is omitted, all pie slices will have equal spans."

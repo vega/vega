@@ -26,6 +26,10 @@ function Force(graph) {
   this._output = {
     'x': 'layout_x',
     'y': 'layout_y',
+    'px': 'layout_px',
+    'py': 'layout_py',
+    'fixed': 'layout_fixed',
+    'weight': 'layout_weight',
     'source': '_source',
     'target': '_target'
   };
@@ -91,6 +95,10 @@ prototype.transform = function(nodeInput) {
   nodes.forEach(function(n) {
     Tuple.set(n.tuple, output.x, n.x);
     Tuple.set(n.tuple, output.y, n.y);
+    Tuple.set(n.tuple, output.px, n.px);
+    Tuple.set(n.tuple, output.py, n.py);
+    Tuple.set(n.tuple, output.fixed, n.fixed);
+    Tuple.set(n.tuple, output.weight, n.weight);
   });
 
   // process removed nodes

@@ -9,7 +9,7 @@ function Stack(graph) {
   Transform.addParameters(this, {
     groupby: {type: 'array<field>'},
     sortby: {type: 'array<field>'},
-    value: {type: 'field'},
+    field: {type: 'field'},
     offset: {type: 'value', default: 'zero'}
   });
 
@@ -29,12 +29,12 @@ prototype.batchTransform = function(input, data) {
 
   var groupby = this.param('groupby').accessor,
       sortby = util.comparator(this.param('sortby').field),
-      value = this.param('value').accessor,
+      field = this.param('field').accessor,
       offset = this.param('offset'),
       output = this._output;
 
   // partition, sum, and sort the stack groups
-  var groups = partition(data, groupby, sortby, value);
+  var groups = partition(data, groupby, sortby, field);
 
   // compute stack layouts per group
   for (var i=0, max=groups.max; i<groups.length; ++i) {
@@ -48,7 +48,7 @@ prototype.batchTransform = function(input, data) {
     for (j=0; j<group.length; ++j) {
       x = group[j];
       a = b; // use previous value for start point
-      v += value(x);
+      v += field(x);
       b = scale * v + off; // compute end point
       Tuple.set(x, output.start, a);
       Tuple.set(x, output.end, b);
@@ -62,7 +62,7 @@ prototype.batchTransform = function(input, data) {
   return input;
 };
 
-function partition(data, groupby, sortby, value) {
+function partition(data, groupby, sortby, field) {
   var groups = [],
       get = function(f) { return f(x); },
       map, i, x, k, g, s, max;
@@ -83,7 +83,7 @@ function partition(data, groupby, sortby, value) {
   for (k=0, max=0; k<groups.length; ++k) {
     g = groups[k];
     for (i=0, s=0; i<g.length; ++i) {
-      s += value(g[i]);
+      s += field(g[i]);
     }
     g.sum = s;
     if (s > max) max = s;
@@ -123,7 +123,7 @@ Stack.schema = {
         {"$ref": "#/refs/signal"}
       ],
     },
-    "value": {
+    "field": {
       "description": "The data field that determines the thickness/height of stacks.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
@@ -144,5 +144,5 @@ Stack.schema = {
     }
   },
   "additionalProperties": false,
-  "required": ["type", "groupby", "value"]
+  "required": ["type", "groupby", "field"]
 };
