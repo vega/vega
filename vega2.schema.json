@@ -1742,7 +1742,7 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "name": {
+                        "field": {
                           "description": "The name of the field to aggregate.",
                           "oneOf": [
                             {
@@ -1805,7 +1805,7 @@
                       },
                       "additionalProperties": false,
                       "required": [
-                        "name",
+                        "field",
                         "ops"
                       ]
                     }
@@ -2174,7 +2174,7 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "name": {
+                        "field": {
                           "description": "The name of the field to aggregate.",
                           "oneOf": [
                             {
@@ -2237,7 +2237,7 @@
                       },
                       "additionalProperties": false,
                       "required": [
-                        "name",
+                        "field",
                         "ops"
                       ]
                     }

@@ -21,7 +21,7 @@ function Aggregate(graph) {
           fields = [];
           for (name in summarize) {
             ops = util.array(summarize[name]);
-            fields.push({name: name, ops: ops});
+            fields.push({field: name, ops: ops});
           }
         }
 
@@ -29,7 +29,7 @@ function Aggregate(graph) {
 
         for (i=0, len=fields.length; i<len; ++i) {
           f = fields[i];
-          if (f.name.signal) signals[f.name.signal] = 1;
+          if (f.field.signal) signals[f.field.signal] = 1;
           util.array(f.ops).forEach(sg);
           util.array(f.as).forEach(sg);
         }
@@ -100,7 +100,7 @@ prototype.aggr = function() {
     var f = util.duplicate(field);
     if (field.get) f.get = field.get;
 
-    f.name = f.name.signal ? graph.signalRef(f.name.signal) : f.name;
+    f.name = f.field.signal ? graph.signalRef(f.field.signal) : f.field;
     f.ops  = f.ops.signal ? graph.signalRef(f.ops.signal) :
       util.array(f.ops).map(function(o) {
         return o.signal ? graph.signalRef(o.signal) : o;
@@ -201,7 +201,7 @@ Aggregate.schema = {
           "items": {
             "type": "object",
             "properties": {
-              "name": {
+              "field": {
                 "description": "The name of the field to aggregate.",
                 "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
               },
@@ -217,7 +217,7 @@ Aggregate.schema = {
               }
             },
             "additionalProperties": false,
-            "required": ["name", "ops"]
+            "required": ["field", "ops"]
           }
         }
       ]

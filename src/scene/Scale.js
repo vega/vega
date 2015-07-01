@@ -261,18 +261,18 @@ function getCache(which, def, scale, group) {
     } else if (atype === Aggregate.TYPES.TUPLE) {
       groupby = [{ name: DataRef.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
-        name: DataRef.VALUE,
+        field: DataRef.VALUE,
         get:  util.$(ref.sort || sort.field),
         ops: [sort.stat]
       }] : {'*': DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
       groupby   = DataRef.GROUPBY;
-      summarize = [{ name: DataRef.VALUE, ops: [sort.stat] }]; 
+      summarize = [{ field: DataRef.VALUE, ops: [sort.stat] }]; 
     }
   } else {
     groupby = [];
     summarize = [{
-      name: DataRef.VALUE,
+      field: DataRef.VALUE,
       get: (atype == Aggregate.TYPES.TUPLE) ? util.$(fields[0]) : util.identity,
       ops: [DataRef.MIN, DataRef.MAX],
       as:  [DataRef.MIN, DataRef.MAX]

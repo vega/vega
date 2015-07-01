@@ -13,7 +13,7 @@
         {
           "type": "aggregate",
           "groupby": ["variety"],
-          "summarize": [{"name": "yield", "ops": ["median"]}]
+          "summarize": [{"field": "yield", "ops": ["median"]}]
         },
         {"type": "sort", "by": "-median_yield"}
       ]
@@ -25,7 +25,7 @@
         {
           "type": "aggregate",
           "groupby": ["site"],
-          "summarize": [{"name": "yield", "ops": ["median"]}]
+          "summarize": [{"field": "yield", "ops": ["median"]}]
         },
         {"type": "sort", "by": "-median_yield"}
       ]

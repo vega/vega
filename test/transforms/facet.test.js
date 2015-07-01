@@ -248,8 +248,8 @@ describe('Facet', function() {
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
-        {"name": "medals", "ops": ["count", "min", "max"]},
-        {"name": "gdp", "ops": ["argmin", "argmax"]}
+        {"field": "medals", "ops": ["count", "min", "max"]},
+        {"field": "gdp", "ops": ["argmin", "argmax"]}
       ]
     })).to.be.true;
 
@@ -257,8 +257,8 @@ describe('Facet', function() {
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
-        {"name": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
-        {"name": "gdp", "ops": ["argmin", "argmax"]}
+        {"field": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
+        {"field": "gdp", "ops": ["argmin", "argmax"]}
       ]
     })).to.be.true;
 
@@ -292,21 +292,21 @@ describe('Facet', function() {
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
-        {"name": 1, "ops": ["argmin", "argmax"]}
+        {"field": 1, "ops": ["argmin", "argmax"]}
       ]
     })).to.be.false;
     expect(validate({ 
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
-        {"name": "gdp", "ops": ["argmin", "argmax", "foo"]}
+        {"field": "gdp", "ops": ["argmin", "argmax", "foo"]}
       ]
     })).to.be.false;
     expect(validate({ 
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
-        {"name": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
+        {"field": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
       ]
     })).to.be.false;
 

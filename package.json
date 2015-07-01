@@ -2,14 +2,15 @@
   "name": "vega",
   "version": "2.0.0",
   "dependencies": {
-    "datalib": "^1.2.x",
     "d3": "^3.5.x",
     "d3-geo-projection": "^0.2.13",
+    "datalib": "^1.2.x",
+    "del": "^1.2.0",
     "topojson": "^1.6.18",
     "vega-dataflow": "vega/vega-dataflow",
     "vega-expression": "vega/vega-expression",
-    "vega-scenegraph": "vega/vega-scenegraph",
     "vega-logging": "vega/vega-logging",
+    "vega-scenegraph": "vega/vega-scenegraph",
     "yargs": "^3.2.1"
   },
   "optionalDependencies": {

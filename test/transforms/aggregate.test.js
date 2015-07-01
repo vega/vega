@@ -21,7 +21,7 @@ describe('Aggregate', function() {
         "name": "table",
         "values": values,
         "transform": [{"type": "aggregate", "summarize": [{
-          "name": "y", 
+          "field": "y", 
           "ops": ["count", "sum", "min", "max"]
         }]}]
       }]
@@ -162,7 +162,7 @@ describe('Aggregate', function() {
         "name": "table",
         "values": values,
         "transform": [{"type": "aggregate", "groupby": "country",
-          "summarize": [{"name": "area", "ops": ["sum", "count"]}, {"name": "population", "ops": ["sum"]}]}]
+          "summarize": [{"field": "area", "ops": ["sum", "count"]}, {"field": "population", "ops": ["sum"]}]}]
       }]
     };
 
@@ -212,7 +212,7 @@ describe('Aggregate', function() {
     it('should handle signals', function(done) {
       var s = dl.duplicate(spec);
       s.signals = [{"name": "field", "init": "area"}, {"name": "ops", "init": ["sum", "count"]}];
-      s.data[0].transform[0].summarize = [{"name": {"signal": "field"}, "ops": {"signal": "ops"}}];
+      s.data[0].transform[0].summarize = [{"field": {"signal": "field"}, "ops": {"signal": "ops"}}];
 
       parseSpec(s, function(model) {
         var ds = model.data('table'),
@@ -266,8 +266,8 @@ describe('Aggregate', function() {
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
-        {"name": "medals", "ops": ["count", "min", "max"]},
-        {"name": "gdp", "ops": ["argmin", "argmax"]}
+        {"field": "medals", "ops": ["count", "min", "max"]},
+        {"field": "gdp", "ops": ["argmin", "argmax"]}
       ]
     })).to.be.true;
 
@@ -275,8 +275,8 @@ describe('Aggregate', function() {
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
-        {"name": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
-        {"name": "gdp", "ops": ["argmin", "argmax"]}
+        {"field": "medals", "ops": ["count", "min", "max"], "as": ["c", "m1", "m2"]},
+        {"field": "gdp", "ops": ["argmin", "argmax"]}
       ]
     })).to.be.true;
 
@@ -310,21 +310,21 @@ describe('Aggregate', function() {
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
-        {"name": 1, "ops": ["argmin", "argmax"]}
+        {"field": 1, "ops": ["argmin", "argmax"]}
       ]
     })).to.be.false;
     expect(validate({ 
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
-        {"name": "gdp", "ops": ["argmin", "argmax", "foo"]}
+        {"field": "gdp", "ops": ["argmin", "argmax", "foo"]}
       ]
     })).to.be.false;
     expect(validate({ 
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
-        {"name": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
+        {"field": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
       ]
     })).to.be.false;
 

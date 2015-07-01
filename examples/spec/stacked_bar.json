@@ -25,7 +25,7 @@
         {
           "type": "aggregate",
           "groupby": ["x"],
-          "summarize": [{"name": "y", "ops": ["sum"]}]
+          "summarize": [{"field": "y", "ops": ["sum"]}]
         }
       ]
     }

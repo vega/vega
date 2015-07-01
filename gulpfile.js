@@ -12,6 +12,7 @@ var fs = require('fs'),
     uglify = require('gulp-uglify'),
     watchify = require('watchify'),
     gutil = require('gulp-util'),
+    del = require('del'),
     mocha = require('gulp-spawn-mocha'),
     jstransform = require('jstransform'),
     jstutils = require('jstransform/src/utils'),
@@ -102,6 +103,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('test', function() {
+  if (fs.existsSync('output/')) del(['output/*']);
   return gulp.src(['test/**/*.js'], { read: false })
     .pipe(mocha({ 
       grep: argv.g, 

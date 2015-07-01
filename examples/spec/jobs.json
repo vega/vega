@@ -21,7 +21,7 @@
           "type": "facet",
           "groupby": ["job", "sex"],
           "summarize": [{
-            "name": "perc",
+            "field": "perc",
             "ops": ["sum", "argmax"],
             "as": ["sum", "argmax"]
           }]
@@ -35,7 +35,7 @@
         {
           "type": "aggregate",
           "groupby": ["year"],
-          "summarize": [{"name": "perc", "ops": ["sum"], "as": ["sum"]}]
+          "summarize": [{"field": "perc", "ops": ["sum"], "as": ["sum"]}]
         }
       ]
     }
