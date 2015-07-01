@@ -124,7 +124,7 @@ vg.svg.Renderer = (function() {
       marks.update[type].call(node, item);
       marks.style.call(node, item);
     }
-  }
+  };
   
   prototype.draw = function(ctx, scene, index) {
     var marktype = scene.marktype,

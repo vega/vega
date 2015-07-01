@@ -74,7 +74,7 @@ vg.data.force = function() {
     force[name] = function(x) {
       layout[name](x);
       return force;
-    }
+    };
   });
 
   return force;

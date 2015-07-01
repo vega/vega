@@ -5,7 +5,7 @@ vg.parse.legends = (function() {
       legends[index] = legends[index] || vg.scene.legend();
       legend(def, index, legends[index], scales);
     });
-  };
+  }
 
   function legend(def, index, legend, scales) {
     // legend scales

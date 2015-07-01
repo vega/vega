@@ -87,7 +87,7 @@ vg.scene.Transition = (function() {
 
     this.callback();
     return stop;
-  };
+  }
   
   return trans;
   

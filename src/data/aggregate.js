@@ -82,7 +82,7 @@ vg.data.aggregate = (function() {
     var ops = this.ops;
     for (var i=0; i<ops.length; ++i) {
       if (ops[i] === 'count') {
-        o["count"] = this.count;
+        o.count = this.count;
       } else {
         o[ops[i] + "_" + this.field] = this.value(ops[i]);
       }

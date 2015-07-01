@@ -334,7 +334,7 @@ vg.canvas.marks = (function() {
   function drawAll(pathFunc) {
     return function(g, scene, bounds) {
       drawPathAll(pathFunc, g, scene, bounds);
-    }
+    };
   }
 
   function drawOne(pathFunc) {
@@ -343,7 +343,7 @@ vg.canvas.marks = (function() {
       if (bounds && !bounds.intersects(scene.items[0].bounds))
         return; // bounds check
       drawPathOne(pathFunc, g, scene.items[0], scene.items);
-    }
+    };
   }
 
   function drawGroup(g, scene, bounds) {

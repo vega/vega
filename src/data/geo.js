@@ -47,7 +47,7 @@ vg.data.geo = (function() {
         opt[name] = x;
         func[name](x);
         return map;
-      }
+      };
     });
     
     map.lon = function(field) {
@@ -71,7 +71,7 @@ vg.data.geo = (function() {
     
     
     return map;
-  };
+  }
   
   geo.params = params;
   return geo;
