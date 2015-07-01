@@ -9,7 +9,6 @@ function regexEqual(x, y) {
     (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
 }
 
-
 suite.addBatch({
   'vg.expression': {
     topic: require('../index.js'),
@@ -339,6 +338,8 @@ suite.addBatch({
       },
       'should eval string functions': function(evaluate) {
         assert.equal("123".length, evaluate('length("123")'));
+        assert.equal("12321".indexOf("2"), evaluate('indexof("12321", "2")'));
+        assert.equal("12321".lastIndexOf("2"), evaluate('lastindexof("12321", "2")'));
         assert.equal("abc".toUpperCase(), evaluate('upper("abc")'));
         assert.equal("abc".toLowerCase(), evaluate('lower("abc")'));
         assert.equal("123".slice(1), evaluate('slice("123",1)'));
@@ -379,6 +380,11 @@ suite.addBatch({
           assert.equal(d.getDate(), evaluate('date(datetime(2001,1,'+date+'))'));
           assert.equal(d.getUTCDate(), evaluate('utcdate(datetime(2001,1,'+date+'))'));
         }
+      },
+      'should eval array functions': function(evaluate) {
+        assert.equal([1,2,3].length, evaluate('length([1,2,3])'));
+        assert.equal([1,2,3,2,1].indexOf("2"), evaluate('indexof([1,2,3,2,1], "2")'));
+        assert.equal([1,2,3,2,1].lastIndexOf("2"), evaluate('lastindexof([1,2,3,2,1], "2")'));
       },
       'should not eval undefined functions': function(evaluate) {
         assert.throws(evaluate.fn('Array()'));

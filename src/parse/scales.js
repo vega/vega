@@ -59,9 +59,15 @@ vg.parse.scales = (function() {
     if (def.bandWidth) {
       var bw = def.bandWidth,
           len = domain.length,
-          start = rng[0] || 0,
-          space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
-      rng = [start, start + (bw * len + space)];
+          space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
+          start;
+      if (rng[0] > rng[1]) {
+        start = rng[1] || 0;
+        rng = [start + (bw * len + space), start];
+      } else {
+        start = rng[0] || 0;
+        rng = [start, start + (bw * len + space)];
+      }
     }
 
     // range
@@ -213,7 +219,9 @@ vg.parse.scales = (function() {
       if (vg.isObject(rev)) {
         rev = vg.accessor(rev.field)(group.datum);
       }
-      if (rev) rng = rng.reverse();
+      if (rev) {
+        rng = rng.reverse();
+      }
     }
     
     return rng;
