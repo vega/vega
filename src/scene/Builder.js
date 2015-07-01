@@ -202,7 +202,7 @@ proto.evaluate = function(input) {
     }
   } else {
     data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
-    output = joinValues.call(this, input, data, true);
+    output = joinValues.call(this, input, data);
   }
 
   // Stash output before Bounder for downstream reactive geometry.
@@ -274,7 +274,7 @@ function joinDatasource(input, data, fullUpdate) {
   return (this._mark.items = next, output);
 }
 
-function joinValues(input, data, fullUpdate) {
+function joinValues(input, data) {
   var output = ChangeSet.create(input),
       keyf = keyFunction(this._def.key),
       prev = this._mark.items || [],
@@ -287,7 +287,7 @@ function joinValues(input, data, fullUpdate) {
     if (keyf) this._map[item.key] = item;
   }
 
-  join.call(this, data, keyf, next, output, prev, fullUpdate ? Tuple.idMap(data) : null);
+  join.call(this, data, keyf, next, output, prev, Tuple.idMap(data));
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];

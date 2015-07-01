@@ -13451,7 +13451,7 @@ proto.evaluate = function(input) {
     }
   } else {
     data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
-    output = joinValues.call(this, input, data, true);
+    output = joinValues.call(this, input, data);
   }
 
   // Stash output before Bounder for downstream reactive geometry.
@@ -13523,7 +13523,7 @@ function joinDatasource(input, data, fullUpdate) {
   return (this._mark.items = next, output);
 }
 
-function joinValues(input, data, fullUpdate) {
+function joinValues(input, data) {
   var output = ChangeSet.create(input),
       keyf = keyFunction(this._def.key),
       prev = this._mark.items || [],
@@ -13536,7 +13536,7 @@ function joinValues(input, data, fullUpdate) {
     if (keyf) this._map[item.key] = item;
   }
 
-  join.call(this, data, keyf, next, output, prev, fullUpdate ? Tuple.idMap(data) : null);
+  join.call(this, data, keyf, next, output, prev, Tuple.idMap(data));
 
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
@@ -14102,9 +14102,15 @@ function ordinal(scale, rng, group) {
   if (def.bandWidth) {
     var bw = signal.call(this, def.bandWidth),
         len = domain.length,
-        start = rng[0] || 0,
-        space = points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
-    rng = [start, start + (bw * len + space)];
+        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
+        start;
+    if (rng[0] > rng[1]) {
+      start = rng[1] || 0;
+      rng = [start + (bw * len + space), start];
+    } else {
+      start = rng[0] || 0;
+      rng = [start, start + (bw * len + space)];
+    }
   }
 
   str = typeof rng[0] === 'string';

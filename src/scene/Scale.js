@@ -131,9 +131,15 @@ function ordinal(scale, rng, group) {
   if (def.bandWidth) {
     var bw = signal.call(this, def.bandWidth),
         len = domain.length,
-        start = rng[0] || 0,
-        space = points ? (pad*bw) : (pad*bw*(len-1) + 2*outer);
-    rng = [start, start + (bw * len + space)];
+        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
+        start;
+    if (rng[0] > rng[1]) {
+      start = rng[1] || 0;
+      rng = [start + (bw * len + space), start];
+    } else {
+      start = rng[0] || 0;
+      rng = [start, start + (bw * len + space)];
+    }
   }
 
   str = typeof rng[0] === 'string';
