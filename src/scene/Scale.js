@@ -263,11 +263,11 @@ function getCache(which, def, scale, group) {
       summarize = sort ? [{
         field: DataRef.VALUE,
         get:  util.$(ref.sort || sort.field),
-        ops: [sort.stat]
+        ops: [sort.op]
       }] : {'*': DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
       groupby   = DataRef.GROUPBY;
-      summarize = [{ field: DataRef.VALUE, ops: [sort.stat] }]; 
+      summarize = [{ field: DataRef.VALUE, ops: [sort.op] }]; 
     }
   } else {
     groupby = [];
@@ -437,10 +437,12 @@ function range(group) {
   return rng;
 }
 
+module.exports = Scale;
+
 var sortDef = {
   "type": "object",
   "field": {"type": "string"},
-  "stat": {"enum": require('../transforms/Aggregate').VALID_OPS},
+  "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
   "order": {"enum": [DataRef.ASC, DataRef.DESC]}
 };
 
@@ -453,7 +455,6 @@ var rangeDef = [
   {"$ref": "#/refs/signal"}
 ];
 
-module.exports = Scale;
 Scale.schema = {
   "refs": {
     "data": {

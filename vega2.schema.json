@@ -2727,7 +2727,7 @@
                   "geopath"
                 ]
               },
-              "value": {
+              "field": {
                 "description": "The data field containing GeoJSON Feature data.",
                 "oneOf": [
                   {
@@ -2877,7 +2877,7 @@
                   "pie"
                 ]
               },
-              "value": {
+              "field": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -3033,7 +3033,7 @@
                   }
                 ]
               },
-              "value": {
+              "field": {
                 "description": "The data field that determines the thickness/height of stacks.",
                 "oneOf": [
                   {
@@ -3085,7 +3085,7 @@
             "required": [
               "type",
               "groupby",
-              "value"
+              "field"
             ]
           },
           {
@@ -3130,10 +3130,9 @@
                   {
                     "$ref": "#/refs/signal"
                   }
-                ],
-                "default": "children"
+                ]
               },
-              "value": {
+              "field": {
                 "description": "The values to use to determine the area of each leaf-level treemap cell.",
                 "oneOf": [
                   {
@@ -3142,8 +3141,7 @@
                   {
                     "$ref": "#/refs/signal"
                   }
-                ],
-                "default": "value"
+                ]
               },
               "size": {
                 "description": "The dimensions of the treemap layout",
@@ -3260,7 +3258,7 @@
             "additionalProperties": false,
             "required": [
               "type",
-              "value"
+              "field"
             ]
           },
           {
@@ -3546,7 +3544,7 @@
                   "field": {
                     "type": "string"
                   },
-                  "stat": {
+                  "op": {
                     "enum": [
                       "values",
                       "count",
@@ -3760,7 +3758,7 @@
                       "field": {
                         "type": "string"
                       },
-                      "stat": {
+                      "op": {
                         "enum": [
                           "values",
                           "count",
