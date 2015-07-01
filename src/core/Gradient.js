@@ -8,7 +8,7 @@ vg.Gradient = (function() {
     this.x2 = 1;
     this.y1 = 0;
     this.y2 = 0;
-  };
+  }
 
   var prototype = gradient.prototype;
 

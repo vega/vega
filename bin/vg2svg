@@ -37,6 +37,7 @@ if (args.b) {
     : "file://" + process.cwd() + path.sep + args.b + path.sep;
 }
 vg.config.baseURL = base;
+vg.config.isNode = true;
 
 // input / output files
 var header = args.h ? svgHeader : "",

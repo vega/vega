@@ -125,7 +125,7 @@ var vg_template_var = function(text, variable) {
   }
 
   return source;
-}
+};
 
 var vg_template_re = /\{\{(.+?)\}\}|$/g;
 

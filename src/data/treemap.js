@@ -48,7 +48,7 @@ vg.data.treemap = function() {
     treemap[name] = function(x) {
       layout[name](x);
       return treemap;
-    }
+    };
   });
 
   treemap.output = function(map) {

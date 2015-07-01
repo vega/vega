@@ -59,7 +59,7 @@ vg.data.mapper = function(func) {
   return function(data) {
     data.forEach(func);
     return data;
-  }
+  };
 };
 
 vg.data.size = function(size, group) {

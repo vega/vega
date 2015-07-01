@@ -3,9 +3,9 @@ vg.data.bin = function() {
   var field,
       accessor,
       setter,
-      min = undefined,
-      max = undefined,
-      step = undefined,
+      min,
+      max,
+      step,
       maxbins = 20,
       output = "bin";
 

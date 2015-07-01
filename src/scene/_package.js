@@ -5,7 +5,7 @@ vg.scene.ENTER  = 0,
 vg.scene.UPDATE = 1,
 vg.scene.EXIT   = 2;
 
-vg.scene.DEFAULT_DATA = {"sentinel":1}
+vg.scene.DEFAULT_DATA = {"sentinel":1};
 
 vg.scene.data = function(data, parentData) {
   var DEFAULT = vg.scene.DEFAULT_DATA;
