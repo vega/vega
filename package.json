@@ -1,6 +1,28 @@
 {
   "name": "vega",
   "version": "2.0.0",
+  "description": "The Vega visualization grammar runtime",
+  "keywords": [
+    "vega",
+    "visualization",
+    "interaction",
+    "dataflow",
+    "grammar",
+    "d3"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/vega/vega.git"
+  },
+  "author": {
+    "name": "Arvind Satyanarayan",
+    "url": "http://arvindsatya.com/"
+  },
+  "contributors": [{
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu/"
+  }],
+  "license": "BSD-3-Clause",
   "dependencies": {
     "d3": "^3.5.x",
     "d3-geo-projection": "^0.2.13",
@@ -19,6 +41,7 @@
   "devDependencies": {
     "browserify": "^9.0.8",
     "browserify-shim": "^3.8.5",
+    "browserify-versionify": "^1.0.4",
     "chai": "^1.10.0",
     "chai-spies": "^0.6.0",
     "chromedriver": "^2.14.1",
@@ -61,7 +84,8 @@
   },
   "browserify": {
     "transform": [
-      "browserify-shim"
+      "browserify-shim",
+      "browserify-versionify"
     ]
   },
   "browserify-shim": {

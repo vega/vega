@@ -3,14 +3,14 @@ var util = require('datalib/src/util'),
     Deps = require('vega-dataflow/src/Dependencies'),
     expr = require('./expr');
 
-var reserved = ['datum', 'event', 'signals'].concat(util.keys(functions));
+var RESERVED = ['datum', 'event', 'signals'].concat(util.keys(functions));
 
 function parseSignals(model, spec) {
   // process each signal definition
   (spec || []).forEach(function(s) {
-    if (reserved.indexOf(s.name) !== -1) {
+    if (RESERVED.indexOf(s.name) !== -1) {
       throw Error('Signal name "'+s.name+'" is a '+
-        'reserved keyword ('+reserved.join(', ')+').');
+        'reserved keyword ('+RESERVED.join(', ')+').');
     }
 
     var signal = model.signal(s.name, s.init)
@@ -112,7 +112,7 @@ parseSignals.schema = {
       "properties": {
         "name": {
           "type": "string",
-          "not": {"enum": reserved}
+          "not": {"enum": RESERVED}
         },
         "init": {},
         "verbose": {"type": "boolean", "default": false},
