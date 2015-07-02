@@ -79,14 +79,14 @@ describe('Scale', function() {
         var spec = {
           "data": [],
           "signals": [
-            {"name": "min", "init": 0},
-            {"name": "max", "init": 10}
+            {"name": "minDomain", "init": 0},
+            {"name": "maxDomain", "init": 10}
           ],
 
           "scales": [{
             "name": "y", "type": "linear", "range": [0, 1], "zero": false,
-            "domainMin": {"signal": "min"}, 
-            "domainMax": {"signal": "max"} 
+            "domainMin": {"signal": "minDomain"}, 
+            "domainMax": {"signal": "maxDomain"} 
           }]
         };
 
@@ -96,10 +96,10 @@ describe('Scale', function() {
 
           expect(y.domain()).to.eql([0, 10]);
 
-          model.signal('min').value(5).fire();
+          model.signal('minDomain').value(5).fire();
           expect(y.domain()).to.eql([5, 10]);
 
-          model.signal('max').value(15).fire();
+          model.signal('maxDomain').value(15).fire();
           expect(y.domain()).to.eql([5, 15]);
 
           done();
@@ -744,18 +744,18 @@ describe('Scale', function() {
         var spec = {
           "data": [],
           "signals": [
-            {"name": "min", "init": range[0]},
-            {"name": "max", "init": range[1]}
+            {"name": "minRange", "init": range[0]},
+            {"name": "maxRange", "init": range[1]}
           ],
 
           "scales": [{
             "name": "x", "type": "ordinal", 
             "domain": [0, 1], 
-            "rangeMin": {"signal": "min"}, "rangeMax": {"signal": "max"}
+            "rangeMin": {"signal": "minRange"}, "rangeMax": {"signal": "maxRange"}
           }, {
             "name": "y", "type": "linear", 
             "domain": [0, 1], 
-            "rangeMin": {"signal": "min"}, "rangeMax": {"signal": "max"}
+            "rangeMin": {"signal": "minRange"}, "rangeMax": {"signal": "maxRange"}
           }]
         };
 
@@ -768,12 +768,12 @@ describe('Scale', function() {
           expect(x.rangeExtent()).to.eql(range);
           expect(y.range()).to.eql(range);
 
-          model.signal('min').value(27).fire();
+          model.signal('minRange').value(27).fire();
           expect(x.rangeBand()).to.eql(~~((range[1]-27)/2));
           expect(x.rangeExtent()).to.eql([27, range[1]]);
           expect(y.range()).to.eql([27, range[1]]);
 
-          model.signal('max').value(47).fire();
+          model.signal('maxRange').value(47).fire();
           expect(x.rangeBand()).to.eql(10);
           expect(x.rangeExtent()).to.eql([27, 47]);
           expect(y.range()).to.eql([27, 47]);
