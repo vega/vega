@@ -13080,7 +13080,7 @@ function parseStreams(view) {
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
-      filters.push("!!event.vg"+capitalize(name)+"Item"); // Mimic event bubbling
+      filters.push("!!event['vg"+capitalize(name)+"Item']"); // Mimic event bubbling
     } else if (mark) {
       filters.push("event.vgItem.mark && event.vgItem.mark.marktype==="+util.str(mark));
     }
