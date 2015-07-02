@@ -611,7 +611,7 @@
             "properties": {
               "type": {
                 "enum": [
-                  "add",
+                  "insert",
                   "remove",
                   "toggle"
                 ]

@@ -5,7 +5,7 @@ var util = require('datalib/src/util'),
     log = require('vega-logging');
 
 var Types = {
-  ADD:    "add",
+  INSERT: "insert",
   REMOVE: "remove",
   TOGGLE: "toggle",
   CLEAR:  "clear"
@@ -45,7 +45,7 @@ function parseModify(model, def, ds) {
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples. 
-    if (def.type === Types.ADD) {
+    if (def.type === Types.INSERT) {
       t = Tuple.ingest(datum, prev);
       input.add.push(t);
       d._data.push(t);
@@ -91,7 +91,7 @@ parseModify.schema = {
         "type": "object",
         "oneOf": [{
           "properties": {
-            "type": {"enum": [Types.ADD, Types.REMOVE, Types.TOGGLE]},
+            "type": {"enum": [Types.INSERT, Types.REMOVE, Types.TOGGLE]},
             "signal": {"type": "string"},
             "field": {"type": "string"}
           },
