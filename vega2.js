@@ -12545,7 +12545,10 @@ function properties(model, mark, spec) {
       
   code += "var o = trans ? {} : item,\n" +
           "    dirty = false;\n" +
-          "  signals.datum = item.datum;\n";  // Stash for util.template
+          // Stash for util.template
+          "  signals.datum  = item.datum;\n" + 
+          "  signals.group  = group;\n" + 
+          "  signals.parent = group.datum;\n";
 
   function handleDep(p) {
     if (ref[p] == null) return;
