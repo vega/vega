@@ -216,7 +216,8 @@ function buildMarks(input, group) {
     mark = marks[i];
     from = mark.from || {};
     inherit = group.datum._facetID;
-    group.items[i] = {group: group, name: mark.name};
+    group.items[i] = {group: group};
+    if (util.isValid(mark.name)) group.items[i].name = mark.name;
     b = (mark.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);
     this._children[group._id].push({ 
