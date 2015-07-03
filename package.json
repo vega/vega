@@ -8,14 +8,14 @@
     "grammar",
     "d3"
   ],
-  "homepage": "http://trifacta.github.io/vega/",
+  "homepage": "http://vega.github.io/vega/",
   "author": {
     "name": "Jeffrey Heer",
     "url": "http://trifacta.com"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/trifacta/vega.git"
+    "url": "http://github.com/vega/vega.git"
   },
   "main": "index.js",
   "browser": {
@@ -46,10 +46,5 @@
   "scripts": {
     "test": "node_modules/.bin/vows; echo"
   },
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "https://github.com/trifacta/vega/blob/master/LICENSE"
-    }
-  ]
+  "license": "BSD-3-Clause"
 }
