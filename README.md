@@ -6,7 +6,7 @@ saving visualization designs. With Vega you can describe data visualizations
 in a JSON format, and generate interactive views using either HTML5 Canvas or
 SVG.
 
-To learn more, [visit the wiki](https://github.com/trifacta/vega/wiki).
+To learn more, [visit the wiki](https://github.com/vega/vega/wiki).
 
 ## The Vega Runtime
 
@@ -39,7 +39,7 @@ node_modules folder if it does not exist.
 Vega can also be run server-side using node.js. When running in "headless"
 mode, Vega can be used to render specifications directly to PNG or SVG. In
 addition to the summary below, [see the Headless Mode wiki
-documentation](https://github.com/trifacta/vega/wiki/Headless-Mode) for more
+documentation](https://github.com/vega/vega/wiki/Headless-Mode) for more
 information.
 
 ### Command Line Tools
