@@ -1,5 +1,4 @@
 {
-  "name": "image",
   "width": 200,
   "height": 200,
   "padding": {"left":30, "top":10, "bottom":30, "right":10},
