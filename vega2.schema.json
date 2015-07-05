@@ -4851,7 +4851,10 @@
                 "parent": {
                   "type": "string"
                 }
-              }
+              },
+              "required": [
+                "parent"
+              ]
             },
             {
               "type": "array",
@@ -4861,7 +4864,10 @@
                   "parent": {
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "parent"
+                ]
               }
             }
           ]

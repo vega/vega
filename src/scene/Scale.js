@@ -486,7 +486,8 @@ Scale.schema = {
               "type": "object",
               "properties": {
                 "parent": {"type": "string"}
-              }
+              },
+              "required": ["parent"]
             },
             {
               "type": "array",
@@ -494,7 +495,8 @@ Scale.schema = {
                 "type": "object",
                 "properties": {
                   "parent": {"type": "string"}
-                }
+                },
+                "required": ["parent"]
               }
             }
           ]
