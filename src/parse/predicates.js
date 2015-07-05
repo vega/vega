@@ -138,9 +138,16 @@ function parseIn(model, spec) {
     code += "return db["+util.str(spec.data)+"].filter(where).length > 0;";
   } else if (spec.range) {
     // TODO: inclusive/exclusive range?
-    // TODO: inverting ordinal scales
-    if (spec.scale) code += "o1 = scale(o1);\no2 = scale(o2);\n";
-    code += "return o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1";
+    if (spec.scale) {
+      code += "if (scale.length == 2) {\n" + // inverting ordinal scales
+        "  var ordSet = scale(o1, o2);\n" +
+        "} else {\n" +
+        "  o1 = scale(o1);\no2 = scale(o2);\n" +
+        "}";
+    }
+
+    code += "return ordSet ? ordSet.indexOf(o0) !== -1 :\n" + 
+      "  o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1;";
   }
 
   return {

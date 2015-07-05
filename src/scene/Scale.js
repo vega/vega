@@ -156,8 +156,27 @@ function ordinal(scale, rng, group) {
   }
 
   if (!scale.invert) {
-    scale.invert = function(x) {
-      return this.domain()[d3.bisect(this.range(), x) - 1];
+    scale.invert = function(x, y) {
+      if (arguments.length === 1) {
+        return this.domain()[d3.bisect(this.range(), x) - 1];
+      } else if (arguments.length === 2) {  // Invert extents
+        if (!util.isNumber(x) || !util.isNumber(y)) {
+          throw new Error('Extents to ordinal invert are not numbers ('+x+', '+y+').');
+        }
+
+        var points = [],
+            rng = this.range(),
+            i = 0, len = rng.length, r;
+
+        for(; i<len; ++i) {
+          r = rng[i];
+          if (x < y ? x <= r && r <= y : y <= r && r <= x) {
+            points.push(r);
+          }
+        }
+
+        return points.map(function(p) { return scale.invert(p); });
+      }
     };
   }
 
