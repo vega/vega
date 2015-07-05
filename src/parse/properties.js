@@ -192,11 +192,22 @@ function valueRef(config, name, ref) {
 
   // initialize value
   var val = null, scale = null, 
-      sgRef = {}, fRef = {}, sRef = {},
+      sgRef = {}, fRef = {}, sRef = {}, tmpl = {},
       signals = [], fields = [], reflow = false;
 
   if (ref.template !== undefined) {
-    val = template.source(ref.template, "signals");
+    val = template.source(ref.template, "signals", tmpl);
+    util.keys(tmpl).forEach(function(k) {
+      var f = util.field(k)[0];
+      if (f === 'parent' || f === 'group') {
+        reflow = true;
+        fRef[f] = 1;
+      } else if (k === 'datum') {
+        fRef[f] = 1;
+      } else {
+        sgRef[f] = 1;
+      }
+    });
   }
 
   if (ref.value !== undefined) {
@@ -313,7 +324,7 @@ function scaleRef(ref) {
   }
 
   scale = "group.scale("+scale+")";
-  if (ref.invert) scale += ".invert";  // TODO: ordinal scales
+  if (ref.invert) scale += ".invert";
 
   return fr ? (fr.val = scale, fr) : {val: scale};
 }

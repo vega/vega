@@ -3,6 +3,7 @@ var Aggregator = require('datalib/src/aggregate/aggregator'),
     Flags = Aggregator.Flags,
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    util = require('datalib/src/util'),
     log = require('vega-logging'),
     facetID = 1;
 
@@ -96,6 +97,8 @@ prototype.changes = function(input, output) {
   var aggr = this._aggr,
       cell, flag, i, k;
 
+  function fields(k) { output.fields[k] = 1; }
+
   for (k in this._cells) {
     cell = this._cells[k];
     flag = cell.flag;
@@ -127,6 +130,7 @@ prototype.changes = function(input, output) {
         output.add.push(cell.tuple);
       } else if (flag & Flags.MOD_CELL) {
         output.mod.push(cell.tuple);
+        util.keys(cell.tuple._prev).forEach(fields);
       }
     }
 

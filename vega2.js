@@ -12717,11 +12717,22 @@ function valueRef(config, name, ref) {
 
   // initialize value
   var val = null, scale = null, 
-      sgRef = {}, fRef = {}, sRef = {},
+      sgRef = {}, fRef = {}, sRef = {}, tmpl = {},
       signals = [], fields = [], reflow = false;
 
   if (ref.template !== undefined) {
-    val = template.source(ref.template, "signals");
+    val = template.source(ref.template, "signals", tmpl);
+    util.keys(tmpl).forEach(function(k) {
+      var f = util.field(k)[0];
+      if (f === 'parent' || f === 'group') {
+        reflow = true;
+        fRef[f] = 1;
+      } else if (k === 'datum') {
+        fRef[f] = 1;
+      } else {
+        sgRef[f] = 1;
+      }
+    });
   }
 
   if (ref.value !== undefined) {
@@ -12838,7 +12849,7 @@ function scaleRef(ref) {
   }
 
   scale = "group.scale("+scale+")";
-  if (ref.invert) scale += ".invert";  // TODO: ordinal scales
+  if (ref.invert) scale += ".invert";
 
   return fr ? (fr.val = scale, fr) : {val: scale};
 }
@@ -14136,6 +14147,12 @@ function ordinal(scale, rng, group) {
     scale.rangeRoundBands(rng, pad, outer);
   } else {
     scale.rangeBands(rng, pad, outer);
+  }
+
+  if (!scale.invert) {
+    scale.invert = function(x) {
+      return this.domain()[d3.bisect(this.range(), x) - 1];
+    };
   }
 
   prev.range = rng;
@@ -16077,6 +16094,7 @@ var Aggregator = require('datalib/src/aggregate/aggregator'),
     Flags = Aggregator.Flags,
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
+    util = require('datalib/src/util'),
     log = require('vega-logging'),
     facetID = 1;
 
@@ -16170,6 +16188,8 @@ prototype.changes = function(input, output) {
   var aggr = this._aggr,
       cell, flag, i, k;
 
+  function fields(k) { output.fields[k] = 1; }
+
   for (k in this._cells) {
     cell = this._cells[k];
     flag = cell.flag;
@@ -16201,6 +16221,7 @@ prototype.changes = function(input, output) {
         output.add.push(cell.tuple);
       } else if (flag & Flags.MOD_CELL) {
         output.mod.push(cell.tuple);
+        util.keys(cell.tuple._prev).forEach(fields);
       }
     }
 
@@ -16212,7 +16233,7 @@ prototype.changes = function(input, output) {
 };
 
 module.exports = Facetor;
-},{"datalib/src/aggregate/aggregator":3,"vega-dataflow/src/ChangeSet":26,"vega-dataflow/src/Tuple":34,"vega-logging":41}],117:[function(require,module,exports){
+},{"datalib/src/aggregate/aggregator":3,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":26,"vega-dataflow/src/Tuple":34,"vega-logging":41}],117:[function(require,module,exports){
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Deps = require('vega-dataflow/src/Dependencies'),
     log = require('vega-logging'),

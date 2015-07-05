@@ -155,6 +155,12 @@ function ordinal(scale, rng, group) {
     scale.rangeBands(rng, pad, outer);
   }
 
+  if (!scale.invert) {
+    scale.invert = function(x) {
+      return this.domain()[d3.bisect(this.range(), x) - 1];
+    };
+  }
+
   prev.range = rng;
   this._updated = true;
 }
