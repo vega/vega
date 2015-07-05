@@ -130,7 +130,7 @@ function parseIn(model, spec) {
   }
 
   var ops = parseOperands(model, o);
-  code = ops.code + code;
+  code = ops.code + code + "\n  var ordSet = null;\n";
 
   if (spec.data) {
     var field = util.field(spec.field).map(util.str);
@@ -140,13 +140,13 @@ function parseIn(model, spec) {
     // TODO: inclusive/exclusive range?
     if (spec.scale) {
       code += "if (scale.length == 2) {\n" + // inverting ordinal scales
-        "  var ordSet = scale(o1, o2);\n" +
+        "  ordSet = scale(o1, o2);\n" +
         "} else {\n" +
         "  o1 = scale(o1);\no2 = scale(o2);\n" +
         "}";
     }
 
-    code += "return ordSet ? ordSet.indexOf(o0) !== -1 :\n" + 
+    code += "return ordSet !== null ? ordSet.indexOf(o0) !== -1 :\n" + 
       "  o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1;";
   }
 

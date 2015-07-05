@@ -90,8 +90,11 @@ describe('Schema', function() {
       var name = path.basename(file, ".json");
 
       it('should validate the '+ name + ' example', function() {
-        var spec = dl.json(examples + file);
-        expect(validate(spec)).to.be.true;
+        var spec = dl.json(examples + file),
+            v = validate(spec);
+
+        if (!v && tv4.error) console.log(name, tv4.error);
+        expect(v).to.equal(true, tv4.error);
       });
     });
 

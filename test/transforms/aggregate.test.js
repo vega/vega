@@ -281,7 +281,7 @@ describe('Aggregate', function() {
     })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "aggregate" })).to.be.false;
+    expect(validate({ "type": "aggregate" })).to.be.true;
     expect(validate({ 
       "type": "aggregate",
       "groupby": "country",
