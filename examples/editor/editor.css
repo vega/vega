@@ -1,8 +1,3 @@
-* {
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-size: 11pt;
-}
-
 html, body {
   height: 100%;
 }
@@ -10,6 +5,17 @@ html, body {
 body {
   margin: 0px;
   overflow: hidden;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+}
+
+#spec { 
+  position: absolute;
+  top: 20;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  font-size: 10px;
 }
 
 #content {
@@ -20,7 +26,6 @@ body {
 .pre {
   position: absolute;
   font-family: Monaco, Courier New;
-  font-size: 10px;
   white-space: pre;
   overflow: auto;
   border: none;
