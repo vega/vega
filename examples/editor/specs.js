@@ -14,6 +14,7 @@ var STATIC_SPECS = [
   "lifelines",
   "map",
   "parallel_coords",
+  "playfair",
   "population",
   "treemap",
   "scatter_matrix",
