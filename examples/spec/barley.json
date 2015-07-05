@@ -56,6 +56,9 @@
   "axes": [
     {"type": "x", "scale": "x", "offset": -12}
   ],
+  "legends": [
+    {"fill": "c", "title": "year"}
+  ],
   "marks": [
     {
       "type": "text",
