@@ -3,69 +3,72 @@
     <title>Vega Dynamic Data Test</title/>
     <script src="../lib/d3.v3.min.js"></script>
     <script src="../../vega2.js"></script>
+    <script type="text/javascript">
+      d3.jsonp = function (url, callback) {
+        function rand() {
+          var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+            c = '', i = -1;
+          while (++i < 15) c += chars.charAt(Math.floor(Math.random() * 52));
+          return c;
+        }
+
+        function create(url) {
+          var e = url.match(/callback=d3.jsonp.(\w+)/),
+            c = e ? e[1] : rand();
+          d3.jsonp[c] = function(data) {
+            callback(data);
+            delete d3.jsonp[c];
+            script.remove();
+          };
+          return 'd3.jsonp.' + c;
+        }
+
+        var cb = create(url),
+          script = d3.select('head')
+          .append('script')
+          .attr('type', 'text/javascript')
+          .attr('src', url.replace(/(\{|%7B)callback(\}|%7D)/, cb));
+      };
+    </script>
     <style>
-* { font-family: Helvetica Neue, Helvetica, Arial, sans-serif; }
-.view { display: block; }
-input[type="range"] { width: 280px; }
-.ctrl { display: inline-block; width: 90px; font-weight: bold; }
-.flash { display: none; font-style: italic; }
+      * { font-family: Helvetica Neue, Helvetica, Arial, sans-serif; }
+      .view { display: block; }
     </style>
   </head>
   <body>
-    <div><strong>Vega Dynamic Data Test</strong></div>
+    <div><strong>An Interactive Index Chart of Streaming Financial Data</strong></div>
     <div>
-      <div id="view1" class="view"></div>
+      <div id="view" class="view"></div>
     </div>
   </body>
-  <script>
-    d3.jsonp = function (url, callback) {
-      function rand() {
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-          c = '', i = -1;
-        while (++i < 15) c += chars.charAt(Math.floor(Math.random() * 52));
-        return c;
-      }
-
-      function create(url) {
-        var e = url.match(/callback=d3.jsonp.(\w+)/),
-          c = e ? e[1] : rand();
-        d3.jsonp[c] = function(data) {
-          callback(data);
-          delete d3.jsonp[c];
-          script.remove();
-        };
-        return 'd3.jsonp.' + c;
-      }
-
-      var cb = create(url),
-        script = d3.select('head')
-        .append('script')
-        .attr('type', 'text/javascript')
-        .attr('src', url.replace(/(\{|%7B)callback(\}|%7D)/, cb));
-    };
-  </script>
   <script type="text/javascript">
-    var spec1 = {
+    var now = new Date();
+    var spec = {
       "width": 750,
       "height": 300,
+      "padding": "strict",
 
       "signals": [
         {
           "name": "xPos",
-          "init": 265,
           "streams": [{
             "type": "mousemove", 
             "expr": "event.vgX", 
             "scale": {"name": "x", "invert": true}
           }]
         },
+
+        {"name": "minDate"},
+        {"name": "maxDate"},
         {
           "name": "indexDate",
-          "streams": [{"type": "xPos", "expr": "xPos"}]
+          "init": new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 1, 00, 00).getTime(),
+          "streams": [{
+            "type": "xPos", 
+            "expr": "min(max(xPos, minDate), maxDate)"
+          }]
         },
-        {
-          "name": "lastTick"
-        }
+        {"name": "lastTick"}
       ],
 
       "data": [
@@ -75,7 +78,7 @@ input[type="range"] { width: 280px; }
           "source": "stocks",
           "transform": [{
             "type": "filter",
-            "test": "datum.date + 70000 >= indexDate && datum.date - 70000 <= indexDate"
+            "test": "hours(datum.date) == hours(indexDate) && minutes(datum.date) == minutes(indexDate)"
           }]
         },
         {
@@ -117,10 +120,11 @@ input[type="range"] { width: 280px; }
           "range": "category10"
         }
       ],
+
       "axes": [
-        {"type": "x", "scale": "x", "tickSizeEnd": 0},
-        {"type": "y", "scale": "y", "grid": true, "layer": "back"}
+        {"type": "y", "scale": "y", "grid": true, "layer": "back", "format": "%"}
       ],
+
       "marks": [
         {
           "type": "group",
@@ -161,30 +165,51 @@ input[type="range"] { width: 280px; }
           "type":"rule",
           "properties": {
             "update": {
+              "x": {"field": {"group": "x"}},
+              "x2": {"field": {"group": "width"}},
+              "y": {"scale": "y", "value": 0},
+              "stroke": {"value": "black"},
+              "strokeWidth": {"value": 1}
+            }
+          }
+        },
+        {
+          "type":"rule",
+          "properties": {
+            "update": {
               "x": {"scale": "x", "signal": "indexDate"},
               "y": {"value": 0},
-              "y2": {"value": 300},
+              "y2": {"field": {"group": "height"}},
               "stroke": {"value": "red"}
+            }
+          }
+        },
+        {
+          "type":"text",
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "signal": "indexDate"},
+              "y2": {"field": {"group": "height"}, "offset": 15},
+              "align": {"value": "center"},
+              "text": {"template": "{{indexDate | time: '%c'}}"},
+              "fill": {"value": "red"}
             }
           }
         }
       ]
     };
 
-    var renderer = "canvas";
+    var firstDone = {},
+        tick = -1,
+        renderer = "canvas",
+        minDate = Infinity, maxDate = -Infinity, 
+        view;
 
-    vg.parse.spec(spec1, function(chart) {
-      self.view1 = chart({
-        el: "#view1",
-        renderer: renderer,
-        hover: false
-      });
-
+    vg.parse.spec(spec, function(chart) {
+      view = chart({ el: "#view", renderer: renderer });
       update();
     });
 
-    var firstDone = {};
-    var tick = -1;
     function update() {
       var companies = ['AAPL', 'AMZN', 'MSFT', 'GOOG', 'IBM'];
       var numToLoad = companies.length;
@@ -192,31 +217,35 @@ input[type="range"] { width: 280px; }
       companies.forEach(function(company) {
         d3.jsonp('http://chartapi.finance.yahoo.com/instrument/1.0/'+company+'/chartdata;type=quote;range=1d/json?callback={callback}', function(d) {
           numToLoad--;
-          if (firstDone[company]) {
-            d.series = [d.series[d.series.length-1]];
-          }
+          if (firstDone[company]) d.series = [d.series[d.series.length-1]];
           firstDone[company] = true;
+
           dataLoaded = dataLoaded.concat(d.series.map(function(pt, i){
+            var ts = pt.Timestamp*1000;
+            if (ts < minDate) minDate = ts;
+            if (ts > maxDate) maxDate = ts;
+
             return {
               tick: i == d.series.length-1 ? tick+1 : -1,
               price: pt.close,
               symbol: company,
-              date: pt.Timestamp*1000
+              date: ts
             };
           }));
+
           if (numToLoad == 0) {
-            dataLoaded.forEach(function(pt) {
-              self.view1.data('stocks').insert([pt]);
-            });
             console.log(dataLoaded);
-            self.view1.update({duration: 0});
-            self.view1.signal('lastTick', ++tick).update();
+            view.data('stocks').insert(dataLoaded);
+
+            view.signal('minDate', minDate)
+              .signal('maxDate', maxDate)
+              .signal('lastTick', ++tick)
+              .update();
           }
         });
       });
     }
 
-    setInterval(update, 60000)
-
+    setInterval(update, 60000);
   </script>
 </html>
