@@ -35,5 +35,6 @@ var INTERACTIVE_SPECS = [
   "panzoom_points",
   "panzoom_touch",
   "shiftclick_select",
+  "tooltip",
   "overview+detail"
 ];
