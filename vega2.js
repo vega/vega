@@ -13317,6 +13317,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   mark.marktype = def.type;
   mark.interactive = (def.interactive !== false);
   mark.items = [];
+  if (util.isValid(def.name)) mark.name = def.name;
 
   this._parent = parent;
   this._parent_id = parent_id;
@@ -13947,7 +13948,6 @@ function buildMarks(input, group) {
     from = mark.from || {};
     inherit = group.datum._facetID;
     group.items[i] = {group: group};
-    if (util.isValid(mark.name)) group.items[i].name = mark.name;
     b = (mark.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);
     this._children[group._id].push({ 

@@ -39,6 +39,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   mark.marktype = def.type;
   mark.interactive = (def.interactive !== false);
   mark.items = [];
+  if (util.isValid(def.name)) mark.name = def.name;
 
   this._parent = parent;
   this._parent_id = parent_id;
