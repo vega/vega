@@ -76,11 +76,7 @@
       "name": "tipForecast",
       "source": "budgets",
       "transform": [
-        {
-          "type": "zip",
-          "with": "tooltip",
-          "as": "t"
-        },
+        {"type": "zip", "with": "tooltip", "as": "t"},
         {"type": "filter", "test": "datum.t && datum.t.argmin.budgetYear == datum.budgetYear"}
       ]
     }

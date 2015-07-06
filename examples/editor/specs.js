@@ -29,11 +29,11 @@ var INTERACTIVE_SPECS = [
   "budget_forecasts",
   // "brush_interactor",
   "crossfilter",
+  "dimpvis",
   "index_chart",
   "linking",
   "panzoom_points",
   "panzoom_touch",
   "shiftclick_select",
-  "overview+detail",
-  "dimpvis"
+  "overview+detail"
 ];
