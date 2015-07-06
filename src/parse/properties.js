@@ -333,9 +333,10 @@ module.exports = properties;
 
 function valueSchema(type) {
   type = util.isArray(type) ? {"enum": type} : {"type": type};
-  var valRef = {
+  var modType = type.type === "number" && type.type || "string";
+  var valRef  = {
     "type": "object",
-    "allOf": [{"$ref": "#/refs/valueModifiers"}, {
+    "allOf": [{"$ref": "#/refs/" + modType + "Modifiers"}, {
       "oneOf": [{
         "$ref": "#/refs/signal",
         "required": ["signal"]
@@ -444,7 +445,13 @@ properties.schema = {
       ]
     },
 
-    "valueModifiers": {
+    "stringModifiers": {
+      "properties": {
+        "scale": {"$ref": "#/refs/scale"}
+      }
+    },
+
+    "numberModifiers": {
       "properties": {
         "mult": {"type": "number"},
         "offset": {"type": "number"},

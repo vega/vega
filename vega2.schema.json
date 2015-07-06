@@ -888,7 +888,7 @@
                         "type": "object",
                         "allOf": [
                           {
-                            "$ref": "#/refs/valueModifiers"
+                            "$ref": "#/refs/stringModifiers"
                           },
                           {
                             "oneOf": [
@@ -952,7 +952,7 @@
               "type": "object",
               "allOf": [
                 {
-                  "$ref": "#/refs/valueModifiers"
+                  "$ref": "#/refs/stringModifiers"
                 },
                 {
                   "oneOf": [
@@ -1056,7 +1056,7 @@
                         "type": "object",
                         "allOf": [
                           {
-                            "$ref": "#/refs/valueModifiers"
+                            "$ref": "#/refs/stringModifiers"
                           },
                           {
                             "oneOf": [
@@ -1122,7 +1122,7 @@
               "type": "object",
               "allOf": [
                 {
-                  "$ref": "#/refs/valueModifiers"
+                  "$ref": "#/refs/stringModifiers"
                 },
                 {
                   "oneOf": [
@@ -1219,7 +1219,7 @@
                         "type": "object",
                         "allOf": [
                           {
-                            "$ref": "#/refs/valueModifiers"
+                            "$ref": "#/refs/stringModifiers"
                           },
                           {
                             "oneOf": [
@@ -1280,7 +1280,7 @@
               "type": "object",
               "allOf": [
                 {
-                  "$ref": "#/refs/valueModifiers"
+                  "$ref": "#/refs/stringModifiers"
                 },
                 {
                   "oneOf": [
@@ -1366,7 +1366,7 @@
                         "type": "object",
                         "allOf": [
                           {
-                            "$ref": "#/refs/valueModifiers"
+                            "$ref": "#/refs/stringModifiers"
                           },
                           {
                             "oneOf": [
@@ -1427,7 +1427,7 @@
               "type": "object",
               "allOf": [
                 {
-                  "$ref": "#/refs/valueModifiers"
+                  "$ref": "#/refs/stringModifiers"
                 },
                 {
                   "oneOf": [
@@ -1816,8 +1816,7 @@
             },
             "additionalProperties": false,
             "required": [
-              "type",
-              "groupby"
+              "type"
             ]
           },
           {
@@ -3946,7 +3945,14 @@
         }
       ]
     },
-    "valueModifiers": {
+    "stringModifiers": {
+      "properties": {
+        "scale": {
+          "$ref": "#/refs/scale"
+        }
+      }
+    },
+    "numberModifiers": {
       "properties": {
         "mult": {
           "type": "number"
@@ -3995,7 +4001,7 @@
                     "type": "object",
                     "allOf": [
                       {
-                        "$ref": "#/refs/valueModifiers"
+                        "$ref": "#/refs/stringModifiers"
                       },
                       {
                         "oneOf": [
@@ -4052,7 +4058,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/refs/valueModifiers"
+              "$ref": "#/refs/stringModifiers"
             },
             {
               "oneOf": [
@@ -4134,7 +4140,7 @@
                     "type": "object",
                     "allOf": [
                       {
-                        "$ref": "#/refs/valueModifiers"
+                        "$ref": "#/refs/numberModifiers"
                       },
                       {
                         "oneOf": [
@@ -4191,7 +4197,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/refs/valueModifiers"
+              "$ref": "#/refs/numberModifiers"
             },
             {
               "oneOf": [
@@ -4273,7 +4279,7 @@
                     "type": "object",
                     "allOf": [
                       {
-                        "$ref": "#/refs/valueModifiers"
+                        "$ref": "#/refs/stringModifiers"
                       },
                       {
                         "oneOf": [
@@ -4340,7 +4346,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/refs/valueModifiers"
+              "$ref": "#/refs/stringModifiers"
             },
             {
               "oneOf": [
@@ -4432,7 +4438,7 @@
                     "type": "object",
                     "allOf": [
                       {
-                        "$ref": "#/refs/valueModifiers"
+                        "$ref": "#/refs/stringModifiers"
                       },
                       {
                         "oneOf": [
@@ -4489,7 +4495,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/refs/valueModifiers"
+              "$ref": "#/refs/stringModifiers"
             },
             {
               "oneOf": [
@@ -4571,7 +4577,7 @@
                     "type": "object",
                     "allOf": [
                       {
-                        "$ref": "#/refs/valueModifiers"
+                        "$ref": "#/refs/stringModifiers"
                       },
                       {
                         "oneOf": [
@@ -4628,7 +4634,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/refs/valueModifiers"
+              "$ref": "#/refs/stringModifiers"
             },
             {
               "oneOf": [
