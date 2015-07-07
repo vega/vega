@@ -1540,6 +1540,7 @@
               "sin",
               "sqrt",
               "tan",
+              "clamp",
               "now",
               "datetime",
               "date",

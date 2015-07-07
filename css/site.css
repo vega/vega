@@ -57,6 +57,10 @@ p {
   margin-top: 0.5em;
 }
 
+#examples {
+  margin-top: 2em;
+}
+
 .credits {
   margin-top: 2em;
   text-align: left;
