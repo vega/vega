@@ -40,21 +40,21 @@
   </body>
   <script>
     var examples = [
-      {name: 'bar',               editor: true, row: 0, col: 0, x: [90, 36, 97],    y: [-12, -18, 9], width: 275, height: 105},
+      {name: 'bar',               editor: true, row: 0, col: 0, x: [90, 36, 97],    y: [-12, -18, 9],   width: 275, height: 105},
       {name: 'linking',           editor: true, row: 0, col: 1, x: [10, 10, 175],   y: [-148, -210, 0], width: 710, height: 300},
-      {name: 'choropleth',        editor: true, row: 0, col: 2, x: [25, 15, 125],   y: [-10, -65, 5], width: 348, height: 150},
+      {name: 'choropleth',        editor: true, row: 0, col: 2, x: [115, 15, 125],  y: [0, -65, 5],     width: 348, height: 150},
       {name: 'dimpvis',           editor: true, row: 0, col: 3, x: [175, 150, 205], y: [-42, -100, -5], width: 946, height: 300},
-      {name: 'crossfilter',       editor: true, row: 0, col: 4, x: [75, -25, 240],  y: [0, -55, 0], width: 997, height: 250},
-      {name: 'driving',           editor: true, row: 1, col: 0, x: [25, 25, 25],    y: [0, 0, 0], width: 825, height: 150},
-      {name: 'force',             editor: true, row: 1, col: 1, x: [50, 50, 50],    y: [0, 0, 0], width: 200, height: 200},
-      {name: 'heatmap',           editor: true, row: 1, col: 2, x: [50, 50, 50],    y: [-5, -5, -5], width: 957, height: 150},
-      {name: 'index_chart',       editor: true, row: 1, col: 3, x: [25, 25, 25],    y: [5, 5, 5], width: 650, height: 125},
-      {name: 'jobs',              editor: true, row: 1, col: 4, x: [50, 50, 50],    y: [0, 0, 0], width: 880, height: 150},
-      {name: 'parallel_coords',   editor: true, row: 2, col: 0, x: [25, 25, 25],    y: [0, 0, 0], width: 729, height: 150},
-      {name: 'playfair',          editor: true, row: 2, col: 1, x: [23, 23, 23],    y: [0, 0, 0], width: 815, height: 135},
-      {name: 'population',        editor: true, row: 2, col: 2, x: [75, 75, 75],    y: [0, 0, 0], width: 657, height: 135},
-      {name: 'budget_forecasts',  editor: true, row: 2, col: 3, x: [10, 10, 10],    y: [0, 0, 0], width: 540, height: 140},
-      {name: 'treemap',           editor: true, row: 2, col: 4, x: [0, 0, 0],       y: [0, 0, 0], width: 965, height: 140},
+      {name: 'crossfilter',       editor: true, row: 0, col: 4, x: [71, -25, 240],  y: [-35, -55, 0],   width: 997, height: 250},
+      {name: 'driving',           editor: true, row: 1, col: 0, x: [29, 15, 125],   y: [-42, -45, 5],   width: 825, height: 150},
+      {name: 'force',             editor: true, row: 1, col: 1, x: [50, 45, 65],    y: [-15, -75, -5],  width: 200, height: 200},
+      {name: 'heatmap',           editor: true, row: 1, col: 2, x: [75, 40, 125],   y: [-5, -50, -5],   width: 957, height: 150},
+      {name: 'index_chart',       editor: true, row: 1, col: 3, x: [35, -5, 55],    y: [-40, -40, 0],   width: 650, height: 125},
+      {name: 'jobs',              editor: true, row: 1, col: 4, x: [120, 15, 120],  y: [0, -65, -5],    width: 880, height: 150},
+      {name: 'parallel_coords',   editor: true, row: 2, col: 0, x: [130, 0, 130],   y: [-46, -65, 0],   width: 729, height: 150},
+      {name: 'playfair',          editor: true, row: 2, col: 1, x: [36, 20, 115],   y: [-41, -50, 0],   width: 815, height: 135},
+      {name: 'population',        editor: true, row: 2, col: 2, x: [69, 40, 105],   y: [3.5, -50, 5],   width: 657, height: 135},
+      {name: 'budget_forecasts',  editor: true, row: 2, col: 3, x: [45, 10, 60],    y: [-20, -35, 0],   width: 540, height: 140},
+      {name: 'treemap',           editor: true, row: 2, col: 4, x: [75, 0, 75],     y: [0, -35, 0],     width: 965, height: 140},
     ];
 
     var width = 700,
@@ -105,12 +105,12 @@
           {
             "type": "formula", 
             "field": "pan_x", 
-            "expr": "clamp(active._id == datum._id ? datum.pan_x + pan.x/1.5 : datum.pan_x || datum.x[0], datum.x[1], datum.x[2])"
+            "expr": "clamp(active._id == datum._id ? datum.pan_x + pan.x/3 : datum.pan_x || datum.x[0], datum.x[1], datum.x[2])"
           },
           {
             "type": "formula", 
             "field": "pan_y", 
-            "expr": "clamp(active._id == datum._id ? datum.pan_y + pan.y/1.5 : datum.pan_y || datum.y[0], datum.y[1], datum.y[2])"
+            "expr": "clamp(active._id == datum._id ? datum.pan_y + pan.y/3 : datum.pan_y || datum.y[0], datum.y[1], datum.y[2])"
           },
         ]
       }],
