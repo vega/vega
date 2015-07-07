@@ -38,6 +38,15 @@ module.exports = function(codegen) {
     'sqrt':     'Math.sqrt',
     'tan':      'Math.tan',
 
+    'clamp': function(args) {
+      if (args.length < 3)
+        throw new Error('Missing arguments to clamp function.');
+      if (args.length > 3)
+      throw new Error('Too many arguments to clamp function.');
+      var a = args.map(codegen);
+      return 'Math.max('+a[1]+', Math.min('+a[2]+','+a[0]+'))';
+    },
+
     // DATE functions
     'now':      'Date.now',
     'datetime': 'new Date',
