@@ -1,7 +1,7 @@
 {
   "width": 800,
   "height": 500,
-  "padding": {"left": 45, "right": 65, "top": 50, "bottom": 50},
+  "padding": 50,
 
   "data": [
     {
@@ -11,91 +11,102 @@
   ],
 
   "signals": [
-    {"name": "zoomSpeed", "init": 1.015},
+    {"name": "width", "init": 800},
+    {"name": "height", "init": 500},
     {
-      "name": "xDelta",
+      "name": "point",
       "init": 0,
+      "streams": [{
+        "type": "mousedown",
+        "expr": "{x: event.vgX, y: event.vgY}"
+      }]
+    },
+    {
+      "name": "delta",
+      "init": 0,
+      "streams": [{
+        "type": "[mousedown, window:mouseup] > window:mousemove",
+        "expr": "{x: point.x - event.vgX, y: event.vgY - point.y}"
+      }]
+    },
+    {
+      "name": "xAnchor",
+      "init": 0,
+      "streams": [{
+        "type": "mousemove",
+        "expr": "event.vgX",
+        "scale": {"name":"x", "invert":true}
+      }]
+    },
+    {
+      "name": "yAnchor",
+      "init": 0,
+      "streams": [{
+        "type": "mousemove",
+        "expr": "event.vgY",
+        "scale": {"name":"y", "invert":true}
+      }]
+    },
+    {
+      "name": "zoom",
+      "init": 1.0,
       "streams": [
-        {"type": "mousedown", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "xCoord - event.vgX"}
+        {"type": "wheel", "expr": "pow(1.001, event.deltaY)"}
       ]
     },
     {
-      "name": "xCoord",
-      "init": 0,
-      "streams": [
-        {"type": "mousedown", "expr": "event.vgX"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgX"}
+      "name": "xs",
+      "streams": [{
+        "type": "mousedown, mouseup, wheel",
+        "expr": "{min: xMin, max: xMax}"}
       ]
     },
     {
-      "name": "yDelta",
-      "init": 0,
-      "streams": [
-        {"type": "mousedown", "expr": "0"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgY - yCoord"}
-      ]
-    },
-    {
-      "name": "yCoord",
-      "init": 0,
-      "streams": [
-        {"type": "mousedown", "expr": "event.vgY"},
-        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgY"}
-      ]
+      "name": "ys",
+      "streams": [{
+        "type": "mousedown, mouseup, wheel",
+        "expr": "{min: yMin, max: yMax}"
+      }]
     },
     {
       "name": "xMin",
       "init": -1.6,
       "streams": [
-        {"type": "xDelta", "expr": "xMin + (xMax-xMin)*xDelta/800"},
-        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"}
+        {"type": "delta", "expr": "xs.min + (xs.max-xs.min)*delta.x/width"},
+        {"type": "zoom", "expr": "(xs.min-xAnchor)*zoom + xAnchor"}
       ]
     },
     {
       "name": "xMax",
       "init": 1.6,
       "streams": [
-        {"type": "xDelta", "expr": "xMax + (xMax-xMin)*xDelta/800"},
-        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"}
+        {"type": "delta", "expr": "xs.max + (xs.max-xs.min)*delta.x/width"},
+        {"type": "zoom", "expr": "(xs.max-xAnchor)*zoom + xAnchor"}
       ]
     },
     {
       "name": "yMin",
       "init": -1,
       "streams": [
-        {"type": "yDelta", "expr": "yMin + (yMax-yMin)*yDelta/500"},
-        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"}
+        {"type": "delta", "expr": "ys.min + (ys.max-ys.min)*delta.y/height"},
+        {"type": "zoom", "expr": "(ys.min-yAnchor)*zoom + yAnchor"}
       ]
     },
     {
       "name": "yMax",
       "init": 1,
       "streams": [
-        {"type": "yDelta", "expr": "yMax + (yMax-yMin)*yDelta/500"},
-        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"}
-      ]
-    },
-    {
-      "name": "zoomCenterX",
-      "init": 0,
-      "streams": [
-        {"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert":true}}
-      ]
-    },
-    {
-      "name": "zoomCenterY",
-      "init": 0,
-      "streams": [
-        {"type": "mousemove", "expr": "event.vgY", "scale": {"name": "y", "invert":true}}
+        {"type": "delta", "expr": "ys.max + (ys.max-ys.min)*delta.y/height"},
+        {"type": "zoom", "expr": "(ys.max-yAnchor)*zoom + yAnchor"}
       ]
     },
     {
       "name": "pointSize",
-      "init": 30,
-      "streams": [
-        {"type": "xMin", "expr": "min(max(60/(xMax-xMin), 30),100)"}
-      ]
+      "init": 20,
+      "streams": [{
+        "type": "xMin",
+        "expr": "min(max(60/(xMax-xMin), 1), 100)"
+      }]
     }
   ],
 
@@ -135,9 +146,9 @@
       "properties": {
         "enter": {
           "x": {"value": 0},
-          "width": {"value": 800},
+          "width": {"field": {"group": "width"}},
           "y": {"value": 0},
-          "height": {"value": 500},
+          "height": {"field": {"group": "height"}},
           "clip": {"value": true}
         }
       },

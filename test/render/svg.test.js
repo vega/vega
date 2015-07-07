@@ -62,13 +62,18 @@ describe('SVG', function() {
           done();
         } else {
           jsdom.env("<html><body></body></html>", function(err, window) {
+            global.window = window;
+            global.document = window.document;
+            
             var body = d3.select(window.document).select('body').node();
             var view = viewFactory({ renderer: "svg", el: body }).update();
             var svg  = d3.select(body).select('div.vega').node().innerHTML
               .replace(/ href=/g, " xlink:href=")   // ns hack
               .replace("<svg", "<svg "+config.svgNamespace);
-
             validate(svg, name+".dom", validation);
+
+            delete global.window;
+            delete global.document;
             done();
           });
         }
