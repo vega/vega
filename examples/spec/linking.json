@@ -25,18 +25,15 @@
       "init": {"x": 0, "y": 0},
       "streams": [{
         "type": "@cell:mousedown, @point:mousedown", 
-        "expr": "{x: event.vgX, y: event.vgY}"
+        "expr": "{x: clamp(event.vgX, cell.x, cell.x+cell.width), y: clamp(event.vgY, cell.y, cell.y+cell.height)}"
       }]
     },
     {
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
       "streams": [{
-        "type": "@cell:mousedown, @point:mousedown, @cell:mouseup, @point:mouseup", 
-        "expr": "{x: event.vgX, y: event.vgY}"
-      }, {
-        "type": "[(@cell:mousedown, @point:mousedown), mouseup] > mousemove", 
-        "expr": "{x: event.vgX, y: event.vgY}"
+        "type": "@cell:mousedown, @point:mousedown, [(@cell:mousedown, @point:mousedown), window:mouseup] > window:mousemove",
+        "expr": "{x: clamp(event.vgX, cell.x, cell.x+cell.width), y: clamp(event.vgY, cell.y, cell.y+cell.height)}"
       }]
     },
     {
@@ -44,8 +41,8 @@
       "init": 0,
       "streams": [{
         "type": "brush_start", 
-        "expr": "brush_start.x - cell.x", 
-        "scale": {"name": "x", "invert": true, "scope": {"signal": "cell"}}
+        "expr": "brush_start.x - cell.x",
+        "scale": {"name": "x", "invert": true, "scope": "cell"}
       }]
     },
     {
@@ -53,8 +50,8 @@
       "init": 0,
       "streams": [{
         "type": "brush_start", 
-        "expr": "brush_start.y - cell.y", 
-        "scale": {"name": "y", "invert": true, "scope": {"signal": "cell"}}
+        "expr": "brush_start.y - cell.y",
+        "scale": {"name": "y", "invert": true, "scope": "cell"}
       }]
     },
     {
@@ -62,8 +59,8 @@
       "init": 0,
       "streams": [{
         "type": "brush_end", 
-        "expr": "brush_end.x - cell.x", 
-        "scale": {"name": "x", "invert": true, "scope": {"signal": "cell"}}
+        "expr": "brush_end.x - cell.x",
+        "scale": {"name": "x", "invert": true, "scope": "cell"}
       }]
     },
     {
@@ -71,8 +68,8 @@
       "init": 0,
       "streams": [{
         "type": "brush_end", 
-        "expr": "brush_end.y - cell.y", 
-        "scale": {"name": "y", "invert": true, "scope": {"signal": "cell"}}
+        "expr": "brush_end.y - cell.y",
+        "scale": {"name": "y", "invert": true, "scope": "cell"}
       }]
     }
   ],

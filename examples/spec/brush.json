@@ -3,20 +3,23 @@
   "height": 200,
 
   "signals": [
+    {"name": "w", "init": 200},
+    {"name": "h", "init": 200},
     {
       "name": "brush_start",
       "init": {"x": 0, "y": 0},
-      "streams": [{"type": "mousedown", "expr": "{x: event.vgX, y: event.vgY}"}]
+      "streams": [{
+        "type": "mousedown",
+        "expr": "{x: clamp(event.vgX,0,w), y: clamp(event.vgY,0,h)}"
+      }]
     },
     {
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
-      "streams": [
-        {
-          "type": "mousedown, mouseup, [mousedown, mouseup] > mousemove", 
-          "expr": "{x: event.vgX, y: event.vgY}"
-        }
-      ]
+      "streams": [{
+        "type": "mousedown, [mousedown, window:mouseup] > window:mousemove", 
+        "expr": "{x: clamp(event.vgX,0,w), y: clamp(event.vgY,0,h)}"
+      }]
     }
   ],
 
@@ -28,7 +31,6 @@
       "range": [{"signal": "brush_start.x"}, {"signal": "brush_end.x"}],
       "scale": {"name": "x", "invert": true}
     },
-
     {
       "name": "yRange",
       "type": "in",
@@ -36,7 +38,6 @@
       "range": [{"signal": "brush_start.y"}, {"signal": "brush_end.y"}],
       "scale": {"name": "y", "invert": true}
     },
-
     {
       "name": "inRange",
       "type": "&&",
@@ -102,7 +103,6 @@
                   "x": {"field": "sepalWidth"},
                   "y": {"field": "petalLength"}
                 },
-
                 "scale": "c", 
                 "field": "species"
               },

@@ -4,7 +4,7 @@
 
   "signals": [
     {
-      "name": "clickedPt",
+      "name": "clickedPoint",
       "init": 0,
       "verbose": true,
       "streams": [{"type": "click", "expr": "datum._id"}]
@@ -19,7 +19,7 @@
 
   "predicates": [
     {
-      "name": "clearPts",
+      "name": "clearPoints",
       "type": "==",
       "operands": [{"signal": "shift"}, {"value": false}]
     },
@@ -27,7 +27,7 @@
       "name": "isSelected",
       "type": "in",
       "item": {"arg": "id"},
-      "data": "selectedPts",
+      "data": "selectedPoints",
       "field": "id"
     }
   ],
@@ -38,15 +38,15 @@
       "url": "data/iris.json"
     },
     {
-      "name": "selectedPts",
+      "name": "selectedPoints",
       "modify": [
         {
           "type": "clear",
-          "predicate": "clearPts"
+          "predicate": "clearPoints"
         },
         {
           "type": "toggle",
-          "signal": "clickedPt",
+          "signal": "clickedPoint",
           "field": "id"
         }
       ]
@@ -97,7 +97,6 @@
                   "name": "isSelected",
                   "id": {"field": "_id"}
                 },
-
                 "scale": "c", 
                 "field": "species"
               },

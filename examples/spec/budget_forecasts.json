@@ -1,6 +1,7 @@
 {
   "width": 700,
   "height": 400,
+  "padding": {"top": 10, "left": 10, "right": 80, "bottom": 10},
   "background": "#edf1f7",
   
   "signals": [
@@ -14,13 +15,11 @@
     },
     {
       "name": "handleYear",
-      "streams": [
-        {
-          "type": "mousemove[dragging]",
-          "expr": "event.vgX",
-          "scale": {"name": "x", "invert": true}
-        }
-      ]
+      "streams": [{
+        "type": "mousemove[dragging]",
+        "expr": "clamp(event.vgX, 10, 10000)",
+        "scale": {"name": "x", "invert": true}
+      }]
     },
     {
       "name": "currentYear",
@@ -29,21 +28,17 @@
     },
     {
       "name": "tipYear",
-      "streams": [
-        {
-          "type": "mousemove[!dragging]", "expr": "event.vgX",
-          "scale": {"name": "x", "invert": true}
-        }  
-      ]
+      "streams": [{
+        "type": "mousemove[!dragging]", "expr": "event.vgX",
+        "scale": {"name": "x", "invert": true}
+      }]
     },
     {
       "name": "tipValue",
-      "streams": [
-        {
-          "type": "mousemove[!dragging]", "expr": "event.vgY",
-          "scale": {"name": "y", "invert": true}
-        }  
-      ]
+      "streams": [{
+        "type": "mousemove[!dragging]", "expr": "event.vgY",
+        "scale": {"name": "y", "invert": true}
+      }]
     }
   ],
   
@@ -228,9 +223,9 @@
       "type": "text",
       "properties": {
         "enter": {
-          "x": {"field": {"group": "width"}, "offset": -25},
+          "x": {"value": 0},
           "y": {"value": 25},
-          "fontSize": {"value": 24},
+          "fontSize": {"value": 32},
           "fontWeight": {"value": "bold"},
           "fill": {"value": "steelblue"}
         },
@@ -245,9 +240,9 @@
       "from": {"data": "tooltip"},
       "properties": {
         "update": {
-          "x": {"scale": "x", "field": "argmin.forecastYear", "offset": -50},
+          "x": {"scale": "x", "field": "argmin.forecastYear", "offset": -5},
+          "y": {"scale": "y", "field": "argmin.value", "offset": 20},
           "width": {"value": 150},
-          "y": {"scale": "y", "field": "argmin.value", "offset": 25},
           "height": {"value": 35},
           "fill": {"value": "#fff"},
           "fillOpacity": {"value": 0.85},
@@ -261,8 +256,8 @@
           "type": "text",
           "properties": {
             "update": {
-              "x": {"value": 5},
-              "y": {"value": 15},
+              "x": {"value": 6},
+              "y": {"value": 14},
               "text": {"template": "Forecast from early {{parent.argmin.budgetYear}}"},
               "fill": {"value": "black"},
               "fontWeight": {"value": "bold"}
@@ -273,9 +268,9 @@
           "type": "text",
           "properties": {
             "update": {
-              "x": {"value": 5},
-              "y": {"value": 30},
-              "text": {"template": "{{parent.argmin.forecastYear}} \t\t {{parent.argmin.abs|number:'$.3f'}} trillion {{parent.argmin.type}}"},
+              "x": {"value": 6},
+              "y": {"value": 29},
+              "text": {"template": "{{parent.argmin.forecastYear}} \t {{parent.argmin.abs|number:'$.3f'}} trillion {{parent.argmin.type}}"},
               "fill": {"value": "black"},
               "align": {"value": "left"}
             }
