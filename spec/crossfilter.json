@@ -1,0 +1,583 @@
+{
+  "data": [
+    {
+      "name": "flights",
+      "url": "data/flights-2k.json",
+      "format": {"type": "json", "parse": {"date": "date"}},
+      "transform": [
+        {"type": "formula", "field": "hour", "expr": "hours(datum.date)"},
+        {
+          "type": "formula", 
+          "field": "day", 
+          "expr": "datetime((month(datum.date)+1) + '/' + date(datum.date) + '/2001')"
+        }
+      ]
+    },
+    {
+      "name": "times",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay))"},
+        {
+          "type": "bin",
+          "field": "hour",
+          "min": 0,
+          "max": 24,
+          "step": 1
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["bin"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    },
+    {
+      "name": "delay",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime))"},
+        {
+          "type": "bin",
+          "field": "delay",
+          "min": -60,
+          "max": 140,
+          "step": 10
+        },
+        {"type": "filter", "test": "datum.bin <= 140"},
+        {
+          "type": "aggregate",
+          "groupby": ["bin"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    },
+    {
+      "name": "distance",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime))"},
+        {
+          "type": "bin",
+          "field": "distance",
+          "min": 0,
+          "max": 2000,
+          "step": 50
+        },
+        {"type": "filter", "test": "datum.bin <= 2000"},
+        {
+          "type": "aggregate",
+          "groupby": ["bin"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    },
+    {
+      "name": "date",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime))"},
+        {"type": "filter", "test": "datum.day < datetime('4/1/2001')"},
+        {
+          "type": "aggregate",
+          "groupby": ["day"],
+          "summarize": {"delay": ["count"]}
+        }        
+      ]
+    }
+  ],
+
+  "signals": [
+    {
+      "name": "timesStart",
+      "init": -1,
+      "streams": [{
+        "type": "@timesGroup:mousedown", 
+        "expr": "event.vgTimesGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgTimesGroupItem"}
+      }]
+    },
+    {
+      "name": "timesEnd",
+      "init": -1,
+      "streams": [{
+        "type": "@timesGroup:mousedown, @timesGroup:mouseup, [@timesGroup:mousedown, @timesGroup:mouseup] > @timesGroup:mousemove",
+        "expr": "event.vgTimesGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgTimesGroupItem"}
+      }]
+    },
+    {"name": "minTime", "expr": "max(min(timesStart, timesEnd), 0)"},
+    {"name": "maxTime", "expr": "min(max(timesStart, timesEnd), 24)"},
+
+    {
+      "name": "delayStart",
+      "init": -1,
+      "streams": [{
+        "type": "@delayGroup:mousedown", 
+        "expr": "event.vgDelayGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgDelayGroupItem"}
+      }]
+    },
+    {
+      "name": "delayEnd",
+      "init": -1,
+      "streams": [{
+        "type": "@delayGroup:mousedown, @delayGroup:mouseup, [@delayGroup:mousedown, @delayGroup:mouseup] > @delayGroup:mousemove",
+        "expr": "event.vgDelayGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgDelayGroupItem"}
+      }]
+    },
+    {"name": "minDelay", "expr": "max(min(delayStart, delayEnd), -60)"},
+    {"name": "maxDelay", "expr": "min(max(delayStart, delayEnd), 140)"},
+
+    {
+      "name": "distStart",
+      "init": -1,
+      "streams": [{
+        "type": "@distGroup:mousedown", 
+        "expr": "event.vgDistGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgDistGroupItem"}
+      }]
+    },
+    {
+      "name": "distEnd",
+      "init": -1,
+      "streams": [{
+        "type": "@distGroup:mousedown, @distGroup:mouseup, [@distGroup:mousedown, @distGroup:mouseup] > @distGroup:mousemove",
+        "expr": "event.vgDistGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgDistGroupItem"}
+      }]
+    },
+    {"name": "minDist", "expr": "max(min(distStart, distEnd), 0)"},
+    {"name": "maxDist", "expr": "min(max(distStart, distEnd), 2000)"},
+
+    {
+      "name": "dayStart",
+      "streams": [{
+        "type": "@dayGroup:mousedown", 
+        "expr": "event.vgDayGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgDayGroupItem"}
+      }]
+    },
+    {
+      "name": "dayEnd",
+      "streams": [{
+        "type": "@dayGroup:mousedown, @dayGroup:mouseup, [@dayGroup:mousedown, @dayGroup:mouseup] > @dayGroup:mousemove",
+        "expr": "event.vgDayGroupX",
+        "scale": {"name": "x", "invert": true, "scope": "event.vgDayGroupItem"}
+      }]
+    },
+    {"name": "minDay", "expr": "max(min(dayStart, dayEnd), datetime('Jan 1 2001'))"},
+    {"name": "maxDay", "expr": "min(max(dayStart, dayEnd), datetime('Mar 31 2001'))"}
+  ],
+
+  "predicates": [
+    {
+      "name": "timesEqual",
+      "type": "==",
+      "operands": [{"signal": "timesStart"}, {"signal": "timesEnd"}]
+    },
+    {
+      "name": "timesRange",
+      "type": "in",
+      "item": {"arg": "x"},
+      "range": [{"signal": "timesStart"}, {"signal": "timesEnd"}]
+    },
+    {
+      "name": "timesBrush",
+      "type": "or",
+      "operands": [{"predicate": "timesEqual"}, {"predicate": "timesRange"}]
+    },
+
+    {
+      "name": "delayEqual",
+      "type": "==",
+      "operands": [{"signal": "delayStart"}, {"signal": "delayEnd"}]
+    },
+    {
+      "name": "delayRange",
+      "type": "in",
+      "item": {"arg": "x"},
+      "range": [{"signal": "delayStart"}, {"signal": "delayEnd"}]
+    },
+    {
+      "name": "delayBrush",
+      "type": "or",
+      "operands": [{"predicate": "delayEqual"}, {"predicate": "delayRange"}]
+    },
+
+    {
+      "name": "distEqual",
+      "type": "==",
+      "operands": [{"signal": "distStart"}, {"signal": "distEnd"}]
+    },
+    {
+      "name": "distRange",
+      "type": "in",
+      "item": {"arg": "x"},
+      "range": [{"signal": "distStart"}, {"signal": "distEnd"}]
+    },
+    {
+      "name": "distBrush",
+      "type": "or",
+      "operands": [{"predicate": "distEqual"}, {"predicate": "distRange"}]
+    },
+
+    {
+      "name": "dayEqual",
+      "type": "==",
+      "operands": [{"signal": "dayStart"}, {"signal": "dayEnd"}]
+    },
+    {
+      "name": "dayRange",
+      "type": "in",
+      "item": {"arg": "x"},
+      "range": [{"signal": "dayStart"}, {"signal": "dayEnd"}]
+    },
+    {
+      "name": "dayBrush",
+      "type": "or",
+      "operands": [{"predicate": "dayEqual"}, {"predicate": "dayRange"}]
+    }
+  ],
+
+  "marks": [
+    {
+      "name": "timesGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 0},
+          "width": {"value": 250},
+          "y": {"value": 0},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": [0, 24]
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "times", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "times"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "bin"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": {
+                "rule": [
+                  {
+                    "predicate": {"name": "timesBrush", "x": {"field": "bin"}},
+                    "value": "steelblue"
+                  },
+                  {"value": "#bbb"}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": -10},
+              "text": {"value": "Time of Day"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "timesStart"},
+              "x2": {"scale": "x", "signal": "timesEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "delayGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 290},
+          "width": {"value": 210},
+          "y": {"value": 0},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": [-60, 140]
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "delay", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "delay"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "bin"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": {
+                "rule": [
+                  {
+                    "predicate": {"name": "delayBrush", "x": {"field": "bin"}},
+                    "value": "steelblue"
+                  },
+                  {"value": "#bbb"}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": -10},
+              "text": {"value": "Delay (min.)"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "delayStart"},
+              "x2": {"scale": "x", "signal": "delayEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "distGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 540},
+          "width": {"value": 420},
+          "y": {"value": 0},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": [0, 2000]
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "distance", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "distance"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "bin"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": {
+                "rule": [
+                  {
+                    "predicate": {"name": "distBrush", "x": {"field": "bin"}},
+                    "value": "steelblue"
+                  },
+                  {"value": "#bbb"}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": -10},
+              "text": {"value": "Distance (mi.)"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "distStart"},
+              "x2": {"scale": "x", "signal": "distEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "dayGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 0},
+          "width": {"value": 920},
+          "y": {"value": 150},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "date", "field": "day"}
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "date", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "date"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "day"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": {
+                "rule": [
+                  {
+                    "predicate": {"name": "dayBrush", "x": {"field": "day"}},
+                    "value": "steelblue"
+                  },
+                  {"value": "#bbb"}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": 0},
+              "text": {"value": "Date"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "dayStart"},
+              "x2": {"scale": "x", "signal": "dayEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    }
+
+  ]
+}

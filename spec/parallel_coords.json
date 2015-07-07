@@ -19,39 +19,39 @@
       "domain": {"data": "fields", "field": "data"}
     },    
     {
-      "name": "cyl",
+      "name": "cyl", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.cyl"}
+      "domain": {"data": "cars", "field": "cyl"}
     },
     {
-      "name": "dsp",
+      "name": "dsp", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.dsp"}
+      "domain": {"data": "cars", "field": "dsp"}
     },
     {
-      "name": "lbs",
+      "name": "lbs", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.lbs"}
+      "domain": {"data": "cars", "field": "lbs"}
     },
     {
-      "name": "hp",
+      "name": "hp", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.hp"}
+      "domain": {"data": "cars", "field": "hp"}
     },
     {
-      "name": "acc",
+      "name": "acc", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.acc"}
+      "domain": {"data": "cars", "field": "acc"}
     },
     {
-      "name": "mpg",
+      "name": "mpg", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.mpg"}
+      "domain": {"data": "cars", "field": "mpg"}
     },
     {
-      "name": "year",
+      "name": "year", "type": "linear",
       "range": "height", "zero": false, "nice": true,
-      "domain": {"data": "cars", "field": "data.year"}
+      "domain": {"data": "cars", "field": "year"}
     }
   ],
   "axes": [
@@ -74,7 +74,10 @@
           "properties": {
             "enter": {
               "x": {"scale": "ord", "field": "data"},
-              "y": {"scale": {"field": "data"}, "group": "data", "field": "data"},
+              "y": {
+                "scale": {"datum": "data"}, 
+                "field": {"parent": {"datum": "data"}}
+              },
               "stroke": {"value": "steelblue"},
               "strokeWidth": {"value": 1},
               "strokeOpacity": {"value": 0.3}
@@ -89,7 +92,7 @@
       "properties": {
         "enter": {
           "x": {"scale": "ord", "field": "data", "offset":-8},
-          "y": {"group": "height", "offset": 6},
+          "y": {"field": {"group": "height"}, "offset": 6},
           "fontWeight": {"value": "bold"},
           "fill": {"value": "black"},
           "text": {"field": "data"},

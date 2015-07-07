@@ -2,17 +2,20 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="http://vega.github.io/favicon.ico"/>
     <title>Vega Live Editor</title>
     <link rel="stylesheet" type="text/css" href="editor.css"/>
     <script src="../lib/topojson.js"></script>
-    <script src="../lib/d3.v3.min.js"></script>
-    <script src="../lib/d3.geo.projection.min.js"></script>
-    <script src="../lib/d3.layout.cloud.js"></script>
-    <script src="../vega.js"></script>
+    <script src="../lib/d3.v3.min.js" charset="utf-8"></script>
+    <script src="../lib/d3.geo.projection.min.js" charset="utf-8"></script>
+    <script src="../lib/d3.layout.cloud.js" charset="utf-8"></script>
+    <script src="../lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../lib/tv4.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../vega2.js"></script>
     <script src="specs.js"></script>
     <script src="editor.js"></script>
   </head>
-  <body>    
+  <body>
     <div id="content">
       <div id="mod_spec" class="mod">
         <div class="mod_header">
@@ -25,7 +28,7 @@
             <a id="link_spec" class="active">Vega</a>         
           </div>
         </div>
-        <textarea id="spec" class="pre" spellcheck="false"></textarea>
+        <div id="spec" class="pre" spellcheck="false"></div>
       </div>
       <div id="mod_vis" class="mod">
         <div class="mod_ctrls">

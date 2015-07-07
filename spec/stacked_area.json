@@ -22,30 +22,34 @@
       "name": "stats",
       "source": "table",
       "transform": [
-        {"type": "facet", "keys": ["data.x"]},
-        {"type": "stats", "value": "data.y"}
+        {
+          "type": "aggregate",
+          "groupby": ["x"],
+          "summarize": [{"field": "y", "ops": ["sum"]}]
+        }
       ]
     }
   ],
   "scales": [
     {
       "name": "x",
-      "type": "linear",
+      "type": "ordinal",
       "range": "width",
-      "zero": false,
-      "domain": {"data": "table", "field": "data.x"}
+      "points": true,
+      "domain": {"data": "table", "field": "x"}
     },
     {
       "name": "y",
       "type": "linear",
       "range": "height",
       "nice": true,
-      "domain": {"data": "stats", "field": "sum"}
+      "domain": {"data": "stats", "field": "sum_y"}
     },
     {
       "name": "color",
       "type": "ordinal",
-      "range": "category10"
+      "range": "category10",
+      "domain": {"data": "table", "field": "c"}
     }
   ],
   "axes": [
@@ -58,8 +62,8 @@
       "from": {
         "data": "table",
         "transform": [
-          {"type": "facet", "keys": ["data.c"]},
-          {"type": "stack", "point": "data.x", "height": "data.y"}
+          {"type": "stack", "groupby": ["x"], "sortby": ["c"], "field": "y"},
+          {"type": "facet", "groupby": ["c"]}
         ]
       },
       "marks": [
@@ -68,10 +72,10 @@
           "properties": {
             "enter": {
               "interpolate": {"value": "monotone"},
-              "x": {"scale": "x", "field": "data.x"},
-              "y": {"scale": "y", "field": "y"},
-              "y2": {"scale": "y", "field": "y2"},
-              "fill": {"scale": "color", "field": "data.c"}
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "layout_start"},
+              "y2": {"scale": "y", "field": "layout_end"},
+              "fill": {"scale": "color", "field": "c"}
             },
             "update": {
               "fillOpacity": {"value": 1}
@@ -82,6 +86,6 @@
           }
         }
       ]
-    }    
+    }
   ]
 }

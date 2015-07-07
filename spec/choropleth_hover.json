@@ -1,6 +1,19 @@
 {
   "width": 960,
   "height": 500,
+
+  "signals": [{
+    "name": "hoverID", 
+    "init": 0,
+    "streams": [{"type": "mousemove", "expr": "datum._id"}]
+  }],
+
+  "predicates": [{
+    "name": "isHovered",
+    "type": "==",
+    "operands": [{"signal": "hoverID"}, {"arg": "id"}]
+  }],
+
   "data": [
     {
       "name": "unemp",
@@ -40,8 +53,18 @@
       "from": {"data": "counties"},
       "properties": {
         "enter": { "path": {"field": "layout_path"} },
-        "update": { "fill": {"scale": "color", "field": "unemp.rate"} },
-        "hover": { "fill": {"value": "red"} }
+        "update": { "fill": {
+          "rule": [
+            {
+              "predicate": {
+                "name": "isHovered",
+                "id": {"field": "_id"}
+                },
+              "value": "red"
+            },
+            {"scale": "color", "field": "unemp.rate"}
+          ]} 
+        }
       }
     }
   ]

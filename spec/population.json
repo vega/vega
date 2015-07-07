@@ -1,28 +1,28 @@
 {
-  "width": 700,
+  "width": 640,
   "height": 400,
-  "padding": {"top": 0, "left": 0, "bottom": 20, "right": 0},
   "data": [
     {
       "name": "pop2000",
       "url": "data/population.json",
       "transform": [
-        {"type": "filter", "test": "d.data.year == 2000"}
+        {"type": "filter", "test": "datum.year == 2000"}
       ]
     }
   ],
   "scales": [
     {
       "name": "g",
-      "domain": [0, 1],
-      "range": [340, 10]
+      "type": "ordinal",
+      "domain": [2, 1],
+      "range": "width"
     },
     {
       "name": "y",
       "type": "ordinal",
       "range": "height",
       "reverse": true,
-      "domain": {"data": "pop2000", "field": "data.age"}
+      "domain": {"data": "pop2000", "field": "age"}
     },
     {
       "name": "c",
@@ -37,11 +37,11 @@
       "interactive": false,
       "from": {
         "data": "pop2000",
-        "transform": [{"type":"unique", "field":"data.age", "as":"age"}]
+        "transform": [{"type":"aggregate", "groupby":["age"]}]
       },
       "properties": {
         "enter": {
-          "x": {"value": 325},
+          "x": {"field": {"group": "width"}, "mult": 0.5, "offset": -15},
           "y": {"scale": "y", "field": "age", "offset": 11},
           "text": {"field": "age"},
           "baseline": {"value": "middle"},
@@ -55,15 +55,16 @@
       "from": {
         "data": "pop2000",
         "transform": [
-          {"type":"facet", "keys":["data.sex"]}
+          {"type":"facet", "groupby": ["sex"]},
+          {"type":"formula", "field":"reverse", "expr":"datum.key==2"}
         ]
       },
       "properties": {
         "update": {
-          "x": {"scale": "g", "field": "index"},
+          "x": {"scale": "g", "field": "key"},
           "y": {"value": 0},
-          "width": {"value": 300},
-          "height": {"group": "height"}
+          "width": {"scale": "g", "band": true, "offset": -30},
+          "height": {"field": {"group": "height"}}
         }
       },
       "scales": [
@@ -71,9 +72,9 @@
           "name": "x",
           "type": "linear",
           "range": "width",
-          "reverse": {"field": "index"},
+          "reverse": {"field": "reverse"},
           "nice": true,
-          "domain": {"data": "pop2000", "field": "data.people"}
+          "domain": {"data": "pop2000", "field": "people"}
         }
       ],
       "axes": [
@@ -84,12 +85,12 @@
           "type": "rect",
           "properties": {
             "enter": {
-              "x": {"scale": "x", "field": "data.people"},
+              "x": {"scale": "x", "field": "people"},
               "x2": {"scale": "x", "value": 0},
-              "y": {"scale": "y", "field": "data.age"},
+              "y": {"scale": "y", "field": "age"},
               "height": {"scale": "y", "band": true, "offset": -1},
               "fillOpacity": {"value": 0.6},
-              "fill": {"scale": "c", "field": "data.sex"}
+              "fill": {"scale": "c", "field": "sex"}
             }
           }
         }

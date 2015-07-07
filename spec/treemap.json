@@ -1,5 +1,4 @@
 {
-  "name": "treemap",
   "width": 960,
   "height": 500,
   "padding": 2.5,
@@ -9,7 +8,7 @@
       "url": "data/flare.json",
       "format": {"type": "treejson"},
       "transform": [
-        {"type": "treemap", "value": "data.size"}
+        {"type": "treemap", "field": "size", "size": [960, 500]}
       ]
     }
   ],
@@ -42,16 +41,16 @@
       "type": "rect",
       "from": {
         "data": "tree",
-        "transform": [{"type":"filter", "test":"d.values"}]
+        "transform": [{"type":"filter", "test":"datum.children"}]
       },
       "interactive": false,
       "properties": {
         "enter": {
-          "x": {"field": "x"},
-          "y": {"field": "y"},
-          "width": {"field": "width"},
-          "height": {"field": "height"},
-          "fill": {"scale": "color", "field": "data.name"}
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
+          "width": {"field": "layout_width"},
+          "height": {"field": "layout_height"},
+          "fill": {"scale": "color", "field": "name"}
         }
       }
     },
@@ -59,14 +58,14 @@
       "type": "rect",
       "from": {
         "data": "tree",
-        "transform": [{"type":"filter", "test":"!d.values"}]
+        "transform": [{"type":"filter", "test":"!datum.children"}]
       },
       "properties": {
         "enter": {
-          "x": {"field": "x"},
-          "y": {"field": "y"},
-          "width": {"field": "width"},
-          "height": {"field": "height"},
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
+          "width": {"field": "layout_width"},
+          "height": {"field": "layout_height"},
           "stroke": {"value": "#fff"}
         },
         "update": {
@@ -81,22 +80,22 @@
       "type": "text",
       "from": {
         "data": "tree",
-        "transform": [{"type":"filter", "test":"d.values"}]
+        "transform": [{"type":"filter", "test":"datum.children"}]
       },
       "interactive": false,
       "properties": {
         "enter": {
-          "x": {"field": "x"},
-          "y": {"field": "y"},
-          "dx": {"field": "width", "mult": 0.5},
-          "dy": {"field": "height", "mult": 0.5},
+          "x": {"field": "layout_x"},
+          "y": {"field": "layout_y"},
+          "dx": {"field": "layout_width", "mult": 0.5},
+          "dy": {"field": "layout_height", "mult": 0.5},
           "font": {"value": "Helvetica Neue"},
           "fontSize": {"scale": "size", "field": "depth"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"},
           "fill": {"value": "#000"},
           "fillOpacity": {"scale": "opacity", "field": "depth"},
-          "text": {"field": "data.name"}
+          "text": {"field": "name"}
         }
       }
     }

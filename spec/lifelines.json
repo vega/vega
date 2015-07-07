@@ -1,5 +1,4 @@
 {
-  "name": "lifelines",
   "width": 400,
   "height": 100,
   "data": [
@@ -35,7 +34,7 @@
       "name": "y",
       "type": "ordinal",
       "range": "height",
-      "domain": {"data": "people", "field": "data.label"}
+      "domain": {"data": "people", "field": "label"}
     },
     {
       "name": "x",
@@ -43,7 +42,7 @@
       "range": "width",
       "round": true,
       "nice": "year",
-      "domain": {"data": "people", "field": ["data.born", "data.died"]}
+      "domain": {"data": "people", "field": ["born", "died"]}
     }
   ],
   "axes": [
@@ -55,11 +54,11 @@
       "from": {"data": "events"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "data.when"},
+          "x": {"scale": "x", "field": "when"},
           "y": {"value": -10},
           "angle": {"value": -25},
           "fill": {"value": "#000"},
-          "text": {"field": "data.name"},
+          "text": {"field": "name"},
           "font": {"value": "Helvetica Neue"},
           "fontSize": {"value": 10}
         }
@@ -70,10 +69,10 @@
       "from": {"data": "events"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "data.when"},
+          "x": {"scale": "x", "field": "when"},
           "y": {"value": -8},
           "width": {"value": 1},
-          "height": {"group": "height", "offset": 8},
+          "height": {"field": {"group": "height"}, "offset": 8},
           "fill": {"value": "#888"}
         }
       }
@@ -83,10 +82,10 @@
       "from": {"data": "people"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "data.born"},
-          "y": {"scale": "y", "field": "data.label", "offset": -3},
+          "x": {"scale": "x", "field": "born"},
+          "y": {"scale": "y", "field": "label", "offset": -3},
           "fill": {"value": "#000"},
-          "text": {"field": "data.label"},
+          "text": {"field": "label"},
           "font": {"value": "Helvetica Neue"},
           "fontSize": {"value": 10}
         }
@@ -97,9 +96,9 @@
       "from": {"data": "people"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "data.born"},
-          "x2": {"scale": "x", "field": "data.died"},
-          "y": {"scale": "y", "field": "data.label"},
+          "x": {"scale": "x", "field": "born"},
+          "x2": {"scale": "x", "field": "died"},
+          "y": {"scale": "y", "field": "label"},
           "height": {"value": 2},
           "fill": {"value": "#557"}
         }
@@ -110,9 +109,9 @@
       "from": {"data": "people"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "data.enter"},
-          "x2": {"scale": "x", "field": "data.leave"},
-          "y": {"scale": "y", "field": "data.label", "offset":-1},
+          "x": {"scale": "x", "field": "enter"},
+          "x2": {"scale": "x", "field": "leave"},
+          "y": {"scale": "y", "field": "label", "offset":-1},
           "height": {"value": 4},
           "fill": {"value": "#e44"}
         }

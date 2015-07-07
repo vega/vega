@@ -1,0 +1,160 @@
+{
+  "width": 800,
+  "height": 500,
+  "padding": {"left": 45, "right": 65, "top": 50, "bottom": 50},
+
+  "data": [
+    {
+      "name": "points",
+      "url": "data/points.json"
+    }
+  ],
+
+  "signals": [
+    {"name": "zoomSpeed", "init": 1.015},
+    {
+      "name": "xDelta",
+      "init": 0,
+      "streams": [
+        {"type": "mousedown", "expr": "0"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "xCoord - event.vgX"}
+      ]
+    },
+    {
+      "name": "xCoord",
+      "init": 0,
+      "streams": [
+        {"type": "mousedown", "expr": "event.vgX"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgX"}
+      ]
+    },
+    {
+      "name": "yDelta",
+      "init": 0,
+      "streams": [
+        {"type": "mousedown", "expr": "0"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgY - yCoord"}
+      ]
+    },
+    {
+      "name": "yCoord",
+      "init": 0,
+      "streams": [
+        {"type": "mousedown", "expr": "event.vgY"},
+        {"type": "[mousedown, mouseup] > mousemove", "expr": "event.vgY"}
+      ]
+    },
+    {
+      "name": "xMin",
+      "init": -1.6,
+      "streams": [
+        {"type": "xDelta", "expr": "xMin + (xMax-xMin)*xDelta/800"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMin-zoomCenterX) * zoomSpeed + zoomCenterX : (xMin-zoomCenterX) / zoomSpeed + zoomCenterX"}
+      ]
+    },
+    {
+      "name": "xMax",
+      "init": 1.6,
+      "streams": [
+        {"type": "xDelta", "expr": "xMax + (xMax-xMin)*xDelta/800"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (xMax-zoomCenterX) * zoomSpeed + zoomCenterX :(xMax-zoomCenterX) / zoomSpeed + zoomCenterX"}
+      ]
+    },
+    {
+      "name": "yMin",
+      "init": -1,
+      "streams": [
+        {"type": "yDelta", "expr": "yMin + (yMax-yMin)*yDelta/500"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMin-zoomCenterY) * zoomSpeed + zoomCenterY : (yMin-zoomCenterY) / zoomSpeed + zoomCenterY"}
+      ]
+    },
+    {
+      "name": "yMax",
+      "init": 1,
+      "streams": [
+        {"type": "yDelta", "expr": "yMax + (yMax-yMin)*yDelta/500"},
+        {"type": "wheel", "expr": "(event.wheelDelta||-event.deltaY) < 0 ? (yMax-zoomCenterY) * zoomSpeed + zoomCenterY: (yMax-zoomCenterY) / zoomSpeed + zoomCenterY"}
+      ]
+    },
+    {
+      "name": "zoomCenterX",
+      "init": 0,
+      "streams": [
+        {"type": "mousemove", "expr": "event.vgX", "scale": {"name": "x", "invert":true}}
+      ]
+    },
+    {
+      "name": "zoomCenterY",
+      "init": 0,
+      "streams": [
+        {"type": "mousemove", "expr": "event.vgY", "scale": {"name": "y", "invert":true}}
+      ]
+    },
+    {
+      "name": "pointSize",
+      "init": 30,
+      "streams": [
+        {"type": "xMin", "expr": "min(max(60/(xMax-xMin), 30),100)"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width", "zero": false,
+      "domainMin": {"signal": "xMin"},
+      "domainMax": {"signal": "xMax"}
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height", "zero": false,
+      "domainMin": {"signal": "yMin"},
+      "domainMax": {"signal": "yMax"}
+    }
+  ],
+  "axes": [
+    {"type": "x", "scale": "x", "grid": true, "layer": "back", "properties": {
+      "labels": {
+        "fontSize": {"value": 14}
+      }
+
+    }},
+    {"type": "y", "scale": "y", "grid": true, "layer": "back", "properties": {
+      "labels": {
+        "fontSize": {"value": 14}
+      }
+
+    }}
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "width": {"value": 800},
+          "y": {"value": 0},
+          "height": {"value": 500},
+          "clip": {"value": true}
+        }
+      },
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "points"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "fill": {"value": "steelblue"},
+              "size": {"signal": "pointSize"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

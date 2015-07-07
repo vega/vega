@@ -1,14 +1,11 @@
 {
-  "name": "arc",
   "width": 400,
   "height": 400,
   "data": [
     {
       "name": "table",
       "values": [12, 23, 47, 6, 52, 19],
-      "transform": [
-        {"type": "pie", "value": "data"}
-      ]
+      "transform": [{"type": "pie", "field": "data"}]
     }
   ],
   "scales": [
@@ -25,12 +22,12 @@
       "from": {"data": "table"},
       "properties": {
         "enter": {
-          "x": {"group": "width", "mult": 0.5},
-          "y": {"group": "height", "mult": 0.5},
-          "startAngle": {"field": "startAngle"},
-          "endAngle": {"field": "endAngle"},
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
+          "startAngle": {"field": "layout_start"},
+          "endAngle": {"field": "layout_end"},
           "innerRadius": {"value": 20},
-          "outerRadius": {"scale": "r"},
+          "outerRadius": {"scale": "r", "field": "data"},
           "stroke": {"value": "#fff"}
         },
         "update": {
@@ -46,10 +43,10 @@
       "from": {"data": "table"},
       "properties": {
         "enter": {
-          "x": {"group": "width", "mult": 0.5},
-          "y": {"group": "height", "mult": 0.5},
-          "radius": {"scale": "r", "offset": 8},
-          "theta": {"field": "midAngle"},
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
+          "radius": {"scale": "r", "field": "data", "offset": 8},
+          "theta": {"field": "layout_mid"},
           "fill": {"value": "#000"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"},

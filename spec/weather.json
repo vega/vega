@@ -13,15 +13,16 @@
       "type": "ordinal",
       "range": "width",
       "padding": 0.1, "round": true,
-      "domain": {"data": "weather", "field": "index"}
+      "domain": {"data": "weather", "field": "id"}
     },
     {
-      "name": "y",
+      "name": "y", 
+      "type": "linear",
       "range": "height",
       "nice": true, "zero": false, "round": true,
       "domain": {
         "data": "weather",
-        "field": ["data.record.low", "data.record.high"]
+        "field": ["record.low", "record.high"]
       }
     }
   ],
@@ -40,11 +41,11 @@
       "from": {"data": "weather"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index"},
+          "x": {"scale": "x", "field": "id"},
           "dx": {"scale": "x", "band": true, "mult": 0.5},
           "y": {"value": 0},
           "fill": {"value": "#000"},
-          "text": {"field": "data.day"},
+          "text": {"field": "day"},
           "align": {"value": "center"},
           "baseline": {"value": "bottom"}
         }
@@ -55,10 +56,10 @@
       "from": {"data": "weather"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index"},
+          "x": {"scale": "x", "field": "id"},
           "width": {"scale": "x", "band": true, "offset": -1},
-          "y": {"scale": "y", "field": "data.record.low"},
-          "y2": {"scale": "y", "field": "data.record.high"},
+          "y": {"scale": "y", "field": "record.low"},
+          "y2": {"scale": "y", "field": "record.high"},
           "fill": {"value": "#ccc"}
         }
       }
@@ -68,10 +69,10 @@
       "from": {"data": "weather"},
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index"},
+          "x": {"scale": "x", "field": "id"},
           "width": {"scale": "x", "band": true, "offset": -1},
-          "y": {"scale": "y", "field": "data.normal.low"},
-          "y2": {"scale": "y", "field": "data.normal.high"},
+          "y": {"scale": "y", "field": "normal.low"},
+          "y2": {"scale": "y", "field": "normal.high"},
           "fill": {"value": "#999"}
         }
       }
@@ -80,14 +81,14 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.data.actual"}]
+        "transform": [{"type":"filter", "test":"datum.actual"}]
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index", "offset": 4},
+          "x": {"scale": "x", "field": "id", "offset": 4},
           "width": {"scale": "x", "band": true, "offset": -8},
-          "y": {"scale": "y", "field": "data.actual.low"},
-          "y2": {"scale": "y", "field": "data.actual.high"},
+          "y": {"scale": "y", "field": "actual.low"},
+          "y2": {"scale": "y", "field": "actual.high"},
           "fill": {"value": "#000"}
         }
       }
@@ -96,14 +97,14 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.data.forecast"}]
+        "transform": [{"type":"filter", "test":"datum.forecast"}]
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index", "offset": 9},
+          "x": {"scale": "x", "field": "id", "offset": 9},
           "width": {"scale": "x", "band": true, "offset": -18},
-          "y": {"scale": "y", "field": "data.forecast.low.low"},
-          "y2": {"scale": "y", "field": "data.forecast.high.high"},
+          "y": {"scale": "y", "field": "forecast.low.low"},
+          "y2": {"scale": "y", "field": "forecast.high.high"},
           "fill": {"value": "#000"}
         }
       }
@@ -112,14 +113,14 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.data.forecast"}]
+        "transform": [{"type":"filter", "test":"datum.forecast"}]
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index", "offset": 4},
+          "x": {"scale": "x", "field": "id", "offset": 4},
           "width": {"scale": "x", "band": true, "offset": -8},
-          "y": {"scale": "y", "field": "data.forecast.low.low"},
-          "y2": {"scale": "y", "field": "data.forecast.low.high"},
+          "y": {"scale": "y", "field": "forecast.low.low"},
+          "y2": {"scale": "y", "field": "forecast.low.high"},
           "fill": {"value": "#000"}
         }
       }
@@ -128,14 +129,14 @@
       "type": "rect",
       "from": {
         "data": "weather",
-        "transform": [{"type":"filter", "test":"d.data.forecast"}]
+        "transform": [{"type":"filter", "test":"datum.forecast"}]
       },
       "properties": {
         "enter": {
-          "x": {"scale": "x", "field": "index", "offset": 4},
+          "x": {"scale": "x", "field": "id", "offset": 4},
           "width": {"scale": "x", "band": true, "offset": -8},
-          "y": {"scale": "y", "field": "data.forecast.high.low"},
-          "y2": {"scale": "y", "field": "data.forecast.high.high"},
+          "y": {"scale": "y", "field": "forecast.high.low"},
+          "y2": {"scale": "y", "field": "forecast.high.high"},
           "fill": {"value": "#000"}
         }
       }

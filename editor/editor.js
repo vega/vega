@@ -1,7 +1,8 @@
 var ved = {
   version: 0.1,
   data: undefined,
-  renderType: "canvas"
+  renderType: "canvas",
+  editor: null
 };
 
 ved.params = function() {
@@ -20,11 +21,13 @@ ved.select = function() {
 
   if (idx > 0) {
     d3.xhr(uri, function(error, response) {
-      d3.select("#spec").property("value", response.responseText);
+      ved.editor.setValue(response.responseText);
+      ved.editor.gotoLine(0);
       ved.parse();
     });
   } else {
-    d3.select("#spec").property("value", "");
+    ved.editor.setValue("");
+    ved.editor.gotoLine(0);
   }
 };
 
@@ -47,7 +50,7 @@ ved.format = function(event) {
 ved.parse = function() {
   var spec, source;
   try {
-    spec = JSON.parse(d3.select("#spec").property("value"));
+    spec = JSON.parse(ved.editor.getValue());
   } catch (e) {
     console.log(e);
     return;
@@ -68,18 +71,32 @@ ved.parse = function() {
 ved.resize = function(event) {
   var h = window.innerHeight - 30;
   d3.select("#spec").style("height", h+"px");
+  ved.editor.resize();
 };
 
 ved.init = function() {
   // Set base directory
-  vg.config.baseURL = "../";
+  vg.config.load.baseURL = "../";
   
   // Specification drop-down menu               
   var sel = d3.select("#sel_spec");
   sel.on("change", ved.select);
   sel.append("option").text("Custom");
-  sel.selectAll("option.spec")
-    .data(SPECS)
+
+  var st = sel.append("optgroup")
+    .attr("label", "Static");
+
+  st.selectAll("option.spec")
+    .data(STATIC_SPECS)
+   .enter().append("option")
+    .attr("value", function(d) { return "../spec/"+d+".json"; })
+    .text(function(d) { return d; });
+
+  var interactive = sel.append("optgroup")
+    .attr("label", "Interactive");
+
+  interactive.selectAll("option.spec")
+    .data(INTERACTIVE_SPECS)
    .enter().append("option")
     .attr("value", function(d) { return "../spec/"+d+".json"; })
     .text(function(d) { return d; });
@@ -93,6 +110,25 @@ ved.init = function() {
     .attr("value", function(d) { return d.toLowerCase(); })
     .text(function(d) { return d; });
 
+  // Code Editor
+  var editor = ved.editor = ace.edit("spec");
+  editor.getSession().setMode("ace/mode/json");
+  editor.getSession().setTabSize(2);
+  editor.getSession().setUseSoftTabs(true);
+  editor.setShowPrintMargin(false);
+  editor.on('focus', function() {
+    editor.setHighlightActiveLine(true);
+    d3.selectAll('.ace_gutter-active-line').style('background', '#DCDCDC');
+    d3.selectAll('.ace-tm .ace_cursor').style('visibility', 'visible');
+  });
+  editor.on('blur', function() {
+    editor.setHighlightActiveLine(false);
+    d3.selectAll('.ace_gutter-active-line').style('background', 'transparent');
+    d3.selectAll('.ace-tm .ace_cursor').style('visibility', 'hidden');
+    editor.clearSelection();
+  });
+  editor.$blockScrolling = Infinity;
+
   // Initialize application
   d3.select("#btn_spec_format").on("click", ved.format);
   d3.select("#btn_spec_parse").on("click", ved.parse);
@@ -102,11 +138,17 @@ ved.init = function() {
   // Handle application parameters
   var p = ved.params();
   if (p.spec) {
-    var idx = SPECS.indexOf(p.spec) + 1;
+    var idx = STATIC_SPECS.concat(INTERACTIVE_SPECS).indexOf(p.spec) + 1;
     if (idx > 0) {
       sel.node().selectedIndex = idx;
       ved.select();
     }
+  }
+
+  if (p.renderer) {
+    var ren = document.getElementById("sel_render");
+    ren.selectedIndex = p.renderer === "SVG" || p.renderer === "svg" ? 1 : 0;
+    ved.renderer();
   }
 };
 
