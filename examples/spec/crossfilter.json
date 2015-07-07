@@ -89,21 +89,30 @@
 
   "signals": [
     {
+      "name": "scope",
+      "streams": [
+        {"type": "@timesGroup:mousedown", "expr": "event.vgTimesGroupItem"},
+        {"type": "@delayGroup:mousedown", "expr": "event.vgDelayGroupItem"},
+        {"type": "@distGroup:mousedown", "expr": "event.vgDistGroupItem"},
+        {"type": "@dayGroup:mousedown", "expr": "event.vgDayGroupItem"}
+      ]
+    },
+    {
       "name": "timesStart",
       "init": -1,
       "streams": [{
         "type": "@timesGroup:mousedown", 
         "expr": "event.vgTimesGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgTimesGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {
       "name": "timesEnd",
       "init": -1,
       "streams": [{
-        "type": "@timesGroup:mousedown, @timesGroup:mouseup, [@timesGroup:mousedown, @timesGroup:mouseup] > @timesGroup:mousemove",
+        "type": "@timesGroup:mousedown, [@timesGroup:mousedown, @timesGroup:mouseup] > @timesGroup:mousemove",
         "expr": "event.vgTimesGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgTimesGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {"name": "minTime", "expr": "max(min(timesStart, timesEnd), 0)"},
@@ -115,16 +124,16 @@
       "streams": [{
         "type": "@delayGroup:mousedown", 
         "expr": "event.vgDelayGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgDelayGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {
       "name": "delayEnd",
       "init": -1,
       "streams": [{
-        "type": "@delayGroup:mousedown, @delayGroup:mouseup, [@delayGroup:mousedown, @delayGroup:mouseup] > @delayGroup:mousemove",
+        "type": "@delayGroup:mousedown, [@delayGroup:mousedown, @delayGroup:mouseup] > @delayGroup:mousemove",
         "expr": "event.vgDelayGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgDelayGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {"name": "minDelay", "expr": "max(min(delayStart, delayEnd), -60)"},
@@ -136,16 +145,16 @@
       "streams": [{
         "type": "@distGroup:mousedown", 
         "expr": "event.vgDistGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgDistGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {
       "name": "distEnd",
       "init": -1,
       "streams": [{
-        "type": "@distGroup:mousedown, @distGroup:mouseup, [@distGroup:mousedown, @distGroup:mouseup] > @distGroup:mousemove",
+        "type": "@distGroup:mousedown, [@distGroup:mousedown, @distGroup:mouseup] > @distGroup:mousemove",
         "expr": "event.vgDistGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgDistGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {"name": "minDist", "expr": "max(min(distStart, distEnd), 0)"},
@@ -156,15 +165,15 @@
       "streams": [{
         "type": "@dayGroup:mousedown", 
         "expr": "event.vgDayGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgDayGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {
       "name": "dayEnd",
       "streams": [{
-        "type": "@dayGroup:mousedown, @dayGroup:mouseup, [@dayGroup:mousedown, @dayGroup:mouseup] > @dayGroup:mousemove",
+        "type": "@dayGroup:mousedown, [@dayGroup:mousedown, @dayGroup:mouseup] > @dayGroup:mousemove",
         "expr": "event.vgDayGroupX",
-        "scale": {"name": "x", "invert": true, "scope": "event.vgDayGroupItem"}
+        "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
     },
     {"name": "minDay", "expr": "max(min(dayStart, dayEnd), datetime('Jan 1 2001'))"},

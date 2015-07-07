@@ -6,18 +6,18 @@
     {
       "name": "brush_start",
       "streams": [{
-        "type": "mousedown", 
+        "type": "@overview:mousedown", 
         "expr": "event.vgX", 
-        "scale": {"name": "xContext", "invert": true}
+        "scale": {"name": "xOverview", "invert": true}
       }]
     },
     {
       "name": "brush_end",
       "init": {"expr": "datetime('Jan 1 2000')"},
       "streams": [{
-        "type": "mousedown, mouseup, [mousedown, mouseup] > mousemove",
-        "expr": "event.vgX", 
-        "scale": {"name": "xContext", "invert": true}
+        "type": "@overview:mousedown, [@overview:mousedown, window:mouseup] > window:mousemove",
+        "expr": "clamp(event.vgX, 0, 720)",
+        "scale": {"name": "xOverview", "invert": true}
       }]
     },
     {
@@ -42,27 +42,27 @@
 
   "scales": [
     {
-      "name": "xContext",
+      "name": "xOverview",
       "type": "time",
       "range": [0, 720],
       "domain": {"data": "sp500", "field": "date"}
     },
     {
-      "name": "yContext",
+      "name": "yOverview",
       "type": "linear",
       "range": [70, 0],
       "nice": true,
       "domain": {"data": "sp500", "field": "price"}
     },
     {
-      "name": "xFocus",
+      "name": "xDetail",
       "type": "time",
       "range": [0, 720],
       "domainMin": {"signal": "min_date"},
       "domainMax": {"signal": "max_date"}
     },
     {
-      "name": "yFocus",
+      "name": "yDetail",
       "type": "linear",
       "range": [390, 0],
       "nice": true,
@@ -73,6 +73,7 @@
   "marks": [
     {
       "type": "group",
+      "name": "detail",
       "properties": {
         "enter": {
           "height": {"value": 390},
@@ -80,8 +81,8 @@
         }
       },
       "axes": [
-        {"type": "x", "scale": "xFocus"},
-        {"type": "y", "scale": "yFocus"}
+        {"type": "x", "scale": "xDetail"},
+        {"type": "y", "scale": "yDetail"}
       ],
       "marks": [
         {
@@ -99,9 +100,9 @@
               "from": {"data": "sp500"},
               "properties": {
                 "update": {
-                  "x": {"scale": "xFocus", "field": "date"},
-                  "y": {"scale": "yFocus", "field": "price"},
-                  "y2": {"scale": "yFocus", "value": 0},
+                  "x": {"scale": "xDetail", "field": "date"},
+                  "y": {"scale": "yDetail", "field": "price"},
+                  "y2": {"scale": "yDetail", "value": 0},
                   "fill": {"value": "steelblue"}
                 }
               }
@@ -113,6 +114,7 @@
 
     {
       "type": "group",
+      "name": "overview",
       "properties": {
         "enter": {
           "x": {"value": 0},
@@ -122,7 +124,7 @@
         }
       },
       "axes": [
-        {"type": "x", "scale": "xContext"}
+        {"type": "x", "scale": "xOverview"}
       ],
       "marks": [
         {
@@ -130,9 +132,9 @@
           "from": {"data": "sp500"},
           "properties": {
             "update": {
-              "x": {"scale": "xContext", "field": "date"},
-              "y": {"scale": "yContext", "field": "price"},
-              "y2": {"scale": "yContext", "value": 0},
+              "x": {"scale": "xOverview", "field": "date"},
+              "y": {"scale": "yOverview", "field": "price"},
+              "y2": {"scale": "yOverview", "value": 0},
               "fill": {"value": "steelblue"}
             }
           }
@@ -144,13 +146,11 @@
               "y": {"value": 0},
               "height": {"value":70},
               "fill": {"value": "#333"},
-              "fillOpacity": {"value":0.2},
-              "stroke":{"value":"white"},
-              "strokeOpacity":{"value":0.5}
+              "fillOpacity": {"value":0.2}
             },
             "update":{
-              "x": {"scale": "xContext", "signal": "brush_start"},
-              "x2": {"scale": "xContext", "signal": "brush_end"}
+              "x": {"scale": "xOverview", "signal": "brush_start"},
+              "x2": {"scale": "xOverview", "signal": "brush_end"}
             }
           }
         }

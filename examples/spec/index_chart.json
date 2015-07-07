@@ -5,7 +5,7 @@
 
   "signals": [
     {
-      "name": "xPos",
+      "name": "xDate",
       "streams": [{
         "type": "mousemove", 
         "expr": "event.vgX", 
@@ -19,8 +19,8 @@
       "name": "indexDate",
       "init": {"expr": "time('Jan 1 2005')"},
       "streams": [{
-        "type": "xPos", 
-        "expr": "min(max(xPos, minDate), maxDate)"
+        "type": "xDate", 
+        "expr": "clamp(xDate, minDate, maxDate)"
       }]
     }
   ],

@@ -96,7 +96,7 @@
           "dx": {"scale": "x", "band": true, "mult": 0.5},
           "y": {"scale": "y", "signal": "tooltip.y", "offset": -5},
           "text": {"signal": "tooltip.y"},
-          "opacity": {
+          "fillOpacity": {
             "rule": [
               {
                 "predicate": {
