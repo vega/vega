@@ -17,8 +17,8 @@ function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
-      internal = util.duplicate(registry),  // Vega internal event processing
-      external = util.duplicate(registry);  // D3 external event processing
+      internal = util.duplicate(registry),  // Internal event processing
+      external = util.duplicate(registry);  // External event processing
 
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
@@ -36,33 +36,68 @@ function parseStreams(view) {
   // new value on the same pulse. 
   util.keys(internal.handlers).forEach(function(type) {
     view.on(type, function(evt, item) {
-      var pad = view.padding(),
-          mouse, datum, name;
+      var datum, name;
 
-      evt.preventDefault(); // Stop text selection
-      mouse = d3.mouse((d3.event=evt, view._el)); // Relative position within container
-
-      datum = (item && item.datum) || {};
-      evt.vgItem = item || {};
-      evt.vgX = mouse[0] - pad.left;
-      evt.vgY = mouse[1] - pad.top;
+      evt.preventDefault(); // stop text selection
+      extendEvent(evt, item);
       groupOffsets(evt);
 
       if (item && (name = item.mark.def.name)) {
-        populateEvt(evt, name, item, item.mark.marktype === "group");
+        populateEvent(evt, name, item, item.mark.marktype === "group");
       }
 
+      datum = (item && item.datum) || {};
       fire(internal, type, datum, evt);
     });
   });
 
+  // add external event listeners
   util.keys(external.handlers).forEach(function(type) {
-    var sel = type.split(":"); // This means no element pseudo-selectors
+    if (typeof window === 'undefined') return; // No external support
 
-    d3.selectAll(sel[0]).on(sel[1], function(datum) {
-      fire(external, type, datum, d3.event);
-    });
+    var h = external.handlers[type],
+        t = type.split(':'), // --> no element pseudo-selectors
+        elt = (t[0] === 'window') ? [window] :
+              window.document.querySelectorAll(t[0]);
+
+    function handler(evt) {
+      extendEvent(evt, null);
+      fire(external, type, d3.select(this).datum(), evt);
+    }
+    for (var i=0; i<elt.length; ++i) {
+      elt[i].addEventListener(t[1], handler);
+    }
+    h.elements = elt;
+    h.listener = handler;
   });
+
+  // remove external event listeners
+  external.detach = function() {
+    util.keys(external.handlers).forEach(function(type) {
+      var h = external.handlers[type],
+          t = type.split(':'),
+          elt = h.elements || [];
+
+      for (var i=0; i<elt.length; ++i) {
+        elt[i].removeEventListener(t[1], h.listener);
+      }
+    });
+  };
+
+  // export detach method
+  return external.detach;
+
+  // -- helper functions -----
+
+  function extendEvent(evt, item) {
+    // Relative position within container
+    var mouse = d3.mouse((d3.event=evt, view._el)),
+        pad = view.padding();
+    
+    evt.vgItem = item || {};
+    evt.vgX = mouse[0] - pad.left;
+    evt.vgY = mouse[1] - pad.top;
+  }
 
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
@@ -196,23 +231,24 @@ function parseStreams(view) {
     });
   }
 
-  function groupOffsets(event) {
-    if (!event.vgItem.mark) return;
-    var group = event.vgItem.mark.group,
-        name;
+  function groupOffsets(evt) {
+    if (!evt.vgItem.mark) return;
+    var group = evt.vgItem.mark.group, name;
 
     while (group) {
-      if ((name = group.mark.def.name)) populateEvt(event, name, group, true);
+      if ((name = group.mark.def.name)) {
+        populateEvent(evt, name, group, true);
+      }
       group = group.mark.group;
     }
   }
 
-  function populateEvt(event, name, item, group) {
-    var prefix;
-    event[(prefix = "vg"+capitalize(name))+"Item"] = item;
+  function populateEvent(evt, name, item, group) {
+    var prefix = "vg" + capitalize(name);
+    evt[prefix + "Item"] = item;
     if (group) {
-      if (item.x !== undefined) event[prefix+"X"] = event.vgX - item.x;
-      if (item.y !== undefined) event[prefix+"Y"] = event.vgY - item.y;
+      if (item.x !== undefined) evt[prefix+"X"] = evt.vgX - item.x;
+      if (item.y !== undefined) evt[prefix+"Y"] = evt.vgY - item.y;
     }
   }
 }

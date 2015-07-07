@@ -260,10 +260,14 @@ prototype.initialize = function(el) {
     });
   } else {
     // Register event listeners for signal stream definitions.
-    parseStreams(this);
+    v._detach = parseStreams(this);
   }
   
   return (this._repaint = true, this);
+};
+
+prototype.destroy = function() {
+  if (this._detach) this._detach();
 };
 
 function build() {

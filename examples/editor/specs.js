@@ -31,8 +31,8 @@ var INTERACTIVE_SPECS = [
   "dimpvis",
   "index_chart",
   "linking",
+  "overview+detail",
   "panzoom_points",
   "shiftclick_select",
-  "tooltip",
-  "overview+detail"
+  "tooltip"
 ];

@@ -8049,8 +8049,8 @@ function draw(g, scene, bounds) {
     g.font = font.string(o);
     g.textAlign = o.align || 'left';
 
-    x = o.x || 0;
-    y = o.y || 0;
+    x = (o.x || 0);
+    y = (o.y || 0) + font.offset(o);
     if ((r = o.radius)) {
       t = (o.theta || 0) - Math.PI/2;
       x += r * Math.cos(t);
@@ -8061,12 +8061,10 @@ function draw(g, scene, bounds) {
       g.save();
       g.translate(x, y);
       g.rotate(o.angle * Math.PI/180);
-      x = o.dx || 0;
-      y = o.dy || 0 + font.offset(o);
-    } else {
-      x += (o.dx || 0);
-      y += (o.dy || 0) + font.offset(o);
+      x = y = 0; // reset x, y
     }
+    x += (o.dx || 0);
+    y += (o.dy || 0);
 
     if (o.fill && util.fill(g, o, opac)) {
       g.fillText(o.text, x, y);
@@ -8082,6 +8080,7 @@ function hit(g, o, x, y, gx, gy) {
   if (o.fontSize <= 0) return false;
   if (!o.angle) return true; // bounds sufficient if no rotation
 
+  // project point into space of unrotated bounds
   var b = textBounds(o, tempBounds, true),
       a = -o.angle * Math.PI / 180,
       cos = Math.cos(a),
@@ -8967,8 +8966,12 @@ var font = require('../../util/font'),
     textAlign = SVG.textAlign,
     path = SVG.path;
 
-function translate(o) {
-  return 'translate(' + (o.x || 0) + ',' + (o.y || 0) + ')';
+function translateItem(o) {
+  return translate(o.x || 0, o.y || 0);
+}
+
+function translate(x, y) {
+  return 'translate(' + x + ',' + y + ')';
 }
 
 module.exports = {
@@ -8976,7 +8979,7 @@ module.exports = {
     tag:  'path',
     type: 'arc',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('d', path.arc(o));
     }
   },
@@ -8994,7 +8997,7 @@ module.exports = {
     type: 'group',
     attr: function(emit, o, renderer) {
       var id = null, defs, c;
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       if (o.clip) {
         defs = renderer._defs;
         id = o.clip_id || (o.clip_id = 'clip' + defs.clip_id++);
@@ -9024,7 +9027,7 @@ module.exports = {
       y = y - (o.baseline === 'middle' ? h/2 : o.baseline === 'bottom' ? h : 0);
 
       emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
-      emit('transform', 'translate('+x+','+y+')');
+      emit('transform', translate(x, y));
       emit('width', w);
       emit('height', h);
     }
@@ -9042,7 +9045,7 @@ module.exports = {
     tag:  'path',
     type: 'path',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('d', o.path);
     }
   },
@@ -9051,7 +9054,7 @@ module.exports = {
     type: 'rect',
     nest: false,
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('width', o.width || 0);
       emit('height', o.height || 0);
     }
@@ -9060,7 +9063,7 @@ module.exports = {
     tag:  'line',
     type: 'rule',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('x2', o.x2 != null ? o.x2 - (o.x||0) : 0);
       emit('y2', o.y2 != null ? o.y2 - (o.y||0) : 0);
     }
@@ -9069,7 +9072,7 @@ module.exports = {
     tag:  'path',
     type: 'symbol',
     attr: function(emit, o) {
-      emit('transform', translate(o));
+      emit('transform', translateItem(o));
       emit('d', path.symbol(o));
     }
   },
@@ -9078,8 +9081,10 @@ module.exports = {
     type: 'text',
     nest: false,
     attr: function(emit, o) {
-      var x = o.x || 0,
-          y = o.y || 0,
+      var dx = (o.dx || 0),
+          dy = (o.dy || 0),
+          x = (o.x || 0),
+          y = (o.y || 0) + font.offset(o),
           a = o.angle || 0,
           r = o.radius || 0, t;
 
@@ -9089,10 +9094,15 @@ module.exports = {
         y += r * Math.sin(t);
       }
 
-      x += (o.dx || 0);
-      y += (o.dy || 0) + font.offset(o);
       emit('text-anchor', textAlign[o.align] || 'start');
-      emit('transform', 'translate('+x+','+y+')' + (a?' rotate('+a+')':''));
+      
+      if (a) {
+        t = translate(x, y) + ' rotate('+a+')';
+        if (dx || dy) t += ' ' + translate(dx, dy);
+      } else {
+        t = translate(x+dx, y+dy);
+      }
+      emit('transform', t);
     }
   }
 };
@@ -9537,8 +9547,10 @@ function symbol(o, bounds) {
 }
 
 function text(o, bounds, noRotate) {
-  var x = (o.x || 0) + (o.dx || 0),
-      y = (o.y || 0) + (o.dy || 0),
+  var dx = (o.dx || 0),
+      dy = (o.dy || 0),
+      x = (o.x || 0) + dx,
+      y = (o.y || 0) + dy,
       h = font.size(o),
       a = o.align,
       r = o.radius || 0,
@@ -9553,7 +9565,7 @@ function text(o, bounds, noRotate) {
     y += r * Math.sin(t);
   }
 
-  // horizontal
+  // horizontal alignment
   if (a === 'center') {
     x = x - (w / 2);
   } else if (a === 'right') {
@@ -9562,12 +9574,13 @@ function text(o, bounds, noRotate) {
     // left by default, do nothing
   }
 
-  // vertical
+  // vertical alignment
+  // assume 4/5 (0.8) height offset from alphabetic baseline
   y += font.offset(o) - Math.round(0.8*h);
   
   bounds.set(x, y, x+w, y+h);
   if (o.angle && !noRotate) {
-    bounds.rotate(o.angle*Math.PI/180, o.x||0, o.y||0);
+    bounds.rotate(o.angle*Math.PI/180, x-dx, y-dy);
   }
   return bounds.expand(noRotate ? 0 : 1);
 }
@@ -9589,11 +9602,10 @@ function group(g, bounds, includeLegends) {
       bounds.union(legends[j].bounds);
     }
   }
-  if (g.width != null && g.height != null) {
-    bounds.add(g.width, g.height);
-  }
-  if (g.x != null && g.y != null) {
-    bounds.add(0, 0);
+  if (g.width || g.height) {
+    strokeBounds(g, bounds
+      .add(0, 0)
+      .add(g.width || 0, g.height || 0));
   }
   return bounds.translate(g.x || 0, g.y || 0);
 }
@@ -10406,10 +10418,14 @@ prototype.initialize = function(el) {
     });
   } else {
     // Register event listeners for signal stream definitions.
-    parseStreams(this);
+    v._detach = parseStreams(this);
   }
   
   return (this._repaint = true, this);
+};
+
+prototype.destroy = function() {
+  if (this._detach) this._detach();
 };
 
 function build() {
@@ -12855,8 +12871,8 @@ function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
-      internal = util.duplicate(registry),  // Vega internal event processing
-      external = util.duplicate(registry);  // D3 external event processing
+      internal = util.duplicate(registry),  // Internal event processing
+      external = util.duplicate(registry);  // External event processing
 
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
@@ -12874,33 +12890,68 @@ function parseStreams(view) {
   // new value on the same pulse. 
   util.keys(internal.handlers).forEach(function(type) {
     view.on(type, function(evt, item) {
-      var pad = view.padding(),
-          mouse, datum, name;
+      var datum, name;
 
-      evt.preventDefault(); // Stop text selection
-      mouse = d3.mouse((d3.event=evt, view._el)); // Relative position within container
-
-      datum = (item && item.datum) || {};
-      evt.vgItem = item || {};
-      evt.vgX = mouse[0] - pad.left;
-      evt.vgY = mouse[1] - pad.top;
+      evt.preventDefault(); // stop text selection
+      extendEvent(evt, item);
       groupOffsets(evt);
 
       if (item && (name = item.mark.def.name)) {
-        populateEvt(evt, name, item, item.mark.marktype === "group");
+        populateEvent(evt, name, item, item.mark.marktype === "group");
       }
 
+      datum = (item && item.datum) || {};
       fire(internal, type, datum, evt);
     });
   });
 
+  // add external event listeners
   util.keys(external.handlers).forEach(function(type) {
-    var sel = type.split(":"); // This means no element pseudo-selectors
+    if (typeof window === 'undefined') return; // No external support
 
-    d3.selectAll(sel[0]).on(sel[1], function(datum) {
-      fire(external, type, datum, d3.event);
-    });
+    var h = external.handlers[type],
+        t = type.split(':'), // --> no element pseudo-selectors
+        elt = (t[0] === 'window') ? [window] :
+              window.document.querySelectorAll(t[0]);
+
+    function handler(evt) {
+      extendEvent(evt, null);
+      fire(external, type, d3.select(this).datum(), evt);
+    }
+    for (var i=0; i<elt.length; ++i) {
+      elt[i].addEventListener(t[1], handler);
+    }
+    h.elements = elt;
+    h.listener = handler;
   });
+
+  // remove external event listeners
+  external.detach = function() {
+    util.keys(external.handlers).forEach(function(type) {
+      var h = external.handlers[type],
+          t = type.split(':'),
+          elt = h.elements || [];
+
+      for (var i=0; i<elt.length; ++i) {
+        elt[i].removeEventListener(t[1], h.listener);
+      }
+    });
+  };
+
+  // export detach method
+  return external.detach;
+
+  // -- helper functions -----
+
+  function extendEvent(evt, item) {
+    // Relative position within container
+    var mouse = d3.mouse((d3.event=evt, view._el)),
+        pad = view.padding();
+    
+    evt.vgItem = item || {};
+    evt.vgX = mouse[0] - pad.left;
+    evt.vgY = mouse[1] - pad.top;
+  }
 
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
@@ -13034,23 +13085,24 @@ function parseStreams(view) {
     });
   }
 
-  function groupOffsets(event) {
-    if (!event.vgItem.mark) return;
-    var group = event.vgItem.mark.group,
-        name;
+  function groupOffsets(evt) {
+    if (!evt.vgItem.mark) return;
+    var group = evt.vgItem.mark.group, name;
 
     while (group) {
-      if ((name = group.mark.def.name)) populateEvt(event, name, group, true);
+      if ((name = group.mark.def.name)) {
+        populateEvent(evt, name, group, true);
+      }
       group = group.mark.group;
     }
   }
 
-  function populateEvt(event, name, item, group) {
-    var prefix;
-    event[(prefix = "vg"+capitalize(name))+"Item"] = item;
+  function populateEvent(evt, name, item, group) {
+    var prefix = "vg" + capitalize(name);
+    evt[prefix + "Item"] = item;
     if (group) {
-      if (item.x !== undefined) event[prefix+"X"] = event.vgX - item.x;
-      if (item.y !== undefined) event[prefix+"Y"] = event.vgY - item.y;
+      if (item.x !== undefined) evt[prefix+"X"] = evt.vgX - item.x;
+      if (item.y !== undefined) evt[prefix+"Y"] = evt.vgY - item.y;
     }
   }
 }
