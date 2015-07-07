@@ -1,71 +1,155 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>Vega: A Visualization Grammar</title>
-    <link rel="shortcut icon" href="http://trifacta.github.com/vega/favicon.ico"/>
+    <link rel="shortcut icon" href="http://vega.github.io/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
-    <script src="d3.v3.min.js"></script>
-    <script src="vega.min.js"></script>
+    <script src="lib/d3.v3.min.js"></script>
+    <script src="vega2.min.js"></script>
   </head>
   <body>
-    <div id="side">
-      <div class="example">
-        <a href="editor/index.html?spec=bar" title="Bar Chart">
-          <img src="images/example-bar.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=force" title="Force-Directed Layout">
-          <img src="images/example-force.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=population" title="Population Pyramid">
-          <img src="images/example-population.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=choropleth" title="Choropleth Map">
-          <img src="images/example-choropleth.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=wordcloud" title="Word Cloud">
-          <img src="images/example-wordcloud.png" />
-        </a>
-      </div>
-    </div>
     <div id="main">
-      <a href="https://github.com/trifacta/vega">
+      <a href="https://github.com/vega/vega">
         <img style="position:absolute;top:0;right:0;border:0;" width="149" height="149" src="images/forkme.png" alt="Fork me on GitHub">
       </a>
       <div id="logo">
         <div id="links">
-          <a href="vega.min.js"><strong>vega.min.js</strong> (125k)</a><br/>
-          <a href="https://github.com/trifacta/vega"><strong>Source</strong> (GitHub)</a>
+          <a href="vega2.min.js"><strong>vega2.min.js</strong></a><br/>
+          <a href="vega2.schema.json"><strong>JSON Schema</strong></a><br /> 
+          <a href="https://github.com/vega/vega"><strong>Source</strong> (GitHub)</a>
         </div>
-        <img src="images/vega.png">
+        <div id="wordmark">
+          vega
+        </div>
       </div>
-      <div class="content">
-        <strong>Vega</strong> is a <emph>visualization grammar</emph>,
-        a declarative format for creating, saving and sharing visualization 
-        designs.
+
+      <p><strong>Vega</strong> is a <em>visualization grammar</em>, a declarative format for creating, saving, and sharing interactive visualization designs.</p>
+
+      <p>With Vega, you can describe the visual appearance and interactive behaviour of a visualization in a JSON format, and generate views using HTML5 Canvas or SVG.</p>
+
+      <p>Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>, browse the <a href="https://github.com/trifacta/vega/wiki">documentation</a>, join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>. A sampling of example visualizations is shown below. Click to explore them using the web-based <a href="editor/">Vega Editor</a>.</p>
+
+      <div id="examples">
       </div>
-      <div class="content">
-        With Vega you can describe data visualizations in a JSON format, and
-        generate interactive views using either HTML5 Canvas or SVG.
-      </div>
-      <div class="content">
-        Read the <a href="https://github.com/trifacta/vega/wiki/Tutorial">tutorial</a>,
-        browse the <a href="https://github.com/trifacta/vega/wiki">documentation</a>,
-        join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>,
-        and explore visualizations using the
-        web-based <a href="editor">Vega Editor</a>.
-      </div>
+
       <div class="credits">
         <a href="http://trifacta.com" title="Trifacta"><img src="images/trifacta-logo.png"/></a>
+        <a href="http://idl.cs.washington.edu" title="UW Interactive Data Lab"><img src="images/idl-logo.png"/></a>
       </div>
-    </div>
   </body>
+  <script>
+    var examples = [
+      {name: 'bar',               editor: true, row: 0, col: 0, x: 10, y: -10, width: 440, height: 150},
+      {name: 'linking',           editor: true, row: 0, col: 1, x: 25, y: -150, width: 710, height: 300},
+      {name: 'choropleth',        editor: true, row: 0, col: 2, x: 25, y: -10, width: 348, height: 150},
+      {name: 'dimpvis',           editor: true, row: 0, col: 3, x: 175, y: -25, width: 946, height: 300},
+      {name: 'crossfilter',       editor: true, row: 0, col: 4, x: 75, y: 0, width: 997, height: 250},
+      {name: 'driving',           editor: true, row: 1, col: 0, x: 25, y: 0, width: 825, height: 150},
+      {name: 'force',             editor: true, row: 1, col: 1, x: 50, y: 0, width: 200, height: 200},
+      {name: 'heatmap',           editor: true, row: 1, col: 2, x: 50, y: -10, width: 957, height: 200},
+      {name: 'index_chart',       editor: true, row: 1, col: 3, x: 25, y: 5, width: 650, height: 125},
+      {name: 'jobs',              editor: true, row: 1, col: 4, x: 50, y: 0, width: 880, height: 150},
+      {name: 'parallel_coords',   editor: true, row: 2, col: 0, x: 25, y: 0, width: 729, height: 150},
+      {name: 'playfair',          editor: true, row: 2, col: 1, x: 23, y: 0, width: 815, height: 135},
+      {name: 'population',        editor: true, row: 2, col: 2, x: 75, y: 0, width: 657, height: 135},
+      {name: 'budget_forecasts',  editor: true, row: 2, col: 3, x: 10, y: 0, width: 540, height: 140},
+      {name: 'treemap',           editor: true, row: 2, col: 4, x: 0, y: 0, width: 965, height: 140},
+    ];
+
+    var width = 700,
+        thumb  = width / 5,
+        height = thumb * (examples.length/5); 
+
+    var spec = {
+      "width": width,
+      "height": height,
+      "padding": 0,
+
+      "data": [{ "name": "examples", "values": examples }],
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "ordinal",
+          "domain": {"data": "examples", "field": "col"},
+          "range": "width"
+        },
+        {
+          "name": "y",
+          "type": "ordinal",
+          "domain": {"data": "examples", "field": "row"},
+          "range": "height"
+        }
+      ],
+
+      "marks": [
+        {
+          "type": "group",
+          "from": {"data": "examples"},
+          "properties": {
+            "enter": {
+              "x": {"scale": "x", "field": "col"},
+              "width": {"scale": "x", "band": true, "offset": -5},
+              "y": {"scale": "y", "field": "row"},
+              "height": {"scale": "y", "band": true, "offset": -5},
+              "clip": {"value": true},
+              "fill": {"value": "#fff"}
+            },
+            "update": {
+              "stroke": {"value": "#8A5ED3"},
+              "strokeWidth": {"value": 1}
+            },
+            "hover": {
+              "stroke": {"value": "#d5a928"},
+              "strokeWidth": {"value": 3}
+            }
+          },
+
+          "marks": [
+            {
+              "name": "example-thumb",
+              "type": "image",
+              "properties": {
+                "enter": {
+                  "x": {"field": {"parent": "x"}},
+                  "y": {"field": {"parent": "y"}},
+                  "width": {"field": {"parent": "width"}},
+                  "height": {"field": {"parent": "height"}},
+                  "url": {"template": "{{parent.name}}.png"},
+                  "align": {"value": "center"},
+                  "baseline": {"value": "center"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    };
+
+    var view;
+    vg.parse.spec(spec, function(chart) {
+      view = chart({ el: "#examples", renderer: "svg" })
+        .update();
+
+      view.on('click', function(e, i) {
+        if (!i) return;
+        if (i.mark.marktype === 'image') i = i.mark.group;
+        var d = i.datum;
+        window.location = d.editor ? 'editor/index.html?spec=' + d.name : d.url; 
+      });
+
+      // Mimic event bubbling to group
+      view.on('mouseover', function(e, i) {
+        if (!i || i.mark.marktype === 'group') return;
+        view.update({ props: "hover", items: [i.mark.group] });
+      })
+      .on('mouseout', function(e, i) {
+        if (!i || i.mark.marktype === 'group') return;
+        view.update({ props: "update", items: [i.mark.group] });
+      })
+    }, {
+      load: { baseURL: "images/examples/" }
+    });
+  </script>
 </html>
