@@ -219,11 +219,10 @@ function group(g, bounds, includeLegends) {
       bounds.union(legends[j].bounds);
     }
   }
-  if (g.width != null && g.height != null) {
-    bounds.add(g.width, g.height);
-  }
-  if (g.x != null && g.y != null) {
-    bounds.add(0, 0);
+  if (g.width || g.height) {
+    strokeBounds(g, bounds
+      .add(0, 0)
+      .add(g.width || 0, g.height || 0));
   }
   return bounds.translate(g.x || 0, g.y || 0);
 }
