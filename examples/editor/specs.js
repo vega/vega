@@ -27,13 +27,11 @@ var STATIC_SPECS = [
 var INTERACTIVE_SPECS = [
   "brush",
   "budget_forecasts",
-  // "brush_interactor",
   "crossfilter",
   "dimpvis",
   "index_chart",
   "linking",
   "panzoom_points",
-  "panzoom_touch",
   "shiftclick_select",
   "tooltip",
   "overview+detail"

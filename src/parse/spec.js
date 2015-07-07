@@ -6,8 +6,7 @@ var util = require('datalib/src/util'),
     parseMarks = require('../parse/marks'),
     parseSignals = require('../parse/signals'),
     parsePredicates = require('../parse/predicates'),
-    parseData = require('../parse/data'),
-    parseInteractors = require('../parse/interactors');
+    parseData = require('../parse/data');
 
 function parseSpec(spec, callback) {
   // protect against subsequent spec modification
@@ -22,18 +21,16 @@ function parseSpec(spec, callback) {
       viewport = spec.viewport || null,
       model = new Model(config);
 
-  parseInteractors(model, spec, function() {
-    model.defs({
-      width: width,
-      height: height,
-      viewport: viewport,
-      background: parseBg(spec.background),
-      padding: parsePadding(spec.padding),
-      signals: parseSignals(model, spec.signals),
-      predicates: parsePredicates(model, spec.predicates),
-      marks: parseMarks(model, spec, width, height),
-      data: parseData(model, spec.data, function() { callback(viewFactory(model)); })
-    });
+  model.defs({
+    width: width,
+    height: height,
+    viewport: viewport,
+    background: parseBg(spec.background),
+    padding: parsePadding(spec.padding),
+    signals: parseSignals(model, spec.signals),
+    predicates: parsePredicates(model, spec.predicates),
+    marks: parseMarks(model, spec, width, height),
+    data: parseData(model, spec.data, function() { callback(viewFactory(model)); })
   });
 }
 
@@ -56,8 +53,6 @@ parseSpec.schema = {
 
           "background": {"$ref": "#/defs/background"},
           "padding": {"$ref": "#/defs/padding"},
-
-          "interactors": {"$ref": "#/refs/interactors"},
 
           "signals": {
             "type": "array",

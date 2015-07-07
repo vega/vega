@@ -4,7 +4,6 @@ module.exports = {
   data: require('./data'),
   events: require('./events'),
   expr: require('./expr'),
-  interactors: require('./interactors'),
   legends: require('./legends'),
   mark: require('./mark'),
   marks: require('./marks'),
