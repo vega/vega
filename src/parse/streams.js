@@ -17,8 +17,8 @@ function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
-      internal = util.duplicate(registry),  // Vega internal event processing
-      external = util.duplicate(registry);  // D3 external event processing
+      internal = util.duplicate(registry),  // Internal event processing
+      external = util.duplicate(registry);  // External event processing
 
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
@@ -51,21 +51,43 @@ function parseStreams(view) {
     });
   });
 
+  // add external event listeners
   util.keys(external.handlers).forEach(function(type) {
-    var sel = type.split(":"), // This means no element pseudo-selectors
-        select;
+    if (typeof window === 'undefined') return; // No external support
 
-    if (sel[0] === 'window' && typeof window !== 'undefined') {
-      select = d3.select(window);
-    } else {
-      select = d3.selectAll(sel[0]);
+    var h = external.handlers[type],
+        t = type.split(':'), // --> no element pseudo-selectors
+        elt = (t[0] === 'window') ? [window] :
+              window.document.querySelectorAll(t[0]);
+
+    function handler(evt) {
+      extendEvent(evt, null);
+      fire(external, type, d3.select(this).datum(), evt);
     }
-
-    select.on(sel[1], function(datum) {
-      extendEvent(d3.event, null);
-      fire(external, type, datum, d3.event);
-    });
+    for (var i=0; i<elt.length; ++i) {
+      elt[i].addEventListener(t[1], handler);
+    }
+    h.elements = elt;
+    h.listener = handler;
   });
+
+  // remove external event listeners
+  external.detach = function() {
+    util.keys(external.handlers).forEach(function(type) {
+      var h = external.handlers[type],
+          t = type.split(':'),
+          elt = h.elements || [];
+
+      for (var i=0; i<elt.length; ++i) {
+        elt[i].removeEventListener(t[1], h.listener);
+      }
+    });
+  };
+
+  // export detach method
+  return external.detach;
+
+  // -- helper functions -----
 
   function extendEvent(evt, item) {
     // Relative position within container
