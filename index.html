@@ -5,7 +5,7 @@
     <title>Vega: A Visualization Grammar</title>
     <link rel="shortcut icon" href="http://vega.github.io/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
-    <script src="lib/d3.v3.min.js"></script>
+    <script src="d3.v3.min.js"></script>
     <script src="vega.min.js"></script>
   </head>
   <body>
@@ -28,7 +28,7 @@
 
       <p>With Vega, you can describe the visual appearance and interactive behaviour of a visualization in a JSON format, and generate views using HTML5 Canvas or SVG.</p>
 
-      <p>Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>, browse the <a href="https://github.com/trifacta/vega/wiki">documentation</a>, join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>. A gallery of example visualizations is shown below. Click to explore them using the web-based <a href="editor/">Vega Editor</a>.</p>
+      <p>Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>, browse the <a href="https://github.com/vega/vega/wiki">documentation</a>, join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>. A gallery of example visualizations is shown below. Click to explore them using the web-based <a href="http://vega.github.io/vega-editor/">Vega Editor</a>.</p>
 
       <div id="examples">
       </div>
@@ -224,7 +224,7 @@
         if (!i) return;
         if (i.mark.marktype === 'image') i = i.mark.group;
         var d = i.datum;
-        window.location = d.editor ? 'editor/index.html?spec=' + d.name : d.url; 
+        window.location = d.editor ? 'http://vega.github.io/vega-editor/index.html?spec=' + d.name : d.url; 
       });
     }, {
       load: { baseURL: "images/examples/" }
