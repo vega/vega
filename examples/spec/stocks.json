@@ -13,17 +13,20 @@
       "name": "x",
       "type": "time",
       "range": "width",
-      "domain": {"data": "stocks", "field": "data.date"}
+      "domain": {"data": "stocks", "field": "date"}
     },
     {
       "name": "y",
       "type": "linear",
       "range": "height",
       "nice": true,
-      "domain": {"data": "stocks", "field": "data.price"}
+      "domain": {"data": "stocks", "field": "price"}
     },
     {
-      "name": "color", "type": "ordinal", "range": "category10"
+      "name": "color", 
+      "type": "ordinal", 
+      "domain": {"data": "stocks", "field": "symbol"},
+      "range": "category10"
     }
   ],
   "axes": [
@@ -35,16 +38,16 @@
       "type": "group",
       "from": {
         "data": "stocks",
-        "transform": [{"type": "facet", "keys": ["data.symbol"]}]
+        "transform": [{"type": "facet", "groupby": ["symbol"]}]
       },
       "marks": [
         {
           "type": "line",
           "properties": {
             "enter": {
-              "x": {"scale": "x", "field": "data.date"},
-              "y": {"scale": "y", "field": "data.price"},
-              "stroke": {"scale": "color", "field": "data.symbol"},
+              "x": {"scale": "x", "field": "date"},
+              "y": {"scale": "y", "field": "price"},
+              "stroke": {"scale": "color", "field": "symbol"},
               "strokeWidth": {"value": 2}
             }
           }
@@ -52,14 +55,14 @@
         {
           "type": "text",
           "from": {
-            "transform": [{"type": "filter", "test": "index==data.length-1"}]
+            "transform": [{"type": "filter", "test": "datum.date == 1267430400000"}]
           },
           "properties": {
             "enter": {
-              "x": {"scale": "x", "field": "data.date", "offset": 2},
-              "y": {"scale": "y", "field": "data.price"},
-              "fill": {"scale": "color", "field": "data.symbol"},
-              "text": {"field": "data.symbol"},
+              "x": {"scale": "x", "field": "date", "offset": 2},
+              "y": {"scale": "y", "field": "price"},
+              "fill": {"scale": "color", "field": "symbol"},
+              "text": {"field": "symbol"},
               "baseline": {"value": "middle"}
             }
           }

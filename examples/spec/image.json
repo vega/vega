@@ -1,5 +1,4 @@
 {
-  "name": "image",
   "width": 200,
   "height": 200,
   "padding": {"left":30, "top":10, "bottom":30, "right":10},
@@ -14,8 +13,8 @@
     }
   ],
   "scales": [
-    {"name": "x", "domain": [0, 3], "range": "width"},
-    {"name": "y", "domain": [0, 3], "range": "height"}
+    {"name": "x", "type": "linear", "domain": [0, 3], "range": "width"},
+    {"name": "y", "type": "linear", "domain": [0, 3], "range": "height"}
   ],
   "axes": [
     {"type": "x", "scale": "x"},
@@ -27,11 +26,11 @@
       "from": {"data": "data"},
       "properties": {
         "enter": {
-          "url": {"field": "data.img"},
+          "url": {"field": "img"},
           "width": {"value": 50},
           "height": {"value": 50},
-          "x": {"scale": "x", "field": "data.x"},
-          "y": {"scale": "y", "field": "data.y"},
+          "x": {"scale": "x", "field": "x"},
+          "y": {"scale": "y", "field": "y"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"}
         },

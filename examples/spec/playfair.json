@@ -1,0 +1,163 @@
+{
+  "width": 780,
+  "height": 465,
+  "data": [
+    {
+      "name": "wheat",
+      "url": "data/wheat.json"
+    }, 
+    {
+      "name": "monarchs",
+      "url": "data/monarchs.json",
+      "transform": [{
+        "type": "formula", 
+        "field": "offset", 
+         "expr": "((!datum.commonwealth && datum.index % 2) ? -1: 1) * 2 + 95"
+      }]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width", "zero": false,
+      "domain": [1565, 1825]
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "domain": {"data": "wheat", "field": "wheat"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "range": ["black", "white"],
+      "domain": {"data": "monarchs", "field" : "commonwealth"}
+    }
+  ],
+  "axes": [
+    {"type": "x", "scale": "x", "ticks": 5, "format": "04d"},
+    {
+      "type": "y", 
+      "scale": "y", 
+      "grid": true,
+      "orient":"right", 
+      "layer": "front",
+      "ticks": 5,
+      "offset": 5,
+      "tickSize": 0,
+      "properties": {
+        "axis": {
+          "strokeWidth": {"value": 0}
+        },
+        "grid": {
+          "stroke": {"value": "#fff"},
+          "strokeWidth": {"value": 0.25}
+        },
+        "labels": {
+          "fontStyle": {"value": "italic"}
+        }
+      }
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "wheat"},
+      "properties": {
+        "enter": {
+          "x": {"scale": "x", "field": "year"},
+          "width": {"value": 15},
+          "y": {"scale": "y", "field": "wheat"},
+          "y2": {"scale": "y", "value": 0},
+          "fill": {"value": "#aaa"},
+          "stroke": {"value": "#5d5d5d"},
+          "strokeWidth": {"value": 0.25}
+        }
+      }
+    },
+    {
+      "type": "area",
+      "from": {
+        "data": "wheat",
+        "transform": [{"type": "filter", "test": "!!datum.wages"}]
+      },
+      "properties": {
+        "enter": {
+          "interpolate": {"value": "linear"},
+          "x": {"scale": "x", "field": "year"},
+          "y": {"scale": "y", "field": "wages"},
+          "y2": {"scale": "y", "value": 0},
+          "fill": {"value": "#B3D9E6"},
+          "fillOpacity": {"value": 0.8}
+        }
+      }
+    },
+    {
+      "type": "line",
+      "from": {
+        "data": "wheat",
+        "transform": [{"type": "filter", "test": "!!datum.wages"}]
+      },
+      "properties": {
+        "enter": {
+          "interpolate": {"value": "linear"},
+          "x": {"scale": "x", "field": "year"},
+          "y": {"scale": "y", "field": "wages"},
+          "stroke": {"value": "#ff7e79"},
+          "strokeWidth": {"value": 3}
+        }
+      }
+    },
+    {
+      "type": "line",
+      "from": {
+        "data": "wheat",
+        "transform": [{"type": "filter", "test": "!!datum.wages"}]
+      },
+      "properties": {
+        "enter": {
+          "interpolate": {"value": "linear"},
+          "x": {"scale": "x", "field": "year"},
+          "y": {"scale": "y", "field": "wages"},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 1}
+        }
+      }
+    },
+    {
+      "name" : "monarch_rects",
+      "type": "rect",
+      "from": {"data": "monarchs"},
+      "properties": {
+        "enter": {
+          "x": {"scale": "x", "field": "start"},
+          "x2": {"scale": "x", "field": "end"},
+          "y": {"scale": "y", "value": 95},
+          "y2": {"scale": "y", "field": "offset"},
+          "fill": {"scale": "c", "field": "commonwealth"},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"mark": "monarch_rects"},
+      "properties": {
+        "enter": {
+          "x": {"field": "x"},
+          "dx": {"field": "width", "mult": 0.5},
+          "y": {"field": "y2", "offset": 14},
+          "text": {"field": "datum.name"},
+          "align": {"value": "center"},
+          "fill": {"value": "black"},
+          "font": {"value": "Helvetica Neue"},
+          "fontSize": {"value": 10},
+          "fontStyle": {"value": "italic"}
+        }
+      }
+    }
+  ]
+}
