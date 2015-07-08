@@ -6,7 +6,7 @@
     <link rel="shortcut icon" href="http://vega.github.io/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
     <script src="lib/d3.v3.min.js"></script>
-    <script src="vega2.js"></script>
+    <script src="vega.min.js"></script>
   </head>
   <body>
     <div id="main">
@@ -15,8 +15,8 @@
       </a>
       <div id="logo">
         <div id="links">
-          <a href="vega2.min.js"><strong>vega2.min.js</strong></a><br/>
-          <!-- <a href="vega2.schema.json"><strong>JSON Schema</strong></a><br />  -->
+          <a href="vega.min.js"><strong>vega.min.js</strong></a><br/>
+          <a href="vega-schema.json"><strong>JSON Schema</strong></a><br /> 
           <a href="https://github.com/vega/vega"><strong>Source</strong> (GitHub)</a>
         </div>
         <h1 id="wordmark">
@@ -215,8 +215,9 @@
       ]
     };
  
+    var view;
     vg.parse.spec(spec, function(chart) {
-      var view = chart({ el: "#examples", renderer: "svg" })
+      view = chart({ el: "#examples", renderer: "svg" })
         .update({});
 
       view.on('click', function(e, i) {
