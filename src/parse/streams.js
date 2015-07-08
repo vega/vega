@@ -148,7 +148,7 @@ function parseStreams(view) {
         prefix = 'vg' + capitalize(name);
         evt[prefix+'Item'] = group;
         evt[prefix+'X'] = evt.vgX - offset[0] - group.x;
-        evt[prefix+'Y'] = evt.vgX - offset[1] - group.y;
+        evt[prefix+'Y'] = evt.vgY - offset[1] - group.y;
       }
 
       offset[0] += group.x || 0;
