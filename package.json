@@ -1,13 +1,14 @@
 {
   "name": "vega",
   "version": "2.0.0",
-  "description": "The Vega visualization grammar runtime",
+  "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
     "visualization",
     "interaction",
     "dataflow",
     "grammar",
+    "data",
     "d3"
   ],
   "repository": {
@@ -16,12 +17,12 @@
   },
   "author": {
     "name": "Arvind Satyanarayan",
-    "url": "http://arvindsatya.com/"
+    "url": "http://arvindsatya.com"
   },
   "contributors": [
     {
       "name": "Jeffrey Heer",
-      "url": "http://idl.cs.washington.edu/"
+      "url": "http://idl.cs.washington.edu"
     }
   ],
   "license": "BSD-3-Clause",
@@ -35,9 +36,6 @@
     "vega-logging": "vega/vega-logging",
     "vega-scenegraph": "vega/vega-scenegraph",
     "yargs": "^3.2.1"
-  },
-  "optionalDependencies": {
-    "canvas": "~1.1.6"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
@@ -56,6 +54,7 @@
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4",
     "jsdom": "^3.1.2",
+    "jshint": "2.8.x",
     "jstransform": "^11.0.1",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
@@ -70,6 +69,8 @@
   },
   "main": "index.js",
   "scripts": {
+    "deploy": "scripts/deploy.sh",
+    "lint": "jshint src/",
     "test": "gulp test"
   },
   "browser": {
