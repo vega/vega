@@ -37,9 +37,6 @@
     "vega-scenegraph": "vega/vega-scenegraph",
     "yargs": "^3.2.1"
   },
-  "optionalDependencies": {
-    "canvas": "~1.1.6"
-  },
   "devDependencies": {
     "browserify": "^9.0.8",
     "browserify-shim": "^3.8.5",
