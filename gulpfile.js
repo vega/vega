@@ -108,7 +108,7 @@ gulp.task('test', function() {
     .pipe(mocha({ 
       grep: argv.g, 
       timeout: 30000,
-      istanbul: argv.i !== undefined ? (argv.i === "true") : true
+      istanbul: argv.i !== undefined ? (argv.i === "true") : false
     }))
     .on('error', gutil.log);
 });
