@@ -28,7 +28,7 @@
   "dependencies": {
     "d3": "^3.5.x",
     "d3-geo-projection": "^0.2.13",
-    "datalib": "^1.2.x",
+    "datalib": "~1.2.x",
     "topojson": "^1.6.18",
     "vega-dataflow": "vega/vega-dataflow",
     "vega-expression": "vega/vega-expression",
