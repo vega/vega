@@ -1,3 +1,5 @@
-examples/
-test/
 .DS_Store
+coverage
+examples
+temp
+test

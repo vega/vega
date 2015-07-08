@@ -1,50 +1,98 @@
 {
   "name": "vega",
-  "version": "1.5.4",
-  "description": "Vega Runtime",
+  "version": "2.0.0",
+  "description": "The Vega visualization grammar runtime",
   "keywords": [
     "vega",
     "visualization",
+    "interaction",
+    "dataflow",
     "grammar",
     "d3"
   ],
-  "homepage": "http://vega.github.io/vega/",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://trifacta.com"
-  },
   "repository": {
     "type": "git",
     "url": "http://github.com/vega/vega.git"
   },
-  "main": "index.js",
+  "author": {
+    "name": "Arvind Satyanarayan",
+    "url": "http://arvindsatya.com/"
+  },
+  "contributors": [
+    {
+      "name": "Jeffrey Heer",
+      "url": "http://idl.cs.washington.edu/"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "d3": "^3.5.x",
+    "d3-geo-projection": "^0.2.13",
+    "datalib": "^1.2.x",
+    "topojson": "^1.6.18",
+    "vega-dataflow": "vega/vega-dataflow",
+    "vega-expression": "vega/vega-expression",
+    "vega-logging": "vega/vega-logging",
+    "vega-scenegraph": "vega/vega-scenegraph",
+    "yargs": "^3.2.1"
+  },
+  "optionalDependencies": {
+    "canvas": "~1.1.6"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "browserify-shim": "^3.8.5",
+    "browserify-versionify": "^1.0.4",
+    "chai": "^1.10.0",
+    "chai-spies": "^0.6.0",
+    "chromedriver": "^2.14.1",
+    "coveralls": "^2.11.2",
+    "del": "^1.2.0",
+    "event-stream": "^3.3.1",
+    "exorcist": "^0.4.0",
+    "gulp": "^3.8.11",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.5.1",
+    "gulp-spawn-mocha": "^2.0.1",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.4",
+    "jsdom": "^3.1.2",
+    "jstransform": "^11.0.1",
+    "mocha": "^2.1.0",
+    "pegjs": "0.8.x",
+    "selenium-server-standalone-jar": "^2.45.0",
+    "summary": "^0.3.2",
+    "through": "^2.3.7",
+    "tv4": "^1.1.12",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "vinyl-transform": "^1.0.0",
+    "watchify": "^3.1.0",
+    "webdriverio": "^2.4.5",
+    "xmldom": "^0.1.19",
+    "xpath": "^0.0.9"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
   "browser": {
     "buffer": false,
     "canvas": false,
     "fs": false,
     "http": false,
-    "request": false
+    "request": false,
+    "sync-request": false,
+    "url": false
   },
-  "bin": {
-    "vg2png": "./bin/vg2png",
-    "vg2svg": "./bin/vg2svg"
+  "browserify": {
+    "transform": [
+      "browserify-shim",
+      "browserify-versionify"
+    ]
   },
-  "dependencies": {
-    "d3": "^3.5.5",
-    "d3-geo-projection": "^0.2.13",
-    "d3.layout.cloud": "^1.0.5",
-    "canvas": "~1.1.6",
-    "topojson": "^1.6.18",
-    "yargs": "^2.3.0",
-    "request": "^2.55.0"
-  },
-  "devDependencies": {
-    "jshint": "^2.7.0",
-    "uglify-js": "^2.4.16",
-    "vows": "^0.8.1"
-  },
-  "scripts": {
-    "test": "node_modules/.bin/vows; echo"
-  },
-  "license": "BSD-3-Clause"
+  "browserify-shim": {
+    "d3": "global:d3",
+    "canvas": "global:canvas",
+    "topojson": "global:topojson"
+  }
 }

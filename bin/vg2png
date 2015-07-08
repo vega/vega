@@ -10,9 +10,10 @@ var helpText =
   "  For files, use `-b file:///dir/data/` (absolute) or `-b data/` (relative).";
 
 // import required libraries
-var path = require("path");
-var fs = require("fs");
-var vg = require("../index");
+var path = require("path"),
+    fs = require("fs"),
+    d3 = require("d3"),
+    vg = require("../index");
 
 // arguments
 var args = require("yargs")
@@ -29,8 +30,7 @@ if (args.b) {
   base = /^[A-Za-z]+\:\/\//.test(args.b) ? args.b + path.sep
     : "file://" + process.cwd() + path.sep + args.b + path.sep;
 }
-vg.config.baseURL = base;
-vg.config.isNode = true;
+vg.config.load.baseURL = base;
 
 // input / output files
 var specFile = args._[0],
@@ -52,11 +52,12 @@ function writePNG(canvas, file) {
 }
 
 function render(spec) {
-  vg.headless.render(
-    {spec: spec, renderer: "canvas"},
-    function(err, data) {
-      if (err) throw err;
-      writePNG(data.canvas, outputFile);
-    }
-  );
+  vg.parse.spec(spec, function(chart) {
+    var view = chart({ renderer: "canvas" })
+      .update();
+
+    view.canvasAsync(function(canvas) {
+      writePNG(canvas, outputFile);
+    });
+  });
 }

@@ -5,23 +5,23 @@
     {
       "name": "unemp",
       "url": "data/unemployment.tsv",
-      "format": {"type": "tsv", "parse": {"rate":"number"}}
+      "format": {"type": "tsv", "parse": "auto"}
     },
     {
       "name": "counties",
       "url": "data/us-10m.json",
       "format": {"type": "topojson", "feature": "counties"},
       "transform": [
-        {"type": "geopath", "value": "data", "projection": "albersUsa"},
+        {"type": "geopath", "projection": "albersUsa"},
         {
           "type": "zip",
-          "key": "data.id",
+          "key": "id",
           "with": "unemp",
-          "withKey": "data.id",
-          "as": "value",
+          "withKey": "id",
+          "as": "unemp",
           "default": null
         },
-        {"type":"filter", "test":"d.path!=null && d.value!=null"}
+        {"type": "filter", "test": "datum.layout_path!=null && datum.unemp!=null"}
       ]
     }
   ],
@@ -39,8 +39,8 @@
       "type": "path",
       "from": {"data": "counties"},
       "properties": {
-        "enter": { "path": {"field": "path"} },
-        "update": { "fill": {"scale":"color", "field":"value.data.rate"} },
+        "enter": { "path": {"field": "layout_path"} },
+        "update": { "fill": {"scale": "color", "field": "unemp.rate"} },
         "hover": { "fill": {"value": "red"} }
       }
     }

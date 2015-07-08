@@ -1,0 +1,132 @@
+{
+  "width": 200,
+  "height": 200,
+
+  "signals": [
+    {"name": "w", "init": 200},
+    {"name": "h", "init": 200},
+    {
+      "name": "brush_start",
+      "init": {"x": 0, "y": 0},
+      "streams": [{
+        "type": "mousedown",
+        "expr": "{x: clamp(event.vgX,0,w), y: clamp(event.vgY,0,h)}"
+      }]
+    },
+    {
+      "name": "brush_end",
+      "init": {"x": 0, "y": 0},
+      "streams": [{
+        "type": "mousedown, [mousedown, window:mouseup] > window:mousemove", 
+        "expr": "{x: clamp(event.vgX,0,w), y: clamp(event.vgY,0,h)}"
+      }]
+    }
+  ],
+
+  "predicates": [
+    {
+      "name": "xRange",
+      "type": "in",
+      "item": {"arg": "x"},
+      "range": [{"signal": "brush_start.x"}, {"signal": "brush_end.x"}],
+      "scale": {"name": "x", "invert": true}
+    },
+    {
+      "name": "yRange",
+      "type": "in",
+      "item": {"arg": "y"},
+      "range": [{"signal": "brush_start.y"}, {"signal": "brush_end.y"}],
+      "scale": {"name": "y", "invert": true}
+    },
+    {
+      "name": "inRange",
+      "type": "&&",
+      "operands": [
+        {"predicate": "xRange"},
+        {"predicate": "yRange"}
+      ]
+    }
+  ],
+
+  "data": [{
+    "name": "iris",
+    "url": "data/iris.json"
+  }],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "iris", "field": "sepalWidth"},
+      "range": "width", 
+      "zero": false
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "iris", "field": "petalLength"},
+      "range": "height",
+      "nice": true, 
+      "zero": false
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "iris", "field": "species"},
+      "range": "category10"
+    }
+  ],
+
+  "axes": [
+    {"type": "x", "scale": "x", "offset": 5, "ticks": 5, "title": "Sepal Width"},
+    {"type": "y", "scale": "y", "offset": 5, "ticks": 5, "title": "Petal Length"}
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "iris"},
+      "properties": {
+        "enter": {
+          "x": {"scale": "x", "field": "sepalWidth"},
+          "y": {"scale": "y", "field": "petalLength"},
+          "fill": {"scale": "c", "field": "species"},
+          "fillOpacity": {"value": 0.5},
+          "size": {"value": 100}
+        },
+        "update": {
+          "fill": {
+            "rule": [
+              {
+                "predicate": {
+                  "name": "inRange",
+                  "x": {"field": "sepalWidth"},
+                  "y": {"field": "petalLength"}
+                },
+                "scale": "c", 
+                "field": "species"
+              },
+              {"value": "grey"}
+            ]
+          }
+        }
+      }
+    },
+
+    {
+      "type": "rect",
+      "properties": {
+        "enter": {
+          "fill": {"value": "grey"},
+          "fillOpacity": {"value": 0.2}
+        },
+        "update": {
+          "x": {"signal": "brush_start.x"},
+          "x2": {"signal": "brush_end.x"},
+          "y": {"signal": "brush_start.y"},
+          "y2": {"signal": "brush_end.y"}
+        }
+      }
+    }
+  ]
+}

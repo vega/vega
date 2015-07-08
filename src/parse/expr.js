@@ -1,14 +1,4 @@
-vg.parse.expr = (function() {
+var args = ['datum', 'event', 'signals'];
 
-  var parse = vg.expression.parse;
-  var codegen = vg.expression.code({
-    idWhiteList: ['d', 'index', 'data']
-  });
-
-  return function(expr) {
-    var code = codegen(parse(expr));
-    return Function('d', 'index', 'data',
-      '"use strict"; return (' + code + ');');
-  };
-
-})();
+module.exports = require('vega-expression')
+  .compiler(args, args[0], args[2]);

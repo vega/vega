@@ -1,66 +1,139 @@
-vg.parse.data = function(spec, callback) {
-  var model = {
-    defs: spec,
-    load: {},
-    flow: {},
-    deps: {},
-    source: {},
-    sorted: null
-  };
+var load = require('datalib/src/import/load'),
+    read = require('datalib/src/import/read'),
+    util = require('datalib/src/util'),
+    log = require('vega-logging'),
+    parseTransforms = require('./transforms'),
+    parseModify = require('./modify');
 
-  var count = 0;
-  
-  function load(d) {
+function parseData(model, spec, callback) {
+  var config = model.config(),
+      count = 0;
+
+  function loaded(d) {
     return function(error, data) {
       if (error) {
-        vg.error("LOADING FAILED: " + d.url);
+        log.error("LOADING FAILED: " + d.url + " " + error);
       } else {
-        try {
-          model.load[d.name] = vg.data.read(data.toString(), d.format);
-        } catch (err) {
-          vg.error("UNABLE TO PARSE: " + d.url + ' ' + err.toString());
-        }
+        model.data(d.name).values(read(data, d.format));
       }
       if (--count === 0) callback();
     };
   }
-  
+
   // process each data set definition
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
-      vg.data.load(d.url, load(d)); 
-    } else if (d.values) {
-      model.load[d.name] = vg.data.read(d.values, d.format);
-    } else if (d.source) {
-      (model.source[d.source] || (model.source[d.source] = [])).push(d.name);
+      load(util.extend({url: d.url}, config.load), loaded(d));
     }
-    
-    if (d.transform) {
-      var flow = vg.parse.dataflow(d);
-      model.flow[d.name] = flow;
-      flow.dependencies.forEach(function(dep) {
-        (model.deps[dep] || (model.deps[dep] = [])).push(d.name);
-      });
-    }
+    parseData.datasource(model, d);
   });
-  
-  // topological sort by dependencies
-  var names = (spec || []).map(vg.accessor("name")),
-      order = [], v = {}, n;
-  function visit(n) {
-    if (v[n] === 1) return; // not a DAG!
-    if (!v[n]) {
-      v[n] = 1;
-      (model.source[n] || []).forEach(visit);
-      (model.deps[n] || []).forEach(visit);
-      v[n] = 2;
-      order.push(n);
+
+  if (count === 0) setTimeout(callback, 1);
+  return spec;
+}
+
+parseData.datasource = function(model, d) {
+  var transform = (d.transform || []).map(function(t) {
+        return parseTransforms(model, t); 
+      }),
+      mod = (d.modify || []).map(function(m) {
+        return parseModify(model, m, d);
+      }),
+      ds = model.data(d.name, mod.concat(transform));
+
+  if (d.values) {
+    ds.values(read(d.values, d.format));
+  } else if (d.source) {
+    ds.source(d.source)
+      .revises(ds.revises()) // If new ds revises, then it's origin must revise too.
+      .addListener(ds);  // Derived ds will be pulsed by its src rather than the model.
+    model.removeListener(ds.pipeline()[0]); 
+  }
+
+  return ds;    
+};
+
+var parseDef = {
+  "oneOf": [
+    {"enum": ["auto"]},
+    {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["number", "boolean", "date", "string"]
+      }
+    }
+  ]
+};
+
+module.exports = parseData;
+parseData.schema = {
+  "defs": {
+    "data": {
+      "title": "Input data set definition",
+      "type": "object",
+
+      "allOf": [{
+        "properties": {
+          "name": {"type": "string"},
+          "transform": {"$ref": "#/defs/transform"},
+          "modify": {"$ref": "#/defs/modify"},
+          "format": {
+            "type": "object",
+            "oneOf": [{
+              "properties": {
+                "type": {"enum": ["json"]},
+                "parse": parseDef,
+                "property": {"type": "string"}
+              },
+              "additionalProperties": false
+            }, {
+              "properties": {
+                "type": {"enum": ["csv", "tsv"]},
+                "parse": parseDef
+              },
+              "additionalProperties": false
+            }, {
+              "oneOf": [{
+                "properties": {
+                  "type": {"enum": ["topojson"]},
+                  "feature": {"type": "string"}
+                },
+                "additionalProperties": false
+              }, {
+                "properties": {
+                  "type": {"enum": ["topojson"]},
+                  "mesh": {"type": "string"}
+                },
+                "additionalProperties": false
+              }]
+            }, {
+              "properties": {
+                "type": {"enum": ["treejson"]},
+                "children": {"type": "string"},
+                "parse": parseDef
+              },
+              "additionalProperties": false
+            }]
+          }
+        },
+        "required": ["name"]
+      }, {
+        "anyOf": [{
+          "required": ["name", "modify"]
+        }, {
+          "oneOf": [{
+            "properties": {"source": {"type": "string"}},
+            "required": ["source"]
+          }, {
+            "properties": {"values": {"type": "array"}},
+            "required": ["values"]
+          }, {
+            "properties": {"url": {"type": "string"}},
+            "required": ["url"]
+          }]
+        }]
+      }]
     }
   }
-  while (names.length) { if (v[n=names.pop()] !== 2) visit(n); }
-  model.sorted = order.reverse();
-  
-  if (count === 0) setTimeout(callback, 1);
-  return model;
 };

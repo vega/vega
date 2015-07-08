@@ -22,8 +22,11 @@
       "name": "stats",
       "source": "table",
       "transform": [
-        {"type": "facet", "keys": ["data.x"]},
-        {"type": "stats", "value": "data.y"}
+        {
+          "type": "aggregate",
+          "groupby": ["x"],
+          "summarize": [{"field": "y", "ops": ["sum"]}]
+        }
       ]
     }
   ],
@@ -32,19 +35,20 @@
       "name": "x",
       "type": "ordinal",
       "range": "width",
-      "domain": {"data": "table", "field": "data.x"}
+      "domain": {"data": "table", "field": "x"}
     },
     {
       "name": "y",
       "type": "linear",
       "range": "height",
       "nice": true,
-      "domain": {"data": "stats", "field": "sum"}
+      "domain": {"data": "stats", "field": "sum_y"}
     },
     {
       "name": "color",
       "type": "ordinal",
-      "range": "category10"
+      "range": "category10",
+      "domain": {"data": "table", "field": "c"}
     }
   ],
   "axes": [
@@ -53,34 +57,28 @@
   ],
   "marks": [
     {
-      "type": "group",
+      "type": "rect",
       "from": {
         "data": "table",
         "transform": [
-          {"type": "facet", "keys": ["data.c"]},
-          {"type": "stack", "point": "data.x", "height": "data.y"}
+          {"type": "stack", "groupby": ["x"], "sortby": ["c"], "field": "y"}
         ]
       },
-      "marks": [
-        {
-          "type": "rect",
-          "properties": {
-            "enter": {
-              "x": {"scale": "x", "field": "data.x"},
-              "width": {"scale": "x", "band": true, "offset": -1},
-              "y": {"scale": "y", "field": "y"},
-              "y2": {"scale": "y", "field": "y2"},
-              "fill": {"scale": "color", "field": "data.c"}
-            },
-            "update": {
-              "fillOpacity": {"value": 1}
-            },
-            "hover": {
-              "fillOpacity": {"value": 0.5}
-            }
-          }
+      "properties": {
+        "enter": {
+          "x": {"scale": "x", "field": "x"},
+          "width": {"scale": "x", "band": true, "offset": -1},
+          "y": {"scale": "y", "field": "layout_start"},
+          "y2": {"scale": "y", "field": "layout_end"},
+          "fill": {"scale": "color", "field": "c"}
+        },
+        "update": {
+          "fillOpacity": {"value": 1}
+        },
+        "hover": {
+          "fillOpacity": {"value": 0.5}
         }
-      ]
-    }    
+      }
+    }
   ]
 }

@@ -1,24 +1,38 @@
 {
   "name": "vega",
   "main": "vega.js",
-  "scripts": [
-    "vega.js"
+  "homepage": "http://vega.github.io/vega/",
+  "description": "Vega is a visualization grammar, a declarative format for creating, saving, and sharing interactive visualization designs.",
+  "keywords": [
+    "vega",
+    "visualization",
+    "interaction",
+    "dataflow",
+    "grammar",
+    "data",
+    "d3"
   ],
+  "authors": [
+    "Arvind Satyanarayan (http://arvindsatya.com)",
+    "Jeffrey Heer (http://idl.cs.washington.edu)"
+  ],
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "d3": "^3.5.5"
+  }
   "ignore": [
     ".DS_Store",
     ".git",
     ".gitignore",
     ".npmignore",
-    "Makefile",
+    ".jshintrc",
+    ".travis.yml",
+    "gulpfile.js",
+    "benchmarks",
     "bin",
     "examples",
-    "index.js",
     "node_modules",
-    "package.json",
     "src",
     "test"
-  ],
-  "dependencies": {
-    "d3": "^3.5.5"
-  }
+  ]
 }

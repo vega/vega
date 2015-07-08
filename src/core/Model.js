@@ -1,103 +1,135 @@
-vg.Model = (function() {
-  function model() {
-    this._defs = null;
-    this._data = {};
-    this._scene = null;
-    this._reset = {axes: false, legends: false};
+var util = require('datalib/src/util'),
+    ChangeSet = require('vega-dataflow/src/ChangeSet'),
+    Base = require('vega-dataflow/src/Graph').prototype,
+    Node  = require('vega-dataflow/src/Node'), // jshint ignore:line
+    GroupBuilder = require('../scene/GroupBuilder'),
+    visit = require('../scene/visit'),
+    config = require('./config');
+
+function Model(cfg) {
+  this._defs = {};
+  this._predicates = {};
+  this._scene = null;
+
+  this._node = null;
+  this._builder = null; // Top-level scenegraph builder
+
+  this._reset = {axes: false, legends: false};
+
+  this.config(cfg);
+  Base.init.call(this);
+}
+
+var prototype = (Model.prototype = Object.create(Base));
+prototype.constructor = Model;
+
+prototype.defs = function(defs) {
+  if (!arguments.length) return this._defs;
+  this._defs = defs;
+  return this;
+};
+
+prototype.config = function(cfg) {
+  if (!arguments.length) return this._config;
+  this._config = Object.create(config);
+  for (var name in cfg) {
+    var x = cfg[name], y = this._config[name];
+    if (util.isObject(x) && util.isObject(y)) {
+      util.extend(y, x);
+    } else {
+      this._config[name] = x;
+    }
   }
 
-  var prototype = model.prototype;
+  return this;
+};
 
-  prototype.defs = function(defs) {
-    if (!arguments.length) return this._defs;
-    this._defs = defs;
-    return this;
-  };
+prototype.width = function(width) {
+  if (this._defs) this._defs.width = width;
+  if (this._defs && this._defs.marks) this._defs.marks.width = width;
+  if (this._scene) {
+    this._scene.items[0].width = width;
+    this._scene.items[0]._dirty = true;
+  }
+  this._reset.axes = true;
+  return this;
+};
 
-  prototype.data = function(data) {
-    if (!arguments.length) return this._data;
+prototype.height = function(height) {
+  if (this._defs) this._defs.height = height;
+  if (this._defs && this._defs.marks) this._defs.marks.height = height;
+  if (this._scene) {
+    this._scene.items[0].height = height;
+    this._scene.items[0]._dirty = true;
+  }
+  this._reset.axes = true;
+  return this;
+};
 
-    var deps = {},
-        defs = this._defs,
-        src  = defs.data.source,
-        tx   = defs.data.flow || {},
-        keys = defs.data.sorted,
-        len  = keys.length, i, k, x;
+prototype.node = function() {
+  return this._node || (this._node = new Node(this));
+};
 
-    // collect source data set dependencies
-    function sources(k) {
-      (src[k] || []).forEach(function(s) { deps[s] = k; sources(s); });
-    }
-    vg.keys(data).forEach(sources);
-    
-    // update data sets in dependency-aware order
-    for (i=0; i<len; ++i) {
-      if (data[k=keys[i]]) {
-        x = data[k];
-      } else if (deps[k]) {
-        x = vg_data_duplicate(this._data[deps[k]]);
-        if (vg.isTree(data)) vg_make_tree(x);
-      } else continue;
-      this._data[k] = tx[k] ? tx[k](x, this._data, defs.marks) : x;
-    }
+prototype.data = function() {
+  var data = Base.data.apply(this, arguments);
+  if (arguments.length > 1) {  // new Datasource
+    this.node().addListener(data.pipeline()[0]);
+  }
 
-    this._reset.legends = true;
-    return this;
-  };
+  return data;
+};
 
-  prototype.width = function(width) {
-    if (this._defs) this._defs.width = width;
-    if (this._defs && this._defs.marks) this._defs.marks.width = width;
-    if (this._scene) this._scene.items[0].width = width;
-    this._reset.axes = true;
-    return this;
-  };
+function predicates(name) {
+  var m = this, pred = {};
+  if (!util.isArray(name)) return this._predicates[name];
+  name.forEach(function(n) { pred[n] = m._predicates[n]; });
+  return pred;
+}
 
-  prototype.height = function(height) {
-    if (this._defs) this._defs.height = height;
-    if (this._defs && this._defs.marks) this._defs.marks.height = height;
-    if (this._scene) this._scene.items[0].height = height;
-    this._reset.axes = true;
-    return this;
-  };
+prototype.predicate = function(name, predicate) {
+  if (arguments.length === 1) return predicates.call(this, name);
+  return (this._predicates[name] = predicate);
+};
 
-  prototype.scene = function(node) {
-    if (!arguments.length) return this._scene;
-    this._scene = node;
-    return this;
-  };
+prototype.predicates = function() { return this._predicates; };
 
-  prototype.build = function() {
-    var m = this, data = m._data, marks = m._defs.marks;
-    m._scene = vg.scene.build.call(m, marks, data, m._scene);
-    m._scene.items[0].width = marks.width;
-    m._scene.items[0].height = marks.height;
-    m._scene.interactive = false;
-    return this;
-  };
+prototype.scene = function(renderer) {
+  if (!arguments.length) return this._scene;
+  if (this._builder) this.node().removeListener(this._builder.disconnect());
+  this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
+  this.node().addListener(this._builder.connect());
+  var p = this._builder.pipeline();
+  p[p.length-1].addListener(renderer);
+  return this;
+};
 
-  prototype.encode = function(trans, request, item) {
-    this.reset();
-    var m = this, scene = m._scene, defs = m._defs;
-    vg.scene.encode.call(m, scene, defs.marks, trans, request, item);
-    return this;
-  };
+prototype.reset = function() {
+  if (this._scene && this._reset.axes) {
+    visit(this._scene, function(item) {
+      if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
+    });
+    this._reset.axes = false;
+  }
+  if (this._scene && this._reset.legends) {
+    visit(this._scene, function(item) {
+      if (item.legends) item.legends.forEach(function(l) { l.reset(); });
+    });
+    this._reset.legends = false;
+  }
+  return this;
+};
 
-  prototype.reset = function() {
-    if (this._scene && this._reset.axes) {
-      vg.scene.visit(this._scene, function(item) {
-        if (item.axes) item.axes.forEach(function(axis) { axis.reset(); });
-      });
-      this._reset.axes = false;
-    }
-    if (this._scene && this._reset.legends) {
-      vg.scene.visit(this._scene, function(item) {
-        if (item.legends) item.legends.forEach(function(l) { l.reset(); });
-      });
-      this._reset.legends = false;
-    }
-    return this;
-  };
+prototype.addListener = function(l) {
+  this.node().addListener(l);
+};
 
-  return model;
-})();
+prototype.removeListener = function(l) {
+  this.node().removeListener(l); 
+};
+
+prototype.fire = function(cs) {
+  if (!cs) cs = ChangeSet.create();
+  this.propagate(cs, this.node());
+};
+
+module.exports = Model;
