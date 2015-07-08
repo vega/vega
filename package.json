@@ -45,7 +45,6 @@
     "browserify-versionify": "^1.0.4",
     "chai": "^1.10.0",
     "chai-spies": "^0.6.0",
-    "chromedriver": "^2.14.1",
     "coveralls": "^2.11.2",
     "del": "^1.2.0",
     "event-stream": "^3.3.1",
@@ -60,18 +59,16 @@
     "jstransform": "^11.0.1",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
-    "selenium-server-standalone-jar": "^2.45.0",
-    "summary": "^0.3.2",
     "through": "^2.3.7",
     "tv4": "^1.1.12",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "vinyl-transform": "^1.0.0",
     "watchify": "^3.1.0",
-    "webdriverio": "^2.4.5",
     "xmldom": "^0.1.19",
     "xpath": "^0.0.9"
   },
+  "main": "index.js",
   "scripts": {
     "test": "gulp test"
   },

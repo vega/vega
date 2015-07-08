@@ -3,6 +3,7 @@
 _site
 coverage
 node_modules
+output
 temp
 vega-schema.json
 vega.js

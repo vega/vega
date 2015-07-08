@@ -19,7 +19,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "d3": "^3.5.5"
-  }
+  },
   "ignore": [
     ".DS_Store",
     ".git",
@@ -28,11 +28,12 @@
     ".jshintrc",
     ".travis.yml",
     "gulpfile.js",
-    "benchmarks",
     "bin",
     "examples",
     "node_modules",
+    "output",
     "src",
+    "index.js",
     "test"
   ]
 }
