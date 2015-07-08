@@ -2,7 +2,7 @@
   "name": "vega",
   "main": "vega.js",
   "homepage": "http://vega.github.io/vega/",
-  "description": "Vega is a visualization grammar, a declarative format for creating, saving, and sharing interactive visualization designs.",
+  "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
     "visualization",
