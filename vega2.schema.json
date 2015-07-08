@@ -1623,9 +1623,6 @@
             "padding": {
               "$ref": "#/defs/padding"
             },
-            "interactors": {
-              "$ref": "#/refs/interactors"
-            },
             "signals": {
               "type": "array",
               "items": {
@@ -3800,24 +3797,6 @@
     }
   },
   "refs": {
-    "interactors": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "url"
-        ]
-      }
-    },
     "operand": {
       "type": "object",
       "oneOf": [

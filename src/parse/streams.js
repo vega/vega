@@ -39,12 +39,8 @@ function parseStreams(view) {
       var datum, name;
 
       evt.preventDefault(); // stop text selection
-      extendEvent(evt, item);
-      groupOffsets(evt);
-
-      if (item && (name = item.mark.def.name)) {
-        populateEvent(evt, name, item, item.mark.marktype === "group");
-      }
+      vgOffset(evt, item);
+      groupOffsets(evt, item);
 
       datum = (item && item.datum) || {};
       fire(internal, type, datum, evt);
@@ -61,12 +57,14 @@ function parseStreams(view) {
               window.document.querySelectorAll(t[0]);
 
     function handler(evt) {
-      extendEvent(evt, null);
+      vgOffset(evt, null);
       fire(external, type, d3.select(this).datum(), evt);
     }
+
     for (var i=0; i<elt.length; ++i) {
       elt[i].addEventListener(t[1], handler);
     }
+
     h.elements = elt;
     h.listener = handler;
   });
@@ -88,16 +86,6 @@ function parseStreams(view) {
   return external.detach;
 
   // -- helper functions -----
-
-  function extendEvent(evt, item) {
-    // Relative position within container
-    var mouse = d3.mouse((d3.event=evt, view._el)),
-        pad = view.padding();
-    
-    evt.vgItem = item || {};
-    evt.vgX = mouse[0] - pad.left;
-    evt.vgY = mouse[1] - pad.top;
-  }
 
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
@@ -127,6 +115,47 @@ function parseStreams(view) {
     }
 
     model.propagate(cs, node);
+  }
+
+  function vgOffset(evt, item) {
+    // Relative position within container
+    var mouse = d3.mouse((d3.event=evt, view._el)),
+        pad = view.padding(),
+        name;
+
+    evt.vgItem = item || {};
+    evt.vgX = mouse[0] - pad.left;
+    evt.vgY = mouse[1] - pad.top;
+
+    if (item && (name = item.mark.def.name)) {
+      evt['vg'+capitalize(name)+'Item'] = item;
+    }
+  }
+
+  function groupOffsets(evt, item) {
+    if (!item || !item.mark) return;
+    var path = [],
+        group  = item.mark.marktype === 'group' ? item : item.mark.group,
+        offset = [0, 0],
+        name, i;
+
+    while (group) {
+      path.push(group);
+      group = group.mark.group;
+    }
+
+    for (i=path.length-1; i>=0; --i) {
+      group = path[i];
+      if ((name = group.mark.def.name)) {
+        prefix = 'vg'+capitalize(name);
+        evt[prefix+'Item'] = group;
+        evt[prefix+'X'] = evt.vgX - offset[0] - group.x;
+        evt[prefix+'Y'] = evt.vgX - offset[1] - group.y;
+      }
+
+      offset[0] += group.x || 0;
+      offset[1] += group.y || 0;
+    }
   }
 
   function mergedStream(sig, selector, exp, spec) {
@@ -229,27 +258,6 @@ function parseStreams(view) {
       else if (selector[x].stream) mergedStream(s[x], selector[x].stream, val, sp);
       s[x].addListener(router);
     });
-  }
-
-  function groupOffsets(evt) {
-    if (!evt.vgItem.mark) return;
-    var group = evt.vgItem.mark.group, name;
-
-    while (group) {
-      if ((name = group.mark.def.name)) {
-        populateEvent(evt, name, group, true);
-      }
-      group = group.mark.group;
-    }
-  }
-
-  function populateEvent(evt, name, item, group) {
-    var prefix = "vg" + capitalize(name);
-    evt[prefix + "Item"] = item;
-    if (group) {
-      if (item.x !== undefined) evt[prefix+"X"] = evt.vgX - item.x;
-      if (item.y !== undefined) evt[prefix+"Y"] = evt.vgY - item.y;
-    }
   }
 }
 
