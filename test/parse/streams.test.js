@@ -5,52 +5,18 @@ var dl = require('datalib'),
     fs = require('fs');
 
 describe('Streams', function() {
-  var renderer = "canvas";
-
   function test(spec, interaction) {
     parseSpec(spec, function(chart) { 
       jsdom.env("<html><body></body></html>", function(err, window) {
         var document = window.document,
-            body = d3.select(document).select('body').node(),
-            isCanvas = (renderer === "canvas"),
-            opt = {renderer: (renderer = (isCanvas = !isCanvas) ? "canvas" : "svg")};
+            body = d3.select(document).select('body').node();
 
-        if (!isCanvas) opt.el = body;
-        
-        // HACK due to bug w/node-canvas+jsdom dropping attributes
-        // so d3.select("canvas.marks") within Vega fails. So, 
-        // manually initialize the canvas view handler.
-        var view = chart(opt),
-            w = view.width(),
-            h = view.height(),
-            pad = view.padding(),
-            tw = w + (pad ? pad.left + pad.right : 0),
-            th = h + (pad ? pad.top + pad.bottom : 0),
-            canvas, ctx;
+        var view = chart({ el: body, renderer: 'svg' })
+          .update();
 
-        if (isCanvas) {
-          body.innerHTML = "<canvas class=\"marks\"></canvas>";
-          view._el = body;
-          canvas = d3.select(body).select("canvas").node();
-          canvas.width  = tw;
-          canvas.height = th;
-          ctx = canvas.getContext("2d");
-          ctx.setTransform(1, 0, 0, 1, pad.left, pad.top);
-          view._renderer.context(ctx);
-
-          // Manually init handler
-          view._handler = new canvasIO.Handler()
-            .initialize(body, pad, view);
-          parseStreams(view);
-        }
-
-        view.update();
-        view._handler.scene(view.model().scene());
         interaction(view, d3.select(body).select('.marks').node(), mouseEvt);
         
         function mouseEvt(type, x, y, target) {
-          if (isCanvas) target = canvas;
-
           var mm = document.createEvent("MouseEvents");
           mm.initMouseEvent("mousemove", true, true, window, null, x, y, x, y, false, false, false, false, target);
 
@@ -66,12 +32,6 @@ describe('Streams', function() {
 
           target.dispatchEvent(mm);
           target.dispatchEvent(evt);
-
-          if (isCanvas) {
-            view._handler.mousemove(mm);
-            if (view._handler[type]) view._handler[type](evt);
-            else view._handler.fire(type, evt);
-          }
         }
       });
     });
@@ -148,11 +108,11 @@ describe('Streams', function() {
 
     it('should respect names', function(done) {
       test(spec, function(view, svg, mouseEvt) {
-        mouseEvt('mousedown', 50, 50, d3.select(svg).select('.mark-rect rect').node());
+        mouseEvt('mousedown', 50, 50, d3.select(svg).select('.mark1 rect').node());
         expect(view.signal('signalA')).to.equal(50);
         expect(view.signal('signalB')).to.be.undefined;
 
-        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark-group rect').node());
+        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark2 rect').node());
         expect(view.signal('signalA')).to.equal(50);
         expect(view.signal('signalB')).to.equal(75);
 
@@ -166,9 +126,9 @@ describe('Streams', function() {
         expect(view.signal('signalC')).to.equal(50);
         expect(view.signal('signalD')).to.be.undefined;
 
-        // mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark-group rect').node());
-        // expect(view.signal('signalC')).to.equal(50);
-        // expect(view.signal('signalD')).to.equal(75);
+        mouseEvt('mousedown', 75, 75, d3.select(svg).select('.mark-group rect').node());
+        expect(view.signal('signalC')).to.equal(50);
+        expect(view.signal('signalD')).to.equal(75);
 
         done();
       });
