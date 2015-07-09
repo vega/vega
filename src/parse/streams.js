@@ -7,11 +7,26 @@ var d3 = require('d3'),
     selector = require('./events'),
     expr = require('./expr');
 
-var START = "start", MIDDLE = "middle", END = "end";
+var START  = 'start',
+    MIDDLE = 'middle',
+    END    = 'end';
 
-function capitalize(str) {
-  return str && str.charAt(0).toUpperCase() + str.slice(1);
-}
+var vgEvent = {
+  getGroup: function(name) { return name ? this.name[name] : this.group; },
+  getXY: function(item) {
+      var p = {x: this.x, y: this.y};
+      if (typeof item === 'string') {
+        item = this.name[item];
+      }
+      for (; item; item = item.mark && item.mark.group) {
+        p.x -= item.x || 0;
+        p.y -= item.y || 0;
+      }
+      return p;
+    },
+  getX: function(item) { return this.getXY(item).x; },
+  getY: function(item) { return this.getXY(item).y; }
+};
 
 function parseStreams(view) {
   var model = view.model(),
@@ -37,11 +52,8 @@ function parseStreams(view) {
   util.keys(internal.handlers).forEach(function(type) {
     view.on(type, function(evt, item) {
       evt.preventDefault(); // stop text selection
-      vgOffset(evt, item);
-      groupOffsets(evt, item);
-
-      var datum = (item && item.datum) || {};
-      fire(internal, type, datum, evt);
+      extendEvent(evt, item);
+      fire(internal, type, (item && item.datum) || {}, evt);
     });
   });
 
@@ -55,7 +67,7 @@ function parseStreams(view) {
               window.document.querySelectorAll(t[0]);
 
     function handler(evt) {
-      vgOffset(evt, null);
+      extendEvent(evt);
       fire(external, type, d3.select(this).datum(), evt);
     }
 
@@ -84,6 +96,30 @@ function parseStreams(view) {
   return external.detach;
 
   // -- helper functions -----
+
+  function extendEvent(evt, item) {
+    var mouse = d3.mouse((d3.event=evt, view._el)),
+        pad = view.padding(),
+        names = {}, mark, group, i;
+
+    if (item) {
+      mark = item.mark;
+      group = mark.marktype === 'group' ? item : mark.group;
+      for (i=item; i!=null; i=i.mark.group) {
+        if (i.mark.def.name) {
+          names[i.mark.def.name] = i;
+        }
+      }
+    }
+    names['root'] = view.model().scene().items[0];
+
+    evt.vg = Object.create(vgEvent);
+    evt.vg.group = group;
+    evt.vg.item = item || {},
+    evt.vg.name = names;
+    evt.vg.x = mouse[0] - pad.left;
+    evt.vg.y = mouse[1] - pad.top;
+  }
 
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
@@ -115,47 +151,6 @@ function parseStreams(view) {
     model.propagate(cs, node);
   }
 
-  function vgOffset(evt, item) {
-    // Relative position within container
-    var mouse = d3.mouse((d3.event=evt, view._el)),
-        pad = view.padding(),
-        name;
-
-    evt.vgItem = item || {};
-    evt.vgX = mouse[0] - pad.left;
-    evt.vgY = mouse[1] - pad.top;
-
-    if (item && (name = item.mark.def.name)) {
-      evt['vg'+capitalize(name)+'Item'] = item;
-    }
-  }
-
-  function groupOffsets(evt, item) {
-    if (!item || !item.mark) return;
-    var path = [],
-        group  = item.mark.marktype === 'group' ? item : item.mark.group,
-        offset = [0, 0],
-        name, prefix, i;
-
-    while (group) {
-      path.push(group);
-      group = group.mark.group;
-    }
-
-    for (i=path.length-1; i>=0; --i) {
-      group = path[i];
-      if ((name = group.mark.def.name)) {
-        prefix = 'vg' + capitalize(name);
-        evt[prefix+'Item'] = group;
-        evt[prefix+'X'] = evt.vgX - offset[0] - group.x;
-        evt[prefix+'Y'] = evt.vgY - offset[1] - group.y;
-      }
-
-      offset[0] += group.x || 0;
-      offset[1] += group.y || 0;
-    }
-  }
-
   function mergedStream(sig, selector, exp, spec) {
     selector.forEach(function(s) {
       if (s.event)       event(sig, s, exp, spec);
@@ -172,14 +167,14 @@ function parseStreams(view) {
         target   = selector.target,
         filters  = selector.filters || [],
         registry = target ? external : internal,
-        type = target ? target+":"+evt : evt,
+        type = target ? target+':'+evt : evt,
         node = registry.nodes[type] || (registry.nodes[type] = new Node(model)),
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
-      filters.push("!!event['vg"+capitalize(name)+"Item']"); // Mimic event bubbling
+      filters.push('!!event.vg.name["' + name + '"]'); // Mimic event bubbling
     } else if (mark) {
-      filters.push("event.vgItem.mark && event.vgItem.mark.marktype==="+util.str(mark));
+      filters.push('event.vg.item.mark && event.vg.item.mark.marktype==='+util.str(mark));
     }
 
     handlers.push({
@@ -216,7 +211,7 @@ function parseStreams(view) {
 
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(), 
-        trueFn = expr("true"),
+        trueFn = expr('true'),
         s = {};
 
     s[START]  = model.signal(name + START,  false);
