@@ -159,8 +159,9 @@ function parseIn(model, spec) {
 
 // Populate ops such that ultimate scale/inversion function will be in `scale` var. 
 function parseScale(spec, ops) {
-  var code = "var scale = ", 
-      idx  = ops.length;
+  var code = "var scale = ",
+      idx  = ops.length,
+      scaleObj;
 
   if (util.isString(spec)) {
     ops.push({ value: spec });
@@ -173,15 +174,15 @@ function parseScale(spec, ops) {
     code += "(this.isFunction(o"+idx+") ? o"+idx+" : ";
     if (spec.scope) {
       ops.push(spec.scope);
-      code += "(o"+(idx+1)+".scale || this.root().scale)(o"+idx+")";
+      scaleObj = "(o"+(idx+1)+".scale || this.root().scale)(o"+idx+")";
     } else {
-      code += "this.root().scale(o"+idx+")";
+      scaleObj = "this.root().scale(o"+idx+")";
     }
-    code += ")";
+    code += scaleObj + ")";
   }
 
   if (spec.invert === true) {  // Allow spec.invert.arg?
-    code += ".invert";
+    code += ".invert.bind(" + scaleObj+ ")";
   }
 
   return code+";\n";
