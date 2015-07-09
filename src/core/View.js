@@ -305,7 +305,7 @@ function build() {
   return (v._model.scene(v._renderNode), true);  
 }
 
-prototype.update = function(opt) {    
+prototype.update = function(opt) {   
   opt = opt || {};
   var v = this,
       trans = opt.duration ? new Transition(opt.duration, opt.ease) : null;
