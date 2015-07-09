@@ -137,7 +137,7 @@ prototype.pipeline = function(pipeline) {
     log.debug(input, ['input', ds._name]);
 
     var delta = ds._input, 
-        out = ChangeSet.create(input), f, ids = {};
+        out = ChangeSet.create(input), f;
 
     // Delta might contain fields updated through API
     for (f in delta.fields) {

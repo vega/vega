@@ -1,5 +1,4 @@
 var log = require('vega-logging'),
-    ChangeSet = require('./ChangeSet'),
     Tuple = require('./Tuple'),
     Base = require('./Node').prototype;
 
