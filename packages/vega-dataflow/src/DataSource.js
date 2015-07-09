@@ -229,13 +229,14 @@ prototype.listener = function() {
     });
 
     output.mod = input.mod.map(function(t) {
-      return map[t._id];
+      var o = map[t._id];
+      return (o._prev = t._prev, o);
     });
 
     output.rem = input.rem.map(function(t) { 
       var o = map[t._id];
       map[t._id] = null;
-      return o;
+      return (o._prev = t._prev, o);
     });
 
     return (dest._input = output);
