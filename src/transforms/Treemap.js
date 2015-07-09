@@ -79,6 +79,7 @@ module.exports = Treemap;
 
 Treemap.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Treemap transform",
   "type": "object",
   "properties": {
     "type": {"enum": ["treemap"]},
