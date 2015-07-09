@@ -65,6 +65,13 @@ var TYPES = Aggregate.TYPES = {
   MULTI: 3
 };
 
+Aggregate.VALID_OPS = [
+  'values', 'count', 'valid', 'missing', 'distinct', 
+  'sum', 'mean', 'average', 'variance', 'variancep', 'stdev', 
+  'stdevp', 'median', 'q1', 'q3', 'modeskew', 'min', 'max', 
+  'argmin', 'argmax'
+];
+
 prototype.type = function(type) { 
   return (this._type = type, this); 
 };
@@ -165,14 +172,9 @@ prototype.transform = function(input, reset) {
   return aggr.changes(input, output);
 };
 
-var VALID_OPS = Aggregate.VALID_OPS = [
-  "values", "count", "valid", "missing", "distinct", 
-  "sum", "mean", "average", "variance", "variancep", "stdev", 
-  "stdevp", "median", "q1", "q3", "modeskew", "min", "max", 
-  "argmin", "argmax"
-];
-
 module.exports = Aggregate;
+
+var VALID_OPS = Aggregate.VALID_OPS;
 
 Aggregate.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",

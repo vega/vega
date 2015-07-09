@@ -15,23 +15,14 @@ This repository contains the **vega-runtime** system, which parses Vega
 specifications to produce interactive visualizations which run in the
 browser using a scenegraph-based rendering system.
 
-### Running Test Examples
+## Build Process
 
-To run the example tests, you will need to run a local web server. For 
-example, if you have Python installed on your system, run `python -m 
-SimpleHTTPServer 8000` in the top-level directory of this repository and then 
-point your browser to 
-[http://localhost:8000/examples/](http://localhost:8000/examples/).
+To use Vega in the browser, you need to build the vega.js and vega.min.js files. We assume that you have [npm](https://www.npmjs.com/) installed.
 
-### Build Process
+1. Run `npm install` in the vega folder to install dependencies.
+2. Run `npm run build`. This will invoke [browserify](http://browserify.org/) to bundle the source files into vega.js, and then [uglify-js](http://lisperator.net/uglifyjs/) to create the minified vega.min.js.
 
-To build the vega.js and vega.min.js files we use the 
-[gulp](http://gulpjs.com/) build system along with 
-[browserify](http://browserify.org/) to bundles the files.
-
-1. Install gulp, as needed. Follow [step 1 on the Gulp Getting Started guide](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md).
-2. Run `npm install` in the vega folder to install dependencies.
-3. Run `gulp`.
+Vega visualization specifications can be validated against a [JSON Schema](http://json-schema.org/). To generate the vega-schema.json definition file, run `npm run schema`.
 
 ## Vega Server-Side and Command Line Tools
 
@@ -58,5 +49,4 @@ are accessible either locally (`node_modules/.bin/vg2png`) or globally
 
 To include Vega in a node project, first install it from the command line
 using npm (`npm install vega`) or by including `"vega"` among the dependencies
-in your package.json file. When running in node.js, Vega uses a "headless" 
-rendering mode for generating visualizations outside the browser.
+in your package.json file.

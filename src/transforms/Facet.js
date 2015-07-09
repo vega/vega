@@ -1,5 +1,4 @@
-var util = require('datalib/src/util'),
-    Transform = require('./Transform'),
+var Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
 function Facet(graph) {
@@ -31,6 +30,8 @@ prototype.aggr = function() {
 };
 
 module.exports = Facet;
+
+var util = require('datalib/src/util');
 
 Facet.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
