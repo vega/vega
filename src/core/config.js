@@ -11,11 +11,6 @@ config.load = {
   domainWhiteList: false
 };
 
-// version and namepsaces for exported svg
-config.svgNamespace =
-  'version="1.1" xmlns="http://www.w3.org/2000/svg" ' +
-  'xmlns:xlink="http://www.w3.org/1999/xlink"';
-
 // inset padding for automatic padding calculation
 config.autopadInset = 5;
 

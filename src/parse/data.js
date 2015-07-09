@@ -54,6 +54,8 @@ parseData.datasource = function(model, d) {
   return ds;    
 };
 
+module.exports = parseData;
+
 var parseDef = {
   "oneOf": [
     {"enum": ["auto"]},
@@ -66,7 +68,6 @@ var parseDef = {
   ]
 };
 
-module.exports = parseData;
 parseData.schema = {
   "defs": {
     "data": {
