@@ -119,9 +119,9 @@ module.exports = {
     nest: false,
     attr: function(emit, o) {
       var dx = (o.dx || 0),
-          dy = (o.dy || 0),
+          dy = (o.dy || 0) + font.offset(o),
           x = (o.x || 0),
-          y = (o.y || 0) + font.offset(o),
+          y = (o.y || 0),
           a = o.angle || 0,
           r = o.radius || 0, t;
 

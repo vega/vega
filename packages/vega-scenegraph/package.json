@@ -24,15 +24,17 @@
     "jsdom": "3",
     "jshint": "latest",
     "mocha": "latest",
-    "uglify-js": "latest"
+    "uglify-js": "latest",
+    "watchify": "latest"
   },
   "main": "src/index.js",
   "scripts": {
     "lint": "jshint src/",
     "test": "mocha --recursive test/",
     "cover": "istanbul cover _mocha -- --recursive test/",
-    "build": "browserify src/index.js --debug --standalone vg.scene -o vega-scenegraph.js",
-    "postbuild": "uglifyjs vega-scenegraph.js -c -m -o vega-scenegraph.min.js"
+    "build": "browserify src/index.js -d -s vg.scene -o vega-scenegraph.js",
+    "postbuild": "uglifyjs vega-scenegraph.js -c -m -o vega-scenegraph.min.js",
+    "watch": "watchify src/index.js -v -d -s vg.scene -o vega-scenegraph.js"
   },
   "browserify": {
     "transform": [
