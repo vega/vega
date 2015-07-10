@@ -122,6 +122,7 @@ function axs(model) {
     util.extend(m.domain, vg_axisDomain(config));
     util.extend(m.title, vg_axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
+    m.gridLines.properties.enter.strokeOpacity = {value: config.axis.gridOpacity};
 
     // extend axis marks based on axis orientation
     vg_axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
