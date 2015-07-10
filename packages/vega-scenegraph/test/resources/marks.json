@@ -90,8 +90,8 @@
   "symbol": {
     "marktype": "symbol",
     "items": [
-      {"x":0,   "y":0,   "size":64, "shape":"circle",  "stroke":"steelblue"},
-      {"x":50,  "y":90,  "size":49, "shape":"square",  "stroke":"steelblue"},
+      {"x":0,   "y":0,   "size":64, "shape":"circle",  "stroke":"steelblue", "fill": "white"},
+      {"x":50,  "y":90,  "size":49, "shape":"square",  "stroke":"steelblue", "fill": "white"},
       {"x":100, "y":114, "size":36, "shape":"cross",   "stroke":"steelblue"},
       {"x":150, "y":18,  "size":25, "shape":"diamond", "stroke":"steelblue"},
       {"x":200, "y":18,  "size":81, "shape":"triangle-up", "stroke":"steelblue"},

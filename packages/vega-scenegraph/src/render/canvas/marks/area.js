@@ -10,24 +10,21 @@ function path(g, items) {
 }
 
 function pick(g, scene, x, y, gx, gy) {
-  if (!scene.items || !scene.items.length) return false;
-
   var items = scene.items,
       b = scene.bounds;
 
-  if (b && !b.contains(gx, gy)) return false;
+  if (!items || !items.length || b && !b.contains(gx, gy)) {
+    return null;
+  }
+
   if (g.pixelratio != null && g.pixelratio !== 1) {
     x *= g.pixelratio;
     y *= g.pixelratio;
   }
-  if (!hit(g, items, x, y)) return false;
-  return items[0];
+  return hit(g, items, x, y) ? items[0] : null;
 }
 
-function hit(g, s, x, y) {
-  path(g, s);
-  return g.isPointInPath(x, y);
-}
+var hit = util.testPath(path);
 
 module.exports = {
   draw: util.drawOne(path),

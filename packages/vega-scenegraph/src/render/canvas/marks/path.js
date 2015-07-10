@@ -8,11 +8,7 @@ function path(g, o) {
   render(g, p, o.x, o.y);
 }
 
-function hit(g, o, x, y) {
-  return path(g, o) ? false : g.isPointInPath(x, y);
-}
-
 module.exports = {
   draw: util.drawAll(path),
-  pick: util.pick(hit)
+  pick: util.pickPath(path)
 };

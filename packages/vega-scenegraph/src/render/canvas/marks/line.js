@@ -9,36 +9,22 @@ function path(g, items) {
   render(g, p);
 }
 
-function stroke(g, items) {
-  var o = items[0],
-      lw = o.strokeWidth,
-      lc = o.strokeCap;
-  g.lineWidth = lw != null ? lw : 1;
-  g.lineCap   = lc != null ? lc : 'butt';
-  path(g, items);
-}
-
 function pick(g, scene, x, y, gx, gy) {
-  if (!scene.items || !scene.items.length) return false;
-
   var items = scene.items,
       b = scene.bounds;
 
-  if (b && !b.contains(gx, gy)) return false;
+  if (!items || !items.length || b && !b.contains(gx, gy)) {
+    return null;
+  }
 
   if (g.pixelratio != null && g.pixelratio !== 1) {
     x *= g.pixelratio;
     y *= g.pixelratio;
   }
-  if (!hit(g, items, x, y)) return false;
-  return items[0];
+  return hit(g, items, x, y) ? items[0] : null;
 }
 
-function hit(g, s, x, y) {
-  if (!g.isPointInStroke) return false;
-  stroke(g, s);
-  return g.isPointInStroke(x, y);
-}
+var hit = util.testPath(path, false);
 
 module.exports = {
   draw: util.drawOne(path),

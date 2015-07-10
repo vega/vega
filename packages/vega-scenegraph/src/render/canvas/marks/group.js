@@ -57,7 +57,7 @@ function hit(g, o) {
 
 function pick(g, scene, x, y, gx, gy) {
   if (scene.bounds && !scene.bounds.contains(gx, gy)) {
-    return false;
+    return null;
   }
   var items = scene.items || [],
       subscene, group, hits, dx, dy, i, j;
@@ -81,7 +81,7 @@ function pick(g, scene, x, y, gx, gy) {
     g.restore();
   }
 
-  return scene.interactive !== false ? pickSelf(g, scene, x, y, gx, gy) : false;
+  return scene.interactive !== false ? pickSelf(g, scene, x, y, gx, gy) : null;
 }
 
 var pickSelf = util.pick(hit);

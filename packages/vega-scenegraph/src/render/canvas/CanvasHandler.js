@@ -5,6 +5,8 @@ var DOM = require('../../util/dom'),
 function CanvasHandler() {
   Handler.call(this);
   this._down = null;
+  this._touch = null;
+  this._first = true;
 }
 
 var base = Handler.prototype;
@@ -25,6 +27,7 @@ prototype.initialize = function(el, pad, obj) {
     });
   });
 
+  this._rect = this._canvas.getBoundingClientRect();
   return base.initialize.call(this, el, pad, obj);
 };
 
@@ -46,6 +49,7 @@ prototype.events = [
   'mouseup',
   'mousemove',
   'mouseout',
+  'mouseover',
   'click',
   'dblclick',
   'wheel',
@@ -55,34 +59,29 @@ prototype.events = [
   'touchend'
 ];
 
+// to keep firefox happy
+prototype.DOMMouseScroll = function(evt) {
+  this.fire('mousewheel', evt);
+};
+
 prototype.mousemove = function(evt) {
-  var pad = this._padding,
-      b = evt.target.getBoundingClientRect(),
-      x = evt.clientX - b.left,
-      y = evt.clientY - b.top,
-      a = this._active,
-      p = this.pick(this._scene, x, y, x-pad.left, y-pad.top);
+  var a = this._active,
+      p = this.pickEvent(evt);
 
   if (p === a) {
-    this.fire('mousemove', evt);
-    if (evt.type === 'touchmove') this.fire('touchmove', evt);
-    return;
-  } else if (a) {
-    this.fire('mouseout', evt);
-    if (evt.type === 'touchend') this.fire('touchend', evt);
-  }
-  this._active = p;
-  if (p) {
-    this.fire('mouseover', evt);
-    if (evt.type === 'touchstart') this.fire('touchstart', evt);
+    // active item and picked item are the same
+    this.fire('mousemove', evt); // fire move
+  } else {
+    // active item and picked item are different
+    this.fire('mouseout', evt);  // fire out for prior active item
+    this._active = p;            // set new active item
+    this.fire('mouseover', evt); // fire over for new active item
+    this.fire('mousemove', evt); // fire move for new active item
   }
 };
 
 prototype.mouseout = function(evt) {
-  if (this._active) {
-    this.fire('mouseout', evt);
-    this.fire('touchend', evt);
-  }
+  this.fire('mouseout', evt);
   this._active = null;
 };
 
@@ -98,20 +97,32 @@ prototype.click = function(evt) {
   }
 };
 
-// to keep firefox happy
-prototype.DOMMouseScroll = function(evt) {
-  this.fire('mousewheel', evt);
+prototype.touchstart = function(evt) {
+  this._touch = this.pickEvent(evt.changedTouches[0]);
+
+  if (this._first) {
+    this._active = this._touch;
+    this._first = false;
+  }
+
+  this.fire('touchstart', evt, true);
 };
 
-prototype.touchmove = prototype.mousemove;
+prototype.touchmove = function(evt) {
+  this.fire('touchmove', evt, true);
+};
 
-prototype.touchend = prototype.mouseout;
+prototype.touchend = function(evt) {
+  this.fire('touchend', evt, true);
+  this._touch = null;
+};
 
 // fire an event
-prototype.fire = function(type, evt) {
-  var a = this._active,
+prototype.fire = function(type, evt, touch) {
+  var a = touch ? this._touch : this._active,
       h = this._handlers[type], i, len;
   if (h) {
+    evt.vegaType = type;
     for (i=0, len=h.length; i<len; ++i) {
       h[i].handler.call(this._obj, evt, a);
     }
@@ -139,6 +150,14 @@ prototype.off = function(type, handler) {
     if (!handler || h[i].handler === handler) h.splice(i, 1);
   }
   return this;
+};
+
+prototype.pickEvent = function(evt) {
+  var pad = this._padding, x, y;
+  return this.pick(this._scene,
+    x = (evt.clientX - this._rect.left),
+    y = (evt.clientY - this._rect.top),
+    x - pad.left, y - pad.top);
 };
 
 // find the scenegraph item at the current mouse position

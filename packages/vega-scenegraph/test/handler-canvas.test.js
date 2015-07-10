@@ -47,8 +47,12 @@ function renderAsync(scene, w, h, callback) {
 function event(name, x, y) {
   var evt = jsdom.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
-  evt.clientX = x || 50;
-  evt.clientY = y || 150;
+  evt.clientX = x || 0;
+  evt.clientY = y || 0;
+  evt.changedTouches = [{
+    clientX: x || 0,
+    clientY: y || 0
+  }];
   return evt;
 }
 
@@ -75,16 +79,19 @@ describe('canvas handler', function() {
     handler.events.forEach(function(name) {
       canvas.dispatchEvent(event(name));
     });
+    
     handler.DOMMouseScroll(event('mousewheel'));
-
     canvas.dispatchEvent(event('mousemove', 0, 0));
     canvas.dispatchEvent(event('mousemove', 50, 150));
+    canvas.dispatchEvent(event('mousedown', 50, 150));
+    canvas.dispatchEvent(event('mouseup', 50, 150));
     canvas.dispatchEvent(event('click', 50, 150));
     canvas.dispatchEvent(event('mousemove', 50, 151));
     canvas.dispatchEvent(event('mousemove', 50, 1));
     canvas.dispatchEvent(event('mouseout', 1, 1));
 
-    assert.equal(count, handler.events.length + 4);
+    // 9 events above + 4 triggered (mouseover, mouseout)
+    assert.equal(count, handler.events.length + 13);
 
     handler.off('mousemove', {});
     assert.equal(handler.handlers().length, handler.events.length);
@@ -109,7 +116,7 @@ describe('canvas handler', function() {
   it('should pick arc mark', function() {
     var mark = marks.arc;
     var handler = new Handler().initialize(render(mark, 500, 500));
-    assert.ok(handler.pick(mark, 260, 240, 260, 240));
+    assert.ok(handler.pick(mark, 270, 260, 270, 260));
     assert.notOk(handler.pick(mark, 248, 250, 248, 250));
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
   });
@@ -234,7 +241,7 @@ describe('canvas handler', function() {
     for (i=0; i<types.length; ++i) {
       scene.marktype = types[i];
       var handler = new Handler().initialize(render(scene, 500, 500));
-      assert.isFalse(handler.pick(scene, 0, 0, 0, 0));
+      assert.isNull(handler.pick(scene, 0, 0, 0, 0));
     }
   });
 

@@ -24,6 +24,7 @@ prototype.listener = function(handler) {
   return function(evt) {
     var target = evt.target,
         item = target.__data__;
+    evt.vegaType = evt.type;
     item = Array.isArray(item) ? item[0] : item;
     handler.call(that._obj, evt, item);
   };

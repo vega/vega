@@ -37,7 +37,7 @@ function pick(test) {
   if (!test) test = function() { return true; };
 
   return function(g, scene, x, y, gx, gy) {
-    if (!scene.items.length) return false;
+    if (!scene.items.length) return null;
 
     var o, b, i;
 
@@ -53,8 +53,31 @@ function pick(test) {
       // if in bounding box, perform more careful test
       if (test(g, o, x, y, gx, gy)) return o;
     }
-    return false;
+    return null;
   };
+}
+
+function testPath(path, fill) {
+  return function(g, o, x, y) {
+    var item = Array.isArray(o) ? o[0] : o,
+        stroke = item.stroke && g.isPointInStroke, lw, lc;
+    fill = (fill == null) ? item.fill : fill;
+
+    if (stroke) {
+      lw = item.strokeWidth;
+      lc = item.strokeCap;
+      g.lineWidth = lw != null ? lw : 1;
+      g.lineCap   = lc != null ? lc : 'butt';
+    }
+
+    return path(g, o) ? false :
+      (fill && g.isPointInPath(x, y)) ||
+      (stroke && g.isPointInStroke(x, y));
+  };
+}
+
+function pickPath(path) {
+  return pick(testPath(path));
 }
 
 function fill(g, o, opacity) {
@@ -113,6 +136,8 @@ module.exports = {
   drawOne:  drawOne,
   drawAll:  drawAll,
   pick:     pick,
+  pickPath: pickPath,
+  testPath: testPath,
   stroke:   stroke,
   fill:     fill,
   color:    color,
