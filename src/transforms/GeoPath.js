@@ -47,7 +47,7 @@ module.exports = GeoPath;
 
 GeoPath.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Geopath transform",
+  "title": "GeoPath transform",
   "description": "Creates paths for geographic regions, such as countries, states and counties.",
   "type": "object",
   "properties": util.extend({
