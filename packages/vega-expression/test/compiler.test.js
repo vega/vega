@@ -5,7 +5,10 @@ var expr = require('../src/index');
 
 describe('compiler', function() {
 
-  var compile = expr.compiler(['d'], 'd', 'global');
+  var compile = expr.compiler(['d'], {
+    fieldVar: 'd',
+    globalVar: 'global'
+  });
 
   it('should return compiled function', function() {
     var f = compile('d.a*d.a');

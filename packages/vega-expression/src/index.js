@@ -8,13 +8,9 @@ var expr = module.exports = {
   code: function(opt) {
       return codegen(opt);
     },
-  compiler: function(args, fieldVar, globalVar) {
+  compiler: function(args, opt) {
       args = args.slice();
-      var generator = codegen({
-            idWhiteList: args,
-            fieldVar: fieldVar,
-            globalVar: globalVar
-          }),
+      var generator = codegen(opt),
           len = args.length;
       return function(str) {
         var value = generator(expr.parse(str));
@@ -22,5 +18,7 @@ var expr = module.exports = {
         value.fn = Function.apply(null, args);
         return value;
       };
-    }
+    },
+  functions: require('./functions'),
+  constants: require('./constants')
 };
