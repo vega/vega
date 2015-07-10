@@ -52,8 +52,8 @@ function axs(model) {
   
   function buildTickFormat() {
     var fmtStr = getTickFormatString();
-    if (scale.tickFormat) {
-      return scale.tickFormat(tickCount, fmtStr);
+    if (scale.tickFormat && !util.isValid(fmtStr)) {
+      return scale.tickFormat(tickCount);
     } else if (fmtStr) {
       return ((scale.type === 'time') ?
         d3.time.format(fmtStr) : d3.format(fmtStr));
