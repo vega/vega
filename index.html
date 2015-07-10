@@ -71,7 +71,7 @@
           "name": "active",
           "init": {},
           "streams": [
-            {"type": "image:mouseover, group:mouseover, group:mouseout, rect:mouseover", "expr": "event.vgExampleItem.datum"},
+            {"type": "image:mouseover, group:mouseover, group:mouseout, rect:mouseover", "expr": "eventGroup().datum"},
             {"type": "body:mouseout", "expr": "{}"},
           ]
         },
@@ -82,7 +82,7 @@
             {"type": "body:mouseout", "expr": "{x: 0, y: 0}"},
             {
               "type": "image:mousemove", 
-              "expr": "{x: panPrev.x - event.vgExampleX, y: panPrev.y - event.vgExampleY}"
+              "expr": "{x: panPrev.x - eventX('example'), y: panPrev.y - eventY('example')}"
             }
           ]
         },
@@ -92,7 +92,7 @@
           "streams": [
             {
               "type": "image:mouseover, image:mousemove", 
-              "expr": "{x: event.vgExampleX, y: event.vgExampleY}"
+              "expr": "{x: eventX('example'), y: eventY('example')}"
             },
           ]
         }
