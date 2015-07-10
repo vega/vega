@@ -164,17 +164,15 @@ function symbol(o, bounds) {
 }
 
 function text(o, bounds, noRotate) {
-  var dx = (o.dx || 0),
-      dy = (o.dy || 0),
-      x = (o.x || 0) + dx,
-      y = (o.y || 0) + dy,
+  var g = context(),
       h = font.size(o),
       a = o.align,
       r = o.radius || 0,
-      g = context(), w, t;
-
-  g.font = font.string(o);
-  w = g.measureText(o.text || '').width;
+      x = (o.x || 0),
+      y = (o.y || 0),
+      dx = (o.dx || 0),
+      dy = (o.dy || 0) + font.offset(o) - Math.round(0.8*h), // use 4/5 offset
+      w, t;
 
   if (r) {
     t = (o.theta || 0) - Math.PI/2;
@@ -183,21 +181,19 @@ function text(o, bounds, noRotate) {
   }
 
   // horizontal alignment
+  g.font = font.string(o);
+  w = g.measureText(o.text || '').width;
   if (a === 'center') {
-    x = x - (w / 2);
+    dx -= (w / 2);
   } else if (a === 'right') {
-    x = x - w;
+    dx -= w;
   } else {
     // left by default, do nothing
   }
 
-  // vertical alignment
-  // assume 4/5 (0.8) height offset from alphabetic baseline
-  y += font.offset(o) - Math.round(0.8*h);
-  
-  bounds.set(x, y, x+w, y+h);
+  bounds.set(dx+=x, dy+=y, dx+w, dy+h);
   if (o.angle && !noRotate) {
-    bounds.rotate(o.angle*Math.PI/180, x-dx, y-dy);
+    bounds.rotate(o.angle*Math.PI/180, x, y);
   }
   return bounds.expand(noRotate ? 0 : 1);
 }

@@ -22,7 +22,7 @@ function draw(g, scene, bounds) {
     g.textAlign = o.align || 'left';
 
     x = (o.x || 0);
-    y = (o.y || 0) + font.offset(o);
+    y = (o.y || 0);
     if ((r = o.radius)) {
       t = (o.theta || 0) - Math.PI/2;
       x += r * Math.cos(t);
@@ -36,7 +36,7 @@ function draw(g, scene, bounds) {
       x = y = 0; // reset x, y
     }
     x += (o.dx || 0);
-    y += (o.dy || 0);
+    y += (o.dy || 0) + font.offset(o);
 
     if (o.fill && util.fill(g, o, opac)) {
       g.fillText(o.text, x, y);
