@@ -7,11 +7,10 @@ module.exports = expr.compiler(args, {
   globalVar:   args[2],
   functions:   function(codegen) {
     var fn = expr.functions(codegen);
-    fn.item   = function() { return 'event.vg.item'; };
-    fn.group  = 'event.vg.getGroup';
-    fn.mouseX = 'event.vg.getX';
-    fn.mouseY = 'event.vg.getY';
-    fn.mouse  = 'event.vg.getXY';
+    fn.eventItem = function() { return 'event.vg.item'; };
+    fn.eventGroup = 'event.vg.getGroup';
+    fn.eventX = 'event.vg.getX';
+    fn.eventY = 'event.vg.getY';
     return fn;
   }
 });
