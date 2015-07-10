@@ -55,7 +55,8 @@ prototype.start = function(callback) {
   var t = this, prev = t.updates, curr = prev.next;
   for (; curr!=null; prev=curr, curr=prev.next) {
     if (curr.item.status === Status.EXIT) {
-      curr.item.status = Status.UPDATE;  // Only mark item as exited when it is removed.
+      // Only mark item as exited when it is removed.
+      curr.item.status = Status.UPDATE;
       curr.remove = true;
     }
   }
