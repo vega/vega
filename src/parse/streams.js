@@ -111,11 +111,11 @@ function parseStreams(view) {
         }
       }
     }
-    names['root'] = view.model().scene().items[0];
+    names.root = view.model().scene().items[0];
 
     evt.vg = Object.create(vgEvent);
     evt.vg.group = group;
-    evt.vg.item = item || {},
+    evt.vg.item = item || {};
     evt.vg.name = names;
     evt.vg.x = mouse[0] - pad.left;
     evt.vg.y = mouse[1] - pad.top;

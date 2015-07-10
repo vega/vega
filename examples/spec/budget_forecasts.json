@@ -17,26 +17,26 @@
       "name": "handleYear",
       "streams": [{
         "type": "mousemove[dragging]",
-        "expr": "clamp(event.vgX, 10, 10000)",
+        "expr": "clamp(eventX(), 10, 10000)",
         "scale": {"name": "x", "invert": true}
       }]
     },
     {
       "name": "currentYear",
       "init": 2010,
-      "expr": "min(max(handleYear, 1980), 2010)"
+      "expr": "clamp(handleYear, 1980, 2010)"
     },
     {
       "name": "tipYear",
       "streams": [{
-        "type": "mousemove[!dragging]", "expr": "event.vgX",
+        "type": "mousemove[!dragging]", "expr": "eventX()",
         "scale": {"name": "x", "invert": true}
       }]
     },
     {
       "name": "tipValue",
       "streams": [{
-        "type": "mousemove[!dragging]", "expr": "event.vgY",
+        "type": "mousemove[!dragging]", "expr": "eventY()",
         "scale": {"name": "y", "invert": true}
       }]
     }

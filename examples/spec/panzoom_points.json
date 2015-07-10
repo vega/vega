@@ -18,7 +18,7 @@
       "init": 0,
       "streams": [{
         "type": "mousedown",
-        "expr": "{x: event.vgX, y: event.vgY}"
+        "expr": "{x: eventX(), y: eventY()}"
       }]
     },
     {
@@ -26,7 +26,7 @@
       "init": 0,
       "streams": [{
         "type": "[mousedown, window:mouseup] > window:mousemove",
-        "expr": "{x: point.x - event.vgX, y: event.vgY - point.y}"
+        "expr": "{x: point.x - eventX(), y: eventY() - point.y}"
       }]
     },
     {
@@ -34,7 +34,7 @@
       "init": 0,
       "streams": [{
         "type": "mousemove",
-        "expr": "event.vgX",
+        "expr": "eventX()",
         "scale": {"name":"x", "invert":true}
       }]
     },
@@ -43,7 +43,7 @@
       "init": 0,
       "streams": [{
         "type": "mousemove",
-        "expr": "event.vgY",
+        "expr": "eventY()",
         "scale": {"name":"y", "invert":true}
       }]
     },
@@ -105,7 +105,7 @@
       "init": 20,
       "streams": [{
         "type": "xMin",
-        "expr": "min(max(60/(xMax-xMin), 1), 100)"
+        "expr": "clamp(60/(xMax-xMin), 1, 100)"
       }]
     }
   ],

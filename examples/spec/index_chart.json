@@ -5,24 +5,15 @@
 
   "signals": [
     {
-      "name": "xDate",
-      "streams": [{
-        "type": "mousemove", 
-        "expr": "event.vgX", 
-        "scale": {"name": "x", "invert": true}
-      }]
-    },
-
-    {"name": "minDate", "init": {"expr": "time('Jan 1 2000')"}},
-    {"name": "maxDate", "init": {"expr": "time('Mar 1 2010')"}},
-    {
       "name": "indexDate",
       "init": {"expr": "time('Jan 1 2005')"},
       "streams": [{
-        "type": "xDate", 
-        "expr": "clamp(xDate, minDate, maxDate)"
+        "type": "mousemove",
+        "expr": "clamp(eventX(), 0, eventGroup('root').width)",
+        "scale": {"name": "x", "invert": true}
       }]
-    }
+    },
+    {"name": "maxDate", "init": {"expr": "time('Mar 1 2010')"}}
   ],
 
   "data": [
