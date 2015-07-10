@@ -15,12 +15,7 @@ function path(g, o) {
   g.closePath();
 }
 
-function hit(g, o, x, y) {
-  path(g, o);
-  return g.isPointInPath(x, y);
-}
-
 module.exports = {
   draw: util.drawAll(path),
-  pick: util.pick(hit)
+  pick: util.pickPath(path)
 };

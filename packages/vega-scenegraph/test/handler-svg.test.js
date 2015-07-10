@@ -17,6 +17,7 @@ var events = [
   'mouseup',
   'mousemove',
   'mouseout',
+  'mouseover',
   'click',
   'dblclick',
   'wheel',
@@ -46,8 +47,8 @@ function render(scene, w, h) {
 function event(name, x, y) {
   var evt = jsdom.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
-  evt.clientX = x || 50;
-  evt.clientY = y || 150;
+  evt.clientX = x || 0;
+  evt.clientY = y || 0;
   return evt;
 }
 
@@ -77,12 +78,15 @@ describe('svg handler', function() {
 
     svg.dispatchEvent(event('mousemove', 0, 0));
     svg.dispatchEvent(event('mousemove', 50, 150));
+    svg.dispatchEvent(event('mousedown', 50, 150));
+    svg.dispatchEvent(event('mouseup', 50, 150));
     svg.dispatchEvent(event('click', 50, 150));
     svg.dispatchEvent(event('mousemove', 50, 151));
     svg.dispatchEvent(event('mousemove', 50, 1));
     svg.dispatchEvent(event('mouseout', 1, 1));
 
-    assert.equal(count, events.length + 6);
+    // 8 events above + no sub-events from JSDOM
+    assert.equal(count, events.length + 8);
 
     handler.off('mousemove', {});
     assert.equal(handler.handlers().length, events.length);
