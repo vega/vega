@@ -151,14 +151,14 @@ function parseStreams(view) {
 
   function mergedStream(sig, selector, exp, spec) {
     selector.forEach(function(s) {
-      if (s.event)       event(sig, s, exp, spec);
+      if (s.event)       domEvent(sig, s, exp, spec);
       else if (s.signal) signal(sig, s, exp, spec);
       else if (s.start)  orderedStream(sig, s, exp, spec);
       else if (s.stream) mergedStream(sig, s.stream, exp, spec);
     });
   }
 
-  function event(sig, selector, exp, spec) {
+  function domEvent(sig, selector, exp, spec) {
     var evt = selector.event,
         name = selector.name,
         mark = selector.mark,
