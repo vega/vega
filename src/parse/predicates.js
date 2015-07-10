@@ -15,6 +15,9 @@ var types = {
   'in':  parseIn
 };
 
+var nullScale = function() { return 0; };
+nullScale.invert = nullScale;
+
 function parsePredicates(model, spec) {
   (spec || []).forEach(function(s) {
     var parse = types[s.type](model, s);
@@ -22,6 +25,7 @@ function parsePredicates(model, spec) {
     /* jshint evil:true */
     var pred  = Function("args", "db", "signals", "predicates", parse.code);
     pred.root = function() { return model.scene().items[0]; }; // For global scales
+    pred.nullScale = nullScale;
     pred.isFunction = util.isFunction;
     pred.signals = parse.signals;
     pred.data = parse.data;
@@ -173,7 +177,7 @@ function parseScale(spec, ops) {
     code += "(this.isFunction(o"+idx+") ? o"+idx+" : ";
     if (spec.scope) {
       ops.push(spec.scope);
-      code += "(o"+(idx+1)+".scale || this.root().scale)(o"+idx+")";
+      code += "((o"+(idx+1)+".scale || this.root().scale)(o"+idx+") || this.nullScale)";
     } else {
       code += "this.root().scale(o"+idx+")";
     }

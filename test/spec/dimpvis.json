@@ -66,113 +66,113 @@
     {
       "name": "pX",
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
+        "type": "mousemove[dragging], touchmove", 
         "expr": "datum.p_fertility", 
-        "scale":"x"
+        "scale": "x"
       }]
     },
     {
       "name": "nX",
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
+        "type": "mousemove[dragging], touchmove", 
         "expr": "datum.n_fertility", 
-        "scale":"x"
+        "scale": "x"
       }]
     },
     {
       "name": "cX",
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
+        "type": "mousemove[dragging], touchmove", 
         "expr": "datum.fertility", 
-        "scale":"x"
+        "scale": "x"
       }]
     },
     {
       "name": "pY",
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
+        "type": "mousemove[dragging], touchmove", 
         "expr": "datum.p_life_expect", 
-        "scale":"y"
+        "scale": "y"
       }]
     },
     {
       "name": "nY",
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
+        "type": "mousemove[dragging], touchmove", 
         "expr": "datum.n_life_expect", 
-        "scale":"y"
+        "scale": "y"
       }]
     },
     {
       "name": "cY",
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
+        "type": "mousemove[dragging], touchmove", 
         "expr": "datum.life_expect", 
-        "scale":"y"
+        "scale": "y"
       }]
     },
     {
       "name": "currDist",
       "init": 0,
       "streams":[{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"sqrt(pow(event.vgX-cX, 2) + pow(event.vgY-cY, 2))"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "sqrt(pow(eventX()-cX, 2) + pow(eventY()-cY, 2))"
       }]
     },
     {
       "name": "prevDist",
       "init": 0,
       "streams":[{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"sqrt(pow(event.vgX-pX, 2) + pow(event.vgY-pY, 2))"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "sqrt(pow(eventX()-pX, 2) + pow(eventY()-pY, 2))"
       }]
     },
     {
       "name": "nextDist",
       "init": 0,
       "streams":[{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"sqrt(pow(event.vgX-nX, 2) + pow(event.vgY-nY, 2))"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "sqrt(pow(eventX()-nX, 2) + pow(eventY()-nY, 2))"
       }]
     },
     {
       "name": "prevScore",
       "init": 0,
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"((pX-cX) * (event.vgX-cX) + (pY-cY) * (event.vgY-cY))/prevDist || -999999"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "((pX-cX) * (eventX()-cX) + (pY-cY) * (eventY()-cY))/prevDist || -999999"
       }]
     },
     {
       "name": "nextScore",
       "init": 0,
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"((nX-cX) * (event.vgX-cX) + (nY-cY) * (event.vgY-cY))/nextDist || -999999"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "((nX-cX) * (eventX()-cX) + (nY-cY) * (eventY()-cY))/nextDist || -999999"
       }]
     },
     {
       "name": "inter_year",
       "init": 1980,
       "streams": [{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"min(2000, currentYear+5, max(1955, currentYear-5, prevScore > nextScore ? (currentYear - 2.5*prevScore/sqrt(pow(pX-cX, 2) + pow(pY-cY, 2))) : (currentYear + 2.5*nextScore/sqrt(pow(nX-cX, 2) + pow(nY-cY, 2)))))"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "min(2000, currentYear+5, max(1955, currentYear-5, prevScore > nextScore ? (currentYear - 2.5*prevScore/sqrt(pow(pX-cX, 2) + pow(pY-cY, 2))) : (currentYear + 2.5*nextScore/sqrt(pow(nX-cX, 2) + pow(nY-cY, 2)))))"
       }]
     },
     {
       "name": "currentYear",
       "init": 1980,
       "streams":[{
-        "type":"mousemove[dragging], touchmove", 
-        "expr":"min(2000, max(1955, prevScore > nextScore ? (currDist < prevDist ? currentYear : currentYear-5) : (currDist < nextDist ? currentYear : currentYear+5)))"
+        "type": "mousemove[dragging], touchmove", 
+        "expr": "min(2000, max(1955, prevScore > nextScore ? (currDist < prevDist ? currentYear : currentYear-5) : (currDist < nextDist ? currentYear : currentYear+5)))"
       }]
     },
     {
       "name": "dragging",
       "init": 0,
       "streams": [
-        {"type":"@point:mousedown, @point:touchstart", "expr":"event.vgX"},
-        {"type":"mouseup, touchend", "expr": "0"}
+        {"type": "@point:mousedown, @point:touchstart", "expr":"eventX()"},
+        {"type": "mouseup, touchend", "expr": "0"}
       ]
     },
     {

@@ -265,7 +265,7 @@ describe('Streams', function() {
     });    
   });
 
-  it('should populate vgItem, vgX, and vgY', function(done) {
+  it('should populate vg events', function(done) {
     var spec = {
       signals: [{
         name: "signalA",
@@ -290,12 +290,15 @@ describe('Streams', function() {
     test(spec, function(view, svg, mouseEvt) {
       mouseEvt('mousedown', 50, 50, d3.select(svg).select('.mark1 rect').node());
       var sgA = view.signal('signalA');
-      expect(sgA).to.have.deep.property("vgItem.mark.marktype", "rect");
-      expect(sgA).to.have.deep.property("vgItem.mark.def.name", "mark1");
-      expect(sgA).to.have.deep.property("vgItem.x", 25);
-      expect(sgA).to.have.deep.property("vgItem.fill", "red");
-      expect(sgA).to.have.property("vgX");
-      expect(sgA).to.have.property("vgY");
+      expect(sgA).to.have.property("vg");
+      expect(sgA).to.have.deep.property("vg.item.mark.marktype", "rect");
+      expect(sgA).to.have.deep.property("vg.item.mark.def.name", "mark1");
+      expect(sgA).to.have.deep.property("vg.item.x", 25);
+      expect(sgA).to.have.deep.property("vg.item.fill", "red");
+      expect(sgA).to.have.deep.property("vg.x");
+      expect(sgA).to.have.deep.property("vg.y");
+      expect(sgA).to.have.deep.property("vg.getX");
+      expect(sgA).to.have.deep.property("vg.getY");
       done();
     });
   });
@@ -339,24 +342,23 @@ describe('Streams', function() {
       mouseEvt('mousedown', 50, 50, d3.select(svg).select('.mark-rect rect').node());
       var sgA = view.signal('signalA');
 
-      expect(sgA).to.have.deep.property("vgItem.mark.marktype", "rect");
-      expect(sgA).to.have.deep.property("vgItem.mark.def.name", "mark2");
-      expect(sgA).to.have.deep.property("vgItem.x", 25);
-      expect(sgA).to.have.deep.property("vgItem.fill", "green");
-      expect(sgA).to.have.property("vgX");
-      expect(sgA).to.have.property("vgY");
+      expect(sgA).to.have.deep.property("vg.item.mark.marktype", "rect");
+      expect(sgA).to.have.deep.property("vg.item.mark.def.name", "mark2");
+      expect(sgA).to.have.deep.property("vg.item.x", 25);
+      expect(sgA).to.have.deep.property("vg.item.fill", "green");
+      expect(sgA).to.have.deep.property("vg.x");
+      expect(sgA).to.have.deep.property("vg.y");
 
-      expect(sgA).to.have.deep.property("vgMark2Item.mark.marktype", "rect");
-      expect(sgA).to.have.deep.property("vgMark2Item.mark.def.name", "mark2");
-      expect(sgA).to.have.deep.property("vgMark2Item.x", 25);
-      expect(sgA).to.have.deep.property("vgMark2Item.fill", "green");
-
-      expect(sgA).to.have.deep.property("vgMark1Item.mark.marktype", "group");
-      expect(sgA).to.have.deep.property("vgMark1Item.mark.def.name", "mark1");
-      expect(sgA).to.have.deep.property("vgMark1Item.x", 25);
-      expect(sgA).to.have.deep.property("vgMark1Item.fill", "red");
-      expect(sgA).to.have.property("vgMark1X");
-      expect(sgA).to.have.property("vgMark1Y");
+      expect(sgA).to.have.deep.property("vg.name")
+      expect(sgA).to.have.deep.property("vg.name.mark2.mark.marktype", "rect");
+      expect(sgA).to.have.deep.property("vg.name.mark2.mark.def.name", "mark2");
+      expect(sgA).to.have.deep.property("vg.name.mark2.x", 25);
+      expect(sgA).to.have.deep.property("vg.name.mark2.fill", "green");
+      
+      expect(sgA).to.have.deep.property("vg.name.mark1.mark.marktype", "group");
+      expect(sgA).to.have.deep.property("vg.name.mark1.mark.def.name", "mark1");
+      expect(sgA).to.have.deep.property("vg.name.mark1.x", 25);
+      expect(sgA).to.have.deep.property("vg.name.mark1.fill", "red");
 
       done();
     });

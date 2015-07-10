@@ -7,7 +7,7 @@
       "name": "brush_start",
       "streams": [{
         "type": "@overview:mousedown", 
-        "expr": "event.vgX", 
+        "expr": "eventX()", 
         "scale": {"name": "xOverview", "invert": true}
       }]
     },
@@ -16,7 +16,7 @@
       "init": {"expr": "datetime('Jan 1 2000')"},
       "streams": [{
         "type": "@overview:mousedown, [@overview:mousedown, window:mouseup] > window:mousemove",
-        "expr": "clamp(event.vgX, 0, 720)",
+        "expr": "clamp(eventX(), 0, 720)",
         "scale": {"name": "xOverview", "invert": true}
       }]
     },
