@@ -30,5 +30,5 @@ filter = "[" e:expr "]" { return e  }
 
 name = n:[a-zA-Z0-9_-]+ { return n.join("") }
 css  = c:[a-zA-Z0-9-_  #\.\>\+~\[\]=|\^\$\*]+ { return c.join("") }
-expr = v:['"a-zA-Z0-9_\.\>\<\=\! \t-&|~]+ { return v.join("") }
+expr = v:['"a-zA-Z0-9_\(\)\.\>\<\=\! \t-&|~]+ { return v.join("") }
 sep = [ \t\r\n]*

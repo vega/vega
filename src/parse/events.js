@@ -35,31 +35,32 @@ module.exports = (function() {
         peg$c0 = peg$FAILED,
         peg$c1 = ",",
         peg$c2 = { type: "literal", value: ",", description: "\",\"" },
-        peg$c3 = function(o, m) { return [o].concat(m); },
-        peg$c4 = function(o) { return [o]; },
+        peg$c3 = function(o, m) { return [o].concat(m) },
+        peg$c4 = function(o) { return [o] },
         peg$c5 = "[",
         peg$c6 = { type: "literal", value: "[", description: "\"[\"" },
         peg$c7 = "]",
         peg$c8 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c9 = ">",
         peg$c10 = { type: "literal", value: ">", description: "\">\"" },
-        peg$c11 = function(f1, f2, o) { return {start: f1, end: f2, middle: o}; },
-        peg$c13 = function(s, f) { return (s.filters = f), s; },
-        peg$c14 = function(s) { return s; },
+        peg$c11 = function(f1, f2, o) { return {start: f1, end: f2, middle: o}},
+        peg$c12 = [],
+        peg$c13 = function(s, f) { return (s.filters = f), s },
+        peg$c14 = function(s) { return s },
         peg$c15 = "(",
         peg$c16 = { type: "literal", value: "(", description: "\"(\"" },
         peg$c17 = ")",
         peg$c18 = { type: "literal", value: ")", description: "\")\"" },
-        peg$c19 = function(m) { return { stream: m }; },
+        peg$c19 = function(m) { return { stream: m }},
         peg$c20 = "@",
         peg$c21 = { type: "literal", value: "@", description: "\"@\"" },
         peg$c22 = ":",
         peg$c23 = { type: "literal", value: ":", description: "\":\"" },
-        peg$c24 = function(n, e) { return {event: e, name: n}; },
-        peg$c25 = function(m, e) { return {event: e, mark: m}; },
-        peg$c26 = function(t, e) { return {event: e, target: t}; },
-        peg$c27 = function(e) { return {event: e}; },
-        peg$c28 = function(s) { return { signal: s }; },
+        peg$c24 = function(n, e) { return {event: e, name: n} },
+        peg$c25 = function(m, e) { return {event: e, mark: m} },
+        peg$c26 = function(t, e) { return {event: e, target: t} },
+        peg$c27 = function(e) { return {event: e} },
+        peg$c28 = function(s) { return { signal: s }},
         peg$c29 = "rect",
         peg$c30 = { type: "literal", value: "rect", description: "\"rect\"" },
         peg$c31 = "symbol",
@@ -112,16 +113,16 @@ module.exports = (function() {
         peg$c78 = { type: "literal", value: "touchmove", description: "\"touchmove\"" },
         peg$c79 = "touchend",
         peg$c80 = { type: "literal", value: "touchend", description: "\"touchend\"" },
-        peg$c81 = function(e) { return e; },
+        peg$c81 = function(e) { return e  },
         peg$c82 = /^[a-zA-Z0-9_\-]/,
         peg$c83 = { type: "class", value: "[a-zA-Z0-9_\\-]", description: "[a-zA-Z0-9_\\-]" },
-        peg$c84 = function(n) { return n.join(""); },
+        peg$c84 = function(n) { return n.join("") },
         peg$c85 = /^[a-zA-Z0-9\-_  #.>+~[\]=|\^$*]/,
         peg$c86 = { type: "class", value: "[a-zA-Z0-9\\-_  #.>+~[\\]=|\\^$*]", description: "[a-zA-Z0-9\\-_  #.>+~[\\]=|\\^$*]" },
-        peg$c87 = function(c) { return c.join(""); },
-        peg$c88 = /^['"a-zA-Z0-9_.><=! \t-&|~]/,
-        peg$c89 = { type: "class", value: "['\"a-zA-Z0-9_.><=! \\t-&|~]", description: "['\"a-zA-Z0-9_.><=! \\t-&|~]" },
-        peg$c90 = function(v) { return v.join(""); },
+        peg$c87 = function(c) { return c.join("") },
+        peg$c88 = /^['"a-zA-Z0-9_().><=! \t-&|~]/,
+        peg$c89 = { type: "class", value: "['\"a-zA-Z0-9_().><=! \\t-&|~]", description: "['\"a-zA-Z0-9_().><=! \\t-&|~]" },
+        peg$c90 = function(v) { return v.join("") },
         peg$c91 = /^[ \t\r\n]/,
         peg$c92 = { type: "class", value: "[ \\t\\r\\n]", description: "[ \\t\\r\\n]" },
 
@@ -141,6 +142,34 @@ module.exports = (function() {
       }
 
       peg$startRuleFunction = peg$startRuleFunctions[options.startRule];
+    }
+
+    function text() {
+      return input.substring(peg$reportedPos, peg$currPos);
+    }
+
+    function offset() {
+      return peg$reportedPos;
+    }
+
+    function line() {
+      return peg$computePosDetails(peg$reportedPos).line;
+    }
+
+    function column() {
+      return peg$computePosDetails(peg$reportedPos).column;
+    }
+
+    function expected(description) {
+      throw peg$buildException(
+        null,
+        [{ type: "other", description: description }],
+        peg$reportedPos
+      );
+    }
+
+    function error(message) {
+      throw peg$buildException(message, null, peg$reportedPos);
     }
 
     function peg$computePosDetails(pos) {
@@ -235,10 +264,11 @@ module.exports = (function() {
           expectedDescs[i] = expected[i].description;
         }
 
-        expectedDesc = expected.length > 1 ?
-          expectedDescs.slice(0, -1).join(", ") +
-            " or " + expectedDescs[expected.length - 1] :
-          expectedDescs[0];
+        expectedDesc = expected.length > 1
+          ? expectedDescs.slice(0, -1).join(", ")
+              + " or "
+              + expectedDescs[expected.length - 1]
+          : expectedDescs[0];
 
         foundDesc = found ? "\"" + stringEscape(found) + "\"" : "end of input";
 

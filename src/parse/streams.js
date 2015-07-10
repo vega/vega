@@ -7,9 +7,7 @@ var d3 = require('d3'),
     selector = require('./events'),
     expr = require('./expr');
 
-var START  = 'start',
-    MIDDLE = 'middle',
-    END    = 'end';
+var GATEKEEPER = '_vgGATEKEEPER';
 
 var vgEvent = {
   getGroup: function(name) { return name ? this.name[name] : this.group; },
@@ -211,46 +209,20 @@ function parseStreams(view) {
 
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(), 
-        trueFn = expr('true'),
-        s = {};
+        trueFn = expr('true'), 
+        falseFn = expr('false'),
+        middle = selector.middle,
+        filters = middle.filters || (middle.filters = []),
+        gatekeeper = model.signal(name + GATEKEEPER, false);
 
-    s[START]  = model.signal(name + START,  false);
-    s[MIDDLE] = model.signal(name + MIDDLE, false);
-    s[END]    = model.signal(name + END,    false);
+    // Register an anonymous signal to act as a gatekeeper. It's value is
+    // true or false depending on whether the start or end streams occur. 
+    // The middle signal then simply filters for the gatekeeper's value. 
+    mergedStream(gatekeeper, [selector.start], trueFn, {});
+    mergedStream(gatekeeper, [selector.end], falseFn, {});
 
-    var router = new Node(model);
-    router.evaluate = function(input) {
-      if (s[START].value() === true && s[END].value() === false) {
-        // TODO: Expand selector syntax to allow start/end signals into stream.
-        // Until then, prevent old middles entering stream on new start.
-        if (input.signals[name+START]) return model.doNotPropagate;
-
-        if (s[MIDDLE].value() !== sig.value() || sig.verbose()) {
-          sig.value(s[MIDDLE].value());
-          input.signals[name] = 1;
-        }
-
-        return input;
-      }
-
-      if (s[END].value() === true) {
-        s[START].value(false);
-        s[END].value(false);
-      }
-
-      return model.doNotPropagate;
-    };
-    router.addListener(sig);
-
-    [START, MIDDLE, END].forEach(function(x) {
-      var val = (x == MIDDLE) ? exp : trueFn,
-          sp = (x == MIDDLE) ? spec : {};
-
-      if (selector[x].event) event(s[x], selector[x], val, sp);
-      else if (selector[x].signal) signal(s[x], selector[x], val, sp);
-      else if (selector[x].stream) mergedStream(s[x], selector[x].stream, val, sp);
-      s[x].addListener(router);
-    });
+    filters.push(gatekeeper.name());
+    mergedStream(sig, [selector.middle], exp, spec);
   }
 }
 
