@@ -21,7 +21,7 @@ nullScale.invert = nullScale;
 function parsePredicates(model, spec) {
   (spec || []).forEach(function(s) {
     var parse = types[s.type](model, s);
-    
+
     /* jshint evil:true */
     var pred  = Function("args", "db", "signals", "predicates", parse.code);
     pred.root = function() { return model.scene().items[0]; }; // For global scales
@@ -80,8 +80,8 @@ function parseOperands(model, operands) {
             def += "args["+util.str(i.arg)+"]";
           }
           def += ", ";
-        });  
-      } 
+        });
+      }
 
       def += p+".call("+p+", args, db, signals, predicates)";
     }
@@ -150,21 +150,22 @@ function parseIn(model, spec) {
         "}";
     }
 
-    code += "return ordSet !== null ? ordSet.indexOf(o0) !== -1 :\n" + 
+    code += "return ordSet !== null ? ordSet.indexOf(o0) !== -1 :\n" +
       "  o1 < o2 ? o1 <= o0 && o0 <= o2 : o2 <= o0 && o0 <= o1;";
   }
 
   return {
-    code: code, 
-    signals: ops.signals, 
+    code: code,
+    signals: ops.signals,
     data: ops.data.concat(spec.data ? [spec.data] : [])
   };
 }
 
-// Populate ops such that ultimate scale/inversion function will be in `scale` var. 
+// Populate ops such that ultimate scale/inversion function will be in `scale` var.
 function parseScale(spec, ops) {
-  var code = "var scale = ", 
-      idx  = ops.length;
+  var code = "var scale = ",
+      idx  = ops.length,
+      scaleObj;
 
   if (util.isString(spec)) {
     ops.push({ value: spec });
@@ -177,15 +178,15 @@ function parseScale(spec, ops) {
     code += "(this.isFunction(o"+idx+") ? o"+idx+" : ";
     if (spec.scope) {
       ops.push(spec.scope);
-      code += "((o"+(idx+1)+".scale || this.root().scale)(o"+idx+") || this.nullScale)";
+      scaleObj = "((o"+(idx+1)+".scale || this.root().scale)(o"+idx+") || this.nullScale)";
     } else {
-      code += "this.root().scale(o"+idx+")";
+      scaleObj = "this.root().scale(o"+idx+")";
     }
-    code += ")";
+    code += scaleObj + ")";
   }
 
   if (spec.invert === true) {  // Allow spec.invert.arg?
-    code += ".invert";
+    code += ".invert.bind(" + scaleObj+ ")";
   }
 
   return code+";\n";
