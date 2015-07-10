@@ -5,7 +5,7 @@ var config = require('../../src/core/config'),
     path = require('path'),
     svg = require('vega-scenegraph/src/util/svg'),
     output = "output/",
-    examples = "./examples/spec/";
+    examples = "test/spec/";
 
 var svgNamespace = Object.keys(svg.metadata)
   .map(function(n) { return n + '="' + svg.metadata[n] + '"'; })

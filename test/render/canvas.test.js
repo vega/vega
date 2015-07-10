@@ -5,7 +5,7 @@ var config = require('../../src/core/config'),
   fs = require('fs'),
   path = require('path'),
   output = "output/",
-  examples = "./examples/spec/";
+  examples = "test/spec/";
 
 describe('Canvas', function() {
   require('d3-geo-projection')(d3);

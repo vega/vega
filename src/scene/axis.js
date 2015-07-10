@@ -436,7 +436,7 @@ function vg_axisTitleExtend(orient, title, range, offset) {
     util.extend(title.properties.update, {
       x: {value: sign*offset},
       y: {value: mid},
-      angle: {value: -90}
+      angle: {value: orient === "left" ? -90 : 90}
     });
   }
 }

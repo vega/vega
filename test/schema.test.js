@@ -76,7 +76,7 @@ describe('Schema', function() {
     var fs = require('fs'),
         path = require('path'),
         config = require('../src/core/config'),
-        examples = "./examples/spec/",
+        examples = "test/spec/",
         validate = validator(schema);
 
     expect(fs.statSync(examples).isDirectory()).to.equal(true);

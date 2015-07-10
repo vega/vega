@@ -45,13 +45,13 @@
     "chai": "^1.10.0",
     "chai-spies": "^0.6.0",
     "exorcist": "^0.4.0",
+    "istanbul": "latest",
     "jsdom": "^3.1.2",
     "jshint": "2.8.x",
     "jstransform": "^11.0.1",
-    "istanbul": "latest",
     "mocha": "^2.1.0",
     "pegjs": "0.8.x",
-    "through": "^2.3.7",
+    "through": "^2.3.8",
     "tv4": "^1.1.12",
     "uglify-js": "2.4.x",
     "watchify": "^3.1.0",
@@ -66,7 +66,7 @@
     "build": "browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
     "postbuild": "uglifyjs vega.js -cm > vega.min.js",
     "schema": "node scripts/schema.js > vega-schema.json",
-    "watch": "watchify index.js -d -s vg -o 'exorcist vega.js.map > vega.js'"
+    "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
   },
   "browser": {
     "buffer": false,

@@ -37,11 +37,12 @@ gitsha=$(git rev-parse HEAD)
 version=$(cat package.json | jq .version | sed -e 's/^"//'  -e 's/"$//')
 
 npm run build
+npm run schema
 # swap to head so we don't commit compiled file to master along with tags
 git checkout head
 
 # add the compiled files, commit and tag!
-git add datalib* -f
+git add vega* -f
 git commit -m "Release $version $gitsha."
 git tag -am "Release v$version." "v$version"
 
