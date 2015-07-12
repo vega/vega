@@ -24,7 +24,7 @@
     "lint": "jshint src/",
     "test": "mocha --recursive test/",
     "cover": "istanbul cover _mocha -- --recursive test/",
-    "build": "browserify src/index.js --debug --standalone vg.expression -o vega-expression.js",
-    "postbuild": "uglifyjs vega-expression.js -c -m -o vega-expression.min.js"
+    "build": "browserify src/index.js -d -s vg.expression -o vega-expression.js",
+    "postbuild": "uglifyjs vega-expression.js -cm > vega-expression.min.js"
   }
 }
