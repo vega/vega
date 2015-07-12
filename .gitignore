@@ -3,6 +3,7 @@
 _site
 coverage
 node_modules
+bower_components
 output
 temp
 vega-schema.json
