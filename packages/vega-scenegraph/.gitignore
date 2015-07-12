@@ -1,9 +1,9 @@
-_site
-node_modules
 .DS_Store
 .idea
-temp
+_site
 coverage
-demo
+node_modules
+temp
 vega-scenegraph.js
+vega-scenegraph.js.map
 vega-scenegraph.min.js
