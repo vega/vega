@@ -27,13 +27,14 @@
     ".npmignore",
     ".jshintrc",
     ".travis.yml",
-    "gulpfile.js",
     "bin",
+    "coverage",
     "examples",
+    "index.js",
     "node_modules",
     "output",
+    "scripts",
     "src",
-    "index.js",
     "test"
   ]
 }
