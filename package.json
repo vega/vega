@@ -23,6 +23,10 @@
     {
       "name": "Jeffrey Heer",
       "url": "http://idl.cs.washington.edu"
+    },
+    {
+      "name": "Dominik Moritz",
+      "url": "https://domoritz.github.io"
     }
   ],
   "license": "BSD-3-Clause",
@@ -67,7 +71,8 @@
     "build": "npm run pegjs && browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
     "postbuild": "uglifyjs vega.js -cm > vega.min.js",
     "schema": "node scripts/schema.js > vega-schema.json",
-    "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
+    "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'",
+    "update-deps": "npm-check-updates -u && bcu -u"
   },
   "browser": {
     "buffer": false,
