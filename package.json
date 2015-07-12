@@ -53,7 +53,7 @@
     "closest-package": "^1.0.0",
     "exorcist": "^0.4.0",
     "istanbul": "latest",
-    "jsdom": "^5.6.0",
+    "jsdom": "^3.0.0",
     "jshint": "2.8.x",
     "jstransform": "^11.0.2",
     "mocha": "^2.2.5",
