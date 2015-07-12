@@ -18,7 +18,7 @@
   ],
   "license": "BSD-3-Clause",
   "dependencies": {
-    "d3": "^3.5.5"
+    "d3": "3.5.x"
   },
   "ignore": [
     ".DS_Store",
@@ -27,13 +27,14 @@
     ".npmignore",
     ".jshintrc",
     ".travis.yml",
-    "gulpfile.js",
     "bin",
+    "coverage",
     "examples",
+    "index.js",
     "node_modules",
     "output",
+    "scripts",
     "src",
-    "index.js",
     "test"
   ]
 }
