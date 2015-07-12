@@ -8,7 +8,7 @@
   },
   "author": {
     "name": "Arvind Satyanarayan",
-    "url": "http://arvindsatya.com/"
+    "url": "http://arvindsatya.com"
   },
   "contributors": [{
     "name": "Jeffrey Heer",
@@ -18,7 +18,7 @@
   "dependencies": {
     "datalib": "1.2.x",
     "heap": "0.2.x",
-    "vega-logging": "vega/vega-logging"
+    "vega-logging": "1.0.x"
   },
   "devDependencies": {
     "browserify": "latest",
@@ -34,8 +34,8 @@
     "lint": "jshint src/",
     "test": "mocha --recursive test/",
     "cover": "istanbul cover _mocha -- --recursive test/",
-    "build": "browserify src/index.js --debug --standalone vg.dataflow -o vega-dataflow.js",
-    "postbuild": "uglifyjs vega-dataflow.js -c -m -o vega-dataflow.min.js"
+    "build": "browserify src/index.js -d -s vg.dataflow -o vega-dataflow.js",
+    "postbuild": "uglifyjs vega-dataflow.js -cm > vega-dataflow.min.js"
   },
   "browserify-shim": {
   }

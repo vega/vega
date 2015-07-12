@@ -1,8 +1,9 @@
-_site
-node_modules
 .DS_Store
 .idea
-temp
+_site
 coverage
+node_modules
+temp
 vega-dataflow.js
+vega-dataflow.js.map
 vega-dataflow.min.js
