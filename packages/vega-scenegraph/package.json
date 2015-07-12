@@ -33,7 +33,7 @@
     "test": "mocha --recursive test/",
     "cover": "istanbul cover _mocha -- --recursive test/",
     "build": "browserify src/index.js -d -s vg.scene -o vega-scenegraph.js",
-    "postbuild": "uglifyjs vega-scenegraph.js -c -m -o vega-scenegraph.min.js",
+    "postbuild": "uglifyjs vega-scenegraph.js -cm > vega-scenegraph.min.js",
     "watch": "watchify src/index.js -v -d -s vg.scene -o vega-scenegraph.js"
   },
   "browserify": {
