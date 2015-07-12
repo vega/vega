@@ -37,8 +37,8 @@ proto.evaluate = function(input) {
       group._legendPositions = null;
       for (j=0, jlen=group.legendItems.length; j<jlen; ++j) {
         legend = group.legendItems[j];
-        Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items);
-        bound.mark(legend, null, true);
+        Encoder.update(this._graph, input.trans, "vg_legendPosition", legend.items, input.dirty);
+        bound.mark(legend, null, false);
       }
     }
 

@@ -387,20 +387,16 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
       break;
     }
     case "right": {
-      gx = group.width;
-      if (group.bounds) gx = trans ?
-        group.width + group.bounds.delta :
-        group.bounds.x2;
+      gx = group.width + (group.bounds && trans ? group.bounds.delta : 0);
       o.x += gx + offset;
       break;
     }
   }
   
   if (trans) trans.interpolate(item, o);
-  var enc = item.mark.def.properties.enter.encode,
-      wasDirty = item._dirty,
-      isDirty  = enc.call(enc, item, group, trans, db, signals, predicates);
-  return (item._dirty = isDirty || wasDirty);
+  var enc = item.mark.def.properties.enter.encode;
+  enc.call(enc, item, group, trans, db, signals, predicates);
+  return true;
 }
 
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {

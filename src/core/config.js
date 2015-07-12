@@ -54,7 +54,7 @@ config.axis = {
 // default legend properties
 config.legend = {
   orient: 'right',
-  offset: 10,
+  offset: 20,
   padding: 3,
   gradientStrokeColor: '#888',
   gradientStrokeWidth: 1,
