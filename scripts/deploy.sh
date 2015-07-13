@@ -22,6 +22,10 @@ else
 fi
 git checkout master
 
+# generate build files
+npm run build
+npm run schema
+
 # 1. NPM PUBLISH 
 npm publish
 # exit if npm publish failed 
@@ -36,8 +40,6 @@ fi
 gitsha=$(git rev-parse HEAD)
 version=$(cat package.json | jq .version | sed -e 's/^"//'  -e 's/"$//')
 
-npm run build
-npm run schema
 # swap to head so we don't commit compiled file to master along with tags
 git checkout head
 
