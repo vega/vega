@@ -23,10 +23,6 @@
     {
       "name": "Jeffrey Heer",
       "url": "http://idl.cs.washington.edu"
-    },
-    {
-      "name": "Dominik Moritz",
-      "url": "https://domoritz.github.io"
     }
   ],
   "license": "BSD-3-Clause",
@@ -34,7 +30,7 @@
   "dependencies": {
     "d3": "^3.5.6",
     "d3-geo-projection": "^0.2.15",
-    "datalib": "~1.3.x",
+    "datalib": "~1.2.x",
     "topojson": "^1.6.19",
     "vega-dataflow": "^1.0",
     "vega-expression": "^1.0",
@@ -43,21 +39,17 @@
     "yargs": "^3.15.0"
   },
   "devDependencies": {
-    "bower-check-updates": "^2.0.0-alpha.15",
-    "bower-update": "^0.1.0",
     "browserify": "^10.2.6",
     "browserify-shim": "^3.8.9",
     "browserify-versionify": "^1.0.4",
     "chai": "^3.0.0",
     "chai-spies": "^0.6.0",
-    "closest-package": "^1.0.0",
     "exorcist": "^0.4.0",
     "istanbul": "latest",
     "jsdom": "^3.0.0",
     "jshint": "2.8.x",
     "jstransform": "^11.0.2",
     "mocha": "^2.2.5",
-    "npm-check-updates": "^1.5.1",
     "pegjs": "0.8.x",
     "through": "^2.3.8",
     "tv4": "^1.1.12",
@@ -75,8 +67,7 @@
     "build": "npm run pegjs && browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
     "postbuild": "uglifyjs vega.js -cm > vega.min.js",
     "schema": "node scripts/schema.js > vega-schema.json",
-    "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'",
-    "update-deps": "npm-check-updates -u && bcu -u"
+    "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
   },
   "browser": {
     "buffer": false,
