@@ -1,72 +1,233 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>Vega: A Visualization Grammar</title>
-    <link rel="shortcut icon" href="http://vega.github.io/vega/favicon.ico"/>
+    <link rel="shortcut icon" href="http://vega.github.io/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
     <script src="d3.v3.min.js"></script>
     <script src="vega.min.js"></script>
   </head>
   <body>
-    <div id="side">
-      <div class="example">
-        <a href="editor/index.html?spec=bar" title="Bar Chart">
-          <img src="images/example-bar.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=force" title="Force-Directed Layout">
-          <img src="images/example-force.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=population" title="Population Pyramid">
-          <img src="images/example-population.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=choropleth" title="Choropleth Map">
-          <img src="images/example-choropleth.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=wordcloud" title="Word Cloud">
-          <img src="images/example-wordcloud.png" />
-        </a>
-      </div>
-    </div>
     <div id="main">
       <a href="https://github.com/vega/vega">
         <img style="position:absolute;top:0;right:0;border:0;" width="149" height="149" src="images/forkme.png" alt="Fork me on GitHub">
       </a>
       <div id="logo">
         <div id="links">
-          <a href="vega.min.js"><strong>vega.min.js</strong> (188k)</a><br/>
+          <a href="vega.min.js"><strong>vega.min.js</strong></a><br/>
+          <a href="vega-schema.json"><strong>JSON Schema</strong></a><br /> 
           <a href="https://github.com/vega/vega"><strong>Source</strong> (GitHub)</a>
         </div>
-        <img src="images/vega.png">
+        <h1 id="wordmark">
+          vega
+        </h1>
       </div>
-      <div class="content">
-        <strong>Vega</strong> is a <emph>visualization grammar</emph>,
-        a declarative format for creating, saving and sharing visualization 
-        designs.
+
+      <p><strong>Vega</strong> is a <em>visualization grammar</em>, a declarative format for creating, saving, and sharing interactive visualization designs.</p>
+
+      <p>With Vega, you can describe the visual appearance and interactive behaviour of a visualization in a JSON format, and generate views using HTML5 Canvas or SVG.</p>
+
+      <p>Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>, browse the <a href="https://github.com/vega/vega/wiki">documentation</a>, join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>. A gallery of example visualizations is shown below. Click to explore them using the web-based <a href="http://vega.github.io/vega-editor/">Vega Editor</a>.</p>
+
+      <div id="examples">
       </div>
-      <div class="content">
-        With Vega you can describe data visualizations in a JSON format, and
-        generate interactive views using either HTML5 Canvas or SVG.
-      </div>
-      <div class="content">
-        Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>,
-        browse the <a href="https://github.com/vega/vega/wiki">documentation</a>,
-        join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>,
-        and explore visualizations using the
-        web-based <a href="editor">Vega Editor</a>.
-      </div>
+
       <div class="credits">
         <a href="http://trifacta.com" title="Trifacta"><img src="images/trifacta-logo.png"/></a>
         <a href="http://idl.cs.washington.edu" title="UW Interactive Data Lab"><img src="images/idl-logo.png"/></a>
       </div>
-    </div>
   </body>
+  <script>
+    var examples = [
+      {name: 'bar',               editor: true, row: 0, col: 0, x: [90, 36, 97],    y: [-12, -18, 9],   width: 275, height: 105},
+      {name: 'linking',           editor: true, row: 0, col: 1, x: [10, 10, 175],   y: [-148, -210, 0], width: 710, height: 300},
+      {name: 'choropleth',        editor: true, row: 0, col: 2, x: [115, 15, 125],  y: [0, -65, 5],     width: 348, height: 150},
+      {name: 'dimpvis',           editor: true, row: 0, col: 3, x: [91, 25, 134],   y: [-90, -100, -40], width: 946, height: 300},
+      {name: 'crossfilter',       editor: true, row: 0, col: 4, x: [71, -25, 240],  y: [-35, -55, 0],   width: 997, height: 250},
+      {name: 'driving',           editor: true, row: 1, col: 0, x: [29, 15, 125],   y: [-42, -45, 5],   width: 825, height: 150},
+      {name: 'force',             editor: true, row: 1, col: 1, x: [50, 45, 65],    y: [-15, -75, -5],  width: 200, height: 200},
+      {name: 'heatmap',           editor: true, row: 1, col: 2, x: [75, 40, 125],   y: [-5, -50, -5],   width: 957, height: 150},
+      {name: 'index_chart',       editor: true, row: 1, col: 3, x: [35, -5, 55],    y: [-40, -40, 0],   width: 650, height: 125},
+      {name: 'jobs',              editor: true, row: 1, col: 4, x: [120, 15, 120],  y: [0, -65, -5],    width: 880, height: 150},
+      {name: 'parallel_coords',   editor: true, row: 2, col: 0, x: [130, 0, 130],   y: [-46, -65, 0],   width: 729, height: 150},
+      {name: 'playfair',          editor: true, row: 2, col: 1, x: [36, 20, 115],   y: [-41, -50, 0],   width: 815, height: 135},
+      {name: 'population',        editor: true, row: 2, col: 2, x: [69, 40, 105],   y: [3.5, -50, 5],   width: 657, height: 135},
+      {name: 'budget_forecasts',  editor: true, row: 2, col: 3, x: [45, 10, 60],    y: [-20, -35, 0],   width: 540, height: 140},
+      {name: 'treemap',           editor: true, row: 2, col: 4, x: [75, 0, 75],     y: [0, -35, 0],     width: 965, height: 140},
+    ];
+
+    var width = 700,
+        thumb  = width / 5,
+        height = thumb/1.5 * (examples.length/5); 
+
+    var spec = {
+      "width": width,
+      "height": height,
+      "padding": 0,
+
+      "signals": [
+        {
+          "name": "active",
+          "init": {},
+          "streams": [
+            {"type": "image:mouseover, group:mouseover, group:mouseout, rect:mouseover", "expr": "eventGroup().datum"},
+            {"type": "body:mouseout", "expr": "{}"},
+          ]
+        },
+        {
+          "name": "pan",
+          "init": {"x": 0, "y": 0},
+          "streams": [
+            {"type": "body:mouseout", "expr": "{x: 0, y: 0}"},
+            {
+              "type": "image:mousemove", 
+              "expr": "{x: panPrev.x - eventX('example'), y: panPrev.y - eventY('example')}"
+            }
+          ]
+        },
+        {
+          "name": "panPrev",
+          "init": {"x": 0, "y": 0},
+          "streams": [
+            {
+              "type": "image:mouseover, image:mousemove", 
+              "expr": "{x: eventX('example'), y: eventY('example')}"
+            },
+          ]
+        }
+      ],
+
+      "data": [{ 
+        "name": "examples", 
+        "values": examples,
+        "transform": [
+          {
+            "type": "formula", 
+            "field": "pan_x", 
+            "expr": "clamp(active._id == datum._id ? datum.pan_x + pan.x/3 : datum.pan_x || datum.x[0], datum.x[1], datum.x[2])"
+          },
+          {
+            "type": "formula", 
+            "field": "pan_y", 
+            "expr": "clamp(active._id == datum._id ? datum.pan_y + pan.y/3 : datum.pan_y || datum.y[0], datum.y[1], datum.y[2])"
+          },
+        ]
+      }],
+
+      "predicates": [
+        {
+          "name": "hovered",
+          "type": "==",
+          "operands": [{"signal": "active._id"}, {"arg": "id"}]
+        }
+      ],
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "ordinal",
+          "domain": {"data": "examples", "field": "col"},
+          "range": "width"
+        },
+        {
+          "name": "y",
+          "type": "ordinal",
+          "domain": {"data": "examples", "field": "row"},
+          "range": "height"
+        }
+      ],
+
+      "marks": [
+        {
+          "name": "example",
+          "type": "group",
+          "from": {"data": "examples"},
+          "properties": {
+            "enter": {
+              "x": {"scale": "x", "field": "col"},
+              "width": {"scale": "x", "band": true, "offset": -5},
+              "y": {"scale": "y", "field": "row"},
+              "height": {"scale": "y", "band": true, "offset": -5},
+              "clip": {"value": true},
+              "fill": {"value": "#fff"}
+            }
+          },
+
+          "marks": [
+            {
+              "name": "example-thumb",
+              "type": "image",
+              "properties": {
+                "enter": {
+                  "width": {"field": {"parent": "width"}},
+                  "height": {"field": {"parent": "height"}},
+                  "url": {"template": "{{parent.name}}.png"},
+                  "align": {"value": "center"},
+                  "baseline": {"value": "center"}
+                },
+                "update": {
+                  "x": {"field": {"parent": "pan_x"}},
+                  "y": {"field": {"parent": "pan_y"}}
+                }
+              }
+            },
+            {
+              "type": "rect",
+              "properties": {
+                "enter": {
+                  "x": {"value": 0},
+                  "y": {"value": 0},
+                  "width": {"field": {"group": "width"}},
+                  "height": {"field": {"group": "height"}}
+                },
+                "update": {
+                  "stroke": {
+                    "rule": [
+                      {
+                        "predicate": {
+                          "name": "hovered",
+                          "id": {"field": {"parent": "_id"}}
+                        },
+                        "value": "#d5a928"
+                      },
+                      {"value": "#8A5ED3"}
+                    ]
+                  },
+
+                  "strokeWidth": {
+                    "rule": [
+                      {
+                        "predicate": {
+                          "name": "hovered",
+                          "id": {"field": {"parent": "_id"}}
+                        },
+                        "value": 3
+                      },
+                      {"value": 1}
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    };
+ 
+    var view;
+    vg.parse.spec(spec, function(chart) {
+      view = chart({ el: "#examples", renderer: "svg" })
+        .update({});
+
+      view.on('click', function(e, i) {
+        if (!i) return;
+        if (i.mark.marktype === 'image') i = i.mark.group;
+        var d = i.datum;
+        window.location = d.editor ? 'http://vega.github.io/vega-editor/index.html?spec=' + d.name : d.url; 
+      });
+    }, {
+      load: { baseURL: "images/examples/" }
+    });
+  </script>
 </html>
