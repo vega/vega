@@ -35,7 +35,7 @@ if [[ $rc != 0 ]]; then
   exit $rc; 
 fi
 
-# 2. BOWER PUBLISH 
+# 3. BOWER PUBLISH 
 # read version
 gitsha=$(git rev-parse HEAD)
 version=$(cat package.json | jq .version | sed -e 's/^"//'  -e 's/"$//')
@@ -54,6 +54,10 @@ git push --tags
 # now the published tag contains build files which work great with bower.
 
 # 3. GITHUB PAGES PUBLISH
+# re-generate build files
+npm run build
+npm run schema
+
 # populate staging directory
 stage=gh_pages_stage
 rm -rf $stage
