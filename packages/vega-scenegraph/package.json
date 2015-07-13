@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vega scenegraph and renderers.",
   "repository": {
     "type": "git",
@@ -12,20 +12,20 @@
   },
   "license": "BSD-3-Clause",
   "dependencies": {
-    "d3": "3.5.x",
+    "d3": "^3.5.6",
     "datalib": "1.2.x",
-    "canvas": "1.2.x"
+    "canvas": "^1.2.3"
   },
   "devDependencies": {
-    "browserify": "latest",
-    "browserify-shim": "latest",
-    "chai": "latest",
+    "browserify": "^10.2.6",
+    "browserify-shim": "^3.8.9",
+    "chai": "^3.0.0",
     "istanbul": "latest",
-    "jsdom": "3",
-    "jshint": "latest",
-    "mocha": "latest",
-    "uglify-js": "latest",
-    "watchify": "latest"
+    "jsdom": "^3.0.0",
+    "jshint": "2.8.x",
+    "mocha": "^2.2.5",
+    "uglify-js": "2.4.x",
+    "watchify": "^3.2.3"
   },
   "main": "src/index.js",
   "scripts": {
