@@ -1,12 +1,12 @@
 * {
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Avenir, Helvetica Neue, Helvetica, Arial;
   font-weight: 300;
   font-size: 17px;
   line-height: 24px;
 }
 
 strong {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 body {
@@ -17,40 +17,34 @@ body {
 }
 
 a {
-  color: #0aa84a;
+  color: #700EB3;
   text-decoration: none;
+  font-weight: 400;
 }
 
 a:hover {
-  color: #f05a00;
+  color: #d5a928;
 }
 
-#side {
-  float: left;
-  width: 130px;
-}
-
-#main {
-  margin-left: 160px;
+#wordmark {
+  font-weight: 600;
+  font-size: 60px;
+  line-height: 72px;
+  margin: 0 0 0.5em 0;
 }
 
 #links {
   float: right;
-  margin: 11px 12px 0 0;
+  margin: 5px 12px 0 0;
   text-align: left;
-  line-height: 26px;
+}
+
+#links * {
+  line-height: 20px;
 }
 
 #links strong {
-  font-weight: bold;
-}
-
-#links a {
-  color: #0aa84a;
-}
-
-#links a:hover {
-  color: #f05a00;
+  font-weight: 400;
 }
 
 .example img {
@@ -62,12 +56,17 @@ a:hover {
   border: 1px solid #f05a00;
 }
 
-.content {
+p {
   margin-top: 0.5em;
 }
 
+#examples {
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
 .credits {
-  margin-top: 1.3em;
+  margin-top: 2em;
   text-align: left;
 }
 
@@ -77,5 +76,18 @@ a:hover {
 }
 
 .credits a:hover img {
-  border: 1px solid #f05a00;
+  border-radius: 4px;
+  box-shadow: 2px 2px 18px #8a5ed3;
+}
+
+.code {
+  font-family: Monaco, Courier New;
+  color: #333;
+  font-size: 15px;
+  background-color: #ddd;
+  padding: 1px 4px;
+}
+
+.example-thumb {
+  cursor: pointer;
 }

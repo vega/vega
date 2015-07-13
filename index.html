@@ -1,72 +1,38 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>Vega: A Visualization Grammar</title>
-    <link rel="shortcut icon" href="http://vega.github.io/vega/favicon.ico"/>
+    <link rel="shortcut icon" href="http://vega.github.io/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
     <script src="d3.v3.min.js"></script>
     <script src="vega.min.js"></script>
   </head>
   <body>
-    <div id="side">
-      <div class="example">
-        <a href="editor/index.html?spec=bar" title="Bar Chart">
-          <img src="images/example-bar.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=force" title="Force-Directed Layout">
-          <img src="images/example-force.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=population" title="Population Pyramid">
-          <img src="images/example-population.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=choropleth" title="Choropleth Map">
-          <img src="images/example-choropleth.png" />
-        </a>
-      </div>
-      <div class="example">
-        <a href="editor/index.html?spec=wordcloud" title="Word Cloud">
-          <img src="images/example-wordcloud.png" />
-        </a>
-      </div>
-    </div>
     <div id="main">
-      <a href="https://github.com/vega/vega">
-        <img style="position:absolute;top:0;right:0;border:0;" width="149" height="149" src="images/forkme.png" alt="Fork me on GitHub">
-      </a>
       <div id="logo">
         <div id="links">
-          <a href="vega.min.js"><strong>vega.min.js</strong> (188k)</a><br/>
-          <a href="https://github.com/vega/vega"><strong>Source</strong> (GitHub)</a>
+          <a href="vega.min.js"><strong>vega.min.js</strong></a><br/>
+          <a href="vega-schema.json"><strong>JSON Schema</strong></a><br /> 
+          <a href="https://github.com/vega/vega"><strong>GitHub</strong></a>
         </div>
-        <img src="images/vega.png">
+        <h1 id="wordmark">
+          vega
+        </h1>
       </div>
-      <div class="content">
-        <strong>Vega</strong> is a <emph>visualization grammar</emph>,
-        a declarative format for creating, saving and sharing visualization 
-        designs.
-      </div>
-      <div class="content">
-        With Vega you can describe data visualizations in a JSON format, and
-        generate interactive views using either HTML5 Canvas or SVG.
-      </div>
-      <div class="content">
-        Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>,
-        browse the <a href="https://github.com/vega/vega/wiki">documentation</a>,
-        join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>,
-        and explore visualizations using the
-        web-based <a href="editor">Vega Editor</a>.
-      </div>
+
+      <div id="examples"></div>
+
+      <p><strong>Vega</strong> is a <em>visualization grammar</em>, a declarative format for creating, saving, and sharing interactive visualization designs.</p>
+
+      <p>With Vega, you can describe the visual appearance and interactive behavior of a visualization in a JSON format, and generate views using HTML5 Canvas or SVG.</p>
+
+      <p>Read the <a href="https://github.com/vega/vega/wiki/Tutorial">tutorial</a>, browse the <a href="https://github.com/vega/vega/wiki">documentation</a>, and join the <a href="https://groups.google.com/forum/?fromgroups#!forum/vega-js">discussion</a>. Click an example visualization above to explore it using the web-based <a href="http://vega.github.io/vega-editor/">Vega Editor</a>.</p>
+
       <div class="credits">
         <a href="http://trifacta.com" title="Trifacta"><img src="images/trifacta-logo.png"/></a>
         <a href="http://idl.cs.washington.edu" title="UW Interactive Data Lab"><img src="images/idl-logo.png"/></a>
       </div>
-    </div>
   </body>
+  <script src="examples.js"></script>
 </html>
