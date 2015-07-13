@@ -6,7 +6,7 @@
 }
 
 strong {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 body {
@@ -17,9 +17,9 @@ body {
 }
 
 a {
-  color: #8A5ED3;
+  color: #700EB3;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 a:hover {
@@ -35,13 +35,16 @@ a:hover {
 
 #links {
   float: right;
-  margin: 11px 12px 0 0;
+  margin: 5px 12px 0 0;
   text-align: left;
-  line-height: 26px;
+}
+
+#links * {
+  line-height: 20px;
 }
 
 #links strong {
-  font-weight: bold;
+  font-weight: 400;
 }
 
 .example img {
@@ -59,6 +62,7 @@ p {
 
 #examples {
   margin-top: 2em;
+  margin-bottom: 1em;
 }
 
 .credits {
@@ -84,4 +88,6 @@ p {
   padding: 1px 4px;
 }
 
-.example-thumb { cursor: pointer; }
+.example-thumb {
+  cursor: pointer;
+}
