@@ -18,16 +18,15 @@
   "dependencies": {
     "datalib": "1.2.x",
     "heap": "0.2.x",
-    "vega-logging": "1.0.x"
+    "vega-logging": "^1.0"
   },
   "devDependencies": {
-    "browserify": "latest",
-    "browserify-shim": "latest",
-    "chai": "latest",
+    "browserify": "^10.2.6",
+    "browserify-shim": "^3.8.9",
+    "chai": "^3.0.0",
     "istanbul": "latest",
-    "jshint": "latest",
-    "mocha": "latest",
-    "uglify-js": "latest"
+    "mocha": "^2.2.5",
+    "uglify-js": "2.4.x"
   },
   "main": "src/index.js",
   "scripts": {
