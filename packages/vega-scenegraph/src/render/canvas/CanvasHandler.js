@@ -27,7 +27,6 @@ prototype.initialize = function(el, pad, obj) {
     });
   });
 
-  this._rect = this._canvas.getBoundingClientRect();
   return base.initialize.call(this, el, pad, obj);
 };
 
@@ -153,10 +152,11 @@ prototype.off = function(type, handler) {
 };
 
 prototype.pickEvent = function(evt) {
-  var pad = this._padding, x, y;
+  var rect = this._canvas.getBoundingClientRect(),
+      pad = this._padding, x, y;
   return this.pick(this._scene,
-    x = (evt.clientX - this._rect.left),
-    y = (evt.clientY - this._rect.top),
+    x = (evt.clientX - rect.left),
+    y = (evt.clientY - rect.top),
     x - pad.left, y - pad.top);
 };
 
