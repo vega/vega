@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.0.3',
+  version: '2.0.4',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -15,9 +15,1437 @@ module.exports = {
   util:  require('datalib/src/util'),
   debug: require('vega-logging').debug
 };
-},{"./src/core/config":78,"./src/core/schema":79,"./src/parse/":85,"./src/scene/Bounder":97,"./src/scene/Builder":98,"./src/scene/Encoder":99,"./src/scene/GroupBuilder":100,"./src/transforms":126,"datalib/src/util":20,"vega-dataflow":32,"vega-logging":38}],2:[function(require,module,exports){
+},{"./src/core/config":85,"./src/core/schema":86,"./src/parse/":92,"./src/scene/Bounder":104,"./src/scene/Builder":105,"./src/scene/Encoder":106,"./src/scene/GroupBuilder":107,"./src/transforms":133,"datalib/src/util":24,"vega-dataflow":38,"vega-logging":44}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  factory((global.dsv = {}));
+}(this, function (exports) { 'use strict';
+
+  var dsv = function(delimiter) {
+    var reFormat = new RegExp("[\"" + delimiter + "\n]"),
+        delimiterCode = delimiter.charCodeAt(0);
+
+    function parse(text, f) {
+      var o;
+      return parseRows(text, function(row, i) {
+        if (o) return o(row, i - 1);
+        var a = new Function("d", "return {" + row.map(function(name, i) {
+          return JSON.stringify(name) + ": d[" + i + "]";
+        }).join(",") + "}");
+        o = f ? function(row, i) { return f(a(row), i); } : a;
+      });
+    }
+
+    function parseRows(text, f) {
+      var EOL = {}, // sentinel value for end-of-line
+          EOF = {}, // sentinel value for end-of-file
+          rows = [], // output rows
+          N = text.length,
+          I = 0, // current character index
+          n = 0, // the current line number
+          t, // the current token
+          eol; // is the current token followed by EOL?
+
+      function token() {
+        if (I >= N) return EOF; // special case: end of file
+        if (eol) return eol = false, EOL; // special case: end of line
+
+        // special case: quotes
+        var j = I;
+        if (text.charCodeAt(j) === 34) {
+          var i = j;
+          while (i++ < N) {
+            if (text.charCodeAt(i) === 34) {
+              if (text.charCodeAt(i + 1) !== 34) break;
+              ++i;
+            }
+          }
+          I = i + 2;
+          var c = text.charCodeAt(i + 1);
+          if (c === 13) {
+            eol = true;
+            if (text.charCodeAt(i + 2) === 10) ++I;
+          } else if (c === 10) {
+            eol = true;
+          }
+          return text.slice(j + 1, i).replace(/""/g, "\"");
+        }
+
+        // common case: find next delimiter or newline
+        while (I < N) {
+          var c = text.charCodeAt(I++), k = 1;
+          if (c === 10) eol = true; // \n
+          else if (c === 13) { eol = true; if (text.charCodeAt(I) === 10) ++I, ++k; } // \r|\r\n
+          else if (c !== delimiterCode) continue;
+          return text.slice(j, I - k);
+        }
+
+        // special case: last token before EOF
+        return text.slice(j);
+      }
+
+      while ((t = token()) !== EOF) {
+        var a = [];
+        while (t !== EOL && t !== EOF) {
+          a.push(t);
+          t = token();
+        }
+        if (f && (a = f(a, n++)) == null) continue;
+        rows.push(a);
+      }
+
+      return rows;
+    }
+
+    function format(rows) {
+      if (Array.isArray(rows[0])) return formatRows(rows); // deprecated; use formatRows
+      var fieldSet = Object.create(null), fields = [];
+
+      // Compute unique fields in order of discovery.
+      rows.forEach(function(row) {
+        for (var field in row) {
+          if (!((field += "") in fieldSet)) {
+            fields.push(fieldSet[field] = field);
+          }
+        }
+      });
+
+      return [fields.map(formatValue).join(delimiter)].concat(rows.map(function(row) {
+        return fields.map(function(field) {
+          return formatValue(row[field]);
+        }).join(delimiter);
+      })).join("\n");
+    }
+
+    function formatRows(rows) {
+      return rows.map(formatRow).join("\n");
+    }
+
+    function formatRow(row) {
+      return row.map(formatValue).join(delimiter);
+    }
+
+    function formatValue(text) {
+      return reFormat.test(text) ? "\"" + text.replace(/\"/g, "\"\"") + "\"" : text;
+    }
+
+    return {
+      parse: parse,
+      parseRows: parseRows,
+      format: format,
+      formatRows: formatRows
+    };
+  }
+
+  exports.csv = dsv(",");
+  exports.tsv = dsv("\t");
+
+  exports.dsv = dsv;
+
+}));
+},{}],4:[function(require,module,exports){
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  factory((global.format = {}));
+}(this, function (exports) { 'use strict';
+
+  var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
+
+
+  // Computes the decimal coefficient and exponent of the specified number x with
+  // significant digits p, where x is positive and p is in [1, 21] or undefined.
+  // For example, formatDecimal(1.23) returns ["123", 0].
+  function formatDecimal(x, p) {
+    if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
+    var i, coefficient = x.slice(0, i);
+
+    // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
+    // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
+    return [
+      coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
+      +x.slice(i + 1)
+    ];
+  }
+
+  function exponent(x) {
+    return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+  }
+
+  var prefixExponent;
+
+  function formatPrefixAuto(x, p) {
+    var d = formatDecimal(x, p);
+    if (!d) return x + "";
+    var coefficient = d[0],
+        exponent = d[1],
+        i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
+        n = coefficient.length;
+    return i === n ? coefficient
+        : i > n ? coefficient + new Array(i - n + 1).join("0")
+        : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
+        : "0." + new Array(1 - i).join("0") + formatDecimal(x, p + i - 1)[0]; // less than 1y!
+  }
+
+  function formatRounded(x, p) {
+    var d = formatDecimal(x, p);
+    if (!d) return x + "";
+    var coefficient = d[0],
+        exponent = d[1];
+    return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient
+        : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1)
+        : coefficient + new Array(exponent - coefficient.length + 2).join("0");
+  }
+
+  function formatDefault(x, p) {
+    x = x.toPrecision(p);
+
+    out: for (var n = x.length, i = 1, i0 = -1, i1; i < n; ++i) {
+      switch (x[i]) {
+        case ".": i0 = i1 = i; break;
+        case "0": if (i0 === 0) i0 = i; i1 = i; break;
+        case "e": break out;
+        default: if (i0 > 0) i0 = 0; break;
+      }
+    }
+
+    return i0 > 0 ? x.slice(0, i0) + x.slice(i1 + 1) : x;
+  }
+
+  var formatTypes = {
+    "": formatDefault,
+    "%": function(x, p) { return (x * 100).toFixed(p); },
+    "b": function(x) { return Math.round(x).toString(2); },
+    "c": function(x) { return x + ""; },
+    "d": function(x) { return Math.round(x).toString(10); },
+    "e": function(x, p) { return x.toExponential(p); },
+    "f": function(x, p) { return x.toFixed(p); },
+    "g": function(x, p) { return x.toPrecision(p); },
+    "o": function(x) { return Math.round(x).toString(8); },
+    "p": function(x, p) { return formatRounded(x * 100, p); },
+    "r": formatRounded,
+    "s": formatPrefixAuto,
+    "X": function(x) { return Math.round(x).toString(16).toUpperCase(); },
+    "x": function(x) { return Math.round(x).toString(16); }
+  };
+
+
+  // [[fill]align][sign][symbol][0][width][,][.precision][type]
+  var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
+
+  function FormatSpecifier(specifier) {
+    if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
+
+    var match,
+        fill = match[1] || " ",
+        align = match[2] || ">",
+        sign = match[3] || "-",
+        symbol = match[4] || "",
+        zero = !!match[5],
+        width = match[6] && +match[6],
+        comma = !!match[7],
+        precision = match[8] && +match[8].slice(1),
+        type = match[9] || "";
+
+    // The "n" type is an alias for ",g".
+    if (type === "n") comma = true, type = "g";
+
+    // Map invalid types to the default format.
+    else if (!formatTypes[type]) type = "";
+
+    // If zero fill is specified, padding goes after sign and before digits.
+    if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
+
+    this.fill = fill;
+    this.align = align;
+    this.sign = sign;
+    this.symbol = symbol;
+    this.zero = zero;
+    this.width = width;
+    this.comma = comma;
+    this.precision = precision;
+    this.type = type;
+  }
+
+  FormatSpecifier.prototype.toString = function() {
+    return this.fill
+        + this.align
+        + this.sign
+        + this.symbol
+        + (this.zero ? "0" : "")
+        + (this.width == null ? "" : Math.max(1, this.width | 0))
+        + (this.comma ? "," : "")
+        + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
+        + this.type;
+  };
+
+  function formatSpecifier(specifier) {
+    return new FormatSpecifier(specifier);
+  }
+
+  function identity(x) {
+    return x;
+  }
+
+  function formatGroup(grouping, thousands) {
+    return function(value, width) {
+      var i = value.length,
+          t = [],
+          j = 0,
+          g = grouping[0],
+          length = 0;
+
+      while (i > 0 && g > 0) {
+        if (length + g + 1 > width) g = Math.max(1, width - length);
+        t.push(value.substring(i -= g, i + g));
+        if ((length += g + 1) > width) break;
+        g = grouping[j = (j + 1) % grouping.length];
+      }
+
+      return t.reverse().join(thousands);
+    };
+  }
+
+  function localeFormat(locale) {
+    var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity,
+        currency = locale.currency,
+        decimal = locale.decimal;
+
+    function format(specifier) {
+      specifier = formatSpecifier(specifier);
+
+      var fill = specifier.fill,
+          align = specifier.align,
+          sign = specifier.sign,
+          symbol = specifier.symbol,
+          zero = specifier.zero,
+          width = specifier.width,
+          comma = specifier.comma,
+          precision = specifier.precision,
+          type = specifier.type;
+
+      // Compute the prefix and suffix.
+      // For SI-prefix, the suffix is lazily computed.
+      var prefix = symbol === "$" ? currency[0] : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
+          suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? "%" : "";
+
+      // What format function should we use?
+      // Is this an integer type?
+      // Can this type generate exponential notation?
+      var formatType = formatTypes[type],
+          maybeSuffix = !type || /[defgprs%]/.test(type);
+
+      // Set the default precision if not specified,
+      // or clamp the specified precision to the supported range.
+      // For significant precision, it must be in [1, 21].
+      // For fixed precision, it must be in [0, 20].
+      precision = precision == null ? (type ? 6 : 12)
+          : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
+          : Math.max(0, Math.min(20, precision));
+
+      return function(value) {
+        var valuePrefix = prefix,
+            valueSuffix = suffix;
+
+        if (type === "c") {
+          valueSuffix = formatType(value) + valueSuffix;
+          value = "";
+        } else {
+          value = +value;
+
+          // Convert negative to positive, and compute the prefix.
+          // Note that -0 is not less than 0, but 1 / -0 is!
+          var valueNegative = (value < 0 || 1 / value < 0) && (value *= -1, true);
+
+          // Perform the initial formatting.
+          value = formatType(value, precision);
+
+          // Compute the prefix and suffix.
+          valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
+          valueSuffix = valueSuffix + (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + (valueNegative && sign === "(" ? ")" : "");
+
+          // Break the formatted value into the integer “value” part that can be
+          // grouped, and fractional or exponential “suffix” part that is not.
+          if (maybeSuffix) {
+            var i = -1, n = value.length, c;
+            while (++i < n) {
+              if (c = value.charCodeAt(i), 48 > c || c > 57) {
+                valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
+                value = value.slice(0, i);
+                break;
+              }
+            }
+          }
+        }
+
+        // If the fill character is not "0", grouping is applied before padding.
+        if (comma && !zero) value = group(value, Infinity);
+
+        // Compute the padding.
+        var length = valuePrefix.length + value.length + valueSuffix.length,
+            padding = length < width ? new Array(width - length + 1).join(fill) : "";
+
+        // If the fill character is "0", grouping is applied after padding.
+        if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
+
+        // Reconstruct the final output based on the desired alignment.
+        switch (align) {
+          case "<": return valuePrefix + value + valueSuffix + padding;
+          case "=": return valuePrefix + padding + value + valueSuffix;
+          case "^": return padding.slice(0, length = padding.length >> 1) + valuePrefix + value + valueSuffix + padding.slice(length);
+        }
+        return padding + valuePrefix + value + valueSuffix;
+      };
+    }
+
+    function formatPrefix(specifier, value) {
+      var f = format((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)),
+          e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3,
+          k = Math.pow(10, -e),
+          prefix = prefixes[8 + e / 3];
+      return function(value) {
+        return f(k * value) + prefix;
+      };
+    }
+
+    return {
+      format: format,
+      formatPrefix: formatPrefix
+    };
+  }
+
+  var locale = localeFormat({
+    decimal: ".",
+    thousands: ",",
+    grouping: [3],
+    currency: ["$", ""]
+  });
+
+  exports.format = locale.format;
+  exports.formatPrefix = locale.formatPrefix;
+
+  function precisionRound(step, max) {
+    return Math.max(0, exponent(Math.abs(max)) - exponent(Math.abs(step))) + 1;
+  }
+
+  function precisionPrefix(step, value) {
+    return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
+  }
+
+  function precisionFixed(step) {
+    return Math.max(0, -exponent(Math.abs(step)));
+  }
+
+  exports.formatSpecifier = formatSpecifier;
+  exports.localeFormat = localeFormat;
+  exports.precisionFixed = precisionFixed;
+  exports.precisionPrefix = precisionPrefix;
+  exports.precisionRound = precisionRound;
+
+}));
+},{}],5:[function(require,module,exports){
+if (typeof Map === "undefined") {
+  Map = function() { this.clear(); };
+  Map.prototype = {
+    set: function(k, v) { this._[k] = v; return this; },
+    get: function(k) { return this._[k]; },
+    has: function(k) { return k in this._; },
+    delete: function(k) { return k in this._ && delete this._[k]; },
+    clear: function() { this._ = Object.create(null); },
+    get size() { var n = 0; for (var k in this._) ++n; return n; },
+    forEach: function(c) { for (var k in this._) c(this._[k], k, this); }
+  };
+} else (function() {
+  var m = new Map;
+  if (m.set(0, 0) !== m) {
+    m = m.set;
+    Map.prototype.set = function() { m.apply(this, arguments); return this; };
+  }
+})();
+
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  factory((global.timeFormat = {}));
+}(this, function (exports) { 'use strict';
+
+  function utcDate(d) {
+    if (0 <= d.y && d.y < 100) {
+      var date = new Date(Date.UTC(-1, d.m, d.d, d.H, d.M, d.S, d.L));
+      date.setUTCFullYear(d.y);
+      return date;
+    }
+    return new Date(Date.UTC(d.y, d.m, d.d, d.H, d.M, d.S, d.L));
+  }
+
+  function localDate(d) {
+    if (0 <= d.y && d.y < 100) {
+      var date = new Date(-1, d.m, d.d, d.H, d.M, d.S, d.L);
+      date.setFullYear(d.y);
+      return date;
+    }
+    return new Date(d.y, d.m, d.d, d.H, d.M, d.S, d.L);
+  }
+
+  var pads = {"-": "", "_": " ", "0": "0"};
+
+  function newYear(y) {
+    return {y: y, m: 0, d: 1, H: 0, M: 0, S: 0, L: 0};
+  }
+
+  var percentRe = /^%/;
+
+  function parseLiteralPercent(d, string, i) {
+    var n = percentRe.exec(string.slice(i, i + 1));
+    return n ? i + n[0].length : -1;
+  }
+
+  function parseZone(d, string, i) {
+    return /^[+-]\d{4}$/.test(string = string.slice(i, i + 5))
+        ? (d.Z = -string, i + 5) // sign differs from getTimezoneOffset!
+        : -1;
+  }
+
+  var numberRe = /^\s*\d+/;
+
+  function parseWeekdayNumber(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 1));
+    return n ? (d.w = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseWeekNumberSunday(d, string, i) {
+    var n = numberRe.exec(string.slice(i));
+    return n ? (d.U = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseWeekNumberMonday(d, string, i) {
+    var n = numberRe.exec(string.slice(i));
+    return n ? (d.W = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseYear(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 2));
+    return n ? (d.y = +n[0] + (+n[0] > 68 ? 1900 : 2000), i + n[0].length) : -1;
+  }
+
+  function parseMonthNumber(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 2));
+    return n ? (d.m = n[0] - 1, i + n[0].length) : -1;
+  }
+
+  function parseDayOfMonth(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 2));
+    return n ? (d.d = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseDayOfYear(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 3));
+    return n ? (d.m = 0, d.d = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseHour24(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 2));
+    return n ? (d.H = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseMinutes(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 2));
+    return n ? (d.M = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseSeconds(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 2));
+    return n ? (d.S = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseMilliseconds(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 3));
+    return n ? (d.L = +n[0], i + n[0].length) : -1;
+  }
+
+  function parseFullYear(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 4));
+    return n ? (d.y = +n[0], i + n[0].length) : -1;
+  }
+
+  function formatLiteralPercent() {
+    return "%";
+  }
+
+  function formatUTCZone() {
+    return "+0000";
+  }
+
+  function pad(value, fill, width) {
+    var sign = value < 0 ? "-" : "",
+        string = (sign ? -value : value) + "",
+        length = string.length;
+    return sign + (length < width ? new Array(width - length + 1).join(fill) + string : string);
+  }
+
+  function formatUTCFullYear(d, p) {
+    return pad(d.getUTCFullYear() % 10000, p, 4);
+  }
+
+  function formatUTCYear(d, p) {
+    return pad(d.getUTCFullYear() % 100, p, 2);
+  }
+
+  var t1 = new Date;
+
+  var t0 = new Date;
+
+  function newInterval(floori, offseti, count) {
+
+    function interval(date) {
+      return floori(date = new Date(+date)), date;
+    }
+
+    interval.floor = interval;
+
+    interval.round = function(date) {
+      var d0 = new Date(+date),
+          d1 = new Date(date - 1);
+      floori(d0), floori(d1), offseti(d1, 1);
+      return date - d0 < d1 - date ? d0 : d1;
+    };
+
+    interval.ceil = function(date) {
+      return floori(date = new Date(date - 1)), offseti(date, 1), date;
+    };
+
+    interval.offset = function(date, step) {
+      return offseti(date = new Date(+date), step == null ? 1 : Math.floor(step)), date;
+    };
+
+    interval.range = function(start, stop, step) {
+      var range = [];
+      start = new Date(start - 1);
+      stop = new Date(+stop);
+      step = step == null ? 1 : Math.floor(step);
+      if (!(start < stop) || !(step > 0)) return range; // also handles Invalid Date
+      offseti(start, 1), floori(start);
+      if (start < stop) range.push(new Date(+start));
+      while (offseti(start, step), floori(start), start < stop) range.push(new Date(+start));
+      return range;
+    };
+
+    interval.filter = function(test) {
+      return newInterval(function(date) {
+        while (floori(date), !test(date)) date.setTime(date - 1);
+      }, function(date, step) {
+        while (--step >= 0) while (offseti(date, 1), !test(date));
+      });
+    };
+
+    if (count) interval.count = function(start, end) {
+      t0.setTime(+start), t1.setTime(+end);
+      floori(t0), floori(t1);
+      return Math.floor(count(t0, t1));
+    };
+
+    return interval;
+  }
+
+  var utcYear = newInterval(function(date) {
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCMonth(0, 1);
+  }, function(date, offset) {
+    date.setUTCFullYear(date.getUTCFullYear() + offset);
+  }, function(start, end) {
+    return end.getUTCFullYear() - start.getUTCFullYear();
+  });
+
+  function utcWeekday(i) {
+    return newInterval(function(date) {
+      date.setUTCHours(0, 0, 0, 0);
+      date.setUTCDate(date.getUTCDate() - (date.getUTCDay() + 7 - i) % 7);
+    }, function(date, offset) {
+      date.setUTCDate(date.getUTCDate() + offset * 7);
+    }, function(start, end) {
+      return (end - start) / 6048e5;
+    });
+  }
+
+  var utcMonday = utcWeekday(1);
+
+  function formatUTCWeekNumberMonday(d, p) {
+    return pad(utcMonday.count(utcYear(d), d), p, 2);
+  }
+
+  function formatUTCWeekdayNumber(d) {
+    return d.getUTCDay();
+  }
+
+  var utcSunday = utcWeekday(0);
+
+  function formatUTCWeekNumberSunday(d, p) {
+    return pad(utcSunday.count(utcYear(d), d), p, 2);
+  }
+
+  function formatUTCSeconds(d, p) {
+    return pad(d.getUTCSeconds(), p, 2);
+  }
+
+  function formatUTCMinutes(d, p) {
+    return pad(d.getUTCMinutes(), p, 2);
+  }
+
+  function formatUTCMonthNumber(d, p) {
+    return pad(d.getUTCMonth() + 1, p, 2);
+  }
+
+  function formatUTCMilliseconds(d, p) {
+    return pad(d.getUTCMilliseconds(), p, 3);
+  }
+
+  var utcDay = newInterval(function(date) {
+    date.setUTCHours(0, 0, 0, 0);
+  }, function(date, offset) {
+    date.setUTCDate(date.getUTCDate() + offset);
+  }, function(start, end) {
+    return (end - start) / 864e5;
+  });
+
+  function formatUTCDayOfYear(d, p) {
+    return pad(1 + utcDay.count(utcYear(d), d), p, 3);
+  }
+
+  function formatUTCHour12(d, p) {
+    return pad(d.getUTCHours() % 12 || 12, p, 2);
+  }
+
+  function formatUTCHour24(d, p) {
+    return pad(d.getUTCHours(), p, 2);
+  }
+
+  function formatUTCDayOfMonth(d, p) {
+    return pad(d.getUTCDate(), p, 2);
+  }
+
+  function formatZone(d) {
+    var z = d.getTimezoneOffset();
+    return (z > 0 ? "-" : (z *= -1, "+"))
+        + pad(z / 60 | 0, "0", 2)
+        + pad(z % 60, "0", 2);
+  }
+
+  function formatFullYear(d, p) {
+    return pad(d.getFullYear() % 10000, p, 4);
+  }
+
+  function formatYear(d, p) {
+    return pad(d.getFullYear() % 100, p, 2);
+  }
+
+  var year = newInterval(function(date) {
+    date.setHours(0, 0, 0, 0);
+    date.setMonth(0, 1);
+  }, function(date, offset) {
+    date.setFullYear(date.getFullYear() + offset);
+  }, function(start, end) {
+    return end.getFullYear() - start.getFullYear();
+  });
+
+  function weekday(i) {
+    return newInterval(function(date) {
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - (date.getDay() + 7 - i) % 7);
+    }, function(date, offset) {
+      date.setDate(date.getDate() + offset * 7);
+    }, function(start, end) {
+      return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * 6e4) / 6048e5;
+    });
+  }
+
+  var monday = weekday(1);
+
+  function formatWeekNumberMonday(d, p) {
+    return pad(monday.count(year(d), d), p, 2);
+  }
+
+  function formatWeekdayNumber(d) {
+    return d.getDay();
+  }
+
+  var sunday = weekday(0);
+
+  function formatWeekNumberSunday(d, p) {
+    return pad(sunday.count(year(d), d), p, 2);
+  }
+
+  function formatSeconds(d, p) {
+    return pad(d.getSeconds(), p, 2);
+  }
+
+  function formatMinutes(d, p) {
+    return pad(d.getMinutes(), p, 2);
+  }
+
+  function formatMonthNumber(d, p) {
+    return pad(d.getMonth() + 1, p, 2);
+  }
+
+  function formatMilliseconds(d, p) {
+    return pad(d.getMilliseconds(), p, 3);
+  }
+
+  var day = newInterval(function(date) {
+    date.setHours(0, 0, 0, 0);
+  }, function(date, offset) {
+    date.setDate(date.getDate() + offset);
+  }, function(start, end) {
+    return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * 6e4) / 864e5;
+  });
+
+  function formatDayOfYear(d, p) {
+    return pad(1 + day.count(year(d), d), p, 3);
+  }
+
+  function formatHour12(d, p) {
+    return pad(d.getHours() % 12 || 12, p, 2);
+  }
+
+  function formatHour24(d, p) {
+    return pad(d.getHours(), p, 2);
+  }
+
+  function formatDayOfMonth(d, p) {
+    return pad(d.getDate(), p, 2);
+  }
+
+  function formatLookup(names) {
+    var map = new Map, i = -1, n = names.length;
+    while (++i < n) map.set(names[i].toLowerCase(), i);
+    return map;
+  }
+
+  var requoteRe = /[\\\^\$\*\+\?\|\[\]\(\)\.\{\}]/g;
+
+  function requote(s) {
+    return s.replace(requoteRe, "\\$&");
+  }
+
+  function formatRe(names) {
+    return new RegExp("^(?:" + names.map(requote).join("|") + ")", "i");
+  }
+
+  function localeFormat(locale) {
+    var locale_dateTime = locale.dateTime,
+        locale_date = locale.date,
+        locale_time = locale.time,
+        locale_periods = locale.periods,
+        locale_weekdays = locale.days,
+        locale_shortWeekdays = locale.shortDays,
+        locale_months = locale.months,
+        locale_shortMonths = locale.shortMonths;
+
+    var periodLookup = formatLookup(locale_periods),
+        weekdayRe = formatRe(locale_weekdays),
+        weekdayLookup = formatLookup(locale_weekdays),
+        shortWeekdayRe = formatRe(locale_shortWeekdays),
+        shortWeekdayLookup = formatLookup(locale_shortWeekdays),
+        monthRe = formatRe(locale_months),
+        monthLookup = formatLookup(locale_months),
+        shortMonthRe = formatRe(locale_shortMonths),
+        shortMonthLookup = formatLookup(locale_shortMonths);
+
+    var formats = {
+      "a": formatShortWeekday,
+      "A": formatWeekday,
+      "b": formatShortMonth,
+      "B": formatMonth,
+      "c": null,
+      "d": formatDayOfMonth,
+      "e": formatDayOfMonth,
+      "H": formatHour24,
+      "I": formatHour12,
+      "j": formatDayOfYear,
+      "L": formatMilliseconds,
+      "m": formatMonthNumber,
+      "M": formatMinutes,
+      "p": formatPeriod,
+      "S": formatSeconds,
+      "U": formatWeekNumberSunday,
+      "w": formatWeekdayNumber,
+      "W": formatWeekNumberMonday,
+      "x": null,
+      "X": null,
+      "y": formatYear,
+      "Y": formatFullYear,
+      "Z": formatZone,
+      "%": formatLiteralPercent
+    };
+
+    var utcFormats = {
+      "a": formatUTCShortWeekday,
+      "A": formatUTCWeekday,
+      "b": formatUTCShortMonth,
+      "B": formatUTCMonth,
+      "c": null,
+      "d": formatUTCDayOfMonth,
+      "e": formatUTCDayOfMonth,
+      "H": formatUTCHour24,
+      "I": formatUTCHour12,
+      "j": formatUTCDayOfYear,
+      "L": formatUTCMilliseconds,
+      "m": formatUTCMonthNumber,
+      "M": formatUTCMinutes,
+      "p": formatUTCPeriod,
+      "S": formatUTCSeconds,
+      "U": formatUTCWeekNumberSunday,
+      "w": formatUTCWeekdayNumber,
+      "W": formatUTCWeekNumberMonday,
+      "x": null,
+      "X": null,
+      "y": formatUTCYear,
+      "Y": formatUTCFullYear,
+      "Z": formatUTCZone,
+      "%": formatLiteralPercent
+    };
+
+    var parses = {
+      "a": parseShortWeekday,
+      "A": parseWeekday,
+      "b": parseShortMonth,
+      "B": parseMonth,
+      "c": parseLocaleDateTime,
+      "d": parseDayOfMonth,
+      "e": parseDayOfMonth,
+      "H": parseHour24,
+      "I": parseHour24,
+      "j": parseDayOfYear,
+      "L": parseMilliseconds,
+      "m": parseMonthNumber,
+      "M": parseMinutes,
+      "p": parsePeriod,
+      "S": parseSeconds,
+      "U": parseWeekNumberSunday,
+      "w": parseWeekdayNumber,
+      "W": parseWeekNumberMonday,
+      "x": parseLocaleDate,
+      "X": parseLocaleTime,
+      "y": parseYear,
+      "Y": parseFullYear,
+      "Z": parseZone,
+      "%": parseLiteralPercent
+    };
+
+    // These recursive directive definitions must be deferred.
+    formats.x = newFormat(locale_date, formats);
+    formats.X = newFormat(locale_time, formats);
+    formats.c = newFormat(locale_dateTime, formats);
+    utcFormats.x = newFormat(locale_date, utcFormats);
+    utcFormats.X = newFormat(locale_time, utcFormats);
+    utcFormats.c = newFormat(locale_dateTime, utcFormats);
+
+    function newFormat(specifier, formats) {
+      return function(date) {
+        var string = [],
+            i = -1,
+            j = 0,
+            n = specifier.length,
+            c,
+            pad,
+            format;
+
+        while (++i < n) {
+          if (specifier.charCodeAt(i) === 37) {
+            string.push(specifier.slice(j, i));
+            if ((pad = pads[c = specifier.charAt(++i)]) != null) c = specifier.charAt(++i);
+            if (format = formats[c]) c = format(date, pad == null ? (c === "e" ? " " : "0") : pad);
+            string.push(c);
+            j = i + 1;
+          }
+        }
+
+        string.push(specifier.slice(j, i));
+        return string.join("");
+      };
+    }
+
+    function newParse(specifier, newDate) {
+      return function(string) {
+        var d = newYear(1900),
+            i = parseSpecifier(d, specifier, string, 0);
+        if (i != string.length) return null;
+
+        // The am-pm flag is 0 for AM, and 1 for PM.
+        if ("p" in d) d.H = d.H % 12 + d.p * 12;
+
+        // If a time zone is specified, all fields are interpreted as UTC and then
+        // offset according to the specified time zone.
+        if ("Z" in d) {
+          if ("w" in d && ("W" in d || "U" in d)) {
+            var day = utcDate(newYear(d.y)).getUTCDay();
+            if ("W" in d) d.U = d.W, d.w = (d.w + 6) % 7, --day;
+            d.m = 0;
+            d.d = d.w + d.U * 7 - (day + 6) % 7;
+          }
+          d.H += d.Z / 100 | 0;
+          d.M += d.Z % 100;
+          return utcDate(d);
+        }
+
+        // Otherwise, all fields are in local time.
+        if ("w" in d && ("W" in d || "U" in d)) {
+          var day = newDate(newYear(d.y)).getDay();
+          if ("W" in d) d.U = d.W, d.w = (d.w + 6) % 7, --day;
+          d.m = 0;
+          d.d = d.w + d.U * 7 - (day + 6) % 7;
+        }
+        return newDate(d);
+      };
+    }
+
+    function parseSpecifier(d, specifier, string, j) {
+      var i = 0,
+          n = specifier.length,
+          m = string.length,
+          c,
+          parse;
+
+      while (i < n) {
+        if (j >= m) return -1;
+        c = specifier.charCodeAt(i++);
+        if (c === 37) {
+          c = specifier.charAt(i++);
+          parse = parses[c in pads ? specifier.charAt(i++) : c];
+          if (!parse || ((j = parse(d, string, j)) < 0)) return -1;
+        } else if (c != string.charCodeAt(j++)) {
+          return -1;
+        }
+      }
+
+      return j;
+    }
+
+    function parseShortWeekday(d, string, i) {
+      var n = shortWeekdayRe.exec(string.slice(i));
+      return n ? (d.w = shortWeekdayLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+
+    function parseWeekday(d, string, i) {
+      var n = weekdayRe.exec(string.slice(i));
+      return n ? (d.w = weekdayLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+
+    function parseShortMonth(d, string, i) {
+      var n = shortMonthRe.exec(string.slice(i));
+      return n ? (d.m = shortMonthLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+
+    function parseMonth(d, string, i) {
+      var n = monthRe.exec(string.slice(i));
+      return n ? (d.m = monthLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+
+    function parseLocaleDateTime(d, string, i) {
+      return parseSpecifier(d, locale_dateTime, string, i);
+    }
+
+    function parseLocaleDate(d, string, i) {
+      return parseSpecifier(d, locale_date, string, i);
+    }
+
+    function parseLocaleTime(d, string, i) {
+      return parseSpecifier(d, locale_time, string, i);
+    }
+
+    function parsePeriod(d, string, i) {
+      var n = periodLookup.get(string.slice(i, i += 2).toLowerCase());
+      return n == null ? -1 : (d.p = n, i);
+    }
+
+    function formatShortWeekday(d) {
+      return locale_shortWeekdays[d.getDay()];
+    }
+
+    function formatWeekday(d) {
+      return locale_weekdays[d.getDay()];
+    }
+
+    function formatShortMonth(d) {
+      return locale_shortMonths[d.getMonth()];
+    }
+
+    function formatMonth(d) {
+      return locale_months[d.getMonth()];
+    }
+
+    function formatPeriod(d) {
+      return locale_periods[+(d.getHours() >= 12)];
+    }
+
+    function formatUTCShortWeekday(d) {
+      return locale_shortWeekdays[d.getUTCDay()];
+    }
+
+    function formatUTCWeekday(d) {
+      return locale_weekdays[d.getUTCDay()];
+    }
+
+    function formatUTCShortMonth(d) {
+      return locale_shortMonths[d.getUTCMonth()];
+    }
+
+    function formatUTCMonth(d) {
+      return locale_months[d.getUTCMonth()];
+    }
+
+    function formatUTCPeriod(d) {
+      return locale_periods[+(d.getUTCHours() >= 12)];
+    }
+
+    return {
+      format: function(specifier) {
+        var f = newFormat(specifier += "", formats);
+        f.parse = newParse(specifier, localDate);
+        f.toString = function() { return specifier; };
+        return f;
+      },
+      utcFormat: function(specifier) {
+        var f = newFormat(specifier += "", utcFormats);
+        f.parse = newParse(specifier, utcDate);
+        f.toString = function() { return specifier; };
+        return f;
+      }
+    };
+  }
+
+  var locale = localeFormat({
+    dateTime: "%a %b %e %X %Y",
+    date: "%m/%d/%Y",
+    time: "%H:%M:%S",
+    periods: ["AM", "PM"],
+    days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    shortDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  });
+
+  exports.format = locale.format;
+  exports.utcFormat = locale.utcFormat;
+
+  var isoSpecifier = "%Y-%m-%dT%H:%M:%S.%LZ";
+
+  function formatIsoNative(date) {
+    return date.toISOString();
+  }
+
+  formatIsoNative.parse = function(string) {
+    var date = new Date(string);
+    return isNaN(date) ? null : date;
+  };
+
+  formatIsoNative.toString = function() {
+    return isoSpecifier;
+  };
+
+  var formatIso = Date.prototype.toISOString && +new Date("2000-01-01T00:00:00.000Z")
+      ? formatIsoNative
+      : locale.utcFormat(isoSpecifier);
+
+  var isoFormat = formatIso;
+
+  exports.isoFormat = isoFormat;
+  exports.localeFormat = localeFormat;
+
+}));
+},{}],6:[function(require,module,exports){
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  factory((global.time = {}));
+}(this, function (exports) { 'use strict';
+
+  var t1 = new Date;
+
+  var t0 = new Date;
+
+  function newInterval(floori, offseti, count) {
+
+    function interval(date) {
+      return floori(date = new Date(+date)), date;
+    }
+
+    interval.floor = interval;
+
+    interval.round = function(date) {
+      var d0 = new Date(+date),
+          d1 = new Date(date - 1);
+      floori(d0), floori(d1), offseti(d1, 1);
+      return date - d0 < d1 - date ? d0 : d1;
+    };
+
+    interval.ceil = function(date) {
+      return floori(date = new Date(date - 1)), offseti(date, 1), date;
+    };
+
+    interval.offset = function(date, step) {
+      return offseti(date = new Date(+date), step == null ? 1 : Math.floor(step)), date;
+    };
+
+    interval.range = function(start, stop, step) {
+      var range = [];
+      start = new Date(start - 1);
+      stop = new Date(+stop);
+      step = step == null ? 1 : Math.floor(step);
+      if (!(start < stop) || !(step > 0)) return range; // also handles Invalid Date
+      offseti(start, 1), floori(start);
+      if (start < stop) range.push(new Date(+start));
+      while (offseti(start, step), floori(start), start < stop) range.push(new Date(+start));
+      return range;
+    };
+
+    interval.filter = function(test) {
+      return newInterval(function(date) {
+        while (floori(date), !test(date)) date.setTime(date - 1);
+      }, function(date, step) {
+        while (--step >= 0) while (offseti(date, 1), !test(date));
+      });
+    };
+
+    if (count) interval.count = function(start, end) {
+      t0.setTime(+start), t1.setTime(+end);
+      floori(t0), floori(t1);
+      return Math.floor(count(t0, t1));
+    };
+
+    return interval;
+  }
+
+  var second = newInterval(function(date) {
+    date.setMilliseconds(0);
+  }, function(date, step) {
+    date.setTime(+date + step * 1e3);
+  }, function(start, end) {
+    return (end - start) / 1e3;
+  });
+
+  exports.seconds = second.range;
+
+  var minute = newInterval(function(date) {
+    date.setSeconds(0, 0);
+  }, function(date, step) {
+    date.setTime(+date + step * 6e4);
+  }, function(start, end) {
+    return (end - start) / 6e4;
+  });
+
+  exports.minutes = minute.range;
+
+  var hour = newInterval(function(date) {
+    date.setMinutes(0, 0, 0);
+  }, function(date, step) {
+    date.setTime(+date + step * 36e5);
+  }, function(start, end) {
+    return (end - start) / 36e5;
+  });
+
+  exports.hours = hour.range;
+
+  var day = newInterval(function(date) {
+    date.setHours(0, 0, 0, 0);
+  }, function(date, step) {
+    date.setDate(date.getDate() + step);
+  }, function(start, end) {
+    return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * 6e4) / 864e5;
+  });
+
+  exports.days = day.range;
+
+  function weekday(i) {
+    return newInterval(function(date) {
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - (date.getDay() + 7 - i) % 7);
+    }, function(date, step) {
+      date.setDate(date.getDate() + step * 7);
+    }, function(start, end) {
+      return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * 6e4) / 6048e5;
+    });
+  }
+
+  exports.sunday = weekday(0);
+
+  exports.sundays = exports.sunday.range;
+
+  exports.monday = weekday(1);
+
+  exports.mondays = exports.monday.range;
+
+  exports.tuesday = weekday(2);
+
+  exports.tuesdays = exports.tuesday.range;
+
+  exports.wednesday = weekday(3);
+
+  exports.wednesdays = exports.wednesday.range;
+
+  exports.thursday = weekday(4);
+
+  exports.thursdays = exports.thursday.range;
+
+  exports.friday = weekday(5);
+
+  exports.fridays = exports.friday.range;
+
+  exports.saturday = weekday(6);
+
+  exports.saturdays = exports.saturday.range;
+
+  var week = exports.sunday;
+
+  exports.weeks = week.range;
+
+  var month = newInterval(function(date) {
+    date.setHours(0, 0, 0, 0);
+    date.setDate(1);
+  }, function(date, step) {
+    date.setMonth(date.getMonth() + step);
+  }, function(start, end) {
+    return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
+  });
+
+  exports.months = month.range;
+
+  var year = newInterval(function(date) {
+    date.setHours(0, 0, 0, 0);
+    date.setMonth(0, 1);
+  }, function(date, step) {
+    date.setFullYear(date.getFullYear() + step);
+  }, function(start, end) {
+    return end.getFullYear() - start.getFullYear();
+  });
+
+  exports.years = year.range;
+
+  var utcSecond = newInterval(function(date) {
+    date.setUTCMilliseconds(0);
+  }, function(date, step) {
+    date.setTime(+date + step * 1e3);
+  }, function(start, end) {
+    return (end - start) / 1e3;
+  });
+
+  exports.utcSeconds = utcSecond.range;
+
+  var utcMinute = newInterval(function(date) {
+    date.setUTCSeconds(0, 0);
+  }, function(date, step) {
+    date.setTime(+date + step * 6e4);
+  }, function(start, end) {
+    return (end - start) / 6e4;
+  });
+
+  exports.utcMinutes = utcMinute.range;
+
+  var utcHour = newInterval(function(date) {
+    date.setUTCMinutes(0, 0, 0);
+  }, function(date, step) {
+    date.setTime(+date + step * 36e5);
+  }, function(start, end) {
+    return (end - start) / 36e5;
+  });
+
+  exports.utcHours = utcHour.range;
+
+  var utcDay = newInterval(function(date) {
+    date.setUTCHours(0, 0, 0, 0);
+  }, function(date, step) {
+    date.setUTCDate(date.getUTCDate() + step);
+  }, function(start, end) {
+    return (end - start) / 864e5;
+  });
+
+  exports.utcDays = utcDay.range;
+
+  function utcWeekday(i) {
+    return newInterval(function(date) {
+      date.setUTCHours(0, 0, 0, 0);
+      date.setUTCDate(date.getUTCDate() - (date.getUTCDay() + 7 - i) % 7);
+    }, function(date, step) {
+      date.setUTCDate(date.getUTCDate() + step * 7);
+    }, function(start, end) {
+      return (end - start) / 6048e5;
+    });
+  }
+
+  exports.utcSunday = utcWeekday(0);
+
+  exports.utcSundays = exports.utcSunday.range;
+
+  exports.utcMonday = utcWeekday(1);
+
+  exports.utcMondays = exports.utcMonday.range;
+
+  exports.utcTuesday = utcWeekday(2);
+
+  exports.utcTuesdays = exports.utcTuesday.range;
+
+  exports.utcWednesday = utcWeekday(3);
+
+  exports.utcWednesdays = exports.utcWednesday.range;
+
+  exports.utcThursday = utcWeekday(4);
+
+  exports.utcThursdays = exports.utcThursday.range;
+
+  exports.utcFriday = utcWeekday(5);
+
+  exports.utcFridays = exports.utcFriday.range;
+
+  exports.utcSaturday = utcWeekday(6);
+
+  exports.utcSaturdays = exports.utcSaturday.range;
+
+  var utcWeek = exports.utcSunday;
+
+  exports.utcWeeks = utcWeek.range;
+
+  var utcMonth = newInterval(function(date) {
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCDate(1);
+  }, function(date, step) {
+    date.setUTCMonth(date.getUTCMonth() + step);
+  }, function(start, end) {
+    return end.getUTCMonth() - start.getUTCMonth() + (end.getUTCFullYear() - start.getUTCFullYear()) * 12;
+  });
+
+  exports.utcMonths = utcMonth.range;
+
+  var utcYear = newInterval(function(date) {
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCMonth(0, 1);
+  }, function(date, step) {
+    date.setUTCFullYear(date.getUTCFullYear() + step);
+  }, function(start, end) {
+    return end.getUTCFullYear() - start.getUTCFullYear();
+  });
+
+  exports.utcYears = utcYear.range;
+
+  exports.interval = newInterval;
+  exports.second = second;
+  exports.minute = minute;
+  exports.hour = hour;
+  exports.day = day;
+  exports.week = week;
+  exports.month = month;
+  exports.year = year;
+  exports.utcSecond = utcSecond;
+  exports.utcMinute = utcMinute;
+  exports.utcHour = utcHour;
+  exports.utcDay = utcDay;
+  exports.utcWeek = utcWeek;
+  exports.utcMonth = utcMonth;
+  exports.utcYear = utcYear;
+
+}));
+},{}],7:[function(require,module,exports){
 var util = require('../util'),
     Measures = require('./measures'),
     Collector = require('./collector');
@@ -318,7 +1746,7 @@ proto._consolidate = function() {
 };
 
 module.exports = Aggregator;
-},{"../util":20,"./collector":4,"./measures":5}],4:[function(require,module,exports){
+},{"../util":24,"./collector":8,"./measures":9}],8:[function(require,module,exports){
 var util = require('../util');
 var stats = require('../stats');
 
@@ -436,7 +1864,7 @@ proto.q3 = function(get) {
 
 module.exports = Collector;
 
-},{"../stats":17,"../util":20}],5:[function(require,module,exports){
+},{"../stats":21,"../util":24}],9:[function(require,module,exports){
 var util = require('../util');
 
 var types = {
@@ -617,10 +2045,10 @@ function create(agg, stream, accessor, mutator) {
 
 types.create = create;
 module.exports = types;
-},{"../stats":17,"../util":20}],6:[function(require,module,exports){
-var util = require('../util');
-var units = require('../time-units');
-var EPSILON = 1e-15;
+},{"../stats":21,"../util":24}],10:[function(require,module,exports){
+var util = require('../util'),
+    time = require('../time'),
+    EPSILON = 1e-15;
 
 function bins(opt) {
   if (!opt) { throw Error("Missing binning options."); }
@@ -709,7 +2137,8 @@ bins.date = function(opt) {
   if (!opt) { throw Error("Missing date binning options."); }
 
   // find time step, then bin
-  var dmin = opt.min,
+  var units = opt.utc ? time.utc : time,
+      dmin = opt.min,
       dmax = opt.max,
       maxb = opt.maxbins || 20,
       minb = opt.minbins || 4,
@@ -731,7 +2160,7 @@ bins.date = function(opt) {
 
 module.exports = bins;
 
-},{"../time-units":19,"../util":20}],7:[function(require,module,exports){
+},{"../time":23,"../util":24}],11:[function(require,module,exports){
 var gen = module.exports = {};
 
 gen.repeat = function(val, n) {
@@ -810,17 +2239,16 @@ gen.random.normal = function(mean, stdev) {
   f.samples = function(n) { return gen.zeros(n).map(f); };
   return f;
 };
-},{}],8:[function(require,module,exports){
-(function (global){
+},{}],12:[function(require,module,exports){
 var util = require('../../util');
-var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null);
+var d3_dsv = require('d3-dsv');
 
 function dsv(data, format) {
   if (data) {
     var h = format.header;
     data = (h ? h.join(format.delimiter) + '\n' : '') + data;
   }
-  return d3.dsv(format.delimiter).parse(data);
+  return d3_dsv.dsv(format.delimiter).parse(data);
 }
 
 dsv.delimiter = function(delim) {
@@ -831,9 +2259,7 @@ dsv.delimiter = function(delim) {
 };
 
 module.exports = dsv;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{"../../util":20}],9:[function(require,module,exports){
+},{"../../util":24,"d3-dsv":3}],13:[function(require,module,exports){
 var dsv = require('./dsv');
 
 module.exports = {
@@ -844,7 +2270,7 @@ module.exports = {
   csv: dsv.delimiter(','),
   tsv: dsv.delimiter('\t')
 };
-},{"./dsv":8,"./json":10,"./topojson":11,"./treejson":12}],10:[function(require,module,exports){
+},{"./dsv":12,"./json":14,"./topojson":15,"./treejson":16}],14:[function(require,module,exports){
 var util = require('../../util');
 
 module.exports = function(data, format) {
@@ -856,7 +2282,7 @@ module.exports = function(data, format) {
   return d;
 };
 
-},{"../../util":20}],11:[function(require,module,exports){
+},{"../../util":24}],15:[function(require,module,exports){
 (function (global){
 var json = require('./json');
 
@@ -887,7 +2313,7 @@ reader.topojson = (typeof window !== "undefined" ? window['topojson'] : typeof g
 module.exports = reader;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./json":10}],12:[function(require,module,exports){
+},{"./json":14}],16:[function(require,module,exports){
 var json = require('./json');
 
 module.exports = function(data, format) {
@@ -912,7 +2338,7 @@ function toTable(root, childrenField) {
   visit(root, null);
   return (table.root = root, table);
 }
-},{"./json":10}],13:[function(require,module,exports){
+},{"./json":14}],17:[function(require,module,exports){
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
 var protocol_re = /^([A-Za-z]+:)?\/\//;
@@ -1078,7 +2504,7 @@ load.useXHR = (typeof XMLHttpRequest !== 'undefined');
 
 module.exports = load;
 
-},{"fs":2,"request":2,"sync-request":2,"url":2}],14:[function(require,module,exports){
+},{"fs":2,"request":2,"sync-request":2,"url":2}],18:[function(require,module,exports){
 var util = require('../util');
 var type = require('./type');
 var formats = require('./formats');
@@ -1109,7 +2535,7 @@ function parse(data, types) {
 read.formats = formats;
 module.exports = read;
 
-},{"../util":20,"./formats":9,"./type":16}],15:[function(require,module,exports){
+},{"../util":24,"./formats":13,"./type":20}],19:[function(require,module,exports){
 var util = require('../util');
 var load = require('./load');
 var read = require('./read');
@@ -1147,7 +2573,7 @@ module.exports = util
     return out;
   }, {});
 
-},{"../util":20,"./load":13,"./read":14}],16:[function(require,module,exports){
+},{"../util":24,"./load":17,"./read":18}],20:[function(require,module,exports){
 var util = require('../util');
 
 var TYPES = '__types__';
@@ -1238,7 +2664,7 @@ type.infer = infer;
 type.inferAll = inferAll;
 type.parsers = PARSERS;
 module.exports = type;
-},{"../util":20}],17:[function(require,module,exports){
+},{"../util":24}],21:[function(require,module,exports){
 var util = require('./util');
 var type = require('./import/type');
 var gen = require('./generate');
@@ -1727,10 +3153,10 @@ stats.summary = function(data, fields) {
 };
 
 module.exports = stats;
-},{"./generate":7,"./import/type":16,"./util":20}],18:[function(require,module,exports){
-(function (global){
-var util = require('./util');
-var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null);
+},{"./generate":11,"./import/type":20,"./util":24}],22:[function(require,module,exports){
+var util = require('./util'),
+    d3_format = require('d3-format'),
+    d3_time_format = require('d3-time-format');
 
 var context = {
   formats:    [],
@@ -1796,7 +3222,7 @@ function source(text, variable, properties) {
 }
 
 function template_var(text, variable, properties) {
-  var filters = text.split('|');
+  var filters = text.match(filter_re);
   var prop = filters.shift().trim();
   var stringCast = true;
 
@@ -1815,6 +3241,18 @@ function template_var(text, variable, properties) {
     return '(typeof ' + src + '==="number"?new Date('+src+'):'+src+')';
   }
 
+  function number_format(fmt, key) {
+    a = template_format(args[0], key, fmt);
+    stringCast = false;
+    src = 'this.formats['+a+']('+src+')';
+  }
+  
+  function time_format(fmt, key) {
+    a = template_format(args[0], key, fmt);
+    stringCast = false;
+    src = 'this.formats['+a+']('+date()+')';
+  }
+
   if (properties) properties[prop] = 1;
   var src = template.property(variable, prop);
 
@@ -1823,7 +3261,8 @@ function template_var(text, variable, properties) {
 
     if ((pidx=f.indexOf(':')) > 0) {
       f = f.slice(0, pidx);
-      args = filters[i].slice(pidx+1).split(',')
+      args = filters[i].slice(pidx+1)
+        .match(args_re)
         .map(function(s) { return s.trim(); });
     }
     f = f.trim();
@@ -1879,14 +3318,13 @@ function template_var(text, variable, properties) {
         src = 'this.pad(' + strcall() + ',' + a + ',\'' + b + '\')';
         break;
       case 'number':
-        a = template_format(args[0], d3.format);
-        stringCast = false;
-        src = 'this.formats['+a+']('+src+')';
+        number_format(d3_format.format, 'number');
         break;
       case 'time':
-        a = template_format(args[0], d3.time.format);
-        stringCast = false;
-        src = 'this.formats['+a+']('+date()+')';
+        time_format(d3_time_format.format, 'time');
+        break;
+      case 'time-utc':
+        time_format(d3_time_format.utcFormat, 'time-utc');
         break;
       default:
         throw Error('Unrecognized template filter: ' + f);
@@ -1896,7 +3334,9 @@ function template_var(text, variable, properties) {
   return src;
 }
 
-var template_re = /\{\{(.+?)\}\}|$/g;
+var template_re = /\{\{(.+?)\}\}|$/g,
+    filter_re = /(?:"[^"]*"|\'[^\']*\'|[^\|"]+|[^\|\']+)+/g,
+    args_re = /(?:"[^"]*"|\'[^\']*\'|[^,"]+|[^,\']+)+/g;
 
 // Certain characters need to be escaped so that they can be put into a
 // string literal.
@@ -1915,25 +3355,513 @@ function template_escapeChar(match) {
   return '\\' + template_escapes[match];
 }
 
-function template_format(pattern, fmt) {
+function template_format(pattern, key, fmt) {
   if ((pattern[0] === '\'' && pattern[pattern.length-1] === '\'') ||
       (pattern[0] === '"'  && pattern[pattern.length-1] === '"')) {
     pattern = pattern.slice(1, -1);
   } else {
     throw Error('Format pattern must be quoted: ' + pattern);
   }
-  if (!context.format_map[pattern]) {
+  key = key + ':' + pattern;
+  if (!context.format_map[key]) {
     var f = fmt(pattern);
     var i = context.formats.length;
     context.formats.push(f);
-    context.format_map[pattern] = i;
+    context.format_map[key] = i;
   }
-  return context.format_map[pattern];
+  return context.format_map[key];
 }
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./util":24,"d3-format":4,"d3-time-format":5}],23:[function(require,module,exports){
+var d3_time = require('d3-time');
 
-},{"./util":20}],19:[function(require,module,exports){
+var tempDate = new Date(),
+    baseDate = new Date(0, 0, 1).setFullYear(0), // Jan 1, 0 AD
+    utcBaseDate = new Date(Date.UTC(0, 0, 1)).setUTCFullYear(0);
+
+function date(d) {
+  return (tempDate.setTime(+d), tempDate);
+}
+
+// create a time unit entry
+function entry(type, date, unit, step, min, max) {
+  var e = {
+    type: type,
+    date: date,
+    unit: unit
+  };
+  if (step) {
+    e.step = step;
+  } else {
+    e.minstep = 1;
+  }
+  if (min != null) e.min = min;
+  if (max != null) e.max = max;
+  return e;
+}
+
+function create(type, unit, base, step, min, max) {
+  return entry(type,
+    function(d) { return unit.offset(base, d); },
+    function(d) { return unit.count(base, d); },
+    step, min, max);
+}
+
+var locale = [
+  create('second', d3_time.second, baseDate),
+  create('minute', d3_time.minute, baseDate),
+  create('hour',   d3_time.hour,   baseDate),
+  create('day',    d3_time.day,    baseDate, [1, 7]),
+  create('month',  d3_time.month,  baseDate, [1, 3, 6]),
+  create('year',   d3_time.year,   baseDate),
+
+  // periodic units
+  entry('seconds',
+    function(d) { return new Date(1970, 0, 1, 0, 0, d); },
+    function(d) { return date(d).getSeconds(); },
+    null, 0, 59
+  ),
+  entry('minutes',
+    function(d) { return new Date(1970, 0, 1, 0, d); },
+    function(d) { return date(d).getMinutes(); },
+    null, 0, 59
+  ),
+  entry('hours',
+    function(d) { return new Date(1970, 0, 1, d); },
+    function(d) { return date(d).getHours(); },
+    null, 0, 23
+  ),
+  entry('weekdays',
+    function(d) { return new Date(1970, 0, 4+d); },
+    function(d) { return date(d).getDay(); },
+    [1], 0, 6
+  ),
+  entry('dates',
+    function(d) { return new Date(1970, 0, d); },
+    function(d) { return date(d).getDate(); },
+    [1], 1, 31
+  ),
+  entry('months',
+    function(d) { return new Date(1970, d % 12, 1); },
+    function(d) { return date(d).getMonth(); },
+    [1], 0, 11
+  )
+];
+
+var utc = [
+  create('second', d3_time.utcSecond, utcBaseDate),
+  create('minute', d3_time.utcMinute, utcBaseDate),
+  create('hour',   d3_time.utcHour,   utcBaseDate),
+  create('day',    d3_time.utcDay,    utcBaseDate, [1, 7]),
+  create('month',  d3_time.utcMonth,  utcBaseDate, [1, 3, 6]),
+  create('year',   d3_time.utcYear,   utcBaseDate),
+
+  // periodic units
+  entry('seconds',
+    function(d) { return new Date(Date.UTC(1970, 0, 1, 0, 0, d)); },
+    function(d) { return date(d).getUTCSeconds(); },
+    null, 0, 59
+  ),
+  entry('minutes',
+    function(d) { return new Date(Date.UTC(1970, 0, 1, 0, d)); },
+    function(d) { return date(d).getUTCMinutes(); },
+    null, 0, 59
+  ),
+  entry('hours',
+    function(d) { return new Date(Date.UTC(1970, 0, 1, d)); },
+    function(d) { return date(d).getUTCHours(); },
+    null, 0, 23
+  ),
+  entry('weekdays',
+    function(d) { return new Date(Date.UTC(1970, 0, 4+d)); },
+    function(d) { return date(d).getUTCDay(); },
+    [1], 0, 6
+  ),
+  entry('dates',
+    function(d) { return new Date(Date.UTC(1970, 0, d)); },
+    function(d) { return date(d).getUTCDate(); },
+    [1], 1, 31
+  ),
+  entry('months',
+    function(d) { return new Date(Date.UTC(1970, d % 12, 1)); },
+    function(d) { return date(d).getUTCMonth(); },
+    [1], 0, 11
+  )
+];
+
+var STEPS = [
+  [31536e6, 5],  // 1-year
+  [7776e6, 4],   // 3-month
+  [2592e6, 4],   // 1-month
+  [12096e5, 3],  // 2-week
+  [6048e5, 3],   // 1-week
+  [1728e5, 3],   // 2-day
+  [864e5, 3],    // 1-day
+  [432e5, 2],    // 12-hour
+  [216e5, 2],    // 6-hour
+  [108e5, 2],    // 3-hour
+  [36e5, 2],     // 1-hour
+  [18e5, 1],     // 30-minute
+  [9e5, 1],      // 15-minute
+  [3e5, 1],      // 5-minute
+  [6e4, 1],      // 1-minute
+  [3e4, 0],      // 30-second
+  [15e3, 0],     // 15-second
+  [5e3, 0],      // 5-second
+  [1e3, 0]       // 1-second
+];
+
+function find(units, span, minb, maxb) {
+  var step = STEPS[0], i, n, bins;
+
+  for (i=1, n=STEPS.length; i<n; ++i) {
+    step = STEPS[i];
+    if (span > step[0]) {
+      bins = span / step[0];
+      if (bins > maxb) {
+        return units[STEPS[i-1][1]];
+      }
+      if (bins >= minb) {
+        return units[step[1]];
+      }
+    }
+  }
+  return units[STEPS[n-1][1]];
+}
+
+function toUnitMap(units) {
+  var map = {}, i, n;
+  for (i=0, n=units.length; i<n; ++i) {
+    map[units[i].type] = units[i];
+  }
+  map.find = function(span, minb, maxb) {
+    return find(units, span, minb, maxb);
+  };
+  return map;
+}
+
+module.exports = toUnitMap(locale);
+module.exports.utc = toUnitMap(utc);
+
+},{"d3-time":6}],24:[function(require,module,exports){
+var buffer = require('buffer'),
+    time = require('./time'),
+    utc = time.utc;
+
+var u = module.exports = {};
+
+// utility functions
+
+var FNAME = '__name__';
+
+u.namedfunc = function(name, f) { return (f[FNAME] = name, f); };
+
+u.name = function(f) { return f==null ? null : f[FNAME]; };
+
+u.identity = function(x) { return x; };
+
+u.true = u.namedfunc('true', function() { return true; });
+
+u.false = u.namedfunc('false', function() { return false; });
+
+u.duplicate = function(obj) {
+  return JSON.parse(JSON.stringify(obj));
+};
+
+u.equal = function(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+};
+
+u.extend = function(obj) {
+  for (var x, name, i=1, len=arguments.length; i<len; ++i) {
+    x = arguments[i];
+    for (name in x) { obj[name] = x[name]; }
+  }
+  return obj;
+};
+
+u.length = function(x) {
+  return x != null && x.length != null ? x.length : null;
+};
+
+u.keys = function(x) {
+  var keys = [], k;
+  for (k in x) keys.push(k);
+  return keys;
+};
+
+u.vals = function(x) {
+  var vals = [], k;
+  for (k in x) vals.push(x[k]);
+  return vals;
+};
+
+u.toMap = function(list, f) {
+  return (f = u.$(f)) ?
+    list.reduce(function(obj, x) { return (obj[f(x)] = 1, obj); }, {}) :
+    list.reduce(function(obj, x) { return (obj[x] = 1, obj); }, {});
+};
+
+u.keystr = function(values) {
+  // use to ensure consistent key generation across modules
+  var n = values.length;
+  if (!n) return '';
+  for (var s=String(values[0]), i=1; i<n; ++i) {
+    s += '|' + String(values[i]);
+  }
+  return s;
+};
+
+// type checking functions
+
+var toString = Object.prototype.toString;
+
+u.isObject = function(obj) {
+  return obj === Object(obj);
+};
+
+u.isFunction = function(obj) {
+  return toString.call(obj) === '[object Function]';
+};
+
+u.isString = function(obj) {
+  return typeof value === 'string' || toString.call(obj) === '[object String]';
+};
+
+u.isArray = Array.isArray || function(obj) {
+  return toString.call(obj) === '[object Array]';
+};
+
+u.isNumber = function(obj) {
+  return typeof obj === 'number' || toString.call(obj) === '[object Number]';
+};
+
+u.isBoolean = function(obj) {
+  return obj === true || obj === false || toString.call(obj) == '[object Boolean]';
+};
+
+u.isDate = function(obj) {
+  return toString.call(obj) === '[object Date]';
+};
+
+u.isValid = function(obj) {
+  return obj != null && obj === obj;
+};
+
+u.isBuffer = (buffer.Buffer && buffer.Buffer.isBuffer) || u.false;
+
+// type coercion functions
+
+u.number = function(s) {
+  return s == null || s === '' ? null : +s;
+};
+
+u.boolean = function(s) {
+  return s == null || s === '' ? null : s==='false' ? false : !!s;
+};
+
+u.date = function(s) {
+  return s == null || s === '' ? null : Date.parse(s);
+};
+
+u.array = function(x) {
+  return x != null ? (u.isArray(x) ? x : [x]) : [];
+};
+
+u.str = function(x) {
+  return u.isArray(x) ? '[' + x.map(u.str) + ']'
+    : u.isObject(x) ? JSON.stringify(x)
+    : u.isString(x) ? ('\''+util_escape_str(x)+'\'') : x;
+};
+
+var escape_str_re = /(^|[^\\])'/g;
+
+function util_escape_str(x) {
+  return x.replace(escape_str_re, '$1\\\'');
+}
+
+// data access functions
+
+u.field = function(f) {
+  return String(f).split('\\.')
+    .map(function(d) { return d.split('.'); })
+    .reduce(function(a, b) {
+      if (a.length) { a[a.length-1] += '.' + b.shift(); }
+      a.push.apply(a, b);
+      return a;
+    }, []);
+};
+
+u.accessor = function(f) {
+  var s;
+  return f==null || u.isFunction(f) ? f :
+    u.namedfunc(f, (s = u.field(f)).length > 1 ?
+      function(x) { return s.reduce(function(x,f) { return x[f]; }, x); } :
+      function(x) { return x[f]; }
+    );
+};
+
+// short-cut for accessor
+u.$ = u.accessor;
+
+u.mutator = function(f) {
+  var s;
+  return u.isString(f) && (s=u.field(f)).length > 1 ?
+    function(x, v) {
+      for (var i=0; i<s.length-1; ++i) x = x[s[i]];
+      x[s[i]] = v;
+    } :
+    function(x, v) { x[f] = v; };
+};
+
+
+u.$func = function(name, op) {
+  return function(f) {
+    f = u.$(f) || u.identity;
+    var n = name + (u.name(f) ? '_'+u.name(f) : '');
+    return u.namedfunc(n, function(d) { return op(f(d)); });
+  };
+};
+
+u.$valid  = u.$func('valid', u.isValid);
+u.$length = u.$func('length', u.length);
+
+u.$in = function(f, values) {
+  f = u.$(f);
+  var map = u.isArray(values) ? u.toMap(values) : values;
+  return function(d) { return !!map[f(d)]; };
+};
+
+u.$year   = u.$func('year', time.year.unit);
+u.$month  = u.$func('month', time.months.unit);
+u.$date   = u.$func('date', time.dates.unit);
+u.$day    = u.$func('day', time.weekdays.unit);
+u.$hour   = u.$func('hour', time.hours.unit);
+u.$minute = u.$func('minute', time.minutes.unit);
+u.$second = u.$func('second', time.seconds.unit);
+
+u.$utcYear   = u.$func('utcYear', utc.year.unit);
+u.$utcMonth  = u.$func('utcMonth', utc.months.unit);
+u.$utcDate   = u.$func('utcDate', utc.dates.unit);
+u.$utcDay    = u.$func('utcDay', utc.weekdays.unit);
+u.$utcHour   = u.$func('utcHour', utc.hours.unit);
+u.$utcMinute = u.$func('utcMinute', utc.minutes.unit);
+u.$utcSecond = u.$func('utcSecond', utc.seconds.unit);
+
+// comparison / sorting functions
+
+u.comparator = function(sort) {
+  var sign = [];
+  if (sort === undefined) sort = [];
+  sort = u.array(sort).map(function(f) {
+    var s = 1;
+    if      (f[0] === '-') { s = -1; f = f.slice(1); }
+    else if (f[0] === '+') { s = +1; f = f.slice(1); }
+    sign.push(s);
+    return u.accessor(f);
+  });
+  return function(a,b) {
+    var i, n, f, x, y;
+    for (i=0, n=sort.length; i<n; ++i) {
+      f = sort[i]; x = f(a); y = f(b);
+      if (x < y) return -1 * sign[i];
+      if (x > y) return sign[i];
+    }
+    return 0;
+  };
+};
+
+u.cmp = function(a, b) {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else if (a >= b) {
+    return 0;
+  } else if (a === null) {
+    return -1;
+  } else if (b === null) {
+    return 1;
+  }
+  return NaN;
+};
+
+u.numcmp = function(a, b) { return a - b; };
+
+u.stablesort = function(array, sortBy, keyFn) {
+  var indices = array.reduce(function(idx, v, i) {
+    return (idx[keyFn(v)] = i, idx);
+  }, {});
+
+  array.sort(function(a, b) {
+    var sa = sortBy(a),
+        sb = sortBy(b);
+    return sa < sb ? -1 : sa > sb ? 1
+         : (indices[keyFn(a)] - indices[keyFn(b)]);
+  });
+
+  return array;
+};
+
+
+// string functions
+
+u.pad = function(s, length, pos, padchar) {
+  padchar = padchar || " ";
+  var d = length - s.length;
+  if (d <= 0) return s;
+  switch (pos) {
+    case 'left':
+      return strrep(d, padchar) + s;
+    case 'middle':
+    case 'center':
+      return strrep(Math.floor(d/2), padchar) +
+         s + strrep(Math.ceil(d/2), padchar);
+    default:
+      return s + strrep(d, padchar);
+  }
+};
+
+function strrep(n, str) {
+  var s = "", i;
+  for (i=0; i<n; ++i) s += str;
+  return s;
+}
+
+u.truncate = function(s, length, pos, word, ellipsis) {
+  var len = s.length;
+  if (len <= length) return s;
+  ellipsis = ellipsis !== undefined ? String(ellipsis) : '\u2026';
+  var l = Math.max(0, length - ellipsis.length);
+
+  switch (pos) {
+    case 'left':
+      return ellipsis + (word ? truncateOnWord(s,l,1) : s.slice(len-l));
+    case 'middle':
+    case 'center':
+      var l1 = Math.ceil(l/2), l2 = Math.floor(l/2);
+      return (word ? truncateOnWord(s,l1) : s.slice(0,l1)) +
+        ellipsis + (word ? truncateOnWord(s,l2,1) : s.slice(len-l2));
+    default:
+      return (word ? truncateOnWord(s,l) : s.slice(0,l)) + ellipsis;
+  }
+};
+
+function truncateOnWord(s, len, rev) {
+  var cnt = 0, tok = s.split(truncate_word_re);
+  if (rev) {
+    s = (tok = tok.reverse())
+      .filter(function(w) { cnt += w.length; return cnt <= len; })
+      .reverse();
+  } else {
+    s = tok.filter(function(w) { cnt += w.length; return cnt <= len; });
+  }
+  return s.length ? s.join('').trim() : tok[0].slice(0, len);
+}
+
+var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u2028\u2029\u3000\uFEFF])/;
+
+},{"./time":23,"buffer":2}],25:[function(require,module,exports){
 var STEPS = [
   [31536e6, 5],  // 1-year
   [7776e6, 4],   // 3-month
@@ -2135,7 +4063,7 @@ units.find = function(span, minb, maxb) {
 
 module.exports = units;
 
-},{}],20:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var buffer = require('buffer');
 var units = require('./time-units');
 var u = module.exports = {};
@@ -2439,10 +4367,10 @@ function truncateOnWord(s, len, rev) {
 
 var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u2028\u2029\u3000\uFEFF])/;
 
-},{"./time-units":19,"buffer":2}],21:[function(require,module,exports){
+},{"./time-units":25,"buffer":2}],27:[function(require,module,exports){
 module.exports = require('./lib/heap');
 
-},{"./lib/heap":22}],22:[function(require,module,exports){
+},{"./lib/heap":28}],28:[function(require,module,exports){
 // Generated by CoffeeScript 1.8.0
 (function() {
   var Heap, defaultCmp, floor, heapify, heappop, heappush, heappushpop, heapreplace, insort, min, nlargest, nsmallest, updateItem, _siftdown, _siftup;
@@ -2819,7 +4747,7 @@ module.exports = require('./lib/heap');
 
 }).call(this);
 
-},{}],23:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL;
 
 function create(cs, reflow) {
@@ -2851,7 +4779,7 @@ module.exports = {
   create: create,
   copy: copy
 };
-},{"./Dependencies":26}],24:[function(require,module,exports){
+},{"./Dependencies":32}],30:[function(require,module,exports){
 var log = require('vega-logging'),
     Tuple = require('./Tuple'),
     Base = require('./Node').prototype;
@@ -2894,7 +4822,7 @@ prototype.evaluate = function(input) {
 };
 
 module.exports = Collector;
-},{"./Node":28,"./Tuple":31,"vega-logging":38}],25:[function(require,module,exports){
+},{"./Node":34,"./Tuple":37,"vega-logging":44}],31:[function(require,module,exports){
 var log = require('vega-logging'),
     ChangeSet = require('./ChangeSet'), 
     Collector = require('./Collector'),
@@ -3173,13 +5101,13 @@ prototype.listeners = function(ds) {
 
 module.exports = DataSource;
 
-},{"./ChangeSet":23,"./Collector":24,"./Node":28,"./Sentinel":29,"./Tuple":31,"vega-logging":38}],26:[function(require,module,exports){
+},{"./ChangeSet":29,"./Collector":30,"./Node":34,"./Sentinel":35,"./Tuple":37,"vega-logging":44}],32:[function(require,module,exports){
 var deps = module.exports = {
   ALL: ['data', 'fields', 'scales', 'signals']
 };
 deps.ALL.forEach(function(k) { deps[k.toUpperCase()] = k; });
 
-},{}],27:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var Heap = require('heap'),
     util = require('datalib/src/util'),
     ChangeSet = require('./ChangeSet'),
@@ -3443,7 +5371,7 @@ prototype.evaluate = function(pulse, node) {
 
 module.exports = Graph;
 
-},{"./ChangeSet":23,"./Collector":24,"./DataSource":25,"./Dependencies":26,"./Signal":30,"datalib/src/util":20,"heap":21}],28:[function(require,module,exports){
+},{"./ChangeSet":29,"./Collector":30,"./DataSource":31,"./Dependencies":32,"./Signal":36,"datalib/src/util":26,"heap":27}],34:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL,
     nodeID = 1;
 
@@ -3610,10 +5538,10 @@ prototype.reevaluate = function(pulse) {
 
 module.exports = Node;
 
-},{"./Dependencies":26}],29:[function(require,module,exports){
+},{"./Dependencies":32}],35:[function(require,module,exports){
 module.exports = {'sentinel': 1};
 
-},{}],30:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var ChangeSet = require('./ChangeSet'),
     Node = require('./Node'), // jshint ignore:line
     Base = Node.prototype;
@@ -3686,7 +5614,7 @@ prototype.off = function(handler) {
 
 module.exports = Signal;
 
-},{"./ChangeSet":23,"./Node":28}],31:[function(require,module,exports){
+},{"./ChangeSet":29,"./Node":34}],37:[function(require,module,exports){
 var util = require('datalib/src/util'),
     SENTINEL = require('./Sentinel'),
     tupleID = 0;
@@ -3755,7 +5683,7 @@ module.exports = {
   idFilter: idFilter
 };
 
-},{"./Sentinel":29,"datalib/src/util":20}],32:[function(require,module,exports){
+},{"./Sentinel":35,"datalib/src/util":26}],38:[function(require,module,exports){
 module.exports = {
   ChangeSet:    require('./ChangeSet'),
   Collector:    require('./Collector'),
@@ -3769,7 +5697,7 @@ module.exports = {
   debug:        require('vega-logging').debug
 };
 
-},{"./ChangeSet":23,"./Collector":24,"./DataSource":25,"./Dependencies":26,"./Graph":27,"./Node":28,"./Sentinel":29,"./Signal":30,"./Tuple":31,"vega-logging":38}],33:[function(require,module,exports){
+},{"./ChangeSet":29,"./Collector":30,"./DataSource":31,"./Dependencies":32,"./Graph":33,"./Node":34,"./Sentinel":35,"./Signal":36,"./Tuple":37,"vega-logging":44}],39:[function(require,module,exports){
 function toMap(list) {
   var map = {}, i, n;
   for (i=0, n=list.length; i<n; ++i) map[list[i]] = 1;
@@ -3902,7 +5830,7 @@ module.exports = function(opt) {
   return codegen_wrap;
 };
 
-},{"./constants":34,"./functions":35}],34:[function(require,module,exports){
+},{"./constants":40,"./functions":41}],40:[function(require,module,exports){
 module.exports = {
   'NaN':     'NaN',
   'E':       'Math.E',
@@ -3914,7 +5842,7 @@ module.exports = {
   'SQRT1_2': 'Math.SQRT1_2',
   'SQRT2':   'Math.SQRT2'
 };
-},{}],35:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = function(codegen) {
 
   function fncall(name, args, cast, type) {
@@ -4065,7 +5993,7 @@ module.exports = function(codegen) {
       }
   };
 };
-},{}],36:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var parser = require('./parser'),
     codegen = require('./codegen');
     
@@ -4091,7 +6019,7 @@ var expr = module.exports = {
   constants: require('./constants')
 };
 
-},{"./codegen":33,"./constants":34,"./functions":35,"./parser":37}],37:[function(require,module,exports){
+},{"./codegen":39,"./constants":40,"./functions":41,"./parser":43}],43:[function(require,module,exports){
 /*
   The following expression parser is based on Esprima (http://esprima.org/).
   Original header comment and license for Esprima is included here:
@@ -6419,7 +8347,7 @@ module.exports = (function() {
   };
 
 })();
-},{}],38:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var ts = Date.now();
 
 function write(msg) {
@@ -6457,7 +8385,9 @@ module.exports = {
   debug: (debug.enable = false, debug)
 };
 
-},{}],39:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
+arguments[4][17][0].apply(exports,arguments)
+},{"dup":17,"fs":2,"request":2,"sync-request":2,"url":2}],46:[function(require,module,exports){
 var segmentCache = {},
     bezierCache = {},
     join = [].join;
@@ -6572,7 +8502,7 @@ module.exports = {
   }
 };
 
-},{}],40:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(path, bounds) {
@@ -6831,14 +8761,14 @@ function boundArc(x, y, coords, bounds) {
   }
 }
 
-},{"./arc":39}],41:[function(require,module,exports){
+},{"./arc":46}],48:[function(require,module,exports){
 module.exports = {
   parse:  require('./parse'),
   render: require('./render'),
   bounds: require('./bounds')
 };
 
-},{"./bounds":40,"./parse":42,"./render":43}],42:[function(require,module,exports){
+},{"./bounds":47,"./parse":49,"./render":50}],49:[function(require,module,exports){
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
 var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
     regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)-/g, /\s|,|###/];
@@ -6889,7 +8819,7 @@ module.exports = function(pathstr) {
   return result;
 };
 
-},{}],43:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
@@ -7185,7 +9115,7 @@ function drawArc(g, x, y, coords) {
   }
 }
 
-},{"./arc":39}],44:[function(require,module,exports){
+},{"./arc":46}],51:[function(require,module,exports){
 function Handler() {
   this._active = null;
   this._handlers = {};
@@ -7235,7 +9165,7 @@ prototype.eventName = function(name) {
 };
 
 module.exports = Handler;
-},{}],45:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 function Renderer() {
   this._el = null;
   this._bgcolor = null;
@@ -7270,7 +9200,7 @@ prototype.render = function(/*scene, items*/) {
 };
 
 module.exports = Renderer;
-},{}],46:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler'),
     marks = require('./marks');
@@ -7444,7 +9374,7 @@ prototype.pick = function(scene, x, y, gx, gy) {
 
 module.exports = CanvasHandler;
 
-},{"../../util/dom":72,"../Handler":44,"./marks":53}],47:[function(require,module,exports){
+},{"../../util/dom":79,"../Handler":51,"./marks":60}],54:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Bounds = require('../../util/Bounds'),
     ImageLoader = require('../../util/ImageLoader'),
@@ -7579,12 +9509,12 @@ prototype.renderAsync = function(scene) {
 
 module.exports = CanvasRenderer;
 
-},{"../../util/Bounds":66,"../../util/ImageLoader":68,"../../util/canvas":71,"../../util/dom":72,"../Renderer":45,"./marks":53}],48:[function(require,module,exports){
+},{"../../util/Bounds":73,"../../util/ImageLoader":75,"../../util/canvas":78,"../../util/dom":79,"../Renderer":52,"./marks":60}],55:[function(require,module,exports){
 module.exports = {
   Handler:  require('./CanvasHandler'),
   Renderer: require('./CanvasRenderer')
 };
-},{"./CanvasHandler":46,"./CanvasRenderer":47}],49:[function(require,module,exports){
+},{"./CanvasHandler":53,"./CanvasRenderer":54}],56:[function(require,module,exports){
 var util = require('./util');
 var halfpi = Math.PI / 2;
 
@@ -7606,7 +9536,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":60}],50:[function(require,module,exports){
+},{"./util":67}],57:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -7641,7 +9571,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":42,"../../../path/render":43,"../../../util/svg":74,"./util":60}],51:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":81,"./util":67}],58:[function(require,module,exports){
 var util = require('./util'),
     rect = require('./rect');
 
@@ -7735,7 +9665,7 @@ module.exports = {
   pick: pick
 };
 
-},{"./rect":56,"./util":60}],52:[function(require,module,exports){
+},{"./rect":63,"./util":67}],59:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -7773,7 +9703,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":60}],53:[function(require,module,exports){
+},{"./util":67}],60:[function(require,module,exports){
 module.exports = {
   arc:    require('./arc'),
   area:   require('./area'),
@@ -7787,7 +9717,7 @@ module.exports = {
   text:   require('./text')
 };
 
-},{"./arc":49,"./area":50,"./group":51,"./image":52,"./line":54,"./path":55,"./rect":56,"./rule":57,"./symbol":58,"./text":59}],54:[function(require,module,exports){
+},{"./arc":56,"./area":57,"./group":58,"./image":59,"./line":61,"./path":62,"./rect":63,"./rule":64,"./symbol":65,"./text":66}],61:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -7822,7 +9752,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":42,"../../../path/render":43,"../../../util/svg":74,"./util":60}],55:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":81,"./util":67}],62:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -7838,7 +9768,7 @@ module.exports = {
   pick: util.pickPath(path)
 };
 
-},{"../../../path/parse":42,"../../../path/render":43,"./util":60}],56:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"./util":67}],63:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -7873,7 +9803,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":60}],57:[function(require,module,exports){
+},{"./util":67}],64:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -7930,7 +9860,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"./util":60}],58:[function(require,module,exports){
+},{"./util":67}],65:[function(require,module,exports){
 var util = require('./util');
 
 var sqrt3 = Math.sqrt(3),
@@ -8004,7 +9934,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":60}],59:[function(require,module,exports){
+},{"./util":67}],66:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
     font = require('../../../util/font'),
@@ -8077,7 +10007,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../util/Bounds":66,"../../../util/bound":70,"../../../util/font":73,"./util":60}],60:[function(require,module,exports){
+},{"../../../util/Bounds":73,"../../../util/bound":77,"../../../util/font":80,"./util":67}],67:[function(require,module,exports){
 function drawPathOne(path, g, o, items) {
   if (path(g, items)) return;
 
@@ -8226,7 +10156,7 @@ module.exports = {
   gradient: gradient
 };
 
-},{}],61:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
@@ -8292,7 +10222,7 @@ prototype.off = function(type, handler) {
 
 module.exports = SVGHandler;
 
-},{"../../util/dom":72,"../Handler":44}],62:[function(require,module,exports){
+},{"../../util/dom":79,"../Handler":51}],69:[function(require,module,exports){
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
     font = require('../../util/font'),
@@ -8714,7 +10644,7 @@ prototype.style = function(el, o) {
 
 module.exports = SVGRenderer;
 
-},{"../../util/ImageLoader":68,"../../util/dom":72,"../../util/font":73,"../../util/svg":74,"../Renderer":45,"./marks":65}],63:[function(require,module,exports){
+},{"../../util/ImageLoader":75,"../../util/dom":79,"../../util/font":80,"../../util/svg":81,"../Renderer":52,"./marks":72}],70:[function(require,module,exports){
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
@@ -8959,7 +10889,7 @@ function escape_text(s) {
 
 module.exports = SVGStringRenderer;
 
-},{"../../util/ImageLoader":68,"../../util/dom":72,"../../util/font":73,"../../util/svg":74,"../Renderer":45,"./marks":65}],64:[function(require,module,exports){
+},{"../../util/ImageLoader":75,"../../util/dom":79,"../../util/font":80,"../../util/svg":81,"../Renderer":52,"./marks":72}],71:[function(require,module,exports){
 module.exports = {
   Handler:  require('./SVGHandler'),
   Renderer: require('./SVGRenderer'),
@@ -8967,7 +10897,7 @@ module.exports = {
     Renderer : require('./SVGStringRenderer')
   }
 };
-},{"./SVGHandler":61,"./SVGRenderer":62,"./SVGStringRenderer":63}],65:[function(require,module,exports){
+},{"./SVGHandler":68,"./SVGRenderer":69,"./SVGStringRenderer":70}],72:[function(require,module,exports){
 var font = require('../../util/font'),
     SVG = require('../../util/svg'),
     textAlign = SVG.textAlign,
@@ -9114,7 +11044,7 @@ module.exports = {
   }
 };
 
-},{"../../util/font":73,"../../util/svg":74}],66:[function(require,module,exports){
+},{"../../util/font":80,"../../util/svg":81}],73:[function(require,module,exports){
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
@@ -9234,7 +11164,7 @@ prototype.height = function() {
 
 module.exports = Bounds;
 
-},{}],67:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var gradient_id = 0;
 
 function Gradient(type) {
@@ -9258,7 +11188,7 @@ prototype.stop = function(offset, color) {
 };
 
 module.exports = Gradient;
-},{}],68:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (global){
 var load = require('datalib/src/import/load');
 
@@ -9338,7 +11268,7 @@ module.exports = ImageLoader;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib/src/import/load":13}],69:[function(require,module,exports){
+},{"datalib/src/import/load":45}],76:[function(require,module,exports){
 function Item(mark) {
   this.mark = mark;
 }
@@ -9387,7 +11317,7 @@ prototype.touch = function() {
 };
 
 module.exports = Item;
-},{}],70:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 var Bounds = require('../util/Bounds'),
     canvas = require('../util/canvas'),
     svg = require('../util/svg'),
@@ -9680,7 +11610,7 @@ module.exports = {
   group: group
 };
 
-},{"../path":41,"../util/Bounds":66,"../util/canvas":71,"../util/svg":74,"./font":73}],71:[function(require,module,exports){
+},{"../path":48,"../util/Bounds":73,"../util/canvas":78,"../util/svg":81,"./font":80}],78:[function(require,module,exports){
 (function (global){
 function instance(w, h) {
   w = w || 1;
@@ -9773,7 +11703,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],72:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 // create a new DOM element
 function create(doc, tag, ns) {
   return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
@@ -9851,7 +11781,7 @@ module.exports = {
   }
 };
 
-},{}],73:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 function size(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
@@ -9883,7 +11813,7 @@ module.exports = {
   }
 };
 
-},{}],74:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 (function (global){
 var d3_svg = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null).svg;
 
@@ -9958,7 +11888,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],75:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var canvas = require('vega-scenegraph/src/render/canvas'),
     svg = require('vega-scenegraph/src/render/svg').string,
     View = require('./View');
@@ -10021,7 +11951,7 @@ prototype.initialize = function() {
 };
 
 module.exports = HeadlessView;
-},{"./View":77,"vega-scenegraph/src/render/canvas":48,"vega-scenegraph/src/render/svg":64}],76:[function(require,module,exports){
+},{"./View":84,"vega-scenegraph/src/render/canvas":55,"vega-scenegraph/src/render/svg":71}],83:[function(require,module,exports){
 var util = require('datalib/src/util'),
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Base = require('vega-dataflow/src/Graph').prototype,
@@ -10157,7 +12087,7 @@ prototype.fire = function(cs) {
 };
 
 module.exports = Model;
-},{"../scene/GroupBuilder":100,"../scene/visit":105,"./config":78,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Graph":27,"vega-dataflow/src/Node":28}],77:[function(require,module,exports){
+},{"../scene/GroupBuilder":107,"../scene/visit":112,"./config":85,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Graph":33,"vega-dataflow/src/Node":34}],84:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -10568,7 +12498,7 @@ View.factory = function(model) {
 module.exports = View;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/streams":95,"../scene/Encoder":99,"../scene/Transition":102,"./HeadlessView":75,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Node":28,"vega-logging":38,"vega-scenegraph/src/render/canvas":48,"vega-scenegraph/src/render/svg":64}],78:[function(require,module,exports){
+},{"../parse/streams":102,"../scene/Encoder":106,"../scene/Transition":109,"./HeadlessView":82,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Node":34,"vega-logging":44,"vega-scenegraph/src/render/canvas":55,"vega-scenegraph/src/render/svg":71}],85:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     config = {};
@@ -10705,7 +12635,7 @@ config.range = {
 module.exports = config;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],79:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var util = require('datalib/src/util'),
     load = require('datalib/src/import/readers'),
     parse = require('../parse'),
@@ -10753,7 +12683,7 @@ module.exports = function(opt) {
 
   return schema;
 };
-},{"../parse":85,"../scene/Scale":101,"./config":78,"datalib/src/import/readers":15,"datalib/src/util":20}],80:[function(require,module,exports){
+},{"../parse":92,"../scene/Scale":108,"./config":85,"datalib/src/import/readers":19,"datalib/src/util":24}],87:[function(require,module,exports){
 var util = require('datalib/src/util'),
     axs = require('../scene/axis');
 
@@ -10838,7 +12768,7 @@ function parseAxis(config, def, index, axis, group) {
 }
 
 module.exports = parseAxes;
-},{"../scene/axis":103,"datalib/src/util":20}],81:[function(require,module,exports){
+},{"../scene/axis":110,"datalib/src/util":24}],88:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null);
 
@@ -10852,7 +12782,7 @@ function parseBg(bg) {
 module.exports = parseBg;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],82:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     read = require('datalib/src/import/read'),
     util = require('datalib/src/util'),
@@ -10910,7 +12840,7 @@ parseData.datasource = function(model, d) {
 };
 
 module.exports = parseData;
-},{"./modify":89,"./transforms":96,"datalib/src/import/load":13,"datalib/src/import/read":14,"datalib/src/util":20,"vega-logging":38}],83:[function(require,module,exports){
+},{"./modify":96,"./transforms":103,"datalib/src/import/load":17,"datalib/src/import/read":18,"datalib/src/util":24,"vega-logging":44}],90:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -12020,7 +13950,7 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],84:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 var expr = require('vega-expression'),
     args = ['datum', 'event', 'signals'];
 
@@ -12037,7 +13967,7 @@ module.exports = expr.compiler(args, {
     return fn;
   }
 });
-},{"vega-expression":36}],85:[function(require,module,exports){
+},{"vega-expression":42}],92:[function(require,module,exports){
 module.exports = {
   axes: require('./axes'),
   background: require('./background'),
@@ -12056,7 +13986,7 @@ module.exports = {
   streams: require('./streams'),
   transforms: require('./transforms')
 };
-},{"./axes":80,"./background":81,"./data":82,"./events":83,"./expr":84,"./legends":86,"./mark":87,"./marks":88,"./modify":89,"./padding":90,"./predicates":91,"./properties":92,"./signals":93,"./spec":94,"./streams":95,"./transforms":96}],86:[function(require,module,exports){
+},{"./axes":87,"./background":88,"./data":89,"./events":90,"./expr":91,"./legends":93,"./mark":94,"./marks":95,"./modify":96,"./padding":97,"./predicates":98,"./properties":99,"./signals":100,"./spec":101,"./streams":102,"./transforms":103}],93:[function(require,module,exports){
 var lgnd = require('../scene/legend');
 
 function parseLegends(model, spec, legends, group) {
@@ -12098,7 +14028,7 @@ function parseLegend(def, index, legend, group) {
 }
 
 module.exports = parseLegends;
-},{"../scene/legend":104}],87:[function(require,module,exports){
+},{"../scene/legend":111}],94:[function(require,module,exports){
 var util = require('datalib/src/util'),
     parseProperties = require('./properties');
 
@@ -12125,7 +14055,7 @@ function parseMark(model, mark) {
 }
 
 module.exports = parseMark;
-},{"./properties":92,"datalib/src/util":20}],88:[function(require,module,exports){
+},{"./properties":99,"datalib/src/util":24}],95:[function(require,module,exports){
 var parseMark = require('./mark');
 
 function parseRootMark(model, spec, width, height) {
@@ -12141,7 +14071,7 @@ function parseRootMark(model, spec, width, height) {
 }
 
 module.exports = parseRootMark;
-},{"./mark":87}],89:[function(require,module,exports){
+},{"./mark":94}],96:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -12227,7 +14157,7 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-},{"datalib/src/util":20,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28,"vega-dataflow/src/Tuple":31,"vega-logging":38}],90:[function(require,module,exports){
+},{"datalib/src/util":24,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34,"vega-dataflow/src/Tuple":37,"vega-logging":44}],97:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 function parsePadding(pad) {
@@ -12239,7 +14169,7 @@ function parsePadding(pad) {
 }
 
 module.exports = parsePadding;
-},{"datalib/src/util":20}],91:[function(require,module,exports){
+},{"datalib/src/util":24}],98:[function(require,module,exports){
 var util = require('datalib/src/util');
 
 var types = {
@@ -12434,7 +14364,7 @@ function parseScale(spec, ops) {
 }
 
 module.exports = parsePredicates;
-},{"datalib/src/util":20}],92:[function(require,module,exports){
+},{"datalib/src/util":24}],99:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     template = require('datalib/src/template'),
@@ -12770,7 +14700,7 @@ function scaleRef(ref) {
 module.exports = properties;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib/src/template":18,"datalib/src/util":20,"vega-dataflow/src/Tuple":31,"vega-logging":38}],93:[function(require,module,exports){
+},{"datalib/src/template":22,"datalib/src/util":24,"vega-dataflow/src/Tuple":37,"vega-logging":44}],100:[function(require,module,exports){
 var util = require('datalib/src/util'),
     functions = require('vega-expression/src/functions')(),
     Deps = require('vega-dataflow/src/Dependencies'),
@@ -12844,7 +14774,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
 };
 
 module.exports = parseSignals;
-},{"./expr":84,"datalib/src/util":20,"vega-dataflow/src/Dependencies":26,"vega-expression/src/functions":35}],94:[function(require,module,exports){
+},{"./expr":91,"datalib/src/util":24,"vega-dataflow/src/Dependencies":32,"vega-expression/src/functions":41}],101:[function(require,module,exports){
 var load = require('datalib/src/import/load'),
     util = require('datalib/src/util'),
     log = require('vega-logging'),
@@ -12905,7 +14835,7 @@ function parseSpec(spec, callback) {
 }
 
 module.exports = parseSpec;
-},{"../core/Model":76,"../core/View":77,"../parse/background":81,"../parse/data":82,"../parse/marks":88,"../parse/padding":90,"../parse/predicates":91,"../parse/signals":93,"datalib/src/import/load":13,"datalib/src/util":20,"vega-logging":38}],95:[function(require,module,exports){
+},{"../core/Model":83,"../core/View":84,"../parse/background":88,"../parse/data":89,"../parse/marks":95,"../parse/padding":97,"../parse/predicates":98,"../parse/signals":100,"datalib/src/import/load":17,"datalib/src/util":24,"vega-logging":44}],102:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -13138,7 +15068,7 @@ function parseStreams(view) {
 module.exports = parseStreams;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./events":83,"./expr":84,"./signals":93,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28}],96:[function(require,module,exports){
+},{"./events":90,"./expr":91,"./signals":100,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34}],103:[function(require,module,exports){
 var util = require('datalib/src/util'),
     transforms = require('../transforms/index');
 
@@ -13158,7 +15088,7 @@ function parseTransforms(model, def) {
 }
 
 module.exports = parseTransforms;
-},{"../transforms/index":126,"datalib/src/util":20}],97:[function(require,module,exports){
+},{"../transforms/index":133,"datalib/src/util":24}],104:[function(require,module,exports){
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
@@ -13210,7 +15140,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"./Encoder":99,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Node":28,"vega-logging":38,"vega-scenegraph/src/util/bound":70}],98:[function(require,module,exports){
+},{"./Encoder":106,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Node":34,"vega-logging":44,"vega-scenegraph/src/util/bound":77}],105:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Item = require('vega-scenegraph/src/util/Item'),
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -13530,7 +15460,7 @@ function keyFunction(key) {
 }
 
 module.exports = Builder;
-},{"../parse/data":82,"./Bounder":97,"./Encoder":99,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28,"vega-dataflow/src/Sentinel":29,"vega-dataflow/src/Tuple":31,"vega-logging":38,"vega-scenegraph/src/util/Item":69}],99:[function(require,module,exports){
+},{"../parse/data":89,"./Bounder":104,"./Encoder":106,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34,"vega-dataflow/src/Sentinel":35,"vega-dataflow/src/Tuple":37,"vega-logging":44,"vega-scenegraph/src/util/Item":76}],106:[function(require,module,exports){
 var util = require('datalib/src/util'),
     bound = require('vega-scenegraph/src/util/bound'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
@@ -13663,7 +15593,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
 };
 
 module.exports = Encoder;
-},{"./Builder":98,"datalib/src/util":20,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28,"vega-logging":38,"vega-scenegraph/src/util/bound":70}],100:[function(require,module,exports){
+},{"./Builder":105,"datalib/src/util":24,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34,"vega-logging":44,"vega-scenegraph/src/util/bound":77}],107:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Node = require('vega-dataflow/src/Node'), // jshint ignore:line
     Collector = require('vega-dataflow/src/Collector'),
@@ -13932,7 +15862,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../parse/axes":80,"../parse/legends":86,"./Builder":98,"./Scale":101,"datalib/src/util":20,"vega-dataflow/src/Collector":24,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28,"vega-logging":38}],101:[function(require,module,exports){
+},{"../parse/axes":87,"../parse/legends":93,"./Builder":105,"./Scale":108,"datalib/src/util":24,"vega-dataflow/src/Collector":30,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34,"vega-logging":44}],108:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -14405,7 +16335,7 @@ function range(group) {
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../transforms/Aggregate":106,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28,"vega-logging":38}],102:[function(require,module,exports){
+},{"../transforms/Aggregate":113,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34,"vega-logging":44}],109:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     bound = require('vega-scenegraph/src/util/bound'),
@@ -14512,7 +16442,7 @@ function step(elapsed) {
 module.exports = Transition;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Builder":98,"vega-dataflow/src/Tuple":31,"vega-scenegraph/src/util/bound":70}],103:[function(require,module,exports){
+},{"./Builder":105,"vega-dataflow/src/Tuple":37,"vega-scenegraph/src/util/bound":77}],110:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -15088,7 +17018,7 @@ function vg_axisDomain(config) {
 module.exports = axs;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/mark":87,"datalib/src/util":20,"vega-dataflow/src/Tuple":31}],104:[function(require,module,exports){
+},{"../parse/mark":94,"datalib/src/util":24,"vega-dataflow/src/Tuple":37}],111:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -15635,7 +17565,7 @@ function vg_hLegendLabels(config) {
 module.exports = lgnd;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/mark":87,"../parse/properties":92,"datalib/src/util":20,"vega-scenegraph/src/util/Gradient":67}],105:[function(require,module,exports){
+},{"../parse/mark":94,"../parse/properties":99,"datalib/src/util":24,"vega-scenegraph/src/util/Gradient":74}],112:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
   if (func(node)) return true;
@@ -15649,7 +17579,7 @@ module.exports = function visit(node, func) {
     }
   }
 };
-},{}],106:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 var util = require('datalib/src/util'),
     ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -15825,7 +17755,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Aggregate;
-},{"./Facetor":111,"./Transform":123,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Tuple":31,"vega-logging":38}],107:[function(require,module,exports){
+},{"./Facetor":118,"./Transform":130,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Tuple":37,"vega-logging":44}],114:[function(require,module,exports){
 var Base = require('./Transform').prototype;
 
 function BatchTransform() {
@@ -15850,7 +17780,7 @@ prototype.batchTransform = function(/* input, data */) {
 };
 
 module.exports = BatchTransform;
-},{"./Transform":123}],108:[function(require,module,exports){
+},{"./Transform":130}],115:[function(require,module,exports){
 var bins = require('datalib/src/bins/bins'),
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
@@ -15912,7 +17842,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Bin;
-},{"./Transform":123,"datalib/src/bins/bins":6,"vega-dataflow/src/Tuple":31,"vega-logging":38}],109:[function(require,module,exports){
+},{"./Transform":130,"datalib/src/bins/bins":10,"vega-dataflow/src/Tuple":37,"vega-logging":44}],116:[function(require,module,exports){
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
@@ -16024,7 +17954,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Cross;
-},{"./BatchTransform":107,"./Transform":123,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Tuple":31,"vega-logging":38}],110:[function(require,module,exports){
+},{"./BatchTransform":114,"./Transform":130,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Tuple":37,"vega-logging":44}],117:[function(require,module,exports){
 var Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
@@ -16057,7 +17987,7 @@ prototype.aggr = function() {
 };
 
 module.exports = Facet;
-},{"../parse/transforms":96,"./Aggregate":106,"./Transform":123}],111:[function(require,module,exports){
+},{"../parse/transforms":103,"./Aggregate":113,"./Transform":130}],118:[function(require,module,exports){
 var Aggregator = require('datalib/src/aggregate/aggregator'),
     Base = Aggregator.prototype,
     Flags = Aggregator.Flags,
@@ -16202,7 +18132,7 @@ prototype.changes = function(input, output) {
 };
 
 module.exports = Facetor;
-},{"datalib/src/aggregate/aggregator":3,"datalib/src/util":20,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Tuple":31,"vega-logging":38}],112:[function(require,module,exports){
+},{"datalib/src/aggregate/aggregator":7,"datalib/src/util":24,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Tuple":37,"vega-logging":44}],119:[function(require,module,exports){
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Deps = require('vega-dataflow/src/Dependencies'),
     log = require('vega-logging'),
@@ -16258,7 +18188,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"./Transform":123,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Dependencies":26,"vega-logging":38}],113:[function(require,module,exports){
+},{"./Transform":130,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Dependencies":32,"vega-logging":44}],120:[function(require,module,exports){
 var ChangeSet = require('vega-dataflow/src/ChangeSet'),
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
@@ -16330,7 +18260,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"./Transform":123,"vega-dataflow/src/ChangeSet":23,"vega-dataflow/src/Tuple":31,"vega-logging":38}],114:[function(require,module,exports){
+},{"./Transform":130,"vega-dataflow/src/ChangeSet":29,"vega-dataflow/src/Tuple":37,"vega-logging":44}],121:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -16454,7 +18384,7 @@ prototype.transform = function(nodeInput) {
 module.exports = Force;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Transform":123,"vega-dataflow/src/Tuple":31,"vega-logging":38}],115:[function(require,module,exports){
+},{"./Transform":130,"vega-dataflow/src/Tuple":37,"vega-logging":44}],122:[function(require,module,exports){
 var Tuple = require('vega-dataflow/src/Tuple'),
     Deps = require('vega-dataflow/src/Dependencies'),
     log = require('vega-logging'),
@@ -16496,7 +18426,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"./Transform":123,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Tuple":31,"vega-logging":38}],116:[function(require,module,exports){
+},{"./Transform":130,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Tuple":37,"vega-logging":44}],123:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -16587,7 +18517,7 @@ prototype.transform = function(input) {
 module.exports = Geo;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Transform":123,"datalib/src/util":20,"vega-dataflow/src/Tuple":31,"vega-logging":38}],117:[function(require,module,exports){
+},{"./Transform":130,"datalib/src/util":24,"vega-dataflow/src/Tuple":37,"vega-logging":44}],124:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -16637,7 +18567,7 @@ prototype.transform = function(input) {
 module.exports = GeoPath;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Geo":116,"./Transform":123,"datalib/src/util":20,"vega-dataflow/src/Tuple":31,"vega-logging":38}],118:[function(require,module,exports){
+},{"./Geo":123,"./Transform":130,"datalib/src/util":24,"vega-dataflow/src/Tuple":37,"vega-logging":44}],125:[function(require,module,exports){
 var Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -16734,7 +18664,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = LinkPath;
-},{"./Transform":123,"vega-dataflow/src/Tuple":31,"vega-logging":38}],119:[function(require,module,exports){
+},{"./Transform":130,"vega-dataflow/src/Tuple":37,"vega-logging":44}],126:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Deps = require('vega-dataflow/src/Dependencies'),
     expr = require('../parse/expr');
@@ -16846,7 +18776,7 @@ prototype.set = function(value) {
 };
 
 module.exports = Parameter;
-},{"../parse/expr":84,"datalib/src/util":20,"vega-dataflow/src/Dependencies":26}],120:[function(require,module,exports){
+},{"../parse/expr":91,"datalib/src/util":24,"vega-dataflow/src/Dependencies":32}],127:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     gen  = require('datalib/src/generate'),
@@ -16916,7 +18846,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Pie;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":107,"./Transform":123,"datalib/src/generate":7,"vega-dataflow/src/Tuple":31,"vega-logging":38}],121:[function(require,module,exports){
+},{"./BatchTransform":114,"./Transform":130,"datalib/src/generate":11,"vega-dataflow/src/Tuple":37,"vega-logging":44}],128:[function(require,module,exports){
 var util = require('datalib/src/util'),
     log  = require('vega-logging'),
     Transform = require('./Transform');
@@ -16940,7 +18870,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Sort;
-},{"./Transform":123,"datalib/src/util":20,"vega-logging":38}],122:[function(require,module,exports){
+},{"./Transform":130,"datalib/src/util":24,"vega-logging":44}],129:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
@@ -17038,7 +18968,7 @@ function partition(data, groupby, sortby, field) {
 }
 
 module.exports = Stack;
-},{"./BatchTransform":107,"./Transform":123,"datalib/src/util":20,"vega-dataflow/src/Tuple":31,"vega-logging":38}],123:[function(require,module,exports){
+},{"./BatchTransform":114,"./Transform":130,"datalib/src/util":24,"vega-dataflow/src/Tuple":37,"vega-logging":44}],130:[function(require,module,exports){
 var Base = require('vega-dataflow/src/Node').prototype, // jshint ignore:line
     Deps = require('vega-dataflow/src/Dependencies'),
     Parameter = require('./Parameter');
@@ -17098,7 +19028,7 @@ prototype.output = function(map) {
 };
 
 module.exports = Transform;
-},{"./Parameter":119,"vega-dataflow/src/Dependencies":26,"vega-dataflow/src/Node":28}],124:[function(require,module,exports){
+},{"./Parameter":126,"vega-dataflow/src/Dependencies":32,"vega-dataflow/src/Node":34}],131:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     util = require('datalib/src/util'),
@@ -17180,7 +19110,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Treemap;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":107,"./Transform":123,"datalib/src/util":20,"vega-dataflow/src/Tuple":31,"vega-logging":38}],125:[function(require,module,exports){
+},{"./BatchTransform":114,"./Transform":130,"datalib/src/util":24,"vega-dataflow/src/Tuple":37,"vega-logging":44}],132:[function(require,module,exports){
 var util = require('datalib/src/util'),
     Collector = require('vega-dataflow/src/Collector'),
     log = require('vega-logging'),
@@ -17310,7 +19240,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Zip;
-},{"./Transform":123,"datalib/src/util":20,"vega-dataflow/src/Collector":24,"vega-logging":38}],126:[function(require,module,exports){
+},{"./Transform":130,"datalib/src/util":24,"vega-dataflow/src/Collector":30,"vega-logging":44}],133:[function(require,module,exports){
 module.exports = {
   aggregate:  require('./Aggregate'),
   bin:        require('./Bin'),
@@ -17329,6 +19259,6 @@ module.exports = {
   treemap:    require('./Treemap'),
   zip:        require('./Zip')
 };
-},{"./Aggregate":106,"./Bin":108,"./Cross":109,"./Facet":110,"./Filter":112,"./Fold":113,"./Force":114,"./Formula":115,"./Geo":116,"./GeoPath":117,"./LinkPath":118,"./Pie":120,"./Sort":121,"./Stack":122,"./Treemap":124,"./Zip":125}]},{},[1])(1)
+},{"./Aggregate":113,"./Bin":115,"./Cross":116,"./Facet":117,"./Filter":119,"./Fold":120,"./Force":121,"./Formula":122,"./Geo":123,"./GeoPath":124,"./LinkPath":125,"./Pie":127,"./Sort":128,"./Stack":129,"./Treemap":131,"./Zip":132}]},{},[1])(1)
 });
 //# sourceMappingURL=vega.js.map
