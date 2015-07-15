@@ -116,7 +116,7 @@ describe('canvas handler', function() {
   it('should pick arc mark', function() {
     var mark = marks.arc;
     var handler = new Handler().initialize(render(mark, 500, 500));
-    assert.ok(handler.pick(mark, 270, 260, 270, 260));
+    assert.ok(handler.pick(mark, 260, 300, 260, 300));
     assert.notOk(handler.pick(mark, 248, 250, 248, 250));
     assert.notOk(handler.pick(mark, 800, 800, 800, 800));
   });

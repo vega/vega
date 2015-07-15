@@ -33,8 +33,10 @@ function drawOne(pathFunc) {
   };
 }
 
+var trueFunc = function() { return true; };
+
 function pick(test) {
-  if (!test) test = function() { return true; };
+  if (!test) test = trueFunc;
 
   return function(g, scene, x, y, gx, gy) {
     if (!scene.items.length) return null;
@@ -57,11 +59,11 @@ function pick(test) {
   };
 }
 
-function testPath(path, fill) {
+function testPath(path, filled) {
   return function(g, o, x, y) {
     var item = Array.isArray(o) ? o[0] : o,
+        fill = (filled == null) ? item.fill : filled,
         stroke = item.stroke && g.isPointInStroke, lw, lc;
-    fill = (fill == null) ? item.fill : fill;
 
     if (stroke) {
       lw = item.strokeWidth;
