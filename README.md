@@ -17,12 +17,14 @@ browser using a scenegraph-based rendering system.
 
 ## Build Process
 
-To use Vega in the browser, you need to build the vega.js and vega.min.js files. We assume that you have [npm](https://www.npmjs.com/) installed.
+To manually build Vega, you must have [npm](https://www.npmjs.com/) installed.
 
 1. Run `npm install` in the vega folder to install dependencies.
 2. Run `npm run build`. This will invoke [browserify](http://browserify.org/) to bundle the source files into vega.js, and then [uglify-js](http://lisperator.net/uglifyjs/) to create the minified vega.min.js.
 
 Vega visualization specifications can be validated against a [JSON Schema](http://json-schema.org/). To generate the vega-schema.json definition file, run `npm run schema`.
+
+Built files are available on [npm](https://www.npmjs.com/package/vega), and under [tagged releases](https://github.com/vega/vega/releases). The latest built versions can be found at [vega.min.js](http://vega.github.io/vega/vega.min.js) and [vega-schema.json](http://vega.github.io/vega/vega-schema.json).
 
 ## Vega Server-Side and Command Line Tools
 
