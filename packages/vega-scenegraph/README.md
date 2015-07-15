@@ -4,7 +4,7 @@
 
 Renderers and event handlers for Vega's [mark-based](https://github.com/vega/vega/wiki/Marks) scenegraph. This module supports both pixel-based (canvas) and vector graphics (SVG) output. Renderers can either (re-)draw a complete scene or perform incremental re-rendering for a set of provided "dirty" items. A fast SVG string renderer is also provided to generate static SVG outside the browser environment.
 
-The [node-canvas](https://github.com/Automattic/node-canvas) library is used for server-side canvas rendering and bounds calculation. Node-canvas requires the native Cairo graphics library and compiles native code as part of the installation process. In some instances this may result in installation hiccups. Should you run into issues, you are likely to quickly resolve them more quickly if you first search for help regarding node-canvas (as opposed to vega-scenegraph) installation.
+The [node-canvas](https://github.com/Automattic/node-canvas) library is used for server-side canvas rendering and bounds calculation. Node-canvas requires the native Cairo graphics library and compiles native code as part of the installation process. In some instances this may result in installation hiccups. Should you run into issues, you are likely to resolve them more quickly if you first search for help regarding node-canvas (as opposed to vega-scenegraph) installation.
 
 ### Scenegraph Definition
 
@@ -44,7 +44,7 @@ For example, a top-level group mark may look like:
 }
 ```
 
-In this example, the group _mark_ contains only a single group _item_. In practice a group mark may contain a number of group items, for example to describe a scene with multiple layers or sub-plots.
+In this example, the group _mark_ contains only a single group _item_. In practice a group mark may contain any number of group items, for example to describe a scene with multiple layers or sub-plots.
 
 For more information regarding supported mark properties, please see the [Vega marks documentation](https://github.com/vega/vega/wiki/Marks).
 
