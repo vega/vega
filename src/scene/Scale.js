@@ -470,9 +470,11 @@ module.exports = Scale;
 
 var sortDef = {
   "type": "object",
-  "field": {"type": "string"},
-  "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
-  "order": {"enum": [DataRef.ASC, DataRef.DESC]}
+  "properties": {
+    "field": {"type": "string"},
+    "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
+    "order": {"enum": [DataRef.ASC, DataRef.DESC]}
+  }
 };
 
 var rangeDef = [
