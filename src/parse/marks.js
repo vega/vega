@@ -52,9 +52,11 @@ parseRootMark.schema = {
 
     "nonGroupMark": {
       "allOf": [
-        {"$ref": "#/defs/mark"},
-        { "not": {"$ref": "#/defs/groupMark"} }
-      ]
+        {
+          "not": { "properties": { "type": {"enum": ["group"]} } },
+        },
+        {"$ref": "#/defs/mark"}
+      ]   
     }
   }
 };
