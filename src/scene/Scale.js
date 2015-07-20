@@ -598,7 +598,12 @@ Scale.schema = {
             ]
           },
 
-          "reverse": {"type": "boolean"},
+          "reverse": {
+            "oneOf": [
+              {"type": "boolean"},
+              {"$ref": "#/refs/data"}
+            ],
+          },
           "round": {"type": "boolean"}
         },
 
