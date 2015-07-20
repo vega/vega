@@ -43,7 +43,6 @@ parseMark.schema = {
             "mark": {"type": "string"},
             "transform": {"$ref": "#/defs/transform"}
           },
-          "oneOf":[{"required": ["data"]}, {"required": ["mark"]}],
           "additionalProperties": false
         },
 
