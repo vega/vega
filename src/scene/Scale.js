@@ -547,7 +547,7 @@ Scale.schema = {
           "type": {
             "enum": [Types.LINEAR, Types.ORDINAL, Types.TIME, Types.TIME_UTC, Types.LOG, 
               Types.POWER, Types.SQRT, Types.QUANTILE, Types.QUANTIZE, Types.THRESHOLD],
-            "default": "linear"
+            "default": Types.LINEAR
           },
 
           "domain": {
@@ -623,7 +623,8 @@ Scale.schema = {
             "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
 
             "sort": sortDef
-          }
+          },
+          "required": ["type"]
         }, {
           "properties": {
             "type": {"enum": [Types.TIME, Types.TIME_UTC]},
@@ -631,7 +632,8 @@ Scale.schema = {
             "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
             "nice": {"oneOf": [{"enum": ["second", "minute", "hour", 
               "day", "week", "month", "year"]}, {"$ref": "#/refs/signal"}]}
-          }
+          },
+          "required": ["type"]
         }, {
           "anyOf": [{
             "properties": {
@@ -646,12 +648,14 @@ Scale.schema = {
             "properties": {
               "type": {"enum": [Types.POWER]},
               "exponent": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
-            }
+            },
+            "required": ["type"]
           }, {
             "properties": {
               "type": {"enum": [Types.QUANTILE]},
               "sort": sortDef
-            }
+            },
+            "required": ["type"]
           }]
         }]
       }]
