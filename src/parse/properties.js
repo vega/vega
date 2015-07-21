@@ -440,7 +440,8 @@ properties.schema = {
           "properties": {
             "name": {"$ref": "#/refs/field"},
             "invert": {"type": "boolean", "default": false}
-          }
+          },
+          "required": ["name"]
         }
       ]
     },

@@ -33,18 +33,30 @@ parseRootMark.schema = {
         },
         "marks": {
           "type": "array",
-          "items": {"anyOf":[{"$ref": "#/defs/groupMark"}, {"$ref": "#/defs/mark"}]}
+          "items": {"oneOf":[{"$ref": "#/defs/groupMark"}, {"$ref": "#/defs/visualMark"}]}
         }
       }
     },
 
+
     "groupMark": {
-      "allOf": [{"$ref": "#/defs/mark"}, {"$ref": "#/defs/container"}, {
-        "properties": {
-          "type": {"enum": ["group"]}
+      "allOf": [
+        {
+          "properties": { "type": {"enum": ["group"]} },
+          "required": ["type"]
         },
-        "required": ["type"]
-      }]
+        {"$ref": "#/defs/mark"},
+        {"$ref": "#/defs/container"}
+      ]
+    },
+
+    "visualMark": {
+      "allOf": [
+        {
+          "not": { "properties": { "type": {"enum": ["group"]} } },
+        },
+        {"$ref": "#/defs/mark"}
+      ]   
     }
   }
 };
