@@ -448,18 +448,6 @@
               "$ref": "#/defs/transform"
             }
           },
-          "oneOf": [
-            {
-              "required": [
-                "data"
-              ]
-            },
-            {
-              "required": [
-                "mark"
-              ]
-            }
-          ],
           "additionalProperties": false
         },
         "delay": {
@@ -568,12 +556,12 @@
         "marks": {
           "type": "array",
           "items": {
-            "anyOf": [
+            "oneOf": [
               {
                 "$ref": "#/defs/groupMark"
               },
               {
-                "$ref": "#/defs/mark"
+                "$ref": "#/defs/visualMark"
               }
             ]
           }
@@ -582,12 +570,6 @@
     },
     "groupMark": {
       "allOf": [
-        {
-          "$ref": "#/defs/mark"
-        },
-        {
-          "$ref": "#/defs/container"
-        },
         {
           "properties": {
             "type": {
@@ -599,6 +581,30 @@
           "required": [
             "type"
           ]
+        },
+        {
+          "$ref": "#/defs/mark"
+        },
+        {
+          "$ref": "#/defs/container"
+        }
+      ]
+    },
+    "visualMark": {
+      "allOf": [
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "group"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/defs/mark"
         }
       ]
     },
@@ -3444,7 +3450,14 @@
               ]
             },
             "reverse": {
-              "type": "boolean"
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "$ref": "#/refs/data"
+                }
+              ]
             },
             "round": {
               "type": "boolean"
@@ -3540,41 +3553,46 @@
                 },
                 "sort": {
                   "type": "object",
-                  "field": {
-                    "type": "string"
-                  },
-                  "op": {
-                    "enum": [
-                      "values",
-                      "count",
-                      "valid",
-                      "missing",
-                      "distinct",
-                      "sum",
-                      "mean",
-                      "average",
-                      "variance",
-                      "variancep",
-                      "stdev",
-                      "stdevp",
-                      "median",
-                      "q1",
-                      "q3",
-                      "modeskew",
-                      "min",
-                      "max",
-                      "argmin",
-                      "argmax"
-                    ]
-                  },
-                  "order": {
-                    "enum": [
-                      "asc",
-                      "desc"
-                    ]
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "op": {
+                      "enum": [
+                        "values",
+                        "count",
+                        "valid",
+                        "missing",
+                        "distinct",
+                        "sum",
+                        "mean",
+                        "average",
+                        "variance",
+                        "variancep",
+                        "stdev",
+                        "stdevp",
+                        "median",
+                        "q1",
+                        "q3",
+                        "modeskew",
+                        "min",
+                        "max",
+                        "argmin",
+                        "argmax"
+                      ]
+                    },
+                    "order": {
+                      "enum": [
+                        "asc",
+                        "desc"
+                      ]
+                    }
                   }
                 }
-              }
+              },
+              "required": [
+                "type"
+              ]
             },
             {
               "properties": {
@@ -3644,7 +3662,10 @@
                     }
                   ]
                 }
-              }
+              },
+              "required": [
+                "type"
+              ]
             },
             {
               "anyOf": [
@@ -3743,7 +3764,10 @@
                         }
                       ]
                     }
-                  }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 },
                 {
                   "properties": {
@@ -3754,41 +3778,46 @@
                     },
                     "sort": {
                       "type": "object",
-                      "field": {
-                        "type": "string"
-                      },
-                      "op": {
-                        "enum": [
-                          "values",
-                          "count",
-                          "valid",
-                          "missing",
-                          "distinct",
-                          "sum",
-                          "mean",
-                          "average",
-                          "variance",
-                          "variancep",
-                          "stdev",
-                          "stdevp",
-                          "median",
-                          "q1",
-                          "q3",
-                          "modeskew",
-                          "min",
-                          "max",
-                          "argmin",
-                          "argmax"
-                        ]
-                      },
-                      "order": {
-                        "enum": [
-                          "asc",
-                          "desc"
-                        ]
+                      "properties": {
+                        "field": {
+                          "type": "string"
+                        },
+                        "op": {
+                          "enum": [
+                            "values",
+                            "count",
+                            "valid",
+                            "missing",
+                            "distinct",
+                            "sum",
+                            "mean",
+                            "average",
+                            "variance",
+                            "variancep",
+                            "stdev",
+                            "stdevp",
+                            "median",
+                            "q1",
+                            "q3",
+                            "modeskew",
+                            "min",
+                            "max",
+                            "argmin",
+                            "argmax"
+                          ]
+                        },
+                        "order": {
+                          "enum": [
+                            "asc",
+                            "desc"
+                          ]
+                        }
                       }
                     }
-                  }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 }
               ]
             }
@@ -3922,7 +3951,10 @@
               "type": "boolean",
               "default": false
             }
-          }
+          },
+          "required": [
+            "name"
+          ]
         }
       ]
     },
