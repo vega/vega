@@ -122,6 +122,20 @@ function properties(model, mark, spec) {
   }
 }
 
+function dependencies(a, b) {
+  if (!util.isObject(a)) {
+    a = {reflow: false};
+    DEPS.forEach(function(d) { a[d] = []; });
+  }
+
+  if (util.isObject(b)) {
+    a.reflow = a.reflow || b.reflow;
+    DEPS.forEach(function(d) { a[d].push.apply(a[d], b[d]); });
+  }
+
+  return a;
+}
+
 function hasPath(mark, vars) {
   return vars.path ||
     ((mark==="area" || mark==="line") &&
@@ -132,7 +146,7 @@ function hasPath(mark, vars) {
 
 function rule(model, name, rules) {
   var config  = model.config(),
-      signals = [], scales = [], db = [],
+      deps = dependencies(),
       inputs  = [], code = "";
 
   (rules||[]).forEach(function(r, i) {
@@ -148,18 +162,16 @@ function rule(model, name, rules) {
         if (k === "name") return;
         var ref = valueRef(config, i, def[k]);
         input.push(util.str(k)+": "+ref.val);
-        if (ref.signals) signals.push.apply(signals, util.array(ref.signals));
-        if (ref.scales)  scales.push.apply(scales, util.array(ref.scales));
+        dependencies(deps, ref);
       });
     }
 
     ref = valueRef(config, name, r);
-    if (ref.signals) signals.push.apply(signals, util.array(ref.signals));
-    if (ref.scales)  scales.push.apply(scales, util.array(ref.scales));
+    dependencies(deps, ref);
 
     if (predName) {
-      signals.push.apply(signals, pred.signals);
-      db.push.apply(db, pred.data);
+      deps.signals.push.apply(deps.signals, pred.signals);
+      deps.data.push.apply(deps.data, pred.data);
       inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
       code += "if ("+p+".call("+p+","+args+", db, signals, predicates)) {" +
         "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;";
@@ -172,7 +184,7 @@ function rule(model, name, rules) {
   });
 
   code = "var " + inputs.join(",\n      ") + ";\n  " + code;
-  return {code: code, signals: signals, scales: scales, data: db};
+  return (deps.code = code, deps);
 }
 
 function valueRef(config, name, ref) {
@@ -192,20 +204,21 @@ function valueRef(config, name, ref) {
 
   // initialize value
   var val = null, scale = null, 
-      sgRef = {}, fRef = {}, sRef = {}, tmpl = {},
-      signals = [], fields = [], reflow = false;
+      deps = dependencies(),
+      sgRef = null, fRef = null, sRef = null, tmpl = {};
 
   if (ref.template !== undefined) {
     val = template.source(ref.template, "signals", tmpl);
     util.keys(tmpl).forEach(function(k) {
-      var f = util.field(k)[0];
-      if (f === 'parent' || f === 'group') {
-        reflow = true;
-        fRef[f] = 1;
-      } else if (k === 'datum') {
-        fRef[f] = 1;
+      var f = util.field(k),
+          a = f.shift();
+      if (a === 'parent' || a === 'group') {
+        deps.reflow = true;
+        deps.fields.push(f.join('.'));
+      } else if (a === 'datum') {
+        deps.fields.push(f.join('.'));
       } else {
-        sgRef[f] = 1;
+        deps.signals.push(a);
       }
     });
   }
@@ -217,18 +230,21 @@ function valueRef(config, name, ref) {
   if (ref.signal !== undefined) {
     sgRef = util.field(ref.signal);
     val = "signals["+sgRef.map(util.str).join("][")+"]"; 
-    signals.push(sgRef.shift());
+    deps.signals.push(sgRef.shift());
   }
 
   if (ref.field !== undefined) {
     ref.field = util.isString(ref.field) ? {datum: ref.field} : ref.field;
-    fRef  = fieldRef(ref.field);
-    val = fRef.val;
+    fRef = fieldRef(ref.field);
+    val  = fRef.val;
+    dependencies(deps, fRef);
   }
 
   if (ref.scale !== undefined) {
-    sRef = scaleRef(ref.scale);
+    sRef  = scaleRef(ref.scale);
     scale = sRef.val;
+    dependencies(deps, sRef);
+    deps.scales.push(ref.scale.name || ref.scale);
 
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
@@ -245,31 +261,22 @@ function valueRef(config, name, ref) {
         (ref.offset ? " + " + util.number(ref.offset) : "");
 
   // Collate dependencies
-  return {
-    val: val,
-    signals: signals.concat(util.array(fRef.signals)).concat(util.array(sRef.signals)),
-    fields:  fields.concat(util.array(fRef.fields)).concat(util.array(sRef.fields)),
-    scales:  ref.scale ? (ref.scale.name || ref.scale) : null, // TODO: connect sRef'd scale?
-    reflow:  reflow || fRef.reflow || sRef.reflow
-  };
+  return (deps.val = val, deps);
 }
 
 function colorRef(config, type, x, y, z) {
   var xx = x ? valueRef(config, "", x) : config.color[type][0],
       yy = y ? valueRef(config, "", y) : config.color[type][1],
       zz = z ? valueRef(config, "", z) : config.color[type][2],
-      signals = [], scales = [];
+      deps = dependencies();
 
   [xx, yy, zz].forEach(function(v) {
-    if (v.signals) signals.push.apply(signals, v.signals);
-    if (v.scales)  scales.push(v.scales);
+    if (util.isArray) return;
+    dependencies(deps, v);
   });
 
-  return {
-    val: "(this.d3." + type + "(" + [xx.val, yy.val, zz.val].join(",") + ') + "")',
-    signals: signals,
-    scales: scales
-  };
+  var val = "(this.d3." + type + "(" + [xx.val, yy.val, zz.val].join(",") + ') + "")';
+  return (deps.val = val, deps);
 }
 
 // {field: {datum: "foo"} }  -> item.datum.foo
@@ -286,26 +293,24 @@ function fieldRef(ref) {
       scope = nested ? Array(l).join("group.mark.") : "",
       r = fieldRef(ref.datum || ref.group || ref.parent || ref.signal),
       val = r.val,
-      fields  = r.fields  || [],
-      signals = r.signals || [],
-      reflow  = r.reflow  || false; // Nested fieldrefs trigger full reeval of Encoder.
+      deps = dependencies(null, r);
 
   if (ref.datum) {
     val = "item.datum["+val+"]";
-    fields.push(ref.datum);
+    deps.fields.push(ref.datum);
   } else if (ref.group) {
     val = scope+"group["+val+"]";
-    reflow = true;
+    deps.reflow = true;
   } else if (ref.parent) {
     val = scope+"group.datum["+val+"]";
-    reflow = true;
+    deps.reflow = true;
   } else if (ref.signal) {
     val = "signals["+val+"]";
-    signals.push(util.field(ref.signal)[0]);
-    reflow = true;
+    deps.signals.push(util.field(ref.signal)[0]);
+    deps.reflow = true;
   }
 
-  return {val: val, fields: fields, signals: signals, reflow: reflow};
+  return (deps.val = val, deps);
 }
 
 // {scale: "x"}
@@ -313,7 +318,8 @@ function fieldRef(ref) {
 // {scale: fieldRef}
 function scaleRef(ref) {
   var scale = null,
-      fr = null;
+      fr = null,
+      deps = dependencies();
 
   if (util.isString(ref)) {
     scale = util.str(ref);
@@ -326,7 +332,7 @@ function scaleRef(ref) {
   scale = "group.scale("+scale+")";
   if (ref.invert) scale += ".invert";
 
-  return fr ? (fr.val = scale, fr) : {val: scale};
+  return fr ? (fr.val = scale, fr) : (deps.val = scale, deps);
 }
 
 module.exports = properties;
