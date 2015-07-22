@@ -51,7 +51,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   // Non-group mark builders are super nodes. Encoder and Bounder remain 
   // separate operators but are embedded and called by Builder.evaluate.
   this._isSuper = (this._def.type !== "group"); 
-  this._encoder = new Encoder(this._graph, this._mark);
+  this._encoder = new Encoder(this._graph, this._mark, this);
   this._bounder = new Bounder(this._graph, this._mark);
   this._output  = null; // Output changeset for reactive geom as Bounder reflows
 
@@ -138,9 +138,10 @@ function inlineDs() {
   }
 }
 
-proto.pipeline = function() {
-  return [this];
-};
+proto.ds = function() { return this._ds; };
+proto.parent   = function() { return this._parent; };
+proto.encoder  = function() { return this._encoder; };
+proto.pipeline = function() { return [this]; };
 
 proto.connect = function() {
   var builder = this;
@@ -179,7 +180,11 @@ proto.sibling = function(name) {
 proto.evaluate = function(input) {
   log.debug(input, ["building", (this._from || this._def.from), this._def.type]);
 
-  var output, fullUpdate, fcs, data, name;
+  var self = this,
+      def = this._mark.def,
+      props  = def.properties || {},
+      update = props.update   || {},
+      output, fullUpdate, fcs, data, name;
 
   if (this._ds) {
     output = ChangeSet.create(input);
@@ -208,6 +213,19 @@ proto.evaluate = function(input) {
 
   // Stash output before Bounder for downstream reactive geometry.
   this._output = output = this._graph.evaluate(output, this._encoder);
+
+  // Add any new scale references to the dependency list, and ensure
+  // they're connected.
+  if (update && update.nested && update.nested.length) {
+    util.keys(this._mark._scaleRefs).forEach(function(s) {
+      var scale = self._parent.scale(s);
+      if (!scale) return;
+
+      scale.addListener(self);
+      self.dependency(Deps.SCALES, s);
+      self._encoder.dependency(Deps.SCALES, s);
+    });
+  }
 
   // Supernodes calculate bounds too, but only on items marked dirty.
   if (this._isSuper) {

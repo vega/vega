@@ -6,7 +6,7 @@ var util = require('datalib/src/util'),
   
 var EMPTY = {};
 
-function Encoder(graph, mark) {
+function Encoder(graph, mark, builder) {
   var props  = mark.def.properties || {},
       enter  = props.enter,
       update = props.update,
@@ -15,6 +15,7 @@ function Encoder(graph, mark) {
   Node.prototype.init.call(this, graph);
 
   this._mark = mark;
+  this._builder = builder;
   var s = this._scales = [];
 
   // Only scales used in the "update" property set are set as
@@ -102,12 +103,41 @@ function encode(prop, item, trans, db, sg, preds, dirty) {
 proto.reevaluate = function(pulse) {
   var def = this._mark.def,
       props = def.properties || {},
-      update = props.update;
+      reeval = util.isFunction(def.from) || def.orient || pulse.request || 
+        Node.prototype.reevaluate.call(this, pulse);
 
-  return util.isFunction(def.from) || def.orient || pulse.request || 
-    Node.prototype.reevaluate.call(this, pulse) || 
-    (update ? update.reflow : false);
+  return reeval || (props.update ? nestedRefs.call(this) : false);
 };
+
+// Test if any nested refs trigger a reflow of mark items.
+function nestedRefs() {
+  var refs = this._mark.def.properties.update.nested,
+      parent = this._builder,
+      level = 0,
+      i = 0, len = refs.length,
+      ref, ds, stamp;
+
+  for (; i<len; ++i) {
+    ref = refs[i];
+
+    // Scale references are resolved via this._mark._scaleRefs which are
+    // added to dependency lists + connected in Builder.evaluate.
+    if (ref.scale) continue;
+
+    for (; level<ref.level; ++level) {
+      parent = parent.parent();
+      ds = parent.ds();
+    }
+
+    // Compare stamps to determine if a change in a group's properties
+    // or data should trigger a reeval. We cannot check anything fancier
+    // (e.g., pulse.fields) as the ref may use item.datum.
+    stamp = (ref.group ? parent.encoder() : ds.last())._stamp;
+    if (stamp > this._stamp) return true;
+  }
+
+  return false;
+}
 
 // Short-circuit encoder if user specifies items
 Encoder.update = function(graph, trans, request, items, dirty) {

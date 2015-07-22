@@ -58,7 +58,10 @@ proto.evaluate = function(input) {
   // Scales are at the end of an encoding pipeline, so they should forward a
   // reflow pulse. Thus, if multiple scales update in the parent group, we don't
   // reevaluate child marks multiple times. 
-  if (this._updated) input.scales[this._def.name] = 1;
+  if (this._updated) {
+    input.scales[this._def.name] = 1;
+    log.debug(input, ["scale", this._def.name]);  
+  } 
   return changeset.create(input, true);
 };
 

@@ -16,6 +16,8 @@ function properties(model, mark, spec) {
         scales:  {},
         data:    {},
         fields:  {},
+        nested:  [],
+        _nRefs:  {},  // Temp stash to de-dupe nested refs.
         reflow:  false
       };
       
@@ -34,6 +36,11 @@ function properties(model, mark, spec) {
     }
   }
 
+  function handleNestedRefs(r) {
+    var k = (r.parent ? "parent_" : "group_")+r.level+"_"+r.ref;
+    deps._nRefs[k] = r;
+  }
+
   for (i=0, len=names.length; i<len; ++i) {
     ref = spec[name = names[i]];
     code += (i > 0) ? "\n  " : "  ";
@@ -48,7 +55,17 @@ function properties(model, mark, spec) {
     vars[name] = true;
     DEPS.forEach(handleDep);
     deps.reflow = deps.reflow || ref.reflow;
+    if (ref.nested.length) ref.nested.forEach(handleNestedRefs);
   }
+
+  // If nested references are present, sort them based on their level
+  // to speed up determination of whether encoders should be reeval'd.
+  util.keys(deps._nRefs).forEach(function(k) { deps.nested.push(deps._nRefs[k]); });
+  deps.nested.sort(function(a, b) { 
+    a = a.level;
+    b = b.level;
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN; 
+  });
 
   if (vars.x2) {
     if (vars.x) {
@@ -114,6 +131,7 @@ function properties(model, mark, spec) {
       scales:  util.keys(deps.scales),
       data:    util.keys(deps.data),
       fields:  util.keys(deps.fields),
+      nested:  deps.nested,
       reflow:  deps.reflow
     };
   } catch (e) {
@@ -124,12 +142,13 @@ function properties(model, mark, spec) {
 
 function dependencies(a, b) {
   if (!util.isObject(a)) {
-    a = {reflow: false};
+    a = {reflow: false, nested: []};
     DEPS.forEach(function(d) { a[d] = []; });
   }
 
   if (util.isObject(b)) {
     a.reflow = a.reflow || b.reflow;
+    a.nested.push.apply(a.nested, b.nested);
     DEPS.forEach(function(d) { a[d].push.apply(a[d], b[d]); });
   }
 
@@ -213,10 +232,13 @@ function valueRef(config, name, ref) {
       var f = util.field(k),
           a = f.shift();
       if (a === 'parent' || a === 'group') {
-        deps.reflow = true;
-        deps.fields.push(f.join('.'));
+        deps.nested.push({ 
+          parent: a === 'parent',
+          group:  a === 'group', 
+          level:  1
+        });
       } else if (a === 'datum') {
-        deps.fields.push(f.join('.'));
+        deps.fields.push(f[0]);
       } else {
         deps.signals.push(a);
       }
@@ -288,7 +310,7 @@ function fieldRef(ref) {
   } 
 
   // Resolve nesting/parent lookups
-  var l = ref.level,
+  var l = ref.level || 1,
       nested = (ref.group || ref.parent) && l,
       scope = nested ? Array(l).join("group.mark.") : "",
       r = fieldRef(ref.datum || ref.group || ref.parent || ref.signal),
@@ -300,10 +322,10 @@ function fieldRef(ref) {
     deps.fields.push(ref.datum);
   } else if (ref.group) {
     val = scope+"group["+val+"]";
-    deps.reflow = true;
+    deps.nested.push({ level: l, group: true });
   } else if (ref.parent) {
     val = scope+"group.datum["+val+"]";
-    deps.reflow = true;
+    deps.nested.push({ level: l, parent: true });
   } else if (ref.signal) {
     val = "signals["+val+"]";
     deps.signals.push(util.field(ref.signal)[0]);
@@ -329,9 +351,11 @@ function scaleRef(ref) {
     scale = (fr = fieldRef(ref)).val;
   }
 
-  scale = "group.scale("+scale+")";
+  scale = "(item.mark._scaleRefs["+scale+"] = 1, group.scale("+scale+"))";
   if (ref.invert) scale += ".invert";
 
+  // Mark scale refs as they're dealt with separately in mark._scaleRefs.
+  if (fr) fr.nested.forEach(function(g) { g.scale = true; });
   return fr ? (fr.val = scale, fr) : (deps.val = scale, deps);
 }
 
