@@ -10,6 +10,8 @@ function CanvasRenderer(loadConfig) {
   this._loader = new ImageLoader(loadConfig);
 }
 
+CanvasRenderer.RETINA = true;
+
 var base = Renderer.prototype;
 var prototype = (CanvasRenderer.prototype = Object.create(base));
 prototype.constructor = CanvasRenderer;
@@ -25,7 +27,8 @@ prototype.initialize = function(el, width, height, padding) {
 
 prototype.resize = function(width, height, padding) {
   base.resize.call(this, width, height, padding);
-  Canvas.resize(this._canvas, this._width, this._height, this._padding);
+  Canvas.resize(this._canvas, this._width, this._height,
+    this._padding, CanvasRenderer.RETINA);
   return this;
 };
 
