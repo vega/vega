@@ -1,35 +1,10 @@
 {
   "width": 200,
   "height": 720,
+  "padding": {"left": 96, "top": 0, "right": 13, "bottom": 27},
   "data": [
-    {
-      "name": "barley",
-      "url": "data/barley.json"
-    },
-    {
-      "name": "variety",
-      "source": "barley",
-      "transform": [
-        {
-          "type": "aggregate",
-          "groupby": ["variety"],
-          "summarize": [{"field": "yield", "ops": ["median"]}]
-        },
-        {"type": "sort", "by": "-median_yield"}
-      ]
-    },
-    {
-      "name": "site",
-      "source": "barley",
-      "transform": [
-        {
-          "type": "aggregate",
-          "groupby": ["site"],
-          "summarize": [{"field": "yield", "ops": ["median"]}]
-        },
-        {"type": "sort", "by": "-median_yield"}
-      ]
-    }
+    {"name": "barley", "url": "data/barley.json"},
+    {"name": "singleton", "values": [1]}
   ],
   "scales": [
     {
@@ -37,7 +12,15 @@
       "type": "ordinal",
       "range": "height",
       "padding": 0.15,
-      "domain": {"data": "site", "field": "site"}
+      "domain": {
+        "data": "barley", 
+        "field": "site",
+        "sort": {
+          "field": "yield",
+          "op": "median",
+          "order": "desc"
+        }
+      }
     },
     {
       "name": "x",
@@ -61,21 +44,6 @@
   ],
   "marks": [
     {
-      "type": "text",
-      "from": {"data": "site"},
-      "properties": {
-        "enter": {
-          "x": {"field": {"group": "width"}, "mult": 0.5},
-          "y": {"scale": "g", "field": "site", "offset": -2},
-          "fontWeight": {"value": "bold"},
-          "text": {"field": "site"},
-          "align": {"value": "center"},
-          "baseline": {"value": "bottom"},
-          "fill": {"value": "#000"}
-        }
-      }
-    },
-    {
       "type": "group",
       "from": {
         "data": "barley",
@@ -88,7 +56,15 @@
           "range": "height",
           "points": true,
           "padding": 1.2,
-          "domain": {"data": "variety", "field": "variety"}
+          "domain": {
+            "data": "barley", 
+            "field": "variety",
+            "sort": {
+              "field": "yield",
+              "op": "median",
+              "order": "desc"
+            }
+          }
         }
       ],
       "axes": [
@@ -100,7 +76,7 @@
         }
       ],
       "properties": {
-        "enter": {
+        "update": {
           "x": {"value": 0.5},
           "y": {"scale": "g", "field": "key"},
           "height": {"scale": "g", "band": true},
@@ -112,12 +88,27 @@
         {
           "type": "symbol",
           "properties": {
-            "enter": {
+            "update": {
               "x": {"scale": "x", "field": "yield"},
               "y": {"scale": "y", "field": "variety"},
               "size": {"value": 50},
               "stroke": {"scale": "c", "field": "year"},
               "strokeWidth": {"value": 2}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": {"data": "singleton"},
+          "properties": {
+            "update": {
+              "x": {"field": {"group": "width"}, "mult": 0.5},
+              "y": {"value": -2},
+              "fontWeight": {"value": "bold"},
+              "text": {"field": {"parent": "key"}},
+              "align": {"value": "center"},
+              "baseline": {"value": "bottom"},
+              "fill": {"value": "#000"}
             }
           }
         }

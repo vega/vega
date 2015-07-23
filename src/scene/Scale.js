@@ -278,8 +278,7 @@ function getCache(which, def, scale, group) {
       uniques = isUniques(scale),
       sort = def.sort,
       ck = '_'+which,
-      fields = getFields(refs[0], group),
-      ref;
+      fields = getFields(refs[0], group);
 
   if (scale[ck]) return scale[ck];
 
@@ -294,7 +293,7 @@ function getCache(which, def, scale, group) {
       groupby = [{ name: DataRef.GROUPBY, get: util.$(fields[0]) }];
       summarize = sort ? [{
         field: DataRef.VALUE,
-        get:  util.$(ref.sort || sort.field),
+        get:  util.$(sort.field),
         ops: [sort.op]
       }] : {'*': DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
@@ -327,7 +326,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from;
+      i, rlen, j, flen, ref, fields, field, data, from, cmp;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
@@ -362,12 +361,10 @@ function dataRef(which, def, scale, group) {
   data = cache.aggr().result();
   if (uniques) {
     if (sort) {
-      sort = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      sort = (sort == DataRef.DESC ? '-' : '+') + DataRef.VALUE;
-      sort = util.comparator(sort);
-      data = data.sort(sort);
-    // } else {  // 'First seen' order
-    //   sort = util.comparator('tpl._id');
+      cmp = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
+      cmp = (cmp == DataRef.DESC ? '-' : '+') + sort.op + '_' + DataRef.VALUE;
+      cmp = util.comparator(cmp);
+      data = data.sort(cmp);
     }
 
     return data.map(function(d) { return d[DataRef.GROUPBY]; });
@@ -471,15 +468,6 @@ function range(group) {
 
 module.exports = Scale;
 
-var sortDef = {
-  "type": "object",
-  "properties": {
-    "field": {"type": "string"},
-    "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
-    "order": {"enum": [DataRef.ASC, DataRef.DESC]}
-  }
-};
-
 var rangeDef = [
   {"enum": ["width", "height", "shapes", "category10", "category20"]},
   {
@@ -534,6 +522,14 @@ Scale.schema = {
               }
             }
           ]
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "field": {"type": "string"},
+            "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
+            "order": {"enum": [DataRef.ASC, DataRef.DESC]}
+          }
         }
       },
       "additionalProperties": false
@@ -625,9 +621,7 @@ Scale.schema = {
             "points": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
             "padding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
             "outerPadding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-            "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-
-            "sort": sortDef
+            "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
           },
           "required": ["type"]
         }, {
@@ -653,12 +647,6 @@ Scale.schema = {
             "properties": {
               "type": {"enum": [Types.POWER]},
               "exponent": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
-            },
-            "required": ["type"]
-          }, {
-            "properties": {
-              "type": {"enum": [Types.QUANTILE]},
-              "sort": sortDef
             },
             "required": ["type"]
           }]
