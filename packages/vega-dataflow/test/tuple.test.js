@@ -11,7 +11,7 @@ describe('Tuple', function() {
 
     d = Tuple.ingest(o);
     assert.equal(d._id, 1);
-    assert.equal(d.a, 5)
+    assert.equal(d.a, 5);
     assert.strictEqual(d, o);
     assert.notOk(Tuple.has_prev(d));
     assert.isUndefined(d._prev);

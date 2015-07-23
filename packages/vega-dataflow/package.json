@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Vega streaming dataflow graph.",
   "repository": {
     "type": "git",
@@ -16,8 +16,7 @@
   }],
   "license": "BSD-3-Clause",
   "dependencies": {
-    "datalib": "1.2.x",
-    "heap": "0.2.x",
+    "datalib": "^1.3.0",
     "vega-logging": "^1.0"
   },
   "devDependencies": {
