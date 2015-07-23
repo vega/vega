@@ -22,7 +22,7 @@ prototype.init = function(graph) {
   this._stamp = 0;  // Last stamp seen
 
   this._listeners = [];
-  this._registered = {}; // To prevent duplicate listeners
+  this._listeners._ids = {}; // To prevent duplicate listeners
 
   // Initialize dependencies.
   this._deps = {};
@@ -79,8 +79,10 @@ prototype.batch = function(state) {
 };
 
 prototype.dependency = function(type, deps) {
-  var d = this._deps[type];
+  var d = this._deps[type],
+      n = d._names || (d._names = {});  // To prevent dupe deps
 
+  // Get dependencies of the given type
   if (arguments.length === 1) {
     return d;
   }
@@ -88,12 +90,19 @@ prototype.dependency = function(type, deps) {
   if (deps === null) {
     // Clear dependencies of the given type
     d.splice(0, d.length);
+    d._names = {};
   } else if (!Array.isArray(deps)) {
-    if (d.indexOf(deps) < 0) { d.push(deps); }
+    // Separate this case to avoid cost of array creation
+    if (n[deps]) return this;
+    d.push(deps);
+    n[deps] = 1;
   } else {
-    // TODO: singleton case checks for inclusion already
-    // Should this be done here as well?
-    d.push.apply(d, deps);
+    for (var i=0, len=deps.length, dep; i<len; ++i) {
+      dep = deps[i];
+      if (n[dep]) continue;
+      d.push(dep);
+      n[dep] = 1;
+    }
   }
 
   return this;
@@ -107,10 +116,10 @@ prototype.addListener = function(l) {
   if (!(l instanceof Node)) {
     throw Error('Listener is not a Node');
   }
-  if (this._registered[l._id]) return this;
+  if (this._listeners._ids[l._id]) return this;
 
   this._listeners.push(l);
-  this._registered[l._id] = 1;
+  this._listeners._ids[l._id] = 1;
   if (this._rank > l._rank) {
     var q = [l],
         g = this._graph, cur;
@@ -130,14 +139,14 @@ prototype.removeListener = function(l) {
 
   if (b) {
     this._listeners.splice(idx, 1);
-    this._registered[l._id] = null;
+    this._listeners._ids[l._id] = null;
   }
   return b;
 };
 
 prototype.disconnect = function() {
   this._listeners = [];
-  this._registered = {};
+  this._listeners._ids = {};
 };
 
 // Evaluate this dataflow node for the current pulse.
