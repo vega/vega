@@ -1,5 +1,5 @@
-var Heap = require('heap'),
-    util = require('datalib/src/util'),
+var util = require('datalib/src/util'),
+    Heap = require('./Heap'),
     ChangeSet = require('./ChangeSet'),
     DataSource = require('./DataSource'),
     Collector = require('./Collector'),
@@ -140,33 +140,32 @@ prototype.propagate = function(pulse, node, stamp) {
   pq.push({node: node, pulse: pulse, rank: node.rank()});
 
   while (pq.size() > 0) {
-    v = pq.pop();
+    v = pq.peek();
     n = v.node;
     p = v.pulse;
-    r = v.rank;
-    l = n._listeners;
     reflowed = p.reflow && n.last() >= p.stamp;
 
-    if (reflowed) continue; // Don't needlessly reflow ops.
+    if (reflowed) {
+      // Don't needlessly reflow ops.
+      pq.pop();
+    } else if (v.rank !== (r = n.rank())) {
+      // A node's rank might change during a propagation. Re-queue if so.
+      v.rank = r;
+      pq.replace(v);
+    } else {
+      // Evaluate node and propagate pulse.
+      pq.pop();
+      l = n._listeners;
+      p = this.evaluate(p, n);
 
-    // A node's rank might change during a propagation (e.g. instantiating
-    // a group's dataflow branch). Re-queue if it has.
-    // TODO: use pq.replace or pq.poppush?
-    if (r !== n.rank()) {
-      pq.push({node: n, pulse: p, rank: n.rank()});
-      continue;
-    }
-
-    p = this.evaluate(p, n);
-
-    // Even if we didn't run the node, we still want to propagate the pulse. 
-    if (p !== this.doNotPropagate) {
-      if (!p.reflow && n.reflows()) { // If skipped eval of reflows node
-        p = ChangeSet.create(p, true);
-      }
-
-      for (i=0, len=l.length; i<len; ++i) {
-        pq.push({node: l[i], pulse: p, rank: l[i]._rank, src: n});
+      // Propagate the pulse. 
+      if (p !== this.doNotPropagate) {
+        if (!p.reflow && n.reflows()) { // If skipped eval of reflows node
+          p = ChangeSet.create(p, true);
+        }
+        for (i=0, len=l.length; i<len; ++i) {
+          pq.push({node: l[i], pulse: p, rank: l[i]._rank});
+        }
       }
     }
   }
