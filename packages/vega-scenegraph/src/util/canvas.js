@@ -15,7 +15,7 @@ function instance(w, h) {
   return lineDash(canvas);
 }
 
-function resize(canvas, w, h, p) {
+function resize(canvas, w, h, p, retina) {
   var g = this._ctx = canvas.getContext('2d'), 
       s = 1;
 
@@ -23,7 +23,9 @@ function resize(canvas, w, h, p) {
   canvas.height = h + p.top + p.bottom;
 
   // if browser canvas, attempt to modify for retina display
-  if (typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement) {
+  if (retina && typeof HTMLElement !== 'undefined' &&
+      canvas instanceof HTMLElement)
+  {
     g.pixelratio = (s = pixelRatio(canvas) || 1);
   }
 
@@ -83,6 +85,5 @@ function lineDash(canvas) {
 module.exports = {
   instance:   instance,
   resize:     resize,
-  pixelRatio: pixelRatio,
   lineDash:   lineDash
 };
