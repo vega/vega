@@ -37,7 +37,7 @@ function properties(model, mark, spec) {
   }
 
   function handleNestedRefs(r) {
-    var k = (r.parent ? "parent_" : "group_")+r.level+"_"+r.ref;
+    var k = (r.parent ? "parent_" : "group_")+r.level;
     deps._nRefs[k] = r;
   }
 

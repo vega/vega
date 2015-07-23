@@ -244,6 +244,7 @@ prototype.initialize = function(el) {
   }
 
   // renderer
+  canvas.Renderer.RETINA = config.render.retina;
   v._renderer = (v._renderer || new this._io.Renderer(config.load))
     .initialize(el, w, h, pad)
     .background(bg);

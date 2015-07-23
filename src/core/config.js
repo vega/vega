@@ -26,7 +26,8 @@ config.render = {
   lineWidth: 1,
   lineCap:   'butt',
   font:      'sans-serif',
-  fontSize:  11
+  fontSize:  11,
+  retina:    true
 };
 
 // default axis properties

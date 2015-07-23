@@ -216,7 +216,7 @@ proto.evaluate = function(input) {
 
   // Add any new scale references to the dependency list, and ensure
   // they're connected.
-  if (update && update.nested && update.nested.length) {
+  if (update.nested && update.nested.length) {
     util.keys(this._mark._scaleRefs).forEach(function(s) {
       var scale = self._parent.scale(s);
       if (!scale) return;
