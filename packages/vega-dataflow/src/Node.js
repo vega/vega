@@ -1,5 +1,5 @@
 var DEPS = require('./Dependencies').ALL,
-    nodeID = 1;
+    nodeID = 0;
 
 function Node(graph) {
   if (graph) this.init(graph);
@@ -16,10 +16,11 @@ var Flags = Node.Flags = {
 var prototype = Node.prototype;
 
 prototype.init = function(graph) {
-  this._id = nodeID++;
+  this._id = ++nodeID;
   this._graph = graph;
-  this._rank = graph.rank(); // For topologial sort
-  this._stamp = 0;  // Last stamp seen
+  this._rank  = graph.rank(); // Topological sort by rank
+  this._qrank = null; // Rank when enqueued for propagation
+  this._stamp = 0;    // Last stamp seen
 
   this._listeners = [];
   this._listeners._ids = {}; // To prevent duplicate listeners
@@ -40,10 +41,14 @@ prototype.rank = function() {
   return this._rank;
 };
 
+prototype.qrank = function(/* set */) {
+  if (!arguments.length) return this._qrank;
+  return (this._qrank = this._rank, this);
+};
+
 prototype.last = function(stamp) { 
   if (!arguments.length) return this._stamp;
-  this._stamp = stamp;
-  return this;
+  return (this._stamp = stamp, this);
 };
 
 // -- status flags ---
@@ -170,5 +175,7 @@ prototype.reevaluate = function(pulse) {
 
   return false;
 };
+
+Node.reset = function() { nodeID = 0; };
 
 module.exports = Node;
