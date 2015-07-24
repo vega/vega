@@ -103,68 +103,69 @@ prototype.signalRef = function(ref) {
   return value;
 };
 
-var schedule = function(a, b) {
-  if (a.rank !== b.rank) {  
-    // Topological sort
-    return a.rank - b.rank;
-  } else {
-    // If queueing multiple pulses to the same node, then there will be
-    // at most one pulse with a changeset (add/mod/rem), and the remainder
-    // will be reflows. Combine the changeset and reflows into a single pulse
-    // and queue that first. Subsequent reflow-only pulses will be pruned.
-    var pa = a.pulse, pb = b.pulse,
-        paCS = pa.add.length || pa.mod.length || pa.rem.length,
-        pbCS = pb.add.length || pb.mod.length || pb.rem.length;
-
-    pa.reflow = pb.reflow = pa.reflow || pb.reflow;
-
-    if (paCS && pbCS) throw Error('Both pulses have changesets.');
-    return paCS ? -1 : 1;
-  }
-};
-
 // Stamp should be specified with caution. It is necessary for inline datasources,
 // which need to be populated during the same cycle even though propagation has
 // passed that part of the dataflow graph.  
 prototype.propagate = function(pulse, node, stamp) {
-  var v, l, n, p, r, i, len, reflowed;
+  var pulses = {},
+      listeners, next, nplse, tpls, ntpls, i, len;
 
   // new PQ with each propagation cycle so that we can pulse branches
   // of the dataflow graph during a propagation (e.g., when creating
   // a new inline datasource).
-  var pq = new Heap(schedule); 
+  var pq = new Heap(function(a, b) {
+    // Topological sort on qrank as rank may change during propagation.
+    return a.qrank() - b.qrank();
+  }); 
 
   if (pulse.stamp) throw Error('Pulse already has a non-zero stamp.');
 
   pulse.stamp = stamp || ++this._stamp;
-  pq.push({node: node, pulse: pulse, rank: node.rank()});
+  pulses[node._id] = pulse;
+  pq.push(node.qrank(true));
 
   while (pq.size() > 0) {
-    v = pq.peek();
-    n = v.node;
-    p = v.pulse;
-    reflowed = p.reflow && n.last() >= p.stamp;
+    node  = pq.peek();
+    pulse = pulses[node._id];
 
-    if (reflowed) {
-      // Don't needlessly reflow ops.
-      pq.pop();
-    } else if (v.rank !== (r = n.rank())) {
+    if (node.rank() !== node.qrank()) {
       // A node's rank might change during a propagation. Re-queue if so.
-      v.rank = r;
-      pq.replace(v);
+      pq.replace(node.qrank(true));
     } else {
       // Evaluate node and propagate pulse.
       pq.pop();
-      l = n._listeners;
-      p = this.evaluate(p, n);
+      pulses[node._id] = null;
+      listeners = node._listeners;
+      pulse = this.evaluate(pulse, node);
 
       // Propagate the pulse. 
-      if (p !== this.doNotPropagate) {
-        if (!p.reflow && n.reflows()) { // If skipped eval of reflows node
-          p = ChangeSet.create(p, true);
+      if (pulse !== this.doNotPropagate) {
+        // Ensure reflow pulses always send reflow pulses even if skipped.
+        if (!pulse.reflow && node.reflows()) {
+          pulse = ChangeSet.create(pulse, true);
         }
-        for (i=0, len=l.length; i<len; ++i) {
-          pq.push({node: l[i], pulse: p, rank: l[i]._rank});
+
+        for (i=0, len=listeners.length; i<len; ++i) {
+          next = listeners[i];
+
+          if ((nplse = pulses[next._id]) !== undefined) {
+            if (nplse === null) throw Error('Already propagated to node.');
+
+            // We've already queued this node. Ensure there should be at most one
+            // pulse with tuples (add/mod/rem), and the remainder will be reflows. 
+            tpls  = pulse.add.length || pulse.mod.length || pulse.rem.length;
+            ntpls = nplse.add.length || nplse.mod.length || nplse.rem.length;
+
+            if (tpls && ntpls) throw Error('Multiple changeset pulses to same node');
+
+            // Combine reflow and tuples into a single pulse. 
+            pulses[next._id] = tpls ? pulse : nplse;
+            pulses[next._id].reflow = pulse.reflow || nplse.reflow;
+          } else {
+            // First time we're seeing this node, queue it for propagation.
+            pq.push(next.qrank(true));
+            pulses[next._id] = pulse;
+          }
         }
       }
     }
@@ -245,8 +246,8 @@ prototype.disconnect = function(branch) {
 };
 
 prototype.reevaluate = function(pulse, node) {
-  var reflowed = !pulse.reflow || (pulse.reflow && node.last() >= pulse.stamp),
-      run = !!pulse.add.length || !!pulse.rem.length || node.router();
+  var reflowed = pulse.reflow && node.last() >= pulse.stamp,
+      run = node.router() || pulse.add.length || pulse.rem.length;
 
   return run || !reflowed || node.reevaluate(pulse);
 };
