@@ -175,15 +175,15 @@ prototype.propagate = function(pulse, node, stamp) {
 // Connect a branch of dataflow nodes. 
 // Dependencies are wired to the nearest collector. 
 function forEachNode(branch, fn) {
-  var node, collector, router, i, n;
+  var node, collector, router, i;
 
-  for (i=0, n=branch.length; i<n; ++i) {
+  for (i=0; i<branch.length; ++i) {
     node = branch[i];
 
     // Share collectors between batch transforms. We can reuse an
     // existing collector unless a router node has come after it,
     // in which case, we splice in a new collector.
-    if (!node.data && node.batch()) { /* TODO: update transforms! */
+    if (!node.data && node.batch()) {
       if (router) {
         branch.splice(i, 0, (node = new Collector(this)));
       } else {
