@@ -68,7 +68,7 @@ prototype.transform = function(input) {
 
   function set(t) {
     var ll = [lon(t), lat(t)];
-    var xy = proj(ll);
+    var xy = proj(ll) || [null, null];
     Tuple.set(t, output.x, xy[0]);
     Tuple.set(t, output.y, xy[1]);
   }
