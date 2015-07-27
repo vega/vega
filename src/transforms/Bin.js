@@ -117,6 +117,14 @@ Bin.schema = {
         },
         {"$ref": "#/refs/signal"}
       ]
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "bin": {"type": "string", "default": "bin"}
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

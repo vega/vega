@@ -150,7 +150,8 @@ Treemap.schema = {
         "x": {"type": "string", "default": "layout_x"},
         "y": {"type": "string", "default": "layout_y"},
         "width": {"type": "string", "default": "layout_width"},
-        "height": {"type": "string", "default": "layout_height"}
+        "height": {"type": "string", "default": "layout_height"},
+        "depth": {"type": "string", "default": "layout_depth"}
       }
     }
   },
