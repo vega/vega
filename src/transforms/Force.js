@@ -1,27 +1,38 @@
 var d3 = require('d3'),
     Tuple = require('vega-dataflow').Tuple,
+    ChangeSet = require('vega-dataflow/src/ChangeSet'),
+    Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Force(graph) {
   Transform.prototype.init.call(this, graph);
-  Transform.addParameters(this, {
-    size: {type: 'array<value>', default: [500, 500]},
-    links: {type: 'data'},
-    linkDistance: {type: 'field|value', default: 20},
-    linkStrength: {type: 'field|value', default: 1},
-    charge: {type: 'field|value', default: -30},
-    chargeDistance: {type: 'field|value', default: Infinity},
-    iterations: {type: 'value', default: 500},
-    friction: {type: 'value', default: 0.9},
-    theta: {type: 'value', default: 0.8},
-    gravity: {type: 'value', default: 0.1},
-    alpha: {type: 'value', default: 0.1}
-  });
 
+  this._prev = null;
+  this._setup = true;
   this._nodes  = [];
   this._links = [];
   this._layout = d3.layout.force();
+
+  Transform.addParameters(this, {
+    size: {type: 'array<value>', default: [500, 500]},
+    bound: {type: 'value', default: true},
+
+    links: {type: 'data'},
+    linkStrength: {type: 'field|value', default: 1},
+    linkDistance: {type: 'field|value', default: 20},
+    charge: {type: 'field|value', default: -30},
+    chargeDistance: {type: 'field|value', default: Infinity},
+    friction: {type: 'value', default: 0.9},
+    theta: {type: 'value', default: 0.8},
+    gravity: {type: 'value', default: 0.1},
+    alpha: {type: 'value', default: 0.1},
+    iterations: {type: 'value', default: 500},
+    
+    interactive: {type: 'value', default: false},    
+    active: {type: 'value', default: this._prev},
+    fixed: {type: 'data'}
+  });
 
   this._output = {
     'x': 'layout_x',
@@ -44,77 +55,144 @@ prototype.transform = function(nodeInput) {
   log.debug(nodeInput, ['force']);
 
   // get variables
-  var linkInput = this.param('links').source.last(),
-      layout = this._layout,
+  var interactive = this.param('interactive'),
+      linkInput = this.param('links').source.last(),
+      active = this.param('active'),
       output = this._output,
+      layout = this._layout,
       nodes = this._nodes,
-      links = this._links,
-      iter = this.param('iterations');
+      links = this._links;
 
-  // process added nodes
-  nodeInput.add.forEach(function(n) {
-    nodes.push({tuple: n});
-  });
-
-  // process added edges
-  linkInput.add.forEach(function(l) {
-    var link = {
-      tuple: l,
-      source: nodes[l.source],
-      target: nodes[l.target]
-    };
-    Tuple.set(l, output.source, link.source.tuple);
-    Tuple.set(l, output.target, link.target.tuple);
-    links.push(link);
-  });
-
-  // TODO process 'mod' of edge source or target?
-
-  // configure layout
-  layout
-    .size(this.param('size'))
-    .linkDistance(this.param('linkDistance'))
-    .linkStrength(this.param('linkStrength'))
-    .charge(this.param('charge'))
-    .chargeDistance(this.param('chargeDistance'))
-    .friction(this.param('friction'))
-    .theta(this.param('theta'))
-    .gravity(this.param('gravity'))
-    .alpha(this.param('alpha'))
-    .nodes(nodes)
-    .links(links);
-
-  // run layout
-  layout.start();
-  for (var i=0; i<iter; ++i) {
-    layout.tick();
+  // configure nodes, links and layout
+  // TODO what if interactive or charge/linkDistance/linkStrength has changed?
+  if (this._setup || nodeInput.add.length || linkInput.add.length) {
+    this.configure(nodeInput, linkInput, interactive);
+    this._setup = false;
   }
-  layout.stop();
-
-  // copy layout values to nodes
-  nodes.forEach(function(n) {
-    Tuple.set(n.tuple, output.x, n.x);
-    Tuple.set(n.tuple, output.y, n.y);
-    Tuple.set(n.tuple, output.px, n.px);
-    Tuple.set(n.tuple, output.py, n.py);
-    Tuple.set(n.tuple, output.fixed, n.fixed);
-    Tuple.set(n.tuple, output.weight, n.weight);
-  });
-
-  // process removed nodes
-  if (nodeInput.rem.length > 0) {
-    this._nodes = Tuple.idFilter(nodes, nodeInput.rem);
+  
+  // run batch layout
+  if (!interactive) {
+    var iterations = this.param('iterations');
+    for (var i=0; i<iterations; ++i) layout.tick();
+    layout.stop();
   }
 
-  // process removed edges
-  if (linkInput.rem.length > 0) {
-    this.links = Tuple.idFilter(links, linkInput.rem);
+  // update node positions
+  this.update(active);
+
+  // update active node status
+  if (active !== this._prev) {
+    if (active && active.update) {
+      layout.alpha(this.param('alpha')); // re-start layout
+    }
+    this._prev = active;
+  }
+
+  // process removed nodes or edges
+  if (nodeInput.rem.length) {
+    layout.nodes(this._nodes = Tuple.idFilter(nodes, nodeInput.rem));
+  }
+  if (linkInput.rem.length) {
+    layout.links(this._links = Tuple.idFilter(links, linkInput.rem));
   }
 
   // return changeset
   nodeInput.fields[output.x] = 1;
   nodeInput.fields[output.y] = 1;
   return nodeInput;
+};
+
+prototype.configure = function(nodeInput, linkInput, interactive) {
+  var force = this,
+      graph = this._graph,
+      output = this._output,
+      layout = this._layout,
+      nodes = this._nodes,
+      links = this._links,
+      a, i, x, link;
+  
+  // process added nodes
+  for (a=nodeInput.add, i=0; i<a.length; ++i) {
+    nodes.push({tuple: a[i]});
+  }
+
+  // process added edges
+  for (a=linkInput.add, i=0; i<a.length; ++i) {
+    x = a[i];
+    link = {
+      tuple:  x,
+      source: nodes[x.source],
+      target: nodes[x.target]
+    };
+    Tuple.set(x, output.source, link.source.tuple);
+    Tuple.set(x, output.target, link.target.tuple);
+    links.push(link);
+  }
+
+  // TODO process 'mod' of edge source or target?
+
+  // setup handler for force layout tick events
+  var tickHandler = !interactive ? null : function() {
+    // re-schedule the transform, force reflow
+    graph.propagate(ChangeSet.create(null, true), force);
+
+    // hard-code propagation to links
+    // TODO: dataflow graph should propagate automatically
+    var lnode = force.param('links').source._pipeline[0];
+    graph.propagate(ChangeSet.create(null, true), lnode);
+  };
+
+  // configure layout
+  layout
+    .size(this.param('size'))
+    .linkStrength(this.param('linkStrength'))
+    .linkDistance(this.param('linkDistance'))
+    .chargeDistance(this.param('chargeDistance'))
+    .charge(this.param('charge'))
+    .theta(this.param('theta'))
+    .gravity(this.param('gravity'))
+    .friction(this.param('friction'))
+    .nodes(nodes)
+    .links(links)
+    .on('tick', tickHandler)
+    .start().alpha(this.param('alpha'));
+};
+
+prototype.update = function(active) {
+  var output = this._output,
+      bound = this.param('bound'),
+      fixed = this.param('fixed'),
+      size = this.param('size'),
+      nodes = this._nodes,
+      lut = {}, id, i, n, t, x, y;
+
+  if (fixed) {
+    fixed = fixed.source.values();
+    for (i=0, n=fixed.length; i<n; ++i) {
+      lut[fixed[i].id] = 1;
+    }
+  }
+
+  for (i=0; i<nodes.length; ++i) {
+    n = nodes[i];
+    t = n.tuple;
+    id = t._id;
+
+    if (active && active.id === id) {
+      n.fixed = 1;
+      if (active.update) {
+        n.x = n.px = active.x;
+        n.y = n.py = active.y;
+      }
+    } else {
+      n.fixed = lut[id] || 0;
+    }
+
+    x = bound ? Math.max(0, Math.min(n.x, size[0])) : n.x;
+    y = bound ? Math.max(0, Math.min(n.y, size[1])) : n.y;
+    Tuple.set(t, output.x, x);
+    Tuple.set(t, output.y, y);
+  }
 };
 
 module.exports = Force;
