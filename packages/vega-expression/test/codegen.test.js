@@ -211,6 +211,14 @@ describe('evaluate', function() {
       }
     });
 
+    it('should eval clamp function', function() {
+      expect(evaluate('clamp(5, 0, 10)')).to.equal(5);
+      expect(evaluate('clamp(-1, 0, 10)')).to.equal(0);
+      expect(evaluate('clamp(11, 0, 10)')).to.equal(10);
+      expect(evaluate.fn('clamp(0,1)')).to.throw();
+      expect(evaluate.fn('clamp(0,1,2,3)')).to.throw();
+    });
+
     it('should eval string functions', function() {
       expect(evaluate('length("123")')).to.equal('123'.length);
       expect(evaluate('upper("abc")')).to.equal('abc'.toUpperCase());
