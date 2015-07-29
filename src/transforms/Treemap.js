@@ -1,6 +1,6 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+    dl = require('datalib'),
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
@@ -47,7 +47,7 @@ prototype.batchTransform = function(input, data) {
 
   // configure layout
   layout
-    .sort(util.comparator(this.param('sort').field))
+    .sort(dl.comparator(this.param('sort').field))
     .children(this.param('children').accessor)
     .value(this.param('field').accessor)
     .size(this.param('size'))

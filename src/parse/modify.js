@@ -1,8 +1,9 @@
-var util = require('datalib/src/util'),
-    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    Tuple = require('vega-dataflow/src/Tuple'),
-    Deps = require('vega-dataflow/src/Dependencies'),
-    log = require('vega-logging');
+var dl = require('datalib'),
+    log = require('vega-logging'),
+    df = require('vega-dataflow'),
+    Node = df.Node, // jshint ignore:line
+    Tuple = df.Tuple,
+    Deps = df.Dependencies;
 
 var Types = {
   INSERT: "insert",
@@ -19,7 +20,7 @@ var filter = function(field, value, src, dest) {
 };
 
 function parseModify(model, def, ds) {
-  var signal = def.signal ? util.field(def.signal) : null, 
+  var signal = def.signal ? dl.field(def.signal) : null, 
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),

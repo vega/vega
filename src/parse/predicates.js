@@ -1,4 +1,4 @@
-var util = require('datalib/src/util');
+var dl = require('datalib');
 
 var types = {
   '=':   parseComparator,
@@ -26,7 +26,7 @@ function parsePredicates(model, spec) {
     var pred  = Function("args", "db", "signals", "predicates", parse.code);
     pred.root = function() { return model.scene().items[0]; }; // For global scales
     pred.nullScale = nullScale;
-    pred.isFunction = util.isFunction;
+    pred.isFunction = dl.isFunction;
     pred.signals = parse.signals;
     pred.data = parse.data;
 
@@ -37,8 +37,8 @@ function parsePredicates(model, spec) {
 }
 
 function parseSignal(signal, signals) {
-  var s = util.field(signal),
-      code = "signals["+s.map(util.str).join("][")+"]";
+  var s = dl.field(signal),
+      code = "signals["+s.map(dl.str).join("][")+"]";
   signals[s[0]] = 1;
   return code;
 }
@@ -50,34 +50,34 @@ function parseOperands(model, operands) {
   function setSignal(s) { signals[s] = 1; }
   function setData(d) { db[d] = 1; }
 
-  util.array(operands).forEach(function(o, i) {
+  dl.array(operands).forEach(function(o, i) {
     var name = "o" + i,
         def = "";
 
     if (o.value !== undefined) {
-      def = util.str(o.value);
+      def = dl.str(o.value);
     } else if (o.arg) {
-      def = "args["+util.str(o.arg)+"]";
+      def = "args["+dl.str(o.arg)+"]";
     } else if (o.signal) {
       def = parseSignal(o.signal, signals);
     } else if (o.predicate) {
       var ref = o.predicate,
           predName = ref && (ref.name || ref),
           pred = model.predicate(predName),
-          p = "predicates["+util.str(predName)+"]";
+          p = "predicates["+dl.str(predName)+"]";
 
       pred.signals.forEach(setSignal);
       pred.data.forEach(setData);
 
-      if (util.isObject(ref)) {
-        util.keys(ref).forEach(function(k) {
+      if (dl.isObject(ref)) {
+        dl.keys(ref).forEach(function(k) {
           if (k === "name") return;
           var i = ref[k];
-          def += "args["+util.str(k)+"] = ";
+          def += "args["+dl.str(k)+"] = ";
           if (i.signal) {
             def += parseSignal(i.signal, signals);
           } else if (i.arg) {
-            def += "args["+util.str(i.arg)+"]";
+            def += "args["+dl.str(i.arg)+"]";
           }
           def += ", ";
         });  
@@ -92,8 +92,8 @@ function parseOperands(model, operands) {
 
   return {
     code: "var " + decl.join(", ") + ";\n" + defs.join(";\n") + ";\n",
-    signals: util.keys(signals),
-    data: util.keys(db)
+    signals: dl.keys(signals),
+    data: dl.keys(db)
   };
 }
 
@@ -137,9 +137,9 @@ function parseIn(model, spec) {
   code = ops.code + code + "\n  var ordSet = null;\n";
 
   if (spec.data) {
-    var field = util.field(spec.field).map(util.str);
+    var field = dl.field(spec.field).map(dl.str);
     code += "var where = function(d) { return d["+field.join("][")+"] == o0 };\n";
-    code += "return db["+util.str(spec.data)+"].filter(where).length > 0;";
+    code += "return db["+dl.str(spec.data)+"].filter(where).length > 0;";
   } else if (spec.range) {
     // TODO: inclusive/exclusive range?
     if (spec.scale) {
@@ -166,14 +166,14 @@ function parseScale(spec, ops) {
   var code = "var scale = ", 
       idx  = ops.length;
 
-  if (util.isString(spec)) {
+  if (dl.isString(spec)) {
     ops.push({ value: spec });
     code += "this.root().scale(o"+idx+")";
   } else if (spec.arg) {  // Scale function is being passed as an arg
     ops.push(spec);
     code += "o"+idx;
   } else if (spec.name) { // Full scale parameter {name: ..}
-    ops.push(util.isString(spec.name) ? {value: spec.name} : spec.name);
+    ops.push(dl.isString(spec.name) ? {value: spec.name} : spec.name);
     code += "(this.isFunction(o"+idx+") ? o"+idx+" : ";
     if (spec.scope) {
       ops.push(spec.scope);

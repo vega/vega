@@ -1,4 +1,4 @@
-var util = require('datalib/src/util'),
+var dl = require('datalib'),
     log  = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -15,7 +15,7 @@ prototype.transform = function(input) {
   log.debug(input, ['sorting']);
 
   if (input.add.length || input.mod.length || input.rem.length) {
-    input.sort = util.comparator(this.param('by').field);
+    input.sort = dl.comparator(this.param('by').field);
   }
   return input;
 };

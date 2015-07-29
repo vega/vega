@@ -1,9 +1,9 @@
-var Aggregator = require('datalib/src/aggregate/aggregator'),
+var dl = require('datalib'),
+    Aggregator = dl.Aggregator,
     Base = Aggregator.prototype,
     Flags = Aggregator.Flags,
-    ChangeSet = require('vega-dataflow/src/ChangeSet'),
-    Tuple = require('vega-dataflow/src/Tuple'),
-    util = require('datalib/src/util'),
+    df = require('vega-dataflow'),
+    Tuple = df.Tuple,
     log = require('vega-logging'),
     facetID = 1;
 
@@ -123,14 +123,14 @@ prototype.changes = function(input, output) {
     } else {
       if (this._facet !== null) {
         // propagate sort, signals, fields, etc.
-        ChangeSet.copy(input, cell.ds._input);
+        df.ChangeSet.copy(input, cell.ds._input);
       }
 
       if (flag & Flags.ADD_CELL) {
         output.add.push(cell.tuple);
       } else if (flag & Flags.MOD_CELL) {
         output.mod.push(cell.tuple);
-        util.keys(cell.tuple._prev).forEach(fields);
+        dl.keys(cell.tuple._prev).forEach(fields);
       }
     }
 

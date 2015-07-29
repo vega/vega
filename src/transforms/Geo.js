@@ -1,6 +1,6 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+    dl = require('datalib'),
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -44,7 +44,7 @@ Geo.d3Projection = function() {
   for (name in param) {
     if (name === 'projection' || !proj[name]) continue;
     value = this.param(name);
-    if (value === undefined || (util.isArray(value) && value.length === 0)) {
+    if (value === undefined || (dl.isArray(value) && value.length === 0)) {
       continue;
     }
     if (value !== proj[name]()) {
@@ -143,7 +143,7 @@ Geo.schema = {
   "title": "Geo transform",
   "description": "Performs a cartographic projection. Given longitude and latitude values, sets corresponding x and y properties for a mark.",
   "type": "object",
-  "properties": util.extend({
+  "properties": dl.extend({
     "type": {"enum": ["geo"]},
     "lon": {
       "description": "The input longitude values.",

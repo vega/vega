@@ -1,5 +1,5 @@
 var d3 = require('d3'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
 

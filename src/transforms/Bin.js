@@ -1,5 +1,5 @@
-var bins = require('datalib/src/bins/bins'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+var bins = require('datalib').bins,
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
 

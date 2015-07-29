@@ -31,14 +31,14 @@ prototype.aggr = function() {
 
 module.exports = Facet;
 
-var util = require('datalib/src/util');
+var dl = require('datalib');
 
 Facet.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Facet transform",
   "description": "A special aggregate transform that organizes a data set into groups or \"facets\".",
   "type": "object",
-  "properties": util.extend({}, Aggregate.schema.properties, {
+  "properties": dl.extend({}, Aggregate.schema.properties, {
     "type": {"enum": ["facet"]},
     "transform": {"$ref": "#/defs/transform"}
   }),

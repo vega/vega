@@ -1,24 +1,18 @@
-var load = require('datalib/src/import/load'),
-    util = require('datalib/src/util'),
+var dl = require('datalib'),
     log = require('vega-logging'),
     Model = require('../core/Model'), 
-    View = require('../core/View'), 
-    parseBg = require('../parse/background'),
-    parsePadding = require('../parse/padding'),
-    parseMarks = require('../parse/marks'),
-    parseSignals = require('../parse/signals'),
-    parsePredicates = require('../parse/predicates'),
-    parseData = require('../parse/data');
+    View = require('../core/View'),
+    parsers = require('./');
 
 function parseSpec(spec, callback) {
   var vf = arguments[arguments.length-1],
-      viewFactory = arguments.length > 2 && util.isFunction(vf) ? vf : View.factory,
+      viewFactory = arguments.length > 2 && dl.isFunction(vf) ? vf : View.factory,
       config = arguments[2] !== viewFactory ? arguments[2] : {},
       model = new Model(config);
 
   function parse(spec) {
     // protect against subsequent spec modification
-    spec = util.duplicate(spec);
+    spec = dl.duplicate(spec);
 
     var width = spec.width || 500,
         height = spec.height || 500,
@@ -28,20 +22,22 @@ function parseSpec(spec, callback) {
       width: width,
       height: height,
       viewport: viewport,
-      background: parseBg(spec.background),
-      padding: parsePadding(spec.padding),
-      signals: parseSignals(model, spec.signals),
-      predicates: parsePredicates(model, spec.predicates),
-      marks: parseMarks(model, spec, width, height),
-      data:  parseData(model, spec.data, function() { callback(viewFactory(model)); })
+      background: parsers.background(spec.background),
+      padding: parsers.padding(spec.padding),
+      signals: parsers.signals(model, spec.signals),
+      predicates: parsers.predicates(model, spec.predicates),
+      marks: parsers.marks(model, spec, width, height),
+      data: parsers.data(model, spec.data, function() {
+        callback(viewFactory(model));
+      })
     });    
   }
 
-  if (util.isObject(spec)) {
+  if (dl.isObject(spec)) {
     parse(spec);
-  } else if (util.isString(spec)) {
-    var opts = util.extend({url: spec}, model.config().load);
-    load(opts, function(err, data) {
+  } else if (dl.isString(spec)) {
+    var opts = dl.extend({url: spec}, model.config().load);
+    dl.load(opts, function(err, data) {
       if (err) {
         log.error('LOADING SPECIFICATION FAILED: ' + err.statusText);
       } else {

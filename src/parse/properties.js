@@ -1,15 +1,14 @@
 var d3 = require('d3'),
-    template = require('datalib/src/template'),
-    util = require('datalib/src/util'),
-    Tuple = require('vega-dataflow/src/Tuple'),
-    log = require('vega-logging');
+    dl = require('datalib'),
+    log = require('vega-logging'),
+    Tuple = require('vega-dataflow').Tuple;
 
 var DEPS = ["signals", "scales", "data", "fields"];
 
 function properties(model, mark, spec) {
   var config = model.config(),
       code = "",
-      names = util.keys(spec),
+      names = dl.keys(spec),
       i, len, name, ref, vars = {}, 
       deps = {
         signals: {},
@@ -23,14 +22,14 @@ function properties(model, mark, spec) {
       
   code += "var o = trans ? {} : item,\n" +
           "    dirty = false;\n" +
-          // Stash for util.template
+          // Stash for dl.template
           "  signals.datum  = item.datum;\n" + 
           "  signals.group  = group;\n" + 
           "  signals.parent = group.datum;\n";
 
   function handleDep(p) {
     if (ref[p] == null) return;
-    var k = util.array(ref[p]), i, n;
+    var k = dl.array(ref[p]), i, n;
     for (i=0, n=k.length; i<n; ++i) {
       deps[p][k[i]] = 1;
     }
@@ -49,7 +48,7 @@ function properties(model, mark, spec) {
       code += "\n  " + ref.code;
     } else {
       ref = valueRef(config, name, ref);
-      code += "dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;";
+      code += "dirty = this.tpl.set(o, "+dl.str(name)+", "+ref.val+") || dirty;";
     }
 
     vars[name] = true;
@@ -60,7 +59,7 @@ function properties(model, mark, spec) {
 
   // If nested references are present, sort them based on their level
   // to speed up determination of whether encoders should be reeval'd.
-  util.keys(deps._nRefs).forEach(function(k) { deps.nested.push(deps._nRefs[k]); });
+  dl.keys(deps._nRefs).forEach(function(k) { deps.nested.push(deps._nRefs[k]); });
   deps.nested.sort(function(a, b) { 
     a = a.level;
     b = b.level;
@@ -122,15 +121,15 @@ function properties(model, mark, spec) {
     var encoder = Function("item", "group", "trans", "db", 
       "signals", "predicates", code);
     encoder.tpl  = Tuple;
-    encoder.util = util;
+    encoder.util = dl;
     encoder.d3   = d3; // For color spaces
-    util.extend(encoder, template.context);
+    dl.extend(encoder, dl.template.context);
     return {
       encode:  encoder,
-      signals: util.keys(deps.signals),
-      scales:  util.keys(deps.scales),
-      data:    util.keys(deps.data),
-      fields:  util.keys(deps.fields),
+      signals: dl.keys(deps.signals),
+      scales:  dl.keys(deps.scales),
+      data:    dl.keys(deps.data),
+      fields:  dl.keys(deps.fields),
       nested:  deps.nested,
       reflow:  deps.reflow
     };
@@ -141,12 +140,12 @@ function properties(model, mark, spec) {
 }
 
 function dependencies(a, b) {
-  if (!util.isObject(a)) {
+  if (!dl.isObject(a)) {
     a = {reflow: false, nested: []};
     DEPS.forEach(function(d) { a[d] = []; });
   }
 
-  if (util.isObject(b)) {
+  if (dl.isObject(b)) {
     a.reflow = a.reflow || b.reflow;
     a.nested.push.apply(a.nested, b.nested);
     DEPS.forEach(function(d) { a[d].push.apply(a[d], b[d]); });
@@ -172,15 +171,15 @@ function rule(model, name, rules) {
     var def = r.predicate,
         predName = def && (def.name || def),
         pred = model.predicate(predName),
-        p = "predicates["+util.str(predName)+"]",
+        p = "predicates["+dl.str(predName)+"]",
         input = [], args = name+"_arg"+i,
         ref;
 
-    if (util.isObject(def)) {
-      util.keys(def).forEach(function(k) {
+    if (dl.isObject(def)) {
+      dl.keys(def).forEach(function(k) {
         if (k === "name") return;
         var ref = valueRef(config, i, def[k]);
-        input.push(util.str(k)+": "+ref.val);
+        input.push(dl.str(k)+": "+ref.val);
         dependencies(deps, ref);
       });
     }
@@ -193,11 +192,11 @@ function rule(model, name, rules) {
       deps.data.push.apply(deps.data, pred.data);
       inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
       code += "if ("+p+".call("+p+","+args+", db, signals, predicates)) {" +
-        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;";
+        "\n    dirty = this.tpl.set(o, "+dl.str(name)+", "+ref.val+") || dirty;";
       code += rules[i+1] ? "\n  } else " : "  }";
     } else {
       code += "{" + 
-        "\n    dirty = this.tpl.set(o, "+util.str(name)+", "+ref.val+") || dirty;"+
+        "\n    dirty = this.tpl.set(o, "+dl.str(name)+", "+ref.val+") || dirty;"+
         "\n  }\n";
     }
   });
@@ -227,9 +226,9 @@ function valueRef(config, name, ref) {
       sgRef = null, fRef = null, sRef = null, tmpl = {};
 
   if (ref.template !== undefined) {
-    val = template.source(ref.template, "signals", tmpl);
-    util.keys(tmpl).forEach(function(k) {
-      var f = util.field(k),
+    val = dl.template.source(ref.template, "signals", tmpl);
+    dl.keys(tmpl).forEach(function(k) {
+      var f = dl.field(k),
           a = f.shift();
       if (a === 'parent' || a === 'group') {
         deps.nested.push({ 
@@ -246,17 +245,17 @@ function valueRef(config, name, ref) {
   }
 
   if (ref.value !== undefined) {
-    val = util.str(ref.value);
+    val = dl.str(ref.value);
   }
 
   if (ref.signal !== undefined) {
-    sgRef = util.field(ref.signal);
-    val = "signals["+sgRef.map(util.str).join("][")+"]"; 
+    sgRef = dl.field(ref.signal);
+    val = "signals["+sgRef.map(dl.str).join("][")+"]"; 
     deps.signals.push(sgRef.shift());
   }
 
   if (ref.field !== undefined) {
-    ref.field = util.isString(ref.field) ? {datum: ref.field} : ref.field;
+    ref.field = dl.isString(ref.field) ? {datum: ref.field} : ref.field;
     fRef = fieldRef(ref.field);
     val  = fRef.val;
     dependencies(deps, fRef);
@@ -279,8 +278,8 @@ function valueRef(config, name, ref) {
   }
   
   // multiply, offset, return value
-  val = "(" + (ref.mult?(util.number(ref.mult)+" * "):"") + val + ")" +
-        (ref.offset ? " + " + util.number(ref.offset) : "");
+  val = "(" + (ref.mult?(dl.number(ref.mult)+" * "):"") + val + ")" +
+        (ref.offset ? " + " + dl.number(ref.offset) : "");
 
   // Collate dependencies
   return (deps.val = val, deps);
@@ -293,7 +292,7 @@ function colorRef(config, type, x, y, z) {
       deps = dependencies();
 
   [xx, yy, zz].forEach(function(v) {
-    if (util.isArray) return;
+    if (dl.isArray) return;
     dependencies(deps, v);
   });
 
@@ -305,8 +304,8 @@ function colorRef(config, type, x, y, z) {
 // {field: {group: "foo"} }  -> group.foo
 // {field: {parent: "foo"} } -> group.datum.foo
 function fieldRef(ref) {
-  if (util.isString(ref)) {
-    return {val: util.field(ref).map(util.str).join("][")};
+  if (dl.isString(ref)) {
+    return {val: dl.field(ref).map(dl.str).join("][")};
   } 
 
   // Resolve nesting/parent lookups
@@ -328,7 +327,7 @@ function fieldRef(ref) {
     deps.nested.push({ level: l, parent: true });
   } else if (ref.signal) {
     val = "signals["+val+"]";
-    deps.signals.push(util.field(ref.signal)[0]);
+    deps.signals.push(dl.field(ref.signal)[0]);
     deps.reflow = true;
   }
 
@@ -343,10 +342,10 @@ function scaleRef(ref) {
       fr = null,
       deps = dependencies();
 
-  if (util.isString(ref)) {
-    scale = util.str(ref);
+  if (dl.isString(ref)) {
+    scale = dl.str(ref);
   } else if (ref.name) {
-    scale = util.isString(ref.name) ? util.str(ref.name) : (fr = fieldRef(ref.name)).val;
+    scale = dl.isString(ref.name) ? dl.str(ref.name) : (fr = fieldRef(ref.name)).val;
   } else {
     scale = (fr = fieldRef(ref)).val;
   }
@@ -362,7 +361,7 @@ function scaleRef(ref) {
 module.exports = properties;
 
 function valueSchema(type) {
-  type = util.isArray(type) ? {"enum": type} : {"type": type};
+  type = dl.isArray(type) ? {"enum": type} : {"type": type};
   var modType = type.type === "number" && type.type || "string";
   var valRef  = {
     "type": "object",

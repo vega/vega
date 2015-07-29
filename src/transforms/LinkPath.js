@@ -1,4 +1,4 @@
-var Tuple = require('vega-dataflow/src/Tuple'),
+var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
 

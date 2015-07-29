@@ -1,4 +1,4 @@
-var util = require('datalib/src/util'),
+var dl = require('datalib'),
     transforms = require('../transforms/index');
 
 function parseTransforms(model, def) {
@@ -8,7 +8,7 @@ function parseTransforms(model, def) {
   // as subsequent properties may require output to be set (e.g. group by).
   if(def.output) tx.output(def.output);
 
-  util.keys(def).forEach(function(k) {
+  dl.keys(def).forEach(function(k) {
     if(k === 'type' || k === 'output') return;
     tx.param(k, def[k]);
   });
@@ -22,7 +22,7 @@ parseTransforms.schema = {
     "transform": {
       "type": "array",
       "items": {
-        "oneOf": util.keys(transforms).map(function(k) {
+        "oneOf": dl.keys(transforms).map(function(k) {
           return transforms[k].schema;
         })
       }
