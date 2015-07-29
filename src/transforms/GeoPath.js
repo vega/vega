@@ -15,7 +15,7 @@ function GeoPath(graph) {
   this._output = {
     'path': 'layout_path'
   };
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (GeoPath.prototype = Object.create(Transform.prototype));

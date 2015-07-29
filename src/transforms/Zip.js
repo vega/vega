@@ -17,7 +17,7 @@ function Zip(graph) {
   this._collector = new Collector(graph);
   this._lastJoin = 0;
 
-  return this.revises(true);
+  return this.revises(true).mutates(true);
 }
 
 var prototype = (Zip.prototype = Object.create(Transform.prototype));

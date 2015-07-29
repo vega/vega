@@ -16,7 +16,7 @@ function Geo(graph) {
     'x': 'layout_x',
     'y': 'layout_y'
   };
-  return this;
+  return this.mutates(true);
 }
 
 Geo.Parameters = {

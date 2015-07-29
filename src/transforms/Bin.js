@@ -18,7 +18,7 @@ function Bin(graph) {
   });
 
   this._output = {'bin': 'bin'};
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (Bin.prototype = Object.create(Transform.prototype));

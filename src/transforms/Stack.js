@@ -18,7 +18,7 @@ function Stack(graph) {
     'end':   'layout_end',
     'mid':   'layout_mid'
   };
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (Stack.prototype = Object.create(BatchTransform.prototype));

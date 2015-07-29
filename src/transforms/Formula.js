@@ -11,7 +11,7 @@ function Formula(graph) {
     expr:  {type: 'expr'}
   });
 
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (Formula.prototype = Object.create(Transform.prototype));

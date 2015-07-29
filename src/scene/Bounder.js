@@ -9,7 +9,8 @@ function Bounder(graph, mark) {
   this._mark = mark;
   return Node.prototype.init.call(this, graph)
     .router(true)
-    .reflows(true);
+    .reflows(true)
+    .mutates(true);
 }
 
 var proto = (Bounder.prototype = new Node());

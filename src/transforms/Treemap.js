@@ -32,7 +32,7 @@ function Treemap(graph) {
     'height': 'layout_height',
     'depth':  'layout_depth',
   };
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (Treemap.prototype = Object.create(BatchTransform.prototype));

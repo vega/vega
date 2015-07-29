@@ -34,7 +34,7 @@ function Force(graph) {
     'target': '_target'
   };
 
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (Force.prototype = Object.create(Transform.prototype));

@@ -35,7 +35,7 @@ function Encoder(graph, mark, builder) {
 
   if (exit) s.push.apply(s, exit.scales);
 
-  return this;
+  return this.mutates(true);
 }
 
 var proto = (Encoder.prototype = new Node());

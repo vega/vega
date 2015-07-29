@@ -19,7 +19,7 @@ function Pie(graph) {
     'mid':   'layout_mid'
   };
 
-  return this;
+  return this.mutates(true);
 }
 
 var prototype = (Pie.prototype = Object.create(BatchTransform.prototype));
