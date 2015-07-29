@@ -242,6 +242,15 @@ function getRefs(def) {
   return def.fields || util.array(def);
 }
 
+function inherits(refs) {
+  return refs.some(function(r) {
+    if (!r.data) return true;
+    return r.data && util.array(r.field).some(function(f) {
+      return f.parent;
+    });
+  });
+}
+
 function getFields(ref, group) {
   return util.array(ref.field).map(function(f) {
     return f.parent ?
@@ -274,16 +283,25 @@ function aggrType(def, scale) {
 
 function getCache(which, def, scale, group) {
   var refs = getRefs(def),
+      inherit = inherits(refs),
       atype = aggrType(def, scale),
       uniques = isUniques(scale),
       sort = def.sort,
       ck = '_'+which,
       fields = getFields(refs[0], group);
 
-  if (scale[ck]) return scale[ck];
+  if (scale[ck] || this[ck]) return scale[ck] || this[ck];
 
-  var cache = scale[ck] = new Aggregate(this._graph).type(atype),
+  var cache = new Aggregate(this._graph).type(atype),
       groupby, summarize;
+
+  // If a scale's dataref doesn't inherit data from the group, we can
+  // store the dataref aggregator at the Scale (dataflow node) level. 
+  if (inherit) {
+    scale[ck] = cache;
+  } else {
+    this[ck]  = cache;
+  }
 
   if (uniques) {
     if (atype === Aggregate.TYPES.VALUE) {
@@ -313,7 +331,7 @@ function getCache(which, def, scale, group) {
   cache.param('groupby', groupby)
     .param('summarize', summarize);
 
-  return cache;
+  return (cache._lastUpdate = -1, cache);
 }
 
 function dataRef(which, def, scale, group) {
@@ -322,6 +340,7 @@ function dataRef(which, def, scale, group) {
 
   var self = this, graph = this._graph,
       refs = getRefs(def),
+      inherit = inherits(refs),
       atype = aggrType(def, scale),
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
@@ -332,46 +351,52 @@ function dataRef(which, def, scale, group) {
     self.dependency(Deps.SIGNALS, s);
   }
 
-  for (i=0, rlen=refs.length; i<rlen; ++i) {
-    ref = refs[i];
-    from = ref.data || group.datum._facetID;
-    data = graph.data(from)
-      .revises(true)
-      .last();
+  if (inherit || (!inherit && cache._lastUpdate < this._stamp)) {
+    for (i=0, rlen=refs.length; i<rlen; ++i) {
+      ref = refs[i];
+      from = ref.data || group.datum._facetID;
+      data = graph.data(from)
+        .revises(true)
+        .last();
 
-    if (data.stamp <= this._stamp) continue;
+      if (data.stamp <= this._stamp) continue;
 
-    fields = getFields(ref, group);
-    for (j=0, flen=fields.length; j<flen; ++j) {
-      field = fields[j];
+      fields = getFields(ref, group);
+      for (j=0, flen=fields.length; j<flen; ++j) {
+        field = fields[j];
 
-      if (atype === Aggregate.TYPES.VALUE) {
-        cache.accessors(null, field);
-      } else if (atype === Aggregate.TYPES.MULTI) {
-        cache.accessors(field, ref.sort || sort.field);
-      } // Else (Tuple-case) is handled by the aggregator accessors by default
+        if (atype === Aggregate.TYPES.VALUE) {
+          cache.accessors(null, field);
+        } else if (atype === Aggregate.TYPES.MULTI) {
+          cache.accessors(field, ref.sort || sort.field);
+        } // Else (Tuple-case) is handled by the aggregator accessors by default
 
-      cache.evaluate(data);
+        cache.evaluate(data);
+      }
+
+      this.dependency(Deps.DATA, from);
+      cache.dependency(Deps.SIGNALS).forEach(addDep);
     }
 
-    this.dependency(Deps.DATA, from);
-    cache.dependency(Deps.SIGNALS).forEach(addDep);
-  }
+    cache._lastUpdate = this._stamp;
 
-  data = cache.aggr().result();
-  if (uniques) {
-    if (sort) {
-      cmp = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
-      cmp = (cmp == DataRef.DESC ? '-' : '+') + sort.op + '_' + DataRef.VALUE;
-      cmp = util.comparator(cmp);
-      data = data.sort(cmp);
+    data = cache.aggr().result();
+    if (uniques) {
+      if (sort) {
+        cmp = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
+        cmp = (cmp == DataRef.DESC ? '-' : '+') + sort.op + '_' + DataRef.VALUE;
+        cmp = util.comparator(cmp);
+        data = data.sort(cmp);
+      }
+
+      cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
+    } else {
+      data = data[0];
+      cache._values = !util.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
     }
-
-    return data.map(function(d) { return d[DataRef.GROUPBY]; });
-  } else {
-    data = data[0];
-    return !util.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
   }
+
+  return cache._values;
 }
 
 function signal(v) {
