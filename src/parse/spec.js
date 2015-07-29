@@ -1,8 +1,7 @@
 var dl = require('datalib'),
     log = require('vega-logging'),
     Model = require('../core/Model'), 
-    View = require('../core/View'),
-    parsers = require('./');
+    View = require('../core/View');
 
 function parseSpec(spec, callback) {
   var vf = arguments[arguments.length-1],
@@ -14,7 +13,8 @@ function parseSpec(spec, callback) {
     // protect against subsequent spec modification
     spec = dl.duplicate(spec);
 
-    var width = spec.width || 500,
+    var parsers = require('./'),
+        width = spec.width || 500,
         height = spec.height || 500,
         viewport = spec.viewport || null;
 
