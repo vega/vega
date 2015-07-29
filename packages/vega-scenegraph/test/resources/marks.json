@@ -51,7 +51,7 @@
     "marktype": "line",
     "items": [
       {"x":0,   "y":144, "stroke": "steelblue", "strokeOpacity": 0.8, "strokeCap": "butt"},
-      {"x":100, "y":90},
+      {"x":100, "y":90, "interpolate": "linear"},
       {"x":200, "y":114},
       {"x":300, "y":18}
     ]
