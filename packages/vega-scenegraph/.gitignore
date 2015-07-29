@@ -4,6 +4,7 @@ _site
 coverage
 node_modules
 temp
+vega-scenegraph-schema.json
 vega-scenegraph.js
 vega-scenegraph.js.map
 vega-scenegraph.min.js

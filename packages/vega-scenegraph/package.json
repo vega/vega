@@ -24,16 +24,18 @@
     "jsdom": "^3.0.0",
     "jshint": "2.8.x",
     "mocha": "^2.2.5",
+    "tv4": "^1.1.12",
     "uglify-js": "2.4.x",
     "watchify": "^3.2.3"
   },
   "main": "src/index.js",
   "scripts": {
     "lint": "jshint src/",
-    "test": "mocha --recursive test/",
-    "cover": "istanbul cover _mocha -- --recursive test/",
+    "test": "npm run schema && mocha --timeout 5000 --recursive test/",
+    "cover": "npm run schema && istanbul cover _mocha -- --timeout 5000 --recursive test/",
     "build": "browserify src/index.js -d -s vg.scene -o vega-scenegraph.js",
     "postbuild": "uglifyjs vega-scenegraph.js -cm > vega-scenegraph.min.js",
+    "schema": "node scripts/schema.js > vega-scenegraph-schema.json",
     "watch": "watchify src/index.js -v -d -s vg.scene -o vega-scenegraph.js"
   },
   "browserify": {
