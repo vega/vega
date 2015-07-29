@@ -17,6 +17,7 @@ function DataSource(graph, name, facet) {
   this._pipeline  = null; // Pipeline of transformations.
   this._collector = null; // Collector to materialize output of pipeline
   this._revises = false;  // Does any pipeline operator need to track prev?
+  this._mutates = false;  // Does any pipeline operator mutate tuples?
 }
 
 var prototype = DataSource.prototype;
@@ -99,6 +100,12 @@ prototype.revises = function(p) {
   return this;
 };
 
+prototype.mutates = function(m) {
+  if (!arguments.length) return this._mutates;
+  this._mutates = this._mutates || m;
+  return this;
+};
+
 prototype.last = function() {
   return this._output;
 };
@@ -119,6 +126,7 @@ prototype.pipeline = function(pipeline) {
     ds._collector = new Collector(this._graph);
     pipeline.push(ds._collector);
     ds._revises = pipeline.some(function(p) { return p.revises(); });
+    ds._mutates = pipeline.some(function(p) { return p.mutates(); });
   }
 
   // Input/output nodes masquerade as collector nodes, so they need to
@@ -219,27 +227,35 @@ prototype.listener = function() {
       prev = this._revises ? null : undefined;
 
   l.evaluate = function(input) {
-    dest._srcMap = dest._srcMap || {}; // to propagate tuples correctly
-    var map = dest._srcMap,
-        output  = ChangeSet.create(input);
+    if (dest.mutates()) {
+      // Tuple derivation is expensive. Only do so if dest datasource has
+      // operators that mutate, and thus would pollute the source data.
+      dest._srcMap = dest._srcMap || {}; // to propagate tuples correctly
+      var map = dest._srcMap,
+          output  = ChangeSet.create(input);
 
-    output.add = input.add.map(function(t) {
-      var d = Tuple.derive(t, t._prev !== undefined ? t._prev : prev);
-      return (map[t._id] = d);
-    });
+      output.add = input.add.map(function(t) {
+        var d = dest._mutates ? 
+          Tuple.derive(t, t._prev !== undefined ? t._prev : prev) : 
+          t;
+        return (map[t._id] = d);
+      });
 
-    output.mod = input.mod.map(function(t) {
-      var o = map[t._id];
-      return (o._prev = t._prev, o);
-    });
+      output.mod = input.mod.map(function(t) {
+        var o = map[t._id];
+        return (o._prev = t._prev, o);
+      });
 
-    output.rem = input.rem.map(function(t) { 
-      var o = map[t._id];
-      map[t._id] = null;
-      return (o._prev = t._prev, o);
-    });
+      output.rem = input.rem.map(function(t) { 
+        var o = map[t._id];
+        map[t._id] = null;
+        return (o._prev = t._prev, o);
+      });
 
-    return (dest._input = output);
+      return (dest._input = output);
+    } else {
+      return (dest._input = input);
+    }
   };
 
   l.addListener(this._pipeline[0]);
