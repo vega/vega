@@ -11,13 +11,15 @@ var expr = module.exports = {
   compiler: function(args, opt) {
       args = args.slice();
       var generator = codegen(opt),
-          len = args.length;
-      return function(str) {
-        var value = generator(expr.parse(str));
-        args[len] = '"use strict"; return (' + value.code + ');';
-        value.fn = Function.apply(null, args);
-        return value;
-      };
+          len = args.length,
+          compile = function(str) {
+            var value = generator(expr.parse(str));
+            args[len] = '"use strict"; return (' + value.code + ');';
+            value.fn = Function.apply(null, args);
+            return value;
+          };
+      compile.codegen = generator;
+      return compile;
     },
   functions: require('./functions'),
   constants: require('./constants')
