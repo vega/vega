@@ -22,6 +22,10 @@ else
 fi
 git checkout master
 
+# 0.4 fresh npm install to ensure no dev changes are included
+rm -rf node_modules
+npm install
+
 # generate build files
 npm run build
 npm run schema
