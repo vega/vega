@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Vega expression parser and code generator.",
   "repository": {
     "type": "git",
@@ -15,9 +15,9 @@
     "browserify": "^10.2.6",
     "chai": "^3.0.0",
     "istanbul": "latest",
-    "jshint": "2.8.x",
+    "jshint": "^2.8.0",
     "mocha": "^2.2.5",
-    "uglify-js": "2.4.x"
+    "uglify-js": "^2.4.24"
   },
   "main": "src/index.js",
   "scripts": {

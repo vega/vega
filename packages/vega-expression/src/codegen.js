@@ -126,6 +126,8 @@ module.exports = function(opt) {
         return codegen(n.expression);
       }
   };
-  
+
+  codegen_wrap.functions = functions;
+  codegen_wrap.constants = constants;
   return codegen_wrap;
 };
