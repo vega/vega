@@ -1,13 +1,11 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    canvas = require('vega-scenegraph/src/render/canvas'),
-    svg = require('vega-scenegraph/src/render/svg'),
-    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
+    dl = require('datalib'),
+    df = require('vega-dataflow'),
+    sg = require('vega-scenegraph').render,
     log = require('vega-logging'),
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
-    Transition = require('../scene/Transition'),
-    changeset = require('vega-dataflow/src/ChangeSet');
+    Transition = require('../scene/Transition');
 
 function View(el, width, height) {
   this._el    = null;
@@ -23,8 +21,8 @@ function View(el, width, height) {
   this._streamer = null; // Targeted update for streaming changes
   this._changeset = null;
   this._repaint = true; // Full re-render on every re-init
-  this._renderers = {canvas: canvas, svg: svg};
-  this._io  = canvas;
+  this._renderers = sg;
+  this._io  = null;
   this._api = {}; // Stash streaming data API sandboxes.
 }
 
@@ -34,8 +32,8 @@ prototype.model = function(model) {
   if (!arguments.length) return this._model;
   if (this._model !== model) {
     this._model = model;
-    this._streamer = new Node(model);
-    this._changeset = changeset.create();
+    this._streamer = new df.Node(model);
+    this._changeset = df.ChangeSet.create();
     if (this._handler) this._handler.model(model);
   }
   return this;
@@ -54,7 +52,7 @@ function streaming(src) {
   if (this._api[src]) return this._api[src];
 
   api.insert = function(vals) {
-    ds.insert(util.duplicate(vals));  // Don't pollute the environment
+    ds.insert(dl.duplicate(vals));  // Don't pollute the environment
     streamer.addListener(listener);
     view._changeset.data[name] = 1;
     return api;
@@ -80,9 +78,9 @@ function streaming(src) {
 prototype.data = function(data) {
   var v = this;
   if (!arguments.length) return v._model.dataValues();
-  else if (util.isString(data)) return streaming.call(v, data);
-  else if (util.isObject(data)) {
-    util.keys(data).forEach(function(k) {
+  else if (dl.isString(data)) return streaming.call(v, data);
+  else if (dl.isObject(data)) {
+    dl.keys(data).forEach(function(k) {
       var api = streaming.call(v, k);
       data[k](api);
     });
@@ -97,14 +95,14 @@ prototype.signal = function(name, value) {
       setter = name; 
 
   if (!arguments.length) return m.signalValues();
-  else if (arguments.length == 1 && util.isString(name)) return m.signalValues(name);
+  else if (arguments.length == 1 && dl.isString(name)) return m.signalValues(name);
 
   if (arguments.length == 2) {
     setter = {};
     setter[name] = value;
   }
 
-  util.keys(setter).forEach(function(k) {
+  dl.keys(setter).forEach(function(k) {
     streamer.addListener(m.signal(k).value(setter[k]));
     cs.signals[k] = 1;
     cs.reflow = true;
@@ -147,10 +145,10 @@ prototype.background = function(bgcolor) {
 prototype.padding = function(pad) {
   if (!arguments.length) return this._padding;
   if (this._padding !== pad) {
-    if (util.isString(pad)) {
+    if (dl.isString(pad)) {
       this._autopad = 1;
       this._padding = {top:0, left:0, bottom:0, right:0};
-      this._strict = (pad === "strict");
+      this._strict = (pad === 'strict');
     } else {
       this._autopad = 0;
       this._padding = pad;
@@ -186,7 +184,7 @@ prototype.autopad = function(opt) {
       .height(this._height).reset();
 
     this.initialize()
-      .update({props:"enter"}).update({props:"update"});
+      .update({props:'enter'}).update({props:'update'});
   } else {
     this.padding(pad).update(opt);
   }
@@ -205,8 +203,8 @@ prototype.viewport = function(size) {
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderer;
   if (this._renderers[type]) type = this._renderers[type];
-  else if (util.isString(type)) throw new Error("Unknown renderer: " + type);
-  else if (!type) throw new Error("No renderer specified");
+  else if (dl.isString(type)) throw new Error('Unknown renderer: ' + type);
+  else if (!type) throw new Error('No renderer specified');
 
   if (this._io !== type) {
     this._io = type;
@@ -228,23 +226,23 @@ prototype.initialize = function(el) {
   }
 
   // clear pre-existing container
-  d3.select(el).select("div.vega").remove();
+  d3.select(el).select('div.vega').remove();
   
   // add div container
   this._el = el = d3.select(el)
-    .append("div")
-    .attr("class", "vega")
-    .style("position", "relative")
+    .append('div')
+    .attr('class', 'vega')
+    .style('position', 'relative')
     .node();
   if (v._viewport) {
     d3.select(el)
-      .style("width",  (v._viewport[0] || w)+"px")
-      .style("height", (v._viewport[1] || h)+"px")
-      .style("overflow", "auto");
+      .style('width',  (v._viewport[0] || w)+'px')
+      .style('height', (v._viewport[1] || h)+'px')
+      .style('overflow', 'auto');
   }
 
   // renderer
-  canvas.Renderer.RETINA = config.render.retina;
+  sg.canvas.Renderer.RETINA = config.render.retina;
   v._renderer = (v._renderer || new this._io.Renderer(config.load))
     .initialize(el, w, h, pad)
     .background(bg);
@@ -272,7 +270,7 @@ prototype.destroy = function() {
 
 function build() {
   var v = this;
-  v._renderNode = new Node(v._model)
+  v._renderNode = new df.Node(v._model)
     .router(true);
 
   v._renderNode.evaluate = function(input) {
@@ -314,10 +312,10 @@ prototype.update = function(opt) {
   var cs = v._changeset;
   if (trans) cs.trans = trans;
   if (opt.props !== undefined) {
-    if (util.keys(cs.data).length > 0) {
+    if (dl.keys(cs.data).length > 0) {
       throw Error(
-        "New data values are not reflected in the visualization." +
-        " Please call view.update() before updating a specified property set."
+        'New data values are not reflected in the visualization.' +
+        ' Please call view.update() before updating a specified property set.'
       );
     }
 
@@ -341,7 +339,7 @@ prototype.update = function(opt) {
     v._model.fire(cs);
   }
 
-  v._changeset = changeset.create();
+  v._changeset = df.ChangeSet.create();
 
   return v.autopad(opt);
 };
@@ -378,7 +376,7 @@ View.factory = function(model) {
     var defs = model.defs();
     var v = (opt.el ? new View() : new HeadlessView())
       .model(model)
-      .renderer(opt.renderer || "canvas")
+      .renderer(opt.renderer || 'canvas')
       .width(defs.width)
       .height(defs.height)
       .background(defs.background)
@@ -389,14 +387,14 @@ View.factory = function(model) {
     if (opt.data) v.data(opt.data);
 
     if (opt.hover !== false && opt.el) {
-      v.on("mouseover", function(evt, item) {
-        if (item && item.hasPropertySet("hover")) {
-          this.update({props:"hover", items:item});
+      v.on('mouseover', function(evt, item) {
+        if (item && item.hasPropertySet('hover')) {
+          this.update({props:'hover', items:item});
         }
       })
-      .on("mouseout", function(evt, item) {
-        if (item && item.hasPropertySet("hover")) {
-          this.update({props:"update", items:item});
+      .on('mouseout', function(evt, item) {
+        if (item && item.hasPropertySet('hover')) {
+          this.update({props:'update', items:item});
         }
       });
     }

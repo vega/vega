@@ -1,6 +1,5 @@
-var d3 = require('d3'),
-    gen  = require('datalib/src/generate'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+var dl = require('datalib'),
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
@@ -8,16 +7,16 @@ var d3 = require('d3'),
 function Pie(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    field:      {type: "field", default: null},
-    startAngle: {type: "value", default: 0},
-    endAngle:   {type: "value", default: 2 * Math.PI},
-    sort:       {type: "value", default: false}
+    field:      {type: 'field', default: null},
+    startAngle: {type: 'value', default: 0},
+    endAngle:   {type: 'value', default: 2 * Math.PI},
+    sort:       {type: 'value', default: false}
   });
 
   this._output = {
-    "start": "layout_start",
-    "end":   "layout_end",
-    "mid":   "layout_mid"
+    'start': 'layout_start',
+    'end':   'layout_end',
+    'mid':   'layout_mid'
   };
 
   return this;
@@ -32,15 +31,15 @@ prototype.batchTransform = function(input, data) {
   log.debug(input, ['pie']);
 
   var output = this._output,
-      field = this.param("field").accessor || ones,
-      start = this.param("startAngle"),
-      stop = this.param("endAngle"),
-      sort = this.param("sort");
+      field = this.param('field').accessor || ones,
+      start = this.param('startAngle'),
+      stop = this.param('endAngle'),
+      sort = this.param('sort');
 
   var values = data.map(field),
       a = start,
-      k = (stop - start) / d3.sum(values),
-      index = gen.range(data.length),
+      k = (stop - start) / dl.sum(values),
+      index = dl.range(data.length),
       i, t, v;
 
   if (sort) {

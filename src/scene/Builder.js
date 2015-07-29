@@ -1,11 +1,13 @@
-var util = require('datalib/src/util'),
-    Item = require('vega-scenegraph/src/util/Item'),
-    Tuple = require('vega-dataflow/src/Tuple'),
-    ChangeSet = require('vega-dataflow/src/ChangeSet'),
-    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    Deps = require('vega-dataflow/src/Dependencies'),
-    Sentinel = require('vega-dataflow/src/Sentinel'),
+var dl = require('datalib'),
     log = require('vega-logging'),
+    Item = require('vega-scenegraph').Item,
+    df = require('vega-dataflow'),
+    Node = df.Node, // jshint ignore:line
+    Deps = df.Dependencies,
+    Tuple = df.Tuple,
+    ChangeSet = df.ChangeSet,
+    Sentinel = df.Sentinel,
+    
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
     parseData = require('../parse/data');
@@ -15,9 +17,9 @@ function Builder() {
 }
 
 var Status = Builder.STATUS = {
-  ENTER: "enter",
-  UPDATE: "update",
-  EXIT: "exit"
+  ENTER: 'enter',
+  UPDATE: 'update',
+  EXIT: 'exit'
 };
 
 var proto = (Builder.prototype = new Node());
@@ -30,7 +32,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._def   = def;
   this._mark  = mark;
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
-  this._ds    = util.isString(this._from) ? graph.data(this._from) : null;
+  this._ds    = dl.isString(this._from) ? graph.data(this._from) : null;
   this._map   = {};
 
   this._revises = false;  // Should scenegraph items track _prev?
@@ -39,7 +41,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   mark.marktype = def.type;
   mark.interactive = (def.interactive !== false);
   mark.items = [];
-  if (util.isValid(def.name)) mark.name = def.name;
+  if (dl.isValid(def.name)) mark.name = def.name;
 
   this._parent = parent;
   this._parent_id = parent_id;
@@ -50,7 +52,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
 
   // Non-group mark builders are super nodes. Encoder and Bounder remain 
   // separate operators but are embedded and called by Builder.evaluate.
-  this._isSuper = (this._def.type !== "group"); 
+  this._isSuper = (this._def.type !== 'group'); 
   this._encoder = new Encoder(this._graph, this._mark, this);
   this._bounder = new Bounder(this._graph, this._mark);
   this._output  = null; // Output changeset for reactive geom as Bounder reflows
@@ -87,7 +89,7 @@ function inlineDs() {
       src, name, spec, sibling, output, input;
 
   if (geom) {
-    name = ["vg", this._parent_id, geom].join("_");
+    name = ['vg', this._parent_id, geom].join('_');
     spec = {
       name: name,
       transform: from.transform, 
@@ -95,7 +97,7 @@ function inlineDs() {
     };
   } else {
     src = this._graph.data(this._from);
-    name = ["vg", this._from, this._def.type, src.listeners(true).length].join("_");
+    name = ['vg', this._from, this._def.type, src.listeners(true).length].join('_');
     spec = {
       name: name,
       source: this._from,
@@ -178,7 +180,7 @@ proto.sibling = function(name) {
 };
 
 proto.evaluate = function(input) {
-  log.debug(input, ["building", (this._from || this._def.from), this._def.type]);
+  log.debug(input, ['building', (this._from || this._def.from), this._def.type]);
 
   var self = this,
       def = this._mark.def,
@@ -207,7 +209,7 @@ proto.evaluate = function(input) {
       output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
     }
   } else {
-    data = util.isFunction(this._def.from) ? this._def.from() : [Sentinel];
+    data = dl.isFunction(this._def.from) ? this._def.from() : [Sentinel];
     output = joinValues.call(this, input, data);
   }
 
@@ -217,7 +219,7 @@ proto.evaluate = function(input) {
   // Add any new scale references to the dependency list, and ensure
   // they're connected.
   if (update.nested && update.nested.length) {
-    util.keys(this._mark._scaleRefs).forEach(function(s) {
+    dl.keys(this._mark._scaleRefs).forEach(function(s) {
       var scale = self._parent.scale(s);
       if (!scale) return;
 
@@ -241,8 +243,8 @@ function newItem() {
       item = Tuple.ingest(new Item(this._mark), prev);
 
   // For the root node's item
-  if (this._def.width)  Tuple.set(item, "width",  this._def.width);
-  if (this._def.height) Tuple.set(item, "height", this._def.height);
+  if (this._def.width)  Tuple.set(item, 'width',  this._def.width);
+  if (this._def.height) Tuple.set(item, 'height', this._def.height);
   return item;
 }
 
@@ -255,7 +257,7 @@ function join(data, keyf, next, output, prev, mod) {
     enter = item ? false : (item = newItem.call(this), true);
     item.status = enter ? Status.ENTER : Status.UPDATE;
     item.datum = datum;
-    Tuple.set(item, "key", key);
+    Tuple.set(item, 'key', key);
     this._map[key] = item;
     next.push(item);
     if (enter) {
@@ -268,7 +270,7 @@ function join(data, keyf, next, output, prev, mod) {
 
 function joinDatasource(input, data, fullUpdate) {
   var output = ChangeSet.create(input),
-      keyf = keyFunction(this._def.key || "_id"),
+      keyf = keyFunction(this._def.key || '_id'),
       mod = input.mod,
       rem = input.rem,
       next = [],
@@ -311,10 +313,10 @@ function joinValues(input, data) {
   for (i=0, len=prev.length; i<len; ++i) {
     item = prev[i];
     if (item.status === Status.EXIT) {
-      Tuple.set(item, "key", keyf ? item.key : this._items.length);
+      Tuple.set(item, 'key', keyf ? item.key : this._items.length);
       item._dirty = true;
       input.dirty.push(item);
-      next.splice(0, 0, item);  // Keep item around for "exit" transition.
+      next.splice(0, 0, item);  // Keep item around for 'exit' transition.
       output.rem.push(item);
     }
   }
@@ -324,10 +326,10 @@ function joinValues(input, data) {
 
 function keyFunction(key) {
   if (key == null) return null;
-  var f = util.array(key).map(util.accessor);
+  var f = dl.array(key).map(dl.accessor);
   return function(d) {
-    for (var s="", i=0, n=f.length; i<n; ++i) {
-      if (i>0) s += "|";
+    for (var s='', i=0, n=f.length; i<n; ++i) {
+      if (i>0) s += '|';
       s += String(f[i](d));
     }
     return s;

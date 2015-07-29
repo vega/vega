@@ -1,5 +1,6 @@
-var Base = require('vega-dataflow/src/Node').prototype, // jshint ignore:line
-    Deps = require('vega-dataflow/src/Dependencies'),
+var df = require('vega-dataflow'),
+    Base = df.Node.prototype, // jshint ignore:line
+    Deps = df.Dependencies,
     Parameter = require('./Parameter');
 
 function Transform(graph) {

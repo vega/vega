@@ -1,4 +1,4 @@
-var util = require('datalib/src/util'),
+var dl = require('datalib'),
     axs = require('../scene/axis');
 
 var ORIENT = {
@@ -68,9 +68,9 @@ function parseAxis(config, def, index, axis, group) {
   var p = def.properties;
   if (p && p.ticks) {
     axis.majorTickProperties(p.majorTicks ?
-      util.extend({}, p.ticks, p.majorTicks) : p.ticks);
+      dl.extend({}, p.ticks, p.majorTicks) : p.ticks);
     axis.minorTickProperties(p.minorTicks ?
-      util.extend({}, p.ticks, p.minorTicks) : p.ticks);
+      dl.extend({}, p.ticks, p.minorTicks) : p.ticks);
   } else {
     axis.majorTickProperties(p && p.majorTicks || {});
     axis.minorTickProperties(p && p.minorTicks || {});

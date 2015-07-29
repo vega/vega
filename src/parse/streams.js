@@ -1,8 +1,6 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    changeset = require('vega-dataflow/src/ChangeSet'),
-    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    Deps = require('vega-dataflow/src/Dependencies'),
+    dl = require('datalib'),
+    df = require('vega-dataflow'),
     parseSignals = require('./signals'),
     selector = require('./events'),
     expr = require('./expr');
@@ -30,8 +28,8 @@ function parseStreams(view) {
   var model = view.model(),
       spec  = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
-      internal = util.duplicate(registry),  // Internal event processing
-      external = util.duplicate(registry);  // External event processing
+      internal = dl.duplicate(registry),  // Internal event processing
+      external = dl.duplicate(registry);  // External event processing
 
   (spec || []).forEach(function(sig) {
     var signal = model.signal(sig.name);
@@ -47,7 +45,7 @@ function parseStreams(view) {
   // We register the event listeners all together so that if multiple
   // signals are registered on the same event, they will receive the
   // new value on the same pulse. 
-  util.keys(internal.handlers).forEach(function(type) {
+  dl.keys(internal.handlers).forEach(function(type) {
     view.on(type, function(evt, item) {
       evt.preventDefault(); // stop text selection
       extendEvent(evt, item);
@@ -56,7 +54,7 @@ function parseStreams(view) {
   });
 
   // add external event listeners
-  util.keys(external.handlers).forEach(function(type) {
+  dl.keys(external.handlers).forEach(function(type) {
     if (typeof window === 'undefined') return; // No external support
 
     var h = external.handlers[type],
@@ -79,7 +77,7 @@ function parseStreams(view) {
 
   // remove external event listeners
   external.detach = function() {
-    util.keys(external.handlers).forEach(function(type) {
+    dl.keys(external.handlers).forEach(function(type) {
       var h = external.handlers[type],
           t = type.split(':'),
           elt = h.elements || [];
@@ -122,7 +120,7 @@ function parseStreams(view) {
   function fire(registry, type, datum, evt) {
     var handlers = registry.handlers[type],
         node = registry.nodes[type],
-        cs = changeset.create(null, true),
+        cs = df.ChangeSet.create(null, true),
         filtered = false,
         val, i, n, h;
 
@@ -166,13 +164,13 @@ function parseStreams(view) {
         filters  = selector.filters || [],
         registry = target ? external : internal,
         type = target ? target+':'+evt : evt,
-        node = registry.nodes[type] || (registry.nodes[type] = new Node(model)),
+        node = registry.nodes[type] || (registry.nodes[type] = new df.Node(model)),
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
 
     if (name) {
       filters.push('!!event.vg.name["' + name + '"]'); // Mimic event bubbling
     } else if (mark) {
-      filters.push('event.vg.item.mark && event.vg.item.mark.marktype==='+util.str(mark));
+      filters.push('event.vg.item.mark && event.vg.item.mark.marktype==='+dl.str(mark));
     }
 
     handlers.push({
@@ -186,7 +184,7 @@ function parseStreams(view) {
   }
 
   function signal(sig, selector, exp, spec) {
-    var n = new Node(model);
+    var n = new df.Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
       var val = exp.fn(null, null, model.signalValues(exp.globals));
@@ -202,7 +200,7 @@ function parseStreams(view) {
 
       return input;  
     };
-    n.dependency(Deps.SIGNALS, selector.signal);
+    n.dependency(df.Dependencies.SIGNALS, selector.signal);
     n.addListener(sig);
     model.signal(selector.signal).addListener(n);
   }

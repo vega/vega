@@ -1,5 +1,6 @@
-var ChangeSet = require('vega-dataflow/src/ChangeSet'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+var df = require('vega-dataflow'),
+    ChangeSet = df.ChangeSet,
+    Tuple = df.Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');

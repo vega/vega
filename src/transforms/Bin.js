@@ -1,5 +1,5 @@
-var bins = require('datalib/src/bins/bins'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+var bins = require('datalib').bins,
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -117,6 +117,14 @@ Bin.schema = {
         },
         {"$ref": "#/refs/signal"}
       ]
+    },
+    "output": {
+      "type": "object",
+      "description": "Rename the output data fields",
+      "properties": {
+        "bin": {"type": "string", "default": "bin"}
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

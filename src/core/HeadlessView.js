@@ -1,5 +1,6 @@
-var canvas = require('vega-scenegraph/src/render/canvas'),
-    svg = require('vega-scenegraph/src/render/svg').string,
+var sg = require('vega-scenegraph').render,
+    canvas = sg.canvas,
+    svg = sg.svg.string,
     View = require('./View');
 
 function HeadlessView(width, height, model) {

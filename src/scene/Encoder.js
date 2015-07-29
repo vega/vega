@@ -1,9 +1,10 @@
-var util = require('datalib/src/util'),
-    bound = require('vega-scenegraph/src/util/bound'),
-    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    Deps = require('vega-dataflow/src/Dependencies'),
-    log = require('vega-logging');
-  
+var dl = require('datalib'),
+    log = require('vega-logging'),
+    df = require('vega-dataflow'),
+    Node = df.Node, // jshint ignore:line
+    Deps = df.Dependencies,
+    bound = require('vega-scenegraph').bound;
+
 var EMPTY = {};
 
 function Encoder(graph, mark, builder) {
@@ -18,9 +19,9 @@ function Encoder(graph, mark, builder) {
   this._builder = builder;
   var s = this._scales = [];
 
-  // Only scales used in the "update" property set are set as
+  // Only scales used in the 'update' property set are set as
   // encoder depedencies to have targeted reevaluations. However,
-  // we still want scales in "enter" and "exit" to be evaluated
+  // we still want scales in 'enter' and 'exit' to be evaluated
   // before the encoder. 
   if (enter) s.push.apply(s, enter.scales);
 
@@ -40,7 +41,7 @@ function Encoder(graph, mark, builder) {
 var proto = (Encoder.prototype = new Node());
 
 proto.evaluate = function(input) {
-  log.debug(input, ["encoding", this._mark.def.type]);
+  log.debug(input, ['encoding', this._mark.def.type]);
   var graph = this._graph,
       props = this._mark.def.properties || {},
       enter  = props.enter,
@@ -103,7 +104,7 @@ function encode(prop, item, trans, db, sg, preds, dirty) {
 proto.reevaluate = function(pulse) {
   var def = this._mark.def,
       props = def.properties || {},
-      reeval = util.isFunction(def.from) || def.orient || pulse.request || 
+      reeval = dl.isFunction(def.from) || def.orient || pulse.request || 
         Node.prototype.reevaluate.call(this, pulse);
 
   return reeval || (props.update ? nestedRefs.call(this) : false);
@@ -141,7 +142,7 @@ function nestedRefs() {
 
 // Short-circuit encoder if user specifies items
 Encoder.update = function(graph, trans, request, items, dirty) {
-  items = util.array(items);
+  items = dl.array(items);
   var preds = graph.predicates(), 
       db = graph.dataValues(),
       sg = graph.signalValues(),

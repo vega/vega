@@ -1,5 +1,5 @@
-var util = require('datalib/src/util'),
-    Collector = require('vega-dataflow/src/Collector'),
+var dl = require('datalib'),
+    Collector = require('vega-dataflow').Collector,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -97,7 +97,7 @@ prototype.transform = function(input) {
       });
     }
 
-    util.keys(rem).forEach(function(k) { 
+    dl.keys(rem).forEach(function(k) { 
       var m = map(k);
       if (!m[0]) return;
       m[0] = m[0].filter(function(x) { return rem[k][x._id] !== 1; });
@@ -152,7 +152,7 @@ Zip.schema = {
       "additionalProperties": false
     },
     {
-      "properties": util.extend({
+      "properties": dl.extend({
         "key": {
           "description": "The field in the primary data set to match against the secondary data set.",
           "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]

@@ -1,7 +1,8 @@
-var util = require('datalib/src/util'),
-    ChangeSet = require('vega-dataflow/src/ChangeSet'),
-    Base = require('vega-dataflow/src/Graph').prototype,
-    Node  = require('vega-dataflow/src/Node'), // jshint ignore:line
+var dl = require('datalib'),
+    df = require('vega-dataflow'),
+    ChangeSet = df.ChangeSet,
+    Base = df.Graph.prototype,
+    Node  = df.Node, // jshint ignore:line
     GroupBuilder = require('../scene/GroupBuilder'),
     visit = require('../scene/visit'),
     config = require('./config');
@@ -34,8 +35,8 @@ prototype.config = function(cfg) {
   this._config = Object.create(config);
   for (var name in cfg) {
     var x = cfg[name], y = this._config[name];
-    if (util.isObject(x) && util.isObject(y)) {
-      util.extend(y, x);
+    if (dl.isObject(x) && dl.isObject(y)) {
+      dl.extend(y, x);
     } else {
       this._config[name] = x;
     }
@@ -81,7 +82,7 @@ prototype.data = function() {
 
 function predicates(name) {
   var m = this, pred = {};
-  if (!util.isArray(name)) return this._predicates[name];
+  if (!dl.isArray(name)) return this._predicates[name];
   name.forEach(function(n) { pred[n] = m._predicates[n]; });
   return pred;
 }

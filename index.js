@@ -11,6 +11,6 @@ module.exports = {
   transforms: require('./src/transforms'),
   schema: require('./src/core/schema'),
   config: require('./src/core/config'),
-  util:  require('datalib/src/util'),
+  util:  require('datalib'),
   debug: require('vega-logging').debug
 };

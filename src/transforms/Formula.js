@@ -1,5 +1,6 @@
-var Tuple = require('vega-dataflow/src/Tuple'),
-    Deps = require('vega-dataflow/src/Dependencies'),
+var df = require('vega-dataflow'),
+    Tuple = df.Tuple,
+    Deps = df.Dependencies,
     log = require('vega-logging'),
     Transform = require('./Transform');
 

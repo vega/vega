@@ -1,19 +1,19 @@
 var d3 = require('d3'),
-    bound = require('vega-scenegraph/src/util/bound'),
-    tuple = require('vega-dataflow/src/Tuple'),
+    bound = require('vega-scenegraph').bound,
+    Tuple = require('vega-dataflow').Tuple,
     Status = require('./Builder').STATUS;
 
 function Transition(duration, ease) {
   this.duration = duration || 500;
-  this.ease = ease && d3.ease(ease) || d3.ease("cubic-in-out");
+  this.ease = ease && d3.ease(ease) || d3.ease('cubic-in-out');
   this.updates = {next: null};
 }
 
 var prototype = Transition.prototype;
 
 var skip = {
-  "text": 1,
-  "url":  1
+  'text': 1,
+  'url':  1
 };
 
 prototype.interpolate = function(item, values) {
@@ -25,10 +25,10 @@ prototype.interpolate = function(item, values) {
     if (curr !== next) {
       if (skip[key] || curr === undefined) {
         // skip interpolation for specific keys or undefined start values
-        tuple.set(item, key, next);
-      } else if (typeof curr === "number" && !isFinite(curr)) {
+        Tuple.set(item, key, next);
+      } else if (typeof curr === 'number' && !isFinite(curr)) {
         // for NaN or infinite numeric values, skip to final value
-        tuple.set(item, key, next);
+        Tuple.set(item, key, next);
       } else {
         // otherwise lookup interpolator
         interp = d3.interpolate(curr, next);

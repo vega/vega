@@ -1,7 +1,8 @@
-var util = require('datalib/src/util'),
-    Node = require('vega-dataflow/src/Node'), // jshint ignore:line
-    Collector = require('vega-dataflow/src/Collector'),
-    Deps = require('vega-dataflow/src/Dependencies'),
+var dl = require('datalib'),
+    df = require('vega-dataflow'),
+    Node = df.Node, // jshint ignore:line
+    Deps = df.Dependencies,
+    Collector = df.Collector,
     log = require('vega-logging'),
     Builder = require('./Builder'),
     Scale = require('./Scale'),
@@ -49,7 +50,7 @@ proto.init = function(graph, def) {
     return (acc[x.size || x.shape || x.fill || x.stroke], acc);
   }, scales);
 
-  this._recursor.dependency(Deps.SCALES, util.keys(scales));
+  this._recursor.dependency(Deps.SCALES, dl.keys(scales));
 
   // We only need a collector for up-propagation of bounds calculation,
   // so only GroupBuilders, and not regular Builders, have collectors.
@@ -72,7 +73,7 @@ proto.pipeline = function() {
 
 proto.disconnect = function() {
   var builder = this;
-  util.keys(builder._children).forEach(function(group_id) {
+  dl.keys(builder._children).forEach(function(group_id) {
     builder._children[group_id].forEach(function(c) {
       builder._recursor.removeListener(c.builder);
       c.builder.disconnect();
@@ -98,9 +99,9 @@ proto.child = function(name, group_id) {
 
 function recurse(input) {
   var builder = this,
-      hasMarks = util.array(this._def.marks).length > 0,
-      hasAxes = util.array(this._def.axes).length > 0,
-      hasLegends = util.array(this._def.legends).length > 0,
+      hasMarks = dl.array(this._def.marks).length > 0,
+      hasAxes = dl.array(this._def.axes).length > 0,
+      hasLegends = dl.array(this._def.legends).length > 0,
       i, j, c, len, group, pipeline, def, inline = false;
 
   for (i=0, len=input.add.length; i<len; ++i) {

@@ -1,5 +1,5 @@
-var ChangeSet = require('vega-dataflow/src/ChangeSet'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+var df = require('vega-dataflow'),
+    Tuple = df.Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -48,7 +48,7 @@ prototype.transform = function(input, reset) {
 
   var fold = this,
       on = this.param('fields'),
-      output = ChangeSet.create(input);
+      output = df.ChangeSet.create(input);
 
   if (reset) rst.call(this, input, output);
 

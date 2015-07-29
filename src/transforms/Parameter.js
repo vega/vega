@@ -1,5 +1,5 @@
-var util = require('datalib/src/util'),
-    Deps = require('vega-dataflow/src/Dependencies'),
+var dl = require('datalib'),
+    Deps = require('vega-dataflow').Dependencies,
     expr = require('../parse/expr');
 
 var arrayType = /array/i,
@@ -31,7 +31,7 @@ function get() {
   var val = isArray ? this._value : this._value[0],
       acc = isArray ? this._accessors : this._accessors[0];
 
-  if (!util.isValid(acc) && valType.test(this._type)) {
+  if (!dl.isValid(acc) && valType.test(this._type)) {
     return val;
   } else {
     return isData ? { name: val, source: acc } :
@@ -59,7 +59,7 @@ prototype.get = function() {
 
     if (isField) {
       this._accessors[idx] = this._value[idx] != val ? 
-        util.accessor(val) : this._accessors[idx];
+        dl.accessor(val) : this._accessors[idx];
     }
 
     this._value[idx] = val;
@@ -74,15 +74,15 @@ prototype.set = function(value) {
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
 
-  this._value = util.array(value).map(function(v, i) {
-    if (util.isString(v)) {
+  this._value = dl.array(value).map(function(v, i) {
+    if (dl.isString(v)) {
       if (isExpr) {
         var e = expr(v);
         p._transform.dependency(Deps.FIELDS,  e.fields);
         p._transform.dependency(Deps.SIGNALS, e.globals);
         return e.fn;
       } else if (isField) {  // Backwards compatibility
-        p._accessors[i] = util.accessor(v);
+        p._accessors[i] = dl.accessor(v);
         p._transform.dependency(Deps.FIELDS, v);
       } else if (isData) {
         p._resolution = true;
@@ -92,7 +92,7 @@ prototype.set = function(value) {
     } else if (v.value !== undefined) {
       return v.value;
     } else if (v.field !== undefined) {
-      p._accessors[i] = util.accessor(v.field);
+      p._accessors[i] = dl.accessor(v.field);
       p._transform.dependency(Deps.FIELDS, v.field);
       return v.field;
     } else if (v.signal !== undefined) {

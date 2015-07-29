@@ -1,5 +1,4 @@
-var load = require('datalib/src/import/load'),
-    util = require('datalib/src/util'),
+var dl = require('datalib'),
     log = require('vega-logging'),
     Status = require('../scene/Builder').STATUS;
 
@@ -14,7 +13,7 @@ function parseInteractors(model, spec, defFactory) {
       if (error) {
         log.error("LOADING FAILED: " + i.url);
       } else {
-        var def = util.isObject(data) && !util.isBuffer(data) ?
+        var def = dl.isObject(data) && !dl.isBuffer(data) ?
           data : JSON.parse(data);
         interactor(i.name, def);
       }
@@ -35,9 +34,9 @@ function parseInteractors(model, spec, defFactory) {
   }
 
   function inject() {
-    if (util.keys(mk).length > 0) injectMarks(spec.marks);
-    spec.signals = util.array(spec.signals);
-    spec.predicates = util.array(spec.predicates);
+    if (dl.keys(mk).length > 0) injectMarks(spec.marks);
+    spec.signals = dl.array(spec.signals);
+    spec.predicates = dl.array(spec.predicates);
     spec.signals.unshift.apply(spec.signals, signals);
     spec.predicates.unshift.apply(spec.predicates, predicates);
     defFactory();
@@ -45,16 +44,16 @@ function parseInteractors(model, spec, defFactory) {
 
   function injectMarks(marks) {
     var m, r, i, len;
-    marks = util.array(marks);
+    marks = dl.array(marks);
 
     function extend(p) {
-      marks[i].properties[p] = util.extend(r.properties[p], m.properties[p]);
+      marks[i].properties[p] = dl.extend(r.properties[p], m.properties[p]);
     }
 
     for (i=0, len=marks.length; i < len; ++i) {
       m = marks[i];
       if ((r = mk[m.name])) {
-        marks[i] = util.duplicate(r);
+        marks[i] = dl.duplicate(r);
         if (m.from) marks[i].from = m.from;
         if (m.properties) [Status.ENTER, Status.UPDATE, Status.EXIT].forEach(extend);
       } else if (m.marks) {  // TODO how to override properties of nested marks?
@@ -64,10 +63,10 @@ function parseInteractors(model, spec, defFactory) {
   }
 
   function ns(n, s) { 
-    if (util.isString(s)) {
+    if (dl.isString(s)) {
       return s + "_" + n;
     } else {
-      util.keys(s).forEach(function(x) { 
+      dl.keys(s).forEach(function(x) { 
         var regex = new RegExp('\\b'+x+'\\b', "g");
         n = n.replace(regex, s[x]);
       });
@@ -76,7 +75,7 @@ function parseInteractors(model, spec, defFactory) {
   }
 
   function nsSignals(name, signals) {
-    signals = util.array(signals);
+    signals = dl.array(signals);
     // Two passes to ns all signals, and then overwrite their definitions
     // in case signal order is important.
     signals.forEach(function(s) { s.name = sg[s.name] = ns(s.name, name); });
@@ -90,7 +89,7 @@ function parseInteractors(model, spec, defFactory) {
   }
 
   function nsPredicates(name, predicates) {
-    predicates = util.array(predicates);
+    predicates = dl.array(predicates);
     predicates.forEach(function(p) {
       p.name = pd[p.name] = ns(p.name, name);
 
@@ -107,7 +106,7 @@ function parseInteractors(model, spec, defFactory) {
 
   function nsOperand(o) {
     o.predicate = pd[o.predicate];
-    util.keys(o.input).forEach(function(k) {
+    dl.keys(o.input).forEach(function(k) {
       var i = o.input[k];
       if (i.signal) i.signal = ns(i.signal, sg);
     });
@@ -123,7 +122,7 @@ function parseInteractors(model, spec, defFactory) {
   }
 
   function nsProperties(propset) {
-    util.keys(propset).forEach(function(k) {
+    dl.keys(propset).forEach(function(k) {
       var p = propset[k];
       if (p.signal) p.signal = ns(p.signal, sg);
       else if (p.rule) {
@@ -138,7 +137,7 @@ function parseInteractors(model, spec, defFactory) {
   (spec.interactors || []).forEach(function(i) {
     if (i.url) {
       count += 1;
-      load(util.extend({url: i.url}, config.load), loaded(i));
+      dl.load(dl.extend({url: i.url}, config.load), loaded(i));
     }
   });
 

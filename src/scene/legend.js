@@ -1,6 +1,6 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    Gradient = require('vega-scenegraph/src/util/Gradient'),
+    dl = require('datalib'),
+    Gradient = require('vega-scenegraph').Gradient,
     parseProperties = require('../parse/properties'),
     parseMark = require('../parse/mark');
 
@@ -15,7 +15,7 @@ function lgnd(model) {
       formatString = null,
       config = model.config(),
       title,
-      orient = "right",
+      orient = 'right',
       offset = config.legend.offset,
       padding = config.legend.padding,
       tickArguments = [5],
@@ -54,8 +54,8 @@ function lgnd(model) {
   };
 
   function discrete(type) {
-    return type==="ordinal" || type==="quantize" ||
-           type==="quantile" || type==="threshold";
+    return type==='ordinal' || type==='quantize' ||
+           type==='quantile' || type==='threshold';
   }
 
   function ordinalDef(scale) {
@@ -95,8 +95,8 @@ function lgnd(model) {
     
     // build scale for label layout
     var scaleSpec = {
-      name: "legend",
-      type: "ordinal",
+      name: 'legend',
+      type: 'ordinal',
       points: true,
       domain: domain,
       range: range
@@ -118,17 +118,17 @@ function lgnd(model) {
 
   function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
-    var titles  = util.extend(m.titles, vg_legendTitle(config)),
-        symbols = util.extend(m.symbols, vg_legendSymbols(config)),
-        labels  = util.extend(m.labels, vg_vLegendLabels(config));
+    var titles  = dl.extend(m.titles, vg_legendTitle(config)),
+        symbols = dl.extend(m.symbols, vg_legendSymbols(config)),
+        labels  = dl.extend(m.labels, vg_vLegendLabels(config));
 
     // extend legend marks
     vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
     
     // add / override custom style properties
-    util.extend(titles.properties.update,  titleStyle);
-    util.extend(symbols.properties.update, symbolStyle);
-    util.extend(labels.properties.update,  labelStyle);
+    dl.extend(titles.properties.update,  titleStyle);
+    dl.extend(symbols.properties.update, symbolStyle);
+    dl.extend(labels.properties.update,  labelStyle);
 
     // padding from legend border
     titles.properties.enter.x.value += padding;
@@ -138,11 +138,11 @@ function lgnd(model) {
     labels.properties.update.x.offset += padding + 1;
     symbols.properties.update.x.offset = padding + 1;
 
-    util.extend(legendDef, {
-      type: "group",
+    dl.extend(legendDef, {
+      type: 'group',
       interactive: false,
       properties: {
-        enter: parseProperties(model, "group", legendStyle),
+        enter: parseProperties(model, 'group', legendStyle),
         vg_legendPosition: {
           encode: vg_legendPosition,
           signals: [], scales:[], data: [], fields: []
@@ -165,20 +165,20 @@ function lgnd(model) {
 
     // build scale for label layout
     var layoutSpec = {
-      name: "legend",
+      name: 'legend',
       type: scale.type,
       round: true,
       zero: false,
       domain: [dom[0], dom[dom.length-1]],
       range: [padding, width+padding]
     };
-    if (scale.type==="pow") layoutSpec.exponent = scale.exponent();
+    if (scale.type==='pow') layoutSpec.exponent = scale.exponent();
     
     // update legend def
     var tdata = (title ? [title] : []).map(ingest);
     data.forEach(function(d,i) {
       d.label = fmt(d.data);
-      d.align = i==(data.length-1) ? "right" : i===0 ? "left" : "center";
+      d.align = i==(data.length-1) ? 'right' : i===0 ? 'left' : 'center';
     });
     def.scales = [ layoutSpec ];
     def.marks[0].from = function() { return tdata; };
@@ -189,9 +189,9 @@ function lgnd(model) {
   
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = util.extend(m.titles, vg_legendTitle(config)),
-        gradient = util.extend(m.gradient, vg_legendGradient(config)),
-        labels = util.extend(m.labels, vg_hLegendLabels(config)),
+    var titles = dl.extend(m.titles, vg_legendTitle(config)),
+        gradient = dl.extend(m.gradient, vg_legendGradient(config)),
+        labels = dl.extend(m.labels, vg_hLegendLabels(config)),
         grad = new Gradient();
 
     // setup color gradient
@@ -200,7 +200,7 @@ function lgnd(model) {
         max = dom[dom.length-1],
         f = scale.copy().domain([min, max]).range([0,1]);
         
-    var stops = (scale.type !== "linear" && scale.ticks) ?
+    var stops = (scale.type !== 'linear' && scale.ticks) ?
       scale.ticks.call(scale, 15) : dom;
     if (min !== stops[0]) stops.unshift(min);
     if (max !== stops[stops.length-1]) stops.push(max);
@@ -211,9 +211,9 @@ function lgnd(model) {
     gradient.properties.enter.fill = {value: grad};
 
     // add / override custom style properties
-    util.extend(titles.properties.update, titleStyle);
-    util.extend(gradient.properties.update, gradientStyle);
-    util.extend(labels.properties.update, labelStyle);
+    dl.extend(titles.properties.update, titleStyle);
+    dl.extend(gradient.properties.update, gradientStyle);
+    dl.extend(labels.properties.update, labelStyle);
 
     // account for gradient size
     var gp = gradient.properties, gh = gradientStyle.height,
@@ -241,11 +241,11 @@ function lgnd(model) {
     gradient.properties.update.y.value += padding;
     labels.properties.update.y.value += padding;
 
-    util.extend(legendDef, {
-      type: "group",
+    dl.extend(legendDef, {
+      type: 'group',
       interactive: false,
       properties: {
-        enter: parseProperties(model, "group", legendStyle),
+        enter: parseProperties(model, 'group', legendStyle),
         vg_legendPosition: {
           encode: vg_legendPosition,
           signals: [], scales: [], data: [], fields: []
@@ -304,7 +304,7 @@ function lgnd(model) {
 
   legend.orient = function(x) {
     if (!arguments.length) return orient;
-    orient = x in vg_legendOrients ? x + "" : config.legend.orient;
+    orient = x in vg_legendOrients ? x + '' : config.legend.orient;
     return legend;
   };
 
@@ -381,12 +381,12 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   }
 
   switch (orient) {
-    case "left":  {
+    case 'left':  {
       gx = group.bounds ? group.bounds.x1 : 0;
       o.x += gx - offset - lw;
       break;
     }
-    case "right": {
+    case 'right': {
       gx = group.width + (group.bounds && trans ? group.bounds.delta : 0);
       o.x += gx + offset;
       break;
@@ -402,18 +402,18 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
 function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
   var e = mark.properties.enter,
       u = mark.properties.update;
-  if (size)   e.size   = u.size   = {scale: size.scaleName,   field: "data"};
-  if (shape)  e.shape  = u.shape  = {scale: shape.scaleName,  field: "data"};
-  if (fill)   e.fill   = u.fill   = {scale: fill.scaleName,   field: "data"};
-  if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: "data"};
+  if (size)   e.size   = u.size   = {scale: size.scaleName,   field: 'data'};
+  if (shape)  e.shape  = u.shape  = {scale: shape.scaleName,  field: 'data'};
+  if (fill)   e.fill   = u.fill   = {scale: fill.scaleName,   field: 'data'};
+  if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: 'data'};
 }
 
 function vg_legendTitle(config) {
   var cfg = config.legend;
   return {
-    type: "text",
+    type: 'text',
     interactive: false,
-    key: "data",
+    key: 'data',
     properties: {
       enter: {
         x: {value: 0},
@@ -422,8 +422,8 @@ function vg_legendTitle(config) {
         font: {value: cfg.titleFont},
         fontSize: {value: cfg.titleFontSize},
         fontWeight: {value: cfg.titleFontWeight},
-        baseline: {value: "top"},
-        text: {field: "data"},
+        baseline: {value: 'top'},
+        text: {field: 'data'},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
@@ -435,13 +435,13 @@ function vg_legendTitle(config) {
 function vg_legendSymbols(config) {
   var cfg = config.legend;
   return {
-    type: "symbol",
+    type: 'symbol',
     interactive: false,
-    key: "data",
+    key: 'data',
     properties: {
       enter: {
-        x: {field: "offset", mult: 0.5},
-        y: {scale: "legend", field: "index"},
+        x: {field: 'offset', mult: 0.5},
+        y: {scale: 'legend', field: 'index'},
         shape: {value: cfg.symbolShape},
         size: {value: cfg.symbolSize},
         stroke: {value: cfg.symbolColor},
@@ -450,8 +450,8 @@ function vg_legendSymbols(config) {
       },
       exit: { opacity: {value: 1e-6} },
       update: {
-        x: {field: "offset", mult: 0.5},
-        y: {scale: "legend", field: "index"},
+        x: {field: 'offset', mult: 0.5},
+        y: {scale: 'legend', field: 'index'},
         opacity: {value: 1}
       }
     }
@@ -461,26 +461,26 @@ function vg_legendSymbols(config) {
 function vg_vLegendLabels(config) {
   var cfg = config.legend;
   return {
-    type: "text",
+    type: 'text',
     interactive: false,
-    key: "data",
+    key: 'data',
     properties: {
       enter: {
-        x: {field: "offset", offset: 5},
-        y: {scale: "legend", field: "index"},
+        x: {field: 'offset', offset: 5},
+        y: {scale: 'legend', field: 'index'},
         fill: {value: cfg.labelColor},
         font: {value: cfg.labelFont},
         fontSize: {value: cfg.labelFontSize},
         align: {value: cfg.labelAlign},
         baseline: {value: cfg.labelBaseline},
-        text: {field: "label"},
+        text: {field: 'label'},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
       update: {
         opacity: {value: 1},
-        x: {field: "offset", offset: 5},
-        y: {scale: "legend", field: "index"},
+        x: {field: 'offset', offset: 5},
+        y: {scale: 'legend', field: 'index'},
       }
     }
   };
@@ -489,7 +489,7 @@ function vg_vLegendLabels(config) {
 function vg_legendGradient(config) {
   var cfg = config.legend;
   return {
-    type: "rect",
+    type: 'rect',
     interactive: false,
     properties: {
       enter: {
@@ -514,25 +514,25 @@ function vg_legendGradient(config) {
 function vg_hLegendLabels(config) {
   var cfg = config.legend;
   return {
-    type: "text",
+    type: 'text',
     interactive: false,
-    key: "data",
+    key: 'data',
     properties: {
       enter: {
-        x: {scale: "legend", field: "data"},
+        x: {scale: 'legend', field: 'data'},
         y: {value: 20},
         dy: {value: 2},
         fill: {value: cfg.labelColor},
         font: {value: cfg.labelFont},
         fontSize: {value: cfg.labelFontSize},
-        align: {field: "align"},
-        baseline: {value: "top"},
-        text: {field: "label"},
+        align: {field: 'align'},
+        baseline: {value: 'top'},
+        text: {field: 'label'},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
       update: {
-        x: {scale: "legend", field: "data"},
+        x: {scale: 'legend', field: 'data'},
         y: {value: 20},
         opacity: {value: 1}
       }

@@ -1,6 +1,4 @@
-var load = require('datalib/src/import/load'),
-    read = require('datalib/src/import/read'),
-    util = require('datalib/src/util'),
+var dl = require('datalib'),
     log = require('vega-logging'),
     parseTransforms = require('./transforms'),
     parseModify = require('./modify');
@@ -12,9 +10,9 @@ function parseData(model, spec, callback) {
   function loaded(d) {
     return function(error, data) {
       if (error) {
-        log.error("LOADING FAILED: " + d.url + " " + error);
+        log.error('LOADING FAILED: ' + d.url + ' ' + error);
       } else {
-        model.data(d.name).values(read(data, d.format));
+        model.data(d.name).values(dl.read(data, d.format));
       }
       if (--count === 0) callback();
     };
@@ -24,7 +22,7 @@ function parseData(model, spec, callback) {
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
-      load(util.extend({url: d.url}, config.load), loaded(d));
+      dl.load(dl.extend({url: d.url}, config.load), loaded(d));
     }
     parseData.datasource(model, d);
   });
@@ -43,7 +41,7 @@ parseData.datasource = function(model, d) {
       ds = model.data(d.name, mod.concat(transform));
 
   if (d.values) {
-    ds.values(read(d.values, d.format));
+    ds.values(dl.read(d.values, d.format));
   } else if (d.source) {
     ds.source(d.source)
       .revises(ds.revises()) // If new ds revises, then it's origin must revise too.

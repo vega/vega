@@ -1,6 +1,6 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+    dl = require('datalib'),
+    Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Geo = require('./Geo'),
     Transform = require('./Transform');
@@ -25,7 +25,7 @@ prototype.transform = function(input) {
   log.debug(input, ['geopath']);
 
   var output = this._output,
-      geojson = this.param('field').accessor || util.identity,
+      geojson = this.param('field').accessor || dl.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
@@ -50,7 +50,7 @@ GeoPath.schema = {
   "title": "GeoPath transform",
   "description": "Creates paths for geographic regions, such as countries, states and counties.",
   "type": "object",
-  "properties": util.extend({
+  "properties": dl.extend({
     "type": {"enum": ["geopath"]},
     "field": {
       "description": "The data field containing GeoJSON Feature data.",

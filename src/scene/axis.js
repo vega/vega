@@ -1,6 +1,6 @@
 var d3 = require('d3'),
-    util = require('datalib/src/util'),
-    tpl = require('vega-dataflow/src/Tuple'),
+    dl = require('datalib'),
+    Tuple = require('vega-dataflow').Tuple,
     parseMark = require('../parse/mark');
 
 function axs(model) {
@@ -122,12 +122,12 @@ function axs(model) {
     range = vg_axisScaleRange(scale);
 
     // setup axis marks
-    util.extend(m.gridLines, vg_axisTicks(config));
-    util.extend(m.majorTicks, vg_axisTicks(config));
-    util.extend(m.minorTicks, vg_axisTicks(config));
-    util.extend(m.tickLabels, vg_axisTickLabels(config));
-    util.extend(m.domain, vg_axisDomain(config));
-    util.extend(m.title, vg_axisTitle(config));
+    dl.extend(m.gridLines, vg_axisTicks(config));
+    dl.extend(m.majorTicks, vg_axisTicks(config));
+    dl.extend(m.minorTicks, vg_axisTicks(config));
+    dl.extend(m.tickLabels, vg_axisTickLabels(config));
+    dl.extend(m.domain, vg_axisDomain(config));
+    dl.extend(m.title, vg_axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
     m.gridLines.properties.enter.strokeOpacity = {value: config.axis.gridOpacity};
 
@@ -141,15 +141,15 @@ function axs(model) {
     vg_axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
     
     // add / override custom style properties
-    util.extend(m.gridLines.properties.update, gridLineStyle);
-    util.extend(m.majorTicks.properties.update, majorTickStyle);
-    util.extend(m.minorTicks.properties.update, minorTickStyle);
-    util.extend(m.tickLabels.properties.update, tickLabelStyle);
-    util.extend(m.domain.properties.update, domainStyle);
-    util.extend(m.title.properties.update, titleStyle);
+    dl.extend(m.gridLines.properties.update, gridLineStyle);
+    dl.extend(m.majorTicks.properties.update, majorTickStyle);
+    dl.extend(m.minorTicks.properties.update, minorTickStyle);
+    dl.extend(m.tickLabels.properties.update, tickLabelStyle);
+    dl.extend(m.domain.properties.update, domainStyle);
+    dl.extend(m.title.properties.update, titleStyle);
 
     var marks = [m.gridLines, m.majorTicks, m.minorTicks, m.tickLabels, m.domain, m.title];
-    util.extend(axisDef, {
+    dl.extend(axisDef, {
       type: "group",
       interactive: false,
       properties: { 
@@ -238,7 +238,7 @@ function axs(model) {
   
   axis.offset = function(x) {
     if (!arguments.length) return offset;
-    offset = util.isObject(x) ? x : +x;
+    offset = dl.isObject(x) ? x : +x;
     return axis;
   };
 
@@ -366,22 +366,22 @@ function vg_axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
     size *= -1;
   }  
   if (orient === "top" || orient === "bottom") {
-    util.extend(labels.properties.enter, {
+    dl.extend(labels.properties.enter, {
       x: oldScale,
       y: {value: size},
     });
-    util.extend(labels.properties.update, {
+    dl.extend(labels.properties.update, {
       x: newScale,
       y: {value: size},
       align: {value: "center"},
       baseline: {value: vg_axisBaseline[orient]}
     });
   } else {
-    util.extend(labels.properties.enter, {
+    dl.extend(labels.properties.enter, {
       x: {value: size},
       y: oldScale,
     });
-    util.extend(labels.properties.update, {
+    dl.extend(labels.properties.update, {
       x: {value: size},
       y: newScale,
       align: {value: vg_axisAlign[orient]},
@@ -400,31 +400,31 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
     size = {value: sign * size};
   }
   if (orient === "top" || orient === "bottom") {
-    util.extend(ticks.properties.enter, {
+    dl.extend(ticks.properties.enter, {
       x:  oldScale,
       y:  {value: 0},
       y2: size
     });
-    util.extend(ticks.properties.update, {
+    dl.extend(ticks.properties.update, {
       x:  newScale,
       y:  {value: 0},
       y2: size
     });
-    util.extend(ticks.properties.exit, {
+    dl.extend(ticks.properties.exit, {
       x:  newScale,
     });        
   } else {
-    util.extend(ticks.properties.enter, {
+    dl.extend(ticks.properties.enter, {
       x:  {value: 0},
       x2: size,
       y:  oldScale
     });
-    util.extend(ticks.properties.update, {
+    dl.extend(ticks.properties.update, {
       x:  {value: 0},
       x2: size,
       y:  newScale
     });
-    util.extend(ticks.properties.exit, {
+    dl.extend(ticks.properties.exit, {
       y:  newScale,
     });
   }
@@ -435,13 +435,13 @@ function vg_axisTitleExtend(orient, title, range, offset) {
       sign = (orient === "top" || orient === "left") ? -1 : 1;
   
   if (orient === "bottom" || orient === "top") {
-    util.extend(title.properties.update, {
+    dl.extend(title.properties.update, {
       x: {value: mid},
       y: {value: sign*offset},
       angle: {value: 0}
     });
   } else {
-    util.extend(title.properties.update, {
+    dl.extend(title.properties.update, {
       x: {value: sign*offset},
       y: {value: mid},
       angle: {value: orient === "left" ? -90 : 90}
@@ -469,28 +469,28 @@ function vg_axisUpdate(item, group, trans) {
       width  = group.width,
       height = group.height; // TODO fallback to global w,h?
 
-  if (util.isArray(offset)) {
+  if (dl.isArray(offset)) {
     var ofx = offset[0],
         ofy = offset[1];
 
     switch (orient) {
-      case "left":   { tpl.set(o, 'x', -ofx); tpl.set(o, 'y', ofy); break; }
-      case "right":  { tpl.set(o, 'x', width + ofx); tpl.set(o, 'y', ofy); break; }
-      case "bottom": { tpl.set(o, 'x', ofx); tpl.set(o, 'y', height + ofy); break; }
-      case "top":    { tpl.set(o, 'x', ofx); tpl.set(o, 'y', -ofy); break; }
-      default:       { tpl.set(o, 'x', ofx); tpl.set(o, 'y', ofy); }
+      case "left":   { Tuple.set(o, 'x', -ofx); Tuple.set(o, 'y', ofy); break; }
+      case "right":  { Tuple.set(o, 'x', width + ofx); Tuple.set(o, 'y', ofy); break; }
+      case "bottom": { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', height + ofy); break; }
+      case "top":    { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', -ofy); break; }
+      default:       { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', ofy); }
     }
   } else {
-    if (util.isObject(offset)) {
+    if (dl.isObject(offset)) {
       offset = -group.scale(offset.scale)(offset.value);
     }
 
     switch (orient) {
-      case "left":   { tpl.set(o, 'x', -offset); tpl.set(o, 'y', 0); break; }
-      case "right":  { tpl.set(o, 'x', width + offset); tpl.set(o, 'y', 0); break; }
-      case "bottom": { tpl.set(o, 'x', 0); tpl.set(o, 'y', height + offset); break; }
-      case "top":    { tpl.set(o, 'x', 0); tpl.set(o, 'y', -offset); break; }
-      default:       { tpl.set(o, 'x', 0); tpl.set(o, 'y', 0); }
+      case "left":   { Tuple.set(o, 'x', -offset); Tuple.set(o, 'y', 0); break; }
+      case "right":  { Tuple.set(o, 'x', width + offset); Tuple.set(o, 'y', 0); break; }
+      case "bottom": { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', height + offset); break; }
+      case "top":    { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', -offset); break; }
+      default:       { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', 0); }
     }
   }
 
