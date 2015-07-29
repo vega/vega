@@ -19,7 +19,7 @@ var keys = [
   'path',                                                       // path
   'x2', 'y2',                                                   // rule
   'size', 'shape',                                              // symbol
-  'text', 'angle', 'theta', 'radius',                           // text
+  'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
 ];
 
