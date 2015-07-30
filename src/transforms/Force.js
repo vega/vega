@@ -1,7 +1,7 @@
 var d3 = require('d3'),
-    Tuple = require('vega-dataflow').Tuple,
-    ChangeSet = require('vega-dataflow/src/ChangeSet'),
-    Tuple = require('vega-dataflow/src/Tuple'),
+    df = require('vega-dataflow'),
+    Tuple = df.Tuple,
+    ChangeSet = df.ChangeSet,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
