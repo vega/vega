@@ -1,6 +1,6 @@
 var dl = require('datalib'),
     log = require('vega-logging'),
-    Model = require('../core/Model'), 
+    Model = require('../core/Model'),
     View = require('../core/View');
 
 function parseSpec(spec, callback) {

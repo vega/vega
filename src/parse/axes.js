@@ -41,6 +41,7 @@ function parseAxis(config, def, index, axis, group) {
   axis.tickValues(def.values || null);
   // axis label formatting
   axis.tickFormat(def.format || null);
+  axis.tickFormatType(def.formatType || null);
   // axis tick subdivision
   axis.tickSubdivide(def.subdivide || 0);
   // axis tick padding
