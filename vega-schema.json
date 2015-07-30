@@ -1577,7 +1577,11 @@
               "slice",
               "substring",
               "test",
-              "if"
+              "if",
+              "eventItem",
+              "eventGroup",
+              "eventX",
+              "eventY"
             ]
           }
         },
@@ -1944,6 +1948,17 @@
                     "$ref": "#/refs/signal"
                   }
                 ]
+              },
+              "output": {
+                "type": "object",
+                "description": "Rename the output data fields",
+                "properties": {
+                  "bin": {
+                    "type": "string",
+                    "default": "bin"
+                  }
+                },
+                "additionalProperties": false
               }
             },
             "additionalProperties": false,
@@ -3256,6 +3271,10 @@
                   "height": {
                     "type": "string",
                     "default": "layout_height"
+                  },
+                  "depth": {
+                    "type": "string",
+                    "default": "layout_depth"
                   }
                 }
               }
@@ -3550,44 +3569,6 @@
                       "$ref": "#/refs/signal"
                     }
                   ]
-                },
-                "sort": {
-                  "type": "object",
-                  "properties": {
-                    "field": {
-                      "type": "string"
-                    },
-                    "op": {
-                      "enum": [
-                        "values",
-                        "count",
-                        "valid",
-                        "missing",
-                        "distinct",
-                        "sum",
-                        "mean",
-                        "average",
-                        "variance",
-                        "variancep",
-                        "stdev",
-                        "stdevp",
-                        "median",
-                        "q1",
-                        "q3",
-                        "modeskew",
-                        "min",
-                        "max",
-                        "argmin",
-                        "argmax"
-                      ]
-                    },
-                    "order": {
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
-                    }
-                  }
                 }
               },
               "required": [
@@ -3763,56 +3744,6 @@
                           "$ref": "#/refs/signal"
                         }
                       ]
-                    }
-                  },
-                  "required": [
-                    "type"
-                  ]
-                },
-                {
-                  "properties": {
-                    "type": {
-                      "enum": [
-                        "quantile"
-                      ]
-                    },
-                    "sort": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "type": "string"
-                        },
-                        "op": {
-                          "enum": [
-                            "values",
-                            "count",
-                            "valid",
-                            "missing",
-                            "distinct",
-                            "sum",
-                            "mean",
-                            "average",
-                            "variance",
-                            "variancep",
-                            "stdev",
-                            "stdevp",
-                            "median",
-                            "q1",
-                            "q3",
-                            "modeskew",
-                            "min",
-                            "max",
-                            "argmin",
-                            "argmax"
-                          ]
-                        },
-                        "order": {
-                          "enum": [
-                            "asc",
-                            "desc"
-                          ]
-                        }
-                      }
                     }
                   },
                   "required": [
@@ -4890,6 +4821,44 @@
               }
             }
           ]
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "values",
+                "count",
+                "valid",
+                "missing",
+                "distinct",
+                "sum",
+                "mean",
+                "average",
+                "variance",
+                "variancep",
+                "stdev",
+                "stdevp",
+                "median",
+                "q1",
+                "q3",
+                "modeskew",
+                "min",
+                "max",
+                "argmin",
+                "argmax"
+              ]
+            },
+            "order": {
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": false
