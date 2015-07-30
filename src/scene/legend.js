@@ -41,7 +41,7 @@ function lgnd(model) {
     var scale = size || shape || fill || stroke;
     
     format = !formatString ? null : ((scale.type === 'time') ?
-      d3.time.format(formatString) : d3.format(formatString));
+      dl.format.time(formatString) : dl.format.number(formatString));
     
     if (!legendDef.type) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type) ?

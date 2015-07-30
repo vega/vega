@@ -1,7 +1,12 @@
-var d3 = require('d3'),
-    dl = require('datalib'),
+var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     parseMark = require('../parse/mark');
+
+var TIME    = 'time',
+    UTC     = 'utc',
+    STRING  = 'string',
+    ORDINAL = 'ordinal',
+    NUMBER  = 'number';
 
 function axs(model) {
   var scale,
@@ -10,7 +15,7 @@ function axs(model) {
       offset = 0,
       titleOffset = config.axis.titleOffset,
       axisDef = {},
-      layer = "front",
+      layer = 'front',
       grid = false,
       title = null,
       tickMajorSize = config.axis.tickSize,
@@ -19,6 +24,7 @@ function axs(model) {
       tickPadding = config.axis.padding,
       tickValues = null,
       tickFormatString = null,
+      tickFormatType = null,
       tickSubdivide = 0,
       tickCount = config.axis.ticks,
       gridLineStyle = {},
@@ -46,99 +52,110 @@ function axs(model) {
     return {data: d};
   }
 
-  function getTickFormatString() {
-    return tickFormatString || (scale.type === 'log' ? ".1s" : null);
+  function getTickFormat() {
+    var formatType = tickFormatType || inferFormatType();
+    return getFormatter(formatType, tickFormatString);
   }
 
-  function getTickFormatFn(fmtStr) {
-    return (!fmtStr && String) || ((scale.type === 'time') ?
-      d3.time.format(fmtStr) : d3.format(fmtStr));
-  }
-  
-  function buildTickFormat() {
-    var fmtStr = getTickFormatString();
-    
-    // D3 v3 has an inconsistent tickFormat API for time scales.
-    if (scale.tickFormat) {
-      return fmtStr ?
-        (scale.tickFormat.length === 2 ?
-          scale.tickFormat(tickCount, fmtStr) : getTickFormatFn(fmtStr)) :
-        scale.tickFormat(tickCount);
+  function inferFormatType() {
+    switch (scale.type) {
+      case TIME:    return TIME;
+      case UTC:     return UTC;
+      case ORDINAL: return STRING;
+      default:      return NUMBER;
     }
-
-    return getTickFormatFn(fmtStr);
   }
-  
-  function buildTicks(fmt) {
-    var ticks = {
-      major: tickValues,
-      minor: null
+
+  // Adapted from d3 log scale
+  // TODO customize? replace with range-size-aware filtering?
+  function logFilter(domain, count, f) {
+    if (count == null) return f;
+    var base = scale.base(),
+        k = Math.min(base, scale.ticks().length / count),
+        v = domain[0] > 0 ? (e = 1e-12, Math.ceil) : (e = -1e-12, Math.floor),
+        e;
+    function log(x) {
+      return (domain[0] < 0 ?
+        -Math.log(x > 0 ? 0 : -x) :
+        Math.log(x < 0 ? 0 : x)) / Math.log(base);
+    }
+    function pow(x) {
+      return domain[0] < 0 ? -Math.pow(base, -x) : Math.pow(base, x);
+    }
+    return function(d) {
+      return pow(v(log(d) + e)) / d >= k ? f(d) : '';
     };
-    
-    if (ticks.major == null) {
-      ticks.major = scale.ticks ?
-        scale.ticks(tickCount) : scale.domain();
+  }
+
+  function getFormatter(formatType, str) {
+    var fmt = dl.format, domain, f;
+    switch (formatType) {
+      case NUMBER:
+        domain = scale.domain();
+        f = fmt.auto.number(domain, tickCount, str);
+        return scale.type === 'log' ? logFilter(domain, tickCount, f) : f;
+      case TIME: return (str ? fmt : fmt.auto).time(str);
+      case UTC:  return (str ? fmt : fmt.auto).utc(str);
+      default:   return String;
     }
+  }
   
-    ticks.minor = vg_axisSubdivide(scale, ticks.major, tickSubdivide)
-      .map(ingest);
-  
-    ticks.major = ticks.major.map(function(d) {
-      return (d = ingest(d), d.label = fmt(d.data), d);
-    });
-    
-    return ticks;
+  function getTicks(format) {
+    var major = tickValues || (scale.ticks ? scale.ticks(tickCount) : scale.domain()),
+        minor = axisSubdivide(scale, major, tickSubdivide).map(ingest);
+    major = major.map(function(d) { return (d = ingest(d), d.label = format(d.data), d); });
+    return [major, minor];
   }
 
   axis.def = function() {
-    if(!axisDef.type) axis_def(scale);
+    if (!axisDef.type) axis_def(scale);
 
-    var fmt = buildTickFormat();
-    var ticks = buildTicks(fmt);
+    var ticks = getTicks(getTickFormat());
     var tdata = title ? [title].map(ingest) : [];
 
-    axisDef.marks[0].from = function() { return grid ? ticks.major : []; };
-    axisDef.marks[1].from = function() { return ticks.major; };
-    axisDef.marks[2].from = function() { return ticks.minor; };
+    axisDef.marks[0].from = function() { return grid ? ticks[0] : []; };
+    axisDef.marks[1].from = function() { return ticks[0]; };
+    axisDef.marks[2].from = function() { return ticks[1]; };
     axisDef.marks[3].from = axisDef.marks[1].from;
     axisDef.marks[4].from = function() { return [1]; };
     axisDef.marks[5].from = function() { return tdata; };
     axisDef.offset = offset;
     axisDef.orient = orient;
     axisDef.layer = layer;
+
     return axisDef;
   };
 
   function axis_def(scale) {
     // setup scale mapping
     var newScale, oldScale, range;
-    if (scale.type === "ordinal") {
+    if (scale.type === ORDINAL) {
       newScale = {scale: scale.scaleName, offset: 0.5 + scale.rangeBand()/2};
       oldScale = newScale;
     } else {
       newScale = {scale: scale.scaleName, offset: 0.5};
-      oldScale = {scale: scale.scaleName+":prev", offset: 0.5};
+      oldScale = {scale: scale.scaleName+':prev', offset: 0.5};
     }
-    range = vg_axisScaleRange(scale);
+    range = axisScaleRange(scale);
 
     // setup axis marks
-    dl.extend(m.gridLines, vg_axisTicks(config));
-    dl.extend(m.majorTicks, vg_axisTicks(config));
-    dl.extend(m.minorTicks, vg_axisTicks(config));
-    dl.extend(m.tickLabels, vg_axisTickLabels(config));
-    dl.extend(m.domain, vg_axisDomain(config));
-    dl.extend(m.title, vg_axisTitle(config));
+    dl.extend(m.gridLines, axisTicks(config));
+    dl.extend(m.majorTicks, axisTicks(config));
+    dl.extend(m.minorTicks, axisTicks(config));
+    dl.extend(m.tickLabels, axisTickLabels(config));
+    dl.extend(m.domain, axisDomain(config));
+    dl.extend(m.title, axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
     m.gridLines.properties.enter.strokeOpacity = {value: config.axis.gridOpacity};
 
     // extend axis marks based on axis orientation
-    vg_axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
-    vg_axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
-    vg_axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
-    vg_axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
+    axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
-    vg_axisDomainExtend(orient, m.domain, range, tickEndSize);
-    vg_axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
+    axisDomainExtend(orient, m.domain, range, tickEndSize);
+    axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
     
     // add / override custom style properties
     dl.extend(m.gridLines.properties.update, gridLineStyle);
@@ -150,16 +167,16 @@ function axs(model) {
 
     var marks = [m.gridLines, m.majorTicks, m.minorTicks, m.tickLabels, m.domain, m.title];
     dl.extend(axisDef, {
-      type: "group",
+      type: 'group',
       interactive: false,
       properties: { 
         enter: {
-          encode: vg_axisUpdate,
+          encode: axisUpdate,
           scales: [scale.scaleName],
           signals: [], data: []
         },
         update: {
-          encode: vg_axisUpdate,
+          encode: axisUpdate,
           scales: [scale.scaleName],
           signals: [], data: []
         }
@@ -178,7 +195,7 @@ function axs(model) {
   axis.orient = function(x) {
     if (!arguments.length) return orient;
     if (orient !== x) {
-      orient = x in vg_axisOrients ? x + "" : config.axis.orient;
+      orient = x in axisOrients ? x + '' : config.axis.orient;
       reset();
     }
     return axis;
@@ -210,7 +227,16 @@ function axs(model) {
     }
     return axis;
   };
-  
+
+  axis.tickFormatType = function(x) {
+    if (!arguments.length) return tickFormatType;
+    if (tickFormatType !== x) {
+      tickFormatType = x;
+      reset();
+    }
+    return axis;
+  };
+
   axis.tickSize = function(x, y) {
     if (!arguments.length) return tickMajorSize;
     var n = arguments.length - 1,
@@ -310,12 +336,12 @@ function axs(model) {
   return axis;
 }
 
-var vg_axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
+var axisOrients = {top: 1, right: 1, bottom: 1, left: 1};
 
-function vg_axisSubdivide(scale, ticks, m) {
+function axisSubdivide(scale, ticks, m) {
   var subticks = [];
   if (m && ticks.length > 1) {
-    var extent = vg_axisScaleExtent(scale.domain()),
+    var extent = axisScaleExtent(scale.domain()),
         i = -1,
         n = ticks.length,
         d = (ticks[1] - ticks[0]) / ++m,
@@ -335,37 +361,37 @@ function vg_axisSubdivide(scale, ticks, m) {
   return subticks;
 }
 
-function vg_axisScaleExtent(domain) {
+function axisScaleExtent(domain) {
   var start = domain[0], stop = domain[domain.length - 1];
   return start < stop ? [start, stop] : [stop, start];
 }
 
-function vg_axisScaleRange(scale) {
+function axisScaleRange(scale) {
   return scale.rangeExtent ?
     scale.rangeExtent() :
-    vg_axisScaleExtent(scale.range());
+    axisScaleExtent(scale.range());
 }
 
-var vg_axisAlign = {
-  bottom: "center",
-  top: "center",
-  left: "right",
-  right: "left"
+var axisAlign = {
+  bottom: 'center',
+  top: 'center',
+  left: 'right',
+  right: 'left'
 };
 
-var vg_axisBaseline = {
-  bottom: "top",
-  top: "bottom",
-  left: "middle",
-  right: "middle"
+var axisBaseline = {
+  bottom: 'top',
+  top: 'bottom',
+  left: 'middle',
+  right: 'middle'
 };
 
-function vg_axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
+function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   size = Math.max(size, 0) + pad;
-  if (orient === "left" || orient === "top") {
+  if (orient === 'left' || orient === 'top') {
     size *= -1;
   }  
-  if (orient === "top" || orient === "bottom") {
+  if (orient === 'top' || orient === 'bottom') {
     dl.extend(labels.properties.enter, {
       x: oldScale,
       y: {value: size},
@@ -373,8 +399,8 @@ function vg_axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
     dl.extend(labels.properties.update, {
       x: newScale,
       y: {value: size},
-      align: {value: "center"},
-      baseline: {value: vg_axisBaseline[orient]}
+      align: {value: 'center'},
+      baseline: {value: axisBaseline[orient]}
     });
   } else {
     dl.extend(labels.properties.enter, {
@@ -384,22 +410,22 @@ function vg_axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
     dl.extend(labels.properties.update, {
       x: {value: size},
       y: newScale,
-      align: {value: vg_axisAlign[orient]},
-      baseline: {value: "middle"}
+      align: {value: axisAlign[orient]},
+      baseline: {value: 'middle'}
     });
   }
 }
 
-function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
-  var sign = (orient === "left" || orient === "top") ? -1 : 1;
+function axisTicksExtend(orient, ticks, oldScale, newScale, size) {
+  var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
-    size = (orient === "top" || orient === "bottom") ?
-      {field: {group: "height", level: 2}, mult: -sign} :
-      {field: {group: "width",  level: 2}, mult: -sign};
+    size = (orient === 'top' || orient === 'bottom') ?
+      {field: {group: 'height', level: 2}, mult: -sign} :
+      {field: {group: 'width',  level: 2}, mult: -sign};
   } else {
     size = {value: sign * size};
   }
-  if (orient === "top" || orient === "bottom") {
+  if (orient === 'top' || orient === 'bottom') {
     dl.extend(ticks.properties.enter, {
       x:  oldScale,
       y:  {value: 0},
@@ -430,11 +456,11 @@ function vg_axisTicksExtend(orient, ticks, oldScale, newScale, size) {
   }
 }
 
-function vg_axisTitleExtend(orient, title, range, offset) {
+function axisTitleExtend(orient, title, range, offset) {
   var mid = ~~((range[0] + range[1]) / 2),
-      sign = (orient === "top" || orient === "left") ? -1 : 1;
+      sign = (orient === 'top' || orient === 'left') ? -1 : 1;
   
-  if (orient === "bottom" || orient === "top") {
+  if (orient === 'bottom' || orient === 'top') {
     dl.extend(title.properties.update, {
       x: {value: mid},
       y: {value: sign*offset},
@@ -444,25 +470,25 @@ function vg_axisTitleExtend(orient, title, range, offset) {
     dl.extend(title.properties.update, {
       x: {value: sign*offset},
       y: {value: mid},
-      angle: {value: orient === "left" ? -90 : 90}
+      angle: {value: orient === 'left' ? -90 : 90}
     });
   }
 }
 
-function vg_axisDomainExtend(orient, domain, range, size) {
+function axisDomainExtend(orient, domain, range, size) {
   var path;
-  if (orient === "top" || orient === "left") {
+  if (orient === 'top' || orient === 'left') {
     size = -1 * size;
   }
-  if (orient === "bottom" || orient === "top") {
-    path = "M" + range[0] + "," + size + "V0H" + range[1] + "V" + size;
+  if (orient === 'bottom' || orient === 'top') {
+    path = 'M' + range[0] + ',' + size + 'V0H' + range[1] + 'V' + size;
   } else {
-    path = "M" + size + "," + range[0] + "H0V" + range[1] + "H" + size;
+    path = 'M' + size + ',' + range[0] + 'H0V' + range[1] + 'H' + size;
   }
   domain.properties.update.path = {value: path};
 }
 
-function vg_axisUpdate(item, group, trans) {
+function axisUpdate(item, group, trans) {
   var o = trans ? {} : item,
       offset = item.mark.def.offset,
       orient = item.mark.def.orient,
@@ -474,10 +500,10 @@ function vg_axisUpdate(item, group, trans) {
         ofy = offset[1];
 
     switch (orient) {
-      case "left":   { Tuple.set(o, 'x', -ofx); Tuple.set(o, 'y', ofy); break; }
-      case "right":  { Tuple.set(o, 'x', width + ofx); Tuple.set(o, 'y', ofy); break; }
-      case "bottom": { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', height + ofy); break; }
-      case "top":    { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', -ofy); break; }
+      case 'left':   { Tuple.set(o, 'x', -ofx); Tuple.set(o, 'y', ofy); break; }
+      case 'right':  { Tuple.set(o, 'x', width + ofx); Tuple.set(o, 'y', ofy); break; }
+      case 'bottom': { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', height + ofy); break; }
+      case 'top':    { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', -ofy); break; }
       default:       { Tuple.set(o, 'x', ofx); Tuple.set(o, 'y', ofy); }
     }
   } else {
@@ -486,10 +512,10 @@ function vg_axisUpdate(item, group, trans) {
     }
 
     switch (orient) {
-      case "left":   { Tuple.set(o, 'x', -offset); Tuple.set(o, 'y', 0); break; }
-      case "right":  { Tuple.set(o, 'x', width + offset); Tuple.set(o, 'y', 0); break; }
-      case "bottom": { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', height + offset); break; }
-      case "top":    { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', -offset); break; }
+      case 'left':   { Tuple.set(o, 'x', -offset); Tuple.set(o, 'y', 0); break; }
+      case 'right':  { Tuple.set(o, 'x', width + offset); Tuple.set(o, 'y', 0); break; }
+      case 'bottom': { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', height + offset); break; }
+      case 'top':    { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', -offset); break; }
       default:       { Tuple.set(o, 'x', 0); Tuple.set(o, 'y', 0); }
     }
   }
@@ -498,11 +524,11 @@ function vg_axisUpdate(item, group, trans) {
   return true;
 }
 
-function vg_axisTicks(config) {
+function axisTicks(config) {
   return {
-    type: "rule",
+    type: 'rule',
     interactive: false,
-    key: "data",
+    key: 'data',
     properties: {
       enter: {
         stroke: {value: config.axis.tickColor},
@@ -515,18 +541,18 @@ function vg_axisTicks(config) {
   };
 }
 
-function vg_axisTickLabels(config) {
+function axisTickLabels(config) {
   return {
-    type: "text",
+    type: 'text',
     interactive: true,
-    key: "data",
+    key: 'data',
     properties: {
       enter: {
         fill: {value: config.axis.tickLabelColor},
         font: {value: config.axis.tickLabelFont},
         fontSize: {value: config.axis.tickLabelFontSize},
         opacity: {value: 1e-6},
-        text: {field: "label"}
+        text: {field: 'label'}
       },
       exit: { opacity: {value: 1e-6} },
       update: { opacity: {value: 1} }
@@ -534,9 +560,9 @@ function vg_axisTickLabels(config) {
   };
 }
 
-function vg_axisTitle(config) {
+function axisTitle(config) {
   return {
-    type: "text",
+    type: 'text',
     interactive: true,
     properties: {
       enter: {
@@ -544,18 +570,18 @@ function vg_axisTitle(config) {
         fontSize: {value: config.axis.titleFontSize},
         fontWeight: {value: config.axis.titleFontWeight},
         fill: {value: config.axis.titleColor},
-        align: {value: "center"},
-        baseline: {value: "middle"},
-        text: {field: "data"}
+        align: {value: 'center'},
+        baseline: {value: 'middle'},
+        text: {field: 'data'}
       },
       update: {}
     }
   };
 }
 
-function vg_axisDomain(config) {
+function axisDomain(config) {
   return {
-    type: "path",
+    type: 'path',
     interactive: false,
     properties: {
       enter: {

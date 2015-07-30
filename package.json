@@ -34,12 +34,12 @@
   "dependencies": {
     "d3": "^3.5.6",
     "d3-geo-projection": "^0.2.15",
-    "datalib": "^1.3.2",
+    "datalib": "^1.4.2",
     "topojson": "^1.6.19",
-    "vega-dataflow": "^1.0.4",
+    "vega-dataflow": "^1.1.0",
     "vega-expression": "^1.0.2",
     "vega-logging": "^1.0.1",
-    "vega-scenegraph": "^1.0.5",
+    "vega-scenegraph": "^1.0.6",
     "yargs": "^3.15.0"
   },
   "devDependencies": {
