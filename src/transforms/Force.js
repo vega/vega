@@ -9,6 +9,7 @@ function Force(graph) {
   Transform.prototype.init.call(this, graph);
 
   this._prev = null;
+  this._interactive = false;
   this._setup = true;
   this._nodes  = [];
   this._links = [];
@@ -17,19 +18,22 @@ function Force(graph) {
   Transform.addParameters(this, {
     size: {type: 'array<value>', default: [500, 500]},
     bound: {type: 'value', default: true},
-
     links: {type: 'data'},
-    linkStrength: {type: 'field|value', default: 1},
-    linkDistance: {type: 'field|value', default: 20},
-    charge: {type: 'field|value', default: -30},
-    chargeDistance: {type: 'field|value', default: Infinity},
+
+    // TODO: force these to be value-only parameters for now
+    // Can update to include fields after Parameter refactoring.
+    linkStrength: {type: 'value', default: 1},
+    linkDistance: {type: 'value', default: 20},
+    charge: {type: 'value', default: -30},
+
+    chargeDistance: {type: 'value', default: Infinity},
     friction: {type: 'value', default: 0.9},
     theta: {type: 'value', default: 0.8},
     gravity: {type: 'value', default: 0.1},
     alpha: {type: 'value', default: 0.1},
     iterations: {type: 'value', default: 500},
-    
-    interactive: {type: 'value', default: false},    
+
+    interactive: {type: 'value', default: this._interactive},    
     active: {type: 'value', default: this._prev},
     fixed: {type: 'data'}
   });
@@ -64,11 +68,7 @@ prototype.transform = function(nodeInput) {
       links = this._links;
 
   // configure nodes, links and layout
-  // TODO what if interactive or charge/linkDistance/linkStrength has changed?
-  if (this._setup || nodeInput.add.length || linkInput.add.length) {
-    this.configure(nodeInput, linkInput, interactive);
-    this._setup = false;
-  }
+  this.configure(nodeInput, linkInput, interactive);
   
   // run batch layout
   if (!interactive) {
@@ -99,18 +99,30 @@ prototype.transform = function(nodeInput) {
   // return changeset
   nodeInput.fields[output.x] = 1;
   nodeInput.fields[output.y] = 1;
+  nodeInput.fields[output.source] = 1;
+  nodeInput.fields[output.target] = 1;
   return nodeInput;
 };
 
 prototype.configure = function(nodeInput, linkInput, interactive) {
   var force = this,
-      graph = this._graph,
       output = this._output,
       layout = this._layout,
       nodes = this._nodes,
       links = this._links,
-      a, i, x, link;
-  
+      a, i, x, link, run;
+
+  // check if we need to run configuration
+  run = this._setup ||
+    nodeInput.add.length || linkInput.add.length ||
+    interactive !== this._interactive ||
+    this.param('charge') !== layout.charge() ||
+    this.param('linkStrength') !== layout.linkStrength() ||
+    this.param('linkDistance') !== layout.linkDistance();
+  this._setup = false;
+  this._interactive = interactive;
+  if (!run) return;
+
   // process added nodes
   for (a=nodeInput.add, i=0; i<a.length; ++i) {
     nodes.push({tuple: a[i]});
@@ -134,12 +146,16 @@ prototype.configure = function(nodeInput, linkInput, interactive) {
   // setup handler for force layout tick events
   var tickHandler = !interactive ? null : function() {
     // re-schedule the transform, force reflow
-    graph.propagate(ChangeSet.create(null, true), force);
+    // comment out for now (see comments below!)
+    // graph.propagate(ChangeSet.create(null, true), force);
 
     // hard-code propagation to links
     // TODO: dataflow graph should propagate automatically
-    var lnode = force.param('links').source._pipeline[0];
-    graph.propagate(ChangeSet.create(null, true), lnode);
+    force.param('links').source.fire(ChangeSet.create(null, true));
+    // NOTE: because the Force operator depends on the links data set
+    // this pulse cascades back to Force to ensure it runs.
+    // For now we only make one propagate call for efficiency.
+    // If the dependency issue is worked out, we should swap calls.
   };
 
   // configure layout
@@ -147,8 +163,8 @@ prototype.configure = function(nodeInput, linkInput, interactive) {
     .size(this.param('size'))
     .linkStrength(this.param('linkStrength'))
     .linkDistance(this.param('linkDistance'))
-    .chargeDistance(this.param('chargeDistance'))
     .charge(this.param('charge'))
+    .chargeDistance(this.param('chargeDistance'))
     .theta(this.param('theta'))
     .gravity(this.param('gravity'))
     .friction(this.param('friction'))
@@ -166,7 +182,8 @@ prototype.update = function(active) {
       nodes = this._nodes,
       lut = {}, id, i, n, t, x, y;
 
-  if (fixed) {
+  if (fixed && fixed.source) {
+    // TODO: could cache and update as needed?
     fixed = fixed.source.values();
     for (i=0, n=fixed.length; i<n; ++i) {
       lut[fixed[i].id] = 1;
@@ -238,7 +255,7 @@ Force.schema = {
       "default": -30
     },
     "chargeDistance": {
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum distance over which charge forces are applied.",
       "default": Infinity
     },

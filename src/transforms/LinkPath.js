@@ -78,7 +78,7 @@ prototype.transform = function(input) {
       x = this.param('x').accessor,
       y = this.param('y').accessor,
       tension = this.param('tension');
-  
+
   function set(t) {
     var path = shape(t, source, target, x, y, tension);
     Tuple.set(t, output.path, path);

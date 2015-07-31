@@ -95,7 +95,6 @@ describe('Force', function() {
     expect(validate({ "type": "force", "links": "edges", "charge": 30 })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "charge": "foo" })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "chargeDistance": 30 })).to.be.true;
-    expect(validate({ "type": "force", "links": "edges", "chargeDistance": "foo" })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "iterations": 100 })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "friction": 0.5 })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "theta": 0.4 })).to.be.true;
