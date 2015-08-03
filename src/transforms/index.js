@@ -14,5 +14,6 @@ module.exports = {
   sort:       require('./Sort'),
   stack:      require('./Stack'),
   treemap:    require('./Treemap'),
+  voronoi:    require('./Voronoi'),
   zip:        require('./Zip')
 };
