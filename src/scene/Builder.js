@@ -17,9 +17,9 @@ function Builder() {
 }
 
 var Status = Builder.STATUS = {
-  ENTER: 'enter',
+  ENTER:  'enter',
   UPDATE: 'update',
-  EXIT: 'exit'
+  EXIT:   'exit'
 };
 
 var proto = (Builder.prototype = new Node());
@@ -206,11 +206,11 @@ proto.evaluate = function(input) {
     fcs = this._ds.last();
     if (!fcs) throw Error('Builder evaluated before backing DataSource');
     if (fcs.stamp > this._stamp) {
-      output = joinDatasource.call(this, fcs, this._ds.values(), fullUpdate);
+      output = join.call(this, fcs, this._ds.values(), true, fullUpdate);
     }
   } else {
     data = dl.isFunction(this._def.from) ? this._def.from() : [Sentinel];
-    output = joinValues.call(this, input, data);
+    output = join.call(this, input, data);
   }
 
   // Stash output before Bounder for downstream reactive geometry.
@@ -248,76 +248,53 @@ function newItem() {
   return item;
 }
 
-function join(data, keyf, next, output, prev, mod) {
-  var i, key, len, item, datum, enter;
+function join(input, data, ds, fullUpdate) {
+  var output = ChangeSet.create(input),
+      keyf = keyFunction(this._def.key || (ds ? '_id' : null)),
+      prev = this._mark.items || [],
+      rem  = ds ? input.rem : prev,
+      mod  = Tuple.idMap((!ds || fullUpdate) ? data : input.mod),
+      next = [],
+      i, key, len, item, datum, enter;
 
-  for (i=0, len=data.length; i<len; ++i) {
+  // Only mark rems as exiting. Due to keyf, there may be an add/mod 
+  // tuple that replaces it.
+  for (i=0, len=rem.length; i<len; ++i) {
+    item = (rem[i] === prev[i]) ? prev[i] :
+      keyf ? this._map[keyf(rem[i])] : rem[i];
+    item.status = Status.EXIT;
+  }
+
+  for(i=0, len=data.length; i<len; ++i) {
     datum = data[i];
-    item  = keyf ? this._map[key = keyf(datum)] : prev[i];
+    item  = keyf ? this._map[key = keyf(data[i])] : prev[i];
     enter = item ? false : (item = newItem.call(this), true);
     item.status = enter ? Status.ENTER : Status.UPDATE;
-    item.datum = datum;
-    Tuple.set(item, 'key', key);
-    this._map[key] = item;
-    next.push(item);
+    item.datum  = datum;
+
+    if (keyf) {
+      Tuple.set(item, 'key', key);
+      this._map[key] = item;
+    }
+
     if (enter) {
       output.add.push(item);
-    } else if (!mod || (mod && mod[datum._id])) {
+    } else if (mod[datum._id]) {
       output.mod.push(item);
     }
+
+    next.push(item);
   }
-}
-
-function joinDatasource(input, data, fullUpdate) {
-  var output = ChangeSet.create(input),
-      keyf = keyFunction(this._def.key || '_id'),
-      mod = input.mod,
-      rem = input.rem,
-      next = [],
-      i, key, len, item;
-
-  // Build rems first, and put them at the head of the next items
-  // Then build the rest of the data values (which won't contain rem).
-  // This will preserve the sort order without needing anything extra.
 
   for (i=0, len=rem.length; i<len; ++i) {
-    item = this._map[key = keyf(rem[i])];
-    item.status = Status.EXIT;
-    item._dirty = true;
-    input.dirty.push(item);
-    next.push(item);
-    output.rem.push(item);
-    this._map[key] = null;
-  }
-
-  join.call(this, data, keyf, next, output, null, Tuple.idMap(fullUpdate ? data : mod));
-
-  return (this._mark.items = next, output);
-}
-
-function joinValues(input, data) {
-  var output = ChangeSet.create(input),
-      keyf = keyFunction(this._def.key),
-      prev = this._mark.items || [],
-      next = [],
-      i, len, item;
-
-  for (i=0, len=prev.length; i<len; ++i) {
-    item = prev[i];
-    item.status = Status.EXIT;
-    if (keyf) this._map[item.key] = item;
-  }
-
-  join.call(this, data, keyf, next, output, prev, Tuple.idMap(data));
-
-  for (i=0, len=prev.length; i<len; ++i) {
-    item = prev[i];
+    item = (rem[i] === prev[i]) ? prev[i] :
+      keyf ? this._map[key = keyf(rem[i])] : rem[i];
     if (item.status === Status.EXIT) {
-      Tuple.set(item, 'key', keyf ? item.key : this._items.length);
       item._dirty = true;
       input.dirty.push(item);
-      next.splice(0, 0, item);  // Keep item around for 'exit' transition.
+      next.push(item);
       output.rem.push(item);
+      if (keyf) this._map[key] = null;
     }
   }
 

@@ -44,13 +44,14 @@ proto.evaluate = function(input) {
   log.debug(input, ['encoding', this._mark.def.type]);
   var graph = this._graph,
       props = this._mark.def.properties || {},
+      items = this._mark.items,
       enter  = props.enter,
       update = props.update,
       exit   = props.exit,
       dirty  = input.dirty,
       preds  = this._graph.predicates(),
-      sg = graph.signalValues(),  // For expediency, get all signal values
-      db = graph.dataValues(), 
+      sg  = graph.signalValues(),  // For expediency, get all signal values
+      db  = graph.dataValues(), 
       req = input.request,
       i, len, item, prop;
 
@@ -65,12 +66,12 @@ proto.evaluate = function(input) {
     return input; // exit early if given request
   }
 
-  // Items marked for removal are at the head of items. Process them first.
+  // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if (exit)   encode.call(this, exit,   item, input.trans, db, sg, preds, dirty); 
+    if (exit)   encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
     if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
-    else if (!input.trans) item.remove();
+    else if (!input.trans) items.pop();
   }
 
   for (i=0, len=input.add.length; i<len; ++i) {
