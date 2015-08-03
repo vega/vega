@@ -33,6 +33,7 @@ prototype.model = function(model) {
   if (this._model !== model) {
     this._model = model;
     this._streamer = new df.Node(model);
+    this._streamer._rank = -1;  // HACK: To reduce re-ranking churn. 
     this._changeset = df.ChangeSet.create();
     if (this._handler) this._handler.model(model);
   }
