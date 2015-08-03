@@ -83,7 +83,7 @@ prototype.set = function(value) {
         return e.fn;
       } else if (isField) {  // Backwards compatibility
         p._accessors[i] = dl.accessor(v);
-        p._transform.dependency(Deps.FIELDS, v);
+        p._transform.dependency(Deps.FIELDS, dl.field(v));
       } else if (isData) {
         p._resolution = true;
         p._transform.dependency(Deps.DATA, v);
@@ -93,7 +93,7 @@ prototype.set = function(value) {
       return v.value;
     } else if (v.field !== undefined) {
       p._accessors[i] = dl.accessor(v.field);
-      p._transform.dependency(Deps.FIELDS, v.field);
+      p._transform.dependency(Deps.FIELDS, dl.field(v.field));
       return v.field;
     } else if (v.signal !== undefined) {
       p._resolution = true;

@@ -20,7 +20,7 @@ function Force(graph) {
     bound: {type: 'value', default: true},
     links: {type: 'data'},
 
-    // TODO: force these to be value-only parameters for now
+    // TODO: for now force these to be value params only (pun-intended)
     // Can update to include fields after Parameter refactoring.
     linkStrength: {type: 'value', default: 1},
     linkDistance: {type: 'value', default: 20},
@@ -40,13 +40,7 @@ function Force(graph) {
 
   this._output = {
     'x': 'layout_x',
-    'y': 'layout_y',
-    'px': 'layout_px',
-    'py': 'layout_py',
-    'fixed': 'layout_fixed',
-    'weight': 'layout_weight',
-    'source': '_source',
-    'target': '_target'
+    'y': 'layout_y'
   };
 
   return this.mutates(true);
@@ -60,7 +54,8 @@ prototype.transform = function(nodeInput) {
 
   // get variables
   var interactive = this.param('interactive'),
-      linkInput = this.param('links').source.last(),
+      linkSource = this.param('links').source,
+      linkInput = linkSource.last(),
       active = this.param('active'),
       output = this._output,
       layout = this._layout,
@@ -68,6 +63,7 @@ prototype.transform = function(nodeInput) {
       links = this._links;
 
   // configure nodes, links and layout
+  if (linkInput.stamp < nodeInput.stamp) linkInput = null;
   this.configure(nodeInput, linkInput, interactive);
   
   // run batch layout
@@ -92,36 +88,33 @@ prototype.transform = function(nodeInput) {
   if (nodeInput.rem.length) {
     layout.nodes(this._nodes = Tuple.idFilter(nodes, nodeInput.rem));
   }
-  if (linkInput.rem.length) {
+  if (linkInput && linkInput.rem.length) {
     layout.links(this._links = Tuple.idFilter(links, linkInput.rem));
   }
 
   // return changeset
   nodeInput.fields[output.x] = 1;
   nodeInput.fields[output.y] = 1;
-  nodeInput.fields[output.source] = 1;
-  nodeInput.fields[output.target] = 1;
   return nodeInput;
 };
 
 prototype.configure = function(nodeInput, linkInput, interactive) {
-  var force = this,
-      output = this._output,
-      layout = this._layout,
-      nodes = this._nodes,
-      links = this._links,
-      a, i, x, link, run;
-
   // check if we need to run configuration
-  run = this._setup ||
-    nodeInput.add.length || linkInput.add.length ||
-    interactive !== this._interactive ||
-    this.param('charge') !== layout.charge() ||
-    this.param('linkStrength') !== layout.linkStrength() ||
-    this.param('linkDistance') !== layout.linkDistance();
+  var layout = this._layout,
+      run = this._setup || nodeInput.add.length ||
+            linkInput && linkInput.add.length ||
+            interactive !== this._interactive ||
+            this.param('charge') !== layout.charge() ||
+            this.param('linkStrength') !== layout.linkStrength() ||
+            this.param('linkDistance') !== layout.linkDistance();
+  if (!run) return;
   this._setup = false;
   this._interactive = interactive;
-  if (!run) return;
+
+  var force = this,
+      graph = this._graph,
+      nodes = this._nodes,
+      links = this._links, a, i;
 
   // process added nodes
   for (a=nodeInput.add, i=0; i<a.length; ++i) {
@@ -129,33 +122,21 @@ prototype.configure = function(nodeInput, linkInput, interactive) {
   }
 
   // process added edges
-  for (a=linkInput.add, i=0; i<a.length; ++i) {
-    x = a[i];
-    link = {
-      tuple:  x,
-      source: nodes[x.source],
-      target: nodes[x.target]
-    };
-    Tuple.set(x, output.source, link.source.tuple);
-    Tuple.set(x, output.target, link.target.tuple);
-    links.push(link);
+  if (linkInput) for (a=linkInput.add, i=0; i<a.length; ++i) {
+    // TODO add configurable source/target accessors
+    // TODO support lookup by node id
+    // TODO process 'mod' of edge source or target?
+    links.push({
+      tuple:  a[i],
+      source: nodes[a[i].source],
+      target: nodes[a[i].target]
+    });
   }
-
-  // TODO process 'mod' of edge source or target?
 
   // setup handler for force layout tick events
   var tickHandler = !interactive ? null : function() {
     // re-schedule the transform, force reflow
-    // comment out for now (see comments below!)
-    // graph.propagate(ChangeSet.create(null, true), force);
-
-    // hard-code propagation to links
-    // TODO: dataflow graph should propagate automatically
-    force.param('links').source.fire(ChangeSet.create(null, true));
-    // NOTE: because the Force operator depends on the links data set
-    // this pulse cascades back to Force to ensure it runs.
-    // For now we only make one propagate call for efficiency.
-    // If the dependency issue is worked out, we should swap calls.
+    graph.propagate(ChangeSet.create(null, true), force);
   };
 
   // configure layout
@@ -289,9 +270,7 @@ Force.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "x": {"type": "string", "default": "layout_x"},
-        "y": {"type": "string", "default": "layout_y"},
-        "source": {"type": "string", "default": "_source"},
-        "target": {"type": "string", "default": "_target"}
+        "y": {"type": "string", "default": "layout_y"}
       },
       "additionalProperties": false
     }

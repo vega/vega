@@ -40,7 +40,10 @@
       "from": {
         "data": "edges",
         "transform": [
-          {"type": "linkpath", "shape": "line"}
+          { "type": "lookup", "on": "nodes",
+            "keys": ["source", "target"],
+            "as":   ["_source", "_target"] },
+          { "type": "linkpath", "shape": "line" }
         ]
       },
       "properties": {
