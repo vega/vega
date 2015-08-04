@@ -34,6 +34,7 @@
   "dependencies": {
     "d3": "^3.5.6",
     "d3-geo-projection": "^0.2.15",
+    "d3.layout.cloud": "^1.1.1",
     "datalib": "^1.4.2",
     "topojson": "^1.6.19",
     "vega-dataflow": "^1.1.0",
@@ -91,6 +92,7 @@
   },
   "browserify-shim": {
     "d3": "global:d3",
+    "d3.layout.cloud": "global:d3.layout.cloud",
     "canvas": "global:canvas",
     "topojson": "global:topojson"
   }
