@@ -53,9 +53,11 @@ proto.evaluate = function(input) {
       sg  = graph.signalValues(),  // For expediency, get all signal values
       db  = graph.dataValues(), 
       req = input.request,
+      group = this._mark.group,
+      guide = group && (group.mark.axis || group.mark.legend),
       i, len, item, prop;
 
-  if (req) {
+  if (req && !guide) {
     if ((prop = props[req])) {
       for (i=0, len=input.mod.length; i<len; ++i) {
         item = input.mod[i];
