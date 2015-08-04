@@ -186,13 +186,14 @@ function forEachNode(branch, fn) {
     if (!node.data && node.batch()) {
       if (router) {
         branch.splice(i, 0, (node = new Collector(this)));
+        router = false;
       } else {
         node.data = collector.data.bind(collector);
       }
     } 
 
     if (node.collector()) collector = node;
-    router = node.router() && !node.collector(); 
+    router = router || node.router() && !node.collector(); 
     fn(node, collector, i);
   }
 }
