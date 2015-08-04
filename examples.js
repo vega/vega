@@ -5,7 +5,7 @@ var examples = [
   {name: 'dimpvis',          editor: true, row: 0, col: 3, x: [91, 25, 134],   y: [-90, -100, -40], width: 946, height: 300},
   {name: 'crossfilter',      editor: true, row: 0, col: 4, x: [71, -25, 240],  y: [-35, -55, 0],   width: 997, height: 250},
   {name: 'driving',          editor: true, row: 1, col: 0, x: [15, 15, 125],   y: [-50, -50, 5],   width: 825, height: 150},
-  {name: 'force_drag',       editor: true, row: 1, col: 1, x: [50, 45, 65],    y: [-15, -75, -5],  width: 200, height: 200},
+  {name: 'force',            editor: true, row: 1, col: 1, x: [50, 45, 65],    y: [-15, -75, -5],  width: 200, height: 200},
   {name: 'heatmap',          editor: true, row: 1, col: 2, x: [75, 40, 125],   y: [-5, -50, -5],   width: 957, height: 150},
   {name: 'index_chart',      editor: true, row: 1, col: 3, x: [35, -5, 55],    y: [-25, -40, 0],   width: 650, height: 125},
   {name: 'jobs',             editor: true, row: 1, col: 4, x: [120, 15, 120],  y: [0, -65, -5],    width: 880, height: 150},
