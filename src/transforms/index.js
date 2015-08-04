@@ -10,10 +10,11 @@ module.exports = {
   formula:    require('./Formula'),
   geo:        require('./Geo'),
   geopath:    require('./GeoPath'),
+  lookup:     require('./Lookup'),
   pie:        require('./Pie'),
   sort:       require('./Sort'),
   stack:      require('./Stack'),
   treemap:    require('./Treemap'),
   voronoi:    require('./Voronoi'),
-  zip:        require('./Zip')
+  zip:        require('./Zip') // Deprecated, do not use.
 };

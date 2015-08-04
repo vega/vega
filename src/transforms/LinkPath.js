@@ -5,12 +5,12 @@ var Tuple = require('vega-dataflow').Tuple,
 function LinkPath(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    source:  {type: 'field', default: '_source'},
-    target:  {type: 'field', default: '_target'},
-    x:       {type: 'field', default: 'layout_x'},
-    y:       {type: 'field', default: 'layout_y'},
-    tension: {type: 'value', default: 0.2},
-    shape:   {type: 'value', default: 'line'}
+    sourceX:  {type: 'field', default: '_source.layout_x'},
+    sourceY:  {type: 'field', default: '_source.layout_y'},
+    targetX:  {type: 'field', default: '_target.layout_x'},
+    targetY:  {type: 'field', default: '_target.layout_y'},
+    tension:  {type: 'value', default: 0.2},
+    shape:    {type: 'value', default: 'line'}
   });
 
   this._output = {'path': 'layout_path'};
@@ -20,17 +20,13 @@ function LinkPath(graph) {
 var prototype = (LinkPath.prototype = Object.create(Transform.prototype));
 prototype.constructor = LinkPath;
 
-function line(d, source, target, x, y) {
-  var s = source(d), sx = x(s), sy = y(s),
-      t = target(d), tx = x(t), ty = y(t);
+function line(sx, sy, tx, ty) {
   return 'M' + sx + ',' + sy +
          'L' + tx + ',' + ty;
 }
 
-function curve(d, source, target, x, y, tension) {
-  var s = source(d), sx = x(s), sy = y(s),
-      t = target(d), tx = x(t), ty = y(t),
-      dx = tx - sx,
+function curve(sx, sy, tx, ty, tension) {
+  var dx = tx - sx,
       dy = ty - sy,
       ix = tension * (dx + dy),
       iy = tension * (dy - dx);
@@ -40,20 +36,16 @@ function curve(d, source, target, x, y, tension) {
          ' ' + tx + ',' + ty;
 }
 
-function diagonalX(d, source, target, x, y) {
-  var s = source(d), sx = x(s), sy = y(s),
-      t = target(d), tx = x(t), ty = y(t),
-      m = (sx + tx) / 2;
+function diagonalX(sx, sy, tx, ty) {
+  var m = (sx + tx) / 2;
   return 'M' + sx + ',' + sy +
          'C' + m  + ',' + sy +
          ' ' + m  + ',' + ty +
          ' ' + tx + ',' + ty;
 }
 
-function diagonalY(d, source, target, x, y) {
-  var s = source(d), sx = x(s), sy = y(s),
-      t = target(d), tx = x(t), ty = y(t),
-      m = (sy + ty) / 2;
+function diagonalY(sx, sy, tx, ty) {
+  var m = (sy + ty) / 2;
   return 'M' + sx + ',' + sy +
          'C' + sx + ',' + m +
          ' ' + tx + ',' + m +
@@ -73,20 +65,21 @@ prototype.transform = function(input) {
 
   var output = this._output,
       shape = shapes[this.param('shape')] || shapes.line,
-      source = this.param('source').accessor,
-      target = this.param('target').accessor,
-      x = this.param('x').accessor,
-      y = this.param('y').accessor,
+      sourceX = this.param('sourceX').accessor,
+      sourceY = this.param('sourceY').accessor,
+      targetX = this.param('targetX').accessor,
+      targetY = this.param('targetY').accessor,
       tension = this.param('tension');
-  
+
   function set(t) {
-    var path = shape(t, source, target, x, y, tension);
+    var path = shape(sourceX(t), sourceY(t), targetX(t), targetY(t), tension);
     Tuple.set(t, output.path, path);
   }
 
   input.add.forEach(set);
   if (this.reevaluate(input)) {
     input.mod.forEach(set);
+    input.rem.forEach(set);
   }
 
   input.fields[output.path] = 1;
@@ -102,23 +95,25 @@ LinkPath.schema = {
   "type": "object",
   "properties": {
     "type": {"enum": ["linkpath"]},
-    "source": {
-      "description": "The data field that references the source node for this link.",
+    "sourceX": {
+      "description": "The data field that references the source x-coordinate for this link.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "_source"
     },
-    "target": {
-      "description": "The data field that references the target node for this link.",
+    "sourceY": {
+      "description": "The data field that references the source y-coordinate for this link.",
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "default": "_source"
+    },
+    "targetX": {
+      "description": "The data field that references the target x-coordinate for this link.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": "_target"
     },
-    "x": {
+    "targetY": {
+      "description": "The data field that references the target y-coordinate for this link.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "layout_x"
-    },
-    "y": {
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "default": "layout_y"
+      "default": "_target"
     },
     "tension": {
       "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",

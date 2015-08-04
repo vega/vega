@@ -7,10 +7,10 @@ describe('LinkPath', function() {
         validate = validator(schema);
 
     expect(validate({ "type": "linkpath" })).to.be.true;
-    expect(validate({ "type": "linkpath", "source": "src" })).to.be.true;
-    expect(validate({ "type": "linkpath", "target": "trgt" })).to.be.true;
-    expect(validate({ "type": "linkpath", "x": "x" })).to.be.true;
-    expect(validate({ "type": "linkpath", "y": "y" })).to.be.true;
+    expect(validate({ "type": "linkpath", "sourceX": "sx" })).to.be.true;
+    expect(validate({ "type": "linkpath", "targetX": "tx" })).to.be.true;
+    expect(validate({ "type": "linkpath", "sourceY": "sy" })).to.be.true;
+    expect(validate({ "type": "linkpath", "targetY": "ty" })).to.be.true;
     expect(validate({ "type": "linkpath", "tension": 0.1 })).to.be.true;
     expect(validate({ "type": "linkpath", "shape": "curve" })).to.be.true;
     expect(validate({ "type": "linkpath", "shape": "diagonal" })).to.be.true;
@@ -19,10 +19,10 @@ describe('LinkPath', function() {
     expect(validate({ "type": "linkpath", "output": {"path": "path"} })).to.be.true;
     
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "linkpath", "source": 1 })).to.be.false;
-    expect(validate({ "type": "linkpath", "target": 2 })).to.be.false;
-    expect(validate({ "type": "linkpath", "x": 3 })).to.be.false;
-    expect(validate({ "type": "linkpath", "y": 4 })).to.be.false;
+    expect(validate({ "type": "linkpath", "sourceX": 1 })).to.be.false;
+    expect(validate({ "type": "linkpath", "targetX": 2 })).to.be.false;
+    expect(validate({ "type": "linkpath", "sourceY": 3 })).to.be.false;
+    expect(validate({ "type": "linkpath", "targetY": 4 })).to.be.false;
     expect(validate({ "type": "linkpath", "tension": "0.1" })).to.be.false;
     expect(validate({ "type": "linkpath", "shape": "foo" })).to.be.false;
     expect(validate({ "type": "linkpath", "output": {"foo": "bar"} })).to.be.false;

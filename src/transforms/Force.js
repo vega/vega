@@ -1,37 +1,46 @@
 var d3 = require('d3'),
-    Tuple = require('vega-dataflow').Tuple,
+    df = require('vega-dataflow'),
+    Tuple = df.Tuple,
+    ChangeSet = df.ChangeSet,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
 function Force(graph) {
   Transform.prototype.init.call(this, graph);
-  Transform.addParameters(this, {
-    size: {type: 'array<value>', default: [500, 500]},
-    links: {type: 'data'},
-    linkDistance: {type: 'field|value', default: 20},
-    linkStrength: {type: 'field|value', default: 1},
-    charge: {type: 'field|value', default: -30},
-    chargeDistance: {type: 'field|value', default: Infinity},
-    iterations: {type: 'value', default: 500},
-    friction: {type: 'value', default: 0.9},
-    theta: {type: 'value', default: 0.8},
-    gravity: {type: 'value', default: 0.1},
-    alpha: {type: 'value', default: 0.1}
-  });
 
+  this._prev = null;
+  this._interactive = false;
+  this._setup = true;
   this._nodes  = [];
   this._links = [];
   this._layout = d3.layout.force();
 
+  Transform.addParameters(this, {
+    size: {type: 'array<value>', default: [500, 500]},
+    bound: {type: 'value', default: true},
+    links: {type: 'data'},
+
+    // TODO: for now force these to be value params only (pun-intended)
+    // Can update to include fields after Parameter refactoring.
+    linkStrength: {type: 'value', default: 1},
+    linkDistance: {type: 'value', default: 20},
+    charge: {type: 'value', default: -30},
+
+    chargeDistance: {type: 'value', default: Infinity},
+    friction: {type: 'value', default: 0.9},
+    theta: {type: 'value', default: 0.8},
+    gravity: {type: 'value', default: 0.1},
+    alpha: {type: 'value', default: 0.1},
+    iterations: {type: 'value', default: 500},
+
+    interactive: {type: 'value', default: this._interactive},    
+    active: {type: 'value', default: this._prev},
+    fixed: {type: 'data'}
+  });
+
   this._output = {
     'x': 'layout_x',
-    'y': 'layout_y',
-    'px': 'layout_px',
-    'py': 'layout_py',
-    'fixed': 'layout_fixed',
-    'weight': 'layout_weight',
-    'source': '_source',
-    'target': '_target'
+    'y': 'layout_y'
   };
 
   return this.mutates(true);
@@ -44,77 +53,144 @@ prototype.transform = function(nodeInput) {
   log.debug(nodeInput, ['force']);
 
   // get variables
-  var linkInput = this.param('links').source.last(),
-      layout = this._layout,
+  var interactive = this.param('interactive'),
+      linkSource = this.param('links').source,
+      linkInput = linkSource.last(),
+      active = this.param('active'),
       output = this._output,
+      layout = this._layout,
       nodes = this._nodes,
-      links = this._links,
-      iter = this.param('iterations');
+      links = this._links;
 
-  // process added nodes
-  nodeInput.add.forEach(function(n) {
-    nodes.push({tuple: n});
-  });
-
-  // process added edges
-  linkInput.add.forEach(function(l) {
-    var link = {
-      tuple: l,
-      source: nodes[l.source],
-      target: nodes[l.target]
-    };
-    Tuple.set(l, output.source, link.source.tuple);
-    Tuple.set(l, output.target, link.target.tuple);
-    links.push(link);
-  });
-
-  // TODO process 'mod' of edge source or target?
-
-  // configure layout
-  layout
-    .size(this.param('size'))
-    .linkDistance(this.param('linkDistance'))
-    .linkStrength(this.param('linkStrength'))
-    .charge(this.param('charge'))
-    .chargeDistance(this.param('chargeDistance'))
-    .friction(this.param('friction'))
-    .theta(this.param('theta'))
-    .gravity(this.param('gravity'))
-    .alpha(this.param('alpha'))
-    .nodes(nodes)
-    .links(links);
-
-  // run layout
-  layout.start();
-  for (var i=0; i<iter; ++i) {
-    layout.tick();
-  }
-  layout.stop();
-
-  // copy layout values to nodes
-  nodes.forEach(function(n) {
-    Tuple.set(n.tuple, output.x, n.x);
-    Tuple.set(n.tuple, output.y, n.y);
-    Tuple.set(n.tuple, output.px, n.px);
-    Tuple.set(n.tuple, output.py, n.py);
-    Tuple.set(n.tuple, output.fixed, n.fixed);
-    Tuple.set(n.tuple, output.weight, n.weight);
-  });
-
-  // process removed nodes
-  if (nodeInput.rem.length > 0) {
-    this._nodes = Tuple.idFilter(nodes, nodeInput.rem);
+  // configure nodes, links and layout
+  if (linkInput.stamp < nodeInput.stamp) linkInput = null;
+  this.configure(nodeInput, linkInput, interactive);
+  
+  // run batch layout
+  if (!interactive) {
+    var iterations = this.param('iterations');
+    for (var i=0; i<iterations; ++i) layout.tick();
+    layout.stop();
   }
 
-  // process removed edges
-  if (linkInput.rem.length > 0) {
-    this.links = Tuple.idFilter(links, linkInput.rem);
+  // update node positions
+  this.update(active);
+
+  // update active node status
+  if (active !== this._prev) {
+    if (active && active.update) {
+      layout.alpha(this.param('alpha')); // re-start layout
+    }
+    this._prev = active;
+  }
+
+  // process removed nodes or edges
+  if (nodeInput.rem.length) {
+    layout.nodes(this._nodes = Tuple.idFilter(nodes, nodeInput.rem));
+  }
+  if (linkInput && linkInput.rem.length) {
+    layout.links(this._links = Tuple.idFilter(links, linkInput.rem));
   }
 
   // return changeset
   nodeInput.fields[output.x] = 1;
   nodeInput.fields[output.y] = 1;
   return nodeInput;
+};
+
+prototype.configure = function(nodeInput, linkInput, interactive) {
+  // check if we need to run configuration
+  var layout = this._layout,
+      run = this._setup || nodeInput.add.length ||
+            linkInput && linkInput.add.length ||
+            interactive !== this._interactive ||
+            this.param('charge') !== layout.charge() ||
+            this.param('linkStrength') !== layout.linkStrength() ||
+            this.param('linkDistance') !== layout.linkDistance();
+  if (!run) return;
+  this._setup = false;
+  this._interactive = interactive;
+
+  var force = this,
+      graph = this._graph,
+      nodes = this._nodes,
+      links = this._links, a, i;
+
+  // process added nodes
+  for (a=nodeInput.add, i=0; i<a.length; ++i) {
+    nodes.push({tuple: a[i]});
+  }
+
+  // process added edges
+  if (linkInput) for (a=linkInput.add, i=0; i<a.length; ++i) {
+    // TODO add configurable source/target accessors
+    // TODO support lookup by node id
+    // TODO process 'mod' of edge source or target?
+    links.push({
+      tuple:  a[i],
+      source: nodes[a[i].source],
+      target: nodes[a[i].target]
+    });
+  }
+
+  // setup handler for force layout tick events
+  var tickHandler = !interactive ? null : function() {
+    // re-schedule the transform, force reflow
+    graph.propagate(ChangeSet.create(null, true), force);
+  };
+
+  // configure layout
+  layout
+    .size(this.param('size'))
+    .linkStrength(this.param('linkStrength'))
+    .linkDistance(this.param('linkDistance'))
+    .charge(this.param('charge'))
+    .chargeDistance(this.param('chargeDistance'))
+    .theta(this.param('theta'))
+    .gravity(this.param('gravity'))
+    .friction(this.param('friction'))
+    .nodes(nodes)
+    .links(links)
+    .on('tick', tickHandler)
+    .start().alpha(this.param('alpha'));
+};
+
+prototype.update = function(active) {
+  var output = this._output,
+      bound = this.param('bound'),
+      fixed = this.param('fixed'),
+      size = this.param('size'),
+      nodes = this._nodes,
+      lut = {}, id, i, n, t, x, y;
+
+  if (fixed && fixed.source) {
+    // TODO: could cache and update as needed?
+    fixed = fixed.source.values();
+    for (i=0, n=fixed.length; i<n; ++i) {
+      lut[fixed[i].id] = 1;
+    }
+  }
+
+  for (i=0; i<nodes.length; ++i) {
+    n = nodes[i];
+    t = n.tuple;
+    id = t._id;
+
+    if (active && active.id === id) {
+      n.fixed = 1;
+      if (active.update) {
+        n.x = n.px = active.x;
+        n.y = n.py = active.y;
+      }
+    } else {
+      n.fixed = lut[id] || 0;
+    }
+
+    x = bound ? Math.max(0, Math.min(n.x, size[0])) : n.x;
+    y = bound ? Math.max(0, Math.min(n.y, size[1])) : n.y;
+    Tuple.set(t, output.x, x);
+    Tuple.set(t, output.y, y);
+  }
 };
 
 module.exports = Force;
@@ -160,7 +236,7 @@ Force.schema = {
       "default": -30
     },
     "chargeDistance": {
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "description": "The maximum distance over which charge forces are applied.",
       "default": Infinity
     },
@@ -194,9 +270,7 @@ Force.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "x": {"type": "string", "default": "layout_x"},
-        "y": {"type": "string", "default": "layout_y"},
-        "source": {"type": "string", "default": "_source"},
-        "target": {"type": "string", "default": "_target"}
+        "y": {"type": "string", "default": "layout_y"}
       },
       "additionalProperties": false
     }
