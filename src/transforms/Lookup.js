@@ -1,10 +1,9 @@
 var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
-    Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform');
+    Transform = require('./Transform');
 
 function Lookup(graph) {
-  BatchTransform.prototype.init.call(this, graph);
+  Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     on:      {type: 'data'},
     onKey:   {type: 'field', default: null},
@@ -16,10 +15,10 @@ function Lookup(graph) {
   return this.revises(true).mutates(true);
 }
 
-var prototype = (Lookup.prototype = Object.create(BatchTransform.prototype));
+var prototype = (Lookup.prototype = Object.create(Transform.prototype));
 prototype.constructor = Lookup;
 
-prototype.batchTransform = function(input, data) {
+prototype.transform = function(input, reset) {
   log.debug(input, ['lookup']);
 
   var on = this.param('on'),
@@ -32,7 +31,7 @@ prototype.batchTransform = function(input, data) {
       as = this.param('as'),
       defaultValue = this.param('default'),
       lut = this._lut,
-      batch = false, i, v;
+      i, v;
 
   // build lookup table on init, withKey modified, or tuple add/rem
   if (lut == null || this._on !== onF || onF && onLast.fields[onF] ||
@@ -48,7 +47,7 @@ prototype.batchTransform = function(input, data) {
     }
     this._lut = lut;
     this._on = onF;
-    batch = true;
+    reset = true;
   }
 
   function set(t) {
@@ -58,17 +57,11 @@ prototype.batchTransform = function(input, data) {
     }
   }
 
-  if (batch) {
-    // perform batch update if lookup table has changed
-    data.forEach(set);
-  } else {
-    // otherwise, update changeset data only
-    input.add.forEach(set);
-    var run = keys.field.some(function(f) { return input.fields[f]; });
-    if (run) {
-      input.mod.forEach(set);
-      input.rem.forEach(set); 
-    }
+  input.add.forEach(set);
+  var run = keys.field.some(function(f) { return input.fields[f]; });
+  if (run || reset) {
+    input.mod.forEach(set);
+    input.rem.forEach(set); 
   }
 
   as.forEach(function(k) { input.fields[k] = 1; });
