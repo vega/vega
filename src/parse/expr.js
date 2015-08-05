@@ -11,6 +11,7 @@ module.exports = expr.compiler(args, {
     fn.eventGroup = 'event.vg.getGroup';
     fn.eventX = 'event.vg.getX';
     fn.eventY = 'event.vg.getY';
+    fn.open = 'window.open';
     return fn;
   }
 });
