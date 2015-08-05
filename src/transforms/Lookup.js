@@ -18,7 +18,7 @@ function Lookup(graph) {
 var prototype = (Lookup.prototype = Object.create(Transform.prototype));
 prototype.constructor = Lookup;
 
-prototype.transform = function(input) {
+prototype.transform = function(input, reset) {
   log.debug(input, ['lookup']);
 
   var on = this.param('on'),
@@ -31,7 +31,7 @@ prototype.transform = function(input) {
       as = this.param('as'),
       defaultValue = this.param('default'),
       lut = this._lut,
-      reset = false, i, v;
+      i, v;
 
   // build lookup table on init, withKey modified, or tuple add/rem
   if (lut == null || this._on !== onF || onF && onLast.fields[onF] ||

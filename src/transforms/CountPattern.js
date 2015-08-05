@@ -21,25 +21,21 @@ function CountPattern(graph) {
 var prototype = (CountPattern.prototype = Object.create(Transform.prototype));
 prototype.constructor = CountPattern;
 
-prototype.transform = function(input) {
+prototype.transform = function(input, reset) {
   log.debug(input, ['countpattern']);
 
   var get = this.param('field'),
       pattern = this.param('pattern'),
-      tcase = this.param('case'),
       stop = this.param('stopwords'),
-      reset = false, run = false;
+      run = false;
 
   // update parameters
-  if (this._case !== tcase) {
-    this._case = tcase;
-    reset = true;
-  }
   if (this._stop !== stop) {
     this._stop = stop;
     this._stop_re = new RegExp('^' + stop + '$', 'i');
     reset = true;
   }
+
   if (this._pattern !== pattern) {
     this._pattern = pattern;
     this._match = new RegExp(this._pattern, 'g');
@@ -88,7 +84,7 @@ prototype._changeset = function(input) {
 };
 
 prototype._tokenize = function(text) {
-  switch (this._case) {
+  switch (this.param('case')) {
     case 'upper': text = text.toUpperCase(); break;
     case 'lower': text = text.toLowerCase(); break;
   }
