@@ -2,11 +2,10 @@ var dl = require('datalib'),
     df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
-    Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform');
+    Transform = require('./Transform');
 
 function CountPattern(graph) {
-  BatchTransform.prototype.init.call(this, graph);
+  Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     field:     {type: 'field', default: 'data'},
     pattern:   {type: 'value', default: '[\\w\']+'},
@@ -19,46 +18,44 @@ function CountPattern(graph) {
   return this.router(true).revises(true);
 }
 
-var prototype = (CountPattern.prototype = Object.create(BatchTransform.prototype));
+var prototype = (CountPattern.prototype = Object.create(Transform.prototype));
 prototype.constructor = CountPattern;
 
-prototype.batchTransform = function(input, data) {
+prototype.transform = function(input) {
   log.debug(input, ['countpattern']);
 
   var get = this.param('field'),
       pattern = this.param('pattern'),
       tcase = this.param('case'),
       stop = this.param('stopwords'),
-      batch = 0;
+      reset = false, run = false;
 
   // update parameters
   if (this._case !== tcase) {
     this._case = tcase;
-    batch = 1;
+    reset = true;
   }
   if (this._stop !== stop) {
     this._stop = stop;
     this._stop_re = new RegExp('^' + stop + '$', 'i');
-    batch = 1;
+    reset = true;
   }
   if (this._pattern !== pattern) {
     this._pattern = pattern;
     this._match = new RegExp(this._pattern, 'g');
-    batch = 1;
+    reset = true;
   }
 
-  // count patterns
-  if (batch) {
-    this._counts = {};
-    this._add(data, get.accessor);
-  } else {
-    this._add(input.add, get.accessor);
-    if (input.fields[get.field]) {
-      this._add(input.mod, get.accessor);
-      this._rem(input.mod, dl.$('_prev.' + get.field));
-    }
-    this._rem(input.rem, get.accessor);
+  if (reset) this._counts = {};
+
+  this._add(input.add, get.accessor);
+
+  if (reset || (run = input.fields[get.field])) {
+    this._add(input.mod, get.accessor);
+    if (run) this._rem(input.mod, dl.$('_prev.' + get.field));
   }
+
+  if (!reset) this._rem(input.rem, get.accessor);
 
   // generate output tuples
   return this._changeset(input);
