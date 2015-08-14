@@ -53,7 +53,7 @@ prototype._newcell = function(x) {
 prototype._newtuple = function(x) {
   var t = Base._newtuple.call(this, x);
   if (this._facet !== null) {
-    Tuple.set(t, 'key', this._cellkey(x));
+    Tuple.set(t, 'key', this._dims.length ? this._cellkey(x) : '');
     Tuple.set(t, '_facetID', 'vg_'+(facetID++));
   }
   return t;

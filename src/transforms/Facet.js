@@ -42,5 +42,6 @@ Facet.schema = {
     "type": {"enum": ["facet"]},
     "transform": {"$ref": "#/defs/transform"}
   }),
-  "required": ["type", "groupby"]
+  "additionalProperties": false,
+  "required": ["type"]
 };

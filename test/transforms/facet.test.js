@@ -233,6 +233,7 @@ describe('Facet', function() {
     var schema = schemaPath(transforms.facet.schema),
         validate = validator(schema);
 
+    expect(validate({ "type": "facet" })).to.be.true;
     expect(validate({ "type": "facet", "groupby": ["country"] })).to.be.true;
 
     expect(validate({ 
@@ -263,7 +264,6 @@ describe('Facet', function() {
     })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "facet" })).to.be.false;
     expect(validate({ 
       "type": "facet",
       "groupby": "country",
@@ -309,6 +309,8 @@ describe('Facet', function() {
         {"field": "gdp", "ops": ["argmin", "argmax"], "foo": "bar"}
       ]
     })).to.be.false;
+
+    expect(validate({ "type": "facet", "output": {} })).to.be.false;
 
   });
 });

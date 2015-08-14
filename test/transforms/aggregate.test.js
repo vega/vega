@@ -252,6 +252,7 @@ describe('Aggregate', function() {
     var schema = schemaPath(transforms.aggregate.schema),
         validate = validator(schema);
 
+    expect(validate({ "type": "aggregate" })).to.be.true;
     expect(validate({ "type": "aggregate", "groupby": ["country"] })).to.be.true;
     expect(validate({ 
       "type": "aggregate",
@@ -281,7 +282,6 @@ describe('Aggregate', function() {
     })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "aggregate" })).to.be.true;
     expect(validate({ 
       "type": "aggregate",
       "groupby": "country",
@@ -328,6 +328,7 @@ describe('Aggregate', function() {
       ]
     })).to.be.false;
 
+    expect(validate({ "type": "aggregate", "output": {} })).to.be.false;
   });
 
 });
