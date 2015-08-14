@@ -177,7 +177,7 @@ Wordcloud.schema = {
     },
     "spiral": {
       "description": "The type of spiral used for positioning words, either 'archimedean' or 'rectangular'.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"enum": ["archimedean", "rectangular"]}, {"$ref": "#/refs/signal"}],
       "default": "archimedean"
     },
     "padding": {
@@ -196,9 +196,10 @@ Wordcloud.schema = {
         "fontStyle": {"type": "string", "default": "layout_fontStyle"},
         "fontWeight": {"type": "string", "default": "layout_fontWeight"},
         "rotate": {"type": "string", "default": "layout_rotate"}
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
-  "required": ["type", "field"]
+  "required": ["type"]
 };

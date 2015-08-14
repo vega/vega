@@ -159,8 +159,10 @@ Geo.schema = {
       "properties": {
         "x": {"type": "string", "default": "layout_x"},
         "y": {"type": "string", "default": "layout_y"}
-      }
+      },
+      "additionalProperties": false
     }
   }, Geo.baseSchema),
-  "required": ["type", "lon", "lat"]
+  "required": ["type", "lon", "lat"],
+  "additionalProperties": false
 };

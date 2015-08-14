@@ -61,8 +61,10 @@ GeoPath.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "path": {"type": "string", "default": "layout_path"}
-      }
+      },
+      "additionalProperties": false
     }
   }, Geo.baseSchema),
-  "required": ["type"]
+  "required": ["type"],
+  "additionalProperties": false
 };

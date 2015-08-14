@@ -87,9 +87,10 @@ Voronoi.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "path": {"type": "string", "default": "layout_path"}
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
-  "required": ["type", "field"]
+  "required": ["type"]
 };

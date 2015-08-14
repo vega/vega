@@ -155,9 +155,10 @@ CountPattern.schema = {
       "properties": {
         "text": {"type": "string", "default": "text"},
         "count": {"type": "string", "default": "count"}
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
-  "required": ["type", "field"]
+  "required": ["type"]
 };
