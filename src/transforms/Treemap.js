@@ -152,9 +152,10 @@ Treemap.schema = {
         "width": {"type": "string", "default": "layout_width"},
         "height": {"type": "string", "default": "layout_height"},
         "depth": {"type": "string", "default": "layout_depth"}
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
-  "required": ["type", "field"]
+  "required": ["type"]
 };
