@@ -182,7 +182,7 @@ function text(o, bounds, noRotate) {
 
   // horizontal alignment
   g.font = font.string(o);
-  w = g.measureText(o.text || '').width;
+  w = g.measureText(o.text != null ? o.text : '').width;
   if (a === 'center') {
     dx -= (w / 2);
   } else if (a === 'right') {
