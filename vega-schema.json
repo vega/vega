@@ -448,18 +448,6 @@
               "$ref": "#/defs/transform"
             }
           },
-          "oneOf": [
-            {
-              "required": [
-                "data"
-              ]
-            },
-            {
-              "required": [
-                "mark"
-              ]
-            }
-          ],
           "additionalProperties": false
         },
         "delay": {
@@ -568,12 +556,12 @@
         "marks": {
           "type": "array",
           "items": {
-            "anyOf": [
+            "oneOf": [
               {
                 "$ref": "#/defs/groupMark"
               },
               {
-                "$ref": "#/defs/mark"
+                "$ref": "#/defs/visualMark"
               }
             ]
           }
@@ -582,12 +570,6 @@
     },
     "groupMark": {
       "allOf": [
-        {
-          "$ref": "#/defs/mark"
-        },
-        {
-          "$ref": "#/defs/container"
-        },
         {
           "properties": {
             "type": {
@@ -599,6 +581,30 @@
           "required": [
             "type"
           ]
+        },
+        {
+          "$ref": "#/defs/mark"
+        },
+        {
+          "$ref": "#/defs/container"
+        }
+      ]
+    },
+    "visualMark": {
+      "allOf": [
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "group"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/defs/mark"
         }
       ]
     },
@@ -1571,7 +1577,12 @@
               "slice",
               "substring",
               "test",
-              "if"
+              "if",
+              "eventItem",
+              "eventGroup",
+              "eventX",
+              "eventY",
+              "open"
             ]
           }
         },
@@ -1938,6 +1949,17 @@
                     "$ref": "#/refs/signal"
                   }
                 ]
+              },
+              "output": {
+                "type": "object",
+                "description": "Rename the output data fields",
+                "properties": {
+                  "bin": {
+                    "type": "string",
+                    "default": "bin"
+                  }
+                },
+                "additionalProperties": false
               }
             },
             "additionalProperties": false,
@@ -1998,6 +2020,89 @@
           },
           {
             "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "CountPattern transform",
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "countpattern"
+                ]
+              },
+              "field": {
+                "description": "The field containing the text to analyze.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "data"
+              },
+              "pattern": {
+                "description": "A regexp pattern for matching words in text.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "[\\w']+"
+              },
+              "case": {
+                "description": "Text case transformation to apply.",
+                "oneOf": [
+                  {
+                    "enum": [
+                      "lower",
+                      "upper",
+                      "none"
+                    ]
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "lower"
+              },
+              "stopwords": {
+                "description": "A regexp pattern for matching stopwords to omit.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": ""
+              },
+              "output": {
+                "type": "object",
+                "description": "Rename the output data fields",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "default": "text"
+                  },
+                  "count": {
+                    "type": "string",
+                    "default": "count"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "$schema": "http://json-schema.org/draft-04/schema#",
             "title": "LinkPath transform",
             "description": "Computes a path definition for connecting nodes within a node-link network or tree diagram.",
             "type": "object",
@@ -2007,8 +2112,8 @@
                   "linkpath"
                 ]
               },
-              "source": {
-                "description": "The data field that references the source node for this link.",
+              "sourceX": {
+                "description": "The data field that references the source x-coordinate for this link.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -2019,8 +2124,20 @@
                 ],
                 "default": "_source"
               },
-              "target": {
-                "description": "The data field that references the target node for this link.",
+              "sourceY": {
+                "description": "The data field that references the source y-coordinate for this link.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "_source"
+              },
+              "targetX": {
+                "description": "The data field that references the target x-coordinate for this link.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -2031,7 +2148,8 @@
                 ],
                 "default": "_target"
               },
-              "x": {
+              "targetY": {
+                "description": "The data field that references the target y-coordinate for this link.",
                 "oneOf": [
                   {
                     "type": "string"
@@ -2040,18 +2158,7 @@
                     "$ref": "#/refs/signal"
                   }
                 ],
-                "default": "layout_x"
-              },
-              "y": {
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "#/refs/signal"
-                  }
-                ],
-                "default": "layout_y"
+                "default": "_target"
               },
               "tension": {
                 "description": "A tension parameter for the \"tightness\" of \"curve\"-shaped links.",
@@ -2246,9 +2353,9 @@
                 "$ref": "#/defs/transform"
               }
             },
+            "additionalProperties": false,
             "required": [
-              "type",
-              "groupby"
+              "type"
             ]
           },
           {
@@ -2422,9 +2529,6 @@
                     "type": "number"
                   },
                   {
-                    "type": "string"
-                  },
-                  {
                     "$ref": "#/refs/signal"
                   }
                 ],
@@ -2502,14 +2606,6 @@
                   "y": {
                     "type": "string",
                     "default": "layout_y"
-                  },
-                  "source": {
-                    "type": "string",
-                    "default": "_source"
-                  },
-                  "target": {
-                    "type": "string",
-                    "default": "_target"
                   }
                 },
                 "additionalProperties": false
@@ -2592,7 +2688,8 @@
                     "type": "string",
                     "default": "layout_y"
                   }
-                }
+                },
+                "additionalProperties": false
               },
               "projection": {
                 "description": "The type of cartographic projection to use.",
@@ -2712,7 +2809,8 @@
               "type",
               "lon",
               "lat"
-            ]
+            ],
+            "additionalProperties": false
           },
           {
             "$schema": "http://json-schema.org/draft-04/schema#",
@@ -2744,7 +2842,8 @@
                     "type": "string",
                     "default": "layout_path"
                   }
-                }
+                },
+                "additionalProperties": false
               },
               "projection": {
                 "description": "The type of cartographic projection to use.",
@@ -2862,7 +2961,67 @@
             },
             "required": [
               "type"
-            ]
+            ],
+            "additionalProperties": false
+          },
+          {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "Lookup transform",
+            "description": "Extends a data set by looking up values in another data set.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "lookup"
+                ]
+              },
+              "on": {
+                "type": "string",
+                "description": "The name of the secondary data set on which to lookup values."
+              },
+              "onKey": {
+                "description": "The key field to lookup, or null for index-based lookup.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              },
+              "keys": {
+                "description": "One or more fields in the primary data set to match against the secondary data set.",
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/refs/signal"
+                    }
+                  ]
+                }
+              },
+              "as": {
+                "type": "array",
+                "description": "The names of the fields in which to store looked-up values.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "default": {
+                "description": "The default value to use if a lookup match fails."
+              }
+            },
+            "required": [
+              "type",
+              "on",
+              "as",
+              "keys"
+            ],
+            "additionalProperties": false
           },
           {
             "$schema": "http://json-schema.org/draft-04/schema#",
@@ -3250,14 +3409,322 @@
                   "height": {
                     "type": "string",
                     "default": "layout_height"
+                  },
+                  "depth": {
+                    "type": "string",
+                    "default": "layout_depth"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             },
             "additionalProperties": false,
             "required": [
-              "type",
-              "field"
+              "type"
+            ]
+          },
+          {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "Voronoi transform",
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "voronoi"
+                ]
+              },
+              "clipExtent": {
+                "description": "The min and max points at which to clip the voronoi diagram.",
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "$ref": "#/refs/signal"
+                              }
+                            ]
+                          },
+                          "minItems": 2,
+                          "maxItems": 2
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": [
+                  [
+                    -100000,
+                    -100000
+                  ],
+                  [
+                    100000,
+                    100000
+                  ]
+                ]
+              },
+              "x": {
+                "description": "The input x coordinates.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              },
+              "y": {
+                "description": "The input y coordinates.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              },
+              "output": {
+                "type": "object",
+                "description": "Rename the output data fields",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "default": "layout_path"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "Wordcloud transform",
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "wordcloud"
+                ]
+              },
+              "size": {
+                "description": "The dimensions of the wordcloud layout",
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": [
+                  900,
+                  500
+                ]
+              },
+              "font": {
+                "description": "The font face to use for a word.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "sans-serif"
+              },
+              "fontStyle": {
+                "description": "The font style to use for a word.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "normal"
+              },
+              "fontWeight": {
+                "description": "The font weight to use for a word.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "normal"
+              },
+              "fontSize": {
+                "description": "The font size to use for a word.",
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": 14
+              },
+              "fontScale": {
+                "description": "The minimum and maximum scaled font sizes, or null to prevent scaling.",
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "default": [
+                  10,
+                  50
+                ]
+              },
+              "rotate": {
+                "description": "The field or number to set the roration angle (in degrees).",
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": 0
+              },
+              "text": {
+                "description": "The field containing the text to use for each word.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "data"
+              },
+              "spiral": {
+                "description": "The type of spiral used for positioning words, either 'archimedean' or 'rectangular'.",
+                "oneOf": [
+                  {
+                    "enum": [
+                      "archimedean",
+                      "rectangular"
+                    ]
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": "archimedean"
+              },
+              "padding": {
+                "description": "The padding around each word.",
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ],
+                "default": 1
+              },
+              "output": {
+                "type": "object",
+                "description": "Rename the output data fields",
+                "properties": {
+                  "x": {
+                    "type": "string",
+                    "default": "layout_x"
+                  },
+                  "y": {
+                    "type": "string",
+                    "default": "layout_y"
+                  },
+                  "font": {
+                    "type": "string",
+                    "default": "layout_font"
+                  },
+                  "fontSize": {
+                    "type": "string",
+                    "default": "layout_fontSize"
+                  },
+                  "fontStyle": {
+                    "type": "string",
+                    "default": "layout_fontStyle"
+                  },
+                  "fontWeight": {
+                    "type": "string",
+                    "default": "layout_fontWeight"
+                  },
+                  "rotate": {
+                    "type": "string",
+                    "default": "layout_rotate"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "type"
             ]
           },
           {
@@ -3444,7 +3911,14 @@
               ]
             },
             "reverse": {
-              "type": "boolean"
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "$ref": "#/refs/data"
+                }
+              ]
             },
             "round": {
               "type": "boolean"
@@ -3537,44 +4011,11 @@
                       "$ref": "#/refs/signal"
                     }
                   ]
-                },
-                "sort": {
-                  "type": "object",
-                  "field": {
-                    "type": "string"
-                  },
-                  "op": {
-                    "enum": [
-                      "values",
-                      "count",
-                      "valid",
-                      "missing",
-                      "distinct",
-                      "sum",
-                      "mean",
-                      "average",
-                      "variance",
-                      "variancep",
-                      "stdev",
-                      "stdevp",
-                      "median",
-                      "q1",
-                      "q3",
-                      "modeskew",
-                      "min",
-                      "max",
-                      "argmin",
-                      "argmax"
-                    ]
-                  },
-                  "order": {
-                    "enum": [
-                      "asc",
-                      "desc"
-                    ]
-                  }
                 }
-              }
+              },
+              "required": [
+                "type"
+              ]
             },
             {
               "properties": {
@@ -3644,7 +4085,10 @@
                     }
                   ]
                 }
-              }
+              },
+              "required": [
+                "type"
+              ]
             },
             {
               "anyOf": [
@@ -3743,52 +4187,10 @@
                         }
                       ]
                     }
-                  }
-                },
-                {
-                  "properties": {
-                    "type": {
-                      "enum": [
-                        "quantile"
-                      ]
-                    },
-                    "sort": {
-                      "type": "object",
-                      "field": {
-                        "type": "string"
-                      },
-                      "op": {
-                        "enum": [
-                          "values",
-                          "count",
-                          "valid",
-                          "missing",
-                          "distinct",
-                          "sum",
-                          "mean",
-                          "average",
-                          "variance",
-                          "variancep",
-                          "stdev",
-                          "stdevp",
-                          "median",
-                          "q1",
-                          "q3",
-                          "modeskew",
-                          "min",
-                          "max",
-                          "argmin",
-                          "argmax"
-                        ]
-                      },
-                      "order": {
-                        "enum": [
-                          "asc",
-                          "desc"
-                        ]
-                      }
-                    }
-                  }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 }
               ]
             }
@@ -3922,7 +4324,10 @@
               "type": "boolean",
               "default": false
             }
-          }
+          },
+          "required": [
+            "name"
+          ]
         }
       ]
     },
@@ -4858,6 +5263,44 @@
               }
             }
           ]
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "values",
+                "count",
+                "valid",
+                "missing",
+                "distinct",
+                "sum",
+                "mean",
+                "average",
+                "variance",
+                "variancep",
+                "stdev",
+                "stdevp",
+                "median",
+                "q1",
+                "q3",
+                "modeskew",
+                "min",
+                "max",
+                "argmin",
+                "argmax"
+              ]
+            },
+            "order": {
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": false
