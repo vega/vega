@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Vega scenegraph and renderers.",
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "browserify": "^10.2.6",
     "browserify-shim": "^3.8.9",
+    "browserify-versionify": "^1.0.4",
     "chai": "^3.0.0",
     "istanbul": "latest",
     "jsdom": "^3.0.0",
