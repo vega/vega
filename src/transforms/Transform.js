@@ -42,9 +42,9 @@ prototype.evaluate = function(input) {
   // Many transforms store caches that must be invalidated if
   // a signal value has changed. 
   var reset = this._stamp < input.stamp &&
-    this.dependency(Deps.SIGNALS).some(function(s) { 
-      return !!input.signals[s];
-    });
+    this.dependency(Deps.SIGNALS).reduce(function(c, s) { 
+      return c += input.signals[s] ? 1 : 0;
+    }, 0);
   return this.transform(input, reset);
 };
 

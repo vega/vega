@@ -49,8 +49,9 @@ function Force(graph) {
 var prototype = (Force.prototype = Object.create(Transform.prototype));
 prototype.constructor = Force;
 
-prototype.transform = function(nodeInput) {
+prototype.transform = function(nodeInput, reset) {
   log.debug(nodeInput, ['force']);
+  reset = reset - (nodeInput.signals.active ? 1 : 0);
 
   // get variables
   var interactive = this.param('interactive'),
@@ -64,7 +65,7 @@ prototype.transform = function(nodeInput) {
 
   // configure nodes, links and layout
   if (linkInput.stamp < nodeInput.stamp) linkInput = null;
-  this.configure(nodeInput, linkInput, interactive);
+  this.configure(nodeInput, linkInput, interactive, reset);
   
   // run batch layout
   if (!interactive) {
@@ -76,11 +77,13 @@ prototype.transform = function(nodeInput) {
   // update node positions
   this.update(active);
 
-  // update active node status
+  // re-up alpha on parameter change
+  if (reset || active !== this._prev && active && active.update) {
+    layout.alpha(this.param('alpha')); // re-start layout
+  }
+
+  // update active node status, 
   if (active !== this._prev) {
-    if (active && active.update) {
-      layout.alpha(this.param('alpha')); // re-start layout
-    }
     this._prev = active;
   }
 
@@ -98,16 +101,28 @@ prototype.transform = function(nodeInput) {
   return nodeInput;
 };
 
-prototype.configure = function(nodeInput, linkInput, interactive) {
+prototype.configure = function(nodeInput, linkInput, interactive, reset) {
   // check if we need to run configuration
   var layout = this._layout,
-      run = this._setup || nodeInput.add.length ||
+      update = this._setup || nodeInput.add.length ||
             linkInput && linkInput.add.length ||
             interactive !== this._interactive ||
             this.param('charge') !== layout.charge() ||
             this.param('linkStrength') !== layout.linkStrength() ||
             this.param('linkDistance') !== layout.linkDistance();
-  if (!run) return;
+
+  if (update || reset) {
+    // a parameter changed, so update tick-only parameters
+    layout
+      .size(this.param('size'))
+      .chargeDistance(this.param('chargeDistance'))
+      .theta(this.param('theta'))
+      .gravity(this.param('gravity'))
+      .friction(this.param('friction'));
+  }
+
+  if (!update) return; // if no more updates needed, return now
+
   this._setup = false;
   this._interactive = interactive;
 
@@ -139,16 +154,11 @@ prototype.configure = function(nodeInput, linkInput, interactive) {
     graph.propagate(ChangeSet.create(null, true), force);
   };
 
-  // configure layout
+  // configure the rest of the layout
   layout
-    .size(this.param('size'))
     .linkStrength(this.param('linkStrength'))
     .linkDistance(this.param('linkDistance'))
     .charge(this.param('charge'))
-    .chargeDistance(this.param('chargeDistance'))
-    .theta(this.param('theta'))
-    .gravity(this.param('gravity'))
-    .friction(this.param('friction'))
     .nodes(nodes)
     .links(links)
     .on('tick', tickHandler)
