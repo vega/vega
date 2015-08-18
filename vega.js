@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.1.1',
+  version: '2.1.2',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -3278,7 +3278,7 @@ module.exports = type;
 var util = require('./util');
 
 var dl = {
-  version:    '1.4.3',
+  version:    '1.4.4',
   load:       require('./import/load'),
   read:       require('./import/read'),
   type:       require('./import/type'),
@@ -4415,14 +4415,14 @@ function util_escape_str(x) {
 
 // data access functions
 
+var field_re = /\[(.*?)\]|[^.\[]+/g;
+
 u.field = function(f) {
-  return String(f).split('\\.')
-    .map(function(d) { return d.split('.'); })
-    .reduce(function(a, b) {
-      if (a.length) { a[a.length-1] += '.' + b.shift(); }
-      a.push.apply(a, b);
-      return a;
-    }, []);
+  return String(f).match(field_re).map(function(d) {
+    return d[0] !== '[' ? d :
+      d[1] !== "'" && d[1] !== '"' ? d.slice(1, -1) :
+      d.slice(2, -2).replace(/\\(["'])/g, '$1');
+  });
 };
 
 u.accessor = function(f) {
@@ -18607,8 +18607,9 @@ function Force(graph) {
 var prototype = (Force.prototype = Object.create(Transform.prototype));
 prototype.constructor = Force;
 
-prototype.transform = function(nodeInput) {
+prototype.transform = function(nodeInput, reset) {
   log.debug(nodeInput, ['force']);
+  reset = reset - (nodeInput.signals.active ? 1 : 0);
 
   // get variables
   var interactive = this.param('interactive'),
@@ -18622,7 +18623,7 @@ prototype.transform = function(nodeInput) {
 
   // configure nodes, links and layout
   if (linkInput.stamp < nodeInput.stamp) linkInput = null;
-  this.configure(nodeInput, linkInput, interactive);
+  this.configure(nodeInput, linkInput, interactive, reset);
   
   // run batch layout
   if (!interactive) {
@@ -18634,11 +18635,13 @@ prototype.transform = function(nodeInput) {
   // update node positions
   this.update(active);
 
-  // update active node status
+  // re-up alpha on parameter change
+  if (reset || active !== this._prev && active && active.update) {
+    layout.alpha(this.param('alpha')); // re-start layout
+  }
+
+  // update active node status, 
   if (active !== this._prev) {
-    if (active && active.update) {
-      layout.alpha(this.param('alpha')); // re-start layout
-    }
     this._prev = active;
   }
 
@@ -18656,16 +18659,28 @@ prototype.transform = function(nodeInput) {
   return nodeInput;
 };
 
-prototype.configure = function(nodeInput, linkInput, interactive) {
+prototype.configure = function(nodeInput, linkInput, interactive, reset) {
   // check if we need to run configuration
   var layout = this._layout,
-      run = this._setup || nodeInput.add.length ||
+      update = this._setup || nodeInput.add.length ||
             linkInput && linkInput.add.length ||
             interactive !== this._interactive ||
             this.param('charge') !== layout.charge() ||
             this.param('linkStrength') !== layout.linkStrength() ||
             this.param('linkDistance') !== layout.linkDistance();
-  if (!run) return;
+
+  if (update || reset) {
+    // a parameter changed, so update tick-only parameters
+    layout
+      .size(this.param('size'))
+      .chargeDistance(this.param('chargeDistance'))
+      .theta(this.param('theta'))
+      .gravity(this.param('gravity'))
+      .friction(this.param('friction'));
+  }
+
+  if (!update) return; // if no more updates needed, return now
+
   this._setup = false;
   this._interactive = interactive;
 
@@ -18697,16 +18712,11 @@ prototype.configure = function(nodeInput, linkInput, interactive) {
     graph.propagate(ChangeSet.create(null, true), force);
   };
 
-  // configure layout
+  // configure the rest of the layout
   layout
-    .size(this.param('size'))
     .linkStrength(this.param('linkStrength'))
     .linkDistance(this.param('linkDistance'))
     .charge(this.param('charge'))
-    .chargeDistance(this.param('chargeDistance'))
-    .theta(this.param('theta'))
-    .gravity(this.param('gravity'))
-    .friction(this.param('friction'))
     .nodes(nodes)
     .links(links)
     .on('tick', tickHandler)
@@ -19445,9 +19455,9 @@ prototype.evaluate = function(input) {
   // Many transforms store caches that must be invalidated if
   // a signal value has changed. 
   var reset = this._stamp < input.stamp &&
-    this.dependency(Deps.SIGNALS).some(function(s) { 
-      return !!input.signals[s];
-    });
+    this.dependency(Deps.SIGNALS).reduce(function(c, s) {
+      return c += input.signals[s] ? 1 : 0;
+    }, 0);
   return this.transform(input, reset);
 };
 
