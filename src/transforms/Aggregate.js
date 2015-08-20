@@ -44,8 +44,9 @@ function Aggregate(graph) {
     }
   });
 
+  this._aggr = null; // dl.Aggregator
   this._fields = [];
-  this._aggr = null;  // dl.Aggregator
+  this._out = [];
 
   this._type = TYPES.TUPLE; 
   this._acc = {groupby: dl.true, value: dl.true};
@@ -117,9 +118,31 @@ prototype.aggr = function() {
     .stream(true)
     .summarize(fields);
 
+  this._out = getFields(aggr);
+
   if (this._type !== TYPES.VALUE) { aggr.key('_id'); }
   return aggr;
 };
+
+// Collect all fields set by this aggregate
+function getFields(aggr) {
+  var f = [], i, n, j, m, dims, vals, meas;
+
+  dims = aggr._dims;
+  for (i=0, n=dims.length; i<n; ++i) {
+    f.push(dims[i].name);
+  }
+
+  vals = aggr._aggr;
+  for (i=0, n=vals.length; i<n; ++i) {
+    meas = vals[i].measures.fields;
+    for (j=0, m=meas.length; j<m; ++j) {
+      f.push(meas[j]);
+    }
+  }
+
+  return f;
+}
 
 prototype._reset = function(input, output) {
   var aggr = this.aggr(),
@@ -133,32 +156,34 @@ prototype._reset = function(input, output) {
 prototype.transform = function(input, reset) {
   log.debug(input, ['aggregate']);
 
+  this._input = input;
   var output = ChangeSet.create(input);
   if (reset) this._reset(input, output);
 
   var t = this,
-      tpl = this._type === TYPES.TUPLE, // reduce calls to standardize
-      aggr = this.aggr();
+      out = t._out,
+      tpl = t._type === TYPES.TUPLE, // reduce calls to standardize
+      aggr = t.aggr();
 
-  input.add.forEach(function(x) {
+  function add(x) {
     aggr._add(tpl ? x : standardize.call(t, x));
-  });
+  }
+
+  input.add.forEach(add);
 
   if (reset) {
     // Signal change triggered reflow, so add everything
-    input.mod.forEach(function(x) {
-      aggr._add(tpl ? x : standardize.call(t, x));
-    });
+    // Rem irrelevant upon reset, as we clear the aggregator
+    input.mod.forEach(add);
   } else {
     input.mod.forEach(function(x) {
       var y = Tuple.prev(x);
-      aggr._mod(tpl ? x : standardize.call(t, x), 
-        tpl ? y : standardize.call(t, y));
+      if (tpl) {
+        aggr._mod(x, y);
+      } else {
+        aggr._mod(standardize.call(t, x), standardize.call(t, y));
+      }
     });
-  }
-
-  if (!reset) {
-    // not necessary upon reset, as we clear the aggregator
     input.rem.forEach(function(x) {
       var y = Tuple.prev(x);
       aggr._rem(tpl ? y : standardize.call(t, y));
@@ -166,7 +191,11 @@ prototype.transform = function(input, reset) {
     });
   }
 
-  return aggr.changes(input, output);
+  for (var i=0; i<out.length; ++i) {
+    output.fields[out[i]] = 1;
+  }
+
+  return aggr.changes(output);
 };
 
 module.exports = Aggregate;

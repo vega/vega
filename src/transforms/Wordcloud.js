@@ -101,13 +101,7 @@ prototype.batchTransform = function(input, data) {
     .start();
 
   // return changeset
-  input.fields[output.x] = 1;
-  input.fields[output.y] = 1;
-  input.fields[output.font] = 1;
-  input.fields[output.fontSize] = 1;
-  input.fields[output.fontStyle] = 1;
-  input.fields[output.fontWeight] = 1;
-  input.fields[output.rotate] = 1;
+  for (var key in output) input.fields[output[key]] = 1;
   return input;
 };
 

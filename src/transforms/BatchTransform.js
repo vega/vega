@@ -1,9 +1,9 @@
 var Base = require('./Transform').prototype;
 
 function BatchTransform() {
-  // Funcptr to nearest shared upstream collector. 
-  // Populated by the dataflow Graph during connection.
-  this.data = null; 
+  // Nearest appropriate collector. 
+  // Set by the dataflow Graph during connection.
+  this._collector = null; 
 }
 
 var prototype = (BatchTransform.prototype = Object.create(Base));
@@ -15,7 +15,7 @@ prototype.init = function(graph) {
 };
 
 prototype.transform = function(input) {
-  return this.batchTransform(input, this.data());
+  return this.batchTransform(input, this._collector.data());
 };
 
 prototype.batchTransform = function(/* input, data */) {

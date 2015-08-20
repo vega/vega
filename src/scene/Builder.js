@@ -6,8 +6,7 @@ var dl = require('datalib'),
     Deps = df.Dependencies,
     Tuple = df.Tuple,
     ChangeSet = df.ChangeSet,
-    Sentinel = df.Sentinel,
-    
+    Sentinel = {},
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
     parseData = require('../parse/data');
@@ -74,7 +73,7 @@ proto.revises = function(p) {
   // If we've not needed prev in the past, but a new inline ds needs it now
   // ensure existing items have prev set.
   if (!this._revises && p) {
-    this._items.forEach(function(d) { if (d._prev === undefined) d._prev = Sentinel; });
+    this._items.forEach(Tuple.init_prev);
   }
 
   this._revises = this._revises || p;

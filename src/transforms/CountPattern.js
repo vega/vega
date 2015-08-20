@@ -67,7 +67,7 @@ prototype._changeset = function(input) {
     t = tuples[w];
     c = counts[w] || 0;
     if (!t && c) {
-      tuples[w] = (t = Tuple.ingest({}));
+      tuples[w] = (t = Tuple.ingest({}, null));
       t[out.text] = w;
       t[out.count] = c;
       change.add.push(t);

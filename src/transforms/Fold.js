@@ -18,30 +18,30 @@ function Fold(graph) {
 var prototype = (Fold.prototype = Object.create(Transform.prototype));
 prototype.constructor = Fold;
 
-function rst(input, output) { 
+prototype._reset = function(input, output) { 
   for (var id in this._cache) {
     output.rem.push.apply(output.rem, this._cache[id]);
   }
   this._cache = {};
-}
+};
 
-function get_tuple(x, i, len) {
+prototype._tuple = function(x, i, len) {
   var list = this._cache[x._id] || (this._cache[x._id] = Array(len));
-  return list[i] || (list[i] = Tuple.derive(x, x._prev));
-}
+  return list[i] || (list[i] = Tuple.derive(x));
+};
 
-function fn(data, on, out) {
+prototype._fn = function(data, on, out) {
   var i, j, n, m, d, t;
   for (i=0, n=data.length; i<n; ++i) {
     d = data[i];
     for (j=0, m=on.field.length; j<m; ++j) {
-      t = get_tuple.call(this, d, j, m);  
+      t = this._tuple(d, j, m);  
       Tuple.set(t, this._output.key, on.field[j]);
       Tuple.set(t, this._output.value, on.accessor[j](d));
       out.push(t);
     }      
   }
-}
+};
 
 prototype.transform = function(input, reset) {
   log.debug(input, ['folding']);
@@ -50,10 +50,10 @@ prototype.transform = function(input, reset) {
       on = this.param('fields'),
       output = df.ChangeSet.create(input);
 
-  if (reset) rst.call(this, input, output);
+  if (reset) this._reset(input, output);
 
-  fn.call(this, input.add, on, output.add);
-  fn.call(this, input.mod, on, reset ? output.add : output.mod);
+  this._fn(input.add, on, output.add);
+  this._fn(input.mod, on, reset ? output.add : output.mod);
   input.rem.forEach(function(x) {
     output.rem.push.apply(output.rem, fold._cache[x._id]);
     fold._cache[x._id] = null;
