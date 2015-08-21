@@ -50,7 +50,6 @@ function Aggregate(graph) {
 
   this._type = TYPES.TUPLE; 
   this._acc = {groupby: dl.true, value: dl.true};
-  this._cache = {}; // And cache them as aggregators expect original tuples.
 
   return this.router(true).revises(true);
 }
@@ -80,21 +79,6 @@ prototype.accessors = function(groupby, value) {
   acc.groupby = dl.$(groupby) || dl.true;
   acc.value = dl.$(value) || dl.true;
 };
-
-function standardize(x) {
-  var acc = this._acc;
-  if (this._type === TYPES.TUPLE) {
-    return x;
-  } else if (this._type === TYPES.VALUE) {
-    return acc.value(x);
-  } else {
-    return this._cache[x._id] || (this._cache[x._id] = {
-      _id: x._id,
-      groupby: acc.groupby(x),
-      value: acc.value(x)
-    });
-  }
-}
 
 prototype.aggr = function() {
   if (this._aggr) return this._aggr;
@@ -144,57 +128,50 @@ function getFields(aggr) {
   return f;
 }
 
-prototype._reset = function(input, output) {
-  var aggr = this.aggr(),
-      rem = output.rem;
-
-  rem.push.apply(rem, aggr.result());
-  aggr.clear();
-  this._aggr = null;
-};
-
 prototype.transform = function(input, reset) {
   log.debug(input, ['aggregate']);
+  this._input = input; // Used by Facetor._on_keep
 
-  this._input = input;
-  var output = ChangeSet.create(input);
-  if (reset) this._reset(input, output);
+  var output = ChangeSet.create(input),
+      aggr = this.aggr(),
+      out = this._out,
+      add, rem, mod;
 
-  var t = this,
-      out = t._out,
-      tpl = t._type === TYPES.TUPLE, // reduce calls to standardize
-      aggr = t.aggr();
+  if (reset) {
+    output.rem.push.apply(output.rem, aggr.result());
+    aggr.clear();
+    this._aggr = null;
+    aggr = this.aggr();
+  }
 
-  function add(x) {
-    aggr._add(tpl ? x : standardize.call(t, x));
+  if (this._type === TYPES.TUPLE) {
+    add = function(x) { aggr._add(x); };
+    rem = function(x) { aggr._rem(Tuple.prev(x)); };
+    mod = function(x) { aggr._mod(x, Tuple.prev(x)); };
+  } else {
+    var gby = this._acc.groupby,
+        val = this._acc.value,
+        get = this._type === TYPES.VALUE ? val : function(x) {
+          return { _id: x._id, groupby: gby(x), value: val(x) };
+        };
+    add = function(x) { aggr._add(get(x)); };
+    rem = function(x) { aggr._rem(get(Tuple.prev(x))); };
+    mod = function(x) { aggr._mod(get(x), get(Tuple.prev(x))); };
   }
 
   input.add.forEach(add);
-
   if (reset) {
-    // Signal change triggered reflow, so add everything
-    // Rem irrelevant upon reset, as we clear the aggregator
+    // A signal change triggered reflow. Add everything.
+    // No need for rem, we cleared the aggregator.
     input.mod.forEach(add);
   } else {
-    input.mod.forEach(function(x) {
-      var y = Tuple.prev(x);
-      if (tpl) {
-        aggr._mod(x, y);
-      } else {
-        aggr._mod(standardize.call(t, x), standardize.call(t, y));
-      }
-    });
-    input.rem.forEach(function(x) {
-      var y = Tuple.prev(x);
-      aggr._rem(tpl ? y : standardize.call(t, y));
-      t._cache[x._id] = null;
-    });
+    input.mod.forEach(mod);
+    input.rem.forEach(rem);
   }
 
   for (var i=0; i<out.length; ++i) {
     output.fields[out[i]] = 1;
   }
-
   return aggr.changes(output);
 };
 
