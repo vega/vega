@@ -203,7 +203,7 @@ proto.evaluate = function(input) {
     if (fullUpdate) output.mod = this._mark.items.slice();
 
     fcs = this._ds.last();
-    if (!fcs) throw Error('Builder evaluated before backing DataSource');
+    if (!fcs) throw Error('Builder evaluated before backing DataSource.');
     if (fcs.stamp > this._stamp) {
       output = join.call(this, fcs, this._ds.values(), true, fullUpdate);
     }

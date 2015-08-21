@@ -17,7 +17,7 @@ function Bin(graph) {
     div: {type: 'array<value>', default: [5, 2]}
   });
 
-  this._output = {'bin': 'bin'};
+  this._output = {bin: 'bin'};
   return this.mutates(true);
 }
 
@@ -49,7 +49,7 @@ prototype.transform = function(input) {
     var v = get(d);
     v = v == null ? null
       : b.start + b.step * ~~((v - b.start) / b.step);
-    Tuple.set(d, output, v, input.stamp);
+    Tuple.set(d, output, v);
   }
   input.add.forEach(update);
   input.mod.forEach(update);
