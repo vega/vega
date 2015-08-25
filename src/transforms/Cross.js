@@ -32,9 +32,7 @@ function cache(x, t) {
 }
 
 function add(output, left, data, diag, x) {
-  var i = 0, len = data.length,
-      prev = x._prev !== undefined ? null : undefined, 
-      t, y, id;
+  var i = 0, len = data.length, t, y, id;
 
   for (; i<len; ++i) {
     y = data[i];
@@ -45,7 +43,7 @@ function add(output, left, data, diag, x) {
     t = {};
     t[this._output.left]  = left ? x : y;
     t[this._output.right] = left ? y : x;
-    t = Tuple.ingest(t, prev);
+    t = Tuple.ingest(t);
     output.add.push(t);
     cache.call(this, x, t);
     cache.call(this, y, t);

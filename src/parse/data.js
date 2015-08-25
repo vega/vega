@@ -43,9 +43,8 @@ parseData.datasource = function(model, d) {
   if (d.values) {
     ds.values(dl.read(d.values, d.format));
   } else if (d.source) {
-    ds.source(d.source)
-      .revises(ds.revises()) // If new ds revises, then it's origin must revise too.
-      .addListener(ds);  // Derived ds will be pulsed by its src rather than the model.
+    // Derived ds will be pulsed by its src rather than the model.
+    ds.source(d.source).addListener(ds);  
     model.removeListener(ds.pipeline()[0]); 
   }
 

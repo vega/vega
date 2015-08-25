@@ -38,7 +38,6 @@ function parseModify(model, def, ds) {
     var datum = {}, 
         value = signal ? model.signalRef(def.signal) : null,
         d = model.data(ds.name),
-        prev = d.revises() ? null : undefined,
         t = null;
 
     datum[def.field] = value;
@@ -47,7 +46,7 @@ function parseModify(model, def, ds) {
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples. 
     if (def.type === Types.INSERT) {
-      t = Tuple.ingest(datum, prev);
+      t = Tuple.ingest(datum);
       input.add.push(t);
       d._data.push(t);
     } else if (def.type === Types.REMOVE) {

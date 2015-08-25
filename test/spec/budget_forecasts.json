@@ -64,15 +64,20 @@
           "summarize": [
             {"field": "value", "ops": ["min", "argmin"], "as": ["min", "argmin"]}
           ]
-        }
+        },
+        {"type": "formula", "field": "minYear", "expr": "datum.argmin.budgetYear"}
       ]
     },
     {
       "name": "tipForecast",
       "source": "budgets",
       "transform": [
-        {"type": "zip", "with": "tooltip", "as": "t"},
-        {"type": "filter", "test": "datum.t && datum.t.argmin.budgetYear == datum.budgetYear"}
+        {
+          "type": "lookup", 
+          "on": "tooltip", "onKey": "minYear",
+          "keys": ["budgetYear"], "as": ["t"]
+        },
+        {"type": "filter", "test": "datum.t"}
       ]
     }
   ],
@@ -99,7 +104,10 @@
       "values": [1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018],
       "tickSize": 0,
       "properties": {
-        "grid": {"stroke": {"value": "white"}},
+        "grid": {
+          "stroke": {"value": "white"},
+          "strokeOpacity": {"value": 0.75}
+        },
         "axis": {"stroke": {"value": "#edf1f7"}},
         "labels": {"fill": {"value": "#edf1f7"}}
       }
@@ -110,7 +118,10 @@
       "values": [0, -0.5, -1, -1.5],
       "tickSize": 0,
       "properties": {
-        "grid": {"stroke": {"value": "white"}},
+        "grid": {
+          "stroke": {"value": "white"},
+          "strokeOpacity": {"value": 0.75}
+        },
         "axis": {"stroke": {"value": "#edf1f7"}},
         "labels": {"text": {"template": "{{datum.data|number:'$.1f'}} trillion"}}
       }

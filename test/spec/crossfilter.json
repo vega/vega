@@ -1,4 +1,8 @@
 {
+  "width": 1000,
+  "height": 325,
+  "padding": "strict",
+
   "data": [
     {
       "name": "flights",

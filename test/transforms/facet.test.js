@@ -72,7 +72,7 @@ describe('Facet', function() {
 
   it('should handle streaming mods', function(done) {
     parseSpec(spec, function(model) {
-      var ds = model.data('table'),
+      var ds = model.data('table').synchronize(),
           facets = ds.values(),
           i, len;
 
@@ -110,7 +110,7 @@ describe('Facet', function() {
 
   it('should handle streaming rems', function(done) {
     parseSpec(spec, function(model) {
-      var ds = model.data('table'),
+      var ds = model.data('table').synchronize(),
           facets = ds.values(), 
           i, len;
 

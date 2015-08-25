@@ -51,7 +51,7 @@ function Aggregate(graph) {
   this._type = TYPES.TUPLE; 
   this._acc = {groupby: dl.true, value: dl.true};
 
-  return this.router(true).revises(true);
+  return this.router(true);
 }
 
 var prototype = (Aggregate.prototype = Object.create(Transform.prototype));
@@ -131,10 +131,11 @@ function getFields(aggr) {
 prototype.transform = function(input, reset) {
   log.debug(input, ['aggregate']);
   this._input = input; // Used by Facetor._on_keep
-
+//console.log(reset, JSON.stringify(input, null, 2));
   var output = ChangeSet.create(input),
       aggr = this.aggr(),
       out = this._out,
+      p = Tuple.prev,
       add, rem, mod;
 
   if (reset) {
@@ -145,18 +146,18 @@ prototype.transform = function(input, reset) {
   }
 
   if (this._type === TYPES.TUPLE) {
-    add = function(x) { aggr._add(x); };
-    rem = function(x) { aggr._rem(Tuple.prev(x)); };
-    mod = function(x) { aggr._mod(x, Tuple.prev(x)); };
+    add = function(x) { aggr._add(x); Tuple.prev_init(x); };
+    rem = function(x) { aggr._rem(p(x)); };
+    mod = function(x) { aggr._mod(x, p(x)); };
   } else {
     var gby = this._acc.groupby,
         val = this._acc.value,
         get = this._type === TYPES.VALUE ? val : function(x) {
           return { _id: x._id, groupby: gby(x), value: val(x) };
         };
-    add = function(x) { aggr._add(get(x)); };
-    rem = function(x) { aggr._rem(get(Tuple.prev(x))); };
-    mod = function(x) { aggr._mod(get(x), get(Tuple.prev(x))); };
+    add = function(x) { aggr._add(get(x)); Tuple.prev_init(x); };
+    rem = function(x) { aggr._rem(get(p(x))); };
+    mod = function(x) { aggr._mod(get(x), get(p(x))); };
   }
 
   input.add.forEach(add);
@@ -165,8 +166,8 @@ prototype.transform = function(input, reset) {
     // No need for rem, we cleared the aggregator.
     input.mod.forEach(add);
   } else {
-    input.mod.forEach(mod);
     input.rem.forEach(rem);
+    input.mod.forEach(mod);
   }
 
   for (var i=0; i<out.length; ++i) {

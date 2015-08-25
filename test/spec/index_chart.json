@@ -34,11 +34,9 @@
       "name": "indexified_stocks",
       "source": "stocks",
       "transform": [{
-        "type": "zip",
-        "with": "index",
-        "as": "index_term",
-        "key": "symbol",
-        "withKey": "symbol",
+        "type": "lookup",
+        "on": "index", "onKey": "symbol",
+        "keys": ["symbol"], "as": ["index_term"],
         "default": {"price": 0}
       }, {
         "type": "formula",

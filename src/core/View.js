@@ -278,8 +278,7 @@ function build() {
     log.debug(input, ['rendering']);
 
     var s = v._model.scene(),
-        h = v._handler,
-        d;
+        h = v._handler;
 
     if (h && h.scene) h.scene(s);
 
@@ -298,7 +297,7 @@ function build() {
     }
 
     // For all updated datasources, clear their previous values.
-    for (d in input.data) v._model.data(d).finalize();
+    for (var d in input.data) { v._model.data(d).synchronize(); }
     return input;
   };
 
