@@ -22,6 +22,7 @@
   "devDependencies": {
     "browserify": "^10.2.6",
     "browserify-shim": "^3.8.9",
+    "browserify-versionify": "^1.0.4",
     "chai": "^3.0.0",
     "istanbul": "latest",
     "mocha": "^2.2.5",
