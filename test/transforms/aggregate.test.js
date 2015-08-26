@@ -79,7 +79,7 @@ describe('Aggregate', function() {
             a3 = {x: 23, y: 47};
 
         values.push(a1, a2, a3);
-        model.data('table').insert([a1]).insert([a2]).insert([a3]).fire();
+        model.data('table').synchronize().insert([a1]).insert([a2]).insert([a3]).fire();
 
         var ds = model.data('table'),
             data = ds.values(),
@@ -102,6 +102,7 @@ describe('Aggregate', function() {
     it('should handle streaming mods', function(done) {
       parseSpec(spec, function(model) {
         model.data('table')
+          .synchronize()
           .update(function(d) { return d.x % 2 !== 0 }, "y", 
             function(d) { return d.y * 2 })
           .fire();
@@ -125,9 +126,10 @@ describe('Aggregate', function() {
     });
 
     it('should handle streaming rems', function(done) {
-      parseSpec(spec, function(model) {
+      parseSpec(spec, function(model) {        
         values = values.filter(function(d) { return d.y < 50 });
-        model.data('table').remove(function(d) { return d.y >= 50 }).fire();
+        model.data('table').synchronize()
+          .remove(function(d) { return d.y >= 50 }).fire();
 
         var ds = model.data('table'),
             data = ds.values(),
@@ -189,7 +191,9 @@ describe('Aggregate', function() {
 
     it('should handle modified keys', function(done) {
       parseSpec(spec, function(model) {
-        var ds = model.data('table').update(function(d) { return d.country === "Canada" },
+        var ds = model.data('table')
+              .synchronize()
+              .update(function(d) { return d.country === "Canada" },
               "country", function(d) { return "Australia" }).fire(),
             data = ds.values();
 

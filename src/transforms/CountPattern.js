@@ -1,5 +1,4 @@
-var dl = require('datalib'),
-    df = require('vega-dataflow'),
+var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -15,7 +14,7 @@ function CountPattern(graph) {
 
   this._output = {text: 'text', count: 'count'};
 
-  return this.router(true).revises(true);
+  return this.router(true);
 }
 
 var prototype = (CountPattern.prototype = Object.create(Transform.prototype));
@@ -24,10 +23,10 @@ prototype.constructor = CountPattern;
 prototype.transform = function(input, reset) {
   log.debug(input, ['countpattern']);
 
-  var get = this.param('field'),
+  var get = this.param('field').accessor,
       pattern = this.param('pattern'),
       stop = this.param('stopwords'),
-      run = false;
+      rem = false;
 
   // update parameters
   if (this._stop !== stop) {
@@ -44,14 +43,15 @@ prototype.transform = function(input, reset) {
 
   if (reset) this._counts = {};
 
-  this._add(input.add, get.accessor);
+  function curr(t) { return (Tuple.prev_init(t), get(t)); }
+  function prev(t) { return get(Tuple.prev(t)); }
 
-  if (reset || (run = input.fields[get.field])) {
-    this._add(input.mod, get.accessor);
-    if (run) this._rem(input.mod, dl.$('_prev.' + get.field));
+  this._add(input.add, curr);
+  if (!reset) this._rem(input.rem, prev);
+  if (reset || (rem = input.fields[get.field])) {
+    if (rem) this._rem(input.mod, prev);
+    this._add(input.mod, curr);
   }
-
-  if (!reset) this._rem(input.rem, get.accessor);
 
   // generate output tuples
   return this._changeset(input);

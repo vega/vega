@@ -17,6 +17,5 @@ module.exports = {
   stack:        require('./Stack'),
   treemap:      require('./Treemap'),
   voronoi:      require('./Voronoi'),
-  wordcloud:    require('./Wordcloud'),
-  zip:          require('./Zip') // Deprecated, do not use.
+  wordcloud:    require('./Wordcloud')
 };

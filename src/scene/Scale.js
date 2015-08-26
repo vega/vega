@@ -355,9 +355,7 @@ function dataRef(which, def, scale, group) {
     for (i=0, rlen=refs.length; i<rlen; ++i) {
       ref = refs[i];
       from = ref.data || group.datum._facetID;
-      data = graph.data(from)
-        .revises(true)
-        .last();
+      data = graph.data(from).last();
 
       if (data.stamp <= this._stamp) continue;
 

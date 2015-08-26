@@ -12,7 +12,7 @@ function Lookup(graph) {
     default: {type: 'value'}
   });
 
-  return this.revises(true).mutates(true);
+  return this.mutates(true);
 }
 
 var prototype = (Lookup.prototype = Object.create(Transform.prototype));

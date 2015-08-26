@@ -14,12 +14,11 @@
       "transform": [
         {"type": "geopath", "projection": "albersUsa"},
         {
-          "type": "zip",
-          "key": "id",
-          "with": "unemp",
-          "withKey": "id",
-          "as": "unemp",
-          "default": null
+          "type": "lookup",
+          "on": "unemp",
+          "onKey": "id",
+          "keys": ["id"],
+          "as": ["unemp"]
         },
         {"type": "filter", "test": "datum.layout_path!=null && datum.unemp!=null"}
       ]

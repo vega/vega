@@ -6,8 +6,7 @@ var dl = require('datalib'),
     Deps = df.Dependencies,
     Tuple = df.Tuple,
     ChangeSet = df.ChangeSet,
-    Sentinel = df.Sentinel,
-    
+    Sentinel = {},
     Encoder  = require('./Encoder'),
     Bounder  = require('./Bounder'),
     parseData = require('../parse/data');
@@ -34,8 +33,6 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
   this._ds    = dl.isString(this._from) ? graph.data(this._from) : null;
   this._map   = {};
-
-  this._revises = false;  // Should scenegraph items track _prev?
 
   mark.def = def;
   mark.marktype = def.type;
@@ -68,19 +65,6 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   return this;
 };
 
-proto.revises = function(p) {
-  if (!arguments.length) return this._revises;
-
-  // If we've not needed prev in the past, but a new inline ds needs it now
-  // ensure existing items have prev set.
-  if (!this._revises && p) {
-    this._items.forEach(function(d) { if (d._prev === undefined) d._prev = Sentinel; });
-  }
-
-  this._revises = this._revises || p;
-  return this;
-};
-
 // Reactive geometry and mark-level transformations are handled here 
 // because they need their group's data-joined context. 
 function inlineDs() {
@@ -108,10 +92,10 @@ function inlineDs() {
 
   this._from = name;
   this._ds = parseData.datasource(this._graph, spec);
-  var revises = this._ds.revises(), node;
+  var node;
 
   if (geom) {
-    sibling = this.sibling(geom).revises(revises);
+    sibling = this.sibling(geom);
 
     // Bounder reflows, so we need an intermediary node to propagate
     // the output constructed by the Builder.
@@ -128,8 +112,7 @@ function inlineDs() {
     // the propagation cycle has already crossed the datasources. 
     // So, we repulse just this datasource. This should be safe
     // as the ds isn't connected to the scenegraph yet.
-    
-    output = this._ds.source().revises(revises).last();
+    output = this._ds.source().last();
     input  = ChangeSet.create(output);
 
     input.add = output.add;
@@ -204,7 +187,7 @@ proto.evaluate = function(input) {
     if (fullUpdate) output.mod = this._mark.items.slice();
 
     fcs = this._ds.last();
-    if (!fcs) throw Error('Builder evaluated before backing DataSource');
+    if (!fcs) throw Error('Builder evaluated before backing DataSource.');
     if (fcs.stamp > this._stamp) {
       output = join.call(this, fcs, this._ds.values(), true, fullUpdate);
     }
@@ -239,8 +222,7 @@ proto.evaluate = function(input) {
 };
 
 function newItem() {
-  var prev = this._revises ? null : undefined,
-      item = Tuple.ingest(new Item(this._mark), prev);
+  var item = Tuple.ingest(new Item(this._mark));
 
   // For the root node's item
   if (this._def.width)  Tuple.set(item, 'width',  this._def.width);

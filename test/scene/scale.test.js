@@ -206,6 +206,7 @@ describe('Scale', function() {
         it('should handle streaming mods', function(done) {
           parseSpec(spec, function(model) {
             model.data('table')
+              .synchronize()
               .update(function(x) { return x.x % 2 !== 0 }, "x", 
                 function(x) { return x.x * 2 })
               .update(function(x) { return x.x >= 0 }, "y",
@@ -220,7 +221,7 @@ describe('Scale', function() {
 
             for(; i<=len; ++i) {
               v = i%2 ? i*2 : i;
-              if(ord.indexOf(v) === -1) ord.push(v);
+              if (ord.indexOf(v) === -1) ord.push(v);
             }
 
             expect(x.domain()).to.have.members(ord);
@@ -233,6 +234,7 @@ describe('Scale', function() {
         it('should handle streaming rems', function(done) {
           parseSpec(spec, function(model) {
             model.data('table')
+              .synchronize()
               .remove(function(x) { return x.x > 10 })
               .fire();
 
@@ -356,6 +358,7 @@ describe('Scale', function() {
                 i = 1, len = 20, v;
 
             model.data('table1')
+              .synchronize()
               .update(function(x) { return x.x % 2 !== 0 }, "x", 
                 function(x) { return x.x * 2 })
               .update(function(x) { return x.x >= 0 }, "y",
@@ -363,6 +366,7 @@ describe('Scale', function() {
               .fire();
 
             model.data('table2')
+              .synchronize()
               .update(function(x) { return x.a % 2 !== 0 }, "a", 
                 function(x) { return x.a * 2 })
               .update(function(x) { return x.b >= 0 }, "b",
@@ -384,10 +388,12 @@ describe('Scale', function() {
         it('should handle streaming rems', function(done) {
           parseSpec(spec, function(model) {
             model.data('table1')
+              .synchronize()
               .remove(function(x) { return x.x > 10 })
               .fire();
 
             model.data('table2')
+              .synchronize()
               .remove(function(x) { return x.a > 10 })
               .fire();
 
@@ -492,8 +498,9 @@ describe('Scale', function() {
         it('should handle streaming mods', function(done) {
           parseSpec(spec, function(model) {
             model.data('table')
-              .update(function(x) { return true }, "position", 
-                function(x) { return x.position*2 })
+              .synchronize()
+              .update(function(x) { return true; }, "position", 
+                function(x) { return x.position*2; })
               .fire();
 
             var groups = model.scene().items[0].items[0].items,
@@ -514,6 +521,7 @@ describe('Scale', function() {
         it('should handle streaming rems', function(done) {
           parseSpec(spec, function(model) {
             model.data('table')
+              .synchronize()
               .remove(function(x) { return x.position % 2 === 0 })
               .fire();
 

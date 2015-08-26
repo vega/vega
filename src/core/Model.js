@@ -76,7 +76,6 @@ prototype.data = function() {
   if (arguments.length > 1) {  // new Datasource
     this.node().addListener(data.pipeline()[0]);
   }
-
   return data;
 };
 

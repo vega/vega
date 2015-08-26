@@ -14,7 +14,8 @@ function Voronoi(graph) {
 
   this._layout = d3.geom.voronoi();
   this._output = {'path': 'layout_path'};
-  return this;
+
+  return this.mutates(true);
 }
 
 var prototype = (Voronoi.prototype = Object.create(BatchTransform.prototype));
