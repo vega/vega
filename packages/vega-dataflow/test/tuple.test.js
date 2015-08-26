@@ -2,7 +2,6 @@
 
 var assert = require('chai').assert;
 var Tuple = require('../src/Tuple');
-var SENTINEL = require('../src/Sentinel');
 
 describe('Tuple', function() {
 
@@ -13,45 +12,50 @@ describe('Tuple', function() {
     assert.equal(d._id, 1);
     assert.equal(d.a, 5);
     assert.strictEqual(d, o);
-    assert.notOk(Tuple.has_prev(d));
     assert.isUndefined(d._prev);
 
-    d = Tuple.ingest(o, null);
+    d = Tuple.ingest(o);
     assert.equal(d._id, 2);
-    assert.notOk(Tuple.has_prev(d));
-    assert.strictEqual(d._prev, SENTINEL);
+    assert.isUndefined(d._prev, null);
 
-    d = Tuple.ingest(5, p);
+    d = Tuple.ingest(3);
+    Tuple.prev_init(d);
+    Tuple.prev_update(d);
+    d.data = 5;
     assert.equal(d._id, 3);
     assert.equal(d.data, 5);
-    assert.ok(Tuple.has_prev(d));
-    assert.strictEqual(d._prev, p);
+    assert.isDefined(d._prev);
     assert.equal(d._prev.data, 3);
+    assert.equal(d._prev._id, d._id);
   });
 
-  it('should derive inheriting tuples', function() {
-    var o = {a: 5};
+  it('should copy on derive', function() {
+    var o = Tuple.ingest({a: 5});
     var d = Tuple.derive(o);
     assert.equal(d.a, 5);
-    assert.strictEqual(d.__proto__, o);
+    assert.isUndefined(d._prev);
   });
 
   it('should set values', function() {
     var d = Tuple.ingest({a:5});
-    assert.isTrue(Tuple.set(d, 'a', 7));
+    assert.equal(Tuple.set(d, 'a', 7), 1);
     assert.equal(d.a, 7);
-    assert.notOk(Tuple.has_prev(d));
+    assert.isUndefined(d._prev);
 
-    d = Tuple.ingest({a:5}, null);
-    assert.isTrue(Tuple.set(d, 'a', 7));
+    d = Tuple.ingest({a:5});
+    Tuple.prev_init(d);
+    Tuple.prev_update(d);
+    assert.equal(Tuple.set(d, 'a', 7), 1);
     assert.equal(d.a, 7);
     assert.equal(d._prev.a, 5);
 
-    d = Tuple.ingest(5, {data: 3});
-    assert.isTrue(Tuple.set(d, 'data', 7));
+    d = Tuple.ingest(5);
+    Tuple.prev_init(d);
+    Tuple.prev_update(d);
+    assert.equal(Tuple.set(d, 'data', 7), 1);
     assert.equal(d.data, 7);
     assert.equal(d._prev.data, 5);
-    assert.isFalse(Tuple.set(d, 'data', 7));
+    assert.equal(Tuple.set(d, 'data', 7), 0);
   });
 
   it('should reset tuple ids', function() {
