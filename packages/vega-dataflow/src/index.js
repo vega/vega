@@ -5,7 +5,6 @@ module.exports = {
   Dependencies: require('./Dependencies'),
   Graph:        require('./Graph'),
   Node:         require('./Node'),
-  Sentinel:     require('./Sentinel'),
   Signal:       require('./Signal'),
   Tuple:        require('./Tuple'),
   debug:        require('vega-logging').debug

@@ -1,8 +1,7 @@
-var util = require('datalib/src/util'),
+var dl = require('datalib'),
     Heap = require('./Heap'),
     ChangeSet = require('./ChangeSet'),
     DataSource = require('./DataSource'),
-    Collector = require('./Collector'),
     Signal = require('./Signal'),
     Deps = require('./Dependencies');
 
@@ -91,7 +90,7 @@ prototype.signalValues = function(names) {
 
 prototype.signalRef = function(ref) {
   if (!Array.isArray(ref)) {
-    ref = util.field(ref);
+    ref = dl.field(ref);
   }
 
   var value = this.signal(ref[0]).value();
@@ -172,76 +171,49 @@ prototype.propagate = function(pulse, node, stamp) {
   }
 };
 
-// Connect a branch of dataflow nodes. 
-// Dependencies are wired to the nearest collector. 
-function forEachNode(branch, fn) {
-  var node, collector, router, i;
-
-  for (i=0; i<branch.length; ++i) {
-    node = branch[i];
-
-    // Share collectors between batch transforms. We can reuse an
-    // existing collector unless a router node has come after it,
-    // in which case, we splice in a new collector.
-    if (!node.data && node.batch()) {
-      if (router) {
-        branch.splice(i, 0, (node = new Collector(this)));
-        router = false;
-      } else {
-        node.data = collector.data.bind(collector);
-      }
-    } 
-
-    if (node.collector()) collector = node;
-    router = router || node.router() && !node.collector(); 
-    fn(node, collector, i);
-  }
-}
-
 prototype.connect = function(branch) {
-  var graph = this;
+  var collector, node, data, signals, i, n, j, m;
 
-  forEachNode.call(this, branch, function(n, c, i) {
-    var data = n.dependency(Deps.DATA),
-        signals = n.dependency(Deps.SIGNALS);
+  // connect the pipeline
+  for (i=0, n=branch.length; i<n; ++i) {
+    node = branch[i];
+    if (node.collector()) collector = node;
 
-    if (data.length > 0) {
-      data.forEach(function(d) { 
-        graph.data(d)
-          .revises(n.revises())
-          .addListener(c);
-      });
+    data = node.dependency(Deps.DATA);
+    for (j=0, m=data.length; j<m; ++j) {
+      this.data(data[j]).addListener(collector);
     }
 
-    if (signals.length > 0) {
-      signals.forEach(function(s) { graph.signal(s).addListener(c); });
+    signals = node.dependency(Deps.SIGNALS);
+    for (j=0, m=signals.length; j<m; ++j) {
+      this.signal(signals[j]).addListener(collector);
     }
 
-    if (i > 0) {
-      branch[i-1].addListener(branch[i]);
-    }
-  });
+    if (i > 0) branch[i-1].addListener(node);
+  }
 
   return branch;
 };
 
 prototype.disconnect = function(branch) {
-  var graph = this;
+  var collector, node, data, signals, i, n, j, m;
 
-  forEachNode.call(this, branch, function(n, c) {
-    var data = n.dependency(Deps.DATA),
-        signals = n.dependency(Deps.SIGNALS);
+  for (i=0, n=branch.length; i<n; ++i) {
+    node = branch[i];
+    if (node.collector()) collector = node;
 
-    if (data.length > 0) {
-      data.forEach(function(d) { graph.data(d).removeListener(c); });
+    data = node.dependency(Deps.DATA);
+    for (j=0, m=data.length; j<m; ++j) {
+      this.data(data[j]).removeListener(collector);
     }
 
-    if (signals.length > 0) {
-      signals.forEach(function(s) { graph.signal(s).removeListener(c); });
+    signals = node.dependency(Deps.SIGNALS);
+    for (j=0, m=signals.length; j<m; ++j) {
+      this.signal(signals[j]).removeListener(collector);
     }
 
-    n.disconnect();  
-  });
+    node.disconnect();
+  }
 
   return branch;
 };

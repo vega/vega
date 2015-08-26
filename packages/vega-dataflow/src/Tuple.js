@@ -1,67 +1,68 @@
-var util = require('datalib/src/util'),
-    SENTINEL = require('./Sentinel'),
-    tupleID = 0;
+var tupleID = 0;
 
-// Object.create is expensive. So, when ingesting, trust that the
-// datum is an object that has been appropriately sandboxed from 
-// the outside environment. 
-function ingest(datum, prev) {
+function ingest(datum) {
   datum = (datum === Object(datum)) ? datum : {data: datum};
   datum._id = ++tupleID;
-  datum._prev = (prev !== undefined) ? (prev || SENTINEL) : undefined;
+  if (datum._prev) datum._prev = null;
   return datum;
 }
 
-function derive(datum, prev) {
-  return ingest(Object.create(datum), prev);
-}
-
-// WARNING: operators should only call this once per timestamp!
-function set(t, k, v) {
-  var prev = t[k];
-  if (prev === v) return false;
-  set_prev(t, k);
-  t[k] = v;
-  return true;
-}
-
-function set_prev(t, k) {
-  if (t._prev === undefined) return;
-  t._prev = (t._prev === SENTINEL) ? {} : t._prev;
-  t._prev[k] = t[k];
-}
-
-function has_prev(t) {
-  return t._prev && t._prev !== SENTINEL;
-}
-
-function reset() {
-  tupleID = 0;
-}
-
-function idMap(a) {
-  for (var ids={}, i=0, n=a.length; i<n; ++i) {
+function idMap(a, ids) {
+  ids = ids || {};
+  for (var i=0, n=a.length; i<n; ++i) {
     ids[a[i]._id] = 1;
   }
   return ids;
 }
 
-function idFilter(data) {
-  var ids = {};
-  for (var i=1, len=arguments.length; i<len; ++i) {
-    util.extend(ids, idMap(arguments[i]));
+function copy(t, c) {
+  c = c || {};
+  for (var k in t) {
+    if (k !== '_prev' && k !== '_id') c[k] = t[k];
   }
-
-  return data.filter(function(x) { return !ids[x._id]; });
+  return c;
 }
 
 module.exports = {
-  ingest:   ingest,
-  derive:   derive,
-  set:      set,
-  set_prev: set_prev,
-  has_prev: has_prev,
-  reset:    reset,
-  idMap:    idMap,
-  idFilter: idFilter
+  ingest: ingest,
+  idMap: idMap,
+
+  derive: function(d) {
+    return ingest(copy(d));
+  },
+
+  rederive: function(d, t) {
+    return copy(d, t);
+  },
+
+  set: function(t, k, v) {
+    return t[k] === v ? 0 : (t[k] = v, 1);
+  },
+
+  prev: function(t) {
+    return t._prev || t;
+  },
+
+  prev_init: function(t) {
+    if (!t._prev) { t._prev = {_id: t._id}; }
+  },
+
+  prev_update: function(t) {
+    var p = t._prev, k, v;
+    if (p) for (k in t) {
+      if (k !== '_prev' && k !== '_id') {
+        p[k] = ((v=t[k]) instanceof Object && v._prev) ? v._prev : v;
+      }
+    }
+  },
+
+  reset: function() { tupleID = 0; },
+
+  idFilter: function(data) {
+    var ids = {};
+    for (var i=arguments.length; --i>0;) {
+      idMap(arguments[i], ids);
+    }
+    return data.filter(function(x) { return !ids[x._id]; });
+  }
 };
