@@ -40,10 +40,9 @@ function add(output, left, data, diag, x) {
     if (this._ids[id]) continue;
     if (x._id == y._id && !diag) continue;
 
-    t = {};
+    t = Tuple.ingest({});
     t[this._output.left]  = left ? x : y;
     t[this._output.right] = left ? y : x;
-    t = Tuple.ingest(t);
     output.add.push(t);
     cache.call(this, x, t);
     cache.call(this, y, t);

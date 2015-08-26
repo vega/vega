@@ -4,7 +4,7 @@ var dl = require('datalib'),
     df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
-    facetID = 1;
+    facetID = 0;
 
 function Facetor() {
   Aggregator.call(this);
@@ -25,7 +25,7 @@ prototype._ingest = function(t) {
 prototype._assign = Tuple.set;
 
 function disconnect_cell(facet) {
-  log.debug({}, ["disconnecting cell", this.tuple._id]);
+  log.debug({}, ['disconnecting cell', this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);

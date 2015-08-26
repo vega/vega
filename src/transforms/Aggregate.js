@@ -44,7 +44,9 @@ function Aggregate(graph) {
     }
   });
 
-  this._aggr = null; // dl.Aggregator
+  this._aggr  = null; // dl.Aggregator
+  this._input = null; // Used by Facetor._on_keep.
+  this._args  = null; // To cull re-computation.
   this._fields = [];
   this._out = [];
 
@@ -89,7 +91,7 @@ prototype.aggr = function() {
       groupby = this.param('groupby').field,
       value = function(x) { return x.signal ? g.signalRef(x.signal) : x; };
 
-  // Prepare summarize fields
+  // Prepare summarize fields.
   var fields = this._fields.map(function(f) {
     var field = {
       name: value(f.field),
@@ -102,8 +104,8 @@ prototype.aggr = function() {
     return field;
   });
 
-  // If there is an arbitrary getter, all bets are off
-  // Otherwise, we can check argument fields to cull re-computation
+  // If there is an arbitrary getter, all bets are off.
+  // Otherwise, we can check argument fields to cull re-computation.
   groupby.forEach(function(g) {
     if (g.get) hasGetter = true;
     args.push(g.name || g);
@@ -112,24 +114,24 @@ prototype.aggr = function() {
 
   if (!fields.length) fields = {'*': 'values'};
 
-  // Instatiate our aggregator instance
-  // Facetor is a special subclass that can facet into data pipelines
+  // Instatiate our aggregator instance.
+  // Facetor is a special subclass that can facet into data pipelines.
   var aggr = this._aggr = new Facetor()
     .groupby(groupby)
     .stream(true)
     .summarize(fields);
 
-  // Collect output fields sets by this aggregate
+  // Collect output fields sets by this aggregate.
   this._out = getFields(aggr);
 
-  // If we are processing tuples, key them by '_id'
+  // If we are processing tuples, key them by '_id'.
   if (this._type !== TYPES.VALUE) { aggr.key('_id'); }
 
   return aggr;
 };
 
 function getFields(aggr) {
-  // Collect the output fields set by this aggregate
+  // Collect the output fields set by this aggregate.
   var f = [], i, n, j, m, dims, vals, meas;
 
   dims = aggr._dims;
@@ -150,7 +152,7 @@ function getFields(aggr) {
 
 prototype.transform = function(input, reset) {
   log.debug(input, ['aggregate']);
-  this._input = input; // Used by Facetor._on_keep
+  this._input = input; // Used by Facetor._on_keep.
 
   var output = ChangeSet.create(input),
       aggr = this.aggr(),
@@ -160,7 +162,7 @@ prototype.transform = function(input, reset) {
       p = Tuple.prev,
       add, rem, mod, i;
 
-  // Upon reset, retract prior tuples and re-initialize
+  // Upon reset, retract prior tuples and re-initialize.
   if (reset) {
     output.rem.push.apply(output.rem, aggr.result());
     aggr.clear();
@@ -168,7 +170,7 @@ prototype.transform = function(input, reset) {
     aggr = this.aggr();
   }
 
-  // Get update methods according to input type
+  // Get update methods according to input type.
   if (this._type === TYPES.TUPLE) {
     add = function(x) { aggr._add(x); Tuple.prev_init(x); };
     rem = function(x) { aggr._rem(p(x)); };
@@ -192,14 +194,14 @@ prototype.transform = function(input, reset) {
   } else {
     input.rem.forEach(rem);
 
-    // If possible, check argument fields to see if we need to re-process mods
+    // If possible, check argument fields to see if we need to re-process mods.
     if (args) for (i=0, reeval=false; i<args.length; ++i) {
       if (input.fields[args[i]]) { reeval = true; break; }
     }
     if (reeval) input.mod.forEach(mod);
   }
 
-  // Indicate output fields and return aggregate tuples
+  // Indicate output fields and return aggregate tuples.
   for (i=0; i<out.length; ++i) {
     output.fields[out[i]] = 1;
   }

@@ -27,7 +27,7 @@ prototype._reset = function(input, output) {
 
 prototype._tuple = function(x, i, len) {
   var list = this._cache[x._id] || (this._cache[x._id] = Array(len));
-  return list[i] || (list[i] = Tuple.derive(x));
+  return list[i] ? Tuple.rederive(x, list[i]) : (list[i] = Tuple.derive(x));
 };
 
 prototype._fn = function(data, on, out) {
