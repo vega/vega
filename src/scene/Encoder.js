@@ -49,16 +49,17 @@ proto.evaluate = function(input) {
       update = props.update,
       exit   = props.exit,
       dirty  = input.dirty,
-      preds  = this._graph.predicates(),
-      sg  = graph.signalValues(),  // For expediency, get all signal values
-      db  = graph.dataValues(), 
+      preds  = graph.predicates(),
       req = input.request,
       group = this._mark.group,
       guide = group && (group.mark.axis || group.mark.legend),
-      i, len, item, prop;
+      db, sg, i, len, item, prop;
 
   if (req && !guide) {
-    if ((prop = props[req])) {
+    if ((prop = props[req]) && input.mod.length) {
+      db = prop.data ? graph.dataValues(prop.data) : null;
+      sg = prop.signals ? graph.signalValues(prop.signals) : null;
+
       for (i=0, len=input.mod.length; i<len; ++i) {
         item = input.mod[i];
         encode.call(this, prop, item, input.trans, db, sg, preds, dirty);
@@ -68,25 +69,44 @@ proto.evaluate = function(input) {
     return input; // exit early if given request
   }
 
+  // Only marshall necessary data and signal values
+  function marshall(type) {
+    var vals = type === Deps.DATA ? "dataValues" : "signalValues",
+        en = (enter && enter[type].length), 
+        ex = (exit && exit[type].length),
+        up = (update && update[type].length);
+
+    if (!en && !up && !ex) return null;
+    return {
+      enter: (en && input.add.length) ? graph[vals](enter[type]) : null,
+      exit:  (ex && input.rem.length) ? graph[vals](exit[type])  : null,
+      update: (up && (input.add.length || input.mod.length)) ? 
+        graph[vals](update[type]) : null
+    };
+  }
+
+  db = marshall(Deps.DATA);
+  sg = marshall(Deps.SIGNALS);
+
   // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if (exit)   encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
+    if (exit) encode.call(this, exit, item, input.trans, db && db.exit, sg && sg.exit, preds, dirty); 
     if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if (!input.trans) items.pop();
   }
 
   for (i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
-    if (enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
-    if (update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
+    if (enter)  encode.call(this, enter,  item, input.trans, db && db.enter, sg && sg.enter, preds, dirty);
+    if (update) encode.call(this, update, item, input.trans, db && db.update, sg && sg.update, preds, dirty);
     item.status = require('./Builder').STATUS.UPDATE;
   }
 
   if (update) {
     for (i=0, len=input.mod.length; i<len; ++i) {
       item = input.mod[i];
-      encode.call(this, update, item, input.trans, db, sg, preds, dirty);
+      encode.call(this, update, item, input.trans, db && db.update, sg && sg.update, preds, dirty);
     }
   }
 

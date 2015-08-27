@@ -20,11 +20,11 @@ function properties(model, mark, spec) {
         reflow:  false
       };
       
-  code += "var o = trans ? {} : item, d=0, set=this.tpl.set, t;\n" +
+  code += "var o = trans ? {} : item, d=0, set=this.tpl.set, tmpl=signals||{}, t;\n" +
           // Stash for dl.template
-          "signals.datum  = item.datum;\n" + 
-          "signals.group  = group;\n" + 
-          "signals.parent = group.datum;\n";
+          "tmpl.datum  = item.datum;\n" + 
+          "tmpl.group  = group;\n" + 
+          "tmpl.parent = group.datum;\n";
 
   function handleDep(p) {
     if (ref[p] == null) return;
@@ -225,7 +225,7 @@ function valueRef(config, name, ref) {
       sgRef = null, fRef = null, sRef = null, tmpl = {};
 
   if (ref.template !== undefined) {
-    val = dl.template.source(ref.template, 'signals', tmpl);
+    val = dl.template.source(ref.template, 'tmpl', tmpl);
     dl.keys(tmpl).forEach(function(k) {
       var f = dl.field(k),
           a = f.shift();
