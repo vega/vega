@@ -23,10 +23,10 @@
     "chai": "^3.0.0",
     "istanbul": "latest",
     "jsdom": "^3.0.0",
-    "jshint": "2.8.x",
+    "jshint": "^2.8.0",
     "mocha": "^2.2.5",
     "tv4": "^1.1.12",
-    "uglify-js": "2.4.x",
+    "uglify-js": "^2.4.24",
     "watchify": "^3.2.3"
   },
   "main": "src/index.js",
