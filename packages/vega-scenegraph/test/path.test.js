@@ -2,10 +2,16 @@
 
 var assert = require('chai').assert;
 var Canvas = require('canvas');
+var BoundsContext = require('../src/util/BoundsContext');
 var Bounds = require('../src/util/Bounds');
 var parse = require('../src/path/parse');
-var bound = require('../src/path/bounds');
 var render = require('../src/path/render');
+var bc = BoundsContext();
+
+function bound(path, bounds) {
+  render(bc.bounds(bounds), path, 0, 0);
+  return bounds;
+}
 
 describe('path', function() {
 
@@ -56,10 +62,10 @@ describe('path', function() {
     { x1: -10, y1: 0, x2: 20, y2: 20 },
     { x1: 10, y1: 10, x2: 20, y2: 20 },
     { x1: 0, y1: 10, x2: 10, y2: 10 },
-    { x1: 10, y1: 10, x2: 50, y2: 10 },
-    { x1: 10, y1: 10, x2: 50, y2: 20 },
-    { x1: 0, y1: 10, x2: 40, y2: 10 },
-    { x1: 10, y1: 10, x2: 50, y2: 30 },
+    { x1: 10, y1: 10, x2: 30, y2: 10 },
+    { x1: 0, y1: 10, x2: 30, y2: 20 },
+    { x1: 0, y1: 10, x2: 20, y2: 10 },
+    { x1: 10, y1: 10, x2: 30, y2: 30 },
     { x1: -10, y1: 0, x2: 20, y2: 10 },
     { x1: 45.482203135575425,
       y1: 80,
@@ -104,10 +110,10 @@ describe('path', function() {
       for (var i=0; i<paths.length; ++i) {
         var p = parse(paths[i]);
         var b = bound(p, new Bounds());
-        assert.equal(b.x1, bounds[i].x1);
-        assert.equal(b.x2, bounds[i].x2);
-        assert.equal(b.y1, bounds[i].y1);
-        assert.equal(b.y2, bounds[i].y2);
+        assert.equal(b.x1, bounds[i].x1, paths[i] + ' ' + JSON.stringify(b));
+        assert.equal(b.x2, bounds[i].x2, paths[i] + ' ' + JSON.stringify(b));
+        assert.equal(b.y1, bounds[i].y1, paths[i] + ' ' + JSON.stringify(b));
+        assert.equal(b.y2, bounds[i].y2, paths[i] + ' ' + JSON.stringify(b));
       }
     });
   });
