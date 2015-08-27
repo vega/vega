@@ -1,16 +1,18 @@
-var Bounds = require('../util/Bounds'),
-    canvas = require('../util/canvas'),
-    svg = require('../util/svg'),
+var BoundsContext = require('./BoundsContext'),
+    Bounds = require('./Bounds'),
+    canvas = require('./canvas'),
+    svg = require('./svg'),
     font = require('./font'),
     paths = require('../path'),
     parse = paths.parse,
-    boundPath = paths.bounds,
+    drawPath = paths.render,
     areaPath = svg.path.area,
     linePath = svg.path.line,
     halfpi = Math.PI / 2,
     sqrt3 = Math.sqrt(3),
     tan30 = Math.tan(30 * Math.PI / 180),
-    g2D = null;
+    g2D = null,
+    bc = BoundsContext();
 
 function context() {
   return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
@@ -23,11 +25,11 @@ function strokeBounds(o, bounds) {
   return bounds;
 }
 
-function pathBounds(o, path, bounds) {
+function pathBounds(o, path, bounds, x, y) {
   if (path == null) {
     bounds.set(0, 0, 0, 0);
   } else {
-    boundPath(path, bounds);
+    drawPath(bc.bounds(bounds), path, x, y);
     strokeBounds(o, bounds);
   }
   return bounds;
@@ -35,7 +37,7 @@ function pathBounds(o, path, bounds) {
 
 function path(o, bounds) {
   var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
-  return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
+  return pathBounds(o, p, bounds, o.x, o.y);
 }
 
 function area(mark, bounds) {
