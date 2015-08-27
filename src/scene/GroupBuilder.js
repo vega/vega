@@ -182,14 +182,14 @@ function recurse(input) {
 }
 
 function scale(name, s) {
-  var group = this;
+  var group = this, scale = null;
   if (arguments.length === 2) return (group._scales[name] = s, s);
-  while (s == null) {
-    s = group._scales[name];
+  while (scale == null) {
+    scale = group._scales[name];
     group = group.mark ? group.mark.group : group._parent;
     if (!group) break;
   }
-  return s;
+  return scale;
 }
 
 function buildGroup(input, group) {
