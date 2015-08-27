@@ -69,8 +69,8 @@ proto.evaluate = function(input) {
     return input; // exit early if given request
   }
 
-  // Only marshall necessary data and signal values
-  function marshall(type) {
+  // Only marshal necessary data and signal values
+  function marshal(type) {
     var vals = type === Deps.DATA ? "dataValues" : "signalValues",
         en = (enter && enter[type].length), 
         ex = (exit && exit[type].length),
@@ -85,8 +85,8 @@ proto.evaluate = function(input) {
     };
   }
 
-  db = marshall(Deps.DATA);
-  sg = marshall(Deps.SIGNALS);
+  db = marshal(Deps.DATA);
+  sg = marshal(Deps.SIGNALS);
 
   // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
