@@ -24,6 +24,32 @@ prototype.rank = function() {
   return ++this._rank;
 };
 
+prototype.values = function(type, names, hash) {
+  var data = (type === Deps.SIGNALS ? this._signals : this._data),
+      n = (names !== undefined ? names : dl.keys(data)),
+      vals, i;
+
+  if (Array.isArray(n)) {
+    vals = hash || {};
+    for (i=0; i<n.length; ++i) {
+      vals[n[i]] = data[n[i]].values();
+    }
+    return vals;
+  } else {
+    return data[n].values();
+  }
+};
+
+// Retain for backwards-compatibility
+prototype.dataValues = function(names) {
+  return this.values(Deps.DATA, names);
+};
+
+// Retain for backwards-compatibility
+prototype.signalValues = function(names) {
+  return this.values(Deps.SIGNALS, names);
+};
+
 prototype.data = function(name, pipeline, facet) {
   var db = this._data;
   if (!arguments.length) {
@@ -45,37 +71,6 @@ prototype.signal = function(name, init) {
       this._signals[name];
   } else {
     return (this._signals[name] = new Signal(this, name, init));
-  }
-};
-
-prototype.dataValues = function(names) {
-  var data = this._data,
-      n = arguments.length ? names : dl.keys(data),
-      name, db, i;
-
-  if (Array.isArray(n)) {
-    for (db={}, i=0; i<n.length; ++i) {
-      db[(name=n[i])] = data[name].values();
-    }
-    return db;
-  } else {
-    return data[n].values();
-  }
-};
-
-// TODO: separate into signalValue and signalValues?
-prototype.signalValues = function(names) {
-  var sig = this._signals,
-      n = arguments.length ? names : dl.keys(sig),
-      vals, i;
-
-  if (Array.isArray(n)) {
-    for (vals={}, i=0; i<n.length; ++i) {
-      vals[n[i]] = sig[n[i]].value();
-    }
-    return vals;
-  } else {
-    return sig[n].value();
   }
 };
 
