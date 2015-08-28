@@ -29,6 +29,7 @@ function disconnect_cell(facet) {
   log.debug({}, ['disconnecting cell', this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
+  facet._graph.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);
 }
 
