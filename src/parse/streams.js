@@ -1,6 +1,7 @@
 var d3 = require('d3'),
     dl = require('datalib'),
     df = require('vega-dataflow'),
+    SIGNALS = df.Dependencies.SIGNALS,
     parseSignals = require('./signals'),
     selector = require('./events'),
     expr = require('./expr');
@@ -125,7 +126,7 @@ function parseStreams(view) {
         val, i, n, h;
 
     function invoke(f) {
-      return !f.fn(datum, evt, model.signalValues(f.globals));
+      return !f.fn(datum, evt, model.values(SIGNALS, f.globals));
     }
 
     for (i=0, n=handlers.length; i<n; ++i) {
@@ -133,7 +134,7 @@ function parseStreams(view) {
       filtered = h.filters.some(invoke);
       if (filtered) continue;
       
-      val = h.exp.fn(datum, evt, model.signalValues(h.exp.globals));
+      val = h.exp.fn(datum, evt, model.values(SIGNALS, h.exp.globals));
       if (h.spec.scale) {
         val = parseSignals.scale(model, h.spec, val, datum, evt);
       }
@@ -187,7 +188,7 @@ function parseStreams(view) {
     var n = new df.Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = exp.fn(null, null, model.signalValues(exp.globals));
+      var val = exp.fn(null, null, model.values(SIGNALS, exp.globals));
       if (spec.scale) {
         val = parseSignals.scale(model, spec, val);
       }

@@ -9,6 +9,7 @@ var dl = require('datalib'),
 function Facetor() {
   Aggregator.call(this);
   this._facet = null;
+  this._facetID = ++facetID;
 }
 
 var prototype = (Facetor.prototype = Object.create(Base));
@@ -51,7 +52,7 @@ prototype._newtuple = function(x, key) {
   var t = Base._newtuple.call(this, x);
   if (this._facet) {
     Tuple.set(t, 'key', key);
-    Tuple.set(t, '_facetID', 'vg_'+ (++facetID));
+    Tuple.set(t, '_facetID', this._facetID + '_' + key);
   }
   return t;
 };

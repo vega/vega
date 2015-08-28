@@ -37,7 +37,7 @@
     "d3.layout.cloud": "^1.1.1",
     "datalib": "^1.4.5",
     "topojson": "^1.6.19",
-    "vega-dataflow": "^1.2.1",
+    "vega-dataflow": "^1.2.2",
     "vega-expression": "^1.0.2",
     "vega-logging": "^1.0.1",
     "vega-scenegraph": "^1.0.8",

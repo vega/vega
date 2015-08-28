@@ -181,22 +181,22 @@ function recurse(input) {
   return input;
 }
 
-function scale(name, s) {
-  var group = this, scale = null;
-  if (arguments.length === 2) return (group._scales[name] = s, s);
-  while (scale == null) {
-    scale = group._scales[name];
+function scale(name, x) {
+  var group = this, s = null;
+  if (arguments.length === 2) return (group._scales[name] = x, x);
+  while (s == null) {
+    s = group._scales[name];
     group = group.mark ? group.mark.group : group._parent;
     if (!group) break;
   }
-  return scale;
+  return s;
 }
 
 function buildGroup(input, group) {
   log.debug(input, ["building group", group._id]);
 
   group._scales = group._scales || {};    
-  group.scale  = scale.bind(group);
+  group.scale = scale.bind(group);
 
   group.items = group.items || [];
   this._children[group._id] = this._children[group._id] || [];
