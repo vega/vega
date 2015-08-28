@@ -10,7 +10,7 @@ prototype.size = function() {
 };
 
 prototype.clear = function() {
-  this.nodes = [];
+  return (this.nodes = [], this);
 };
 
 prototype.peek = function() {
