@@ -23,6 +23,9 @@ prototype.value = function(val) {
   return (this._value = val, this);
 };
 
+// Alias to value, for shared API with DataSource
+prototype.values = prototype.value;
+
 prototype.verbose = function(v) {
   if (!arguments.length) return this._verbose;
   return (this._verbose = !!v, this);
