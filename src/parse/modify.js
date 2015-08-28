@@ -77,7 +77,11 @@ function parseModify(model, def, ds) {
   };
 
   if (signalName) node.dependency(Deps.SIGNALS, signalName);
-  if (predicate)  node.dependency(Deps.SIGNALS, predicate.signals);
+  
+  if (predicate) {
+    node.dependency(Deps.DATA, predicate.data);
+    node.dependency(Deps.SIGNALS, predicate.signals);
+  }
   
   return node;
 }
