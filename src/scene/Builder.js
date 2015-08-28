@@ -154,7 +154,7 @@ proto.disconnect = function() {
 
   function disconnectScales(scales) {
     for(var i=0, len=scales.length, s; i<len; ++i) {
-      if (!(s = builder._parent.scale(scales[i]))) return;
+      if (!(s = builder._parent.scale(scales[i]))) continue;
       s.removeListener(builder);
     }
   }
