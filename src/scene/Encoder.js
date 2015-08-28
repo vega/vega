@@ -69,49 +69,52 @@ proto.evaluate = function(input) {
     return input; // exit early if given request
   }
 
-  // Only marshal necessary data and signal values
-  function marshal(type) {
-    var vals = type === Deps.DATA ? "dataValues" : "signalValues",
-        en = (enter && enter[type].length), 
-        ex = (exit && exit[type].length),
-        up = (update && update[type].length);
-
-    if (!en && !up && !ex) return null;
-    return {
-      enter: (en && input.add.length) ? graph[vals](enter[type]) : null,
-      exit:  (ex && input.rem.length) ? graph[vals](exit[type])  : null,
-      update: (up && (input.add.length || input.mod.length)) ? 
-        graph[vals](update[type]) : null
-    };
-  }
-
-  db = marshal(Deps.DATA);
-  sg = marshal(Deps.SIGNALS);
+  db = marshal(Deps.DATA, input, graph, enter, update, exit);
+  sg = marshal(Deps.SIGNALS, input, graph, enter, update, exit);
 
   // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if (exit) encode.call(this, exit, item, input.trans, db && db.exit, sg && sg.exit, preds, dirty); 
+    if (exit) encode.call(this, exit, item, input.trans, db.exit, sg.exit, preds, dirty); 
     if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if (!input.trans) items.pop();
   }
 
+  var update_status = require('./Builder').STATUS.UPDATE;
   for (i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
-    if (enter)  encode.call(this, enter,  item, input.trans, db && db.enter, sg && sg.enter, preds, dirty);
-    if (update) encode.call(this, update, item, input.trans, db && db.update, sg && sg.update, preds, dirty);
-    item.status = require('./Builder').STATUS.UPDATE;
+    if (enter)  encode.call(this, enter,  item, input.trans, db.enter, sg.enter, preds, dirty);
+    if (update) encode.call(this, update, item, input.trans, db.update, sg.update, preds, dirty);
+    item.status = update_status;
   }
 
   if (update) {
     for (i=0, len=input.mod.length; i<len; ++i) {
       item = input.mod[i];
-      encode.call(this, update, item, input.trans, db && db.update, sg && sg.update, preds, dirty);
+      encode.call(this, update, item, input.trans, db.update, sg.update, preds, dirty);
     }
   }
 
   return input;
 };
+
+// Only marshal necessary data and signal values
+function marshal(type, input, graph, enter, update, exit) {
+  var vals = type === Deps.DATA ? 'dataValues' : 'signalValues',
+      add = input.add.length,
+      o = {};
+
+  if (add && enter && enter[type].length) {
+    o.enter = graph[vals](enter[type]);
+  }
+  if (input.rem.length && exit && exit[type].length) {
+    o.exit = graph[vals](exit[type]);
+  }
+  if ((input.mod.length || add) && update && update[type].length) {
+    o.update = graph[vals](update[type]);
+  }
+  return o;
+}
 
 function encode(prop, item, trans, db, sg, preds, dirty) {
   var enc = prop.encode,
