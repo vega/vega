@@ -139,6 +139,8 @@ prototype.addListener = function(l) {
 };
 
 prototype.removeListener = function(l) {
+  if (!this._listeners._ids[l._id]) return false;
+  
   var idx = this._listeners.indexOf(l),
       b = idx >= 0;
 
