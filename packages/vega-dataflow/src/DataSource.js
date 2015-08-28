@@ -65,9 +65,7 @@ prototype.update = function(where, field, func) {
 };
 
 prototype.values = function(data) {
-  if (!arguments.length) {
-    return this._collector ? this._collector.data() : this._data;
-  }
+  if (!arguments.length) return this._collector.data();
 
   // Replace backing data
   this._input.rem = this._data.slice();

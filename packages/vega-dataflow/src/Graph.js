@@ -37,54 +37,44 @@ prototype.data = function(name, pipeline, facet) {
   }
 };
 
-prototype.dataValues = function(names) {
-  var data = this._data, k;
-  if (!arguments.length) {
-    names = [];
-    for (k in data) names.push(k);
-  }
-  if (Array.isArray(names)) {
-    return names.reduce(function(db, name) {
-      return (db[name] = data[name].values(), db);
-    }, {});
-  } else {
-    return data[names].values();
-  }
-};
-
-function signal(names) {
-  var m = this;
-  if (Array.isArray(names)) {
-    return names.map(function(name) {
-      return m._signals[name];
-    });
-  } else {
-    return this._signals[names];
-  }
-}
-
 prototype.signal = function(name, init) {
   if (arguments.length === 1) {
-    return signal.call(this, name);
+    return Array.isArray(name) ?
+      name.map(function(n) { return m._signals[n]; }) :
+      this._signals[name];
   } else {
     return (this._signals[name] = new Signal(this, name, init));
   }
 };
 
+prototype.dataValues = function(names) {
+  var data = this._data,
+      n = arguments.length ? names : dl.keys(data),
+      name, db, i;
+
+  if (Array.isArray(n)) {
+    for (db={}, i=0; i<n.length; ++i) {
+      db[(name=n[i])] = data[name].values();
+    }
+    return db;
+  } else {
+    return data[n].values();
+  }
+};
+
 // TODO: separate into signalValue and signalValues?
 prototype.signalValues = function(names) {
-  if (!arguments.length) {
-    names = [];
-    for (var k in this._signals) names.push(k);
-  }
-  if (Array.isArray(names)) {
-    var values = {};
-    for (var i=0, n=names.length; i<n; ++i) {
-      values[names[i]] = this._signals[names[i]].value();
+  var sig = this._signals,
+      n = arguments.length ? names : dl.keys(sig),
+      vals, i;
+
+  if (Array.isArray(n)) {
+    for (vals={}, i=0; i<n.length; ++i) {
+      vals[n[i]] = sig[n[i]].value();
     }
-    return values;
+    return vals;
   } else {
-    return this._signals[names].value();
+    return sig[n].value();
   }
 };
 
@@ -113,9 +103,10 @@ prototype.propagate = function(pulse, node, stamp) {
   // of the dataflow graph during a propagation (e.g., when creating
   // a new inline datasource).
   var pq = new Heap(function(a, b) {
-    // Topological sort on qrank as rank may change during propagation.
-    return a.qrank() - b.qrank();
-  }); 
+    // Sort on qrank (queue-rank).
+    // Rank can change during propagation due to rewiring.
+    return a._qrank - b._qrank;
+  });
 
   if (pulse.stamp) throw Error('Pulse already has a non-zero stamp.');
 
