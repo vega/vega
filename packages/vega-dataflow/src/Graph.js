@@ -39,6 +39,7 @@ prototype.data = function(name, pipeline, facet) {
 
 prototype.signal = function(name, init) {
   if (arguments.length === 1) {
+    var m = this;
     return Array.isArray(name) ?
       name.map(function(n) { return m._signals[n]; }) :
       this._signals[name];
