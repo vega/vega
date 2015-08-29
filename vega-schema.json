@@ -1576,6 +1576,7 @@
               "lower",
               "slice",
               "substring",
+              "regexp",
               "test",
               "if",
               "eventItem",

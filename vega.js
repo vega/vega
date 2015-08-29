@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.2.0',
+  version: '2.2.1',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -4745,9 +4745,7 @@ prototype.update = function(where, field, func) {
 };
 
 prototype.values = function(data) {
-  if (!arguments.length) {
-    return this._collector ? this._collector.data() : this._data;
-  }
+  if (!arguments.length) return this._collector.data();
 
   // Replace backing data
   this._input.rem = this._data.slice();
@@ -4995,6 +4993,32 @@ prototype.rank = function() {
   return ++this._rank;
 };
 
+prototype.values = function(type, names, hash) {
+  var data = (type === Deps.SIGNALS ? this._signals : this._data),
+      n = (names !== undefined ? names : dl.keys(data)),
+      vals, i;
+
+  if (Array.isArray(n)) {
+    vals = hash || {};
+    for (i=0; i<n.length; ++i) {
+      vals[n[i]] = data[n[i]].values();
+    }
+    return vals;
+  } else {
+    return data[n].values();
+  }
+};
+
+// Retain for backwards-compatibility
+prototype.dataValues = function(names) {
+  return this.values(Deps.DATA, names);
+};
+
+// Retain for backwards-compatibility
+prototype.signalValues = function(names) {
+  return this.values(Deps.SIGNALS, names);
+};
+
 prototype.data = function(name, pipeline, facet) {
   var db = this._data;
   if (!arguments.length) {
@@ -5008,54 +5032,14 @@ prototype.data = function(name, pipeline, facet) {
   }
 };
 
-prototype.dataValues = function(names) {
-  var data = this._data, k;
-  if (!arguments.length) {
-    names = [];
-    for (k in data) names.push(k);
-  }
-  if (Array.isArray(names)) {
-    return names.reduce(function(db, name) {
-      return (db[name] = data[name].values(), db);
-    }, {});
-  } else {
-    return data[names].values();
-  }
-};
-
-function signal(names) {
-  var m = this;
-  if (Array.isArray(names)) {
-    return names.map(function(name) {
-      return m._signals[name];
-    });
-  } else {
-    return this._signals[names];
-  }
-}
-
 prototype.signal = function(name, init) {
   if (arguments.length === 1) {
-    return signal.call(this, name);
+    var m = this;
+    return Array.isArray(name) ?
+      name.map(function(n) { return m._signals[n]; }) :
+      this._signals[name];
   } else {
     return (this._signals[name] = new Signal(this, name, init));
-  }
-};
-
-// TODO: separate into signalValue and signalValues?
-prototype.signalValues = function(names) {
-  if (!arguments.length) {
-    names = [];
-    for (var k in this._signals) names.push(k);
-  }
-  if (Array.isArray(names)) {
-    var values = {};
-    for (var i=0, n=names.length; i<n; ++i) {
-      values[names[i]] = this._signals[names[i]].value();
-    }
-    return values;
-  } else {
-    return this._signals[names].value();
   }
 };
 
@@ -5084,9 +5068,10 @@ prototype.propagate = function(pulse, node, stamp) {
   // of the dataflow graph during a propagation (e.g., when creating
   // a new inline datasource).
   var pq = new Heap(function(a, b) {
-    // Topological sort on qrank as rank may change during propagation.
-    return a.qrank() - b.qrank();
-  }); 
+    // Sort on qrank (queue-rank).
+    // Rank can change during propagation due to rewiring.
+    return a._qrank - b._qrank;
+  });
 
   if (pulse.stamp) throw Error('Pulse already has a non-zero stamp.');
 
@@ -5218,7 +5203,7 @@ prototype.size = function() {
 };
 
 prototype.clear = function() {
-  this.nodes = [];
+  return (this.nodes = [], this);
 };
 
 prototype.peek = function() {
@@ -5444,6 +5429,8 @@ prototype.addListener = function(l) {
 };
 
 prototype.removeListener = function(l) {
+  if (!this._listeners._ids[l._id]) return false;
+  
   var idx = this._listeners.indexOf(l),
       b = idx >= 0;
 
@@ -5510,6 +5497,9 @@ prototype.value = function(val) {
   if (!arguments.length) return this._value;
   return (this._value = val, this);
 };
+
+// Alias to value, for shared API with DataSource
+prototype.values = prototype.value;
 
 prototype.verbose = function(v) {
   if (!arguments.length) return this._verbose;
@@ -5801,10 +5791,16 @@ module.exports = function(codegen) {
       '()' :
       '(' + args.slice(1).map(codegen).join(',') + ')');
   }
-  
-  var DATE = 'new Date';
-  var STRING = 'String';
-  var REGEXP = 'RegExp';
+
+  function fn(name, cast, type) {
+    return function(args) {
+      return fncall(name, args, cast, type);
+    };
+  }
+
+  var DATE = 'new Date',
+      STRING = 'String',
+      REGEXP = 'RegExp';
 
   return {
     // MATH functions
@@ -5839,95 +5835,44 @@ module.exports = function(codegen) {
     },
 
     // DATE functions
-    'now':      'Date.now',
-    'datetime': 'new Date',
-    'date': function(args) {
-        return fncall('getDate', args, DATE, 0);
-      },
-    'day': function(args) {
-        return fncall('getDay', args, DATE, 0);
-      },
-    'year': function(args) {
-        return fncall('getFullYear', args, DATE, 0);
-      },
-    'month': function(args) {
-        return fncall('getMonth', args, DATE, 0);
-      },
-    'hours': function(args) {
-        return fncall('getHours', args, DATE, 0);
-      },
-    'minutes': function(args) {
-        return fncall('getMinutes', args, DATE, 0);
-      },
-    'seconds': function(args) {
-        return fncall('getSeconds', args, DATE, 0);
-      },
-    'milliseconds': function(args) {
-        return fncall('getMilliseconds', args, DATE, 0);
-      },
-    'time': function(args) {
-        return fncall('getTime', args, DATE, 0);
-      },
-    'timezoneoffset': function(args) {
-        return fncall('getTimezoneOffset', args, DATE, 0);
-      },
-    'utcdate': function(args) {
-        return fncall('getUTCDate', args, DATE, 0);
-      },
-    'utcday': function(args) {
-        return fncall('getUTCDay', args, DATE, 0);
-      },
-    'utcyear': function(args) {
-        return fncall('getUTCFullYear', args, DATE, 0);
-      },
-    'utcmonth': function(args) {
-        return fncall('getUTCMonth', args, DATE, 0);
-      },
-    'utchours': function(args) {
-        return fncall('getUTCHours', args, DATE, 0);
-      },
-    'utcminutes': function(args) {
-        return fncall('getUTCMinutes', args, DATE, 0);
-      },
-    'utcseconds': function(args) {
-        return fncall('getUTCSeconds', args, DATE, 0);
-      },
-    'utcmilliseconds': function(args) {
-        return fncall('getUTCMilliseconds', args, DATE, 0);
-      },
+    'now':             'Date.now',
+    'datetime':        DATE,
+    'date':            fn('getDate', DATE, 0),
+    'day':             fn('getDay', DATE, 0),
+    'year':            fn('getFullYear', DATE, 0),
+    'month':           fn('getMonth', DATE, 0),
+    'hours':           fn('getHours', DATE, 0),
+    'minutes':         fn('getMinutes', DATE, 0),
+    'seconds':         fn('getSeconds', DATE, 0),
+    'milliseconds':    fn('getMilliseconds', DATE, 0),
+    'time':            fn('getTime', DATE, 0),
+    'timezoneoffset':  fn('getTimezoneOffset', DATE, 0),
+    'utcdate':         fn('getUTCDate', DATE, 0),
+    'utcday':          fn('getUTCDay', DATE, 0),
+    'utcyear':         fn('getUTCFullYear', DATE, 0),
+    'utcmonth':        fn('getUTCMonth', DATE, 0),
+    'utchours':        fn('getUTCHours', DATE, 0),
+    'utcminutes':      fn('getUTCMinutes', DATE, 0),
+    'utcseconds':      fn('getUTCSeconds', DATE, 0),
+    'utcmilliseconds': fn('getUTCMilliseconds', DATE, 0),
 
     // shared sequence functions
-    'length': function(args) {
-        return fncall('length', args, null, -1);
-      },
-    'indexof': function(args) {
-        return fncall('indexOf', args, null);
-      },
-    'lastindexof': function(args) {
-        return fncall('lastIndexOf', args, null);
-      },
+    'length':      fn('length', null, -1),
+    'indexof':     fn('indexOf', null),
+    'lastindexof': fn('lastIndexOf', null),
 
     // STRING functions
-    'parseFloat': 'parseFloat',
-    'parseInt': 'parseInt',
-    'upper': function(args) {
-        return fncall('toUpperCase', args, STRING, 0);
-      },
-    'lower': function(args) {
-        return fncall('toLowerCase', args, STRING, 0);
-      },
-    'slice': function(args) {
-        return fncall('slice', args, STRING);
-      },
-    'substring': function(args) {
-        return fncall('substring', args, STRING);
-      },
+    'parseFloat':  'parseFloat',
+    'parseInt':    'parseInt',
+    'upper':       fn('toUpperCase', STRING, 0),
+    'lower':       fn('toLowerCase', STRING, 0),
+    'slice':       fn('slice', STRING),
+    'substring':   fn('substring', STRING),
 
     // REGEXP functions
-    'test': function(args) {
-        return fncall('test', args, REGEXP);
-      },
-    
+    'regexp':  REGEXP,
+    'test':    fn('test', REGEXP),
+
     // Control Flow functions
     'if': function(args) {
         if (args.length < 3)
@@ -8344,7 +8289,7 @@ module.exports = {
   toJSON:     require('./util/scene').toJSON,
   fromJSON:   require('./util/scene').fromJSON
 };
-},{"./path":49,"./render":69,"./util/Bounds":75,"./util/Gradient":76,"./util/Item":78,"./util/bound":79,"./util/scene":83}],47:[function(require,module,exports){
+},{"./path":48,"./render":68,"./util/Bounds":74,"./util/Gradient":76,"./util/Item":78,"./util/bound":79,"./util/scene":83}],47:[function(require,module,exports){
 var segmentCache = {},
     bezierCache = {},
     join = [].join;
@@ -8460,272 +8405,12 @@ module.exports = {
 };
 
 },{}],48:[function(require,module,exports){
-var arc = require('./arc');
-
-module.exports = function(path, bounds) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY,
-      i, len;
-
-  for (i=0, len=path.length; i<len; ++i) {
-    current = path[i];
-
-    switch (current[0]) { // command
-
-      case 'l': // lineto, relative
-        x += current[1];
-        y += current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'L': // lineto, absolute
-        x = current[1];
-        y = current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'h': // horizontal lineto, relative
-        x += current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'H': // horizontal lineto, absolute
-        x = current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'v': // vertical lineto, relative
-        y += current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'V': // verical lineto, absolute
-        y = current[1];
-        bounds.add(x, y);
-        break;
-
-      case 'm': // moveTo, relative
-        x += current[1];
-        y += current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'M': // moveTo, absolute
-        x = current[1];
-        y = current[2];
-        bounds.add(x, y);
-        break;
-
-      case 'c': // bezierCurveTo, relative
-        tempX = x + current[5];
-        tempY = y + current[6];
-        controlX = x + current[3];
-        controlY = y + current[4];
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'C': // bezierCurveTo, absolute
-        x = current[5];
-        y = current[6];
-        controlX = current[3];
-        controlY = current[4];
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(x, y);
-        break;
-
-      case 's': // shorthand cubic bezierCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-        bounds.add(controlX, controlY);
-        bounds.add(x + current[1], y + current[2]);
-        bounds.add(tempX, tempY);
-
-        // set control point to 2nd one of this command
-        // the first control point is assumed to be the reflection of
-        // the second control point on the previous command relative
-        // to the current point.
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        break;
-
-      case 'S': // shorthand cubic bezierCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-        // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
-        x = tempX;
-        y = tempY;
-        bounds.add(current[1], current[2]);
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        // set control point to 2nd one of this command
-        // the first control point is assumed to be the reflection of 
-        // the second control point on the previous command relative
-        // to the current point.
-        controlX = current[1];
-        controlY = current[2];
-
-        break;
-
-      case 'q': // quadraticCurveTo, relative
-        // transform to absolute x,y
-        tempX = x + current[3];
-        tempY = y + current[4];
-
-        controlX = x + current[1];
-        controlY = y + current[2];
-
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'Q': // quadraticCurveTo, absolute
-        tempX = current[3];
-        tempY = current[4];
-
-        x = tempX;
-        y = tempY;
-        controlX = current[1];
-        controlY = current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 't': // shorthand quadraticCurveTo, relative
-
-        // transform to absolute x,y
-        tempX = x + current[1];
-        tempY = y + current[2];
-
-        if (previous[0].match(/[QqTt]/) === null) {
-          // If there is no previous command or if the previous command was not a Q, q, T or t,
-          // assume the control point is coincident with the current point
-          controlX = x;
-          controlY = y;
-        }
-        else if (previous[0] === 't') {
-          // calculate reflection of previous control points for t
-          controlX = 2 * x - tempControlX;
-          controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
-          // calculate reflection of previous control points for q
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-        }
-
-        tempControlX = controlX;
-        tempControlY = controlY;
-
-        x = tempX;
-        y = tempY;
-        controlX = x + current[1];
-        controlY = y + current[2];
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'T':
-        tempX = current[1];
-        tempY = current[2];
-
-        // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
-
-        x = tempX;
-        y = tempY;
-        bounds.add(controlX, controlY);
-        bounds.add(tempX, tempY);
-        break;
-
-      case 'a':
-        boundArc(x, y, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6] + x,
-          current[7] + y
-        ], bounds);
-        x += current[6];
-        y += current[7];
-        break;
-
-      case 'A':
-        boundArc(x, y, [
-          current[1],
-          current[2],
-          current[3],
-          current[4],
-          current[5],
-          current[6],
-          current[7]
-        ], bounds);
-        x = current[6];
-        y = current[7];
-        break;
-
-      case 'z':
-      case 'Z':
-        break;
-    }
-    previous = current;
-  }
-  return bounds;
-};
-
-function boundArc(x, y, coords, bounds) {
-  var seg = arc.segments(
-    coords[5], // ex
-    coords[6], // ey
-    coords[0], // rx
-    coords[1], // ry
-    coords[3], // large
-    coords[4], // sweep
-    coords[2], // rot
-    x, y
-  );
-  for (var i=0; i<seg.length; ++i) {
-    var bez = arc.bezier(seg[i]);
-    bounds.add(bez[0], bez[1]);
-    bounds.add(bez[2], bez[3]);
-    bounds.add(bez[4], bez[5]);
-  }
-}
-
-},{"./arc":47}],49:[function(require,module,exports){
 module.exports = {
   parse:  require('./parse'),
-  render: require('./render'),
-  bounds: require('./bounds')
+  render: require('./render')
 };
 
-},{"./bounds":48,"./parse":50,"./render":51}],50:[function(require,module,exports){
+},{"./parse":49,"./render":50}],49:[function(require,module,exports){
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
 var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
     regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)([-+])/g, /\s|,|###/];
@@ -8776,7 +8461,7 @@ module.exports = function(pathstr) {
   return result;
 };
 
-},{}],51:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
@@ -9072,7 +8757,7 @@ function drawArc(g, x, y, coords) {
   }
 }
 
-},{"./arc":47}],52:[function(require,module,exports){
+},{"./arc":47}],51:[function(require,module,exports){
 function Handler() {
   this._active = null;
   this._handlers = {};
@@ -9122,7 +8807,7 @@ prototype.eventName = function(name) {
 };
 
 module.exports = Handler;
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 function Renderer() {
   this._el = null;
   this._bgcolor = null;
@@ -9157,7 +8842,7 @@ prototype.render = function(/*scene, items*/) {
 };
 
 module.exports = Renderer;
-},{}],54:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler'),
     marks = require('./marks');
@@ -9331,7 +9016,7 @@ prototype.pick = function(scene, x, y, gx, gy) {
 
 module.exports = CanvasHandler;
 
-},{"../../util/dom":81,"../Handler":52,"./marks":61}],55:[function(require,module,exports){
+},{"../../util/dom":81,"../Handler":51,"./marks":60}],54:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Bounds = require('../../util/Bounds'),
     ImageLoader = require('../../util/ImageLoader'),
@@ -9469,12 +9154,12 @@ prototype.renderAsync = function(scene) {
 
 module.exports = CanvasRenderer;
 
-},{"../../util/Bounds":75,"../../util/ImageLoader":77,"../../util/canvas":80,"../../util/dom":81,"../Renderer":53,"./marks":61}],56:[function(require,module,exports){
+},{"../../util/Bounds":74,"../../util/ImageLoader":77,"../../util/canvas":80,"../../util/dom":81,"../Renderer":52,"./marks":60}],55:[function(require,module,exports){
 module.exports = {
   Handler:  require('./CanvasHandler'),
   Renderer: require('./CanvasRenderer')
 };
-},{"./CanvasHandler":54,"./CanvasRenderer":55}],57:[function(require,module,exports){
+},{"./CanvasHandler":53,"./CanvasRenderer":54}],56:[function(require,module,exports){
 var util = require('./util');
 var halfpi = Math.PI / 2;
 
@@ -9496,7 +9181,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":68}],58:[function(require,module,exports){
+},{"./util":67}],57:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -9531,7 +9216,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":50,"../../../path/render":51,"../../../util/svg":84,"./util":68}],59:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":84,"./util":67}],58:[function(require,module,exports){
 var util = require('./util'),
     rect = require('./rect');
 
@@ -9625,7 +9310,7 @@ module.exports = {
   pick: pick
 };
 
-},{"./rect":64,"./util":68}],60:[function(require,module,exports){
+},{"./rect":63,"./util":67}],59:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -9663,7 +9348,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":68}],61:[function(require,module,exports){
+},{"./util":67}],60:[function(require,module,exports){
 module.exports = {
   arc:    require('./arc'),
   area:   require('./area'),
@@ -9677,7 +9362,7 @@ module.exports = {
   text:   require('./text')
 };
 
-},{"./arc":57,"./area":58,"./group":59,"./image":60,"./line":62,"./path":63,"./rect":64,"./rule":65,"./symbol":66,"./text":67}],62:[function(require,module,exports){
+},{"./arc":56,"./area":57,"./group":58,"./image":59,"./line":61,"./path":62,"./rect":63,"./rule":64,"./symbol":65,"./text":66}],61:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -9712,7 +9397,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":50,"../../../path/render":51,"../../../util/svg":84,"./util":68}],63:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":84,"./util":67}],62:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -9728,7 +9413,7 @@ module.exports = {
   pick: util.pickPath(path)
 };
 
-},{"../../../path/parse":50,"../../../path/render":51,"./util":68}],64:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"./util":67}],63:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -9763,7 +9448,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":68}],65:[function(require,module,exports){
+},{"./util":67}],64:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -9820,7 +9505,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"./util":68}],66:[function(require,module,exports){
+},{"./util":67}],65:[function(require,module,exports){
 var util = require('./util');
 
 var sqrt3 = Math.sqrt(3),
@@ -9894,7 +9579,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":68}],67:[function(require,module,exports){
+},{"./util":67}],66:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
     font = require('../../../util/font'),
@@ -9967,7 +9652,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../util/Bounds":75,"../../../util/bound":79,"../../../util/font":82,"./util":68}],68:[function(require,module,exports){
+},{"../../../util/Bounds":74,"../../../util/bound":79,"../../../util/font":82,"./util":67}],67:[function(require,module,exports){
 function drawPathOne(path, g, o, items) {
   if (path(g, items)) return;
 
@@ -10116,13 +9801,13 @@ module.exports = {
   gradient: gradient
 };
 
-},{}],69:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = {
   'canvas': require('./canvas'),
   'svg':    require('./svg')
 };
 
-},{"./canvas":56,"./svg":73}],70:[function(require,module,exports){
+},{"./canvas":55,"./svg":72}],69:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
@@ -10188,7 +9873,7 @@ prototype.off = function(type, handler) {
 
 module.exports = SVGHandler;
 
-},{"../../util/dom":81,"../Handler":52}],71:[function(require,module,exports){
+},{"../../util/dom":81,"../Handler":51}],70:[function(require,module,exports){
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
     font = require('../../util/font'),
@@ -10610,7 +10295,7 @@ prototype.style = function(el, o) {
 
 module.exports = SVGRenderer;
 
-},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/font":82,"../../util/svg":84,"../Renderer":53,"./marks":74}],72:[function(require,module,exports){
+},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/font":82,"../../util/svg":84,"../Renderer":52,"./marks":73}],71:[function(require,module,exports){
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
@@ -10855,7 +10540,7 @@ function escape_text(s) {
 
 module.exports = SVGStringRenderer;
 
-},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/font":82,"../../util/svg":84,"../Renderer":53,"./marks":74}],73:[function(require,module,exports){
+},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/font":82,"../../util/svg":84,"../Renderer":52,"./marks":73}],72:[function(require,module,exports){
 module.exports = {
   Handler:  require('./SVGHandler'),
   Renderer: require('./SVGRenderer'),
@@ -10863,7 +10548,7 @@ module.exports = {
     Renderer : require('./SVGStringRenderer')
   }
 };
-},{"./SVGHandler":70,"./SVGRenderer":71,"./SVGStringRenderer":72}],74:[function(require,module,exports){
+},{"./SVGHandler":69,"./SVGRenderer":70,"./SVGStringRenderer":71}],73:[function(require,module,exports){
 var font = require('../../util/font'),
     SVG = require('../../util/svg'),
     textAlign = SVG.textAlign,
@@ -11010,7 +10695,7 @@ module.exports = {
   }
 };
 
-},{"../../util/font":82,"../../util/svg":84}],75:[function(require,module,exports){
+},{"../../util/font":82,"../../util/svg":84}],74:[function(require,module,exports){
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
@@ -11129,6 +10814,32 @@ prototype.height = function() {
 };
 
 module.exports = Bounds;
+
+},{}],75:[function(require,module,exports){
+module.exports = function(b) {
+  function noop() { }
+  function add(x,y) { b.add(x, y); }
+
+  return {
+    bounds: function(_) {
+      if (!arguments.length) return b;
+      return (b = _, this);
+    },
+    beginPath: noop,
+    closePath: noop,
+    moveTo: add,
+    lineTo: add,
+    quadraticCurveTo: function(x1, y1, x2, y2) {
+      b.add(x1, y1);
+      b.add(x2, y2);
+    },
+    bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
+      b.add(x1, y1);
+      b.add(x2, y2);
+      b.add(x3, y3);
+    }
+  };
+};
 
 },{}],76:[function(require,module,exports){
 var gradient_id = 0;
@@ -11284,19 +10995,21 @@ prototype.touch = function() {
 
 module.exports = Item;
 },{}],79:[function(require,module,exports){
-var Bounds = require('../util/Bounds'),
-    canvas = require('../util/canvas'),
-    svg = require('../util/svg'),
+var BoundsContext = require('./BoundsContext'),
+    Bounds = require('./Bounds'),
+    canvas = require('./canvas'),
+    svg = require('./svg'),
     font = require('./font'),
     paths = require('../path'),
     parse = paths.parse,
-    boundPath = paths.bounds,
+    drawPath = paths.render,
     areaPath = svg.path.area,
     linePath = svg.path.line,
     halfpi = Math.PI / 2,
     sqrt3 = Math.sqrt(3),
     tan30 = Math.tan(30 * Math.PI / 180),
-    g2D = null;
+    g2D = null,
+    bc = BoundsContext();
 
 function context() {
   return g2D || (g2D = canvas.instance(1,1).getContext('2d'));
@@ -11309,11 +11022,11 @@ function strokeBounds(o, bounds) {
   return bounds;
 }
 
-function pathBounds(o, path, bounds) {
+function pathBounds(o, path, bounds, x, y) {
   if (path == null) {
     bounds.set(0, 0, 0, 0);
   } else {
-    boundPath(path, bounds);
+    drawPath(bc.bounds(bounds), path, x, y);
     strokeBounds(o, bounds);
   }
   return bounds;
@@ -11321,7 +11034,7 @@ function pathBounds(o, path, bounds) {
 
 function path(o, bounds) {
   var p = o.path ? o.pathCache || (o.pathCache = parse(o.path)) : null;
-  return pathBounds(o, p, bounds).translate(o.x || 0, o.y || 0);
+  return pathBounds(o, p, bounds, o.x, o.y);
 }
 
 function area(mark, bounds) {
@@ -11576,7 +11289,7 @@ module.exports = {
   group: group
 };
 
-},{"../path":49,"../util/Bounds":75,"../util/canvas":80,"../util/svg":84,"./font":82}],80:[function(require,module,exports){
+},{"../path":48,"./Bounds":74,"./BoundsContext":75,"./canvas":80,"./font":82,"./svg":84}],80:[function(require,module,exports){
 (function (global){
 function instance(w, h) {
   w = w || 1;
@@ -12120,6 +11833,7 @@ var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "unde
     df = require('vega-dataflow'),
     sg = require('vega-scenegraph').render,
     log = require('vega-logging'),
+    Deps = df.Dependencies,
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition');
@@ -12195,7 +11909,7 @@ function streaming(src) {
 
 prototype.data = function(data) {
   var v = this;
-  if (!arguments.length) return v._model.dataValues();
+  if (!arguments.length) return v._model.values();
   else if (dl.isString(data)) return streaming.call(v, data);
   else if (dl.isObject(data)) {
     dl.keys(data).forEach(function(k) {
@@ -12212,8 +11926,11 @@ prototype.signal = function(name, value) {
       streamer = this._streamer,
       setter = name; 
 
-  if (!arguments.length) return m.signalValues();
-  else if (arguments.length == 1 && dl.isString(name)) return m.signalValues(name);
+  if (!arguments.length) {
+    return m.values(Deps.SIGNALS);
+  } else if (arguments.length == 1 && dl.isString(name)) {
+    return m.values(Deps.SIGNALS, name);
+  }
 
   if (arguments.length == 2) {
     setter = {};
@@ -12421,7 +12138,7 @@ function build() {
   return (v._model.scene(v._renderNode), true);  
 }
 
-prototype.update = function(opt) {   
+prototype.update = function(opt) {
   opt = opt || {};
   var v = this,
       trans = opt.duration ? new Transition(opt.duration, opt.ease) : null;
@@ -14106,6 +13823,8 @@ var Types = {
   CLEAR:  "clear"
 };
 
+var EMPTY = [];
+
 var filter = function(field, value, src, dest) {
   for(var i = src.length-1; i >= 0; --i) {
     if (src[i][field] == value)
@@ -14122,8 +13841,9 @@ function parseModify(model, def, ds) {
 
   node.evaluate = function(input) {
     if (predicate !== null) {  // TODO: predicate args
-      var db = model.dataValues(predicate.data||[]);
-      reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
+      var db = model.values(Deps.DATA, predicate.data || EMPTY),
+          sg = model.values(Deps.SIGNALS, predicate.signals || EMPTY);
+      reeval = predicate.call(predicate, {}, db, sg, model._predicates);
     }
 
     log.debug(input, [def.type+"ing", reeval]);
@@ -14171,7 +13891,11 @@ function parseModify(model, def, ds) {
   };
 
   if (signalName) node.dependency(Deps.SIGNALS, signalName);
-  if (predicate)  node.dependency(Deps.SIGNALS, predicate.signals);
+  
+  if (predicate) {
+    node.dependency(Deps.DATA, predicate.data);
+    node.dependency(Deps.SIGNALS, predicate.signals);
+  }
   
   return node;
 }
@@ -14408,11 +14132,11 @@ function properties(model, mark, spec) {
         reflow:  false
       };
       
-  code += "var o = trans ? {} : item, d=0, set=this.tpl.set, t;\n" +
+  code += "var o = trans ? {} : item, d=0, set=this.tpl.set, tmpl=signals||{}, t;\n" +
           // Stash for dl.template
-          "signals.datum  = item.datum;\n" + 
-          "signals.group  = group;\n" + 
-          "signals.parent = group.datum;\n";
+          "tmpl.datum  = item.datum;\n" + 
+          "tmpl.group  = group;\n" + 
+          "tmpl.parent = group.datum;\n";
 
   function handleDep(p) {
     if (ref[p] == null) return;
@@ -14613,7 +14337,7 @@ function valueRef(config, name, ref) {
       sgRef = null, fRef = null, sRef = null, tmpl = {};
 
   if (ref.template !== undefined) {
-    val = dl.template.source(ref.template, 'signals', tmpl);
+    val = dl.template.source(ref.template, 'tmpl', tmpl);
     dl.keys(tmpl).forEach(function(k) {
       var f = dl.field(k),
           a = f.shift();
@@ -14750,7 +14474,7 @@ module.exports = properties;
 
 },{"datalib":24,"vega-dataflow":39,"vega-logging":45}],103:[function(require,module,exports){
 var dl = require('datalib'),
-    Deps = require('vega-dataflow').Dependencies,
+    SIGNALS = require('vega-dataflow').Dependencies.SIGNALS,
     expr = require('./expr');
 
 var RESERVED = ['datum', 'event', 'signals']
@@ -14783,7 +14507,7 @@ function parseSignals(model, spec) {
         }
         return model.doNotPropagate;        
       };
-      signal.dependency(Deps.SIGNALS, s.expr.globals);
+      signal.dependency(SIGNALS, s.expr.globals);
       s.expr.globals.forEach(function(dep) {
         model.signal(dep).addListener(signal);
       });
@@ -14795,7 +14519,7 @@ function parseSignals(model, spec) {
 
 function exprVal(model, spec) {
   var e = spec.expr,
-      val = e.fn(null, null, model.signalValues(e.globals));
+      val = e.fn(null, null, model.values(SIGNALS, e.globals));
   return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
@@ -14809,7 +14533,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
       scope = model.signalRef(scope.signal);
     } else if (dl.isString(scope)) { // Scope is an expression
       e = def._expr = (def._expr || expr(scope));
-      scope = e.fn(datum, evt, model.signalValues(e.globals));
+      scope = e.fn(datum, evt, model.values(SIGNALS, e.globals));
     }
   }
 
@@ -14884,6 +14608,7 @@ module.exports = parseSpec;
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
     df = require('vega-dataflow'),
+    SIGNALS = df.Dependencies.SIGNALS,
     parseSignals = require('./signals'),
     selector = require('./events'),
     expr = require('./expr');
@@ -15008,7 +14733,7 @@ function parseStreams(view) {
         val, i, n, h;
 
     function invoke(f) {
-      return !f.fn(datum, evt, model.signalValues(f.globals));
+      return !f.fn(datum, evt, model.values(SIGNALS, f.globals));
     }
 
     for (i=0, n=handlers.length; i<n; ++i) {
@@ -15016,7 +14741,7 @@ function parseStreams(view) {
       filtered = h.filters.some(invoke);
       if (filtered) continue;
       
-      val = h.exp.fn(datum, evt, model.signalValues(h.exp.globals));
+      val = h.exp.fn(datum, evt, model.values(SIGNALS, h.exp.globals));
       if (h.spec.scale) {
         val = parseSignals.scale(model, h.spec, val, datum, evt);
       }
@@ -15070,7 +14795,7 @@ function parseStreams(view) {
     var n = new df.Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = exp.fn(null, null, model.signalValues(exp.globals));
+      var val = exp.fn(null, null, model.values(SIGNALS, exp.globals));
       if (spec.scale) {
         val = parseSignals.scale(model, spec, val);
       }
@@ -15207,6 +14932,8 @@ var Status = Builder.STATUS = {
   EXIT:   'exit'
 };
 
+var CONNECTED = 1, DISCONNECTED = 2;
+
 var proto = (Builder.prototype = new Node());
 
 proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
@@ -15219,6 +14946,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
   this._ds    = dl.isString(this._from) ? graph.data(this._from) : null;
   this._map   = {};
+  this._status = null; // Connected or disconnected?
 
   mark.def = def;
   mark.marktype = def.type;
@@ -15328,20 +15056,26 @@ proto.connect = function() {
     else this._bounder.addListener(this._parent._collector);
   }
 
-  return this;
+  return (this._status = CONNECTED, this);
 };
 
 proto.disconnect = function() {
   var builder = this;
   if (!this._listeners.length) return this;
 
+  function disconnectScales(scales) {
+    for(var i=0, len=scales.length, s; i<len; ++i) {
+      if (!(s = builder._parent.scale(scales[i]))) continue;
+      s.removeListener(builder);
+    }
+  }
+
   Node.prototype.disconnect.call(this);
   this._graph.disconnect(this.pipeline());
-  this._encoder._scales.forEach(function(s) {
-    if (!(s = builder._parent.scale(s))) return;
-    s.removeListener(builder);
-  });
-  return this;
+  disconnectScales(this._encoder._scales);
+  disconnectScales(dl.keys(this._mark._scaleRefs));
+  
+  return (this._status = DISCONNECTED, this);
 };
 
 proto.sibling = function(name) {
@@ -15387,7 +15121,7 @@ proto.evaluate = function(input) {
 
   // Add any new scale references to the dependency list, and ensure
   // they're connected.
-  if (update.nested && update.nested.length) {
+  if (update.nested && update.nested.length && this._status === CONNECTED) {
     dl.keys(this._mark._scaleRefs).forEach(function(s) {
       var scale = self._parent.scale(s);
       if (!scale) return;
@@ -15534,16 +15268,17 @@ proto.evaluate = function(input) {
       update = props.update,
       exit   = props.exit,
       dirty  = input.dirty,
-      preds  = this._graph.predicates(),
-      sg  = graph.signalValues(),  // For expediency, get all signal values
-      db  = graph.dataValues(), 
+      preds  = graph.predicates(),
       req = input.request,
       group = this._mark.group,
       guide = group && (group.mark.axis || group.mark.legend),
-      i, len, item, prop;
+      db = EMPTY, sg = EMPTY, i, len, item, prop;
 
   if (req && !guide) {
-    if ((prop = props[req])) {
+    if ((prop = props[req]) && input.mod.length) {
+      db = prop.data ? graph.values(Deps.DATA, prop.data) : null;
+      sg = prop.signals ? graph.values(Deps.SIGNALS, prop.signals) : null;
+
       for (i=0, len=input.mod.length; i<len; ++i) {
         item = input.mod[i];
         encode.call(this, prop, item, input.trans, db, sg, preds, dirty);
@@ -15553,19 +15288,23 @@ proto.evaluate = function(input) {
     return input; // exit early if given request
   }
 
+  db = values(Deps.DATA, graph, input, props);
+  sg = values(Deps.SIGNALS, graph, input, props);
+
   // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if (exit)   encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
+    if (exit) encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
     if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if (!input.trans) items.pop();
   }
 
+  var update_status = require('./Builder').STATUS.UPDATE;
   for (i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
     if (enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
     if (update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
-    item.status = require('./Builder').STATUS.UPDATE;
+    item.status = update_status;
   }
 
   if (update) {
@@ -15577,6 +15316,21 @@ proto.evaluate = function(input) {
 
   return input;
 };
+
+// Only marshal necessary data and signal values
+function values(type, graph, input, props) {
+  var p, x, o, add = input.add.length;
+  if ((p=props.enter) && (x=p[type]).length && add) {
+    o = graph.values(type, x, (o=o||{}));
+  }
+  if ((p=props.exit) && (x=p[type]).length && input.rem.length) {
+    o = graph.values(type, x, (o=o||{})); 
+  }
+  if ((p=props.update) && (x=p[type]).length && (add || input.mod.length)) {
+    o = graph.values(type, x, (o=o||{}));
+  }
+  return o || EMPTY;
+}
 
 function encode(prop, item, trans, db, sg, preds, dirty) {
   var enc = prop.encode,
@@ -15632,8 +15386,8 @@ function nestedRefs() {
 Encoder.update = function(graph, trans, request, items, dirty) {
   items = dl.array(items);
   var preds = graph.predicates(), 
-      db = graph.dataValues(),
-      sg = graph.signalValues(),
+      db = graph.values(Deps.DATA),
+      sg = graph.values(Deps.SIGNALS),
       i, len, item, props, prop;
 
   for (i=0, len=items.length; i<len; ++i) {
@@ -15833,9 +15587,9 @@ function recurse(input) {
   return input;
 }
 
-function scale(name, s) {
-  var group = this;
-  if (arguments.length === 2) return (group._scales[name] = s, s);
+function scale(name, x) {
+  var group = this, s = null;
+  if (arguments.length === 2) return (group._scales[name] = x, x);
   while (s == null) {
     s = group._scales[name];
     group = group.mark ? group.mark.group : group._parent;
@@ -15848,7 +15602,7 @@ function buildGroup(input, group) {
   log.debug(input, ["building group", group._id]);
 
   group._scales = group._scales || {};    
-  group.scale  = scale.bind(group);
+  group.scale = scale.bind(group);
 
   group.items = group.items || [];
   this._children[group._id] = this._children[group._id] || [];
@@ -18265,6 +18019,7 @@ var dl = require('datalib'),
 function Facetor() {
   Aggregator.call(this);
   this._facet = null;
+  this._facetID = ++facetID;
 }
 
 var prototype = (Facetor.prototype = Object.create(Base));
@@ -18284,6 +18039,7 @@ function disconnect_cell(facet) {
   log.debug({}, ['disconnecting cell', this.tuple._id]);
   var pipeline = this.ds.pipeline();
   facet.removeListener(pipeline[0]);
+  facet._graph.removeListener(pipeline[0]);
   facet._graph.disconnect(pipeline);
 }
 
@@ -18307,7 +18063,7 @@ prototype._newtuple = function(x, key) {
   var t = Base._newtuple.call(this, x);
   if (this._facet) {
     Tuple.set(t, 'key', key);
-    Tuple.set(t, '_facetID', 'vg_'+ (++facetID));
+    Tuple.set(t, '_facetID', this._facetID + '_' + key);
   }
   return t;
 };
@@ -18352,7 +18108,7 @@ prototype._on_keep = function(cell) {
 module.exports = Facetor;
 },{"datalib":24,"vega-dataflow":39,"vega-logging":45}],123:[function(require,module,exports){
 var df = require('vega-dataflow'),
-    Deps = df.Dependencies,
+    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -18374,7 +18130,7 @@ prototype.transform = function(input) {
       graph = this._graph,
       skip = this._skip,
       test = this.param('test'),
-      signals = graph.signalValues(this.dependency(Deps.SIGNALS));
+      signals = graph.values(SIGNALS, this.dependency(SIGNALS));
 
   input.rem.forEach(function(x) {
     if (skip[x._id] !== 1) output.rem.push(x);
@@ -18691,7 +18447,7 @@ module.exports = Force;
 },{"./Transform":135,"vega-dataflow":39,"vega-logging":45}],126:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
-    Deps = df.Dependencies,
+    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -18714,7 +18470,7 @@ prototype.transform = function(input) {
   var g = this._graph,
       field = this.param('field'),
       expr = this.param('expr'),
-      signals = g.signalValues(this.dependency(Deps.SIGNALS));
+      signals = g.values(SIGNALS, this.dependency(SIGNALS));
 
   function set(x) {
     Tuple.set(x, field, expr(x, null, signals));
