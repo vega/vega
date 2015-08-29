@@ -141,6 +141,11 @@ describe('evaluate', function() {
       expect(regexEqual(/[0-9]+/, evaluate('/[0-9]+/'))).to.be.true;
       expect(regexEqual(/[0-9]+/, evaluate('/[1-9]+/'))).to.be.false;
       expect(regexEqual(/[a-z]/gi, evaluate('/[a-z]/gi'))).to.be.true;
+
+      expect(regexEqual(/pattern/, evaluate('regexp("pattern")'))).to.be.true;
+      expect(regexEqual(/[0-9]+/, evaluate('regexp("[0-9]+")'))).to.be.true;
+      expect(regexEqual(/[0-9]+/, evaluate('regexp("[1-9]+")'))).to.be.false;
+      expect(regexEqual(/[a-z]/gi, evaluate('regexp("[a-z]", "gi")'))).to.be.true;
     });
 
     it('should eval array expressions', function() {

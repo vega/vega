@@ -10,10 +10,16 @@ module.exports = function(codegen) {
       '()' :
       '(' + args.slice(1).map(codegen).join(',') + ')');
   }
-  
-  var DATE = 'new Date';
-  var STRING = 'String';
-  var REGEXP = 'RegExp';
+
+  function fn(name, cast, type) {
+    return function(args) {
+      return fncall(name, args, cast, type);
+    };
+  }
+
+  var DATE = 'new Date',
+      STRING = 'String',
+      REGEXP = 'RegExp';
 
   return {
     // MATH functions
@@ -48,95 +54,44 @@ module.exports = function(codegen) {
     },
 
     // DATE functions
-    'now':      'Date.now',
-    'datetime': 'new Date',
-    'date': function(args) {
-        return fncall('getDate', args, DATE, 0);
-      },
-    'day': function(args) {
-        return fncall('getDay', args, DATE, 0);
-      },
-    'year': function(args) {
-        return fncall('getFullYear', args, DATE, 0);
-      },
-    'month': function(args) {
-        return fncall('getMonth', args, DATE, 0);
-      },
-    'hours': function(args) {
-        return fncall('getHours', args, DATE, 0);
-      },
-    'minutes': function(args) {
-        return fncall('getMinutes', args, DATE, 0);
-      },
-    'seconds': function(args) {
-        return fncall('getSeconds', args, DATE, 0);
-      },
-    'milliseconds': function(args) {
-        return fncall('getMilliseconds', args, DATE, 0);
-      },
-    'time': function(args) {
-        return fncall('getTime', args, DATE, 0);
-      },
-    'timezoneoffset': function(args) {
-        return fncall('getTimezoneOffset', args, DATE, 0);
-      },
-    'utcdate': function(args) {
-        return fncall('getUTCDate', args, DATE, 0);
-      },
-    'utcday': function(args) {
-        return fncall('getUTCDay', args, DATE, 0);
-      },
-    'utcyear': function(args) {
-        return fncall('getUTCFullYear', args, DATE, 0);
-      },
-    'utcmonth': function(args) {
-        return fncall('getUTCMonth', args, DATE, 0);
-      },
-    'utchours': function(args) {
-        return fncall('getUTCHours', args, DATE, 0);
-      },
-    'utcminutes': function(args) {
-        return fncall('getUTCMinutes', args, DATE, 0);
-      },
-    'utcseconds': function(args) {
-        return fncall('getUTCSeconds', args, DATE, 0);
-      },
-    'utcmilliseconds': function(args) {
-        return fncall('getUTCMilliseconds', args, DATE, 0);
-      },
+    'now':             'Date.now',
+    'datetime':        DATE,
+    'date':            fn('getDate', DATE, 0),
+    'day':             fn('getDay', DATE, 0),
+    'year':            fn('getFullYear', DATE, 0),
+    'month':           fn('getMonth', DATE, 0),
+    'hours':           fn('getHours', DATE, 0),
+    'minutes':         fn('getMinutes', DATE, 0),
+    'seconds':         fn('getSeconds', DATE, 0),
+    'milliseconds':    fn('getMilliseconds', DATE, 0),
+    'time':            fn('getTime', DATE, 0),
+    'timezoneoffset':  fn('getTimezoneOffset', DATE, 0),
+    'utcdate':         fn('getUTCDate', DATE, 0),
+    'utcday':          fn('getUTCDay', DATE, 0),
+    'utcyear':         fn('getUTCFullYear', DATE, 0),
+    'utcmonth':        fn('getUTCMonth', DATE, 0),
+    'utchours':        fn('getUTCHours', DATE, 0),
+    'utcminutes':      fn('getUTCMinutes', DATE, 0),
+    'utcseconds':      fn('getUTCSeconds', DATE, 0),
+    'utcmilliseconds': fn('getUTCMilliseconds', DATE, 0),
 
     // shared sequence functions
-    'length': function(args) {
-        return fncall('length', args, null, -1);
-      },
-    'indexof': function(args) {
-        return fncall('indexOf', args, null);
-      },
-    'lastindexof': function(args) {
-        return fncall('lastIndexOf', args, null);
-      },
+    'length':      fn('length', null, -1),
+    'indexof':     fn('indexOf', null),
+    'lastindexof': fn('lastIndexOf', null),
 
     // STRING functions
-    'parseFloat': 'parseFloat',
-    'parseInt': 'parseInt',
-    'upper': function(args) {
-        return fncall('toUpperCase', args, STRING, 0);
-      },
-    'lower': function(args) {
-        return fncall('toLowerCase', args, STRING, 0);
-      },
-    'slice': function(args) {
-        return fncall('slice', args, STRING);
-      },
-    'substring': function(args) {
-        return fncall('substring', args, STRING);
-      },
+    'parseFloat':  'parseFloat',
+    'parseInt':    'parseInt',
+    'upper':       fn('toUpperCase', STRING, 0),
+    'lower':       fn('toLowerCase', STRING, 0),
+    'slice':       fn('slice', STRING),
+    'substring':   fn('substring', STRING),
 
     // REGEXP functions
-    'test': function(args) {
-        return fncall('test', args, REGEXP);
-      },
-    
+    'regexp':  REGEXP,
+    'test':    fn('test', REGEXP),
+
     // Control Flow functions
     'if': function(args) {
         if (args.length < 3)
