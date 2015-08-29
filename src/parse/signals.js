@@ -1,5 +1,5 @@
 var dl = require('datalib'),
-    Deps = require('vega-dataflow').Dependencies,
+    SIGNALS = require('vega-dataflow').Dependencies.SIGNALS,
     expr = require('./expr');
 
 var RESERVED = ['datum', 'event', 'signals']
@@ -32,7 +32,7 @@ function parseSignals(model, spec) {
         }
         return model.doNotPropagate;        
       };
-      signal.dependency(Deps.SIGNALS, s.expr.globals);
+      signal.dependency(SIGNALS, s.expr.globals);
       s.expr.globals.forEach(function(dep) {
         model.signal(dep).addListener(signal);
       });
@@ -44,7 +44,7 @@ function parseSignals(model, spec) {
 
 function exprVal(model, spec) {
   var e = spec.expr,
-      val = e.fn(null, null, model.signalValues(e.globals));
+      val = e.fn(null, null, model.values(SIGNALS, e.globals));
   return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
@@ -58,7 +58,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
       scope = model.signalRef(scope.signal);
     } else if (dl.isString(scope)) { // Scope is an expression
       e = def._expr = (def._expr || expr(scope));
-      scope = e.fn(datum, evt, model.signalValues(e.globals));
+      scope = e.fn(datum, evt, model.values(SIGNALS, e.globals));
     }
   }
 

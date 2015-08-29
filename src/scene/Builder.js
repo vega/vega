@@ -21,6 +21,8 @@ var Status = Builder.STATUS = {
   EXIT:   'exit'
 };
 
+var CONNECTED = 1, DISCONNECTED = 2;
+
 var proto = (Builder.prototype = new Node());
 
 proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
@@ -33,6 +35,7 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   this._from  = (def.from ? def.from.data : null) || inheritFrom;
   this._ds    = dl.isString(this._from) ? graph.data(this._from) : null;
   this._map   = {};
+  this._status = null; // Connected or disconnected?
 
   mark.def = def;
   mark.marktype = def.type;
@@ -142,20 +145,26 @@ proto.connect = function() {
     else this._bounder.addListener(this._parent._collector);
   }
 
-  return this;
+  return (this._status = CONNECTED, this);
 };
 
 proto.disconnect = function() {
   var builder = this;
   if (!this._listeners.length) return this;
 
+  function disconnectScales(scales) {
+    for(var i=0, len=scales.length, s; i<len; ++i) {
+      if (!(s = builder._parent.scale(scales[i]))) continue;
+      s.removeListener(builder);
+    }
+  }
+
   Node.prototype.disconnect.call(this);
   this._graph.disconnect(this.pipeline());
-  this._encoder._scales.forEach(function(s) {
-    if (!(s = builder._parent.scale(s))) return;
-    s.removeListener(builder);
-  });
-  return this;
+  disconnectScales(this._encoder._scales);
+  disconnectScales(dl.keys(this._mark._scaleRefs));
+  
+  return (this._status = DISCONNECTED, this);
 };
 
 proto.sibling = function(name) {
@@ -201,7 +210,7 @@ proto.evaluate = function(input) {
 
   // Add any new scale references to the dependency list, and ensure
   // they're connected.
-  if (update.nested && update.nested.length) {
+  if (update.nested && update.nested.length && this._status === CONNECTED) {
     dl.keys(this._mark._scaleRefs).forEach(function(s) {
       var scale = self._parent.scale(s);
       if (!scale) return;

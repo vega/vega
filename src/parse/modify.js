@@ -12,6 +12,8 @@ var Types = {
   CLEAR:  "clear"
 };
 
+var EMPTY = [];
+
 var filter = function(field, value, src, dest) {
   for(var i = src.length-1; i >= 0; --i) {
     if (src[i][field] == value)
@@ -28,8 +30,9 @@ function parseModify(model, def, ds) {
 
   node.evaluate = function(input) {
     if (predicate !== null) {  // TODO: predicate args
-      var db = model.dataValues(predicate.data||[]);
-      reeval = predicate.call(predicate, {}, db, model.signalValues(predicate.signals||[]), model._predicates);
+      var db = model.values(Deps.DATA, predicate.data || EMPTY),
+          sg = model.values(Deps.SIGNALS, predicate.signals || EMPTY);
+      reeval = predicate.call(predicate, {}, db, sg, model._predicates);
     }
 
     log.debug(input, [def.type+"ing", reeval]);
@@ -77,7 +80,11 @@ function parseModify(model, def, ds) {
   };
 
   if (signalName) node.dependency(Deps.SIGNALS, signalName);
-  if (predicate)  node.dependency(Deps.SIGNALS, predicate.signals);
+  
+  if (predicate) {
+    node.dependency(Deps.DATA, predicate.data);
+    node.dependency(Deps.SIGNALS, predicate.signals);
+  }
   
   return node;
 }

@@ -49,16 +49,17 @@ proto.evaluate = function(input) {
       update = props.update,
       exit   = props.exit,
       dirty  = input.dirty,
-      preds  = this._graph.predicates(),
-      sg  = graph.signalValues(),  // For expediency, get all signal values
-      db  = graph.dataValues(), 
+      preds  = graph.predicates(),
       req = input.request,
       group = this._mark.group,
       guide = group && (group.mark.axis || group.mark.legend),
-      i, len, item, prop;
+      db = EMPTY, sg = EMPTY, i, len, item, prop;
 
   if (req && !guide) {
-    if ((prop = props[req])) {
+    if ((prop = props[req]) && input.mod.length) {
+      db = prop.data ? graph.values(Deps.DATA, prop.data) : null;
+      sg = prop.signals ? graph.values(Deps.SIGNALS, prop.signals) : null;
+
       for (i=0, len=input.mod.length; i<len; ++i) {
         item = input.mod[i];
         encode.call(this, prop, item, input.trans, db, sg, preds, dirty);
@@ -68,19 +69,23 @@ proto.evaluate = function(input) {
     return input; // exit early if given request
   }
 
+  db = values(Deps.DATA, graph, input, props);
+  sg = values(Deps.SIGNALS, graph, input, props);
+
   // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if (exit)   encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
+    if (exit) encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
     if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if (!input.trans) items.pop();
   }
 
+  var update_status = require('./Builder').STATUS.UPDATE;
   for (i=0, len=input.add.length; i<len; ++i) {
     item = input.add[i];
     if (enter)  encode.call(this, enter,  item, input.trans, db, sg, preds, dirty);
     if (update) encode.call(this, update, item, input.trans, db, sg, preds, dirty);
-    item.status = require('./Builder').STATUS.UPDATE;
+    item.status = update_status;
   }
 
   if (update) {
@@ -92,6 +97,21 @@ proto.evaluate = function(input) {
 
   return input;
 };
+
+// Only marshal necessary data and signal values
+function values(type, graph, input, props) {
+  var p, x, o, add = input.add.length;
+  if ((p=props.enter) && (x=p[type]).length && add) {
+    o = graph.values(type, x, (o=o||{}));
+  }
+  if ((p=props.exit) && (x=p[type]).length && input.rem.length) {
+    o = graph.values(type, x, (o=o||{})); 
+  }
+  if ((p=props.update) && (x=p[type]).length && (add || input.mod.length)) {
+    o = graph.values(type, x, (o=o||{}));
+  }
+  return o || EMPTY;
+}
 
 function encode(prop, item, trans, db, sg, preds, dirty) {
   var enc = prop.encode,
@@ -147,8 +167,8 @@ function nestedRefs() {
 Encoder.update = function(graph, trans, request, items, dirty) {
   items = dl.array(items);
   var preds = graph.predicates(), 
-      db = graph.dataValues(),
-      sg = graph.signalValues(),
+      db = graph.values(Deps.DATA),
+      sg = graph.values(Deps.SIGNALS),
       i, len, item, props, prop;
 
   for (i=0, len=items.length; i<len; ++i) {

@@ -1,5 +1,5 @@
 var df = require('vega-dataflow'),
-    Deps = df.Dependencies,
+    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -21,7 +21,7 @@ prototype.transform = function(input) {
       graph = this._graph,
       skip = this._skip,
       test = this.param('test'),
-      signals = graph.signalValues(this.dependency(Deps.SIGNALS));
+      signals = graph.values(SIGNALS, this.dependency(SIGNALS));
 
   input.rem.forEach(function(x) {
     if (skip[x._id] !== 1) output.rem.push(x);

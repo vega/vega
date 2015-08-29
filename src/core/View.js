@@ -3,6 +3,7 @@ var d3 = require('d3'),
     df = require('vega-dataflow'),
     sg = require('vega-scenegraph').render,
     log = require('vega-logging'),
+    Deps = df.Dependencies,
     parseStreams = require('../parse/streams'),
     Encoder = require('../scene/Encoder'),
     Transition = require('../scene/Transition');
@@ -78,7 +79,7 @@ function streaming(src) {
 
 prototype.data = function(data) {
   var v = this;
-  if (!arguments.length) return v._model.dataValues();
+  if (!arguments.length) return v._model.values();
   else if (dl.isString(data)) return streaming.call(v, data);
   else if (dl.isObject(data)) {
     dl.keys(data).forEach(function(k) {
@@ -95,8 +96,11 @@ prototype.signal = function(name, value) {
       streamer = this._streamer,
       setter = name; 
 
-  if (!arguments.length) return m.signalValues();
-  else if (arguments.length == 1 && dl.isString(name)) return m.signalValues(name);
+  if (!arguments.length) {
+    return m.values(Deps.SIGNALS);
+  } else if (arguments.length == 1 && dl.isString(name)) {
+    return m.values(Deps.SIGNALS, name);
+  }
 
   if (arguments.length == 2) {
     setter = {};
@@ -304,7 +308,7 @@ function build() {
   return (v._model.scene(v._renderNode), true);  
 }
 
-prototype.update = function(opt) {   
+prototype.update = function(opt) {
   opt = opt || {};
   var v = this,
       trans = opt.duration ? new Transition(opt.duration, opt.ease) : null;
