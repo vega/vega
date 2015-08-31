@@ -18,7 +18,7 @@ function Cross(graph) {
   this._ids   = {};
   this._cache = {};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (Cross.prototype = Object.create(BatchTransform.prototype));

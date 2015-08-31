@@ -14,7 +14,7 @@ function CountPattern(graph) {
 
   this._output = {text: 'text', count: 'count'};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (CountPattern.prototype = Object.create(Transform.prototype));
