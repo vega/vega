@@ -53,7 +53,7 @@ function Aggregate(graph) {
   this._type = TYPES.TUPLE; 
   this._acc = {groupby: dl.true, value: dl.true};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (Aggregate.prototype = Object.create(Transform.prototype));

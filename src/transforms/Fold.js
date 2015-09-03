@@ -12,7 +12,7 @@ function Fold(graph) {
   this._output = {key: 'key', value: 'value'};
   this._cache = {};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (Fold.prototype = Object.create(Transform.prototype));

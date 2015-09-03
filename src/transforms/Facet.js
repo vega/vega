@@ -19,7 +19,7 @@ function Facet(graph) {
   });
 
   this._pipeline = [];
-  Aggregate.call(this, graph);
+  return Aggregate.call(this, graph);
 }
 
 var prototype = (Facet.prototype = Object.create(Aggregate.prototype));
