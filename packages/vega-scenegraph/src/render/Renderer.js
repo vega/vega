@@ -10,8 +10,15 @@ prototype.initialize = function(el, width, height, padding) {
   return this.resize(width, height, padding);
 };
 
+// Returns the parent container element for a visualization
 prototype.element = function() {
   return this._el;
+};
+
+// Returns the scene element (e.g., canvas or SVG) of the visualization
+// Subclasses must override if the first child is not the scene element
+prototype.scene = function() {
+  return this._el && this._el.firstChild;
 };
 
 prototype.background = function(bgcolor) {
