@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.2.1',
+  version: '2.2.3',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -4772,55 +4772,26 @@ prototype.fire = function(input) {
 prototype.pipeline = function(pipeline) {
   if (!arguments.length) return this._pipeline;
 
-  this._inputNode = DataSourceInput(this);
-  this._outputNode = DataSourceOutput(this);
-
   var graph = this._graph,
-      mutates = 0,
-      collector = this._inputNode,
-      i, node, router, collects;
+      status;
 
-  for (i=0; i<pipeline.length; ++i) {
-    node = pipeline[i];
+  pipeline.unshift(this._inputNode = DataSourceInput(this));
+  status = graph.preprocess(pipeline);
 
-    if (!node._collector && node.batch()) {
-      if (router) {
-        node = new Collector(graph);
-        pipeline.splice(i, 0, node);
-        router = false;
-      } else {
-        node._collector = collector;
-      }
-    }
-
-    if ((collects = node.collector())) collector = node;
-    router = router || node.router() && !collects;
-    mutates = mutates || node.mutates();
+  if (status.router) {
+    pipeline.push(status.collector = new Collector(graph));
   }
-  if (router) pipeline.push(collector = new Collector(graph));
 
-  pipeline.unshift(this._inputNode);
-  pipeline.push(this._outputNode);
-  this._collector = collector;
-  this._mutates = !!mutates;
-  this._graph.connect(this._pipeline = pipeline);
+  pipeline.push(this._outputNode = DataSourceOutput(this));
+  this._collector = status.collector;
+  this._mutates = !!status.mutates;
+  graph.connect(this._pipeline = pipeline);
+
   return this;
 };
 
 prototype.synchronize = function() {
-  var data = this._data, i, n;
-
-  for (i=0, n=data.length; i<n; ++i) {
-    Tuple.prev_update(data[i]);
-  }
-
-  if (this._inputNode !== this._collector) {
-    data = this._collector.data();
-    for (i=0, n=data.length; i<n; ++i) {
-      Tuple.prev_update(data[i]);
-    }
-  }
-
+  this._graph.synchronize(this._pipeline);
   return this;
 };
 
@@ -4971,6 +4942,8 @@ var dl = require('datalib'),
     Heap = require('./Heap'),
     ChangeSet = require('./ChangeSet'),
     DataSource = require('./DataSource'),
+    Collector = require('./Collector'),
+    Tuple = require('./Tuple'),
     Signal = require('./Signal'),
     Deps = require('./Dependencies');
 
@@ -5127,6 +5100,43 @@ prototype.propagate = function(pulse, node, stamp) {
   }
 };
 
+// Process a new branch of the dataflow graph prior to connection:
+// (1) Insert new Collector nodes as needed. 
+// (2) Track + return mutation/routing status of the branch.
+prototype.preprocess = function(branch) {
+  var graph = this,
+      mutates = 0,
+      node, router, collector, collects;
+
+  for (var i=0; i<branch.length; ++i) {
+    node = branch[i];
+
+    // Batch nodes need access to a materialized dataset. 
+    if (node.batch() && !node._collector) {
+      if (router || !collector) {
+        node = new Collector(graph);
+        branch.splice(i, 0, node);
+        router = false;
+      } else {
+        node._collector = collector;
+      }
+    }
+
+    if ((collects = node.collector())) collector = node;
+    router  = router  || node.router() && !collects;
+    mutates = mutates || node.mutates();
+
+    // A collector needs to be inserted after tuple-producing
+    // nodes for correct previous value tracking.
+    if (node.produces()) {
+      branch.splice(i+1, 0, new Collector(graph));
+      router = false;
+    }
+  }
+
+  return {router: router, collector: collector, mutates: mutates};
+};
+
 prototype.connect = function(branch) {
   var collector, node, data, signals, i, n, j, m;
 
@@ -5174,6 +5184,25 @@ prototype.disconnect = function(branch) {
   return branch;
 };
 
+prototype.synchronize = function(branch) {
+  var ids = {},
+      node, data, i, n, j, m, d, id;
+
+  for (i=0, n=branch.length; i<n; ++i) {
+    node = branch[i];
+    if (!node.collector()) continue;
+
+    for (j=0, data=node.data(), m=data.length; j<m; ++j) {
+      id = (d = data[j])._id;
+      if (ids[id]) continue; 
+      Tuple.prev_update(d);
+      ids[id] = 1; 
+    }
+  }
+
+  return this;
+};
+
 prototype.reevaluate = function(pulse, node) {
   var reflowed = pulse.reflow && node.last() >= pulse.stamp,
       run = node.router() || pulse.add.length || pulse.rem.length;
@@ -5190,7 +5219,7 @@ prototype.evaluate = function(pulse, node) {
 
 module.exports = Graph;
 
-},{"./ChangeSet":30,"./DataSource":32,"./Dependencies":33,"./Heap":35,"./Signal":37,"datalib":24}],35:[function(require,module,exports){
+},{"./ChangeSet":30,"./Collector":31,"./DataSource":32,"./Dependencies":33,"./Heap":35,"./Signal":37,"./Tuple":38,"datalib":24}],35:[function(require,module,exports){
 function Heap(comparator) {
   this.cmp = comparator;
   this.nodes = [];
@@ -5298,9 +5327,10 @@ function Node(graph) {
 var Flags = Node.Flags = {
   Router:     0x01, // Responsible for propagating tuples, cannot be skipped.
   Collector:  0x02, // Holds a materialized dataset, pulse node to reflow.
-  Mutates:    0x04, // Sets properties of incoming tuples.
-  Reflows:    0x08, // Forwards a reflow pulse.
-  Batch:      0x10  // Performs batch data processing, needs collector.
+  Produces:   0x04, // Produces new tuples. 
+  Mutates:    0x08, // Sets properties of incoming tuples.
+  Reflows:    0x10, // Forwards a reflow pulse.
+  Batch:      0x20  // Performs batch data processing, needs collector.
 };
 
 var prototype = Node.prototype;
@@ -5356,6 +5386,11 @@ prototype.router = function(state) {
 prototype.collector = function(state) {
   if (!arguments.length) return (this._flags & Flags.Collector);
   return this._setf(Flags.Collector, state);
+};
+
+prototype.produces = function(state) {
+  if (!arguments.length) return (this._flags & Flags.Produces);
+  return this._setf(Flags.Produces, state);
 };
 
 prototype.mutates = function(state) {
@@ -8820,8 +8855,15 @@ prototype.initialize = function(el, width, height, padding) {
   return this.resize(width, height, padding);
 };
 
+// Returns the parent container element for a visualization
 prototype.element = function() {
   return this._el;
+};
+
+// Returns the scene element (e.g., canvas or SVG) of the visualization
+// Subclasses must override if the first child is not the scene element
+prototype.scene = function() {
+  return this._el && this._el.firstChild;
 };
 
 prototype.background = function(bgcolor) {
@@ -14702,7 +14744,7 @@ function parseStreams(view) {
   // -- helper functions -----
 
   function extendEvent(evt, item) {
-    var mouse = d3.mouse((d3.event=evt, view._el)),
+    var mouse = d3.mouse((d3.event=evt, view.renderer().scene())),
         pad = view.padding(),
         names = {}, mark, group, i;
 
@@ -17495,7 +17537,7 @@ function Aggregate(graph) {
   this._type = TYPES.TUPLE; 
   this._acc = {groupby: dl.true, value: dl.true};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (Aggregate.prototype = Object.create(Transform.prototype));
@@ -17755,7 +17797,7 @@ function CountPattern(graph) {
 
   this._output = {text: 'text', count: 'count'};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (CountPattern.prototype = Object.create(Transform.prototype));
@@ -17884,7 +17926,7 @@ function Cross(graph) {
   this._ids   = {};
   this._cache = {};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (Cross.prototype = Object.create(BatchTransform.prototype));
@@ -17996,7 +18038,7 @@ function Facet(graph) {
   });
 
   this._pipeline = [];
-  Aggregate.call(this, graph);
+  return Aggregate.call(this, graph);
 }
 
 var prototype = (Facet.prototype = Object.create(Aggregate.prototype));
@@ -18177,7 +18219,7 @@ function Fold(graph) {
   this._output = {key: 'key', value: 'value'};
   this._cache = {};
 
-  return this.router(true);
+  return this.router(true).produces(true);
 }
 
 var prototype = (Fold.prototype = Object.create(Transform.prototype));
