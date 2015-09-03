@@ -8,9 +8,10 @@ function Node(graph) {
 var Flags = Node.Flags = {
   Router:     0x01, // Responsible for propagating tuples, cannot be skipped.
   Collector:  0x02, // Holds a materialized dataset, pulse node to reflow.
-  Mutates:    0x04, // Sets properties of incoming tuples.
-  Reflows:    0x08, // Forwards a reflow pulse.
-  Batch:      0x10  // Performs batch data processing, needs collector.
+  Produces:   0x04, // Produces new tuples. 
+  Mutates:    0x08, // Sets properties of incoming tuples.
+  Reflows:    0x10, // Forwards a reflow pulse.
+  Batch:      0x20  // Performs batch data processing, needs collector.
 };
 
 var prototype = Node.prototype;
@@ -66,6 +67,11 @@ prototype.router = function(state) {
 prototype.collector = function(state) {
   if (!arguments.length) return (this._flags & Flags.Collector);
   return this._setf(Flags.Collector, state);
+};
+
+prototype.produces = function(state) {
+  if (!arguments.length) return (this._flags & Flags.Produces);
+  return this._setf(Flags.Produces, state);
 };
 
 prototype.mutates = function(state) {
