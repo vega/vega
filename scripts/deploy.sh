@@ -30,6 +30,11 @@ npm install
 npm run build
 npm run schema
 
+if [ -f "npm-debug.log" ]; then
+  echo "An error occurred during the build process. Check npm-debug.log."
+  exit 1
+fi
+
 # 1. NPM PUBLISH 
 npm publish
 # exit if npm publish failed 
