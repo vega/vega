@@ -40,7 +40,7 @@
     "vega-dataflow": "^1.2.4",
     "vega-expression": "^1.0.3",
     "vega-logging": "^1.0.1",
-    "vega-scenegraph": "^1.0.8",
+    "vega-scenegraph": "^1.0.9",
     "yargs": "^3.15.0"
   },
   "devDependencies": {

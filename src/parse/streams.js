@@ -95,7 +95,7 @@ function parseStreams(view) {
   // -- helper functions -----
 
   function extendEvent(evt, item) {
-    var mouse = d3.mouse((d3.event=evt, view._el)),
+    var mouse = d3.mouse((d3.event=evt, view.renderer().scene())),
         pad = view.padding(),
         names = {}, mark, group, i;
 
