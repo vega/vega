@@ -208,11 +208,12 @@ function parseStreams(view) {
 
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(), 
+        gk = name + GATEKEEPER, 
         trueFn  = expr('true'), 
         falseFn = expr('false'),
         middle  = selector.middle,
         filters = middle.filters || (middle.filters = []),
-        gatekeeper = model.signal(name + GATEKEEPER, false);
+        gatekeeper = model.signal(gk) || model.signal(gk, false);
 
     // Register an anonymous signal to act as a gatekeeper. Its value is
     // true or false depending on whether the start or end streams occur. 
