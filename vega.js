@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.2.3',
+  version: '2.2.4',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -2675,6 +2675,7 @@ var e10 = Math.sqrt(50),
     e2 = Math.sqrt(2);
 
 function intervals(domain, count) {
+  if (!domain.length) domain = [0];
   if (count == null) count = 10;
 
   var start = domain[0],
@@ -2682,7 +2683,7 @@ function intervals(domain, count) {
 
   if (stop < start) { error = stop; stop = start; start = error; }
 
-  var span = stop - start,
+  var span = (stop - start) || (count = 1, start || stop || 1),
       step = Math.pow(10, Math.floor(Math.log(span / count) / Math.LN10)),
       error = span / count / step;
 
@@ -3286,7 +3287,7 @@ module.exports = type;
 var util = require('./util');
 
 var dl = {
-  version:    '1.4.5',
+  version:    '1.4.6',
   load:       require('./import/load'),
   read:       require('./import/read'),
   type:       require('./import/type'),
@@ -12220,6 +12221,38 @@ prototype.update = function(opt) {
   return v.autopad(opt);
 };
 
+prototype.toImageURL = function(type) {
+  var v = this, Renderer;
+
+  // lookup appropriate renderer
+  switch (type || 'png') {
+    case 'canvas':
+    case 'png':
+      Renderer = sg.canvas.Renderer; break;
+    case 'svg':
+      Renderer = sg.svg.string.Renderer; break;
+    default: throw Error('Unrecognized renderer type: ' + type);
+  }
+
+  var retina = sg.canvas.Renderer.RETINA;
+  sg.canvas.Renderer.RETINA = false; // ignore retina screen
+
+  // render the scenegraph
+  var ren = new Renderer(v._model.config.load)
+    .initialize(null, v._width, v._height, v._padding)
+    .render(v._model.scene());
+
+  sg.canvas.Renderer.RETINA = retina; // restore retina settings
+
+  // return data url
+  if (type === 'svg') {
+    var blob = new Blob([ren.svg()], {type: 'image/svg+xml'});
+    return window.URL.createObjectURL(blob);
+  } else {
+    return ren.canvas().toDataURL('image/png');
+  }
+};
+
 prototype.render = function(items) {
   this._renderer.render(this._model.scene(), items);
   return this;
@@ -14857,11 +14890,12 @@ function parseStreams(view) {
 
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(), 
+        gk = name + GATEKEEPER, 
         trueFn  = expr('true'), 
         falseFn = expr('false'),
         middle  = selector.middle,
         filters = middle.filters || (middle.filters = []),
-        gatekeeper = model.signal(name + GATEKEEPER, false);
+        gatekeeper = model.signal(gk) || model.signal(gk, false);
 
     // Register an anonymous signal to act as a gatekeeper. Its value is
     // true or false depending on whether the start or end streams occur. 
