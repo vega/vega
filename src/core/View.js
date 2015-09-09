@@ -348,6 +348,38 @@ prototype.update = function(opt) {
   return v.autopad(opt);
 };
 
+prototype.toImageURL = function(type) {
+  var v = this, Renderer;
+
+  // lookup appropriate renderer
+  switch (type || 'png') {
+    case 'canvas':
+    case 'png':
+      Renderer = sg.canvas.Renderer; break;
+    case 'svg':
+      Renderer = sg.svg.string.Renderer; break;
+    default: throw Error('Unrecognized renderer type: ' + type);
+  }
+
+  var retina = sg.canvas.Renderer.RETINA;
+  sg.canvas.Renderer.RETINA = false; // ignore retina screen
+
+  // render the scenegraph
+  var ren = new Renderer(v._model.config.load)
+    .initialize(null, v._width, v._height, v._padding)
+    .render(v._model.scene());
+
+  sg.canvas.Renderer.RETINA = retina; // restore retina settings
+
+  // return data url
+  if (type === 'svg') {
+    var blob = new Blob([ren.svg()], {type: 'image/svg+xml'});
+    return window.URL.createObjectURL(blob);
+  } else {
+    return ren.canvas().toDataURL('image/png');
+  }
+};
+
 prototype.render = function(items) {
   this._renderer.render(this._model.scene(), items);
   return this;
