@@ -246,7 +246,7 @@ function join(input, data, ds, fullUpdate) {
       rem  = ds ? input.rem : prev,
       mod  = Tuple.idMap((!ds || fullUpdate) ? data : input.mod),
       next = [],
-      i, key, len, item, datum, enter;
+      i, key, len, item, datum, enter, diff;
 
   // Only mark rems as exiting. Due to keyf, there may be an add/mod 
   // tuple that replaces it.
@@ -258,10 +258,11 @@ function join(input, data, ds, fullUpdate) {
 
   for(i=0, len=data.length; i<len; ++i) {
     datum = data[i];
-    item  = keyf ? this._map[key = keyf(data[i])] : prev[i];
+    item  = keyf ? this._map[key = keyf(datum)] : prev[i];
     enter = item ? false : (item = newItem.call(this), true);
     item.status = enter ? Status.ENTER : Status.UPDATE;
-    item.datum  = datum;
+    diff = !enter && item.datum !== datum;
+    item.datum = datum;
 
     if (keyf) {
       Tuple.set(item, 'key', key);
@@ -270,7 +271,7 @@ function join(input, data, ds, fullUpdate) {
 
     if (enter) {
       output.add.push(item);
-    } else if (mod[datum._id]) {
+    } else if (diff || mod[datum._id]) {
       output.mod.push(item);
     }
 
