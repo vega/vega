@@ -893,6 +893,56 @@ describe('Scale', function() {
       }, viewFactory);
     });
 
+    it('should sort domain', function(done) {
+      var spec = {
+        "data": [{
+          "name": "table",
+          "values": [
+            {"category":"B", "position":0, "value":0.1},
+            {"category":"B", "position":1, "value":0.6},
+            {"category":"B", "position":2, "value":0.9},
+            {"category":"B", "position":3, "value":0.4},
+            {"category":"A", "position":4, "value":0.7},
+            {"category":"A", "position":5, "value":0.2},
+            {"category":"A", "position":6, "value":1.1},
+            {"category":"A", "position":7, "value":0.8},
+            {"category":"C", "position":8, "value":0.6},
+            {"category":"C", "position":9, "value":0.1},
+            {"category":"C", "position":10, "value":0.2},
+            {"category":"C", "position":11, "value":0.7}
+          ]
+        }],
+        "scales": [{
+          "name": "x", "type": "ordinal", 
+          "domain": {"data": "table", "field": "category", "sort": true}, 
+          "range": "width"
+        }, {
+          "name": "y", "type": "ordinal", 
+          "domain": {
+            "data": "table", 
+            "field": "category",
+            "sort": {"field": "value", "op": "average"}
+          }, 
+          "range": "width"
+        }]
+      };
+
+      parseSpec(spec, function(model) {
+        var group = model.scene().items[0],
+            x = group.scale('x'),
+            y = group.scale('y');
+
+          B = 0.5
+          A = 0.7
+          C = 0.4
+
+        expect(x.domain()).to.eql(['A', 'B', 'C']);
+        expect(y.domain()).to.eql(['C', 'B', 'A']);
+
+        done();
+      }, viewFactory);
+    });
+
     it('should support points via signal');
 
     it('should support padding', function(done) {

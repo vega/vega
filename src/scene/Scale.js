@@ -276,7 +276,7 @@ function aggrType(def, scale) {
   if (!isUniques(scale)) return Aggregate.TYPES.VALUE;
 
   // If we don't sort, then we can send values directly to aggrs as well
-  if (!def.sort) return Aggregate.TYPES.VALUE;
+  if (!dl.isObject(def.sort)) return Aggregate.TYPES.VALUE;
 
   return Aggregate.TYPES.MULTI;
 }
@@ -309,7 +309,7 @@ function getCache(which, def, scale, group) {
       summarize = {'*': DataRef.COUNT};
     } else if (atype === Aggregate.TYPES.TUPLE) {
       groupby = [{ name: DataRef.GROUPBY, get: dl.$(fields[0]) }];
-      summarize = sort ? [{
+      summarize = dl.isObject(sort) ? [{
         field: DataRef.VALUE,
         get:  dl.$(sort.field),
         ops: [sort.op]
@@ -345,7 +345,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from, cmp;
+      i, rlen, j, flen, ref, fields, field, data, from, so, cmp;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
@@ -380,13 +380,15 @@ function dataRef(which, def, scale, group) {
 
     data = cache.aggr().result();
     if (uniques) {
-      if (sort) {
-        cmp = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
+      if (dl.isObject(sort)) {
+        cmp = (so = sort.order) && so.signal ? graph.signalRef(so.signal) : so;
         cmp = (cmp == DataRef.DESC ? '-' : '+') + sort.op + '_' + DataRef.VALUE;
         cmp = dl.comparator(cmp);
-        data = data.sort(cmp);
+      } else if (sort === true) {
+        cmp = dl.comparator(DataRef.GROUPBY);
       }
 
+      if (cmp) data = data.sort(cmp);
       cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
     } else {
       data = data[0];
@@ -547,12 +549,14 @@ Scale.schema = {
           ]
         },
         "sort": {
-          "type": "object",
-          "properties": {
-            "field": {"type": "string"},
-            "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
-            "order": {"enum": [DataRef.ASC, DataRef.DESC]}
-          }
+          "oneOf": [{"type": "boolean"}, {
+            "type": "object",
+            "properties": {
+              "field": {"type": "string"},
+              "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
+              "order": {"enum": [DataRef.ASC, DataRef.DESC]}
+            }
+          }]
         }
       },
       "additionalProperties": false
