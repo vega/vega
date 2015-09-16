@@ -11,7 +11,7 @@ function Cross(graph) {
   Transform.addParameters(this, {
     with: {type: 'data'},
     diagonal: {type: 'value', default: 'true'},
-    filter: {type: 'expr', default: 'true'}
+    filter: {type: 'expr'}
   });
 
   this._output = {'left': 'a', 'right': 'b'};
@@ -33,8 +33,8 @@ function cache(x, t) {
   c.c.push(t);
 }
 
-function add(output, left, data, diag, filt, x) {
-  var i = 0, len = data.length, t, y, id;
+function add(output, left, data, diag, test, x) {
+  var i = 0, len = data.length, t = {}, y, id;
 
   for (; i<len; ++i) {
     y = data[i];
@@ -42,14 +42,17 @@ function add(output, left, data, diag, filt, x) {
     if (this._ids[id]) continue;
     if (x._id == y._id && !diag) continue;
 
-    t = Tuple.ingest({});
     t[this._output.left]  = left ? x : y;
     t[this._output.right] = left ? y : x;
-    if (!filt(t, null, null)) continue;
-    output.add.push(t);
-    cache.call(this, x, t);
-    cache.call(this, y, t);
-    this._ids[id] = 1;
+
+    // Only ingest a tuple if we keep it around.
+    if (!test || test(t)) {
+      output.add.push(t=Tuple.ingest(t));
+      cache.call(this, x, t);
+      cache.call(this, y, t);
+      this._ids[id] = 1;
+      t = {};
+    }    
   }
 }
 
@@ -85,11 +88,11 @@ prototype.batchTransform = function(input, data) {
   log.debug(input, ['crossing']);
 
   var w = this.param('with'),
+      f = this.param('filter'),
       diag = this.param('diagonal'),
       graph = this._graph,
       signals = graph.values(SIGNALS, this.dependency(SIGNALS)),
-      _filt = this.param('filter'),
-      filt = function(x){return _filt(x, null, signals)},
+      test = f ? function(x) {return f(x, null, signals); } : null,
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
@@ -97,11 +100,11 @@ prototype.batchTransform = function(input, data) {
       r = rem.bind(this, output);
 
   input.rem.forEach(r);
-  input.add.forEach(add.bind(this, output, true, wdata, diag, filt));
+  input.add.forEach(add.bind(this, output, true, wdata, diag, test));
 
   if (!selfCross && woutput.stamp > this._lastWith) {
     woutput.rem.forEach(r);
-    woutput.add.forEach(add.bind(this, output, false, data, diag, filt));
+    woutput.add.forEach(add.bind(this, output, false, data, diag, test));
     woutput.mod.forEach(mod.bind(this, output, false));
     upFields.call(this, woutput, output);
     this._lastWith = woutput.stamp;
@@ -137,8 +140,8 @@ Cross.schema = {
     },
     "filter": {
       "type": "string",
-      "description": "A string containing an expression (in JavaScript syntax) to filter the resulting data elements.",
-      "default": "true"
+      "description": "A string containing an expression (in JavaScript syntax) " +
+        "to filter the resulting data elements."
     },
     "output": {
       "type": "object",
