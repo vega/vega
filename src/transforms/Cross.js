@@ -1,6 +1,7 @@
 var df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
     Tuple = df.Tuple,
+    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
@@ -9,7 +10,8 @@ function Cross(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     with: {type: 'data'},
-    diagonal: {type: 'value', default: 'true'}
+    diagonal: {type: 'value', default: 'true'},
+    filter: {type: 'expr', default: 'true'}
   });
 
   this._output = {'left': 'a', 'right': 'b'};
@@ -31,7 +33,7 @@ function cache(x, t) {
   c.c.push(t);
 }
 
-function add(output, left, data, diag, x) {
+function add(output, left, data, diag, filt, x) {
   var i = 0, len = data.length, t, y, id;
 
   for (; i<len; ++i) {
@@ -43,6 +45,7 @@ function add(output, left, data, diag, x) {
     t = Tuple.ingest({});
     t[this._output.left]  = left ? x : y;
     t[this._output.right] = left ? y : x;
+    if (!filt(t, null, null)) continue;
     output.add.push(t);
     cache.call(this, x, t);
     cache.call(this, y, t);
@@ -83,18 +86,22 @@ prototype.batchTransform = function(input, data) {
 
   var w = this.param('with'),
       diag = this.param('diagonal'),
+      graph = this._graph,
+      signals = graph.values(SIGNALS, this.dependency(SIGNALS)),
+      _filt = this.param('filter'),
+      filt = function(x){return _filt(x, null, signals)},
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
       output  = ChangeSet.create(input),
-      r = rem.bind(this, output); 
+      r = rem.bind(this, output);
 
   input.rem.forEach(r);
-  input.add.forEach(add.bind(this, output, true, wdata, diag));
+  input.add.forEach(add.bind(this, output, true, wdata, diag, filt));
 
   if (!selfCross && woutput.stamp > this._lastWith) {
     woutput.rem.forEach(r);
-    woutput.add.forEach(add.bind(this, output, false, data, diag));
+    woutput.add.forEach(add.bind(this, output, false, data, diag, filt));
     woutput.mod.forEach(mod.bind(this, output, false));
     upFields.call(this, woutput, output);
     this._lastWith = woutput.stamp;
@@ -127,6 +134,11 @@ Cross.schema = {
         "(those elements with the same index in their respective array) " +
         "will not be included in the output.",
       "default": true
+    },
+    "filter": {
+      "type": "string",
+      "description": "A string containing an expression (in JavaScript syntax) to filter the resulting data elements.",
+      "default": "true"
     },
     "output": {
       "type": "object",
