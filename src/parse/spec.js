@@ -16,12 +16,16 @@ function parseSpec(spec, callback) {
     var parsers = require('./'),
         width = spec.width || 500,
         height = spec.height || 500,
-        viewport = spec.viewport || null;
+        viewport = spec.viewport || null,
+        duration = spec.duration || null,
+        ease = spec.ease || null;
 
     model.defs({
       width: width,
       height: height,
       viewport: viewport,
+      duration: duration,
+      ease: ease,
       background: parsers.background(spec.background),
       padding: parsers.padding(spec.padding),
       signals: parsers.signals(model, spec.signals),
@@ -69,6 +73,9 @@ parseSpec.schema = {
             "items": {"type": "number"},
             "maxItems": 2
           },
+
+          "duration": {"type": "number"},
+          "ease": {"type": "string"},
 
           "background": {"$ref": "#/defs/background"},
           "padding": {"$ref": "#/defs/padding"},

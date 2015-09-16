@@ -123,7 +123,7 @@ function parseStreams(view) {
         node = registry.nodes[type],
         cs = df.ChangeSet.create(null, true),
         filtered = false,
-        val, i, n, h;
+        val, i, n, h, opt;
 
     function invoke(f) {
       return !f.fn(datum, evt, model.values(SIGNALS, f.globals));
@@ -142,10 +142,11 @@ function parseStreams(view) {
       if (val !== h.signal.value() || h.signal.verbose()) {
         h.signal.value(val);
         cs.signals[h.signal.name()] = 1;
+        opt = h.spec.update || opt;
       }
     }
 
-    model.propagate(cs, node);
+    model.propagate(model.update(cs, opt), node);
   }
 
   function mergedStream(sig, selector, exp, spec) {
@@ -237,7 +238,15 @@ parseStreams.schema = {
         "properties": {
           "type": {"type": "string"},
           "expr": {"type": "string"},
-          "scale": {"$ref": "#/refs/scopedScale"}
+          "scale": {"$ref": "#/refs/scopedScale"},
+          "update": {
+            "type": "object",
+            "properties": {
+              "duration": {"type": "number"},
+              "ease": {"type": "string"},
+              "props": {"type": "string"}
+            }
+          }
         },
 
         "additionalProperties": false,
