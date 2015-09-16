@@ -932,10 +932,6 @@ describe('Scale', function() {
             x = group.scale('x'),
             y = group.scale('y');
 
-          B = 0.5
-          A = 0.7
-          C = 0.4
-
         expect(x.domain()).to.eql(['A', 'B', 'C']);
         expect(y.domain()).to.eql(['C', 'B', 'A']);
 
