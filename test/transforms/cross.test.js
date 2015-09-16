@@ -36,7 +36,6 @@ describe('Cross', function() {
 
       done();
     }, modelFactory);
-
   });
 
   it('should handle streaming adds', function(done) {
@@ -226,6 +225,25 @@ describe('Cross', function() {
           data1 = ds1.values();
 
       expect(data1).to.have.length(6);
+
+      done();
+    }, modelFactory);
+  });
+
+  it('should exclude filtered values', function(done) {
+    var spec = {
+      "data": [{
+        "name": "table1", 
+        "values": values1,
+        "transform": [{"type": "cross", "filter": "datum.a.x >= 2 && datum.b.y < 40"}]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      var ds1 = model.data('table1'),
+          data1 = ds1.values();
+
+      expect(data1).to.have.length(2);
 
       done();
     }, modelFactory);
