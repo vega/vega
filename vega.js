@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.2.4',
+  version: '2.2.5',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -212,6 +212,13 @@ if (typeof Map === "undefined") {
     thousands: ".",
     grouping: [3],
     currency: ["", "\xa0ден."]
+  };
+
+  var jaJp = {
+    decimal: ".",
+    thousands: ",",
+    grouping: [3],
+    currency: ["", "円"]
   };
 
   var itIt = {
@@ -579,6 +586,7 @@ if (typeof Map === "undefined") {
       .set("fr-FR", frFr)
       .set("he-IL", heIl)
       .set("it-IT", itIt)
+      .set("ja-JP", jaJp)
       .set("mk-MK", mkMk)
       .set("nl-NL", nlNl)
       .set("pl-PL", plPl)
@@ -696,6 +704,17 @@ if (typeof Map === "undefined") {
     shortDays: ["нед", "пон", "вто", "сре", "чет", "пет", "саб"],
     months: ["јануари", "февруари", "март", "април", "мај", "јуни", "јули", "август", "септември", "октомври", "ноември", "декември"],
     shortMonths: ["јан", "фев", "мар", "апр", "мај", "јун", "јул", "авг", "сеп", "окт", "ное", "дек"]
+  };
+
+  var jaJp = {
+    dateTime: "%Y %b %e %a %X",
+    date: "%Y/%m/%d",
+    time: "%H:%M:%S",
+    periods: ["AM", "PM"],
+    days: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+    shortDays: ["日", "月", "火", "水", "木", "金", "土"],
+    months: ["睦月", "如月", "弥生", "卯月", "皐月", "水無月", "文月", "葉月", "長月", "神無月", "霜月", "師走"],
+    shortMonths: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
   };
 
   var itIt = {
@@ -1490,6 +1509,7 @@ if (typeof Map === "undefined") {
       .set("fr-FR", frFr)
       .set("he-IL", heIl)
       .set("it-IT", itIt)
+      .set("ja-JP", jaJp)
       .set("mk-MK", mkMk)
       .set("nl-NL", nlNl)
       .set("pl-PL", plPl)
@@ -5457,7 +5477,7 @@ prototype.addListener = function(l) {
     while (q.length) {
       cur = q.shift();
       cur._rank = g.rank();
-      q.push.apply(q, cur.listeners());
+      q.unshift.apply(q, cur.listeners());
     }
   }
 
@@ -8325,7 +8345,7 @@ module.exports = {
   toJSON:     require('./util/scene').toJSON,
   fromJSON:   require('./util/scene').fromJSON
 };
-},{"./path":48,"./render":68,"./util/Bounds":74,"./util/Gradient":76,"./util/Item":78,"./util/bound":79,"./util/scene":83}],47:[function(require,module,exports){
+},{"./path":48,"./render":68,"./util/Bounds":74,"./util/Gradient":76,"./util/Item":78,"./util/bound":79,"./util/scene":82}],47:[function(require,module,exports){
 var segmentCache = {},
     bezierCache = {},
     join = [].join;
@@ -9259,7 +9279,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":84,"./util":67}],58:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":83,"./util":67}],58:[function(require,module,exports){
 var util = require('./util'),
     rect = require('./rect');
 
@@ -9440,7 +9460,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":84,"./util":67}],62:[function(require,module,exports){
+},{"../../../path/parse":49,"../../../path/render":50,"../../../util/svg":83,"./util":67}],62:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -9625,7 +9645,7 @@ module.exports = {
 },{"./util":67}],66:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
-    font = require('../../../util/font'),
+    text = require('../../../util/text'),
     util = require('./util'),
     tempBounds = new Bounds();
 
@@ -9633,17 +9653,19 @@ function draw(g, scene, bounds) {
   if (!scene.items || !scene.items.length) return;
 
   var items = scene.items,
-      o, opac, x, y, r, t;
+      o, opac, x, y, r, t, str;
 
   for (var i=0, len=items.length; i<len; ++i) {
     o = items[i];
     if (bounds && !bounds.intersects(o.bounds))
       continue; // bounds check
 
+    str = text.value(o.text);
+    if (!str) continue;
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac === 0) continue;
 
-    g.font = font.string(o);
+    g.font = text.font(o);
     g.textAlign = o.align || 'left';
 
     x = (o.x || 0);
@@ -9661,13 +9683,13 @@ function draw(g, scene, bounds) {
       x = y = 0; // reset x, y
     }
     x += (o.dx || 0);
-    y += (o.dy || 0) + font.offset(o);
+    y += (o.dy || 0) + text.offset(o);
 
     if (o.fill && util.fill(g, o, opac)) {
-      g.fillText(o.text, x, y);
+      g.fillText(str, x, y);
     }
     if (o.stroke && util.stroke(g, o, opac)) {
-      g.strokeText(o.text, x, y);
+      g.strokeText(str, x, y);
     }
     if (o.angle) g.restore();
   }
@@ -9695,7 +9717,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../util/Bounds":74,"../../../util/bound":79,"../../../util/font":82,"./util":67}],67:[function(require,module,exports){
+},{"../../../util/Bounds":74,"../../../util/bound":79,"../../../util/text":84,"./util":67}],67:[function(require,module,exports){
 function drawPathOne(path, g, o, items) {
   if (path(g, items)) return;
 
@@ -9919,7 +9941,7 @@ module.exports = SVGHandler;
 },{"../../util/dom":81,"../Handler":51}],70:[function(require,module,exports){
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
-    font = require('../../util/font'),
+    text = require('../../util/text'),
     DOM = require('../../util/dom'),
     SVG = require('../../util/svg'),
     ns = SVG.metadata.xmlns,
@@ -10253,11 +10275,12 @@ var mark_extras = {
     }
   },
   text: function(mdef, el, item) {
-    if (item.text !== values.text) {
-      el.textContent = item.text || '';
-      values.text = item.text;
+    var str = text.value(item.text);
+    if (str !== values.text) {
+      el.textContent = str;
+      values.text = str;
     }
-    var str = font.string(item);
+    str = text.font(item);
     if (str !== values.font) {
       el.style.setProperty('font', str);
       values.font = str;
@@ -10338,11 +10361,11 @@ prototype.style = function(el, o) {
 
 module.exports = SVGRenderer;
 
-},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/font":82,"../../util/svg":84,"../Renderer":52,"./marks":73}],71:[function(require,module,exports){
+},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/svg":83,"../../util/text":84,"../Renderer":52,"./marks":73}],71:[function(require,module,exports){
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
-    font = require('../../util/font'),
+    text = require('../../util/text'),
     DOM = require('../../util/dom'),
     openTag = DOM.openTag,
     closeTag = DOM.closeTag,
@@ -10499,7 +10522,7 @@ prototype.mark = function(scene) {
     style = (tag !== 'g') ? styles(item, scene, tag, defs) : null;
     str += openTag(tag, this.attributes(attr, item), style);
     if (tag === 'text') {
-      str += escape_text(item.text);
+      str += escape_text(text.value(item.text));
     } else if (tag === 'g') {
       str += openTag('rect',
         this.attributes(mdef.background, item),
@@ -10549,7 +10572,7 @@ function styles(o, mark, tag, defs) {
   }
 
   if (tag === 'text') {
-    s += 'font: ' + font.string(o) + ';';
+    s += 'font: ' + text.font(o) + ';';
   }
 
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
@@ -10575,7 +10598,6 @@ function styles(o, mark, tag, defs) {
 }
 
 function escape_text(s) {
-  s = (s == null ? '' : String(s));
   return s.replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');
@@ -10583,7 +10605,7 @@ function escape_text(s) {
 
 module.exports = SVGStringRenderer;
 
-},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/font":82,"../../util/svg":84,"../Renderer":52,"./marks":73}],72:[function(require,module,exports){
+},{"../../util/ImageLoader":77,"../../util/dom":81,"../../util/svg":83,"../../util/text":84,"../Renderer":52,"./marks":73}],72:[function(require,module,exports){
 module.exports = {
   Handler:  require('./SVGHandler'),
   Renderer: require('./SVGRenderer'),
@@ -10592,7 +10614,7 @@ module.exports = {
   }
 };
 },{"./SVGHandler":69,"./SVGRenderer":70,"./SVGStringRenderer":71}],73:[function(require,module,exports){
-var font = require('../../util/font'),
+var text = require('../../util/text'),
     SVG = require('../../util/svg'),
     textAlign = SVG.textAlign,
     path = SVG.path;
@@ -10713,7 +10735,7 @@ module.exports = {
     nest: false,
     attr: function(emit, o) {
       var dx = (o.dx || 0),
-          dy = (o.dy || 0) + font.offset(o),
+          dy = (o.dy || 0) + text.offset(o),
           x = (o.x || 0),
           y = (o.y || 0),
           a = o.angle || 0,
@@ -10738,7 +10760,7 @@ module.exports = {
   }
 };
 
-},{"../../util/font":82,"../../util/svg":84}],74:[function(require,module,exports){
+},{"../../util/svg":83,"../../util/text":84}],74:[function(require,module,exports){
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
@@ -11042,7 +11064,7 @@ var BoundsContext = require('./BoundsContext'),
     Bounds = require('./Bounds'),
     canvas = require('./canvas'),
     svg = require('./svg'),
-    font = require('./font'),
+    text = require('./text'),
     paths = require('../path'),
     parse = paths.parse,
     drawPath = paths.render,
@@ -11205,15 +11227,15 @@ function symbol(o, bounds) {
   return strokeBounds(o, bounds);
 }
 
-function text(o, bounds, noRotate) {
+function textMark(o, bounds, noRotate) {
   var g = context(),
-      h = font.size(o),
+      h = text.size(o),
       a = o.align,
       r = o.radius || 0,
       x = (o.x || 0),
       y = (o.y || 0),
       dx = (o.dx || 0),
-      dy = (o.dy || 0) + font.offset(o) - Math.round(0.8*h), // use 4/5 offset
+      dy = (o.dy || 0) + text.offset(o) - Math.round(0.8*h), // use 4/5 offset
       w, t;
 
   if (r) {
@@ -11223,8 +11245,8 @@ function text(o, bounds, noRotate) {
   }
 
   // horizontal alignment
-  g.font = font.string(o);
-  w = g.measureText(o.text != null ? o.text : '').width;
+  g.font = text.font(o);
+  w = g.measureText(text.value(o.text)).width;
   if (a === 'center') {
     dx -= (w / 2);
   } else if (a === 'right') {
@@ -11272,7 +11294,7 @@ var methods = {
   rect:   rect,
   rule:   rule,
   arc:    arc,
-  text:   text,
+  text:   textMark,
   path:   path,
   area:   area,
   line:   line
@@ -11328,11 +11350,11 @@ function markBounds(mark, bounds, opt) {
 module.exports = {
   mark:  markBounds,
   item:  itemBounds,
-  text:  text,
+  text:  textMark,
   group: group
 };
 
-},{"../path":48,"./Bounds":74,"./BoundsContext":75,"./canvas":80,"./font":82,"./svg":84}],80:[function(require,module,exports){
+},{"../path":48,"./Bounds":74,"./BoundsContext":75,"./canvas":80,"./svg":83,"./text":84}],80:[function(require,module,exports){
 (function (global){
 function instance(w, h) {
   w = w || 1;
@@ -11505,38 +11527,6 @@ module.exports = {
 };
 
 },{}],82:[function(require,module,exports){
-function size(item) {
-  return item.fontSize != null ? item.fontSize : 11;
-}
-
-module.exports = {
-  size: size,
-  string: function(item, quote) {
-    var font = item.font;
-    if (quote && font) {
-      font = String(font).replace(/\"/g, '\'');
-    }
-    return '' +
-      (item.fontStyle ? item.fontStyle + ' ' : '') +
-      (item.fontVariant ? item.fontVariant + ' ' : '') +
-      (item.fontWeight ? item.fontWeight + ' ' : '') +
-      size(item) + 'px ' +
-      (font || 'sans-serif');
-  },
-  offset: function(item) {
-    // perform our own font baseline calculation
-    // why? not all browsers support SVG 1.1 'alignment-baseline' :(
-    var baseline = item.baseline,
-        h = size(item);
-    return Math.round(
-      baseline === 'top'    ?  0.93*h :
-      baseline === 'middle' ?  0.30*h :
-      baseline === 'bottom' ? -0.21*h : 0
-    );
-  }
-};
-
-},{}],83:[function(require,module,exports){
 var bound = require('../util/bound');
 
 var sets = [
@@ -11594,7 +11584,7 @@ module.exports = {
   toJSON:   toJSON,
   fromJSON: fromJSON
 };
-},{"../util/bound":79}],84:[function(require,module,exports){
+},{"../util/bound":79}],83:[function(require,module,exports){
 (function (global){
 var d3_svg = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null).svg;
 
@@ -11668,6 +11658,41 @@ module.exports = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{}],84:[function(require,module,exports){
+function size(item) {
+  return item.fontSize != null ? item.fontSize : 11;
+}
+
+module.exports = {
+  size: size,
+  value: function(s) {
+    return s != null ? String(s) : '';
+  },
+  font: function(item, quote) {
+    var font = item.font;
+    if (quote && font) {
+      font = String(font).replace(/\"/g, '\'');
+    }
+    return '' +
+      (item.fontStyle ? item.fontStyle + ' ' : '') +
+      (item.fontVariant ? item.fontVariant + ' ' : '') +
+      (item.fontWeight ? item.fontWeight + ' ' : '') +
+      size(item) + 'px ' +
+      (font || 'sans-serif');
+  },
+  offset: function(item) {
+    // perform our own font baseline calculation
+    // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+    var baseline = item.baseline,
+        h = size(item);
+    return Math.round(
+      baseline === 'top'    ?  0.93*h :
+      baseline === 'middle' ?  0.30*h :
+      baseline === 'bottom' ? -0.21*h : 0
+    );
+  }
+};
 
 },{}],85:[function(require,module,exports){
 var sg = require('vega-scenegraph').render,
@@ -12402,40 +12427,10 @@ config.color = {
 
 // default scale ranges
 config.range = {
-  category10: [
-    '#1f77b4',
-    '#ff7f0e',
-    '#2ca02c',
-    '#d62728',
-    '#9467bd',
-    '#8c564b',
-    '#e377c2',
-    '#7f7f7f',
-    '#bcbd22',
-    '#17becf'
-  ],
-  category20: [
-    '#1f77b4',
-    '#aec7e8',
-    '#ff7f0e',
-    '#ffbb78',
-    '#2ca02c',
-    '#98df8a',
-    '#d62728',
-    '#ff9896',
-    '#9467bd',
-    '#c5b0d5',
-    '#8c564b',
-    '#c49c94',
-    '#e377c2',
-    '#f7b6d2',
-    '#7f7f7f',
-    '#c7c7c7',
-    '#bcbd22',
-    '#dbdb8d',
-    '#17becf',
-    '#9edae5'
-  ],
+  category10:  d3.scale.category10().range(),
+  category20:  d3.scale.category20().range(),
+  category20b: d3.scale.category20b().range(),
+  category20c: d3.scale.category20c().range(),
   shapes: [
     'circle',
     'cross',
@@ -15233,7 +15228,7 @@ function join(input, data, ds, fullUpdate) {
       rem  = ds ? input.rem : prev,
       mod  = Tuple.idMap((!ds || fullUpdate) ? data : input.mod),
       next = [],
-      i, key, len, item, datum, enter;
+      i, key, len, item, datum, enter, diff;
 
   // Only mark rems as exiting. Due to keyf, there may be an add/mod 
   // tuple that replaces it.
@@ -15245,10 +15240,11 @@ function join(input, data, ds, fullUpdate) {
 
   for(i=0, len=data.length; i<len; ++i) {
     datum = data[i];
-    item  = keyf ? this._map[key = keyf(data[i])] : prev[i];
+    item  = keyf ? this._map[key = keyf(datum)] : prev[i];
     enter = item ? false : (item = newItem.call(this), true);
     item.status = enter ? Status.ENTER : Status.UPDATE;
-    item.datum  = datum;
+    diff = !enter && item.datum !== datum;
+    item.datum = datum;
 
     if (keyf) {
       Tuple.set(item, 'key', key);
@@ -15257,7 +15253,7 @@ function join(input, data, ds, fullUpdate) {
 
     if (enter) {
       output.add.push(item);
-    } else if (mod[datum._id]) {
+    } else if (diff || mod[datum._id]) {
       output.mod.push(item);
     }
 
@@ -16029,7 +16025,7 @@ function aggrType(def, scale) {
   if (!isUniques(scale)) return Aggregate.TYPES.VALUE;
 
   // If we don't sort, then we can send values directly to aggrs as well
-  if (!def.sort) return Aggregate.TYPES.VALUE;
+  if (!dl.isObject(def.sort)) return Aggregate.TYPES.VALUE;
 
   return Aggregate.TYPES.MULTI;
 }
@@ -16062,7 +16058,7 @@ function getCache(which, def, scale, group) {
       summarize = {'*': DataRef.COUNT};
     } else if (atype === Aggregate.TYPES.TUPLE) {
       groupby = [{ name: DataRef.GROUPBY, get: dl.$(fields[0]) }];
-      summarize = sort ? [{
+      summarize = dl.isObject(sort) ? [{
         field: DataRef.VALUE,
         get:  dl.$(sort.field),
         ops: [sort.op]
@@ -16098,7 +16094,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from, cmp;
+      i, rlen, j, flen, ref, fields, field, data, from, so, cmp;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
@@ -16133,13 +16129,15 @@ function dataRef(which, def, scale, group) {
 
     data = cache.aggr().result();
     if (uniques) {
-      if (sort) {
-        cmp = sort.order.signal ? graph.signalRef(sort.order.signal) : sort.order;
+      if (dl.isObject(sort)) {
+        cmp = (so = sort.order) && so.signal ? graph.signalRef(so.signal) : so;
         cmp = (cmp == DataRef.DESC ? '-' : '+') + sort.op + '_' + DataRef.VALUE;
         cmp = dl.comparator(cmp);
-        data = data.sort(cmp);
+      } else if (sort === true) {
+        cmp = dl.comparator(DataRef.GROUPBY);
       }
 
+      if (cmp) data = data.sort(cmp);
       cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
     } else {
       data = data[0];
@@ -16159,7 +16157,7 @@ function signal(v) {
 
 function domainMinMax(scale, group) {
   var def = this._def,
-      domain = [null, null], z;
+      domain = [null, null], s, z;
 
   if (def.domain !== undefined) {
     domain = (!dl.isObject(def.domain)) ? domain :
@@ -16170,7 +16168,7 @@ function domainMinMax(scale, group) {
   if (def.domainMin !== undefined) {
     if (dl.isObject(def.domainMin)) {
       if (def.domainMin.signal) {
-        domain[0] = signal.call(this, def.domainMin);
+        domain[0] = dl.isValid(s=signal.call(this, def.domainMin)) ? s : domain[0];
       } else {
         domain[0] = dataRef.call(this, DataRef.DOMAIN+DataRef.MIN, def.domainMin, scale, group)[0];
       }
@@ -16181,7 +16179,7 @@ function domainMinMax(scale, group) {
   if (def.domainMax !== undefined) {
     if (dl.isObject(def.domainMax)) {
       if (def.domainMax.signal) {
-        domain[z] = signal.call(this, def.domainMax);
+        domain[z] = dl.isValid(s=signal.call(this, def.domainMax)) ? s : domain[z];
       } else {
         domain[z] = dataRef.call(this, DataRef.DOMAIN+DataRef.MAX, def.domainMax, scale, group)[1];
       }
@@ -17810,6 +17808,7 @@ prototype.transform = function(input) {
   input.mod.forEach(update);
   input.rem.forEach(update);
 
+  input.fields[output] = 1;
   return input;
 };
 
@@ -17943,6 +17942,7 @@ module.exports = CountPattern;
 var df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
     Tuple = df.Tuple,
+    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
@@ -17951,7 +17951,8 @@ function Cross(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     with: {type: 'data'},
-    diagonal: {type: 'value', default: 'true'}
+    diagonal: {type: 'value', default: 'true'},
+    filter: {type: 'expr'}
   });
 
   this._output = {'left': 'a', 'right': 'b'};
@@ -17973,8 +17974,8 @@ function cache(x, t) {
   c.c.push(t);
 }
 
-function add(output, left, data, diag, x) {
-  var i = 0, len = data.length, t, y, id;
+function add(output, left, data, diag, test, x) {
+  var i = 0, len = data.length, t = {}, y, id;
 
   for (; i<len; ++i) {
     y = data[i];
@@ -17982,13 +17983,17 @@ function add(output, left, data, diag, x) {
     if (this._ids[id]) continue;
     if (x._id == y._id && !diag) continue;
 
-    t = Tuple.ingest({});
     t[this._output.left]  = left ? x : y;
     t[this._output.right] = left ? y : x;
-    output.add.push(t);
-    cache.call(this, x, t);
-    cache.call(this, y, t);
-    this._ids[id] = 1;
+
+    // Only ingest a tuple if we keep it around.
+    if (!test || test(t)) {
+      output.add.push(t=Tuple.ingest(t));
+      cache.call(this, x, t);
+      cache.call(this, y, t);
+      this._ids[id] = 1;
+      t = {};
+    }    
   }
 }
 
@@ -18024,19 +18029,23 @@ prototype.batchTransform = function(input, data) {
   log.debug(input, ['crossing']);
 
   var w = this.param('with'),
+      f = this.param('filter'),
       diag = this.param('diagonal'),
+      graph = this._graph,
+      signals = graph.values(SIGNALS, this.dependency(SIGNALS)),
+      test = f ? function(x) {return f(x, null, signals); } : null,
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
       output  = ChangeSet.create(input),
-      r = rem.bind(this, output); 
+      r = rem.bind(this, output);
 
   input.rem.forEach(r);
-  input.add.forEach(add.bind(this, output, true, wdata, diag));
+  input.add.forEach(add.bind(this, output, true, wdata, diag, test));
 
   if (!selfCross && woutput.stamp > this._lastWith) {
     woutput.rem.forEach(r);
-    woutput.add.forEach(add.bind(this, output, false, data, diag));
+    woutput.add.forEach(add.bind(this, output, false, data, diag, test));
     woutput.mod.forEach(mod.bind(this, output, false));
     upFields.call(this, woutput, output);
     this._lastWith = woutput.stamp;

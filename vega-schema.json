@@ -1998,6 +1998,10 @@
                 "description": "If false, items along the \"diagonal\" of the cross-product (those elements with the same index in their respective array) will not be included in the output.",
                 "default": true
               },
+              "filter": {
+                "type": "string",
+                "description": "A string containing an expression (in JavaScript syntax) to filter the resulting data elements."
+              },
               "output": {
                 "type": "object",
                 "description": "Rename the output data fields",
@@ -5185,42 +5189,49 @@
           ]
         },
         "sort": {
-          "type": "object",
-          "properties": {
-            "field": {
-              "type": "string"
+          "oneOf": [
+            {
+              "type": "boolean"
             },
-            "op": {
-              "enum": [
-                "values",
-                "count",
-                "valid",
-                "missing",
-                "distinct",
-                "sum",
-                "mean",
-                "average",
-                "variance",
-                "variancep",
-                "stdev",
-                "stdevp",
-                "median",
-                "q1",
-                "q3",
-                "modeskew",
-                "min",
-                "max",
-                "argmin",
-                "argmax"
-              ]
-            },
-            "order": {
-              "enum": [
-                "asc",
-                "desc"
-              ]
+            {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "op": {
+                  "enum": [
+                    "values",
+                    "count",
+                    "valid",
+                    "missing",
+                    "distinct",
+                    "sum",
+                    "mean",
+                    "average",
+                    "variance",
+                    "variancep",
+                    "stdev",
+                    "stdevp",
+                    "median",
+                    "q1",
+                    "q3",
+                    "modeskew",
+                    "min",
+                    "max",
+                    "argmin",
+                    "argmax"
+                  ]
+                },
+                "order": {
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ]
+                }
+              }
             }
-          }
+          ]
         }
       },
       "additionalProperties": false
