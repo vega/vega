@@ -1,4 +1,4 @@
-var font = require('../../util/font'),
+var text = require('../../util/text'),
     SVG = require('../../util/svg'),
     textAlign = SVG.textAlign,
     path = SVG.path;
@@ -119,7 +119,7 @@ module.exports = {
     nest: false,
     attr: function(emit, o) {
       var dx = (o.dx || 0),
-          dy = (o.dy || 0) + font.offset(o),
+          dy = (o.dy || 0) + text.offset(o),
           x = (o.x || 0),
           y = (o.y || 0),
           a = o.angle || 0,

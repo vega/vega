@@ -2,7 +2,7 @@ var BoundsContext = require('./BoundsContext'),
     Bounds = require('./Bounds'),
     canvas = require('./canvas'),
     svg = require('./svg'),
-    font = require('./font'),
+    text = require('./text'),
     paths = require('../path'),
     parse = paths.parse,
     drawPath = paths.render,
@@ -165,15 +165,15 @@ function symbol(o, bounds) {
   return strokeBounds(o, bounds);
 }
 
-function text(o, bounds, noRotate) {
+function textMark(o, bounds, noRotate) {
   var g = context(),
-      h = font.size(o),
+      h = text.size(o),
       a = o.align,
       r = o.radius || 0,
       x = (o.x || 0),
       y = (o.y || 0),
       dx = (o.dx || 0),
-      dy = (o.dy || 0) + font.offset(o) - Math.round(0.8*h), // use 4/5 offset
+      dy = (o.dy || 0) + text.offset(o) - Math.round(0.8*h), // use 4/5 offset
       w, t;
 
   if (r) {
@@ -183,8 +183,8 @@ function text(o, bounds, noRotate) {
   }
 
   // horizontal alignment
-  g.font = font.string(o);
-  w = g.measureText(o.text != null ? o.text : '').width;
+  g.font = text.font(o);
+  w = g.measureText(text.value(o.text)).width;
   if (a === 'center') {
     dx -= (w / 2);
   } else if (a === 'right') {
@@ -232,7 +232,7 @@ var methods = {
   rect:   rect,
   rule:   rule,
   arc:    arc,
-  text:   text,
+  text:   textMark,
   path:   path,
   area:   area,
   line:   line
@@ -288,6 +288,6 @@ function markBounds(mark, bounds, opt) {
 module.exports = {
   mark:  markBounds,
   item:  itemBounds,
-  text:  text,
+  text:  textMark,
   group: group
 };

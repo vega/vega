@@ -1,42 +1,42 @@
 'use strict';
 
 var assert = require('chai').assert;
-var font = require('../src/util/font');
+var text = require('../src/util/text');
 var DOM = require('../src/util/dom');
 
 describe('util', function() {
 
-  describe('font-string', function() {
+  describe('text-font', function() {
     it('should produce default font string', function() {
-      assert.equal(font.string({}), '11px sans-serif');
+      assert.equal(text.font({}), '11px sans-serif');
     });
     it('should include font style', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         fontStyle: 'italic'
       }), 'italic 11px sans-serif');
     });
     it('should include font variant', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         fontVariant: 'small-caps'
       }), 'small-caps 11px sans-serif');
     });
     it('should include font weight', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         fontWeight: 'bold'
       }), 'bold 11px sans-serif');
     });
     it('should include font size', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         fontSize: 18
       }), '18px sans-serif');
     });
     it('should include font family', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         font: 'Helvetica'
       }), '11px Helvetica');
     });
     it('should include all properties style', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         fontStyle: 'italic',
         fontVariant: 'small-caps',
         fontWeight: 'bold',
@@ -45,10 +45,10 @@ describe('util', function() {
       }), 'italic small-caps bold 18px Helvetica');
     });
     it('should handle quotes if requested', function() {
-      assert.equal(font.string({
+      assert.equal(text.font({
         font: '"Helvetica Neue"'
       }, true), '11px \'Helvetica Neue\'');
-      assert.equal(font.string({
+      assert.equal(text.font({
         font: "'Helvetica Neue'"
       }, true), '11px \'Helvetica Neue\'');
     });
