@@ -408,7 +408,7 @@ function signal(v) {
 
 function domainMinMax(scale, group) {
   var def = this._def,
-      domain = [null, null], z;
+      domain = [null, null], s, z;
 
   if (def.domain !== undefined) {
     domain = (!dl.isObject(def.domain)) ? domain :
@@ -419,7 +419,7 @@ function domainMinMax(scale, group) {
   if (def.domainMin !== undefined) {
     if (dl.isObject(def.domainMin)) {
       if (def.domainMin.signal) {
-        domain[0] = signal.call(this, def.domainMin);
+        domain[0] = dl.isValid(s=signal.call(this, def.domainMin)) ? s : domain[0];
       } else {
         domain[0] = dataRef.call(this, DataRef.DOMAIN+DataRef.MIN, def.domainMin, scale, group)[0];
       }
@@ -430,7 +430,7 @@ function domainMinMax(scale, group) {
   if (def.domainMax !== undefined) {
     if (dl.isObject(def.domainMax)) {
       if (def.domainMax.signal) {
-        domain[z] = signal.call(this, def.domainMax);
+        domain[z] = dl.isValid(s=signal.call(this, def.domainMax)) ? s : domain[z];
       } else {
         domain[z] = dataRef.call(this, DataRef.DOMAIN+DataRef.MAX, def.domainMax, scale, group)[1];
       }
