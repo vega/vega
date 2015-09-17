@@ -55,6 +55,7 @@ prototype.transform = function(input) {
   input.mod.forEach(update);
   input.rem.forEach(update);
 
+  input.fields[output] = 1;
   return input;
 };
 
