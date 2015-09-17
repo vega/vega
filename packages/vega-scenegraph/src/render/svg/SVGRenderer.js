@@ -1,6 +1,6 @@
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
-    font = require('../../util/font'),
+    text = require('../../util/text'),
     DOM = require('../../util/dom'),
     SVG = require('../../util/svg'),
     ns = SVG.metadata.xmlns,
@@ -334,11 +334,12 @@ var mark_extras = {
     }
   },
   text: function(mdef, el, item) {
-    if (item.text !== values.text) {
-      el.textContent = item.text || '';
-      values.text = item.text;
+    var str = text.value(item.text);
+    if (str !== values.text) {
+      el.textContent = str;
+      values.text = str;
     }
-    var str = font.string(item);
+    str = text.font(item);
     if (str !== values.font) {
       el.style.setProperty('font', str);
       values.font = str;

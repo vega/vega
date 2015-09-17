@@ -1,7 +1,7 @@
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
-    font = require('../../util/font'),
+    text = require('../../util/text'),
     DOM = require('../../util/dom'),
     openTag = DOM.openTag,
     closeTag = DOM.closeTag,
@@ -158,7 +158,7 @@ prototype.mark = function(scene) {
     style = (tag !== 'g') ? styles(item, scene, tag, defs) : null;
     str += openTag(tag, this.attributes(attr, item), style);
     if (tag === 'text') {
-      str += escape_text(item.text);
+      str += escape_text(text.value(item.text));
     } else if (tag === 'g') {
       str += openTag('rect',
         this.attributes(mdef.background, item),
@@ -208,7 +208,7 @@ function styles(o, mark, tag, defs) {
   }
 
   if (tag === 'text') {
-    s += 'font: ' + font.string(o) + ';';
+    s += 'font: ' + text.font(o) + ';';
   }
 
   for (i=0, n=SVG.styleProperties.length; i<n; ++i) {
@@ -234,7 +234,6 @@ function styles(o, mark, tag, defs) {
 }
 
 function escape_text(s) {
-  s = (s == null ? '' : String(s));
   return s.replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');

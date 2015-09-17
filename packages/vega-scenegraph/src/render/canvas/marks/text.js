@@ -1,6 +1,6 @@
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
-    font = require('../../../util/font'),
+    text = require('../../../util/text'),
     util = require('./util'),
     tempBounds = new Bounds();
 
@@ -8,17 +8,19 @@ function draw(g, scene, bounds) {
   if (!scene.items || !scene.items.length) return;
 
   var items = scene.items,
-      o, opac, x, y, r, t;
+      o, opac, x, y, r, t, str;
 
   for (var i=0, len=items.length; i<len; ++i) {
     o = items[i];
     if (bounds && !bounds.intersects(o.bounds))
       continue; // bounds check
 
+    str = text.value(o.text);
+    if (!str) continue;
     opac = o.opacity == null ? 1 : o.opacity;
     if (opac === 0) continue;
 
-    g.font = font.string(o);
+    g.font = text.font(o);
     g.textAlign = o.align || 'left';
 
     x = (o.x || 0);
@@ -36,13 +38,13 @@ function draw(g, scene, bounds) {
       x = y = 0; // reset x, y
     }
     x += (o.dx || 0);
-    y += (o.dy || 0) + font.offset(o);
+    y += (o.dy || 0) + text.offset(o);
 
     if (o.fill && util.fill(g, o, opac)) {
-      g.fillText(o.text, x, y);
+      g.fillText(str, x, y);
     }
     if (o.stroke && util.stroke(g, o, opac)) {
-      g.strokeText(o.text, x, y);
+      g.strokeText(str, x, y);
     }
     if (o.angle) g.restore();
   }

@@ -4,7 +4,10 @@ function size(item) {
 
 module.exports = {
   size: size,
-  string: function(item, quote) {
+  value: function(s) {
+    return s != null ? String(s) : '';
+  },
+  font: function(item, quote) {
     var font = item.font;
     if (quote && font) {
       font = String(font).replace(/\"/g, '\'');
