@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -37,10 +37,10 @@
     "d3.layout.cloud": "^1.1.1",
     "datalib": "^1.4.6",
     "topojson": "^1.6.19",
-    "vega-dataflow": "^1.2.4",
+    "vega-dataflow": "^1.2.5",
     "vega-expression": "^1.0.3",
     "vega-logging": "^1.0.1",
-    "vega-scenegraph": "^1.0.9",
+    "vega-scenegraph": "^1.0.10",
     "yargs": "^3.15.0"
   },
   "devDependencies": {
