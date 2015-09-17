@@ -137,7 +137,7 @@ prototype.addListener = function(l) {
     while (q.length) {
       cur = q.shift();
       cur._rank = g.rank();
-      q.push.apply(q, cur.listeners());
+      q.unshift.apply(q, cur.listeners());
     }
   }
 
