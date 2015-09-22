@@ -138,6 +138,7 @@ prototype.propagate = function(pulse, node, stamp) {
 
           if ((nplse = pulses[next._id]) !== undefined) {
             if (nplse === null) throw Error('Already propagated to node.');
+            if (nplse === pulse) continue;  // Re-queueing the same pulse.
 
             // We've already queued this node. Ensure there should be at most one
             // pulse with tuples (add/mod/rem), and the remainder will be reflows. 
