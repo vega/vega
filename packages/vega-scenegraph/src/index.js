@@ -4,6 +4,7 @@ module.exports = {
   Item:       require('./util/Item'),
   bound:      require('./util/bound'),
   Bounds:     require('./util/Bounds'),
+  canvas:     require('./util/canvas'),
   Gradient:   require('./util/Gradient'),
   toJSON:     require('./util/scene').toJSON,
   fromJSON:   require('./util/scene').fromJSON
