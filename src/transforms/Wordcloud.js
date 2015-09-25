@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     d3 = require('d3'),
     d3_cloud = require('d3-cloud'),
-    Canvas = require('canvas-browserify'),
+    canvas = require('vega-scenegraph').canvas,
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
     Transform = require('./Transform'),
@@ -22,7 +22,7 @@ function Wordcloud(graph) {
     spiral: {type: 'value', default: 'archimedean'}
   });
 
-  this._layout = d3_cloud().canvas(function() { return new Canvas(1, 1); });
+  this._layout = d3_cloud().canvas(canvas.instance);
 
   this._output = {
     'x':          'layout_x',
