@@ -34,13 +34,13 @@
   "dependencies": {
     "d3": "^3.5.6",
     "d3-geo-projection": "^0.2.15",
-    "d3.layout.cloud": "^1.1.1",
+    "d3-cloud": "^1.2.0",
     "datalib": "^1.4.6",
     "topojson": "^1.6.19",
     "vega-dataflow": "^1.2.5",
     "vega-expression": "^1.0.3",
     "vega-logging": "^1.0.1",
-    "vega-scenegraph": "^1.0.10",
+    "vega-scenegraph": "^1.0.11",
     "yargs": "^3.15.0"
   },
   "devDependencies": {
@@ -92,7 +92,6 @@
   },
   "browserify-shim": {
     "d3": "global:d3",
-    "d3.layout.cloud": "global:d3.layout.cloud",
     "canvas": "global:canvas",
     "topojson": "global:topojson"
   }
