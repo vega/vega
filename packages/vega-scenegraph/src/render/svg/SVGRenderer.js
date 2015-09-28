@@ -253,8 +253,7 @@ prototype.drawMark = function(el, scene, index, mdef) {
   for (i=0, n=items.length; i<n; ++i) {
     if (this.isDirty(d = items[i])) {
       insert = !(this._dirtyAll || d._svg);
-      c = insert ? bind(p, mdef, d, i, true)
-        : (p.childNodes[i] || bind(p, mdef, d, i));
+      c = bind(p, mdef, d, i, insert);
       this._update(mdef, c, d);
       if (isGroup) {
         if (insert) this._dirtyAll = true;

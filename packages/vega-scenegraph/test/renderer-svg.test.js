@@ -35,6 +35,11 @@ function compensate(svg) {
 }
 
 function render(scene, w, h) {
+  // clear document first
+  for (var i=doc.body.children.length; --i>=0;) {
+    doc.body.removeChild(doc.body.children[i]);
+  }
+  // then render svg
   return compensate(new Renderer()
     .initialize(doc.body, w, h)
     .render(scene)
