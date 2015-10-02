@@ -2,7 +2,7 @@
 
 [Vega](http://github.com/vega/vega) expression parser and code generator.
 
-Parses a limited subset of JavaScript expressions into an abstract syntax tree, and provides code generation utilities for generating `eval`'able output code. The parser recognizes basic JavaScript expressions, excluding assignment operators, `new` expressions, and control flow statements (`for`, `while`, `switch`, etc). The configurable code generator further limits the set of allowable function invocations and variable names. The goal is to provide simple, expressive and security-conscious expression evaluation.
+Parses a [limited subset](https://github.com/vega/vega/wiki/Expressions) of JavaScript expressions into an abstract syntax tree, and provides code generation utilities for generating `eval`'able output code. The parser recognizes basic JavaScript expressions, excluding assignment operators, `new` expressions, and control flow statements (`for`, `while`, `switch`, etc). The configurable code generator further limits the set of allowable function invocations and variable names. The goal is to provide simple, expressive and security-conscious expression evaluation.
 
 ### API Usage
 
