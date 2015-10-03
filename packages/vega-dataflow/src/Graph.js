@@ -199,7 +199,7 @@ prototype.preprocess = function(branch) {
 };
 
 prototype.connect = function(branch) {
-  var collector, node, data, signals, i, n, j, m;
+  var collector, node, data, signals, i, n, j, m, x, y;
 
   // connect the pipeline
   for (i=0, n=branch.length; i<n; ++i) {
@@ -208,12 +208,20 @@ prototype.connect = function(branch) {
 
     data = node.dependency(Deps.DATA);
     for (j=0, m=data.length; j<m; ++j) {
-      this.data(data[j]).addListener(collector);
+      if (!(x=this.data(y=data[j]))) {
+        throw new Error('Unknown data source ' + dl.str(y));
+      }
+
+      x.addListener(collector);
     }
 
     signals = node.dependency(Deps.SIGNALS);
     for (j=0, m=signals.length; j<m; ++j) {
-      this.signal(signals[j]).addListener(collector);
+      if (!(x=this.signal(y=signals[j]))) {
+        throw new Error('Unknown signal ' + dl.str(y));
+      }
+
+      x.addListener(collector);
     }
 
     if (i > 0) branch[i-1].addListener(node);
