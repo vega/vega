@@ -1,0 +1,1152 @@
+[
+  {
+    "budgetYear": 1980,
+    "forecastYear": 1980,
+    "value": -0.103
+  },
+  {
+    "budgetYear": 1980,
+    "forecastYear": 1981,
+    "value": -0.037
+  },
+  {
+    "budgetYear": 1980,
+    "forecastYear": 1982,
+    "value": 0.01
+  },
+  {
+    "budgetYear": 1980,
+    "forecastYear": 1983,
+    "value": 0.051
+  },
+  {
+    "budgetYear": 1981,
+    "forecastYear": 1980,
+    "value": -0.192
+  },
+  {
+    "budgetYear": 1981,
+    "forecastYear": 1981,
+    "value": -0.129
+  },
+  {
+    "budgetYear": 1981,
+    "forecastYear": 1982,
+    "value": -0.06
+  },
+  {
+    "budgetYear": 1981,
+    "forecastYear": 1983,
+    "value": -0.017
+  },
+  {
+    "budgetYear": 1981,
+    "forecastYear": 1984,
+    "value": 0.063
+  },
+  {
+    "budgetYear": 1982,
+    "forecastYear": 1981,
+    "value": -0.185
+  },
+  {
+    "budgetYear": 1982,
+    "forecastYear": 1982,
+    "value": -0.215
+  },
+  {
+    "budgetYear": 1982,
+    "forecastYear": 1983,
+    "value": -0.19
+  },
+  {
+    "budgetYear": 1982,
+    "forecastYear": 1984,
+    "value": -0.164
+  },
+  {
+    "budgetYear": 1982,
+    "forecastYear": 1985,
+    "value": -0.137
+  },
+  {
+    "budgetYear": 1983,
+    "forecastYear": 1982,
+    "value": -0.28
+  },
+  {
+    "budgetYear": 1983,
+    "forecastYear": 1983,
+    "value": -0.432
+  },
+  {
+    "budgetYear": 1983,
+    "forecastYear": 1984,
+    "value": -0.373
+  },
+  {
+    "budgetYear": 1983,
+    "forecastYear": 1985,
+    "value": -0.371
+  },
+  {
+    "budgetYear": 1983,
+    "forecastYear": 1986,
+    "value": -0.275
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1983,
+    "value": -0.432
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1984,
+    "value": -0.363
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1985,
+    "value": -0.345
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1986,
+    "value": -0.33
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1987,
+    "value": -0.326
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1988,
+    "value": -0.267
+  },
+  {
+    "budgetYear": 1984,
+    "forecastYear": 1989,
+    "value": -0.209
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1984,
+    "value": -0.367
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1985,
+    "value": -0.425
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1986,
+    "value": -0.336
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1987,
+    "value": -0.298
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1988,
+    "value": -0.253
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1989,
+    "value": -0.182
+  },
+  {
+    "budgetYear": 1985,
+    "forecastYear": 1990,
+    "value": -0.135
+  },
+  {
+    "budgetYear": 1986,
+    "forecastYear": 1985,
+    "value": -0.406
+  },
+  {
+    "budgetYear": 1986,
+    "forecastYear": 1986,
+    "value": -0.378
+  },
+  {
+    "budgetYear": 1986,
+    "forecastYear": 1987,
+    "value": -0.26
+  },
+  {
+    "budgetYear": 1986,
+    "forecastYear": 1988,
+    "value": -0.164
+  },
+  {
+    "budgetYear": 1986,
+    "forecastYear": 1989,
+    "value": -0.114
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1986,
+    "value": -0.412
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1987,
+    "value": -0.313
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1988,
+    "value": -0.189
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1989,
+    "value": -0.157
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1990,
+    "value": -0.098
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1991,
+    "value": -0.033
+  },
+  {
+    "budgetYear": 1987,
+    "forecastYear": 1992,
+    "value": 0.019
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1987,
+    "value": -0.271
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1988,
+    "value": -0.257
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1989,
+    "value": -0.219
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1990,
+    "value": -0.166
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1991,
+    "value": -0.124
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1992,
+    "value": -0.077
+  },
+  {
+    "budgetYear": 1988,
+    "forecastYear": 1993,
+    "value": -0.034
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1988,
+    "value": -0.272
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1989,
+    "value": -0.273
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1990,
+    "value": -0.152
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1991,
+    "value": -0.105
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1992,
+    "value": -0.049
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1993,
+    "value": -0.004
+  },
+  {
+    "budgetYear": 1989,
+    "forecastYear": 1994,
+    "value": 0.048
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1989,
+    "value": -0.258
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1990,
+    "value": -0.203
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1991,
+    "value": -0.099
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1992,
+    "value": -0.038
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1993,
+    "value": 0.008
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1994,
+    "value": 0.015
+  },
+  {
+    "budgetYear": 1990,
+    "forecastYear": 1995,
+    "value": 0.013
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1990,
+    "value": -0.363
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1991,
+    "value": -0.499
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1992,
+    "value": -0.424
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1993,
+    "value": -0.296
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1994,
+    "value": -0.089
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1995,
+    "value": 0.004
+  },
+  {
+    "budgetYear": 1991,
+    "forecastYear": 1996,
+    "value": 0.027
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1991,
+    "value": -0.422
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1992,
+    "value": -0.603
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1993,
+    "value": -0.514
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1994,
+    "value": -0.306
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1995,
+    "value": -0.272
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1996,
+    "value": -0.249
+  },
+  {
+    "budgetYear": 1992,
+    "forecastYear": 1997,
+    "value": -0.252
+  },
+  {
+    "budgetYear": 1993,
+    "forecastYear": 1992,
+    "value": -0.438
+  },
+  {
+    "budgetYear": 1993,
+    "forecastYear": 1993,
+    "value": -0.465
+  },
+  {
+    "budgetYear": 1993,
+    "forecastYear": 1994,
+    "value": -0.367
+  },
+  {
+    "budgetYear": 1993,
+    "forecastYear": 1995,
+    "value": -0.323
+  },
+  {
+    "budgetYear": 1993,
+    "forecastYear": 1996,
+    "value": -0.258
+  },
+  {
+    "budgetYear": 1993,
+    "forecastYear": 1997,
+    "value": -0.243
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1993,
+    "value": -0.375
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1994,
+    "value": -0.339
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1995,
+    "value": -0.232
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1996,
+    "value": -0.233
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1997,
+    "value": -0.25
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1998,
+    "value": -0.253
+  },
+  {
+    "budgetYear": 1994,
+    "forecastYear": 1999,
+    "value": -0.238
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 1994,
+    "value": -0.293
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 1995,
+    "value": -0.27
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 1996,
+    "value": -0.27
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 1997,
+    "value": -0.286
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 1998,
+    "value": -0.261
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 1999,
+    "value": -0.259
+  },
+  {
+    "budgetYear": 1995,
+    "forecastYear": 2000,
+    "value": -0.249
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 1995,
+    "value": -0.23
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 1996,
+    "value": -0.2
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 1997,
+    "value": -0.188
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 1998,
+    "value": -0.13
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 1999,
+    "value": -0.084
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 2000,
+    "value": -0.035
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 2001,
+    "value": 0.01
+  },
+  {
+    "budgetYear": 1996,
+    "forecastYear": 2002,
+    "value": 0.054
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 1996,
+    "value": -0.147
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 1997,
+    "value": -0.169
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 1998,
+    "value": -0.16
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 1999,
+    "value": -0.154
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 2000,
+    "value": -0.112
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 2001,
+    "value": -0.045
+  },
+  {
+    "budgetYear": 1997,
+    "forecastYear": 2002,
+    "value": 0.021
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 1997,
+    "value": -0.029
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 1998,
+    "value": -0.013
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 1999,
+    "value": 0.012
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2000,
+    "value": 0.011
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2001,
+    "value": 0.035
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2002,
+    "value": 0.11
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2003,
+    "value": 0.098
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2004,
+    "value": 0.127
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2005,
+    "value": 0.153
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2006,
+    "value": 0.178
+  },
+  {
+    "budgetYear": 1998,
+    "forecastYear": 2007,
+    "value": 0.228
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 1998,
+    "value": 0.092
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 1999,
+    "value": 0.104
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 2000,
+    "value": 0.15
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 2001,
+    "value": 0.167
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 2002,
+    "value": 0.229
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 2003,
+    "value": 0.218
+  },
+  {
+    "budgetYear": 1999,
+    "forecastYear": 2004,
+    "value": 0.242
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 1999,
+    "value": 0.165
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2000,
+    "value": 0.214
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2001,
+    "value": 0.23
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2002,
+    "value": 0.229
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2003,
+    "value": 0.221
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2004,
+    "value": 0.227
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2005,
+    "value": 0.241
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2006,
+    "value": 0.277
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2007,
+    "value": 0.308
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2008,
+    "value": 0.32
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2009,
+    "value": 0.334
+  },
+  {
+    "budgetYear": 2000,
+    "forecastYear": 2010,
+    "value": 0.363
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2000,
+    "value": 0.302
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2001,
+    "value": 0.351
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2002,
+    "value": 0.284
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2003,
+    "value": 0.29
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2004,
+    "value": 0.305
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2005,
+    "value": 0.302
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2006,
+    "value": 0.331
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2007,
+    "value": 0.359
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2008,
+    "value": 0.38
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2009,
+    "value": 0.427
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2010,
+    "value": 0.465
+  },
+  {
+    "budgetYear": 2001,
+    "forecastYear": 2011,
+    "value": 0.519
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2001,
+    "value": 0.16
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2002,
+    "value": -0.13
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2003,
+    "value": -0.096
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2004,
+    "value": -0.016
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2005,
+    "value": 0.068
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2006,
+    "value": 0.093
+  },
+  {
+    "budgetYear": 2002,
+    "forecastYear": 2007,
+    "value": 0.11
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2002,
+    "value": -0.194
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2003,
+    "value": -0.364
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2004,
+    "value": -0.357
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2005,
+    "value": -0.233
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2006,
+    "value": -0.218
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2007,
+    "value": -0.188
+  },
+  {
+    "budgetYear": 2003,
+    "forecastYear": 2008,
+    "value": -0.193
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2003,
+    "value": -0.452
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2004,
+    "value": -0.606
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2005,
+    "value": -0.409
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2006,
+    "value": -0.29
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2007,
+    "value": -0.254
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2008,
+    "value": -0.243
+  },
+  {
+    "budgetYear": 2004,
+    "forecastYear": 2009,
+    "value": -0.241
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2004,
+    "value": -0.48
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2005,
+    "value": -0.479
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2006,
+    "value": -0.423
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2007,
+    "value": -0.329
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2008,
+    "value": -0.255
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2009,
+    "value": -0.237
+  },
+  {
+    "budgetYear": 2005,
+    "forecastYear": 2010,
+    "value": -0.207
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2005,
+    "value": -0.357
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2006,
+    "value": -0.458
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2007,
+    "value": -0.373
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2008,
+    "value": -0.227
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2009,
+    "value": -0.211
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2010,
+    "value": -0.183
+  },
+  {
+    "budgetYear": 2006,
+    "forecastYear": 2011,
+    "value": -0.202
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2006,
+    "value": -0.269
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2007,
+    "value": -0.257
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2008,
+    "value": -0.24
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2009,
+    "value": -0.19
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2010,
+    "value": -0.094
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2011,
+    "value": -0.053
+  },
+  {
+    "budgetYear": 2007,
+    "forecastYear": 2012,
+    "value": 0.059
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2007,
+    "value": -0.17
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2008,
+    "value": -0.417
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2009,
+    "value": -0.414
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2010,
+    "value": -0.16
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2011,
+    "value": -0.094
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2012,
+    "value": 0.047
+  },
+  {
+    "budgetYear": 2008,
+    "forecastYear": 2013,
+    "value": 0.028
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2008,
+    "value": -0.467
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2009,
+    "value": -1.781
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2010,
+    "value": -1.171
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2011,
+    "value": -0.899
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2012,
+    "value": -0.563
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2013,
+    "value": -0.507
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2014,
+    "value": -0.532
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2015,
+    "value": -0.534
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2016,
+    "value": -0.573
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2017,
+    "value": -0.562
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2018,
+    "value": -0.551
+  },
+  {
+    "budgetYear": 2009,
+    "forecastYear": 2019,
+    "value": -0.607
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2009,
+    "value": -1.436
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2010,
+    "value": -1.556
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2011,
+    "value": -1.25
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2012,
+    "value": -0.803
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2013,
+    "value": -0.692
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2014,
+    "value": -0.659
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2015,
+    "value": -0.689
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2016,
+    "value": -0.7
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2017,
+    "value": -0.688
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2018,
+    "value": -0.682
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2019,
+    "value": -0.775
+  },
+  {
+    "budgetYear": 2010,
+    "forecastYear": 2020,
+    "value": -0.841
+  }
+]
