@@ -362,7 +362,7 @@ function scaleRef(ref) {
 
 module.exports = properties;
 
-function valueSchema(type) {
+function valueSchema(type, name) {
   type = dl.isArray(type) ? {"enum": type} : {"type": type};
   var modType = type.type === "number" && type.type || "string";
   var valRef  = {
@@ -419,6 +419,27 @@ function valueSchema(type) {
       },
       "additionalProperties": false,
       "required": ["rule"]
+    },
+    {
+      "type": "array",
+      "items": {
+        "allOf": [{
+          "type": "object",
+          "properties": {
+            "predicate": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "object",
+                  "properties": {"name": { "type": "string" }},
+                  "required": ["name"]
+                }
+              ]
+            }
+          }
+        },
+        valRef]
+      }
     },
     valRef]
   };
@@ -491,11 +512,11 @@ properties.schema = {
       }
     },
 
-    "value": valueSchema({}),
-    "numberValue": valueSchema("number"),
-    "stringValue": valueSchema("string"),
-    "booleanValue": valueSchema("boolean"),
-    "arrayValue": valueSchema("array"),
+    "value": valueSchema({}, "value"),
+    "numberValue": valueSchema("number", "numberValue"),
+    "stringValue": valueSchema("string", "stringValue"),
+    "booleanValue": valueSchema("boolean", "booleanValue"),
+    "arrayValue": valueSchema("array", "arrayValue"),
 
     "colorValue": {
       "title": "ColorRef",
