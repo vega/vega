@@ -21,3 +21,10 @@ git subtree pull --prefix path-to-data git@github.com:vega/vega-datasets.git gh-
 You can also get the data directly via HTTP served by Github like:
 
 https://vega.github.io/vega-datasets/cars.json
+
+## Changelog
+
+### Version 1.0, October 8, 2015
+
+* Initial import from vega and vega-lite
+* Change field names in `cars.json` to be more descriptive (`hp` to `Horsepower`)
