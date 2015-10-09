@@ -1,3 +1,3 @@
 #!/bin/bash
 
-git subtree pull --prefix test/data git@github.com:vega/vega-data.git gh-pages
+git subtree pull --prefix test/data git@github.com:vega/vega-datasets.git gh-pages
