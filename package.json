@@ -71,7 +71,6 @@
     "pegjs": "pegjs src/parse/events.pegjs",
     "build": "npm run pegjs && browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
     "postbuild": "uglifyjs vega.js -cm > vega.min.js",
-    "postvendor": "scripts/update-data.sh",
     "schema": "node scripts/schema.js > vega-schema.json",
     "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
   },
