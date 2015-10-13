@@ -85,11 +85,13 @@ function pick(g, scene, x, y, gx, gy) {
     axes = group.axisItems || EMPTY;
     items = group.items || EMPTY;
     legends = group.legendItems || EMPTY;
-    dx = gx - (group.x || 0);
-    dy = gy - (group.y || 0);
+    dx = (group.x || 0);
+    dy = (group.y || 0);
 
     g.save();
     g.translate(dx, dy);
+    dx = gx - dx;
+    dy = gy - dy;
     for (j=legends.length; --j>=0;) {
       subscene = legends[j];
       if (subscene.interactive !== false) {
