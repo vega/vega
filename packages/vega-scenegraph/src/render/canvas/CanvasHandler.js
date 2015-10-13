@@ -15,17 +15,19 @@ prototype.constructor = CanvasHandler;
 
 prototype.initialize = function(el, pad, obj) {
   // add event listeners
-  var canvas = this._canvas = DOM.find(el, 'canvas'),
-      that = this;
-  this.events.forEach(function(type) {
-    canvas.addEventListener(type, function(evt) {
-      if (prototype[type]) {
-        prototype[type].call(that, evt);
-      } else {
-        that.fire(type, evt);
-      }
+  var canvas = this._canvas = DOM.find(el, 'canvas');
+  if (canvas) {
+    var that = this;
+    this.events.forEach(function(type) {
+      canvas.addEventListener(type, function(evt) {
+        if (prototype[type]) {
+          prototype[type].call(that, evt);
+        } else {
+          that.fire(type, evt);
+        }
+      });
     });
-  });
+  }
 
   return base.initialize.call(this, el, pad, obj);
 };
