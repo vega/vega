@@ -9,7 +9,7 @@ function properties(model, mark, spec) {
   var config = model.config(),
       code = "",
       names = dl.keys(spec),
-      i, len, name, ref, vars = {}, 
+      i, len, name, ref, vars = {},
       deps = {
         signals: {},
         scales:  {},
@@ -19,11 +19,11 @@ function properties(model, mark, spec) {
         _nRefs:  {},  // Temp stash to de-dupe nested refs.
         reflow:  false
       };
-      
+
   code += "var o = trans ? {} : item, d=0, set=this.tpl.set, tmpl=signals||{}, t;\n" +
           // Stash for dl.template
-          "tmpl.datum  = item.datum;\n" + 
-          "tmpl.group  = group;\n" + 
+          "tmpl.datum  = item.datum;\n" +
+          "tmpl.group  = group;\n" +
           "tmpl.parent = group.datum;\n";
 
   function handleDep(p) {
@@ -45,6 +45,9 @@ function properties(model, mark, spec) {
     if (ref.rule) {
       ref = rule(model, name, ref.rule);
       code += "\n  " + ref.code;
+    } else if (dl.isArray(ref)) {
+      ref = rule(model, name, ref);
+      code += "\n  " + ref.code;
     } else {
       ref = valueRef(config, name, ref);
       code += "d += set(o, "+dl.str(name)+", "+ref.val+");";
@@ -59,10 +62,10 @@ function properties(model, mark, spec) {
   // If nested references are present, sort them based on their level
   // to speed up determination of whether encoders should be reeval'd.
   dl.keys(deps._nRefs).forEach(function(k) { deps.nested.push(deps._nRefs[k]); });
-  deps.nested.sort(function(a, b) { 
+  deps.nested.sort(function(a, b) {
     a = a.level;
     b = b.level;
-    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN; 
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
   });
 
   if (vars.x2) {
@@ -110,14 +113,14 @@ function properties(model, mark, spec) {
       code += "\n  d += set(o, 'y', o.yc);" ;
     }
   }
-  
+
   if (hasPath(mark, vars)) code += "\n  d += (item.touch(), 1);";
   code += "\n  if (trans) trans.interpolate(item, o);";
   code += "\n  return d > 0;";
 
   try {
     /* jshint evil:true */
-    var encoder = Function('item', 'group', 'trans', 'db', 
+    var encoder = Function('item', 'group', 'trans', 'db',
       'signals', 'predicates', code);
     encoder.tpl  = Tuple;
     encoder.util = dl;
@@ -194,7 +197,7 @@ function rule(model, name, rules) {
         "\n    d += set(o, "+dl.str(name)+", "+ref.val+");";
       code += rules[i+1] ? "\n  } else " : "  }";
     } else {
-      code += "{" + 
+      code += "{" +
         "\n    d += set(o, "+dl.str(name)+", "+ref.val+");"+
         "\n  }\n";
     }
@@ -220,7 +223,7 @@ function valueRef(config, name, ref) {
   }
 
   // initialize value
-  var val = null, scale = null, 
+  var val = null, scale = null,
       deps = dependencies(),
       sgRef = null, fRef = null, sRef = null, tmpl = {};
 
@@ -230,9 +233,9 @@ function valueRef(config, name, ref) {
       var f = dl.field(k),
           a = f.shift();
       if (a === 'parent' || a === 'group') {
-        deps.nested.push({ 
+        deps.nested.push({
           parent: a === 'parent',
-          group:  a === 'group', 
+          group:  a === 'group',
           level:  1
         });
       } else if (a === 'datum') {
@@ -249,7 +252,7 @@ function valueRef(config, name, ref) {
 
   if (ref.signal !== undefined) {
     sgRef = dl.field(ref.signal);
-    val = 'signals['+sgRef.map(dl.str).join('][')+']'; 
+    val = 'signals['+sgRef.map(dl.str).join('][')+']';
     deps.signals.push(sgRef.shift());
   }
 
@@ -269,13 +272,13 @@ function valueRef(config, name, ref) {
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
     if (val !== null || ref.band || ref.mult || ref.offset) {
-      val = scale + (ref.band ? '.rangeBand()' : 
+      val = scale + (ref.band ? '.rangeBand()' :
         '('+(val !== null ? val : 'item.datum.data')+')');
     } else {
       val = scale;
     }
   }
-  
+
   // multiply, offset, return value
   val = '(' + (ref.mult?(dl.number(ref.mult)+' * '):'') + val + ')' +
         (ref.offset ? ' + ' + dl.number(ref.offset) : '');
@@ -305,7 +308,7 @@ function colorRef(config, type, x, y, z) {
 function fieldRef(ref) {
   if (dl.isString(ref)) {
     return {val: dl.field(ref).map(dl.str).join('][')};
-  } 
+  }
 
   // Resolve nesting/parent lookups
   var l = ref.level || 1,
@@ -359,7 +362,7 @@ function scaleRef(ref) {
 
 module.exports = properties;
 
-function valueSchema(type) {
+function valueSchema(type, name) {
   type = dl.isArray(type) ? {"enum": type} : {"type": type};
   var modType = type.type === "number" && type.type || "string";
   var valRef  = {
@@ -400,7 +403,7 @@ function valueSchema(type) {
               "properties": {
                 "predicate": {
                   "oneOf": [
-                    {"type": "string"}, 
+                    {"type": "string"},
                     {
                       "type": "object",
                       "properties": {"name": { "type": "string" }},
@@ -417,6 +420,27 @@ function valueSchema(type) {
       "additionalProperties": false,
       "required": ["rule"]
     },
+    {
+      "type": "array",
+      "items": {
+        "allOf": [{
+          "type": "object",
+          "properties": {
+            "predicate": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "object",
+                  "properties": {"name": { "type": "string" }},
+                  "required": ["name"]
+                }
+              ]
+            }
+          }
+        },
+        valRef]
+      }
+    },
     valRef]
   };
 }
@@ -431,24 +455,24 @@ properties.schema = {
           "oneOf": [
             {"$ref": "#/refs/signal"},
             {
-              "type": "object", 
+              "type": "object",
               "properties": {"datum": {"$ref": "#/refs/field"}},
               "required": ["datum"],
               "additionalProperties": false
             },
             {
-              "type": "object", 
+              "type": "object",
               "properties": {
-                "group": {"$ref": "#/refs/field"}, 
+                "group": {"$ref": "#/refs/field"},
                 "level": {"type": "number"}
               },
               "required": ["group"],
               "additionalProperties": false
             },
             {
-              "type": "object", 
+              "type": "object",
               "properties": {
-                "parent": {"$ref": "#/refs/field"}, 
+                "parent": {"$ref": "#/refs/field"},
                 "level": {"type": "number"}
               },
               "required": ["parent"],
@@ -488,11 +512,11 @@ properties.schema = {
       }
     },
 
-    "value": valueSchema({}),
-    "numberValue": valueSchema("number"),
-    "stringValue": valueSchema("string"),
-    "booleanValue": valueSchema("boolean"),
-    "arrayValue": valueSchema("array"),
+    "value": valueSchema({}, "value"),
+    "numberValue": valueSchema("number", "numberValue"),
+    "stringValue": valueSchema("string", "stringValue"),
+    "booleanValue": valueSchema("boolean", "booleanValue"),
+    "arrayValue": valueSchema("array", "arrayValue"),
 
     "colorValue": {
       "title": "ColorRef",
@@ -560,7 +584,7 @@ properties.schema = {
 
         // Symbol-mark properties
         "size": {"$ref": "#/refs/numberValue"},
-        "shape": valueSchema(["circle", "square", 
+        "shape": valueSchema(["circle", "square",
           "cross", "diamond", "triangle-up", "triangle-down"]),
 
         // Path-mark properties
@@ -573,7 +597,7 @@ properties.schema = {
         "endAngle": {"$ref": "#/refs/numberValue"},
 
         // Area- and line-mark properties
-        "interpolate": valueSchema(["linear", "step-before", "step-after", 
+        "interpolate": valueSchema(["linear", "step-before", "step-after",
           "basis", "basis-open", "cardinal", "cardinal-open", "monotone"]),
         "tension": {"$ref": "#/refs/numberValue"},
 
