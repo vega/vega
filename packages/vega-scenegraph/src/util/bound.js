@@ -206,18 +206,20 @@ function group(g, bounds, includeLegends) {
       legends = g.legendItems || [],
       j, m;
 
-  for (j=0, m=axes.length; j<m; ++j) {
-    bounds.union(axes[j].bounds);
-  }
-  for (j=0, m=items.length; j<m; ++j) {
-    bounds.union(items[j].bounds);
-  }
-  if (includeLegends) {
-    for (j=0, m=legends.length; j<m; ++j) {
-      bounds.union(legends[j].bounds);
+  if (!g.clip) {
+    for (j=0, m=axes.length; j<m; ++j) {
+      bounds.union(axes[j].bounds);
+    }
+    for (j=0, m=items.length; j<m; ++j) {
+      bounds.union(items[j].bounds);
+    }
+    if (includeLegends) {
+      for (j=0, m=legends.length; j<m; ++j) {
+        bounds.union(legends[j].bounds);
+      }
     }
   }
-  if (g.width || g.height) {
+  if (g.clip || g.width || g.height) {
     strokeBounds(g, bounds
       .add(0, 0)
       .add(g.width || 0, g.height || 0));
