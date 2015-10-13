@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Vega scenegraph and renderers.",
   "repository": {
     "type": "git",
