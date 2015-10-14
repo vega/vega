@@ -17,15 +17,23 @@ function parseTransforms(model, def) {
 }
 
 module.exports = parseTransforms;
+
+var keys = dl.keys(transforms)
+  .filter(function(k) { return transforms[k].schema; });
+
+var defs = keys.reduce(function(acc, k) {
+  return (acc[k+'Transform'] = transforms[k].schema, acc);
+}, {});
+
 parseTransforms.schema = {
-  "defs": {
+  "defs": dl.extend(defs, {
     "transform": {
       "type": "array",
       "items": {
-        "oneOf": dl.keys(transforms).map(function(k) {
-          return transforms[k].schema;
+        "oneOf": keys.map(function(k) { 
+          return {"$ref": "#/defs/"+k+"Transform"}; 
         })
       }
     }
-  }
+  })
 };
