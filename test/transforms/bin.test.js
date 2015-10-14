@@ -25,6 +25,21 @@ describe('Bin', function() {
     };
   }
 
+  it('should handle extent calculation', function(done) {
+    parseSpec(spec({maxbins: 10}), function(model) {
+      var ds = model.data('table'),
+          data = ds.values(),
+          floored = values.map(function(x) { return ~~x; });
+
+      expect(data.length).to.be.above(0).and.equal(floored.length);
+      for (var i=0, len=data.length; i<len; ++i) {
+        expect(data[i].bin_v).to.equal(floored[i]);
+      }
+  
+      done();
+    }, modelFactory);
+  });
+
   it('should handle step definition', function(done) {
     parseSpec(spec({min:0, max:10, step:1}), function(model) {
       var ds = model.data('table'),
@@ -119,6 +134,9 @@ describe('Bin', function() {
     var schema = schemaPath(transforms.bin.schema),
         validate = validator(schema);
 
+    expect(validate({ "type": "bin", "field": "price" })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "min": 1 })).to.be.true;
+    expect(validate({ "type": "bin", "field": "price", "max": 10 })).to.be.true;
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10 })).to.be.true;
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "base": 5 })).to.be.true;
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "maxbins": 5 })).to.be.true;
@@ -129,8 +147,6 @@ describe('Bin', function() {
 
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "bin" })).to.be.false;
-    expect(validate({ "type": "bin", "field": "price" })).to.be.false;
-    expect(validate({ "type": "bin", "field": "price", "min": 1 })).to.be.false;
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": 10, "hello": "world" })).to.be.false;
     expect(validate({ "type": "bin", "field": "price", "min": "1", "max": 10 })).to.be.false;
     expect(validate({ "type": "bin", "field": "price", "min": 1, "max": "10" })).to.be.false;
