@@ -27,7 +27,8 @@
           "field": "hour",
           "min": 0,
           "max": 24,
-          "step": 1
+          "step": 1,
+          "output": {"start": "bin"}
         },
         {
           "type": "aggregate",
@@ -46,7 +47,8 @@
           "field": "delay",
           "min": -60,
           "max": 140,
-          "step": 10
+          "step": 10,
+          "output": {"start": "bin"}
         },
         {"type": "filter", "test": "datum.bin <= 140"},
         {
@@ -66,7 +68,8 @@
           "field": "distance",
           "min": 0,
           "max": 2000,
-          "step": 50
+          "step": 50,
+          "output": {"start": "bin"}
         },
         {"type": "filter", "test": "datum.bin <= 2000"},
         {
