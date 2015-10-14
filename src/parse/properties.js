@@ -362,7 +362,7 @@ function scaleRef(ref) {
 
 module.exports = properties;
 
-function valueSchema(type, name) {
+function valueSchema(type) {
   type = dl.isArray(type) ? {"enum": type} : {"type": type};
   var modType = type.type === "number" && type.type || "string";
   var valRef  = {
