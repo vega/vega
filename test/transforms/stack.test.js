@@ -133,11 +133,9 @@ describe('Stack', function() {
     expect(validate({ "type": "stack", "groupby": ["country"], 
       "field": "medals", "offset": "zero" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "field": "medals", "offset": "silhouette" })).to.be.true;
+      "field": "medals", "offset": "center" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
-      "field": "medals", "offset": "wiggle" })).to.be.true;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
-      "field": "medals", "offset": "expand" })).to.be.true;
+      "field": "medals", "offset": "normalize" })).to.be.true;
     expect(validate({ "type": "stack", "groupby": ["country"], 
       "field": "medals", "output": {"start": "start", "mid": "mid", "end": "end"} })).to.be.true;
     
@@ -154,5 +152,11 @@ describe('Stack', function() {
       "field": "medals", "output": {"foo": "bar"} })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"], 
       "field": "medals", "bar": "foo" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "field": "medals", "offset": "silhouette" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "field": "medals", "offset": "wiggle" })).to.be.false;
+    expect(validate({ "type": "stack", "groupby": ["country"], 
+      "field": "medals", "offset": "expand" })).to.be.false;
   });
 });
