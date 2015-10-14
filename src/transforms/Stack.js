@@ -129,7 +129,7 @@ Stack.schema = {
     },
     "offset": {
       "description": "The baseline offset",
-      "oneOf": [{"enum": ["zero", "silhouette", "wiggle", "expand"]}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"enum": ["zero", "center", "normalize"]}, {"$ref": "#/refs/signal"}],
       "default": "zero"
     },
     "output": {
