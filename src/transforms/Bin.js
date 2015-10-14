@@ -1,10 +1,11 @@
-var bins = require('datalib').bins,
+var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
-    Transform = require('./Transform');
+    Transform = require('./Transform'),
+    BatchTransform = require('./BatchTransform');
 
 function Bin(graph) {
-  Transform.prototype.init.call(this, graph);
+  BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     field: {type: 'field'},
     min: {type: 'value'},
@@ -17,24 +18,39 @@ function Bin(graph) {
     div: {type: 'array<value>', default: [5, 2]}
   });
 
-  this._output = {bin: 'bin'};
+  this._output = {
+    start: 'bin_start',
+    end:   'bin_end'
+  };
   return this.mutates(true);
 }
 
-var prototype = (Bin.prototype = Object.create(Transform.prototype));
+var prototype = (Bin.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Bin;
 
-prototype.transform = function(input) {
+prototype.extent = function(data) {
+  // TODO only recompute extent upon data or field change?
+  var e = [this.param('min'), this.param('max')], d;
+  if (e[0] == null || e[1] == null) {
+    d = dl.extent(data, this.param('field').accessor);
+    if (e[0] == null) e[0] = d[0];
+    if (e[1] == null) e[1] = d[1];
+  }
+  return e;
+};
+
+prototype.batchTransform = function(input, data) {
   log.debug(input, ['binning']);
 
-  var output  = this._output.bin,
+  var extent  = this.extent(data),
+      output  = this._output,
       step    = this.param('step'),
       steps   = this.param('steps'),
       minstep = this.param('minstep'),
       get     = this.param('field').accessor,
       opt = {
-        min: this.param('min'),
-        max: this.param('max'),
+        min: extent[0],
+        max: extent[1],
         base: this.param('base'),
         maxbins: this.param('maxbins'),
         div: this.param('div')
@@ -43,19 +59,21 @@ prototype.transform = function(input) {
   if (step) opt.step = step;
   if (steps) opt.steps = steps;
   if (minstep) opt.minstep = minstep;
-  var b = bins(opt);
+  var b = dl.bins(opt);
 
   function update(d) {
     var v = get(d);
     v = v == null ? null
       : b.start + b.step * ~~((v - b.start) / b.step);
-    Tuple.set(d, output, v);
+    Tuple.set(d, output.start, v);
+    Tuple.set(d, output.end, v + b.step);
   }
   input.add.forEach(update);
   input.mod.forEach(update);
   input.rem.forEach(update);
 
-  input.fields[output] = 1;
+  input.fields[output.start] = 1;
+  input.fields[output.end] = 1;
   return input;
 };
 
@@ -123,11 +141,12 @@ Bin.schema = {
       "type": "object",
       "description": "Rename the output data fields",
       "properties": {
-        "bin": {"type": "string", "default": "bin"}
+        "start": {"type": "string", "default": "bin_start"},
+        "end": {"type": "string", "default": "bin_end"}
       },
       "additionalProperties": false
     }
   },
   "additionalProperties": false,
-  "required":["type", "field", "min", "max"]
+  "required": ["type", "field"]
 };
