@@ -178,31 +178,28 @@ proto.evaluate = function(input) {
       def = this._mark.def,
       props  = def.properties || {},
       update = props.update   || {},
-      output, fullUpdate, fcs, data, name;
+      output = ChangeSet.create(input), 
+      fullUpdate, fcs, data, name;
 
   if (this._ds) {
-    output = ChangeSet.create(input);
-
     // We need to determine if any encoder dependencies have been updated.
     // However, the encoder's data source will likely be updated, and shouldn't
     // trigger all items to mod.
     data = output.data[(name=this._ds.name())];
-    delete output.data[name];
+    output.data[name] = null;
     fullUpdate = this._encoder.reevaluate(output);
     output.data[name] = data;
-
-    // If a scale or signal in the update propset has been updated, 
-    // send forward all items for reencoding if we do an early return.
-    if (fullUpdate) output.mod = this._mark.items.slice();
 
     fcs = this._ds.last();
     if (!fcs) throw Error('Builder evaluated before backing DataSource.');
     if (fcs.stamp > this._stamp) {
-      output = join.call(this, fcs, this._ds.values(), true, fullUpdate);
+      join.call(this, fcs, output, this._ds.values(), true, fullUpdate);
+    } else if (fullUpdate) {
+      output.mod = this._mark.items.slice();
     }
   } else {
     data = dl.isFunction(this._def.from) ? this._def.from() : [Sentinel];
-    output = join.call(this, input, data);
+    join.call(this, input, output, data);
   }
 
   // Stash output before Bounder for downstream reactive geometry.
@@ -239,9 +236,8 @@ function newItem() {
   return item;
 }
 
-function join(input, data, ds, fullUpdate) {
-  var output = ChangeSet.create(input),
-      keyf = keyFunction(this._def.key || (ds ? '_id' : null)),
+function join(input, output, data, ds, fullUpdate) {
+  var keyf = keyFunction(this._def.key || (ds ? '_id' : null)),
       prev = this._mark.items || [],
       rem  = ds ? input.rem : prev,
       mod  = Tuple.idMap((!ds || fullUpdate) ? data : input.mod),
