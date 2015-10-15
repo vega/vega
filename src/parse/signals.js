@@ -24,13 +24,13 @@ function parseSignals(model, spec) {
     if (s.expr) {
       s.expr = expr(s.expr);
       signal.evaluate = function(input) {
-        var val = exprVal(model, s);
+        var val = exprVal(model, s),
+            sg  = input.signals;
         if (val !== signal.value() || signal.verbose()) {
           signal.value(val);
-          input.signals[s.name] = 1;
-          return input;
+          sg[s.name] = 1;
         }
-        return model.doNotPropagate;        
+        return sg[s.name] ? input : model.doNotPropagate;        
       };
       signal.dependency(SIGNALS, s.expr.globals);
       s.expr.globals.forEach(function(dep) {
