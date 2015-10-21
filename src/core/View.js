@@ -90,26 +90,33 @@ prototype.data = function(data) {
   return this;
 };
 
-prototype.signal = function(name, value) {
+prototype.signal = function(name, value, propagate) {
   var m  = this._model,
       cs = this._changeset,
       streamer = this._streamer,
-      setter = name; 
+      batch;
 
+  // Getter. Returns the value for the specified signal, or
+  // returns all signal values.
   if (!arguments.length) {
     return m.values(Deps.SIGNALS);
-  } else if (arguments.length == 1 && dl.isString(name)) {
+  } else if (arguments.length === 1 && dl.isString(name)) {
     return m.values(Deps.SIGNALS, name);
   }
 
-  if (arguments.length == 2) {
-    setter = {};
-    setter[name] = value;
+  // Setter. Can be done in batch or individually. In either case,
+  // the final argument determines if set values should propagate.
+  if (dl.isObject(name)) {
+    batch = name;
+    propagate = value;
+  } else {
+    batch = {};
+    batch[name] = value;
   }
 
-  dl.keys(setter).forEach(function(k) {
-    streamer.addListener(m.signal(k).value(setter[k]));
-    cs.signals[k] = 1;
+  dl.keys(batch).forEach(function(k) {
+    streamer.addListener(m.signal(k).value(batch[k]));
+    if (propagate !== false) cs.signals[k] = 1;
     cs.reflow = true;
   });
 
