@@ -167,6 +167,10 @@ function DataSourceInput(ds) {
       ds._data = ds._data.concat(delta.add);
     }
 
+    if (delta.sort) {
+      ds._data.sort(delta.sort);
+    }
+
     // if reflowing, add any other tuples not currently in changeset
     if (input.reflow) {
       delta.mod = delta.mod.concat(
