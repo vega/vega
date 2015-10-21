@@ -71,7 +71,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 function tuple(gb, gv, ob, ov) {
-  var t = {}, i;
+  var t = {_imputed: true}, i;
   for (i=0; i<gv.length; ++i) t[gb[i]] = gv[i];
   for (i=0; i<ov.length; ++i) t[ob[i]] = ov[i];
   return Tuple.ingest(t);
@@ -119,7 +119,13 @@ Impute.schema = {
     },
     "value": {
       "description": "The value to use for missing data if the method is 'value'.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [
+        {"type": "number"},
+        {"type": "string"},
+        {"type": "boolean"},
+        {"type": "null"},
+        {"$ref": "#/refs/signal"}
+      ],
       "default": 0
     },
     "field": {
