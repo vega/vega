@@ -152,7 +152,6 @@ function getFields(aggr) {
 
 prototype.transform = function(input, reset) {
   log.debug(input, ['aggregate']);
-  this._input = input; // Used by Facetor._on_keep.
 
   var output = ChangeSet.create(input),
       aggr = this.aggr(),
@@ -205,7 +204,7 @@ prototype.transform = function(input, reset) {
   for (i=0; i<out.length; ++i) {
     output.fields[out[i]] = 1;
   }
-  return aggr.changes(output);
+  return (aggr._input = input, aggr.changes(output));
 };
 
 module.exports = Aggregate;
