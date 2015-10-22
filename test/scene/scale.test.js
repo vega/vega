@@ -971,19 +971,20 @@ describe('Scale', function() {
     it('should support padding via signal');
 
     it('should support numeric inversion', function(done) {
+      var domain = ["petalWidth", "petalLength", "sepalWidth", "sepalLength"];
       var spec = {
         "data": [],
         "scales": [
           {
             "name": "asc",
             "type": "ordinal",
-            "domain": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"],
+            "domain": domain,
             "range": [0, 600]
           },
           {
             "name": "desc",
             "type": "ordinal",
-            "domain": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"],
+            "domain": domain,
             "range": [600, 0]
           }
         ]
@@ -1012,6 +1013,12 @@ describe('Scale', function() {
         expect(asc.invert(451)).to.equal('sepalLength');
         expect(asc.invert(600)).to.equal('sepalLength');
 
+        expect(asc.invert(-10, -1)).to.deep.equal([]);
+        expect(asc.invert(-1, 700)).to.deep.equal(domain);
+        expect(asc.invert(1, 120)).to.deep.equal(domain.slice(0,1));
+        expect(asc.invert(1, 150)).to.deep.equal(domain.slice(0,2));
+        expect(asc.invert(449, 700)).to.deep.equal(domain.slice(2,4));
+
         expect(desc.invert(600)).to.equal('petalWidth');
         expect(desc.invert(451)).to.equal('petalWidth');
         expect(desc.invert(450)).to.equal('petalWidth');
@@ -1024,6 +1031,14 @@ describe('Scale', function() {
         expect(desc.invert(149)).to.equal('sepalLength');
         expect(desc.invert(1)).to.equal('sepalLength');
         expect(desc.invert(0)).to.equal('sepalLength');
+
+        var drev = domain.slice().reverse();
+        expect(desc.invert(-1, -10)).to.deep.equal([]);
+        expect(desc.invert(700, -1)).to.deep.equal(drev);
+        expect(desc.invert(0, 120)).to.deep.equal(drev.slice(0,1));
+        expect(desc.invert(599, 449)).to.deep.equal(drev.slice(2,4));
+        expect(desc.invert(599, 500)).to.deep.equal(drev.slice(3,4));
+        expect(desc.invert(800, 700)).to.deep.equal(drev.slice(3,4));
 
         done();
       }, viewFactory);

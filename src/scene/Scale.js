@@ -115,7 +115,7 @@ function ordinal(scale, rng, group) {
       outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
-      domain, str;
+      domain, str, spatial=true;
   
   // range pre-processing for data-driven ranges
   if (dl.isObject(def.range) && !dl.isArray(def.range)) {
@@ -151,6 +151,7 @@ function ordinal(scale, rng, group) {
     str = typeof rng[0] === 'string';
     if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
       scale.range(rng); // color or shape values
+      spatial = false;
     } else if (points && round) {
       scale.rangeRoundPoints(rng, pad);
     } else if (points) {
@@ -165,7 +166,7 @@ function ordinal(scale, rng, group) {
     this._updated = true;
   }
 
-  if (!scale.invert) invertOrdinal(scale);
+  if (!scale.invert && spatial) invertOrdinal(scale);
 }
 
 // "Polyfill" ordinal scale inversion. Currently, only ordinal scales
@@ -177,14 +178,13 @@ var bisect = d3.bisector(dl.numcmp).right,
 function invertOrdinal(scale) {
   scale.invert = function(x, y) {
     var rng = scale.range(),
-        asc = rng[0] < rng[1];
+        asc = rng[0] < rng[1],
+        find = asc ? findAsc : findDsc;
 
     if (arguments.length === 1) {
       if (!dl.isNumber(x)) {
         throw Error('Ordinal scale inversion is only supported for numeric input ('+x+').');
       }
-
-      var find = asc ? findAsc : findDsc;
       return scale.domain()[find(rng, x)];
 
     } else if (arguments.length === 2) {  // Invert extents
@@ -192,14 +192,16 @@ function invertOrdinal(scale) {
         throw Error('Extents to ordinal invert are not numbers ('+x+', '+y+').');
       }
 
-      var points = [], i = 0, n = rng.length-1, r;
-      if (y < x) { r = x; x = y; y = x; } // ensure x <= y
+      var domain = scale.domain(),
+          a = find(rng, x),
+          b = find(rng, y),
+          n = rng.length - 1, r;
+      if (b < a) { r = a; a = b; b = a; } // ensure a <= b
+      if (a < 0) a = 0;
+      if (b > n) b = n;
 
-      for (; i<=n; ++i) {
-        r = rng[asc ? i : n-i];
-        if (x <= r && r <= y) points.push(r);
-      }
-      return points.map(function(p) { return scale.invert(p); });
+      return (asc ? dl.range(a, b+1) : dl.range(b, a-1, -1))
+        .map(function(i) { return domain[i]; });
     }
   };
 }
