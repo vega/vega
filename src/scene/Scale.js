@@ -115,7 +115,7 @@ function ordinal(scale, rng, group) {
       outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
-      domain, str;
+      domain, str, inv;
   
   // range pre-processing for data-driven ranges
   if (dl.isObject(def.range) && !dl.isArray(def.range)) {
@@ -132,47 +132,53 @@ function ordinal(scale, rng, group) {
   } 
 
   // range
-  if (dl.equal(prev.range, rng)) return;
-
-  // width-defined range
-  if (def.bandWidth) {
-    var bw = signal.call(this, def.bandWidth),
-        len = domain.length,
-        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
-        start;
-    if (rng[0] > rng[1]) {
-      start = rng[1] || 0;
-      rng = [start + (bw * len + space), start];
-    } else {
-      start = rng[0] || 0;
-      rng = [start, start + (bw * len + space)];
+  if (!dl.equal(prev.range, rng)) {
+    // width-defined range
+    if (def.bandWidth) {
+      var bw = signal.call(this, def.bandWidth),
+          len = domain.length,
+          space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
+          start;
+      if (rng[0] > rng[1]) {
+        start = rng[1] || 0;
+        rng = [start + (bw * len + space), start];
+      } else {
+        start = rng[0] || 0;
+        rng = [start, start + (bw * len + space)];
+      }
     }
+
+    str = typeof rng[0] === 'string';
+    if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
+      scale.range(rng); // color or shape values
+    } else if (points && round) {
+      scale.rangeRoundPoints(rng, pad);
+    } else if (points) {
+      scale.rangePoints(rng, pad);
+    } else if (round) {
+      scale.rangeRoundBands(rng, pad, outer);
+    } else {
+      scale.rangeBands(rng, pad, outer);
+    }
+
+    prev.range = rng;
+    this._updated = true;
   }
 
-  str = typeof rng[0] === 'string';
-  if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
-    scale.range(rng); // color or shape values
-  } else if (points && round) {
-    scale.rangeRoundPoints(rng, pad);
-  } else if (points) {
-    scale.rangePoints(rng, pad);
-  } else if (round) {
-    scale.rangeRoundBands(rng, pad, outer);
-  } else {
-    scale.rangeBands(rng, pad, outer);
-  }
-
-  if (!scale.invert) {
-    scale.invert = function(x, y) {
+  if (!(inv=scale.invert)) {
+    inv = scale.invert = function(x, y) {
       if (arguments.length === 1) {
-        return scale.domain()[d3.bisect(scale.range(), x) - 1];
+        if (!dl.isNumber(x)) {
+          throw new Error('Ordinal scale inversion is only supported for numeric input ('+x+').');
+        }
+        return inv._domain[d3.bisect(inv._range, x) - 1];
       } else if (arguments.length === 2) {  // Invert extents
         if (!dl.isNumber(x) || !dl.isNumber(y)) {
-          throw Error('Extents to ordinal invert are not numbers ('+x+', '+y+').');
+          throw new Error('Extents to ordinal invert are not numbers ('+x+', '+y+').');
         }
 
         var points = [],
-            rng = scale.range(),
+            rng = inv._range,
             i = 0, len = rng.length, r;
 
         for(; i<len; ++i) {
@@ -187,8 +193,34 @@ function ordinal(scale, rng, group) {
     };
   }
 
-  prev.range = rng;
-  this._updated = true;
+  // Ordinal scale inversion requires range in ascending order.
+  // Shuffle domain/range to ensure this is true, and cache.
+  if (this._updated) {
+    var invDomain = scale.domain(), 
+        invRange  = scale.range(),
+        shuffle = false,
+        map = {},
+        i, n;
+
+    for (i=0, n=invRange.length; i<n-1; ++i) {
+      if ((shuffle = invRange[i] > invRange[i+1])) break;
+    }
+
+    if (shuffle) {
+      for (i=0, n=invDomain.length; i<n; ++i) {
+        map[invRange[i]] = invDomain[i];
+      }
+
+      invDomain = [];
+      invRange  = invRange.slice(0).sort(dl.cmp);
+      for (i=0, n=invRange.length; i<n; ++i) {
+        invDomain[i] = map[invRange[i]];
+      }
+    }
+
+    inv._domain = invDomain;
+    inv._range  = invRange;
+  }
 }
 
 function quantitative(scale, rng, group) {
