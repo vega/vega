@@ -2,7 +2,13 @@
   "width": 700,
   "height": 400,
   "data": [
-    {"name": "cars","url": "data/cars.json"},
+    {
+      "name": "cars",
+      "url": "data/cars.json",
+      "transform": [
+        {"type": "filter", "test": "datum.Horsepower && datum.Miles_per_Gallon"}  
+      ]
+    },
     {
       "name": "fields",
       "values": [
