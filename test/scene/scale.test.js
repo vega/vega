@@ -969,6 +969,65 @@ describe('Scale', function() {
     });
 
     it('should support padding via signal');
+
+    it('should support numeric inversion', function(done) {
+      var spec = {
+        "data": [],
+        "scales": [
+          {
+            "name": "asc",
+            "type": "ordinal",
+            "domain": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"],
+            "range": [0, 600]
+          },
+          {
+            "name": "desc",
+            "type": "ordinal",
+            "domain": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"],
+            "range": [600, 0]
+          }
+        ]
+      };
+
+      parseSpec(spec, function(model) {
+        var group = model.scene().items[0],
+            asc  = group.scale('asc'),
+            desc = group.scale('desc'),
+            rng = [0, 150, 300, 450],
+            rngRev = rng.slice(0).reverse();
+
+        expect(asc.range()).to.eql(rng);
+        expect(desc.range()).to.eql(rngRev);
+
+        expect(asc.invert(0)).to.equal('petalWidth');
+        expect(asc.invert(1)).to.equal('petalWidth');
+        expect(asc.invert(149)).to.equal('petalWidth');
+        expect(asc.invert(150)).to.equal('petalLength');
+        expect(asc.invert(151)).to.equal('petalLength');
+        expect(asc.invert(299)).to.equal('petalLength');
+        expect(asc.invert(300)).to.equal('sepalWidth');
+        expect(asc.invert(301)).to.equal('sepalWidth');
+        expect(asc.invert(449)).to.equal('sepalWidth');
+        expect(asc.invert(450)).to.equal('sepalLength');
+        expect(asc.invert(451)).to.equal('sepalLength');
+        expect(asc.invert(600)).to.equal('sepalLength');
+
+        expect(desc.invert(600)).to.equal('petalWidth');
+        expect(desc.invert(451)).to.equal('petalWidth');
+        expect(desc.invert(450)).to.equal('petalWidth');
+        expect(desc.invert(449)).to.equal('petalLength');
+        expect(desc.invert(301)).to.equal('petalLength');
+        expect(desc.invert(300)).to.equal('petalLength');
+        expect(desc.invert(299)).to.equal('sepalWidth');
+        expect(desc.invert(151)).to.equal('sepalWidth');
+        expect(desc.invert(150)).to.equal('sepalWidth');
+        expect(desc.invert(149)).to.equal('sepalLength');
+        expect(desc.invert(1)).to.equal('sepalLength');
+        expect(desc.invert(0)).to.equal('sepalLength');
+
+        done();
+      }, viewFactory);
+    });
   });
 
   describe('Quantitative', function() {

@@ -132,63 +132,76 @@ function ordinal(scale, rng, group) {
   } 
 
   // range
-  if (dl.equal(prev.range, rng)) return;
-
-  // width-defined range
-  if (def.bandWidth) {
-    var bw = signal.call(this, def.bandWidth),
-        len = domain.length,
-        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
-        start;
-    if (rng[0] > rng[1]) {
-      start = rng[1] || 0;
-      rng = [start + (bw * len + space), start];
-    } else {
-      start = rng[0] || 0;
-      rng = [start, start + (bw * len + space)];
-    }
-  }
-
-  str = typeof rng[0] === 'string';
-  if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
-    scale.range(rng); // color or shape values
-  } else if (points && round) {
-    scale.rangeRoundPoints(rng, pad);
-  } else if (points) {
-    scale.rangePoints(rng, pad);
-  } else if (round) {
-    scale.rangeRoundBands(rng, pad, outer);
-  } else {
-    scale.rangeBands(rng, pad, outer);
-  }
-
-  if (!scale.invert) {
-    scale.invert = function(x, y) {
-      if (arguments.length === 1) {
-        return scale.domain()[d3.bisect(scale.range(), x) - 1];
-      } else if (arguments.length === 2) {  // Invert extents
-        if (!dl.isNumber(x) || !dl.isNumber(y)) {
-          throw Error('Extents to ordinal invert are not numbers ('+x+', '+y+').');
-        }
-
-        var points = [],
-            rng = scale.range(),
-            i = 0, len = rng.length, r;
-
-        for(; i<len; ++i) {
-          r = rng[i];
-          if (x < y ? x <= r && r <= y : y <= r && r <= x) {
-            points.push(r);
-          }
-        }
-
-        return points.map(function(p) { return scale.invert(p); });
+  if (!dl.equal(prev.range, rng)) {
+    // width-defined range
+    if (def.bandWidth) {
+      var bw = signal.call(this, def.bandWidth),
+          len = domain.length,
+          space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
+          start;
+      if (rng[0] > rng[1]) {
+        start = rng[1] || 0;
+        rng = [start + (bw * len + space), start];
+      } else {
+        start = rng[0] || 0;
+        rng = [start, start + (bw * len + space)];
       }
-    };
+    }
+
+    str = typeof rng[0] === 'string';
+    if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
+      scale.range(rng); // color or shape values
+    } else if (points && round) {
+      scale.rangeRoundPoints(rng, pad);
+    } else if (points) {
+      scale.rangePoints(rng, pad);
+    } else if (round) {
+      scale.rangeRoundBands(rng, pad, outer);
+    } else {
+      scale.rangeBands(rng, pad, outer);
+    }
+
+    prev.range = rng;
+    this._updated = true;
   }
 
-  prev.range = rng;
-  this._updated = true;
+  if (!scale.invert) invertOrdinal(scale);
+}
+
+// "Polyfill" ordinal scale inversion. Currently, only ordinal scales
+// with ordered numeric ranges are supported. 
+var bisect = d3.bisector(dl.numcmp).right,
+    findAsc = function(a, x) { return bisect(a,x) - 1; },
+    findDsc = d3.bisector(function(a,b) { return -1 * dl.numcmp(a,b); }).left;
+
+function invertOrdinal(scale) {
+  scale.invert = function(x, y) {
+    var rng = scale.range(),
+        asc = rng[0] < rng[1];
+
+    if (arguments.length === 1) {
+      if (!dl.isNumber(x)) {
+        throw Error('Ordinal scale inversion is only supported for numeric input ('+x+').');
+      }
+
+      var find = asc ? findAsc : findDsc;
+      return scale.domain()[find(rng, x)];
+
+    } else if (arguments.length === 2) {  // Invert extents
+      if (!dl.isNumber(x) || !dl.isNumber(y)) {
+        throw Error('Extents to ordinal invert are not numbers ('+x+', '+y+').');
+      }
+
+      var points = [], i = 0, n = rng.length-1, r;
+      if (y < x) { r = x; x = y; y = x; } // ensure x <= y
+
+      for (; i<=n; ++i) {
+        r = rng[asc ? i : n-i];
+        if (x <= r && r <= y) points.push(r);
+      }
+      return points.map(function(p) { return scale.invert(p); });
+    }
+  };
 }
 
 function quantitative(scale, rng, group) {
