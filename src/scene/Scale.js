@@ -132,38 +132,38 @@ function ordinal(scale, rng, group) {
   } 
 
   // range
-  if (dl.equal(prev.range, rng)) return;
-
-  // width-defined range
-  if (def.bandWidth) {
-    var bw = signal.call(this, def.bandWidth),
-        len = domain.length,
-        space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
-        start;
-    if (rng[0] > rng[1]) {
-      start = rng[1] || 0;
-      rng = [start + (bw * len + space), start];
-    } else {
-      start = rng[0] || 0;
-      rng = [start, start + (bw * len + space)];
+  if (!dl.equal(prev.range, rng)) {
+    // width-defined range
+    if (def.bandWidth) {
+      var bw = signal.call(this, def.bandWidth),
+          len = domain.length,
+          space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
+          start;
+      if (rng[0] > rng[1]) {
+        start = rng[1] || 0;
+        rng = [start + (bw * len + space), start];
+      } else {
+        start = rng[0] || 0;
+        rng = [start, start + (bw * len + space)];
+      }
     }
-  }
 
-  str = typeof rng[0] === 'string';
-  if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
-    scale.range(rng); // color or shape values
-  } else if (points && round) {
-    scale.rangeRoundPoints(rng, pad);
-  } else if (points) {
-    scale.rangePoints(rng, pad);
-  } else if (round) {
-    scale.rangeRoundBands(rng, pad, outer);
-  } else {
-    scale.rangeBands(rng, pad, outer);
-  }
+    str = typeof rng[0] === 'string';
+    if (str || rng.length > 2 || rng.length===1 || dataDrivenRange) {
+      scale.range(rng); // color or shape values
+    } else if (points && round) {
+      scale.rangeRoundPoints(rng, pad);
+    } else if (points) {
+      scale.rangePoints(rng, pad);
+    } else if (round) {
+      scale.rangeRoundBands(rng, pad, outer);
+    } else {
+      scale.rangeBands(rng, pad, outer);
+    }
 
-  prev.range = rng;
-  this._updated = true;
+    prev.range = rng;
+    this._updated = true;
+  }
 
   if (!(inv=scale.invert)) {
     inv = scale.invert = function(x, y) {
@@ -212,7 +212,7 @@ function ordinal(scale, rng, group) {
       }
 
       invDomain = [];
-      invRange  = dl.duplicate(invRange).sort(dl.cmp);
+      invRange  = invRange.slice(0).sort(dl.cmp);
       for (i=0, n=invRange.length; i<n; ++i) {
         invDomain[i] = map[invRange[i]];
       }
