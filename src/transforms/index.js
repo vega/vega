@@ -11,6 +11,7 @@ module.exports = {
   formula:      require('./Formula'),
   geo:          require('./Geo'),
   geopath:      require('./GeoPath'),
+  impute:       require('./Impute'),
   lookup:       require('./Lookup'),
   pie:          require('./Pie'),
   sort:         require('./Sort'),
