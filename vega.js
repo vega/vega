@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.3.0',
+  version: '2.3.1',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -10792,8 +10792,7 @@ function bind(el, mdef, item, index, insert) {
 
 // -- Set attributes & styles on SVG elements ---
 
-var href = (typeof window !== 'undefined' ? window.location.href : ''),
-    element = null, // temp var for current SVG element
+var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
 // Extra configuration for certain mark types
@@ -10885,7 +10884,7 @@ prototype.style = function(el, o) {
       if (value.id) {
         // ensure definition is included
         this._defs.gradient[value.id] = value;
-        value = 'url(' + href + '#' + value.id + ')';
+        value = 'url(' + href() + '#' + value.id + ')';
       }
       el.style.setProperty(name, value+'');
     }
@@ -10893,6 +10892,10 @@ prototype.style = function(el, o) {
     values[prop] = value;
   }
 };
+
+function href() {
+  return typeof window !== 'undefined' ? window.location.href : '';
+}
 
 module.exports = SVGRenderer;
 
@@ -17671,9 +17674,7 @@ function lgnd(model) {
   function quantDef(scale) {
     var def = q_legend_def(scale),
         dom = scale.domain(),
-        data = (values == null ?
-          (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) :
-          values).map(ingest),
+        data  = (values == null ? dom : values).map(ingest),
         width = (gradientStyle.width && gradientStyle.width.value) || config.legend.gradientWidth,
         fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
 
