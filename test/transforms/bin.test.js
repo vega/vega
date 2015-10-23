@@ -49,6 +49,8 @@ describe('Bin', function() {
       expect(data.length).to.be.above(0).and.equal(floored.length);
       for (var i=0, len=data.length; i<len; ++i) {
         expect(data[i].bin_v).to.equal(floored[i]);
+        expect(data[i].bin_end).to.equal(floored[i]+1);
+        expect(data[i].bin_mid).to.equal(floored[i]+0.5);
       }
   
       done();
