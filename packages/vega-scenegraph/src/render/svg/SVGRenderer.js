@@ -315,8 +315,7 @@ function bind(el, mdef, item, index, insert) {
 
 // -- Set attributes & styles on SVG elements ---
 
-var href = (typeof window !== 'undefined' ? window.location.href : ''),
-    element = null, // temp var for current SVG element
+var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
 // Extra configuration for certain mark types
@@ -408,7 +407,7 @@ prototype.style = function(el, o) {
       if (value.id) {
         // ensure definition is included
         this._defs.gradient[value.id] = value;
-        value = 'url(' + href + '#' + value.id + ')';
+        value = 'url(' + href() + '#' + value.id + ')';
       }
       el.style.setProperty(name, value+'');
     }
@@ -416,5 +415,9 @@ prototype.style = function(el, o) {
     values[prop] = value;
   }
 };
+
+function href() {
+  return typeof window !== 'undefined' ? window.location.href : '';
+}
 
 module.exports = SVGRenderer;
