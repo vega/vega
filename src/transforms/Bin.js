@@ -146,7 +146,8 @@ Bin.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "start": {"type": "string", "default": "bin_start"},
-        "end": {"type": "string", "default": "bin_end"}
+        "end": {"type": "string", "default": "bin_end"},
+        "mid": {"type": "string", "default": "bin_mid"}
       },
       "additionalProperties": false
     }
