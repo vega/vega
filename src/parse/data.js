@@ -7,6 +7,12 @@ function parseData(model, spec, callback) {
   var config = model.config(),
       count = 0;
 
+  function done(err) {
+    if (callback) {
+      callback(err);
+      callback = undefined;
+    }
+  }
   function loaded(d) {
     return function(error, data) {
       try {
@@ -19,10 +25,9 @@ function parseData(model, spec, callback) {
             log.error('PARSING FAILED: ' + d.url + ' ' + error);
           }
         }
-        if (--count === 0) callback();
+        if (--count === 0) done();
       } catch(error) {
-        count = -1; // prevent success callback
-        callback(error);
+        done(error);
       }
     };
   }
@@ -36,7 +41,7 @@ function parseData(model, spec, callback) {
     parseData.datasource(model, d);
   });
 
-  if (count === 0) setTimeout(callback, 1);
+  if (count === 0) setTimeout(done, 1);
   return spec;
 }
 

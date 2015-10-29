@@ -39,6 +39,13 @@ parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
       model, argInd = 2,
       viewFactory = View.factory;
 
+  function done(err, value) {
+    if (cb) {
+      cb(err, value);
+      cb = undefined;
+    }
+  }
+
   if (arguments.length > argInd && dl.isFunction(arguments[arguments.length - argInd])) {
     viewFactory = arguments[arguments.length - argInd];
     argInd++;
@@ -68,7 +75,7 @@ parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
       predicates: parsers.predicates(model, spec.predicates),
       marks: parsers.marks(model, spec, width, height),
       data: parsers.data(model, spec.data, function() {
-        if (cb) cb(undefined, viewFactory(model));
+        done(undefined, viewFactory(model));
       })
     });
   }
@@ -89,16 +96,14 @@ parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
           }
         }
       } catch (err) {
-        if (cb) cb(err);
-        cb = false;
+        done(err);
       }
     });
   } else {
     try {
       log.error('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
     } catch (err) {
-      if (cb) cb(err);
-      cb = false;
+      done(err);
     }
   }
 };
