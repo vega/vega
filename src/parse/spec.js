@@ -5,29 +5,48 @@ var dl = require('datalib'),
 
 /**
  * Backward compatibility wrapper that accepts callback without error handler
- * @param spec
- * @param callback
- * @param config (optional)
- * @param viewFactory (optional)
+ * @param spec (object)
+ * @param callback (model)
+ * @param config (optional object)
+ * @param viewFactory (optional callback)
  * @returns {*}
  */
-function parseSpec(spec, callback) {
-  var cb = callback;
-  arguments[1] = function(err, model) {
+function parseSpec(spec, callback /* [, config] [, viewFactory] */) {
+  var cb = callback,
+      vf = arguments[arguments.length-1],
+      viewFactory = arguments.length > 2 && dl.isFunction(vf) ? vf : View.factory,
+      config = arguments[2] !== viewFactory ? arguments[2] : {};
+
+  return module.exports.parse(spec, config, viewFactory, function(err, model) {
     // For backward compatibility, the error is thrown even though it might never be caught
     if (err) throw err;
     cb(model);
-  };
-  return module.exports.parse.apply(this, arguments);
+  });
 }
 
 module.exports = parseSpec;
 
-parseSpec.parse = function (spec, callback /* config */  /* viewFactory */) {
-  var vf = arguments[arguments.length-1],
-      viewFactory = arguments.length > 2 && dl.isFunction(vf) ? vf : View.factory,
-      config = arguments[2] !== viewFactory ? arguments[2] : {},
-      model = new Model(config);
+/**
+ * Parse graph specification
+ * @param spec (object)
+ * @param config (optional object)
+ * @param viewFactory (optional function)
+ * @param callback (error, model)
+ */
+parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
+  var model, argInd = 2,
+      viewFactory = View.factory;
+
+  callback = arguments[arguments.length - 1];
+  if (arguments.length > argInd && dl.isFunction(arguments[arguments.length - argInd])) {
+    viewFactory = arguments[arguments.length - argInd];
+    argInd++;
+  }
+  if (arguments.length > argInd && dl.isObject(arguments[arguments.length - argInd])) {
+    model = new Model(arguments[arguments.length - argInd]);
+  } else {
+    model = new Model();
+  }
 
   function parse(spec) {
     // protect against subsequent spec modification
