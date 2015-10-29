@@ -74,8 +74,8 @@ parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
       signals: parsers.signals(model, spec.signals),
       predicates: parsers.predicates(model, spec.predicates),
       marks: parsers.marks(model, spec, width, height),
-      data: parsers.data(model, spec.data, function() {
-        done(undefined, viewFactory(model));
+      data: parsers.data(model, spec.data, function(err) {
+        done(err, err ? undefined : viewFactory(model));
       })
     });
   }
