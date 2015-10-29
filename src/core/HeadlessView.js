@@ -22,7 +22,7 @@ prototype.canvas = function() {
 
 prototype.canvasAsync = function(callback) {
   var r = this._renderer, view = this;
-  
+
   function wait() {
     if (r.pendingImages() === 0) {
       view.render(); // re-render with all images
@@ -41,7 +41,7 @@ prototype.svg = function() {
   return (this._type === 'svg') ? this._renderer.svg() : null;
 };
 
-prototype.initialize = function() {    
+prototype.initialize = function() {
   var w = this._width,
       h = this._height,
       bg  = this._bgcolor,
@@ -56,7 +56,7 @@ prototype.initialize = function() {
   this._renderer = (this._renderer || new this._io.Renderer(config.load))
     .initialize(null, w, h, pad)
     .background(bg);
-  
+
   return this;
 };
 

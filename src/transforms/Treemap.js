@@ -134,7 +134,7 @@ Treemap.schema = {
       "oneOf": [
         {"type": "number"},
         {
-          "type": "array", 
+          "type": "array",
           "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
           "minItems": 4,
           "maxItems": 4

@@ -102,7 +102,7 @@ function axs(model) {
       default:   return String;
     }
   }
-  
+
   function getTicks(format) {
     var major = tickValues || (scale.ticks ? scale.ticks(tickCount) : scale.domain()),
         minor = axisSubdivide(scale, major, tickSubdivide).map(ingest);
@@ -159,7 +159,7 @@ function axs(model) {
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
     axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
-    
+
     // add / override custom style properties
     dl.extend(m.gridLines.properties.update, gridLineStyle);
     dl.extend(m.majorTicks.properties.update, majorTickStyle);
@@ -172,7 +172,7 @@ function axs(model) {
     dl.extend(axisDef, {
       type: 'group',
       interactive: false,
-      properties: { 
+      properties: {
         enter: {
           encode: axisUpdate,
           scales: [scale.scaleName],
@@ -264,7 +264,7 @@ function axs(model) {
     tickSubdivide = +x;
     return axis;
   };
-  
+
   axis.offset = function(x) {
     if (!arguments.length) return offset;
     offset = dl.isObject(x) ? x : +x;
@@ -330,10 +330,10 @@ function axs(model) {
     if (domainStyle !== x) { domainStyle = x; }
     return axis;
   };
-  
-  axis.reset = function() { 
-    reset(); 
-    return axis; 
+
+  axis.reset = function() {
+    reset();
+    return axis;
   };
 
   return axis;
@@ -393,7 +393,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   size = Math.max(size, 0) + pad;
   if (orient === 'left' || orient === 'top') {
     size *= -1;
-  }  
+  }
   if (orient === 'top' || orient === 'bottom') {
     dl.extend(labels.properties.enter, {
       x: oldScale,
@@ -441,7 +441,7 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size) {
     });
     dl.extend(ticks.properties.exit, {
       x:  newScale,
-    });        
+    });
   } else {
     dl.extend(ticks.properties.enter, {
       x:  {value: 0},
@@ -462,7 +462,7 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size) {
 function axisTitleExtend(orient, title, range, offset) {
   var mid = ~~((range[0] + range[1]) / 2),
       sign = (orient === 'top' || orient === 'left') ? -1 : 1;
-  
+
   if (orient === 'bottom' || orient === 'top') {
     dl.extend(title.properties.update, {
       x: {value: mid},

@@ -1,9 +1,9 @@
 var Base = require('./Transform').prototype;
 
 function BatchTransform() {
-  // Nearest appropriate collector. 
+  // Nearest appropriate collector.
   // Set by the dataflow Graph during connection.
-  this._collector = null; 
+  this._collector = null;
 }
 
 var prototype = (BatchTransform.prototype = Object.create(Base));

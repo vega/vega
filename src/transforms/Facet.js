@@ -14,7 +14,7 @@ function Facet(graph) {
         return facet._pipeline.map(function(t) {
           return parse(facet._graph, t);
         });
-      }      
+      }
     }
   });
 

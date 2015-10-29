@@ -50,7 +50,7 @@ function streaming(src) {
       streamer = this._streamer,
       api = {};
 
-  // If we have it stashed, don't create a new closure. 
+  // If we have it stashed, don't create a new closure.
   if (this._api[src]) return this._api[src];
 
   api.insert = function(vals) {
@@ -72,7 +72,7 @@ function streaming(src) {
     return (ds.remove.apply(ds, arguments), api);
   };
 
-  api.values = function() { return ds.values(); };    
+  api.values = function() { return ds.values(); };
 
   return (this._api[src] = api);
 }
@@ -239,7 +239,7 @@ prototype.initialize = function(el) {
 
   // clear pre-existing container
   d3.select(el).select('div.vega').remove();
-  
+
   // add div container
   this._el = el = d3.select(el)
     .append('div')
@@ -258,7 +258,7 @@ prototype.initialize = function(el) {
   v._renderer = (v._renderer || new this._io.Renderer(config.load))
     .initialize(el, w, h, pad)
     .background(bg);
-  
+
   // input handler
   prevHandler = v._handler;
   v._handler = new this._io.Handler()
@@ -272,7 +272,7 @@ prototype.initialize = function(el) {
     // Register event listeners for signal stream definitions.
     v._detach = parseStreams(this);
   }
-  
+
   return (this._repaint = true, this);
 };
 
@@ -312,7 +312,7 @@ function build() {
     return input;
   };
 
-  return (v._model.scene(v._renderNode), true);  
+  return (v._model.scene(v._renderNode), true);
 }
 
 prototype.update = function(opt) {
@@ -340,7 +340,7 @@ prototype.update = function(opt) {
   // If specific items are specified, short-circuit dataflow graph.
   // Else-If there are streaming updates, perform a targeted propagation.
   // Otherwise, reevaluate the entire model (datasources + scene).
-  if (opt.items && built) { 
+  if (opt.items && built) {
     Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
   } else if (v._streamer.listeners().length && built) {
@@ -441,9 +441,9 @@ View.factory = function(model) {
         }
       });
     }
-  
+
     return v;
-  };    
+  };
 };
 
 module.exports = View;

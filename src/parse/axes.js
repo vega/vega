@@ -97,7 +97,7 @@ parseAxes.schema = {
         "format": {"type": "string"},
         "ticks": {"type": "number"},
         "values": {
-          "type": "array", 
+          "type": "array",
           "items": {"type": ["string", "number"]}
         },
         "subdivide": {"type": "number"},

@@ -102,7 +102,7 @@ Geo.baseSchema = {
         "maxItems": 2
       },
       {"$ref": "#/refs/signal"}
-    ]    
+    ]
   },
   "translate": {
     "description": "The translation of the projection.",
@@ -114,7 +114,7 @@ Geo.baseSchema = {
         "maxItems": 2
       },
       {"$ref": "#/refs/signal"}
-    ]    
+    ]
   },
   "rotate": {
     "description": "The rotation of the projection.",
@@ -166,3 +166,4 @@ Geo.schema = {
   "required": ["type", "lon", "lat"],
   "additionalProperties": false
 };
+

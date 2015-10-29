@@ -33,7 +33,7 @@ function Force(graph) {
     alpha: {type: 'value', default: 0.1},
     iterations: {type: 'value', default: 500},
 
-    interactive: {type: 'value', default: this._interactive},    
+    interactive: {type: 'value', default: this._interactive},
     active: {type: 'value', default: this._prev},
     fixed: {type: 'data'}
   });
@@ -66,7 +66,7 @@ prototype.transform = function(nodeInput, reset) {
   // configure nodes, links and layout
   if (linkInput.stamp < nodeInput.stamp) linkInput = null;
   this.configure(nodeInput, linkInput, interactive, reset);
-  
+
   // run batch layout
   if (!interactive) {
     var iterations = this.param('iterations');
@@ -82,7 +82,7 @@ prototype.transform = function(nodeInput, reset) {
     layout.alpha(this.param('alpha')); // re-start layout
   }
 
-  // update active node status, 
+  // update active node status,
   if (active !== this._prev) {
     this._prev = active;
   }
