@@ -9,12 +9,21 @@ function parseData(model, spec, callback) {
 
   function loaded(d) {
     return function(error, data) {
-      if (error) {
-        log.error('LOADING FAILED: ' + d.url + ' ' + error);
-      } else {
-        model.data(d.name).values(dl.read(data, d.format));
+      try {
+        if (error) {
+          log.error('LOADING FAILED: ' + d.url + ' ' + error);
+        } else if (count >= 0) {
+          try {
+            model.data(d.name).values(dl.read(data, d.format));
+          } catch (error) {
+            log.error('PARSING FAILED: ' + d.url + ' ' + error);
+          }
+        }
+        if (--count === 0) callback();
+      } catch(error) {
+        count = -1; // prevent success callback
+        callback(error);
       }
-      if (--count === 0) callback();
     };
   }
 
