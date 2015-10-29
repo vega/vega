@@ -59,14 +59,14 @@ function parseInteractors(model, spec, defFactory) {
       } else if (m.marks) {  // TODO how to override properties of nested marks?
         injectMarks(m.marks);
       }
-    }    
+    }
   }
 
-  function ns(n, s) { 
+  function ns(n, s) {
     if (dl.isString(s)) {
       return s + "_" + n;
     } else {
-      dl.keys(s).forEach(function(x) { 
+      dl.keys(s).forEach(function(x) {
         var regex = new RegExp('\\b'+x+'\\b', "g");
         n = n.replace(regex, s[x]);
       });
@@ -100,8 +100,8 @@ function parseInteractors(model, spec, defFactory) {
         });
       });
 
-    });  
-    return predicates; 
+    });
+    return predicates;
   }
 
   function nsOperand(o) {
@@ -113,11 +113,11 @@ function parseInteractors(model, spec, defFactory) {
   }
 
   function nsMarks(name, marks) {
-    (marks || []).forEach(function(m) { 
+    (marks || []).forEach(function(m) {
       nsProperties(m.properties.enter);
       nsProperties(m.properties.update);
       nsProperties(m.properties.exit);
-      mk[ns(m.name, name)] = m; 
+      mk[ns(m.name, name)] = m;
     });
   }
 
@@ -126,9 +126,9 @@ function parseInteractors(model, spec, defFactory) {
       var p = propset[k];
       if (p.signal) p.signal = ns(p.signal, sg);
       else if (p.rule) {
-        p.rule.forEach(function(r) { 
+        p.rule.forEach(function(r) {
           if (r.signal) r.signal = ns(r.signal, sg);
-          if (r.predicate) nsOperand(r); 
+          if (r.predicate) nsOperand(r);
         });
       }
     });

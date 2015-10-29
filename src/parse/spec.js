@@ -30,7 +30,7 @@ function parseSpec(spec, callback) {
       data: parsers.data(model, spec.data, function() {
         callback(viewFactory(model));
       })
-    });    
+    });
   }
 
   if (dl.isObject(spec)) {
@@ -41,10 +41,10 @@ function parseSpec(spec, callback) {
       if (err) {
         log.error('LOADING SPECIFICATION FAILED: ' + err.statusText);
       } else {
-        try { 
-          parse(JSON.parse(data)); 
-        } catch (e) { 
-          log.error('INVALID SPECIFICATION: Must be a valid JSON object. '+e); 
+        try {
+          parse(JSON.parse(data));
+        } catch (e) {
+          log.error('INVALID SPECIFICATION: Must be a valid JSON object. '+e);
         }
       }
     });
