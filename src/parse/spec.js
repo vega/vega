@@ -34,10 +34,11 @@ module.exports = parseSpec;
  * @param callback (error, model)
  */
 parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
-  var model, argInd = 2,
+  // do not assign any values to callback, as it will change arguments
+  var cb = arguments[arguments.length - 1],
+      model, argInd = 2,
       viewFactory = View.factory;
 
-  callback = arguments[arguments.length - 1];
   if (arguments.length > argInd && dl.isFunction(arguments[arguments.length - argInd])) {
     viewFactory = arguments[arguments.length - argInd];
     argInd++;
@@ -67,7 +68,7 @@ parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
       predicates: parsers.predicates(model, spec.predicates),
       marks: parsers.marks(model, spec, width, height),
       data: parsers.data(model, spec.data, function() {
-        if (callback) callback(undefined, viewFactory(model));
+        if (cb) cb(undefined, viewFactory(model));
       })
     });
   }
@@ -88,16 +89,16 @@ parseSpec.parse = function (spec, /* [config,] [viewFactory,] */ callback) {
           }
         }
       } catch (err) {
-        if (callback) callback(err);
-        callback = false;
+        if (cb) cb(err);
+        cb = false;
       }
     });
   } else {
     try {
       log.error('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
     } catch (err) {
-      if (callback) callback(err);
-      callback = false;
+      if (cb) cb(err);
+      cb = false;
     }
   }
 };
