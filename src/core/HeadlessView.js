@@ -4,7 +4,7 @@ var sg = require('vega-scenegraph').render,
     View = require('./View');
 
 function HeadlessView(width, height, model) {
-  View.call(null, width, height, model);
+  View.call(this, width, height, model);
   this._type = 'canvas';
   this._renderers = {canvas: canvas, svg: svg};
 }
