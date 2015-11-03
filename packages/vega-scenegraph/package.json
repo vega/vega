@@ -49,5 +49,8 @@
   "browserify-shim": {
     "d3": "global:d3",
     "canvas": "global:canvas"
+  },
+  "browser": {
+    "canvas": false
   }
 }
