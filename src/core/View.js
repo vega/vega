@@ -352,6 +352,11 @@ prototype.update = function(opt) {
 
   v._changeset = df.ChangeSet.create();
 
+  if (opt.autopad){
+    v._autopad = 1;
+    opt.autopad = false; // To avoid an infinite loop.
+  }
+
   return v.autopad(opt);
 };
 
