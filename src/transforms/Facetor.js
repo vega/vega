@@ -19,7 +19,7 @@ prototype.facet = function(f) {
   return arguments.length ? (this._facet = f, this) : this._facet;
 };
 
-prototype._ingest = function(t) { 
+prototype._ingest = function(t) {
   return Tuple.ingest(t, null);
 };
 

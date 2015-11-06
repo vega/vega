@@ -21,7 +21,7 @@ prototype.interpolate = function(item, values) {
 
   for (key in values) {
     curr = item[key];
-    next = values[key];      
+    next = values[key];
     if (curr !== next) {
       if (skip[key] || curr === undefined) {
         // skip interpolation for specific keys or undefined start values

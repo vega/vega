@@ -22,7 +22,7 @@ var filter = function(field, value, src, dest) {
 };
 
 function parseModify(model, def, ds) {
-  var signal = def.signal ? dl.field(def.signal) : null, 
+  var signal = def.signal ? dl.field(def.signal) : null,
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),
@@ -38,7 +38,7 @@ function parseModify(model, def, ds) {
     log.debug(input, [def.type+"ing", reeval]);
     if (!reeval) return input;
 
-    var datum = {}, 
+    var datum = {},
         value = signal ? model.signalRef(def.signal) : null,
         d = model.data(ds.name),
         t = null;
@@ -47,7 +47,7 @@ function parseModify(model, def, ds) {
 
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
-    // collector will contain dynamic tuples. 
+    // collector will contain dynamic tuples.
     if (def.type === Types.INSERT) {
       t = Tuple.ingest(datum);
       input.add.push(t);
@@ -73,19 +73,19 @@ function parseModify(model, def, ds) {
       input.add = [];
       input.mod = [];
       d._data  = [];
-    } 
+    }
 
     input.fields[def.field] = 1;
     return input;
   };
 
   if (signalName) node.dependency(Deps.SIGNALS, signalName);
-  
+
   if (predicate) {
     node.dependency(Deps.DATA, predicate.data);
     node.dependency(Deps.SIGNALS, predicate.signals);
   }
-  
+
   return node;
 }
 

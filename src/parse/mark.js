@@ -19,7 +19,7 @@ function parseMark(model, mark) {
   if (group) {
     mark.marks = group.map(function(g) { return parseMark(model, g); });
   }
-    
+
   return mark;
 }
 
@@ -33,7 +33,7 @@ parseMark.schema = {
       "properties": {
         "name": {"type": "string"},
         "key": {"type": "string"},
-        "type": {"enum": ["rect", "symbol", "path", "arc", 
+        "type": {"enum": ["rect", "symbol", "path", "arc",
           "area", "line", "rule", "image", "text", "group"]},
 
         "from": {
@@ -48,7 +48,7 @@ parseMark.schema = {
 
         "delay": {"$ref": "#/refs/numberValue"},
         "ease": {
-          "enum": ["linear", "quad", "cubic", "sin", 
+          "enum": ["linear", "quad", "cubic", "sin",
             "exp", "circle", "bounce"].reduce(function(acc, e) {
               ["in", "out", "in-out", "out-in"].forEach(function(m) {
                 acc.push(e+"-"+m);

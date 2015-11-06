@@ -57,11 +57,11 @@ proto.evaluate = function(input) {
 
   // Scales are at the end of an encoding pipeline, so they should forward a
   // reflow pulse. Thus, if multiple scales update in the parent group, we don't
-  // reevaluate child marks multiple times. 
+  // reevaluate child marks multiple times.
   if (this._updated) {
     input.scales[this._def.name] = 1;
-    log.debug(input, ["scale", this._def.name]);  
-  } 
+    log.debug(input, ["scale", this._def.name]);
+  }
   return df.ChangeSet.create(input, true);
 };
 
@@ -116,20 +116,20 @@ function ordinal(scale, rng, group) {
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
       domain, str, spatial=true;
-  
+
   // range pre-processing for data-driven ranges
   if (dl.isObject(def.range) && !dl.isArray(def.range)) {
     dataDrivenRange = true;
     rng = dataRef.call(this, DataRef.RANGE, def.range, scale, group);
   }
-  
+
   // domain
   domain = dataRef.call(this, DataRef.DOMAIN, def.domain, scale, group);
   if (domain && !dl.equal(prev.domain, domain)) {
     scale.domain(domain);
     prev.domain = domain;
     this._updated = true;
-  } 
+  }
 
   // range
   if (!dl.equal(prev.range, rng)) {
@@ -170,7 +170,7 @@ function ordinal(scale, rng, group) {
 }
 
 // "Polyfill" ordinal scale inversion. Currently, only ordinal scales
-// with ordered numeric ranges are supported. 
+// with ordered numeric ranges are supported.
 var bisect = d3.bisector(dl.numcmp).right,
     findAsc = function(a, x) { return bisect(a,x) - 1; },
     findDsc = d3.bisector(function(a,b) { return -1 * dl.numcmp(a,b); }).left;
@@ -223,7 +223,7 @@ function quantitative(scale, rng, group) {
     scale.domain(domain);
     prev.domain = domain;
     this._updated = true;
-  } 
+  }
 
   // range
   // vertical scales should flip by default, so use XOR here
@@ -249,11 +249,11 @@ function quantitative(scale, rng, group) {
   }
 }
 
-function isUniques(scale) { 
-  return scale.type === Types.ORDINAL || scale.type === Types.QUANTILE; 
+function isUniques(scale) {
+  return scale.type === Types.ORDINAL || scale.type === Types.QUANTILE;
 }
 
-function getRefs(def) { 
+function getRefs(def) {
   return def.fields || dl.array(def);
 }
 
@@ -274,10 +274,10 @@ function getFields(ref, group) {
   });
 }
 
-// Scale datarefs can be computed over multiple schema types. 
+// Scale datarefs can be computed over multiple schema types.
 // This function determines the type of aggregator created, and
 // what data is sent to it: values, tuples, or multi-tuples that must
-// be standardized into a consistent schema. 
+// be standardized into a consistent schema.
 function aggrType(def, scale) {
   var refs = getRefs(def);
 
@@ -311,7 +311,7 @@ function getCache(which, def, scale, group) {
       groupby, summarize;
 
   // If a scale's dataref doesn't inherit data from the group, we can
-  // store the dataref aggregator at the Scale (dataflow node) level. 
+  // store the dataref aggregator at the Scale (dataflow node) level.
   if (inherit) {
     scale[ck] = cache;
   } else {
@@ -331,7 +331,7 @@ function getCache(which, def, scale, group) {
       }] : {'*': DataRef.COUNT};
     } else {  // atype === Aggregate.TYPES.MULTI
       groupby   = DataRef.GROUPBY;
-      summarize = [{ field: DataRef.VALUE, ops: [sort.op] }]; 
+      summarize = [{ field: DataRef.VALUE, ops: [sort.op] }];
     }
   } else {
     groupby = [];
@@ -494,7 +494,7 @@ function range(group) {
       signal.call(this, def.rangeMax) :
       def.rangeMax;
   }
-  
+
   if (def.reverse !== undefined) {
     var rev = signal.call(this, def.reverse);
     if (dl.isObject(rev)) {
@@ -502,7 +502,7 @@ function range(group) {
     }
     if (rev) rng = rng.reverse();
   }
-  
+
   return rng;
 }
 
@@ -588,7 +588,7 @@ Scale.schema = {
           "name": {"type": "string"},
 
           "type": {
-            "enum": [Types.LINEAR, Types.ORDINAL, Types.TIME, Types.TIME_UTC, Types.LOG, 
+            "enum": [Types.LINEAR, Types.ORDINAL, Types.TIME, Types.TIME_UTC, Types.LOG,
               Types.POWER, Types.SQRT, Types.QUANTILE, Types.QUANTIZE, Types.THRESHOLD],
             "default": Types.LINEAR
           },
@@ -599,8 +599,8 @@ Scale.schema = {
                 "type": "array",
                 "items": {
                   "oneOf": [
-                    {"type":"string"}, 
-                    {"type": "number"}, 
+                    {"type":"string"},
+                    {"type": "number"},
                     {"$ref": "#/refs/signal"}
                   ]
                 }
@@ -627,16 +627,16 @@ Scale.schema = {
 
           "rangeMin": {
             "oneOf": [
-              {"type":"string"}, 
-              {"type": "number"}, 
+              {"type":"string"},
+              {"type": "number"},
               {"$ref": "#/refs/signal"}
             ]
           },
 
           "rangeMax": {
             "oneOf": [
-              {"type":"string"}, 
-              {"type": "number"}, 
+              {"type":"string"},
+              {"type": "number"},
               {"$ref": "#/refs/signal"}
             ]
           },
@@ -671,14 +671,14 @@ Scale.schema = {
             "type": {"enum": [Types.TIME, Types.TIME_UTC]},
             "range": {"oneOf": rangeDef},
             "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
-            "nice": {"oneOf": [{"enum": ["second", "minute", "hour", 
+            "nice": {"oneOf": [{"enum": ["second", "minute", "hour",
               "day", "week", "month", "year"]}, {"$ref": "#/refs/signal"}]}
           },
           "required": ["type"]
         }, {
           "anyOf": [{
             "properties": {
-              "type": {"enum": [Types.LINEAR, Types.LOG, Types.POWER, Types.SQRT, 
+              "type": {"enum": [Types.LINEAR, Types.LOG, Types.POWER, Types.SQRT,
                 Types.QUANTILE, Types.QUANTIZE, Types.THRESHOLD], "default": Types.LINEAR},
               "range": {"oneOf": rangeDef},
               "clamp": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},

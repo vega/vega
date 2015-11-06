@@ -61,7 +61,7 @@ prototype.transform = function(input, reset) {
   var run = keys.field.some(function(f) { return input.fields[f]; });
   if (run || reset) {
     input.mod.forEach(set);
-    input.rem.forEach(set); 
+    input.rem.forEach(set);
   }
 
   as.forEach(function(k) { input.fields[k] = 1; });

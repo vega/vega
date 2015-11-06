@@ -11,7 +11,7 @@ var dl = require('datalib'),
     Bounder  = require('./Bounder'),
     parseData = require('../parse/data');
 
-function Builder() {    
+function Builder() {
   return arguments.length ? this.init.apply(this, arguments) : this;
 }
 
@@ -50,9 +50,9 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
     inlineDs.call(this);
   }
 
-  // Non-group mark builders are super nodes. Encoder and Bounder remain 
+  // Non-group mark builders are super nodes. Encoder and Bounder remain
   // separate operators but are embedded and called by Builder.evaluate.
-  this._isSuper = (this._def.type !== 'group'); 
+  this._isSuper = (this._def.type !== 'group');
   this._encoder = new Encoder(this._graph, this._mark, this);
   this._bounder = new Bounder(this._graph, this._mark);
   this._output  = null; // Output changeset for reactive geom as Bounder reflows
@@ -68,8 +68,8 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
   return this;
 };
 
-// Reactive geometry and mark-level transformations are handled here 
-// because they need their group's data-joined context. 
+// Reactive geometry and mark-level transformations are handled here
+// because they need their group's data-joined context.
 function inlineDs() {
   var from = this._def.from,
       geom = from.mark,
@@ -79,7 +79,7 @@ function inlineDs() {
     name = ['vg', this._parent_id, geom].join('_');
     spec = {
       name: name,
-      transform: from.transform, 
+      transform: from.transform,
       modify: from.modify
     };
   } else {
@@ -112,7 +112,7 @@ function inlineDs() {
     }
   } else {
     // At this point, we have a new datasource but it is empty as
-    // the propagation cycle has already crossed the datasources. 
+    // the propagation cycle has already crossed the datasources.
     // So, we repulse just this datasource. This should be safe
     // as the ds isn't connected to the scenegraph yet.
     output = this._ds.source().last();
@@ -163,7 +163,7 @@ proto.disconnect = function() {
   this._graph.disconnect(this.pipeline());
   disconnectScales(this._encoder._scales);
   disconnectScales(dl.keys(this._mark._scaleRefs));
-  
+
   return (this._status = DISCONNECTED, this);
 };
 
@@ -178,7 +178,7 @@ proto.evaluate = function(input) {
       def = this._mark.def,
       props  = def.properties || {},
       update = props.update   || {},
-      output = ChangeSet.create(input), 
+      output = ChangeSet.create(input),
       fullUpdate, fcs, data, name;
 
   if (this._ds) {
@@ -244,7 +244,7 @@ function join(input, output, data, ds, fullUpdate) {
       next = [],
       i, key, len, item, datum, enter, diff;
 
-  // Only mark rems as exiting. Due to keyf, there may be an add/mod 
+  // Only mark rems as exiting. Due to keyf, there may be an add/mod
   // tuple that replaces it.
   for (i=0, len=rem.length; i<len; ++i) {
     item = (rem[i] === prev[i]) ? prev[i] :
