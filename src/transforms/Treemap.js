@@ -43,7 +43,8 @@ prototype.batchTransform = function(input, data) {
 
   // get variables
   var layout = this._layout,
-      output = this._output;
+      output = this._output,
+      root = data.filter(dl.$('_root'))[0];
 
   // configure layout
   layout
@@ -56,7 +57,7 @@ prototype.batchTransform = function(input, data) {
     .ratio(this.param('ratio'))
     .padding(this.param('padding'))
     .mode(this.param('mode'))
-    .nodes(data[0]);
+    .nodes(root);
 
   // copy layout values to nodes
   data.forEach(function(n) {
@@ -72,6 +73,7 @@ prototype.batchTransform = function(input, data) {
   input.fields[output.y] = 1;
   input.fields[output.width] = 1;
   input.fields[output.height] = 1;
+  input.fields[output.depth] = 1;
   return input;
 };
 
