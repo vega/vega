@@ -64,7 +64,7 @@ prototype.batchTransform = function(input, data) {
       s = b.step;
 
   function update(d) {
-    var v = get(d),
+    var v = get(d);
     v = v == null ? null
       : b.start + s * ~~((v - b.start) / s);
     Tuple.set(d, output.start, v);

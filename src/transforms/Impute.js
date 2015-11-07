@@ -66,7 +66,6 @@ prototype.batchTransform = function(input, data) {
   }
   this._imputed = curr;
 
-  log.debug(input, ['imputing2']);
   return input;
 };
 
