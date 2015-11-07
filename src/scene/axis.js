@@ -2,6 +2,8 @@ var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     parseMark = require('../parse/mark');
 
+var axisBounds = new (require('vega-scenegraph').Bounds)();
+
 var TIME    = 'time',
     UTC     = 'utc',
     STRING  = 'string',
@@ -10,23 +12,23 @@ var TIME    = 'time',
 
 function axs(model) {
   var scale,
-      config = model.config(),
-      orient = config.axis.orient,
+      config = model.config().axis,
+      orient = config.orient,
       offset = 0,
-      titleOffset = config.axis.titleOffset,
+      titleOffset = config.titleOffset,
       axisDef = {},
       layer = 'front',
       grid = false,
       title = null,
-      tickMajorSize = config.axis.tickSize,
-      tickMinorSize = config.axis.tickSize,
-      tickEndSize = config.axis.tickSize,
-      tickPadding = config.axis.padding,
+      tickMajorSize = config.tickSize,
+      tickMinorSize = config.tickSize,
+      tickEndSize = config.tickSize,
+      tickPadding = config.padding,
       tickValues = null,
       tickFormatString = null,
       tickFormatType = null,
       tickSubdivide = 0,
-      tickCount = config.axis.ticks,
+      tickCount = config.ticks,
       gridLineStyle = {},
       tickLabelStyle = {},
       majorTickStyle = {},
@@ -125,9 +127,35 @@ function axs(model) {
     axisDef.offset = offset;
     axisDef.orient = orient;
     axisDef.layer = layer;
+    if (titleOffset === 'auto') titleAutoOffset(axisDef);
 
     return axisDef;
   };
+
+  function titleAutoOffset(axisDef) {
+    var orient = axisDef.orient,
+        update = axisDef.marks[5].properties.update,
+        fn = update.encode,
+        min = config.titleOffsetAutoMin,
+        max = config.titleOffsetAutoMax,
+        pad = config.titleOffsetAutoMargin;
+
+    // Offset axis title using bounding box of axis domain and labels
+    // Assumes other components are **encoded and bounded** beforehand
+    update.encode = function(item, group, trans, db, signals, preds) {
+      fn.call(fn, item, group, trans, db, signals, preds);
+
+      axisBounds.clear()
+        .union(group.items[3].bounds)
+        .union(group.items[4].bounds);
+
+      var method = (orient==='left' || orient==='right') ? 'width' : 'height',
+          field = (orient==='bottom' || orient==='top') ? 'y' : 'x',
+          sign = (orient==='top' || orient==='left') ? -1 : 1,
+          off = ~~(axisBounds[method]() + item.fontSize/2 + pad);
+      item[field] = sign * Math.min(Math.max(min, off), max);
+    };
+  }
 
   function axis_def(scale) {
     // setup scale mapping
@@ -148,8 +176,8 @@ function axs(model) {
     dl.extend(m.tickLabels, axisTickLabels(config));
     dl.extend(m.domain, axisDomain(config));
     dl.extend(m.title, axisTitle(config));
-    m.gridLines.properties.enter.stroke = {value: config.axis.gridColor};
-    m.gridLines.properties.enter.strokeOpacity = {value: config.axis.gridOpacity};
+    m.gridLines.properties.enter.stroke = {value: config.gridColor};
+    m.gridLines.properties.enter.strokeOpacity = {value: config.gridOpacity};
 
     // extend axis marks based on axis orientation
     axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
@@ -158,7 +186,7 @@ function axs(model) {
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
-    axisTitleExtend(orient, m.title, range, titleOffset); // TODO get offset
+    axisTitleExtend(orient, m.title, range, +titleOffset || 0);
 
     // add / override custom style properties
     dl.extend(m.gridLines.properties.update, gridLineStyle);
@@ -198,7 +226,7 @@ function axs(model) {
   axis.orient = function(x) {
     if (!arguments.length) return orient;
     if (orient !== x) {
-      orient = x in axisOrients ? x + '' : config.axis.orient;
+      orient = x in axisOrients ? x + '' : config.orient;
       reset();
     }
     return axis;
@@ -279,7 +307,7 @@ function axs(model) {
 
   axis.titleOffset = function(x) {
     if (!arguments.length) return titleOffset;
-    if (titleOffset !== +x) { titleOffset = +x; reset(); }
+    if (titleOffset !== x) { titleOffset = x; reset(); }
     return axis;
   };
 
@@ -534,8 +562,8 @@ function axisTicks(config) {
     key: 'data',
     properties: {
       enter: {
-        stroke: {value: config.axis.tickColor},
-        strokeWidth: {value: config.axis.tickWidth},
+        stroke: {value: config.tickColor},
+        strokeWidth: {value: config.tickWidth},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
@@ -551,9 +579,9 @@ function axisTickLabels(config) {
     key: 'data',
     properties: {
       enter: {
-        fill: {value: config.axis.tickLabelColor},
-        font: {value: config.axis.tickLabelFont},
-        fontSize: {value: config.axis.tickLabelFontSize},
+        fill: {value: config.tickLabelColor},
+        font: {value: config.tickLabelFont},
+        fontSize: {value: config.tickLabelFontSize},
         opacity: {value: 1e-6},
         text: {field: 'label'}
       },
@@ -569,10 +597,10 @@ function axisTitle(config) {
     interactive: true,
     properties: {
       enter: {
-        font: {value: config.axis.titleFont},
-        fontSize: {value: config.axis.titleFontSize},
-        fontWeight: {value: config.axis.titleFontWeight},
-        fill: {value: config.axis.titleColor},
+        font: {value: config.titleFont},
+        fontSize: {value: config.titleFontSize},
+        fontWeight: {value: config.titleFontWeight},
+        fill: {value: config.titleColor},
         align: {value: 'center'},
         baseline: {value: 'middle'},
         text: {field: 'data'}
@@ -590,8 +618,8 @@ function axisDomain(config) {
       enter: {
         x: {value: 0.5},
         y: {value: 0.5},
-        stroke: {value: config.axis.axisColor},
-        strokeWidth: {value: config.axis.axisWidth}
+        stroke: {value: config.axisColor},
+        strokeWidth: {value: config.axisWidth}
       },
       update: {}
     }

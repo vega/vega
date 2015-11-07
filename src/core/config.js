@@ -45,7 +45,10 @@ config.axis = {
   titleFont: 'sans-serif',
   titleFontSize: 11,
   titleFontWeight: 'bold',
-  titleOffset: 35
+  titleOffset: 'auto',
+  titleOffsetAutoMin: 30,
+  titleOffsetAutoMax: Infinity,
+  titleOffsetAutoMargin: 4
 };
 
 // default legend properties
