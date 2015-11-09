@@ -39,13 +39,13 @@ function lgnd(model) {
 
   legend.def = function() {
     var scale = size || shape || fill || stroke;
-    
+
     format = !formatString ? null : ((scale.type === 'time') ?
       dl.format.time(formatString) : dl.format.number(formatString));
-    
+
     if (!legendDef.type) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type) ?
-        quantDef(scale) : ordinalDef(scale);      
+        quantDef(scale) : ordinalDef(scale);
     }
     legendDef.orient = orient;
     legendDef.offset = offset;
@@ -66,7 +66,7 @@ function lgnd(model) {
       (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) :
       values).map(ingest);
     var fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
-    
+
     // determine spacing between legend entries
     var fs, range, offset, pad=5, domain = d3.range(data.length);
     if (size) {
@@ -92,7 +92,7 @@ function lgnd(model) {
       sz += 5 + ((ts && ts.value) || config.legend.titleFontSize);
     }
     for (var i=0, n=range.length; i<n; ++i) range[i] += sz;
-    
+
     // build scale for label layout
     var scaleSpec = {
       name: 'legend',
@@ -101,7 +101,7 @@ function lgnd(model) {
       domain: domain,
       range: range
     };
-    
+
     // update legend def
     var tdata = (title ? [title] : []).map(ingest);
     data.forEach(function(d) {
@@ -124,7 +124,7 @@ function lgnd(model) {
 
     // extend legend marks
     vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
-    
+
     // add / override custom style properties
     dl.extend(titles.properties.update,  titleStyle);
     dl.extend(symbols.properties.update, symbolStyle);
@@ -171,7 +171,7 @@ function lgnd(model) {
       range: [padding, width+padding]
     };
     if (scale.type==='pow') layoutSpec.exponent = scale.exponent();
-    
+
     // update legend def
     var tdata = (title ? [title] : []).map(ingest);
     data.forEach(function(d,i) {
@@ -184,7 +184,7 @@ function lgnd(model) {
     def.marks[2].from = function() { return data; };
     return def;
   }
-  
+
   function q_legend_def(scale) {
     // setup legend marks
     var titles = dl.extend(m.titles, vg_legendTitle(config)),
@@ -197,7 +197,7 @@ function lgnd(model) {
         min = dom[0],
         max = dom[dom.length-1],
         f = scale.copy().domain([min, max]).range([0,1]);
-        
+
     var stops = (scale.type !== 'linear' && scale.ticks) ?
       scale.ticks.call(scale, 15) : dom;
     if (min !== stops[0]) stops.unshift(min);
@@ -228,7 +228,7 @@ function lgnd(model) {
       gradient.properties.update.y.value += sz;
       labels.properties.update.y.value += sz;
     }
-    
+
     // padding from legend border
     titles.properties.enter.x.value += padding;
     titles.properties.enter.y.value += padding;
@@ -272,7 +272,7 @@ function lgnd(model) {
     if (fill !== x) { fill = x; reset(); }
     return legend;
   };
-  
+
   legend.stroke = function(x) {
     if (!arguments.length) return stroke;
     if (stroke !== x) { stroke = x; reset(); }
@@ -341,15 +341,15 @@ function lgnd(model) {
     labelStyle = x;
     return legend;
   };
-  
+
   legend.titleProperties = function(x) {
     if (!arguments.length) return titleStyle;
     titleStyle = x;
     return legend;
   };
 
-  legend.reset = function() { 
-    reset(); 
+  legend.reset = function() {
+    reset();
     return legend;
   };
 
@@ -365,7 +365,7 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
       pad    = item.mark.def.padding * 2,
       lw     = ~~item.bounds.width() + (item.width ? 0 : pad),
       lh     = ~~item.bounds.height() + (item.height ? 0 : pad),
-      pos = group._legendPositions || 
+      pos = group._legendPositions ||
         (group._legendPositions = {right: 0.5, left: 0.5});
 
   o.x = 0.5;
@@ -390,7 +390,7 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
       break;
     }
   }
-  
+
   if (trans) trans.interpolate(item, o);
   var enc = item.mark.def.properties.enter.encode;
   enc.call(enc, item, group, trans, db, signals, predicates);

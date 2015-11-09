@@ -20,7 +20,7 @@ stream
   / t:css ":" e:eventType { return {event: e, target: t}; }
   / e:eventType { return {event: e}; }
   / s:name { return {signal: s}; }
-  
+
 
 markType = m: "rect" / "symbol" / "path" / "arc" / "area" / "line" / "rule" / "image" / "text" / "group"
 

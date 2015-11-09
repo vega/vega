@@ -45,7 +45,7 @@ function parseStreams(view) {
 
   // We register the event listeners all together so that if multiple
   // signals are registered on the same event, they will receive the
-  // new value on the same pulse. 
+  // new value on the same pulse.
   dl.keys(internal.handlers).forEach(function(type) {
     view.on(type, function(evt, item) {
       evt.preventDefault(); // stop text selection
@@ -133,7 +133,7 @@ function parseStreams(view) {
       h = handlers[i];
       filtered = h.filters.some(invoke);
       if (filtered) continue;
-      
+
       val = h.exp.fn(datum, evt, model.values(SIGNALS, h.exp.globals));
       if (h.spec.scale) {
         val = parseSignals.scale(model, h.spec, val, datum, evt);
@@ -196,10 +196,10 @@ function parseStreams(view) {
       if (val !== sig.value() || sig.verbose()) {
         sig.value(val);
         input.signals[sig.name()] = 1;
-        input.reflow = true;        
+        input.reflow = true;
       }
 
-      return input;  
+      return input;
     };
     n.dependency(df.Dependencies.SIGNALS, selector.signal);
     n.addListener(sig);
@@ -207,17 +207,17 @@ function parseStreams(view) {
   }
 
   function orderedStream(sig, selector, exp, spec) {
-    var name = sig.name(), 
-        gk = name + GATEKEEPER, 
-        trueFn  = expr('true'), 
+    var name = sig.name(),
+        gk = name + GATEKEEPER,
+        trueFn  = expr('true'),
         falseFn = expr('false'),
         middle  = selector.middle,
         filters = middle.filters || (middle.filters = []),
         gatekeeper = model.signal(gk) || model.signal(gk, false);
 
     // Register an anonymous signal to act as a gatekeeper. Its value is
-    // true or false depending on whether the start or end streams occur. 
-    // The middle signal then simply filters for the gatekeeper's value. 
+    // true or false depending on whether the start or end streams occur.
+    // The middle signal then simply filters for the gatekeeper's value.
     mergedStream(gatekeeper, [selector.start], trueFn, {});
     mergedStream(gatekeeper, [selector.end], falseFn, {});
 

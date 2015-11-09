@@ -60,7 +60,7 @@ prototype.batchTransform = function(input, data) {
       range = fontSize.accessor && this.param('fontScale'),
       size, scale;
   fontSize = fontSize.accessor || d3.functor(fontSize);
-  
+
   // create font size scaling function as needed
   if (range.length) {
     scale = d3.scale.sqrt()
@@ -151,7 +151,7 @@ Wordcloud.schema = {
       "description": "The minimum and maximum scaled font sizes, or null to prevent scaling.",
       "oneOf": [
         { "type": "null" },
-        { 
+        {
           "type": "array",
           "minItems": 2,
           "maxItems": 2,

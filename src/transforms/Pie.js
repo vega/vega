@@ -73,7 +73,7 @@ Pie.schema = {
     "type": {"enum": ["pie"]},
     "field": {
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
-      "description": "The data values to encode as angular spans. " + 
+      "description": "The data values to encode as angular spans. " +
         "If this property is omitted, all pie slices will have equal spans."
     },
     "startAngle": {
@@ -82,7 +82,7 @@ Pie.schema = {
           "type": "number",
           "minimum": 0,
           "maximum": 2 * Math.PI
-        }, 
+        },
         {"$ref": "#/refs/signal"}
       ],
       "default": 0
@@ -93,7 +93,7 @@ Pie.schema = {
           "type": "number",
           "minimum": 0,
           "maximum": 2 * Math.PI
-        }, 
+        },
         {"$ref": "#/refs/signal"}
       ],
       "default": 2 * Math.PI,

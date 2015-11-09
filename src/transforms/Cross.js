@@ -15,7 +15,7 @@ function Cross(graph) {
   });
 
   this._output = {'left': 'a', 'right': 'b'};
-  this._lastRem  = null; // Most recent stamp that rem occured. 
+  this._lastRem  = null; // Most recent stamp that rem occured.
   this._lastWith = null; // Last time we crossed w/withds.
   this._ids   = {};
   this._cache = {};
@@ -52,7 +52,7 @@ function add(output, left, data, diag, test, x) {
       cache.call(this, y, t);
       this._ids[id] = 1;
       t = {};
-    }    
+    }
   }
 }
 
@@ -79,7 +79,7 @@ function rem(output, x) {
 
 function upFields(input, output) {
   if (input.add.length || input.rem.length) {
-    output.fields[this._output.left]  = 1; 
+    output.fields[this._output.left]  = 1;
     output.fields[this._output.right] = 1;
   }
 }
@@ -128,7 +128,7 @@ Cross.schema = {
     "type": {"enum": ["cross"]},
     "with": {
       "type": "string",
-      "description": "The name of the secondary data set to cross with the primary data. " + 
+      "description": "The name of the secondary data set to cross with the primary data. " +
         "If unspecified, the primary data is crossed with itself."
     },
     "diagonal": {

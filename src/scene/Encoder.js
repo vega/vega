@@ -22,7 +22,7 @@ function Encoder(graph, mark, builder) {
   // Only scales used in the 'update' property set are set as
   // encoder depedencies to have targeted reevaluations. However,
   // we still want scales in 'enter' and 'exit' to be evaluated
-  // before the encoder. 
+  // before the encoder.
   if (enter) s.push.apply(s, enter.scales);
 
   if (update) {
@@ -75,7 +75,7 @@ proto.evaluate = function(input) {
   // Items marked for removal are at the tail of items. Process them first.
   for (i=0, len=input.rem.length; i<len; ++i) {
     item = input.rem[i];
-    if (exit) encode.call(this, exit, item, input.trans, db, sg, preds, dirty); 
+    if (exit) encode.call(this, exit, item, input.trans, db, sg, preds, dirty);
     if (input.trans && !exit) input.trans.interpolate(item, EMPTY);
     else if (!input.trans) items.pop();
   }
@@ -105,7 +105,7 @@ function values(type, graph, input, props) {
     o = graph.values(type, x, (o=o||{}));
   }
   if ((p=props.exit) && (x=p[type]).length && input.rem.length) {
-    o = graph.values(type, x, (o=o||{})); 
+    o = graph.values(type, x, (o=o||{}));
   }
   if ((p=props.update) && (x=p[type]).length && (add || input.mod.length)) {
     o = graph.values(type, x, (o=o||{}));
@@ -122,12 +122,12 @@ function encode(prop, item, trans, db, sg, preds, dirty) {
   if (isDirty && !wasDirty) dirty.push(item);
 }
 
-// If a specified property set called, or update property set 
+// If a specified property set called, or update property set
 // uses nested fieldrefs, reevaluate all items.
 proto.reevaluate = function(pulse) {
   var def = this._mark.def,
       props = def.properties || {},
-      reeval = dl.isFunction(def.from) || def.orient || pulse.request || 
+      reeval = dl.isFunction(def.from) || def.orient || pulse.request ||
         Node.prototype.reevaluate.call(this, pulse);
 
   return reeval || (props.update ? nestedRefs.call(this) : false);
@@ -166,7 +166,7 @@ function nestedRefs() {
 // Short-circuit encoder if user specifies items
 Encoder.update = function(graph, trans, request, items, dirty) {
   items = dl.array(items);
-  var preds = graph.predicates(), 
+  var preds = graph.predicates(),
       db = graph.values(Deps.DATA),
       sg = graph.values(Deps.SIGNALS),
       i, len, item, props, prop;

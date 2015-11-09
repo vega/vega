@@ -20,7 +20,8 @@ function Bin(graph) {
 
   this._output = {
     start: 'bin_start',
-    end:   'bin_end'
+    end:   'bin_end',
+    mid:   'bin_mid'
   };
   return this.mutates(true);
 }
@@ -59,14 +60,16 @@ prototype.batchTransform = function(input, data) {
   if (step) opt.step = step;
   if (steps) opt.steps = steps;
   if (minstep) opt.minstep = minstep;
-  var b = dl.bins(opt);
+  var b = dl.bins(opt),
+      s = b.step;
 
   function update(d) {
     var v = get(d);
     v = v == null ? null
-      : b.start + b.step * ~~((v - b.start) / b.step);
+      : b.start + s * ~~((v - b.start) / s);
     Tuple.set(d, output.start, v);
-    Tuple.set(d, output.end, v + b.step);
+    Tuple.set(d, output.end, v + s);
+    Tuple.set(d, output.mid, v + s/2);
   }
   input.add.forEach(update);
   input.mod.forEach(update);
@@ -74,6 +77,7 @@ prototype.batchTransform = function(input, data) {
 
   input.fields[output.start] = 1;
   input.fields[output.end] = 1;
+  input.fields[output.mid] = 1;
   return input;
 };
 
@@ -142,7 +146,8 @@ Bin.schema = {
       "description": "Rename the output data fields",
       "properties": {
         "start": {"type": "string", "default": "bin_start"},
-        "end": {"type": "string", "default": "bin_end"}
+        "end": {"type": "string", "default": "bin_end"},
+        "mid": {"type": "string", "default": "bin_mid"}
       },
       "additionalProperties": false
     }

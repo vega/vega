@@ -124,7 +124,7 @@ prototype.addListener = function(l) {
 };
 
 prototype.removeListener = function(l) {
-  this.node().removeListener(l); 
+  this.node().removeListener(l);
 };
 
 prototype.fire = function(cs) {

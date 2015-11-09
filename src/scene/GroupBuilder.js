@@ -121,10 +121,10 @@ function recurse(input) {
       def = c.builder._def;
 
       // This new child needs to be built during this propagation cycle.
-      // We could add its builder as a listener off the _recursor node, 
+      // We could add its builder as a listener off the _recursor node,
       // but try to inline it if we can to minimize graph dispatches.
       inline = (def.type !== Types.GROUP);
-      inline = inline && (this._graph.data(c.from) !== undefined); 
+      inline = inline && (this._graph.data(c.from) !== undefined);
       inline = inline && (pipeline[pipeline.length-1].listeners().length === 1); // Reactive geom source
       inline = inline && (def.from && !def.from.mark); // Reactive geom target
       c.inline = inline;
@@ -141,13 +141,13 @@ function recurse(input) {
     }
   }
 
-  function updateAxis(a) { 
+  function updateAxis(a) {
     var scale = a.scale();
     if (!input.scales[scale.scaleName]) return;
     a.reset().def();
   }
-  
-  function updateLegend(l) { 
+
+  function updateLegend(l) {
     var scale = l.size() || l.shape() || l.fill() || l.stroke();
     if (!input.scales[scale.scaleName]) return;
     l.reset().def();
@@ -166,9 +166,9 @@ function recurse(input) {
     if (hasLegends) group.legends.forEach(updateLegend);
   }
 
-  function disconnectChildren(c) { 
+  function disconnectChildren(c) {
     builder._recursor.removeListener(c.builder);
-    c.builder.disconnect(); 
+    c.builder.disconnect();
   }
 
   for (i=0, len=input.rem.length; i<len; ++i) {
@@ -195,7 +195,7 @@ function scale(name, x) {
 function buildGroup(input, group) {
   log.debug(input, ["building group", group._id]);
 
-  group._scales = group._scales || {};    
+  group._scales = group._scales || {};
   group.scale = scale.bind(group);
 
   group.items = group.items || [];
@@ -220,10 +220,10 @@ function buildMarks(input, group) {
     group.items[i] = {group: group, _scaleRefs: {}};
     b = (mark.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(this._graph, mark, group.items[i], this, group._id, inherit);
-    this._children[group._id].push({ 
-      builder: b, 
-      from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit), 
-      type: Types.MARK 
+    this._children[group._id].push({
+      builder: b,
+      from: from.data || (from.mark ? ("vg_" + group._id + "_" + from.mark) : inherit),
+      type: Types.MARK
     });
   }
 }

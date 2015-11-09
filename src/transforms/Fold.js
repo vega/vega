@@ -6,7 +6,7 @@ var df = require('vega-dataflow'),
 function Fold(graph) {
   Transform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    fields: {type: 'array<field>'} 
+    fields: {type: 'array<field>'}
   });
 
   this._output = {key: 'key', value: 'value'};
@@ -18,7 +18,7 @@ function Fold(graph) {
 var prototype = (Fold.prototype = Object.create(Transform.prototype));
 prototype.constructor = Fold;
 
-prototype._reset = function(input, output) { 
+prototype._reset = function(input, output) {
   for (var id in this._cache) {
     output.rem.push.apply(output.rem, this._cache[id]);
   }
@@ -35,11 +35,11 @@ prototype._fn = function(data, on, out) {
   for (i=0, n=data.length; i<n; ++i) {
     d = data[i];
     for (j=0, m=on.field.length; j<m; ++j) {
-      t = this._tuple(d, j, m);  
+      t = this._tuple(d, j, m);
       Tuple.set(t, this._output.key, on.field[j]);
       Tuple.set(t, this._output.value, on.accessor[j](d));
       out.push(t);
-    }      
+    }
   }
 };
 
@@ -60,7 +60,7 @@ prototype.transform = function(input, reset) {
   });
 
   // If we're only propagating values, don't mark key/value as updated.
-  if (input.add.length || input.rem.length || 
+  if (input.add.length || input.rem.length ||
       on.field.some(function(f) { return !!input.fields[f]; })) {
     output.fields[this._output.key] = 1;
     output.fields[this._output.value] = 1;

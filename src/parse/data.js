@@ -33,7 +33,7 @@ function parseData(model, spec, callback) {
 
 parseData.datasource = function(model, d) {
   var transform = (d.transform || []).map(function(t) {
-        return parseTransforms(model, t); 
+        return parseTransforms(model, t);
       }),
       mod = (d.modify || []).map(function(m) {
         return parseModify(model, m, d);
@@ -44,11 +44,11 @@ parseData.datasource = function(model, d) {
     ds.values(dl.read(d.values, d.format));
   } else if (d.source) {
     // Derived ds will be pulsed by its src rather than the model.
-    ds.source(d.source).addListener(ds);  
-    model.removeListener(ds.pipeline()[0]); 
+    ds.source(d.source).addListener(ds);
+    model.removeListener(ds.pipeline()[0]);
   }
 
-  return ds;    
+  return ds;
 };
 
 module.exports = parseData;

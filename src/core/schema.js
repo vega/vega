@@ -14,7 +14,7 @@ module.exports = function(opt) {
   var schema = null;
   opt = opt || {};
 
-  // Compile if we're not loading the schema from a URL. 
+  // Compile if we're not loading the schema from a URL.
   // Load from a URL to extend the existing base schema.
   if (opt.url) {
     schema = dl.json(dl.extend({url: opt.url}, config.load));
@@ -22,8 +22,8 @@ module.exports = function(opt) {
     schema = {
       "$schema": "http://json-schema.org/draft-04/schema#",
       "title": "Vega Visualization Specification Language",
-      "defs": {}, 
-      "refs": {}, 
+      "defs": {},
+      "refs": {},
       "$ref": "#/defs/spec"
     };
 

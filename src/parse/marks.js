@@ -56,7 +56,7 @@ parseRootMark.schema = {
           "not": { "properties": { "type": {"enum": ["group"]} } },
         },
         {"$ref": "#/defs/mark"}
-      ]   
+      ]
     }
   }
 };

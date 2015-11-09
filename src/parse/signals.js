@@ -30,7 +30,7 @@ function parseSignals(model, spec) {
           signal.value(val);
           sg[s.name] = 1;
         }
-        return sg[s.name] ? input : model.doNotPropagate;        
+        return sg[s.name] ? input : model.doNotPropagate;
       };
       signal.dependency(SIGNALS, s.expr.globals);
       s.expr.globals.forEach(function(dep) {

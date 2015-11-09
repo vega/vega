@@ -40,7 +40,7 @@ function get() {
 }
 
 prototype.get = function() {
-  var graph = this._transform._graph, 
+  var graph = this._transform._graph,
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type),
       s, idx, val;
@@ -58,7 +58,7 @@ prototype.get = function() {
     val = graph.signalRef(s);
 
     if (isField) {
-      this._accessors[idx] = this._value[idx] != val ? 
+      this._accessors[idx] = this._value[idx] != val ?
         dl.accessor(val) : this._accessors[idx];
     }
 

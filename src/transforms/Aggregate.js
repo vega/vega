@@ -13,7 +13,7 @@ function Aggregate(graph) {
   Transform.addParameters(this, {
     groupby: {type: 'array<field>'},
     summarize: {
-      type: 'custom', 
+      type: 'custom',
       set: function(summarize) {
         var signalDeps = {},
             tx = this._transform,
@@ -50,7 +50,7 @@ function Aggregate(graph) {
   this._fields = [];
   this._out = [];
 
-  this._type = TYPES.TUPLE; 
+  this._type = TYPES.TUPLE;
   this._acc = {groupby: dl.true, value: dl.true};
 
   return this.router(true).produces(true);
@@ -60,20 +60,20 @@ var prototype = (Aggregate.prototype = Object.create(Transform.prototype));
 prototype.constructor = Aggregate;
 
 var TYPES = Aggregate.TYPES = {
-  VALUE: 1, 
-  TUPLE: 2, 
+  VALUE: 1,
+  TUPLE: 2,
   MULTI: 3
 };
 
 Aggregate.VALID_OPS = [
-  'values', 'count', 'valid', 'missing', 'distinct', 
-  'sum', 'mean', 'average', 'variance', 'variancep', 'stdev', 
-  'stdevp', 'median', 'q1', 'q3', 'modeskew', 'min', 'max', 
+  'values', 'count', 'valid', 'missing', 'distinct',
+  'sum', 'mean', 'average', 'variance', 'variancep', 'stdev',
+  'stdevp', 'median', 'q1', 'q3', 'modeskew', 'min', 'max',
   'argmin', 'argmax'
 ];
 
-prototype.type = function(type) { 
-  return (this._type = type, this); 
+prototype.type = function(type) {
+  return (this._type = type, this);
 };
 
 prototype.accessors = function(groupby, value) {
