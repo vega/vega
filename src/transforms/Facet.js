@@ -29,6 +29,20 @@ prototype.aggr = function() {
   return Aggregate.prototype.aggr.call(this).facet(this);
 };
 
+prototype.transform = function(input, reset) {
+  var output  = Aggregate.prototype.transform.call(this, input, reset);
+
+  // New facet cells should trigger a re-ranking of the dataflow graph.
+  // This ensures facet datasources are computed before scenegraph nodes.
+  // We rerank the Facet's first listener, which is the next node in the
+  // datasource's pipeline.
+  if (input.add.length) {
+    this.listeners()[0].rerank();
+  }
+
+  return output;
+}
+
 module.exports = Facet;
 
 var dl = require('datalib');
