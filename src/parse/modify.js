@@ -26,7 +26,8 @@ function parseModify(model, def, ds) {
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       reeval = (predicate === null),
-      node = new Node(model).router(def.type === Types.CLEAR);
+      isClear = def.type === Types.CLEAR,
+      node = new Node(model).router(isClear);
 
   node.evaluate = function(input) {
     if (predicate !== null) {  // TODO: predicate args
@@ -36,7 +37,7 @@ function parseModify(model, def, ds) {
     }
 
     log.debug(input, [def.type+"ing", reeval]);
-    if (!reeval) return input;
+    if (!reeval || (!isClear && !input.signals[signalName])) return input;
 
     var datum = {}, 
         value = signal ? model.signalRef(def.signal) : null,
