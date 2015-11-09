@@ -42,6 +42,20 @@ prototype.rank = function() {
   return this._rank;
 };
 
+prototype.rerank = function() {
+  var g = this._graph, 
+      q = [this],
+      cur;
+
+  while (q.length) {
+    cur = q.shift();
+    cur._rank = g.rank();
+    q.unshift.apply(q, cur.listeners());
+  }
+
+  return this;
+};
+
 prototype.qrank = function(/* set */) {
   if (!arguments.length) return this._qrank;
   return (this._qrank = this._rank, this);
@@ -132,13 +146,7 @@ prototype.addListener = function(l) {
   this._listeners.push(l);
   this._listeners._ids[l._id] = 1;
   if (this._rank > l._rank) {
-    var q = [l],
-        g = this._graph, cur;
-    while (q.length) {
-      cur = q.shift();
-      cur._rank = g.rank();
-      q.unshift.apply(q, cur.listeners());
-    }
+    l.rerank();
   }
 
   return this;
