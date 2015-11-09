@@ -59,7 +59,8 @@ function add(output, left, data, diag, test, x) {
 function mod(output, left, x) {
   var cross = this,
       c = this._cache[x._id];
-
+  if (!c) return;
+  
   if (this._lastRem > c.s) {  // Removed tuples haven't been filtered yet
     c.c = c.c.filter(function(y) {
       var t = y[cross._output[left ? 'right' : 'left']];
@@ -72,7 +73,9 @@ function mod(output, left, x) {
 }
 
 function rem(output, x) {
-  output.rem.push.apply(output.rem, this._cache[x._id].c);
+  var c = this._cache[x._id];
+  if (!c) return;
+  output.rem.push.apply(output.rem, c.c);
   this._cache[x._id] = null;
   this._lastRem = this._stamp;
 }
