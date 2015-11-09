@@ -51,7 +51,7 @@
     "chai-spies": "^0.7.1",
     "exorcist": "^0.4.0",
     "istanbul": "latest",
-    "jsdom": "^7.0.2",
+    "jsdom": "^3.0.0",
     "jshint": "^2.8.0",
     "jstransform": "^11.0.3",
     "mocha": "^2.3.3",
