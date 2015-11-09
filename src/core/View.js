@@ -166,8 +166,8 @@ prototype.padding = function(pad) {
       this._padding = pad;
       this._strict = false;
     }
-    if (this._renderer) this._renderer.resize(this._width, this._height, pad);
-    if (this._handler)  this._handler.padding(pad);
+    if (this._renderer) this._renderer.resize(this._width, this._height, this._padding);
+    if (this._handler)  this._handler.padding(this._padding);
   }
   return (this._repaint = true, this);
 };
