@@ -40,6 +40,7 @@ prototype.batchTransform = function(input, data) {
       n[parentField] = node;
       curr.push(Tuple.ingest(n));
       if (index+1 < fields.length) level(index+1, n, n[childField]);
+      else n[childField].forEach(function(c) { c[parentField] = n; });
     });
   }
 

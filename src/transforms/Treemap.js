@@ -116,6 +116,14 @@ Treemap.schema = {
       "description": "The values to use to determine the area of each leaf-level treemap cell.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
+    "mode": {
+      "description": "The treemap layout algorithm to use.",
+      "oneOf": [
+        {"type": {"enum": ["squarify", "slice", "dice", "slice-dice"]}},
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": "squarify"
+    },
     "size": {
       "description": "The dimensions of the treemap layout",
       "oneOf": [

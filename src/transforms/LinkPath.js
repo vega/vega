@@ -36,6 +36,28 @@ function curve(sx, sy, tx, ty, tension) {
          ' ' + tx + ',' + ty;
 }
 
+function cornerX(sx, sy, tx, ty) {
+  return 'M' + sx + ',' + sy +
+         'V' + ty + 'H' + tx;
+}
+
+function cornerY(sx, sy, tx, ty) {
+  return 'M' + sx + ',' + sy +
+         'H' + tx + 'V' + ty;
+}
+
+function cornerR(sa, sr, ta, tr) {
+  var sc = Math.cos(sa),
+      ss = Math.sin(sa),
+      tc = Math.cos(ta),
+      ts = Math.sin(ta),
+      sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
+  return 'M' + (sr*sc) + ',' + (sr*ss) +
+         'A' + sr + ',' + sr + ' 0 0,' + (sf?1:0) +
+         ' ' + (sr*tc) + ',' + (sr*ts) +
+         'L' + (tr*tc) + ',' + (tr*ts);
+}
+
 function diagonalX(sx, sy, tx, ty) {
   var m = (sx + tx) / 2;
   return 'M' + sx + ',' + sy +
@@ -52,12 +74,27 @@ function diagonalY(sx, sy, tx, ty) {
          ' ' + tx + ',' + ty;
 }
 
+function diagonalR(sa, sr, ta, tr) {
+  var sc = Math.cos(sa),
+      ss = Math.sin(sa),
+      tc = Math.cos(ta),
+      ts = Math.sin(ta),
+      mr = (sr + tr) / 2;
+  return 'M' + (sr*sc) + ',' + (sr*ss) +
+         'C' + (mr*sc) + ',' + (mr*ss) +
+         ' ' + (mr*tc) + ',' + (mr*ts) +
+         ' ' + (tr*tc) + ',' + (tr*ts);
+}
+
 var shapes = {
   line:      line,
   curve:     curve,
-  diagonal:  diagonalX,
+  cornerX:   cornerX,
+  cornerY:   cornerY,
+  cornerR:   cornerR,
   diagonalX: diagonalX,
-  diagonalY: diagonalY
+  diagonalY: diagonalY,
+  diagonalR: diagonalR
 };
 
 prototype.transform = function(input) {
@@ -130,7 +167,7 @@ LinkPath.schema = {
     "shape": {
       "description": "The path shape to use",
       "oneOf": [
-        {"enum": ["line", "curve", "diagonal", "diagonalX", "diagonalY"]},
+        {"enum": ["line", "curve", "cornerX", "cornerY", "cornerR", "diagonalX", "diagonalY", "diagonalR"]},
         {"$ref": "#/refs/signal"}
       ],
       "default": "line"
