@@ -5,92 +5,105 @@ var d3 = require('d3'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
 
-var defaultRatio = 0.5 * (1 + Math.sqrt(5));
-
-function Treemap(graph) {
+function Hierarchy(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
     // hierarchy parameters
-    sort: {type: 'array<field>', default: ['-value']},
+    sort: {type: 'array<field>', default: null},
     children: {type: 'field', default: 'children'},
     parent: {type: 'field', default: 'parent'},
-    field: {type: 'field', default: 'value'},
-    // treemap parameters
+    field: {type: 'value', default: null},
+    // layout parameters
+    mode: {type: 'value', default: 'tidy'}, // tidy, cluster, partition
     size: {type: 'array<value>', default: [500, 500]},
-    round: {type: 'value', default: true},
-    sticky: {type: 'value', default: false},
-    ratio: {type: 'value', default: defaultRatio},
-    padding: {type: 'value', default: null},
-    mode: {type: 'value', default: 'squarify'}
+    nodesize: {type: 'array<value>', default: null},
+    orient: {type: 'value', default: 'cartesian'}
   });
 
-  this._layout = d3.layout.treemap();
-
+  this._mode = null;
   this._output = {
     'x':      'layout_x',
     'y':      'layout_y',
     'width':  'layout_width',
     'height': 'layout_height',
-    'depth':  'layout_depth',
+    'depth':  'layout_depth'
   };
   return this.mutates(true);
 }
 
-var prototype = (Treemap.prototype = Object.create(BatchTransform.prototype));
-prototype.constructor = Treemap;
+var PARTITION = 'partition';
+
+var SEPARATION = {
+  cartesian: function(a, b) { return (a.parent === b.parent ? 1 : 2); },
+  radial: function(a, b) { return (a.parent === b.parent ? 1 : 2) / a.depth; }
+};
+
+var prototype = (Hierarchy.prototype = Object.create(BatchTransform.prototype));
+prototype.constructor = Hierarchy;
 
 prototype.batchTransform = function(input, data) {
-  log.debug(input, ['treemap']);
+  log.debug(input, ['hierarchy layout']);
 
   // get variables
   var layout = this._layout,
       output = this._output,
-      sticky = this.param('sticky'),
+      mode   = this.param('mode'),
+      sort   = this.param('sort'),
+      nodesz = this.param('nodesize'),
       parent = this.param('parent').accessor,
       root = data.filter(function(d) { return parent(d) === null; })[0];
 
-  // layout.sticky resets state _regardless_ of input value
-  // so, we perform out own check first
-  if (layout.sticky() !== sticky) { layout.sticky(sticky); }
+  if (mode !== this._mode) {
+    this._mode = mode;
+    if (mode === 'tidy') mode = 'tree';
+    layout = (this._layout = d3.layout[mode]());
+  }
 
-  // configure layout
+  input.fields[output.x] = 1;
+  input.fields[output.y] = 1;
+  input.fields[output.depth] = 1;
+  if (mode === PARTITION) {
+    input.fields[output.width] = 1;
+    input.fields[output.height] = 1;
+    layout.value(this.param('field').accessor);
+  } else {
+    layout.separation(SEPARATION[this.param('orient')]);
+  }
+
+  if (nodesz.length && mode !== PARTITION) {
+    layout.nodeSize(nodesz);
+  } else {
+    layout.size(this.param('size'));
+  }
+
   layout
-    .sort(dl.comparator(this.param('sort').field))
+    .sort(sort.field.length ? dl.comparator(sort.field) : null)
     .children(this.param('children').accessor)
-    .value(this.param('field').accessor)
-    .size(this.param('size'))
-    .round(this.param('round'))
-    .ratio(this.param('ratio'))
-    .padding(this.param('padding'))
-    .mode(this.param('mode'))
     .nodes(root);
 
   // copy layout values to nodes
   data.forEach(function(n) {
     Tuple.set(n, output.x, n.x);
     Tuple.set(n, output.y, n.y);
-    Tuple.set(n, output.width, n.dx);
-    Tuple.set(n, output.height, n.dy);
     Tuple.set(n, output.depth, n.depth);
+    if (mode === PARTITION) {
+      Tuple.set(n, output.width, n.dx);
+      Tuple.set(n, output.height, n.dy);
+    }
   });
 
   // return changeset
-  input.fields[output.x] = 1;
-  input.fields[output.y] = 1;
-  input.fields[output.width] = 1;
-  input.fields[output.height] = 1;
-  input.fields[output.depth] = 1;
   return input;
 };
 
-module.exports = Treemap;
+module.exports = Hierarchy;
 
-Treemap.schema = {
+Hierarchy.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Treemap transform",
+  "title": "Hierarchy transform",
   "type": "object",
   "properties": {
-    "type": {"enum": ["treemap"]},
+    "type": {"enum": ["hierarchy"]},
     "sort": {
       "description": "A list of fields to use as sort criteria for sibling nodes.",
       "oneOf": [
@@ -99,8 +112,7 @@ Treemap.schema = {
           "items": {"oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]}
         },
         {"$ref": "#/refs/signal"}
-      ],
-      "default": ["-value"]
+      ]
     },
     "children": {
       "description": "The data field for the children node array",
@@ -113,19 +125,27 @@ Treemap.schema = {
       "default": "parent"
     },
     "field": {
-      "description": "The values to use to determine the area of each leaf-level treemap cell.",
+      "description": "The value for the area of each leaf-level node for partition layouts.",
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
     },
     "mode": {
-      "description": "The treemap layout algorithm to use.",
+      "description": "The layout algorithm mode to use.",
       "oneOf": [
-        {"type": {"enum": ["squarify", "slice", "dice", "slice-dice"]}},
+        {"enum": ["tidy", "cluster", "partition"]},
         {"$ref": "#/refs/signal"}
       ],
-      "default": "squarify"
+      "default": "tidy"
+    },
+    "orient": {
+      "description": "The layout orientation to use.",
+      "oneOf": [
+        {"enum": ["cartesian", "radial"]},
+        {"$ref": "#/refs/signal"}
+      ],
+      "default": "cartesian"
     },
     "size": {
-      "description": "The dimensions of the treemap layout",
+      "description": "The dimensions of the tree layout",
       "oneOf": [
         {
           "type": "array",
@@ -137,33 +157,18 @@ Treemap.schema = {
       ],
       "default": [500, 500]
     },
-    "round": {
-      "description": "If true, treemap cell dimensions will be rounded to integer pixels.",
-      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
-      "default": true
-    },
-    "sticky": {
-      "description": "If true, repeated runs of the treemap will use cached partition boundaries.",
-      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
-      "default": false
-    },
-    "ratio": {
-      "description": "The target aspect ratio for the layout to optimize.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": defaultRatio
-    },
-    "padding": {
+    "nodesize": {
+      "description": "Sets a fixed x,y size for each node (overrides the size parameter)",
       "oneOf": [
-        {"type": "number"},
         {
           "type": "array",
           "items": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-          "minItems": 4,
-          "maxItems": 4
+          "minItems": 2,
+          "maxItems": 2
         },
         {"$ref": "#/refs/signal"}
       ],
-      "description": "he padding (in pixels) to provide around internal nodes in the treemap."
+      "default": null
     },
     "output": {
       "type": "object",

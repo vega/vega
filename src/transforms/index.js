@@ -11,11 +11,13 @@ module.exports = {
   formula:      require('./Formula'),
   geo:          require('./Geo'),
   geopath:      require('./GeoPath'),
+  hierarchy:    require('./Hierarchy'),
   impute:       require('./Impute'),
   lookup:       require('./Lookup'),
   pie:          require('./Pie'),
   sort:         require('./Sort'),
   stack:        require('./Stack'),
+  treeify:      require('./Treeify'),
   treemap:      require('./Treemap'),
   voronoi:      require('./Voronoi'),
   wordcloud:    require('./Wordcloud')

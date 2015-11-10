@@ -13,11 +13,14 @@ describe('LinkPath', function() {
     expect(validate({ "type": "linkpath", "targetY": "ty" })).to.be.true;
     expect(validate({ "type": "linkpath", "tension": 0.1 })).to.be.true;
     expect(validate({ "type": "linkpath", "shape": "curve" })).to.be.true;
-    expect(validate({ "type": "linkpath", "shape": "diagonal" })).to.be.true;
     expect(validate({ "type": "linkpath", "shape": "diagonalX" })).to.be.true;
     expect(validate({ "type": "linkpath", "shape": "diagonalY" })).to.be.true;
+    expect(validate({ "type": "linkpath", "shape": "diagonalR" })).to.be.true;
+    expect(validate({ "type": "linkpath", "shape": "cornerX" })).to.be.true;
+    expect(validate({ "type": "linkpath", "shape": "cornerY" })).to.be.true;
+    expect(validate({ "type": "linkpath", "shape": "cornerR" })).to.be.true;
     expect(validate({ "type": "linkpath", "output": {"path": "path"} })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "linkpath", "sourceX": 1 })).to.be.false;
     expect(validate({ "type": "linkpath", "targetX": 2 })).to.be.false;
