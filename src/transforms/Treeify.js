@@ -11,7 +11,8 @@ function Treeify(graph) {
   });
 
   this._output = {
-    'children': 'children'
+    'children': 'children',
+    'parent':   'parent'
   };
   return this.router(true).produces(true);
 }
@@ -24,6 +25,7 @@ prototype.batchTransform = function(input, data) {
 
   var fields = this.param('groupby').field,
       childField = this._output.children,
+      parentField = this._output.parent,
       summary = [{name:'*', ops: ['values'], as: [childField]}],
       aggrs = fields.map(function(f) {
         return dl.groupby(f).summarize(summary);
@@ -35,12 +37,14 @@ prototype.batchTransform = function(input, data) {
 
     node[childField] = vals;
     vals.forEach(function(n) {
+      n[parentField] = node;
       curr.push(Tuple.ingest(n));
       if (index+1 < fields.length) level(index+1, n, n[childField]);
     });
   }
 
-  var root = Tuple.ingest({_root: true});
+  var root = Tuple.ingest({});
+  root[parentField] = null;
   curr.push(root);
   level(0, root, data);
 
@@ -78,7 +82,8 @@ Treeify.schema = {
       "type": "object",
       "description": "Rename the output data fields",
       "properties": {
-        "children": {"type": "string", "default": "children"}
+        "children": {"type": "string", "default": "children"},
+        "parent": {"type": "string", "default": "parent"}
       },
       "additionalProperties": false
     }

@@ -17,6 +17,7 @@ module.exports = {
   sort:         require('./Sort'),
   stack:        require('./Stack'),
   treeify:      require('./Treeify'),
+  treelayout:   require('./TreeLayout'),
   treemap:      require('./Treemap'),
   voronoi:      require('./Voronoi'),
   wordcloud:    require('./Wordcloud')
