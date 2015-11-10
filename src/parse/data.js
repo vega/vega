@@ -7,14 +7,28 @@ function parseData(model, spec, callback) {
   var config = model.config(),
       count = 0;
 
+  function done(err) {
+    if (callback) {
+      callback(err);
+      callback = undefined;
+    }
+  }
   function loaded(d) {
     return function(error, data) {
-      if (error) {
-        log.error('LOADING FAILED: ' + d.url + ' ' + error);
-      } else {
-        model.data(d.name).values(dl.read(data, d.format));
+      try {
+        if (error) {
+          log.error('LOADING FAILED: ' + d.url + ' ' + error);
+        } else if (count >= 0) {
+          try {
+            model.data(d.name).values(dl.read(data, d.format));
+          } catch (error) {
+            log.error('PARSING FAILED: ' + d.url + ' ' + error);
+          }
+        }
+        if (--count === 0) done();
+      } catch(error) {
+        done(error);
       }
-      if (--count === 0) callback();
     };
   }
 
@@ -27,7 +41,7 @@ function parseData(model, spec, callback) {
     parseData.datasource(model, d);
   });
 
-  if (count === 0) setTimeout(callback, 1);
+  if (count === 0) setTimeout(done, 1);
   return spec;
 }
 
