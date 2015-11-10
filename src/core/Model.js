@@ -106,10 +106,10 @@ prototype.scene = function(renderer) {
 
   b.evaluate = function(input) {
     if (b._groupBuilder) return input;
-    
+
     var gb = b._groupBuilder = new GroupBuilder(m, m._defs.marks, m._scene={}),
         p  = gb.pipeline();
-    
+
     this.addListener(gb.connect());
     p[p.length-1].addListener(renderer);
     return input;

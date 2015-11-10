@@ -26,17 +26,28 @@ config.render = {
   retina: true
 };
 
+// root scenegraph group
+config.scene = {
+  fill: undefined,
+  fillOpacity: undefined,
+  stroke: undefined,
+  strokeOpacity: undefined,
+  strokeWidth: undefined,
+  strokeDash: undefined,
+  strokeDashOffset: undefined
+};
+
 // default axis properties
 config.axis = {
   orient: 'bottom',
   ticks: 10,
   padding: 3,
   axisColor: '#000',
+  axisWidth: 1,
   gridColor: '#000',
   gridOpacity: 0.15,
   tickColor: '#000',
   tickLabelColor: '#000',
-  axisWidth: 1,
   tickWidth: 1,
   tickSize: 6,
   tickLabelFontSize: 11,
