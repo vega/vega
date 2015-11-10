@@ -95,11 +95,27 @@ prototype.predicates = function() { return this._predicates; };
 
 prototype.scene = function(renderer) {
   if (!arguments.length) return this._scene;
-  if (this._builder) this.node().removeListener(this._builder.disconnect());
-  this._builder = new GroupBuilder(this, this._defs.marks, this._scene={});
-  this.node().addListener(this._builder.connect());
-  var p = this._builder.pipeline();
-  p[p.length-1].addListener(renderer);
+
+  if (this._builder) {
+    this.node().removeListener(this._builder);
+    this._builder._groupBuilder.disconnect();
+  }
+
+  var m = this,
+      b = this._builder = new Node(this);
+
+  b.evaluate = function(input) {
+    if (b._groupBuilder) return input;
+    
+    var gb = b._groupBuilder = new GroupBuilder(m, m._defs.marks, m._scene={}),
+        p  = gb.pipeline();
+    
+    this.addListener(gb.connect());
+    p[p.length-1].addListener(renderer);
+    return input;
+  };
+
+  this.addListener(b);
   return this;
 };
 

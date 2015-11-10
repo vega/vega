@@ -41,7 +41,7 @@ prototype.transform = function(input, reset) {
   }
 
   return output;
-}
+};
 
 module.exports = Facet;
 
