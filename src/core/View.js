@@ -11,7 +11,7 @@ var d3 = require('d3'),
 function View(el, width, height) {
   this._el    = null;
   this._model = null;
-  this._width = this.__width = width || 500;
+  this._width   = this.__width = width || 500;
   this._height  = this.__height = height || 300;
   this._bgcolor = null;
   this._autopad = 1;
@@ -130,6 +130,7 @@ prototype.width = function(width) {
     this.model().width(width);
     this.initialize();
     if (this._strict) this._autopad = 1;
+    this.signal('width', width);
   }
   return this;
 };
@@ -141,6 +142,7 @@ prototype.height = function(height) {
     this.model().height(height);
     this.initialize();
     if (this._strict) this._autopad = 1;
+    this.signal('height', height);
   }
   return this;
 };
@@ -192,11 +194,11 @@ prototype.autopad = function(opt) {
     this._width = Math.max(0, this.__width - (l+r));
     this._height = Math.max(0, this.__height - (t+b));
 
-    this._model.width(this._width)
-      .height(this._height).reset();
+    this._model.width(this._width).height(this._height).reset();
+    this.signal('width', this._width);
+    this.signal('height', this._height);
 
-    this.initialize()
-      .update({props:'enter'}).update({props:'update'});
+    this.initialize().update({props:'enter'}).update({props:'update'});
   } else {
     this.padding(pad).update(opt);
   }
@@ -344,6 +346,10 @@ prototype.update = function(opt) {
     Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
   } else if (v._streamer.listeners().length && built) {
+    // Force re-eval on repaint. HACK-ish??
+    // Added to make width/height updates work in concert with width/height signals
+    if (this._repaint) v._model.fire();
+
     v._model.propagate(cs, v._streamer);
     v._streamer.disconnect();
   } else {

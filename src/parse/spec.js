@@ -18,6 +18,8 @@ function parseSpec(spec, callback) {
         height = spec.height || 500,
         create = function() { callback(viewFactory(model)); };
 
+    model.signal('width').value(width);
+    model.signal('height').value(height);
     model.defs({
       width:      width,
       height:     height,
