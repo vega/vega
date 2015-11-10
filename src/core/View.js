@@ -5,8 +5,7 @@ var d3 = require('d3'),
     log = require('vega-logging'),
     Deps = df.Dependencies,
     parseStreams = require('../parse/streams'),
-    Encoder = require('../scene/Encoder'),
-    Transition = require('../scene/Transition');
+    Encoder = require('../scene/Encoder');
 
 function View(el, width, height) {
   this._el    = null;
@@ -318,23 +317,10 @@ function build() {
 prototype.update = function(opt) {
   opt = opt || {};
   var v = this,
-      trans = opt.duration ? new Transition(opt.duration, opt.ease) : null;
+      cs = v._changeset,
+      built = v._build;
 
-  var cs = v._changeset;
-  if (trans) cs.trans = trans;
-  if (opt.props !== undefined) {
-    if (dl.keys(cs.data).length > 0) {
-      throw Error(
-        'New data values are not reflected in the visualization.' +
-        ' Please call view.update() before updating a specified property set.'
-      );
-    }
-
-    cs.reflow  = true;
-    cs.request = opt.props;
-  }
-
-  var built = v._build;
+  v._model.update(cs, opt);
   v._build = v._build || build.call(this);
 
   // If specific items are specified, short-circuit dataflow graph.

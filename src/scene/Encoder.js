@@ -45,29 +45,15 @@ proto.evaluate = function(input) {
   var graph = this._graph,
       props = this._mark.def.properties || {},
       items = this._mark.items,
+      req   = input.request,
       enter  = props.enter,
-      update = props.update,
+      // TODO falls back to update if no req props.
+      // Is this the desired behavior?
+      update = (req && props[req]) || props.update,
       exit   = props.exit,
       dirty  = input.dirty,
       preds  = graph.predicates(),
-      req = input.request,
-      group = this._mark.group,
-      guide = group && (group.mark.axis || group.mark.legend),
       db = EMPTY, sg = EMPTY, i, len, item, prop;
-
-  if (req && !guide) {
-    if ((prop = props[req]) && input.mod.length) {
-      db = prop.data ? graph.values(Deps.DATA, prop.data) : null;
-      sg = prop.signals ? graph.values(Deps.SIGNALS, prop.signals) : null;
-
-      for (i=0, len=input.mod.length; i<len; ++i) {
-        item = input.mod[i];
-        encode.call(this, prop, item, input.trans, db, sg, preds, dirty);
-      }
-    }
-
-    return input; // exit early if given request
-  }
 
   db = values(Deps.DATA, graph, input, props);
   sg = values(Deps.SIGNALS, graph, input, props);

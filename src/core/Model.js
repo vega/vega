@@ -4,6 +4,7 @@ var dl = require('datalib'),
     Base = df.Graph.prototype,
     Node  = df.Node, // jshint ignore:line
     GroupBuilder = require('../scene/GroupBuilder'),
+    Transition = require('../scene/Transition'),
     visit = require('../scene/visit'),
     config = require('./config');
 
@@ -92,6 +93,30 @@ prototype.predicate = function(name, predicate) {
 };
 
 prototype.predicates = function() { return this._predicates; };
+
+prototype.update = function(cs, opt) {
+  if (!opt) return cs;
+
+  // set up transition, if requested
+  var d = opt.duration || this._defs.duration, t;
+  if (d) {
+    t = new Transition(d, opt.ease || this._defs.ease);
+    cs.trans = t;
+  }
+
+  // set up special property set, if requested
+  if (opt.props !== undefined) {
+    if (dl.keys(cs.data).length > 0) {
+      throw Error(
+        'New data values are not reflected in the visualization.' +
+        ' Please call view.update() before updating a specified property set.'
+      );
+    }
+    cs.reflow  = true;
+    cs.request = opt.props;
+  }
+  return cs;
+};
 
 prototype.scene = function(renderer) {
   if (!arguments.length) return this._scene;
