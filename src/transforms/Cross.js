@@ -105,7 +105,7 @@ prototype.batchTransform = function(input, data) {
   input.rem.forEach(r);
   input.add.forEach(add.bind(this, output, true, wdata, diag, test));
 
-  if (!selfCross && woutput.stamp > this._lastWith) {
+  if (woutput.stamp > this._lastWith) {
     woutput.rem.forEach(r);
     woutput.add.forEach(add.bind(this, output, false, data, diag, test));
     woutput.mod.forEach(mod.bind(this, output, false));
