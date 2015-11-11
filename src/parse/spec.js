@@ -14,18 +14,23 @@ function parseSpec(spec, callback) {
     spec = dl.duplicate(spec);
 
     var parsers = require('./'),
-        width  = spec.width || 500,
-        height = spec.height || 500,
-        create = function() { callback(viewFactory(model)); };
+        create  = function() { callback(viewFactory(model)); },
+        width   = spec.width || 500,
+        height  = spec.height || 500,
+        padding = parsers.padding(spec.padding);
 
-    model.signal('width').value(width);
-    model.signal('height').value(height);
+    // create signals for width, height and padding
+    model.signal('width', width);
+    model.signal('height', height);
+    model.signal('padding', padding);
+
+    // initialize model
     model.defs({
       width:      width,
       height:     height,
+      padding:    padding,
       viewport:   spec.viewport || null,
       background: parsers.background(spec.background),
-      padding:    parsers.padding(spec.padding),
       signals:    parsers.signals(model, spec.signals),
       predicates: parsers.predicates(model, spec.predicates),
       marks:      parsers.marks(model, spec, width, height),

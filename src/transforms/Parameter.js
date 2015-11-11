@@ -98,8 +98,7 @@ prototype.set = function(value) {
       p._accessors[i] = dl.accessor(v.field);
       p._transform.dependency(Deps.FIELDS, dl.field(v.field));
       return v.field;
-    }
-    else if (v.signal !== undefined) {
+    } else if (v.signal !== undefined) {
       p._resolution = true;
       p._transform.dependency(Deps.SIGNALS, v.signal);
       p._signals.push({
@@ -107,15 +106,14 @@ prototype.set = function(value) {
         value: function(graph) { return graph.signalRef(v.signal); }
       });
       return v.signal;
-    }
-    else if (v.expr !== undefined) {
+    } else if (v.expr !== undefined) {
       p._resolution = true;
       e = expr(v.expr);
       p._transform.dependency(Deps.SIGNALS, e.globals);
       p._signals.push({
         index: i,
         value: function(graph) {
-          return e.fn(null, null, graph.signalValues());
+          return e.fn(null, null, graph.values(Deps.SIGNALS, e.globals));
         }
       });
       return v.expr;

@@ -19,10 +19,6 @@ function Model(cfg) {
 
   this.config(cfg);
   Base.init.call(this);
-
-  // create signals for width and height
-  this.signal('width', -1);
-  this.signal('height', -1);
 }
 
 var prototype = (Model.prototype = Object.create(Base));

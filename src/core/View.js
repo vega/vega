@@ -170,6 +170,7 @@ prototype.padding = function(pad) {
     }
     if (this._renderer) this._renderer.resize(this._width, this._height, this._padding);
     if (this._handler)  this._handler.padding(this._padding);
+    this.signal('padding', this._padding);
   }
   return (this._repaint = true, this);
 };
@@ -197,6 +198,7 @@ prototype.autopad = function(opt) {
     this._model.width(this._width).height(this._height).reset();
     this.signal('width', this._width);
     this.signal('height', this._height);
+    this.signal('padding', pad);
 
     this.initialize().update({props:'enter'}).update({props:'update'});
   } else {
@@ -341,15 +343,15 @@ prototype.update = function(opt) {
 
   // If specific items are specified, short-circuit dataflow graph.
   // Else-If there are streaming updates, perform a targeted propagation.
-  // Otherwise, reevaluate the entire model (datasources + scene).
+  // Otherwise, re-evaluate the entire model (datasources + scene).
   if (opt.items && built) {
     Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
   } else if (v._streamer.listeners().length && built) {
-    // Force re-eval on repaint. HACK-ish??
-    // Added to make width/height updates work in concert with width/height signals
-    if (this._repaint) v._model.fire();
-
+    if (this._repaint) {
+      // Include re-evaluation entire model when repaint flag is set
+      v._streamer.addListener(v._model.node());
+    }
     v._model.propagate(cs, v._streamer);
     v._streamer.disconnect();
   } else {
