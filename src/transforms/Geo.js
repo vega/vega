@@ -22,7 +22,7 @@ function Geo(graph) {
 Geo.Parameters = {
   projection: {type: 'value', default: 'mercator'},
   center:     {type: 'array<value>'},
-  translate:  {type: 'array<value>'},
+  translate:  {type: 'array<value>', default: require('./screen').center},
   rotate:     {type: 'array<value>'},
   scale:      {type: 'value'},
   precision:  {type: 'value'},

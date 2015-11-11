@@ -11,7 +11,13 @@ describe('Voronoi', function() {
     data: [{
       name: "table",
       values: values,
-      transform: [{type: 'voronoi', x: 'x', y: 'y', output: {path: 'p'}}]
+      transform: [{
+        type: 'voronoi',
+        x: 'x',
+        y: 'y',
+        clipExtent: [[-1e5,-1e5], [1e5,1e5]],
+        output: {path: 'p'}
+      }]
     }]
   };
 
@@ -35,7 +41,7 @@ describe('Voronoi', function() {
     expect(validate({ "type": "voronoi", "y": "field" })).to.be.true;
     expect(validate({ "type": "voronoi", "clipExtent": [[-1e5,-1e5],[1e5,1e5]] })).to.be.true;
     expect(validate({ "type": "voronoi", "output": {"path": "path"} })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "voronoi", "x": 1 })).to.be.false;
     expect(validate({ "type": "voronoi", "y": 2 })).to.be.false;

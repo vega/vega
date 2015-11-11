@@ -10,7 +10,7 @@ var dl = require('datalib'),
 function Wordcloud(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    size: {type: 'array<value>', default: [900, 500]},
+    size: {type: 'array<value>', default: require('./screen').size},
     text: {type: 'field', default: 'data'},
     rotate: {type: 'field|value', default: 0},
     font: {type: 'field|value', default: {value: 'sans-serif'}},
