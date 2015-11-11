@@ -114,7 +114,7 @@ prototype.batchTransform = function(input, data) {
   }
 
   // Mods need to come after all removals have been run.
-  input.mod.forEach(mod.bind(this, output, true, data, diag, test));
+  input.mod.forEach(mod.bind(this, output, true, wdata, diag, test));
   upFields.call(this, input, output);
 
   return output;
