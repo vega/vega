@@ -2,7 +2,7 @@ var dl = require('datalib'),
     SIGNALS = require('vega-dataflow').Dependencies.SIGNALS,
     expr = require('./expr');
 
-var RESERVED = ['datum', 'event', 'signals', 'width', 'height']
+var RESERVED = ['datum', 'event', 'signals', 'width', 'height', 'padding']
   .concat(dl.keys(expr.codegen.functions));
 
 function parseSignals(model, spec) {
