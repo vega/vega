@@ -59,7 +59,7 @@ function add(output, left, data, diag, test, x) {
 function mod(output, left, data, diag, test, x) {
   var cross = this,
       c = this._cache[x._id];
-  if (!c) return add(output, left, data, diag, test, x);
+  if (!c) return add.call(this, output, left, data, diag, test, x);
   
   if (this._lastRem > c.s) {  // Removed tuples haven't been filtered yet
     c.c = c.c.filter(function(y) {
