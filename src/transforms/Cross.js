@@ -56,10 +56,10 @@ function add(output, left, data, diag, test, x) {
   }
 }
 
-function mod(output, left, x) {
+function mod(output, left, data, diag, test, x) {
   var cross = this,
       c = this._cache[x._id];
-  if (!c) return;
+  if (!c) return add.call(this, output, left, data, diag, test, x);
   
   if (this._lastRem > c.s) {  // Removed tuples haven't been filtered yet
     c.c = c.c.filter(function(y) {
@@ -108,13 +108,13 @@ prototype.batchTransform = function(input, data) {
   if (!selfCross && woutput.stamp > this._lastWith) {
     woutput.rem.forEach(r);
     woutput.add.forEach(add.bind(this, output, false, data, diag, test));
-    woutput.mod.forEach(mod.bind(this, output, false));
+    woutput.mod.forEach(mod.bind(this, output, false, data, diag, test));
     upFields.call(this, woutput, output);
     this._lastWith = woutput.stamp;
   }
 
   // Mods need to come after all removals have been run.
-  input.mod.forEach(mod.bind(this, output, true));
+  input.mod.forEach(mod.bind(this, output, true, wdata, diag, test));
   upFields.call(this, input, output);
 
   return output;
