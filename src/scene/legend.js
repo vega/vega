@@ -360,7 +360,7 @@ function lgnd(model) {
 var LEGEND_ORIENT = {right: 1, left: 1};
 
 function legendPosition(item, group, trans, db, signals, predicates) {
-  var o = trans ? {} : item,
+  var o = trans ? {} : item, i, aw = 0,
       def    = item.mark.def,
       offset = def.offset,
       orient = def.orient,
@@ -375,10 +375,16 @@ function legendPosition(item, group, trans, db, signals, predicates) {
   o.y = pos[orient];
   pos[orient] += (o.height = lh) + def.margin;
 
+  for (i=0; i<group.axes.length; ++i) {
+    if (group.axes[i].orient() === orient) {
+      aw = Math.max(aw, group.axisItems[i].bounds.width());
+    }
+  }
+
   if (orient === 'left') {
-    o.x += group.bounds.x1 - offset - lw;
+    o.x -= aw + offset + lw;
   } else {
-    o.x += group.bounds.x2 + offset;
+    o.x += group.width + aw + offset;
   }
 
   if (trans) trans.interpolate(item, o);
