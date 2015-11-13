@@ -15,7 +15,7 @@ function lgnd(model) {
       formatString = null,
       config = model.config(),
       title,
-      orient = 'right',
+      orient = config.legend.orient,
       offset = config.legend.offset,
       padding = config.legend.padding,
       tickArguments = [5],
@@ -50,6 +50,7 @@ function lgnd(model) {
     legendDef.orient = orient;
     legendDef.offset = offset;
     legendDef.padding = padding;
+    legendDef.margin = config.legend.margin;
     return legendDef;
   };
 
@@ -118,12 +119,12 @@ function lgnd(model) {
 
   function o_legend_def(size, shape, fill, stroke) {
     // setup legend marks
-    var titles  = dl.extend(m.titles, vg_legendTitle(config)),
-        symbols = dl.extend(m.symbols, vg_legendSymbols(config)),
-        labels  = dl.extend(m.labels, vg_vLegendLabels(config));
+    var titles  = dl.extend(m.titles, legendTitle(config)),
+        symbols = dl.extend(m.symbols, legendSymbols(config)),
+        labels  = dl.extend(m.labels, vLegendLabels(config));
 
     // extend legend marks
-    vg_legendSymbolExtend(symbols, size, shape, fill, stroke);
+    legendSymbolExtend(symbols, size, shape, fill, stroke);
 
     // add / override custom style properties
     dl.extend(titles.properties.update,  titleStyle);
@@ -143,8 +144,8 @@ function lgnd(model) {
       interactive: false,
       properties: {
         enter: parseProperties(model, 'group', legendStyle),
-        vg_legendPosition: {
-          encode: vg_legendPosition,
+        legendPosition: {
+          encode: legendPosition,
           signals: [], scales:[], data: [], fields: []
         }
       }
@@ -187,9 +188,9 @@ function lgnd(model) {
 
   function q_legend_def(scale) {
     // setup legend marks
-    var titles = dl.extend(m.titles, vg_legendTitle(config)),
-        gradient = dl.extend(m.gradient, vg_legendGradient(config)),
-        labels = dl.extend(m.labels, vg_hLegendLabels(config)),
+    var titles = dl.extend(m.titles, legendTitle(config)),
+        gradient = dl.extend(m.gradient, legendGradient(config)),
+        labels = dl.extend(m.labels, hLegendLabels(config)),
         grad = new Gradient();
 
     // setup color gradient
@@ -244,8 +245,8 @@ function lgnd(model) {
       interactive: false,
       properties: {
         enter: parseProperties(model, 'group', legendStyle),
-        vg_legendPosition: {
-          encode: vg_legendPosition,
+        legendPosition: {
+          encode: legendPosition,
           signals: [], scales: [], data: [], fields: []
         }
       }
@@ -302,7 +303,7 @@ function lgnd(model) {
 
   legend.orient = function(x) {
     if (!arguments.length) return orient;
-    orient = x in vg_legendOrients ? x + '' : config.legend.orient;
+    orient = x in LEGEND_ORIENT ? x + '' : config.legend.orient;
     return legend;
   };
 
@@ -356,13 +357,14 @@ function lgnd(model) {
   return legend;
 }
 
-var vg_legendOrients = {right: 1, left: 1};
+var LEGEND_ORIENT = {right: 1, left: 1};
 
-function vg_legendPosition(item, group, trans, db, signals, predicates) {
-  var o = trans ? {} : item, gx,
-      offset = item.mark.def.offset,
-      orient = item.mark.def.orient,
-      pad    = item.mark.def.padding * 2,
+function legendPosition(item, group, trans, db, signals, predicates) {
+  var o = trans ? {} : item,
+      def    = item.mark.def,
+      offset = def.offset,
+      orient = def.orient,
+      pad    = def.padding * 2,
       lw     = ~~item.bounds.width() + (item.width ? 0 : pad),
       lh     = ~~item.bounds.height() + (item.height ? 0 : pad),
       pos = group._legendPositions ||
@@ -371,24 +373,12 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   o.x = 0.5;
   o.width = lw;
   o.y = pos[orient];
-  pos[orient] += (o.height = lh);
+  pos[orient] += (o.height = lh) + def.margin;
 
-  // HACK: use to estimate group bounds during animated transition
-  if (!trans && group.bounds) {
-    group.bounds.delta = group.bounds.x2 - group.width;
-  }
-
-  switch (orient) {
-    case 'left':  {
-      gx = group.bounds ? group.bounds.x1 : 0;
-      o.x += gx - offset - lw;
-      break;
-    }
-    case 'right': {
-      gx = group.width + (group.bounds && trans ? group.bounds.delta : 0);
-      o.x += gx + offset;
-      break;
-    }
+  if (orient === 'left') {
+    o.x += group.bounds.x1 - offset - lw;
+  } else {
+    o.x += group.bounds.x2 + offset;
   }
 
   if (trans) trans.interpolate(item, o);
@@ -397,7 +387,7 @@ function vg_legendPosition(item, group, trans, db, signals, predicates) {
   return true;
 }
 
-function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
+function legendSymbolExtend(mark, size, shape, fill, stroke) {
   var e = mark.properties.enter,
       u = mark.properties.update;
   if (size)   e.size   = u.size   = {scale: size.scaleName,   field: 'data'};
@@ -406,7 +396,7 @@ function vg_legendSymbolExtend(mark, size, shape, fill, stroke) {
   if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: 'data'};
 }
 
-function vg_legendTitle(config) {
+function legendTitle(config) {
   var cfg = config.legend;
   return {
     type: 'text',
@@ -430,7 +420,7 @@ function vg_legendTitle(config) {
   };
 }
 
-function vg_legendSymbols(config) {
+function legendSymbols(config) {
   var cfg = config.legend;
   return {
     type: 'symbol',
@@ -456,7 +446,7 @@ function vg_legendSymbols(config) {
   };
 }
 
-function vg_vLegendLabels(config) {
+function vLegendLabels(config) {
   var cfg = config.legend;
   return {
     type: 'text',
@@ -484,7 +474,7 @@ function vg_vLegendLabels(config) {
   };
 }
 
-function vg_legendGradient(config) {
+function legendGradient(config) {
   var cfg = config.legend;
   return {
     type: 'rect',
@@ -509,7 +499,7 @@ function vg_legendGradient(config) {
   };
 }
 
-function vg_hLegendLabels(config) {
+function hLegendLabels(config) {
   var cfg = config.legend;
   return {
     type: 'text',

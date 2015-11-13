@@ -65,8 +65,9 @@ config.axis = {
 // default legend properties
 config.legend = {
   orient: 'right',
-  offset: 20,
-  padding: 3,
+  offset: 10,
+  padding: 3, // padding between legend items and border
+  margin: 2,  // extra margin between two consecutive legends
   gradientStrokeColor: '#888',
   gradientStrokeWidth: 1,
   gradientHeight: 16,
