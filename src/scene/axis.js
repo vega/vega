@@ -143,17 +143,22 @@ function axs(model) {
     // Offset axis title using bounding box of axis domain and labels
     // Assumes other components are **encoded and bounded** beforehand
     update.encode = function(item, group, trans, db, signals, preds) {
-      fn.call(fn, item, group, trans, db, signals, preds);
+      var dirty = fn.call(fn, item, group, trans, db, signals, preds),
+          field = (orient==='bottom' || orient==='top') ? 'y' : 'x';
+      if (titleStyle[field] != null) return dirty;
 
       axisBounds.clear()
         .union(group.items[3].bounds)
         .union(group.items[4].bounds);
 
-      var method = (orient==='left' || orient==='right') ? 'width' : 'height',
-          field = (orient==='bottom' || orient==='top') ? 'y' : 'x',
+      var o = trans ? {} : item,
+          method = (orient==='left' || orient==='right') ? 'width' : 'height',
           sign = (orient==='top' || orient==='left') ? -1 : 1,
           off = ~~(axisBounds[method]() + item.fontSize/2 + pad);
-      item[field] = sign * Math.min(Math.max(min, off), max);
+
+      Tuple.set(o, field, sign * Math.min(Math.max(min, off), max));
+      if (trans) trans.interpolate(item, o);
+      return true;
     };
   }
 
@@ -186,7 +191,7 @@ function axs(model) {
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
-    axisTitleExtend(orient, m.title, range, +titleOffset || 0);
+    axisTitleExtend(orient, m.title, range, +titleOffset || -1);
 
     // add / override custom style properties
     dl.extend(m.gridLines.properties.update, gridLineStyle);
@@ -488,21 +493,18 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size) {
 }
 
 function axisTitleExtend(orient, title, range, offset) {
-  var mid = ~~((range[0] + range[1]) / 2),
+  var update = title.properties.update,
+      mid = ~~((range[0] + range[1]) / 2),
       sign = (orient === 'top' || orient === 'left') ? -1 : 1;
 
   if (orient === 'bottom' || orient === 'top') {
-    dl.extend(title.properties.update, {
-      x: {value: mid},
-      y: {value: sign*offset},
-      angle: {value: 0}
-    });
+    update.x = {value: mid};
+    update.angle = {value: 0};
+    if (offset >= 0) update.y = sign * offset;
   } else {
-    dl.extend(title.properties.update, {
-      x: {value: sign*offset},
-      y: {value: mid},
-      angle: {value: orient === 'left' ? -90 : 90}
-    });
+    update.y = {value: mid};
+    update.angle = {value: orient === 'left' ? -90 : 90};
+    if (offset >= 0) update.x = sign * offset;
   }
 }
 
