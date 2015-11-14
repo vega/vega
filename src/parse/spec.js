@@ -14,22 +14,20 @@ function parseSpec(spec, callback) {
     spec = dl.duplicate(spec);
 
     var parsers = require('./'),
-        width = spec.width || 500,
+        width  = spec.width || 500,
         height = spec.height || 500,
-        viewport = spec.viewport || null;
+        create = function() { callback(viewFactory(model)); };
 
     model.defs({
-      width: width,
-      height: height,
-      viewport: viewport,
+      width:      width,
+      height:     height,
+      viewport:   spec.viewport || null,
       background: parsers.background(spec.background),
-      padding: parsers.padding(spec.padding),
-      signals: parsers.signals(model, spec.signals),
+      padding:    parsers.padding(spec.padding),
+      signals:    parsers.signals(model, spec.signals),
       predicates: parsers.predicates(model, spec.predicates),
-      marks: parsers.marks(model, spec, width, height),
-      data: parsers.data(model, spec.data, function() {
-        callback(viewFactory(model));
-      })
+      marks:      parsers.marks(model, spec, width, height),
+      data:       parsers.data(model, spec.data, create)
     });
   }
 

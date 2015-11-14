@@ -1,15 +1,35 @@
-var parseMark = require('./mark');
+var parseMark = require('./mark'),
+    parseProperties = require('./properties');
 
 function parseRootMark(model, spec, width, height) {
   return {
-    type: "group",
-    width: width,
-    height: height,
-    scales: spec.scales || [],
-    axes: spec.axes || [],
-    legends: spec.legends || [],
-    marks: (spec.marks || []).map(function(m) { return parseMark(model, m); })
+    type:       'group',
+    width:      width,
+    height:     height,
+    properties: defaults(spec.scene || {}, model),
+    scales:     spec.scales  || [],
+    axes:       spec.axes    || [],
+    legends:    spec.legends || [],
+    marks:      (spec.marks || []).map(function(m) { return parseMark(model, m); })
   };
+}
+
+var PROPERTIES = [
+  'fill', 'fillOpacity', 'stroke', 'strokeOpacity',
+  'strokeWidth', 'strokeDash', 'strokeDashOffset'
+];
+
+function defaults(spec, model) {
+  var config = model.config().scene,
+      props = {}, i, n, m, p;
+
+  for (i=0, n=m=PROPERTIES.length; i<n; ++i) {
+    p = PROPERTIES[i];
+    if (spec[p] !== undefined) props[p] = {value: spec[p]};
+    else if (config[p]) props[p] = {value: config[p]};
+    else --m;
+  }
+  return m ? {enter: parseProperties(model, 'group', props)} : {};
 }
 
 module.exports = parseRootMark;
@@ -19,6 +39,18 @@ parseRootMark.schema = {
     "container": {
       "type": "object",
       "properties": {
+        "scene": {
+          "type": "object",
+          "properties": {
+            "fill": {"type": "string"},
+            "fillOpacity": {"type": "number"},
+            "stroke": {"type": "string"},
+            "strokeOpacity": {"type": "number"},
+            "strokeWidth": {"type": "number"},
+            "strokeDash": {"type": "array", "items": {"type": "number"}},
+            "strokeDashOffset": {"type": "number"}
+          }
+        },
         "scales": {
           "type": "array",
           "items": {"$ref": "#/defs/scale"}
