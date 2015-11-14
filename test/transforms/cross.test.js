@@ -32,7 +32,7 @@ describe('Cross', function() {
       expect(data2).to.have.length(9);
       //TODO: check cross content
 
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       done();
     }, modelFactory);
@@ -49,7 +49,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(3);
       expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       ds1.insert([new1]).fire();
       data1 = ds1.values();
@@ -57,14 +57,14 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(4);
       expect(data2).to.have.length(12);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       ds2.insert([new2]).fire();
       data1 = ds1.values();
       data2 = ds2.values();
       expect(data1).to.have.length(4);
       expect(data2).to.have.length(16);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       done();
     }, modelFactory);
@@ -80,7 +80,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(3);
       expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       ds1.remove(function(x) { return x.x == 1; }).fire();
       data1 = ds1.values();
@@ -88,7 +88,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(2);
       expect(data2).to.have.length(6);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       ds2.remove(function(x) { return x.x == 4; }).fire();
       data1 = ds1.values();
@@ -96,7 +96,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(2);
       expect(data2).to.have.length(4);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       // Test that lazy removal is working correctly.
       ds2.update(function(x) { return x.x == 6; }, 
@@ -106,15 +106,14 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(2);
       expect(data2).to.have.length(4);
-      expect(ds2._output.fields).to.not.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       done();
     }, modelFactory);
 
   });
 
-  it('should propegate mod tuples if fields updated', function(done) {
-    //TODO: not quite sure about this one
+  it('should propegate mod tuples', function(done) {
     parseSpec(spec, function(model) {
       var ds1 = model.data('table1'),
           ds2 = model.data('table2'),
@@ -123,7 +122,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(3);
       expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       ds2.update(function(x) { return x.x == 1; }, 
         'y', function(x) { return 100; }).fire();
@@ -132,7 +131,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(3);
       expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.not.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       ds2.update(function(x) { return x.x == 4; }, 
         'y', function(x) { return 400; }).fire();
@@ -141,32 +140,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(3);
       expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.not.have.keys(['a', 'b']);
-
-      done();
-    }, modelFactory);
-
-  });
-
-  it('should only propagate mod tuples if fields not updated', function(done) {
-    //TODO: not quite sure about this one
-    parseSpec(spec, function(model) {
-      var ds1 = model.data('table1'),
-          ds2 = model.data('table2'),
-          data1 = ds1.values(),
-          data2 = ds2.values();
-
-      expect(data1).to.have.length(3);
-      expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.have.keys(['a', 'b']);
-
-
-      model.fire();
-      data1 = ds1.values(),
-      data2 = ds2.values();
-      expect(data1).to.have.length(3);
-      expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.not.have.keys(['a', 'b']);
+      expect(ds2._output.fields).to.contain.keys(['a', 'b']);
 
       done();
     }, modelFactory);
@@ -185,7 +159,7 @@ describe('Cross', function() {
 
       expect(data1).to.have.length(3);
       expect(data2).to.have.length(9);
-      expect(ds2._output.fields).to.have.keys(['thing1', 'thing2']);
+      expect(ds2._output.fields).to.contain.keys(['thing1', 'thing2']);
 
       done();
     }, modelFactory);
@@ -244,6 +218,53 @@ describe('Cross', function() {
           data1 = ds1.values();
 
       expect(data1).to.have.length(2);
+
+      done();
+    }, modelFactory);
+  });
+
+  it('should recross on signal change', function(done) {
+    var spec = {
+      "signals": [
+        {"name": "d", "init": true},
+        {"name": "s", "init": 2}
+      ],
+      "data": [{
+        "name": "table1",
+        "values": values1,
+        "transform": [{
+          "type": "cross",
+          "diagonal": {"signal": "d"},
+          "filter": "datum.a.x >= s"
+        }]
+      }]
+    };
+
+    parseSpec(spec, function(model) {
+      var ds1 = model.data('table1'),
+          data1 = ds1.values(),
+          out1  = ds1._output;
+
+      expect(data1).to.have.length(6);
+      expect(out1.add).to.have.length(6);
+      expect(out1.mod).to.have.length(0);
+      expect(out1.rem).to.have.length(0);
+
+      model.signal('d').value(false).fire();
+      data1 = ds1.values();
+      out1  = ds1._output;
+      expect(data1).to.have.length(4);
+      expect(out1.rem).to.have.length(6);
+      expect(out1.add).to.have.length(4);
+      expect(out1.mod).to.have.length(0);
+
+      model.signal('s').value(3).fire();
+      data1 = ds1.values();
+      out1  = ds1._output;
+      expect(data1).to.have.length(2);
+      expect(out1.rem).to.have.length(4);
+      expect(out1.add).to.have.length(2);  
+      expect(out1.mod).to.have.length(0);          
 
       done();
     }, modelFactory);

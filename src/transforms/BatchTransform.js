@@ -14,11 +14,11 @@ prototype.init = function(graph) {
   return this.batch(true);
 };
 
-prototype.transform = function(input) {
-  return this.batchTransform(input, this._collector.data());
+prototype.transform = function(input, reset) {
+  return this.batchTransform(input, this._collector.data(), reset);
 };
 
-prototype.batchTransform = function(/* input, data */) {
+prototype.batchTransform = function(/* input, data, reset */) {
 };
 
 module.exports = BatchTransform;

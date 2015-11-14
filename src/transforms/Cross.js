@@ -1,4 +1,5 @@
-var df = require('vega-dataflow'),
+var dl = require('datalib'),
+    df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
     Tuple = df.Tuple,
     SIGNALS = df.Dependencies.SIGNALS,
@@ -56,67 +57,93 @@ function add(output, left, data, diag, test, x) {
   }
 }
 
-function mod(output, left, x) {
-  var cross = this,
-      c = this._cache[x._id];
-  if (!c) return;
-  
-  if (this._lastRem > c.s) {  // Removed tuples haven't been filtered yet
-    c.c = c.c.filter(function(y) {
-      var t = y[cross._output[left ? 'right' : 'left']];
-      return cross._cache[t._id] !== null;
+function mod(output, left, data, diag, test, x) {
+  var cache = this._cache,
+      cross = cache[x._id],
+      other = this._output[left ? 'right' : 'left'];
+
+  if (!cross) return;
+  if (this._lastRem > cross.s) {  // Lazy removal
+    cross.c = cross.c.filter(function(t) {
+      var y = t[other];
+      return cache[y._id] !== null;
     });
-    c.s = this._lastRem;
+    cross.s = this._lastRem;
   }
 
-  output.mod.push.apply(output.mod, c.c);
+  output.mod.push.apply(output.mod, cross.c);
 }
 
 function rem(output, x) {
-  var c = this._cache[x._id];
-  if (!c) return;
-  output.rem.push.apply(output.rem, c.c);
+  var cross = this._cache[x._id];
+  if (!cross) return;
+  output.rem.push.apply(output.rem, cross.c);
   this._cache[x._id] = null;
   this._lastRem = this._stamp;
 }
 
-function upFields(input, output) {
-  if (input.add.length || input.rem.length) {
-    output.fields[this._output.left]  = 1;
-    output.fields[this._output.right] = 1;
+function purge(output) {
+  var cache = this._cache,
+      keys  = dl.keys(cache),
+      rem = output.rem,
+      ids = {},
+      i, len, j, jlen, cross, t;
+
+  for (i=0, len=keys.length; i<len; ++i) {
+    cross = cache[keys[i]];
+    for (j=0, jlen=cross.c.length; j<jlen; ++j) {
+      t = cross.c[j];
+      if (ids[t._id]) continue;
+      rem.push(t);
+      ids[t._id] = 1;
+    }
   }
+
+  this._cache = {};
+  this._ids = {};
+  this._lastWith = null;
+  this._lastRem  = null;
 }
 
-prototype.batchTransform = function(input, data) {
+prototype.batchTransform = function(input, data, reset) {
   log.debug(input, ['crossing']);
 
-  var w = this.param('with'),
+  var g = this._graph,
+      w = this.param('with'),
       f = this.param('filter'),
       diag = this.param('diagonal'),
-      graph = this._graph,
-      signals = graph.values(SIGNALS, this.dependency(SIGNALS)),
-      test = f ? function(x) {return f(x, null, signals); } : null,
+      as = this._output,
+      sg = g.values(SIGNALS, this.dependency(SIGNALS)),
+      test = f ? function(x) {return f(x, null, sg); } : null,
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
       output  = ChangeSet.create(input),
       r = rem.bind(this, output);
 
-  input.rem.forEach(r);
-  input.add.forEach(add.bind(this, output, true, wdata, diag, test));
-
-  if (!selfCross && woutput.stamp > this._lastWith) {
-    woutput.rem.forEach(r);
-    woutput.add.forEach(add.bind(this, output, false, data, diag, test));
-    woutput.mod.forEach(mod.bind(this, output, false));
-    upFields.call(this, woutput, output);
+  // If signal values (for diag or test) have changed, purge the cache
+  // and re-run cross in batch mode. Otherwise stream cross values.
+  if (reset) {
+    purge.call(this, output);
+    data.forEach(add.bind(this, output, true, wdata, diag, test));
     this._lastWith = woutput.stamp;
+  } else {
+    input.rem.forEach(r);
+    input.add.forEach(add.bind(this, output, true, wdata, diag, test));
+
+    if (!selfCross && woutput.stamp > this._lastWith) {
+      woutput.rem.forEach(r);
+      woutput.add.forEach(add.bind(this, output, false, data, diag, test));
+      woutput.mod.forEach(mod.bind(this, output, false, data, diag, test));
+      this._lastWith = woutput.stamp;
+    }
+
+    // Mods need to come after all removals have been run.
+    input.mod.forEach(mod.bind(this, output, true, wdata, diag, test));
   }
 
-  // Mods need to come after all removals have been run.
-  input.mod.forEach(mod.bind(this, output, true));
-  upFields.call(this, input, output);
-
+  output.fields[as.left]  = 1;
+  output.fields[as.right] = 1;
   return output;
 };
 
