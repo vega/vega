@@ -13,11 +13,11 @@ function lgnd(model) {
       values = null,
       format = null,
       formatString = null,
-      config = model.config(),
+      config = model.config().legend,
       title,
-      orient = config.legend.orient,
-      offset = config.legend.offset,
-      padding = config.legend.padding,
+      orient = config.orient,
+      offset = config.offset,
+      padding = config.padding,
       tickArguments = [5],
       legendStyle = {},
       symbolStyle = {},
@@ -50,7 +50,7 @@ function lgnd(model) {
     legendDef.orient = orient;
     legendDef.offset = offset;
     legendDef.padding = padding;
-    legendDef.margin = config.legend.margin;
+    legendDef.margin = config.margin;
     return legendDef;
   };
 
@@ -77,10 +77,10 @@ function lgnd(model) {
           if (i > 0) a[i] = a[i-1] + z[i-1]/2 + pad;
           return (a[i] += b/2, a); }, [0]).map(Math.round);
     } else {
-      offset = Math.round(Math.sqrt(config.legend.symbolSize));
+      offset = Math.round(Math.sqrt(config.symbolSize));
       range = spacing ||
         (fs = labelStyle.fontSize) && (fs.value + pad) ||
-        (config.legend.labelFontSize + pad);
+        (config.labelFontSize + pad);
       range = domain.map(function(d,i) {
         return Math.round(offset/2 + i*range);
       });
@@ -90,7 +90,7 @@ function lgnd(model) {
     var sz = padding, ts;
     if (title) {
       ts = titleStyle.fontSize;
-      sz += 5 + ((ts && ts.value) || config.legend.titleFontSize);
+      sz += 5 + ((ts && ts.value) || config.titleFontSize);
     }
     for (var i=0, n=range.length; i<n; ++i) range[i] += sz;
 
@@ -159,7 +159,7 @@ function lgnd(model) {
     var def = q_legend_def(scale),
         dom = scale.domain(),
         data  = (values == null ? dom : values).map(ingest),
-        width = (gradientStyle.width && gradientStyle.width.value) || config.legend.gradientWidth,
+        width = (gradientStyle.width && gradientStyle.width.value) || config.gradientWidth,
         fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
 
     // build scale for label layout
@@ -303,7 +303,7 @@ function lgnd(model) {
 
   legend.orient = function(x) {
     if (!arguments.length) return orient;
-    orient = x in LEGEND_ORIENT ? x + '' : config.legend.orient;
+    orient = x in LEGEND_ORIENT ? x + '' : config.orient;
     return legend;
   };
 
@@ -403,7 +403,6 @@ function legendSymbolExtend(mark, size, shape, fill, stroke) {
 }
 
 function legendTitle(config) {
-  var cfg = config.legend;
   return {
     type: 'text',
     interactive: false,
@@ -412,10 +411,10 @@ function legendTitle(config) {
       enter: {
         x: {value: 0},
         y: {value: 0},
-        fill: {value: cfg.titleColor},
-        font: {value: cfg.titleFont},
-        fontSize: {value: cfg.titleFontSize},
-        fontWeight: {value: cfg.titleFontWeight},
+        fill: {value: config.titleColor},
+        font: {value: config.titleFont},
+        fontSize: {value: config.titleFontSize},
+        fontWeight: {value: config.titleFontWeight},
         baseline: {value: 'top'},
         text: {field: 'data'},
         opacity: {value: 1e-6}
@@ -427,7 +426,6 @@ function legendTitle(config) {
 }
 
 function legendSymbols(config) {
-  var cfg = config.legend;
   return {
     type: 'symbol',
     interactive: false,
@@ -436,10 +434,10 @@ function legendSymbols(config) {
       enter: {
         x: {field: 'offset', mult: 0.5},
         y: {scale: 'legend', field: 'index'},
-        shape: {value: cfg.symbolShape},
-        size: {value: cfg.symbolSize},
-        stroke: {value: cfg.symbolColor},
-        strokeWidth: {value: cfg.symbolStrokeWidth},
+        shape: {value: config.symbolShape},
+        size: {value: config.symbolSize},
+        stroke: {value: config.symbolColor},
+        strokeWidth: {value: config.symbolStrokeWidth},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
@@ -453,7 +451,6 @@ function legendSymbols(config) {
 }
 
 function vLegendLabels(config) {
-  var cfg = config.legend;
   return {
     type: 'text',
     interactive: false,
@@ -462,11 +459,11 @@ function vLegendLabels(config) {
       enter: {
         x: {field: 'offset', offset: 5},
         y: {scale: 'legend', field: 'index'},
-        fill: {value: cfg.labelColor},
-        font: {value: cfg.labelFont},
-        fontSize: {value: cfg.labelFontSize},
-        align: {value: cfg.labelAlign},
-        baseline: {value: cfg.labelBaseline},
+        fill: {value: config.labelColor},
+        font: {value: config.labelFont},
+        fontSize: {value: config.labelFontSize},
+        align: {value: config.labelAlign},
+        baseline: {value: config.labelBaseline},
         text: {field: 'label'},
         opacity: {value: 1e-6}
       },
@@ -481,7 +478,6 @@ function vLegendLabels(config) {
 }
 
 function legendGradient(config) {
-  var cfg = config.legend;
   return {
     type: 'rect',
     interactive: false,
@@ -489,10 +485,10 @@ function legendGradient(config) {
       enter: {
         x: {value: 0},
         y: {value: 0},
-        width: {value: cfg.gradientWidth},
-        height: {value: cfg.gradientHeight},
-        stroke: {value: cfg.gradientStrokeColor},
-        strokeWidth: {value: cfg.gradientStrokeWidth},
+        width: {value: config.gradientWidth},
+        height: {value: config.gradientHeight},
+        stroke: {value: config.gradientStrokeColor},
+        strokeWidth: {value: config.gradientStrokeWidth},
         opacity: {value: 1e-6}
       },
       exit: { opacity: {value: 1e-6} },
@@ -506,7 +502,6 @@ function legendGradient(config) {
 }
 
 function hLegendLabels(config) {
-  var cfg = config.legend;
   return {
     type: 'text',
     interactive: false,
@@ -516,9 +511,9 @@ function hLegendLabels(config) {
         x: {scale: 'legend', field: 'data'},
         y: {value: 20},
         dy: {value: 2},
-        fill: {value: cfg.labelColor},
-        font: {value: cfg.labelFont},
-        fontSize: {value: cfg.labelFontSize},
+        fill: {value: config.labelColor},
+        font: {value: config.labelFont},
+        fontSize: {value: config.labelFontSize},
         align: {field: 'align'},
         baseline: {value: 'top'},
         text: {field: 'label'},
