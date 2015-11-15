@@ -90,11 +90,11 @@ prototype.data = function(data) {
   return this;
 };
 
+var VIEW_SIGNALS = dl.toMap(['width', 'height', 'padding']);
+
 prototype.signal = function(name, value, propagate) {
-  var m  = this._model,
-      cs = this._changeset,
-      streamer = this._streamer,
-      batch;
+  var m = this._model,
+      key, values;
 
   // Getter. Returns the value for the specified signal, or
   // returns all signal values.
@@ -107,20 +107,27 @@ prototype.signal = function(name, value, propagate) {
   // Setter. Can be done in batch or individually. In either case,
   // the final argument determines if set values should propagate.
   if (dl.isObject(name)) {
-    batch = name;
+    values = name;
     propagate = value;
   } else {
-    batch = {};
-    batch[name] = value;
+    values = {};
+    values[name] = value;
   }
-
-  dl.keys(batch).forEach(function(k) {
-    streamer.addListener(m.signal(k).value(batch[k]));
-    if (propagate !== false) cs.signals[k] = 1;
-    cs.reflow = true;
-  });
-
+  for (key in values) {
+    if (VIEW_SIGNALS[key]) {
+      this[key](values[key]);
+    } else {
+      this._setSignal(key, values[key], propagate);
+    }
+  }
   return this;
+};
+
+prototype._setSignal = function(name, value, propagate) {
+  var cs = this._changeset;
+  this._streamer.addListener(this._model.signal(name).value(value));
+  if (propagate !== false) cs.signals[name] = 1;
+  cs.reflow = true;
 };
 
 prototype.width = function(width) {
@@ -130,7 +137,7 @@ prototype.width = function(width) {
     this.model().width(width);
     this.initialize();
     if (this._strict) this._autopad = 1;
-    this.signal('width', width);
+    this._setSignal('width', width);
   }
   return this;
 };
@@ -142,7 +149,7 @@ prototype.height = function(height) {
     this.model().height(height);
     this.initialize();
     if (this._strict) this._autopad = 1;
-    this.signal('height', height);
+    this._setSignal('height', height);
   }
   return this;
 };
@@ -170,7 +177,7 @@ prototype.padding = function(pad) {
     }
     if (this._renderer) this._renderer.resize(this._width, this._height, this._padding);
     if (this._handler)  this._handler.padding(this._padding);
-    this.signal('padding', this._padding);
+    this._setSignal('padding', this._padding);
   }
   return (this._repaint = true, this);
 };
@@ -196,9 +203,9 @@ prototype.autopad = function(opt) {
     this._height = Math.max(0, this.__height - (t+b));
 
     this._model.width(this._width).height(this._height).reset();
-    this.signal('width', this._width);
-    this.signal('height', this._height);
-    this.signal('padding', pad);
+    this._setSignal('width', this._width);
+    this._setSignal('height', this._height);
+    this._setSignal('padding', pad);
 
     this.initialize().update({props:'enter'}).update({props:'update'});
   } else {
