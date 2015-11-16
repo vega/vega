@@ -604,7 +604,7 @@ properties.schema = {
         // Image-mark properties
         "url": {"$ref": "#/refs/stringValue"},
         "align": valueSchema(["left", "right", "center"]),
-        "baseline": valueSchema(["top", "middle", "bottom"]),
+        "baseline": valueSchema(["top", "middle", "bottom", "alphabetic"]),
 
         // Text-mark properties
         "text": {"$ref": "#/refs/stringValue"},

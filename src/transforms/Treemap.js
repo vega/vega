@@ -119,7 +119,7 @@ Treemap.schema = {
     "mode": {
       "description": "The treemap layout algorithm to use.",
       "oneOf": [
-        {"type": {"enum": ["squarify", "slice", "dice", "slice-dice"]}},
+        {"enum": ["squarify", "slice", "dice", "slice-dice"]},
         {"$ref": "#/refs/signal"}
       ],
       "default": "squarify"

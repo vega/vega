@@ -109,3 +109,15 @@ prototype.set = function(value) {
 };
 
 module.exports = Parameter;
+
+// Schema for field|value-type parameters.
+Parameter.schema = {
+  "type": "object",
+  "oneOf": [{
+    "properties": {"field": {"type": "string"}},
+    "required": ["field"]
+  }, {
+    "properties": {"value": {"type": "string"}},
+    "required": ["value"]
+  }]
+};

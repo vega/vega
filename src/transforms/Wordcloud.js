@@ -5,7 +5,8 @@ var dl = require('datalib'),
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
     Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform');
+    BatchTransform = require('./BatchTransform'),
+    Parameter = require('./Parameter');
 
 function Wordcloud(graph) {
   BatchTransform.prototype.init.call(this, graph);
@@ -129,22 +130,22 @@ Wordcloud.schema = {
     },
     "font": {
       "description": "The font face to use for a word.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "string"}, Parameter.schema, {"$ref": "#/refs/signal"}],
       "default": "sans-serif"
     },
     "fontStyle": {
       "description": "The font style to use for a word.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "string"}, Parameter.schema, {"$ref": "#/refs/signal"}],
       "default": "normal"
     },
     "fontWeight": {
       "description": "The font weight to use for a word.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "string"}, Parameter.schema, {"$ref": "#/refs/signal"}],
       "default": "normal"
     },
     "fontSize": {
       "description": "The font size to use for a word.",
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "number"}, Parameter.schema, {"type": "string"}, {"$ref": "#/refs/signal"}],
       "default": 14
     },
     "fontScale": {
@@ -162,22 +163,25 @@ Wordcloud.schema = {
     },
     "rotate": {
       "description": "The field or number to set the roration angle (in degrees).",
-      "oneOf": [{"type": "number"}, {"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [
+        {"type": "number"}, {"type": "string"}, 
+        Parameter.schema, {"$ref": "#/refs/signal"}
+      ],
       "default": 0
     },
     "text": {
       "description": "The field containing the text to use for each word.",
-      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "string"}, Parameter.schema, {"$ref": "#/refs/signal"}],
       "default": 'data'
     },
     "spiral": {
       "description": "The type of spiral used for positioning words, either 'archimedean' or 'rectangular'.",
-      "oneOf": [{"enum": ["archimedean", "rectangular"]}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"enum": ["archimedean", "rectangular"]}, Parameter.schema, {"$ref": "#/refs/signal"}],
       "default": "archimedean"
     },
     "padding": {
       "description": "The padding around each word.",
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
+      "oneOf": [{"type": "number"}, Parameter.schema, {"$ref": "#/refs/signal"}],
       "default": 1
     },
     "output": {
