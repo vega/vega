@@ -21,15 +21,20 @@ var PROPERTIES = [
 
 function defaults(spec, model) {
   var config = model.config().scene,
-      props = {}, i, n, m, p;
+      props = {}, i, n, m, p, s;
 
   for (i=0, n=m=PROPERTIES.length; i<n; ++i) {
     p = PROPERTIES[i];
-    if (spec[p] !== undefined) props[p] = {value: spec[p]};
-    else if (config[p]) props[p] = {value: config[p]};
-    else --m;
+    if ((s=spec[p]) !== undefined) {
+      props[p] = s.signal ? s : {value: s};
+    } else if (config[p]) {
+      props[p] = {value: config[p]};
+    } else {
+      --m;
+    }
   }
-  return m ? {enter: parseProperties(model, 'group', props)} : {};
+
+  return m ? {update: parseProperties(model, 'group', props)} : {};
 }
 
 module.exports = parseRootMark;
@@ -42,13 +47,30 @@ parseRootMark.schema = {
         "scene": {
           "type": "object",
           "properties": {
-            "fill": {"type": "string"},
-            "fillOpacity": {"type": "number"},
-            "stroke": {"type": "string"},
-            "strokeOpacity": {"type": "number"},
-            "strokeWidth": {"type": "number"},
-            "strokeDash": {"type": "array", "items": {"type": "number"}},
-            "strokeDashOffset": {"type": "number"}
+            "fill": {
+              "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
+            },
+            "fillOpacity": {
+              "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
+            },
+            "stroke": {
+              "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]
+            },
+            "strokeOpacity": {
+              "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
+            },
+            "strokeWidth": {
+              "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
+            },
+            "strokeDash": {
+              "oneOf": [
+                {"type": "array", "items": {"type": "number"}}, 
+                {"$ref": "#/refs/signal"}
+              ]
+            },
+            "strokeDashOffset": {
+              "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]
+            },
           }
         },
         "scales": {
