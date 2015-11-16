@@ -19,7 +19,7 @@ function Cross(graph) {
   this._lastRem  = null; // Most recent stamp that rem occured.
   this._lastWith = null; // Last time we crossed w/withds.
   this._ids   = {};
-  this._cache = {};
+  this._cache = {}; 
 
   return this.router(true).produces(true);
 }
@@ -27,51 +27,91 @@ function Cross(graph) {
 var prototype = (Cross.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Cross;
 
-// Each cached incoming tuple also has a stamp to track if we need to do
-// lazy filtering of removed tuples.
+// Each cached incoming tuple also has a stamp to track if we need to do lazy
+// tuple removal, and a flag to determine whether any tuples were filtered.
 function cache(x, t) {
-  var c = this._cache[x._id] = this._cache[x._id] || {c: [], s: this._stamp};
-  c.c.push(t);
+  var c = this._cache,
+      s = this._stamp,
+      cross = c[x._id] || (c[x._id] = {c: [], s: s, f: false});
+  cross.c.push(t);
 }
 
 function add(output, left, data, diag, test, x) {
-  var i = 0, len = data.length, t = {}, y, id;
+  var c   = this._cache,
+      as  = this._output,
+      ids = this._ids,
+      oadd  = output.add, 
+      fltrd = false,
+      i = 0, len = data.length,
+      t = {}, y, id;
 
   for (; i<len; ++i) {
     y = data[i];
     id = left ? x._id+'_'+y._id : y._id+'_'+x._id;
-    if (this._ids[id]) continue;
+    if (ids[id]) continue;
     if (x._id == y._id && !diag) continue;
 
-    t[this._output.left]  = left ? x : y;
-    t[this._output.right] = left ? y : x;
+    t[as.left]  = left ? x : y;
+    t[as.right] = left ? y : x;
 
-    // Only ingest a tuple if we keep it around.
+    // Only ingest a tuple if we keep it around. Otherwise, flag the
+    // caches as filtered. 
     if (!test || test(t)) {
-      output.add.push(t=Tuple.ingest(t));
+      oadd.push(t=Tuple.ingest(t));
       cache.call(this, x, t);
       cache.call(this, y, t);
-      this._ids[id] = 1;
+      ids[id] = 1;
       t = {};
+    } else {
+      if (c[y._id]) c[y._id].f = true;
+      fltrd = true;
     }
   }
+
+  if (c[x._id]) c[x._id].f = fltrd;
 }
 
 function mod(output, left, data, diag, test, x) {
   var cache = this._cache,
       cross = cache[x._id],
-      other = this._output[left ? 'right' : 'left'];
+      other = this._output[left ? 'right' : 'left'],
+      tpls  = cross && cross.c,
+      lazy  = cross && this._lastRem > cross.s,
+      fltrd = !cross || cross.f,
+      omod  = output.mod,
+      orem  = output.rem,
+      i, t, y;
 
-  if (!cross) return;
-  if (this._lastRem > cross.s) {  // Lazy removal
-    cross.c = cross.c.filter(function(t) {
-      var y = t[other];
-      return cache[y._id] !== null;
-    });
-    cross.s = this._lastRem;
+  // If we have cached values, iterate through them for lazy
+  // removal, and to re-run the filter. 
+  if (tpls) {
+    if (lazy || test) {
+      for (i=tpls.length-1; i>=0; --i) {
+        t = tpls[i];
+        y = t[other];
+
+        if (lazy && !cache[y._id]) {
+          tpls.splice(i, 1);
+          continue;
+        }
+
+        if (!test || test(t)) {
+          omod.push(t);
+        } else {
+          orem.push.apply(orem, tpls.splice(i, 1));
+          cross.f = true;
+        }
+      }
+
+      cross.s = this._lastRem;
+    } else {
+      omod.push.apply(omod, tpls);
+    }
   }
 
-  output.mod.push.apply(output.mod, cross.c);
+  // If we have a filter param, call add to catch any tuples that may
+  // have previously been filtered.
+  if (test && fltrd) add.call(this, output, left, data, diag, test, x); 
 }
 
 function rem(output, x) {

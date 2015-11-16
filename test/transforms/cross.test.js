@@ -187,6 +187,11 @@ describe('Cross', function() {
       data1 = ds1.values();
       expect(data1).to.have.length(25);
 
+      ds1.update(function() { return true; }, 'x', function(t) { return t.x+1; })
+        .fire();
+      data1 = ds1.values();
+      expect(data1).to.have.length(25);        
+
       ds1.remove(function(t) { return t.x === 8; }).fire();
       data1 = ds1.values();
       expect(data1).to.have.length(16);
@@ -225,8 +230,28 @@ describe('Cross', function() {
 
     parseSpec(spec, function(model) {
       var ds1 = model.data('table1'),
-          data1 = ds1.values();
+          data1 = ds1.values(),
+          new1 = {"x": 7,  "y": 19}, 
+          new2 = {"x": 8,  "y": 87};
 
+      expect(data1).to.have.length(2);
+
+      ds1.insert([new1, new2]).fire();
+      data1 = ds1.values();     
+      expect(data1).to.have.length(8);
+
+      ds1.update(function(t) { return t.x === 3; }, 'y', function(t) { return 39; })
+        .fire();
+      data1 = ds1.values();
+      expect(data1).to.have.length(12);
+
+      ds1.update(function(t) { return t.x === 3; }, 'y', function(t) { return 41; })
+        .fire();
+      data1 = ds1.values();
+      expect(data1).to.have.length(8);   
+
+      ds1.remove(function(t) { return t.x >=7; }).fire();
+      data1 = ds1.values();
       expect(data1).to.have.length(2);
 
       done();
