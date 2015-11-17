@@ -95,13 +95,14 @@ function lgnd(model) {
     for (var i=0, n=range.length; i<n; ++i) range[i] += sz;
 
     // build scale for label layout
-    var scaleSpec = {
+    def.scales = def.scales || [{}];
+    dl.extend(def.scales[0], {
       name: 'legend',
       type: 'ordinal',
       points: true,
       domain: domain,
       range: range
-    };
+    });
 
     // update legend def
     var tdata = (title ? [title] : []).map(ingest);
@@ -109,7 +110,6 @@ function lgnd(model) {
       d.label = fmt(d.data);
       d.offset = offset;
     });
-    def.scales = [ scaleSpec ];
     def.marks[0].from = function() { return tdata; };
     def.marks[1].from = function() { return data; };
     def.marks[2].from = def.marks[1].from;
@@ -163,14 +163,15 @@ function lgnd(model) {
         fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
 
     // build scale for label layout
-    var layoutSpec = {
+    def.scales = def.scales || [{}];
+    var layoutSpec = dl.extend(def.scales[0], {
       name: 'legend',
       type: scale.type,
       round: true,
       zero: false,
       domain: [dom[0], dom[dom.length-1]],
       range: [padding, width+padding]
-    };
+    });
     if (scale.type==='pow') layoutSpec.exponent = scale.exponent();
 
     // update legend def
@@ -179,7 +180,7 @@ function lgnd(model) {
       d.label = fmt(d.data);
       d.align = i==(data.length-1) ? 'right' : i===0 ? 'left' : 'center';
     });
-    def.scales = [ layoutSpec ];
+
     def.marks[0].from = function() { return tdata; };
     def.marks[1].from = function() { return [1]; };
     def.marks[2].from = function() { return data; };
