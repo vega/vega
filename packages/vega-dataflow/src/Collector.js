@@ -1,6 +1,7 @@
 var log = require('vega-logging'),
     Tuple = require('./Tuple'),
-    Base = require('./Node').prototype;
+    Base = require('./Node').prototype,
+    ChangeSet = require('./ChangeSet');
 
 function Collector(graph) {
   Base.init.call(this, graph);
@@ -18,12 +19,22 @@ prototype.data = function() {
 prototype.evaluate = function(input) {
   log.debug(input, ["collecting"]);
 
+  // Create a new output changeset to prevent pollution when the Graph
+  // merges reflow and regular changesets.
+  var output = ChangeSet.create(input);
+
   if (input.rem.length) {
     this._data = Tuple.idFilter(this._data, input.rem);
+    output.rem = input.rem.slice(0);
   }
 
   if (input.add.length) {
-    this._data = this._data.length ? this._data.concat(input.add) : input.add;
+    this._data = this._data.concat(input.add);
+    output.add = input.add.slice(0);
+  }
+
+  if (input.mod.length) {
+    output.mod = input.mod.slice(0);
   }
 
   if (input.sort) {
@@ -31,12 +42,12 @@ prototype.evaluate = function(input) {
   }
 
   if (input.reflow) {
-    input.mod = input.mod.concat(
-      Tuple.idFilter(this._data, input.add, input.mod, input.rem));
-    input.reflow = false;
+    output.mod = output.mod.concat(
+      Tuple.idFilter(this._data, output.add, output.mod, output.rem));
+    output.reflow = false;
   }
 
-  return input;
+  return output;
 };
 
 module.exports = Collector;
