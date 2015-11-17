@@ -11,7 +11,7 @@ var d3 = require('d3'),
 function View(el, width, height) {
   this._el    = null;
   this._model = null;
-  this._width = this.__width = width || 500;
+  this._width   = this.__width = width || 500;
   this._height  = this.__height = height || 300;
   this._bgcolor = null;
   this._autopad = 1;
@@ -90,11 +90,11 @@ prototype.data = function(data) {
   return this;
 };
 
+var VIEW_SIGNALS = dl.toMap(['width', 'height', 'padding']);
+
 prototype.signal = function(name, value, propagate) {
-  var m  = this._model,
-      cs = this._changeset,
-      streamer = this._streamer,
-      batch;
+  var m = this._model,
+      key, values;
 
   // Getter. Returns the value for the specified signal, or
   // returns all signal values.
@@ -107,21 +107,28 @@ prototype.signal = function(name, value, propagate) {
   // Setter. Can be done in batch or individually. In either case,
   // the final argument determines if set values should propagate.
   if (dl.isObject(name)) {
-    batch = name;
+    values = name;
     propagate = value;
   } else {
-    batch = {};
-    batch[name] = value;
+    values = {};
+    values[name] = value;
   }
-
-  dl.keys(batch).forEach(function(k) {
-    streamer.addListener(m.signal(k).value(batch[k]));
-    if (propagate !== false) cs.signals[k] = 1;
-    cs.reflow = true;
-  });
-
+  for (key in values) {
+    if (VIEW_SIGNALS[key]) {
+      this[key](values[key]);
+    } else {
+      setSignal.call(this, key, values[key], propagate);
+    }
+  }
   return this;
 };
+
+function setSignal(name, value, propagate) {
+  var cs = this._changeset;
+  this._streamer.addListener(this._model.signal(name).value(value));
+  if (propagate !== false) cs.signals[name] = 1;
+  cs.reflow = true;
+}
 
 prototype.width = function(width) {
   if (!arguments.length) return this.__width;
@@ -130,6 +137,7 @@ prototype.width = function(width) {
     this.model().width(width);
     this.initialize();
     if (this._strict) this._autopad = 1;
+    setSignal.call(this, 'width', width);
   }
   return this;
 };
@@ -141,6 +149,7 @@ prototype.height = function(height) {
     this.model().height(height);
     this.initialize();
     if (this._strict) this._autopad = 1;
+    setSignal.call(this, 'height', height);
   }
   return this;
 };
@@ -168,6 +177,7 @@ prototype.padding = function(pad) {
     }
     if (this._renderer) this._renderer.resize(this._width, this._height, this._padding);
     if (this._handler)  this._handler.padding(this._padding);
+    setSignal.call(this, 'padding', this._padding);
   }
   return (this._repaint = true, this);
 };
@@ -192,11 +202,12 @@ prototype.autopad = function(opt) {
     this._width = Math.max(0, this.__width - (l+r));
     this._height = Math.max(0, this.__height - (t+b));
 
-    this._model.width(this._width)
-      .height(this._height).reset();
+    this._model.width(this._width).height(this._height).reset();
+    setSignal.call(this, 'width', this._width);
+    setSignal.call(this, 'height', this._height);
+    setSignal.call(this, 'padding', pad);
 
-    this.initialize()
-      .update({props:'enter'}).update({props:'update'});
+    this.initialize().update({props:'enter'}).update({props:'update'});
   } else {
     this.padding(pad).update(opt);
   }
@@ -318,9 +329,11 @@ function build() {
 prototype.update = function(opt) {
   opt = opt || {};
   var v = this,
+      model = this._model,
+      streamer = this._streamer,
+      cs = this._changeset,
       trans = opt.duration ? new Transition(opt.duration, opt.ease) : null;
 
-  var cs = v._changeset;
   if (trans) cs.trans = trans;
   if (opt.props !== undefined) {
     if (dl.keys(cs.data).length > 0) {
@@ -339,15 +352,17 @@ prototype.update = function(opt) {
 
   // If specific items are specified, short-circuit dataflow graph.
   // Else-If there are streaming updates, perform a targeted propagation.
-  // Otherwise, reevaluate the entire model (datasources + scene).
+  // Otherwise, re-evaluate the entire model (datasources + scene).
   if (opt.items && built) {
-    Encoder.update(this._model, opt.trans, opt.props, opt.items, cs.dirty);
+    Encoder.update(model, opt.trans, opt.props, opt.items, cs.dirty);
     v._renderNode.evaluate(cs);
-  } else if (v._streamer.listeners().length && built) {
-    v._model.propagate(cs, v._streamer);
-    v._streamer.disconnect();
+  } else if (streamer.listeners().length && built) {
+    // Include re-evaluation entire model when repaint flag is set
+    if (this._repaint) streamer.addListener(model.node());
+    model.propagate(cs, streamer);
+    streamer.disconnect();
   } else {
-    v._model.fire(cs);
+    model.fire(cs);
   }
 
   v._changeset = df.ChangeSet.create();

@@ -15,7 +15,7 @@ function Hierarchy(graph) {
     field: {type: 'value', default: null},
     // layout parameters
     mode: {type: 'value', default: 'tidy'}, // tidy, cluster, partition
-    size: {type: 'array<value>', default: [500, 500]},
+    size: {type: 'array<value>', default: require('./screen').size},
     nodesize: {type: 'array<value>', default: null},
     orient: {type: 'value', default: 'cartesian'}
   });

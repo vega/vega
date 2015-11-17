@@ -16,7 +16,7 @@ function Treemap(graph) {
     parent: {type: 'field', default: 'parent'},
     field: {type: 'field', default: 'value'},
     // treemap parameters
-    size: {type: 'array<value>', default: [500, 500]},
+    size: {type: 'array<value>', default: require('./screen').size},
     round: {type: 'value', default: true},
     sticky: {type: 'value', default: false},
     ratio: {type: 'value', default: defaultRatio},

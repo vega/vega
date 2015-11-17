@@ -16,7 +16,7 @@ function Force(graph) {
   this._layout = d3.layout.force();
 
   Transform.addParameters(this, {
-    size: {type: 'array<value>', default: [500, 500]},
+    size: {type: 'array<value>', default: require('./screen').size},
     bound: {type: 'value', default: true},
     links: {type: 'data'},
 

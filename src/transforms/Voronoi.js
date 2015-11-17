@@ -7,7 +7,7 @@ var d3 = require('d3'),
 function Voronoi(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    clipExtent: {type: 'array<value>', default: [[-1e5,-1e5],[1e5,1e5]]},
+    clipExtent: {type: 'array<value>', default: require('./screen').extent},
     x: {type: 'field', default: 'layout_x'},
     y: {type: 'field', default: 'layout_y'}
   });

@@ -11,8 +11,6 @@
   ],
 
   "signals": [
-    {"name": "width", "init": 800},
-    {"name": "height", "init": 500},
     {
       "name": "point",
       "init": 0,

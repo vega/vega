@@ -1,11 +1,10 @@
 var dl = require('datalib');
 
 function parsePadding(pad) {
-  if (pad == null) return "auto";
-  else if (dl.isString(pad)) return pad==="strict" ? "strict" : "auto";
-  else if (dl.isObject(pad)) return pad;
-  var p = dl.isNumber(pad) ? pad : 20;
-  return {top:p, left:p, right:p, bottom:p};
+  return pad == null ? 'auto' :
+    dl.isObject(pad) ? pad :
+    dl.isNumber(pad) ? {top:pad, left:pad, right:pad, bottom:pad} :
+    pad === 'strict' ? pad : 'auto';
 }
 
 module.exports = parsePadding;

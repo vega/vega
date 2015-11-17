@@ -18,7 +18,7 @@ function Parameter(name, type, transform) {
   this._value = [];
   this._accessors = [];
   this._resolution = false;
-  this._signals = {};
+  this._signals = [];
 }
 
 var prototype = Parameter.prototype;
@@ -43,7 +43,7 @@ prototype.get = function() {
   var graph = this._transform._graph,
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type),
-      s, idx, val;
+      i, n, sig, idx, val;
 
   // If we don't require resolution, return the value immediately.
   if (!this._resolution) return get.call(this);
@@ -53,9 +53,10 @@ prototype.get = function() {
     return get.call(this); // TODO: support signal as dataTypes
   }
 
-  for (s in this._signals) {
-    idx = this._signals[s];
-    val = graph.signalRef(s);
+  for (i=0, n=this._signals.length; i<n; ++i) {
+    sig = this._signals[i];
+    idx = sig.index;
+    val = sig.value(graph);
 
     if (isField) {
       this._accessors[idx] = this._value[idx] != val ?
@@ -74,10 +75,12 @@ prototype.set = function(value) {
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
 
+  p._signals = [];
   this._value = dl.array(value).map(function(v, i) {
+    var e;
     if (dl.isString(v)) {
       if (isExpr) {
-        var e = expr(v);
+        e = expr(v);
         p._transform.dependency(Deps.FIELDS,  e.fields);
         p._transform.dependency(Deps.SIGNALS, e.globals);
         return e.fn;
@@ -97,9 +100,23 @@ prototype.set = function(value) {
       return v.field;
     } else if (v.signal !== undefined) {
       p._resolution = true;
-      p._signals[v.signal] = i;
       p._transform.dependency(Deps.SIGNALS, v.signal);
+      p._signals.push({
+        index: i,
+        value: function(graph) { return graph.signalRef(v.signal); }
+      });
       return v.signal;
+    } else if (v.expr !== undefined) {
+      p._resolution = true;
+      e = expr(v.expr);
+      p._transform.dependency(Deps.SIGNALS, e.globals);
+      p._signals.push({
+        index: i,
+        value: function(graph) {
+          return e.fn(null, null, graph.values(Deps.SIGNALS, e.globals));
+        }
+      });
+      return v.expr;
     }
 
     return v;
