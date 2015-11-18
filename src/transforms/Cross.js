@@ -60,7 +60,7 @@ function add(output, left, data, diag, test, x) {
       oadd.push(t=Tuple.ingest(t));
       cache.call(this, x, t);
       cache.call(this, y, t);
-      ids[id] = 1;
+      ids[id] = true;
       t = {};
     } else {
       if (c[y._id]) c[y._id].f = true;
@@ -73,6 +73,7 @@ function add(output, left, data, diag, test, x) {
 
 function mod(output, left, data, diag, test, x) {
   var cache = this._cache,
+      ids   = this._ids,
       cross = cache[x._id],
       other = this._output[left ? 'right' : 'left'],
       tpls  = cross && cross.c,
@@ -80,7 +81,7 @@ function mod(output, left, data, diag, test, x) {
       fltrd = !cross || cross.f,
       omod  = output.mod,
       orem  = output.rem,
-      i, t, y;
+      i, t, y, id;
 
   // If we have cached values, iterate through them for lazy
   // removal, and to re-run the filter. 
@@ -89,8 +90,10 @@ function mod(output, left, data, diag, test, x) {
       for (i=tpls.length-1; i>=0; --i) {
         t = tpls[i];
         y = t[other];
+        id = left ? x._id+'_'+y._id : y._id+'_'+x._id;
 
         if (lazy && !cache[y._id]) {
+          ids[id] = false;
           tpls.splice(i, 1);
           continue;
         }
@@ -98,6 +101,7 @@ function mod(output, left, data, diag, test, x) {
         if (!test || test(t)) {
           omod.push(t);
         } else {
+          ids[id] = false;
           orem.push.apply(orem, tpls.splice(i, 1));
           cross.f = true;
         }
@@ -114,9 +118,16 @@ function mod(output, left, data, diag, test, x) {
   if (test && fltrd) add.call(this, output, left, data, diag, test, x); 
 }
 
-function rem(output, x) {
-  var cross = this._cache[x._id];
+function rem(output, left, x) {
+  var cross = this._cache[x._id],
+      ids   = this._ids,
+      other = this._output[left ? 'right' : 'left'];
   if (!cross) return;
+  cross.c.forEach(function(t){
+    var y  = t[other],
+        id = left ? x._id+'_'+y._id : y._id+'_'+x._id;
+    ids[id] = false;
+  });
   output.rem.push.apply(output.rem, cross.c);
   this._cache[x._id] = null;
   this._lastRem = this._stamp;
@@ -158,8 +169,7 @@ prototype.batchTransform = function(input, data, reset) {
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
-      output  = ChangeSet.create(input),
-      r = rem.bind(this, output);
+      output  = ChangeSet.create(input);
 
   // If signal values (for diag or test) have changed, purge the cache
   // and re-run cross in batch mode. Otherwise stream cross values.
@@ -168,11 +178,11 @@ prototype.batchTransform = function(input, data, reset) {
     data.forEach(add.bind(this, output, true, wdata, diag, test));
     this._lastWith = woutput.stamp;
   } else {
-    input.rem.forEach(r);
+    input.rem.forEach(rem.bind(this, output, true));
     input.add.forEach(add.bind(this, output, true, wdata, diag, test));
 
     if (woutput.stamp > this._lastWith) {
-      woutput.rem.forEach(r);
+      woutput.rem.forEach(rem.bind(this, output, false));
       woutput.add.forEach(add.bind(this, output, false, data, diag, test));
       woutput.mod.forEach(mod.bind(this, output, false, data, diag, test));
       this._lastWith = woutput.stamp;
