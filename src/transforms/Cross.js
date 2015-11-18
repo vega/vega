@@ -16,9 +16,8 @@ function Cross(graph) {
   });
 
   this._output = {'left': 'a', 'right': 'b'};
-  this._lastRem  = null; // Most recent stamp that rem occured.
-  this._lastWith = null; // Last time we crossed w/withds.
-  this._ids   = {};
+  this._lastWith = null; // Last time we crossed w/with-ds.
+  this._cids  = {};
   this._cache = {}; 
 
   return this.router(true).produces(true);
@@ -27,29 +26,33 @@ function Cross(graph) {
 var prototype = (Cross.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Cross;
 
-// Each cached incoming tuple also has a stamp to track if we need to do lazy
-// tuple removal, and a flag to determine whether any tuples were filtered.
-function cache(x, t) {
+// Each cached incoming tuple also has a flag to determine whether 
+// any tuples were filtered.
+function _cache(x, t) {
   var c = this._cache,
       s = this._stamp,
-      cross = c[x._id] || (c[x._id] = {c: [], s: s, f: false});
+      cross = c[x._id] || (c[x._id] = {c: [], f: false});
   cross.c.push(t);
 }
 
-function add(output, left, data, diag, test, x) {
-  var c   = this._cache,
-      as  = this._output,
-      ids = this._ids,
+function _cid(left, x, y) {
+  return left ? x._id+'_'+y._id : y._id+'_'+x._id;
+}
+
+function add(output, left, data, diag, test, x, idx) {
+  var as = this._output,
+      cache = this._cache,
+      cids  = this._cids,
       oadd  = output.add, 
       fltrd = false,
       i = 0, len = data.length,
-      t = {}, y, id;
+      t = {}, y, cid;
 
   for (; i<len; ++i) {
     y = data[i];
-    id = left ? x._id+'_'+y._id : y._id+'_'+x._id;
-    if (ids[id]) continue;
-    if (x._id == y._id && !diag) continue;
+    cid = _cid(left, x, y);
+    if (cids[cid]) continue;
+    if (idx === i && !diag) continue;
 
     t[as.left]  = left ? x : y;
     t[as.right] = left ? y : x;
@@ -58,100 +61,103 @@ function add(output, left, data, diag, test, x) {
     // caches as filtered. 
     if (!test || test(t)) {
       oadd.push(t=Tuple.ingest(t));
-      cache.call(this, x, t);
-      if (x._id !== y._id) cache.call(this, y, t);
-      ids[id] = 1;
+      _cache.call(this, x, t);
+      if (x._id !== y._id) _cache.call(this, y, t);
+      cids[cid] = true;
       t = {};
     } else {
-      if (c[y._id]) c[y._id].f = true;
+      if (cache[y._id]) cache[y._id].f = true;
       fltrd = true;
     }
   }
 
-  if (c[x._id]) c[x._id].f = fltrd;
+  if (cache[x._id]) cache[x._id].f = fltrd;
 }
 
-function mod(output, left, data, diag, test, mids, rids, x) {
+function mod(output, left, data, diag, test, mids, rids, x, idx) {
   var cache = this._cache,
+      cids  = this._cids,
       cross = cache[x._id],
       other = this._output[left ? 'right' : 'left'],
       tpls  = cross && cross.c,
-      lazy  = cross && this._lastRem > cross.s,
       fltrd = !cross || cross.f,
       omod  = output.mod,
       orem  = output.rem,
-      i, t, y;
+      i, t, y, cid;
 
   // If we have cached values, iterate through them for lazy
   // removal, and to re-run the filter. 
   if (tpls) {
-    if (lazy || test) {
-      for (i=tpls.length-1; i>=0; --i) {
-        t = tpls[i];
-        y = t[other];
+    for (i=tpls.length-1; i>=0; --i) {
+      t = tpls[i];
+      y = t[other];
+      cid = _cid(left, x, y);
 
-        if (lazy && !cache[y._id]) {
-          tpls.splice(i, 1);
-          continue;
-        }
-
-        if (!test || test(t)) {
-          if (mids[t._id]) continue;
-          omod.push(t);
-          mids[t._id] = 1;
-        } else {
-          if (!rids[t._id]) orem.push.apply(orem, tpls.splice(i, 1));
-          rids[t._id] = 1;
-          cross.f = true;
-        }
+      // Lazy removal: y was previously rem'd, so clean up the cache.
+      if (!cache[y._id]) {
+        cids[cid] = false;
+        tpls.splice(i, 1);
+        continue;
       }
 
-      cross.s = this._lastRem;
-    } else {
-      tpls = tpls.filter(function(x) { return !mids[x._id]; });
-      omod.push.apply(omod, tpls);
-      Tuple.idMap(tpls, mids);
+      if (!test || test(t)) {
+        if (mids[t._id]) continue;
+        omod.push(t);
+        mids[t._id] = 1;
+      } else {
+        if (!rids[t._id]) orem.push.apply(orem, tpls.splice(i, 1));
+        rids[t._id] = 1;
+        cids[cid] = false;
+        cross.f = true;
+      }
     }
   }
 
   // If we have a filter param, call add to catch any tuples that may
   // have previously been filtered.
-  if (test && fltrd) add.call(this, output, left, data, diag, test, x); 
+  if (test && fltrd) add.call(this, output, left, data, diag, test, x, idx); 
 }
 
-function rem(output, rids, x) {
+function rem(output, left, rids, x) {
   var cross = this._cache[x._id],
-      orem  = output.rem, tpls;
+      cids  = this._cids,
+      other = this._output[left ? 'right' : 'left'],
+      orem  = output.rem, 
+      tpls, i, len, t, y;
   if (!cross) return;
 
-  tpls = cross.c.filter(function(x) { return !rids[x._id]; });
-  orem.push.apply(orem, tpls);
-  Tuple.idMap(tpls, rids);
+  for (i=0, len=cross.c.length; i<len; ++i) {
+    t = cross.c[i];
+    y = t[other];
+    cids[_cid(left, x, y)] = false;
+    if (!rids[t._id]) {
+      orem.push(t);
+      rids[t._id] = 1;
+    }
+  }
+
   this._cache[x._id] = null;
-  this._lastRem = this._stamp;
 }
 
-function purge(output) {
+function purge(output, rids) {
   var cache = this._cache,
       keys  = dl.keys(cache),
       rem = output.rem,
-      ids = {},
       i, len, j, jlen, cross, t;
 
   for (i=0, len=keys.length; i<len; ++i) {
     cross = cache[keys[i]];
     for (j=0, jlen=cross.c.length; j<jlen; ++j) {
       t = cross.c[j];
-      if (ids[t._id]) continue;
+      if (rids[t._id]) continue;
       rem.push(t);
-      ids[t._id] = 1;
+      rids[t._id] = 1;
     }
   }
 
   this._cache = {};
-  this._ids = {};
+  this._cids = {};
   this._lastWith = null;
-  this._lastRem  = null;
 }
 
 prototype.batchTransform = function(input, data, reset) {
@@ -168,21 +174,20 @@ prototype.batchTransform = function(input, data, reset) {
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
       output  = ChangeSet.create(input),
-      mids = {}, rids = {}, // Track IDs to prevent dupe mod/rem tuples.
-      r = rem.bind(this, output, rids);
+      mids = {}, rids = {}; // Track IDs to prevent dupe mod/rem tuples.
 
   // If signal values (for diag or test) have changed, purge the cache
   // and re-run cross in batch mode. Otherwise stream cross values.
   if (reset) {
-    purge.call(this, output);
+    purge.call(this, output, rids);
     data.forEach(add.bind(this, output, true, wdata, diag, test));
     this._lastWith = woutput.stamp;
   } else {
-    input.rem.forEach(r);
+    input.rem.forEach(rem.bind(this, output, true, rids));
     input.add.forEach(add.bind(this, output, true, wdata, diag, test));
 
     if (woutput.stamp > this._lastWith) {
-      woutput.rem.forEach(r);
+      woutput.rem.forEach(rem.bind(this, output, false, rids));
       woutput.add.forEach(add.bind(this, output, false, data, diag, test));
       woutput.mod.forEach(mod.bind(this, output, false, data, diag, test, mids, rids));
       this._lastWith = woutput.stamp;
