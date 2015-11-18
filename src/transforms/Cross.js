@@ -59,7 +59,7 @@ function add(output, left, data, diag, test, x) {
     if (!test || test(t)) {
       oadd.push(t=Tuple.ingest(t));
       cache.call(this, x, t);
-      cache.call(this, y, t);
+      if (x._id !== y._id) cache.call(this, y, t);
       ids[id] = 1;
       t = {};
     } else {
@@ -71,7 +71,7 @@ function add(output, left, data, diag, test, x) {
   if (c[x._id]) c[x._id].f = fltrd;
 }
 
-function mod(output, left, data, diag, test, x) {
+function mod(output, left, data, diag, test, mids, rids, x) {
   var cache = this._cache,
       cross = cache[x._id],
       other = this._output[left ? 'right' : 'left'],
@@ -96,16 +96,21 @@ function mod(output, left, data, diag, test, x) {
         }
 
         if (!test || test(t)) {
+          if (mids[t._id]) continue;
           omod.push(t);
+          mids[t._id] = 1;
         } else {
-          orem.push.apply(orem, tpls.splice(i, 1));
+          if (!rids[t._id]) orem.push.apply(orem, tpls.splice(i, 1));
+          rids[t._id] = 1;
           cross.f = true;
         }
       }
 
       cross.s = this._lastRem;
     } else {
+      tpls = tpls.filter(function(x) { return !mids[x._id]; });
       omod.push.apply(omod, tpls);
+      Tuple.idMap(tpls, mids);
     }
   }
 
@@ -114,10 +119,14 @@ function mod(output, left, data, diag, test, x) {
   if (test && fltrd) add.call(this, output, left, data, diag, test, x); 
 }
 
-function rem(output, x) {
-  var cross = this._cache[x._id];
+function rem(output, rids, x) {
+  var cross = this._cache[x._id],
+      orem  = output.rem, tpls;
   if (!cross) return;
-  output.rem.push.apply(output.rem, cross.c);
+
+  tpls = cross.c.filter(function(x) { return !rids[x._id]; });
+  orem.push.apply(orem, tpls);
+  Tuple.idMap(tpls, rids);
   this._cache[x._id] = null;
   this._lastRem = this._stamp;
 }
@@ -159,7 +168,8 @@ prototype.batchTransform = function(input, data, reset) {
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
       output  = ChangeSet.create(input),
-      r = rem.bind(this, output);
+      mids = {}, rids = {}, // Track IDs to prevent dupe mod/rem tuples.
+      r = rem.bind(this, output, rids);
 
   // If signal values (for diag or test) have changed, purge the cache
   // and re-run cross in batch mode. Otherwise stream cross values.
@@ -174,12 +184,12 @@ prototype.batchTransform = function(input, data, reset) {
     if (woutput.stamp > this._lastWith) {
       woutput.rem.forEach(r);
       woutput.add.forEach(add.bind(this, output, false, data, diag, test));
-      woutput.mod.forEach(mod.bind(this, output, false, data, diag, test));
+      woutput.mod.forEach(mod.bind(this, output, false, data, diag, test, mids, rids));
       this._lastWith = woutput.stamp;
     }
 
     // Mods need to come after all removals have been run.
-    input.mod.forEach(mod.bind(this, output, true, wdata, diag, test));
+    input.mod.forEach(mod.bind(this, output, true, wdata, diag, test, mids, rids));
   }
 
   output.fields[as.left]  = 1;
