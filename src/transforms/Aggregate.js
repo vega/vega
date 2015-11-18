@@ -159,7 +159,7 @@ prototype.transform = function(input, reset) {
       args = this._args,
       reeval = true,
       p = Tuple.prev,
-      add, rem, mod, i;
+      add, rem, mod, mark, i;
 
   // Upon reset, retract prior tuples and re-initialize.
   if (reset) {
@@ -171,18 +171,20 @@ prototype.transform = function(input, reset) {
 
   // Get update methods according to input type.
   if (this._type === TYPES.TUPLE) {
-    add = function(x) { aggr._add(x); Tuple.prev_init(x); };
-    rem = function(x) { aggr._rem(p(x)); };
-    mod = function(x) { aggr._mod(x, p(x)); };
+    add  = function(x) { aggr._add(x); Tuple.prev_init(x); };
+    rem  = function(x) { aggr._rem(p(x)); };
+    mod  = function(x) { aggr._mod(x, p(x)); };
+    mark = function(x) { aggr._markMod(x, p(x)); };
   } else {
     var gby = this._acc.groupby,
         val = this._acc.value,
         get = this._type === TYPES.VALUE ? val : function(x) {
           return { _id: x._id, groupby: gby(x), value: val(x) };
         };
-    add = function(x) { aggr._add(get(x)); Tuple.prev_init(x); };
-    rem = function(x) { aggr._rem(get(p(x))); };
-    mod = function(x) { aggr._mod(get(x), get(p(x))); };
+    add  = function(x) { aggr._add(get(x)); Tuple.prev_init(x); };
+    rem  = function(x) { aggr._rem(get(p(x))); };
+    mod  = function(x) { aggr._mod(get(x), get(p(x))); };
+    mark = function(x) { aggr._mark(get(x), get(p(x))); };
   }
 
   input.add.forEach(add);
@@ -197,7 +199,7 @@ prototype.transform = function(input, reset) {
     if (args) for (i=0, reeval=false; i<args.length; ++i) {
       if (input.fields[args[i]]) { reeval = true; break; }
     }
-    if (reeval) input.mod.forEach(mod);
+    input.mod.forEach(reeval ? mod : mark);
   }
 
   // Indicate output fields and return aggregate tuples.
