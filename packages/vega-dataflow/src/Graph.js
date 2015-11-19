@@ -1,4 +1,5 @@
 var dl = require('datalib'),
+    log = require('vega-logging'),
     Heap = require('./Heap'),
     ChangeSet = require('./ChangeSet'),
     DataSource = require('./DataSource'),
@@ -159,6 +160,16 @@ prototype.propagate = function(pulse, node, stamp) {
       }
     }
   }
+
+  return this.done(pulse);
+};
+
+// Perform final bookkeeping on the graph, after propagation is complete. 
+//  - For all updated datasources, synchronize their previous values.
+prototype.done = function(pulse) {
+  log.debug(pulse, ['bookkeeping']);
+  for (var d in pulse.data) { this.data(d).synchronize(); }
+  return this;
 };
 
 // Process a new branch of the dataflow graph prior to connection:
