@@ -182,7 +182,7 @@ prototype.batchTransform = function(input, data, reset) {
   // and re-run cross in batch mode. Otherwise stream cross values.
   if (reset) {
     purge.call(this, output, rids);
-    data.forEach(add.bind(this, output, true, wdata, diag, test));
+    data.forEach(add.bind(this, output, true, wdata, diag, test, mids));
     this._lastWith = woutput.stamp;
   } else {
     input.rem.forEach(rem.bind(this, output, true, rids));
