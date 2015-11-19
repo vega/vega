@@ -318,8 +318,6 @@ function build() {
       s.items[0]._dirty = false;
     }
 
-    // For all updated datasources, clear their previous values.
-    for (var d in input.data) { v._model.data(d).synchronize(); }
     return input;
   };
 

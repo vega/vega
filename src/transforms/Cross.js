@@ -53,8 +53,8 @@ function add(output, left, data, diag, test, mids, x, idx) {
     if (cids[cid]) continue;
     if (idx === i && !diag) continue;
 
-    t[as.left]  = left ? x : y;
-    t[as.right] = left ? y : x;
+    Tuple.set(t, as.left, left ? x : y);
+    Tuple.set(t, as.right, left ? y : x);
 
     // Only ingest a tuple if we keep it around. Otherwise, flag the
     // caches as filtered. 
