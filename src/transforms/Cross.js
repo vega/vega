@@ -30,7 +30,6 @@ prototype.constructor = Cross;
 // any tuples were filtered.
 function _cache(x, t) {
   var c = this._cache,
-      s = this._stamp,
       cross = c[x._id] || (c[x._id] = {c: [], f: false});
   cross.c.push(t);
 }
@@ -39,7 +38,7 @@ function _cid(left, x, y) {
   return left ? x._id+'_'+y._id : y._id+'_'+x._id;
 }
 
-function add(output, left, data, diag, test, x, idx) {
+function add(output, left, data, diag, test, mids, x, idx) {
   var as = this._output,
       cache = this._cache,
       cids  = this._cids,
@@ -63,6 +62,7 @@ function add(output, left, data, diag, test, x, idx) {
       oadd.push(t=Tuple.ingest(t));
       _cache.call(this, x, t);
       if (x._id !== y._id) _cache.call(this, y, t);
+      mids[t._id] = 1;
       cids[cid] = true;
       t = {};
     } else {
@@ -123,7 +123,7 @@ function rem(output, left, rids, x) {
       cids  = this._cids,
       other = this._output[left ? 'right' : 'left'],
       orem  = output.rem, 
-      tpls, i, len, t, y;
+      i, len, t, y;
   if (!cross) return;
 
   for (i=0, len=cross.c.length; i<len; ++i) {
@@ -184,11 +184,11 @@ prototype.batchTransform = function(input, data, reset) {
     this._lastWith = woutput.stamp;
   } else {
     input.rem.forEach(rem.bind(this, output, true, rids));
-    input.add.forEach(add.bind(this, output, true, wdata, diag, test));
+    input.add.forEach(add.bind(this, output, true, wdata, diag, test, mids));
 
     if (woutput.stamp > this._lastWith) {
       woutput.rem.forEach(rem.bind(this, output, false, rids));
-      woutput.add.forEach(add.bind(this, output, false, data, diag, test));
+      woutput.add.forEach(add.bind(this, output, false, data, diag, test, mids));
       woutput.mod.forEach(mod.bind(this, output, false, data, diag, test, mids, rids));
       this._lastWith = woutput.stamp;
     }
