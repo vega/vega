@@ -75,23 +75,24 @@ function add(output, left, data, diag, test, mids, x, idx) {
 }
 
 function mod(output, left, data, diag, test, mids, rids, x, idx) {
-  var cache = this._cache,
+  var as = this._output,
+      cache = this._cache,
       cids  = this._cids,
       cross = cache[x._id],
-      other = this._output[left ? 'right' : 'left'],
       tpls  = cross && cross.c,
       fltrd = !cross || cross.f,
       omod  = output.mod,
       orem  = output.rem,
-      i, t, y, cid;
+      i, t, y, l, cid;
 
   // If we have cached values, iterate through them for lazy
   // removal, and to re-run the filter. 
   if (tpls) {
     for (i=tpls.length-1; i>=0; --i) {
       t = tpls[i];
-      y = t[other];
-      cid = _cid(left, x, y);
+      l = x === t[as.left]; // Cache has tpls w/x both on left & right.
+      y = l ? t[as.right] : t[as.left];
+      cid = _cid(l, x, y);
 
       // Lazy removal: y was previously rem'd, so clean up the cache.
       if (!cache[y._id]) {
@@ -115,21 +116,22 @@ function mod(output, left, data, diag, test, mids, rids, x, idx) {
 
   // If we have a filter param, call add to catch any tuples that may
   // have previously been filtered.
-  if (test && fltrd) add.call(this, output, left, data, diag, test, x, idx); 
+  if (test && fltrd) add.call(this, output, left, data, diag, test, mids, x, idx); 
 }
 
 function rem(output, left, rids, x) {
-  var cross = this._cache[x._id],
+  var as = this._output,
+      cross = this._cache[x._id],
       cids  = this._cids,
-      other = this._output[left ? 'right' : 'left'],
       orem  = output.rem, 
-      i, len, t, y;
+      i, len, t, y, l;
   if (!cross) return;
 
   for (i=0, len=cross.c.length; i<len; ++i) {
     t = cross.c[i];
-    y = t[other];
-    cids[_cid(left, x, y)] = false;
+    l = x === t[as.left];
+    y = l ? t[as.right] : t[as.left];
+    cids[_cid(l, x, y)] = false;
     if (!rids[t._id]) {
       orem.push(t);
       rids[t._id] = 1;
