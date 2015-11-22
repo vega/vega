@@ -266,4 +266,5 @@ function buildLegends(input, group) {
   });
 }
 
+GroupBuilder.scale = scale;
 module.exports = GroupBuilder;
