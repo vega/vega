@@ -20,11 +20,11 @@ function parseData(model, spec, callback) {
       } else if (count >= 0) {
         try {
           model.data(d.name).values(dl.read(data, d.format));
+          if (--count === 0) callback();
         } catch (err) {
           onError(err, d);
         }
       }
-      if (--count === 0) callback();
     };
   }
 
