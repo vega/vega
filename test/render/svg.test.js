@@ -59,7 +59,7 @@ describe('SVG', function() {
       if (err) throw err;
       var spec = JSON.parse(text);
 
-      parseSpec(spec, function(viewFactory) {
+      parseSpec(spec, function(error, viewFactory) {
         if (headless) {
           var view = viewFactory({ renderer: "svg" }).update();
           var svg  = view.renderer().svg();
@@ -68,7 +68,7 @@ describe('SVG', function() {
         } else {
           jsdom.env("<html><body></body></html>", function(err, window) {
             global.window = window;
-            
+
             var body = d3.select(window.document).select('body').node();
             var view = viewFactory({ renderer: "svg", el: body }).update();
             var svg  = d3.select(body).select('div.vega').node().innerHTML

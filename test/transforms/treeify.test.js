@@ -18,8 +18,8 @@ describe('Treeify', function() {
   }
 
   it('should treeify a table', function(done) {
-    parseSpec(spec(),
-      function(model) {
+    parseSpec(spec(), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             root = data.filter(function(d) { return d.parent==null; });
@@ -31,8 +31,7 @@ describe('Treeify', function() {
         expect(root[0].children[1].children).to.have.length(2);
 
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should validate against the schema', function() {

@@ -14,7 +14,7 @@ describe('Stack', function() {
     {a: 3, b: 9, c: 'c'},
     {a: 3, b: 2, c: 'a'}
   ];
-  
+
   function spec(opt) {
     var stack = {
       type: "stack",
@@ -24,7 +24,7 @@ describe('Stack', function() {
       offset: opt.offset,
       output: {start: "y2", end: "y", mid: "cy"}
     };
-    
+
     return {
       data: [{
         name: "table",
@@ -36,7 +36,8 @@ describe('Stack', function() {
 
   it('should perform flat stack', function(done) {
     parseSpec(spec({groupby:null, sortby:null, field:"b", offset:"zero"}),
-      function(model) {
+      modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             y = [0,1,3,6,10,15,21,28,36,45,47];
@@ -47,13 +48,13 @@ describe('Stack', function() {
           expect(data[i]).to.have.property('cy', 0.5 * (y[i] + y[i+1]));
         }
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should perform grouped stack', function(done) {
     parseSpec(spec({groupby:["a"], sortby:null, field:"b", offset:"zero"}),
-      function(model) {
+      modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             y0 = [0,1,3,  0,4, 9,  0, 7,15,24],
@@ -65,13 +66,13 @@ describe('Stack', function() {
           expect(data[i]).to.have.property('cy', 0.5 * (y0[i] + y1[i]));
         }
         done();
-      },
-      modelFactory);
+      });
   });
-  
+
   it('should perform grouped stack with offset center', function(done) {
     parseSpec(spec({groupby:["a"], sortby:null, field:"b", offset:"center"}),
-      function(model) {
+      modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             y0 = [10,11,13,  5.5, 9.5,14.5,  0, 7,15,24],
@@ -83,13 +84,13 @@ describe('Stack', function() {
           expect(data[i]).to.have.property('cy', 0.5 * (y0[i] + y1[i]));
         }
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should perform grouped stack with offset normalize', function(done) {
     parseSpec(spec({groupby:["a"], sortby:null, field:"b", offset:"normalize"}),
-      function(model) {
+      modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             y0 = [0/6,1/6,3/6,  0/15,4/15, 9/15,  0/26, 7/26,15/26,24/26],
@@ -101,13 +102,13 @@ describe('Stack', function() {
           expect(data[i]).to.have.property('cy').closeTo(0.5 * (y0[i] + y1[i]), EPSILON);
         }
         done();
-      },
-      modelFactory);
+      });
   });
-  
+
   it('should perform grouped sorted stack', function(done) {
     parseSpec(spec({groupby:["a"], sortby:"c", field:"b", offset:"zero"}),
-      function(model) {
+      modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             y0 = [0,1,3,  0,4, 9,  0, 9,17,7],
@@ -119,8 +120,7 @@ describe('Stack', function() {
           expect(data[i]).to.have.property('cy', 0.5 * (y0[i] + y1[i]));
         }
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should validate against the schema', function() {
@@ -128,35 +128,35 @@ describe('Stack', function() {
         validate = validator(schema);
 
     expect(validate({ "type": "stack", "groupby": ["country"], "field": "medals" })).to.be.true;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "sortby": ["gdp"] })).to.be.true;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "zero" })).to.be.true;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "center" })).to.be.true;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "normalize" })).to.be.true;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "output": {"start": "start", "mid": "mid", "end": "end"} })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "stack" })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"] })).to.be.false;
     expect(validate({ "type": "stack", "groupby": "country", "field": "medals" })).to.be.false;
     expect(validate({ "type": "stack", "groupby": ["country"], "field": ["medals"] })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "sortby": "gdp" })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "foo" })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "output": {"foo": "bar"} })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "bar": "foo" })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "silhouette" })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "wiggle" })).to.be.false;
-    expect(validate({ "type": "stack", "groupby": ["country"], 
+    expect(validate({ "type": "stack", "groupby": ["country"],
       "field": "medals", "offset": "expand" })).to.be.false;
   });
 });

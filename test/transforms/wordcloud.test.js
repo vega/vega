@@ -23,7 +23,7 @@ describe('Wordcloud', function() {
     var s = dl.duplicate(spec);
     s.data[0].transform[0].fontScale = null;
 
-    parseSpec(s, function(model) {
+    parseSpec(s, modelFactory, function(error, model) {
       var data = model.data('table').values();
       expect(data.length).to.equal(3);
       expect(data[0].w).to.equal('a');
@@ -43,13 +43,13 @@ describe('Wordcloud', function() {
       expect(data[2].layout_y).to.be.defined;
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should layout scaled wordcloud', function(done) {
     var s = dl.duplicate(spec);
     s.data[0].transform[0].rotate = 'r';
-    parseSpec(s, function(model) {
+    parseSpec(s, modelFactory, function(error, model) {
       var data = model.data('table').values();
       expect(data.length).to.equal(3);
       expect(data[0].w).to.equal('a');
@@ -69,7 +69,7 @@ describe('Wordcloud', function() {
       expect(data[2].layout_y).to.be.defined;
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should validate against the schema', function() {
@@ -110,7 +110,7 @@ describe('Wordcloud', function() {
     expect(validate({ "type": "wordcloud", "output": {"rotate": "rotate"} })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "wordcloud", "size": 1 })).to.be.false;    
+    expect(validate({ "type": "wordcloud", "size": 1 })).to.be.false;
     expect(validate({ "type": "wordcloud", "font": 2 })).to.be.false;
     expect(validate({ "type": "wordcloud", "fontStyle": 2 })).to.be.false;
     expect(validate({ "type": "wordcloud", "fontWeight": 3 })).to.be.false;

@@ -35,15 +35,13 @@ describe('Canvas', function() {
     });
   });
 
-  // Render the given spec using both the headless string renderer
-  // and the standard SVG renderer (in a fake JSDOM)
-  // and compare that the SVG output is identical
+  // Render the given spec using the headless canvas renderer
   function render(name, specFile, done) {
     fs.readFile(specFile, "utf8", function(err, text) {
       if (err) throw err;
       var spec = JSON.parse(text);
 
-      parseSpec(spec, function(viewFactory) {
+      parseSpec(spec, function(error, viewFactory) {
         var view = viewFactory({ renderer: "canvas" }).update();
         view.canvasAsync(function(canvas) {
           var data = canvas.toDataURL();

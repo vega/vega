@@ -7,12 +7,22 @@ function parseData(model, spec, callback) {
   var config = model.config(),
       count = 0;
 
-  function loaded(d) {
+  function onError(error, d) {
+    log.error('PARSE DATA FAILED: ' + d.name + ' ' + error);
+    count = -1;
+    callback(error);
+  }
+
+  function onLoad(d) {
     return function(error, data) {
       if (error) {
-        log.error('LOADING FAILED: ' + d.url + ' ' + error);
-      } else {
-        model.data(d.name).values(dl.read(data, d.format));
+        onError(error, d);
+      } else if (count >= 0) {
+        try {
+          model.data(d.name).values(dl.read(data, d.format));
+        } catch (err) {
+          onError(err, d);
+        }
       }
       if (--count === 0) callback();
     };
@@ -22,9 +32,13 @@ function parseData(model, spec, callback) {
   (spec || []).forEach(function(d) {
     if (d.url) {
       count += 1;
-      dl.load(dl.extend({url: d.url}, config.load), loaded(d));
+      dl.load(dl.extend({url: d.url}, config.load), onLoad(d));
     }
-    parseData.datasource(model, d);
+    try {
+      parseData.datasource(model, d);
+    } catch (err) {
+      onError(err, d);
+    }
   });
 
   if (count === 0) setTimeout(callback, 1);

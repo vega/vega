@@ -32,7 +32,7 @@ describe('CountPattern', function() {
   };
 
   it('should count patterns', function(done) {
-    parseSpec(spec1, function(model) {
+    parseSpec(spec1, modelFactory, function(error, model) {
       var data = model.data('table').values().sort(dl.comparator('-count'));
       expect(data.length).to.equal(3);
       expect(data[0].text).to.equal('a');
@@ -41,16 +41,16 @@ describe('CountPattern', function() {
       expect(data[0].count).to.equal(4);
       expect(data[1].count).to.equal(3);
       expect(data[2].count).to.equal(1);
-      
-      parseSpec(spec2, function(model) {
+
+      parseSpec(spec2, modelFactory, function(error, model) {
         var data = model.data('table').values().sort(dl.comparator('-count'));
         expect(data.length).to.equal(1);
         expect(data[0].text).to.equal(' ');
         expect(data[0].count).to.equal(15);
         done();
-      }, modelFactory);
+      });
 
-    }, modelFactory);
+    });
   });
 
   it('should validate against the schema', function() {
@@ -70,7 +70,7 @@ describe('CountPattern', function() {
     expect(validate({ "type": "countpattern", "stopwords": {"signal": "stop"} })).to.be.true;
     expect(validate({ "type": "countpattern", "output": {"text": "text"} })).to.be.true;
     expect(validate({ "type": "countpattern", "output": {"count": "count"} })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "countpattern", "field": 1 })).to.be.false;
     expect(validate({ "type": "countpattern", "pattern": 2 })).to.be.false;

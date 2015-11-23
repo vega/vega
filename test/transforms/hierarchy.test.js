@@ -23,8 +23,8 @@ describe('Hierarchy', function() {
   }
 
   it('should perform hierarchy layout', function(done) {
-    parseSpec(spec(),
-      function(model) {
+    parseSpec(spec(), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values();
 
@@ -35,8 +35,7 @@ describe('Hierarchy', function() {
         });
 
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should validate against the schema', function() {

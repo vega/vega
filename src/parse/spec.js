@@ -3,62 +3,92 @@ var dl = require('datalib'),
     Model = require('../core/Model'),
     View = require('../core/View');
 
-function parseSpec(spec, callback) {
-  var vf = arguments[arguments.length-1],
-      viewFactory = arguments.length > 2 && dl.isFunction(vf) ? vf : View.factory,
-      config = arguments[2] !== viewFactory ? arguments[2] : {},
-      model = new Model(config);
+/**
+ * Parse graph specification
+ * @param spec (object)
+ * @param config (optional object)
+ * @param viewFactory (optional function)
+ * @param callback (error, model)
+ */
+ function parseSpec(spec /*, [config,] [viewFactory,] callback */) {
+  // do not assign any values to callback, as it will change arguments
+  var arglen = arguments.length,
+      argidx = 2,
+      cb = arguments[arglen-1],
+      model = new Model(),
+      viewFactory = View.factory;
+
+  if (arglen > argidx && dl.isFunction(arguments[arglen - argidx])) {
+    viewFactory = arguments[arglen - argidx];
+    ++argidx;
+  }
+  if (arglen > argidx && dl.isObject(arguments[arglen - argidx])) {
+    model.config(arguments[arglen - argidx]);
+  }
+
+  function onDone(err, value) {
+    if (cb) {
+      if (cb.length > 1) cb(err, value);
+      else if (!err) cb(value);
+      cb = null;
+    }
+  }
+
+  function onError(err) {
+    log.error(err);
+    onDone(err);
+  }
+
+  function onCreate(err) {
+    if (err) onError(err);
+    else onDone(null, viewFactory(model));
+  }
 
   function parse(spec) {
-    // protect against subsequent spec modification
-    spec = dl.duplicate(spec);
+    try {
+      // protect against subsequent spec modification
+      spec = dl.duplicate(spec);
 
-    var parsers = require('./'),
-        create  = function() { callback(viewFactory(model)); },
-        width   = spec.width || 500,
-        height  = spec.height || 500,
-        padding = parsers.padding(spec.padding);
+      var parsers = require('./'),
+          width   = spec.width || 500,
+          height  = spec.height || 500,
+          padding = parsers.padding(spec.padding);
 
-    // create signals for width, height and padding
-    model.signal('width', width);
-    model.signal('height', height);
-    model.signal('padding', padding);
+      // create signals for width, height and padding
+      model.signal('width', width);
+      model.signal('height', height);
+      model.signal('padding', padding);
 
-    // initialize model
-    model.defs({
-      width:      width,
-      height:     height,
-      padding:    padding,
-      viewport:   spec.viewport || null,
-      background: parsers.background(spec.background),
-      signals:    parsers.signals(model, spec.signals),
-      predicates: parsers.predicates(model, spec.predicates),
-      marks:      parsers.marks(model, spec, width, height),
-      data:       parsers.data(model, spec.data, create)
-    });
+      // initialize model
+      model.defs({
+        width:      width,
+        height:     height,
+        padding:    padding,
+        viewport:   spec.viewport || null,
+        background: parsers.background(spec.background),
+        signals:    parsers.signals(model, spec.signals),
+        predicates: parsers.predicates(model, spec.predicates),
+        marks:      parsers.marks(model, spec, width, height),
+        data:       parsers.data(model, spec.data, onCreate)
+      });
+    } catch (err) { onError(err); }
   }
 
   if (dl.isObject(spec)) {
     parse(spec);
   } else if (dl.isString(spec)) {
     var opts = dl.extend({url: spec}, model.config().load);
-    dl.load(opts, function(err, data) {
-      if (err) {
-        log.error('LOADING SPECIFICATION FAILED: ' + err.statusText);
-      } else {
-        try {
-          parse(JSON.parse(data));
-        } catch (e) {
-          log.error('INVALID SPECIFICATION: Must be a valid JSON object. '+e);
-        }
-      }
+    dl.json(opts, function(err, spec) {
+      if (err) onError('SPECIFICATION LOAD FAILED: ' + err);
+      else parse(spec);
     });
   } else {
-    log.error('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
+    onError('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
   }
 }
 
 module.exports = parseSpec;
+
 parseSpec.schema = {
   "defs": {
     "spec": {

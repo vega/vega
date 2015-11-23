@@ -13,38 +13,38 @@ describe('Filter', function() {
   ];
 
   it('should work w/a static expr', function(done) {
-    parseSpec({ 
-      "data": [{ 
-        "name": "table", 
+    parseSpec({
+      "data": [{
+        "name": "table",
         "values": values,
         "transform": [{"type": "filter", "test": "datum.y > 45"}]
-      }] 
-    }, function(model) {
+      }]
+    }, viewFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
-          filtered = values.filter(function(d) { return d.y > 45 }), 
+          data = ds.values(),
+          filtered = values.filter(function(d) { return d.y > 45 }),
           i, len;
 
       expect(data.length).to.be.above(0).and.equal(filtered.length);
       for(i=0, len=data.length; i<len; ++i) expect(data[i].y).to.be.above(45);
 
       done();
-    }, viewFactory);
+    });
   });
 
   it('should work w/signals in expr', function(done) {
-    parseSpec({ 
+    parseSpec({
       "signals":[{"name": "above", "init": 45}],
 
-      "data": [{ 
-        "name": "table", 
+      "data": [{
+        "name": "table",
         "values": values,
         "transform": [{"type": "filter", "test": "datum.y > above"}]
-      }] 
-    }, function(model) {
+      }]
+    }, viewFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
-          filtered = values.filter(function(d) { return d.y > 45 }), 
+          data = ds.values(),
+          filtered = values.filter(function(d) { return d.y > 45 }),
           i, len;
 
       expect(data.length).to.be.above(0).and.equal(filtered.length);
@@ -63,7 +63,7 @@ describe('Filter', function() {
       for(i=0, len=data.length; i<len; ++i) expect(data[i].y).to.be.above(30);
 
       done();
-    }, viewFactory);
+    });
   });
 
   it('should validate against the schema', function() {
@@ -71,7 +71,7 @@ describe('Filter', function() {
         validate = validator(schema);
 
     expect(validate({ "type": "filter", "test": "d.x > 5" })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "filter" })).to.be.false;
     expect(validate({ "type": "filter", "test": true })).to.be.false;

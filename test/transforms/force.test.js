@@ -39,8 +39,8 @@ describe('Force', function() {
   }
 
   it('should perform layout', function(done) {
-    parseSpec(spec({}),
-      function(model) {
+    parseSpec(spec({}), modelFactory,
+      function(error, model) {
         var nodes = model.data('vertices').values(),
             links = model.data('edges').values();
 
@@ -51,16 +51,15 @@ describe('Force', function() {
         }
 
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should respect link distances', function(done) {
     var linkDistances = [20, 100, 200];
-    
+
     linkDistances.forEach(function(dist, i) {
-      parseSpec(spec({linkDistance: dist, iterations: 100}),
-        function(model) {
+      parseSpec(spec({linkDistance: dist, iterations: 100}), modelFactory,
+        function(error, model) {
           var nodes = model.data('vertices').values(),
               links = model.data('edges').values();
 
@@ -75,8 +74,7 @@ describe('Force', function() {
           }
 
           if (i == linkDistances.length - 1) done();
-        },
-        modelFactory);
+        });
     });
   });
 
@@ -99,7 +97,7 @@ describe('Force', function() {
     expect(validate({ "type": "force", "links": "edges", "gravity": 0.4 })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "alpha": 0.4 })).to.be.true;
     expect(validate({ "type": "force", "links": "edges", "output": {"x": "x", "y": "y"} })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "force" })).to.be.false;
     expect(validate({ "type": "force", "links": true })).to.be.false;
