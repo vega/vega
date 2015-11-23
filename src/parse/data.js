@@ -17,7 +17,7 @@ function parseData(model, spec, callback) {
     return function(error, data) {
       if (error) {
         onError(error, d);
-      } else if (count >= 0) {
+      } else if (count > 0) {
         try {
           model.data(d.name).values(dl.read(data, d.format));
           if (--count === 0) callback();
