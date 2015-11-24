@@ -49,10 +49,13 @@ var dl = require('datalib'),
       // protect against subsequent spec modification
       spec = dl.duplicate(spec);
 
+      var paddingVar = spec.padding || config.padding;
+
       var parsers = require('./'),
-          width   = spec.width || 500,
-          height  = spec.height || 500,
-          padding = parsers.padding(spec.padding);
+          width   = spec.width || config.width || 500,
+          height  = spec.height || config.height || 500,
+          padding = parsers.padding(paddingVar),
+          background = spec.background || config.background;
 
       // create signals for width, height and padding
       model.signal('width', width);
@@ -65,7 +68,7 @@ var dl = require('datalib'),
         height:     height,
         padding:    padding,
         viewport:   spec.viewport || null,
-        background: parsers.background(spec.background),
+        background: parsers.background(background),
         signals:    parsers.signals(model, spec.signals),
         predicates: parsers.predicates(model, spec.predicates),
         marks:      parsers.marks(model, spec, width, height),

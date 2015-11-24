@@ -108,11 +108,14 @@ function instance(scale) {
 }
 
 function ordinal(scale, rng, group) {
+  var config = this._graph.config();
   var def = this._def,
       prev = scale._prev,
       dataDrivenRange = false,
-      pad = signal.call(this, def.padding) || 0,
-      outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
+      pad = signal.call(this, def.padding) || config && config.scales && config.scales.padding || 0,
+      outer = def.outerPadding == null ? 
+        config && config.scales && config.scales.outerPadding || pad : 
+        signal.call(this, def.outerPadding),
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
       domain, str, spatial=true;

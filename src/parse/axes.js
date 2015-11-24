@@ -13,9 +13,31 @@ var ORIENT = {
 function parseAxes(model, spec, axes, group) {
   var config = model.config();
   (spec || []).forEach(function(def, index) {
-    axes[index] = axes[index] || axs(model);
-    parseAxis(config, def, index, axes[index], group);
+    var updatedConfig = setConfig(config, def.type);
+    axes[index] = axes[index] || axs(model, updatedConfig);
+    parseAxis(updatedConfig, def, index, axes[index], group);
   });
+}
+
+function setConfig(config, defType) {
+  var updatedConfig = {};
+  updatedConfig.axis = {};
+  var axisName = 'axis_' + defType;
+
+  if (config[axisName]) {
+    for (var key in config[axisName]) {
+      if (config[axisName].hasOwnProperty(key)) {
+        updatedConfig.axis[key] = config[axisName][key];
+      }
+    }
+  }
+
+  for (var key in config.axis) {
+    if (config.axis.hasOwnProperty(key) && (!(key in updatedConfig.axis))) {
+      updatedConfig.axis[key] = config.axis[key];
+    }
+  }
+  return updatedConfig;
 }
 
 function parseAxis(config, def, index, axis, group) {
@@ -29,9 +51,9 @@ function parseAxis(config, def, index, axis, group) {
   // axis offset
   axis.offset(def.offset || 0);
   // axis layer
-  axis.layer(def.layer || "front");
+  axis.layer(def.layer || config.axis.layer || "front");
   // axis grid lines
-  axis.grid(def.grid || false);
+  axis.grid(def.grid || config.axis.grid || false);
   // axis title
   axis.title(def.title || null);
   // axis title offset
@@ -57,7 +79,11 @@ function parseAxis(config, def, index, axis, group) {
   }
   if (def.tickSizeMajor != null) size[0] = def.tickSizeMajor;
   if (def.tickSizeMinor != null) size[1] = def.tickSizeMinor;
-  if (def.tickSizeEnd   != null) size[2] = def.tickSizeEnd;
+  if ('tickSizeEnd' in config.axis) {
+    size[2] = config.axis.tickSizeEnd;
+  } else if (def.tickSizeEnd   != null) {
+    size[2] = def.tickSizeEnd;
+  }
   if (size.length) {
     axis.tickSize.apply(axis, size);
   }

@@ -10,9 +10,9 @@ var TIME    = 'time',
     ORDINAL = 'ordinal',
     NUMBER  = 'number';
 
-function axs(model) {
+function axs(model, updatedConfig) {
   var scale,
-      config = model.config().axis,
+      config = updatedConfig.axis,
       orient = config.orient,
       offset = 0,
       titleOffset = config.titleOffset,
@@ -184,6 +184,7 @@ function axs(model) {
     dl.extend(m.title, axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.gridColor};
     m.gridLines.properties.enter.strokeOpacity = {value: config.gridOpacity};
+    m.gridLines.properties.enter.strokeWidth = {value: config.gridWidth};
 
     // extend axis marks based on axis orientation
     axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
