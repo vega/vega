@@ -18,16 +18,20 @@ var proto = (Bounder.prototype = new Node());
 proto.evaluate = function(input) {
   log.debug(input, ['bounds', this._mark.marktype]);
 
-  var type  = this._mark.marktype,
+  var mark  = this._mark,
+      type  = mark.marktype,
       isGrp = type === 'group',
-      items = this._mark.items,
-      hasLegends = dl.array(this._mark.def.legends).length > 0,
-      i, ilen, j, jlen, group, legend;
+      items = mark.items,
+      group = items.length && (isGrp ? items[0] : items[0].mark.group),
+      axis  = group && group.mark.axis,
+      hasLegends = dl.array(mark.def.legends).length > 0,
+      i, ilen, j, jlen, legend, axis;
 
   if (input.add.length || input.rem.length || !items.length ||
       input.mod.length === items.length ||
-      type === 'area' || type === 'line') {
-    bound.mark(this._mark, null, isGrp && !hasLegends);
+      type === 'area' || type === 'line' ||
+      (axis && input.scales[axis.scale().scaleName])) {
+    bound.mark(mark, null, isGrp && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bound.item(item); });
   }
@@ -43,7 +47,7 @@ proto.evaluate = function(input) {
       }
     }
 
-    bound.mark(this._mark, null, true);
+    bound.mark(mark, null, true);
   }
 
   return df.ChangeSet.create(input, true);

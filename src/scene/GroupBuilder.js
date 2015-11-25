@@ -244,7 +244,7 @@ function buildAxes(input, group) {
         def = a.def(),
         b = null;
 
-    axisItems[i] = {group: group, axis: true, layer: def.layer};
+    axisItems[i] = {group: group, axis: a, layer: def.layer};
     b = (def.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, axisItems[i], builder)
       .dependency(Deps.SCALES, scale);
@@ -263,7 +263,7 @@ function buildLegends(input, group) {
         def = l.def(),
         b = null;
 
-    legendItems[i] = {group: group, legend: true};
+    legendItems[i] = {group: group, legend: l};
     b = (def.type === Types.GROUP) ? new GroupBuilder() : new Builder();
     b.init(builder._graph, def, legendItems[i], builder)
       .dependency(Deps.SCALES, scale);
