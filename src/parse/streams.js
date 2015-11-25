@@ -47,6 +47,9 @@ function parseStreams(view) {
   // signals are registered on the same event, they will receive the
   // new value on the same pulse.
   dl.keys(internal.handlers).forEach(function(type) {
+    if (type === 'tick') {
+      return; // no need to register the tick event
+    }
     view.on(type, function(evt, item) {
       evt.preventDefault(); // stop text selection
       extendEvent(evt, item);
@@ -57,6 +60,15 @@ function parseStreams(view) {
   // add external event listeners
   dl.keys(external.handlers).forEach(function(type) {
     if (typeof window === 'undefined') return; // No external support
+
+    if (type === 'tick') {
+      function tick(timestamp) {
+        fire(external, type, {}, {now:timestamp});
+        requestAnimationFrame(tick);
+      }
+      external.handlers[type].animationFrameId = requestAnimationFrame(tick);
+      return;
+    }
 
     var h = external.handlers[type],
         t = type.split(':'), // --> no element pseudo-selectors
@@ -82,7 +94,10 @@ function parseStreams(view) {
       var h = external.handlers[type],
           t = type.split(':'),
           elt = h.elements || [];
-
+      if (type == 'tick') {
+        cancelAnimationFrame(h.animationFrameId);
+        return;
+      }
       for (var i=0; i<elt.length; ++i) {
         elt[i].removeEventListener(t[1], h.listener);
       }
@@ -167,7 +182,6 @@ function parseStreams(view) {
         type = target ? target+':'+evt : evt,
         node = registry.nodes[type] || (registry.nodes[type] = new df.Node(model)),
         handlers = registry.handlers[type] || (registry.handlers[type] = []);
-
     if (name) {
       filters.push('!!event.vg.name["' + name + '"]'); // Mimic event bubbling
     } else if (mark) {
