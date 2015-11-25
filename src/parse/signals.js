@@ -67,7 +67,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
   }
 
   // Verify scope is valid
-  if (!model.group(scope._id)) {
+  if (model.group(scope._id) !== scope) {
     throw new Error('Scope for scale "'+name+'" is not a valid group item.');
   }
 
