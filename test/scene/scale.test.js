@@ -15,7 +15,7 @@ describe('Scale', function() {
         ]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -24,7 +24,7 @@ describe('Scale', function() {
         expect(y.domain()).to.eql(lin);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should support array<signal>', function(done) {
@@ -33,14 +33,14 @@ describe('Scale', function() {
         "data": [],
         "scales": [
           {
-            "name": "x", "type": "ordinal", 
-            "domain": [1, 2, {"signal": "s1"}, 6, {"signal": "s2"}], 
+            "name": "x", "type": "ordinal",
+            "domain": [1, 2, {"signal": "s1"}, 6, {"signal": "s2"}],
             "range": [0, 1]
           }
         ]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x');
 
@@ -53,7 +53,7 @@ describe('Scale', function() {
         expect(x.domain()).to.eql([1, 2, 3, 6]);
 
         done();
-      }, viewFactory);
+      });
     });
 
     describe('Min/Max', function() {
@@ -65,14 +65,14 @@ describe('Scale', function() {
           ]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
               y = group.scale('y');
 
           expect(y.domain()).to.eql([0, 10]);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support signal values', function(done) {
@@ -85,12 +85,12 @@ describe('Scale', function() {
 
           "scales": [{
             "name": "y", "type": "linear", "range": [0, 1], "zero": false,
-            "domainMin": {"signal": "minDomain"}, 
-            "domainMax": {"signal": "maxDomain"} 
+            "domainMin": {"signal": "minDomain"},
+            "domainMax": {"signal": "maxDomain"}
           }]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
               y = group.scale('y');
 
@@ -103,7 +103,7 @@ describe('Scale', function() {
           expect(y.domain()).to.eql([5, 15]);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should override domain values', function(done) {
@@ -116,14 +116,14 @@ describe('Scale', function() {
           }]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
               y = group.scale('y');
 
           expect(y.domain()).to.eql([0, 10]);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support DataRef');
@@ -165,7 +165,7 @@ describe('Scale', function() {
         };
 
         it('should initialize', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             var group = model.scene().items[0],
                 x = group.scale('x'),
                 y = group.scale('y'),
@@ -178,11 +178,11 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([15, 91]);
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming adds', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table').insert([
               {"x": 21, "y": 100}, {"x": 22, "y": 10},
               {"x": 23, "y": 53}
@@ -200,14 +200,14 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([10, 100]);
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming mods', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table')
               .synchronize()
-              .update(function(x) { return x.x % 2 !== 0 }, "x", 
+              .update(function(x) { return x.x % 2 !== 0 }, "x",
                 function(x) { return x.x * 2 })
               .update(function(x) { return x.x >= 0 }, "y",
                 function(x) { return x.y * 2 })
@@ -228,11 +228,11 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([30, 182]);
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming rems', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table')
               .synchronize()
               .remove(function(x) { return x.x > 10 })
@@ -250,7 +250,7 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([19, 91]);
 
             done();
-          }, viewFactory);
+          });
         });
       });
 
@@ -298,7 +298,7 @@ describe('Scale', function() {
         };
 
         it('should initialize', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             var group = model.scene().items[0],
                 x = group.scale('x'),
                 y = group.scale('y'),
@@ -311,11 +311,11 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([15, 91]);
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming adds', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             var group = model.scene().items[0],
                 x = group.scale('x'),
                 y = group.scale('y'),
@@ -346,11 +346,11 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([1, 523]);
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming mods', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             var group = model.scene().items[0],
                 x = group.scale('x'),
                 y = group.scale('y'),
@@ -359,7 +359,7 @@ describe('Scale', function() {
 
             model.data('table1')
               .synchronize()
-              .update(function(x) { return x.x % 2 !== 0 }, "x", 
+              .update(function(x) { return x.x % 2 !== 0 }, "x",
                 function(x) { return x.x * 2 })
               .update(function(x) { return x.x >= 0 }, "y",
                 function(x) { return x.y * 2 })
@@ -367,7 +367,7 @@ describe('Scale', function() {
 
             model.data('table2')
               .synchronize()
-              .update(function(x) { return x.a % 2 !== 0 }, "a", 
+              .update(function(x) { return x.a % 2 !== 0 }, "a",
                 function(x) { return x.a * 2 })
               .update(function(x) { return x.b >= 0 }, "b",
                 function(x) { return x.b * 2 })
@@ -382,11 +382,11 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([30, 182]);
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming rems', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table1')
               .synchronize()
               .remove(function(x) { return x.x > 10 })
@@ -409,7 +409,7 @@ describe('Scale', function() {
             expect(y.domain()).to.eql([19, 91]);
 
             done();
-          }, viewFactory);
+          });
         });
       });
 
@@ -454,7 +454,7 @@ describe('Scale', function() {
         };
 
         it('should initialize', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             var groups = model.scene().items[0].items[0].items,
                 i = 0, len = groups.length,
                 num = 4,
@@ -467,11 +467,11 @@ describe('Scale', function() {
             }
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming adds', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table')
               .insert([
                 {"category": "A", "position": 4},
@@ -492,14 +492,14 @@ describe('Scale', function() {
             }
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming mods', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table')
               .synchronize()
-              .update(function(x) { return true; }, "position", 
+              .update(function(x) { return true; }, "position",
                 function(x) { return x.position*2; })
               .fire();
 
@@ -515,11 +515,11 @@ describe('Scale', function() {
             }
 
             done();
-          }, viewFactory);
+          });
         });
 
         it('should handle streaming rems', function(done) {
-          parseSpec(spec, function(model) {
+          parseSpec(spec, viewFactory, function(error, model) {
             model.data('table')
               .synchronize()
               .remove(function(x) { return x.position % 2 === 0 })
@@ -536,10 +536,10 @@ describe('Scale', function() {
             }
 
             done();
-          }, viewFactory);
+          });
         });
       });
-    }); 
+    });
   });
 
   describe('Range', function() {
@@ -547,17 +547,17 @@ describe('Scale', function() {
       var spec = {
         "data": [],
         "scales": [{
-          "name": "x", "type": "ordinal", 
-          "domain": [0, 1], 
+          "name": "x", "type": "ordinal",
+          "domain": [0, 1],
           "range": range
         }, {
-          "name": "y", "type": "linear", 
-          "domain": [0, 1], 
+          "name": "y", "type": "linear",
+          "domain": [0, 1],
           "range": range
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -567,7 +567,7 @@ describe('Scale', function() {
         expect(y.range()).to.eql(range);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should support array<signal>', function(done) {
@@ -575,17 +575,17 @@ describe('Scale', function() {
         "signals": [{"name": "s1", "init": 5}, {"name": "s2", "init": 7}],
         "data": [],
         "scales": [{
-          "name": "x", "type": "ordinal", 
-          "domain": [0, 1], 
+          "name": "x", "type": "ordinal",
+          "domain": [0, 1],
           "range": [{"signal": "s1"}, 23, {"signal": "s2"}, 51]
         }, {
-          "name": "y", "type": "linear", 
-          "domain": [0, 1], 
+          "name": "y", "type": "linear",
+          "domain": [0, 1],
           "range": [{"signal": "s1"}, 23, {"signal": "s2"}, 51]
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -602,24 +602,24 @@ describe('Scale', function() {
         expect(y.range()).to.eql([10, 23, 37, 51]);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should reverse', function(done) {
       var spec = {
         "data": [],
         "scales": [{
-          "name": "x", "type": "ordinal", 
-          "domain": [0, 1], 
+          "name": "x", "type": "ordinal",
+          "domain": [0, 1],
           "range": range, "reverse": true
         }, {
-          "name": "y", "type": "linear", 
-          "domain": [0, 1], 
+          "name": "y", "type": "linear",
+          "domain": [0, 1],
           "range": range, "reverse": true
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -629,7 +629,7 @@ describe('Scale', function() {
         expect(y.range()).to.eql([range[1], range[0]]);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should round');
@@ -655,7 +655,7 @@ describe('Scale', function() {
       }
 
       it('should support `width`', function(done) {
-        parseSpec(spec('width'), function(model) {
+        parseSpec(spec('width'), viewFactory, function(error, model) {
           var group = model.scene().items[0],
               linear  = group.scale('lin'),
               ordinal = group.scale('ord');
@@ -664,11 +664,11 @@ describe('Scale', function() {
           expect(ordinal.range()).to.eql([0, 250]);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support `height`', function(done) {
-        parseSpec(spec('height'), function(model) {
+        parseSpec(spec('height'), viewFactory, function(error, model) {
           var group = model.scene().items[0],
               linear  = group.scale('lin'),
               ordinal = group.scale('ord');
@@ -677,11 +677,11 @@ describe('Scale', function() {
           expect(ordinal.range()).to.eql([0, 150]);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support `shapes`', function(done) {
-        parseSpec(spec('shapes'), function(model) {
+        parseSpec(spec('shapes'), viewFactory, function(error, model) {
           var group = model.scene().items[0],
               linear  = group.scale('lin'),
               ordinal = group.scale('ord');
@@ -690,11 +690,11 @@ describe('Scale', function() {
           expect(ordinal.range()).to.eql(config.range.shapes);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support `category10`', function(done) {
-        parseSpec(spec('category10'), function(model) {
+        parseSpec(spec('category10'), viewFactory, function(error, model) {
           var group = model.scene().items[0],
               linear  = group.scale('lin'),
               ordinal = group.scale('ord');
@@ -703,11 +703,11 @@ describe('Scale', function() {
           expect(ordinal.range()).to.eql(config.range.category10);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support `category20`', function(done) {
-        parseSpec(spec('category20'), function(model) {
+        parseSpec(spec('category20'), viewFactory, function(error, model) {
           var group = model.scene().items[0],
               linear  = group.scale('lin'),
               ordinal = group.scale('ord');
@@ -716,7 +716,7 @@ describe('Scale', function() {
           expect(ordinal.range()).to.eql(config.range.category20);
 
           done();
-        }, viewFactory);
+        });
       });
     });
 
@@ -725,17 +725,17 @@ describe('Scale', function() {
         var spec = {
           "data": [],
           "scales": [{
-            "name": "x", "type": "ordinal", 
-            "domain": [0, 1], 
+            "name": "x", "type": "ordinal",
+            "domain": [0, 1],
             "rangeMin": range[0], "rangeMax": range[1]
           }, {
-            "name": "y", "type": "linear", 
-            "domain": [0, 1], 
+            "name": "y", "type": "linear",
+            "domain": [0, 1],
             "rangeMin": range[0], "rangeMax": range[1]
           }]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
               x = group.scale('x'),
               y = group.scale('y');
@@ -745,7 +745,7 @@ describe('Scale', function() {
           expect(y.range()).to.eql(range);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support signal values', function(done) {
@@ -757,17 +757,17 @@ describe('Scale', function() {
           ],
 
           "scales": [{
-            "name": "x", "type": "ordinal", 
-            "domain": [0, 1], 
+            "name": "x", "type": "ordinal",
+            "domain": [0, 1],
             "rangeMin": {"signal": "minRange"}, "rangeMax": {"signal": "maxRange"}
           }, {
-            "name": "y", "type": "linear", 
-            "domain": [0, 1], 
+            "name": "y", "type": "linear",
+            "domain": [0, 1],
             "rangeMin": {"signal": "minRange"}, "rangeMax": {"signal": "maxRange"}
           }]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
               x = group.scale('x'),
               y = group.scale('y');
@@ -787,24 +787,24 @@ describe('Scale', function() {
           expect(y.range()).to.eql([27, 47]);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should override range values', function(done) {
         var spec = {
           "data": [],
           "scales": [{
-            "name": "x", "type": "ordinal", 
+            "name": "x", "type": "ordinal",
             "domain": [0, 1],  "range": [0, 1],
             "rangeMin": range[0], "rangeMax": range[1]
           }, {
-            "name": "y", "type": "linear", 
+            "name": "y", "type": "linear",
             "domain": [0, 1], "range": [0, 1],
             "rangeMin": range[0], "rangeMax": range[1]
           }]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
               x = group.scale('x'),
               y = group.scale('y');
@@ -814,7 +814,7 @@ describe('Scale', function() {
           expect(y.range()).to.eql(range);
 
           done();
-        }, viewFactory);
+        });
       });
 
       it('should support DataRef');
@@ -824,7 +824,7 @@ describe('Scale', function() {
       it('should initialize', function(done) {
         var spec = {
           "data": [{
-            "name": "table1", 
+            "name": "table1",
             "values": [{"c": "red"}, {"c": "green"}, {"c": "blue"}]
           }, {
             "name": "table2",
@@ -841,13 +841,13 @@ describe('Scale', function() {
             "range": {
               "fields": [
                 {"data": "table1", "field": "c"},
-                {"data": "table2", "field": "c"}  
+                {"data": "table2", "field": "c"}
               ]
             }
           }]
         };
 
-        parseSpec(spec, function(model) {
+        parseSpec(spec, viewFactory, function(error, model) {
           var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -856,7 +856,7 @@ describe('Scale', function() {
             expect(y.range()).to.eql(['red', 'green', 'blue', 'cyan', 'yellow', 'magenta']);
 
             done();
-        }, viewFactory);
+        });
       });
 
       it('should handle streaming adds');
@@ -870,17 +870,17 @@ describe('Scale', function() {
       var spec = {
         "data": [],
         "scales": [{
-          "name": "x", "type": "ordinal", 
-          "domain": [0, 1], 
+          "name": "x", "type": "ordinal",
+          "domain": [0, 1],
           "range": range
         }, {
-          "name": "y", "type": "ordinal", 
-          "domain": [0, 1], 
+          "name": "y", "type": "ordinal",
+          "domain": [0, 1],
           "range": range, "points": true
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -890,7 +890,7 @@ describe('Scale', function() {
         expect(y.range()).to.eql(range);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should sort domain', function(done) {
@@ -913,21 +913,21 @@ describe('Scale', function() {
           ]
         }],
         "scales": [{
-          "name": "x", "type": "ordinal", 
-          "domain": {"data": "table", "field": "category", "sort": true}, 
+          "name": "x", "type": "ordinal",
+          "domain": {"data": "table", "field": "category", "sort": true},
           "range": "width"
         }, {
-          "name": "y", "type": "ordinal", 
+          "name": "y", "type": "ordinal",
           "domain": {
-            "data": "table", 
+            "data": "table",
             "field": "category",
             "sort": {"field": "value", "op": "average"}
-          }, 
+          },
           "range": "width"
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -936,7 +936,7 @@ describe('Scale', function() {
         expect(y.domain()).to.eql(['C', 'B', 'A']);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should support points via signal');
@@ -945,17 +945,17 @@ describe('Scale', function() {
       var spec = {
         "data": [],
         "scales": [{
-          "name": "x", "type": "ordinal", 
-          "domain": [0, 1, 2], 
+          "name": "x", "type": "ordinal",
+          "domain": [0, 1, 2],
           "range": [0, 120], "padding": 0.2,
         }, {
-          "name": "y", "type": "ordinal", 
-          "domain": [0, 1, 2], 
+          "name": "y", "type": "ordinal",
+          "domain": [0, 1, 2],
           "range": [0, 120], "points": true, "padding": 1,
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -965,7 +965,7 @@ describe('Scale', function() {
         expect(y.range()).to.eql([20, 60, 100]);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should support padding via signal');
@@ -990,7 +990,7 @@ describe('Scale', function() {
         ]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             asc  = group.scale('asc'),
             desc = group.scale('desc'),
@@ -1041,7 +1041,7 @@ describe('Scale', function() {
         expect(desc.invert(800, 700)).to.deep.equal(drev.slice(3,4));
 
         done();
-      }, viewFactory);
+      });
     });
   });
 
@@ -1051,17 +1051,17 @@ describe('Scale', function() {
       var spec = {
         "data": [],
         "scales": [{
-          "name": "x", 
-          "domain": [-10, 0], 
+          "name": "x",
+          "domain": [-10, 0],
           "range": ["red", "white", "green"], "clamp": true
         }, {
-          "name": "y", 
-          "domain": [-10, 0, 100], 
+          "name": "y",
+          "domain": [-10, 0, 100],
           "range": ["red", "white"], "clamp": true
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             x = group.scale('x'),
             y = group.scale('y');
@@ -1073,7 +1073,7 @@ describe('Scale', function() {
         expect(x(50)).to.equal("#ffffff");
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should nice the domain values', function(done) {
@@ -1082,7 +1082,7 @@ describe('Scale', function() {
         "data": [],
         "scales": [{
           "name": "s1", "zero": false,
-          "domain": [1.1, 10.9], "nice": true 
+          "domain": [1.1, 10.9], "nice": true
         }, {
           "name": "s2", "zero": false,
           "domain": [10.9, 1.1], "nice": true
@@ -1098,7 +1098,7 @@ describe('Scale', function() {
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             s = group.scale;
 
@@ -1109,7 +1109,7 @@ describe('Scale', function() {
         expect(s('s5').domain()).to.eql([0, .5]);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should start at zero', function(done) {
@@ -1124,7 +1124,7 @@ describe('Scale', function() {
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             s = group.scale;
 
@@ -1132,7 +1132,7 @@ describe('Scale', function() {
         expect(s('s2').domain()).to.eql([0, range[1]]);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should support signals for clamp, nice, zero');
@@ -1146,7 +1146,7 @@ describe('Scale', function() {
         "scales": [{
           "name": "s1", "type": "pow",
           "domain": [1, 2], "range": [0, 1], "zero": false,
-          "exponent": 0.5 
+          "exponent": 0.5
         }, {
           "name": "s2", "type": "pow",
           "domain": [1, 2], "range": [0, 1], "zero": false,
@@ -1158,7 +1158,7 @@ describe('Scale', function() {
         }]
       };
 
-      parseSpec(spec, function(model) {
+      parseSpec(spec, viewFactory, function(error, model) {
         var group = model.scene().items[0],
             s1 = group.scale('s1'),
             s2 = group.scale('s2'),
@@ -1180,7 +1180,7 @@ describe('Scale', function() {
         expect(s3.exponent()).to.equal(-1);
 
         done();
-      }, viewFactory);
+      });
     });
 
     it('should support signal exponents');

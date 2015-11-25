@@ -6,7 +6,7 @@ var dl = require('datalib'),
 
 describe('Streams', function() {
   function test(spec, interaction) {
-    parseSpec(spec, function(chart) { 
+    parseSpec(spec, function(error, chart) {
       jsdom.env("<html><body></body></html>", function(err, window) {
         var document = window.document,
             body = d3.select(document).select('body').node();
@@ -15,7 +15,7 @@ describe('Streams', function() {
           .update();
 
         interaction(view, d3.select(body).select('.marks').node(), mouseEvt);
-        
+
         function mouseEvt(type, x, y, target) {
           var mm = document.createEvent("MouseEvents");
           mm.initMouseEvent("mousemove", true, true, window, null, x, y, x, y, false, false, false, false, target);
@@ -155,7 +155,7 @@ describe('Streams', function() {
         streams: [{ type: "mousedown", expr: "event" }]
       }, {
         name: "signalB",
-        streams: [{ 
+        streams: [{
           type: "signalA", expr: "signalA.clientX",
           scale: {name: "x", invert: true}
         }]
@@ -205,7 +205,7 @@ describe('Streams', function() {
       mouseEvt('mousedown', 201, 350, svg);
       expect(view.signal('signalA')).to.not.be.undefined;
       done();
-    });    
+    });
   });
 
   it('should propagate ordered streams', function(done) {
@@ -227,8 +227,8 @@ describe('Streams', function() {
       expect(view.signal('signalA')).to.have.property('clientX', 250);
       expect(view.signal('signalA')).to.have.property('clientY', 350);
 
-      mouseEvt('mouseup', 250, 350, svg);  
-      mouseEvt('mousemove', 190, 100, svg);    
+      mouseEvt('mouseup', 250, 350, svg);
+      mouseEvt('mousemove', 190, 100, svg);
       expect(view.signal('signalA')).to.have.property('clientX', 250);
       expect(view.signal('signalA')).to.have.property('clientY', 350);
 
@@ -256,13 +256,13 @@ describe('Streams', function() {
       expect(view.signal('signalA')).to.have.property('clientX', 190);
       expect(view.signal('signalA')).to.have.property('clientY', 100);
 
-      mouseEvt('mouseup', 250, 350, svg);  
-      mouseEvt('mousemove', 190, 100, svg);    
+      mouseEvt('mouseup', 250, 350, svg);
+      mouseEvt('mousemove', 190, 100, svg);
       expect(view.signal('signalA')).to.have.property('clientX', 250);
       expect(view.signal('signalA')).to.have.property('clientY', 350);
 
       done();
-    });    
+    });
   });
 
   it('should populate vg events', function(done) {
@@ -354,7 +354,7 @@ describe('Streams', function() {
       expect(sgA).to.have.deep.property("vg.name.mark2.mark.def.name", "mark2");
       expect(sgA).to.have.deep.property("vg.name.mark2.x", 25);
       expect(sgA).to.have.deep.property("vg.name.mark2.fill", "green");
-      
+
       expect(sgA).to.have.deep.property("vg.name.mark1.mark.marktype", "group");
       expect(sgA).to.have.deep.property("vg.name.mark1.mark.def.name", "mark1");
       expect(sgA).to.have.deep.property("vg.name.mark1.x", 25);

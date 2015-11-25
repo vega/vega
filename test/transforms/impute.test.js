@@ -8,7 +8,7 @@ describe('Impute', function() {
     {a: 2, b: 3, c: 5},
     {a: 2, b: 4, c: 11}
   ];
-  
+
   function spec(opt) {
     var impute = {
       type: 'impute',
@@ -18,7 +18,7 @@ describe('Impute', function() {
       method:  opt.method,
       value:   opt.value
     };
-    
+
     return {
       data: [{
         name: "table",
@@ -33,8 +33,8 @@ describe('Impute', function() {
   };
 
   it('should impute values', function(done) {
-    parseSpec(spec({method: 'value', value: -1}),
-      function(model) {
+    parseSpec(spec({method: 'value', value: -1}), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values().filter(imputed);
 
@@ -46,13 +46,12 @@ describe('Impute', function() {
         expect(data[1]).to.have.property('b', 2);
         expect(data[1]).to.have.property('c', -1);
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should impute mean', function(done) {
-    parseSpec(spec({method: 'mean'}),
-      function(model) {
+    parseSpec(spec({method: 'mean'}), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values().filter(imputed);
 
@@ -60,13 +59,12 @@ describe('Impute', function() {
         expect(data[0]).to.have.property('c', 3);
         expect(data[1]).to.have.property('c', 6);
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should impute median', function(done) {
-    parseSpec(spec({method: 'median'}),
-      function(model) {
+    parseSpec(spec({method: 'median'}), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values().filter(imputed);
 
@@ -74,13 +72,12 @@ describe('Impute', function() {
         expect(data[0]).to.have.property('c', 3);
         expect(data[1]).to.have.property('c', 5);
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should impute min', function(done) {
-    parseSpec(spec({method: 'min'}),
-      function(model) {
+    parseSpec(spec({method: 'min'}), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values().filter(imputed);
 
@@ -88,13 +85,12 @@ describe('Impute', function() {
         expect(data[0]).to.have.property('c', 1);
         expect(data[1]).to.have.property('c', 2);
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should impute max', function(done) {
-    parseSpec(spec({method: 'max'}),
-      function(model) {
+    parseSpec(spec({method: 'max'}), modelFactory,
+      function(error, model) {
         var ds = model.data('table'),
             data = ds.values().filter(imputed);
 
@@ -102,8 +98,7 @@ describe('Impute', function() {
         expect(data[0]).to.have.property('c', 5);
         expect(data[1]).to.have.property('c', 11);
         done();
-      },
-      modelFactory);
+      });
   });
 
   it('should validate against the schema', function() {
@@ -119,9 +114,9 @@ describe('Impute', function() {
     expect(validate({ "type": "impute", "groupby": ["a"], "orderby": ["b"], "field": "c", "method": "value", "value": 5 })).to.be.true;
     expect(validate({ "type": "impute", "groupby": ["a"], "orderby": ["b"], "field": "c", "method": "value", "value": "na" })).to.be.true;
     expect(validate({ "type": "impute", "groupby": ["a"], "orderby": ["b"], "field": "c", "method": "value", "value": false })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "impute" })).to.be.false;    
+    expect(validate({ "type": "impute" })).to.be.false;
     expect(validate({ "type": "impute", "groupby": ["a"] })).to.be.false;
     expect(validate({ "type": "impute", "groupby": ["a"], "orderby": "b" })).to.be.false;
     expect(validate({ "type": "impute", "groupby": ["a"], "orderby": ["b"] })).to.be.false;

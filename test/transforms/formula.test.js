@@ -13,15 +13,15 @@ describe('Formula', function() {
   ];
 
   it('should work w/a static expr', function(done) {
-    parseSpec({ 
-      "data": [{ 
-        "name": "table", 
+    parseSpec({
+      "data": [{
+        "name": "table",
         "values": values,
         "transform": [{"type": "formula", "field": "z", "expr": "datum.x + datum.y"}]
-      }] 
-    }, function(model) {
+      }]
+    }, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(20);
@@ -32,21 +32,21 @@ describe('Formula', function() {
       expect(ds._output.fields).to.have.key('z');
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should work w/signals in expr', function(done) {
-    parseSpec({ 
+    parseSpec({
       "signals":[{"name": "multipler", "init": 2}],
 
-      "data": [{ 
-        "name": "table", 
+      "data": [{
+        "name": "table",
         "values": values,
         "transform": [{"type": "formula", "field": "z", "expr": "multipler * (datum.x + datum.y)"}]
-      }] 
-    }, function(model) {
+      }]
+    }, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(20);
@@ -75,7 +75,7 @@ describe('Formula', function() {
       expect(ds._output.fields).to.have.key('z');
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should validate against the schema', function() {
@@ -83,7 +83,7 @@ describe('Formula', function() {
         validate = validator(schema);
 
     expect(validate({ "type": "formula", "expr": "d.x + d.y", "field": "sum" })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "formula" })).to.be.false;
     expect(validate({ "type": "formula", "field": "sum" })).to.be.false;

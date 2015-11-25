@@ -21,14 +21,14 @@ describe('Aggregate', function() {
         "name": "table",
         "values": values,
         "transform": [{"type": "aggregate", "summarize": [{
-          "field": "y", 
+          "field": "y",
           "ops": ["count", "sum", "min", "max"]
         }]}]
       }]
     };
 
     it('should compute summaries', function(done) {
-      parseSpec(spec, function(model) {
+      parseSpec(spec, modelFactory, function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length,
@@ -43,9 +43,8 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('min_y', min);
         expect(data[0]).to.have.property('max_y', max);
 
-
         done();
-      }, modelFactory);
+      });
     });
 
     // Assume other measures are being tested in datalib.
@@ -53,7 +52,7 @@ describe('Aggregate', function() {
       var s = dl.duplicate(spec);
       s.data[0].transform[0].summarize[0].as = ["a", "b", "c", "d"];
 
-      parseSpec(s, function(model) {
+      parseSpec(s, modelFactory, function(error, model) {
         var ds = model.data('table'),
             data = ds.values(),
             count = values.length,
@@ -69,11 +68,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('d', max);
 
         done();
-      }, modelFactory);
+      });
     });
 
     it('should handle streaming adds', function(done) {
-      parseSpec(spec, function(model) {
+      parseSpec(spec, modelFactory, function(error, model) {
         var a1 = {x: 21, y: 21},
             a2 = {x: 22, y: 95},
             a3 = {x: 23, y: 47};
@@ -96,14 +95,14 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('max_y', max);
 
         done();
-      }, modelFactory);
+      });
     });
 
     it('should handle streaming mods', function(done) {
-      parseSpec(spec, function(model) {
+      parseSpec(spec, modelFactory, function(error, model) {
         model.data('table')
           .synchronize()
-          .update(function(d) { return d.x % 2 !== 0 }, "y", 
+          .update(function(d) { return d.x % 2 !== 0 }, "y",
             function(d) { return d.y * 2 })
           .fire();
 
@@ -122,11 +121,11 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('max_y', max);
 
         done();
-      }, modelFactory);
+      });
     });
 
     it('should handle streaming rems', function(done) {
-      parseSpec(spec, function(model) {        
+      parseSpec(spec, modelFactory, function(error, model) {
         values = values.filter(function(d) { return d.y < 50 });
         model.data('table').synchronize()
           .remove(function(d) { return d.y >= 50 }).fire();
@@ -146,7 +145,7 @@ describe('Aggregate', function() {
         expect(data[0]).to.have.property('max_y', max);
 
         done();
-      }, modelFactory);
+      });
     });
   });
 
@@ -169,7 +168,7 @@ describe('Aggregate', function() {
     };
 
     it('should calculate multiple aggregations', function(done) {
-      parseSpec(spec, function(model) {
+      parseSpec(spec, modelFactory, function(error, model) {
         var ds = model.data('table'),
             data = ds.values();
 
@@ -186,11 +185,11 @@ describe('Aggregate', function() {
         expect(data[1]).to.have.property('sum_population', 6);
 
         done();
-      }, modelFactory);
+      });
     });
 
     it('should handle modified keys', function(done) {
-      parseSpec(spec, function(model) {
+      parseSpec(spec, modelFactory, function(error, model) {
         var ds = model.data('table')
               .synchronize()
               .update(function(d) { return d.country === "Canada" },
@@ -210,7 +209,7 @@ describe('Aggregate', function() {
         expect(data[1]).to.have.property('sum_population', 6);
 
         done();
-      }, modelFactory);
+      });
     });
 
     it('should handle signals', function(done) {
@@ -218,7 +217,7 @@ describe('Aggregate', function() {
       s.signals = [{"name": "field", "init": "area"}, {"name": "ops", "init": ["sum", "count"]}];
       s.data[0].transform[0].summarize = [{"field": {"signal": "field"}, "ops": {"signal": "ops"}}];
 
-      parseSpec(s, function(model) {
+      parseSpec(s, modelFactory, function(error, model) {
         var ds = model.data('table'),
             data = ds.values();
 
@@ -243,10 +242,10 @@ describe('Aggregate', function() {
 
         expect(data[1]).to.have.property('country', 'Canada');
         expect(data[1]).to.have.property('sum_population', 6);
-        expect(data[1]).to.have.property('count_population', 2);        
+        expect(data[1]).to.have.property('count_population', 2);
 
         done();
-      }, modelFactory);
+      });
     });
   });
 
@@ -258,7 +257,7 @@ describe('Aggregate', function() {
 
     expect(validate({ "type": "aggregate" })).to.be.true;
     expect(validate({ "type": "aggregate", "groupby": ["country"] })).to.be.true;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": {
@@ -267,7 +266,7 @@ describe('Aggregate', function() {
       }
     })).to.be.true;
 
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
@@ -276,7 +275,7 @@ describe('Aggregate', function() {
       ]
     })).to.be.true;
 
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
@@ -286,7 +285,7 @@ describe('Aggregate', function() {
     })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": "country",
       "summarize": {
@@ -294,7 +293,7 @@ describe('Aggregate', function() {
         "gdp": ["argmin", "argmax"]
       }
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": {
@@ -302,7 +301,7 @@ describe('Aggregate', function() {
         "gdp": ["argmin", "argmax"]
       }
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": {
@@ -310,21 +309,21 @@ describe('Aggregate', function() {
         "gdp": ["argmin", "argmax"]
       }
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
         {"field": 1, "ops": ["argmin", "argmax"]}
       ]
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [
         {"field": "gdp", "ops": ["argmin", "argmax", "foo"]}
       ]
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "aggregate",
       "groupby": ["country"],
       "summarize": [

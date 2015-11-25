@@ -22,14 +22,14 @@ describe('Voronoi', function() {
   };
 
   it('should compute voronoi diagram', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var data = model.data('table').values().sort(dl.comparator('p'));
       expect(data[0].p).to.equal('M-100000,0L0,0L0,-100000L-100000,-100000Z');
       expect(data[1].p).to.equal('M0,-100000L0,0L100000,0L100000,-100000Z');
       expect(data[2].p).to.equal('M0,0L0,100000L100000,100000L100000,0Z');
       expect(data[3].p).to.equal('M0,100000L0,0L-100000,0L-100000,100000Z');
       done();
-    }, modelFactory);
+    });
   });
 
   it('should validate against the schema', function() {

@@ -5,14 +5,14 @@ describe('Fold', function() {
   ];
 
   var spec = {
-    "data": [{ 
-      "name": "table", 
+    "data": [{
+      "name": "table",
       "values": values,
       "transform": [{
-        "type": "fold", 
+        "type": "fold",
         "fields": [{"field": "gold"}, {"field": "silver"}, {"field": "bronze"}]
       }]
-    }] 
+    }]
   };
 
   function expectFold(val, data, idx, key, value) {
@@ -35,9 +35,9 @@ describe('Fold', function() {
 
 
   it('should handle initial datasource', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -46,15 +46,15 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should handle streaming adds', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
           mex = {"country": "Mexico", "gold": 3, "silver": 3, "bronze": 2},
           bel = {"country": "Belize", "gold": 0, "silver": 0, "bronze": 0},
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -72,13 +72,13 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should handle streaming rems', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -93,13 +93,13 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should propagate mod tuples if fields updated', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -107,7 +107,7 @@ describe('Fold', function() {
       expectFold(values[1], data);  // Canada
       expect(ds._output.fields).to.have.keys(['key', 'value']);
 
-      ds.update(function(x) { return x.country == "US" }, 
+      ds.update(function(x) { return x.country == "US" },
         'gold', function(x) { return 100; }).fire();
       data = ds.values();
       expect(data).to.have.length(6);
@@ -128,13 +128,13 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['gold', 'key', 'value']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should only propagate mod tuples if fields not updated', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -150,16 +150,16 @@ describe('Fold', function() {
       expect(ds._output.fields).to.not.have.keys(['key', 'value']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should allow renamed keys', function(done) {
     var s = dl.duplicate(spec);
     s.data[0].transform[0].output = {key: "type"};
 
-    parseSpec(s, function(model) {
+    parseSpec(s, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -168,16 +168,16 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['type', 'value']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should allow renamed values', function(done) {
     var s = dl.duplicate(spec);
     s.data[0].transform[0].output = {value: "medals"};
 
-    parseSpec(s, function(model) {
+    parseSpec(s, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          data = ds.values(), 
+          data = ds.values(),
           i, len, d;
 
       expect(data).to.have.length(6);
@@ -186,7 +186,7 @@ describe('Fold', function() {
       expect(ds._output.fields).to.have.keys(['key', 'medals']);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should allow array<signal> for fields?');
@@ -196,19 +196,19 @@ describe('Fold', function() {
         validate = validator(schema);
 
     expect(validate({ "type": "fold", "fields": ["gold", "silver"] })).to.be.true;
-    expect(validate({ 
-      "type": "fold", 
-      "fields": ["gold", "silver"], 
-      "output": {"key": "k", "value": "v"} 
+    expect(validate({
+      "type": "fold",
+      "fields": ["gold", "silver"],
+      "output": {"key": "k", "value": "v"}
     })).to.be.true;
-    
+
     expect(validate({ "type": "foo" })).to.be.false;
     expect(validate({ "type": "fold" })).to.be.false;
     expect(validate({ "type": "fold", "foo": "bar" })).to.be.false;
     expect(validate({ "type": "fold", "fields": "gold" })).to.be.false;
     expect(validate({ "type": "fold", "fields": ["gold", 1] })).to.be.false;
-    expect(validate({ 
-      "type": "fold", 
+    expect(validate({
+      "type": "fold",
       "fields": ["gold"],
       "output": {"foo": "bar"}
     })).to.be.false;

@@ -30,9 +30,9 @@ describe('Facet', function() {
   }
 
   it('should handle initial datasource', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          facets = ds.values(), 
+          facets = ds.values(),
           i, len;
 
       expect(facets).to.have.length(2);
@@ -40,13 +40,13 @@ describe('Facet', function() {
       expectFacet(facets, 1, 3, 5); // Canada
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should handle streaming adds', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          facets = ds.values(), 
+          facets = ds.values(),
           i, len;
 
       expect(facets).to.have.length(2);
@@ -67,11 +67,11 @@ describe('Facet', function() {
       expectFacet(facets, 2, 8, 8); // Mexico
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should handle streaming mods', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table').synchronize(),
           facets = ds.values(),
           i, len;
@@ -96,7 +96,7 @@ describe('Facet', function() {
 
       // Changing key field
       values[8].country = "India";
-      ds.update(function(x) { return x.country === "Mexico" }, 
+      ds.update(function(x) { return x.country === "Mexico" },
         "country", function(x) { return "India"; }).fire();
       facets = ds.values();
       expect(facets).to.have.length(3);
@@ -105,13 +105,13 @@ describe('Facet', function() {
       expectFacet(facets, 2, 8, 8); // India
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should handle streaming rems', function(done) {
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table').synchronize(),
-          facets = ds.values(), 
+          facets = ds.values(),
           i, len;
 
       expect(facets).to.have.length(3);
@@ -129,16 +129,16 @@ describe('Facet', function() {
       expectFacet(facets, 1, 3, 5); // Canada
 
       done();
-    }, modelFactory);    
+    });
   })
 
   it('should handle signals as keys', function(done) {
     var s = dl.duplicate(spec);
     spec.data[0].transform[0].groupby = [{"signal": "keys"}];
 
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          facets = ds.values(), 
+          facets = ds.values(),
           i, len;
 
       expect(facets).to.have.length(2);
@@ -158,7 +158,7 @@ describe('Facet', function() {
       expect(facets[2].values).to.have.length(2);
 
       done();
-    }, modelFactory);      
+    });
   });
 
   it('should handle fields+signals as keys', function(done) {
@@ -166,9 +166,9 @@ describe('Facet', function() {
     spec.signals[0].init = 'type';
     spec.data[0].transform[0].groupby = [{"field": "country"}, {"signal": "keys"}];
 
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
-          facets = ds.values(), 
+          facets = ds.values(),
           i, len;
 
       expect(facets).to.have.length(6);
@@ -187,7 +187,7 @@ describe('Facet', function() {
       expect(facets[5].values).to.have.length(1);
 
       done();
-    }, modelFactory);      
+    });
   });
 
   it('should compute summaries on facets', function(done) {
@@ -205,7 +205,7 @@ describe('Facet', function() {
       }]
     };
 
-    parseSpec(spec, function(model) {
+    parseSpec(spec, modelFactory, function(error, model) {
       var ds = model.data('table'),
           data = ds.values();
 
@@ -224,7 +224,7 @@ describe('Facet', function() {
       expect(data[1]).to.have.property('max_count', 5);
 
       done();
-    }, modelFactory);
+    });
   });
 
   it('should transform faceted values');
@@ -236,7 +236,7 @@ describe('Facet', function() {
     expect(validate({ "type": "facet" })).to.be.true;
     expect(validate({ "type": "facet", "groupby": ["country"] })).to.be.true;
 
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": {
@@ -245,7 +245,7 @@ describe('Facet', function() {
       }
     })).to.be.true;
 
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
@@ -254,7 +254,7 @@ describe('Facet', function() {
       ]
     })).to.be.true;
 
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
@@ -264,7 +264,7 @@ describe('Facet', function() {
     })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": "country",
       "summarize": {
@@ -272,7 +272,7 @@ describe('Facet', function() {
         "gdp": ["argmin", "argmax"]
       }
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": {
@@ -280,7 +280,7 @@ describe('Facet', function() {
         "gdp": ["argmin", "argmax"]
       }
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": {
@@ -288,21 +288,21 @@ describe('Facet', function() {
         "gdp": ["argmin", "argmax"]
       }
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
         {"field": 1, "ops": ["argmin", "argmax"]}
       ]
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
         {"field": "gdp", "ops": ["argmin", "argmax", "foo"]}
       ]
     })).to.be.false;
-    expect(validate({ 
+    expect(validate({
       "type": "facet",
       "groupby": ["country"],
       "summarize": [
