@@ -24,12 +24,14 @@ proto.evaluate = function(input) {
       items = mark.items,
       group = items.length && (isGrp ? items[0] : items[0].mark.group),
       axis  = group && group.mark.axis,
+      signals = input.signals,
       hasLegends = dl.array(mark.def.legends).length > 0,
-      i, ilen, j, jlen, legend, axis;
+      i, ilen, j, jlen, legend;
 
   if (input.add.length || input.rem.length || !items.length ||
       input.mod.length === items.length ||
       type === 'area' || type === 'line' ||
+      signals.width || signals.height || signals.padding ||
       (axis && input.scales[axis.scale().scaleName])) {
     bound.mark(mark, null, isGrp && !hasLegends);
   } else {
