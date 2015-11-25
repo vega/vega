@@ -10,10 +10,12 @@ var dl = require('datalib'),
 function Model(cfg) {
   this._defs = {};
   this._predicates = {};
-  this._scene = null;
+
+  this._scene  = null;  // Root scenegraph node.
+  this._groups = null;  // Index of group items.
 
   this._node = null;
-  this._builder = null; // Top-level scenegraph builder
+  this._builder = null; // Top-level scenegraph builder.
 
   this._reset = {axes: false, legends: false};
 
@@ -110,6 +112,7 @@ prototype.scene = function(renderer) {
     var gb = b._groupBuilder = new GroupBuilder(m, m._defs.marks, m._scene={}),
         p  = gb.pipeline();
 
+    m._groups = {};
     this.addListener(gb.connect());
     p[p.length-1].addListener(renderer);
     return input;
@@ -117,6 +120,12 @@ prototype.scene = function(renderer) {
 
   this.addListener(b);
   return this;
+};
+
+prototype.group = function(id, item) {
+  var groups = this._groups;
+  if (arguments.length === 1) return groups[id];
+  return (groups[id] = item, this);
 };
 
 prototype.reset = function() {

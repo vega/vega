@@ -1,7 +1,6 @@
 var dl = require('datalib'),
     SIGNALS = require('vega-dataflow').Dependencies.SIGNALS,
-    expr = require('./expr'),
-    GroupBuilder = require('../scene/GroupBuilder');
+    expr = require('./expr');
 
 var RESERVED = ['datum', 'event', 'signals', 'width', 'height', 'padding']
   .concat(dl.keys(expr.codegen.functions));
@@ -67,7 +66,12 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
     scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
   }
 
-  var s = GroupBuilder.scale.call(scope, name);
+  // Verify scope is valid
+  if (!model.group(scope._id)) {
+    throw new Error('Scope for scale "'+name+'" is not a valid group item.');
+  }
+
+  var s = scope.scale(name);
   return !s ? value : (def.invert ? s.invert(value) : s(value));
 };
 

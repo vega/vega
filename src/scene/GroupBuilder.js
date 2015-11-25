@@ -60,10 +60,12 @@ proto.init = function(graph, def) {
 };
 
 proto.evaluate = function() {
-  var output = Builder.prototype.evaluate.apply(this, arguments),
+  var output  = Builder.prototype.evaluate.apply(this, arguments),
+      model   = this._graph,
       builder = this;
 
   output.add.forEach(function(group) { buildGroup.call(builder, output, group); });
+  output.rem.forEach(function(group) { model.group(group._id, null); });
   return output;
 };
 
@@ -206,6 +208,9 @@ function buildGroup(input, group) {
 
   group.legends = group.legends || [];
   group.legendItems = group.legendItems || [];
+
+  // Index group by ID to enable safe scoped scale lookups.
+  this._graph.group(group._id, group);
 }
 
 function buildMarks(input, group) {
@@ -266,5 +271,4 @@ function buildLegends(input, group) {
   });
 }
 
-GroupBuilder.scale = scale;
 module.exports = GroupBuilder;
