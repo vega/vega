@@ -38,7 +38,7 @@ function _cid(left, x, y) {
   return left ? x._id+'_'+y._id : y._id+'_'+x._id;
 }
 
-function add(output, left, data, diag, test, mids, x, idx) {
+function add(output, left, data, diag, test, mids, x) {
   var as = this._output,
       cache = this._cache,
       cids  = this._cids,
@@ -51,7 +51,7 @@ function add(output, left, data, diag, test, mids, x, idx) {
     y = data[i];
     cid = _cid(left, x, y);
     if (cids[cid]) continue;
-    if (idx === i && !diag) continue;
+    if (x._id === y._id && !diag) continue;
 
     Tuple.set(t, as.left, left ? x : y);
     Tuple.set(t, as.right, left ? y : x);
@@ -74,7 +74,7 @@ function add(output, left, data, diag, test, mids, x, idx) {
   if (cache[x._id]) cache[x._id].f = fltrd;
 }
 
-function mod(output, left, data, diag, test, mids, rids, x, idx) {
+function mod(output, left, data, diag, test, mids, rids, x) {
   var as = this._output,
       cache = this._cache,
       cids  = this._cids,
@@ -116,7 +116,7 @@ function mod(output, left, data, diag, test, mids, rids, x, idx) {
 
   // If we have a filter param, call add to catch any tuples that may
   // have previously been filtered.
-  if (test && fltrd) add.call(this, output, left, data, diag, test, mids, x, idx); 
+  if (test && fltrd) add.call(this, output, left, data, diag, test, mids, x); 
 }
 
 function rem(output, left, rids, x) {
