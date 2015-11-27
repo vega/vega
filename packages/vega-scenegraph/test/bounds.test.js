@@ -29,7 +29,7 @@ describe('bounds', function() {
     assert.strictEqual(b.y1, 1);
     assert.strictEqual(b.x2, 2);
     assert.strictEqual(b.y2, 2);
-    
+
   });
 
   it('should support set', function() {
@@ -110,6 +110,18 @@ describe('bounds', function() {
     assert.isTrue(b.intersects(c));
     assert.isFalse(c.intersects(a));
     assert.isTrue(c.intersects(b));
+  });
+
+it('should support alignsWith', function() {
+    var a = (new Bounds()).set(1,1,5,5),
+        b = (new Bounds()).set(1,2,8,4),
+        c = (new Bounds()).set(5,5,8,8);
+    assert.isTrue(a.alignsWith(b));
+    assert.isTrue(b.alignsWith(a));
+    assert.isFalse(a.alignsWith(c));
+    assert.isFalse(c.alignsWith(a));
+    assert.isTrue(b.alignsWith(c));
+    assert.isTrue(c.alignsWith(b));
   });
 
   it('should support contains', function() {
