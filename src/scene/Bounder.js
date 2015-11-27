@@ -15,30 +15,33 @@ function Bounder(graph, mark) {
 
 var proto = (Bounder.prototype = new Node());
 
+function reevaluate(input, mark) {
+  return input.add.length ||
+    input.rem.length ||
+    mark.items.length === 0 ||
+    mark.marktype === 'area' ||
+    mark.marktype === 'line' ||
+    input.mod.some(function(item) {
+      return mark.bounds.alignsWith(item.bounds);
+    });
+}
+
 proto.evaluate = function(input) {
   log.debug(input, ['bounds', this._mark.marktype]);
 
   var mark  = this._mark,
-      type  = mark.marktype,
-      isGrp = type === 'group',
+      isGroup = mark.marktype === 'group',
       items = mark.items,
-      group = items.length && (isGrp ? items[0] : items[0].mark.group),
-      axis  = group && group.mark.axis,
-      signals = input.signals,
       hasLegends = dl.array(mark.def.legends).length > 0,
-      i, ilen, j, jlen, legend;
+      i, ilen, j, jlen, legend, group;
 
-  if (input.add.length || input.rem.length || !items.length ||
-      input.mod.length === items.length ||
-      type === 'area' || type === 'line' ||
-      signals.width || signals.height || signals.padding ||
-      (axis && input.scales[axis.scale().scaleName])) {
-    bound.mark(mark, null, isGrp && !hasLegends);
+  if (reevaluate(input, mark)) {
+    bound.mark(mark, null, isGroup && !hasLegends);
   } else {
     input.mod.forEach(function(item) { bound.item(item); });
   }
 
-  if (isGrp && hasLegends) {
+  if (isGroup && hasLegends) {
     for (i=0, ilen=items.length; i<ilen; ++i) {
       group = items[i];
       group._legendPositions = null;
