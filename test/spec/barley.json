@@ -1,10 +1,11 @@
 {
   "width": 200,
   "height": 720,
-  "padding": {"left": 96, "top": 0, "right": 13, "bottom": 27},
   "data": [
-    {"name": "barley", "url": "data/barley.json"},
-    {"name": "singleton", "values": [1]}
+    {
+      "name": "barley",
+      "url": "data/barley.json"
+    }
   ],
   "scales": [
     {
@@ -13,14 +14,10 @@
       "range": "height",
       "padding": 0.15,
       "domain": {
-        "data": "barley", 
-        "field": "site",
-        "sort": {
-          "field": "yield",
-          "op": "median",
-          "order": "desc"
-        }
-      }
+        "data": "barley", "field": "site",
+        "sort": {"field": "yield", "op": "median"}
+      },
+      "reverse": true
     },
     {
       "name": "x",
@@ -44,6 +41,7 @@
   ],
   "marks": [
     {
+      "name": "sites",
       "type": "group",
       "from": {
         "data": "barley",
@@ -57,14 +55,10 @@
           "points": true,
           "padding": 1.2,
           "domain": {
-            "data": "barley", 
-            "field": "variety",
-            "sort": {
-              "field": "yield",
-              "op": "median",
-              "order": "desc"
-            }
-          }
+            "data": "barley", "field": "variety",
+            "sort": {"field": "yield", "op": "median"}
+          },
+          "reverse": true
         }
       ],
       "axes": [
@@ -76,7 +70,7 @@
         }
       ],
       "properties": {
-        "update": {
+        "enter": {
           "x": {"value": 0.5},
           "y": {"scale": "g", "field": "key"},
           "height": {"scale": "g", "band": true},
@@ -88,7 +82,7 @@
         {
           "type": "symbol",
           "properties": {
-            "update": {
+            "enter": {
               "x": {"scale": "x", "field": "yield"},
               "y": {"scale": "y", "field": "variety"},
               "size": {"value": 50},
@@ -96,23 +90,23 @@
               "strokeWidth": {"value": 2}
             }
           }
-        },
-        {
-          "type": "text",
-          "from": {"data": "singleton"},
-          "properties": {
-            "update": {
-              "x": {"field": {"group": "width"}, "mult": 0.5},
-              "y": {"value": -2},
-              "fontWeight": {"value": "bold"},
-              "text": {"field": {"parent": "key"}},
-              "align": {"value": "center"},
-              "baseline": {"value": "bottom"},
-              "fill": {"value": "#000"}
-            }
-          }
         }
       ]
+    },
+    {
+      "type": "text",
+      "from": {"mark": "sites"},
+      "properties": {
+        "enter": {
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": "y", "offset": -2},
+          "fontWeight": {"value": "bold"},
+          "text": {"field": "datum.site"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
     }
   ]
 }
