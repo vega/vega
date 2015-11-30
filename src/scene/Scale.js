@@ -360,7 +360,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from, so, cmp;
+      i, rlen, j, flen, ref, fields, field, data, from, cmp;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
