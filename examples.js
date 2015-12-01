@@ -175,7 +175,9 @@ var spec = {
 };
 
 var view;
-vg.parse.spec(spec, function(chart) {
+vg.parse.spec(spec, {
+  load: { baseURL: "images/examples/" }
+}, function(chart) {
   view = chart({ el: "#examples", renderer: "svg" })
     .update({});
 
@@ -185,6 +187,4 @@ vg.parse.spec(spec, function(chart) {
     var d = i.datum;
     window.location = d.editor ? 'http://vega.github.io/vega-editor/index.html?spec=' + d.name : d.url; 
   });
-}, {
-  load: { baseURL: "images/examples/" }
 });
