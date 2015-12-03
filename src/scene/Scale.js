@@ -228,14 +228,12 @@ function quantitative(scale, rng, group) {
   // range
   // vertical scales should flip by default, so use XOR here
   if (signal.call(this, def.range) === 'height') rng = rng.reverse();
-  if (dl.equal(prev.range, rng)) return;
-  scale[round && scale.rangeRound ? 'rangeRound' : 'range'](rng);
-  prev.range = rng;
-  this._updated = true;
+  if (rng && !dl.equal(prev.range, rng)) {
+    scale[round && scale.rangeRound ? 'rangeRound' : 'range'](rng);
+    prev.range = rng;
+    this._updated = true;
+  }
 
-  // TODO: Support signals for these properties. Until then, only eval
-  // them once.
-  if (this._stamp > 0) return;
   if (exponent && def.type===Types.POWER) scale.exponent(exponent);
   if (clamp) scale.clamp(true);
   if (nice) {
