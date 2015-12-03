@@ -1,8 +1,10 @@
 var dl = require('datalib'),
     df = require('vega-dataflow'),
+    scene = require('vega-scenegraph'),
     Node = df.Node, // jshint ignore:line
     log = require('vega-logging'),
-    bound = require('vega-scenegraph').bound,
+    bound = scene.bound,
+    Bounds = scene.Bounds,
     Encoder = require('./Encoder');
 
 function Bounder(graph, mark) {
@@ -22,20 +24,28 @@ proto.evaluate = function(input) {
       type  = mark.marktype,
       isGrp = type === 'group',
       items = mark.items,
-      group = items.length && (isGrp ? items[0] : items[0].mark.group),
-      axis  = group && group.mark.axis,
-      signals = input.signals,
       hasLegends = dl.array(mark.def.legends).length > 0,
-      i, ilen, j, jlen, legend;
+      bounds  = mark.bounds,
+      rebound = !bounds || input.rem.length,
+      i, ilen, j, jlen, group, legend;
 
-  if (input.add.length || input.rem.length || !items.length ||
-      input.mod.length === items.length ||
-      type === 'area' || type === 'line' ||
-      signals.width || signals.height || signals.padding ||
-      (axis && input.scales[axis.scale().scaleName])) {
+  if (type === 'line' || type === 'area') {
     bound.mark(mark, null, isGrp && !hasLegends);
   } else {
-    input.mod.forEach(function(item) { bound.item(item); });
+    input.add.forEach(function(item) {
+      bound.item(item);
+      rebound = rebound || (bounds && !bounds.encloses(item.bounds));
+    });
+
+    input.mod.forEach(function(item) {
+      rebound = rebound || (bounds && bounds.alignsWith(item.bounds));
+      bound.item(item);
+    });
+
+    if (rebound) {
+      bounds = mark.bounds && mark.bounds.clear() || (mark.bounds = new Bounds());
+      for (i=0, ilen=items.length; i<ilen; ++i) bounds.union(items[i].bounds);
+    }
   }
 
   if (isGrp && hasLegends) {
