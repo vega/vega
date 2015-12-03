@@ -360,7 +360,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from, so, cmp;
+      i, rlen, j, flen, ref, fields, field, data, from, cmp;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
@@ -396,8 +396,7 @@ function dataRef(which, def, scale, group) {
     data = cache.aggr().result();
     if (uniques) {
       if (dl.isObject(sort)) {
-        cmp = (so = sort.order) && so.signal ? graph.signalRef(so.signal) : so;
-        cmp = (cmp == DataRef.DESC ? '-' : '+') + sort.op + '_' + DataRef.VALUE;
+        cmp = sort.op + '_' + DataRef.VALUE;
         cmp = dl.comparator(cmp);
       } else if (sort === true) {
         cmp = dl.comparator(DataRef.GROUPBY);
@@ -568,8 +567,7 @@ Scale.schema = {
             "type": "object",
             "properties": {
               "field": {"type": "string"},
-              "op": {"enum": require('../transforms/Aggregate').VALID_OPS},
-              "order": {"enum": [DataRef.ASC, DataRef.DESC]}
+              "op": {"enum": require('../transforms/Aggregate').VALID_OPS}
             }
           }]
         }
