@@ -4,8 +4,8 @@ var expect = require('chai').expect;
 var expr = require('../src/index');
 
 function regexEqual(x, y) {
-  return (x instanceof RegExp) && (y instanceof RegExp) && 
-    (x.source === y.source) && (x.global === y.global) && 
+  return (x instanceof RegExp) && (y instanceof RegExp) &&
+    (x.source === y.source) && (x.global === y.global) &&
     (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
 }
 
@@ -48,7 +48,7 @@ describe('evaluate', function() {
       var value = codegen('d');
       expect(value.code).to.equal('d');
     });
-    
+
     it('should not allow unknown ast node type', function() {
       expect(function() { codegen({}); }).to.throw();
       expect(function() { codegen({type: 'foo'}); }).to.throw();
@@ -236,6 +236,7 @@ describe('evaluate', function() {
       expect(evaluate('parseInt("42")')).to.equal(parseInt('42'));
       expect(evaluate('indexof("hello world", "l")')).to.equal(2);
       expect(evaluate('lastindexof("hello world", "l")')).to.equal(9);
+      expect(evaluate('replace("hello world", /hello/, "goodbye")')).to.equal('goodbye world');
     });
 
     it('should eval regular expression functions', function() {
@@ -250,23 +251,23 @@ describe('evaluate', function() {
       expect(evaluate('+datetime(2001,1,1)')).to.equal(+d);
       expect(evaluate('time(datetime(2001,1,1))')).to.equal(+d);
       expect(evaluate('timezoneoffset(datetime(2001,1,1))')).to.equal(d.getTimezoneOffset());
-    
+
       expect(evaluate('day(datetime(2001,1,1))')).to.equal(d.getDay());
       expect(evaluate('year(datetime(2001,1,1))')).to.equal(d.getFullYear());
       expect(evaluate('month(datetime(2001,1,1))')).to.equal(d.getMonth());
       expect(evaluate('hours(datetime(2001,1,1))')).to.equal(d.getHours());
       expect(evaluate('minutes(datetime(2001,1,1))')).to.equal(d.getMinutes());
-      expect(evaluate('seconds(datetime(2001,1,1))')).to.equal(d.getSeconds());  
+      expect(evaluate('seconds(datetime(2001,1,1))')).to.equal(d.getSeconds());
       expect(evaluate('milliseconds(datetime(2001,1,1))')).to.equal(d.getMilliseconds());
-    
+
       expect(evaluate('utcday(datetime(2001,1,1))')).to.equal(d.getUTCDay());
       expect(evaluate('utcyear(datetime(2001,1,1))')).to.equal(d.getUTCFullYear());
       expect(evaluate('utcmonth(datetime(2001,1,1))')).to.equal(d.getUTCMonth());
       expect(evaluate('utchours(datetime(2001,1,1))')).to.equal(d.getUTCHours());
       expect(evaluate('utcminutes(datetime(2001,1,1))')).to.equal(d.getUTCMinutes());
-      expect(evaluate('utcseconds(datetime(2001,1,1))')).to.equal(d.getUTCSeconds());  
+      expect(evaluate('utcseconds(datetime(2001,1,1))')).to.equal(d.getUTCSeconds());
       expect(evaluate('utcmilliseconds(datetime(2001,1,1))')).to.equal(d.getUTCMilliseconds());
-  
+
       for (var date=1; date<=7; ++date) {
         d = new Date(2001, 1, date);
         expect(evaluate('date(datetime(2001,1,'+date+'))')).to.equal(d.getDate());
@@ -315,7 +316,7 @@ describe('evaluate', function() {
     });
 
     it('should not allow eval', function() {
-      expect(evaluate.fn('eval')).to.throw(); 
+      expect(evaluate.fn('eval')).to.throw();
       expect(evaluate.fn('eval()')).to.throw();
       expect(evaluate.fn('eval("1+2")')).to.throw();
     });
