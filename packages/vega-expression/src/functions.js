@@ -87,6 +87,7 @@ module.exports = function(codegen) {
     'lower':       fn('toLowerCase', STRING, 0),
     'slice':       fn('slice', STRING),
     'substring':   fn('substring', STRING),
+    'replace':     fn('replace', STRING),
 
     // REGEXP functions
     'regexp':  REGEXP,
