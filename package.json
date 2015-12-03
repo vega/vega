@@ -95,6 +95,7 @@
   },
   "browserify-shim": {
     "d3": "global:d3",
+    "d3-cloud": "global:d3.layout.cloud",
     "canvas": "global:canvas",
     "topojson": "global:topojson"
   }
