@@ -1996,6 +1996,7 @@
               "lower",
               "slice",
               "substring",
+              "replace",
               "regexp",
               "test",
               "if",
