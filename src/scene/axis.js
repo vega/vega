@@ -92,13 +92,14 @@ function axs(model) {
   function getFormatter(formatType, str) {
     var fmt = dl.format,
         log = scale.type === 'log',
-        domain, f;
+        domain;
 
     switch (formatType) {
       case NUMBER:
-         domain = scale.domain();
-         f = fmt.auto.number(domain, tickCount, str || (log ? '.1r' : null));
-         return log ? logFilter(domain, tickCount, f) : f;
+        domain = scale.domain();
+        return log ?
+          logFilter(domain, tickCount, fmt.auto.number(str || null)) :
+          fmt.auto.linear(domain, tickCount, str || null);
       case TIME: return (str ? fmt : fmt.auto).time(str);
       case UTC:  return (str ? fmt : fmt.auto).utc(str);
       default:   return String;
