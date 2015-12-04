@@ -7,14 +7,18 @@ module.exports = expr.compiler(args, {
   globalVar:   args[3],
   functions:   function(codegen) {
     var fn = expr.functions(codegen);
-    fn.eventItem = function() { return 'event.vg.item'; };
+    fn.eventItem = 'event.vg.item';
     fn.eventGroup = 'event.vg.getGroup';
     fn.eventX = 'event.vg.getX';
     fn.eventY = 'event.vg.getY';
     fn.open = 'window.open';
     fn.inrange = 'this.defs.inrange';
+    fn.scale = scaleCodegen;
+    fn.iscale = iscaleCodegen;
 
-    fn.scale = function(args) {
+    return fn;
+
+    function scaleCodegen(args) {
       args = args.map(codegen);
       if (args.length == 2) {
         return 'this.defs.scale(model, false, ' + args[0] + ',' + args[1] + ')';
@@ -23,9 +27,9 @@ module.exports = expr.compiler(args, {
       } else {
         throw new Error("scale takes exactly 2 or 3 arguments.");
       }
-    };
+    }
 
-    fn.iscale = function(args) {
+    function iscaleCodegen(args) {
       args = args.map(codegen);
       if (args.length == 2) {
         return 'this.defs.scale(model, true, ' + args[0] + ',' + args[1] + ')';
@@ -34,8 +38,7 @@ module.exports = expr.compiler(args, {
       } else {
         throw new Error("iscale takes exactly 2 or 3 arguments.");
       }
-    };
-    return fn;
+    }
   },
   functionDefs: function(codegen) {
     return {
