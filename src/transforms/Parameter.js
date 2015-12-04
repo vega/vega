@@ -113,7 +113,7 @@ prototype.set = function(value) {
       p._signals.push({
         index: i,
         value: function(graph) {
-          return e.fn(null, null, graph.values(Deps.SIGNALS, e.globals));
+          return e.fn(graph, null, null, graph.values(Deps.SIGNALS, e.globals));
         }
       });
       return v.expr;

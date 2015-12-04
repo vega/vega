@@ -29,12 +29,12 @@ prototype.transform = function(input) {
   });
 
   input.add.forEach(function(x) {
-    if (test(x, null, signals)) output.add.push(x);
+    if (test(graph, x, null, signals)) output.add.push(x);
     else skip[x._id] = 1;
   });
 
   input.mod.forEach(function(x) {
-    var b = test(x, null, signals),
+    var b = test(graph, x, null, signals),
         s = (skip[x._id] === 1);
     if (b && s) {
       skip[x._id] = 0;

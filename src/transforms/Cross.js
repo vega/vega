@@ -18,7 +18,7 @@ function Cross(graph) {
   this._output = {'left': 'a', 'right': 'b'};
   this._lastWith = null; // Last time we crossed w/with-ds.
   this._cids  = {};
-  this._cache = {}; 
+  this._cache = {};
 
   return this.router(true).produces(true);
 }
@@ -26,7 +26,7 @@ function Cross(graph) {
 var prototype = (Cross.prototype = Object.create(BatchTransform.prototype));
 prototype.constructor = Cross;
 
-// Each cached incoming tuple also has a flag to determine whether 
+// Each cached incoming tuple also has a flag to determine whether
 // any tuples were filtered.
 function _cache(x, t) {
   var c = this._cache,
@@ -42,7 +42,7 @@ function add(output, left, data, diag, test, mids, x) {
   var as = this._output,
       cache = this._cache,
       cids  = this._cids,
-      oadd  = output.add, 
+      oadd  = output.add,
       fltrd = false,
       i = 0, len = data.length,
       t = {}, y, cid;
@@ -57,7 +57,7 @@ function add(output, left, data, diag, test, mids, x) {
     Tuple.set(t, as.right, left ? y : x);
 
     // Only ingest a tuple if we keep it around. Otherwise, flag the
-    // caches as filtered. 
+    // caches as filtered.
     if (!test || test(t)) {
       oadd.push(t=Tuple.ingest(t));
       _cache.call(this, x, t);
@@ -86,7 +86,7 @@ function mod(output, left, data, diag, test, mids, rids, x) {
       i, t, y, l, cid;
 
   // If we have cached values, iterate through them for lazy
-  // removal, and to re-run the filter. 
+  // removal, and to re-run the filter.
   if (tpls) {
     for (i=tpls.length-1; i>=0; --i) {
       t = tpls[i];
@@ -116,14 +116,14 @@ function mod(output, left, data, diag, test, mids, rids, x) {
 
   // If we have a filter param, call add to catch any tuples that may
   // have previously been filtered.
-  if (test && fltrd) add.call(this, output, left, data, diag, test, mids, x); 
+  if (test && fltrd) add.call(this, output, left, data, diag, test, mids, x);
 }
 
 function rem(output, left, rids, x) {
   var as = this._output,
       cross = this._cache[x._id],
       cids  = this._cids,
-      orem  = output.rem, 
+      orem  = output.rem,
       i, len, t, y, l;
   if (!cross) return;
 
@@ -171,7 +171,7 @@ prototype.batchTransform = function(input, data, reset) {
       diag = this.param('diagonal'),
       as = this._output,
       sg = g.values(SIGNALS, this.dependency(SIGNALS)),
-      test = f ? function(x) {return f(x, null, sg); } : null,
+      test = f ? function(x) {return f(g, x, null, sg); } : null,
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
