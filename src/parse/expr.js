@@ -12,6 +12,7 @@ module.exports = expr.compiler(args, {
     fn.eventX = 'event.vg.getX';
     fn.eventY = 'event.vg.getY';
     fn.open = 'window.open';
+    fn.inrange = 'this.defs.inrange';
 
     fn.scale = function(args) {
       args = args.map(codegen);
@@ -38,19 +39,30 @@ module.exports = expr.compiler(args, {
   },
   functionDefs: function(codegen) {
     return {
-     scale: function(model, invert, name, value, scope) {
-        if (!scope || !scope.scale) {
-          scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
-        }
-
-        // Verify scope is valid
-        if (model.group(scope._id) !== scope) {
-          throw new Error('Scope for scale "'+name+'" is not a valid group item.');
-        }
-
-        var s = scope.scale(name);
-        return !s ? value : (invert ? s.invert(value) : s(value));
-      }
+      'scale': scale
+      'inrange': inrange
     };
   }
 });
+
+function inrange(val, a, b, exclusive) {
+  var min = a, max = b;
+  if (a > b) { min = b; max = a; }
+  return exclusive ?
+    (min < val && max > val) :
+    (min <= val && max >= val);
+}
+
+function scale(model, invert, name, value, scope) {
+  if (!scope || !scope.scale) {
+    scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
+  }
+
+  // Verify scope is valid
+  if (model.group(scope._id) !== scope) {
+    throw new Error('Scope for scale "'+name+'" is not a valid group item.');
+  }
+
+  var s = scope.scale(name);
+  return !s ? value : (invert ? s.invert(value) : s(value));
+}
