@@ -290,7 +290,6 @@ describe('evaluate', function() {
       expect(evaluate.fn('String()')).to.throw();
     });
 
-
     // Validation checks
     it('should not allow nested function calls', function() {
       expect(evaluate.fn('d.hasOwnProperty("a")')).to.throw();

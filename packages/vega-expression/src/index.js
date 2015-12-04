@@ -1,6 +1,6 @@
 var parser = require('./parser'),
     codegen = require('./codegen');
-    
+
 var expr = module.exports = {
   parse: function(input, opt) {
       return parser.parse('('+input+')', opt);
@@ -15,7 +15,12 @@ var expr = module.exports = {
           compile = function(str) {
             var value = generator(expr.parse(str));
             args[len] = '"use strict"; return (' + value.code + ');';
-            value.fn = Function.apply(null, args);
+            var fn = Function.apply(null, args);
+            value.fn = (args.length > 8) ?
+              function() { return fn.apply(value, arguments); } :
+              function(a, b, c, d, e, f, g) {
+                return fn.call(value, a, b, c, d, e, f, g);
+              }; // call often faster than apply, use if args low enough
             return value;
           };
       compile.codegen = generator;
