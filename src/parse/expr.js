@@ -2,7 +2,7 @@ var expr = require('vega-expression'),
     args = ['model', 'datum', 'event', 'signals'];
 
 module.exports = expr.compiler(args, {
-  idWhiteList: args,
+  idWhiteList: ['datum', 'event', 'signals'],
   fieldVar:    args[1],
   globalVar:   args[3],
   functions:   function(codegen) {
