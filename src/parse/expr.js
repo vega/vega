@@ -16,9 +16,9 @@ module.exports = expr.compiler(args, {
     fn.scale = function(args) {
       args = args.map(codegen);
       if (args.length == 2) {
-        return 'fn.scale(model, false, ' + args[0] + ',' + args[1] + ')';
+        return 'this.defs.scale(model, false, ' + args[0] + ',' + args[1] + ')';
       } else if (args.length == 3) {
-        return 'fn.scale(model, false, ' + args[0] + ',' + args[1] + ',' + args[2] + ')';
+        return 'this.defs.scale(model, false, ' + args[0] + ',' + args[1] + ',' + args[2] + ')';
       } else {
         throw new Error("scale takes exactly 2 or 3 arguments.");
       }
@@ -27,30 +27,30 @@ module.exports = expr.compiler(args, {
     fn.iscale = function(args) {
       args = args.map(codegen);
       if (args.length == 2) {
-        return 'fn.scale(model, true, ' + args[0] + ',' + args[1] + ')';
+        return 'this.defs.scale(model, true, ' + args[0] + ',' + args[1] + ')';
       } else if (args.length == 3) {
-        return 'fn.scale(model, true, ' + args[0] + ',' + args[1] + ',' + args[2] + ')';
+        return 'this.defs.scale(model, true, ' + args[0] + ',' + args[1] + ',' + args[2] + ')';
       } else {
         throw new Error("iscale takes exactly 2 or 3 arguments.");
       }
     };
     return fn;
   },
-  functionDefinitions: function(codegen) {
-    var fns = expr.functionDefinitions(codegen);
-    fns.scale = function(model, invert, name, value, scope) {
-      if (!scope || !scope.scale) {
-        scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
-      }
+  functionDefs: function(codegen) {
+    return {
+     scale: function(model, invert, name, value, scope) {
+        if (!scope || !scope.scale) {
+          scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
+        }
 
-      // Verify scope is valid
-      if (model.group(scope._id) !== scope) {
-        throw new Error('Scope for scale "'+name+'" is not a valid group item.');
-      }
+        // Verify scope is valid
+        if (model.group(scope._id) !== scope) {
+          throw new Error('Scope for scale "'+name+'" is not a valid group item.');
+        }
 
-      var s = scope.scale(name);
-      return !s ? value : (invert ? s.invert(value) : s(value));
+        var s = scope.scale(name);
+        return !s ? value : (invert ? s.invert(value) : s(value));
+      }
     };
-    return fns;
   }
 });
