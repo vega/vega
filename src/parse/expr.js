@@ -16,18 +16,18 @@ module.exports = expr.compiler(args, {
     fn.scale      = scaleGen(codegen, false);
     fn.iscale     = scaleGen(codegen, true);
     fn.inrange    = 'this.defs.inrange';
-    fn.format     = 'this.defs.number';
-    fn.timeFormat = 'this.defs.time';
-    fn.utcFormat  = 'this.defs.utc';
+    fn.format     = 'this.defs.format';
+    fn.timeFormat = 'this.defs.timeFormat';
+    fn.utcFormat  = 'this.defs.utcFormat';
     return fn;
   },
   functionDefs: function(/*codegen*/) {
     return {
-      'scale':   scale,
-      'inrange': inrange,
-      'number':  numberFormat,
-      'time':    timeFormat,
-      'utc':     utcFormat
+      'scale':      scale,
+      'inrange':    inrange,
+      'format':     numberFormat,
+      'timeFormat': timeFormat,
+      'utcFormat':  utcFormat
     };
   }
 });
@@ -69,11 +69,9 @@ function numberFormat(specifier, v) {
 }
 
 function timeFormat(specifier, d) {
-  return template.format(specifier, 'time')
-    (typeof d==='number' ? new Date(d) : d);
+  return template.format(specifier, 'time')(typeof d==='number' ? new Date(d) : d);
 }
 
 function utcFormat(specifier, d) {
-  return template.format(specifier, 'utc')
-    (typeof d==='number' ? new Date(d) : d);
+  return template.format(specifier, 'utc')(typeof d==='number' ? new Date(d) : d);
 }
