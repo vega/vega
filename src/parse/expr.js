@@ -42,7 +42,7 @@ module.exports = expr.compiler(args, {
   },
   functionDefs: function(codegen) {
     return {
-      'scale': scale
+      'scale': scale,
       'inrange': inrange
     };
   }
