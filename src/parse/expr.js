@@ -13,40 +13,41 @@ module.exports = expr.compiler(args, {
     fn.eventY = 'event.vg.getY';
     fn.open = 'window.open';
     fn.inrange = 'this.defs.inrange';
-    fn.scale = scaleCodegen;
-    fn.iscale = iscaleCodegen;
-
+    fn.scale  = scaleGen(codegen, false);
+    fn.iscale = scaleGen(codegen, true);
     return fn;
-
-    function scaleCodegen(args) {
-      args = args.map(codegen);
-      if (args.length == 2) {
-        return 'this.defs.scale(model, false, ' + args[0] + ',' + args[1] + ')';
-      } else if (args.length == 3) {
-        return 'this.defs.scale(model, false, ' + args[0] + ',' + args[1] + ',' + args[2] + ')';
-      } else {
-        throw new Error("scale takes exactly 2 or 3 arguments.");
-      }
-    }
-
-    function iscaleCodegen(args) {
-      args = args.map(codegen);
-      if (args.length == 2) {
-        return 'this.defs.scale(model, true, ' + args[0] + ',' + args[1] + ')';
-      } else if (args.length == 3) {
-        return 'this.defs.scale(model, true, ' + args[0] + ',' + args[1] + ',' + args[2] + ')';
-      } else {
-        throw new Error("iscale takes exactly 2 or 3 arguments.");
-      }
-    }
   },
-  functionDefs: function(codegen) {
+  functionDefs: function(/*codegen*/) {
     return {
-      'scale': scale,
+      'scale':   scale,
       'inrange': inrange
     };
   }
 });
+
+function scaleGen(codegen, inverse) {
+  return function(args) {
+    args = args.map(codegen);
+    var n = args.length;
+    if (n < 2 || n > 3) {
+      throw Error("scale takes exactly 2 or 3 arguments.");
+    }
+    return 'this.defs.scale(model, ' + inverse + ', ' +
+      args[0] + ',' + args[1] + (n > 2 ? ',' + args[2] : '') + ')';
+  };
+}
+
+function scale(model, invert, name, value, scope) {
+  if (!scope || !scope.scale) {
+    scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
+  }
+  // Verify scope is valid
+  if (model.group(scope._id) !== scope) {
+    throw Error('Scope for scale "'+name+'" is not a valid group item.');
+  }
+  var s = scope.scale(name);
+  return !s ? value : (invert ? s.invert(value) : s(value));
+}
 
 function inrange(val, a, b, exclusive) {
   var min = a, max = b;
@@ -54,18 +55,4 @@ function inrange(val, a, b, exclusive) {
   return exclusive ?
     (min < val && max > val) :
     (min <= val && max >= val);
-}
-
-function scale(model, invert, name, value, scope) {
-  if (!scope || !scope.scale) {
-    scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
-  }
-
-  // Verify scope is valid
-  if (model.group(scope._id) !== scope) {
-    throw new Error('Scope for scale "'+name+'" is not a valid group item.');
-  }
-
-  var s = scope.scale(name);
-  return !s ? value : (invert ? s.invert(value) : s(value));
 }
