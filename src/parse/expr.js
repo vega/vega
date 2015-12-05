@@ -1,4 +1,5 @@
-var expr = require('vega-expression'),
+var template = require('datalib').template,
+    expr = require('vega-expression'),
     args = ['model', 'datum', 'event', 'signals'];
 
 module.exports = expr.compiler(args, {
@@ -7,20 +8,26 @@ module.exports = expr.compiler(args, {
   globalVar:   args[3],
   functions:   function(codegen) {
     var fn = expr.functions(codegen);
-    fn.eventItem = 'event.vg.item';
+    fn.eventItem  = 'event.vg.item';
     fn.eventGroup = 'event.vg.getGroup';
-    fn.eventX = 'event.vg.getX';
-    fn.eventY = 'event.vg.getY';
-    fn.open = 'window.open';
-    fn.inrange = 'this.defs.inrange';
-    fn.scale  = scaleGen(codegen, false);
-    fn.iscale = scaleGen(codegen, true);
+    fn.eventX     = 'event.vg.getX';
+    fn.eventY     = 'event.vg.getY';
+    fn.open       = 'window.open';
+    fn.scale      = scaleGen(codegen, false);
+    fn.iscale     = scaleGen(codegen, true);
+    fn.inrange    = 'this.defs.inrange';
+    fn.format     = 'this.defs.number';
+    fn.timeFormat = 'this.defs.time';
+    fn.utcFormat  = 'this.defs.utc';
     return fn;
   },
   functionDefs: function(/*codegen*/) {
     return {
       'scale':   scale,
-      'inrange': inrange
+      'inrange': inrange,
+      'number':  numberFormat,
+      'time':    timeFormat,
+      'utc':     utcFormat
     };
   }
 });
@@ -55,4 +62,18 @@ function inrange(val, a, b, exclusive) {
   return exclusive ?
     (min < val && max > val) :
     (min <= val && max >= val);
+}
+
+function numberFormat(specifier, v) {
+  return template.format(specifier, 'number')(v);
+}
+
+function timeFormat(specifier, d) {
+  return template.format(specifier, 'time')
+    (typeof d==='number' ? new Date(d) : d);
+}
+
+function utcFormat(specifier, d) {
+  return template.format(specifier, 'utc')
+    (typeof d==='number' ? new Date(d) : d);
 }
