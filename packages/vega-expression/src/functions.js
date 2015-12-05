@@ -55,6 +55,7 @@ module.exports = function(codegen) {
 
     // DATE functions
     'now':             'Date.now',
+    'utc':             'Date.UTC',
     'datetime':        DATE,
     'date':            fn('getDate', DATE, 0),
     'day':             fn('getDay', DATE, 0),
@@ -98,7 +99,7 @@ module.exports = function(codegen) {
         if (args.length < 3)
           throw new Error('Missing arguments to if function.');
         if (args.length > 3)
-        throw new Error('Too many arguments to if function.');
+          throw new Error('Too many arguments to if function.');
         var a = args.map(codegen);
         return a[0]+'?'+a[1]+':'+a[2];
       }

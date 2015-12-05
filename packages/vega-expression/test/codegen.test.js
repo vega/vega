@@ -245,7 +245,8 @@ describe('evaluate', function() {
     });
 
     it('should eval datetime functions', function() {
-      var d = new Date(2001,1,1);
+      var d = new Date(2001,1,1),
+          u = Date.UTC(2009, 9, 1, 10);
 
       expect(Math.abs(Date.now() - evaluate('now()')) <= 5).to.be.true;
       expect(evaluate('+datetime(2001,1,1)')).to.equal(+d);
@@ -273,6 +274,9 @@ describe('evaluate', function() {
         expect(evaluate('date(datetime(2001,1,'+date+'))')).to.equal(d.getDate());
         expect(evaluate('utcdate(datetime(2001,1,'+date+'))')).to.equal(d.getUTCDate());
       }
+
+      expect(evaluate('utc(2009,9,1,10)')).to.equal(u);
+      expect(evaluate('utchours(utc(2009,9,1,10))')).to.equal((new Date(u).getUTCHours()));
     });
 
     it('should evaluate if statements', function() {
