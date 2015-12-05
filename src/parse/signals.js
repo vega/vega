@@ -44,7 +44,7 @@ function parseSignals(model, spec) {
 
 function exprVal(model, spec) {
   var e = spec.expr,
-      val = e.fn(null, null, model.values(SIGNALS, e.globals));
+      val = e.fn(model, null, null, model.values(SIGNALS, e.globals));
   return spec.scale ? parseSignals.scale(model, spec, val) : val;
 }
 
@@ -58,7 +58,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
       scope = model.signalRef(scope.signal);
     } else if (dl.isString(scope)) { // Scope is an expression
       e = def._expr = (def._expr || expr(scope));
-      scope = e.fn(datum, evt, model.values(SIGNALS, e.globals));
+      scope = e.fn(model, datum, evt, model.values(SIGNALS, e.globals));
     }
   }
 

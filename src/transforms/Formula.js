@@ -26,7 +26,7 @@ prototype.transform = function(input) {
       signals = g.values(SIGNALS, this.dependency(SIGNALS));
 
   function set(x) {
-    Tuple.set(x, field, expr(x, null, signals));
+    Tuple.set(x, field, expr(g, x, null, signals));
   }
 
   input.add.forEach(set);
