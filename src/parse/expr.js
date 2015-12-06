@@ -79,13 +79,13 @@ function utcFormat(specifier, d) {
   return template.format(specifier, 'utc')(typeof d==='number' ? new Date(d) : d);
 }
 
-module.exports = function(model) {
+function wrap(model) {
   return function(str) {
     var x = compile(str);
     x.model = model;
     x.sig = model ? model._signals : {};
     return x;
   };
-};
-
-module.exports.codegen = compile.codegen;
+}
+wrap.codegen = compile.codegen;
+module.exports = wrap;
