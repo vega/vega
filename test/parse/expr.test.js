@@ -1,5 +1,5 @@
 var dl = require('datalib'),
-    expr = require('../../src/parse/expr');
+    expr = require('../../src/parse/expr')(null);
 
 describe('Expression Parser', function() {
 
@@ -10,8 +10,10 @@ describe('Expression Parser', function() {
     getY:     function() { return 'yy'; }
   }};
 
-  function run(code, model, datum, signals) {
-    return expr(code).fn(model, datum, evt, signals);
+  function run(code, model, datum) {
+    var e = expr(code);
+    e.model = model;
+    return e.fn(datum, evt);
   }
 
   it('should evaluate event functions', function() {

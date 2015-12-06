@@ -5,6 +5,7 @@ var dl = require('datalib'),
     Node  = df.Node, // jshint ignore:line
     GroupBuilder = require('../scene/GroupBuilder'),
     visit = require('../scene/visit'),
+    compiler = require('../parse/expr'),
     config = require('./config');
 
 function Model(cfg) {
@@ -20,6 +21,7 @@ function Model(cfg) {
   this._reset = {axes: false, legends: false};
 
   this.config(cfg);
+  this.expr = compiler(this);
   Base.init.call(this);
 }
 

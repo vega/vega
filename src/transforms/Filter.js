@@ -1,5 +1,4 @@
 var df = require('vega-dataflow'),
-    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -18,10 +17,8 @@ prototype.transform = function(input) {
   log.debug(input, ['filtering']);
 
   var output = df.ChangeSet.create(input),
-      graph = this._graph,
       skip = this._skip,
-      test = this.param('test'),
-      signals = graph.values(SIGNALS, this.dependency(SIGNALS));
+      test = this.param('test');
 
   input.rem.forEach(function(x) {
     if (skip[x._id] !== 1) output.rem.push(x);
@@ -29,12 +26,12 @@ prototype.transform = function(input) {
   });
 
   input.add.forEach(function(x) {
-    if (test(graph, x, null, signals)) output.add.push(x);
+    if (test(x)) output.add.push(x);
     else skip[x._id] = 1;
   });
 
   input.mod.forEach(function(x) {
-    var b = test(graph, x, null, signals),
+    var b = test(x),
         s = (skip[x._id] === 1);
     if (b && s) {
       skip[x._id] = 0;

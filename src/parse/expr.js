@@ -1,11 +1,14 @@
-var template = require('datalib').template,
+var dl = require('datalib'),
+    template = dl.template,
     expr = require('vega-expression'),
-    args = ['model', 'datum', 'event', 'signals'];
+    args = ['datum', 'event', 'signals'];
 
-module.exports = expr.compiler(args, {
-  idWhiteList: ['datum', 'event', 'signals'],
-  fieldVar:    args[1],
-  globalVar:   args[3],
+var compile = expr.compiler(args, {
+  idWhiteList: args,
+  fieldVar:    args[0],
+  globalVar:   function(id) {
+    return 'this.sig["' + id + '"]._value';
+  },
   functions:   function(codegen) {
     var fn = expr.functions(codegen);
     fn.eventItem  = 'event.vg.item';
@@ -32,14 +35,14 @@ module.exports = expr.compiler(args, {
   }
 });
 
-function scaleGen(codegen, inverse) {
+function scaleGen(codegen, invert) {
   return function(args) {
     args = args.map(codegen);
     var n = args.length;
     if (n < 2 || n > 3) {
       throw Error("scale takes exactly 2 or 3 arguments.");
     }
-    return 'this.defs.scale(model, ' + inverse + ', ' +
+    return 'this.defs.scale(this.model, ' + invert + ', ' +
       args[0] + ',' + args[1] + (n > 2 ? ',' + args[2] : '') + ')';
   };
 }
@@ -75,3 +78,14 @@ function timeFormat(specifier, d) {
 function utcFormat(specifier, d) {
   return template.format(specifier, 'utc')(typeof d==='number' ? new Date(d) : d);
 }
+
+module.exports = function(model) {
+  return function(str) {
+    var x = compile(str);
+    x.model = model;
+    x.sig = model ? model._signals : {};
+    return x;
+  };
+};
+
+module.exports.codegen = compile.codegen;

@@ -1,6 +1,5 @@
 var dl = require('datalib'),
-    Deps = require('vega-dataflow').Dependencies,
-    expr = require('../parse/expr');
+    Deps = require('vega-dataflow').Dependencies;
 
 var arrayType = /array/i,
     dataType  = /data/i,
@@ -71,6 +70,7 @@ prototype.get = function() {
 
 prototype.set = function(value) {
   var p = this,
+      graph = p._transform._graph,
       isExpr = exprType.test(this._type),
       isData  = dataType.test(this._type),
       isField = fieldType.test(this._type);
@@ -80,7 +80,7 @@ prototype.set = function(value) {
     var e;
     if (dl.isString(v)) {
       if (isExpr) {
-        e = expr(v);
+        e = graph.expr(v);
         p._transform.dependency(Deps.FIELDS,  e.fields);
         p._transform.dependency(Deps.SIGNALS, e.globals);
         return e.fn;
@@ -108,13 +108,11 @@ prototype.set = function(value) {
       return v.signal;
     } else if (v.expr !== undefined) {
       p._resolution = true;
-      e = expr(v.expr);
+      e = graph.expr(v.expr);
       p._transform.dependency(Deps.SIGNALS, e.globals);
       p._signals.push({
         index: i,
-        value: function(graph) {
-          return e.fn(graph, null, null, graph.values(Deps.SIGNALS, e.globals));
-        }
+        value: function() { return e.fn(); }
       });
       return v.expr;
     }

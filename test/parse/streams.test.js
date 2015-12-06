@@ -148,7 +148,7 @@ describe('Streams', function() {
     });
   });
 
-  it('should propagated signals', function(done) {
+  it('should propagate signals', function(done) {
     var spec = {
       signals: [{
         name: "signalA",

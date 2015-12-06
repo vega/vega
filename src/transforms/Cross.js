@@ -2,7 +2,6 @@ var dl = require('datalib'),
     df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
     Tuple = df.Tuple,
-    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform'),
     BatchTransform = require('./BatchTransform');
@@ -165,13 +164,10 @@ function purge(output, rids) {
 prototype.batchTransform = function(input, data, reset) {
   log.debug(input, ['crossing']);
 
-  var g = this._graph,
-      w = this.param('with'),
-      f = this.param('filter'),
+  var w = this.param('with'),
       diag = this.param('diagonal'),
       as = this._output,
-      sg = g.values(SIGNALS, this.dependency(SIGNALS)),
-      test = f ? function(x) {return f(g, x, null, sg); } : null,
+      test = this.param('filter') || null,
       selfCross = (!w.name),
       woutput = selfCross ? input : w.source.last(),
       wdata   = selfCross ? data : w.source.values(),
