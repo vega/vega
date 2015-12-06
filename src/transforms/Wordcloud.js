@@ -5,8 +5,7 @@ var dl = require('datalib'),
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
     Transform = require('./Transform'),
-    BatchTransform = require('./BatchTransform'),
-    Parameter = require('./Parameter');
+    BatchTransform = require('./BatchTransform');
 
 function Wordcloud(graph) {
   BatchTransform.prototype.init.call(this, graph);
@@ -109,6 +108,7 @@ prototype.batchTransform = function(input, data) {
 
 module.exports = Wordcloud;
 
+var Parameter = require('./Parameter');
 Wordcloud.schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Wordcloud transform",
@@ -164,7 +164,7 @@ Wordcloud.schema = {
     "rotate": {
       "description": "The field or number to set the roration angle (in degrees).",
       "oneOf": [
-        {"type": "number"}, {"type": "string"}, 
+        {"type": "number"}, {"type": "string"},
         Parameter.schema, {"$ref": "#/refs/signal"}
       ],
       "default": 0
