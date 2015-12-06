@@ -35,9 +35,11 @@ module.exports = function(opt) {
     return retval;
   }
 
-  function lookupGlobal(id) {
-    return GLOBAL_VAR + '["' + id + '"]';
-  }
+  /* istanbul ignore next */
+  var lookupGlobal = typeof GLOBAL_VAR === 'function' ? GLOBAL_VAR :
+    function (id) {
+      return GLOBAL_VAR + '["' + id + '"]';
+    };
 
   function codegen(ast) {
     if (typeof ast === 'string') return ast;
