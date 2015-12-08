@@ -175,6 +175,11 @@ function axs(model, updatedConfig) {
     }
     range = axisScaleRange(scale);
 
+    var scales;
+    if ('marks' in model._defs && 'scales' in model._defs.marks) {
+      scales = model._defs.marks.scales;
+    }
+
     // setup axis marks
     dl.extend(m.gridLines, axisTicks(config));
     dl.extend(m.majorTicks, axisTicks(config));
@@ -187,9 +192,9 @@ function axs(model, updatedConfig) {
     m.gridLines.properties.enter.strokeWidth = {value: config.gridWidth};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales);
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
@@ -454,7 +459,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size) {
+function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -463,19 +468,49 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size) {
   } else {
     size = {value: sign * size};
   }
+
+  var tickPlacement = config.axis.tickPlacement;
   if (orient === 'top' || orient === 'bottom') {
+    var updatedOldScale = {'scale': oldScale.scale, 'offset': oldScale.offset};
+    var updatedNewScale = {'scale': newScale.scale, 'offset': newScale.offset};
+    if (tickPlacement === 'between') {
+      var currPadding = 0;
+      var currOuterPadding = 0;
+      for (i=0; i<scales.length; i++) {
+        if (scales[i].name === oldScale.scale) {
+          if ('padding' in scales[i]) {
+           currPadding = scales[i].padding;
+          }
+          if ('outerPadding' in scales[i]) {
+           outerPadding = scales[i].padding;
+          }
+        }
+      }
+      if (!currPadding && 'padding' in config.scales) {
+        currPadding = config.scales.padding;
+      }
+
+      if (!currOuterPadding && 'outerPadding' in config.scales) {
+        currOuterPadding = config.scales.outerPadding;
+      }
+      var oldOffset = oldScale.offset;
+      var newOffset = newScale.offset;
+      updatedOldScale.offset = (oldOffset * 2) + (oldOffset * 2 * currPadding) + (oldOffset * currOuterPadding);
+      updatedNewScale.offset = (newOffset * 2) + (newOffset * 2 * currPadding) + (newOffset * currOuterPadding);
+    }
+
     dl.extend(ticks.properties.enter, {
-      x:  oldScale,
+      x:  updatedOldScale,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.update, {
-      x:  newScale,
+      x:  updatedNewScale,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.exit, {
-      x:  newScale,
+      x:  updatedNewScale,
     });
   } else {
     dl.extend(ticks.properties.enter, {
