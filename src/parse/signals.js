@@ -1,9 +1,9 @@
 var dl = require('datalib'),
-    SIGNALS = require('vega-dataflow').Dependencies.SIGNALS,
-    expr = require('./expr');
+    expr = require('./expr'),
+    SIGNALS = require('vega-dataflow').Dependencies.SIGNALS;
 
 var RESERVED = ['datum', 'event', 'signals', 'width', 'height', 'padding']
-  .concat(dl.keys(expr.codegen.functions));
+    .concat(dl.keys(expr.codegen.functions));
 
 function parseSignals(model, spec) {
   // process each signal definition
@@ -17,12 +17,12 @@ function parseSignals(model, spec) {
       .verbose(s.verbose);
 
     if (s.init && s.init.expr) {
-      s.init.expr = expr(s.init.expr);
+      s.init.expr = model.expr(s.init.expr);
       signal.value(exprVal(model, s.init));
     }
 
     if (s.expr) {
-      s.expr = expr(s.expr);
+      s.expr = model.expr(s.expr);
       signal.evaluate = function(input) {
         var val = exprVal(model, s),
             sg  = input.signals;
@@ -43,9 +43,8 @@ function parseSignals(model, spec) {
 }
 
 function exprVal(model, spec) {
-  var e = spec.expr,
-      val = e.fn(null, null, model.values(SIGNALS, e.globals));
-  return spec.scale ? parseSignals.scale(model, spec, val) : val;
+  var e = spec.expr, v = e.fn();
+  return spec.scale ? parseSignals.scale(model, spec, v) : v;
 }
 
 parseSignals.scale = function scale(model, spec, value, datum, evt) {
@@ -57,22 +56,12 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
     if (scope.signal) {
       scope = model.signalRef(scope.signal);
     } else if (dl.isString(scope)) { // Scope is an expression
-      e = def._expr = (def._expr || expr(scope));
-      scope = e.fn(datum, evt, model.values(SIGNALS, e.globals));
+      e = def._expr = (def._expr || model.expr(scope));
+      scope = e.fn(datum, evt);
     }
   }
 
-  if (!scope || !scope.scale) {
-    scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
-  }
-
-  // Verify scope is valid
-  if (model.group(scope._id) !== scope) {
-    throw new Error('Scope for scale "'+name+'" is not a valid group item.');
-  }
-
-  var s = scope.scale(name);
-  return !s ? value : (def.invert ? s.invert(value) : s(value));
+  return expr.scale(model, def.invert, name, value, scope);
 };
 
 module.exports = parseSignals;

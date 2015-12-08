@@ -1,10 +1,8 @@
 var d3 = require('d3'),
     dl = require('datalib'),
     df = require('vega-dataflow'),
-    SIGNALS = df.Dependencies.SIGNALS,
     parseSignals = require('./signals'),
-    selector = require('./events'),
-    expr = require('./expr');
+    selector = require('./events');
 
 var GATEKEEPER = '_vgGATEKEEPER';
 
@@ -27,18 +25,20 @@ var vgEvent = {
 
 function parseStreams(view) {
   var model = view.model(),
-      spec  = model.defs().signals,
+      trueFn  = model.expr('true'),
+      falseFn = model.expr('false'),
+      spec    = model.defs().signals,
       registry = {handlers: {}, nodes: {}},
       internal = dl.duplicate(registry),  // Internal event processing
       external = dl.duplicate(registry);  // External event processing
 
-  (spec || []).forEach(function(sig) {
+  dl.array(spec).forEach(function(sig) {
     var signal = model.signal(sig.name);
     if (sig.expr) return;  // Cannot have an expr and stream definition.
 
-    (sig.streams || []).forEach(function(stream) {
+    dl.array(sig.streams).forEach(function(stream) {
       var sel = selector.parse(stream.type),
-          exp = expr(stream.expr);
+          exp = model.expr(stream.expr);
       mergedStream(signal, sel, exp, stream);
     });
   });
@@ -81,7 +81,7 @@ function parseStreams(view) {
     dl.keys(external.handlers).forEach(function(type) {
       var h = external.handlers[type],
           t = type.split(':'),
-          elt = h.elements || [];
+          elt = dl.array(h.elements);
 
       for (var i=0; i<elt.length; ++i) {
         elt[i].removeEventListener(t[1], h.listener);
@@ -126,7 +126,7 @@ function parseStreams(view) {
         val, i, n, h;
 
     function invoke(f) {
-      return !f.fn(datum, evt, model.values(SIGNALS, f.globals));
+      return !f.fn(datum, evt);
     }
 
     for (i=0, n=handlers.length; i<n; ++i) {
@@ -134,7 +134,7 @@ function parseStreams(view) {
       filtered = h.filters.some(invoke);
       if (filtered) continue;
 
-      val = h.exp.fn(datum, evt, model.values(SIGNALS, h.exp.globals));
+      val = h.exp.fn(datum, evt);
       if (h.spec.scale) {
         val = parseSignals.scale(model, h.spec, val, datum, evt);
       }
@@ -162,7 +162,7 @@ function parseStreams(view) {
         name = selector.name,
         mark = selector.mark,
         target   = selector.target,
-        filters  = selector.filters || [],
+        filters  = dl.array(selector.filters),
         registry = target ? external : internal,
         type = target ? target+':'+evt : evt,
         node = registry.nodes[type] || (registry.nodes[type] = new df.Node(model)),
@@ -178,7 +178,7 @@ function parseStreams(view) {
       signal: sig,
       exp: exp,
       spec: spec,
-      filters: filters.map(function(f) { return expr(f); })
+      filters: filters.map(function(f) { return model.expr(f); })
     });
 
     node.addListener(sig);
@@ -188,7 +188,7 @@ function parseStreams(view) {
     var n = new df.Node(model);
     n.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
-      var val = exp.fn(null, null, model.values(SIGNALS, exp.globals));
+      var val = exp.fn();
       if (spec.scale) {
         val = parseSignals.scale(model, spec, val);
       }
@@ -209,8 +209,6 @@ function parseStreams(view) {
   function orderedStream(sig, selector, exp, spec) {
     var name = sig.name(),
         gk = name + GATEKEEPER,
-        trueFn  = expr('true'),
-        falseFn = expr('false'),
         middle  = selector.middle,
         filters = middle.filters || (middle.filters = []),
         gatekeeper = model.signal(gk) || model.signal(gk, false);

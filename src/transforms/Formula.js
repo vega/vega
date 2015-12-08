@@ -1,6 +1,5 @@
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
-    SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
     Transform = require('./Transform');
 
@@ -20,13 +19,11 @@ prototype.constructor = Formula;
 prototype.transform = function(input) {
   log.debug(input, ['formulating']);
 
-  var g = this._graph,
-      field = this.param('field'),
-      expr = this.param('expr'),
-      signals = g.values(SIGNALS, this.dependency(SIGNALS));
+  var field = this.param('field'),
+      expr = this.param('expr');
 
   function set(x) {
-    Tuple.set(x, field, expr(x, null, signals));
+    Tuple.set(x, field, expr(x));
   }
 
   input.add.forEach(set);
