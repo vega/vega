@@ -12,6 +12,8 @@ function parseMark(model, mark) {
 
   // parse mark property definitions
   dl.keys(props).forEach(function(k) {
+    defaultColor('fill', 'defaultFill', props[k]);
+    defaultColor('stroke', 'defaultFill', props[k]);
     props[k] = parseProperties(model, mark.type, props[k]);
   });
 
@@ -26,6 +28,16 @@ function parseMark(model, mark) {
   }
 
   return mark;
+}
+
+function defaultColor(property, configProperty, prop) {
+  if (property in prop && 'value' in prop[property] && prop[property]['value'] === 'default') {
+    if ('marks' in config && configProperty in config.marks) {
+      prop[property]['value'] = config.marks[configProperty];
+    } else {
+      prop[property]['value'] = '#000000';
+    }
+  }
 }
 
 module.exports = parseMark;
