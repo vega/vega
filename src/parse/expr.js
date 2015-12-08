@@ -88,4 +88,5 @@ function wrap(model) {
   };
 }
 wrap.codegen = compile.codegen;
+wrap.scale = scale;
 module.exports = wrap;

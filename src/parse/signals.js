@@ -61,17 +61,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
     }
   }
 
-  if (!scope || !scope.scale) {
-    scope = (scope && scope.mark) ? scope.mark.group : model.scene().items[0];
-  }
-
-  // Verify scope is valid
-  if (model.group(scope._id) !== scope) {
-    throw new Error('Scope for scale "'+name+'" is not a valid group item.');
-  }
-
-  var s = scope.scale(name);
-  return !s ? value : (def.invert ? s.invert(value) : s(value));
+  return expr.scale(model, def.invert, name, value, scope);
 };
 
 module.exports = parseSignals;
