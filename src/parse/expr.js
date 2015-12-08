@@ -7,7 +7,7 @@ var compile = expr.compiler(args, {
   idWhiteList: args,
   fieldVar:    args[0],
   globalVar:   function(id) {
-    return 'this.sig["' + id + '"]._value';
+    return 'this.sig[' + dl.str(id) + ']._value';
   },
   functions:   function(codegen) {
     var fn = expr.functions(codegen);
