@@ -5,6 +5,11 @@ function parseMark(model, mark) {
   var props = mark.properties,
       group = mark.marks;
 
+  var symbolShape = model._config.legend.symbolShape;
+  if (typeof symbolShape === 'object' && mark.type in symbolShape) {
+    model._config.legend.symbolShape = symbolShape[mark.type];
+  }
+
   // parse mark property definitions
   dl.keys(props).forEach(function(k) {
     props[k] = parseProperties(model, mark.type, props[k]);
