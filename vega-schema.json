@@ -1968,6 +1968,7 @@
               "tan",
               "clamp",
               "now",
+              "utc",
               "datetime",
               "date",
               "day",

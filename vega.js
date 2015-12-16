@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.4.1',
+  version: '2.4.2',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -19,515 +19,9 @@ module.exports = {
   logging: require('vega-logging'),
   debug: require('vega-logging').debug
 };
-},{"./src/core/config":92,"./src/core/schema":93,"./src/parse/":99,"./src/scene/Bounder":111,"./src/scene/Builder":112,"./src/scene/Encoder":113,"./src/scene/GroupBuilder":114,"./src/transforms":146,"./src/transforms/BatchTransform":121,"./src/transforms/Parameter":137,"./src/transforms/Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],2:[function(require,module,exports){
+},{"./src/core/config":91,"./src/core/schema":92,"./src/parse/":98,"./src/scene/Bounder":110,"./src/scene/Builder":111,"./src/scene/Encoder":112,"./src/scene/GroupBuilder":113,"./src/transforms":145,"./src/transforms/BatchTransform":120,"./src/transforms/Parameter":136,"./src/transforms/Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
-// Word cloud layout by Jason Davies, https://www.jasondavies.com/wordcloud/
-// Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
-
-var dispatch = require("d3-dispatch").dispatch;
-
-var cloudRadians = Math.PI / 180,
-    cw = 1 << 11 >> 5,
-    ch = 1 << 11;
-
-module.exports = function() {
-  var size = [256, 256],
-      text = cloudText,
-      font = cloudFont,
-      fontSize = cloudFontSize,
-      fontStyle = cloudFontNormal,
-      fontWeight = cloudFontNormal,
-      rotate = cloudRotate,
-      padding = cloudPadding,
-      spiral = archimedeanSpiral,
-      words = [],
-      timeInterval = Infinity,
-      event = dispatch("word", "end"),
-      timer = null,
-      random = Math.random,
-      cloud = {},
-      canvas = cloudCanvas;
-
-  cloud.canvas = function(_) {
-    return arguments.length ? (canvas = functor(_), cloud) : canvas;
-  };
-
-  cloud.start = function() {
-    var contextAndRatio = getContext(canvas()),
-        board = zeroArray((size[0] >> 5) * size[1]),
-        bounds = null,
-        n = words.length,
-        i = -1,
-        tags = [],
-        data = words.map(function(d, i) {
-          d.text = text.call(this, d, i);
-          d.font = font.call(this, d, i);
-          d.style = fontStyle.call(this, d, i);
-          d.weight = fontWeight.call(this, d, i);
-          d.rotate = rotate.call(this, d, i);
-          d.size = ~~fontSize.call(this, d, i);
-          d.padding = padding.call(this, d, i);
-          return d;
-        }).sort(function(a, b) { return b.size - a.size; });
-
-    if (timer) clearInterval(timer);
-    timer = setInterval(step, 0);
-    step();
-
-    return cloud;
-
-    function step() {
-      var start = Date.now();
-      while (Date.now() - start < timeInterval && ++i < n && timer) {
-        var d = data[i];
-        d.x = (size[0] * (random() + .5)) >> 1;
-        d.y = (size[1] * (random() + .5)) >> 1;
-        cloudSprite(contextAndRatio, d, data, i);
-        if (d.hasText && place(board, d, bounds)) {
-          tags.push(d);
-          event.word(d);
-          if (bounds) cloudBounds(bounds, d);
-          else bounds = [{x: d.x + d.x0, y: d.y + d.y0}, {x: d.x + d.x1, y: d.y + d.y1}];
-          // Temporary hack
-          d.x -= size[0] >> 1;
-          d.y -= size[1] >> 1;
-        }
-      }
-      if (i >= n) {
-        cloud.stop();
-        event.end(tags, bounds);
-      }
-    }
-  }
-
-  cloud.stop = function() {
-    if (timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-    return cloud;
-  };
-
-  function getContext(canvas) {
-    canvas.width = canvas.height = 1;
-    var ratio = Math.sqrt(canvas.getContext("2d").getImageData(0, 0, 1, 1).data.length >> 2);
-    canvas.width = (cw << 5) / ratio;
-    canvas.height = ch / ratio;
-
-    var context = canvas.getContext("2d");
-    context.fillStyle = context.strokeStyle = "red";
-    context.textAlign = "center";
-
-    return {context: context, ratio: ratio};
-  }
-
-  function place(board, tag, bounds) {
-    var perimeter = [{x: 0, y: 0}, {x: size[0], y: size[1]}],
-        startX = tag.x,
-        startY = tag.y,
-        maxDelta = Math.sqrt(size[0] * size[0] + size[1] * size[1]),
-        s = spiral(size),
-        dt = random() < .5 ? 1 : -1,
-        t = -dt,
-        dxdy,
-        dx,
-        dy;
-
-    while (dxdy = s(t += dt)) {
-      dx = ~~dxdy[0];
-      dy = ~~dxdy[1];
-
-      if (Math.min(Math.abs(dx), Math.abs(dy)) >= maxDelta) break;
-
-      tag.x = startX + dx;
-      tag.y = startY + dy;
-
-      if (tag.x + tag.x0 < 0 || tag.y + tag.y0 < 0 ||
-          tag.x + tag.x1 > size[0] || tag.y + tag.y1 > size[1]) continue;
-      // TODO only check for collisions within current bounds.
-      if (!bounds || !cloudCollide(tag, board, size[0])) {
-        if (!bounds || collideRects(tag, bounds)) {
-          var sprite = tag.sprite,
-              w = tag.width >> 5,
-              sw = size[0] >> 5,
-              lx = tag.x - (w << 4),
-              sx = lx & 0x7f,
-              msx = 32 - sx,
-              h = tag.y1 - tag.y0,
-              x = (tag.y + tag.y0) * sw + (lx >> 5),
-              last;
-          for (var j = 0; j < h; j++) {
-            last = 0;
-            for (var i = 0; i <= w; i++) {
-              board[x + i] |= (last << msx) | (i < w ? (last = sprite[j * w + i]) >>> sx : 0);
-            }
-            x += sw;
-          }
-          delete tag.sprite;
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  cloud.timeInterval = function(_) {
-    return arguments.length ? (timeInterval = _ == null ? Infinity : _, cloud) : timeInterval;
-  };
-
-  cloud.words = function(_) {
-    return arguments.length ? (words = _, cloud) : words;
-  };
-
-  cloud.size = function(_) {
-    return arguments.length ? (size = [+_[0], +_[1]], cloud) : size;
-  };
-
-  cloud.font = function(_) {
-    return arguments.length ? (font = functor(_), cloud) : font;
-  };
-
-  cloud.fontStyle = function(_) {
-    return arguments.length ? (fontStyle = functor(_), cloud) : fontStyle;
-  };
-
-  cloud.fontWeight = function(_) {
-    return arguments.length ? (fontWeight = functor(_), cloud) : fontWeight;
-  };
-
-  cloud.rotate = function(_) {
-    return arguments.length ? (rotate = functor(_), cloud) : rotate;
-  };
-
-  cloud.text = function(_) {
-    return arguments.length ? (text = functor(_), cloud) : text;
-  };
-
-  cloud.spiral = function(_) {
-    return arguments.length ? (spiral = spirals[_] || _, cloud) : spiral;
-  };
-
-  cloud.fontSize = function(_) {
-    return arguments.length ? (fontSize = functor(_), cloud) : fontSize;
-  };
-
-  cloud.padding = function(_) {
-    return arguments.length ? (padding = functor(_), cloud) : padding;
-  };
-
-  cloud.random = function(_) {
-    return arguments.length ? (random = _, cloud) : random;
-  };
-
-  cloud.on = function() {
-    var value = event.on.apply(event, arguments);
-    return value === event ? cloud : value;
-  };
-
-  return cloud;
-};
-
-function cloudText(d) {
-  return d.text;
-}
-
-function cloudFont() {
-  return "serif";
-}
-
-function cloudFontNormal() {
-  return "normal";
-}
-
-function cloudFontSize(d) {
-  return Math.sqrt(d.value);
-}
-
-function cloudRotate() {
-  return (~~(Math.random() * 6) - 3) * 30;
-}
-
-function cloudPadding() {
-  return 1;
-}
-
-// Fetches a monochrome sprite bitmap for the specified text.
-// Load in batches for speed.
-function cloudSprite(contextAndRatio, d, data, di) {
-  if (d.sprite) return;
-  var c = contextAndRatio.context,
-      ratio = contextAndRatio.ratio;
-
-  c.clearRect(0, 0, (cw << 5) / ratio, ch / ratio);
-  var x = 0,
-      y = 0,
-      maxh = 0,
-      n = data.length;
-  --di;
-  while (++di < n) {
-    d = data[di];
-    c.save();
-    c.font = d.style + " " + d.weight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
-    var w = c.measureText(d.text + "m").width * ratio,
-        h = d.size << 1;
-    if (d.rotate) {
-      var sr = Math.sin(d.rotate * cloudRadians),
-          cr = Math.cos(d.rotate * cloudRadians),
-          wcr = w * cr,
-          wsr = w * sr,
-          hcr = h * cr,
-          hsr = h * sr;
-      w = (Math.max(Math.abs(wcr + hsr), Math.abs(wcr - hsr)) + 0x1f) >> 5 << 5;
-      h = ~~Math.max(Math.abs(wsr + hcr), Math.abs(wsr - hcr));
-    } else {
-      w = (w + 0x1f) >> 5 << 5;
-    }
-    if (h > maxh) maxh = h;
-    if (x + w >= (cw << 5)) {
-      x = 0;
-      y += maxh;
-      maxh = 0;
-    }
-    if (y + h >= ch) break;
-    c.translate((x + (w >> 1)) / ratio, (y + (h >> 1)) / ratio);
-    if (d.rotate) c.rotate(d.rotate * cloudRadians);
-    c.fillText(d.text, 0, 0);
-    if (d.padding) c.lineWidth = 2 * d.padding, c.strokeText(d.text, 0, 0);
-    c.restore();
-    d.width = w;
-    d.height = h;
-    d.xoff = x;
-    d.yoff = y;
-    d.x1 = w >> 1;
-    d.y1 = h >> 1;
-    d.x0 = -d.x1;
-    d.y0 = -d.y1;
-    d.hasText = true;
-    x += w;
-  }
-  var pixels = c.getImageData(0, 0, (cw << 5) / ratio, ch / ratio).data,
-      sprite = [];
-  while (--di >= 0) {
-    d = data[di];
-    if (!d.hasText) continue;
-    var w = d.width,
-        w32 = w >> 5,
-        h = d.y1 - d.y0;
-    // Zero the buffer
-    for (var i = 0; i < h * w32; i++) sprite[i] = 0;
-    x = d.xoff;
-    if (x == null) return;
-    y = d.yoff;
-    var seen = 0,
-        seenRow = -1;
-    for (var j = 0; j < h; j++) {
-      for (var i = 0; i < w; i++) {
-        var k = w32 * j + (i >> 5),
-            m = pixels[((y + j) * (cw << 5) + (x + i)) << 2] ? 1 << (31 - (i % 32)) : 0;
-        sprite[k] |= m;
-        seen |= m;
-      }
-      if (seen) seenRow = j;
-      else {
-        d.y0++;
-        h--;
-        j--;
-        y++;
-      }
-    }
-    d.y1 = d.y0 + seenRow;
-    d.sprite = sprite.slice(0, (d.y1 - d.y0) * w32);
-  }
-}
-
-// Use mask-based collision detection.
-function cloudCollide(tag, board, sw) {
-  sw >>= 5;
-  var sprite = tag.sprite,
-      w = tag.width >> 5,
-      lx = tag.x - (w << 4),
-      sx = lx & 0x7f,
-      msx = 32 - sx,
-      h = tag.y1 - tag.y0,
-      x = (tag.y + tag.y0) * sw + (lx >> 5),
-      last;
-  for (var j = 0; j < h; j++) {
-    last = 0;
-    for (var i = 0; i <= w; i++) {
-      if (((last << msx) | (i < w ? (last = sprite[j * w + i]) >>> sx : 0))
-          & board[x + i]) return true;
-    }
-    x += sw;
-  }
-  return false;
-}
-
-function cloudBounds(bounds, d) {
-  var b0 = bounds[0],
-      b1 = bounds[1];
-  if (d.x + d.x0 < b0.x) b0.x = d.x + d.x0;
-  if (d.y + d.y0 < b0.y) b0.y = d.y + d.y0;
-  if (d.x + d.x1 > b1.x) b1.x = d.x + d.x1;
-  if (d.y + d.y1 > b1.y) b1.y = d.y + d.y1;
-}
-
-function collideRects(a, b) {
-  return a.x + a.x1 > b[0].x && a.x + a.x0 < b[1].x && a.y + a.y1 > b[0].y && a.y + a.y0 < b[1].y;
-}
-
-function archimedeanSpiral(size) {
-  var e = size[0] / size[1];
-  return function(t) {
-    return [e * (t *= .1) * Math.cos(t), t * Math.sin(t)];
-  };
-}
-
-function rectangularSpiral(size) {
-  var dy = 4,
-      dx = dy * size[0] / size[1],
-      x = 0,
-      y = 0;
-  return function(t) {
-    var sign = t < 0 ? -1 : 1;
-    // See triangular numbers: T_n = n * (n + 1) / 2.
-    switch ((Math.sqrt(1 + 4 * sign * t) - sign) & 3) {
-      case 0:  x += dx; break;
-      case 1:  y += dy; break;
-      case 2:  x -= dx; break;
-      default: y -= dy; break;
-    }
-    return [x, y];
-  };
-}
-
-// TODO reuse arrays?
-function zeroArray(n) {
-  var a = [],
-      i = -1;
-  while (++i < n) a[i] = 0;
-  return a;
-}
-
-function cloudCanvas() {
-  return document.createElement("canvas");
-}
-
-function functor(d) {
-  return typeof d === "function" ? d : function() { return d; };
-}
-
-var spirals = {
-  archimedean: archimedeanSpiral,
-  rectangular: rectangularSpiral
-};
-
-},{"d3-dispatch":4}],4:[function(require,module,exports){
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define('d3-dispatch', ['exports'], factory) :
-  factory((global.d3_dispatch = {}));
-}(this, function (exports) { 'use strict';
-
-  function dispatch() {
-    return new Dispatch(arguments);
-  }
-
-  function Dispatch(types) {
-    var i = -1,
-        n = types.length,
-        callbacksByType = {},
-        callbackByName = {},
-        type,
-        that = this;
-
-    that.on = function(type, callback) {
-      type = parseType(type);
-
-      // Return the current callback, if any.
-      if (arguments.length < 2) {
-        return (callback = callbackByName[type.name]) && callback.value;
-      }
-
-      // If a type was specified…
-      if (type.type) {
-        var callbacks = callbacksByType[type.type],
-            callback0 = callbackByName[type.name],
-            i;
-
-        // Remove the current callback, if any, using copy-on-remove.
-        if (callback0) {
-          callback0.value = null;
-          i = callbacks.indexOf(callback0);
-          callbacksByType[type.type] = callbacks = callbacks.slice(0, i).concat(callbacks.slice(i + 1));
-          delete callbackByName[type.name];
-        }
-
-        // Add the new callback, if any.
-        if (callback) {
-          callback = {value: callback};
-          callbackByName[type.name] = callback;
-          callbacks.push(callback);
-        }
-      }
-
-      // Otherwise, if a null callback was specified, remove all callbacks with the given name.
-      else if (callback == null) {
-        for (var otherType in callbacksByType) {
-          if (callback = callbackByName[otherType + type.name]) {
-            callback.value = null;
-            var callbacks = callbacksByType[otherType], i = callbacks.indexOf(callback);
-            callbacksByType[otherType] = callbacks.slice(0, i).concat(callbacks.slice(i + 1));
-            delete callbackByName[callback.name];
-          }
-        }
-      }
-
-      return that;
-    };
-
-    while (++i < n) {
-      type = types[i] + "";
-      if (!type || (type in that)) throw new Error("illegal or duplicate type: " + type);
-      callbacksByType[type] = [];
-      that[type] = applier(type);
-    }
-
-    function parseType(type) {
-      var i = (type += "").indexOf("."), name = type;
-      if (i >= 0) type = type.slice(0, i); else name += ".";
-      if (type && !callbacksByType.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-      return {type: type, name: name};
-    }
-
-    function applier(type) {
-      return function() {
-        var callbacks = callbacksByType[type], // Defensive reference; copy-on-remove.
-            callback,
-            callbackValue,
-            i = -1,
-            n = callbacks.length;
-
-        while (++i < n) {
-          if (callbackValue = (callback = callbacks[i]).value) {
-            callbackValue.apply(this, arguments);
-          }
-        }
-
-        return that;
-      };
-    }
-  }
-
-  dispatch.prototype = Dispatch.prototype;
-
-  var version = "0.2.4";
-
-  exports.version = version;
-  exports.dispatch = dispatch;
-
-}));
-},{}],5:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define('d3-dsv', ['exports'], factory) :
@@ -538,16 +32,16 @@ var spirals = {
     return new Dsv(delimiter);
   }
 
-  function converter(columns) {
+  function objectConverter(columns) {
     return new Function("d", "return {" + columns.map(function(name, i) {
       return JSON.stringify(name) + ": d[" + i + "]";
     }).join(",") + "}");
   }
 
   function customConverter(columns, f) {
-    var convert = converter(columns);
+    var object = objectConverter(columns);
     return function(row, i) {
-      return f(convert(row), i);
+      return f(object(row), i, columns);
     };
   }
 
@@ -574,7 +68,7 @@ var spirals = {
     this.parse = function(text, f) {
       var convert, columns, rows = this.parseRows(text, function(row, i) {
         if (convert) return convert(row, i - 1);
-        columns = row, convert = f ? customConverter(row, f) : converter(row);
+        columns = row, convert = f ? customConverter(row, f) : objectConverter(row);
       });
       rows.columns = columns;
       return rows;
@@ -668,7 +162,7 @@ var spirals = {
   var csv = dsv(",");
   var tsv = dsv("\t");
 
-  var version = "0.1.11";
+  var version = "0.1.12";
 
   exports.version = version;
   exports.dsv = dsv;
@@ -676,7 +170,7 @@ var spirals = {
   exports.tsv = tsv;
 
 }));
-},{}],6:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define('d3-format', ['exports'], factory) :
@@ -1163,7 +657,7 @@ var spirals = {
   exports.precisionRound = precisionRound;
 
 }));
-},{}],7:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-time')) :
   typeof define === 'function' && define.amd ? define('d3-time-format', ['exports', 'd3-time'], factory) :
@@ -1984,7 +1478,7 @@ var spirals = {
   exports.isoFormat = formatIso;
 
 }));
-},{"d3-time":8}],8:[function(require,module,exports){
+},{"d3-time":6}],6:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define('d3-time', ['exports'], factory) :
@@ -2290,7 +1784,7 @@ var spirals = {
   exports.interval = newInterval;
 
 }));
-},{}],9:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define('d3-time', ['exports'], factory) :
@@ -2645,7 +2139,30 @@ var spirals = {
   exports.interval = newInterval;
 
 }));
-},{}],10:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+var util = require('./util'),
+    time = require('./time'),
+    utc = time.utc;
+
+var u = module.exports;
+
+u.$year   = util.$func('year', time.year.unit);
+u.$month  = util.$func('month', time.months.unit);
+u.$date   = util.$func('date', time.dates.unit);
+u.$day    = util.$func('day', time.weekdays.unit);
+u.$hour   = util.$func('hour', time.hours.unit);
+u.$minute = util.$func('minute', time.minutes.unit);
+u.$second = util.$func('second', time.seconds.unit);
+
+u.$utcYear   = util.$func('utcYear', utc.year.unit);
+u.$utcMonth  = util.$func('utcMonth', utc.months.unit);
+u.$utcDate   = util.$func('utcDate', utc.dates.unit);
+u.$utcDay    = util.$func('utcDay', utc.weekdays.unit);
+u.$utcHour   = util.$func('utcHour', utc.hours.unit);
+u.$utcMinute = util.$func('utcMinute', utc.minutes.unit);
+u.$utcSecond = util.$func('utcSecond', utc.seconds.unit);
+
+},{"./time":30,"./util":31}],9:[function(require,module,exports){
 var util = require('../util'),
     Measures = require('./measures'),
     Collector = require('./collector');
@@ -2959,7 +2476,7 @@ proto._consolidate = function() {
 
 module.exports = Aggregator;
 
-},{"../util":32,"./collector":11,"./measures":13}],11:[function(require,module,exports){
+},{"../util":31,"./collector":10,"./measures":12}],10:[function(require,module,exports){
 var util = require('../util');
 var stats = require('../stats');
 
@@ -3047,12 +2564,12 @@ proto.argmax = function(get) {
 
 proto.min = function(get) {
   var m = this.extent(get)[0];
-  return m ? get(m) : +Infinity;
+  return m != null ? get(m) : +Infinity;
 };
 
 proto.max = function(get) {
   var m = this.extent(get)[1];
-  return m ? get(m) : -Infinity;
+  return m != null ? get(m) : -Infinity;
 };
 
 proto.quartile = function(get) {
@@ -3077,7 +2594,7 @@ proto.q3 = function(get) {
 
 module.exports = Collector;
 
-},{"../stats":29,"../util":32}],12:[function(require,module,exports){
+},{"../stats":28,"../util":31}],11:[function(require,module,exports){
 var util = require('../util');
 var Aggregator = require('./aggregator');
 
@@ -3092,7 +2609,7 @@ module.exports = function() {
     .summarize({'*':'values'});
 };
 
-},{"../util":32,"./aggregator":10}],13:[function(require,module,exports){
+},{"../util":31,"./aggregator":9}],12:[function(require,module,exports){
 var util = require('../util');
 
 var types = {
@@ -3275,7 +2792,7 @@ function create(agg, stream, accessor, mutator) {
 types.create = create;
 module.exports = types;
 
-},{"../stats":29,"../util":32}],14:[function(require,module,exports){
+},{"../stats":28,"../util":31}],13:[function(require,module,exports){
 var util = require('../util'),
     time = require('../time'),
     EPSILON = 1e-15;
@@ -3312,7 +2829,7 @@ function bins(opt) {
     );
 
     // increase step size if too many bins
-    do { step *= base; } while (Math.ceil(span/step) > maxb);
+    while (Math.ceil(span/step) > maxb) { step *= base; }
 
     // decrease step size if allowed
     for (i=0; i<div.length; ++i) {
@@ -3390,7 +2907,7 @@ bins.date = function(opt) {
 
 module.exports = bins;
 
-},{"../time":31,"../util":32}],15:[function(require,module,exports){
+},{"../time":30,"../util":31}],14:[function(require,module,exports){
 var bins = require('./bins'),
     gen  = require('../generate'),
     type = require('../import/type'),
@@ -3476,7 +2993,7 @@ module.exports = {
   histogram: histogram
 };
 
-},{"../generate":18,"../import/type":27,"../stats":29,"../util":32,"./bins":14}],16:[function(require,module,exports){
+},{"../generate":17,"../import/type":26,"../stats":28,"../util":31,"./bins":13}],15:[function(require,module,exports){
 var util = require('./util'),
     type = require('./import/type'),
     stats = require('./stats'),
@@ -3580,7 +3097,7 @@ function printCategoricalProfile(p) {
     .map(function(v) { return ' \'' + v + '\' (' + u[v] + ')'; });
   return list.concat(top).join('\n');
 }
-},{"./import/type":27,"./stats":29,"./template":30,"./util":32}],17:[function(require,module,exports){
+},{"./import/type":26,"./stats":28,"./template":29,"./util":31}],16:[function(require,module,exports){
 var util = require('./util'),
     d3_time = require('d3-time'),
     d3_timeF = require('d3-time-format'),
@@ -3802,8 +3319,9 @@ function dayFormat(day, abbreviate) {
     (dayFull || (dayFull = timeF.format('%A')));
   return (tmpDate.setMonth(0), tmpDate.setDate(2 + day), f(tmpDate));
 }
-},{"./util":32,"d3-format":6,"d3-time":9,"d3-time-format":7}],18:[function(require,module,exports){
-var gen = module.exports = {};
+},{"./util":31,"d3-format":4,"d3-time":7,"d3-time-format":5}],17:[function(require,module,exports){
+var util = require('./util'),
+    gen = module.exports;
 
 gen.repeat = function(val, n) {
   var a = Array(n), i;
@@ -3957,7 +3475,22 @@ gen.random.normal = function(mean, stdev) {
   };
   return f;
 };
-},{}],19:[function(require,module,exports){
+
+gen.random.bootstrap = function(domain, smooth) {
+  // Generates a bootstrap sample from a set of observations.
+  // Smooth bootstrapping adds random zero-centered noise to the samples.
+  var val = domain.filter(util.isValid),
+      len = val.length,
+      err = smooth ? gen.random.normal(0, smooth) : null;
+  var f = function() {
+    return val[~~(Math.random()*len)] + (err ? err() : 0);
+  };
+  f.samples = function(n) {
+    return gen.zeros(n).map(f);
+  };
+  return f;
+};
+},{"./util":31}],18:[function(require,module,exports){
 var util = require('../../util');
 var d3_dsv = require('d3-dsv');
 
@@ -3978,7 +3511,7 @@ dsv.delimiter = function(delim) {
 
 module.exports = dsv;
 
-},{"../../util":32,"d3-dsv":5}],20:[function(require,module,exports){
+},{"../../util":31,"d3-dsv":3}],19:[function(require,module,exports){
 var dsv = require('./dsv');
 
 module.exports = {
@@ -3990,7 +3523,7 @@ module.exports = {
   tsv: dsv.delimiter('\t')
 };
 
-},{"./dsv":19,"./json":21,"./topojson":22,"./treejson":23}],21:[function(require,module,exports){
+},{"./dsv":18,"./json":20,"./topojson":21,"./treejson":22}],20:[function(require,module,exports){
 var util = require('../../util');
 
 module.exports = function(data, format) {
@@ -4002,7 +3535,7 @@ module.exports = function(data, format) {
   return d;
 };
 
-},{"../../util":32}],22:[function(require,module,exports){
+},{"../../util":31}],21:[function(require,module,exports){
 var json = require('./json');
 
 var reader = function(data, format) {
@@ -4031,7 +3564,7 @@ var reader = function(data, format) {
 reader.topojson = require('topojson');
 module.exports = reader;
 
-},{"./json":21,"topojson":33}],23:[function(require,module,exports){
+},{"./json":20,"topojson":32}],22:[function(require,module,exports){
 var json = require('./json');
 
 module.exports = function(tree, format) {
@@ -4058,7 +3591,9 @@ function toTable(root, fields) {
   return (table.root = root, table);
 }
 
-},{"./json":21}],24:[function(require,module,exports){
+},{"./json":20}],23:[function(require,module,exports){
+var util = require('../util');
+
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
 var protocol_re = /^([A-Za-z]+:)?\/\//;
@@ -4123,6 +3658,10 @@ function sanitizeUrl(opt) {
 }
 
 function load(opt, callback) {
+  return load.loader(opt, callback);
+}
+
+function loader(opt, callback) {
   var error = callback || function(e) { throw e; }, url;
 
   try {
@@ -4136,16 +3675,16 @@ function load(opt, callback) {
     error('Invalid URL: ' + opt.url);
   } else if (load.useXHR) {
     // on client, use xhr
-    return xhr(url, callback);
+    return load.xhr(url, opt, callback);
   } else if (startsWith(url, fileProtocol)) {
     // on server, if url starts with 'file://', strip it and load from file
-    return file(url.slice(fileProtocol.length), callback);
+    return load.file(url.slice(fileProtocol.length), opt, callback);
   } else if (url.indexOf('://') < 0) { // TODO better protocol check?
     // on server, if no protocol assume file
-    return file(url, callback);
+    return load.file(url, opt, callback);
   } else {
     // for regular URLs on server
-    return http(url, callback);
+    return load.http(url, opt, callback);
   }
 }
 
@@ -4156,11 +3695,11 @@ function xhrHasResponse(request) {
     request.responseText; // '' on error
 }
 
-function xhr(url, callback) {
+function xhr(url, opt, callback) {
   var async = !!callback;
   var request = new XMLHttpRequest();
   // If IE does not support CORS, use XDomainRequest (copied from d3.xhr)
-  if (this.XDomainRequest &&
+  if (typeof XDomainRequest !== 'undefined' &&
       !('withCredentials' in request) &&
       /^(http(s)?:)?\/\//.test(url)) request = new XDomainRequest();
 
@@ -4184,6 +3723,13 @@ function xhr(url, callback) {
   }
 
   request.open('GET', url, async);
+  /* istanbul ignore else */
+  if (request.setRequestHeader) {
+    var headers = util.extend({}, load.headers, opt.headers);
+    for (var name in headers) {
+      request.setRequestHeader(name, headers[name]);
+    }
+  }
   request.send();
 
   if (!async && xhrHasResponse(request)) {
@@ -4191,7 +3737,7 @@ function xhr(url, callback) {
   }
 }
 
-function file(filename, callback) {
+function file(filename, opt, callback) {
   var fs = require('fs');
   if (!callback) {
     return fs.readFileSync(filename, 'utf8');
@@ -4199,12 +3745,14 @@ function file(filename, callback) {
   fs.readFile(filename, callback);
 }
 
-function http(url, callback) {
+function http(url, opt, callback) {
+  var headers = util.extend({}, load.headers, opt.headers);
+
   if (!callback) {
-    return require('sync-request')('GET', url).getBody();
+    return require('sync-request')('GET', url, {headers: headers}).getBody();
   }
 
-  var options = {url: url, encoding: null, gzip: true};
+  var options = {url: url, encoding: null, gzip: true, headers: headers};
   require('request')(options, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       callback(null, body);
@@ -4220,13 +3768,20 @@ function startsWith(string, searchString) {
   return string == null ? false : string.lastIndexOf(searchString, 0) === 0;
 }
 
+// Allow these functions to be overriden by the user of the library
+load.loader = loader;
 load.sanitizeUrl = sanitizeUrl;
+load.xhr = xhr;
+load.file = file;
+load.http = http;
 
+// Default settings
 load.useXHR = (typeof XMLHttpRequest !== 'undefined');
+load.headers = {};
 
 module.exports = load;
 
-},{"fs":2,"request":2,"sync-request":2,"url":2}],25:[function(require,module,exports){
+},{"../util":31,"fs":2,"request":2,"sync-request":2,"url":2}],24:[function(require,module,exports){
 var util = require('../util'),
   type = require('./type'),
   formats = require('./formats'),
@@ -4276,7 +3831,7 @@ function parse(data, types) {
 read.formats = formats;
 module.exports = read;
 
-},{"../format":17,"../util":32,"./formats":20,"./type":27}],26:[function(require,module,exports){
+},{"../format":16,"../util":31,"./formats":19,"./type":26}],25:[function(require,module,exports){
 var util = require('../util');
 var load = require('./load');
 var read = require('./read');
@@ -4314,7 +3869,7 @@ module.exports = util
     return out;
   }, {});
 
-},{"../util":32,"./load":24,"./read":25}],27:[function(require,module,exports){
+},{"../util":31,"./load":23,"./read":24}],26:[function(require,module,exports){
 var util = require('../util');
 
 var TYPES = '__types__';
@@ -4408,11 +3963,11 @@ type.inferAll = inferAll;
 type.parsers = PARSERS;
 module.exports = type;
 
-},{"../util":32}],28:[function(require,module,exports){
+},{"../util":31}],27:[function(require,module,exports){
 var util = require('./util');
 
 var dl = {
-  version:    '1.5.1',
+  version:    '1.5.8',
   load:       require('./import/load'),
   read:       require('./import/read'),
   type:       require('./import/type'),
@@ -4427,6 +3982,7 @@ var dl = {
 };
 
 util.extend(dl, util);
+util.extend(dl, require('./accessor'));
 util.extend(dl, require('./generate'));
 util.extend(dl, require('./stats'));
 util.extend(dl, require('./import/readers'));
@@ -4441,12 +3997,12 @@ dl.print = {
 
 module.exports = dl;
 
-},{"./aggregate/aggregator":10,"./aggregate/groupby":12,"./bins/bins":14,"./bins/histogram":15,"./format":17,"./format-tables":16,"./generate":18,"./import/load":24,"./import/read":25,"./import/readers":26,"./import/type":27,"./stats":29,"./template":30,"./time":31,"./util":32}],29:[function(require,module,exports){
+},{"./accessor":8,"./aggregate/aggregator":9,"./aggregate/groupby":11,"./bins/bins":13,"./bins/histogram":14,"./format":16,"./format-tables":15,"./generate":17,"./import/load":23,"./import/read":24,"./import/readers":25,"./import/type":26,"./stats":28,"./template":29,"./time":30,"./util":31}],28:[function(require,module,exports){
 var util = require('./util');
 var type = require('./import/type');
 var gen = require('./generate');
 
-var stats = {};
+var stats = module.exports;
 
 // Collect unique values.
 // Output: an array of unique values, in first-observed order
@@ -4783,8 +4339,8 @@ stats.cor = function(values, a, b) {
 
 // Compute the Spearman rank correlation of two arrays of values.
 stats.cor.rank = function(values, a, b) {
-  var ra = b ? stats.rank(values, util.$(a)) : stats.rank(values),
-      rb = b ? stats.rank(values, util.$(b)) : stats.rank(a),
+  var ra = b ? stats.rank(values, a) : stats.rank(values),
+      rb = b ? stats.rank(values, b) : stats.rank(a),
       n = values.length, i, s, d;
 
   for (i=0, s=0; i<n; ++i) {
@@ -4840,27 +4396,86 @@ stats.linearRegression = function(values, a, b) {
   return fit;
 };
 
+// Namespace for bootstrap
+stats.bootstrap = {};
+
+// Construct a bootstrapped confidence interval at a given percentile level
+// Arguments are an array, an optional n (defaults to 1000),
+//  an optional alpha (defaults to 0.05), and an optional smoothing parameter
+stats.bootstrap.ci = function(values, a, b, c, d) {
+  var X, N, alpha, smooth, bs, means, i;
+  if (util.isFunction(a) || util.isString(a)) {
+    X = values.map(util.$(a));
+    N = b;
+    alpha = c;
+    smooth = d;
+  } else {
+    X = values;
+    N = a;
+    alpha = b;
+    smooth = c;
+  }
+  N = N ? +N : 1000;
+  alpha = alpha || 0.05;
+
+  bs = gen.random.bootstrap(X, smooth);
+  for (i=0, means = Array(N); i<N; ++i) {
+    means[i] = stats.mean(bs.samples(X.length));
+  }
+  means.sort(util.numcmp);
+  return [
+    stats.quantile(means, alpha/2),
+    stats.quantile(means, 1-(alpha/2))
+  ];
+};
+
 // Namespace for z-tests
 stats.z = {};
 
 // Construct a z-confidence interval at a given significance level
 // Arguments are an array and an optional alpha (defaults to 0.05).
-stats.z.ci = function(a, alpha) {
-  var z = alpha ? gen.random.normal(0, 1).icdf(1-(alpha/2)) : 1.96,
-      mu = stats.mean(a),
-      SE = stats.stdev(a) / Math.sqrt(stats.count.valid(a));
+stats.z.ci = function(values, a, b) {
+  var X = values, alpha = a;
+  if (util.isFunction(a) || util.isString(a)) {
+    X = values.map(util.$(a));
+    alpha = b;
+  }
+  alpha = alpha || 0.05;
+
+  var z = alpha===0.05 ? 1.96 : gen.random.normal(0, 1).icdf(1-(alpha/2)),
+      mu = stats.mean(X),
+      SE = stats.stdev(X) / Math.sqrt(stats.count.valid(X));
   return [mu - (z*SE), mu + (z*SE)];
+};
+
+// Perform a z-test of means. Returns the p-value.
+// If a single array is provided, performs a one-sample location test.
+// If two arrays or a table and two accessors are provided, performs
+// a two-sample location test. A paired test is performed if specified
+// by the options hash.
+// The options hash format is: {paired: boolean, nullh: number}.
+// http://en.wikipedia.org/wiki/Z-test
+// http://en.wikipedia.org/wiki/Paired_difference_test
+stats.z.test = function(values, a, b, opt) {
+  if (util.isFunction(b) || util.isString(b)) { // table and accessors
+    return (opt && opt.paired ? ztestP : ztest2)(opt, values, a, b);
+  } else if (util.isArray(a)) { // two arrays
+    return (b && b.paired ? ztestP : ztest2)(b, values, a);
+  } else if (util.isFunction(a) || util.isString(a)) {
+    return ztest1(b, values, a); // table and accessor
+  } else {
+    return ztest1(a, values); // one array
+  }
 };
 
 // Perform a z-test of means. Returns the p-value.
 // Assuming we have a list of values, and a null hypothesis. If no null
 // hypothesis, assume our null hypothesis is mu=0.
-// http://en.wikipedia.org/wiki/Z-test
-stats.z.test = function(a, b) {
-  var nullH = b ? b : 0,
+function ztest1(opt, X, f) {
+  var nullH = opt && opt.nullh || 0,
       gaussian = gen.random.normal(0, 1),
-      mu = stats.mean(a),
-      SE = stats.stdev(a) / Math.sqrt(stats.count.valid(a));
+      mu = stats.mean(X,f),
+      SE = stats.stdev(X,f) / Math.sqrt(stats.count.valid(X,f));
 
   if (SE===0) {
     // Test not well defined when standard error is 0.
@@ -4869,11 +4484,10 @@ stats.z.test = function(a, b) {
   // Two-sided, so twice the one-sided cdf.
   var z = (mu - nullH) / SE;
   return 2 * gaussian.cdf(-Math.abs(z));
-};
+}
 
 // Perform a two sample paired z-test of means. Returns the p-value.
-// http://en.wikipedia.org/wiki/Paired_difference_test
-stats.z.pairedTest = function(values, a, b) {
+function ztestP(opt, values, a, b) {
   var X = b ? values.map(util.$(a)) : values,
       Y = b ? values.map(util.$(b)) : a,
       n1 = stats.count(X),
@@ -4889,18 +4503,17 @@ stats.z.pairedTest = function(values, a, b) {
       diffs.push(X[i] - Y[i]);
     }
   }
-  return stats.z.test(diffs);
-};
+  return stats.z.test(diffs, opt && opt.nullh || 0);
+}
 
 // Perform a two sample z-test of means. Returns the p-value.
-// http://en.wikipedia.org/wiki/Z-test
-stats.z.twoSampleTest = function(values, a, b) {
+function ztest2(opt, values, a, b) {
   var X = b ? values.map(util.$(a)) : values,
       Y = b ? values.map(util.$(b)) : a,
       n1 = stats.count.valid(X),
       n2 = stats.count.valid(Y),
       gaussian = gen.random.normal(0, 1),
-      meanDiff = stats.mean(X) - stats.mean(Y),
+      meanDiff = stats.mean(X) - stats.mean(Y) - (opt && opt.nullh || 0),
       SE = Math.sqrt(stats.variance(X)/n1 + stats.variance(Y)/n2);
 
   if (SE===0) {
@@ -4910,7 +4523,7 @@ stats.z.twoSampleTest = function(values, a, b) {
   // Two-tailed, so twice the one-sided cdf.
   var z = meanDiff / SE;
   return 2 * gaussian.cdf(-Math.abs(z));
-};
+}
 
 // Construct a mean-centered distance matrix for an array of numbers.
 stats.dist.mat = function(X) {
@@ -5074,9 +4687,7 @@ stats.summary = function(data, fields) {
   return (s.__summary__ = true, s);
 };
 
-module.exports = stats;
-
-},{"./generate":18,"./import/type":27,"./util":32}],30:[function(require,module,exports){
+},{"./generate":17,"./import/type":26,"./util":31}],29:[function(require,module,exports){
 var util = require('./util'),
     format = require('./format');
 
@@ -5099,6 +4710,7 @@ function template(text) {
 
 template.source = source;
 template.context = context;
+template.format = get_format;
 module.exports = template;
 
 // Clear cache of format objects.
@@ -5165,16 +4777,18 @@ function template_var(text, variable, properties) {
     return '(typeof ' + src + '==="number"?new Date('+src+'):'+src+')';
   }
 
-  function number_format(fmt, key) {
-    a = template_format(args[0], key, fmt);
+  function formatter(type) {
+    var pattern = args[0];
+    if ((pattern[0] === '\'' && pattern[pattern.length-1] === '\'') ||
+        (pattern[0] === '"'  && pattern[pattern.length-1] === '"')) {
+      pattern = pattern.slice(1, -1);
+    } else {
+      throw Error('Format pattern must be quoted: ' + pattern);
+    }
+    a = template_format(pattern, type);
     stringCast = false;
-    src = 'this.formats['+a+']('+src+')';
-  }
-
-  function time_format(fmt, key) {
-    a = template_format(args[0], key, fmt);
-    stringCast = false;
-    src = 'this.formats['+a+']('+date()+')';
+    var arg = type === 'number' ? src : date();
+    src = 'this.formats['+a+']('+arg+')';
   }
 
   if (properties) properties[prop] = 1;
@@ -5242,13 +4856,13 @@ function template_var(text, variable, properties) {
         src = 'this.pad(' + strcall() + ',' + a + ',\'' + b + '\')';
         break;
       case 'number':
-        number_format(format.number, 'number');
+        formatter('number');
         break;
       case 'time':
-        time_format(format.time, 'time');
+        formatter('time');
         break;
       case 'time-utc':
-        time_format(format.utc, 'time-utc');
+        formatter('utc');
         break;
       case 'month':
         src = 'this.month(' + src + ')';
@@ -5291,24 +4905,23 @@ function template_escapeChar(match) {
   return '\\' + template_escapes[match];
 }
 
-function template_format(pattern, key, fmt) {
-  if ((pattern[0] === '\'' && pattern[pattern.length-1] === '\'') ||
-      (pattern[0] === '"'  && pattern[pattern.length-1] === '"')) {
-    pattern = pattern.slice(1, -1);
-  } else {
-    throw Error('Format pattern must be quoted: ' + pattern);
-  }
-  key = key + ':' + pattern;
-  if (!context.format_map[key]) {
-    var f = fmt(pattern);
+function template_format(pattern, type) {
+  var key = type + ':' + pattern;
+  if (context.format_map[key] == null) {
+    var f = format[type](pattern);
     var i = context.formats.length;
     context.formats.push(f);
     context.format_map[key] = i;
+    return i;
   }
   return context.format_map[key];
 }
 
-},{"./format":17,"./util":32}],31:[function(require,module,exports){
+function get_format(pattern, type) {
+  return context.formats[template_format(pattern, type)];
+}
+
+},{"./format":16,"./util":31}],30:[function(require,module,exports){
 var d3_time = require('d3-time');
 
 var tempDate = new Date(),
@@ -5478,13 +5091,9 @@ function toUnitMap(units) {
 
 module.exports = toUnitMap(locale);
 module.exports.utc = toUnitMap(utc);
-
-},{"d3-time":9}],32:[function(require,module,exports){
-var buffer = require('buffer'),
-    time = require('./time'),
-    utc = time.utc;
-
-var u = module.exports = {};
+},{"d3-time":7}],31:[function(require,module,exports){
+(function (Buffer){
+var u = module.exports;
 
 // utility functions
 
@@ -5584,7 +5193,7 @@ u.isValid = function(obj) {
   return obj != null && obj === obj;
 };
 
-u.isBuffer = (buffer.Buffer && buffer.Buffer.isBuffer) || u.false;
+u.isBuffer = (typeof Buffer === 'function' && Buffer.isBuffer) || u.false;
 
 // type coercion functions
 
@@ -5669,22 +5278,6 @@ u.$in = function(f, values) {
   var map = u.isArray(values) ? u.toMap(values) : values;
   return function(d) { return !!map[f(d)]; };
 };
-
-u.$year   = u.$func('year', time.year.unit);
-u.$month  = u.$func('month', time.months.unit);
-u.$date   = u.$func('date', time.dates.unit);
-u.$day    = u.$func('day', time.weekdays.unit);
-u.$hour   = u.$func('hour', time.hours.unit);
-u.$minute = u.$func('minute', time.minutes.unit);
-u.$second = u.$func('second', time.seconds.unit);
-
-u.$utcYear   = u.$func('utcYear', utc.year.unit);
-u.$utcMonth  = u.$func('utcMonth', utc.months.unit);
-u.$utcDate   = u.$func('utcDate', utc.dates.unit);
-u.$utcDay    = u.$func('utcDay', utc.weekdays.unit);
-u.$utcHour   = u.$func('utcHour', utc.hours.unit);
-u.$utcMinute = u.$func('utcMinute', utc.minutes.unit);
-u.$utcSecond = u.$func('utcSecond', utc.seconds.unit);
 
 // comparison / sorting functions
 
@@ -5799,7 +5392,9 @@ function truncateOnWord(s, len, rev) {
 
 var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u2028\u2029\u3000\uFEFF])/;
 
-},{"./time":31,"buffer":2}],33:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+
+},{"buffer":2}],32:[function(require,module,exports){
 !function() {
   var topojson = {
     version: "1.6.19",
@@ -6335,7 +5930,7 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
   else this.topojson = topojson;
 }();
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL;
 
 function create(cs, reflow) {
@@ -6367,7 +5962,7 @@ module.exports = {
   create: create,
   copy: copy
 };
-},{"./Dependencies":37}],35:[function(require,module,exports){
+},{"./Dependencies":36}],34:[function(require,module,exports){
 var log = require('vega-logging'),
     Tuple = require('./Tuple'),
     Base = require('./Node').prototype,
@@ -6421,7 +6016,7 @@ prototype.evaluate = function(input) {
 };
 
 module.exports = Collector;
-},{"./ChangeSet":34,"./Node":40,"./Tuple":42,"vega-logging":49}],36:[function(require,module,exports){
+},{"./ChangeSet":33,"./Node":39,"./Tuple":41,"vega-logging":48}],35:[function(require,module,exports){
 var log = require('vega-logging'),
     ChangeSet = require('./ChangeSet'), 
     Collector = require('./Collector'),
@@ -6679,13 +6274,13 @@ function DataSourceListener(ds) {
 
 module.exports = DataSource;
 
-},{"./ChangeSet":34,"./Collector":35,"./Node":40,"./Tuple":42,"vega-logging":49}],37:[function(require,module,exports){
+},{"./ChangeSet":33,"./Collector":34,"./Node":39,"./Tuple":41,"vega-logging":48}],36:[function(require,module,exports){
 var deps = module.exports = {
   ALL: ['data', 'fields', 'scales', 'signals']
 };
 deps.ALL.forEach(function(k) { deps[k.toUpperCase()] = k; });
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Heap = require('./Heap'),
@@ -6987,7 +6582,7 @@ prototype.evaluate = function(pulse, node) {
 
 module.exports = Graph;
 
-},{"./ChangeSet":34,"./Collector":35,"./DataSource":36,"./Dependencies":37,"./Heap":39,"./Signal":41,"./Tuple":42,"datalib":28,"vega-logging":49}],39:[function(require,module,exports){
+},{"./ChangeSet":33,"./Collector":34,"./DataSource":35,"./Dependencies":36,"./Heap":38,"./Signal":40,"./Tuple":41,"datalib":27,"vega-logging":48}],38:[function(require,module,exports){
 function Heap(comparator) {
   this.cmp = comparator;
   this.nodes = [];
@@ -7084,7 +6679,7 @@ function _siftup(array, idx, cmp) {
 
 module.exports = Heap;
 
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL,
     nodeID = 0;
 
@@ -7283,7 +6878,7 @@ Node.reset = function() { nodeID = 0; };
 
 module.exports = Node;
 
-},{"./Dependencies":37}],41:[function(require,module,exports){
+},{"./Dependencies":36}],40:[function(require,module,exports){
 var ChangeSet = require('./ChangeSet'),
     Node = require('./Node'), // jshint ignore:line
     Base = Node.prototype;
@@ -7359,7 +6954,7 @@ prototype.off = function(handler) {
 
 module.exports = Signal;
 
-},{"./ChangeSet":34,"./Node":40}],42:[function(require,module,exports){
+},{"./ChangeSet":33,"./Node":39}],41:[function(require,module,exports){
 var tupleID = 0;
 
 function ingest(datum) {
@@ -7429,7 +7024,7 @@ module.exports = {
   }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = {
   ChangeSet:    require('./ChangeSet'),
   Collector:    require('./Collector'),
@@ -7442,7 +7037,7 @@ module.exports = {
   debug:        require('vega-logging').debug
 };
 
-},{"./ChangeSet":34,"./Collector":35,"./DataSource":36,"./Dependencies":37,"./Graph":38,"./Node":40,"./Signal":41,"./Tuple":42,"vega-logging":49}],44:[function(require,module,exports){
+},{"./ChangeSet":33,"./Collector":34,"./DataSource":35,"./Dependencies":36,"./Graph":37,"./Node":39,"./Signal":40,"./Tuple":41,"vega-logging":48}],43:[function(require,module,exports){
 function toMap(list) {
   var map = {}, i, n;
   for (i=0, n=list.length; i<n; ++i) map[list[i]] = 1;
@@ -7459,6 +7054,7 @@ module.exports = function(opt) {
   opt = opt || {};
   var constants = opt.constants || require('./constants'),
       functions = (opt.functions || require('./functions'))(codegen),
+      functionDefs = opt.functionDefs ? opt.functionDefs(codegen) : {},
       idWhiteList = opt.idWhiteList ? toMap(opt.idWhiteList) : null,
       idBlackList = opt.idBlackList ? toMap(opt.idBlackList) : null,
       memberDepth = 0,
@@ -7467,20 +7063,23 @@ module.exports = function(opt) {
       globals = {},
       fields = {};
 
-  function codegen_wrap(ast) {    
+  function codegen_wrap(ast) {
     var retval = {
       code: codegen(ast),
       globals: keys(globals),
-      fields: keys(fields)
+      fields: keys(fields),
+      defs: functionDefs
     };
     globals = {};
     fields = {};
     return retval;
   }
 
-  function lookupGlobal(id) {
-    return GLOBAL_VAR + '["' + id + '"]';
-  }
+  /* istanbul ignore next */
+  var lookupGlobal = typeof GLOBAL_VAR === 'function' ? GLOBAL_VAR :
+    function (id) {
+      return GLOBAL_VAR + '["' + id + '"]';
+    };
 
   function codegen(ast) {
     if (typeof ast === 'string') return ast;
@@ -7573,11 +7172,11 @@ module.exports = function(opt) {
   };
 
   codegen_wrap.functions = functions;
+  codegen_wrap.functionDefs = functionDefs;
   codegen_wrap.constants = constants;
   return codegen_wrap;
 };
-
-},{"./constants":45,"./functions":46}],45:[function(require,module,exports){
+},{"./constants":44,"./functions":45}],44:[function(require,module,exports){
 module.exports = {
   'NaN':     'NaN',
   'E':       'Math.E',
@@ -7589,7 +7188,7 @@ module.exports = {
   'SQRT1_2': 'Math.SQRT1_2',
   'SQRT2':   'Math.SQRT2'
 };
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = function(codegen) {
 
   function fncall(name, args, cast, type) {
@@ -7640,13 +7239,14 @@ module.exports = function(codegen) {
       if (args.length < 3)
         throw new Error('Missing arguments to clamp function.');
       if (args.length > 3)
-      throw new Error('Too many arguments to clamp function.');
+        throw new Error('Too many arguments to clamp function.');
       var a = args.map(codegen);
       return 'Math.max('+a[1]+', Math.min('+a[2]+','+a[0]+'))';
     },
 
     // DATE functions
     'now':             'Date.now',
+    'utc':             'Date.UTC',
     'datetime':        DATE,
     'date':            fn('getDate', DATE, 0),
     'day':             fn('getDay', DATE, 0),
@@ -7690,17 +7290,17 @@ module.exports = function(codegen) {
         if (args.length < 3)
           throw new Error('Missing arguments to if function.');
         if (args.length > 3)
-        throw new Error('Too many arguments to if function.');
+          throw new Error('Too many arguments to if function.');
         var a = args.map(codegen);
         return a[0]+'?'+a[1]+':'+a[2];
       }
   };
 };
 
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var parser = require('./parser'),
     codegen = require('./codegen');
-    
+
 var expr = module.exports = {
   parse: function(input, opt) {
       return parser.parse('('+input+')', opt);
@@ -7715,7 +7315,12 @@ var expr = module.exports = {
           compile = function(str) {
             var value = generator(expr.parse(str));
             args[len] = '"use strict"; return (' + value.code + ');';
-            value.fn = Function.apply(null, args);
+            var fn = Function.apply(null, args);
+            value.fn = (args.length > 8) ?
+              function() { return fn.apply(value, arguments); } :
+              function(a, b, c, d, e, f, g) {
+                return fn.call(value, a, b, c, d, e, f, g);
+              }; // call often faster than apply, use if args low enough
             return value;
           };
       compile.codegen = generator;
@@ -7724,8 +7329,7 @@ var expr = module.exports = {
   functions: require('./functions'),
   constants: require('./constants')
 };
-
-},{"./codegen":44,"./constants":45,"./functions":46,"./parser":48}],48:[function(require,module,exports){
+},{"./codegen":43,"./constants":44,"./functions":45,"./parser":47}],47:[function(require,module,exports){
 /*
   The following expression parser is based on Esprima (http://esprima.org/).
   Original header comment and license for Esprima is included here:
@@ -10053,7 +9657,7 @@ module.exports = (function() {
   };
 
 })();
-},{}],49:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var ts = Date.now();
 
 function write(msg) {
@@ -10091,7 +9695,7 @@ module.exports = {
   debug: (debug.enable = false, debug)
 };
 
-},{}],50:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module.exports = {
   path:       require('./path'),
   render:     require('./render'),
@@ -10103,7 +9707,7 @@ module.exports = {
   toJSON:     require('./util/scene').toJSON,
   fromJSON:   require('./util/scene').fromJSON
 };
-},{"./path":52,"./render":72,"./util/Bounds":78,"./util/Gradient":80,"./util/Item":82,"./util/bound":83,"./util/canvas":84,"./util/scene":86}],51:[function(require,module,exports){
+},{"./path":51,"./render":71,"./util/Bounds":77,"./util/Gradient":79,"./util/Item":81,"./util/bound":82,"./util/canvas":83,"./util/scene":85}],50:[function(require,module,exports){
 var segmentCache = {},
     bezierCache = {},
     join = [].join;
@@ -10218,13 +9822,13 @@ module.exports = {
   }
 };
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module.exports = {
   parse:  require('./parse'),
   render: require('./render')
 };
 
-},{"./parse":53,"./render":54}],53:[function(require,module,exports){
+},{"./parse":52,"./render":53}],52:[function(require,module,exports){
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
 var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
     regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)([-+])/g, /\s|,|###/];
@@ -10275,7 +9879,7 @@ module.exports = function(pathstr) {
   return result;
 };
 
-},{}],54:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
@@ -10571,7 +10175,7 @@ function drawArc(g, x, y, coords) {
   }
 }
 
-},{"./arc":51}],55:[function(require,module,exports){
+},{"./arc":50}],54:[function(require,module,exports){
 function Handler() {
   this._active = null;
   this._handlers = {};
@@ -10621,7 +10225,7 @@ prototype.eventName = function(name) {
 };
 
 module.exports = Handler;
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 function Renderer() {
   this._el = null;
   this._bgcolor = null;
@@ -10663,7 +10267,7 @@ prototype.render = function(/*scene, items*/) {
 };
 
 module.exports = Renderer;
-},{}],57:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler'),
     marks = require('./marks');
@@ -10839,7 +10443,7 @@ prototype.pick = function(scene, x, y, gx, gy) {
 
 module.exports = CanvasHandler;
 
-},{"../../util/dom":85,"../Handler":55,"./marks":64}],58:[function(require,module,exports){
+},{"../../util/dom":84,"../Handler":54,"./marks":63}],57:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Bounds = require('../../util/Bounds'),
     ImageLoader = require('../../util/ImageLoader'),
@@ -10977,12 +10581,12 @@ prototype.renderAsync = function(scene) {
 
 module.exports = CanvasRenderer;
 
-},{"../../util/Bounds":78,"../../util/ImageLoader":81,"../../util/canvas":84,"../../util/dom":85,"../Renderer":56,"./marks":64}],59:[function(require,module,exports){
+},{"../../util/Bounds":77,"../../util/ImageLoader":80,"../../util/canvas":83,"../../util/dom":84,"../Renderer":55,"./marks":63}],58:[function(require,module,exports){
 module.exports = {
   Handler:  require('./CanvasHandler'),
   Renderer: require('./CanvasRenderer')
 };
-},{"./CanvasHandler":57,"./CanvasRenderer":58}],60:[function(require,module,exports){
+},{"./CanvasHandler":56,"./CanvasRenderer":57}],59:[function(require,module,exports){
 var util = require('./util');
 var halfpi = Math.PI / 2;
 
@@ -11004,7 +10608,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":71}],61:[function(require,module,exports){
+},{"./util":70}],60:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -11039,7 +10643,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":53,"../../../path/render":54,"../../../util/svg":87,"./util":71}],62:[function(require,module,exports){
+},{"../../../path/parse":52,"../../../path/render":53,"../../../util/svg":86,"./util":70}],61:[function(require,module,exports){
 var util = require('./util'),
     EMPTY = [];
 
@@ -11178,7 +10782,7 @@ module.exports = {
   pick: pick
 };
 
-},{"./util":71}],63:[function(require,module,exports){
+},{"./util":70}],62:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -11216,7 +10820,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":71}],64:[function(require,module,exports){
+},{"./util":70}],63:[function(require,module,exports){
 module.exports = {
   arc:    require('./arc'),
   area:   require('./area'),
@@ -11230,7 +10834,7 @@ module.exports = {
   text:   require('./text')
 };
 
-},{"./arc":60,"./area":61,"./group":62,"./image":63,"./line":65,"./path":66,"./rect":67,"./rule":68,"./symbol":69,"./text":70}],65:[function(require,module,exports){
+},{"./arc":59,"./area":60,"./group":61,"./image":62,"./line":64,"./path":65,"./rect":66,"./rule":67,"./symbol":68,"./text":69}],64:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -11265,7 +10869,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":53,"../../../path/render":54,"../../../util/svg":87,"./util":71}],66:[function(require,module,exports){
+},{"../../../path/parse":52,"../../../path/render":53,"../../../util/svg":86,"./util":70}],65:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -11281,7 +10885,7 @@ module.exports = {
   pick: util.pickPath(path)
 };
 
-},{"../../../path/parse":53,"../../../path/render":54,"./util":71}],67:[function(require,module,exports){
+},{"../../../path/parse":52,"../../../path/render":53,"./util":70}],66:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -11316,7 +10920,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":71}],68:[function(require,module,exports){
+},{"./util":70}],67:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -11373,7 +10977,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"./util":71}],69:[function(require,module,exports){
+},{"./util":70}],68:[function(require,module,exports){
 var util = require('./util');
 
 var sqrt3 = Math.sqrt(3),
@@ -11447,7 +11051,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":71}],70:[function(require,module,exports){
+},{"./util":70}],69:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
     text = require('../../../util/text'),
@@ -11522,7 +11126,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../util/Bounds":78,"../../../util/bound":83,"../../../util/text":88,"./util":71}],71:[function(require,module,exports){
+},{"../../../util/Bounds":77,"../../../util/bound":82,"../../../util/text":87,"./util":70}],70:[function(require,module,exports){
 function drawPathOne(path, g, o, items) {
   if (path(g, items)) return;
 
@@ -11671,13 +11275,13 @@ module.exports = {
   gradient: gradient
 };
 
-},{}],72:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 module.exports = {
   'canvas': require('./canvas'),
   'svg':    require('./svg')
 };
 
-},{"./canvas":59,"./svg":76}],73:[function(require,module,exports){
+},{"./canvas":58,"./svg":75}],72:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
@@ -11743,7 +11347,7 @@ prototype.off = function(type, handler) {
 
 module.exports = SVGHandler;
 
-},{"../../util/dom":85,"../Handler":55}],74:[function(require,module,exports){
+},{"../../util/dom":84,"../Handler":54}],73:[function(require,module,exports){
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
     text = require('../../util/text'),
@@ -12168,7 +11772,7 @@ function href() {
 
 module.exports = SVGRenderer;
 
-},{"../../util/ImageLoader":81,"../../util/dom":85,"../../util/svg":87,"../../util/text":88,"../Renderer":56,"./marks":77}],75:[function(require,module,exports){
+},{"../../util/ImageLoader":80,"../../util/dom":84,"../../util/svg":86,"../../util/text":87,"../Renderer":55,"./marks":76}],74:[function(require,module,exports){
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
@@ -12412,7 +12016,7 @@ function escape_text(s) {
 
 module.exports = SVGStringRenderer;
 
-},{"../../util/ImageLoader":81,"../../util/dom":85,"../../util/svg":87,"../../util/text":88,"../Renderer":56,"./marks":77}],76:[function(require,module,exports){
+},{"../../util/ImageLoader":80,"../../util/dom":84,"../../util/svg":86,"../../util/text":87,"../Renderer":55,"./marks":76}],75:[function(require,module,exports){
 module.exports = {
   Handler:  require('./SVGHandler'),
   Renderer: require('./SVGRenderer'),
@@ -12420,7 +12024,7 @@ module.exports = {
     Renderer : require('./SVGStringRenderer')
   }
 };
-},{"./SVGHandler":73,"./SVGRenderer":74,"./SVGStringRenderer":75}],77:[function(require,module,exports){
+},{"./SVGHandler":72,"./SVGRenderer":73,"./SVGStringRenderer":74}],76:[function(require,module,exports){
 var text = require('../../util/text'),
     SVG = require('../../util/svg'),
     textAlign = SVG.textAlign,
@@ -12567,7 +12171,7 @@ module.exports = {
   }
 };
 
-},{"../../util/svg":87,"../../util/text":88}],78:[function(require,module,exports){
+},{"../../util/svg":86,"../../util/text":87}],77:[function(require,module,exports){
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
@@ -12696,7 +12300,7 @@ prototype.height = function() {
 
 module.exports = Bounds;
 
-},{}],79:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module.exports = function(b) {
   function noop() { }
   function add(x,y) { b.add(x, y); }
@@ -12722,7 +12326,7 @@ module.exports = function(b) {
   };
 };
 
-},{}],80:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 var gradient_id = 0;
 
 function Gradient(type) {
@@ -12746,7 +12350,7 @@ prototype.stop = function(offset, color) {
 };
 
 module.exports = Gradient;
-},{}],81:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 (function (global){
 var load = require('datalib/src/import/load');
 
@@ -12826,7 +12430,7 @@ module.exports = ImageLoader;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib/src/import/load":24}],82:[function(require,module,exports){
+},{"datalib/src/import/load":23}],81:[function(require,module,exports){
 function Item(mark) {
   this.mark = mark;
 }
@@ -12875,7 +12479,7 @@ prototype.touch = function() {
 };
 
 module.exports = Item;
-},{}],83:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var BoundsContext = require('./BoundsContext'),
     Bounds = require('./Bounds'),
     canvas = require('./canvas'),
@@ -13172,7 +12776,7 @@ module.exports = {
   group: group
 };
 
-},{"../path":52,"./Bounds":78,"./BoundsContext":79,"./canvas":84,"./svg":87,"./text":88}],84:[function(require,module,exports){
+},{"../path":51,"./Bounds":77,"./BoundsContext":78,"./canvas":83,"./svg":86,"./text":87}],83:[function(require,module,exports){
 (function (global){
 function instance(w, h) {
   w = w || 1;
@@ -13266,7 +12870,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],85:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 // create a new DOM element
 function create(doc, tag, ns) {
   return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
@@ -13344,7 +12948,7 @@ module.exports = {
   }
 };
 
-},{}],86:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var bound = require('../util/bound');
 
 var sets = [
@@ -13402,7 +13006,7 @@ module.exports = {
   toJSON:   toJSON,
   fromJSON: fromJSON
 };
-},{"../util/bound":83}],87:[function(require,module,exports){
+},{"../util/bound":82}],86:[function(require,module,exports){
 (function (global){
 var d3_svg = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null).svg;
 
@@ -13477,7 +13081,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],88:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 function size(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
@@ -13512,7 +13116,7 @@ module.exports = {
   }
 };
 
-},{}],89:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 var sg = require('vega-scenegraph').render,
     canvas = sg.canvas,
     svg = sg.svg.string,
@@ -13576,7 +13180,7 @@ prototype.initialize = function() {
 };
 
 module.exports = HeadlessView;
-},{"./View":91,"vega-scenegraph":50}],90:[function(require,module,exports){
+},{"./View":90,"vega-scenegraph":49}],89:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
@@ -13737,7 +13341,7 @@ prototype.fire = function(cs) {
 };
 
 module.exports = Model;
-},{"../scene/GroupBuilder":114,"../scene/visit":119,"./config":92,"datalib":28,"vega-dataflow":43}],91:[function(require,module,exports){
+},{"../scene/GroupBuilder":113,"../scene/visit":118,"./config":91,"datalib":27,"vega-dataflow":42}],90:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -14203,7 +13807,7 @@ View.factory = function(model) {
 module.exports = View;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/streams":109,"../scene/Encoder":113,"../scene/Transition":116,"./HeadlessView":89,"datalib":28,"vega-dataflow":43,"vega-logging":49,"vega-scenegraph":50}],92:[function(require,module,exports){
+},{"../parse/streams":108,"../scene/Encoder":112,"../scene/Transition":115,"./HeadlessView":88,"datalib":27,"vega-dataflow":42,"vega-logging":48,"vega-scenegraph":49}],91:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     config = {};
@@ -14322,7 +13926,7 @@ config.range = {
 module.exports = config;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],93:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var dl = require('datalib'),
     parse = require('../parse'),
     Scale = require('../scene/Scale'),
@@ -14369,7 +13973,7 @@ module.exports = function(opt) {
 
   return schema;
 };
-},{"../parse":99,"../scene/Scale":115,"./config":92,"datalib":28}],94:[function(require,module,exports){
+},{"../parse":98,"../scene/Scale":114,"./config":91,"datalib":27}],93:[function(require,module,exports){
 var dl = require('datalib'),
     axs = require('../scene/axis');
 
@@ -14455,7 +14059,7 @@ function parseAxis(config, def, index, axis, group) {
 }
 
 module.exports = parseAxes;
-},{"../scene/axis":117,"datalib":28}],95:[function(require,module,exports){
+},{"../scene/axis":116,"datalib":27}],94:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null);
 
@@ -14469,7 +14073,7 @@ function parseBg(bg) {
 module.exports = parseBg;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],96:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     parseTransforms = require('./transforms'),
@@ -14538,7 +14142,7 @@ parseData.datasource = function(model, d) {
 };
 
 module.exports = parseData;
-},{"./modify":103,"./transforms":110,"datalib":28,"vega-logging":49}],97:[function(require,module,exports){
+},{"./modify":102,"./transforms":109,"datalib":27,"vega-logging":48}],96:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -15648,7 +15252,7 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],98:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var expr = require('vega-expression'),
     args = ['datum', 'event', 'signals'];
 
@@ -15666,7 +15270,7 @@ module.exports = expr.compiler(args, {
     return fn;
   }
 });
-},{"vega-expression":47}],99:[function(require,module,exports){
+},{"vega-expression":46}],98:[function(require,module,exports){
 module.exports = {
   axes:       require('./axes'),
   background: require('./background'),
@@ -15685,7 +15289,7 @@ module.exports = {
   streams:    require('./streams'),
   transforms: require('./transforms')
 };
-},{"./axes":94,"./background":95,"./data":96,"./events":97,"./expr":98,"./legends":100,"./mark":101,"./marks":102,"./modify":103,"./padding":104,"./predicates":105,"./properties":106,"./signals":107,"./spec":108,"./streams":109,"./transforms":110}],100:[function(require,module,exports){
+},{"./axes":93,"./background":94,"./data":95,"./events":96,"./expr":97,"./legends":99,"./mark":100,"./marks":101,"./modify":102,"./padding":103,"./predicates":104,"./properties":105,"./signals":106,"./spec":107,"./streams":108,"./transforms":109}],99:[function(require,module,exports){
 var lgnd = require('../scene/legend');
 
 function parseLegends(model, spec, legends, group) {
@@ -15727,7 +15331,7 @@ function parseLegend(def, index, legend, group) {
 }
 
 module.exports = parseLegends;
-},{"../scene/legend":118}],101:[function(require,module,exports){
+},{"../scene/legend":117}],100:[function(require,module,exports){
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
@@ -15754,7 +15358,7 @@ function parseMark(model, mark) {
 }
 
 module.exports = parseMark;
-},{"./properties":106,"datalib":28}],102:[function(require,module,exports){
+},{"./properties":105,"datalib":27}],101:[function(require,module,exports){
 var parseMark = require('./mark'),
     parseProperties = require('./properties');
 
@@ -15795,7 +15399,7 @@ function defaults(spec, model) {
 }
 
 module.exports = parseRootMark;
-},{"./mark":101,"./properties":106}],103:[function(require,module,exports){
+},{"./mark":100,"./properties":105}],102:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     df = require('vega-dataflow'),
@@ -15889,7 +15493,7 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-},{"datalib":28,"vega-dataflow":43,"vega-logging":49}],104:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42,"vega-logging":48}],103:[function(require,module,exports){
 var dl = require('datalib');
 
 function parsePadding(pad) {
@@ -15900,7 +15504,7 @@ function parsePadding(pad) {
 }
 
 module.exports = parsePadding;
-},{"datalib":28}],105:[function(require,module,exports){
+},{"datalib":27}],104:[function(require,module,exports){
 var dl = require('datalib');
 
 var types = {
@@ -16095,7 +15699,7 @@ function parseScale(spec, ops) {
 }
 
 module.exports = parsePredicates;
-},{"datalib":28}],106:[function(require,module,exports){
+},{"datalib":27}],105:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -16462,7 +16066,7 @@ function scaleRef(ref) {
 module.exports = properties;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib":28,"vega-dataflow":43,"vega-logging":49}],107:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42,"vega-logging":48}],106:[function(require,module,exports){
 var dl = require('datalib'),
     SIGNALS = require('vega-dataflow').Dependencies.SIGNALS,
     expr = require('./expr');
@@ -16541,7 +16145,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
 };
 
 module.exports = parseSignals;
-},{"./expr":98,"datalib":28,"vega-dataflow":43}],108:[function(require,module,exports){
+},{"./expr":97,"datalib":27,"vega-dataflow":42}],107:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Model = require('../core/Model'),
@@ -16632,7 +16236,7 @@ var dl = require('datalib'),
 }
 
 module.exports = parseSpec;
-},{"../core/Model":90,"../core/View":91,"./":99,"datalib":28,"vega-logging":49}],109:[function(require,module,exports){
+},{"../core/Model":89,"../core/View":90,"./":98,"datalib":27,"vega-logging":48}],108:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -16865,7 +16469,7 @@ function parseStreams(view) {
 module.exports = parseStreams;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./events":97,"./expr":98,"./signals":107,"datalib":28,"vega-dataflow":43}],110:[function(require,module,exports){
+},{"./events":96,"./expr":97,"./signals":106,"datalib":27,"vega-dataflow":42}],109:[function(require,module,exports){
 var dl = require('datalib'),
     transforms = require('../transforms/index');
 
@@ -16885,7 +16489,7 @@ function parseTransforms(model, def) {
 }
 
 module.exports = parseTransforms;
-},{"../transforms/index":146,"datalib":28}],111:[function(require,module,exports){
+},{"../transforms/index":145,"datalib":27}],110:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     scene = require('vega-scenegraph'),
@@ -16954,7 +16558,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"./Encoder":113,"datalib":28,"vega-dataflow":43,"vega-logging":49,"vega-scenegraph":50}],112:[function(require,module,exports){
+},{"./Encoder":112,"datalib":27,"vega-dataflow":42,"vega-logging":48,"vega-scenegraph":49}],111:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Item = require('vega-scenegraph').Item,
@@ -17259,7 +16863,7 @@ function keyFunction(key) {
 }
 
 module.exports = Builder;
-},{"../parse/data":96,"./Bounder":111,"./Encoder":113,"datalib":28,"vega-dataflow":43,"vega-logging":49,"vega-scenegraph":50}],113:[function(require,module,exports){
+},{"../parse/data":95,"./Bounder":110,"./Encoder":112,"datalib":27,"vega-dataflow":42,"vega-logging":48,"vega-scenegraph":49}],112:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     df = require('vega-dataflow'),
@@ -17446,7 +17050,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
 };
 
 module.exports = Encoder;
-},{"./Builder":112,"datalib":28,"vega-dataflow":43,"vega-logging":49,"vega-scenegraph":50}],114:[function(require,module,exports){
+},{"./Builder":111,"datalib":27,"vega-dataflow":42,"vega-logging":48,"vega-scenegraph":49}],113:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     Node = df.Node, // jshint ignore:line
@@ -17721,7 +17325,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../parse/axes":94,"../parse/legends":100,"./Builder":112,"./Scale":115,"datalib":28,"vega-dataflow":43,"vega-logging":49}],115:[function(require,module,exports){
+},{"../parse/axes":93,"../parse/legends":99,"./Builder":111,"./Scale":114,"datalib":27,"vega-dataflow":42,"vega-logging":48}],114:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -18231,7 +17835,7 @@ function range(group) {
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../transforms/Aggregate":120,"datalib":28,"vega-dataflow":43,"vega-logging":49}],116:[function(require,module,exports){
+},{"../transforms/Aggregate":119,"datalib":27,"vega-dataflow":42,"vega-logging":48}],115:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     bound = require('vega-scenegraph').bound,
@@ -18338,7 +17942,7 @@ function step(elapsed) {
 module.exports = Transition;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Builder":112,"vega-dataflow":43,"vega-scenegraph":50}],117:[function(require,module,exports){
+},{"./Builder":111,"vega-dataflow":42,"vega-scenegraph":49}],116:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     parseMark = require('../parse/mark');
@@ -18971,7 +18575,7 @@ function axisDomain(config) {
 }
 
 module.exports = axs;
-},{"../parse/mark":101,"datalib":28,"vega-dataflow":43,"vega-scenegraph":50}],118:[function(require,module,exports){
+},{"../parse/mark":100,"datalib":27,"vega-dataflow":42,"vega-scenegraph":49}],117:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -19508,7 +19112,7 @@ function hLegendLabels(config) {
 module.exports = lgnd;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/mark":101,"../parse/properties":106,"datalib":28,"vega-scenegraph":50}],119:[function(require,module,exports){
+},{"../parse/mark":100,"../parse/properties":105,"datalib":27,"vega-scenegraph":49}],118:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
   if (func(node)) return true;
@@ -19522,7 +19126,7 @@ module.exports = function visit(node, func) {
     }
   }
 };
-},{}],120:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     log = require('vega-logging'),
@@ -19735,7 +19339,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Aggregate;
-},{"./Facetor":126,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],121:[function(require,module,exports){
+},{"./Facetor":125,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],120:[function(require,module,exports){
 var Base = require('./Transform').prototype;
 
 function BatchTransform() {
@@ -19760,7 +19364,7 @@ prototype.batchTransform = function(/* input, data, reset */) {
 };
 
 module.exports = BatchTransform;
-},{"./Transform":141}],122:[function(require,module,exports){
+},{"./Transform":140}],121:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -19845,7 +19449,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Bin;
-},{"./BatchTransform":121,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],123:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],122:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
@@ -19970,7 +19574,7 @@ prototype._rem = function(tuples, get) {
 };
 
 module.exports = CountPattern;
-},{"./Transform":141,"vega-dataflow":43,"vega-logging":49}],124:[function(require,module,exports){
+},{"./Transform":140,"vega-dataflow":42,"vega-logging":48}],123:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
@@ -20178,7 +19782,7 @@ prototype.batchTransform = function(input, data, reset) {
 };
 
 module.exports = Cross;
-},{"./BatchTransform":121,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],125:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],124:[function(require,module,exports){
 var Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
@@ -20225,7 +19829,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Facet;
-},{"../parse/transforms":110,"./Aggregate":120,"./Transform":141}],126:[function(require,module,exports){
+},{"../parse/transforms":109,"./Aggregate":119,"./Transform":140}],125:[function(require,module,exports){
 var dl = require('datalib'),
     Aggregator = dl.Aggregator,
     Base = Aggregator.prototype,
@@ -20324,7 +19928,7 @@ prototype._on_keep = function(cell) {
 };
 
 module.exports = Facetor;
-},{"datalib":28,"vega-dataflow":43,"vega-logging":49}],127:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42,"vega-logging":48}],126:[function(require,module,exports){
 var df = require('vega-dataflow'),
     SIGNALS = df.Dependencies.SIGNALS,
     log = require('vega-logging'),
@@ -20380,7 +19984,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"./Transform":141,"vega-dataflow":43,"vega-logging":49}],128:[function(require,module,exports){
+},{"./Transform":140,"vega-dataflow":42,"vega-logging":48}],127:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
@@ -20452,7 +20056,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"./Transform":141,"vega-dataflow":43,"vega-logging":49}],129:[function(require,module,exports){
+},{"./Transform":140,"vega-dataflow":42,"vega-logging":48}],128:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     df = require('vega-dataflow'),
@@ -20662,7 +20266,7 @@ prototype.update = function(active) {
 module.exports = Force;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Transform":141,"./screen":147,"vega-dataflow":43,"vega-logging":49}],130:[function(require,module,exports){
+},{"./Transform":140,"./screen":146,"vega-dataflow":42,"vega-logging":48}],129:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     SIGNALS = df.Dependencies.SIGNALS,
@@ -20705,7 +20309,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"./Transform":141,"vega-dataflow":43,"vega-logging":49}],131:[function(require,module,exports){
+},{"./Transform":140,"vega-dataflow":42,"vega-logging":48}],130:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -20796,7 +20400,7 @@ prototype.transform = function(input) {
 module.exports = Geo;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Transform":141,"./screen":147,"datalib":28,"vega-dataflow":43,"vega-logging":49}],132:[function(require,module,exports){
+},{"./Transform":140,"./screen":146,"datalib":27,"vega-dataflow":42,"vega-logging":48}],131:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -20846,7 +20450,7 @@ prototype.transform = function(input) {
 module.exports = GeoPath;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Geo":131,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],133:[function(require,module,exports){
+},{"./Geo":130,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],132:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -20949,7 +20553,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Hierarchy;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":121,"./Transform":141,"./screen":147,"datalib":28,"vega-dataflow":43,"vega-logging":49}],134:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"./screen":146,"datalib":27,"vega-dataflow":42,"vega-logging":48}],133:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Tuple = require('vega-dataflow').Tuple,
@@ -21052,7 +20656,7 @@ function partition(data, groupby, orderby) {
 }
 
 module.exports = Impute;
-},{"./BatchTransform":121,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],135:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],134:[function(require,module,exports){
 var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -21179,7 +20783,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = LinkPath;
-},{"./Transform":141,"vega-dataflow":43,"vega-logging":49}],136:[function(require,module,exports){
+},{"./Transform":140,"vega-dataflow":42,"vega-logging":48}],135:[function(require,module,exports){
 var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -21251,7 +20855,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Lookup;
-},{"./Transform":141,"vega-dataflow":43,"vega-logging":49}],137:[function(require,module,exports){
+},{"./Transform":140,"vega-dataflow":42,"vega-logging":48}],136:[function(require,module,exports){
 var dl = require('datalib'),
     Deps = require('vega-dataflow').Dependencies,
     expr = require('../parse/expr');
@@ -21380,7 +20984,7 @@ prototype.set = function(value) {
 };
 
 module.exports = Parameter;
-},{"../parse/expr":98,"datalib":28,"vega-dataflow":43}],138:[function(require,module,exports){
+},{"../parse/expr":97,"datalib":27,"vega-dataflow":42}],137:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -21446,7 +21050,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
-},{"./BatchTransform":121,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],139:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],138:[function(require,module,exports){
 var dl = require('datalib'),
     log  = require('vega-logging'),
     Transform = require('./Transform');
@@ -21470,7 +21074,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Sort;
-},{"./Transform":141,"datalib":28,"vega-logging":49}],140:[function(require,module,exports){
+},{"./Transform":140,"datalib":27,"vega-logging":48}],139:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -21568,7 +21172,7 @@ function partition(data, groupby, sortby, field) {
 }
 
 module.exports = Stack;
-},{"./BatchTransform":121,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],141:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],140:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Base = df.Node.prototype, // jshint ignore:line
     Deps = df.Dependencies,
@@ -21629,7 +21233,7 @@ prototype.output = function(map) {
 };
 
 module.exports = Transform;
-},{"./Parameter":137,"vega-dataflow":43}],142:[function(require,module,exports){
+},{"./Parameter":136,"vega-dataflow":42}],141:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -21694,7 +21298,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Treeify;
-},{"./BatchTransform":121,"./Transform":141,"datalib":28,"vega-dataflow":43,"vega-logging":49}],143:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"datalib":27,"vega-dataflow":42,"vega-logging":48}],142:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -21784,7 +21388,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Treemap;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":121,"./Transform":141,"./screen":147,"datalib":28,"vega-dataflow":43,"vega-logging":49}],144:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"./screen":146,"datalib":27,"vega-dataflow":42,"vega-logging":48}],143:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -21835,11 +21439,11 @@ prototype.batchTransform = function(input, data) {
 module.exports = Voronoi;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":121,"./Transform":141,"./screen":147,"vega-dataflow/src/Tuple":42,"vega-logging":49}],145:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":140,"./screen":146,"vega-dataflow/src/Tuple":41,"vega-logging":48}],144:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
     d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
-    d3_cloud = require('d3-cloud'),
+    d3_cloud = (typeof window !== "undefined" ? window['d3']['layout']['cloud'] : typeof global !== "undefined" ? global['d3']['layout']['cloud'] : null),
     canvas = require('vega-scenegraph').canvas,
     Tuple = require('vega-dataflow/src/Tuple'),
     log = require('vega-logging'),
@@ -21949,7 +21553,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Wordcloud;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":121,"./Parameter":137,"./Transform":141,"./screen":147,"d3-cloud":3,"datalib":28,"vega-dataflow/src/Tuple":42,"vega-logging":49,"vega-scenegraph":50}],146:[function(require,module,exports){
+},{"./BatchTransform":120,"./Parameter":136,"./Transform":140,"./screen":146,"datalib":27,"vega-dataflow/src/Tuple":41,"vega-logging":48,"vega-scenegraph":49}],145:[function(require,module,exports){
 module.exports = {
   aggregate:    require('./Aggregate'),
   bin:          require('./Bin'),
@@ -21974,7 +21578,7 @@ module.exports = {
   voronoi:      require('./Voronoi'),
   wordcloud:    require('./Wordcloud')
 };
-},{"./Aggregate":120,"./Bin":122,"./CountPattern":123,"./Cross":124,"./Facet":125,"./Filter":127,"./Fold":128,"./Force":129,"./Formula":130,"./Geo":131,"./GeoPath":132,"./Hierarchy":133,"./Impute":134,"./LinkPath":135,"./Lookup":136,"./Pie":138,"./Sort":139,"./Stack":140,"./Treeify":142,"./Treemap":143,"./Voronoi":144,"./Wordcloud":145}],147:[function(require,module,exports){
+},{"./Aggregate":119,"./Bin":121,"./CountPattern":122,"./Cross":123,"./Facet":124,"./Filter":126,"./Fold":127,"./Force":128,"./Formula":129,"./Geo":130,"./GeoPath":131,"./Hierarchy":132,"./Impute":133,"./LinkPath":134,"./Lookup":135,"./Pie":137,"./Sort":138,"./Stack":139,"./Treeify":141,"./Treemap":142,"./Voronoi":143,"./Wordcloud":144}],146:[function(require,module,exports){
 module.exports = {
   size:   [{signal: 'width'}, {signal: 'height'}],
   mid:    [{expr: 'width/2'}, {expr: 'height/2'}],
