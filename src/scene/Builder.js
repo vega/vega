@@ -73,10 +73,12 @@ proto.init = function(graph, def, mark, parent, parent_id, inheritFrom) {
 function inlineDs() {
   var from = this._def.from,
       geom = from.mark,
-      src, name, spec, sibling, output, input;
+      src, name, spec, sibling, output, input, node;
 
   if (geom) {
-    name = ['vg', this._parent_id, geom].join('_');
+    sibling = this.sibling(geom);
+    src  = sibling._isSuper ? sibling : sibling._bounder;
+    name = ['vg', this._parent_id, geom, src.listeners(true).length].join('_');
     spec = {
       name: name,
       transform: from.transform,
@@ -95,21 +97,13 @@ function inlineDs() {
 
   this._from = name;
   this._ds = parseData.datasource(this._graph, spec);
-  var node;
 
   if (geom) {
-    sibling = this.sibling(geom);
-
     // Bounder reflows, so we need an intermediary node to propagate
     // the output constructed by the Builder.
     node = new Node(this._graph).addListener(this._ds.listener());
     node.evaluate = function() { return sibling._output; };
-
-    if (sibling._isSuper) {
-      sibling.addListener(node);
-    } else {
-      sibling._bounder.addListener(node);
-    }
+    src.addListener(node);
   } else {
     // At this point, we have a new datasource but it is empty as
     // the propagation cycle has already crossed the datasources.
