@@ -19,6 +19,7 @@ var compile = expr.compiler(args, {
     fn.scale      = scaleGen(codegen, false);
     fn.iscale     = scaleGen(codegen, true);
     fn.inrange    = 'this.defs.inrange';
+    fn.indata     = indataGen(codegen);
     fn.format     = 'this.defs.format';
     fn.timeFormat = 'this.defs.timeFormat';
     fn.utcFormat  = 'this.defs.utcFormat';
@@ -28,6 +29,7 @@ var compile = expr.compiler(args, {
     return {
       'scale':      scale,
       'inrange':    inrange,
+      'indata':     indata,
       'format':     numberFormat,
       'timeFormat': timeFormat,
       'utcFormat':  utcFormat
@@ -65,6 +67,30 @@ function inrange(val, a, b, exclusive) {
   return exclusive ?
     (min < val && max > val) :
     (min <= val && max >= val);
+}
+
+function indataGen(codegen) {
+  return function(args) {
+    var n = args.length,
+        field, data;
+    if (n < 2 || n > 3) {
+      throw Error("indata takes exactly 2 or 3 arguments.");
+    }
+    if (args[0].type == 'Literal' && (!args[2] || args[2].type === 'Literal')) {
+      // We can make the index now, rather than at runtime, but we need
+      // access to the model
+      field = args[2] ? args[2].value : null;
+      //data = model.data(args[0].value);
+      //if (data) data.getIndex(field);
+    }
+    args = args.map(codegen);
+    return 'this.defs.indata(this.model,' + args[0] + ',' + args[1] + (n > 2 ? ',' + args[2] : '') + ')'
+  }
+}
+
+function indata(model, dataname, val, field) {
+  var data = model.data(dataname);
+  return data ? data.hasElement(val, field) : false;
 }
 
 function numberFormat(specifier, v) {
