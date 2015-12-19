@@ -25,7 +25,8 @@ function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null,
       signalName = signal ? signal[0] : null,
       predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
-      reeval = (predicate === null),
+      exprTrigger = def.test ? model.expr(def.test) : null,
+      reeval = (predicate === null && exprTrigger === null),
       isClear = def.type === Types.CLEAR,
       node = new Node(model).router(isClear);
 
@@ -34,6 +35,11 @@ function parseModify(model, def, ds) {
       var db = model.values(Deps.DATA, predicate.data || EMPTY),
           sg = model.values(Deps.SIGNALS, predicate.signals || EMPTY);
       reeval = predicate.call(predicate, {}, db, sg, model._predicates);
+    }
+
+    if (exprTrigger !== null) {
+      var sg = model.values(Deps.SIGNALS, exprTrigger.globals || EMPTY);
+      reeval = exprTrigger.fn();
     }
 
     log.debug(input, [def.type+"ing", reeval]);
@@ -87,6 +93,10 @@ function parseModify(model, def, ds) {
     node.dependency(Deps.SIGNALS, predicate.signals);
   }
 
+  if (exprTrigger) {
+    node.dependency(Deps.SIGNALS, exprTrigger.globals);
+  }
+
   return node;
 }
 
@@ -110,6 +120,13 @@ parseModify.schema = {
             "predicate": {"type": "string"}  // TODO predicate args
           },
           "required": ["type", "predicate"]
+        },
+        {
+          "properties": {
+            "type": {"enum": [Types.CLEAR]},
+            "test": {"type": "string"}
+          },
+          "required": ["type", "expr"]
         }]
       }
     }
