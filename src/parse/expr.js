@@ -90,7 +90,7 @@ function indataGen(codegen) {
 
 function indata(model, dataname, val, field) {
   var data = model.data(dataname);
-  return data ? data.hasElement(val, field) : false;
+  return data && data.hasElement(val, field);
 }
 
 function numberFormat(specifier, v) {
