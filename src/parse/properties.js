@@ -450,19 +450,22 @@ function valueSchema(type) {
       "type": "array",
       "items": {
         "allOf": [{
-          "type": "object",
-          "properties": {
-            "predicate": {
-              "oneOf": [
-                {"type": "string"},
-                {
-                  "type": "object",
-                  "properties": {"name": { "type": "string" }},
-                  "required": ["name"]
-                }
-              ]
+          "oneOf": [{
+            "type": "object",
+            "properties": {
+              "predicate": {
+                "oneOf": [
+                  {"type": "string"},
+                  {
+                    "type": "object",
+                    "properties": {"name": { "type": "string" }},
+                    "required": ["name"]
+                  }
+                ]
+              }
             }
-          }
+          },
+          {"type": "object", "properties": {"test": {"type": "string"}}}]
         },
         valRef]
       }
