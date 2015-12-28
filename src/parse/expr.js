@@ -12,7 +12,7 @@ function wrap(model) {
     },
     functions:   function(codegen) {
       var fn = expr.functions(codegen);
-      fn.eventItem  = 'event.vg.item';
+      fn.eventItem  = 'event.vg.getItem';
       fn.eventGroup = 'event.vg.getGroup';
       fn.eventX     = 'event.vg.getX';
       fn.eventY     = 'event.vg.getY';
@@ -38,6 +38,7 @@ function wrap(model) {
     }
   });
 
+  wrap.codegen = compile.codegen;
   return function(str) {
     var x = compile(str);
     x.model = model;
@@ -114,6 +115,5 @@ function utcFormat(specifier, d) {
   return template.format(specifier, 'utc')(typeof d==='number' ? new Date(d) : d);
 }
 
-wrap.codegen = compile.codegen;
 wrap.scale = scale;
 module.exports = wrap;

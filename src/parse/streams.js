@@ -7,6 +7,7 @@ var d3 = require('d3'),
 var GATEKEEPER = '_vgGATEKEEPER';
 
 var vgEvent = {
+  getItem: function() { return this.item; },
   getGroup: function(name) { return name ? this.name[name] : this.group; },
   getXY: function(item) {
       var p = {x: this.x, y: this.y};
