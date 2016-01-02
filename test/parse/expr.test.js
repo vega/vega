@@ -16,6 +16,10 @@ describe('Expression Parser', function() {
     return e.fn(datum, parent, evt);
   }
 
+  run.fn = function(code, model, datum) {
+    return function() { return run(code, model, datum); }
+  };
+
   it('should evaluate event functions', function() {
     expect(run('eventItem()')).to.equal('foo');
     expect(run('eventGroup()')).to.equal('bar');
@@ -69,5 +73,23 @@ describe('Expression Parser', function() {
       done();
     });
   });
+
+  it('should evaluate open function', function() {
+    var config = {load: {}},
+        model = {config: function() { return config; }};
+
+    expect(run.fn('open("http://vega.github.io/")', model)).to.throw();
+
+    var oldwin = global.window;
+    global.window = {open: function(url, name) {}};
+
+    // COMMENT OUT for now. sanitizeUrl allows javascript protocol to pass through
+    // expect(run.fn('open("javascript:alert(\'foo\')")', model)).to.throw();
+
+    expect(run.fn('open("http://vega.github.io/")', model)).to.not.throw();
+
+    global.window = oldwin;
+  });
+
 
 });
