@@ -4,7 +4,7 @@ var dl = require('datalib'),
 describe('Expression Parser', function() {
 
   var evt = {vg: {
-    item:     function() { return 'foo'; },
+    getItem:  function() { return 'foo'; },
     getGroup: function() { return 'bar'; },
     getX:     function() { return 'xx'; },
     getY:     function() { return 'yy'; }

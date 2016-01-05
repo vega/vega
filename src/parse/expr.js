@@ -11,7 +11,7 @@ var compile = expr.compiler(args, {
   },
   functions:   function(codegen) {
     var fn = expr.functions(codegen);
-    fn.eventItem  = 'event.vg.item';
+    fn.eventItem  = 'event.vg.getItem';
     fn.eventGroup = 'event.vg.getGroup';
     fn.eventX     = 'event.vg.getX';
     fn.eventY     = 'event.vg.getY';
