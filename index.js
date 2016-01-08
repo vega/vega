@@ -7,6 +7,7 @@ module.exports = {
     Builder: require('./src/scene/Builder'),
     Encoder: require('./src/scene/Encoder'),
     GroupBuilder: require('./src/scene/GroupBuilder'),
+    visit: require('./src/scene/visit')
   },
   transforms: require('./src/transforms'),
   Transform: require('./src/transforms/Transform'),
