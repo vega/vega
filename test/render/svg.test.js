@@ -56,10 +56,12 @@ describe('SVG', function() {
   // and compare that the SVG output is identical
   function render(name, specFile, headless, validation, done) {
     fs.readFile(specFile, "utf8", function(err, text) {
-      if (err) throw err;
+      if (err) return done(err);
       var spec = JSON.parse(text);
 
       parseSpec(spec, function(error, viewFactory) {
+        if (error) return done(error);
+        
         if (headless) {
           var view = viewFactory({ renderer: "svg" }).update();
           var svg  = view.renderer().svg();
