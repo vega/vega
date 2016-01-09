@@ -42,6 +42,8 @@ describe('Canvas', function() {
       var spec = JSON.parse(text);
 
       parseSpec(spec, function(error, viewFactory) {
+        if (error) return done(error);
+        
         var view = viewFactory({ renderer: "canvas" }).update();
         view.canvasAsync(function(canvas) {
           var data = canvas.toDataURL();
