@@ -394,10 +394,12 @@ function legendPosition(item, group, trans, db, signals, predicates) {
     totalHeight += currItem.bounds.height() + (item.height ? 0 : pad);
   }
 
-  if (config.legend.baseline === 'middle') {
-    o.y += offset + (group.height / 2) - (totalHeight / 2);
-  } else if (config.legend.baseline === 'bottom') {
-    o.y += offset + group.height - totalHeight;
+  if (typeof config !== 'undefined') {
+    if (config.legend.baseline === 'middle') {
+      o.y += offset + (group.height / 2) - (totalHeight / 2);
+    } else if (config.legend.baseline === 'bottom') {
+      o.y += offset + group.height - totalHeight;
+    }
   }
 
   if (trans) trans.interpolate(item, o);

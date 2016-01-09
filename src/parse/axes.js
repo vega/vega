@@ -24,17 +24,19 @@ function setConfig(config, defType) {
   updatedConfig.axis = {};
   var axisName = 'axis_' + defType;
 
-  if (config[axisName]) {
-    for (var key in config[axisName]) {
-      if (config[axisName].hasOwnProperty(key)) {
-        updatedConfig.axis[key] = config[axisName][key];
+  if (typeof config !== 'undefined') {
+    if (config[axisName]) {
+      for (var key in config[axisName]) {
+        if (config[axisName].hasOwnProperty(key)) {
+          updatedConfig.axis[key] = config[axisName][key];
+        }
       }
     }
-  }
 
-  for (var key in config.axis) {
-    if (config.axis.hasOwnProperty(key) && (!(key in updatedConfig.axis))) {
-      updatedConfig.axis[key] = config.axis[key];
+    for (var key in config.axis) {
+      if (config.axis.hasOwnProperty(key) && (!(key in updatedConfig.axis))) {
+        updatedConfig.axis[key] = config.axis[key];
+      }
     }
   }
   return updatedConfig;

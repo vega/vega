@@ -32,7 +32,7 @@ function parseMark(model, mark) {
 
 function defaultColor(property, configProperty, prop) {
   if (property in prop && 'value' in prop[property] && prop[property]['value'] === 'default') {
-    if ('marks' in config && configProperty in config.marks) {
+    if (typeof config !== 'undefined' && 'marks' in config && configProperty in config.marks) {
       prop[property]['value'] = config.marks[configProperty];
     } else {
       prop[property]['value'] = '#000000';

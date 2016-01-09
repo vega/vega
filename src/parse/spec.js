@@ -48,14 +48,14 @@ var dl = require('datalib'),
     try {
       // protect against subsequent spec modification
       spec = dl.duplicate(spec);
-
-      var paddingVar = spec.padding || config.padding;
+      
+      var paddingVar = spec.padding || (typeof config !== 'undefined' && config.padding);
 
       var parsers = require('./'),
-          width   = spec.width || config.width || 500,
-          height  = spec.height || config.height || 500,
+          width   = spec.width || (typeof config !== 'undefined' && config.width) || 500,
+          height  = spec.height || (typeof config !== 'undefined' && config.height) || 500,
           padding = parsers.padding(paddingVar),
-          background = spec.background || config.background;
+          background = spec.background || (typeof config !== 'undefined' && config.background);
 
       // create signals for width, height and padding
       model.signal('width', width);

@@ -180,6 +180,8 @@ function axs(model, updatedConfig) {
       scales = model._defs.marks.scales;
     }
 
+    var config_scales = model.config().scales;
+
     // setup axis marks
     dl.extend(m.gridLines, axisTicks(config));
     dl.extend(m.majorTicks, axisTicks(config));
@@ -192,9 +194,9 @@ function axs(model, updatedConfig) {
     m.gridLines.properties.enter.strokeWidth = {value: config.gridWidth};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scales, config);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales, config_scales, config);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales, config_scales, config);
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
@@ -459,7 +461,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales) {
+function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config_scales, config_axis) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -469,7 +471,7 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales) {
     size = {value: sign * size};
   }
 
-  var tickPlacement = config.axis.tickPlacement;
+  var tickPlacement = config_axis.tickPlacement;
   if (orient === 'top' || orient === 'bottom') {
     var updatedOldScale = {'scale': oldScale.scale, 'offset': oldScale.offset};
     var updatedNewScale = {'scale': newScale.scale, 'offset': newScale.offset};
@@ -486,12 +488,12 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales) {
           }
         }
       }
-      if (!currPadding && 'padding' in config.scales) {
-        currPadding = config.scales.padding;
+      if (!currPadding && typeof config_scales !== 'undefined' && 'padding' in config_scales) {
+        currPadding = config_scales.padding;
       }
 
-      if (!currOuterPadding && 'outerPadding' in config.scales) {
-        currOuterPadding = config.scales.outerPadding;
+      if (!currOuterPadding && typeof config_scales !== 'undefined' && 'outerPadding' in config_scales) {
+        currOuterPadding = config_scales.outerPadding;
       }
       var oldOffset = oldScale.offset;
       var newOffset = newScale.offset;
