@@ -49,13 +49,13 @@ var dl = require('datalib'),
       // protect against subsequent spec modification
       spec = dl.duplicate(spec);
       
-      var paddingVar = spec.padding || (typeof config !== 'undefined' && config.padding);
+      var paddingVar = setVal(spec, 'padding'),
+          width = setVal(spec, 'width', 500),
+          height = setVal(spec, 'height', 500),
+          background = setVal(spec, 'background');
 
       var parsers = require('./'),
-          width   = spec.width || (typeof config !== 'undefined' && config.width) || 500,
-          height  = spec.height || (typeof config !== 'undefined' && config.height) || 500,
-          padding = parsers.padding(paddingVar),
-          background = spec.background || (typeof config !== 'undefined' && config.background);
+          padding = parsers.padding(paddingVar);
 
       // create signals for width, height and padding
       model.signal('width', width);
@@ -75,6 +75,19 @@ var dl = require('datalib'),
         data:       parsers.data(model, spec.data, onCreate)
       });
     } catch (err) { onError(err); }
+  }
+
+  function setVal(spec, property, defaultVal) {
+    if (spec[property]) {
+      return spec[property];
+    }
+    if (typeof config !== 'undefined') {
+      return config[property]
+    }
+    if (typeof defaultVal !== 'undefined') {
+      return defaultVal;
+    }
+    return undefined;
   }
 
   if (dl.isObject(spec)) {
