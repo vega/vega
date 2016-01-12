@@ -6,8 +6,8 @@ var Tuple = require('vega-dataflow').Tuple,
 function Rank(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    min:  {type: 'value', default: 1},
-    step: {type: 'value', default: 1},
+    start: {type: 'value', default: 1},
+    step:  {type: 'value', default: 1},
     normalize: {type: 'value', default: false}
   });
 
@@ -28,7 +28,7 @@ prototype.batchTransform = function(input, data) {
       len   = data.length,
       norm  = this.param('normalize'),
       step  = norm ? 1/len : this.param('step'),
-      value = (norm ? 0 : this.param('min')) - step;
+      value = (norm ? 0 : this.param('start')) - step;
 
   for (var i = 0; i<len; ++i) {
     Tuple.set(data[i], rank, value+=step);
@@ -47,7 +47,7 @@ Rank.schema = {
   "type": "object",
   "properties": {
     "type": {"enum": ["rank"]},
-    "min": {
+    "start": {
       "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 1
     },

@@ -45,8 +45,8 @@ describe('Rank', function() {
     });
   });
 
-  it('should support custom min', function(done) {
-    parseSpec(spec({min: 3}), modelFactory, function(error, model) {
+  it('should support custom start', function(done) {
+    parseSpec(spec({start: 3}), modelFactory, function(error, model) {
       if (error) return done(error);
 
       var ds = model.data('table'),
@@ -81,8 +81,8 @@ describe('Rank', function() {
     });
   });
 
-  it('should support custom min+step', function(done) {
-    parseSpec(spec({min: 3, step: 2}), modelFactory, function(error, model) {
+  it('should support custom start+step', function(done) {
+    parseSpec(spec({start: 3, step: 2}), modelFactory, function(error, model) {
       if (error) return done(error);
 
       var ds = model.data('table'),
@@ -124,9 +124,9 @@ describe('Rank', function() {
         validate = validator(schema);
 
     expect(validate({ "type": "rank" })).to.be.true;
-    expect(validate({ "type": "rank", "min": 0 })).to.be.true;
-    expect(validate({ "type": "rank", "min": 2 })).to.be.true;
-    expect(validate({ "type": "rank", "min": {"signal": "min_sig"} })).to.be.true;
+    expect(validate({ "type": "rank", "start": 0 })).to.be.true;
+    expect(validate({ "type": "rank", "start": 2 })).to.be.true;
+    expect(validate({ "type": "rank", "start": {"signal": "start_sig"} })).to.be.true;
     expect(validate({ "type": "rank", "step": 2 })).to.be.true;
     expect(validate({ "type": "rank", "step": {"signal": "step_sig"} })).to.be.true;
     expect(validate({ "type": "rank", "normalize": true })).to.be.true;
@@ -135,7 +135,7 @@ describe('Rank', function() {
     expect(validate({ "type": "rank", "output": {"rank": "idx"} })).to.be.true;
 
     expect(validate({ "type": "foo" })).to.be.false;
-    expect(validate({ "type": "rank", "min": "min_sig" })).to.be.false;
+    expect(validate({ "type": "rank", "start": "min_sig" })).to.be.false;
     expect(validate({ "type": "rank", "step": 0 })).to.be.false;
     expect(validate({ "type": "rank", "step": "step_sg" })).to.be.false;
     expect(validate({ "type": "rank", "normalize": "hello" })).to.be.false;
