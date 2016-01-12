@@ -3,49 +3,39 @@ var dl = require('datalib'),
     expr = require('vega-expression'),
     args = ['datum', 'event', 'signals'];
 
-function wrap(model) {
-  var compile = expr.compiler(args, {
-    idWhiteList: args,
-    fieldVar:    args[0],
-    globalVar:   function(id) {
-      return 'this.sig[' + dl.str(id) + ']._value';
-    },
-    functions:   function(codegen) {
-      var fn = expr.functions(codegen);
-      fn.eventItem  = 'event.vg.getItem';
-      fn.eventGroup = 'event.vg.getGroup';
-      fn.eventX     = 'event.vg.getX';
-      fn.eventY     = 'event.vg.getY';
-      fn.open       = 'window.open';
-      fn.scale      = scaleGen(codegen, false);
-      fn.iscale     = scaleGen(codegen, true);
-      fn.inrange    = 'this.defs.inrange';
-      fn.indata     = indataGen(codegen, model);
-      fn.format     = 'this.defs.format';
-      fn.timeFormat = 'this.defs.timeFormat';
-      fn.utcFormat  = 'this.defs.utcFormat';
-      return fn;
-    },
-    functionDefs: function(/*codegen*/) {
-      return {
-        'scale':      scale,
-        'inrange':    inrange,
-        'indata':     indata,
-        'format':     numberFormat,
-        'timeFormat': timeFormat,
-        'utcFormat':  utcFormat
-      };
-    }
-  });
-
-  wrap.codegen = compile.codegen;
-  return function(str) {
-    var x = compile(str);
-    x.model = model;
-    x.sig = model ? model._signals : {};
-    return x;
-  };
-}
+var compile = expr.compiler(args, {
+  idWhiteList: args,
+  fieldVar:    args[0],
+  globalVar:   function(id) {
+    return 'this.sig[' + dl.str(id) + ']._value';
+  },
+  functions:   function(codegen) {
+    var fn = expr.functions(codegen);
+    fn.eventItem  = 'event.vg.getItem';
+    fn.eventGroup = 'event.vg.getGroup';
+    fn.eventX     = 'event.vg.getX';
+    fn.eventY     = 'event.vg.getY';
+    fn.open       = 'window.open';
+    fn.scale      = scaleGen(codegen, false);
+    fn.iscale     = scaleGen(codegen, true);
+    fn.inrange    = 'this.defs.inrange';
+    fn.indata     = indataGen(codegen);
+    fn.format     = 'this.defs.format';
+    fn.timeFormat = 'this.defs.timeFormat';
+    fn.utcFormat  = 'this.defs.utcFormat';
+    return fn;
+  },
+  functionDefs: function(/*codegen*/) {
+    return {
+      'scale':      scale,
+      'inrange':    inrange,
+      'indata':     indata,
+      'format':     numberFormat,
+      'timeFormat': timeFormat,
+      'utcFormat':  utcFormat
+    };
+  }
+});
 
 function scaleGen(codegen, invert) {
   return function(args) {
@@ -79,28 +69,32 @@ function inrange(val, a, b, exclusive) {
     (min <= val && max >= val);
 }
 
-function indataGen(codegen, model) {
-  return function(args) {
+function indataGen(codegen) {
+  return function(args, globals, fields, dataSources) {
     var n = args.length,
         field, data;
     if (n < 2 || n > 3) {
       throw Error("indata takes exactly 2 or 3 arguments.");
     }
-    if (args[0].type == 'Literal' && (!args[2] || args[2].type === 'Literal')) {
-      // The call uses literals, so we can create the index on the
-      // data source now.
-      field = args[2] ? args[2].value : null;
-      data = model.data(args[0].value);
-      if (data) data.getIndex(field);
+    if (args[0].type !== 'Literal') {
+      throw Error("Data source name must be a literal for indata.");
     }
+
+    field = args[2] ? args[2].value : null;
+    data = indataGen.model.data(args[0].value);
+    // mark the dataSource as a dependency
+    dataSources[args[0].value] = 1;
+    if (data) data.getIndex(field);
+
     args = args.map(codegen);
     return 'this.defs.indata(this.model,' + args[0] + ',' + args[1] + (n > 2 ? ',' + args[2] : '') + ')'
   }
 }
 
 function indata(model, dataname, val, field) {
-  var data = model.data(dataname);
-  return data && data.hasElement(val, field);
+  var data = model.data(dataname),
+      index = data.getIndex(field);
+  return index[val] > 0;
 }
 
 function numberFormat(specifier, v) {
@@ -115,5 +109,16 @@ function utcFormat(specifier, d) {
   return template.format(specifier, 'utc')(typeof d==='number' ? new Date(d) : d);
 }
 
+function wrap(model) {
+  return function(str) {
+    indataGen.model = model;
+    var x = compile(str);
+    x.model = model;
+    x.sig = model ? model._signals : {};
+    return x;
+  };
+}
+
 wrap.scale = scale;
+wrap.codegen = compile.codegen;
 module.exports = wrap;

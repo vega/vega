@@ -185,6 +185,7 @@ function rule(model, name, rules, exprs) {
       // rule uses an expression instead of a predicate.
       var exprFn = model.expr(r.test);
       deps.signals.push.apply(deps.signals, exprFn.globals);
+      deps.data.push.apply(deps.data, exprFn.dataSources);
       ref = valueRef(config, name, r);
       dependencies(deps, ref);
 

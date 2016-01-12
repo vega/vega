@@ -95,6 +95,7 @@ function parseModify(model, def, ds) {
 
   if (exprTrigger) {
     node.dependency(Deps.SIGNALS, exprTrigger.globals);
+    node.dependency(Deps.DATA,    exprTrigger.dataSources);
   }
 
   return node;
