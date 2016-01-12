@@ -8,6 +8,7 @@ function Rank(graph) {
   Transform.addParameters(this, {
     start: {type: 'value', default: 1},
     step:  {type: 'value', default: 1},
+    field: {type: 'field', default: null},
     normalize: {type: 'value', default: false}
   });
 
@@ -28,10 +29,16 @@ prototype.batchTransform = function(input, data) {
       len   = data.length,
       norm  = this.param('normalize'),
       step  = norm ? 1/len : this.param('step'),
-      value = (norm ? 0 : this.param('start')) - step;
+      value = (norm ? 0 : this.param('start')) - step,
+      field = this.param('field').accessor,
+      l = {}, d;
 
   for (var i = 0; i<len; ++i) {
-    Tuple.set(data[i], rank, value+=step);
+    if (field) {
+      Tuple.set(d=data[i], rank, l[d=field(d)] || (l[d]=value+=step));
+    } else {
+      Tuple.set(data[i], rank, value+=step);
+    }
   }
 
   input.fields[rank] = 1;
@@ -56,6 +63,11 @@ Rank.schema = {
         "type": "number", "minimum": 0, "exclusiveMinimum": true,
       }, {"$ref": "#/refs/signal"}],
       "default": 1
+    },
+    "field": {
+      "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
+      "description": "A key field to used to rank tuples. " +
+        "If undefined, tuples will be ranked in their observed order."
     },
     "normalize": {
       "description": "If true, values of the output field will lie in the range [0, 1].",
