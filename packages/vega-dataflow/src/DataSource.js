@@ -2,8 +2,7 @@ var log = require('vega-logging'),
     ChangeSet = require('./ChangeSet'),
     Collector = require('./Collector'),
     Tuple = require('./Tuple'),
-    Node = require('./Node'), // jshint ignore:line
-    DATAPOINT = '_vgDATAPOINT';
+    Node = require('./Node'); // jshint ignore:line
 
 function DataSource(graph, name, facet) {
   this._graph = graph;
@@ -125,21 +124,14 @@ prototype.listener = function() {
 prototype.getIndex = function(field) {
   var data = this._data,
       index, i, len, value;
-  field = field || DATAPOINT;
   if (!this._indexes[field]) {
     index = {};
     this._indexes[field] = index;
     this._indexFields.push(field);
-    if (field == DATAPOINT) {
-      for (i = 0, len = data.length; i < len; i++) {
-        value = data[i];
-        index[value] = (index[value] || 0) + 1;
-      }
-    } else {
-      for (i = 0, len = data.length; i < len; i++) {
-        value = this._data[i][field];
-        index[value] = (index[value] || 0) + 1;
-      }
+    for (i = 0, len = data.length; i < len; i++) {
+      value = this._data[i][field];
+      index[value] = (index[value] || 0) + 1;
+      Tuple.prev_init(this._data[i]);
     }
   }
   return this._indexes[field];
@@ -232,21 +224,25 @@ function DataSourceOutput(ds) {
   output.evaluate = function(input) {
     log.debug(input, ['output', ds._name]);
 
-    var out = ChangeSet.create(input, true);
+    var out = ChangeSet.create(input, true), value;
 
     for (i = 0; i < ds._indexFields.length; i++) {
       key = ds._indexFields[i];
       index = ds._indexes[key];
       for (j = 0; j < input.add.length; j++) {
-        value = key == DATAPOINT ? input.add[j] : input.add[j][key];
+        value = input.add[j][key];
+        Tuple.prev_init(input.add[j]);
         index[value] = (index[value] || 0) + 1;
       }
       for (j = 0; j < input.rem.length; j++) {
-        value = key == DATAPOINT ? input.add[j] : input.rem[j][key];
-        index[value] = ((index[value] || 0) - 1) || undefined;
+        value = input.rem[j][key];
+        index[value] = (index[value] || 0) - 1;
       }
       for (j = 0; j < input.mod.length; j++) {
-        console.log('TODO: modded', input.mod[j]);
+        value = input.mod[j]._prev[key];
+        index[value] = (index[value] || 0) - 1;
+        value = input.mod[j][key];
+        index[value] = (index[value] || 0) + 1;
       }
     }
 
