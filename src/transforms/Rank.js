@@ -6,8 +6,6 @@ var Tuple = require('vega-dataflow').Tuple,
 function Rank(graph) {
   BatchTransform.prototype.init.call(this, graph);
   Transform.addParameters(this, {
-    start: {type: 'value', default: 1},
-    step:  {type: 'value', default: 1},
     field: {type: 'field', default: null},
     normalize: {type: 'value', default: false}
   });
@@ -25,19 +23,17 @@ prototype.constructor = Rank;
 prototype.batchTransform = function(input, data) {
   log.debug(input, ['rank']);
 
-  var rank = this._output.rank,
-      len   = data.length,
+  var rank  = this._output.rank,
       norm  = this.param('normalize'),
-      step  = norm ? 1/len : this.param('step'),
-      value = (norm ? 0 : this.param('start')) - step,
       field = this.param('field').accessor,
-      l = {}, d;
+      l = {}, i = 0, len = data.length, r, v, d;
 
-  for (var i = 0; i<len; ++i) {
+  for (; i<len; ++i) {
+    r = norm ? (i+1)/len : i+1;
     if (field) {
-      Tuple.set(d=data[i], rank, l[d=field(d)] || (l[d]=value+=step));
+      Tuple.set(d=data[i], rank, l[d=field(d)] || (l[d]=r));
     } else {
-      Tuple.set(data[i], rank, value+=step);
+      Tuple.set(data[i], rank, r);
     }
   }
 
@@ -54,16 +50,6 @@ Rank.schema = {
   "type": "object",
   "properties": {
     "type": {"enum": ["rank"]},
-    "start": {
-      "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
-      "default": 1
-    },
-    "step": {
-      "oneOf": [{
-        "type": "number", "minimum": 0, "exclusiveMinimum": true,
-      }, {"$ref": "#/refs/signal"}],
-      "default": 1
-    },
     "field": {
       "oneOf": [{"type": "string"}, {"$ref": "#/refs/signal"}],
       "description": "A key field to used to rank tuples. " +

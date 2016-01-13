@@ -45,60 +45,6 @@ describe('Rank', function() {
     });
   });
 
-  it('should support custom start', function(done) {
-    parseSpec(spec({start: 3}), modelFactory, function(error, model) {
-      if (error) return done(error);
-
-      var ds = model.data('table'),
-          data = ds.values(),
-          i, len;
-
-      expect(data).to.have.length(20);
-      for(i=1, len=data.length; i<len; ++i) {
-        expect(data[i].y).to.be.at.least(data[i-1].y);
-        expect(data[i].rank).to.equal(i+3);
-      }
-
-      done();
-    });
-  });
-
-  it('should support custom step', function(done) {
-    parseSpec(spec({step: 2}), modelFactory, function(error, model) {
-      if (error) return done(error);
-
-      var ds = model.data('table'),
-          data = ds.values(),
-          i, len;
-
-      expect(data).to.have.length(20);
-      for(i=1, len=data.length; i<len; ++i) {
-        expect(data[i].y).to.be.at.least(data[i-1].y);
-        expect(data[i].rank).to.equal(1+2*i);
-      }
-
-      done();
-    });
-  });
-
-  it('should support custom start+step', function(done) {
-    parseSpec(spec({start: 3, step: 2}), modelFactory, function(error, model) {
-      if (error) return done(error);
-
-      var ds = model.data('table'),
-          data = ds.values(),
-          i, len;
-
-      expect(data).to.have.length(20);
-      for(i=1, len=data.length; i<len; ++i) {
-        expect(data[i].y).to.be.at.least(data[i-1].y);
-        expect(data[i].rank).to.equal(3+2*i);
-      }
-
-      done();
-    });
-  });
-
   it('should rank by key field', function(done) {
     var spec = {
       data: [{
@@ -145,13 +91,12 @@ describe('Rank', function() {
       var ds = model.data('table'),
           data = ds.values(),
           len  = data.length,
-          step = 1/len,
           i = 1;
 
       expect(data).to.have.length(20);
       for(; i<len; ++i) {
         expect(data[i].y).to.be.at.least(data[i-1].y);
-        expect(data[i].rank).to.be.closeTo(i*step, EPSILON);
+        expect(data[i].rank).to.equal((i+1)/len);
       }
 
       done();
@@ -163,11 +108,6 @@ describe('Rank', function() {
         validate = validator(schema);
 
     expect(validate({ 'type': 'rank' })).to.be.true;
-    expect(validate({ 'type': 'rank', 'start': 0 })).to.be.true;
-    expect(validate({ 'type': 'rank', 'start': 2 })).to.be.true;
-    expect(validate({ 'type': 'rank', 'start': {'signal': 'start_sig'} })).to.be.true;
-    expect(validate({ 'type': 'rank', 'step': 2 })).to.be.true;
-    expect(validate({ 'type': 'rank', 'step': {'signal': 'step_sig'} })).to.be.true;
     expect(validate({ 'type': 'rank', 'normalize': true })).to.be.true;
     expect(validate({ 'type': 'rank', 'normalize': false })).to.be.true;
     expect(validate({ 'type': 'rank', 'normalize': {'signal': 'norm_sig'} })).to.be.true;
@@ -176,9 +116,6 @@ describe('Rank', function() {
     expect(validate({ 'type': 'rank', 'output': {'rank': 'idx'} })).to.be.true;
 
     expect(validate({ 'type': 'foo' })).to.be.false;
-    expect(validate({ 'type': 'rank', 'start': 'min_sig' })).to.be.false;
-    expect(validate({ 'type': 'rank', 'step': 0 })).to.be.false;
-    expect(validate({ 'type': 'rank', 'step': 'step_sg' })).to.be.false;
     expect(validate({ 'type': 'rank', 'normalize': 'hello' })).to.be.false;
     expect(validate({ 'type': 'rank', 'output': {'foo': 'bar'} })).to.be.false;
     expect(validate({ 'type': 'rank', 'foo': 'bar' })).to.be.false;
