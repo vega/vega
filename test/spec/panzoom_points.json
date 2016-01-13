@@ -48,8 +48,9 @@
     {
       "name": "zoom",
       "init": 1.0,
+      "verbose": true,
       "streams": [
-        {"type": "wheel", "expr": "pow(1.001, event.deltaY)"}
+        {"type": "wheel", "expr": "pow(1.001, event.deltaY*pow(16, event.deltaMode))"}
       ]
     },
     {
