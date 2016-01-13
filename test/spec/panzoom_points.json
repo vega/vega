@@ -49,7 +49,7 @@
       "name": "zoom",
       "init": 1.0,
       "streams": [
-        {"type": "wheel", "expr": "pow(1.001, event.deltaY)"}
+        {"type": "wheel", "expr": "pow(1.001, event.deltaY) + random()/100"}
       ]
     },
     {
