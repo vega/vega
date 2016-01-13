@@ -21,17 +21,20 @@ module.exports = function(opt) {
       FIELD_VAR = opt.fieldVar || 'datum',
       GLOBAL_VAR = opt.globalVar || 'signals',
       globals = {},
-      fields = {};
+      fields = {},
+      dataSources = {};
 
   function codegen_wrap(ast) {
     var retval = {
       code: codegen(ast),
       globals: keys(globals),
       fields: keys(fields),
+      dataSources: keys(dataSources),
       defs: functionDefs
     };
     globals = {};
     fields = {};
+    dataSources = {};
     return retval;
   }
 
@@ -96,7 +99,7 @@ module.exports = function(opt) {
         var fn = functions.hasOwnProperty(callee) && functions[callee];
         if (!fn) throw new Error('Unrecognized function: ' + callee);
         return fn instanceof Function ?
-          fn(args) :
+          fn(args, globals, fields, dataSources) :
           fn + '(' + args.map(codegen).join(',') + ')';
       },
     'ArrayExpression': function(n) {
