@@ -72,11 +72,11 @@ function numberFormat(specifier, v) {
 }
 
 function timeFormat(specifier, d) {
-  return template.format(specifier, 'time')(typeof d==='number' ? new Date(d) : d);
+  return template.format(specifier, 'time')(d);
 }
 
 function utcFormat(specifier, d) {
-  return template.format(specifier, 'utc')(typeof d==='number' ? new Date(d) : d);
+  return template.format(specifier, 'utc')(d);
 }
 
 function wrap(model) {
