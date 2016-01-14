@@ -19,6 +19,7 @@ function Model(cfg) {
   this._builder = null; // Top-level scenegraph builder.
 
   this._reset = {axes: false, legends: false};
+  this._requestedIndexes = [];
 
   this.config(cfg);
   this.expr = compiler(this);
@@ -96,6 +97,10 @@ prototype.predicate = function(name, predicate) {
 };
 
 prototype.predicates = function() { return this._predicates; };
+
+prototype.requestIndex = function(data, field) {
+  this._requestedIndexes.push({data: data, field: field});
+};
 
 prototype.scene = function(renderer) {
   if (!arguments.length) return this._scene;

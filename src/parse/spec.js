@@ -45,6 +45,7 @@ var dl = require('datalib'),
   }
 
   function parse(spec) {
+    var i, request, data;
     try {
       // protect against subsequent spec modification
       spec = dl.duplicate(spec);
@@ -68,9 +69,17 @@ var dl = require('datalib'),
         background: parsers.background(spec.background),
         signals:    parsers.signals(model, spec.signals),
         predicates: parsers.predicates(model, spec.predicates),
-        data:       parsers.data(model, spec.data, onCreate),
-        marks:      parsers.marks(model, spec, width, height)
+        marks:      parsers.marks(model, spec, width, height),
+        data:       parsers.data(model, spec.data, onCreate)
       });
+
+      // Make indexes
+      for (i=0; i<model._requestedIndexes.length; ++i) {
+        request = model._requestedIndexes[i];
+        data = model.data(request.data);
+        if (!data) throw Error("Data source '" + request.data + "' does not exist");
+        data.getIndex(request.field);
+      }
     } catch (err) { onError(err); }
   }
 
