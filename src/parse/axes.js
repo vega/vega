@@ -95,6 +95,7 @@ parseAxes.schema = {
         "title": {"type": "string"},
         "titleOffset": {"type": "number"},
         "format": {"type": "string"},
+        "formatType": {"enum": ["time", "utc", "string", "number"]},
         "ticks": {"type": "number"},
         "values": {
           "type": "array",
