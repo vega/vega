@@ -68,8 +68,8 @@ var dl = require('datalib'),
         background: parsers.background(spec.background),
         signals:    parsers.signals(model, spec.signals),
         predicates: parsers.predicates(model, spec.predicates),
-        marks:      parsers.marks(model, spec, width, height),
-        data:       parsers.data(model, spec.data, onCreate)
+        data:       parsers.data(model, spec.data, onCreate),
+        marks:      parsers.marks(model, spec, width, height)
       });
     } catch (err) { onError(err); }
   }

@@ -21,7 +21,7 @@ function properties(model, mark, spec) {
         reflow:  false
       };
 
-  code += "var o = trans ? {} : item, d=0, set=this.tpl.set, tmpl=signals||{}, t;\n" +
+  code += "var o = trans ? {} : item, d=0, exprs=this.exprs, set=this.tpl.set, tmpl=signals||{}, t;\n" +
           // Stash for dl.template
           "tmpl.datum  = item.datum;\n" +
           "tmpl.group  = group;\n" +
@@ -124,13 +124,11 @@ function properties(model, mark, spec) {
 
   try {
     /* jshint evil:true */
-    var innerEncoder = Function('exprs', 'item', 'group', 'trans', 'db',
+    var encoder = Function('item', 'group', 'trans', 'db',
       'signals', 'predicates', code);
 
-    var encoder = function(item, group, trans, db, signals, predicates) {
-      return innerEncoder.call(this, exprs, item, group, trans, db, signals, predicates);
-    }
     encoder.tpl  = Tuple;
+    encoder.exprs = exprs;
     encoder.util = dl;
     encoder.d3   = d3; // For color spaces
     dl.extend(encoder, dl.template.context);

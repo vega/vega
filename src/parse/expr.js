@@ -80,12 +80,14 @@ function indataGen(codegen) {
     }
 
     data = indataGen.model.data(args[0].value);
+    console.log(indataGen.model);
     if (!data) {
       throw Error("Data source '" + args[0].value + "' does not exist.");
     }
     // mark the dataSource as a dependency
     dataSources[args[0].value] = 1;
-    data.getIndex(field);
+    if (args[2].type === 'Literal')
+      data.getIndex(args[2].value);
 
     args = args.map(codegen);
     return 'this.defs.indata(this.model,' + args[0] + ',' + args[1] + ',' + args[2] + ')'
