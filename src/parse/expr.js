@@ -71,23 +71,24 @@ function inrange(val, a, b, exclusive) {
 
 function indataGen(codegen) {
   return function(args, globals, fields, dataSources) {
-    var n = args.length,
-        field, data;
-    if (n < 2 || n > 3) {
-      throw Error("indata takes exactly 2 or 3 arguments.");
+    var data;
+    if (args.length !== 3) {
+      throw Error("indata takes 3 arguments.");
     }
     if (args[0].type !== 'Literal') {
       throw Error("Data source name must be a literal for indata.");
     }
 
-    field = args[2] ? args[2].value : null;
     data = indataGen.model.data(args[0].value);
+    if (!data) {
+      throw Error("Data source '" + args[0].value + "' does not exist.");
+    }
     // mark the dataSource as a dependency
     dataSources[args[0].value] = 1;
-    if (data) data.getIndex(field);
+    data.getIndex(field);
 
     args = args.map(codegen);
-    return 'this.defs.indata(this.model,' + args[0] + ',' + args[1] + (n > 2 ? ',' + args[2] : '') + ')'
+    return 'this.defs.indata(this.model,' + args[0] + ',' + args[1] + ',' + args[2] + ')'
   }
 }
 
