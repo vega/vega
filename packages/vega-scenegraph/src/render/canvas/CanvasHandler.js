@@ -46,6 +46,9 @@ prototype.events = [
   'keydown',
   'keypress',
   'keyup',
+  'dragenter',
+  'dragleave',
+  'dragover',
   'mousedown',
   'mouseup',
   'mousemove',
@@ -65,26 +68,36 @@ prototype.DOMMouseScroll = function(evt) {
   this.fire('mousewheel', evt);
 };
 
-prototype.mousemove = function(evt) {
-  var a = this._active,
-      p = this.pickEvent(evt);
+function move(move, over, out) {
+  return function(evt) {
+    var a = this._active,
+        p = this.pickEvent(evt);
 
-  if (p === a) {
-    // active item and picked item are the same
-    this.fire('mousemove', evt); // fire move
-  } else {
-    // active item and picked item are different
-    this.fire('mouseout', evt);  // fire out for prior active item
-    this._active = p;            // set new active item
-    this.fire('mouseover', evt); // fire over for new active item
-    this.fire('mousemove', evt); // fire move for new active item
+    if (p === a) {
+      // active item and picked item are the same
+      this.fire(move, evt); // fire move
+    } else {
+      // active item and picked item are different
+      this.fire(out, evt);  // fire out for prior active item
+      this._active = p;            // set new active item
+      this.fire(over, evt); // fire over for new active item
+      this.fire(move, evt); // fire move for new active item
+    }  
   }
-};
+}
 
-prototype.mouseout = function(evt) {
-  this.fire('mouseout', evt);
-  this._active = null;
-};
+function inactive(type) {
+  return function(evt) {
+    this.fire(type, evt);
+    this._active = null;
+  }
+}
+
+prototype.mousemove = move('mousemove', 'mouseover', 'mouseout');
+prototype.dragover  = move('dragover', 'dragenter', 'dragleave');
+
+prototype.mouseout  = inactive('mouseout');
+prototype.dragleave = inactive('dragleave');
 
 prototype.mousedown = function(evt) {
   this._down = this._active;
