@@ -19,6 +19,7 @@ prototype.init = function() {
 
   this._data = {};
   this._signals = {};
+  this._requestedIndexes = [];
 
   this.doNotPropagate = {};
 };
@@ -91,9 +92,25 @@ prototype.signalRef = function(ref) {
   return value;
 };
 
+prototype.requestIndex = function(data, field) {
+  this._requestedIndexes.push({data: data, field: field});
+};
+
+prototype.buildIndexes = function() {
+  // Make indexes
+  for (i=0; i<this._requestedIndexes.length; ++i) {
+    request = this._requestedIndexes[i];
+    data = this.data(request.data);
+    if (!data) throw Error("Data source '" + request.data + "' does not exist");
+    data.getIndex(request.field);
+  }
+  this._requestedIndexes = [];
+};
+
+
 // Stamp should be specified with caution. It is necessary for inline datasources,
 // which need to be populated during the same cycle even though propagation has
-// passed that part of the dataflow graph.  
+// passed that part of the dataflow graph.
 prototype.propagate = function(pulse, node, stamp) {
   var pulses = {},
       listeners, next, nplse, tpls, ntpls, i, len;
@@ -127,7 +144,7 @@ prototype.propagate = function(pulse, node, stamp) {
       listeners = node._listeners;
       pulse = this.evaluate(pulse, node);
 
-      // Propagate the pulse. 
+      // Propagate the pulse.
       if (pulse !== this.doNotPropagate) {
         // Ensure reflow pulses always send reflow pulses even if skipped.
         if (!pulse.reflow && node.reflows()) {
@@ -142,13 +159,13 @@ prototype.propagate = function(pulse, node, stamp) {
             if (nplse === pulse) continue;  // Re-queueing the same pulse.
 
             // We've already queued this node. Ensure there should be at most one
-            // pulse with tuples (add/mod/rem), and the remainder will be reflows. 
+            // pulse with tuples (add/mod/rem), and the remainder will be reflows.
             tpls  = pulse.add.length || pulse.mod.length || pulse.rem.length;
             ntpls = nplse.add.length || nplse.mod.length || nplse.rem.length;
 
             if (tpls && ntpls) throw Error('Multiple changeset pulses to same node');
 
-            // Combine reflow and tuples into a single pulse. 
+            // Combine reflow and tuples into a single pulse.
             pulses[next._id] = tpls ? pulse : nplse;
             pulses[next._id].reflow = pulse.reflow || nplse.reflow;
           } else {
@@ -164,7 +181,7 @@ prototype.propagate = function(pulse, node, stamp) {
   return this.done(pulse);
 };
 
-// Perform final bookkeeping on the graph, after propagation is complete. 
+// Perform final bookkeeping on the graph, after propagation is complete.
 //  - For all updated datasources, synchronize their previous values.
 prototype.done = function(pulse) {
   log.debug(pulse, ['bookkeeping']);
@@ -173,7 +190,7 @@ prototype.done = function(pulse) {
 };
 
 // Process a new branch of the dataflow graph prior to connection:
-// (1) Insert new Collector nodes as needed. 
+// (1) Insert new Collector nodes as needed.
 // (2) Track + return mutation/routing status of the branch.
 prototype.preprocess = function(branch) {
   var graph = this,
@@ -183,7 +200,7 @@ prototype.preprocess = function(branch) {
   for (var i=0; i<branch.length; ++i) {
     node = branch[i];
 
-    // Batch nodes need access to a materialized dataset. 
+    // Batch nodes need access to a materialized dataset.
     if (node.batch() && !node._collector) {
       if (router || !collector) {
         node = new Collector(graph);
@@ -274,9 +291,9 @@ prototype.synchronize = function(branch) {
 
     for (j=0, data=node.data(), m=data.length; j<m; ++j) {
       id = (d = data[j])._id;
-      if (ids[id]) continue; 
+      if (ids[id]) continue;
       Tuple.prev_update(d);
-      ids[id] = 1; 
+      ids[id] = 1;
     }
   }
 
