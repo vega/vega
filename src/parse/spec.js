@@ -73,13 +73,7 @@ var dl = require('datalib'),
         data:       parsers.data(model, spec.data, onCreate)
       });
 
-      // Make indexes
-      for (i=0; i<model._requestedIndexes.length; ++i) {
-        request = model._requestedIndexes[i];
-        data = model.data(request.data);
-        if (!data) throw Error("Data source '" + request.data + "' does not exist");
-        data.getIndex(request.field);
-      }
+      model.buildIndexes();
     } catch (err) { onError(err); }
   }
 
