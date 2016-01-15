@@ -3,17 +3,25 @@ var dl = require('datalib'),
 
 function parseMark(model, mark) {
   var props = mark.properties,
-      group = mark.marks;
+      group = mark.marks,
+      config = model._config;
 
   var symbolShape = model._config.legend.symbolShape;
   if (typeof symbolShape === 'object' && mark.type in symbolShape) {
     model._config.legend.symbolShape = symbolShape[mark.type];
   }
 
+  var enter = props['enter'];
+  if (mark.type === 'symbol') {
+    if (!enter['size'] && config && config.marks && config.marks.symbolSize) {
+      enter['size'] = {value: model._config.marks.symbolSize};
+    }
+  }
+
   // parse mark property definitions
   dl.keys(props).forEach(function(k) {
-    defaultColor('fill', 'defaultFill', props[k]);
-    defaultColor('stroke', 'defaultFill', props[k]);
+    defaultColor('fill', 'defaultFill', props[k], config);
+    defaultColor('stroke', 'defaultFill', props[k], config);
     props[k] = parseProperties(model, mark.type, props[k]);
   });
 
@@ -30,7 +38,7 @@ function parseMark(model, mark) {
   return mark;
 }
 
-function defaultColor(property, configProperty, prop) {
+function defaultColor(property, configProperty, prop, config) {
   if (property in prop && 'value' in prop[property] && prop[property]['value'] === 'default') {
     if (typeof config !== 'undefined' && 'marks' in config && configProperty in config.marks) {
       prop[property]['value'] = config.marks[configProperty];
