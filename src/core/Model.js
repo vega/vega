@@ -19,7 +19,6 @@ function Model(cfg) {
   this._builder = null; // Top-level scenegraph builder.
 
   this._reset = {axes: false, legends: false};
-  this._requestedIndexes = [];
 
   this.config(cfg);
   this.expr = compiler(this);
@@ -97,22 +96,6 @@ prototype.predicate = function(name, predicate) {
 };
 
 prototype.predicates = function() { return this._predicates; };
-
-prototype.requestIndex = function(data, field) {
-  if (!this._requestedIndexes) throw Error("Cannot request indexes after parse time.");
-  this._requestedIndexes.push({data: data, field: field});
-};
-
-prototype.buildIndexes = function() {
-  this._requestedIndexes = false;
-  // Make indexes
-  for (i=0; i<this._requestedIndexes.length; ++i) {
-    request = this._requestedIndexes[i];
-    data = this.data(request.data);
-    if (!data) throw Error("Data source '" + request.data + "' does not exist");
-    data.getIndex(request.field);
-  }
-};
 
 prototype.scene = function(renderer) {
   if (!arguments.length) return this._scene;
