@@ -6,6 +6,7 @@ var Tuple = require('../src/Tuple');
 describe('Tuple', function() {
 
   it('should ingest tuples', function() {
+    Tuple.reset();
     var o = {a: 5}, p = {data: 3}, d;
 
     d = Tuple.ingest(o);

@@ -1,4 +1,5 @@
-var log = require('vega-logging'),
+var dl = require('datalib'),
+    log = require('vega-logging'),
     ChangeSet = require('./ChangeSet'),
     Collector = require('./Collector'),
     Tuple = require('./Tuple'),
@@ -117,25 +118,27 @@ prototype.synchronize = function() {
   return this;
 };
 
-prototype.listener = function() {
-  return DataSourceListener(this).addListener(this._inputNode);
-};
-
 prototype.getIndex = function(field) {
-  var data = this._data,
+  var data = this.values(),
+      f = dl.$(field),
       index, i, len, value;
+
   if (!this._indexes[field]) {
     index = {};
     this._indexes[field] = index;
     this._indexFields.push(field);
-    for (i = 0, len = data.length; i < len; i++) {
-      value = this._data[i][field];
+    for (i=0, len=data.length; i<len; ++i) {
+      value = f(data[i]);
       index[value] = (index[value] || 0) + 1;
-      Tuple.prev_init(this._data[i]);
+      Tuple.prev_init(data[i]);
     }
   }
   return this._indexes[field];
-}
+};
+
+prototype.listener = function() {
+  return DataSourceListener(this).addListener(this._inputNode);
+};
 
 prototype.addListener = function(l) {
   if (l instanceof DataSource) {
@@ -169,7 +172,7 @@ function DataSourceInput(ds) {
     log.debug(input, ['input', ds._name]);
 
     var delta = ds._input,
-        out = ChangeSet.create(input), f, i, j, key, value, index;
+        out = ChangeSet.create(input), f;
 
     // Delta might contain fields updated through API
     for (f in delta.fields) {
@@ -217,6 +220,33 @@ function DataSourceOutput(ds) {
     .reflows(true)
     .collector(true);
 
+  function updateIndices(pulse) {
+    var fields = ds._indexFields,
+        i, j, f, key, index, value;
+
+    for (i=0; i<fields.length; ++i) {
+      key = fields[i];
+      index = ds._indexes[key];
+      f = dl.$(key);
+
+      for (j=0; j<pulse.add.length; ++j) {
+        value = f(pulse.add[j]);
+        Tuple.prev_init(pulse.add[j]);
+        index[value] = (index[value] || 0) + 1;
+      }
+      for (j=0; j<pulse.rem.length; ++j) {
+        value = f(pulse.rem[j]);
+        index[value] = (index[value] || 0) - 1;
+      }
+      for (j=0; j<pulse.mod.length; ++j) {
+        value = f(pulse.mod[j]._prev);
+        index[value] = (index[value] || 0) - 1;
+        value = f(pulse.mod[j]);
+        index[value] = (index[value] || 0) + 1;
+      }
+    }
+  }
+
   output.data = function() {
     return ds._collector ? ds._collector.data() : ds._data;
   };
@@ -224,27 +254,8 @@ function DataSourceOutput(ds) {
   output.evaluate = function(input) {
     log.debug(input, ['output', ds._name]);
 
-    var out = ChangeSet.create(input, true), value;
-
-    for (i = 0; i < ds._indexFields.length; i++) {
-      key = ds._indexFields[i];
-      index = ds._indexes[key];
-      for (j = 0; j < input.add.length; j++) {
-        value = input.add[j][key];
-        Tuple.prev_init(input.add[j]);
-        index[value] = (index[value] || 0) + 1;
-      }
-      for (j = 0; j < input.rem.length; j++) {
-        value = input.rem[j][key];
-        index[value] = (index[value] || 0) - 1;
-      }
-      for (j = 0; j < input.mod.length; j++) {
-        value = input.mod[j]._prev[key];
-        index[value] = (index[value] || 0) - 1;
-        value = input.mod[j][key];
-        index[value] = (index[value] || 0) + 1;
-      }
-    }
+    updateIndices(input);
+    var out = ChangeSet.create(input, true);
 
     if (ds._facet) {
       ds._facet.values = ds.values();
