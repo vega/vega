@@ -110,10 +110,13 @@ prototype.buildIndexes = function() {
 
 // Stamp should be specified with caution. It is necessary for inline datasources,
 // which need to be populated during the same cycle even though propagation has
-// passed that part of the dataflow graph.
-prototype.propagate = function(pulse, node, stamp) {
+// passed that part of the dataflow graph. 
+// If skipSignals is true, Signal nodes do not get reevaluated but their listeners
+// are queued for propagation. This is useful when setting signal values in batch
+// (e.g., time travel to the initial state).
+prototype.propagate = function(pulse, node, stamp, skipSignals) {
   var pulses = {},
-      listeners, next, nplse, tpls, ntpls, i, len;
+      listeners, next, nplse, tpls, ntpls, i, len, isSg;
 
   // new PQ with each propagation cycle so that we can pulse branches
   // of the dataflow graph during a propagation (e.g., when creating
@@ -132,6 +135,7 @@ prototype.propagate = function(pulse, node, stamp) {
 
   while (pq.size() > 0) {
     node  = pq.peek();
+    isSg  = node instanceof Signal;
     pulse = pulses[node._id];
 
     if (node.rank() !== node.qrank()) {
@@ -142,7 +146,10 @@ prototype.propagate = function(pulse, node, stamp) {
       pq.pop();
       pulses[node._id] = null;
       listeners = node._listeners;
-      pulse = this.evaluate(pulse, node);
+
+      if (!isSg || (isSg && !skipSignals)) {
+        pulse = this.evaluate(pulse, node);
+      }
 
       // Propagate the pulse.
       if (pulse !== this.doNotPropagate) {
