@@ -22,8 +22,10 @@ var dl = require('datalib'),
     viewFactory = arguments[arglen - argidx];
     ++argidx;
   }
+  var config;
   if (arglen > argidx && dl.isObject(arguments[arglen - argidx])) {
     model.config(arguments[arglen - argidx]);
+    config = model.config();
   }
 
   function onDone(err, value) {
@@ -62,6 +64,9 @@ var dl = require('datalib'),
       model.signal('height', height);
       model.signal('padding', padding);
 
+      // find type of graph
+      model['markType'] = getMarkType(spec, spec.marks);
+
       // initialize model
       model.defs({
         width:      width,
@@ -77,12 +82,39 @@ var dl = require('datalib'),
     } catch (err) { onError(err); }
   }
 
+  var markTypes = {
+    'rect': true, 
+    'symbol': true, 
+    'path': true, 
+    'arc': true, 
+    'area': true, 
+    'line': true
+  };
+
+  function getMarkType(spec, marks) {
+    var mark;
+    for (var i = 0; i < marks.length; i++) {
+      if (marks[i].type === 'group') {
+        mark = getMarkType(spec, marks[i].marks);
+      } else {
+        mark = marks[i].type;
+      }
+      if (mark in markTypes) {
+        break;
+      }
+    }
+    if (mark in markTypes) {
+      return mark;
+    }
+    return 'other';
+  }
+
   function setVal(spec, property, defaultVal) {
     if (spec[property]) {
       return spec[property];
     }
-    if (typeof config !== 'undefined') {
-      return config[property]
+    if (typeof config !== 'undefined' && config[property]) {
+      return config[property];
     }
     if (typeof defaultVal !== 'undefined') {
       return defaultVal;
