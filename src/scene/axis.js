@@ -192,6 +192,7 @@ function axs(model, updatedConfig) {
     m.gridLines.properties.enter.stroke = {value: config.gridColor};
     m.gridLines.properties.enter.strokeOpacity = {value: config.gridOpacity};
     m.gridLines.properties.enter.strokeWidth = {value: config.gridWidth};
+    m.gridLines.properties.enter.strokeDash = {value: config.gridDash};
 
     // extend axis marks based on axis orientation
     axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scales, config);
