@@ -6,6 +6,7 @@ function parseMark(model, mark) {
       group = mark.marks,
       config = model._config;
 
+  // set symbol shape based on type of graph
   var symbolShape = model._config.legend.symbolShape;
   if (typeof symbolShape === 'object' && model.markType) {
     if (model.markType in symbolShape) {
@@ -14,6 +15,11 @@ function parseMark(model, mark) {
       model._config.legend.symbolShape = symbolShape['default'];
     }
   }
+
+  // set grids based on type of graph
+  gridProperty('axis', model, mark);
+  gridProperty('axis_x', model, mark);
+  gridProperty('axis_y', model, mark);
 
   // for scatter plots, set symbol size specified in config if not in spec
   var enter = props['enter'];
@@ -43,6 +49,21 @@ function parseMark(model, mark) {
   return mark;
 }
 
+// set grid on or off based on graph type
+function gridProperty(axis, model, mark) {
+  if (typeof model._config[axis] !== 'undefined') {
+    var gridOn = model._config[axis].grid;
+    if (typeof gridOn === 'object') {
+      if (model.markType in gridOn) {
+        model._config[axis].grid = gridOn[model.markType];
+      } else {
+        model._config[axis].grid = gridOn['default'];
+      }
+    }
+  }
+}
+
+// set color given in graph if "default" specified in spec for marks color
 function defaultColor(property, configProperty, prop, config) {
   if (property in prop && 'value' in prop[property] && prop[property]['value'] === 'default') {
     if (typeof config !== 'undefined' && 'marks' in config && configProperty in config.marks) {
