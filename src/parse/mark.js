@@ -22,10 +22,12 @@ function parseMark(model, mark) {
   gridProperty('axis_y', model, mark);
 
   // for scatter plots, set symbol size specified in config if not in spec
-  var enter = props['enter'];
-  if (mark.type === 'symbol') {
-    if (!enter['size'] && config && config.marks && config.marks.symbolSize) {
-      enter['size'] = {value: model._config.marks.symbolSize};
+  if (typeof props !== 'undefined') {
+    var enter = props['enter'];
+    if (mark.type === 'symbol') {
+      if (enter && !enter['size'] && config && config.marks && config.marks.symbolSize) {
+        enter['size'] = {value: model._config.marks.symbolSize};
+      }
     }
   }
 

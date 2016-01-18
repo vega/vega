@@ -93,14 +93,16 @@ var dl = require('datalib'),
 
   function getMarkType(spec, marks) {
     var mark;
-    for (var i = 0; i < marks.length; i++) {
-      if (marks[i].type === 'group') {
-        mark = getMarkType(spec, marks[i].marks);
-      } else {
-        mark = marks[i].type;
-      }
-      if (mark in markTypes) {
-        break;
+    if (typeof marks !== 'undefined') {
+      for (var i = 0; i < marks.length; i++) {
+        if (marks[i].type === 'group') {
+          mark = getMarkType(spec, marks[i].marks);
+        } else {
+          mark = marks[i].type;
+        }
+        if (mark in markTypes) {
+          break;
+        }
       }
     }
     if (mark in markTypes) {
