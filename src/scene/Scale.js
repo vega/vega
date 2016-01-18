@@ -109,11 +109,12 @@ function instance(scale) {
 
 function ordinal(scale, rng, group) {
   var config = this._graph.config();
+  var parent_id = this._parent._parent_id;
   var def = this._def,
       prev = scale._prev,
       dataDrivenRange = false,
-      pad = signal.call(this, def.padding) || setPadding(pad, config, 0),
-      outer = signal.call(this, def.outerPadding) || setPadding(outer, config, pad),
+      pad = signal.call(this, def.padding) || setPadding('padding', config, 0, parent_id),
+      outer = signal.call(this, def.outerPadding) || setPadding('outerPadding', config, pad, parent_id),
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
       domain, str, spatial=true;
@@ -170,14 +171,11 @@ function ordinal(scale, rng, group) {
   if (!scale.invert && spatial) invertOrdinal(scale);
 }
 
-function setPadding(pad, config, default) {
-  if (!pad) {
-    if (!this._parent._parent_id) {
-      pad = config && config.scales && config.scales.padding || default;
-    } else {
-      pad = default;
-    }
+function setPadding(pad, config, defaultPad, parent_id) {
+  if (!parent_id && config && config.scales && config.scales[pad]) {
+    return config.scales[pad];
   }
+  return defaultPad;
 }
 
 // "Polyfill" ordinal scale inversion. Currently, only ordinal scales
