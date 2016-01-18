@@ -41,7 +41,7 @@ describe('Canvas', function() {
       if (err) throw err;
       var spec = JSON.parse(text);
 
-      parseSpec(spec, function(error, viewFactory) {
+      parseSpec(spec, config, function(error, viewFactory) {
         if (error) return done(error);
         
         var view = viewFactory({ renderer: "canvas" }).update();
