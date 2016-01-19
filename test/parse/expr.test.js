@@ -50,4 +50,24 @@ describe('Expression Parser', function() {
     expect(run('utcFormat("%b %Y %H:%M", utc(2009,9,1,10))')).to.equal('Oct 2009 10:00');
   });
 
+  it('should evaluate indata function', function(done) {
+    var spec = {
+      signals: [{name:'sig', streams:[]}],
+      data: [{name: 'source', values: [{x: 1, y:2}, {x: 1, y: 5}]}]
+    };
+    parseSpec(spec, viewFactory, function(error, model) {
+      var expr = require('../../src/parse/expr')(model);
+      function run(code, datum, evt) {
+        return expr(code).fn(datum, evt);
+      }
+      expect(run('indata("source", 1, "x")')).to.equal(true);
+      expect(run('indata("source", 2, "x")')).to.equal(false);
+      expect(run('indata("source", 5, "y")')).to.equal(true);
+
+      // data source must be a consant expression
+      expect(run.bind('indata(sig, 1, "x")')).to.throw(Error);
+      done();
+    });
+  });
+
 });

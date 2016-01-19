@@ -41,7 +41,7 @@ var dl = require('datalib'),
 
   function onCreate(err) {
     if (err) onError(err);
-    else onDone(null, viewFactory(model));
+    else onDone(null, viewFactory(model.buildIndexes()));
   }
 
   function parse(spec) {

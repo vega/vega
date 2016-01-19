@@ -19,6 +19,7 @@ var compile = expr.compiler(args, {
     fn.scale      = scaleGen(codegen, false);
     fn.iscale     = scaleGen(codegen, true);
     fn.inrange    = 'this.defs.inrange';
+    fn.indata     = indataGen(codegen);
     fn.format     = 'this.defs.format';
     fn.timeFormat = 'this.defs.timeFormat';
     fn.utcFormat  = 'this.defs.utcFormat';
@@ -28,6 +29,7 @@ var compile = expr.compiler(args, {
     return {
       'scale':      scale,
       'inrange':    inrange,
+      'indata':     indata,
       'format':     numberFormat,
       'timeFormat': timeFormat,
       'utcFormat':  utcFormat
@@ -67,6 +69,34 @@ function inrange(val, a, b, exclusive) {
     (min <= val && max >= val);
 }
 
+function indataGen(codegen) {
+  return function(args, globals, fields, dataSources) {
+    var data;
+    if (args.length !== 3) {
+      throw Error("indata takes 3 arguments.");
+    }
+    if (args[0].type !== 'Literal') {
+      throw Error("Data source name must be a literal for indata.");
+    }
+
+    data = args[0].value;
+    dataSources[data] = 1;
+    if (args[2].type === 'Literal') {
+      indataGen.model.requestIndex(data, args[2].value);
+    }
+
+    args = args.map(codegen);
+    return 'this.defs.indata(this.model,' + 
+      args[0] + ',' + args[1] + ',' + args[2] + ')';
+  };
+}
+
+function indata(model, dataname, val, field) {
+  var data = model.data(dataname),
+      index = data.getIndex(field);
+  return index[val] > 0;
+}
+
 function numberFormat(specifier, v) {
   return template.format(specifier, 'number')(v);
 }
@@ -81,12 +111,14 @@ function utcFormat(specifier, d) {
 
 function wrap(model) {
   return function(str) {
+    indataGen.model = model;
     var x = compile(str);
     x.model = model;
     x.sig = model ? model._signals : {};
     return x;
   };
 }
-wrap.codegen = compile.codegen;
+
 wrap.scale = scale;
+wrap.codegen = compile.codegen;
 module.exports = wrap;

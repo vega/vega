@@ -41,8 +41,8 @@
     "d3-cloud": "^1.2.1",
     "datalib": "^1.5.7",
     "topojson": "^1.6.19",
-    "vega-dataflow": "^1.3.2",
-    "vega-expression": "^1.1.0",
+    "vega-dataflow": "^1.4.0",
+    "vega-expression": "^1.2.0",
     "vega-logging": "^1.0.1",
     "vega-scenegraph": "^1.0.16",
     "yargs": "^3.30.0"
