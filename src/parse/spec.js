@@ -41,11 +41,10 @@ var dl = require('datalib'),
 
   function onCreate(err) {
     if (err) onError(err);
-    else onDone(null, viewFactory(model));
+    else onDone(null, viewFactory(model.buildIndexes()));
   }
 
   function parse(spec) {
-    var i, request, data;
     try {
       // protect against subsequent spec modification
       spec = dl.duplicate(spec);
@@ -72,8 +71,6 @@ var dl = require('datalib'),
         marks:      parsers.marks(model, spec, width, height),
         data:       parsers.data(model, spec.data, onCreate)
       });
-
-      model.buildIndexes();
     } catch (err) { onError(err); }
   }
 

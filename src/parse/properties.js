@@ -174,24 +174,22 @@ function rule(model, name, rules, exprs) {
   var config  = model.config(),
       deps = dependencies(),
       inputs  = [],
-      code = '',
-      hadExpr = false;
+      code = '';
 
   (rules||[]).forEach(function(r, i) {
-    var ref;
+    var ref = valueRef(config, name, r);
+    dependencies(deps, ref);
+
     if (r.test) {
       // rule uses an expression instead of a predicate.
       var exprFn = model.expr(r.test);
       deps.signals.push.apply(deps.signals, exprFn.globals);
       deps.data.push.apply(deps.data, exprFn.dataSources);
-      ref = valueRef(config, name, r);
-      dependencies(deps, ref);
 
-      code += "if (exprs[" + exprs.length + "](datum, null)) {" +
+      code += "if (exprs[" + exprs.length + "](item.datum, null)) {" +
           "\n    d += set(o, "+dl.str(name)+", " +ref.val+");";
       code += rules[i+1] ? "\n  } else " : "  }";
-      if (!hadExpr) { inputs.push('datum = item.datum'); }
-      hadExpr = true;
+
       exprs.push(exprFn.fn);
     } else {
       var def = r.predicate,
@@ -209,9 +207,6 @@ function rule(model, name, rules, exprs) {
         });
       }
 
-      ref = valueRef(config, name, r);
-      dependencies(deps, ref);
-
       if (predName) {
         // append the predicates dependencies to our dependencies
         deps.signals.push.apply(deps.signals, pred.signals);
@@ -228,7 +223,7 @@ function rule(model, name, rules, exprs) {
     }
   });
 
-  code = "var " + inputs.join(",\n      ") + ";\n  " + code;
+  if (inputs.length) code = "var " + inputs.join(",\n      ") + ";\n  " + code;
   return (deps.code = code, deps);
 }
 

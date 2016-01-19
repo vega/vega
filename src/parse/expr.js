@@ -80,15 +80,15 @@ function indataGen(codegen) {
     }
 
     data = args[0].value;
+    dataSources[data] = 1;
     if (args[2].type === 'Literal') {
       indataGen.model.requestIndex(data, args[2].value);
     }
-    // mark the dataSource as a dependency
-    dataSources[data] = 1;
 
     args = args.map(codegen);
-    return 'this.defs.indata(this.model,' + args[0] + ',' + args[1] + ',' + args[2] + ')'
-  }
+    return 'this.defs.indata(this.model,' + 
+      args[0] + ',' + args[1] + ',' + args[2] + ')';
+  };
 }
 
 function indata(model, dataname, val, field) {

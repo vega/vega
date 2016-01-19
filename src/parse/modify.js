@@ -31,14 +31,16 @@ function parseModify(model, def, ds) {
       node = new Node(model).router(isClear);
 
   node.evaluate = function(input) {
+    var db, sg;
+
     if (predicate !== null) {  // TODO: predicate args
-      var db = model.values(Deps.DATA, predicate.data || EMPTY),
-          sg = model.values(Deps.SIGNALS, predicate.signals || EMPTY);
+      db = model.values(Deps.DATA, predicate.data || EMPTY);
+      sg = model.values(Deps.SIGNALS, predicate.signals || EMPTY);
       reeval = predicate.call(predicate, {}, db, sg, model._predicates);
     }
 
     if (exprTrigger !== null) {
-      var sg = model.values(Deps.SIGNALS, exprTrigger.globals || EMPTY);
+      sg = model.values(Deps.SIGNALS, exprTrigger.globals || EMPTY);
       reeval = exprTrigger.fn();
     }
 
