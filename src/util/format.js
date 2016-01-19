@@ -50,7 +50,7 @@ function getFormatter(scale, tickCount, formatType, str) {
     case NUMBER:
       domain = scale.domain();
       return log ?
-        logFilter(domain, tickCount, fmt.auto.number(str || null)) :
+        logFilter(scale, domain, tickCount, fmt.auto.number(str || null)) :
         fmt.auto.linear(domain, tickCount, str || null);
     case TIME: return (str ? fmt : fmt.auto).time(str);
     case UTC:  return (str ? fmt : fmt.auto).utc(str);
