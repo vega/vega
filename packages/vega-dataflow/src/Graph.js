@@ -19,7 +19,7 @@ prototype.init = function() {
 
   this._data = {};
   this._signals = {};
-  this._requestedIndexes = [];
+  this._requestedIndexes = {};
 
   this.doNotPropagate = {};
 };
@@ -93,20 +93,28 @@ prototype.signalRef = function(ref) {
 };
 
 prototype.requestIndex = function(data, field) {
-  this._requestedIndexes.push({data: data, field: field});
+  var ri  = this._requestedIndexes,
+      reg = ri[data] || (ri[data] = {}); 
+  return (reg[field] = true, this);
 };
 
 prototype.buildIndexes = function() {
-  // Make indexes
-  for (i=0; i<this._requestedIndexes.length; ++i) {
-    request = this._requestedIndexes[i];
-    data = this.data(request.data);
-    if (!data) throw Error("Data source '" + request.data + "' does not exist");
-    data.getIndex(request.field);
-  }
-  this._requestedIndexes = [];
-};
+  var ri = this._requestedIndexes,
+      data = dl.keys(ri),
+      i, len, j, jlen, d, src, fields, f;
 
+  for (i=0, len=data.length; i<len; ++i) {
+    src = this.data(d=data[i]);
+    if (!src) throw Error('Data source '+dl.str(d)+' does not exist.');
+
+    fields = dl.keys(ri[d]);
+    for (j=0, jlen=fields.length; j<jlen; ++j) {
+      if ((f=fields[j]) === null) continue;
+      src.getIndex(f);
+      ri[d][f] = null;
+    }
+  }
+};
 
 // Stamp should be specified with caution. It is necessary for inline datasources,
 // which need to be populated during the same cycle even though propagation has
