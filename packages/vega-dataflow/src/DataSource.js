@@ -120,20 +120,21 @@ prototype.synchronize = function() {
 
 prototype.getIndex = function(field) {
   var data = this.values(),
+      indexes = this._indexes,
+      fields  = this._indexFields,
       f = dl.$(field),
       index, i, len, value;
 
-  if (!this._indexes[field]) {
-    index = {};
-    this._indexes[field] = index;
-    this._indexFields.push(field);
+  if (!indexes[field]) {
+    indexes[field] = index = {};
+    fields.push(field);
     for (i=0, len=data.length; i<len; ++i) {
       value = f(data[i]);
       index[value] = (index[value] || 0) + 1;
       Tuple.prev_init(data[i]);
     }
   }
-  return this._indexes[field];
+  return indexes[field];
 };
 
 prototype.listener = function() {
