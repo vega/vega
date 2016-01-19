@@ -114,6 +114,8 @@ prototype.buildIndexes = function() {
       ri[d][f] = null;
     }
   }
+
+  return this;
 };
 
 // Stamp should be specified with caution. It is necessary for inline datasources,

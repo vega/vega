@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Vega streaming dataflow graph.",
   "repository": {
     "type": "git",
