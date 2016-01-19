@@ -26,7 +26,7 @@ prototype.batchTransform = function(input, data) {
   var rank  = this._output.rank,
       norm  = this.param('normalize'),
       field = this.param('field').accessor,
-      l = {}, i = 0, len = data.length, r, v, d;
+      l = {}, i = 0, len = data.length, r, d;
 
   for (; i<len; ++i) {
     r = norm ? (i+1)/len : i+1;

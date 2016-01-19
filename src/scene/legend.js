@@ -2,19 +2,20 @@ var d3 = require('d3'),
     dl = require('datalib'),
     Gradient = require('vega-scenegraph').Gradient,
     parseProperties = require('../parse/properties'),
-    parseMark = require('../parse/mark');
+    parseMark = require('../parse/mark'),
+    util = require('../util');
 
 function lgnd(model) {
-  var size = null,
+  var size  = null,
       shape = null,
-      fill = null,
-      stroke = null,
+      fill  = null,
+      stroke  = null,
       spacing = null,
-      values = null,
-      format = null,
+      values  = null,
       formatString = null,
+      formatType   = null,
+      title  = null,
       config = model.config().legend,
-      title,
       orient = config.orient,
       offset = config.offset,
       padding = config.padding,
@@ -40,9 +41,6 @@ function lgnd(model) {
   legend.def = function() {
     var scale = size || shape || fill || stroke;
 
-    format = !formatString ? null : ((scale.type === 'time') ?
-      dl.format.time(formatString) : dl.format.number(formatString));
-
     if (!legendDef.type) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type) ?
         quantDef(scale) : ordinalDef(scale);
@@ -66,7 +64,8 @@ function lgnd(model) {
     var data = (values == null ?
       (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) :
       values).map(ingest);
-    var fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
+
+    var fmt = util.getTickFormat(scale, data.length, formatType, formatString);
 
     // determine spacing between legend entries
     var fs, range, offset, pad=5, domain = d3.range(data.length);
@@ -160,7 +159,7 @@ function lgnd(model) {
         dom = scale.domain(),
         data  = (values == null ? dom : values).map(ingest),
         width = (gradientStyle.width && gradientStyle.width.value) || config.gradientWidth,
-        fmt = format==null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : String) : format;
+        fmt = util.getTickFormat(scale, data.length, formatType, formatString);
 
     // build scale for label layout
     def.scales = def.scales || [{}];
@@ -291,6 +290,15 @@ function lgnd(model) {
     if (!arguments.length) return formatString;
     if (formatString !== x) {
       formatString = x;
+      reset();
+    }
+    return legend;
+  };
+
+  legend.formatType = function(x) {
+    if (!arguments.length) return formatType;
+    if (formatType !== x) {
+      formatType = x;
       reset();
     }
     return legend;

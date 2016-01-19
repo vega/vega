@@ -1,14 +1,10 @@
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
-    parseMark = require('../parse/mark');
+    parseMark = require('../parse/mark'),
+    util = require('../util');
 
 var axisBounds = new (require('vega-scenegraph').Bounds)();
-
-var TIME    = 'time',
-    UTC     = 'utc',
-    STRING  = 'string',
-    ORDINAL = 'ordinal',
-    NUMBER  = 'number';
+var ORDINAL = 'ordinal';
 
 function axs(model) {
   var scale,
@@ -54,58 +50,6 @@ function axs(model) {
     return {data: d};
   }
 
-  function getTickFormat() {
-    var formatType = tickFormatType || inferFormatType();
-    return getFormatter(formatType, tickFormatString);
-  }
-
-  function inferFormatType() {
-    switch (scale.type) {
-      case TIME:    return TIME;
-      case UTC:     return UTC;
-      case ORDINAL: return STRING;
-      default:      return NUMBER;
-    }
-  }
-
-  // Adapted from d3 log scale
-  // TODO customize? replace with range-size-aware filtering?
-  function logFilter(domain, count, f) {
-    if (count == null) return f;
-    var base = scale.base(),
-        k = Math.min(base, scale.ticks().length / count),
-        v = domain[0] > 0 ? (e = 1e-12, Math.ceil) : (e = -1e-12, Math.floor),
-        e;
-    function log(x) {
-      return (domain[0] < 0 ?
-        -Math.log(x > 0 ? 0 : -x) :
-        Math.log(x < 0 ? 0 : x)) / Math.log(base);
-    }
-    function pow(x) {
-      return domain[0] < 0 ? -Math.pow(base, -x) : Math.pow(base, x);
-    }
-    return function(d) {
-      return pow(v(log(d) + e)) / d >= k ? f(d) : '';
-    };
-  }
-
-  function getFormatter(formatType, str) {
-    var fmt = dl.format,
-        log = scale.type === 'log',
-        domain;
-
-    switch (formatType) {
-      case NUMBER:
-        domain = scale.domain();
-        return log ?
-          logFilter(domain, tickCount, fmt.auto.number(str || null)) :
-          fmt.auto.linear(domain, tickCount, str || null);
-      case TIME: return (str ? fmt : fmt.auto).time(str);
-      case UTC:  return (str ? fmt : fmt.auto).utc(str);
-      default:   return String;
-    }
-  }
-
   function getTicks(format) {
     var major = tickValues || (scale.ticks ? scale.ticks(tickCount) : scale.domain()),
         minor = axisSubdivide(scale, major, tickSubdivide).map(ingest);
@@ -116,8 +60,9 @@ function axs(model) {
   axis.def = function() {
     if (!axisDef.type) axis_def(scale);
 
-    var ticks = getTicks(getTickFormat());
-    var tdata = title ? [title].map(ingest) : [];
+    var format = util.getTickFormat(scale, tickCount, tickFormatType, tickFormatString),
+        ticks  = getTicks(format),
+        tdata  = title ? [title].map(ingest) : [];
 
     axisDef.marks[0].from = function() { return grid ? ticks[0] : []; };
     axisDef.marks[1].from = function() { return ticks[0]; };
