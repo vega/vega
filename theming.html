@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <title>Vega Scaffold</title>
+    <script src="http://vega.github.io/vega-editor/vendor/d3.min.js"></script>
+    <script src="http://vega.github.io/vega-editor/vendor/d3.geo.projection.min.js"></script>
+    <script src="http://vega.github.io/vega-editor/vendor/topojson.js"></script>
+    <script src="http://vega.github.io/vega-editor/vendor/d3.layout.cloud.js"></script>
+    <script src="vega.js"></script>
+    <script src="theme/configs/excelconfig.js" id="theme-id"></script>
+    <script>
+      function updateTheme() {
+          // Remove previously set theme script tag
+          var head= document.getElementsByTagName('head')[0];
+          var prevScript = document.getElementById("theme-id");
+          head.removeChild(prevScript);
+
+          // Get selected theme
+          var theme = document.getElementById("themeSelect");
+          var selectedTheme = theme.options[theme.selectedIndex].text;
+
+          // Create new script tag, set src of tag and append
+          var script= document.createElement('script');
+
+          script.setAttribute("id", "theme-id");
+          script.src= "theme/configs/" + selectedTheme + "config.js";
+
+          head.appendChild(script);
+       }
+
+      function getOption() {
+        // parse a spec and create a visualization view
+        function parse(spec) {
+          vg.parse.spec(spec, config, function(chart) { chart({el:"#vis"}).update(); });
+        }
+
+        // Change to selected chart spec
+        parse("theme/spec/" + getSelected("chartSelect") + ".json");
+      }
+
+      function getSelected(id) {
+        var element = document.getElementById(id);
+        return element.options[element.selectedIndex].text
+      }
+
+      function openNewTab(type) {
+        var url;
+        if (type === 'theme') {
+          url = "theme/configs/" + getSelected("themeSelect") + "config.js";
+        } else {
+          url = "theme/spec/" + getSelected("chartSelect") + ".json";
+        }
+        window.open(url, '_blank');
+      }
+    </script>
+  </head>
+  <body>
+    <form>
+      Theme:
+      <select id="themeSelect" onchange="updateTheme()">
+        <option>excel</option>
+        <option>ggplot</option>
+        <option>quartz</option>
+        <option>vox</option>
+      </select>
+
+      Chart:
+      <select id="chartSelect">
+        <option>arc</option>
+        <option>bar</option>
+        <option>line</option>
+        <option>group_bar</option>
+        <option>scatter</option>
+        <option>scatter_matrix</option>
+      </select>
+
+      <input type="button" onclick="getOption()" value="Render">
+    </form>
+    <div>
+      <input type="button" onclick="openNewTab('theme')" value="Show theme">
+      <input type="button" onclick="openNewTab('chart')" value="Show chart">
+    </div>
+    <div id="vis"></div>
+  </body>
+</html>
