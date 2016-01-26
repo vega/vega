@@ -71,8 +71,7 @@ config.axis = {
 };
 
 config.scales = {
-  padding: 0.6,
-  outerPadding: 0.3
+  padding: 0.2
 };
 
 // default legend properties
