@@ -113,8 +113,8 @@ function ordinal(scale, rng, group) {
   var def = this._def,
       prev = scale._prev,
       dataDrivenRange = false,
-      pad = signal.call(this, def.padding) || setPadding('padding', config, 0, parent_id),
-      outer = signal.call(this, def.outerPadding) || setPadding('outerPadding', config, pad, parent_id),
+      pad = signal.call(this, def.padding) || setPadding('padding', config, 0, parent_id, group.datum),
+      outer = signal.call(this, def.outerPadding) || setPadding('outerPadding', config, pad, parent_id, group.datum),
       points = def.points && signal.call(this, def.points),
       round = signal.call(this, def.round) || def.round == null,
       domain, str, spatial=true;
@@ -171,8 +171,8 @@ function ordinal(scale, rng, group) {
   if (!scale.invert && spatial) invertOrdinal(scale);
 }
 
-function setPadding(pad, config, defaultPad, parent_id) {
-  if (!parent_id && config && config.scales && config.scales[pad]) {
+function setPadding(pad, config, defaultPad, parent_id, datum) {
+  if (!parent_id && config && config.scales && config.scales[pad] && !datum._facetID) {
     return config.scales[pad];
   }
   return defaultPad;
