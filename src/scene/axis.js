@@ -195,9 +195,9 @@ function axs(model, updatedConfig) {
     m.gridLines.properties.enter.strokeDash = {value: config.gridDash};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scales, config);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales, config_scales, config);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales, config_scales, config);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scales, config, scale.type);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales, config_scales, config, scale.type);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales, config_scales, config, scale.type);
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
@@ -462,7 +462,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config_scales, config_axis) {
+function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config_scales, config_axis, scaleType) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -476,7 +476,7 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config
   if (orient === 'top' || orient === 'bottom') {
     var updatedOldScale = {'scale': oldScale.scale, 'offset': oldScale.offset};
     var updatedNewScale = {'scale': newScale.scale, 'offset': newScale.offset};
-    if (tickPlacement === 'between') {
+    if (tickPlacement === 'between' && scaleType === ORDINAL) {
       var currPadding = 0;
       var currOuterPadding = 0;
       for (i=0; i<scales.length; i++) {
