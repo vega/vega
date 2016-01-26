@@ -48,6 +48,16 @@ function parseAxis(config, def, index, axis, group) {
     axis.scale(group.scale(def.scale));
   }
 
+  var scaleType = group.scale(def.scale).type;
+  var grid = config.axis.grid;
+  if (typeof grid === 'object') {
+    if (scaleType in grid) {
+      config.axis.grid = grid[scaleType];
+    } else {
+      config.axis.grid = grid['default'];
+    }
+  }
+
   // axis orientation
   axis.orient(def.orient || ORIENT[def.type]);
   // axis offset

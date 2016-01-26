@@ -60,7 +60,11 @@ config.axis = {
   titleFontSize: 11,
   titleFontWeight: 'normal',
   titleOffset: 35,
-  tickSize: 5
+  tickSize: 5,
+  grid: {
+    ordinal: false,
+    default: true
+  }
 };
 
 config.axis_x = {
@@ -70,7 +74,6 @@ config.axis_x = {
 
 config.axis_y = {
   gridWidth: 0.4,
-  grid: true,
   gridDash: [3]
 }
 

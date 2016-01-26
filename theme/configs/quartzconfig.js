@@ -67,9 +67,8 @@ config.axis_x = {
   tickSize: 10,
   tickSizeEnd: 0,
   grid: {
-    line: true,
-    symbol: true,
-    default: false
+    ordinal: false,
+    default: true
   }
 }
 

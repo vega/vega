@@ -60,14 +60,14 @@ config.axis = {
   titleFontWeight: 'bold',
   titleOffset: 35,
   tickSize: 5,
-  tickPlacement: 'between'
-};
-
-config.axis_y = {
-  grid: true,
+  tickPlacement: 'between',
+  grid: {
+    ordinal: false,
+    default: true
+  },
   layer: "back",
-  gridColor: '#000000',
-  gridWidth: 0.5
+  gridWidth: 0.5,
+  gridColor: '#000000'
 };
 
 config.scales = {

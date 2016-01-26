@@ -16,11 +16,6 @@ function parseMark(model, mark) {
     }
   }
 
-  // set grids based on type of graph
-  gridProperty('axis', model, mark);
-  gridProperty('axis_x', model, mark);
-  gridProperty('axis_y', model, mark);
-
   // for scatter plots, set symbol size specified in config if not in spec
   if (typeof props !== 'undefined') {
     var enter = props['enter'];
@@ -49,20 +44,6 @@ function parseMark(model, mark) {
   }
 
   return mark;
-}
-
-// set grid on or off based on graph type
-function gridProperty(axis, model, mark) {
-  if (typeof model._config[axis] !== 'undefined') {
-    var gridOn = model._config[axis].grid;
-    if (typeof gridOn === 'object') {
-      if (model.markType in gridOn) {
-        model._config[axis].grid = gridOn[model.markType];
-      } else {
-        model._config[axis].grid = gridOn['default'];
-      }
-    }
-  }
 }
 
 // set color given in graph if "default" specified in spec for marks color
