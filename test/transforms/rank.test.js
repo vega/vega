@@ -50,8 +50,8 @@ describe('Rank', function() {
       data: [{
         name: 'table',
         values: [
-          {x: 'A', y: 12}, {x: 'B', y: 32}, {x: 'C', y: 6},
-          {x: 'A', y: 35}, {x: 'B', y: 19}, {x: 'C', y: 66}
+          {x: 'A', y: 12}, {x: 'A', y: 32}, {x: 'B', y: 6},
+          {x: 'B', y: 35}, {x: 'C', y: 19}, {x: 'C', y: 66}
         ],
         transform: [
           {type: 'sort', by: ['y']},
@@ -74,9 +74,9 @@ describe('Rank', function() {
 
         expect(d.y).to.be.at.least(data[i-1].y);
         switch (d.x) {
-          case 'C': expect(r).to.equal(1); break;
+          case 'B': expect(r).to.equal(1); break;
           case 'A': expect(r).to.equal(2); break;
-          case 'B': expect(r).to.equal(3); break;
+          case 'C': expect(r).to.equal(3); break;          
         }
       }
 

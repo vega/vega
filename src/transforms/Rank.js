@@ -26,14 +26,23 @@ prototype.batchTransform = function(input, data) {
   var rank  = this._output.rank,
       norm  = this.param('normalize'),
       field = this.param('field').accessor,
-      l = {}, i = 0, len = data.length, r, d;
+      keys = {}, 
+      i, len = data.length, klen, d, f;
 
-  for (; i<len; ++i) {
-    r = norm ? (i+1)/len : i+1;
-    if (field) {
-      Tuple.set(d=data[i], rank, l[d=field(d)] || (l[d]=r));
+  // If we have a field accessor, first compile distinct keys.
+  if (field) {
+    for (i=0, klen=0; i<len; ++i) {
+      d = data[i];
+      keys[f=field(d)] || (keys[f] = ++klen);
+    }
+  }
+
+  // Assign ranks to all tuples.
+  for (i=0; i<len && (d=data[i]); ++i) {
+    if (field && (f=field(d))) {
+      Tuple.set(d, rank, norm ? keys[f] / klen : keys[f]);
     } else {
-      Tuple.set(data[i], rank, r);
+      Tuple.set(d, rank, norm ? (i+1) / len : (i+1));
     }
   }
 
