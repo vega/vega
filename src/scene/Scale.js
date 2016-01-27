@@ -146,6 +146,8 @@ function ordinal(scale, rng, group) {
         start = rng[0] || 0;
         rng = [start, start + (bw * len + space)];
       }
+
+      if (def.reverse) rng = rng.reverse();
     }
 
     str = typeof rng[0] === 'string';
