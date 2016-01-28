@@ -79,7 +79,7 @@
               "y": {"scale": "pos", "field": "position"},
               "height": {"scale": "pos", "band": true},
               "x": {"scale": "val", "field": "value"},
-              "x2": {"scale": "val", "value": 0, "offset": 1},
+              "x2": {"scale": "val", "value": 0},
               "fill": {"scale": "color", "field": "position"}
             }
           }
