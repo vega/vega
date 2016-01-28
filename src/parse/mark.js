@@ -6,16 +6,6 @@ function parseMark(model, mark) {
       group = mark.marks,
       config = model._config;
 
-  // set symbol shape based on type of graph
-  var symbolShape = model._config.legend.symbolShape;
-  if (typeof symbolShape === 'object' && model.markType) {
-    if (model.markType in symbolShape) {
-      model._config.legend.symbolShape = symbolShape[model.markType];
-    } else {
-      model._config.legend.symbolShape = symbolShape['default'];
-    }
-  }
-
   // for scatter plots, set symbol size specified in config if not in spec
   if (typeof props !== 'undefined') {
     var enter = props['enter'];

@@ -80,10 +80,7 @@ config.legend = {
   labelAlign: 'left',
   labelBaseline: 'middle',
   labelOffset: 8,
-  symbolShape: {
-    arc: 'square',
-    default: 'circle'
-  },
+  symbolShape: 'circle',
   symbolSize: 50,
   symbolColor: '#888',
   symbolStrokeWidth: 1,
