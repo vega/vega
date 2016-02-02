@@ -50,7 +50,7 @@ prototype.batchTransform = function(input, data) {
       mode   = this.param('mode'),
       sort   = this.param('sort'),
       nodesz = this.param('nodesize'),
-      parent = this.param('parent').accessor,
+      parent = this.paramGet('parent', 'accessor'),
       root = data.filter(function(d) { return parent(d) === null; })[0];
 
   if (mode !== this._mode) {
@@ -65,7 +65,7 @@ prototype.batchTransform = function(input, data) {
   if (mode === PARTITION) {
     input.fields[output.width] = 1;
     input.fields[output.height] = 1;
-    layout.value(this.param('field').accessor);
+    layout.value(this.paramGet('field', 'accessor'));
   } else {
     layout.separation(SEPARATION[this.param('orient')]);
   }
@@ -78,7 +78,7 @@ prototype.batchTransform = function(input, data) {
 
   layout
     .sort(sort.field.length ? dl.comparator(sort.field) : null)
-    .children(this.param('children').accessor)
+    .children(this.paramGet('children', 'accessor'))
     .nodes(root);
 
   // copy layout values to nodes

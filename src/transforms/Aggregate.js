@@ -88,7 +88,7 @@ prototype.aggr = function() {
   var g = this._graph,
       hasGetter = false,
       args = [],
-      groupby = this.param('groupby').field,
+      groupby = this.paramGet('groupby', 'field'),
       value = function(x) { return x.signal ? g.signalRef(x.signal) : x; };
 
   // Prepare summarize fields.

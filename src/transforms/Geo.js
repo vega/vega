@@ -62,8 +62,8 @@ prototype.transform = function(input) {
   log.debug(input, ['geo']);
 
   var output = this._output,
-      lon = this.param('lon').accessor,
-      lat = this.param('lat').accessor,
+      lon = this.paramGet('lon', 'accessor'),
+      lat = this.paramGet('lat', 'accessor'),
       proj = Geo.d3Projection.call(this);
 
   function set(t) {

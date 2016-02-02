@@ -15,7 +15,7 @@ prototype.transform = function(input) {
   log.debug(input, ['sorting']);
 
   if (input.add.length || input.mod.length || input.rem.length) {
-    input.sort = dl.comparator(this.param('by').field);
+    input.sort = dl.comparator(this.paramGet('by', 'field'));
   }
   return input;
 };

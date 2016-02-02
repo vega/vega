@@ -23,7 +23,7 @@ prototype.constructor = CountPattern;
 prototype.transform = function(input, reset) {
   log.debug(input, ['countpattern']);
 
-  var get = this.param('field').accessor,
+  var get = this.paramGet('field', 'accessor'),
       pattern = this.param('pattern'),
       stop = this.param('stopwords'),
       rem = false;

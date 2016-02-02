@@ -33,7 +33,7 @@ prototype.extent = function(data) {
   // TODO only recompute extent upon data or field change?
   var e = [this.param('min'), this.param('max')], d;
   if (e[0] == null || e[1] == null) {
-    d = dl.extent(data, this.param('field').accessor);
+    d = dl.extent(data, this.paramGet('field', 'accessor'));
     if (e[0] == null) e[0] = d[0];
     if (e[1] == null) e[1] = d[1];
   }
@@ -48,7 +48,7 @@ prototype.batchTransform = function(input, data) {
       step    = this.param('step'),
       steps   = this.param('steps'),
       minstep = this.param('minstep'),
-      get     = this.param('field').accessor,
+      get     = this.paramGet('field', 'accessor'),
       opt = {
         min: extent[0],
         max: extent[1],

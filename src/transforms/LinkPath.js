@@ -102,10 +102,10 @@ prototype.transform = function(input) {
 
   var output = this._output,
       shape = shapes[this.param('shape')] || shapes.line,
-      sourceX = this.param('sourceX').accessor,
-      sourceY = this.param('sourceY').accessor,
-      targetX = this.param('targetX').accessor,
-      targetY = this.param('targetY').accessor,
+      sourceX = this.paramGet('sourceX', 'accessor'),
+      sourceY = this.paramGet('sourceY', 'accessor'),
+      targetX = this.paramGet('targetX', 'accessor'),
+      targetY = this.paramGet('targetY', 'accessor'),
       tension = this.param('tension');
 
   function set(t) {
