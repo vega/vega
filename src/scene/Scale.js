@@ -508,7 +508,7 @@ function range(group) {
 module.exports = Scale;
 
 var rangeDef = [
-  {"enum": ["width", "height", "shapes", "category10", "category20"]},
+  {"enum": ["width", "height", "shapes", "category10", "category20", "category20b", "category20c"]},
   {
     "type": "array",
     "items": {"oneOf": [{"type":"string"}, {"type": "number"}, {"$ref": "#/refs/signal"}]}
