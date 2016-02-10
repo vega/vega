@@ -89,9 +89,13 @@ describe('canvas handler', function() {
     canvas.dispatchEvent(event('mousemove', 50, 151));
     canvas.dispatchEvent(event('mousemove', 50, 1));
     canvas.dispatchEvent(event('mouseout', 1, 1));
+    canvas.dispatchEvent(event('dragover', 50, 151));
+    canvas.dispatchEvent(event('dragover', 50, 1));
+    canvas.dispatchEvent(event('dragleave', 1, 1));
 
-    // 9 events above + 4 triggered (mouseover, mouseout)
-    assert.equal(count, handler.events.length + 13);
+    // 12 events above + 8 triggered: 
+    //   2*(mouseover, mouseout) + 2*(dragenter, dragleave)
+    assert.equal(count, handler.events.length + 20);
 
     handler.off('mousemove', {});
     assert.equal(handler.handlers().length, handler.events.length);

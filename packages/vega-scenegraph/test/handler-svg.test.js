@@ -18,6 +18,9 @@ var events = [
   'mousemove',
   'mouseout',
   'mouseover',
+  'dragover',
+  'dragenter',
+  'dragleave',
   'click',
   'dblclick',
   'wheel',
@@ -84,9 +87,12 @@ describe('svg handler', function() {
     svg.dispatchEvent(event('mousemove', 50, 151));
     svg.dispatchEvent(event('mousemove', 50, 1));
     svg.dispatchEvent(event('mouseout', 1, 1));
+    svg.dispatchEvent(event('dragover', 50, 151));
+    svg.dispatchEvent(event('dragover', 50, 1));
+    svg.dispatchEvent(event('dragleave', 1, 1));
 
-    // 8 events above + no sub-events from JSDOM
-    assert.equal(count, events.length + 8);
+    // 11 events above + no sub-events from JSDOM
+    assert.equal(count, events.length + 11);
 
     handler.off('mousemove', {});
     assert.equal(handler.handlers().length, events.length);
