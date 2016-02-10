@@ -201,7 +201,7 @@ function rule(model, name, rules, exprs) {
       if (dl.isObject(def)) {
         dl.keys(def).forEach(function(k) {
           if (k === 'name') return;
-          var ref = valueRef(config, i, def[k]);
+          var ref = valueRef(config, i, def[k], true);
           input.push(dl.str(k)+': '+ref.val);
           dependencies(deps, ref);
         });
@@ -227,7 +227,7 @@ function rule(model, name, rules, exprs) {
   return (deps.code = code, deps);
 }
 
-function valueRef(config, name, ref) {
+function valueRef(config, name, ref, predicateArg) {
   if (ref == null) return null;
 
   if (name==='fill' || name==='stroke') {
@@ -291,10 +291,10 @@ function valueRef(config, name, ref) {
 
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
-    if (val !== null || ref.band || ref.mult || ref.offset) {
+    if (val !== null || ref.band || ref.mult || ref.offset || !predicateArg) {
       val = scale + (ref.band ? '.rangeBand()' :
         '('+(val !== null ? val : 'item.datum.data')+')');
-    } else {
+    } else if (predicateArg) {
       val = scale;
     }
   }
