@@ -25,15 +25,8 @@
     {
       "name": "selectedPoints",
       "modify": [
-        {
-          "type": "clear",
-          "test": "!shift"
-        },
-        {
-          "type": "toggle",
-          "signal": "clickedPoint",
-          "field": "id"
-        }
+        {"type": "clear", "test": "!shift"},
+        {"type": "toggle", "signal": "clickedPoint", "field": "id"}
       ]
     }
   ],
