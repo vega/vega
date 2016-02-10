@@ -68,29 +68,29 @@ prototype.DOMMouseScroll = function(evt) {
   this.fire('mousewheel', evt);
 };
 
-function move(move, over, out) {
+function move(moveEvent, overEvent, outEvent) {
   return function(evt) {
     var a = this._active,
         p = this.pickEvent(evt);
 
     if (p === a) {
       // active item and picked item are the same
-      this.fire(move, evt); // fire move
+      this.fire(moveEvent, evt); // fire move
     } else {
       // active item and picked item are different
-      this.fire(out, evt);  // fire out for prior active item
+      this.fire(outEvent, evt);  // fire out for prior active item
       this._active = p;            // set new active item
-      this.fire(over, evt); // fire over for new active item
-      this.fire(move, evt); // fire move for new active item
-    }  
-  }
+      this.fire(overEvent, evt); // fire over for new active item
+      this.fire(moveEvent, evt); // fire move for new active item
+    }
+  };
 }
 
 function inactive(type) {
   return function(evt) {
     this.fire(type, evt);
     this._active = null;
-  }
+  };
 }
 
 prototype.mousemove = move('mousemove', 'mouseover', 'mouseout');
