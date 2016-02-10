@@ -17,21 +17,6 @@
     }
   ],
 
-  "predicates": [
-    {
-      "name": "clearPoints",
-      "type": "==",
-      "operands": [{"signal": "shift"}, {"value": false}]
-    },
-    {
-      "name": "isSelected",
-      "type": "in",
-      "item": {"arg": "id"},
-      "data": "selectedPoints",
-      "field": "id"
-    }
-  ],
-
   "data": [
     {
       "name": "iris",
@@ -42,7 +27,7 @@
       "modify": [
         {
           "type": "clear",
-          "predicate": "clearPoints"
+          "test": "!shift"
         },
         {
           "type": "toggle",
@@ -90,19 +75,14 @@
           "size": {"value": 100}
         },
         "update": {
-          "fill": {
-            "rule": [
-              {
-                "predicate": {
-                  "name": "isSelected",
-                  "id": {"field": "_id"}
-                },
-                "scale": "c", 
-                "field": "species"
-              },
-              {"value": "grey"}
-            ]
-          }
+          "fill": [
+            {
+              "test": "indata('selectedPoints', datum._id, 'id')",
+              "scale": "c",
+              "field": "species"
+            },
+            {"value": "grey"}
+          ]
         }
       }
     }

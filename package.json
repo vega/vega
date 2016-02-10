@@ -66,6 +66,7 @@
     "through": "^2.3.8",
     "tv4": "^1.1.12",
     "uglify-js": "^2.4.24",
+    "vega-datasets": "vega/vega-datasets#gh-pages",
     "watchify": "^3.2.3",
     "xmldom": "^0.1.19",
     "xpath": "^0.0.9"

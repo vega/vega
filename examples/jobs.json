@@ -1,22 +1,24 @@
 {
   "width": 800,
   "height": 500,
-  "padding": {"left": 15, "right": 65, "top": 10, "bottom": 20},
+  "padding": {"left": 15, "right": 65, "top": 10, "bottom": 25},
   "data": [
     {
       "name": "jobs",
-      "url": "data/jobs.json"
-    },
-    {
-      "name": "series",
-      "source": "jobs",
+      "url": "data/jobs.json",
       "transform": [
         {
           "type": "stack",
           "groupby": ["year"],
           "field": "perc",
           "sortby": ["-job", "-sex"]
-        },
+        }
+      ]
+    },
+    {
+      "name": "series",
+      "source": "jobs",
+      "transform": [
         {
           "type": "facet",
           "groupby": ["job", "sex"],
@@ -97,7 +99,7 @@
       "ticks": 15, "tickSizeEnd": 0
     },
     {
-      "type": "y", "scale": "y", "format": "n", "orient": "right",
+      "type": "y", "scale": "y", "format": "%", "orient": "right",
       "grid": true, "layer": "back", "tickSize": 12,
       "properties": {
         "axis": {"stroke": {"value":"transparent"}},

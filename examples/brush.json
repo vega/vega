@@ -17,34 +17,9 @@
       "name": "brush_end",
       "init": {"x": 0, "y": 0},
       "streams": [{
-        "type": "mousedown, [mousedown, window:mouseup] > window:mousemove", 
+        "type": "mousedown, [mousedown, window:mouseup] > window:mousemove",
         "expr": "{x: clamp(eventX(), 0, w), y: clamp(eventY(), 0, h)}"
       }]
-    }
-  ],
-
-  "predicates": [
-    {
-      "name": "xRange",
-      "type": "in",
-      "item": {"arg": "x"},
-      "range": [{"signal": "brush_start.x"}, {"signal": "brush_end.x"}],
-      "scale": {"name": "x", "invert": true}
-    },
-    {
-      "name": "yRange",
-      "type": "in",
-      "item": {"arg": "y"},
-      "range": [{"signal": "brush_start.y"}, {"signal": "brush_end.y"}],
-      "scale": {"name": "y", "invert": true}
-    },
-    {
-      "name": "inRange",
-      "type": "&&",
-      "operands": [
-        {"predicate": "xRange"},
-        {"predicate": "yRange"}
-      ]
     }
   ],
 
@@ -58,7 +33,7 @@
       "name": "x",
       "type": "linear",
       "domain": {"data": "iris", "field": "sepalWidth"},
-      "range": "width", 
+      "range": "width",
       "zero": false
     },
     {
@@ -66,7 +41,7 @@
       "type": "linear",
       "domain": {"data": "iris", "field": "petalLength"},
       "range": "height",
-      "nice": true, 
+      "nice": true,
       "zero": false
     },
     {
@@ -95,20 +70,13 @@
           "size": {"value": 100}
         },
         "update": {
-          "fill": {
-            "rule": [
-              {
-                "predicate": {
-                  "name": "inRange",
-                  "x": {"field": "sepalWidth"},
-                  "y": {"field": "petalLength"}
-                },
-                "scale": "c", 
-                "field": "species"
-              },
-              {"value": "grey"}
-            ]
-          }
+          "fill": [
+            { "test": "inrange(scale('x', datum.sepalWidth), brush_start.x, brush_end.x) && inrange(scale('y', datum.petalLength), brush_start.y, brush_end.y)",
+              "scale": "c",
+              "field": "species"
+            },
+            {"value": "grey"}
+          ]
         }
       }
     },

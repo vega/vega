@@ -129,7 +129,7 @@ parseModify.schema = {
             "type": {"enum": [Types.CLEAR]},
             "test": {"type": "string"}
           },
-          "required": ["type", "expr"]
+          "required": ["type", "test"]
         }]
       }
     }

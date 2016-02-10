@@ -18,7 +18,7 @@
           "type": "force",
           "links": "edges",
           "linkDistance": 70,
-          "charge": -100,
+          "charge": -80,
           "iterations": 1000
         }
       ]

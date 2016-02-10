@@ -24,7 +24,7 @@ stream
 
 markType = m: "rect" / "symbol" / "path" / "arc" / "area" / "line" / "rule" / "image" / "text" / "group"
 
-eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter" / "touchstart" / "touchmove" / "touchend"
+eventType = e: "mousedown" / "mouseup" / "click" / "dblclick" / "wheel" / "keydown" / "keypress" / "keyup" / "mousewheel" / "mousemove" / "mouseout" / "mouseover" / "mouseenter" / "touchstart" / "touchmove" / "touchend" / "dragenter" / "dragover" / "dragleave" 
 
 filter = "[" e:expr "]" { return e; }
 

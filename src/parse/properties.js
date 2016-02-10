@@ -418,22 +418,7 @@ function valueSchema(type) {
         "rule": {
           "type": "array",
           "items": {
-            "allOf": [{
-              "type": "object",
-              "properties": {
-                "predicate": {
-                  "oneOf": [
-                    {"type": "string"},
-                    {
-                      "type": "object",
-                      "properties": {"name": { "type": "string" }},
-                      "required": ["name"]
-                    }
-                  ]
-                }
-              }
-            },
-            valRef]
+            "allOf": [{"$ref": "#/defs/rule"}, valRef]
           }
         }
       },
@@ -443,25 +428,7 @@ function valueSchema(type) {
     {
       "type": "array",
       "items": {
-        "allOf": [{
-          "oneOf": [{
-            "type": "object",
-            "properties": {
-              "predicate": {
-                "oneOf": [
-                  {"type": "string"},
-                  {
-                    "type": "object",
-                    "properties": {"name": { "type": "string" }},
-                    "required": ["name"]
-                  }
-                ]
-              }
-            }
-          },
-          {"type": "object", "properties": {"test": {"type": "string"}}}]
-        },
-        valRef]
+        "allOf": [{"$ref": "#/defs/rule"}, valRef]
       }
     },
     valRef]
@@ -469,6 +436,28 @@ function valueSchema(type) {
 }
 
 properties.schema = {
+  "defs": {
+    "rule": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "predicate": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "object",
+                  "properties": {"name": { "type": "string" }},
+                  "required": ["name"]
+                }
+              ]
+            }
+          }
+        },
+        {"type": "object", "properties": {"test": {"type": "string"}}}
+      ]
+    }
+  },
   "refs": {
     "field": {
       "title": "FieldRef",

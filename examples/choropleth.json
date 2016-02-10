@@ -12,15 +12,11 @@
       "url": "data/us-10m.json",
       "format": {"type": "topojson", "feature": "counties"},
       "transform": [
-        {"type": "geopath", "projection": "albersUsa"},
-        {
-          "type": "lookup",
-          "on": "unemp",
-          "onKey": "id",
-          "keys": ["id"],
-          "as": ["unemp"]
-        },
-        {"type": "filter", "test": "datum.layout_path!=null && datum.unemp!=null"}
+        { "type": "geopath", "projection": "albersUsa" },
+        { "type": "lookup", "on": "unemp", "onKey": "id",
+          "keys": ["id"], "as": ["unemp"] },
+        { "type": "filter",
+          "test": "datum.layout_path!=null && datum.unemp!=null" }
       ]
     }
   ],

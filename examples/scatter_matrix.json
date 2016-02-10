@@ -8,7 +8,7 @@
     },
     {
       "name": "fields",
-      "values": ["petalLength", "petalWidth", "sepalWidth", "sepalLength"]
+      "values": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"]
     }
   ],
   "scales": [
@@ -24,6 +24,7 @@
       "type": "ordinal",
       "range": "height",
       "round": true,
+      "reverse": true,
       "domain": {"data": "fields", "field": "data"}
     },
     {

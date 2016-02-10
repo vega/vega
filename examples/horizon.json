@@ -1,0 +1,108 @@
+{
+  "width": 500,
+  "height": 50,
+
+  "signals": [
+    { "name": "layers", "init": 2,
+      "streams": [
+        {"type": "click", "expr": "1 + (layers % 4)"}
+      ]
+    },
+    { "name": "vheight", "init": {"expr": "height * layers"},
+      "streams": [
+        {"type": "layers, height", "expr": "height * layers"}
+      ]
+    },
+    { "name": "opacity", "init": {"expr": "pow(layers, -2/3)"},
+      "streams": [
+        {"type": "layers", "expr": "pow(layers, -2/3)"}
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "layer_indices",
+      "values": [0, 1, 2, 3],
+      "transform": [
+        {"type": "filter", "test": "datum.data < layers"},
+        {"type": "formula", "field": "offset", "expr": "datum.data * -height"}
+      ]
+    },
+    {
+      "name": "table",
+      "values": [
+        {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
+        {"x": 3,  "y": 43}, {"x": 4,  "y": 91},
+        {"x": 5,  "y": 81}, {"x": 6,  "y": 53},
+        {"x": 7,  "y": 19}, {"x": 8,  "y": 87},
+        {"x": 9,  "y": 52}, {"x": 10, "y": 48},
+        {"x": 11, "y": 24}, {"x": 12, "y": 49},
+        {"x": 13, "y": 87}, {"x": 14, "y": 66},
+        {"x": 15, "y": 17}, {"x": 16, "y": 27},
+        {"x": 17, "y": 68}, {"x": 18, "y": 16},
+        {"x": 19, "y": 49}, {"x": 20, "y": 15}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width",
+      "zero": false, "round": true,
+      "domain": {"data": "table", "field": "x"}
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": [{"signal":"vheight"}, 0],
+      "nice": true,
+      "domain": {"data": "table", "field": "y"}
+    }
+  ],
+  "axes": [
+    {"type": "x", "scale": "x", "ticks": 20}
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "properties": {
+        "update": {
+          "width": {"field": {"group": "width"}},
+          "height": {"field": {"group": "height"}},
+          "clip": {"value": true}
+        }
+      },
+      "marks": [
+        {
+          "type": "group",
+          "from": {"data": "layer_indices"},
+          "properties": {
+            "update": {
+              "y": {"field": "offset"}
+            }
+          },
+          "marks": [
+            {
+              "type": "area",
+              "from": {"data": "table"},
+              "properties": {
+                "enter": {
+                  "interpolate": {"value": "monotone"},
+                  "x": {"scale": "x", "field": "x"},
+                  "fill": {"value": "steelblue"}
+                },
+                "update": {
+                  "y": {"scale": "y", "field": "y"},
+                  "y2": {"scale": "y", "value": 0},
+                  "fillOpacity": {"signal": "opacity"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

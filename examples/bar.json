@@ -2,16 +2,6 @@
   "width": 400,
   "height": 200,
   "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10},
-
-  "signals": [
-    {"name": "fill", "init": "red"}
-  ],
-
-  "scene": {
-    "fill": {"signal": "fill"},
-    "fillOpacity": 0.5
-  },
-
   "data": [
     {
       "name": "table",

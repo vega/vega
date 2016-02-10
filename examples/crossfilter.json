@@ -11,9 +11,33 @@
       "transform": [
         {"type": "formula", "field": "hour", "expr": "hours(datum.date)"},
         {
-          "type": "formula", 
-          "field": "day", 
+          "type": "formula",
+          "field": "day",
           "expr": "datetime((month(datum.date)+1) + '/' + date(datum.date) + '/2001')"
+        },
+        {
+          "type": "bin",
+          "field": "hour",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "output": {"start": "bin_hour"}
+        },
+        {
+          "type": "bin",
+          "field": "delay",
+          "min": -60,
+          "max": 140,
+          "step": 10,
+          "output": {"start": "bin_delay"}
+        },
+        {
+          "type": "bin",
+          "field": "distance",
+          "min": 0,
+          "max": 2000,
+          "step": 50,
+          "output": {"start": "bin_dist"}
         }
       ]
     },
@@ -23,16 +47,8 @@
       "transform": [
         {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay))"},
         {
-          "type": "bin",
-          "field": "hour",
-          "min": 0,
-          "max": 24,
-          "step": 1,
-          "output": {"start": "bin"}
-        },
-        {
           "type": "aggregate",
-          "groupby": ["bin"],
+          "groupby": ["bin_hour"],
           "summarize": {"delay": ["count"]}
         }
       ]
@@ -41,19 +57,10 @@
       "name": "delay",
       "source": "flights",
       "transform": [
-        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime))"},
-        {
-          "type": "bin",
-          "field": "delay",
-          "min": -60,
-          "max": 140,
-          "step": 10,
-          "output": {"start": "bin"}
-        },
-        {"type": "filter", "test": "datum.bin <= 140"},
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime)) && datum.bin_delay <= 140"},
         {
           "type": "aggregate",
-          "groupby": ["bin"],
+          "groupby": ["bin_delay"],
           "summarize": {"delay": ["count"]}
         }
       ]
@@ -62,19 +69,10 @@
       "name": "distance",
       "source": "flights",
       "transform": [
-        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime))"},
-        {
-          "type": "bin",
-          "field": "distance",
-          "min": 0,
-          "max": 2000,
-          "step": 50,
-          "output": {"start": "bin"}
-        },
-        {"type": "filter", "test": "datum.bin <= 2000"},
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime)) && datum.bin_dist <= 2000"},
         {
           "type": "aggregate",
-          "groupby": ["bin"],
+          "groupby": ["bin_dist"],
           "summarize": {"delay": ["count"]}
         }
       ]
@@ -83,13 +81,12 @@
       "name": "date",
       "source": "flights",
       "transform": [
-        {"type": "filter", "test": "(minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime))"},
-        {"type": "filter", "test": "datum.day < datetime('4/1/2001')"},
+        {"type": "filter", "test": "(minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime)) && datum.day < datetime('4/1/2001')"},
         {
           "type": "aggregate",
           "groupby": ["day"],
           "summarize": {"delay": ["count"]}
-        }        
+        }
       ]
     }
   ],
@@ -106,7 +103,7 @@
       "name": "timesStart",
       "init": -1,
       "streams": [{
-        "type": "@timesGroup:mousedown", 
+        "type": "@timesGroup:mousedown",
         "expr": "eventX(scope)",
         "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
@@ -127,7 +124,7 @@
       "name": "delayStart",
       "init": -1,
       "streams": [{
-        "type": "@delayGroup:mousedown", 
+        "type": "@delayGroup:mousedown",
         "expr": "eventX(scope)",
         "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
@@ -148,7 +145,7 @@
       "name": "distStart",
       "init": -1,
       "streams": [{
-        "type": "@distGroup:mousedown", 
+        "type": "@distGroup:mousedown",
         "expr": "eventX(scope)",
         "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
@@ -168,7 +165,7 @@
     {
       "name": "dayStart",
       "streams": [{
-        "type": "@dayGroup:mousedown", 
+        "type": "@dayGroup:mousedown",
         "expr": "eventX(scope)",
         "scale": {"scope": "scope", "name": "x", "invert": true}
       }]
@@ -182,77 +179,7 @@
       }]
     },
     {"name": "minDay", "expr": "max(min(dayStart, dayEnd), datetime('Jan 1 2001'))"},
-    {"name": "maxDay", "expr": "min(max(dayStart, dayEnd), datetime('Mar 31 2001'))"}
-  ],
-
-  "predicates": [
-    {
-      "name": "timesEqual",
-      "type": "==",
-      "operands": [{"signal": "timesStart"}, {"signal": "timesEnd"}]
-    },
-    {
-      "name": "timesRange",
-      "type": "in",
-      "item": {"arg": "x"},
-      "range": [{"signal": "timesStart"}, {"signal": "timesEnd"}]
-    },
-    {
-      "name": "timesBrush",
-      "type": "or",
-      "operands": [{"predicate": "timesEqual"}, {"predicate": "timesRange"}]
-    },
-
-    {
-      "name": "delayEqual",
-      "type": "==",
-      "operands": [{"signal": "delayStart"}, {"signal": "delayEnd"}]
-    },
-    {
-      "name": "delayRange",
-      "type": "in",
-      "item": {"arg": "x"},
-      "range": [{"signal": "delayStart"}, {"signal": "delayEnd"}]
-    },
-    {
-      "name": "delayBrush",
-      "type": "or",
-      "operands": [{"predicate": "delayEqual"}, {"predicate": "delayRange"}]
-    },
-
-    {
-      "name": "distEqual",
-      "type": "==",
-      "operands": [{"signal": "distStart"}, {"signal": "distEnd"}]
-    },
-    {
-      "name": "distRange",
-      "type": "in",
-      "item": {"arg": "x"},
-      "range": [{"signal": "distStart"}, {"signal": "distEnd"}]
-    },
-    {
-      "name": "distBrush",
-      "type": "or",
-      "operands": [{"predicate": "distEqual"}, {"predicate": "distRange"}]
-    },
-
-    {
-      "name": "dayEqual",
-      "type": "==",
-      "operands": [{"signal": "dayStart"}, {"signal": "dayEnd"}]
-    },
-    {
-      "name": "dayRange",
-      "type": "in",
-      "item": {"arg": "x"},
-      "range": [{"signal": "dayStart"}, {"signal": "dayEnd"}]
-    },
-    {
-      "name": "dayBrush",
-      "type": "or",
-      "operands": [{"predicate": "dayEqual"}, {"predicate": "dayRange"}]
-    }
+    {"name": "maxDay", "expr": "min(max(dayStart, dayEnd), datetime('Mar 31 2001')) || datetime('Mar 31 2001')"}
   ],
 
   "marks": [
@@ -293,19 +220,17 @@
           "from": {"data": "times"},
           "properties": {
             "update": {
-              "x": {"scale": "x", "field": "bin"},
+              "x": {"scale": "x", "field": "bin_hour"},
               "width": {"value": 9.5},
               "y": {"scale": "y", "field": "count_delay"},
               "y2": {"scale": "y", "value": 0},
-              "fill": {
-                "rule": [
-                  {
-                    "predicate": {"name": "timesBrush", "x": {"field": "bin"}},
-                    "value": "steelblue"
-                  },
-                  {"value": "#bbb"}
-                ]
-              }
+              "fill": [
+                {
+                  "test": "timesStart == timesEnd || inrange(datum.bin_hour, timesStart, timesEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
             }
           }
         },
@@ -378,19 +303,17 @@
           "from": {"data": "delay"},
           "properties": {
             "update": {
-              "x": {"scale": "x", "field": "bin"},
+              "x": {"scale": "x", "field": "bin_delay"},
               "width": {"value": 9.5},
               "y": {"scale": "y", "field": "count_delay"},
               "y2": {"scale": "y", "value": 0},
-              "fill": {
-                "rule": [
-                  {
-                    "predicate": {"name": "delayBrush", "x": {"field": "bin"}},
-                    "value": "steelblue"
-                  },
-                  {"value": "#bbb"}
-                ]
-              }
+              "fill": [
+                {
+                  "test": "delayStart == delayEnd || inrange(datum.bin_delay, delayStart, delayEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
             }
           }
         },
@@ -462,19 +385,17 @@
           "from": {"data": "distance"},
           "properties": {
             "update": {
-              "x": {"scale": "x", "field": "bin"},
+              "x": {"scale": "x", "field": "bin_dist"},
               "width": {"value": 9.5},
               "y": {"scale": "y", "field": "count_delay"},
               "y2": {"scale": "y", "value": 0},
-              "fill": {
-                "rule": [
-                  {
-                    "predicate": {"name": "distBrush", "x": {"field": "bin"}},
-                    "value": "steelblue"
-                  },
-                  {"value": "#bbb"}
-                ]
-              }
+              "fill": [
+                {
+                  "test": "distStart == distEnd || inrange(datum.bin_dist, distStart, distEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
             }
           }
         },
@@ -550,15 +471,13 @@
               "width": {"value": 9.5},
               "y": {"scale": "y", "field": "count_delay"},
               "y2": {"scale": "y", "value": 0},
-              "fill": {
-                "rule": [
-                  {
-                    "predicate": {"name": "dayBrush", "x": {"field": "day"}},
-                    "value": "steelblue"
-                  },
-                  {"value": "#bbb"}
-                ]
-              }
+              "fill": [
+                {
+                  "test": "!dayStart || time(dayStart) == time(dayEnd) || inrange(datum.day, dayStart, dayEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
             }
           }
         },
@@ -592,6 +511,5 @@
         }
       ]
     }
-
   ]
 }
