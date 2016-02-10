@@ -1,4 +1,4 @@
-describe.only('Modify Transforms', function() {
+describe('Modify Transforms', function() {
   it('should clear', function(done) {
     var spec = {
       "signals": [{"name": "clear", "init": false}],
