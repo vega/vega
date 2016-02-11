@@ -1,0 +1,72 @@
+{
+  "width": 400,
+  "height": 400,
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"category":"A", "amount":100}
+      ],
+      "transform": [
+        {"type": "pie", "field": "amount"},
+        {"type": "formula", "field": "TEMP_TESTTTTT", "expr": "123456"}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "r",
+      "type": "sqrt",
+      "domain": {"data": "table", "field": "amount"},
+      "range": [20, 100]
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category10",
+      "domain": {"data": "table", "field": "category"}
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "properties": {
+        "symbols": {
+          "shape": {
+            "value": {
+              "M": "0, 4",
+              "L": [
+                "4.702, 6.472",
+                "3.804, 1.236",
+                "7.608, -2.472",
+                "2.351, -3.236",
+                "0, -8",
+                "-2.351, -3.236",
+                "-7.608, -2.472",
+                "-3.804, 1.236",
+                "-4.702, 6.472",
+                "0, 4"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "marks": [
+    {
+      "type": "arc",
+      "from": {"data": "table", "transform": [{"type": "formula", "field": "TEMP_TESTTTTT", "expr": "123456"}]},
+      "properties": {
+        "enter": {
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
+          "startAngle": {"field": "layout_start"},
+          "endAngle": {"field": "layout_end"},
+          "outerRadius": {"value": 100},
+          "fill": {"scale": "color", "field": "category"}
+        }
+      }
+    }
+  ]
+}
