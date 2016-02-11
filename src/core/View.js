@@ -45,9 +45,10 @@ prototype.model = function(model) {
 // Sandboxed streaming data API
 function streaming(src) {
   var view = this,
-      ds = this._model.data(src),
-      name = ds.name(),
-      listener = ds.pipeline()[0],
+      ds = this._model.data(src);
+  if (!ds) return log.error('Data source "'+src+'" is not defined.');
+
+  var listener = ds.pipeline()[0],
       streamer = this._streamer,
       api = {};
 
@@ -57,19 +58,19 @@ function streaming(src) {
   api.insert = function(vals) {
     ds.insert(dl.duplicate(vals));  // Don't pollute the environment
     streamer.addListener(listener);
-    view._changeset.data[name] = 1;
+    view._changeset.data[src] = 1;
     return api;
   };
 
   api.update = function() {
     streamer.addListener(listener);
-    view._changeset.data[name] = 1;
+    view._changeset.data[src] = 1;
     return (ds.update.apply(ds, arguments), api);
   };
 
   api.remove = function() {
     streamer.addListener(listener);
-    view._changeset.data[name] = 1;
+    view._changeset.data[src] = 1;
     return (ds.remove.apply(ds, arguments), api);
   };
 
@@ -125,8 +126,11 @@ prototype.signal = function(name, value, skip) {
 };
 
 function setSignal(name, value) {
-  var cs = this._changeset;
-  this._streamer.addListener(this._model.signal(name).value(value));
+  var cs = this._changeset,
+      sg = this._model.signal(name);
+  if (!sg) return log.error('Signal "'+name+'" is not defined.');
+
+  this._streamer.addListener(sg.value(value));
   cs.signals[name] = 1;
   cs.reflow = true;
 }
@@ -412,8 +416,9 @@ prototype.on = function() {
 };
 
 prototype.onSignal = function(name, handler) {
-  this._model.signal(name).on(handler);
-  return this;
+  var sg = this._model.signal(name);
+  return (sg ? 
+    sg.on(handler) : log.error('Signal "'+name+'" is not defined.'), this);
 };
 
 prototype.off = function() {
@@ -422,8 +427,9 @@ prototype.off = function() {
 };
 
 prototype.offSignal = function(name, handler) {
-  this._model.signal(name).off(handler);
-  return this;
+  var sg = this._model.signal(name);
+  return (sg ? 
+    sg.off(handler) : log.error('Signal "'+name+'" is not defined.'), this);
 };
 
 View.factory = function(model) {
