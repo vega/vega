@@ -436,28 +436,6 @@ function valueSchema(type) {
 }
 
 properties.schema = {
-  "defs": {
-    "rule": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "predicate": {
-              "oneOf": [
-                {"type": "string"},
-                {
-                  "type": "object",
-                  "properties": {"name": { "type": "string" }},
-                  "required": ["name"]
-                }
-              ]
-            }
-          }
-        },
-        {"type": "object", "properties": {"test": {"type": "string"}}}
-      ]
-    }
-  },
   "refs": {
     "field": {
       "title": "FieldRef",
@@ -569,6 +547,29 @@ properties.schema = {
   },
 
   "defs": {
+    "rule": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "predicate": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "object",
+                  "properties": {"name": { "type": "string" }},
+                  "required": ["name"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object", 
+          "properties": {"test": {"type": "string"}}
+        }
+      ]
+    },
     "propset": {
       "title": "Mark property set",
       "type": "object",

@@ -33,7 +33,7 @@ prototype.batchTransform = function(input, data) {
   if (field) {
     for (i=0, klen=0; i<len; ++i) {
       d = data[i];
-      keys[f=field(d)] || (keys[f] = ++klen);
+      keys[f=field(d)] = keys[f] || (keys[f] = ++klen);
     }
   }
 
