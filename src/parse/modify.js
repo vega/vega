@@ -14,10 +14,23 @@ var Types = {
 
 var EMPTY = [];
 
-var filter = function(field, value, src, dest) {
-  for(var i = src.length-1; i >= 0; --i) {
-    if (src[i][field] == value)
-      dest.push.apply(dest, src.splice(i, 1));
+var filter = function(fields, value, src, dest) {
+  if ((fields = dl.array(fields)) && !fields.length) {
+    fields = dl.isObject(value) ? dl.keys(value) : ['data'];
+  }
+
+  var splice = true, len = fields.length, i, j, f, v;
+  for (i = src.length - 1; i >= 0; --i) {
+    for (j=0; j<len; ++j) {
+      v = value[f=fields[j]] || value;
+      if (src[i][f] !== v) {
+        splice = false;
+        break;
+      }
+    }
+
+    if (splice) dest.push.apply(dest, src.splice(i, 1));
+    splice = true;
   }
 };
 
@@ -70,11 +83,11 @@ function parseModify(model, def, ds) {
       filter(fieldName, value, input.add, rem);
       filter(fieldName, value, d._data, rem);
     } else if (def.type === Types.TOGGLE) {
-      // If tuples are in mod, remove them. 
+      // If tuples are in mod, remove them.
       filter(fieldName, value, input.mod, rem);
       input.rem.push.apply(input.rem, rem);
 
-      // If tuples are in add, they've been added to backing data source, 
+      // If tuples are in add, they've been added to backing data source,
       // but no downstream operators will have seen it yet.
       filter(fieldName, value, input.add, add);
 
@@ -85,7 +98,7 @@ function parseModify(model, def, ds) {
       } else {
         // If the tuples aren't seen in the changeset, add a new tuple.
         // Note, tuple might be in input.rem, but we ignore this and just
-        // re-add a new tuple for simplicity. 
+        // re-add a new tuple for simplicity.
         input.add.push(t=Tuple.ingest(datum));
         d._data.push(t);
       }
@@ -127,7 +140,7 @@ parseModify.schema = {
             "signal": {"type": "string"},
             "field": {"type": "string"}
           },
-          "required": ["type", "signal", "field"]
+          "required": ["type", "signal"]
         }, {
           "properties": {
             "type": {"enum": [Types.CLEAR]},

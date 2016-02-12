@@ -565,7 +565,7 @@ properties.schema = {
           }
         },
         {
-          "type": "object", 
+          "type": "object",
           "properties": {"test": {"type": "string"}}
         }
       ]

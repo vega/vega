@@ -21,7 +21,7 @@ describe('Modify Transforms', function() {
 
       ds.insert([5, 6, 7, 8]).fire();
       expect(ds._data).to.have.length(0);
-      expect(ds.values()).to.have.length(0); 
+      expect(ds.values()).to.have.length(0);
 
       ds.insert([5, 6, 7, 8]);
       model.signal('clear').value(false).fire();
@@ -39,7 +39,7 @@ describe('Modify Transforms', function() {
         "name": "table",
         "values": [0],
         "modify": [
-          {"type": "insert", "signal": "A"}, 
+          {"type": "insert", "signal": "A"},
           {"type": "insert", "signal": "B", "field": "foobar"}
         ]
       }]
@@ -70,21 +70,21 @@ describe('Modify Transforms', function() {
       expect(vals).to.have.length(4);
       expect(vals[0].data).to.equal(0);
       expect(vals[1].data).to.equal(2);
-      expect(vals[2].foobar).to.equal(3); 
+      expect(vals[2].foobar).to.equal(3);
       expect(vals[3]).to.have.property('hello', 'world');
 
       done();
     });
   });
 
-  it('should toggle', function(done) {
+  it('should toggle values', function(done) {
     var spec = {
       "signals": [{"name": "toggle", "init": 1, "verbose": true}],
       "data": [{
         "name": "table",
         "values": [0],
         "modify": [
-          {"type": "toggle", "signal": "toggle", "field": "data"} 
+          {"type": "toggle", "signal": "toggle", "field": "data"}
         ]
       }]
     };
@@ -115,6 +115,38 @@ describe('Modify Transforms', function() {
       vals = ds.values();
       expect(vals).to.have.length(1);
       expect(vals[0].data).to.equal(5);
+
+      done();
+    });
+  });
+
+  it('should toggle objects', function(done) {
+    var spec = {
+      "signals": [{"name": "toggle", "init": {"id": 1, "species": "setosa"}}],
+      "data": [{
+        "name": "table",
+        "values": [],
+        "modify": [
+          {"type": "toggle", "signal": "toggle"}
+        ]
+      }]
+    };
+
+    parseSpec(spec, modelFactory, function(error, model) {
+      var ds = model.data('table'),
+          vals = ds.values();
+
+      expect(vals).to.have.length(0);
+
+      model.signal('toggle').value({id: 2, 'species': 'versicolor'}).fire();
+      vals = ds.values();
+      expect(vals).to.have.length(1);
+      expect(vals[0]).to.have.property('id', 2);
+      expect(vals[0]).to.have.property('species', 'versicolor');
+
+      model.signal('toggle').value({id: 2, 'species': 'versicolor'}).fire();
+      vals = ds.values();
+      expect(vals).to.have.length(0);
 
       done();
     });
