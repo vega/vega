@@ -8,7 +8,9 @@
       "url": "data/seattle-temps.csv",
       "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
       "transform": [
-        {"type": "formula", "field": "hour", "expr": "hours(datum.date)"}
+        {"type": "formula", "field": "hour", "expr": "hours(datum.date)"},
+        { "type": "formula", "field": "date",
+          "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"}
       ]
     }
   ],
@@ -23,7 +25,8 @@
       "name": "y",
       "type": "ordinal",
       "domain": {"data": "temperature", "field": "hour"},
-      "range": "height"
+      "range": "height",
+      "round": false
     }, {
       "name": "c",
       "type": "linear",
