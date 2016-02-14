@@ -8,8 +8,7 @@
         {"category":"A", "amount":100}
       ],
       "transform": [
-        {"type": "pie", "field": "amount"},
-        {"type": "formula", "field": "TEMP_TESTTTTT", "expr": "123456"}
+        {"type": "pie", "field": "amount"}
       ]
     }
   ],
@@ -34,12 +33,12 @@
         "symbols": {
           "shape": {
             "value": {
-              "variables": [
-                "var ry = Math.sqrt(size / (2 * d3_svg_symbolTan30));", 
-                "var rx = ry * d3_svg_symbolTan30;"
+              "M": ["0,{{-(Math.sqrt(size / (2 * d3_svg_symbolTan30)))}}"],
+              "L": [
+                "{{Math.sqrt(size / (2 * d3_svg_symbolTan30)) * d3_svg_symbolTan30}}, 0", 
+                "0, {{Math.sqrt(size / (2 * d3_svg_symbolTan30))}}", 
+                "{{-(Math.sqrt(size / (2 * d3_svg_symbolTan30)) * d3_svg_symbolTan30)}},0"
               ],
-              "M": ["0,{{-ry}}"],
-              "L": ["{{rx}}, 0", "0, {{ry}}", "{{-rx}},0"],
               "Z": ""
             }
           }
@@ -50,7 +49,7 @@
   "marks": [
     {
       "type": "arc",
-      "from": {"data": "table", "transform": [{"type": "formula", "field": "TEMP_TESTTTTT", "expr": "123456"}]},
+      "from": {"data": "table"},
       "properties": {
         "enter": {
           "x": {"field": {"group": "width"}, "mult": 0.5},

@@ -8,8 +8,7 @@
         {"category":"A", "amount":100}
       ],
       "transform": [
-        {"type": "pie", "field": "amount"},
-        {"type": "formula", "field": "TEMP_TESTTTTT", "expr": "123456"}
+        {"type": "pie", "field": "amount"}
       ]
     }
   ],
@@ -42,7 +41,7 @@
   "marks": [
     {
       "type": "arc",
-      "from": {"data": "table", "transform": [{"type": "formula", "field": "TEMP_TESTTTTT", "expr": "123456"}]},
+      "from": {"data": "table"},
       "properties": {
         "enter": {
           "x": {"field": {"group": "width"}, "mult": 0.5},
