@@ -1,11 +1,11 @@
-var config = require('../../src/core/config'),
+var config = require('../../shape_test/configs/shape_config.js'),
     jsdom = require('jsdom'),
     d3 = require('d3'),
     fs = require('fs'),
     path = require('path'),
     svg = require('vega-scenegraph/src/util/svg'),
-    output = "output/",
-    examples = "test/spec/";
+    output = "shape_test/output/",
+    examples = "shape_test/spec/";
 
 var svgNamespace = Object.keys(svg.metadata)
   .map(function(n) { return n + '="' + svg.metadata[n] + '"'; })
@@ -59,7 +59,7 @@ describe('SVG', function() {
       if (err) return done(err);
       var spec = JSON.parse(text);
 
-      parseSpec(spec, function(error, viewFactory) {
+      parseSpec(spec, config, function(error, viewFactory) {
         if (error) return done(error);
         
         if (headless) {

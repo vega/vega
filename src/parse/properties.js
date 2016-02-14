@@ -40,6 +40,13 @@ function properties(model, mark, spec) {
     deps._nRefs[k] = r;
   }
 
+  if ("shape" in spec) {
+    var shape = spec.shape.value;
+    if (typeof shape !== "object" && typeof config.customShapes !== 'undefined' && shape in config.customShapes) {
+      spec.shape.value = config.customShapes[shape]
+    }
+  }
+
   for (i=0, len=names.length; i<len; ++i) {
     ref = spec[name = names[i]];
     code += (i > 0) ? "\n  " : "  ";

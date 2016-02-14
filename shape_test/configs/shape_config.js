@@ -1,4 +1,4 @@
-//var d3 = require('d3');
+var d3 = require('d3');
 var config = {};
 
 config.load = {
@@ -159,4 +159,4 @@ config.range = {
   ]
 };
 
-//module.exports = config;
+module.exports = config;
