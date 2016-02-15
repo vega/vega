@@ -54,10 +54,11 @@ var dl = require('datalib'),
           height  = spec.height || 500,
           padding = parsers.padding(spec.padding);
 
-      // create signals for width, height and padding
+      // create signals for width, height, padding, and cursor
       model.signal('width', width);
       model.signal('height', height);
       model.signal('padding', padding);
+      cursor(spec);
 
       // initialize model
       model.defs({
@@ -84,6 +85,20 @@ var dl = require('datalib'),
     });
   } else {
     onError('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
+  }
+
+  function cursor(spec) {
+    var signals = spec.signals || (spec.signals=[]),  def;
+    signals.some(function(sg) {
+      return (sg.name === 'cursor') ? (def=sg, true) : false;
+    });
+
+    if (!def) signals.push(def={name: 'cursor', streams: []});
+
+    // Add a stream def at the head, so that custom defs can override it.
+    def.streams.unshift({
+      type: 'mousemove', expr: '{default: eventItem().cursor}'
+    });
   }
 }
 
