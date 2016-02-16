@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Testing SVG Symbol Shapes</title>
+    <script src="node_modules/d3/d3.js" charset="utf-8"></script>
+    <script src="vega.js"></script>
+
+    <!-- Change to different config files -->
+    <script src="shape_test/configs/shape_config.js"></script>
+    <script>
+      function getOption() {
+        // parse a spec and create a visualization view
+        function parse(spec) {
+          vg.parse.spec(spec, config, function(chart) { chart({el:"#vis", renderer: 'svg'}).update(); });
+        }
+        // Change to selected chart spec
+        parse("shape_test/spec/legend_" + getSelected("chartSelect") + ".json");
+      }
+      function getSelected(id) {
+        var element = document.getElementById(id);
+        return element.options[element.selectedIndex].text
+      }
+      function openNewTab(type) {
+        var url;
+        if (type === 'theme') {
+          url = "shape_test/configs/shape_config.js";
+        } else {
+          url = "shape_test/spec/legend_" + getSelected("chartSelect") + ".json";
+        }
+        window.open(url, '_blank');
+      }
+    </script>
+  </head>
+  <body>
+    <form>
+      Chart:
+      <select id="chartSelect">
+        <option>arrow</option>
+        <option>default_diamond</option>
+        <option>config_star</option>
+        <option>multiple_diamonds</option>
+      </select>
+
+      <input type="button" onclick="getOption()" value="Render">
+    </form>
+    <div>
+      <input type="button" onclick="openNewTab('theme')" value="Show config">
+      <input type="button" onclick="openNewTab('chart')" value="Show chart">
+    </div>
+    <div id="vis"></div>
+  </body>
+</html>
