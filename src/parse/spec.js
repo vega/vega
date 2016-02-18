@@ -78,8 +78,10 @@ var dl  = require('datalib'),
     if (!def) signals.push(def={name: 'cursor', streams: []});
 
     // Add a stream def at the head, so that custom defs can override it.
+    def.init = def.init || {};
     def.streams.unshift({
-      type: 'mousemove', expr: '{default: eventItem().cursor}'
+      type: 'mousemove',
+      expr: 'eventItem().cursor === cursor.default ? cursor : {default: eventItem().cursor}'
     });
   }
 
