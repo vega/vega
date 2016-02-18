@@ -102,7 +102,15 @@ function inlineDs() {
     // Bounder reflows, so we need an intermediary node to propagate
     // the output constructed by the Builder.
     node = new Node(this._graph).addListener(this._ds.listener());
-    node.evaluate = function() { return sibling._output; };
+    node.evaluate = function(input) { 
+      var out  = ChangeSet.create(input),
+          sout = sibling._output;
+
+      out.add = sout.add;
+      out.mod = sout.mod;
+      out.rem = sout.rem;
+      return out;
+    };
     src.addListener(node);
   } else {
     // At this point, we have a new datasource but it is empty as

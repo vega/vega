@@ -20,6 +20,7 @@ function View(el, width, height) {
   this._renderer = null;
   this._handler  = null;
   this._streamer = null; // Targeted update for streaming changes
+  this._skipSignals = false; // Batch set signals can skip reevaluation.
   this._changeset = null;
   this._repaint = true; // Full re-render on every re-init
   this._renderers = sg;
@@ -92,7 +93,7 @@ prototype.data = function(data) {
 
 var VIEW_SIGNALS = dl.toMap(['width', 'height', 'padding']);
 
-prototype.signal = function(name, value, propagate) {
+prototype.signal = function(name, value, skip) {
   var m = this._model,
       key, values;
 
@@ -105,10 +106,10 @@ prototype.signal = function(name, value, propagate) {
   }
 
   // Setter. Can be done in batch or individually. In either case,
-  // the final argument determines if set values should propagate.
+  // the final argument determines if set signals should be skipped.
   if (dl.isObject(name)) {
     values = name;
-    propagate = value;
+    skip = value;
   } else {
     values = {};
     values[name] = value;
@@ -117,16 +118,16 @@ prototype.signal = function(name, value, propagate) {
     if (VIEW_SIGNALS[key]) {
       this[key](values[key]);
     } else {
-      setSignal.call(this, key, values[key], propagate);
+      setSignal.call(this, key, values[key]);
     }
   }
-  return this;
+  return (this._skipSignals = skip, this);
 };
 
-function setSignal(name, value, propagate) {
+function setSignal(name, value) {
   var cs = this._changeset;
   this._streamer.addListener(this._model.signal(name).value(value));
-  if (propagate !== false) cs.signals[name] = 1;
+  cs.signals[name] = 1;
   cs.reflow = true;
 }
 
@@ -308,7 +309,6 @@ function build() {
       input.trans.start(function(items) { v._renderer.render(s, items); });
     } else if (v._repaint) {
       v._renderer.render(s);
-      v._repaint = false;
     } else if (input.dirty.length) {
       v._renderer.render(s, input.dirty);
     }
@@ -318,6 +318,7 @@ function build() {
       s.items[0]._dirty = false;
     }
 
+    v._repaint = v._skipSignals = false;
     return input;
   };
 
@@ -357,7 +358,7 @@ prototype.update = function(opt) {
   } else if (streamer.listeners().length && built) {
     // Include re-evaluation entire model when repaint flag is set
     if (this._repaint) streamer.addListener(model.node());
-    model.propagate(cs, streamer);
+    model.propagate(cs, streamer, null, this._skipSignals);
     streamer.disconnect();
   } else {
     model.fire(cs);

@@ -4,7 +4,8 @@ var d3 = require('d3'),
     parseSignals = require('./signals'),
     selector = require('./events');
 
-var GATEKEEPER = '_vgGATEKEEPER';
+var GATEKEEPER = '_vgGATEKEEPER',
+    EVALUATOR  = '_vgEVALUATOR';
 
 var vgEvent = {
   getItem: function() { return this.item; },
@@ -186,8 +187,8 @@ function parseStreams(view) {
   }
 
   function signal(sig, selector, exp, spec) {
-    var n = new df.Node(model);
-    n.evaluate = function(input) {
+    var n = sig.name(), s = model.signal(n+EVALUATOR, null);
+    s.evaluate = function(input) {
       if (!input.signals[selector.signal]) return model.doNotPropagate;
       var val = exp.fn();
       if (spec.scale) {
@@ -196,15 +197,15 @@ function parseStreams(view) {
 
       if (val !== sig.value() || sig.verbose()) {
         sig.value(val);
-        input.signals[sig.name()] = 1;
+        input.signals[n] = 1;
         input.reflow = true;
       }
 
       return input;
     };
-    n.dependency(df.Dependencies.SIGNALS, selector.signal);
-    n.addListener(sig);
-    model.signal(selector.signal).addListener(n);
+    s.dependency(df.Dependencies.SIGNALS, selector.signal);
+    s.addListener(sig);
+    model.signal(selector.signal).addListener(s);
   }
 
   function orderedStream(sig, selector, exp, spec) {

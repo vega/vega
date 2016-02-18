@@ -114,7 +114,7 @@ prototype.aggr = function() {
 
   if (!fields.length) fields = {'*': 'values'};
 
-  // Instatiate our aggregator instance.
+  // Instantiate our aggregator instance.
   // Facetor is a special subclass that can facet into data pipelines.
   var aggr = this._aggr = new Facetor()
     .groupby(groupby)

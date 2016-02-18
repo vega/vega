@@ -501,11 +501,11 @@ function axisTitleExtend(orient, title, range, offset) {
   if (orient === 'bottom' || orient === 'top') {
     update.x = {value: mid};
     update.angle = {value: 0};
-    if (offset >= 0) update.y = sign * offset;
+    if (offset >= 0) update.y = {value: sign * offset};
   } else {
     update.y = {value: mid};
     update.angle = {value: orient === 'left' ? -90 : 90};
-    if (offset >= 0) update.x = sign * offset;
+    if (offset >= 0) update.x = {value: sign * offset};
   }
 }
 
