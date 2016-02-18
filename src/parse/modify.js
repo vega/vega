@@ -65,7 +65,7 @@ function parseModify(model, def, ds) {
         d = model.data(ds.name),
         t = null, add = [], rem = [], datum;
 
-    if (dl.isObject(value) && !fieldName) {
+    if (dl.isObject(value)) {
       datum = value;
     } else {
       datum = {};
