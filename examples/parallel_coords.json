@@ -1,0 +1,145 @@
+{
+  "width": 700,
+  "height": 400,
+  "data": [
+    {
+      "name": "cars",
+      "url": "data/cars.json",
+      "transform": [
+        {"type": "filter", "test": "datum.Horsepower && datum.Miles_per_Gallon"}  
+      ]
+    },
+    {
+      "name": "fields",
+      "values": [
+        "Cylinders",
+        "Displacement",
+        "Weight_in_lbs",
+        "Horsepower",
+        "Acceleration",
+        "Miles_per_Gallon",
+        "Year"
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "ord",
+      "type": "ordinal",
+      "range": "width", "points": true,
+      "domain": ["Cylinders", "Displacement", "Weight_in_lbs", "Horsepower",
+                 "Acceleration", "Miles_per_Gallon", "Year"]
+    },
+    {
+      "name": "Cylinders", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Cylinders"}
+    },
+    {
+      "name": "Displacement", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Displacement"}
+    },
+    {
+      "name": "Weight_in_lbs", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Weight_in_lbs"}
+    },
+    {
+      "name": "Horsepower", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Horsepower"}
+    },
+    {
+      "name": "Acceleration", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Acceleration"}
+    },
+    {
+      "name": "Miles_per_Gallon", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Miles_per_Gallon"}
+    },
+    {
+      "name": "Year", "type": "linear",
+      "range": "height", "zero": false, "nice": true,
+      "domain": {"data": "cars", "field": "Year"}
+    }
+  ],
+  "axes": [
+    {
+      "type": "y",
+      "scale": "Cylinders",
+      "offset": {"scale": "ord","value": "Cylinders"}
+    },
+    {
+      "type": "y",
+      "scale": "Displacement",
+      "offset": {"scale": "ord","value": "Displacement"}
+    },
+    {
+      "type": "y",
+      "scale": "Weight_in_lbs",
+      "offset": {"scale": "ord","value": "Weight_in_lbs"}
+    },
+    {
+      "type": "y",
+      "scale": "Horsepower",
+      "offset": {"scale": "ord","value": "Horsepower"}
+    },
+    {
+      "type": "y",
+      "scale": "Acceleration",
+      "offset": {"scale": "ord","value": "Acceleration"}
+    },
+    {
+      "type": "y",
+      "scale": "Miles_per_Gallon",
+      "offset": {"scale": "ord","value": "Miles_per_Gallon"}
+    },
+    {
+      "type": "y",
+      "scale": "Year",
+      "offset": {"scale": "ord","value": "Year"}
+    }
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "from": {"data": "cars"},
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "fields"},
+          "properties": {
+            "enter": {
+              "x": {"scale": "ord", "field": "data"},
+              "y": {
+                "scale": {"datum": "data"},
+                "field": {"parent": {"datum": "data"}}
+              },
+              "stroke": {"value": "steelblue"},
+              "strokeWidth": {"value": 1},
+              "strokeOpacity": {"value": 0.3}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "from": {"data": "fields"},
+      "properties": {
+        "enter": {
+          "x": {"scale": "ord", "field": "data", "offset":-8},
+          "y": {"field": {"group": "height"}, "offset": 6},
+          "fontWeight": {"value": "bold"},
+          "fill": {"value": "black"},
+          "text": {"field": "data"},
+          "align": {"value": "right"},
+          "baseline": {"value": "top"}
+        }
+      }
+    }
+  ]
+}

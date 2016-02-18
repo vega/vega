@@ -14,6 +14,7 @@ function View(el, width, height) {
   this._width   = this.__width = width || 500;
   this._height  = this.__height = height || 300;
   this._bgcolor = null;
+  this._cursor  = true; // Set cursor based on hover propset?
   this._autopad = 1;
   this._padding = {top:0, left:0, bottom:0, right:0};
   this._viewport = null;
@@ -45,9 +46,10 @@ prototype.model = function(model) {
 // Sandboxed streaming data API
 function streaming(src) {
   var view = this,
-      ds = this._model.data(src),
-      name = ds.name(),
-      listener = ds.pipeline()[0],
+      ds = this._model.data(src);
+  if (!ds) return log.error('Data source "'+src+'" is not defined.');
+
+  var listener = ds.pipeline()[0],
       streamer = this._streamer,
       api = {};
 
@@ -57,19 +59,19 @@ function streaming(src) {
   api.insert = function(vals) {
     ds.insert(dl.duplicate(vals));  // Don't pollute the environment
     streamer.addListener(listener);
-    view._changeset.data[name] = 1;
+    view._changeset.data[src] = 1;
     return api;
   };
 
   api.update = function() {
     streamer.addListener(listener);
-    view._changeset.data[name] = 1;
+    view._changeset.data[src] = 1;
     return (ds.update.apply(ds, arguments), api);
   };
 
   api.remove = function() {
     streamer.addListener(listener);
-    view._changeset.data[name] = 1;
+    view._changeset.data[src] = 1;
     return (ds.remove.apply(ds, arguments), api);
   };
 
@@ -125,8 +127,11 @@ prototype.signal = function(name, value, skip) {
 };
 
 function setSignal(name, value) {
-  var cs = this._changeset;
-  this._streamer.addListener(this._model.signal(name).value(value));
+  var cs = this._changeset,
+      sg = this._model.signal(name);
+  if (!sg) return log.error('Signal "'+name+'" is not defined.');
+
+  this._streamer.addListener(sg.value(value));
   cs.signals[name] = 1;
   cs.reflow = true;
 }
@@ -412,8 +417,9 @@ prototype.on = function() {
 };
 
 prototype.onSignal = function(name, handler) {
-  this._model.signal(name).on(handler);
-  return this;
+  var sg = this._model.signal(name);
+  return (sg ?
+    sg.on(handler) : log.error('Signal "'+name+'" is not defined.'), this);
 };
 
 prototype.off = function() {
@@ -422,8 +428,9 @@ prototype.off = function() {
 };
 
 prototype.offSignal = function(name, handler) {
-  this._model.signal(name).off(handler);
-  return this;
+  var sg = this._model.signal(name);
+  return (sg ?
+    sg.off(handler) : log.error('Signal "'+name+'" is not defined.'), this);
 };
 
 View.factory = function(model) {
@@ -443,17 +450,35 @@ View.factory = function(model) {
 
     if (opt.data) v.data(opt.data);
 
-    if (opt.hover !== false && opt.el) {
-      v.on('mouseover', function(evt, item) {
-        if (item && item.hasPropertySet('hover')) {
-          this.update({props:'hover', items:item});
-        }
-      })
-      .on('mouseout', function(evt, item) {
-        if (item && item.hasPropertySet('hover')) {
-          this.update({props:'update', items:item});
-        }
-      });
+    // Register handlers for the hover propset and cursors.
+    if (opt.el) {
+      if (opt.hover !== false) {
+        v.on('mouseover', function(evt, item) {
+          if (item && item.hasPropertySet('hover')) {
+            this.update({props:'hover', items:item});
+          }
+        })
+        .on('mouseout', function(evt, item) {
+          if (item && item.hasPropertySet('hover')) {
+            this.update({props:'update', items:item});
+          }
+        });
+      }
+
+      if (opt.cursor !== false) {
+        // If value is a string, it is a custom value set by the user.
+        // In this case, the user is responsible for maintaining the cursor state
+        // and control only reverts back to this handler if set back to 'default'.
+        v.onSignal('cursor', function(name, value) {
+          var body = d3.select('body');
+          if (dl.isString(value)) {
+            v._cursor = value === 'default';
+            body.style('cursor', value);
+          } else if (dl.isObject(value) && v._cursor) {
+            body.style('cursor', value.default);
+          }
+        });
+      }
     }
 
     return v;

@@ -146,6 +146,8 @@ function ordinal(scale, rng, group) {
         start = rng[0] || 0;
         rng = [start, start + (bw * len + space)];
       }
+
+      if (def.reverse) rng = rng.reverse();
     }
 
     str = typeof rng[0] === 'string';
@@ -506,7 +508,7 @@ function range(group) {
 module.exports = Scale;
 
 var rangeDef = [
-  {"enum": ["width", "height", "shapes", "category10", "category20"]},
+  {"enum": ["width", "height", "shapes", "category10", "category20", "category20b", "category20c"]},
   {
     "type": "array",
     "items": {"oneOf": [{"type":"string"}, {"type": "number"}, {"$ref": "#/refs/signal"}]}

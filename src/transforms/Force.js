@@ -275,6 +275,19 @@ Force.schema = {
       "oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}],
       "default": 0.1
     },
+    "interactive": {
+      "description": "Enables an interactive force-directed layout.",
+      "oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}],
+      "default": false
+    },
+    "active": {
+      "description": "A signal representing the active node.",
+      "$ref": "#/refs/signal"
+    },
+    "fixed": {
+      "description": "The name of a datasource containing the IDs of nodes with fixed positions.",
+      "type": "string"
+    },
     "output": {
       "type": "object",
       "description": "Rename the output data fields",

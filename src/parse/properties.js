@@ -9,6 +9,7 @@ function properties(model, mark, spec) {
   var config = model.config(),
       code = "",
       names = dl.keys(spec),
+      exprs = [], // parsed expressions injected in the generated code
       i, len, name, ref, vars = {},
       deps = {
         signals: {},
@@ -20,7 +21,7 @@ function properties(model, mark, spec) {
         reflow:  false
       };
 
-  code += "var o = trans ? {} : item, d=0, set=this.tpl.set, tmpl=signals||{}, t;\n" +
+  code += "var o = trans ? {} : item, d=0, exprs=this.exprs, set=this.tpl.set, tmpl=signals||{}, t;\n" +
           // Stash for dl.template
           "tmpl.datum  = item.datum;\n" +
           "tmpl.group  = group;\n" +
@@ -43,12 +44,15 @@ function properties(model, mark, spec) {
     ref = spec[name = names[i]];
     code += (i > 0) ? "\n  " : "  ";
     if (ref.rule) {
-      ref = rule(model, name, ref.rule);
+      // a production rule valueref
+      ref = rule(model, name, ref.rule, exprs);
       code += "\n  " + ref.code;
     } else if (dl.isArray(ref)) {
-      ref = rule(model, name, ref);
+      // a production rule valueref as an array
+      ref = rule(model, name, ref, exprs);
       code += "\n  " + ref.code;
     } else {
+      // a simple valueref
       ref = valueRef(config, name, ref);
       code += "d += set(o, "+dl.str(name)+", "+ref.val+");";
     }
@@ -122,7 +126,9 @@ function properties(model, mark, spec) {
     /* jshint evil:true */
     var encoder = Function('item', 'group', 'trans', 'db',
       'signals', 'predicates', code);
+
     encoder.tpl  = Tuple;
+    encoder.exprs = exprs;
     encoder.util = dl;
     encoder.d3   = d3; // For color spaces
     dl.extend(encoder, dl.template.context);
@@ -164,50 +170,64 @@ function hasPath(mark, vars) {
        vars.tension || vars.interpolate));
 }
 
-function rule(model, name, rules) {
+function rule(model, name, rules, exprs) {
   var config  = model.config(),
       deps = dependencies(),
-      inputs  = [], code = '';
+      inputs  = [],
+      code = '';
 
   (rules||[]).forEach(function(r, i) {
-    var def = r.predicate,
-        predName = def && (def.name || def),
-        pred = model.predicate(predName),
-        p = 'predicates['+dl.str(predName)+']',
-        input = [], args = name+'_arg'+i,
-        ref;
-
-    if (dl.isObject(def)) {
-      dl.keys(def).forEach(function(k) {
-        if (k === 'name') return;
-        var ref = valueRef(config, i, def[k]);
-        input.push(dl.str(k)+': '+ref.val);
-        dependencies(deps, ref);
-      });
-    }
-
-    ref = valueRef(config, name, r);
+    var ref = valueRef(config, name, r);
     dependencies(deps, ref);
 
-    if (predName) {
-      deps.signals.push.apply(deps.signals, pred.signals);
-      deps.data.push.apply(deps.data, pred.data);
-      inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
-      code += "if ("+p+".call("+p+","+args+", db, signals, predicates)) {" +
-        "\n    d += set(o, "+dl.str(name)+", "+ref.val+");";
+    if (r.test) {
+      // rule uses an expression instead of a predicate.
+      var exprFn = model.expr(r.test);
+      deps.signals.push.apply(deps.signals, exprFn.globals);
+      deps.data.push.apply(deps.data, exprFn.dataSources);
+
+      code += "if (exprs[" + exprs.length + "](item.datum, null)) {" +
+          "\n    d += set(o, "+dl.str(name)+", " +ref.val+");";
       code += rules[i+1] ? "\n  } else " : "  }";
+
+      exprs.push(exprFn.fn);
     } else {
-      code += "{" +
-        "\n    d += set(o, "+dl.str(name)+", "+ref.val+");"+
-        "\n  }\n";
+      var def = r.predicate,
+          predName = def && (def.name || def),
+          pred = model.predicate(predName),
+          p = 'predicates['+dl.str(predName)+']',
+          input = [], args = name+'_arg'+i;
+
+      if (dl.isObject(def)) {
+        dl.keys(def).forEach(function(k) {
+          if (k === 'name') return;
+          var ref = valueRef(config, i, def[k], true);
+          input.push(dl.str(k)+': '+ref.val);
+          dependencies(deps, ref);
+        });
+      }
+
+      if (predName) {
+        // append the predicates dependencies to our dependencies
+        deps.signals.push.apply(deps.signals, pred.signals);
+        deps.data.push.apply(deps.data, pred.data);
+        inputs.push(args+" = {\n    "+input.join(",\n    ")+"\n  }");
+        code += "if ("+p+".call("+p+","+args+", db, signals, predicates)) {" +
+          "\n    d += set(o, "+dl.str(name)+", "+ref.val+");";
+        code += rules[i+1] ? "\n  } else " : "  }";
+      } else {
+        code += "{" +
+          "\n    d += set(o, "+dl.str(name)+", "+ref.val+");"+
+          "\n  }\n";
+      }
     }
   });
 
-  code = "var " + inputs.join(",\n      ") + ";\n  " + code;
+  if (inputs.length) code = "var " + inputs.join(",\n      ") + ";\n  " + code;
   return (deps.code = code, deps);
 }
 
-function valueRef(config, name, ref) {
+function valueRef(config, name, ref, predicateArg) {
   if (ref == null) return null;
 
   if (name==='fill' || name==='stroke') {
@@ -271,10 +291,10 @@ function valueRef(config, name, ref) {
 
     // run through scale function if val specified.
     // if no val, scale function is predicate arg.
-    if (val !== null || ref.band || ref.mult || ref.offset) {
+    if (val !== null || ref.band || ref.mult || ref.offset || !predicateArg) {
       val = scale + (ref.band ? '.rangeBand()' :
         '('+(val !== null ? val : 'item.datum.data')+')');
-    } else {
+    } else if (predicateArg) {
       val = scale;
     }
   }
@@ -398,22 +418,7 @@ function valueSchema(type) {
         "rule": {
           "type": "array",
           "items": {
-            "allOf": [{
-              "type": "object",
-              "properties": {
-                "predicate": {
-                  "oneOf": [
-                    {"type": "string"},
-                    {
-                      "type": "object",
-                      "properties": {"name": { "type": "string" }},
-                      "required": ["name"]
-                    }
-                  ]
-                }
-              }
-            },
-            valRef]
+            "allOf": [{"$ref": "#/defs/rule"}, valRef]
           }
         }
       },
@@ -423,22 +428,7 @@ function valueSchema(type) {
     {
       "type": "array",
       "items": {
-        "allOf": [{
-          "type": "object",
-          "properties": {
-            "predicate": {
-              "oneOf": [
-                {"type": "string"},
-                {
-                  "type": "object",
-                  "properties": {"name": { "type": "string" }},
-                  "required": ["name"]
-                }
-              ]
-            }
-          }
-        },
-        valRef]
+        "allOf": [{"$ref": "#/defs/rule"}, valRef]
       }
     },
     valRef]
@@ -557,6 +547,29 @@ properties.schema = {
   },
 
   "defs": {
+    "rule": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "predicate": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "object",
+                  "properties": {"name": { "type": "string" }},
+                  "required": ["name"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"test": {"type": "string"}}
+        }
+      ]
+    },
     "propset": {
       "title": "Mark property set",
       "type": "object",

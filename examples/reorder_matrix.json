@@ -1,0 +1,193 @@
+{
+  "width": 750,
+  "height": 750,
+
+  "data": [
+    {
+      "name": "nodes",
+      "url": "data/miserables.json",
+      "format": {"type": "json", "property": "nodes"},
+      "transform": [
+        {
+          "type": "formula",
+          "field": "order",
+          "expr": "datum.order == null ? datum.index : datum.order"
+        },
+        {
+          "type": "formula",
+          "field": "order",
+          "expr": "if(dragging && datum._id === dest._id, src.order, datum.order)"
+        },
+        {
+          "type": "formula",
+          "field": "order",
+          "expr": "if(dragging && datum._id === src._id, destOrder, datum.order)"
+        }
+      ]
+    },
+    {
+      "name": "edges",
+      "url": "data/miserables.json",
+      "format": {"type": "json", "property": "links"},
+      "transform": [
+        {
+          "type": "lookup",
+          "on": "nodes", "onKey": "index",
+          "keys": ["source", "target"], "as": ["s", "t"]
+        },
+        {
+          "type": "formula",
+          "field": "adjacent",
+          "expr": "datum.s.group === datum.t.group ? datum.s.group : null"
+        }
+      ]
+    }
+  ],
+
+  "signals": [
+    {
+      "name": "src",
+      "init": {},
+      "streams": [
+        {"type": "@label:mousedown", "expr": "datum"},
+        {"type": "window:mouseup", "expr": "{}"}
+      ]
+    },
+    {
+      "name": "dest",
+      "init": {},
+      "streams": [
+        {"type": "@label:mouseover[src._id != null]", "expr": "datum"},
+        {"type": "@label:mouseout", "expr": "{}"}
+      ]
+    },
+    {"name": "destOrder", "expr": "dest.order"},
+    {"name": "dragging",  "expr": "src._id && dest._id"}
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "ordinal",
+      "domain": {"data": "nodes", "field": "order", "sort": true},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "ordinal",
+      "domain": {"data": "nodes", "field": "order", "sort": true},
+      "range": "height"
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "nodes", "field": "group"},
+      "range": "category20"
+    },
+    {
+      "name": "labels",
+      "type": "ordinal",
+      "domain": {"data": "nodes", "field": "order"},
+      "range": {"data": "nodes", "field": "name"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {
+        "data": "nodes",
+        "transform": [{"type": "cross"}]
+      },
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "a.order"},
+          "y": {"scale": "y", "field": "b.order"},
+          "width": {"scale": "x", "band": true, "offset": -1},
+          "height": {"scale": "y", "band": true, "offset": -1},
+          "fill": [
+            { "test": "datum.a._id == datum.b._id",
+              "scale": "c", "field": "a.group"
+            },
+            { "test": "datum.a._id == src._id",
+              "value": "#ddd"
+            },
+            { "test": "datum.b._id == src._id",
+              "value": "#ddd"
+            },
+            {"value": "#eee"}
+          ]
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "edges"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "s.order"},
+          "y": {"scale": "y", "field": "t.order"},
+          "width": {"scale": "x", "band": true, "offset": -1},
+          "height": {"scale": "y", "band": true, "offset": -1},
+          "fill": {"scale": "c", "field": "adjacent"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "edges"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "t.order"},
+          "width": {"scale": "x", "band": true, "offset": -1},
+          "y": {"scale": "y", "field": "s.order"},
+          "height": {"scale": "y", "band": true, "offset": -1},
+          "fill": {"scale": "c", "field": "adjacent"}
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "from": {"data": "nodes"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "order"},
+          "y": {"value": 20},
+          "dy": {"scale": "x", "band": true, "mult": 0.5},
+          "text": {"field": "name"},
+          "fontSize": {"value": 10},
+          "angle": {"value": -90},
+          "align": {"value": "left"},
+          "fill": [
+            { "test": "datum._id == src._id",
+              "value": "steelblue"
+            },
+            {"value": "black"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "from": {"data": "nodes"},
+      "properties": {
+        "update": {
+          "x": {"value": 20},
+          "y": {"scale": "y", "field": "order"},
+          "dy": {"scale": "y", "band": true, "mult": 0.5},
+          "text": {"field": "name"},
+          "fontSize": {"value": 10},
+          "align": {"value": "right"},
+          "fill": [
+            { "test": "datum._id == src._id",
+              "value": "steelblue"
+            },
+            {"value": "black"}
+          ]
+        }
+      }
+    }
+  ]
+}

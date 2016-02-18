@@ -718,6 +718,32 @@ describe('Scale', function() {
           done();
         });
       });
+
+      it('should support `category20b`', function(done) {
+        parseSpec(spec('category20b'), viewFactory, function(error, model) {
+        var group = model.scene().items[0],
+            linear = group.scale('lin'),
+            ordinal = group.scale('ord');
+
+          expect(linear.range()).to.eql(config.range.category20b);
+          expect(ordinal.range()).to.eql(config.range.category20b);
+
+          done();
+        });
+      });
+
+      it('should support `category20c`', function(done) {
+        parseSpec(spec('category20c'), viewFactory, function(error, model) {
+        var group = model.scene().items[0],
+            linear = group.scale('lin'),
+            ordinal = group.scale('ord');
+
+          expect(linear.range()).to.eql(config.range.category20c);
+          expect(ordinal.range()).to.eql(config.range.category20c);
+
+          done();
+        });
+      });
     });
 
     describe('Min/Max', function() {
