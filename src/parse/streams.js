@@ -1,8 +1,8 @@
 var d3 = require('d3'),
     dl = require('datalib'),
     df = require('vega-dataflow'),
-    parseSignals = require('./signals'),
-    selector = require('./events');
+    selector = require('vega-event-selector'),
+    parseSignals = require('./signals');
 
 var GATEKEEPER = '_vgGATEKEEPER',
     EVALUATOR  = '_vgEVALUATOR';

@@ -2,7 +2,7 @@
   "url": "app/spec/vega/airports.json",
   "parameters": [
     {
-      "signal": "scale", "type": "range",
+      "signal": "geoscale", "type": "range",
       "value": 1200, "min": 500, "max": 3000,
       "rewrite": ["data[0].transform[0].scale", "data[2].transform[2].scale"]
     },

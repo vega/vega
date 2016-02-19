@@ -37,11 +37,12 @@
   },
   "dependencies": {
     "d3": "^3.5.9",
-    "d3-geo-projection": "^0.2.15",
     "d3-cloud": "^1.2.1",
+    "d3-geo-projection": "^0.2.15",
     "datalib": "^1.5.7",
     "topojson": "^1.6.19",
     "vega-dataflow": "^1.4.0",
+    "vega-event-selector": "^1.0.0",
     "vega-expression": "^1.2.0",
     "vega-logging": "^1.0.1",
     "vega-scenegraph": "^1.0.16",

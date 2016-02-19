@@ -101,7 +101,7 @@
     {
       "name": "trackCountries",
       "modify": [
-        {"type": "toggle", "signal": "active", "field": "active"}
+        {"type": "toggle", "signal": "active", "field": "country"}
       ]
     }
   ],
@@ -110,8 +110,6 @@
     {"name": "minYear", "init": 1955},
     {"name": "maxYear", "init": 2005},
     {"name": "stepYear", "init": 5},
-
-
     {
       "name": "active",
       "init": {},
@@ -346,7 +344,7 @@
           "y": {"scale": "y", "field": "inter_life_expect", "offset": -7},
           "fillOpacity": [
             {
-              "test": "datum.country==timeline.country || indata('trackCountries', datum.country, 'active.country')",
+              "test": "datum.country==timeline.country || indata('trackCountries', datum.country, 'country')",
               "value": 0.75
             },
             {"value": 0}
@@ -368,7 +366,7 @@
           "y": {"scale": "y", "field": "inter_life_expect"},
           "fillOpacity": [
             {
-              "test": "datum.country==timeline.country || indata('trackCountries', datum.country, 'active.country')",
+              "test": "datum.country==timeline.country || indata('trackCountries', datum.country, 'country')",
               "value": 1
             },
             {"value": 0.5}
