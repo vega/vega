@@ -134,8 +134,8 @@ function ordinal(scale, rng, group) {
   // range
   if (!dl.equal(prev.range, rng)) {
     // width-defined range
-    if (def.bandWidth) {
-      var bw = signal.call(this, def.bandWidth),
+    if (def.bandSize) {
+      var bw = signal.call(this, def.bandSize),
           len = domain.length,
           space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
           start;
@@ -661,7 +661,7 @@ Scale.schema = {
             "points": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
             "padding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
             "outerPadding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-            "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
+            "bandSize": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
           },
           "required": ["type"]
         }, {
