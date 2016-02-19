@@ -18,9 +18,13 @@
   },
   "main": "index.js",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "datalib": "^1.6.1",
+    "mocha": "^2.4.5",
     "pegjs": "^0.9.0"
   },
   "scripts": {
-    "build": "pegjs selector.pegjs index.js"
+    "build": "pegjs selector.pegjs index.js",
+    "test": "mocha events.test.js"
   }
 }
