@@ -1,0 +1,26 @@
+{
+  "name": "vega-event-selector",
+  "version": "1.0.0",
+  "description": "A CSS-inspired language to select, sequence, and compose DOM events.",
+  "keywords": [
+    "vega",
+    "events",
+    "selectors"
+  ],
+  "author": {
+    "name": "Arvind Satyanarayan",
+    "url": "http://arvindsatya.com"
+  },
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/vega/vega-event-selector.git"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "pegjs": "^0.9.0"
+  },
+  "scripts": {
+    "build": "pegjs selector.pegjs index.js"
+  }
+}
