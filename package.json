@@ -63,7 +63,6 @@
     "jshint": "^2.8.0",
     "jstransform": "^11.0.2",
     "mocha": "^2.2.5",
-    "pegjs": "~0.8.0",
     "through": "^2.3.8",
     "tv4": "^1.1.12",
     "uglify-js": "^2.4.24",
@@ -77,8 +76,7 @@
     "lint": "jshint src/",
     "test": "mocha --timeout 30000 --recursive test/",
     "cover": "istanbul cover _mocha -- --timeout 30000 --recursive test/",
-    "pegjs": "pegjs src/parse/events.pegjs",
-    "build": "npm run pegjs && browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
+    "build": "browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
     "postbuild": "uglifyjs vega.js -cm > vega.min.js",
     "schema": "node scripts/schema.js > vega-schema.json",
     "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
