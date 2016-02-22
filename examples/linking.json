@@ -21,27 +21,37 @@
       ]
     },
     {
-      "name": "start",
-      "init": {"x": 0, "y": 0},
+      "name": "start_coords",
+      "init": {},
       "streams": [{
         "type": "@cell:mousedown, @point:mousedown",
         "expr": "{x: clamp(eventX(cell), 0, cell.width), y: clamp(eventY(cell), 0, cell.height)}"
       }]
     },
     {
-      "name": "end",
-      "init": {"x": 0, "y": 0},
+      "name": "end_coords",
+      "init": {},
       "streams": [{
         "type": "@cell:mousedown, @point:mousedown, [(@cell:mousedown, @point:mousedown), window:mouseup] > window:mousemove",
         "expr": "{x: clamp(eventX(cell), 0, cell.width), y: clamp(eventY(cell), 0, cell.height)}"
       }]
     },
     {
+      "name": "start_data",
+      "init": {},
+      "expr": "{x: iscale('x', start_coords.x, cell), y: iscale('y', start_coords.y, cell)}"
+    },
+    {
+      "name": "end_data",
+      "init": {},
+      "expr": "{x: iscale('x', end_coords.x, cell), y: iscale('y', end_coords.y, cell)}"
+    },
+    {
       "name": "brush",
       "init": {"x1": 0, "y1": 0, "x2": 0, "y2": 0},
       "streams": [{
-        "type": "start, end",
-        "expr": "{x1: cell.x + start.x, y1: cell.y + start.y, x2: cell.x + end.x, y2: cell.y + end.y}"
+        "type": "start_coords, end_coords",
+        "expr": "{x1: cell.x + start_coords.x, y1: cell.y + start_coords.y, x2: cell.x + end_coords.x, y2: cell.y + end_coords.y}"
       }]
     }
   ],
@@ -140,7 +150,7 @@
             "update": {
               "fill": [
                 {
-                  "test": "inrange(scale('x', datum[cell.a], cell), start.x, end.x) && inrange(scale('y', datum[cell.b], cell), start.y, end.y)",
+                  "test": "inrange(datum[cell.a], start_data.x, end_data.x) && inrange(datum[cell.b], start_data.y, end_data.y)",
                   "scale": "c",
                   "field": "species"
                 },

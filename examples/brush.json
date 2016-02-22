@@ -7,18 +7,18 @@
     {"name": "h", "init": 200},
     {
       "name": "brush_start",
-      "init": {"x": 0, "y": 0},
+      "init": {},
       "streams": [{
         "type": "mousedown",
-        "expr": "{x: clamp(eventX(), 0, w), y: clamp(eventY(), 0, h)}"
+        "expr": "{x: iscale('x', clamp(eventX(), 0, w)), y: iscale('y', clamp(eventY(), 0, h))}"
       }]
     },
     {
       "name": "brush_end",
-      "init": {"x": 0, "y": 0},
+      "init": {},
       "streams": [{
         "type": "mousedown, [mousedown, window:mouseup] > window:mousemove",
-        "expr": "{x: clamp(eventX(), 0, w), y: clamp(eventY(), 0, h)}"
+        "expr": "{x: iscale('x', clamp(eventX(), 0, w)), y: iscale('y', clamp(eventY(), 0, h))}"
       }]
     }
   ],
@@ -71,7 +71,7 @@
         },
         "update": {
           "fill": [
-            { "test": "inrange(scale('x', datum.sepalWidth), brush_start.x, brush_end.x) && inrange(scale('y', datum.petalLength), brush_start.y, brush_end.y)",
+            { "test": "inrange(datum.sepalWidth, brush_start.x, brush_end.x) && inrange(datum.petalLength, brush_start.y, brush_end.y)",
               "scale": "c",
               "field": "species"
             },
@@ -89,10 +89,10 @@
           "fillOpacity": {"value": 0.2}
         },
         "update": {
-          "x": {"signal": "brush_start.x"},
-          "x2": {"signal": "brush_end.x"},
-          "y": {"signal": "brush_start.y"},
-          "y2": {"signal": "brush_end.y"}
+          "x": {"scale": "x", "signal": "brush_start.x"},
+          "x2": {"scale": "x", "signal": "brush_end.x"},
+          "y": {"scale": "y", "signal": "brush_start.y"},
+          "y2": {"scale": "y", "signal": "brush_end.y"}
         }
       }
     }
