@@ -112,11 +112,11 @@ function axs(model) {
     // setup scale mapping
     var newScale, oldScale, range;
     if (scale.type === ORDINAL) {
-      newScale = {scale: scale.scaleName, offset: scale.rangeBand()/2};
+      newScale = {scale: scale.scaleName, offset: 0.5 + scale.rangeBand()/2};
       oldScale = newScale;
     } else {
-      newScale = {scale: scale.scaleName};
-      oldScale = {scale: scale.scaleName+':prev'};
+      newScale = {scale: scale.scaleName, offset: 0.5};
+      oldScale = {scale: scale.scaleName+':prev', offset: 0.5};
     }
     range = axisScaleRange(scale);
 
@@ -564,8 +564,8 @@ function axisDomain(config) {
     interactive: false,
     properties: {
       enter: {
-        x: {value: 0},
-        y: {value: 0},
+        x: {value: 0.5},
+        y: {value: 0.5},
         stroke: {value: config.axisColor},
         strokeWidth: {value: config.axisWidth}
       },
