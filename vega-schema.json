@@ -31,6 +31,14 @@
         "format": {
           "type": "string"
         },
+        "formatType": {
+          "enum": [
+            "time",
+            "utc",
+            "string",
+            "number"
+          ]
+        },
         "ticks": {
           "type": "number"
         },
@@ -366,6 +374,14 @@
         "format": {
           "type": "string"
         },
+        "formatType": {
+          "enum": [
+            "time",
+            "utc",
+            "string",
+            "number"
+          ]
+        },
         "properties": {
           "type": "object",
           "properties": {
@@ -519,17 +535,8 @@
           ]
         }
       },
-      "anyOf": [
-        {
-          "required": [
-            "type"
-          ]
-        },
-        {
-          "required": [
-            "name"
-          ]
-        }
+      "required": [
+        "type"
       ]
     },
     "container": {
@@ -709,8 +716,7 @@
             },
             "required": [
               "type",
-              "signal",
-              "field"
+              "signal"
             ]
           },
           {
@@ -727,6 +733,22 @@
             "required": [
               "type",
               "predicate"
+            ]
+          },
+          {
+            "properties": {
+              "type": {
+                "enum": [
+                  "clear"
+                ]
+              },
+              "test": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "test"
             ]
           }
         ]
@@ -878,6 +900,41 @@
         }
       ]
     },
+    "rule": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "predicate": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
     "propset": {
       "title": "Mark property set",
       "type": "object",
@@ -930,6 +987,9 @@
         "strokeDashOffset": {
           "$ref": "#/refs/numberValue"
         },
+        "cursor": {
+          "$ref": "#/refs/stringValue"
+        },
         "clip": {
           "$ref": "#/refs/booleanValue"
         },
@@ -946,27 +1006,7 @@
                   "items": {
                     "allOf": [
                       {
-                        "type": "object",
-                        "properties": {
-                          "predicate": {
-                            "oneOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "object",
-                                "properties": {
-                                  "name": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "name"
-                                ]
-                              }
-                            ]
-                          }
-                        }
+                        "$ref": "#/defs/rule"
                       },
                       {
                         "type": "object",
@@ -1037,27 +1077,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -1199,27 +1219,7 @@
                   "items": {
                     "allOf": [
                       {
-                        "type": "object",
-                        "properties": {
-                          "predicate": {
-                            "oneOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "object",
-                                "properties": {
-                                  "name": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "name"
-                                ]
-                              }
-                            ]
-                          }
-                        }
+                        "$ref": "#/defs/rule"
                       },
                       {
                         "type": "object",
@@ -1292,27 +1292,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -1449,27 +1429,7 @@
                   "items": {
                     "allOf": [
                       {
-                        "type": "object",
-                        "properties": {
-                          "predicate": {
-                            "oneOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "object",
-                                "properties": {
-                                  "name": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "name"
-                                ]
-                              }
-                            ]
-                          }
-                        }
+                        "$ref": "#/defs/rule"
                       },
                       {
                         "type": "object",
@@ -1537,27 +1497,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -1678,27 +1618,7 @@
                   "items": {
                     "allOf": [
                       {
-                        "type": "object",
-                        "properties": {
-                          "predicate": {
-                            "oneOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "object",
-                                "properties": {
-                                  "name": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "name"
-                                ]
-                              }
-                            ]
-                          }
-                        }
+                        "$ref": "#/defs/rule"
                       },
                       {
                         "type": "object",
@@ -1767,27 +1687,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -2005,7 +1905,14 @@
               "eventGroup",
               "eventX",
               "eventY",
-              "open"
+              "open",
+              "scale",
+              "iscale",
+              "inrange",
+              "indata",
+              "format",
+              "timeFormat",
+              "utcFormat"
             ]
           }
         },
@@ -3027,6 +2934,26 @@
           ],
           "default": 0.1
         },
+        "interactive": {
+          "description": "Enables an interactive force-directed layout.",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": false
+        },
+        "active": {
+          "description": "A signal representing the active node.",
+          "$ref": "#/refs/signal"
+        },
+        "fixed": {
+          "description": "The name of a datasource containing the IDs of nodes with fixed positions.",
+          "type": "string"
+        },
         "output": {
           "type": "object",
           "description": "Rename the output data fields",
@@ -3827,6 +3754,57 @@
           }
         }
       },
+      "required": [
+        "type"
+      ]
+    },
+    "rankTransform": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Rank transform",
+      "description": "Computes ascending rank scores for data tuples.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "rank"
+          ]
+        },
+        "field": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "description": "A key field to used to rank tuples. If undefined, tuples will be ranked in their observed order."
+        },
+        "normalize": {
+          "description": "If true, values of the output field will lie in the range [0, 1].",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": false
+        },
+        "output": {
+          "type": "object",
+          "description": "Rename the output data fields",
+          "properties": {
+            "rank": {
+              "type": "string",
+              "default": "rank"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
       "required": [
         "type"
       ]
@@ -4787,6 +4765,9 @@
             "$ref": "#/defs/pieTransform"
           },
           {
+            "$ref": "#/defs/rankTransform"
+          },
+          {
             "$ref": "#/defs/sortTransform"
           },
           {
@@ -4941,7 +4922,9 @@
                         "height",
                         "shapes",
                         "category10",
-                        "category20"
+                        "category20",
+                        "category20b",
+                        "category20c"
                       ]
                     },
                     {
@@ -4998,7 +4981,7 @@
                     }
                   ]
                 },
-                "bandWidth": {
+                "bandSize": {
                   "oneOf": [
                     {
                       "type": "number"
@@ -5029,7 +5012,9 @@
                         "height",
                         "shapes",
                         "category10",
-                        "category20"
+                        "category20",
+                        "category20b",
+                        "category20c"
                       ]
                     },
                     {
@@ -5110,7 +5095,9 @@
                             "height",
                             "shapes",
                             "category10",
-                            "category20"
+                            "category20",
+                            "category20b",
+                            "category20c"
                           ]
                         },
                         {
@@ -5357,27 +5344,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -5441,27 +5408,7 @@
           "items": {
             "allOf": [
               {
-                "type": "object",
-                "properties": {
-                  "predicate": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "name"
-                        ]
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/defs/rule"
               },
               {
                 "type": "object",
@@ -5574,27 +5521,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -5658,27 +5585,7 @@
           "items": {
             "allOf": [
               {
-                "type": "object",
-                "properties": {
-                  "predicate": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "name"
-                        ]
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/defs/rule"
               },
               {
                 "type": "object",
@@ -5791,27 +5698,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -5885,27 +5772,7 @@
           "items": {
             "allOf": [
               {
-                "type": "object",
-                "properties": {
-                  "predicate": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "name"
-                        ]
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/defs/rule"
               },
               {
                 "type": "object",
@@ -6038,27 +5905,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -6122,27 +5969,7 @@
           "items": {
             "allOf": [
               {
-                "type": "object",
-                "properties": {
-                  "predicate": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "name"
-                        ]
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/defs/rule"
               },
               {
                 "type": "object",
@@ -6255,27 +6082,7 @@
               "items": {
                 "allOf": [
                   {
-                    "type": "object",
-                    "properties": {
-                      "predicate": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "object",
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "name"
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/defs/rule"
                   },
                   {
                     "type": "object",
@@ -6339,27 +6146,7 @@
           "items": {
             "allOf": [
               {
-                "type": "object",
-                "properties": {
-                  "predicate": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "name"
-                        ]
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/defs/rule"
               },
               {
                 "type": "object",
