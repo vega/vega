@@ -3,7 +3,7 @@
   "height": 400,
   "padding": {"top": 10, "left": 10, "right": 80, "bottom": 10},
   "background": "#edf1f7",
-  
+
   "signals": [
     {
       "name": "dragging",
@@ -39,9 +39,15 @@
         "type": "mousemove[!dragging]", "expr": "eventY()",
         "scale": {"name": "y", "invert": true}
       }]
+    },
+    {
+      "name": "cursor",
+      "streams": [
+        {"type": "dragging", "expr": "dragging ? 'pointer' : 'default'"}
+      ]
     }
   ],
-  
+
   "data": [
     {
       "name": "budgets",
@@ -56,7 +62,7 @@
       "source": "budgets",
       "transform": [
         {
-          "type": "filter", 
+          "type": "filter",
           "test": "datum.budgetYear <= currentYear && datum.forecastYear == tipYear && abs(datum.value - tipValue) <= 0.1"
         },
         {
@@ -73,7 +79,7 @@
       "source": "budgets",
       "transform": [
         {
-          "type": "lookup", 
+          "type": "lookup",
           "on": "tooltip", "onKey": "minYear",
           "keys": ["budgetYear"], "as": ["t"]
         },
@@ -99,8 +105,8 @@
 
   "axes": [
     {
-      "type": "x", "scale": "x", 
-      "grid": true, "layer": "back", 
+      "type": "x", "scale": "x",
+      "grid": true, "layer": "back",
       "values": [1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018],
       "tickSize": 0,
       "properties": {
@@ -113,8 +119,8 @@
       }
     },
     {
-      "type": "y", "scale": "y", 
-      "grid": true, "layer": "back", "orient": "right", 
+      "type": "y", "scale": "y",
+      "grid": true, "layer": "back", "orient": "right",
       "values": [0, -0.5, -1, -1.5],
       "tickSize": 0,
       "properties": {
@@ -226,7 +232,8 @@
           "fill": {"value": "#fff"}
         },
         "hover": {
-          "fill": {"value": "lemonchiffon"}
+          "fill": {"value": "lemonchiffon"},
+          "cursor": {"value": "pointer"}
         }
       }
     },
@@ -261,7 +268,7 @@
           "strokeWidth": {"value": 0.5}
         }
       },
-      
+
       "marks": [
         {
           "type": "text",

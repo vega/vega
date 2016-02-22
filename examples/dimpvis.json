@@ -120,6 +120,12 @@
     },
     {"name": "isActive", "expr": "active.country"},
     {
+      "name": "cursor",
+      "streams": [
+        {"type": "isActive", "expr": "isActive ? 'pointer' : 'default'"}
+      ]
+    },
+    {
       "name": "timeline",
       "init": {},
       "streams": [
@@ -371,6 +377,9 @@
             },
             {"value": 0.5}
           ]
+        },
+        "hover": {
+          "cursor": {"value": "pointer"}
         }
       }
     }
