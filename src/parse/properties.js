@@ -591,6 +591,7 @@ properties.schema = {
         "strokeOpacity": {"$ref": "#/refs/numberValue"},
         "strokeDash": {"$ref": "#/refs/arrayValue"},
         "strokeDashOffset": {"$ref": "#/refs/numberValue"},
+        "cursor": {"$ref": "#/refs/stringValue"},
 
         // Group-mark properties
         "clip": {"$ref": "#/refs/booleanValue"},
