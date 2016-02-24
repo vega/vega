@@ -1,7 +1,8 @@
 var dl = require('datalib'),
     df = require('vega-dataflow'),
-    Node = df.Node, // jshint ignore:line
-    Deps = df.Dependencies,
+    Node  = df.Node, // jshint ignore:line
+    Deps  = df.Dependencies,
+    Tuple = df.Tuple,
     Collector = df.Collector,
     log = require('vega-logging'),
     Builder = require('./Builder'),
@@ -62,7 +63,20 @@ proto.init = function(graph, def) {
 proto.evaluate = function() {
   var output  = Builder.prototype.evaluate.apply(this, arguments),
       model   = this._graph,
-      builder = this;
+      builder = this,
+      scales = this._scales,
+      items  = this._mark.items;
+
+  // If scales need to be reevaluated, we need to send all group items forward.
+  if (output.mod.length < items.length) {
+    var fullUpdate = dl.keys(scales).some(function(s) {
+      return scales[s].reevaluate(output);
+    });
+
+    if (fullUpdate) {
+      output.mod = output.mod.concat(Tuple.idFilter(items, output.mod));
+    }
+  }
 
   output.add.forEach(function(group) { buildGroup.call(builder, output, group); });
   output.rem.forEach(function(group) { model.group(group._id, null); });

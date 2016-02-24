@@ -103,7 +103,7 @@ function inlineDs() {
     // Bounder reflows, so we need an intermediary node to propagate
     // the output constructed by the Builder.
     node = new Node(this._graph).addListener(this._ds.listener());
-    node.evaluate = function(input) { 
+    node.evaluate = function(input) {
       var out  = ChangeSet.create(input),
           sout = sibling._output;
 
