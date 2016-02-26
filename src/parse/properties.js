@@ -614,6 +614,7 @@ properties.schema = {
         "interpolate": valueSchema(["linear", "step-before", "step-after",
           "basis", "basis-open", "cardinal", "cardinal-open", "monotone"]),
         "tension": {"$ref": "#/refs/numberValue"},
+        "orient": valueSchema(["horizontal", "vertical"]),
 
         // Image-mark properties
         "url": {"$ref": "#/refs/stringValue"},
