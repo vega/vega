@@ -393,6 +393,7 @@ prototype.toImageURL = function(type) {
   // render the scenegraph
   var ren = new Renderer(v._model.config.load)
     .initialize(null, v._width, v._height, v._padding)
+    .background(v._bgcolor)
     .render(v._model.scene());
 
   sg.canvas.Renderer.RETINA = retina; // restore retina settings
