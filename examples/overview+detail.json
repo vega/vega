@@ -120,7 +120,8 @@
           "x": {"value": 0},
           "y": {"value": 430},
           "height": {"value": 70},
-          "width": {"value": 720}
+          "width": {"value": 720},
+          "fill": {"value": "transparent"}
         }
       },
       "axes": [
