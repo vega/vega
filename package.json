@@ -77,7 +77,7 @@
     "test": "mocha --timeout 30000 --recursive test/",
     "cover": "istanbul cover _mocha -- --timeout 30000 --recursive test/",
     "build": "browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
-    "postbuild": "uglifyjs vega.js -cm > vega.min.js",
+    "postbuild": "uglifyjs vega.js -cm > vega.min.js && npm run schema",
     "schema": "node scripts/schema.js > vega-schema.json",
     "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
   },
