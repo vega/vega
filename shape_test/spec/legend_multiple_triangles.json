@@ -5,8 +5,7 @@
     {
       "name": "table",
       "values": [
-        {"category":"A", "amount":100},
-        {"category":"B", "amount":50}
+        {"category":"A", "amount":100}
       ],
       "transform": [
         {"type": "pie", "field": "amount"}
@@ -32,8 +31,9 @@
       "fill": "color",
       "properties": {
         "symbols": {
+          "size": {"value": 200},
           "shape": {
-            "value": "star"
+            "value": "M-0.25,0.25L0,0.5 0.25,0.25 -0.25,0.25M0.25,0.25L0.5,0 0.25,-0.25 0.25,0.25M0.25,-0.25L0,-0.5 -0.25,-0.25 0.25,-0.25M-0.25,-0.25L-0.5,0 -0.25,0.25 -0.25,-0.25Z"
           }
         }
       }
