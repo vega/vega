@@ -8,13 +8,14 @@ var dl = require('datalib'),
 var Types = {
   INSERT: "insert",
   REMOVE: "remove",
+  UPSERT: "upsert",
   TOGGLE: "toggle",
   CLEAR:  "clear"
 };
 
 var EMPTY = [];
 
-var filter = function(fields, value, src, dest) {
+function filter(fields, value, src, dest) {
   if ((fields = dl.array(fields)) && !fields.length) {
     fields = dl.isObject(value) ? dl.keys(value) : ['data'];
   }
@@ -32,7 +33,13 @@ var filter = function(fields, value, src, dest) {
     if (splice) dest.push.apply(dest, src.splice(i, 1));
     splice = true;
   }
-};
+}
+
+function insert(input, datum, source) {
+  var t = Tuple.ingest(datum);
+  input.add.push(t);
+  source._data.push(t);
+}
 
 function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null,
@@ -63,25 +70,33 @@ function parseModify(model, def, ds) {
 
     var value = signal ? model.signalRef(def.signal) : null,
         d = model.data(ds.name),
-        t = null, add = [], rem = [], datum;
+        t = null, add = [], rem = [], up = 0, datum;
 
     if (dl.isObject(value)) {
       datum = value;
     } else {
       datum = {};
-      datum[fieldName || 'data'] = value;
+      datum[fieldName || (fieldName = 'data')] = value;
     }
 
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples.
     if (def.type === Types.INSERT) {
-      input.add.push(t=Tuple.ingest(datum));
-      d._data.push(t);
+      insert(input, datum, d);
     } else if (def.type === Types.REMOVE) {
       filter(fieldName, value, input.mod, input.rem);
       filter(fieldName, value, input.add, rem);
       filter(fieldName, value, d._data, rem);
+    } else if (def.type === Types.UPSERT) {
+      input.mod.forEach(function(x) {
+        if (x[fieldName] === datum[fieldName]) {
+          dl.extend(x, datum);
+          ++up;
+        }
+      });
+
+      if (up === 0) insert(input, datum, d);
     } else if (def.type === Types.TOGGLE) {
       // If tuples are in mod, remove them.
       filter(fieldName, value, input.mod, rem);
@@ -136,7 +151,9 @@ parseModify.schema = {
         "type": "object",
         "oneOf": [{
           "properties": {
-            "type": {"enum": [Types.INSERT, Types.REMOVE, Types.TOGGLE]},
+            "type": {"enum": [
+              Types.INSERT, Types.REMOVE, Types.UPSERT, Types.TOGGLE
+            ]},
             "signal": {"type": "string"},
             "field": {"type": "string"}
           },

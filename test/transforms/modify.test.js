@@ -77,6 +77,70 @@ describe('Modify Transforms', function() {
     });
   });
 
+  it('should upsert values', function(done) {
+    var spec = {
+      "signals": [
+        {"name": "A", "init": {"key": "foo", "value": 5}},
+        {"name": "B", "init": {"key": "bar", "value": 10}}
+      ],
+      "data": [{
+        "name": "table",
+        "values": [],
+        "modify": [
+          {"type": "upsert", "signal": "A", "field": "key"},
+          {"type": "upsert", "signal": "B", "field": "key"},
+        ]
+      }]
+    };
+
+    parseSpec(spec, modelFactory, function(error, model) {
+      var ds = model.data('table'),
+          vals = ds.values();
+
+      expect(vals).to.have.length(0);
+
+      model.signal('A').fire();
+      vals = ds.values();
+      expect(vals).to.have.length(1);
+      expect(vals[0].key).to.equal('foo');
+      expect(vals[0].value).to.equal(5);
+
+      model.signal('B').fire();
+      vals = ds.values();
+      expect(vals).to.have.length(2);
+      expect(vals[0].key).to.equal('foo');
+      expect(vals[0].value).to.equal(5);
+      expect(vals[1].key).to.equal('bar');
+      expect(vals[1].value).to.equal(10);
+
+      model.signal('A').value({key: 'foo', value: 15}).fire();
+      expect(vals).to.have.length(2);
+      expect(vals[0].key).to.equal('foo');
+      expect(vals[0].value).to.equal(15);
+      expect(vals[1].key).to.equal('bar');
+      expect(vals[1].value).to.equal(10);
+
+      model.signal('A').value({key: 'bar', value: 20}).fire();
+      expect(vals).to.have.length(2);
+      expect(vals[0].key).to.equal('foo');
+      expect(vals[0].value).to.equal(15);
+      expect(vals[1].key).to.equal('bar');
+      expect(vals[1].value).to.equal(20);
+
+      model.signal('B').value({key: 'hello', value: 25}).fire();
+      expect(vals).to.have.length(3);
+      expect(vals[0].key).to.equal('foo');
+      expect(vals[0].value).to.equal(15);
+      expect(vals[1].key).to.equal('bar');
+      expect(vals[1].value).to.equal(20);
+      expect(vals[2].key).to.equal('hello');
+      expect(vals[2].value).to.equal(25);
+
+      done();
+    });
+
+  });
+
   it('should toggle values', function(done) {
     var spec = {
       "signals": [{"name": "toggle", "init": 1, "verbose": true}],
