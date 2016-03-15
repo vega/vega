@@ -8,16 +8,16 @@ if [ ! -z "$(git status --porcelain)" ]; then
   echo "There are uncommitted files on master. Please commit or stash first!"
   git status
   exit 1
-fi 
+fi
 
 # 0.3 check if gh-pages files are commited
 git checkout gh-pages
-if [ ! -z "$(git status --porcelain)" ]; then 
+if [ ! -z "$(git status --porcelain)" ]; then
   echo "There are uncommitted files on gh-pages. Please commit or stash first!"
   git status
   git checkout master
   exit 1
-else 
+else
   echo "All tracked files are commited. Publishing for npm, bower & gh-pages."
 fi
 git checkout master
@@ -28,20 +28,19 @@ npm install
 
 # generate build files
 npm run build
-npm run schema
 
 if [ -f "npm-debug.log" ]; then
   echo "An error occurred during the build process. Check npm-debug.log."
   exit 1
 fi
 
-# 1. NPM PUBLISH 
+# 1. NPM PUBLISH
 npm publish
-# exit if npm publish failed 
+# exit if npm publish failed
 rc=$?
-if [[ $rc != 0 ]]; then 
+if [[ $rc != 0 ]]; then
   echo "npm publish failed. Publishing cancelled."
-  exit $rc; 
+  exit $rc;
 fi
 
 # 2. BOWER PUBLISH
@@ -65,7 +64,6 @@ git push --tags
 # 3. GITHUB PAGES PUBLISH
 # re-generate build files
 npm run build
-npm run schema
 
 # populate staging directory
 stage=gh_pages_stage
