@@ -16,15 +16,12 @@ var Types = {
 var EMPTY = [];
 
 function filter(fields, value, src, dest) {
-  if ((fields = dl.array(fields)) && !fields.length) {
-    fields = dl.isObject(value) ? dl.keys(value) : ['data'];
-  }
-
   var splice = true, len = fields.length, i, j, f, v;
   for (i = src.length - 1; i >= 0; --i) {
     for (j=0; j<len; ++j) {
-      v = value[f=fields[j]] || value;
-      if (src[i][f] !== v) {
+      f = fields[j];
+      v = value && f(value) || value;
+      if (f(src[i]) !== v) {
         splice = false;
         break;
       }
@@ -43,12 +40,14 @@ function insert(input, datum, source) {
 
 function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null,
-      signalName = signal ? signal[0] : null,
-      predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
+      signalName  = signal ? signal[0] : null,
+      predicate   = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       exprTrigger = def.test ? model.expr(def.test) : null,
       reeval  = (predicate === null && exprTrigger === null),
       isClear = def.type === Types.CLEAR,
-      fieldName = def.field,
+      fields  = dl.array(def.field || 'data'),
+      getters = fields.map(dl.accessor),
+      setters = fields.map(dl.mutator),
       node = new Node(model).router(isClear);
 
   node.evaluate = function(input) {
@@ -74,9 +73,14 @@ function parseModify(model, def, ds) {
 
     if (dl.isObject(value)) {
       datum = value;
+      if (!def.field) {
+        fields = dl.keys(datum);
+        getters = fields.map(dl.accessor);
+        setters = fields.map(dl.mutator);
+      }
     } else {
       datum = {};
-      datum[fieldName || (fieldName = 'data')] = value;
+      setters.forEach(function(f) { f(datum, value); });
     }
 
     // We have to modify ds._data so that subsequent pulses contain
@@ -85,26 +89,27 @@ function parseModify(model, def, ds) {
     if (def.type === Types.INSERT) {
       insert(input, datum, d);
     } else if (def.type === Types.REMOVE) {
-      filter(fieldName, value, input.mod, input.rem);
-      filter(fieldName, value, input.add, rem);
-      filter(fieldName, value, d._data, rem);
+      filter(getters, value, input.mod, input.rem);
+      filter(getters, value, input.add, rem);
+      filter(getters, value, d._data, rem);
     } else if (def.type === Types.UPSERT) {
       input.mod.forEach(function(x) {
-        if (x[fieldName] === datum[fieldName]) {
-          dl.extend(x, datum);
-          ++up;
-        }
+        var every = getters.every(function(f) {
+          return f(x) === f(datum);
+        });
+
+        if (every) up = (dl.extend(x, datum), up+1);
       });
 
       if (up === 0) insert(input, datum, d);
     } else if (def.type === Types.TOGGLE) {
       // If tuples are in mod, remove them.
-      filter(fieldName, value, input.mod, rem);
+      filter(getters, value, input.mod, rem);
       input.rem.push.apply(input.rem, rem);
 
       // If tuples are in add, they've been added to backing data source,
       // but no downstream operators will have seen it yet.
-      filter(fieldName, value, input.add, add);
+      filter(getters, value, input.add, add);
 
       if (add.length || rem.length) {
         d._data = d._data.filter(function(x) {
@@ -123,7 +128,7 @@ function parseModify(model, def, ds) {
       d._data.splice(0);
     }
 
-    if (fieldName) input.fields[fieldName] = 1;
+    fields.forEach(function(f) { input.fields[f] = 1; });
     return input;
   };
 
