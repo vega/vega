@@ -603,7 +603,17 @@ Scale.schema = {
                   ]
                 }
               },
-              {"$ref": "#/refs/data"}
+              {"$ref": "#/refs/data"},
+              {
+                "type": "object",
+                "properties": {
+                  "fields": {
+                    "type": "array",
+                    "items": {"$ref": "#/refs/data"}
+                  }
+                },
+                "required": ["fields"],
+              }
             ]
           },
 
