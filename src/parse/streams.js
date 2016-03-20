@@ -9,7 +9,12 @@ var GATEKEEPER = '_vgGATEKEEPER',
 
 var vgEvent = {
   getItem: function() { return this.item; },
-  getGroup: function(name) { return name ? this.name[name] : this.group; },
+  getGroup: function(name) {
+    var group = name ? this.name[name] : this.group,
+        mark = group && group.mark,
+        interactive = mark && (mark.interactive || mark.interactive === undefined);
+    return interactive ? group : {};
+  },
   getXY: function(item) {
       var p = {x: this.x, y: this.y};
       if (typeof item === 'string') {
