@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.5.1',
+  version: '2.5.2',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -1356,7 +1356,7 @@ module.exports = {
     days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
     shortDays: ["일", "월", "화", "수", "목", "금", "토"],
     months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-    shortMonths: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+    shortMonths: ["1월", "2월", "3월", "4���", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
   });
 
   var mkMK = locale$1({
@@ -1386,7 +1386,7 @@ module.exports = {
     date: "%d/%m/%Y",
     time: "%H:%M:%S",
     periods: ["AM", "PM"], // unused
-    days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+    days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Pi��tek", "Sobota"],
     shortDays: ["Niedz.", "Pon.", "Wt.", "Śr.", "Czw.", "Pt.", "Sob."],
     months: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"],
     shortMonths: ["Stycz.", "Luty", "Marz.", "Kwie.", "Maj", "Czerw.", "Lipc.", "Sierp.", "Wrz.", "Paźdz.", "Listop.", "Grudz."]/* In Polish language abbraviated months are not commonly used so there is a dispute about the proper abbraviations. */
@@ -15452,22 +15452,20 @@ var dl = require('datalib'),
 var Types = {
   INSERT: "insert",
   REMOVE: "remove",
+  UPSERT: "upsert",
   TOGGLE: "toggle",
   CLEAR:  "clear"
 };
 
 var EMPTY = [];
 
-var filter = function(fields, value, src, dest) {
-  if ((fields = dl.array(fields)) && !fields.length) {
-    fields = dl.isObject(value) ? dl.keys(value) : ['data'];
-  }
-
+function filter(fields, value, src, dest) {
   var splice = true, len = fields.length, i, j, f, v;
   for (i = src.length - 1; i >= 0; --i) {
     for (j=0; j<len; ++j) {
-      v = value[f=fields[j]] || value;
-      if (src[i][f] !== v) {
+      f = fields[j];
+      v = value && f(value) || value;
+      if (f(src[i]) !== v) {
         splice = false;
         break;
       }
@@ -15476,16 +15474,24 @@ var filter = function(fields, value, src, dest) {
     if (splice) dest.push.apply(dest, src.splice(i, 1));
     splice = true;
   }
-};
+}
+
+function insert(input, datum, source) {
+  var t = Tuple.ingest(datum);
+  input.add.push(t);
+  source._data.push(t);
+}
 
 function parseModify(model, def, ds) {
   var signal = def.signal ? dl.field(def.signal) : null,
-      signalName = signal ? signal[0] : null,
-      predicate = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
+      signalName  = signal ? signal[0] : null,
+      predicate   = def.predicate ? model.predicate(def.predicate.name || def.predicate) : null,
       exprTrigger = def.test ? model.expr(def.test) : null,
       reeval  = (predicate === null && exprTrigger === null),
       isClear = def.type === Types.CLEAR,
-      fieldName = def.field,
+      fields  = dl.array(def.field || 'data'),
+      getters = fields.map(dl.accessor),
+      setters = fields.map(dl.mutator),
       node = new Node(model).router(isClear);
 
   node.evaluate = function(input) {
@@ -15507,33 +15513,47 @@ function parseModify(model, def, ds) {
 
     var value = signal ? model.signalRef(def.signal) : null,
         d = model.data(ds.name),
-        t = null, add = [], rem = [], datum;
+        t = null, add = [], rem = [], up = 0, datum;
 
     if (dl.isObject(value)) {
       datum = value;
+      if (!def.field) {
+        fields = dl.keys(datum);
+        getters = fields.map(dl.accessor);
+        setters = fields.map(dl.mutator);
+      }
     } else {
       datum = {};
-      datum[fieldName || 'data'] = value;
+      setters.forEach(function(f) { f(datum, value); });
     }
 
     // We have to modify ds._data so that subsequent pulses contain
     // our dynamic data. W/o modifying ds._data, only the output
     // collector will contain dynamic tuples.
     if (def.type === Types.INSERT) {
-      input.add.push(t=Tuple.ingest(datum));
-      d._data.push(t);
+      insert(input, datum, d);
     } else if (def.type === Types.REMOVE) {
-      filter(fieldName, value, input.mod, input.rem);
-      filter(fieldName, value, input.add, rem);
-      filter(fieldName, value, d._data, rem);
+      filter(getters, value, input.mod, input.rem);
+      filter(getters, value, input.add, rem);
+      filter(getters, value, d._data, rem);
+    } else if (def.type === Types.UPSERT) {
+      input.mod.forEach(function(x) {
+        var every = getters.every(function(f) {
+          return f(x) === f(datum);
+        });
+
+        if (every) up = (dl.extend(x, datum), up+1);
+      });
+
+      if (up === 0) insert(input, datum, d);
     } else if (def.type === Types.TOGGLE) {
       // If tuples are in mod, remove them.
-      filter(fieldName, value, input.mod, rem);
+      filter(getters, value, input.mod, rem);
       input.rem.push.apply(input.rem, rem);
 
       // If tuples are in add, they've been added to backing data source,
       // but no downstream operators will have seen it yet.
-      filter(fieldName, value, input.add, add);
+      filter(getters, value, input.add, add);
 
       if (add.length || rem.length) {
         d._data = d._data.filter(function(x) {
@@ -15552,7 +15572,7 @@ function parseModify(model, def, ds) {
       d._data.splice(0);
     }
 
-    if (fieldName) input.fields[fieldName] = 1;
+    fields.forEach(function(f) { input.fields[f] = 1; });
     return input;
   };
 
@@ -16497,7 +16517,12 @@ function parseStreams(view) {
       if (s.event)       domEvent(sig, s, exp, spec);
       else if (s.signal) signal(sig, s, exp, spec);
       else if (s.start)  orderedStream(sig, s, exp, spec);
-      else if (s.stream) mergedStream(sig, s.stream, exp, spec);
+      else if (s.stream) {
+        if (s.filters) s.stream.forEach(function(ms) {
+          ms.filters = dl.array(ms.filters).concat(s.filters);
+        });
+        mergedStream(sig, s.stream, exp, spec);
+      }
     });
   }
 
