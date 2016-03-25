@@ -46,23 +46,36 @@ module.exports = (function() {
         peg$c7 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c8 = ">",
         peg$c9 = { type: "literal", value: ">", description: "\">\"" },
-        peg$c10 = function(f1, f2, o) { return {start: f1, end: f2, middle: o}; },
-        peg$c11 = function(s, f) { return (s.filters = f, s); },
+        peg$c10 = function(f1, f2, o) {
+            return {
+              start: f1, middle: o, end: f2,
+              str: '['+f1.str+', '+f2.str+'] > '+o.str};
+            },
+        peg$c11 = function(s, f) {
+            s.filters = f;
+            s.str += f.map(function(x) { return '['+x+']'; }).join('');
+            return s;
+          },
         peg$c12 = function(s) { return s; },
         peg$c13 = "(",
         peg$c14 = { type: "literal", value: "(", description: "\"(\"" },
         peg$c15 = ")",
         peg$c16 = { type: "literal", value: ")", description: "\")\"" },
-        peg$c17 = function(m) { return {stream: m}; },
+        peg$c17 = function(m) {
+            return {
+              stream: m,
+              str: '('+m.map(function(m) { return m.str; }).join(', ')+')'
+            };
+          },
         peg$c18 = "@",
         peg$c19 = { type: "literal", value: "@", description: "\"@\"" },
         peg$c20 = ":",
         peg$c21 = { type: "literal", value: ":", description: "\":\"" },
-        peg$c22 = function(n, e) { return {event: e, name: n}; },
-        peg$c23 = function(m, e) { return {event: e, mark: m}; },
-        peg$c24 = function(t, e) { return {event: e, target: t}; },
-        peg$c25 = function(e) { return {event: e}; },
-        peg$c26 = function(s) { return {signal: s}; },
+        peg$c22 = function(n, e) { return {event: e, name: n, str: '@'+n+':'+e}; },
+        peg$c23 = function(m, e) { return {event: e, mark: m, str: m+':'+e}; },
+        peg$c24 = function(t, e) { return {event: e, target: t, str: t+':'+e}; },
+        peg$c25 = function(e) { return {event: e, str: e}; },
+        peg$c26 = function(s) { return {signal: s, str: s}; },
         peg$c27 = "rect",
         peg$c28 = { type: "literal", value: "rect", description: "\"rect\"" },
         peg$c29 = "symbol",
@@ -124,13 +137,13 @@ module.exports = (function() {
         peg$c85 = function(e) { return e; },
         peg$c86 = /^[a-zA-Z0-9_\-]/,
         peg$c87 = { type: "class", value: "[a-zA-Z0-9_-]", description: "[a-zA-Z0-9_-]" },
-        peg$c88 = function(n) { return n.join(""); },
+        peg$c88 = function(n) { return n.join(''); },
         peg$c89 = /^[a-zA-Z0-9\-_  #.>+~[\]=|\^$*]/,
         peg$c90 = { type: "class", value: "[a-zA-Z0-9-_  #\\.\\>\\+~\\[\\]=|\\^\\$\\*]", description: "[a-zA-Z0-9-_  #\\.\\>\\+~\\[\\]=|\\^\\$\\*]" },
-        peg$c91 = function(c) { return c.join(""); },
+        peg$c91 = function(c) { return c.join(''); },
         peg$c92 = /^['"a-zA-Z0-9_().><=! \t-&|~]/,
         peg$c93 = { type: "class", value: "['\"a-zA-Z0-9_\\(\\)\\.\\>\\<\\=\\! \\t-&|~]", description: "['\"a-zA-Z0-9_\\(\\)\\.\\>\\<\\=\\! \\t-&|~]" },
-        peg$c94 = function(v) { return v.join(""); },
+        peg$c94 = function(v) { return v.join(''); },
         peg$c95 = /^[ \t\r\n]/,
         peg$c96 = { type: "class", value: "[ \\t\\r\\n]", description: "[ \\t\\r\\n]" },
 
