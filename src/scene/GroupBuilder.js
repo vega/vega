@@ -73,8 +73,21 @@ proto.evaluate = function() {
       return scales[s].reevaluate(output);
     });
 
+    if (!fullUpdate && this._def.axes) {
+      fullUpdate = this._def.axes.reduce(function(acc, a) {
+        return acc || output.scales[a.scale];
+      }, false);
+    }
+
+    if (!fullUpdate && this._def.legends) {
+      fullUpdate = this._def.legends.reduce(function(acc, l) {
+        return acc || output.scales[l.size || l.shape || l.fill || l.stroke];
+      }, false);
+    }
+
     if (fullUpdate) {
-      output.mod = output.mod.concat(Tuple.idFilter(items, output.mod));
+      output.mod = output.mod.concat(Tuple.idFilter(items,
+          output.mod, output.add, output.rem));
     }
   }
 
