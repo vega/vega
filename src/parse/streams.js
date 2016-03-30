@@ -57,7 +57,7 @@ function parseStreams(view) {
     view.on(type, function(evt, item) {
       evt.preventDefault(); // stop text selection
       extendEvent(evt, item);
-      fire(internal, type, (item && item.datum) || {}, evt);
+      fire(internal, type, (item && item.datum) || {}, (item && item.mark && item.mark.group && item.mark.group.datum) || {}, evt);
     });
   });
 
@@ -72,7 +72,7 @@ function parseStreams(view) {
 
     function handler(evt) {
       extendEvent(evt);
-      fire(external, type, d3.select(this).datum(), evt);
+      fire(external, type, d3.select(this).datum(), this.parentNode && d3.select(this.parentNode).datum(), evt);
     }
 
     for (var i=0; i<elt.length; ++i) {
@@ -125,7 +125,7 @@ function parseStreams(view) {
     evt.vg.y = mouse[1] - pad.top;
   }
 
-  function fire(registry, type, datum, evt) {
+  function fire(registry, type, datum, parent, evt) {
     var handlers = registry.handlers[type],
         node = registry.nodes[type],
         cs = df.ChangeSet.create(null, true),
@@ -133,7 +133,7 @@ function parseStreams(view) {
         val, i, n, h;
 
     function invoke(f) {
-      return !f.fn(datum, evt);
+      return !f.fn(datum, parent, evt);
     }
 
     for (i=0, n=handlers.length; i<n; ++i) {
@@ -141,7 +141,7 @@ function parseStreams(view) {
       filtered = h.filters.some(invoke);
       if (filtered) continue;
 
-      val = h.exp.fn(datum, evt);
+      val = h.exp.fn(datum, parent, evt);
       if (h.spec.scale) {
         val = parseSignals.scale(model, h.spec, val, datum, evt);
       }
