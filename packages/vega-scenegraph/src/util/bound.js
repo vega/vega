@@ -211,7 +211,7 @@ function group(g, bounds, includeLegends) {
       bounds.union(axes[j].bounds);
     }
     for (j=0, m=items.length; j<m; ++j) {
-      bounds.union(items[j].bounds);
+      if (items[j].bounds) bounds.union(items[j].bounds);
     }
     if (includeLegends) {
       for (j=0, m=legends.length; j<m; ++j) {
