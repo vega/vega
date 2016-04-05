@@ -611,8 +611,11 @@ properties.schema = {
         "endAngle": {"$ref": "#/refs/numberValue"},
 
         // Area- and line-mark properties
-        "interpolate": valueSchema(["linear", "step-before", "step-after",
-          "basis", "basis-open", "cardinal", "cardinal-open", "monotone"]),
+        "interpolate": valueSchema(["linear", "linear-closed",
+          "step", "step-before", "step-after",
+          "basis", "basis-open", "basis-closed", 
+          "cardinal", "cardinal-open", "cardinal-closed",
+          "bundle", "monotone"]),
         "tension": {"$ref": "#/refs/numberValue"},
         "orient": valueSchema(["horizontal", "vertical"]),
 
