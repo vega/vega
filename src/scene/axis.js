@@ -496,10 +496,12 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config
       if (!currOuterPadding && typeof config_scales !== 'undefined' && 'outerPadding' in config_scales) {
         currOuterPadding = config_scales.outerPadding;
       }
-      var oldOffset = oldScale.offset;
-      var newOffset = newScale.offset;
-      updatedOldScale.offset = (oldOffset * 2) + (oldOffset * 2 * currPadding) + (oldOffset * currOuterPadding);
-      updatedNewScale.offset = (newOffset * 2) + (newOffset * 2 * currPadding) + (newOffset * currOuterPadding);
+
+      var oldPadding = ((oldScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
+      var newPadding = ((newScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
+
+      updatedOldScale.offset = ((oldScale.offset - 1) * 2) + oldPadding;
+      updatedNewScale.offset = ((newScale.offset - 1) * 2) + newPadding;
     }
 
     dl.extend(ticks.properties.enter, {
