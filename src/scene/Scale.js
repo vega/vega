@@ -136,8 +136,8 @@ function ordinal(scale, rng, group) {
   // range
   if (!dl.equal(prev.range, rng)) {
     // width-defined range
-    if (def.bandWidth) {
-      var bw = signal.call(this, def.bandWidth),
+    if (def.bandSize) {
+      var bw = signal.call(this, def.bandSize),
           len = domain.length,
           space = def.points ? (pad*bw) : (pad*bw*(len-1) + 2*outer),
           start;
@@ -148,6 +148,8 @@ function ordinal(scale, rng, group) {
         start = rng[0] || 0;
         rng = [start, start + (bw * len + space)];
       }
+
+      if (def.reverse) rng = rng.reverse();
     }
 
     str = typeof rng[0] === 'string';
@@ -515,7 +517,7 @@ function range(group) {
 module.exports = Scale;
 
 var rangeDef = [
-  {"enum": ["width", "height", "shapes", "category10", "category20"]},
+  {"enum": ["width", "height", "shapes", "category10", "category20", "category20b", "category20c"]},
   {
     "type": "array",
     "items": {"oneOf": [{"type":"string"}, {"type": "number"}, {"$ref": "#/refs/signal"}]}
@@ -610,7 +612,17 @@ Scale.schema = {
                   ]
                 }
               },
-              {"$ref": "#/refs/data"}
+              {"$ref": "#/refs/data"},
+              {
+                "type": "object",
+                "properties": {
+                  "fields": {
+                    "type": "array",
+                    "items": {"$ref": "#/refs/data"}
+                  }
+                },
+                "required": ["fields"],
+              }
             ]
           },
 
@@ -668,7 +680,7 @@ Scale.schema = {
             "points": {"oneOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]},
             "padding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
             "outerPadding": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]},
-            "bandWidth": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
+            "bandSize": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
           },
           "required": ["type"]
         }, {

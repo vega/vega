@@ -28,6 +28,7 @@ function parseLegend(def, index, legend, group) {
 
   // legend label formatting
   legend.format(def.format !== undefined ? def.format : null);
+  legend.formatType(def.formatType || null);
 
   // style properties
   var p = def.properties;
@@ -54,6 +55,7 @@ parseLegends.schema = {
         "title": {"type": "string"},
         "values": {"type": "array"},
         "format": {"type": "string"},
+        "formatType": {"enum": ["time", "utc", "string", "number"]},
         "properties": {
           "type": "object",
           "properties": {

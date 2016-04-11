@@ -86,6 +86,7 @@ function inlineDs() {
     };
   } else {
     src = this._graph.data(this._from);
+    if (!src) throw Error('Data source "'+this._from+'" is not defined.');
     name = ['vg', this._from, this._def.type, src.listeners(true).length].join('_');
     spec = {
       name: name,
@@ -102,7 +103,7 @@ function inlineDs() {
     // Bounder reflows, so we need an intermediary node to propagate
     // the output constructed by the Builder.
     node = new Node(this._graph).addListener(this._ds.listener());
-    node.evaluate = function(input) { 
+    node.evaluate = function(input) {
       var out  = ChangeSet.create(input),
           sout = sibling._output;
 

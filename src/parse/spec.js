@@ -1,7 +1,7 @@
-var dl = require('datalib'),
+var dl  = require('datalib'),
     log = require('vega-logging'),
     Model = require('../core/Model'),
-    View = require('../core/View');
+    View  = require('../core/View');
 
 /**
  * Parse graph specification
@@ -28,22 +28,16 @@ var dl = require('datalib'),
     config = model.config();
   }
 
-  function onDone(err, value) {
-    if (cb) {
-      if (cb.length > 1) cb(err, value);
-      else if (!err) cb(value);
-      cb = null;
-    }
-  }
-
-  function onError(err) {
-    log.error(err);
-    onDone(err);
-  }
-
-  function onCreate(err) {
-    if (err) onError(err);
-    else onDone(null, viewFactory(model));
+  if (dl.isObject(spec)) {
+    parse(spec);
+  } else if (dl.isString(spec)) {
+    var opts = dl.extend({url: spec}, model.config().load);
+    dl.json(opts, function(err, spec) {
+      if (err) done('SPECIFICATION LOAD FAILED: ' + err);
+      else parse(spec);
+    });
+  } else {
+    done('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
   }
 
   function parse(spec) {
@@ -59,10 +53,11 @@ var dl = require('datalib'),
       var parsers = require('./'),
           padding = parsers.padding(paddingVar);
 
-      // create signals for width, height and padding
+      // create signals for width, height, padding, and cursor
       model.signal('width', width);
       model.signal('height', height);
       model.signal('padding', padding);
+      cursor(spec);
 
       // initialize model
       model.defs({
@@ -74,9 +69,9 @@ var dl = require('datalib'),
         signals:    parsers.signals(model, spec.signals),
         predicates: parsers.predicates(model, spec.predicates),
         marks:      parsers.marks(model, spec, width, height),
-        data:       parsers.data(model, spec.data, onCreate)
+        data:       parsers.data(model, spec.data, done)
       });
-    } catch (err) { onError(err); }
+    } catch (err) { done(err); }
   }
 
   var markTypes = {
@@ -101,16 +96,35 @@ var dl = require('datalib'),
     return undefined;
   }
 
-  if (dl.isObject(spec)) {
-    parse(spec);
-  } else if (dl.isString(spec)) {
-    var opts = dl.extend({url: spec}, model.config().load);
-    dl.json(opts, function(err, spec) {
-      if (err) onError('SPECIFICATION LOAD FAILED: ' + err);
-      else parse(spec);
+  function cursor(spec) {
+    var signals = spec.signals || (spec.signals=[]),  def;
+    signals.some(function(sg) {
+      return (sg.name === 'cursor') ? (def=sg, true) : false;
     });
-  } else {
-    onError('INVALID SPECIFICATION: Must be a valid JSON object or URL.');
+
+    if (!def) signals.push(def={name: 'cursor', streams: []});
+
+    // Add a stream def at the head, so that custom defs can override it.
+    def.init = def.init || {};
+    def.streams.unshift({
+      type: 'mousemove',
+      expr: 'eventItem().cursor === cursor.default ? cursor : {default: eventItem().cursor}'
+    });
+  }
+
+  function done(err) {
+    var view;
+    if (err) {
+      log.error(err);
+    } else {
+      view = viewFactory(model.buildIndexes());
+    }
+
+    if (cb) {
+      if (cb.length > 1) cb(err, view);
+      else if (!err) cb(view);
+      cb = null;
+    }
   }
 }
 

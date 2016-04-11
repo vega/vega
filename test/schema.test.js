@@ -73,30 +73,20 @@ describe('Schema', function() {
   });
   
   describe('Examples', function() {
-    var fs = require('fs'),
-        path = require('path'),
-        config = require('../src/core/config'),
-        examples = "test/spec/",
+    var path  = require('path'),
+        files = examples(),
         validate = validator(schema);
-
-    expect(fs.statSync(examples).isDirectory()).to.equal(true);
-    var files = fs.readdirSync(examples).filter(function(name) {
-      return path.extname(name) === ".json";
-    });
-
-    config.load.baseURL = 'file://' + examples + "../"; // needed for data loading
 
     files.forEach(function(file, idx) {
       var name = path.basename(file, ".json");
 
       it('should validate the '+ name + ' example', function() {
-        var spec = dl.json(examples + file),
+        var spec = dl.json(file),
             v = validate(spec);
 
         if (!v && tv4.error) console.log(name, tv4.error);
         expect(v).to.equal(true, tv4.error);
       });
     });
-
   });
 });

@@ -1,0 +1,515 @@
+{
+  "width": 1000,
+  "height": 325,
+  "padding": "strict",
+
+  "data": [
+    {
+      "name": "flights",
+      "url": "data/flights-2k.json",
+      "format": {"type": "json", "parse": {"date": "date"}},
+      "transform": [
+        {"type": "formula", "field": "hour", "expr": "hours(datum.date)"},
+        {
+          "type": "formula",
+          "field": "day",
+          "expr": "datetime((month(datum.date)+1) + '/' + date(datum.date) + '/2001')"
+        },
+        {
+          "type": "bin",
+          "field": "hour",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "output": {"start": "bin_hour"}
+        },
+        {
+          "type": "bin",
+          "field": "delay",
+          "min": -60,
+          "max": 140,
+          "step": 10,
+          "output": {"start": "bin_delay"}
+        },
+        {
+          "type": "bin",
+          "field": "distance",
+          "min": 0,
+          "max": 2000,
+          "step": 50,
+          "output": {"start": "bin_dist"}
+        }
+      ]
+    },
+    {
+      "name": "times",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay))"},
+        {
+          "type": "aggregate",
+          "groupby": ["bin_hour"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    },
+    {
+      "name": "delay",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime)) && datum.bin_delay <= 140"},
+        {
+          "type": "aggregate",
+          "groupby": ["bin_delay"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    },
+    {
+      "name": "distance",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDay == maxDay || (datum.day >= minDay && datum.day <= maxDay)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime)) && datum.bin_dist <= 2000"},
+        {
+          "type": "aggregate",
+          "groupby": ["bin_dist"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    },
+    {
+      "name": "date",
+      "source": "flights",
+      "transform": [
+        {"type": "filter", "test": "(minDist == maxDist || (datum.distance >= minDist && datum.distance <= maxDist)) && (minDelay == maxDelay || (datum.delay >= minDelay && datum.delay <= maxDelay)) && (minTime == maxTime || (datum.hour >= minTime && datum.hour <= maxTime)) && datum.day < datetime('4/1/2001')"},
+        {
+          "type": "aggregate",
+          "groupby": ["day"],
+          "summarize": {"delay": ["count"]}
+        }
+      ]
+    }
+  ],
+
+  "signals": [
+    {
+      "name": "scope",
+      "init": {"width": 0},
+      "streams": [
+        {"type": "mousedown", "expr": "eventGroup()"}
+      ]
+    },
+    {
+      "name": "timesStart",
+      "init": -1,
+      "streams": [{
+        "type": "@timesGroup:mousedown",
+        "expr": "eventX(scope)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {
+      "name": "timesEnd",
+      "init": -1,
+      "streams": [{
+        "type": "@timesGroup:mousedown, [@timesGroup:mousedown, window:mouseup] > window:mousemove",
+        "expr": "clamp(eventX(scope), 0, scope.width)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {"name": "minTime", "expr": "max(min(timesStart, timesEnd), 0)"},
+    {"name": "maxTime", "expr": "min(max(timesStart, timesEnd), 24)"},
+
+    {
+      "name": "delayStart",
+      "init": -1,
+      "streams": [{
+        "type": "@delayGroup:mousedown",
+        "expr": "eventX(scope)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {
+      "name": "delayEnd",
+      "init": -1,
+      "streams": [{
+        "type": "@delayGroup:mousedown, [@delayGroup:mousedown, window:mouseup] > window:mousemove",
+        "expr": "clamp(eventX(scope), 0, scope.width)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {"name": "minDelay", "expr": "max(min(delayStart, delayEnd), -60)"},
+    {"name": "maxDelay", "expr": "min(max(delayStart, delayEnd), 140)"},
+
+    {
+      "name": "distStart",
+      "init": -1,
+      "streams": [{
+        "type": "@distGroup:mousedown",
+        "expr": "eventX(scope)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {
+      "name": "distEnd",
+      "init": -1,
+      "streams": [{
+        "type": "@distGroup:mousedown, [@distGroup:mousedown, window:mouseup] > window:mousemove",
+        "expr": "clamp(eventX(scope), 0, scope.width)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {"name": "minDist", "expr": "max(min(distStart, distEnd), 0)"},
+    {"name": "maxDist", "expr": "min(max(distStart, distEnd), 2000)"},
+
+    {
+      "name": "dayStart",
+      "streams": [{
+        "type": "@dayGroup:mousedown",
+        "expr": "eventX(scope)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {
+      "name": "dayEnd",
+      "streams": [{
+        "type": "@dayGroup:mousedown, [@dayGroup:mousedown, window:mouseup] > window:mousemove",
+        "expr": "clamp(eventX(scope), 0, scope.width)",
+        "scale": {"scope": "scope", "name": "x", "invert": true}
+      }]
+    },
+    {"name": "minDay", "expr": "max(min(dayStart, dayEnd), datetime('Jan 1 2001'))"},
+    {"name": "maxDay", "expr": "min(max(dayStart, dayEnd), datetime('Mar 31 2001')) || datetime('Mar 31 2001')"}
+  ],
+
+  "marks": [
+    {
+      "name": "timesGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 0},
+          "width": {"value": 250},
+          "y": {"value": 0},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": [0, 24]
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "times", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "times"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "bin_hour"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": [
+                {
+                  "test": "timesStart == timesEnd || inrange(datum.bin_hour, timesStart, timesEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": -10},
+              "text": {"value": "Time of Day"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "timesStart"},
+              "x2": {"scale": "x", "signal": "timesEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "delayGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 290},
+          "width": {"value": 210},
+          "y": {"value": 0},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": [-60, 140]
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "delay", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "delay"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "bin_delay"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": [
+                {
+                  "test": "delayStart == delayEnd || inrange(datum.bin_delay, delayStart, delayEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": -10},
+              "text": {"value": "Delay (min.)"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "delayStart"},
+              "x2": {"scale": "x", "signal": "delayEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "distGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 540},
+          "width": {"value": 420},
+          "y": {"value": 0},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "range": "width",
+          "domain": [0, 2000]
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "distance", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "distance"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "bin_dist"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": [
+                {
+                  "test": "distStart == distEnd || inrange(datum.bin_dist, distStart, distEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": -10},
+              "text": {"value": "Distance (mi.)"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "distStart"},
+              "x2": {"scale": "x", "signal": "distEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "dayGroup",
+      "type": "group",
+
+      "properties": {
+        "update": {
+          "x": {"value": 0},
+          "width": {"value": 920},
+          "y": {"value": 150},
+          "height": {"value": 100},
+          "fill": {"value": "#fff"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "date", "field": "day"}
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "range": "height",
+          "domain": {"data": "date", "field": "count_delay"}
+        }
+      ],
+
+      "axes": [{"type": "x", "scale": "x"}],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "date"},
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "day"},
+              "width": {"value": 9.5},
+              "y": {"scale": "y", "field": "count_delay"},
+              "y2": {"scale": "y", "value": 0},
+              "fill": [
+                {
+                  "test": "!dayStart || time(dayStart) == time(dayEnd) || inrange(datum.day, dayStart, dayEnd)",
+                  "value": "steelblue"
+                },
+                {"value": "#bbb"}
+              ]
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "enter": {
+              "x": {"value": 0},
+              "y": {"value": 0},
+              "text": {"value": "Date"},
+              "fill": {"value": "black"},
+              "fontSize": {"value": 14},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "properties": {
+            "enter": {
+              "fill": {"value": "grey"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"scale": "x", "signal": "dayStart"},
+              "x2": {"scale": "x", "signal": "dayEnd"},
+              "y": {"value": 0},
+              "y2": {"field": {"group": "height"}}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

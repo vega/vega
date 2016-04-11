@@ -20,10 +20,12 @@ prototype.transform = function(input) {
   log.debug(input, ['formulating']);
 
   var field = this.param('field'),
-      expr = this.param('expr');
+      expr = this.param('expr'),
+      updated = false;
 
   function set(x) {
     Tuple.set(x, field, expr(x));
+    updated = true;
   }
 
   input.add.forEach(set);
@@ -32,7 +34,7 @@ prototype.transform = function(input) {
     input.mod.forEach(set);
   }
 
-  input.fields[field] = 1;
+  if (updated) input.fields[field] = 1;
   return input;
 };
 

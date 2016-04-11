@@ -1,0 +1,300 @@
+{
+  "width": 700,
+  "height": 400,
+  "padding": {"top": 10, "left": 10, "right": 80, "bottom": 10},
+  "background": "#edf1f7",
+
+  "signals": [
+    {
+      "name": "dragging",
+      "init": false,
+      "streams": [
+        {"type": "@handle:mousedown", "expr": "true"},
+        {"type": "mouseup", "expr": "false"}
+      ]
+    },
+    {
+      "name": "handleYear",
+      "streams": [{
+        "type": "mousemove[dragging]",
+        "expr": "clamp(eventX(), 10, 10000)",
+        "scale": {"name": "x", "invert": true}
+      }]
+    },
+    {
+      "name": "currentYear",
+      "init": 2010,
+      "expr": "clamp(handleYear, 1980, 2010)"
+    },
+    {
+      "name": "tipYear",
+      "streams": [{
+        "type": "mousemove[!dragging]", "expr": "eventX()",
+        "scale": {"name": "x", "invert": true}
+      }]
+    },
+    {
+      "name": "tipValue",
+      "streams": [{
+        "type": "mousemove[!dragging]", "expr": "eventY()",
+        "scale": {"name": "y", "invert": true}
+      }]
+    },
+    {
+      "name": "cursor",
+      "streams": [
+        {"type": "dragging", "expr": "dragging ? 'pointer' : 'default'"}
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "budgets",
+      "url": "data/budgets.json",
+      "transform": [
+        {"type": "formula", "field": "abs", "expr": "abs(datum.value)"},
+        {"type": "formula", "field": "type", "expr": "datum.value < 0 ? 'deficit' : 'surplus'"}
+      ]
+    },
+    {
+      "name": "tooltip",
+      "source": "budgets",
+      "transform": [
+        {
+          "type": "filter",
+          "test": "datum.budgetYear <= currentYear && datum.forecastYear == tipYear && abs(datum.value - tipValue) <= 0.1"
+        },
+        {
+          "type": "aggregate",
+          "summarize": [
+            {"field": "value", "ops": ["min", "argmin"], "as": ["min", "argmin"]}
+          ]
+        },
+        {"type": "formula", "field": "minYear", "expr": "datum.argmin.budgetYear"}
+      ]
+    },
+    {
+      "name": "tipForecast",
+      "source": "budgets",
+      "transform": [
+        {
+          "type": "lookup",
+          "on": "tooltip", "onKey": "minYear",
+          "keys": ["budgetYear"], "as": ["t"]
+        },
+        {"type": "filter", "test": "datum.t"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "ordinal",
+      "domain": {"data": "budgets", "field": "forecastYear"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "budgets", "field": "value"},
+      "range": "height"
+    }
+  ],
+
+  "axes": [
+    {
+      "type": "x", "scale": "x",
+      "grid": true, "layer": "back",
+      "values": [1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018],
+      "tickSize": 0,
+      "properties": {
+        "grid": {
+          "stroke": {"value": "white"},
+          "strokeOpacity": {"value": 0.75}
+        },
+        "axis": {"stroke": {"value": "#edf1f7"}},
+        "labels": {"fill": {"value": "#edf1f7"}}
+      }
+    },
+    {
+      "type": "y", "scale": "y",
+      "grid": true, "layer": "back", "orient": "right",
+      "values": [0, -0.5, -1, -1.5],
+      "tickSize": 0,
+      "properties": {
+        "grid": {
+          "stroke": {"value": "white"},
+          "strokeOpacity": {"value": 0.75}
+        },
+        "axis": {"stroke": {"value": "#edf1f7"}},
+        "labels": {"text": {"template": "{{datum.data|number:'$.1f'}} trillion"}}
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "data": "budgets",
+        "transform": [
+          {"type": "filter", "test": "datum.budgetYear <= currentYear"},
+          {"type": "facet", "groupby": ["budgetYear"]}
+        ]
+      },
+      "marks": [
+        {
+          "type": "line",
+          "properties": {
+            "update": {
+              "x": {"scale": "x", "field": "forecastYear"},
+              "y": {"scale": "y", "field": "value"},
+              "stroke": {"value": "steelblue"},
+              "strokeWidth": {"value": 1},
+              "strokeOpacity": {"value": 0.25}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "line",
+      "from": {
+        "data": "budgets",
+        "transform": [
+          {"type": "filter", "test": "datum.budgetYear <= currentYear && datum.forecastYear == datum.budgetYear - 1"}
+        ]
+      },
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "forecastYear"},
+          "y": {"scale": "y", "field": "value"},
+          "stroke": {"value": "steelblue"},
+          "strokeWidth": {"value": 3}
+        }
+      }
+    },
+
+    {
+      "type": "line",
+      "from": {"data": "tipForecast"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "forecastYear"},
+          "y": {"scale": "y", "field": "value"},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 1}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "tooltip"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "argmin.forecastYear"},
+          "y": {"scale": "y", "field": "argmin.value"},
+          "size": {"value": 50},
+          "fill": {"value": "black"}
+        }
+      }
+    },
+
+    {
+      "type": "rule",
+      "properties": {
+        "enter": {
+          "y": {"scale": "y", "value": 0},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 1}
+        },
+        "update": {
+          "x": {"value": 0},
+          "x2": {"scale": "x", "signal": "currentYear"}
+        }
+      }
+    },
+    {
+      "name": "handle",
+      "type": "symbol",
+      "properties": {
+        "enter": {
+          "y": {"scale": "y", "value": 0, "offset": 1},
+          "shape": {"value": "triangle-down"},
+          "size": {"value": 150},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 0.5}
+        },
+        "update": {
+          "x": {"scale": "x", "signal": "currentYear"},
+          "fill": {"value": "#fff"}
+        },
+        "hover": {
+          "fill": {"value": "lemonchiffon"},
+          "cursor": {"value": "pointer"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 25},
+          "fontSize": {"value": 32},
+          "fontWeight": {"value": "bold"},
+          "fill": {"value": "steelblue"}
+        },
+        "update": {
+          "text": {"signal": "currentYear"}
+        }
+      }
+    },
+
+    {
+      "type": "group",
+      "from": {"data": "tooltip"},
+      "properties": {
+        "update": {
+          "x": {"scale": "x", "field": "argmin.forecastYear", "offset": -5},
+          "y": {"scale": "y", "field": "argmin.value", "offset": 20},
+          "width": {"value": 150},
+          "height": {"value": 35},
+          "fill": {"value": "#fff"},
+          "fillOpacity": {"value": 0.85},
+          "stroke": {"value": "#aaa"},
+          "strokeWidth": {"value": 0.5}
+        }
+      },
+
+      "marks": [
+        {
+          "type": "text",
+          "properties": {
+            "update": {
+              "x": {"value": 6},
+              "y": {"value": 14},
+              "text": {"template": "Forecast from early {{parent.argmin.budgetYear}}"},
+              "fill": {"value": "black"},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "properties": {
+            "update": {
+              "x": {"value": 6},
+              "y": {"value": 29},
+              "text": {"template": "{{parent.argmin.forecastYear}} \t {{parent.argmin.abs|number:'$.3f'}} trillion {{parent.argmin.type}}"},
+              "fill": {"value": "black"},
+              "align": {"value": "left"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@ module.exports = {
   axes:       require('./axes'),
   background: require('./background'),
   data:       require('./data'),
-  events:     require('./events'),
+  events:     require('vega-event-selector'),
   expr:       require('./expr'),
   legends:    require('./legends'),
   mark:       require('./mark'),

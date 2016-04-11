@@ -36,7 +36,7 @@ prototype.batchTransform = function(input, data) {
 
   // build and assign path strings
   for (var i=0; i<data.length; ++i) {
-    Tuple.set(data[i], pathname, 'M' + polygons[i].join('L') + 'Z');
+    if (polygons[i]) Tuple.set(data[i], pathname, 'M' + polygons[i].join('L') + 'Z');
   }
 
   // return changeset

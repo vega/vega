@@ -15,7 +15,7 @@ module.exports = {
   Parameter: require('./src/transforms/Parameter'),
   schema: require('./src/core/schema'),
   config: require('./src/core/config'),
-  util:  require('datalib'),
+  util: require('./src/util'),
   logging: require('vega-logging'),
   debug: require('vega-logging').debug
 };

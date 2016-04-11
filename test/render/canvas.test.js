@@ -4,32 +4,23 @@ var config = require('../../src/core/config'),
   dl = require('datalib'),
   fs = require('fs'),
   path = require('path'),
-  output = "output/",
-  examples = "test/spec/";
+  output = 'output/';
 
 describe('Canvas', function() {
   require('d3-geo-projection')(d3);
 
   describe('Examples', function() {
-    // list all the example json spec files
-    expect(fs.statSync(examples).isDirectory()).to.equal(true);
-    var files = fs.readdirSync(examples).filter(function(name) {
-      return path.extname(name) === ".json";
-    });
-    expect(files.length).to.be.at.least(15);
-
-    config.load.baseURL = 'file://' + examples + "../"; // needed for data loading
-
-    var skip = {};
+    var files = examples(),
+        skip  = {};
 
     files.forEach(function(file, idx) {
-      var name = path.basename(file, ".json");
+      var name = path.basename(file, '.json');
       if (skip[name]) {
         // skip, but mark as pending
         it('renders the ' + name + ' example');
       } else {
         it('renders the ' + name + ' example', function(done) {
-          render(name, examples + file, done);
+          render(name, file, done);
         });
       }
     });
@@ -37,19 +28,19 @@ describe('Canvas', function() {
 
   // Render the given spec using the headless canvas renderer
   function render(name, specFile, done) {
-    fs.readFile(specFile, "utf8", function(err, text) {
+    fs.readFile(specFile, 'utf8', function(err, text) {
       if (err) throw err;
       var spec = JSON.parse(text);
 
       parseSpec(spec, config, function(error, viewFactory) {
         if (error) return done(error);
         
-        var view = viewFactory({ renderer: "canvas" }).update();
+        var view = viewFactory({ renderer: 'canvas' }).update();
         view.canvasAsync(function(canvas) {
           var data = canvas.toDataURL();
           expect(data).to.not.be.undefined;
 
-          writePNG(canvas, output+name+".png");
+          writePNG(canvas, output+name+'.png');
           done();
         });
       });
@@ -60,6 +51,6 @@ describe('Canvas', function() {
     if (!fs.existsSync(output)) return;
     var out = file ? fs.createWriteStream(file) : process.stdout;
     var stream = canvas.createPNGStream();
-    stream.on("data", function(chunk) { out.write(chunk); });
+    stream.on('data', function(chunk) { out.write(chunk); });
   }
 })

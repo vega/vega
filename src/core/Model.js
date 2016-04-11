@@ -40,7 +40,7 @@ prototype.config = function(cfg) {
   for (var name in cfg) {
     var x = cfg[name], y = this._config[name];
     if (dl.isObject(x) && dl.isObject(y)) {
-      dl.extend(y, x);
+      this._config[name] = dl.extend({}, y, x);
     } else {
       this._config[name] = x;
     }

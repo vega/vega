@@ -1,0 +1,25 @@
+{
+  "url": "app/spec/vega/airports.json",
+  "parameters": [
+    {
+      "signal": "geoscale", "type": "range",
+      "value": 1200, "min": 500, "max": 3000,
+      "rewrite": ["data[0].transform[0].scale", "data[2].transform[2].scale"]
+    },
+    {
+      "signal": "tx", "type": "range",
+      "value": 450, "min": -500, "max": 1200,
+      "rewrite": ["data[0].transform[0].translate[0]", "data[2].transform[2].translate[0]"]
+    },
+    {
+      "signal": "ty", "type": "range",
+      "value": 280, "min": -300, "max": 700,
+      "rewrite": ["data[0].transform[0].translate[1]", "data[2].transform[2].translate[1]"]
+    },
+    {
+      "signal": "shape", "type": "radio",
+      "value": "line", "options": ["line", "curve"],
+      "rewrite": ["data[3].transform[3].shape"]
+    }
+  ]
+}

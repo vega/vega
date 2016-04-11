@@ -97,7 +97,7 @@ parseMark.schema = {
       },
 
       // "additionalProperties": false,
-      "anyOf": [{"required": ["type"]}, {"required": ["name"]}]
+      "required": ["type"]
     }
   }
 };

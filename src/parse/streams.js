@@ -1,15 +1,20 @@
 var d3 = require('d3'),
     dl = require('datalib'),
     df = require('vega-dataflow'),
-    parseSignals = require('./signals'),
-    selector = require('./events');
+    selector = require('vega-event-selector'),
+    parseSignals = require('./signals');
 
 var GATEKEEPER = '_vgGATEKEEPER',
     EVALUATOR  = '_vgEVALUATOR';
 
 var vgEvent = {
   getItem: function() { return this.item; },
-  getGroup: function(name) { return name ? this.name[name] : this.group; },
+  getGroup: function(name) {
+    var group = name ? this.name[name] : this.group,
+        mark = group && group.mark,
+        interactive = mark && (mark.interactive || mark.interactive === undefined);
+    return interactive ? group : {};
+  },
   getXY: function(item) {
       var p = {x: this.x, y: this.y};
       if (typeof item === 'string') {
@@ -155,7 +160,12 @@ function parseStreams(view) {
       if (s.event)       domEvent(sig, s, exp, spec);
       else if (s.signal) signal(sig, s, exp, spec);
       else if (s.start)  orderedStream(sig, s, exp, spec);
-      else if (s.stream) mergedStream(sig, s.stream, exp, spec);
+      else if (s.stream) {
+        if (s.filters) s.stream.forEach(function(ms) {
+          ms.filters = dl.array(ms.filters).concat(s.filters);
+        });
+        mergedStream(sig, s.stream, exp, spec);
+      }
     });
   }
 
