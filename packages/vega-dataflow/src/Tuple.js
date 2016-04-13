@@ -49,11 +49,15 @@ module.exports = {
 
   prev_update: function(t) {
     var p = t._prev, k, v;
-    if (p) for (k in t) {
-      if (k !== '_prev' && k !== '_id') {
-        p[k] = ((v=t[k]) instanceof Object && v._prev) ? v._prev : v;
+    if (p) {
+      for (k in t) {
+        if (k !== '_prev' && k !== '_id') {
+          p[k] = ((v=t[k]) instanceof Object && v._prev) ? v._prev : v;
+        }
       }
+      return true;
     }
+    return false;
   },
 
   reset: function() { tupleID = 0; },

@@ -94,7 +94,7 @@ prototype.signalRef = function(ref) {
 
 prototype.requestIndex = function(data, field) {
   var ri  = this._requestedIndexes,
-      reg = ri[data] || (ri[data] = {}); 
+      reg = ri[data] || (ri[data] = {});
   return (reg[field] = true, this);
 };
 
@@ -120,7 +120,7 @@ prototype.buildIndexes = function() {
 
 // Stamp should be specified with caution. It is necessary for inline datasources,
 // which need to be populated during the same cycle even though propagation has
-// passed that part of the dataflow graph. 
+// passed that part of the dataflow graph.
 // If skipSignals is true, Signal nodes do not get reevaluated but their listeners
 // are queued for propagation. This is useful when setting signal values in batch
 // (e.g., time travel to the initial state).
@@ -308,9 +308,13 @@ prototype.synchronize = function(branch) {
 
     for (j=0, data=node.data(), m=data.length; j<m; ++j) {
       id = (d = data[j])._id;
-      if (ids[id]) continue;
-      Tuple.prev_update(d);
-      ids[id] = 1;
+      if (ids[id] != null) continue;
+      if (ids[id] === false) break;
+      ids[id] = true;
+      if (!Tuple.prev_update(d)) {
+        ids[id] = false;
+        break;
+      }
     }
   }
 
