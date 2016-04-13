@@ -408,9 +408,9 @@ function legendPosition(item, group, trans, db, signals, predicates) {
   }
 
   if (typeof config !== 'undefined') {
-    if (config.legend.labelBaseline === 'middle') {
+    if (config.legend.baseline === 'middle') {
       o.y += offset + (group.height / 2) - (totalHeight / 2);
-    } else if (config.legend.labelBaseline === 'bottom') {
+    } else if (config.legend.baseline === 'bottom') {
       o.y += offset + group.height - totalHeight;
     }
   }
