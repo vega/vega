@@ -18,7 +18,8 @@ config.autopadInset = 5;
 // all d3.scale.* instances also supported
 config.scale = {
   time: d3.time.scale,
-  utc:  d3.time.scale.utc
+  utc:  d3.time.scale.utc,
+  padding: 0.2
 };
 
 // default rendering settings
@@ -70,7 +71,7 @@ config.axis = {
   gridColor: '#000000'
 };
 
-config.scales = {
+config.paddings = {
   padding: 0.2
 };
 

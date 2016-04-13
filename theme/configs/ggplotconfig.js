@@ -18,7 +18,8 @@ config.autopadInset = 5;
 // all d3.scale.* instances also supported
 config.scale = {
   time: d3.time.scale,
-  utc:  d3.time.scale.utc
+  utc:  d3.time.scale.utc,
+  padding: 0.1
 };
 
 // default rendering settings
@@ -88,10 +89,6 @@ config.legend = {
   titleFont: 'sans-serif',
   titleFontSize: 11,
   titleFontWeight: 'bold'
-};
-
-config.scales = {
-  padding: 0.1
 };
 
 config.marks = {

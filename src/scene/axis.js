@@ -125,7 +125,7 @@ function axs(model, updatedConfig) {
       scales = model._defs.marks.scales;
     }
 
-    var config_scales = model.config().scales;
+    var config_scale = model.config().scale;
 
     // setup axis marks
     dl.extend(m.gridLines, axisTicks(config));
@@ -140,9 +140,9 @@ function axs(model, updatedConfig) {
     m.gridLines.properties.enter.strokeDash = {value: config.gridDash};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scales, config, scale.type, offset);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales, config_scales, config, scale.type);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales, config_scales, config, scale.type);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scale, config, scale.type, offset);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales, config_scale, config, scale.type);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales, config_scale, config, scale.type);
 
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
@@ -408,7 +408,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config_scales, config_axis, scaleType, offset) {
+function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config_scale, config_axis, scaleType, offset) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -435,12 +435,13 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config
           }
         }
       }
-      if (!currPadding && typeof config_scales !== 'undefined' && 'padding' in config_scales) {
-        currPadding = config_scales.padding;
+      console.log('whattttt');
+      if (!currPadding && typeof config_scale !== 'undefined' && 'padding' in config_scale) {
+        currPadding = config_scale.padding;
       }
 
-      if (!currOuterPadding && typeof config_scales !== 'undefined' && 'outerPadding' in config_scales) {
-        currOuterPadding = config_scales.outerPadding;
+      if (!currOuterPadding && typeof config_scale !== 'undefined' && 'outerPadding' in config_scale) {
+        currOuterPadding = config_scale.outerPadding;
       }
 
       var oldPadding = ((oldScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));

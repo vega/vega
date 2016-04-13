@@ -174,8 +174,8 @@ function ordinal(scale, rng, group) {
 }
 
 function setPadding(pad, config, defaultPad, parent_id, datum) {
-  if (!parent_id && config && config.scales && config.scales[pad] && !datum._facetID) {
-    return config.scales[pad];
+  if (!parent_id && config && config.scale && config.scale[pad] && !datum._facetID) {
+    return config.scale[pad];
   }
   return defaultPad;
 }

@@ -18,7 +18,8 @@ config.autopadInset = 5;
 // all d3.scale.* instances also supported
 config.scale = {
   time: d3.time.scale,
-  utc:  d3.time.scale.utc
+  utc:  d3.time.scale.utc,
+  padding: 0.2
 };
 
 // default rendering settings
@@ -77,10 +78,6 @@ config.axis_y = {
   axisColor: 'transparent',
   grid: true
 }
-
-config.scales = {
-  padding: 0.2
-};
 
 config.marks = {
   defaultFill: '#ab5787',
