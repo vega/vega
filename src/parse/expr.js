@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     template = dl.template,
     expr = require('vega-expression'),
-    args = ['datum', 'event', 'signals'];
+    args = ['datum', 'parent', 'event', 'signals'];
 
 var compile = expr.compiler(args, {
   idWhiteList: args,

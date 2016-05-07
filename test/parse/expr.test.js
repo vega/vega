@@ -10,10 +10,10 @@ describe('Expression Parser', function() {
     getY:     function() { return 'yy'; }
   }};
 
-  function run(code, model, datum) {
+  function run(code, model, datum, parent) {
     var e = expr(code);
     e.model = model;
-    return e.fn(datum, evt);
+    return e.fn(datum, parent, evt);
   }
 
   it('should evaluate event functions', function() {
@@ -57,8 +57,8 @@ describe('Expression Parser', function() {
     };
     parseSpec(spec, viewFactory, function(error, model) {
       var expr = require('../../src/parse/expr')(model);
-      function run(code, datum, evt) {
-        return expr(code).fn(datum, evt);
+      function run(code, datum, parent, evt) {
+        return expr(code).fn(datum, parent, evt);
       }
       expect(run('indata("source", 1, "x")')).to.equal(true);
       expect(run('indata("source", 2, "x")')).to.equal(false);
