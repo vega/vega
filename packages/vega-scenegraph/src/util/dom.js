@@ -33,7 +33,7 @@ module.exports = {
         a.tagName.toLowerCase() !== tag.toLowerCase() ||
         className && a.getAttribute('class') != className) {
       a = create(el.ownerDocument, tag, ns);
-      el.insertBefore(a, b);
+      el.insertBefore(a, b || null);
       if (className) a.setAttribute('class', className);
     }
     return a;
