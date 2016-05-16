@@ -24,7 +24,7 @@
     "browserify-versionify": "^1.0.4",
     "chai": "^3.0.0",
     "istanbul": "latest",
-    "jsdom": "^3.0.0",
+    "jsdom": "^9.1.0",
     "jshint": "^2.8.0",
     "mocha": "^2.2.5",
     "tv4": "^1.1.12",
