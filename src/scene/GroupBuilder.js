@@ -44,11 +44,13 @@ proto.init = function(graph, def) {
   this._recursor.evaluate = recurse.bind(this);
 
   var scales = (def.axes||[]).reduce(function(acc, x) {
-    return (acc[x.scale] = 1, acc);
+    acc[x.scale] = 1;
+    return acc;
   }, {});
 
   scales = (def.legends||[]).reduce(function(acc, x) {
-    return (acc[x.size || x.shape || x.fill || x.stroke], acc);
+    acc[x.size || x.shape || x.fill || x.stroke || x.opacity] = 1;
+    return acc;
   }, scales);
 
   this._recursor.dependency(Deps.SCALES, dl.keys(scales));
@@ -177,7 +179,7 @@ function recurse(input) {
   }
 
   function updateLegend(l) {
-    var scale = l.size() || l.shape() || l.fill() || l.stroke();
+    var scale = l.size() || l.shape() || l.fill() || l.stroke() || l.opacity();
     if (!input.scales[scale.scaleName]) return;
     l.reset().def();
   }
@@ -286,7 +288,7 @@ function buildLegends(input, group) {
 
   parseLegends(this._graph, this._def.legends, legends, group);
   legends.forEach(function(l, i) {
-    var scale = l.size() || l.shape() || l.fill() || l.stroke(),
+    var scale = l.size() || l.shape() || l.fill() || l.stroke() || l.opacity(),
         def = l.def(),
         b = null;
 
