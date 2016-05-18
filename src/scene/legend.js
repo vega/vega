@@ -373,7 +373,14 @@ function lgnd(model) {
   return legend;
 }
 
-var LEGEND_ORIENT = {left: 'x1', right: 'x2'};
+var LEGEND_ORIENT = {
+  'left': 'x1',
+  'right': 'x2',
+  'top-left': 'x1',
+  'top-right': 'x2',
+  'bottom-left': 'x1',
+  'bottom-right': 'x2'
+};
 
 function legendPosition(item, group, trans, db, signals, predicates) {
   var o = trans ? {} : item, i,
@@ -388,24 +395,48 @@ function legendPosition(item, group, trans, db, signals, predicates) {
         (group._legendPositions = {right: 0.5, left: 0.5});
 
   o.x = 0.5;
+  o.y = 0.5;
   o.width = lw;
-  o.y = pos[orient];
-  pos[orient] += (o.height = lh) + def.margin;
+  o.height = lh;
 
-  // Calculate axis offset.
-  var axes  = group.axes,
-      items = group.axisItems,
-      bound = LEGEND_ORIENT[orient];
-  for (i=0; i<axes.length; ++i) {
-    if (axes[i].orient() === orient) {
-      ao = Math.max(ao, Math.abs(items[i].bounds[bound]));
+  if (orient === 'left' || orient === 'right') {
+    o.y = pos[orient];
+    pos[orient] += lh + def.margin;
+
+    // Calculate axis offset.
+    var axes  = group.axes,
+        items = group.axisItems,
+        bound = LEGEND_ORIENT[orient];
+    for (i=0; i<axes.length; ++i) {
+      if (axes[i].orient() === orient) {
+        ao = Math.max(ao, Math.abs(items[i].bounds[bound]));
+      }
     }
   }
 
-  if (orient === 'left') {
-    o.x -= ao + offset + lw;
-  } else {
-    o.x += ao + offset;
+  switch (orient) {
+    case 'left':
+      o.x -= ao + offset + lw;
+      break;
+    case 'right':
+      o.x += ao + offset;
+      break;
+    case 'top-left':
+      o.x += offset;
+      o.y += offset;
+      break;
+    case 'top-right':
+      o.x += group.width - lw - offset;
+      o.y += offset;
+      break;
+    case 'bottom-left':
+      o.x += offset;
+      o.y += group.height - lh - offset;
+      break;
+    case 'bottom-right':
+      o.x += group.width - lw - offset;
+      o.y += group.height - lh - offset;
+      break;
   }
 
   if (trans) trans.interpolate(item, o);
