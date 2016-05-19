@@ -75,7 +75,8 @@ parseLegends.schema = {
         {"required": ["size"]},
         {"required": ["shape"]},
         {"required": ["fill"]},
-        {"required": ["stroke"]}
+        {"required": ["stroke"]},
+        {"required": ["opacity"]}
       ]
     }
   }
