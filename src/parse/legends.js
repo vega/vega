@@ -51,6 +51,7 @@ parseLegends.schema = {
         "shape": {"type": "string"},
         "fill": {"type": "string"},
         "stroke": {"type": "string"},
+        "opacity": {"type": "string"},
         "orient": {"enum": ["left", "right"], "default": "right"},
         "offset": {"type": "number"},
         "title": {"type": "string"},
