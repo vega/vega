@@ -1,5 +1,6 @@
 var dl  = require('datalib'),
     log = require('vega-logging'),
+    themeVal = require('../util/theme-val'),
     Model = require('../core/Model'),
     View  = require('../core/View');
 
@@ -16,13 +17,13 @@ var dl  = require('datalib'),
       argidx = 2,
       cb = arguments[arglen-1],
       model = new Model(),
-      viewFactory = View.factory;
+      viewFactory = View.factory,
+      config;
 
   if (arglen > argidx && dl.isFunction(arguments[arglen - argidx])) {
     viewFactory = arguments[arglen - argidx];
     ++argidx;
   }
-  var config;
   if (arglen > argidx && dl.isObject(arguments[arglen - argidx])) {
     model.config(arguments[arglen - argidx]);
     config = model.config();
@@ -31,7 +32,7 @@ var dl  = require('datalib'),
   if (dl.isObject(spec)) {
     parse(spec);
   } else if (dl.isString(spec)) {
-    var opts = dl.extend({url: spec}, model.config().load);
+    var opts = dl.extend({url: spec}, config.load);
     dl.json(opts, function(err, spec) {
       if (err) done('SPECIFICATION LOAD FAILED: ' + err);
       else parse(spec);
@@ -44,14 +45,12 @@ var dl  = require('datalib'),
     try {
       // protect against subsequent spec modification
       spec = dl.duplicate(spec);
-      
-      var paddingVar = setVal(spec, 'padding'),
-          width = setVal(spec, 'width', 500),
-          height = setVal(spec, 'height', 500),
-          background = setVal(spec, 'background');
 
       var parsers = require('./'),
-          padding = parsers.padding(paddingVar);
+          width   = themeVal(spec, config, 'width', 500),
+          height  = themeVal(spec, config, 'height', 500),
+          padding = parsers.padding(themeVal(spec, config, 'padding')),
+          background = themeVal(spec, config, 'background');
 
       // create signals for width, height, padding, and cursor
       model.signal('width', width);
@@ -72,28 +71,6 @@ var dl  = require('datalib'),
         data:       parsers.data(model, spec.data, done)
       });
     } catch (err) { done(err); }
-  }
-
-  var markTypes = {
-    'rect': true, 
-    'symbol': true, 
-    'path': true, 
-    'arc': true, 
-    'area': true, 
-    'line': true
-  };
-
-  function setVal(spec, property, defaultVal) {
-    if (spec[property]) {
-      return spec[property];
-    }
-    if (typeof config !== 'undefined' && config[property]) {
-      return config[property];
-    }
-    if (typeof defaultVal !== 'undefined') {
-      return defaultVal;
-    }
-    return undefined;
   }
 
   function cursor(spec) {

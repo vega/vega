@@ -44,7 +44,6 @@ config.background = '#f9f9f9';
 
 // default axis properties
 config.axis = {
-  orient: 'bottom',
   ticks: 10,
   padding: 2,
   axisColor: '#979797',

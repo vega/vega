@@ -7,7 +7,7 @@
     <script src="http://vega.github.io/vega-editor/vendor/d3.layout.cloud.js"></script>
     <script src="vega.js"></script>
     <!-- Change to different config files -->
-    <script src="theme/configs/excelconfig.js"></script>
+    <script src="theme/configs/quartzconfig.js"></script>
   </head>
   <body>
     <div id="vis"></div>
@@ -15,9 +15,9 @@
 <script type="text/javascript">
 // parse a spec and create a visualization view
 function parse(spec) {
-  vg.parse.spec(spec, config, function(chart) { chart({el:"#vis"}).update(); });
+  vg.parse.spec(spec, config, function(chart) { view = chart({el:"#vis"}).update(); });
 }
 // Change to different specs
-parse("theme/spec/arc.json");
+parse("theme/spec/bar.json");
 </script>
 </html>

@@ -39,7 +39,6 @@ config.scene = {
 
 // default axis properties
 config.axis = {
-  orient: 'bottom',
   ticks: 10,
   padding: 3,
   axisColor: '#000',

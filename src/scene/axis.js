@@ -6,9 +6,8 @@ var dl = require('datalib'),
 var axisBounds = new (require('vega-scenegraph').Bounds)();
 var ORDINAL = 'ordinal';
 
-function axs(model, updatedConfig) {
+function axs(model, config) {
   var scale,
-      config = updatedConfig.axis,
       orient = config.orient,
       offset = 0,
       titleOffset = config.titleOffset,
@@ -19,7 +18,7 @@ function axs(model, updatedConfig) {
       tickMajorSize = config.tickSize,
       tickMinorSize = config.tickSize,
       tickEndSize = config.tickSize,
-      tickPadding = config.padding,
+      tickPadding = config.tickPadding || config.padding,
       tickValues = null,
       tickFormatString = null,
       tickFormatType = null,
