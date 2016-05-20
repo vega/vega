@@ -419,38 +419,41 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config
   }
 
   var tickPlacement = config_axis.tickPlacement;
-  if (orient === 'top' || orient === 'bottom') {
-    var updatedOldScale = {'scale': oldScale.scale, 'offset': oldScale.offset};
-    var updatedNewScale = {'scale': newScale.scale, 'offset': newScale.offset};
-    if (tickPlacement === 'between' && scaleType === ORDINAL) {
-      var currPadding = 0;
-      var currOuterPadding = 0;
-      for (i=0; i<scales.length; i++) {
-        if (scales[i].name === oldScale.scale) {
-          if ('padding' in scales[i]) {
-           currPadding = scales[i].padding;
-          }
-          if ('outerPadding' in scales[i]) {
-           outerPadding = scales[i].padding;
-          }
+  var updatedOldScale = {'scale': oldScale.scale, 'offset': oldScale.offset};
+  var updatedNewScale = {'scale': newScale.scale, 'offset': newScale.offset};
+
+  // Update offset of tick placement to be in between ordinal marks 
+  // instead of directly aligned with
+  if (tickPlacement === 'between' && scaleType === ORDINAL) {
+    var currPadding = 0;
+    var currOuterPadding = 0;
+    for (i=0; i<scales.length; i++) {
+      if (scales[i].name === oldScale.scale) {
+        if ('padding' in scales[i]) {
+         currPadding = scales[i].padding;
+        }
+        if ('outerPadding' in scales[i]) {
+         outerPadding = scales[i].padding;
         }
       }
-      console.log('whattttt');
-      if (!currPadding && typeof config_scale !== 'undefined' && 'padding' in config_scale) {
-        currPadding = config_scale.padding;
-      }
-
-      if (!currOuterPadding && typeof config_scale !== 'undefined' && 'outerPadding' in config_scale) {
-        currOuterPadding = config_scale.outerPadding;
-      }
-
-      var oldPadding = ((oldScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
-      var newPadding = ((newScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
-
-      updatedOldScale.offset = ((oldScale.offset - 1) * 2) + oldPadding;
-      updatedNewScale.offset = ((newScale.offset - 1) * 2) + newPadding;
     }
 
+    if (!currPadding && typeof config_scale !== 'undefined' && 'padding' in config_scale) {
+      currPadding = config_scale.padding;
+    }
+
+    if (!currOuterPadding && typeof config_scale !== 'undefined' && 'outerPadding' in config_scale) {
+      currOuterPadding = config_scale.outerPadding;
+    }
+
+    var oldPadding = ((oldScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
+    var newPadding = ((newScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
+
+    updatedOldScale.offset = ((oldScale.offset - 1) * 2) + oldPadding;
+    updatedNewScale.offset = ((newScale.offset - 1) * 2) + newPadding;
+  }
+
+  if (orient === 'top' || orient === 'bottom') {
     dl.extend(ticks.properties.enter, {
       x:  updatedOldScale,
       y:  {value: 0},
@@ -468,15 +471,15 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config
     dl.extend(ticks.properties.enter, {
       x:  {value: 0},
       x2: size,
-      y:  oldScale
+      y:  updatedOldScale
     });
     dl.extend(ticks.properties.update, {
       x:  {value: 0},
       x2: size,
-      y:  newScale
+      y:  updatedNewScale
     });
     dl.extend(ticks.properties.exit, {
-      y:  newScale,
+      y:  updatedNewScale,
     });
   }
 }
