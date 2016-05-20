@@ -9,10 +9,11 @@ function parseLegends(model, spec, legends, group) {
 
 function parseLegend(def, index, legend, group) {
   // legend scales
-  legend.size  (def.size   ? group.scale(def.size)   : null);
-  legend.shape (def.shape  ? group.scale(def.shape)  : null);
-  legend.fill  (def.fill   ? group.scale(def.fill)   : null);
-  legend.stroke(def.stroke ? group.scale(def.stroke) : null);
+  legend.size   (def.size    ? group.scale(def.size)    : null);
+  legend.shape  (def.shape   ? group.scale(def.shape)   : null);
+  legend.fill   (def.fill    ? group.scale(def.fill)    : null);
+  legend.stroke (def.stroke  ? group.scale(def.stroke)  : null);
+  legend.opacity(def.opacity ? group.scale(def.opacity) : null);
 
   // legend orientation
   if (def.orient) legend.orient(def.orient);
@@ -50,6 +51,7 @@ parseLegends.schema = {
         "shape": {"type": "string"},
         "fill": {"type": "string"},
         "stroke": {"type": "string"},
+        "opacity": {"type": "string"},
         "orient": {"enum": ["left", "right"], "default": "right"},
         "offset": {"type": "number"},
         "title": {"type": "string"},
@@ -73,7 +75,8 @@ parseLegends.schema = {
         {"required": ["size"]},
         {"required": ["shape"]},
         {"required": ["fill"]},
-        {"required": ["stroke"]}
+        {"required": ["stroke"]},
+        {"required": ["opacity"]}
       ]
     }
   }

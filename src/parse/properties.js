@@ -186,7 +186,7 @@ function rule(model, name, rules, exprs) {
       deps.signals.push.apply(deps.signals, exprFn.globals);
       deps.data.push.apply(deps.data, exprFn.dataSources);
 
-      code += "if (exprs[" + exprs.length + "](item.datum, null)) {" +
+      code += "if (exprs[" + exprs.length + "](item.datum, item.mark.group.datum, null)) {" +
           "\n    d += set(o, "+dl.str(name)+", " +ref.val+");";
       code += rules[i+1] ? "\n  } else " : "  }";
 
@@ -611,8 +611,11 @@ properties.schema = {
         "endAngle": {"$ref": "#/refs/numberValue"},
 
         // Area- and line-mark properties
-        "interpolate": valueSchema(["linear", "step-before", "step-after",
-          "basis", "basis-open", "cardinal", "cardinal-open", "monotone"]),
+        "interpolate": valueSchema(["linear", "linear-closed",
+          "step", "step-before", "step-after",
+          "basis", "basis-open", "basis-closed", 
+          "cardinal", "cardinal-open", "cardinal-closed",
+          "bundle", "monotone"]),
         "tension": {"$ref": "#/refs/numberValue"},
         "orient": valueSchema(["horizontal", "vertical"]),
 

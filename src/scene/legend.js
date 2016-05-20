@@ -10,6 +10,7 @@ function lgnd(model) {
       shape = null,
       fill  = null,
       stroke  = null,
+      opacity = null,
       spacing = null,
       values  = null,
       formatString = null,
@@ -39,7 +40,7 @@ function lgnd(model) {
   function ingest(d, i) { return {data: d, index: i}; }
 
   legend.def = function() {
-    var scale = size || shape || fill || stroke;
+    var scale = size || shape || fill || stroke || opacity;
 
     if (!legendDef.type) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type) ?
@@ -58,7 +59,7 @@ function lgnd(model) {
   }
 
   function ordinalDef(scale) {
-    var def = o_legend_def(size, shape, fill, stroke);
+    var def = o_legend_def(size, shape, fill, stroke, opacity);
 
     // generate data
     var data = (values == null ?
@@ -116,14 +117,14 @@ function lgnd(model) {
     return def;
   }
 
-  function o_legend_def(size, shape, fill, stroke) {
+  function o_legend_def(size, shape, fill, stroke, opacity) {
     // setup legend marks
     var titles  = dl.extend(m.titles, legendTitle(config)),
         symbols = dl.extend(m.symbols, legendSymbols(config)),
         labels  = dl.extend(m.labels, vLegendLabels(config));
 
     // extend legend marks
-    legendSymbolExtend(symbols, size, shape, fill, stroke);
+    legendSymbolExtend(symbols, size, shape, fill, stroke, opacity);
 
     // add / override custom style properties
     dl.extend(titles.properties.update,  titleStyle);
@@ -280,6 +281,12 @@ function lgnd(model) {
     return legend;
   };
 
+  legend.opacity = function(x) {
+    if (!arguments.length) return opacity;
+    if (opacity !== x) { opacity = x; reset(); }
+    return legend;
+  };
+
   legend.title = function(x) {
     if (!arguments.length) return title;
     if (title !== x) { title = x; reset(); }
@@ -366,7 +373,14 @@ function lgnd(model) {
   return legend;
 }
 
-var LEGEND_ORIENT = {left: 'x1', right: 'x2'};
+var LEGEND_ORIENT = {
+  'left': 'x1',
+  'right': 'x2',
+  'top-left': 'x1',
+  'top-right': 'x2',
+  'bottom-left': 'x1',
+  'bottom-right': 'x2'
+};
 
 function legendPosition(item, group, trans, db, signals, predicates) {
   var o = trans ? {} : item, i,
@@ -381,24 +395,48 @@ function legendPosition(item, group, trans, db, signals, predicates) {
         (group._legendPositions = {right: 0.5, left: 0.5});
 
   o.x = 0.5;
+  o.y = 0.5;
   o.width = lw;
-  o.y = pos[orient];
-  pos[orient] += (o.height = lh) + def.margin;
+  o.height = lh;
 
-  // Calculate axis offset. 
-  var axes  = group.axes, 
-      items = group.axisItems,
-      bound = LEGEND_ORIENT[orient];
-  for (i=0; i<axes.length; ++i) {
-    if (axes[i].orient() === orient) {
-      ao = Math.max(ao, Math.abs(items[i].bounds[bound]));
+  if (orient === 'left' || orient === 'right') {
+    o.y = pos[orient];
+    pos[orient] += lh + def.margin;
+
+    // Calculate axis offset.
+    var axes  = group.axes,
+        items = group.axisItems,
+        bound = LEGEND_ORIENT[orient];
+    for (i=0; i<axes.length; ++i) {
+      if (axes[i].orient() === orient) {
+        ao = Math.max(ao, Math.abs(items[i].bounds[bound]));
+      }
     }
   }
 
-  if (orient === 'left') {
-    o.x -= ao + offset + lw;
-  } else {
-    o.x += ao + offset;
+  switch (orient) {
+    case 'left':
+      o.x -= ao + offset + lw;
+      break;
+    case 'right':
+      o.x += ao + offset;
+      break;
+    case 'top-left':
+      o.x += offset;
+      o.y += offset;
+      break;
+    case 'top-right':
+      o.x += group.width - lw - offset;
+      o.y += offset;
+      break;
+    case 'bottom-left':
+      o.x += offset;
+      o.y += group.height - lh - offset;
+      break;
+    case 'bottom-right':
+      o.x += group.width - lw - offset;
+      o.y += group.height - lh - offset;
+      break;
   }
 
   var totalHeight = 0;
@@ -421,13 +459,14 @@ function legendPosition(item, group, trans, db, signals, predicates) {
   return true;
 }
 
-function legendSymbolExtend(mark, size, shape, fill, stroke) {
+function legendSymbolExtend(mark, size, shape, fill, stroke, opacity) {
   var e = mark.properties.enter,
       u = mark.properties.update;
-  if (size)   e.size   = u.size   = {scale: size.scaleName,   field: 'data'};
-  if (shape)  e.shape  = u.shape  = {scale: shape.scaleName,  field: 'data'};
-  if (fill)   e.fill   = u.fill   = {scale: fill.scaleName,   field: 'data'};
-  if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: 'data'};
+  if (size)    e.size    = u.size    = {scale: size.scaleName,   field: 'data'};
+  if (shape)   e.shape   = u.shape   = {scale: shape.scaleName,  field: 'data'};
+  if (fill)    e.fill    = u.fill    = {scale: fill.scaleName,   field: 'data'};
+  if (stroke)  e.stroke  = u.stroke  = {scale: stroke.scaleName, field: 'data'};
+  if (opacity) u.opacity = {scale: opacity.scaleName, field: 'data'};
 }
 
 function legendTitle(config) {

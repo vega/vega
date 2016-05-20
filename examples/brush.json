@@ -3,14 +3,12 @@
   "height": 200,
 
   "signals": [
-    {"name": "w", "init": 200},
-    {"name": "h", "init": 200},
     {
       "name": "brush_start",
       "init": {},
       "streams": [{
         "type": "mousedown",
-        "expr": "{x: iscale('x', clamp(eventX(), 0, w)), y: iscale('y', clamp(eventY(), 0, h))}"
+        "expr": "{x: iscale('x', clamp(eventX(), 0, width)), y: iscale('y', clamp(eventY(), 0, height))}"
       }]
     },
     {
@@ -18,7 +16,7 @@
       "init": {},
       "streams": [{
         "type": "mousedown, [mousedown, window:mouseup] > window:mousemove",
-        "expr": "{x: iscale('x', clamp(eventX(), 0, w)), y: iscale('y', clamp(eventY(), 0, h))}"
+        "expr": "{x: iscale('x', clamp(eventX(), 0, width)), y: iscale('y', clamp(eventY(), 0, height))}"
       }]
     }
   ],
