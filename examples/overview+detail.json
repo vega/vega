@@ -15,7 +15,7 @@
       "name": "brush_end",
       "init": {"expr": "datetime('Jan 1 2000')"},
       "streams": [{
-        "type": "@overview:mousedown, [@overview:mousedown, window:mouseup] > window:mousemove",
+        "type": "@overview:mousedown, [@overview:mousedown, window:mouseup] > window:mousemove, @overview:mouseup",
         "expr": "clamp(eventX(), 0, 720)",
         "scale": {"name": "xOverview", "invert": true}
       }]
