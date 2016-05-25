@@ -43,7 +43,6 @@ function setConfig(config, defType) {
 }
 
 function parseAxis(config, def, index, axis, group) {
-  console.log(config);
   // axis scale
   if (def.scale !== undefined) {
     axis.scale(group.scale(def.scale));
