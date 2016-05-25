@@ -1,10 +1,17 @@
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-function parseMark(model, mark, isMark=false) {
+function parseMark(model, mark/*, [isMark]*/) {
   var props = mark.properties,
       group = mark.marks,
-      config = model._config;
+      config = model._config,
+      arglen = arguments.length,
+      argidx = 2,
+      isMark = false;
+
+  if (arglen > argidx && dl.isBoolean(arguments[arglen - 1])) {
+    isMark = true;
+  }
 
   // for scatter plots, set symbol size specified in config if not in spec
   if (typeof props !== 'undefined') {
