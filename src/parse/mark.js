@@ -1,7 +1,7 @@
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-function parseMark(model, mark) {
+function parseMark(model, mark, isMark=false) {
   var props = mark.properties,
       group = mark.marks,
       config = model._config;
@@ -16,10 +16,29 @@ function parseMark(model, mark) {
     }
   }
 
+  // Object defines whether to set the stroke or 
+  // fill to the given default color
+  var colorMap = {
+    symbol: 'fill',
+    arc: 'fill',
+    area: 'fill',
+    rect: 'fill',
+    path: 'stroke',
+    line: 'stroke',
+    rule: 'stroke',
+    text: 'stroke'
+  }
+
+  // Set default mark color if no color is given in spec
+  if (isMark) {
+    var property = colorMap[mark.type];
+    if (typeof props !== 'undefined' && 'enter' in props && !(property in props['enter'])) {
+      setDefaultColor(property, props, config);
+    }
+  }
+
   // parse mark property definitions
   dl.keys(props).forEach(function(k) {
-    defaultColor('fill', 'defaultFill', props[k], config);
-    defaultColor('stroke', 'defaultFill', props[k], config);
     props[k] = parseProperties(model, mark.type, props[k]);
   });
 
@@ -36,15 +55,14 @@ function parseMark(model, mark) {
   return mark;
 }
 
-// set color given in graph if "default" specified in spec for marks color
-function defaultColor(property, configProperty, prop, config) {
-  if (property in prop && 'value' in prop[property] && prop[property]['value'] === 'default') {
-    if (typeof config !== 'undefined' && 'marks' in config && configProperty in config.marks) {
-      prop[property]['value'] = config.marks[configProperty];
-    } else {
-      prop[property]['value'] = '#000000';
-    }
+function setDefaultColor(property, props, config) {
+  var color = '#000000';
+  if (typeof config !== 'undefined' && 'marks' in config && 'color' in config.marks) {
+    color =  config.marks['color'];
   }
+  props['enter'][property] = {
+    'value': color
+  };
 }
 
 module.exports = parseMark;

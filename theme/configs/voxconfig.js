@@ -79,7 +79,7 @@ config.axis_y = {
 }
 
 config.marks = {
-  defaultFill: '#3e5c69'
+  color: '#3e5c69'
 };
 
 // default legend properties

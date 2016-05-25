@@ -98,7 +98,7 @@ config.legend = {
 };
 
 config.marks = {
-  defaultFill: 'steelblue',
+  color: '#1FFFFF',
   symbolSize: 50
 };
 

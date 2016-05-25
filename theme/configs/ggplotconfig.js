@@ -92,7 +92,7 @@ config.legend = {
 };
 
 config.marks = {
-  defaultFill: '#000000',
+  color: '#000000',
   symbolSize: 30
 };
 

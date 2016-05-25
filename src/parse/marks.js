@@ -10,7 +10,7 @@ function parseRootMark(model, spec, width, height) {
     scales:     spec.scales  || [],
     axes:       spec.axes    || [],
     legends:    spec.legends || [],
-    marks:      (spec.marks || []).map(function(m) { return parseMark(model, m); })
+    marks:      (spec.marks || []).map(function(m) { return parseMark(model, m, true); })
   };
 }
 

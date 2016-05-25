@@ -80,7 +80,7 @@ config.axis_y = {
 }
 
 config.marks = {
-  defaultFill: '#ab5787',
+  color: '#ab5787',
   symbolSize: 20
 };
 
