@@ -101,7 +101,7 @@ prototype.set = function(value) {
       return v.field;
     } else if (v.signal !== undefined) {
       p._resolution = true;
-      p._transform.dependency(Deps.SIGNALS, v.signal);
+      p._transform.dependency(Deps.SIGNALS, dl.field(v.signal)[0]);
       p._signals.push({
         index: i,
         value: function(graph) { return graph.signalRef(v.signal); }
