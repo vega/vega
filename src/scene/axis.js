@@ -119,13 +119,6 @@ function axs(model, config) {
     }
     range = axisScaleRange(scale);
 
-    var scales;
-    if ('marks' in model._defs && 'scales' in model._defs.marks) {
-      scales = model._defs.marks.scales;
-    }
-
-    var config_scale = model.config().scale;
-
     // setup axis marks
     dl.extend(m.gridLines, axisTicks(config));
     dl.extend(m.majorTicks, axisTicks(config));
@@ -139,9 +132,9 @@ function axs(model, config) {
     m.gridLines.properties.enter.strokeDash = {value: config.gridDash};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scales, config_scale, config, scale.type, offset);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scales, config_scale, config, scale.type);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scales, config_scale, config, scale.type);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scale, config, offset);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scale, config);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scale, config);
 
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
@@ -407,7 +400,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config_scale, config_axis, scaleType, offset) {
+function axisTicksExtend(orient, ticks, oldRef, newRef, size, scale, config, offset) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -417,68 +410,42 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, scales, config
     size = {value: sign * size, offset: offset};
   }
 
-  var tickPlacement = config_axis.tickPlacement;
-  var updatedOldScale = {'scale': oldScale.scale, 'offset': oldScale.offset};
-  var updatedNewScale = {'scale': newScale.scale, 'offset': newScale.offset};
-
-  // Update offset of tick placement to be in between ordinal marks 
-  // instead of directly aligned with
-  if (tickPlacement === 'between' && scaleType === ORDINAL) {
-    var currPadding = 0;
-    var currOuterPadding = 0;
-    for (i=0; i<scales.length; i++) {
-      if (scales[i].name === oldScale.scale) {
-        if ('padding' in scales[i]) {
-         currPadding = scales[i].padding;
-        }
-        if ('outerPadding' in scales[i]) {
-         outerPadding = scales[i].padding;
-        }
-      }
-    }
-
-    if (!currPadding && typeof config_scale !== 'undefined' && 'padding' in config_scale) {
-      currPadding = config_scale.padding;
-    }
-
-    if (!currOuterPadding && typeof config_scale !== 'undefined' && 'outerPadding' in config_scale) {
-      currOuterPadding = config_scale.outerPadding;
-    }
-
-    var oldPadding = ((oldScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
-    var newPadding = ((newScale.offset * 2 * currPadding) / ((1 - currPadding) * 2));
-
-    updatedOldScale.offset = ((oldScale.offset - 1) * 2) + oldPadding;
-    updatedNewScale.offset = ((newScale.offset - 1) * 2) + newPadding;
+  // Update offset of tick placement to be in between ordinal marks
+  // instead of directly aligned with.
+  if (config.tickPlacement === 'between' && scale.type === ORDINAL) {
+    var rng = scale.range(),
+        offset = 0.5 + (scale.rangeBand() || (rng[1] - rng[0]) / 2);
+    newRef = oldRef = dl.duplicate(newRef);
+    newRef.offset = oldRef.offset = offset;
   }
 
   if (orient === 'top' || orient === 'bottom') {
     dl.extend(ticks.properties.enter, {
-      x:  updatedOldScale,
+      x:  oldRef,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.update, {
-      x:  updatedNewScale,
+      x:  newRef,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.exit, {
-      x:  updatedNewScale,
+      x:  newRef,
     });
   } else {
     dl.extend(ticks.properties.enter, {
       x:  {value: 0},
       x2: size,
-      y:  updatedOldScale
+      y:  oldRef
     });
     dl.extend(ticks.properties.update, {
       x:  {value: 0},
       x2: size,
-      y:  updatedNewScale
+      y:  newRef
     });
     dl.extend(ticks.properties.exit, {
-      y:  updatedNewScale,
+      y:  newRef,
     });
   }
 }
