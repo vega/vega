@@ -24,11 +24,12 @@ var dl  = require('datalib'),
     viewFactory = arguments[arglen - argidx];
     ++argidx;
   }
+
   if (arglen > argidx && dl.isObject(arguments[arglen - argidx])) {
     model.config(arguments[arglen - argidx]);
-    config = model.config();
   }
 
+  config = model.config();
   if (dl.isObject(spec)) {
     parse(spec);
   } else if (dl.isString(spec)) {

@@ -2,8 +2,8 @@ var dl = require('datalib'),
     parseProperties = require('./properties');
 
 function parseMark(model, mark, applyDefaults) {
-  var props = mark.properties || (mark.properties = {}),
-      enter = props.enter || (props.enter = {}),
+  var props = mark.properties || (applyDefaults && (mark.properties = {})),
+      enter = props.enter || (applyDefaults && (props.enter = {})),
       group = mark.marks,
       config = model.config().marks || {};
 
