@@ -37,8 +37,7 @@
           "x": {"scale": "xscale", "field": "category"},
           "width": {"scale": "xscale", "band": true, "offset": -1},
           "y": {"scale": "yscale", "field": "amount"},
-          "y2": {"scale": "yscale", "value":0},
-          "fill": {"value": "default"}
+          "y2": {"scale": "yscale", "value":0}
         }
       }
     }

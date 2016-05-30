@@ -36,9 +36,6 @@
         "enter": {
           "x": {"scale": "xscale", "field": "category"},
           "y": {"scale": "yscale", "field": "amount"},
-          "stroke": {
-            "value": "default"
-          },
           "strokeWidth": {
             "value": 2
           }

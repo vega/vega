@@ -17,7 +17,7 @@
   ],
 
   "scales": [
-    { "name": "xscale", "range": "width",
+    { "name": "xscale", "range": "width", "type": "ordinal", "points": true,
       "domain": {"data": "table", "field": "category"} },
     { "name": "yscale", "range": "height", "nice": true,
       "domain": {"data": "table", "field": "amount"} }
@@ -37,8 +37,8 @@
           "x": {"scale": "xscale", "field": "category"},
           "x2": {"scale": "xscale"},
           "y": {"scale": "yscale", "field": "amount"},
-          "y2": {"scale": "yscale", "value":0},
-          "fill": {"value": "default"}        }
+          "y2": {"scale": "yscale", "value":0}
+        }
       }
     }
   ]
