@@ -1,5 +1,6 @@
 var dl  = require('datalib'),
     log = require('vega-logging'),
+    themeVal = require('../util/theme-val'),
     Model = require('../core/Model'),
     View  = require('../core/View');
 
@@ -16,20 +17,23 @@ var dl  = require('datalib'),
       argidx = 2,
       cb = arguments[arglen-1],
       model = new Model(),
-      viewFactory = View.factory;
+      viewFactory = View.factory,
+      config;
 
   if (arglen > argidx && dl.isFunction(arguments[arglen - argidx])) {
     viewFactory = arguments[arglen - argidx];
     ++argidx;
   }
+
   if (arglen > argidx && dl.isObject(arguments[arglen - argidx])) {
     model.config(arguments[arglen - argidx]);
   }
 
+  config = model.config();
   if (dl.isObject(spec)) {
     parse(spec);
   } else if (dl.isString(spec)) {
-    var opts = dl.extend({url: spec}, model.config().load);
+    var opts = dl.extend({url: spec}, config.load);
     dl.json(opts, function(err, spec) {
       if (err) done('SPECIFICATION LOAD FAILED: ' + err);
       else parse(spec);
@@ -44,9 +48,10 @@ var dl  = require('datalib'),
       spec = dl.duplicate(spec);
 
       var parsers = require('./'),
-          width   = spec.width || 500,
-          height  = spec.height || 500,
-          padding = parsers.padding(spec.padding);
+          width   = themeVal(spec, config, 'width', 500),
+          height  = themeVal(spec, config, 'height', 500),
+          padding = parsers.padding(themeVal(spec, config, 'padding')),
+          background = themeVal(spec, config, 'background');
 
       // create signals for width, height, padding, and cursor
       model.signal('width', width);
@@ -60,7 +65,7 @@ var dl  = require('datalib'),
         height:     height,
         padding:    padding,
         viewport:   spec.viewport || null,
-        background: parsers.background(spec.background),
+        background: parsers.background(background),
         signals:    parsers.signals(model, spec.signals),
         predicates: parsers.predicates(model, spec.predicates),
         marks:      parsers.marks(model, spec, width, height),

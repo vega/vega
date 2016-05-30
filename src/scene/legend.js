@@ -145,7 +145,7 @@ function lgnd(model) {
       properties: {
         enter: parseProperties(model, 'group', legendStyle),
         legendPosition: {
-          encode: legendPosition,
+          encode: legendPosition.bind(null, config),
           signals: [], scales:[], data: [], fields: []
         }
       }
@@ -247,7 +247,7 @@ function lgnd(model) {
       properties: {
         enter: parseProperties(model, 'group', legendStyle),
         legendPosition: {
-          encode: legendPosition,
+          encode: legendPosition.bind(null, config),
           signals: [], scales: [], data: [], fields: []
         }
       }
@@ -382,7 +382,7 @@ var LEGEND_ORIENT = {
   'bottom-right': 'x2'
 };
 
-function legendPosition(item, group, trans, db, signals, predicates) {
+function legendPosition(config, item, group, trans, db, signals, predicates) {
   var o = trans ? {} : item, i,
       def = item.mark.def,
       offset = def.offset,
@@ -437,6 +437,19 @@ function legendPosition(item, group, trans, db, signals, predicates) {
       o.x += group.width - lw - offset;
       o.y += group.height - lh - offset;
       break;
+  }
+
+  var baseline = config.baseline,
+      totalHeight = 0;
+  for (i=0; i<group.legendItems.length; i++) {
+    var currItem = group.legendItems[i];
+    totalHeight += currItem.bounds.height() + (item.height ? 0 : pad);
+  }
+
+  if (baseline === 'middle') {
+    o.y += offset + (group.height / 2) - (totalHeight / 2);
+  } else if (baseline === 'bottom') {
+    o.y += offset + group.height - totalHeight;
   }
 
   if (trans) trans.interpolate(item, o);

@@ -1,5 +1,6 @@
 var dl = require('datalib'),
-    axs = require('../scene/axis');
+    axs = require('../scene/axis'),
+    themeVal = require('../util/theme-val');
 
 var ORIENT = {
   "x":      "bottom",
@@ -11,32 +12,38 @@ var ORIENT = {
 };
 
 function parseAxes(model, spec, axes, group) {
-  var config = model.config();
+  var cfg = config(model);
   (spec || []).forEach(function(def, index) {
-    axes[index] = axes[index] || axs(model);
-    parseAxis(config, def, index, axes[index], group);
+    axes[index] = axes[index] || axs(model, cfg[def.type]);
+    parseAxis(cfg[def.type], def, index, axes[index], group);
   });
 }
 
 function parseAxis(config, def, index, axis, group) {
   // axis scale
+  var scale;
   if (def.scale !== undefined) {
-    axis.scale(group.scale(def.scale));
+    axis.scale(scale = group.scale(def.scale));
+  }
+
+  // grid by scaletype
+  var grid = config.grid;
+  if (dl.isObject(grid)) {
+    config.grid = grid[scale.type] !== undefined ? grid[scale.type] : grid.default;
   }
 
   // axis orientation
-  axis.orient(def.orient || ORIENT[def.type]);
+  axis.orient(themeVal(def, config, 'orient', ORIENT[def.type]));
   // axis offset
-  axis.offset(def.offset || 0);
+  axis.offset(themeVal(def, config, 'offset', 0));
   // axis layer
-  axis.layer(def.layer || "front");
+  axis.layer(themeVal(def, config, 'layer', 'front'));
   // axis grid lines
-  axis.grid(def.grid || false);
+  axis.grid(themeVal(def, config, 'grid', false));
   // axis title
   axis.title(def.title || null);
   // axis title offset
-  axis.titleOffset(def.titleOffset != null ?
-    def.titleOffset : config.axis.titleOffset);
+  axis.titleOffset(themeVal(def, config, 'titleOffset'));
   // axis values
   axis.tickValues(def.values || null);
   // axis label formatting
@@ -44,26 +51,23 @@ function parseAxis(config, def, index, axis, group) {
   axis.tickFormatType(def.formatType || null);
   // axis tick subdivision
   axis.tickSubdivide(def.subdivide || 0);
-  // axis tick padding
-  axis.tickPadding(def.tickPadding || config.axis.padding);
+  // axis tick padding (config.padding for backwards compatibility).
+  axis.tickPadding(themeVal(def, config, 'tickPadding', config.padding));
 
   // axis tick size(s)
-  var size = [];
-  if (def.tickSize !== undefined) {
-    for (var i=0; i<3; ++i) size.push(def.tickSize);
-  } else {
-    var ts = config.axis.tickSize;
-    size = [ts, ts, ts];
-  }
-  if (def.tickSizeMajor != null) size[0] = def.tickSizeMajor;
-  if (def.tickSizeMinor != null) size[1] = def.tickSizeMinor;
-  if (def.tickSizeEnd   != null) size[2] = def.tickSizeEnd;
+  var ts = themeVal(def, config, 'tickSize'),
+      size = [ts, ts, ts];
+
+  size[0] = themeVal(def, config, 'tickSizeMajor', size[0]);
+  size[1] = themeVal(def, config, 'tickSizeMinor', size[1]);
+  size[2] = themeVal(def, config, 'tickSizeEnd', size[2]);
+
   if (size.length) {
     axis.tickSize.apply(axis, size);
   }
 
   // axis tick count
-  axis.tickCount(def.ticks || config.axis.ticks);
+  axis.tickCount(themeVal(def, config, 'ticks'));
 
   // style properties
   var p = def.properties;
@@ -80,6 +84,16 @@ function parseAxis(config, def, index, axis, group) {
   axis.titleProperties(p && p.title || {});
   axis.gridLineProperties(p && p.grid || {});
   axis.domainProperties(p && p.axis || {});
+}
+
+function config(model) {
+  var cfg  = model.config(),
+      axis = cfg.axis;
+
+  return {
+    x: dl.extend(dl.duplicate(axis), cfg.axis_x),
+    y: dl.extend(dl.duplicate(axis), cfg.axis_y)
+  };
 }
 
 module.exports = parseAxes;

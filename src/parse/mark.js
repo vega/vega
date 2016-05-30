@@ -1,9 +1,31 @@
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-function parseMark(model, mark) {
-  var props = mark.properties,
-      group = mark.marks;
+function parseMark(model, mark, applyDefaults) {
+  var props = mark.properties || (applyDefaults && (mark.properties = {})),
+      enter = props.enter || (applyDefaults && (props.enter = {})),
+      group = mark.marks,
+      config = model.config().marks || {};
+
+  if (applyDefaults) {
+    // for scatter plots, set symbol size specified in config if not in spec
+    if (mark.type === 'symbol' && !enter.size && config.symbolSize) {
+        enter.size = {value: config.symbolSize};
+    }
+
+    // Themes define a default "color" that maps to fill/stroke based on mark type.
+    var colorMap = {
+      arc: 'fill', area: 'fill', rect: 'fill', symbol: 'fill', text: 'fill',
+      line: 'stroke', path: 'stroke', rule: 'stroke'
+    };
+
+    // Set default mark color if no color is given in spec, and only do so for
+    // user-defined marks (not axis/legend marks).
+    var colorProp = colorMap[mark.type];
+    if (!enter[colorProp] && config.color) {
+      enter[colorProp] = {value: config.color};
+    }
+  }
 
   // parse mark property definitions
   dl.keys(props).forEach(function(k) {
@@ -17,7 +39,7 @@ function parseMark(model, mark) {
 
   // recurse if group type
   if (group) {
-    mark.marks = group.map(function(g) { return parseMark(model, g); });
+    mark.marks = group.map(function(g) { return parseMark(model, g, true); });
   }
 
   return mark;

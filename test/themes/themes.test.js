@@ -1,40 +1,35 @@
-var config = require('../../src/core/config'),
-  jsdom = require('jsdom'),
-  d3 = require('d3'),
-  dl = require('datalib'),
+var dl = require('datalib'),
   fs = require('fs'),
   path = require('path'),
   output = 'output/';
 
-describe('Canvas', function() {
-  require('d3-geo-projection')(d3);
+describe('Themes', function() {
+  var specs = getFiles(['test/themes/spec/']);
 
-  describe('Examples', function() {
-    var files = examples(),
-        skip  = {};
+  themes().forEach(function(t) {
+    var theme = JSON.parse(fs.readFileSync(t)),
+        themeName = path.basename(t, '.json');
 
-    files.forEach(function(file, idx) {
-      var name = path.basename(file, '.json');
-      if (skip[name]) {
-        // skip, but mark as pending
-        it('renders the ' + name + ' example');
-      } else {
-        it('renders the ' + name + ' example', function(done) {
-          render(name, file, done);
-        });
-      }
+    specs.forEach(function(spec) {
+      var name = themeName + '-' + path.basename(spec, '.json');
+      it('renders ' + name, function(done) {
+        render(name, spec, theme, done);
+      });
     });
   });
 
   // Render the given spec using the headless canvas renderer
-  function render(name, specFile, done) {
+  function render(name, specFile, theme, done) {
     fs.readFile(specFile, 'utf8', function(err, text) {
       if (err) throw err;
       var spec = JSON.parse(text);
 
-      parseSpec(spec, config, function(error, viewFactory) {
+      theme.load = theme.load || {};
+      theme.load.baseURL = 'file://node_modules/vega-datasets/';
+
+      parseSpec(spec, theme, function(error, viewFactory) {
         if (error) return done(error);
-        
+
         var view = viewFactory({ renderer: 'canvas' }).update();
         view.canvasAsync(function(canvas) {
           var data = canvas.toDataURL();

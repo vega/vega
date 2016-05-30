@@ -50,14 +50,26 @@ global.examples = function() {
     expect(fs.statSync(dir).isDirectory()).to.equal(true);
     var specs = fs.readdirSync(dir).filter(function(name) {
       var basename = path.basename(name, '.json');
-      return path.extname(name) === '.json' && 
+      return path.extname(name) === '.json' &&
         basename.indexOf('-params') < 0;
     });
 
-    files = files.concat(specs.map(function(name) {
-      return dir+name;
-    }));
+    files = files.concat(specs.map(function(name) { return dir+name; }));
   });
 
   return files;
+};
+
+global.getFiles = function(dirs) {
+  var files = [];
+  dirs.forEach(function(dir) {
+    expect(fs.statSync(dir).isDirectory()).to.equal(true);
+    var configs = fs.readdirSync(dir);
+    files = files.concat(configs.map(function(name) { return dir + name; }));
+  });
+  return files;
+}
+
+global.themes = function() {
+  return getFiles(['examples/themes/']);
 };

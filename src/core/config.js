@@ -39,7 +39,7 @@ config.scene = {
 
 // default axis properties
 config.axis = {
-  orient: 'bottom',
+  layer: 'back',
   ticks: 10,
   padding: 3,
   axisColor: '#000',
@@ -58,7 +58,7 @@ config.axis = {
   titleFontWeight: 'bold',
   titleOffset: 'auto',
   titleOffsetAutoMin: 30,
-  titleOffsetAutoMax: Infinity,
+  titleOffsetAutoMax: 10000,
   titleOffsetAutoMargin: 4
 };
 

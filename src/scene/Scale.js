@@ -112,9 +112,9 @@ function ordinal(scale, rng, group) {
       prev = scale._prev,
       dataDrivenRange = false,
       pad = signal.call(this, def.padding) || 0,
-      outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
+      outer  = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
       points = def.points && signal.call(this, def.points),
-      round = signal.call(this, def.round) || def.round == null,
+      round  = signal.call(this, def.round) || def.round == null,
       domain, str, spatial=true;
 
   // range pre-processing for data-driven ranges

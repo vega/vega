@@ -6,9 +6,8 @@ var dl = require('datalib'),
 var axisBounds = new (require('vega-scenegraph').Bounds)();
 var ORDINAL = 'ordinal';
 
-function axs(model) {
+function axs(model, config) {
   var scale,
-      config = model.config().axis,
       orient = config.orient,
       offset = 0,
       titleOffset = config.titleOffset,
@@ -19,7 +18,7 @@ function axs(model) {
       tickMajorSize = config.tickSize,
       tickMinorSize = config.tickSize,
       tickEndSize = config.tickSize,
-      tickPadding = config.padding,
+      tickPadding = config.tickPadding || config.padding,
       tickValues = null,
       tickFormatString = null,
       tickFormatType = null,
@@ -129,11 +128,14 @@ function axs(model) {
     dl.extend(m.title, axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.gridColor};
     m.gridLines.properties.enter.strokeOpacity = {value: config.gridOpacity};
+    m.gridLines.properties.enter.strokeWidth = {value: config.gridWidth};
+    m.gridLines.properties.enter.strokeDash = {value: config.gridDash};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, offset);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scale, config, offset);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scale, config);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scale, config);
+
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
@@ -398,7 +400,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size, offset) {
+function axisTicksExtend(orient, ticks, oldRef, newRef, size, scale, config, offset) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -407,33 +409,43 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, offset) {
   } else {
     size = {value: sign * size, offset: offset};
   }
+
+  // Update offset of tick placement to be in between ordinal marks
+  // instead of directly aligned with.
+  if (config.tickPlacement === 'between' && scale.type === ORDINAL) {
+    var rng = scale.range(),
+        tickOffset = 0.5 + (scale.rangeBand() || (rng[1] - rng[0]) / 2);
+    newRef = oldRef = dl.duplicate(newRef);
+    newRef.offset = oldRef.offset = tickOffset;
+  }
+
   if (orient === 'top' || orient === 'bottom') {
     dl.extend(ticks.properties.enter, {
-      x:  oldScale,
+      x:  oldRef,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.update, {
-      x:  newScale,
+      x:  newRef,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.exit, {
-      x:  newScale,
+      x:  newRef,
     });
   } else {
     dl.extend(ticks.properties.enter, {
       x:  {value: 0},
       x2: size,
-      y:  oldScale
+      y:  oldRef
     });
     dl.extend(ticks.properties.update, {
       x:  {value: 0},
       x2: size,
-      y:  newScale
+      y:  newRef
     });
     dl.extend(ticks.properties.exit, {
-      y:  newScale,
+      y:  newRef,
     });
   }
 }
