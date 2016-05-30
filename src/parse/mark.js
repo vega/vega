@@ -1,46 +1,29 @@
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-function parseMark(model, mark/*, [isMark]*/) {
-  var props = mark.properties,
+function parseMark(model, mark, applyDefaults) {
+  var props = mark.properties || (mark.properties = {}),
+      enter = props.enter || (props.enter = {}),
       group = mark.marks,
-      config = model._config,
-      arglen = arguments.length,
-      argidx = 2,
-      isMark = false;
+      config = model.config().marks || {};
 
-  if (arglen > argidx && dl.isBoolean(arguments[arglen - 1])) {
-    isMark = true;
-  }
-
-  // for scatter plots, set symbol size specified in config if not in spec
-  if (typeof props !== 'undefined') {
-    var enter = props['enter'];
-    if (mark.type === 'symbol') {
-      if (enter && !enter['size'] && config && config.marks && config.marks.symbolSize) {
-        enter['size'] = {value: model._config.marks.symbolSize};
-      }
+  if (applyDefaults) {
+    // for scatter plots, set symbol size specified in config if not in spec
+    if (mark.type === 'symbol' && !enter.size && config.symbolSize) {
+        enter.size = {value: config.symbolSize};
     }
-  }
 
-  // Object defines whether to set the stroke or 
-  // fill to the given default color
-  var colorMap = {
-    symbol: 'fill',
-    arc: 'fill',
-    area: 'fill',
-    rect: 'fill',
-    path: 'stroke',
-    line: 'stroke',
-    rule: 'stroke',
-    text: 'stroke'
-  }
+    // Themes define a default "color" that maps to fill/stroke based on mark type.
+    var colorMap = {
+      arc: 'fill', area: 'fill', rect: 'fill', symbol: 'fill', text: 'fill',
+      line: 'stroke', path: 'stroke', rule: 'stroke'
+    };
 
-  // Set default mark color if no color is given in spec
-  if (isMark) {
-    var property = colorMap[mark.type];
-    if (typeof props !== 'undefined' && 'enter' in props && !(property in props['enter'])) {
-      setDefaultColor(property, props, config);
+    // Set default mark color if no color is given in spec, and only do so for
+    // user-defined marks (not axis/legend marks).
+    var colorProp = colorMap[mark.type];
+    if (!enter[colorProp] && config.color) {
+      enter[colorProp] = {value: config.color};
     }
   }
 
@@ -56,20 +39,10 @@ function parseMark(model, mark/*, [isMark]*/) {
 
   // recurse if group type
   if (group) {
-    mark.marks = group.map(function(g) { return parseMark(model, g); });
+    mark.marks = group.map(function(g) { return parseMark(model, g, true); });
   }
 
   return mark;
-}
-
-function setDefaultColor(property, props, config) {
-  var color = '#000000';
-  if (typeof config !== 'undefined' && 'marks' in config && 'color' in config.marks) {
-    color =  config.marks['color'];
-  }
-  props['enter'][property] = {
-    'value': color
-  };
 }
 
 module.exports = parseMark;
