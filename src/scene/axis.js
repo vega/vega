@@ -414,9 +414,9 @@ function axisTicksExtend(orient, ticks, oldRef, newRef, size, scale, config, off
   // instead of directly aligned with.
   if (config.tickPlacement === 'between' && scale.type === ORDINAL) {
     var rng = scale.range(),
-        offset = 0.5 + (scale.rangeBand() || (rng[1] - rng[0]) / 2);
+        tickOffset = 0.5 + (scale.rangeBand() || (rng[1] - rng[0]) / 2);
     newRef = oldRef = dl.duplicate(newRef);
-    newRef.offset = oldRef.offset = offset;
+    newRef.offset = oldRef.offset = tickOffset;
   }
 
   if (orient === 'top' || orient === 'bottom') {

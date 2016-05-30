@@ -92,8 +92,8 @@ function config(model) {
 
   return {
     x: dl.extend(dl.duplicate(axis), cfg.axis_x),
-    y: dl.extend(dl.duplicate(axis), cfg.axis_y),
-  }
+    y: dl.extend(dl.duplicate(axis), cfg.axis_y)
+  };
 }
 
 module.exports = parseAxes;

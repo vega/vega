@@ -7,4 +7,4 @@ module.exports = function(def, config, property, defaultVal) {
     return defaultVal;
   }
   return undefined;
-}
+};
