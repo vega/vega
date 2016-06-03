@@ -57,6 +57,8 @@ prototype.initialize = function() {
     .initialize(null, w, h, pad)
     .background(bg);
 
+  this._renderer['expr'] = this._model.expr;
+
   return this;
 };
 

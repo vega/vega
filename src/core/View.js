@@ -275,6 +275,7 @@ prototype.initialize = function(el) {
   v._renderer = (v._renderer || new this._io.Renderer(config.load))
     .initialize(el, w, h, pad)
     .background(bg);
+  v._renderer['expr'] = this._model.expr;
 
   // input handler
   prevHandler = v._handler;
