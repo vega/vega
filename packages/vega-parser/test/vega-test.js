@@ -1,12 +1,12 @@
 var tape = require('tape'),
-    dataflow = require('dataflow'),
     parse = require('../');
 
-tape("Parser parses Vega specs", function(test) {
+tape('Parser parses Vega specs', function(test) {
   var spec = {
     "signals": [
       {"name": "width", "init": 500},
-      {"name": "height", "init": 300}
+      {"name": "height", "init": 300},
+      {"name": "xfield", "init": "x"}
     ],
     "data": [
       {
@@ -22,7 +22,7 @@ tape("Parser parses Vega specs", function(test) {
         "name": "xscale",
         "type": "band",
         "range": [0, {"signal": "width"}],
-        "domain": {"data": "table", "field": "x"}
+        "domain": {"data": "table", "field": {"signal": "xfield"}}
       },
       {
         "name": "yscale",
@@ -33,11 +33,12 @@ tape("Parser parses Vega specs", function(test) {
     ]
   };
 
-  var df = new dataflow.Dataflow(),
-      dfs = parse.vega(spec);
+  var dfs = parse.vega(spec);
 
-  var ctx = parse.dataflow(dfs, df);
-  test.equal(Object.keys(ctx.operators).length, 8);
+  test.equal(dfs.length, 10);
+  test.deepEqual(dfs.map(function(o) { return o.type; }),
+    ['Operator', 'Operator', 'Operator', 'Collect', 'Field',
+     'Aggregate', 'Values', 'Scale', 'Extent', 'Scale']);
 
   test.end();
 });

@@ -1,8 +1,9 @@
-import {ref, operator, transform} from './util';
+import {ref, fieldRef, operator, transform, isString, error} from './util';
 import DataScope from './DataScope';
 
 export default function Scope() {
   this.nextId = 0;
+  this.field = {};
   this.signal = {};
   this.scale = {};
   this.data = {};
@@ -17,6 +18,21 @@ prototype.id = function() {
 
 prototype.add = function(op) {
   return this.operators.push(op), op.id = this.id(), op;
+};
+
+// ----
+
+prototype.fieldRef = function(field) {
+  if (isString(field)) return fieldRef(field);
+  if (!field.signal) error('Unsupported field reference: ' + JSON.stringify(field));
+
+  var s = field.signal,
+      f = this.field[s];
+  if (!f) {
+    f = this.add(transform('Field', {name: ref(this.signal[s])}));
+    this.field[s] = f = ref(f);
+  }
+  return f;
 };
 
 // ----

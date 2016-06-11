@@ -32,3 +32,11 @@ export function error(message) {
 export function isObject(_) {
   return _ === Object(_);
 }
+
+export function isString(_) {
+  return typeof _ === 'string';
+}
+
+export function isFunction(_) {
+  return typeof _ === 'function';
+}
