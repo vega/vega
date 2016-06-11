@@ -35,10 +35,68 @@ tape('Parser parses Vega specs', function(test) {
 
   var dfs = parse.vega(spec);
 
-  test.equal(dfs.length, 10);
+  test.equal(dfs.length, 11);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
     ['Operator', 'Operator', 'Operator', 'Collect', 'Field',
-     'Aggregate', 'Values', 'Scale', 'Extent', 'Scale']);
+     'Aggregate', 'Collect', 'Values', 'Scale', 'Extent', 'Scale']);
+
+  test.end();
+});
+
+tape('Parser parses Vega specs with multi-domain scales', function(test) {
+  var spec = {
+    "data": [
+      {
+        "name": "table",
+        "values": [
+          {"x": 1,  "y": 6}, {"x": 2,  "y": 7},
+          {"x": 3,  "y": 8}, {"x": 4,  "y": 5}
+        ]
+      }
+    ],
+    "scales": [
+      {
+        "name": "ofield",
+        "type": "band",
+        "range": [0, 1],
+        "domain": {"data": "table", "field": ["x", "y"]}
+      },
+      {
+        "name": "odomain",
+        "type": "band",
+        "range": [0, 1],
+        "domain": [
+          {"data": "table", "field": "x"},
+          {"data": "table", "field": "y"}
+        ]
+      }
+/* Multi-domain not yet supported for quantitative scales
+      {
+        "name": "qfield",
+        "type": "linear",
+        "range": [0, 1],
+        "domain": {"data": "table", "field": ["x", "y"]}
+      },
+      {
+        "name": "qdomain",
+        "type": "linear",
+        "range": [0, 1],
+        "domain": [
+          {"data": "table", "field": "x"},
+          {"data": "table", "field": "y"}
+        ]
+      }
+*/
+    ]
+  };
+
+  var dfs = parse.vega(spec);
+
+  test.equal(dfs.length, 13);
+  test.deepEqual(dfs.map(function(o) { return o.type; }),
+    ['Collect', 'Aggregate', 'Collect', 'Aggregate', 'Collect',
+     'Aggregate', 'Collect', 'Values', 'Scale',
+     'Aggregate', 'Collect', 'Values', 'Scale']);
 
   test.end();
 });

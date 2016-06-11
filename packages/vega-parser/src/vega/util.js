@@ -17,17 +17,25 @@ export function transform(type, params) {
   return entry(type, null, params);
 }
 
+// -----
+
 export function ref(op) {
   return {$ref: op.id};
 }
 
-export function fieldRef(field) {
-  return {$field: field};
+export function fieldRef(field, name) {
+  return name ? {$field: field, $name: name} : {$field: field};
 }
+
+export var keyRef = fieldRef('key');
+
+// -----
 
 export function error(message) {
   throw Error(message);
 }
+
+// -----
 
 export function isObject(_) {
   return _ === Object(_);
@@ -39,4 +47,8 @@ export function isString(_) {
 
 export function isFunction(_) {
   return typeof _ === 'function';
+}
+
+export function isArray(_) {
+  return Array.isArray(_);
 }
