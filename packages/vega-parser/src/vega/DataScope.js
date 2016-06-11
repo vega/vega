@@ -1,4 +1,4 @@
-import {ref, fieldRef, transform} from './util';
+import {ref, transform} from './util';
 
 export default function DataScope(scope, entries) {
   this.scope = scope;
@@ -11,17 +11,17 @@ var prototype = DataScope.prototype;
 
 function cache(ds, name, op, field) {
   var cache = ds[name] || (ds[name] = {}),
-      ref = cache[field];
+      v = cache[field];
 
-  if (!ref) {
-    cache[field] = ref = ds.scope.add(
+  if (!v) {
+    cache[field] = v = ref(ds.scope.add(
       transform('Extent', {
-        field: fieldRef(field),
+        field: ds.scope.fieldRef(field),
         pulse: ds.output
       })
-    );
+    ));
   }
-  return ref;
+  return v;
 }
 
 prototype.valuesRef = function(field) {
@@ -30,10 +30,10 @@ prototype.valuesRef = function(field) {
       v = cache[field], f, a;
 
   if (!v) {
-    f = fieldRef(field);
+    f = scope.fieldRef(field);
     a = scope.add(transform('Aggregate', {groupby:f, pulse:this.output}));
     v = scope.add(transform('Values', {field:f, pulse:ref(a)}));
-    cache[field] = v;
+    cache[field] = v = ref(v);
   }
   return v;
 };
