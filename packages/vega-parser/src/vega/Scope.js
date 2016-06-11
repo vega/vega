@@ -22,15 +22,15 @@ prototype.add = function(op) {
 
 // ----
 
-prototype.fieldRef = function(field) {
-  if (isString(field)) return fieldRef(field);
+prototype.fieldRef = function(field, name) {
+  if (isString(field)) return fieldRef(field, name);
   if (!field.signal) error('Unsupported field reference: ' + JSON.stringify(field));
 
-  var s = field.signal,
-      f = this.field[s];
+  var s = field.signal, f = this.field[s], params;
   if (!f) {
-    f = this.add(transform('Field', {name: ref(this.signal[s])}));
-    this.field[s] = f = ref(f);
+    params = {name: ref(this.signal[s])};
+    if (name) params.as = name;
+    this.field[s] = f = ref(this.add(transform('Field', params)));
   }
   return f;
 };

@@ -1,4 +1,4 @@
-import {ref, transform} from './util';
+import {ref, transform, keyRef} from './util';
 
 export default function DataScope(scope, entries) {
   this.scope = scope;
@@ -9,43 +9,49 @@ export default function DataScope(scope, entries) {
 
 var prototype = DataScope.prototype;
 
-function cache(ds, name, op, field) {
-  var cache = ds[name] || (ds[name] = {}),
-      v = cache[field];
+prototype.countsRef = function(field) {
+  var ds = this,
+      cache = ds.counts || (ds.counts = {}),
+      v = cache[field], a;
 
   if (!v) {
-    cache[field] = v = ref(ds.scope.add(
-      transform('Extent', {
-        field: ds.scope.fieldRef(field),
-        pulse: ds.output
-      })
-    ));
-  }
-  return v;
-}
-
-prototype.valuesRef = function(field) {
-  var scope = this.scope,
-      cache = this.values || (this.values = {}),
-      v = cache[field], f, a;
-
-  if (!v) {
-    f = scope.fieldRef(field);
-    a = scope.add(transform('Aggregate', {groupby:f, pulse:this.output}));
-    v = scope.add(transform('Values', {field:f, pulse:ref(a)}));
+    // TODO additional measures for sorting?
+    var params = {
+      groupby: ds.scope.fieldRef(field, 'key'),
+      pulse: ds.output
+    };
+    a = ds.scope.add(transform('Aggregate', params));
+    v = ds.scope.add(transform('Collect', {pulse: ref(a)}));
     cache[field] = v = ref(v);
   }
   return v;
 };
 
+function cache(ds, name, optype, field, counts) {
+  var cache = ds[name] || (ds[name] = {}),
+      v = cache[field];
+
+  if (!v) {
+    var params = counts
+      ? {field: keyRef, pulse: ds.countsRef(field)}
+      : {field: ds.scope.fieldRef(field), pulse: ds.output};
+    cache[field] = v = ref(ds.scope.add(transform(optype, params)));
+  }
+  return v;
+}
+
 prototype.extentRef = function(field) {
-  return cache(this, 'extent', 'Extent', field);
+  return cache(this, 'extent', 'Extent', field, false);
 };
 
-prototype.countsRef = function(field) {
-  return cache(this, 'counts', 'CountIndex', field);
+prototype.lookupRef = function(field) {
+  return cache(this, 'lookup', 'TupleIndex', field, false);
 };
 
-prototype.tuplesRef = function(field) {
-  return cache(this, 'tuples', 'TupleIndex', field);
+prototype.valuesRef = function(field) {
+  return cache(this, 'values', 'Values', field, true);
+};
+
+prototype.indataRef = function(field) {
+  return cache(this, 'indata', 'TupleIndex', field, true);
 };
