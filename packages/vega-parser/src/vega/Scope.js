@@ -1,5 +1,9 @@
-import {ref, fieldRef, operator, transform, isString, error} from './util';
 import DataScope from './DataScope';
+import {
+  error, isString, isObject, isArray,
+  ref, fieldRef, compareRef, sortRef,
+  operator, transform
+} from './util';
 
 export default function Scope() {
   this.nextId = 0;
@@ -34,6 +38,32 @@ prototype.fieldRef = function(field, name) {
   }
   return f;
 };
+
+prototype.sortRef = function(sort) {
+  if (!isObject(sort)) error('Invalid sort argument: ' + sort);
+
+  var order = sort.order && sort.order.signal,
+      op = sort.op && sort.op.signal;
+  if (!order && !op) return sortRef(sort);
+
+  // TODO modify DataScope to support fields as signals?
+  if (op && sort.field) error('Sort field can not be used in conjunction with signals.');
+
+  return ref(this.add(transform('Compare', {
+    order: order ? ref(this.signal[order]) : sort.order,
+    op:    op ? ref(this.signal[op]) : sort.op,
+    field: sort.field
+  })));
+};
+
+prototype.compareRef = function(cmp) {
+  // TODO examine array?
+  if (isString(cmp) || isArray(cmp)) return compareRef(cmp);
+  if (!cmp.signal) error('Unsupported compare reference: ' + JSON.stringify(cmp));
+  return ref(this.add(transform('Compare', {
+    fields: ref(this.signal[cmp.signal])
+  })));
+}
 
 // ----
 

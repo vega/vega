@@ -22,7 +22,11 @@ tape('Parser parses Vega specs', function(test) {
         "name": "xscale",
         "type": "band",
         "range": [0, {"signal": "width"}],
-        "domain": {"data": "table", "field": {"signal": "xfield"}}
+        "domain": {
+          "data": "table",
+          "field": {"signal": "xfield"},
+          "sort": {"op": "max", "field": "y"}
+        }
       },
       {
         "name": "yscale",
@@ -59,16 +63,28 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
         "name": "ofield",
         "type": "band",
         "range": [0, 1],
-        "domain": {"data": "table", "field": ["x", "y"]}
+        "domain": {
+          "data": "table",
+          "fields": ["x", "y"],
+          "sort": {
+            "order": "descending"
+          }
+        }
       },
       {
         "name": "odomain",
         "type": "band",
         "range": [0, 1],
-        "domain": [
-          {"data": "table", "field": "x"},
-          {"data": "table", "field": "y"}
-        ]
+        "domain": {
+          "fields": [
+            {"data": "table", "field": "x"},
+            {"data": "table", "field": "y"}
+          ],
+          "sort": {
+            "op": "count",
+            "order": "descending"
+          }
+        }
       }
 /* Multi-domain not yet supported for quantitative scales
       {
