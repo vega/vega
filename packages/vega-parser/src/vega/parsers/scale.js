@@ -1,4 +1,8 @@
-import {error, isObject, isArray, transform, ref, keyRef} from '../util';
+import {
+  error,
+  isObject, isArray, isString,
+  transform, ref, keyRef
+} from '../util';
 
 export default function parseScale(scale, scope) {
   var type = scale.type, // TODO check for valid type?
@@ -24,44 +28,46 @@ function parseLiteral(v, scope) {
 // -- SCALE DOMAIN ----
 
 function parseScaleDomain(scale, scope) {
-  if (!scale.domain) error('Missing scale domain');
-  var domain = standardizeDomain(scale.domain);
+  var domain = scale.domain;
+  if (!domain) error('Missing scale domain');
 
-  return domain.length > 1
-    ? multipleDomain(domain, scale, scope)
-    : isArray(domain = domain[0])
-      ? explicitDomain(domain, scope)
-      : singularDomain(domain, scale, scope);
+  return isArray(domain) ? explicitDomain(scale, scope)
+    : domain.fields ? multipleDomain(scale, scope)
+    : singularDomain(scale, scope);
 }
 
-function explicitDomain(domain, scope) {
-  return domain.map(function(v) {
+function explicitDomain(scale, scope) {
+  return scale.domain.map(function(v) {
     return parseLiteral(v, scope);
   });
 }
 
-function singularDomain(domain, scale, scope) {
-  var data = scope.getData(domain.data);
+function singularDomain(scale, scope) {
+  var domain = scale.domain,
+      data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
   return isDiscrete(scale.type)
-    ? data.valuesRef(domain.field)
+    ? data.valuesRef(domain.field, domain.sort)
     : data.extentRef(domain.field);
 }
 
-function multipleDomain(domain, scale, scope) {
-  return isDiscrete(scale.type)
-    ? oMultipleDomain(domain, scale, scope)
-    : qMultipleDomain(domain, scale, scope);
+function multipleDomain(scale, scope) {
+  var method = isDiscrete(scale.type) ? oMultipleDomain : qMultipleDomain,
+      data   = scale.domain.data,
+      fields = scale.domain.fields.reduce(function(dom, d) {
+        return dom.push(isString(d) ? {data: data, field:d} : d), dom;
+      }, []);
+  method(scale, scope, fields);
 }
 
-function oMultipleDomain(domain, scale, scope) {
+function oMultipleDomain(scale, scope, fields) {
   var counts, a, c, v;
 
   // get value counts for each domain field
-  counts = domain.map(function(d) {
-    var data = scope.getData(d.data);
-    if (!data) error('Can not find data set: ' + d.data);
-    return data.countsRef(d.field);
+  counts = fields.map(function(f) {
+    var data = scope.getData(f.data);
+    if (!data) error('Can not find data set: ' + f.data);
+    return data.countsRef(f.field);
   });
 
   // sum counts from all fields
@@ -71,40 +77,20 @@ function oMultipleDomain(domain, scale, scope) {
     pulse: counts
   }));
 
-  // collect aggregate output; TODO: sort?
+  // collect aggregate output
   c = scope.add(transform('Collect', {pulse: ref(a)}));
 
   // extract values for combined domain
   v = scope.add(transform('Values', {field: keyRef, pulse: ref(c)}));
+  if (scale.domain.sort) v.params = scope.sortRef(scale.domain.sort);
 
   return ref(v);
 }
 
-function qMultipleDomain(/*domain, scale, scope*/) {
+function qMultipleDomain(/*scale, scope, fields*/) {
   throw Error('Not yet supported.');
 }
 
-// Standardize a potentially multi-domain or multi-field specification
-// into an array of stand-alone domain specifications.
-function standardizeDomain(domain) {
-  var a = isArray(domain);
-
-  if (a && isObject(domain[0])) {
-    // multi-domain spec: recursively standardize
-    return domain.reduce(function(dom, d) {
-      if (isArray(d)) error('Scale domain can not have nested arrays.');
-      return dom.push.apply(dom, standardizeDomain(d)), dom;
-    }, []);
-  } else if (!a && isArray(domain.field)) {
-    // multi-field spec: map to multi-domain format
-    return domain.field.map(function(f) {
-      return {data: domain.data, field: f};
-    });
-  } else {
-    // otherwise nothing to do, return
-    return [domain];
-  }
-}
 
 // -- SCALE RANGE -----
 

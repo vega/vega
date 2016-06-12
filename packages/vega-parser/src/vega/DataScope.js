@@ -1,4 +1,4 @@
-import {ref, transform, keyRef} from './util';
+import {ref, transform, keyRef, isObject} from './util';
 
 export default function DataScope(scope, entries) {
   this.scope = scope;
@@ -9,23 +9,36 @@ export default function DataScope(scope, entries) {
 
 var prototype = DataScope.prototype;
 
-prototype.countsRef = function(field) {
+prototype.countsRef = function(field, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       v = cache[field], a;
 
   if (!v) {
-    // TODO additional measures for sorting?
-    var params = {
+    a = ds.scope.add(transform('Aggregate', {
       groupby: ds.scope.fieldRef(field, 'key'),
       pulse: ds.output
-    };
-    a = ds.scope.add(transform('Aggregate', params));
+    }));
     v = ds.scope.add(transform('Collect', {pulse: ref(a)}));
-    cache[field] = v = ref(v);
+    cache[field] = v = {agg: a, ref: ref(v)};
   }
-  return v;
+  if (sort && sort.field) addSortField(v.agg.params, sort);
+  return v.ref;
 };
+
+// TODO support signals?
+function addSortField(p, sort) {
+  if (p.ops) {
+    for (var i=0, n=p.ops.length; i<n; ++i) {
+      if (p.ops[i] === sort.op && p.fields[i] === sort.field) return;
+    }
+  } else {
+    p.ops = ['count']; p.fields = ['*']; p.as = ['count'];
+  }
+  p.ops.push(sort.op);
+  p.fields.push(sort.field);
+  p.as.push(sort.op + '_' + sort.field);
+}
 
 function cache(ds, name, optype, field, counts) {
   var cache = ds[name] || (ds[name] = {}),
@@ -33,8 +46,9 @@ function cache(ds, name, optype, field, counts) {
 
   if (!v) {
     var params = counts
-      ? {field: keyRef, pulse: ds.countsRef(field)}
+      ? {field: keyRef, pulse: ds.countsRef(field, counts)}
       : {field: ds.scope.fieldRef(field), pulse: ds.output};
+    if (isObject(counts)) params.sort = ds.scope.sortRef(counts);
     cache[field] = v = ref(ds.scope.add(transform(optype, params)));
   }
   return v;
@@ -48,8 +62,8 @@ prototype.lookupRef = function(field) {
   return cache(this, 'lookup', 'TupleIndex', field, false);
 };
 
-prototype.valuesRef = function(field) {
-  return cache(this, 'values', 'Values', field, true);
+prototype.valuesRef = function(field, sort) {
+  return cache(this, 'values', 'Values', field, sort || true);
 };
 
 prototype.indataRef = function(field) {

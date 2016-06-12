@@ -29,6 +29,20 @@ export function fieldRef(field, name) {
 
 export var keyRef = fieldRef('key');
 
+export function compareRef(cmp) {
+  return {$compare: cmp};
+}
+
+export function sortRef(sort) {
+  if (!sort.field && sort.op && sort.op !== 'count') {
+    error('Invalid sort configuration.');
+  }
+  var s = (sort.order === 'descending' ? '-' : '')
+    + (sort.field ? sort.op + '_' + sort.field
+    : (sort.op ? 'count' : 'key'));
+  return compareRef(s);
+}
+
 // -----
 
 export function error(message) {
