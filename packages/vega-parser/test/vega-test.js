@@ -6,7 +6,9 @@ tape('Parser parses Vega specs', function(test) {
     "signals": [
       {"name": "width", "init": 500},
       {"name": "height", "init": 300},
-      {"name": "xfield", "init": "x"}
+      {"name": "yfield", "init": "y"},
+      {"name": "sortop", "init": "median"},
+      {"name": "order", "init": "ascending"}
     ],
     "data": [
       {
@@ -24,26 +26,36 @@ tape('Parser parses Vega specs', function(test) {
         "range": [0, {"signal": "width"}],
         "domain": {
           "data": "table",
-          "field": {"signal": "xfield"},
-          "sort": {"op": "max", "field": "y"}
+          "field": "x",
+          "sort": {
+            "op":    {"signal": "sortop"},
+            "field": {"signal": "yfield"},
+            "order": {"signal": "order"}
+          }
         }
       },
       {
         "name": "yscale",
         "type": "linear",
         "range": [{"signal": "height"}, 0],
-        "domain": {"data": "table", "field": "y"}
+        "domain": {"data": "table", "field": {"signal": "yfield"}}
+      },
+      {
+        "name": "sscale",
+        "type": "sqrt",
+        "range": [1, 100],
+        "domain": [0, {"signal": "width"}]
       }
     ]
   };
 
   var dfs = parse.vega(spec);
 
-  test.equal(dfs.length, 12);
+  test.equal(dfs.length, 15);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
-    ['Operator', 'Operator', 'Operator', 'Collect', 'Field',
-     'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
-     'Extent', 'Scale']);
+    ['Operator', 'Operator', 'Operator', 'Operator', 'Operator', 'Collect',
+     'Field', 'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
+     'Extent', 'Scale', 'Scale']);
 
   test.end();
 });
