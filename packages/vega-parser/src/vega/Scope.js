@@ -1,7 +1,7 @@
 import DataScope from './DataScope';
 import {
   error, isString,
-  ref, fieldRef,
+  ref, fieldRef, compareRef,
   aggrField, ASCENDING,
   operator, transform
 } from './util';
@@ -45,10 +45,13 @@ prototype.sortRef = function(sort) {
 
   var a = aggrField(sort.op, sort.field),
       o = sort.order || ASCENDING;
-  return ref(this.add(transform('Compare', {
-    fields: a,
-    orders: o && o.signal ? this.signalRef(o.signal) : o
-  })));
+
+  return o.signal
+    ? ref(this.add(transform('Compare', {
+        fields: a,
+        orders: this.signalRef(o.signal)
+      })))
+    : compareRef(a, o);
 };
 
 // ----
