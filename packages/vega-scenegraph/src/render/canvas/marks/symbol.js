@@ -1,4 +1,6 @@
-var util = require('./util');
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render');
 
 var sqrt3 = Math.sqrt(3),
     tan30 = Math.tan(30 * Math.PI / 180);
@@ -63,6 +65,15 @@ function path(g, o) {
       g.moveTo(x, y-ry);
       g.lineTo(x+rx, y+ry);
       g.lineTo(x-rx, y+ry);
+      break;
+
+    // custom shape
+    default:
+      var pathArray = parse(o.shape);
+
+      g.translate(x,y);
+      render(g, pathArray, undefined, undefined, o.size);
+      g.translate(-x,-y);
   }
   g.closePath();
 }

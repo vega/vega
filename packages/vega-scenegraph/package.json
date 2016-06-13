@@ -10,6 +10,13 @@
     "name": "Jeffrey Heer",
     "url": "http://idl.cs.washington.edu"
   },
+  "contributors": [{
+    "name": "Arvind Satyanarayan",
+    "url": "http://arvindsatya.com"
+  }, {
+    "name": "Emily Gu",
+    "url": "https://github.com/emilygu"
+  }],
   "license": "BSD-3-Clause",
   "dependencies": {
     "d3": "^3.5.6",

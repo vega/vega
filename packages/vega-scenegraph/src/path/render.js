@@ -1,6 +1,6 @@
 var arc = require('./arc');
 
-module.exports = function(g, path, l, t) {
+module.exports = function(g, path, l, t, size) {
   var current, // current instruction
       previous = null,
       x = 0, // current x
@@ -14,11 +14,19 @@ module.exports = function(g, path, l, t) {
 
   if (l == null) l = 0;
   if (t == null) t = 0;
+  if (size != null) size = Math.sqrt(size);
 
   g.beginPath();
 
   for (var i=0, len=path.length; i<len; ++i) {
     current = path[i];
+
+    // Scale custom shapes (defined within a unit square) by given size.
+    if (size !== undefined) {
+      for (var j=1, jlen=current.length; j<jlen; ++j) {
+        current[j] = current[j] * size;
+      }
+    }
 
     switch (current[0]) { // first letter
 

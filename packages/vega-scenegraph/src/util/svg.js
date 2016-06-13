@@ -35,6 +35,7 @@ module.exports = {
         (items);
     }
   },
+  symbolTypes: d3_svg.symbolTypes,
   textAlign: {
     'left':   'start',
     'center': 'middle',
