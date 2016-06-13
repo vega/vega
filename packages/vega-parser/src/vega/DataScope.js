@@ -1,4 +1,4 @@
-import {ref, transform, keyRef, aggregateAs, isObject} from './util';
+import {ref, transform, keyRef, aggrField, sortKey} from './util';
 
 export default function DataScope(scope, entries) {
   this.scope = scope;
@@ -12,22 +12,26 @@ var prototype = DataScope.prototype;
 prototype.countsRef = function(field, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
-      v = cache[field], a;
+      v = cache[field], a, p;
 
   if (!v) {
-    a = ds.scope.add(transform('Aggregate', {
+    p = {
       groupby: ds.scope.fieldRef(field, 'key'),
       pulse: ds.output
-    }));
+    };
+    if (sort && sort.field) addSortField(ds.scope, p, sort);
+    a = ds.scope.add(transform('Aggregate', p));
     v = ds.scope.add(transform('Collect', {pulse: ref(a)}));
     cache[field] = v = {agg: a, ref: ref(v)};
+  } else if (sort && sort.field) {
+    addSortField(ds.scope, v.agg.params, sort);
   }
-  if (sort && sort.field) addSortField(ds.scope, v.agg.params, sort);
+
   return v.ref;
 };
 
 function addSortField(scope, p, sort) {
-  var as = aggregateAs(sort.op, sort.field), s;
+  var as = aggrField(sort.op, sort.field), s;
 
   if (p.ops) {
     for (var i=0, n=p.as.length; i<n; ++i) {
@@ -39,20 +43,22 @@ function addSortField(scope, p, sort) {
     p.as = ['count'];
   }
   p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
-  p.fields.push((s=sort.field.signal) ? scope.signalRef(s) : sort.field);
+  p.fields.push(scope.fieldRef(sort.field));
   p.as.push(as);
 }
 
 function cache(ds, name, optype, field, counts) {
   var cache = ds[name] || (ds[name] = {}),
-      v = cache[field];
+      sort = sortKey(counts),
+      k = field + '$' + sort,
+      v = cache[k];
 
   if (!v) {
     var params = counts
       ? {field: keyRef, pulse: ds.countsRef(field, counts)}
       : {field: ds.scope.fieldRef(field), pulse: ds.output};
-    if (isObject(counts)) params.sort = ds.scope.sortRef(counts);
-    cache[field] = v = ref(ds.scope.add(transform(optype, params)));
+    if (sort) params.sort = ds.scope.sortRef(counts);
+    cache[k] = v = ref(ds.scope.add(transform(optype, params)));
   }
   return v;
 }

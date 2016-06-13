@@ -33,7 +33,19 @@ export function compareRef(fields, order) {
   return {$compare: fields, $order: order};
 }
 
-export function aggregateAs(op, field) {
+// -----
+
+export var ASCENDING  = 'ascending';
+
+export var DESCENDING = 'descending';
+
+export function sortKey(sort) {
+  return !isObject(sort) ? ''
+    : (sort.order === DESCENDING ? '-' : '+')
+      + aggrField(sort.op, sort.field);
+}
+
+export function aggrField(op, field) {
   return (op && op.signal ? '$' + op.signal : op || '')
     + (op && field ? '_' : '')
     + (field && field.signal ? '$' + field.signal : field || '');

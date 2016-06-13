@@ -1,7 +1,8 @@
 import DataScope from './DataScope';
 import {
   error, isString,
-  ref, fieldRef, aggregateAs,
+  ref, fieldRef,
+  aggrField, ASCENDING,
   operator, transform
 } from './util';
 
@@ -42,8 +43,8 @@ prototype.fieldRef = function(field, name) {
 prototype.sortRef = function(sort) {
   if (!sort) return sort;
 
-  var a = aggregateAs(sort.op, sort.field),
-      o = sort.order || 'ascending';
+  var a = aggrField(sort.op, sort.field),
+      o = sort.order || ASCENDING;
   return ref(this.add(transform('Compare', {
     fields: a,
     orders: o && o.signal ? this.signalRef(o.signal) : o
