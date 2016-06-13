@@ -29,18 +29,14 @@ export function fieldRef(field, name) {
 
 export var keyRef = fieldRef('key');
 
-export function compareRef(cmp) {
-  return {$compare: cmp};
+export function compareRef(fields, order) {
+  return {$compare: fields, $order: order};
 }
 
-export function sortRef(sort) {
-  if (!sort.field && sort.op && sort.op !== 'count') {
-    error('Invalid sort configuration.');
-  }
-  var s = (sort.order === 'descending' ? '-' : '')
-    + (sort.field ? sort.op + '_' + sort.field
-    : (sort.op ? 'count' : 'key'));
-  return compareRef(s);
+export function aggregateAs(op, field) {
+  return (op && op.signal ? '$' + op.signal : op || '')
+    + (op && field ? '_' : '')
+    + (field && field.signal ? '$' + field.signal : field || '');
 }
 
 // -----

@@ -47,7 +47,7 @@ function singularDomain(scale, scope) {
       data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
   return isDiscrete(scale.type)
-    ? data.valuesRef(domain.field, domain.sort)
+    ? data.valuesRef(domain.field, parseSort(domain.sort))
     : data.extentRef(domain.field);
 }
 
@@ -57,7 +57,7 @@ function multipleDomain(scale, scope) {
       fields = scale.domain.fields.reduce(function(dom, d) {
         return dom.push(isString(d) ? {data: data, field:d} : d), dom;
       }, []);
-  method(scale, scope, fields);
+  return method(scale, scope, fields);
 }
 
 function oMultipleDomain(scale, scope, fields) {
@@ -81,10 +81,18 @@ function oMultipleDomain(scale, scope, fields) {
   c = scope.add(transform('Collect', {pulse: ref(a)}));
 
   // extract values for combined domain
-  v = scope.add(transform('Values', {field: keyRef, pulse: ref(c)}));
-  if (scale.domain.sort) v.params = scope.sortRef(scale.domain.sort);
+  v = scope.add(transform('Values', {
+    field: keyRef,
+    sort:  scope.sortRef(parseSort(scale.domain.sort)),
+    pulse: ref(c)
+  }));
 
   return ref(v);
+}
+
+function parseSort(sort) {
+  if (sort && !sort.op && !sort.field) sort.field = 'key';
+  return sort;
 }
 
 function qMultipleDomain(/*scale, scope, fields*/) {
