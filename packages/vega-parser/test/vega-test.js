@@ -38,13 +38,16 @@ tape('Parser parses Vega specs', function(test) {
         "name": "yscale",
         "type": "linear",
         "range": [{"signal": "height"}, 0],
-        "domain": {"data": "table", "field": {"signal": "yfield"}}
+        "domain": {"data": "table", "field": {"signal": "yfield"}},
+        "nice": true,
+        "zero": true
       },
       {
         "name": "sscale",
         "type": "sqrt",
         "range": [1, 100],
-        "domain": [0, {"signal": "width"}]
+        "domain": [0, {"signal": "width"}],
+        "domainMax": 1000
       }
     ]
   };
@@ -98,34 +101,35 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
             "order": "descending"
           }
         }
-      }
-/* Multi-domain not yet supported for quantitative scales
+      },
       {
         "name": "qfield",
         "type": "linear",
         "range": [0, 1],
-        "domain": {"data": "table", "field": ["x", "y"]}
+        "domain": {"data": "table", "fields": ["x", "y"]}
       },
       {
         "name": "qdomain",
         "type": "linear",
         "range": [0, 1],
-        "domain": [
-          {"data": "table", "field": "x"},
-          {"data": "table", "field": "y"}
-        ]
+        "domain": {
+          "fields": [
+            {"data": "table", "field": "x"},
+            {"data": "table", "field": "y"}
+          ]
+        }
       }
-*/
     ]
   };
 
   var dfs = parse.vega(spec);
 
-  test.equal(dfs.length, 15);
+  test.equal(dfs.length, 19);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
     ['Collect', 'Aggregate', 'Collect', 'Aggregate', 'Collect',
-     'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
-     'Aggregate', 'Collect', 'Compare', 'Values', 'Scale']);
+     'Aggregate', 'Collect', 'Values', 'Scale',
+     'Aggregate', 'Collect', 'Values', 'Scale',
+     'Extent', 'Extent', 'MultiExtent', 'Scale', 'MultiExtent', 'Scale']);
 
   test.end();
 });

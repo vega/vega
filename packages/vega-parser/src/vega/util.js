@@ -74,3 +74,16 @@ export function isFunction(_) {
 export function isArray(_) {
   return Array.isArray(_);
 }
+
+export function extend(_) {
+  for (var x, k, i=1, n=arguments.length; i<n; ++i) {
+    x = arguments[i];
+    for (k in x) { _[k] = x[k]; }
+  }
+  return _;
+}
+
+export function set(_) {
+  for (var s={}, i=0, n=_.length; i<n; ++i) s[_[i]] = 1;
+  return s;
+}

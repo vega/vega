@@ -50,7 +50,7 @@ function parseParameter(spec, ctx) {
   for (var i=0, n=PARSERS.length, p; i<n; ++i) {
     p = PARSERS[i];
     if (spec.hasOwnProperty(p.key)) {
-      return p.parse(spec[p.key], ctx);
+      return p.parse(spec, ctx);
     }
   }
   return spec;
@@ -58,17 +58,26 @@ function parseParameter(spec, ctx) {
 
 // Operator and field reference parsers
 var PARSERS = [
-  {key: '$ref',   parse: getOperator},
-  {key: '$field', parse: getField}
+  {key: '$ref',     parse: getOperator},
+  {key: '$field',   parse: getField},
+  {key: '$compare', parse: getCompare}
 ];
 
-function getOperator(key, ctx) {
-  return ctx.operators[key];
+function getOperator(_, ctx) {
+  return ctx.operators[_.$ref];
 }
 
-function getField(key, ctx) {
-  var f = ctx.fields[key];
-  if (!f) ctx.fields[key] = (f = dataflow.field(key));
+function getField(_, ctx) {
+  var k = _.$field + '_' + _.$name,
+      f = ctx.fields[k];
+  if (!f) ctx.fields[k] = (f = dataflow.field(_.$field, _.$name));
+  return f;
+}
+
+function getCompare(_, ctx) {
+  var k = _.$compare + '_' + _.$order,
+      f = ctx.fields[k];
+  if (!f) ctx.fields[k] = (f = dataflow.compare(_.$compare, _.$order));
   return f;
 }
 
