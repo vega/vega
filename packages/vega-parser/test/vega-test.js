@@ -39,10 +39,11 @@ tape('Parser parses Vega specs', function(test) {
 
   var dfs = parse.vega(spec);
 
-  test.equal(dfs.length, 11);
+  test.equal(dfs.length, 12);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
     ['Operator', 'Operator', 'Operator', 'Collect', 'Field',
-     'Aggregate', 'Collect', 'Values', 'Scale', 'Extent', 'Scale']);
+     'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
+     'Extent', 'Scale']);
 
   test.end();
 });
@@ -108,11 +109,11 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
 
   var dfs = parse.vega(spec);
 
-  test.equal(dfs.length, 13);
+  test.equal(dfs.length, 15);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
     ['Collect', 'Aggregate', 'Collect', 'Aggregate', 'Collect',
-     'Aggregate', 'Collect', 'Values', 'Scale',
-     'Aggregate', 'Collect', 'Values', 'Scale']);
+     'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
+     'Aggregate', 'Collect', 'Compare', 'Values', 'Scale']);
 
   test.end();
 });

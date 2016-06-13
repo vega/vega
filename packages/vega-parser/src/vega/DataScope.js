@@ -1,4 +1,4 @@
-import {ref, transform, keyRef, isObject} from './util';
+import {ref, transform, keyRef, aggregateAs, isObject} from './util';
 
 export default function DataScope(scope, entries) {
   this.scope = scope;
@@ -22,22 +22,25 @@ prototype.countsRef = function(field, sort) {
     v = ds.scope.add(transform('Collect', {pulse: ref(a)}));
     cache[field] = v = {agg: a, ref: ref(v)};
   }
-  if (sort && sort.field) addSortField(v.agg.params, sort);
+  if (sort && sort.field) addSortField(ds.scope, v.agg.params, sort);
   return v.ref;
 };
 
-// TODO support signals?
-function addSortField(p, sort) {
+function addSortField(scope, p, sort) {
+  var as = aggregateAs(sort.op, sort.field), s;
+
   if (p.ops) {
-    for (var i=0, n=p.ops.length; i<n; ++i) {
-      if (p.ops[i] === sort.op && p.fields[i] === sort.field) return;
+    for (var i=0, n=p.as.length; i<n; ++i) {
+      if (p.as[i] === as) return;
     }
   } else {
-    p.ops = ['count']; p.fields = ['*']; p.as = ['count'];
+    p.ops = ['count'];
+    p.fields = ['*'];
+    p.as = ['count'];
   }
-  p.ops.push(sort.op);
-  p.fields.push(sort.field);
-  p.as.push(sort.op + '_' + sort.field);
+  p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
+  p.fields.push((s=sort.field.signal) ? scope.signalRef(s) : sort.field);
+  p.as.push(as);
 }
 
 function cache(ds, name, optype, field, counts) {
