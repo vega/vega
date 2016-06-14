@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    parse = require('../');
+    parse = require('../../');
 
 tape('Parser parses Vega specs', function(test) {
   var spec = {
@@ -172,6 +172,7 @@ tape('Parser parses Vega specs with transforms', function(test) {
   var dfs = parse.vega(spec);
 
   test.equal(dfs.length, 19);
+  // console.log(JSON.stringify(dfs, null, 2));
 
   test.end();
 });

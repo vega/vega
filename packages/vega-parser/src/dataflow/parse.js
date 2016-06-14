@@ -1,10 +1,13 @@
 import * as dataflow from 'dataflow';
 
-// Parse a serialized dataflow specification
+/**
+ * Parse a serialized dataflow specification.
+ */
 export default function parse(spec, df) {
   var ctx = {
     operators: {},
-    fields: {}
+    fields: {},
+    exprs: {}
   };
   spec.forEach(function(entry) {
     ctx.operators[entry.id] = parseOperator(entry, df, ctx);
@@ -13,16 +16,24 @@ export default function parse(spec, df) {
   return ctx;
 }
 
-// Parse an operator
+/**
+ * Parse an operator.
+ */
 function parseOperator(spec, df, ctx) {
-  var op, params = null;
+  var op, fn, params;
 
   if (spec.type === 'Operator') {
-    op = df.add(spec.value);
+    return df.add(spec.value);
+  }
+
+  if (spec.params) {
+    params = parseParams(spec.params, ctx);
+  }
+
+  if (spec.type === 'Expression') {
+    fn = Function('_', 'event', 'return ' + spec.value + ';');
+    op = df.add(fn, params);
   } else {
-    if (spec.params) {
-      params = parseParams(spec.params, ctx);
-    }
     op = df.add(dataflow[spec.type], params);
     if (spec.type === 'Collect' && spec.value) {
       df.pulse(op, dataflow.changeset().insert(spec.value));
@@ -31,11 +42,20 @@ function parseOperator(spec, df, ctx) {
   return op;
 }
 
-// Parse a set of operator parameters
-function parseParams(spec, ctx) {
-  var params = {}, key, value;
+/**
+ * Parse a set of operator parameters.
+ */
+function parseParams(spec, ctx, params) {
+  params = params || {};
+  var key, value;
+
   for (key in spec) {
     value = spec[key];
+
+    if (isExpression(value) && value.$params) {
+      parseParams(value.$params, ctx, params);
+    }
+
     params[key] = Array.isArray(value)
       ? value.map(function(v) { return parseParameter(v, ctx); })
       : parseParameter(value, ctx);
@@ -43,7 +63,9 @@ function parseParams(spec, ctx) {
   return params;
 }
 
-// Parse a single parameter
+/**
+ * Parse a single parameter.
+ */
 function parseParameter(spec, ctx) {
   if (!spec || !isObject(spec)) return spec;
 
@@ -56,31 +78,59 @@ function parseParameter(spec, ctx) {
   return spec;
 }
 
-// Operator and field reference parsers
+/** Reference parsers. */
 var PARSERS = [
   {key: '$ref',     parse: getOperator},
+  {key: '$expr',    parse: getExpression},
   {key: '$field',   parse: getField},
   {key: '$compare', parse: getCompare}
 ];
 
+/**
+ * Resolve an operator reference.
+ */
 function getOperator(_, ctx) {
   return ctx.operators[_.$ref];
 }
 
-function getField(_, ctx) {
-  var k = _.$field + '_' + _.$name,
-      f = ctx.fields[k];
-  if (!f) ctx.fields[k] = (f = dataflow.field(_.$field, _.$name));
-  return f;
+/**
+ * Resolve an expression reference.
+ */
+function getExpression(_, ctx) {
+  var k = 'e:' + _.$expr;
+  return ctx.fields[k] || (ctx.fields[k] =
+    dataflow.accessor(
+      Function('datum', '_', 'return ' + _.$expr + ';'),
+      _.$fields,
+      _.$name
+    )
+  );
 }
 
-function getCompare(_, ctx) {
-  var k = _.$compare + '_' + _.$order,
-      f = ctx.fields[k];
-  if (!f) ctx.fields[k] = (f = dataflow.compare(_.$compare, _.$order));
-  return f;
+/**
+ * Resolve a field accessor reference.
+ */
+function getField(_, ctx) {
+  var k = 'f:' + _.$field + '_' + _.$name;
+  return ctx.fields[k]
+    || (ctx.fields[k] = dataflow.field(_.$field, _.$name));
 }
+
+/**
+ * Resolve a comparator function reference.
+ */
+function getCompare(_, ctx) {
+  var k = 'c:' + _.$compare + '_' + _.$order;
+  return ctx.fields[k]
+    || (ctx.fields[k] = dataflow.compare(_.$compare, _.$order));
+}
+
+// ----
 
 function isObject(_) {
   return _ === Object(_);
+}
+
+function isExpression(_) {
+  return _ && _.$expr;
 }
