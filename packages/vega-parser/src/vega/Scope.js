@@ -1,6 +1,6 @@
 import DataScope from './DataScope';
 import {
-  error, isString,
+  error, array, isString, isSignal,
   ref, fieldRef, compareRef,
   aggrField, ASCENDING,
   operator, transform
@@ -38,6 +38,24 @@ prototype.fieldRef = function(field, name) {
     this.field[s] = f = ref(this.add(transform('Field', params)));
   }
   return f;
+};
+
+prototype.compareRef = function(cmp) {
+  function check(_) {
+    return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
+  }
+
+  var sig = this.signals,
+      signal = false,
+      fields = array(cmp.field).map(check),
+      orders = array(cmp.order).map(check);
+
+  return signal
+    ? ref(this.add(transform('Compare', {
+        fields: fields,
+        orders: orders
+      })))
+    : compareRef(fields, orders);
 };
 
 prototype.sortRef = function(sort) {
@@ -92,7 +110,9 @@ prototype.addData = function(name, entries) {
     throw Error('Parse error. Duplicate data set: ' + name);
   }
 
-  for (var i=0, n=entries.length; i<n; ++i) {
+  this.add(entries[0]);
+  for (var i=1, n=entries.length; i<n; ++i) {
+    entries[i].params.pulse = ref(entries[i-1]);
     this.add(entries[i]);
   }
   this.data[name] = new DataScope(this, entries);

@@ -2,9 +2,12 @@ import {ref, transform, keyRef, aggrField, sortKey} from './util';
 
 export default function DataScope(scope, entries) {
   this.scope = scope;
-  this.input = ref(entries[0]);
-  this.output = ref(entries[entries.length - 1]);
+
+  var n = entries.length;
   this.entries = entries; // is this needed? keep for now...
+  this.input  = ref(entries[0]);
+  this.values = ref(entries[--n]);
+  this.output = ref(entries[--n]);
 }
 
 var prototype = DataScope.prototype;
