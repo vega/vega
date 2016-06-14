@@ -14,7 +14,7 @@ export function operator(value, params) {
 }
 
 export function transform(type, params) {
-  return entry(type, null, params);
+  return entry(type, undefined, params);
 }
 
 // -----
@@ -29,8 +29,8 @@ export function fieldRef(field, name) {
 
 export var keyRef = fieldRef('key');
 
-export function compareRef(fields, order) {
-  return {$compare: fields, $order: order};
+export function compareRef(fields, orders) {
+  return {$compare: fields, $order: orders};
 }
 
 // -----
@@ -53,8 +53,8 @@ export function aggrField(op, field) {
 
 // -----
 
-export function error(message) {
-  throw Error(message);
+export function isSignal(_) {
+  return _ && _.signal;
 }
 
 // -----
@@ -75,6 +75,12 @@ export function isArray(_) {
   return Array.isArray(_);
 }
 
+// ------
+
+export function array(_) {
+  return _ != null ? (Array.isArray(_) ? _ : [_]) : [];
+}
+
 export function extend(_) {
   for (var x, k, i=1, n=arguments.length; i<n; ++i) {
     x = arguments[i];
@@ -86,4 +92,10 @@ export function extend(_) {
 export function set(_) {
   for (var s={}, i=0, n=_.length; i<n; ++i) s[_[i]] = 1;
   return s;
+}
+
+// -----
+
+export function error(message) {
+  throw Error(message);
 }
