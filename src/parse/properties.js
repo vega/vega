@@ -40,6 +40,8 @@ function properties(model, mark, spec) {
     deps._nRefs[k] = r;
   }
 
+  parseShape(model, config, spec);
+
   for (i=0, len=names.length; i<len; ++i) {
     ref = spec[name = names[i]];
     code += (i > 0) ? "\n  " : "  ";
@@ -168,6 +170,28 @@ function hasPath(mark, vars) {
       (vars.x || vars.x2 || vars.width ||
        vars.y || vars.y2 || vars.height ||
        vars.tension || vars.interpolate));
+}
+
+var hb = /{{(.*?)}}/g;
+function parseShape(model, config, spec) {
+  var shape = spec.shape,
+      last = 0,
+      value, match;
+
+  if (shape && (value = shape.value)) {
+    if (config.shape && config.shape[value]) {
+      value = config.shape[value];
+    }
+
+    // Parse handlebars
+    shape = '';
+    while ((match = hb.exec(value)) !== null) {
+      shape += value.substring(last, match.index);
+      shape += model.expr(match[1]).fn();
+      last = hb.lastIndex;
+    }
+    spec.shape.value = shape + value.substring(last);
+  }
 }
 
 function rule(model, name, rules, exprs) {
@@ -598,8 +622,13 @@ properties.schema = {
 
         // Symbol-mark properties
         "size": {"$ref": "#/refs/numberValue"},
-        "shape": valueSchema(["circle", "square",
-          "cross", "diamond", "triangle-up", "triangle-down"]),
+        "shape": {
+          "anyOf": [
+            valueSchema(["circle", "square", "cross", "diamond",
+              "triangle-up", "triangle-down"]),
+            {"$ref": "#/refs/stringValue"}
+          ]
+        },
 
         // Path-mark properties
         "path": {"$ref": "#/refs/stringValue"},
