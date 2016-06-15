@@ -1,7 +1,7 @@
 var tape = require('tape'),
-    parse = require('../../');
+    parse = require('../').parse;
 
-tape('Parser parses Vega specs', function(test) {
+tape('Parser parses Vega specs with scales', function(test) {
   var spec = {
     "signals": [
       {"name": "width", "init": 500},
@@ -52,7 +52,7 @@ tape('Parser parses Vega specs', function(test) {
     ]
   };
 
-  var dfs = parse.vega(spec);
+  var dfs = parse(spec);
 
   test.equal(dfs.length, 16);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
@@ -123,7 +123,7 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
     ]
   };
 
-  var dfs = parse.vega(spec);
+  var dfs = parse(spec);
 
   test.equal(dfs.length, 20);
   test.deepEqual(dfs.map(function(o) { return o.type; }),
@@ -135,44 +135,3 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
   test.end();
 });
 
-tape('Parser parses Vega specs with transforms', function(test) {
-  var spec = {
-    "signals": [
-      { "name": "ufield", "init": "u" },
-      { "name": "fields", "init": ["u", "v"] }
-    ],
-    "data": [
-      {
-        "name": "data0",
-        "values": [],
-        "transform": [
-          { "type": "fold", "fields": [{"signal": "ufield"}, "v"] },
-          { "type": "fold", "fields": {"signal": "fields"} }
-        ]
-      },
-      {
-        "name": "data1",
-        "values": [],
-        "transform": [
-          { "type": "force", "fixed": "data0", "forces":
-            [
-              { "force": "center", "x": 500, "y": 250 },
-              { "force": "collide", "radius": "r" },
-              { "force": "nbody" },
-              { "force": "link", "links": "data0" }
-            ]
-          },
-          { "type": "lookup", "from": "data0", "key": {"signal": "ufield"},
-            "fields": ["a", "b"], "as": ["foo", "bar"] }
-        ]
-      }
-    ]
-  };
-
-  var dfs = parse.vega(spec);
-
-  test.equal(dfs.length, 19);
-  // console.log(JSON.stringify(dfs, null, 2));
-
-  test.end();
-});

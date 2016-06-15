@@ -1,30 +1,30 @@
 {
-  "name": "dataflow-parser",
-  "version": "0.0.1",
-  "description": "Parsers for reactive dataflow.",
+  "name": "vega-parser",
+  "version": "0.1.0",
+  "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
+    "vega",
+    "parser",
     "dataflow",
-    "reactive",
-    "parser"
+    "reactive"
   ],
   "license": "BSD-3-Clause",
   "author": {
     "name": "Jeffrey Heer",
     "url": "http://idl.cs.washington.edu"
   },
-  "main": "build/dataflow-parser.js",
+  "main": "build/vega-parser.js",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/dataflow-parser.git"
+    "url": "https://github.com/uwdata/vega-parser.git"
   },
   "scripts": {
-    "build": "npm run test && uglifyjs build/dataflow-parser.js -c -m -o build/dataflow-parser.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n dfp -o build/dataflow-parser.js -- index.js",
+    "build": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-parser.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "devDependencies": {
-    "dataflow": "0.2.0",
     "eslint": "2",
     "json2module": "0.0",
     "rollup": "0.26",
