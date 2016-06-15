@@ -28,16 +28,6 @@ export var transforms = [
     "output": ["text", "count"]
   },
   {
-    "type": "Generate",
-    "source": true,
-    "params": [
-      { "name": "start", "type": "number", "required": true },
-      { "name": "stop", "type": "number", "required": true },
-      { "name": "step", "type": "number", "default": 1 }
-    ],
-    "output": ["value"]
-  },
-  {
     "type": "Filter",
     "producer": true,
     "params": [
@@ -51,6 +41,13 @@ export var transforms = [
       { "name": "fields", "type": "field", "array": true, "required": true }
     ],
     "output": ["key", "value"]
+  },
+  {
+    "name": "formula", "type": "Apply",
+    "params": [
+      { "name": "apply", "type": "expr", "required": true }
+      { "name": "as", "type": "string", "required": true }
+    ]
   },
   {
     "type": "Impute",
@@ -75,6 +72,16 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "required": true },
       { "name": "default", "default": null }
     ]
+  },
+  {
+    "type": "Range",
+    "source": true,
+    "params": [
+      { "name": "start", "type": "number", "required": true },
+      { "name": "stop", "type": "number", "required": true },
+      { "name": "step", "type": "number", "default": 1 }
+    ],
+    "output": ["value"]
   },
   {
     "type": "Rank",
