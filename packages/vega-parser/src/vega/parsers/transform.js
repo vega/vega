@@ -54,17 +54,17 @@ function parseParameter(def, spec, scope) {
  */
 function parameterValue(type, val, scope) {
   if (isSignal(val)) {
-    if (isData(val)) {
-      error('Data references can not be signals.');
-    }
-    return isField(type) ? scope.fieldRef(val)
-      : isCompare(type) ? scope.compareRef(val)
-      : scope.signalRef(val.signal);
+    return isData(type) ? error('Data references can not be signals.')
+         : isExpr(type) ? error('Expression references can not be signals.')
+         : isField(type) ? scope.fieldRef(val)
+         : isCompare(type) ? scope.compareRef(val)
+         : scope.signalRef(val.signal);
   } else {
     return isData(type) ? scope.getData(val).values
-      : isField(type) ? fieldRef(val)
-      : isCompare(type) ? compareRef(val)
-      : val;
+         : isExpr(type) ? error('Expression parsing not yet supported.')
+         : isField(type) ? fieldRef(val)
+         : isCompare(type) ? compareRef(val)
+         : val;
   }
 }
 
@@ -122,6 +122,10 @@ function parseSubParameter(def, value, scope) {
 
 export function isData(_) {
   return _ === 'data';
+}
+
+export function isExpr(_) {
+  return _ === 'expr';
 }
 
 export function isField(_) {
