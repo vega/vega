@@ -1,0 +1,43 @@
+var tape = require('tape'),
+    parse = require('../').parse;
+
+tape('Parser parses Vega specs with data transforms', function(test) {
+  var spec = {
+    "signals": [
+      { "name": "ufield", "init": "u" },
+      { "name": "fields", "init": ["u", "v"] }
+    ],
+    "data": [
+      {
+        "name": "data0",
+        "values": [],
+        "transform": [
+          { "type": "fold", "fields": [{"signal": "ufield"}, "v"] },
+          { "type": "fold", "fields": {"signal": "fields"} }
+        ]
+      },
+      {
+        "name": "data1",
+        "values": [],
+        "transform": [
+          { "type": "force", "fixed": "data0", "forces":
+            [
+              { "force": "center", "x": 500, "y": 250 },
+              { "force": "collide", "radius": "r" },
+              { "force": "nbody" },
+              { "force": "link", "links": "data0" }
+            ]
+          },
+          { "type": "lookup", "from": "data0", "key": {"signal": "ufield"},
+            "fields": ["a", "b"], "as": ["foo", "bar"] }
+        ]
+      }
+    ]
+  };
+
+  var dfs = parse(spec);
+
+  test.equal(dfs.length, 19);
+
+  test.end();
+});

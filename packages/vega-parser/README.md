@@ -1,3 +1,3 @@
-# dataflow-parser
+# vega-parser
 
-Experimental parsers for experimental reactive dataflow processing.
+Parse Vega specifications to runtime dataflows.

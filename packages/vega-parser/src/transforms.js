@@ -45,7 +45,7 @@ export var transforms = [
   {
     "name": "formula", "type": "Apply",
     "params": [
-      { "name": "apply", "type": "expr", "required": true }
+      { "name": "apply", "type": "expr", "required": true },
       { "name": "as", "type": "string", "required": true }
     ]
   },
