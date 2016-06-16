@@ -1,5 +1,5 @@
 import {paramExpression} from './expressions';
-
+import parseDataflow from './dataflow';
 import {accessor, field, compare, isObject, error} from 'vega-dataflow';
 
 /**
@@ -44,7 +44,8 @@ var PARSERS = [
   {key: '$ref',     parse: getOperator},
   {key: '$expr',    parse: getExpression},
   {key: '$field',   parse: getField},
-  {key: '$compare', parse: getCompare}
+  {key: '$compare', parse: getCompare},
+  {key: '$subflow', parse: getSubflow}
 ];
 
 /**
@@ -80,4 +81,15 @@ function getCompare(_, ctx) {
   var k = 'c:' + _.$compare + '_' + _.$order;
   return ctx.fn[k]
     || (ctx.fn[k] = compare(_.$compare, _.$order));
+}
+
+/**
+ * Resolve a recursive subflow specification.
+ */
+function getSubflow(_, ctx) {
+  var spec = _.$subflow;
+  return function(df) {
+    var out = parseDataflow(spec, df, ctx.fork());
+    return out.context.operator(spec.operators[0].id);
+  };
 }

@@ -1,3 +1,4 @@
+import context from './context';
 import parseOperator from './operators';
 import parseStream from './streams';
 import parseUpdate from './updates';
@@ -7,10 +8,9 @@ import {Dataflow} from 'vega-dataflow';
 /**
  * Parse a serialized dataflow specification.
  */
-export default function dataflow(spec, df) {
+export default function dataflow(spec, df, ctx) {
   df = df || new Dataflow();
-
-  var ctx = getContext(df);
+  ctx = ctx || context(df);
 
   // parse operators
   (spec.operators || []).forEach(function(entry) {
@@ -31,27 +31,4 @@ export default function dataflow(spec, df) {
     dataflow: df,
     context: ctx
   }
-}
-
-function getContext(df) {
-  var operators = {},
-      streams = {};
-
-  function operator(id) {
-    return operators.hasOwnProperty(id) && operators[id];
-  }
-
-  function stream(id) {
-    return streams.hasOwnProperty(id) && streams[id];
-  }
-
-  return {
-    events: df.events.bind(df),
-    updates: {},
-    fn: {},
-    operators: operators,
-    operator: operator,
-    streams: streams,
-    stream: stream
-  };
 }
