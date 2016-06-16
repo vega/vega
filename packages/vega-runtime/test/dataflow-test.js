@@ -8,7 +8,7 @@ tape('Parser parses Dataflow specs', function(test) {
     {"x": 3,  "y": 81},
     {"x": 4,  "y": 19}
   ];
-  var spec = [
+  var spec = {operators: [
     {id:0, type:'Operator', value:500},
     {id:1, type:'Operator', value:300},
     {id:2, type:'Collect',  value:values},
@@ -17,17 +17,16 @@ tape('Parser parses Dataflow specs', function(test) {
     {id:5, type:'Scale', params:{type:'band', range:[0,{$ref:0}], domain:{$ref:4}}},
     {id:6, type:'Extent', params:{field:{$field:'y'}, pulse:{$ref:2}}},
     {id:7, type:'Scale', params:{type:'linear', range:[{$ref:1},0], domain:{$ref:6}}}
-  ];
+  ]};
 
   var out = dataflow(spec),
       df  = out.dataflow,
       ctx = out.context,
-      ops = ctx.operator;
+      ops = ctx.operators;
 
   test.equal(Object.keys(ctx.fn).length, 2);
-  test.equal(Object.keys(ops).length, spec.length);
-
-  test.equal(df.run(), spec.length);
+  test.equal(Object.keys(ops).length, spec.operators.length);
+  test.equal(df.run(), spec.operators.length);
 
   test.equal(ops[0].value, 500);
 

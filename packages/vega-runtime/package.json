@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-runtime.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g vega-dataflow:vega -n vega -o build/vega-runtime.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {

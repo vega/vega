@@ -10,7 +10,7 @@ tape('Parser parses expressions', function(test) {
     {"x": 4,  "y": 19}
   ];
 
-  var spec = [
+  var spec = {operators: [
     {id:0, type:'Operator', value: 50},
     {id:1, type:'Expression', value: '2 * _.foo', params: {foo:{$ref:0}}},
     {id:2, type:'Collect',  value: values},
@@ -31,16 +31,16 @@ tape('Parser parses expressions', function(test) {
       pulse: {$ref: 3}
     }},
     {id:5, type:'Collect', params: {pulse: {$ref:4}}}
-  ];
+  ]};
 
   var out = dataflow(spec),
       df  = out.dataflow,
       ctx = out.context,
-      ops = ctx.operator,
+      ops = ctx.operators,
       z = vega.field('z');
 
-  test.equal(Object.keys(ops).length, spec.length);
-  test.equal(df.run(), spec.length);
+  test.equal(Object.keys(ops).length, spec.operators.length);
+  test.equal(df.run(), spec.operators.length);
 
   test.equal(typeof ops[1]._update, 'function');
   test.equal(ops[1].value, 100);
