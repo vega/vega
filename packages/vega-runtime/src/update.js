@@ -1,5 +1,5 @@
-import parseParams from './parameters';
-import {handlerExpression} from './expressions';
+import parseParameters from './parameters';
+import {handlerExpression} from './expression';
 
 import {error} from 'vega-dataflow';
 
@@ -17,7 +17,7 @@ export default function parseUpdate(spec, df, ctx) {
 
   if (update && update.$expr) {
     if (update.$params) {
-      params = parseParams(update.$params, ctx);
+      params = parseParameters(update.$params, ctx);
     }
     update = handlerExpression(update.$expr);
   }

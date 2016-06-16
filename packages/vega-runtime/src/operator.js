@@ -1,5 +1,5 @@
-import parseParams from './parameters';
-import {operatorExpression} from './expressions';
+import parseParameters from './parameters';
+import {operatorExpression} from './expression';
 
 import * as vega from 'vega-dataflow';
 
@@ -14,7 +14,7 @@ export default function parseOperator(spec, df, ctx) {
   }
 
   if (spec.params) {
-    params = parseParams(spec.params, ctx);
+    params = parseParameters(spec.params, ctx);
   }
 
   if (spec.type === 'Expression') {
