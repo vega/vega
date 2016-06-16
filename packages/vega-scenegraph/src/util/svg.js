@@ -1,4 +1,6 @@
-var d3_svg = require('d3').svg;
+var dl = require('datalib'),
+    d3_svg = require('d3').svg,
+    parse = require('../path/parse');
 
 function x(o)     { return o.x || 0; }
 function y(o)     { return o.y || 0; }
@@ -33,9 +35,29 @@ module.exports = {
         .interpolate(o.interpolate || 'linear')
         .tension(o.tension || 0.7)
         (items);
+    },
+    resize: function(pathStr, size) {
+      var path = parse(pathStr),
+          newPath = '',
+          command, current, index, i, n, j, m;
+
+      size = Math.sqrt(size);
+      for (i=0, n=path.length; i<n; ++i) {
+        for (command=path[i], j=0, m=command.length; j<m; ++j) {
+          if (command[j] === 'Z') break;
+          if ((current = +command[j]) === current) {
+            // if number, need to resize
+            index = pathStr.indexOf(current);
+            newPath += pathStr.substring(0, index) + (current * size);
+            pathStr  = pathStr.substring(index + (current+'').length);
+          }
+        }
+      }
+
+      return newPath + 'Z';
     }
   },
-  symbolTypes: d3_svg.symbolTypes,
+  symbolTypes: dl.toMap(d3_svg.symbolTypes),
   textAlign: {
     'left':   'start',
     'center': 'middle',
