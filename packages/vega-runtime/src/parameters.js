@@ -1,11 +1,12 @@
-import {paramExpression} from './expressions';
 import parseDataflow from './dataflow';
+import {parameterExpression} from './expression';
+
 import {accessor, field, compare, isObject, error} from 'vega-dataflow';
 
 /**
  * Parse a set of operator parameters.
  */
-export default function parseParams(spec, ctx, params) {
+export default function parseParameters(spec, ctx, params) {
   params = params || {};
   var key, value;
 
@@ -14,12 +15,12 @@ export default function parseParams(spec, ctx, params) {
 
     if (value && value.$expr && value.$params) {
       // if expression, parse its parameters
-      parseParams(value.$params, ctx, params);
+      parseParameters(value.$params, ctx, params);
     }
 
     params[key] = Array.isArray(value)
-      ? value.map(function(v) { return parseParam(v, ctx); })
-      : parseParam(value, ctx);
+      ? value.map(function(v) { return parseParameter(v, ctx); })
+      : parseParameter(value, ctx);
   }
   return params;
 }
@@ -27,7 +28,7 @@ export default function parseParams(spec, ctx, params) {
 /**
  * Parse a single parameter.
  */
-function parseParam(spec, ctx) {
+function parseParameter(spec, ctx) {
   if (!spec || !isObject(spec)) return spec;
 
   for (var i=0, n=PARSERS.length, p; i<n; ++i) {
@@ -62,7 +63,7 @@ function getOperator(_, ctx) {
 function getExpression(_, ctx) {
   var k = 'e:' + _.$expr;
   return ctx.fn[k]
-    || (ctx.fn[k] = accessor(paramExpression(_.$expr), _.$fields, _.$name));
+    || (ctx.fn[k] = accessor(parameterExpression(_.$expr), _.$fields, _.$name));
 }
 
 /**

@@ -1,14 +1,14 @@
 import context from './context';
-import parseOperator from './operators';
-import parseStream from './streams';
-import parseUpdate from './updates';
+import parseOperator from './operator';
+import parseStream from './stream';
+import parseUpdate from './update';
 
 import {Dataflow} from 'vega-dataflow';
 
 /**
  * Parse a serialized dataflow specification.
  */
-export default function dataflow(spec, df, ctx) {
+export default function parseDataflow(spec, df, ctx) {
   df = df || new Dataflow();
   ctx = ctx || context(df);
 
