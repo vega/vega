@@ -1,6 +1,5 @@
 var text = require('../../util/text'),
     SVG = require('../../util/svg'),
-    parse = require('../../path/parse'),
     symbolTypes = SVG.symbolTypes,
     textAlign = SVG.textAlign,
     path = SVG.path;
@@ -11,27 +10,6 @@ function translateItem(o) {
 
 function translate(x, y) {
   return 'translate(' + x + ',' + y + ')';
-}
-
-function resize(pathStr, size) {
-  var path = parse(pathStr),
-      newPath = '',
-      command, current, index;
-
-  size = Math.sqrt(size);
-  for (var i=0, len=path.length; i<len; ++i) {
-    command = path[i];
-    for (var j=0, jlen=command.length; j<jlen; ++j) {
-      if (command[j] === 'Z') break;
-      if ((current = +command[j]) === current) { // if number, need to resize
-        index = pathStr.indexOf(current);
-        newPath += pathStr.substring(0, index) + (current * size);
-        pathStr  = pathStr.substring(index + (current+'').length);
-      }
-    }
-  }
-
-  return newPath + 'Z';
 }
 
 module.exports = {
@@ -132,8 +110,8 @@ module.exports = {
     tag:  'path',
     type: 'symbol',
     attr: function(emit, o) {
-      var pathStr = symbolTypes.indexOf(o.shape) !== -1 || !o.shape ?
-        path.symbol(o) : resize(o.shape, o.size);
+      var pathStr = !o.shape || symbolTypes[o.shape] ?
+        path.symbol(o) : path.resize(o.shape, o.size);
 
       emit('transform', translateItem(o));
       emit('d', pathStr);

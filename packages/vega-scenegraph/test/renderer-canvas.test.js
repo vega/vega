@@ -33,10 +33,10 @@ function renderAsync(scene, w, h, callback) {
   var r = new Renderer({baseURL: './test/resources/'})
     .initialize(null, w, h)
     .render(scene);
-  
+
   function wait() {
     if (r.pendingImages() === 0) {
-      callback(r.canvas().toBuffer());      
+      callback(r.canvas().toBuffer());
     } else {
       setTimeout(wait, 100);
     }
@@ -69,7 +69,7 @@ describe('canvas renderer', function() {
     var r = new Renderer().initialize(document.body, 100, 100);
     assert.strictEqual(r.element(), document.body);
     assert.strictEqual(r.canvas(), document.body.childNodes[0]);
-    
+
     delete global.document;
   });
 
@@ -165,17 +165,17 @@ describe('canvas renderer', function() {
       .initialize(null, 400, 200)
       .background('white')
       .render(scene);
-  
+
     var rect = scene.items[0].items[0].items.pop();
     rect.status = 'exit';
     r.render(scene, [rect]);
-  
+
     var image = r.canvas().toBuffer();
     generate('png/scenegraph-exit-redraw.png', image);
     var test = load('png/scenegraph-exit-redraw.png');
     assert.equal(image, test);
   });
-  
+
   it('should support single-item redraw', function() {
     var scene = loadScene('scenegraph-rect.json');
     var r = new Renderer()
@@ -250,7 +250,7 @@ describe('canvas renderer', function() {
       'text'
     ];
     var test = load('png/marks-empty.png'), image;
-    
+
     for (var i=0; i<types.length; ++i) {
       scene.marktype = types[i];
       image = render(scene, 500, 500);
@@ -299,7 +299,7 @@ describe('canvas renderer', function() {
       generate('png/marks-image.png', image);
       var test = load('png/marks-image.png');
       assert.equal(image, test);
-      done();        
+      done();
     });
   });
 

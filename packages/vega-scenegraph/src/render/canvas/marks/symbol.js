@@ -69,13 +69,23 @@ function path(g, o) {
 
     // custom shape
     default:
-      var pathArray = parse(o.shape);
-
-      g.translate(x,y);
-      render(g, pathArray, undefined, undefined, o.size);
-      g.translate(-x,-y);
+      var pathArray = resize(parse(o.shape), size);
+      render(g, pathArray, x, y);
   }
   g.closePath();
+}
+
+// Scale custom shapes (defined within a unit square) by given size.
+function resize(path, size) {
+  var sz = Math.sqrt(size),
+      i, n, j, m, curr;
+
+  for (i=0, n=path.length; i<n; ++i) {
+    for (curr=path[i], j=1, m=curr.length; j<m; ++j) {
+      curr[j] *= sz;
+    }
+  }
+  return path;
 }
 
 module.exports = {
