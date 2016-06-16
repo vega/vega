@@ -1,7 +1,7 @@
 var tape = require('tape'),
     dataflow = require('../').dataflow;
 
-tape('Parser parses Dataflow specs', function(test) {
+tape('Parser parses dataflow specs', function(test) {
   var values = [
     {"x": 1,  "y": 28},
     {"x": 2,  "y": 43},
