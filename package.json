@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "2.5.2",
+  "version": "2.6.0",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -27,6 +27,10 @@
     {
       "name": "Ryan Russell",
       "url": "https://github.com/RussellSprouts"
+    },
+    {
+      "name": "Emily Gu",
+      "url": "https://github.com/emilygu"
     }
   ],
   "license": "BSD-3-Clause",
