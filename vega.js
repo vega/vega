@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.5.2',
+  version: '2.6.0',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -1356,7 +1356,7 @@ module.exports = {
     days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
     shortDays: ["일", "월", "화", "수", "목", "금", "토"],
     months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-    shortMonths: ["1월", "2월", "3월", "4���", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+    shortMonths: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
   });
 
   var mkMK = locale$1({
@@ -1386,7 +1386,7 @@ module.exports = {
     date: "%d/%m/%Y",
     time: "%H:%M:%S",
     periods: ["AM", "PM"], // unused
-    days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Pi��tek", "Sobota"],
+    days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
     shortDays: ["Niedz.", "Pon.", "Wt.", "Śr.", "Czw.", "Pt.", "Sob."],
     months: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"],
     shortMonths: ["Stycz.", "Luty", "Marz.", "Kwie.", "Maj", "Czerw.", "Lipc.", "Sierp.", "Wrz.", "Paźdz.", "Listop.", "Grudz."]/* In Polish language abbraviated months are not commonly used so there is a dispute about the proper abbraviations. */
@@ -2377,6 +2377,11 @@ var types = {
     set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : 0',
     req:  ['variance'], idx: 2
   }),
+  'stderr': measure({
+    name: 'stderr',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : 0',
+    req:  ['variance'], idx: 2
+  }),
   'median': measure({
     name: 'median',
     set:  'cell.data.q2(this.get)',
@@ -2430,7 +2435,7 @@ var types = {
   'modeskew': measure({
     name: 'modeskew',
     set:  'this.dev===0 ? 0 : (this.mean - cell.data.q2(this.get)) / Math.sqrt(this.dev/(this.valid-1))',
-    req:  ['mean', 'stdev', 'median'], idx: 5
+    req:  ['mean', 'variance', 'median'], idx: 5
   })
 };
 
@@ -2837,8 +2842,10 @@ module.exports = {
     utc:      function() { return utcAutoFormat(); }
   },
 
-  month: monthFormat, // format month name from integer code
-  day:   dayFormat    // format week day name from integer code
+  month:      monthFormat,      // format month name from integer code
+  day:        dayFormat,        // format week day name from integer code
+  quarter:    quarterFormat,    // format quarter name from timestamp
+  utcQuarter: utcQuarterFormat  // format quarter name from utc timestamp
 };
 
 // -- Locales ----
@@ -3024,6 +3031,15 @@ function dayFormat(day, abbreviate) {
     (dayFull || (dayFull = timeF.format('%A')));
   return (tmpDate.setMonth(0), tmpDate.setDate(2 + day), f(tmpDate));
 }
+
+function quarterFormat(date) {
+  return Math.floor(date.getMonth() / 3) + 1;
+}
+
+function utcQuarterFormat(date) {
+  return Math.floor(date.getUTCMonth() / 3) + 1;
+}
+
 },{"./util":30,"d3-format":4,"d3-time":6,"d3-time-format":5}],16:[function(require,module,exports){
 var util = require('./util'),
     gen = module.exports;
@@ -3507,7 +3523,7 @@ function parse(data, types) {
   parsers = cols.map(function(c) {
     var t = types[c];
     if (t && t.indexOf('date:') === 0) {
-      var parts = t.split(':', 2),
+      var parts = t.split(/:(.+)?/, 2),  // split on first :
           pattern = parts[1];
       if ((pattern[0] === '\'' && pattern[pattern.length-1] === '\'') ||
           (pattern[0] === '"'  && pattern[pattern.length-1] === '"')) {
@@ -3584,7 +3600,7 @@ var PARSERS = {
   integer: util.number,
   number:  util.number,
   date:    util.date,
-  string:  function(x) { return x==='' ? null : x; }
+  string:  function(x) { return x == null || x === '' ? null : x + ''; }
 };
 
 var TESTS = {
@@ -3672,7 +3688,7 @@ module.exports = type;
 var util = require('./util');
 
 var dl = {
-  version:    '1.6.3',
+  version:    '1.7.1',
   load:       require('./import/load'),
   read:       require('./import/read'),
   type:       require('./import/type'),
@@ -4434,7 +4450,9 @@ var context = {
   truncate:   util.truncate,
   pad:        util.pad,
   day:        format.day,
-  month:      format.month
+  month:      format.month,
+  quarter:    format.quarter,
+  utcQuarter: format.utcQuarter
 };
 
 function template(text) {
@@ -4612,6 +4630,12 @@ function template_var(text, variable, properties) {
         break;
       case 'day-abbrev':
         src = 'this.day(' + src + ',true)';
+        break;
+      case 'quarter':
+        src = 'this.quarter(' + src + ')';
+        break;
+      case 'quarter-utc':
+        src = 'this.utcQuarter(' + src + ')';
         break;
       default:
         throw Error('Unrecognized template filter: ' + f);
@@ -5022,30 +5046,23 @@ u.comparator = function(sort) {
     sign.push(s);
     return u.accessor(f);
   });
-  return function(a,b) {
-    var i, n, f, x, y;
+  return function(a, b) {
+    var i, n, f, c;
     for (i=0, n=sort.length; i<n; ++i) {
-      f = sort[i]; x = f(a); y = f(b);
-      if (x < y) return -1 * sign[i];
-      if (x > y) return sign[i];
+      f = sort[i];
+      c = u.cmp(f(a), f(b));
+      if (c) return c * sign[i];
     }
     return 0;
   };
 };
 
 u.cmp = function(a, b) {
-  if (a < b) {
-    return -1;
-  } else if (a > b) {
-    return 1;
-  } else if (a >= b) {
-    return 0;
-  } else if (a === null) {
-    return -1;
-  } else if (b === null) {
-    return 1;
-  }
-  return NaN;
+  return (a < b || a == null) && b != null ? -1 :
+    (a > b || b == null) && a != null ? 1 :
+    ((b = b instanceof Date ? +b : b),
+     (a = a instanceof Date ? +a : a)) !== a && b === b ? -1 :
+    b !== b && a === a ? 1 : 0;
 };
 
 u.numcmp = function(a, b) { return a - b; };
@@ -5065,6 +5082,19 @@ u.stablesort = function(array, sortBy, keyFn) {
   return array;
 };
 
+// permutes an array using a Knuth shuffle
+u.permute = function(a) {
+  var m = a.length,
+      swap,
+      i;
+
+  while (m) {
+    i = Math.floor(Math.random() * m--);
+    swap = a[m];
+    a[m] = a[i];
+    a[i] = swap;
+  }
+};
 
 // string functions
 
@@ -5129,12 +5159,12 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.topojson = {})));
+  (factory((global.topojson = global.topojson || {})));
 }(this, function (exports) { 'use strict';
 
   function noop() {}
 
-  function absolute(transform) {
+  function transformAbsolute(transform) {
     if (!transform) return noop;
     var x0,
         y0,
@@ -5149,7 +5179,7 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
     };
   }
 
-  function relative(transform) {
+  function transformRelative(transform) {
     if (!transform) return noop;
     var x0,
         y0,
@@ -5159,8 +5189,8 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
         dy = transform.translate[1];
     return function(point, i) {
       if (!i) x0 = y0 = 0;
-      var x1 = (point[0] - dx) / kx | 0,
-          y1 = (point[1] - dy) / ky | 0;
+      var x1 = Math.round((point[0] - dx) / kx),
+          y1 = Math.round((point[1] - dy) / ky);
       point[0] = x1 - x0;
       point[1] = y1 - y0;
       x0 = x1;
@@ -5202,21 +5232,21 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
   }
 
   function object(topology, o) {
-    var absolute$$ = absolute(topology.transform),
+    var absolute = transformAbsolute(topology.transform),
         arcs = topology.arcs;
 
     function arc(i, points) {
       if (points.length) points.pop();
       for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length, p; k < n; ++k) {
         points.push(p = a[k].slice());
-        absolute$$(p, k);
+        absolute(p, k);
       }
       if (i < 0) reverse(points, n);
     }
 
     function point(p) {
       p = p.slice();
-      absolute$$(p, 0);
+      absolute(p, 0);
       return p;
     }
 
@@ -5378,7 +5408,7 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
     return {type: "MultiLineString", arcs: stitchArcs(topology, arcs)};
   }
 
-  function triangle(triangle) {
+  function cartesianTriangleArea(triangle) {
     var a = triangle[0], b = triangle[1], c = triangle[2];
     return Math.abs((a[0] - c[0]) * (b[1] - a[1]) - (a[0] - b[0]) * (c[1] - a[1]));
   }
@@ -5422,8 +5452,8 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
       polygons.push(polygon);
     }
 
-    function exterior(ring$$) {
-      return ring(object(topology, {type: "Polygon", arcs: [ring$$]}).coordinates[0]) > 0; // TODO allow spherical?
+    function area(ring$$) {
+      return Math.abs(ring(object(topology, {type: "Polygon", arcs: [ring$$]}).coordinates[0]));
     }
 
     polygons.forEach(function(polygon) {
@@ -5473,14 +5503,11 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
 
         // If more than one ring is returned,
         // at most one of these rings can be the exterior;
-        // this exterior ring has the same winding order
-        // as any exterior ring in the original polygons.
+        // choose the one with the greatest absolute area.
         if ((n = arcs.length) > 1) {
-          var sgn = exterior(polygons[0][0]);
-          for (var i = 0, t; i < n; ++i) {
-            if (sgn === exterior(arcs[i])) {
-              t = arcs[0], arcs[0] = arcs[i], arcs[i] = t;
-              break;
+          for (var i = 1, k = area(arcs[0]), ki, t; i < n; ++i) {
+            if ((ki = area(arcs[i])) > k) {
+              t = arcs[0], arcs[0] = arcs[i], arcs[i] = t, k = ki;
             }
           }
         }
@@ -5590,11 +5617,11 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
   }
 
   function presimplify(topology, triangleArea) {
-    var absolute$$ = absolute(topology.transform),
-        relative$$ = relative(topology.transform),
+    var absolute = transformAbsolute(topology.transform),
+        relative = transformRelative(topology.transform),
         heap = minAreaHeap();
 
-    if (!triangleArea) triangleArea = triangle;
+    if (!triangleArea) triangleArea = cartesianTriangleArea;
 
     topology.arcs.forEach(function(arc) {
       var triangles = [],
@@ -5610,7 +5637,7 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
       // Infinity will be computed in the next step.
       for (i = 0, n = arc.length; i < n; ++i) {
         p = arc[i];
-        absolute$$(arc[i] = [p[0], p[1], Infinity], i);
+        absolute(arc[i] = [p[0], p[1], Infinity], i);
       }
 
       for (i = 1, n = arc.length - 1; i < n; ++i) {
@@ -5650,7 +5677,7 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
         }
       }
 
-      arc.forEach(relative$$);
+      arc.forEach(relative);
     });
 
     function update(triangle) {
@@ -5662,7 +5689,7 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
     return topology;
   }
 
-  var version = "1.6.24";
+  var version = "1.6.26";
 
   exports.version = version;
   exports.mesh = mesh;
@@ -6914,23 +6941,36 @@ module.exports = (function() {
         peg$c7 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c8 = ">",
         peg$c9 = { type: "literal", value: ">", description: "\">\"" },
-        peg$c10 = function(f1, f2, o) { return {start: f1, end: f2, middle: o}; },
-        peg$c11 = function(s, f) { return (s.filters = f, s); },
+        peg$c10 = function(f1, f2, o) {
+            return {
+              start: f1, middle: o, end: f2,
+              str: '['+f1.str+', '+f2.str+'] > '+o.str};
+            },
+        peg$c11 = function(s, f) {
+            s.filters = f;
+            s.str += f.map(function(x) { return '['+x+']'; }).join('');
+            return s;
+          },
         peg$c12 = function(s) { return s; },
         peg$c13 = "(",
         peg$c14 = { type: "literal", value: "(", description: "\"(\"" },
         peg$c15 = ")",
         peg$c16 = { type: "literal", value: ")", description: "\")\"" },
-        peg$c17 = function(m) { return {stream: m}; },
+        peg$c17 = function(m) {
+            return {
+              stream: m,
+              str: '('+m.map(function(m) { return m.str; }).join(', ')+')'
+            };
+          },
         peg$c18 = "@",
         peg$c19 = { type: "literal", value: "@", description: "\"@\"" },
         peg$c20 = ":",
         peg$c21 = { type: "literal", value: ":", description: "\":\"" },
-        peg$c22 = function(n, e) { return {event: e, name: n}; },
-        peg$c23 = function(m, e) { return {event: e, mark: m}; },
-        peg$c24 = function(t, e) { return {event: e, target: t}; },
-        peg$c25 = function(e) { return {event: e}; },
-        peg$c26 = function(s) { return {signal: s}; },
+        peg$c22 = function(n, e) { return {event: e, name: n, str: '@'+n+':'+e}; },
+        peg$c23 = function(m, e) { return {event: e, mark: m, str: m+':'+e}; },
+        peg$c24 = function(t, e) { return {event: e, target: t, str: t+':'+e}; },
+        peg$c25 = function(e) { return {event: e, str: e}; },
+        peg$c26 = function(s) { return {signal: s, str: s}; },
         peg$c27 = "rect",
         peg$c28 = { type: "literal", value: "rect", description: "\"rect\"" },
         peg$c29 = "symbol",
@@ -6992,13 +7032,13 @@ module.exports = (function() {
         peg$c85 = function(e) { return e; },
         peg$c86 = /^[a-zA-Z0-9_\-]/,
         peg$c87 = { type: "class", value: "[a-zA-Z0-9_-]", description: "[a-zA-Z0-9_-]" },
-        peg$c88 = function(n) { return n.join(""); },
+        peg$c88 = function(n) { return n.join(''); },
         peg$c89 = /^[a-zA-Z0-9\-_  #.>+~[\]=|\^$*]/,
         peg$c90 = { type: "class", value: "[a-zA-Z0-9-_  #\\.\\>\\+~\\[\\]=|\\^\\$\\*]", description: "[a-zA-Z0-9-_  #\\.\\>\\+~\\[\\]=|\\^\\$\\*]" },
-        peg$c91 = function(c) { return c.join(""); },
+        peg$c91 = function(c) { return c.join(''); },
         peg$c92 = /^['"a-zA-Z0-9_().><=! \t-&|~]/,
         peg$c93 = { type: "class", value: "['\"a-zA-Z0-9_\\(\\)\\.\\>\\<\\=\\! \\t-&|~]", description: "['\"a-zA-Z0-9_\\(\\)\\.\\>\\<\\=\\! \\t-&|~]" },
-        peg$c94 = function(v) { return v.join(""); },
+        peg$c94 = function(v) { return v.join(''); },
         peg$c95 = /^[ \t\r\n]/,
         peg$c96 = { type: "class", value: "[ \\t\\r\\n]", description: "[ \\t\\r\\n]" },
 
@@ -11993,7 +12033,9 @@ module.exports = {
 };
 
 },{"./util":70}],68:[function(require,module,exports){
-var util = require('./util');
+var util = require('./util'),
+    parse = require('../../../path/parse'),
+    render = require('../../../path/render');
 
 var sqrt3 = Math.sqrt(3),
     tan30 = Math.tan(30 * Math.PI / 180);
@@ -12058,15 +12100,34 @@ function path(g, o) {
       g.moveTo(x, y-ry);
       g.lineTo(x+rx, y+ry);
       g.lineTo(x-rx, y+ry);
+      break;
+
+    // custom shape
+    default:
+      var pathArray = resize(parse(o.shape), size);
+      render(g, pathArray, x, y);
   }
   g.closePath();
+}
+
+// Scale custom shapes (defined within a unit square) by given size.
+function resize(path, size) {
+  var sz = Math.sqrt(size),
+      i, n, j, m, curr;
+
+  for (i=0, n=path.length; i<n; ++i) {
+    for (curr=path[i], j=1, m=curr.length; j<m; ++j) {
+      curr[j] *= sz;
+    }
+  }
+  return path;
 }
 
 module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":70}],69:[function(require,module,exports){
+},{"../../../path/parse":52,"../../../path/render":53,"./util":70}],69:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
     text = require('../../../util/text'),
@@ -13042,6 +13103,7 @@ module.exports = {
 },{"./SVGHandler":72,"./SVGRenderer":73,"./SVGStringRenderer":74}],76:[function(require,module,exports){
 var text = require('../../util/text'),
     SVG = require('../../util/svg'),
+    symbolTypes = SVG.symbolTypes,
     textAlign = SVG.textAlign,
     path = SVG.path;
 
@@ -13151,8 +13213,11 @@ module.exports = {
     tag:  'path',
     type: 'symbol',
     attr: function(emit, o) {
+      var pathStr = !o.shape || symbolTypes[o.shape] ?
+        path.symbol(o) : path.resize(o.shape, o.size);
+
       emit('transform', translateItem(o));
-      emit('d', path.symbol(o));
+      emit('d', pathStr);
     }
   },
   text: {
@@ -13174,7 +13239,7 @@ module.exports = {
       }
 
       emit('text-anchor', textAlign[o.align] || 'start');
-      
+
       if (a) {
         t = translate(x, y) + ' rotate('+a+')';
         if (dx || dy) t += ' ' + translate(dx, dy);
@@ -13708,7 +13773,7 @@ function group(g, bounds, includeLegends) {
       bounds.union(axes[j].bounds);
     }
     for (j=0, m=items.length; j<m; ++j) {
-      bounds.union(items[j].bounds);
+      if (items[j].bounds) bounds.union(items[j].bounds);
     }
     if (includeLegends) {
       for (j=0, m=legends.length; j<m; ++j) {
@@ -13921,7 +13986,7 @@ module.exports = {
         a.tagName.toLowerCase() !== tag.toLowerCase() ||
         className && a.getAttribute('class') != className) {
       a = create(el.ownerDocument, tag, ns);
-      el.insertBefore(a, b);
+      el.insertBefore(a, b || null);
       if (className) a.setAttribute('class', className);
     }
     return a;
@@ -14023,7 +14088,9 @@ module.exports = {
 };
 },{"../util/bound":82}],86:[function(require,module,exports){
 (function (global){
-var d3_svg = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null).svg;
+var dl = require('datalib'),
+    d3_svg = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null).svg,
+    parse = require('../path/parse');
 
 function x(o)     { return o.x || 0; }
 function y(o)     { return o.y || 0; }
@@ -14058,8 +14125,29 @@ module.exports = {
         .interpolate(o.interpolate || 'linear')
         .tension(o.tension || 0.7)
         (items);
+    },
+    resize: function(pathStr, size) {
+      var path = parse(pathStr),
+          newPath = '',
+          command, current, index, i, n, j, m;
+
+      size = Math.sqrt(size);
+      for (i=0, n=path.length; i<n; ++i) {
+        for (command=path[i], j=0, m=command.length; j<m; ++j) {
+          if (command[j] === 'Z') break;
+          if ((current = +command[j]) === current) {
+            // if number, need to resize
+            index = pathStr.indexOf(current);
+            newPath += pathStr.substring(0, index) + (current * size);
+            pathStr  = pathStr.substring(index + (current+'').length);
+          }
+        }
+      }
+
+      return newPath + 'Z';
     }
   },
+  symbolTypes: dl.toMap(d3_svg.symbolTypes),
   textAlign: {
     'left':   'start',
     'center': 'middle',
@@ -14096,7 +14184,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],87:[function(require,module,exports){
+},{"../path/parse":52,"datalib":26}],87:[function(require,module,exports){
 function size(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
@@ -14894,7 +14982,7 @@ config.scene = {
 
 // default axis properties
 config.axis = {
-  orient: 'bottom',
+  layer: 'back',
   ticks: 10,
   padding: 3,
   axisColor: '#000',
@@ -14913,7 +15001,7 @@ config.axis = {
   titleFontWeight: 'bold',
   titleOffset: 'auto',
   titleOffsetAutoMin: 30,
-  titleOffsetAutoMax: Infinity,
+  titleOffsetAutoMax: 10000,
   titleOffsetAutoMargin: 4
 };
 
@@ -15019,7 +15107,8 @@ module.exports = function(opt) {
 };
 },{"../parse":97,"../scene/Scale":113,"./config":91,"datalib":26}],93:[function(require,module,exports){
 var dl = require('datalib'),
-    axs = require('../scene/axis');
+    axs = require('../scene/axis'),
+    themeVal = require('../util/theme-val');
 
 var ORIENT = {
   "x":      "bottom",
@@ -15031,32 +15120,38 @@ var ORIENT = {
 };
 
 function parseAxes(model, spec, axes, group) {
-  var config = model.config();
+  var cfg = config(model);
   (spec || []).forEach(function(def, index) {
-    axes[index] = axes[index] || axs(model);
-    parseAxis(config, def, index, axes[index], group);
+    axes[index] = axes[index] || axs(model, cfg[def.type]);
+    parseAxis(cfg[def.type], def, index, axes[index], group);
   });
 }
 
 function parseAxis(config, def, index, axis, group) {
   // axis scale
+  var scale;
   if (def.scale !== undefined) {
-    axis.scale(group.scale(def.scale));
+    axis.scale(scale = group.scale(def.scale));
+  }
+
+  // grid by scaletype
+  var grid = config.grid;
+  if (dl.isObject(grid)) {
+    config.grid = grid[scale.type] !== undefined ? grid[scale.type] : grid.default;
   }
 
   // axis orientation
-  axis.orient(def.orient || ORIENT[def.type]);
+  axis.orient(themeVal(def, config, 'orient', ORIENT[def.type]));
   // axis offset
-  axis.offset(def.offset || 0);
+  axis.offset(themeVal(def, config, 'offset', 0));
   // axis layer
-  axis.layer(def.layer || "front");
+  axis.layer(themeVal(def, config, 'layer', 'front'));
   // axis grid lines
-  axis.grid(def.grid || false);
+  axis.grid(themeVal(def, config, 'grid', false));
   // axis title
   axis.title(def.title || null);
   // axis title offset
-  axis.titleOffset(def.titleOffset != null ?
-    def.titleOffset : config.axis.titleOffset);
+  axis.titleOffset(themeVal(def, config, 'titleOffset'));
   // axis values
   axis.tickValues(def.values || null);
   // axis label formatting
@@ -15064,26 +15159,23 @@ function parseAxis(config, def, index, axis, group) {
   axis.tickFormatType(def.formatType || null);
   // axis tick subdivision
   axis.tickSubdivide(def.subdivide || 0);
-  // axis tick padding
-  axis.tickPadding(def.tickPadding || config.axis.padding);
+  // axis tick padding (config.padding for backwards compatibility).
+  axis.tickPadding(themeVal(def, config, 'tickPadding', config.padding));
 
   // axis tick size(s)
-  var size = [];
-  if (def.tickSize !== undefined) {
-    for (var i=0; i<3; ++i) size.push(def.tickSize);
-  } else {
-    var ts = config.axis.tickSize;
-    size = [ts, ts, ts];
-  }
-  if (def.tickSizeMajor != null) size[0] = def.tickSizeMajor;
-  if (def.tickSizeMinor != null) size[1] = def.tickSizeMinor;
-  if (def.tickSizeEnd   != null) size[2] = def.tickSizeEnd;
+  var ts = themeVal(def, config, 'tickSize'),
+      size = [ts, ts, ts];
+
+  size[0] = themeVal(def, config, 'tickSizeMajor', size[0]);
+  size[1] = themeVal(def, config, 'tickSizeMinor', size[1]);
+  size[2] = themeVal(def, config, 'tickSizeEnd', size[2]);
+
   if (size.length) {
     axis.tickSize.apply(axis, size);
   }
 
   // axis tick count
-  axis.tickCount(def.ticks || config.axis.ticks);
+  axis.tickCount(themeVal(def, config, 'ticks'));
 
   // style properties
   var p = def.properties;
@@ -15102,8 +15194,18 @@ function parseAxis(config, def, index, axis, group) {
   axis.domainProperties(p && p.axis || {});
 }
 
+function config(model) {
+  var cfg  = model.config(),
+      axis = cfg.axis;
+
+  return {
+    x: dl.extend(dl.duplicate(axis), cfg.axis_x),
+    y: dl.extend(dl.duplicate(axis), cfg.axis_y)
+  };
+}
+
 module.exports = parseAxes;
-},{"../scene/axis":115,"datalib":26}],94:[function(require,module,exports){
+},{"../scene/axis":115,"../util/theme-val":149,"datalib":26}],94:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null);
 
@@ -15190,7 +15292,7 @@ module.exports = parseData;
 var dl = require('datalib'),
     template = dl.template,
     expr = require('vega-expression'),
-    args = ['datum', 'event', 'signals'];
+    args = ['datum', 'parent', 'event', 'signals'];
 
 var compile = expr.compiler(args, {
   idWhiteList: args,
@@ -15342,10 +15444,11 @@ function parseLegends(model, spec, legends, group) {
 
 function parseLegend(def, index, legend, group) {
   // legend scales
-  legend.size  (def.size   ? group.scale(def.size)   : null);
-  legend.shape (def.shape  ? group.scale(def.shape)  : null);
-  legend.fill  (def.fill   ? group.scale(def.fill)   : null);
-  legend.stroke(def.stroke ? group.scale(def.stroke) : null);
+  legend.size   (def.size    ? group.scale(def.size)    : null);
+  legend.shape  (def.shape   ? group.scale(def.shape)   : null);
+  legend.fill   (def.fill    ? group.scale(def.fill)    : null);
+  legend.stroke (def.stroke  ? group.scale(def.stroke)  : null);
+  legend.opacity(def.opacity ? group.scale(def.opacity) : null);
 
   // legend orientation
   if (def.orient) legend.orient(def.orient);
@@ -15377,9 +15480,31 @@ module.exports = parseLegends;
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
-function parseMark(model, mark) {
-  var props = mark.properties,
-      group = mark.marks;
+function parseMark(model, mark, applyDefaults) {
+  var props = mark.properties || (applyDefaults && (mark.properties = {})),
+      enter = props.enter || (applyDefaults && (props.enter = {})),
+      group = mark.marks,
+      config = model.config().marks || {};
+
+  if (applyDefaults) {
+    // for scatter plots, set symbol size specified in config if not in spec
+    if (mark.type === 'symbol' && !enter.size && config.symbolSize) {
+        enter.size = {value: config.symbolSize};
+    }
+
+    // Themes define a default "color" that maps to fill/stroke based on mark type.
+    var colorMap = {
+      arc: 'fill', area: 'fill', rect: 'fill', symbol: 'fill', text: 'fill',
+      line: 'stroke', path: 'stroke', rule: 'stroke'
+    };
+
+    // Set default mark color if no color is given in spec, and only do so for
+    // user-defined marks (not axis/legend marks).
+    var colorProp = colorMap[mark.type];
+    if (!enter[colorProp] && config.color) {
+      enter[colorProp] = {value: config.color};
+    }
+  }
 
   // parse mark property definitions
   dl.keys(props).forEach(function(k) {
@@ -15393,7 +15518,7 @@ function parseMark(model, mark) {
 
   // recurse if group type
   if (group) {
-    mark.marks = group.map(function(g) { return parseMark(model, g); });
+    mark.marks = group.map(function(g) { return parseMark(model, g, true); });
   }
 
   return mark;
@@ -15413,7 +15538,7 @@ function parseRootMark(model, spec, width, height) {
     scales:     spec.scales  || [],
     axes:       spec.axes    || [],
     legends:    spec.legends || [],
-    marks:      (spec.marks || []).map(function(m) { return parseMark(model, m); })
+    marks:      (spec.marks || []).map(function(m) { return parseMark(model, m, true); })
   };
 }
 
@@ -15842,6 +15967,8 @@ function properties(model, mark, spec) {
     deps._nRefs[k] = r;
   }
 
+  parseShape(model, config, spec);
+
   for (i=0, len=names.length; i<len; ++i) {
     ref = spec[name = names[i]];
     code += (i > 0) ? "\n  " : "  ";
@@ -15972,6 +16099,28 @@ function hasPath(mark, vars) {
        vars.tension || vars.interpolate));
 }
 
+var hb = /{{(.*?)}}/g;
+function parseShape(model, config, spec) {
+  var shape = spec.shape,
+      last = 0,
+      value, match;
+
+  if (shape && (value = shape.value)) {
+    if (config.shape && config.shape[value]) {
+      value = config.shape[value];
+    }
+
+    // Parse handlebars
+    shape = '';
+    while ((match = hb.exec(value)) !== null) {
+      shape += value.substring(last, match.index);
+      shape += model.expr(match[1]).fn();
+      last = hb.lastIndex;
+    }
+    spec.shape.value = shape + value.substring(last);
+  }
+}
+
 function rule(model, name, rules, exprs) {
   var config  = model.config(),
       deps = dependencies(),
@@ -15988,7 +16137,7 @@ function rule(model, name, rules, exprs) {
       deps.signals.push.apply(deps.signals, exprFn.globals);
       deps.data.push.apply(deps.data, exprFn.dataSources);
 
-      code += "if (exprs[" + exprs.length + "](item.datum, null)) {" +
+      code += "if (exprs[" + exprs.length + "](item.datum, item.mark.group.datum, null)) {" +
           "\n    d += set(o, "+dl.str(name)+", " +ref.val+");";
       code += rules[i+1] ? "\n  } else " : "  }";
 
@@ -16256,6 +16405,7 @@ module.exports = parseSignals;
 },{"./expr":96,"datalib":26,"vega-dataflow":41}],106:[function(require,module,exports){
 var dl  = require('datalib'),
     log = require('vega-logging'),
+    themeVal = require('../util/theme-val'),
     Model = require('../core/Model'),
     View  = require('../core/View');
 
@@ -16272,20 +16422,23 @@ var dl  = require('datalib'),
       argidx = 2,
       cb = arguments[arglen-1],
       model = new Model(),
-      viewFactory = View.factory;
+      viewFactory = View.factory,
+      config;
 
   if (arglen > argidx && dl.isFunction(arguments[arglen - argidx])) {
     viewFactory = arguments[arglen - argidx];
     ++argidx;
   }
+
   if (arglen > argidx && dl.isObject(arguments[arglen - argidx])) {
     model.config(arguments[arglen - argidx]);
   }
 
+  config = model.config();
   if (dl.isObject(spec)) {
     parse(spec);
   } else if (dl.isString(spec)) {
-    var opts = dl.extend({url: spec}, model.config().load);
+    var opts = dl.extend({url: spec}, config.load);
     dl.json(opts, function(err, spec) {
       if (err) done('SPECIFICATION LOAD FAILED: ' + err);
       else parse(spec);
@@ -16300,9 +16453,10 @@ var dl  = require('datalib'),
       spec = dl.duplicate(spec);
 
       var parsers = require('./'),
-          width   = spec.width || 500,
-          height  = spec.height || 500,
-          padding = parsers.padding(spec.padding);
+          width   = themeVal(spec, config, 'width', 500),
+          height  = themeVal(spec, config, 'height', 500),
+          padding = parsers.padding(themeVal(spec, config, 'padding')),
+          background = themeVal(spec, config, 'background');
 
       // create signals for width, height, padding, and cursor
       model.signal('width', width);
@@ -16316,7 +16470,7 @@ var dl  = require('datalib'),
         height:     height,
         padding:    padding,
         viewport:   spec.viewport || null,
-        background: parsers.background(spec.background),
+        background: parsers.background(background),
         signals:    parsers.signals(model, spec.signals),
         predicates: parsers.predicates(model, spec.predicates),
         marks:      parsers.marks(model, spec, width, height),
@@ -16358,7 +16512,7 @@ var dl  = require('datalib'),
 }
 
 module.exports = parseSpec;
-},{"../core/Model":89,"../core/View":90,"./":97,"datalib":26,"vega-logging":48}],107:[function(require,module,exports){
+},{"../core/Model":89,"../core/View":90,"../util/theme-val":149,"./":97,"datalib":26,"vega-logging":48}],107:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -16371,7 +16525,12 @@ var GATEKEEPER = '_vgGATEKEEPER',
 
 var vgEvent = {
   getItem: function() { return this.item; },
-  getGroup: function(name) { return name ? this.name[name] : this.group; },
+  getGroup: function(name) {
+    var group = name ? this.name[name] : this.group,
+        mark = group && group.mark,
+        interactive = mark && (mark.interactive || mark.interactive === undefined);
+    return interactive ? group : {};
+  },
   getXY: function(item) {
       var p = {x: this.x, y: this.y};
       if (typeof item === 'string') {
@@ -16414,7 +16573,7 @@ function parseStreams(view) {
     view.on(type, function(evt, item) {
       evt.preventDefault(); // stop text selection
       extendEvent(evt, item);
-      fire(internal, type, (item && item.datum) || {}, evt);
+      fire(internal, type, (item && item.datum) || {}, (item && item.mark && item.mark.group && item.mark.group.datum) || {}, evt);
     });
   });
 
@@ -16429,7 +16588,7 @@ function parseStreams(view) {
 
     function handler(evt) {
       extendEvent(evt);
-      fire(external, type, d3.select(this).datum(), evt);
+      fire(external, type, d3.select(this).datum(), this.parentNode && d3.select(this.parentNode).datum(), evt);
     }
 
     for (var i=0; i<elt.length; ++i) {
@@ -16482,7 +16641,7 @@ function parseStreams(view) {
     evt.vg.y = mouse[1] - pad.top;
   }
 
-  function fire(registry, type, datum, evt) {
+  function fire(registry, type, datum, parent, evt) {
     var handlers = registry.handlers[type],
         node = registry.nodes[type],
         cs = df.ChangeSet.create(null, true),
@@ -16490,7 +16649,7 @@ function parseStreams(view) {
         val, i, n, h;
 
     function invoke(f) {
-      return !f.fn(datum, evt);
+      return !f.fn(datum, parent, evt);
     }
 
     for (i=0, n=handlers.length; i<n; ++i) {
@@ -16498,7 +16657,7 @@ function parseStreams(view) {
       filtered = h.filters.some(invoke);
       if (filtered) continue;
 
-      val = h.exp.fn(datum, evt);
+      val = h.exp.fn(datum, parent, evt);
       if (h.spec.scale) {
         val = parseSignals.scale(model, h.spec, val, datum, evt);
       }
@@ -17231,11 +17390,13 @@ proto.init = function(graph, def) {
   this._recursor.evaluate = recurse.bind(this);
 
   var scales = (def.axes||[]).reduce(function(acc, x) {
-    return (acc[x.scale] = 1, acc);
+    acc[x.scale] = 1;
+    return acc;
   }, {});
 
   scales = (def.legends||[]).reduce(function(acc, x) {
-    return (acc[x.size || x.shape || x.fill || x.stroke], acc);
+    acc[x.size || x.shape || x.fill || x.stroke || x.opacity] = 1;
+    return acc;
   }, scales);
 
   this._recursor.dependency(Deps.SCALES, dl.keys(scales));
@@ -17260,8 +17421,21 @@ proto.evaluate = function() {
       return scales[s].reevaluate(output);
     });
 
+    if (!fullUpdate && this._def.axes) {
+      fullUpdate = this._def.axes.reduce(function(acc, a) {
+        return acc || output.scales[a.scale];
+      }, false);
+    }
+
+    if (!fullUpdate && this._def.legends) {
+      fullUpdate = this._def.legends.reduce(function(acc, l) {
+        return acc || output.scales[l.size || l.shape || l.fill || l.stroke];
+      }, false);
+    }
+
     if (fullUpdate) {
-      output.mod = output.mod.concat(Tuple.idFilter(items, output.mod));
+      output.mod = output.mod.concat(Tuple.idFilter(items,
+          output.mod, output.add, output.rem));
     }
   }
 
@@ -17351,7 +17525,7 @@ function recurse(input) {
   }
 
   function updateLegend(l) {
-    var scale = l.size() || l.shape() || l.fill() || l.stroke();
+    var scale = l.size() || l.shape() || l.fill() || l.stroke() || l.opacity();
     if (!input.scales[scale.scaleName]) return;
     l.reset().def();
   }
@@ -17460,7 +17634,7 @@ function buildLegends(input, group) {
 
   parseLegends(this._graph, this._def.legends, legends, group);
   legends.forEach(function(l, i) {
-    var scale = l.size() || l.shape() || l.fill() || l.stroke(),
+    var scale = l.size() || l.shape() || l.fill() || l.stroke() || l.opacity(),
         def = l.def(),
         b = null;
 
@@ -17589,9 +17763,9 @@ function ordinal(scale, rng, group) {
       prev = scale._prev,
       dataDrivenRange = false,
       pad = signal.call(this, def.padding) || 0,
-      outer = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
+      outer  = def.outerPadding == null ? pad : signal.call(this, def.outerPadding),
       points = def.points && signal.call(this, def.points),
-      round = signal.call(this, def.round) || def.round == null,
+      round  = signal.call(this, def.round) || def.round == null,
       domain, str, spatial=true;
 
   // range pre-processing for data-driven ranges
@@ -18101,9 +18275,8 @@ var dl = require('datalib'),
 var axisBounds = new (require('vega-scenegraph').Bounds)();
 var ORDINAL = 'ordinal';
 
-function axs(model) {
+function axs(model, config) {
   var scale,
-      config = model.config().axis,
       orient = config.orient,
       offset = 0,
       titleOffset = config.titleOffset,
@@ -18114,7 +18287,7 @@ function axs(model) {
       tickMajorSize = config.tickSize,
       tickMinorSize = config.tickSize,
       tickEndSize = config.tickSize,
-      tickPadding = config.padding,
+      tickPadding = config.tickPadding || config.padding,
       tickValues = null,
       tickFormatString = null,
       tickFormatType = null,
@@ -18224,11 +18397,14 @@ function axs(model) {
     dl.extend(m.title, axisTitle(config));
     m.gridLines.properties.enter.stroke = {value: config.gridColor};
     m.gridLines.properties.enter.strokeOpacity = {value: config.gridOpacity};
+    m.gridLines.properties.enter.strokeWidth = {value: config.gridWidth};
+    m.gridLines.properties.enter.strokeDash = {value: config.gridDash};
 
     // extend axis marks based on axis orientation
-    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, offset);
-    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize);
-    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize);
+    axisTicksExtend(orient, m.gridLines, oldScale, newScale, Infinity, scale, config, offset);
+    axisTicksExtend(orient, m.majorTicks, oldScale, newScale, tickMajorSize, scale, config);
+    axisTicksExtend(orient, m.minorTicks, oldScale, newScale, tickMinorSize, scale, config);
+
     axisLabelExtend(orient, m.tickLabels, oldScale, newScale, tickMajorSize, tickPadding);
 
     axisDomainExtend(orient, m.domain, range, tickEndSize);
@@ -18493,7 +18669,7 @@ function axisLabelExtend(orient, labels, oldScale, newScale, size, pad) {
   }
 }
 
-function axisTicksExtend(orient, ticks, oldScale, newScale, size, offset) {
+function axisTicksExtend(orient, ticks, oldRef, newRef, size, scale, config, offset) {
   var sign = (orient === 'left' || orient === 'top') ? -1 : 1;
   if (size === Infinity) {
     size = (orient === 'top' || orient === 'bottom') ?
@@ -18502,33 +18678,43 @@ function axisTicksExtend(orient, ticks, oldScale, newScale, size, offset) {
   } else {
     size = {value: sign * size, offset: offset};
   }
+
+  // Update offset of tick placement to be in between ordinal marks
+  // instead of directly aligned with.
+  if (config.tickPlacement === 'between' && scale.type === ORDINAL) {
+    var rng = scale.range(),
+        tickOffset = 0.5 + (scale.rangeBand() || (rng[1] - rng[0]) / 2);
+    newRef = oldRef = dl.duplicate(newRef);
+    newRef.offset = oldRef.offset = tickOffset;
+  }
+
   if (orient === 'top' || orient === 'bottom') {
     dl.extend(ticks.properties.enter, {
-      x:  oldScale,
+      x:  oldRef,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.update, {
-      x:  newScale,
+      x:  newRef,
       y:  {value: 0},
       y2: size
     });
     dl.extend(ticks.properties.exit, {
-      x:  newScale,
+      x:  newRef,
     });
   } else {
     dl.extend(ticks.properties.enter, {
       x:  {value: 0},
       x2: size,
-      y:  oldScale
+      y:  oldRef
     });
     dl.extend(ticks.properties.update, {
       x:  {value: 0},
       x2: size,
-      y:  newScale
+      y:  newRef
     });
     dl.extend(ticks.properties.exit, {
-      y:  newScale,
+      y:  newRef,
     });
   }
 }
@@ -18684,6 +18870,7 @@ function lgnd(model) {
       shape = null,
       fill  = null,
       stroke  = null,
+      opacity = null,
       spacing = null,
       values  = null,
       formatString = null,
@@ -18713,7 +18900,7 @@ function lgnd(model) {
   function ingest(d, i) { return {data: d, index: i}; }
 
   legend.def = function() {
-    var scale = size || shape || fill || stroke;
+    var scale = size || shape || fill || stroke || opacity;
 
     if (!legendDef.type) {
       legendDef = (scale===fill || scale===stroke) && !discrete(scale.type) ?
@@ -18732,7 +18919,7 @@ function lgnd(model) {
   }
 
   function ordinalDef(scale) {
-    var def = o_legend_def(size, shape, fill, stroke);
+    var def = o_legend_def(size, shape, fill, stroke, opacity);
 
     // generate data
     var data = (values == null ?
@@ -18790,14 +18977,14 @@ function lgnd(model) {
     return def;
   }
 
-  function o_legend_def(size, shape, fill, stroke) {
+  function o_legend_def(size, shape, fill, stroke, opacity) {
     // setup legend marks
     var titles  = dl.extend(m.titles, legendTitle(config)),
         symbols = dl.extend(m.symbols, legendSymbols(config)),
         labels  = dl.extend(m.labels, vLegendLabels(config));
 
     // extend legend marks
-    legendSymbolExtend(symbols, size, shape, fill, stroke);
+    legendSymbolExtend(symbols, size, shape, fill, stroke, opacity);
 
     // add / override custom style properties
     dl.extend(titles.properties.update,  titleStyle);
@@ -18818,7 +19005,7 @@ function lgnd(model) {
       properties: {
         enter: parseProperties(model, 'group', legendStyle),
         legendPosition: {
-          encode: legendPosition,
+          encode: legendPosition.bind(null, config),
           signals: [], scales:[], data: [], fields: []
         }
       }
@@ -18920,7 +19107,7 @@ function lgnd(model) {
       properties: {
         enter: parseProperties(model, 'group', legendStyle),
         legendPosition: {
-          encode: legendPosition,
+          encode: legendPosition.bind(null, config),
           signals: [], scales: [], data: [], fields: []
         }
       }
@@ -18951,6 +19138,12 @@ function lgnd(model) {
   legend.stroke = function(x) {
     if (!arguments.length) return stroke;
     if (stroke !== x) { stroke = x; reset(); }
+    return legend;
+  };
+
+  legend.opacity = function(x) {
+    if (!arguments.length) return opacity;
+    if (opacity !== x) { opacity = x; reset(); }
     return legend;
   };
 
@@ -19040,9 +19233,16 @@ function lgnd(model) {
   return legend;
 }
 
-var LEGEND_ORIENT = {left: 'x1', right: 'x2'};
+var LEGEND_ORIENT = {
+  'left': 'x1',
+  'right': 'x2',
+  'top-left': 'x1',
+  'top-right': 'x2',
+  'bottom-left': 'x1',
+  'bottom-right': 'x2'
+};
 
-function legendPosition(item, group, trans, db, signals, predicates) {
+function legendPosition(config, item, group, trans, db, signals, predicates) {
   var o = trans ? {} : item, i,
       def = item.mark.def,
       offset = def.offset,
@@ -19055,24 +19255,61 @@ function legendPosition(item, group, trans, db, signals, predicates) {
         (group._legendPositions = {right: 0.5, left: 0.5});
 
   o.x = 0.5;
+  o.y = 0.5;
   o.width = lw;
-  o.y = pos[orient];
-  pos[orient] += (o.height = lh) + def.margin;
+  o.height = lh;
 
-  // Calculate axis offset. 
-  var axes  = group.axes, 
-      items = group.axisItems,
-      bound = LEGEND_ORIENT[orient];
-  for (i=0; i<axes.length; ++i) {
-    if (axes[i].orient() === orient) {
-      ao = Math.max(ao, Math.abs(items[i].bounds[bound]));
+  if (orient === 'left' || orient === 'right') {
+    o.y = pos[orient];
+    pos[orient] += lh + def.margin;
+
+    // Calculate axis offset.
+    var axes  = group.axes,
+        items = group.axisItems,
+        bound = LEGEND_ORIENT[orient];
+    for (i=0; i<axes.length; ++i) {
+      if (axes[i].orient() === orient) {
+        ao = Math.max(ao, Math.abs(items[i].bounds[bound]));
+      }
     }
   }
 
-  if (orient === 'left') {
-    o.x -= ao + offset + lw;
-  } else {
-    o.x += ao + offset;
+  switch (orient) {
+    case 'left':
+      o.x -= ao + offset + lw;
+      break;
+    case 'right':
+      o.x += ao + offset;
+      break;
+    case 'top-left':
+      o.x += offset;
+      o.y += offset;
+      break;
+    case 'top-right':
+      o.x += group.width - lw - offset;
+      o.y += offset;
+      break;
+    case 'bottom-left':
+      o.x += offset;
+      o.y += group.height - lh - offset;
+      break;
+    case 'bottom-right':
+      o.x += group.width - lw - offset;
+      o.y += group.height - lh - offset;
+      break;
+  }
+
+  var baseline = config.baseline,
+      totalHeight = 0;
+  for (i=0; i<group.legendItems.length; i++) {
+    var currItem = group.legendItems[i];
+    totalHeight += currItem.bounds.height() + (item.height ? 0 : pad);
+  }
+
+  if (baseline === 'middle') {
+    o.y += offset + (group.height / 2) - (totalHeight / 2);
+  } else if (baseline === 'bottom') {
+    o.y += offset + group.height - totalHeight;
   }
 
   if (trans) trans.interpolate(item, o);
@@ -19081,13 +19318,14 @@ function legendPosition(item, group, trans, db, signals, predicates) {
   return true;
 }
 
-function legendSymbolExtend(mark, size, shape, fill, stroke) {
+function legendSymbolExtend(mark, size, shape, fill, stroke, opacity) {
   var e = mark.properties.enter,
       u = mark.properties.update;
-  if (size)   e.size   = u.size   = {scale: size.scaleName,   field: 'data'};
-  if (shape)  e.shape  = u.shape  = {scale: shape.scaleName,  field: 'data'};
-  if (fill)   e.fill   = u.fill   = {scale: fill.scaleName,   field: 'data'};
-  if (stroke) e.stroke = u.stroke = {scale: stroke.scaleName, field: 'data'};
+  if (size)    e.size    = u.size    = {scale: size.scaleName,   field: 'data'};
+  if (shape)   e.shape   = u.shape   = {scale: shape.scaleName,  field: 'data'};
+  if (fill)    e.fill    = u.fill    = {scale: fill.scaleName,   field: 'data'};
+  if (stroke)  e.stroke  = u.stroke  = {scale: stroke.scaleName, field: 'data'};
+  if (opacity) u.opacity = {scale: opacity.scaleName, field: 'data'};
 }
 
 function legendTitle(config) {
@@ -20390,10 +20628,12 @@ prototype.transform = function(input) {
   log.debug(input, ['formulating']);
 
   var field = this.param('field'),
-      expr = this.param('expr');
+      expr = this.param('expr'),
+      updated = false;
 
   function set(x) {
     Tuple.set(x, field, expr(x));
+    updated = true;
   }
 
   input.add.forEach(set);
@@ -20402,7 +20642,7 @@ prototype.transform = function(input) {
     input.mod.forEach(set);
   }
 
-  input.fields[field] = 1;
+  if (updated) input.fields[field] = 1;
   return input;
 };
 
@@ -21057,7 +21297,7 @@ prototype.set = function(value) {
       return v.field;
     } else if (v.signal !== undefined) {
       p._resolution = true;
-      p._transform.dependency(Deps.SIGNALS, v.signal);
+      p._transform.dependency(Deps.SIGNALS, dl.field(v.signal)[0]);
       p._signals.push({
         index: i,
         value: function(graph) { return graph.signalRef(v.signal); }
@@ -21579,7 +21819,7 @@ prototype.batchTransform = function(input, data) {
 
   // build and assign path strings
   for (var i=0; i<data.length; ++i) {
-    Tuple.set(data[i], pathname, 'M' + polygons[i].join('L') + 'Z');
+    if (polygons[i]) Tuple.set(data[i], pathname, 'M' + polygons[i].join('L') + 'Z');
   }
 
   // return changeset
@@ -21808,6 +22048,17 @@ var dl = require('datalib'),
 
 dl.extend(u, require('./format'));
 module.exports = dl.extend(u, dl);
-},{"./format":147,"datalib":26}]},{},[1])(1)
+},{"./format":147,"datalib":26}],149:[function(require,module,exports){
+module.exports = function(def, config, property, defaultVal) {
+  if (def[property] !== undefined) {
+    return def[property];
+  } else if (config !== undefined && config[property] !== undefined) {
+    return config[property];
+  } else if (defaultVal !== undefined) {
+    return defaultVal;
+  }
+  return undefined;
+};
+},{}]},{},[1])(1)
 });
 //# sourceMappingURL=vega.js.map

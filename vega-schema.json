@@ -355,6 +355,9 @@
         "stroke": {
           "type": "string"
         },
+        "opacity": {
+          "type": "string"
+        },
         "orient": {
           "enum": [
             "left",
@@ -424,6 +427,11 @@
         {
           "required": [
             "stroke"
+          ]
+        },
+        {
+          "required": [
+            "opacity"
           ]
         }
       ]
@@ -998,11 +1006,84 @@
           "$ref": "#/refs/numberValue"
         },
         "shape": {
-          "oneOf": [
+          "anyOf": [
             {
-              "type": "object",
-              "properties": {
-                "rule": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "rule": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/defs/rule"
+                          },
+                          {
+                            "type": "object",
+                            "allOf": [
+                              {
+                                "$ref": "#/refs/stringModifiers"
+                              },
+                              {
+                                "oneOf": [
+                                  {
+                                    "$ref": "#/refs/signal",
+                                    "required": [
+                                      "signal"
+                                    ]
+                                  },
+                                  {
+                                    "properties": {
+                                      "value": {
+                                        "enum": [
+                                          "circle",
+                                          "square",
+                                          "cross",
+                                          "diamond",
+                                          "triangle-up",
+                                          "triangle-down"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "value"
+                                    ]
+                                  },
+                                  {
+                                    "properties": {
+                                      "field": {
+                                        "$ref": "#/refs/field"
+                                      }
+                                    },
+                                    "required": [
+                                      "field"
+                                    ]
+                                  },
+                                  {
+                                    "properties": {
+                                      "band": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "required": [
+                                      "band"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "rule"
+                  ]
+                },
+                {
                   "type": "array",
                   "items": {
                     "allOf": [
@@ -1066,132 +1147,66 @@
                       }
                     ]
                   }
-                }
-              },
-              "additionalProperties": false,
-              "required": [
-                "rule"
-              ]
-            },
-            {
-              "type": "array",
-              "items": {
-                "allOf": [
-                  {
-                    "$ref": "#/defs/rule"
-                  },
-                  {
-                    "type": "object",
-                    "allOf": [
-                      {
-                        "$ref": "#/refs/stringModifiers"
-                      },
-                      {
-                        "oneOf": [
-                          {
-                            "$ref": "#/refs/signal",
-                            "required": [
-                              "signal"
-                            ]
-                          },
-                          {
-                            "properties": {
-                              "value": {
-                                "enum": [
-                                  "circle",
-                                  "square",
-                                  "cross",
-                                  "diamond",
-                                  "triangle-up",
-                                  "triangle-down"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "value"
-                            ]
-                          },
-                          {
-                            "properties": {
-                              "field": {
-                                "$ref": "#/refs/field"
-                              }
-                            },
-                            "required": [
-                              "field"
-                            ]
-                          },
-                          {
-                            "properties": {
-                              "band": {
-                                "type": "boolean"
-                              }
-                            },
-                            "required": [
-                              "band"
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "type": "object",
-              "allOf": [
-                {
-                  "$ref": "#/refs/stringModifiers"
                 },
                 {
-                  "oneOf": [
+                  "type": "object",
+                  "allOf": [
                     {
-                      "$ref": "#/refs/signal",
-                      "required": [
-                        "signal"
-                      ]
+                      "$ref": "#/refs/stringModifiers"
                     },
                     {
-                      "properties": {
-                        "value": {
-                          "enum": [
-                            "circle",
-                            "square",
-                            "cross",
-                            "diamond",
-                            "triangle-up",
-                            "triangle-down"
+                      "oneOf": [
+                        {
+                          "$ref": "#/refs/signal",
+                          "required": [
+                            "signal"
+                          ]
+                        },
+                        {
+                          "properties": {
+                            "value": {
+                              "enum": [
+                                "circle",
+                                "square",
+                                "cross",
+                                "diamond",
+                                "triangle-up",
+                                "triangle-down"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "value"
+                          ]
+                        },
+                        {
+                          "properties": {
+                            "field": {
+                              "$ref": "#/refs/field"
+                            }
+                          },
+                          "required": [
+                            "field"
+                          ]
+                        },
+                        {
+                          "properties": {
+                            "band": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "band"
                           ]
                         }
-                      },
-                      "required": [
-                        "value"
-                      ]
-                    },
-                    {
-                      "properties": {
-                        "field": {
-                          "$ref": "#/refs/field"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    },
-                    {
-                      "properties": {
-                        "band": {
-                          "type": "boolean"
-                        }
-                      },
-                      "required": [
-                        "band"
                       ]
                     }
                   ]
                 }
               ]
+            },
+            {
+              "$ref": "#/refs/stringValue"
             }
           ]
         },
@@ -1241,12 +1256,17 @@
                                   "value": {
                                     "enum": [
                                       "linear",
+                                      "linear-closed",
+                                      "step",
                                       "step-before",
                                       "step-after",
                                       "basis",
                                       "basis-open",
+                                      "basis-closed",
                                       "cardinal",
                                       "cardinal-open",
+                                      "cardinal-closed",
+                                      "bundle",
                                       "monotone"
                                     ]
                                   }
@@ -1314,12 +1334,17 @@
                               "value": {
                                 "enum": [
                                   "linear",
+                                  "linear-closed",
+                                  "step",
                                   "step-before",
                                   "step-after",
                                   "basis",
                                   "basis-open",
+                                  "basis-closed",
                                   "cardinal",
                                   "cardinal-open",
+                                  "cardinal-closed",
+                                  "bundle",
                                   "monotone"
                                 ]
                               }
@@ -1374,12 +1399,17 @@
                         "value": {
                           "enum": [
                             "linear",
+                            "linear-closed",
+                            "step",
                             "step-before",
                             "step-after",
                             "basis",
                             "basis-open",
+                            "basis-closed",
                             "cardinal",
                             "cardinal-open",
+                            "cardinal-closed",
+                            "bundle",
                             "monotone"
                           ]
                         }
