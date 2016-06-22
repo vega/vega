@@ -217,9 +217,50 @@ export var transforms = [
     "params": [
       { "name": "x", "type": "field", "required": true },
       { "name": "y", "type": "field", "required": true },
-      { "name": "size", "type": "number", "array": true, "length": 2 }
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "extent", "type": "array", "array": true, "length": 2,
+        "content": {"type": "number", "array": true, "length": 2} }
     ],
     "output": ["path"]
+  },
+
+
+  {
+    "type": "GeoPath",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "projection", "type": "projection", "required": true },
+      { "name": "pointRadius", "type": "number" },
+      { "name": "field", "type": "field" },
+      { "name": "as", "type": "string" }
+    ],
+    "output": ["path"]
+  },
+  {
+    "type": "GeoPoint",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "projection", "type": "projection", "required": true },
+      { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 2 }
+    ],
+    "output": ["x", "y"]
+  },
+  {
+    "type": "Graticule",
+    "metadata": {"generates": true, "changes": true},
+    "params": [
+      { "name": "extent", "type": "array", "array": true, "length": 2,
+        "content": {"type": "number", "array": true, "length": 2} },
+      { "name": "extentMajor", "type": "array", "array": true, "length": 2,
+        "content": {"type": "number", "array": true, "length": 2} },
+      { "name": "extentMinor", "type": "array", "array": true, "length": 2,
+        "content": {"type": "number", "array": true, "length": 2} },
+      { "name": "step", "type": "number", "array": true, "length": 2 },
+      { "name": "stepMajor", "type": "number", "array": true, "length": 2, "default": [90, 360] },
+      { "name": "stepMinor", "type": "number", "array": true, "length": 2, "default": [10, 10] },
+      { "name": "precision", "type": "number", "default": 2.5 }
+    ]
   },
 
 
