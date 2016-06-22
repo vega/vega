@@ -75,6 +75,15 @@ export function isArray(_) {
   return Array.isArray(_);
 }
 
+export function stringValue(x) {
+  return Array.isArray(x) ? '[' + x.map(stringValue) + ']'
+    : isObject(x) || isString(x) ?
+      // Output valid JSON and JS source strings.
+      // See http://timelessrepo.com/json-isnt-a-javascript-subset
+      JSON.stringify(x).replace('\u2028','\\u2028').replace('\u2029', '\\u2029')
+    : x;
+}
+
 // ------
 
 export function array(_) {
