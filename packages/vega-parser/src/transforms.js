@@ -1,7 +1,7 @@
 export var transforms = [
   {
     "type": "Aggregate",
-    "producer": true,
+    "metadata": {"generates": true, "changes": true},
     "params": [
       { "name": "groupby", "type": "field", "array": true, "required": true },
       { "name": "fields", "type": "field", "array": true },
@@ -18,7 +18,7 @@ export var transforms = [
   },
   {
     "type": "CountPattern",
-    "producer": true,
+    "metadata": {"generates": true, "changes": true},
     "params": [
       { "name": "field", "type": "field", "required": true },
       { "name": "case", "type": "enum", "values": ["upper", "lower", "mixed"], "default": "mixed" },
@@ -29,14 +29,14 @@ export var transforms = [
   },
   {
     "type": "Filter",
-    "producer": true,
+    "metadata": {"changes": true},
     "params": [
       { "name": "test", "type": "expr", "required": true }
     ]
   },
   {
     "type": "Fold",
-    "producer": true,
+    "metadata": {"generates": true, "changes": true},
     "params": [
       { "name": "fields", "type": "field", "array": true, "required": true }
     ],
@@ -44,6 +44,7 @@ export var transforms = [
   },
   {
     "name": "formula", "type": "Apply",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "apply", "type": "expr", "required": true },
       { "name": "as", "type": "string", "required": true }
@@ -51,7 +52,7 @@ export var transforms = [
   },
   {
     "type": "Impute",
-    "producer": true,
+    "metadata": {"changes": true},
     "params": [
       { "name": "field", "type": "field", "required": true },
       { "name": "groupby", "type": "field", "array": true },
@@ -63,6 +64,7 @@ export var transforms = [
   },
   {
     "type": "Lookup",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "index", "type": "index", "params": [
           {"name": "from", "type": "string", "signal": false, "required": true },
@@ -75,7 +77,7 @@ export var transforms = [
   },
   {
     "type": "Range",
-    "source": true,
+    "metadata": {"generates": true, "source": true},
     "params": [
       { "name": "start", "type": "number", "required": true },
       { "name": "stop", "type": "number", "required": true },
@@ -85,6 +87,7 @@ export var transforms = [
   },
   {
     "type": "Rank",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "field", "type": "field", "required": true },
       { "name": "normalize", "type": "boolean", "default": false }
@@ -92,14 +95,14 @@ export var transforms = [
   },
   {
     "type": "Sample",
-    "source": true,
+    "metadata": {"source": true, "changes": true},
     "params": [
       { "name": "size", "type": "number", "default": 1000 }
     ]
   },
   {
     "name": "sort", "type": "Collect",
-    "source": true,
+    "metadata": {"source": true},
     "params": [
       { "name": "sort", "type": "compare" }
     ]
@@ -108,6 +111,7 @@ export var transforms = [
 
   {
     "type": "Force",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "static", "type": "boolean", "default": false },
       { "name": "iterations", "type": "number", "default": 300 },
@@ -172,6 +176,7 @@ export var transforms = [
   },
   {
     "type": "LinkPath",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "sourceX", "type": "field", "default": "source.x" },
       { "name": "sourceY", "type": "field", "default": "source.y" },
@@ -186,6 +191,7 @@ export var transforms = [
   },
   {
     "type": "Pie",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "field", "type": "field" },
       { "name": "startAngle", "type": "number", "default": 0 },
@@ -196,6 +202,7 @@ export var transforms = [
   },
   {
     "type": "Stack",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "field", "type": "field" },
       { "name": "groupby", "type": "field", "array": true },
@@ -206,6 +213,7 @@ export var transforms = [
   },
   {
     "type": "Voronoi",
+    "metadata": {"modifies": true},
     "params": [
       { "name": "x", "type": "field", "required": true },
       { "name": "y", "type": "field", "required": true },
@@ -217,7 +225,7 @@ export var transforms = [
 
   {
     "type": "Stratify",
-    "treesource": true,
+    "metadata": {"treesource": true},
     "params": [
       { "name": "key", "type": "field", "required": true },
       { "name": "parentKey", "type": "field", "required": true  }
@@ -225,14 +233,14 @@ export var transforms = [
   },
   {
     "type": "Nest",
-    "treesource": true,
+    "metadata": {"treesource": true},
     "params": [
       { "name": "keys", "type": "field", "array": true }
     ]
   },
   {
     "type": "Pack",
-    "tree": true,
+    "metadata": {"tree": true, "modifies": true},
     "params": [
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "radius", "type": "field", "default": null },
@@ -242,7 +250,7 @@ export var transforms = [
   },
   {
     "type": "Partition",
-    "tree": true,
+    "metadata": {"tree": true, "modifies": true},
     "params": [
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "round", "type": "boolean", "default": false },
@@ -252,7 +260,7 @@ export var transforms = [
   },
   {
     "type": "Tree",
-    "tree": true,
+    "metadata": {"tree": true, "modifies": true},
     "params": [
       { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
       { "name": "size", "type": "number", "array": true, "length": 2 },
@@ -262,7 +270,7 @@ export var transforms = [
   },
   {
     "type": "Treemap",
-    "tree": true,
+    "metadata": {"tree": true, "modifies": true},
     "params": [
       { "name": "method", "type": "enum", "default": "squarify",
         "values": ["squarify", "resquarify", "binary", "dice", "slice", "slicedice"] },

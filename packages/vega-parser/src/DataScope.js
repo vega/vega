@@ -5,9 +5,12 @@ export default function DataScope(scope, entries) {
 
   var n = entries.length;
   this.entries = entries; // is this needed? keep for now...
+
   this.input  = ref(entries[0]);
   this.values = ref(entries[--n]);
-  this.output = ref(entries[--n]);
+
+  while (!entries[--n].metadata.source); // find last source
+  this.output = ref(entries[n]);
 }
 
 var prototype = DataScope.prototype;

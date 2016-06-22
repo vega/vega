@@ -11,7 +11,8 @@ import {transformDef} from '../transforms';
  */
 export default function parseTransform(spec, scope) {
   var def = transformDef(spec.type);
-  return transform(def.type, parseParameters(def, spec, scope));
+  var t = transform(def.type, parseParameters(def, spec, scope));
+  return t.metadata = def.metadata || {}, t;
 }
 
 /**
