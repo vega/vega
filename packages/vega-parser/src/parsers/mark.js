@@ -13,6 +13,14 @@ export default function parseMark(mark, scope) {
     pulse: data.output
   }));
 
+  // collect visual items, sort as requested
+  // TODO: collected array should be part of scenegraph
+  op = scope.add(transform('Collect', {
+    sort:  mark.sort ? scope.compareRef(mark.sort) : undefined,
+    pulse: ref(op)
+  }));
+
+  // parse encoders if defined
   if (mark.encode) {
     enc = {};
     params = {encoders: {$encode: enc}};
