@@ -23,6 +23,8 @@ tape('Parser parses Vega specs with marks', function(test) {
       {
         "type": "rect",
         "from": {"data": "table"},
+        "key": "k",
+        "sort": {"field": ["x", "y"]},
         "encode": {
           "enter": {
             "fill": {"signal": "color"},
@@ -40,7 +42,7 @@ tape('Parser parses Vega specs with marks', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.length, 6);
+  test.equal(dfs.length, 7);
 
   test.end();
 });
