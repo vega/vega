@@ -40,7 +40,7 @@
       "name": "color",
       "type": "ordinal",
       "domain": {"data": "table", "field": "position"},
-      "range": "category20"
+      "range": "category10"
     }
   ],
   "axes": [
@@ -89,7 +89,7 @@
             "enter": {
               "x": {"field": "x2", "offset": -5},
               "y": {"field": "y"},
-              "dy": {"field": "height", "mult": 0.5},              
+              "dy": {"field": "height", "mult": 0.5},
               "fill": {"value": "white"},
               "align": {"value": "right"},
               "baseline": {"value": "middle"},
