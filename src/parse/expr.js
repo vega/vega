@@ -52,7 +52,7 @@ function openGen(codegen) {
 
 function windowOpen(model, url, name) {
   if (window && window.open) {
-    var opt = dl.extend({url: url}, model.config().load),
+    var opt = dl.extend({type: 'open', url: url, name: name}, model.config().load),
         uri = dl.load.sanitizeUrl(opt);
     if (uri) {
       window.open(uri, name);

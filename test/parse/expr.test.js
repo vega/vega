@@ -75,7 +75,7 @@ describe('Expression Parser', function() {
   });
 
   it('should evaluate open function', function() {
-    var config = {load: {}},
+    var config = {load: {domainWhiteList: ['github.io']}},
         model = {config: function() { return config; }};
 
     expect(run.fn('open("http://vega.github.io/")', model)).to.throw();
@@ -87,6 +87,7 @@ describe('Expression Parser', function() {
     // expect(run.fn('open("javascript:alert(\'foo\')")', model)).to.throw();
 
     expect(run.fn('open("http://vega.github.io/")', model)).to.not.throw();
+    expect(run.fn('open("http://example.com/")', model)).to.throw();
 
     global.window = oldwin;
   });
