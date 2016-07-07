@@ -1,0 +1,37 @@
+{
+  "name": "vega-loader",
+  "version": "0.1.0",
+  "description": "Network request and file loading utilities.",
+  "keywords": [
+    "vega",
+    "loader",
+    "file",
+    "xhr"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-loader.js",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/vega-loader.git"
+  },
+  "scripts": {
+    "build": "npm run test && uglifyjs build/vega-loader.js -c -m -o build/vega-loader.min.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g d3-request:d3 -n vega -o build/vega-loader.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+  },
+  "dependencies": {
+    "d3-request": "1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "2",
+    "json2module": "0.0",
+    "rollup": "0.26",
+    "tape": "4",
+    "uglify-js": "2"
+  }
+}
