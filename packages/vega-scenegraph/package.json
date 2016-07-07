@@ -1,11 +1,8 @@
 {
   "name": "vega-scenegraph",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Vega scenegraph and renderers.",
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/vega/vega-scenegraph.git"
-  },
+  "license": "BSD-3-Clause",
   "author": {
     "name": "Jeffrey Heer",
     "url": "http://idl.cs.washington.edu"
@@ -17,47 +14,31 @@
     "name": "Emily Gu",
     "url": "https://github.com/emilygu"
   }],
-  "license": "BSD-3-Clause",
+  "main": "build/vega-scenegraph.js",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/uwdata/vega-scenegraph.git"
+  },
+  "scripts": {
+    "build": "npm run test && uglifyjs build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g canvas:canvas,d3-shape:d3,vega-loader:vega -n vega -o build/vega-scenegraph.js -- index.js && bin/schema > build/vega-scenegraph-schema.json",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+  },
   "dependencies": {
-    "d3": "^3.5.6",
-    "datalib": "^1.4.6"
+    "d3-shape": "1.0.0",
+    "vega-loader": "^0.1.0"
   },
   "optionalDependencies": {
-    "canvas": "^1.2.9"
+    "canvas": "^1.4.0"
   },
   "devDependencies": {
-    "browserify": "^10.2.6",
-    "browserify-shim": "^3.8.9",
-    "browserify-versionify": "^1.0.4",
-    "chai": "^3.0.0",
-    "istanbul": "latest",
+    "eslint": "2",
     "jsdom": "^3.0.0",
-    "jshint": "^2.8.0",
-    "mocha": "^2.2.5",
-    "tv4": "^1.1.12",
-    "uglify-js": "^2.4.24",
-    "watchify": "^3.2.3"
-  },
-  "main": "src/index.js",
-  "scripts": {
-    "lint": "jshint src/",
-    "test": "npm run schema && mocha --timeout 5000 --recursive test/",
-    "cover": "npm run schema && istanbul cover _mocha -- --timeout 5000 --recursive test/",
-    "build": "browserify src/index.js -d -s vg.scene -o vega-scenegraph.js",
-    "postbuild": "uglifyjs vega-scenegraph.js -cm > vega-scenegraph.min.js",
-    "schema": "node scripts/schema.js > vega-scenegraph-schema.json",
-    "watch": "watchify src/index.js -v -d -s vg.scene -o vega-scenegraph.js"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "d3": "global:d3",
-    "canvas": "global:canvas"
-  },
-  "browser": {
-    "canvas": false
+    "json2module": "0.0",
+    "rollup": "0.26",
+    "tape": "4",
+    "tv4": "1",
+    "uglify-js": "2"
   }
 }

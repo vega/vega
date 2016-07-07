@@ -1,10 +1,5 @@
+*.sublime-workspace
 .DS_Store
-.idea
-_site
-coverage
+build/
 node_modules
-temp
-vega-scenegraph-schema.json
-vega-scenegraph.js
-vega-scenegraph.js.map
-vega-scenegraph.min.js
+npm-debug.log

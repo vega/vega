@@ -2,7 +2,7 @@
 var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
     regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)([-+])/g, /\s|,|###/];
 
-module.exports = function(pathstr) {
+export default function(pathstr) {
   var result = [],
       path,
       curr,
@@ -46,4 +46,4 @@ module.exports = function(pathstr) {
   }
 
   return result;
-};
+}

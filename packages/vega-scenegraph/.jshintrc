@@ -1,9 +1,0 @@
-{
-  "undef":   true,
-  "unused":  true,
-  "eqnull":  true,
-  "freeze":  true,
-  "noarg":   true,
-  "node":    true,
-  "browser": true
-}
