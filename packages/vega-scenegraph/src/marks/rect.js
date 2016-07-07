@@ -1,13 +1,10 @@
 import boundStroke from '../bound/boundStroke';
-import translateItem from '../util/svg/translateItem';
-import stroke from '../util/canvas/stroke';
-import fill from '../util/canvas/fill';
-import {pick} from '../util/canvas/pick';
+import {rectangle} from '../path/shapes';
+import {drawAll} from '../util/canvas/draw';
+import {pickPath} from '../util/canvas/pick';
 
 function attr(emit, item) {
-  emit('transform', translateItem(item));
-  emit('width', item.width || 0);
-  emit('height', item.height || 0);
+  emit('d', rectangle(null, item));
 }
 
 function bound(bounds, item) {
@@ -20,39 +17,17 @@ function bound(bounds, item) {
   ));
 }
 
-function draw(context, scene, bounds) {
-  var items = scene.items,
-      o, opac, x, y, w, h, i, n;
-
-  if (!items || !items.length) return;
-
-  for (i=0, n=items.length; i<n; ++i) {
-    o = items[i];
-    if (bounds && !bounds.intersects(o.bounds)) continue; // bounds check
-
-    opac = o.opacity == null ? 1 : o.opacity;
-    if (opac === 0) continue;
-
-    x = o.x || 0;
-    y = o.y || 0;
-    w = o.width || 0;
-    h = o.height || 0;
-
-    if (o.fill && fill(context, o, opac)) {
-      context.fillRect(x, y, w, h);
-    }
-    if (o.stroke && stroke(context, o, opac)) {
-      context.strokeRect(x, y, w, h);
-    }
-  }
+function draw(context, item) {
+  context.beginPath();
+  rectangle(context, item);
 }
 
 export default {
   type:   'rect',
-  tag:    'rect',
+  tag:    'path',
   nested: false,
   attr:   attr,
   bound:  bound,
-  draw:   draw,
-  pick:   pick()
+  draw:   drawAll(draw),
+  pick:   pickPath(draw)
 };

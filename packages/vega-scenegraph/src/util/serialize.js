@@ -17,6 +17,7 @@ var keys = [
   'interpolate', 'tension', 'orient',                           // area, line
   'url',                                                        // image
   'path',                                                       // path
+  'cornerRadius',                                               // rect, arc
   'x2', 'y2',                                                   // rule
   'size', 'shape',                                              // symbol
   'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text

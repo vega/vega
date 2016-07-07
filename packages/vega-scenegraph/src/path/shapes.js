@@ -1,5 +1,9 @@
-import symbols from './symbols';
 import curves from './curves';
+import symbols from './symbols';
+
+import {
+  default as vg_rect
+} from './rectangle';
 import {
   arc as d3_arc,
   symbol as d3_symbol,
@@ -9,15 +13,19 @@ import {
 
 function x(item)     { return item.x || 0; }
 function y(item)     { return item.y || 0; }
+function w(item)     { return item.width || 0; }
+function h(item)     { return item.height || 0; }
 function xw(item)    { return (item.x || 0) + (item.width || 0); }
 function yh(item)    { return (item.y || 0) + (item.height || 0); }
+function cr(item)    { return item.cornerRadius || 0; }
 function size(item)  { return item.size == null ? 64 : item.size; }
 function shape(item) { return symbols(item.shape || 'circle'); }
 
-var arcPath    = d3_arc(),
+var arcPath    = d3_arc().cornerRadius(cr),
     areaVPath  = d3_area().x(x).y1(y).y0(yh),
     areaHPath  = d3_area().y(y).x1(x).x0(xw),
     linePath   = d3_line().x(x).y(y),
+    rectPath   = vg_rect().x(x).y(y).width(w).height(h).cornerRadius(cr),
     symbolPath = d3_symbol().type(shape).size(size);
 
 export function arc(context, item) {
@@ -35,6 +43,10 @@ export function line(context, items) {
   var item = items[0],
       curvef = curves(item.interpolate || 'linear', item.orient, item.tension);
   return linePath.curve(curvef).context(context)(items);
+}
+
+export function rectangle(context, item) {
+  return rectPath.context(context)(item);
 }
 
 export function symbol(context, item) {
