@@ -1,6 +1,23 @@
-var arc = require('./arc');
+import {bezier, segments} from './arc';
 
-module.exports = function(g, path, l, t) {
+var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
+
+function scale(current, s) {
+  var c = (temp[0] = current[0]);
+  if (c === 'a' || c === 'A') {
+    temp[1] = s * current[1];
+    temp[2] = s * current[2];
+    temp[6] = s * current[6];
+    temp[7] = s * current[7];
+  } else {
+    for (var i=1, n=current.length; i<n; ++i) {
+      temp[i] = s * current[i];
+    }
+  }
+  return temp;
+}
+
+export default function(context, path, l, t, s) {
   var current, // current instruction
       previous = null,
       x = 0, // current x
@@ -14,56 +31,58 @@ module.exports = function(g, path, l, t) {
 
   if (l == null) l = 0;
   if (t == null) t = 0;
+  if (s == null) s = 1;
 
-  g.beginPath();
+  if (context.beginPath) context.beginPath();
 
   for (var i=0, len=path.length; i<len; ++i) {
     current = path[i];
+    if (s !== 1) current = scale(current, s);
 
     switch (current[0]) { // first letter
 
       case 'l': // lineto, relative
         x += current[1];
         y += current[2];
-        g.lineTo(x + l, y + t);
+        context.lineTo(x + l, y + t);
         break;
 
       case 'L': // lineto, absolute
         x = current[1];
         y = current[2];
-        g.lineTo(x + l, y + t);
+        context.lineTo(x + l, y + t);
         break;
 
       case 'h': // horizontal lineto, relative
         x += current[1];
-        g.lineTo(x + l, y + t);
+        context.lineTo(x + l, y + t);
         break;
 
       case 'H': // horizontal lineto, absolute
         x = current[1];
-        g.lineTo(x + l, y + t);
+        context.lineTo(x + l, y + t);
         break;
 
       case 'v': // vertical lineto, relative
         y += current[1];
-        g.lineTo(x + l, y + t);
+        context.lineTo(x + l, y + t);
         break;
 
       case 'V': // verical lineto, absolute
         y = current[1];
-        g.lineTo(x + l, y + t);
+        context.lineTo(x + l, y + t);
         break;
 
       case 'm': // moveTo, relative
         x += current[1];
         y += current[2];
-        g.moveTo(x + l, y + t);
+        context.moveTo(x + l, y + t);
         break;
 
       case 'M': // moveTo, absolute
         x = current[1];
         y = current[2];
-        g.moveTo(x + l, y + t);
+        context.moveTo(x + l, y + t);
         break;
 
       case 'c': // bezierCurveTo, relative
@@ -71,7 +90,7 @@ module.exports = function(g, path, l, t) {
         tempY = y + current[6];
         controlX = x + current[3];
         controlY = y + current[4];
-        g.bezierCurveTo(
+        context.bezierCurveTo(
           x + current[1] + l, // x1
           y + current[2] + t, // y1
           controlX + l, // x2
@@ -88,7 +107,7 @@ module.exports = function(g, path, l, t) {
         y = current[6];
         controlX = current[3];
         controlY = current[4];
-        g.bezierCurveTo(
+        context.bezierCurveTo(
           current[1] + l,
           current[2] + t,
           controlX + l,
@@ -105,7 +124,7 @@ module.exports = function(g, path, l, t) {
         // calculate reflection of previous control points
         controlX = 2 * x - controlX;
         controlY = 2 * y - controlY;
-        g.bezierCurveTo(
+        context.bezierCurveTo(
           controlX + l,
           controlY + t,
           x + current[1] + l,
@@ -131,7 +150,7 @@ module.exports = function(g, path, l, t) {
         // calculate reflection of previous control points
         controlX = 2*x - controlX;
         controlY = 2*y - controlY;
-        g.bezierCurveTo(
+        context.bezierCurveTo(
           controlX + l,
           controlY + t,
           current[1] + l,
@@ -158,7 +177,7 @@ module.exports = function(g, path, l, t) {
         controlX = x + current[1];
         controlY = y + current[2];
 
-        g.quadraticCurveTo(
+        context.quadraticCurveTo(
           controlX + l,
           controlY + t,
           tempX + l,
@@ -172,7 +191,7 @@ module.exports = function(g, path, l, t) {
         tempX = current[3];
         tempY = current[4];
 
-        g.quadraticCurveTo(
+        context.quadraticCurveTo(
           current[1] + l,
           current[2] + t,
           tempX + l,
@@ -210,7 +229,7 @@ module.exports = function(g, path, l, t) {
         tempControlX = controlX;
         tempControlY = controlY;
 
-        g.quadraticCurveTo(
+        context.quadraticCurveTo(
           controlX + l,
           controlY + t,
           tempX + l,
@@ -229,7 +248,7 @@ module.exports = function(g, path, l, t) {
         // calculate reflection of previous control points
         controlX = 2 * x - controlX;
         controlY = 2 * y - controlY;
-        g.quadraticCurveTo(
+        context.quadraticCurveTo(
           controlX + l,
           controlY + t,
           tempX + l,
@@ -240,7 +259,7 @@ module.exports = function(g, path, l, t) {
         break;
 
       case 'a':
-        drawArc(g, x + l, y + t, [
+        drawArc(context, x + l, y + t, [
           current[1],
           current[2],
           current[3],
@@ -254,7 +273,7 @@ module.exports = function(g, path, l, t) {
         break;
 
       case 'A':
-        drawArc(g, x + l, y + t, [
+        drawArc(context, x + l, y + t, [
           current[1],
           current[2],
           current[3],
@@ -269,15 +288,15 @@ module.exports = function(g, path, l, t) {
 
       case 'z':
       case 'Z':
-        g.closePath();
+        context.closePath();
         break;
     }
     previous = current;
   }
-};
+}
 
-function drawArc(g, x, y, coords) {
-  var seg = arc.segments(
+function drawArc(context, x, y, coords) {
+  var seg = segments(
     coords[5], // end x
     coords[6], // end y
     coords[0], // radius x
@@ -288,7 +307,7 @@ function drawArc(g, x, y, coords) {
     x, y
   );
   for (var i=0; i<seg.length; ++i) {
-    var bez = arc.bezier(seg[i]);
-    g.bezierCurveTo.apply(g, bez);
+    var bez = bezier(seg[i]);
+    context.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5]);
   }
 }

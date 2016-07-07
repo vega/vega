@@ -1,9 +1,10 @@
-var segmentCache = {},
-    bezierCache = {},
-    join = [].join;
+export var segmentCache = {};
+export var bezierCache = {};
+
+var join = [].join;
 
 // Copied from Inkscape svgtopdf, thanks!
-function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
+export function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
   var key = join.call(arguments);
   if (segmentCache[key]) {
     return segmentCache[key];
@@ -61,12 +62,12 @@ function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
   return (segmentCache[key] = result);
 }
 
-function bezier(params) {
+export function bezier(params) {
   var key = join.call(params);
   if (bezierCache[key]) {
     return bezierCache[key];
   }
-  
+
   var cx = params[0],
       cy = params[1],
       th0 = params[2],
@@ -102,12 +103,3 @@ function bezier(params) {
     a00 * x3 + a01 * y3,  a10 * x3 + a11 * y3
   ]);
 }
-
-module.exports = {
-  segments: segments,
-  bezier: bezier,
-  cache: {
-    segments: segmentCache,
-    bezier: bezierCache
-  }
-};
