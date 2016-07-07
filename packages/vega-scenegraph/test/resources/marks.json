@@ -5,7 +5,7 @@
       {"x":250, "y":250, "startAngle":0.0, "endAngle":1.0, "innerRadius":0, "outerRadius":50, "stroke":"steelblue", "strokeWidth":2},
       {"x":250, "y":250, "startAngle":1.0, "endAngle":2.0, "innerRadius":20, "outerRadius":60, "stroke":"steelblue"},
       {"x":250, "y":250, "startAngle":2.0, "endAngle":3.0, "innerRadius":30, "outerRadius":70, "fill":"firebrick"},
-      {"startAngle":2.0, "endAngle":3.0, "innerRadius":40, "outerRadius":80, "fill":"purple"},
+      {"startAngle":2.0, "endAngle":3.0, "innerRadius":40, "outerRadius":80, "fill":"purple", "cornerRadius":8},
       {"x":250, "y":250}
     ]
   },
@@ -69,10 +69,10 @@
     "items": [
       {"x":0,   "y":0,   "width":99, "height":56,  "fill":"steelblue", "stroke":"red", "strokeWidth":2, "strokeOpacity":0.5, "strokeCap":"butt"},
       {"x":100, "y":90,  "width":99, "height":110, "fill":"steelblue", "stroke":"red", "strokeWidth":0},
-      {"x":200, "y":114, "width":99, "height":86,  "fill":"steelblue", "fillOpacity": 0.5},
+      {"x":200, "y":114, "width":99, "height":86,  "fill":"steelblue", "fillOpacity": 0.5, "cornerRadius":8},
       {"x":300, "y":18,  "fill":"steelblue"},
-      {"x":400, "y":26,  "fill":"steelblue", "opacity": 0},
-      {"x":400, "y":26,  "fill":"steelblue", "fillOpacity": 0, "stroke":"black", "strokeOpacity":0}
+      {"x":400, "y":26,  "fill":"steelblue", "opacity":0},
+      {"x":400, "y":26,  "fill":"steelblue", "fillOpacity":0, "stroke":"black", "strokeOpacity":0}
     ]
   },
   "rule": {
