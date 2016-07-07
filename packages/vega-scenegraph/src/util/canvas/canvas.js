@@ -1,4 +1,6 @@
-import Canvas from 'canvas';
+export var Canvas;
+
+try { Canvas = require('canvas'); } catch (e) { Canvas = null; }
 
 export default function(w, h) {
   var canvas = null;
@@ -6,7 +8,7 @@ export default function(w, h) {
     canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
-  } else if (Canvas && Canvas.prototype) {
+  } else if (Canvas) {
     canvas = new Canvas(w, h);
   }
   return canvas;
