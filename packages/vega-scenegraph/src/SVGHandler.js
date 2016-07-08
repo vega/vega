@@ -9,7 +9,7 @@ export default function SVGHandler() {
 var prototype = inherits(SVGHandler, Handler);
 
 prototype.initialize = function(el, pad, obj) {
-  this._svg = find(el, 'svg');
+  this._svg = el && find(el, 'svg');
   return Handler.prototype.initialize.call(this, el, pad, obj);
 };
 
