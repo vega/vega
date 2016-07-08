@@ -1,5 +1,6 @@
 var tape = require('tape'),
-    dataflow = require('../').dataflow;
+    vega = require('vega-dataflow'),
+    runtime = require('../');
 
 tape('Parser parses faceted dataflow specs', function(test) {
   var values = [
@@ -13,17 +14,23 @@ tape('Parser parses faceted dataflow specs', function(test) {
     {id:0, type:'Collect', value:values},
     {id:1, type:'Facet', params:{
       key: {$field: 'k'},
-      subflow: {$subflow: {operators: [
-        {id:2, type:'Collect'},
-        {id:3, type:'Extent', params:{field:{$field:'y'}, pulse:{$ref:2}}},
-        {id:4, type:'Facet', params:{
-          key: {$field:'x'},
-          subflow: {$subflow: {operators: [
-            {id:5, type:'Collect'}
-          ]}},
-          pulse: {$ref:2}
-        }}
-      ]}},
+      subflow: {
+        $subflow: {
+          operators: [
+            {id:2, type:'Collect'},
+            {id:3, type:'Extent', params:{field:{$field:'y'}, pulse:{$ref:2}}},
+            {id:4, type:'Facet', params:{
+              key: {$field:'x'},
+              subflow: {
+                $subflow: {
+                  operators: [{id:5, type:'Collect'}]
+                }
+              },
+              pulse: {$ref:2}
+            }}
+          ]
+        }
+      },
       pulse: {$ref:0}
     }}
   ]};
@@ -35,9 +42,8 @@ tape('Parser parses faceted dataflow specs', function(test) {
 
   // ----
 
-  var out = dataflow(spec),
-      df  = out.dataflow,
-      ctx = out.context,
+  var df  = new vega.Dataflow(),
+      ctx = runtime.parse(spec, runtime.context(df, vega)),
       ops = ctx.operators;
 
   test.equal(Object.keys(ops).length, spec.operators.length);

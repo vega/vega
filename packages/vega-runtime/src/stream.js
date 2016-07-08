@@ -5,7 +5,7 @@ import {error} from 'vega-dataflow';
 /**
  * Parse an event stream specification.
  */
-export default function parseStream(spec, df, ctx) {
+export default function parseStream(spec, ctx) {
   var filter = spec.filter != null ? eventExpression(spec.filter) : undefined,
       stream = spec.stream != null ? ctx.stream(spec.stream) : undefined,
       args;

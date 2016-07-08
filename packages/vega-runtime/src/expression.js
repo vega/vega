@@ -7,10 +7,10 @@ export default function parseExpression(args, code, context) {
 }
 
 /**
- * Parse an expression used to update an operator value.
+ * Parse an expression applied to an event stream.
  */
-export function operatorExpression(code, context) {
-  return parseExpression(['_'], code, context);
+export function eventExpression(code, context) {
+  return parseExpression(['event'], code, context);
 }
 
 /**
@@ -21,6 +21,13 @@ export function handlerExpression(code, context) {
 }
 
 /**
+ * Parse an expression used to update an operator value.
+ */
+export function operatorExpression(code, context) {
+  return parseExpression(['_'], code, context);
+}
+
+/**
  * Parse an expression provided as an operator parameter value.
  */
 export function parameterExpression(code, context) {
@@ -28,8 +35,9 @@ export function parameterExpression(code, context) {
 }
 
 /**
- * Parse an expression applied to an event stream.
+ * Parse an expression that performs visual encoding.
  */
-export function eventExpression(code, context) {
-  return parseExpression(['event'], code, context);
+export function encodeExpression(code, context) {
+  var fn = Function.apply(null, ['item', '_', code]);
+  return context ? fn.bind(context) : fn;
 }

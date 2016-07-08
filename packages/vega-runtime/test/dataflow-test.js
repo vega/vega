@@ -1,5 +1,6 @@
 var tape = require('tape'),
-    dataflow = require('../').dataflow;
+    vega = require('vega-dataflow'),
+    runtime = require('../');
 
 tape('Parser parses dataflow specs', function(test) {
   var values = [
@@ -19,9 +20,8 @@ tape('Parser parses dataflow specs', function(test) {
     {id:7, type:'Scale', params:{type:'linear', range:[{$ref:1},0], domain:{$ref:6}}}
   ]};
 
-  var out = dataflow(spec),
-      df  = out.dataflow,
-      ctx = out.context,
+  var df  = new vega.Dataflow(),
+      ctx = runtime.parse(spec, runtime.context(df, vega)),
       ops = ctx.operators;
 
   test.equal(Object.keys(ctx.fn).length, 2);

@@ -1,13 +1,13 @@
 import parseParameters from './parameters';
 import {operatorExpression} from './expression';
-
-import * as vega from 'vega-dataflow';
+import {changeset} from 'vega-dataflow';
 
 /**
  * Parse a dataflow operator.
  */
-export default function parseOperator(spec, df, ctx) {
-  var op, params;
+export default function parseOperator(spec, ctx) {
+  var df = ctx.dataflow,
+      op, params;
 
   if (spec.type === 'Operator') {
     return df.add(spec.value);
@@ -20,9 +20,9 @@ export default function parseOperator(spec, df, ctx) {
   if (spec.type === 'Expression') {
     op = df.add(operatorExpression(spec.value), params);
   } else {
-    op = df.add(vega[spec.type], params);
+    op = df.add(ctx.transforms[spec.type], params);
     if (spec.type === 'Collect' && spec.value) {
-      df.pulse(op, vega.changeset().insert(spec.value));
+      df.pulse(op, changeset().insert(spec.value));
     }
   }
 
