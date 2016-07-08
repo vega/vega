@@ -18,13 +18,15 @@ function h(item)     { return item.height || 0; }
 function xw(item)    { return (item.x || 0) + (item.width || 0); }
 function yh(item)    { return (item.y || 0) + (item.height || 0); }
 function cr(item)    { return item.cornerRadius || 0; }
+function pa(item)    { return item.padAngle || 0; }
+function def(item)   { return !(item.defined === false); }
 function size(item)  { return item.size == null ? 64 : item.size; }
 function shape(item) { return symbols(item.shape || 'circle'); }
 
-var arcPath    = d3_arc().cornerRadius(cr),
-    areaVPath  = d3_area().x(x).y1(y).y0(yh),
-    areaHPath  = d3_area().y(y).x1(x).x0(xw),
-    linePath   = d3_line().x(x).y(y),
+var arcPath    = d3_arc().cornerRadius(cr).padAngle(pa),
+    areaVPath  = d3_area().x(x).y1(y).y0(yh).defined(def),
+    areaHPath  = d3_area().y(y).x1(x).x0(xw).defined(def),
+    linePath   = d3_line().x(x).y(y).defined(def),
     rectPath   = vg_rect().x(x).y(y).width(w).height(h).cornerRadius(cr),
     symbolPath = d3_symbol().type(shape).size(size);
 
