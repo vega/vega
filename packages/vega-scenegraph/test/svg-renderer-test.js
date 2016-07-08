@@ -337,6 +337,13 @@ tape('SVGRenderer should render line mark with breaks', function(test) {
   test.end();
 });
 
+tape('SVGRenderer should render trail line mark', function(test) {
+  var svg = render(marks['line-trail'], 500, 500);
+  var file = load('svg/marks-line-trail.svg');
+  test.equal(svg, file);
+  test.end();
+});
+
 tape('SVGRenderer should render path mark', function(test) {
   var svg = render(marks.path, 500, 500);
   var file = load('svg/marks-path.svg');

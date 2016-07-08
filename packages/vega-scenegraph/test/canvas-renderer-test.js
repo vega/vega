@@ -361,6 +361,14 @@ tape('CanvasRenderer should render line mark with breaks', function(test) {
   test.end();
 });
 
+tape('CanvasRenderer should render trail line mark', function(test) {
+  var image = render(marks['line-trail'], 500, 500);
+  generate('png/marks-line-trail.png', image);
+  var file = load('png/marks-line-trail.png');
+  test.equal(image+'', file);
+  test.end();
+});
+
 tape('CanvasRenderer should render path mark', function(test) {
   var image = render(marks.path, 500, 500);
   generate('png/marks-path.png', image);

@@ -12,7 +12,7 @@
   "area-h": {
     "marktype": "area",
     "items": [
-      {"x":0,   "y":144, "height":56, "interpolate":"monotone", "tension":0.8, "fill": "steelblue"},
+      {"x":0,   "y":144, "height":56, "interpolate":"monotone", "tension":0.8, "fill":"steelblue"},
       {"x":100, "y":90,  "height":110},
       {"x":200, "y":114, "height":86},
       {"x":300, "y":18,  "height":182},
@@ -32,7 +32,7 @@
   "area-breaks": {
     "marktype": "area",
     "items": [
-      {"x":  0, "y": 144, "height": 56, "fill": "steelblue", "interpolate": "monotone"},
+      {"x":  0, "y": 144, "height": 56, "fill":"steelblue", "interpolate":"monotone"},
       {"x": 50, "y": 90,  "height": 110},
       {"x":100, "y": 114, "height": 86},
       {"x":150, "y": 18,  "height": 182},
@@ -57,7 +57,7 @@
   "line-1": {
     "marktype": "line",
     "items": [
-      {"x":0,   "y":144, "interpolate":"monotone", "tension":1.0, "stroke": "steelblue", "strokeWidth": 2},
+      {"x":0,   "y":144, "interpolate":"monotone", "tension":1.0, "stroke":"steelblue", "strokeWidth":2},
       {"x":100, "y":90},
       {"x":200, "y":114},
       {"x":300, "y":18}
@@ -66,8 +66,8 @@
   "line-2": {
     "marktype": "line",
     "items": [
-      {"x":0,   "y":144, "stroke": "steelblue", "strokeOpacity": 0.8, "strokeCap": "butt"},
-      {"x":100, "y":90, "interpolate": "linear"},
+      {"x":0,   "y":144, "stroke":"steelblue", "strokeOpacity":0.8, "strokeCap":"butt"},
+      {"x":100, "y":90, "interpolate":"linear"},
       {"x":200, "y":114},
       {"x":300, "y":18}
     ]
@@ -75,7 +75,7 @@
   "line-breaks": {
     "marktype": "line",
     "items": [
-      {"x":  0, "y": 144, "stroke": "firebrick", "interpolate": "monotone"},
+      {"x":  0, "y": 144, "stroke":"firebrick", "interpolate":"monotone"},
       {"x": 50, "y": 90},
       {"x":100, "y": 114},
       {"x":150, "y": 18},
@@ -86,6 +86,22 @@
       {"defined": false},
       {"x":450, "y": 18},
       {"x":500, "y": 90}
+    ]
+  },
+  "line-trail": {
+    "marktype": "line",
+    "items": [
+      {"x": 10, "y": 144, "size": 8, "fill":"steelblue", "fillOpacity":0.5, "interpolate":"trail"},
+      {"x": 50, "y": 90,  "size": 12},
+      {"x":100, "y": 114, "size": 16},
+      {"x":150, "y": 18,  "size": 14},
+      {"defined": false},
+      {"x":250, "y": 90,  "size": 10},
+      {"x":300, "y": 114, "size": 6},
+      {"x":350, "y": 18,  "size": 8},
+      {"defined": false},
+      {"x":450, "y": 18,  "size": 8},
+      {"x":490, "y": 90,  "size": 6}
     ]
   },
   "path": {
