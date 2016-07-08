@@ -1,7 +1,8 @@
 export {default as Bounds} from './src/Bounds';
-export {default as Item} from './src/Item';
 export {default as Gradient} from './src/Gradient';
 export {default as ImageLoader} from './src/ImageLoader';
+export {default as Item} from './src/Item';
+export {default as Scenegraph} from './src/Scenegraph';
 
 export {default as Handler} from './src/Handler';
 export {default as Renderer} from './src/Renderer';
@@ -16,6 +17,8 @@ export {default as SVGStringRenderer} from './src/SVGStringRenderer';
 export {default as boundContext} from './src/bound/boundContext';
 export {default as boundItem} from './src/bound/boundItem';
 export {default as boundMark} from './src/bound/boundMark';
+
+export {default as Marks} from './src/marks/index';
 
 export {default as pathParse} from './src/path/parse';
 export {default as pathRender} from './src/path/render';
