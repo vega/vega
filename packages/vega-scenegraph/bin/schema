@@ -189,9 +189,8 @@ var ITEM_BASE = {
   }
 };
 
-var CURVE_TYPES = [
+var AREA_INTERPOLATE = [
   'basis',
-  'bundle',
   'cardinal',
   'catmullRom',
   'linear',
@@ -202,14 +201,10 @@ var CURVE_TYPES = [
   'stepBefore'
 ];
 
-var CONTINUOUS_ITEM_PROPERTIES = {
-  "properties": {
-    "defined": { "type": "boolean" },
-    "interpolate": { "enum": CURVE_TYPES },
-    "tension": { "type": "number" },
-    "orient": { "enum": [ "horizontal", "vertical" ] }
-  }
-};
+var LINE_INTERPOLATE = AREA_INTERPOLATE.concat([
+  'bundle',
+  'trail'
+]);
 
 var GUIDES = {
   "axis": {
@@ -248,7 +243,14 @@ var MARKS = {
       "cornerRadius": { "type": "number" }
     }
   },
-  "area": CONTINUOUS_ITEM_PROPERTIES,
+  "area": {
+    "properties": {
+      "defined": { "type": "boolean" },
+      "interpolate": { "enum": AREA_INTERPOLATE },
+      "tension": { "type": "number" },
+      "orient": { "enum": [ "horizontal", "vertical" ] }
+    }
+  },
   "image": {
     "properties": {
       "url": { "type": "string", "format": "uri" },
@@ -262,7 +264,15 @@ var MARKS = {
       }
     }
   },
-  "line": CONTINUOUS_ITEM_PROPERTIES,
+  "line": {
+    "properties": {
+      "defined": { "type": "boolean" },
+      "interpolate": { "enum": LINE_INTERPOLATE },
+      "tension": { "type": "number" },
+      "orient": { "enum": [ "horizontal", "vertical" ] },
+      "size": { "type": "number" }
+    }
+  },
   "path": {
     "properties": {
       "path": { "$ref": "#/refs/path" }

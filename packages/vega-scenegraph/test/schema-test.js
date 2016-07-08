@@ -10,7 +10,7 @@ tape('schema should validate correct marks', function(test) {
   var marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
   for (var name in marks) {
     var v = tv4.validate(marks[name], schema);
-    test.ok(v);
+    test.ok(v, name);
   }
   test.end();
 });
