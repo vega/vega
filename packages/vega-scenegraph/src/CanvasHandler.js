@@ -1,6 +1,6 @@
 import Handler from './Handler';
 import inherits from './util/inherits';
-import marks from './marks/index';
+import Marks from './marks/index';
 import {find} from './util/dom';
 
 export default function CanvasHandler() {
@@ -15,7 +15,7 @@ var base = Handler.prototype;
 
 prototype.initialize = function(el, pad, obj) {
   // add event listeners
-  var canvas = this._canvas = find(el, 'canvas');
+  var canvas = this._canvas = el && find(el, 'canvas');
   if (canvas) {
     var that = this;
     this.events.forEach(function(type) {
@@ -180,6 +180,6 @@ prototype.pickEvent = function(evt) {
 // gx, gy -- the relative coordinates within the current group
 prototype.pick = function(scene, x, y, gx, gy) {
   var g = this.context(),
-      mark = marks[scene.marktype];
+      mark = Marks[scene.marktype];
   return mark.pick.call(this, g, scene, x, y, gx, gy);
 };
