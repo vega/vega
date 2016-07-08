@@ -1,5 +1,5 @@
 import parseDataflow from './dataflow';
-import {parameterExpression} from './expression';
+import {parameterExpression, encodeExpression} from './expression';
 
 import {accessor, field, compare, isObject, error} from 'vega-dataflow';
 
@@ -45,6 +45,7 @@ var PARSERS = [
   {key: '$ref',     parse: getOperator},
   {key: '$expr',    parse: getExpression},
   {key: '$field',   parse: getField},
+  {key: '$encode',  parse: getEncode},
   {key: '$compare', parse: getCompare},
   {key: '$subflow', parse: getSubflow}
 ];
@@ -76,6 +77,20 @@ function getField(_, ctx) {
 }
 
 /**
+ * Resolve an encode operator reference.
+ */
+function getEncode(_) {
+  var spec = _.$encode,
+      encode = {}, name, enc;
+
+  for (name in spec) {
+    enc = spec[name];
+    encode[name] = accessor(encodeExpression(enc.$expr), enc.$fields);
+  }
+  return encode;
+}
+
+/**
  * Resolve a comparator function reference.
  */
 function getCompare(_, ctx) {
@@ -89,8 +104,7 @@ function getCompare(_, ctx) {
  */
 function getSubflow(_, ctx) {
   var spec = _.$subflow;
-  return function(df) {
-    var out = parseDataflow(spec, df, ctx.fork());
-    return out.context.operator(spec.operators[0].id);
+  return function() {
+    return parseDataflow(spec, ctx.fork()).operator(spec.operators[0].id);
   };
 }

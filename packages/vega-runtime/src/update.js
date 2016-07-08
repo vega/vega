@@ -6,7 +6,7 @@ import {error} from 'vega-dataflow';
 /**
  * Parse an event-driven operator update.
  */
-export default function parseUpdate(spec, df, ctx) {
+export default function parseUpdate(spec, ctx) {
   var stream = ctx.stream(spec.stream),
       target = ctx.operator(spec.operator),
       update = spec.update,
@@ -22,5 +22,5 @@ export default function parseUpdate(spec, df, ctx) {
     update = handlerExpression(update.$expr);
   }
 
-  df.on(stream, target, update, params, spec.options);
+  ctx.dataflow.on(stream, target, update, params, spec.options);
 }

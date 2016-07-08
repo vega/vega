@@ -1,6 +1,6 @@
 var tape = require('tape'),
     vega = require('vega-dataflow'),
-    dataflow = require('../').dataflow,
+    runtime = require('../'),
     events = require('./events');
 
 tape('Parser parses event streams', function(test) {
@@ -20,7 +20,7 @@ tape('Parser parses event streams', function(test) {
   var df = new vega.Dataflow();
   df.events = events.events;
 
-  var ctx = dataflow(spec, df).context,
+  var ctx = runtime.parse(spec, runtime.context(df, vega)),
       streams = ctx.streams,
       counts = [0,0,0,0,0,0,0];
 

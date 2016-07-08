@@ -1,6 +1,6 @@
 var tape = require('tape'),
     vega = require('vega-dataflow'),
-    dataflow = require('../').dataflow;
+    runtime = require('../');
 
 tape('Parser parses expressions', function(test) {
   var values = [
@@ -33,9 +33,8 @@ tape('Parser parses expressions', function(test) {
     {id:5, type:'Collect', params: {pulse: {$ref:4}}}
   ]};
 
-  var out = dataflow(spec),
-      df  = out.dataflow,
-      ctx = out.context,
+  var df  = new vega.Dataflow(),
+      ctx = runtime.parse(spec, runtime.context(df, vega)),
       ops = ctx.operators,
       z = vega.field('z');
 
