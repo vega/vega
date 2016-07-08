@@ -47,9 +47,10 @@ function bound(bounds, group, includeLegends) {
     }
   }
   if (group.clip || group.width || group.height) {
-    boundStroke(group, bounds
-      .add(0, 0)
-      .add(group.width || 0, group.height || 0));
+    boundStroke(
+      bounds.add(0, 0).add(group.width || 0, group.height || 0),
+      group
+    );
   }
   return bounds.translate(group.x || 0, group.y || 0);
 }

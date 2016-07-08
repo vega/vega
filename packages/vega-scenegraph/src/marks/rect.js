@@ -9,12 +9,12 @@ function attr(emit, item) {
 
 function bound(bounds, item) {
   var x, y;
-  return boundStroke(item, bounds.set(
+  return boundStroke(bounds.set(
     x = item.x || 0,
     y = item.y || 0,
     (x + item.width) || 0,
     (y + item.height) || 0
-  ));
+  ), item);
 }
 
 function draw(context, item) {
