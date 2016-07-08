@@ -14,10 +14,10 @@ var keys = [
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
   'strokeDash', 'strokeDashOffset',                             // stroke dash
   'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
-  'interpolate', 'tension', 'orient',                           // area, line
+  'cornerRadius', 'padAngle',                                   // arc, rect
+  'interpolate', 'tension', 'orient', 'defined',                // area, line
   'url',                                                        // image
   'path',                                                       // path
-  'cornerRadius',                                               // rect, arc
   'x2', 'y2',                                                   // rule
   'size', 'shape',                                              // symbol
   'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text

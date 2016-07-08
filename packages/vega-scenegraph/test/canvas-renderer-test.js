@@ -299,6 +299,14 @@ tape('CanvasRenderer should render vertical area mark', function(test) {
   test.end();
 });
 
+tape('CanvasRenderer should render area mark with breaks', function(test) {
+  var image = render(marks['area-breaks'], 500, 500);
+  generate('png/marks-area-breaks.png', image);
+  var file = load('png/marks-area-breaks.png');
+  test.equal(image+'', file);
+  test.end();
+});
+
 tape('CanvasRenderer should render group mark', function(test) {
   var image = render(marks.group, 500, 500);
   generate('png/marks-group.png', image);
@@ -341,6 +349,14 @@ tape('CanvasRenderer should render line mark', function(test) {
 
   // clear path cache and re-render
   image = render(clearPathCache(marks['line-2']), 500, 500);
+  test.equal(image+'', file);
+  test.end();
+});
+
+tape('CanvasRenderer should render line mark with breaks', function(test) {
+  var image = render(marks['line-breaks'], 500, 500);
+  generate('png/marks-line-breaks.png', image);
+  var file = load('png/marks-line-breaks.png');
   test.equal(image+'', file);
   test.end();
 });

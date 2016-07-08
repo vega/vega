@@ -286,6 +286,14 @@ tape('SVGStringRenderer should render vertical area mark', function(test) {
   test.end();
 });
 
+tape('SVGStringRenderer should render area mark with breaks', function(test) {
+  var svg = render(marks['area-breaks'], 500, 500);
+  generate('svg/marks-area-breaks.svg', svg);
+  var file = load('svg/marks-area-breaks.svg');
+  test.equal(svg, file);
+  test.end();
+});
+
 tape('SVGStringRenderer should render group mark', function(test) {
   var svg = render(marks.group, 500, 500);
   generate('svg/marks-group.svg', svg);
@@ -314,6 +322,14 @@ tape('SVGStringRenderer should render line mark', function(test) {
   file = load('svg/marks-line-2.svg');
   test.equal(svg, file);
 
+  test.end();
+});
+
+tape('SVGStringRenderer should render line mark with breaks', function(test) {
+  var svg = render(marks['line-breaks'], 500, 500);
+  generate('svg/marks-line-breaks.svg', svg);
+  var file = load('svg/marks-line-breaks.svg');
+  test.equal(svg, file);
   test.end();
 });
 
