@@ -1,21 +1,50 @@
-module.exports = {
-  version: '__VERSION__',
-  dataflow: require('vega-dataflow'),
-  parse: require('./src/parse/'),
-  scene: {
-    Bounder: require('./src/scene/Bounder'),
-    Builder: require('./src/scene/Builder'),
-    Encoder: require('./src/scene/Encoder'),
-    GroupBuilder: require('./src/scene/GroupBuilder'),
-    visit: require('./src/scene/visit')
-  },
-  transforms: require('./src/transforms'),
-  Transform: require('./src/transforms/Transform'),
-  BatchTransform: require('./src/transforms/BatchTransform'),
-  Parameter: require('./src/transforms/Parameter'),
-  schema: require('./src/core/schema'),
-  config: require('./src/core/config'),
-  util: require('./src/util'),
-  logging: require('vega-logging'),
-  debug: require('vega-logging').debug
-};
+export {version} from './build/package';
+
+export {
+  Bounds,
+  Gradient,
+  ImageLoader,
+  Item,
+  Scenegraph,
+  Handler,
+  Renderer,
+  CanvasHandler,
+  CanvasRenderer,
+  SVGHandler,
+  SVGRenderer,
+  SVGStringRenderer
+} from 'vega-scenegraph';
+
+export {
+  accessor,
+  compare,
+  error,
+  field,
+  fname,
+  inherits,
+  logLevel,
+  warn,
+  info,
+  debug
+} from 'vega-dataflow';
+
+export {
+  changeset,
+  Dataflow,
+  EventStream,
+  Parameters,
+  Pulse,
+  MultiPulse,
+  Operator,
+  Transform,
+  Tuple
+} from 'vega-dataflow';
+
+import * as transforms from './src/transforms/index';
+export {transforms};
+
+export {
+  parse as parseRuntimeSpec
+} from 'vega-runtime';
+
+export {default as View} from './src/View';
