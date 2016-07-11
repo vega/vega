@@ -7,7 +7,7 @@ import {error} from 'vega-dataflow';
  */
 export default function parseStream(spec, ctx) {
   var filter = spec.filter != null ? eventExpression(spec.filter) : undefined,
-      stream = spec.stream != null ? ctx.stream(spec.stream) : undefined,
+      stream = spec.stream != null ? ctx.get(spec.stream) : undefined,
       args;
 
   if (spec.source) {
@@ -19,12 +19,12 @@ export default function parseStream(spec, ctx) {
   }
 
   else if (spec.merge) {
-    args = spec.merge.map(ctx.stream);
+    args = spec.merge.map(ctx.get.bind(ctx));
     stream = args[0].merge.apply(args[0], args.slice(1));
   }
 
   else if (spec.between) {
-    args = spec.between.map(ctx.stream);
+    args = spec.between.map(ctx.get.bind(ctx));
     stream = stream.between(args[0], args[1]);
   }
 
@@ -39,7 +39,8 @@ export default function parseStream(spec, ctx) {
   if (stream == null) {
     error('Invalid stream definition: ' + JSON.stringify(spec));
   }
+
   if (spec.consume) stream.consume(true);
 
-  return stream;
+  ctx.stream(spec, stream);
 }

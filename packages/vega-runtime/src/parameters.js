@@ -54,8 +54,7 @@ var PARSERS = [
  * Resolve an operator reference.
  */
 function getOperator(_, ctx) {
-  return ctx.operator(_.$ref)
-    || error('Operator not defined: ' + _.$ref);
+  return ctx.get(_.$ref) || error('Operator not defined: ' + _.$ref);
 }
 
 /**
@@ -105,6 +104,6 @@ function getCompare(_, ctx) {
 function getSubflow(_, ctx) {
   var spec = _.$subflow;
   return function() {
-    return parseDataflow(spec, ctx.fork()).operator(spec.operators[0].id);
+    return parseDataflow(spec, ctx.fork()).get(spec.operators[0].id);
   };
 }

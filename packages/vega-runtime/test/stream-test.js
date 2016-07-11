@@ -19,9 +19,10 @@ tape('Parser parses event streams', function(test) {
 
   var df = new vega.Dataflow();
   df.events = events.events;
+  df.fire = events.fire;
 
   var ctx = runtime.parse(spec, runtime.context(df, vega)),
-      streams = ctx.streams,
+      streams = ctx.nodes,
       counts = [0,0,0,0,0,0,0];
 
   Object.keys(streams).forEach(function(id, i) {
@@ -30,24 +31,24 @@ tape('Parser parses event streams', function(test) {
 
   test.deepEqual(counts, [0,0,0,0,0,0,0]);
 
-  events.fire('window', 'mousemove', {});
+  df.fire('window', 'mousemove', {});
   test.deepEqual(counts, [1,0,0,0,0,0,0]);
 
-  events.fire('window', 'mousedown', {});
+  df.fire('window', 'mousedown', {});
   test.deepEqual(counts, [1,1,0,1,0,0,0]);
 
-  events.fire('window', 'mouseup', {});
+  df.fire('window', 'mouseup', {});
   test.deepEqual(counts, [1,1,1,2,0,0,0]);
 
-  events.fire('window', 'mousedown', {});
-  events.fire('window', 'mousemove', {});
-  events.fire('window', 'mousemove', {});
-  events.fire('window', 'mouseup', {});
+  df.fire('window', 'mousedown', {});
+  df.fire('window', 'mousemove', {});
+  df.fire('window', 'mousemove', {});
+  df.fire('window', 'mouseup', {});
   test.deepEqual(counts, [3,2,2,4,2,1,0]);
 
-  events.fire('window', 'mousedown', {});
-  events.fire('window', 'mousemove', {buttons: 1});
-  events.fire('window', 'mouseup', {});
+  df.fire('window', 'mousedown', {});
+  df.fire('window', 'mousemove', {buttons: 1});
+  df.fire('window', 'mouseup', {});
 
   setTimeout(function() {
     test.deepEqual(counts, [4,3,3,6,3,1,1]);

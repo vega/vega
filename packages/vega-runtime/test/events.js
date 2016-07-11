@@ -11,6 +11,7 @@ function fire(source, type, event) {
   var handlers = registry[source],
       handler = handlers && handlers[type];
   if (handler) handler.receive(event);
+  if (this && this.run) this.run();
 }
 
 module.exports = {

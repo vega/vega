@@ -8,17 +8,17 @@ import parseUpdate from './update';
 export default function parseDataflow(spec, ctx) {
   // parse operators
   (spec.operators || []).forEach(function(entry) {
-    ctx.operators[entry.id] = parseOperator(entry, ctx);
+    parseOperator(entry, ctx);
   });
 
   // parse streams
   (spec.streams || []).forEach(function(entry) {
-    ctx.streams[entry.id] = parseStream(entry, ctx);
+    parseStream(entry, ctx);
   });
 
   // parse updates
   (spec.updates || []).forEach(function(entry) {
-    ctx.updates[entry.id] = parseUpdate(entry, ctx);
+    parseUpdate(entry, ctx);
   });
 
   return ctx;
