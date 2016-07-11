@@ -22,7 +22,7 @@ tape('Parser parses dataflow specs', function(test) {
 
   var df  = new vega.Dataflow(),
       ctx = runtime.parse(spec, runtime.context(df, vega)),
-      ops = ctx.operators;
+      ops = ctx.nodes;
 
   test.equal(Object.keys(ctx.fn).length, 2);
   test.equal(Object.keys(ops).length, spec.operators.length);

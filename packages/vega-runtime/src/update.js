@@ -1,5 +1,5 @@
+import {eventExpression, handlerExpression} from './expression';
 import parseParameters from './parameters';
-import {handlerExpression} from './expression';
 
 import {error} from 'vega-dataflow';
 
@@ -7,13 +7,20 @@ import {error} from 'vega-dataflow';
  * Parse an event-driven operator update.
  */
 export default function parseUpdate(spec, ctx) {
-  var stream = ctx.stream(spec.stream),
-      target = ctx.operator(spec.operator),
+  var source = ctx.get(spec.source),
+      target = null,
       update = spec.update,
       params = undefined;
 
-  if (!stream) error('Stream not defined: ' + spec.stream);
-  if (!target) error('Operator not defined: ' + spec.operator);
+  if (!source) error('Source not defined: ' + spec.source);
+
+  if (spec.target && spec.target.$expr) {
+    target = eventExpression(spec.target.$expr);
+  } else {
+    target = ctx.get(spec.target);
+  }
+
+  if (!target) error('Target not defined: ' + spec.target);
 
   if (update && update.$expr) {
     if (update.$params) {
@@ -22,5 +29,5 @@ export default function parseUpdate(spec, ctx) {
     update = handlerExpression(update.$expr);
   }
 
-  ctx.dataflow.on(stream, target, update, params, spec.options);
+  ctx.update(spec, source, target, update, params);
 }
