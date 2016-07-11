@@ -18,8 +18,11 @@ export default function View(runtimeSpec) {
   this._io = null;
   this._renderType = 'canvas';
   this._loadConfig = {};
+  this._scenegraph = new Scenegraph();
+  var root = this._scenegraph.root;
+
   this._renderer = null;
-  this._handler = null;
+  this._handler = new CanvasHandler().scene(root);
   this._queue = null;
   this._eventListeners = [];
 
@@ -29,8 +32,6 @@ export default function View(runtimeSpec) {
   this._data = ctx.data;
 
   // initialize scenegraph
-  this._scenegraph = new Scenegraph();
-  var root = this._scenegraph.root;
   this._signals.root.set(root);
   this.pulse(
     this._data.__marks__.input,
@@ -81,9 +82,6 @@ prototype.initialize = function(el) {
     prevHandler.handlers().forEach(function(h) {
       view._handler.on(h.type, h.handler);
     });
-  } else {
-    // TODO Register event listeners for signal stream definitions.
-    // view._detach = parseStreams(view);
   }
 
   return view;
@@ -154,8 +152,12 @@ prototype.height = function(value) {
  * @return {EventStream}
  */
 prototype.events = function(source, type, filter) {
-  var s = new EventStream(filter),
-      send = function(e) { s.receive(e); },
+  var df = this,
+      s = new EventStream(filter),
+      send = function(e, item) {
+        s.receive((e.dataflow = df, e.item = item, e));
+        df.run();
+      },
       sources;
 
   if (source === 'view') {
@@ -197,6 +199,8 @@ prototype.destroy = function() {
     }
   }
 };
+
+prototype.changeset = changeset;
 
 // -----
 

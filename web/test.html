@@ -64,6 +64,24 @@ var runtimeSpec = {
     {id:13, type:'Bound', params:{mark:{$ref:2}, pulse:{$ref:4}, children:[{$ref:11}]}},
     {id:14, type:'Sieve', params:{pulse: {$ref:13}}, data: {__marks__:['values']}},
     {id:15, type:'Render', params:{pulse: {$ref:13}}},
+  ],
+
+  streams: [
+    {id:100, source:'view', type:'mouseover', filter:'event.item'},
+    {id:101, source:'view', type:'mouseout', filter:'event.item'}
+  ],
+
+  updates: [
+    {
+      source: 100,
+      target: {$expr: 'event.item.mark.source'},
+      update: {$expr: 'event.dataflow.changeset().encode(event.item, "hover")'}
+    },
+    {
+      source: 101,
+      target: {$expr: 'event.item.mark.source'},
+      update: {$expr: 'event.dataflow.changeset().encode(event.item, "update")'}
+    }
   ]
 };
 
@@ -72,19 +90,6 @@ var view = new vega.View(runtimeSpec);
 view.renderer('canvas')
   .initialize(document.querySelector('#view'))
   .run();
-
-view._handler
-  .on('mouseover', function(evt, item) {
-    if (item) view
-      .pulse(item.mark.source, vega.changeset().encode(item, 'hover'))
-      .run();
-  })
-  .on('mouseout', function(evt, item) {
-    if (item) view
-      .pulse(item.mark.source, vega.changeset().encode(item, 'update'))
-      .run();
-  });
-
     </script>
   </body>
   </html>
