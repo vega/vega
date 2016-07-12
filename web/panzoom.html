@@ -12,7 +12,7 @@
     <script>
 var values = [],
     sample = vega.normal(0.5, 0.2);
-for (var i=0; i<1000; ++i) {
+for (var i=0; i<2000; ++i) {
   values.push({u: sample(), v: sample()});
 }
 
@@ -26,36 +26,40 @@ var runtimeSpec = {
     {id:'root',   value:null,   signal:'root'},
 
     {
-      id:'dim', type:'Expression',
-      value: 'Math.min(_.w, _.h)',
+      id:'dim',
+      update: 'Math.min(_.w, _.h)',
       params: {w:{$ref:'width'}, h:{$ref:'height'}}
     },
     {
-      id:'offset', type:'Expression',
-      value: '(Math.max(_.w, _.h) - Math.min(_.w, _.h)) / 2',
+      id:'offset',
+      update: '(Math.max(_.w, _.h) - Math.min(_.w, _.h)) / 2',
       params: {w:{$ref:'width'}, h:{$ref:'height'}}
     },
     {
-      id:'xrange', type:'Expression',
-      value: '[_.x, _.x + _.w]',
+      id:'xrange',
+      update: '[_.x, _.x + _.w]',
       params: {w:{$ref:'dim'}, x:{$ref:'offset'}}
     },
     {
-      id:'yrange', type:'Expression',
-      value: '[_.h, 0]',
+      id:'yrange',
+      update: '[_.h, 0]',
       params: {h:{$ref:'dim'}}
     },
 
-    {id:'down',   value:null,   signal:'down'},
-    {id:'anchor', value:[0,0],  signal:'anchor'},
-    {id:'zoom',   value:1,      signal:'zoom'},
-    {id:'delta',  value:[0,0],  signal:'delta'},
-    {id:'xdom',   value:[0,1],  signal:'xdom'},
-    {id:'ydom',   value:[0,1],  signal:'ydom'},
-    {id:'xcur',   value:[0,1],  signal:'xcur'},
-    {id:'ycur',   value:[0,1],  signal:'ycur'},
-    {id:'size',   value:10,     signal:'size'},
+    {id:'pdata',  type:'Collect', value:values, data: {points:['input', 'output']}},
+    {id:'xext',   type:'Extent', params:{field:{$field:'u'}, pulse:{$ref:'pdata'}}},
+    {id:'yext',   type:'Extent', params:{field:{$field:'v'}, pulse:{$ref:'pdata'}}},
 
+    {id:'down',   value:null,  signal:'down'},
+    {id:'anchor', value:[0,0], signal:'anchor'},
+    {id:'zoom',   value:1,     signal:'zoom'},
+    {id:'delta',  value:[0,0], signal:'delta'},
+    {id:'xcur',   value:null,  signal:'xcur'},
+    {id:'ycur',   value:null,  signal:'ycur'},
+    {id:'size',   value:10,    signal:'size'},
+
+    {id:'xdom',   update:'_.x', params:{x:{$ref:'xext'}}, react:false, signal:'xdom'},
+    {id:'ydom',   update:'_.y', params:{y:{$ref:'yext'}}, react:false, signal:'ydom'},
     {id:'xscale', type:'Scale', params:{domain:{$ref:'xdom'}, range:{$ref:'xrange'}}},
     {id:'yscale', type:'Scale', params:{domain:{$ref:'ydom'}, range:{$ref:'yrange'}}},
 
@@ -71,7 +75,6 @@ var runtimeSpec = {
       pulse: {$ref:'marks'}
     } },
 
-    {id:'pdata', type:'Collect', value:values},
     {id:'pjoin', type:'DataJoin', params:{pulse:{$ref:'pdata'}}},
     {id:'pcoll', type:'Collect', params:{pulse:{$ref:'pjoin'}}},
     {id:'pmark', type:'Mark', params: {

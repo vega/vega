@@ -93,6 +93,16 @@ prototype.initialize = function(el) {
   return view;
 };
 
+function getIO(type, el) {
+  var r = CanvasRenderer,
+      h = CanvasHandler;
+  if (type === 'svg') {
+    r = el ? SVGRenderer : SVGStringRenderer;
+    h = SVGHandler;
+  }
+  return {Renderer: r, Handler: h};
+}
+
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (type !== 'svg') type = 'canvas';
@@ -240,15 +250,3 @@ prototype.destroy = function() {
 };
 
 prototype.changeset = changeset;
-
-// -----
-
-function getIO(type, el) {
-  var r = CanvasRenderer,
-      h = CanvasHandler;
-  if (type === 'svg') {
-    r = el ? SVGRenderer : SVGStringRenderer;
-    h = SVGHandler;
-  }
-  return {Renderer: r, Handler: h};
-}
