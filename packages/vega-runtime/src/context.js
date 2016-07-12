@@ -48,6 +48,10 @@ Context.prototype = ContextFork.prototype = {
       ctx.dataflow.pulse(op, changeset().insert(spec.value));
     }
 
+    if (spec.root) {
+      ctx.root = op;
+    }
+
     if (spec.signal) {
       ctx.signals[spec.signal] = op;
     }
