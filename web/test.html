@@ -23,9 +23,9 @@ var values = [
 
 var runtimeSpec = {
   operators: [
-    {id:0, type:'Operator', value:200, signal:'width'},
-    {id:1, type:'Operator', value:100, signal:'height'},
-    {id:2, type:'Operator', value:null, signal:'root'},
+    {id:0, type:'Operator', value:null, root:true},
+    {id:1, type:'Operator', value:200, signal:'width'},
+    {id:2, type:'Operator', value:100, signal:'height'},
     {id:3, type:'Collect', data: {__marks__:['input', 'output']}},
     {id:4, type:'Encode', params:{
       encoders: {
@@ -33,7 +33,7 @@ var runtimeSpec = {
           update: {$expr: 'var o=item;o.width=_.width,o.height=_.height;return(1);'}
         }
       },
-      width: {$ref:0}, height: {$ref:1}, pulse: {$ref:3}
+      width: {$ref:1}, height: {$ref:2}, pulse: {$ref:3}
     }},
 
     {id:5, type:'Collect', value:values},
@@ -61,7 +61,7 @@ var runtimeSpec = {
     {id:11, type:'Sieve', params:{pulse: {$ref:10}}},
     {id:12, type:'Render', params:{pulse: {$ref:10}}},
 
-    {id:13, type:'Bound', params:{mark:{$ref:2}, pulse:{$ref:4}, children:[{$ref:11}]}},
+    {id:13, type:'Bound', params:{mark:{$ref:0}, pulse:{$ref:4}, children:[{$ref:11}]}},
     {id:14, type:'Sieve', params:{pulse: {$ref:13}}, data: {__marks__:['values']}},
     {id:15, type:'Render', params:{pulse: {$ref:13}}},
   ],

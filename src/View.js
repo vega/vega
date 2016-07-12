@@ -33,14 +33,16 @@ export default function View(runtimeSpec) {
   this._data = ctx.data;
 
   // initialize scenegraph
-  this._signals.root.set(root);
+  if (ctx.root) ctx.root.set(root);
   this.pulse(
     this._data.__marks__.input,
     changeset().insert(root.items)
   );
 
+  // initialize padding
   this._padding = {top:5, left:5, bottom:5, right:5};
 
+  // initialize resize operator
   this.add(null,
     function(_, pulse) { pulse.dataflow.resize(_.width, _.height); },
     {width: this._signals.width, height: this._signals.height}
@@ -250,3 +252,27 @@ prototype.destroy = function() {
 };
 
 prototype.changeset = changeset;
+
+// -- SAVE / RESTORE STATE -----
+
+/**
+ * Get or set the current signal state. If an input object is provided,
+ * all property on that object will be assigned to signals of this view,
+ * and the run method will be invoked. If no argument is provided,
+ * returns a hash of all current signal values.
+ * @param {object} [state] - The state vector to set.
+ * @return {object|View} - If invoked with arguments, returns the
+ *   current signal state. Otherwise returns this View instance.
+ */
+prototype.state = function(state) {
+  var key, skip;
+  if (arguments.length) {
+    skip = {skip: true};
+    for (key in state) this.signal(key, state[key], skip);
+    return this.run();
+  } else {
+    state = {};
+    for (key in this._signals) state[key] = this.signal(key);
+    return state;
+  }
+};
