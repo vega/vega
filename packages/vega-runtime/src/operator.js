@@ -7,7 +7,7 @@ import parseParameters from './parameters';
 export default function parseOperator(spec, ctx) {
   var params;
 
-  if (spec.type === 'Operator') {
+  if (spec.type === 'Operator' || !spec.type) {
     ctx.operator(spec, spec.value);
     return;
   }
