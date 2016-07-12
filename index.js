@@ -22,6 +22,7 @@ export {
   field,
   fname,
   inherits,
+  normal,
   logLevel,
   warn,
   info,

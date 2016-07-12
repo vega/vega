@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Pan/Zoom Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+var values = [],
+    sample = vega.normal(0.5, 0.2);
+for (var i=0; i<1000; ++i) {
+  values.push({u: sample(), v: sample()});
+}
+
+var runtimeSpec = {
+  operators: [
+    {id:'width',  value:500,   signal:'width'},
+    {id:'height', value:500,   signal:'height'},
+    {id:'root',   value:null,  signal:'root'},
+
+    {id:'down',   value:null,  signal:'down'},
+    {id:'anchor', value:[0,0], signal:'anchor'},
+    {id:'zoom',   value:1,     signal:'zoom'},
+    {id:'delta',  value:[0,0], signal:'delta'},
+    {id:'xdom',   value:[0,1], signal:'xdom'},
+    {id:'ydom',   value:[0,1], signal:'ydom'},
+    {id:'xcur',   value:[0,1], signal:'xcur'},
+    {id:'ycur',   value:[0,1], signal:'ycur'},
+    {id:'size',   value:10,    signal:'size'},
+
+    {id:'xrange', type:'Expression', value:'[0, _.w]', params:{w:{$ref:'width'}}},
+    {id:'yrange', type:'Expression', value:'[_.h, 0]', params:{h:{$ref:'height'}}},
+    {id:'xscale', type:'Scale', params:{domain:{$ref:'xdom'}, range:{$ref:'xrange'}}},
+    {id:'yscale', type:'Scale', params:{domain:{$ref:'ydom'}, range:{$ref:'yrange'}}},
+
+    {id:'marks', type:'Collect', data: {__marks__:['input', 'output']}},
+    {id:'menc',  type:'Encode', params:{
+      encoders: {
+        $encode: {
+          update: {$expr: 'var o=item;o.width=_.width,o.height=_.height;return(1);'}
+        }
+      },
+      width: {$ref:'width'},
+      height: {$ref:'height'},
+      pulse: {$ref:'marks'}
+    } },
+
+    {id:'pdata', type:'Collect', value:values},
+    {id:'pjoin', type:'DataJoin', params:{pulse:{$ref:'pdata'}}},
+    {id:'pcoll', type:'Collect', params:{pulse:{$ref:'pjoin'}}},
+    {id:'pmark', type:'Mark', params: {
+      markdef: {marktype: 'symbol'},
+      scenepath: [0],
+      pulse: {$ref:'pcoll'}
+    } },
+    {id:'penc',  type:'Encode', params:{
+      encoders: {
+        $encode: {
+          enter: { $expr: 'item.fillOpacity=0.6;item.fill="steelblue";return(1);', },
+          update: {
+            $expr: 'var o=item,d=o.datum;o.x=_.xscale(d.u);o.y=_.yscale(d.v);item.size=_.size;return(1);',
+            $fields: ['u', 'v']
+          },
+          hover: { $expr: 'item.fill="firebrick";return(1);' },
+          leave: { $expr: 'item.fill="steelblue";return(1);' }
+        }
+      },
+      xscale: {$ref:'xscale'},
+      yscale: {$ref:'yscale'},
+      size:   {$ref:'size'},
+      pulse:  {$ref:'pmark'}
+    } },
+    {id:'pbound', type:'Bound', params:{mark:{$ref:'pmark'}, pulse:{$ref:'penc'}}},
+    {id:'psieve', type:'Sieve', params:{pulse: {$ref:'pbound'}}},
+    {id:'prend',  type:'Render', params:{pulse: {$ref:'pbound'}}},
+
+    {id:'mbound', type:'Bound', params:{mark:{$ref:'root'}, pulse:{$ref:'menc'}, children:[{$ref:'psieve'}]}},
+    {id:'msieve', type:'Sieve', params:{pulse: {$ref:'mbound'}}, data: {__marks__:['values']}},
+    {id:'mrend',  type:'Render', params:{pulse: {$ref:'mbound'}}},
+  ],
+
+  streams: [
+    {id:'hover', source:'view', type:'mouseover', filter:'event.item'},
+    {id:'leave', source:'view', type:'mouseout', filter:'event.item'},
+    {id:'mousedown', source:'view', type:'mousedown'},
+    {id:'mouseup', source:'window', type:'mouseup'},
+    {id:'mousemove', source:'window', type:'mousemove'},
+    {id:'wheel', source:'window', type:'wheel', consume:true},
+    {id:'drag', stream:'mousemove', between:['mousedown', 'mouseup']}
+  ],
+
+  updates: [
+    // HOVER
+    {
+      source: 'hover',
+      target: {$expr: 'event.item.mark.source'},
+      update: {$expr: 'event.dataflow.changeset().encode(event.item, "hover")'}
+    },
+    {
+      source: 'leave',
+      target: {$expr: 'event.item.mark.source'},
+      update: {$expr: 'event.dataflow.changeset().encode(event.item, "leave")'}
+    },
+
+    // MOUSE EVENTS
+    {
+      source: 'mousedown', target: 'down',
+      update: {$expr: '[event.viewX, event.viewY]'}
+    },
+    {
+      source: 'mousedown', target: 'xcur',
+      update: {$expr: '_.x.slice()', $params: {x:{$ref:'xdom'}}}
+    },
+    {
+      source: 'mousedown', target: 'ycur',
+      update: {$expr: '_.y.slice()', $params: {y:{$ref:'ydom'}}}
+    },
+    {
+      source: 'drag', target: 'delta',
+      update: {
+        $expr: '[_.p[0] - event.viewX, event.viewY - _.p[1]]',
+        $params: {p:{$ref:'down'}}
+      }
+    },
+    {
+      source: 'mousemove', target: 'anchor',
+      update: {
+        $expr: '[_.xscale.invert(event.viewX), _.yscale.invert(event.viewY)]',
+        $params: {xscale:{$ref:'xscale'}, yscale:{$ref:'yscale'}}
+      }
+    },
+    {
+      source: 'wheel', target: 'zoom',
+      update: {$expr: 'Math.pow(1.001, event.deltaY*Math.pow(16, event.deltaMode))'}
+    },
+
+    // UPDATE SCALE DOMAINS ON ZOOM
+    {
+      source: 'zoom', target: 'xdom',
+      update: {
+        $expr: '[(_.x[0] - _.a[0]) * _.zoom + _.a[0], (_.x[1] - _.a[0]) * _.zoom + _.a[0]]',
+        $params: {x:{$ref:'xdom'}, a:{$ref:'anchor'}, zoom:{$ref:'zoom'}}
+      }
+    },
+    {
+      source: 'zoom', target: 'ydom',
+      update: {
+        $expr: '[(_.y[0] - _.a[1]) * _.zoom + _.a[1], (_.y[1] - _.a[1]) * _.zoom + _.a[1]]',
+        $params: {y:{$ref:'ydom'}, a:{$ref:'anchor'}, zoom:{$ref:'zoom'}}
+      }
+    },
+
+    // UPDATE SCALE DOMAINS ON PAN
+    {
+      source: 'delta', target: 'xdom',
+      update: {
+        $expr: '[_.x[0] + (_.x[1]-_.x[0]) * _.d[0] / _.w, _.x[1] + (_.x[1]-_.x[0]) * _.d[0] / _.w]',
+        $params: {x:{$ref:'xcur'}, d:{$ref:'delta'}, w:{$ref:'width'}}
+      }
+    },
+    {
+      source: 'delta', target: 'ydom',
+      update: {
+        $expr: '[_.y[0] + (_.y[1]-_.y[0]) * _.d[1] / _.h, _.y[1] + (_.y[1]-_.y[0]) * _.d[1] / _.h]',
+        $params: {y:{$ref:'ycur'}, d:{$ref:'delta'}, h:{$ref:'height'}}
+      }
+    },
+
+    // MODIFY POINT SIZE
+    {
+      source: 'xdom', target: 'size',
+      update: {
+        $expr: 'Math.min(1000, Math.max(1, 20 / (_.x[1] - _.x[0])))',
+        $params: {x:{$ref:'xdom'}}
+      }
+    }
+  ]
+};
+
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
+  .run();
+    </script>
+  </body>
+  </html>

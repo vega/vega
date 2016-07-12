@@ -8,7 +8,8 @@ import {
   SVGRenderer,
   SVGHandler,
   SVGStringRenderer,
-  Scenegraph
+  Scenegraph,
+  point
 } from 'vega-scenegraph';
 
 export default function View(runtimeSpec) {
@@ -142,7 +143,7 @@ prototype.height = function(value) {
   return arguments.length ? this.signal('height', value) : this.signal('height');
 };
 
-// -- EVENT STREAMS -----
+// -- EVENT HANDLING -----
 
 /**
  * Create a new event stream from an event source.
@@ -152,11 +153,11 @@ prototype.height = function(value) {
  * @return {EventStream}
  */
 prototype.events = function(source, type, filter) {
-  var df = this,
+  var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        s.receive((e.dataflow = df, e.item = item, e));
-        df.run();
+        s.receive(view.extendEvent(e, item));
+        view.run();
       },
       sources;
 
@@ -182,6 +183,26 @@ prototype.events = function(source, type, filter) {
   });
 
   return s;
+};
+
+/**
+ * Extend an event with additional view-specific information.
+ * @param {Event} event - The input event to extend.
+ * @param {Item} item - The currently selected scenegraph item (if any).
+ * @return {Event} - The extended input event.
+ */
+prototype.extendEvent = function(event, item) {
+  event.dataflow = this;
+  event.item = item;
+
+  var el = this._renderer.element(), p;
+  if (el) {
+    p = point(event, el);
+    event.viewX = p[0] - this._padding.left;
+    event.viewY = p[1] - this._padding.top;
+  }
+
+  return event;
 };
 
 /**
