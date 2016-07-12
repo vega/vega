@@ -40,6 +40,11 @@ export default function View(runtimeSpec) {
   );
 
   this._padding = {top:5, left:5, bottom:5, right:5};
+
+  this.add(null,
+    function(_, pulse) { pulse.dataflow.resize(_.width, _.height); },
+    {width: this._signals.width, height: this._signals.height}
+  );
 }
 
 var prototype = inherits(View, Dataflow);
@@ -102,6 +107,19 @@ prototype.renderer = function(type) {
 };
 
 // -- SCENEGRAPH and RENDERING -----
+
+prototype.resize = function(width, height) {
+  var w = this.signal('width'),
+      h = this.signal('height');
+
+  if (w === width && h === height) {
+    this._renderer.resize(width, height, this._padding);
+  } else {
+    this.signal('width', width).signal('height', height).run();
+  }
+
+  return this;
+};
 
 prototype.scenegraph = function() {
   return this._scenegraph;

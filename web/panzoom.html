@@ -4,8 +4,7 @@
     <title>Vega Pan/Zoom Test</title>
     <script src="../../build/vega.js"></script>
     <style>
-      body { margin: 10px; font: 14px Helvetica Neue; }
-      canvas, svg { border: 1px solid #ccc; }
+      body { margin: 0px; font: 14px Helvetica Neue; }
     </style>
   </head>
   <body>
@@ -17,24 +16,46 @@ for (var i=0; i<1000; ++i) {
   values.push({u: sample(), v: sample()});
 }
 
+var width = window.innerWidth,
+    height = window.innerHeight;
+
 var runtimeSpec = {
   operators: [
-    {id:'width',  value:500,   signal:'width'},
-    {id:'height', value:500,   signal:'height'},
-    {id:'root',   value:null,  signal:'root'},
+    {id:'width',  value:width,  signal:'width'},
+    {id:'height', value:height, signal:'height'},
+    {id:'root',   value:null,   signal:'root'},
 
-    {id:'down',   value:null,  signal:'down'},
-    {id:'anchor', value:[0,0], signal:'anchor'},
-    {id:'zoom',   value:1,     signal:'zoom'},
-    {id:'delta',  value:[0,0], signal:'delta'},
-    {id:'xdom',   value:[0,1], signal:'xdom'},
-    {id:'ydom',   value:[0,1], signal:'ydom'},
-    {id:'xcur',   value:[0,1], signal:'xcur'},
-    {id:'ycur',   value:[0,1], signal:'ycur'},
-    {id:'size',   value:10,    signal:'size'},
+    {
+      id:'dim', type:'Expression',
+      value: 'Math.min(_.w, _.h)',
+      params: {w:{$ref:'width'}, h:{$ref:'height'}}
+    },
+    {
+      id:'offset', type:'Expression',
+      value: '(Math.max(_.w, _.h) - Math.min(_.w, _.h)) / 2',
+      params: {w:{$ref:'width'}, h:{$ref:'height'}}
+    },
+    {
+      id:'xrange', type:'Expression',
+      value: '[_.x, _.x + _.w]',
+      params: {w:{$ref:'dim'}, x:{$ref:'offset'}}
+    },
+    {
+      id:'yrange', type:'Expression',
+      value: '[_.h, 0]',
+      params: {h:{$ref:'dim'}}
+    },
 
-    {id:'xrange', type:'Expression', value:'[0, _.w]', params:{w:{$ref:'width'}}},
-    {id:'yrange', type:'Expression', value:'[_.h, 0]', params:{h:{$ref:'height'}}},
+    {id:'down',   value:null,   signal:'down'},
+    {id:'anchor', value:[0,0],  signal:'anchor'},
+    {id:'zoom',   value:1,      signal:'zoom'},
+    {id:'delta',  value:[0,0],  signal:'delta'},
+    {id:'xdom',   value:[0,1],  signal:'xdom'},
+    {id:'ydom',   value:[0,1],  signal:'ydom'},
+    {id:'xcur',   value:[0,1],  signal:'xcur'},
+    {id:'ycur',   value:[0,1],  signal:'ycur'},
+    {id:'size',   value:10,     signal:'size'},
+
     {id:'xscale', type:'Scale', params:{domain:{$ref:'xdom'}, range:{$ref:'xrange'}}},
     {id:'yscale', type:'Scale', params:{domain:{$ref:'ydom'}, range:{$ref:'yrange'}}},
 
@@ -91,7 +112,8 @@ var runtimeSpec = {
     {id:'mouseup', source:'window', type:'mouseup'},
     {id:'mousemove', source:'window', type:'mousemove'},
     {id:'wheel', source:'window', type:'wheel', consume:true},
-    {id:'drag', stream:'mousemove', between:['mousedown', 'mouseup']}
+    {id:'drag', stream:'mousemove', between:['mousedown', 'mouseup']},
+    {id:'resize', source:'window', type:'resize', debounce:200}
   ],
 
   updates: [
@@ -160,14 +182,14 @@ var runtimeSpec = {
       source: 'delta', target: 'xdom',
       update: {
         $expr: '[_.x[0] + (_.x[1]-_.x[0]) * _.d[0] / _.w, _.x[1] + (_.x[1]-_.x[0]) * _.d[0] / _.w]',
-        $params: {x:{$ref:'xcur'}, d:{$ref:'delta'}, w:{$ref:'width'}}
+        $params: {x:{$ref:'xcur'}, d:{$ref:'delta'}, w:{$ref:'dim'}}
       }
     },
     {
       source: 'delta', target: 'ydom',
       update: {
         $expr: '[_.y[0] + (_.y[1]-_.y[0]) * _.d[1] / _.h, _.y[1] + (_.y[1]-_.y[0]) * _.d[1] / _.h]',
-        $params: {y:{$ref:'ycur'}, d:{$ref:'delta'}, h:{$ref:'height'}}
+        $params: {y:{$ref:'ycur'}, d:{$ref:'delta'}, h:{$ref:'dim'}}
       }
     },
 
@@ -178,6 +200,16 @@ var runtimeSpec = {
         $expr: 'Math.min(1000, Math.max(1, 20 / (_.x[1] - _.x[0])))',
         $params: {x:{$ref:'xdom'}}
       }
+    },
+
+    // WINDOW RESIZE
+    {
+      source: 'resize', target: 'width',
+      update: {$expr: 'window.innerWidth'}
+    },
+    {
+      source: 'resize', target: 'height',
+      update: {$expr: 'window.innerHeight'}
     }
   ]
 };
