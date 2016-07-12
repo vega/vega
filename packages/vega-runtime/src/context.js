@@ -30,22 +30,22 @@ function ContextFork(ctx) {
 }
 
 Context.prototype = ContextFork.prototype = {
+  fork: function() {
+    return new ContextFork(this);
+  },
   get: function(id) {
     return this.nodes.hasOwnProperty(id) && this.nodes[id];
   },
   set: function(id, node) {
     return this.nodes[id] = node;
   },
-  fork: function() {
-    return new ContextFork(this);
-  },
-  operator: function(spec, value, params) {
-    var ctx = this,
-        df = ctx.dataflow,
-        op = ctx.set(spec.id, df.add(value, params));
+  add: function(spec, op) {
+    var ctx = this;
+
+    ctx.set(spec.id, op);
 
     if (spec.type === 'Collect' && spec.value) {
-      df.pulse(op, changeset().insert(spec.value));
+      ctx.dataflow.pulse(op, changeset().insert(spec.value));
     }
 
     if (spec.signal) {
@@ -59,8 +59,11 @@ Context.prototype = ContextFork.prototype = {
       }
     }
   },
-  transform: function(spec, params) {
-    this.operator(spec, this.transforms[spec.type], params);
+  operator: function(spec, update, params) {
+    this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
+  },
+  transform: function(spec, type, params) {
+    this.add(spec, this.dataflow.add(this.transforms[type], params));
   },
   stream: function(spec, stream) {
     this.set(spec.id, stream);
