@@ -9,7 +9,7 @@ tape('Parser parses event-driven operator updates', function(test) {
     operators: [
       { id:0, type:'Operator', value:50 },
       { id:1, type:'Operator', value:0 },
-      { id:2, type:'Expression', value:'(this.value||0) + 1' }
+      { id:2, type:'Operator', value:0, update:'this.value + 1' }
     ],
     streams: [
       { id:3, source:'window', type:'mousemove' },

@@ -5,20 +5,18 @@ import parseParameters from './parameters';
  * Parse a dataflow operator.
  */
 export default function parseOperator(spec, ctx) {
-  var params;
-
-  if (spec.type === 'Operator' || !spec.type) {
-    ctx.operator(spec, spec.value);
-    return;
-  }
+  var params, update;
 
   if (spec.params) {
     params = parseParameters(spec.params, ctx);
   }
 
-  if (spec.type === 'Expression') {
-    ctx.operator(spec, operatorExpression(spec.value), params);
+  if (spec.type === 'Operator' || !spec.type) {
+    if (spec.update) {
+      update = operatorExpression(spec.update);
+    }
+    ctx.operator(spec, update, params);
   } else {
-    ctx.transform(spec, params);
+    ctx.transform(spec, spec.type, params);
   }
 }
