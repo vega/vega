@@ -13,26 +13,25 @@ export default function parseStream(spec, ctx) {
   if (spec.source) {
     stream = ctx.events(spec.source, spec.type, filter);
   }
-
-  else if (spec.filter) {
-    stream = stream.filter(filter);
-  }
-
   else if (spec.merge) {
     args = spec.merge.map(ctx.get.bind(ctx));
     stream = args[0].merge.apply(args[0], args.slice(1));
   }
 
-  else if (spec.between) {
+  if (spec.between) {
     args = spec.between.map(ctx.get.bind(ctx));
     stream = stream.between(args[0], args[1]);
   }
 
-  else if (spec.debounce != null) {
+  if (spec.filter) {
+    stream = stream.filter(filter);
+  }
+
+  if (spec.debounce != null) {
     stream = stream.debounce(+spec.debounce);
   }
 
-  else if (spec.throttle != null) {
+  if (spec.throttle != null) {
     stream = stream.throttle(+spec.throttle);
   }
 
