@@ -2,7 +2,7 @@
  * Parse an expression given the argument signature and body code.
  */
 export default function parseExpression(args, code, context) {
-  var fn = Function.apply(null, args.concat('return ' + code + ';'));
+  var fn = Function.apply(null, args.concat('return(' + code + ');'));
   return context ? fn.bind(context) : fn;
 }
 
