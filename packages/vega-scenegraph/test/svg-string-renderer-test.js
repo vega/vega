@@ -294,6 +294,14 @@ tape('SVGStringRenderer should render area mark with breaks', function(test) {
   test.end();
 });
 
+tape('SVGStringRenderer should render trail area mark', function(test) {
+  var svg = render(marks['area-trail'], 500, 500);
+  generate('svg/marks-area-trail.svg', svg);
+  var file = load('svg/marks-area-trail.svg');
+  test.equal(svg, file);
+  test.end();
+});
+
 tape('SVGStringRenderer should render group mark', function(test) {
   var svg = render(marks.group, 500, 500);
   generate('svg/marks-group.svg', svg);
@@ -329,14 +337,6 @@ tape('SVGStringRenderer should render line mark with breaks', function(test) {
   var svg = render(marks['line-breaks'], 500, 500);
   generate('svg/marks-line-breaks.svg', svg);
   var file = load('svg/marks-line-breaks.svg');
-  test.equal(svg, file);
-  test.end();
-});
-
-tape('SVGStringRenderer should render trail line mark', function(test) {
-  var svg = render(marks['line-trail'], 500, 500);
-  generate('svg/marks-line-trail.svg', svg);
-  var file = load('svg/marks-line-trail.svg');
   test.equal(svg, file);
   test.end();
 });

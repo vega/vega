@@ -307,6 +307,14 @@ tape('CanvasRenderer should render area mark with breaks', function(test) {
   test.end();
 });
 
+tape('CanvasRenderer should render trail area mark', function(test) {
+  var image = render(marks['area-trail'], 500, 500);
+  generate('png/marks-area-trail.png', image);
+  var file = load('png/marks-area-trail.png');
+  test.equal(image+'', file);
+  test.end();
+});
+
 tape('CanvasRenderer should render group mark', function(test) {
   var image = render(marks.group, 500, 500);
   generate('png/marks-group.png', image);
@@ -357,14 +365,6 @@ tape('CanvasRenderer should render line mark with breaks', function(test) {
   var image = render(marks['line-breaks'], 500, 500);
   generate('png/marks-line-breaks.png', image);
   var file = load('png/marks-line-breaks.png');
-  test.equal(image+'', file);
-  test.end();
-});
-
-tape('CanvasRenderer should render trail line mark', function(test) {
-  var image = render(marks['line-trail'], 500, 500);
-  generate('png/marks-line-trail.png', image);
-  var file = load('png/marks-line-trail.png');
   test.equal(image+'', file);
   test.end();
 });
