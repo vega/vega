@@ -31,9 +31,9 @@ export default function(type, shape) {
       return null;
     }
 
-    if (context.pixelratio != null && context.pixelratio !== 1) {
-      x *= context.pixelratio;
-      y *= context.pixelratio;
+    if (context.pixelRatio > 1) {
+      x *= context.pixelRatio;
+      y *= context.pixelRatio;
     }
     return hit(context, items, x, y) ? items[0] : null;
   }
