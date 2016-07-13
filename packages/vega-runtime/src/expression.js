@@ -17,7 +17,7 @@ export function eventExpression(code, context) {
  * Parse an expression used to handle an event-driven operator update.
  */
 export function handlerExpression(code, context) {
-  return parseExpression(['_', 'event', 'datum'], code, context);
+  return parseExpression(['_', 'event'], code, context);
 }
 
 /**
