@@ -198,13 +198,22 @@ var AREA_INTERPOLATE = [
   'natural',
   'step',
   'stepAfter',
-  'stepBefore'
+  'stepBefore',
+  'trail'
 ];
 
-var LINE_INTERPOLATE = AREA_INTERPOLATE.concat([
+var LINE_INTERPOLATE = [
+  'basis',
   'bundle',
-  'trail'
-]);
+  'cardinal',
+  'catmullRom',
+  'linear',
+  'monotone',
+  'natural',
+  'step',
+  'stepAfter',
+  'stepBefore'
+];
 
 var GUIDES = {
   "axis": {
