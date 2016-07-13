@@ -12,7 +12,7 @@
     <script>
 var values = [],
     sample = vega.normal(0.5, 0.2);
-for (var i=0; i<2000; ++i) {
+for (var i=0; i<500; ++i) {
   values.push({u: sample(), v: sample()});
 }
 
@@ -50,9 +50,11 @@ var runtimeSpec = {
     {id:'xext',   type:'Extent', params:{field:{$field:'u'}, pulse:{$ref:'pdata'}}},
     {id:'yext',   type:'Extent', params:{field:{$field:'v'}, pulse:{$ref:'pdata'}}},
 
-    {id:'down',   value:null,  signal:'down'},
     {id:'anchor', value:[0,0], signal:'anchor'},
+    {id:'down',   value:null,  signal:'down'},
     {id:'zoom',   value:1,     signal:'zoom'},
+    {id:'dist1',  value:0,     signal:'dist1'},
+    {id:'dist2',  value:0,     signal:'dist2'},
     {id:'delta',  value:[0,0], signal:'delta'},
     {id:'xcur',   value:null,  signal:'xcur'},
     {id:'ycur',   value:null,  signal:'ycur'},
@@ -114,8 +116,16 @@ var runtimeSpec = {
     {id:'mousedown', source:'view', type:'mousedown'},
     {id:'mouseup', source:'window', type:'mouseup'},
     {id:'mousemove', source:'window', type:'mousemove'},
+    {id:'mousedrag', stream:'mousemove', between:['mousedown', 'mouseup']},
+    {id:'touchstart', source:'view', type:'touchstart', filter:'event.touches.length===1'},
+    {id:'pinchstart', source:'view', type:'touchstart', filter:'event.touches.length===2'},
+    {id:'touchmove', source:'view', type:'touchmove', filter:'event.touches.length===1', consume:true},
+    {id:'pinchmove', source:'view', type:'touchmove', filter:'event.touches.length===2', consume:true},
+    {id:'touchend', source:'view', type:'touchend'},
+    {id:'start', merge:['mousedown', 'touchstart'], throttle:500},
+    {id:'reset', merge:['start', 'touchend']},
+    {id:'drag', merge:['mousedrag', 'touchmove'], consume:true},
     {id:'wheel', source:'window', type:'wheel', consume:true},
-    {id:'drag', stream:'mousemove', between:['mousedown', 'mouseup']},
     {id:'resize', source:'window', type:'resize', debounce:200}
   ],
 
@@ -132,26 +142,32 @@ var runtimeSpec = {
       update: {$expr: 'event.dataflow.changeset().encode(event.item, "leave")'}
     },
 
-    // MOUSE EVENTS
+    // DRAG-TO-PAN
     {
-      source: 'mousedown', target: 'down',
+      source: 'touchend', target: 'down',
+      update: {$expr: 'null'}
+    },
+    {
+      source: 'start', target: 'down',
       update: {$expr: '[event.viewX, event.viewY]'}
     },
     {
-      source: 'mousedown', target: 'xcur',
+      source: 'reset', target: 'xcur',
       update: {$expr: '_.x.slice()', $params: {x:{$ref:'xdom'}}}
     },
     {
-      source: 'mousedown', target: 'ycur',
+      source: 'reset', target: 'ycur',
       update: {$expr: '_.y.slice()', $params: {y:{$ref:'ydom'}}}
     },
     {
       source: 'drag', target: 'delta',
       update: {
-        $expr: '[_.p[0] - event.viewX, event.viewY - _.p[1]]',
+        $expr: '_.p ? [_.p[0] - event.viewX, event.viewY - _.p[1]] : [0,0]',
         $params: {p:{$ref:'down'}}
       }
     },
+
+    // SCROLL-TO-ZOOM
     {
       source: 'mousemove', target: 'anchor',
       update: {
@@ -162,6 +178,45 @@ var runtimeSpec = {
     {
       source: 'wheel', target: 'zoom',
       update: {$expr: 'Math.pow(1.001, event.deltaY*Math.pow(16, event.deltaMode))'}
+    },
+
+    // PINCH-TO-ZOOM
+    {
+      source: 'pinchstart', target: 'anchor',
+      update: {
+        $expr: '[(_.x[0] + _.x[1])/2, (_.y[0] + _.y[1])/2]',
+        $params: {x:{$ref:'xdom'}, y:{$ref:'ydom'}}
+      }
+    },
+    {
+      source: 'pinchstart', target: 'dist1',
+      update: {
+        $expr: 'Math.sqrt('
+          + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
+          + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2))'
+      }
+    },
+    {
+      source: 'pinchmove', target: 'dist2',
+      update: {
+        $expr: 'Math.sqrt('
+          + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
+          + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2))'
+      }
+    },
+    {
+      source: 'dist2', target: 'zoom',
+      update: {
+        $expr: '_.d1 / _.d2',
+        $params: {d1:{$ref:'dist1'}, d2:{$ref:'dist2'}}
+      }
+    },
+    {
+      source: 'dist2', target: 'dist1',
+      update: {
+        $expr: '_.d2',
+        $params: {d2:{$ref:'dist2'}}
+      }
     },
 
     // UPDATE SCALE DOMAINS ON ZOOM

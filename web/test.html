@@ -5,10 +5,14 @@
     <script src="../../build/vega.js"></script>
     <style>
       body { margin: 10px; font: 14px Helvetica Neue; }
+      #view { display: inline-block; }
+      canvas, svg, img { border: 1px solid #ccc; }
     </style>
   </head>
   <body>
     <div id="view"></div>
+    <img id="png"></div>
+    <img id="svg"></div>
     <script>
 var values = [
   {"x": 0,  "y": 28},
@@ -85,11 +89,17 @@ var runtimeSpec = {
   ]
 };
 
-var view = new vega.View(runtimeSpec);
-
-view.renderer('canvas')
+var view = new vega.View(runtimeSpec)
   .initialize(document.querySelector('#view'))
   .run();
+
+// generate png and svg snapshots, assign to image elements
+['png', 'svg'].forEach(function(type) {
+  view.toImageURL(type, function(error, url) {
+    if (error) return console.error(error);
+    document.querySelector('#'+type).src = url;
+  });
+});
     </script>
   </body>
   </html>
