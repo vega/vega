@@ -1,43 +1,30 @@
-export default function(canvas, w, h, p, retina) {
-  var g = canvas.getContext('2d'),
-      s = 1;
+export var devicePixelRatio = typeof window !== 'undefined'
+  ? window.devicePixelRatio || 1 : 1;
 
-  canvas.width = w + p.left + p.right;
-  canvas.height = h + p.top + p.bottom;
+export default function(canvas, width, height, padding) {
+  var scale = typeof HTMLElement !== 'undefined'
+    && canvas instanceof HTMLElement
+    && canvas.parentNode != null;
 
-  // if browser canvas, attempt to modify for retina display
-  if (retina && typeof HTMLElement !== 'undefined' &&
-      canvas instanceof HTMLElement)
-  {
-    g.pixelratio = (s = pixelRatio(canvas) || 1);
-  }
+  var context = canvas.getContext('2d'),
+      ratio = scale ? devicePixelRatio : 1,
+      w = width + padding.left + padding.right,
+      h = height + padding.top + padding.bottom;
 
-  g.setTransform(s, 0, 0, s, s*p.left, s*p.top);
-  return canvas;
-}
+  canvas.width = w * ratio;
+  canvas.height = h * ratio;
 
-function pixelRatio(canvas) {
-  var g = canvas.getContext('2d');
-
-  // get canvas pixel data
-  var devicePixelRatio = window && window.devicePixelRatio || 1,
-      backingStoreRatio = (
-        g.webkitBackingStorePixelRatio ||
-        g.mozBackingStorePixelRatio ||
-        g.msBackingStorePixelRatio ||
-        g.oBackingStorePixelRatio ||
-        g.backingStorePixelRatio) || 1,
-      ratio = devicePixelRatio / backingStoreRatio;
-
-  if (devicePixelRatio !== backingStoreRatio) {
-    // set actual and visible canvas size
-    var w = canvas.width,
-        h = canvas.height;
-    canvas.width = w * ratio;
-    canvas.height = h * ratio;
+  if (ratio !== 1) {
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
   }
 
-  return ratio;
+  context.pixelRatio = ratio;
+  context.setTransform(
+    ratio, 0, 0, ratio,
+    ratio * padding.left,
+    ratio * padding.top
+  );
+
+  return canvas;
 }

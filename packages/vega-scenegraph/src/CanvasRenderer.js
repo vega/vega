@@ -11,8 +11,6 @@ export default function CanvasRenderer(loadConfig) {
   Renderer.call(this, loadConfig);
 }
 
-CanvasRenderer.Retina = true;
-
 var prototype = inherits(CanvasRenderer, Renderer);
 var base = Renderer.prototype;
 
@@ -27,7 +25,7 @@ prototype.initialize = function(el, width, height, padding) {
 
 prototype.resize = function(width, height, padding) {
   base.resize.call(this, width, height, padding);
-  resize(this._canvas, this._width, this._height, this._padding, CanvasRenderer.Retina);
+  resize(this._canvas, this._width, this._height, this._padding);
   return this;
 };
 

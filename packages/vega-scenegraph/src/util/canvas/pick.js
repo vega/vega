@@ -7,9 +7,9 @@ export function pick(test) {
     var items = scene.items, item, b, i;
     if (!items.length) return null;
 
-    if (context.pixelratio != null && context.pixelratio !== 1) {
-      x *= context.pixelratio;
-      y *= context.pixelratio;
+    if (context.pixelRatio > 1) {
+      x *= context.pixelRatio;
+      y *= context.pixelRatio;
     }
 
     for (i=items.length; --i >= 0;) {
