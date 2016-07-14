@@ -39,6 +39,7 @@ function createMark(def) {
     clip:        !!def.clip,
     interactive: def.interactive === false ? false : true,
     items:       [],
-    marktype:    def.marktype
+    marktype:    def.marktype,
+    role:        def.role || null
   };
 }
