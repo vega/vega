@@ -71,6 +71,10 @@ export function isFunction(_) {
   return typeof _ === 'function';
 }
 
+export function isNumber(_) {
+  return typeof _ === 'number';
+}
+
 export function isArray(_) {
   return Array.isArray(_);
 }
