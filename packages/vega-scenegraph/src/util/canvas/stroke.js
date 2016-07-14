@@ -1,5 +1,7 @@
 import color from './color';
 
+var Empty = [];
+
 export default function(context, item, opacity) {
   var lw = (lw = item.strokeWidth) != null ? lw : 1, lc;
   if (lw <= 0) return false;
@@ -11,7 +13,7 @@ export default function(context, item, opacity) {
     context.lineWidth = lw;
     context.lineCap = (lc = item.strokeCap) != null ? lc : 'butt';
     if (context.setLineDash) {
-      context.setLineDash(item.strokeDash || null);
+      context.setLineDash(item.strokeDash || Empty);
       context.lineDashOffset = item.strokeDashOffset || 0;
     }
     return true;
