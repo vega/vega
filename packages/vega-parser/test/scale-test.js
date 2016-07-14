@@ -3,9 +3,11 @@ var tape = require('tape'),
 
 tape('Parser parses Vega specs with scales', function(test) {
   var spec = {
+    "width": 500,
+    "height": 300,
     "signals": [
-      {"name": "width", "init": 500},
-      {"name": "height", "init": 300},
+      // {"name": "width", "init": 500},
+      // {"name": "height", "init": 300},
       {"name": "yfield", "init": "y"},
       {"name": "sortop", "init": "median"},
       {"name": "order", "init": "ascending"}
@@ -54,12 +56,13 @@ tape('Parser parses Vega specs with scales', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.length, 16);
-  test.deepEqual(dfs.map(function(o) { return o.type; }),
-    ['Operator', 'Operator', 'Operator', 'Operator', 'Operator',
-     'Collect', 'Sieve',
+  test.equal(dfs.operators.length, 24);
+  test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
+    ['Operator', 'Operator', 'Operator', 'Operator', 'Collect', 'Encode',
+     'Operator', 'Operator', 'Operator', 'Collect', 'Sieve',
      'Field', 'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
-     'Extent', 'Scale', 'Scale']);
+     'Extent', 'Scale', 'Scale',
+     'ChartLayout', 'Bound', 'Render', 'Sieve']);
 
   test.end();
 });
@@ -125,12 +128,14 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.length, 20);
-  test.deepEqual(dfs.map(function(o) { return o.type; }),
-    ['Collect', 'Sieve', 'Aggregate', 'Collect', 'Aggregate', 'Collect',
+  test.equal(dfs.operators.length, 30);
+  test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
+    ['Operator', 'Operator', 'Operator', 'Operator', 'Collect', 'Encode',
+     'Collect', 'Sieve', 'Aggregate', 'Collect', 'Aggregate', 'Collect',
      'Aggregate', 'Collect', 'Values', 'Scale',
      'Aggregate', 'Collect', 'Values', 'Scale',
-     'Extent', 'Extent', 'MultiExtent', 'Scale', 'MultiExtent', 'Scale']);
+     'Extent', 'Extent', 'MultiExtent', 'Scale', 'MultiExtent', 'Scale',
+     'ChartLayout', 'Bound', 'Render', 'Sieve']);
 
   test.end();
 });

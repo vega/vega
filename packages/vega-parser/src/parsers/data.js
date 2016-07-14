@@ -10,7 +10,7 @@ export default function parseData(data, scope) {
     });
   }
 
-  scope.addData(data.name, analyze(data, scope, transforms));
+  scope.addDataPipeline(data.name, analyze(data, scope, transforms));
 }
 
 /**

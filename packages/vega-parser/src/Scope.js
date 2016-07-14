@@ -13,6 +13,7 @@ export default function Scope() {
   this.scale = {};
   this.data = {};
   this.operators = [];
+  this.scenepath = [-1];
 }
 
 var prototype = Scope.prototype;
@@ -23,6 +24,54 @@ prototype.id = function() {
 
 prototype.add = function(op) {
   return this.operators.push(op), op.id = this.id(), op;
+};
+
+// Apply metadata
+prototype.finish = function() {
+  var name, ds;
+
+  // annotate root
+  if (this.root) this.root.root = true;
+
+  // annotate signals
+  for (name in this.signal) {
+    this.signal[name].signal = name;
+  }
+
+  // annotate data sets
+  function annotate(ds, name, type) {
+    var op = ds[type], data, list;
+    if (op) {
+      data = op.data || (op.data = {});
+      list = data[name] || (data[name] = []);
+      list.push(type);
+    }
+  }
+  for (name in this.data) {
+    ds = this.data[name];
+    annotate(ds, name, 'input');
+    annotate(ds, name, 'output');
+    annotate(ds, name, 'values');
+  }
+
+  return this;
+};
+
+// ----
+
+prototype.scenepathNext = function() {
+  this.scenepath[this.scenepath.length-1] += 1;
+  return this.scenepath.slice();
+};
+
+prototype.scenepathPush = function() {
+  this.scenepath.push(0);
+  this.scenepath.push(-1);
+};
+
+prototype.scenepathPop = function() {
+  this.scenepath.pop();
+  this.scenepath.pop();
 };
 
 // ----
@@ -82,7 +131,14 @@ prototype.addSignal = function(name, value) {
 };
 
 prototype.signalRef = function(name) {
+  if (!this.signal.hasOwnProperty(name)) {
+    error('Unrecognized signal name: ' + name);
+  }
   return ref(this.signal[name]);
+};
+
+prototype.property = function(spec) {
+  return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
 // ----
@@ -101,6 +157,13 @@ prototype.scaleRef = function(name) {
 
 // ----
 
+prototype.addData = function(name, dataScope) {
+  if (this.data.hasOwnProperty(name)) {
+    error('Duplicate data set name: ' + name);
+  }
+  this.data[name] = dataScope;
+};
+
 prototype.getData = function(name) {
   if (!this.data.hasOwnProperty(name)) {
     error('Undefined data set name: ' + name);
@@ -108,7 +171,7 @@ prototype.getData = function(name) {
   return this.data[name];
 };
 
-prototype.addData = function(name, entries) {
+prototype.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + name);
   }
@@ -122,5 +185,5 @@ prototype.addData = function(name, entries) {
   }
 
   // create new scope for the data pipeline
-  this.data[name] = new DataScope(this, entries);
+  this.addData(name, DataScope.fromEntries(this, entries));
 };

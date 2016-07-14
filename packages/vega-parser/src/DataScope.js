@@ -1,17 +1,23 @@
 import {ref, transform, keyRef, aggrField, sortKey} from './util';
 
-export default function DataScope(scope, entries) {
+export default function DataScope(scope, input, output, values) {
   this.scope = scope;
+  this.input = input;
+  this.output = output;
+  this.values = values;
+}
 
-  var n = entries.length;
-  this.entries = entries; // is this needed? keep for now...
-
-  this.input  = ref(entries[0]);
-  this.values = ref(entries[--n]);
+DataScope.fromEntries = function(scope, entries) {
+  var n = entries.length,
+      input  = entries[0],
+      values = entries[--n],
+      output;
 
   while (!entries[--n].metadata.source); // find last source
-  this.output = ref(entries[n]);
-}
+  output = entries[n];
+
+  return new DataScope(scope, input, output, values);
+};
 
 var prototype = DataScope.prototype;
 
@@ -23,7 +29,7 @@ prototype.countsRef = function(field, sort) {
   if (!v) {
     p = {
       groupby: ds.scope.fieldRef(field, 'key'),
-      pulse: ds.output
+      pulse: ref(ds.output)
     };
     if (sort && sort.field) addSortField(ds.scope, p, sort);
     a = ds.scope.add(transform('Aggregate', p));
@@ -62,7 +68,7 @@ function cache(ds, name, optype, field, counts) {
   if (!v) {
     var params = counts
       ? {field: keyRef, pulse: ds.countsRef(field, counts)}
-      : {field: ds.scope.fieldRef(field), pulse: ds.output};
+      : {field: ds.scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = ds.scope.sortRef(counts);
     cache[k] = v = ref(ds.scope.add(transform(optype, params)));
   }
