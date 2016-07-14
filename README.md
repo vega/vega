@@ -9,6 +9,7 @@ New Vega modules are under active development and have not yet been published to
 First, clone the following repositories under the uwdata organization:
 
 * https://github.com/uwdata/vega-dataflow
+* https://github.com/uwdata/vega-loader
 * https://github.com/uwdata/vega-scenegraph
 * https://github.com/uwdata/vega-runtime
 * https://github.com/uwdata/vega-parser
