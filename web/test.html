@@ -27,28 +27,31 @@ var values = [
 
 var runtimeSpec = {
   operators: [
-    {id:0, type:'Operator', value:null, root:true},
-    {id:1, type:'Operator', value:200, signal:'width'},
-    {id:2, type:'Operator', value:100, signal:'height'},
-    {id:3, type:'Collect', data: {__marks__:['input', 'output']}},
-    {id:4, type:'Encode', params:{
+    {id:'root', type:'Operator', value:null, root:true},
+    {id:'width', type:'Operator', value:200, signal:'width'},
+    {id:'height', type:'Operator', value:100, signal:'height'},
+    {id:'padding', type:'Operator', value:{left:5,top:5,right:5,bottom:5}, signal:'padding'},
+    {id:'mcoll', type:'Collect', data: {root:['input', 'output']}},
+    {id:'menc', type:'Encode', params:{
       encoders: {
         $encode: {
           update: {$expr: 'var o=item;o.width=_.width,o.height=_.height;return(1);'}
         }
       },
-      width: {$ref:1}, height: {$ref:2}, pulse: {$ref:3}
+      width: {$ref:'width'},
+      height: {$ref:'height'},
+      pulse: {$ref:'mcoll'}
     }},
 
-    {id:5, type:'Collect', value:values},
-    {id:6, type:'DataJoin', params:{pulse:{$ref:5}}},
-    {id:7, type:'Collect', params:{pulse:{$ref:6}}},
-    {id:8, type:'Mark', params: {
+    {id:'data', type:'Collect', value:values},
+    {id:'djoin', type:'DataJoin', params:{pulse:{$ref:'data'}}},
+    {id:'dcoll', type:'Collect', params:{pulse:{$ref:'djoin'}}},
+    {id:'dmark', type:'Mark', params: {
       markdef: {marktype: 'rect'},
       scenepath: [0],
-      pulse: {$ref:7}
+      pulse: {$ref:'dcoll'}
     }},
-    {id:9, type:'Encode', params:{
+    {id:'denc', type:'Encode', params:{
       encoders: {
         $encode: {
           enter: {
@@ -59,30 +62,30 @@ var runtimeSpec = {
           hover: {$expr: 'var o=item;o.fill="fuchsia";return(1);'}
         }
       },
-      pulse: {$ref:8}
+      pulse: {$ref:'dmark'}
     }},
-    {id:10, type:'Bound', params:{mark:{$ref:8}, pulse:{$ref:9}}},
-    {id:11, type:'Sieve', params:{pulse: {$ref:10}}},
-    {id:12, type:'Render', params:{pulse: {$ref:10}}},
+    {id:'dbound', type:'Bound', params:{mark:{$ref:'dmark'}, pulse:{$ref:'denc'}}},
+    {id:'dsieve', type:'Sieve', params:{pulse: {$ref:'dbound'}}},
+    {id:'drend', type:'Render', params:{pulse: {$ref:'dbound'}}},
 
-    {id:13, type:'Bound', params:{mark:{$ref:0}, pulse:{$ref:4}, children:[{$ref:11}]}},
-    {id:14, type:'Sieve', params:{pulse: {$ref:13}}, data: {__marks__:['values']}},
-    {id:15, type:'Render', params:{pulse: {$ref:13}}},
+    {id:'mbound', type:'Bound', params:{mark:{$ref:'root'}, pulse:{$ref:'menc'}, children:[{$ref:'dsieve'}]}},
+    {id:'msieve', type:'Sieve', params:{pulse: {$ref:'mbound'}}, data: {root:['values']}},
+    {id:'mrend', type:'Render', params:{pulse: {$ref:'mbound'}}},
   ],
 
   streams: [
-    {id:100, source:'view', type:'mouseover', filter:'event.item'},
-    {id:101, source:'view', type:'mouseout', filter:'event.item'}
+    {id:'hover', source:'view', type:'mouseover', filter:'event.item'},
+    {id:'leave', source:'view', type:'mouseout', filter:'event.item'}
   ],
 
   updates: [
     {
-      source: 100,
+      source: 'hover',
       target: {$expr: 'event.item.mark.source'},
       update: {$expr: 'event.dataflow.changeset().encode(event.item, "hover")'}
     },
     {
-      source: 101,
+      source: 'leave',
       target: {$expr: 'event.item.mark.source'},
       update: {$expr: 'event.dataflow.changeset().encode(event.item, "update")'}
     }

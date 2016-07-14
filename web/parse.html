@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Parse Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      #view { display: inline-block; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+var runtimeSpec = vega.parse({
+  "width": 500,
+  "height": 100,
+  "padding": 100,
+
+  "data": [
+    {
+      "name": "values",
+      "values": [
+        {"x": 0,  "y": 28},
+        {"x": 1,  "y": 43},
+        {"x": 2,  "y": 99},
+        {"x": 3,  "y": 56},
+        {"x": 4,  "y": 38},
+        {"x": 5,  "y": 83},
+        {"x": 6,  "y": 69},
+        {"x": 7,  "y": 24}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": [0, {"signal": "width"}],
+      "round": true,
+      "domain": {"data": "values", "field": "x"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": [0, {"signal": "height"}],
+      "domain": {"data": "values", "field": "y"},
+      "zero": true,
+      "nice": true
+    }
+  ],
+
+  "axes": [
+    {
+      "scale": "xscale",
+      "orient": "top",
+      "title": "Top Title"
+    },
+    {
+      "scale": "xscale",
+      "orient": "bottom",
+      "title": "Bottom Title"
+    },
+    {
+      "scale": "yscale",
+      "orient": "left",
+      "title": "Left Title"
+    },
+    {
+      "scale": "yscale",
+      "orient": "right",
+      "title": "Right Title"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "values"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "x"},
+          "width": {"scale": "xscale", "band": true, "offset": -1},
+          "y": {"scale": "yscale", "value": 0},
+          "height": {"scale": "yscale", "field": "y"}
+        },
+        "update": {
+          "fill": {"value": "steelblue"}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"}
+        }
+      }
+    }
+  ]
+});
+
+var view = new vega.View(runtimeSpec)
+  .renderer('svg')
+  .initialize(document.querySelector('#view'))
+  .run();
+    </script>
+  </body>
+</html>

@@ -53,19 +53,19 @@ export default function View(runtimeSpec) {
 
   // initialize dataflow graph
   var ctx = parse(runtimeSpec, context(this, transforms));
+  self.context = ctx; // DEBUG
   this._signals = ctx.signals;
   this._data = ctx.data;
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
   this.pulse(
-    this._data.__marks__.input,
+    this._data.root.input,
     changeset().insert(root.items)
   );
 
-  // initialize background, padding
+  // background color
   this._backgroundColor = null;
-  this._padding = {top:5, left:5, bottom:5, right:5};
 
   // initialize resize operator
   this.add(null,
@@ -103,14 +103,14 @@ prototype.initialize = function(el) {
 function initializeRenderer(view, r, el, constructor) {
   r = r || new constructor(view._loadConfig);
   return r
-    .initialize(el, view.width(), view.height(), view._padding)
+    .initialize(el, view.width(), view.height(), view.padding())
     .background(view._backgroundColor);
 }
 
 function initializeHandler(view, prevHandler, el, constructor) {
   var handler = new constructor()
     .scene(view.scenegraph().root)
-    .initialize(el, view._padding, view);
+    .initialize(el, view.padding(), view);
 
   if (prevHandler) {
     prevHandler.handlers().forEach(function(h) {
@@ -288,13 +288,15 @@ prototype.signal = function(name, value, options) {
 };
 
 prototype.resize = function(width, height) {
-  var w = this.signal('width'),
-      h = this.signal('height');
+  var w = this.width(),
+      h = this.height();
 
   if (w === width && h === height) {
-    this._renderer.resize(width, height, this._padding);
+    this._renderer.resize(width, height, this.padding());
   } else {
-    this.signal('width', width).signal('height', height).run();
+    this.width(width);
+    this.height(height);
+    this.run();
   }
 
   return this;
@@ -306,6 +308,10 @@ prototype.width = function(value) {
 
 prototype.height = function(value) {
   return arguments.length ? this.signal('height', value) : this.signal('height');
+};
+
+prototype.padding = function(value) {
+  return arguments.length ? this.signal('padding', value) : this.signal('padding');
 };
 
 // -- EVENT HANDLING -----
@@ -364,12 +370,13 @@ prototype.extendEvent = function(event, item) {
   event.dataflow = this;
   event.item = item;
 
-  var el = this._renderer.element(), e, p;
+  var el = this._renderer.element(), e, p, pad;
   if (el) {
+    pad = this.padding();
     e = event.changedTouches ? event.changedTouches[0] : event;
     p = point(e, el);
-    event.viewX = p[0] - this._padding.left;
-    event.viewY = p[1] - this._padding.top;
+    event.viewX = p[0] - pad.left;
+    event.viewY = p[1] - pad.top;
   }
 
   return event;

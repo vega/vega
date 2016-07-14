@@ -4,6 +4,8 @@ import {Marks} from 'vega-scenegraph';
 /**
  * Calculate bounding boxes for scenegraph items.
  * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.mark - The scenegraph mark instance to bound.
  */
 export default function Bound(params) {
   Transform.call(this, null, params);

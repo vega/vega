@@ -1,6 +1,7 @@
 export {
   Aggregate,
   Apply,
+  AxisTicks,
   Bin,
   Collect,
   Compare,
@@ -50,5 +51,6 @@ export {
 } from 'vega-dataflow';
 
 export {default as Bound} from './Bound';
+export {default as ChartLayout} from './ChartLayout';
 export {default as Mark} from './Mark';
 export {default as Render} from './Render';

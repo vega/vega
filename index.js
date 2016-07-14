@@ -1,4 +1,6 @@
-export {version} from './build/package';
+export {
+  version
+} from './build/package';
 
 export {
   Bounds,
@@ -41,11 +43,16 @@ export {
   Tuple
 } from 'vega-dataflow';
 
-import * as transforms from './src/transforms/index';
-export {transforms};
+export {
+  parse as runtime,
+  context as runtimeContext
+} from 'vega-runtime';
 
 export {
-  parse as parseRuntimeSpec
-} from 'vega-runtime';
+  parse
+} from 'vega-parser';
+
+import * as transforms from './src/transforms/index';
+export {transforms};
 
 export {default as View} from './src/View';

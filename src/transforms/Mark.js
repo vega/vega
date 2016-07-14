@@ -1,5 +1,5 @@
 import {Transform, inherits} from 'vega-dataflow';
-import {Item} from 'vega-scenegraph';
+import {Item, GroupItem} from 'vega-scenegraph';
 
 /**
  * Bind scenegraph items to a scenegraph mark instance.
@@ -29,7 +29,8 @@ prototype.transform = function(_, pulse) {
   }
 
   // initialize entering items
-  pulse.visit(pulse.ADD, function(item) { Item.call(item, mark); });
+  var Init = mark.marktype === 'group' ? GroupItem : Item;
+  pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
 
   // bind items array to scenegraph mark
   return (mark.items = pulse.source, pulse);

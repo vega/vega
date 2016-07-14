@@ -24,6 +24,7 @@ var runtimeSpec = {
     {id:'root',   value:null,   root:true},
     {id:'width',  value:width,  signal:'width'},
     {id:'height', value:height, signal:'height'},
+    {id:'padding', type:'Operator', value:{left:5,top:5,right:5,bottom:5}, signal:'padding'},
 
     {
       id:'dim',
@@ -65,7 +66,7 @@ var runtimeSpec = {
     {id:'xscale', type:'Scale', params:{domain:{$ref:'xdom'}, range:{$ref:'xrange'}}},
     {id:'yscale', type:'Scale', params:{domain:{$ref:'ydom'}, range:{$ref:'yrange'}}},
 
-    {id:'marks', type:'Collect', data: {__marks__:['input', 'output']}},
+    {id:'marks', type:'Collect', data: {root:['input', 'output']}},
     {id:'menc',  type:'Encode', params:{
       encoders: {
         $encode: {
@@ -106,7 +107,7 @@ var runtimeSpec = {
     {id:'prend',  type:'Render', params:{pulse: {$ref:'pbound'}}},
 
     {id:'mbound', type:'Bound', params:{mark:{$ref:'root'}, pulse:{$ref:'menc'}, children:[{$ref:'psieve'}]}},
-    {id:'msieve', type:'Sieve', params:{pulse: {$ref:'mbound'}}, data: {__marks__:['values']}},
+    {id:'msieve', type:'Sieve', params:{pulse: {$ref:'mbound'}}, data: {root:['values']}},
     {id:'mrend',  type:'Render', params:{pulse: {$ref:'mbound'}}},
   ],
 
