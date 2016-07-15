@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -21,17 +21,17 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g vega-dataflow:vega -n vega -o build/vega-runtime.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
-    "vega-dataflow": "~0.3.0"
+    "vega-dataflow": "2",
+    "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
     "json2module": "0.0",
     "rollup": "0.26",
-    "rollup-plugin-node-resolve": "1",
     "tape": "4",
     "uglify-js": "2"
   }

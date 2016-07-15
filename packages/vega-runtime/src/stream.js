@@ -1,5 +1,4 @@
 import {eventExpression} from './expression';
-
 import {error} from 'vega-dataflow';
 
 /**

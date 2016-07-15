@@ -1,6 +1,5 @@
 import {eventExpression, handlerExpression} from './expression';
 import parseParameters from './parameters';
-
 import {error} from 'vega-dataflow';
 
 /**
