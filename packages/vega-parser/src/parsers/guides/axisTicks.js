@@ -2,11 +2,11 @@ import {Top, Left, Bottom, Value} from './constants';
 
 export default function(spec, config, dataRef) {
   var orient = spec.orient,
-      size = +spec.tickSize || config.axisTickSize,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      zero = {value: 0},
+      size = +spec.tickSize || config.axisTickSize,
       tickSize = {value: sign * size},
       tickPos = {scale: spec.scale, field: Value, band: 0.5, offset: 0.5},
+      zero = {value: 0},
       enter, exit, update;
 
   enter = {

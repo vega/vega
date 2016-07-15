@@ -1,10 +1,7 @@
-import {
-  error, extend, set,
-  isObject, isArray, isString,
-  transform, ref, keyRef
-} from '../util';
+import {error, transform, ref, keyRef} from '../util';
+import {extend, isArray, isObject, isString, toSet} from 'vega-util';
 
-export var scaleTypes = set([
+export var scaleTypes = toSet([
   'identity', 'ordinal', 'band', 'point',
   'linear', 'log', 'pow', 'sqrt', 'sequential', 'time', 'utc',
   'quantize', 'quantile', 'threshold'

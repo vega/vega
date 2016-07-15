@@ -1,7 +1,6 @@
+import parseMarkDefinition from './markDefinition';
 import parseEncode from './encode';
 import {ref, transform} from '../util';
-
-import parseMarkDefinition from './markDefinition';
 
 // TODO: facet, pre/post-transforms, reactive geometry
 export default function parseMark(mark, scope) {

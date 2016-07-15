@@ -1,11 +1,9 @@
-import parseMark from './mark';
-import {ref, entry, transform} from '../util';
-
 import axisGroup from './guides/axisGroup';
 import axisTicks from './guides/axisTicks';
 import axisLabels from './guides/axisLabels';
 import axisTitle from './guides/axisTitle';
-
+import parseMark from './mark';
+import {ref, entry, transform} from '../util';
 import config from '../config'; // TODO customizable config
 
 export default function(spec, scope) {

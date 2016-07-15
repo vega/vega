@@ -1,12 +1,12 @@
-import {array, ref, operator, transform} from '../util';
+import {ref, operator, transform} from '../util';
 import DataScope from '../DataScope';
-
 import parsePadding from './padding';
 import parseSignal from './signal';
 import parseScale from './scale';
 import parseData from './data';
 import parseMark from './mark';
 import parseAxis from './axis';
+import {array} from 'vega-util';
 
 export default function parseView(spec, scope) {
   var op, input, root, children;

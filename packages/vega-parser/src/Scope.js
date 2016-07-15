@@ -1,10 +1,9 @@
 import DataScope from './DataScope';
 import {
-  error, array, isString, isSignal,
-  ref, fieldRef, compareRef,
-  aggrField, ASCENDING,
-  operator, transform
+  aggrField, Ascending, compareRef, error,
+  fieldRef, isSignal, operator, ref, transform
 } from './util';
+import {array, isString} from 'vega-util';
 
 export default function Scope() {
   this.nextId = 0;
@@ -111,7 +110,7 @@ prototype.sortRef = function(sort) {
   if (!sort) return sort;
 
   var a = aggrField(sort.op, sort.field),
-      o = sort.order || ASCENDING;
+      o = sort.order || Ascending;
 
   return o.signal
     ? ref(this.add(transform('Compare', {

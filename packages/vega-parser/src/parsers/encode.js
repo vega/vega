@@ -1,4 +1,4 @@
-import {isString, stringValue} from '../util';
+import {isString, stringValue} from 'vega-util';
 
 export default function parseEncode(encode, params, scope) {
   var fields = {},

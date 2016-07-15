@@ -1,4 +1,4 @@
-import {isObject, isNumber} from '../util';
+import {isObject, isNumber} from 'vega-util';
 
 export default function(spec) {
   return isObject(spec) ? spec
