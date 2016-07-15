@@ -1,6 +1,6 @@
 import {eventExpression, handlerExpression} from './expression';
 import parseParameters from './parameters';
-import {error} from 'vega-dataflow';
+import {error} from 'vega-util';
 
 /**
  * Parse an event-driven operator update.

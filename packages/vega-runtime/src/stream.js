@@ -1,5 +1,5 @@
 import {eventExpression} from './expression';
-import {error} from 'vega-dataflow';
+import {error} from 'vega-util';
 
 /**
  * Parse an event stream specification.
