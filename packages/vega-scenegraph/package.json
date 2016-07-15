@@ -26,9 +26,9 @@
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
-    "d3-path": "1.0.0",
-    "d3-shape": "1.0.0",
-    "vega-loader": "^0.1.0"
+    "d3-path": "1",
+    "d3-shape": "1",
+    "vega-loader": "1"
   },
   "optionalDependencies": {
     "canvas": "^1.4.0"
