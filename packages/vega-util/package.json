@@ -1,0 +1,32 @@
+{
+  "name": "vega-util",
+  "version": "1.0.0",
+  "description": "JavaScript utilities for Vega.",
+  "keywords": [
+    "vega",
+    "utilities"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-util.js",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/vega-util.git"
+  },
+  "scripts": {
+    "build": "npm run test && uglifyjs build/vega-util.js -c -m -o build/vega-util.min.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-util.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+  },
+  "devDependencies": {
+    "eslint": "2",
+    "json2module": "0.0",
+    "rollup": "0.26",
+    "tape": "4",
+    "uglify-js": "2"
+  }
+}
