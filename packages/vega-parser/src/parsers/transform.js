@@ -1,10 +1,6 @@
-import {
-  isArray, isString, isSignal,
-  ref, fieldRef, compareRef, transform,
-  error, extend
-} from '../util';
-
+import {compareRef, error, fieldRef, isSignal, ref, transform} from '../util';
 import {transformDef} from '../transforms';
+import {extend, isArray, isString} from 'vega-util';
 
 /**
  * Parse a data transform specification.

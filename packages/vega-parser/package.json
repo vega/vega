@@ -21,14 +21,16 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-parser.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g vega-util:vega -n vega -o build/vega-parser.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+  },
+  "dependencies": {
+    "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
     "json2module": "0.0",
     "rollup": "0.26",
-    "rollup-plugin-node-resolve": "1",
     "tape": "4",
     "uglify-js": "2"
   }
