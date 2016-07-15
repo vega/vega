@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    integer = require('../').integer;
+    integer = require('../').randomInteger;
 
 tape('integer generates random values', function(test) {
   var s = integer(10).sample();

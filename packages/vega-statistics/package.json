@@ -1,14 +1,12 @@
 {
   "name": "vega-statistics",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
     "vega",
     "statistics",
     "probability",
-    "distrubtion",
-    "correlation",
-    "regression"
+    "distribution"
   ],
   "license": "BSD-3-Clause",
   "author": {
@@ -19,18 +17,20 @@
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-dataflow.git"
+    "url": "https://github.com/uwdata/vega-statistics.git"
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-statistics.js -c -m -o build/vega-statistics.min.js",
     "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-statistics.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
+  "dependencies": {
+    "d3-array": "1"
+  },
   "devDependencies": {
     "eslint": "2",
     "json2module": "0.0",
     "rollup": "0.26",
-    "rollup-plugin-node-resolve": "1",
     "tape": "4",
     "uglify-js": "2"
   }

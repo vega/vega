@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    normal = require('../').normal;
+    normal = require('../').randomNormal;
 
 function closeTo(test, a, b, delta) {
   test.equal(Math.abs(a-b) < delta, true);
