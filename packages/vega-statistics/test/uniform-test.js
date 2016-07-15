@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    uniform = require('../').uniform;
+    uniform = require('../').randomUniform;
 
 tape('uniform generates random values', function(test) {
   var s = uniform().sample();
