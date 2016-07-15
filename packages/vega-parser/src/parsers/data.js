@@ -1,5 +1,6 @@
 import parseTransform from './transform';
-import {entry, transform, error} from '../util';
+import {entry, transform} from '../util';
+import {error} from 'vega-util';
 
 export default function parseData(data, scope) {
   var transforms = [];
