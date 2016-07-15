@@ -1,7 +1,6 @@
 import parseDataflow from './dataflow';
 import {parameterExpression, encodeExpression} from './expression';
-import {accessor, compare, field, isObject} from 'vega-util';
-import {error} from 'vega-dataflow';
+import {accessor, compare, error, field, isObject} from 'vega-util';
 
 /**
  * Parse a set of operator parameters.
