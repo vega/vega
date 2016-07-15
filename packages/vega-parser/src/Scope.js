@@ -1,9 +1,9 @@
 import DataScope from './DataScope';
 import {
-  aggrField, Ascending, compareRef, error,
+  aggrField, Ascending, compareRef,
   fieldRef, isSignal, operator, ref, transform
 } from './util';
-import {array, isString} from 'vega-util';
+import {array, error, isString} from 'vega-util';
 
 export default function Scope() {
   this.nextId = 0;

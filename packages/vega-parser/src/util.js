@@ -58,9 +58,3 @@ export function aggrField(op, field) {
 export function isSignal(_) {
   return _ && _.signal;
 }
-
-// -----
-
-export function error(message) {
-  throw Error(message);
-}

@@ -1,5 +1,5 @@
-import {error, transform, ref, keyRef} from '../util';
-import {extend, isArray, isObject, isString, toSet} from 'vega-util';
+import {transform, ref, keyRef} from '../util';
+import {error, extend, isArray, isObject, isString, toSet} from 'vega-util';
 
 export var scaleTypes = toSet([
   'identity', 'ordinal', 'band', 'point',
