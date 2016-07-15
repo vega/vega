@@ -1,4 +1,5 @@
-import {Transform, inherits} from 'vega-dataflow';
+import {Transform} from 'vega-dataflow';
+import {inherits} from 'vega-util';
 
 /**
  * Queue modified scenegraph items for rendering.

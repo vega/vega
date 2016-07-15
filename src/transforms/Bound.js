@@ -1,5 +1,6 @@
-import {Transform, inherits} from 'vega-dataflow';
+import {Transform} from 'vega-dataflow';
 import {Marks} from 'vega-scenegraph';
+import {inherits} from 'vega-util';
 
 /**
  * Calculate bounding boxes for scenegraph items.

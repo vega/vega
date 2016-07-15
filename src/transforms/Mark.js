@@ -1,5 +1,6 @@
-import {Transform, inherits} from 'vega-dataflow';
+import {Transform} from 'vega-dataflow';
 import {Item, GroupItem} from 'vega-scenegraph';
+import {inherits} from 'vega-util';
 
 /**
  * Bind scenegraph items to a scenegraph mark instance.

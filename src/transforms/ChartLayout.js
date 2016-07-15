@@ -1,5 +1,6 @@
-import {Transform, inherits} from 'vega-dataflow';
+import {Transform} from 'vega-dataflow';
 import {Bounds} from 'vega-scenegraph';
+import {inherits} from 'vega-util';
 
 // var GRIDS = 0,
 var TICKS = 0,

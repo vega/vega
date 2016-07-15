@@ -3,8 +3,7 @@ import * as transforms from './transforms/index';
 import {
   Dataflow,
   EventStream,
-  changeset,
-  inherits
+  changeset
 } from 'vega-dataflow';
 
 import {
@@ -21,6 +20,10 @@ import {
   Scenegraph,
   point
 } from 'vega-scenegraph';
+
+import {
+  inherits
+} from 'vega-util';
 
 // constants
 var CANVAS = 'canvas',

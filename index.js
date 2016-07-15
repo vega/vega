@@ -2,6 +2,10 @@ export {
   version
 } from './build/package';
 
+export * from 'vega-util';
+
+export * from 'vega-statistics';
+
 export {
   Bounds,
   Gradient,
@@ -16,20 +20,6 @@ export {
   SVGRenderer,
   SVGStringRenderer
 } from 'vega-scenegraph';
-
-export {
-  accessor,
-  compare,
-  error,
-  field,
-  fname,
-  inherits,
-  normal,
-  logLevel,
-  warn,
-  info,
-  debug
-} from 'vega-dataflow';
 
 export {
   changeset,

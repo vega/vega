@@ -11,9 +11,9 @@
     <div id="view"></div>
     <script>
 var values = [],
-    sample = vega.normal(0.5, 0.2);
+    normal = vega.randomNormal(0.5, 0.2);
 for (var i=0; i<500; ++i) {
-  values.push({u: sample(), v: sample()});
+  values.push({u: normal.sample(), v: normal.sample()});
 }
 
 var width = window.innerWidth,
@@ -59,12 +59,16 @@ var runtimeSpec = {
     {id:'delta',  value:[0,0], signal:'delta'},
     {id:'xcur',   value:null,  signal:'xcur'},
     {id:'ycur',   value:null,  signal:'ycur'},
-    {id:'size',   value:10,    signal:'size'},
 
     {id:'xdom',   update:'_.x', params:{x:{$ref:'xext'}}, react:false, signal:'xdom'},
     {id:'ydom',   update:'_.y', params:{y:{$ref:'yext'}}, react:false, signal:'ydom'},
     {id:'xscale', type:'Scale', params:{domain:{$ref:'xdom'}, range:{$ref:'xrange'}}},
     {id:'yscale', type:'Scale', params:{domain:{$ref:'ydom'}, range:{$ref:'yrange'}}},
+    {
+      id:'size',
+      update: 'Math.min(1000, Math.max(1, 20 / (_.x[1] - _.x[0])))',
+      params: {x:{$ref:'xdom'}}
+    },
 
     {id:'marks', type:'Collect', data: {root:['input', 'output']}},
     {id:'menc',  type:'Encode', params:{
@@ -249,15 +253,6 @@ var runtimeSpec = {
       update: {
         $expr: '[_.y[0] + (_.y[1]-_.y[0]) * _.d[1] / _.h, _.y[1] + (_.y[1]-_.y[0]) * _.d[1] / _.h]',
         $params: {y:{$ref:'ycur'}, d:{$ref:'delta'}, h:{$ref:'dim'}}
-      }
-    },
-
-    // MODIFY POINT SIZE
-    {
-      source: 'xdom', target: 'size',
-      update: {
-        $expr: 'Math.min(1000, Math.max(1, 20 / (_.x[1] - _.x[0])))',
-        $params: {x:{$ref:'xdom'}}
       }
     },
 

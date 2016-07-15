@@ -42,11 +42,13 @@
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
-    "vega-dataflow": "2.0.0",
-    "vega-expression": "2.0.0",
-    "vega-parser": "1.0.0",
-    "vega-runtime": "1.0.0",
-    "vega-scenegraph": "2.0.0"
+    "vega-dataflow": "2",
+    "vega-expression": "2",
+    "vega-parser": "1",
+    "vega-runtime": "1",
+    "vega-scenegraph": "2",
+    "vega-statistics": "1",
+    "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
