@@ -22,6 +22,7 @@ export {default as field} from './src/field';
 export {default as inherits} from './src/inherits';
 export {default as isArray} from './src/isArray';
 export {default as isFunction} from './src/isFunction';
+export {default as isNumber} from './src/isNumber';
 export {default as isObject} from './src/isObject';
 export {default as isString} from './src/isString';
 export {default as merge} from './src/merge';
