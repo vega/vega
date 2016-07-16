@@ -5,7 +5,7 @@ var rollup = require('rollup'),
 
 rollup.rollup({
   entry: 'index.js',
-  plugins: [nodeResolve({jsnext: true})]
+  plugins: [resolveCache(nodeResolve({jsnext: true}))]
 }).then(function(bundle) {
   return bundle.write({
     format: 'umd',
@@ -18,4 +18,20 @@ rollup.rollup({
 
 function abort(error) {
   console.error(error.stack);
+}
+
+/**
+ * Rollup plugin that caches node_modules resolutions. This ensures that only
+ * one version of each module is included in the output bundle, BUT assumes
+ * that all shared dependencies are of the same version.
+ */
+function resolveCache(_) {
+  var cache = {};
+  return {
+    resolveId: function(importee, importer) {
+      return (importee && importee[0] !== '.')
+        ? cache[importee] || (cache[importee] = _.resolveId(importee, importer))
+        : _.resolveId(importee, importer);
+    }
+  };
 }
