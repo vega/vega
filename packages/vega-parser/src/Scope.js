@@ -8,9 +8,13 @@ import {array, error, isString} from 'vega-util';
 export default function Scope() {
   this.nextId = 0;
   this.field = {};
-  this.signal = {};
-  this.scale = {};
+  this.signals = {};
+  this.scales = {};
+  this.events = {};
   this.data = {};
+
+  this.streams = [];
+  this.updates = [];
   this.operators = [];
   this.scenepath = [-1];
 }
@@ -25,6 +29,10 @@ prototype.add = function(op) {
   return this.operators.push(op), op.id = this.id(), op;
 };
 
+prototype.addStream = function(stream) {
+  return this.streams.push(stream), stream.id = this.id(), stream;
+};
+
 // Apply metadata
 prototype.finish = function() {
   var name, ds;
@@ -33,8 +41,8 @@ prototype.finish = function() {
   if (this.root) this.root.root = true;
 
   // annotate signals
-  for (name in this.signal) {
-    this.signal[name].signal = name;
+  for (name in this.signals) {
+    this.signals[name].signal = name;
   }
 
   // annotate data sets
@@ -81,7 +89,7 @@ prototype.fieldRef = function(field, name) {
 
   var s = field.signal, f = this.field[s], params;
   if (!f) {
-    params = {name: ref(this.signal[s])};
+    params = {name: ref(this.signals[s])};
     if (name) params.as = name;
     this.field[s] = f = ref(this.add(transform('Field', params)));
   }
@@ -122,18 +130,38 @@ prototype.sortRef = function(sort) {
 
 // ----
 
+prototype.event = function(source, type) {
+  var key = source + ':' + type;
+  if (!this.events.hasOwnProperty(key)) {
+    var id = this.id();
+    this.streams.push({
+      id: id,
+      source: source,
+      type: type
+    });
+    this.events[key] = id;
+  }
+  return this.events[key];
+};
+
+// ----
+
 prototype.addSignal = function(name, value) {
-  if (this.signal.hasOwnProperty(name)) {
+  if (this.signals.hasOwnProperty(name)) {
     error('Duplicate signal name: ' + name);
   }
-  this.signal[name] = this.add(operator(value));
+  this.signals[name] = this.add(operator(value));
+};
+
+prototype.getSignal = function(name) {
+  if (!this.signals.hasOwnProperty(name)) {
+    error('Unrecognized signal name: ' + name);
+  }
+  return this.signals[name];
 };
 
 prototype.signalRef = function(name) {
-  if (!this.signal.hasOwnProperty(name)) {
-    error('Unrecognized signal name: ' + name);
-  }
-  return ref(this.signal[name]);
+  return ref(this.getSignal(name));
 };
 
 prototype.property = function(spec) {
@@ -143,15 +171,15 @@ prototype.property = function(spec) {
 // ----
 
 prototype.addScale = function(name, params) {
-  if (this.scale.hasOwnProperty(name)) {
+  if (this.scales.hasOwnProperty(name)) {
     error('Duplicate scale name: ' + name);
   }
 
-  this.scale[name] = this.add(transform('Scale', params));
+  this.scales[name] = this.add(transform('Scale', params));
 };
 
 prototype.scaleRef = function(name) {
-  return ref(this.scale[name]);
+  return ref(this.scales[name]);
 };
 
 // ----
