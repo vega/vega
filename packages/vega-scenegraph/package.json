@@ -37,7 +37,7 @@
     "eslint": "2",
     "jsdom": "^3.0.0",
     "json2module": "0.0",
-    "rollup": "0.26",
+    "rollup": "0.34",
     "tape": "4",
     "tv4": "1",
     "uglify-js": "2"
