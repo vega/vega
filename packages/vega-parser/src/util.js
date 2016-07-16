@@ -21,6 +21,12 @@ export function transform(type, params) {
 
 // -----
 
+// stream entries
+
+// update entries
+
+// -----
+
 export function ref(op) {
   return {$ref: op.id};
 }
