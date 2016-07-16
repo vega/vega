@@ -14,12 +14,12 @@ export {
 } from './src/accessors';
 
 export {
-  default as log,
+  default as logger,
   None,
   Warn,
   Info,
   Debug
-} from './src/log';
+} from './src/logger';
 
 export {default as array} from './src/array';
 export {default as compare} from './src/compare';
