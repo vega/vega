@@ -26,12 +26,12 @@ export default function parseStream(spec, ctx) {
     stream = stream.filter(filter);
   }
 
-  if (spec.debounce != null) {
-    stream = stream.debounce(+spec.debounce);
-  }
-
   if (spec.throttle != null) {
     stream = stream.throttle(+spec.throttle);
+  }
+
+  if (spec.debounce != null) {
+    stream = stream.debounce(+spec.debounce);
   }
 
   if (stream == null) {
