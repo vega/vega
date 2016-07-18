@@ -1,4 +1,3 @@
-import parseMarkDefinition from './markDefinition';
 import parseEncode from './encode';
 import {ref, transform} from '../util';
 
@@ -21,9 +20,9 @@ export default function parseMark(mark, scope) {
 
   // connect visual items to scenegraph
   markRef = ref(op = scope.add(transform('Mark', {
-    markdef: parseMarkDefinition(mark),
+    markdef:   markDefinition(mark),
     scenepath: scope.scenepathNext(),
-    pulse: ref(op)
+    pulse:     ref(op)
   })));
 
   // add visual encoders (if defined)
@@ -31,7 +30,7 @@ export default function parseMark(mark, scope) {
     enc = {};
     params = {encoders: {$encode: enc}};
     for (key in mark.encode) {
-      enc[key] = parseEncode(mark.encode[key], params, scope);
+      enc[key] = parseEncode(mark.encode[key], mark.type, params, scope);
     }
     params.pulse = markRef;
     op = scope.add(transform('Encode', params));
@@ -60,4 +59,13 @@ export default function parseMark(mark, scope) {
 
   // propagate value changes
   return ref(scope.add(transform('Sieve', {pulse: boundRef})));
+}
+
+function markDefinition(spec) {
+  return {
+    clip:        spec.clip || false,
+    interactive: spec.interactive === false ? false : true,
+    marktype:    spec.type,
+    role:        spec.role || undefined
+  };
 }
