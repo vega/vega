@@ -61,13 +61,13 @@ tape('Parser parses signals with event-driven updates', function(test) {
     ]
   }, scope);
 
-  // signal update value
+  // signal update value, selector string
   vega.signal({
     name: 'd',
     value: 4,
     on: [
       {
-        events: {source: 'window', type: 'mouseover'},
+        events: 'window:mouseover',
         update: {signal: 'c'}
       }
     ]
