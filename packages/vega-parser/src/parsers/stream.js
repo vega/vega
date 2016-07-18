@@ -11,6 +11,7 @@ export default function(stream, scope) {
 
 function parseStream(stream, scope) {
   var method = stream.merge ? mergeStream
+    : stream.stream ? nestedStream
     : stream.type ? eventStream
     : error('Invalid stream specification: ' + JSON.stringify(stream));
 
@@ -23,6 +24,12 @@ function mergeStream(stream, scope) {
   });
 
   var entry = streamParameters({merge: list}, stream, scope);
+  return scope.addStream(entry).id;
+}
+
+function nestedStream(stream, scope) {
+  var id = parseStream(stream.stream, scope),
+      entry = streamParameters({stream: id}, stream, scope);
   return scope.addStream(entry).id;
 }
 

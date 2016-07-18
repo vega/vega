@@ -1,13 +1,14 @@
 import parseExpression from './expression';
+import parseSelector from './event-selector';
 import parseStream from './stream';
-import {array, error, extend} from 'vega-util';
+import {array, error, extend, isString} from 'vega-util';
 
 export default function(signal, scope) {
   var op = scope.addSignal(signal.name, signal.value);
   if (signal.react === false) op.react = false;
 
   if (signal.update) {
-    // in runtime, change update to {$expr, $params}?
+    // TODO: in runtime, change update to {$expr, $params}?
     var expr = parseExpression(signal.update, scope);
     op.update = expr.$expr;
     if (expr.$params) op.params = expr.$params;
@@ -27,6 +28,11 @@ function parseUpdate(spec, scope, target) {
       value, entry;
 
   if (!events) error('Signal update missing events specification.');
+
+  // interpret as an event selector string
+  if (isString(events)) {
+    events = parseSelector(events);
+  }
 
   // separate event streams from signal updates
   events = array(events).filter(function(stream) {

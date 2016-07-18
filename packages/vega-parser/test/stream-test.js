@@ -3,7 +3,7 @@ var tape = require('tape'),
 
 tape('Parser parses stream definitions', function(test) {
   var scope = new vega.Scope(),
-      dom, view, between, merge, signal, stream;
+      dom, view, between, merge, signal, nested;
 
   scope.addSignal('drag', true);
 
@@ -44,88 +44,93 @@ tape('Parser parses stream definitions', function(test) {
     signal: 'drag'
   }, scope);
 
+  nested = vega.stream({
+    stream: {
+      source:   'window',
+      type:     'mousemove',
+      between:  [
+        {source: 'view', type: 'mousedown'},
+        {source: 'view', type: 'mouseup'}
+      ]
+    },
+    between:  [
+      {source: 'view', type: 'touchstart'},
+      {source: 'view', type: 'touchend'}
+    ]
+  }, scope);
 
-  test.equal(scope.streams.length, 7);
+  test.equal(scope.streams.length, 11);
 
   test.equal(signal, 0);
 
-  stream = scope.streams[0];
-  test.equal(stream.id, 1);
-  test.equal(stream.source, 'window');
-  test.equal(stream.type, 'mousemove');
-  test.equal(stream.stream, undefined);
-  test.equal(stream.merge, undefined);
-  test.equal(stream.between, undefined);
-  test.equal(stream.filter, undefined);
-  test.equal(stream.throttle, undefined);
-  test.equal(stream.debounce, undefined);
+  test.deepEqual(scope.streams[0], {
+    id: 1,
+    source: 'window',
+    type: 'mousemove'
+  });
 
-  stream = scope.streams[1];
-  test.equal(stream.id, dom);
-  test.equal(stream.source, undefined);
-  test.equal(stream.type, undefined);
-  test.equal(stream.stream, 1);
-  test.equal(stream.merge, undefined);
-  test.equal(stream.between, undefined);
-  test.equal(stream.filter, '(event.metaKey)');
-  test.equal(stream.throttle, 1);
-  test.equal(stream.debounce, 2);
+  test.deepEqual(scope.streams[1], {
+    id: dom,
+    stream: 1,
+    filter: '(event.metaKey)',
+    throttle: 1,
+    debounce: 2
+  });
 
-  stream = scope.streams[2];
-  test.equal(stream.id, 3);
-  test.equal(stream.source, 'view');
-  test.equal(stream.type, 'mousedown');
-  test.equal(stream.stream, undefined);
-  test.equal(stream.merge, undefined);
-  test.equal(stream.between, undefined);
-  test.equal(stream.filter, undefined);
-  test.equal(stream.throttle, undefined);
-  test.equal(stream.debounce, undefined);
+  test.deepEqual(scope.streams[2], {
+    id: 3,
+    source: 'view',
+    type: 'mousedown'
+  });
 
-    // TODO mark, name
-  stream = scope.streams[3];
-  test.equal(stream.id, view);
-  test.equal(stream.source, undefined);
-  test.equal(stream.type, undefined);
-  test.equal(stream.stream, 3);
-  test.equal(stream.merge, undefined);
-  test.equal(stream.between, undefined);
-  test.equal(stream.filter, "(event.shiftKey)&&(event.item&&event.item.mark.marktype==='rect'&&event.item.mark.name==='foo')");
-  test.equal(stream.throttle, 3);
-  test.equal(stream.debounce, 4);
+  test.deepEqual(scope.streams[3], {
+    id: view,
+    stream: 3,
+    filter: "(event.shiftKey)&&(event.item&&event.item.mark.marktype==='rect'&&event.item.mark.name==='foo')",
+    throttle: 3,
+    debounce: 4
+  });
 
-  stream = scope.streams[4];
-  test.equal(stream.id, 5);
-  test.equal(stream.source, 'view');
-  test.equal(stream.type, 'mouseup');
-  test.equal(stream.stream, undefined);
-  test.equal(stream.merge, undefined);
-  test.equal(stream.between, undefined);
-  test.equal(stream.filter, undefined);
-  test.equal(stream.throttle, undefined);
-  test.equal(stream.debounce, undefined);
+  test.deepEqual(scope.streams[4], {
+    id: 5,
+    source: 'view',
+    type: 'mouseup'
+  });
 
-  stream = scope.streams[5];
-  test.equal(stream.id, between);
-  test.equal(stream.source, undefined);
-  test.equal(stream.type, undefined);
-  test.equal(stream.stream, 1);
-  test.equal(stream.merge, undefined);
-  test.deepEqual(stream.between, [3,5]);
-  test.equal(stream.filter, undefined);
-  test.equal(stream.throttle, undefined);
-  test.equal(stream.debounce, undefined);
+  test.deepEqual(scope.streams[5], {
+    id: between,
+    stream: 1,
+    between: [3, 5]
+  });
 
-  stream = scope.streams[6];
-  test.equal(stream.id, merge);
-  test.equal(stream.source, undefined);
-  test.equal(stream.type, undefined);
-  test.equal(stream.stream, undefined);
-  test.deepEqual(stream.merge, [3,5]);
-  test.equal(stream.between, undefined);
-  test.equal(stream.filter, undefined);
-  test.equal(stream.throttle, undefined);
-  test.equal(stream.debounce, undefined);
+  test.deepEqual(scope.streams[6], {
+    id: merge,
+    merge: [3, 5]
+  });
+
+  test.deepEqual(scope.streams[7], {
+    id: 8,
+    stream: 1,
+    between: [3, 5]
+  });
+
+  test.deepEqual(scope.streams[8], {
+    id: 9,
+    source: 'view',
+    type: 'touchstart'
+  });
+
+  test.deepEqual(scope.streams[9], {
+    id: 10,
+    source: 'view',
+    type: 'touchend'
+  });
+
+  test.deepEqual(scope.streams[10], {
+    id: nested,
+    stream: 8,
+    between: [9, 10]
+  });
 
   test.end();
 });
