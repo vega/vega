@@ -11,7 +11,7 @@ export default function(stream, scope) {
 function parseStream(stream, scope) {
   var method = stream.merge ? mergeStream
     : stream.type ? eventStream
-    : error('Invalid stream specification: ' + stream);
+    : error('Invalid stream specification: ' + JSON.stringify(stream));
 
   return method(stream, scope);
 }

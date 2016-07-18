@@ -33,6 +33,10 @@ prototype.addStream = function(stream) {
   return this.streams.push(stream), stream.id = this.id(), stream;
 };
 
+prototype.addUpdate = function(update) {
+  return this.updates.push(update), update;
+};
+
 // Apply metadata
 prototype.finish = function() {
   var name, ds;
@@ -150,7 +154,7 @@ prototype.addSignal = function(name, value) {
   if (this.signals.hasOwnProperty(name)) {
     error('Duplicate signal name: ' + name);
   }
-  this.signals[name] = this.add(operator(value));
+  return this.signals[name] = this.add(operator(value));
 };
 
 prototype.getSignal = function(name) {
