@@ -17,8 +17,8 @@ tape('Parser parses stream definitions', function(test) {
 
   view = vega.stream({
     type:     'mousedown',
-    mark:     'rect',
-    name:     'foo',
+    marktype: 'rect',
+    markname: 'foo',
     filter:   'event.shiftKey',
     throttle: 3,
     debounce: 4

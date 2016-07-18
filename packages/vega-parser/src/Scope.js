@@ -21,6 +21,14 @@ export default function Scope() {
 
 var prototype = Scope.prototype;
 
+prototype.toRuntime = function() {
+  return this.finish(), {
+    operators: this.operators,
+    streams:   this.streams,
+    updates:   this.updates
+  };
+};
+
 prototype.id = function() {
   return this.nextId++;
 };

@@ -1,3 +1,4 @@
+import parseExpression from './expression';
 import {array, error} from 'vega-util';
 
 var View = 'view';
@@ -45,14 +46,13 @@ function streamParameters(entry, stream, scope) {
     ];
   }
 
-  mark = stream.mark || stream.name;
+  mark = stream.marktype || stream.markname;
   if (stream.filter || mark) {
     param = stream.filter ? array(stream.filter) : [];
     if (mark) {
-      param.push(filterMark(stream.mark, stream.name));
+      param.push(filterMark(stream.marktype, stream.markname));
     }
-    entry.filter = '(' + param.join(')&&(') + ')';
-    // TODO: run through expression parser...
+    entry.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
   }
 
   if ((param = stream.throttle) != null) {
