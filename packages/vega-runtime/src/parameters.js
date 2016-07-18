@@ -77,13 +77,13 @@ function getField(_, ctx) {
 /**
  * Resolve an encode operator reference.
  */
-function getEncode(_) {
+function getEncode(_, ctx) {
   var spec = _.$encode,
       encode = {}, name, enc;
 
   for (name in spec) {
     enc = spec[name];
-    encode[name] = accessor(encodeExpression(enc.$expr), enc.$fields);
+    encode[name] = accessor(encodeExpression(enc.$expr, ctx.encode), enc.$fields);
   }
   return encode;
 }
