@@ -42,6 +42,7 @@
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
+    "d3-color": "1",
     "vega-dataflow": "2",
     "vega-expression": "2",
     "vega-parser": "1",

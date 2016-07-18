@@ -1,15 +1,10 @@
-import * as transforms from './transforms/index';
+import runtime from './runtime';
 
 import {
   Dataflow,
   EventStream,
   changeset
 } from 'vega-dataflow';
-
-import {
-  parse,
-  context
-} from 'vega-runtime';
 
 import {
   CanvasRenderer,
@@ -38,9 +33,9 @@ var CANVAS = 'canvas',
  * method to evaluate the dataflow graph. Rendering will automatically
  * be peformed upon dataflow runs.
  * @constructor
- * @param {object} runtimeSpec - The Vega dataflow runtime specification.
+ * @param {object} spec - The Vega dataflow runtime specification.
  */
-export default function View(runtimeSpec) {
+export default function View(spec) {
   Dataflow.call(this);
 
   this._el = null;
@@ -55,8 +50,7 @@ export default function View(runtimeSpec) {
   this._eventListeners = [];
 
   // initialize dataflow graph
-  var ctx = parse(runtimeSpec, context(this, transforms));
-  self.context = ctx; // DEBUG
+  var ctx = runtime(this, spec);
   this._signals = ctx.signals;
   this._data = ctx.data;
 
