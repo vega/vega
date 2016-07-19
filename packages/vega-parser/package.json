@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g vega-util:vega -n vega -o build/vega-parser.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g vega-util:vega,vega-expression:vega -n vega -o build/vega-parser.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {

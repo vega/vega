@@ -66,6 +66,7 @@ function markDefinition(spec) {
     clip:        spec.clip || false,
     interactive: spec.interactive === false ? false : true,
     marktype:    spec.type,
+    name:        spec.name || undefined,
     role:        spec.role || undefined
   };
 }
