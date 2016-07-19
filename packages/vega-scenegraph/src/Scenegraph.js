@@ -40,6 +40,7 @@ function createMark(def) {
     interactive: def.interactive === false ? false : true,
     items:       [],
     marktype:    def.marktype,
-    role:        def.role || null
+    name:        def.name || undefined,
+    role:        def.role || undefined
   };
 }
