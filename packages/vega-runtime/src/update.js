@@ -25,7 +25,7 @@ export default function parseUpdate(spec, ctx) {
     if (update.$params) {
       params = parseParameters(update.$params, ctx);
     }
-    update = handlerExpression(update.$expr);
+    update = handlerExpression(update.$expr, ctx);
   }
 
   ctx.update(spec, source, target, update, params);
