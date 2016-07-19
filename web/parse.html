@@ -17,6 +17,23 @@ var runtimeSpec = vega.parse({
   "height": 100,
   "padding": 100,
 
+  "signals": [
+    {
+      "name": "active",
+      "value": null,
+      "on": [
+        {
+          "events": {"marktype": "rect", "type": "mouseover"},
+          "update": {"expr": "event.item.datum"}
+        },
+        {
+          "events": {"marktype": "rect", "type": "mouseout"},
+          "update": {"expr": "null"}
+        }
+      ]
+    }
+  ],
+
   "data": [
     {
       "name": "values",
@@ -86,15 +103,23 @@ var runtimeSpec = vega.parse({
           "height": {"scale": "yscale", "field": "y"}
         },
         "update": {
-          "fill": {"value": "steelblue"}
-        },
-        "hover": {
-          "fill": {"value": "firebrick"}
+          "fill": {"value": "steelblue"},
+          "stroke": {"color": {
+            "l": {"value": 50},
+            "a": {"value": 100},
+            "b": {"value": -20}
+          }},
+          "strokeWidth": [
+            {"test": "datum===active", "value": 5},
+            {"value": 0}
+          ]
         }
       }
     }
   ]
 });
+
+console.log(runtimeSpec);
 
 var view = new vega.View(runtimeSpec)
   .renderer('svg')
