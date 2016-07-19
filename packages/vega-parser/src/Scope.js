@@ -58,8 +58,8 @@ prototype.finish = function() {
   }
 
   // annotate data sets
-  function annotate(ds, name, type) {
-    var op = ds[type], data, list;
+  function annotate(op, name, type) {
+    var data, list;
     if (op) {
       data = op.data || (op.data = {});
       list = data[name] || (data[name] = []);
@@ -68,9 +68,12 @@ prototype.finish = function() {
   }
   for (name in this.data) {
     ds = this.data[name];
-    annotate(ds, name, 'input');
-    annotate(ds, name, 'output');
-    annotate(ds, name, 'values');
+    annotate(ds.input,  name, 'input');
+    annotate(ds.output, name, 'output');
+    annotate(ds.values, name, 'values');
+    for (var field in ds.index) {
+      annotate(ds.index[field], name, 'index:' + field);
+    }
   }
 
   return this;

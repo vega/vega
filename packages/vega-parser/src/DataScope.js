@@ -5,6 +5,7 @@ export default function DataScope(scope, input, output, values) {
   this.input = input;
   this.output = output;
   this.values = values;
+  this.index = {};
 }
 
 DataScope.fromEntries = function(scope, entries) {
@@ -59,18 +60,20 @@ function addSortField(scope, p, sort) {
   p.as.push(as);
 }
 
-function cache(ds, name, optype, field, counts) {
+function cache(ds, name, optype, field, counts, index) {
   var cache = ds[name] || (ds[name] = {}),
       sort = sortKey(counts),
       k = field + '$' + sort,
-      v = cache[k];
+      v = cache[k], op;
 
   if (!v) {
     var params = counts
       ? {field: keyRef, pulse: ds.countsRef(field, counts)}
       : {field: ds.scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = ds.scope.sortRef(counts);
-    cache[k] = v = ref(ds.scope.add(transform(optype, params)));
+    op = ds.scope.add(transform(optype, params));
+    if (index) ds.index[field] = op;
+    cache[k] = v = ref(op);
   }
   return v;
 }
@@ -88,5 +91,5 @@ prototype.valuesRef = function(field, sort) {
 };
 
 prototype.indataRef = function(field) {
-  return cache(this, 'indata', 'TupleIndex', field, true);
+  return cache(this, 'indata', 'TupleIndex', field, true, true);
 };
