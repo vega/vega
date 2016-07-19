@@ -1,5 +1,6 @@
 import {ref, operator, transform} from '../util';
 import DataScope from '../DataScope';
+import parseProjection from './projection';
 import parsePadding from './padding';
 import parseSignal from './signal';
 import parseScale from './scale';
@@ -76,6 +77,10 @@ function parseSpec(spec, scope) {
 
   array(spec.scales).forEach(function(_) {
     parseScale(_, scope);
+  });
+
+  array(spec.projections).forEach(function(_) {
+    parseProjection(_, scope);
   });
 
   array(spec.axes).forEach(function(_) {
