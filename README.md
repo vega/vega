@@ -9,13 +9,16 @@ New Vega modules are under active development and have not yet been published to
 First, clone the following repositories under the uwdata organization:
 
 * https://github.com/uwdata/vega-dataflow
+* https://github.com/uwdata/vega-statistics
 * https://github.com/uwdata/vega-loader
+* https://github.com/uwdata/vega-util
 * https://github.com/uwdata/vega-scenegraph
 * https://github.com/uwdata/vega-runtime
+* https://github.com/uwdata/vega-expression
 * https://github.com/uwdata/vega-parser
 * https://github.com/uwdata/vega
 
-Next, link all the vega module repos using `npm link`. For example, to link _vega-dataflow_ for use by other repos, do the following:
+Next, use `npm link` to connect each repo with its 'vega-' dependencies. For example, to link _vega-dataflow_ for use by other repos, do the following:
 
 ```
 cd vega-dataflow
