@@ -25,6 +25,7 @@
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
+    "vega-expression": "2",
     "vega-util": "1"
   },
   "devDependencies": {

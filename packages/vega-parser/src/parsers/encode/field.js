@@ -1,6 +1,6 @@
 import {isString} from 'vega-util';
 
-export default function field(name, fields) {
+export default function(name, fields) {
   if (!isString(name)) {
     fields[name.parent] = 1;
     return 'item.parent.datum[\'' + name.parent + '\']';

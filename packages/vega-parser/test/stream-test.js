@@ -72,7 +72,7 @@ tape('Parser parses stream definitions', function(test) {
   test.deepEqual(scope.streams[1], {
     id: dom,
     stream: 1,
-    filter: '(event.metaKey)',
+    filter: 'event.metaKey',
     throttle: 1,
     debounce: 2
   });
@@ -86,7 +86,7 @@ tape('Parser parses stream definitions', function(test) {
   test.deepEqual(scope.streams[3], {
     id: view,
     stream: 3,
-    filter: "(event.shiftKey)&&(event.item&&event.item.mark.marktype==='rect'&&event.item.mark.name==='foo')",
+    filter: "(event.shiftKey&&((event.item&&(event.item.mark.marktype==='rect'))&&(event.item.mark.name==='foo')))",
     throttle: 3,
     debounce: 4
   });
