@@ -185,15 +185,23 @@ prototype.property = function(spec) {
 
 // ----
 
-prototype.addScale = function(name, params) {
+prototype.addScaleProj = function(type, name, params) {
   if (this.scales.hasOwnProperty(name)) {
-    error('Duplicate scale name: ' + name);
+    error('Duplicate scale or projection name: ' + name);
   }
 
-  this.scales[name] = this.add(transform('Scale', params));
+  this.scales[name] = this.add(transform(type, params));
+}
+
+prototype.addScale = function(name, params) {
+  this.addScaleProj('Scale', name, params);
 };
 
-prototype.scaleRef = function(name) {
+prototype.addProjection = function(name, params) {
+  this.addScaleProj('Projection', name, params);
+};
+
+prototype.scaleRef = prototype.projectionRef = function(name) {
   return ref(this.scales[name]);
 };
 
