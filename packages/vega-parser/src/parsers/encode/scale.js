@@ -1,3 +1,6 @@
+import {scalePrefix} from '../expression';
+import {stringValue} from 'vega-util';
+
 export default function(enc, value, scope, params) {
   var scale = getScale(enc.scale, scope, params),
       interp, func;
@@ -29,10 +32,10 @@ export default function(enc, value, scope, params) {
   return value;
 }
 
-function getScale(name, scope, params) {
-  var scaleName = '$' + name;
+export function getScale(name, scope, params) {
+  var scaleName = scalePrefix + name;
   if (!params.hasOwnProperty(scaleName)) {
     params[scaleName] = scope.scaleRef(name);
   }
-  return '_[\'' + scaleName + '\']';
+  return '_[' + stringValue(scaleName) + ']';
 }

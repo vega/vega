@@ -94,13 +94,13 @@ tape('Parser parses signals with event-driven updates', function(test) {
   update = scope.updates[1];
   test.equal(update.source, a);
   test.equal(update.target, c);
-  test.equal(update.update.$expr, '2*2');
+  test.equal(update.update.$expr, '(2*2)');
   test.equal(update.options, undefined);
 
   update = scope.updates[2];
   test.equal(update.source, 5);
   test.equal(update.target, c);
-  test.equal(update.update.$expr, '2*2');
+  test.equal(update.update.$expr, '(2*2)');
   test.equal(update.options, undefined);
 
   update = scope.updates[3];
@@ -112,84 +112,3 @@ tape('Parser parses signals with event-driven updates', function(test) {
 
   test.end();
 });
-
-/*
-  var scope = new vega.Scope(),
-      dom, view, between, merge, signal, stream;
-
-  scope.addSignal('a', true);
-  scope.addSignal('b', true);
-  scope.addSignal('c', true);
-
-  var spec1 = {
-    events: [
-      {
-        source: 'window',
-        type: 'mouseover'
-      }
-    ],
-    update: {expr: '1'}
-  }; | {value: null} | {signal: 'name'},
-    force: true | false
-  }
-
-  test.end();
-});
-*/
-/*
-signals: [
-  {
-    name: 'foo',
-    value: null,
-    update: {expr: 'expr'} | {value: null} | {signal: 'name'},
-    react: true | false,
-    on: [
-      {
-        events: [
-          {
-            source: 'css|window',
-            type: 'mousemove',
-            between: [
-              {
-
-              },
-              'eventb'
-            ],
-            filter: 'expr' | ['expr'],
-            throttle: 0,
-            debounce: 0,
-          },
-          {
-            merge: [
-              {source: 'window', type: 'mousedown'},
-              {source: 'window', type: 'mouseup'}
-            ],
-            between / filter / throttle / debounce
-          },
-          {
-            source: 'view', (no source --> view)
-            type: 'wheel',
-            between: [0,0],
-            mark: 'rect', // --> event.item && event.item.mark.marktype === 'rect'
-            name: 'name', // --> event.item && event.item.mark.name === 'name'
-            filter: 'expr' | ['expr'],
-            throttle: 0,
-            debounce: 0
-          },
-          {signal: 'foo'}
-        ],
-        update: {expr: 'expr'} | {value: null} | {signal: 'name'},
-        force: true | false
-      }
-    ]
-  }
-]
-/*
-{ id:0, source:'window', type:'mousemove' },
-{ id:1, source:'window', type:'mousedown' },
-{ id:2, source:'window', type:'mouseup' },
-{ id:3, merge:[1,2] },
-{ id:4, stream:0, between:[1,2] },
-{ id:5, stream:4, throttle:100 },
-{ id:6, stream:4, debounce:100, filter:'event.buttons > 0' }
-*/
