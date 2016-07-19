@@ -1,4 +1,4 @@
-import * as transforms from './transforms/index';
+import * as transforms from '../transforms/index';
 
 import {
   parse,

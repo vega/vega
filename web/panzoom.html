@@ -138,13 +138,13 @@ var runtimeSpec = {
     // HOVER
     {
       source: 'hover',
-      target: {$expr: 'event.item.mark.source'},
-      update: {$expr: 'event.dataflow.changeset().encode(event.item, "hover")'}
+      target: {$expr: 'event.vega.item().mark.source'},
+      update: {$expr: 'event.vega.view().changeset().encode(event.item, "hover")'}
     },
     {
       source: 'leave',
-      target: {$expr: 'event.item.mark.source'},
-      update: {$expr: 'event.dataflow.changeset().encode(event.item, "leave")'}
+      target: {$expr: 'event.vega.item().mark.source'},
+      update: {$expr: 'event.vega.view().changeset().encode(event.item, "leave")'}
     },
 
     // DRAG-TO-PAN
@@ -154,7 +154,7 @@ var runtimeSpec = {
     },
     {
       source: 'start', target: 'down',
-      update: {$expr: '[event.viewX, event.viewY]'}
+      update: {$expr: 'event.vega.xy()'}
     },
     {
       source: 'reset', target: 'xcur',
@@ -167,7 +167,7 @@ var runtimeSpec = {
     {
       source: 'drag', target: 'delta',
       update: {
-        $expr: '_.p ? [_.p[0] - event.viewX, event.viewY - _.p[1]] : [0,0]',
+        $expr: '_.p ? [_.p[0] - event.vega.x(), event.vega.y() - _.p[1]] : [0,0]',
         $params: {p:{$ref:'down'}}
       }
     },
@@ -176,7 +176,7 @@ var runtimeSpec = {
     {
       source: 'mousemove', target: 'anchor',
       update: {
-        $expr: '[_.xscale.invert(event.viewX), _.yscale.invert(event.viewY)]',
+        $expr: '[_.xscale.invert(event.vega.x()), _.yscale.invert(event.vega.y())]',
         $params: {xscale:{$ref:'xscale'}, yscale:{$ref:'yscale'}}
       }
     },

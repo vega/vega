@@ -81,13 +81,13 @@ var runtimeSpec = {
   updates: [
     {
       source: 'hover',
-      target: {$expr: 'event.item.mark.source'},
-      update: {$expr: 'event.dataflow.changeset().encode(event.item, "hover")'}
+      target: {$expr: 'event.vega.item().mark.source'},
+      update: {$expr: 'event.vega.view().changeset().encode(event.item, "hover")'}
     },
     {
       source: 'leave',
-      target: {$expr: 'event.item.mark.source'},
-      update: {$expr: 'event.dataflow.changeset().encode(event.item, "update")'}
+      target: {$expr: 'event.vega.item().mark.source'},
+      update: {$expr: 'event.vega.view().changeset().encode(event.item, "update")'}
     }
   ]
 };

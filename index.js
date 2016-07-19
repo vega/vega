@@ -45,4 +45,4 @@ export {
 import * as transforms from './src/transforms/index';
 export {transforms};
 
-export {default as View} from './src/View';
+export {default as View} from './src/view/index';
