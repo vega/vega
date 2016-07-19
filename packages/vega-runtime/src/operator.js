@@ -13,7 +13,7 @@ export default function parseOperator(spec, ctx) {
 
   if (spec.type === 'Operator' || !spec.type) {
     if (spec.update) {
-      update = operatorExpression(spec.update);
+      update = operatorExpression(spec.update, ctx);
     }
     ctx.operator(spec, update, params);
   } else {

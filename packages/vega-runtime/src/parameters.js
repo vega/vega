@@ -62,7 +62,7 @@ function getOperator(_, ctx) {
 function getExpression(_, ctx) {
   var k = 'e:' + _.$expr;
   return ctx.fn[k]
-    || (ctx.fn[k] = accessor(parameterExpression(_.$expr), _.$fields, _.$name));
+    || (ctx.fn[k] = accessor(parameterExpression(_.$expr, ctx), _.$fields, _.$name));
 }
 
 /**
@@ -83,7 +83,7 @@ function getEncode(_, ctx) {
 
   for (name in spec) {
     enc = spec[name];
-    encode[name] = accessor(encodeExpression(enc.$expr, ctx.encode), enc.$fields);
+    encode[name] = accessor(encodeExpression(enc.$expr, ctx), enc.$fields);
   }
   return encode;
 }

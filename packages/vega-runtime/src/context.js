@@ -5,16 +5,17 @@ import {changeset} from 'vega-dataflow';
  * Enables lookup of parsed operators, event streams, accessors, etc.
  * Provides a 'fork' method for creating child contexts for subflows.
  */
-export default function context(df, transforms, encode) {
-  return new Context(df, transforms, encode);
+export default function context(df, transforms, functions) {
+  return new Context(df, transforms, functions);
 }
 
-function Context(df, transforms, encode) {
+function Context(df, transforms, functions) {
   this.dataflow = df;
   this.transforms = transforms;
+  this.functions = functions;
   this.events = df.events.bind(df);
   this.signals = {};
-  this.encode = encode;
+  this.scales = {};
   this.nodes = {};
   this.data = {};
   this.fn = {};
@@ -25,6 +26,7 @@ function ContextFork(ctx) {
   this.transforms = ctx.transforms;
   this.events = ctx.events;
   this.signals = Object.create(ctx.signals);
+  this.scales = Object.create(ctx.scales);
   this.nodes = Object.create(ctx.nodes);
   this.data = Object.create(ctx.data);
   this.fn = Object.create(ctx.fn);
