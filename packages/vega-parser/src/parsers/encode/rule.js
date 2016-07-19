@@ -10,7 +10,7 @@ export default function(channel, rules, scope, params, fields) {
     var value = entry(channel, rule, scope, params, fields),
         expr;
 
-    if (index > 0) code += 'else ';
+    if (index > 0) code += 'else';
 
     if (rule.test) {
       // TODO data and scale dependencies

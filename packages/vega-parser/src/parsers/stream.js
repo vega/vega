@@ -78,7 +78,8 @@ function streamParameters(entry, stream, scope) {
 }
 
 function filterMark(type, name) {
-  return 'event.item'
-    + (type && type !== 'item' ? '&&event.item.mark.marktype===\'' + type + '\'' : '')
-    + (name ? '&&event.item.mark.name===\'' + name + '\'' : '');
+  var item = 'event.item';
+  return item
+    + (type && type !== 'item' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
+    + (name ? '&&' + item + '.mark.name===\'' + name + '\'' : '');
 }
