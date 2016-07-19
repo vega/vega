@@ -4,11 +4,11 @@ import {
   functions as baseFunctions,
   constants
 } from 'vega-expression';
-import {stringValue} from 'vega-util';
+import {error, stringValue} from 'vega-util';
 
 export var signalPrefix = '$';
 export var scalePrefix  = '%';
-export var dataPrefix   = '@';
+export var indexPrefix  = '@';
 export var eventPrefix  = 'event.vega.';
 
 export var generator = codegen({
@@ -31,8 +31,20 @@ export var functions = function(codegen) {
   fn.x     = eventPrefix + 'x';
   fn.y     = eventPrefix + 'y';
 
-  // to support hyperlinks
+  // hyperlink support
   fn.open  = 'window.open';
+
+  // color functions
+  fn.rgb = 'this.rgb';
+  fn.lab = 'this.lab';
+  fn.hcl = 'this.hcl';
+  fn.hsl = 'this.hsl';
+
+  // scales, projections, data
+  fn.scale  = 'this.scale';
+  fn.invert = 'this.scaleInvert';
+  fn.copy   = 'this.scaleCopy';
+  fn.indata = 'this.indata';
 
   return fn;
 }
@@ -41,18 +53,63 @@ function signal(id) {
   return '_[' + stringValue('$' + id) + ']';
 }
 
+function scale(name, scope, params) {
+  var scaleName = scalePrefix + name;
+  if (!params.hasOwnProperty(scaleName)) {
+    params[scaleName] = scope.scaleRef(name);
+  }
+}
+
+function index(data, field, scope, params) {
+  var indexName = indexPrefix + field;
+  if (!params.hasOwnProperty(indexName)) {
+    params[indexName] = scope.getData(data).indataRef(field);
+  }
+}
+
 export default function(expr, scope, preamble) {
-  // TODO cache?
-  var e = generator(parse(expr));
+  var ast = parse(expr),
+      gen = generator(ast),
+      code = preamble ? preamble + 'return(' + gen.code + ');' : gen.code,
+      params = gen.globals,
+      fields = gen.fields;
 
-  var code = preamble
-    ? preamble + 'return(' + e.code + ');'
-    : e.code;
+  ast.visit(function visitor(node) {
+    if (node.type !== 'CallExpression') return;
 
-  // TODO: collect data references, scale references
+    var name = node.callee.name,
+        args = node.arguments;
+
+    switch (node.callee.name) {
+      case 'scale':
+      case 'invert':
+        if (args[0].type !== 'Literal') {
+          error('First argument to ' + name + ' must be a string literal.');
+        }
+        scale(args[0], scope, params);
+        break;
+      case 'copy':
+        if (args[0].type !== 'Literal' || args[1].type !== 'Literal') {
+          error('Arguments to copy must be string literals.');
+        }
+        scale(args[0], scope, params);
+        scale(args[1], scope, params);
+        break;
+      case 'indata':
+        if (args[0].type !== 'Literal') {
+          error('First argument to indata must be a string literal.');
+        }
+        if (args[1].type !== 'Literal') {
+          error('Second argument to indata must be a string literal.');
+        }
+        index(args[0], args[1], scope, params);
+        break;
+    }
+  });
+
   return {
     $expr:   code,
-    $fields: e.fields,
-    $params: e.globals
+    $fields: fields,
+    $params: params
   };
 }
