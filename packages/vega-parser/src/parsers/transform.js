@@ -33,6 +33,8 @@ function parseParameter(def, spec, scope) {
     return parseIndexParameter(def, spec, scope);
   } else if (type === 'param') {
     return parseSubParameters(def, spec, scope);
+  } else if (type === 'projection') {
+    return scope.projectionRef(spec[def.name]);
   } else {
     value = spec[def.name];
     if (value === undefined) {

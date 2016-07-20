@@ -1,7 +1,7 @@
 import entry from './entry';
 import set from './set';
-import signal from './signal';
 import expression from '../expression';
+import {extend} from 'vega-util';
 
 export default function(channel, rules, scope, params, fields) {
   var code = '';
@@ -13,10 +13,9 @@ export default function(channel, rules, scope, params, fields) {
     if (index > 0) code += 'else';
 
     if (rule.test) {
-      // TODO data and scale dependencies
       expr = expression(rule.test, scope);
       expr.$fields.forEach(function(name) { fields[name] = 1; });
-      expr.$params.forEach(function(name) { signal(name, scope, params); });
+      extend(params, expr.$params);
       code += 'if(' + expr.$expr + ')';
     }
 

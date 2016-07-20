@@ -237,6 +237,17 @@ export var transforms = [
     "output": ["path"]
   },
   {
+    "type": "GeoShape",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "projection", "type": "projection", "required": true },
+      { "name": "pointRadius", "type": "number" },
+      { "name": "field", "type": "field", "default": "datum" },
+      { "name": "as", "type": "string" }
+    ],
+    "output": ["shape"]
+  },
+  {
     "type": "GeoPoint",
     "metadata": {"modifies": true},
     "params": [
@@ -248,7 +259,7 @@ export var transforms = [
   },
   {
     "type": "Graticule",
-    "metadata": {"generates": true, "changes": true},
+    "metadata": {"source": true, "generates": true, "changes": true},
     "params": [
       { "name": "extent", "type": "array", "array": true, "length": 2,
         "content": {"type": "number", "array": true, "length": 2} },
