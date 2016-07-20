@@ -16,6 +16,9 @@ export default function parseEncode(encode, marktype, params, scope) {
     } else {
       value = entry(channel, enc, scope, params, fields);
       code += set('o', channel, value);
+      if (channel === 'path') {
+        code += set('o', 'pathCache', 'null');
+      }
     }
   }
 

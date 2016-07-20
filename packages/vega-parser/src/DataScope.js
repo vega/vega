@@ -12,10 +12,7 @@ DataScope.fromEntries = function(scope, entries) {
   var n = entries.length,
       input  = entries[0],
       values = entries[--n],
-      output;
-
-  while (!entries[--n].metadata.source); // find last source
-  output = entries[n];
+      output = entries[--n];
 
   return new DataScope(scope, input, output, values);
 };

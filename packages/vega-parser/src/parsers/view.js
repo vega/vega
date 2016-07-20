@@ -1,5 +1,6 @@
 import {ref, operator, transform} from '../util';
 import DataScope from '../DataScope';
+import parseSignalUpdates from './signal-updates';
 import parseProjection from './projection';
 import parsePadding from './padding';
 import parseSignal from './signal';
@@ -65,10 +66,15 @@ export default function parseView(spec, scope) {
 }
 
 function parseSpec(spec, scope) {
-  var children = [];
+  var children = [],
+      signals = array(spec.signals);
 
-  array(spec.signals).forEach(function(_) {
+  signals.forEach(function(_) {
     parseSignal(_, scope);
+  });
+
+  array(spec.projections).forEach(function(_) {
+    parseProjection(_, scope);
   });
 
   array(spec.data).forEach(function(_) {
@@ -79,8 +85,8 @@ function parseSpec(spec, scope) {
     parseScale(_, scope);
   });
 
-  array(spec.projections).forEach(function(_) {
-    parseProjection(_, scope);
+  signals.forEach(function(_) {
+    parseSignalUpdates(_, scope);
   });
 
   array(spec.axes).forEach(function(_) {

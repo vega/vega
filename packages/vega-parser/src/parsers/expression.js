@@ -1,4 +1,5 @@
 import {
+  ASTNode,
   parse,
   codegen,
   functions as baseFunctions,
@@ -6,19 +7,17 @@ import {
 } from 'vega-expression';
 import {error, stringValue} from 'vega-util';
 
+var Literal = 'Literal';
+var Identifier = 'Identifier';
+
 export var signalPrefix = '$';
 export var scalePrefix  = '%';
 export var indexPrefix  = '@';
 export var eventPrefix  = 'event.vega.';
 
-export var generator = codegen({
-  blacklist:  ['_'],
-  whitelist:  ['datum', 'event'],
-  fieldvar:   'datum',
-  globalvar:  signal,
-  functions:  functions,
-  constants:  constants
-});
+function signalCode(id) {
+  return '_[' + stringValue('$' + id) + ']';
+}
 
 export var functions = function(codegen) {
   var fn = baseFunctions(codegen);
@@ -47,10 +46,22 @@ export var functions = function(codegen) {
   fn.indata = 'this.indata';
 
   return fn;
-}
+};
 
-function signal(id) {
-  return '_[' + stringValue('$' + id) + ']';
+export var generator = codegen({
+  blacklist:  ['_'],
+  whitelist:  ['datum', 'event'],
+  fieldvar:   'datum',
+  globalvar:  signalCode,
+  functions:  functions,
+  constants:  constants
+});
+
+function signal(name, scope, params) {
+  var signalName = signalPrefix + name;
+  if (!params.hasOwnProperty(signalName)) {
+    params[signalName] = scope.signalRef(name);
+  }
 }
 
 function scale(name, scope, params) {
@@ -69,47 +80,49 @@ function index(data, field, scope, params) {
 
 export default function(expr, scope, preamble) {
   var ast = parse(expr),
-      gen = generator(ast),
-      code = preamble ? preamble + 'return(' + gen.code + ');' : gen.code,
-      params = gen.globals,
-      fields = gen.fields;
+      params = {},
+      gen;
 
+  // analyze ast for dependencies
   ast.visit(function visitor(node) {
     if (node.type !== 'CallExpression') return;
 
     var name = node.callee.name,
         args = node.arguments;
 
-    switch (node.callee.name) {
+    switch (name) {
       case 'scale':
       case 'invert':
-        if (args[0].type !== 'Literal') {
-          error('First argument to ' + name + ' must be a string literal.');
+        if (args[0].type === Literal) {           // scale dependency
+          scale(args[0].value, scope, params);
+        } else if (args[0].type === Identifier) { // forward reference to signal
+          name = args[0].name;
+          args[0] = new ASTNode(Literal);
+          args[0].raw = '{signal:"' + name + '"}';
+        } else {
+          error('First argument to ' + name + ' must be a string literal or identifier.');
         }
-        scale(args[0], scope, params);
         break;
       case 'copy':
-        if (args[0].type !== 'Literal' || args[1].type !== 'Literal') {
-          error('Arguments to copy must be string literals.');
-        }
-        scale(args[0], scope, params);
-        scale(args[1], scope, params);
+        if (args[0].type !== Literal) error('Argument to copy must be a string literals.');
+        scale(args[0].value, scope, params);
         break;
       case 'indata':
-        if (args[0].type !== 'Literal') {
-          error('First argument to indata must be a string literal.');
-        }
-        if (args[1].type !== 'Literal') {
-          error('Second argument to indata must be a string literal.');
-        }
-        index(args[0], args[1], scope, params);
+        if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
+        if (args[1].type !== Literal) error('Second argument to indata must be a string literal.');
+        index(args[0].value, args[1].value, scope, params);
         break;
     }
   });
 
+  // perform code generation
+  gen = generator(ast);
+  gen.globals.forEach(function(name) { signal(name, scope, params); });
+
+  // returned parsed expression
   return {
-    $expr:   code,
-    $fields: fields,
+    $expr:   preamble ? preamble + 'return(' + gen.code + ');' : gen.code,
+    $fields: gen.fields,
     $params: params
   };
 }

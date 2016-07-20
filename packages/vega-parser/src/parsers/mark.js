@@ -1,5 +1,7 @@
 import parseEncode from './encode';
+import parseTransform from './transform';
 import {ref, transform} from '../util';
+import {error} from 'vega-util';
 
 // TODO: facet, pre/post-transforms, reactive geometry
 export default function parseMark(mark, scope) {
@@ -36,6 +38,18 @@ export default function parseMark(mark, scope) {
     op = scope.add(transform('Encode', params));
   }
 
+  // post-encoding transforms
+  if (mark.transform) {
+    mark.transform.forEach(function(_) {
+      var tx = parseTransform(_, scope);
+      if (tx.metadata.generates) {
+        error('Mark transforms should not generate new data.');
+      }
+      tx.params.pulse = ref(op);
+      scope.add(op = tx);
+    });
+  }
+
   // recurse if group mark
   if (mark.type === 'group') {
     scope.scenepathPush();
@@ -44,8 +58,6 @@ export default function parseMark(mark, scope) {
     });
     scope.scenepathPop();
   }
-
-  // TODO: post-encoding transforms
 
   // compute bounding boxes
   boundRef = ref(scope.add(transform('Bound', {

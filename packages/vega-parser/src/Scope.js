@@ -57,6 +57,11 @@ prototype.finish = function() {
     this.signals[name].signal = name;
   }
 
+  // annotate scales
+  for (name in this.scales) {
+    this.scales[name].scale = name;
+  }
+
   // annotate data sets
   function annotate(op, name, type) {
     var data, list;
@@ -201,9 +206,11 @@ prototype.addProjection = function(name, params) {
   this.addScaleProj('Projection', name, params);
 };
 
-prototype.scaleRef = prototype.projectionRef = function(name) {
+prototype.scaleRef = function(name) {
   return ref(this.scales[name]);
 };
+
+prototype.projectionRef = prototype.scaleRef;
 
 // ----
 

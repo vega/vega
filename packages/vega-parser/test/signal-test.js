@@ -1,6 +1,11 @@
 var tape = require('tape'),
     vega = require('../');
 
+function parseSignal(spec, scope) {
+  vega.signal(spec, scope);
+  vega.signalUpdates(spec, scope);
+}
+
 tape('Parser parses static signals', function(test) {
   var scope = new vega.Scope();
 
@@ -32,7 +37,7 @@ tape('Parser parses signals with event-driven updates', function(test) {
   scope.addSignal('a', 1);
 
   // single event stream, constant update value, force true
-  vega.signal({
+  parseSignal({
     name: 'b',
     value: 2,
     on: [
@@ -45,7 +50,7 @@ tape('Parser parses signals with event-driven updates', function(test) {
   }, scope);
 
   // event stream array, expression update value, force false
-  vega.signal({
+  parseSignal({
     name: 'c',
     value: 3,
     on: [
@@ -62,7 +67,7 @@ tape('Parser parses signals with event-driven updates', function(test) {
   }, scope);
 
   // signal update value, selector string
-  vega.signal({
+  parseSignal({
     name: 'd',
     value: 4,
     on: [
