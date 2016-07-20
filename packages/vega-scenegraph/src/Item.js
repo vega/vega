@@ -19,8 +19,5 @@ Item.prototype = {
       }
     }
     return item;
-  },
-  touch: function() {
-    if (this.pathCache) this.pathCache = null;
   }
 }
