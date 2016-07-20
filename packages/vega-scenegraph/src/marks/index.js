@@ -6,18 +6,20 @@ import line from './line';
 import path from './path';
 import rect from './rect';
 import rule from './rule';
+import shape from './shape';
 import symbol from './symbol';
 import text from './text';
 
 export default {
-  arc:    arc,
-  area:   area,
-  group:  group,
-  image:  image,
-  line:   line,
-  path:   path,
-  rect:   rect,
-  rule:   rule,
-  symbol: symbol,
-  text:   text
+  arc:     arc,
+  area:    area,
+  group:   group,
+  image:   image,
+  line:    line,
+  path:    path,
+  rect:    rect,
+  rule:    rule,
+  shape:   shape,
+  symbol:  symbol,
+  text:    text
 };

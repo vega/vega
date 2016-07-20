@@ -20,7 +20,7 @@ function path(context, item) {
 function bound(bounds, item) {
   return path(context(bounds), item)
     ? bounds.set(0, 0, 0, 0)
-    : boundStroke(item, bounds);
+    : boundStroke(bounds, item);
 }
 
 export default {
