@@ -1,16 +1,14 @@
 import * as transforms from '../transforms/index';
+import {isObject, isString} from 'vega-util';
+import {parse, context} from 'vega-runtime';
+import {rgb, lab, hcl, hsl} from 'd3-color';
 
-import {
-  parse,
-  context
-} from 'vega-runtime';
-
-import {
-  rgb,
-  lab,
-  hcl,
-  hsl
-} from 'd3-color';
+function scale(name, ctx) {
+  var s = isString(name) ? ctx.scales[name]
+    : isObject(name) && name.signal ? ctx.signals[name.signal]
+    : undefined;
+  return s && s.value;
+}
 
 function functions(fn, ctx) {
   fn.rgb = rgb;
@@ -19,21 +17,19 @@ function functions(fn, ctx) {
   fn.hsl = hsl;
 
   fn.scale = function(name, value) {
-    var s = ctx.scales[name];
-    return s ? s.value(value) : undefined;
+    var s = scale(name, ctx);
+    return s ? s(value) : undefined;
   };
 
   fn.scaleInvert = function(name, value) {
-    var s = ctx.scales[name];
-    return s ? s.value.invert(value) : undefined;
+    var s = scale(name, ctx);
+    // TODO: handle varied scale inversion methods
+    return s ? s.invert(value) : undefined;
   };
 
-  fn.scaleCopy = function(source, target) {
-    var s = ctx.scales[source],
-        t = ctx.scales[target];
-    return (s && t)
-      ? null // TODO: perform copy
-      : undefined;
+  fn.scaleCopy = function(name) {
+    var s = scale(name, ctx);
+    return s ? s.copy() : undefined;
   };
 
   fn.indata = function(name, field, value) {

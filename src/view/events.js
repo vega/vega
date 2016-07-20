@@ -1,4 +1,4 @@
-import extendEvent from './extend-event';
+import eventExtend from './events-extend';
 import {EventStream} from 'vega-dataflow';
 
 /**
@@ -12,7 +12,7 @@ export default function(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        s.receive(extendEvent(view, e, item));
+        s.receive(eventExtend(view, e, item));
         view.run();
       },
       sources;

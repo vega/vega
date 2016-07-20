@@ -1,3 +1,4 @@
+import {data, insert, remove} from './data';
 import events from './events';
 import finalize from './finalize';
 import initialize from './initialize';
@@ -52,7 +53,9 @@ export default function View(spec) {
 
   // initialize dataflow graph
   var ctx = runtime(this, spec);
+  self.context = ctx; // DEBUG
   this._signals = ctx.signals;
+  this._scales = ctx.scales;
   this._data = ctx.data;
 
   // initialize scenegraph
@@ -108,16 +111,20 @@ prototype.scenegraph = function() {
   return this._scenegraph;
 };
 
-prototype.width = function(value) {
-  return arguments.length ? this.signal('width', value) : this.signal('width');
+prototype.background = function(_) {
+  return arguments.length ? this._backgroundColor = _ : this._backgroundColor;
 };
 
-prototype.height = function(value) {
-  return arguments.length ? this.signal('height', value) : this.signal('height');
+prototype.width = function(_) {
+  return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype.padding = function(value) {
-  return arguments.length ? this.signal('padding', value) : this.signal('padding');
+prototype.height = function(_) {
+  return arguments.length ? this.signal('height', _) : this.signal('height');
+};
+
+prototype.padding = function(_) {
+  return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
 prototype.resize = function(width, height) {
@@ -147,6 +154,11 @@ prototype.renderer = function(type) {
   }
   return this;
 };
+
+// -- DATA ----
+prototype.data = data;
+prototype.insert = insert;
+prototype.remove = remove;
 
 // -- INITIALIZATION ----
 prototype.initialize = initialize;

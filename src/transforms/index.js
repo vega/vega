@@ -19,6 +19,7 @@ export {
   Generate,
   GeoPath,
   GeoPoint,
+  GeoShape,
   Graticule,
   Impute,
   Lookup,
