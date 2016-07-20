@@ -59,6 +59,10 @@ Context.prototype = ContextFork.prototype = {
       ctx.signals[spec.signal] = op;
     }
 
+    if (spec.scale) {
+      ctx.scales[spec.scale] = op;
+    }
+
     if (spec.data) {
       for (var name in spec.data) {
         var data = ctx.data[name] || (ctx.data[name] = {});
