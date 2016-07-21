@@ -36,6 +36,10 @@ function parseScaleDomain(scale, scope) {
   var domain = scale.domain;
   if (!domain) error('Missing scale domain');
 
+  if (domain.signal) {
+    return scope.signalRef(domain.signal);
+  }
+
   return (isArray(domain) ? explicitDomain
     : domain.fields ? multipleDomain
     : singularDomain)(scale, scope);
@@ -126,7 +130,9 @@ function parseScaleRange(scale, scope) {
   if (!scale.range) error('Missing scale range');
   var range = scale.range;
 
-  if (range === 'WIDTH') {
+  if (range.signal) {
+    return scope.signalRef(range.signal);
+  } else if (range === 'WIDTH') {
     range = [0, {'signal': 'width'}];
   } else if (range === 'HEIGHT') {
     range = [{'signal': 'height'}, 0];
