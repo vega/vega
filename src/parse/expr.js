@@ -51,7 +51,7 @@ function openGen(codegen) {
 }
 
 function windowOpen(model, url, name) {
-  if (window && window.open) {
+  if (typeof window !== 'undefined' && window && window.open) {
     var opt = dl.extend({type: 'open', url: url, name: name}, model.config().load),
         uri = dl.load.sanitizeUrl(opt);
     if (uri) {
@@ -60,7 +60,7 @@ function windowOpen(model, url, name) {
       throw Error('Invalid URL: ' + opt.url);
     }
   } else {
-    throw Error("open can only be invoked in a browser.")
+    throw Error('Open function can only be invoked in a browser.');
   }
 }
 
