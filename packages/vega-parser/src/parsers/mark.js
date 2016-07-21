@@ -3,7 +3,7 @@ import parseTransform from './transform';
 import {ref, transform} from '../util';
 import {error} from 'vega-util';
 
-// TODO: facet, pre/post-transforms, reactive geometry
+// TODO: facet, reactive geometry
 export default function parseMark(mark, scope) {
   var op, markRef, boundRef, key, params, enc, children;
 
@@ -38,7 +38,7 @@ export default function parseMark(mark, scope) {
     op = scope.add(transform('Encode', params));
   }
 
-  // post-encoding transforms
+  // post-encoding transforms (if defined)
   if (mark.transform) {
     mark.transform.forEach(function(_) {
       var tx = parseTransform(_, scope);
