@@ -8,7 +8,9 @@ import parseScale from './scale';
 import parseData from './data';
 import parseMark from './mark';
 import parseAxis from './axis';
-import {array} from 'vega-util';
+import {array, toSet} from 'vega-util';
+
+var predefined = toSet(['width', 'height', 'padding']);
 
 export default function parseView(spec, scope) {
   var op, input, root, children;
@@ -70,7 +72,7 @@ function parseSpec(spec, scope) {
       signals = array(spec.signals);
 
   signals.forEach(function(_) {
-    parseSignal(_, scope);
+    if (!predefined[_.name]) parseSignal(_, scope);
   });
 
   array(spec.projections).forEach(function(_) {
