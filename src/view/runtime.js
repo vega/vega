@@ -16,6 +16,24 @@ function functions(fn, ctx) {
   fn.hcl = hcl;
   fn.hsl = hsl;
 
+  fn.pinchDistance = function() {
+    return 'Math.sqrt('
+      + 'pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
+      + 'pow(event.touches[0].clientY - event.touches[1].clientY, 2)'
+      + ')';
+  };
+
+  fn.pinchAngle = function() {
+    return 'Math.atan2('
+      + 'event.touches[1].clientY - event.touches[0].clientY,'
+      + 'event.touches[1].clientX - event.touches[0].clientX'
+      + ')';
+  };
+
+  fn.span = function(array) {
+    return array[array.length-1] - array[0];
+  };
+
   fn.scale = function(name, value) {
     var s = scale(name, ctx);
     return s ? s(value) : undefined;
