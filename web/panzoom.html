@@ -4,273 +4,219 @@
     <title>Vega Pan/Zoom Test</title>
     <script src="../../build/vega.js"></script>
     <style>
-      body { margin: 0px; font: 14px Helvetica Neue; }
+      * { margin: 0; padding: 0 }
     </style>
   </head>
   <body>
     <div id="view"></div>
     <script>
+var width = window.innerWidth,
+    height = window.innerHeight,
+    padding = 30;
+
 var values = [],
     normal = vega.randomNormal(0.5, 0.2);
 for (var i=0; i<500; ++i) {
   values.push({u: normal.sample(), v: normal.sample()});
 }
 
-var width = window.innerWidth,
-    height = window.innerHeight;
+var runtimeSpec = vega.parse(self.spec = {
+  "width": width - 2 * padding,
+  "height": height - 2 * padding,
+  "padding": padding,
 
-var runtimeSpec = {
-  operators: [
-    {id:'root',   value:null,   root:true},
-    {id:'width',  value:width,  signal:'width'},
-    {id:'height', value:height, signal:'height'},
-    {id:'padding', type:'Operator', value:{left:5,top:5,right:5,bottom:5}, signal:'padding'},
+  "signals": [
+    { "name": "dim", "update": "min(width, height)" },
+    { "name": "xrange", "update": "[0, width]" },
+    { "name": "yrange", "update": "[height, 0]" },
 
     {
-      id:'dim',
-      update: 'Math.min(_.w, _.h)',
-      params: {w:{$ref:'width'}, h:{$ref:'height'}}
+      "name": "down", "value": null,
+      "on": [
+        {"events": "touchend", "update": "null"},
+        {"events": "mousedown, touchstart", "update": "xy()"}
+      ]
     },
     {
-      id:'offset',
-      update: '(Math.max(_.w, _.h) - Math.min(_.w, _.h)) / 2',
-      params: {w:{$ref:'width'}, h:{$ref:'height'}}
-    },
-    {
-      id:'xrange',
-      update: '[_.x, _.x + _.w]',
-      params: {w:{$ref:'dim'}, x:{$ref:'offset'}}
-    },
-    {
-      id:'yrange',
-      update: '[_.h, 0]',
-      params: {h:{$ref:'dim'}}
-    },
-
-    {id:'pdata',  type:'Collect', value:values, data: {points:['input', 'output']}},
-    {id:'xext',   type:'Extent', params:{field:{$field:'u'}, pulse:{$ref:'pdata'}}},
-    {id:'yext',   type:'Extent', params:{field:{$field:'v'}, pulse:{$ref:'pdata'}}},
-
-    {id:'anchor', value:[0,0], signal:'anchor'},
-    {id:'down',   value:null,  signal:'down'},
-    {id:'zoom',   value:1,     signal:'zoom'},
-    {id:'dist1',  value:0,     signal:'dist1'},
-    {id:'dist2',  value:0,     signal:'dist2'},
-    {id:'delta',  value:[0,0], signal:'delta'},
-    {id:'xcur',   value:null,  signal:'xcur'},
-    {id:'ycur',   value:null,  signal:'ycur'},
-
-    {id:'xdom',   update:'_.x', params:{x:{$ref:'xext'}}, react:false, signal:'xdom'},
-    {id:'ydom',   update:'_.y', params:{y:{$ref:'yext'}}, react:false, signal:'ydom'},
-    {id:'xscale', type:'Scale', params:{domain:{$ref:'xdom'}, range:{$ref:'xrange'}}},
-    {id:'yscale', type:'Scale', params:{domain:{$ref:'ydom'}, range:{$ref:'yrange'}}},
-    {
-      id:'size',
-      update: 'Math.min(1000, Math.max(1, 20 / (_.x[1] - _.x[0])))',
-      params: {x:{$ref:'xdom'}}
-    },
-
-    {id:'marks', type:'Collect', data: {root:['input', 'output']}},
-    {id:'menc',  type:'Encode', params:{
-      encoders: {
-        $encode: {
-          update: {$expr: 'var o=item;o.width=_.width,o.height=_.height;return(1);'}
+      "name": "xcur", "value": null,
+      "on": [
+        {
+          "events": "mousedown, touchstart, touchend",
+          "update": "slice(xdom)"
         }
-      },
-      width: {$ref:'width'},
-      height: {$ref:'height'},
-      pulse: {$ref:'marks'}
-    } },
-
-    {id:'pjoin', type:'DataJoin', params:{pulse:{$ref:'pdata'}}},
-    {id:'pcoll', type:'Collect', params:{pulse:{$ref:'pjoin'}}},
-    {id:'pmark', type:'Mark', params: {
-      markdef: {marktype: 'symbol'},
-      scenepath: [0],
-      pulse: {$ref:'pcoll'}
-    } },
-    {id:'penc',  type:'Encode', params:{
-      encoders: {
-        $encode: {
-          enter: { $expr: 'item.fillOpacity=0.6;item.fill="steelblue";return(1);', },
-          update: {
-            $expr: 'var o=item,d=o.datum;o.x=_.xscale(d.u);o.y=_.yscale(d.v);item.size=_.size;return(1);',
-            $fields: ['u', 'v']
-          },
-          hover: { $expr: 'item.fill="firebrick";return(1);' },
-          leave: { $expr: 'item.fill="steelblue";return(1);' }
+      ]
+    },
+    {
+      "name": "ycur", "value": null,
+      "on": [
+        {
+          "events": "mousedown, touchstart, touchend",
+          "update": "slice(ydom)"
         }
-      },
-      xscale: {$ref:'xscale'},
-      yscale: {$ref:'yscale'},
-      size:   {$ref:'size'},
-      pulse:  {$ref:'pmark'}
-    } },
-    {id:'pbound', type:'Bound', params:{mark:{$ref:'pmark'}, pulse:{$ref:'penc'}}},
-    {id:'psieve', type:'Sieve', params:{pulse: {$ref:'pbound'}}},
-    {id:'prend',  type:'Render', params:{pulse: {$ref:'pbound'}}},
+      ]
+    },
+    {
+      "name": "delta", "value": [0, 0],
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window", "type": "mousemove", "consume": true,
+              "between": [{"type": "mousedown"}, {"source": "window", "type": "mouseup"}]
+            },
+            {
+              "type": "touchmove", "consume": true,
+              "filter": "event.touches.length === 1"
+            }
+          ],
+          "update": "down ? [down[0]-x(), y()-down[1]] : [0,0]"
+        }
+      ]
+    },
 
-    {id:'mbound', type:'Bound', params:{mark:{$ref:'root'}, pulse:{$ref:'menc'}, children:[{$ref:'psieve'}]}},
-    {id:'msieve', type:'Sieve', params:{pulse: {$ref:'mbound'}}, data: {root:['values']}},
-    {id:'mrend',  type:'Render', params:{pulse: {$ref:'mbound'}}},
+    {
+      "name": "anchor", "value": [0, 0],
+      "on": [
+        {
+          "events": "window:mousemove",
+          "update": "[invert('xscale', x()), invert('yscale', y())]"
+        },
+        {
+          "events": {"type": "touchstart", "filter": "event.touches.length===2"},
+          "update": "[(xdom[0] + xdom[1]) / 2, (ydom[0] + ydom[1]) / 2]"
+        }
+      ]
+    },
+    {
+      "name": "zoom", "value": 1,
+      "on": [
+        {
+          "events": {"source": "window", "type": "wheel", "consume": true},
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        },
+        {
+          "events": {"signal": "dist2"},
+          "update": "dist1 / dist2"
+        }
+      ]
+    },
+    {
+      "name": "dist1", "value": 0,
+      "on": [
+        {
+          "events": {"type": "touchstart", "filter": "event.touches.length===2"},
+          "update": "pinchDistance()"
+        },
+        {
+          "events": {"signal": "dist2"},
+          "update": "dist2"
+        }
+      ]
+    },
+    {
+      "name": "dist2", "value": 0,
+      "on": [{
+        "events": {"type": "touchmove", "consume": true, "filter": "event.touches.length===2"},
+        "update": "pinchDistance()"
+      }]
+    },
+    {
+      "name": "xdom", "value": [0, 1],
+      "on": [
+        {
+          "events": {"signal": "delta"},
+          "update": "[xcur[0] + span(xcur) * delta[0] / width,"
+                  + " xcur[1] + span(xcur) * delta[0] / width]"
+        },
+        {
+          "events": {"signal": "zoom"},
+          "update": "[anchor[0] + (xdom[0] - anchor[0]) * zoom,"
+                  + " anchor[0] + (xdom[1] - anchor[0]) * zoom]"
+        }
+      ]
+    },
+    {
+      "name": "ydom", "value": [0, 1],
+      "on": [
+        {
+          "events": {"signal": "delta"},
+          "update": "[ycur[0] + span(ycur) * delta[1] / height,"
+                  + " ycur[1] + span(ycur) * delta[1] / height]"
+        },
+        {
+          "events": {"signal": "zoom"},
+          "update": "[anchor[1] + (ydom[0] - anchor[1]) * zoom,"
+                  + " anchor[1] + (ydom[1] - anchor[1]) * zoom]"
+        }
+      ]
+    },
+    {
+      "name": "size",
+      "update": 'clamp(20 / span(xdom), 1, 1000)'
+    }
   ],
 
-  streams: [
-    {id:'hover', source:'view', type:'mouseover', filter:'event.item'},
-    {id:'leave', source:'view', type:'mouseout', filter:'event.item'},
-    {id:'mousedown', source:'view', type:'mousedown'},
-    {id:'mouseup', source:'window', type:'mouseup'},
-    {id:'mousemove', source:'window', type:'mousemove'},
-    {id:'mousedrag', stream:'mousemove', between:['mousedown', 'mouseup']},
-    {id:'touchstart', source:'view', type:'touchstart', filter:'event.touches.length===1'},
-    {id:'pinchstart', source:'view', type:'touchstart', filter:'event.touches.length===2'},
-    {id:'touchmove', source:'view', type:'touchmove', filter:'event.touches.length===1', consume:true},
-    {id:'pinchmove', source:'view', type:'touchmove', filter:'event.touches.length===2', consume:true},
-    {id:'touchend', source:'view', type:'touchend'},
-    {id:'start', merge:['mousedown', 'touchstart'], throttle:500},
-    {id:'reset', merge:['start', 'touchend']},
-    {id:'drag', merge:['mousedrag', 'touchmove'], consume:true},
-    {id:'wheel', source:'window', type:'wheel', consume:true},
-    {id:'resize', source:'window', type:'resize', debounce:200}
+  "data": [
+    {
+      "name": "points"
+    }
   ],
 
-  updates: [
-    // HOVER
+  "scales": [
     {
-      source: 'hover',
-      target: {$expr: 'event.vega.item().mark.source'},
-      update: {$expr: 'event.vega.view().changeset().encode(event.item, "hover")'}
+      "name": "xscale",
+      "domain": {"signal": "xdom"},
+      "range": {"signal": "xrange"}
     },
     {
-      source: 'leave',
-      target: {$expr: 'event.vega.item().mark.source'},
-      update: {$expr: 'event.vega.view().changeset().encode(event.item, "leave")'}
-    },
+      "name": "yscale",
+      "domain": {"signal": "ydom"},
+      "range": {"signal": "yrange"}
+    }
+  ],
 
-    // DRAG-TO-PAN
+  "axes": [
     {
-      source: 'touchend', target: 'down',
-      update: {$expr: 'null'}
+      "scale": "xscale",
+      "orient": "top",
+      "offset": -(height-padding)
     },
     {
-      source: 'start', target: 'down',
-      update: {$expr: 'event.vega.xy()'}
-    },
-    {
-      source: 'reset', target: 'xcur',
-      update: {$expr: '_.x.slice()', $params: {x:{$ref:'xdom'}}}
-    },
-    {
-      source: 'reset', target: 'ycur',
-      update: {$expr: '_.y.slice()', $params: {y:{$ref:'ydom'}}}
-    },
-    {
-      source: 'drag', target: 'delta',
-      update: {
-        $expr: '_.p ? [_.p[0] - event.vega.x(), event.vega.y() - _.p[1]] : [0,0]',
-        $params: {p:{$ref:'down'}}
-      }
-    },
+      "scale": "yscale",
+      "orient": "right",
+      "offset": -(width-padding)
+    }
+  ],
 
-    // SCROLL-TO-ZOOM
+  "marks": [
     {
-      source: 'mousemove', target: 'anchor',
-      update: {
-        $expr: '[_.xscale.invert(event.vega.x()), _.yscale.invert(event.vega.y())]',
-        $params: {xscale:{$ref:'xscale'}, yscale:{$ref:'yscale'}}
+      "type": "symbol",
+      "from": {"data": "points"},
+      "encode": {
+        "enter": {
+          "fillOpacity": {"value": 0.6},
+          "fill": {"value": "steelblue"}
+        },
+        "update": {
+          "x": {"scale": "xscale", "field": "u"},
+          "y": {"scale": "yscale", "field": "v"},
+          "size": {"signal": "size"}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"}
+        },
+        "leave": {
+          "fill": {"value": "steelblue"}
+        }
       }
-    },
-    {
-      source: 'wheel', target: 'zoom',
-      update: {$expr: 'Math.pow(1.001, event.deltaY*Math.pow(16, event.deltaMode))'}
-    },
-
-    // PINCH-TO-ZOOM
-    {
-      source: 'pinchstart', target: 'anchor',
-      update: {
-        $expr: '[(_.x[0] + _.x[1])/2, (_.y[0] + _.y[1])/2]',
-        $params: {x:{$ref:'xdom'}, y:{$ref:'ydom'}}
-      }
-    },
-    {
-      source: 'pinchstart', target: 'dist1',
-      update: {
-        $expr: 'Math.sqrt('
-          + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
-          + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2))'
-      }
-    },
-    {
-      source: 'pinchmove', target: 'dist2',
-      update: {
-        $expr: 'Math.sqrt('
-          + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
-          + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2))'
-      }
-    },
-    {
-      source: 'dist2', target: 'zoom',
-      update: {
-        $expr: '_.d1 / _.d2',
-        $params: {d1:{$ref:'dist1'}, d2:{$ref:'dist2'}}
-      }
-    },
-    {
-      source: 'dist2', target: 'dist1',
-      update: {
-        $expr: '_.d2',
-        $params: {d2:{$ref:'dist2'}}
-      }
-    },
-
-    // UPDATE SCALE DOMAINS ON ZOOM
-    {
-      source: 'zoom', target: 'xdom',
-      update: {
-        $expr: '[(_.x[0] - _.a[0]) * _.zoom + _.a[0], (_.x[1] - _.a[0]) * _.zoom + _.a[0]]',
-        $params: {x:{$ref:'xdom'}, a:{$ref:'anchor'}, zoom:{$ref:'zoom'}}
-      }
-    },
-    {
-      source: 'zoom', target: 'ydom',
-      update: {
-        $expr: '[(_.y[0] - _.a[1]) * _.zoom + _.a[1], (_.y[1] - _.a[1]) * _.zoom + _.a[1]]',
-        $params: {y:{$ref:'ydom'}, a:{$ref:'anchor'}, zoom:{$ref:'zoom'}}
-      }
-    },
-
-    // UPDATE SCALE DOMAINS ON PAN
-    {
-      source: 'delta', target: 'xdom',
-      update: {
-        $expr: '[_.x[0] + (_.x[1]-_.x[0]) * _.d[0] / _.w, _.x[1] + (_.x[1]-_.x[0]) * _.d[0] / _.w]',
-        $params: {x:{$ref:'xcur'}, d:{$ref:'delta'}, w:{$ref:'dim'}}
-      }
-    },
-    {
-      source: 'delta', target: 'ydom',
-      update: {
-        $expr: '[_.y[0] + (_.y[1]-_.y[0]) * _.d[1] / _.h, _.y[1] + (_.y[1]-_.y[0]) * _.d[1] / _.h]',
-        $params: {y:{$ref:'ycur'}, d:{$ref:'delta'}, h:{$ref:'dim'}}
-      }
-    },
-
-    // WINDOW RESIZE
-    {
-      source: 'resize', target: 'width',
-      update: {$expr: 'window.innerWidth'}
-    },
-    {
-      source: 'resize', target: 'height',
-      update: {$expr: 'window.innerHeight'}
     }
   ]
-};
+});
 
 var view = new vega.View(runtimeSpec)
+  .insert('points', values)
   .initialize(document.querySelector('#view'))
   .run();
-    </script>
-  </body>
-  </html>
+  </script>
+</body>
+</html>
