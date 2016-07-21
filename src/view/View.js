@@ -88,11 +88,12 @@ prototype.run = function() {
   return this;
 };
 
-prototype.render = function(items) {
-  return this._renderer.render(this._scenegraph.root, items), this;
+prototype.render = function(update, remove) {
+  this._renderer.render(this._scenegraph.root, update, remove)
+  return this;
 };
 
-prototype.renderQueue = function(items) {
+prototype.enqueue = function(items) {
   if (this._queue && items && items.length) {
     this._queue = this._queue.concat(items);
   }
