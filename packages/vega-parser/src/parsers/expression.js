@@ -30,9 +30,6 @@ export var functions = function(codegen) {
   fn.x     = eventPrefix + 'x';
   fn.y     = eventPrefix + 'y';
 
-  // hyperlink support
-  fn.open  = 'window.open';
-
   // color functions
   fn.rgb = 'this.rgb';
   fn.lab = 'this.lab';
@@ -40,10 +37,22 @@ export var functions = function(codegen) {
   fn.hsl = 'this.hsl';
 
   // scales, projections, data
+  fn.span   = 'this.span';
   fn.scale  = 'this.scale';
   fn.invert = 'this.scaleInvert';
   fn.copy   = 'this.scaleCopy';
   fn.indata = 'this.indata';
+
+  // interaction support
+  fn.pinchDistance = 'this.pinchDistance';
+  fn.pinchAngle    = 'this.pinchAngle';
+
+  // environment functions
+  fn.open   = 'window.open';
+  fn.screen = function() { return 'window.screen'; };
+  fn.windowsize = function() {
+    return '[window.innerWidth, window.innerHeight]';
+  };
 
   return fn;
 };
@@ -79,9 +88,13 @@ function index(data, field, scope, params) {
 }
 
 export default function(expr, scope, preamble) {
-  var ast = parse(expr),
-      params = {},
-      gen;
+  var params = {}, ast, gen;
+
+  try {
+    ast = parse(expr);
+  } catch (err) {
+    error('Expression parse error: ' + expr);
+  }
 
   // analyze ast for dependencies
   ast.visit(function visitor(node) {
