@@ -15,7 +15,7 @@ var compile = expr.compiler(args, {
     fn.eventGroup = 'event.vg.getGroup';
     fn.eventX     = 'event.vg.getX';
     fn.eventY     = 'event.vg.getY';
-    fn.open       = 'window.open';
+    fn.open       = openGen(codegen);
     fn.scale      = scaleGen(codegen, false);
     fn.iscale     = scaleGen(codegen, true);
     fn.inrange    = 'this.defs.inrange';
@@ -32,10 +32,37 @@ var compile = expr.compiler(args, {
       'indata':     indata,
       'format':     numberFormat,
       'timeFormat': timeFormat,
-      'utcFormat':  utcFormat
+      'utcFormat':  utcFormat,
+      'open':       windowOpen
     };
   }
 });
+
+function openGen(codegen) {
+  return function (args) {
+    args = args.map(codegen);
+    var n = args.length;
+    if (n < 1 || n > 2) {
+      throw Error("open takes exactly 1 or 2 arguments.");
+    }
+    return 'this.defs.open(this.model, ' +
+      args[0] + (n > 1 ? ',' + args[1] : '') + ')';
+  };
+}
+
+function windowOpen(model, url, name) {
+  if (typeof window !== 'undefined' && window && window.open) {
+    var opt = dl.extend({type: 'open', url: url, name: name}, model.config().load),
+        uri = dl.load.sanitizeUrl(opt);
+    if (uri) {
+      window.open(uri, name);
+    } else {
+      throw Error('Invalid URL: ' + opt.url);
+    }
+  } else {
+    throw Error('Open function can only be invoked in a browser.');
+  }
+}
 
 function scaleGen(codegen, invert) {
   return function(args) {
@@ -86,7 +113,7 @@ function indataGen(codegen) {
     }
 
     args = args.map(codegen);
-    return 'this.defs.indata(this.model,' + 
+    return 'this.defs.indata(this.model,' +
       args[0] + ',' + args[1] + ',' + args[2] + ')';
   };
 }
