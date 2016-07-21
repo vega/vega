@@ -11,7 +11,8 @@ export default function(spec, scope) {
 
   defRef = ref(scope.add(entry('Collect', [{
     orient:       spec.orient,
-    padding:      +spec.axisPadding || config.axisPadding,
+    offset:       +spec.offset,
+    padding:      +spec.axisPadding  || config.axisPadding,
     titlePadding: +spec.titlePadding || config.axisTitlePadding,
     minExtent:    +spec.minExtent || config.axisMinExtent,
     maxExtent:    +spec.maxExtent || config.axisMaxExtent
