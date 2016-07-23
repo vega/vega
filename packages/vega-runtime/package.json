@@ -25,7 +25,6 @@
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
-    "vega-dataflow": "2",
     "vega-util": "1"
   },
   "devDependencies": {
@@ -33,6 +32,7 @@
     "json2module": "0.0",
     "rollup": "0.34",
     "tape": "4",
-    "uglify-js": "2"
+    "uglify-js": "2",
+    "vega-dataflow": "2"
   }
 }

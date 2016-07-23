@@ -1,11 +1,9 @@
-import {changeset} from 'vega-dataflow';
-
 /**
  * Context objects store the current parse state.
  * Enables lookup of parsed operators, event streams, accessors, etc.
  * Provides a 'fork' method for creating child contexts for subflows.
  */
-export default function context(df, transforms, functions) {
+export default function(df, transforms, functions) {
   return new Context(df, transforms, functions);
 }
 
@@ -43,12 +41,13 @@ Context.prototype = ContextFork.prototype = {
     return this.nodes[id] = node;
   },
   add: function(spec, op) {
-    var ctx = this;
+    var ctx = this,
+        df = ctx.dataflow;
 
     ctx.set(spec.id, op);
 
     if (spec.type === 'Collect' && spec.value) {
-      ctx.dataflow.pulse(op, changeset().insert(spec.value));
+      df.pulse(op, df.changeset().insert(spec.value));
     }
 
     if (spec.root) {
