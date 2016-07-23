@@ -46,15 +46,15 @@ export default function parseView(spec, scope) {
 
   // Perform chart layout
   op = scope.add(transform('ChartLayout', {
-    mark:  root,
-    pulse: ref(op)
+    children: children,
+    mark:     root,
+    pulse:    ref(op)
   }));
 
   // Bound root item
   op = scope.add(transform('Bound', {
-    mark:     root,
-    children: children,
-    pulse:    ref(op)
+    mark:  root,
+    pulse: ref(op)
   }));
 
   // Render root item

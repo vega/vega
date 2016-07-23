@@ -1,6 +1,6 @@
 import DataScope from './DataScope';
 import {
-  aggrField, Ascending, compareRef,
+  aggrField, Ascending, compareRef, Entry,
   fieldRef, isSignal, operator, ref, transform
 } from './util';
 import {array, error, isString} from 'vega-util';
@@ -170,7 +170,8 @@ prototype.addSignal = function(name, value) {
   if (this.signals.hasOwnProperty(name)) {
     error('Duplicate signal name: ' + name);
   }
-  return this.signals[name] = this.add(operator(value));
+  var op = value instanceof Entry ? value : this.add(operator(value));
+  return this.signals[name] = op;
 };
 
 prototype.getSignal = function(name) {

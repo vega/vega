@@ -2,9 +2,10 @@ import color from './color';
 import field from './field';
 import scale from './scale';
 import signal from './signal';
+import property from './property';
 import {stringValue} from 'vega-util';
 
-export default function(channel, enc, scope, params, fields) {
+export default function entry(channel, enc, scope, params, fields) {
   var value = (enc.color != null) ? color(enc.color, scope, params, fields)
     : (enc.field != null) ? field(enc.field, fields)
     : (enc.signal != null) ? signal(enc.signal, scope, params)
@@ -16,11 +17,11 @@ export default function(channel, enc, scope, params, fields) {
   }
 
   if (enc.mult != null) {
-    value += '*' + (+enc.mult);
+    value += '*' + property(enc.mult, scope, params, fields);
   }
 
   if (enc.offset != null) {
-    value += '+' + (+enc.offset);
+    value += '+' + property(enc.offset, scope, params, fields);
   }
 
   return value;

@@ -1,14 +1,15 @@
 import {Top, Bottom, Left, Right, Value, Label} from './constants';
+import encoder from './encoder';
+import {extend} from 'vega-util';
 
-export default function(spec, config, dataRef) {
+export default function(spec, config, encode, dataRef) {
+  encode = encode || {};
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      size = +spec.tickSize|| config.axisTickSize,
-      pad = +spec.tickPadding || config.axisTickPadding,
-      tickSize = {value: sign * (Math.max(size, 0) + pad)},
-      tickPos = {scale: spec.scale, field: Value, band: 0.5},
+      size = spec.tickSize != null ? spec.tickSize : config.axisTickSize,
+      pad = spec.tickPadding != null ? spec.tickPadding : config.axisTickPadding,
       zero = {value: 0},
-      enter, exit, update;
+      enter, exit, update, tickSize, tickPos;
 
   enter = {
     opacity: zero,
@@ -26,6 +27,13 @@ export default function(spec, config, dataRef) {
     opacity: {value: 1}
   };
 
+  tickSize = extend(encoder(size), {
+    mult:   sign,
+    offset: extend(encoder(pad), {mult: sign})
+  });
+
+  tickPos = {scale: spec.scale, field: Value, band: 0.5};
+
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
@@ -40,9 +48,13 @@ export default function(spec, config, dataRef) {
 
   return {
     type: 'text',
-    key:  Value,
+    key:  Label,
     from: dataRef,
     interactive: true,
-    encode: {enter: enter, exit: exit, update: update}
+    encode: {
+      exit:   extend(exit, encode.exit),
+      enter:  extend(enter, encode.enter),
+      update: extend(update, encode.update)
+    }
   };
 }

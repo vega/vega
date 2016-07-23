@@ -28,6 +28,13 @@ export var transforms = [
     "output": ["text", "count"]
   },
   {
+    "type": "Extent",
+    "metadata": {},
+    "params": [
+      { "name": "field", "type": "field", "required": true }
+    ]
+  },
+  {
     "type": "Filter",
     "metadata": {"changes": true},
     "params": [
