@@ -1,5 +1,6 @@
 import {data, insert, remove} from './data';
 import events from './events';
+import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
 import renderToImageURL from './render-to-image-url';
@@ -14,8 +15,7 @@ import {
 } from './render-types';
 
 import {
-  Dataflow,
-  changeset
+  Dataflow
 } from 'vega-dataflow';
 
 import {
@@ -62,7 +62,7 @@ export default function View(spec) {
   if (ctx.root) ctx.root.set(root);
   this.pulse(
     this._data.root.input,
-    changeset().insert(root.items)
+    this.changeset().insert(root.items)
   );
 
   // background color
@@ -172,7 +172,7 @@ prototype.toSVG = renderToSVG;
 // -- EVENT HANDLING ----
 prototype.events = events;
 prototype.finalize = finalize;
-prototype.changeset = changeset;
+prototype.hover = hover;
 
 // -- SAVE / RESTORE STATE ----
 prototype.state = state;

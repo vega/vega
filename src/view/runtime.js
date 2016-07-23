@@ -55,6 +55,15 @@ function functions(fn, ctx) {
     return index ? !!index.value.get(value) : undefined;
   };
 
+  fn.encode = function(item, name, retval) {
+    if (item) {
+      var df = ctx.dataflow,
+          target = item.mark.source;
+      df.pulse(target, df.changeset().encode(item, name));
+    }
+    return retval !== undefined ? retval : item;
+  };
+
   return ctx;
 }
 
