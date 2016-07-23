@@ -58,14 +58,13 @@ function layoutGroup(group) {
 
 function layoutAxis(axis, width, height) {
   var item = axis.items[0],
-      datum = item.datum,
-      orient = datum.orient || 'left',
-      offset = datum.offset || 0,
-      minExtent = datum.minExtent || -Infinity,
-      maxExtent = datum.maxExtent || +Infinity,
+      orient = item.datum.orient || 'left',
+      offset = item.offset,
+      minExtent = item.minExtent,
+      maxExtent = item.maxExtent,
       title = item.items[TITLE] && item.items[TITLE].items[0],
-      titleOffset = datum.titleOffset || 0,
-      titleSize = title ? (title.fontSize || 14) + titleOffset : 0,
+      titlePadding = item.titlePadding,
+      titleSize = title ? (title.fontSize || 14) + titlePadding : 0,
       bounds = tempBounds,
       x, y, s;
 
@@ -74,13 +73,14 @@ function layoutAxis(axis, width, height) {
     .union(item.items[LABEL].bounds);
 
   // position axis group and title
+  // TODO: ignore title positioning if user-specified
   switch (orient) {
     case 'top': {
       x = 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, offset - bounds.y1));
       if (title) {
-        title.y = -(titleOffset + s);
+        title.y = -(titlePadding + s);
         s += titleSize;
       }
       bounds.set(0, -s, width, 0);
@@ -91,7 +91,7 @@ function layoutAxis(axis, width, height) {
       y = 0;
       s = Math.max(minExtent, Math.min(maxExtent, offset - bounds.x1));
       if (title) {
-        title.x = -(titleOffset + s);
+        title.x = -(titlePadding + s);
         s += titleSize;
       }
       bounds.set(-s, 0, 0, height);
@@ -102,7 +102,7 @@ function layoutAxis(axis, width, height) {
       x = offset + width;
       s = Math.max(minExtent, Math.min(maxExtent, offset + bounds.x2));
       if (title) {
-        title.x = titleOffset + s;
+        title.x = titlePadding + s;
         s += titleSize;
       }
       bounds.set(width, 0, width + s, height);
@@ -113,7 +113,7 @@ function layoutAxis(axis, width, height) {
       y = offset + height;
       s = Math.max(minExtent, Math.min(maxExtent, offset + bounds.y2));
       if (title) {
-        title.y = titleOffset + s;
+        title.y = titlePadding + s;
         s += titleSize;
       }
       bounds.set(0, height, width, height + s);
