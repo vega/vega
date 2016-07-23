@@ -23,12 +23,13 @@ export var functions = function(codegen) {
   var fn = baseFunctions(codegen);
 
   // view-specific event information
-  fn.view  = eventPrefix + 'view';
-  fn.item  = eventPrefix + 'item';
-  fn.group = eventPrefix + 'group';
-  fn.xy    = eventPrefix + 'xy';
-  fn.x     = eventPrefix + 'x';
-  fn.y     = eventPrefix + 'y';
+  fn.view   = eventPrefix + 'view';
+  fn.item   = eventPrefix + 'item';
+  fn.group  = eventPrefix + 'group';
+  fn.xy     = eventPrefix + 'xy';
+  fn.x      = eventPrefix + 'x';
+  fn.y      = eventPrefix + 'y';
+  fn.encode = 'this.encode';
 
   // color functions
   fn.rgb = 'this.rgb';

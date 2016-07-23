@@ -80,6 +80,6 @@ function streamParameters(entry, stream, scope) {
 function filterMark(type, name) {
   var item = 'event.item';
   return item
-    + (type && type !== 'item' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
+    + (type && type !== '*' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
     + (name ? '&&' + item + '.mark.name===\'' + name + '\'' : '');
 }

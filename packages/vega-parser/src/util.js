@@ -1,6 +1,6 @@
 import {isObject} from 'vega-util';
 
-function Entry(type, value, params) {
+export function Entry(type, value, params) {
   this.id = -1,
   this.type = type;
   this.value = value;

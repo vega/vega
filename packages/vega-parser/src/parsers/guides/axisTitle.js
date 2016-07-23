@@ -1,10 +1,11 @@
 import {Top, Bottom, Left} from './constants';
+import {extend} from 'vega-util';
 
-export default function(spec, config, dataRef) {
+export default function(spec, config, encode, dataRef) {
+  encode = encode || {};
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      titlePos = {scale: spec.scale, range: 0.5},
-      enter, exit, update;
+      enter, exit, update, titlePos;
 
   enter = {
     opacity: {value: 1},
@@ -23,6 +24,8 @@ export default function(spec, config, dataRef) {
     text: {field: 'title'}
   };
 
+  titlePos = {scale: spec.scale, range: 0.5};
+
   if (orient === Top || orient === Bottom) {
     update.x = titlePos;
     update.angle = {value: 0};
@@ -37,6 +40,10 @@ export default function(spec, config, dataRef) {
     type: 'text',
     from: dataRef,
     interactive: true,
-    encode: {enter: enter, exit: exit, update: update}
+    encode: {
+      exit:   extend(exit, encode.exit),
+      enter:  extend(enter, encode.enter),
+      update: extend(update, encode.update)
+    }
   };
 }

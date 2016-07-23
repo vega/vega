@@ -1,15 +1,16 @@
 import parseExpression from './expression';
 import parseSelector from './event-selector';
 import parseStream from './stream';
-import {array, error, extend, isString} from 'vega-util';
+import {array, error, extend, isString, stringValue} from 'vega-util';
 
 var preamble = 'var datum=event.item&&event.item.datum;';
 
 export default function(spec, scope, target) {
   var events = spec.events,
       update = spec.update,
+      encode = spec.encode,
       sources = [],
-      value, entry;
+      value = '', entry;
 
   if (!events) {
     error('Signal update missing events specification.');
@@ -28,6 +29,11 @@ export default function(spec, scope, target) {
   // merge event streams, include as source
   if (events.length) {
     sources.push(events.length > 1 ? {merge: events} : events[0]);
+  }
+
+  if (encode != null) {
+    if (update) error('Signal encode and update are mutually exclusive.');
+    update = 'encode(item(),' + stringValue(encode) + ')';
   }
 
   // resolve update value

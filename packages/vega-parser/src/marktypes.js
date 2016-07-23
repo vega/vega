@@ -1,6 +1,7 @@
 import {toSet} from 'vega-util';
 
 export var marktypes = toSet([
+  '*',
   'arc',
   'area',
   'group',

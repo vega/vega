@@ -1,5 +1,4 @@
 export default {
-  axisPadding: 0,
   axisMinExtent: 0,
   axisMaxExtent: Infinity,
   axisTickPadding: 2,
