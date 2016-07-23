@@ -1,22 +1,29 @@
 import {operatorExpression} from './expression';
 import parseParameters from './parameters';
+import {error} from 'vega-util';
 
 /**
  * Parse a dataflow operator.
  */
-export default function parseOperator(spec, ctx) {
-  var params, update;
-
-  if (spec.params) {
-    params = parseParameters(spec.params, ctx);
-  }
-
+export default function(spec, ctx) {
   if (spec.type === 'Operator' || !spec.type) {
-    if (spec.update) {
-      update = operatorExpression(spec.update, ctx);
-    }
-    ctx.operator(spec, update, params);
+    ctx.operator(spec,
+      spec.update ? operatorExpression(spec.update, ctx) : null);
   } else {
-    ctx.transform(spec, spec.type, params);
+    ctx.transform(spec, spec.type);
+  }
+}
+
+/**
+ * Parse and assign operator parameters.
+ */
+export function parseOperatorParameters(spec, ctx) {
+  var op, params;
+  if (spec.params) {
+    if (!(op = ctx.get(spec.id))) {
+      error('Invalid operator id: ' + spec.id);
+    }
+    params = parseParameters(spec.params, ctx);
+    ctx.dataflow.connect(op, op.parameters(params));
   }
 }

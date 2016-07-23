@@ -5,7 +5,7 @@ import {error} from 'vega-util';
 /**
  * Parse an event-driven operator update.
  */
-export default function parseUpdate(spec, ctx) {
+export default function(spec, ctx) {
   var source = ctx.get(spec.source),
       target = null,
       update = spec.update,
