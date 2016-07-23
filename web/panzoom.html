@@ -15,18 +15,49 @@ var width = window.innerWidth,
     padding = 30;
 
 var values = [],
-    normal = vega.randomNormal(0.5, 0.2);
+    normal = vega.randomNormal(0, 0.2);
 for (var i=0; i<500; ++i) {
   values.push({u: normal.sample(), v: normal.sample()});
 }
 
 var runtimeSpec = vega.parse(self.spec = {
+  "version": "3.0.0",
   "width": width - 2 * padding,
   "height": height - 2 * padding,
   "padding": padding,
 
   "signals": [
-    { "name": "dim", "update": "min(width, height)" },
+    {
+      "name": "hover",
+      "on": [
+        {"events": "*:mouseover", "encode": "hover"},
+        {"events": "*:mouseout",  "encode": "leave"},
+        {"events": "*:mousedown", "encode": "select"},
+        {"events": "*:mouseup",   "encode": "release"}
+      ]
+    },
+    {
+      "name": "width",
+      "on": [{
+        "events": {"source": "window", "type": "resize"},
+        "update": "windowsize()[0] - padding.left - padding.right"
+      }]
+    },
+    {
+      "name": "height",
+      "on": [{
+        "events": {"source": "window", "type": "resize"},
+        "update": "windowsize()[1] - padding.top - padding.bottom"
+      }]
+    },
+    {
+      "name": "xoffset",
+      "update": "-(height + padding.bottom)"
+    },
+    {
+      "name": "yoffset",
+      "update": "-(width + padding.left)"
+    },
     { "name": "xrange", "update": "[0, width]" },
     { "name": "yrange", "update": "[height, 0]" },
 
@@ -120,8 +151,9 @@ var runtimeSpec = vega.parse(self.spec = {
         "update": "pinchDistance()"
       }]
     },
+
     {
-      "name": "xdom", "value": [0, 1],
+      "name": "xdom", "update": "slice(xext)", "react": false,
       "on": [
         {
           "events": {"signal": "delta"},
@@ -136,7 +168,7 @@ var runtimeSpec = vega.parse(self.spec = {
       ]
     },
     {
-      "name": "ydom", "value": [0, 1],
+      "name": "ydom", "update": "slice(yext)", "react": false,
       "on": [
         {
           "events": {"signal": "delta"},
@@ -158,7 +190,11 @@ var runtimeSpec = vega.parse(self.spec = {
 
   "data": [
     {
-      "name": "points"
+      "name": "points",
+      "transform": [
+        { "type": "extent", "field": "u", "signal": "xext" },
+        { "type": "extent", "field": "v", "signal": "yext" }
+      ]
     }
   ],
 
@@ -179,12 +215,22 @@ var runtimeSpec = vega.parse(self.spec = {
     {
       "scale": "xscale",
       "orient": "top",
-      "offset": -(height-padding)
+      "offset": {"signal": "xoffset"},
+      "encode": {
+        "labels": {
+          "enter": {"font": {"value": "Monaco"}}
+        }
+      }
     },
     {
       "scale": "yscale",
       "orient": "right",
-      "offset": -(width-padding)
+      "offset": {"signal": "yoffset"},
+      "encode": {
+        "labels": {
+          "enter": {"font": {"value": "Monaco"}}
+        }
+      }
     }
   ],
 
@@ -202,12 +248,10 @@ var runtimeSpec = vega.parse(self.spec = {
           "y": {"scale": "yscale", "field": "v"},
           "size": {"signal": "size"}
         },
-        "hover": {
-          "fill": {"value": "firebrick"}
-        },
-        "leave": {
-          "fill": {"value": "steelblue"}
-        }
+        "hover":   { "fill": {"value": "firebrick"} },
+        "leave":   { "fill": {"value": "steelblue"} },
+        "select":  { "size": {"signal": "size", "mult": 5} },
+        "release": { "size": {"signal": "size"} }
       }
     }
   ]
