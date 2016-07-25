@@ -1,3 +1,4 @@
+import parseExpression from './expression';
 import {compareRef, fieldRef, isSignal, ref, transform} from '../util';
 import {transformDef} from '../transforms';
 import {error, extend, isArray, isString} from 'vega-util';
@@ -52,19 +53,19 @@ function parseParameter(def, spec, scope) {
 /**
  * Parse a single parameter value.
  */
-function parameterValue(type, val, scope) {
-  if (isSignal(val)) {
+function parameterValue(type, value, scope) {
+  if (isSignal(value)) {
     return isData(type) ? error('Data references can not be signals.')
          : isExpr(type) ? error('Expression references can not be signals.')
-         : isField(type) ? scope.fieldRef(val)
-         : isCompare(type) ? scope.compareRef(val)
-         : scope.signalRef(val.signal);
+         : isField(type) ? scope.fieldRef(value)
+         : isCompare(type) ? scope.compareRef(value)
+         : scope.signalRef(value.signal);
   } else {
-    return isData(type) ? scope.getData(val).values
-         : isExpr(type) ? error('Expression parsing not yet supported.')
-         : isField(type) ? fieldRef(val)
-         : isCompare(type) ? compareRef(val)
-         : val;
+    return isData(type) ? scope.getData(value).values
+         : isExpr(type) ? parseExpression(value, scope)
+         : isField(type) ? fieldRef(value)
+         : isCompare(type) ? compareRef(value)
+         : value;
   }
 }
 
