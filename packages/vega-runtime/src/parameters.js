@@ -1,6 +1,6 @@
 import parseDataflow from './dataflow';
 import {parameterExpression, encodeExpression} from './expression';
-import {accessor, compare, error, field, isObject} from 'vega-util';
+import {accessor, compare, error, field, isArray, isObject} from 'vega-util';
 
 /**
  * Parse a set of operator parameters.
@@ -17,7 +17,7 @@ export default function parseParameters(spec, ctx, params) {
       parseParameters(value.$params, ctx, params);
     }
 
-    params[key] = Array.isArray(value)
+    params[key] = isArray(value)
       ? value.map(function(v) { return parseParameter(v, ctx); })
       : parseParameter(value, ctx);
   }
