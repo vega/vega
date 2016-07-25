@@ -2,11 +2,6 @@ import {Transform} from 'vega-dataflow';
 import {Bounds} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
-// var GRIDS = 0,
-var TICKS = 0,
-    LABEL = 1,
-    TITLE = 2;
-
 var tempBounds = new Bounds();
 
 /**
@@ -58,19 +53,23 @@ function layoutGroup(group) {
 
 function layoutAxis(axis, width, height) {
   var item = axis.items[0],
-      orient = item.datum.orient || 'left',
+      datum = item.datum,
+      orient = datum.orient || 'left',
+      ticksIndex = datum.grid ? 1 : 0,
+      labelIndex = ticksIndex + 1,
+      titleIndex = labelIndex + datum.domain ? 1 : 0,
       offset = item.offset,
       minExtent = item.minExtent,
       maxExtent = item.maxExtent,
-      title = item.items[TITLE] && item.items[TITLE].items[0],
+      title = datum.title && item.items[titleIndex].items[0],
       titlePadding = item.titlePadding,
       titleSize = title ? (title.fontSize || 14) + titlePadding : 0,
       bounds = tempBounds,
       x, y, s;
 
   bounds.clear()
-    .union(item.items[TICKS].bounds)
-    .union(item.items[LABEL].bounds);
+    .union(item.items[ticksIndex].bounds)
+    .union(item.items[labelIndex].bounds);
 
   // position axis group and title
   // TODO: ignore title positioning if user-specified

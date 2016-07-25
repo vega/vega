@@ -16,8 +16,10 @@ prototype.transform = function(_, pulse) {
 
   if (pulse.changed(pulse.REM)) {
     // TODO remove need for this annotation?
-    pulse.visit(pulse.REM, function(t) { t.status = 'exit'; });
-    view.enqueue(pulse.materialize(pulse.REM).rem);
+    pulse.materialize(pulse.REM).visit(pulse.REM, function(t) {
+      t.status = 'exit';
+    });
+    view.enqueue(pulse.rem);
   }
 
   if (pulse.changed(pulse.ADD)) {

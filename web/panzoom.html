@@ -12,7 +12,8 @@
     <script>
 var width = window.innerWidth,
     height = window.innerHeight,
-    padding = 30;
+    majorPadding = 30,
+    minorPadding = 10;
 
 var values = [],
     normal = vega.randomNormal(0, 0.2);
@@ -22,9 +23,14 @@ for (var i=0; i<500; ++i) {
 
 var runtimeSpec = vega.parse(self.spec = {
   "version": "3.0.0",
-  "width": width - 2 * padding,
-  "height": height - 2 * padding,
-  "padding": padding,
+  "width": width - (majorPadding + minorPadding),
+  "height": height - (majorPadding + minorPadding),
+  "padding": {
+    "top":    minorPadding,
+    "left":   majorPadding,
+    "bottom": majorPadding,
+    "right":  minorPadding
+  },
 
   "signals": [
     {
@@ -109,7 +115,7 @@ var runtimeSpec = vega.parse(self.spec = {
       "name": "anchor", "value": [0, 0],
       "on": [
         {
-          "events": "window:mousemove",
+          "events": "wheel",
           "update": "[invert('xscale', x()), invert('yscale', y())]"
         },
         {
@@ -215,6 +221,7 @@ var runtimeSpec = vega.parse(self.spec = {
     {
       "scale": "xscale",
       "orient": "top",
+      "domain": false,
       "offset": {"signal": "xoffset"},
       "encode": {
         "labels": {
@@ -225,6 +232,7 @@ var runtimeSpec = vega.parse(self.spec = {
     {
       "scale": "yscale",
       "orient": "right",
+      "domain": false,
       "offset": {"signal": "yoffset"},
       "encode": {
         "labels": {
