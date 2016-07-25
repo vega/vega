@@ -5,11 +5,11 @@ export default function(enc, value, scope, params) {
   var scale = getScale(enc.scale, scope, params),
       interp, func;
 
-  if (enc.range) {
+  if (enc.range != null) {
     // pull value from scale range
     interp = +enc.range;
     func = scale + '.range()';
-    value = (interp === 0) ? func + '[0]'
+    value = (interp === 0) ? (func + '[0]')
       : '($=' + func + ',' + ((interp === 1) ? '$[$.length-1]'
       : '$[0]+' + interp + '*($[$.length-1]-$[0])') + ')';
   } else {
