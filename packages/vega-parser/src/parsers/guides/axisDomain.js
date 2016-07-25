@@ -1,14 +1,11 @@
-import {Top, Left, Bottom, Value, Label} from './constants';
-import encoder from './encoder';
+import {Top, Bottom} from './constants';
 import {extend} from 'vega-util';
 
 export default function(spec, config, encode, dataRef) {
   encode = encode || {};
   var orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      size = spec.tickSize != null ? spec.tickSize : config.axisTickSize,
       zero = {value: 0},
-      enter, exit, update, tickSize, tickPos;
+      enter, exit, update;
 
   enter = {
     opacity: zero,
@@ -24,23 +21,18 @@ export default function(spec, config, encode, dataRef) {
     opacity: {value: 1}
   };
 
-  tickSize = extend(encoder(size), {mult: sign});
-
-  tickPos = {scale: spec.scale, field: Value, band: 0.5, offset: 0.5};
-
   if (orient === Top || orient === Bottom) {
-    update.y = enter.y = {value: 0.5};
-    update.y2 = enter.y2 = tickSize;
-    update.x = enter.x = exit.x = tickPos;
+    enter.y = {value: 0.5};
+    update.x = enter.x = {scale: spec.scale, range: 0, offset: 0.5};
+    update.x2 = enter.x2 = {scale: spec.scale, range: 1, offset: 0.5};
   } else {
-    update.x = enter.x = {value: 0.5};
-    update.x2 = enter.x2 = tickSize;
-    update.y = enter.y = exit.y = tickPos;
+    enter.x = {value: 0.5};
+    update.y = enter.y = {scale: spec.scale, range: 0, offset: 0.5};
+    update.y2 = enter.y2 = {scale: spec.scale, range: 1, offset: 0.5};
   }
 
   return {
     type: 'rule',
-    key:  Label,
     from: dataRef,
     interactive: false,
     encode: {

@@ -1,6 +1,10 @@
 export default {
   axisMinExtent: 0,
-  axisMaxExtent: Infinity,
+  axisMaxExtent: 200,
+  axisDomainWidth: 1,
+  axisDomainColor: '#000',
+  axisGridWidth: 1,
+  axisGridColor: '#ddd',
   axisTickPadding: 2,
   axisTickSize: 5,
   axisTickWidth: 1,

@@ -1,3 +1,5 @@
+import axisDomain from './guides/axisDomain';
+import axisGrid from './guides/axisGrid';
 import axisGroup from './guides/axisGroup';
 import axisTicks from './guides/axisTicks';
 import axisLabels from './guides/axisLabels';
@@ -9,10 +11,16 @@ import config from '../config'; // TODO customizable config
 
 export default function(spec, scope) {
   var encode = spec.encode || {},
-      defRef, ticksRef, titleRef, group, axisEncode, children;
+      datum, defRef, ticksRef, titleRef, group, axisEncode, children;
 
   // single-element data source for axis group
-  defRef = ref(scope.add(entry('Collect', [{orient: spec.orient}], {})));
+  datum = {
+    orient: spec.orient,
+    domain: spec.domain != null ? !!spec.domain : true,
+    grid:   spec.grid != null ? !!spec.grid : false,
+    title:  !!spec.title
+  };
+  defRef = ref(scope.add(entry('Collect', [datum], {})));
 
   // encoding properties for axis group item
   axisEncode = {
@@ -34,14 +42,23 @@ export default function(spec, scope) {
   })));
 
   // generate axis marks
-  // TODO: domain, gridlines
   children = [
     axisTicks(spec, config, encode.ticks, ticksRef),
     axisLabels(spec, config, encode.labels, ticksRef)
   ];
 
+  // include axis gridlines if requested
+  if (datum.grid) {
+    children.unshift(axisGrid(spec, config, encode.grid, ticksRef));
+  }
+
+  // include axis domain path if requested
+  if (datum.domain) {
+    children.push(axisDomain(spec, config, encode.domain, defRef));
+  }
+
   // include axis title if defined
-  if (spec.title) {
+  if (datum.title) {
     titleRef = ref(scope.add(entry('Collect', [{
       title: spec.title
     }], {})));
