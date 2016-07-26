@@ -1,17 +1,16 @@
 import {Top, Bottom, Left, Right, Value, Label} from './constants';
-import encoder from './encoder';
-import {extend} from 'vega-util';
+import {encoder} from './encode-util';
+import guideMark from './guide-mark';
 
-export default function(spec, config, encode, dataRef) {
-  encode = encode || {};
+export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       size = spec.tickSize != null ? spec.tickSize : config.axisTickSize,
       pad = spec.tickPadding != null ? spec.tickPadding : config.axisTickPadding,
       zero = {value: 0},
-      enter, exit, update, tickSize, tickPos;
+      encode = {}, enter, exit, update, tickSize, tickPos;
 
-  enter = {
+  encode.enter = enter = {
     opacity: zero,
     fill: {value: config.axisTickLabelColor},
     font: {value: config.axisTickLabelFont},
@@ -19,20 +18,24 @@ export default function(spec, config, encode, dataRef) {
     text: {field: Label}
   };
 
-  exit = {
+  encode.exit = exit = {
     opacity: zero
   };
 
-  update = {
+  encode.update = update = {
     opacity: {value: 1}
   };
 
-  tickSize = extend(encoder(size), {
-    mult:   sign,
-    offset: extend(encoder(pad), {mult: sign})
-  });
+  tickSize = encoder(size);
+  tickSize.mult = sign;
+  tickSize.offset = encoder(pad);
+  tickSize.offset.mult = sign;
 
-  tickPos = {scale: spec.scale, field: Value, band: 0.5};
+  tickPos = {
+    scale: spec.scale,
+    field: Value,
+    band: 0.5
+  };
 
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = tickSize;
@@ -46,15 +49,5 @@ export default function(spec, config, encode, dataRef) {
     update.baseline = {value: 'middle'};
   }
 
-  return {
-    type: 'text',
-    key:  Label,
-    from: dataRef,
-    interactive: true,
-    encode: {
-      exit:   extend(exit, encode.exit),
-      enter:  extend(enter, encode.enter),
-      update: extend(update, encode.update)
-    }
-  };
+  return guideMark('text', 'axis-label', Label, dataRef, encode, userEncode);
 }

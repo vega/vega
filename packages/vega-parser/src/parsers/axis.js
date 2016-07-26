@@ -1,42 +1,42 @@
-import axisDomain from './guides/axisDomain';
-import axisGrid from './guides/axisGrid';
-import axisGroup from './guides/axisGroup';
-import axisTicks from './guides/axisTicks';
-import axisLabels from './guides/axisLabels';
-import axisTitle from './guides/axisTitle';
-import encoder from './guides/encoder';
+import axisDomain from './guides/axis-domain';
+import axisGrid from './guides/axis-grid';
+import axisTicks from './guides/axis-ticks';
+import axisLabels from './guides/axis-labels';
+import axisTitle from './guides/axis-title';
+import {encoder, extendEncode} from './guides/encode-util';
+import guideGroup from './guides/guide-group';
 import parseMark from './mark';
 import {ref, entry, transform} from '../util';
 import config from '../config'; // TODO customizable config
 
 export default function(spec, scope) {
   var encode = spec.encode || {},
-      datum, defRef, ticksRef, titleRef, group, axisEncode, children;
+      interactive = !!spec.interactive,
+      datum, dataRef, ticksRef, group, axisEncode, children;
 
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
     domain: spec.domain != null ? !!spec.domain : true,
     grid:   spec.grid != null ? !!spec.grid : false,
-    title:  !!spec.title
+    title:  spec.title
   };
-  defRef = ref(scope.add(entry('Collect', [datum], {})));
+  dataRef = ref(scope.add(entry('Collect', [datum], {})));
 
   // encoding properties for axis group item
-  axisEncode = {
+  axisEncode = extendEncode({
     update: {
       offset:       encoder(spec.offset || 0),
-      padding:      encoder(spec.axisPadding || config.axisPadding),
       titlePadding: encoder(spec.titlePadding || config.axisTitlePadding),
       minExtent:    encoder(spec.minExtent || config.axisMinExtent),
       maxExtent:    encoder(spec.maxExtent || config.axisMaxExtent)
     }
-  };
+  }, encode.axis);
 
   // data source for axis ticks
   ticksRef = ref(scope.add(transform('AxisTicks', {
     scale:  scope.scaleRef(spec.scale),
-    count:  scope.property(spec.ticks),
+    count:  scope.property(spec.count),
     values: scope.property(spec.values),
     formatSpecifier: scope.property(spec.formatSpecifier)
   })));
@@ -54,19 +54,16 @@ export default function(spec, scope) {
 
   // include axis domain path if requested
   if (datum.domain) {
-    children.push(axisDomain(spec, config, encode.domain, defRef));
+    children.push(axisDomain(spec, config, encode.domain, dataRef));
   }
 
   // include axis title if defined
   if (datum.title) {
-    titleRef = ref(scope.add(entry('Collect', [{
-      title: spec.title
-    }], {})));
-    children.push(axisTitle(spec, config, encode.title, titleRef));
+    children.push(axisTitle(spec, config, encode.title, dataRef));
   }
 
   // build axis specification
-  group = axisGroup(spec, config, defRef, axisEncode, children);
+  group = guideGroup('axis', dataRef, interactive, axisEncode, children);
 
   // parse axis specification
   return parseMark(group, scope);

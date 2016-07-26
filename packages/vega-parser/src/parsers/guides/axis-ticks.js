@@ -1,32 +1,37 @@
 import {Top, Left, Bottom, Value, Label} from './constants';
-import encoder from './encoder';
-import {extend} from 'vega-util';
+import {encoder} from './encode-util';
+import guideMark from './guide-mark';
 
-export default function(spec, config, encode, dataRef) {
-  encode = encode || {};
+export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       size = spec.tickSize != null ? spec.tickSize : config.axisTickSize,
       zero = {value: 0},
-      enter, exit, update, tickSize, tickPos;
+      encode = {}, enter, exit, update, tickSize, tickPos;
 
-  enter = {
+  encode.enter = enter = {
     opacity: zero,
     stroke: {value: config.axisTickColor},
     strokeWidth: {value: config.axisTickWidth}
   };
 
-  exit = {
+  encode.exit = exit = {
     opacity: zero
   };
 
-  update = {
+  encode.update = update = {
     opacity: {value: 1}
   };
 
-  tickSize = extend(encoder(size), {mult: sign});
+  tickSize = encoder(size);
+  tickSize.mult = sign;
 
-  tickPos = {scale: spec.scale, field: Value, band: 0.5, offset: 0.5};
+  tickPos = {
+    scale:  spec.scale,
+    field:  Value,
+    band:   0.5,
+    offset: 0.5
+  };
 
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = {value: 0.5};
@@ -38,15 +43,5 @@ export default function(spec, config, encode, dataRef) {
     update.y = enter.y = exit.y = tickPos;
   }
 
-  return {
-    type: 'rule',
-    key:  Label,
-    from: dataRef,
-    interactive: false,
-    encode: {
-      exit:   extend(exit, encode.exit),
-      enter:  extend(enter, encode.enter),
-      update: extend(update, encode.update)
-    }
-  };
+  return guideMark('rule', 'axis-tick', Label, dataRef, encode, userEncode);
 }

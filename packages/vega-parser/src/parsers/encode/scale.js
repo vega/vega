@@ -14,7 +14,7 @@ export default function(enc, value, scope, params) {
       : '$[0]+' + interp + '*($[$.length-1]-$[0])') + ')';
   } else {
     // run value through scale and/or pull scale bandwidth
-    value = value ? scale + '(' + value + ')' : null;
+    value = value != null ? scale + '(' + value + ')' : null;
 
     if (enc.band) {
       // TODO streamline codegen using scale type info?

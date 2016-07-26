@@ -16,5 +16,27 @@ export default {
   axisTitleColor: '#000',
   axisTitleFont: 'sans-serif',
   axisTitleFontSize: 11,
-  axisTitleFontWeight: 'bold'
+  axisTitleFontWeight: 'bold',
+
+  legendOrient: 'right',
+  legendOffset: 18,
+  legendPadding: 0,
+  legendEntryPadding: 5,
+  legendTitlePadding: 5,
+  legendLabelColor: '#000',
+  legendLabelFontSize: 10,
+  legendLabelFont: 'sans-serif',
+  legendLabelAlign: 'left',
+  legendLabelBaseline: 'middle',
+  legendLabelOffset: 8,
+  legendSymbolType: 'circle',
+  legendSymbolSize: 64,
+  legendSymbolColor: '#888',
+  legendSymbolStrokeWidth: 1,
+  legendTitleColor: '#000',
+  legendTitleFont: 'sans-serif',
+  legendTitleFontSize: 11,
+  legendTitleFontWeight: 'bold',
+  legendTitleAlign: 'left',
+  legendTitleBaseline: 'top'
 };
