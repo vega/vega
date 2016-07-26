@@ -16,6 +16,11 @@ export default function entry(channel, enc, scope, params, fields) {
     value = scale(enc, value, scope, params);
   }
 
+  if (enc.exponent != null) {
+    value = 'Math.pow(' + value + ','
+      + property(enc.exponent, scope, params, fields) + ')';
+  }
+
   if (enc.mult != null) {
     value += '*' + property(enc.mult, scope, params, fields);
   }

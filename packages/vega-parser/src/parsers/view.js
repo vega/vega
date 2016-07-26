@@ -1,8 +1,10 @@
 import {ref, operator, transform} from '../util';
+import config from '../config';
 import DataScope from '../DataScope';
 import parseSignalUpdates from './signal-updates';
 import parseProjection from './projection';
 import parsePadding from './padding';
+import parseLegend from './legend';
 import parseSignal from './signal';
 import parseScale from './scale';
 import parseData from './data';
@@ -46,9 +48,10 @@ export default function parseView(spec, scope) {
 
   // Perform chart layout
   op = scope.add(transform('ChartLayout', {
-    children: children,
-    mark:     root,
-    pulse:    ref(op)
+    legendMargin: config.legendMargin,
+    children:     children,
+    mark:         root,
+    pulse:        ref(op)
   }));
 
   // Bound root item
@@ -97,6 +100,10 @@ function parseSpec(spec, scope) {
 
   array(spec.marks).forEach(function(_) {
     children.push(parseMark(_, scope));
+  });
+
+  array(spec.legends).forEach(function(_) {
+    children.push(parseLegend(_, scope));
   });
 
   return children;

@@ -19,7 +19,14 @@ export default function parseScale(scale, scope) {
   delete params.name;
   params.type = type;
   params.domain = parseScaleDomain(scale, scope);
-  params.range = parseScaleRange(scale, scope);
+
+  if (scale.range != null) {
+    params.range = parseScaleRange(scale, scope);
+  }
+
+  if (scale.scheme != null) {
+    params.scheme = parseLiteral(scale.scheme, scope);
+  }
 
   scope.addScale(scale.name, params);
 }
@@ -127,7 +134,6 @@ function qMultipleDomain(scale, scope, fields) {
 // -- SCALE RANGE -----
 
 function parseScaleRange(scale, scope) {
-  if (!scale.range) error('Missing scale range');
   var range = scale.range;
 
   if (range.signal) {

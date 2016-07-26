@@ -1,14 +1,13 @@
 import {Top, Bottom, Left} from './constants';
-import {extend} from 'vega-util';
+import guideMark from './guide-mark';
 
-export default function(spec, config, encode, dataRef) {
-  encode = encode || {};
+export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      enter, exit, update, titlePos;
+      encode = {}, update, titlePos;
 
-  enter = {
-    opacity: {value: 1},
+  encode.enter = {
+    opacity: {value: 0},
     fill: {value: config.axisTitleColor},
     font: {value: config.axisTitleFont},
     fontSize: {value: config.axisTitleFontSize},
@@ -16,15 +15,19 @@ export default function(spec, config, encode, dataRef) {
     align: {value: 'center'}
   };
 
-  exit = {
+  encode.exit = {
     opacity: {value: 0}
   };
 
-  update = {
+  encode.update = update = {
+    opacity: {value: 1},
     text: {field: 'title'}
   };
 
-  titlePos = {scale: spec.scale, range: 0.5};
+  titlePos = {
+    scale: spec.scale,
+    range: 0.5
+  };
 
   if (orient === Top || orient === Bottom) {
     update.x = titlePos;
@@ -36,14 +39,5 @@ export default function(spec, config, encode, dataRef) {
     update.baseline = {value: 'bottom'};
   }
 
-  return {
-    type: 'text',
-    from: dataRef,
-    interactive: true,
-    encode: {
-      exit:   extend(exit, encode.exit),
-      enter:  extend(enter, encode.enter),
-      update: extend(update, encode.update)
-    }
-  };
+  return guideMark('text', 'axis-title', null, dataRef, encode, userEncode);
 }
