@@ -139,13 +139,15 @@ function layoutLegend(legend, flow, axisBounds, width, height) {
       orient = datum.orient,
       offset = item.offset,
       bounds = item.bounds.clear(),
-      x = 0.5,
-      y = 0.5 + (flow[orient] || 0),
+      x = 0,
+      y = (flow[orient] || 0),
       w, h;
 
+  // aggregate bounds to determine size
+  // shave off 1 pixel because it looks better...
   item.items.forEach(function(_) { bounds.union(_.bounds); });
-  w = Math.ceil(bounds.width()) + item.padding * 2;
-  h = Math.ceil(bounds.height()) + item.padding * 2;
+  w = Math.round(bounds.width()) + 2 * item.padding - 1;
+  h = Math.round(bounds.height()) + 2 * item.padding - 1;
 
   switch (orient) {
     case 'left':
