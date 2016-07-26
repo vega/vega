@@ -23,8 +23,9 @@ function attr(emit, item, renderer) {
 }
 
 function background(emit, item) {
+  var offset = item.stroke ? -0.5 : 0;
   emit('class', 'background');
-  emit('d', rectangle(null, item, 0, 0));
+  emit('d', rectangle(null, item, offset, offset));
 }
 
 function bound(bounds, group) {
@@ -48,7 +49,7 @@ function bound(bounds, group) {
 function draw(context, scene, bounds) {
   var renderer = this,
       groups = scene.items,
-      group, items, gx, gy, w, h, opacity, i, n, j, m;
+      group, items, gx, gy, offset, w, h, opacity, i, n, j, m;
 
   if (!groups || !groups.length) return;
 
@@ -60,12 +61,17 @@ function draw(context, scene, bounds) {
     w = group.width || 0;
     h = group.height || 0;
 
+    // setup graphics context
+    context.save();
+    context.translate(gx, gy);
+
     // draw group background
     if (group.stroke || group.fill) {
       opacity = group.opacity == null ? 1 : group.opacity;
       if (opacity > 0) {
         context.beginPath();
-        rectangle(context, group);
+        offset = group.stroke ? -0.5 : 0;
+        rectangle(context, group, offset, offset);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();
         }
@@ -75,9 +81,7 @@ function draw(context, scene, bounds) {
       }
     }
 
-    // setup graphics context
-    context.save();
-    context.translate(gx, gy);
+    // set clip and bounds
     if (group.clip) {
       context.beginPath();
       context.rect(0, 0, w, h);
