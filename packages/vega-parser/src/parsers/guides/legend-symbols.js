@@ -9,9 +9,12 @@ export default function(spec, config, userEncode, dataRef) {
     opacity: zero,
     shape: {value: config.legendSymbolType},
     size: {value: config.legendSymbolSize},
-    stroke: {value: config.legendSymbolColor},
     strokeWidth: {value: config.legendSymbolStrokeWidth}
   };
+
+  if (!spec.fill) {
+    enter.stroke = {value: config.legendSymbolColor};
+  }
 
   encode.exit = {
     opacity: zero
