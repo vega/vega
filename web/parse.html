@@ -14,8 +14,8 @@
     <script>
 var runtimeSpec = vega.parse({
   "width": 500,
-  "height": 100,
-  "padding": 100,
+  "height": 200,
+  "padding": 200,
 
   "signals": [
     {
@@ -24,7 +24,7 @@ var runtimeSpec = vega.parse({
       "on": [
         {
           "events": {"marktype": "rect", "type": "mouseover"},
-          "update": {"expr": "event.item.datum"}
+          "update": {"expr": "datum"}
         },
         {
           "events": {"marktype": "rect", "type": "mouseout"},
@@ -61,33 +61,156 @@ var runtimeSpec = vega.parse({
     {
       "name": "yscale",
       "type": "linear",
-      "range": [0, {"signal": "height"}],
+      "range": [{"signal": "height"}, 0],
       "domain": {"data": "values", "field": "y"},
       "zero": true,
       "nice": true
+    },
+    {
+      "name": "shapeScale",
+      "type": "ordinal",
+      "domain": ["a", "b", "c", "d", "e", "f"],
+      "range": ["circle", "square", "cross", "diamond", "triangle-up", "triangle-down"]
+    },
+    {
+      "name": "colorScale",
+      "type": "ordinal",
+      "domain": ["a", "b", "c", "d", "e", "f"],
+      "scheme": "category10"
+    },
+    {
+      "name": "innerScale",
+      "type": "ordinal",
+      "domain": ["alpha", "beta"],
+      "range": ["circle", "square"]
     }
   ],
 
   "axes": [
     {
-      "scale": "xscale",
-      "orient": "top",
-      "title": "Top Title"
-    },
-    {
-      "scale": "xscale",
-      "orient": "bottom",
-      "title": "Bottom Title"
-    },
-    {
       "scale": "yscale",
       "orient": "left",
+      "count": 5,
+      "grid": false,
+      "domain": true,
       "title": "Left Title"
     },
     {
       "scale": "yscale",
       "orient": "right",
+      "count": 5,
+      "grid": true,
+      "domain": true,
       "title": "Right Title"
+    },
+    {
+      "scale": "xscale",
+      "orient": "top",
+      "grid": false,
+      "domain": true,
+      "title": "Top Title"
+    },
+    {
+      "scale": "xscale",
+      "orient": "bottom",
+      "grid": true,
+      "domain": true,
+      "title": "Bottom Title"
+    }
+  ],
+
+  "legends": [
+    {
+      "shape": "shapeScale",
+      "stroke": "colorScale",
+      "title": "Legend Right 1"
+    },
+    {
+      "shape": "shapeScale",
+      "fill": "colorScale",
+      "orient": "right",
+      "title": "Legend Right 2"
+    },
+    {
+      "shape": "shapeScale",
+      "orient": "left",
+      "title": "Legend Left 1"
+    },
+    {
+      "stroke": "colorScale",
+      "orient": "left",
+      "title": "Legend Left 2"
+    },
+    {
+      "shape": "innerScale",
+      "orient": "top-left",
+      "offset": 5,
+      "padding": 3,
+      "encode": {
+        "legend": {
+          "enter": {
+            "fill": {value: "#fff"},
+            "fillOpacity": {value: 0.5},
+            "stroke": {value: "#888"},
+            "cornerRadius": {value: 4}
+          }
+        }
+      }
+    },
+    {
+      "shape": "innerScale",
+      "orient": "top-right",
+      "offset": 5,
+      "padding": 3,
+      "encode": {
+        "legend": {
+          "enter": {
+            "fill": {value: "#fff"},
+            "fillOpacity": {value: 0.5},
+            "stroke": {value: "#888"},
+            "cornerRadius": {value: 4}
+          }
+        }
+      }
+    },
+    {
+      "shape": "innerScale",
+      "orient": "bottom-left",
+      "offset": 6,
+      "padding": 3,
+      "encode": {
+        "legend": {
+          "enter": {
+            "fill": {value: "#fff"},
+            "fillOpacity": {value: 0.5},
+            "stroke": {value: "#888"},
+            "cornerRadius": {value: 4}
+          }
+        }
+      }
+    },
+    {
+      "shape": "innerScale",
+      "orient": "bottom-right",
+      "interactive": true,
+      "offset": 6,
+      "padding": 3,
+      "encode": {
+        "legend": {
+          "enter": {
+            "fill": {value: "#fff"},
+            "fillOpacity": {value: 0.5},
+            "stroke": {value: "#888"},
+            "cornerRadius": {value: 4}
+          },
+          "update": {
+            "stroke": {value: "#888"}
+          },
+          "hover": {
+            "stroke": {value: "#f8f"}
+          }
+        }
+      }
     }
   ],
 
@@ -98,12 +221,13 @@ var runtimeSpec = vega.parse({
       "encode": {
         "enter": {
           "x": {"scale": "xscale", "field": "x"},
-          "width": {"scale": "xscale", "band": true, "offset": -1},
-          "y": {"scale": "yscale", "value": 0},
-          "height": {"scale": "yscale", "field": "y"}
+          "width": {"scale": "xscale", "band": 1, "offset": -1},
+          "y": {"scale": "yscale", "field": "y"},
+          "y2": {"scale": "yscale", "value": 0}
         },
         "update": {
           "fill": {"value": "steelblue"},
+          "fillOpacity": {"value": 0.5},
           "stroke": {"color": {
             "l": {"value": 50},
             "a": {"value": 100},
@@ -123,6 +247,7 @@ console.log(runtimeSpec);
 
 var view = new vega.View(runtimeSpec)
   .renderer('svg')
+  .hover()
   .initialize(document.querySelector('#view'))
   .run();
     </script>
