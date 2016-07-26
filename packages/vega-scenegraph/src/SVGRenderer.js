@@ -2,7 +2,7 @@ import Renderer from './Renderer';
 import marks from './marks/index';
 
 import inherits from './util/inherits';
-import {child, clear, remove, cssClass} from './util/dom';
+import {child, clear, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
 import metadata from './util/svg/metadata';
@@ -196,7 +196,7 @@ prototype._dirtyCheck = function(items) {
           o._update = id;
         } else {
           // otherwise remove from DOM
-          remove(item._svg);
+          item._svg.remove();
         }
         item._svg = null;
       }
@@ -267,25 +267,10 @@ prototype.drawMark = function(el, scene, index, mdef) {
 // Recursively process group contents.
 prototype._recurse = function(el, group) {
   var items = group.items || [],
-      legends = group.legendItems || [],
-      axes = group.axisItems || [],
       idx = 0, j, m;
 
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer === 'back') {
-      this.drawMark(el, axes[j], idx++, marks.group);
-    }
-  }
   for (j=0, m=items.length; j<m; ++j) {
     this.draw(el, items[j], idx++);
-  }
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer !== 'back') {
-      this.drawMark(el, axes[j], idx++, marks.group);
-    }
-  }
-  for (j=0, m=legends.length; j<m; ++j) {
-    this.drawMark(el, legends[j], idx++, marks.group);
   }
 
   // remove any extraneous DOM elements
@@ -300,9 +285,9 @@ function bind(el, mdef, item, index, insert) {
   node.__data__ = item;
   node.__values__ = {fill: 'default'};
 
-  // create background rect
+  // create background element
   if (mdef.tag === 'g') {
-    var bg = child(node, 0, 'rect', ns, 'background');
+    var bg = child(node, 0, 'path', ns, 'background');
     bg.__data__ = item;
   }
 

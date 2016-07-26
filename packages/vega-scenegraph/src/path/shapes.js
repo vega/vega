@@ -57,8 +57,8 @@ export function line(context, items) {
     .context(context)(items);
 }
 
-export function rectangle(context, item) {
-  return rectShape.context(context)(item);
+export function rectangle(context, item, x, y) {
+  return rectShape.context(context)(item, x, y);
 }
 
 export function symbol(context, item) {

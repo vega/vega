@@ -48,12 +48,7 @@ tape('schema should invalidate degenerate scenegraphs', function(test) {
     {},
     {x: 0, y:1},
     {items: [{x:0, y:0}]},
-    {marktype:'blah', items: []},
-    {marktype:'group', items: [{axisItems: [{marktype:'rect', items:[]}]}]},
-    {marktype:'group', items: [{axisItems: [{
-      marktype:'group',
-      items: [{axisItems: []}]
-    }]}]}
+    {marktype:'blah', items: []}
   ];
 
   list.forEach(function(scene) {

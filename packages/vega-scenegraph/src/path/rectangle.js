@@ -28,13 +28,13 @@ export default function() {
       cornerRadius = constant(0),
       context = null;
 
-  function rectangle() {
+  function rectangle(_, x0, y0) {
     var buffer,
-        x1 = +x.apply(this, arguments),
-        y1 = +y.apply(this, arguments),
-        w  = +width.apply(this, arguments),
-        h  = +height.apply(this, arguments),
-        cr = +cornerRadius.apply(this, arguments);
+        x1 = x0 != null ? x0 : +x.call(this, _),
+        y1 = y0 != null ? y0 : +y.call(this, _),
+        w  = +width.call(this, _),
+        h  = +height.call(this, _),
+        cr = +cornerRadius.call(this, _);
 
     if (!context) context = buffer = path();
 
