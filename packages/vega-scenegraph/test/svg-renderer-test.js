@@ -188,6 +188,9 @@ tape('SVGRenderer should support exit-item redraw', function(test) {
 
   var rect = scene.items[0].items[0].items.pop();
   rect.status = 'exit';
+  rect._svg.remove = rect._svg.remove || function() {
+    this.parentNode.removeChild(this);
+  };
   r.render(scene, [rect]);
 
   var svg = compensate(r.svg());

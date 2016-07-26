@@ -17,9 +17,6 @@ function build(strict) {
   for (var type in MARKS) {
     buildMark(type, schema.refs, strict);
   }
-  for (var type in GUIDES) {
-    buildGuide(type, schema.refs, strict);
-  }
   return schema;
 }
 
@@ -34,21 +31,6 @@ function buildMark(type, refs, strict) {
   if (strict) item.additionalProperties = false;
 
   refs.mark.oneOf.push({$ref: '#/refs/mark-' + type});
-  refs['mark-'+type] = mark;
-  refs['item-'+type] = item;
-}
-
-function buildGuide(type, refs, strict) {
-  var mark = duplicate(MARK_BASE);
-  mark.properties.marktype.enum = [ 'group' ];
-  mark.properties.items.items.$ref += type;
-  extend(mark.properties, GUIDES[type].mark || {});
-  if (strict) mark.additionalProperties = false;
-
-  var item = duplicate(ITEM_BASE);
-  extend(item.properties, GUIDES[type].properties || {});
-  if (strict) item.additionalProperties = false;
-
   refs['mark-'+type] = mark;
   refs['item-'+type] = item;
 }
@@ -161,6 +143,7 @@ var MARK_BASE = {
   "properties": {
     "marktype": { "enum": null },
     "name": { "type": "string" },
+    "role": { "type": "string" },
     "interactive": { "type": "boolean", "default": true },
     "items": {
       "type": "array",
@@ -215,31 +198,11 @@ var LINE_INTERPOLATE = [
   'stepBefore'
 ];
 
-var GUIDES = {
-  "axis": {
-    "mark": {
-      "layer": { "enum": [ "front", "back" ] },
-    },
-    "properties": {
-      "clip": { "type": "boolean" },
-      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } }
-    }
-  },
-  "legend": {
-    "properties": {
-      "clip": { "type": "boolean" },
-      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } }
-    }
-  }
-}
-
 var MARKS = {
   "group": {
     "properties": {
       "clip": { "type": "boolean" },
-      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } },
-      "axisItems": { "type": "array", "items": { "$ref": "#/refs/mark-axis" } },
-      "legendItems": { "type": "array", "items": { "$ref": "#/refs/mark-legend" } }
+      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } }
     }
   },
   "arc": {

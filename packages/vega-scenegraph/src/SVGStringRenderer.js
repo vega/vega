@@ -159,9 +159,9 @@ prototype.mark = function(scene) {
     if (tag === 'text') {
       str += escape_text(textValue(item.text));
     } else if (tag === 'g') {
-      str += openTag('rect',
+      str += openTag('path',
         this.attributes(mdef.background, item),
-        applyStyles(item, scene, 'bgrect', defs)) + closeTag('rect');
+        applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
       str += this.markGroup(item);
     }
 
@@ -174,26 +174,11 @@ prototype.mark = function(scene) {
 
 prototype.markGroup = function(scene) {
   var str = '',
-      axes = scene.axisItems || [],
       items = scene.items || [],
-      legends = scene.legendItems || [],
       j, m;
 
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer === 'back') {
-      str += this.mark(axes[j]);
-    }
-  }
   for (j=0, m=items.length; j<m; ++j) {
     str += this.mark(items[j]);
-  }
-  for (j=0, m=axes.length; j<m; ++j) {
-    if (axes[j].layer !== 'back') {
-      str += this.mark(axes[j]);
-    }
-  }
-  for (j=0, m=legends.length; j<m; ++j) {
-    str += this.mark(legends[j]);
   }
 
   return str;
