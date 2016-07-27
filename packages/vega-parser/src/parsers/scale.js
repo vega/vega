@@ -2,13 +2,16 @@ import {transform, ref, keyRef} from '../util';
 import {error, extend, isArray, isObject, isString, toSet} from 'vega-util';
 
 export var scaleTypes = toSet([
-  'identity', 'ordinal', 'band', 'point',
+  'identity', 'ordinal', 'band', 'point', 'index',
   'linear', 'log', 'pow', 'sqrt', 'sequential', 'time', 'utc',
   'quantize', 'quantile', 'threshold'
 ]);
 
 export function isOrdinal(type) {
-  return type === 'ordinal' || type === 'band' || type === 'point';
+  return type === 'ordinal'
+    || type === 'band'
+    || type === 'point'
+    || type === 'index';
 }
 
 export default function parseScale(scale, scope) {
