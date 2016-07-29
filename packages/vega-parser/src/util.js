@@ -1,22 +1,23 @@
 import {isObject} from 'vega-util';
 
-export function Entry(type, value, params) {
+export function Entry(type, value, params, parent) {
   this.id = -1,
   this.type = type;
   this.value = value;
   this.params = params;
+  if (parent) this.parent = parent;
 }
 
-export function entry(type, value, params) {
-  return new Entry(type, value, params);
+export function entry(type, value, params, parent) {
+  return new Entry(type, value, params, parent);
 }
 
 export function operator(value, params) {
   return entry('Operator', value, params);
 }
 
-export function transform(type, params) {
-  return entry(type, undefined, params);
+export function transform(type, params, parent) {
+  return entry(type, undefined, params, parent);
 }
 
 // -----

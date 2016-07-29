@@ -3,7 +3,7 @@ import {
   aggrField, Ascending, compareRef, Entry,
   fieldRef, isSignal, operator, ref, transform
 } from './util';
-import {array, error, isString} from 'vega-util';
+import {array, error, isString, peek} from 'vega-util';
 
 export default function Scope() {
   this.nextId = 0;
@@ -16,10 +16,36 @@ export default function Scope() {
   this.streams = [];
   this.updates = [];
   this.operators = [];
-  this.scenepath = [-1];
+
+  this._parent = [];
+  this._encode = [];
+  this._markpath = [];
 }
 
-var prototype = Scope.prototype;
+function Subscope(scope) {
+  this.nextId = 1000 + scope.nextId;
+  this.field = Object.create(scope.field);
+  this.signals = Object.create(scope.signals);
+  this.scales = Object.create(scope.scales);
+  this.events = Object.create(scope.events);
+  this.data = Object.create(scope.data);
+
+  this.streams = [];
+  this.updates = [];
+  this.operators = [];
+
+  this._parent = scope._parent.slice();
+  this._encode = scope._encode.slice();
+  this._markpath = scope._markpath;
+}
+
+var prototype = Scope.prototype = Subscope.prototype;
+
+// ----
+
+prototype.fork = function() {
+  return new Subscope(this);
+};
 
 prototype.toRuntime = function() {
   return this.finish(), {
@@ -86,19 +112,29 @@ prototype.finish = function() {
 
 // ----
 
-prototype.scenepathNext = function() {
-  this.scenepath[this.scenepath.length-1] += 1;
-  return this.scenepath.slice();
+prototype.pushState = function(encode, parent) {
+  this._encode.push(ref(this.add(transform('Sieve', {pulse: encode}))));
+  this._parent.push(parent);
+  this._markpath.push(-1);
 };
 
-prototype.scenepathPush = function() {
-  this.scenepath.push(0);
-  this.scenepath.push(-1);
+prototype.popState = function() {
+  this._parent.pop();
+  this._encode.pop();
+  this._markpath.pop();
 };
 
-prototype.scenepathPop = function() {
-  this.scenepath.pop();
-  this.scenepath.pop();
+prototype.parent = function() {
+  return peek(this._parent);
+};
+
+prototype.encode = function() {
+  return peek(this._encode);
+};
+
+prototype.markpath = function() {
+  var p = this._markpath;
+  return ++p[p.length-1], p.slice();
 };
 
 // ----
@@ -152,7 +188,7 @@ prototype.sortRef = function(sort) {
 
 prototype.event = function(source, type) {
   var key = source + ':' + type;
-  if (!this.events.hasOwnProperty(key)) {
+  if (!this.events[key]) {
     var id = this.id();
     this.streams.push({
       id: id,
@@ -175,7 +211,7 @@ prototype.addSignal = function(name, value) {
 };
 
 prototype.getSignal = function(name) {
-  if (!this.signals.hasOwnProperty(name)) {
+  if (!this.signals[name]) {
     error('Unrecognized signal name: ' + name);
   }
   return this.signals[name];
@@ -223,7 +259,7 @@ prototype.addData = function(name, dataScope) {
 };
 
 prototype.getData = function(name) {
-  if (!this.data.hasOwnProperty(name)) {
+  if (!this.data[name]) {
     error('Undefined data set name: ' + name);
   }
   return this.data[name];
