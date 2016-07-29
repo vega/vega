@@ -80,13 +80,12 @@ export default function(spec, scope) {
   return parseMark(group, scope);
 }
 
-
-
 function value(value, defaultValue) {
   return value != null ? value : defaultValue;
 }
 
 function sizeExpression(spec, encode) {
+  // TODO get override for symbolSize...
   var symbolSize = +config.legendSymbolSize, fontSize;
   fontSize = encode && encode.update && encode.update.fontSize;
   if (!fontSize) fontSize = encode && encode.enter && encode.enter.fontSize;
