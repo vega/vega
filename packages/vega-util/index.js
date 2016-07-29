@@ -34,6 +34,7 @@ export {default as isFunction} from './src/isFunction';
 export {default as isNumber} from './src/isNumber';
 export {default as isObject} from './src/isObject';
 export {default as isString} from './src/isString';
+export {default as key} from './src/key';
 export {default as merge} from './src/merge';
 export {default as peek} from './src/peek';
 export {default as splitAccessPath} from './src/splitAccessPath';
