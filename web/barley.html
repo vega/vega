@@ -16,7 +16,7 @@
 var runtimeSpec = vega.parse({
   "width": 200,
   "height": 600,
-  "padding": 100,
+  "padding": {"top": 5, "bottom": 25, "left": 100, "right": 230},
 
   "data": [
     {
@@ -63,7 +63,8 @@ var runtimeSpec = vega.parse({
   "legends": [
     {
       "stroke": "cscale",
-      "title": "year",
+      "title": "Outer",
+      "padding": 4,
       "encode": {
         "symbols": {
           "enter": {
@@ -95,7 +96,8 @@ var runtimeSpec = vega.parse({
           "name": "yscale",
           "type": "point",
           "range": [0, {"signal": "height"}],
-          "padding": 1.2,
+          "padding": 1,
+          "round": true,
           "domain": {
             "data": "barley",
             "field": "variety",
@@ -113,7 +115,40 @@ var runtimeSpec = vega.parse({
           "orient": "left",
           "scale": "yscale",
           "tickSize": 0,
+          "domain": false,
+          "grid": true,
+          "encode": {
+            "grid": {
+              "enter": {"strokeDash": {"value": [3,3]}}
+            }
+          }
+        },
+        {
+          "orient": "right",
+          "scale": "yscale",
+          "tickSize": 0,
           "domain": false
+        }
+      ],
+
+      "legends": [
+        {
+          "stroke": "cscale",
+          "title": "Inner",
+          "padding": 4,
+          "encode": {
+            "symbols": {
+              "enter": {
+                "strokeWidth": {"value": 2},
+                "size": {"value": 50}
+              }
+            },
+            "legend": {
+              "enter": {
+                "stroke": {value: "#ddd"}
+              }
+            }
+          }
         }
       ],
 

@@ -38,6 +38,7 @@ function layoutGroup(group, _) {
     mark = items[i];
     if (mark.role === 'axis') axisMarks.push(mark);
     else if (mark.role === 'legend') legendMarks.push(mark);
+    else bounds.union(mark.bounds);
   }
 
   // layout axes
