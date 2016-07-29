@@ -35,6 +35,7 @@ export {default as isNumber} from './src/isNumber';
 export {default as isObject} from './src/isObject';
 export {default as isString} from './src/isString';
 export {default as merge} from './src/merge';
+export {default as peek} from './src/peek';
 export {default as splitAccessPath} from './src/splitAccessPath';
 export {default as stringValue} from './src/stringValue';
 export {default as toSet} from './src/toSet';
