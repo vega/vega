@@ -21,6 +21,7 @@ export default {
   legendOrient: 'right',
   legendOffset: 18,
   legendPadding: 0,
+  legendMargin: 8,
   legendEntryPadding: 5,
   legendTitlePadding: 5,
   legendLabelColor: '#000',

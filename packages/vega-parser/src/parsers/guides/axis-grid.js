@@ -24,17 +24,16 @@ export default function(spec, config, userEncode, dataRef) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   0.5,
-    offset: 0.5
+    band:   0.5
   };
 
   if (orient === Top || orient === Bottom) {
-    enter.y = {value: 0.5};
-    update.y2 = enter.y2 = {signal: 'height', mult: sign, offset: 0.5};
+    enter.y = zero;
+    update.y2 = enter.y2 = {signal: 'height', mult: sign};
     update.x = enter.x = exit.x = tickPos;
   } else {
-    enter.x = {value: 0.5};
-    update.x2 = enter.x2 = {signal: 'width', mult: sign, offset: 0.5};
+    enter.x = zero;
+    update.x2 = enter.x2 = {signal: 'width', mult: sign};
     update.y = enter.y = exit.y = tickPos;
   }
 

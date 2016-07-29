@@ -29,16 +29,15 @@ export default function(spec, config, userEncode, dataRef) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   0.5,
-    offset: 0.5
+    band:   0.5
   };
 
   if (orient === Top || orient === Bottom) {
-    update.y = enter.y = {value: 0.5};
+    update.y = enter.y = zero;
     update.y2 = enter.y2 = tickSize;
     update.x = enter.x = exit.x = tickPos;
   } else {
-    update.x = enter.x = {value: 0.5};
+    update.x = enter.x = zero;
     update.x2 = enter.x2 = tickSize;
     update.y = enter.y = exit.y = tickPos;
   }

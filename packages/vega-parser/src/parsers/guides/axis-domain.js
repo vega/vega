@@ -21,11 +21,11 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   if (orient === Top || orient === Bottom) {
-    enter.y = {value: 0.5};
+    enter.y = zero;
     update.x = enter.x = position(spec, 0);
     update.x2 = enter.x2 = position(spec, 1);
   } else {
-    enter.x = {value: 0.5};
+    enter.x = zero;
     update.y = enter.y = position(spec, 0);
     update.y2 = enter.y2 = position(spec, 1);
   }
@@ -34,5 +34,5 @@ export default function(spec, config, userEncode, dataRef) {
 }
 
 function position(spec, pos) {
-  return {scale: spec.scale, range: pos, offset: 0.5};
+  return {scale: spec.scale, range: pos};
 }
