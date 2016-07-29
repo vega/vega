@@ -15,11 +15,7 @@ prototype.transform = function(_, pulse) {
   var view = pulse.dataflow;
 
   if (pulse.changed(pulse.REM)) {
-    // TODO remove need for this annotation?
-    pulse.materialize(pulse.REM).visit(pulse.REM, function(t) {
-      t.status = 'exit';
-    });
-    view.enqueue(pulse.rem);
+    view.enqueue(pulse.materialize(pulse.REM).rem);
   }
 
   if (pulse.changed(pulse.ADD)) {
