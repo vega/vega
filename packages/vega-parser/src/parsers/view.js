@@ -1,7 +1,6 @@
 import parsePadding from './padding';
 import parseSpec from './spec';
 import {ref, operator, transform} from '../util';
-import config from '../config';
 import DataScope from '../DataScope';
 
 export default function parseView(spec, scope) {
@@ -35,7 +34,7 @@ export default function parseView(spec, scope) {
 
   // Perform chart layout
   parent = scope.add(transform('ChartLayout', {
-    legendMargin: config.legendMargin,
+    legendMargin: scope.config.legendMargin,
     mark:         root,
     pulse:        ref(encode)
   }));
@@ -51,4 +50,6 @@ export default function parseView(spec, scope) {
 
   // Track metadata for root item
   scope.addData('root', new DataScope(scope, input, input, op));
+
+  return scope;
 }

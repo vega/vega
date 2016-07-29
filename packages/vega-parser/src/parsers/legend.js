@@ -5,11 +5,11 @@ import guideGroup from './guides/guide-group';
 import {encoder, extendEncode} from './guides/encode-util';
 import parseMark from './mark';
 import {ref, entry, transform} from '../util';
-import config from '../config'; // TODO customizable config
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  var encode = spec.encode || {},
+  var config = scope.config,
+      encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, entryRef, group, title,
       legendEncode, entryEncode, children;
@@ -48,7 +48,7 @@ export default function(spec, scope) {
 
   // data source for legend entries
   entryRef = ref(scope.add(transform('LegendEntries', {
-    size:   sizeExpression(spec, encode.labels),
+    size:   sizeExpression(spec, config, encode.labels),
     scale:  scope.scaleRef(scale),
     count:  scope.property(spec.count),
     values: scope.property(spec.values),
@@ -84,7 +84,7 @@ function value(value, defaultValue) {
   return value != null ? value : defaultValue;
 }
 
-function sizeExpression(spec, encode) {
+function sizeExpression(spec, config, encode) {
   // TODO get override for symbolSize...
   var symbolSize = +config.legendSymbolSize, fontSize;
   fontSize = encode && encode.update && encode.update.fontSize;
