@@ -186,7 +186,7 @@ prototype._dirtyCheck = function(items) {
       mdef = marks[type];
     }
 
-    if (item.status === 'exit') { // EXIT
+    if (item.exit) { // EXIT
       if (item._svg) {
         if (mdef.nested && item.mark.items.length) {
           // if nested mark with remaining points, update instead

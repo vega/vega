@@ -11,27 +11,29 @@ export default function Scenegraph() {
 
 var prototype = Scenegraph.prototype;
 
-prototype.select = function(path, markdef) {
-  var group = this.root.items[0],
-      mark = group.items[path[0]],
-      i, n;
+prototype.mark = function(scenepath, markdef) {
+  var markpath = scenepath[0],
+      itempath = scenepath[1],
+      item = this.root.items[0],
+      mark, index, i, n;
 
   try {
-    for (i=1, n=path.length-1; i<n; ++i) {
-      group = mark.items[path[i++]];
-      mark = group.items[path[i]];
+    for (i=0, n=markpath.length; i<n; ++i) {
+      mark = item.items[markpath[i]];
+      if (!mark) break;
+      index = itempath[i] || 0;
+      item = mark.items[index] || mark.items[mark.items.length-1];
     }
 
-    if (!mark && !markdef) throw n;
-
-    if (markdef) {
-      mark = createMark(markdef, group);
-      group.items[path[n]] = mark;
+    if (!mark) {
+      mark = createMark(markdef, item);
+      item.items.push(mark);
+      return mark;
     }
 
-    return mark;
+    throw n;
   } catch (err) {
-    error('Invalid scenegraph path: ' + path);
+    error('Invalid scenegraph path: ' + JSON.stringify(scenepath));
   }
 };
 

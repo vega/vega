@@ -16,6 +16,7 @@ export {default as SVGRenderer} from './src/SVGRenderer';
 export {default as SVGStringRenderer} from './src/SVGStringRenderer';
 
 export {default as boundContext} from './src/bound/boundContext';
+export {default as boundStroke} from './src/bound/boundStroke';
 export {default as boundItem} from './src/bound/boundItem';
 export {default as boundMark} from './src/bound/boundMark';
 

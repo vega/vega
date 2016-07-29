@@ -23,26 +23,26 @@ function attr(emit, item, renderer) {
 }
 
 function background(emit, item) {
-  var offset = item.stroke ? -0.5 : 0;
+  var offset = item.stroke ? 0.5 : 0;
   emit('class', 'background');
   emit('d', rectangle(null, item, offset, offset));
 }
 
 function bound(bounds, group) {
-  var items = group.items || [],
-      j, m;
-
-  if (!group.clip) {
-    for (j=0, m=items.length; j<m; ++j) {
-      if (items[j].bounds) bounds.union(items[j].bounds);
+  if (!group.clip && group.items) {
+    var items = group.items;
+    for (var j=0, m=items.length; j<m; ++j) {
+      bounds.union(items[j].bounds);
     }
   }
+
   if (group.clip || group.width || group.height) {
     boundStroke(
       bounds.add(0, 0).add(group.width || 0, group.height || 0),
       group
     );
   }
+
   return bounds.translate(group.x || 0, group.y || 0);
 }
 
@@ -70,7 +70,7 @@ function draw(context, scene, bounds) {
       opacity = group.opacity == null ? 1 : group.opacity;
       if (opacity > 0) {
         context.beginPath();
-        offset = group.stroke ? -0.5 : 0;
+        offset = group.stroke ? 0.5 : 0;
         rectangle(context, group, offset, offset);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();

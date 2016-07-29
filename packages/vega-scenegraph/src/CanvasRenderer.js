@@ -11,8 +11,9 @@ export default function CanvasRenderer(loadConfig) {
   Renderer.call(this, loadConfig);
 }
 
-var prototype = inherits(CanvasRenderer, Renderer);
-var base = Renderer.prototype;
+var prototype = inherits(CanvasRenderer, Renderer),
+    base = Renderer.prototype,
+    tempBounds = new Bounds();
 
 prototype.initialize = function(el, width, height, padding) {
   this._canvas = Canvas(width, height);
@@ -62,7 +63,7 @@ function clipToBounds(g, items) {
 
 function translate(bounds, group) {
   if (group == null) return bounds;
-  var b = bounds.clone();
+  var b = tempBounds.clear().union(bounds);
   for (; group != null; group = group.mark.group) {
     b.translate(group.x || 0, group.y || 0);
   }
