@@ -30,7 +30,10 @@ export {
   MultiPulse,
   Operator,
   Transform,
-  Tuple
+  Tuple,
+  scale,
+  scheme,
+  projection
 } from 'vega-dataflow';
 
 export {
