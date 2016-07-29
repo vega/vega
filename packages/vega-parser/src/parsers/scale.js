@@ -141,9 +141,9 @@ function parseScaleRange(scale, scope) {
 
   if (range.signal) {
     return scope.signalRef(range.signal);
-  } else if (range === 'WIDTH') {
+  } else if (range === 'width') {
     range = [0, {'signal': 'width'}];
-  } else if (range === 'HEIGHT') {
+  } else if (range === 'height') {
     range = [{'signal': 'height'}, 0];
   } else if (!isArray(range)) {
     error('Unsupported range type: ' + range);
