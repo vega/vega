@@ -24,7 +24,7 @@ prototype.transform = function(_, pulse) {
 
   // acquire mark on first invocation
   if (!mark) {
-    mark = pulse.dataflow.scenegraph().select(_.scenepath, _.markdef);
+    mark = pulse.dataflow.scenegraph().mark(_.scenepath, _.markdef);
     mark.source = this;
     this.value = mark;
   }
