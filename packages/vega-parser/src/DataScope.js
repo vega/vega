@@ -49,7 +49,7 @@ function addSortField(scope, p, sort) {
     }
   } else {
     p.ops = ['count'];
-    p.fields = ['*'];
+    p.fields = [null];
     p.as = ['count'];
   }
   p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
