@@ -11,9 +11,9 @@ export var Debug = 3;
 export default function(_) {
   var level = _ || None;
   return {
-    level: function(_) { if (arguments.length) level = +_; return level; },
-    warn: function()   { if (level >= Warn)  log('WARN', arguments);  },
-    info: function()   { if (level >= Info)  log('INFO', arguments);  },
-    debug: function()  { if (level >= Debug) log('DEBUG', arguments); }
+    level: function(_) { return arguments.length ? (level = +_, this) : level; },
+    warn: function()   { if (level >= Warn) log('WARN', arguments); return this; },
+    info: function()   { if (level >= Info) log('INFO', arguments); return this; },
+    debug: function()  { if (level >= Debug) log('DEBUG', arguments); return this; }
   }
 }
