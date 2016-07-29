@@ -88,8 +88,8 @@ prototype.run = function() {
   return this;
 };
 
-prototype.render = function(update, remove) {
-  this._renderer.render(this._scenegraph.root, update, remove)
+prototype.render = function(update) {
+  this._renderer.render(this._scenegraph.root, update);
   return this;
 };
 
