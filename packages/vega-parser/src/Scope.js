@@ -7,7 +7,7 @@ import {array, error, isString, peek} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
-  this.nextId = 0;
+
   this.field = {};
   this.signals = {};
   this.scales = {};
@@ -18,6 +18,10 @@ export default function Scope(config) {
   this.updates = [];
   this.operators = [];
 
+  this._id = 0;
+  this._subid = 0;
+  this._nextsub = [0];
+
   this._parent = [];
   this._encode = [];
   this._markpath = [];
@@ -25,7 +29,7 @@ export default function Scope(config) {
 
 function Subscope(scope) {
   this.config = scope.config;
-  this.nextId = 1000 + scope.nextId; // TODO id scheme
+
   this.field = Object.create(scope.field);
   this.signals = Object.create(scope.signals);
   this.scales = Object.create(scope.scales);
@@ -35,6 +39,10 @@ function Subscope(scope) {
   this.streams = [];
   this.updates = [];
   this.operators = [];
+
+  this._id = 0;
+  this._subid = ++scope._nextsub[0];
+  this._nextsub = scope._nextsub;
 
   this._parent = scope._parent.slice();
   this._encode = scope._encode.slice();
@@ -58,7 +66,7 @@ prototype.toRuntime = function() {
 };
 
 prototype.id = function() {
-  return this.nextId++;
+  return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
 prototype.add = function(op) {
