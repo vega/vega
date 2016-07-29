@@ -7,10 +7,10 @@ import {encoder, extendEncode} from './guides/encode-util';
 import guideGroup from './guides/guide-group';
 import parseMark from './mark';
 import {ref, entry, transform} from '../util';
-import config from '../config'; // TODO customizable config
 
 export default function(spec, scope) {
-  var encode = spec.encode || {},
+  var config = scope.config,
+      encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, ticksRef, group, axisEncode, children;
 

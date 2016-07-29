@@ -5,7 +5,8 @@ import {
 } from './util';
 import {array, error, isString, peek} from 'vega-util';
 
-export default function Scope() {
+export default function Scope(config) {
+  this.config = config;
   this.nextId = 0;
   this.field = {};
   this.signals = {};
@@ -23,7 +24,8 @@ export default function Scope() {
 }
 
 function Subscope(scope) {
-  this.nextId = 1000 + scope.nextId;
+  this.config = scope.config;
+  this.nextId = 1000 + scope.nextId; // TODO id scheme
   this.field = Object.create(scope.field);
   this.signals = Object.create(scope.signals);
   this.scales = Object.create(scope.scales);
