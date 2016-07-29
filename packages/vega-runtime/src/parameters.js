@@ -41,12 +41,13 @@ function parseParameter(spec, ctx) {
 
 /** Reference parsers. */
 var PARSERS = [
-  {key: '$ref',     parse: getOperator},
-  {key: '$expr',    parse: getExpression},
-  {key: '$field',   parse: getField},
-  {key: '$encode',  parse: getEncode},
-  {key: '$compare', parse: getCompare},
-  {key: '$subflow', parse: getSubflow}
+  {key: '$ref',      parse: getOperator},
+  {key: '$expr',     parse: getExpression},
+  {key: '$field',    parse: getField},
+  {key: '$encode',   parse: getEncode},
+  {key: '$compare',  parse: getCompare},
+  {key: '$subflow',  parse: getSubflow},
+  {key: '$itempath', parse: getItemPath}
 ];
 
 /**
@@ -102,7 +103,16 @@ function getCompare(_, ctx) {
  */
 function getSubflow(_, ctx) {
   var spec = _.$subflow;
-  return function() {
-    return parseDataflow(spec, ctx.fork()).get(spec.operators[0].id);
+  return function(dataflow, key, index) {
+    var subctx = parseDataflow(spec, ctx.fork(index)),
+        op = subctx.get(spec.operators[0].id);
+    return op.context = subctx, op;
   };
+}
+
+/**
+ * Resolve an iteration index reference.
+ */
+function getItemPath(_, ctx) {
+  return [_.$itempath, ctx.itempath];
 }
