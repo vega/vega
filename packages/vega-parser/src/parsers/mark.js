@@ -1,44 +1,50 @@
 import parseEncode from './encode';
+import parseFacet from './facet';
 import parseTransform from './transform';
 import {ref, transform} from '../util';
 import {error} from 'vega-util';
 
-// TODO: facet, reactive geometry
+// TODO: reactive geometry
 export default function parseMark(mark, scope) {
-  var op, markRef, boundRef, key, params, enc, children;
+  var from = mark.from, facet, key,
+      op, dataRef, markRef, encodeRef, boundRef, params, enc;
+
+  // resolve input data
+  if (facet = from.facet) {
+    // TODO: support more aggregate options
+    key = scope.fieldRef(facet.key);
+    dataRef = ref(scope.add(transform('Aggregate', {
+      groupby: key,
+      pulse:   ref(scope.getData(facet.data).output)
+    })));
+  } else {
+    dataRef = from.$ref
+      ? from
+      : ref(scope.getData(from.data).output);
+    key = from.key ? scope.fieldRef(from.key) : undefined;
+  }
 
   // add data join to map tuples to visual items
-  op = scope.add(transform('DataJoin', {
-    key:   mark.key ? scope.fieldRef(mark.key) : undefined,
-    pulse: mark.from.$ref ? mark.from
-            : ref(scope.getData(mark.from.data).output)
-  }));
+  op = scope.add(transform('DataJoin', {key: key, pulse: dataRef}));
 
-  // collect visual items, sort as requested
-  op = scope.add(transform('Collect', {
-    sort:  mark.sort ? scope.compareRef(mark.sort) : undefined,
-    pulse: ref(op)
-  }));
+  // collect visual items
+  op = scope.add(transform('Collect', {pulse: ref(op)}));
 
   // connect visual items to scenegraph
   markRef = ref(op = scope.add(transform('Mark', {
     markdef:   markDefinition(mark),
-    scenepath: scope.scenepathNext(),
+    scenepath: {$itempath: scope.markpath()},
     pulse:     ref(op)
   })));
 
-  // add visual encoders (if defined)
-  if (mark.encode) {
-    enc = {};
-    params = {encoders: {$encode: enc}};
-    for (key in mark.encode) {
-      enc[key] = parseEncode(mark.encode[key], mark.type, params, scope);
-    }
-    params.pulse = markRef;
-    op = scope.add(transform('Encode', params));
+  // add visual encoders
+  params = {encoders: {$encode: (enc={})}, pulse: markRef};
+  for (key in mark.encode) {
+    enc[key] = parseEncode(mark.encode[key], mark.type, params, scope);
   }
+  op = scope.add(transform('Encode', params));
 
-  // post-encoding transforms (if defined)
+  // add post-encoding transforms, if defined
   if (mark.transform) {
     mark.transform.forEach(function(_) {
       var tx = parseTransform(_, scope);
@@ -50,27 +56,32 @@ export default function parseMark(mark, scope) {
     });
   }
 
-  // recurse if group mark
-  if (mark.type === 'group') {
-    scope.scenepathPush();
-    children = mark.marks.map(function(child) {
-      return parseMark(child, scope);
-    });
-    scope.scenepathPop();
-  }
+  // monitor parent marks to propagate changes
+  op.params.parent = scope.encode();
+  encodeRef = ref(op);
+
+  // TODO: if faceted, include chart layout
 
   // compute bounding boxes
-  boundRef = ref(scope.add(transform('Bound', {
-    mark: markRef,
-    pulse: ref(op),
-    children: children
-  })));
+  op = scope.add(transform('Bound', {mark: markRef, pulse: encodeRef}));
+  boundRef = ref(op);
+
+  // recurse if group mark
+  if (mark.type === 'group') {
+    scope.pushState(encodeRef, boundRef);
+
+    facet
+      ? parseFacet(mark, scope)
+      : mark.marks.map(function(_) { return parseMark(_, scope); });
+
+    scope.popState();
+  }
 
   // render marks
   scope.add(transform('Render', {pulse: boundRef}));
 
   // propagate value changes
-  return ref(scope.add(transform('Sieve', {pulse: boundRef})));
+  ref(scope.add(transform('Sieve', {pulse: boundRef}, scope.parent())));
 }
 
 function markDefinition(spec) {
