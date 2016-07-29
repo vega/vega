@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {Bounds} from 'vega-scenegraph';
+import {Bounds, boundStroke} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
 var tempBounds = new Bounds();
@@ -127,8 +127,8 @@ function layoutAxis(axis, width, height) {
     }
   }
 
-  item.x = x;
-  item.y = y;
+  item.x = x + 0.5;
+  item.y = y + 0.5;
 
   return bounds;
 }
@@ -183,6 +183,6 @@ function layoutLegend(legend, flow, axisBounds, width, height) {
   item.height = h;
 
   // update bounds
-  bounds.set(x, y, x + w, y + h);
+  boundStroke(bounds.set(x, y, x + w, y + h), item);
   item.mark.bounds.clear().union(bounds);
 }
