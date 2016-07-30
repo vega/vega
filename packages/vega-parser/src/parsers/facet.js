@@ -20,9 +20,8 @@ export default function(spec, scope) {
   }
 
   // TODO: facet field for pre-faceted data
-  // TODO: allow groupby key...
   op = scope.add(transform('Facet', {
-    key:    scope.fieldRef(facet.key),
+    key:    scope.keyRef(facet.key),
     pulse:  ref(scope.getData(facet.data).output)
   }));
 

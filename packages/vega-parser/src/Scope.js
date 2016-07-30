@@ -1,7 +1,7 @@
 import DataScope from './DataScope';
 import {
   aggrField, Ascending, compareRef, Entry,
-  fieldRef, isSignal, operator, ref, transform
+  fieldRef, keyRef, isSignal, operator, ref, transform
 } from './util';
 import {array, error, isString, peek} from 'vega-util';
 
@@ -178,6 +178,20 @@ prototype.compareRef = function(cmp) {
         orders: orders
       })))
     : compareRef(fields, orders);
+};
+
+prototype.keyRef = function(fields) {
+  function check(_) {
+    return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
+  }
+
+  var sig = this.signals,
+      signal = false;
+  fields = array(fields).map(check);
+
+  return signal
+    ? ref(this.add(transform('Key', {fields: fields})))
+    : keyRef(fields);
 };
 
 prototype.sortRef = function(sort) {

@@ -6,7 +6,7 @@ import {error, extend, isArray, isString} from 'vega-util';
 /**
  * Parse a data transform specification.
  */
-export default function parseTransform(spec, scope) {
+export default function(spec, scope) {
   var def = transformDef(spec.type);
   var t = transform(def.type, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, t);
