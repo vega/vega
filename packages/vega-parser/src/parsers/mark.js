@@ -2,7 +2,7 @@ import parseEncode from './encode';
 import parseFacet from './facet';
 import parseTransform from './transform';
 import {ref, transform} from '../util';
-import {error} from 'vega-util';
+import {array, error, extend} from 'vega-util';
 
 // TODO: reactive geometry
 export default function parseMark(spec, scope) {
@@ -14,13 +14,13 @@ export default function parseMark(spec, scope) {
   // resolve input data
   if (facet = from.facet) {
     if (!group) error('Only group marks can be faceted.');
-
-    // TODO: support more aggregate options
-    key = scope.fieldRef(facet.key);
-    dataRef = ref(scope.add(transform('Aggregate', {
-      groupby: key,
-      pulse:   ref(scope.getData(facet.data).output)
-    })));
+    op = parseTransform(extend({
+      type:    'aggregate',
+      groupby: array(facet.key)
+    }, facet.aggregate));
+    op.params.key = (key = scope.keyRef(facet.key));
+    op.params.pulse = ref(scope.getData(facet.data).output);
+    dataRef = ref(scope.add(op));
   } else {
     dataRef = from.$ref
       ? from

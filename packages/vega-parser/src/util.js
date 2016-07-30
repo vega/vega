@@ -30,10 +30,14 @@ export function fieldRef(field, name) {
   return name ? {$field: field, $name: name} : {$field: field};
 }
 
-export var keyRef = fieldRef('key');
+export var keyFieldRef = fieldRef('key');
 
 export function compareRef(fields, orders) {
   return {$compare: fields, $order: orders};
+}
+
+export function keyRef(fields) {
+  return {$key: fields};
 }
 
 // -----

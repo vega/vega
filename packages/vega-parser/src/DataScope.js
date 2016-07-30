@@ -1,4 +1,4 @@
-import {ref, transform, keyRef, aggrField, sortKey} from './util';
+import {ref, transform, keyFieldRef, aggrField, sortKey} from './util';
 
 export default function DataScope(scope, input, output, values) {
   this.scope = scope;
@@ -65,7 +65,7 @@ function cache(ds, name, optype, field, counts, index) {
 
   if (!v) {
     var params = counts
-      ? {field: keyRef, pulse: ds.countsRef(field, counts)}
+      ? {field: keyFieldRef, pulse: ds.countsRef(field, counts)}
       : {field: ds.scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = ds.scope.sortRef(counts);
     op = ds.scope.add(transform(optype, params));

@@ -1,4 +1,4 @@
-import {transform, ref, keyRef} from '../util';
+import {transform, ref, keyFieldRef} from '../util';
 import {error, extend, isArray, isObject, isString, toSet} from 'vega-util';
 
 export var scaleTypes = toSet([
@@ -91,7 +91,7 @@ function oMultipleDomain(scale, scope, fields) {
 
   // sum counts from all fields
   a = scope.add(transform('Aggregate', {
-    groupby: keyRef,
+    groupby: keyFieldRef,
     ops:['sum'], fields: [scope.fieldRef('count')], as:['count'],
     pulse: counts
   }));
@@ -101,7 +101,7 @@ function oMultipleDomain(scale, scope, fields) {
 
   // extract values for combined domain
   v = scope.add(transform('Values', {
-    field: keyRef,
+    field: keyFieldRef,
     sort:  scope.sortRef(parseSort(scale.domain.sort, true)),
     pulse: ref(c)
   }));
