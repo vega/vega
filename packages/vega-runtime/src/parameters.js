@@ -1,6 +1,6 @@
 import parseDataflow from './dataflow';
 import {parameterExpression, encodeExpression} from './expression';
-import {accessor, compare, error, field, isArray, isObject} from 'vega-util';
+import {accessor, compare, error, field, isArray, isObject, key} from 'vega-util';
 
 /**
  * Parse a set of operator parameters.
@@ -42,6 +42,7 @@ function parseParameter(spec, ctx) {
 /** Reference parsers. */
 var PARSERS = [
   {key: '$ref',      parse: getOperator},
+  {key: '$key',      parse: getKey},
   {key: '$expr',     parse: getExpression},
   {key: '$field',    parse: getField},
   {key: '$encode',   parse: getEncode},
@@ -67,12 +68,27 @@ function getExpression(_, ctx) {
 }
 
 /**
+ * Resolve a key accessor reference.
+ */
+function getKey(_, ctx) {
+  var k = 'k:' + _.$key;
+  return ctx.fn[k] || (ctx.fn[k] = key(_.$key));
+}
+
+/**
  * Resolve a field accessor reference.
  */
 function getField(_, ctx) {
   var k = 'f:' + _.$field + '_' + _.$name;
-  return ctx.fn[k]
-    || (ctx.fn[k] = field(_.$field, _.$name));
+  return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name));
+}
+
+/**
+ * Resolve a comparator function reference.
+ */
+function getCompare(_, ctx) {
+  var k = 'c:' + _.$compare + '_' + _.$order;
+  return ctx.fn[k] || (ctx.fn[k] = compare(_.$compare, _.$order));
 }
 
 /**
@@ -87,15 +103,6 @@ function getEncode(_, ctx) {
     encode[name] = accessor(encodeExpression(enc.$expr, ctx), enc.$fields);
   }
   return encode;
-}
-
-/**
- * Resolve a comparator function reference.
- */
-function getCompare(_, ctx) {
-  var k = 'c:' + _.$compare + '_' + _.$order;
-  return ctx.fn[k]
-    || (ctx.fn[k] = compare(_.$compare, _.$order));
 }
 
 /**
