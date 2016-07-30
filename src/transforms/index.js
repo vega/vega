@@ -22,6 +22,7 @@ export {
   GeoShape,
   Graticule,
   Impute,
+  Key,
   LegendEntries,
   LinkPath,
   Lookup,
