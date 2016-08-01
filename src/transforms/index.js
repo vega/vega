@@ -33,6 +33,7 @@ export {
   Params,
   Partition,
   Pie,
+  PreFacet,
   Projection,
   Range,
   Rank,
