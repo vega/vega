@@ -1,3 +1,4 @@
+import cursor from './cursor';
 import {data, insert, remove} from './data';
 import events from './events';
 import hover from './hover';
@@ -73,6 +74,9 @@ export default function View(spec) {
     function(_, pulse) { pulse.dataflow.resize(_.width, _.height); },
     {width: this._signals.width, height: this._signals.height}
   );
+
+  // initialize cursor
+  cursor(this);
 }
 
 var prototype = inherits(View, Dataflow);
