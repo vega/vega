@@ -176,27 +176,28 @@ var runtimeSpec = vega.parse({
           }
         }
       ]
+    },
+    {
+      "type": "text",
+      "from": {"mark": "site"},
+      "encode": {
+        "enter": {
+          "x": {"field": "width", "offset": -2},
+          "y": {"field": "y", "offset": {"field": "height"}},
+          "fontSize": {"value": 11},
+          "fontWeight": {"value": "bold"},
+          "text": {"field": "datum.site"},
+          "align": {"value": "right"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
     }
-    // {
-    //   "type": "text",
-    //   "from": {"mark": "site"},
-    //   "encode": {
-    //     "enter": {
-    //       "x": {"field": {"group": "width"}, "mult": 0.5},
-    //       "y": {"field": "y", "offset": -2},
-    //       "fontWeight": {"value": "bold"},
-    //       "text": {"field": "datum.site"},
-    //       "align": {"value": "center"},
-    //       "baseline": {"value": "bottom"},
-    //       "fill": {"value": "#000"}
-    //     }
-    //   }
-    // }
   ]
 });
 
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
+var view = new vega.View(runtimeSpec);
+view.initialize(document.querySelector('#view'))
   .renderer('svg')
   .insert('barley', barley)
   .run();
