@@ -27,7 +27,7 @@ prototype.mark = function(scenepath, markdef) {
 
     if (!mark) {
       mark = createMark(markdef, item);
-      item.items.push(mark);
+      item.items[markpath[i]] = mark;
       return mark;
     }
 
