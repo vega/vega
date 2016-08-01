@@ -7,6 +7,7 @@ import {error} from 'vega-util';
 export default function(spec, scope) {
   var facet = spec.from.facet,
       name = facet.name,
+      data = ref(scope.getData(facet.data).output),
       subscope, source, op;
 
   if (!facet.name) {
@@ -15,15 +16,20 @@ export default function(spec, scope) {
   if (!facet.data) {
     error('Facet must reference a data set: ' + JSON.stringify(facet));
   }
-  if (!(facet.key || facet.field)) {
+
+  if (facet.field) {
+    op = scope.add(transform('PreFacet', {
+      field: scope.fieldRef(facet.field),
+      pulse: data
+    }));
+  } else if (facet.key) {
+    op = scope.add(transform('Facet', {
+      key:    scope.keyRef(facet.key),
+      pulse:  data
+    }));
+  } else {
     error('Facet must specify a key or field: ' + JSON.stringify(facet));
   }
-
-  // TODO: facet field for pre-faceted data
-  op = scope.add(transform('Facet', {
-    key:    scope.keyRef(facet.key),
-    pulse:  ref(scope.getData(facet.data).output)
-  }));
 
   // initialize subscope
   subscope = scope.fork();

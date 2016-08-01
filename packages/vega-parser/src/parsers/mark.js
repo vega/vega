@@ -1,35 +1,20 @@
 import parseEncode from './encode';
 import parseFacet from './facet';
 import parseTransform from './transform';
-import {ref, transform} from '../util';
+import {entry, ref, transform} from '../util';
 import {array, error, extend} from 'vega-util';
 
 // TODO: reactive geometry
 export default function parseMark(spec, scope) {
-  var from = spec.from,
-      facet = from.facet,
+  var facet = spec.from && spec.from.facet,
       group = spec.type === 'group',
-      key, op, dataRef, markRef, encodeRef, params, enc;
+      input, key, op, markRef, encodeRef, params, enc;
 
   // resolve input data
-  if (facet = from.facet) {
-    if (!group) error('Only group marks can be faceted.');
-    op = parseTransform(extend({
-      type:    'aggregate',
-      groupby: array(facet.key)
-    }, facet.aggregate));
-    op.params.key = (key = scope.keyRef(facet.key));
-    op.params.pulse = ref(scope.getData(facet.data).output);
-    dataRef = ref(scope.add(op));
-  } else {
-    dataRef = from.$ref
-      ? from
-      : ref(scope.getData(from.data).output);
-    key = from.key ? scope.fieldRef(from.key) : undefined;
-  }
+  input = markData(spec.from, group, scope);
 
-  // add data join to map tuples to visual items
-  op = scope.add(transform('DataJoin', {key: key, pulse: dataRef}));
+  // data join to map tuples to visual items
+  op = scope.add(transform('DataJoin', input));
 
   // collect visual items
   op = scope.add(transform('Collect', {pulse: ref(op)}));
@@ -93,6 +78,41 @@ export default function parseMark(spec, scope) {
   // render / sieve items
   scope.add(transform('Render', {pulse: ref(op)}));
   scope.add(transform('Sieve', {pulse: ref(op)}, scope.parent()));
+}
+
+function markData(from, group, scope) {
+  var facet, key, op, dataRef;
+
+  // resolve input data
+  if (!from) {
+    // if no source data, generate singleton datum
+    dataRef = ref(scope.add(entry('Collect', [{}])));
+  } else if (facet = from.facet) {
+    if (!group) error('Only group marks can be faceted.');
+
+    if (facet.field != null) {
+      // use pre-faceted source data
+      dataRef = ref(scope.getData(facet.data).output);
+    } else {
+      // facet the source data
+      op = parseTransform(extend({
+        type:    'aggregate',
+        groupby: array(facet.key)
+      }, facet.aggregate));
+      op.params.key = (key = scope.keyRef(facet.key));
+      op.params.pulse = ref(scope.getData(facet.data).output);
+      dataRef = ref(scope.add(op));
+    }
+
+  } else {
+    // get output reference of source data set
+    dataRef = from.$ref
+      ? from
+      : ref(scope.getData(from.data).output);
+    key = from.key ? scope.fieldRef(from.key) : undefined;
+  }
+
+  return {key: key, pulse: dataRef};
 }
 
 function markDefinition(spec) {
