@@ -1,6 +1,7 @@
 import parseEncode from './encode';
 import parseFacet from './facet';
 import parseTransform from './transform';
+import DataScope from '../DataScope';
 import {entry, ref, transform} from '../util';
 import {array, error, extend} from 'vega-util';
 
@@ -8,7 +9,9 @@ import {array, error, extend} from 'vega-util';
 export default function parseMark(spec, scope) {
   var facet = spec.from && spec.from.facet,
       group = spec.type === 'group',
-      input, key, op, markRef, encodeRef, params, enc;
+      input, key, op, params, enc,
+      markRef, encodeRef, boundRef,
+      bound, render, sieve;
 
   // resolve input data
   input = markData(spec.from, group, scope);
@@ -66,18 +69,24 @@ export default function parseMark(spec, scope) {
   }
 
   // compute bounding boxes
-  op = scope.add(transform('Bound', {mark: markRef, pulse: ref(op)}));
+  bound = scope.add(transform('Bound', {mark: markRef, pulse: ref(op)}));
+  boundRef = ref(bound);
 
   // if non-faceted group, recurse directly
   if (group && !facet) {
-    scope.pushState(encodeRef, ref(op));
+    scope.pushState(encodeRef, boundRef);
     spec.marks.map(function(_) { return parseMark(_, scope); });
     scope.popState();
   }
 
   // render / sieve items
-  scope.add(transform('Render', {pulse: ref(op)}));
-  scope.add(transform('Sieve', {pulse: ref(op)}, scope.parent()));
+  render = scope.add(transform('Render', {pulse: boundRef}));
+  sieve = scope.add(transform('Sieve', {pulse: boundRef}, scope.parent()));
+
+  // if mark is named, make accessible as reactive geometry
+  if (spec.name != null) {
+    scope.addData('mark:' + spec.name, new DataScope(scope, null, render, sieve))
+  }
 }
 
 function markData(from, group, scope) {
@@ -106,8 +115,8 @@ function markData(from, group, scope) {
 
   } else {
     // get output reference of source data set
-    dataRef = from.$ref
-      ? from
+    dataRef = from.$ref ? from
+      : from.mark ? ref(scope.getData('mark:' + from.mark).output)
       : ref(scope.getData(from.data).output);
     key = from.key ? scope.fieldRef(from.key) : undefined;
   }
