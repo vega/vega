@@ -1,18 +1,20 @@
-import {isString} from 'vega-util';
+import {isString, splitAccessPath, stringValue} from 'vega-util';
 
 export default function(name, fields) {
+  var object = 'datum';
+
   if (!isString(name)) {
-    var object = 'item.mark.group', field;
+    object = 'item.mark.group';
     if (name.parent != null) {
-      field = name.parent;
+      name = name.parent;
       object += '.datum';
     } else if (name.group != null) {
-      field = name.group;
+      name = name.group;
     }
-    fields[field] = 1;
-    return object + '[\'' + field + '\']';
-  } else {
-    fields[name] = 1;
-    return 'datum[\'' + name + '\']';
   }
+
+  fields[name] = 1;
+  return object + '['
+    + splitAccessPath(name).map(stringValue).join('][')
+    + ']';
 }
