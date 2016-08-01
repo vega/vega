@@ -1,5 +1,5 @@
 import {transform, ref, keyFieldRef} from '../util';
-import {error, extend, isArray, isObject, isString, toSet} from 'vega-util';
+import {error, isArray, isObject, isString, toSet} from 'vega-util';
 
 export var scaleTypes = toSet([
   'identity', 'ordinal', 'band', 'point', 'index',
@@ -14,24 +14,32 @@ export function isOrdinal(type) {
     || type === 'index';
 }
 
-export default function parseScale(scale, scope) {
-  var type = scale.type || 'linear';
-  if (!scaleTypes.hasOwnProperty(type)) error ('Unrecognized scale type: ' + type);
+export default function(spec, scope) {
+  var type = spec.type || 'linear',
+      params, key;
 
-  var params = extend({}, scale);
-  delete params.name;
-  params.type = type;
-  params.domain = parseScaleDomain(scale, scope);
-
-  if (scale.range != null) {
-    params.range = parseScaleRange(scale, scope);
+  if (!scaleTypes.hasOwnProperty(type)) {
+    error('Unrecognized scale type: ' + type);
   }
 
-  if (scale.scheme != null) {
-    params.scheme = parseLiteral(scale.scheme, scope);
+  params = {
+    type:   type,
+    domain: parseScaleDomain(spec, scope)
+  };
+
+  if (spec.range != null) {
+    if (spec.bandSize != null) {
+      error('Scale range and bandSize are mutually exclusive.');
+    }
+    params.range = parseScaleRange(spec, scope);
   }
 
-  scope.addScale(scale.name, params);
+  for (key in spec) {
+    if (params[key] || key === 'name') continue;
+    params[key] = parseLiteral(spec[key], scope);
+  }
+
+  scope.addScale(spec.name, params);
 }
 
 function parseLiteral(v, scope) {
@@ -42,8 +50,8 @@ function parseLiteral(v, scope) {
 
 // -- SCALE DOMAIN ----
 
-function parseScaleDomain(scale, scope) {
-  var domain = scale.domain;
+function parseScaleDomain(spec, scope) {
+  var domain = spec.domain;
   if (!domain) error('Missing scale domain');
 
   if (domain.signal) {
@@ -52,34 +60,34 @@ function parseScaleDomain(scale, scope) {
 
   return (isArray(domain) ? explicitDomain
     : domain.fields ? multipleDomain
-    : singularDomain)(scale, scope);
+    : singularDomain)(spec, scope);
 }
 
-function explicitDomain(scale, scope) {
-  return scale.domain.map(function(v) {
+function explicitDomain(spec, scope) {
+  return spec.domain.map(function(v) {
     return parseLiteral(v, scope);
   });
 }
 
-function singularDomain(scale, scope) {
-  var domain = scale.domain,
+function singularDomain(spec, scope) {
+  var domain = spec.domain,
       data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
-  return isOrdinal(scale.type)
+  return isOrdinal(spec.type)
     ? data.valuesRef(domain.field, parseSort(domain.sort, false))
     : data.extentRef(domain.field);
 }
 
-function multipleDomain(scale, scope) {
-  var method = isOrdinal(scale.type) ? oMultipleDomain : qMultipleDomain,
-      data   = scale.domain.data,
-      fields = scale.domain.fields.reduce(function(dom, d) {
+function multipleDomain(spec, scope) {
+  var method = isOrdinal(spec.type) ? oMultipleDomain : qMultipleDomain,
+      data   = spec.domain.data,
+      fields = spec.domain.fields.reduce(function(dom, d) {
         return dom.push(isString(d) ? {data: data, field:d} : d), dom;
       }, []);
-  return method(scale, scope, fields);
+  return method(spec, scope, fields);
 }
 
-function oMultipleDomain(scale, scope, fields) {
+function oMultipleDomain(spec, scope, fields) {
   var counts, a, c, v;
 
   // get value counts for each domain field
@@ -102,7 +110,7 @@ function oMultipleDomain(scale, scope, fields) {
   // extract values for combined domain
   v = scope.add(transform('Values', {
     field: keyFieldRef,
-    sort:  scope.sortRef(parseSort(scale.domain.sort, true)),
+    sort:  scope.sortRef(parseSort(spec.domain.sort, true)),
     pulse: ref(c)
   }));
 
@@ -122,7 +130,7 @@ function parseSort(sort, multidomain) {
   return sort;
 }
 
-function qMultipleDomain(scale, scope, fields) {
+function qMultipleDomain(spec, scope, fields) {
   // get extents for each domain field
   var extents = fields.map(function(f) {
     var data = scope.getData(f.data);
@@ -136,8 +144,8 @@ function qMultipleDomain(scale, scope, fields) {
 
 // -- SCALE RANGE -----
 
-function parseScaleRange(scale, scope) {
-  var range = scale.range;
+function parseScaleRange(spec, scope) {
+  var range = spec.range;
 
   if (range.signal) {
     return scope.signalRef(range.signal);
