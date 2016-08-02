@@ -34,6 +34,11 @@ function functions(fn, ctx) {
     return array[array.length-1] - array[0];
   };
 
+  fn.range = function(name) {
+    var s = scale(name, ctx);
+    return s && s.range() ? s.range() : [0, 0];
+  };
+
   fn.scale = function(name, value) {
     var s = scale(name, ctx);
     return s ? s(value) : undefined;
