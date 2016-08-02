@@ -17,23 +17,24 @@ export default function(view) {
   // evaluate cursor on each mousemove event
   view.on(view.events('view', 'mousemove'), cursor,
     function(_, event) {
-      var value = this.value,
+      var value = cursor.value,
           item = event.item && event.item.cursor || null;
       return isString(value) || value && value[Cursor] === item
-        ? value : {cursor: item};
+        ? value
+        : {cursor: item};
     }
   );
 
   // when cursor signal updates, set visible cursor as needed
-  view.on(cursor, null, function() {
-    var value = cursor.value;
+  view.add(null, function(_) {
+    var value = _.cursor;
     if (isString(value)) {
       view._cursor = (value === Default);
       setCursor(value);
     } else if (view._cursor && value && value.hasOwnProperty(Cursor)) {
       setCursor(value = value[Cursor]);
     }
-  });
+  }, {cursor: cursor});
 }
 
 function setCursor(cursor) {
