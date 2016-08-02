@@ -8,9 +8,9 @@ export default function Renderer(loadConfig) {
 
 var prototype = Renderer.prototype;
 
-prototype.initialize = function(el, width, height, padding) {
+prototype.initialize = function(el, width, height, origin) {
   this._el = el;
-  return this.resize(width, height, padding);
+  return this.resize(width, height, origin);
 };
 
 // Returns the parent container element for a visualization
@@ -30,10 +30,10 @@ prototype.background = function(bgcolor) {
   return this;
 };
 
-prototype.resize = function(width, height, padding) {
+prototype.resize = function(width, height, origin) {
   this._width = width;
   this._height = height;
-  this._padding = padding || {top:0, left:0, bottom:0, right:0};
+  this._origin = origin || [0, 0];
   return this;
 };
 

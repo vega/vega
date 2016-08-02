@@ -14,7 +14,7 @@ export default function CanvasHandler() {
 var prototype = inherits(CanvasHandler, Handler);
 var base = Handler.prototype;
 
-prototype.initialize = function(el, pad, obj) {
+prototype.initialize = function(el, origin, obj) {
   // add event listeners
   var canvas = this._canvas = el && find(el, 'canvas');
   if (canvas) {
@@ -30,7 +30,7 @@ prototype.initialize = function(el, pad, obj) {
     });
   }
 
-  return base.initialize.call(this, el, pad, obj);
+  return base.initialize.call(this, el, origin, obj);
 };
 
 prototype.canvas = function() {
@@ -169,8 +169,8 @@ prototype.off = function(type, handler) {
 
 prototype.pickEvent = function(evt) {
   var p = point(evt, this._canvas),
-      pad = this._padding;
-  return this.pick(this._scene, p[0], p[1], p[0] - pad.left, p[1] - pad.top);
+      o = this._origin;
+  return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
 };
 
 // find the scenegraph item at the current mouse position

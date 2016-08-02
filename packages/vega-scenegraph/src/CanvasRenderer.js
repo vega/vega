@@ -15,18 +15,18 @@ var prototype = inherits(CanvasRenderer, Renderer),
     base = Renderer.prototype,
     tempBounds = new Bounds();
 
-prototype.initialize = function(el, width, height, padding) {
+prototype.initialize = function(el, width, height, origin) {
   this._canvas = Canvas(width, height);
   if (el) {
     clear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
   }
-  return base.initialize.call(this, el, width, height, padding);
+  return base.initialize.call(this, el, width, height, origin);
 };
 
-prototype.resize = function(width, height, padding) {
-  base.resize.call(this, width, height, padding);
-  resize(this._canvas, this._width, this._height, this._padding);
+prototype.resize = function(width, height, origin) {
+  base.resize.call(this, width, height, origin);
+  resize(this._canvas, this._width, this._height, this._origin);
   return this;
 };
 
@@ -72,16 +72,16 @@ function translate(bounds, group) {
 
 prototype.render = function(scene, items) {
   var g = this.context(),
-      p = this._padding,
-      w = this._width + p.left + p.right,
-      h = this._height + p.top + p.bottom,
+      o = this._origin,
+      w = this._width,
+      h = this._height,
       b;
 
   // setup
   this._scene = scene; // cache scene for async redraw
   g.save();
   b = clipToBounds(g, items);
-  this.clear(-p.left, -p.top, w, h);
+  this.clear(-o[0], -o[1], w, h);
 
   // render
   this.draw(g, scene, b);
