@@ -1,5 +1,5 @@
 import parseTransform from './transform';
-import {entry, transform} from '../util';
+import {entry, ref, transform} from '../util';
 import {error} from 'vega-util';
 
 export default function parseData(data, scope) {
@@ -62,9 +62,9 @@ function analyze(data, scope, ops) {
   if (upstream) {
     if (modify) { // relay if we modify upstream tuples
       output[0] = collect();
-      output.unshift(transform('Relay', {pulse: upstream.output}));
+      output.unshift(transform('Relay', {pulse: ref(upstream.output)}));
     } else {
-      output[0] = transform('NoOp', {pulse: upstream.output});
+      output[0] = transform('NoOp', {pulse: ref(upstream.output)});
     }
   }
 
