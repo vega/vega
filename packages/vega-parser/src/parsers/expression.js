@@ -39,6 +39,7 @@ export var functions = function(codegen) {
 
   // scales, projections, data
   fn.span   = 'this.span';
+  fn.range  = 'this.range';
   fn.scale  = 'this.scale';
   fn.invert = 'this.scaleInvert';
   fn.copy   = 'this.scaleCopy';
@@ -107,6 +108,7 @@ export default function(expr, scope, preamble) {
     switch (name) {
       case 'scale':
       case 'invert':
+      case 'range':
         if (args[0].type === Literal) {           // scale dependency
           scale(args[0].value, scope, params);
         } else if (args[0].type === Identifier) { // forward reference to signal
