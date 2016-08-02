@@ -2,10 +2,6 @@ var tape = require('tape'),
     vega = require('../'),
     Handler = vega.Handler;
 
-function padding(l,t,r,b) {
-  return {left: l, top: t, right: r, bottom: b};
-}
-
 tape('Handler should support argument free constructor', function(test) {
   var h = new Handler();
   test.equal(h._active, null);
@@ -16,15 +12,15 @@ tape('Handler should support argument free constructor', function(test) {
 tape('Handler should initialize', function(test) {
   var el = {};
   var obj = {};
-  var pad = padding(1, 1, 1, 1);
+  var o = [1, 1];
   var h = new Handler();
-  var s = h.initialize(el, pad, obj);
+  var s = h.initialize(el, o, obj);
   test.equal(s, h);
   test.equal(h._el, el);
   test.equal(h._obj, obj);
-  test.deepEqual(h._padding, pad);
+  test.deepEqual(h._origin, o);
 
-  h.initialize(el, pad);
+  h.initialize(el, o);
   test.equal(h._obj, null);
   test.equal(h.on(), undefined);
   test.equal(h.off(), undefined);

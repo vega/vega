@@ -47,18 +47,13 @@ prototype.background = function(bgcolor) {
   return base.background.apply(this, arguments);
 };
 
-prototype.resize = function(width, height, padding) {
-  base.resize.call(this, width, height, padding);
+prototype.resize = function(width, height, origin) {
+  base.resize.call(this, width, height, origin);
 
   if (this._svg) {
-    var w = this._width,
-        h = this._height,
-        p = this._padding;
-
-    this._svg.setAttribute('width', w + p.left + p.right);
-    this._svg.setAttribute('height', h + p.top + p.bottom);
-
-    this._root.setAttribute('transform', 'translate('+p.left+','+p.top+')');
+    this._svg.setAttribute('width', this._width);
+    this._svg.setAttribute('height', this._height);
+    this._root.setAttribute('transform', 'translate(' + this._origin + ')');
   }
 
   return this;
@@ -69,8 +64,8 @@ prototype.svg = function() {
 
   var attr = {
     'class':  'marks',
-    'width':  this._width + this._padding.left + this._padding.right,
-    'height': this._height + this._padding.top + this._padding.bottom
+    'width':  this._width,
+    'height': this._height
   };
   for (var key in metadata) {
     attr[key] = metadata[key];

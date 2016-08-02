@@ -4,6 +4,8 @@ import GroupItem from './GroupItem';
 export default function Scenegraph() {
   this.root = createMark({
     marktype: 'group',
+    name: 'root',
+    role: 'view',
     interactive: false
   });
   this.root.items = [new GroupItem(this.root)];

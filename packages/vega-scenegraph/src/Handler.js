@@ -5,18 +5,18 @@ export default function Handler() {
 
 var prototype = Handler.prototype;
 
-prototype.initialize = function(el, pad, obj) {
+prototype.initialize = function(el, origin, obj) {
   this._el = el;
   this._obj = obj || null;
-  return this.padding(pad);
+  return this.origin(origin);
 };
 
 prototype.element = function() {
   return this._el;
 };
 
-prototype.padding = function(pad) {
-  this._padding = pad || {top:0, left:0, bottom:0, right:0};
+prototype.origin = function(origin) {
+  this._origin = origin || [0, 0];
   return this;
 };
 

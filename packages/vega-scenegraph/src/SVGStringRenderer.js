@@ -29,15 +29,15 @@ export default function SVGStringRenderer(loadConfig) {
 var prototype = inherits(SVGStringRenderer, Renderer);
 var base = Renderer.prototype;
 
-prototype.resize = function(width, height, padding) {
-  base.resize.call(this, width, height, padding);
-  var p = this._padding,
+prototype.resize = function(width, height, origin) {
+  base.resize.call(this, width, height, origin);
+  var o = this._origin,
       t = this._text;
 
   var attr = {
     'class':  'marks',
-    'width':  this._width + p.left + p.right,
-    'height': this._height + p.top + p.bottom
+    'width':  this._width,
+    'height': this._height
   };
   for (var key in metadata) {
     attr[key] = metadata[key];
@@ -45,7 +45,7 @@ prototype.resize = function(width, height, padding) {
 
   t.head = openTag('svg', attr);
   t.root = openTag('g', {
-    transform: 'translate(' + p.left + ',' + p.top + ')'
+    transform: 'translate(' + o + ')'
   });
   t.foot = closeTag('g') + closeTag('svg');
 
