@@ -6,15 +6,14 @@ import parseScale from './scale';
 import parseData from './data';
 import parseMark from './mark';
 import parseAxis from './axis';
-import {array, toSet} from 'vega-util';
+import {array} from 'vega-util';
 
-var predefined = toSet(['width', 'height', 'padding']);
-
-export default function(spec, scope) {
+export default function(spec, scope, defined) {
+  defined = defined || {};
   var signals = array(spec.signals);
 
   signals.forEach(function(_) {
-    if (!predefined[_.name]) parseSignal(_, scope);
+    if (!defined[_.name]) parseSignal(_, scope);
   });
 
   array(spec.projections).forEach(function(_) {

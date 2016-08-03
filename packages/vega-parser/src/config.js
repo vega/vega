@@ -1,4 +1,6 @@
 export default {
+  autosize: 'pad',
+
   axisMinExtent: 0,
   axisMaxExtent: 200,
   axisDomainWidth: 1,

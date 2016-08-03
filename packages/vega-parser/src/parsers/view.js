@@ -2,6 +2,7 @@ import parsePadding from './padding';
 import parseSpec from './spec';
 import {ref, operator, transform} from '../util';
 import DataScope from '../DataScope';
+import {toSet} from 'vega-util';
 
 export default function parseView(spec, scope) {
   var op, input, encode, parent, root;
@@ -32,16 +33,17 @@ export default function parseView(spec, scope) {
     pulse: ref(input)
   }));
 
-  // Perform chart layout
-  parent = scope.add(transform('ChartLayout', {
+  // Perform view layout
+  parent = scope.add(transform('ViewLayout', {
     legendMargin: scope.config.legendMargin,
+    autosize:     spec.autosize || scope.config.autosize,
     mark:         root,
     pulse:        ref(encode)
   }));
 
   // Parse remainder of specification
   scope.pushState(ref(encode), ref(parent));
-  parseSpec(spec, scope);
+  parseSpec(spec, scope, toSet(['width', 'height', 'padding']));
 
   // Bound / render / sieve root item
   op = scope.add(transform('Bound', {mark: root, pulse: ref(parent)}));
