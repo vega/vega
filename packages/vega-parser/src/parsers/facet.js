@@ -1,4 +1,3 @@
-import parsePadding from './padding';
 import parseSpec from './spec';
 import {ref, transform} from '../util';
 import DataScope from '../DataScope';
@@ -35,10 +34,6 @@ export default function(spec, scope) {
   subscope = scope.fork();
   source = subscope.add(transform('Collect'));
   subscope.addData(name, new DataScope(subscope, source, source));
-
-  subscope.addSignal('width', spec.width || -1);
-  subscope.addSignal('height', spec.height || -1);
-  subscope.addSignal('padding', parsePadding(spec.padding));
 
   // parse faceted subflow
   op.params.subflow = {

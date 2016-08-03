@@ -5,7 +5,6 @@ import DataScope from '../DataScope';
 import {entry, ref, transform} from '../util';
 import {array, error, extend} from 'vega-util';
 
-// TODO: reactive geometry
 export default function parseMark(spec, scope) {
   var facet = spec.from && spec.from.facet,
       group = spec.type === 'group',
@@ -55,7 +54,7 @@ export default function parseMark(spec, scope) {
 
   // if faceted, add layout and recurse
   if (facet) {
-    op = scope.add(transform('ChartLayout', {
+    op = scope.add(transform('ViewLayout', {
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
@@ -92,36 +91,49 @@ export default function parseMark(spec, scope) {
 function markData(from, group, scope) {
   var facet, key, op, dataRef;
 
-  // resolve input data
+  // if no source data, generate singleton datum
   if (!from) {
-    // if no source data, generate singleton datum
     dataRef = ref(scope.add(entry('Collect', [{}])));
-  } else if (facet = from.facet) {
+  }
+
+  // if faceted, process facet specification
+  else if (facet = from.facet) {
     if (!group) error('Only group marks can be faceted.');
 
+    // use pre-faceted source data, if available
     if (facet.field != null) {
-      // use pre-faceted source data
       dataRef = ref(scope.getData(facet.data).output);
     } else {
-      // facet the source data
-      op = parseTransform(extend({
-        type:    'aggregate',
-        groupby: array(facet.key)
-      }, facet.aggregate));
-      op.params.key = (key = scope.keyRef(facet.key));
-      op.params.pulse = ref(scope.getData(facet.data).output);
-      dataRef = ref(scope.add(op));
-    }
+      key = scope.keyRef(facet.key);
 
-  } else {
-    // get output reference of source data set
+      // generate facet aggregates if no direct data specification
+      if (!from.data) {
+        op = parseTransform(extend({
+          type:    'aggregate',
+          groupby: array(facet.key)
+        }, facet.aggregate));
+        op.params.key = key;
+        op.params.pulse = ref(scope.getData(facet.data).output);
+        dataRef = ref(scope.add(op));
+      }
+    }
+  }
+
+  // if not yet defined, get source data reference
+  if (!dataRef) {
     dataRef = from.$ref ? from
       : from.mark ? ref(scope.getData('mark:' + from.mark).output)
       : ref(scope.getData(from.data).output);
-    key = from.key ? scope.fieldRef(from.key) : undefined;
   }
 
   return {key: key, pulse: dataRef};
+}
+
+function markRole(spec) {
+  return spec.role || (
+    spec.type === 'group' && (spec.axes || spec.legends)
+      ? 'view' : 'mark'
+  );
 }
 
 function markDefinition(spec) {
@@ -130,6 +142,6 @@ function markDefinition(spec) {
     interactive: spec.interactive === false ? false : true,
     marktype:    spec.type,
     name:        spec.name || undefined,
-    role:        spec.role || undefined
+    role:        markRole(spec)
   };
 }
