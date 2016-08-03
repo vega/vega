@@ -15,8 +15,14 @@
     <script>
 var runtimeSpec = vega.parse({
   "width": 200,
-  "height": 600,
-  "padding": {"top": 5, "bottom": 25, "left": 100, "right": 230},
+  // "height": 720,
+  "padding": 5,
+
+  "signals": [
+    {"name": "offset", "value": 15},
+    {"name": "cellHeight", "value": 100},
+    {"name": "height", "update": "6 * (offset + cellHeight)"}
+  ],
 
   "data": [
     {
@@ -63,7 +69,7 @@ var runtimeSpec = vega.parse({
   "legends": [
     {
       "stroke": "cscale",
-      "title": "Outer",
+      "title": "Year",
       "padding": 4,
       "encode": {
         "symbols": {
@@ -80,8 +86,6 @@ var runtimeSpec = vega.parse({
     {
       "name": "site",
       "type": "group",
-      "width": 200,
-      "height": 100,
 
       "from": {
         "facet": {
@@ -95,7 +99,7 @@ var runtimeSpec = vega.parse({
         {
           "name": "yscale",
           "type": "point",
-          "range": [0, {"signal": "height"}],
+          "range": [0, {"signal": "cellHeight"}],
           "padding": 1,
           "round": true,
           "domain": {
@@ -131,32 +135,11 @@ var runtimeSpec = vega.parse({
         }
       ],
 
-      "legends": [
-        {
-          "stroke": "cscale",
-          "title": "Inner",
-          "padding": 4,
-          "encode": {
-            "symbols": {
-              "enter": {
-                "strokeWidth": {"value": 2},
-                "size": {"value": 50}
-              }
-            },
-            "legend": {
-              "enter": {
-                "stroke": {value: "#ddd"}
-              }
-            }
-          }
-        }
-      ],
-
       "encode": {
         "enter": {
-          "y": {"scale": "gscale", "field": "site"},
-          "height": {"scale": "gscale", "band": 1},
-          "width": {"field": {"group": "width"}},
+          "y": {"scale": "gscale", "field": "site", "offset": {"signal": "offset"}},
+          "height": {"signal": "cellHeight"},
+          "width": {"signal": "width"},
           "stroke": {"value": "#ccc"}
         }
       },
@@ -177,17 +160,18 @@ var runtimeSpec = vega.parse({
         }
       ]
     },
+
     {
       "type": "text",
       "from": {"mark": "site"},
       "encode": {
         "enter": {
-          "x": {"field": "width", "offset": -2},
-          "y": {"field": "y", "offset": {"field": "height"}},
+          "x": {"field": "width", "mult": 0.5},
+          "y": {"field": "y"},
           "fontSize": {"value": 11},
           "fontWeight": {"value": "bold"},
           "text": {"field": "datum.site"},
-          "align": {"value": "right"},
+          "align": {"value": "center"},
           "baseline": {"value": "bottom"},
           "fill": {"value": "#000"}
         }

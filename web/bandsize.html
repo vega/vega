@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>Vega Parse Test</title>
+    <title>Vega BandSize Test</title>
     <script src="../../build/vega.js"></script>
     <style>
       body { margin: 10px; font: 14px Helvetica Neue; }
@@ -13,12 +13,14 @@
     <div id="view"></div>
     <script>
 var runtimeSpec = vega.parse({
-  "width": 600,
-  "height": 300,
+  "height": 200,
   "padding": 10,
-  "autosize": "fit",
 
   "signals": [
+    {
+      "name": "width",
+      "update": "span(range('xscale'))"
+    },
     {
       "name": "active",
       "value": null,
@@ -30,6 +32,24 @@ var runtimeSpec = vega.parse({
         {
           "events": {"marktype": "rect", "type": "mouseout"},
           "update": {"expr": "null"}
+        }
+      ]
+    },
+    {
+      "name": "cursor",
+      "value": "default",
+      "on": [
+        {
+          "events": {"marktype": "rect", "type": "mousedown"},
+          "update": {"value": "default"}
+        },
+        {
+          "events": {"marktype": "rect", "type": "mouseover"},
+          "update": {"value": "ew-resize"}
+        },
+        {
+          "events": {"marktype": "rect", "type": "mouseout"},
+          "update": {"value": "default"}
         }
       ]
     }
@@ -55,8 +75,7 @@ var runtimeSpec = vega.parse({
     {
       "name": "xscale",
       "type": "band",
-      "range": [0, {"signal": "width"}],
-      "round": true,
+      "bandSize": 40,
       "domain": {"data": "values", "field": "x"}
     },
     {
@@ -126,22 +145,22 @@ var runtimeSpec = vega.parse({
       "stroke": "colorScale",
       "title": "Legend Right 1"
     },
-    {
-      "shape": "shapeScale",
-      "fill": "colorScale",
-      "orient": "right",
-      "title": "Legend Right 2"
-    },
+    // {
+    //   "shape": "shapeScale",
+    //   "fill": "colorScale",
+    //   "orient": "right",
+    //   "title": "Legend Right 2"
+    // },
     {
       "shape": "shapeScale",
       "orient": "left",
       "title": "Legend Left 1"
     },
-    {
-      "stroke": "colorScale",
-      "orient": "left",
-      "title": "Legend Left 2"
-    },
+    // {
+    //   "stroke": "colorScale",
+    //   "orient": "left",
+    //   "title": "Legend Left Left"
+    // },
     {
       "shape": "innerScale",
       "orient": "top-left",
@@ -199,6 +218,7 @@ var runtimeSpec = vega.parse({
       "encode": {
         "legend": {
           "enter": {
+            "cursor": {"value": "crosshair"},
             "fill": {value: "#fff"},
             "fillOpacity": {value: 0.5},
             "stroke": {value: "#888"},
@@ -220,11 +240,14 @@ var runtimeSpec = vega.parse({
       "type": "rect",
       "from": {"data": "values"},
       "encode": {
-        "update": {
+        "enter": {
           "x": {"scale": "xscale", "field": "x"},
           "width": {"scale": "xscale", "band": 1, "offset": -1},
           "y": {"scale": "yscale", "field": "y"},
           "y2": {"scale": "yscale", "value": 0},
+          "cursor": {"value": "pointer"}
+        },
+        "update": {
           "fill": {"value": "steelblue"},
           "fillOpacity": {"value": 0.5},
           "stroke": {"color": {

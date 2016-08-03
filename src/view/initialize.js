@@ -11,7 +11,15 @@ import {
 } from 'vega-scenegraph';
 
 export default function(el) {
-  var view = this;
+  var view = this,
+      Handler = CanvasHandler,
+      Renderer = CanvasRenderer;
+
+  // select appropriate renderer/handler types
+  if (view._renderType === SVG) {
+    Handler = SVGHandler;
+    Renderer = (el ? SVGRenderer : SVGStringRenderer);
+  }
 
   // containing dom element
   if (el) {
@@ -24,20 +32,9 @@ export default function(el) {
     view._el = null; // headless
   }
 
-  // renderer and input handler
-  var io = getIO(view._renderType, el);
-  view._renderer = initializeRenderer(view, view._renderer, el, io.Renderer);
-  view._handler = initializeHandler(view, view._handler, el, io.Handler);
+  // initialize renderer and input handler
+  view._renderer = initializeRenderer(view, view._renderer, el, Renderer);
+  view._handler = initializeHandler(view, view._handler, el, Handler);
 
   return view;
-}
-
-function getIO(type, el) {
-  var r = CanvasRenderer,
-      h = CanvasHandler;
-  if (type === SVG) {
-    r = el ? SVGRenderer : SVGStringRenderer;
-    h = SVGHandler;
-  }
-  return {Renderer: r, Handler: h};
 }

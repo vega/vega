@@ -7,7 +7,9 @@ import initialize from './initialize';
 import renderToImageURL from './render-to-image-url';
 import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
+import {resizeRenderer} from './render-size';
 import runtime from './runtime';
+import {autosize, resizer} from './size';
 import state from './state';
 
 import {
@@ -47,6 +49,7 @@ export default function View(spec) {
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
+  // initialize renderer and handler
   this._renderer = null;
   this._handler = new CanvasHandler().scene(root);
   this._queue = null;
@@ -66,14 +69,19 @@ export default function View(spec) {
     this.changeset().insert(root.items)
   );
 
-  // background color
+  // initialize background color
   this._backgroundColor = null;
 
-  // initialize resize operator
-  this.add(null,
-    function(_, pulse) { pulse.dataflow.resize(_.width, _.height); },
-    {width: this._signals.width, height: this._signals.height}
-  );
+  // initialize view size
+  this._width = this.width();
+  this._height = this.height();
+  this._origin = [0, 0];
+  this._resize = 0;
+  this._autosize = 1;
+
+  // initialize resize operators
+  this._resizeWidth = resizer(this, 'width');
+  this._resizeHeight = resizer(this, 'height');
 
   // initialize cursor
   cursor(this);
@@ -93,6 +101,7 @@ prototype.run = function() {
 };
 
 prototype.render = function(update) {
+  if (this._resize) this._resize = 0, resizeRenderer(this);
   this._renderer.render(this._scenegraph.root, update);
   return this;
 };
@@ -132,21 +141,6 @@ prototype.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
-prototype.resize = function(width, height) {
-  var w = this.width(),
-      h = this.height();
-
-  if (w === width && h === height) {
-    this._renderer.resize(width, height, this.padding());
-  } else {
-    this.width(width);
-    this.height(height);
-    this.run();
-  }
-
-  return this;
-};
-
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (type !== SVG) type = CANVAS;
@@ -159,6 +153,9 @@ prototype.renderer = function(type) {
   }
   return this;
 };
+
+// -- SIZING ----
+prototype.autosize = autosize;
 
 // -- DATA ----
 prototype.data = data;

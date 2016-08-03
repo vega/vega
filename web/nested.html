@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Nested Plot Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      #view { display: inline-block; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+var runtimeSpec = vega.parse({
+  "width": 300,
+  "padding": 5,
+  "autosize": "pad",
+
+  "signals": [
+    {
+      "name": "height",
+      "update": "extent[1] * bandSize"
+    },
+    {
+      "name": "bandSize",
+      "value": 20
+    }
+  ],
+
+  "data": [
+    {
+      "name": "tuples",
+      "values": [
+        {"a": 0, "b": "a", "c": 6},
+        {"a": 0, "b": "a", "c": 4},
+        {"a": 0, "b": "b", "c": 7},
+        {"a": 1, "b": "b", "c": 4},
+        {"a": 2, "b": "b", "c": 3},
+        {"a": 2, "b": "c", "c": 6}
+      ],
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["a", "b"],
+          "fields": ["c"],
+          "ops": ["average"],
+          "as": ["c"]
+        }
+      ]
+    },
+    {
+      "name": "trellis",
+      "source": "tuples",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["a"]
+        },
+        {
+          "type": "stack",
+          "field": "count"
+        },
+        {
+          "type": "extent",
+          "field": "y1",
+          "signal": "extent"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "domain": {"data": "tuples", "field": "c"},
+      "zero": true,
+      "round": true,
+      "range": "width"
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "scheme": "category10",
+      "domain": {"data": "trellis", "field": "a"}
+    }
+  ],
+
+  "axes": [
+    { "orient": "bottom", "scale": "xscale", "domain": true }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      // "width": 300,
+      // "height": 100,
+
+      "from": {
+        "data": "trellis",
+        "facet": {
+          "name": "facet",
+          "data": "tuples",
+          "key":  "a"
+        }
+      },
+
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "width": {"signal": "width"},
+          "y": {"field": "y0", "mult": {"signal": "bandSize"}},
+          "y2": {"field": "y1", "mult": {"signal": "bandSize"}}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "yscale",
+          "type": "band",
+          "padding": 0.11,
+          "round": true,
+          "domain": {"data": "facet", "field": "b"},
+          "bandSize": {"signal": "bandSize"}
+        }
+      ],
+
+      "axes": [
+        { "orient": "left", "scale": "yscale", "domain": false }
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "facet"},
+          "encode": {
+            "enter": {
+              "x": {"value": 0},
+              "x2": {"scale": "xscale", "field": "c"},
+              "y": {"scale": "yscale", "field": "b"},
+              "height": {"scale": "yscale", "band": 1},
+              "fill": {"scale": "color", "field": "a"},
+              "cornerRadius": {"value": 8},
+              "strokeWidth": {"value": 2}
+            },
+            "update": {
+              "stroke": {"value": null}
+            },
+            "hover": {
+              "stroke": {"value": "firebrick"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+});
+
+console.log(runtimeSpec);
+
+var view = new vega.View(runtimeSpec)
+  .renderer('svg')
+  .hover()
+  .initialize(document.querySelector('#view'))
+  .run();
+    </script>
+  </body>
+</html>

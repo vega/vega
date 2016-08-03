@@ -1,7 +1,9 @@
+import {offset} from './render-size';
+
 export default function(view, prevHandler, el, constructor) {
   var handler = new constructor()
     .scene(view.scenegraph().root)
-    .initialize(el, view.padding(), view);
+    .initialize(el, offset(view), view);
 
   if (prevHandler) {
     prevHandler.handlers().forEach(function(h) {

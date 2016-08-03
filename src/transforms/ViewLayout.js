@@ -2,61 +2,65 @@ import {Transform} from 'vega-dataflow';
 import {Bounds, boundStroke} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
-var tempBounds = new Bounds();
+export var Fit = 'fit';
+export var Pad = 'pad';
+export var None = 'none';
 
 /**
- * Layout chart elements such as axes and legends.
+ * Layout view elements such as axes and legends.
+ * Also performs size adjustments.
  * @constructor
  * @param {object} params - The parameters for this operator.
- * @param {object} params.mark - Scenegraph mark of chart groups to layout.
+ * @param {object} params.mark - Scenegraph mark of groups to layout.
  */
-export default function ChartLayout(params) {
+export default function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(ChartLayout, Transform);
+var prototype = inherits(ViewLayout, Transform);
 
 prototype.transform = function(_, pulse) {
-  // TODO incremental update, output
+  // TODO incremental update, output?
+  var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
-    layoutGroup(group, _);
+    layoutGroup(view, group, _);
   });
   return pulse;
 };
 
-function layoutGroup(group, _) {
+function layoutGroup(view, group, _) {
   var items = group.items,
-      width = group.width,
-      height = group.height,
-      bounds = new Bounds(0, 0, width, height),
-      axisMarks = [],
-      legendMarks = [],
-      mark, i, n;
+      width = Math.max(0, group.width || 0),
+      height = Math.max(0, group.height || 0),
+      viewBounds = new Bounds().set(0, 0, width, height),
+      markBounds = viewBounds.clone(),
+      axisBounds = markBounds.clone(),
+      legends = [],
+      mark, margin, i, n;
 
-  // collect axes and legends, compute bounds
+  // layout axes, gather legends, collect bounds
   for (i=0, n=items.length; i<n; ++i) {
     mark = items[i];
-    if (mark.role === 'axis') axisMarks.push(mark);
-    else if (mark.role === 'legend') legendMarks.push(mark);
-    else bounds.union(mark.bounds);
+    switch (mark.role) {
+      case 'axis':
+        axisBounds.union(layoutAxis(mark, width, height));
+        break;
+      case 'legend': legends.push(mark); break;
+      case 'view':   viewBounds.union(mark.bounds); // break omitted
+      default:       markBounds.union(mark.bounds);
+    }
+  }
+  viewBounds.union(axisBounds);
+
+  // layout legends, extending viewBounds
+  if (legends.length) {
+    margin = _.legendMargin || 8;
+    axisBounds.union(markBounds);
+    layoutLegends(legends, axisBounds, margin, width, height, viewBounds);
   }
 
-  // layout axes
-  for (i=0, n=axisMarks.length; i<n; ++i) {
-    bounds.union(layoutAxis(axisMarks[i], width, height));
-  }
-
-  // layout legends
-  var flow = {
-    left:   0,
-    right:  0,
-    margin: _.legendMargin || 8
-  };
-  for (i=0, n=legendMarks.length; i<n; ++i) {
-    layoutLegend(legendMarks[i], flow, bounds, width, height);
-  }
-
-  // TODO automatic size adjustment
+  // perform size adjustment
+  layoutSize(view, group, markBounds, viewBounds, _);
 }
 
 function layoutAxis(axis, width, height) {
@@ -72,7 +76,7 @@ function layoutAxis(axis, width, height) {
       title = datum.title && item.items[titleIndex].items[0],
       titlePadding = item.titlePadding,
       titleSize = title ? title.fontSize + titlePadding : 0,
-      bounds = tempBounds,
+      bounds = item.bounds,
       x, y, s;
 
   bounds.clear()
@@ -90,7 +94,7 @@ function layoutAxis(axis, width, height) {
         title.y = -(titlePadding + s);
         s += titleSize;
       }
-      bounds.set(0, -s, width, 0);
+      bounds.add(0, -s).add(width, 0);
       break;
     }
     case 'left': {
@@ -101,7 +105,7 @@ function layoutAxis(axis, width, height) {
         title.x = -(titlePadding + s);
         s += titleSize;
       }
-      bounds.set(-s, 0, 0, height);
+      bounds.add(-s, 0).add(0, height);
       break;
     }
     case 'right': {
@@ -112,7 +116,7 @@ function layoutAxis(axis, width, height) {
         title.x = titlePadding + s;
         s += titleSize;
       }
-      bounds.set(width, 0, width + s, height);
+      bounds.add(width, 0).add(width + s, height);
       break;
     }
     case 'bottom': {
@@ -123,7 +127,7 @@ function layoutAxis(axis, width, height) {
         title.y = titlePadding + s;
         s += titleSize;
       }
-      bounds.set(0, height, width, height + s);
+      bounds.add(0, height).add(width, height + s);
       break;
     }
   }
@@ -131,7 +135,21 @@ function layoutAxis(axis, width, height) {
   item.x = x + 0.5;
   item.y = y + 0.5;
 
+  // update bounds
+  boundStroke(bounds, item);
+  item.mark.bounds.clear().union(bounds);
   return bounds;
+}
+
+function layoutLegends(legends, axisBounds, margin, width, height, output) {
+  var flow = {left: 0, right: 0, margin: margin},
+      n = legends.length, i = 0, b;
+
+  // layout legends
+  for (; i<n; ++i) {
+    b = layoutLegend(legends[i], flow, axisBounds, width, height);
+    output.add(b.x1, 0).add(b.x2, 0);
+  }
 }
 
 function layoutLegend(legend, flow, axisBounds, width, height) {
@@ -186,4 +204,34 @@ function layoutLegend(legend, flow, axisBounds, width, height) {
   // update bounds
   boundStroke(bounds.set(x, y, x + w, y + h), item);
   item.mark.bounds.clear().union(bounds);
+  return bounds;
+}
+
+function layoutSize(view, group, markBounds, viewBounds, _) {
+  var type = _.autosize,
+      viewWidth = view._width,
+      viewHeight = view._height;
+
+  if (view._autosize < 1 || !type || type === None) return;
+
+  var width  = Math.max(0, group.width || 0),
+      left   = Math.max(0, Math.ceil(-viewBounds.x1)),
+      right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+      height = Math.max(0, group.height || 0),
+      top    = Math.max(0, Math.ceil(-viewBounds.y1)),
+      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+
+  if (type === Fit) {
+    width = Math.max(0, viewWidth - left - right);
+    height = Math.max(0, viewHeight - top - bottom);
+  }
+
+  else if (type === Pad) {
+    viewWidth = width + left + right;
+    viewHeight = height + top + bottom;
+    if (group.width  < 0) width = markBounds.width();
+    if (group.height < 0) height = markBounds.height();
+  }
+
+  view.autosize(viewWidth, viewHeight, width, height, [left, top]);
 }
