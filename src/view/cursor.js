@@ -1,39 +1,40 @@
 import {isString} from 'vega-util';
 
-var Default = 'default',
-    Cursor = 'cursor';
+var Default = 'default';
 
 export default function(view) {
-  var cursor = view._signals[Cursor];
-
-  // initialize cursor flag
-  view._cursor = !cursor || (cursor.value === Default);
+  var cursor = view._signals.cursor;
 
   // add cursor signal to dataflow, if needed
   if (!cursor) {
-    view._signals[Cursor] = (cursor = view.add({cursor: null}));
+    view._signals.cursor = (cursor = view.add({user: Default, item: null}));
   }
 
   // evaluate cursor on each mousemove event
   view.on(view.events('view', 'mousemove'), cursor,
     function(_, event) {
       var value = cursor.value,
+          user = value ? (isString(value) ? value : value.user) : Default,
           item = event.item && event.item.cursor || null;
-      return isString(value) || value && value[Cursor] === item
-        ? value
-        : {cursor: item};
+
+      return (value && user === value.user && item == value.item) ? value
+        : {user: user, item: item};
     }
   );
 
-  // when cursor signal updates, set visible cursor as needed
+  // when cursor signal updates, set visible cursor
   view.add(null, function(_) {
-    var value = _.cursor;
-    if (isString(value)) {
-      view._cursor = (value === Default);
-      setCursor(value);
-    } else if (view._cursor && value && value.hasOwnProperty(Cursor)) {
-      setCursor(value = value[Cursor]);
+    var user = _.cursor,
+        item = this.value;
+
+    if (!isString(user)) {
+      item = user.item;
+      user = user.user;
     }
+
+    setCursor(user && user !== Default ? user : (item || user));
+
+    return item;
   }, {cursor: cursor});
 }
 
