@@ -22,13 +22,13 @@ export default function(spec, scope) {
       field: scope.fieldRef(facet.field),
       pulse: data
     }));
-  } else if (facet.key) {
+  } else if (facet.groupby) {
     op = scope.add(Facet({
-      key:   scope.keyRef(facet.key),
+      key:   scope.keyRef(facet.groupby),
       pulse: data
     }));
   } else {
-    error('Facet must specify a key or field: ' + JSON.stringify(facet));
+    error('Facet must specify groupby or field: ' + JSON.stringify(facet));
   }
 
   // initialize facet subscope
