@@ -5,8 +5,10 @@ import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import {encoder, extendEncode} from './guides/encode-util';
 import guideGroup from './guides/guide-group';
+import {AxisRole} from './marks/roles';
 import parseMark from './mark';
-import {ref, entry, transform} from '../util';
+import {ref} from '../util';
+import {Collect, AxisTicks} from '../transforms';
 
 export default function(spec, scope) {
   var config = scope.config,
@@ -21,7 +23,7 @@ export default function(spec, scope) {
     grid:   spec.grid != null ? !!spec.grid : false,
     title:  spec.title
   };
-  dataRef = ref(scope.add(entry('Collect', [datum], {})));
+  dataRef = ref(scope.add(Collect({}, [datum])));
 
   // encoding properties for axis group item
   axisEncode = extendEncode({
@@ -34,7 +36,7 @@ export default function(spec, scope) {
   }, encode.axis);
 
   // data source for axis ticks
-  ticksRef = ref(scope.add(transform('AxisTicks', {
+  ticksRef = ref(scope.add(AxisTicks({
     scale:  scope.scaleRef(spec.scale),
     count:  scope.property(spec.count),
     values: scope.property(spec.values),
@@ -63,7 +65,7 @@ export default function(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup('axis', dataRef, interactive, axisEncode, children);
+  group = guideGroup(AxisRole, dataRef, interactive, axisEncode, children);
 
   // parse axis specification
   return parseMark(group, scope);

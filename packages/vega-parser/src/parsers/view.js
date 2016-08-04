@@ -1,7 +1,8 @@
 import parsePadding from './padding';
 import parseSpec from './spec';
-import {ref, operator, transform} from '../util';
+import {ref, operator} from '../util';
 import DataScope from '../DataScope';
+import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
 import {toSet} from 'vega-util';
 
 export default function parseView(spec, scope) {
@@ -13,11 +14,11 @@ export default function parseView(spec, scope) {
   scope.addSignal('padding', parsePadding(spec.padding));
 
   // Store root item
-  input = scope.add(transform('Collect'));
+  input = scope.add(Collect());
 
   // Encode root item width/height
   // TODO: run through proper encoding, with user configurable options
-  encode = scope.add(transform('Encode', {
+  encode = scope.add(Encode({
     encoders: {
       $encode: {
         enter: {
@@ -34,7 +35,7 @@ export default function parseView(spec, scope) {
   }));
 
   // Perform view layout
-  parent = scope.add(transform('ViewLayout', {
+  parent = scope.add(ViewLayout({
     legendMargin: scope.config.legendMargin,
     autosize:     spec.autosize || scope.config.autosize,
     mark:         root,
@@ -46,9 +47,9 @@ export default function parseView(spec, scope) {
   parseSpec(spec, scope, toSet(['width', 'height', 'padding']));
 
   // Bound / render / sieve root item
-  op = scope.add(transform('Bound', {mark: root, pulse: ref(parent)}));
-  op = scope.add(transform('Render', {pulse: ref(op)}));
-  op = scope.add(transform('Sieve', {pulse: ref(op)}));
+  op = scope.add(Bound({mark: root, pulse: ref(parent)}));
+  op = scope.add(Render({pulse: ref(op)}));
+  op = scope.add(Sieve({pulse: ref(op)}));
 
   // Track metadata for root item
   scope.addData('root', new DataScope(scope, input, input, op));

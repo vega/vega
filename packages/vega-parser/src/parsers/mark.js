@@ -1,29 +1,37 @@
+import definition from './marks/definition';
+import dataName from './marks/data-name';
+import parseData from './marks/data';
+import parseFacet from './marks/facet';
+import role from './marks/role';
+import {Group} from './marks/marktypes';
+import {ScopeRole} from './marks/roles';
 import parseEncode from './encode';
-import parseFacet from './facet';
 import parseTransform from './transform';
+import parseSpec from './spec';
 import DataScope from '../DataScope';
-import {entry, ref, transform} from '../util';
-import {array, error, extend} from 'vega-util';
+import {ref} from '../util';
+import {error} from 'vega-util';
+import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from '../transforms';
 
-export default function parseMark(spec, scope) {
+export default function(spec, scope) {
   var facet = spec.from && spec.from.facet,
-      group = spec.type === 'group',
+      group = spec.type === Group,
       input, key, op, params, enc,
       markRef, encodeRef, boundRef,
       bound, render, sieve;
 
   // resolve input data
-  input = markData(spec.from, group, scope);
+  input = parseData(spec.from, group, scope);
 
   // data join to map tuples to visual items
-  op = scope.add(transform('DataJoin', input));
+  op = scope.add(DataJoin(input));
 
   // collect visual items
-  op = scope.add(transform('Collect', {pulse: ref(op)}));
+  op = scope.add(Collect({pulse: ref(op)}));
 
   // connect visual items to scenegraph
-  op = scope.add(transform('Mark', {
-    markdef:   markDefinition(spec),
+  op = scope.add(Mark({
+    markdef:   definition(spec),
     scenepath: {$itempath: scope.markpath()},
     pulse:     ref(op)
   }));
@@ -34,7 +42,7 @@ export default function parseMark(spec, scope) {
   for (key in spec.encode) {
     enc[key] = parseEncode(spec.encode[key], spec.type, params, scope);
   }
-  op = scope.add(transform('Encode', params));
+  op = scope.add(Encode(params));
 
   // add post-encoding transforms, if defined
   if (spec.transform) {
@@ -54,7 +62,7 @@ export default function parseMark(spec, scope) {
 
   // if faceted, add layout and recurse
   if (facet) {
-    op = scope.add(transform('ViewLayout', {
+    op = scope.add(ViewLayout({
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
@@ -68,80 +76,22 @@ export default function parseMark(spec, scope) {
   }
 
   // compute bounding boxes
-  bound = scope.add(transform('Bound', {mark: markRef, pulse: ref(op)}));
+  bound = scope.add(Bound({mark: markRef, pulse: ref(op)}));
   boundRef = ref(bound);
 
   // if non-faceted group, recurse directly
   if (group && !facet) {
     scope.pushState(encodeRef, boundRef);
-    spec.marks.map(function(_) { return parseMark(_, scope); });
+    parseSpec(spec, role(spec) === ScopeRole ? scope.fork() : scope);
     scope.popState();
   }
 
   // render / sieve items
-  render = scope.add(transform('Render', {pulse: boundRef}));
-  sieve = scope.add(transform('Sieve', {pulse: boundRef}, scope.parent()));
+  render = scope.add(Render({pulse: boundRef}));
+  sieve = scope.add(Sieve({pulse: boundRef}, undefined, scope.parent()));
 
   // if mark is named, make accessible as reactive geometry
   if (spec.name != null) {
-    scope.addData('mark:' + spec.name, new DataScope(scope, null, render, sieve))
+    scope.addData(dataName(spec.name), new DataScope(scope, null, render, sieve))
   }
-}
-
-function markData(from, group, scope) {
-  var facet, key, op, dataRef;
-
-  // if no source data, generate singleton datum
-  if (!from) {
-    dataRef = ref(scope.add(entry('Collect', [{}])));
-  }
-
-  // if faceted, process facet specification
-  else if (facet = from.facet) {
-    if (!group) error('Only group marks can be faceted.');
-
-    // use pre-faceted source data, if available
-    if (facet.field != null) {
-      dataRef = ref(scope.getData(facet.data).output);
-    } else {
-      key = scope.keyRef(facet.key);
-
-      // generate facet aggregates if no direct data specification
-      if (!from.data) {
-        op = parseTransform(extend({
-          type:    'aggregate',
-          groupby: array(facet.key)
-        }, facet.aggregate));
-        op.params.key = key;
-        op.params.pulse = ref(scope.getData(facet.data).output);
-        dataRef = ref(scope.add(op));
-      }
-    }
-  }
-
-  // if not yet defined, get source data reference
-  if (!dataRef) {
-    dataRef = from.$ref ? from
-      : from.mark ? ref(scope.getData('mark:' + from.mark).output)
-      : ref(scope.getData(from.data).output);
-  }
-
-  return {key: key, pulse: dataRef};
-}
-
-function markRole(spec) {
-  return spec.role || (
-    spec.type === 'group' && (spec.axes || spec.legends)
-      ? 'view' : 'mark'
-  );
-}
-
-function markDefinition(spec) {
-  return {
-    clip:        spec.clip || false,
-    interactive: spec.interactive === false ? false : true,
-    marktype:    spec.type,
-    name:        spec.name || undefined,
-    role:        markRole(spec)
-  };
 }

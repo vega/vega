@@ -1,6 +1,8 @@
 import {Top, Left, Bottom, Value, Label} from './constants';
 import {encoder} from './encode-util';
 import guideMark from './guide-mark';
+import {Rule} from '../marks/marktypes';
+import {AxisTickRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
@@ -42,5 +44,5 @@ export default function(spec, config, userEncode, dataRef) {
     update.y = enter.y = exit.y = tickPos;
   }
 
-  return guideMark('rule', 'axis-tick', Label, dataRef, encode, userEncode);
+  return guideMark(Rule, AxisTickRole, Label, dataRef, encode, userEncode);
 }

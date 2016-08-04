@@ -1,0 +1,15 @@
+export var MarkRole = 'mark';
+export var ScopeRole = 'scope';
+
+export var AxisRole = 'axis';
+export var AxisDomainRole = 'axis-domain';
+export var AxisGridRole = 'axis-grid';
+export var AxisLabelRole = 'axis-label';
+export var AxisTickRole = 'axis-tick';
+export var AxisTitleRole = 'axis-title';
+
+export var LegendRole = 'legend';
+export var LegendEntryRole = 'legend-entry';
+export var LegendLabelRole = 'legend-label';
+export var LegendSymbolRole = 'legend-symbol';
+export var LegendTitleRole = 'legend-title';

@@ -1,5 +1,7 @@
 import {Top, Bottom, Left} from './constants';
 import guideMark from './guide-mark';
+import {Text} from '../marks/marktypes';
+import {AxisTitleRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
@@ -39,5 +41,5 @@ export default function(spec, config, userEncode, dataRef) {
     update.baseline = {value: 'bottom'};
   }
 
-  return guideMark('text', 'axis-title', null, dataRef, encode, userEncode);
+  return guideMark(Text, AxisTitleRole, null, dataRef, encode, userEncode);
 }

@@ -1,4 +1,5 @@
-import {transform, ref, keyFieldRef} from '../util';
+import {ref, keyFieldRef} from '../util';
+import {Collect, Aggregate, MultiExtent, Values} from '../transforms';
 import {error, isArray, isObject, isString, toSet} from 'vega-util';
 
 export var scaleTypes = toSet([
@@ -98,17 +99,17 @@ function oMultipleDomain(spec, scope, fields) {
   });
 
   // sum counts from all fields
-  a = scope.add(transform('Aggregate', {
+  a = scope.add(Aggregate({
     groupby: keyFieldRef,
     ops:['sum'], fields: [scope.fieldRef('count')], as:['count'],
     pulse: counts
   }));
 
   // collect aggregate output
-  c = scope.add(transform('Collect', {pulse: ref(a)}));
+  c = scope.add(Collect({pulse: ref(a)}));
 
   // extract values for combined domain
-  v = scope.add(transform('Values', {
+  v = scope.add(Values({
     field: keyFieldRef,
     sort:  scope.sortRef(parseSort(spec.domain.sort, true)),
     pulse: ref(c)
@@ -139,7 +140,7 @@ function qMultipleDomain(spec, scope, fields) {
   });
 
   // combine extents
-  return ref(scope.add(transform('MultiExtent', {extents: extents})));
+  return ref(scope.add(MultiExtent({extents: extents})));
 }
 
 // -- SCALE RANGE -----

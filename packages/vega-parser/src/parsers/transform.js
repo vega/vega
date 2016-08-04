@@ -1,6 +1,7 @@
 import parseExpression from './expression';
-import {compareRef, fieldRef, isSignal, ref, transform} from '../util';
-import {transformDef} from '../transforms';
+import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
+import {transformDef} from '../definitions';
+import {Param} from '../transforms';
 import {error, extend, isArray, isString} from 'vega-util';
 
 /**
@@ -8,7 +9,7 @@ import {error, extend, isArray, isString} from 'vega-util';
  */
 export default function(spec, scope) {
   var def = transformDef(spec.type);
-  var t = transform(def.type, parseParameters(def, spec, scope));
+  var t = entry(def.type, null, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, t);
   return t.metadata = def.metadata || {}, t;
 }
@@ -116,7 +117,7 @@ function parseSubParameter(def, value, scope) {
 
   // parse params, create Param transform, return ref
   params = extend(parseParameters(pdef, value, scope), pdef.key);
-  return ref(scope.add(transform('Param', params)));
+  return ref(scope.add(Param(params)));
 }
 
 // -- Utilities -----

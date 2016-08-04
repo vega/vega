@@ -4,7 +4,9 @@ import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
 import {encoder, extendEncode} from './guides/encode-util';
 import parseMark from './mark';
-import {ref, entry, transform} from '../util';
+import {LegendRole, LegendEntryRole} from './marks/roles';
+import {ref} from '../util';
+import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
@@ -26,7 +28,7 @@ export default function(spec, scope) {
     orient: value(spec.orient, config.legendOrient),
     title:  spec.title
   };
-  dataRef = ref(scope.add(entry('Collect', [datum], {})));
+  dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
   legendEncode = extendEncode({
@@ -47,7 +49,7 @@ export default function(spec, scope) {
   };
 
   // data source for legend entries
-  entryRef = ref(scope.add(transform('LegendEntries', {
+  entryRef = ref(scope.add(LegendEntries({
     size:   sizeExpression(spec, config, encode.labels),
     scale:  scope.scaleRef(scale),
     count:  scope.property(spec.count),
@@ -57,7 +59,7 @@ export default function(spec, scope) {
 
   // generate legend marks
   children = [
-    guideGroup('legend-entries', dataRef, interactive, entryEncode, [
+    guideGroup(LegendEntryRole, dataRef, interactive, entryEncode, [
       legendSymbols(spec, config, encode.symbols, entryRef),
       legendLabels(spec, config, encode.labels, entryRef)
     ])
@@ -74,7 +76,7 @@ export default function(spec, scope) {
   }
 
   // build legend specification
-  group = guideGroup('legend', dataRef, interactive, legendEncode, children);
+  group = guideGroup(LegendRole, dataRef, interactive, legendEncode, children);
 
   // parse legend specification
   return parseMark(group, scope);

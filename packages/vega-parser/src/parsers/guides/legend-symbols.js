@@ -1,5 +1,7 @@
 import {Index, Label, Size, Total, Value} from './constants';
 import guideMark from './guide-mark';
+import {Symbol} from '../marks/marktypes';
+import {LegendSymbolRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
@@ -47,5 +49,5 @@ export default function(spec, config, userEncode, dataRef) {
     }
   });
 
-  return guideMark('symbol', 'legend-symbol', Label, dataRef, encode, userEncode);
+  return guideMark(Symbol, LegendSymbolRole, Label, dataRef, encode, userEncode);
 }

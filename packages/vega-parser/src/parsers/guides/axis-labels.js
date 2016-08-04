@@ -1,6 +1,8 @@
 import {Top, Bottom, Left, Right, Value, Label} from './constants';
 import {encoder} from './encode-util';
 import guideMark from './guide-mark';
+import {Text} from '../marks/marktypes';
+import {AxisLabelRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
@@ -49,5 +51,5 @@ export default function(spec, config, userEncode, dataRef) {
     update.baseline = {value: 'middle'};
   }
 
-  return guideMark('text', 'axis-label', Label, dataRef, encode, userEncode);
+  return guideMark(Text, AxisLabelRole, Label, dataRef, encode, userEncode);
 }
