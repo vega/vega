@@ -20,13 +20,13 @@ export default function(from, group, scope) {
     if (facet.field != null) {
       dataRef = ref(scope.getData(facet.data).output);
     } else {
-      key = scope.keyRef(facet.key);
+      key = scope.keyRef(facet.groupby);
 
       // generate facet aggregates if no direct data specification
       if (!from.data) {
         op = parseTransform(extend({
           type:    'aggregate',
-          groupby: array(facet.key)
+          groupby: array(facet.groupby)
         }, facet.aggregate));
         op.params.key = key;
         op.params.pulse = ref(scope.getData(facet.data).output);
