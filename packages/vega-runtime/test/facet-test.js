@@ -11,7 +11,7 @@ tape('Parser parses faceted dataflow specs', function(test) {
   ];
 
   var spec = {operators: [
-    {id:0, type:'Collect', value:values},
+    {id:0, type:'Collect', value:{$ingest: values}},
     {id:1, type:'Facet', params:{
       key: {$field: 'k'},
       subflow: {

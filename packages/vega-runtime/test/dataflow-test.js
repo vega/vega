@@ -12,7 +12,7 @@ tape('Parser parses dataflow specs', function(test) {
   var spec = {operators: [
     {id:0, type:'Operator', value:500},
     {id:1, type:'Operator', value:300},
-    {id:2, type:'Collect',  value:values},
+    {id:2, type:'Collect',  value:{$ingest: values}},
     {id:3, type:'Aggregate', params:{groupby:{$field:'x'}, pulse:{$ref:2}}},
     {id:4, type:'Values', params:{field:{$field:'x'}, pulse:{$ref:3}}},
     {id:5, type:'Scale', params:{type:'band', range:[0,{$ref:0}], domain:{$ref:4}}},
