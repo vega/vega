@@ -17,6 +17,20 @@ var runtimeSpec = vega.parse({
   "padding": 5,
   "autosize": "pad",
 
+  "encode": {
+    "enter": {
+      "fill": {"value": "transparent"},
+      "strokeWidth": {"value": 1},
+      "stroke": {"value": "#888"}
+    },
+    "update": {
+      "strokeDash": {"value": [3, 3]}
+    },
+    "hover": {
+      "strokeDash": {"value": []}
+    }
+  },
+
   "signals": [
     {
       "name": "height",
@@ -32,12 +46,12 @@ var runtimeSpec = vega.parse({
     {
       "name": "tuples",
       "values": [
-        {"a": 0, "b": "a", "c": 6},
-        {"a": 0, "b": "a", "c": 4},
-        {"a": 0, "b": "b", "c": 7},
-        {"a": 1, "b": "b", "c": 4},
-        {"a": 2, "b": "b", "c": 3},
-        {"a": 2, "b": "c", "c": 6}
+        {"a": 0, "b": "a", "c": 6.3},
+        {"a": 0, "b": "a", "c": 4.2},
+        {"a": 0, "b": "b", "c": 6.8},
+        {"a": 1, "b": "b", "c": 4.4},
+        {"a": 2, "b": "b", "c": 3.5},
+        {"a": 2, "b": "c", "c": 6.2}
       ],
       "transform": [
         {
@@ -74,6 +88,7 @@ var runtimeSpec = vega.parse({
     {
       "name": "xscale",
       "domain": {"data": "tuples", "field": "c"},
+      "nice": true,
       "zero": true,
       "round": true,
       "range": "width"

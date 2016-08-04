@@ -64,6 +64,7 @@ export default function View(spec) {
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
+  root.source = this._data.root.input;
   this.pulse(
     this._data.root.input,
     this.changeset().insert(root.items)
