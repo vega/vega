@@ -3,7 +3,6 @@
   <head>
     <title>Vega Barley Test</title>
     <script src="../../build/vega.js"></script>
-    <script src="lib/barley.js"></script>
     <style>
       body { margin: 10px; font: 14px Helvetica Neue; }
       #view { display: inline-block; }
@@ -15,7 +14,6 @@
     <script>
 var runtimeSpec = vega.parse({
   "width": 200,
-  // "height": 720,
   "padding": 5,
 
   "signals": [
@@ -26,7 +24,8 @@ var runtimeSpec = vega.parse({
 
   "data": [
     {
-      "name": "barley"
+      "name": "barley",
+      "url": "data/barley.json"
     }
   ],
 
@@ -180,10 +179,9 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-var view = new vega.View(runtimeSpec);
-view.initialize(document.querySelector('#view'))
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
   .renderer('svg')
-  .insert('barley', barley)
   .run();
     </script>
   </body>

@@ -1,4 +1,4 @@
-var barley = [{"yield":27,"variety":"Manchuria","year":1931,"site":"University Farm"},
+[{"yield":27,"variety":"Manchuria","year":1931,"site":"University Farm"},
 {"yield":48.86667,"variety":"Manchuria","year":1931,"site":"Waseca"},
 {"yield":27.43334,"variety":"Manchuria","year":1931,"site":"Morris"},
 {"yield":39.93333,"variety":"Manchuria","year":1931,"site":"Crookston"},
@@ -117,4 +117,4 @@ var barley = [{"yield":27,"variety":"Manchuria","year":1931,"site":"University F
 {"yield":47.16667,"variety":"Wisconsin No. 38","year":1932,"site":"Morris"},
 {"yield":35.9,"variety":"Wisconsin No. 38","year":1932,"site":"Crookston"},
 {"yield":20.66667,"variety":"Wisconsin No. 38","year":1932,"site":"Grand Rapids"},
-{"yield":29.33333,"variety":"Wisconsin No. 38","year":1932,"site":"Duluth"}];
+{"yield":29.33333,"variety":"Wisconsin No. 38","year":1932,"site":"Duluth"}]

@@ -46,7 +46,7 @@ function layoutGroup(view, group, _) {
         axisBounds.union(layoutAxis(mark, width, height));
         break;
       case 'legend': legends.push(mark); break;
-      case 'view':   viewBounds.union(mark.bounds); // break omitted
+      case 'scope':  viewBounds.union(mark.bounds); // break omitted
       default:       markBounds.union(mark.bounds);
     }
   }

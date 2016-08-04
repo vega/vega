@@ -159,9 +159,9 @@ var runtimeSpec = vega.parse({
 console.log(runtimeSpec);
 
 var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
   .renderer('svg')
   .hover()
-  .initialize(document.querySelector('#view'))
   .run();
     </script>
   </body>

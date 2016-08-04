@@ -113,9 +113,8 @@ var runtimeSpec = vega.parse({
 });
 
 var view = new vega.View(runtimeSpec)
-  .renderer('canvas')
-  .hover()
   .initialize(document.querySelector('#view'))
+  .hover()
   .run();
 
 document.querySelector('#scale').addEventListener('click', function(evt) {

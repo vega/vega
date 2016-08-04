@@ -2,8 +2,6 @@
 <html>
   <head>
     <title>Vega Map Test</title>
-    <script src="lib/topojson.v1.min.js"></script>
-    <script src="lib/world-110m.js"></script>
     <script src="../../build/vega.js"></script>
     <style>
       body { margin: 10px; font: 14px Helvetica Neue; }
@@ -97,6 +95,11 @@ var runtimeSpec = vega.parse({
   "data": [
     {
       "name": "world",
+      "url": "data/world-110m.json",
+      "format": {
+        "type": "topojson",
+        "feature": "countries"
+      }
     },
     {
       "name": "graticule",
@@ -138,12 +141,8 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-var mesh = topojson.feature(world, world.objects.countries); // 'countries' or 'land'
-
-var view = new vega.View(runtimeSpec);
-
-view.initialize(document.querySelector('#view'))
-  .insert('world', mesh)
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
   .run();
     </script>
   </body>

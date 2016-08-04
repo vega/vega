@@ -25,75 +25,40 @@ var values = [
   {"x": 7,  "y": 24}
 ];
 
-var runtimeSpec = {
-  operators: [
-    {id:'root', type:'Operator', value:null, root:true},
-    {id:'width', type:'Operator', value:200, signal:'width'},
-    {id:'height', type:'Operator', value:100, signal:'height'},
-    {id:'padding', type:'Operator', value:{left:5,top:5,right:5,bottom:5}, signal:'padding'},
-    {id:'mcoll', type:'Collect', data: {root:['input', 'output']}},
-    {id:'menc', type:'Encode', params:{
-      encoders: {
-        $encode: {
-          update: {$expr: 'var o=item;o.width=_.width,o.height=_.height;return(1);'}
-        }
-      },
-      width: {$ref:'width'},
-      height: {$ref:'height'},
-      pulse: {$ref:'mcoll'}
-    }},
+var runtimeSpec = vega.parse({
+  "width": 200,
+  "height": 100,
+  "padding": 5,
 
-    {id:'data', type:'Collect', value:values},
-    {id:'djoin', type:'DataJoin', params:{pulse:{$ref:'data'}}},
-    {id:'dcoll', type:'Collect', params:{pulse:{$ref:'djoin'}}},
-    {id:'dmark', type:'Mark', params: {
-      markdef: {marktype: 'rect'},
-      scenepath: [0],
-      pulse: {$ref:'dcoll'}
-    }},
-    {id:'denc', type:'Encode', params:{
-      encoders: {
-        $encode: {
-          enter: {
-            $expr: 'var o=item,t=o.datum;o.x=25*t.x;o.y=0;o.height=t.y;o.width=24;o.cornerRadius=4;return(1);',
-            $fields: ['x', 'y']
-          },
-          update: {$expr: 'var o=item;o.fill="steelblue";return(1);'},
-          hover: {$expr: 'var o=item;o.fill="fuchsia";return(1);'}
-        }
-      },
-      pulse: {$ref:'dmark'}
-    }},
-    {id:'dbound', type:'Bound', params:{mark:{$ref:'dmark'}, pulse:{$ref:'denc'}}},
-    {id:'dsieve', type:'Sieve', params:{pulse: {$ref:'dbound'}}},
-    {id:'drend', type:'Render', params:{pulse: {$ref:'dbound'}}},
-
-    {id:'mbound', type:'Bound', params:{mark:{$ref:'root'}, pulse:{$ref:'menc'}, children:[{$ref:'dsieve'}]}},
-    {id:'msieve', type:'Sieve', params:{pulse: {$ref:'mbound'}}, data: {root:['values']}},
-    {id:'mrend', type:'Render', params:{pulse: {$ref:'mbound'}}},
+  "data": [
+    { "name": "table", "values": values }
   ],
 
-  streams: [
-    {id:'hover', source:'view', type:'mouseover', filter:'event.item'},
-    {id:'leave', source:'view', type:'mouseout', filter:'event.item'}
-  ],
-
-  updates: [
+  "marks": [
     {
-      source: 'hover',
-      target: {$expr: 'event.vega.item().mark.source'},
-      update: {$expr: 'event.vega.view().changeset().encode(event.item, "hover")'}
-    },
-    {
-      source: 'leave',
-      target: {$expr: 'event.vega.item().mark.source'},
-      update: {$expr: 'event.vega.view().changeset().encode(event.item, "update")'}
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"field": "x", "mult": 25},
+          "height": {"field": "y"},
+          "width": {"value": 24},
+          "cornerRadius": {"value": 4}
+        },
+        "update": {
+          "fill": {"value": "steelblue"},
+        },
+        "hover": {
+          "fill": {"value": "fuchsia"}
+        }
+      }
     }
   ]
-};
+});
 
 var view = new vega.View(runtimeSpec)
   .initialize(document.querySelector('#view'))
+  .hover()
   .run();
 
 // generate png and svg snapshots, assign to image elements
