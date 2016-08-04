@@ -3,10 +3,10 @@ import axisGrid from './guides/axis-grid';
 import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
-import {encoder, extendEncode} from './guides/encode-util';
 import guideGroup from './guides/guide-group';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
+import {encoder, extendEncode} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect, AxisTicks} from '../transforms';
 

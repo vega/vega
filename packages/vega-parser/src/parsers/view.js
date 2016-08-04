@@ -1,5 +1,7 @@
 import parsePadding from './padding';
 import parseSpec from './spec';
+import {encoders, extendEncode} from './encode/encode-util';
+import {Group} from './marks/marktypes';
 import {ref, operator} from '../util';
 import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
@@ -13,26 +15,18 @@ export default function parseView(spec, scope) {
   scope.addSignal('height', spec.height || -1);
   scope.addSignal('padding', parsePadding(spec.padding));
 
-  // Store root item
+  // Store root group item
   input = scope.add(Collect());
 
-  // Encode root item width/height
-  // TODO: run through proper encoding, with user configurable options
-  encode = scope.add(Encode({
-    encoders: {
-      $encode: {
-        enter: {
-          $expr: "var o=item;o.x=0,o.y=0;o.width=_.width;o.height=_.height;return(1);"
-        },
-        update: {
-          $expr: "var o=item;o.width=_.width;o.height=_.height;return(1);"
-        }
-      }
-    },
-    width: scope.signalRef('width'),
-    height: scope.signalRef('height'),
-    pulse: ref(input)
-  }));
+  // Encode root group item
+  encode = extendEncode({
+    enter: { x: {value: 0}, y: {value: 0} },
+    update: { width: {signal: 'width'}, height: {signal: 'height'} }
+  }, spec.encode);
+
+  encode = scope.add(Encode(
+    encoders(encode, Group, scope, {pulse: ref(input)}))
+  );
 
   // Perform view layout
   parent = scope.add(ViewLayout({

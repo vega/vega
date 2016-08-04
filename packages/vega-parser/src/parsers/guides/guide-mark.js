@@ -1,4 +1,4 @@
-import {extendEncode} from './encode-util';
+import {extendEncode} from '../encode/encode-util';
 
 export default function(type, role, key, dataRef, encode, extras) {
   return {

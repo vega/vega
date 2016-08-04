@@ -1,8 +1,8 @@
 import {Top, Bottom, Left, Right, Value, Label} from './constants';
-import {encoder} from './encode-util';
 import guideMark from './guide-mark';
 import {Text} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
+import {encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,

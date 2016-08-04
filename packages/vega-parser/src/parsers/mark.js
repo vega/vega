@@ -5,7 +5,7 @@ import parseFacet from './marks/facet';
 import role from './marks/role';
 import {Group} from './marks/marktypes';
 import {ScopeRole} from './marks/roles';
-import parseEncode from './encode';
+import {encoders} from './encode/encode-util';
 import parseTransform from './transform';
 import parseSpec from './spec';
 import DataScope from '../DataScope';
@@ -16,9 +16,8 @@ import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from 
 export default function(spec, scope) {
   var facet = spec.from && spec.from.facet,
       group = spec.type === Group,
-      input, key, op, params, enc,
-      markRef, encodeRef, boundRef,
-      bound, render, sieve;
+      op, input, bound, render, sieve,
+      markRef, encodeRef, boundRef;
 
   // resolve input data
   input = parseData(spec.from, group, scope);
@@ -38,11 +37,9 @@ export default function(spec, scope) {
   markRef = ref(op);
 
   // add visual encoders
-  params = {encoders: {$encode: (enc={})}, pulse: markRef};
-  for (key in spec.encode) {
-    enc[key] = parseEncode(spec.encode[key], spec.type, params, scope);
-  }
-  op = scope.add(Encode(params));
+  op = scope.add(Encode(
+    encoders(spec.encode, spec.type, scope, {pulse: markRef})
+  ));
 
   // add post-encoding transforms, if defined
   if (spec.transform) {
