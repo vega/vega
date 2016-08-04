@@ -6,6 +6,10 @@ export var Fit = 'fit';
 export var Pad = 'pad';
 export var None = 'none';
 
+var AxisRole = 'axis',
+    LegendRole = 'legend',
+    ScopeRole = 'scope';
+
 /**
  * Layout view elements such as axes and legends.
  * Also performs size adjustments.
@@ -42,12 +46,12 @@ function layoutGroup(view, group, _) {
   for (i=0, n=items.length; i<n; ++i) {
     mark = items[i];
     switch (mark.role) {
-      case 'axis':
+      case AxisRole:
         axisBounds.union(layoutAxis(mark, width, height));
         break;
-      case 'legend': legends.push(mark); break;
-      case 'scope':  viewBounds.union(mark.bounds); // break omitted
-      default:       markBounds.union(mark.bounds);
+      case LegendRole: legends.push(mark); break;
+      case ScopeRole:  viewBounds.union(mark.bounds); // break omitted
+      default:         markBounds.union(mark.bounds);
     }
   }
   viewBounds.union(axisBounds);
