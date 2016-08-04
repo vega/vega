@@ -1,6 +1,5 @@
 import parseTransform from './transform';
 import {entry, ref, transform} from '../util';
-import {error} from 'vega-util';
 
 export default function parseData(data, scope) {
   var transforms = [];
@@ -30,11 +29,10 @@ function analyze(data, scope, ops) {
 
   if (data.values) {
     // hard-wired input data set
-    output.push(source = collect(data.values));
+    output.push(source = collect({$ingest: data.values, $format: data.format}));
   } else if (data.url) {
     // load data from external source
-    // TODO: is loader a source?
-    output.push(source = load(data));
+    output.push(source = collect({$request: data.url, $format: data.format}));
   } else if (data.source) {
     // derives from another data set
     upstream = scope.getData(data.source);
@@ -76,9 +74,4 @@ function analyze(data, scope, ops) {
 function collect(values) {
   var s = entry('Collect', values, {});
   return s.metadata = {source: true}, s;
-}
-
-function load(/*data*/) {
-  // TODO: add load operator
-  error('Load data from URL not yet supported.');
 }
