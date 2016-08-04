@@ -21,11 +21,15 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-loader.js -c -m -o build/vega-loader.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g d3-request:d3 -n vega -o build/vega-loader.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g d3-request:d3,d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson:topojson -n vega -o build/vega-loader.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
-    "d3-request": "1"
+    "d3-dsv": "1",
+    "d3-request": "1",
+    "d3-time-format": "2",
+    "topojson": "1",
+    "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
