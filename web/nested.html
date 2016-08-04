@@ -93,13 +93,11 @@ var runtimeSpec = vega.parse({
   "marks": [
     {
       "type": "group",
-      // "width": 300,
-      // "height": 100,
 
       "from": {
         "data": "trellis",
         "facet": {
-          "name": "facet",
+          "name": "faceted_tuples",
           "data": "tuples",
           "key":  "a"
         }
@@ -120,7 +118,7 @@ var runtimeSpec = vega.parse({
           "type": "band",
           "padding": 0.11,
           "round": true,
-          "domain": {"data": "facet", "field": "b"},
+          "domain": {"data": "faceted_tuples", "field": "b"},
           "bandSize": {"signal": "bandSize"}
         }
       ],
@@ -132,7 +130,7 @@ var runtimeSpec = vega.parse({
       "marks": [
         {
           "type": "rect",
-          "from": {"data": "facet"},
+          "from": {"data": "faceted_tuples"},
           "encode": {
             "enter": {
               "x": {"value": 0},

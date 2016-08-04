@@ -94,6 +94,15 @@ var runtimeSpec = vega.parse({
         }
       },
 
+      "encode": {
+        "enter": {
+          "y": {"scale": "gscale", "field": "site", "offset": {"signal": "offset"}},
+          "height": {"signal": "cellHeight"},
+          "width": {"signal": "width"},
+          "stroke": {"value": "#ccc"}
+        }
+      },
+
       "scales": [
         {
           "name": "yscale",
@@ -133,15 +142,6 @@ var runtimeSpec = vega.parse({
           "domain": false
         }
       ],
-
-      "encode": {
-        "enter": {
-          "y": {"scale": "gscale", "field": "site", "offset": {"signal": "offset"}},
-          "height": {"signal": "cellHeight"},
-          "width": {"signal": "width"},
-          "stroke": {"value": "#ccc"}
-        }
-      },
 
       "marks": [
         {
