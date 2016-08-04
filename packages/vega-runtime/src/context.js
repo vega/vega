@@ -44,12 +44,19 @@ Context.prototype = ContextFork.prototype = {
   },
   add: function(spec, op) {
     var ctx = this,
-        df = ctx.dataflow;
+        df = ctx.dataflow,
+        data;
 
     ctx.set(spec.id, op);
 
-    if (spec.type === 'Collect' && spec.value) {
-      df.pulse(op, df.changeset().insert(spec.value));
+    if (spec.type === 'Collect' && (data = spec.value)) {
+      if (data.$ingest) {
+        df.ingest(op, data.$ingest, data.$format);
+      } else if (data.$request) {
+        df.request(op, data.$request, data.$format);
+      } else {
+        df.pulse(op, df.changeset().insert(data));
+      }
     }
 
     if (spec.root) {
@@ -72,7 +79,7 @@ Context.prototype = ContextFork.prototype = {
 
     if (spec.data) {
       for (var name in spec.data) {
-        var data = ctx.data[name] || (ctx.data[name] = {});
+        data = ctx.data[name] || (ctx.data[name] = {});
         spec.data[name].forEach(function(role) { data[role] = op; });
       }
     }
