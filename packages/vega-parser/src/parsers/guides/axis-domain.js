@@ -1,5 +1,7 @@
 import {Top, Bottom} from './constants';
 import guideMark from './guide-mark';
+import {Rule} from '../marks/marktypes';
+import {AxisDomainRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
@@ -30,7 +32,7 @@ export default function(spec, config, userEncode, dataRef) {
     update.y2 = enter.y2 = position(spec, 1);
   }
 
-  return guideMark('rule', 'axis-domain', null, dataRef, encode, userEncode);
+  return guideMark(Rule, AxisDomainRole, null, dataRef, encode, userEncode);
 }
 
 function position(spec, pos) {

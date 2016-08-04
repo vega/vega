@@ -1,5 +1,7 @@
 import {Index, Label, Size, Total} from './constants';
 import guideMark from './guide-mark';
+import {Text} from '../marks/marktypes';
+import {LegendLabelRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
@@ -40,5 +42,5 @@ export default function(spec, config, userEncode, dataRef) {
     }
   };
 
-  return guideMark('text', 'legend-label', Label, dataRef, encode, userEncode);
+  return guideMark(Text, LegendLabelRole, Label, dataRef, encode, userEncode);
 }

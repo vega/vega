@@ -1,8 +1,10 @@
 import DataScope from './DataScope';
 import {
   aggrField, Ascending, compareRef, Entry,
-  fieldRef, keyRef, isSignal, operator, ref, transform
+  fieldRef, keyRef, isSignal, operator, ref
 } from './util';
+
+import {Compare, Field, Key, Projection, Scale, Sieve} from './transforms';
 import {array, error, isString, peek} from 'vega-util';
 
 export default function Scope(config) {
@@ -123,7 +125,7 @@ prototype.finish = function() {
 // ----
 
 prototype.pushState = function(encode, parent) {
-  this._encode.push(ref(this.add(transform('Sieve', {pulse: encode}))));
+  this._encode.push(ref(this.add(Sieve({pulse: encode}))));
   this._parent.push(parent);
   this._markpath.push(-1);
 };
@@ -157,7 +159,7 @@ prototype.fieldRef = function(field, name) {
   if (!f) {
     params = {name: ref(this.signals[s])};
     if (name) params.as = name;
-    this.field[s] = f = ref(this.add(transform('Field', params)));
+    this.field[s] = f = ref(this.add(Field(params)));
   }
   return f;
 };
@@ -173,10 +175,7 @@ prototype.compareRef = function(cmp) {
       orders = array(cmp.order).map(check);
 
   return signal
-    ? ref(this.add(transform('Compare', {
-        fields: fields,
-        orders: orders
-      })))
+    ? ref(this.add(Compare({fields: fields, orders: orders})))
     : compareRef(fields, orders);
 };
 
@@ -190,7 +189,7 @@ prototype.keyRef = function(fields) {
   fields = array(fields).map(check);
 
   return signal
-    ? ref(this.add(transform('Key', {fields: fields})))
+    ? ref(this.add(Key({fields: fields})))
     : keyRef(fields);
 };
 
@@ -201,10 +200,7 @@ prototype.sortRef = function(sort) {
       o = sort.order || Ascending;
 
   return o.signal
-    ? ref(this.add(transform('Compare', {
-        fields: a,
-        orders: this.signalRef(o.signal)
-      })))
+    ? ref(this.add(Compare({fields: a, orders: this.signalRef(o.signal)})))
     : compareRef(a, o);
 };
 
@@ -251,20 +247,19 @@ prototype.property = function(spec) {
 
 // ----
 
-prototype.addScaleProj = function(type, name, params) {
+prototype.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error('Duplicate scale or projection name: ' + name);
   }
-
-  this.scales[name] = this.add(transform(type, params));
+  this.scales[name] = this.add(transform);
 }
 
 prototype.addScale = function(name, params) {
-  this.addScaleProj('Scale', name, params);
+  this.addScaleProj(name, Scale(params));
 };
 
 prototype.addProjection = function(name, params) {
-  this.addScaleProj('Projection', name, params);
+  this.addScaleProj(name, Projection(params));
 };
 
 prototype.scaleRef = function(name) {

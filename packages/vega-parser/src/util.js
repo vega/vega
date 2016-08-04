@@ -16,10 +16,6 @@ export function operator(value, params) {
   return entry('Operator', value, params);
 }
 
-export function transform(type, params, parent) {
-  return entry(type, undefined, params, parent);
-}
-
 // -----
 
 export function ref(op) {

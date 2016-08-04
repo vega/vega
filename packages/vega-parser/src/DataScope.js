@@ -1,4 +1,5 @@
-import {ref, transform, keyFieldRef, aggrField, sortKey} from './util';
+import {entry, ref, keyFieldRef, aggrField, sortKey} from './util';
+import {Aggregate, Collect} from './transforms';
 
 export default function DataScope(scope, input, output, values) {
   this.scope = scope;
@@ -30,8 +31,8 @@ prototype.countsRef = function(field, sort) {
       pulse: ref(ds.output)
     };
     if (sort && sort.field) addSortField(ds.scope, p, sort);
-    a = ds.scope.add(transform('Aggregate', p));
-    v = ds.scope.add(transform('Collect', {pulse: ref(a)}));
+    a = ds.scope.add(Aggregate(p));
+    v = ds.scope.add(Collect({pulse: ref(a)}));
     cache[field] = v = {agg: a, ref: ref(v)};
   } else if (sort && sort.field) {
     addSortField(ds.scope, v.agg.params, sort);
@@ -68,7 +69,7 @@ function cache(ds, name, optype, field, counts, index) {
       ? {field: keyFieldRef, pulse: ds.countsRef(field, counts)}
       : {field: ds.scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = ds.scope.sortRef(counts);
-    op = ds.scope.add(transform(optype, params));
+    op = ds.scope.add(entry(optype, undefined, params));
     if (index) ds.index[field] = op;
     cache[k] = v = ref(op);
   }
