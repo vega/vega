@@ -34,7 +34,7 @@ tape('Parser parses expressions', function(test) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, vega)),
+      ctx = runtime.parse(spec, runtime.context(df, vega.transforms)),
       ops = ctx.nodes,
       z = vega.field('z');
 
