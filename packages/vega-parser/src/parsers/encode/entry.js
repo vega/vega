@@ -13,7 +13,7 @@ export default function entry(channel, enc, scope, params, fields) {
     : null;
 
   if (enc.scale != null) {
-    value = scale(enc, value, scope, params);
+    value = scale(enc, value, scope, params, fields);
   }
 
   if (enc.exponent != null) {
