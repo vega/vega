@@ -31,7 +31,8 @@ export default function(spec, config, userEncode, dataRef) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   0.5
+    band:   0.5,
+    round:  true
   };
 
   if (orient === Top || orient === Bottom) {

@@ -262,11 +262,22 @@ prototype.addProjection = function(name, params) {
   this.addScaleProj(name, Projection(params));
 };
 
-prototype.scaleRef = function(name) {
-  return ref(this.scales[name]);
+prototype.getScale = function(name) {
+  if (!this.scales[name]) {
+    error('Unrecognized scale name: ' + name);
+  }
+  return this.scales[name];
 };
 
-prototype.projectionRef = prototype.scaleRef;
+prototype.projectionRef =
+prototype.scaleRef = function(name) {
+  return ref(this.getScale(name));
+};
+
+prototype.projectionType =
+prototype.scaleType = function(name) {
+  return this.getScale(name).params.type;
+};
 
 // ----
 

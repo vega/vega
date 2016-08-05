@@ -29,5 +29,9 @@ export default function entry(channel, enc, scope, params, fields) {
     value += '+' + property(enc.offset, scope, params, fields);
   }
 
+  if (enc.round) {
+    value = 'Math.round(' + value + ')';
+  }
+
   return value;
 }
