@@ -1,24 +1,39 @@
-import {isString, splitAccessPath, stringValue} from 'vega-util';
+import {error, isString, isObject, splitAccessPath, stringValue} from 'vega-util';
 
-export default function(name, fields) {
-  var object = 'datum';
+export default function(ref, fields) {
+  return resolve(isObject(ref) ? ref: {datum: ref}, fields);
+}
 
-  if (!isString(name)) {
-    if (name.datum != null) {
-      name = name.datum;
-    } else {
-      object = 'item.mark.group';
-      if (name.parent != null) {
-        name = name.parent;
-        object += '.datum';
-      } else if (name.group != null) {
-        name = name.group;
-      }
+function resolve(ref, fields) {
+  var object, level, field;
+
+  if (ref.group || ref.parent) {
+    level = Math.max(1, ref.level || 1);
+    object = 'item';
+
+    while (level-- > 0) {
+      object += '.mark.group';
     }
+
+    if (ref.parent) {
+      field = ref.parent;
+      object += '.datum';
+    } else {
+      field = ref.group;
+    }
+  } else if (ref.datum) {
+    object = 'datum';
+    field = ref.datum;
+  } else {
+    error('Invalid field reference: ' + JSON.stringify(ref));
   }
 
-  fields[name] = 1;
-  return object + '['
-    + splitAccessPath(name).map(stringValue).join('][')
-    + ']';
+  if (isString(field)) {
+    fields[field] = 1; // TODO review field tracking?
+    field = splitAccessPath(field).map(stringValue).join('][');
+  } else {
+    field = resolve(field, fields);
+  }
+
+  return object + '[' + field + ']';
 }
