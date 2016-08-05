@@ -1,7 +1,7 @@
 import parseExpression from './expression';
 import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
 import {transformDef} from '../definitions';
-import {Param} from '../transforms';
+import {Params} from '../transforms';
 import {error, extend, isArray, isString} from 'vega-util';
 
 /**
@@ -115,9 +115,9 @@ function parseSubParameter(def, value, scope) {
   // raise error if matching key not found
   if (!pdef) error('Unsupported parameter: ' + JSON.stringify(value));
 
-  // parse params, create Param transform, return ref
+  // parse params, create Params transform, return ref
   params = extend(parseParameters(pdef, value, scope), pdef.key);
-  return ref(scope.add(Param(params)));
+  return ref(scope.add(Params(params)));
 }
 
 // -- Utilities -----
