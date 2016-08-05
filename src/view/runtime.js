@@ -1,4 +1,4 @@
-import * as transforms from '../transforms/index';
+import {transforms} from 'vega-dataflow';
 import {isObject, isString} from 'vega-util';
 import {parse, context} from 'vega-runtime';
 import {rgb, lab, hcl, hsl} from 'd3-color';
