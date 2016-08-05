@@ -1,9 +1,9 @@
 import {scalePrefix} from '../expression';
-import {stringValue} from 'vega-util';
+import {isString, stringValue} from 'vega-util';
 
 export default function(enc, value, scope, params) {
   var scale = getScale(enc.scale, scope, params),
-      interp, func;
+      interp, func, flag;
 
   if (enc.range != null) {
     // pull value from scale range
@@ -16,20 +16,27 @@ export default function(enc, value, scope, params) {
     // run value through scale and/or pull scale bandwidth
     value = value != null ? scale + '(' + value + ')' : null;
 
-    if (enc.band) {
-      // TODO streamline codegen using scale type info?
-      interp = +enc.band;
+    if (enc.band && (flag = hasBandwidth(enc.scale, scope))) {
       func = scale + '.bandwidth';
-      value = (value ? value + '+' : '')
-        + '(' + func
-        + '?' + func + '()' + (interp===1 ? '' : '*' + interp)
-        + ':0)';
+      interp = +enc.band;
+      interp = func + '()' + (interp===1 ? '' : '*' + interp);
+
+      // if we don't know the scale type, check for bandwidth
+      if (flag < 0) interp = '(' + func + '?' + interp + ':0)';
+
+      value = (value ? value + '+' : '') + interp;
     }
 
     if (value == null) value = '0';
   }
 
   return value;
+}
+
+function hasBandwidth(name, scope) {
+  if (!isString(name)) return -1;
+  var type = scope.scaleType(name);
+  return type === 'band' || type === 'point' ? 1 : 0;
 }
 
 export function getScale(name, scope, params) {
