@@ -36,16 +36,16 @@ export {
   projection
 } from 'vega-dataflow';
 
-export {
-  parse as runtime,
-  context as runtimeContext
-} from 'vega-runtime';
+import * as transforms from './src/transforms/index';
+export {transforms};
+
+export {default as View} from './src/view/View';
 
 export {
   parse
 } from 'vega-parser';
 
-import * as transforms from './src/transforms/index';
-export {transforms};
-
-export {default as View} from './src/view/View';
+export {
+  parse as runtime,
+  context as runtimeContext
+} from 'vega-runtime';
