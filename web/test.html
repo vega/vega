@@ -63,10 +63,9 @@ var view = new vega.View(runtimeSpec)
 
 // generate png and svg snapshots, assign to image elements
 ['png', 'svg'].forEach(function(type) {
-  view.toImageURL(type, function(error, url) {
-    if (error) return console.error(error);
-    document.querySelector('#'+type).src = url;
-  });
+  view.toImageURL(type)
+    .then(function(url) { document.querySelector('#'+type).src = url; })
+    .catch(function(err) { console.error(err); });
 });
     </script>
   </body>

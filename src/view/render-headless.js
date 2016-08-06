@@ -1,5 +1,4 @@
 import initializeRenderer from './initialize-renderer';
-import renderAsync from './render-async';
 
 import {
   CANVAS,
@@ -13,8 +12,10 @@ import {
 
 /**
  * Render the current scene in a headless fashion.
+ * This method is asynchronous, returning a Promise instance.
+ * @return {Promise} - A Promise that resolves to a renderer.
  */
-export default function(view, type, callback) {
+export default function(view, type) {
   var renderer = view._renderer,
       scaled = type === CANVAS
             && typeof window !== 'undefined'
@@ -25,5 +26,5 @@ export default function(view, type, callback) {
       (type === SVG) ? SVGStringRenderer : CanvasRenderer);
   }
 
-  renderAsync(renderer, view._scenegraph.root, callback);
+  return renderer.renderAsync(view._scenegraph.root);
 }
