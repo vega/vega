@@ -1,33 +1,55 @@
 import {request} from 'd3-request';
 
-export default function load(uri, options, callback) {
-  if (typeof options === 'function') {
-    callback = options;
-    options = {};
-  }
-  if (!callback) throw Error('Missing callback function.');
-  try {
-    load.loader(uri, options || {}, callback);
-  } catch (error) {
-    callback(error);
-  }
+/**
+ * Load an external resource, typically either from the web
+ * or from the local filesystem.
+ * @param {string} uri - The resource indicator (e.g., URL or filename).
+ * @param {object} [options] - Optional loading options.
+ * @return {Promise} - A promise that resolves to the loaded content.
+ */
+export default function load(uri, options) {
+  return load.loader(uri, options || {});
 }
 
+/**
+ * Overridable load function. If not overridden, this function
+ * uses load.sanitize to first sanitize the uri, then calls either
+ * load.http (for web requests) or load.file (for filesystem loading).
+ * @param {string} uri - The uri (url or filename) to sanity check.
+ * @param {object} options - Loading options.
+ * @return {Promise} - A promise that resolves to the loaded content.
+ */
 load.loader = loader;
+
+/**
+ * Overridable uri sanitizer function.
+ * @param {string} uri - The uri (url or filename) to sanity chekc.
+ * @param {object} options - An options hash.
+ * @return {string} - The sanitized uri, or null if rejected.
+ */
 load.sanitize = sanitize;
+
+/**
+ * Overridable http request loader.
+ * @param {string} url - The url to request.
+ * @param {object} options - An options hash.
+ * @return {Promise} - A promise that resolves to the file contents.
+ */
 load.http = http;
+
+/**
+ * Overridable file system loader.
+ * @param {string} filename - The file system path to load.
+ * @return {Promise} - A promise that resolves to the file contents.
+ */
 load.file = file;
 
-function loader(uri, options, callback) {
+function loader(uri, options) {
   var url = load.sanitize(uri, options);
-
-  if (!url) {
-    callback('Invalid URL: ' + uri);
-  } else if (startsWith(url, fileProtocol)) {
-    load.file(url.slice(fileProtocol.length), callback);
-  } else {
-    load.http(url, options, callback);
-  }
+  return !url ? Promise.reject('Invalid URL: ' + uri)
+    : startsWith(url, fileProtocol)
+      ? load.file(url.slice(fileProtocol.length))
+      : load.http(url, options);
 }
 
 // Matches absolute URLs with optional protocol
@@ -76,41 +98,45 @@ var requestOptions = [
   'password'
 ];
 
-function http(url, options, callback) {
-  var req = request(url),
-      name;
+function http(url, options) {
+  return new Promise(function(accept, reject) {
+    var req = request(url),
+        name;
 
-  for (name in options.headers) {
-    req.header(name, options.headers[name]);
-  }
+    for (name in options.headers) {
+      req.header(name, options.headers[name]);
+    }
 
-  requestOptions.forEach(function(name) {
-    if (options[name]) req[name](options[name]);
+    requestOptions.forEach(function(name) {
+      if (options[name]) req[name](options[name]);
+    });
+
+    req.on('error', function(error) {
+        reject(error || 'Error loading URL: ' + url);
+      })
+      .on('load', function(result) {
+        var text = result && result.responseText;
+        (!result || result.status === 0)
+          ? reject(text || 'Error')
+          : accept(text);
+      })
+      .get();
   });
-
-  req.on('error', function(error) {
-      callback(error || 'Error loading URL: ' + url);
-    })
-    .on('load', function(result) {
-      var text = result && result.responseText;
-      (!result || result.status === 0)
-        ? callback(text || 'Error')
-        : callback(null, text);
-    })
-    .get();
 }
 
-function file(filename, callback) {
-  fs().readFile(filename, callback);
+function file(filename) {
+  return new Promise(function(accept, reject) {
+    var f = fs();
+    f ? f.readFile(filename, function(error, data) {
+          if (error) reject(error);
+          else accept(data);
+        })
+      : reject('No file system access for ' + filename);
+  });
 }
 
 function fs() {
-  var fs = typeof require === 'function' && require('fs');
-  return fs || {
-    readFile: function(filename, callback) {
-      callback('No file system access for ' + filename);
-    }
-  };
+  return typeof require === 'function' && require('fs');
 }
 
 function startsWith(string, query) {

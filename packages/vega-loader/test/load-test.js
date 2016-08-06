@@ -24,103 +24,104 @@ tape('load should sanitize url', function(test) {
   test.end();
 });
 
-tape('load should throw error if callback missing', function(test) {
-  test.throws(function() { return load(url); });
-  test.end();
+tape('load should resolve error for missing url', function(test) {
+  load(undefined)
+    .then(function() { test.fail(); test.end(); })
+    .catch(function() { test.pass(); test.end(); });
 });
 
-tape('load should return error for missing url', function(test) {
-  load(undefined, function(error, data) {
-    test.ok(error);
-    test.notOk(data);
-    test.end();
-  });
-});
-
-tape('load should return error for empty url string', function(test) {
-  load('', function(error, data) {
-    test.ok(error);
-    test.notOk(data);
-    test.end();
-  });
+tape('load should resolve error for empty url string', function(test) {
+  load('')
+    .then(function() { test.fail(); test.end(); })
+    .catch(function() { test.pass(); test.end(); });
 });
 
 tape('load should load from file path', function(test) {
-  load(file, {file: true}, function(error, data) {
-    test.equal(data+'', text);
-    test.end();
-  });
+  load(file, {file: true})
+    .then(function(data) {
+      test.equal(data+'', text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
 tape('load should infer file load in node', function(test) {
-  load(file, function(error, data) {
-    test.equal(data+'', text);
-    test.end();
-  });
+  load(file)
+    .then(function(data) {
+      test.equal(data+'', text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
 tape('load should load from file url', function(test) {
-  load('file://' + file, function(error, data) {
-    test.equal(data+'', text);
-    test.end();
-  });
+  load('file://' + file)
+    .then(function(data) {
+      test.equal(data+'', text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
 tape('load should load from http url', function(test) {
-  load(url, function(error, data) {
-    test.equal(data, text);
-    test.end();
-  });
+  load(url)
+    .then(function(data) {
+      test.equal(data, text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
 tape('load should load from http with headers', function(test) {
-  load(url, {headers: {'User-Agent': 'datalib'}}, function(error, data) {
-    test.equal(data, text);
-    test.end();
-  });
+  load(url, {headers: {'User-Agent': 'vega'}})
+    .then(function(data) {
+      test.equal(data, text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
-tape('load should error with invalid url', function(test) {
-  load(url+'.invalid', function(error, data) {
-    test.ok(error);
-    test.notOk(data);
-    test.end();
-  });
+tape('load should resolve error with invalid url', function(test) {
+  load(url + '.invalid')
+    .then(function() { test.fail(); test.end(); })
+    .catch(function() { test.pass(); test.end(); });
 });
 
 tape('load should load from http base url + uri', function(test) {
-  load(uri, {mode: 'http', baseURL: base}, function(error, data) {
-    test.equal(data+'', text);
-    test.end();
-  });
+  load(uri, {mode: 'http', baseURL: base})
+    .then(function(data) {
+      test.equal(data+'', text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
 tape('load should load from relative protocol http url', function(test) {
-  load(rel, function(error, data) {
-    test.equal(data+'', text);
-    test.end();
-  });
+  load(rel)
+    .then(function(data) {
+      test.equal(data+'', text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
 tape('load should load from relative protocol file url', function(test) {
-  load('//'+file, {defaultProtocol: 'file'}, function(error, data) {
-    test.equal(data+'', text);
-    test.end();
-  });
+  load('//'+file, {defaultProtocol: 'file'})
+    .then(function(data) {
+      test.equal(data+'', text);
+      test.end();
+    })
+    .catch(function() { test.fail(); test.end(); });
 });
 
-tape('load should return error for invalid protocol', function(test) {
-  load('htsp://globalhost/invalid.dne', function(error, data) {
-    test.ok(error);
-    test.notOk(data);
-    test.end();
-  });
+tape('load should resolve error for invalid protocol', function(test) {
+  load('htsp://globalhost/invalid.dne')
+    .then(function() { test.fail(); test.end(); })
+    .catch(function() { test.pass(); test.end(); });
 });
 
-tape('load should return error on failed request', function(test) {
-  load(fake, function(error, data) {
-    test.ok(error);
-    test.notOk(data);
-    test.end();
-  });
+tape('load should resolve error on failed request', function(test) {
+  load(fake)
+    .then(function() { test.fail(); test.end(); })
+    .catch(function() { test.pass(); test.end(); });
 });
