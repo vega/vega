@@ -70,7 +70,7 @@ function translate(bounds, group) {
   return b;
 }
 
-prototype.render = function(scene, items) {
+prototype._render = function(scene, items) {
   var g = this.context(),
       o = this._origin,
       w = this._width,
@@ -78,7 +78,6 @@ prototype.render = function(scene, items) {
       b;
 
   // setup
-  this._scene = scene; // cache scene for async redraw
   g.save();
   b = clipToBounds(g, items);
   this.clear(-o[0], -o[1], w, h);
@@ -88,7 +87,6 @@ prototype.render = function(scene, items) {
 
   // takedown
   g.restore();
-  this._scene = null; // clear scene cache
 
   return this;
 };
@@ -105,24 +103,4 @@ prototype.clear = function(x, y, w, h) {
     g.fillStyle = this._bgcolor;
     g.fillRect(x, y, w, h);
   }
-};
-
-prototype.loadImage = function(uri) {
-  var renderer = this,
-      scene = this._scene;
-  return this._loader.loadImage(uri, function() {
-    renderer.renderAsync(scene);
-  });
-};
-
-prototype.renderAsync = function(scene) {
-  // TODO make safe for multiple scene rendering?
-  var renderer = this;
-  if (renderer._async_id) {
-    clearTimeout(renderer._async_id);
-  }
-  renderer._async_id = setTimeout(function() {
-    renderer.render(scene);
-    delete renderer._async_id;
-  }, 10);
 };

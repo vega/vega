@@ -77,12 +77,13 @@ prototype.svg = function() {
 
 // -- Render entry point --
 
-prototype.render = function(scene, items) {
+prototype._render = function(scene, items) {
   if (this._dirtyCheck(items)) {
     if (this._dirtyAll) this._resetDefs();
     this.draw(this._root, scene, -1);
     clear(this._root, 1);
   }
+
   this.updateDefs();
   return this;
 };

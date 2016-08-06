@@ -30,20 +30,11 @@ function render(scene, w, h) {
 
 function renderAsync(scene, w, h, callback) {
   global.document = doc;
-  var r = new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer({mode: 'http', baseURL: './test/resources/'})
     .initialize(doc.body, w, h)
-    .render(scene);
+    .renderAsync(scene)
+    .then(function(r) { callback(r.element()); });
   delete global.document;
-
-  function wait() {
-    if (r.pendingImages() === 0) {
-      callback(r.element());
-    } else {
-      setTimeout(wait, 100);
-    }
-  }
-
-  wait();
 }
 
 function event(name, x, y) {

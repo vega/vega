@@ -50,19 +50,11 @@ function renderAsync(scene, w, h, callback) {
   for (var i=doc.body.children.length; --i>=0;) {
     doc.body.removeChild(doc.body.children[i]);
   }
-  var r = new Renderer({mode: 'http', baseURL: './test/resources/'})
+  // then render svg
+  new Renderer({mode: 'http', baseURL: './test/resources/'})
     .initialize(doc.body, w, h)
-    .render(scene);
-
-  function wait() {
-    if (r.pendingImages() === 0) {
-      callback(compensate(r.render(scene).svg()));
-    } else {
-      setTimeout(wait, 100);
-    }
-  }
-
-  wait();
+    .renderAsync(scene)
+    .then(function(r) { callback(compensate(r.svg())); });
 }
 
 // workaround for broken jsdom style parser

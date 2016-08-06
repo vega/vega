@@ -30,19 +30,10 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  var r = new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer({mode: 'http', baseURL: './test/resources/'})
     .initialize(null, w, h)
-    .render(scene);
-
-  function wait() {
-    if (r.pendingImages() === 0) {
-      callback(r.render(scene).svg());
-    } else {
-      setTimeout(wait, 100);
-    }
-  }
-
-  wait();
+    .renderAsync(scene)
+    .then(function(r) { callback(r.svg()); });
 }
 
 tape('SVGStringRenderer should build empty group for item-less area mark', function(test) {
