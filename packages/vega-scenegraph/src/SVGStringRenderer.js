@@ -57,7 +57,7 @@ prototype.svg = function() {
   return t.head + t.defs + t.root + t.body + t.foot;
 };
 
-prototype.render = function(scene) {
+prototype._render = function(scene) {
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
   return this;
@@ -111,10 +111,6 @@ prototype.buildDefs = function() {
   }
 
   return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
-};
-
-prototype.imageURL = function(url) {
-  return this._loader.imageURL(url);
 };
 
 var object;

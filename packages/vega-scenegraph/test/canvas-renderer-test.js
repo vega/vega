@@ -31,19 +31,10 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  var r = new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer({mode: 'http', baseURL: './test/resources/'})
     .initialize(null, w, h)
-    .render(scene);
-
-  function wait() {
-    if (r.pendingImages() === 0) {
-      callback(r.canvas().toBuffer());
-    } else {
-      setTimeout(wait, 100);
-    }
-  }
-
-  wait();
+    .renderAsync(scene)
+    .then(function(r) { callback(r.canvas().toBuffer()); });
 }
 
 function clearPathCache(mark) {

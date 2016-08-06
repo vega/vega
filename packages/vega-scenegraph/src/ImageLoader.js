@@ -19,11 +19,10 @@ prototype.imageURL = function(uri) {
   return load.sanitize(uri, this._config);
 };
 
-prototype.loadImage = function(uri, callback) {
+prototype.loadImage = function(uri) {
   var url = this.imageURL(uri);
 
   if (!url || !Image) {
-    if (callback) callback(uri, null);
     return {loaded: false, width: 0, height: 0};
   }
 
@@ -35,16 +34,25 @@ prototype.loadImage = function(uri, callback) {
   image.onload = function() {
     loader._pending -= 1;
     image.loaded = true;
-    if (callback) callback(null, image);
   };
 
   image.onerror = function() {
     loader._pending -= 1;
     image.loaded = false;
-    if (callback) callback(uri);
   }
 
   image.src = url;
 
   return image;
+};
+
+prototype.ready = function() {
+  var loader = this;
+  return new Promise(function(accept) {
+    function poll(value) {
+      if (!loader._pending) accept(value);
+      else setTimeout(function() { poll(true); }, 10);
+    }
+    poll(false);
+  });
 };
