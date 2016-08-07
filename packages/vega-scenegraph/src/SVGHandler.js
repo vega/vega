@@ -32,7 +32,6 @@ prototype.listener = function(handler) {
 // add an event handler
 prototype.on = function(type, handler) {
   var name = this.eventName(type),
-      svg = this._svg,
       h = this._handlers,
       x = {
         type:     type,
@@ -41,7 +40,11 @@ prototype.on = function(type, handler) {
       };
 
   (h[name] || (h[name] = [])).push(x);
-  svg.addEventListener(name, x.listener);
+
+  if (this._svg) {
+    this._svg.addEventListener(name, x.listener);
+  }
+
   return this;
 };
 
@@ -50,12 +53,17 @@ prototype.off = function(type, handler) {
   var name = this.eventName(type),
       svg = this._svg,
       h = this._handlers[name], i;
+
   if (!h) return;
+
   for (i=h.length; --i>=0;) {
     if (h[i].type === type && !handler || h[i].handler === handler) {
-      svg.removeEventListener(name, h[i].listener);
+      if (this._svg) {
+        svg.removeEventListener(name, h[i].listener);
+      }
       h.splice(i, 1);
     }
   }
+
   return this;
 };
