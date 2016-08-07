@@ -3,7 +3,6 @@ import {isMarkType} from '../marktypes';
 /**
  * Parse an event selector string.
  * Returns an array of event stream definitions.
- * TODO: support debounce, consume
  */
 export default function(selector) {
   return parseMerge(selector.trim())
@@ -12,6 +11,8 @@ export default function(selector) {
 
 var LBRACK = '[',
     RBRACK = ']',
+    LBRACE = '{',
+    RBRACE = '}',
     COLON  = ':',
     COMMA  = ',',
     GT = '>';
@@ -24,9 +25,9 @@ function find(s, i, endChar, pushChar, popChar) {
       c;
   for (; i<n; ++i) {
     c = s[i];
-    if (c === popChar) --count;
+    if (popChar && popChar.indexOf(c) >= 0) --count;
     if (c === endChar && !count) return i;
-    else if (c === pushChar) ++count;
+    else if (pushChar && pushChar.indexOf(c) >= 0) ++count;
   }
   return i;
 }
@@ -38,12 +39,14 @@ function parseMerge(s) {
       i = 0;
 
   while (i < n) {
-    i = find(s, i, COMMA, LBRACK, RBRACK);
+    i = find(s, i, COMMA, LBRACK + LBRACE, RBRACK + RBRACE);
     output.push(s.substring(start, i).trim());
     start = ++i;
   }
 
-  if (output.length === 0) throw s;
+  if (output.length === 0) {
+    throw 'Empty event selector: ' + s;
+  }
   return output;
 }
 
@@ -60,13 +63,19 @@ function parseBetween(s) {
       b, stream;
 
   i = find(s, i, RBRACK, LBRACK);
-  if (i === n) throw s;
+  if (i === n) {
+    throw 'Empty between selector: ' + s;
+  }
 
   b = parseMerge(s.substring(start, i));
-  if (b.length !== 2) throw s;
+  if (b.length !== 2) {
+    throw 'Between selector must have two elements: ' + s;
+  }
 
   s = s.slice(i + 1).trim();
-  if (s[0] !== GT) throw s;
+  if (s[0] !== GT) {
+    throw 'Expected \'>\' after between selector: ' + s;
+  }
 
   b = b.map(parseSelector);
 
@@ -86,20 +95,25 @@ function parseBetween(s) {
 function parseStream(s) {
   var stream = {source: 'view'},
       source = [],
+      throttle = [0, 0],
       markname = 0,
       start = 0,
       n = s.length,
       i = 0, j,
-      filter, throttle;
+      filter;
 
   // extract throttle from end
-  if (s[n-1] === '}') {
-    i = s.lastIndexOf('{');
+  if (s[n-1] === RBRACE) {
+    i = s.lastIndexOf(LBRACE);
     if (i >= 0) {
-      throttle = s.substring(i+1, n-1);
+      try {
+        throttle = parseThrottle(s.substring(i+1, n-1));
+      } catch (e) {
+        throw 'Invalid throttle specification: ' + s;
+      }
       s = s.slice(0, i).trim();
       n = s.length;
-    } else throw s;
+    } else throw 'Unmatched right brace: ' + s;
     i = 0;
   }
 
@@ -123,20 +137,22 @@ function parseStream(s) {
     source.push(s.substring(start, i).trim());
     filter = [];
     start = ++i;
-    if (start === n) throw s;
+    if (start === n) throw 'Unmatched left bracket: ' + s;
   }
 
   // extract filters
   while (i < n) {
     i = find(s, i, RBRACK);
-    if (i === n) throw s;
+    if (i === n) throw 'Unmatched left bracket: ' + s;
     filter.push(s.substring(start, i).trim());
-    if (i < n-1 && s[++i] !== LBRACK) throw s;
+    if (i < n-1 && s[++i] !== LBRACK) throw 'Expected left bracket: ' + s;
     start = ++i;
   }
 
   // marshall event stream specification
-  if (!(n = source.length) || ILLEGAL.test(source[n-1])) throw s;
+  if (!(n = source.length) || ILLEGAL.test(source[n-1])) {
+    throw 'Invalid event selector: ' + s;
+  }
 
   if (n > 1) {
     stream.type = source[1];
@@ -150,8 +166,23 @@ function parseStream(s) {
   } else {
     stream.type = source[0];
   }
+  if (stream.type.slice(-1) === '!') {
+    stream.consume = true;
+    stream.type = stream.type.slice(0, -1)
+  }
   if (filter != null) stream.filter = filter;
-  if (throttle != null) stream.throttle = +throttle;
+  if (throttle[0]) stream.throttle = throttle[0];
+  if (throttle[1]) stream.debounce = throttle[1];
 
   return stream;
+}
+
+function parseThrottle(s) {
+  var a = s.split(COMMA);
+  if (!s.length || a.length > 2) throw s;
+  return a.map(function(_) {
+    var x = +_;
+    if (x !== x) throw s;
+    return x;
+  });
 }
