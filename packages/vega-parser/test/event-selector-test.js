@@ -12,6 +12,15 @@ tape('Parser parses event selector strings', function(test) {
     marktype: 'rect'
   });
 
+  events = vega.selector('rect:mousedown!');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect',
+    consume: true
+  });
+
   events = vega.selector('@foo:mouseup');
   test.equal(events.length, 1);
   test.deepEqual(events[0], {
@@ -27,6 +36,52 @@ tape('Parser parses event selector strings', function(test) {
     type: 'mousedown',
     marktype: 'rect',
     throttle: 1000
+  });
+
+  events = vega.selector('rect:mousedown{100,200}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect',
+    throttle: 100,
+    debounce: 200
+  });
+
+  events = vega.selector('rect:mousedown{0,200}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect',
+    debounce: 200
+  });
+
+  events = vega.selector('rect:mousedown{,200}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect',
+    debounce: 200
+  });
+
+  events = vega.selector('rect:mousedown{200,0}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect',
+    throttle: 200
+  });
+
+  events = vega.selector('rect:mousedown{200,}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect',
+    throttle: 200
   });
 
   events = vega.selector('mousedown[event.x>10][event.metaKey]');
@@ -70,6 +125,9 @@ tape('Parser parses event selector strings', function(test) {
 
 tape('Parser rejects invalid event selector strings', function(test) {
   test.throws(function() { vega.selector(''); });
+  test.throws(function() { vega.selector('foo{}'); });
+  test.throws(function() { vega.selector('foo{a}'); });
+  test.throws(function() { vega.selector('foo{1,2,3}'); });
 
   test.throws(function() { vega.selector('{foo'); });
   test.throws(function() { vega.selector('}foo'); });
