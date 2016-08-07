@@ -20,6 +20,8 @@ var data = [
 ].map(function(d) {
   d.x = Math.random();
   d.y = Math.random();
+  d.xscale = 'sx';
+  d.yscale = 'sy';
   return d;
 });
 var tuple = data[0],
@@ -96,8 +98,8 @@ var runtimeSpec = vega.parse({
               "strokeWidth": {"value": 1}
             },
             "update": {
-              "x": {"scale": "sx", "field": "x"},
-              "y": {"scale": "sy", "field": "y"},
+              "x": {"scale": {"datum": "xscale"}, "field": "x"},
+              "y": {"scale": {"datum": "yscale"}, "field": "y"},
               "size": {"value": 150},
               "fill": {"field": {"group": "color"}}
             },
@@ -132,7 +134,7 @@ document.querySelector('#palette').addEventListener('click', function(evt) {
 
 document.querySelector('#parent').addEventListener('click', function(evt) {
   category = (category === 'a' ? 'c' : 'a');
-  var newTuple = {cat: category, x: tuple.x, y: tuple.y};
+  var newTuple = vega.extend({}, tuple, {id: null, cat: category});
 
   view.pulse(view._data.top.input,
     vega.changeset()
