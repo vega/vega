@@ -7,6 +7,6 @@ import {SVG} from './render-types';
  * @return {Promise} - A promise that resolves to an SVG string.
  */
 export default function() {
-  renderHeadless(this, SVG)
+  return renderHeadless(this, SVG)
     .then(function(renderer) { return renderer.svg(); });
 }

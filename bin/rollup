@@ -5,7 +5,10 @@ var rollup = require('rollup'),
 
 rollup.rollup({
   entry: 'index.js',
-  plugins: [resolveCache(nodeResolve({jsnext: true}))]
+  plugins: [resolveCache(nodeResolve({
+    jsnext: true,
+    skip: ['yargs']
+  }))]
 }).then(function(bundle) {
   return bundle.write({
     format: 'umd',

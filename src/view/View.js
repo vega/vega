@@ -40,12 +40,12 @@ import {
  * @constructor
  * @param {object} spec - The Vega dataflow runtime specification.
  */
-export default function View(spec) {
+export default function View(spec, options) {
   Dataflow.call(this);
+  this.loadOptions(options || {});
 
   this._el = null;
   this._renderType = CANVAS;
-  this._loadConfig = {};
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
@@ -57,10 +57,12 @@ export default function View(spec) {
 
   // initialize dataflow graph
   var ctx = runtime(this, spec);
-  self.context = ctx; // DEBUG
   this._signals = ctx.signals;
   this._scales = ctx.scales;
   this._data = ctx.data;
+
+  // DEBUG - remove later
+  if (typeof self !== 'undefined') self.context = ctx;
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
@@ -93,8 +95,8 @@ var prototype = inherits(View, Dataflow);
 // -- DATAFLOW / RENDERING ----
 
 prototype.run = function() {
-  Dataflow.prototype.run.call(this);
-  if (!this._queue || this._queue.length) {
+  var numOps = Dataflow.prototype.run.call(this);
+  if (numOps && (!this._queue || this._queue.length)) {
     this.render(this._queue);
     this._queue = [];
   }
@@ -127,7 +129,7 @@ prototype.scenegraph = function() {
 };
 
 prototype.background = function(_) {
-  return arguments.length ? this._backgroundColor = _ : this._backgroundColor;
+  return arguments.length ? (this._backgroundColor = _, this) : this._backgroundColor;
 };
 
 prototype.width = function(_) {

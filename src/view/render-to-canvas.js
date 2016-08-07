@@ -11,6 +11,6 @@ import {CANVAS} from './render-types';
  * @return {Promise} - A promise that resolves to a Canvas instance.
  */
 export default function() {
-  renderHeadless(this, CANVAS)
+  return renderHeadless(this, CANVAS)
     .then(function(renderer) { return renderer.canvas(); });
 }

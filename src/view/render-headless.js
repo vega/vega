@@ -26,5 +26,7 @@ export default function(view, type) {
       (type === SVG) ? SVGStringRenderer : CanvasRenderer);
   }
 
-  return renderer.renderAsync(view._scenegraph.root);
+  return view
+    .runAsync()
+    .then(function() { return renderer.renderAsync(view._scenegraph.root); });
 }

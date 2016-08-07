@@ -32,6 +32,10 @@
   ],
   "main": "build/vega.js",
   "jsnext:main": "index",
+  "bin": {
+    "vg2png": "./bin/vg2png",
+    "vg2svg": "./bin/vg2svg"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/uwdata/vega.git"
@@ -49,7 +53,11 @@
     "vega-runtime": "1",
     "vega-scenegraph": "2",
     "vega-statistics": "1",
-    "vega-util": "1"
+    "vega-util": "1",
+    "yargs": "4"
+  },
+  "optionalDependencies": {
+    "canvas": "1"
   },
   "devDependencies": {
     "eslint": "2",
