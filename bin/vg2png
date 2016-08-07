@@ -31,10 +31,6 @@ if (args.b) {
     : 'file://' + process.cwd() + path.sep + args.b + path.sep;
 }
 
-var options = {
-  baseURL: base
-};
-
 // input / output files
 var specFile = args._[0],
     outputFile = args._[1] || null;
@@ -54,9 +50,11 @@ function writePNG(canvas, file) {
 }
 
 function render(spec) {
-  var view = new vega.View(vega.parse(spec), options)
-    .logLevel(vega.Warn)
-    .renderer('canvas')
+  var view = new vega.View(vega.parse(spec), {
+      loadOptions: {baseURL: base},
+      logLevel: vega.Warn,
+      renderer: 'none'
+    })
     .initialize()
     .toCanvas()
     .then(function(canvas) { writePNG(canvas, outputFile); })

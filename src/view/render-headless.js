@@ -1,7 +1,6 @@
 import initializeRenderer from './initialize-renderer';
 
 import {
-  CANVAS,
   SVG
 } from './render-types';
 
@@ -16,17 +15,9 @@ import {
  * @return {Promise} - A Promise that resolves to a renderer.
  */
 export default function(view, type) {
-  var renderer = view._renderer,
-      scaled = type === CANVAS
-            && typeof window !== 'undefined'
-            && window.devicePixelRatio > 1;
-
-  if (scaled || !renderer || view.renderer() !== type) {
-    renderer = initializeRenderer(view, null, null,
-      (type === SVG) ? SVGStringRenderer : CanvasRenderer);
-  }
-
-  return view
-    .runAsync()
-    .then(function() { return renderer.renderAsync(view._scenegraph.root); });
+  return view.runAsync().then(function() {
+    var renderClass = (type === SVG) ? SVGStringRenderer : CanvasRenderer;
+    return initializeRenderer(view, null, null, renderClass)
+      .renderAsync(view._scenegraph.root);
+  });
 }

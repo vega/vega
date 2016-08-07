@@ -1,5 +1,5 @@
 import renderHeadless from './render-headless';
-import {CANVAS, PNG, SVG} from './render-types';
+import {Canvas, PNG, SVG} from './render-types';
 
 /**
  * Produce an image URL for the visualization. Depending on the type
@@ -11,13 +11,13 @@ import {CANVAS, PNG, SVG} from './render-types';
  * @return {Promise} - A promise that resolves to an image URL.
  */
 export default function(type) {
-  if (type === PNG) type = CANVAS;
+  if (type === PNG) type = Canvas;
 
-  if (type !== SVG && type !== CANVAS) {
+  if (type !== SVG && type !== Canvas) {
     return Promise.reject('Unrecognized image type: ' + type);
   } else {
     return renderHeadless(this, type).then(function(renderer) {
-      return type === CANVAS
+      return type === Canvas
         ? renderer.canvas().toDataURL('image/png')
         : window.URL.createObjectURL(
             new Blob([renderer.svg()], {type: 'image/svg+xml'})

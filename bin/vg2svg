@@ -37,10 +37,6 @@ if (args.b) {
     : 'file://' + process.cwd() + path.sep + args.b + path.sep;
 }
 
-var options = {
-  baseURL: base
-};
-
 // input / output files
 var header = args.h ? svgHeader : '',
     specFile = args._[0],
@@ -66,9 +62,11 @@ function writeSVG(svg, file) {
 }
 
 function render(spec) {
-  new vega.View(vega.parse(spec), options)
-    .logLevel(vega.Warn)
-    .renderer('svg')
+  var view = new vega.View(vega.parse(spec), {
+      loadOptions: {baseURL: base},
+      logLevel: vega.Warn,
+      renderer: 'none'
+    })
     .initialize()
     .toSVG()
     .then(function(svg) { writeSVG(svg, outputFile); })

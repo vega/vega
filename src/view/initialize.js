@@ -1,6 +1,6 @@
 import initializeRenderer from './initialize-renderer';
 import initializeHandler from './initialize-handler';
-import {SVG} from './render-types';
+import {None, SVG} from './render-types';
 
 import {
   CanvasRenderer,
@@ -12,11 +12,12 @@ import {
 
 export default function(el) {
   var view = this,
+      type = view._renderType,
       Handler = CanvasHandler,
       Renderer = CanvasRenderer;
 
   // select appropriate renderer/handler types
-  if (view._renderType === SVG) {
+  if (type === SVG) {
     Handler = SVGHandler;
     Renderer = (el ? SVGRenderer : SVGStringRenderer);
   }
@@ -33,7 +34,8 @@ export default function(el) {
   }
 
   // initialize renderer and input handler
-  view._renderer = initializeRenderer(view, view._renderer, el, Renderer);
+  view._renderer = (type === None) ? null
+    : initializeRenderer(view, view._renderer, el, Renderer);
   view._handler = initializeHandler(view, view._handler, el, Handler);
 
   return view;

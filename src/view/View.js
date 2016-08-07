@@ -4,6 +4,7 @@ import events from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
+import {Canvas, None, SVG} from './render-types';
 import renderToImageURL from './render-to-image-url';
 import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
@@ -11,24 +12,9 @@ import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {autosize, resizer} from './size';
 import state from './state';
-
-import {
-  CANVAS,
-  SVG
-} from './render-types';
-
-import {
-  Dataflow
-} from 'vega-dataflow';
-
-import {
-  CanvasHandler,
-  Scenegraph
-} from 'vega-scenegraph';
-
-import {
-  inherits
-} from 'vega-util';
+import {Dataflow} from 'vega-dataflow';
+import {CanvasHandler, Scenegraph} from 'vega-scenegraph';
+import {inherits} from 'vega-util';
 
 /**
  * Create a new View instance from a Vega dataflow runtime specification.
@@ -41,11 +27,14 @@ import {
  * @param {object} spec - The Vega dataflow runtime specification.
  */
 export default function View(spec, options) {
+  options = options || {};
+
   Dataflow.call(this);
-  this.loadOptions(options || {});
+  this.loadOptions(options.loadOptions || {});
+  this.logLevel(options.logLevel || 0);
 
   this._el = null;
-  this._renderType = CANVAS;
+  this._renderType = options.renderer || Canvas;
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
@@ -104,8 +93,10 @@ prototype.run = function() {
 };
 
 prototype.render = function(update) {
-  if (this._resize) this._resize = 0, resizeRenderer(this);
-  this._renderer.render(this._scenegraph.root, update);
+  if (this._renderer) {
+    if (this._resize) this._resize = 0, resizeRenderer(this);
+    this._renderer.render(this._scenegraph.root, update);
+  }
   return this;
 };
 
@@ -146,7 +137,7 @@ prototype.padding = function(_) {
 
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderType;
-  if (type !== SVG) type = CANVAS;
+  if (type !== SVG && type !== None) type = Canvas;
   if (type !== this._renderType) {
     this._renderType = type;
     if (this._renderer) {
