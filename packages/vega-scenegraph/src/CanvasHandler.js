@@ -12,7 +12,6 @@ export default function CanvasHandler() {
 }
 
 var prototype = inherits(CanvasHandler, Handler);
-var base = Handler.prototype;
 
 prototype.initialize = function(el, origin, obj) {
   // add event listeners
@@ -30,7 +29,7 @@ prototype.initialize = function(el, origin, obj) {
     });
   }
 
-  return base.initialize.call(this, el, origin, obj);
+  return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
 prototype.canvas = function() {
