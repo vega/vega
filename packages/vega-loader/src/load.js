@@ -60,19 +60,9 @@ var protocol_re = /^([A-Za-z]+:)?\/\//;
 var fileProtocol = 'file://';
 
 function sanitize(uri, options) {
+  var isFile, hasProtocol, loadFile, base;
+
   if (uri == null) return null;
-
-  var isFile = startsWith(uri, fileProtocol),
-      hasProtocol = protocol_re.test(uri),
-      loadFile, base;
-
-  // should we load from file system?
-  loadFile = isFile
-    || options.mode === 'file'
-    || options.mode !== 'http' && !hasProtocol && fs();
-  if (loadFile) {
-    return (isFile ? '' : fileProtocol) + uri;
-  }
 
   // if relative url (no protocol/host), prepend baseURL
   if ((base = options.baseURL) && !hasProtocol) {
@@ -81,6 +71,17 @@ function sanitize(uri, options) {
       uri = '/' + uri;
     }
     uri = base + uri;
+  }
+
+  isFile = startsWith(uri, fileProtocol);
+  hasProtocol = protocol_re.test(uri);
+
+  // should we load from file system?
+  loadFile = isFile
+    || options.mode === 'file'
+    || options.mode !== 'http' && !hasProtocol && fs();
+  if (loadFile) {
+    return (isFile ? '' : fileProtocol) + uri;
   }
 
   // if relative protocol (starts with '//'), prepend default protocol
