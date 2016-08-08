@@ -1,7 +1,7 @@
 import parsePadding from './padding';
 import parseSpec from './spec';
 import {encoders, extendEncode} from './encode/encode-util';
-import {Group} from './marks/marktypes';
+import {GroupMark} from './marks/marktypes';
 import {ref, operator} from '../util';
 import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
@@ -25,7 +25,7 @@ export default function parseView(spec, scope) {
   }, spec.encode);
 
   encode = scope.add(Encode(
-    encoders(encode, Group, scope, {pulse: ref(input)}))
+    encoders(encode, GroupMark, scope, {pulse: ref(input)}))
   );
 
   // Perform view layout

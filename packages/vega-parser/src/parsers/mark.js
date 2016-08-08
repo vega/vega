@@ -3,7 +3,7 @@ import dataName from './marks/data-name';
 import parseData from './marks/data';
 import parseFacet from './marks/facet';
 import role from './marks/role';
-import {Group} from './marks/marktypes';
+import {GroupMark} from './marks/marktypes';
 import {ScopeRole} from './marks/roles';
 import {encoders} from './encode/encode-util';
 import parseTransform from './transform';
@@ -15,7 +15,7 @@ import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from 
 
 export default function(spec, scope) {
   var facet = spec.from && spec.from.facet,
-      group = spec.type === Group,
+      group = spec.type === GroupMark,
       op, input, bound, render, sieve,
       markRef, encodeRef, boundRef;
 
