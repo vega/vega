@@ -1,5 +1,6 @@
+import formats from './formats';
 import {transforms} from 'vega-dataflow';
-import {isObject, isString} from 'vega-util';
+import {extend, isObject, isString} from 'vega-util';
 import {parse, context} from 'vega-runtime';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 
@@ -11,6 +12,8 @@ function scale(name, ctx) {
 }
 
 function functions(fn, ctx) {
+  extend(fn, formats());
+
   fn.rgb = rgb;
   fn.lab = lab;
   fn.hcl = hcl;
