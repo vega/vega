@@ -3,12 +3,14 @@ import field from './field';
 import scale from './scale';
 import signal from './signal';
 import property from './property';
+import expression from './expression';
 import {stringValue} from 'vega-util';
 
-export default function entry(channel, enc, scope, params, fields) {
+export default function(channel, enc, scope, params, fields) {
   var value = (enc.color != null) ? color(enc.color, scope, params, fields)
     : (enc.field != null) ? field(enc.field, fields)
     : (enc.signal != null) ? signal(enc.signal, scope, params)
+    : (enc.expr != null) ? expression(enc.expr, scope, params, fields)
     : (enc.value != null) ? stringValue(enc.value)
     : null;
 
