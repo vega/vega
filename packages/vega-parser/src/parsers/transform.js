@@ -46,7 +46,7 @@ function parseParameter(def, spec, scope) {
     }
 
     return def.array && !isSignal(value)
-      ? value.map(function(v) {  return parameterValue(type, v, scope); })
+      ? value.map(function(v) { return parameterValue(type, v, scope); })
       : parameterValue(type, value, scope);
   }
 }
