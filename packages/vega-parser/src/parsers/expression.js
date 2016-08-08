@@ -31,6 +31,11 @@ export var functions = function(codegen) {
   fn.y      = eventPrefix + 'y';
   fn.encode = 'this.encode';
 
+  // format functions
+  fn.format = 'this.format';
+  fn.timeFormat = 'this.timeFormat';
+  fn.utcFormat = 'this.utcFormat';
+
   // color functions
   fn.rgb = 'this.rgb';
   fn.lab = 'this.lab';
