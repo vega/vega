@@ -13,8 +13,24 @@ export var transforms = [
           "argmin", "argmax" ] },
       { "name": "as", "type": "string", "array": true },
       { "name": "drop", "type": "boolean", "default": true }
-    ],
-    "output": ["text", "count"]
+    ]
+  },
+  {
+    "type": "Bin",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "field", "type": "field", "required": true },
+      { "name": "maxbins", "type": "number", "default": 20 },
+      { "name": "base", "type": "number", "default": 10 },
+      { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
+      { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
+      { "name": "step", "type": "number" },
+      { "name": "steps", "type": "number", "array": true },
+      { "name": "minstep", "type": "number", "default": 0 },
+      { "name": "nice", "type": "boolean", "default": true },
+      { "name": "name", "type": "string" },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["bin0", "bin1"] }
+    ]
   },
   {
     "type": "CountPattern",
@@ -23,9 +39,9 @@ export var transforms = [
       { "name": "field", "type": "field", "required": true },
       { "name": "case", "type": "enum", "values": ["upper", "lower", "mixed"], "default": "mixed" },
       { "name": "pattern", "type": "string", "default": "[\\w\"]+" },
-      { "name": "stopwords", "type": "string", "default": "" }
+      { "name": "stopwords", "type": "string", "default": "" },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["text", "count"] }
     ],
-    "output": ["text", "count"]
   },
   {
     "type": "Extent",
@@ -38,22 +54,22 @@ export var transforms = [
     "type": "Filter",
     "metadata": {"changes": true},
     "params": [
-      { "name": "test", "type": "expr", "required": true }
+      { "name": "expr", "type": "expr", "required": true }
     ]
   },
   {
     "type": "Fold",
     "metadata": {"generates": true, "changes": true},
     "params": [
-      { "name": "fields", "type": "field", "array": true, "required": true }
-    ],
-    "output": ["key", "value"]
+      { "name": "fields", "type": "field", "array": true, "required": true },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
+    ]
   },
   {
     "name": "formula", "type": "Apply",
     "metadata": {"modifies": true},
     "params": [
-      { "name": "apply", "type": "expr", "required": true },
+      { "name": "expr", "type": "expr", "required": true },
       { "name": "as", "type": "string", "required": true }
     ]
   },
@@ -97,7 +113,8 @@ export var transforms = [
     "metadata": {"modifies": true},
     "params": [
       { "name": "field", "type": "field", "required": true },
-      { "name": "normalize", "type": "boolean", "default": false }
+      { "name": "normalize", "type": "boolean", "default": false },
+      { "name": "as", "type": "string", "default": "rank" }
     ]
   },
   {
@@ -177,9 +194,12 @@ export var transforms = [
               { "name": "y", "type": "field" }
             ]
           }
-        ] }
-    ],
-    "output": ["x", "y", "vx", "vy"]
+        ] },
+      {
+        "name": "as", "type": "string", "array": true, "modify": false,
+        "default": ["x", "y", "vx", "vy", "fx", "fy"]
+      }
+    ]
   },
   {
     "type": "LinkPath",
@@ -192,9 +212,9 @@ export var transforms = [
       { "name": "orient", "type": "enum", "default": "vertical",
         "values": ["horizontal", "vertical", "radial"] },
       { "name": "shape", "type": "enum", "default": "line",
-        "values": ["line", "curve", "diagonal", "orthogonal"] }
-    ],
-    "output": ["path"]
+        "values": ["line", "curve", "diagonal", "orthogonal"] },
+      { "name": "as", "type": "string", "default": "path" }
+    ]
   },
   {
     "type": "Pie",
@@ -203,9 +223,9 @@ export var transforms = [
       { "name": "field", "type": "field" },
       { "name": "startAngle", "type": "number", "default": 0 },
       { "name": "endAngle", "type": "number", "default": 6.283185307179586 },
-      { "name": "sort", "type": "boolean", "default": false }
+      { "name": "sort", "type": "boolean", "default": false },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["startAngle", "endAngle"] }
     ],
-    "output": ["startAngle", "endAngle"]
   },
   {
     "type": "Stack",
@@ -214,9 +234,9 @@ export var transforms = [
       { "name": "field", "type": "field" },
       { "name": "groupby", "type": "field", "array": true },
       { "name": "sort", "type": "compare" },
-      { "name": "offset", "type": "enum", "default": "zero", "values": ["zero", "center", "normalize"] }
-    ],
-    "output": ["y0", "y1"]
+      { "name": "offset", "type": "enum", "default": "zero", "values": ["zero", "center", "normalize"] },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["y0", "y1"] }
+    ]
   },
   {
     "type": "Voronoi",
@@ -226,9 +246,9 @@ export var transforms = [
       { "name": "y", "type": "field", "required": true },
       { "name": "size", "type": "number", "array": true, "length": 2 },
       { "name": "extent", "type": "array", "array": true, "length": 2,
-        "content": {"type": "number", "array": true, "length": 2} }
-    ],
-    "output": ["path"]
+        "content": {"type": "number", "array": true, "length": 2} },
+      { "name": "as", "type": "string", "default": "path" }
+    ]
   },
 
 
@@ -239,9 +259,8 @@ export var transforms = [
       { "name": "projection", "type": "projection", "required": true },
       { "name": "pointRadius", "type": "number" },
       { "name": "field", "type": "field" },
-      { "name": "as", "type": "string" }
-    ],
-    "output": ["path"]
+      { "name": "as", "type": "string", "default": "path" }
+    ]
   },
   {
     "type": "GeoShape",
@@ -250,9 +269,8 @@ export var transforms = [
       { "name": "projection", "type": "projection", "required": true },
       { "name": "pointRadius", "type": "number" },
       { "name": "field", "type": "field", "default": "datum" },
-      { "name": "as", "type": "string" }
-    ],
-    "output": ["shape"]
+      { "name": "as", "type": "string", "default": "shape" }
+    ]
   },
   {
     "type": "GeoPoint",
@@ -260,9 +278,8 @@ export var transforms = [
     "params": [
       { "name": "projection", "type": "projection", "required": true },
       { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": 2 }
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
     ],
-    "output": ["x", "y"]
   },
   {
     "type": "Graticule",
@@ -303,9 +320,9 @@ export var transforms = [
     "params": [
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "radius", "type": "field", "default": null },
-      { "name": "size", "type": "number", "array": true, "length": 2 }
-    ],
-    "output": ["x", "y", "r"]
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 3, "default": ["x", "y", "r"] }
+    ]
   },
   {
     "type": "Partition",
@@ -313,9 +330,9 @@ export var transforms = [
     "params": [
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "round", "type": "boolean", "default": false },
-      { "name": "size", "type": "number", "array": true, "length": 2 }
-    ],
-    "output": ["x0", "y0", "x1", "y1"]
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1"] }
+    ]
   },
   {
     "type": "Tree",
@@ -323,9 +340,9 @@ export var transforms = [
     "params": [
       { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "nodeSize", "type": "number", "array": true, "length": 2 }
-    ],
-    "output": ["x", "y"]
+      { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
+    ]
   },
   {
     "type": "Treemap",
@@ -342,9 +359,9 @@ export var transforms = [
       { "name": "paddingLeft", "type": "number", "default": 0 },
       { "name": "ratio", "type": "number", "default": 1.618033988749895 },
       { "name": "round", "type": "boolean", "default": false },
-      { "name": "size", "type": "number", "array": true, "length": 2 }
-    ],
-    "output": ["x0", "y0", "x1", "y1"]
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1"] }
+    ]
   }
 ];
 
