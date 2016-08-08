@@ -1,5 +1,5 @@
 import guideMark from './guide-mark';
-import {Text} from '../marks/marktypes';
+import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
@@ -27,5 +27,5 @@ export default function(spec, config, userEncode, dataRef) {
     text: {field: 'title'}
   };
 
-  return guideMark(Text, LegendTitleRole, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendTitleRole, null, dataRef, encode, userEncode);
 }

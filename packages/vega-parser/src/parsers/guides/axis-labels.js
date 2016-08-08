@@ -1,6 +1,6 @@
 import {Top, Bottom, Left, Right, Value, Label} from './constants';
 import guideMark from './guide-mark';
-import {Text} from '../marks/marktypes';
+import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {encoder} from '../encode/encode-util';
 
@@ -51,5 +51,5 @@ export default function(spec, config, userEncode, dataRef) {
     update.baseline = {value: 'middle'};
   }
 
-  return guideMark(Text, AxisLabelRole, Label, dataRef, encode, userEncode);
+  return guideMark(TextMark, AxisLabelRole, Label, dataRef, encode, userEncode);
 }

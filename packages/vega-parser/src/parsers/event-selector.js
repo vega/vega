@@ -1,4 +1,4 @@
-import {isMarkType} from '../marktypes';
+import {isMarkType} from './marks/marktypes';
 
 /**
  * Parse an event selector string.
