@@ -1,6 +1,6 @@
 import parseExpression from './expression';
 import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
-import {transformDef} from '../definitions';
+import {definition} from '../definitions';
 import {Params} from '../transforms';
 import {error, extend, isArray, isString} from 'vega-util';
 
@@ -8,7 +8,7 @@ import {error, extend, isArray, isString} from 'vega-util';
  * Parse a data transform specification.
  */
 export default function(spec, scope) {
-  var def = transformDef(spec.type);
+  var def = definition(spec.type);
   var t = entry(def.type, null, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, t);
   return t.metadata = def.metadata || {}, t;
