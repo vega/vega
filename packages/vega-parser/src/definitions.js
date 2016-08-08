@@ -1,5 +1,5 @@
-export var transforms = [
-  {
+export var definitions = {
+  aggregate: {
     "type": "Aggregate",
     "metadata": {"generates": true, "changes": true},
     "params": [
@@ -15,7 +15,7 @@ export var transforms = [
       { "name": "drop", "type": "boolean", "default": true }
     ]
   },
-  {
+  bin: {
     "type": "Bin",
     "metadata": {"modifies": true},
     "params": [
@@ -32,7 +32,7 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["bin0", "bin1"] }
     ]
   },
-  {
+  countpattern: {
     "type": "CountPattern",
     "metadata": {"generates": true, "changes": true},
     "params": [
@@ -41,23 +41,23 @@ export var transforms = [
       { "name": "pattern", "type": "string", "default": "[\\w\"]+" },
       { "name": "stopwords", "type": "string", "default": "" },
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["text", "count"] }
-    ],
+    ]
   },
-  {
+  extent: {
     "type": "Extent",
     "metadata": {},
     "params": [
       { "name": "field", "type": "field", "required": true }
     ]
   },
-  {
+  filter: {
     "type": "Filter",
     "metadata": {"changes": true},
     "params": [
       { "name": "expr", "type": "expr", "required": true }
     ]
   },
-  {
+  fold: {
     "type": "Fold",
     "metadata": {"generates": true, "changes": true},
     "params": [
@@ -65,15 +65,15 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
     ]
   },
-  {
-    "name": "formula", "type": "Apply",
+  formula: {
+    "type": "Apply",
     "metadata": {"modifies": true},
     "params": [
       { "name": "expr", "type": "expr", "required": true },
       { "name": "as", "type": "string", "required": true }
     ]
   },
-  {
+  impute: {
     "type": "Impute",
     "metadata": {"changes": true},
     "params": [
@@ -85,7 +85,7 @@ export var transforms = [
       { "name": "value", "default": 0 }
     ]
   },
-  {
+  lookup: {
     "type": "Lookup",
     "metadata": {"modifies": true},
     "params": [
@@ -98,7 +98,7 @@ export var transforms = [
       { "name": "default", "default": null }
     ]
   },
-  {
+  range: {
     "type": "Range",
     "metadata": {"generates": true, "source": true},
     "params": [
@@ -108,7 +108,7 @@ export var transforms = [
     ],
     "output": ["value"]
   },
-  {
+  rank: {
     "type": "Rank",
     "metadata": {"modifies": true},
     "params": [
@@ -117,15 +117,15 @@ export var transforms = [
       { "name": "as", "type": "string", "default": "rank" }
     ]
   },
-  {
+  sample: {
     "type": "Sample",
     "metadata": {"source": true, "changes": true},
     "params": [
       { "name": "size", "type": "number", "default": 1000 }
     ]
   },
-  {
-    "name": "sort", "type": "Collect",
+  sort: {
+    "type": "Collect",
     "metadata": {"source": true},
     "params": [
       { "name": "sort", "type": "compare" }
@@ -133,7 +133,7 @@ export var transforms = [
   },
 
 
-  {
+  force: {
     "type": "Force",
     "metadata": {"modifies": true},
     "params": [
@@ -201,7 +201,7 @@ export var transforms = [
       }
     ]
   },
-  {
+  linkpath: {
     "type": "LinkPath",
     "metadata": {"modifies": true},
     "params": [
@@ -216,7 +216,7 @@ export var transforms = [
       { "name": "as", "type": "string", "default": "path" }
     ]
   },
-  {
+  pie: {
     "type": "Pie",
     "metadata": {"modifies": true},
     "params": [
@@ -225,9 +225,9 @@ export var transforms = [
       { "name": "endAngle", "type": "number", "default": 6.283185307179586 },
       { "name": "sort", "type": "boolean", "default": false },
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["startAngle", "endAngle"] }
-    ],
+    ]
   },
-  {
+  stack: {
     "type": "Stack",
     "metadata": {"modifies": true},
     "params": [
@@ -238,7 +238,7 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["y0", "y1"] }
     ]
   },
-  {
+  voronoi: {
     "type": "Voronoi",
     "metadata": {"modifies": true},
     "params": [
@@ -252,7 +252,7 @@ export var transforms = [
   },
 
 
-  {
+  geopath: {
     "type": "GeoPath",
     "metadata": {"modifies": true},
     "params": [
@@ -262,7 +262,7 @@ export var transforms = [
       { "name": "as", "type": "string", "default": "path" }
     ]
   },
-  {
+  geoshape: {
     "type": "GeoShape",
     "metadata": {"modifies": true},
     "params": [
@@ -272,16 +272,16 @@ export var transforms = [
       { "name": "as", "type": "string", "default": "shape" }
     ]
   },
-  {
+  geopoint: {
     "type": "GeoPoint",
     "metadata": {"modifies": true},
     "params": [
       { "name": "projection", "type": "projection", "required": true },
       { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
-    ],
+    ]
   },
-  {
+  graticule: {
     "type": "Graticule",
     "metadata": {"source": true, "generates": true, "changes": true},
     "params": [
@@ -299,7 +299,7 @@ export var transforms = [
   },
 
 
-  {
+  stratify: {
     "type": "Stratify",
     "metadata": {"treesource": true},
     "params": [
@@ -307,14 +307,14 @@ export var transforms = [
       { "name": "parentKey", "type": "field", "required": true  }
     ]
   },
-  {
+  nest: {
     "type": "Nest",
     "metadata": {"treesource": true},
     "params": [
       { "name": "keys", "type": "field", "array": true }
     ]
   },
-  {
+  pack: {
     "type": "Pack",
     "metadata": {"tree": true, "modifies": true},
     "params": [
@@ -324,7 +324,7 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 3, "default": ["x", "y", "r"] }
     ]
   },
-  {
+  partition: {
     "type": "Partition",
     "metadata": {"tree": true, "modifies": true},
     "params": [
@@ -334,7 +334,7 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1"] }
     ]
   },
-  {
+  tree: {
     "type": "Tree",
     "metadata": {"tree": true, "modifies": true},
     "params": [
@@ -344,7 +344,7 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
     ]
   },
-  {
+  treemap: {
     "type": "Treemap",
     "metadata": {"tree": true, "modifies": true},
     "params": [
@@ -363,13 +363,9 @@ export var transforms = [
       { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1"] }
     ]
   }
-];
+};
 
-var lookup = transforms.reduce(function(map, t) {
-  var key = t.name || t.type.toLowerCase();
-  return map[key] = t, map;
-}, {});
-
-export function transformDef(type) {
-  return lookup.hasOwnProperty(type) ? lookup[type] : null;
+export function definition(type, def) {
+  return arguments.length > 1 ? (definitions[type] = def, this)
+    : definitions.hasOwnProperty(type) ? definitions[type] : null;
 }
