@@ -7,6 +7,10 @@ export * from 'vega-statistics';
 export * from 'vega-util';
 
 export {
+  load
+} from 'vega-loader';
+
+export {
   Bounds,
   Gradient,
   ImageLoader,
@@ -51,7 +55,9 @@ export {transform};
 export {default as View} from './src/view/View';
 
 export {
-  parse
+  parse,
+  definition,
+  definitions
 } from 'vega-parser';
 
 export {

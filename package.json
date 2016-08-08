@@ -49,6 +49,7 @@
     "d3-color": "1",
     "vega-dataflow": "2",
     "vega-expression": "2",
+    "vega-loader": "1",
     "vega-parser": "1",
     "vega-runtime": "1",
     "vega-scenegraph": "2",
