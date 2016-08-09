@@ -55,14 +55,14 @@ var runtimeSpec = vega.parse({
     {
       "name": "xscale",
       "type": "band",
-      "range": [0, {"signal": "width"}],
+      "range": "width",
       "round": true,
       "domain": {"data": "values", "field": "x"}
     },
     {
       "name": "yscale",
       "type": "linear",
-      "range": [{"signal": "height"}, 0],
+      "range": "height",
       "round": true,
       "domain": {"data": "values", "field": "y"},
       "zero": true,
@@ -72,13 +72,13 @@ var runtimeSpec = vega.parse({
       "name": "shapeScale",
       "type": "ordinal",
       "domain": ["a", "b", "c", "d", "e", "f"],
-      "range": ["circle", "square", "cross", "diamond", "triangle-up", "triangle-down"]
+      "range": "symbol"
     },
     {
       "name": "colorScale",
       "type": "ordinal",
       "domain": ["a", "b", "c", "d", "e", "f"],
-      "scheme": "category10"
+      "range": "category"
     },
     {
       "name": "innerScale",
@@ -95,7 +95,8 @@ var runtimeSpec = vega.parse({
       "count": 5,
       "grid": false,
       "domain": true,
-      "title": "Left Title"
+      "title": "Left Title",
+      "offset": 10
     },
     {
       "scale": "yscale",
@@ -103,21 +104,24 @@ var runtimeSpec = vega.parse({
       "count": 5,
       "grid": true,
       "domain": true,
-      "title": "Right Title"
+      "title": "Right Title",
+      "offset": 10
     },
     {
       "scale": "xscale",
       "orient": "top",
       "grid": false,
       "domain": true,
-      "title": "Top Title"
+      "title": "Top Title",
+      "offset": 10
     },
     {
       "scale": "xscale",
       "orient": "bottom",
       "grid": true,
       "domain": true,
-      "title": "Bottom Title"
+      "title": "Bottom Title",
+      "offset": 10
     }
   ],
 
