@@ -29,7 +29,8 @@ export default function(spec, config, userEncode, dataRef) {
     scale:  spec.scale,
     field:  Value,
     band:   config.bandPosition,
-    round:  true
+    round:  config.tickRound,
+    extra:  config.tickExtra
   };
 
   if (orient === Top || orient === Bottom) {

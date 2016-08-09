@@ -59,6 +59,7 @@ function defaults() {
       gridDash: [],
       gridOpacity: 1,
       tickPadding: 2,
+      tickRound: true,
       tickSize: 5,
       tickWidth: 1,
       tickColor: '#000',
@@ -70,6 +71,13 @@ function defaults() {
       titleFont: 'sans-serif',
       titleFontSize: 11,
       titleFontWeight: 'bold'
+    },
+
+    // additional axis defaults for band scales
+    axisBand: {
+      bandPosition: 1,
+      tickExtra: true,
+      tickPadding: -1
     },
 
     // defaults for legends

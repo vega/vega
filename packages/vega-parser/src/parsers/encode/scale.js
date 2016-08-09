@@ -26,6 +26,11 @@ export default function(enc, value, scope, params, fields) {
       if (flag < 0) interp = '(' + func + '?' + interp + ':0)';
 
       value = (value ? value + '+' : '') + interp;
+
+      if (enc.extra) {
+        // include logic to handle extraneous elements
+        value = '(datum.extra?' + scale + '(datum.extra.value):' + value + ')';
+      }
     }
 
     if (value == null) value = '0';
