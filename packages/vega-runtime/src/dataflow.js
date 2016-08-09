@@ -8,6 +8,11 @@ import parseUpdate from './update';
 export default function(spec, ctx) {
   var operators = spec.operators || [];
 
+  // parse background
+  if (spec.background) {
+    ctx.background = spec.background;
+  }
+
   // parse operators
   operators.forEach(function(entry) {
     parseOperator(entry, ctx);
