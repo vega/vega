@@ -62,7 +62,7 @@ export default function View(spec, options) {
   );
 
   // initialize background color
-  this._backgroundColor = null;
+  this._background = ctx.background || null;
 
   // initialize view size
   this._width = this.width();
@@ -120,7 +120,7 @@ prototype.scenegraph = function() {
 };
 
 prototype.background = function(_) {
-  return arguments.length ? (this._backgroundColor = _, this) : this._backgroundColor;
+  return arguments.length ? (this._background = _, this) : this._background;
 };
 
 prototype.width = function(_) {
