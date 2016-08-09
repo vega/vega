@@ -146,14 +146,17 @@ function qMultipleDomain(spec, scope, fields) {
 // -- SCALE RANGE -----
 
 function parseScaleRange(spec, scope) {
-  var range = spec.range;
+  var range = spec.range,
+      config = scope.config.range;
 
   if (range.signal) {
     return scope.signalRef(range.signal);
-  } else if (range === 'width') {
-    range = [0, {'signal': 'width'}];
-  } else if (range === 'height') {
-    range = [{'signal': 'height'}, 0];
+  } else if (isString(range)) {
+    if (config && config.hasOwnProperty(range)) {
+      range = config[range];
+    } else {
+      error('Unrecognized scale range value: ' + range);
+    }
   } else if (!isArray(range)) {
     error('Unsupported range type: ' + range);
   }
