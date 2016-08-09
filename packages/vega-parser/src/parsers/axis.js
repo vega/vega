@@ -1,3 +1,4 @@
+import axisConfig from './guides/axis-config';
 import axisDomain from './guides/axis-domain';
 import axisGrid from './guides/axis-grid';
 import axisTicks from './guides/axis-ticks';
@@ -11,7 +12,7 @@ import {ref} from '../util';
 import {Collect, AxisTicks} from '../transforms';
 
 export default function(spec, scope) {
-  var config = scope.config,
+  var config = axisConfig(spec, scope),
       encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, ticksRef, group, axisEncode, children;
@@ -19,8 +20,8 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    domain: spec.domain != null ? !!spec.domain : true,
-    grid:   spec.grid != null ? !!spec.grid : false,
+    domain: spec.domain != null ? !!spec.domain : config.domainDefault,
+    grid:   spec.grid != null ? !!spec.grid : config.gridDefault,
     title:  spec.title
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
@@ -29,9 +30,9 @@ export default function(spec, scope) {
   axisEncode = extendEncode({
     update: {
       offset:       encoder(spec.offset || 0),
-      titlePadding: encoder(spec.titlePadding || config.axisTitlePadding),
-      minExtent:    encoder(spec.minExtent || config.axisMinExtent),
-      maxExtent:    encoder(spec.maxExtent || config.axisMaxExtent)
+      titlePadding: encoder(spec.titlePadding || config.titlePadding),
+      minExtent:    encoder(spec.minExtent || config.minExtent),
+      maxExtent:    encoder(spec.maxExtent || config.maxExtent)
     }
   }, encode.axis);
 

@@ -9,13 +9,13 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.enter = enter = {
     opacity: zero,
-    shape: {value: config.legendSymbolType},
-    size: {value: config.legendSymbolSize},
-    strokeWidth: {value: config.legendSymbolStrokeWidth}
+    shape: {value: config.symbolType},
+    size: {value: config.symbolSize},
+    strokeWidth: {value: config.symbolStrokeWidth}
   };
 
   if (!spec.fill) {
-    enter.stroke = {value: config.legendSymbolColor};
+    enter.stroke = {value: config.symbolColor};
   }
 
   encode.exit = {

@@ -6,13 +6,15 @@ import {AxisGridRole} from '../marks/roles';
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? 1 : -1,
+      offset = sign * spec.offset || 0,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickPos;
 
   encode.enter = enter = {
     opacity: zero,
-    stroke: {value: config.axisGridColor},
-    strokeWidth: {value: config.axisGridWidth}
+    stroke: {value: config.gridColor},
+    strokeWidth: {value: config.gridWidth},
+    strokeDash: {value: config.gridDash}
   };
 
   encode.exit = exit = {
@@ -20,22 +22,23 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   encode.update = update = {
-    opacity: {value: 1}
+    opacity: {value: config.gridOpacity}
   };
 
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   0.5
+    band:   config.bandPosition,
+    round:  true
   };
 
   if (orient === Top || orient === Bottom) {
-    enter.y = zero;
-    update.y2 = enter.y2 = {signal: 'height', mult: sign};
+    enter.y = {value: offset};
+    update.y2 = enter.y2 = {signal: 'height', mult: sign, offset: offset};
     update.x = enter.x = exit.x = tickPos;
   } else {
-    enter.x = zero;
-    update.x2 = enter.x2 = {signal: 'width', mult: sign};
+    enter.x = {value: offset};
+    update.x2 = enter.x2 = {signal: 'width', mult: sign, offset: offset};
     update.y = enter.y = exit.y = tickPos;
   }
 

@@ -7,16 +7,16 @@ import {encoder} from '../encode/encode-util';
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      size = spec.tickSize != null ? spec.tickSize : config.axisTickSize,
-      pad = spec.tickPadding != null ? spec.tickPadding : config.axisTickPadding,
+      size = spec.tickSize != null ? spec.tickSize : config.tickSize,
+      pad = spec.tickPadding != null ? spec.tickPadding : config.tickPadding,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
     opacity: zero,
-    fill: {value: config.axisTickLabelColor},
-    font: {value: config.axisTickLabelFont},
-    fontSize: {value: config.axisTickLabelFontSize},
+    fill: {value: config.tickLabelColor},
+    font: {value: config.tickLabelFont},
+    fontSize: {value: config.tickLabelFontSize},
     text: {field: Label}
   };
 

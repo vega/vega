@@ -10,7 +10,7 @@ import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  var config = scope.config,
+  var config = scope.config.legend,
       encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, entryRef, group, title,
@@ -25,7 +25,7 @@ export default function(spec, scope) {
 
   // single-element data source for axis group
   datum = {
-    orient: value(spec.orient, config.legendOrient),
+    orient: value(spec.orient, config.orient),
     title:  spec.title
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
@@ -33,9 +33,9 @@ export default function(spec, scope) {
   // encoding properties for legend group
   legendEncode = extendEncode({
     update: {
-      offset:        encoder(value(spec.offset, config.legendOffset)),
-      padding:       encoder(value(spec.padding, config.legendPadding)),
-      titlePadding:  encoder(value(spec.titlePadding, config.legendTitlePadding))
+      offset:        encoder(value(spec.offset, config.offset)),
+      padding:       encoder(value(spec.padding, config.padding)),
+      titlePadding:  encoder(value(spec.titlePadding, config.titlePadding))
     }
   }, encode.legend);
 
@@ -44,7 +44,7 @@ export default function(spec, scope) {
     update: {
       x: {field: {group: 'padding'}},
       y: {field: {group: 'padding'}},
-      entryPadding: encoder(value(spec.entryPadding, config.legendEntryPadding))
+      entryPadding: encoder(value(spec.entryPadding, config.entryPadding))
     }
   };
 
@@ -88,11 +88,11 @@ function value(value, defaultValue) {
 
 function sizeExpression(spec, config, encode) {
   // TODO get override for symbolSize...
-  var symbolSize = +config.legendSymbolSize, fontSize;
+  var symbolSize = +config.symbolSize, fontSize;
   fontSize = encode && encode.update && encode.update.fontSize;
   if (!fontSize) fontSize = encode && encode.enter && encode.enter.fontSize;
   if (fontSize) fontSize = fontSize.value; // TODO support signal?
-  if (!fontSize) fontSize = +config.legendLabelFontSize;
+  if (!fontSize) fontSize = +config.labelFontSize;
 
   return spec.size
     ? {$expr: 'Math.max(ceil(sqrt(_.scale(datum))),' + fontSize + ')'}

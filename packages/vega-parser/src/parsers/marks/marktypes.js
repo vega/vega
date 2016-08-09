@@ -8,6 +8,7 @@ export var LineMark = 'line';
 export var PathMark = 'path';
 export var RectMark = 'rect';
 export var RuleMark = 'rule';
+export var ShapeMark = 'shape';
 export var SymbolMark = 'symbol';
 export var TextMark = 'text';
 
@@ -21,6 +22,7 @@ export var marktypes = toSet([
   'path',
   'rect',
   'rule',
+  'shape',
   'symbol',
   'text'
 ]);

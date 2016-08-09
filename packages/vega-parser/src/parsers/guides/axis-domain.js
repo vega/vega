@@ -10,8 +10,8 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.enter = enter = {
     opacity: zero,
-    stroke: {value: config.axisTickColor},
-    strokeWidth: {value: config.axisTickWidth}
+    stroke: {value: config.tickColor},
+    strokeWidth: {value: config.tickWidth}
   };
 
   encode.exit = {
