@@ -1,13 +1,13 @@
 import Image from './util/canvas/image';
 import {load} from 'vega-loader';
 
-export default function ImageLoader(loadConfig) {
+export default function ImageLoader(loadOptions) {
   this._pending = 0;
-  this._config = loadConfig || ImageLoader.Config;
+  this._options = loadOptions || ImageLoader.Options;
 }
 
 // Overridable global default load configuration
-ImageLoader.Config = {};
+ImageLoader.Options = {};
 
 var prototype = ImageLoader.prototype;
 
@@ -16,7 +16,7 @@ prototype.pending = function() {
 };
 
 prototype.imageURL = function(uri) {
-  return load.sanitize(uri, this._config);
+  return load.sanitize(uri, this._options);
 };
 
 prototype.loadImage = function(uri) {
