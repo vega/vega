@@ -10,12 +10,12 @@ export default function(spec, config, userEncode, dataRef) {
     x: {field: {group: 'padding'}},
     y: {field: {group: 'padding'}},
     opacity: zero,
-    fill: {value: config.legendTitleColor},
-    font: {value: config.legendTitleFont},
-    fontSize: {value: config.legendTitleFontSize},
-    fontWeight: {value: config.legendTitleFontWeight},
-    align: {value: config.legendTitleAlign},
-    baseline: {value: config.legendTitleBaseline}
+    fill: {value: config.titleColor},
+    font: {value: config.titleFont},
+    fontSize: {value: config.titleFontSize},
+    fontWeight: {value: config.titleFontWeight},
+    align: {value: config.titleAlign},
+    baseline: {value: config.titleBaseline}
   };
 
   encode.exit = {

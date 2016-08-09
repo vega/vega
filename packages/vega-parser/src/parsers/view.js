@@ -22,7 +22,7 @@ export default function parseView(spec, scope) {
   encode = extendEncode({
     enter: { x: {value: 0}, y: {value: 0} },
     update: { width: {signal: 'width'}, height: {signal: 'height'} }
-  }, spec.encode);
+  }, encodeConfig(scope), spec.encode);
 
   encode = scope.add(Encode(
     encoders(encode, GroupMark, scope, {pulse: ref(input)}))
@@ -49,4 +49,15 @@ export default function parseView(spec, scope) {
   scope.addData('root', new DataScope(scope, input, input, op));
 
   return scope;
+}
+
+function encodeConfig(scope) {
+  var config = scope.config.root,
+      encode, key;
+
+  if (config) {
+    encode = {};
+    for (key in config) encode[key] = {value: config[key]};
+    return {enter: encode};
+  }
 }

@@ -9,12 +9,12 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.enter = enter = {
     opacity: zero,
-    fill: {value: config.legendLabelColor},
+    fill: {value: config.labelColor},
     text: {field: Label},
-    font: {value: config.legendLabelFont},
-    fontSize: {value: config.legendLabelFontSize},
-    align: {value: config.legendLabelAlign},
-    baseline: {value: config.legendLabelBaseline}
+    font: {value: config.labelFont},
+    fontSize: {value: config.labelFontSize},
+    align: {value: config.labelAlign},
+    baseline: {value: config.labelBaseline}
   };
 
   encode.exit = {
@@ -27,7 +27,7 @@ export default function(spec, config, userEncode, dataRef) {
 
   enter.x = update.x = {
     field:  Size,
-    offset: config.legendLabelOffset
+    offset: config.labelOffset
   };
 
   enter.y = update.y = {

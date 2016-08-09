@@ -7,14 +7,14 @@ import {encoder} from '../encode/encode-util';
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      size = spec.tickSize != null ? spec.tickSize : config.axisTickSize,
+      size = spec.tickSize != null ? spec.tickSize : config.tickSize,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
     opacity: zero,
-    stroke: {value: config.axisTickColor},
-    strokeWidth: {value: config.axisTickWidth}
+    stroke: {value: config.tickColor},
+    strokeWidth: {value: config.tickWidth}
   };
 
   encode.exit = exit = {
@@ -31,7 +31,7 @@ export default function(spec, config, userEncode, dataRef) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   0.5,
+    band:   config.bandPosition,
     round:  true
   };
 

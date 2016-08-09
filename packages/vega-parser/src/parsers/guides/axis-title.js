@@ -10,10 +10,10 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.enter = {
     opacity: {value: 0},
-    fill: {value: config.axisTitleColor},
-    font: {value: config.axisTitleFont},
-    fontSize: {value: config.axisTitleFontSize},
-    fontWeight: {value: config.axisTitleFontWeight},
+    fill: {value: config.titleColor},
+    font: {value: config.titleFont},
+    fontSize: {value: config.titleFontSize},
+    fontWeight: {value: config.titleFontWeight},
     align: {value: 'center'}
   };
 
