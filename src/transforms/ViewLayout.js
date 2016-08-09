@@ -1,14 +1,11 @@
 import {Transform} from 'vega-dataflow';
 import {Bounds, boundStroke} from 'vega-scenegraph';
+import {AxisRole, FrameRole, LegendRole, ScopeRole} from 'vega-parser';
 import {inherits} from 'vega-util';
 
 export var Fit = 'fit';
 export var Pad = 'pad';
 export var None = 'none';
-
-var AxisRole = 'axis',
-    LegendRole = 'legend',
-    ScopeRole = 'scope';
 
 /**
  * Layout view elements such as axes and legends.
@@ -49,9 +46,13 @@ function layoutGroup(view, group, _) {
       case AxisRole:
         axisBounds.union(layoutAxis(mark, width, height));
         break;
-      case LegendRole: legends.push(mark); break;
-      case ScopeRole:  viewBounds.union(mark.bounds); // break omitted
-      default:         markBounds.union(mark.bounds);
+      case LegendRole:
+        legends.push(mark); break;
+      case FrameRole:
+      case ScopeRole:
+        viewBounds.union(mark.bounds); // break omitted
+      default:
+        markBounds.union(mark.bounds);
     }
   }
   viewBounds.union(axisBounds);
