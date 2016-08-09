@@ -93,45 +93,45 @@ function layoutAxis(axis, width, height) {
     case 'top': {
       x = 0;
       y = -offset;
-      s = Math.max(minExtent, Math.min(maxExtent, offset - bounds.y1));
+      s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
       if (title) {
         title.y = -(titlePadding + s);
         s += titleSize;
       }
-      bounds.add(0, -s).add(width, 0);
+      bounds.add(0, y-s).add(width, y);
       break;
     }
     case 'left': {
       x = -offset;
       y = 0;
-      s = Math.max(minExtent, Math.min(maxExtent, offset - bounds.x1));
+      s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
       if (title) {
         title.x = -(titlePadding + s);
         s += titleSize;
       }
-      bounds.add(-s, 0).add(0, height);
+      bounds.add(x-s, 0).add(x, height);
       break;
     }
     case 'right': {
       y = 0;
       x = offset + width;
-      s = Math.max(minExtent, Math.min(maxExtent, offset + bounds.x2));
+      s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
       if (title) {
         title.x = titlePadding + s;
         s += titleSize;
       }
-      bounds.add(width, 0).add(width + s, height);
+      bounds.add(x, 0).add(x + s, height);
       break;
     }
     case 'bottom': {
       x = 0;
       y = offset + height;
-      s = Math.max(minExtent, Math.min(maxExtent, offset + bounds.y2));
+      s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
       if (title) {
         title.y = titlePadding + s;
         s += titleSize;
       }
-      bounds.add(0, height).add(width, height + s);
+      bounds.add(0, y).add(width, y + s);
       break;
     }
   }
