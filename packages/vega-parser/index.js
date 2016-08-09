@@ -10,5 +10,22 @@ export {default as stream} from './src/parsers/stream';
 
 export {marktypes, isMarkType} from './src/parsers/marks/marktypes';
 
+export {
+  MarkRole,
+  FrameRole,
+  ScopeRole,
+  AxisRole,
+  AxisDomainRole,
+  AxisGridRole,
+  AxisLabelRole,
+  AxisTickRole,
+  AxisTitleRole,
+  LegendRole,
+  LegendEntryRole,
+  LegendLabelRole,
+  LegendSymbolRole,
+  LegendTitleRole
+} from './src/parsers/marks/roles';
+
 export {default as Scope} from './src/Scope';
 export {default as DataScope} from './src/DataScope';

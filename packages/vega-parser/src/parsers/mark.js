@@ -4,7 +4,7 @@ import parseData from './marks/data';
 import parseFacet from './marks/facet';
 import role from './marks/role';
 import {GroupMark} from './marks/marktypes';
-import {ScopeRole} from './marks/roles';
+import {FrameRole, ScopeRole} from './marks/roles';
 import {encoders} from './encode/encode-util';
 import parseTransform from './transform';
 import parseSpec from './spec';
@@ -38,7 +38,7 @@ export default function(spec, scope) {
 
   // add visual encoders
   op = scope.add(Encode(
-    encoders(spec.encode, spec.type, scope, {pulse: markRef})
+    encoders(spec.encode, spec.type, role(spec), scope, {pulse: markRef})
   ));
 
   // add post-encoding transforms, if defined
@@ -79,7 +79,7 @@ export default function(spec, scope) {
   // if non-faceted group, recurse directly
   if (group && !facet) {
     scope.pushState(encodeRef, boundRef);
-    parseSpec(spec, role(spec) === ScopeRole ? scope.fork() : scope);
+    parseSpec(spec, shouldFork(spec) ? scope.fork() : scope);
     scope.popState();
   }
 
@@ -91,4 +91,9 @@ export default function(spec, scope) {
   if (spec.name != null) {
     scope.addData(dataName(spec.name), new DataScope(scope, null, render, sieve))
   }
+}
+
+function shouldFork(spec) {
+  var r = role(spec);
+  return r === FrameRole || r === ScopeRole;
 }

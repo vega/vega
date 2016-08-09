@@ -1,4 +1,5 @@
 export var MarkRole = 'mark';
+export var FrameRole = 'frame';
 export var ScopeRole = 'scope';
 
 export var AxisRole = 'axis';

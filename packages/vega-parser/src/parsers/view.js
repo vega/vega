@@ -2,6 +2,7 @@ import parsePadding from './padding';
 import parseSpec from './spec';
 import {encoders, extendEncode} from './encode/encode-util';
 import {GroupMark} from './marks/marktypes';
+import {FrameRole} from './marks/roles';
 import {ref, operator} from '../util';
 import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
@@ -10,6 +11,7 @@ import {toSet} from 'vega-util';
 export default function parseView(spec, scope) {
   var op, input, encode, parent, root;
 
+  scope.background = spec.background || scope.config.background;
   root = ref(scope.root = scope.add(operator()));
   scope.addSignal('width', spec.width || -1);
   scope.addSignal('height', spec.height || -1);
@@ -22,10 +24,10 @@ export default function parseView(spec, scope) {
   encode = extendEncode({
     enter: { x: {value: 0}, y: {value: 0} },
     update: { width: {signal: 'width'}, height: {signal: 'height'} }
-  }, encodeConfig(scope), spec.encode);
+  }, spec.encode);
 
   encode = scope.add(Encode(
-    encoders(encode, GroupMark, scope, {pulse: ref(input)}))
+    encoders(encode, GroupMark, FrameRole, scope, {pulse: ref(input)}))
   );
 
   // Perform view layout
@@ -49,15 +51,4 @@ export default function parseView(spec, scope) {
   scope.addData('root', new DataScope(scope, input, input, op));
 
   return scope;
-}
-
-function encodeConfig(scope) {
-  var config = scope.config.root,
-      encode, key;
-
-  if (config) {
-    encode = {};
-    for (key in config) encode[key] = {value: config[key]};
-    return {enter: encode};
-  }
 }
