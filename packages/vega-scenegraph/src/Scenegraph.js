@@ -5,7 +5,7 @@ export default function Scenegraph() {
   this.root = createMark({
     marktype: 'group',
     name: 'root',
-    role: 'scope'
+    role: 'frame'
   });
   this.root.items = [new GroupItem(this.root)];
 }
