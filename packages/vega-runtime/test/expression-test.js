@@ -15,7 +15,7 @@ tape('Parser parses expressions', function(test) {
     {id:1, type:'Operator', update: '2 * _.foo', params: {foo:{$ref:0}}},
     {id:2, type:'Collect',  value: {$ingest: values}},
     {id:3, type:'Apply', params: {
-      apply: {
+      expr: {
         $expr: 'datum.x * datum.y',
         $fields: ['x', 'y']
       },
@@ -23,7 +23,7 @@ tape('Parser parses expressions', function(test) {
       pulse: {$ref: 2}
     }},
     {id:4, type:'Filter', params: {
-      test: {
+      expr: {
         $expr: 'datum.z > _.bar',
         $fields: ['z'],
         $params: {bar: {$ref:1}}
