@@ -21,9 +21,10 @@
     "url": "http://github.com/uwdata/vega-scenegraph.git"
   },
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g d3-path:d3,d3-shape:d3,vega-loader:vega -n vega -o build/vega-scenegraph.js -- index.js && bin/schema > build/vega-scenegraph-schema.json",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+    "pretest": "rm -rf build && mkdir build && rollup -f umd -g d3-path:d3,d3-shape:d3,vega-loader:vega -n vega -o build/vega-scenegraph.js -- index.js && bin/schema > build/vega-scenegraph-schema.json",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run test && uglifyjs build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
+    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-scenegraph.zip -- LICENSE README.md build/vega-scenegraph.js build/vega-scenegraph.min.js"
   },
   "dependencies": {
     "d3-path": "1",
@@ -36,7 +37,6 @@
   "devDependencies": {
     "eslint": "2",
     "jsdom": "^3.0.0",
-    "json2module": "0.0",
     "rollup": "0.34",
     "tape": "4",
     "tv4": "1",
