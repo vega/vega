@@ -13,7 +13,7 @@ var helpText =
 var path = require('path'),
     fs = require('fs'),
     canvas = require('canvas'),
-    vega = require('../build/vega.js');
+    vega = require('../');
 
 // arguments
 var args = require('yargs')

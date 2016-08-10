@@ -42,19 +42,26 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega.js -c -m -o build/vega.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && bin/rollup",
+    "pretest": "rm -rf build && mkdir build && bin/rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
     "d3-color": "1",
+    "vega-crossfilter": "1",
     "vega-dataflow": "2",
+    "vega-encode": "1",
     "vega-expression": "2",
+    "vega-force": "1",
+    "vega-geo": "1",
+    "vega-hierarchy": "1",
     "vega-loader": "1",
     "vega-parser": "1",
     "vega-runtime": "1",
+    "vega-scale": "1",
     "vega-scenegraph": "2",
     "vega-statistics": "1",
     "vega-util": "1",
+    "vega-voronoi": "1",
     "yargs": "4"
   },
   "optionalDependencies": {
@@ -62,7 +69,6 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "json2module": "0.0",
     "rollup": "0.34",
     "rollup-plugin-node-resolve": "1",
     "tape": "4",

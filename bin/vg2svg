@@ -17,7 +17,7 @@ var svgHeader =
 // import required libraries
 var path = require('path'),
     fs = require('fs'),
-    vega = require('../build/vega.js');
+    vega = require('../');
 
 // arguments
 var args = require('yargs')
