@@ -1,4 +1,5 @@
 var tape = require('tape'),
+    venc = require('vega-encode'), // eslint-disable-line no-unused-vars
     vega = require('vega-dataflow'),
     runtime = require('../');
 

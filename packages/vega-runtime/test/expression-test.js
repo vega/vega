@@ -1,4 +1,5 @@
 var tape = require('tape'),
+    util = require('vega-util'),
     vega = require('vega-dataflow'),
     runtime = require('../');
 
@@ -36,7 +37,7 @@ tape('Parser parses expressions', function(test) {
   var df  = new vega.Dataflow(),
       ctx = runtime.parse(spec, runtime.context(df, vega.transforms)),
       ops = ctx.nodes,
-      z = vega.field('z');
+      z = util.field('z');
 
   test.equal(Object.keys(ops).length, spec.operators.length);
   test.equal(df.run(), spec.operators.length);
