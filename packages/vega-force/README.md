@@ -1,2 +1,2 @@
 # vega-force
-Force simulation transform for the Vega dataflow.
+Force simulation transform for Vega dataflows.
