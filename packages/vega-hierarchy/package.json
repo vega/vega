@@ -23,7 +23,7 @@
     "url": "https://github.com/uwdata/vega-hierarchy.git"
   },
   "scripts": {
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-collection:d3,d3-hierarchy:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-hierarchy.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-collection:d3,d3-hierarchy:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega -o build/vega-hierarchy.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run test && uglifyjs build/vega-hierarchy.js -c -m -o build/vega-hierarchy.min.js",
     "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-hierarchy.zip -- LICENSE README.md build/vega-hierarchy.js build/vega-hierarchy.min.js"
