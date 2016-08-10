@@ -1,0 +1,66 @@
+[
+  {
+    "type": "Stratify",
+    "metadata": {"treesource": true},
+    "params": [
+      { "name": "key", "type": "field", "required": true },
+      { "name": "parentKey", "type": "field", "required": true  }
+    ]
+  },
+  {
+    "type": "Nest",
+    "metadata": {"treesource": true},
+    "params": [
+      { "name": "keys", "type": "field", "array": true }
+    ]
+  },
+  {
+    "type": "Pack",
+    "metadata": {"tree": true, "modifies": true},
+    "params": [
+      { "name": "padding", "type": "number", "default": 0 },
+      { "name": "radius", "type": "field", "default": null },
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 3, "default": ["x", "y", "r"] }
+    ]
+  },
+  {
+    "type": "Partition",
+    "metadata": {"tree": true, "modifies": true},
+    "params": [
+      { "name": "padding", "type": "number", "default": 0 },
+      { "name": "round", "type": "boolean", "default": false },
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1"] }
+    ]
+  },
+  {
+    "type": "Tree",
+    "metadata": {"tree": true, "modifies": true},
+    "params": [
+      { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
+    ]
+  },
+  {
+    "type": "Treemap",
+    "metadata": {"tree": true, "modifies": true},
+    "params": [
+      { "name": "method", "type": "enum", "default": "squarify",
+        "values": ["squarify", "resquarify", "binary", "dice", "slice", "slicedice"] },
+      { "name": "padding", "type": "number", "default": 0 },
+      { "name": "paddingInner", "type": "number", "default": 0 },
+      { "name": "paddingOuter", "type": "number", "default": 0 },
+      { "name": "paddingTop", "type": "number", "default": 0 },
+      { "name": "paddingRight", "type": "number", "default": 0 },
+      { "name": "paddingBottom", "type": "number", "default": 0 },
+      { "name": "paddingLeft", "type": "number", "default": 0 },
+      { "name": "ratio", "type": "number", "default": 1.618033988749895 },
+      { "name": "round", "type": "boolean", "default": false },
+      { "name": "size", "type": "number", "array": true, "length": 2 },
+      { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1"] }
+    ]
+  }
+]

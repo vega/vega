@@ -1,2 +1,2 @@
 # vega-hierarchy
-Hierarchical layout transforms for the Vega dataflow.
+Hierarchical layout transforms for Vega dataflows.
