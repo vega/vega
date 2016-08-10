@@ -1,3 +1,4 @@
+import get from './get';
 import {Transform, Tuple} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
 
@@ -16,10 +17,6 @@ var prototype = inherits(DataJoin, Transform);
 
 function defaultItemCreate() {
   return Tuple.ingest({});
-}
-
-function get(map, key) {
-  return map.hasOwnProperty(key) ? map[key] : null;
 }
 
 prototype.transform = function(_, pulse) {
