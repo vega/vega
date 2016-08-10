@@ -1,2 +1,2 @@
 # vega-voronoi
-Voronoi diagram transform for the Vega dataflow.
+Voronoi diagram transform for Vega dataflows.
