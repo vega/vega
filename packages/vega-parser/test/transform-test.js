@@ -19,14 +19,7 @@ tape('Parser parses Vega specs with data transforms', function(test) {
         "name": "data1",
         "values": [{"u": "data1", "v": "bar"}],
         "transform": [
-          { "type": "force", "fixed": "data0", "forces":
-            [
-              { "force": "center", "x": 500, "y": 250 },
-              { "force": "collide", "radius": "r" },
-              { "force": "nbody" },
-              { "force": "link", "links": "data0" }
-            ]
-          },
+          { "type": "formula", "expr": "datum.u * datum.v", "as": "z" },
           { "type": "lookup", "from": "data0", "key": {"signal": "ufield"},
             "fields": ["a", "b"], "as": ["foo", "bar"] }
         ]
@@ -42,7 +35,7 @@ tape('Parser parses Vega specs with data transforms', function(test) {
         "name": "data3",
         "source": "data0",
         "transform": [
-          { "type": "pie", "field": "v" }
+          { "type": "rank", "field": "v" }
         ]
       }
     ]
@@ -50,7 +43,7 @@ tape('Parser parses Vega specs with data transforms', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.operators.length, 36);
+  test.equal(dfs.operators.length, 32);
 
   test.end();
 });
