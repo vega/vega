@@ -1,0 +1,37 @@
+{
+  "name": "vega-crossfilter",
+  "version": "1.0.0",
+  "description": "Indexed cross-filtering for Vega dataflows.",
+  "keywords": [
+    "vega",
+    "crossfilter"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-crossfilter.js",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/vega-crossfilter.git"
+  },
+  "scripts": {
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega -o build/vega-crossfilter.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run test && uglifyjs build/vega-crossfilter.js -c -m -o build/vega-crossfilter.min.js",
+    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-crossfilter.zip -- LICENSE README.md build/vega-crossfilter.js build/vega-crossfilter.min.js"
+  },
+  "dependencies": {
+    "d3-array": "1",
+    "vega-dataflow": "2",
+    "vega-util": "1"
+  },
+  "devDependencies": {
+    "eslint": "2",
+    "rollup": "0.34",
+    "tape": "4",
+    "uglify-js": "2"
+  }
+}
