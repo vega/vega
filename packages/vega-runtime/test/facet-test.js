@@ -53,8 +53,8 @@ tape('Parser parses faceted dataflow specs', function(test) {
 
   // test that subflows contain correct values
   var subflows = ops[1].value,
-      collectA = subflows.get('a')._targets[0],
-      collectB = subflows.get('b')._targets[0],
+      collectA = subflows.a._targets[0],
+      collectB = subflows.b._targets[0],
       extentA = collectA._targets[0],
       extentB = collectB._targets[0];
 
