@@ -1,4 +1,4 @@
-import {Transform, Tuple} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 import {tickValues, tickFormat} from './ticks';
 
@@ -39,13 +39,13 @@ prototype.transform = function(_, pulse) {
   if (ticks) out.rem = ticks;
 
   ticks = values.map(function(value) {
-    return Tuple.ingest({value: value, label: format(value)})
+    return ingest({value: value, label: format(value)})
   });
 
   if (_.extra) {
     // add an extra tick pegged to the initial domain value
     // this is used to generate axes with 'binned' domains
-    ticks.push(Tuple.ingest({
+    ticks.push(ingest({
       extra: {value: ticks[0].value},
       label: ''
     }));

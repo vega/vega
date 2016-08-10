@@ -1,5 +1,5 @@
 import get from './get';
-import {Transform, Tuple} from 'vega-dataflow';
+import {Transform, ingest, tupleid} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
 
 /**
@@ -16,13 +16,13 @@ export default function DataJoin(params) {
 var prototype = inherits(DataJoin, Transform);
 
 function defaultItemCreate() {
-  return Tuple.ingest({});
+  return ingest({});
 }
 
 prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE),
       item = _.item || defaultItemCreate,
-      key = _.key || Tuple.id,
+      key = _.key || tupleid,
       map = this.value;
 
   if (_.modified('key') || pulse.modified(key)) {
