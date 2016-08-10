@@ -1,2 +1,2 @@
 # vega-geo
-Geographic data transforms for the Vega dataflow.
+Geographic data transforms for Vega dataflows.
