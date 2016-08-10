@@ -1,7 +1,7 @@
 import parseExpression from './expression';
 import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
-import {definition} from '../definitions';
 import {Params} from '../transforms';
+import {definition} from 'vega-dataflow';
 import {error, extend, isArray, isString} from 'vega-util';
 
 /**
@@ -9,6 +9,8 @@ import {error, extend, isArray, isString} from 'vega-util';
  */
 export default function(spec, scope) {
   var def = definition(spec.type);
+  if (!def) error('Unrecognized transform type: ' + spec.type);
+
   var t = entry(def.type, null, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, t);
   return t.metadata = def.metadata || {}, t;
