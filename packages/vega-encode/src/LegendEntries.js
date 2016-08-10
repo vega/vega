@@ -1,4 +1,4 @@
-import {Transform, Tuple} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {constant, inherits, isFunction} from 'vega-util';
 import {tickValues, tickFormat} from './ticks';
 
@@ -42,7 +42,7 @@ prototype.transform = function(_, pulse) {
   if (items) out.rem = items;
 
   items = values.map(function(value, index) {
-    var t = Tuple.ingest({
+    var t = ingest({
       index: index,
       label: format(value),
       size:  size(value),
