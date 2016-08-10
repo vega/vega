@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
-import {projection, projectionProperties} from 'vega-projection';
+import {projection, properties} from './projections';
 
 /**
  * Maintains a cartographic projection.
@@ -19,11 +19,11 @@ prototype.transform = function(_) {
 
   if (!proj || _.modified('type')) {
     this.value = (proj = create(_.type));
-    projectionProperties.forEach(function(prop) {
+    properties.forEach(function(prop) {
       if (_[prop] != null) proj[prop](_[prop]);
     });
   } else {
-    projectionProperties.forEach(function(prop) {
+    properties.forEach(function(prop) {
       if (_.modified(prop)) proj[prop](_[prop]);
     });
   }
