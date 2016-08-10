@@ -1,4 +1,4 @@
-import {Transform, Tuple} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
 
  /**
@@ -48,7 +48,7 @@ prototype.transform = function(_, pulse) {
   pulse.visit(pulse.ADD, function(t) {
     var id = t._id, p;
     if (p = parentTuple(nodes[id])) {
-      out.add.push(links[id] = Tuple.ingest({source: p, target: t}));
+      out.add.push(links[id] = ingest({source: p, target: t}));
       mods[id] = 1;
     }
   });
