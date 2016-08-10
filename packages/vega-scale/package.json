@@ -1,0 +1,37 @@
+{
+  "name": "vega-scale",
+  "version": "1.0.0",
+  "description": "Scales and color schemes for visual encoding.",
+  "keywords": [
+    "vega",
+    "scales"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-scale.js",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/vega-scale.git"
+  },
+  "scripts": {
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-scale:d3,d3-scale-chromatic:d3 -f umd -n vega -o build/vega-scale.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run test && uglifyjs build/vega-scale.js -c -m -o build/vega-scale.min.js",
+    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-scale.zip -- LICENSE README.md build/vega-scale.js build/vega-scale.min.js"
+  },
+  "dependencies": {
+    "d3-array": "1",
+    "d3-scale": "1",
+    "d3-scale-chromatic": "1"
+  },
+  "devDependencies": {
+    "eslint": "2",
+    "rollup": "0.34",
+    "tape": "4",
+    "uglify-js": "2"
+  }
+}
