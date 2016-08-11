@@ -54,7 +54,7 @@ function create(type, constructor) {
     };
 
     return p;
-  }
+  };
 }
 
 export function projection(type, proj) {
