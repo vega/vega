@@ -34,12 +34,11 @@ export {
 } from 'vega-geo';
 
 /* eslint-disable no-unused-vars */
-import * as xfilter from 'vega-crossfilter';
 import * as encode from 'vega-encode';
 import * as force from 'vega-force';
-import * as geo from 'vega-geo';
 import * as hierarchy from 'vega-hierarchy';
 import * as voronoi from 'vega-voronoi';
+import * as xfilter from 'vega-crossfilter';
 /* eslint-enable */
 
 import {transform} from 'vega-dataflow';
