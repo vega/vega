@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {scale as getScale, scheme as getScheme} from 'vega-scale';
+import {scale as getScale} from 'vega-scale';
 import {error, inherits, isFunction} from 'vega-util';
 
 var SKIP = {
@@ -37,7 +37,7 @@ prototype.transform = function(_, pulse) {
   var scale = this.value, prop;
 
   if (!scale || _.modified('type') || _.modified('scheme')) {
-    this.value = (scale = createScale(_.type, _.scheme, pulse));
+    this.value = (scale = createScale(_.type, _.scheme));
   }
 
   for (prop in _) if (!SKIP[prop]) {
@@ -49,19 +49,8 @@ prototype.transform = function(_, pulse) {
   configureRange(scale, _, configureDomain(scale, _));
 };
 
-function createScale(scaleType, scheme) {
-  var type = (scaleType || 'linear').toLowerCase(),
-      scale;
-
-  if (!type || !(scale = getScale(type))) {
-    error('Unrecognized scale type: ' + scaleType);
-  }
-
-  if (scheme && !(scheme = getScheme(scheme))) {
-    error('Unrecognized scale scheme: ' + scheme)
-  }
-
-  return scale = scale(scheme), scale.type = type, scale;
+function createScale(type, scheme) {
+  return getScale((type || 'linear').toLowerCase())(scheme);
 }
 
 function configureDomain(scale, _) {
