@@ -1,0 +1,42 @@
+{
+  "name": "vega-view",
+  "version": "1.0.0",
+  "description": "View component and transforms for Vega visualizations.",
+  "keywords": [
+    "vega",
+    "view",
+    "layout"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-view.js",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwdata/vega-view.git"
+  },
+  "scripts": {
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-color:d3,d3-format:d3,d3-time-format:d3,vega-dataflow:vega,vega-runtime:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega -o build/vega-view.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run test && uglifyjs build/vega-view.js -c -m -o build/vega-view.min.js",
+    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-view.zip -- LICENSE README.md build/vega-view.js build/vega-view.min.js"
+  },
+  "dependencies": {
+    "d3-color": "1",
+    "d3-format": "1",
+    "d3-time-format": "2",
+    "vega-dataflow": "2",
+    "vega-runtime": "1",
+    "vega-scenegraph": "2",
+    "vega-util": "1"
+  },
+  "devDependencies": {
+    "eslint": "2",
+    "rollup": "0.34",
+    "tape": "4",
+    "uglify-js": "2"
+  }
+}
