@@ -13,13 +13,17 @@
   ],
   "license": "BSD-3-Clause",
   "author": {
-    "name": "Arvind Satyanarayan",
-    "url": "http://arvindsatya.com"
+    "name": "UW Interactive Data Lab",
+    "url": "http://idl.cs.washington.edu"
   },
   "contributors": [
     {
       "name": "Jeffrey Heer",
       "url": "http://idl.cs.washington.edu"
+    },
+    {
+      "name": "Arvind Satyanarayan",
+      "url": "http://arvindsatya.com"
     },
     {
       "name": "Ryan Russell",
@@ -58,9 +62,9 @@
     "vega-parser": "1",
     "vega-runtime": "1",
     "vega-scale": "1",
-    "vega-scenegraph": "2",
     "vega-statistics": "1",
     "vega-util": "1",
+    "vega-view": "1",
     "vega-voronoi": "1",
     "yargs": "4"
   },

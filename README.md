@@ -23,6 +23,7 @@ First, clone the following repositories under the uwdata organization:
 * https://github.com/uwdata/vega-scenegraph
 * https://github.com/uwdata/vega-statistics
 * https://github.com/uwdata/vega-util
+* https://github.com/uwdata/vega-view
 * https://github.com/uwdata/vega-voronoi
 
 Next, use `npm link` to connect each repo with its 'vega-' dependencies. For example, to link _vega-dataflow_ for use by other repos, do the following:
