@@ -20,8 +20,8 @@ function create(type, constructor) {
     s.type = type;
 
     if (!s.invertRange) {
-      s.invertRange = s.invert ? invertRange
-        : s.invertExtent ? invertRangeExtent
+      s.invertRange = s.invert ? invertRange(s)
+        : s.invertExtent ? invertRangeExtent(s)
         : undefined;
     }
 

@@ -69,9 +69,9 @@ export default function band() {
     return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
   };
 
-  scale.invertRange = function(r0, r1) {
-    var lo = +r0,
-        hi = arguments.length > 1 ? +r1 : lo,
+  scale.invertRange = function(_) {
+    var lo = +_[0],
+        hi = +_[1],
         reverse = range[1] < range[0],
         values = reverse ? ordinalRange().reverse() : ordinalRange(),
         n = values.length - 1, a, b, t;
@@ -89,6 +89,11 @@ export default function band() {
 
     if (reverse) t = a, a = n - b, b = n - t; // map + swap
     return (a > b) ? undefined : domain().slice(a, b+1);
+  };
+
+  scale.invert = function(_) {
+    var value = scale.invertRange([_, _]);
+    return value ? value[0] : value;
   };
 
   scale.copy = function() {

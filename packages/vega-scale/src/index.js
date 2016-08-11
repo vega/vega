@@ -27,21 +27,19 @@ export default function index(scheme) {
       return domain[interp.invert(_)];
     };
 
-    scale.invertRange = function(r0, r1) {
-      if (arguments.length < 2) {
-        return (t = scale.invert(r0)) !== undefined ? [t] : [];
-      }
-
-      var lo = interp.invert(r0),
-          hi = interp.invert(r1),
+    scale.invertRange = function(_) {
+      var lo = interp.invert(_[0]),
+          hi = interp.invert(_[1]),
           t;
 
       if (lo > hi) t = lo, lo = hi, hi = t;
 
-      return (hi < 0 || lo >= length) ? [] : domain.slice(
+      t = domain.slice(
         Math.max(0, Math.ceil(lo)),
         Math.min(length, Math.floor(hi) + 1)
       );
+
+      return t.length ? t : undefined;
     };
   }
 

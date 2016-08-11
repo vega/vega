@@ -1,12 +1,14 @@
-export default function(r0, r1) {
-  var lo = r0,
-      hi = r1,
-      t;
+export default function(scale) {
+  return function(_) {
+    var lo = _[0],
+        hi = _[1],
+        t;
 
-  if (hi < lo) t = lo, lo = hi, hi = t;
+    if (hi < lo) t = lo, lo = hi, hi = t;
 
-  return [
-    this.invert(lo),
-    this.invert(hi)
-  ];
+    return [
+      scale.invert(lo),
+      scale.invert(hi)
+    ];
+  }
 }
