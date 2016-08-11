@@ -69,7 +69,7 @@ export default function band() {
     return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
   };
 
-  scale.invertExtent = function(r0, r1) {
+  scale.invertRange = function(r0, r1) {
     var lo = +r0,
         hi = arguments.length > 1 ? +r1 : lo,
         reverse = range[1] < range[0],

@@ -27,7 +27,7 @@ export default function index(scheme) {
       return domain[interp.invert(_)];
     };
 
-    scale.invertExtent = function(r0, r1) {
+    scale.invertRange = function(r0, r1) {
       if (arguments.length < 2) {
         return (t = scale.invert(r0)) !== undefined ? [t] : [];
       }
