@@ -1,12 +1,10 @@
 import {error, isArray, isObject} from 'vega-util';
 
 export default function(proj, scope) {
-  var params = {
-    type: proj.type || 'mercator'
-  };
+  var params = {};
 
   for (var name in proj) {
-    if (name === 'name' || name === 'type') continue;
+    if (name === 'name') continue;
     params[name] = parseParameter(proj[name], scope);
   }
 
