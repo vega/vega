@@ -1,3 +1,4 @@
+import bind from './bind';
 import cursor from './cursor';
 import {data, insert, remove} from './data';
 import events from './events';
@@ -49,6 +50,7 @@ export default function View(spec, options) {
   this._signals = ctx.signals;
   this._scales = ctx.scales;
   this._data = ctx.data;
+  this._bind = spec.bindings;
 
   // DEBUG - remove later
   if (typeof self !== 'undefined') self.context = ctx;
@@ -168,6 +170,9 @@ prototype.toSVG = renderToSVG;
 prototype.events = events;
 prototype.finalize = finalize;
 prototype.hover = hover;
+
+// -- INPUT BINDING ---
+prototype.bind = bind;
 
 // -- SAVE / RESTORE STATE ----
 prototype.state = state;
