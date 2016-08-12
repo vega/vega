@@ -1,6 +1,7 @@
 import formats from './formats';
 import {transforms} from 'vega-dataflow';
-import {extend, isArray, isObject, isString} from 'vega-util';
+import {load} from 'vega-loader';
+import {error, extend, isArray, isObject, isString} from 'vega-util';
 import {parse, context} from 'vega-runtime';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 
@@ -31,6 +32,20 @@ function functions(fn, ctx) {
       + 'event.touches[1].clientY - event.touches[0].clientY,'
       + 'event.touches[1].clientX - event.touches[0].clientX'
       + ')';
+  };
+
+  fn.open = function(uri, name) {
+    if (typeof window !== 'undefined' && window && window.open) {
+      var opt = ctx.dataflow.loadOptions(),
+          url = load.sanitize(uri, extend({type:'open', name:name}, opt));
+      if (url) {
+        window.open(url, name);
+      } else {
+        error('Invalid URL: ' + opt.url);
+      }
+    } else {
+      error('Open function can only be invoked in a browser.');
+    }
   };
 
   fn.span = function(array) {
