@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {error, inherits} from 'vega-util';
+import {error, inherits, isFunction} from 'vega-util';
 import {projection, properties} from './projections';
 
 /**
@@ -20,11 +20,11 @@ prototype.transform = function(_) {
   if (!proj || _.modified('type')) {
     this.value = (proj = create(_.type));
     properties.forEach(function(prop) {
-      if (_[prop] != null) proj[prop](_[prop]);
+      if (_[prop] != null) set(proj, prop, _[prop]);
     });
   } else {
     properties.forEach(function(prop) {
-      if (_.modified(prop)) proj[prop](_[prop]);
+      if (_.modified(prop)) set(proj, prop, _[prop]);
     });
   }
 };
@@ -33,4 +33,8 @@ function create(type) {
   var constructor = projection((type || 'mercator').toLowerCase());
   if (!constructor) error('Unrecognized projection type: ' + type);
   return constructor();
+}
+
+function set(proj, key, value) {
+   if (isFunction(proj[key])) proj[key](value);
 }
