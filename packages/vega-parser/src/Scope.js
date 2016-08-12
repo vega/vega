@@ -5,11 +5,12 @@ import {
 } from './util';
 
 import {Compare, Field, Key, Projection, Scale, Sieve} from './transforms';
-import {array, error, isString, peek} from 'vega-util';
+import {array, error, extend, isString, peek} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
 
+  this.bindings = [];
   this.field = {};
   this.signals = {};
   this.scales = {};
@@ -65,7 +66,8 @@ prototype.toRuntime = function() {
     background: this.background,
     operators:  this.operators,
     streams:    this.streams,
-    updates:    this.updates
+    updates:    this.updates,
+    bindings:   this.bindings
   };
 };
 
@@ -245,6 +247,11 @@ prototype.signalRef = function(name) {
 
 prototype.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
+};
+
+prototype.addBinding = function(name, bind) {
+  if (!this.bindings) error('Nested signals do not support binding.');
+  this.bindings.push(extend({signal: name}, bind));
 };
 
 // ----
