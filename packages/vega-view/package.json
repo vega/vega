@@ -19,7 +19,7 @@
     "url": "https://github.com/uwdata/vega-view.git"
   },
   "scripts": {
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-color:d3,d3-format:d3,d3-time-format:d3,vega-dataflow:vega,vega-runtime:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega -o build/vega-view.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-color:d3,d3-format:d3,d3-time-format:d3,vega-dataflow:vega,vega-loader:vega,vega-runtime:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega -o build/vega-view.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run test && uglifyjs build/vega-view.js -c -m -o build/vega-view.min.js",
     "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-view.zip -- LICENSE README.md build/vega-view.js build/vega-view.min.js"
@@ -30,6 +30,7 @@
     "d3-format": "1",
     "d3-time-format": "2",
     "vega-dataflow": "2",
+    "vega-loader": "1",
     "vega-runtime": "1",
     "vega-scenegraph": "2",
     "vega-util": "1"
