@@ -8,12 +8,11 @@ import parseMark from './mark';
 import parseAxis from './axis';
 import {array} from 'vega-util';
 
-export default function(spec, scope, defined) {
-  defined = defined || {};
+export default function(spec, scope, preprocessed) {
   var signals = array(spec.signals);
 
-  signals.forEach(function(_) {
-    if (!defined[_.name]) parseSignal(_, scope);
+  if (!preprocessed) signals.forEach(function(_) {
+    parseSignal(_, scope);
   });
 
   array(spec.projections).forEach(function(_) {
