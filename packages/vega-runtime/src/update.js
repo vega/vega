@@ -19,8 +19,6 @@ export default function(spec, ctx) {
     target = ctx.get(spec.target);
   }
 
-  if (!target) error('Target not defined: ' + spec.target);
-
   if (update && update.$expr) {
     if (update.$params) {
       params = parseParameters(update.$params, ctx);
