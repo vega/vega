@@ -19,25 +19,25 @@ context.moveTo = add;
 context.lineTo = add;
 
 context.rect = function(x, y, w, h) {
-  bounds.add(x, y);
-  bounds.add(x + w, y + h);
+  add(x, y);
+  add(x + w, y + h);
 };
 
 context.quadraticCurveTo = function(x1, y1, x2, y2) {
-  bounds.add(x1, y1);
-  bounds.add(x2, y2);
+  add(x1, y1);
+  add(x2, y2);
 };
 
 context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
-  bounds.add(x1, y1);
-  bounds.add(x2, y2);
-  bounds.add(x3, y3);
+  add(x1, y1);
+  add(x2, y2);
+  add(x3, y3);
 };
 
 context.arc = function(cx, cy, r, sa, ea, ccw) {
   if (r === tau) {
-    bounds.add(cx - r, cy - r);
-    bounds.add(cx + r, cy + r);
+    add(cx - r, cy - r);
+    add(cx + r, cy + r);
     return;
   }
 
@@ -64,6 +64,6 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     for (i=0; i<4 && s<ea; ++i, s+=halfPi) update(s);
   }
 
-  bounds.add(cx + xmin, cy + ymin);
-  bounds.add(cx + xmax, cy + ymax);
+  add(cx + xmin, cy + ymin);
+  add(cx + xmax, cy + ymax);
 };
