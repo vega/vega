@@ -55,7 +55,7 @@ export var functions = function(codegen) {
   fn.pinchAngle    = 'this.pinchAngle';
 
   // environment functions
-  fn.open   = 'window.open';
+  fn.open   = 'this.open';
   fn.screen = function() { return 'window.screen'; };
   fn.windowsize = function() {
     return '[window.innerWidth, window.innerHeight]';
