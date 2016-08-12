@@ -19,10 +19,12 @@ var prototype = inherits(Encode, Transform);
 
 prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
+      encode = pulse.encode,
+      reenter = encode === 'enter',
       update = _.encoders.update || falsy,
       enter = _.encoders.enter || falsy,
       exit = _.encoders.exit || falsy,
-      set = (pulse.encode ? _.encoders[pulse.encode] : update) || falsy;
+      set = (encode && !reenter ? _.encoders[encode] : update) || falsy;
 
   if (enter !== falsy || update !== falsy) {
     pulse.visit(pulse.ADD, function(t) {
@@ -38,11 +40,17 @@ prototype.transform = function(_, pulse) {
     });
   }
 
-  if (set !== falsy) {
+  if (reenter || set !== falsy) {
     var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
-    pulse.visit(flag, function(t) {
-      if (set(t, _)) { out.mod.push(t); }
-    });
+    pulse.visit(flag, reenter
+      ? function(t) {
+          var mod = enter(t, _);
+          if (set(t, _) || mod) out.mod.push(t);
+        }
+      : function(t) {
+          if (set(t, _)) out.mod.push(t);
+        }
+    );
   }
 
   return out;
