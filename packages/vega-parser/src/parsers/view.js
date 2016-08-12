@@ -1,4 +1,5 @@
 import parsePadding from './padding';
+import parseSignal from './signal';
 import parseSpec from './spec';
 import {encoders, extendEncode} from './encode/encode-util';
 import {GroupMark} from './marks/marktypes';
@@ -6,7 +7,9 @@ import {FrameRole} from './marks/roles';
 import {ref, operator} from '../util';
 import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
-import {toSet} from 'vega-util';
+import {array, toSet} from 'vega-util';
+
+var defined = toSet(['width', 'height', 'padding']);
 
 export default function parseView(spec, scope) {
   var op, input, encode, parent, root;
@@ -16,6 +19,10 @@ export default function parseView(spec, scope) {
   scope.addSignal('width', spec.width || -1);
   scope.addSignal('height', spec.height || -1);
   scope.addSignal('padding', parsePadding(spec.padding));
+
+  array(spec.signals).forEach(function(_) {
+    if (!defined[_.name]) parseSignal(_, scope);
+  });
 
   // Store root group item
   input = scope.add(Collect());
@@ -40,7 +47,7 @@ export default function parseView(spec, scope) {
 
   // Parse remainder of specification
   scope.pushState(ref(encode), ref(parent));
-  parseSpec(spec, scope, toSet(['width', 'height', 'padding']));
+  parseSpec(spec, scope, true);
 
   // Bound / render / sieve root item
   op = scope.add(Bound({mark: root, pulse: ref(parent)}));
