@@ -22,6 +22,7 @@ export var properties = [
   'translate',
   'center',
   'rotate',
+  'parallels',
   'precision',
 
   // extended properties in d3-geo-projections
