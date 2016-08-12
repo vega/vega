@@ -56,12 +56,13 @@ tape('Parser parses Vega specs with scales', function(test) {
 
   test.equal(dfs.operators.length, 25);
   test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
-    ['Operator', 'Operator', 'Operator', 'Operator',
+    ['Operator', 'Operator', 'Operator',
+     'Operator', 'Operator', 'Operator', 'Operator',
      'Collect', 'Encode', 'ViewLayout', 'Sieve',
-     'Operator', 'Operator', 'Operator', 'Collect', 'Sieve',
+     'Collect', 'Sieve',
      'Field', 'Aggregate', 'Collect', 'Compare', 'Values', 'Scale',
      'Extent', 'Scale', 'Scale',
-     'Bound', 'Render', 'Sieve']);
+     'Bound', 'Render', 'Sieve' ]);
 
   test.end();
 });
