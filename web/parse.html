@@ -225,7 +225,7 @@ var runtimeSpec = vega.parse({
       "type": "rect",
       "from": {"data": "values"},
       "encode": {
-        "update": {
+        "enter": {
           "x": {"scale": "xscale", "field": "x"},
           "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "y"},
@@ -237,6 +237,8 @@ var runtimeSpec = vega.parse({
             "a": {"value": 100},
             "b": {"value": -20}
           }},
+        },
+        "update": {
           "strokeWidth": [
             {"test": "datum===active", "value": 5},
             {"value": 0}
