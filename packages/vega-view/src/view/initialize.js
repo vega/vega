@@ -38,5 +38,10 @@ export default function(el) {
     : initializeRenderer(view, view._renderer, el, Renderer);
   view._handler = initializeHandler(view, view._handler, el, Handler);
 
+  // initialize view bindings
+  if (el && view._bind) view._bind.forEach(function(binding) {
+    view.bind(binding.element || el, binding);
+  });
+
   return view;
 }
