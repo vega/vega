@@ -1,29 +1,29 @@
+import {reverse} from '../iterate';
+
 var trueFunc = function() { return true; };
 
 export function pick(test) {
   if (!test) test = trueFunc;
 
   return function(context, scene, x, y, gx, gy) {
-    var items = scene.items, item, b, i;
-    if (!items.length) return null;
+    var items = scene.items,
+        retval = null;
+    if (!items.length) return retval;
 
     if (context.pixelRatio > 1) {
       x *= context.pixelRatio;
       y *= context.pixelRatio;
     }
 
-    for (i=items.length; --i >= 0;) {
-      item = items[i];
-      b = item.bounds;
-
+    reverse(items, function(item) {
+      var b = item.bounds;
       // first hit test against bounding box
-      if ((b && !b.contains(gx, gy)) || !b) continue;
-
+      if ((b && !b.contains(gx, gy)) || !b) return;
       // if in bounding box, perform more careful test
-      if (test(context, item, x, y, gx, gy)) return item;
-    }
+      if (test(context, item, x, y, gx, gy)) return retval = item, 1;
+    });
 
-    return null;
+    return retval;
   };
 }
 

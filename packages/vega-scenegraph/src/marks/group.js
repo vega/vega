@@ -1,10 +1,9 @@
 import {rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
+import {forward, reverse} from '../util/iterate';
 import translateItem from '../util/svg/translateItem';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
-
-var EMPTY = [];
 
 function attr(emit, item, renderer) {
   var id = null, defs, c;
@@ -48,18 +47,17 @@ function bound(bounds, group) {
 
 function draw(context, scene, bounds) {
   var renderer = this,
-      groups = scene.items,
-      group, items, gx, gy, offset, w, h, opacity, i, n, j, m;
+      groups = scene.items;
 
   if (!groups || !groups.length) return;
 
-  for (i=0, n=groups.length; i<n; ++i) {
-    group = groups[i];
-    items = group.items || EMPTY;
-    gx = group.x || 0;
-    gy = group.y || 0;
-    w = group.width || 0;
-    h = group.height || 0;
+  forward(groups, function(group) {
+    var items = group.items,
+        gx = group.x || 0,
+        gy = group.y || 0,
+        w = group.width || 0,
+        h = group.height || 0,
+        offset, opacity;
 
     // setup graphics context
     context.save();
@@ -90,31 +88,31 @@ function draw(context, scene, bounds) {
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents
-    for (j=0, m=items.length; j<m; ++j) {
-      renderer.draw(context, items[j], bounds);
-    }
+    if (items) forward(items, function(item) {
+      renderer.draw(context, item, bounds);
+    });
 
     // restore graphics context
     if (bounds) bounds.translate(gx, gy);
     context.restore();
-  }
+  });
 }
 
 function pick(context, scene, x, y, gx, gy) {
-  if (scene.bounds && !scene.bounds.contains(gx, gy)) {
+  if (scene.bounds && !scene.bounds.contains(gx, gy) || !scene.items) {
     return null;
   }
 
-  var groups = scene.items || EMPTY,
-      subscene, group, items, hit, hits, dx, dy, i, j, b;
+  var renderer = this,
+      retval = null;
 
-  for (i=groups.length; --i>=0;) {
-    group = groups[i];
+  reverse(scene.items, function(group) {
+    var items, hit, hits, dx, dy, b;
 
     // first hit test against bounding box
     // if a group is clipped, that should be handled by the bounds check.
     b = group.bounds;
-    if (b && !b.contains(gx, gy)) continue;
+    if (b && !b.contains(gx, gy)) return;
 
     // passed bounds check, so test sub-groups
     dx = (group.x || 0);
@@ -126,13 +124,18 @@ function pick(context, scene, x, y, gx, gy) {
     dx = gx - dx;
     dy = gy - dy;
 
-    items = group.items || EMPTY;
-    for (j=items.length; --j>=0;) {
-      subscene = items[j];
-      if (subscene.interactive !== false) {
-        hits = this.pick(subscene, x, y, dx, dy);
-        if (hits) { context.restore(); return hits; }
-      }
+    items = group.items;
+    if (items) {
+      reverse(items, function(subscene) {
+        if (subscene.interactive !== false) {
+          hits = renderer.pick(subscene, x, y, dx, dy);
+          if (hits) {
+            context.restore();
+            return retval = hits, true;
+          }
+        }
+      });
+      if (retval) return true;
     }
 
     context.restore();
@@ -143,10 +146,10 @@ function pick(context, scene, x, y, gx, gy) {
       && dx <= group.width
       && dy >= 0
       && dy <= group.height;
-    if (hit) return group;
-  }
+    if (hit) return retval = group, true;
+  });
 
-  return null;
+  return retval;
 }
 
 export default {
