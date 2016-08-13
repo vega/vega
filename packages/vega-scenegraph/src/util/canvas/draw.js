@@ -1,5 +1,6 @@
 import fill from './fill';
 import stroke from './stroke';
+import {forward} from '../iterate';
 
 function drawPathOne(path, context, item, items) {
   if (path(context, items)) return;
@@ -16,13 +17,11 @@ function drawPathOne(path, context, item, items) {
 }
 
 function drawPathAll(path, context, scene, bounds) {
-  var i, n, item;
-  for (i=0, n=scene.items.length; i<n; ++i) {
-    item = scene.items[i];
+  forward(scene.items, function(item) {
     if (!bounds || bounds.intersects(item.bounds)) {
       drawPathOne(path, context, item, item);
     }
-  }
+  });
 }
 
 export function drawAll(pathFunc) {

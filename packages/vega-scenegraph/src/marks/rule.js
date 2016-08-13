@@ -1,4 +1,5 @@
 import boundStroke from '../bound/boundStroke';
+import {forward} from '../util/iterate';
 import translateItem from '../util/svg/translateItem';
 import stroke from '../util/canvas/stroke';
 import {pick} from '../util/canvas/pick';
@@ -36,20 +37,16 @@ function path(context, item, opacity) {
 }
 
 function draw(context, scene, bounds) {
-  var items = scene.items,
-      item, opacity, i, n;
-
+  var items = scene.items;
   if (!items || !items.length) return;
 
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    if (bounds && !bounds.intersects(item.bounds)) continue; // bounds check
-
-    opacity = item.opacity == null ? 1 : item.opacity;
+  forward(items, function(item) {
+    if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
+    var opacity = item.opacity == null ? 1 : item.opacity;
     if (opacity && path(context, item, opacity)) {
       context.stroke();
     }
-  }
+  });
 }
 
 function hit(context, item, x, y) {

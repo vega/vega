@@ -1,4 +1,5 @@
 import Bounds from '../Bounds';
+import {forward} from '../util/iterate';
 import {font, offset, width, height, textValue} from '../util/text';
 import translate from '../util/svg/translate';
 import stroke from '../util/canvas/stroke';
@@ -72,18 +73,16 @@ function bound(bounds, item, noRotate) {
 }
 
 function draw(context, scene, bounds) {
-  var items = scene.items,
-      item, opacity, x, y, r, t, str, i, n;
-
+  var items = scene.items;
   if (!items || !items.length) return;
 
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    if (bounds && !bounds.intersects(item.bounds)) continue; // bounds check
-    if (!(str = textValue(item.text))) continue; // get text string
+  forward(items, function(item) {
+    var opacity, x, y, r, t, str;
+    if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
+    if (!(str = textValue(item.text))) return; // get text string
 
     opacity = item.opacity == null ? 1 : item.opacity;
-    if (opacity === 0) continue;
+    if (opacity === 0) return;
 
     context.font = font(item);
     context.textAlign = item.align || 'left';
@@ -112,7 +111,7 @@ function draw(context, scene, bounds) {
       context.strokeText(str, x, y);
     }
     if (item.angle) context.restore();
-  }
+  });
 }
 
 function hit(context, item, x, y, gx, gy) {

@@ -1,3 +1,4 @@
+import {forward} from '../util/iterate';
 import translate from '../util/svg/translate';
 import {pick} from '../util/canvas/pick';
 
@@ -49,16 +50,14 @@ function bound(bounds, item) {
 }
 
 function draw(context, scene, bounds) {
-  var items = scene.items,
-      item, i, n;
-
+  var renderer = this,
+      items = scene.items;
   if (!items || !items.length) return;
 
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    if (bounds && !bounds.intersects(item.bounds)) continue; // bounds check
+  forward(items, function(item) {
+    if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
-    var image = getImage(item, this),
+    var image = getImage(item, renderer),
         x = item.x || 0,
         y = item.y || 0,
         w = item.width || image.width || 0,
@@ -72,7 +71,7 @@ function draw(context, scene, bounds) {
       context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
       context.drawImage(image, x, y, w, h);
     }
-  }
+  });
 }
 
 export default {

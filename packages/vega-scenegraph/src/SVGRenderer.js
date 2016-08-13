@@ -1,10 +1,10 @@
 import Renderer from './Renderer';
 import marks from './marks/index';
-
 import inherits from './util/inherits';
 import {child, clear, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
+import {forward} from './util/iterate';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 
@@ -229,13 +229,14 @@ function dirtyParents(item, id) {
 prototype.drawMark = function(el, scene, index, mdef) {
   if (!this.isDirty(scene)) return;
 
-  var items = mdef.nested ?
+  var renderer = this,
+      items = mdef.nested ?
         (scene.items && scene.items.length ? [scene.items[0]] : []) :
         scene.items || [],
       events = scene.interactive === false ? 'none' : null,
       isGroup = (mdef.tag === 'g'),
       className = cssClass(scene),
-      p, i, n, c, d, insert;
+      i = 0, p;
 
   p = child(el, index+1, 'g', ns, className);
   p.setAttribute('class', className);
@@ -244,30 +245,33 @@ prototype.drawMark = function(el, scene, index, mdef) {
     p.style.setProperty('pointer-events', events);
   }
 
-  for (i=0, n=items.length; i<n; ++i) {
-    if (this.isDirty(d = items[i])) {
-      insert = !(this._dirtyAll || d._svg);
-      c = bind(p, mdef, d, i, insert);
-      this._update(mdef, c, d);
+  forward(items, function(d) {
+    if (renderer.isDirty(d)) {
+      var insert = !(renderer._dirtyAll || d._svg),
+          c = bind(p, mdef, d, i, insert);
+      renderer._update(mdef, c, d);
       if (isGroup) {
-        if (insert) this._dirtyAll = true;
-        this._recurse(c, d);
-        if (insert) this._dirtyAll = false;
+        if (insert) renderer._dirtyAll = true;
+        renderer._recurse(c, d);
+        if (insert) renderer._dirtyAll = false;
       }
     }
-  }
+    ++i;
+  });
+
   clear(p, i);
   return p;
 };
 
 // Recursively process group contents.
 prototype._recurse = function(el, group) {
-  var items = group.items || [],
-      idx = 0, j, m;
+  var renderer = this,
+      items = group.items,
+      idx = 0;
 
-  for (j=0, m=items.length; j<m; ++j) {
-    this.draw(el, items[j], idx++);
-  }
+  if (items) forward(items, function(item) {
+    renderer.draw(el, item, idx++);
+  });
 
   // remove any extraneous DOM elements
   clear(el, 1 + idx);
