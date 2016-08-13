@@ -1,4 +1,5 @@
 import parseTransform from './transform';
+import parseModify from './modify';
 import {ref} from '../util';
 import {Collect, NoOp, Relay, Sieve} from '../transforms';
 
@@ -8,6 +9,12 @@ export default function parseData(data, scope) {
   if (data.transform) {
     data.transform.forEach(function(tx) {
       transforms.push(parseTransform(tx, scope));
+    });
+  }
+
+  if (data.on) {
+    data.on.forEach(function(on) {
+      parseModify(on, scope, data.name);
     });
   }
 

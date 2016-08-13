@@ -30,6 +30,7 @@ export var functions = function(codegen) {
   fn.x      = eventPrefix + 'x';
   fn.y      = eventPrefix + 'y';
   fn.encode = 'this.encode';
+  fn.modify = 'this.modify';
 
   // format functions
   fn.format = 'this.format';
