@@ -1,7 +1,7 @@
 import formats from './formats';
 import {transforms} from 'vega-dataflow';
 import {load} from 'vega-loader';
-import {error, extend, isArray, isObject, isString} from 'vega-util';
+import {error, extend, isArray, isObject, isString, truthy} from 'vega-util';
 import {parse, context} from 'vega-runtime';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 
@@ -75,8 +75,9 @@ function functions(fn, ctx) {
   };
 
   fn.indata = function(name, field, value) {
-    var index = ctx.data['index:' + field];
-    return index ? !!index.value.get(value) : undefined;
+    var index = ctx.data[name]['index:' + field],
+        entry = index ? index.value[value] : undefined;
+    return entry ? entry.count : entry;
   };
 
   fn.encode = function(item, name, retval) {
@@ -86,6 +87,50 @@ function functions(fn, ctx) {
       df.pulse(target, df.changeset().encode(item, name));
     }
     return retval !== undefined ? retval : item;
+  };
+
+  fn.modify = function(name, insert, remove, toggle) {
+    var df = ctx.dataflow,
+        data = ctx.data[name],
+        input = data.input,
+        changes = data.changes,
+        stamp = df.stamp();
+
+    if (!(input.value.length || insert || toggle)) {
+      // nothing to do!
+      return 0;
+    }
+
+    if (!changes || changes.stamp < stamp) {
+      data.changes = (changes = df.changeset());
+      changes.stamp = stamp;
+      df.runAfter(function() { df.pulse(input, changes).run(); });
+    }
+
+    if (remove) {
+      changes.remove(remove === true ? truthy : remove);
+    }
+
+    if (insert) {
+      changes.insert(insert);
+    }
+
+    if (toggle) {
+      var predicate = function(_) {
+        for (var key in toggle) {
+          if (_[key] !== toggle[key]) return false;
+        }
+        return true;
+      };
+
+      if (input.value.filter(predicate).length) {
+        changes.remove(predicate);
+      } else {
+        changes.insert(toggle);
+      }
+    }
+
+    return 1;
   };
 
   return ctx;
