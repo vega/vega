@@ -148,7 +148,8 @@ var MARK_BASE = {
     "items": {
       "type": "array",
       "items": { "$ref": "#/refs/item-" }
-    }
+    },
+    "zindex": { "type": "number" }
   },
   "required": [ "marktype" ]
 };
@@ -168,7 +169,8 @@ var ITEM_BASE = {
     "strokeWidth": { "type": "number", "default": 1 },
     "strokeCap": { "enum": [ "butt", "cap", "round" ], "default": "butt" },
     "strokeDash": { "type": "array", "items": { "type": "number" } },
-    "strokeDashOffset": { "type": "number", "default": 0 }
+    "strokeDashOffset": { "type": "number", "default": 0 },
+    "zindex": { "type": "number" }
   }
 };
 

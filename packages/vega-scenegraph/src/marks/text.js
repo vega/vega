@@ -1,10 +1,10 @@
 import Bounds from '../Bounds';
-import {forward} from '../util/iterate';
 import {font, offset, width, height, textValue} from '../util/text';
-import translate from '../util/svg/translate';
-import stroke from '../util/canvas/stroke';
+import {visit} from '../util/visit';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
+import stroke from '../util/canvas/stroke';
+import translate from '../util/svg/translate';
 
 var textAlign = {
   'left':   'start',
@@ -73,10 +73,7 @@ function bound(bounds, item, noRotate) {
 }
 
 function draw(context, scene, bounds) {
-  var items = scene.items;
-  if (!items || !items.length) return;
-
-  forward(items, function(item) {
+  visit(scene, function(item) {
     var opacity, x, y, r, t, str;
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     if (!(str = textValue(item.text))) return; // get text string

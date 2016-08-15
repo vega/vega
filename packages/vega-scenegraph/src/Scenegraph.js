@@ -29,6 +29,7 @@ prototype.mark = function(scenepath, markdef) {
     if (!mark) {
       mark = createMark(markdef, item);
       item.items[markpath[i]] = mark;
+      if (mark.zindex) mark.group.zdirty = true;
       return mark;
     }
 
@@ -51,6 +52,7 @@ function createMark(def, group) {
     items:       [],
     marktype:    def.marktype,
     name:        def.name || undefined,
-    role:        def.role || undefined
+    role:        def.role || undefined,
+    zindex:      def.zindex || undefined
   };
 }

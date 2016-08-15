@@ -1,8 +1,8 @@
 import boundStroke from '../bound/boundStroke';
 import context from '../bound/boundContext';
-import translateItem from '../util/svg/translateItem';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
+import translateItem from '../util/svg/translateItem';
 
 export default function(type, shape) {
 

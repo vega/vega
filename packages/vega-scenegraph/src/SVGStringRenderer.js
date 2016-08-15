@@ -1,10 +1,10 @@
 import Renderer from './Renderer';
 import marks from './marks/index';
-
 import inherits from './util/inherits';
 import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
+import {visit} from './util/visit';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 
@@ -126,16 +126,12 @@ prototype.attributes = function(attr, item) {
 };
 
 prototype.mark = function(scene) {
-  var mdef = marks[scene.marktype],
+  var renderer = this,
+      mdef = marks[scene.marktype],
       tag  = mdef.tag,
-      attr = mdef.attr,
-      nest = mdef.nested || false,
-      data = nest ?
-          (scene.items && scene.items.length ? [scene.items[0]] : []) :
-          (scene.items || []),
       defs = this._defs,
       str = '',
-      style, i, item;
+      style;
 
   if (tag !== 'g' && scene.interactive === false) {
     style = 'style="pointer-events: none;"';
@@ -147,21 +143,26 @@ prototype.mark = function(scene) {
   }, style);
 
   // render contained elements
-  for (i=0; i<data.length; ++i) {
-    item = data[i];
+  function process(item) {
     style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
-    str += openTag(tag, this.attributes(attr, item), style);
+    str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
     if (tag === 'text') {
       str += escape_text(textValue(item.text));
     } else if (tag === 'g') {
       str += openTag('path',
-        this.attributes(mdef.background, item),
+        renderer.attributes(mdef.background, item),
         applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
-      str += this.markGroup(item);
+      str += renderer.markGroup(item);
     }
 
     str += closeTag(tag);
+  }
+
+  if (mdef.nested) {
+    if (scene.items && scene.items.length) process(scene.items[0]);
+  } else {
+    visit(scene, process);
   }
 
   // render closing group tag
@@ -169,13 +170,12 @@ prototype.mark = function(scene) {
 };
 
 prototype.markGroup = function(scene) {
-  var str = '',
-      items = scene.items || [],
-      j, m;
+  var renderer = this,
+      str = '';
 
-  for (j=0, m=items.length; j<m; ++j) {
-    str += this.mark(items[j]);
-  }
+  visit(scene, function(item) {
+    str += renderer.mark(item);
+  });
 
   return str;
 };

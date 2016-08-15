@@ -72,8 +72,8 @@ tape('SVGRenderer should support argument free constructor', function(test) {
 
 tape('SVGRenderer should behave when dom element is not provided', function(test) {
   var r = new Renderer().initialize(null, 100, 100, null);
-  test.equal(r._svg, undefined);
-  test.equal(r._root, undefined);
+  test.equal(r._svg, null);
+  test.equal(r._root, null);
   test.equal(r.svg(), null);
   test.equal(r.background('blue').background(), 'blue');
 
@@ -103,10 +103,10 @@ tape('SVGRenderer should support clipping and gradients', function(test) {
   svg = compensate(r.render(scene).svg());
   test.equal(svg, file);
 
-  var scene2 = loadScene('scenegraph-defs.json');
-  scene2.items[0].clip = false;
-  scene2.items[0].fill = 'red';
-  svg = compensate(r.render(scene2).svg());
+  scene = loadScene('scenegraph-defs.json');
+  scene.items[0].clip = false;
+  scene.items[0].fill = 'red';
+  svg = compensate(r.render(scene).svg());
   file = load('svg/scenegraph-defs2.svg');
   test.equal(svg, file);
   test.end();
