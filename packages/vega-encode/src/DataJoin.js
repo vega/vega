@@ -20,7 +20,7 @@ function defaultItemCreate() {
 }
 
 prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       item = _.item || defaultItemCreate,
       key = _.key || tupleid,
       map = this.value;
