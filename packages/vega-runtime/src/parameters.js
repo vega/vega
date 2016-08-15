@@ -101,6 +101,7 @@ function getEncode(_, ctx) {
   for (name in spec) {
     enc = spec[name];
     encode[name] = accessor(encodeExpression(enc.$expr, ctx), enc.$fields);
+    encode[name].output = enc.$output;
   }
   return encode;
 }
