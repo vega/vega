@@ -27,6 +27,7 @@ export default function parseEncode(encode, marktype, params, scope) {
 
   return {
     $expr:   code,
-    $fields: Object.keys(fields)
+    $fields: Object.keys(fields),
+    $output: Object.keys(encode)
   };
 }
