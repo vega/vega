@@ -25,4 +25,10 @@ prototype.transform = function(_, pulse) {
   if (pulse.changed(pulse.MOD)) {
     view.enqueue(pulse.materialize(pulse.MOD).mod);
   }
+
+  // set z-index dirty flag as needed
+  if (pulse.fields && pulse.fields['zindex']) {
+    var item = pulse.source && pulse.source[0];
+    if (item) item.mark.zdirty = true;
+  }
 };
