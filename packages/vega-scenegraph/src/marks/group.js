@@ -1,9 +1,9 @@
 import {rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
-import {forward, reverse} from '../util/iterate';
-import translateItem from '../util/svg/translateItem';
+import {visit, pickVisit} from '../util/visit';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
+import translateItem from '../util/svg/translateItem';
 
 function attr(emit, item, renderer) {
   var id = null, defs, c;
@@ -46,14 +46,10 @@ function bound(bounds, group) {
 }
 
 function draw(context, scene, bounds) {
-  var renderer = this,
-      groups = scene.items;
+  var renderer = this;
 
-  if (!groups || !groups.length) return;
-
-  forward(groups, function(group) {
-    var items = group.items,
-        gx = group.x || 0,
+  visit(scene, function(group) {
+    var gx = group.x || 0,
         gy = group.y || 0,
         w = group.width || 0,
         h = group.height || 0,
@@ -88,7 +84,7 @@ function draw(context, scene, bounds) {
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents
-    if (items) forward(items, function(item) {
+    visit(group, function(item) {
       renderer.draw(context, item, bounds);
     });
 
@@ -103,11 +99,10 @@ function pick(context, scene, x, y, gx, gy) {
     return null;
   }
 
-  var renderer = this,
-      retval = null;
+  var renderer = this;
 
-  reverse(scene.items, function(group) {
-    var items, hit, hits, dx, dy, b;
+  return pickVisit(scene, function(group) {
+    var hit, dx, dy, b;
 
     // first hit test against bounding box
     // if a group is clipped, that should be handled by the bounds check.
@@ -124,21 +119,14 @@ function pick(context, scene, x, y, gx, gy) {
     dx = gx - dx;
     dy = gy - dy;
 
-    items = group.items;
-    if (items) {
-      reverse(items, function(subscene) {
-        if (subscene.interactive !== false) {
-          hits = renderer.pick(subscene, x, y, dx, dy);
-          if (hits) {
-            context.restore();
-            return retval = hits, true;
-          }
-        }
-      });
-      if (retval) return true;
-    }
+    hit = pickVisit(group, function(subscene) {
+      if (subscene.interactive !== false) {
+        return renderer.pick(subscene, x, y, dx, dy);
+      }
+    });
 
     context.restore();
+    if (hit) return hit;
 
     hit = scene.interactive !== false
       && (group.fill || group.stroke)
@@ -146,10 +134,9 @@ function pick(context, scene, x, y, gx, gy) {
       && dx <= group.width
       && dy >= 0
       && dy <= group.height;
-    if (hit) return retval = group, true;
-  });
 
-  return retval;
+    return hit ? group : null;
+  });
 }
 
 export default {

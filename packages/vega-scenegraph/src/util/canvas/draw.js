@@ -1,40 +1,36 @@
 import fill from './fill';
 import stroke from './stroke';
-import {forward} from '../iterate';
+import {visit} from '../visit';
 
-function drawPathOne(path, context, item, items) {
-  if (path(context, items)) return;
+export function drawAll(path) {
+  return function(context, scene, bounds) {
+    visit(scene, function(item) {
+      if (!bounds || bounds.intersects(item.bounds)) {
+        drawPath(path, context, item, item);
+      }
+    });
+  };
+}
 
+export function drawOne(path) {
+  return function(context, scene, bounds) {
+    if (scene.items.length && (!bounds || bounds.intersects(scene.bounds))) {
+      drawPath(path, context, scene.items[0], scene.items);
+    }
+  };
+}
+
+function drawPath(path, context, item, items) {
   var opacity = item.opacity == null ? 1 : item.opacity;
   if (opacity === 0) return;
+
+  if (path(context, items)) return;
 
   if (item.fill && fill(context, item, opacity)) {
     context.fill();
   }
+
   if (item.stroke && stroke(context, item, opacity)) {
     context.stroke();
   }
-}
-
-function drawPathAll(path, context, scene, bounds) {
-  forward(scene.items, function(item) {
-    if (!bounds || bounds.intersects(item.bounds)) {
-      drawPathOne(path, context, item, item);
-    }
-  });
-}
-
-export function drawAll(pathFunc) {
-  return function(context, scene, bounds) {
-    drawPathAll(pathFunc, context, scene, bounds);
-  };
-}
-
-export function drawOne(pathFunc) {
-  return function(context, scene, bounds) {
-    if (!scene.items.length) return;
-    if (!bounds || bounds.intersects(scene.bounds)) {
-      drawPathOne(pathFunc, context, scene.items[0], scene.items);
-    }
-  };
 }

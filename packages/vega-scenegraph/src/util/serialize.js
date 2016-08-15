@@ -1,7 +1,7 @@
 import boundMark from '../bound/boundMark';
 
 var keys = [
-  'marktype', 'name', 'interactive', 'clip', 'items',
+  'marktype', 'name', 'interactive', 'clip', 'items', 'zindex',
   'x', 'y', 'width', 'height', 'align', 'baseline',             // layout
   'fill', 'fillOpacity', 'opacity',                             // fill
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
@@ -29,14 +29,14 @@ export function fromJSON(json) {
 function initialize(scene) {
   var type = scene.marktype,
       items = scene.items,
-      i, n;
+      parent, i, n;
 
   if (items) {
     for (i=0, n=items.length; i<n; ++i) {
-      items[i][type ? 'mark' : 'group'] = scene;
-      if (!type || type === 'group') {
-        initialize(items[i]);
-      }
+      parent = type ? 'mark' : 'group';
+      items[i][parent] = scene;
+      if (items[i].zindex) items[i][parent].zdirty = true;
+      if ('group' === (type || parent)) initialize(items[i]);
     }
   }
 

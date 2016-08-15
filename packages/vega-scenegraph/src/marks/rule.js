@@ -1,8 +1,8 @@
 import boundStroke from '../bound/boundStroke';
-import {forward} from '../util/iterate';
-import translateItem from '../util/svg/translateItem';
-import stroke from '../util/canvas/stroke';
+import {visit} from '../util/visit';
 import {pick} from '../util/canvas/pick';
+import stroke from '../util/canvas/stroke';
+import translateItem from '../util/svg/translateItem';
 
 function attr(emit, item) {
   emit('transform', translateItem(item));
@@ -37,10 +37,7 @@ function path(context, item, opacity) {
 }
 
 function draw(context, scene, bounds) {
-  var items = scene.items;
-  if (!items || !items.length) return;
-
-  forward(items, function(item) {
+  visit(scene, function(item) {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     var opacity = item.opacity == null ? 1 : item.opacity;
     if (opacity && path(context, item, opacity)) {

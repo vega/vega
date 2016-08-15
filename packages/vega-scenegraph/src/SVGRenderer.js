@@ -1,10 +1,10 @@
 import Renderer from './Renderer';
 import marks from './marks/index';
 import inherits from './util/inherits';
-import {child, clear, cssClass} from './util/dom';
+import {child, clear, create, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
-import {forward} from './util/iterate';
+import {visit} from './util/visit';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 
@@ -13,6 +13,9 @@ var ns = metadata.xmlns;
 export default function SVGRenderer(loadConfig) {
   Renderer.call(this, loadConfig);
   this._dirtyID = 0;
+  this._svg = null;
+  this._root = null;
+  this._defs = null;
 }
 
 var prototype = inherits(SVGRenderer, Renderer);
@@ -20,7 +23,8 @@ var base = Renderer.prototype;
 
 prototype.initialize = function(el, width, height, padding) {
   if (el) {
-    this._svg = child(el, 0, 'svg', ns, 'marks');
+    this._svg = child(el, 0, 'svg', ns);
+    this._svg.setAttribute('class', 'marks');
     clear(el, 1);
     // set the svg root group
     this._root = child(this._svg, 0, 'g', ns);
@@ -78,20 +82,16 @@ prototype.svg = function() {
 // -- Render entry point --
 
 prototype._render = function(scene, items) {
+  // perform spot updates and re-render markup
   if (this._dirtyCheck(items)) {
     if (this._dirtyAll) this._resetDefs();
-    this.draw(this._root, scene, -1);
+    this.draw(this._root, scene);
     clear(this._root, 1);
   }
 
   this.updateDefs();
   return this;
 };
-
-prototype.draw = function(el, scene, index) {
-  this.drawMark(el, scene, index, marks[scene.marktype]);
-};
-
 
 // -- Manage SVG definitions ('defs') block --
 
@@ -102,12 +102,12 @@ prototype.updateDefs = function() {
       index = 0, id;
 
   for (id in defs.gradient) {
-    if (!el) el = (defs.el = child(svg, 0, 'defs', ns));
+    if (!el) defs.el = (el = child(svg, 0, 'defs', ns));
     updateGradient(el, defs.gradient[id], index++);
   }
 
   for (id in defs.clipping) {
-    if (!el) el = (defs.el = child(svg, 0, 'defs', ns));
+    if (!el) defs.el = (el = child(svg, 0, 'defs', ns));
     updateClipping(el, defs.clipping[id], index++);
   }
 
@@ -163,7 +163,9 @@ prototype._resetDefs = function() {
 // -- Manage rendering of items marked as dirty --
 
 prototype.isDirty = function(item) {
-  return this._dirtyAll || item.dirty === this._dirtyID;
+  return this._dirtyAll
+    || !item._svg
+    || item.dirty === this._dirtyID;
 };
 
 prototype._dirtyCheck = function(items) {
@@ -176,18 +178,25 @@ prototype._dirtyCheck = function(items) {
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
     mark = item.mark;
+
     if (mark.marktype !== type) {
       // memoize mark instance lookup
       type = mark.marktype;
       mdef = marks[type];
     }
 
+    if (mark.zdirty && mark.dirty !== id) {
+      this._dirtyAll = false;
+      mark.dirty = id;
+      dirtyParents(mark.group, id);
+    }
+
     if (item.exit) { // EXIT
       if (item._svg) {
-        if (mdef.nested && item.mark.items.length) {
+        if (mdef.nested && mark.items.length) {
           // if nested mark with remaining points, update instead
-          this._update(mdef, item._svg, item.mark.items[0]);
-          o = item.mark.items[0];
+          this._update(mdef, item._svg, mark.items[0]);
+          o = mark.items[0];
           o._svg = item._svg;
           o._update = id;
         } else {
@@ -200,13 +209,15 @@ prototype._dirtyCheck = function(items) {
     }
 
     item = (mdef.nested ? mark.items[0] : item);
-    if (item._update === id) { // Already processed
-      continue;
-    } else if (item._svg) { // UPDATE
-      this._update(mdef, item._svg, item);
-    } else { // ENTER
+    if (item._update === id) continue; // already visited
+
+    if (!item._svg) {
+      // ENTER
       this._dirtyAll = false;
       dirtyParents(item, id);
+    } else {
+      // IN-PLACE UPDATE
+      this._update(mdef, item._svg, item);
     }
     item._update = id;
   }
@@ -226,73 +237,90 @@ function dirtyParents(item, id) {
 // -- Construct & maintain scenegraph to SVG mapping ---
 
 // Draw a mark container.
-prototype.drawMark = function(el, scene, index, mdef) {
-  if (!this.isDirty(scene)) return;
+prototype.draw = function(el, scene, prev) {
+  if (!this.isDirty(scene)) return scene._svg;
 
   var renderer = this,
-      items = mdef.nested ?
-        (scene.items && scene.items.length ? [scene.items[0]] : []) :
-        scene.items || [],
+      mdef = marks[scene.marktype],
       events = scene.interactive === false ? 'none' : null,
-      isGroup = (mdef.tag === 'g'),
-      className = cssClass(scene),
-      i = 0, p;
+      isGroup = mdef.tag === 'g',
+      sibling = null,
+      i = 0,
+      parent;
 
-  p = child(el, index+1, 'g', ns, className);
-  p.setAttribute('class', className);
-  scene._svg = p;
+  parent = bind(scene, el, prev, 'g');
+  parent.setAttribute('class', cssClass(scene));
   if (!isGroup && events) {
-    p.style.setProperty('pointer-events', events);
+    parent.style.setProperty('pointer-events', events);
   }
 
-  forward(items, function(d) {
-    if (renderer.isDirty(d)) {
-      var insert = !(renderer._dirtyAll || d._svg),
-          c = bind(p, mdef, d, i, insert);
-      renderer._update(mdef, c, d);
-      if (isGroup) {
-        if (insert) renderer._dirtyAll = true;
-        renderer._recurse(c, d);
-        if (insert) renderer._dirtyAll = false;
-      }
-    }
-    ++i;
-  });
+  function process(item) {
+    var dirty = renderer.isDirty(item),
+        node = bind(item, parent, sibling, mdef.tag);
 
-  clear(p, i);
-  return p;
+    if (dirty) {
+      renderer._update(mdef, node, item);
+      if (isGroup) recurse(renderer, node, item);
+    }
+
+    sibling = node;
+    ++i;
+  }
+
+  if (mdef.nested) {
+    if (scene.items.length) process(scene.items[0]);
+  } else {
+    visit(scene, process);
+  }
+
+  clear(parent, i);
+  return parent;
 };
 
 // Recursively process group contents.
-prototype._recurse = function(el, group) {
-  var renderer = this,
-      items = group.items,
+function recurse(renderer, el, group) {
+  var prev = el.firstChild, // group background
       idx = 0;
 
-  if (items) forward(items, function(item) {
-    renderer.draw(el, item, idx++);
+  visit(group, function(item) {
+    prev = renderer.draw(el, item, prev);
+    ++idx;
   });
 
   // remove any extraneous DOM elements
   clear(el, 1 + idx);
-};
+}
 
 // Bind a scenegraph item to an SVG DOM element.
 // Create new SVG elements as needed.
-function bind(el, mdef, item, index, insert) {
-  // create svg element, bind item data for D3 compatibility
-  var node = child(el, index, mdef.tag, ns, null, insert);
-  node.__data__ = item;
-  node.__values__ = {fill: 'default'};
+function bind(item, el, sibling, tag) {
+  var node = item._svg, doc;
 
-  // create background element
-  if (mdef.tag === 'g') {
-    var bg = child(node, 0, 'path', ns, 'background');
-    bg.__data__ = item;
+  // create a new dom node if needed
+  if (!node) {
+    doc = el.ownerDocument;
+    node = create(doc, tag, ns);
+    item._svg = node;
+
+    if (item.mark) {
+      node.__data__ = item;
+      node.__values__ = {fill: 'default'};
+
+      // create background element
+      if (tag === 'g') {
+        var bg = create(doc, 'path', ns);
+        bg.setAttribute('class', 'background');
+        node.appendChild(bg);
+        bg.__data__ = item;
+      }
+    }
   }
 
-  // add pointer from scenegraph item to svg element
-  return (item._svg = node);
+  if (doc || node.previousSibling !== sibling) {
+    el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
+  }
+
+  return node;
 }
 
 

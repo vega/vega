@@ -2,9 +2,9 @@ import boundStroke from '../bound/boundStroke';
 import context from '../bound/boundContext';
 import pathParse from '../path/parse';
 import pathRender from '../path/render';
-import translateItem from '../util/svg/translateItem';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
+import translateItem from '../util/svg/translateItem';
 
 function attr(emit, item) {
   emit('transform', translateItem(item));

@@ -1,6 +1,6 @@
-import {forward} from '../util/iterate';
-import translate from '../util/svg/translate';
+import {visit} from '../util/visit';
 import {pick} from '../util/canvas/pick';
+import translate from '../util/svg/translate';
 
 function getImage(item, renderer) {
   var image = item.image;
@@ -50,11 +50,9 @@ function bound(bounds, item) {
 }
 
 function draw(context, scene, bounds) {
-  var renderer = this,
-      items = scene.items;
-  if (!items || !items.length) return;
+  var renderer = this;
 
-  forward(items, function(item) {
+  visit(scene, function(item) {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
     var image = getImage(item, renderer),
