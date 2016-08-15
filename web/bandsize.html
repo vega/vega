@@ -22,20 +22,6 @@ var runtimeSpec = vega.parse({
       "update": "span(range('xscale'))"
     },
     {
-      "name": "active",
-      "value": null,
-      "on": [
-        {
-          "events": {"marktype": "rect", "type": "mouseover"},
-          "update": {"expr": "datum"}
-        },
-        {
-          "events": {"marktype": "rect", "type": "mouseout"},
-          "update": {"expr": "null"}
-        }
-      ]
-    },
-    {
       "name": "cursor",
       "value": "default",
       "on": [
@@ -234,9 +220,6 @@ var runtimeSpec = vega.parse({
           "width": {"scale": "xscale", "band": 1, "offset": -1},
           "y": {"scale": "yscale", "field": "y"},
           "y2": {"scale": "yscale", "value": 0},
-          "cursor": {"value": "pointer"}
-        },
-        "update": {
           "fill": {"value": "steelblue"},
           "fillOpacity": {"value": 0.5},
           "stroke": {"color": {
@@ -244,10 +227,15 @@ var runtimeSpec = vega.parse({
             "a": {"value": 100},
             "b": {"value": -20}
           }},
-          "strokeWidth": [
-            {"test": "datum===active", "value": 5},
-            {"value": 0}
-          ]
+          "cursor": {"value": "pointer"}
+        },
+        "update": {
+          "strokeWidth": {"value": 0},
+          "zindex": {"value": 0}
+        },
+        "hover": {
+          "strokeWidth": {"value": 5},
+          "zindex": {"value": 1}
         }
       }
     }
