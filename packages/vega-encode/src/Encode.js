@@ -32,25 +32,30 @@ prototype.transform = function(_, pulse) {
       update(t, _);
       if (set !== falsy && set !== update) set(t, _);
     });
+    out.modifies(enter.output);
+    out.modifies(update.output);
+    if (set !== falsy && set !== update) out.modifies(set.output);
   }
 
   if (exit !== falsy) {
-    pulse.visit(pulse.REM, function(t) {
-      exit(t, _);
-    });
+    pulse.visit(pulse.REM, function(t) { exit(t, _); });
+    out.modifies(exit.output);
   }
 
   if (reenter || set !== falsy) {
     var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
-    pulse.visit(flag, reenter
-      ? function(t) {
-          var mod = enter(t, _);
-          if (set(t, _) || mod) out.mod.push(t);
-        }
-      : function(t) {
-          if (set(t, _)) out.mod.push(t);
-        }
-    );
+    if (reenter) {
+      pulse.visit(flag, function(t) {
+        var mod = enter(t, _);
+        if (set(t, _) || mod) out.mod.push(t);
+      });
+      out.modifies(enter.output);
+    } else {
+      pulse.visit(flag, function(t) {
+        if (set(t, _)) out.mod.push(t);
+      });
+    }
+    out.modifies(set.output);
   }
 
   return out;
