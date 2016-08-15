@@ -68,6 +68,7 @@ export default function(spec, scope) {
 
   // build axis specification
   group = guideGroup(AxisRole, dataRef, interactive, axisEncode, children);
+  if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification
   return parseMark(group, scope);
