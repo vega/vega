@@ -86,11 +86,11 @@ var prototype = inherits(View, Dataflow);
 // -- DATAFLOW / RENDERING ----
 
 prototype.run = function(encode) {
-  var ops = Dataflow.prototype.run.call(this, encode),
-      q = this._queue;
+  Dataflow.prototype.run.call(this, encode);
 
-  if (this._resize || (ops && !q) || (q && q.length)) {
-    this.render(this._queue);
+  var q = this._queue;
+  if (this._resize || !q || q.length) {
+    this.render(q);
     this._queue = [];
   }
 
