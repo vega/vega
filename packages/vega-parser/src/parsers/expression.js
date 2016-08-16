@@ -36,6 +36,8 @@ export var functions = function(codegen) {
   fn.format = 'this.format';
   fn.timeFormat = 'this.timeFormat';
   fn.utcFormat = 'this.utcFormat';
+  fn.pad = 'this.pad';
+  fn.truncate = 'this.truncate';
 
   // color functions
   fn.rgb = 'this.rgb';
