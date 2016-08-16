@@ -1,7 +1,9 @@
 import formats from './formats';
 import {transforms} from 'vega-dataflow';
 import {load} from 'vega-loader';
-import {error, extend, isArray, isObject, isString, truthy} from 'vega-util';
+import {
+  error, extend, isArray, isObject, isString, pad, truncate, truthy
+} from 'vega-util';
 import {parse, context} from 'vega-runtime';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 
@@ -14,6 +16,8 @@ function scale(name, ctx) {
 
 function functions(fn, ctx) {
   extend(fn, formats());
+  fn.pad = pad;
+  fn.truncate = truncate;
 
   fn.rgb = rgb;
   fn.lab = lab;
