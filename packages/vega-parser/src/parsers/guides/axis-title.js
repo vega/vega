@@ -1,11 +1,13 @@
 import {Top, Bottom, Left} from './constants';
 import guideMark from './guide-mark';
+import {has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
+      horizontal = (orient === Top || orient === Bottom),
       encode = {}, update, titlePos;
 
   encode.enter = {
@@ -31,13 +33,11 @@ export default function(spec, config, userEncode, dataRef) {
     range: 0.5
   };
 
-  if (orient === Top || orient === Bottom) {
+  if (horizontal) {
     update.x = titlePos;
-    update.y = {value: null};
     update.angle = {value: 0};
     update.baseline = {value: orient === Top ? 'bottom' : 'top'};
   } else {
-    update.x = {value: null};
     update.y = titlePos;
     update.angle = {value: sign * 90};
     update.baseline = {value: 'bottom'};
@@ -46,14 +46,21 @@ export default function(spec, config, userEncode, dataRef) {
   if (config.titleAngle != null) {
     update.angle = {value: config.titleAngle};
   }
+
   if (config.titleBaseline != null) {
     update.baseline = {value: config.titleBaseline};
   }
+
   if (config.titleX != null) {
     update.x = {value: config.titleX};
+  } else if (horizontal && !has(userEncode, 'x')) {
+    encode.enter.auto = {value: true}
   }
+
   if (config.titleY != null) {
     update.y = {value: config.titleY};
+  } else if (!horizontal && !has(userEncode, 'y')) {
+    encode.enter.auto = {value: true}
   }
 
   return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
