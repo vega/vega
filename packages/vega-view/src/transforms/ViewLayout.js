@@ -93,16 +93,15 @@ function layoutAxis(axis, width, height) {
     .union(item.items[labelIndex].bounds);
 
   // position axis group and title
-  // TODO: ignore title positioning if user-specified
   switch (orient) {
     case 'top': {
       x = 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) {
+      if (title.y == null) {
         title.y = -(titlePadding + s);
         s += titleSize;
-      }
+      } else bounds.union(title.bounds);
       bounds.add(0, y-s).add(width, y);
       break;
     }
@@ -110,10 +109,10 @@ function layoutAxis(axis, width, height) {
       x = -offset;
       y = 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) {
+      if (title.x == null) {
         title.x = -(titlePadding + s);
         s += titleSize;
-      }
+      } else bounds.union(title.bounds);
       bounds.add(x-s, 0).add(x, height);
       break;
     }
@@ -121,10 +120,10 @@ function layoutAxis(axis, width, height) {
       y = 0;
       x = offset + width;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) {
+      if (title.x == null) {
         title.x = titlePadding + s;
         s += titleSize;
-      }
+      } else bounds.union(title.bounds);
       bounds.add(x, 0).add(x + s, height);
       break;
     }
@@ -132,10 +131,10 @@ function layoutAxis(axis, width, height) {
       x = 0;
       y = offset + height;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) {
+      if (title.y == null) {
         title.y = titlePadding + s;
         s += titleSize;
-      }
+      } else bounds.union(title.bounds);
       bounds.add(0, y).add(width, y + s);
       break;
     }
