@@ -11,6 +11,7 @@ export var AxisTitleRole = 'axis-title';
 
 export var LegendRole = 'legend';
 export var LegendEntryRole = 'legend-entry';
+export var LegendGradientRole = 'legend-gradient';
 export var LegendLabelRole = 'legend-label';
 export var LegendSymbolRole = 'legend-symbol';
 export var LegendTitleRole = 'legend-title';
