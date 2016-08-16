@@ -49,8 +49,8 @@ function clipToBounds(g, items) {
     group = mark.group;
     item = marks[mark.marktype].nested ? mark : item;
     b.union(translate(item.bounds, group));
-    if (item['bounds:prev']) {
-      b.union(translate(item['bounds:prev'], group));
+    if (item.bounds_prev) {
+      b.union(translate(item.bounds_prev, group));
     }
   }
   b.round();
