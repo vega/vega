@@ -75,7 +75,7 @@ function layoutGroup(view, group, _) {
   }
 
   // perform size adjustment
-  layoutSize(view, group, markBounds, viewBounds, _);
+  layoutSize(view, group, markBounds, viewBounds.union(markBounds), _);
 }
 
 function layoutAxis(axis, width, height) {
