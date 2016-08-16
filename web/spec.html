@@ -53,7 +53,7 @@ render.addEventListener('change', function() {
   if (view) view.renderer(renderType).run();
 });
 
-vega.load('spec/specs.json')
+vega.load('specs.json')
   .then(function(data) {
     // load manifest of test specifications
     JSON.parse(data).forEach(function(name) {
@@ -96,7 +96,7 @@ function load(name) {
 function visualize(spec) {
   if (view) view.finalize(); // finalize existing view
   view = new vega.View(runtime = vega.parse(spec))
-    .logLevel(vega.Info)
+    .logLevel(vega.Warn)
     .initialize(container)
     .renderer(renderType)
     .hover()

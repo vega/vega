@@ -1,6 +1,7 @@
 {
   "width": 900,
   "height": 500,
+  "autosize": "none",
 
   "signals": [
     { "name": "tx", "update": "width / 2" },
