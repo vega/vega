@@ -1,58 +1,4 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title>Vega Bind Test</title>
-    <script src="../../build/vega.js"></script>
-    <style>
-      body { margin: 10px; font: 14px Helvetica Neue; }
-
-      #view { display: inline-block; }
-      .title { font-weight: bold; margin-bottom: 0.5em; }
-      canvas, svg { border: 1px solid #ccc; }
-      .vega-bind-name {
-        display: inline-block;
-        width: 100px;
-      }
-      .vega-bind input[type="range"] {
-        width: 400px;
-      }
-      .vega-bind label {
-        margin: 0 0.5em 0 2px;
-      }
-      #controls {
-        display: inline-block;
-        border: 1px solid #ccc;
-        margin: 8px 0;
-        padding: 5px;
-      }
-      #controls .vega-bind {
-        margin-bottom: 4px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="view"></div><br/>
-    <div id="controls">
-      <div class="title">Style Configuration</div>
-    </div>
-    <script>
-var types = [
-  'albers',
-  'albersUsa',
-  'azimuthalEqualArea',
-  'azimuthalEquidistant',
-  'conicConformal',
-  'conicEqualArea',
-  'conicEquidistant',
-  'equirectangular',
-  'gnomonic',
-  'mercator',
-  'orthographic',
-  'stereographic',
-  'transverseMercator'
-];
-
-var runtimeSpec = vega.parse({
+{
   "width": 900,
   "height": 500,
 
@@ -63,8 +9,28 @@ var runtimeSpec = vega.parse({
   },
 
   "signals": [
-    { "name": "type", "value": "mercator",
-      "bind": {"type": "select", "options": types} },
+    {
+      "name": "type",
+      "value": "mercator",
+      "bind": {
+        "type": "select",
+        "options": [
+          "albers",
+          "albersUsa",
+          "azimuthalEqualArea",
+          "azimuthalEquidistant",
+          "conicConformal",
+          "conicEqualArea",
+          "conicEquidistant",
+          "equirectangular",
+          "gnomonic",
+          "mercator",
+          "orthographic",
+          "stereographic",
+          "transverseMercator"
+        ]
+      }
+    },
     { "name": "scale", "value": 150,
       "bind": {"type": "range", "min": 50, "max": 2000, "step": 1} },
     { "name": "rotate0", "value": 0,
@@ -81,13 +47,13 @@ var runtimeSpec = vega.parse({
     { "name": "translate1", "update": "height / 2" },
 
     { "name": "graticuleDash", "value": 0,
-      "bind": {"element": "#controls", "type": "radio", "options": [0, 3, 5, 10]} },
+      "bind": {"type": "radio", "options": [0, 3, 5, 10]} },
     { "name": "borderWidth", "value": 1,
-      "bind": {"element": "#controls", "type": "text"} },
+      "bind": {"type": "text"} },
     { "name": "background", "value": "#ffffff",
-      "bind": {"element": "#controls", "type": "color"} },
+      "bind": {"type": "color"} },
     { "name": "invert", "value": false,
-      "bind": {"element": "#controls", "type": "checkbox"} }
+      "bind": {"type": "checkbox"} }
   ],
 
   "projections": [
@@ -151,7 +117,13 @@ var runtimeSpec = vega.parse({
         "update": {
           "strokeWidth": {"expr": "+borderWidth"},
           "stroke": {"expr": "invert ? '#777' : '#bbb'"},
-          "fill": {"expr": "invert ? '#fff' : '#000'"}
+          "fill": {"expr": "invert ? '#fff' : '#000'"},
+          "zindex": {"value": 0}
+        },
+        "hover": {
+          "strokeWidth": {"expr": "+borderWidth + 1"},
+          "stroke": {"value": "firebrick"},
+          "zindex": {"value": 1}
         }
       },
       "transform": [
@@ -159,11 +131,4 @@ var runtimeSpec = vega.parse({
       ]
     }
   ]
-});
-
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .run();
-    </script>
-  </body>
-</html>
+}

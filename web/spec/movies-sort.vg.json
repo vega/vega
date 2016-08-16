@@ -24,11 +24,13 @@
     },
     {
       "name": "sortop",
-      "value": "count"
+      "value": "count",
+      "bind": {"type": "radio", "options": ["count", "min"]}
     },
     {
       "name": "sortorder",
-      "value": "descending"
+      "value": "descending",
+      "bind": {"type": "radio", "options": ["ascending", "descending"]}
     }
   ],
 

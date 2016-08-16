@@ -1,18 +1,4 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title>Vega BandSize Test</title>
-    <script src="../../build/vega.js"></script>
-    <style>
-      body { margin: 10px; font: 14px Helvetica Neue; }
-      #view { display: inline-block; }
-      canvas, svg { border: 1px solid #ccc; }
-    </style>
-  </head>
-  <body>
-    <div id="view"></div>
-    <script>
-var runtimeSpec = vega.parse({
+{
   "height": 200,
   "padding": 10,
 
@@ -144,10 +130,10 @@ var runtimeSpec = vega.parse({
       "encode": {
         "legend": {
           "enter": {
-            "fill": {value: "#fff"},
-            "fillOpacity": {value: 0.5},
-            "stroke": {value: "#888"},
-            "cornerRadius": {value: 4}
+            "fill": {"value": "#fff"},
+            "fillOpacity": {"value": 0.5},
+            "stroke": {"value": "#888"},
+            "cornerRadius": {"value": 4}
           }
         }
       }
@@ -160,10 +146,10 @@ var runtimeSpec = vega.parse({
       "encode": {
         "legend": {
           "enter": {
-            "fill": {value: "#fff"},
-            "fillOpacity": {value: 0.5},
-            "stroke": {value: "#888"},
-            "cornerRadius": {value: 4}
+            "fill": {"value": "#fff"},
+            "fillOpacity": {"value": 0.5},
+            "stroke": {"value": "#888"},
+            "cornerRadius": {"value": 4}
           }
         }
       }
@@ -176,10 +162,10 @@ var runtimeSpec = vega.parse({
       "encode": {
         "legend": {
           "enter": {
-            "fill": {value: "#fff"},
-            "fillOpacity": {value: 0.5},
-            "stroke": {value: "#888"},
-            "cornerRadius": {value: 4}
+            "fill": {"value": "#fff"},
+            "fillOpacity": {"value": 0.5},
+            "stroke": {"value": "#888"},
+            "cornerRadius": {"value": 4}
           }
         }
       }
@@ -194,16 +180,16 @@ var runtimeSpec = vega.parse({
         "legend": {
           "enter": {
             "cursor": {"value": "crosshair"},
-            "fill": {value: "#fff"},
-            "fillOpacity": {value: 0.5},
-            "stroke": {value: "#888"},
-            "cornerRadius": {value: 4}
+            "fill": {"value": "#fff"},
+            "fillOpacity": {"value": 0.5},
+            "stroke": {"value": "#888"},
+            "cornerRadius": {"value": 4}
           },
           "update": {
-            "stroke": {value: "#888"}
+            "stroke": {"value": "#888"}
           },
           "hover": {
-            "stroke": {value: "#f8f"}
+            "stroke": {"value": "#f8f"}
           }
         }
       }
@@ -240,15 +226,4 @@ var runtimeSpec = vega.parse({
       }
     }
   ]
-});
-
-console.log(runtimeSpec);
-
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .renderer('svg')
-  .hover()
-  .run();
-    </script>
-  </body>
-</html>
+}

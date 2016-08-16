@@ -1,18 +1,4 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title>Vega Modify Test</title>
-    <script src="../../build/vega.js"></script>
-    <style>
-      body { margin: 10px; font: 14px Helvetica Neue; }
-      #view { display: inline-block; }
-      canvas, svg { border: 1px solid #ccc; }
-    </style>
-  </head>
-  <body>
-    <div id="view"></div>
-    <script>
-var runtimeSpec = vega.parse({
+{
   "width": 600,
   "height": 300,
   "padding": 10,
@@ -119,14 +105,4 @@ var runtimeSpec = vega.parse({
       }
     }
   ]
-});
-
-console.log(runtimeSpec);
-
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .renderer('svg')
-  .run();
-    </script>
-  </body>
-</html>
+}

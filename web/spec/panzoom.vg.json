@@ -1,39 +1,34 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <title>Vega Pan/Zoom Test</title>
-    <script src="../../build/vega.js"></script>
-    <style>
-      * { margin: 0; padding: 0 }
-    </style>
-  </head>
-  <body>
-    <div id="view"></div>
-    <script>
-var width = window.innerWidth,
-    height = window.innerHeight,
-    majorPadding = 30,
-    minorPadding = 10;
-
-var values = [],
-    normal = vega.randomNormal(0, 0.2);
-for (var i=0; i<500; ++i) {
-  values.push({u: normal.sample(), v: normal.sample()});
-}
-
-var runtimeSpec = vega.parse(self.spec = {
+{
   "version": "3.0.0",
-  "width": width - (majorPadding + minorPadding),
-  "height": height - (majorPadding + minorPadding),
   "padding": {
-    "top":    minorPadding,
-    "left":   majorPadding,
-    "bottom": majorPadding,
-    "right":  minorPadding
+    "top":    10,
+    "left":   30,
+    "bottom": 30,
+    "right":  10
   },
   "autosize": "none",
 
   "signals": [
+    {
+      "name": "margin",
+      "value": 20
+    },
+    {
+      "name": "width",
+      "update": "windowsize()[0] - padding.left - padding.right - margin",
+      "on": [{
+        "events": {"source": "window", "type": "resize"},
+        "update": "windowsize()[0] - padding.left - padding.right - margin"
+      }]
+    },
+    {
+      "name": "height",
+      "update": "windowsize()[1] - padding.top - padding.bottom - 3 * margin",
+      "on": [{
+        "events": {"source": "window", "type": "resize"},
+        "update": "windowsize()[1] - padding.top - padding.bottom - 3 * margin"
+      }]
+    },
     {
       "name": "hover",
       "on": [
@@ -42,20 +37,6 @@ var runtimeSpec = vega.parse(self.spec = {
         {"events": "*:mousedown", "encode": "select"},
         {"events": "*:mouseup",   "encode": "release"}
       ]
-    },
-    {
-      "name": "width",
-      "on": [{
-        "events": {"source": "window", "type": "resize"},
-        "update": "windowsize()[0] - padding.left - padding.right"
-      }]
-    },
-    {
-      "name": "height",
-      "on": [{
-        "events": {"source": "window", "type": "resize"},
-        "update": "windowsize()[1] - padding.top - padding.bottom"
-      }]
     },
     {
       "name": "xoffset",
@@ -164,13 +145,11 @@ var runtimeSpec = vega.parse(self.spec = {
       "on": [
         {
           "events": {"signal": "delta"},
-          "update": "[xcur[0] + span(xcur) * delta[0] / width,"
-                  + " xcur[1] + span(xcur) * delta[0] / width]"
+          "update": "[xcur[0] + span(xcur) * delta[0] / width, xcur[1] + span(xcur) * delta[0] / width]"
         },
         {
           "events": {"signal": "zoom"},
-          "update": "[anchor[0] + (xdom[0] - anchor[0]) * zoom,"
-                  + " anchor[0] + (xdom[1] - anchor[0]) * zoom]"
+          "update": "[anchor[0] + (xdom[0] - anchor[0]) * zoom, anchor[0] + (xdom[1] - anchor[0]) * zoom]"
         }
       ]
     },
@@ -179,25 +158,24 @@ var runtimeSpec = vega.parse(self.spec = {
       "on": [
         {
           "events": {"signal": "delta"},
-          "update": "[ycur[0] + span(ycur) * delta[1] / height,"
-                  + " ycur[1] + span(ycur) * delta[1] / height]"
+          "update": "[ycur[0] + span(ycur) * delta[1] / height, ycur[1] + span(ycur) * delta[1] / height]"
         },
         {
           "events": {"signal": "zoom"},
-          "update": "[anchor[1] + (ydom[0] - anchor[1]) * zoom,"
-                  + " anchor[1] + (ydom[1] - anchor[1]) * zoom]"
+          "update": "[anchor[1] + (ydom[0] - anchor[1]) * zoom, anchor[1] + (ydom[1] - anchor[1]) * zoom]"
         }
       ]
     },
     {
       "name": "size",
-      "update": 'clamp(20 / span(xdom), 1, 1000)'
+      "update": "clamp(20 / span(xdom), 1, 1000)"
     }
   ],
 
   "data": [
     {
       "name": "points",
+      "url": "data/normal-2d.json",
       "transform": [
         { "type": "extent", "field": "u", "signal": "xext" },
         { "type": "extent", "field": "v", "signal": "yext" }
@@ -264,12 +242,4 @@ var runtimeSpec = vega.parse(self.spec = {
       }
     }
   ]
-});
-
-var view = new vega.View(runtimeSpec)
-  .insert('points', values)
-  .initialize(document.querySelector('#view'))
-  .run();
-  </script>
-</body>
-</html>
+}

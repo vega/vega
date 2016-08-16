@@ -1,7 +1,13 @@
 [
+  "bandsize",
   "barley",
+  "bind",
   "chart",
   "gradient",
   "legends",
-  "movies-sort"
+  "map",
+  "modify",
+  "movies-sort",
+  "nested",
+  "panzoom"
 ]

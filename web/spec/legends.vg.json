@@ -37,7 +37,19 @@
       "type": "symbol",
       "stroke": "sequence",
       "orient": "right",
-      "title": "Sequence"
+      "title": "Sequence",
+      "encode": {
+        "symbols": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#ccc"}}
+        },
+        "labels": {
+          "interactive": true,
+          "update": {"fill": {"value": "#000"}, "fontWeight": {"value": null}},
+          "hover": {"fill": {"value": "firebrick"}, "fontWeight": {"value": "bold"}}
+        }
+      }
     },
     {
       "type": "symbol",
