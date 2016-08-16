@@ -30,26 +30,37 @@ prototype.transform = function(_, pulse) {
   }
 
   var out = pulse.fork(),
+      total = 0,
       items = this.value,
-      size  = _.size,
+      grad  = _.type === 'gradient',
       scale = _.scale,
       count = _.count == null ? 5 : _.count,
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
-      values = _.values || tickValues(scale, count),
-      total = 0;
+      values = _.values || (grad ? scale.domain() : tickValues(scale, count));
 
-  if (!isFunction(size)) size = constant(size || 8);
   if (items) out.rem = items;
 
+  if (grad) {
+    var domain = _.values ? scale.domain() : values,
+        min = domain[0],
+        max = domain[domain.length - 1],
+        fraction = scale.range
+            ? scale.copy().domain([min, max]).range([0, 1])
+            : function(_) { return (_ - min) / (max - min); };
+  } else {
+    var size = _.size;
+    if (!isFunction(size)) size = constant(size || 8);
+  }
+
   items = values.map(function(value, index) {
-    var t = ingest({
-      index: index,
-      label: format(value),
-      size:  size(value),
-      total: Math.round(total),
-      value: value
-    });
-    total += t.size;
+    var t = ingest({index: index, label: format(value), value: value});
+    if (grad) {
+      t.perc = fraction(value);
+    } else {
+      t.size = size(value);
+      t.total = Math.round(total);
+      total += t.size;
+    }
     return t;
   });
 
