@@ -42,7 +42,7 @@ export default function(spec, scope) {
     extra:  config.tickExtra,
     count:  scope.property(spec.count),
     values: scope.property(spec.values),
-    formatSpecifier: scope.property(spec.formatSpecifier)
+    formatSpecifier: scope.property(spec.format)
   })));
 
   // generate axis marks
