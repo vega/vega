@@ -99,7 +99,7 @@ function pick(context, scene, x, y, gx, gy) {
     return null;
   }
 
-  var renderer = this;
+  var handler = this;
 
   return pickVisit(scene, function(group) {
     var hit, dx, dy, b;
@@ -119,10 +119,10 @@ function pick(context, scene, x, y, gx, gy) {
     dx = gx - dx;
     dy = gy - dy;
 
-    hit = pickVisit(group, function(subscene) {
-      if (subscene.interactive !== false) {
-        return renderer.pick(subscene, x, y, dx, dy);
-      }
+    hit = pickVisit(group, function(mark) {
+      return (mark.interactive !== false || mark.marktype === 'group')
+        ? handler.pick(mark, x, y, dx, dy)
+        : null;
     });
 
     context.restore();
