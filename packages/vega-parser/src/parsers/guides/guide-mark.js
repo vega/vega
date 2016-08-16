@@ -6,7 +6,7 @@ export default function(type, role, key, dataRef, encode, extras) {
     role: role,
     key:  key,
     from: dataRef,
-    interactive: !!encode.interactive,
+    interactive: !!(extras && extras.interactive),
     encode: extendEncode(encode, extras)
   };
 }

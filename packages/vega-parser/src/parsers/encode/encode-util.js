@@ -8,6 +8,7 @@ export function encoder(_) {
 
 export function extendEncode(encode, extra) {
   for (var name in extra) {
+    if (name === 'interactive') continue;
     encode[name] = extend(encode[name] || {}, extra[name]);
   }
   return encode;
