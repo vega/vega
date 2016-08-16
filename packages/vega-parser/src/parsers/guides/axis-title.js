@@ -33,9 +33,11 @@ export default function(spec, config, userEncode, dataRef) {
 
   if (orient === Top || orient === Bottom) {
     update.x = titlePos;
+    update.y = {value: null};
     update.angle = {value: 0};
     update.baseline = {value: orient === Top ? 'bottom' : 'top'};
   } else {
+    update.x = {value: null};
     update.y = titlePos;
     update.angle = {value: sign * 90};
     update.baseline = {value: 'bottom'};
