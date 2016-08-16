@@ -53,9 +53,11 @@ function addSortField(scope, p, sort) {
     p.fields = [null];
     p.as = ['count'];
   }
-  p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
-  p.fields.push(scope.fieldRef(sort.field));
-  p.as.push(as);
+  if (sort.op) {
+    p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
+    p.fields.push(scope.fieldRef(sort.field));
+    p.as.push(as);
+  }
 }
 
 function cache(ds, name, optype, field, counts, index) {
