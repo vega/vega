@@ -1,7 +1,13 @@
-import {extend} from 'vega-util';
+import {extend, isObject} from 'vega-util';
 
-export default function(config) {
-  return extend(defaults(), config);
+export default function(userConfig) {
+  var config = defaults(), key;
+  for (key in userConfig) {
+    config[key] = isObject(config[key])
+      ? extend(config[key], userConfig[key])
+      : config[key] = userConfig[key];
+  }
+  return config;
 }
 
 /**
@@ -66,6 +72,7 @@ function defaults() {
       tickLabelColor: '#000',
       tickLabelFont: 'sans-serif',
       tickLabelFontSize: 10,
+      titleAlign: 'center',
       titlePadding: 2,
       titleColor: '#000',
       titleFont: 'sans-serif',

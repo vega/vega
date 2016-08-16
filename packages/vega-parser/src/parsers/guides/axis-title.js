@@ -14,7 +14,7 @@ export default function(spec, config, userEncode, dataRef) {
     font: {value: config.titleFont},
     fontSize: {value: config.titleFontSize},
     fontWeight: {value: config.titleFontWeight},
-    align: {value: 'center'}
+    align: {value: config.titleAlign}
   };
 
   encode.exit = {
@@ -41,6 +41,19 @@ export default function(spec, config, userEncode, dataRef) {
     update.y = titlePos;
     update.angle = {value: sign * 90};
     update.baseline = {value: 'bottom'};
+  }
+
+  if (config.titleAngle != null) {
+    update.angle = {value: config.titleAngle};
+  }
+  if (config.titleBaseline != null) {
+    update.baseline = {value: config.titleBaseline};
+  }
+  if (config.titleX != null) {
+    update.x = {value: config.titleX};
+  }
+  if (config.titleY != null) {
+    update.y = {value: config.titleY};
   }
 
   return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
