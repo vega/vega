@@ -1,3 +1,5 @@
+import legendGradient from './guides/legend-gradient';
+import legendGradientLabels from './guides/legend-gradient-labels';
 import legendLabels from './guides/legend-labels';
 import legendSymbols from './guides/legend-symbols';
 import legendTitle from './guides/legend-title';
@@ -10,7 +12,8 @@ import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  var config = scope.config.legend,
+  var type = spec.type || 'symbol',
+      config = scope.config.legend,
       encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, entryRef, group, title,
@@ -48,21 +51,41 @@ export default function(spec, scope) {
     }
   };
 
-  // data source for legend entries
-  entryRef = ref(scope.add(LegendEntries({
-    size:   sizeExpression(spec, config, encode.labels),
-    scale:  scope.scaleRef(scale),
-    count:  scope.property(spec.count),
-    values: scope.property(spec.values),
-    formatSpecifier: scope.property(spec.formatSpecifier)
-  })));
+  if (type === 'gradient') {
+    // data source for gradient labels
+    entryRef = ref(scope.add(LegendEntries({
+      type:   'gradient',
+      scale:  scope.scaleRef(scale),
+      count:  scope.property(spec.count),
+      values: scope.property(spec.values),
+      formatSpecifier: scope.property(spec.formatSpecifier)
+    })));
+
+    children = [
+      legendGradient(scale, config, encode.gradient),
+      legendGradientLabels(spec, config, encode.labels, entryRef)
+    ];
+  }
+
+  else {
+    // data source for legend entries
+    entryRef = ref(scope.add(LegendEntries({
+      size:   sizeExpression(spec, config, encode.labels),
+      scale:  scope.scaleRef(scale),
+      count:  scope.property(spec.count),
+      values: scope.property(spec.values),
+      formatSpecifier: scope.property(spec.formatSpecifier)
+    })));
+
+    children = [
+      legendSymbols(spec, config, encode.symbols, entryRef),
+      legendLabels(spec, config, encode.labels, entryRef)
+    ];
+  }
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, dataRef, interactive, entryEncode, [
-      legendSymbols(spec, config, encode.symbols, entryRef),
-      legendLabels(spec, config, encode.labels, entryRef)
-    ])
+    guideGroup(LegendEntryRole, dataRef, interactive, entryEncode, children)
   ];
 
   // include legend title if defined
