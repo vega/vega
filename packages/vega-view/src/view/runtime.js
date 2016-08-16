@@ -5,6 +5,7 @@ import {
   error, extend, isArray, isObject, isString, pad, truncate, truthy
 } from 'vega-util';
 import {parse, context} from 'vega-runtime';
+import {scaleGradient} from 'vega-scenegraph';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 
 function scale(name, ctx) {
@@ -23,6 +24,7 @@ function functions(fn, ctx) {
   fn.lab = lab;
   fn.hcl = hcl;
   fn.hsl = hsl;
+  fn.gradient = scaleGradient;
 
   fn.pinchDistance = function() {
     return 'Math.sqrt('
