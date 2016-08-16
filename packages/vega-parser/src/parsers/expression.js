@@ -44,6 +44,7 @@ export var functions = function(codegen) {
   fn.lab = 'this.lab';
   fn.hcl = 'this.hcl';
   fn.hsl = 'this.hsl';
+  fn.gradient = 'this.gradient';
 
   // scales, projections, data
   fn.span   = 'this.span';
@@ -117,6 +118,7 @@ export default function(expr, scope, preamble) {
       case 'scale':
       case 'invert':
       case 'range':
+      case 'gradient':
         if (args[0].type === Literal) {           // scale dependency
           scale(args[0].value, scope, params);
         } else if (args[0].type === Identifier) { // forward reference to signal
