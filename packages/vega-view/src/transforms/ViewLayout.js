@@ -104,7 +104,7 @@ function layoutAxis(axis, width, height) {
       x = 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) title.y == null
+      if (title) title.auto
         ? (title.y = -(titlePadding + s), s += titleSize)
         : bounds.union(title.bounds);
       bounds.add(0, y-s).add(width, y);
@@ -114,7 +114,7 @@ function layoutAxis(axis, width, height) {
       x = -offset;
       y = 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) title.x == null
+      if (title) title.auto
         ? (title.x = -(titlePadding + s), s += titleSize)
         : bounds.union(title.bounds);
       bounds.add(x-s, 0).add(x, height);
@@ -124,7 +124,7 @@ function layoutAxis(axis, width, height) {
       y = 0;
       x = offset + width;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) title.x == null
+      if (title) title.auto
         ? (title.x = titlePadding + s, s += titleSize)
         : bounds.union(title.bounds);
       bounds.add(x, 0).add(x + s, height);
@@ -134,7 +134,7 @@ function layoutAxis(axis, width, height) {
       x = 0;
       y = offset + height;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) title.y == null
+      if (title) title.auto
         ? (title.y = titlePadding + s, s += titleSize)
         : bounds.union(title.bounds);
       bounds.add(0, y).add(width, y + s);
