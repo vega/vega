@@ -46,7 +46,7 @@ export function area(context, items) {
 }
 
 export function shape(context, item) {
-  (item.mark.shape || item.shape)
+  return (item.mark.shape || item.shape)
     .context(context)(item);
 }
 
