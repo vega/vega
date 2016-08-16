@@ -47,6 +47,8 @@ prototype.transform = function(_, pulse) {
   }
 
   configureRange(scale, _, configureDomain(scale, _));
+
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
 function createScale(type, scheme) {
