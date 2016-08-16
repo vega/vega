@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Spec Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      #view { margin-top: 1em; }
+      canvas, svg { border: 1px dashed #ccc; }
+    </style>
+  </head>
+  <body>
+    Vega Specifications:
+    <select id="specs">
+      <option value="">-----</option>
+    </select><br/>
+    <div id="view"></div>
+    <script>
+var select = document.querySelector('#specs');
+select.addEventListener('change', function() {
+  load(select.options[select.selectedIndex].value);
+});
+
+vega.load('spec/specs.json')
+  .then(function(data) {
+    // load manifest of test specifications
+    JSON.parse(data).forEach(function(name) {
+      var opt = document.createElement('option');
+      opt.setAttribute('value', name);
+      opt.innerText = name;
+      select.appendChild(opt);
+    });
+  })
+  .then(function() {
+    // if query string is present, try to load spec
+    if (location.search) load(location.search.slice(1));
+  });
+
+function load(name) {
+  if (!name) return;
+
+  // update select widget state
+  select.selectedIndex = 0;
+  for (var i=0, n=select.options.length; i<n; ++i) {
+    if (select.options[i].value === name) {
+      select.selectedIndex = i; break;
+    }
+  }
+
+  // load vega spec, then visualize it
+  vega.load(url = 'spec/' + name + '.vg.json')
+    .then(function(spec) {
+      console.log('LOADED', url);
+      visualize(self.runtime = JSON.parse(spec));
+    })
+    .catch(function(err) {
+      console.error(err.stack);
+    });
+}
+
+function visualize(spec) {
+  self.view = new vega.View(vega.parse(spec))
+    .initialize(document.querySelector('#view'))
+    .renderer('svg')
+    .hover()
+    .run();
+}
+    </script>
+  </body>
+</html>
