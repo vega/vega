@@ -41,7 +41,7 @@ function layoutGroup(view, group, _) {
       markBounds = viewBounds.clone(),
       axisBounds = markBounds.clone(),
       legends = [],
-      mark, margin, i, n;
+      mark, flow, b, i, n;
 
   // layout axes, gather legends, collect bounds
   for (i=0, n=items.length; i<n; ++i) {
@@ -63,9 +63,15 @@ function layoutGroup(view, group, _) {
 
   // layout legends, extending viewBounds
   if (legends.length) {
-    margin = _.legendMargin || 8;
+    flow = {left: 0, right: 0, margin: _.legendMargin || 8};
     axisBounds.union(markBounds);
-    layoutLegends(legends, axisBounds, margin, width, height, viewBounds);
+
+    for (i=0, n=legends.length; i<n; ++i) {
+      b = layoutLegend(legends[i], flow, axisBounds, width, height);
+      (_.autosize === Fit)
+        ? viewBounds.add(b.x1, 0).add(b.x2, 0)
+        : viewBounds.union(b);
+    }
   }
 
   // perform size adjustment
@@ -98,10 +104,9 @@ function layoutAxis(axis, width, height) {
       x = 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title.y == null) {
-        title.y = -(titlePadding + s);
-        s += titleSize;
-      } else bounds.union(title.bounds);
+      if (title) title.y == null
+        ? (title.y = -(titlePadding + s), s += titleSize)
+        : bounds.union(title.bounds);
       bounds.add(0, y-s).add(width, y);
       break;
     }
@@ -109,10 +114,9 @@ function layoutAxis(axis, width, height) {
       x = -offset;
       y = 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title.x == null) {
-        title.x = -(titlePadding + s);
-        s += titleSize;
-      } else bounds.union(title.bounds);
+      if (title) title.x == null
+        ? (title.x = -(titlePadding + s), s += titleSize)
+        : bounds.union(title.bounds);
       bounds.add(x-s, 0).add(x, height);
       break;
     }
@@ -120,10 +124,9 @@ function layoutAxis(axis, width, height) {
       y = 0;
       x = offset + width;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title.x == null) {
-        title.x = titlePadding + s;
-        s += titleSize;
-      } else bounds.union(title.bounds);
+      if (title) title.x == null
+        ? (title.x = titlePadding + s, s += titleSize)
+        : bounds.union(title.bounds);
       bounds.add(x, 0).add(x + s, height);
       break;
     }
@@ -131,10 +134,9 @@ function layoutAxis(axis, width, height) {
       x = 0;
       y = offset + height;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title.y == null) {
-        title.y = titlePadding + s;
-        s += titleSize;
-      } else bounds.union(title.bounds);
+      if (title) title.y == null
+        ? (title.y = titlePadding + s, s += titleSize)
+        : bounds.union(title.bounds);
       bounds.add(0, y).add(width, y + s);
       break;
     }
@@ -147,17 +149,6 @@ function layoutAxis(axis, width, height) {
   boundStroke(bounds, item);
   item.mark.bounds.clear().union(bounds);
   return bounds;
-}
-
-function layoutLegends(legends, axisBounds, margin, width, height, output) {
-  var flow = {left: 0, right: 0, margin: margin},
-      n = legends.length, i = 0, b;
-
-  // layout legends
-  for (; i<n; ++i) {
-    b = layoutLegend(legends[i], flow, axisBounds, width, height);
-    output.add(b.x1, 0).add(b.x2, 0);
-  }
 }
 
 function layoutLegend(legend, flow, axisBounds, width, height) {
