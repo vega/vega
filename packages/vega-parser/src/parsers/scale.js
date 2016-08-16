@@ -120,8 +120,11 @@ function oMultipleDomain(spec, scope, fields) {
 
 function parseSort(sort, multidomain) {
   if (sort) {
-    if (!sort.op && !sort.field) {
-      sort.field = 'key';
+    if (!sort.field && !sort.op) {
+      if (isObject(sort)) sort.field = 'key';
+      else sort = {field: 'key'};
+    } else if (!sort.field && sort.op !== 'count') {
+      error('No field provided for sort aggregate op: ' + sort.op);
     } else if (multidomain && sort.field) {
       error('Multiple domain scales can not sort by field.');
     } else if (multidomain && sort.op && sort.op !== 'count') {

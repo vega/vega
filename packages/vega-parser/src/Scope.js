@@ -200,12 +200,17 @@ prototype.keyRef = function(fields) {
 prototype.sortRef = function(sort) {
   if (!sort) return sort;
 
-  var a = aggrField(sort.op, sort.field),
+  // including id ensures stable sorting
+  // TODO review? enable multi-field sorts?
+  var a = [aggrField(sort.op, sort.field), '_id'],
       o = sort.order || Ascending;
 
   return o.signal
-    ? ref(this.add(Compare({fields: a, orders: this.signalRef(o.signal)})))
-    : compareRef(a, o);
+    ? ref(this.add(Compare({
+        fields: a,
+        orders: [o = this.signalRef(o.signal), o]
+      })))
+    : compareRef(a, [o, o]);
 };
 
 // ----
