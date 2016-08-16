@@ -221,7 +221,7 @@ function layoutSize(view, group, markBounds, viewBounds, _) {
       viewWidth = view._width,
       viewHeight = view._height;
 
-  if (view._autosize < 1 || !type || type === None) return;
+  if (view._autosize < 1 || !type) return;
 
   var width  = Math.max(0, group.width || 0),
       left   = Math.max(0, Math.ceil(-viewBounds.x1)),
@@ -230,7 +230,14 @@ function layoutSize(view, group, markBounds, viewBounds, _) {
       top    = Math.max(0, Math.ceil(-viewBounds.y1)),
       bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
-  if (type === Fit) {
+  if (type === None) {
+    viewWidth = width;
+    viewHeight = height;
+    left = 0;
+    top = 0;
+  }
+
+  else if (type === Fit) {
     width = Math.max(0, viewWidth - left - right);
     height = Math.max(0, viewHeight - top - bottom);
   }
