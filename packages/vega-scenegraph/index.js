@@ -25,6 +25,7 @@ export {default as Marks} from './src/marks/index';
 export {default as pathParse} from './src/path/parse';
 export {default as pathRender} from './src/path/render';
 
+export {default as scaleGradient} from './src/util/scale-gradient';
 export {default as point} from './src/util/point';
 export {default as canvas} from './src/util/canvas/canvas';
 export {openTag, closeTag} from './src/util/tags';
