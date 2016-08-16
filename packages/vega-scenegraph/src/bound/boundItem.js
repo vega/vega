@@ -7,7 +7,7 @@ export default function(item, func, opt) {
   if (type.nested) item = item.mark;
 
   var curr = item.bounds,
-      prev = item['bounds:prev'] || (item['bounds:prev'] = new Bounds());
+      prev = item.bounds_prev || (item.bounds_prev = new Bounds());
 
   if (curr) {
     prev.clear().union(curr);

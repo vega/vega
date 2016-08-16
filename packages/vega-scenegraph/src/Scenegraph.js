@@ -46,6 +46,7 @@ function error(msg) {
 function createMark(def, group) {
   return {
     bounds:      new Bounds(),
+    bounds_prev: new Bounds(),
     clip:        !!def.clip,
     group:       group,
     interactive: def.interactive === false ? false : true,
