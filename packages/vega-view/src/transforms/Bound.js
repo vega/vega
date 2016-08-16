@@ -20,6 +20,8 @@ prototype.transform = function(_, pulse) {
       bound = type.bound,
       markBounds = mark.bounds, rebound;
 
+  mark.bounds_prev.clear().union(markBounds);
+
   if (type.nested) {
     // multi-item marks have a single bounds instance
     boundItem(mark, bound);
@@ -57,6 +59,6 @@ prototype.transform = function(_, pulse) {
 };
 
 function boundItem(item, bound, opt) {
-  item['bounds:prev'].clear().union(item.bounds);
+  item.bounds_prev.clear().union(item.bounds);
   return bound(item.bounds.clear(), item, opt);
 }
