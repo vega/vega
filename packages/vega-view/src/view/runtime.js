@@ -60,7 +60,12 @@ function functions(fn, ctx) {
 
   fn.range = function(name) {
     var s = scale(name, ctx);
-    return s && s.range() ? s.range() : [0, 0];
+    return s && s.range ? s.range() : [0, 0];
+  };
+
+  fn.bandwidth = function(name) {
+    var s = scale(name, ctx);
+    return s && s.bandwidth ? s.bandwidth() : 0;
   };
 
   fn.scale = function(name, value) {
