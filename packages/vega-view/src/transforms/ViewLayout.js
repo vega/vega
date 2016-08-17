@@ -92,7 +92,7 @@ function layoutAxis(axis, width, height) {
       titlePadding = item.titlePadding,
       titleSize = title ? title.fontSize + titlePadding : 0,
       bounds = item.bounds,
-      x, y, s;
+      x = 0, y = 0, s;
 
   bounds.clear()
     .union(item.items[ticksIndex].bounds)
@@ -101,43 +101,39 @@ function layoutAxis(axis, width, height) {
   // position axis group and title
   switch (orient) {
     case 'top': {
-      x = 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
       if (title) title.auto
         ? (title.y = -(titlePadding + s), s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(0, y-s).add(width, y);
+      bounds.add(0, -s).add(width, 0);
       break;
     }
     case 'left': {
       x = -offset;
-      y = 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
       if (title) title.auto
         ? (title.x = -(titlePadding + s), s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(x-s, 0).add(x, height);
+      bounds.add(-s, 0).add(0, height);
       break;
     }
     case 'right': {
-      y = 0;
-      x = offset + width;
+      x = width + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
       if (title) title.auto
         ? (title.x = titlePadding + s, s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(x, 0).add(x + s, height);
+      bounds.add(0, 0).add(s, height);
       break;
     }
     case 'bottom': {
-      x = 0;
-      y = offset + height;
+      y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
       if (title) title.auto
         ? (title.y = titlePadding + s, s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(0, y).add(width, y + s);
+      bounds.add(0, 0).add(width, s);
       break;
     }
   }
@@ -146,7 +142,7 @@ function layoutAxis(axis, width, height) {
   item.y = y + 0.5;
 
   // update bounds
-  boundStroke(bounds, item);
+  boundStroke(bounds.translate(x, y), item);
   item.mark.bounds.clear().union(bounds);
   return bounds;
 }
