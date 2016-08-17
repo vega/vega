@@ -10,7 +10,7 @@ import {error, inherits} from 'vega-util';
  * @param {function(object): *} [params.key] - The key field associating data and visual items.
  */
 export default function DataJoin(params) {
-  Transform.call(this, {}, params);
+  Transform.call(this, null, params);
 }
 
 var prototype = inherits(DataJoin, Transform);
@@ -23,10 +23,9 @@ prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       item = _.item || defaultItemCreate,
       key = _.key || tupleid,
-      map = this.value;
+      map = this.value || (pulse = pulse.addAll(), this.value = {});
 
   if (_.modified('key') || pulse.modified(key)) {
-    // TODO: support re-keying?
     error('DataJoin does not support modified key function or fields.');
   }
 
