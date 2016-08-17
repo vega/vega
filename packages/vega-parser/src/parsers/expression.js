@@ -47,11 +47,12 @@ export var functions = function(codegen) {
   fn.gradient = 'this.gradient';
 
   // scales, projections, data
-  fn.span   = 'this.span';
-  fn.range  = 'this.range';
-  fn.scale  = 'this.scale';
+  fn.span = 'this.span';
+  fn.range = 'this.range';
+  fn.bandwidth = 'this.bandwidth';
+  fn.scale = 'this.scale';
   fn.invert = 'this.scaleInvert';
-  fn.copy   = 'this.scaleCopy';
+  fn.copy = 'this.scaleCopy';
   fn.indata = 'this.indata';
 
   // interaction support
@@ -119,6 +120,7 @@ export default function(expr, scope, preamble) {
       case 'invert':
       case 'range':
       case 'gradient':
+      case 'bandwidth':
         if (args[0].type === Literal) {           // scale dependency
           scale(args[0].value, scope, params);
         } else if (args[0].type === Identifier) { // forward reference to signal
