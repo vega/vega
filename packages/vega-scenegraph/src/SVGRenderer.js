@@ -211,7 +211,7 @@ prototype._dirtyCheck = function(items) {
     item = (mdef.nested ? mark.items[0] : item);
     if (item._update === id) continue; // already visited
 
-    if (!item._svg) {
+    if (!item._svg || !item._svg.ownerSVGElement) {
       // ENTER
       this._dirtyAll = false;
       dirtyParents(item, id);
