@@ -1,7 +1,7 @@
 import parseTransform from './transform';
 import parseModify from './modify';
 import {ref} from '../util';
-import {Collect, NoOp, Relay, Sieve} from '../transforms';
+import {Collect, Relay, Sieve} from '../transforms';
 
 export default function parseData(data, scope) {
   var transforms = [];
@@ -66,12 +66,8 @@ function analyze(data, scope, ops) {
   }
 
   if (upstream) {
-    if (modify) { // relay if we modify upstream tuples
-      output[0] = collect();
-      output.unshift(Relay({pulse: ref(upstream.output)}));
-    } else {
-      output[0] = NoOp({pulse: ref(upstream.output)});
-    }
+    output[0] = Relay({derive: modify, pulse: ref(upstream.output)});
+    if (modify) output.splice(1, 0, collect()); // collect derived tuples
   }
 
   if (!source) output.push(collect());

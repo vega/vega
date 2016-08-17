@@ -11,9 +11,17 @@ export default function DataScope(scope, input, output, values) {
 
 DataScope.fromEntries = function(scope, entries) {
   var n = entries.length,
+      i = 1,
       input  = entries[0],
-      values = entries[--n],
-      output = entries[--n];
+      values = entries[n-1],
+      output = entries[n-2];
+
+  // add operator entries to this scope, wire up pulse chain
+  scope.add(entries[0]);
+  for (; i<n; ++i) {
+    entries[i].params.pulse = ref(entries[i-1]);
+    scope.add(entries[i]);
+  }
 
   return new DataScope(scope, input, output, values);
 };

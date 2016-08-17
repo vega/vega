@@ -313,15 +313,5 @@ prototype.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + name);
   }
-
-  // add operator entries to this scope, wire up pulse chain
-  // TODO: should pulse wiring happen here, in DataScope, or ...?
-  this.add(entries[0]);
-  for (var i=1, n=entries.length; i<n; ++i) {
-    entries[i].params.pulse = ref(entries[i-1]);
-    this.add(entries[i]);
-  }
-
-  // create new scope for the data pipeline
   this.addData(name, DataScope.fromEntries(this, entries));
 };
