@@ -81,7 +81,8 @@
       "count": 5,
       "grid": false,
       "domain": true,
-      "title": "Left Title"
+      "title": "Left Title",
+      "offset": 10
     },
     {
       "scale": "yscale",
@@ -89,7 +90,8 @@
       "count": 5,
       "grid": true,
       "domain": true,
-      "title": "Right Title"
+      "title": "Right Title",
+      "offset": 10
     },
     {
       "scale": "xscale",
@@ -97,20 +99,15 @@
       "grid": false,
       "domain": true,
       "title": "Top Title",
-      "encode": {
-        "title": {
-          "update": {
-            "font": {"value": "Arial"}
-          }
-        }
-      }
+      "offset": 10
     },
     {
       "scale": "xscale",
       "orient": "bottom",
       "grid": true,
       "domain": true,
-      "title": "Bottom Title"
+      "title": "Bottom Title",
+      "offset": 10
     }
   ],
 
