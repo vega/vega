@@ -53,7 +53,7 @@ function parseLiteral(v, scope) {
 
 function parseScaleDomain(spec, scope) {
   var domain = spec.domain;
-  if (!domain) error('Missing scale domain');
+  if (!domain) return; // default domain
 
   if (domain.signal) {
     return scope.signalRef(domain.signal);
