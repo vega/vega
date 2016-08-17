@@ -72,7 +72,7 @@ export default function(spec, scope) {
     // but we also want it to be run *after* any faceting transforms
     scope.operators.pop();
     scope.pushState(encodeRef, ref(op));
-    (facet ? parseFacet : parseSubflow)(spec, scope);
+    (facet ? parseFacet(spec, scope) : parseSubflow(spec, scope, input));
     scope.popState();
     scope.operators.push(op);
   }
@@ -84,10 +84,10 @@ export default function(spec, scope) {
   // if non-faceted / non-layout group, recurse here
   if (group && !facet && !layout) {
     scope.pushState(encodeRef, boundRef);
-    // if a normal group mark with backing data, generate dynamic subflows
-    // otherwise, we know the group will have only one item and so dynamic
-    //  subflows are unnecessary, thus we can simplify the dataflow
-    (role === MarkRole && spec.from ? parseSubflow : parseSpec)(spec, scope);
+    // if a normal group mark, we must generate dynamic subflows
+    // otherwise, we know the group is a guide with only one group item
+    // in that case we can simplify the dataflow
+    (role === MarkRole ? parseSubflow(spec, scope, input) : parseSpec(spec, scope));
     scope.popState();
   }
 

@@ -1,15 +1,13 @@
 import parseSpec from '../spec';
-import {ref} from '../../util';
 import {Sieve, PreFacet} from '../../transforms';
 
-export default function(spec, scope) {
-  var data = ref(scope.getData(spec.from.data).output),
-      op = scope.add(PreFacet({pulse: data})),
+export default function(spec, scope, input) {
+  var op = scope.add(PreFacet({pulse: input.pulse})),
       subscope = scope.fork();
 
   subscope.add(Sieve());
 
-  // parse faceted subflow
+  // parse group mark subflow
   op.params.subflow = {
     $subflow: parseSpec(spec, subscope).toRuntime()
   };

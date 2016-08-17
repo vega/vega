@@ -20,7 +20,6 @@ export var Key = transform('Key');
 export var LegendEntries = transform('LegendEntries');
 export var Mark = transform('Mark');
 export var MultiExtent = transform('MultiExtent');
-export var NoOp = transform('NoOp');
 export var Params = transform('Params');
 export var PreFacet = transform('PreFacet');
 export var Projection = transform('Projection');
