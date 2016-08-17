@@ -2,9 +2,10 @@ import definition from './marks/definition';
 import dataName from './marks/data-name';
 import parseData from './marks/data';
 import parseFacet from './marks/facet';
-import role from './marks/role';
+import parseSubflow from './marks/subflow';
+import getRole from './marks/role';
 import {GroupMark} from './marks/marktypes';
-import {FrameRole, ScopeRole} from './marks/roles';
+import {FrameRole, MarkRole, ScopeRole} from './marks/roles';
 import {encoders} from './encode/encode-util';
 import parseTransform from './transform';
 import parseSpec from './spec';
@@ -14,8 +15,10 @@ import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
-  var facet = spec.from && spec.from.facet,
+  var role = getRole(spec),
       group = spec.type === GroupMark,
+      facet = spec.from && spec.from.facet,
+      layout = role === ScopeRole || role === FrameRole,
       op, input, bound, render, sieve,
       markRef, encodeRef, boundRef;
 
@@ -38,7 +41,7 @@ export default function(spec, scope) {
 
   // add visual encoders
   op = scope.add(Encode(
-    encoders(spec.encode, spec.type, role(spec), scope, {pulse: markRef})
+    encoders(spec.encode, spec.type, role, scope, {pulse: markRef})
   ));
 
   // add post-encoding transforms, if defined
@@ -57,17 +60,19 @@ export default function(spec, scope) {
   op.params.parent = scope.encode();
   encodeRef = ref(op);
 
-  // if faceted, add layout and recurse
-  if (facet) {
+  // if group is faceted or requires view layout, recurse here
+  if (facet || layout) {
     op = scope.add(ViewLayout({
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
     }));
 
+    // we juggle the layout operator as we want it in our scope state,
+    // but we also want it to be run *after* any faceting transforms
     scope.operators.pop();
     scope.pushState(encodeRef, ref(op));
-    parseFacet(spec, scope);
+    (facet ? parseFacet : parseSubflow)(spec, scope);
     scope.popState();
     scope.operators.push(op);
   }
@@ -76,10 +81,13 @@ export default function(spec, scope) {
   bound = scope.add(Bound({mark: markRef, pulse: ref(op)}));
   boundRef = ref(bound);
 
-  // if non-faceted group, recurse directly
-  if (group && !facet) {
+  // if non-faceted / non-layout group, recurse here
+  if (group && !facet && !layout) {
     scope.pushState(encodeRef, boundRef);
-    parseSpec(spec, shouldFork(spec) ? scope.fork() : scope);
+    // if a normal group mark with backing data, generate dynamic subflows
+    // otherwise, we know the group will have only one item and so dynamic
+    //  subflows are unnecessary, thus we can simplify the dataflow
+    (role === MarkRole && spec.from ? parseSubflow : parseSpec)(spec, scope);
     scope.popState();
   }
 
@@ -91,9 +99,4 @@ export default function(spec, scope) {
   if (spec.name != null) {
     scope.addData(dataName(spec.name), new DataScope(scope, null, render, sieve))
   }
-}
-
-function shouldFork(spec) {
-  var r = role(spec);
-  return r === FrameRole || r === ScopeRole;
 }
