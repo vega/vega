@@ -2,6 +2,8 @@ export default {
   "type": "Treemap",
   "metadata": {"tree": true, "modifies": true},
   "params": [
+    { "name": "field", "type": "field" },
+    { "name": "sort", "type": "compare" },
     { "name": "method", "type": "enum", "default": "squarify",
       "values": ["squarify", "resquarify", "binary", "dice", "slice", "slicedice"] },
     { "name": "padding", "type": "number", "default": 0 },

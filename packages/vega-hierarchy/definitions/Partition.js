@@ -2,6 +2,8 @@ export default {
   "type": "Partition",
   "metadata": {"tree": true, "modifies": true},
   "params": [
+    { "name": "field", "type": "field" },
+    { "name": "sort", "type": "compare" },
     { "name": "padding", "type": "number", "default": 0 },
     { "name": "round", "type": "boolean", "default": false },
     { "name": "size", "type": "number", "array": true, "length": 2 },

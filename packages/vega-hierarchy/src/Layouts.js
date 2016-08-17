@@ -80,7 +80,7 @@ prototype.transform = function(_, pulse) {
   }
   root.each(function(node) { setFields(node, fields, as); });
 
-  return pulse.reflow().modifies(as);
+  return pulse.reflow().modifies(as).modifies('leaf');
 };
 
 function setParams(layout, params, _) {
@@ -92,9 +92,10 @@ function setParams(layout, params, _) {
 
 function setFields(node, fields, as) {
   var t = node.data;
-  for (var i=0, n=fields.length; i<n; ++i) {
+  for (var i=0, n=fields.length-1; i<n; ++i) {
     t[as[i]] = node[fields[i]];
   }
+  t[as[n]] = node.children ? node.children.length : 0;
 }
 
 /**
@@ -109,7 +110,7 @@ export function Tree(params) {
 inherits(Tree, HierarchyLayout);
 Tree.prototype.layout = treeLayout;
 Tree.prototype.params = ['size', 'nodeSize', 'separation'];
-Tree.prototype.fields = ['x', 'y'];
+Tree.prototype.fields = ['x', 'y', 'depth', 'children'];
 
 /**
  * Treemap layout.
@@ -127,7 +128,7 @@ Treemap.prototype.params = [
   'padding', 'paddingInner', 'paddingOuter',
   'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
 ];
-Treemap.prototype.fields = ['x0', 'y0', 'x1', 'y1'];
+Treemap.prototype.fields = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
 /**
  * Partition tree layout.
@@ -155,4 +156,4 @@ export function Pack(params) {
 inherits(Pack, HierarchyLayout);
 Pack.prototype.layout = pack;
 Pack.prototype.params = ['size', 'padding'];
-Pack.prototype.fields = ['x', 'y', 'r'];
+Pack.prototype.fields = ['x', 'y', 'r', 'depth', 'children'];

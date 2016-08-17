@@ -2,6 +2,8 @@ export default {
   "type": "Pack",
   "metadata": {"tree": true, "modifies": true},
   "params": [
+    { "name": "field", "type": "field" },
+    { "name": "sort", "type": "compare" },
     { "name": "padding", "type": "number", "default": 0 },
     { "name": "radius", "type": "field", "default": null },
     { "name": "size", "type": "number", "array": true, "length": 2 },
