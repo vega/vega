@@ -10,11 +10,15 @@
   "driving",
   "falkensee",
   "gradient",
+  "grouped-bar",
+  "horizon",
   "legends",
+  "lifelines",
   "map",
   "modify",
   "movies-sort",
   "nested",
   "panzoom",
-  "parallel-coords"
+  "parallel-coords",
+  "weather"
 ]
