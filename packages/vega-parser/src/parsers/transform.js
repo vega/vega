@@ -2,7 +2,7 @@ import parseExpression from './expression';
 import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
 import {Params} from '../transforms';
 import {definition} from 'vega-dataflow';
-import {error, extend, isArray, isString} from 'vega-util';
+import {array, error, extend, isArray, isString} from 'vega-util';
 
 /**
  * Parse a data transform specification.
@@ -67,7 +67,7 @@ function parameterValue(type, value, scope) {
     return isData(type) ? scope.getData(value).values
          : isExpr(type) ? parseExpression(value, scope)
          : isField(type) ? fieldRef(value)
-         : isCompare(type) ? compareRef(value)
+         : isCompare(type) ? compareRef(array(value.field), array(value.order))
          : value;
   }
 }
