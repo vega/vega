@@ -1,6 +1,5 @@
 // setup transform definition aliases
 import {definition} from 'vega-dataflow';
-definition('Sort', definition('Collect'));
 definition('Formula', definition('Apply'));
 
 export {default as parse} from './src/parse';
