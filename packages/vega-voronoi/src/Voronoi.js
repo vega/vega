@@ -8,19 +8,18 @@ export default function Voronoi(params) {
 
 var prototype = inherits(Voronoi, Transform);
 
-var Params = ['x', 'y', 'size', 'extent'];
+var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
 prototype.transform = function(_, pulse) {
   var as = _.as || 'path',
       data = pulse.source,
-      diagram, polygons, key, i, n;
+      diagram, polygons, i, n;
 
   // configure and construct voronoi diagram
-  diagram = voronoi();
-  for (i=0, n=Params.length; i<n; ++i) {
-    key = Params[i];
-    if (key in _) diagram[key](_[key]);
-  }
+  diagram = voronoi().x(_.x).y(_.y);
+  if (_.size) diagram.size(_.size);
+  else diagram.extent(_.extent || defaultExtent);
+
   this.value = (diagram = diagram(data));
 
   // map polygons to paths
