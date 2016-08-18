@@ -4,6 +4,45 @@
   "padding": {"top": 25, "left": 0, "right": 0, "bottom": 0},
   "autosize": "none",
 
+  "signals": [
+    {
+      "name": "scale", "value": 1200,
+      "bind": {"type": "range", "min": 500, "max": 3000}
+    },
+    {
+      "name": "translateX", "value": 450,
+      "bind": {"type": "range", "min": -500, "max": 1200}
+    },
+    {
+      "name": "translateY", "value": 260,
+      "bind": {"type": "range", "min": -300, "max": 700}
+    },
+    {
+      "name": "shape", "value": "line",
+      "bind": {"type": "radio", "options": ["line", "curve"]}
+    },
+    {
+      "name": "hover",
+      "value": null,
+      "on": [
+        {"events": "@cell:mouseover", "update": "datum"},
+        {"events": "@cell:mouseout", "update": "null"}
+      ]
+    },
+    {
+      "name": "title",
+      "value": "U.S. Airports, 2008",
+      "update": "hover ? hover.name + ' (' + hover.iata + ')' : 'U.S. Airports, 2008'"
+    },
+    {
+      "name": "cell_stroke",
+      "value": null,
+      "on": [
+        {"events": "dblclick", "update": "cell_stroke ? null : 'brown'"}
+      ]
+    }
+  ],
+
   "data": [
     {
       "name": "states",
@@ -82,7 +121,8 @@
           "expr": "datum.source && datum.target"
         },
         {
-          "type": "linkpath"
+          "type": "linkpath",
+          "shape": {"signal": "shape"}
         }
       ]
     }
@@ -92,8 +132,8 @@
     {
       "name": "projection",
       "type": "albersUsa",
-      "scale": 1200,
-      "translate": [450, 280]
+      "scale": {"signal": "scale"},
+      "translate": [{"signal": "translateX"}, {"signal": "translateY"}]
     }
   ],
 
@@ -105,37 +145,7 @@
       "range": [16, 1000]
     }
   ],
-  "signals": [
-    {
-      "name": "hover",
-      "value": null,
-      "on": [
-        {
-          "events": "@cell:mouseover",
-          "update": "datum"
-        },
-        {
-          "events": "@cell:mouseout",
-          "update": "null"
-        }
-      ]
-    },
-    {
-      "name": "title",
-      "value": "U.S. Airports, 2008",
-      "update": "hover ? hover.name + ' (' + hover.iata + ')' : 'U.S. Airports, 2008'"
-    },
-    {
-      "name": "cell_stroke",
-      "value": null,
-      "on": [
-        {
-          "events": "dblclick",
-          "update": "cell_stroke ? null : 'brown'"
-        }
-      ]
-    }
-  ],
+
   "marks": [
     {
       "type": "path",
