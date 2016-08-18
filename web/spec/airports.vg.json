@@ -54,6 +54,12 @@
         },
         {
           "type": "voronoi", "x": "x", "y": "y"
+        },
+        {
+          "type": "collect", "sort": {
+            "field": "traffic.flights",
+            "order": "descending"
+          }
         }
       ]
     },

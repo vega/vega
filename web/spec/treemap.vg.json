@@ -17,7 +17,7 @@
         {
           "type": "treemap",
           "field": "size",
-          "sort": "value",
+          "sort": {"field": "value"},
           "round": true,
           "size": [{"signal": "width"}, {"signal": "height"}]
         }
