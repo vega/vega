@@ -7,6 +7,6 @@ export default {
     { "name": "padding", "type": "number", "default": 0 },
     { "name": "radius", "type": "field", "default": null },
     { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 3, "default": ["x", "y", "r"] }
+    { "name": "as", "type": "string", "array": true, "length": 3, "default": ["x", "y", "r", "depth", "children"] }
   ]
 };
