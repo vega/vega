@@ -1,3 +1,4 @@
+import {offset} from './render-size';
 import {constant, isString} from 'vega-util';
 import {point} from 'vega-scenegraph';
 
@@ -29,14 +30,14 @@ import {point} from 'vega-scenegraph';
  */
 export default function(view, event, item) {
   var el = view._renderer.element(),
-      p, e, pad;
+      p, e, translate;
 
   if (el) {
-    pad = view.padding();
+    translate = offset(view);
     e = event.changedTouches ? event.changedTouches[0] : event;
     p = point(e, el);
-    p[0] -= pad.left;
-    p[1] -= pad.top;
+    p[0] -= translate[0];
+    p[1] -= translate[1];
   }
 
   return event.vega = extension(view, item, p), event.item = item, event;
