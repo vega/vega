@@ -21,6 +21,8 @@
   "nested",
   "panzoom",
   "parallel-coords",
+  "stacked-area",
+  "stacked-bar",
   "tree-radial",
   "treemap",
   "weather"
