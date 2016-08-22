@@ -54,6 +54,6 @@ function createMark(def, group) {
     marktype:    def.marktype,
     name:        def.name || undefined,
     role:        def.role || undefined,
-    zindex:      def.zindex || undefined
+    zindex:      def.zindex || 0
   };
 }
