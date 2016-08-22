@@ -1,5 +1,5 @@
 import parseTransform from './transform';
-import parseModify from './modify';
+import parseTrigger from './trigger';
 import {ref} from '../util';
 import {Collect, Relay, Sieve} from '../transforms';
 
@@ -14,7 +14,7 @@ export default function parseData(data, scope) {
 
   if (data.on) {
     data.on.forEach(function(on) {
-      parseModify(on, scope, data.name);
+      parseTrigger(on, scope, data.name);
     });
   }
 
