@@ -48,24 +48,26 @@ function parseParameter(def, spec, scope) {
     }
 
     return def.array && !isSignal(value)
-      ? value.map(function(v) { return parameterValue(type, v, scope); })
-      : parameterValue(type, value, scope);
+      ? value.map(function(v) { return parameterValue(def, v, scope); })
+      : parameterValue(def, value, scope);
   }
 }
 
 /**
  * Parse a single parameter value.
  */
-function parameterValue(type, value, scope) {
+function parameterValue(def, value, scope) {
+  var type = def.type;
+
   if (isSignal(value)) {
-    return isData(type) ? error('Data references can not be signals.')
-         : isExpr(type) ? error('Expression references can not be signals.')
+    return isExpr(type) ? error('Expression references can not be signals.')
          : isField(type) ? scope.fieldRef(value)
          : isCompare(type) ? scope.compareRef(value)
          : scope.signalRef(value.signal);
   } else {
-    return isData(type) ? scope.getData(value).values
+    return def.expr && outerExpr(value) ? parseExpression(value.expr, scope)
          : isExpr(type) ? parseExpression(value, scope)
+         : isData(type) ? ref(scope.getData(value).values)
          : isField(type) ? fieldRef(value)
          : isCompare(type) ? compareRef(array(value.field), array(value.order))
          : value;
@@ -123,6 +125,10 @@ function parseSubParameter(def, value, scope) {
 }
 
 // -- Utilities -----
+
+export function outerExpr(_) {
+  return _ && _.expr;
+}
 
 export function isData(_) {
   return _ === 'data';
