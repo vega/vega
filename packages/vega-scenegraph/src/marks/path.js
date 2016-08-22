@@ -12,9 +12,14 @@ function attr(emit, item) {
 }
 
 function path(context, item) {
-  if (item.path == null) return true;
-  var path = item.pathCache || (item.pathCache = pathParse(item.path));
-  pathRender(context, path, item.x, item.y);
+  var path = item.path;
+  if (path == null) return true;
+
+  var cache = item.pathCache;
+  if (!cache || cache.path !== path) {
+    (item.pathCache = cache = pathParse(path)).path = path;
+  }
+  pathRender(context, cache, item.x, item.y);
 }
 
 function bound(bounds, item) {
