@@ -1,3 +1,3 @@
 export default function(name) {
-  return 'mark:' + name;
+  return name;
 }

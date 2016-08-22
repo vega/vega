@@ -8,6 +8,7 @@ import {GroupMark} from './marks/marktypes';
 import {FrameRole, MarkRole, ScopeRole} from './marks/roles';
 import {encoders} from './encode/encode-util';
 import parseTransform from './transform';
+import parseTrigger from './trigger';
 import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {ref} from '../util';
@@ -19,7 +20,7 @@ export default function(spec, scope) {
       group = spec.type === GroupMark,
       facet = spec.from && spec.from.facet,
       layout = role === ScopeRole || role === FrameRole,
-      op, input, bound, render, sieve,
+      op, input, store, bound, render, sieve, name,
       markRef, encodeRef, boundRef;
 
   // resolve input data
@@ -29,7 +30,7 @@ export default function(spec, scope) {
   op = scope.add(DataJoin(input));
 
   // collect visual items
-  op = scope.add(Collect({pulse: ref(op)}));
+  op = store = scope.add(Collect({pulse: ref(op)}));
 
   // connect visual items to scenegraph
   op = scope.add(Mark({
@@ -96,7 +97,15 @@ export default function(spec, scope) {
   sieve = scope.add(Sieve({pulse: boundRef}, undefined, scope.parent()));
 
   // if mark is named, make accessible as reactive geometry
+  // add trigger updates if defined
   if (spec.name != null) {
-    scope.addData(dataName(spec.name), new DataScope(scope, null, render, sieve))
+    name = dataName(spec.name);
+    scope.addData(name, new DataScope(scope, store, render, sieve));
+    if (spec.on) spec.on.forEach(function(on) {
+      if (on.insert || on.remove || on.toggle) {
+        error('Marks only support modify triggers.');
+      }
+      parseTrigger(on, scope, name);
+    });
   }
 }
