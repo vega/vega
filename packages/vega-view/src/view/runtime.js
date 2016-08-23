@@ -100,12 +100,13 @@ function functions(fn, ctx) {
     return retval !== undefined ? retval : item;
   };
 
-  fn.modify = function(name, insert, remove, toggle) {
+  fn.modify = function(name, insert, remove, toggle, modify, values) {
     var df = ctx.dataflow,
         data = ctx.data[name],
         input = data.input,
         changes = data.changes,
-        stamp = df.stamp();
+        stamp = df.stamp(),
+        predicate, key;
 
     if (!(input.value.length || insert || toggle)) {
       // nothing to do!
@@ -127,8 +128,8 @@ function functions(fn, ctx) {
     }
 
     if (toggle) {
-      var predicate = function(_) {
-        for (var key in toggle) {
+      predicate = function(_) {
+        for (key in toggle) {
           if (_[key] !== toggle[key]) return false;
         }
         return true;
@@ -138,6 +139,12 @@ function functions(fn, ctx) {
         changes.remove(predicate);
       } else {
         changes.insert(toggle);
+      }
+    }
+
+    if (modify) {
+      for (key in values) {
+        changes.modify(modify, key, values[key]);
       }
     }
 
