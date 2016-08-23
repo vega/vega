@@ -13,8 +13,12 @@
 
   "data": [
     {
+      "name": "points",
+      "url": "data/normal-2d.json"
+    },
+    {
       "name": "binned",
-      "url": "data/normal-2d.json",
+      "source": "points",
       "transform": [
         {
           "type": "bin", "field": "u",
@@ -36,7 +40,6 @@
       "name": "xscale",
       "type": "linear",
       "range": "width",
-      "round": true,
       "domain": [-1, 1]
     },
     {
@@ -67,6 +70,20 @@
           "fill": {"value": "steelblue"}
         },
         "hover": { "fill": {"value": "firebrick"} }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "points"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "u"},
+          "width": {"value": 1},
+          "y": {"value": 25, "offset": {"signal": "height"}},
+          "height": {"value": 5},
+          "fill": {"value": "steelblue"},
+          "fillOpacity": {"value": 0.4}
+        }
       }
     }
   ]
