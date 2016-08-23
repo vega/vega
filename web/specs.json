@@ -8,6 +8,7 @@
   "bind",
   "chart",
   "choropleth",
+  "crossfilter",
   "driving",
   "falkensee",
   "force-network",
