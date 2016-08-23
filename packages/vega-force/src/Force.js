@@ -20,7 +20,7 @@ var Forces = 'forces',
       'velocityDecay', 'drag', 'forces'
     ],
     ForceConfig = ['static', 'iterations'],
-    ForceOutput = ['x', 'y', 'vx', 'vy', 'fx', 'fy'];
+    ForceOutput = ['x', 'y', 'vx', 'vy'];
 
 /**
  * Force simulation layout.
@@ -51,14 +51,10 @@ prototype.transform = function(_, pulse) {
     if (params) setup(sim, _);
   }
 
-  // fix / unfix nodes as needed
-  if (_.modified('fixed')) {
-    sim.nodes().forEach(function(t) { t.fx = null; t.fy = null; });
-    array(_.fixed).forEach(function(t) { t.fx = t.x; t.fy = t.y; });
-  }
-
   // run simulation
-  if (params || change || pulse.changed() || _.modified(ForceConfig)) {
+  if (params || change || _.modified(ForceConfig)
+      || (pulse.changed() && _.restart !== false))
+  {
     sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
        .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
 
@@ -70,6 +66,26 @@ prototype.transform = function(_, pulse) {
     }
   }
 
+  return this.finish(pulse);
+};
+
+prototype.finish = function(pulse) {
+  var dataflow = pulse.dataflow;
+
+  // inspect dependencies, touch link source data
+  for (var args=this._argops, j=0, m=args.length, arg; j<m; ++j) {
+    arg = args[j];
+    if (arg.name !== Forces || arg.op._argval.force !== 'link') {
+      continue;
+    }
+    for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
+      if (ops[i].name === 'links' && (op = ops[i].op.source)) {
+        dataflow.touch(op); break;
+      }
+    }
+  }
+
+  // reflow all nodes
   return pulse.reflow().modifies(ForceOutput);
 };
 
