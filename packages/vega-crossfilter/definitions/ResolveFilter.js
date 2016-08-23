@@ -1,6 +1,6 @@
 export default {
   "type": "ResolveFilter",
-  "metadata": {"changes": true},
+  "metadata": {},
   "params": [
     { "name": "ignore", "type": "number", "required": true,
       "description": "A bit mask indicating which filters to ignore." },
