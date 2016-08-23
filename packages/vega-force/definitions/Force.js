@@ -3,12 +3,12 @@ export default {
   "metadata": {"modifies": true},
   "params": [
     { "name": "static", "type": "boolean", "default": false },
+    { "name": "restart", "type": "boolean", "default": true },
     { "name": "iterations", "type": "number", "default": 300 },
     { "name": "alpha", "type": "number", "default": 1 },
     { "name": "alphaMin", "type": "number", "default": 0.001 },
     { "name": "alphaTarget", "type": "number", "default": 0 },
     { "name": "drag", "type": "number", "default": 0.6 },
-    { "name": "fixed", "type": "data" },
     { "name": "forces", "type": "param", "array": true,
       "params": [
         {
@@ -21,7 +21,7 @@ export default {
         {
           "key": {"force": "collide"},
           "params": [
-            { "name": "radius", "type": "field" },
+            { "name": "radius", "type": "number", "expr": true },
             { "name": "strength", "type": "number", "default": 0.7 },
             { "name": "iterations", "type": "number", "default": 1 }
           ]
@@ -40,8 +40,8 @@ export default {
           "params": [
             { "name": "links", "type": "data" },
             { "name": "id", "type": "field" },
-            { "name": "distance", "type": "number", "default": 30 },
-            { "name": "strength", "type": "number" },
+            { "name": "distance", "type": "number", "default": 30, "expr": true },
+            { "name": "strength", "type": "number", "expr": true },
             { "name": "iterations", "type": "number", "default": 1 }
           ]
         },
@@ -62,7 +62,7 @@ export default {
       ] },
     {
       "name": "as", "type": "string", "array": true, "modify": false,
-      "default": ["x", "y", "vx", "vy", "fx", "fy"]
+      "default": ["x", "y", "vx", "vy"]
     }
   ]
 };
