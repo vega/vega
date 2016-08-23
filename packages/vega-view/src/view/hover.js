@@ -3,7 +3,8 @@ function itemFilter(event) {
 }
 
 function markTarget(event) {
-  return event.item.mark.source;
+  // grab upstream collector feeding the mark operator
+  return event.item.mark.source.source;
 }
 
 function invoke(name) {
