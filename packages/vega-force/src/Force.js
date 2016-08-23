@@ -53,7 +53,7 @@ prototype.transform = function(_, pulse) {
 
   // run simulation
   if (params || change || _.modified(ForceConfig)
-      || (pulse.changed() && _.restart !== false))
+      || (pulse.changed() && _.restart))
   {
     sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
        .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
