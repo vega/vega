@@ -3,7 +3,7 @@ export default {
   "metadata": {"modifies": true},
   "params": [
     { "name": "static", "type": "boolean", "default": false },
-    { "name": "restart", "type": "boolean", "default": true },
+    { "name": "restart", "type": "boolean", "default": false },
     { "name": "iterations", "type": "number", "default": 300 },
     { "name": "alpha", "type": "number", "default": 1 },
     { "name": "alphaMin", "type": "number", "default": 0.001 },
@@ -55,7 +55,7 @@ export default {
         {
           "key": {"force": "y"},
           "params": [
-            { "name": "strength", "type": "field", "default": 0.1 },
+            { "name": "strength", "type": "number", "default": 0.1 },
             { "name": "y", "type": "field" }
           ]
         }
