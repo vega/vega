@@ -58,5 +58,6 @@ prototype.transform = function(_, pulse) {
     });
   }
 
-  return output;
+  // add filter to source data in case of reflow...
+  return output.filter(output.SOURCE, function(t) { return pass(t._index); });
 };
