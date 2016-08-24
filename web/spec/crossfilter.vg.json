@@ -256,11 +256,11 @@
           "from": {"data": "delay-bins"},
           "encode": {
             "enter": {
-              "x": {"scale": "delayScale", "field": "delay0"},
-              "x2": {"scale": "delayScale", "field": "delay1", "offset": -1},
               "fill": {"value": "steelblue"}
             },
             "update": {
+              "x": {"scale": "delayScale", "field": "delay0"},
+              "x2": {"scale": "delayScale", "field": "delay1", "offset": -1},
               "y": {"scale": "yscale", "field": "count"},
               "y2": {"scale": "yscale", "value": 0}
             }
@@ -380,11 +380,11 @@
           "interactive": false,
           "encode": {
             "enter": {
-              "x": {"scale": "timeScale", "field": "time0"},
-              "x2": {"scale": "timeScale", "field": "time1", "offset": -1},
               "fill": {"value": "steelblue"}
             },
             "update": {
+              "x": {"scale": "timeScale", "field": "time0"},
+              "x2": {"scale": "timeScale", "field": "time1", "offset": -1},
               "y": {"scale": "yscale", "field": "count"},
               "y2": {"scale": "yscale", "value": 0}
             }
@@ -504,11 +504,11 @@
           "from": {"data": "dist-bins"},
           "encode": {
             "enter": {
-              "x": {"scale": "distScale", "field": "dist0"},
-              "x2": {"scale": "distScale", "field": "dist1", "offset": -1},
               "fill": {"value": "steelblue"}
             },
             "update": {
+              "x": {"scale": "distScale", "field": "dist0"},
+              "x2": {"scale": "distScale", "field": "dist1", "offset": -1},
               "y": {"scale": "yscale", "field": "count"},
               "y2": {"scale": "yscale", "value": 0}
             }
