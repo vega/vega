@@ -1,4 +1,5 @@
 var tape = require('tape'),
+    util = require('vega-util'),
     vega = require('vega-dataflow'),
     xf = require('../'),
     changeset = vega.changeset,
@@ -18,8 +19,8 @@ tape('Crossfilter filters tuples', function(test) {
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
   ];
 
-  var a = vega.field('a'),
-      b = vega.field('b'),
+  var a = util.field('a'),
+      b = util.field('b'),
       df = new vega.Dataflow(),
       r1 = df.add([0, 5]),
       r2 = df.add([0, 5]),
@@ -90,8 +91,8 @@ tape('Crossfilter consolidates after remove', function(test) {
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
   ];
 
-  var a = vega.field('a'),
-      b = vega.field('b'),
+  var a = util.field('a'),
+      b = util.field('b'),
       df = new vega.Dataflow(),
       r1 = df.add([0, 3]),
       r2 = df.add([0, 3]),
