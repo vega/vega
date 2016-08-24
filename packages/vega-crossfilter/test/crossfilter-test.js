@@ -108,10 +108,11 @@ tape('Crossfilter consolidates after remove', function(test) {
   // crossfilter consolidates after removal
   // this happens *after* propagation completes
 
-  // were indices appropriately remapped?
-  cf.index.map(function(index) {
-    var idx = index.index();
-    test.equal(index.size(), 2);
+  // were dimensions appropriately remapped?
+  cf._dims.map(function(dim) {
+    test.equal(dim.size(), 2);
+
+    var idx = dim.index();
     test.equal(idx[0], 1);
     test.equal(idx[1], 0);
   });

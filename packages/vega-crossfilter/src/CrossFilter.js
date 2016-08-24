@@ -1,5 +1,6 @@
-import SortedIndex from './SortedIndex';
 import Bitmaps from './Bitmaps';
+import Dimension from './Dimension';
+import SortedIndex from './SortedIndex';
 import {Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
@@ -12,35 +13,14 @@ import {inherits} from 'vega-util';
  */
 export default function CrossFilter(params) {
   Transform.call(this, Bitmaps(), params);
-  this.index = null;
-}
-
-function Dimension(index, field, query) {
-  var dim = SortedIndex();
-  dim.one = (1 << index);
-  dim.zero = ~dim.one;
-  dim.field = field;
-  dim.range = query.slice();
-  dim.add = function(data, curr, k) {
-    var dim = this,
-        one = dim.one,
-        added = dim.insert(dim.field, data, k),
-        range = dim.bisect(dim.range, added.value),
-        index = added.index,
-        lo = range[0],
-        hi = range[1],
-        n1 = index.length, i;
-
-    for (i=0;  i<lo; ++i) curr[index[i]] |= one;
-    for (i=hi; i<n1; ++i) curr[index[i]] |= one;
-  };
-  return dim;
+  this._indices = null;
+  this._dims = null;
 }
 
 var prototype = inherits(CrossFilter, Transform);
 
 prototype.transform = function(_, pulse) {
-  if (!this.index) {
+  if (!this._dims) {
     return this.init(_, pulse);
   } else {
     var init = _.modified('fields')
@@ -55,12 +35,16 @@ prototype.transform = function(_, pulse) {
 prototype.init = function(_, pulse) {
   var fields = _.fields,
       query = _.query,
+      indices = this._indices = {},
+      dims = this._dims = [],
       m = query.length,
-      dims = (this.index = Array(m)), q;
+      i = 0, key, index;
 
-  // instantiate dimensions
-  for (q=0; q<m; ++q) {
-    dims[q] = Dimension(q, fields[q], query[q]);
+  // instantiate indices and dimensions
+  for (; i<m; ++i) {
+    key = fields[i].fname;
+    index = indices[key] || (indices[key] = SortedIndex());
+    dims.push(Dimension(index, i, query[i]));
   }
 
   return this.eval(_, pulse);
@@ -70,15 +54,17 @@ prototype.reinit = function(_, pulse) {
   var output = pulse.materialize().fork(),
       fields = _.fields,
       query = _.query,
-      m = query.length,
-      dims = this.index,
+      indices = this._indices,
+      dims = this._dims,
       bits = this.value,
       curr = bits.curr(),
       prev = bits.prev(),
       all = bits.all(),
       out = (output.rem = output.add),
       mod = output.mod,
-      mods, remMap, modMap, i, n, f, q;
+      m = query.length,
+      adds = {}, add, index, key,
+      mods, remMap, modMap, i, n, f;
 
   // set prev to current state
   prev.set(curr);
@@ -102,11 +88,15 @@ prototype.reinit = function(_, pulse) {
   }
 
   // re-initialize indices as needed, update curr bitmap
-  for (q=0; q<m; ++q) {
-    f = fields[q];
-    if (!dims[q] || _.modified('fields', q) || pulse.modified(f.fields)) {
-      dims[q] = Dimension(q, fields[q], query[q]);
-      dims[q].add(pulse.source, curr, 0);
+  for (i=0; i<m; ++i) {
+    f = fields[i];
+    if (!dims[i] || _.modified('fields', i) || pulse.modified(f.fields)) {
+      key = f.fname;
+      if (!(add = adds[key])) {
+        indices[key] = index = SortedIndex();
+        adds[key] = add = index.insert(f, pulse.source, 0);
+      }
+      dims[i] = Dimension(index, i, query[i]).onAdd(add, curr);
     }
   }
 
@@ -129,7 +119,7 @@ prototype.reinit = function(_, pulse) {
 
 prototype.eval = function(_, pulse) {
   var output = pulse.materialize().fork(),
-      m = this.index.length,
+      m = this._dims.length,
       mask = 0;
 
   if (pulse.rem.length) {
@@ -158,11 +148,14 @@ prototype.eval = function(_, pulse) {
 prototype.insert = function(_, pulse, output) {
   var tuples = pulse.add,
       bits = this.value,
-      dims = this.index,
+      dims = this._dims,
+      indices = this._indices,
+      fields = _.fields,
+      adds = {},
       out = output.add,
       k = bits.size(),
       n = k + tuples.length,
-      m = dims.length, j;
+      m = dims.length, j, key, add;
 
   // resize bitmaps and add tuples as needed
   bits.resize(n, m);
@@ -174,7 +167,9 @@ prototype.insert = function(_, pulse, output) {
 
   // add to dimensional indices
   for (j=0; j<m; ++j) {
-    dims[j].add(tuples, curr, k);
+    key = fields[j].fname;
+    add = adds[key] || (adds[key] = indices[key].insert(fields[j], tuples, k));
+    dims[j].onAdd(add, curr);
   }
 
   // set previous filters, output if passes at least one filter
@@ -199,7 +194,7 @@ prototype.modify = function(pulse, output) {
 };
 
 prototype.remove = function(_, pulse, output) {
-  var dims = this.index,
+  var indices = this._indices,
       bits = this.value,
       curr = bits.curr(),
       prev = bits.prev(),
@@ -207,7 +202,7 @@ prototype.remove = function(_, pulse, output) {
       map = {},
       out = output.rem,
       tuples = pulse.rem,
-      i, j, n, m, k, f;
+      i, n, k, f;
 
   // process tuples, output if passes at least one filter
   for (i=0, n=tuples.length; i<n; ++i) {
@@ -219,8 +214,8 @@ prototype.remove = function(_, pulse, output) {
   }
 
   // remove from dimensional indices
-  for (j=0, m=dims.length; j<m; ++j) {
-    dims[j].remove(n, map);
+  for (k in indices) {
+    indices[k].remove(n, map);
   }
 
   return (this.reindex(pulse, n, map), map);
@@ -228,19 +223,17 @@ prototype.remove = function(_, pulse, output) {
 
 // reindex filters and indices after propagation completes
 prototype.reindex = function(pulse, num, map) {
-  var bits = this.value,
-      dims = this.index;
+  var indices = this._indices,
+      bits = this.value;
 
   pulse.runAfter(function() {
     var indexMap = bits.remove(num, map);
-    dims.forEach(function(dim) {
-      dim.reindex(indexMap);
-    });
+    for (var key in indices) indices[key].reindex(indexMap);
   });
 };
 
 prototype.update = function(_, pulse, output) {
-  var dims = this.index,
+  var dims = this._dims,
       query = _.query,
       stamp = pulse.stamp,
       m = dims.length,
