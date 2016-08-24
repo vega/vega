@@ -12,7 +12,6 @@ import {inherits} from 'vega-util';
  */
 export default function CrossFilter(params) {
   Transform.call(this, Bitmaps(), params);
-  this.data = [];
   this.index = null;
 }
 
