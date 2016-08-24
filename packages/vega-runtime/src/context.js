@@ -10,7 +10,6 @@ export default function(df, transforms, functions) {
 function Context(df, transforms, functions) {
   this.dataflow = df;
   this.transforms = transforms;
-  this.functions = functions;
   this.events = df.events.bind(df);
   this.signals = {};
   this.scales = {};
@@ -18,11 +17,16 @@ function Context(df, transforms, functions) {
   this.data = {};
   this.fn = {};
   this.itempath = [];
+  if (functions) {
+    this.functions = functions;
+    this.functions.context = this;
+  }
 }
 
 function ContextFork(ctx, index) {
   this.dataflow = ctx.dataflow;
   this.transforms = ctx.transforms;
+  this.functions = ctx.functions;
   this.events = ctx.events;
   this.signals = Object.create(ctx.signals);
   this.scales = Object.create(ctx.scales);
@@ -30,6 +34,10 @@ function ContextFork(ctx, index) {
   this.data = Object.create(ctx.data);
   this.fn = Object.create(ctx.fn);
   this.itempath = ctx.itempath.concat(index);
+  if (ctx.functions) {
+    this.functions = Object.create(ctx.functions);
+    this.functions.context = this;
+  }
 }
 
 Context.prototype = ContextFork.prototype = {
