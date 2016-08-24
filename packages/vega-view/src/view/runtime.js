@@ -15,8 +15,8 @@ function scale(name, ctx) {
   return s && s.value;
 }
 
-function functions(fn, ctx) {
-  extend(fn, formats());
+function functions() {
+  var fn = formats();
   fn.pad = pad;
   fn.truncate = truncate;
 
@@ -42,7 +42,7 @@ function functions(fn, ctx) {
 
   fn.open = function(uri, name) {
     if (typeof window !== 'undefined' && window && window.open) {
-      var opt = ctx.dataflow.loadOptions(),
+      var opt = this.context.dataflow.loadOptions(),
           url = load.sanitize(uri, extend({type:'open', name:name}, opt));
       if (url) {
         window.open(url, name);
@@ -59,41 +59,41 @@ function functions(fn, ctx) {
   };
 
   fn.range = function(name) {
-    var s = scale(name, ctx);
+    var s = scale(name, this.context);
     return s && s.range ? s.range() : [0, 0];
   };
 
   fn.bandwidth = function(name) {
-    var s = scale(name, ctx);
+    var s = scale(name, this.context);
     return s && s.bandwidth ? s.bandwidth() : 0;
   };
 
   fn.scale = function(name, value) {
-    var s = scale(name, ctx);
+    var s = scale(name, this.context);
     return s ? s(value) : undefined;
   };
 
   fn.scaleInvert = function(name, range) {
-    var s = scale(name, ctx);
+    var s = scale(name, this.context);
     return !s ? undefined
       : isArray(range) ? (s.invertRange || s.invert)(range)
       : (s.invert || s.invertExtent)(range);
   };
 
   fn.scaleCopy = function(name) {
-    var s = scale(name, ctx);
+    var s = scale(name, this.context);
     return s ? s.copy() : undefined;
   };
 
   fn.indata = function(name, field, value) {
-    var index = ctx.data[name]['index:' + field],
+    var index = this.context.data[name]['index:' + field],
         entry = index ? index.value[value] : undefined;
     return entry ? entry.count : entry;
   };
 
   fn.encode = function(item, name, retval) {
     if (item) {
-      var df = ctx.dataflow,
+      var df = this.context.dataflow,
           target = item.mark.source;
       df.pulse(target, df.changeset().encode(item, name));
     }
@@ -101,8 +101,8 @@ function functions(fn, ctx) {
   };
 
   fn.modify = function(name, insert, remove, toggle, modify, values) {
-    var df = ctx.dataflow,
-        data = ctx.data[name],
+    var df = this.context.dataflow,
+        data = this.context.data[name],
         input = data.input,
         changes = data.changes,
         stamp = df.stamp(),
@@ -151,11 +151,9 @@ function functions(fn, ctx) {
     return 1;
   };
 
-  return ctx;
+  return fn;
 }
 
 export default function(view, spec) {
-  var fn = {},
-      ctx = context(view, transforms, fn);
-  return parse(spec, functions(fn, ctx));
+  return parse(spec, context(view, transforms, functions()));
 }
