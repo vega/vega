@@ -15,6 +15,10 @@ export function isOrdinal(type) {
     || type === 'index';
 }
 
+export function isQuantile(type) {
+  return type === 'quantile';
+}
+
 export default function(spec, scope) {
   var type = spec.type || 'linear',
       params, key;
@@ -74,9 +78,10 @@ function singularDomain(spec, scope) {
   var domain = spec.domain,
       data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
-  return isOrdinal(spec.type)
-    ? data.valuesRef(domain.field, parseSort(domain.sort, false))
-    : data.extentRef(domain.field);
+  return isQuantile(spec.type) ? data.domainRef(domain.field)
+    : isOrdinal(spec.type)
+      ? data.valuesRef(domain.field, parseSort(domain.sort, false))
+      : data.extentRef(domain.field);
 }
 
 function multipleDomain(spec, scope) {

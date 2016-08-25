@@ -90,12 +90,16 @@ prototype.extentRef = function(field) {
   return cache(this, 'extent', 'Extent', field, false);
 };
 
-prototype.lookupRef = function(field) {
-  return cache(this, 'lookup', 'TupleIndex', field, false);
+prototype.domainRef = function(field) {
+  return cache(this, 'domain', 'Values', field, false);
 };
 
 prototype.valuesRef = function(field, sort) {
   return cache(this, 'values', 'Values', field, sort || true);
+};
+
+prototype.lookupRef = function(field) {
+  return cache(this, 'lookup', 'TupleIndex', field, false);
 };
 
 prototype.indataRef = function(field) {
