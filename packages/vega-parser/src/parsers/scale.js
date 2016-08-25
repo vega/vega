@@ -1,5 +1,5 @@
 import {ref, keyFieldRef} from '../util';
-import {Collect, Aggregate, MultiExtent, Values} from '../transforms';
+import {Collect, Aggregate, MultiExtent, MultiValues, Values} from '../transforms';
 import {error, isArray, isObject, isString, toSet} from 'vega-util';
 
 export var scaleTypes = toSet([
@@ -78,22 +78,24 @@ function singularDomain(spec, scope) {
   var domain = spec.domain,
       data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
-  return isQuantile(spec.type) ? data.domainRef(domain.field)
-    : isOrdinal(spec.type)
+  return isOrdinal(spec.type)
       ? data.valuesRef(domain.field, parseSort(domain.sort, false))
+      : isQuantile(spec.type) ? data.domainRef(domain.field)
       : data.extentRef(domain.field);
 }
 
 function multipleDomain(spec, scope) {
-  var method = isOrdinal(spec.type) ? oMultipleDomain : qMultipleDomain,
-      data   = spec.domain.data,
+  var data = spec.domain.data,
       fields = spec.domain.fields.reduce(function(dom, d) {
         return dom.push(isString(d) ? {data: data, field:d} : d), dom;
       }, []);
-  return method(spec, scope, fields);
+
+  return (isOrdinal(spec.type) ? ordinalMultipleDomain
+    : isQuantile(spec.type) ? quantileMultipleDomain
+    : numericMultipleDomain)(spec, scope, fields);
 }
 
-function oMultipleDomain(spec, scope, fields) {
+function ordinalMultipleDomain(spec, scope, fields) {
   var counts, a, c, v;
 
   // get value counts for each domain field
@@ -139,7 +141,19 @@ function parseSort(sort, multidomain) {
   return sort;
 }
 
-function qMultipleDomain(spec, scope, fields) {
+function quantileMultipleDomain(spec, scope, fields) {
+  // get value arrays for each domain field
+  var values = fields.map(function(f) {
+    var data = scope.getData(f.data);
+    if (!data) error('Can not find data set: ' + f.data);
+    return data.domainRef(f.field);
+  });
+
+  // combine value arrays
+  return ref(scope.add(MultiValues({values: values})));
+}
+
+function numericMultipleDomain(spec, scope, fields) {
   // get extents for each domain field
   var extents = fields.map(function(f) {
     var data = scope.getData(f.data);
