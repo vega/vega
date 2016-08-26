@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.6.0',
+  version: '2.6.2',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -3469,11 +3469,10 @@ function file(filename, opt, callback) {
 function http(url, opt, callback) {
   var headers = util.extend({}, load.headers, opt.headers);
 
-  if (!callback) {
-    return require('sync-request')('GET', url, {headers: headers}).getBody();
-  }
-
   var options = {url: url, encoding: null, gzip: true, headers: headers};
+  if (!callback) {
+    return require('sync-request')('GET', url, options).getBody();
+  }
   require('request')(options, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       callback(null, body);
@@ -3688,7 +3687,7 @@ module.exports = type;
 var util = require('./util');
 
 var dl = {
-  version:    '1.7.1',
+  version:    '1.7.2',
   load:       require('./import/load'),
   read:       require('./import/read'),
   type:       require('./import/type'),
@@ -15306,7 +15305,7 @@ var compile = expr.compiler(args, {
     fn.eventGroup = 'event.vg.getGroup';
     fn.eventX     = 'event.vg.getX';
     fn.eventY     = 'event.vg.getY';
-    fn.open       = 'window.open';
+    fn.open       = openGen(codegen);
     fn.scale      = scaleGen(codegen, false);
     fn.iscale     = scaleGen(codegen, true);
     fn.inrange    = 'this.defs.inrange';
@@ -15323,10 +15322,37 @@ var compile = expr.compiler(args, {
       'indata':     indata,
       'format':     numberFormat,
       'timeFormat': timeFormat,
-      'utcFormat':  utcFormat
+      'utcFormat':  utcFormat,
+      'open':       windowOpen
     };
   }
 });
+
+function openGen(codegen) {
+  return function (args) {
+    args = args.map(codegen);
+    var n = args.length;
+    if (n < 1 || n > 2) {
+      throw Error("open takes exactly 1 or 2 arguments.");
+    }
+    return 'this.defs.open(this.model, ' +
+      args[0] + (n > 1 ? ',' + args[1] : '') + ')';
+  };
+}
+
+function windowOpen(model, url, name) {
+  if (typeof window !== 'undefined' && window && window.open) {
+    var opt = dl.extend({type: 'open', url: url, name: name}, model.config().load),
+        uri = dl.load.sanitizeUrl(opt);
+    if (uri) {
+      window.open(uri, name);
+    } else {
+      throw Error('Invalid URL: ' + opt.url);
+    }
+  } else {
+    throw Error('Open function can only be invoked in a browser.');
+  }
+}
 
 function scaleGen(codegen, invert) {
   return function(args) {
@@ -15377,7 +15403,7 @@ function indataGen(codegen) {
     }
 
     args = args.map(codegen);
-    return 'this.defs.indata(this.model,' + 
+    return 'this.defs.indata(this.model,' +
       args[0] + ',' + args[1] + ',' + args[2] + ')';
   };
 }
@@ -18011,7 +18037,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from, cmp;
+      i, rlen, j, flen, ref, fields, field, data, from;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
@@ -18046,15 +18072,15 @@ function dataRef(which, def, scale, group) {
 
     data = cache.aggr().result();
     if (uniques) {
-      if (dl.isObject(sort)) {
-        cmp = sort.op + '_' + DataRef.VALUE;
-        cmp = dl.comparator(cmp);
-      } else if (sort === true) {
-        cmp = dl.comparator(DataRef.GROUPBY);
+      if (sort === true) {
+        cache._values = data.map(function(d) { return d[DataRef.GROUPBY]+''; })
+          .sort(dl.cmp);
+      } else {
+        if (dl.isObject(sort)) {
+          data = data.sort(dl.comparator(sort.op + '_' + DataRef.VALUE));
+        }
+        cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
       }
-
-      if (cmp) data = data.sort(cmp);
-      cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
     } else {
       data = data[0];
       cache._values = !dl.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
