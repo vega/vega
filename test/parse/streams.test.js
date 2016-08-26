@@ -18,7 +18,7 @@ describe('Streams', function() {
 
         function mouseEvt(type, x, y, target) {
           var mm = document.createEvent("MouseEvents");
-          mm.initMouseEvent("mousemove", true, true, window, null, x, y, x, y, false, false, false, false, target);
+          mm.initMouseEvent("mousemove", true, true, window, null, x, y, x, y, false, false, false, false, target, null);
 
           var evt;
           if (type == "wheel") {
@@ -27,7 +27,7 @@ describe('Streams', function() {
             evt = new WheelEvent("wheel", eventInit);
           } else {
             var evt = document.createEvent("MouseEvents");
-            evt.initMouseEvent(type, true, true, window, null, x, y, x, y, false, false, false, false, target);
+            evt.initMouseEvent(type, true, true, window, null, x, y, x, y, false, false, false, false, target, null);
           }
 
           target.dispatchEvent(mm);
