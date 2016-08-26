@@ -78,8 +78,12 @@ function move(moveEvent, overEvent, outEvent) {
       this.fire(moveEvent, evt); // fire move
     } else {
       // active item and picked item are different
-      this.fire(outEvent, evt);  // fire out for prior active item
-      this._active = p;            // set new active item
+      if (!a || !a.exit) {
+        // fire out for prior active item
+        // suppress if active item was removed from scene
+        this.fire(outEvent, evt);
+      }
+      this._active = p;          // set new active item
       this.fire(overEvent, evt); // fire over for new active item
       this.fire(moveEvent, evt); // fire move for new active item
     }
