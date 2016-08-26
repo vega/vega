@@ -10,6 +10,7 @@
   "chart",
   "choropleth",
   "crossfilter",
+  "crossfilter-multi",
   "driving",
   "falkensee",
   "force-network",
