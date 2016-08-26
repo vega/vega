@@ -395,15 +395,15 @@ function dataRef(which, def, scale, group) {
 
     data = cache.aggr().result();
     if (uniques) {
-      if (dl.isObject(sort)) {
-        cmp = sort.op + '_' + DataRef.VALUE;
-        cmp = dl.comparator(cmp);
-      } else if (sort === true) {
-        cmp = dl.comparator(DataRef.GROUPBY);
+      if (sort === true) {
+        cache._values = data.map(function(d) { return d[DataRef.GROUPBY]+''; })
+          .sort(dl.cmp);
+      } else {
+        if (dl.isObject(sort)) {
+          data = data.sort(dl.comparator(sort.op + '_' + DataRef.VALUE));
+        }
+        cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
       }
-
-      if (cmp) data = data.sort(cmp);
-      cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
     } else {
       data = data[0];
       cache._values = !dl.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
