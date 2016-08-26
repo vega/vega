@@ -283,7 +283,7 @@
     },
 
     {
-      "type": "rect",
+      "type": "group",
       "from": {"data": "tooltip"},
       "interactive": false,
       "encode": {
@@ -297,35 +297,35 @@
           "stroke": {"value": "#aaa"},
           "strokeWidth": {"value": 0.5}
         }
-      }
-    },
-    {
-      "type": "text",
-      "from": {"data": "tooltip"},
-      "interactive": false,
-      "encode": {
-        "update": {
-          "x": {"scale": "x", "field": "argmin.forecastYear", "offset": 1},
-          "y": {"scale": "y", "field": "argmin.value", "offset": 34},
-          "text": {"expr": "'Forecast from early ' + datum.argmin.budgetYear"},
-          "fill": {"value": "black"},
-          "fontWeight": {"value": "bold"}
+      },
+      "marks": [
+        {
+          "type": "text",
+          "interactive": false,
+          "encode": {
+            "update": {
+              "x": {"value": 6},
+              "y": {"value": 14},
+              "text": {"expr": "'Forecast from early ' + parent().argmin.budgetYear"},
+              "fill": {"value": "black"},
+              "fontWeight": {"value": "bold"}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "interactive": false,
+          "encode": {
+            "update": {
+              "x": {"value": 6},
+              "y": {"value": 29},
+              "text": {"expr": "parent().argmin.forecastYear + ': ' + format('$.3f', parent().argmin.abs) + ' trillion ' + parent().argmin.type"},
+              "fill": {"value": "black"},
+              "align": {"value": "left"}
+            }
+          }
         }
-      }
-    },
-    {
-      "type": "text",
-      "from": {"data": "tooltip"},
-      "interactive": false,
-      "encode": {
-        "update": {
-          "x": {"scale": "x", "field": "argmin.forecastYear", "offset": 1},
-          "y": {"scale": "y", "field": "argmin.value", "offset": 49},
-          "text": {"expr": "datum.argmin.forecastYear + ': ' + format('$.3f', datum.argmin.abs) + ' trillion ' + datum.argmin.type"},
-          "fill": {"value": "black"},
-          "align": {"value": "left"}
-        }
-      }
+      ]
     }
   ]
 }
