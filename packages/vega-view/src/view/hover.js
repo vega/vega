@@ -4,7 +4,8 @@ function itemFilter(event) {
 
 function markTarget(event) {
   // grab upstream collector feeding the mark operator
-  return event.item.mark.source.source;
+  var source = event.item.mark.source;
+  return source.source || source;
 }
 
 function invoke(name) {
