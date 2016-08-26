@@ -116,7 +116,7 @@
       "from": {"data": "world"},
       "encode": {
         "enter": {
-          "strokeWidth": {"value": 1},
+          "strokeWidth": {"value": 0.5},
           "stroke": {"value": "#bbb"},
           "fill": {"value": "#e5e8d3"}
         }

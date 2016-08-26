@@ -3,36 +3,42 @@
   "padding": 5,
 
   "signals": [
-    {"name": "chartWidth", "value": 300},
-    {"name": "chartPad", "value": 20},
-    {"name": "width", "update": "2 * chartWidth + chartPad"}
+    { "name": "chartWidth", "value": 300 },
+    { "name": "chartPad", "value": 20 },
+    { "name": "width", "update": "2 * chartWidth + chartPad" },
+    { "name": "year", "value": 2000,
+      "bind": {"type": "range", "min": 1850, "max": 2000, "step": 10} }
   ],
 
   "data": [
     {
-      "name": "pop2000",
-      "url": "data/population.json",
+      "name": "population",
+      "url": "data/population.json"
+    },
+    {
+      "name": "popYear",
+      "source": "population",
       "transform": [
-        {"type": "filter", "expr": "datum.year == 2000"}
+        {"type": "filter", "expr": "datum.year == year"}
       ]
     },
     {
       "name": "males",
-      "source": "pop2000",
+      "source": "popYear",
       "transform": [
         {"type": "filter", "expr": "datum.sex == 1"}
       ]
     },
     {
       "name": "females",
-      "source": "pop2000",
+      "source": "popYear",
       "transform": [
         {"type": "filter", "expr": "datum.sex == 2"}
       ]
     },
     {
       "name": "ageGroups",
-      "source": "pop2000",
+      "source": "population",
       "transform": [
         { "type": "aggregate", "groupby": ["age"] }
       ]
@@ -87,7 +93,7 @@
           "type": "linear",
           "range": [{"signal": "chartWidth"}, 0],
           "nice": true, "zero": true,
-          "domain": {"data": "pop2000", "field": "people"}
+          "domain": {"data": "population", "field": "people"}
         }
       ],
 
@@ -128,7 +134,7 @@
           "type": "linear",
           "range": [0, {"signal": "chartWidth"}],
           "nice": true, "zero": true,
-          "domain": {"data": "pop2000", "field": "people"}
+          "domain": {"data": "population", "field": "people"}
         }
       ],
 
