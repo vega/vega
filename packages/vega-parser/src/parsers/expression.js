@@ -31,6 +31,9 @@ export var functions = function(codegen) {
   fn.y      = eventPrefix + 'y';
   fn.encode = 'this.encode';
   fn.modify = 'this.modify';
+  fn.parent = function() {
+    return '(item?item.mark.group.datum:event?event.vega.group().datum:null)';
+  };
 
   // format functions
   fn.format = 'this.format';
