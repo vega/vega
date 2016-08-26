@@ -9,6 +9,7 @@ import resize from './util/canvas/resize';
 
 export default function CanvasRenderer(loadConfig) {
   Renderer.call(this, loadConfig);
+  this._redraw = false;
 }
 
 var prototype = inherits(CanvasRenderer, Renderer),
@@ -28,7 +29,7 @@ prototype.initialize = function(el, width, height, origin) {
 prototype.resize = function(width, height, origin) {
   base.resize.call(this, width, height, origin);
   resize(this._canvas, this._width, this._height, this._origin);
-  return this;
+  return this._redraw = true, this;
 };
 
 prototype.canvas = function() {
@@ -40,8 +41,6 @@ prototype.context = function() {
 };
 
 function clipToBounds(g, items) {
-  if (!items) return null;
-
   var b = new Bounds(), i, n, item, mark, group;
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
@@ -80,7 +79,9 @@ prototype._render = function(scene, items) {
 
   // setup
   g.save();
-  b = clipToBounds(g, items);
+  b = (!items || this._redraw)
+    ? (this._redraw = false, null)
+    : clipToBounds(g, items);
   this.clear(-o[0], -o[1], w, h);
 
   // render
