@@ -1,5 +1,5 @@
 {
-  "padding": 5,
+  "padding": 10,
   "config": {
     "axis": {
       "tickColor": "#ccc"
@@ -7,11 +7,68 @@
   },
 
   "signals": [
-    {"name": "chartSize", "value": 120},
-    {"name": "chartPad", "value": 15},
-    {"name": "chartStep", "update": "chartSize + chartPad"},
-    {"name": "width", "update": "chartStep * 4"},
-    {"name": "height", "update": "chartStep * 4"}
+    { "name": "chartSize", "value": 120 },
+    { "name": "chartPad", "value": 15 },
+    { "name": "chartStep", "update": "chartSize + chartPad" },
+    { "name": "width", "update": "chartStep * 4" },
+    { "name": "height", "update": "chartStep * 4" },
+    {
+      "name": "cell", "value": null,
+      "on": [
+        {
+          "events": "@cell:mousedown",
+          "update": "group()"
+        },
+        {
+          "events": "@cell:mouseup",
+          "update": "brushX[0] === x(cell) && brushY[0] === y(cell) ? null : cell"
+        }
+      ]
+    },
+    {
+      "name": "brushX", "value": 0,
+      "on": [
+        {
+          "events": "@cell:mousedown",
+          "update": "[x(cell), x(cell)]"
+        },
+        {
+          "events": "[@cell:mousedown, window:mouseup] > window:mousemove",
+          "update": "[brushX[0], clamp(x(cell), 0, chartSize)]"
+        }
+      ]
+    },
+    {
+      "name": "brushY", "value": 0,
+      "on": [
+        {
+          "events": "@cell:mousedown",
+          "update": "[y(cell), y(cell)]"
+        },
+        {
+          "events": "[@cell:mousedown, window:mouseup] > window:mousemove!",
+          "update": "[brushY[0], clamp(y(cell), 0, chartSize)]"
+        }
+      ]
+    },
+    {
+      "name": "rangeX", "value": [0, 0],
+      "on": [
+        {
+          "events": {"signal": "brushX"},
+          "update": "invert(cell.datum.x+'X', brushX)"
+        }
+      ]
+    },
+    {
+      "name": "rangeY", "value": [0, 0],
+      "on": [
+        {
+          "events": {"signal": "brushY"},
+          "update": "invert(cell.datum.y+'Y', brushY)"
+        }
+      ]
+    }
   ],
 
   "data": [
@@ -115,34 +172,42 @@
 
   "axes": [
     {
-      "orient": "left", "scale": "petalWidthY", "count": 5, "domain": false,
+      "orient": "left", "scale": "petalWidthY", "minExtent": 25,
+      "title": "Petal Width", "count": 5, "domain": false,
       "position": {"expr": "3 * chartStep"}
     },
     {
-      "orient": "left", "scale": "petalLengthY", "count": 5, "domain": false,
+      "orient": "left", "scale": "petalLengthY", "minExtent": 25,
+      "title": "Petal Length", "count": 5, "domain": false,
       "position": {"expr": "2 * chartStep"}
     },
     {
-      "orient": "left", "scale": "sepalWidthY", "count": 5, "domain": false,
+      "orient": "left", "scale": "sepalWidthY", "minExtent": 25,
+      "title": "Sepal Width", "count": 5, "domain": false,
       "position": {"expr": "1 * chartStep"}
     },
     {
-      "orient": "left", "scale": "sepalLengthY", "count": 5, "domain": false
+      "orient": "left", "scale": "sepalLengthY", "minExtent": 25,
+      "title": "Sepal Length", "count": 5, "domain": false
     },
     {
-      "orient": "bottom", "scale": "petalWidthX", "count": 5, "domain": false,
+      "orient": "bottom", "scale": "petalWidthX",
+      "title": "Petal Width", "count": 5, "domain": false,
       "offset": {"expr": "-chartPad"}
     },
     {
-      "orient": "bottom", "scale": "petalLengthX", "count": 5, "domain": false,
+      "orient": "bottom", "scale": "petalLengthX",
+      "title": "Petal Length", "count": 5, "domain": false,
       "offset": {"expr": "-chartPad"}, "position": {"expr": "1 * chartStep"}
     },
     {
-      "orient": "bottom", "scale": "sepalWidthX", "count": 5, "domain": false,
+      "orient": "bottom", "scale": "sepalWidthX",
+      "title": "Sepal Width", "count": 5, "domain": false,
       "offset": {"expr": "-chartPad"}, "position": {"expr": "2 * chartStep"}
     },
     {
-      "orient": "bottom", "scale": "sepalLengthX", "count": 5, "domain": false,
+      "orient": "bottom", "scale": "sepalLengthX",
+      "title": "Sepal Length", "count": 5, "domain": false,
       "offset": {"expr": "-chartPad"}, "position": {"expr": "3 * chartStep"}
     }
   ],
@@ -164,6 +229,21 @@
   ],
 
   "marks": [
+    {
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "fill": {"value": "#eee"}
+        },
+        "update": {
+          "opacity": {"expr": "cell ? 1 : 0"},
+          "x": {"expr": "cell ? cell.x + brushX[0] : 0"},
+          "x2": {"expr": "cell ? cell.x + brushX[1] : 0"},
+          "y": {"expr": "cell ? cell.y + brushY[0] : 0"},
+          "y2": {"expr": "cell ? cell.y + brushY[1] : 0"}
+        }
+      }
+    },
     {
       "name": "cell",
       "type": "group",
@@ -195,13 +275,36 @@
                 "scale": {"parent": "yscale"},
                 "field": {"datum": {"parent": "y"}}
               },
-              "fill": {"scale": "color", "field": "species"},
               "fillOpacity": {"value": 0.5},
               "size": {"value": 36}
+            },
+            "update": {
+              "fill": [
+                {
+                  "test": "!cell || inrange(datum[cell.datum.x], rangeX) && inrange(datum[cell.datum.y], rangeY)",
+                  "scale": "color", "field": "species"
+                },
+                {"value": "#ddd"}
+              ]
             }
           }
         }
       ]
+    },
+    {
+      "type": "rect",
+      "name": "brush",
+      "encode": {
+        "enter": {
+          "fill": {"value": "transparent"}
+        },
+        "update": {
+          "x": {"expr": "cell ? cell.x + brushX[0] : 0"},
+          "x2": {"expr": "cell ? cell.x + brushX[1] : 0"},
+          "y": {"expr": "cell ? cell.y + brushY[0] : 0"},
+          "y2": {"expr": "cell ? cell.y + brushY[1] : 0"}
+        }
+      }
     }
   ]
 }
