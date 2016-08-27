@@ -57,6 +57,7 @@ export var functions = function(codegen) {
   fn.invert = 'this.scaleInvert';
   fn.copy = 'this.scaleCopy';
   fn.indata = 'this.indata';
+  fn.inrange = 'this.inrange';
 
   // interaction support
   fn.pinchDistance = 'this.pinchDistance';
@@ -130,12 +131,9 @@ export default function(expr, scope, preamble) {
           name = args[0].name;
           args[0] = new ASTNode(Literal);
           args[0].raw = '{signal:"' + name + '"}';
-        } else {
-          error('First argument to ' + name + ' must be a string literal or identifier.');
         }
         break;
       case 'copy':
-        if (args[0].type !== Literal) error('Argument to copy must be a string literals.');
         scale(args[0].value, scope, params);
         break;
       case 'indata':
