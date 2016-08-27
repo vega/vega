@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {scale as getScale} from 'vega-scale';
-import {error, inherits, isFunction} from 'vega-util';
+import {error, inherits, isFunction, toSet} from 'vega-util';
 
 var SKIP = {
   'set': 1,
@@ -20,6 +20,8 @@ var SKIP = {
   'round': 1,
   'bandSize': 1
 };
+
+var INCLUDE_ZERO = toSet(['linear', 'pow', 'sqrt']);
 
 /**
  * Maintains a scale function mapping data values to visual channels.
@@ -56,12 +58,15 @@ function createScale(type, scheme) {
 }
 
 function configureDomain(scale, _) {
-  var domain = _.domain;
+  var domain = _.domain,
+      zero = _.zero || (_.zero === undefined && INCLUDE_ZERO[scale.type]),
+      n;
+
   if (!domain) return 0;
 
-  if (_.zero || _.domainMin != null || _.domainMax != null) {
-    var n = (domain = domain.slice()).length - 1;
-    if (_.zero) {
+  if (zero || _.domainMin != null || _.domainMax != null) {
+    n = (domain = domain.slice()).length - 1;
+    if (zero) {
       if (domain[0] > 0) domain[0] = 0;
       if (domain[n] < 0) domain[n] = 0;
     }
