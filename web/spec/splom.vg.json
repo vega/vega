@@ -1,0 +1,207 @@
+{
+  "padding": 5,
+  "config": {
+    "axis": {
+      "tickColor": "#ccc"
+    }
+  },
+
+  "signals": [
+    {"name": "chartSize", "value": 120},
+    {"name": "chartPad", "value": 15},
+    {"name": "chartStep", "update": "chartSize + chartPad"},
+    {"name": "width", "update": "chartStep * 4"},
+    {"name": "height", "update": "chartStep * 4"}
+  ],
+
+  "data": [
+    {
+      "name": "iris",
+      "url": "data/iris.json"
+    },
+    {
+      "name": "fields",
+      "values": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"]
+    },
+    {
+      "name": "cross",
+      "values": [
+        {"x": "petalWidth",  "y": "petalWidth"},
+        {"x": "petalWidth",  "y": "petalLength"},
+        {"x": "petalWidth",  "y": "sepalWidth"},
+        {"x": "petalWidth",  "y": "sepalLength"},
+        {"x": "petalLength", "y": "petalWidth"},
+        {"x": "petalLength", "y": "petalLength"},
+        {"x": "petalLength", "y": "sepalWidth"},
+        {"x": "petalLength", "y": "sepalLength"},
+        {"x": "sepalWidth",  "y": "petalWidth"},
+        {"x": "sepalWidth",  "y": "petalLength"},
+        {"x": "sepalWidth",  "y": "sepalWidth"},
+        {"x": "sepalWidth",  "y": "sepalLength"},
+        {"x": "sepalLength", "y": "petalWidth"},
+        {"x": "sepalLength", "y": "petalLength"},
+        {"x": "sepalLength", "y": "sepalWidth"},
+        {"x": "sepalLength", "y": "sepalLength"}
+      ],
+      "transform": [
+        { "type": "formula", "as": "xscale", "expr": "datum.x + 'X'"},
+        { "type": "formula", "as": "yscale", "expr": "datum.y + 'Y'"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "groupx",
+      "type": "band",
+      "range": "width",
+      "domain": {"data": "fields", "field": "data"}
+    },
+    {
+      "name": "groupy",
+      "type": "band",
+      "range": [{"signal": "height"}, 0],
+      "domain": {"data": "fields", "field": "data"}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "iris", "field": "species"},
+      "range": "category"
+    },
+
+    {
+      "name": "petalWidthX", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "petalWidth"},
+      "range": [0, {"signal": "chartSize"}]
+    },
+    {
+      "name": "petalLengthX", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "petalLength"},
+      "range": [0, {"signal": "chartSize"}]
+    },
+    {
+      "name": "sepalWidthX", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "sepalWidth"},
+      "range": [0, {"signal": "chartSize"}]
+    },
+    {
+      "name": "sepalLengthX", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "sepalLength"},
+      "range": [0, {"signal": "chartSize"}]
+    },
+
+    {
+      "name": "petalWidthY", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "petalWidth"},
+      "range": [{"signal": "chartSize"}, 0]
+    },
+    {
+      "name": "petalLengthY", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "petalLength"},
+      "range": [{"signal": "chartSize"}, 0]
+    },
+    {
+      "name": "sepalWidthY", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "sepalWidth"},
+      "range": [{"signal": "chartSize"}, 0]
+    },
+    {
+      "name": "sepalLengthY", "zero": false, "nice": true,
+      "domain": {"data": "iris", "field": "sepalLength"},
+      "range": [{"signal": "chartSize"}, 0]
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "left", "scale": "petalWidthY", "count": 5, "domain": false,
+      "position": {"expr": "3 * chartStep"}
+    },
+    {
+      "orient": "left", "scale": "petalLengthY", "count": 5, "domain": false,
+      "position": {"expr": "2 * chartStep"}
+    },
+    {
+      "orient": "left", "scale": "sepalWidthY", "count": 5, "domain": false,
+      "position": {"expr": "1 * chartStep"}
+    },
+    {
+      "orient": "left", "scale": "sepalLengthY", "count": 5, "domain": false
+    },
+    {
+      "orient": "bottom", "scale": "petalWidthX", "count": 5, "domain": false,
+      "offset": {"expr": "-chartPad"}
+    },
+    {
+      "orient": "bottom", "scale": "petalLengthX", "count": 5, "domain": false,
+      "offset": {"expr": "-chartPad"}, "position": {"expr": "1 * chartStep"}
+    },
+    {
+      "orient": "bottom", "scale": "sepalWidthX", "count": 5, "domain": false,
+      "offset": {"expr": "-chartPad"}, "position": {"expr": "2 * chartStep"}
+    },
+    {
+      "orient": "bottom", "scale": "sepalLengthX", "count": 5, "domain": false,
+      "offset": {"expr": "-chartPad"}, "position": {"expr": "3 * chartStep"}
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color",
+      "title": "Species",
+      "offset": 10,
+      "encode": {
+        "symbols": {
+          "update": {
+            "fillOpacity": {"value": 0.5},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "name": "cell",
+      "type": "group",
+      "from": {"data": "cross"},
+
+      "encode": {
+        "enter": {
+          "x": {"scale": "groupx", "field": "x"},
+          "y": {"scale": "groupy", "field": "y"},
+          "width": {"signal": "chartSize"},
+          "height": {"signal": "chartSize"},
+          "fill": {"value": "transparent"},
+          "stroke": {"value": "#ddd"}
+        }
+      },
+
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "iris"},
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "x": {
+                "scale": {"parent": "xscale"},
+                "field": {"datum": {"parent": "x"}}
+              },
+              "y": {
+                "scale": {"parent": "yscale"},
+                "field": {"datum": {"parent": "y"}}
+              },
+              "fill": {"scale": "color", "field": "species"},
+              "fillOpacity": {"value": 0.5},
+              "size": {"value": 36}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

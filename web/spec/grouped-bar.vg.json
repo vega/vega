@@ -27,7 +27,7 @@
       "name": "yscale",
       "type": "band",
       "domain": {"data": "table", "field": "category"},
-      "range": [0, {"signal": "height"}],
+      "range": "height",
       "padding": 0.2
     },
     {

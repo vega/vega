@@ -4,6 +4,14 @@
   "padding": 10,
   "autosize": "fit",
 
+  "config": {
+    "axisBand": {
+      "bandPosition": 1,
+      "tickPadding": -1,
+      "tickExtra": true
+    }
+  },
+
   "signals": [
     {
       "name": "active",

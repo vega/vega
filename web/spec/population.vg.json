@@ -49,7 +49,7 @@
     {
       "name": "y",
       "type": "band",
-      "range": "height",
+      "range": [{"signal": "height"}, 0],
       "round": true,
       "domain": {"data": "ageGroups", "field": "age"}
     },

@@ -27,7 +27,7 @@
           "update": "fix || 1"
         },
         {
-          "events": "[symbol:mousedown, window:mouseup] > window:mousemove",
+          "events": "[symbol:mousedown, window:mouseup] > window:mousemove!",
           "update": "2", "force": true
         }
       ],

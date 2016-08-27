@@ -89,7 +89,7 @@ function load(name) {
       visualize(spec = JSON.parse(data));
     })
     .catch(function(err) {
-      console.error(err.stack);
+      console.error(err, err.stack);
     });
 }
 
