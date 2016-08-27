@@ -85,7 +85,9 @@ function layoutAxis(axis, width, height) {
       ticksIndex = datum.grid ? 1 : 0,
       labelIndex = ticksIndex + 1,
       titleIndex = labelIndex + (datum.domain ? 2 : 1),
+      range = item.range,
       offset = item.offset,
+      position = item.position,
       minExtent = item.minExtent,
       maxExtent = item.maxExtent,
       title = datum.title && item.items[titleIndex].items[0],
@@ -101,39 +103,43 @@ function layoutAxis(axis, width, height) {
   // position axis group and title
   switch (orient) {
     case 'top': {
+      x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
       if (title) title.auto
         ? (title.y = -(titlePadding + s), s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(0, -s).add(width, 0);
+      bounds.add(0, -s).add(range, 0);
       break;
     }
     case 'left': {
       x = -offset;
+      y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
       if (title) title.auto
         ? (title.x = -(titlePadding + s), s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(-s, 0).add(0, height);
+      bounds.add(-s, 0).add(0, range);
       break;
     }
     case 'right': {
       x = width + offset;
+      y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
       if (title) title.auto
         ? (title.x = titlePadding + s, s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(0, 0).add(s, height);
+      bounds.add(0, 0).add(s, range);
       break;
     }
     case 'bottom': {
+      x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
       if (title) title.auto
         ? (title.y = titlePadding + s, s += titleSize)
         : bounds.union(title.bounds);
-      bounds.add(0, 0).add(width, s);
+      bounds.add(0, 0).add(range, s);
       break;
     }
   }
