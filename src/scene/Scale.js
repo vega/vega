@@ -360,7 +360,7 @@ function dataRef(which, def, scale, group) {
       cache = getCache.apply(this, arguments),
       sort  = def.sort,
       uniques = isUniques(scale),
-      i, rlen, j, flen, ref, fields, field, data, from;
+      i, rlen, j, flen, ref, fields, field, data, from, cmp;
 
   function addDep(s) {
     self.dependency(Deps.SIGNALS, s);
@@ -395,15 +395,15 @@ function dataRef(which, def, scale, group) {
 
     data = cache.aggr().result();
     if (uniques) {
-      if (sort === true) {
-        cache._values = data.map(function(d) { return d[DataRef.GROUPBY]+''; })
-          .sort(dl.cmp);
-      } else {
-        if (dl.isObject(sort)) {
-          data = data.sort(dl.comparator(sort.op + '_' + DataRef.VALUE));
-        }
-        cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
+      if (dl.isObject(sort)) {
+        cmp = sort.op + '_' + DataRef.VALUE;
+        cmp = dl.comparator(cmp);
+      } else if (sort === true) {
+        cmp = dl.comparator(DataRef.GROUPBY);
       }
+
+      if (cmp) data = data.sort(cmp);
+      cache._values = data.map(function(d) { return d[DataRef.GROUPBY]; });
     } else {
       data = data[0];
       cache._values = !dl.isValid(data) ? [] : [data[DataRef.MIN], data[DataRef.MAX]];
