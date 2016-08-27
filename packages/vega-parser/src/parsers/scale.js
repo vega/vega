@@ -2,17 +2,19 @@ import {ref, keyFieldRef} from '../util';
 import {Collect, Aggregate, MultiExtent, MultiValues, Values} from '../transforms';
 import {error, isArray, isObject, isString, toSet} from 'vega-util';
 
-export var scaleTypes = toSet([
-  'identity', 'ordinal', 'band', 'point', 'index',
-  'linear', 'log', 'pow', 'sqrt', 'sequential', 'time', 'utc',
+var types = [
+  'identity',
+  'ordinal', 'band', 'point', 'index',
+  'linear', 'pow', 'sqrt', 'log', 'sequential',
+  'time', 'utc',
   'quantize', 'quantile', 'threshold'
-]);
+]
+
+var allTypes = toSet(types),
+    ordinalTypes = toSet(types.slice(1, 5));
 
 export function isOrdinal(type) {
-  return type === 'ordinal'
-    || type === 'band'
-    || type === 'point'
-    || type === 'index';
+  return ordinalTypes.hasOwnProperty(type);
 }
 
 export function isQuantile(type) {
@@ -23,7 +25,7 @@ export default function(spec, scope) {
   var type = spec.type || 'linear',
       params, key;
 
-  if (!scaleTypes.hasOwnProperty(type)) {
+  if (!allTypes.hasOwnProperty(type)) {
     error('Unrecognized scale type: ' + type);
   }
 
@@ -176,6 +178,12 @@ function parseScaleRange(spec, scope) {
   } else if (isString(range)) {
     if (config && config.hasOwnProperty(range)) {
       range = config[range];
+    } else if (range === 'width') {
+      range = [0, {signal: 'width'}]
+    } else if (range === 'height') {
+      range = isOrdinal(spec.type)
+        ? [0, {signal: 'height'}]
+        : [{signal: 'height'}, 0]
     } else {
       error('Unrecognized scale range value: ' + range);
     }
