@@ -86,8 +86,11 @@ var schemes = {
   oranges:     _.interpolateOranges
 };
 
-export default function scheme(name, scheme) {
-  name = String(name).toLowerCase();
+export function reverseInterpolator(interpolator) {
+  return function(i) { return interpolator(1 - i); };
+}
+
+export default function(name, scheme) {
   return arguments.length > 1 ? (schemes[name] = scheme, this)
     : schemes.hasOwnProperty(name) ? schemes[name] : null;
 }

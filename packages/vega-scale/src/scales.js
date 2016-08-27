@@ -2,17 +2,24 @@ import {default as scaleBand, point as scalePoint} from './band';
 import scaleIndex from './index';
 import invertRange from './invertRange';
 import invertRangeExtent from './invertRangeExtent';
-import getScheme from './schemes';
-import {error} from 'vega-util';
+import {default as getScheme, reverseInterpolator} from './schemes';
+import {error, isFunction} from 'vega-util';
 import * as $ from 'd3-scale';
 
 /**
  * Augment scales with their type and needed inverse methods.
  */
 function create(type, constructor) {
-  return function scale(scheme) {
-    if (scheme && !(scheme = getScheme(scheme))) {
-      error('Unrecognized scale scheme: ' + scheme)
+  return function scale(scheme, reverse) {
+    if (scheme) {
+      if (!(scheme = getScheme(scheme))) {
+        error('Unrecognized scale scheme: ' + scheme)
+      }
+      if (reverse) {
+        scheme = isFunction(scheme)
+          ? reverseInterpolator(scheme)
+          : scheme.slice().reverse();
+      }
     }
 
     var s = constructor(scheme);
