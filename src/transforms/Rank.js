@@ -25,8 +25,8 @@ prototype.batchTransform = function(input, data) {
 
   var rank  = this._output.rank,
       norm  = this.param('normalize'),
-      field = this.param('field').accessor,
-      keys = {}, 
+      field = this.paramGet('field', 'accessor'),
+      keys = {},
       i, len = data.length, klen, d, f;
 
   // If we have a field accessor, first compile distinct keys.

@@ -55,7 +55,7 @@ prototype.transform = function(nodeInput, reset) {
 
   // get variables
   var interactive = this.param('interactive'),
-      linkSource = this.param('links').source,
+      linkSource = this.paramGet('links', 'source'),
       linkInput = linkSource.last(),
       active = this.param('active'),
       output = this._output,

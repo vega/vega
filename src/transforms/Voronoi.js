@@ -30,8 +30,8 @@ prototype.batchTransform = function(input, data) {
   // configure layout
   var polygons = this._layout
     .clipExtent(this.param('clipExtent'))
-    .x(this.param('x').accessor)
-    .y(this.param('y').accessor)
+    .x(this.paramGet('x', 'accessor'))
+    .y(this.paramGet('y', 'accessor'))
     (data);
 
   // build and assign path strings

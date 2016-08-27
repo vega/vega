@@ -27,6 +27,15 @@ Transform.addParameters = function(proto, params) {
 var prototype = (Transform.prototype = Object.create(Base));
 prototype.constructor = Transform;
 
+/**
+ * Get attribute from the object's named property
+ */
+prototype.paramGet = function(name, attribute) {
+  var result = this.param(name)[attribute];
+  if (result === undefined) throw new Error('"'+attribute+'" is not defined for "' + name + '"');
+  return result;
+};
+
 prototype.param = function(name, value) {
   var param = this._parameters[name];
   return (param === undefined) ? this :

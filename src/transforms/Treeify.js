@@ -23,7 +23,7 @@ prototype.constructor = Treeify;
 prototype.batchTransform = function(input, data) {
   log.debug(input, ['treeifying']);
 
-  var fields = this.param('groupby').field,
+  var fields = this.paramGet('groupby', 'field'),
       childField = this._output.children,
       parentField = this._output.parent,
       summary = [{name:'*', ops: ['values'], as: [childField]}],

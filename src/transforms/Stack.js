@@ -27,9 +27,9 @@ prototype.constructor = Stack;
 prototype.batchTransform = function(input, data) {
   log.debug(input, ['stacking']);
 
-  var groupby = this.param('groupby').accessor,
-      sortby = dl.comparator(this.param('sortby').field),
-      field = this.param('field').accessor,
+  var groupby = this.paramGet('groupby', 'accessor'),
+      sortby = dl.comparator(this.paramGet('sortby', 'field')),
+      field = this.paramGet('field', 'accessor'),
       offset = this.param('offset'),
       output = this._output;
 

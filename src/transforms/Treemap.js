@@ -46,7 +46,7 @@ prototype.batchTransform = function(input, data) {
   var layout = this._layout,
       output = this._output,
       sticky = this.param('sticky'),
-      parent = this.param('parent').accessor,
+      parent = this.paramGet('parent', 'accessor'),
       root = data.filter(function(d) { return parent(d) === null; })[0];
 
   // layout.sticky resets state _regardless_ of input value
@@ -55,9 +55,9 @@ prototype.batchTransform = function(input, data) {
 
   // configure layout
   layout
-    .sort(dl.comparator(this.param('sort').field))
-    .children(this.param('children').accessor)
-    .value(this.param('field').accessor)
+    .sort(dl.comparator(this.paramGet('sort', 'field')))
+    .children(this.paramGet('children', 'accessor'))
+    .value(this.paramGet('field', 'accessor'))
     .size(this.param('size'))
     .round(this.param('round'))
     .ratio(this.param('ratio'))

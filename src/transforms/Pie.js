@@ -31,7 +31,7 @@ prototype.batchTransform = function(input, data) {
   log.debug(input, ['pie']);
 
   var output = this._output,
-      field = this.param('field').accessor || ones,
+      field = this.paramGet('field', 'accessor') || ones,
       start = this.param('startAngle'),
       stop = this.param('endAngle'),
       sort = this.param('sort');

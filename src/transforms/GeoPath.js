@@ -25,7 +25,7 @@ prototype.transform = function(input) {
   log.debug(input, ['geopath']);
 
   var output = this._output,
-      geojson = this.param('field').accessor || dl.identity,
+      geojson = this.paramGet('field', 'accessor') || dl.identity,
       proj = Geo.d3Projection.call(this),
       path = d3.geo.path().projection(proj);
 
