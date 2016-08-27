@@ -45,6 +45,9 @@
           "YellowOrangeRed"
         ]
       }
+    },
+    {
+      "name": "reverse", "value": false, "bind": {"type": "checkbox"}
     }
   ],
 
@@ -67,20 +70,22 @@
       "type": "time",
       "domain": {"data": "temperature", "field": "date"},
       "range": "width"
-    }, {
+    },
+    {
       "name": "y",
       "type": "band",
       "domain": [
         6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
         0, 1, 2, 3, 4, 5
       ],
-      "range": "height",
-      "round": false
-    }, {
-      "name": "c",
+      "range": "height"
+    },
+    {
+      "name": "color",
       "type": "sequential",
       "scheme": {"signal": "palette"},
       "domain": {"data": "temperature", "field": "temp"},
+      "reverse": {"signal": "reverse"},
       "zero": false, "nice": false
     }
   ],
@@ -100,7 +105,7 @@
   ],
 
   "legends": [
-    {"fill": "c", "type": "gradient", "title": "Avg. Temp (°F)"}
+    {"fill": "color", "type": "gradient", "title": "Avg. Temp (°F)"}
   ],
 
   "marks": [
@@ -115,7 +120,7 @@
           "height": {"scale": "y", "band": 1}
         },
         "update": {
-          "fill": {"scale": "c", "field": "temp"}
+          "fill": {"scale": "color", "field": "temp"}
         }
       }
     },
