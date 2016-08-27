@@ -29,7 +29,9 @@ export default function(spec, scope) {
   // encoding properties for axis group item
   axisEncode = extendEncode({
     update: {
+      range:        {expr: 'abs(span(range("' + spec.scale + '")))'},
       offset:       encoder(spec.offset || 0),
+      position:     encoder(spec.position || 0),
       titlePadding: encoder(spec.titlePadding || config.titlePadding),
       minExtent:    encoder(spec.minExtent || config.minExtent),
       maxExtent:    encoder(spec.maxExtent || config.maxExtent)

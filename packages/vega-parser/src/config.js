@@ -80,13 +80,6 @@ function defaults() {
       titleFontWeight: 'bold'
     },
 
-    // additional axis defaults for band scales
-    axisBand: {
-      bandPosition: 1,
-      tickExtra: true,
-      tickPadding: -1
-    },
-
     // defaults for legends
     legend: {
       orient: 'right',
@@ -121,14 +114,6 @@ function defaults() {
 
     // defaults for scale ranges
     range: {
-      width: [
-        0,
-        {signal: 'width'}
-      ],
-      height: [
-        {signal: 'height'},
-        0
-      ],
       category: [
         '#1f77b4',
         '#ff7f0e',
