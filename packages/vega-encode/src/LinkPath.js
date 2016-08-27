@@ -45,15 +45,9 @@ prototype.transform = function(_, pulse) {
     error('LinkPath unsupported type: ' + _.shape + '-' + _.orient);
   }
 
-  function set(t) {
+  pulse.reflow().visit(pulse.SOURCE, function(t) {
     t[as] = path(sx(t), sy(t), tx(t), ty(t));
-  }
-
-  if (_.modified()) {
-    pulse.visit(pulse.SOURCE, set).reflow();
-  } else {
-    pulse.visit(pulse.ALL, set);
-  }
+  });
 
   return pulse.modifies(as);
 };
