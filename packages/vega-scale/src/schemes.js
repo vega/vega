@@ -39,6 +39,16 @@ var schemes = {
   rdylgn:      _.interpolateRdYlGn,
   spectral:    _.interpolateSpectral,
 
+  // repeat with friendlier names
+  brownbluegreen:  _.interpolateBrBG,
+  purplegreen:     _.interpolatePRGn,
+  pinkyellowgreen: _.interpolatePiYG,
+  purpleorange:    _.interpolatePuOr,
+  redblue:         _.interpolateRdBu,
+  redgrey:         _.interpolateRdGy,
+  redyellowblue:   _.interpolateRdYlBu,
+  redyellowgreen:  _.interpolateRdYlGn,
+
   // sequential multi-hue
   bugn:        _.interpolateBuGn,
   bupu:        _.interpolateBuPu,
@@ -53,6 +63,20 @@ var schemes = {
   ylorbr:      _.interpolateYlOrBr,
   ylorrd:      _.interpolateYlOrRd,
 
+  // repeat with friendlier names
+  bluegreen:         _.interpolateBuGn,
+  bluepurple:        _.interpolateBuPu,
+  greenblue:         _.interpolateGnBu,
+  orangered:         _.interpolateOrRd,
+  purplebluegreen:   _.interpolatePuBuGn,
+  purpleblue:        _.interpolatePuBu,
+  purplered:         _.interpolatePuRd,
+  redpurple:         _.interpolateRdPu,
+  yellowgreenblue:   _.interpolateYlGnBu,
+  yellowgreen:       _.interpolateYlGn,
+  yelloworangebrown: _.interpolateYlOrBr,
+  yelloworangered:   _.interpolateYlOrRd,
+
   // sequential single-hue
   blues:       _.interpolateBlues,
   greens:      _.interpolateGreens,
@@ -63,6 +87,7 @@ var schemes = {
 };
 
 export default function scheme(name, scheme) {
+  name = String(name).toLowerCase();
   return arguments.length > 1 ? (schemes[name] = scheme, this)
     : schemes.hasOwnProperty(name) ? schemes[name] : null;
 }
