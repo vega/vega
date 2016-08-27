@@ -18,7 +18,8 @@ var SKIP = {
 
   'range': 1,
   'round': 1,
-  'bandSize': 1
+  'bandSize': 1,
+  'reverse': 1
 };
 
 var INCLUDE_ZERO = toSet(['linear', 'pow', 'sqrt']);
@@ -36,10 +37,14 @@ export default function Scale(params) {
 var prototype = inherits(Scale, Transform);
 
 prototype.transform = function(_, pulse) {
-  var scale = this.value, prop;
+  var scale = this.value, prop,
+      create = !scale
+            || _.modified('type')
+            || _.modified('scheme')
+            || _.scheme && _.modified('reverse');
 
-  if (!scale || _.modified('type') || _.modified('scheme')) {
-    this.value = (scale = createScale(_.type, _.scheme));
+  if (create) {
+    this.value = (scale = createScale(_.type, _.scheme, _.reverse));
   }
 
   for (prop in _) if (!SKIP[prop]) {
@@ -53,8 +58,9 @@ prototype.transform = function(_, pulse) {
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
-function createScale(type, scheme) {
-  return getScale((type || 'linear').toLowerCase())(scheme);
+function createScale(type, scheme, reverse) {
+  var scale = getScale((type || 'linear').toLowerCase());
+  return scale(scheme && scheme.toLowerCase(), reverse);
 }
 
 function configureDomain(scale, _) {
@@ -90,5 +96,8 @@ function configureRange(scale, _, count) {
     range = [0, _.bandSize * count];
   }
 
-  if (range) scale[_.round ? 'rangeRound' : 'range'](range);
+  if (range) {
+    if (_.reverse) range = range.slice().reverse();
+    scale[_.round ? 'rangeRound' : 'range'](range);
+  }
 }
