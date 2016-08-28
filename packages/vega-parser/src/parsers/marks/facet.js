@@ -4,7 +4,7 @@ import {ref} from '../../util';
 import {Collect, Facet, PreFacet} from '../../transforms';
 import {error} from 'vega-util';
 
-export default function(spec, scope) {
+export default function(spec, scope, group) {
   var facet = spec.from.facet,
       name = facet.name,
       data = ref(scope.getData(facet.data).output),
@@ -25,6 +25,7 @@ export default function(spec, scope) {
   } else if (facet.groupby) {
     op = scope.add(Facet({
       key:   scope.keyRef(facet.groupby),
+      group: group.pulse,
       pulse: data
     }));
   } else {
@@ -35,6 +36,7 @@ export default function(spec, scope) {
   subscope = scope.fork();
   source = subscope.add(Collect());
   subscope.addData(name, new DataScope(subscope, source, source));
+  subscope.addSignal('parent', null);
 
   // parse faceted subflow
   op.params.subflow = {

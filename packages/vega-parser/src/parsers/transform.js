@@ -81,7 +81,7 @@ function parseIndexParameter(def, spec, scope) {
   if (!isString(spec.from)) {
     error('Lookup "from" parameter must be a string literal.');
   }
-  return scope.getData(spec.from).lookupRef(spec.key);
+  return scope.getData(spec.from).lookupRef(scope, spec.key);
 }
 
 /**

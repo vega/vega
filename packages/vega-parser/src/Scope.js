@@ -3,7 +3,7 @@ import {
   aggrField, Ascending, compareRef, Entry,
   fieldRef, keyRef, isSignal, operator, ref
 } from './util';
-
+import parseExpression from './parsers/expression';
 import {Compare, Field, Key, Projection, Scale, Sieve} from './transforms';
 import {array, error, extend, isString, peek} from 'vega-util';
 
@@ -157,11 +157,22 @@ prototype.markpath = function() {
 
 prototype.fieldRef = function(field, name) {
   if (isString(field)) return fieldRef(field, name);
-  if (!field.signal) error('Unsupported field reference: ' + JSON.stringify(field));
+  if (!field.signal && !field.expr) {
+    error('Unsupported field reference: ' + JSON.stringify(field));
+  }
 
-  var s = field.signal, f = this.field[s], params;
+  var f = this.field[field.signal || field.expr],
+      params, s, e, op;
+
   if (!f) {
-    params = {name: ref(this.signals[s])};
+    if (field.expr) {
+      e = parseExpression(s = field.expr, this);
+      op = this.add(operator(null, e.$params));
+      op.update = e.$expr;
+      params = {name: ref(op)};
+    } else {
+      params = {name: ref(this.signals[s = field.signal])};
+    }
     if (name) params.as = name;
     this.field[s] = f = ref(this.add(Field(params)));
   }

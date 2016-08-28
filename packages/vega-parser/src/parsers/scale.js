@@ -80,10 +80,11 @@ function singularDomain(spec, scope) {
   var domain = spec.domain,
       data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
+
   return isOrdinal(spec.type)
-      ? data.valuesRef(domain.field, parseSort(domain.sort, false))
-      : isQuantile(spec.type) ? data.domainRef(domain.field)
-      : data.extentRef(domain.field);
+      ? data.valuesRef(scope, domain.field, parseSort(domain.sort, false))
+      : isQuantile(spec.type) ? data.domainRef(scope, domain.field)
+      : data.extentRef(scope, domain.field);
 }
 
 function multipleDomain(spec, scope) {
@@ -104,7 +105,7 @@ function ordinalMultipleDomain(spec, scope, fields) {
   counts = fields.map(function(f) {
     var data = scope.getData(f.data);
     if (!data) error('Can not find data set: ' + f.data);
-    return data.countsRef(f.field);
+    return data.countsRef(scope, f.field);
   });
 
   // sum counts from all fields
@@ -148,7 +149,7 @@ function quantileMultipleDomain(spec, scope, fields) {
   var values = fields.map(function(f) {
     var data = scope.getData(f.data);
     if (!data) error('Can not find data set: ' + f.data);
-    return data.domainRef(f.field);
+    return data.domainRef(scope, f.field);
   });
 
   // combine value arrays
@@ -160,7 +161,7 @@ function numericMultipleDomain(spec, scope, fields) {
   var extents = fields.map(function(f) {
     var data = scope.getData(f.data);
     if (!data) error('Can not find data set: ' + f.data);
-    return data.extentRef(f.field);
+    return data.extentRef(scope, f.field);
   });
 
   // combine extents

@@ -13,7 +13,7 @@ export default function(channel, enc, scope, params, fields) {
   }
 
   var value = (enc.color != null) ? color(enc.color, scope, params, fields)
-    : (enc.field != null) ? field(enc.field, fields)
+    : (enc.field != null) ? field(enc.field, scope, params, fields)
     : (enc.signal != null) ? signal(enc.signal, scope, params)
     : (enc.expr != null) ? expression(enc.expr, scope, params, fields)
     : (enc.value != null) ? stringValue(enc.value)

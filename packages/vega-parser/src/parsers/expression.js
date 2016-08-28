@@ -31,9 +31,6 @@ export var functions = function(codegen) {
   fn.y      = eventPrefix + 'y';
   fn.encode = 'this.encode';
   fn.modify = 'this.modify';
-  fn.parent = function() {
-    return '(item?item.mark.group.datum:event?event.vega.group().datum:null)';
-  };
 
   // format functions
   fn.format = 'this.format';
@@ -99,7 +96,7 @@ function scale(name, scope, params) {
 function index(data, field, scope, params) {
   var indexName = indexPrefix + field;
   if (!params.hasOwnProperty(indexName)) {
-    params[indexName] = scope.getData(data).indataRef(field);
+    params[indexName] = scope.getData(data).indataRef(scope, field);
   }
 }
 
@@ -132,6 +129,7 @@ export default function(expr, scope, preamble) {
           args[0] = new ASTNode(Literal);
           args[0].raw = '{signal:"' + name + '"}';
         }
+        // TODO: register dependencies on all in-scope scales?
         break;
       case 'copy':
         scale(args[0].value, scope, params);
