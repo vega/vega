@@ -6,6 +6,7 @@ export default function(spec, scope, input) {
       subscope = scope.fork();
 
   subscope.add(Sieve());
+  subscope.addSignal('parent', null);
 
   // parse group mark subflow
   op.params.subflow = {

@@ -1,5 +1,6 @@
 import {entry, ref, keyFieldRef, aggrField, sortKey} from './util';
 import {Aggregate, Collect} from './transforms';
+import {isString} from 'vega-util';
 
 export default function DataScope(scope, input, output, values) {
   this.scope = scope;
@@ -28,26 +29,36 @@ DataScope.fromEntries = function(scope, entries) {
 
 var prototype = DataScope.prototype;
 
-prototype.countsRef = function(field, sort) {
+prototype.countsRef = function(scope, field, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
-      v = cache[field], a, p;
+      k = fieldKey(field), v, a, p;
+
+  if (k != null) {
+    scope = ds.scope;
+    v = cache[k];
+  }
 
   if (!v) {
     p = {
-      groupby: ds.scope.fieldRef(field, 'key'),
+      groupby: scope.fieldRef(field, 'key'),
       pulse: ref(ds.output)
     };
-    if (sort && sort.field) addSortField(ds.scope, p, sort);
-    a = ds.scope.add(Aggregate(p));
-    v = ds.scope.add(Collect({pulse: ref(a)}));
-    cache[field] = v = {agg: a, ref: ref(v)};
+    if (sort && sort.field) addSortField(scope, p, sort);
+    a = scope.add(Aggregate(p));
+    v = scope.add(Collect({pulse: ref(a)}));
+    v = {agg: a, ref: ref(v)};
+    if (k != null) cache[k] = v;
   } else if (sort && sort.field) {
-    addSortField(ds.scope, v.agg.params, sort);
+    addSortField(scope, v.agg.params, sort);
   }
 
   return v.ref;
 };
+
+function fieldKey(field) {
+  return isString(field) ? field : null;
+}
 
 function addSortField(scope, p, sort) {
   var as = aggrField(sort.op, sort.field), s;
@@ -68,40 +79,46 @@ function addSortField(scope, p, sort) {
   }
 }
 
-function cache(ds, name, optype, field, counts, index) {
+function cache(scope, ds, name, optype, field, counts, index) {
   var cache = ds[name] || (ds[name] = {}),
       sort = sortKey(counts),
-      k = field + '$' + sort,
-      v = cache[k], op;
+      k = fieldKey(field), v, op;
+
+  if (k != null) {
+    scope = ds.scope;
+    k = k + (sort ? '|' + sort : '');
+    v = cache[k];
+  }
 
   if (!v) {
     var params = counts
-      ? {field: keyFieldRef, pulse: ds.countsRef(field, counts)}
-      : {field: ds.scope.fieldRef(field), pulse: ref(ds.output)};
-    if (sort) params.sort = ds.scope.sortRef(counts);
-    op = ds.scope.add(entry(optype, undefined, params));
+      ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
+      : {field: scope.fieldRef(field), pulse: ref(ds.output)};
+    if (sort) params.sort = scope.sortRef(counts);
+    op = scope.add(entry(optype, undefined, params));
     if (index) ds.index[field] = op;
-    cache[k] = v = ref(op);
+    v = ref(op);
+    if (k != null) cache[k] = v;
   }
   return v;
 }
 
-prototype.extentRef = function(field) {
-  return cache(this, 'extent', 'Extent', field, false);
+prototype.extentRef = function(scope, field) {
+  return cache(scope, this, 'extent', 'Extent', field, false);
 };
 
-prototype.domainRef = function(field) {
-  return cache(this, 'domain', 'Values', field, false);
+prototype.domainRef = function(scope, field) {
+  return cache(scope, this, 'domain', 'Values', field, false);
 };
 
-prototype.valuesRef = function(field, sort) {
-  return cache(this, 'values', 'Values', field, sort || true);
+prototype.valuesRef = function(scope, field, sort) {
+  return cache(scope, this, 'vals', 'Values', field, sort || true);
 };
 
-prototype.lookupRef = function(field) {
-  return cache(this, 'lookup', 'TupleIndex', field, false);
+prototype.lookupRef = function(scope, field) {
+  return cache(scope, this, 'lookup', 'TupleIndex', field, false);
 };
 
-prototype.indataRef = function(field) {
-  return cache(this, 'indata', 'TupleIndex', field, true, true);
+prototype.indataRef = function(scope, field) {
+  return cache(scope, this, 'indata', 'TupleIndex', field, true, true);
 };

@@ -73,7 +73,7 @@ export default function(spec, scope) {
     // but we also want it to be run *after* any faceting transforms
     scope.operators.pop();
     scope.pushState(encodeRef, ref(op));
-    (facet ? parseFacet(spec, scope) : parseSubflow(spec, scope, input));
+    (facet ? parseFacet(spec, scope, input) : parseSubflow(spec, scope, input));
     scope.popState();
     scope.operators.push(op);
   }

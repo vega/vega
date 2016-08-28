@@ -60,7 +60,8 @@ export function getScale(name, scope, params, fields) {
     for (scaleName in scope.scales) {
       params[scalePrefix + scaleName] = scope.scaleRef(scaleName);
     }
-    scaleName = stringValue(scalePrefix) + '+' + field(name, fields);
+    scaleName = stringValue(scalePrefix) + '+'
+      + field(name, scope, params, fields);
   }
 
   return '_[' + scaleName + ']';

@@ -1,13 +1,17 @@
+import signal from './signal';
 import {error, isString, isObject, splitAccessPath, stringValue} from 'vega-util';
 
-export default function(ref, fields) {
-  return resolve(isObject(ref) ? ref: {datum: ref}, fields);
+export default function(ref, scope, params, fields) {
+  return resolve(isObject(ref) ? ref : {datum: ref}, scope, params, fields);
 }
 
-function resolve(ref, fields) {
+function resolve(ref, scope, params, fields) {
   var object, level, field;
 
-  if (ref.group || ref.parent) {
+  if (ref.signal) {
+    object = 'datum';
+    field = signal(ref.signal, scope, params);
+  } else if (ref.group || ref.parent) {
     level = Math.max(1, ref.level || 1);
     object = 'item';
 
@@ -28,11 +32,13 @@ function resolve(ref, fields) {
     error('Invalid field reference: ' + JSON.stringify(ref));
   }
 
-  if (isString(field)) {
-    fields[field] = 1; // TODO review field tracking?
-    field = splitAccessPath(field).map(stringValue).join('][');
-  } else {
-    field = resolve(field, fields);
+  if (!ref.signal) {
+    if (isString(field)) {
+      fields[field] = 1; // TODO review field tracking?
+      field = splitAccessPath(field).map(stringValue).join('][');
+    } else {
+      field = resolve(field, scope, params, fields);
+    }
   }
 
   return object + '[' + field + ']';
