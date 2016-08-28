@@ -111,9 +111,11 @@ function getEncode(_, ctx) {
  */
 function getSubflow(_, ctx) {
   var spec = _.$subflow;
-  return function(dataflow, key, index) {
+  return function(dataflow, key, index, parent) {
     var subctx = parseDataflow(spec, ctx.fork(index)),
-        op = subctx.get(spec.operators[0].id);
+        op = subctx.get(spec.operators[0].id),
+        p = subctx.signals.parent;
+    if (p) p.set(parent);
     return op.context = subctx, op;
   };
 }
