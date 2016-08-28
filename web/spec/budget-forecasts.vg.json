@@ -306,7 +306,7 @@
             "update": {
               "x": {"value": 6},
               "y": {"value": 14},
-              "text": {"expr": "'Forecast from early ' + parent().argmin.budgetYear"},
+              "text": {"expr": "'Forecast from early ' + parent.argmin.budgetYear"},
               "fill": {"value": "black"},
               "fontWeight": {"value": "bold"}
             }
@@ -319,7 +319,7 @@
             "update": {
               "x": {"value": 6},
               "y": {"value": 29},
-              "text": {"expr": "parent().argmin.forecastYear + ': ' + format('$.3f', parent().argmin.abs) + ' trillion ' + parent().argmin.type"},
+              "text": {"expr": "parent.argmin.forecastYear + ': ' + format('$.3f', parent.argmin.abs) + ' trillion ' + parent.argmin.type"},
               "fill": {"value": "black"},
               "align": {"value": "left"}
             }

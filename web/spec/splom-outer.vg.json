@@ -216,7 +216,7 @@
     {
       "fill": "color",
       "title": "Species",
-      "offset": 10,
+      "offset": 0,
       "encode": {
         "symbols": {
           "update": {

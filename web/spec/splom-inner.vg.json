@@ -1,0 +1,151 @@
+{
+  "padding": 10,
+  "config": {
+    "axis": {
+      "tickColor": "#ccc"
+    }
+  },
+
+  "signals": [
+    { "name": "chartSize", "value": 120 },
+    { "name": "chartPad", "value": 30 },
+    { "name": "chartStep", "update": "chartSize + chartPad" },
+    { "name": "width", "update": "chartStep * 4" },
+    { "name": "height", "update": "chartStep * 4" }
+  ],
+
+  "data": [
+    {
+      "name": "iris",
+      "url": "data/iris.json"
+    },
+    {
+      "name": "fields",
+      "values": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"]
+    },
+    {
+      "name": "cross",
+      "values": [
+        {"x": "petalWidth",  "y": "petalWidth"},
+        {"x": "petalWidth",  "y": "petalLength"},
+        {"x": "petalWidth",  "y": "sepalWidth"},
+        {"x": "petalWidth",  "y": "sepalLength"},
+        {"x": "petalLength", "y": "petalWidth"},
+        {"x": "petalLength", "y": "petalLength"},
+        {"x": "petalLength", "y": "sepalWidth"},
+        {"x": "petalLength", "y": "sepalLength"},
+        {"x": "sepalWidth",  "y": "petalWidth"},
+        {"x": "sepalWidth",  "y": "petalLength"},
+        {"x": "sepalWidth",  "y": "sepalWidth"},
+        {"x": "sepalWidth",  "y": "sepalLength"},
+        {"x": "sepalLength", "y": "petalWidth"},
+        {"x": "sepalLength", "y": "petalLength"},
+        {"x": "sepalLength", "y": "sepalWidth"},
+        {"x": "sepalLength", "y": "sepalLength"}
+      ],
+      "transform": [
+        { "type": "formula", "as": "xscale", "expr": "datum.x + 'X'"},
+        { "type": "formula", "as": "yscale", "expr": "datum.y + 'Y'"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "groupx",
+      "type": "band",
+      "range": "width",
+      "domain": {"data": "fields", "field": "data"}
+    },
+    {
+      "name": "groupy",
+      "type": "band",
+      "range": [{"signal": "height"}, 0],
+      "domain": {"data": "fields", "field": "data"}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "iris", "field": "species"},
+      "range": "category"
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color",
+      "title": "Species",
+      "offset": 0,
+      "encode": {
+        "symbols": {
+          "update": {
+            "fillOpacity": {"value": 0.5},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "name": "cell",
+      "type": "group",
+      "from": {"data": "cross"},
+
+      "encode": {
+        "enter": {
+          "x": {"scale": "groupx", "field": "x"},
+          "y": {"scale": "groupy", "field": "y"},
+          "width": {"signal": "chartSize"},
+          "height": {"signal": "chartSize"},
+          "fill": {"value": "transparent"},
+          "stroke": {"value": "#ddd"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "innerX", "type": "linear",
+          "zero": false, "nice": true,
+          "domain": {"data": "iris", "field": {"expr": "parent.x"}},
+          "range": [0, {"signal": "chartSize"}]
+        },
+        {
+          "name": "innerY", "type": "linear",
+          "zero": false, "nice": true,
+          "domain": {"data": "iris", "field": {"expr": "parent.y"}},
+          "range": [{"signal": "chartSize"}, 0]
+        }
+      ],
+
+      "axes": [
+        {"orient": "bottom", "scale": "innerX", "count": 5},
+        {"orient": "left", "scale": "innerY", "count": 5}
+      ],
+
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "iris"},
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "x": {
+                "scale": "innerX",
+                "field": {"datum": {"parent": "x"}}
+              },
+              "y": {
+                "scale": "innerY",
+                "field": {"datum": {"parent": "y"}}
+              },
+              "fill": {"scale": "color", "field": "species"},
+              "fillOpacity": {"value": 0.5},
+              "size": {"value": 36}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
