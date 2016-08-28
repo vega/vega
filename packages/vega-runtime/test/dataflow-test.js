@@ -18,9 +18,9 @@ tape('Parser parses dataflow specs', function(test) {
     {id:3, type:'Aggregate', params:{groupby:{$field:'x'}, pulse:{$ref:2}}},
     {id:4, type:'Collect',  params:{pulse:{$ref:3}}},
     {id:5, type:'Values', params:{field:{$field:'x'}, pulse:{$ref:4}}},
-    {id:6, type:'Scale', params:{type:'band', range:[0,{$ref:0}], domain:{$ref:5}}},
+    {id:6, type:'Scale', params:{type:'band', range:[0,{$ref:0}], zero:false, domain:{$ref:5}}},
     {id:7, type:'Extent', params:{field:{$field:'y'}, pulse:{$ref:2}}},
-    {id:8, type:'Scale', params:{type:'linear', range:[{$ref:1},0], domain:{$ref:7}}}
+    {id:8, type:'Scale', params:{type:'linear', range:[{$ref:1},0], zero:false, domain:{$ref:7}}}
   ]};
 
   var df  = new vega.Dataflow(),
