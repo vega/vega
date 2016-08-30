@@ -47,16 +47,17 @@ export var functions = function(codegen) {
   fn.gradient = 'this.gradient';
 
   // scales, projections, data
-  fn.span = 'this.span';
-  fn.range = 'this.range';
-  fn.bandwidth = 'this.bandwidth';
-  fn.scale = 'this.scale';
-  fn.invert = 'this.scaleInvert';
   fn.copy = 'this.scaleCopy';
+  fn.bandwidth = 'this.bandwidth';
   fn.indata = 'this.indata';
   fn.inrange = 'this.inrange';
+  fn.invert = 'this.scaleInvert';
+  fn.range = 'this.range';
+  fn.scale = 'this.scale';
+  fn.span = 'this.span';
 
   // interaction support
+  fn.clampRange    = 'this.clampRange';
   fn.pinchDistance = 'this.pinchDistance';
   fn.pinchAngle    = 'this.pinchAngle';
 
@@ -89,7 +90,11 @@ function signal(name, scope, params) {
 function scale(name, scope, params) {
   var scaleName = scalePrefix + name;
   if (!params.hasOwnProperty(scaleName)) {
-    params[scaleName] = scope.scaleRef(name);
+    try {
+      params[scaleName] = scope.scaleRef(name);
+    } catch (err) {
+      // TODO: error handling? warning?
+    }
   }
 }
 
@@ -117,11 +122,12 @@ export default function(expr, scope, preamble) {
         args = node.arguments;
 
     switch (name) {
-      case 'scale':
-      case 'invert':
+      case 'bandwidth':
+      case 'copy':
       case 'range':
       case 'gradient':
-      case 'bandwidth':
+      case 'invert':
+      case 'scale':
         if (args[0].type === Literal) {           // scale dependency
           scale(args[0].value, scope, params);
         } else if (args[0].type === Identifier) { // forward reference to signal
@@ -129,10 +135,6 @@ export default function(expr, scope, preamble) {
           args[0] = new ASTNode(Literal);
           args[0].raw = '{signal:"' + name + '"}';
         }
-        // TODO: register dependencies on all in-scope scales?
-        break;
-      case 'copy':
-        scale(args[0].value, scope, params);
         break;
       case 'indata':
         if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
