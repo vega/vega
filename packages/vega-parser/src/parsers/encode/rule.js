@@ -5,7 +5,7 @@ import expression from './expression';
 export default function(channel, rules, scope, params, fields) {
   var code = '';
 
-  rules.forEach(function(rule, index) {
+  rules.forEach(function(rule) {
     var value = entry(channel, rule, scope, params, fields);
     code += rule.test
       ? expression(rule.test, scope, params, fields) + '?' + value + ':'
