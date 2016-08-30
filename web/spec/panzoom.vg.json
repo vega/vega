@@ -185,12 +185,12 @@
 
   "scales": [
     {
-      "name": "xscale",
+      "name": "xscale", "zero": false,
       "domain": {"signal": "xdom"},
       "range": {"signal": "xrange"}
     },
     {
-      "name": "yscale",
+      "name": "yscale", "zero": false,
       "domain": {"signal": "ydom"},
       "range": {"signal": "yrange"}
     }

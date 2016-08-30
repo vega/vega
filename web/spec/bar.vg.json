@@ -39,8 +39,8 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "zindex": 1},
-    {"orient": "left", "scale": "yscale", "zindex": 1}
+    {"orient": "bottom", "scale": "xscale"},
+    {"orient": "left", "scale": "yscale"}
   ],
 
   "marks": [
@@ -49,7 +49,7 @@
       "from": {"data": "table"},
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "u"},
+          "x": {"scale": "xscale", "field": "u", "offset": 1},
           "width": {"scale": "xscale", "band": 1, "offset": -1},
           "y": {"scale": "yscale", "field": "v"},
           "y2": {"scale": "yscale", "value": 0}

@@ -7,56 +7,72 @@
     { "name": "min", "update": "+datetime('Jan 1 2000')" },
     { "name": "max", "update": "+datetime('Mar 1 2010')" },
     {
-      "name": "range", "update": "[0, 0]",
+      "name": "brush", "value": 0,
       "on": [
         {
           "events": "@overview:mousedown",
           "update": "[x(), x()]"
         },
         {
-          "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
-          "update": "[range[0], clamp(x(), 0, width)]"
+          "events": "[@overview:mousedown, window:mouseup] > window:mousemove",
+          "update": "[brush[0], clamp(x(), 0, width)]"
         },
         {
-          "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
-          "update": "[clamp(range[0] + x() - xmove, 0, width - abs(span(range))), clamp(range[1] + x() - xmove, abs(span(range)), width)]"
+          "events": {"signal": "delta"},
+          "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
         }
       ]
     },
     {
-      "name": "xmove", "value": 0,
+      "name": "anchor", "value": null,
+      "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+    },
+    {
+      "name": "xdown", "value": 0,
+      "on": [{"events": "@brush:mousedown", "update": "x()"}]
+    },
+    {
+      "name": "delta", "value": 0,
       "on": [
         {
-          "events": "window:mousemove",
-          "update": "x()"
+          "events": "[@brush:mousedown, window:mouseup] > window:mousemove",
+          "update": "x() - xdown"
         }
       ]
     },
     {
-      "name": "brush_start", "update": "min",
+      "name": "cursor", "value": "'default'",
       "on": [
         {
-          "events": {"signal": "range"},
-          "update": "invert('xOverview', range[0])"
+          "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
+          "update": "'ew-resize'"
+        },
+        {
+          "events": "@brush:mousemove, [@brush:mousedown, window:mouseup] > window:mousemove!",
+          "update": "'move'"
+        },
+        {
+          "events": "@brush:mouseout, window:mouseup",
+          "update": "'default'"
         }
       ]
     },
     {
-      "name": "brush_end", "update": "min",
+      "name": "range", "update": "[min, min]",
       "on": [
         {
-          "events": {"signal": "range"},
-          "update": "invert('xOverview', range[1])"
+          "events": {"signal": "brush"},
+          "update": "invert('xOverview', brush)"
         }
       ]
     },
     {
       "name": "min_date",
-      "update": "+brush_start === +brush_end ? min : min(brush_start, brush_end)"
+      "update": "+range[0] === +range[1] ? min : min(range[0], range[1])"
     },
     {
       "name": "max_date",
-      "update": "+brush_start === +brush_end ? max : max(brush_start, brush_end)"
+      "update": "+range[0] === +range[1] ? max : max(range[0], range[1])"
     }
   ],
 
@@ -179,8 +195,8 @@
               "fillOpacity": {"value":0.2}
             },
             "update":{
-              "x": {"scale": "xOverview", "signal": "brush_start"},
-              "x2": {"scale": "xOverview", "signal": "brush_end"}
+              "x": {"expr": "brush[0]"},
+              "x2": {"expr": "brush[1]"}
             }
           }
         },
@@ -195,7 +211,7 @@
               "fill": {"value": "firebrick"}
             },
             "update":{
-              "x": {"scale": "xOverview", "signal": "brush_start"}
+              "x": {"expr": "brush[0]"}
             }
           }
         },
@@ -210,7 +226,7 @@
               "fill": {"value": "firebrick"}
             },
             "update":{
-              "x": {"scale": "xOverview", "signal": "brush_end"}
+              "x": {"expr": "brush[1]"}
             }
           }
         }
