@@ -26,6 +26,20 @@ function functions() {
   fn.hsl = hsl;
   fn.gradient = scaleGradient;
 
+  fn.clampRange = function(range, min, max) {
+    var lo = range[0],
+        hi = range[1],
+        span;
+
+    if (hi < lo) span = hi, hi = lo, lo = span;
+    span = hi - lo;
+
+    return [
+      Math.min(Math.max(lo, min), max - span),
+      Math.min(Math.max(hi, span), max)
+    ];
+  };
+
   fn.pinchDistance = function() {
     return 'Math.sqrt('
       + 'pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
@@ -58,31 +72,31 @@ function functions() {
     return array[array.length-1] - array[0];
   };
 
-  fn.range = function(name) {
-    var s = scale(name, this.context);
+  fn.range = function(name, group) {
+    var s = scale(name, (group || this).context);
     return s && s.range ? s.range() : [0, 0];
   };
 
-  fn.bandwidth = function(name) {
-    var s = scale(name, this.context);
+  fn.bandwidth = function(name, group) {
+    var s = scale(name, (group || this).context);
     return s && s.bandwidth ? s.bandwidth() : 0;
   };
 
-  fn.scale = function(name, value) {
-    var s = scale(name, this.context);
+  fn.scaleCopy = function(name, group) {
+    var s = scale(name, (group || this).context);
+    return s ? s.copy() : undefined;
+  };
+
+  fn.scale = function(name, value, group) {
+    var s = scale(name, (group || this).context);
     return s ? s(value) : undefined;
   };
 
-  fn.scaleInvert = function(name, range) {
-    var s = scale(name, this.context);
+  fn.scaleInvert = function(name, range, group) {
+    var s = scale(name, (group || this).context);
     return !s ? undefined
       : isArray(range) ? (s.invertRange || s.invert)(range)
       : (s.invert || s.invertExtent)(range);
-  };
-
-  fn.scaleCopy = function(name) {
-    var s = scale(name, this.context);
-    return s ? s.copy() : undefined;
   };
 
   fn.indata = function(name, field, value) {
