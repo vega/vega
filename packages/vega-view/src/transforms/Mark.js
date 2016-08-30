@@ -27,6 +27,7 @@ prototype.transform = function(_, pulse) {
     mark = pulse.dataflow.scenegraph().mark(_.scenepath, _.markdef);
     mark.source = this;
     this.value = mark;
+    mark.group.context = _.scenepath.context;
   }
 
   // initialize entering items
