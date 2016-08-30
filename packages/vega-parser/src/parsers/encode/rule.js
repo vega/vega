@@ -7,12 +7,10 @@ export default function(channel, rules, scope, params, fields) {
 
   rules.forEach(function(rule, index) {
     var value = entry(channel, rule, scope, params, fields);
-    if (index > 0) code += 'else';
-    if (rule.test) {
-      code += 'if(' + expression(rule.test, scope, params, fields) + ')';
-    }
-    code += '{' + set('o', channel, value) + '}';
+    code += rule.test
+      ? expression(rule.test, scope, params, fields) + '?' + value + ':'
+      : value;
   });
 
-  return code;
+  return set('o', channel, code);
 }
