@@ -13,8 +13,8 @@ export default function Scenegraph() {
 var prototype = Scenegraph.prototype;
 
 prototype.mark = function(scenepath, markdef) {
-  var markpath = scenepath[0],
-      itempath = scenepath[1],
+  var markpath = scenepath.marks,
+      itempath = scenepath.items,
       item = this.root.items[0],
       mark, index, i, n;
 
