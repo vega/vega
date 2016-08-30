@@ -124,5 +124,9 @@ function getSubflow(_, ctx) {
  * Resolve an iteration index reference.
  */
 function getItemPath(_, ctx) {
-  return [_.$itempath, ctx.itempath];
+  return {
+    marks:   _.$itempath,
+    items:   ctx.itempath,
+    context: ctx
+  };
 }
