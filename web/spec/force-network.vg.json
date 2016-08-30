@@ -16,6 +16,7 @@
     { "name": "static", "value": false,
       "bind": {"type": "checkbox"} },
     {
+      "description": "State variable for active node fix status.",
       "name": "fix", "value": 0,
       "on": [
         {
@@ -30,25 +31,24 @@
           "events": "[symbol:mousedown, window:mouseup] > window:mousemove!",
           "update": "2", "force": true
         }
-      ],
-      "description": "State variable for active node fix status."
+      ]
     },
     {
+      "description": "Graph node most recently interacted with.",
       "name": "node", "value": null,
       "on": [
         {
           "events": "symbol:mouseover",
           "update": "fix === 1 ? item() : node"
         }
-      ],
-      "description": "Graph node most recently interacted with."
+      ]
     },
     {
+      "description": "Flag to restart Force simulation upon data changes.",
       "name": "restart", "value": false,
       "on": [
         {"events": {"signal": "fix"}, "update": "fix > 1"}
-      ],
-      "description": "Flag to restart Force simulation upon data changes."
+      ]
     }
   ],
 
