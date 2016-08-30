@@ -31,7 +31,7 @@ export default function(spec, scope) {
 
   params = {
     type:   type,
-    domain: parseScaleDomain(spec, scope)
+    domain: parseScaleDomain(spec.domain, spec, scope)
   };
 
   if (spec.range != null) {
@@ -57,8 +57,7 @@ function parseLiteral(v, scope) {
 
 // -- SCALE DOMAIN ----
 
-function parseScaleDomain(spec, scope) {
-  var domain = spec.domain;
+function parseScaleDomain(domain, spec, scope) {
   if (!domain) return; // default domain
 
   if (domain.signal) {
@@ -67,18 +66,17 @@ function parseScaleDomain(spec, scope) {
 
   return (isArray(domain) ? explicitDomain
     : domain.fields ? multipleDomain
-    : singularDomain)(spec, scope);
+    : singularDomain)(domain, spec, scope);
 }
 
-function explicitDomain(spec, scope) {
-  return spec.domain.map(function(v) {
+function explicitDomain(domain, spec, scope) {
+  return domain.map(function(v) {
     return parseLiteral(v, scope);
   });
 }
 
-function singularDomain(spec, scope) {
-  var domain = spec.domain,
-      data = scope.getData(domain.data);
+function singularDomain(domain, spec, scope) {
+  var data = scope.getData(domain.data);
   if (!data) error('Can not find data set: ' + domain.data);
 
   return isOrdinal(spec.type)
@@ -87,18 +85,18 @@ function singularDomain(spec, scope) {
       : data.extentRef(scope, domain.field);
 }
 
-function multipleDomain(spec, scope) {
-  var data = spec.domain.data,
-      fields = spec.domain.fields.reduce(function(dom, d) {
+function multipleDomain(domain, spec, scope) {
+  var data = domain.data,
+      fields = domain.fields.reduce(function(dom, d) {
         return dom.push(isString(d) ? {data: data, field:d} : d), dom;
       }, []);
 
   return (isOrdinal(spec.type) ? ordinalMultipleDomain
     : isQuantile(spec.type) ? quantileMultipleDomain
-    : numericMultipleDomain)(spec, scope, fields);
+    : numericMultipleDomain)(domain, scope, fields);
 }
 
-function ordinalMultipleDomain(spec, scope, fields) {
+function ordinalMultipleDomain(domain, scope, fields) {
   var counts, a, c, v;
 
   // get value counts for each domain field
@@ -121,7 +119,7 @@ function ordinalMultipleDomain(spec, scope, fields) {
   // extract values for combined domain
   v = scope.add(Values({
     field: keyFieldRef,
-    sort:  scope.sortRef(parseSort(spec.domain.sort, true)),
+    sort:  scope.sortRef(parseSort(domain.sort, true)),
     pulse: ref(c)
   }));
 
@@ -144,7 +142,7 @@ function parseSort(sort, multidomain) {
   return sort;
 }
 
-function quantileMultipleDomain(spec, scope, fields) {
+function quantileMultipleDomain(domain, scope, fields) {
   // get value arrays for each domain field
   var values = fields.map(function(f) {
     var data = scope.getData(f.data);
@@ -156,7 +154,7 @@ function quantileMultipleDomain(spec, scope, fields) {
   return ref(scope.add(MultiValues({values: values})));
 }
 
-function numericMultipleDomain(spec, scope, fields) {
+function numericMultipleDomain(domain, scope, fields) {
   // get extents for each domain field
   var extents = fields.map(function(f) {
     var data = scope.getData(f.data);
@@ -188,6 +186,8 @@ function parseScaleRange(spec, scope) {
     } else {
       error('Unrecognized scale range value: ' + range);
     }
+  } else if (isOrdinal(spec.type) && !isArray(range)) {
+    return parseScaleDomain(range, spec, scope);
   } else if (!isArray(range)) {
     error('Unsupported range type: ' + range);
   }
