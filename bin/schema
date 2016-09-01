@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+var vega = require('../'),
+    schema = require('../node_modules/vega-parser/build/vega-schema');
+
+process.stdout.write(JSON.stringify(schema(vega.definitions), 0, 2));

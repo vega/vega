@@ -46,7 +46,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega.js -c -m -o build/vega.min.js && uglifyjs build/vega.ext.js -c -m -o build/vega.ext.min.js",
-    "pretest": "rm -rf build && mkdir build && bin/rollup && bin/rollup -e",
+    "pretest": "rm -rf build && mkdir build && bin/rollup && bin/rollup -e && bin/schema > build/vega-schema.json",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test"
   },
   "dependencies": {
