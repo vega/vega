@@ -88,7 +88,7 @@ function singularDomain(domain, spec, scope) {
 function multipleDomain(domain, spec, scope) {
   var data = domain.data,
       fields = domain.fields.reduce(function(dom, d) {
-        return dom.push(isString(d) ? {data: data, field:d} : d), dom;
+        return dom.push(isString(d) ? {data: data, field: d} : d), dom;
       }, []);
 
   return (isOrdinal(spec.type) ? ordinalMultipleDomain
