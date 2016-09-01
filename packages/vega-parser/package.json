@@ -20,7 +20,9 @@
     "url": "https://github.com/uwdata/vega-parser.git"
   },
   "scripts": {
-    "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-dataflow:vega,vega-expression:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
+    "rollup": "rollup -f umd -g vega-dataflow:vega,vega-expression:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
+    "schema": "rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega.schema -o build/vega-schema.js -- schema/index.js",
+    "pretest": "rm -rf build && mkdir build && npm run rollup && npm run schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
     "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-parser.js build/vega-parser.min.js"
