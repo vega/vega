@@ -49,7 +49,7 @@ export default function(spec, scope) {
   if (spec.transform) {
     spec.transform.forEach(function(_) {
       var tx = parseTransform(_, scope);
-      if (tx.metadata.generates) {
+      if (tx.metadata.generates || tx.metadata.changes) {
         error('Mark transforms should not generate new data.');
       }
       tx.params.pulse = ref(op);
