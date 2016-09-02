@@ -76,6 +76,7 @@
     "rollup": "0.34",
     "rollup-plugin-node-resolve": "1",
     "tape": "4",
+    "tv4": "1",
     "uglify-js": "2"
   }
 }
