@@ -19,7 +19,10 @@ export default {
         {
           "properties": {
             "name": {"type": "string"},
-            "transform": {"$ref": "#/defs/transform"},
+            "transform": {
+              "type": "array",
+              "items": {"$ref": "#/defs/transform"}
+            },
             "on": {"$ref": "#/defs/onTrigger"},
             "format": {
               "type": "object",
@@ -75,7 +78,7 @@ export default {
         {
           "anyOf": [
             {
-              "required": ["name", "on"]
+              "required": ["name"]
             },
             {
               "oneOf": [

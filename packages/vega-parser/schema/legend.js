@@ -1,5 +1,15 @@
 export default {
   "defs": {
+    "guideEncode": {
+      "type": "object",
+      "properties": {
+        "interactive": {"type": "boolean", "default": false}
+      },
+      "patternProperties": {
+        "^(?!interactive).+$": {"$ref": "#/defs/encodeEntry"},
+      },
+      "additionalProperties": false
+    },
     "legend": {
       "type": "object",
       "properties": {
@@ -13,7 +23,14 @@ export default {
           "default": "symbol"
         },
         "orient": {
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right"
+          ],
           "default": "right"
         },
         "title": {"type": "string"},
@@ -67,11 +84,11 @@ export default {
         "encode": {
           "type": "object",
           "properties": {
-            "title": {"$ref": "#/defs/encode"},
-            "labels": {"$ref": "#/defs/encode"},
-            "legend": {"$ref": "#/defs/encode"},
-            "symbols": {"$ref": "#/defs/encode"},
-            "gradient": {"$ref": "#/defs/encode"}
+            "title": {"$ref": "#/defs/guideEncode"},
+            "labels": {"$ref": "#/defs/guideEncode"},
+            "legend": {"$ref": "#/defs/guideEncode"},
+            "symbols": {"$ref": "#/defs/guideEncode"},
+            "gradient": {"$ref": "#/defs/guideEncode"}
           },
           "additionalProperties": false
         }

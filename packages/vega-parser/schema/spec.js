@@ -7,6 +7,8 @@ export default {
         {"$ref": "#/defs/scope"},
         {
           "properties": {
+            "version": {"type": "string"},
+            "description": {"type": "string"},
             "width": {"type": "number"},
             "height": {"type": "number"},
             "padding": {"$ref": "#/defs/padding"},

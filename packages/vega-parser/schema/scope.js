@@ -29,7 +29,7 @@ export default {
           "items": {
             "oneOf": [
               {"$ref": "#/defs/markGroup"},
-              {"$ref": "#/defs/mark"}
+              {"$ref": "#/defs/markVisual"}
             ]
           }
         }

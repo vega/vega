@@ -18,10 +18,12 @@ export default {
           "type": "string",
           "not": {"enum": ["parent"]}
         },
+        "description": {"type": "string"},
         "value": {},
         "react": {"type": "boolean", "default": true},
         "update": {"$ref": "#/defs/exprString"},
-        "on": {"$ref": "#/defs/onEvents"}
+        "on": {"$ref": "#/defs/onEvents"},
+        "bind": {"$ref": "#/defs/bind"}
       },
       "additionalProperties": false,
       "required": ["name"]

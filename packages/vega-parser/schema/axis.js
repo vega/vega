@@ -66,11 +66,11 @@ export default {
         "encode": {
           "type": "object",
           "properties": {
-            "ticks": {"$ref": "#/defs/encode"},
-            "labels": {"$ref": "#/defs/encode"},
-            "title": {"$ref": "#/defs/encode"},
-            "grid": {"$ref": "#/defs/encode"},
-            "axis": {"$ref": "#/defs/encode"}
+            "ticks": {"$ref": "#/defs/guideEncode"},
+            "labels": {"$ref": "#/defs/guideEncode"},
+            "title": {"$ref": "#/defs/guideEncode"},
+            "grid": {"$ref": "#/defs/guideEncode"},
+            "axis": {"$ref": "#/defs/guideEncode"}
           },
           "additionalProperties": false
         }
