@@ -18,7 +18,10 @@ function transformSchema(name, def) {
     })
   }
 
-  var props = {"type": {"enum": [name]}},
+  var props = {
+        "type": {"enum": [name]},
+        "signal": {"type": "string"}
+      },
       required = ["type"];
 
   parameters(def.params || []);
@@ -56,12 +59,7 @@ function parameterSchema(param) {
                   {"$ref": "#/refs/signal"}
                 ]
               },
-              "order": {
-                "oneOf": [
-                  {"enum": ["ascending", "descending"]},
-                  {"$ref": "#/refs/signal"}
-                ]
-              },
+              "order": {"$ref": "#/refs/sortOrder"}
             },
             {
               "field": {
@@ -75,12 +73,7 @@ function parameterSchema(param) {
               },
               "order": {
                 "type": "array",
-                "items": {
-                  "anyOf": [
-                    {"enum": ["ascending", "descending"]},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
+                "items": {"$ref": "#/refs/sortOrder"}
               }
             }
           ]
@@ -153,17 +146,22 @@ function subParameterSchema(sub) {
 }
 
 export default function(definitions) {
-  var transforms = [];
+  var transforms = [],
+      marks = [],
+      defs = {
+        transform: {"oneOf": transforms},
+        transformMark: {"oneOf": marks}
+      };
 
   for (var name in definitions) {
-    transforms.push(transformSchema(name, definitions[name]));
+    var key = name + 'Transform',
+        ref = {"$ref": "#/defs/" + key},
+        md = definitions[name].metadata;
+
+    defs[key] = transformSchema(name, definitions[name]);
+    if (!(md.generates || md.changes)) marks.push(ref);
+    transforms.push(ref);
   }
 
-  return {
-    "defs": {
-      "transform": {
-        "oneOf": transforms
-      }
-    }
-  };
+  return {"defs": defs};
 }

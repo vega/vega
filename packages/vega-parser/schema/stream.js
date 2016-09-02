@@ -30,7 +30,7 @@ export default {
         "source": {"type": "string"},
         "type": {"type": "string"}
       },
-      "required": ["source", "type"]
+      "required": ["type"]
     },
     "stream": {
       "title": "Input event stream definition",

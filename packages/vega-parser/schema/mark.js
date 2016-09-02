@@ -59,11 +59,15 @@ export default {
     "mark": {
       "type": "object",
       "properties": {
+        "type": {"$ref": "#/refs/marktype"},
         "name": {"type": "string"},
         "key": {"type": "string"},
-        "type": {"$ref": "#/refs/marktype"},
         "interactive": {"type": "boolean"},
         "encode": {"$ref": "#/defs/encode"},
+        "transform": {
+          "type": "array",
+          "items": {"$ref": "#/defs/transformMark"}
+        },
         "on": {"$ref": "#/defs/onMarkTrigger"}
       },
       "required": ["type"]

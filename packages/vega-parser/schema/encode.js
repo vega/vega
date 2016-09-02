@@ -10,33 +10,37 @@ function valueSchema(type) {
     "allOf": [
       { "$ref": "#/refs/" + modType + "Modifiers" },
       {
-        "oneOf": [
+        "anyOf": [
           {
-            "$ref": "#/refs/signal",
+            "oneOf": [
+              {
+                "$ref": "#/refs/signal",
+                "required": ["signal"]
+              },
+              {
+                "$ref": "#/refs/expr",
+                "required": ["expr"]
+              },
+              {
+                "properties": {"value": {}},
+                "required": ["value"]
+              },
+              {
+                "properties": {"field": {"$ref": "#/refs/field"}},
+                "required": ["field"]
+              },
+              {
+                "properties": {"range": {"type": ["number", "boolean"]}},
+                "required": ["range"]
+              }
+            ]
           },
           {
-            "$ref": "#/refs/expr"
-          },
-          {
-            "properties": {"value": type},
-            "required": ["value"]
-          },
-          {
-            "properties": {"field": {"$ref": "#/refs/field"}},
-            "required": ["field"]
-          },
-          {
-            "properties": {"band": {"type": ["number", "boolean"]}},
             "required": ["band"]
           },
           {
-            "properties": {"extra": {"type": "boolean"}},
-            "required": ["extra"]
-          },
-          {
-            "properties": {"range": {"type": ["number", "boolean"]}},
-            "required": ["range"]
-          },
+            "required": ["offset"]
+          }
         ]
       }
     ]
@@ -101,9 +105,7 @@ export default {
 
     "scale": {
       "title": "ScaleRef",
-      "oneOf": [
-        {"$ref": "#/refs/field"}
-      ]
+      "$ref": "#/refs/field"
     },
 
     "stringModifiers": {
@@ -133,7 +135,9 @@ export default {
           ]
         },
         "round": {"type": "boolean", "default": false},
-        "scale": {"$ref": "#/refs/scale"}
+        "scale": {"$ref": "#/refs/scale"},
+        "band": {"type": ["number", "boolean"]},
+        "extra": {"type": "boolean"}
       }
     },
 
@@ -143,41 +147,74 @@ export default {
     "booleanValue": valueSchema("boolean"),
     "arrayValue": valueSchema("array"),
 
+    "colorRGB": {
+      "type": "object",
+      "properties": {
+        "r": {"$ref": "#/refs/numberValue"},
+        "g": {"$ref": "#/refs/numberValue"},
+        "b": {"$ref": "#/refs/numberValue"}
+      },
+      "required": ["r", "g", "b"]
+    },
+
+    "colorHSL": {
+      "type": "object",
+      "properties": {
+        "h": {"$ref": "#/refs/numberValue"},
+        "s": {"$ref": "#/refs/numberValue"},
+        "l": {"$ref": "#/refs/numberValue"}
+      },
+      "required": ["h", "s", "l"]
+    },
+
+    "colorLAB": {
+      "type": "object",
+      "properties": {
+        "l": {"$ref": "#/refs/numberValue"},
+        "a": {"$ref": "#/refs/numberValue"},
+        "b": {"$ref": "#/refs/numberValue"}
+      },
+      "required": ["l", "a", "b"]
+    },
+
+    "colorHCL": {
+      "type": "object",
+      "properties": {
+        "h": {"$ref": "#/refs/numberValue"},
+        "c": {"$ref": "#/refs/numberValue"},
+        "l": {"$ref": "#/refs/numberValue"}
+      },
+      "required": ["h", "c", "l"]
+    },
+
     "colorValue": {
       "title": "ColorRef",
-      "oneOf": [{"$ref": "#/refs/stringValue"}, {
-        "type": "object",
-        "properties": {
-          "r": {"$ref": "#/refs/numberValue"},
-          "g": {"$ref": "#/refs/numberValue"},
-          "b": {"$ref": "#/refs/numberValue"}
+      "oneOf": [
+        {"$ref": "#/refs/stringValue"},
+        {
+          "type": "object",
+          "properties": {
+            "gradient": {"$ref": "#/refs/scale"}
+          },
+          "additionalProperties": false,
+          "required": ["gradient"]
         },
-        "required": ["r", "g", "b"]
-      }, {
-        "type": "object",
-        "properties": {
-          "h": {"$ref": "#/refs/numberValue"},
-          "s": {"$ref": "#/refs/numberValue"},
-          "l": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["h", "s", "l"]
-      }, {
-        "type": "object",
-        "properties": {
-          "l": {"$ref": "#/refs/numberValue"},
-          "a": {"$ref": "#/refs/numberValue"},
-          "b": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["l", "a", "b"]
-      }, {
-        "type": "object",
-        "properties": {
-          "h": {"$ref": "#/refs/numberValue"},
-          "c": {"$ref": "#/refs/numberValue"},
-          "l": {"$ref": "#/refs/numberValue"}
-        },
-        "required": ["h", "c", "l"]
-      }]
+        {
+          "type": "object",
+          "properties": {
+            "color": {
+              "oneOf": [
+                {"$ref": "#/refs/colorRGB"},
+                {"$ref": "#/refs/colorHSL"},
+                {"$ref": "#/refs/colorLAB"},
+                {"$ref": "#/refs/colorHCL"}
+              ]
+            }
+          },
+          "additionalProperties": "false",
+          "required": ["color"]
+        }
+      ]
     }
   },
 
@@ -261,7 +298,7 @@ export default {
       "patternProperties": {
         "^.+$": {"$ref": "#/defs/encodeEntry"},
       },
-      "additionalProperties": false,
+      "additionalProperties": false
     }
   }
 };

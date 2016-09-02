@@ -6,8 +6,7 @@ export default {
       "properties": {
         "expr": {"type": "string"}
       },
-      "required": ["expr"],
-      "additionalProperties": false
+      "required": ["expr"]
     },
     "exprString": {
       "title": "Expression String",

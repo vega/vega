@@ -11,7 +11,11 @@ export default {
                 "oneOf": [
                   {"$ref": "#/refs/selector"},
                   {"$ref": "#/refs/signal"},
-                  {"$ref": "#/defs/stream"}
+                  {"$ref": "#/defs/stream"},
+                  {
+                    "type": "array",
+                    "items": {"$ref": "#/defs/stream"}
+                  }
                 ]
               },
               "force": {"type": "boolean"}
@@ -33,7 +37,10 @@ export default {
                   "update": {
                     "oneOf": [
                       {"$ref": "#/refs/exprString"},
-                      {"$ref": "#/refs/expr"},
+                      {
+                        "$ref": "#/refs/expr",
+                        "additionalProperties": false
+                      },
                       {"$ref": "#/refs/signal"},
                       {
                         "type": "object",

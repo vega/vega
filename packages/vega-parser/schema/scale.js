@@ -17,11 +17,24 @@ var rangeDef = [
 
 export default {
   "refs": {
+    "sortOrder": {
+      "oneOf": [
+        {"enum": ["ascending", "descending"]},
+        {"$ref": "#/refs/signal", "additionalProperties": false}
+      ]
+    },
     "scaleField": {
       "oneOf": [
         {"type": "string"},
-        {"$ref": "#/refs/signal"},
-        {"$ref": "#/refs/expr"}
+        {"$ref": "#/refs/signal", "additionalProperties": false},
+        {"$ref": "#/refs/expr", "additionalProperties": false}
+      ]
+    },
+    "scaleScheme": {
+      "oneOf": [
+        {"type": "string"},
+        {"$ref": "#/refs/signal", "additionalProperties": false},
+        {"$ref": "#/refs/expr", "additionalProperties": false}
       ]
     },
     "scaleData": {
@@ -38,7 +51,8 @@ export default {
                   "type": "object",
                   "properties": {
                     "field": {"$ref": "#/refs/scaleField"},
-                    "op": {"$ref": "#/refs/scaleField"}
+                    "op": {"$ref": "#/refs/scaleField"},
+                    "order": {"$ref": "#/refs/sortOrder"}
                   },
                   "additionalProperties": false,
                 }
@@ -152,7 +166,7 @@ export default {
                 "range": {
                   "oneOf": rangeDef.concat({"$ref": "#/refs/scaleData"})
                 },
-                "scheme": {"type": "string"}
+                "scheme": {"$ref": "#/refs/scaleScheme"}
               },
               "required": ["type"]
             },
@@ -196,7 +210,7 @@ export default {
             {
               "properties": {
                 "type": {"enum": ["sequential"]},
-                "scheme": {"type": "string"},
+                "scheme": {"$ref": "#/refs/scaleScheme"},
                 "clamp": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -246,8 +260,21 @@ export default {
               "required": ["type"]
             },
             {
+              "description": "Default numeric scale",
+              "not": {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "ordinal", "index", "band", "point",
+                      "quantile", "quantize", "threshold",
+                      "sequential", "pow", "time", "utc",
+                      "identity"
+                    ]
+                  }
+                },
+                "required": ["type"]
+              },
               "properties": {
-                "type": {"enum": ["linear", "sqrt", "log"]},
                 "range": {"oneOf": rangeDef},
                 "clamp": {
                   "oneOf": [
@@ -268,8 +295,7 @@ export default {
                     {"$ref": "#/refs/signal"}
                   ]
                 }
-              },
-              "required": ["type"]
+              }
             },
             {
               "properties": {
@@ -324,7 +350,7 @@ export default {
                       "required": ["range"]
                     },
                     {
-                      "properties": {"scheme": {"type": "string"}},
+                      "properties": {"scheme": {"$ref": "#/refs/scaleScheme"}},
                       "required": ["scheme"]
                     }
                   ]
