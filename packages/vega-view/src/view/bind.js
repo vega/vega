@@ -73,7 +73,7 @@ function generate(bind, el, param, value) {
 function form(bind, el, param, value) {
   var node = element('input');
 
-  for (var key in param) if (key !== 'signal') {
+  for (var key in param) if (key !== 'signal' && key !== 'element') {
     node.setAttribute(key, param[key]);
   }
   node.setAttribute('name', param.signal);
