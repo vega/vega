@@ -11,6 +11,16 @@ var parseDef = {
 };
 
 export default {
+  "refs": {
+    "paramField": {
+      "type": "object",
+      "properties": {
+        "field": {"type": "string"}
+      },
+      "additionalProperties": false,
+      "required": ["field"]
+    }
+  },
   "defs": {
     "data": {
       "title": "Input data set definition",
