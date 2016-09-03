@@ -66,6 +66,7 @@
     "vega-util": "1",
     "vega-view": "1",
     "vega-voronoi": "1",
+    "vega-wordcloud": "1",
     "yargs": "4"
   },
   "optionalDependencies": {

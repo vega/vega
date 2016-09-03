@@ -45,5 +45,6 @@
   "stocks-index",
   "tree-radial",
   "treemap",
-  "weather"
+  "weather",
+  "wordcloud"
 ]

@@ -7,6 +7,7 @@ var rollup = require('rollup'),
 
 var modules = !externals ? [] : [
   'd3-array',
+  'd3-cloud',
   'd3-collection',
   'd3-color',
   'd3-dsv',
@@ -31,10 +32,9 @@ var module_globals = modules.reduce(
 rollup.rollup({
   entry: 'index.js',
   external: modules,
-  plugins: [resolveCache(nodeResolve({
-    jsnext: true,
-    skip: ['yargs']
-  }))]
+  plugins: [
+    resolveCache(nodeResolve({jsnext: true, skip: ['yargs']})),
+  ]
 }).then(function(bundle) {
   return bundle.write({
     format: 'umd',

@@ -38,6 +38,7 @@ import * as encode from 'vega-encode';
 import * as force from 'vega-force';
 import * as hierarchy from 'vega-hierarchy';
 import * as voronoi from 'vega-voronoi';
+import * as wordcloud from 'vega-wordcloud';
 import * as xfilter from 'vega-crossfilter';
 /* eslint-enable */
 

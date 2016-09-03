@@ -58,14 +58,15 @@ tape('JSON schema validates correct specifications', function(test) {
     "stocks-index",
     "tree-radial",
     "treemap",
-    "weather"
+    "weather",
+    "wordcloud"
   ];
 
   specs.forEach(function(file) {
     var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
         pass = validate(spec);
     test.ok(pass, tv4.error);
-  })
+  });
 
   test.end();
 });
