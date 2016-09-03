@@ -26,7 +26,7 @@ prototype.transform = function(_, pulse) {
       exit = _.encoders.exit || falsy,
       set = (encode && !reenter ? _.encoders[encode] : update) || falsy;
 
-  if (enter !== falsy || update !== falsy) {
+  if (pulse.changed(pulse.ADD)) {
     pulse.visit(pulse.ADD, function(t) {
       enter(t, _);
       update(t, _);
@@ -37,7 +37,7 @@ prototype.transform = function(_, pulse) {
     if (set !== falsy && set !== update) out.modifies(set.output);
   }
 
-  if (exit !== falsy) {
+  if (pulse.changed(pulse.REM) && exit !== falsy) {
     pulse.visit(pulse.REM, function(t) { exit(t, _); });
     out.modifies(exit.output);
   }
@@ -49,13 +49,13 @@ prototype.transform = function(_, pulse) {
         var mod = enter(t, _);
         if (set(t, _) || mod) out.mod.push(t);
       });
-      out.modifies(enter.output);
+      if (out.mod.length) out.modifies(enter.output);
     } else {
       pulse.visit(flag, function(t) {
         if (set(t, _)) out.mod.push(t);
       });
     }
-    out.modifies(set.output);
+    if (out.mod.length) out.modifies(set.output);
   }
 
   return out;
