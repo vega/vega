@@ -13,6 +13,6 @@ export default {
     { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
     { "name": "padding", "type": "number", "expr": true },
     { "name": "as", "type": "string", "array": true, "length": 7,
-      "default": ["x", "y", "font", "fontSize", "fontStyle", "fontWeight", "rotate"] }
+      "default": ["x", "y", "font", "fontSize", "fontStyle", "fontWeight", "angle"] }
   ]
 };
