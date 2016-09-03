@@ -65,7 +65,9 @@ function parameterValue(def, value, scope) {
          : isCompare(type) ? scope.compareRef(value)
          : scope.signalRef(value.signal);
   } else {
-    return def.expr && outerExpr(value) ? parseExpression(value.expr, scope)
+    var expr = def.expr || isField(type);
+    return expr && outerExpr(value) ? parseExpression(value.expr, scope)
+         : expr && outerField(value) ? fieldRef(value.field)
          : isExpr(type) ? parseExpression(value, scope)
          : isData(type) ? ref(scope.getData(value).values)
          : isField(type) ? fieldRef(value)
@@ -128,6 +130,10 @@ function parseSubParameter(def, value, scope) {
 
 export function outerExpr(_) {
   return _ && _.expr;
+}
+
+export function outerField(_) {
+  return _ && _.field;
 }
 
 export function isData(_) {

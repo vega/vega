@@ -40,14 +40,19 @@ function parameterSchema(param) {
   var p = {};
 
   switch (param.type) {
-    case "projection":
-    case "data":
+    case 'projection':
+    case 'data':
       p = {"type": "string"};
       break;
-    case "field":
-      p = {"$ref": "#/refs/scaleField"};
+    case 'field':
+      p = {
+        "oneOf": [
+          {"$ref": "#/refs/scaleField"},
+          {"$ref": "#/refs/paramField"}
+        ]
+      };
       break;
-    case "compare":
+    case 'compare':
       p = {
         "type": "object",
         "properties": {
@@ -80,7 +85,7 @@ function parameterSchema(param) {
         }
       };
       break;
-    case "enum":
+    case 'enum':
       p = {
         "anyOf": [
           {"enum": param.values},
@@ -88,18 +93,26 @@ function parameterSchema(param) {
         ]
       };
       break;
-    case "expr":
+    case 'expr':
       p = {"$ref": "#/refs/exprString"};
       break;
-    case "string":
+    case 'string':
       p = {"anyOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]};
       break;
-    case "number":
+    case 'number':
       p = {"anyOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]};
       break;
-    case "boolean":
+    case 'boolean':
       p = {"anyOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]};
       break;
+  }
+
+  if (param.expr) {
+    var expr = {"$ref": "#/refs/expr"},
+        field = {"$ref": "#/refs/paramField"};
+    p = p.anyOf
+      ? (p.anyOf.push(expr), p.anyOf.push(field), p)
+      : {"oneOf": [p, expr, field]};
   }
 
   if (param.array) {
@@ -111,6 +124,9 @@ function parameterSchema(param) {
     };
     if (param.length != null) {
       p.minItems = p.maxItems = param.length;
+    }
+    if (param.null) {
+      p.oneOf.push({"type": "null"});
     }
   }
 
