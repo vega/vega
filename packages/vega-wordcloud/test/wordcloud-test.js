@@ -45,7 +45,7 @@ tape('Wordcloud generates wordcloud layout', function(test) {
     test.equal(data[i].fontSize, Math.sqrt(data[i].size));
     test.equal(data[i].fontStyle, 'normal');
     test.equal(data[i].fontWeight, 'normal');
-    test.equal(data[i].rotate, angles[i]);
+    test.equal(data[i].angle, angles[i]);
   }
 
   test.end();
