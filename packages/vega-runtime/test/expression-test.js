@@ -15,7 +15,7 @@ tape('Parser parses expressions', function(test) {
     {id:0, type:'Operator', value: 50},
     {id:1, type:'Operator', update: '2 * _.foo', params: {foo:{$ref:0}}},
     {id:2, type:'Collect',  value: {$ingest: values}},
-    {id:3, type:'Apply', params: {
+    {id:3, type:'Formula', params: {
       expr: {
         $expr: 'datum.x * datum.y',
         $fields: ['x', 'y']
