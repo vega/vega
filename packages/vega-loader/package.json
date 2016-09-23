@@ -6,7 +6,15 @@
     "vega",
     "loader",
     "file",
-    "xhr"
+    "http",
+    "xhr",
+    "json",
+    "csv",
+    "tsv",
+    "topojson",
+    "parse",
+    "type",
+    "inference"
   ],
   "license": "BSD-3-Clause",
   "author": {
@@ -14,6 +22,7 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-loader.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
@@ -21,8 +30,10 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-loader.js -c -m -o build/vega-loader.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -g d3-request:d3,d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson:topojson -n vega -o build/vega-loader.js -- index.js",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+    "pretest": "rm -rf build && mkdir build&& rollup -f umd -g d3-dsv:d3,d3-request:d3,d3-time-format:d3,vega-util:vega,topojson:topojson -n vega -o build/vega-loader.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-loader.zip -- LICENSE README.md build/vega-loader.js build/vega-loader.min.js"
   },
   "dependencies": {
     "d3-dsv": "1",
@@ -33,8 +44,7 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "json2module": "0.0",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
