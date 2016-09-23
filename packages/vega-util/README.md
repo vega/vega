@@ -1,3 +1,429 @@
 # vega-util
 
-JavaScript utilities for Vega.
+JavaScript utilities for Vega. Provides a set of helper methods used
+throughout Vega modules, including function generators, type checkers, log
+messages, and additional utilities for Object, Array and String values.
+
+## API Reference
+
+* [Functions](#functions)
+* [Type Checkers](#type-checkers)
+* [Objects](#objects)
+* [Arrays](#arrays)
+* [Logging](#logging)
+* [Errors](#errors)
+
+### Functions
+
+Functions and function generators for accessing and comparing values.
+
+<a name="accessor" href="#accessor">#</a>
+vega.<b>accessor</b>(<i>function</i>[, <i>fields</i>, <i>name</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/accessor.js "Source")
+
+Annotates a *function* instance with a string array of dependent data *fields*
+and a string *name*, and returns the input *function*. Assumes the input
+function takes an object (data tuple) as input, and that strings in the
+*fields* array correspond to object properties accessed by the function. Once
+annotated, Vega dataflows can track data field dependencies and generate
+appropriate output names (e.g., when computing aggregations) if the function
+is used as an accessor.
+
+Internally, this method assigns the field array to the `fields`
+property of the input *function*, and the name to the `fname` property.
+To be future-proof, clients should not access these properties
+directly. Instead, use the [accessorFields](#accessorFields) and
+[accessorName](#accessorName) methods.
+
+<a name="accessorFields" href="#accessorFields">#</a>
+vega.<b>accessorFields</b>(<i>accessor</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/accessor.js "Source")
+
+Returns the array of dependent field names for a given *accessor* function.
+Returns null if no field names have been set.
+
+<a name="accessorName" href="#accessorName">#</a>
+vega.<b>accessorName</b>(<i>accessor</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/accessor.js "Source")
+
+Returns the name string for a given *accessor* function.
+Returns null if no name has been set.
+
+<a name="compare" href="#compare">#</a>
+vega.<b>compare</b>(<i>fields</i>[, <i>orders</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/compare.js "Source")
+
+Generates a comparator function for sorting data values, based on the given
+set of *fields* and optional sort *orders*. The *fields* argument must be
+either a string or an array of strings, indicating the name of object
+properties to sort by, in precedence order. Field strings may include
+nested properties (e.g., `foo.bar.baz`). The *orders* argument must be
+either a string or an array of strings; the valid string values are
+`'ascending'` (for ascending sort order of the corresponding field) or
+`'descending'` (for descending sort order of the corresponding field).
+If the *orders* argument is omitted, is shorter than the *fields* array,
+or includes values other than  `'ascending'` or `'descending'`,
+corresponding fields will default to ascending order.
+
+<a name="constant" href="#constant">#</a>
+vega.<b>constant</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/constant.js "Source")
+
+Given an input *value*, returns a function that simply returns that value.
+If the input *value* is itself a function, that function is returned directly.
+
+<a name="field" href="#field">#</a>
+vega.<b>field</b>(<i>field</i>[, <i>name</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/field.js "Source")
+
+Generates an accessor function for retrieving the specified *field* value.
+The input *field* string may include nested properties (e.g., `foo.bar.baz`).
+An optional *name* argument indicates the accessor name for the generated
+function; if excluded the field string will be used as the name (see the
+[accessor](#accessor) method for more details).
+
+```js
+var fooField = vega.field('foo');
+fooField({foo: 5}); // 5
+vega.accessorName(fooField); // 'foo'
+vega.accessorFields(fooField); // ['foo']
+
+var pathField = vega.field('foo.bar', 'path');
+pathField({foo: {bar: 'vega'}}); // 'vega'
+pathField({foo: 5}); // undefined
+vega.accessorName(pathField); // 'path'
+vega.accessorFields(pathField); // ['foo.bar']
+```
+
+<a name="id" href="#id">#</a>
+vega.<b>id</b>(<i>object</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+
+An accessor function that returns the value of the `id` property of an
+input *object*.
+
+<a name="identity" href="#identity">#</a>
+vega.<b>identity</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+
+An accessor function that simply returns its *value* argument.
+
+<a name="key" href="#key">#</a>
+vega.<b>key</b>(<i>fields</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/key.js "Source")
+
+Generates an accessor function that returns a key string (suitable for
+using as an object property name) for a set of object *fields*. The
+*fields* argument must be either a string or string array, with each
+entry indicating a property of an input object to be used to produce
+representative key values. The resulting key function is an
+[accessor](#accessor) instance with the accessor name `'key'`.
+
+```js
+var keyf = vega.key(['foo', 'bar']);
+keyf({foo:'hi', bar:5}); // 'hi|5'
+vega.accessorName(keyf); // 'key'
+vega.accessorFields(keyf); // ['foo', 'bar']
+```
+
+<a name="one" href="#one">#</a>
+vega.<b>one</b>()
+[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+
+An accessor function that simply returns the value one (`1`).
+
+<a name="zero" href="#zero">#</a>
+vega.<b>zero</b>()
+[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+
+An accessor function that simply returns the value zero (`0`).
+
+<a name="truthy" href="#truthy">#</a>
+vega.<b>truthy</b>()
+[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+
+An accessor function that simply returns the boolean `true` value.
+
+<a name="falsy" href="#falsy">#</a>
+vega.<b>falsy</b>()
+[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+
+An accessor function that simply returns the boolean `false` value.
+
+
+### Type Checkers
+
+Functions for checking the type of JavaScript values.
+
+<a name="isArray" href="#isArray">#</a>
+vega.<b>isArray</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isArray.js "Source")
+
+Returns `true` if the input *value* is an Array instance, `false` otherwise.
+
+<a name="isFunction" href="#isFunction">#</a>
+vega.<b>isFunction</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isFunction.js "Source")
+
+Returns `true` if the input *value* is a Function instance, `false` otherwise.
+
+<a name="isNumber" href="#isNumber">#</a>
+vega.<b>isNumber</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isNumber.js "Source")
+
+Returns `true` if the input *value* is a Number instance, `false` otherwise.
+
+<a name="isObject" href="#isObject">#</a>
+vega.<b>isObject</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isObject.js "Source")
+
+Returns `true` if the input *value* is an Object instance, `false` otherwise.
+
+<a name="isString" href="#isString">#</a>
+vega.<b>isString</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isString.js "Source")
+
+Returns `true` if the input *value* is a String instance, `false` otherwise.
+
+
+### Objects
+
+Functions for manipulating JavaScript Object values.
+
+<a name="extend" href="#extend">#</a>
+vega.<b>extend</b>(<i>target</i>[, <i>source1</i>, <i>source2</i>, …])
+[<>](https://github.com/vega/vega-util/blob/master/src/extend.js "Source")
+
+Extends a *target* object by copying (in order) all enumerable properties of
+the input *source* objects.
+
+<a name="inherits" href="#inherits">#</a>
+vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
+
+A convenience method for setting up object-oriented inheritance. Assigns the
+`prototype` property of the input *child* function, such that the *child*
+inherits the properties of the *parent* function's prototype via prototypal
+inheritance. Returns the new child prototype object.
+
+
+### Arrays
+
+Functions for manipulating JavaScript Array values.
+
+<a name="array" href="#array">#</a>
+vega.<b>array</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/array.js "Source")
+
+Ensures that the input *value* is an Array instance. If so, the *value* is
+simply returned. If not, the *value* is wrapped within a new single-element
+an array, returning `[value]`.
+
+<a name="extentIndex" href="#extentIndex">#</a>
+vega.<b>extentIndex</b>(<i>array</i>[, <i>accessor<i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/extentIndex.js "Source")
+
+Returns the array indices for the minimum and maximum values in the input
+*array* (as a `[minIndex, maxIndex]` array), according to natural ordering.
+The optional *accessor* argument provides a function that is first applied
+to each array value prior to comparison.
+
+```js
+vega.extentIndex([1,5,3,0,4,2]); // [3,1]
+vega.extentIndex([
+  {a: 3, b:2},
+  {a: 2, b:1},
+  {a: 1, b:3}
+], vega.field('b')); // [1, 2]
+```
+
+<a name="peek" href="#peek">#</a>
+vega.<b>peek</b>(<i>array</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
+
+Returns the last element in the input *array*. Similar to the built-in
+`Array.pop` method, except that it does not remove the last element. This
+method is a convenient shorthand for `array[array.length - 1]`.
+
+<a name="merge" href="#merge">#</a>
+vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
+
+Merge two sorted arrays into a single sorted array. The input *compare*
+function is a comparator for sorting elements and should correspond to the
+pre-sorted orders of the *array1* and *array2* source arrays. The merged
+array contents are written to the *output* array, if provided. If *output*
+is not specified, a new array is generated and returned.
+
+<a name="toSet" href="#toSet">#</a>
+vega.<b>toSet</b>(<i>array</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/toSet.js "Source")
+
+Given an input *array* of values, returns a new Object instance whose
+property keys are the values in *array*, each assigned a property value
+of `1`. Each value in *array* is coerced to a String value and so
+should map to a reasonable string key value.
+
+```js
+vega.toSet([1, 2, 3]); // {'1':1, '2':1, '3':1}
+```
+
+<a name="visitArray" href="#visitArray">#</a>
+vega.<b>visitArray</b>(<i>array</i>, [<i>filter</i>,] <i>visitor</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/visitArray.js "Source")
+
+Vists the values in an input *array*, invoking the *visitor* function
+for each array value that passes an optional *filter*. If specified,
+the *filter* function is called with each individual array value. If
+the *filter* function return value is truthy, the returned value is
+then passed as input to the *visitor* function. Thus, the *filter*
+not only performs filtering, it can serve as a value transformer.
+If the *filter* function is not specified, all values in the *array*
+are passed to the *visitor* function. Similar to the built-in
+`Array.forEach` method, the *visitor* function is invoked with three
+arguments: the value to visit, the current index into the source *array*,
+and a reference to the soure *array*.
+
+```js
+// console output: 1 0; 3 2
+vega.visitArray([0, -1, 2],
+  function(x) { return x + 1; },
+  function(v, i, array) { console.log(v, i); });
+```
+
+
+### Strings
+
+Functions for generating and manipulating JavaScript String values.
+
+<a name="pad" href="#pad">#</a>
+vega.<b>pad</b>(<i>string</i>, <i>length</i>[, <i>character</i>, <i>align</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/pad.js "Source")
+
+Pads a *string* value with repeated instances of a *character* up to a
+specified *length*. If *character* is not specified, a space (`' '`) is used.
+By default, padding is added to the end of a string. An optional *align*
+parameter specifies if padding should be added to the `'left'` (beginning),
+`'center'`, or `'right'` (end) of the input string.
+
+```js
+vega.pad('15', 5, '0', 'left'); // '00015'
+```
+
+<a name="repeat" href="#repeat">#</a>
+vega.<b>repeat</b>(<i>string</i>, <i>count</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/repeat.js "Source")
+
+Given an input *string*, returns a new string that repeats the input
+*count* times.
+
+```js
+vega.repeat('0', 5); // '00000'
+```
+
+<a name="splitAccessPath" href="#splitAccessPath">#</a>
+vega.<b>splitAccessPath</b>(<i>path</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/splitAccessPath.js "Source")
+
+Splits an input string representing an access *path* for JavaScript object
+properties into an array of constituent path elements.
+
+```js
+vega.splitAccessPath('foo'); // ['foo']
+vega.splitAccessPath('foo.bar'); // ['foo', 'bar']
+vega.splitAccessPath('foo["bar"]'); // ['foo', 'bar']
+vega.splitAccessPath('foo[0].bar'); // ['foo', '0', 'bar']
+```
+
+<a name="stringValue" href="#stringValue">#</a>
+vega.<b>stringValue</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/stringValue.js "Source")
+
+Returns an output representation of an input value that is both JSON
+and JavaScript compliant. For Object and String values, `JSON.stringify` is
+used to generate the output string. Primitive types such as Number or Boolean
+are returned as-is. This method can be used to generate values that can then
+be included in runtime-compiled code snippets (for example, via the Function
+constructor).
+
+<a name="truncate" href="#truncate">#</a>
+vega.<b>truncate</b>(<i>string</i> <i>length</i>[, <i>align</i>, <i>ellipsis</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/truncate.js "Source")
+
+Truncates an input *string* to a target *length*. The optional *align* argument
+indicates what part of the string should be truncated: `'left'` (the beginning),
+`'center'`, or `'right'` (the end). By default, the `'right'` end of the string
+is truncated. The optional *ellipsis* argument indicates the string to use to
+indicate truncated content; by default the ellipsis character (`…`, same as
+`\u2026`) is used.
+
+
+### Logging
+
+<a name="logger" href="#logger">#</a>
+vega.<b>logger</b>([<i>level</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+
+Generates a new logger instance for selectively writing log messages to
+the JavaScript console. The optional *level* argument indicates the initial
+log level to use (one of [None](#none), [Warn](#warn), [Info](#info), or
+[Debug](#debug)), and defaults to [None](#none) if not specified.
+
+The generated logger instance provides the following methods:
+* <b>level</b>(<i>value</i>): Sets the current logging level. Only messages
+with a log level less than or equal to *value* will be written to the console.
+* <b>warn</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a warning message.
+The messages will be written to the console using the `console.warn` method
+if the current log level is [Warn](#warn) or higher.
+* <b>info</b>(<i>message1</i>[, <i>message2</i>, …]): Logs an informative
+message. The messages will be written to the console using the `console.log`
+method if the current log level is [Info](#info) or higher.
+* <b>warn</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a debugging message.
+The messages will be written to the console using the `console.log` method
+if the current log level is [Debug](#debug) or higher.
+
+<a name="None" href="#None">#</a>
+vega.<b>None</b>
+[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+
+Constant value indicating a log level of 'None'. If set as the log level of
+a [logger](#logger) instance, all log messages will be suppressed.
+
+<a name="Warn" href="#Warn">#</a>
+vega.<b>Warn</b>
+[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+
+Constant value indicating a log level of 'Warn'. If set as the log level of
+a [logger](#logger) instance, only warning messages will be presented.
+
+<a name="Info" href="#Info">#</a>
+vega.<b>Info</b>
+[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+
+Constant value indicating a log level of 'Info'. If set as the log level of
+a [logger](#logger) instance, both warning and info messages will be presented.
+
+<a name="Debug" href="#Debug">#</a>
+vega.<b>Debug</b>
+[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+
+Constant value indicating a log level of 'Debug'. If set as the log level of
+a [logger](#logger) instance, all log messages (warning, info and debug)
+will be presented.
+
+
+### Errors
+
+<a name="error" href="#error">#</a>
+vega.<b>error</b>(<i>message</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/error.js "Source")
+
+Throws a new error with the provided error *message*. This is a convenience
+method adding a layer of indirection for error handling, for example
+allowing error conditions to be included in expression chains.
+
+```js
+vega.error('Uh oh'); // equivalent to: throw Error('Uh oh')
+
+// embed error in an expression
+return isOk ? returnValue : vega.error('Not OK');
+```
