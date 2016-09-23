@@ -219,7 +219,7 @@ simply returned. If not, the *value* is wrapped within a new single-element
 an array, returning `[value]`.
 
 <a name="extentIndex" href="#extentIndex">#</a>
-vega.<b>extentIndex</b>(<i>array</i>[, <i>accessor<i>])
+vega.<b>extentIndex</b>(<i>array</i>[, <i>accessor</i>])
 [<>](https://github.com/vega/vega-util/blob/master/src/extentIndex.js "Source")
 
 Returns the array indices for the minimum and maximum values in the input
@@ -228,7 +228,7 @@ The optional *accessor* argument provides a function that is first applied
 to each array value prior to comparison.
 
 ```js
-vega.extentIndex([1,5,3,0,4,2]); // [3,1]
+vega.extentIndex([1,5,3,0,4,2]); // [3, 1]
 vega.extentIndex([
   {a: 3, b:2},
   {a: 2, b:1},
