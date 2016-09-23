@@ -14,6 +14,7 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-statistics.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
@@ -21,16 +22,17 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-statistics.js -c -m -o build/vega-statistics.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-statistics.js -- index.js",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+    "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-statistics.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-statistics.zip -- LICENSE README.md build/vega-statistics.js build/vega-statistics.min.js"
   },
   "dependencies": {
     "d3-array": "1"
   },
   "devDependencies": {
     "eslint": "2",
-    "json2module": "0.0",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
