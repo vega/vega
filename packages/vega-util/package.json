@@ -12,6 +12,7 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-util.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
