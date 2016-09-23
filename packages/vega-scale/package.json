@@ -18,7 +18,7 @@
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-scale.git"
+    "url": "https://github.com/vega/vega-scale.git"
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-scale.js -c -m -o build/vega-scale.min.js",
