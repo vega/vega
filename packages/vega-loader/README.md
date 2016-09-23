@@ -1,2 +1,209 @@
 # vega-loader
+
 Network request and file loading utilities.
+
+## API Reference
+
+* [File Loading](#file-loading)
+* [Format Parsing](#format-parsing)
+
+### File Loading
+
+<a name="load" href="#load">#</a>
+vega.<b>load</b>(<i>uri</i>[, <i>options</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+
+Loads a file from either the network or disk, and returns a
+[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+for asyncronously accessing the loaded content. This method does not perform
+any parsing, it simply returns the loaded data as either a Buffer or String
+instance, depending on the execution environment. To subsequently parse loaded
+data, use the [read](#read) method.
+
+The *uri* argument is a string indicating the file to load. This is typically
+either an absolute or relative URL string. If running server-side via node.js,
+this argument might also be a file path (e.g., `'file:///path/to/file.txt'`).
+
+The *options* object may contain the following entries:
+- *baseURL*: A base URL prefix to append to the provided *uri* value. This can
+be useful for applications that load multiple data sets from the same domain.
+- *mode*: A string explicitly indicating the loading mode. One of `'file'`
+(server-side only) or `'http'`. If set to `'file'` mode, the *uri* parameter
+may safely omit a `'file://'` prefix.
+- *defaultProtocol*: The default protocol to use for protocol-relative *uri*
+values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
+- _headers_: An object of key-values indicating custom request headers, used
+only when loading via HTTP.
+
+```js
+dl.load('data.json').then(function(data) {
+  // do something with loaded data
+}).catch(function(error) {
+  // error handling here
+});
+```
+
+<a name="load_loader" href="load_loader">#</a>
+vega.load.<b>loader</b>(<i>uri</i>[, <i>options</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+
+The primary loading function, internally invoked by [load](#load).
+This method is exposed and over-writable for clients who wish to implement
+custom load handling.
+
+<a name="load_sanitize" href="load_sanitize">#</a>
+vega.load.<b>sanitize</b>(<i>uri</i>, <i>options</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+
+URI sanitizer function, which takes a *uri* and *options* object as input,
+and returns a finalized URL as output. This method is used internally by
+[load](#load) to ensure the URL is valid and to add additional protocol and
+hostname information, if needed. This method accepts the same *options* object
+accepted by [load](#load) and returns either a URL string or `null` if the
+*uri* is invalid or disallowed. This method is exposed and over-writable for
+clients who wish to implement custom sanitization.
+
+<a name="load_http" href="load_http">#</a>
+vega.load.<b>http</b>(<i>url</i>, <i>options</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+
+Function used internally by [load](#load) for servicing HTTP requests. This
+method is exposed and over-writable for clients who wish to implement custom
+HTTP request handling. Uses [d3-request](https://github.com/d3/d3-request)
+by default.
+
+<a name="load_file" href="load_file">#</a>
+vega.load.<b>file</b>(<i>filename</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+
+Function used internally by [load](#load) for local file system requests.
+This method is exposed and over-writable for clients who wish to implement
+custom file loading. Uses the node.js [fs](https://nodejs.org/api/fs.html)
+module by default.
+
+### Format Parsing
+
+<a name="read" href="#read">#</a>
+vega.<b>read</b>(<i>data</i>, <i>schema</i>[, <i>dateParse</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/read.js "Source")
+
+Parse loaded *data* according to a given format *schema*. The *data* argument
+should be either a String or Buffer instance, typically the result of
+calling [load](#load).
+
+The *schema* object contents may depend on the data format (see below).
+Common options include:
+- *type*: The data format type, such as `json`, `csv`, `tsv`, or `topojson`.
+- *property*: For JSON types, specifies a property of the loaded JSON to
+reference. This is useful if a loaded JSON file contains multiple data sets
+and one would like to parse data under a specific property.
+- *parse*: When set to `'auto'` (the default), the method will perform type
+inference (using the [inferTypes](#inferTypes) method) to determine data types
+of each field. Alternatively, callers can specify parsing rules by providing
+an object mapping field names to data types (for example: `{'timestamp':
+'date', 'price': 'number'}`). The valid data type options are `'boolean'`,
+`'integer'`, `'number'`, `'date'`, and `'string'`.
+
+The `'date'` data type also accepts an optional format string
+(`'date:format'`). If provided, the optional *dateParse* function is used to
+generate date-time parsers for a date format string. If *dateParse* is
+unspecified, the [d3-time-format](https://github.com/d3/d3-time-format)
+library is used by default. Date-time format strings may be quoted
+(`date:'%A'`), but quoting is not required.
+
+```js
+// read loaded csv data, automatically infer value types
+var data = null;
+vega.load('data/stocks.csv').then(function(data) {
+  data = vega.read(csv_data, {type: 'csv', parse: 'auto'});
+});
+```
+
+```js
+// read loaded csv data, using provided value types
+var data = null;
+vega.load('data/stocks.csv').then(function(data) {
+  data = vega.read(data, {
+    type: 'csv',
+    parse: {'date': 'date', 'price': 'number'}
+  });
+});
+```
+
+```js
+// read loaded topojson data, extract mesh of countries
+var topojson = null;
+vega.load('data/world-110m.json').then(function(data) {
+  topojson = vega.read(data, {type: 'topojson', mesh: 'countries'});
+});
+```
+
+<a name="inferType" href="#inferType">#</a>
+vega.<b>inferType</b>(<i>values</i>[, <i>field</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/type.js "Source")
+
+Given an array of *values*, infers their data type as one of `'boolean'`,
+`'integer'`, `'number'`, `'date'`, or `'string'`. An optional *field* accessor
+can be used to first extract values from the input array, and is equivalent to
+first calling `values.map(field)`.
+
+<a name="inferTypes" href="#inferTypes">#</a>
+vega.<b>inferTypes</b>(<i>data</i>, <i>fields</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/type.js "Source")
+
+Given an array of *data* objects and a list of string-typed field names
+(*fields*), infers the data type for each field. Returns an object that maps
+field names to inferred types, determined using the [inferType](#inferType)
+method.
+
+<a name="typeParsers" href="#typeParsers">#</a>
+vega.<b>typeParsers</b>
+[<>](https://github.com/vega/vega-loader/blob/master/src/type.js "Source")
+
+An object containing a set of parsing functions for converting input values
+to a specified data type. All parsing functions return `null` if the input
+is `null`, `undefined` or the empty string (`''`).
+
+The supported functions are:
+- typeParsers.<b>boolean</b>(<i>value</i>): Parse the input *value* to a
+Boolean.
+- typeParsers.<b>integer</b>(<i>value</i>): Parse the input *value* to an
+integer Number.
+- typeParsers.<b>number</b>(<i>value</i>): Parse the input *value* to a
+Number.
+- typeParsers.<b>date</b>(<i>value</i>[, <i>parser</i>]): Parse the input
+*value* to a Date. If provided, the *parser* function is used to interpret
+the *value*; otherwise `Date.parse` is used.
+- typeParsers.<b>string</b>(<i>value</i>): Parse the input *value* to a String.
+If *value* is not already string-typed, it is coerced to a String.
+
+<a name="formats" href="#formats">#</a>
+vega.<b>formats</b>(<i>name</i>[, <i>format</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/formats/index.js "Source")
+
+Registry function for adding and retrieving data format parsers. If invoked
+with two arguments, adds a new *format* parser with the provided *name*.
+Otherwise, returns an existing parser with the given *name*.
+The method signature of a format parser is:
+- <b>format</b>(<i>data</i>, <i>options</i>)
+
+A format parser that accepts two arguments, the input *data* to parse
+(e.g., a block of CSV text) and a set of format-specific *options*.
+The following data formats are registered by default:
+- *dsv*: Delimiter-separated values format. Each line of text is a record,
+with each field separated by a delimiter string. Accepts a *delimiter* option
+indicating the delimiter string used to separate field values.
+- *csv*: Comma-separated values format. A *dsv* instance with a comma (`,`)
+delimiter.
+- *tsv*: Tab-separated values format. A *dsv* instance with a tab (`\t`)
+delimiter.
+- *json*: [JavaScript Object Notation (JSON)](https://en.wikipedia.org/wiki/JSON)
+format. Accepts a *property* option, indicating a sub-property of the parsed
+JSON to return; useful if a data array is nested within a larger object.
+- *topojson*: [TopoJSON](https://github.com/mbostock/topojson/wiki) format for
+compressed encoding of geographic data. Requires either a *feature* option
+indicating the name of the geographic feature to extract (e.g., extracts
+individual paths for all countries), or a *mesh* option indicating a feature
+name for which a single mesh should be extracted (e.g., all country
+boundaries in a single path). Please see the
+[TopoJSON documentation](https://github.com/mbostock/topojson/wiki) for more.
