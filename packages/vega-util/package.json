@@ -19,13 +19,14 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-util.js -c -m -o build/vega-util.min.js",
-    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && rollup -f umd -n vega -o build/vega-util.js -- index.js",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test"
+    "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-util.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-util.zip -- LICENSE README.md build/vega-util.js build/vega-util.min.js"
   },
   "devDependencies": {
     "eslint": "2",
-    "json2module": "0.0",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
