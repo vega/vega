@@ -1,3 +1,112 @@
 # vega-statistics
 
 Statistical routines and probability distributions.
+
+## API Reference
+
+* [Distributions](#distributions)
+* [Statistics](#statistics)
+
+### Distributions
+
+Methods for sampling and calculating probability distributions. Each method
+takes a set of distributional parameters and returns a distribution object
+representing a random variable.
+
+Distribution objects provide the following methods:
+* dist.<b>sample</b>(): Samples a random value drawn from this distribution.
+* dist.<b>pdf</b>(<i>value</i>): Calculates the value of the [probability
+density function](https://en.wikipedia.org/wiki/Probability_density_function)
+at the given input domain *value*.
+* dist.<b>cdf</b>(<i>value</i>): Calculates the value of the [cumulative
+distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)
+at the given input domain *value*.
+* dist.<b>icdf</b>(<i>probability</i>): Calculates the inverse of the
+[cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)
+for the given input *probability*.
+
+<a name="randomNormal" href="#randomNormal">#</a>
+vega.<b>randomNormal</b>([<i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/normal.js "Source")
+
+Creates a distribution object representing a [normal (Gaussian) probability
+distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified
+*mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0`
+and the standard deviation defaults to `1`.
+
+<a name="randomUniform" href="#randomUniform">#</a>
+vega.<b>randomUniform</b>([<i>min</i>, <i>max</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
+
+Creates a distribution object representing a [continuous uniform probability
+distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous))
+over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and
+*max* defaults to `1`. If only one argument is provided, it is interpreted as
+the *max* value.
+
+<a name="randomInteger" href="#randomInteger">#</a>
+vega.<b>randomInteger</b>([<i>min</i>,] <i>max</i>)
+[<>](https://github.com/vega/vega-statistics/blob/master/src/integer.js "Source")
+
+Creates a distribution object representing a [discrete uniform probability
+distribution](https://en.wikipedia.org/wiki/Discrete_uniform_distribution) over
+the integer domain [*min*, *max*). If only one argument is provided, it is
+interpreted as the *max* value. If unspecified, *min* defaults to `0`.
+
+
+### Statistics
+
+Statistical methods for calculating bins, bootstrapped confidence intervals,
+and quartile boundaries.
+
+<a name="bin" href="#bin">#</a>
+vega.<b>bin</b>(<i>options</i>)
+[<>](https://github.com/vega/vega-statistics/blob/master/src/bin.js "Source")
+
+Determine a quantitative binning scheme, for example to create a histogram.
+Based on the options provided given, this method will search over a space of
+possible bins, aligning step sizes with a given number base and applying
+constraints such as the maximum number of allowable bins. Given a set of
+options (see below), returns an object describing the binning scheme,
+in terms of `start`, `stop` and `step` properties.
+
+The supported options properties are:
+- _extent_: (required) A two-element (`[min, max]`) array indicating the range of desired bin values.
+- _base_: The number base to use for automatic bin determination (default base `10`).
+- _maxbins_: The maximum number of allowable bins (default `20`).
+- _step_: An exact step size to use between bins. If provided, the _maxbins_ and _steps_ options will be ignored.
+- _steps_: An array of allowable step sizes to choose from. If provided, the _maxbins_ option will be ignored.
+- _minstep_: A minimum allowable step size (particularly useful for integer values, default `0`).
+- _divide_: An array of scale factors indicating allowable subdivisions. The default value is `[5, 2]`, which indicates that the method may consider dividing bin sizes by 5 and/or 2. For example, for an initial step size of 10, the method can check if bin sizes of 2 (= 10/5), 5 (= 10/2), or 1 (= 10/(5*2)) might also satisfy the given constraints.
+- _nice_: Boolean indicating if the start and stop values should be nicely-rounded relative to the step size (default `true`).
+
+```js
+vega.bin({extent:[0, 1], maxbins:10}); // {start:0, stop:1, step:0.1}
+vega.bin({extent:[0, 1], maxbins:5}); // {start:0, stop:10, step:2}
+vega.bin({extent:[5, 10], maxbins:5}); // {start:5, stop:10, step:1}
+```
+
+<a name="bootstrapCI" href="#bootstrapCI">#</a>
+vega.<b>bootstrapCI</b>(<i>array</i>, <i>samples</i>, <i>alpha</i>[, <i>accessor</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/bootstrapCI.js "Source")
+
+Calculates a [bootstrapped](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
+[confidence interval](https://en.wikipedia.org/wiki/Confidence_interval) for an
+input *array* of values, based on a given number of *samples* iterations and a
+target *alpha* value. For example, an *alpha* value of `0.05` corresponds to a
+95% confidence interval An optional *accessor* function can be used to first
+extract numerical values from an array of input objects, and is equivalent to
+first calling `array.map(accessor)`. This method ignores null, undefined and
+NaN values.
+
+<a name="quartiles" href="#quartiles">#</a>
+vega.<b>quartiles</b>(<i>array</i>[, <i>accessor</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/quartiles.js "Source")
+
+Given an *array* of numeric values, returns an array of
+[quartile](https://en.wikipedia.org/wiki/Quartile) boundaries.
+The return value is a 3-element array consisting of the first, second (median),
+and third quartile boundaries. An optional *accessor* function can be used to
+first extract numerical values from an array of input objects, and is
+equivalent to first calling `array.map(accessor)`. This method ignores
+null, undefined and NaN values.
