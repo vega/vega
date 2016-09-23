@@ -26,7 +26,7 @@
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-loader.git"
+    "url": "https://github.com/vega/vega-loader.git"
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-loader.js -c -m -o build/vega-loader.min.js",
