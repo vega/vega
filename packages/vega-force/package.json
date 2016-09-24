@@ -1,6 +1,6 @@
 {
   "name": "vega-force",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -12,25 +12,27 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-force.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-force.git"
+    "url": "https://github.com/vega/vega-force.git"
   },
   "scripts": {
+    "build": "npm run test && uglifyjs build/vega-force.js -c -m -o build/vega-force.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-force:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega -o build/vega-force.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run test && uglifyjs build/vega-force.js -c -m -o build/vega-force.min.js",
-    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-force.zip -- LICENSE README.md build/vega-force.js build/vega-force.min.js"
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-force.zip -- LICENSE README.md build/vega-force.js build/vega-force.min.js"
   },
   "dependencies": {
     "d3-force": "1",
-    "vega-dataflow": "2",
+    "vega-dataflow": ">=2.0.0-beta",
     "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
