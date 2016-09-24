@@ -1,6 +1,6 @@
 {
   "name": "vega-parser",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
     "vega",
@@ -14,18 +14,20 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-parser.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-parser.git"
+    "url": "https://github.com/vega/vega-parser.git"
   },
   "scripts": {
+    "build": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
     "rollup": "rollup -f umd -g vega-dataflow:vega,vega-expression:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
     "schema": "rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega.schema -o build/vega-schema.js -- schema/index.js",
     "pretest": "rm -rf build && mkdir build && npm run rollup && npm run schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
-    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-parser.js build/vega-parser.min.js"
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-parser.js build/vega-parser.min.js"
   },
   "dependencies": {
     "vega-dataflow": "2",
@@ -34,7 +36,7 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
