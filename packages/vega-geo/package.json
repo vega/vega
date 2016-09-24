@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -14,16 +14,18 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-geo.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-geo.git"
+    "url": "https://github.com/vega/vega-geo.git"
   },
   "scripts": {
+    "build": "npm run test && uglifyjs build/vega-geo.js -c -m -o build/vega-geo.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-geo:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega -o build/vega-geo.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run test && uglifyjs build/vega-geo.js -c -m -o build/vega-geo.min.js",
-    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-geo.zip -- LICENSE README.md build/vega-geo.js build/vega-geo.min.js"
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-geo.zip -- LICENSE README.md build/vega-geo.js build/vega-geo.min.js"
   },
   "dependencies": {
     "d3-geo": "1",
@@ -32,7 +34,7 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
