@@ -1,4 +1,4 @@
-import Item from './item';
+import Item from './Item';
 import inherits from './util/inherits';
 
 export default function GroupItem(mark) {
