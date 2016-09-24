@@ -1,6 +1,6 @@
 {
   "name": "vega-encode",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Visual encoding transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -14,16 +14,18 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-encode.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-encode.git"
+    "url": "https://github.com/vega/vega-encode.git"
   },
   "scripts": {
+    "build": "npm run test && uglifyjs build/vega-encode.js -c -m -o build/vega-encode.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-format:d3,vega-dataflow:vega,vega-scale:vega,vega-util:vega -f umd -n vega -o build/vega-encode.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run test && uglifyjs build/vega-encode.js -c -m -o build/vega-encode.min.js",
-    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-encode.zip -- LICENSE README.md build/vega-encode.js build/vega-encode.min.js"
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-encode.zip -- LICENSE README.md build/vega-encode.js build/vega-encode.min.js"
   },
   "dependencies": {
     "d3-array": "1",
@@ -34,7 +36,7 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
