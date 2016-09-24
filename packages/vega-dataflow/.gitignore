@@ -1,9 +1,5 @@
+*.sublime-workspace
 .DS_Store
-.idea
-_site
-coverage
+build/
 node_modules
-temp
-vega-dataflow.js
-vega-dataflow.js.map
-vega-dataflow.min.js
+npm-debug.log

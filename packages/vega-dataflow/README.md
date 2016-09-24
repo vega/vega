@@ -1,7 +1,20 @@
 # vega-dataflow
 
-[Vega](http://github.com/vega/vega) dataflow graph.
+Reactive dataflow processing.
 
-Classes and utilities for a reactive dataflow graph that can process both scalar and streaming relational data. A central `Graph` instance manages and schedules a collection of `Node` instances, each of which is an operator in the dataflow. A `Signal` is a special type of node that maintains the latest value defined over a dynamic data stream. A `Node` may be connected to another via dependencies of varying granularity (e.g., based on data tuples, specific data fields and/or signal values).
+Defines a reactive dataflow graph that can process both scalar values and
+streaming relational data. A central `Dataflow` instance manages and schedules
+a collection of `Operator` instances, each of which is a node in a dataflow
+graph. Each operator maintains a local state *value*, and may only also
+process streaming data objects (or *tuples*) passing through. Operators may
+depend on a set of named `Parameters`, which can either be fixed values or
+live references to other operator values.
 
-Upon update, the `Graph` propagates (or "pulses") an update through the network in the form of a `ChangeSet`, triggering targeted recomputation of nodes in a topologically-sorted order.
+Upon modifications to operator parameters or input data, changes are propagated
+through the graph in topological order. `Pulse` objects propagate from
+operators to their dependencies, and carry queues of added, removed and/or
+modified tuples.
+
+This module contains a library of `Operator` types for data stream query
+processing, including data generation, sampling, filtering, binning, group-by
+aggregation, and cross-stream lookup operations.
