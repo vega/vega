@@ -2,6 +2,12 @@
   "name": "vega-expression",
   "version": "2.0.0",
   "description": "Vega expression parser and code generator.",
+  "keywords": [
+    "vega",
+    "expression",
+    "parser",
+    "codegen"
+  ],
   "author": {
     "name": "Jeffrey Heer",
     "url": "http://idl.cs.washington.edu"
@@ -14,23 +20,25 @@
   ],
   "license": "BSD-3-Clause",
   "main": "build/vega-expression.js",
+  "module": "index.js",
   "jsnext:main": "index.js",
   "repository": {
     "type": "git",
     "url": "http://github.com/vega/vega-expression.git"
   },
   "scripts": {
+    "build": "npm run test && uglifyjs build/vega-expression.js -c -m -o build/vega-expression.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run test && uglifyjs build/vega-expression.js -c -m -o build/vega-expression.min.js",
-    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-expression.zip -- LICENSE README.md build/vega-expression.js build/vega-expression.min.js"
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-expression.zip -- LICENSE README.md build/vega-expression.js build/vega-expression.min.js"
   },
   "dependencies": {
     "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2"
   }
