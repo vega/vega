@@ -9,12 +9,10 @@ export default function(opt) {
       blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
       constants = opt.constants || Constants,
       functions = (opt.functions || Functions)(visit),
-      functionDefs = opt.functionDefs ? opt.functionDefs(visit) : {},
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       globals = {},
       fields = {},
-      data = {},
       memberDepth = 0;
 
   var outputGlobal = isFunction(globalvar)
@@ -61,7 +59,7 @@ export default function(opt) {
         var fn = functions.hasOwnProperty(callee) && functions[callee];
         if (!fn) error('Unrecognized function: ' + callee);
         return isFunction(fn)
-          ? fn(args, globals, fields, data)
+          ? fn(args)
           : fn + '(' + args.map(visit).join(',') + ')';
       },
 
@@ -104,18 +102,14 @@ export default function(opt) {
     var result = {
       code:    visit(ast),
       globals: Object.keys(globals),
-      fields:  Object.keys(fields),
-      data:    Object.keys(data),
-      defs:    functionDefs
+      fields:  Object.keys(fields)
     };
     globals = {};
     fields = {};
-    data = {};
     return result;
   }
 
   codegen.functions = functions;
-  codegen.functionDefs = functionDefs;
   codegen.constants = constants;
 
   return codegen;
