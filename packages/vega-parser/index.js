@@ -1,6 +1,3 @@
-// setup transform definition aliases
-import {definition} from 'vega-dataflow';
-
 export {default as parse} from './src/parse';
 
 export {default as selector} from './src/parsers/event-selector';
