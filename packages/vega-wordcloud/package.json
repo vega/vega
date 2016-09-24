@@ -27,7 +27,7 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-wordcloud.zip -- LICENSE README.md build/vega-wordcloud.js build/vega-wordcloud.min.js"
   },
   "dependencies": {
-    "vega-dataflow": "2",
+    "vega-dataflow": ">=2.0.0-beta",
     "vega-scale": "1",
     "vega-util": "1"
   },
