@@ -31,10 +31,10 @@
     "d3-color": "1",
     "d3-format": "1",
     "d3-time-format": "2",
-    "vega-dataflow": "2",
+    "vega-dataflow": ">=2.0.0-beta",
     "vega-loader": "1",
-    "vega-runtime": "1",
-    "vega-scenegraph": "2",
+    "vega-runtime": ">=1.0.0-beta",
+    "vega-scenegraph": ">=2.0.0-beta",
     "vega-util": "1"
   },
   "devDependencies": {
