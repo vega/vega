@@ -4,27 +4,31 @@ Vega 3.0 development.
 
 ## Development Environment Setup
 
-New Vega modules are under active development and have not yet been published to npm. Here's how to set up a working Vega 3.0 development environment.
+Here's how to set up a working Vega 3.0 development environment.
 
-First, clone the following repositories under the uwdata organization:
+For a basic setup allowing you to build Vega and run examples, simply
+clone `https://github.com/uwdata/vega` and run `npm install`.
+
+For a more advanced development setup in which you will be working on multiple
+modules simultaneously, first, clone all Vega 3 module repositories:
 
 * https://github.com/uwdata/vega
-* https://github.com/uwdata/vega-crossfilter
-* https://github.com/uwdata/vega-dataflow
-* https://github.com/uwdata/vega-encode
-* https://github.com/uwdata/vega-expression
-* https://github.com/uwdata/vega-force
-* https://github.com/uwdata/vega-geo
-* https://github.com/uwdata/vega-hierarchy
-* https://github.com/uwdata/vega-loader
-* https://github.com/uwdata/vega-parser
-* https://github.com/uwdata/vega-runtime
-* https://github.com/uwdata/vega-scale
-* https://github.com/uwdata/vega-scenegraph
-* https://github.com/uwdata/vega-statistics
-* https://github.com/uwdata/vega-util
-* https://github.com/uwdata/vega-view
-* https://github.com/uwdata/vega-voronoi
+* https://github.com/vega/vega-crossfilter
+* https://github.com/vega/vega-dataflow
+* https://github.com/vega/vega-encode
+* https://github.com/vega/vega-expression
+* https://github.com/vega/vega-force
+* https://github.com/vega/vega-geo
+* https://github.com/vega/vega-hierarchy
+* https://github.com/vega/vega-loader
+* https://github.com/vega/vega-parser
+* https://github.com/vega/vega-runtime
+* https://github.com/vega/vega-scale
+* https://github.com/vega/vega-scenegraph
+* https://github.com/vega/vega-statistics
+* https://github.com/vega/vega-util
+* https://github.com/vega/vega-view
+* https://github.com/vega/vega-voronoi
 
 Next, use `npm link` to connect each repo with its 'vega-' dependencies. For example, to link _vega-dataflow_ for use by other repos, do the following:
 
