@@ -22,13 +22,13 @@
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "http://github.com/uwdata/vega-scenegraph.git"
+    "url": "http://github.com/vega/vega-scenegraph.git"
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -g d3-path:d3,d3-shape:d3,vega-loader:vega -n vega -o build/vega-scenegraph.js -- index.js && bin/schema > build/vega-scenegraph-schema.json",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run buld",
+    "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-scenegraph.zip -- LICENSE README.md build/vega-scenegraph-schema.json build/vega-scenegraph.js build/vega-scenegraph.min.js"
   },
   "dependencies": {
