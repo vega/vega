@@ -30,7 +30,7 @@
   "dependencies": {
     "d3-array": "1",
     "d3-format": "1",
-    "vega-dataflow": "2",
+    "vega-dataflow": ">=2.0.0-beta",
     "vega-scale": "1",
     "vega-util": "1"
   },
