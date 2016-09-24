@@ -1,72 +1,80 @@
-var tupleID = 0;
+var TUPLE_ID = 1;
 
-function ingest(datum) {
-  datum = (datum === Object(datum)) ? datum : {data: datum};
-  datum._id = ++tupleID;
-  if (datum._prev) datum._prev = null;
-  return datum;
+/**
+ * Resets the internal tuple id counter to zero.
+ */
+function reset() {
+  TUPLE_ID = 1;
 }
 
-function idMap(a, ids) {
-  ids = ids || {};
-  for (var i=0, n=a.length; i<n; ++i) {
-    ids[a[i]._id] = 1;
-  }
-  return ids;
+/**
+ * Returns the id of a tuple.
+ * @param {Tuple} t - The input tuple.
+ * @return the tuple id.
+ */
+function tupleid(t) {
+  return t._id;
 }
 
+/**
+ * Copy the values of one tuple to another (ignoring id and prev fields).
+ * @param {Tuple} t - The tuple to copy from.
+ * @param {Tuple} c - The tuple to write to.
+ * @return The re-written tuple, same as the argument 'c'.
+ */
 function copy(t, c) {
-  c = c || {};
   for (var k in t) {
-    if (k !== '_prev' && k !== '_id') c[k] = t[k];
+    if (k !== '_id') c[k] = t[k];
   }
   return c;
 }
 
-module.exports = {
-  ingest: ingest,
-  idMap: idMap,
+/**
+ * Ingest an object or value as a data tuple.
+ * If the input value is an object, an id field will be added to it. For
+ * efficiency, the input object is modified directly. A copy is not made.
+ * If the input value is a literal, it will be wrapped in a new object
+ * instance, with the value accessible as the 'data' property.
+ * @param datum - The value to ingest.
+ * @return {Tuple} The ingested data tuple.
+ */
+function ingest(datum) {
+  var tuple = (datum === Object(datum)) ? datum : {data: datum};
+  if (!tuple._id) tuple._id = ++TUPLE_ID;
+  return tuple;
+}
 
-  derive: function(d) {
-    return ingest(copy(d));
-  },
+/**
+ * Given a source tuple, return a derived copy.
+ * @param {object} t - The source tuple.
+ * @return {object} The derived tuple.
+ */
+function derive(t) {
+  return ingest(copy(t, {}));
+}
 
-  rederive: function(d, t) {
-    return copy(d, t);
-  },
+/**
+ * Rederive a derived tuple by copying values from the source tuple.
+ * @param {object} t - The source tuple.
+ * @param {object} d - The derived tuple.
+ * @return {object} The derived tuple.
+ */
+function rederive(t, d) {
+  return copy(t, d);
+}
 
-  set: function(t, k, v) {
-    return t[k] === v ? 0 : (t[k] = v, 1);
-  },
+/**
+ * Replace an existing tuple with a new tuple.
+ * The existing tuple will become the previous value of the new.
+ * @param {object} t - The existing data tuple.
+ * @param {object} d - The new tuple that replaces the old.
+ * @return {object} The new tuple.
+ */
+function replace(t, d) {
+  return d._id = t._id, d;
+}
 
-  prev: function(t) {
-    return t._prev || t;
-  },
-
-  prev_init: function(t) {
-    if (!t._prev) { t._prev = {_id: t._id}; }
-  },
-
-  prev_update: function(t) {
-    var p = t._prev, k, v;
-    if (p) {
-      for (k in t) {
-        if (k !== '_prev' && k !== '_id') {
-          p[k] = ((v=t[k]) instanceof Object && v._prev) ? v._prev : v;
-        }
-      }
-      return true;
-    }
-    return false;
-  },
-
-  reset: function() { tupleID = 0; },
-
-  idFilter: function(data) {
-    var ids = {};
-    for (var i=arguments.length; --i>0;) {
-      idMap(arguments[i], ids);
-    }
-    return data.filter(function(x) { return !ids[x._id]; });
-  }
+export {
+  reset, tupleid, ingest,
+  replace, derive, rederive
 };
