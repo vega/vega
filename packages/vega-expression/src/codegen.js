@@ -1,141 +1,122 @@
-function toMap(list) {
-  var map = {}, i, n;
-  for (i=0, n=list.length; i<n; ++i) map[list[i]] = 1;
-  return map;
-}
+import Constants from './constants';
+import Functions from './functions';
+import {error, isFunction, isString, toSet} from 'vega-util';
 
-function keys(object) {
-  var list = [], k;
-  for (k in object) list.push(k);
-  return list;
-}
-
-module.exports = function(opt) {
+export default function(opt) {
   opt = opt || {};
-  var constants = opt.constants || require('./constants'),
-      functions = (opt.functions || require('./functions'))(codegen),
-      functionDefs = opt.functionDefs ? opt.functionDefs(codegen) : {},
-      idWhiteList = opt.idWhiteList ? toMap(opt.idWhiteList) : null,
-      idBlackList = opt.idBlackList ? toMap(opt.idBlackList) : null,
-      memberDepth = 0,
-      FIELD_VAR = opt.fieldVar || 'datum',
-      GLOBAL_VAR = opt.globalVar || 'signals',
+
+  var whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
+      blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
+      constants = opt.constants || Constants,
+      functions = (opt.functions || Functions)(visit),
+      functionDefs = opt.functionDefs ? opt.functionDefs(visit) : {},
+      globalvar = opt.globalvar,
+      fieldvar = opt.fieldvar,
       globals = {},
       fields = {},
-      dataSources = {};
+      data = {},
+      memberDepth = 0;
 
-  function codegen_wrap(ast) {
-    var retval = {
-      code: codegen(ast),
-      globals: keys(globals),
-      fields: keys(fields),
-      dataSources: keys(dataSources),
-      defs: functionDefs
-    };
-    globals = {};
-    fields = {};
-    dataSources = {};
-    return retval;
-  }
+  var outputGlobal = isFunction(globalvar)
+    ? globalvar
+    : function (id) { return globalvar + '["' + id + '"]'; };
 
-  /* istanbul ignore next */
-  var lookupGlobal = typeof GLOBAL_VAR === 'function' ? GLOBAL_VAR :
-    function (id) {
-      return GLOBAL_VAR + '["' + id + '"]';
-    };
-
-  function codegen(ast) {
-    if (typeof ast === 'string') return ast;
-    var generator = CODEGEN_TYPES[ast.type];
-    if (generator == null) {
-      throw new Error('Unsupported type: ' + ast.type);
-    }
+  function visit(ast) {
+    if (isString(ast)) return ast;
+    var generator = Generators[ast.type];
+    if (generator == null) error('Unsupported type: ' + ast.type);
     return generator(ast);
   }
 
-  var CODEGEN_TYPES = {
-    'Literal': function(n) {
+  var Generators = {
+    Literal: function(n) {
         return n.raw;
       },
-    'Identifier': function(n) {
+
+    Identifier: function(n) {
         var id = n.name;
-        if (memberDepth > 0) {
-          return id;
-        }
-        if (constants.hasOwnProperty(id)) {
-          return constants[id];
-        }
-        if (idWhiteList) {
-          if (idWhiteList.hasOwnProperty(id)) {
-            return id;
-          } else {
-            globals[id] = 1;
-            return lookupGlobal(id);
-          }
-        }
-        if (idBlackList && idBlackList.hasOwnProperty(id)) {
-          throw new Error('Illegal identifier: ' + id);
-        }
-        return id;
+        return memberDepth > 0 ? id
+          : blacklist.hasOwnProperty(id) ? error('Illegal identifier: ' + id)
+          : constants.hasOwnProperty(id) ? constants[id]
+          : whitelist.hasOwnProperty(id) ? id
+          : (globals[id] = 1, outputGlobal(id));
       },
-    'Program': function(n) {
-        return n.body.map(codegen).join('\n');
-      },
-    'MemberExpression': function(n) {
+
+    MemberExpression: function(n) {
         var d = !n.computed;
-        var o = codegen(n.object);
+        var o = visit(n.object);
         if (d) memberDepth += 1;
-        var p = codegen(n.property);
-        if (o === FIELD_VAR) { fields[p] = 1; } // HACKish...
+        var p = visit(n.property);
+        if (o === fieldvar) { fields[p] = 1; } // HACKish...
         if (d) memberDepth -= 1;
         return o + (d ? '.'+p : '['+p+']');
       },
-    'CallExpression': function(n) {
+
+    CallExpression: function(n) {
         if (n.callee.type !== 'Identifier') {
-          throw new Error('Illegal callee type: ' + n.callee.type);
+          error('Illegal callee type: ' + n.callee.type);
         }
         var callee = n.callee.name;
         var args = n.arguments;
         var fn = functions.hasOwnProperty(callee) && functions[callee];
-        if (!fn) throw new Error('Unrecognized function: ' + callee);
-        return fn instanceof Function ?
-          fn(args, globals, fields, dataSources) :
-          fn + '(' + args.map(codegen).join(',') + ')';
+        if (!fn) error('Unrecognized function: ' + callee);
+        return isFunction(fn)
+          ? fn(args, globals, fields, data)
+          : fn + '(' + args.map(visit).join(',') + ')';
       },
-    'ArrayExpression': function(n) {
-        return '[' + n.elements.map(codegen).join(',') + ']';
+
+    ArrayExpression: function(n) {
+        return '[' + n.elements.map(visit).join(',') + ']';
       },
-    'BinaryExpression': function(n) {
-        return '(' + codegen(n.left) + n.operator + codegen(n.right) + ')';
+
+    BinaryExpression: function(n) {
+        return '(' + visit(n.left) + n.operator + visit(n.right) + ')';
       },
-    'UnaryExpression': function(n) {
-        return '(' + n.operator + codegen(n.argument) + ')';
+
+    UnaryExpression: function(n) {
+        return '(' + n.operator + visit(n.argument) + ')';
       },
-    'ConditionalExpression': function(n) {
-        return '(' + codegen(n.test) +
-          '?' + codegen(n.consequent) +
-          ':' + codegen(n.alternate) +
+
+    ConditionalExpression: function(n) {
+        return '(' + visit(n.test) +
+          '?' + visit(n.consequent) +
+          ':' + visit(n.alternate) +
           ')';
       },
-    'LogicalExpression': function(n) {
-        return '(' + codegen(n.left) + n.operator + codegen(n.right) + ')';
+
+    LogicalExpression: function(n) {
+        return '(' + visit(n.left) + n.operator + visit(n.right) + ')';
       },
-    'ObjectExpression': function(n) {
-        return '{' + n.properties.map(codegen).join(',') + '}';
+
+    ObjectExpression: function(n) {
+        return '{' + n.properties.map(visit).join(',') + '}';
       },
-    'Property': function(n) {
+
+    Property: function(n) {
         memberDepth += 1;
-        var k = codegen(n.key);
+        var k = visit(n.key);
         memberDepth -= 1;
-        return k + ':' + codegen(n.value);
-      },
-    'ExpressionStatement': function(n) {
-        return codegen(n.expression);
+        return k + ':' + visit(n.value);
       }
   };
 
-  codegen_wrap.functions = functions;
-  codegen_wrap.functionDefs = functionDefs;
-  codegen_wrap.constants = constants;
-  return codegen_wrap;
-};
+  function codegen(ast) {
+    var result = {
+      code:    visit(ast),
+      globals: Object.keys(globals),
+      fields:  Object.keys(fields),
+      data:    Object.keys(data),
+      defs:    functionDefs
+    };
+    globals = {};
+    fields = {};
+    data = {};
+    return result;
+  }
+
+  codegen.functions = functions;
+  codegen.functionDefs = functionDefs;
+  codegen.constants = constants;
+
+  return codegen;
+}

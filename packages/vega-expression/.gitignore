@@ -1,9 +1,5 @@
+*.sublime-workspace
 .DS_Store
-.idea
-_site
-coverage
+build/
 node_modules
-temp
-vega-expression.js
-vega-expression.js.map
-vega-expression.min.js
+npm-debug.log

@@ -1,4 +1,6 @@
-module.exports = function(codegen) {
+import {error} from 'vega-util';
+
+export default function(codegen) {
 
   function fncall(name, args, cast, type) {
     var obj = codegen(args[0]);
@@ -23,85 +25,81 @@ module.exports = function(codegen) {
 
   return {
     // MATH functions
-    'isNaN':    'isNaN',
-    'isFinite': 'isFinite',
-    'abs':      'Math.abs',
-    'acos':     'Math.acos',
-    'asin':     'Math.asin',
-    'atan':     'Math.atan',
-    'atan2':    'Math.atan2',
-    'ceil':     'Math.ceil',
-    'cos':      'Math.cos',
-    'exp':      'Math.exp',
-    'floor':    'Math.floor',
-    'log':      'Math.log',
-    'max':      'Math.max',
-    'min':      'Math.min',
-    'pow':      'Math.pow',
-    'random':   'Math.random',
-    'round':    'Math.round',
-    'sin':      'Math.sin',
-    'sqrt':     'Math.sqrt',
-    'tan':      'Math.tan',
+    isNaN:    'isNaN',
+    isFinite: 'isFinite',
+    abs:      'Math.abs',
+    acos:     'Math.acos',
+    asin:     'Math.asin',
+    atan:     'Math.atan',
+    atan2:    'Math.atan2',
+    ceil:     'Math.ceil',
+    cos:      'Math.cos',
+    exp:      'Math.exp',
+    floor:    'Math.floor',
+    log:      'Math.log',
+    max:      'Math.max',
+    min:      'Math.min',
+    pow:      'Math.pow',
+    random:   'Math.random',
+    round:    'Math.round',
+    sin:      'Math.sin',
+    sqrt:     'Math.sqrt',
+    tan:      'Math.tan',
 
-    'clamp': function(args) {
-      if (args.length < 3)
-        throw new Error('Missing arguments to clamp function.');
-      if (args.length > 3)
-        throw new Error('Too many arguments to clamp function.');
+    clamp: function(args) {
+      if (args.length < 3) error('Missing arguments to clamp function.');
+      if (args.length > 3) error('Too many arguments to clamp function.');
       var a = args.map(codegen);
       return 'Math.max('+a[1]+', Math.min('+a[2]+','+a[0]+'))';
     },
 
     // DATE functions
-    'now':             'Date.now',
-    'utc':             'Date.UTC',
-    'datetime':        DATE,
-    'date':            fn('getDate', DATE, 0),
-    'day':             fn('getDay', DATE, 0),
-    'year':            fn('getFullYear', DATE, 0),
-    'month':           fn('getMonth', DATE, 0),
-    'hours':           fn('getHours', DATE, 0),
-    'minutes':         fn('getMinutes', DATE, 0),
-    'seconds':         fn('getSeconds', DATE, 0),
-    'milliseconds':    fn('getMilliseconds', DATE, 0),
-    'time':            fn('getTime', DATE, 0),
-    'timezoneoffset':  fn('getTimezoneOffset', DATE, 0),
-    'utcdate':         fn('getUTCDate', DATE, 0),
-    'utcday':          fn('getUTCDay', DATE, 0),
-    'utcyear':         fn('getUTCFullYear', DATE, 0),
-    'utcmonth':        fn('getUTCMonth', DATE, 0),
-    'utchours':        fn('getUTCHours', DATE, 0),
-    'utcminutes':      fn('getUTCMinutes', DATE, 0),
-    'utcseconds':      fn('getUTCSeconds', DATE, 0),
-    'utcmilliseconds': fn('getUTCMilliseconds', DATE, 0),
+    now:             'Date.now',
+    utc:             'Date.UTC',
+    datetime:        DATE,
+    date:            fn('getDate', DATE, 0),
+    day:             fn('getDay', DATE, 0),
+    year:            fn('getFullYear', DATE, 0),
+    month:           fn('getMonth', DATE, 0),
+    hours:           fn('getHours', DATE, 0),
+    minutes:         fn('getMinutes', DATE, 0),
+    seconds:         fn('getSeconds', DATE, 0),
+    milliseconds:    fn('getMilliseconds', DATE, 0),
+    time:            fn('getTime', DATE, 0),
+    timezoneoffset:  fn('getTimezoneOffset', DATE, 0),
+    utcdate:         fn('getUTCDate', DATE, 0),
+    utcday:          fn('getUTCDay', DATE, 0),
+    utcyear:         fn('getUTCFullYear', DATE, 0),
+    utcmonth:        fn('getUTCMonth', DATE, 0),
+    utchours:        fn('getUTCHours', DATE, 0),
+    utcminutes:      fn('getUTCMinutes', DATE, 0),
+    utcseconds:      fn('getUTCSeconds', DATE, 0),
+    utcmilliseconds: fn('getUTCMilliseconds', DATE, 0),
 
     // shared sequence functions
-    'length':      fn('length', null, -1),
-    'indexof':     fn('indexOf', null),
-    'lastindexof': fn('lastIndexOf', null),
+    length:      fn('length', null, -1),
+    indexof:     fn('indexOf', null),
+    lastindexof: fn('lastIndexOf', null),
+    slice:       fn('slice', null),
 
     // STRING functions
-    'parseFloat':  'parseFloat',
-    'parseInt':    'parseInt',
-    'upper':       fn('toUpperCase', STRING, 0),
-    'lower':       fn('toLowerCase', STRING, 0),
-    'slice':       fn('slice', STRING),
-    'substring':   fn('substring', STRING),
-    'replace':     fn('replace', STRING),
+    parseFloat:  'parseFloat',
+    parseInt:    'parseInt',
+    upper:       fn('toUpperCase', STRING, 0),
+    lower:       fn('toLowerCase', STRING, 0),
+    substring:   fn('substring', STRING),
+    replace:     fn('replace', STRING),
 
     // REGEXP functions
-    'regexp':  REGEXP,
-    'test':    fn('test', REGEXP),
+    regexp:  REGEXP,
+    test:    fn('test', REGEXP),
 
     // Control Flow functions
-    'if': function(args) {
-        if (args.length < 3)
-          throw new Error('Missing arguments to if function.');
-        if (args.length > 3)
-          throw new Error('Too many arguments to if function.');
+    if: function(args) {
+        if (args.length < 3) error('Missing arguments to if function.');
+        if (args.length > 3) error('Too many arguments to if function.');
         var a = args.map(codegen);
         return a[0]+'?'+a[1]+':'+a[2];
       }
   };
-};
+}
