@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -14,23 +14,25 @@
     "url": "http://idl.cs.washington.edu"
   },
   "main": "build/vega-runtime.js",
+  "module": "index",
   "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uwdata/vega-runtime.git"
+    "url": "https://github.com/vega/vega-runtime.git"
   },
   "scripts": {
+    "build": "npm run test && uglifyjs build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run test && uglifyjs build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
-    "postpublish": "VERSION=`node -e 'console.log(require(\"./package.json\").version)'`; git push && git push --tags && zip -j build/vega-runtime.zip -- LICENSE README.md build/vega-runtime.js build/vega-runtime.min.js"
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-runtime.zip -- LICENSE README.md build/vega-runtime.js build/vega-runtime.min.js"
   },
   "dependencies": {
     "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.34",
+    "rollup": "0.36",
     "tape": "4",
     "uglify-js": "2",
     "vega-dataflow": "2",
