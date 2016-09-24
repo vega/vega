@@ -27,10 +27,10 @@
     "pretest": "rm -rf build && mkdir build && npm run rollup && npm run schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-parser.js build/vega-parser.min.js"
+    "postpublish": "git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-schema.js build/vega-parser.js build/vega-parser.min.js"
   },
   "dependencies": {
-    "vega-dataflow": "2",
+    "vega-dataflow": ">=2.0.0-beta",
     "vega-expression": "2",
     "vega-util": "1"
   },
