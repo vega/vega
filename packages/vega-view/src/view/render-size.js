@@ -19,6 +19,7 @@ export function offset(view) {
 
 export function resizeRenderer(view) {
   var origin = offset(view);
+  view._renderer.background(view._background);
   view._renderer.resize(width(view), height(view), origin);
   view._handler.origin(origin);
 }

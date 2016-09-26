@@ -125,7 +125,7 @@ prototype.scenegraph = function() {
 };
 
 prototype.background = function(_) {
-  return arguments.length ? (this._background = _, this) : this._background;
+  return arguments.length ? (this._background = _, this._resize = 1, this) : this._background;
 };
 
 prototype.width = function(_) {
