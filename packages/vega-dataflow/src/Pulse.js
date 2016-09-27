@@ -34,6 +34,11 @@ var ADD       = (1 << 0),
  *
  * @constructor
  * @param {Dataflow} dataflow - The backing dataflow instance.
+ * @param {number} stamp - The current propagation timestamp.
+ * @param {string} [encode] - An optional encoding set name, which is then
+ *   accessible as Pulse.encode. Operators can respond to (or ignore) this
+ *   setting as appropriate. This parameter can be used in conjunction with
+ *   the Encode transform in the vega-encode module.
  */
 export default function Pulse(dataflow, stamp, encode) {
   this.dataflow = dataflow;
@@ -148,7 +153,7 @@ prototype.addAll = function() {
  *   are ADD, REM and MOD. Array references are copied directly: new array
  *   instances are not created. By default, source data arrays are copied
  *   to the new pulse. Use the NO_SOURCE flag to enforce a null source.
- * @return {Pulse}
+ * @return {Pulse} - Returns this Pulse instance.
  */
 prototype.init = function(src, flags) {
   var p = this;
@@ -172,6 +177,13 @@ prototype.runAfter = function(func) {
   this.dataflow.runAfter(func);
 };
 
+/**
+ * Indicates if tuples have been added, removed or modified.
+ * @param {number} [flags] - The tuple types (ADD, REM or MOD) to query.
+ *   Defaults to ALL, returning true if any tuple type has changed.
+ * @return {boolean} - Returns true if one or more queried tuple types have
+ *   changed, false otherwise.
+ */
 prototype.changed = function(flags) {
   var f = flags || ALL;
   return ((f & ADD) && this.add.length)
@@ -179,6 +191,11 @@ prototype.changed = function(flags) {
       || ((f & MOD) && this.mod.length);
 };
 
+/**
+ * Forces a "reflow" of tuple values, such that all tuples in the backing
+ * source are added to the MOD set, unless already present in the ADD set.
+ * @return {Pulse} - This pulse instance.
+ */
 prototype.reflow = function() {
   var len = this.add.length,
       src = this.source && this.source.length;
@@ -189,6 +206,12 @@ prototype.reflow = function() {
   return this;
 };
 
+/**
+ * Marks one or more data field names as modified to assist dependency
+ * tracking and incremental processing by transform operators.
+ * @param {string|Array<string>} _ - The field(s) to mark as modified.
+ * @return {Pulse} - This pulse instance.
+ */
 prototype.modifies = function(_) {
   var fields = array(_),
       hash = this.fields || (this.fields = {});
@@ -196,6 +219,13 @@ prototype.modifies = function(_) {
   return this;
 };
 
+/**
+ * Checks if one or more data fields have been modified during this pulse
+ * propagation timestamp.
+ * @param {string|Array<string>} _ - The field(s) to check for modified.
+ * @return {boolean} - Returns true if any of the provided fields has been
+ *   marked as modified, false otherwise.
+ */
 prototype.modified = function(_) {
   var fields = this.fields;
   return !(this.mod.length && fields) ? false
@@ -204,6 +234,21 @@ prototype.modified = function(_) {
     : fields[_];
 };
 
+/**
+ * Adds a filter function to one more tuple sets. Filters are applied to
+ * backing tuple arrays, to determine the actual set of tuples considered
+ * added, removed or modified. They can be used to delay materialization of
+ * a tuple set in order to avoid expensive array copies. In addition, the
+ * filter functions can serve as value transformers: unlike standard predicate
+ * function (which return boolean values), Pulse filters should return the
+ * actual tuple value to process. If a tuple set is already filtered, the
+ * new filter value will be appended into a conjuntive ('and') query.
+ * @param {number} flags - Flags indicating the tuple set(s) to filter.
+ * @param {function(*):object} filter - Filter function that will be applied
+ *   to the tuple set array, and should return a data tuple if the value
+ *   should be included in the tuple set, and falsy (or null) otherwise.
+ * @return {Pulse} - Returns this pulse instance.
+ */
 prototype.filter = function(flags, filter) {
   var p = this;
   if (flags & ADD) p.addF = addFilter(p.addF, filter);
@@ -217,6 +262,13 @@ function addFilter(a, b) {
   return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
 }
 
+/**
+ * Materialize one or more tuple sets in this pulse. If the tuple set(s) have
+ * a registered filter function, it will be applied and the tuple set(s) will
+ * be replaced with materialized tuple arrays.
+ * @param {number} flags - Flags indicating the tuple set(s) to materialize.
+ * @return {Pulse} - Returns this pulse instance.
+ */
 prototype.materialize = function(flags) {
   flags = flags || ALL;
   var p = this;
@@ -235,6 +287,14 @@ function filter(pulse, flags) {
   return function(t) { return map[t._id] ? null : t; };
 }
 
+/**
+ * Visit one or more tuple sets in this pulse.
+ * @param {number} flags - Flags indicating the tuple set(s) to visit.
+ *   Legal values are ADD, REM, MOD and SOURCE (if a backing data source
+ *   has been set).
+ * @param {function(object):*} - Visitor function invoked per-tuple.
+ * @return {Pulse} - Returns this pulse instance.
+ */
 prototype.visit = function(flags, visitor) {
   var v = visitor, src, sum;
 
