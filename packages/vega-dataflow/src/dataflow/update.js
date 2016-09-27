@@ -5,7 +5,7 @@ var NO_OPT = {skip: false, force: false};
 /**
  * Touches an operator, scheduling it to be evaluated. If invoked outside of
  * a pulse propagation, the operator will be evaluated the next time this
- * data flow is run. If invoked in the midst of pulse propagation, the operator
+ * dataflow is run. If invoked in the midst of pulse propagation, the operator
  * will be queued for evaluation if and only if the operator has not yet been
  * evaluated on the current propagation timestamp.
  * @param {Operator} op - The operator to touch.

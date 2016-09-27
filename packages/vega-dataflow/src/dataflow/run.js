@@ -10,7 +10,12 @@ import {id, isArray, Info, Debug} from 'vega-util';
  * are pending data loading operations, this method will return immediately
  * without evaluating the dataflow. Instead, the dataflow will be
  * asynchronously invoked when data loading completes. To track when dataflow
- * evaluation completes, use the runAsync instead.
+ * evaluation completes, use the {@link runAsync} method instead.
+ * @param {string} [encode] - The name of an encoding set to invoke during
+ *   propagation. This value is added to generated Pulse instances;
+ *   operators can then respond to (or ignore) this setting as appropriate.
+ *   This parameter can be used in conjunction with the Encode transform in
+ *   the vega-encode module.
  */
 export function run(encode) {
   if (!this._touched.length) {
@@ -121,6 +126,11 @@ export function runAfter(callback) {
  * will be enqueued if it has no registered pulse for the current cycle, or if
  * the force argument is true. Upon enqueue, this method also sets the
  * operator's qrank to the current rank value.
+ * @param {Operator} op - The operator to enqueue.
+ * @param {boolean} [force] - A flag indicating if the operator should be
+ *   forceably added to the queue, even if it has already been previously
+ *   enqueued during the current pulse propagation. This is useful when the
+ *   dataflow graph is dynamically modified and the operator rank changes.
  */
 export function enqueue(op, force) {
   var p = !this._pulses[op.id];
@@ -139,6 +149,9 @@ export function enqueue(op, force) {
  * If the pulse is the pulse map has an explicit target set, we use that.
  * Else if the pulse on the upstream source operator is current, we use that.
  * Else we use the pulse from the pulse map, but copy the source tuple array.
+ * @param {Operator} op - The operator for which to get an input pulse.
+ * @param {string} [encode] - An (optional) encoding set name with which to
+ *   annotate the returned pulse. See {@link run} for more information.
  */
 export function getPulse(op, encode) {
   var s = op.source,

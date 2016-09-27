@@ -3,7 +3,7 @@ import {isFunction} from 'vega-util';
 
 /**
  * Add an operator to the dataflow graph. This function accepts a
- * variety of input argument types. The basic signature support an
+ * variety of input argument types. The basic signature supports an
  * initial value, update function and parameters. If the first parameter
  * is an Operator instance, it will be added directly. If it is a
  * constructor for an Operator subclass, a new instance will be instantiated.
