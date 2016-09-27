@@ -89,9 +89,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The chart `"width"` and `"height"` are automatically bound to signals with the same name. The top-level `"width"` and `"height"` properties can be omitted from the definition and instead replaced by signal definitions whose `"update"` function dynamically sets the width and/or height value.
 
-- Vega 3 adds a new top-level `"autosize"` property to set the layout mode. The allowed options are `"pad"` (the default, similar to `"padding": "auto"` in Vega 2, the chart dimensions will be expanded as needed to fit the chart, axes and legends), `"fit"` (similar to `"padding": "strict"` in Vega 2, the data rectangle size will be decreased in attempt to force the chart to fit within the given width and height) and `"none"` (no resizing is performed, and the chart size is solely determined by the width, height and padding settings).
+- Vega 3 adds a new top-level `"autosize"` property to set the layout mode. The allowed options are `"pad"` (the default, similar to `"padding": "auto"` in Vega 2, the chart dimensions will be expanded as needed to fit the chart, axes and legends), `"fit"` (similar to `"padding": "strict"` in Vega 2, the data rectangle size will be decreased in an attempt to force the chart to fit within the given width and height) and `"none"` (no resizing is performed, and the chart size is solely determined by the width, height and padding settings).
 
-- Vega 3 removes the `"auto"` option for view `"padding"`. Instead, `"padding"` now always defines a fixed padding margin around the visualization. If the `"autosize"` property is set to `"pad"`, the padding values will be added to the results of the auto-size calculation.
+- Vega 3 removes the `"auto"` and `"strict"` options for view `"padding"`. Instead, `"padding"` now always defines a fixed padding margin around the visualization. If the `"autosize"` property is set to `"pad"`, the padding values will be added to the results of the auto-size calculation.
 
 ## Axes and Legends
 
@@ -99,13 +99,33 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The `"ticks"` parameter for suggesting the approximate number of axis ticks has been renamed `"count"`.
 
-- Custom visual properties for axes and legends now reside under an `"encode"` block and use `"enter"`, `"update"`, and `"exit"` sub-blocks. In unsure of which to use, a good defualt is to define an `"update"` block to ensure all properties are updated.
+- Custom visual properties for axes and legends now reside under an `"encode"` block and use `"enter"`, `"update"`, and `"exit"` sub-blocks. If unsure of which to use, a good default is to define an `"update"` block to ensure all properties are updated.
+
+- In addition, the custom `"encode"` block for an axis or legend can include a boolean `"interactive"` value to control if specific axis or legend items should be subject to input events. For example, to enable interaction for legend symbols:
+  ```js
+  "legends": [
+    {
+      "fill": "colorScale",
+      "title": "Legend Title",
+      "orient": "right",
+      "encode": {
+        "symbols": {
+          "interactive": true,
+          "hover": {...},
+          "update": {...}
+        }
+      }
+    }
+  ]
+  ```
+
+- Legends now include an optional `"type"` property. By default, all legends use the `"symbol"` type, to create a discrete legend. For continuous color scales, the `"gradient"` type can be used to create a legend containing a continuous color ramp. See the `legends.vg.json` example for more.
 
 ## Scales
 
 - Following D3 4.0's design, the `"ordinal"` scale type has now been broken up into three different scale types: `"ordinal"` (for strict lookup tables), `"band"` (for spatial ordinal scales) and `"point"` (spatial ordinal scales with no padding, similar to `{"point": true}` in Vega 2).
 
-- Vega 3 includes D3 4.0's `"sequential"` scale type and corresponding color scales. Use the `"scheme"` property to set the range to a named color scale (e.g., `"viridis"`, `"plasma"`, or `"magma"`).
+- Vega 3 includes D3 4.0's `"sequential"` scale type and corresponding color scales. Use the `"scheme"` property to set the range to a named color scale (e.g., `"viridis"`, `"plasma"`, or `"magma"`). To see the list of supported built-in schemes, or to add new custom schemes, see the [vega-scale module](https://github.com/vega/vega-scale).
 
 - The `"category10"`, `"category20"` and similar color palettes are no longer available as built-in range names. Instead, they are available using the scale `"scheme"` property, which can be specified instead of a scale range for `"ordinal"` and `"sequential"` scales. However, Vega 3 does support a built-in `"category"` short-hand for ordinal scale ranges, which can be re-defined as part of the theme configuration.
 
@@ -119,7 +139,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Vega 2.x transform `"output"` maps for determining output field names have been removed. Instead, the relevant transforms accept an `"as"` parameter that (depending on the transform type) takes either a single string or an ordered array of strings, each representing a desired output field name. See the documentation (including JSDoc source code comments) for individual transforms for more information.
 
-- The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operators. In Vega 3, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output names:
+- The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operations. In Vega 3, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output field names:
   ```js
   {
     "type": "aggregate",
@@ -130,9 +150,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
   }
   ```
 
-- A number of transforms now have different default output variable names. In most cases, this was done to make the values more easily serve as scenegraph item properties when using post-encoding transforms.
+- A number of transforms now have different default output field names. In most cases, this was done to make the values more easily serve as scenegraph item properties (for example, when using post-encoding transforms).
 
-- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use an `"expr"` encoding to calulate a midpoint, or provide a nested `"offset"` encoding.
+- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use an `"expr"` encoding to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "expr": "0.5 * (datum.y0 + datum.y1)"}).
 
 - For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
 
@@ -169,4 +189,4 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Instead of `view.update`, the `view.run` method now invokes dataflow pulse propagation and re-rendering.
 
-- The underlying View API and dataflow system have been extensively overhauled. A Vega `View` instance is now a direct subclass of a Vega `Dataflow`, and manages all reactive processing, streaming data input, and rendering. While full web-based documentation is forthcoming, comprehensive JSDoc comments are included in the source code of both the [vega-view](https://github.com/vega/vega-view) and [vega-dataflow](https://github.com/vega/vega-dataflow) repositories.
+- The underlying View API and dataflow system have been extensively overhauled. A Vega `View` instance is now a direct subclass of a Vega `Dataflow`, and manages all reactive processing, streaming data input, and rendering. In addition to the [View API Reference](https://github.com/vega/vega-view), comprehensive JSDoc comments are included in the source code of the [vega-view](https://github.com/vega/vega-view) and [vega-dataflow](https://github.com/vega/vega-dataflow) repositories.
