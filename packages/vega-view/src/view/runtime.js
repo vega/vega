@@ -1,9 +1,6 @@
 import formats from './formats';
 import {transforms} from 'vega-dataflow';
-import {load} from 'vega-loader';
-import {
-  error, extend, isArray, isObject, isString, pad, truncate, truthy
-} from 'vega-util';
+import {isArray, isObject, isString, pad, truncate, truthy} from 'vega-util';
 import {parse, context} from 'vega-runtime';
 import {scaleGradient} from 'vega-scenegraph';
 import {rgb, lab, hcl, hsl} from 'd3-color';
@@ -55,16 +52,13 @@ function functions() {
   };
 
   fn.open = function(uri, name) {
+    var df = this.context.dataflow;
     if (typeof window !== 'undefined' && window && window.open) {
-      var opt = this.context.dataflow.loadOptions(),
-          url = load.sanitize(uri, extend({type:'open', name:name}, opt));
-      if (url) {
-        window.open(url, name);
-      } else {
-        error('Invalid URL: ' + opt.url);
-      }
+      df.loader().sanitize(uri, {context:'open', name:name})
+        .then(function(url) { window.open(url, name); })
+        .catch(function(e) { df.error(e); });
     } else {
-      error('Open function can only be invoked in a browser.');
+      df.error('Open function can only be invoked in a browser.');
     }
   };
 
