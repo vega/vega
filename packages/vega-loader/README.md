@@ -5,12 +5,23 @@ Network request and file loading utilities.
 ## API Reference
 
 * [File Loading](#file-loading)
-* [Format Parsing](#format-parsing)
+* [Data Format Parsing](#data-format-parsing)
 
 ### File Loading
 
+<a name="loader" href="#loader">#</a>
+vega.<b>loader</b>([<i>options</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
+
+Creates a new loader instance, with default *options*. A loader object
+provides methods for loading files for the network or disk, and for sanitizing
+requests to ensure only acceptable URLs or filenames are loaded. If provided,
+the key-value pairs in the *options* object will be passed as the default
+options to the loader methods. See the [load](#load) method for standard
+options.
+
 <a name="load" href="#load">#</a>
-vega.<b>load</b>(<i>uri</i>[, <i>options</i>])
+loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
 [<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
 
 Loads a file from either the network or disk, and returns a
@@ -24,7 +35,7 @@ The *uri* argument is a string indicating the file to load. This is typically
 either an absolute or relative URL string. If running server-side via node.js,
 this argument might also be a file path (e.g., `'file:///path/to/file.txt'`).
 
-The *options* object may contain the following entries:
+The *options* object can include the following entries:
 - *baseURL*: A base URL prefix to append to the provided *uri* value. This can
 be useful for applications that load multiple data sets from the same domain.
 - *mode*: A string explicitly indicating the loading mode. One of `'file'`
@@ -32,56 +43,60 @@ be useful for applications that load multiple data sets from the same domain.
 may safely omit a `'file://'` prefix.
 - *defaultProtocol*: The default protocol to use for protocol-relative *uri*
 values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
-- _headers_: An object of key-values indicating custom request headers, used
+- *headers*: An object of key-values indicating custom request headers, used
 only when loading via HTTP.
 
+If provided, the *options* argument will be combined with any default options
+passed to the [loader](#loader) constructor. In the case of identical property
+names, values from the *options* argument for this method will be used.
+
 ```js
-dl.load('data.json').then(function(data) {
+var loader = vega.loader();
+loader.load('data.json').then(function(data) {
   // do something with loaded data
 }).catch(function(error) {
   // error handling here
 });
 ```
 
-<a name="load_loader" href="load_loader">#</a>
-vega.load.<b>loader</b>(<i>uri</i>[, <i>options</i>])
-[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
-
-The primary loading function, internally invoked by [load](#load).
-This method is exposed and over-writable for clients who wish to implement
-custom load handling.
-
 <a name="load_sanitize" href="load_sanitize">#</a>
-vega.load.<b>sanitize</b>(<i>uri</i>, <i>options</i>)
-[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+loader.<b>sanitize</b>(<i>uri</i>, <i>options</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
 URI sanitizer function, which takes a *uri* and *options* object as input,
-and returns a finalized URL as output. This method is used internally by
+and returns a Promise that resolves to a URL. This method is used internally by
 [load](#load) to ensure the URL is valid and to add additional protocol and
 hostname information, if needed. This method accepts the same *options* object
-accepted by [load](#load) and returns either a URL string or `null` if the
-*uri* is invalid or disallowed. This method is exposed and over-writable for
-clients who wish to implement custom sanitization.
+accepted by [load](#load) and returns a Promise. If sanitization is successful,
+the Promise resolves to the final URL string. Otherwise it rejects if the
+*uri* is invalid or disallowed. This method is over-writable for clients who
+wish to implement custom sanitization.
+
+If provided, the *options* argument will be combined with any default options
+passed to the [loader](#loader) constructor. In the case of identical property
+names, values from the *options* argument for this method will be used.
 
 <a name="load_http" href="load_http">#</a>
-vega.load.<b>http</b>(<i>url</i>, <i>options</i>)
-[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+loader.<b>http</b>(<i>url</i>, <i>options</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
 Function used internally by [load](#load) for servicing HTTP requests. This
-method is exposed and over-writable for clients who wish to implement custom
-HTTP request handling. Uses [d3-request](https://github.com/d3/d3-request)
-by default.
+method is over-writable for clients who wish to implement custom HTTP request
+handling. Uses [d3-request](https://github.com/d3/d3-request) by default.
+
+If provided, the *options* argument will be combined with any default options
+passed to the [loader](#loader) constructor. In the case of identical property
+names, values from the *options* argument for this method will be used.
 
 <a name="load_file" href="load_file">#</a>
-vega.load.<b>file</b>(<i>filename</i>)
-[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+loader.<b>file</b>(<i>filename</i>)
+[<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
-Function used internally by [load](#load) for local file system requests.
-This method is exposed and over-writable for clients who wish to implement
-custom file loading. Uses the node.js [fs](https://nodejs.org/api/fs.html)
-module by default.
+Function used internally by [load](#load) for local file system requests. This
+method is over-writable for clients who wish to implement custom file loading.
+Uses the node.js [fs](https://nodejs.org/api/fs.html) module by default.
 
-### Format Parsing
+### Data Format Parsing
 
 <a name="read" href="#read">#</a>
 vega.<b>read</b>(<i>data</i>, <i>schema</i>[, <i>dateParse</i>])
@@ -114,7 +129,7 @@ library is used by default. Date-time format strings may be quoted
 ```js
 // read loaded csv data, automatically infer value types
 var data = null;
-vega.load('data/stocks.csv').then(function(data) {
+loader.load('data/stocks.csv').then(function(data) {
   data = vega.read(csv_data, {type: 'csv', parse: 'auto'});
 });
 ```
@@ -122,7 +137,7 @@ vega.load('data/stocks.csv').then(function(data) {
 ```js
 // read loaded csv data, using provided value types
 var data = null;
-vega.load('data/stocks.csv').then(function(data) {
+loader.load('data/stocks.csv').then(function(data) {
   data = vega.read(data, {
     type: 'csv',
     parse: {'date': 'date', 'price': 'number'}
@@ -133,7 +148,7 @@ vega.load('data/stocks.csv').then(function(data) {
 ```js
 // read loaded topojson data, extract mesh of countries
 var topojson = null;
-vega.load('data/world-110m.json').then(function(data) {
+loader.load('data/world-110m.json').then(function(data) {
   topojson = vega.read(data, {type: 'topojson', mesh: 'countries'});
 });
 ```
