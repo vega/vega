@@ -1,6 +1,6 @@
 export {
-  default as load
-} from './src/load';
+  default as loader
+} from './src/loader';
 
 export {
   default as read
