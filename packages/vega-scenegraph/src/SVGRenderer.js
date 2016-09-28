@@ -10,8 +10,8 @@ import {styles, styleProperties} from './util/svg/styles';
 
 var ns = metadata.xmlns;
 
-export default function SVGRenderer(loadConfig) {
-  Renderer.call(this, loadConfig);
+export default function SVGRenderer(imageLoader) {
+  Renderer.call(this, imageLoader);
   this._dirtyID = 0;
   this._svg = null;
   this._root = null;

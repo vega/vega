@@ -1,5 +1,6 @@
 var tape = require('tape'),
     fs = require('fs'),
+    loader = require('vega-loader').loader,
     vega = require('../'),
     Bounds = vega.Bounds,
     Renderer = vega.SVGRenderer,
@@ -24,7 +25,7 @@ function compensate(svg) {
   svg = svg.replace(/font: ([^;]+);/g, replaceFont);
 
   // update image href namespace to compensate for JSDOM
-  svg = svg.replace(/image href=/g, 'image xlink:href=');
+  svg = svg.replace(/ href=/g, ' xlink:href=');
 
   // correct capitalization to compensate for JSDOM
   svg = svg.replace(/clippath/g, 'clipPath');
@@ -51,7 +52,7 @@ function renderAsync(scene, w, h, callback) {
     doc.body.removeChild(doc.body.children[i]);
   }
   // then render svg
-  new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(doc.body, w, h)
     .renderAsync(scene)
     .then(function(r) { callback(compensate(r.svg())); });

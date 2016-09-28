@@ -8,8 +8,8 @@ import {visit} from './util/visit';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 
-export default function SVGStringRenderer(loadConfig) {
-  Renderer.call(this, loadConfig);
+export default function SVGStringRenderer(imageLoader) {
+  Renderer.call(this, imageLoader);
 
   this._text = {
     head: '',

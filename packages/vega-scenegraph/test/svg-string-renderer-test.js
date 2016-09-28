@@ -1,5 +1,6 @@
 var tape = require('tape'),
     fs = require('fs'),
+    loader = require('vega-loader').loader,
     vega = require('../'),
     Bounds = vega.Bounds,
     Renderer = vega.SVGStringRenderer;
@@ -30,7 +31,7 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
     .then(function(r) { callback(r.svg()); });

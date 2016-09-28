@@ -7,8 +7,8 @@ import {clear} from './util/dom';
 import Canvas from './util/canvas/canvas';
 import resize from './util/canvas/resize';
 
-export default function CanvasRenderer(loadConfig) {
-  Renderer.call(this, loadConfig);
+export default function CanvasRenderer(imageLoader) {
+  Renderer.call(this, imageLoader);
   this._redraw = false;
 }
 

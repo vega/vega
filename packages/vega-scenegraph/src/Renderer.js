@@ -2,14 +2,15 @@ import ImageLoader from './ImageLoader';
 
 /**
  * Create a new Renderer instance.
- * @param {object} [loadConfig] - Optional configuration for image loading.
- *   Passed to vega-loader's sanitize method.
+ * @param {object} [imageLoader] - Optional loader instance for
+ *   image URL sanitization. If not specified, a standard loader
+ *   instance will be generated.
  * @constructor
  */
-export default function Renderer(loadConfig) {
+export default function Renderer(imageLoader) {
   this._el = null;
   this._bgcolor = null;
-  this._loader = new ImageLoader(loadConfig);
+  this._loader = new ImageLoader(imageLoader);
 }
 
 var prototype = Renderer.prototype;
@@ -127,14 +128,6 @@ prototype.renderAsync = function(scene, items) {
 };
 
 /**
- * Sanitize an image URL prior to image loading.
- * This is a proxy method to ImageLoader.imageURL.
- */
-prototype.imageURL = function(url) {
-  return this._loader.imageURL(url);
-};
-
-/**
  * Requests an image to include in the rendered scene.
  * This method proxies a call to ImageLoader.loadImage, but also tracks
  * image loading progress and invokes a re-render once complete.
@@ -143,7 +136,7 @@ prototype.imageURL = function(url) {
  */
 prototype.loadImage = function(uri) {
   var r = this,
-      image = r._loader.loadImage(uri);
+      p = r._loader.loadImage(uri);
 
   if (!r._ready) {
     // re-render the scene when image loading completes
@@ -155,5 +148,5 @@ prototype.loadImage = function(uri) {
       });
   }
 
-  return image;
+  return p;
 };

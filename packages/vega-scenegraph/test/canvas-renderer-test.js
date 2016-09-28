@@ -1,5 +1,6 @@
 var tape = require('tape'),
     fs = require('fs'),
+    loader = require('vega-loader').loader,
     vega = require('../'),
     Bounds = vega.Bounds,
     Renderer = vega.CanvasRenderer,
@@ -31,7 +32,7 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
     .then(function(r) { callback(r.canvas().toBuffer()); });
@@ -328,11 +329,12 @@ tape('CanvasRenderer should skip invalid image', function(test) {
     marktype: 'image',
     items: [{url: 'does_not_exist.png'}]
   });
-  var image = render(scene, 500, 500);
-  generate('png/marks-empty.png', image);
-  var file = load('png/marks-empty.png');
-  test.equal(image+'', file);
-  test.end();
+  renderAsync(scene, 500, 500, function(image) {
+    generate('png/marks-empty.png', image);
+    var file = load('png/marks-empty.png');
+    test.equal(image+'', file);
+    test.end();
+  });
 });
 
 tape('CanvasRenderer should render line mark', function(test) {
