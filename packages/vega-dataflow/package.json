@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "2.0.0-beta",
+  "version": "2.0.0-beta.1",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "d3-array": "1",
-    "vega-loader": "1",
+    "vega-loader": ">=2.0.0-beta",
     "vega-statistics": "1",
     "vega-util": "1"
   },

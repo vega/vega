@@ -1,11 +1,7 @@
-import {load, read} from 'vega-loader';
+import {read} from 'vega-loader';
 
 export function ingest(target, data, format) {
   return this.pulse(target, this.changeset().insert(read(data, format)));
-}
-
-export function loadOptions(_) {
-  return arguments.length ? (this._loadopt = _, this) : this._loadopt;
 }
 
 function loadPending(df) {
@@ -33,7 +29,8 @@ export function request(target, url, format) {
 
   pending.requests += 1;
 
-  load(url, df.loadOptions())
+  df.loader()
+    .load(url, {context:'dataflow'})
     .then(
       function(data) {
         df.ingest(target, data, format);
