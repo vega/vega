@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0",
+  "schema": {"language": "vega", "version": "3.0.0"},
   "padding": {
     "top":    10,
     "left":   30,
