@@ -1,13 +1,10 @@
 import Image from './util/canvas/image';
-import {load} from 'vega-loader';
+import {loader} from 'vega-loader';
 
-export default function ImageLoader(loadOptions) {
+export default function ImageLoader(imageLoader) {
   this._pending = 0;
-  this._options = loadOptions || ImageLoader.Options;
+  this._loader = imageLoader || loader();
 }
-
-// Overridable global default load configuration
-ImageLoader.Options = {};
 
 var prototype = ImageLoader.prototype;
 
@@ -15,35 +12,33 @@ prototype.pending = function() {
   return this._pending;
 };
 
-prototype.imageURL = function(uri) {
-  return load.sanitize(uri, this._options);
-};
-
 prototype.loadImage = function(uri) {
-  var url = this.imageURL(uri);
-
-  if (!url || !Image) {
-    return {loaded: false, width: 0, height: 0};
-  }
-
-  var loader = this,
-      image = new Image();
-
+  var loader = this;
   loader._pending += 1;
 
-  image.onload = function() {
-    loader._pending -= 1;
-    image.loaded = true;
-  };
+  return loader._loader.sanitize(uri, {context:'image'})
+    .then(function(url) {
+      if (!url || !Image) throw 'Image unsupported.';
 
-  image.onerror = function() {
-    loader._pending -= 1;
-    image.loaded = false;
-  }
+      var image = new Image();
 
-  image.src = url;
+      image.onload = function() {
+        loader._pending -= 1;
+        image.loaded = true;
+      };
 
-  return image;
+      image.onerror = function() {
+        loader._pending -= 1;
+        image.loaded = false;
+      }
+
+      image.src = url;
+      return image;
+    })
+    .catch(function() {
+      loader._pending -= 1;
+      return {loaded: false, width: 0, height: 0};
+    });
 };
 
 prototype.ready = function() {

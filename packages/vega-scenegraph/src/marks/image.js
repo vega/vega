@@ -5,8 +5,11 @@ import translate from '../util/svg/translate';
 function getImage(item, renderer) {
   var image = item.image;
   if (!image || image.url !== item.url) {
-    image = (item.image = renderer.loadImage(item.url));
-    item.image.url = item.url;
+    image = {loaded: false, width: 0, height: 0};
+    renderer.loadImage(item.url).then(function(image) {
+      item.image = image;
+      item.image.url = item.url;
+    });
   }
   return image;
 }
@@ -24,13 +27,12 @@ function attr(emit, item, renderer) {
       x = item.x || 0,
       y = item.y || 0,
       w = item.width || image.width || 0,
-      h = item.height || image.height || 0,
-      url = renderer.imageURL(item.url);
+      h = item.height || image.height || 0;
 
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
 
-  emit('href', url, 'http://www.w3.org/1999/xlink', 'xlink:href');
+  emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
   emit('transform', translate(x, y));
   emit('width', w);
   emit('height', h);

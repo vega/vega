@@ -1,6 +1,7 @@
 var tape = require('tape'),
     fs = require('fs'),
     vega = require('../'),
+    loader = require('vega-loader').loader,
     Renderer = vega.CanvasRenderer,
     Handler = vega.CanvasHandler,
     jsdom = require('jsdom'),
@@ -30,7 +31,7 @@ function render(scene, w, h) {
 
 function renderAsync(scene, w, h, callback) {
   global.document = doc;
-  new Renderer({mode: 'http', baseURL: './test/resources/'})
+  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(doc.body, w, h)
     .renderAsync(scene)
     .then(function(r) { callback(r.element()); });
