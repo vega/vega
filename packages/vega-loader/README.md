@@ -13,12 +13,11 @@ Network request and file loading utilities.
 vega.<b>loader</b>([<i>options</i>])
 [<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
-Creates a new loader instance, with default *options*. A loader object
-provides methods for loading files for the network or disk, and for sanitizing
-requests to ensure only acceptable URLs or filenames are loaded. If provided,
-the key-value pairs in the *options* object will be passed as the default
-options to the loader methods. See the [load](#load) method for standard
-options.
+Creates a new loader instance with default *options*. A loader object
+provides methods for loading files from the network or disk, and for sanitizing
+requested URLs and filenames. If provided, the key-value pairs in the *options*
+object will be passed as default options to the various loader methods. See the
+[load](#load) method for supported option values.
 
 <a name="load" href="#load">#</a>
 loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
@@ -31,7 +30,7 @@ any parsing, it simply returns the loaded data as either a Buffer or String
 instance, depending on the execution environment. To subsequently parse loaded
 data, use the [read](#read) method.
 
-The *uri* argument is a string indicating the file to load. This is typically
+The *uri* argument is a value indicating the file to load. This is typically
 either an absolute or relative URL string. If running server-side via node.js,
 this argument might also be a file path (e.g., `'file:///path/to/file.txt'`).
 
@@ -68,9 +67,9 @@ and returns a Promise that resolves to a URL. This method is used internally by
 [load](#load) to ensure the URL is valid and to add additional protocol and
 hostname information, if needed. This method accepts the same *options* object
 accepted by [load](#load) and returns a Promise. If sanitization is successful,
-the Promise resolves to the final URL string. Otherwise it rejects if the
-*uri* is invalid or disallowed. This method is over-writable for clients who
-wish to implement custom sanitization.
+the Promise resolves to the final URL string. The Promise rejects if the *uri*
+is invalid or disallowed. This method is over-writable for clients who wish to
+implement custom sanitization.
 
 If provided, the *options* argument will be combined with any default options
 passed to the [loader](#loader) constructor. In the case of identical property
@@ -196,10 +195,9 @@ If *value* is not already string-typed, it is coerced to a String.
 vega.<b>formats</b>(<i>name</i>[, <i>format</i>])
 [<>](https://github.com/vega/vega-loader/blob/master/src/formats/index.js "Source")
 
-Registry function for adding and retrieving data format parsers. If invoked
-with two arguments, adds a new *format* parser with the provided *name*.
-Otherwise, returns an existing parser with the given *name*.
-The method signature of a format parser is:
+Registry function for data format parsers. If invoked with two arguments, adds
+a new *format* parser with the provided *name*. Otherwise, returns an existing
+parser with the given *name*. The method signature of a format parser is:
 - <b>format</b>(<i>data</i>, <i>options</i>)
 
 A format parser that accepts two arguments, the input *data* to parse
