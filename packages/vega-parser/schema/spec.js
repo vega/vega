@@ -7,7 +7,13 @@ export default {
         {"$ref": "#/defs/scope"},
         {
           "properties": {
-            "version": {"type": "string"},
+            "schema": {
+              "type": "object",
+              "properties": {
+                "language": {"enum": ["vega"]},
+                "version": {"type": "string"}
+              }
+            },
             "description": {"type": "string"},
             "width": {"type": "number"},
             "height": {"type": "number"},
