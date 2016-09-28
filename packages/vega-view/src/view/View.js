@@ -31,7 +31,7 @@ export default function View(spec, options) {
   options = options || {};
 
   Dataflow.call(this);
-  this.loadOptions(options.loadOptions || {});
+  this.loader(options.loader || this._loader);
   this.logLevel(options.logLevel || 0);
 
   this._el = null;
