@@ -4,11 +4,12 @@ import events from './dataflow/events';
 import on from './dataflow/on';
 import {rank, rerank} from './dataflow/rank';
 import {pulse, touch, update} from './dataflow/update';
-import {ingest, request, loadOptions} from './dataflow/load';
+import {ingest, request} from './dataflow/load';
 import {run, runAsync, runAfter, enqueue, getPulse} from './dataflow/run';
 import changeset from './ChangeSet';
 import Heap from './util/Heap';
 import UniqueList from './util/UniqueList';
+import {loader} from 'vega-loader';
 import {id, logger} from 'vega-util';
 
 /**
@@ -20,6 +21,7 @@ export default function Dataflow() {
 
   this._clock = 0;
   this._rank = 0;
+  this._loader = loader();
 
   this._touched = UniqueList(id);
   this._pulses = {};
@@ -43,6 +45,21 @@ prototype.stamp = function() {
   return this._clock;
 };
 
+/**
+ * Gets or sets the loader instance to use for data file loading. A
+ * loader object must provide a "load" method for loading files and a
+ * "sanitize" method for checking URL/filename validity. Both methods
+ * should accept a URI and options hash as arguments, and return a Promise
+ * that resolves to the loaded file contents or sanitized URL string,
+ * respectively.
+ * @param {object} _ - The loader instance to use.
+ * @return {object|Dataflow} - If no arguments are provided, returns
+ *   the current loader instance. Otherwise returns this Dataflow instance.
+ */
+prototype.loader = function(_) {
+  return arguments.length ? (this._loader = _, this) : this._loader;
+};
+
 // OPERATOR REGISTRATION
 prototype.add = add;
 prototype.connect = connect;
@@ -58,7 +75,6 @@ prototype.changeset = changeset;
 // DATA LOADING
 prototype.ingest = ingest;
 prototype.request = request;
-prototype.loadOptions = loadOptions;
 
 // EVENT HANDLING
 prototype.events = events;
