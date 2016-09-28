@@ -37,6 +37,7 @@
     <div id="view"></div>
     <script>
 var container = document.querySelector('#view'),
+    loader = vega.loader(),
     renderType = 'svg',
     runtime = null,
     spec = null,
@@ -53,7 +54,7 @@ render.addEventListener('change', function() {
   if (view) view.renderer(renderType).run();
 });
 
-vega.load('specs.json')
+loader.load('specs.json')
   .then(function(data) {
     // load manifest of test specifications
     JSON.parse(data).forEach(function(name) {
@@ -83,7 +84,7 @@ function load(name) {
   }
 
   // load vega spec, then visualize it
-  vega.load(url = 'spec/' + name + '.vg.json')
+  loader.load(url = 'spec/' + name + '.vg.json')
     .then(function(data) {
       console.log('LOADED', url);
       visualize(spec = JSON.parse(data));

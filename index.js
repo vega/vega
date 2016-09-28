@@ -2,9 +2,7 @@ export * from 'vega-statistics';
 
 export * from 'vega-util';
 
-export {
-  load
-} from 'vega-loader';
+export * from 'vega-loader';
 
 export {
   Dataflow,

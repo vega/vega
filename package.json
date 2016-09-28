@@ -61,7 +61,7 @@
     "vega-force": ">=1.0.0-beta",
     "vega-geo": ">=1.0.0-beta",
     "vega-hierarchy": ">=1.0.0-beta",
-    "vega-loader": "1",
+    "vega-loader": ">=2.0.0-beta",
     "vega-parser": ">=1.0.0-beta",
     "vega-runtime": ">=1.0.0-beta",
     "vega-scale": "1",
