@@ -85,7 +85,6 @@ function defaults() {
       orient: 'right',
       offset: 18,
       padding: 0,
-      margin: 8,
       entryPadding: 5,
       titlePadding: 5,
       gradientWidth: 100,
