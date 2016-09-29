@@ -3,7 +3,8 @@
 
 var helpText =
   'Render a Vega specification to SVG.\n\n' +
-  'Usage: vg2svg vega_json_file [output_svg_file]\n' +
+  'Usage: vg2svg [vega_json_file] [output_svg_file]\n' +
+  '  If no arguments are provided, reads from stdin.\n' +
   '  If output_svg_file is not provided, writes to stdout.\n\n' +
   'To load data, you may need to set a base directory:\n' +
   '  For web retrieval, use `-b http://host/data/`. \n' +
@@ -22,7 +23,7 @@ var path = require('path'),
 // arguments
 var args = require('yargs')
   .usage(helpText)
-  .demand(1)
+  .demand(0)
   .string('b').alias('b', 'base')
   .describe('b', 'Base directory for data loading.')
   .boolean('h').alias('h', 'header')
@@ -39,7 +40,7 @@ if (args.b) {
 
 // input / output files
 var header = args.h ? svgHeader : '',
-    specFile = args._[0],
+    specFile = args._[0] || '/dev/stdin',
     outputFile = args._[1] || null;
 
 // load spec, render to png
