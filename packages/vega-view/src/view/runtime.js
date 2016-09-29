@@ -56,9 +56,9 @@ function functions() {
     if (typeof window !== 'undefined' && window && window.open) {
       df.loader().sanitize(uri, {context:'open', name:name})
         .then(function(url) { window.open(url, name); })
-        .catch(function(e) { df.error(e); });
+        .catch(function(e) { df.warn('Open url failed: ' + e); });
     } else {
-      df.error('Open function can only be invoked in a browser.');
+      df.warn('Open function can only be invoked in a browser.');
     }
   };
 
