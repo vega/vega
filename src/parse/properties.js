@@ -665,8 +665,9 @@ properties.schema = {
         "fontWeight": {"$ref": "#/refs/stringValue"},
         "fontStyle": {"$ref": "#/refs/stringValue"}
       },
-
-      "additionalProperties": false
+      "additionalProperties": {
+        "$ref": "#/refs/value"
+      }
     }
   }
 };
