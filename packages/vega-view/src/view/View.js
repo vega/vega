@@ -47,19 +47,15 @@ export default function View(spec, options) {
 
   // initialize dataflow graph
   var ctx = runtime(this, spec);
+  this._runtime = ctx;
   this._signals = ctx.signals;
-  this._scales = ctx.scales;
-  this._data = ctx.data;
   this._bind = spec.bindings;
-
-  // DEBUG - remove later
-  if (typeof self !== 'undefined') self.context = ctx;
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
-  root.source = this._data.root.input;
+  root.source = ctx.data.root.input;
   this.pulse(
-    this._data.root.input,
+    ctx.data.root.input,
     this.changeset().insert(root.items)
   );
 
