@@ -116,7 +116,7 @@ function getSubflow(_, ctx) {
         op = subctx.get(spec.operators[0].id),
         p = subctx.signals.parent;
     if (p) p.set(parent);
-    return op.context = subctx, op;
+    return op;
   };
 }
 

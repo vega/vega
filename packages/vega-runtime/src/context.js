@@ -42,7 +42,9 @@ function ContextFork(ctx, index) {
 
 Context.prototype = ContextFork.prototype = {
   fork: function(index) {
-    return new ContextFork(this, index);
+    var ctx = new ContextFork(this, index);
+    (this.subcontext || (this.subcontext = [])).push(ctx);
+    return ctx;
   },
   get: function(id) {
     return this.nodes[id];
