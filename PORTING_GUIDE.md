@@ -83,7 +83,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The `"verbose"` flag has been renamed to `"force"`, and must now be set on individual elements of the `"on"` array. For example, the signal definition `{"name": "clickedPoint", "verbose": true, "streams": [{"type": "click", "expr": "datum._id"}]}` should now be written as `{"name": "clickedPoint", "on": [{"events": "click", "update": "datum._id", "force": true}]}`.
 
-- The `"init"` property has been renamed to `"value"`, and it takes an expression string directly. Thus, `"init": {"expr": "datetime('Jan 1 2000')"}` is now simply `"value": "datetime('Jan 1 2000')"`.
+- Instead of `"init"`, the `"value"` and `"update"` properties can be used to initialize a signal using a literal value or expression, respectively. 
 
 - Signal references (e.g., `{"signal": "name"}`) used for visual encodings or transform parameters no longer support nested property access such as `{"signal": "foo.bar"}`. Instead, use expression references such as `{"expr": "foo.bar"}`.
 
