@@ -13,7 +13,7 @@ Methods for sampling and calculating probability distributions. Each method
 takes a set of distributional parameters and returns a distribution object
 representing a random variable.
 
-Distribution objects provide the following methods:
+Distribution objects expose the following methods:
 * dist.<b>sample</b>(): Samples a random value drawn from this distribution.
 * dist.<b>pdf</b>(<i>value</i>): Calculates the value of the [probability
 density function](https://en.wikipedia.org/wiki/Probability_density_function)
@@ -34,6 +34,9 @@ distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified
 *mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0`
 and the standard deviation defaults to `1`.
 
+Once created, *mean* and *stdev* values can be accessed or modified using
+the `mean` and `stdev` getter/setter methods.
+
 <a name="randomUniform" href="#randomUniform">#</a>
 vega.<b>randomUniform</b>([<i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
@@ -44,6 +47,9 @@ over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and
 *max* defaults to `1`. If only one argument is provided, it is interpreted as
 the *max* value.
 
+Once created, *min* and *max* values can be accessed or modified using
+the `min` and `max` getter/setter methods.
+
 <a name="randomInteger" href="#randomInteger">#</a>
 vega.<b>randomInteger</b>([<i>min</i>,] <i>max</i>)
 [<>](https://github.com/vega/vega-statistics/blob/master/src/integer.js "Source")
@@ -53,6 +59,39 @@ distribution](https://en.wikipedia.org/wiki/Discrete_uniform_distribution) over
 the integer domain [*min*, *max*). If only one argument is provided, it is
 interpreted as the *max* value. If unspecified, *min* defaults to `0`.
 
+Once created, *min* and *max* values can be accessed or modified using
+the `min` and `max` getter/setter methods.
+
+<a name="randomMixture" href="#randomMixture">#</a>
+vega.<b>randomMixture</b>(<i>distributions</i>[, <i>weights</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/mixture.js "Source")
+
+Creates a distribution object representing a (weighted) mixture of probability
+distributions. The *distributions* argument should be an array of distribution
+objects. The optional *weights* array provides proportional numerical weights
+for each distribution. If provided, the values in the *weights* array will be
+normalized to ensure that weights sum to 1. Any unspecified weight values
+default to `1` (prior to normalization). Mixture distributions do **not**
+support the `icdf` method: calling `icdf` will result in an error.
+
+Once created, the *distributions* and *weights* arrays can be accessed or
+modified using the `distributions` and `weights` getter/setter methods.
+
+<a name="randomKDE" href="#randomKDE">#</a>
+vega.<b>randomKDE</b>(<i>values</i>[, <i>bandwidth</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/kde.js "Source")
+
+Creates a distribution object representing a
+[kernel density estimate](https://en.wikipedia.org/wiki/Kernel_density_estimation)
+for an array of numerical *values*. This method uses a Gaussian kernel to
+estimate a smoothed, continuous probability distribution. The optional
+*bandwidth* parameter determines the width of the Gaussian kernel. If the
+*bandwidth* is either `0` or unspecified, a default bandwidth value will be
+automatically estimated based on the input data. KDE distributions do **not**
+support the `icdf` method: calling `icdf` will result in an error.
+
+Once created, *data* and *bandwidth* values can be accessed or modified using
+the `data` and `bandwidth` getter/setter methods.
 
 ### Statistics
 

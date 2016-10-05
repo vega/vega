@@ -1,8 +1,23 @@
 export default function(min, max) {
-  var a = max == null ? 0 : min,
-      b = max == null ? (min == null ? 1 : min) : max,
-      d = b - a,
-      dist = {};
+  if (max == null) {
+    max = (min == null ? 1 : min);
+    min = 0;
+  }
+
+  var dist = {},
+      a, b, d;
+
+  dist.min = function(_) {
+    return arguments.length
+      ? (a = _ || 0, d = b - a, dist)
+      : a;
+  };
+
+  dist.max = function(_) {
+    return arguments.length
+      ? (b = _ || 0, d = b - a, dist)
+      : b;
+  };
 
   dist.sample = function() {
     return a + d * Math.random();
@@ -20,5 +35,5 @@ export default function(min, max) {
     return (p >= 0 && p <= 1) ? a + p * d : NaN;
   };
 
-  return dist;
+  return dist.min(min).max(max);
 }
