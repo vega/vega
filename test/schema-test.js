@@ -24,6 +24,7 @@ tape('JSON schema validates correct specifications', function(test) {
     "choropleth",
     "crossfilter",
     "crossfilter-multi",
+    "density",
     "dimpvis",
     "driving",
     "error",
@@ -58,6 +59,7 @@ tape('JSON schema validates correct specifications', function(test) {
     "stocks-index",
     "tree-radial",
     "treemap",
+    "violin-plot",
     "weather",
     "wordcloud"
   ];

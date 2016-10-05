@@ -11,6 +11,7 @@
   "choropleth",
   "crossfilter",
   "crossfilter-multi",
+  "density",
   "dimpvis",
   "driving",
   "error",
@@ -45,6 +46,7 @@
   "stocks-index",
   "tree-radial",
   "treemap",
+  "violin-plot",
   "weather",
   "wordcloud"
 ]
