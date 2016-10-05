@@ -13,6 +13,7 @@ var Identifier = 'Identifier';
 export var signalPrefix = '$';
 export var scalePrefix  = '%';
 export var indexPrefix  = '@';
+export var tuplePrefix  = ':';
 export var eventPrefix  = 'event.vega.';
 
 function signalCode(id) {
@@ -48,6 +49,7 @@ export var functions = function(codegen) {
 
   // scales, projections, data
   fn.copy = 'this.scaleCopy';
+  fn.domain = 'this.domain';
   fn.bandwidth = 'this.bandwidth';
   fn.indata = 'this.indata';
   fn.inrange = 'this.inrange';
@@ -55,6 +57,7 @@ export var functions = function(codegen) {
   fn.range = 'this.range';
   fn.scale = 'this.scale';
   fn.span = 'this.span';
+  fn.tuples = 'this.tuples';
 
   // interaction support
   fn.clampRange    = 'this.clampRange';
@@ -105,6 +108,13 @@ function index(data, field, scope, params) {
   }
 }
 
+function tuples(data, scope, params) {
+  var dataName = tuplePrefix + data;
+  if (!params.hasOwnProperty(dataName)) {
+    params[dataName] = scope.getData(data).tuplesRef();
+  }
+}
+
 export default function(expr, scope, preamble) {
   var params = {}, ast, gen;
 
@@ -124,6 +134,7 @@ export default function(expr, scope, preamble) {
     switch (name) {
       case 'bandwidth':
       case 'copy':
+      case 'domain':
       case 'range':
       case 'gradient':
       case 'invert':
@@ -140,6 +151,10 @@ export default function(expr, scope, preamble) {
         if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
         if (args[1].type !== Literal) error('Second argument to indata must be a string literal.');
         index(args[0].value, args[1].value, scope, params);
+        break;
+      case 'tuples':
+        if (args[0].type !== Literal) error('First argument to tuples must be a string literal.');
+        tuples(args[0].value, scope, params);
         break;
     }
   });
