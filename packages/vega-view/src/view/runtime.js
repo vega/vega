@@ -71,6 +71,11 @@ function functions() {
     return s && s.range ? s.range() : [0, 0];
   };
 
+  fn.domain = function(name, group) {
+    var s = scale(name, (group || this).context);
+    return s ? s.domain() : [];
+  };
+
   fn.bandwidth = function(name, group) {
     var s = scale(name, (group || this).context);
     return s && s.bandwidth ? s.bandwidth() : 0;
@@ -91,6 +96,11 @@ function functions() {
     return !s ? undefined
       : isArray(range) ? (s.invertRange || s.invert)(range)
       : (s.invert || s.invertExtent)(range);
+  };
+
+  fn.tuples = function(name) {
+    var data = this.context.data[name];
+    return data ? data.values.value : [];
   };
 
   fn.indata = function(name, field, value) {
