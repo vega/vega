@@ -2,13 +2,12 @@ function transformSchema(name, def) {
   function parameters(list) {
     list.forEach(function(param) {
       if (param.type === 'param') {
-        if (!param.array) throw Error('Param-type must be an array!');
-        props[param.name] = {
-          "type": "array",
-          "items": {
-            "oneOf": param.params.map(subParameterSchema)
-          }
-        }
+        var schema = {
+          "oneOf": param.params.map(subParameterSchema)
+        };
+        props[param.name] = param.array
+          ? {"type": "array", "items": schema}
+          : schema;
       } else if (param.params) {
         parameters(param.params)
       } else {
