@@ -137,7 +137,7 @@ document.querySelector('#parent').addEventListener('click', function(evt) {
   category = (category === 'a' ? 'c' : 'a');
   var newTuple = vega.extend({}, tuple, {id: null, cat: category});
 
-  view.pulse(view._data.top.input,
+  view.pulse(view._runtime.data.top.input,
     vega.changeset()
       .remove(tuple)
       .insert(newTuple)
