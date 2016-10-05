@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0",
+  "schema": {"language": "vega", "version": "3.0.0"},
   "padding": {
     "top":    10,
     "left":   30,
@@ -110,11 +110,13 @@
       "name": "zoom", "value": 1,
       "on": [
         {
-          "events": {"source": "window", "type": "wheel", "consume": true},
+          "events": "wheel!",
+          "force": true,
           "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
         },
         {
           "events": {"signal": "dist2"},
+          "force": true,
           "update": "dist1 / dist2"
         }
       ]
