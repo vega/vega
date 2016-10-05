@@ -103,6 +103,10 @@ function cache(scope, ds, name, optype, field, counts, index) {
   return v;
 }
 
+prototype.tuplesRef = function() {
+  return ref(this.values);
+};
+
 prototype.extentRef = function(scope, field) {
   return cache(scope, this, 'extent', 'Extent', field, false);
 };
