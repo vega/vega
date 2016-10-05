@@ -1,8 +1,20 @@
 export default function(mean, stdev) {
-  var mu = mean || 0,
-      sigma = stdev || 1,
+  var mu,
+      sigma,
       next = NaN,
       dist = {};
+
+  dist.mean = function(_) {
+    return arguments.length
+      ? (mu = _ || 0, next = NaN, dist)
+      : mu;
+  };
+
+  dist.stdev = function(_) {
+    return arguments.length
+      ? (sigma = (_==null ? 1 : _), next = NaN, dist)
+      : sigma;
+  };
 
   dist.sample = function() {
     var x = 0, y = 0, rds, c;
@@ -73,5 +85,5 @@ export default function(mean, stdev) {
     return mu + sigma * Math.SQRT2 * s;
   };
 
-  return dist;
+  return dist.mean(mean).stdev(stdev);
 }
