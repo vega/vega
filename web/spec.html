@@ -60,7 +60,7 @@ loader.load('specs.json')
     JSON.parse(data).forEach(function(name) {
       var opt = document.createElement('option');
       opt.setAttribute('value', name);
-      opt.innerText = name;
+      opt.textContent = name;
       select.appendChild(opt);
     });
   })
