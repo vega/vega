@@ -197,20 +197,20 @@ function range(bind, el, param, value) {
   el.appendChild(label);
 
   node.addEventListener('input', function() {
-    label.innerText = node.value;
+    label.textContent = node.value;
     bind.update(+node.value);
   });
 
   bind.elements = [node];
   bind.set = function(value) {
     node.value = value;
-    label.innerText = value;
+    label.textContent = value;
   };
 }
 
 function element(tag, attr, text) {
   var el = document.createElement(tag);
   for (var key in attr) el.setAttribute(key, attr[key]);
-  if (text != null) el.innerText = text;
+  if (text != null) el.textContent = text;
   return el;
 }
