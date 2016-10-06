@@ -18,10 +18,6 @@ function valueSchema(type) {
                 "required": ["signal"]
               },
               {
-                "$ref": "#/refs/expr",
-                "required": ["expr"]
-              },
-              {
                 "properties": {"value": {}},
                 "required": ["value"]
               },

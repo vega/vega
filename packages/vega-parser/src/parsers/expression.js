@@ -85,7 +85,7 @@ export var generator = codegen({
 
 function signal(name, scope, params) {
   var signalName = signalPrefix + name;
-  if (!params.hasOwnProperty(signalName)) {
+  if (!params.hasOwnProperty(signalName) && scope.getSignal(name)) {
     params[signalName] = scope.signalRef(name);
   }
 }

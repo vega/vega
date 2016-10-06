@@ -1,4 +1,4 @@
-import signal from './signal';
+import expression from './expression';
 import {error, isString, isObject, splitAccessPath, stringValue} from 'vega-util';
 
 export default function(ref, scope, params, fields) {
@@ -10,7 +10,7 @@ function resolve(ref, scope, params, fields) {
 
   if (ref.signal) {
     object = 'datum';
-    field = signal(ref.signal, scope, params);
+    field = expression(ref.signal, scope, params, fields);
   } else if (ref.group || ref.parent) {
     level = Math.max(1, ref.level || 1);
     object = 'item';
