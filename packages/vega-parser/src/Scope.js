@@ -13,6 +13,7 @@ export default function Scope(config) {
   this.bindings = [];
   this.field = {};
   this.signals = {};
+  this.lambdas = {};
   this.scales = {};
   this.events = {};
   this.data = {};
@@ -36,6 +37,7 @@ function Subscope(scope) {
 
   this.field = Object.create(scope.field);
   this.signals = Object.create(scope.signals);
+  this.lambdas = Object.create(scope.lambdas);
   this.scales = Object.create(scope.scales);
   this.events = Object.create(scope.events);
   this.data = Object.create(scope.data);
@@ -157,22 +159,16 @@ prototype.markpath = function() {
 
 prototype.fieldRef = function(field, name) {
   if (isString(field)) return fieldRef(field, name);
-  if (!field.signal && !field.expr) {
+  if (!field.signal) {
     error('Unsupported field reference: ' + JSON.stringify(field));
   }
 
-  var f = this.field[field.signal || field.expr],
-      params, s, e, op;
+  var s = field.signal,
+      f = this.field[s],
+      params;
 
-  if (!f) {
-    if (field.expr) {
-      e = parseExpression(s = field.expr, this);
-      op = this.add(operator(null, e.$params));
-      op.update = e.$expr;
-      params = {name: ref(op)};
-    } else {
-      params = {name: ref(this.signals[s = field.signal])};
-    }
+  if (!f) { // TODO: replace with update signalRef?
+    params = {name: this.signalRef(s)}
     if (name) params.as = name;
     this.field[s] = f = ref(this.add(Field(params)));
   }
@@ -257,8 +253,24 @@ prototype.getSignal = function(name) {
   return this.signals[name];
 };
 
-prototype.signalRef = function(name) {
-  return ref(this.getSignal(name));
+prototype.signalRef = function(s) {
+  if (this.signals[s]) {
+    return ref(this.signals[s]);
+  } else if (!this.lambdas[s]) {
+    this.lambdas[s] = this.add(operator(null));
+  }
+  return ref(this.lambdas[s]);
+};
+
+prototype.parseLambdas = function() {
+  var code = Object.keys(this.lambdas);
+  for (var i=0, n=code.length; i<n; ++i) {
+    var s = code[i],
+        e = parseExpression(s, this),
+        op = this.lambdas[s];
+    op.params = e.$params;
+    op.update = e.$expr;
+  }
 };
 
 prototype.property = function(spec) {
