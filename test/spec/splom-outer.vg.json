@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "padding": 10,
   "config": {
     "axis": {
@@ -203,17 +204,17 @@
     {
       "orient": "left", "scale": "petalWidthY", "minExtent": 25,
       "title": "Petal Width", "count": 5, "domain": false,
-      "position": {"expr": "3 * chartStep"}
+      "position": {"signal": "3 * chartStep"}
     },
     {
       "orient": "left", "scale": "petalLengthY", "minExtent": 25,
       "title": "Petal Length", "count": 5, "domain": false,
-      "position": {"expr": "2 * chartStep"}
+      "position": {"signal": "2 * chartStep"}
     },
     {
       "orient": "left", "scale": "sepalWidthY", "minExtent": 25,
       "title": "Sepal Width", "count": 5, "domain": false,
-      "position": {"expr": "1 * chartStep"}
+      "position": {"signal": "1 * chartStep"}
     },
     {
       "orient": "left", "scale": "sepalLengthY", "minExtent": 25,
@@ -222,22 +223,22 @@
     {
       "orient": "bottom", "scale": "petalWidthX",
       "title": "Petal Width", "count": 5, "domain": false,
-      "offset": {"expr": "-chartPad"}
+      "offset": {"signal": "-chartPad"}
     },
     {
       "orient": "bottom", "scale": "petalLengthX",
       "title": "Petal Length", "count": 5, "domain": false,
-      "offset": {"expr": "-chartPad"}, "position": {"expr": "1 * chartStep"}
+      "offset": {"signal": "-chartPad"}, "position": {"signal": "1 * chartStep"}
     },
     {
       "orient": "bottom", "scale": "sepalWidthX",
       "title": "Sepal Width", "count": 5, "domain": false,
-      "offset": {"expr": "-chartPad"}, "position": {"expr": "2 * chartStep"}
+      "offset": {"signal": "-chartPad"}, "position": {"signal": "2 * chartStep"}
     },
     {
       "orient": "bottom", "scale": "sepalLengthX",
       "title": "Sepal Length", "count": 5, "domain": false,
-      "offset": {"expr": "-chartPad"}, "position": {"expr": "3 * chartStep"}
+      "offset": {"signal": "-chartPad"}, "position": {"signal": "3 * chartStep"}
     }
   ],
 
@@ -265,11 +266,11 @@
           "fill": {"value": "#eee"}
         },
         "update": {
-          "opacity": {"expr": "cell ? 1 : 0"},
-          "x": {"expr": "cell ? cell.x + brushX[0] : 0"},
-          "x2": {"expr": "cell ? cell.x + brushX[1] : 0"},
-          "y": {"expr": "cell ? cell.y + brushY[0] : 0"},
-          "y2": {"expr": "cell ? cell.y + brushY[1] : 0"}
+          "opacity": {"signal": "cell ? 1 : 0"},
+          "x": {"signal": "cell ? cell.x + brushX[0] : 0"},
+          "x2": {"signal": "cell ? cell.x + brushX[1] : 0"},
+          "y": {"signal": "cell ? cell.y + brushY[0] : 0"},
+          "y2": {"signal": "cell ? cell.y + brushY[1] : 0"}
         }
       }
     },
@@ -328,10 +329,10 @@
           "fill": {"value": "transparent"}
         },
         "update": {
-          "x": {"expr": "cell ? cell.x + brushX[0] : 0"},
-          "x2": {"expr": "cell ? cell.x + brushX[1] : 0"},
-          "y": {"expr": "cell ? cell.y + brushY[0] : 0"},
-          "y2": {"expr": "cell ? cell.y + brushY[1] : 0"}
+          "x": {"signal": "cell ? cell.x + brushX[0] : 0"},
+          "x2": {"signal": "cell ? cell.x + brushX[1] : 0"},
+          "y": {"signal": "cell ? cell.y + brushY[0] : 0"},
+          "y2": {"signal": "cell ? cell.y + brushY[1] : 0"}
         }
       }
     }

@@ -16,9 +16,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The `"properties"` block of visual encodings has been renamed `"encode"`.
 
-- An `"expr"` encoding directive has been added for all visual encoding definitions. In addition to `"value"`, `"field"` and `"signal"` directives, you can now directly write expressions for visual encodings. For example: `{"expr": "datum.field * 2"}`.
+- The `"signal"` encoding directive now accepts anonymous signal expressions in addition to signal names. You can use these to directly write expressions for visual encodings. For example: `{"signal": "datum.field * 2"}`.
 
-- The `"template"` encoding directive has been removed. Instead, use the `"expr"` directive to perform equivalent text processing.
+- The `"template"` encoding directive has been removed. Instead, use the `"signal"` directive with an expression to perform equivalent text processing.
 
 - The `"mult"` and `"offset"` visual encoding properties now support recursive encoding directives, enabling greater control. For example, each can include a sub-encoding like so: `"x": {"scale": "xscale", "field": "foo", "offset": {"scale": "oscale", "field": "bar"}}`.
 
@@ -83,9 +83,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The `"verbose"` flag has been renamed to `"force"`, and must now be set on individual elements of the `"on"` array. For example, the signal definition `{"name": "clickedPoint", "verbose": true, "streams": [{"type": "click", "expr": "datum._id"}]}` should now be written as `{"name": "clickedPoint", "on": [{"events": "click", "update": "datum._id", "force": true}]}`.
 
-- Instead of `"init"`, the `"value"` and `"update"` properties can be used to initialize a signal using a literal value or expression, respectively. 
-
-- Signal references (e.g., `{"signal": "name"}`) used for visual encodings or transform parameters no longer support nested property access such as `{"signal": "foo.bar"}`. Instead, use expression references such as `{"expr": "foo.bar"}`.
+- Instead of `"init"`, the `"value"` and `"update"` properties can be used to initialize a signal using a literal value or expression, respectively.
 
 - Signal definitions now support a `"bind"` property that binds signal values to automatically-generated HTML input widgets. This provides an additional means of creating interactive visualizations by adding external user controls. The syntax for `"bind"` definitions follows the earlier [vega-embed](https://github.com/vega/vega-embed) model. See the `airports.vg.json` and `map-bind.vg.json` examples for more.
 
@@ -156,7 +154,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - A number of transforms now have different default output field names. In most cases, this was done to make the values more easily serve as scenegraph item properties (for example, when using post-encoding transforms).
 
-- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use an `"expr"` encoding to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "expr": "0.5 * (datum.y0 + datum.y1)"}).
+- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
 
 - For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
 

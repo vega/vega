@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 400,
   "height": 400,
 
@@ -51,7 +52,7 @@
           "x": {"field": {"group": "width"}, "mult": 0.5},
           "y": {"field": {"group": "height"}, "mult": 0.5},
           "radius": {"scale": "r", "field": "data", "offset": 8},
-          "theta": {"expr": "(datum.startAngle + datum.endAngle)/2"},
+          "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
           "fill": {"value": "#000"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"},

@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 800,
   "height": 100,
   "padding": {"left": 5, "right": 5, "top": 0, "bottom": 20},
@@ -56,7 +57,7 @@
           "yfocus": {"signal": "cy"}
         },
         "update": {
-          "size": {"expr": "pow(2 * radius, 2)"},
+          "size": {"signal": "pow(2 * radius, 2)"},
           "stroke": {"value": "white"},
           "strokeWidth": {"value": 1},
           "zindex": {"value": 0}

@@ -3,6 +3,13 @@
   "height": 500,
   "padding": 5,
 
+  "config": {
+    "axisBand": {
+      "bandPosition": 1,
+      "tickExtra": true
+    }
+  },
+
   "signals": [
     { "name": "fields",
       "value": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"] },
@@ -33,7 +40,6 @@
       "name": "layout",
       "type": "band",
       "range": "width",
-      "padding": 0.1,
       "domain": {"data": "iris", "field": "organ"}
     },
     {
@@ -145,7 +151,7 @@
               "width": {"value": 1}
             },
             "update": {
-              "xc": {"expr": "plotWidth / 2", "offset": -0.5},
+              "xc": {"signal": "plotWidth / 2", "offset": -0.5},
               "y": {"scale": "yscale", "field": "q1"},
               "y2": {"scale": "yscale", "field": "q3"}
             }
@@ -161,7 +167,7 @@
               "height": {"value": 2}
             },
             "update": {
-              "xc": {"expr": "plotWidth / 2"},
+              "xc": {"signal": "plotWidth / 2"},
               "width": {"value": 8},
               "y": {"scale": "yscale", "field": "median"}
             }

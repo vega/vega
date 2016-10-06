@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 400,
   "height": 200,
   "padding": 5,
@@ -80,9 +81,9 @@
           "fill": {"value": "#333"}
         },
         "update": {
-          "x": {"scale": "xscale", "expr": "label.x", "band": 0.5},
-          "y": {"scale": "yscale", "expr": "label.y", "offset": -5},
-          "text": {"expr": "label.y"},
+          "x": {"scale": "xscale", "signal": "label.x", "band": 0.5},
+          "y": {"scale": "yscale", "signal": "label.y", "offset": -5},
+          "text": {"signal": "label.y"},
           "fillOpacity": [
             {"test": "!label._id", "value": 0},
             {"value": 1}

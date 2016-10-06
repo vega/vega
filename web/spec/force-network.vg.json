@@ -99,7 +99,7 @@
           "stroke": {"value": "white"}
         },
         "update": {
-          "size": {"expr": "2 * nodeRadius * nodeRadius"},
+          "size": {"signal": "2 * nodeRadius * nodeRadius"},
           "cursor": {"value": "pointer"}
         }
       },

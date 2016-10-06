@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 500,
   "padding": 5,
 
@@ -260,8 +261,8 @@
               "fill": {"value": "#fcfcfc"}
             },
             "update": {
-              "x": {"expr": "scale('delayScale', delayRange[0])"},
-              "x2": {"expr": "scale('delayScale', delayRange[1])"}
+              "x": {"signal": "scale('delayScale', delayRange[0])"},
+              "x2": {"signal": "scale('delayScale', delayRange[1])"}
             }
           }
         },
@@ -275,8 +276,8 @@
               "fill": {"value": "#fcfcfc"}
             },
             "update": {
-              "x": {"expr": "scale('delayScale', delayRange2[0])"},
-              "x2": {"expr": "scale('delayScale', delayRange2[1])"}
+              "x": {"signal": "scale('delayScale', delayRange2[0])"},
+              "x2": {"signal": "scale('delayScale', delayRange2[1])"}
             }
           }
         },
@@ -306,7 +307,7 @@
               "fill": {"value": "firebrick"}
             },
             "update": {
-              "x": {"expr": "scale('delayScale', delayRange[0])"},
+              "x": {"signal": "scale('delayScale', delayRange[0])"},
               "width": {"value": 1}
             }
           }
@@ -321,7 +322,7 @@
               "fill": {"value": "firebrick"}
             },
             "update": {
-              "x": {"expr": "scale('delayScale', delayRange[1])"},
+              "x": {"signal": "scale('delayScale', delayRange[1])"},
               "width": {"value": 1}
             }
           }
@@ -336,7 +337,7 @@
               "fill": {"value": "forestgreen"}
             },
             "update": {
-              "x": {"expr": "scale('delayScale', delayRange2[0])"},
+              "x": {"signal": "scale('delayScale', delayRange2[0])"},
               "width": {"value": 1}
             }
           }
@@ -351,7 +352,7 @@
               "fill": {"value": "forestgreen"}
             },
             "update": {
-              "x": {"expr": "scale('delayScale', delayRange2[1])"},
+              "x": {"signal": "scale('delayScale', delayRange2[1])"},
               "width": {"value": 1}
             }
           }
@@ -429,8 +430,8 @@
               "fill": {"value": "#fcfcfc"}
             },
             "update": {
-              "x": {"expr": "scale('timeScale', timeRange[0])"},
-              "x2": {"expr": "scale('timeScale', timeRange[1])"}
+              "x": {"signal": "scale('timeScale', timeRange[0])"},
+              "x2": {"signal": "scale('timeScale', timeRange[1])"}
             }
           }
         },
@@ -460,7 +461,7 @@
               "fill": {"value": "firebrick"}
             },
             "update": {
-              "x": {"expr": "scale('timeScale', timeRange[0])"},
+              "x": {"signal": "scale('timeScale', timeRange[0])"},
               "width": {"value": 1}
             }
           }
@@ -475,7 +476,7 @@
               "fill": {"value": "firebrick"}
             },
             "update": {
-              "x": {"expr": "scale('timeScale', timeRange[1])"},
+              "x": {"signal": "scale('timeScale', timeRange[1])"},
               "width": {"value": 1}
             }
           }
@@ -553,8 +554,8 @@
               "fill": {"value": "#fcfcfc"}
             },
             "update": {
-              "x": {"expr": "scale('distScale', distRange[0])"},
-              "x2": {"expr": "scale('distScale', distRange[1])"}
+              "x": {"signal": "scale('distScale', distRange[0])"},
+              "x2": {"signal": "scale('distScale', distRange[1])"}
             }
           }
         },
@@ -584,7 +585,7 @@
               "fill": {"value": "firebrick"}
             },
             "update": {
-              "x": {"expr": "scale('distScale', distRange[0])"},
+              "x": {"signal": "scale('distScale', distRange[0])"},
               "width": {"value": 1}
             }
           }
@@ -599,7 +600,7 @@
               "fill": {"value": "firebrick"}
             },
             "update": {
-              "x": {"expr": "scale('distScale', distRange[1])"},
+              "x": {"signal": "scale('distScale', distRange[1])"},
               "width": {"value": 1}
             }
           }

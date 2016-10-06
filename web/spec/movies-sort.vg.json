@@ -118,7 +118,7 @@
             }
           },
           "enter": {
-            "text": {"expr": "truncate(datum.label, 25)"}
+            "text": {"signal": "truncate(datum.label, 25)"}
           },
           "update": {
             "fill": {"value": "black"}

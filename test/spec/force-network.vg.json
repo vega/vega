@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 800,
   "height": 500,
   "padding": 0,
@@ -98,7 +99,7 @@
           "stroke": {"value": "white"}
         },
         "update": {
-          "size": {"expr": "2 * nodeRadius * nodeRadius"},
+          "size": {"signal": "2 * nodeRadius * nodeRadius"},
           "cursor": {"value": "pointer"}
         }
       },

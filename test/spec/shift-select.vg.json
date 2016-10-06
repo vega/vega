@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 600,
   "height": 300,
   "padding": 10,
@@ -10,7 +11,7 @@
       "on": [
         {
           "events": {"marktype": "rect", "type": "click"},
-          "update": {"expr": "event.shiftKey"},
+          "update": "event.shiftKey",
           "force":  true
         }
       ]
@@ -21,7 +22,7 @@
       "on": [
         {
           "events": {"marktype": "rect", "type": "click"},
-          "update": {"expr": "datum"},
+          "update": "datum",
           "force":  true
         }
       ]

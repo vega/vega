@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 960,
   "height": 500,
   "padding": 2.5,
@@ -100,8 +101,8 @@
       "interactive": false,
       "encode": {
         "enter": {
-          "x": {"expr": "0.5 * (datum.x0 + datum.x1)"},
-          "y": {"expr": "0.5 * (datum.y0 + datum.y1)"},
+          "x": {"signal": "0.5 * (datum.x0 + datum.x1)"},
+          "y": {"signal": "0.5 * (datum.y0 + datum.y1)"},
           "font": {"value": "Helvetica Neue"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"},

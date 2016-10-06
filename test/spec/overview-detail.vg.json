@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 720,
   "height": 480,
   "padding": 5,
@@ -195,8 +196,8 @@
               "fillOpacity": {"value":0.2}
             },
             "update":{
-              "x": {"expr": "brush[0]"},
-              "x2": {"expr": "brush[1]"}
+              "x": {"signal": "brush[0]"},
+              "x2": {"signal": "brush[1]"}
             }
           }
         },
@@ -211,7 +212,7 @@
               "fill": {"value": "firebrick"}
             },
             "update":{
-              "x": {"expr": "brush[0]"}
+              "x": {"signal": "brush[0]"}
             }
           }
         },
@@ -226,7 +227,7 @@
               "fill": {"value": "firebrick"}
             },
             "update":{
-              "x": {"expr": "brush[1]"}
+              "x": {"signal": "brush[1]"}
             }
           }
         }

@@ -20,11 +20,11 @@
       "on": [
         {
           "events": {"marktype": "rect", "type": "mouseover"},
-          "update": {"expr": "datum"}
+          "update": "datum"
         },
         {
           "events": {"marktype": "rect", "type": "mouseout"},
-          "update": {"expr": "null"}
+          "update": "null"
         }
       ]
     }

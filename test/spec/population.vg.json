@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "height": 400,
   "padding": 5,
 
@@ -68,7 +69,7 @@
       "from": {"data": "ageGroups"},
       "encode": {
         "enter": {
-          "x": {"expr": "chartWidth + chartPad / 2"},
+          "x": {"signal": "chartWidth + chartPad / 2"},
           "y": {"scale": "y", "field": "age", "band": 0.5},
           "text": {"field": "age"},
           "baseline": {"value": "middle"},
@@ -123,7 +124,7 @@
 
       "encode": {
         "update": {
-          "x": {"expr": "chartWidth + chartPad"},
+          "x": {"signal": "chartWidth + chartPad"},
           "height": {"signal": "height"}
         }
       },

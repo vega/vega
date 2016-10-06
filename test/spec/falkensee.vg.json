@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 500,
   "height": 250,
   "padding": 5,
@@ -165,7 +166,7 @@
         "enter": {
           "x": {"signal": "width", "mult": 0.5},
           "y": {"value": -10},
-          "text": {"expr": "'Population of Falkensee from ' + datum.min_year + ' to ' + datum.max_year"},
+          "text": {"signal": "'Population of Falkensee from ' + datum.min_year + ' to ' + datum.max_year"},
           "fill": {"value": "black"},
           "fontSize": {"value": 16},
           "align": {"value": "center"},

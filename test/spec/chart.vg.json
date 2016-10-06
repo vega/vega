@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 600,
   "height": 300,
   "padding": 10,
@@ -19,11 +20,11 @@
       "on": [
         {
           "events": {"marktype": "rect", "type": "mouseover"},
-          "update": {"expr": "datum"}
+          "update": "datum"
         },
         {
           "events": {"marktype": "rect", "type": "mouseout"},
-          "update": {"expr": "null"}
+          "update": "null"
         }
       ]
     }

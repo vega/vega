@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 15,
   "padding": 5,
   "autosize": "pad",
@@ -117,7 +118,7 @@
             }
           },
           "enter": {
-            "text": {"expr": "truncate(datum.label, 25)"}
+            "text": {"signal": "truncate(datum.label, 25)"}
           },
           "update": {
             "fill": {"value": "black"}

@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 900,
   "height": 500,
   "autosize": "none",
@@ -102,8 +103,8 @@
       "encode": {
         "update": {
           "strokeWidth": {"value": 1},
-          "strokeDash": {"expr": "[+graticuleDash, +graticuleDash]"},
-          "stroke": {"expr": "invert ? '#444' : '#ddd'"},
+          "strokeDash": {"signal": "[+graticuleDash, +graticuleDash]"},
+          "stroke": {"signal": "invert ? '#444' : '#ddd'"},
           "fill": {"value": null}
         }
       },
@@ -116,13 +117,13 @@
       "from": {"data": "world"},
       "encode": {
         "update": {
-          "strokeWidth": {"expr": "+borderWidth"},
-          "stroke": {"expr": "invert ? '#777' : '#bbb'"},
-          "fill": {"expr": "invert ? '#fff' : '#000'"},
+          "strokeWidth": {"signal": "+borderWidth"},
+          "stroke": {"signal": "invert ? '#777' : '#bbb'"},
+          "fill": {"signal": "invert ? '#fff' : '#000'"},
           "zindex": {"value": 0}
         },
         "hover": {
-          "strokeWidth": {"expr": "+borderWidth + 1"},
+          "strokeWidth": {"signal": "+borderWidth + 1"},
           "stroke": {"value": "firebrick"},
           "zindex": {"value": 1}
         }

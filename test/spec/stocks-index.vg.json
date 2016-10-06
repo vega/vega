@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 650,
   "height": 300,
   "padding": 5,
@@ -157,7 +158,7 @@
           "x": {"scale": "x", "signal": "indexDate"},
           "y2": {"field": {"group": "height"}, "offset": 15},
           "align": {"value": "center"},
-          "text": {"expr": "timeFormat('%b %Y', indexDate)"},
+          "text": {"signal": "timeFormat('%b %Y', indexDate)"},
           "fill": {"value": "red"}
         }
       }

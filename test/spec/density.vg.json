@@ -10,10 +10,7 @@
     { "name": "steps", "value": 100,
       "bind": {"type": "range", "min": 10, "max": 500, "step": 1} },
     { "name": "method", "value": "pdf",
-      "bind": {"type": "radio", "options": ["pdf", "cdf"]} },
-    { "name": "mean", "update": "tuples('summary')[0].mean" },
-    { "name": "stdev", "update": "tuples('summary')[0].stdev" },
-    { "name": "domain", "update": "domain('xscale')" }
+      "bind": {"type": "radio", "options": ["pdf", "cdf"]} }
   ],
 
   "data": [
@@ -39,7 +36,7 @@
       "transform": [
         {
           "type": "density",
-          "extent": {"signal": "domain"},
+          "extent": {"signal": "domain('xscale')"},
           "steps": {"signal": "steps"},
           "method": {"signal": "method"},
           "distribution": {
@@ -55,13 +52,13 @@
       "transform": [
         {
           "type": "density",
-          "extent": {"signal": "domain"},
+          "extent": {"signal": "domain('xscale')"},
           "steps": {"signal": "steps"},
           "method": {"signal": "method"},
           "distribution": {
             "function": "normal",
-            "mean": {"signal": "mean"},
-            "stdev": {"signal": "stdev"}
+            "mean": {"signal": "tuples('summary')[0].mean"},
+            "stdev": {"signal": "tuples('summary')[0].stdev"}
           }
         }
       ]
@@ -112,7 +109,7 @@
           "x": {"scale": "xscale", "field": "value"},
           "y": {"scale": "yscale", "field": "density"},
           "y2": {"scale": "yscale", "value": 0},
-          "fill": {"expr": "scale('color', 'Kernel Density Estimate')"}
+          "fill": {"signal": "scale('color', 'Kernel Density Estimate')"}
         }
       }
     },
@@ -123,7 +120,7 @@
         "update": {
           "x": {"scale": "xscale", "field": "value"},
           "y": {"scale": "yscale", "field": "density"},
-          "stroke": {"expr": "scale('color', 'Normal Estimate')"},
+          "stroke": {"signal": "scale('color', 'Normal Estimate')"},
           "strokeWidth": {"value": 2}
         }
       }

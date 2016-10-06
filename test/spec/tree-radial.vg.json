@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 810,
   "height": 810,
   "padding": 20,
@@ -96,8 +97,8 @@
       "from": {"data": "tree"},
       "encode": {
         "update": {
-          "x": {"expr": "originX + datum.radius * cos(datum.angle)"},
-          "y": {"expr": "originY + datum.radius * sin(datum.angle)"},
+          "x": {"signal": "originX + datum.radius * cos(datum.angle)"},
+          "y": {"signal": "originY + datum.radius * sin(datum.angle)"},
           "size": {"value": 100},
           "stroke": {"value": "#fff"},
           "fill": {"scale": "color", "field": "depth"}
@@ -109,15 +110,15 @@
       "from": {"data": "tree"},
       "encode": {
         "update": {
-          "x": {"expr": "originX + datum.radius * cos(datum.angle)"},
-          "y": {"expr": "originY + datum.radius * sin(datum.angle)"},
-          "dx": {"expr": "(datum.degrees >= 180 ? -1 : 1) * 6"},
+          "x": {"signal": "originX + datum.radius * cos(datum.angle)"},
+          "y": {"signal": "originY + datum.radius * sin(datum.angle)"},
+          "dx": {"signal": "(datum.degrees >= 180 ? -1 : 1) * 6"},
           "text": {"field": "name"},
           "fontSize": {"value": 9},
-          "angle": {"expr": "datum.degrees >= 180 ? datum.degrees - 270 : datum.degrees - 90"},
-          "align": {"expr": "datum.degrees >= 180 ? 'right' : 'left'"},
+          "angle": {"signal": "datum.degrees >= 180 ? datum.degrees - 270 : datum.degrees - 90"},
+          "align": {"signal": "datum.degrees >= 180 ? 'right' : 'left'"},
           "baseline": {"value": "middle"},
-          "opacity": {"expr": "labels ? 1 : 0"}
+          "opacity": {"signal": "labels ? 1 : 0"}
         }
       }
     }

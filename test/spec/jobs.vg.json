@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "width": 800,
   "height": 500,
   "padding": 5,
@@ -169,7 +170,7 @@
         "update": {
           "x": {"scale": "x", "field": "argmax.year"},
           "dx": {"scale": "offset", "field": "argmax.year"},
-          "y": {"expr": "scale('y', 0.5 * (datum.argmax.y0 + datum.argmax.y1))"},
+          "y": {"signal": "scale('y', 0.5 * (datum.argmax.y0 + datum.argmax.y1))"},
           "fill": {"value": "#000"},
           "fillOpacity": {"scale": "opacity", "field": "argmax.perc"},
           "fontSize": {"scale": "font", "field": "argmax.perc", "offset": 5},

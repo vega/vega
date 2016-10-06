@@ -1,4 +1,5 @@
 {
+  "schema": {"language": "vega", "version": "3.0.0"},
   "padding": 10,
   "config": {
     "axis": {
@@ -181,11 +182,11 @@
           "fill": {"value": "#eee"}
         },
         "update": {
-          "opacity": {"expr": "cell ? 1 : 0"},
-          "x": {"expr": "cell ? cell.x + brushX[0] : 0"},
-          "x2": {"expr": "cell ? cell.x + brushX[1] : 0"},
-          "y": {"expr": "cell ? cell.y + brushY[0] : 0"},
-          "y2": {"expr": "cell ? cell.y + brushY[1] : 0"}
+          "opacity": {"signal": "cell ? 1 : 0"},
+          "x": {"signal": "cell ? cell.x + brushX[0] : 0"},
+          "x2": {"signal": "cell ? cell.x + brushX[1] : 0"},
+          "y": {"signal": "cell ? cell.y + brushY[0] : 0"},
+          "y2": {"signal": "cell ? cell.y + brushY[1] : 0"}
         }
       }
     },
@@ -209,13 +210,13 @@
         {
           "name": "innerX", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"expr": "parent.x.data"}},
+          "domain": {"data": "iris", "field": {"signal": "parent.x.data"}},
           "range": [0, {"signal": "chartSize"}]
         },
         {
           "name": "innerY", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"expr": "parent.y.data"}},
+          "domain": {"data": "iris", "field": {"signal": "parent.y.data"}},
           "range": [{"signal": "chartSize"}, 0]
         }
       ],
@@ -264,10 +265,10 @@
           "fill": {"value": "transparent"}
         },
         "update": {
-          "x": {"expr": "cell ? cell.x + brushX[0] : 0"},
-          "x2": {"expr": "cell ? cell.x + brushX[1] : 0"},
-          "y": {"expr": "cell ? cell.y + brushY[0] : 0"},
-          "y2": {"expr": "cell ? cell.y + brushY[1] : 0"}
+          "x": {"signal": "cell ? cell.x + brushX[0] : 0"},
+          "x2": {"signal": "cell ? cell.x + brushX[1] : 0"},
+          "y": {"signal": "cell ? cell.y + brushY[0] : 0"},
+          "y2": {"signal": "cell ? cell.y + brushY[1] : 0"}
         }
       }
     }

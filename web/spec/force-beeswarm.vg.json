@@ -57,7 +57,7 @@
           "yfocus": {"signal": "cy"}
         },
         "update": {
-          "size": {"expr": "pow(2 * radius, 2)"},
+          "size": {"signal": "pow(2 * radius, 2)"},
           "stroke": {"value": "white"},
           "strokeWidth": {"value": 1},
           "zindex": {"value": 0}
