@@ -45,14 +45,16 @@ Properties defined in the top-level scope of the configuration object.
 
 - *autosize*: Default automatic sizing setting. Options: `"none"`, `"pad"`, `"fit"`.
 - *background*: Background color of the view component, or `null` for transparent.
+- *group*: Object containing default properties for the top-level group mark
+representing the data rectangle of a chart. Valid properties of this object
+are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`.
 
 ### Mark Properties
 
 Properties defining default attributes for visualized marks. These properties
 are defined within blocks with names matching a valid mark type (e.g.,
-`"area"`, `"line"`, `"rect"`, and `"group"`). The valid properties within each
-block consist of the legal mark properties (e.g., `"fill"`, `"stroke"`,
-`"size"`, `"font"`).
+`"area"`, `"line"`, `"rect"`). The valid properties within each block consist
+of the legal mark properties (e.g., `"fill"`, `"stroke"`, `"size"`, `"font"`).
 
 ### Axis Properties
 
