@@ -127,12 +127,12 @@ function defaults() {
       ],
       symbol: [
         'circle',
-        'cross',
-        'diamond',
         'square',
         'triangle-up',
-        'triangle-down',
+        'cross',
+        'diamond',
         'triangle-right',
+        'triangle-down',
         'triangle-left'
       ]
     }
