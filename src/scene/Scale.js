@@ -452,7 +452,7 @@ function domainMinMax(scale, group) {
       domain[z] = def.domainMax;
     }
   }
-  if (def.type !== Types.LOG && def.type !== Types.TIME && (def.zero || def.zero===undefined)) {
+  if (def.type !== Types.LOG && def.type !== Types.TIME && def.type !== Types.TIME_UTC && (def.zero || def.zero===undefined)) {
     domain[0] = Math.min(0, domain[0]);
     domain[z] = Math.max(0, domain[z]);
   }
