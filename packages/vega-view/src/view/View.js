@@ -46,7 +46,7 @@ export default function View(spec, options) {
   this._eventListeners = [];
 
   // initialize dataflow graph
-  var ctx = runtime(this, spec);
+  var ctx = runtime(this, spec, options.functions);
   this._runtime = ctx;
   this._signals = ctx.signals;
   this._bind = spec.bindings;
