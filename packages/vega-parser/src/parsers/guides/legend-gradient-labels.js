@@ -37,7 +37,7 @@ export default function(spec, config, userEncode, dataRef) {
     offset: config.gradientLabelOffset
   };
 
-  enter.align = update.align = {expr: alignExpr};
+  enter.align = update.align = {signal: alignExpr};
 
   return guideMark(TextMark, LegendLabelRole, Label, dataRef, encode, userEncode);
 }
