@@ -1,5 +1,5 @@
 import field from './field';
-import {scalePrefix} from '../expression';
+import {scalePrefix} from '../codegen';
 import {isString, stringValue} from 'vega-util';
 
 export default function(enc, value, scope, params, fields) {
