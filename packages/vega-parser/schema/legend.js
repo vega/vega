@@ -62,7 +62,7 @@ export default {
           ]
         },
 
-        "count": {
+        "tickCount": {
           "oneOf": [
             {"type": "number"},
             {"$ref": "#/refs/signal"}

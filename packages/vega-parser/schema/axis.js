@@ -13,7 +13,7 @@ export default {
         "tickSize": {"type": "number"},
         "tickPadding": {"type": "number"},
 
-        "count": {
+        "tickCount": {
           "oneOf": [
             {"type": "number"},
             {"$ref": "#/refs/signal"}

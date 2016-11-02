@@ -42,7 +42,7 @@ export default function(spec, scope) {
   ticksRef = ref(scope.add(AxisTicks({
     scale:  scope.scaleRef(spec.scale),
     extra:  config.tickExtra,
-    count:  scope.property(spec.count),
+    count:  scope.property(spec.tickCount),
     values: scope.property(spec.values),
     formatSpecifier: scope.property(spec.format)
   })));
