@@ -222,8 +222,8 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "innerX", "count": 5},
-        {"orient": "left", "scale": "innerY", "count": 5}
+        {"orient": "bottom", "scale": "innerX", "tickCount": 5},
+        {"orient": "left", "scale": "innerY", "tickCount": 5}
       ],
 
       "marks": [

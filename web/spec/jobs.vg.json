@@ -119,7 +119,7 @@
 
   "axes": [
     {
-      "orient": "bottom", "scale": "x", "format": "d", "count": 15
+      "orient": "bottom", "scale": "x", "format": "d", "tickCount": 15
     },
     {
       "orient": "right", "scale": "y", "format": "%",

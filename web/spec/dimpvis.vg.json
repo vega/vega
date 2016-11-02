@@ -261,12 +261,12 @@
     {
       "title": "Fertility",
       "orient": "bottom", "scale": "x",
-      "grid": true, "count": 5
+      "grid": true, "tickCount": 5
     },
     {
       "title": "Life Expectancy",
       "orient": "left", "scale": "y",
-      "grid": true, "count": 5
+      "grid": true, "tickCount": 5
     }
   ],
 

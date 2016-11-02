@@ -44,7 +44,7 @@
     {
       "orient": "right",
       "scale": "y",
-      "count": 3,
+      "tickCount": 3,
       "tickSize": 0,
       "tickPadding": 0,
       "grid": true,

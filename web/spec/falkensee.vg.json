@@ -113,7 +113,7 @@
       "scale": "x",
       "format": "d",
       "title": "Year",
-      "count": 15
+      "tickCount": 15
     }
   ],
 

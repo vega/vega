@@ -60,7 +60,7 @@
     {
       "orient": "top",
       "scale": "x",
-      "count": 5,
+      "tickCount": 5,
       "tickSize": 0,
       "grid": true,
       "domain": false,
@@ -81,7 +81,7 @@
     {
       "orient": "left",
       "scale": "y",
-      "count": 5,
+      "tickCount": 5,
       "tickSize": 0,
       "grid": true,
       "domain": false,

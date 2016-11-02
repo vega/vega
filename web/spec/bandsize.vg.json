@@ -83,7 +83,7 @@
     {
       "scale": "yscale",
       "orient": "left",
-      "count": 5,
+      "tickCount": 5,
       "grid": false,
       "domain": true,
       "title": "Left Title"
@@ -91,7 +91,7 @@
     {
       "scale": "yscale",
       "orient": "right",
-      "count": 5,
+      "tickCount": 5,
       "grid": true,
       "domain": true,
       "title": "Right Title"

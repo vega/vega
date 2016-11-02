@@ -56,7 +56,7 @@
     {
       "orient": "bottom",
       "scale": "x",
-      "count": 5,
+      "tickCount": 5,
       "format": "04d"
     },
     {
@@ -65,7 +65,7 @@
       "grid": true,
       "domain": false,
       "zindex": 1,
-      "count": 5,
+      "tickCount": 5,
       "offset": 5,
       "tickSize": 0,
       "encode": {

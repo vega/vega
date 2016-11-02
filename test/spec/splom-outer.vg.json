@@ -203,41 +203,41 @@
   "axes": [
     {
       "orient": "left", "scale": "petalWidthY", "minExtent": 25,
-      "title": "Petal Width", "count": 5, "domain": false,
+      "title": "Petal Width", "tickCount": 5, "domain": false,
       "position": {"signal": "3 * chartStep"}
     },
     {
       "orient": "left", "scale": "petalLengthY", "minExtent": 25,
-      "title": "Petal Length", "count": 5, "domain": false,
+      "title": "Petal Length", "tickCount": 5, "domain": false,
       "position": {"signal": "2 * chartStep"}
     },
     {
       "orient": "left", "scale": "sepalWidthY", "minExtent": 25,
-      "title": "Sepal Width", "count": 5, "domain": false,
+      "title": "Sepal Width", "tickCount": 5, "domain": false,
       "position": {"signal": "1 * chartStep"}
     },
     {
       "orient": "left", "scale": "sepalLengthY", "minExtent": 25,
-      "title": "Sepal Length", "count": 5, "domain": false
+      "title": "Sepal Length", "tickCount": 5, "domain": false
     },
     {
       "orient": "bottom", "scale": "petalWidthX",
-      "title": "Petal Width", "count": 5, "domain": false,
+      "title": "Petal Width", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}
     },
     {
       "orient": "bottom", "scale": "petalLengthX",
-      "title": "Petal Length", "count": 5, "domain": false,
+      "title": "Petal Length", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}, "position": {"signal": "1 * chartStep"}
     },
     {
       "orient": "bottom", "scale": "sepalWidthX",
-      "title": "Sepal Width", "count": 5, "domain": false,
+      "title": "Sepal Width", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}, "position": {"signal": "2 * chartStep"}
     },
     {
       "orient": "bottom", "scale": "sepalLengthX",
-      "title": "Sepal Length", "count": 5, "domain": false,
+      "title": "Sepal Length", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}, "position": {"signal": "3 * chartStep"}
     }
   ],

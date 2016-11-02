@@ -31,8 +31,8 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "x", "count": 5},
-    {"orient": "left", "scale": "y", "count": 5}
+    {"orient": "bottom", "scale": "x", "tickCount": 5},
+    {"orient": "left", "scale": "y", "tickCount": 5}
   ],
 
   "marks": [

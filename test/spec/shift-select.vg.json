@@ -76,7 +76,7 @@
     {
       "scale": "yscale",
       "orient": "left",
-      "count": 5,
+      "tickCount": 5,
       "zindex": 1
     },
     {

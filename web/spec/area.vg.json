@@ -41,7 +41,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "count": 20},
+    {"orient": "bottom", "scale": "xscale", "tickCount": 20},
     {"orient": "left", "scale": "yscale"}
   ],
 
