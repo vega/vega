@@ -56,7 +56,7 @@ export default function(spec, scope) {
     entryRef = ref(scope.add(LegendEntries({
       type:   'gradient',
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.count),
+      count:  scope.property(spec.tickCount),
       values: scope.property(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
@@ -72,7 +72,7 @@ export default function(spec, scope) {
     entryRef = ref(scope.add(LegendEntries({
       size:   sizeExpression(spec, config, encode.labels),
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.count),
+      count:  scope.property(spec.tickCount),
       values: scope.property(spec.values),
       formatSpecifier: scope.property(spec.formatSpecifier)
     })));
