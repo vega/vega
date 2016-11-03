@@ -99,7 +99,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Axes no longer have a `type` parameter. Instead, the `orient` parameter is now required. Instead of `{"type": "x"}` use `{"orient": "bottom"}`, and instead of `{"type": "y"}` use `{"orient": "left"}`.
 
-- The `"ticks"` parameter for suggesting the approximate number of axis ticks has been renamed `"count"`.
+- The `"ticks"` parameter for suggesting the approximate number of axis ticks has been renamed `"tickCount"`.
 
 - Custom visual properties for axes and legends now reside under an `"encode"` block and use `"enter"`, `"update"`, and `"exit"` sub-blocks. If unsure of which to use, a good default is to define an `"update"` block to ensure all properties are updated.
 
