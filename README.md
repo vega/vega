@@ -1,54 +1,80 @@
-Vega: A Visualization Grammar
-====
-[![Build Status](https://travis-ci.org/vega/vega.svg?branch=master)](https://travis-ci.org/vega/vega)
+# Vega: A Visualization Grammar
 
-**Vega** is a _visualization grammar_, a declarative format for creating and
-saving interactive visualization designs. With Vega you can describe data 
-visualizations in a JSON format, and generate interactive views using either 
+**Vega** is a *visualization grammar*, a declarative format for creating and
+saving interactive visualization designs. With Vega you can describe data
+visualizations in a JSON format, and generate interactive views using either
 HTML5 Canvas or SVG.
 
-To learn more, [visit the wiki](https://github.com/vega/vega/wiki).
+This repository houses ongoing **Vega 3.0** development. While still a work
+in progress, Vega 3 has matured to a fully functional beta version with a
+cleaner, more efficient, and more modular architecture. Vega 3 can now
+reproduce all standard Vega 2 examples, and much more! [Contributions, feature
+requests and bug reports](https://github.com/vega/vega/issues) are
+most appreciated.
 
-## The Vega Runtime
+For a partial description of changes from Vega 2.x, please refer to the
+[Vega 3 Porting Guide](https://github.com/vega/vega/blob/master/PORTING_GUIDE.md).
+The Vega wiki associated with this repo contains documentation for version 2.6.
 
-This repository contains the **vega-runtime** system, which parses Vega
-specifications to produce interactive visualizations which run in the
-browser using a scenegraph-based rendering system.
+Beyond the porting guide, more detailed documentation for aspects of Vega 3
+can be found in the associated modules listed below. For example, the
+[Vega View API](https://github.com/vega/vega-view) and
+[configuration options](https://github.com/vega/vega-parser).
+Full Vega 3 documentation is a work-in-progress and will be added shortly.
 
-## Build Process
+Not ready to live on the edge? Looking for the latest stable release? Please
+see [Vega 2.6](https://github.com/vega/vega/tree/v2.x).
 
-To manually build Vega, you must have [npm](https://www.npmjs.com/) installed.
+## Basic Setup
 
-1. Run `npm install` in the vega folder to install dependencies.
-2. Run `npm run build`. This will invoke [browserify](http://browserify.org/) to bundle the source files into vega.js, and then [uglify-js](http://lisperator.net/uglifyjs/) to create the minified vega.min.js.
+For a basic setup allowing you to build Vega and run examples,
+clone `https://github.com/vega/vega` and run `npm install`.
 
-Vega visualization specifications can be validated against a [JSON Schema](http://json-schema.org/). To generate the vega-schema.json definition file, run `npm run schema`.
+Once installation is complete, use `npm run test` to run tests and
+`npm run build` to build output files.
 
-Built files are available on [npm](https://www.npmjs.com/package/vega), and under [tagged releases](https://github.com/vega/vega/releases). The latest built versions can be found at [vega.min.js](http://vega.github.io/vega/vega.min.js) and [vega-schema.json](http://vega.github.io/vega/vega-schema.json).
+This repo (`vega`) includes web-based demos within the `web` folder. To run
+these, launch a local webserver in the top-level directory for the repo
+(e.g., `python -m SimpleHTTPServer 8000`) and then point your browser to right
+place (e.g., `http://localhost:8000/web/spec.html`).
 
-## Vega Server-Side and Command Line Tools
+## Development Setup
 
-Vega can also be run server-side using node.js. When running in "headless"
-mode, Vega can be used to render specifications directly to PNG or SVG. In
-addition to the summary below, [see the Headless Mode wiki
-documentation](https://github.com/vega/vega/wiki/Headless-Mode) for more
-information.
+For a more advanced development setup in which you will be working on multiple
+modules simultaneously, first clone the Vega 3 module repositories:
 
-### Command Line Tools
+* https://github.com/vega/vega
+* https://github.com/vega/vega-crossfilter
+* https://github.com/vega/vega-dataflow
+* https://github.com/vega/vega-encode
+* https://github.com/vega/vega-expression
+* https://github.com/vega/vega-force
+* https://github.com/vega/vega-geo
+* https://github.com/vega/vega-hierarchy
+* https://github.com/vega/vega-loader
+* https://github.com/vega/vega-parser
+* https://github.com/vega/vega-runtime
+* https://github.com/vega/vega-scale
+* https://github.com/vega/vega-scenegraph
+* https://github.com/vega/vega-statistics
+* https://github.com/vega/vega-util
+* https://github.com/vega/vega-view
+* https://github.com/vega/vega-voronoi
 
-Vega includes two command line tools for converting Vega JSON specifications
-to rendered PNG or SVG:
+Though not strictly required, we recommend using `npm link` to connect each
+local copy of a repo with its 'vega-' dependencies. That way, any edits you
+make in one repo will be immediately reflected within dependent repos,
+accelerating testing.
 
-* __vg2png__: `vg2png [-b basedir] vega_json_file [output_png_file]`
-* __vg2svg__: `vg2svg [-b basedir] [-h] vega_json_file [output_svg_file]`
+For example, to link _vega-dataflow_ for use by other repos, do the following:
+```
+# register a link to vega-dataflow
+cd vega-dataflow; npm link
+# update vega-runtime to use the linked version of vega-dataflow
+cd ../vega-runtime; npm link vega-dataflow
+# update vega to use the linked version of vega-dataflow
+cd ../vega; npm link vega-dataflow
+```
 
-Within the Vega project directories, you can invoke these utilities using
-`./bin/vg2png` or `./bin/vg2svg`. If you import Vega using npm, these commands
-are accessible either locally (`node_modules/.bin/vg2png`) or globally
-(`vg2png`) depending on how you install the Vega package.
-
-### Using Vega in node.js Projects
-
-To include Vega in a node project, first install it from the command line
-using npm (`npm install vega`) or by including `"vega"` among the dependencies
-in your package.json file.
+Once links have been setup, you can use `npm install` as usual to gather all
+remaining dependencies.

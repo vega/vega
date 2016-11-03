@@ -1,0 +1,126 @@
+{
+  "schema": {"language": "vega", "version": "3.0"},
+  "width": 810,
+  "height": 810,
+  "padding": 20,
+
+  "signals": [
+    {
+      "name": "labels", "value": true,
+      "bind": {"type": "checkbox"}
+    },
+    {
+      "name": "radius", "value": 330,
+      "bind": {"type": "range", "min": 20, "max": 600}
+    },
+    {
+      "name": "angle", "value": 360,
+      "bind": {"type": "range", "min": 0, "max": 360, "step": 1}
+    },
+    {
+      "name": "layout", "value": "tidy",
+      "bind": {"type": "radio", "options": ["tidy", "cluster"]}
+    },
+    {
+      "name": "links", "value": "line",
+      "bind": {
+        "type": "radio",
+        "options": ["line", "curve", "diagonal", "orthogonal"]
+      }
+    },
+    { "name": "originX", "update": "width / 2" },
+    { "name": "originY", "update": "height / 2" }
+  ],
+
+  "data": [
+    {
+      "name": "tree",
+      "url": "data/flare.json",
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "tree",
+          "method": {"signal": "layout"},
+          "size": [{"signal": "angle"}, {"signal": "radius"}],
+          "as": ["degrees", "radius", "depth", "children"]
+        },
+        {
+          "type": "formula",
+          "expr": "PI * (datum.degrees / 180 - 0.5)",
+          "as": "angle"
+        }
+      ]
+    },
+    {
+      "name": "links",
+      "source": "tree",
+      "transform": [
+        { "type": "treelinks" },
+        {
+          "type": "linkpath",
+          "shape": {"signal": "links"}, "orient": "radial",
+          "sourceX": "source.angle", "sourceY": "source.radius",
+          "targetX": "target.angle", "targetY": "target.radius"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "sequential", "scheme": "magma",
+      "domain": {"data": "tree", "field": "depth"},
+      "zero": true
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "links"},
+      "encode": {
+        "update": {
+          "x": {"signal": "originX"},
+          "y": {"signal": "originY"},
+          "path": {"field": "path"},
+          "stroke": {"value": "#ccc"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "tree"},
+      "encode": {
+        "update": {
+          "x": {"signal": "originX + datum.radius * cos(datum.angle)"},
+          "y": {"signal": "originY + datum.radius * sin(datum.angle)"},
+          "size": {"value": 100},
+          "stroke": {"value": "#fff"},
+          "fill": {"scale": "color", "field": "depth"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "tree"},
+      "encode": {
+        "update": {
+          "x": {"signal": "originX + datum.radius * cos(datum.angle)"},
+          "y": {"signal": "originY + datum.radius * sin(datum.angle)"},
+          "dx": {"signal": "(datum.degrees >= 180 ? -1 : 1) * 6"},
+          "text": {"field": "name"},
+          "fontSize": {"value": 9},
+          "angle": {"signal": "datum.degrees >= 180 ? datum.degrees - 270 : datum.degrees - 90"},
+          "align": {"signal": "datum.degrees >= 180 ? 'right' : 'left'"},
+          "baseline": {"value": "middle"},
+          "opacity": {"signal": "labels ? 1 : 0"}
+        }
+      }
+    }
+  ]
+}

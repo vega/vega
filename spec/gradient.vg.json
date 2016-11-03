@@ -1,0 +1,28 @@
+{
+  "schema": {"language": "vega", "version": "3.0"},
+  "width": 300,
+  "height": 15,
+  "padding": 5,
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "sequential",
+      "scheme": "viridis",
+      "domain": [0, 100]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "encode": {
+        "update": {
+          "width": {"signal": "width"},
+          "height": {"signal": "height"},
+          "fill": {"gradient": "color"}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Image Output Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      #view { display: inline-block; }
+      canvas, svg, img { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <img id="png"></div>
+    <img id="svg"></div>
+    <script>
+var runtimeSpec = vega.parse({
+  "schema": {"language": "vega", "version": "3.0.0"},
+  "width": 200,
+  "height": 100,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"x": 0,  "y": 28},
+        {"x": 1,  "y": 43},
+        {"x": 2,  "y": 81},
+        {"x": 3,  "y": 56},
+        {"x": 4,  "y": 38},
+        {"x": 5,  "y": 73},
+        {"x": 6,  "y": 62},
+        {"x": 7,  "y": 24}
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"field": "x", "mult": 25},
+          "height": {"field": "y"},
+          "width": {"value": 24},
+          "cornerRadius": {"value": 4}
+        },
+        "update": {
+          "fill": {"value": "steelblue"},
+        },
+        "hover": {
+          "fill": {"value": "fuchsia"}
+        }
+      }
+    }
+  ]
+});
+
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
+  .hover()
+  .run();
+
+// generate png and svg snapshots, assign to image elements
+['png', 'svg'].forEach(function(type) {
+  view.toImageURL(type)
+    .then(function(url) { document.querySelector('#'+type).src = url; })
+    .catch(function(err) { console.error(err); });
+});
+    </script>
+  </body>
+  </html>
