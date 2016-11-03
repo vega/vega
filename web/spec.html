@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Spec Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; position: relative; }
+      #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        width: 100%;
+        height: 20px;
+        background: white;
+      }
+      #view { margin-top: 40px; }
+      canvas, svg { border: 1px dashed #ccc; }
+      .vega-bind { line-height: 18px; margin-bottom: 2px; }
+      .vega-bind-name { display: inline-block; width: 100px; }
+      .vega-bind input[type="range"] { width: 400px; }
+      .vega-bind label { margin: 0 0.5em 0 2px; }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      Vega Specification:
+      <select id="specs">
+        <option value="">-----</option>
+      </select> &nbsp;
+      Renderer:
+      <select id="render">
+        <option value="svg" selected>svg</option>
+        <option value="canvas">canvas</option>
+      </select> <br/>
+    </div>
+    <div id="view"></div>
+    <script>
+var container = document.querySelector('#view'),
+    loader = vega.loader(),
+    renderType = 'svg',
+    runtime = null,
+    spec = null,
+    view = null;
+
+var select = document.querySelector('#specs');
+select.addEventListener('change', function() {
+  load(select.options[select.selectedIndex].value);
+});
+
+var render = document.querySelector('#render');
+render.addEventListener('change', function() {
+  renderType = render.options[render.selectedIndex].value;
+  if (view) view.renderer(renderType).run();
+});
+
+loader.load('specs.json')
+  .then(function(data) {
+    // load manifest of test specifications
+    JSON.parse(data).forEach(function(name) {
+      var opt = document.createElement('option');
+      opt.setAttribute('value', name);
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+  })
+  .then(function() {
+    // if query string is present, try to load spec
+    if (location.search) load(location.search.slice(1));
+  });
+
+function load(name) {
+  if (!name) {
+    if (view) view.finalize(), container.innerHTML = '';
+    return;
+  }
+
+  // update select widget state
+  select.selectedIndex = 0;
+  for (var i=0, n=select.options.length; i<n; ++i) {
+    if (select.options[i].value === name) {
+      select.selectedIndex = i; break;
+    }
+  }
+
+  // load vega spec, then visualize it
+  loader.load(url = 'spec/' + name + '.vg.json')
+    .then(function(data) {
+      console.log('LOADED', url);
+      visualize(spec = JSON.parse(data));
+    })
+    .catch(function(err) {
+      console.error(err, err.stack);
+    });
+}
+
+function visualize(spec) {
+  if (view) view.finalize(); // finalize existing view
+  view = new vega.View(runtime = vega.parse(spec))
+    .logLevel(vega.Warn)
+    .initialize(container)
+    .renderer(renderType)
+    .hover()
+    .run();
+}
+    </script>
+  </body>
+</html>

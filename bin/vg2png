@@ -3,7 +3,8 @@
 
 var helpText =
   'Render a Vega specification to PNG.\n\n' +
-  'Usage: vg2png vega_json_file [output_png_file]\n' +
+  'Usage: vg2png [vega_json_file] [output_png_file]\n' +
+  '  If no arguments are provided, reads from stdin.\n' +
   '  If output_png_file is not provided, writes to stdout.\n\n' +
   'To load data, you may need to set a base directory:\n' +
   '  For web retrieval, use `-b http://host/data/`. \n' +
@@ -12,12 +13,13 @@ var helpText =
 // import required libraries
 var path = require('path'),
     fs = require('fs'),
-    vg = require('../index');
+    canvas = require('canvas'),
+    vega = require('../');
 
 // arguments
 var args = require('yargs')
   .usage(helpText)
-  .demand(1)
+  .demand(0)
   .string('b').alias('b', 'base')
   .describe('b', 'Base directory for data loading.')
   .argv;
@@ -29,17 +31,15 @@ if (args.b) {
   base = /^[A-Za-z]+\:\/\//.test(args.b) ? args.b + path.sep
     : 'file://' + process.cwd() + path.sep + args.b + path.sep;
 }
-vg.config.load.baseURL = base;
 
 // input / output files
-var specFile = args._[0],
+var specFile = args._[0] || '/dev/stdin',
     outputFile = args._[1] || null;
 
 // load spec, render to png
 fs.readFile(specFile, 'utf8', function(err, text) {
   if (err) throw err;
-  var spec = JSON.parse(text);
-  render(spec);
+  render(JSON.parse(text));
 });
 
 // ---
@@ -51,14 +51,13 @@ function writePNG(canvas, file) {
 }
 
 function render(spec) {
-  vg.parse.spec(spec, function(err, chart) {
-    if (err) { throw err; }
-
-    var view = chart({ renderer: 'canvas' })
-      .update();
-
-    view.canvasAsync(function(canvas) {
-      writePNG(canvas, outputFile);
-    });
-  });
+  var view = new vega.View(vega.parse(spec), {
+      loadOptions: {baseURL: base},
+      logLevel: vega.Warn,
+      renderer: 'none'
+    })
+    .initialize()
+    .toCanvas()
+    .then(function(canvas) { writePNG(canvas, outputFile); })
+    .catch(function(err) { console.error(err); });
 }

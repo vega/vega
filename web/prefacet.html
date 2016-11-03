@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega PreFacet Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+function xy(d) { return d.x = Math.random(), d.y = Math.random(), d; }
+var data = [
+  { cat: 'a', tuples: [
+    {'cat':'a'}
+  ].map(xy) },
+  { cat: 'b', tuples: [
+    {'cat':'b'}, {'cat':'b'}, {'cat':'b'}, {'cat':'b'}, {'cat':'b'}
+  ].map(xy) }
+];
+
+var palettes = ['category10', 'category20', 'category20b', 'category20c'],
+    palette = 0;
+
+var runtimeSpec = vega.parse({
+  "schema": {"language": "vega", "version": "3.0.0"},
+  "width": 500,
+  "height": 500,
+  "padding": 0,
+
+  "signals": [
+    { "name": "palette", "value": palettes[palette] },
+    { "name": "rangex", "value": [0, 500] },
+    { "name": "rangey", "value": [500, 0] },
+    { "name": "domainx", "value": [0, 1] },
+    { "name": "domainy", "value": [0, 1] },
+    { "name": "fill", "value": "hotpink" }
+  ],
+
+  "data": [
+    {
+      "name": "top",
+      "values": data
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": ["a", "b", "c"],
+      "scheme": {"signal": "palette"}
+    },
+    {
+      "name": "sx",
+      "domain": {"signal": "domainx"},
+      "range": {"signal": "rangex"}
+    },
+    {
+      "name": "sy",
+      "domain": {"signal": "domainy"},
+      "range": {"signal": "rangey"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+
+      "from": {
+        "facet": {
+          "name":  "faceted",
+          "data":  "top",
+          "field": "tuples"
+        }
+      },
+
+      "encode": {
+        "update": {
+          "color":  {"scale": "color", "field": "cat"}
+        }
+      },
+
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "faceted"},
+          "encode": {
+            "enter": {
+              "stroke": {"value": "#000"},
+              "strokeWidth": {"value": 1}
+            },
+            "update": {
+              "x": {"scale": "sx", "field": "x"},
+              "y": {"scale": "sy", "field": "y"},
+              "size": {"value": 150},
+              "fill": {"field": {"group": "color"}}
+            },
+            "hover": {
+              "size": {"value": 25*25},
+              "fill": {"signal": "fill"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+});
+
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
+  .renderer('svg')
+  .hover()
+  .run();
+    </script>
+  </body>
+</html>

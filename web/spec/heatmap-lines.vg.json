@@ -1,0 +1,110 @@
+{
+  "schema": {"language": "vega", "version": "3.0.0"},
+  "width": 800,
+  "padding": 5,
+
+  "signals": [
+    {"name": "bandSize", "value": 25},
+    {"name": "height", "update": "bandSize * 24"}
+  ],
+
+  "data": [
+    {
+      "name": "temperature",
+      "url": "data/seattle-temps.csv",
+      "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
+      "transform": [
+        {"type": "formula", "as": "hour", "expr": "hours(datum.date)"},
+        { "type": "formula", "as": "date",
+          "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "row",
+      "type": "band",
+      "domain": [
+        6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+        0, 1, 2, 3, 4, 5
+      ],
+      "bandSize": {"signal": "bandSize"}
+    },
+    {
+      "name": "x",
+      "type": "time",
+      "domain": {"data": "temperature", "field": "date"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear", "zero": false,
+      "domain": {"data": "temperature", "field": "temp"},
+      "range": [{"signal": "bandSize"}, 1]
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month"},
+    {
+      "orient": "left", "scale": "row", "domain": false, "title": "Hour",
+      "tickSize": 0,
+      "encode": {
+        "labels": {
+          "update": {
+            "text": {"signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 am' : (datum.value - 12) + ':00 pm'"}
+          }
+        }
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "hour",
+          "data": "temperature",
+          "groupby": "hour"
+        }
+      },
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"scale": "row", "field": "hour"},
+          "width": {"signal": "width"},
+          "height": {"signal": "bandSize"}
+        }
+      },
+      "marks": [
+        {
+          "type": "area",
+          "from": {"data": "hour"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "date"},
+              "y": {"scale": "y", "field": "temp"},
+              "y2": {"signal": "bandSize"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": -4},
+          "text": {"value": "Seattle Annual Temperatures"},
+          "baseline": {"value": "bottom"},
+          "fontSize": {"value": 14},
+          "fontWeight": {"value": "bold"},
+          "fill": {"value": "black"}
+        }
+      }
+    }
+  ]
+}

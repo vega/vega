@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Group Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <button id="palette">Cycle Color Palette</button>
+    <button id="scale">Toggle Scale</button>
+    <button id="parent">Toggle Parent Field</button>
+    <script>
+var data = [
+  {'cat':'a'},
+  {'cat':'b'}, {'cat':'b'}, {'cat':'b'}, {'cat':'b'}, {'cat':'b'}
+].map(function(d) {
+  d.x = Math.random();
+  d.y = Math.random();
+  d.xscale = 'sx';
+  d.yscale = 'sy';
+  return d;
+});
+var tuple = data[0],
+    category = 'a';
+
+var palettes = ['category10', 'category20', 'category20b', 'category20c'],
+    palette = 0;
+
+var runtimeSpec = vega.parse({
+  "schema": {"language": "vega", "version": "3.0.0"},
+  "width": 500,
+  "height": 500,
+  "padding": 0,
+
+  "signals": [
+    { "name": "palette", "value": palettes[palette] },
+    { "name": "rangex", "value": [0, 500] },
+    { "name": "rangey", "value": [500, 0] },
+    { "name": "domainx", "value": [0, 1] },
+    { "name": "domainy", "value": [0, 1] },
+    { "name": "fill", "value": "hotpink" }
+  ],
+
+  "data": [
+    {
+      "name": "top",
+      "values": data
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": ["a", "b", "c"],
+      "scheme": {"signal": "palette"}
+    },
+    {
+      "name": "sx",
+      "domain": {"signal": "domainx"},
+      "range": {"signal": "rangex"}
+    },
+    {
+      "name": "sy",
+      "domain": {"signal": "domainy"},
+      "range": {"signal": "rangey"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+
+      "from": {
+        "facet": {
+          "name": "faceted",
+          "data": "top",
+          "groupby": "cat"
+        }
+      },
+
+      "encode": {
+        "update": {
+          "color":  {"scale": "color", "field": "cat"}
+        }
+      },
+
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "faceted"},
+          "encode": {
+            "enter": {
+              "stroke": {"value": "#000"},
+              "strokeWidth": {"value": 1}
+            },
+            "update": {
+              "x": {"scale": {"datum": "xscale"}, "field": "x"},
+              "y": {"scale": {"datum": "yscale"}, "field": "y"},
+              "size": {"value": 150},
+              "fill": {"field": {"group": "color"}}
+            },
+            "hover": {
+              "size": {"value": 25*25},
+              "fill": {"signal": "fill"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+});
+
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
+  .hover()
+  .run();
+
+document.querySelector('#scale').addEventListener('click', function(evt) {
+  var rx = view.signal('rangex'),
+      ry = view.signal('rangey');
+  rx = (rx[0] === 0) ? [100, 400] : [0, 500];
+  ry = (ry[1] === 0) ? [400, 100] : [500, 0];
+  view.signal('rangex', rx).signal('rangey', ry).run();
+});
+
+document.querySelector('#palette').addEventListener('click', function(evt) {
+  var p = palettes[++palette % palettes.length];
+  view.signal('palette', p).run();
+});
+
+document.querySelector('#parent').addEventListener('click', function(evt) {
+  category = (category === 'a' ? 'c' : 'a');
+  var newTuple = vega.extend({}, tuple, {id: null, cat: category});
+
+  view.pulse(view._runtime.data.top.input,
+    vega.changeset()
+      .remove(tuple)
+      .insert(newTuple)
+  ).run();
+  tuple = newTuple;
+});
+
+    </script>
+  </body>
+</html>
