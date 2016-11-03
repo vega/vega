@@ -4,7 +4,7 @@ var tape = require('tape'),
     fs = require('fs'),
     schema = require('../build/vega-schema.json');
 
-var dir = process.cwd() + '/test/spec/';
+var dir = process.cwd() + '/spec/';
 
 function validate(spec) {
   return tv4.validate(spec, schema);

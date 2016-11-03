@@ -84,7 +84,7 @@ function load(name) {
   }
 
   // load vega spec, then visualize it
-  loader.load(url = 'spec/' + name + '.vg.json')
+  loader.load(url = '../spec/' + name + '.vg.json')
     .then(function(data) {
       console.log('LOADED', url);
       visualize(spec = JSON.parse(data));
