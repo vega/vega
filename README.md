@@ -9,19 +9,26 @@ This repository houses ongoing **Vega 3.0** development. While still a work
 in progress, Vega 3 has matured to a fully functional beta version with a
 cleaner, more efficient, and more modular architecture. Vega 3 can now
 reproduce all standard Vega 2 examples, and much more! [Contributions, feature
-requests and bug reports](https://github.com/uwdata/vega/issues) are
+requests and bug reports](https://github.com/vega/vega/issues) are
 most appreciated.
 
 For a partial description of changes from Vega 2.x, please refer to the
-[Vega 3 Porting Guide](https://github.com/uwdata/vega/blob/master/PORTING_GUIDE.md).
+[Vega 3 Porting Guide](https://github.com/vega/vega/blob/master/PORTING_GUIDE.md).
+The Vega wiki associated with this repo contains documentation for version 2.6.
+
+Beyond the porting guide, more detailed documentation for aspects of Vega 3
+can be found in the associated modules listed below. For example, the
+[Vega View API](https://github.com/vega/vega-view) and
+[configuration options](https://github.com/vega/vega-parser).
+Full Vega 3 documentation is a work-in-progress and will be added shortly.
 
 Not ready to live on the edge? Looking for the latest stable release? Please
-see [Vega 2.6](https://github.com/vega/vega).
+see [Vega 2.6](https://github.com/vega/vega/tree/v2.x).
 
 ## Basic Setup
 
 For a basic setup allowing you to build Vega and run examples,
-clone `https://github.com/uwdata/vega` and run `npm install`.
+clone `https://github.com/vega/vega` and run `npm install`.
 
 Once installation is complete, use `npm run test` to run tests and
 `npm run build` to build output files.
@@ -36,7 +43,7 @@ place (e.g., `http://localhost:8000/web/spec.html`).
 For a more advanced development setup in which you will be working on multiple
 modules simultaneously, first clone the Vega 3 module repositories:
 
-* https://github.com/uwdata/vega
+* https://github.com/vega/vega
 * https://github.com/vega/vega-crossfilter
 * https://github.com/vega/vega-dataflow
 * https://github.com/vega/vega-encode
