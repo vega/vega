@@ -1,4 +1,8 @@
 export default {
-  "enum": ["pad", "fit", "none"],
-  "default": "pad"
+  "defs": {
+    "autosize": {
+      "enum": ["pad", "fit", "none"],
+      "default": "pad"
+    }
+  }
 };

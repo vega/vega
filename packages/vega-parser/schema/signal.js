@@ -21,7 +21,7 @@ export default {
         "description": {"type": "string"},
         "value": {},
         "react": {"type": "boolean", "default": true},
-        "update": {"$ref": "#/defs/exprString"},
+        "update": {"$ref": "#/refs/exprString"},
         "on": {"$ref": "#/defs/onEvents"},
         "bind": {"$ref": "#/defs/bind"}
       },

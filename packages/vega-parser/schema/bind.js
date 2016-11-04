@@ -21,8 +21,7 @@ export default {
             "type": {"enum": ["radio", "select"]},
             "element": {"$ref": "#/refs/element"},
             "options": {
-              "type": "array",
-              "items": {"type": {}}
+              "type": "array"
             }
           },
           "additionalProperties": false,
@@ -43,7 +42,9 @@ export default {
         {
           "type": "object",
           "properties": {
-            "type": {"enum": ["form"]},
+            "type": {
+              "not": {"enum": ["checkbox", "radio", "range", "select"]}
+            },
             "element": {"$ref": "#/refs/element"}
           },
           "additionalProperties": true
