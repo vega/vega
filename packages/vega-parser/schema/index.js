@@ -1,6 +1,7 @@
 import autosize from './autosize';
 import axis from './axis';
 import background from './background';
+import bind from './bind';
 import data from './data';
 import encode from './encode';
 import expr from './expr';
@@ -42,6 +43,7 @@ export default function(definitions) {
     autosize,
     axis,
     background,
+    bind,
     data,
     encode,
     expr,

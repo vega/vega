@@ -12,11 +12,11 @@ export default {
         "markname": {"type": "string"},
         "filter": {
           "oneOf": [
-            {"$ref": "#/defs/exprString"},
+            {"$ref": "#/refs/exprString"},
             {
               "type": "array",
               "minItems": 1,
-              "items": {"$ref": "#/defs/exprString"},
+              "items": {"$ref": "#/refs/exprString"},
             }
           ]
         },

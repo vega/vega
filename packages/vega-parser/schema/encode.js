@@ -207,7 +207,7 @@ export default {
               ]
             }
           },
-          "additionalProperties": "false",
+          "additionalProperties": false,
           "required": ["color"]
         }
       ]
