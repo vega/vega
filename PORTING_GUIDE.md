@@ -123,6 +123,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Legends now include an optional `"type"` property. By default, all legends use the `"symbol"` type, to create a discrete legend. For continuous color scales, the `"gradient"` type can be used to create a legend containing a continuous color ramp. See the `legends.vg.json` example for more.
 
+- Axis now no longer has `"layer"` property. Instead, there is a `"zindex"` property (default `0`). By default, axes should be drawn behind all chart elements. To put them in front, use `"zindex": 1`.
+
 ## Scales
 
 - Following D3 4.0's design, the `"ordinal"` scale type has now been broken up into three different scale types: `"ordinal"` (for strict lookup tables), `"band"` (for spatial ordinal scales) and `"point"` (spatial ordinal scales with no padding, similar to `{"point": true}` in Vega 2).
