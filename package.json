@@ -78,7 +78,7 @@
   "devDependencies": {
     "eslint": "2",
     "rollup": "0.34",
-    "rollup-plugin-node-resolve": "1",
+    "rollup-plugin-node-resolve": "2",
     "tape": "4",
     "tv4": "1",
     "uglify-js": "2"

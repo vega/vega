@@ -33,7 +33,10 @@ rollup.rollup({
   entry: 'index.js',
   external: modules,
   plugins: [
-    resolveCache(nodeResolve({jsnext: true, skip: ['yargs']})),
+    resolveCache(nodeResolve({
+      jsnext: true,
+      skip: ['yargs']
+    }))
   ]
 }).then(function(bundle) {
   return bundle.write({
