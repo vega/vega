@@ -5,8 +5,11 @@ export function ingest(target, data, format) {
 }
 
 function loadPending(df) {
-  var pending = new Promise(function(accept) { resolve = accept; }),
-      resolve;
+  var accept, reject,
+      pending = new Promise(function(a, r) {
+        accept = a;
+        reject = r;
+      });
 
   pending.requests = 0;
 
@@ -14,8 +17,12 @@ function loadPending(df) {
     if (--pending.requests === 0) {
       df.runAfter(function() {
         df._pending = null;
-        df.run();
-        resolve(df);
+        try {
+          df.run();
+          accept(df);
+        } catch (err) {
+          reject(err);
+        }
       });
     }
   }
@@ -40,7 +47,5 @@ export function request(target, url, format) {
         pending.done();
       })
     .then(pending.done)
-    .catch(function(error) {
-      df.error(error);
-    });
+    .catch(function(error) { df.warn(error); });
 }
