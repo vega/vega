@@ -48,6 +48,8 @@ function expressionFunctions(codegen) {
   return fn;
 }
 
+var _window = (typeof window !== 'undefined' && window) || null;
+
 export var extendedFunctions = {
   format: formatter(format),
   timeFormat: formatter(timeFormat),
@@ -91,18 +93,24 @@ export var extendedFunctions = {
 
   open: function(uri, name) {
       var df = this.context.dataflow;
-      if (typeof window !== 'undefined' && window && window.open) {
+      if (_window && _window.open) {
         df.loader().sanitize(uri, {context:'open', name:name})
-          .then(function(url) { window.open(url, name); })
+          .then(function(url) { _window.open(url, name); })
           .catch(function(e) { df.warn('Open url failed: ' + e); });
       } else {
         df.warn('Open function can only be invoked in a browser.');
       }
     },
 
-  screen: function() { return window.screen; },
+  screen: function() {
+    return _window ? _window.screen : {};
+  },
 
-  windowsize: function() { return [window.innerWidth, window.innerHeight]; },
+  windowsize: function() {
+    return _window
+      ? [_window.innerWidth, _window.innerHeight]
+      : [undefined, undefined];
+  },
 
   span: function(array) { return array[array.length-1] - array[0]; },
 
