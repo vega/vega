@@ -1,7 +1,7 @@
 import boundMark from '../bound/boundMark';
 
 var keys = [
-  'marktype', 'name', 'interactive', 'clip', 'items', 'zindex',
+  'marktype', 'name', 'role', 'interactive', 'clip', 'items', 'zindex',
   'x', 'y', 'width', 'height', 'align', 'baseline',             // layout
   'fill', 'fillOpacity', 'opacity',                             // fill
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
