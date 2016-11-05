@@ -15,7 +15,7 @@ tape('JSON schema validates correct specifications', function(test) {
   specs.forEach(function(file) {
     var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
         pass = validate(spec);
-    test.ok(pass, tv4.error);
+    test.ok(pass, 'schema: ' + file + (tv4.error ? '\n' + tv4.error : ''));
   });
 
   test.end();

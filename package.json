@@ -48,7 +48,7 @@
   "scripts": {
     "build": "npm run test && uglifyjs build/vega.js -c -m -o build/vega.min.js",
     "pretest": "rm -rf build && mkdir build && bin/rollup && bin/schema > build/vega-schema.json",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js"
   },
@@ -65,6 +65,7 @@
     "vega-parser": ">=1.0.0-beta",
     "vega-runtime": ">=1.0.0-beta",
     "vega-scale": "1",
+    "vega-scenegraph": ">=2.0.0-beta",
     "vega-statistics": "1",
     "vega-util": "1",
     "vega-view": ">=1.0.0-beta",
