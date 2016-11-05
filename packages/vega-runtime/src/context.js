@@ -18,7 +18,7 @@ function Context(df, transforms, functions) {
   this.fn = {};
   this.itempath = [];
   if (functions) {
-    this.functions = functions;
+    this.functions = Object.create(functions);
     this.functions.context = this;
   }
 }
