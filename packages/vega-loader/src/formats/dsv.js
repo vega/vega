@@ -14,5 +14,5 @@ export default function dsv(data, format) {
       .map(stringValue)
       .join(format.delimiter) + '\n' + data;
   }
-  return dsvFormat(format.delimiter).parse(data);
+  return dsvFormat(format.delimiter).parse(data+'');
 }
