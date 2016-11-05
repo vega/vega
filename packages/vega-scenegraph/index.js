@@ -29,6 +29,6 @@ export {default as scaleGradient} from './src/util/scale-gradient';
 export {default as point} from './src/util/point';
 export {default as canvas} from './src/util/canvas/canvas';
 export {openTag, closeTag} from './src/util/tags';
-export {font} from './src/util/text';
+export {font, textMetrics} from './src/util/text';
 
 export {toJSON, fromJSON} from './src/util/serialize';

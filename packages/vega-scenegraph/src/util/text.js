@@ -13,13 +13,18 @@ function measureWidth(item) {
   return context.measureText(textValue(item.text)).width;
 }
 
-export var width = (context = Canvas(1, 1))
-  ? (context = context.getContext('2d'), measureWidth)
-  : estimateWidth;
-
-export function height(item) {
+function height(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
+
+export var textMetrics = {
+  height: height,
+  measureWidth: measureWidth,
+  estimateWidth: estimateWidth,
+  width: (context = Canvas(1, 1))
+    ? (context = context.getContext('2d'), measureWidth)
+    : estimateWidth
+};
 
 export function textValue(s) {
   return s != null ? String(s) : '';

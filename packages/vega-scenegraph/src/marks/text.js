@@ -1,5 +1,5 @@
 import Bounds from '../Bounds';
-import {font, offset, width, height, textValue} from '../util/text';
+import {font, offset, textMetrics, textValue} from '../util/text';
 import {visit} from '../util/visit';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
@@ -40,7 +40,7 @@ function attr(emit, item) {
 }
 
 function bound(bounds, item, noRotate) {
-  var h = height(item),
+  var h = textMetrics.height(item),
       a = item.align,
       r = item.radius || 0,
       x = item.x || 0,
@@ -56,7 +56,7 @@ function bound(bounds, item, noRotate) {
   }
 
   // horizontal alignment
-  w = width(item);
+  w = textMetrics.width(item);
   if (a === 'center') {
     dx -= (w / 2);
   } else if (a === 'right') {
