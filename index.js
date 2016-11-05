@@ -23,6 +23,10 @@ export {
 } from 'vega-dataflow';
 
 export {
+  textMetrics
+} from 'vega-scenegraph';
+
+export {
   scale,
   scheme
 } from 'vega-scale';

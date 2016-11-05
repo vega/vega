@@ -1,17 +1,17 @@
-var tape = require('tape'),
-    vega = require('../'),
-    fs = require('fs'),
-    specs = require('./specs.json');
-
-// remove wordcloud due to random layout
-specs = specs.filter(function(name) {
-  return name !== 'wordcloud';
-});
-
 var GENERATE_SCENES = false, // flag to generate test scenes
     specdir = process.cwd() + '/spec/',
     testdir = process.cwd() + '/test/scenegraphs/',
-    loader = vega.loader({baseURL: './web/'});
+    fs = require('fs'),
+    tape = require('tape'),
+    vega = require('../'),
+    loader = vega.loader({baseURL: './web/'}),
+    specs = require('./specs.json').filter(function(name) {
+      // remove wordcloud due to random layout
+      return name !== 'wordcloud';
+    });
+
+// Standardize font metrics to suppress cross-platform variance.
+vega.textMetrics.width = vega.textMetrics.estimateWidth;
 
 tape('Vega generates scenegraphs for specifications', function(test) {
   var count = specs.length;
@@ -28,8 +28,8 @@ tape('Vega generates scenegraphs for specifications', function(test) {
         console.log('WRITING TEST SCENE', name, path);
         fs.writeFileSync(path, actual);
       } else {
-        var expect = String(fs.readFileSync(path));
-        test.equal(actual, expect);
+        var expect = fs.readFileSync(path) + '';
+        test.equal(expect, actual, 'scene: ' + name);
       }
     }).catch(function(err) {
       // eslint-disable-next-line no-console
