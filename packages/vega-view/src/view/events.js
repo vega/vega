@@ -29,7 +29,8 @@ export default function(source, type, filter) {
   }
 
   if (!sources) {
-    view.error('Can not resolve event source: ' + source);
+    view.warn('Can not resolve event source: ' + source);
+    return s;
   }
 
   for (var i=0, n=sources.length; i<n; ++i) {
