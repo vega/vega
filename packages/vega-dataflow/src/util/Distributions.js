@@ -11,7 +11,7 @@ var Distributions = {
   kde:     randomKDE,
   mixture: randomMixture,
   normal:  randomNormal,
-  uniform: randomUniform,
+  uniform: randomUniform
 };
 
 var DISTRIBUTIONS = 'distributions',
