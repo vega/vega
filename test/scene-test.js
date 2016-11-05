@@ -1,3 +1,18 @@
+// Standardize font metrics to suppress cross-platform variance.
+// UGH.
+var cachedDoc = global.document;
+global.document = {
+  createElement: function() {
+    return {
+      getContext: function() { return this; },
+      measureText: function(text) {
+        text = text != null ? String(text) : '';
+        return ~~(0.8 * text.length * 11);
+      }
+    };
+  }
+};
+
 var tape = require('tape'),
     vega = require('../'),
     fs = require('fs'),
@@ -28,15 +43,18 @@ tape('Vega generates scenegraphs for specifications', function(test) {
         console.log('WRITING TEST SCENE', name, path);
         fs.writeFileSync(path, actual);
       } else {
-        var expect = String(fs.readFileSync(path));
-        test.equal(actual, expect);
+        var expect = fs.readFileSync(path) + '';
+        test.equal(expect, actual, 'scene: ' + name);
       }
     }).catch(function(err) {
       // eslint-disable-next-line no-console
       console.error('ERROR', err);
       test.fail(name);
     }).then(function() {
-      if (--count === 0) test.end();
+      if (--count === 0) {
+        global.document = cachedDoc;
+        test.end();
+      }
     });
   });
 });
