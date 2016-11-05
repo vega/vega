@@ -22,14 +22,14 @@ tape('Vega generates scenegraphs for specifications', function(test) {
         view = new vega.View(runtime, {loader: loader, renderer: 'none'});
 
     view.initialize().runAsync().then(function() {
-      var actual = JSON.parse(view.scenegraph().toJSON());
+      var actual = view.scenegraph().toJSON();
       if (GENERATE_SCENES) {
         // eslint-disable-next-line no-console
         console.log('WRITING TEST SCENE', name, path);
         fs.writeFileSync(path, actual);
       } else {
         var expect = JSON.parse(fs.readFileSync(path));
-        test.deepEqual(actual, expect);
+        test.deepEqual(JSON.parse(actual), expect);
       }
     }).catch(function(err) {
       // eslint-disable-next-line no-console
