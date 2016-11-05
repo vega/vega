@@ -1,16 +1,25 @@
 import Bounds from './Bounds';
 import GroupItem from './GroupItem';
+import {fromJSON, toJSON} from './util/serialize';
 
-export default function Scenegraph() {
-  this.root = createMark({
-    marktype: 'group',
-    name: 'root',
-    role: 'frame'
-  });
-  this.root.items = [new GroupItem(this.root)];
+export default function Scenegraph(scene) {
+  if (arguments.length) {
+    this.root = fromJSON(scene);
+  } else {
+    this.root = createMark({
+      marktype: 'group',
+      name: 'root',
+      role: 'frame'
+    });
+    this.root.items = [new GroupItem(this.root)];
+  }
 }
 
 var prototype = Scenegraph.prototype;
+
+prototype.toJSON = function(indent) {
+  return toJSON(this.root, indent || 0);
+};
 
 prototype.mark = function(scenepath, markdef) {
   var markpath = scenepath.marks,
