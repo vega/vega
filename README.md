@@ -35,7 +35,7 @@ Once installation is complete, use `npm run test` to run tests and
 
 This repo (`vega`) includes web-based demos within the `web` folder. To run
 these, launch a local webserver in the top-level directory for the repo
-(e.g., `python -m SimpleHTTPServer 8000`) and then point your browser to right
+(e.g., `python -m SimpleHTTPServer 8000` for Python 2, `python -m http.server 8000` for Python 3) and then point your browser to right
 place (e.g., `http://localhost:8000/web/spec.html`).
 
 ## Development Setup
