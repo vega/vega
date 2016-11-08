@@ -127,7 +127,7 @@
 
       "axes": [
         { "orient": "left", "scale": "yscale",
-          "tickSize": 0, "tickPadding": 4, "domain": false }
+          "tickSize": 0, "labelPadding": 4, "domain": false }
       ],
 
       "marks": [

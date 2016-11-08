@@ -8,7 +8,7 @@
   "config": {
     "axisBand": {
       "bandPosition": 1,
-      "tickPadding": -1,
+      "labelPadding": -1,
       "tickExtra": true
     }
   },

@@ -46,7 +46,7 @@
       "scale": "y",
       "tickCount": 3,
       "tickSize": 0,
-      "tickPadding": 0,
+      "labelPadding": 0,
       "grid": true,
       "domain": false,
       "zindex": 1,

@@ -65,7 +65,7 @@
       "grid": true,
       "domain": false,
       "encode": {
-        "axis": {
+        "domain": {
           "enter": { "stroke": {"value": "transparent"} }
         },
         "labels": {
@@ -87,7 +87,7 @@
       "domain": false,
       "format": "$0.2f",
       "encode": {
-        "axis": {
+        "domain": {
           "enter": {"stroke": {"value": "transparent"}}
         },
         "labels": {

@@ -206,18 +206,23 @@
         }
       },
 
+      "signals": [
+        {"name": "width", "update": "chartSize"},
+        {"name": "height", "update": "chartSize"}
+      ],
+
       "scales": [
         {
           "name": "innerX", "type": "linear",
           "zero": false, "nice": true,
           "domain": {"data": "iris", "field": {"signal": "parent.x.data"}},
-          "range": [0, {"signal": "chartSize"}]
+          "range": "width"
         },
         {
           "name": "innerY", "type": "linear",
           "zero": false, "nice": true,
           "domain": {"data": "iris", "field": {"signal": "parent.y.data"}},
-          "range": [{"signal": "chartSize"}, 0]
+          "range": "height"
         }
       ],
 
