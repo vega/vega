@@ -73,9 +73,6 @@
     "vega-wordcloud": ">=1.0.0-beta",
     "yargs": "4"
   },
-  "optionalDependencies": {
-    "canvas": "1"
-  },
   "devDependencies": {
     "eslint": "2",
     "rollup": "0.34",
@@ -83,5 +80,10 @@
     "tape": "4",
     "tv4": "1",
     "uglify-js": "2"
+  },
+  "browser": {
+    "buffer": false,
+    "canvas": false,
+    "fs": false
   }
 }
