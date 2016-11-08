@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "author": {
@@ -46,5 +46,8 @@
     "tape": "4",
     "tv4": "1",
     "uglify-js": "2"
+  },
+  "browser": {
+    "canvas": false
   }
 }
