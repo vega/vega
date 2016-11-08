@@ -32,7 +32,7 @@
     "vega-util": "1"
   },
   "optionalDependencies": {
-    "canvas": "^1.4.0"
+    "canvas": "^1.6.0"
   },
   "devDependencies": {
     "eslint": "2",
