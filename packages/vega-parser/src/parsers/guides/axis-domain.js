@@ -6,7 +6,7 @@ import {AxisDomainRole} from '../marks/roles';
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       zero = {value: 0},
-      encode = {}, enter, update;
+      encode = {}, enter, update, u, u2, v;
 
   encode.enter = enter = {
     opacity: zero,
@@ -22,15 +22,14 @@ export default function(spec, config, userEncode, dataRef) {
     opacity: {value: 1}
   };
 
-  if (orient === Top || orient === Bottom) {
-    enter.y = zero;
-    update.x = enter.x = position(spec, 0);
-    update.x2 = enter.x2 = position(spec, 1);
-  } else {
-    enter.x = zero;
-    update.y = enter.y = position(spec, 0);
-    update.y2 = enter.y2 = position(spec, 1);
-  }
+  (orient === Top || orient === Bottom)
+    ? (u = 'x', v = 'y')
+    : (u = 'y', v = 'x');
+  u2 = u + '2',
+
+  enter[v] = zero;
+  update[u] = enter[u] = position(spec, 0);
+  update[u2] = enter[u2] = position(spec, 1);
 
   return guideMark(RuleMark, AxisDomainRole, null, dataRef, encode, userEncode);
 }

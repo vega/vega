@@ -4,10 +4,9 @@ import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
 import {encoder} from '../encode/encode-util';
 
-export default function(spec, config, userEncode, dataRef) {
+export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      size = spec.tickSize != null ? spec.tickSize : config.tickSize,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 

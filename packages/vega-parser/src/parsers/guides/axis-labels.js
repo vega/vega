@@ -4,19 +4,18 @@ import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {encoder} from '../encode/encode-util';
 
-export default function(spec, config, userEncode, dataRef) {
+export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      size = spec.tickSize != null ? spec.tickSize : config.tickSize,
-      pad = spec.tickPadding != null ? spec.tickPadding : config.tickPadding,
+      pad = spec.labelPadding != null ? spec.labelPadding : config.labelPadding,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
     opacity: zero,
-    fill: {value: config.tickLabelColor},
-    font: {value: config.tickLabelFont},
-    fontSize: {value: config.tickLabelFontSize},
+    fill: {value: config.labelColor},
+    font: {value: config.labelFont},
+    fontSize: {value: config.labelFontSize},
     text: {field: Label}
   };
 

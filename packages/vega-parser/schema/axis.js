@@ -8,10 +8,13 @@ export default {
         "title": {"type": "string"},
         "zindex": {"type": "number"},
         "interactive": {"type": "boolean"},
+        "tick": {"type": "boolean"},
+        "label": {"type": "boolean"},
         "domain": {"type": "boolean"},
         "grid": {"type": "boolean"},
+        "gridScale": {"type": "string"},
         "tickSize": {"type": "number"},
-        "tickPadding": {"type": "number"},
+        "labelPadding": {"type": "number"},
 
         "tickCount": {
           "oneOf": [
@@ -70,7 +73,7 @@ export default {
             "labels": {"$ref": "#/defs/guideEncode"},
             "title": {"$ref": "#/defs/guideEncode"},
             "grid": {"$ref": "#/defs/guideEncode"},
-            "axis": {"$ref": "#/defs/guideEncode"}
+            "domain": {"$ref": "#/defs/guideEncode"}
           },
           "additionalProperties": false
         }
