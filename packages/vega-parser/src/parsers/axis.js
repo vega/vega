@@ -15,13 +15,15 @@ export default function(spec, scope) {
   var config = axisConfig(spec, scope),
       encode = spec.encode || {},
       interactive = !!spec.interactive,
-      datum, dataRef, ticksRef, group, axisEncode, children;
+      datum, dataRef, ticksRef, size, group, axisEncode, children;
 
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    domain: spec.domain != null ? !!spec.domain : config.domainDefault,
+    tick:   spec.tick != null ? !!spec.tick : config.tickDefault,
+    label:  spec.label != null ? !!spec.label : config.labelDefault,
     grid:   spec.grid != null ? !!spec.grid : config.gridDefault,
+    domain: spec.domain != null ? !!spec.domain : config.domainDefault,
     title:  spec.title
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
@@ -48,14 +50,23 @@ export default function(spec, scope) {
   })));
 
   // generate axis marks
-  children = [
-    axisTicks(spec, config, encode.ticks, ticksRef),
-    axisLabels(spec, config, encode.labels, ticksRef)
-  ];
+  children = [];
 
   // include axis gridlines if requested
   if (datum.grid) {
-    children.unshift(axisGrid(spec, config, encode.grid, ticksRef));
+    children.push(axisGrid(spec, config, encode.grid, ticksRef));
+  }
+
+  // include axis ticks if requested
+  if (datum.tick) {
+    size = spec.tickSize != null ? spec.tickSize : config.tickSize;
+    children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
+  }
+
+  // include axis labels if requested
+  if (datum.label) {
+    size = datum.tick ? size : 0;
+    children.push(axisLabels(spec, config, encode.labels, ticksRef, size));
   }
 
   // include axis domain path if requested

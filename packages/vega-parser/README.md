@@ -71,22 +71,24 @@ orientation-based options, which in turn take precedence over general options.
 - *maxExtent*: The maximum extent (in pixels) that axist ticks and labels should use. This determines a maximum offset value for axis titles.
 - *bandPosition*: An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands.
 - *domainDefault*: Boolean flag indicating if axis domain line should be included by default.
-- *domainWidth*: Stroke width of axis domain line.
 - *domainColor*: Color of axis domain line.
+- *domainWidth*: Stroke width of axis domain line.
 - *gridDefault*: Boolean flag indicating if axis grid lines should be included by default.
 - *gridWidth*: Stroke width of axis grid lines.
 - *gridColor*: Color of axis grid lines.
 - *gridDash*: Stroke dash of axis grid lines (or `[]` for solid lines).
 - *gridOpacity*: Opacity of axis grid lines.
+- *labelDefault*: Boolean flag indicating if axis tick labels should be included by default.
+- *labelColor*: Text color for axis tick labels.
+- *labelFont*: Font name for axis tick labels.
+- *labelFontSize*: Font size for axis tick labels.
+- *tickDefault*: Boolean flag indicating if axis tick marks should be included by default.
 - *tickColor*: Color for axis ticks.
 - *tickExtra*: Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
 - *tickRound*: Boolean flag indicating if pixel position values should be rounded to the nearest integer.
 - *tickSize*: Size (or length, in pixels) of axis ticks.
 - *tickWidth*: Width (in pixels) of axis ticks.
 - *tickPadding*: Padding (in pixels) betweem axis ticks and tick labels.
-- *tickLabelColor*: Text color for axis tick labels.
-- *tickLabelFont*: Font name for axis tick labels.
-- *tickLabelFontSize*: Font size for axis tick labels.
 - *titleColor*: Text color for axis titles.
 - *titleFont*: Font name for axis titles.
 - *titleFontSize*: Font size for axis titles.

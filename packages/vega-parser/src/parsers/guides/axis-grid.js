@@ -5,10 +5,11 @@ import {AxisGridRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
+      vscale = spec.gridScale,
       sign = (orient === Left || orient === Top) ? 1 : -1,
       offset = sign * spec.offset || 0,
       zero = {value: 0},
-      encode = {}, enter, exit, update, tickPos;
+      encode = {}, enter, exit, update, tickPos, u, v, v2, s;
 
   encode.enter = enter = {
     opacity: zero,
@@ -33,14 +34,19 @@ export default function(spec, config, userEncode, dataRef) {
     extra:  config.tickExtra
   };
 
-  if (orient === Top || orient === Bottom) {
-    enter.y = {value: offset};
-    update.y2 = enter.y2 = {signal: 'height', mult: sign, offset: offset};
-    update.x = enter.x = exit.x = tickPos;
+  (orient === Top || orient === Bottom)
+    ? (u = 'x', v = 'y', s = 'height')
+    : (u = 'y', v = 'x', s = 'width');
+  v2 = v + '2',
+
+  update[u] = enter[u] = exit[u] = tickPos;
+
+  if (vscale) {
+    enter[v] = {scale: vscale, range: 0, mult: sign, offset: offset};
+    update[v2] = enter[v2] = {scale: vscale, range: 1, mult: sign, offset: offset};
   } else {
-    enter.x = {value: offset};
-    update.x2 = enter.x2 = {signal: 'width', mult: sign, offset: offset};
-    update.y = enter.y = exit.y = tickPos;
+    enter[v] = {value: offset};
+    update[v2] = enter[v2] = {signal: s, mult: sign, offset: offset};
   }
 
   return guideMark(RuleMark, AxisGridRole, Value, dataRef, encode, userEncode);
