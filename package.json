@@ -47,7 +47,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega.js -c -m -o build/vega.min.js",
-    "pretest": "rm -rf build && mkdir build && bin/rollup && bin/schema > build/vega-schema.json",
+    "pretest": "rm -rf build && mkdir build && json2module package.json > build/package.js && bin/rollup && bin/schema > build/vega-schema.json",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js"
@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "eslint": "2",
+    "json2module": "0.0",
     "rollup": "0.34",
     "rollup-plugin-node-resolve": "2",
     "tape": "4",

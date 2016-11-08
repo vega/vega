@@ -1,3 +1,7 @@
+export {
+  version
+} from './build/package';
+
 export * from 'vega-statistics';
 
 export * from 'vega-util';
