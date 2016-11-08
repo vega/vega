@@ -78,27 +78,34 @@ function layoutGroup(view, group, _) {
   layoutSize(view, group, markBounds, viewBounds.union(markBounds), _);
 }
 
+function axisIndices(datum) {
+  var index = +datum.grid;
+  return [
+    datum.tick ? index++ : -1,  // tick index
+    datum.label ? index++ : -1, // label index
+    index + (+datum.domain)     // title index
+  ];
+}
+
 function layoutAxis(axis, width, height) {
   var item = axis.items[0],
       datum = item.datum,
       orient = datum.orient,
-      ticksIndex = datum.grid ? 1 : 0,
-      labelIndex = ticksIndex + 1,
-      titleIndex = labelIndex + (datum.domain ? 2 : 1),
+      indices = axisIndices(datum),
       range = item.range,
       offset = item.offset,
       position = item.position,
       minExtent = item.minExtent,
       maxExtent = item.maxExtent,
-      title = datum.title && item.items[titleIndex].items[0],
+      title = datum.title && item.items[indices[2]].items[0],
       titlePadding = item.titlePadding,
       titleSize = title ? title.fontSize + titlePadding : 0,
       bounds = item.bounds,
-      x = 0, y = 0, s;
+      x = 0, y = 0, i, s;
 
-  bounds.clear()
-    .union(item.items[ticksIndex].bounds)
-    .union(item.items[labelIndex].bounds);
+  bounds.clear();
+  if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
+  if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
 
   // position axis group and title
   switch (orient) {
