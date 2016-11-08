@@ -125,6 +125,12 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Axis now no longer has `"layer"` property. Instead, there is a `"zindex"` property (default `0`). By default, axes should be drawn behind all chart elements. To put them in front, use `"zindex": 1`.
 
+- The axis line previously stylable as `"axis"` is now referred to as the axis `"domain"`. For example, use `"domain": false` to hide the axis line, or include a `"domain"` property in the `"encode"` block to style the axis line.
+
+- Axis ticks, labels, gridlines, and domain can all be selectively enabled or disabled. Axis ticks, labels and domain are enabled by default, but can be disabled (for examepl, `"tick": false`, `"label": false`). Axis grid lines are disabled by default, but can be enabled (`"grid": true`). These toggles can be useful to achieve richer layering. For example, one might place an axis definition with only gridlines on a bottom layer, and add an axis definition with ticks and labels on a higher layer.
+
+- By default, the axis gridline extent is determined by the settings of the signals `"width"` (for y-axis gridlines) or `"height"` (for x-axis gridlines). This is a change from Vega 2, where the group width/height was used. Vega 3 enables recursive signal definitions: named signal values can be overridden within sub-groups, allowing one to set appropriate width/height signal values in sub-plots. Alternatively, Vega 3 introduces a `"gridScale"` property which instead indicates a scale whose range should be used to determine the gridline extent. For example, if you have an x-axis scale named "xscale", the y-axis gridline lengths can be set to match that scale by using `"gridScale": "xscale"`.
+
 ## Scales
 
 - Following D3 4.0's design, the `"ordinal"` scale type has now been broken up into three different scale types: `"ordinal"` (for strict lookup tables), `"band"` (for spatial ordinal scales) and `"point"` (spatial ordinal scales with no padding, similar to `{"point": true}` in Vega 2).
