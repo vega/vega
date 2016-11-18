@@ -45,6 +45,9 @@ export default function(spec, scope) {
     encoders(spec.encode, spec.type, role, scope, {pulse: markRef})
   ));
 
+  // monitor parent marks to propagate changes
+  op.params.parent = scope.encode();
+
   // add post-encoding transforms, if defined
   if (spec.transform) {
     spec.transform.forEach(function(_) {
@@ -57,8 +60,6 @@ export default function(spec, scope) {
     });
   }
 
-  // monitor parent marks to propagate changes
-  op.params.parent = scope.encode();
   encodeRef = ref(op);
 
   // if group is faceted or requires view layout, recurse here
