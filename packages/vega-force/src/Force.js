@@ -66,10 +66,10 @@ prototype.transform = function(_, pulse) {
     }
   }
 
-  return this.finish(pulse);
+  return this.finish(_, pulse);
 };
 
-prototype.finish = function(pulse) {
+prototype.finish = function(_, pulse) {
   var dataflow = pulse.dataflow;
 
   // inspect dependencies, touch link source data
@@ -86,7 +86,7 @@ prototype.finish = function(pulse) {
   }
 
   // reflow all nodes
-  return pulse.reflow().modifies(ForceOutput);
+  return pulse.reflow(_.modified()).modifies(ForceOutput);
 };
 
 function rerun(df, op) {
