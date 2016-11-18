@@ -24,16 +24,19 @@ prototype.transform = function(_, pulse) {
     error('Nest transform requires an upstream data source.');
   }
 
-  if (!this.value || _.modified() || pulse.changed()) {
-    var root = array(_.keys)
+  var root, tree, map, mod;
+
+  if (!this.value || (mod = _.modified()) || pulse.changed()) {
+    root = array(_.keys)
       .reduce(function(n, k) { return (n.key(k), n)}, nest())
       .entries(pulse.source);
-
-    var tree = hierarchy({values: root}, children),
-        map = tree.lookup = {};
+    tree = hierarchy({values: root}, children);
+    map = tree.lookup = {};
     tree.each(function(node) { if ('_id' in node.data) map[node.data._id] = node; });
     this.value = tree;
   }
 
   pulse.source.root = this.value;
+
+  return mod ? pulse.fork(pulse.ALL) : pulse;
 };

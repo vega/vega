@@ -21,18 +21,20 @@ prototype.transform = function(_, pulse) {
     error('Stratify transform requires an upstream data source.');
   }
 
-  var run = !this.value
-         || _.modified()
+  var mod = _.modified(), tree, map,
+      run = !this.value
+         || mod
          || pulse.changed(pulse.ADD_REM)
          || pulse.modified(_.key.fields)
          || pulse.modified(_.parentKey.fields);
 
   if (run) {
-    var tree = stratify().id(_.key).parentId(_.parentKey)(pulse.source),
-        map = tree.lookup = {};
+    tree = stratify().id(_.key).parentId(_.parentKey)(pulse.source);
+    map = tree.lookup = {};
     tree.each(function(node) { map[node.data._id] = node; });
     this.value = tree;
   }
 
   pulse.source.root = this.value;
+  return mod ? pulse.fork(pulse.ALL) : pulse;
 };
