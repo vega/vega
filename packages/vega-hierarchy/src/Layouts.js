@@ -80,7 +80,7 @@ prototype.transform = function(_, pulse) {
   }
   root.each(function(node) { setFields(node, fields, as); });
 
-  return pulse.reflow().modifies(as).modifies('leaf');
+  return pulse.reflow(_.modified()).modifies(as).modifies('leaf');
 };
 
 function setParams(layout, params, _) {
