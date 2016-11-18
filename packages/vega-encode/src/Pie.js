@@ -46,5 +46,5 @@ prototype.transform = function(_, pulse) {
   }
 
   this.value = values;
-  return pulse.reflow().modifies(as);
+  return pulse.reflow(_.modified()).modifies(as);
 };

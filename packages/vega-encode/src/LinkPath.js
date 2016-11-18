@@ -45,11 +45,11 @@ prototype.transform = function(_, pulse) {
     error('LinkPath unsupported type: ' + _.shape + '-' + _.orient);
   }
 
-  pulse.reflow().visit(pulse.SOURCE, function(t) {
+  pulse.visit(pulse.SOURCE, function(t) {
     t[as] = path(sx(t), sy(t), tx(t), ty(t));
   });
 
-  return pulse.modifies(as);
+  return pulse.reflow(_.modified()).modifies(as);
 };
 
 // -- Link Path Generation Methods -----
