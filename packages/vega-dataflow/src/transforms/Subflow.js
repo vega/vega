@@ -51,7 +51,7 @@ prototype.mod = function(t) {
  * @see Pulse.init
  */
 prototype.init = function(pulse) {
-  this.value.init(pulse);
+  this.value.init(pulse, pulse.NO_SOURCE);
 };
 
 /**

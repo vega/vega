@@ -194,9 +194,13 @@ prototype.changed = function(flags) {
 /**
  * Forces a "reflow" of tuple values, such that all tuples in the backing
  * source are added to the MOD set, unless already present in the ADD set.
- * @return {Pulse} - This pulse instance.
+ * @param {boolean} [fork=false] - If true, returns a forked copy of this
+ *   pulse, and invokes reflow on that derived pulse.
+ * @return {Pulse} - The reflowed pulse instance.
  */
-prototype.reflow = function() {
+prototype.reflow = function(fork) {
+  if (fork) return this.fork(ALL).reflow();
+
   var len = this.add.length,
       src = this.source && this.source.length;
   if (src && src !== len) {

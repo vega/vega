@@ -21,7 +21,7 @@ prototype.transform = function(_, pulse) {
       as = _.as || ['bin0', 'bin1'],
       b0 = as[0],
       b1 = as[1],
-      flag = _.modified() ? (pulse.reflow(), pulse.SOURCE)
+      flag = _.modified() ? (pulse = pulse.reflow(true), pulse.SOURCE)
         : pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD
         : pulse.ADD;
 

@@ -30,7 +30,7 @@ prototype.transform = function(_, pulse) {
       keys = fields.map(keyFunction),
       n = fields.length,
       stamp = pulse.stamp,
-      out = pulse.fork(),
+      out = pulse.fork(pulse.NO_SOURCE),
       i = 0, mask = 0, id;
 
   function add(t) {

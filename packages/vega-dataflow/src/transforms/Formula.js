@@ -25,7 +25,7 @@ prototype.transform = function(_, pulse) {
 
   if (_.modified()) {
     // parameters updated, need to reflow
-    pulse.materialize().reflow().visit(pulse.SOURCE, set);
+    pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
   } else {
     mod = pulse.modified(func.fields);
     pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);

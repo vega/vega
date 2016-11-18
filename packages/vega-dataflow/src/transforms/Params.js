@@ -16,5 +16,5 @@ inherits(Params, Transform);
 Params.prototype.transform = function(_, pulse) {
   this.modified(_.modified());
   this.value = _;
-  return pulse.fork(); // do not pass tuples
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
 };
