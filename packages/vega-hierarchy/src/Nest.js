@@ -37,6 +37,5 @@ prototype.transform = function(_, pulse) {
   }
 
   pulse.source.root = this.value;
-
   return mod ? pulse.fork(pulse.ALL) : pulse;
 };
