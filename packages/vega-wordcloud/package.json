@@ -1,6 +1,6 @@
 {
   "name": "vega-wordcloud",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Wordcloud layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -27,7 +27,7 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-wordcloud.zip -- LICENSE README.md build/vega-wordcloud.js build/vega-wordcloud.min.js"
   },
   "dependencies": {
-    "vega-dataflow": ">=2.0.0-beta",
+    "vega-dataflow": ">=2.0.0-beta.4",
     "vega-scale": "1",
     "vega-util": "1"
   },
