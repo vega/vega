@@ -30,5 +30,5 @@ prototype.transform = function(_, pulse) {
       : null;
   }
 
-  return pulse.reflow().modifies(as);
+  return pulse.reflow(_.modified()).modifies(as);
 };
