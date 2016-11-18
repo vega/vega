@@ -12,7 +12,8 @@ export default function Wordcloud(params) {
 var prototype = inherits(Wordcloud, Transform);
 
 prototype.transform = function(_, pulse) {
-  var run = _.modified()
+  var mod = _.modified(),
+      run = mod
         || pulse.changed(pulse.ADD_REM)
         || isFunction(_.text) && pulse.modified(_.text.fields)
         || isFunction(_.font) && pulse.modified(_.font.fields)
@@ -78,7 +79,7 @@ prototype.transform = function(_, pulse) {
     t[as[6]] = w.rotate;
   }
 
-  return pulse.reflow().modifies(as);
+  return pulse.reflow(mod).modifies(as);
 };
 
 function extent(size, pulse) {
