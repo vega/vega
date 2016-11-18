@@ -38,7 +38,7 @@ prototype.subflow = function(key, flow, pulse, parent) {
   if (!sf) {
     p = parent || (p = this._group[key]) && p.tuple;
     df = pulse.dataflow;
-    sf = df.add(new Subflow(pulse.fork(), this))
+    sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
       .connect(flow(df, key, this._count++, p));
     flows[key] = sf;
     this.activate(sf);
