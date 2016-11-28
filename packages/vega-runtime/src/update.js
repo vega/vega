@@ -14,7 +14,7 @@ export default function(spec, ctx) {
   if (!source) error('Source not defined: ' + spec.source);
 
   if (spec.target && spec.target.$expr) {
-    target = eventExpression(spec.target.$expr);
+    target = eventExpression(spec.target.$expr, ctx);
   } else {
     target = ctx.get(spec.target);
   }
