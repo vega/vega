@@ -63,6 +63,17 @@ export var extendedFunctions = {
   hsl: hsl,
   gradient: scaleGradient,
 
+  inScope: function(item) {
+      var group = this.context.group,
+          value = false;
+
+      if (group) while (item) {
+        if (item === group) { value = true; break; }
+        item = item.mark.group;
+      }
+      return value;
+    },
+
   clampRange: function(range, min, max) {
       var lo = range[0],
           hi = range[1],
@@ -103,26 +114,26 @@ export var extendedFunctions = {
     },
 
   screen: function() {
-    return _window ? _window.screen : {};
-  },
+      return _window ? _window.screen : {};
+    },
 
   windowsize: function() {
-    return _window
-      ? [_window.innerWidth, _window.innerHeight]
-      : [undefined, undefined];
-  },
+      return _window
+        ? [_window.innerWidth, _window.innerHeight]
+        : [undefined, undefined];
+    },
 
   span: function(array) { return array[array.length-1] - array[0]; },
 
   range: function(name, group) {
-    var s = getScale(name, (group || this).context);
-    return s && s.range ? s.range() : [0, 0];
-  },
+      var s = getScale(name, (group || this).context);
+      return s && s.range ? s.range() : [0, 0];
+    },
 
   domain: function(name, group) {
-    var s = getScale(name, (group || this).context);
-    return s ? s.domain() : [];
-  },
+      var s = getScale(name, (group || this).context);
+      return s ? s.domain() : [];
+    },
 
   bandwidth: function(name, group) {
       var s = getScale(name, (group || this).context);

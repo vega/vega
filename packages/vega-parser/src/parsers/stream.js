@@ -1,12 +1,17 @@
 import parseExpression from './expression';
 import {array, error} from 'vega-util';
 
-var View = 'view';
+var VIEW = 'view',
+    SCOPE = 'scope';
 
 export default function(stream, scope) {
   return stream.signal
     ? scope.getSignal(stream.signal).id
     : parseStream(stream, scope);
+}
+
+function eventSource(source) {
+   return source === SCOPE ? VIEW : (source || VIEW);
 }
 
 function parseStream(stream, scope) {
@@ -34,16 +39,16 @@ function nestedStream(stream, scope) {
 }
 
 function eventStream(stream, scope) {
-  var id = scope.event(stream.source || View, stream.type),
+  var id = scope.event(eventSource(stream.source), stream.type),
       entry = streamParameters({stream: id}, stream, scope);
   return Object.keys(entry).length === 1 ? id
     : scope.addStream(entry).id;
 }
 
 function streamParameters(entry, stream, scope) {
-  var param, mark;
+  var param = stream.between;
 
-  if (param = stream.between) {
+  if (param) {
     if (param.length !== 2) {
       error('Stream between parameter must have 2 entries.');
     }
@@ -53,12 +58,16 @@ function streamParameters(entry, stream, scope) {
     ];
   }
 
-  mark = stream.marktype || stream.markname;
-  if (stream.filter || mark) {
-    param = stream.filter ? array(stream.filter) : [];
-    if (mark) {
-      param.push(filterMark(stream.marktype, stream.markname));
-    }
+  param = stream.filter ? array(stream.filter) : [];
+  if (stream.marktype || stream.markname) {
+    // add filter for mark type and/or mark name
+    param.push(filterMark(stream.marktype, stream.markname));
+  }
+  if (stream.source === SCOPE) {
+    // add filter to limit events from sub-scope only
+    param.push('inScope(event.item)');
+  }
+  if (param.length) {
     entry.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
   }
 
