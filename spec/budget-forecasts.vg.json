@@ -160,7 +160,7 @@
         },
         "labels": {
           "enter": {
-            "text": {"signal": "format('$.1f', datum.value) + ' trillion'"}
+            "text": {"signal": "format(datum.value, '$.1f') + ' trillion'"}
           }
         }
       }
@@ -320,7 +320,7 @@
             "update": {
               "x": {"value": 6},
               "y": {"value": 29},
-              "text": {"signal": "parent.argmin.forecastYear + ': ' + format('$.3f', parent.argmin.abs) + ' trillion ' + parent.argmin.type"},
+              "text": {"signal": "parent.argmin.forecastYear + ': ' + format(parent.argmin.abs, '$.3f') + ' trillion ' + parent.argmin.type"},
               "fill": {"value": "black"},
               "align": {"value": "left"}
             }
