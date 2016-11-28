@@ -31,7 +31,7 @@ function getScale(name, ctx) {
 
 function formatter(method) {
   var cache = {};
-  return function(specifier, _) {
+  return function(_, specifier) {
     var f = cache[specifier] || (cache[specifier] = method(specifier));
     return f(_);
   };
