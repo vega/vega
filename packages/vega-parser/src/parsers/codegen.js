@@ -48,12 +48,19 @@ function expressionFunctions(codegen) {
   return fn;
 }
 
-var _window = (typeof window !== 'undefined' && window) || null;
+var _window = (typeof window !== 'undefined' && window) || null,
+    _timeFormat = formatter(timeFormat),
+    _date = new Date(2000, 0, 1),
+    _time = function(month, day, specifier) {
+        _date.setMonth(month);
+        _date.setDate(day);
+        return _timeFormat(_date, specifier);
+      };
 
 export var extendedFunctions = {
   format: formatter(format),
-  timeFormat: formatter(timeFormat),
   utcFormat: formatter(utcFormat),
+  timeFormat: _timeFormat,
   pad: pad,
   truncate: truncate,
 
@@ -62,6 +69,30 @@ export var extendedFunctions = {
   hcl: hcl,
   hsl: hsl,
   gradient: scaleGradient,
+
+  monthFormat: function(month) {
+      return _time(month, 1, '%B');
+    },
+
+  monthAbbrevFormat: function(month) {
+      return _time(month, 1, '%b');
+    },
+
+  dayFormat: function(day) {
+      return _time(0, 2 + day, '%A');
+    },
+
+  dayAbbrevFormat: function(day) {
+      return _time(0, 2 + day, '%a');
+    },
+
+  quarter: function(date) {
+      return 1 + ~~(new Date(date).getMonth() / 3);
+    },
+
+  utcquarter: function(date) {
+      return 1 + ~~(new Date(date).getUTCMonth() / 3);
+    },
 
   inScope: function(item) {
       var group = this.context.group,
