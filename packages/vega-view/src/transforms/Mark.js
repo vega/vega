@@ -20,14 +20,17 @@ export default function Mark(params) {
 var prototype = inherits(Mark, Transform);
 
 prototype.transform = function(_, pulse) {
-  var mark = this.value;
+  var mark = this.value, group, context;
 
-  // acquire mark on first invocation
+  // acquire mark on first invocation, bind context and group
   if (!mark) {
     mark = pulse.dataflow.scenegraph().mark(_.scenepath, _.markdef);
     mark.source = this;
     this.value = mark;
-    mark.group.context = _.scenepath.context;
+    context = _.scenepath.context;
+    group = mark.group;
+    group.context = context;
+    if (!context.group) context.group = group;
   }
 
   // initialize entering items
