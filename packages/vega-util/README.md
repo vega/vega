@@ -346,7 +346,7 @@ be included in runtime-compiled code snippets (for example, via the Function
 constructor).
 
 <a name="truncate" href="#truncate">#</a>
-vega.<b>truncate</b>(<i>string</i> <i>length</i>[, <i>align</i>, <i>ellipsis</i>])
+vega.<b>truncate</b>(<i>string</i>, <i>length</i>[, <i>align</i>, <i>ellipsis</i>])
 [<>](https://github.com/vega/vega-util/blob/master/src/truncate.js "Source")
 
 Truncates an input *string* to a target *length*. The optional *align* argument
