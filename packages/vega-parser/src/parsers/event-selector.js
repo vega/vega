@@ -25,8 +25,8 @@ function find(s, i, endChar, pushChar, popChar) {
       c;
   for (; i<n; ++i) {
     c = s[i];
-    if (popChar && popChar.indexOf(c) >= 0) --count;
-    if (c === endChar && !count) return i;
+    if (!count && c === endChar) return i;
+    else if (popChar && popChar.indexOf(c) >= 0) --count;
     else if (pushChar && pushChar.indexOf(c) >= 0) ++count;
   }
   return i;
@@ -62,7 +62,7 @@ function parseBetween(s) {
       i = 1,
       b, stream;
 
-  i = find(s, i, RBRACK, LBRACK);
+  i = find(s, i, RBRACK, LBRACK, RBRACK);
   if (i === n) {
     throw 'Empty between selector: ' + s;
   }
