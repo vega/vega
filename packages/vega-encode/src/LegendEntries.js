@@ -48,8 +48,15 @@ prototype.transform = function(_, pulse) {
             ? scale.copy().domain([min, max]).range([0, 1])
             : function(_) { return (_ - min) / (max - min); };
   } else {
-    var size = _.size;
-    if (!isFunction(size)) size = constant(size || 8);
+    var size = _.size,
+        offset;
+    if (isFunction(size)) {
+      offset = values.reduce(function(max, value) {
+        return Math.max(max, size(value, _));
+      }, 0);
+    } else {
+      size = constant(offset = size || 8);
+    }
   }
 
   items = values.map(function(value, index) {
@@ -57,7 +64,8 @@ prototype.transform = function(_, pulse) {
     if (grad) {
       t.perc = fraction(value);
     } else {
-      t.size = size(value);
+      t.offset = offset;
+      t.size = size(value, _);
       t.total = Math.round(total);
       total += t.size;
     }
