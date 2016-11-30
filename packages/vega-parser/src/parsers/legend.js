@@ -119,6 +119,6 @@ function sizeExpression(spec, config, encode) {
   if (!fontSize) fontSize = +config.labelFontSize;
 
   return spec.size
-    ? {$expr: 'Math.max(ceil(sqrt(_.scale(datum))),' + fontSize + ')'}
+    ? {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'}
     : Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
 }
