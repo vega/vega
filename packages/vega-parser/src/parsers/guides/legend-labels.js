@@ -1,4 +1,4 @@
-import {Index, Label, Size, Total} from './constants';
+import {Index, Label, Offset, Size, Total} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
@@ -26,7 +26,7 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   enter.x = update.x = {
-    field:  Size,
+    field:  Offset,
     offset: config.labelOffset
   };
 
