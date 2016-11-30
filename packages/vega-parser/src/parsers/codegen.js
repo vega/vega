@@ -48,6 +48,15 @@ function expressionFunctions(codegen) {
   return fn;
 }
 
+function log(df, method, value, message) {
+  try {
+    df[method]('EXPRESSION' + (message ? ' ' + message : ''), value);
+  } catch (err) {
+    df.warn(err);
+  }
+  return value;
+}
+
 var _window = (typeof window !== 'undefined' && window) || null,
     _timeFormat = formatter(timeFormat),
     _date = new Date(2000, 0, 1),
@@ -92,6 +101,18 @@ export var extendedFunctions = {
 
   utcquarter: function(date) {
       return 1 + ~~(new Date(date).getUTCMonth() / 3);
+    },
+
+  warn: function(value, message) {
+      return log(this.context.dataflow, 'warn', value, message);
+    },
+
+  info: function(value, message) {
+      return log(this.context.dataflow, 'info', value, message);
+    },
+
+  debug: function(value, message) {
+      return log(this.context.dataflow, 'debug', value, message);
     },
 
   inScope: function(item) {
