@@ -11,6 +11,7 @@ import marktype from './marktype';
 import onEvents from './on-events';
 import onTrigger from './on-trigger';
 import padding from './padding';
+import projection from './projection';
 import scale from './scale';
 import scope from './scope';
 import selector from './selector';
@@ -33,7 +34,7 @@ function addModule(schema, module) {
 export default function(definitions) {
   var schema = {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "Vega 3.x Visualization Specification Language",
+    "title": "Vega 3.0 Visualization Specification Language",
     "defs": {},
     "refs": {},
     "$ref": "#/defs/spec"
@@ -53,6 +54,7 @@ export default function(definitions) {
     onEvents,
     onTrigger,
     padding,
+    projection,
     scale,
     scope,
     selector,
