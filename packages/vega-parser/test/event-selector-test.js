@@ -120,6 +120,17 @@ tape('Parser parses event selector strings', function(test) {
     }
   });
 
+  events = vega.selector('[mousedown[!event.item], window:mouseup] > window:mousemove');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'window',
+    type: 'mousemove',
+    between: [
+      {source: 'view', type: 'mousedown', filter: ['!event.item']},
+      {source: 'window', type: 'mouseup'}
+    ]
+  });
+
   test.end();
 });
 
