@@ -7,6 +7,18 @@ export default {
         "signal": {"type": "string"}
       },
       "required": ["signal"]
+    },
+    "numberOrSignal": {
+      "oneOf": [
+        {"type": "number"},
+        {"$ref": "#/refs/signal", "additionalProperties": false}
+      ]
+    },
+    "stringOrSignal": {
+      "oneOf": [
+        {"type": "string"},
+        {"$ref": "#/refs/signal", "additionalProperties": false}
+      ]
     }
   },
 

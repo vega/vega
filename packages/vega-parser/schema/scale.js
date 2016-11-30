@@ -6,7 +6,7 @@ var rangeDef = [
     "type": "array",
     "items": {
       "oneOf": [
-        {"type":"string"},
+        {"type": "string"},
         {"type": "number"},
         {"$ref": "#/refs/signal"}
       ]
@@ -26,15 +26,13 @@ export default {
     "scaleField": {
       "oneOf": [
         {"type": "string"},
-        {"$ref": "#/refs/signal", "additionalProperties": false},
-        {"$ref": "#/refs/expr", "additionalProperties": false}
+        {"$ref": "#/refs/signal", "additionalProperties": false}
       ]
     },
     "scaleScheme": {
       "oneOf": [
         {"type": "string"},
-        {"$ref": "#/refs/signal", "additionalProperties": false},
-        {"$ref": "#/refs/expr", "additionalProperties": false}
+        {"$ref": "#/refs/signal", "additionalProperties": false}
       ]
     },
     "scaleData": {

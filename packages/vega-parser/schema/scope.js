@@ -16,6 +16,10 @@ export default {
           "type": "array",
           "items": {"$ref": "#/defs/scale"}
         },
+        "projections": {
+          "type": "array",
+          "items": {"$ref": "#/defs/projection"}
+        },
         "axes": {
           "type": "array",
           "items": {"$ref": "#/defs/axis"}
