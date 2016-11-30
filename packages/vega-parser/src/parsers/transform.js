@@ -43,7 +43,9 @@ function parseParameter(def, spec, scope) {
   } else {
     value = spec[def.name];
     if (value === undefined) {
-      if (def.required) error('Missing required parameter: ' + def.name);
+      if (def.required) {
+        error('Missing required ' + spec.type + ' parameter: ' + def.name);
+      }
       return;
     }
 
