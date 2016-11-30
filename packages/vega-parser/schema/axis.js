@@ -4,6 +4,7 @@ export default {
       "type": "object",
       "properties": {
         "orient": {"enum": ["top", "bottom", "left", "right"]},
+        "name": {"type": "string"},
         "scale": {"type": "string"},
         "title": {"type": "string"},
         "zindex": {"type": "number"},
