@@ -166,6 +166,10 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
 
+- For the `"bin"` transform:
+  - The `"max"` and `"min"` have been removed.  Instead, users can provide `"extent"`, a two-element (`[min, max]`) array indicating the range of desired bin values.
+  - The `"div"` property has been renamed to `"divide"`.
+
 - The `"filter"` transform `"test"` parameter has been renamed `"expr"` for consistency with other transforms that take an expression parameter.
 
 - The `"formula"` transform `"field"` parameter has been renamed `"as"`.
