@@ -13,6 +13,7 @@ import {Collect, AxisTicks} from '../transforms';
 
 export default function(spec, scope) {
   var config = axisConfig(spec, scope),
+      name = spec.name || undefined,
       encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, ticksRef, size, group, axisEncode, children;
@@ -80,7 +81,7 @@ export default function(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup(AxisRole, dataRef, interactive, axisEncode, children);
+  group = guideGroup(AxisRole, name, dataRef, interactive, axisEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification

@@ -14,6 +14,7 @@ import {error} from 'vega-util';
 export default function(spec, scope) {
   var type = spec.type || 'symbol',
       config = scope.config.legend,
+      name = spec.name || undefined,
       encode = spec.encode || {},
       interactive = !!spec.interactive,
       datum, dataRef, entryRef, group, title,
@@ -85,7 +86,7 @@ export default function(spec, scope) {
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, dataRef, interactive, entryEncode, children)
+    guideGroup(LegendEntryRole, null, dataRef, interactive, entryEncode, children)
   ];
 
   // include legend title if defined
@@ -99,7 +100,7 @@ export default function(spec, scope) {
   }
 
   // build legend specification
-  group = guideGroup(LegendRole, dataRef, interactive, legendEncode, children);
+  group = guideGroup(LegendRole, name, dataRef, interactive, legendEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse legend specification
