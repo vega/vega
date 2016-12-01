@@ -78,7 +78,14 @@ prototype.id = function() {
 };
 
 prototype.add = function(op) {
-  return this.operators.push(op), op.id = this.id(), op;
+  this.operators.push(op);
+  op.id = this.id();
+  // if pre-registration references exist, resolve them now
+  if (op.refs) {
+    op.refs.forEach(function(ref) { ref.$ref = op.id; });
+    op.refs = null;
+  }
+  return op;
 };
 
 prototype.addStream = function(stream) {

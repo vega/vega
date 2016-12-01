@@ -19,7 +19,10 @@ export function operator(value, params) {
 // -----
 
 export function ref(op) {
-  return {$ref: op.id};
+  var ref = {$ref: op.id};
+  // if operator not yet registered, cache ref to resolve later
+  if (op.id < 0) (op.refs = op.refs || []).push(ref);
+  return ref;
 }
 
 export function fieldRef(field, name) {
