@@ -1,7 +1,7 @@
 export {default as Bounds} from './src/Bounds';
 export {default as Gradient} from './src/Gradient';
 export {default as GroupItem} from './src/GroupItem';
-export {default as ImageLoader} from './src/ImageLoader';
+export {default as ResourceLoader} from './src/ResourceLoader';
 export {default as Item} from './src/Item';
 export {default as Scenegraph} from './src/Scenegraph';
 

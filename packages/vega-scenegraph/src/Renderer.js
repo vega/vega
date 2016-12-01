@@ -1,16 +1,16 @@
-import ImageLoader from './ImageLoader';
+import ResourceLoader from './ResourceLoader';
 
 /**
  * Create a new Renderer instance.
- * @param {object} [imageLoader] - Optional loader instance for
- *   image URL sanitization. If not specified, a standard loader
- *   instance will be generated.
+ * @param {object} [loader] - Optional loader instance for
+ *   image and href URL sanitization. If not specified, a
+ *   standard loader instance will be generated.
  * @constructor
  */
-export default function Renderer(imageLoader) {
+export default function Renderer(loader) {
   this._el = null;
   this._bgcolor = null;
-  this._loader = new ImageLoader(imageLoader);
+  this._loader = new ResourceLoader(loader);
 }
 
 var prototype = Renderer.prototype;
@@ -128,18 +128,19 @@ prototype.renderAsync = function(scene, items) {
 };
 
 /**
- * Requests an image to include in the rendered scene.
- * This method proxies a call to ImageLoader.loadImage, but also tracks
- * image loading progress and invokes a re-render once complete.
- * @return {Image} - The requested image instance.
- *   The image content may not be loaded yet.
+ * Internal method for asynchronous resource loading.
+ * Proxies method calls to the ImageLoader, and tracks loading
+ * progress to invoke a re-render once complete.
+ * @param {string} method - The method name to invoke on the ImageLoader.
+ * @param {string} uri - The URI for the requested resource.
+ * @return {Promise} - A Promise that resolves to the requested resource.
  */
-prototype.loadImage = function(uri) {
+prototype._load = function(method, uri) {
   var r = this,
-      p = r._loader.loadImage(uri);
+      p = r._loader[method](uri);
 
   if (!r._ready) {
-    // re-render the scene when image loading completes
+    // re-render the scene when loading completes
     var call = r._call;
     r._ready = r._loader.ready()
       .then(function(redraw) {
@@ -149,4 +150,26 @@ prototype.loadImage = function(uri) {
   }
 
   return p;
+};
+
+/**
+ * Sanitize a URL to include as a hyperlink in the rendered scene.
+ * This method proxies a call to ImageLoader.sanitizeURL, but also tracks
+ * image loading progress and invokes a re-render once complete.
+ * @param {string} uri - The URI string to sanitize.
+ * @return {Promise} - A Promise that resolves to the sanitized URL.
+ */
+prototype.sanitizeURL = function(uri) {
+  return this._load('sanitizeURL', uri);
+};
+
+/**
+ * Requests an image to include in the rendered scene.
+ * This method proxies a call to ImageLoader.loadImage, but also tracks
+ * image loading progress and invokes a re-render once complete.
+ * @param {string} uri - The URI string of the image.
+ * @return {Promise} - A Promise that resolves to the loaded Image.
+ */
+prototype.loadImage = function(uri) {
+  return this._load('loadImage', uri);
 };

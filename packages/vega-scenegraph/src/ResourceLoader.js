@@ -1,20 +1,43 @@
 import Image from './util/canvas/image';
 import {loader} from 'vega-loader';
 
-export default function ImageLoader(imageLoader) {
+export default function ResourceLoader(customLoader) {
   this._pending = 0;
-  this._loader = imageLoader || loader();
+  this._loader = customLoader || loader();
 }
 
-var prototype = ImageLoader.prototype;
+var prototype = ResourceLoader.prototype;
 
 prototype.pending = function() {
   return this._pending;
 };
 
+function increment(loader) {
+  loader._pending += 1;
+}
+
+function decrement(loader) {
+  loader._pending -= 1;
+}
+
+prototype.sanitizeURL = function(uri) {
+  var loader = this;
+  increment(loader);
+
+  return loader._loader.sanitize(uri, {context:'href'})
+    .then(function(url) {
+      decrement(loader);
+      return url;
+    })
+    .catch(function() {
+      decrement(loader);
+      return null;
+    });
+};
+
 prototype.loadImage = function(uri) {
   var loader = this;
-  loader._pending += 1;
+  increment(loader);
 
   return loader._loader.sanitize(uri, {context:'image'})
     .then(function(url) {
@@ -23,12 +46,12 @@ prototype.loadImage = function(uri) {
       var image = new Image();
 
       image.onload = function() {
-        loader._pending -= 1;
+        decrement(loader);
         image.loaded = true;
       };
 
       image.onerror = function() {
-        loader._pending -= 1;
+        decrement(loader);
         image.loaded = false;
       }
 
@@ -36,7 +59,7 @@ prototype.loadImage = function(uri) {
       return image;
     })
     .catch(function() {
-      loader._pending -= 1;
+      decrement(loader);
       return {loaded: false, width: 0, height: 0};
     });
 };
@@ -45,7 +68,7 @@ prototype.ready = function() {
   var loader = this;
   return new Promise(function(accept) {
     function poll(value) {
-      if (!loader._pending) accept(value);
+      if (!loader.pending()) accept(value);
       else setTimeout(function() { poll(true); }, 10);
     }
     poll(false);
