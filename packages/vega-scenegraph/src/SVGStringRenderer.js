@@ -8,8 +8,8 @@ import {visit} from './util/visit';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 
-export default function SVGStringRenderer(imageLoader) {
-  Renderer.call(this, imageLoader);
+export default function SVGStringRenderer(loader) {
+  Renderer.call(this, loader);
 
   this._text = {
     head: '',
@@ -126,6 +126,22 @@ prototype.attributes = function(attr, item) {
   return object;
 };
 
+prototype.href = function(item) {
+  var that = this,
+      href = item.href, url;
+
+  if (href) {
+    if (url = that._hrefs && that._hrefs[href]) {
+      return url;
+    } else {
+      that.sanitizeURL(href).then(function(url) {
+        (that._hrefs || (that._hrefs = {}))[href] = url;
+      });
+    }
+  }
+  return null;
+};
+
 prototype.mark = function(scene) {
   var renderer = this,
       mdef = marks[scene.marktype],
@@ -145,6 +161,9 @@ prototype.mark = function(scene) {
 
   // render contained elements
   function process(item) {
+    var href = renderer.href(item);
+    if (href) str += openTag('a', {'xlink:href': href});
+
     style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
     str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
@@ -158,6 +177,7 @@ prototype.mark = function(scene) {
     }
 
     str += closeTag(tag);
+    if (href) str += closeTag('a');
   }
 
   if (mdef.nested) {

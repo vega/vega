@@ -1,6 +1,9 @@
-export default function Handler() {
+import {loader} from 'vega-loader';
+
+export default function Handler(customLoader) {
   this._active = null;
   this._handlers = {};
+  this._loader = customLoader || loader();
 }
 
 var prototype = Handler.prototype;
@@ -44,4 +47,19 @@ prototype.handlers = function() {
 prototype.eventName = function(name) {
   var i = name.indexOf('.');
   return i < 0 ? name : name.slice(0,i);
+};
+
+prototype.handleHref = function(event, href) {
+  if (typeof MouseEvent !== 'undefined' &&
+      typeof document !== 'undefined' && document.createElement)
+  {
+    this._loader
+      .sanitize(href, {context:'href'})
+      .then(function(url) {
+        var a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.dispatchEvent(new MouseEvent(event.type, event));
+      })
+      .catch(function() { /* do nothing */ });
+  }
 };

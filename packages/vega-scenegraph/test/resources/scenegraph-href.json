@@ -1,0 +1,23 @@
+{
+  "marktype": "group",
+  "interactive": false,
+  "items": [
+    {
+      "width": 400,
+      "height": 200,
+      "clip": true,
+      "items": [
+        {
+          "marktype": "rect",
+          "interactive": true,
+          "items": [
+            {"x": 0,   "y": 144, "width": 99, "height": 56,  "fill": "steelblue", "href": "image0.png"},
+            {"x": 100, "y": 90,  "width": 99, "height": 110, "fill": "steelblue", "href": "image1.png"},
+            {"x": 200, "y": 114, "width": 99, "height": 86,  "fill": "steelblue", "href": "image2.png"},
+            {"x": 300, "y": 18,  "width": 99, "height": 182, "fill": "steelblue"}
+          ]
+        }
+      ]
+    }
+  ]
+}

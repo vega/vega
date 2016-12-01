@@ -372,3 +372,13 @@ tape('SVGStringRenderer should render text mark', function(test) {
   test.equal(svg, file);
   test.end();
 });
+
+tape('SVGStringRenderer should inject hyperlinks', function(test) {
+  var scene = loadScene('scenegraph-href.json');
+  renderAsync(scene, 400, 200, function(svg) {
+    generate('svg/scenegraph-href.svg', svg);
+    var file = load('svg/scenegraph-href.svg');
+    test.equal(svg, file);
+    test.end();
+  });
+});

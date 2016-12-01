@@ -4,8 +4,8 @@ import Marks from './marks/index';
 import point from './util/point';
 import {find} from './util/dom';
 
-export default function CanvasHandler() {
-  Handler.call(this);
+export default function CanvasHandler(loader) {
+  Handler.call(this, loader);
   this._down = null;
   this._touch = null;
   this._first = true;
@@ -63,7 +63,7 @@ prototype.events = [
   'touchend'
 ];
 
-// to keep firefox happy
+// to keep old versions of firefox happy
 prototype.DOMMouseScroll = function(evt) {
   this.fire('mousewheel', evt);
 };
@@ -139,6 +139,13 @@ prototype.touchend = function(evt) {
 prototype.fire = function(type, evt, touch) {
   var a = touch ? this._touch : this._active,
       h = this._handlers[type], i, len;
+
+  // if hyperlinked, handle link first
+  if (type === 'click' && a && a.href) {
+    this.handleHref(evt, a.href);
+  }
+
+  // invoke all registered handlers
   if (h) {
     evt.vegaType = type;
     for (i=0, len=h.length; i<len; ++i) {
