@@ -95,7 +95,7 @@
           "order": {"signal": "sortorder"}
         }
       },
-      "bandSize": {"signal": "cellSize"},
+      "rangeStep": {"signal": "cellSize"},
       "padding": 0.5
     }
   ],
