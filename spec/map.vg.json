@@ -75,7 +75,7 @@
       "type": "mercator",
       "scale": {"signal": "scale"},
       "rotate": [{"signal": "rotateX"}, 0, 0],
-      "center": [0, {"signal": "centerY"} ],
+      "center": [0, {"signal": "centerY"}],
       "translate": [{"signal": "tx"}, {"signal": "ty"}]
     }
   ],

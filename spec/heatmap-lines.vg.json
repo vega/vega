@@ -4,8 +4,8 @@
   "padding": 5,
 
   "signals": [
-    {"name": "bandSize", "value": 25},
-    {"name": "height", "update": "bandSize * 24"}
+    {"name": "rangeStep", "value": 25},
+    {"name": "height", "update": "rangeStep * 24"}
   ],
 
   "data": [
@@ -29,7 +29,7 @@
         6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
         0, 1, 2, 3, 4, 5
       ],
-      "bandSize": {"signal": "bandSize"}
+      "rangeStep": {"signal": "rangeStep"}
     },
     {
       "name": "x",
@@ -41,7 +41,7 @@
       "name": "y",
       "type": "linear", "zero": false,
       "domain": {"data": "temperature", "field": "temp"},
-      "range": [{"signal": "bandSize"}, 1]
+      "range": [{"signal": "rangeStep"}, 1]
     }
   ],
 
@@ -75,7 +75,7 @@
           "x": {"value": 0},
           "y": {"scale": "row", "field": "hour"},
           "width": {"signal": "width"},
-          "height": {"signal": "bandSize"}
+          "height": {"signal": "rangeStep"}
         }
       },
       "marks": [
@@ -86,7 +86,7 @@
             "enter": {
               "x": {"scale": "x", "field": "date"},
               "y": {"scale": "y", "field": "temp"},
-              "y2": {"signal": "bandSize"}
+              "y2": {"signal": "rangeStep"}
             }
           }
         }

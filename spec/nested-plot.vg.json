@@ -20,12 +20,16 @@
 
   "signals": [
     {
-      "name": "height",
-      "update": "extent[1] * bandSize"
+      "name": "rangeStep", "value": 20,
+      "bind": {"type": "range", "min": 5, "max": 50, "step": 1}
     },
     {
-      "name": "bandSize",
-      "value": 20
+      "name": "barWidth", "value": 0.9,
+      "bind": {"type": "range", "min": 0, "max": 1, "step": 0.05}
+    },
+    {
+      "name": "height",
+      "update": "rangeStep * extent[1]"
     }
   ],
 
@@ -36,6 +40,7 @@
         {"a": 0, "b": "a", "c": 6.3},
         {"a": 0, "b": "a", "c": 4.2},
         {"a": 0, "b": "b", "c": 6.8},
+        {"a": 0, "b": "c", "c": 5.1},
         {"a": 1, "b": "b", "c": 4.4},
         {"a": 2, "b": "b", "c": 3.5},
         {"a": 2, "b": "c", "c": 6.2}
@@ -108,9 +113,11 @@
       "encode": {
         "enter": {
           "x": {"value": 0},
-          "width": {"signal": "width"},
-          "y": {"field": "y0", "mult": {"signal": "bandSize"}},
-          "y2": {"field": "y1", "mult": {"signal": "bandSize"}}
+          "width": {"signal": "width"}
+        },
+        "update": {
+          "y": {"field": "y0", "mult": {"signal": "rangeStep"}},
+          "y2": {"field": "y1", "mult": {"signal": "rangeStep"}}
         }
       },
 
@@ -118,16 +125,16 @@
         {
           "name": "yscale",
           "type": "band",
-          "padding": 0.11,
+          "padding": 0,
           "round": true,
           "domain": {"data": "faceted_tuples", "field": "b"},
-          "bandSize": {"signal": "bandSize"}
+          "rangeStep": {"signal": "rangeStep"}
         }
       ],
 
       "axes": [
         { "orient": "left", "scale": "yscale",
-          "tickSize": 0, "labelPadding": 4, "domain": false }
+          "tick": false, "domain": false, "labelPadding": 4 }
       ],
 
       "marks": [
@@ -138,17 +145,18 @@
             "enter": {
               "x": {"value": 0},
               "x2": {"scale": "xscale", "field": "c"},
-              "y": {"scale": "yscale", "field": "b"},
-              "height": {"scale": "yscale", "band": 1},
               "fill": {"scale": "color", "field": "a"},
-              "cornerRadius": {"value": 8},
               "strokeWidth": {"value": 2}
             },
             "update": {
-              "stroke": {"value": null}
+              "yc": {"scale": "yscale", "field": "b", "band": 0.5},
+              "height": {"scale": "yscale", "band": 1, "mult": {"signal": "barWidth"}},
+              "stroke": {"value": null},
+              "zindex": {"value": 0}
             },
             "hover": {
-              "stroke": {"value": "firebrick"}
+              "stroke": {"value": "firebrick"},
+              "zindex": {"value": 1}
             }
           }
         }
