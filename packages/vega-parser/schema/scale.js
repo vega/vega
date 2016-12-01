@@ -233,7 +233,7 @@ export default {
                     {"$ref": "#/refs/signal"}
                   ]
                 },
-                "bandSize": {
+                "rangeStep": {
                   "oneOf": [
                     {"type": "number"},
                     {"$ref": "#/refs/signal"}
