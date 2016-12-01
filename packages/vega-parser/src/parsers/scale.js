@@ -35,8 +35,8 @@ export default function(spec, scope) {
   };
 
   if (spec.range != null) {
-    if (spec.bandSize != null) {
-      error('Scale range and bandSize are mutually exclusive.');
+    if (spec.rangeStep != null) {
+      error('Scale range and rangeStep are mutually exclusive.');
     }
     params.range = parseScaleRange(spec, scope);
   }
