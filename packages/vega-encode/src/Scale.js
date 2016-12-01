@@ -17,8 +17,8 @@ var SKIP = {
   'zero': 1,
 
   'range': 1,
+  'rangeStep': 1,
   'round': 1,
-  'bandSize': 1,
   'reverse': 1
 };
 
@@ -89,11 +89,15 @@ function configureRange(scale, _, count) {
   var type = scale.type,
       range = _.range;
 
-  if (_.bandSize != null) {
+  if (_.rangeStep != null) {
     if (type !== 'band' && type !== 'point') {
-      error('Only band and point scales support bandSize.');
+      error('Only band and point scales support rangeStep.');
     }
-    range = [0, _.bandSize * count];
+    // calculate full range based on requested step size and padding
+    // Mirrors https://github.com/d3/d3-scale/blob/master/src/band.js#L23
+    var inner = (_.paddingInner != null ? _.paddingInner : _.padding) || 0,
+        outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0;
+    range = [0, _.rangeStep * (count - (count > 1 ? inner : 0) + outer * 2)];
   }
 
   if (range) {
