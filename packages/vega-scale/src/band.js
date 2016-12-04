@@ -19,8 +19,9 @@ export default function band() {
     var n = domain().length,
         reverse = range[1] < range[0],
         start = range[reverse - 0],
-        stop = range[1 - reverse];
-    step = (stop - start) / (n ? n - paddingInner + paddingOuter * 2 : 1);
+        stop = range[1 - reverse],
+        space = n - paddingInner + paddingOuter * 2;
+    step = (stop - start) / (n && space > 0 ? space : 1);
     if (round) step = Math.floor(step);
     start += (stop - start - step * (n - paddingInner)) * align;
     bandwidth = step * (1 - paddingInner);
