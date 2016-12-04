@@ -1,6 +1,7 @@
 import {Transform} from 'vega-dataflow';
 import {scale as getScale} from 'vega-scale';
 import {error, inherits, isFunction, toSet} from 'vega-util';
+import {interpolate, interpolateRound} from 'd3-interpolate';
 
 var SKIP = {
   'set': 1,
@@ -87,21 +88,32 @@ function configureDomain(scale, _) {
 
 function configureRange(scale, _, count) {
   var type = scale.type,
+      round = _.round || false,
       range = _.range;
 
+  // configure rounding
+  if (isFunction(scale.round)) {
+    scale.round(round);
+  } else if (isFunction(scale.rangeRound)) {
+    scale.interpolate(round ? interpolateRound : interpolate);
+  }
+
+  // if range step specified, calculate full range extent
   if (_.rangeStep != null) {
     if (type !== 'band' && type !== 'point') {
       error('Only band and point scales support rangeStep.');
     }
     // calculate full range based on requested step size and padding
     // Mirrors https://github.com/d3/d3-scale/blob/master/src/band.js#L23
+    //  step = span / Math.max(1, n - paddingInner + paddingOuter * 2)
     var inner = (_.paddingInner != null ? _.paddingInner : _.padding) || 0,
-        outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0;
-    range = [0, _.rangeStep * (count - (count > 1 ? inner : 0) + outer * 2)];
+        outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
+        space = count ? Math.max(1, count - inner + outer * 2) : 0;
+    range = [0, _.rangeStep * space];
   }
 
   if (range) {
     if (_.reverse) range = range.slice().reverse();
-    scale[_.round ? 'rangeRound' : 'range'](range);
+    scale.range(range);
   }
 }
