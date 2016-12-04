@@ -20,7 +20,7 @@ export default function band() {
         reverse = range[1] < range[0],
         start = range[reverse - 0],
         stop = range[1 - reverse];
-    step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2);
+    step = (stop - start) / (n ? n - paddingInner + paddingOuter * 2 : 1);
     if (round) step = Math.floor(step);
     start += (stop - start - step * (n - paddingInner)) * align;
     bandwidth = step * (1 - paddingInner);
