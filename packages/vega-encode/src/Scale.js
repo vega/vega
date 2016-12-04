@@ -103,12 +103,15 @@ function configureRange(scale, _, count) {
     if (type !== 'band' && type !== 'point') {
       error('Only band and point scales support rangeStep.');
     }
+
     // calculate full range based on requested step size and padding
     // Mirrors https://github.com/d3/d3-scale/blob/master/src/band.js#L23
-    //  step = span / Math.max(1, n - paddingInner + paddingOuter * 2)
+    //  step = span / (n ? n - paddingInner + paddingOuter * 2 : 1)
+    // with an exception that for count = 0, we set space = 0 so that range is [0,0]
+    // to avoid drawing empty ordinal axis.
     var inner = (_.paddingInner != null ? _.paddingInner : _.padding) || 0,
         outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-        space = count ? Math.max(1, count - inner + outer * 2) : 0;
+        space = count ? count - inner + outer * 2 : 0;
     range = [0, _.rangeStep * space];
   }
 
