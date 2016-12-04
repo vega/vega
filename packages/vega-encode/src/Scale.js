@@ -105,14 +105,16 @@ function configureRange(scale, _, count) {
     }
 
     // calculate full range based on requested step size and padding
-    // Mirrors https://github.com/d3/d3-scale/blob/master/src/band.js#L23
-    //  step = span / (n ? n - paddingInner + paddingOuter * 2 : 1)
-    // with an exception that for count = 0, we set space = 0 so that range is [0,0]
-    // to avoid drawing empty ordinal axis.
+    // Mirrors https://github.com/vega/vega-scale/blob/master/src/band.js#L23
+    //   space = n - paddingInner + paddingOuter * 2;
+    //   step = (stop - start) / (space > 0 ? space : 1);
+    // with an exception that the formula above replaces space with 1 when space is <= 0
+    // to avoid division by zero. Here, we do not have the division by zero problem.
+    // Thus we can set space = 0 to make range = [0,0] to avoid drawing empty ordinal axis.
     var inner = (_.paddingInner != null ? _.paddingInner : _.padding) || 0,
         outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-        space = count ? count - inner + outer * 2 : 0;
-    range = [0, _.rangeStep * space];
+        space = count - inner + outer * 2;
+    range = [0, _.rangeStep * (space > 0 ? space : 0)];
   }
 
   if (range) {
