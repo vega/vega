@@ -57,6 +57,7 @@ prototype.resize = function(width, height, origin) {
   if (this._svg) {
     this._svg.setAttribute('width', this._width);
     this._svg.setAttribute('height', this._height);
+    this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
     this._root.setAttribute('transform', 'translate(' + this._origin + ')');
   }
 
@@ -69,7 +70,8 @@ prototype.svg = function() {
   var attr = {
     'class':  'marks',
     'width':  this._width,
-    'height': this._height
+    'height': this._height,
+    'viewBox': '0 0 ' + this._width + ' ' + this._height
   };
   for (var key in metadata) {
     attr[key] = metadata[key];

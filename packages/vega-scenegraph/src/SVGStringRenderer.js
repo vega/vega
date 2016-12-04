@@ -37,7 +37,8 @@ prototype.resize = function(width, height, origin) {
   var attr = {
     'class':  'marks',
     'width':  this._width,
-    'height': this._height
+    'height': this._height,
+    'viewBox': '0 0 ' + this._width + ' ' + this._height
   };
   for (var key in metadata) {
     attr[key] = metadata[key];
