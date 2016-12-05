@@ -128,14 +128,19 @@ prototype.attributes = function(attr, item) {
 
 prototype.href = function(item) {
   var that = this,
-      href = item.href, url;
+      href = item.href,
+      attr;
 
   if (href) {
-    if (url = that._hrefs && that._hrefs[href]) {
-      return url;
+    if (attr = that._hrefs && that._hrefs[href]) {
+      return attr;
     } else {
-      that.sanitizeURL(href).then(function(url) {
-        (that._hrefs || (that._hrefs = {}))[href] = url;
+      that.sanitizeURL(href).then(function(attr) {
+        // rewrite to use xlink namespace
+        // note that this will be deprecated in SVG 2.0
+        attr['xlink:href'] = attr.href;
+        attr.href = null;
+        (that._hrefs || (that._hrefs = {}))[href] = attr;
       });
     }
   }
@@ -162,7 +167,7 @@ prototype.mark = function(scene) {
   // render contained elements
   function process(item) {
     var href = renderer.href(item);
-    if (href) str += openTag('a', {'xlink:href': href});
+    if (href) str += openTag('a', href);
 
     style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
     str += openTag(tag, renderer.attributes(mdef.attr, item), style);
