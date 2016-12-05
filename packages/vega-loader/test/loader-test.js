@@ -15,7 +15,7 @@ var text = require('fs').readFileSync(file, 'utf8');
 function sanityTest(test, uri, options, result) {
   if (result != null) {
     return loader.sanitize(uri, options)
-      .then(function(url) { test.equal(url, result); })
+      .then(function(opt) { test.equal(opt.href, result); })
       .catch(function(e) { test.fail(e); });
   } else {
     return loader.sanitize(uri, options)
