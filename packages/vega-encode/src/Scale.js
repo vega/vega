@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {scale as getScale} from 'vega-scale';
+import {scale as getScale, bandSpace} from 'vega-scale';
 import {error, inherits, isFunction, toSet} from 'vega-util';
 import {interpolate, interpolateRound} from 'd3-interpolate';
 
@@ -112,9 +112,8 @@ function configureRange(scale, _, count) {
     // to avoid division by zero. Here, we do not have the division by zero problem.
     // Thus we can set space = 0 to make range = [0,0] to avoid drawing empty ordinal axis.
     var inner = (_.paddingInner != null ? _.paddingInner : _.padding) || 0,
-        outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-        space = count - inner + outer * 2;
-    range = [0, _.rangeStep * (space > 0 ? space : 0)];
+        outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0;
+    range = [0, _.rangeStep * bandSpace(count, inner, outer)];
   }
 
   if (range) {
