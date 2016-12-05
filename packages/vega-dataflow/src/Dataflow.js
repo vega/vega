@@ -50,8 +50,9 @@ prototype.stamp = function() {
  * loader object must provide a "load" method for loading files and a
  * "sanitize" method for checking URL/filename validity. Both methods
  * should accept a URI and options hash as arguments, and return a Promise
- * that resolves to the loaded file contents or sanitized URL string,
- * respectively.
+ * that resolves to the loaded file contents (load) or a hash containing
+ * sanitized URI data with the sanitized url assigned to the "href" property
+ * (sanitize).
  * @param {object} _ - The loader instance to use.
  * @return {object|Dataflow} - If no arguments are provided, returns
  *   the current loader instance. Otherwise returns this Dataflow instance.
