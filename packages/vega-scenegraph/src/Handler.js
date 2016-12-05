@@ -55,9 +55,9 @@ prototype.handleHref = function(event, href) {
   {
     this._loader
       .sanitize(href, {context:'href'})
-      .then(function(url) {
+      .then(function(opt) {
         var a = document.createElement('a');
-        a.setAttribute('href', url);
+        for (var name in opt) a.setAttribute(name, opt[name]);
         a.dispatchEvent(new MouseEvent(event.type, event));
       })
       .catch(function() { /* do nothing */ });

@@ -25,9 +25,9 @@ prototype.sanitizeURL = function(uri) {
   increment(loader);
 
   return loader._loader.sanitize(uri, {context:'href'})
-    .then(function(url) {
+    .then(function(opt) {
       decrement(loader);
-      return url;
+      return opt;
     })
     .catch(function() {
       decrement(loader);
@@ -40,7 +40,8 @@ prototype.loadImage = function(uri) {
   increment(loader);
 
   return loader._loader.sanitize(uri, {context:'image'})
-    .then(function(url) {
+    .then(function(opt) {
+      var url = opt.href;
       if (!url || !Image) throw 'Image unsupported.';
 
       var image = new Image();
