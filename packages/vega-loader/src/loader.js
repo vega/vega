@@ -49,7 +49,8 @@ function marshall(loader, options) {
 function load(uri, options) {
   var loader = this;
   return loader.sanitize(uri, options)
-    .then(function(url) {
+    .then(function(opt) {
+      var url = opt.href;
       return (startsWith(url, fileProtocol))
         ? loader.file(url.slice(fileProtocol.length))
         : loader.http(url, options);
@@ -60,8 +61,11 @@ function load(uri, options) {
  * URI sanitizer function.
  * @param {string} uri - The uri (url or filename) to sanity check.
  * @param {object} options - An options hash.
- * @return {Promise} - A promise that resolves to the final URL to
- *   load, or rejects if the input uri is invalid.
+ * @return {Promise} - A promise that resolves to an object containing
+ *  sanitized uri data, or rejects it the input uri is deemed invalid.
+ *  The properties of the resolved object are assumed to be
+ *  valid attributes for an HTML 'a' tag. The sanitized uri *must* be
+ *  provided by the 'href' property of the returned object.
  */
 function sanitize(uri, options) {
   options = marshall(this, options);
@@ -98,7 +102,7 @@ function sanitize(uri, options) {
       uri = (options.defaultProtocol || 'http') + ':' + uri;
     }
 
-    accept(uri);
+    accept({href: uri});
   });
 }
 
