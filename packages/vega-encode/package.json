@@ -32,7 +32,7 @@
     "d3-format": "1",
     "d3-interpolate": "1",
     "vega-dataflow": ">=2.0.0-beta.4",
-    "vega-scale": "1",
+    "vega-scale": ">=1.1",
     "vega-util": "1"
   },
   "devDependencies": {
