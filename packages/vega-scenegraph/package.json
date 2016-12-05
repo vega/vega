@@ -34,7 +34,7 @@
   "dependencies": {
     "d3-path": "1",
     "d3-shape": "1",
-    "vega-loader": ">=2.0.0-beta"
+    "vega-loader": ">=2.0.0-beta.3"
   },
   "optionalDependencies": {
     "canvas": "^1.4.0"
