@@ -12,6 +12,7 @@ import {
 
 export default function(el) {
   var view = this,
+      prev = view._el,
       type = view._renderType,
       Handler = CanvasHandler,
       Renderer = CanvasRenderer;
@@ -39,9 +40,11 @@ export default function(el) {
   view._handler = initializeHandler(view, view._handler, el, Handler);
 
   // initialize view bindings
-  if (el && view._bind) view._bind.forEach(function(binding) {
-    view.bind(binding.element || el, binding);
-  });
+  if (el && el !== prev && view._bind) {
+    view._bind.forEach(function(binding) {
+      view.bind(binding.element || el, binding);
+    });
+  }
 
   return view;
 }
