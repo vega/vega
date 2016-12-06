@@ -68,7 +68,10 @@ function onOperator(df, source, target, update, params, options) {
   } else {
     func = isFunction(update) ? update : constant(update);
     update = !target ? func : function(_, pulse) {
-      if (!target.skip()) return target.skip(true).value = func(_, pulse);
+      var value = func(_, pulse);
+      return target.skip()
+        ? value
+        : (target.skip(true).value = value);
     };
 
     op = new Operator(null, update, params, false);
