@@ -49,7 +49,8 @@ import * as xfilter from 'vega-crossfilter';
 /* eslint-enable */
 
 export {
-  View
+  View,
+  rendererModule
 } from 'vega-view';
 
 export {
