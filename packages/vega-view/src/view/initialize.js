@@ -1,27 +1,14 @@
+import bind from './bind';
 import initializeRenderer from './initialize-renderer';
 import initializeHandler from './initialize-handler';
-import {None, SVG} from './render-types';
-
-import {
-  CanvasRenderer,
-  CanvasHandler,
-  SVGRenderer,
-  SVGHandler,
-  SVGStringRenderer
-} from 'vega-scenegraph';
+import {rendererModule} from './render-types';
+import {CanvasHandler} from 'vega-scenegraph';
 
 export default function(el) {
   var view = this,
-      prev = view._el,
       type = view._renderType,
-      Handler = CanvasHandler,
-      Renderer = CanvasRenderer;
-
-  // select appropriate renderer/handler types
-  if (type === SVG) {
-    Handler = SVGHandler;
-    Renderer = (el ? SVGRenderer : SVGStringRenderer);
-  }
+      module = rendererModule(type),
+      Handler, Renderer;
 
   // containing dom element
   if (el) {
@@ -34,17 +21,20 @@ export default function(el) {
     view._el = null; // headless
   }
 
+  // select appropriate renderer & handler
+  if (!module) view.error('Unrecognized renderer type: ' + type);
+  Handler = module.handler || CanvasHandler;
+  Renderer = (view._el ? module.renderer : module.headless);
+
   // initialize renderer and input handler
-  view._renderer = (type === None) ? null
+  view._renderer = !Renderer ? null
     : initializeRenderer(view, view._renderer, el, Renderer);
   view._handler = initializeHandler(view, view._handler, el, Handler);
 
   // initialize view bindings
-  if (el && el !== prev && view._bind) {
-    view._bind.forEach(function(binding) {
-      view.bind(binding.element || el, binding);
-    });
-  }
+  if (el) view._bind.forEach(function(_) {
+    bind(view, _.param.element || el, _);
+  });
 
   return view;
 }

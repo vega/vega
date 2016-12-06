@@ -1,13 +1,5 @@
 import initializeRenderer from './initialize-renderer';
-
-import {
-  SVG
-} from './render-types';
-
-import {
-  CanvasRenderer,
-  SVGStringRenderer
-} from 'vega-scenegraph';
+import {rendererModule} from './render-types';
 
 /**
  * Render the current scene in a headless fashion.
@@ -15,9 +7,11 @@ import {
  * @return {Promise} - A Promise that resolves to a renderer.
  */
 export default function(view, type) {
-  return view.runAsync().then(function() {
-    var renderClass = (type === SVG) ? SVGStringRenderer : CanvasRenderer;
-    return initializeRenderer(view, null, null, renderClass)
-      .renderAsync(view._scenegraph.root);
-  });
+  var module = rendererModule(type);
+  return !(module && module.headless)
+    ? Promise.reject('Unrecognized renderer type: ' + type)
+    : view.runAsync().then(function() {
+        return initializeRenderer(view, null, null, module.headless)
+          .renderAsync(view._scenegraph.root);
+      });
 }
