@@ -44,7 +44,7 @@ prototype.mark = function(scenepath, markdef) {
 
     throw n;
   } catch (err) {
-    error('Invalid scenegraph path: ' + JSON.stringify(scenepath));
+    error('Invalid scenegraph path: ' + scenepath.marks + ' : ' + scenepath.items);
   }
 };
 
