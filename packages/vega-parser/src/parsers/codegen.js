@@ -1,4 +1,5 @@
 import {ASTNode, functions, constants} from 'vega-expression';
+import {bandSpace} from 'vega-scale';
 import {scaleGradient} from 'vega-scenegraph';
 import {
   error, isArray, isObject, isString, pad, stringValue, truncate, truthy
@@ -190,6 +191,10 @@ export var extendedFunctions = {
   bandwidth: function(name, group) {
       var s = getScale(name, (group || this).context);
       return s && s.bandwidth ? s.bandwidth() : 0;
+    },
+
+  bandspace: function(count, paddingInner, paddingOuter) {
+      return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
     },
 
   copy: function(name, group) {
