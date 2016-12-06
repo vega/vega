@@ -260,7 +260,10 @@ export var extendedFunctions = {
       }
 
       if (remove) {
-        changes.remove(remove === true ? truthy : remove);
+        predicate = remove === true ? truthy
+          : (isArray(remove) || remove._id != null) ? remove
+          : removePredicate(remove);
+        changes.remove(predicate);
       }
 
       if (insert) {
@@ -268,13 +271,7 @@ export var extendedFunctions = {
       }
 
       if (toggle) {
-        predicate = function(_) {
-          for (key in toggle) {
-            if (_[key] !== toggle[key]) return false;
-          }
-          return true;
-        };
-
+        predicate = removePredicate(toggle);
         if (input.value.filter(predicate).length) {
           changes.remove(predicate);
         } else {
@@ -292,6 +289,14 @@ export var extendedFunctions = {
     }
 };
 
+function removePredicate(props) {
+  return function(_) {
+    for (var key in props) {
+      if (_[key] !== props[key]) return false;
+    }
+    return true;
+  };
+}
 
 // AST visitors for dependency analysis
 
