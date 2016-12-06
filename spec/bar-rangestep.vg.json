@@ -26,7 +26,7 @@
     },
     {
       "name": "width",
-      "update": "count ? ceil(step * max(1, count - inner + outer * 2)) : 0"
+      "update": "ceil(step * bandspace(count, inner, outer))"
     }
   ],
 

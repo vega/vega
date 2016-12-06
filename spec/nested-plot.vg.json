@@ -24,12 +24,16 @@
       "bind": {"type": "range", "min": 5, "max": 50, "step": 1}
     },
     {
-      "name": "barWidth", "value": 0.9,
-      "bind": {"type": "range", "min": 0, "max": 1, "step": 0.05}
+      "name": "innerPadding", "value": 0.1,
+      "bind": {"type": "range", "min": 0, "max": 1}
+    },
+    {
+      "name": "outerPadding", "value": 0.2,
+      "bind": {"type": "range", "min": 0, "max": 1}
     },
     {
       "name": "height",
-      "update": "rangeStep * extent[1]"
+      "update": "trellisExtent[1]"
     }
   ],
 
@@ -64,13 +68,17 @@
           "groupby": ["a"]
         },
         {
+          "type": "formula", "as": "span",
+          "expr": "rangeStep * bandspace(datum.count, innerPadding, outerPadding)"
+        },
+        {
           "type": "stack",
-          "field": "count"
+          "field": "span"
         },
         {
           "type": "extent",
           "field": "y1",
-          "signal": "extent"
+          "signal": "trellisExtent"
         }
       ]
     }
@@ -116,8 +124,8 @@
           "width": {"signal": "width"}
         },
         "update": {
-          "y": {"field": "y0", "mult": {"signal": "rangeStep"}},
-          "y2": {"field": "y1", "mult": {"signal": "rangeStep"}}
+          "y": {"field": "y0"},
+          "y2": {"field": "y1"}
         }
       },
 
@@ -125,7 +133,8 @@
         {
           "name": "yscale",
           "type": "band",
-          "padding": 0,
+          "paddingInner": {"signal": "innerPadding"},
+          "paddingOuter": {"signal": "outerPadding"},
           "round": true,
           "domain": {"data": "faceted_tuples", "field": "b"},
           "rangeStep": {"signal": "rangeStep"}
@@ -149,8 +158,8 @@
               "strokeWidth": {"value": 2}
             },
             "update": {
-              "yc": {"scale": "yscale", "field": "b", "band": 0.5},
-              "height": {"scale": "yscale", "band": 1, "mult": {"signal": "barWidth"}},
+              "y": {"scale": "yscale", "field": "b"},
+              "height": {"scale": "yscale", "band": 1},
               "stroke": {"value": null},
               "zindex": {"value": 0}
             },

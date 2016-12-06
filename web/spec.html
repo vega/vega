@@ -98,8 +98,8 @@ function visualize(spec) {
   if (view) view.finalize(); // finalize existing view
   view = new vega.View(runtime = vega.parse(spec))
     .logLevel(vega.Warn)
-    .initialize(container)
     .renderer(renderType)
+    .initialize(container)
     .hover()
     .run();
 }
