@@ -1,11 +1,10 @@
-import bind from './bind';
 import cursor from './cursor';
 import {data, insert, remove} from './data';
 import events from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
-import {Canvas, None, SVG} from './render-types';
+import {Canvas, rendererModule} from './render-types';
 import renderToImageURL from './render-to-image-url';
 import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
@@ -49,7 +48,8 @@ export default function View(spec, options) {
   var ctx = runtime(this, spec, options.functions);
   this._runtime = ctx;
   this._signals = ctx.signals;
-  this._bind = spec.bindings;
+  this._bind = (spec.bindings || [])
+    .map(function(_) { return {state: null, param: _}; });
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
@@ -138,7 +138,7 @@ prototype.padding = function(_) {
 
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderType;
-  if (type !== SVG && type !== None) type = Canvas;
+  if (!rendererModule(type)) this.error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
     this._renderType = type;
     if (this._renderer) {
@@ -169,9 +169,6 @@ prototype.toSVG = renderToSVG;
 prototype.events = events;
 prototype.finalize = finalize;
 prototype.hover = hover;
-
-// -- INPUT BINDING ---
-prototype.bind = bind;
 
 // -- SAVE / RESTORE STATE ----
 prototype.state = state;

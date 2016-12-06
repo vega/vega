@@ -19,25 +19,24 @@ var BindClass = 'vega-bind',
  *   to bind to, the input element type, and type-specific configuration.
  * @return {View} - This view instance.
  */
-export default function(el, param) {
-  if (this._el) bind(this, el || this._el, param);
-  else this.warn('Bind not supported for headless views.');
-  return this;
-}
-
-export function bind(view, el, param) {
-  var bind = {
+export default function(view, el, binding) {
+  var param = binding.param;
+  var bind = binding.state || (binding.state = {
     elements: null,
     set: null,
-    update: function(value) { view.signal(param.signal, value).run(); }
-  };
+    update: function(value) { view.signal(param.signal, value).run(); },
+    active: false
+  });
 
   if (isString(el)) el = document.querySelector(el);
   generate(bind, el, param, view.signal(param.signal));
 
-  view.on(view._signals[param.signal], null, function() {
-    bind.set(view.signal(param.signal));
-  });
+  if (!bind.active) {
+    view.on(view._signals[param.signal], null, function() {
+      bind.set(view.signal(param.signal));
+    });
+    bind.active = true;
+  }
 
   return bind;
 }

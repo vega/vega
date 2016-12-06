@@ -12,16 +12,16 @@ import {Canvas, PNG, SVG} from './render-types';
  */
 export default function(type) {
   if (type === PNG) type = Canvas;
+  return (type !== Canvas && type !== SVG)
+    ? Promise.reject('Unrecognized image type: ' + type)
+    : renderHeadless(this, type).then(function(renderer) {
+        return type === Canvas
+          ? renderer.canvas().toDataURL('image/png')
+          : toBlobURL(renderer.svg(), 'image/svg+xml');
+      });
+}
 
-  if (type !== SVG && type !== Canvas) {
-    return Promise.reject('Unrecognized image type: ' + type);
-  } else {
-    return renderHeadless(this, type).then(function(renderer) {
-      return type === Canvas
-        ? renderer.canvas().toDataURL('image/png')
-        : window.URL.createObjectURL(
-            new Blob([renderer.svg()], {type: 'image/svg+xml'})
-          );
-    });
-  }
+function toBlobURL(data, mime) {
+  var blob = new Blob([data], {type: mime});
+  return window.URL.createObjectURL(blob);
 }

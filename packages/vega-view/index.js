@@ -11,3 +11,4 @@ transform('Render', Render);
 transform('ViewLayout', ViewLayout);
 
 export {default as View} from './src/view/View';
+export {rendererModule} from './src/view/render-types';
