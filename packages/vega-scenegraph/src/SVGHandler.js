@@ -6,7 +6,7 @@ export default function SVGHandler(loader) {
   Handler.call(this, loader);
   var h = this;
   h._hrefHandler = listener(h, function(evt, item) {
-    if (item.href) h.handleHref(evt, item.href);
+    if (item && item.href) h.handleHref(evt, item.href);
   });
 }
 
