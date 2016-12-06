@@ -27,3 +27,6 @@ export {marktypes, isMarkType} from './src/parsers/marks/marktypes';
 
 export {default as Scope} from './src/Scope';
 export {default as DataScope} from './src/DataScope';
+
+export {formatDefaultLocale as formatLocale} from 'd3-format';
+export {timeFormatDefaultLocale as timeFormatLocale} from 'd3-time-format';
