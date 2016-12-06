@@ -24,6 +24,7 @@ export var MultiValues = transform('MultiValues');
 export var Params = transform('Params');
 export var PreFacet = transform('PreFacet');
 export var Projection = transform('Projection');
+export var Proxy = transform('Proxy');
 export var Relay = transform('Relay');
 export var Render = transform('Render');
 export var Scale = transform('Scale');

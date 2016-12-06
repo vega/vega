@@ -12,7 +12,7 @@ export default function(spec, scope) {
   if (!def) error('Unrecognized transform type: ' + spec.type);
 
   var t = entry(def.type, null, parseParameters(def, spec, scope));
-  if (spec.signal) scope.addSignal(spec.signal, t);
+  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
   return t.metadata = def.metadata || {}, t;
 }
 
