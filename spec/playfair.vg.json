@@ -72,7 +72,8 @@
         "grid": {
           "enter": {
             "stroke": {"value": "#fff"},
-            "strokeWidth": {"value": 0.25}
+            "strokeWidth": {"value": 1},
+            "strokeOpacity": {"value": 0.25}
           }
         },
         "labels": {
