@@ -22,6 +22,10 @@ export {default as boundMark} from './src/bound/boundMark';
 
 export {default as Marks} from './src/marks/index';
 
+export {default as pathCurves} from './src/path/curves';
+export {default as pathSymbols} from './src/path/symbols';
+export {default as pathRectangle} from './src/path/rectangle';
+export {default as pathTrail} from './src/path/trail';
 export {default as pathParse} from './src/path/parse';
 export {default as pathRender} from './src/path/render';
 
