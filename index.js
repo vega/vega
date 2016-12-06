@@ -53,7 +53,9 @@ export {
 } from 'vega-view';
 
 export {
-  parse
+  parse,
+  formatLocale,
+  timeFormatLocale
 } from 'vega-parser';
 
 export {
