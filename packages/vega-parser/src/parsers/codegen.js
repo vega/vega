@@ -49,13 +49,13 @@ function expressionFunctions(codegen) {
   return fn;
 }
 
-function log(df, method, value, message) {
+function log(df, method, args) {
   try {
-    df[method]('EXPRESSION' + (message ? ' ' + message : ''), value);
+    df[method].apply(df, ['EXPRESSION'].concat([].slice.call(args)));
   } catch (err) {
     df.warn(err);
   }
-  return value;
+  return args[args.length-1];
 }
 
 var _window = (typeof window !== 'undefined' && window) || null,
@@ -104,16 +104,16 @@ export var extendedFunctions = {
       return 1 + ~~(new Date(date).getUTCMonth() / 3);
     },
 
-  warn: function(value, message) {
-      return log(this.context.dataflow, 'warn', value, message);
+  warn: function() {
+      return log(this.context.dataflow, 'warn', arguments);
     },
 
-  info: function(value, message) {
-      return log(this.context.dataflow, 'info', value, message);
+  info: function() {
+      return log(this.context.dataflow, 'info', arguments);
     },
 
-  debug: function(value, message) {
-      return log(this.context.dataflow, 'debug', value, message);
+  debug: function() {
+      return log(this.context.dataflow, 'debug', arguments);
     },
 
   inScope: function(item) {
@@ -256,7 +256,9 @@ export var extendedFunctions = {
       if (!changes || changes.stamp < stamp) {
         data.changes = (changes = df.changeset());
         changes.stamp = stamp;
-        df.runAfter(function() { df.pulse(input, changes).run(); });
+        df.runAfter(function() {
+          df.pulse(input, changes).run();
+        });
       }
 
       if (remove) {
