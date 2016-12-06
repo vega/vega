@@ -2,11 +2,16 @@ import {entry, ref, keyFieldRef, aggrField, sortKey} from './util';
 import {Aggregate, Collect} from './transforms';
 import {isString} from 'vega-util';
 
-export default function DataScope(scope, input, output, values) {
-  this.scope = scope;
-  this.input = input;
-  this.output = output;
-  this.values = values;
+export default function DataScope(scope, input, output, values, aggr) {
+  this.scope = scope; // parent scope object
+  this.input = input;   // first operator in pipeline (tuple input)
+  this.output = output; // last operator in pipeline (tuple output)
+  this.values = values; // operator for accessing tuples (but not tuple flow)
+
+  // last aggregate in transform pipeline
+  this.aggregate = aggr;
+
+  // lookup table of field indices
   this.index = {};
 }
 
@@ -15,16 +20,18 @@ DataScope.fromEntries = function(scope, entries) {
       i = 1,
       input  = entries[0],
       values = entries[n-1],
-      output = entries[n-2];
+      output = entries[n-2],
+      aggr = null;
 
   // add operator entries to this scope, wire up pulse chain
   scope.add(entries[0]);
   for (; i<n; ++i) {
     entries[i].params.pulse = ref(entries[i-1]);
     scope.add(entries[i]);
+    if (entries[i].type === 'Aggregate') aggr = entries[i];
   }
 
-  return new DataScope(scope, input, output, values);
+  return new DataScope(scope, input, output, values, aggr);
 };
 
 var prototype = DataScope.prototype;

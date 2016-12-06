@@ -5,7 +5,7 @@ import {Collect} from '../../transforms';
 import {array, error, extend} from 'vega-util';
 
 export default function(from, group, scope) {
-  var facet, key, op, dataRef;
+  var facet, key, op, dataRef, parent;
 
   // if no source data, generate singleton datum
   if (!from) {
@@ -18,7 +18,7 @@ export default function(from, group, scope) {
 
     // use pre-faceted source data, if available
     if (facet.field != null) {
-      dataRef = ref(scope.getData(facet.data).output);
+      dataRef = parent = ref(scope.getData(facet.data).output);
     } else {
       key = scope.keyRef(facet.groupby);
 
@@ -30,7 +30,9 @@ export default function(from, group, scope) {
         }, facet.aggregate));
         op.params.key = key;
         op.params.pulse = ref(scope.getData(facet.data).output);
-        dataRef = ref(scope.add(op));
+        dataRef = parent = ref(scope.add(op));
+      } else {
+        parent = scope.getData(from.data).aggregate;
       }
     }
   }
@@ -42,5 +44,5 @@ export default function(from, group, scope) {
       : ref(scope.getData(from.data).output);
   }
 
-  return {key: key, pulse: dataRef};
+  return {key: key, pulse: dataRef, parent: parent};
 }

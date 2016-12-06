@@ -25,7 +25,7 @@ export default function(spec, scope, group) {
   } else if (facet.groupby) {
     op = scope.add(Facet({
       key:   scope.keyRef(facet.groupby),
-      group: group.pulse,
+      group: scope.proxy(group.parent),
       pulse: data
     }));
   } else {

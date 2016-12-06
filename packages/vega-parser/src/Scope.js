@@ -4,7 +4,7 @@ import {
   fieldRef, keyRef, isSignal, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
-import {Compare, Field, Key, Projection, Scale, Sieve} from './transforms';
+import {Compare, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
 import {array, error, extend, isString, peek} from 'vega-util';
 
 export default function Scope(config) {
@@ -86,6 +86,11 @@ prototype.add = function(op) {
     op.refs = null;
   }
   return op;
+};
+
+prototype.proxy = function(op) {
+  var vref = op instanceof Entry ? ref(op) : op;
+  return this.add(Proxy({value: vref}));
 };
 
 prototype.addStream = function(stream) {
