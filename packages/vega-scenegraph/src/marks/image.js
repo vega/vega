@@ -75,11 +75,14 @@ function draw(context, scene, bounds) {
 }
 
 export default {
-  type:   'image',
-  tag:    'image',
-  nested: false,
-  attr:   attr,
-  bound:  bound,
-  draw:   draw,
-  pick:   pick()
+  type:     'image',
+  tag:      'image',
+  nested:   false,
+  attr:     attr,
+  bound:    bound,
+  draw:     draw,
+  pick:     pick(),
+  get:      getImage,
+  xOffset:  imageXOffset,
+  yOffset:  imageYOffset
 };

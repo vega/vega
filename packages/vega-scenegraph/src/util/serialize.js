@@ -17,11 +17,11 @@ var keys = [
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
 ];
 
-export function toJSON(scene, indent) {
+export function sceneToJSON(scene, indent) {
   return JSON.stringify(scene, keys, indent);
 }
 
-export function fromJSON(json) {
+export function sceneFromJSON(json) {
   var scene = (typeof json === 'string' ? JSON.parse(json) : json);
   return initialize(scene);
 }

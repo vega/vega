@@ -9,7 +9,7 @@ var tape = require('tape'),
 var GENERATE = require('./resources/generate-tests');
 
 var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.fromJSON(marks[name]); }
+for (var name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function generate(path, image) {
   if (GENERATE) fs.writeFileSync(res + path, image);
@@ -20,7 +20,7 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return vega.fromJSON(load(file));
+  return vega.sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {
@@ -194,7 +194,7 @@ tape('CanvasRenderer should support single-item redraw', function(test) {
 });
 
 tape('CanvasRenderer should support multi-item redraw', function(test) {
-  var scene = vega.fromJSON(vega.toJSON(marks['line-1']));
+  var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
     .initialize(null, 400, 400)
     .background('white')
@@ -222,11 +222,11 @@ tape('CanvasRenderer should support enter-group redraw', function(test) {
     .background('white')
     .render(scene);
 
-  var group = JSON.parse(vega.toJSON(scene.items[0]));
+  var group = JSON.parse(vega.sceneToJSON(scene.items[0]));
   group.x = 200;
-  scene = JSON.parse(vega.toJSON(scene));
+  scene = JSON.parse(vega.sceneToJSON(scene));
   scene.items.push(group);
-  scene = vega.fromJSON(scene);
+  scene = vega.sceneFromJSON(scene);
 
   var image = r.render(scene, [group]).canvas().toBuffer();
   generate('png/scenegraph-enter-group-redraw.png', image);
@@ -325,7 +325,7 @@ tape('CanvasRenderer should render image mark', function(test) {
 });
 
 tape('CanvasRenderer should skip invalid image', function(test) {
-  var scene = vega.fromJSON({
+  var scene = vega.sceneFromJSON({
     marktype: 'image',
     items: [{url: 'does_not_exist.png'}]
   });

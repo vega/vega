@@ -1,12 +1,12 @@
 import Renderer from './Renderer';
 import marks from './marks/index';
-import inherits from './util/inherits';
-import {child, clear, create, cssClass} from './util/dom';
+import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
 import {visit} from './util/visit';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
+import {inherits} from 'vega-util';
 
 var ns = metadata.xmlns;
 
@@ -23,12 +23,12 @@ var base = Renderer.prototype;
 
 prototype.initialize = function(el, width, height, padding) {
   if (el) {
-    this._svg = child(el, 0, 'svg', ns);
+    this._svg = domChild(el, 0, 'svg', ns);
     this._svg.setAttribute('class', 'marks');
-    clear(el, 1);
+    domClear(el, 1);
     // set the svg root group
-    this._root = child(this._svg, 0, 'g', ns);
-    clear(this._svg, 1);
+    this._root = domChild(this._svg, 0, 'g', ns);
+    domClear(this._svg, 1);
   }
 
   // create the svg definitions cache
@@ -88,7 +88,7 @@ prototype._render = function(scene, items) {
   if (this._dirtyCheck(items)) {
     if (this._dirtyAll) this._resetDefs();
     this.draw(this._root, scene);
-    clear(this._root, 1);
+    domClear(this._root, 1);
   }
 
   this.updateDefs();
@@ -104,12 +104,12 @@ prototype.updateDefs = function() {
       index = 0, id;
 
   for (id in defs.gradient) {
-    if (!el) defs.el = (el = child(svg, 0, 'defs', ns));
+    if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
     updateGradient(el, defs.gradient[id], index++);
   }
 
   for (id in defs.clipping) {
-    if (!el) defs.el = (el = child(svg, 0, 'defs', ns));
+    if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
     updateClipping(el, defs.clipping[id], index++);
   }
 
@@ -119,7 +119,7 @@ prototype.updateDefs = function() {
       svg.removeChild(el);
       defs.el = null;
     } else {
-      clear(el, index);
+      domClear(el, index);
     }
   }
 };
@@ -127,7 +127,7 @@ prototype.updateDefs = function() {
 function updateGradient(el, grad, index) {
   var i, n, stop;
 
-  el = child(el, index, 'linearGradient', ns);
+  el = domChild(el, index, 'linearGradient', ns);
   el.setAttribute('id', grad.id);
   el.setAttribute('x1', grad.x1);
   el.setAttribute('x2', grad.x2);
@@ -135,19 +135,19 @@ function updateGradient(el, grad, index) {
   el.setAttribute('y2', grad.y2);
 
   for (i=0, n=grad.stops.length; i<n; ++i) {
-    stop = child(el, i, 'stop', ns);
+    stop = domChild(el, i, 'stop', ns);
     stop.setAttribute('offset', grad.stops[i].offset);
     stop.setAttribute('stop-color', grad.stops[i].color);
   }
-  clear(el, i);
+  domClear(el, i);
 }
 
 function updateClipping(el, clip, index) {
   var rect;
 
-  el = child(el, index, 'clipPath', ns);
+  el = domChild(el, index, 'clipPath', ns);
   el.setAttribute('id', clip.id);
-  rect = child(el, 0, 'rect', ns);
+  rect = domChild(el, 0, 'rect', ns);
   rect.setAttribute('x', 0);
   rect.setAttribute('y', 0);
   rect.setAttribute('width', clip.width);
@@ -271,7 +271,7 @@ prototype.draw = function(el, scene, prev) {
     visit(scene, process);
   }
 
-  clear(parent, i);
+  domClear(parent, i);
   return parent;
 };
 
@@ -286,7 +286,7 @@ function recurse(renderer, el, group) {
   });
 
   // remove any extraneous DOM elements
-  clear(el, 1 + idx);
+  domClear(el, 1 + idx);
 }
 
 // Bind a scenegraph item to an SVG DOM element.
@@ -297,7 +297,7 @@ function bind(item, el, sibling, tag) {
   // create a new dom node if needed
   if (!node) {
     doc = el.ownerDocument;
-    node = create(doc, tag, ns);
+    node = domCreate(doc, tag, ns);
     item._svg = node;
 
     if (item.mark) {
@@ -306,7 +306,7 @@ function bind(item, el, sibling, tag) {
 
       // create background element
       if (tag === 'g') {
-        var bg = create(doc, 'path', ns);
+        var bg = domCreate(doc, 'path', ns);
         bg.setAttribute('class', 'background');
         node.appendChild(bg);
         bg.__data__ = item;

@@ -1,8 +1,8 @@
 import Handler from './Handler';
-import inherits from './util/inherits';
 import Marks from './marks/index';
 import point from './util/point';
-import {find} from './util/dom';
+import {domFind} from './util/dom';
+import {inherits} from 'vega-util';
 
 export default function CanvasHandler(loader) {
   Handler.call(this, loader);
@@ -15,7 +15,7 @@ var prototype = inherits(CanvasHandler, Handler);
 
 prototype.initialize = function(el, origin, obj) {
   // add event listeners
-  var canvas = this._canvas = el && find(el, 'canvas');
+  var canvas = this._canvas = el && domFind(el, 'canvas');
   if (canvas) {
     var that = this;
     this.events.forEach(function(type) {

@@ -1,3 +1,4 @@
+import {domCreate} from './util/dom';
 import {loader} from 'vega-loader';
 
 export default function Handler(customLoader) {
@@ -50,16 +51,13 @@ prototype.eventName = function(name) {
 };
 
 prototype.handleHref = function(event, href) {
-  if (typeof MouseEvent !== 'undefined' &&
-      typeof document !== 'undefined' && document.createElement)
-  {
-    this._loader
-      .sanitize(href, {context:'href'})
-      .then(function(opt) {
-        var a = document.createElement('a');
-        for (var name in opt) a.setAttribute(name, opt[name]);
-        a.dispatchEvent(new MouseEvent(event.type, event));
-      })
-      .catch(function() { /* do nothing */ });
-  }
+  this._loader
+    .sanitize(href, {context:'href'})
+    .then(function(opt) {
+      var e = new MouseEvent(event.type, event),
+          a = domCreate(null, 'a');
+      for (var name in opt) a.setAttribute(name, opt[name]);
+      a.dispatchEvent(e);
+    })
+    .catch(function() { /* do nothing */ });
 };
