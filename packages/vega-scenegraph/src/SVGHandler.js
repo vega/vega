@@ -1,6 +1,6 @@
 import Handler from './Handler';
-import inherits from './util/inherits';
-import {find} from './util/dom';
+import {domFind} from './util/dom';
+import {inherits} from 'vega-util';
 
 export default function SVGHandler(loader) {
   Handler.call(this, loader);
@@ -14,7 +14,7 @@ var prototype = inherits(SVGHandler, Handler);
 
 prototype.initialize = function(el, origin, obj) {
   if (this._svg) this._svg.removeEventListener('click', this._hrefHandler);
-  this._svg = el && find(el, 'svg');
+  this._svg = el && domFind(el, 'svg');
   if (this._svg) this._svg.addEventListener('click', this._hrefHandler);
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };

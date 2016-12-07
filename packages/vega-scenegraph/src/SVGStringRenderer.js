@@ -1,12 +1,12 @@
 import Renderer from './Renderer';
 import marks from './marks/index';
-import inherits from './util/inherits';
 import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
 import {visit} from './util/visit';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
+import {inherits} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
   Renderer.call(this, loader);

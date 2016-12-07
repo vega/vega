@@ -1,10 +1,15 @@
 // create a new DOM element
-export function create(doc, tag, ns) {
-  return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
+export function domCreate(doc, tag, ns) {
+  if (!doc && typeof document !== 'undefined' && document.createElement) {
+    doc = document;
+  }
+  return doc
+    ? (ns ? doc.createElementNS(ns, tag) : doc.createElement(tag))
+    : null;
 }
 
 // find first child element with matching tag
-export function find(el, tag) {
+export function domFind(el, tag) {
   tag = tag.toLowerCase();
   var nodes = el.childNodes, i = 0, n = nodes.length;
   for (; i<n; ++i) if (nodes[i].tagName.toLowerCase() === tag) {
@@ -14,18 +19,18 @@ export function find(el, tag) {
 
 // retrieve child element at given index
 // create & insert if doesn't exist or if tags do not match
-export function child(el, index, tag, ns) {
+export function domChild(el, index, tag, ns) {
   var a = el.childNodes[index], b;
   if (!a || a.tagName.toLowerCase() !== tag.toLowerCase()) {
     b = a || null;
-    a = create(el.ownerDocument, tag, ns);
+    a = domCreate(el.ownerDocument, tag, ns);
     el.insertBefore(a, b);
   }
   return a;
 }
 
 // remove all child elements at or above the given index
-export function clear(el, index) {
+export function domClear(el, index) {
   var nodes = el.childNodes,
       curr = nodes.length;
   while (curr > index) el.removeChild(nodes[--curr]);

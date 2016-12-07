@@ -2,10 +2,10 @@ import Renderer from './Renderer';
 import Bounds from './Bounds';
 import marks from './marks/index';
 
-import inherits from './util/inherits';
-import {clear} from './util/dom';
+import {domClear} from './util/dom';
 import Canvas from './util/canvas/canvas';
 import resize from './util/canvas/resize';
+import {inherits} from 'vega-util';
 
 export default function CanvasRenderer(loader) {
   Renderer.call(this, loader);
@@ -19,7 +19,7 @@ var prototype = inherits(CanvasRenderer, Renderer),
 prototype.initialize = function(el, width, height, origin) {
   this._canvas = Canvas(1, 1); // instantiate a small canvas
   if (el) {
-    clear(el, 0).appendChild(this._canvas);
+    domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
   }
   // this method will invoke resize to size the canvas appropriately

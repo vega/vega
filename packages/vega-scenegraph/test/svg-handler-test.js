@@ -9,7 +9,7 @@ var tape = require('tape'),
 var res = './test/resources/';
 
 var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.fromJSON(marks[name]); }
+for (var name in marks) { vega.sceneFromJSON(marks[name]); }
 
 var events = [
   'keydown',
@@ -37,7 +37,7 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return vega.fromJSON(load(file));
+  return vega.sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {

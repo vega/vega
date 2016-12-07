@@ -9,7 +9,7 @@ var res = './test/resources/';
 var GENERATE = require('./resources/generate-tests');
 
 var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.fromJSON(marks[name]); }
+for (var name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function generate(path, str) {
   if (GENERATE) fs.writeFileSync(res + path, str);
@@ -20,7 +20,7 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return vega.fromJSON(load(file));
+  return vega.sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {
@@ -188,7 +188,7 @@ tape('SVGStringRenderer should support single-item redraw', function(test) {
 });
 
 tape('SVGStringRenderer should support multi-item redraw', function(test) {
-  var scene = vega.fromJSON(vega.toJSON(marks['line-1']));
+  var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
     .initialize(null, 400, 400)
     .background('white')
@@ -214,7 +214,7 @@ tape('SVGStringRenderer should support enter-group redraw', function(test) {
     .background('white')
     .render(scene);
 
-  var group = vega.fromJSON(vega.toJSON(scene.items[0]));
+  var group = vega.sceneFromJSON(vega.sceneToJSON(scene.items[0]));
   group.x = 200;
   group.mark = scene;
   scene.items.push(group);

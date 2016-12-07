@@ -9,7 +9,7 @@ var PNG = 'png';
 var SVG = 'svg';
 var None = 'none';
 
-export var ModuleType = {
+export var RenderType = {
   Canvas: Canvas,
   PNG:    PNG,
   SVG:    SVG,

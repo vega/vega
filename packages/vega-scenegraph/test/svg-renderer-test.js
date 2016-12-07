@@ -10,14 +10,14 @@ var tape = require('tape'),
 var res = './test/resources/';
 
 var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.fromJSON(marks[name]); }
+for (var name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
 
 function loadScene(file) {
-  return vega.fromJSON(load(file));
+  return vega.sceneFromJSON(load(file));
 }
 
 function compensate(svg) {
@@ -212,7 +212,7 @@ tape('SVGRenderer should support single-item redraw', function(test) {
 });
 
 tape('SVGRenderer should support multi-item redraw', function(test) {
-  var scene = vega.fromJSON(vega.toJSON(marks['line-1']));
+  var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
     .initialize(doc.body, 400, 400)
     .background('white')
@@ -236,7 +236,7 @@ tape('SVGRenderer should support enter-group redraw', function(test) {
     .background('white')
     .render(scene);
 
-  var group = vega.fromJSON(vega.toJSON(scene.items[0]));
+  var group = vega.sceneFromJSON(vega.sceneToJSON(scene.items[0]));
   group.x = 200;
   group.mark = scene;
   scene.items.push(group);
