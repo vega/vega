@@ -1,13 +1,12 @@
 import bind from './bind';
 import initializeRenderer from './initialize-renderer';
 import initializeHandler from './initialize-handler';
-import {rendererModule} from './render-types';
-import {CanvasHandler} from 'vega-scenegraph';
+import {CanvasHandler, renderModule} from 'vega-scenegraph';
 
 export default function(el) {
   var view = this,
       type = view._renderType,
-      module = rendererModule(type),
+      module = renderModule(type),
       Handler, Renderer;
 
   // containing dom element

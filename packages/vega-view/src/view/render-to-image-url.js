@@ -1,5 +1,5 @@
 import renderHeadless from './render-headless';
-import {Canvas, PNG, SVG} from './render-types';
+import {ModuleType as Type} from 'vega-scenegraph';
 
 /**
  * Produce an image URL for the visualization. Depending on the type
@@ -11,13 +11,13 @@ import {Canvas, PNG, SVG} from './render-types';
  * @return {Promise} - A promise that resolves to an image URL.
  */
 export default function(type) {
-  if (type === PNG) type = Canvas;
-  return (type !== Canvas && type !== SVG)
+  return (type !== Type.Canvas && type !== Type.SVG && type !== Type.PNG)
     ? Promise.reject('Unrecognized image type: ' + type)
     : renderHeadless(this, type).then(function(renderer) {
-        return type === Canvas
-          ? renderer.canvas().toDataURL('image/png')
-          : toBlobURL(renderer.svg(), 'image/svg+xml');
+        return type === Type.SVG
+          ? toBlobURL(renderer.svg(), 'image/svg+xml')
+          : renderer.canvas().toDataURL('image/png');
+
       });
 }
 
