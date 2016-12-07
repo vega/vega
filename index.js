@@ -27,7 +27,8 @@ export {
 } from 'vega-dataflow';
 
 export {
-  textMetrics
+  textMetrics,
+  renderModule
 } from 'vega-scenegraph';
 
 export {
@@ -49,8 +50,7 @@ import * as xfilter from 'vega-crossfilter';
 /* eslint-enable */
 
 export {
-  View,
-  rendererModule
+  View
 } from 'vega-view';
 
 export {
