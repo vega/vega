@@ -4,7 +4,6 @@ import events from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
-import {Canvas, rendererModule} from './render-types';
 import renderToImageURL from './render-to-image-url';
 import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
@@ -12,9 +11,13 @@ import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {autosize, resizer} from './size';
 import state from './state';
+
 import {Dataflow} from 'vega-dataflow';
-import {CanvasHandler, Scenegraph} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
+import {
+  CanvasHandler, Scenegraph,
+  renderModule, ModuleType
+} from 'vega-scenegraph';
 
 /**
  * Create a new View instance from a Vega dataflow runtime specification.
@@ -34,7 +37,7 @@ export default function View(spec, options) {
   this.logLevel(options.logLevel || 0);
 
   this._el = null;
-  this._renderType = options.renderer || Canvas;
+  this._renderType = options.renderer || ModuleType.Canvas;
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
@@ -138,7 +141,7 @@ prototype.padding = function(_) {
 
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderType;
-  if (!rendererModule(type)) this.error('Unrecognized renderer type: ' + type);
+  if (!renderModule(type)) this.error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
     this._renderType = type;
     if (this._renderer) {

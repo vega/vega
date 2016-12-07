@@ -1,5 +1,5 @@
 import renderHeadless from './render-headless';
-import {SVG} from './render-types';
+import {ModuleType} from 'vega-scenegraph';
 
 /**
  * Produce a rendered SVG string of the visualization.
@@ -7,6 +7,6 @@ import {SVG} from './render-types';
  * @return {Promise} - A promise that resolves to an SVG string.
  */
 export default function() {
-  return renderHeadless(this, SVG)
+  return renderHeadless(this, ModuleType.SVG)
     .then(function(renderer) { return renderer.svg(); });
 }
