@@ -8,6 +8,8 @@ export * from 'vega-util';
 
 export * from 'vega-loader';
 
+export * from 'vega-scenegraph';
+
 export {
   Dataflow,
   EventStream,
@@ -25,11 +27,6 @@ export {
   transforms,
   tupleid
 } from 'vega-dataflow';
-
-export {
-  textMetrics,
-  renderModule
-} from 'vega-scenegraph';
 
 export {
   scale,
