@@ -1,5 +1,5 @@
 import renderHeadless from './render-headless';
-import {ModuleType as Type} from 'vega-scenegraph';
+import {RenderType as Type} from 'vega-scenegraph';
 
 /**
  * Produce an image URL for the visualization. Depending on the type

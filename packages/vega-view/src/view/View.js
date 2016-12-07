@@ -16,7 +16,7 @@ import {Dataflow} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 import {
   CanvasHandler, Scenegraph,
-  renderModule, ModuleType
+  renderModule, RenderType
 } from 'vega-scenegraph';
 
 /**
@@ -37,7 +37,7 @@ export default function View(spec, options) {
   this.logLevel(options.logLevel || 0);
 
   this._el = null;
-  this._renderType = options.renderer || ModuleType.Canvas;
+  this._renderType = options.renderer || RenderType.Canvas;
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
