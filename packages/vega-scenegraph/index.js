@@ -36,3 +36,4 @@ export {openTag, closeTag} from './src/util/tags';
 export {font, textMetrics} from './src/util/text';
 
 export {toJSON, fromJSON} from './src/util/serialize';
+export {ModuleType, renderModule} from './src/modules';
