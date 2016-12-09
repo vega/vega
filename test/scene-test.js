@@ -29,7 +29,7 @@ tape('Vega generates scenegraphs for specifications', function(test) {
         fs.writeFileSync(path, actual);
       } else {
         var expect = fs.readFileSync(path) + '';
-        test.equal(expect, actual, 'scene: ' + name);
+        test.ok(vega.sceneEqual(JSON.parse(actual), JSON.parse(expect)), 'scene: ' + name);
       }
     }).catch(function(err) {
       // eslint-disable-next-line no-console
