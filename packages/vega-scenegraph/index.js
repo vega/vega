@@ -35,6 +35,7 @@ export {domCreate, domFind, domChild, domClear} from './src/util/dom';
 export {openTag, closeTag} from './src/util/tags';
 export {font, textMetrics} from './src/util/text';
 
+export {sceneEqual, pathEqual} from './src/util/equal';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize';
 export {
   zorder as sceneZOrder,
