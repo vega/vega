@@ -5,7 +5,8 @@ var tape = require('tape'),
     Renderer = vega.CanvasRenderer,
     Handler = vega.CanvasHandler,
     jsdom = require('jsdom'),
-    doc = jsdom.jsdom();
+    doc = jsdom.jsdom(),
+    win = doc.defaultView;
 
 var res = './test/resources/';
 
@@ -39,10 +40,7 @@ function renderAsync(scene, w, h, callback) {
 }
 
 function event(name, x, y) {
-  var evt = doc.createEvent('MouseEvents');
-  evt.initEvent(name, false, true);
-  evt.clientX = x || 0;
-  evt.clientY = y || 0;
+  var evt = new win.MouseEvent(name, {clientX: x, clientY: y});
   evt.changedTouches = [{
     clientX: x || 0,
     clientY: y || 0

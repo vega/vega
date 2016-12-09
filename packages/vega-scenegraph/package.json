@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "jsdom": "^3.0.0",
+    "jsdom": "9",
     "rollup": "0.36",
     "tape": "4",
     "tv4": "1",
