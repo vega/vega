@@ -1,6 +1,7 @@
 var bounds,
     tau = Math.PI * 2,
-    halfPi = Math.PI / 2;
+    halfPi = tau / 4,
+    circleThreshold = tau - 1e-8;
 
 export default function context(_) {
   return bounds = _, context;
@@ -35,7 +36,7 @@ context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
 };
 
 context.arc = function(cx, cy, r, sa, ea, ccw) {
-  if (ea - sa === tau) {
+  if (Math.abs(ea - sa) > circleThreshold) {
     add(cx - r, cy - r);
     add(cx + r, cy + r);
     return;
@@ -54,14 +55,21 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     if (y > ymax) ymax = y;
   }
 
+  // Sample end points and interior points aligned with 90 degrees
   update(sa);
   update(ea);
+
+  if (ea < sa) {
+    ccw = !ccw; // flip direction
+    s = sa; sa = ea; ea = s; // swap end-points
+  }
+
   if (ccw) {
-    s = ea - (ea % halfPi)
-    for (i=0; i<4 && s>sa; ++i, s-=halfPi) update(s);
+    s = ea - (ea % halfPi);
+    for (i=0; i<3 && s>sa; ++i, s-=halfPi) update(s);
   } else {
-    s = sa - (sa % halfPi);
-    for (i=0; i<4 && s<ea; ++i, s+=halfPi) update(s);
+    s = sa - (sa % halfPi) + halfPi;
+    for (i=0; i<3 && s<ea; ++i, s+=halfPi) update(s);
   }
 
   add(cx + xmin, cy + ymin);
