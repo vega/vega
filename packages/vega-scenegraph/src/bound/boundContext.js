@@ -35,7 +35,7 @@ context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
 };
 
 context.arc = function(cx, cy, r, sa, ea, ccw) {
-  if (r === tau) {
+  if (ea - sa === tau) {
     add(cx - r, cy - r);
     add(cx + r, cy + r);
     return;
