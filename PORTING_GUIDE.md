@@ -148,6 +148,11 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 - Vega 3 also introduces a number of new transforms, and modifications to previous transforms (including a dramatically improved `"force"` transform and improved hierarchical layout support). Web-based documentation is still forthcoming. However, most of these transforms are demonstrated in the example specifications included in this repo. In addition, the parameters accepted by each transform are documented via JSDoc comments in the source code. Please consult the appropriate Vega module repositories for further information.
 
 - Vega 2.x transform `"output"` maps for determining output field names have been removed. Instead, the relevant transforms accept an `"as"` parameter that (depending on the transform type) takes either a single string or an ordered array of strings, each representing a desired output field name. See the documentation (including JSDoc source code comments) for individual transforms for more information.
+  - Similarly, the `"formula"` transform `"field"` parameter has been renamed `"as"`.
+
+- A number of transforms now have different default output field names. In most cases, this was done to make the values more easily serve as scenegraph item properties (for example, when using post-encoding transforms).
+
+- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
 
 - The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operations. In Vega 3, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output field names:
   ```js
@@ -159,20 +164,16 @@ This document describes the various changes needed to port Vega 2.x visualizatio
     "as": ["min1", "max1", "median2"]
   }
   ```
-
-- A number of transforms now have different default output field names. In most cases, this was done to make the values more easily serve as scenegraph item properties (for example, when using post-encoding transforms).
-
-- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
-
-- For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
-
+  
 - For the `"bin"` transform:
   - The `"max"` and `"min"` parameters have been removed.  Instead, users can provide `"extent"`, a two-element (`[min, max]`) array indicating the range of desired bin values.
   - The `"div"` property has been renamed to `"divide"`.
 
 - The `"filter"` transform `"test"` parameter has been renamed `"expr"` for consistency with other transforms that take an expression parameter.
 
-- The `"formula"` transform `"field"` parameter has been renamed `"as"`.
+- For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
+
+- The `"stack"` transform `"sortby"` parameter has been renamed `"sort"`.
 
 ## Geo Data
 
