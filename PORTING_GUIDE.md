@@ -148,7 +148,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 - Vega 3 also introduces a number of new transforms, and modifications to previous transforms (including a dramatically improved `"force"` transform and improved hierarchical layout support). Web-based documentation is still forthcoming. However, most of these transforms are demonstrated in the example specifications included in this repo. In addition, the parameters accepted by each transform are documented via JSDoc comments in the source code. Please consult the appropriate Vega module repositories for further information.
 
 - Vega 2.x transform `"output"` maps for determining output field names have been removed. Instead, the relevant transforms accept an `"as"` parameter that (depending on the transform type) takes either a single string or an ordered array of strings, each representing a desired output field name. See the documentation (including JSDoc source code comments) for individual transforms for more information.
-  - Similarly, the `"formula"` transform `"field"` parameter has been renamed `"as"`.
+
+- Similarly, the `"formula"` transform `"field"` parameter has been renamed `"as"`.
 
 - A number of transforms now have different default output field names. In most cases, this was done to make the values more easily serve as scenegraph item properties (for example, when using post-encoding transforms).
 
@@ -172,6 +173,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 - The `"filter"` transform `"test"` parameter has been renamed `"expr"` for consistency with other transforms that take an expression parameter.
 
 - For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
+
+- The `"sort"` transform has been removed. In Vega 2, the sort transform was actually a no-op that added a special annotation to the pulse passing through it, which was later used to sort tuples at the _end_ of a transform pipeline. Vega 3 drops this behavior. Instead, there are two options for achieving sorting in a visualization: (1) Use a `"sort"` directive as part of a scale `"domain"` definition, or (2) use a `"collect"` transform and provide `"sort"` parameter. This ensures that sorting occurs immediately at the point at which it is requested, not at an indeterminate point down stream in the dataflow. We recommend using option (1) if workable, and (2) otherwise.
 
 - The `"stack"` transform `"sortby"` parameter has been renamed `"sort"`.
 
