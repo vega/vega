@@ -130,3 +130,46 @@ tape('Aggregate handles count aggregates', function(test) {
 
   test.end();
 });
+
+tape('Aggregate handles distinct aggregates', function(test) {
+  var data = [
+    {foo:null},
+    {foo:null},
+    {foo:undefined},
+    {foo:undefined},
+    {foo:NaN},
+    {foo:NaN},
+    {foo:0},
+    {foo:0}
+  ];
+
+  var foo = util.field('foo'),
+      df, col, agg, out, d;
+
+  // counts only
+  df = new vega.Dataflow();
+  col = df.add(tx.Collect);
+  agg = df.add(tx.Aggregate, {
+    fields: [foo],
+    ops: ['distinct'],
+    pulse: col
+  });
+  out = df.add(tx.Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert(data)).run();
+  d = out.value;
+  test.equal(d.length, 1);
+  test.equal(d[0].distinct_foo, 4);
+
+  df.pulse(col, changeset().remove(data[0])).run();
+  d = out.value;
+  test.equal(d.length, 1);
+  test.equal(d[0].distinct_foo, 4);
+
+  df.pulse(col, changeset().remove(data[1])).run();
+  d = out.value;
+  test.equal(d.length, 1);
+  test.equal(d[0].distinct_foo, 3);
+
+  test.end();
+});
