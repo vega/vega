@@ -207,7 +207,7 @@ export default {
             },
             {
               "properties": {
-                "type": {"enum": ["band", "point"]},
+                "type": {"enum": ["band"]},
                 "range": {"oneOf": rangeDef},
                 "padding": {
                   "oneOf": [
@@ -216,6 +216,37 @@ export default {
                   ]
                 },
                 "paddingInner": {
+                  "oneOf": [
+                    {"type": "number"},
+                    {"$ref": "#/refs/signal"}
+                  ]
+                },
+                "paddingOuter": {
+                  "oneOf": [
+                    {"type": "number"},
+                    {"$ref": "#/refs/signal"}
+                  ]
+                },
+                "align": {
+                  "oneOf": [
+                    {"type": "number"},
+                    {"$ref": "#/refs/signal"}
+                  ]
+                },
+                "rangeStep": {
+                  "oneOf": [
+                    {"type": "number"},
+                    {"$ref": "#/refs/signal"}
+                  ]
+                }
+              },
+              "required": ["type"]
+            },
+            {
+              "properties": {
+                "type": {"enum": ["point"]},
+                "range": {"oneOf": rangeDef},
+                "padding": {
                   "oneOf": [
                     {"type": "number"},
                     {"$ref": "#/refs/signal"}
