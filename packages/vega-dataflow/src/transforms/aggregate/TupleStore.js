@@ -48,7 +48,24 @@ prototype.values = function() {
   return (this._add = x);
 };
 
-// memoized statistics methods
+// memoizing statistics methods
+
+prototype.distinct = function(get) {
+  var v = this.values(),
+      n = v.length,
+      map = {},
+      count = 0, s;
+
+  while (--n >= 0) {
+    s = get(v[n]) + '';
+    if (!map.hasOwnProperty(s)) {
+      map[s] = 1;
+      ++count;
+    }
+  }
+
+  return count;
+};
 
 prototype.extent = function(get) {
   if (this._get !== get || !this._ext) {

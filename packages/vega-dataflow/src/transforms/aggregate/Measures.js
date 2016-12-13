@@ -18,13 +18,6 @@ export var Aggregates = {
     name: 'valid',
     set:  'this.valid'
   }),
-  'distinct': measure({
-    name: 'distinct',
-    init: 'this.dmap = {}; this.distinct = 0;',
-    add:  'this.dmap[v] = 1 + (this.dmap[v] || (++this.distinct, 0));',
-    rem:  'if (!(--this.dmap[v])) --this.distinct;',
-    set:  'this.distinct'
-  }),
   'sum': measure({
     name: 'sum',
     init: 'this.sum = 0;',
@@ -71,6 +64,11 @@ export var Aggregates = {
     name: 'stderr',
     set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : 0',
     req:  ['variance'], idx: 2
+  }),
+  'distinct': measure({
+    name: 'distinct',
+    set:  'cell.data.distinct(this.get)',
+    req:  ['values'], idx: 3
   }),
   'ci0': measure({
     name: 'ci0',
@@ -165,8 +163,8 @@ export function compileMeasures(agg, field) {
   var get = field || identity,
       all = resolve(agg, true), // assume streaming removes may occur
       ctr = 'this.cell = cell; this.tuple = t; this.valid = 0; this.missing = 0;',
-      add = 'if(v==null){this.missing++; return;} if(v!==v) return; ++this.valid;',
-      rem = 'if(v==null){this.missing--; return;} if(v!==v) return; --this.valid;',
+      add = 'if(v==null){++this.missing; return;} if(v!==v) return; ++this.valid;',
+      rem = 'if(v==null){--this.missing; return;} if(v!==v) return; --this.valid;',
       set = 'var t = this.tuple; var cell = this.cell;';
 
   all.forEach(function(a) {
