@@ -116,7 +116,6 @@ function pointish(scale) {
 
   scale.padding = scale.paddingOuter;
   delete scale.paddingInner;
-  delete scale.paddingOuter;
 
   scale.copy = function() {
     return pointish(copy());
