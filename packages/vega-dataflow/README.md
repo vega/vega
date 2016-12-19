@@ -3,18 +3,18 @@
 Reactive dataflow processing.
 
 Defines a reactive dataflow graph that can process both scalar values and
-streaming relational data. A central `Dataflow` instance manages and schedules
-a collection of `Operator` instances, each of which is a node in a dataflow
-graph. Each operator maintains a local state *value*, and may only also
-process streaming data objects (or *tuples*) passing through. Operators may
-depend on a set of named `Parameters`, which can either be fixed values or
-live references to other operator values.
+streaming relational data. A central `Dataflow` instance manages and
+schedules a collection of `Operator` instances, each of which is a node in
+a dataflow graph. Each operator maintains a local state *value*, and may
+also process streaming data objects (or *tuples*) passing through. Operators
+may depend on a set of named `Parameters`, which can either be fixed values
+or live references to other operator values.
 
-Upon modifications to operator parameters or input data, changes are propagated
-through the graph in topological order. `Pulse` objects propagate from
-operators to their dependencies, and carry queues of added, removed and/or
-modified tuples.
+Upon modifications to operator parameters or input data, changes are
+propagated through the graph in topological order. `Pulse` objects propagate
+from operators to their dependencies, and carry queues of added, removed
+and/or modified tuples.
 
 This module contains a library of `Operator` types for data stream query
-processing, including data generation, sampling, filtering, binning, group-by
-aggregation, and cross-stream lookup operations.
+processing, including data generation, sampling, filtering, binning,
+group-by aggregation, and cross-stream lookup operations.
