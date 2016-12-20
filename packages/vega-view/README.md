@@ -329,7 +329,7 @@ the provided *changeset* instance. This method does not force an immediate
 update to the view: invoke the [run](#view_run) method when ready.
 
 ```js
-view.change('data', vega.changeset().insert([...])).remove([...])
+view.change('data', vega.changeset().insert([...]).remove([...]))
     .run()
 ```
 
