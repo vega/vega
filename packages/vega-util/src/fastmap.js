@@ -1,13 +1,15 @@
 var NULL = {};
 
-export default function(clean) {
-  var obj = {}, map;
+export default function(input) {
+  var obj = {},
+      map,
+      test;
 
   function has(key) {
     return obj.hasOwnProperty(key) && obj[key] !== NULL;
   }
 
-  return map = {
+  map = {
     size: 0,
     empty: 0,
     object: obj,
@@ -35,16 +37,29 @@ export default function(clean) {
       map.size = map.empty = 0;
       map.object = obj = {};
     },
+    test: function(_) {
+      return arguments.length ? (test = _, map) : test;
+    },
     clean: function() {
-      var next = {}, key, value;
+      var next = {},
+          size = 0,
+          key, value;
       for (key in obj) {
         value = obj[key];
-        if (value !== NULL && (!clean || !clean(value))) {
+        if (value !== NULL && (!test || !test(value))) {
           next[key] = value;
+          ++size;
         }
       }
+      map.size = size;
       map.empty = 0;
       map.object = (obj = next);
     }
   };
+
+  if (input) Object.keys(input).forEach(function(key) {
+    map.set(key, input[key]);
+  });
+
+  return map;
 }

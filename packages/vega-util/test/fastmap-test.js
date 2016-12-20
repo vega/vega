@@ -47,3 +47,29 @@ tape('fastmap maps keys to values', function(test) {
 
   test.end();
 });
+
+tape('fastmap accepts object as argument', function(test) {
+  var m = vega.fastmap({a:1, b:2});
+  test.equal(m.size, 2);
+  test.equal(m.empty, 0);
+  test.equal(m.has('a'), true);
+  test.equal(m.has('b'), true);
+  test.equal(m.get('a'), 1);
+  test.equal(m.get('b'), 2);
+  test.end();
+});
+
+tape('fastmap supports external clean test', function(test) {
+  var m = vega.fastmap({a:1, b:2, c:1});
+
+  m.test(function(value) { return value === 1; });
+  m.clean();
+
+  test.equal(m.size, 1);
+  test.equal(m.empty, 0);
+  test.equal(m.has('a'), false);
+  test.equal(m.has('b'), true);
+  test.equal(m.has('c'), false);
+  test.equal(m.get('b'), 2);
+  test.end();
+});
