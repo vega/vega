@@ -8,7 +8,6 @@ export function sceneEqual(a, b, key) {
     : (key === 'path') ? pathEqual(a, b)
     : (a instanceof Date && b instanceof Date) ? +a === +b
     : (isNumber(a) && isNumber(b)) ? Math.abs(a - b) <= TOLERANCE
-    // : (!a || !b || typeof a != 'object' && typeof b != 'object') ? a == b
     : (!a || !b || !isObject(a) && !isObject(b)) ? a == b
     : (a == null || b == null) ? false
     : objectEqual(a, b);
@@ -22,11 +21,6 @@ function objectEqual(a, b) {
   var ka = Object.keys(a),
       kb = Object.keys(b),
       key, i;
-
-  // try {
-  //   ka = Object.keys(a);
-  //   kb = Object.keys(b);
-  // } catch (e) { return false; }
 
   if (ka.length !== kb.length) return false;
 
