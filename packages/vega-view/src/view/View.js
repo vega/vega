@@ -1,5 +1,5 @@
 import cursor from './cursor';
-import {data, insert, remove} from './data';
+import {data, change, insert, remove} from './data';
 import events from './events';
 import hover from './hover';
 import finalize from './finalize';
@@ -157,6 +157,7 @@ prototype.autosize = autosize;
 
 // -- DATA ----
 prototype.data = data;
+prototype.change = change;
 prototype.insert = insert;
 prototype.remove = remove;
 
