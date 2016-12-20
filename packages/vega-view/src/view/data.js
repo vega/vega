@@ -1,4 +1,4 @@
-import {changeset} from 'vega-dataflow';
+import {changeset, isChangeSet} from 'vega-dataflow';
 
 function dataref(view, name) {
   var data = view._runtime.data;
@@ -10,6 +10,13 @@ function dataref(view, name) {
 
 export function data(name) {
   return dataref(this, name).values.value;
+}
+
+export function change(name, changes) {
+  if (!isChangeSet(changes)) {
+    this.error('Second argument to changes must be a changeset.');
+  }
+  return this.pulse(dataref(this, name).input, changes);
 }
 
 export function insert(name, _) {

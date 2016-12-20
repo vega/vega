@@ -320,6 +320,25 @@ objects is a *live* array used by the underlying dataflow. Callers that wish
 to modify the returned array should first make a defensive copy,
 for example using `view.data('name').slice()`.
 
+<a name="view_change" href="#view_change">#</a>
+view.<b>change</b>(<i>name</i>, <i>changeset</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/data.js "Source")
+
+Updates the data set with the given *name* with the changes specified by
+the provided *changeset* instance. This method does not force an immediate
+update to the view: invoke the [run](#view_run) method when ready.
+
+```js
+view.change('data', vega.changeset().insert([...])).remove([...])
+    .run()
+```
+
+Internally, this method takes the provided
+[ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
+and invokes
+[Dataflow.pulse](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/update.js).
+See [vega-dataflow](https://github.com/vega/vega-dataflow) for more.
+
 <a name="view_insert" href="#view_insert">#</a>
 view.<b>insert</b>(<i>name</i>, <i>tuples</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/data.js "Source")
@@ -328,7 +347,9 @@ Inserts an array of new data *tuples* into the data set with the given *name*,
 then returns this view instance. The input *tuples* array should contain one
 or more data objects that are not already included in the data set. This
 method does not force an immediate update to the view: invoke the
-[run](#view_run) method when ready.
+[run](#view_run) method when ready. Insert can not be used in combination with
+the [remove](#view_remove) method on the same pulse; to simultaneously add
+and remove data use the [change](#view_change) method.
 
 Internally, this method creates a
 [ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
@@ -345,6 +366,9 @@ then returns this view instance. The *tuples* argument can either be an
 array of tuples already included in the data set, or a predicate function
 indicating which tuples should be removed. This method does not force an
 immediate update to the view: invoke the [run](#view_run) method when ready.
+Remove can not be used in combination with the [insert](#view_insert) method
+on the same pulse; to simultaneously add and remove data use the
+[change](#view_change) method.
 
 For example, to remove all tuples in the `'table'` data set with a `count`
 property less than five:
