@@ -27,6 +27,7 @@ export {default as constant} from './src/constant';
 export {default as error} from './src/error';
 export {default as extend} from './src/extend';
 export {default as extentIndex} from './src/extentIndex';
+export {default as fastmap} from './src/fastmap';
 export {default as field} from './src/field';
 export {default as inherits} from './src/inherits';
 export {default as isArray} from './src/isArray';
