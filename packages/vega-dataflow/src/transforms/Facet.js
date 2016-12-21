@@ -1,6 +1,6 @@
 import Transform from '../Transform';
 import Subflow from './Subflow';
-import {inherits} from 'vega-util';
+import {fastmap, inherits} from 'vega-util';
 
 /**
  * Facets a dataflow into a set of subflows based on a key.
@@ -12,7 +12,7 @@ import {inherits} from 'vega-util';
  */
 export default function Facet(params) {
   Transform.call(this, {}, params);
-  this._keys = {}; // cache previously calculated key values
+  this._keys = fastmap(); // cache previously calculated key values
   this._count = 0; // count of subflows
 
   // keep track of active subflows, use as targets array for listeners
@@ -51,7 +51,8 @@ prototype.subflow = function(key, flow, pulse, parent) {
 };
 
 prototype.transform = function(_, pulse) {
-  var self = this,
+  var df = pulse.dataflow,
+      self = this,
       key = _.key,
       flow = _.subflow,
       cache = this._keys,
@@ -65,44 +66,47 @@ prototype.transform = function(_, pulse) {
   this._targets.active = 0; // reset list of active subflows
 
   pulse.visit(pulse.ADD, function(t) {
-    subflow(cache[t._id] = key(t)).add(t);
+    var k = key(t);
+    cache.set(t._id, k);
+    subflow(k).add(t);
   });
 
   pulse.visit(pulse.REM, function(t) {
-    var k = cache[t._id];
-    cache[t._id] = null;
+    var k = cache.get(t._id);
+    cache.delete(t._id);
     subflow(k).rem(t);
   });
 
   if (rekey || pulse.modified(key.fields)) {
     pulse.visit(pulse.MOD, function(t) {
-      var k0 = cache[t._id],
+      var k0 = cache.get(t._id),
           k1 = key(t);
       if (k0 === k1) {
         subflow(k1).mod(t);
       } else {
-        cache[t._id] = k1;
+        cache.set(t._id, k1);
         subflow(k0).rem(t);
         subflow(k1).add(t);
       }
     });
   } else if (pulse.changed(pulse.MOD)) {
     pulse.visit(pulse.MOD, function(t) {
-      subflow(cache[t._id]).mod(t);
+      subflow(cache.get(t._id)).mod(t);
     });
   }
 
   if (rekey) {
     pulse.visit(pulse.REFLOW, function(t) {
-      var k0 = cache[t._id],
+      var k0 = cache.get(t._id),
           k1 = key(t);
       if (k0 !== k1) {
-        cache[t._id] = k1;
+        cache.set(t._id, k1);
         subflow(k0).rem(t);
         subflow(k1).add(t);
       }
     });
   }
 
+  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
   return pulse;
 };

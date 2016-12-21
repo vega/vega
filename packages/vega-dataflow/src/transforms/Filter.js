@@ -1,5 +1,5 @@
 import Transform from '../Transform';
-import {inherits} from 'vega-util';
+import {fastmap, inherits} from 'vega-util';
 
 /**
  * Filters data tuples according to a predicate function.
@@ -9,40 +9,42 @@ import {inherits} from 'vega-util';
  *   that determines a tuple's filter status. Truthy values pass the filter.
  */
 export default function Filter(params) {
-  Transform.call(this, {}, params);
+  Transform.call(this, fastmap(), params);
 }
 
 var prototype = inherits(Filter, Transform);
 
 prototype.transform = function(_, pulse) {
-  var test = _.expr,
+  var df = pulse.dataflow,
       cache = this.value, // cache ids of filtered tuples
       output = pulse.fork(),
       add = output.add,
       rem = output.rem,
-      mod = output.mod, isMod = true;
+      mod = output.mod,
+      test = _.expr,
+      isMod = true;
 
-  pulse.visit(pulse.REM, function(x) {
-    if (!cache[x._id]) rem.push(x);
-    else cache[x._id] = 0;
+  pulse.visit(pulse.REM, function(t) {
+    if (!cache.has(t._id)) rem.push(t);
+    else cache.delete(t._id);
   });
 
-  pulse.visit(pulse.ADD, function(x) {
-    if (test(x, _)) add.push(x);
-    else cache[x._id] = 1;
+  pulse.visit(pulse.ADD, function(t) {
+    if (test(t, _)) add.push(t);
+    else cache.set(t._id, 1);
   });
 
-  function revisit(x) {
-    var b = test(x, _),
-        s = cache[x._id];
+  function revisit(t) {
+    var b = test(t, _),
+        s = cache.get(t._id);
     if (b && s) {
-      cache[x._id] = 0;
-      add.push(x);
+      cache.delete(t._id);
+      add.push(t);
     } else if (!b && !s) {
-      cache[x._id] = 1;
-      rem.push(x);
+      cache.set(t._id, 1);
+      rem.push(t);
     } else if (isMod && b && !s) {
-      mod.push(x);
+      mod.push(t);
     }
   }
 
@@ -53,5 +55,6 @@ prototype.transform = function(_, pulse) {
     pulse.visit(pulse.REFLOW, revisit);
   }
 
+  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
   return output;
 };

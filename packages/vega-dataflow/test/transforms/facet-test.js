@@ -118,3 +118,28 @@ tape("Facet handles key parameter change", function(test) {
 
   test.end();
 });
+
+tape('Facet key cache does not leak memory', function(test) {
+  var df = new vega.Dataflow(),
+      c0 = df.add(Collect),
+      ft = df.add(Facet, {subflow:subflow, key:util.field('key'), pulse:c0}),
+      n = df.cleanThreshold + 1;
+
+  function subflow(df) {
+    return df.add(Collect);
+  }
+
+  function generate() {
+    for (var data = [], i=0; i<n; ++i) {
+      data.push({id: i, key: i % 4});
+    }
+    return data;
+  }
+
+  // burn in by filling up to threshold, then remove all
+  df.pulse(c0, changeset().insert(generate())).run();
+  df.pulse(c0, changeset().remove(util.truthy)).run();
+  test.equal(ft._keys.empty, 0, 'Zero empty map entries');
+
+  test.end();
+});

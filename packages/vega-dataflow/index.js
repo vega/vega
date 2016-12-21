@@ -2,7 +2,7 @@
 export {default as UniqueList} from './src/util/UniqueList';
 
 // Core Runtime
-export {default as changeset} from './src/ChangeSet';
+export {default as changeset, isChangeSet} from './src/ChangeSet';
 export {default as Dataflow} from './src/Dataflow';
 export {default as EventStream} from './src/EventStream';
 export {default as Parameters} from './src/Parameters';
