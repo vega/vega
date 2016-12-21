@@ -1,8 +1,7 @@
-import get from './get';
 import {Transform} from 'vega-dataflow';
-import {error, inherits} from 'vega-util';
+import {error, fastmap, inherits} from 'vega-util';
 
-var Paths = {
+var Paths = fastmap({
   'line': line,
   'line-radial': lineR,
   'curve': curve,
@@ -13,7 +12,7 @@ var Paths = {
   'diagonal-horizontal': diagonalX,
   'diagonal-vertical': diagonalY,
   'diagonal-radial': diagonalR
-};
+});
 
 function sourceX(t) { return t.source.x; }
 function sourceY(t) { return t.source.y; }
@@ -39,7 +38,7 @@ prototype.transform = function(_, pulse) {
       as = _.as || 'path',
       orient = _.orient || 'vertical',
       shape = _.shape || 'line',
-      path = get(Paths, shape + '-' + orient) || get(Paths, shape);
+      path = Paths.get(shape + '-' + orient) || Paths.get(shape);
 
   if (!path) {
     error('LinkPath unsupported type: ' + _.shape + '-' + _.orient);
