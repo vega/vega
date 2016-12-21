@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "3.0.0-beta.10",
+  "version": "3.0.0-beta.11",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -69,7 +69,7 @@
     "vega-scale": ">=1.1",
     "vega-scenegraph": ">=2.0.0-beta.11",
     "vega-statistics": "1",
-    "vega-util": "1",
+    "vega-util": "^1.1",
     "vega-view": ">=1.0.0-beta",
     "vega-voronoi": ">=1.0.0-beta",
     "vega-wordcloud": ">=1.0.0-beta",
