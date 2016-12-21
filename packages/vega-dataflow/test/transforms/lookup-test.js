@@ -37,7 +37,7 @@ tape('Lookup looks up matching tuples', function(test) {
 
   // add lookup table
   df.pulse(c0, changeset().insert(lut)).run();
-  test.equal(Object.keys(ti.value).length, 3);
+  test.equal(ti.value.size, 3);
 
   // add primary data
   df.pulse(c1, changeset().insert(data)).run();

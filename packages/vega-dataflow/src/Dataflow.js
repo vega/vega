@@ -61,6 +61,12 @@ prototype.loader = function(_) {
   return arguments.length ? (this._loader = _, this) : this._loader;
 };
 
+/**
+ * Empty entry threshold for garbage cleaning. Map data structures will
+ * perform cleaning once the number of empty entries exceeds this value.
+ */
+prototype.cleanThreshold = 1e4;
+
 // OPERATOR REGISTRATION
 prototype.add = add;
 prototype.connect = connect;

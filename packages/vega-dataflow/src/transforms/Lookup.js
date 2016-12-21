@@ -16,10 +16,6 @@ export default function Lookup(params) {
 
 var prototype = inherits(Lookup, Transform);
 
-function get(index, key) {
-  return index.hasOwnProperty(key) ? index[key] : null;
-}
-
 prototype.transform = function(_, pulse) {
   var out = pulse,
       as = _.as,
@@ -34,13 +30,13 @@ prototype.transform = function(_, pulse) {
     key = keys[0];
     field = as[0];
     set = function(t) {
-      var v = get(index, key(t));
+      var v = index.get(key(t));
       t[field] = v==null ? defaultValue : v;
     };
   } else {
     set = function(t) {
       for (var i=0, n=keys.length, v; i<n; ++i) {
-        v = get(index, keys[i](t));
+        v = index.get(keys[i](t));
         t[as[i]] = v==null ? defaultValue : v;
       }
     };

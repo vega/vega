@@ -45,3 +45,24 @@ tape('Filter filters tuples', function(test) {
 
   test.end();
 });
+
+tape('Filter does not leak memory', function(test) {
+  var df = new vega.Dataflow(),
+      c0 = df.add(Collect),
+      f0 = df.add(Filter, {expr: util.field('value'), pulse: c0}),
+      n = df.cleanThreshold + 1;
+
+  function generate() {
+    for (var data = [], i=0; i<n; ++i) {
+      data.push({index: i, value: 0});
+    }
+    return data;
+  }
+
+  // burn in by filling up to threshold, then remove all
+  df.pulse(c0, changeset().insert(generate())).run();
+  df.pulse(c0, changeset().remove(util.truthy)).run();
+  test.equal(f0.value.empty, 0, 'Zero empty map entries');
+
+  test.end();
+});
