@@ -44,5 +44,9 @@ export default function(from, group, scope) {
       : ref(scope.getData(from.data).output);
   }
 
-  return {key: key, pulse: dataRef, parent: parent};
+  return {
+    key: key,
+    pulse: dataRef,
+    parent: parent
+  };
 }

@@ -27,7 +27,11 @@ export default function(spec, scope) {
   input = parseData(spec.from, group, scope);
 
   // data join to map tuples to visual items
-  op = scope.add(DataJoin(input));
+  op = scope.add(DataJoin({
+    key:   input.key,
+    pulse: input.pulse,
+    clean: !group
+  }));
 
   // collect visual items
   op = store = scope.add(Collect({pulse: ref(op)}));
