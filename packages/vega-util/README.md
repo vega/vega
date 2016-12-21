@@ -205,6 +205,39 @@ A convenience method for setting up object-oriented inheritance. Assigns the
 inherits the properties of the *parent* function's prototype via prototypal
 inheritance. Returns the new child prototype object.
 
+<a name="fastmap" href="#fastmap">#</a>
+vega.<b>fastmap</b>([<i>object</i>])
+
+Provides a key/value map data structure, keyed by string. Supports a subset
+of the [ES6 Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+API, including *has*, *get*, *set*, *delete* and *clear* methods and a
+*size* property. If the optional *object* argument is provided, all
+key/values on the input object will be added to the new map instance.
+
+```js
+var map = vega.fastmap({foo:1, bar:2});
+map.has('foo'); // -> true
+map.get('foo'); // -> 1
+map.delete('bar');
+map.has('bar'); // -> false
+map.set('baz', 0);
+map.get('baz'); // -> 0
+map.size; // -> 2
+map.empty; // -> 1 (number of empty entries)
+map.clean(); // invoke garbage collection, clears empty entries
+```
+
+By using basic JavaScript objects to hash values and avoiding calls to
+the built-in JavaScript `delete` operator, fastmaps provide better
+performance than ES6 maps and
+[d3-collection](https://github.com/d3/d3-collection#maps).
+However, this speed comes at the cost of some object bloat, requiring
+periodic garbage collection in the case of many deletions. The fastmap
+object provides a *clean* method for requesting garbage collection of
+empty map entries. The *test* method is a getter/setter for providing an
+optional boolean-valued function that indicates additional objects (not
+just empty entries from deleted keys) that should be removed during
+garbage collection.
 
 ### Arrays
 
