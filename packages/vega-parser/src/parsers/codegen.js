@@ -81,214 +81,216 @@ export var extendedFunctions = {
   gradient: scaleGradient,
 
   monthFormat: function(month) {
-      return _time(month, 1, '%B');
-    },
+    return _time(month, 1, '%B');
+  },
 
   monthAbbrevFormat: function(month) {
-      return _time(month, 1, '%b');
-    },
+    return _time(month, 1, '%b');
+  },
 
   dayFormat: function(day) {
-      return _time(0, 2 + day, '%A');
-    },
+    return _time(0, 2 + day, '%A');
+  },
 
   dayAbbrevFormat: function(day) {
-      return _time(0, 2 + day, '%a');
-    },
+    return _time(0, 2 + day, '%a');
+  },
 
   quarter: function(date) {
-      return 1 + ~~(new Date(date).getMonth() / 3);
-    },
+    return 1 + ~~(new Date(date).getMonth() / 3);
+  },
 
   utcquarter: function(date) {
-      return 1 + ~~(new Date(date).getUTCMonth() / 3);
-    },
+    return 1 + ~~(new Date(date).getUTCMonth() / 3);
+  },
 
   warn: function() {
-      return log(this.context.dataflow, 'warn', arguments);
-    },
+    return log(this.context.dataflow, 'warn', arguments);
+  },
 
   info: function() {
-      return log(this.context.dataflow, 'info', arguments);
-    },
+    return log(this.context.dataflow, 'info', arguments);
+  },
 
   debug: function() {
-      return log(this.context.dataflow, 'debug', arguments);
-    },
+    return log(this.context.dataflow, 'debug', arguments);
+  },
 
   inScope: function(item) {
-      var group = this.context.group,
-          value = false;
+    var group = this.context.group,
+        value = false;
 
-      if (group) while (item) {
-        if (item === group) { value = true; break; }
-        item = item.mark.group;
-      }
-      return value;
-    },
+    if (group) while (item) {
+      if (item === group) { value = true; break; }
+      item = item.mark.group;
+    }
+    return value;
+  },
 
   clampRange: function(range, min, max) {
-      var lo = range[0],
-          hi = range[1],
-          span;
+    var lo = range[0],
+        hi = range[1],
+        span;
 
-      if (hi < lo) span = hi, hi = lo, lo = span;
-      span = hi - lo;
+    if (hi < lo) span = hi, hi = lo, lo = span;
+    span = hi - lo;
 
-      return [
-        Math.min(Math.max(lo, min), max - span),
-        Math.min(Math.max(hi, span), max)
-      ];
-    },
+    return [
+      Math.min(Math.max(lo, min), max - span),
+      Math.min(Math.max(hi, span), max)
+    ];
+  },
 
   pinchDistance: function() {
-      return 'Math.sqrt('
-        + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
-        + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2)'
-        + ')';
-    },
+    return 'Math.sqrt('
+      + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
+      + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2)'
+      + ')';
+  },
 
   pinchAngle: function() {
-      return 'Math.atan2('
-        + 'event.touches[1].clientY - event.touches[0].clientY,'
-        + 'event.touches[1].clientX - event.touches[0].clientX'
-        + ')';
-    },
+    return 'Math.atan2('
+      + 'event.touches[1].clientY - event.touches[0].clientY,'
+      + 'event.touches[1].clientX - event.touches[0].clientX'
+      + ')';
+  },
 
   open: function(uri, name) {
-      var df = this.context.dataflow;
-      if (_window && _window.open) {
-        df.loader().sanitize(uri, {context:'open', name:name})
-          .then(function(url) { _window.open(url, name); })
-          .catch(function(e) { df.warn('Open url failed: ' + e); });
-      } else {
-        df.warn('Open function can only be invoked in a browser.');
-      }
-    },
+    var df = this.context.dataflow;
+    if (_window && _window.open) {
+      df.loader().sanitize(uri, {context:'open', name:name})
+        .then(function(url) { _window.open(url, name); })
+        .catch(function(e) { df.warn('Open url failed: ' + e); });
+    } else {
+      df.warn('Open function can only be invoked in a browser.');
+    }
+  },
 
   screen: function() {
-      return _window ? _window.screen : {};
-    },
+    return _window ? _window.screen : {};
+  },
 
   windowsize: function() {
-      return _window
-        ? [_window.innerWidth, _window.innerHeight]
-        : [undefined, undefined];
-    },
+    return _window
+      ? [_window.innerWidth, _window.innerHeight]
+      : [undefined, undefined];
+  },
 
-  span: function(array) { return array[array.length-1] - array[0]; },
+  span: function(array) {
+    return array[array.length-1] - array[0];
+  },
 
   range: function(name, group) {
-      var s = getScale(name, (group || this).context);
-      return s && s.range ? s.range() : [0, 0];
-    },
+    var s = getScale(name, (group || this).context);
+    return s && s.range ? s.range() : [0, 0];
+  },
 
   domain: function(name, group) {
-      var s = getScale(name, (group || this).context);
-      return s ? s.domain() : [];
-    },
+    var s = getScale(name, (group || this).context);
+    return s ? s.domain() : [];
+  },
 
   bandwidth: function(name, group) {
-      var s = getScale(name, (group || this).context);
-      return s && s.bandwidth ? s.bandwidth() : 0;
-    },
+    var s = getScale(name, (group || this).context);
+    return s && s.bandwidth ? s.bandwidth() : 0;
+  },
 
   bandspace: function(count, paddingInner, paddingOuter) {
-      return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
-    },
+    return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
+  },
 
   copy: function(name, group) {
-      var s = getScale(name, (group || this).context);
-      return s ? s.copy() : undefined;
-    },
+    var s = getScale(name, (group || this).context);
+    return s ? s.copy() : undefined;
+  },
 
   scale:  function(name, value, group) {
-      var s = getScale(name, (group || this).context);
-      return s ? s(value) : undefined;
-    },
+    var s = getScale(name, (group || this).context);
+    return s ? s(value) : undefined;
+  },
 
   invert: function(name, range, group) {
-      var s = getScale(name, (group || this).context);
-      return !s ? undefined
-        : isArray(range) ? (s.invertRange || s.invert)(range)
-        : (s.invert || s.invertExtent)(range);
-    },
+    var s = getScale(name, (group || this).context);
+    return !s ? undefined
+      : isArray(range) ? (s.invertRange || s.invert)(range)
+      : (s.invert || s.invertExtent)(range);
+  },
 
   tuples: function(name) {
-      var data = this.context.data[name];
-      return data ? data.values.value : [];
-    },
+    var data = this.context.data[name];
+    return data ? data.values.value : [];
+  },
 
   indata: function(name, field, value) {
-      var index = this.context.data[name]['index:' + field],
-          entry = index ? index.value[value] : undefined;
-      return entry ? entry.count : entry;
-    },
+    var index = this.context.data[name]['index:' + field],
+        entry = index ? index.value.get(value) : undefined;
+    return entry ? entry.count : entry;
+  },
 
   inrange: function(value, range) {
-      var r0 = range[0], r1 = range[range.length-1], t;
-      if (r0 > r1) t = r0, r0 = r1, r1 = t;
-      return r0 <= value && value <= r1;
-    },
+    var r0 = range[0], r1 = range[range.length-1], t;
+    if (r0 > r1) t = r0, r0 = r1, r1 = t;
+    return r0 <= value && value <= r1;
+  },
 
   encode: function(item, name, retval) {
-      if (item) {
-        var df = this.context.dataflow,
-            target = item.mark.source;
-        df.pulse(target, df.changeset().encode(item, name));
-      }
-      return retval !== undefined ? retval : item;
-    },
+    if (item) {
+      var df = this.context.dataflow,
+          target = item.mark.source;
+      df.pulse(target, df.changeset().encode(item, name));
+    }
+    return retval !== undefined ? retval : item;
+  },
 
   modify: function(name, insert, remove, toggle, modify, values) {
-      var df = this.context.dataflow,
-          data = this.context.data[name],
-          input = data.input,
-          changes = data.changes,
-          stamp = df.stamp(),
-          predicate, key;
+    var df = this.context.dataflow,
+        data = this.context.data[name],
+        input = data.input,
+        changes = data.changes,
+        stamp = df.stamp(),
+        predicate, key;
 
-      if (!(input.value.length || insert || toggle)) {
-        // nothing to do!
-        return 0;
-      }
-
-      if (!changes || changes.stamp < stamp) {
-        data.changes = (changes = df.changeset());
-        changes.stamp = stamp;
-        df.runAfter(function() {
-          df.pulse(input, changes).run();
-        });
-      }
-
-      if (remove) {
-        predicate = remove === true ? truthy
-          : (isArray(remove) || remove._id != null) ? remove
-          : removePredicate(remove);
-        changes.remove(predicate);
-      }
-
-      if (insert) {
-        changes.insert(insert);
-      }
-
-      if (toggle) {
-        predicate = removePredicate(toggle);
-        if (input.value.filter(predicate).length) {
-          changes.remove(predicate);
-        } else {
-          changes.insert(toggle);
-        }
-      }
-
-      if (modify) {
-        for (key in values) {
-          changes.modify(modify, key, values[key]);
-        }
-      }
-
-      return 1;
+    if (!(input.value.length || insert || toggle)) {
+      // nothing to do!
+      return 0;
     }
+
+    if (!changes || changes.stamp < stamp) {
+      data.changes = (changes = df.changeset());
+      changes.stamp = stamp;
+      df.runAfter(function() {
+        df.pulse(input, changes).run();
+      });
+    }
+
+    if (remove) {
+      predicate = remove === true ? truthy
+        : (isArray(remove) || remove._id != null) ? remove
+        : removePredicate(remove);
+      changes.remove(predicate);
+    }
+
+    if (insert) {
+      changes.insert(insert);
+    }
+
+    if (toggle) {
+      predicate = removePredicate(toggle);
+      if (input.value.filter(predicate).length) {
+        changes.remove(predicate);
+      } else {
+        changes.insert(toggle);
+      }
+    }
+
+    if (modify) {
+      for (key in values) {
+        changes.modify(modify, key, values[key]);
+      }
+    }
+
+    return 1;
+  }
 };
 
 function removePredicate(props) {
