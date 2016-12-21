@@ -199,6 +199,7 @@ the input *source* objects.
 
 <a name="inherits" href="#inherits">#</a>
 vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/inherits.js "Source")
 
 A convenience method for setting up object-oriented inheritance. Assigns the
 `prototype` property of the input *child* function, such that the *child*
@@ -207,6 +208,7 @@ inheritance. Returns the new child prototype object.
 
 <a name="fastmap" href="#fastmap">#</a>
 vega.<b>fastmap</b>([<i>object</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/fastmap.js "Source")
 
 Provides a key/value map data structure, keyed by string. Supports a subset
 of the [ES6 Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
