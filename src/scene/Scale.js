@@ -502,6 +502,11 @@ function range(group) {
     if (rev) rng = rng.reverse();
   }
 
+  if (rng[0] === null || rng[rng.length-1] === null) {
+    log.error('Range is underspecified. Please ensure either the ' +
+      '"range" property or both "rangeMin" and "rangeMax" are specified.')
+  }
+
   return rng;
 }
 
