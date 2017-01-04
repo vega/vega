@@ -64,7 +64,7 @@ function layoutGroup(view, group, _) {
   // layout legends, extending viewBounds
   if (legends.length) {
     flow = {left: 0, right: 0, margin: _.legendMargin || 8};
-    axisBounds.union(markBounds);
+    axisBounds.union(viewBounds); // see vega/vega#694
 
     for (i=0, n=legends.length; i<n; ++i) {
       b = layoutLegend(legends[i], flow, axisBounds, width, height);
