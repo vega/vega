@@ -13,7 +13,7 @@ import {autosize, resizer} from './size';
 import state from './state';
 
 import {Dataflow} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {inherits, stringValue} from 'vega-util';
 import {
   CanvasHandler, Scenegraph,
   renderModule, RenderType
@@ -112,10 +112,16 @@ prototype.enqueue = function(items) {
 
 // -- GET / SET ----
 
+function lookupSignal(view, name) {
+  return view._signals.hasOwnProperty(name)
+    ? view._signals[name]
+    : view.error('Unrecognized signal name: ' + stringValue(name));
+}
+
 prototype.signal = function(name, value, options) {
-  var op = this._signals[name];
+  var op = lookupSignal(this, name);
   return arguments.length === 1
-    ? (op ? op.value : undefined)
+    ? op.value
     : this.update(op, value, options);
 };
 
@@ -152,6 +158,36 @@ prototype.renderer = function(type) {
   return this;
 };
 
+// -- EVENT HANDLING ----
+
+prototype.addEventListener = function(type, handler) {
+  this._handler.on(type, handler);
+};
+
+prototype.removeEventListener = function(type, handler) {
+  this._handler.off(type, handler);
+};
+
+prototype.addSignalListener = function(name, handler) {
+  var s = lookupSignal(this, name),
+      h = function() { handler(name, s.value); };
+  this.on(s, null, (h.handler = handler, h));
+};
+
+prototype.removeSignalListener = function(name, handler) {
+  var s = lookupSignal(this, name),
+      t = s._targets || [],
+      h = t.filter(function(op) {
+            var u = op._update;
+            return u && u.handler === handler;
+          });
+  if (h.length) t.remove(h[0]);
+};
+
+prototype.events = events;
+prototype.finalize = finalize;
+prototype.hover = hover;
+
 // -- SIZING ----
 prototype.autosize = autosize;
 
@@ -168,11 +204,6 @@ prototype.initialize = initialize;
 prototype.toImageURL = renderToImageURL;
 prototype.toCanvas = renderToCanvas;
 prototype.toSVG = renderToSVG;
-
-// -- EVENT HANDLING ----
-prototype.events = events;
-prototype.finalize = finalize;
-prototype.hover = hover;
 
 // -- SAVE / RESTORE STATE ----
 prototype.state = state;

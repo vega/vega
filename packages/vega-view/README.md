@@ -12,9 +12,9 @@ static SVG or PNG (Canvas) images.
 * [View Construction](#view-construction)
 * [View Configuration](#view-configuration)
 * [Dataflow and Rendering](#dataflow-and-rendering)
+* [Signals](#signals)
 * [Event Handling](#event-handling)
 * [Image Export](#image-export)
-* [Signals](#signals)
 * [Data](#data)
 
 ### View Construction
@@ -209,10 +209,65 @@ Returns the [Vega scenegraph](https://github.com/vega/vega-scenegraph)
 instance for this view.
 
 
+### Signals
+
+Methods for accessing and updating dataflow *signal* values.
+
+<a name="view_signal" href="#view_signal">#</a>
+view.<b>signal</b>(<i>name</i>[, <i>value</i>])
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Gets or sets a dataflow *signal*. If only the *name* argument is provided,
+returns the requested signal value. If *value* is also specified, updates the
+signal and returns this view instance. If the signal does not exist, an error
+will be raised. This method does not force an immediate update to the view:
+invoke the [run](#view_run) method when ready.
+
+<a name="view_state" href="#view_state">#</a>
+view.<b>state</b>([<i>state</i>])
+[<>](https://github.com/vega/vega-view/blob/master/src/view/state.js "Source")
+
+Gets or sets the state of signals in the dataflow graph. If no arguments are
+specified, returns an object of name-value mappings for **all** signals in the
+dataflow. If the *state* argument is provided, this method updates the value
+of all signals included in the input *state* object, invokes the
+[run](#view_run) method, and returns this view instance.
+
+<a name="view_addSignalListener" href="#view_addSignalListener">#</a>
+view.<b>addSignalListener</b>(<i>name</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Registers a listener for changes to the signal with the given *name*. If
+the signal does not exist, an error will be raised. When the signal value
+changes, the *handler* function is invoked with two arguments: the *name*
+of the signal and the new signal *value*. Listeners will be invoked when
+the signal value *changes* during pulse propagation (e.g., after
+[view.run()](#view_run) is called).
+
+To remove a listener, use the
+[removeSignalListener](view_removeSignalListener) method.
+
+```js
+view.addSignalListener('width', function(name, value) {
+  console.log('WIDTH: ' + value);
+});
+view.width(500).run(); // listener logs 'WIDTH: 500'
+```
+
+<a name="view_removeSignalListener" href="#view_removeSignalListener">#</a>
+view.<b>removeSignalListener</b>(<i>name</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Removes a signal listener registered with the
+[addSignalListener](#view_addSignalListener) method. If the signal does not
+exist, an error will be raised. If the signal exists but the provided
+*handler* is not registered, this method has no effect.
+
+
 ### Event Handling
 
-Methods for generating new event streams. See also the [hover](#view_hover)
-method.
+Methods for generating new event streams and registering event listeners.
+See also the [hover](#view_hover) method.
 
 <a name="view_events" href="#view_events">#</a>
 view.<b>events</b>(<i>source</i>, <i>type</i>[, <i>filter</i>])
@@ -232,6 +287,36 @@ Typically this method is invoked internally to create event streams referenced
 within Vega signal definitions. However, callers can use this method to create
 custom event streams if desired. This method assumes that the view is running
 in a browser environment, otherwise invoking this method may have no effect.
+
+<a name="view_addEventListener" href="#view_addEventListener">#</a>
+view.<b>addEventListener</b>(<i>type</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Registers an event listener for input events. The event *type* should be a
+string indicating an event type supported by
+[vega-scenegraph](https://github.com/vega/vega-scenegraph) event handlers.
+Examples include `"mouseover"`, `"click"`, `"keydown"` and `"touchstart"`.
+When events occur, the *handler* function is invoked with two arguments: the
+*event* instance and the currently active scenegraph *item* (which is `null`
+if the event target was the view component itself).
+
+All registered event handlers are preserved upon changes of renderer. For
+example, if the View `renderer` type is changed from `"canvas"` to `"svg"`,
+all listeners will remain active. To remove a listener, use the
+[removeEventListener](#view_removeEventListener) method.
+
+```js
+view.addEventListener('click', function(event, item) {
+  console.log('CLICK', event, item);
+});
+```
+
+<a name="view_removeEventListener" href="#view_removeEventListener">#</a>
+view.<b>removeEventListener</b>(<i>type</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Removes an event listener registered with the
+[addEventListener](#view_addEventListener) method.
 
 
 ### Image Export
@@ -281,30 +366,6 @@ view.toImageURL('png').then(function(url) {
   link.dispatchEvent(event);
 }).catch(function(error) { /* error handling */ });
 ```
-
-
-### Signals
-
-Methods for accessing and updating dataflow *signal* values.
-
-<a name="view_signal" href="#view_signal">#</a>
-view.<b>signal</b>(<i>name</i>[, <i>value</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
-
-Gets or sets a dataflow *signal*. If only the *name* argument is provided,
-returns the requested signal value. If *value* is also specified, updates the
-signal and returns this view instance. This method does not force an immediate
-update to the view: invoke the [run](#view_run) method when ready.
-
-<a name="view_state" href="#view_state">#</a>
-view.<b>state</b>([<i>state</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/view/state.js "Source")
-
-Gets or sets the state of signals in the dataflow graph. If no arguments are
-specified, returns an object of name-value mappings for **all** signals in the
-dataflow. If the *state* argument is provided, this method updates the value
-of all signals included in the input *state* object, invokes the
-[run](#view_run) method, and returns this view instance.
 
 
 ### Data
