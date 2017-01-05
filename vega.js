@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.6.3',
+  version: '2.6.4',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -20,7 +20,7 @@ module.exports = {
   logging: require('vega-logging'),
   debug: require('vega-logging').debug
 };
-},{"./src/core/config":91,"./src/core/schema":92,"./src/parse/":97,"./src/scene/Bounder":109,"./src/scene/Builder":110,"./src/scene/Encoder":111,"./src/scene/GroupBuilder":112,"./src/scene/visit":117,"./src/transforms":145,"./src/transforms/BatchTransform":119,"./src/transforms/Parameter":135,"./src/transforms/Transform":140,"./src/util":148,"vega-dataflow":41,"vega-logging":48}],2:[function(require,module,exports){
+},{"./src/core/config":92,"./src/core/schema":93,"./src/parse/":98,"./src/scene/Bounder":110,"./src/scene/Builder":111,"./src/scene/Encoder":112,"./src/scene/GroupBuilder":113,"./src/scene/visit":118,"./src/transforms":146,"./src/transforms/BatchTransform":120,"./src/transforms/Parameter":136,"./src/transforms/Transform":141,"./src/util":149,"vega-dataflow":42,"vega-logging":49}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 (function (global, factory) {
@@ -1356,7 +1356,7 @@ module.exports = {
     days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
     shortDays: ["일", "월", "화", "수", "목", "금", "토"],
     months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-    shortMonths: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+    shortMonths: ["1월", "2월", "3월", "4���", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
   });
 
   var mkMK = locale$1({
@@ -1386,7 +1386,7 @@ module.exports = {
     date: "%d/%m/%Y",
     time: "%H:%M:%S",
     periods: ["AM", "PM"], // unused
-    days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+    days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Pi��tek", "Sobota"],
     shortDays: ["Niedz.", "Pon.", "Wt.", "Śr.", "Czw.", "Pt.", "Sob."],
     months: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"],
     shortMonths: ["Stycz.", "Luty", "Marz.", "Kwie.", "Maj", "Czerw.", "Lipc.", "Sierp.", "Wrz.", "Paźdz.", "Listop.", "Grudz."]/* In Polish language abbraviated months are not commonly used so there is a dispute about the proper abbraviations. */
@@ -1845,6 +1845,143 @@ module.exports = {
 
 }));
 },{}],7:[function(require,module,exports){
+module.exports={
+  "_args": [
+    [
+      {
+        "raw": "datalib@^1.7.1",
+        "scope": null,
+        "escapedName": "datalib",
+        "name": "datalib",
+        "rawSpec": "^1.7.1",
+        "spec": ">=1.7.1 <2.0.0",
+        "type": "range"
+      },
+      "/Users/arvind/Research/vega2/vega3-2"
+    ]
+  ],
+  "_from": "datalib@>=1.7.1 <2.0.0",
+  "_id": "datalib@1.7.3",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/datalib",
+  "_nodeVersion": "0.12.7",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/datalib-1.7.3.tgz_1476399375564_0.8775846140924841"
+  },
+  "_npmUser": {
+    "name": "jheer",
+    "email": "jeffrey.heer@gmail.com"
+  },
+  "_npmVersion": "2.12.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "datalib@^1.7.1",
+    "scope": null,
+    "escapedName": "datalib",
+    "name": "datalib",
+    "rawSpec": "^1.7.1",
+    "spec": ">=1.7.1 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/",
+    "/vega-dataflow",
+    "/vega-scenegraph"
+  ],
+  "_resolved": "https://registry.npmjs.org/datalib/-/datalib-1.7.3.tgz",
+  "_shasum": "4722715bb91f5a2411cf42bf984932cc403eba48",
+  "_shrinkwrap": null,
+  "_spec": "datalib@^1.7.1",
+  "_where": "/Users/arvind/Research/vega2/vega3-2",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "browser": {
+    "buffer": false,
+    "fs": false,
+    "http": false,
+    "request": false,
+    "sync-request": false,
+    "url": false
+  },
+  "bugs": {
+    "url": "https://github.com/vega/datalib/issues"
+  },
+  "contributors": [
+    {
+      "name": "Michael Correll",
+      "url": "http://pages.cs.wisc.edu/~mcorrell/"
+    },
+    {
+      "name": "Ryan Russell",
+      "url": "https://github.com/RussellSprouts"
+    }
+  ],
+  "dependencies": {
+    "d3-dsv": "0.1",
+    "d3-format": "0.4",
+    "d3-time": "0.1",
+    "d3-time-format": "0.2",
+    "request": "^2.67.0",
+    "sync-request": "^2.1.0",
+    "topojson": "^1.6.19"
+  },
+  "description": "JavaScript utilites for loading, summarizing and working with data.",
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "chai": "^3.4.1",
+    "istanbul": "latest",
+    "jshint": "^2.9.1-rc1",
+    "mocha": "^2.3.4",
+    "uglify-js": "^2.6.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "4722715bb91f5a2411cf42bf984932cc403eba48",
+    "tarball": "https://registry.npmjs.org/datalib/-/datalib-1.7.3.tgz"
+  },
+  "gitHead": "0087f0a1e9e9f819bffb309fa10b4ac3c9292486",
+  "homepage": "https://github.com/vega/datalib#readme",
+  "keywords": [
+    "data",
+    "table",
+    "statistics",
+    "parse",
+    "csv",
+    "tsv",
+    "json",
+    "utility"
+  ],
+  "license": "BSD-3-Clause",
+  "main": "src/index.js",
+  "maintainers": [
+    {
+      "name": "jheer",
+      "email": "jeffrey.heer@gmail.com"
+    }
+  ],
+  "name": "datalib",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/vega/datalib.git"
+  },
+  "scripts": {
+    "build": "browserify src/index.js -d -s dl -o datalib.js",
+    "cover": "TZ=America/Los_Angeles istanbul cover _mocha -- --recursive test/",
+    "deploy": "npm run test && scripts/deploy.sh",
+    "lint": "jshint src/",
+    "postbuild": "uglifyjs datalib.js -c -m -o datalib.min.js",
+    "test": "npm run lint && TZ=America/Los_Angeles mocha --recursive test/"
+  },
+  "version": "1.7.3"
+}
+
+},{}],8:[function(require,module,exports){
 var util = require('./util'),
     time = require('./time'),
     utc = time.utc;
@@ -1867,7 +2004,7 @@ u.$utcHour   = util.$func('utcHour', utc.hours.unit);
 u.$utcMinute = util.$func('utcMinute', utc.minutes.unit);
 u.$utcSecond = util.$func('utcSecond', utc.seconds.unit);
 
-},{"./time":29,"./util":30}],8:[function(require,module,exports){
+},{"./time":30,"./util":31}],9:[function(require,module,exports){
 var util = require('../util'),
     Measures = require('./measures'),
     Collector = require('./collector');
@@ -2181,7 +2318,7 @@ proto._consolidate = function() {
 
 module.exports = Aggregator;
 
-},{"../util":30,"./collector":9,"./measures":11}],9:[function(require,module,exports){
+},{"../util":31,"./collector":10,"./measures":12}],10:[function(require,module,exports){
 var util = require('../util');
 var stats = require('../stats');
 
@@ -2299,7 +2436,7 @@ proto.q3 = function(get) {
 
 module.exports = Collector;
 
-},{"../stats":27,"../util":30}],10:[function(require,module,exports){
+},{"../stats":28,"../util":31}],11:[function(require,module,exports){
 var util = require('../util');
 var Aggregator = require('./aggregator');
 
@@ -2314,7 +2451,7 @@ module.exports = function() {
     .summarize({'*':'values'});
 };
 
-},{"../util":30,"./aggregator":8}],11:[function(require,module,exports){
+},{"../util":31,"./aggregator":9}],12:[function(require,module,exports){
 var util = require('../util');
 
 var types = {
@@ -2502,7 +2639,7 @@ function create(agg, stream, accessor, mutator) {
 types.create = create;
 module.exports = types;
 
-},{"../stats":27,"../util":30}],12:[function(require,module,exports){
+},{"../stats":28,"../util":31}],13:[function(require,module,exports){
 var util = require('../util'),
     time = require('../time'),
     EPSILON = 1e-15;
@@ -2617,7 +2754,7 @@ bins.date = function(opt) {
 
 module.exports = bins;
 
-},{"../time":29,"../util":30}],13:[function(require,module,exports){
+},{"../time":30,"../util":31}],14:[function(require,module,exports){
 var bins = require('./bins'),
     gen  = require('../generate'),
     type = require('../import/type'),
@@ -2703,7 +2840,7 @@ module.exports = {
   histogram: histogram
 };
 
-},{"../generate":16,"../import/type":25,"../stats":27,"../util":30,"./bins":12}],14:[function(require,module,exports){
+},{"../generate":17,"../import/type":26,"../stats":28,"../util":31,"./bins":13}],15:[function(require,module,exports){
 var util = require('./util'),
     type = require('./import/type'),
     stats = require('./stats'),
@@ -2807,7 +2944,7 @@ function printCategoricalProfile(p) {
     .map(function(v) { return ' \'' + v + '\' (' + u[v] + ')'; });
   return list.concat(top).join('\n');
 }
-},{"./import/type":25,"./stats":27,"./template":28,"./util":30}],15:[function(require,module,exports){
+},{"./import/type":26,"./stats":28,"./template":29,"./util":31}],16:[function(require,module,exports){
 var util = require('./util'),
     d3_time = require('d3-time'),
     d3_timeF = require('d3-time-format'),
@@ -3040,7 +3177,7 @@ function utcQuarterFormat(date) {
   return Math.floor(date.getUTCMonth() / 3) + 1;
 }
 
-},{"./util":30,"d3-format":4,"d3-time":6,"d3-time-format":5}],16:[function(require,module,exports){
+},{"./util":31,"d3-format":4,"d3-time":6,"d3-time-format":5}],17:[function(require,module,exports){
 var util = require('./util'),
     gen = module.exports;
 
@@ -3211,7 +3348,7 @@ gen.random.bootstrap = function(domain, smooth) {
   };
   return f;
 };
-},{"./util":30}],17:[function(require,module,exports){
+},{"./util":31}],18:[function(require,module,exports){
 var util = require('../../util');
 var d3_dsv = require('d3-dsv');
 
@@ -3232,7 +3369,7 @@ dsv.delimiter = function(delim) {
 
 module.exports = dsv;
 
-},{"../../util":30,"d3-dsv":3}],18:[function(require,module,exports){
+},{"../../util":31,"d3-dsv":3}],19:[function(require,module,exports){
 var dsv = require('./dsv');
 
 module.exports = {
@@ -3244,7 +3381,7 @@ module.exports = {
   tsv: dsv.delimiter('\t')
 };
 
-},{"./dsv":17,"./json":19,"./topojson":20,"./treejson":21}],19:[function(require,module,exports){
+},{"./dsv":18,"./json":20,"./topojson":21,"./treejson":22}],20:[function(require,module,exports){
 var util = require('../../util');
 
 module.exports = function(data, format) {
@@ -3256,7 +3393,7 @@ module.exports = function(data, format) {
   return d;
 };
 
-},{"../../util":30}],20:[function(require,module,exports){
+},{"../../util":31}],21:[function(require,module,exports){
 var json = require('./json');
 
 var reader = function(data, format) {
@@ -3285,7 +3422,7 @@ var reader = function(data, format) {
 reader.topojson = require('topojson');
 module.exports = reader;
 
-},{"./json":19,"topojson":31}],21:[function(require,module,exports){
+},{"./json":20,"topojson":32}],22:[function(require,module,exports){
 var json = require('./json');
 
 module.exports = function(tree, format) {
@@ -3312,7 +3449,7 @@ function toTable(root, fields) {
   return (table.root = root, table);
 }
 
-},{"./json":19}],22:[function(require,module,exports){
+},{"./json":20}],23:[function(require,module,exports){
 var util = require('../util');
 
 // Matches absolute URLs with optional protocol
@@ -3501,7 +3638,7 @@ load.headers = {};
 
 module.exports = load;
 
-},{"../util":30,"fs":2,"request":2,"sync-request":2,"url":2}],23:[function(require,module,exports){
+},{"../util":31,"fs":2,"request":2,"sync-request":2,"url":2}],24:[function(require,module,exports){
 var util = require('../util'),
   type = require('./type'),
   formats = require('./formats'),
@@ -3551,7 +3688,7 @@ function parse(data, types) {
 read.formats = formats;
 module.exports = read;
 
-},{"../format":15,"../util":30,"./formats":18,"./type":25}],24:[function(require,module,exports){
+},{"../format":16,"../util":31,"./formats":19,"./type":26}],25:[function(require,module,exports){
 var util = require('../util');
 var load = require('./load');
 var read = require('./read');
@@ -3589,7 +3726,7 @@ module.exports = util
     return out;
   }, {});
 
-},{"../util":30,"./load":22,"./read":23}],25:[function(require,module,exports){
+},{"../util":31,"./load":23,"./read":24}],26:[function(require,module,exports){
 var util = require('../util');
 
 var TYPES = '__types__';
@@ -3612,6 +3749,14 @@ var TESTS = {
 function annotation(data, types) {
   if (!types) return data && data[TYPES] || null;
   data[TYPES] = types;
+}
+
+function fieldNames(datum) {
+  return util.keys(datum);
+}
+
+function bracket(fieldName) {
+  return '[' + fieldName + ']';
 }
 
 function type(values, f) {
@@ -3637,9 +3782,9 @@ function type(values, f) {
 
 function typeAll(data, fields) {
   if (!data.length) return;
-  fields = fields || util.keys(data[0]);
+  var get = fields ? util.identity : (fields = fieldNames(data[0]), bracket);
   return fields.reduce(function(types, f) {
-    return (types[f] = type(data, f), types);
+    return (types[f] = type(data, get(f)), types);
   }, {});
 }
 
@@ -3669,9 +3814,9 @@ function infer(values, f) {
 }
 
 function inferAll(data, fields) {
-  fields = fields || util.keys(data[0]);
+  var get = fields ? util.identity : (fields = fieldNames(data[0]), bracket);
   return fields.reduce(function(types, f) {
-    types[f] = infer(data, f);
+    types[f] = infer(data, get(f));
     return types;
   }, {});
 }
@@ -3683,11 +3828,11 @@ type.inferAll = inferAll;
 type.parsers = PARSERS;
 module.exports = type;
 
-},{"../util":30}],26:[function(require,module,exports){
+},{"../util":31}],27:[function(require,module,exports){
 var util = require('./util');
 
 var dl = {
-  version:    '1.7.2',
+  version:    require('../package.json').version,
   load:       require('./import/load'),
   read:       require('./import/read'),
   type:       require('./import/type'),
@@ -3717,7 +3862,7 @@ dl.print = {
 
 module.exports = dl;
 
-},{"./accessor":7,"./aggregate/aggregator":8,"./aggregate/groupby":10,"./bins/bins":12,"./bins/histogram":13,"./format":15,"./format-tables":14,"./generate":16,"./import/load":22,"./import/read":23,"./import/readers":24,"./import/type":25,"./stats":27,"./template":28,"./time":29,"./util":30}],27:[function(require,module,exports){
+},{"../package.json":7,"./accessor":8,"./aggregate/aggregator":9,"./aggregate/groupby":11,"./bins/bins":13,"./bins/histogram":14,"./format":16,"./format-tables":15,"./generate":17,"./import/load":23,"./import/read":24,"./import/readers":25,"./import/type":26,"./stats":28,"./template":29,"./time":30,"./util":31}],28:[function(require,module,exports){
 var util = require('./util');
 var type = require('./import/type');
 var gen = require('./generate');
@@ -4439,7 +4584,7 @@ stats.summary = function(data, fields) {
   return (s.__summary__ = true, s);
 };
 
-},{"./generate":16,"./import/type":25,"./util":30}],28:[function(require,module,exports){
+},{"./generate":17,"./import/type":26,"./util":31}],29:[function(require,module,exports){
 var util = require('./util'),
     format = require('./format');
 
@@ -4681,7 +4826,7 @@ function get_format(pattern, type) {
   return context.formats[template_format(pattern, type)];
 }
 
-},{"./format":15,"./util":30}],29:[function(require,module,exports){
+},{"./format":16,"./util":31}],30:[function(require,module,exports){
 var d3_time = require('d3-time');
 
 var tempDate = new Date(),
@@ -4851,7 +4996,7 @@ function toUnitMap(units) {
 
 module.exports = toUnitMap(locale);
 module.exports.utc = toUnitMap(utc);
-},{"d3-time":6}],30:[function(require,module,exports){
+},{"d3-time":6}],31:[function(require,module,exports){
 (function (Buffer){
 var u = module.exports;
 
@@ -5154,553 +5299,555 @@ var truncate_word_re = /([\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u180E
 
 }).call(this,require("buffer").Buffer)
 
-},{"buffer":2}],31:[function(require,module,exports){
+},{"buffer":2}],32:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (factory((global.topojson = global.topojson || {})));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
-  function noop() {}
+function noop() {}
 
-  function transformAbsolute(transform) {
-    if (!transform) return noop;
-    var x0,
-        y0,
-        kx = transform.scale[0],
-        ky = transform.scale[1],
-        dx = transform.translate[0],
-        dy = transform.translate[1];
-    return function(point, i) {
-      if (!i) x0 = y0 = 0;
-      point[0] = (x0 += point[0]) * kx + dx;
-      point[1] = (y0 += point[1]) * ky + dy;
-    };
+function transformAbsolute(transform) {
+  if (!transform) return noop;
+  var x0,
+      y0,
+      kx = transform.scale[0],
+      ky = transform.scale[1],
+      dx = transform.translate[0],
+      dy = transform.translate[1];
+  return function(point, i) {
+    if (!i) x0 = y0 = 0;
+    point[0] = (x0 += point[0]) * kx + dx;
+    point[1] = (y0 += point[1]) * ky + dy;
+  };
+}
+
+function transformRelative(transform) {
+  if (!transform) return noop;
+  var x0,
+      y0,
+      kx = transform.scale[0],
+      ky = transform.scale[1],
+      dx = transform.translate[0],
+      dy = transform.translate[1];
+  return function(point, i) {
+    if (!i) x0 = y0 = 0;
+    var x1 = Math.round((point[0] - dx) / kx),
+        y1 = Math.round((point[1] - dy) / ky);
+    point[0] = x1 - x0;
+    point[1] = y1 - y0;
+    x0 = x1;
+    y0 = y1;
+  };
+}
+
+function reverse(array, n) {
+  var t, j = array.length, i = j - n;
+  while (i < --j) t = array[i], array[i++] = array[j], array[j] = t;
+}
+
+function bisect(a, x) {
+  var lo = 0, hi = a.length;
+  while (lo < hi) {
+    var mid = lo + hi >>> 1;
+    if (a[mid] < x) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+function feature(topology, o) {
+  return o.type === "GeometryCollection" ? {
+    type: "FeatureCollection",
+    features: o.geometries.map(function(o) { return feature$1(topology, o); })
+  } : feature$1(topology, o);
+}
+
+function feature$1(topology, o) {
+  var f = {
+    type: "Feature",
+    id: o.id,
+    properties: o.properties || {},
+    geometry: object(topology, o)
+  };
+  if (o.id == null) delete f.id;
+  return f;
+}
+
+function object(topology, o) {
+  var absolute = transformAbsolute(topology.transform),
+      arcs = topology.arcs;
+
+  function arc(i, points) {
+    if (points.length) points.pop();
+    for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length, p; k < n; ++k) {
+      points.push(p = a[k].slice());
+      absolute(p, k);
+    }
+    if (i < 0) reverse(points, n);
   }
 
-  function transformRelative(transform) {
-    if (!transform) return noop;
-    var x0,
-        y0,
-        kx = transform.scale[0],
-        ky = transform.scale[1],
-        dx = transform.translate[0],
-        dy = transform.translate[1];
-    return function(point, i) {
-      if (!i) x0 = y0 = 0;
-      var x1 = Math.round((point[0] - dx) / kx),
-          y1 = Math.round((point[1] - dy) / ky);
-      point[0] = x1 - x0;
-      point[1] = y1 - y0;
-      x0 = x1;
-      y0 = y1;
-    };
+  function point(p) {
+    p = p.slice();
+    absolute(p, 0);
+    return p;
   }
 
-  function reverse(array, n) {
-    var t, j = array.length, i = j - n;
-    while (i < --j) t = array[i], array[i++] = array[j], array[j] = t;
+  function line(arcs) {
+    var points = [];
+    for (var i = 0, n = arcs.length; i < n; ++i) arc(arcs[i], points);
+    if (points.length < 2) points.push(points[0].slice());
+    return points;
   }
 
-  function bisect(a, x) {
-    var lo = 0, hi = a.length;
-    while (lo < hi) {
-      var mid = lo + hi >>> 1;
-      if (a[mid] < x) lo = mid + 1;
-      else hi = mid;
-    }
-    return lo;
+  function ring(arcs) {
+    var points = line(arcs);
+    while (points.length < 4) points.push(points[0].slice());
+    return points;
   }
 
-  function feature(topology, o) {
-    return o.type === "GeometryCollection" ? {
-      type: "FeatureCollection",
-      features: o.geometries.map(function(o) { return feature$1(topology, o); })
-    } : feature$1(topology, o);
+  function polygon(arcs) {
+    return arcs.map(ring);
   }
 
-  function feature$1(topology, o) {
-    var f = {
-      type: "Feature",
-      id: o.id,
-      properties: o.properties || {},
-      geometry: object(topology, o)
-    };
-    if (o.id == null) delete f.id;
-    return f;
+  function geometry(o) {
+    var t = o.type;
+    return t === "GeometryCollection" ? {type: t, geometries: o.geometries.map(geometry)}
+        : t in geometryType ? {type: t, coordinates: geometryType[t](o)}
+        : null;
   }
 
-  function object(topology, o) {
-    var absolute = transformAbsolute(topology.transform),
-        arcs = topology.arcs;
+  var geometryType = {
+    Point: function(o) { return point(o.coordinates); },
+    MultiPoint: function(o) { return o.coordinates.map(point); },
+    LineString: function(o) { return line(o.arcs); },
+    MultiLineString: function(o) { return o.arcs.map(line); },
+    Polygon: function(o) { return polygon(o.arcs); },
+    MultiPolygon: function(o) { return o.arcs.map(polygon); }
+  };
 
-    function arc(i, points) {
-      if (points.length) points.pop();
-      for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length, p; k < n; ++k) {
-        points.push(p = a[k].slice());
-        absolute(p, k);
-      }
-      if (i < 0) reverse(points, n);
+  return geometry(o);
+}
+
+function stitchArcs(topology, arcs) {
+  var stitchedArcs = {},
+      fragmentByStart = {},
+      fragmentByEnd = {},
+      fragments = [],
+      emptyIndex = -1;
+
+  // Stitch empty arcs first, since they may be subsumed by other arcs.
+  arcs.forEach(function(i, j) {
+    var arc = topology.arcs[i < 0 ? ~i : i], t;
+    if (arc.length < 3 && !arc[1][0] && !arc[1][1]) {
+      t = arcs[++emptyIndex], arcs[emptyIndex] = i, arcs[j] = t;
     }
+  });
 
-    function point(p) {
-      p = p.slice();
-      absolute(p, 0);
-      return p;
-    }
+  arcs.forEach(function(i) {
+    var e = ends(i),
+        start = e[0],
+        end = e[1],
+        f, g;
 
-    function line(arcs) {
-      var points = [];
-      for (var i = 0, n = arcs.length; i < n; ++i) arc(arcs[i], points);
-      if (points.length < 2) points.push(points[0].slice());
-      return points;
-    }
-
-    function ring(arcs) {
-      var points = line(arcs);
-      while (points.length < 4) points.push(points[0].slice());
-      return points;
-    }
-
-    function polygon(arcs) {
-      return arcs.map(ring);
-    }
-
-    function geometry(o) {
-      var t = o.type;
-      return t === "GeometryCollection" ? {type: t, geometries: o.geometries.map(geometry)}
-          : t in geometryType ? {type: t, coordinates: geometryType[t](o)}
-          : null;
-    }
-
-    var geometryType = {
-      Point: function(o) { return point(o.coordinates); },
-      MultiPoint: function(o) { return o.coordinates.map(point); },
-      LineString: function(o) { return line(o.arcs); },
-      MultiLineString: function(o) { return o.arcs.map(line); },
-      Polygon: function(o) { return polygon(o.arcs); },
-      MultiPolygon: function(o) { return o.arcs.map(polygon); }
-    };
-
-    return geometry(o);
-  }
-
-  function stitchArcs(topology, arcs) {
-    var stitchedArcs = {},
-        fragmentByStart = {},
-        fragmentByEnd = {},
-        fragments = [],
-        emptyIndex = -1;
-
-    // Stitch empty arcs first, since they may be subsumed by other arcs.
-    arcs.forEach(function(i, j) {
-      var arc = topology.arcs[i < 0 ? ~i : i], t;
-      if (arc.length < 3 && !arc[1][0] && !arc[1][1]) {
-        t = arcs[++emptyIndex], arcs[emptyIndex] = i, arcs[j] = t;
-      }
-    });
-
-    arcs.forEach(function(i) {
-      var e = ends(i),
-          start = e[0],
-          end = e[1],
-          f, g;
-
-      if (f = fragmentByEnd[start]) {
-        delete fragmentByEnd[f.end];
-        f.push(i);
-        f.end = end;
-        if (g = fragmentByStart[end]) {
-          delete fragmentByStart[g.start];
-          var fg = g === f ? f : f.concat(g);
-          fragmentByStart[fg.start = f.start] = fragmentByEnd[fg.end = g.end] = fg;
-        } else {
-          fragmentByStart[f.start] = fragmentByEnd[f.end] = f;
-        }
-      } else if (f = fragmentByStart[end]) {
-        delete fragmentByStart[f.start];
-        f.unshift(i);
-        f.start = start;
-        if (g = fragmentByEnd[start]) {
-          delete fragmentByEnd[g.end];
-          var gf = g === f ? f : g.concat(f);
-          fragmentByStart[gf.start = g.start] = fragmentByEnd[gf.end = f.end] = gf;
-        } else {
-          fragmentByStart[f.start] = fragmentByEnd[f.end] = f;
-        }
+    if (f = fragmentByEnd[start]) {
+      delete fragmentByEnd[f.end];
+      f.push(i);
+      f.end = end;
+      if (g = fragmentByStart[end]) {
+        delete fragmentByStart[g.start];
+        var fg = g === f ? f : f.concat(g);
+        fragmentByStart[fg.start = f.start] = fragmentByEnd[fg.end = g.end] = fg;
       } else {
-        f = [i];
-        fragmentByStart[f.start = start] = fragmentByEnd[f.end = end] = f;
+        fragmentByStart[f.start] = fragmentByEnd[f.end] = f;
       }
-    });
-
-    function ends(i) {
-      var arc = topology.arcs[i < 0 ? ~i : i], p0 = arc[0], p1;
-      if (topology.transform) p1 = [0, 0], arc.forEach(function(dp) { p1[0] += dp[0], p1[1] += dp[1]; });
-      else p1 = arc[arc.length - 1];
-      return i < 0 ? [p1, p0] : [p0, p1];
-    }
-
-    function flush(fragmentByEnd, fragmentByStart) {
-      for (var k in fragmentByEnd) {
-        var f = fragmentByEnd[k];
-        delete fragmentByStart[f.start];
-        delete f.start;
-        delete f.end;
-        f.forEach(function(i) { stitchedArcs[i < 0 ? ~i : i] = 1; });
-        fragments.push(f);
+    } else if (f = fragmentByStart[end]) {
+      delete fragmentByStart[f.start];
+      f.unshift(i);
+      f.start = start;
+      if (g = fragmentByEnd[start]) {
+        delete fragmentByEnd[g.end];
+        var gf = g === f ? f : g.concat(f);
+        fragmentByStart[gf.start = g.start] = fragmentByEnd[gf.end = f.end] = gf;
+      } else {
+        fragmentByStart[f.start] = fragmentByEnd[f.end] = f;
       }
-    }
-
-    flush(fragmentByEnd, fragmentByStart);
-    flush(fragmentByStart, fragmentByEnd);
-    arcs.forEach(function(i) { if (!stitchedArcs[i < 0 ? ~i : i]) fragments.push([i]); });
-
-    return fragments;
-  }
-
-  function mesh(topology) {
-    return object(topology, meshArcs.apply(this, arguments));
-  }
-
-  function meshArcs(topology, o, filter) {
-    var arcs = [];
-
-    function arc(i) {
-      var j = i < 0 ? ~i : i;
-      (geomsByArc[j] || (geomsByArc[j] = [])).push({i: i, g: geom});
-    }
-
-    function line(arcs) {
-      arcs.forEach(arc);
-    }
-
-    function polygon(arcs) {
-      arcs.forEach(line);
-    }
-
-    function geometry(o) {
-      if (o.type === "GeometryCollection") o.geometries.forEach(geometry);
-      else if (o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
-    }
-
-    if (arguments.length > 1) {
-      var geomsByArc = [],
-          geom;
-
-      var geometryType = {
-        LineString: line,
-        MultiLineString: polygon,
-        Polygon: polygon,
-        MultiPolygon: function(arcs) { arcs.forEach(polygon); }
-      };
-
-      geometry(o);
-
-      geomsByArc.forEach(arguments.length < 3
-          ? function(geoms) { arcs.push(geoms[0].i); }
-          : function(geoms) { if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i); });
     } else {
-      for (var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
+      f = [i];
+      fragmentByStart[f.start = start] = fragmentByEnd[f.end = end] = f;
     }
+  });
 
-    return {type: "MultiLineString", arcs: stitchArcs(topology, arcs)};
+  function ends(i) {
+    var arc = topology.arcs[i < 0 ? ~i : i], p0 = arc[0], p1;
+    if (topology.transform) p1 = [0, 0], arc.forEach(function(dp) { p1[0] += dp[0], p1[1] += dp[1]; });
+    else p1 = arc[arc.length - 1];
+    return i < 0 ? [p1, p0] : [p0, p1];
   }
 
-  function cartesianTriangleArea(triangle) {
-    var a = triangle[0], b = triangle[1], c = triangle[2];
-    return Math.abs((a[0] - c[0]) * (b[1] - a[1]) - (a[0] - b[0]) * (c[1] - a[1]));
+  function flush(fragmentByEnd, fragmentByStart) {
+    for (var k in fragmentByEnd) {
+      var f = fragmentByEnd[k];
+      delete fragmentByStart[f.start];
+      delete f.start;
+      delete f.end;
+      f.forEach(function(i) { stitchedArcs[i < 0 ? ~i : i] = 1; });
+      fragments.push(f);
+    }
   }
 
-  function ring(ring) {
-    var i = -1,
-        n = ring.length,
-        a,
-        b = ring[n - 1],
-        area = 0;
+  flush(fragmentByEnd, fragmentByStart);
+  flush(fragmentByStart, fragmentByEnd);
+  arcs.forEach(function(i) { if (!stitchedArcs[i < 0 ? ~i : i]) fragments.push([i]); });
 
-    while (++i < n) {
-      a = b;
-      b = ring[i];
-      area += a[0] * b[1] - a[1] * b[0];
-    }
+  return fragments;
+}
 
-    return area / 2;
+function mesh(topology) {
+  return object(topology, meshArcs.apply(this, arguments));
+}
+
+function meshArcs(topology, o, filter) {
+  var arcs = [];
+
+  function arc(i) {
+    var j = i < 0 ? ~i : i;
+    (geomsByArc[j] || (geomsByArc[j] = [])).push({i: i, g: geom});
   }
 
-  function merge(topology) {
-    return object(topology, mergeArcs.apply(this, arguments));
+  function line(arcs) {
+    arcs.forEach(arc);
   }
 
-  function mergeArcs(topology, objects) {
-    var polygonsByArc = {},
-        polygons = [],
-        components = [];
-
-    objects.forEach(function(o) {
-      if (o.type === "Polygon") register(o.arcs);
-      else if (o.type === "MultiPolygon") o.arcs.forEach(register);
-    });
-
-    function register(polygon) {
-      polygon.forEach(function(ring$$) {
-        ring$$.forEach(function(arc) {
-          (polygonsByArc[arc = arc < 0 ? ~arc : arc] || (polygonsByArc[arc] = [])).push(polygon);
-        });
-      });
-      polygons.push(polygon);
-    }
-
-    function area(ring$$) {
-      return Math.abs(ring(object(topology, {type: "Polygon", arcs: [ring$$]}).coordinates[0]));
-    }
-
-    polygons.forEach(function(polygon) {
-      if (!polygon._) {
-        var component = [],
-            neighbors = [polygon];
-        polygon._ = 1;
-        components.push(component);
-        while (polygon = neighbors.pop()) {
-          component.push(polygon);
-          polygon.forEach(function(ring$$) {
-            ring$$.forEach(function(arc) {
-              polygonsByArc[arc < 0 ? ~arc : arc].forEach(function(polygon) {
-                if (!polygon._) {
-                  polygon._ = 1;
-                  neighbors.push(polygon);
-                }
-              });
-            });
-          });
-        }
-      }
-    });
-
-    polygons.forEach(function(polygon) {
-      delete polygon._;
-    });
-
-    return {
-      type: "MultiPolygon",
-      arcs: components.map(function(polygons) {
-        var arcs = [], n;
-
-        // Extract the exterior (unique) arcs.
-        polygons.forEach(function(polygon) {
-          polygon.forEach(function(ring$$) {
-            ring$$.forEach(function(arc) {
-              if (polygonsByArc[arc < 0 ? ~arc : arc].length < 2) {
-                arcs.push(arc);
-              }
-            });
-          });
-        });
-
-        // Stitch the arcs into one or more rings.
-        arcs = stitchArcs(topology, arcs);
-
-        // If more than one ring is returned,
-        // at most one of these rings can be the exterior;
-        // choose the one with the greatest absolute area.
-        if ((n = arcs.length) > 1) {
-          for (var i = 1, k = area(arcs[0]), ki, t; i < n; ++i) {
-            if ((ki = area(arcs[i])) > k) {
-              t = arcs[0], arcs[0] = arcs[i], arcs[i] = t, k = ki;
-            }
-          }
-        }
-
-        return arcs;
-      })
-    };
+  function polygon(arcs) {
+    arcs.forEach(line);
   }
 
-  function neighbors(objects) {
-    var indexesByArc = {}, // arc index -> array of object indexes
-        neighbors = objects.map(function() { return []; });
+  function geometry(o) {
+    if (o.type === "GeometryCollection") o.geometries.forEach(geometry);
+    else if (o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
+  }
 
-    function line(arcs, i) {
-      arcs.forEach(function(a) {
-        if (a < 0) a = ~a;
-        var o = indexesByArc[a];
-        if (o) o.push(i);
-        else indexesByArc[a] = [i];
-      });
-    }
-
-    function polygon(arcs, i) {
-      arcs.forEach(function(arc) { line(arc, i); });
-    }
-
-    function geometry(o, i) {
-      if (o.type === "GeometryCollection") o.geometries.forEach(function(o) { geometry(o, i); });
-      else if (o.type in geometryType) geometryType[o.type](o.arcs, i);
-    }
+  if (arguments.length > 1) {
+    var geomsByArc = [],
+        geom;
 
     var geometryType = {
       LineString: line,
       MultiLineString: polygon,
       Polygon: polygon,
-      MultiPolygon: function(arcs, i) { arcs.forEach(function(arc) { polygon(arc, i); }); }
+      MultiPolygon: function(arcs) { arcs.forEach(polygon); }
     };
 
-    objects.forEach(geometry);
+    geometry(o);
 
-    for (var i in indexesByArc) {
-      for (var indexes = indexesByArc[i], m = indexes.length, j = 0; j < m; ++j) {
-        for (var k = j + 1; k < m; ++k) {
-          var ij = indexes[j], ik = indexes[k], n;
-          if ((n = neighbors[ij])[i = bisect(n, ik)] !== ik) n.splice(i, 0, ik);
-          if ((n = neighbors[ik])[i = bisect(n, ij)] !== ij) n.splice(i, 0, ij);
-        }
-      }
-    }
-
-    return neighbors;
+    geomsByArc.forEach(arguments.length < 3
+        ? function(geoms) { arcs.push(geoms[0].i); }
+        : function(geoms) { if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i); });
+  } else {
+    for (var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
   }
 
-  function compareArea(a, b) {
-    return a[1][2] - b[1][2];
+  return {type: "MultiLineString", arcs: stitchArcs(topology, arcs)};
+}
+
+function cartesianTriangleArea(triangle) {
+  var a = triangle[0], b = triangle[1], c = triangle[2];
+  return Math.abs((a[0] - c[0]) * (b[1] - a[1]) - (a[0] - b[0]) * (c[1] - a[1]));
+}
+
+function ring(ring) {
+  var i = -1,
+      n = ring.length,
+      a,
+      b = ring[n - 1],
+      area = 0;
+
+  while (++i < n) {
+    a = b;
+    b = ring[i];
+    area += a[0] * b[1] - a[1] * b[0];
   }
 
-  function minAreaHeap() {
-    var heap = {},
-        array = [],
-        size = 0;
+  return area / 2;
+}
 
-    heap.push = function(object) {
-      up(array[object._ = size] = object, size++);
-      return size;
-    };
+function merge(topology) {
+  return object(topology, mergeArcs.apply(this, arguments));
+}
 
-    heap.pop = function() {
-      if (size <= 0) return;
-      var removed = array[0], object;
-      if (--size > 0) object = array[size], down(array[object._ = 0] = object, 0);
-      return removed;
-    };
+function mergeArcs(topology, objects) {
+  var polygonsByArc = {},
+      polygons = [],
+      components = [];
 
-    heap.remove = function(removed) {
-      var i = removed._, object;
-      if (array[i] !== removed) return; // invalid request
-      if (i !== --size) object = array[size], (compareArea(object, removed) < 0 ? up : down)(array[object._ = i] = object, i);
-      return i;
-    };
+  objects.forEach(function(o) {
+    if (o.type === "Polygon") register(o.arcs);
+    else if (o.type === "MultiPolygon") o.arcs.forEach(register);
+  });
 
-    function up(object, i) {
-      while (i > 0) {
-        var j = ((i + 1) >> 1) - 1,
-            parent = array[j];
-        if (compareArea(object, parent) >= 0) break;
-        array[parent._ = i] = parent;
-        array[object._ = i = j] = object;
-      }
-    }
-
-    function down(object, i) {
-      while (true) {
-        var r = (i + 1) << 1,
-            l = r - 1,
-            j = i,
-            child = array[j];
-        if (l < size && compareArea(array[l], child) < 0) child = array[j = l];
-        if (r < size && compareArea(array[r], child) < 0) child = array[j = r];
-        if (j === i) break;
-        array[child._ = i] = child;
-        array[object._ = i = j] = object;
-      }
-    }
-
-    return heap;
-  }
-
-  function presimplify(topology, triangleArea) {
-    var absolute = transformAbsolute(topology.transform),
-        relative = transformRelative(topology.transform),
-        heap = minAreaHeap();
-
-    if (!triangleArea) triangleArea = cartesianTriangleArea;
-
-    topology.arcs.forEach(function(arc) {
-      var triangles = [],
-          maxArea = 0,
-          triangle,
-          i,
-          n,
-          p;
-
-      // To store each point’s effective area, we create a new array rather than
-      // extending the passed-in point to workaround a Chrome/V8 bug (getting
-      // stuck in smi mode). For midpoints, the initial effective area of
-      // Infinity will be computed in the next step.
-      for (i = 0, n = arc.length; i < n; ++i) {
-        p = arc[i];
-        absolute(arc[i] = [p[0], p[1], Infinity], i);
-      }
-
-      for (i = 1, n = arc.length - 1; i < n; ++i) {
-        triangle = arc.slice(i - 1, i + 2);
-        triangle[1][2] = triangleArea(triangle);
-        triangles.push(triangle);
-        heap.push(triangle);
-      }
-
-      for (i = 0, n = triangles.length; i < n; ++i) {
-        triangle = triangles[i];
-        triangle.previous = triangles[i - 1];
-        triangle.next = triangles[i + 1];
-      }
-
-      while (triangle = heap.pop()) {
-        var previous = triangle.previous,
-            next = triangle.next;
-
-        // If the area of the current point is less than that of the previous point
-        // to be eliminated, use the latter's area instead. This ensures that the
-        // current point cannot be eliminated without eliminating previously-
-        // eliminated points.
-        if (triangle[1][2] < maxArea) triangle[1][2] = maxArea;
-        else maxArea = triangle[1][2];
-
-        if (previous) {
-          previous.next = next;
-          previous[2] = triangle[2];
-          update(previous);
-        }
-
-        if (next) {
-          next.previous = previous;
-          next[0] = triangle[0];
-          update(next);
-        }
-      }
-
-      arc.forEach(relative);
+  function register(polygon) {
+    polygon.forEach(function(ring$$) {
+      ring$$.forEach(function(arc) {
+        (polygonsByArc[arc = arc < 0 ? ~arc : arc] || (polygonsByArc[arc] = [])).push(polygon);
+      });
     });
+    polygons.push(polygon);
+  }
 
-    function update(triangle) {
-      heap.remove(triangle);
+  function area(ring$$) {
+    return Math.abs(ring(object(topology, {type: "Polygon", arcs: [ring$$]}).coordinates[0]));
+  }
+
+  polygons.forEach(function(polygon) {
+    if (!polygon._) {
+      var component = [],
+          neighbors = [polygon];
+      polygon._ = 1;
+      components.push(component);
+      while (polygon = neighbors.pop()) {
+        component.push(polygon);
+        polygon.forEach(function(ring$$) {
+          ring$$.forEach(function(arc) {
+            polygonsByArc[arc < 0 ? ~arc : arc].forEach(function(polygon) {
+              if (!polygon._) {
+                polygon._ = 1;
+                neighbors.push(polygon);
+              }
+            });
+          });
+        });
+      }
+    }
+  });
+
+  polygons.forEach(function(polygon) {
+    delete polygon._;
+  });
+
+  return {
+    type: "MultiPolygon",
+    arcs: components.map(function(polygons) {
+      var arcs = [], n;
+
+      // Extract the exterior (unique) arcs.
+      polygons.forEach(function(polygon) {
+        polygon.forEach(function(ring$$) {
+          ring$$.forEach(function(arc) {
+            if (polygonsByArc[arc < 0 ? ~arc : arc].length < 2) {
+              arcs.push(arc);
+            }
+          });
+        });
+      });
+
+      // Stitch the arcs into one or more rings.
+      arcs = stitchArcs(topology, arcs);
+
+      // If more than one ring is returned,
+      // at most one of these rings can be the exterior;
+      // choose the one with the greatest absolute area.
+      if ((n = arcs.length) > 1) {
+        for (var i = 1, k = area(arcs[0]), ki, t; i < n; ++i) {
+          if ((ki = area(arcs[i])) > k) {
+            t = arcs[0], arcs[0] = arcs[i], arcs[i] = t, k = ki;
+          }
+        }
+      }
+
+      return arcs;
+    })
+  };
+}
+
+function neighbors(objects) {
+  var indexesByArc = {}, // arc index -> array of object indexes
+      neighbors = objects.map(function() { return []; });
+
+  function line(arcs, i) {
+    arcs.forEach(function(a) {
+      if (a < 0) a = ~a;
+      var o = indexesByArc[a];
+      if (o) o.push(i);
+      else indexesByArc[a] = [i];
+    });
+  }
+
+  function polygon(arcs, i) {
+    arcs.forEach(function(arc) { line(arc, i); });
+  }
+
+  function geometry(o, i) {
+    if (o.type === "GeometryCollection") o.geometries.forEach(function(o) { geometry(o, i); });
+    else if (o.type in geometryType) geometryType[o.type](o.arcs, i);
+  }
+
+  var geometryType = {
+    LineString: line,
+    MultiLineString: polygon,
+    Polygon: polygon,
+    MultiPolygon: function(arcs, i) { arcs.forEach(function(arc) { polygon(arc, i); }); }
+  };
+
+  objects.forEach(geometry);
+
+  for (var i in indexesByArc) {
+    for (var indexes = indexesByArc[i], m = indexes.length, j = 0; j < m; ++j) {
+      for (var k = j + 1; k < m; ++k) {
+        var ij = indexes[j], ik = indexes[k], n;
+        if ((n = neighbors[ij])[i = bisect(n, ik)] !== ik) n.splice(i, 0, ik);
+        if ((n = neighbors[ik])[i = bisect(n, ij)] !== ij) n.splice(i, 0, ij);
+      }
+    }
+  }
+
+  return neighbors;
+}
+
+function compareArea(a, b) {
+  return a[1][2] - b[1][2];
+}
+
+function minAreaHeap() {
+  var heap = {},
+      array = [],
+      size = 0;
+
+  heap.push = function(object) {
+    up(array[object._ = size] = object, size++);
+    return size;
+  };
+
+  heap.pop = function() {
+    if (size <= 0) return;
+    var removed = array[0], object;
+    if (--size > 0) object = array[size], down(array[object._ = 0] = object, 0);
+    return removed;
+  };
+
+  heap.remove = function(removed) {
+    var i = removed._, object;
+    if (array[i] !== removed) return; // invalid request
+    if (i !== --size) object = array[size], (compareArea(object, removed) < 0 ? up : down)(array[object._ = i] = object, i);
+    return i;
+  };
+
+  function up(object, i) {
+    while (i > 0) {
+      var j = ((i + 1) >> 1) - 1,
+          parent = array[j];
+      if (compareArea(object, parent) >= 0) break;
+      array[parent._ = i] = parent;
+      array[object._ = i = j] = object;
+    }
+  }
+
+  function down(object, i) {
+    while (true) {
+      var r = (i + 1) << 1,
+          l = r - 1,
+          j = i,
+          child = array[j];
+      if (l < size && compareArea(array[l], child) < 0) child = array[j = l];
+      if (r < size && compareArea(array[r], child) < 0) child = array[j = r];
+      if (j === i) break;
+      array[child._ = i] = child;
+      array[object._ = i = j] = object;
+    }
+  }
+
+  return heap;
+}
+
+function presimplify(topology, triangleArea) {
+  var absolute = transformAbsolute(topology.transform),
+      relative = transformRelative(topology.transform),
+      heap = minAreaHeap();
+
+  if (!triangleArea) triangleArea = cartesianTriangleArea;
+
+  topology.arcs.forEach(function(arc) {
+    var triangles = [],
+        maxArea = 0,
+        triangle,
+        i,
+        n,
+        p;
+
+    // To store each point’s effective area, we create a new array rather than
+    // extending the passed-in point to workaround a Chrome/V8 bug (getting
+    // stuck in smi mode). For midpoints, the initial effective area of
+    // Infinity will be computed in the next step.
+    for (i = 0, n = arc.length; i < n; ++i) {
+      p = arc[i];
+      absolute(arc[i] = [p[0], p[1], Infinity], i);
+    }
+
+    for (i = 1, n = arc.length - 1; i < n; ++i) {
+      triangle = arc.slice(i - 1, i + 2);
       triangle[1][2] = triangleArea(triangle);
+      triangles.push(triangle);
       heap.push(triangle);
     }
 
-    return topology;
+    for (i = 0, n = triangles.length; i < n; ++i) {
+      triangle = triangles[i];
+      triangle.previous = triangles[i - 1];
+      triangle.next = triangles[i + 1];
+    }
+
+    while (triangle = heap.pop()) {
+      var previous = triangle.previous,
+          next = triangle.next;
+
+      // If the area of the current point is less than that of the previous point
+      // to be eliminated, use the latter's area instead. This ensures that the
+      // current point cannot be eliminated without eliminating previously-
+      // eliminated points.
+      if (triangle[1][2] < maxArea) triangle[1][2] = maxArea;
+      else maxArea = triangle[1][2];
+
+      if (previous) {
+        previous.next = next;
+        previous[2] = triangle[2];
+        update(previous);
+      }
+
+      if (next) {
+        next.previous = previous;
+        next[0] = triangle[0];
+        update(next);
+      }
+    }
+
+    arc.forEach(relative);
+  });
+
+  function update(triangle) {
+    heap.remove(triangle);
+    triangle[1][2] = triangleArea(triangle);
+    heap.push(triangle);
   }
 
-  var version = "1.6.26";
+  return topology;
+}
 
-  exports.version = version;
-  exports.mesh = mesh;
-  exports.meshArcs = meshArcs;
-  exports.merge = merge;
-  exports.mergeArcs = mergeArcs;
-  exports.feature = feature;
-  exports.neighbors = neighbors;
-  exports.presimplify = presimplify;
+var version = "1.6.27";
 
-}));
-},{}],32:[function(require,module,exports){
+exports.version = version;
+exports.mesh = mesh;
+exports.meshArcs = meshArcs;
+exports.merge = merge;
+exports.mergeArcs = mergeArcs;
+exports.feature = feature;
+exports.neighbors = neighbors;
+exports.presimplify = presimplify;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
+},{}],33:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL;
 
 function create(cs, reflow) {
@@ -5732,7 +5879,7 @@ module.exports = {
   create: create,
   copy: copy
 };
-},{"./Dependencies":35}],33:[function(require,module,exports){
+},{"./Dependencies":36}],34:[function(require,module,exports){
 var log = require('vega-logging'),
     Tuple = require('./Tuple'),
     Base = require('./Node').prototype,
@@ -5786,7 +5933,7 @@ prototype.evaluate = function(input) {
 };
 
 module.exports = Collector;
-},{"./ChangeSet":32,"./Node":38,"./Tuple":40,"vega-logging":48}],34:[function(require,module,exports){
+},{"./ChangeSet":33,"./Node":39,"./Tuple":41,"vega-logging":49}],35:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     ChangeSet = require('./ChangeSet'),
@@ -6094,13 +6241,13 @@ function DataSourceListener(ds) {
 
 module.exports = DataSource;
 
-},{"./ChangeSet":32,"./Collector":33,"./Node":38,"./Tuple":40,"datalib":26,"vega-logging":48}],35:[function(require,module,exports){
+},{"./ChangeSet":33,"./Collector":34,"./Node":39,"./Tuple":41,"datalib":27,"vega-logging":49}],36:[function(require,module,exports){
 var deps = module.exports = {
   ALL: ['data', 'fields', 'scales', 'signals']
 };
 deps.ALL.forEach(function(k) { deps[k.toUpperCase()] = k; });
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Heap = require('./Heap'),
@@ -6436,7 +6583,7 @@ prototype.evaluate = function(pulse, node) {
 
 module.exports = Graph;
 
-},{"./ChangeSet":32,"./Collector":33,"./DataSource":34,"./Dependencies":35,"./Heap":37,"./Signal":39,"./Tuple":40,"datalib":26,"vega-logging":48}],37:[function(require,module,exports){
+},{"./ChangeSet":33,"./Collector":34,"./DataSource":35,"./Dependencies":36,"./Heap":38,"./Signal":40,"./Tuple":41,"datalib":27,"vega-logging":49}],38:[function(require,module,exports){
 function Heap(comparator) {
   this.cmp = comparator;
   this.nodes = [];
@@ -6533,7 +6680,7 @@ function _siftup(array, idx, cmp) {
 
 module.exports = Heap;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var DEPS = require('./Dependencies').ALL,
     nodeID = 0;
 
@@ -6732,7 +6879,7 @@ Node.reset = function() { nodeID = 0; };
 
 module.exports = Node;
 
-},{"./Dependencies":35}],39:[function(require,module,exports){
+},{"./Dependencies":36}],40:[function(require,module,exports){
 var ChangeSet = require('./ChangeSet'),
     Node = require('./Node'), // jshint ignore:line
     Base = Node.prototype;
@@ -6808,7 +6955,7 @@ prototype.off = function(handler) {
 
 module.exports = Signal;
 
-},{"./ChangeSet":32,"./Node":38}],40:[function(require,module,exports){
+},{"./ChangeSet":33,"./Node":39}],41:[function(require,module,exports){
 var tupleID = 0;
 
 function ingest(datum) {
@@ -6878,7 +7025,7 @@ module.exports = {
   }
 };
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = {
   ChangeSet:    require('./ChangeSet'),
   Collector:    require('./Collector'),
@@ -6891,7 +7038,7 @@ module.exports = {
   debug:        require('vega-logging').debug
 };
 
-},{"./ChangeSet":32,"./Collector":33,"./DataSource":34,"./Dependencies":35,"./Graph":36,"./Node":38,"./Signal":39,"./Tuple":40,"vega-logging":48}],42:[function(require,module,exports){
+},{"./ChangeSet":33,"./Collector":34,"./DataSource":35,"./Dependencies":36,"./Graph":37,"./Node":39,"./Signal":40,"./Tuple":41,"vega-logging":49}],43:[function(require,module,exports){
 module.exports = (function() {
   "use strict";
 
@@ -8076,7 +8223,7 @@ module.exports = (function() {
   };
 })();
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 function toMap(list) {
   var map = {}, i, n;
   for (i=0, n=list.length; i<n; ++i) map[list[i]] = 1;
@@ -8219,7 +8366,7 @@ module.exports = function(opt) {
   return codegen_wrap;
 };
 
-},{"./constants":44,"./functions":45}],44:[function(require,module,exports){
+},{"./constants":45,"./functions":46}],45:[function(require,module,exports){
 module.exports = {
   'NaN':     'NaN',
   'E':       'Math.E',
@@ -8231,7 +8378,7 @@ module.exports = {
   'SQRT1_2': 'Math.SQRT1_2',
   'SQRT2':   'Math.SQRT2'
 };
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = function(codegen) {
 
   function fncall(name, args, cast, type) {
@@ -8340,7 +8487,7 @@ module.exports = function(codegen) {
   };
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var parser = require('./parser'),
     codegen = require('./codegen');
 
@@ -8372,7 +8519,7 @@ var expr = module.exports = {
   functions: require('./functions'),
   constants: require('./constants')
 };
-},{"./codegen":43,"./constants":44,"./functions":45,"./parser":47}],47:[function(require,module,exports){
+},{"./codegen":44,"./constants":45,"./functions":46,"./parser":48}],48:[function(require,module,exports){
 /*
   The following expression parser is based on Esprima (http://esprima.org/).
   Original header comment and license for Esprima is included here:
@@ -10700,7 +10847,7 @@ module.exports = (function() {
   };
 
 })();
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 var ts = Date.now();
 
 function write(msg) {
@@ -10736,7 +10883,7 @@ module.exports = {
   debug: (debug.enable = false, debug)
 };
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module.exports = {
   path:       require('./path'),
   render:     require('./render'),
@@ -10748,7 +10895,7 @@ module.exports = {
   toJSON:     require('./util/scene').toJSON,
   fromJSON:   require('./util/scene').fromJSON
 };
-},{"./path":51,"./render":71,"./util/Bounds":77,"./util/Gradient":79,"./util/Item":81,"./util/bound":82,"./util/canvas":83,"./util/scene":85}],50:[function(require,module,exports){
+},{"./path":52,"./render":72,"./util/Bounds":78,"./util/Gradient":80,"./util/Item":82,"./util/bound":83,"./util/canvas":84,"./util/scene":86}],51:[function(require,module,exports){
 var segmentCache = {},
     bezierCache = {},
     join = [].join;
@@ -10863,13 +11010,13 @@ module.exports = {
   }
 };
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module.exports = {
   parse:  require('./parse'),
   render: require('./render')
 };
 
-},{"./parse":52,"./render":53}],52:[function(require,module,exports){
+},{"./parse":53,"./render":54}],53:[function(require,module,exports){
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
 var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
     regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)([-+])/g, /\s|,|###/];
@@ -10920,7 +11067,7 @@ module.exports = function(pathstr) {
   return result;
 };
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 var arc = require('./arc');
 
 module.exports = function(g, path, l, t) {
@@ -11216,7 +11363,7 @@ function drawArc(g, x, y, coords) {
   }
 }
 
-},{"./arc":50}],54:[function(require,module,exports){
+},{"./arc":51}],55:[function(require,module,exports){
 function Handler() {
   this._active = null;
   this._handlers = {};
@@ -11266,7 +11413,7 @@ prototype.eventName = function(name) {
 };
 
 module.exports = Handler;
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 function Renderer() {
   this._el = null;
   this._bgcolor = null;
@@ -11308,7 +11455,7 @@ prototype.render = function(/*scene, items*/) {
 };
 
 module.exports = Renderer;
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler'),
     marks = require('./marks');
@@ -11497,7 +11644,7 @@ prototype.pick = function(scene, x, y, gx, gy) {
 
 module.exports = CanvasHandler;
 
-},{"../../util/dom":84,"../Handler":54,"./marks":63}],57:[function(require,module,exports){
+},{"../../util/dom":85,"../Handler":55,"./marks":64}],58:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Bounds = require('../../util/Bounds'),
     ImageLoader = require('../../util/ImageLoader'),
@@ -11635,12 +11782,12 @@ prototype.renderAsync = function(scene) {
 
 module.exports = CanvasRenderer;
 
-},{"../../util/Bounds":77,"../../util/ImageLoader":80,"../../util/canvas":83,"../../util/dom":84,"../Renderer":55,"./marks":63}],58:[function(require,module,exports){
+},{"../../util/Bounds":78,"../../util/ImageLoader":81,"../../util/canvas":84,"../../util/dom":85,"../Renderer":56,"./marks":64}],59:[function(require,module,exports){
 module.exports = {
   Handler:  require('./CanvasHandler'),
   Renderer: require('./CanvasRenderer')
 };
-},{"./CanvasHandler":56,"./CanvasRenderer":57}],59:[function(require,module,exports){
+},{"./CanvasHandler":57,"./CanvasRenderer":58}],60:[function(require,module,exports){
 var util = require('./util');
 var halfpi = Math.PI / 2;
 
@@ -11662,7 +11809,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"./util":70}],60:[function(require,module,exports){
+},{"./util":71}],61:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -11697,7 +11844,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":52,"../../../path/render":53,"../../../util/svg":86,"./util":70}],61:[function(require,module,exports){
+},{"../../../path/parse":53,"../../../path/render":54,"../../../util/svg":87,"./util":71}],62:[function(require,module,exports){
 var util = require('./util'),
     EMPTY = [];
 
@@ -11836,7 +11983,7 @@ module.exports = {
   pick: pick
 };
 
-},{"./util":70}],62:[function(require,module,exports){
+},{"./util":71}],63:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -11874,7 +12021,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":70}],63:[function(require,module,exports){
+},{"./util":71}],64:[function(require,module,exports){
 module.exports = {
   arc:    require('./arc'),
   area:   require('./area'),
@@ -11888,7 +12035,7 @@ module.exports = {
   text:   require('./text')
 };
 
-},{"./arc":59,"./area":60,"./group":61,"./image":62,"./line":64,"./path":65,"./rect":66,"./rule":67,"./symbol":68,"./text":69}],64:[function(require,module,exports){
+},{"./arc":60,"./area":61,"./group":62,"./image":63,"./line":65,"./path":66,"./rect":67,"./rule":68,"./symbol":69,"./text":70}],65:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render'),
@@ -11923,7 +12070,7 @@ module.exports = {
   nested: true
 };
 
-},{"../../../path/parse":52,"../../../path/render":53,"../../../util/svg":86,"./util":70}],65:[function(require,module,exports){
+},{"../../../path/parse":53,"../../../path/render":54,"../../../util/svg":87,"./util":71}],66:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -11939,7 +12086,7 @@ module.exports = {
   pick: util.pickPath(path)
 };
 
-},{"../../../path/parse":52,"../../../path/render":53,"./util":70}],66:[function(require,module,exports){
+},{"../../../path/parse":53,"../../../path/render":54,"./util":71}],67:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -11974,7 +12121,7 @@ module.exports = {
   draw: draw,
   pick: util.pick()
 };
-},{"./util":70}],67:[function(require,module,exports){
+},{"./util":71}],68:[function(require,module,exports){
 var util = require('./util');
 
 function draw(g, scene, bounds) {
@@ -12031,7 +12178,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"./util":70}],68:[function(require,module,exports){
+},{"./util":71}],69:[function(require,module,exports){
 var util = require('./util'),
     parse = require('../../../path/parse'),
     render = require('../../../path/render');
@@ -12126,7 +12273,7 @@ module.exports = {
   draw: util.drawAll(path),
   pick: util.pickPath(path)
 };
-},{"../../../path/parse":52,"../../../path/render":53,"./util":70}],69:[function(require,module,exports){
+},{"../../../path/parse":53,"../../../path/render":54,"./util":71}],70:[function(require,module,exports){
 var Bounds = require('../../../util/Bounds'),
     textBounds = require('../../../util/bound').text,
     text = require('../../../util/text'),
@@ -12201,7 +12348,7 @@ module.exports = {
   pick: util.pick(hit)
 };
 
-},{"../../../util/Bounds":77,"../../../util/bound":82,"../../../util/text":87,"./util":70}],70:[function(require,module,exports){
+},{"../../../util/Bounds":78,"../../../util/bound":83,"../../../util/text":88,"./util":71}],71:[function(require,module,exports){
 function drawPathOne(path, g, o, items) {
   if (path(g, items)) return;
 
@@ -12350,13 +12497,13 @@ module.exports = {
   gradient: gradient
 };
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 module.exports = {
   'canvas': require('./canvas'),
   'svg':    require('./svg')
 };
 
-},{"./canvas":58,"./svg":75}],72:[function(require,module,exports){
+},{"./canvas":59,"./svg":76}],73:[function(require,module,exports){
 var DOM = require('../../util/dom'),
     Handler = require('../Handler');
 
@@ -12422,7 +12569,7 @@ prototype.off = function(type, handler) {
 
 module.exports = SVGHandler;
 
-},{"../../util/dom":84,"../Handler":54}],73:[function(require,module,exports){
+},{"../../util/dom":85,"../Handler":55}],74:[function(require,module,exports){
 var ImageLoader = require('../../util/ImageLoader'),
     Renderer = require('../Renderer'),
     text = require('../../util/text'),
@@ -12847,7 +12994,7 @@ function href() {
 
 module.exports = SVGRenderer;
 
-},{"../../util/ImageLoader":80,"../../util/dom":84,"../../util/svg":86,"../../util/text":87,"../Renderer":55,"./marks":76}],74:[function(require,module,exports){
+},{"../../util/ImageLoader":81,"../../util/dom":85,"../../util/svg":87,"../../util/text":88,"../Renderer":56,"./marks":77}],75:[function(require,module,exports){
 var Renderer = require('../Renderer'),
     ImageLoader = require('../../util/ImageLoader'),
     SVG = require('../../util/svg'),
@@ -13091,7 +13238,7 @@ function escape_text(s) {
 
 module.exports = SVGStringRenderer;
 
-},{"../../util/ImageLoader":80,"../../util/dom":84,"../../util/svg":86,"../../util/text":87,"../Renderer":55,"./marks":76}],75:[function(require,module,exports){
+},{"../../util/ImageLoader":81,"../../util/dom":85,"../../util/svg":87,"../../util/text":88,"../Renderer":56,"./marks":77}],76:[function(require,module,exports){
 module.exports = {
   Handler:  require('./SVGHandler'),
   Renderer: require('./SVGRenderer'),
@@ -13099,7 +13246,7 @@ module.exports = {
     Renderer : require('./SVGStringRenderer')
   }
 };
-},{"./SVGHandler":72,"./SVGRenderer":73,"./SVGStringRenderer":74}],76:[function(require,module,exports){
+},{"./SVGHandler":73,"./SVGRenderer":74,"./SVGStringRenderer":75}],77:[function(require,module,exports){
 var text = require('../../util/text'),
     SVG = require('../../util/svg'),
     symbolTypes = SVG.symbolTypes,
@@ -13250,7 +13397,7 @@ module.exports = {
   }
 };
 
-},{"../../util/svg":86,"../../util/text":87}],77:[function(require,module,exports){
+},{"../../util/svg":87,"../../util/text":88}],78:[function(require,module,exports){
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
@@ -13379,7 +13526,7 @@ prototype.height = function() {
 
 module.exports = Bounds;
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = function(b) {
   function noop() { }
   function add(x,y) { b.add(x, y); }
@@ -13405,7 +13552,7 @@ module.exports = function(b) {
   };
 };
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 var gradient_id = 0;
 
 function Gradient(type) {
@@ -13429,7 +13576,7 @@ prototype.stop = function(offset, color) {
 };
 
 module.exports = Gradient;
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 (function (global){
 var load = require('datalib/src/import/load');
 
@@ -13509,7 +13656,7 @@ module.exports = ImageLoader;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib/src/import/load":22}],81:[function(require,module,exports){
+},{"datalib/src/import/load":23}],82:[function(require,module,exports){
 function Item(mark) {
   this.mark = mark;
 }
@@ -13558,7 +13705,7 @@ prototype.touch = function() {
 };
 
 module.exports = Item;
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var BoundsContext = require('./BoundsContext'),
     Bounds = require('./Bounds'),
     canvas = require('./canvas'),
@@ -13855,7 +14002,7 @@ module.exports = {
   group: group
 };
 
-},{"../path":51,"./Bounds":77,"./BoundsContext":78,"./canvas":83,"./svg":86,"./text":87}],83:[function(require,module,exports){
+},{"../path":52,"./Bounds":78,"./BoundsContext":79,"./canvas":84,"./svg":87,"./text":88}],84:[function(require,module,exports){
 (function (global){
 function instance(w, h) {
   w = w || 1;
@@ -13949,7 +14096,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 // create a new DOM element
 function create(doc, tag, ns) {
   return ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
@@ -14027,7 +14174,7 @@ module.exports = {
   }
 };
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var bound = require('../util/bound');
 
 var sets = [
@@ -14085,7 +14232,7 @@ module.exports = {
   toJSON:   toJSON,
   fromJSON: fromJSON
 };
-},{"../util/bound":82}],86:[function(require,module,exports){
+},{"../util/bound":83}],87:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
     d3_svg = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null).svg,
@@ -14183,7 +14330,7 @@ module.exports = {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../path/parse":52,"datalib":26}],87:[function(require,module,exports){
+},{"../path/parse":53,"datalib":27}],88:[function(require,module,exports){
 function size(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
@@ -14218,7 +14365,7 @@ module.exports = {
   }
 };
 
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var sg = require('vega-scenegraph').render,
     canvas = sg.canvas,
     svg = sg.svg.string,
@@ -14278,11 +14425,11 @@ prototype.initialize = function() {
     .initialize(null, w, h, pad)
     .background(bg);
 
-  return this;
+  return (this._repaint = true, this);
 };
 
 module.exports = HeadlessView;
-},{"./View":90,"vega-scenegraph":49}],89:[function(require,module,exports){
+},{"./View":91,"vega-scenegraph":50}],90:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
@@ -14445,7 +14592,7 @@ prototype.fire = function(cs) {
 };
 
 module.exports = Model;
-},{"../parse/expr":96,"../scene/GroupBuilder":112,"../scene/visit":117,"./config":91,"datalib":26,"vega-dataflow":41}],90:[function(require,module,exports){
+},{"../parse/expr":97,"../scene/GroupBuilder":113,"../scene/visit":118,"./config":92,"datalib":27,"vega-dataflow":42}],91:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -14938,7 +15085,7 @@ View.factory = function(model) {
 module.exports = View;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/streams":107,"../scene/Encoder":111,"../scene/Transition":114,"./HeadlessView":88,"datalib":26,"vega-dataflow":41,"vega-logging":48,"vega-scenegraph":49}],91:[function(require,module,exports){
+},{"../parse/streams":108,"../scene/Encoder":112,"../scene/Transition":115,"./HeadlessView":89,"datalib":27,"vega-dataflow":42,"vega-logging":49,"vega-scenegraph":50}],92:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     config = {};
@@ -15057,7 +15204,7 @@ config.range = {
 module.exports = config;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 var dl = require('datalib'),
     parse = require('../parse'),
     Scale = require('../scene/Scale'),
@@ -15104,7 +15251,7 @@ module.exports = function(opt) {
 
   return schema;
 };
-},{"../parse":97,"../scene/Scale":113,"./config":91,"datalib":26}],93:[function(require,module,exports){
+},{"../parse":98,"../scene/Scale":114,"./config":92,"datalib":27}],94:[function(require,module,exports){
 var dl = require('datalib'),
     axs = require('../scene/axis'),
     themeVal = require('../util/theme-val');
@@ -15204,7 +15351,7 @@ function config(model) {
 }
 
 module.exports = parseAxes;
-},{"../scene/axis":115,"../util/theme-val":149,"datalib":26}],94:[function(require,module,exports){
+},{"../scene/axis":116,"../util/theme-val":150,"datalib":27}],95:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null);
 
@@ -15218,7 +15365,7 @@ function parseBg(bg) {
 module.exports = parseBg;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     parseTransforms = require('./transforms'),
@@ -15287,7 +15434,7 @@ parseData.datasource = function(model, d) {
 };
 
 module.exports = parseData;
-},{"./modify":101,"./transforms":108,"datalib":26,"vega-logging":48}],96:[function(require,module,exports){
+},{"./modify":102,"./transforms":109,"datalib":27,"vega-logging":49}],97:[function(require,module,exports){
 var dl = require('datalib'),
     template = dl.template,
     expr = require('vega-expression'),
@@ -15439,7 +15586,7 @@ function wrap(model) {
 wrap.scale = scale;
 wrap.codegen = compile.codegen;
 module.exports = wrap;
-},{"datalib":26,"vega-expression":46}],97:[function(require,module,exports){
+},{"datalib":27,"vega-expression":47}],98:[function(require,module,exports){
 module.exports = {
   axes:       require('./axes'),
   background: require('./background'),
@@ -15458,7 +15605,7 @@ module.exports = {
   streams:    require('./streams'),
   transforms: require('./transforms')
 };
-},{"./axes":93,"./background":94,"./data":95,"./expr":96,"./legends":98,"./mark":99,"./marks":100,"./modify":101,"./padding":102,"./predicates":103,"./properties":104,"./signals":105,"./spec":106,"./streams":107,"./transforms":108,"vega-event-selector":42}],98:[function(require,module,exports){
+},{"./axes":94,"./background":95,"./data":96,"./expr":97,"./legends":99,"./mark":100,"./marks":101,"./modify":102,"./padding":103,"./predicates":104,"./properties":105,"./signals":106,"./spec":107,"./streams":108,"./transforms":109,"vega-event-selector":43}],99:[function(require,module,exports){
 var lgnd = require('../scene/legend');
 
 function parseLegends(model, spec, legends, group) {
@@ -15502,7 +15649,7 @@ function parseLegend(def, index, legend, group) {
 }
 
 module.exports = parseLegends;
-},{"../scene/legend":116}],99:[function(require,module,exports){
+},{"../scene/legend":117}],100:[function(require,module,exports){
 var dl = require('datalib'),
     parseProperties = require('./properties');
 
@@ -15551,7 +15698,7 @@ function parseMark(model, mark, applyDefaults) {
 }
 
 module.exports = parseMark;
-},{"./properties":104,"datalib":26}],100:[function(require,module,exports){
+},{"./properties":105,"datalib":27}],101:[function(require,module,exports){
 var parseMark = require('./mark'),
     parseProperties = require('./properties');
 
@@ -15592,7 +15739,7 @@ function defaults(spec, model) {
 }
 
 module.exports = parseRootMark;
-},{"./mark":99,"./properties":104}],101:[function(require,module,exports){
+},{"./mark":100,"./properties":105}],102:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     df = require('vega-dataflow'),
@@ -15743,7 +15890,7 @@ function parseModify(model, def, ds) {
 }
 
 module.exports = parseModify;
-},{"datalib":26,"vega-dataflow":41,"vega-logging":48}],102:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42,"vega-logging":49}],103:[function(require,module,exports){
 var dl = require('datalib');
 
 function parsePadding(pad) {
@@ -15754,7 +15901,7 @@ function parsePadding(pad) {
 }
 
 module.exports = parsePadding;
-},{"datalib":26}],103:[function(require,module,exports){
+},{"datalib":27}],104:[function(require,module,exports){
 var dl = require('datalib');
 
 var types = {
@@ -15949,7 +16096,7 @@ function parseScale(spec, ops) {
 }
 
 module.exports = parsePredicates;
-},{"datalib":26}],104:[function(require,module,exports){
+},{"datalib":27}],105:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -16360,7 +16507,7 @@ function scaleRef(ref) {
 module.exports = properties;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"datalib":26,"vega-dataflow":41,"vega-logging":48}],105:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42,"vega-logging":49}],106:[function(require,module,exports){
 var dl = require('datalib'),
     expr = require('./expr'),
     SIGNALS = require('vega-dataflow').Dependencies.SIGNALS;
@@ -16428,7 +16575,7 @@ parseSignals.scale = function scale(model, spec, value, datum, evt) {
 };
 
 module.exports = parseSignals;
-},{"./expr":96,"datalib":26,"vega-dataflow":41}],106:[function(require,module,exports){
+},{"./expr":97,"datalib":27,"vega-dataflow":42}],107:[function(require,module,exports){
 var dl  = require('datalib'),
     log = require('vega-logging'),
     themeVal = require('../util/theme-val'),
@@ -16538,7 +16685,7 @@ var dl  = require('datalib'),
 }
 
 module.exports = parseSpec;
-},{"../core/Model":89,"../core/View":90,"../util/theme-val":149,"./":97,"datalib":26,"vega-logging":48}],107:[function(require,module,exports){
+},{"../core/Model":90,"../core/View":91,"../util/theme-val":150,"./":98,"datalib":27,"vega-logging":49}],108:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -16781,7 +16928,7 @@ function parseStreams(view) {
 module.exports = parseStreams;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./signals":105,"datalib":26,"vega-dataflow":41,"vega-event-selector":42}],108:[function(require,module,exports){
+},{"./signals":106,"datalib":27,"vega-dataflow":42,"vega-event-selector":43}],109:[function(require,module,exports){
 var dl = require('datalib'),
     transforms = require('../transforms/index');
 
@@ -16805,7 +16952,7 @@ function parseTransforms(model, def) {
 }
 
 module.exports = parseTransforms;
-},{"../transforms/index":145,"datalib":26}],109:[function(require,module,exports){
+},{"../transforms/index":146,"datalib":27}],110:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     scene = require('vega-scenegraph'),
@@ -16874,7 +17021,7 @@ proto.evaluate = function(input) {
 };
 
 module.exports = Bounder;
-},{"./Encoder":111,"datalib":26,"vega-dataflow":41,"vega-logging":48,"vega-scenegraph":49}],110:[function(require,module,exports){
+},{"./Encoder":112,"datalib":27,"vega-dataflow":42,"vega-logging":49,"vega-scenegraph":50}],111:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Item = require('vega-scenegraph').Item,
@@ -17182,7 +17329,7 @@ function keyFunction(key) {
 }
 
 module.exports = Builder;
-},{"../parse/data":95,"./Bounder":109,"./Encoder":111,"datalib":26,"vega-dataflow":41,"vega-logging":48,"vega-scenegraph":49}],111:[function(require,module,exports){
+},{"../parse/data":96,"./Bounder":110,"./Encoder":112,"datalib":27,"vega-dataflow":42,"vega-logging":49,"vega-scenegraph":50}],112:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     df = require('vega-dataflow'),
@@ -17369,7 +17516,7 @@ Encoder.update = function(graph, trans, request, items, dirty) {
 };
 
 module.exports = Encoder;
-},{"./Builder":110,"datalib":26,"vega-dataflow":41,"vega-logging":48,"vega-scenegraph":49}],112:[function(require,module,exports){
+},{"./Builder":111,"datalib":27,"vega-dataflow":42,"vega-logging":49,"vega-scenegraph":50}],113:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     Node  = df.Node, // jshint ignore:line
@@ -17673,7 +17820,7 @@ function buildLegends(input, group) {
 }
 
 module.exports = GroupBuilder;
-},{"../parse/axes":93,"../parse/legends":98,"./Builder":110,"./Scale":113,"datalib":26,"vega-dataflow":41,"vega-logging":48}],113:[function(require,module,exports){
+},{"../parse/axes":94,"../parse/legends":99,"./Builder":111,"./Scale":114,"datalib":27,"vega-dataflow":42,"vega-logging":49}],114:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -18129,7 +18276,7 @@ function domainMinMax(scale, group) {
       domain[z] = def.domainMax;
     }
   }
-  if (def.type !== Types.LOG && def.type !== Types.TIME && (def.zero || def.zero===undefined)) {
+  if (def.type !== Types.LOG && def.type !== Types.TIME && def.type !== Types.TIME_UTC && (def.zero || def.zero===undefined)) {
     domain[0] = Math.min(0, domain[0]);
     domain[z] = Math.max(0, domain[z]);
   }
@@ -18179,13 +18326,19 @@ function range(group) {
     if (rev) rng = rng.reverse();
   }
 
+  var start = rng[0], end = rng[rng.length-1];
+  if (start === null && end !== null || start !== null && end === null) {
+    log.error('Range is underspecified. Please ensure either the ' +
+      '"range" property or both "rangeMin" and "rangeMax" are specified.');
+  }
+
   return rng;
 }
 
 module.exports = Scale;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../transforms/Aggregate":118,"datalib":26,"vega-dataflow":41,"vega-logging":48}],114:[function(require,module,exports){
+},{"../transforms/Aggregate":119,"datalib":27,"vega-dataflow":42,"vega-logging":49}],115:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     bound = require('vega-scenegraph').bound,
@@ -18292,7 +18445,7 @@ function step(elapsed) {
 module.exports = Transition;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Builder":110,"vega-dataflow":41,"vega-scenegraph":49}],115:[function(require,module,exports){
+},{"./Builder":111,"vega-dataflow":42,"vega-scenegraph":50}],116:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     parseMark = require('../parse/mark'),
@@ -18882,7 +19035,7 @@ function axisDomain(config) {
 }
 
 module.exports = axs;
-},{"../parse/mark":99,"../util":148,"datalib":26,"vega-dataflow":41,"vega-scenegraph":49}],116:[function(require,module,exports){
+},{"../parse/mark":100,"../util":149,"datalib":27,"vega-dataflow":42,"vega-scenegraph":50}],117:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -19484,7 +19637,7 @@ function hLegendLabels(config) {
 module.exports = lgnd;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../parse/mark":99,"../parse/properties":104,"../util":148,"datalib":26,"vega-scenegraph":49}],117:[function(require,module,exports){
+},{"../parse/mark":100,"../parse/properties":105,"../util":149,"datalib":27,"vega-scenegraph":50}],118:[function(require,module,exports){
 module.exports = function visit(node, func) {
   var i, n, s, m, items;
   if (func(node)) return true;
@@ -19498,7 +19651,7 @@ module.exports = function visit(node, func) {
     }
   }
 };
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     log = require('vega-logging'),
@@ -19711,7 +19864,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Aggregate;
-},{"./Facetor":124,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],119:[function(require,module,exports){
+},{"./Facetor":125,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],120:[function(require,module,exports){
 var Base = require('./Transform').prototype;
 
 function BatchTransform() {
@@ -19736,7 +19889,7 @@ prototype.batchTransform = function(/* input, data, reset */) {
 };
 
 module.exports = BatchTransform;
-},{"./Transform":140}],120:[function(require,module,exports){
+},{"./Transform":141}],121:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -19821,7 +19974,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Bin;
-},{"./BatchTransform":119,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],121:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],122:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
@@ -19946,7 +20099,7 @@ prototype._rem = function(tuples, get) {
 };
 
 module.exports = CountPattern;
-},{"./Transform":140,"vega-dataflow":41,"vega-logging":48}],122:[function(require,module,exports){
+},{"./Transform":141,"vega-dataflow":42,"vega-logging":49}],123:[function(require,module,exports){
 var dl = require('datalib'),
     df = require('vega-dataflow'),
     ChangeSet = df.ChangeSet,
@@ -20150,7 +20303,7 @@ prototype.batchTransform = function(input, data, reset) {
 };
 
 module.exports = Cross;
-},{"./BatchTransform":119,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],123:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],124:[function(require,module,exports){
 var Transform = require('./Transform'),
     Aggregate = require('./Aggregate');
 
@@ -20197,7 +20350,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Facet;
-},{"../parse/transforms":108,"./Aggregate":118,"./Transform":140}],124:[function(require,module,exports){
+},{"../parse/transforms":109,"./Aggregate":119,"./Transform":141}],125:[function(require,module,exports){
 var dl = require('datalib'),
     Aggregator = dl.Aggregator,
     Base = Aggregator.prototype,
@@ -20296,7 +20449,7 @@ prototype._on_keep = function(cell) {
 };
 
 module.exports = Facetor;
-},{"datalib":26,"vega-dataflow":41,"vega-logging":48}],125:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42,"vega-logging":49}],126:[function(require,module,exports){
 var df = require('vega-dataflow'),
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -20349,7 +20502,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Filter;
-},{"./Transform":140,"vega-dataflow":41,"vega-logging":48}],126:[function(require,module,exports){
+},{"./Transform":141,"vega-dataflow":42,"vega-logging":49}],127:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
@@ -20421,7 +20574,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Fold;
-},{"./Transform":140,"vega-dataflow":41,"vega-logging":48}],127:[function(require,module,exports){
+},{"./Transform":141,"vega-dataflow":42,"vega-logging":49}],128:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     df = require('vega-dataflow'),
@@ -20631,7 +20784,7 @@ prototype.update = function(active) {
 module.exports = Force;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Transform":140,"./screen":146,"vega-dataflow":41,"vega-logging":48}],128:[function(require,module,exports){
+},{"./Transform":141,"./screen":147,"vega-dataflow":42,"vega-logging":49}],129:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Tuple = df.Tuple,
     log = require('vega-logging'),
@@ -20673,7 +20826,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Formula;
-},{"./Transform":140,"vega-dataflow":41,"vega-logging":48}],129:[function(require,module,exports){
+},{"./Transform":141,"vega-dataflow":42,"vega-logging":49}],130:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -20764,7 +20917,7 @@ prototype.transform = function(input) {
 module.exports = Geo;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Transform":140,"./screen":146,"datalib":26,"vega-dataflow":41,"vega-logging":48}],130:[function(require,module,exports){
+},{"./Transform":141,"./screen":147,"datalib":27,"vega-dataflow":42,"vega-logging":49}],131:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -20814,7 +20967,7 @@ prototype.transform = function(input) {
 module.exports = GeoPath;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./Geo":129,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],131:[function(require,module,exports){
+},{"./Geo":130,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],132:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -20917,7 +21070,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Hierarchy;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":119,"./Transform":140,"./screen":146,"datalib":26,"vega-dataflow":41,"vega-logging":48}],132:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"./screen":147,"datalib":27,"vega-dataflow":42,"vega-logging":49}],133:[function(require,module,exports){
 var dl = require('datalib'),
     log = require('vega-logging'),
     Tuple = require('vega-dataflow').Tuple,
@@ -21020,7 +21173,7 @@ function partition(data, groupby, orderby) {
 }
 
 module.exports = Impute;
-},{"./BatchTransform":119,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],133:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],134:[function(require,module,exports){
 var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -21147,7 +21300,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = LinkPath;
-},{"./Transform":140,"vega-dataflow":41,"vega-logging":48}],134:[function(require,module,exports){
+},{"./Transform":141,"vega-dataflow":42,"vega-logging":49}],135:[function(require,module,exports){
 var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform');
@@ -21219,7 +21372,7 @@ prototype.transform = function(input, reset) {
 };
 
 module.exports = Lookup;
-},{"./Transform":140,"vega-dataflow":41,"vega-logging":48}],135:[function(require,module,exports){
+},{"./Transform":141,"vega-dataflow":42,"vega-logging":49}],136:[function(require,module,exports){
 var dl = require('datalib'),
     Deps = require('vega-dataflow').Dependencies;
 
@@ -21347,7 +21500,7 @@ prototype.set = function(value) {
 };
 
 module.exports = Parameter;
-},{"datalib":26,"vega-dataflow":41}],136:[function(require,module,exports){
+},{"datalib":27,"vega-dataflow":42}],137:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -21413,7 +21566,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Pie;
-},{"./BatchTransform":119,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],137:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],138:[function(require,module,exports){
 var Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
     Transform = require('./Transform'),
@@ -21467,7 +21620,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Rank;
-},{"./BatchTransform":119,"./Transform":140,"vega-dataflow":41,"vega-logging":48}],138:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"vega-dataflow":42,"vega-logging":49}],139:[function(require,module,exports){
 var dl = require('datalib'),
     log  = require('vega-logging'),
     Transform = require('./Transform');
@@ -21491,7 +21644,7 @@ prototype.transform = function(input) {
 };
 
 module.exports = Sort;
-},{"./Transform":140,"datalib":26,"vega-logging":48}],139:[function(require,module,exports){
+},{"./Transform":141,"datalib":27,"vega-logging":49}],140:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -21589,7 +21742,7 @@ function partition(data, groupby, sortby, field) {
 }
 
 module.exports = Stack;
-},{"./BatchTransform":119,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],140:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],141:[function(require,module,exports){
 var df = require('vega-dataflow'),
     Base = df.Node.prototype, // jshint ignore:line
     Deps = df.Dependencies,
@@ -21650,7 +21803,7 @@ prototype.output = function(map) {
 };
 
 module.exports = Transform;
-},{"./Parameter":135,"vega-dataflow":41}],141:[function(require,module,exports){
+},{"./Parameter":136,"vega-dataflow":42}],142:[function(require,module,exports){
 var dl = require('datalib'),
     Tuple = require('vega-dataflow').Tuple,
     log = require('vega-logging'),
@@ -21715,7 +21868,7 @@ prototype.batchTransform = function(input, data) {
 };
 
 module.exports = Treeify;
-},{"./BatchTransform":119,"./Transform":140,"datalib":26,"vega-dataflow":41,"vega-logging":48}],142:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"datalib":27,"vega-dataflow":42,"vega-logging":49}],143:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
@@ -21805,7 +21958,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Treemap;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":119,"./Transform":140,"./screen":146,"datalib":26,"vega-dataflow":41,"vega-logging":48}],143:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"./screen":147,"datalib":27,"vega-dataflow":42,"vega-logging":49}],144:[function(require,module,exports){
 (function (global){
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     Tuple = require('vega-dataflow/src/Tuple'),
@@ -21856,7 +22009,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Voronoi;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":119,"./Transform":140,"./screen":146,"vega-dataflow/src/Tuple":40,"vega-logging":48}],144:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"./screen":147,"vega-dataflow/src/Tuple":41,"vega-logging":49}],145:[function(require,module,exports){
 (function (global){
 var dl = require('datalib'),
     d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
@@ -21969,7 +22122,7 @@ prototype.batchTransform = function(input, data) {
 module.exports = Wordcloud;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./BatchTransform":119,"./Transform":140,"./screen":146,"datalib":26,"vega-dataflow/src/Tuple":40,"vega-logging":48,"vega-scenegraph":49}],145:[function(require,module,exports){
+},{"./BatchTransform":120,"./Transform":141,"./screen":147,"datalib":27,"vega-dataflow/src/Tuple":41,"vega-logging":49,"vega-scenegraph":50}],146:[function(require,module,exports){
 module.exports = {
   aggregate:    require('./Aggregate'),
   bin:          require('./Bin'),
@@ -21995,7 +22148,7 @@ module.exports = {
   voronoi:      require('./Voronoi'),
   wordcloud:    require('./Wordcloud')
 };
-},{"./Aggregate":118,"./Bin":120,"./CountPattern":121,"./Cross":122,"./Facet":123,"./Filter":125,"./Fold":126,"./Force":127,"./Formula":128,"./Geo":129,"./GeoPath":130,"./Hierarchy":131,"./Impute":132,"./LinkPath":133,"./Lookup":134,"./Pie":136,"./Rank":137,"./Sort":138,"./Stack":139,"./Treeify":141,"./Treemap":142,"./Voronoi":143,"./Wordcloud":144}],146:[function(require,module,exports){
+},{"./Aggregate":119,"./Bin":121,"./CountPattern":122,"./Cross":123,"./Facet":124,"./Filter":126,"./Fold":127,"./Force":128,"./Formula":129,"./Geo":130,"./GeoPath":131,"./Hierarchy":132,"./Impute":133,"./LinkPath":134,"./Lookup":135,"./Pie":137,"./Rank":138,"./Sort":139,"./Stack":140,"./Treeify":142,"./Treemap":143,"./Voronoi":144,"./Wordcloud":145}],147:[function(require,module,exports){
 module.exports = {
   size:   [{signal: 'width'}, {signal: 'height'}],
   mid:    [{expr: 'width/2'}, {expr: 'height/2'}],
@@ -22004,7 +22157,7 @@ module.exports = {
     {expr: '[width+padding.right, height+padding.bottom]'}
   ]
 };
-},{}],147:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 var dl = require('datalib');
 
 var TIME    = 'time',
@@ -22068,13 +22221,13 @@ function getFormatter(scale, tickCount, formatType, str) {
 module.exports = {
   getTickFormat: getTickFormat
 };
-},{"datalib":26}],148:[function(require,module,exports){
+},{"datalib":27}],149:[function(require,module,exports){
 var dl = require('datalib'),
     u  = {};
 
 dl.extend(u, require('./format'));
 module.exports = dl.extend(u, dl);
-},{"./format":147,"datalib":26}],149:[function(require,module,exports){
+},{"./format":148,"datalib":27}],150:[function(require,module,exports){
 module.exports = function(def, config, property, defaultVal) {
   if (def[property] !== undefined) {
     return def[property];
