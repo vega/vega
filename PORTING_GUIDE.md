@@ -87,13 +87,22 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Signal definitions now support a `"bind"` property that binds signal values to automatically-generated HTML input widgets. This provides an additional means of creating interactive visualizations by adding external user controls. The syntax for `"bind"` definitions follows the earlier [vega-embed](https://github.com/vega/vega-embed) model. See the `airports.vg.json` and `map-bind.vg.json` examples for more.
 
+- The `View` API for event listeners has changed. The `view.on` and `view.off` methods are no longer defined. Either use [view.addEventListener](https://github.com/vega/vega-view#view_addEventListener) and [view.removeEventListener](https://github.com/vega/vega-view#view_removeEventListener) for standard callbacks or use the new [view.events](https://github.com/vega/vega-view#view_events) method to work with [EventStream](https://github.com/vega/vega-dataflow/blob/master/src/EventStream.js) instances instead.
+
+- The `View` API for signal listeners has changed. Instead of `view.onSignal` and `view.offSignal`, use [view.addSignalListener](https://github.com/vega/vega-view#view_addSignalListener) and [view.removeSignalListener](https://github.com/vega/vega-view#view_removeSignalListener).
+
 ## View Layout
 
 - The chart `"width"` and `"height"` are automatically bound to signals with the same name. The top-level `"width"` and `"height"` properties can be omitted from the definition and instead replaced by signal definitions whose `"update"` function dynamically sets the width and/or height value.
 
-- Vega 3 adds a new top-level `"autosize"` property to set the layout mode. The allowed options are `"pad"` (the default, similar to `"padding": "auto"` in Vega 2, the chart dimensions will be expanded as needed to fit the chart, axes and legends), `"fit"` (similar to `"padding": "strict"` in Vega 2, the data rectangle size will be decreased in an attempt to force the chart to fit within the given width and height) and `"none"` (no resizing is performed, and the chart size is solely determined by the width, height and padding settings).
+- Vega 3 adds a new top-level `"autosize"` property to set the layout mode. The legal values are:
+  - `"pad"` (default) - The width/height values determine the data rectangle for plotting. Axes and legends use additional space, with extra padding added to accommodate those elements. This is akin to `"padding": "auto"` in Vega 2.
+  - `"fit"` - The width/height indicates the final size (minus any explicit padding). The actual width and height signals will be automatically resized to accommodate axes and legends within the given fit size. If elements are too large to fit in the given size, clipping may occur. This is akin to `"padding": "strict"` in Vega 2.
+  - `"none`" - No automatic adjustment of size is performed. The final size is strictly the sum of the width/height and any explicit padding. Clipping may occur.
 
 - Vega 3 removes the `"auto"` and `"strict"` options for view `"padding"`. Instead, `"padding"` now always defines a fixed padding margin around the visualization. If the `"autosize"` property is set to `"pad"`, the padding values will be added to the results of the auto-size calculation.
+
+- SVG rendering now supports some basic responsive resizing. Generated SVG output now includes a `viewBox` attribute. This allows you to resize the SVG element and have the resulting visualization content scale accordingly.
 
 ## Axes and Legends
 
@@ -165,7 +174,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
     "as": ["min1", "max1", "median2"]
   }
   ```
-  
+
 - For the `"bin"` transform:
   - The `"max"` and `"min"` parameters have been removed.  Instead, users can provide `"extent"`, a two-element (`[min, max]`) array indicating the range of desired bin values.
   - The `"div"` property has been renamed to `"divide"`.
