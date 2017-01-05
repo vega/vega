@@ -57,7 +57,7 @@ prototype.initialize = function() {
     .initialize(null, w, h, pad)
     .background(bg);
 
-  return this;
+  return (this._repaint = true, this);
 };
 
 module.exports = HeadlessView;
