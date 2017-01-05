@@ -76,10 +76,10 @@ function onOperator(df, source, target, update, params, options) {
 
     op = new Operator(null, update, params, false);
     op.modified(options && options.force);
-    op.skip(true); // skip first invocation
     op.rank = 0;
 
     if (target) {
+      op.skip(true); // skip first invocation
       op.value = target.value;
       op.targets().add(target);
     }
