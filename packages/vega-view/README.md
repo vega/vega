@@ -99,10 +99,15 @@ parent class. The valid *level* values are `vega.None` (the default),
 view.<b>renderer</b>(<i>type</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
-Sets the renderer type to one of `'canvas'` (the default) or `'svg'` and
+Sets the renderer type (e.g., to `'canvas'` (the default) or `'svg'`) and
 returns this view instance. While typically invoked immediately upon view
-creation, this method can be called at any time to change the type of renderer
-used.
+creation, this method can be called at any time to change the renderer.
+
+Additional renderer types may be used if registered via the
+[renderModule](https://github.com/vega/vega-scenegraph/blob/master/src/modules.js)
+method exported by [vega-scenegraph](https://github.com/vega/vega-scenegraph);
+for an example see the
+[vega-webgl-renderer](https://github.com/vega/vega-webgl-renderer).
 
 <a name="view_hover" href="#view_hover">#</a>
 view.<b>hover</b>([<i>hoverSet</i>, <i>updateSet</i>])
@@ -187,7 +192,7 @@ view.<b>render</b>([<i>update</i>])
 Renders the scenegraph and returns this view instance. If no arguments are
 provided, the entire scenegraph is redrawn. If provided, the *update* argument
 should be an array of "dirty" scenegraph items to redraw. Incremental rendering
-will be perform to redraw only damaged regions of the scenegraph.
+will be performed to redraw only damaged regions of the scenegraph.
 
 During normal execution, this method is automatically invoked by the
 [run](#view_run) method. However, clients may explicitly call this method to
@@ -279,7 +284,7 @@ for a specified *source*, event *type*, and optional *filter* function. The
 *source* should be one of `"view"` (to specify the current view), `"window"`
 (to specify the browser window object), or a valid CSS selector string
 (that will be passed to `document.querySelectorAll`). The event *type* should
-be a legal DOM event type. If provided, the option *filter* argument should
+be a legal DOM event type. If provided, the optional *filter* argument should
 be a function that takes an event object as input and returns true if it
 should be included in the produced event stream.
 
@@ -293,17 +298,17 @@ view.<b>addEventListener</b>(<i>type</i>, <i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
 Registers an event listener for input events. The event *type* should be a
-string indicating an event type supported by
+string indicating a legal DOM event type supported by
 [vega-scenegraph](https://github.com/vega/vega-scenegraph) event handlers.
 Examples include `"mouseover"`, `"click"`, `"keydown"` and `"touchstart"`.
 When events occur, the *handler* function is invoked with two arguments: the
 *event* instance and the currently active scenegraph *item* (which is `null`
-if the event target was the view component itself).
+if the event target is the view component itself).
 
 All registered event handlers are preserved upon changes of renderer. For
-example, if the View `renderer` type is changed from `"canvas"` to `"svg"`,
-all listeners will remain active. To remove a listener, use the
-[removeEventListener](#view_removeEventListener) method.
+example, if the View [renderer](#view_renderer) type is changed from
+`"canvas"` to `"svg"`, all listeners will remain active. To remove a
+listener, use the [removeEventListener](#view_removeEventListener) method.
 
 ```js
 view.addEventListener('click', function(event, item) {
@@ -359,11 +364,7 @@ view.toImageURL('png').then(function(url) {
   link.setAttribute('href', url);
   link.setAttribute('target', '_blank');
   link.setAttribute('download', 'vega-export.png');
-
-  var event = document.createEvent('MouseEvents');
-  event.initMouseEvent('click', true, true, document.defaultView,
-    1, 0, 0, 0, 0, false, false, false, false, 0, null);
-  link.dispatchEvent(event);
+  link.dispatchEvent(new MouseEvent('click'));
 }).catch(function(error) { /* error handling */ });
 ```
 
