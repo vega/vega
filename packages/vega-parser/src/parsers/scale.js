@@ -1,6 +1,6 @@
 import {ref, keyFieldRef} from '../util';
 import {Collect, Aggregate, MultiExtent, MultiValues, Values} from '../transforms';
-import {error, isArray, isObject, isString, toSet} from 'vega-util';
+import {error, isArray, isObject, isString, stringValue, toSet} from 'vega-util';
 
 var types = [
   'identity',
@@ -52,13 +52,22 @@ export default function(spec, scope) {
 function parseLiteral(v, scope) {
   return !isObject(v) ? v
     : v.signal ? scope.signalRef(v.signal)
-    : error('Unsupported object: ' + v);
+    : error('Unsupported object: ' + stringValue(v));
+}
+
+function dataLookupError(name) {
+  error('Can not find data set: ' + name);
 }
 
 // -- SCALE DOMAIN ----
 
 function parseScaleDomain(domain, spec, scope) {
-  if (!domain) return; // default domain
+  if (!domain) {
+    if (spec.domainMin != null || spec.domainMax != null) {
+      error('No scale domain defined for domainMin/domainMax to override.');
+    }
+    return; // default domain
+  }
 
   if (domain.signal) {
     return scope.signalRef(domain.signal);
@@ -77,7 +86,7 @@ function explicitDomain(domain, spec, scope) {
 
 function singularDomain(domain, spec, scope) {
   var data = scope.getData(domain.data);
-  if (!data) error('Can not find data set: ' + domain.data);
+  if (!data) dataLookupError(domain.data);
 
   return isOrdinal(spec.type)
       ? data.valuesRef(scope, domain.field, parseSort(domain.sort, false))
@@ -102,7 +111,7 @@ function ordinalMultipleDomain(domain, scope, fields) {
   // get value counts for each domain field
   counts = fields.map(function(f) {
     var data = scope.getData(f.data);
-    if (!data) error('Can not find data set: ' + f.data);
+    if (!data) dataLookupError(f.data);
     return data.countsRef(scope, f.field);
   });
 
@@ -146,7 +155,7 @@ function quantileMultipleDomain(domain, scope, fields) {
   // get value arrays for each domain field
   var values = fields.map(function(f) {
     var data = scope.getData(f.data);
-    if (!data) error('Can not find data set: ' + f.data);
+    if (!data) dataLookupError(f.data);
     return data.domainRef(scope, f.field);
   });
 
@@ -158,7 +167,7 @@ function numericMultipleDomain(domain, scope, fields) {
   // get extents for each domain field
   var extents = fields.map(function(f) {
     var data = scope.getData(f.data);
-    if (!data) error('Can not find data set: ' + f.data);
+    if (!data) dataLookupError(f.data);
     return data.extentRef(scope, f.field);
   });
 
