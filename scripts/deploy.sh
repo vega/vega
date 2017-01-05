@@ -5,7 +5,7 @@ type jq >/dev/null 2>&1 || { echo >&2 "I require jq but it's not installed. Abor
 
 # 0.2 check if all files are commited
 if [ ! -z "$(git status --porcelain)" ]; then
-  echo "There are uncommitted files on master. Please commit or stash first!"
+  echo "There are uncommitted files on v2.x. Please commit or stash first!"
   git status
   exit 1
 fi
@@ -15,12 +15,12 @@ git checkout gh-pages
 if [ ! -z "$(git status --porcelain)" ]; then
   echo "There are uncommitted files on gh-pages. Please commit or stash first!"
   git status
-  git checkout master
+  git checkout v2.x
   exit 1
 else
   echo "All tracked files are commited. Publishing for npm, bower & gh-pages."
 fi
-git checkout master
+git checkout v2.x
 
 # 0.4 fresh npm install to ensure no dev changes are included
 rm -rf node_modules
@@ -48,7 +48,7 @@ fi
 gitsha=$(git rev-parse HEAD)
 version=$(cat package.json | jq .version | sed -e 's/^"//'  -e 's/"$//')
 
-# swap to head so we don't commit compiled file to master along with tags
+# swap to head so we don't commit compiled file to v2.x along with tags
 git checkout head
 
 # add the compiled files, commit and tag!
@@ -56,8 +56,8 @@ git add vega* -f
 git commit -m "Release $version $gitsha."
 git tag -am "Release v$version." "v$version"
 
-# swap back to the clean master and push the new tag
-git checkout master
+# swap back to the clean v2.x and push the new tag
+git checkout v2.x
 git push --tags
 # now the published tag contains build files which work great with bower.
 
@@ -81,5 +81,5 @@ git add vega* -f
 git commit -m "Move to v$version."
 git push origin gh-pages
 
-# swap back to master branch
-git checkout master
+# swap back to v2.x branch
+git checkout v2.x
