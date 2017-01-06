@@ -1,7 +1,9 @@
 var d3 = require('d3'),
     dl = require('datalib'),
     df = require('vega-dataflow'),
-    sg = require('vega-scenegraph').render,
+        scene = require('vega-scenegraph'),
+    sg = scene.render,
+    bound = scene.bound,
     log = require('vega-logging'),
     Deps = df.Dependencies,
     parseStreams = require('../parse/streams'),
@@ -188,11 +190,30 @@ prototype.padding = function(pad) {
   return (this._repaint = true, this);
 };
 
+function viewBounds() {
+  var s = this.model().scene(),
+      legends = s.items[0].legendItems,
+      i = 0, len = legends.length,
+      b, lb;
+
+  // For strict padding, clip legend height to prevent a tiny data rectangle.
+  if (this._strict) {
+    b = bound.mark(s, null, false);
+    for (; i<len; ++i) {
+      lb = legends[i].bounds;
+      b.add(lb.x1, 0).add(lb.x2, 0);
+    }
+    return b;
+  }
+
+  return s.bounds;
+}
+
 prototype.autopad = function(opt) {
   if (this._autopad < 1) return this;
   else this._autopad = 0;
 
-  var b = this.model().scene().bounds,
+  var b = viewBounds.call(this),
       pad = this._padding,
       config = this.model().config(),
       inset = config.autopadInset,
