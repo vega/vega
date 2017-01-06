@@ -13,4 +13,4 @@ export default {
     { "name": "stepMinor", "type": "number", "array": true, "length": 2, "default": [10, 10] },
     { "name": "precision", "type": "number", "default": 2.5 }
   ]
-};
+}

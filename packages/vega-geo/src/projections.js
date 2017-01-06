@@ -11,7 +11,8 @@ import {
   geoMercator,
   geoOrthographic,
   geoStereographic,
-  geoTransverseMercator
+  geoTransverseMercator,
+  geoPath
 } from 'd3-geo';
 
 export var properties = [
@@ -46,11 +47,14 @@ function create(type, constructor) {
 
     p.type = type;
 
+    p.path = geoPath().projection(p);
+
     p.copy = p.copy || function() {
       var c = projection();
       properties.forEach(function(prop) {
         if (p.hasOwnProperty(prop)) c[prop](p[prop]());
       });
+      c.path.pointRadius(p.path.pointRadius());
       return c;
     };
 
