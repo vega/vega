@@ -49,7 +49,8 @@ export default {
           "minItems": 2,
           "maxItems": 2
         }),
-        "precision": {"$ref": "#/refs/numberOrSignal"}
+        "precision": {"$ref": "#/refs/numberOrSignal"},
+        "pointRadius": {"$ref": "#/refs/numberOrSignal"}
       },
       "additionalProperties": true,
       "required": ["name", "type"]
