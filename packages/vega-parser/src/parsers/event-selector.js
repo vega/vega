@@ -4,12 +4,13 @@ import {isMarkType} from './marks/marktypes';
  * Parse an event selector string.
  * Returns an array of event stream definitions.
  */
-export default function(selector) {
-  return parseMerge(selector.trim())
-    .map(parseSelector);
+export default function(selector, source) {
+  DEFAULT_SOURCE = source || VIEW;
+  return parseMerge(selector.trim()).map(parseSelector);
 }
 
-var LBRACK = '[',
+var VIEW = 'view',
+    LBRACK = '[',
     RBRACK = ']',
     LBRACE = '{',
     RBRACE = '}',
@@ -17,7 +18,8 @@ var LBRACK = '[',
     COMMA  = ',',
     GT = '>';
 
-var ILLEGAL = /[\[\]\{\}]/;
+var ILLEGAL = /[\[\]\{\}]/,
+    DEFAULT_SOURCE;
 
 function find(s, i, endChar, pushChar, popChar) {
   var count = 0,
@@ -93,7 +95,7 @@ function parseBetween(s) {
 }
 
 function parseStream(s) {
-  var stream = {source: 'view'},
+  var stream = {source: DEFAULT_SOURCE},
       source = [],
       throttle = [0, 0],
       markname = 0,
