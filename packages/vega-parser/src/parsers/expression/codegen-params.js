@@ -22,6 +22,7 @@ import indata from './indata';
 import inrange from './inrange';
 import encode from './encode';
 import modify from './modify';
+import {vlPoint, vlInterval} from './selection';
 
 var Literal = 'Literal',
     Identifier = 'Identifier',
@@ -89,7 +90,10 @@ export var extendedFunctions = {
 
   encode: encode,
 
-  modify: modify
+  modify: modify,
+
+  vlPoint: vlPoint,
+  vlInterval: vlInterval
 };
 
 function expressionFunctions(codegen) {
