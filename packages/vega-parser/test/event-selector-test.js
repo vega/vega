@@ -134,6 +134,17 @@ tape('Parser parses event selector strings', function(test) {
   test.end();
 });
 
+tape('Parser allows configurable source', function(test) {
+  var events = vega.selector('rect:mousedown', 'scope');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'scope',
+    type: 'mousedown',
+    marktype: 'rect'
+  });
+  test.end();
+});
+
 tape('Parser rejects invalid event selector strings', function(test) {
   test.throws(function() { vega.selector(''); });
   test.throws(function() { vega.selector('foo{}'); });

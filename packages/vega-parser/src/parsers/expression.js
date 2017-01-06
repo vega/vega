@@ -1,4 +1,4 @@
-import codegenParams from './codegen';
+import codegenParams from './expression/codegen-params';
 import {parse, codegen} from 'vega-expression';
 import {error} from 'vega-util';
 
