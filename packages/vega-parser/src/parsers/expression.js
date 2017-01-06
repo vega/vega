@@ -1,9 +1,8 @@
-import codegenParams from './expression/codegen-params';
-import {parse, codegen} from 'vega-expression';
-import {error} from 'vega-util';
+import {codeGenerator, codegenParams} from './expression/codegen';
+import {parse} from 'vega-expression';
+import {error, stringValue} from 'vega-util';
 
 export var signalPrefix = '$';
-export var generator = codegen(codegenParams);
 
 export default function(expr, scope, preamble) {
   var params = {}, ast, gen;
@@ -12,7 +11,7 @@ export default function(expr, scope, preamble) {
   try {
     ast = parse(expr);
   } catch (err) {
-    error('Expression parse error: ' + expr);
+    error('Expression parse error: ' + stringValue(expr));
   }
 
   // analyze ast function calls for dependencies
@@ -24,7 +23,7 @@ export default function(expr, scope, preamble) {
   });
 
   // perform code generation
-  gen = generator(ast);
+  gen = codeGenerator(ast);
 
   // collect signal dependencies
   gen.globals.forEach(function(name) {

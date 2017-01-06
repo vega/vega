@@ -6,8 +6,10 @@ export {default as signalUpdates} from './src/parsers/signal-updates';
 export {default as stream} from './src/parsers/stream';
 
 export {
-  extendedFunctions as functionContext
-} from './src/parsers/expression/codegen-params.js';
+  codeGenerator,
+  functionContext,
+  expressionFunction
+} from './src/parsers/expression/codegen';
 
 export {
   MarkRole,
