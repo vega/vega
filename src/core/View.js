@@ -1,7 +1,7 @@
 var d3 = require('d3'),
     dl = require('datalib'),
     df = require('vega-dataflow'),
-        scene = require('vega-scenegraph'),
+    scene = require('vega-scenegraph'),
     sg = scene.render,
     bound = scene.bound,
     log = require('vega-logging'),
