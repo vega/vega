@@ -1,6 +1,5 @@
 import {Transform} from 'vega-dataflow';
 import {inherits, identity} from 'vega-util';
-import {geoPath} from 'd3-geo';
 
 /**
  * Map GeoJSON data to an SVG path string.
@@ -8,7 +7,6 @@ import {geoPath} from 'd3-geo';
  * @param {object} params - The parameters for this operator.
  * @param {function(number, number): *} params.projection - The cartographic
  *   projection to apply.
- * @param {number} params.pointRadius - The point radius for path points.
  * @param {function(object): *} [params.field] - The field with GeoJSON data,
  *   or null if the tuple itself is a GeoJSON feature.
  * @param {string} [params.as='path'] - The output field in which to store
@@ -31,10 +29,7 @@ prototype.transform = function(_, pulse) {
 
   if (!path || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = path = geoPath()
-      .pointRadius(_.pointRadius)
-      .projection(_.projection);
-
+    this.value = path = _.projection.path;
     out.materialize().reflow().visit(out.SOURCE, set);
   } else {
     mod = field === identity || pulse.modified(field.fields);

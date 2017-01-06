@@ -1,6 +1,5 @@
 import {Transform} from 'vega-dataflow';
 import {inherits, field} from 'vega-util';
-import {geoPath} from 'd3-geo';
 
 /**
  * Annotate items with a geopath shape generator.
@@ -8,7 +7,6 @@ import {geoPath} from 'd3-geo';
  * @param {object} params - The parameters for this operator.
  * @param {function(number, number): *} params.projection - The cartographic
  *   projection to apply.
- * @param {number} params.pointRadius - The point radius for path points.
  * @param {function(object): *} [params.field] - The field with GeoJSON data,
  *   or null if the tuple itself is a GeoJSON feature.
  * @param {string} [params.as='path'] - The output field in which to store
@@ -29,11 +27,7 @@ prototype.transform = function(_, pulse) {
 
   if (!shape || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = shape = shapeGenerator(
-      geoPath().pointRadius(_.pointRadius).projection(_.projection),
-      datum
-    );
-
+    this.value = shape = shapeGenerator(_.projection.path, datum);
     out.materialize().reflow();
     flag = out.SOURCE;
   }

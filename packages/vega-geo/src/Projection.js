@@ -27,6 +27,8 @@ prototype.transform = function(_) {
       if (_.modified(prop)) set(proj, prop, _[prop]);
     });
   }
+
+  if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
 };
 
 function create(type) {
