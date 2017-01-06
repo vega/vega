@@ -1,0 +1,9 @@
+[
+  {"padding": null},
+  {"padding": "baz"},
+  {"padding": true},
+  {"padding": [0, 1, 2, 3]},
+  {"padding": {"top": "foo", "bottom": 0, "left": 0, "right": 0}},
+  {"padding": {"bottom": 0, "left": 0, "right": 0}},
+  {"padding": {"bottom": 0, "left": 0, "right": 0, "top": 0, "extra": 1}}
+]

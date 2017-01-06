@@ -1,0 +1,70 @@
+[
+  {
+    "signals": [
+      {"name": "foo", "value": 1}
+    ],
+    "marks": [
+      {
+        "type": "group",
+        "signals": [
+          {
+            "name": "foo",
+            "outer": true,
+            "value": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "signals": [
+      {"name": "foo", "value": 1}
+    ],
+    "marks": [
+      {
+        "type": "group",
+        "signals": [
+          {
+            "name": "foo",
+            "outer": true,
+            "update": "2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "signals": [
+      {"name": "foo", "value": 1}
+    ],
+    "marks": [
+      {
+        "type": "group",
+        "signals": [
+          {
+            "name": "foo",
+            "outer": true,
+            "bind": {"type": "text"}
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "signals": [
+      {"name": "foo", "value": 1}
+    ],
+    "marks": [
+      {
+        "type": "group",
+        "signals": [
+          {
+            "name": "foo",
+            "outer": true,
+            "react": false
+          }
+        ]
+      }
+    ]
+  }
+]

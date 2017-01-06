@@ -1,0 +1,19 @@
+[
+  {"background": null},
+  {"background": false},
+  {"background": 100},
+  {"width": null},
+  {"width": true},
+  {"width": "foo"},
+  {"width": {}},
+  {"height": null},
+  {"height": true},
+  {"height": "foo"},
+  {"height": {}},
+  {"schema": null},
+  {"schema": false},
+  {"schema": "3.0"},
+  {"description": null},
+  {"description": false},
+  {"description": 100}
+]
