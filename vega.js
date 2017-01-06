@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.vg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  version: '2.6.4',
+  version: '2.6.5',
   dataflow: require('vega-dataflow'),
   parse: require('./src/parse/'),
   scene: {
@@ -14597,7 +14597,9 @@ module.exports = Model;
 var d3 = (typeof window !== "undefined" ? window['d3'] : typeof global !== "undefined" ? global['d3'] : null),
     dl = require('datalib'),
     df = require('vega-dataflow'),
-    sg = require('vega-scenegraph').render,
+        scene = require('vega-scenegraph'),
+    sg = scene.render,
+    bound = scene.bound,
     log = require('vega-logging'),
     Deps = df.Dependencies,
     parseStreams = require('../parse/streams'),
@@ -14784,11 +14786,30 @@ prototype.padding = function(pad) {
   return (this._repaint = true, this);
 };
 
+function viewBounds() {
+  var s = this.model().scene(),
+      legends = s.items[0].legendItems,
+      i = 0, len = legends.length,
+      b, lb;
+
+  // For strict padding, clip legend height to prevent a tiny data rectangle.
+  if (this._strict) {
+    b = bound.mark(s, null, false);
+    for (; i<len; ++i) {
+      lb = legends[i].bounds;
+      b.add(lb.x1, 0).add(lb.x2, 0);
+    }
+    return b;
+  }
+
+  return s.bounds;
+}
+
 prototype.autopad = function(opt) {
   if (this._autopad < 1) return this;
   else this._autopad = 0;
 
-  var b = this.model().scene().bounds,
+  var b = viewBounds.call(this),
       pad = this._padding,
       config = this.model().config(),
       inset = config.autopadInset,
