@@ -16,6 +16,7 @@ import {pinchDistance, pinchAngle} from './pinch';
 import {open, screen, windowsize} from './window';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
+import {geoArea, geoBounds, geoCentroid} from './geo';
 import {tuples, tuplesVisitor} from './tuples';
 import {indata, indataVisitor} from './indata';
 import inrange from './inrange';
@@ -89,6 +90,9 @@ expressionFunction('range', range, scaleVisitor);
 expressionFunction('invert', invert, scaleVisitor);
 expressionFunction('scale', scale, scaleVisitor);
 expressionFunction('gradient', scaleGradient, scaleVisitor);
+expressionFunction('geoArea', geoArea, scaleVisitor);
+expressionFunction('geoBounds', geoBounds, scaleVisitor);
+expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('tuples', tuples, tuplesVisitor);
 

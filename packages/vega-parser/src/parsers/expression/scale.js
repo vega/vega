@@ -4,7 +4,7 @@ import {ASTNode} from 'vega-expression';
 import {bandSpace} from 'vega-scale';
 import {isArray, isObject, isString} from 'vega-util';
 
-function getScale(name, ctx) {
+export function getScale(name, ctx) {
   var s = isString(name) ? ctx.scales[name]
     : isObject(name) && name.signal ? ctx.signals[name.signal]
     : undefined;
