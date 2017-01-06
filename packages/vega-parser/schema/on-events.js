@@ -14,6 +14,7 @@ export default {
                   {"$ref": "#/defs/stream"},
                   {
                     "type": "array",
+                    "minItems": 1,
                     "items": {"$ref": "#/defs/stream"}
                   }
                 ]
