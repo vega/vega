@@ -24,12 +24,19 @@ export default {
 
   "defs": {
     "signal": {
+      "oneOf": [
+        {"$ref": "#/defs/signalOuter"},
+        {"$ref": "#/defs/signalNew"}
+      ]
+    },
+    "signalName": {
+      "type": "string",
+      "not": {"enum": ["parent"]}
+    },
+    "signalNew": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string",
-          "not": {"enum": ["parent"]}
-        },
+        "name": {"$ref": "#/defs/signalName"},
         "description": {"type": "string"},
         "value": {},
         "react": {"type": "boolean", "default": true},
@@ -39,6 +46,17 @@ export default {
       },
       "additionalProperties": false,
       "required": ["name"]
+    },
+    "signalOuter": {
+      "type": "object",
+      "properties": {
+        "name": {"$ref": "#/defs/signalName"},
+        "outer": {"enum": [true]},
+        "description": {"type": "string"},
+        "on": {"$ref": "#/defs/onEvents"}
+      },
+      "additionalProperties": false,
+      "required": ["name", "outer"]
     }
   }
 };

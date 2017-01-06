@@ -13,6 +13,7 @@ export default {
             "left": {"type": "number"},
             "right": {"type": "number"}
           },
+          "required": ["top", "bottom", "left", "right"],
           "additionalProperties": false
         }
       ]
