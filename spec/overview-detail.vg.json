@@ -4,79 +4,6 @@
   "height": 480,
   "padding": 5,
 
-  "signals": [
-    { "name": "min", "update": "+datetime('Jan 1 2000')" },
-    { "name": "max", "update": "+datetime('Mar 1 2010')" },
-    {
-      "name": "brush", "value": 0,
-      "on": [
-        {
-          "events": "@overview:mousedown",
-          "update": "[x(), x()]"
-        },
-        {
-          "events": "[@overview:mousedown, window:mouseup] > window:mousemove",
-          "update": "[brush[0], clamp(x(), 0, width)]"
-        },
-        {
-          "events": {"signal": "delta"},
-          "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
-        }
-      ]
-    },
-    {
-      "name": "anchor", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
-    },
-    {
-      "name": "xdown", "value": 0,
-      "on": [{"events": "@brush:mousedown", "update": "x()"}]
-    },
-    {
-      "name": "delta", "value": 0,
-      "on": [
-        {
-          "events": "[@brush:mousedown, window:mouseup] > window:mousemove",
-          "update": "x() - xdown"
-        }
-      ]
-    },
-    {
-      "name": "cursor", "value": "'default'",
-      "on": [
-        {
-          "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
-          "update": "'ew-resize'"
-        },
-        {
-          "events": "@brush:mousemove, [@brush:mousedown, window:mouseup] > window:mousemove!",
-          "update": "'move'"
-        },
-        {
-          "events": "@brush:mouseout, window:mouseup",
-          "update": "'default'"
-        }
-      ]
-    },
-    {
-      "name": "range", "update": "[min, min]",
-      "on": [
-        {
-          "events": {"signal": "brush"},
-          "update": "invert('xOverview', brush)"
-        }
-      ]
-    },
-    {
-      "name": "min_date",
-      "update": "+range[0] === +range[1] ? min : min(range[0], range[1])"
-    },
-    {
-      "name": "max_date",
-      "update": "+range[0] === +range[1] ? max : max(range[0], range[1])"
-    }
-  ],
-
   "data": [
     {
       "name": "sp500",
@@ -85,32 +12,9 @@
     }
   ],
 
-  "scales": [
+  "signals": [
     {
-      "name": "xOverview",
-      "type": "time",
-      "range": "width",
-      "domain": {"data": "sp500", "field": "date"}
-    },
-    {
-      "name": "yOverview",
-      "type": "linear",
-      "range": [70, 0],
-      "domain": {"data": "sp500", "field": "price"},
-      "nice": true, "zero": true
-    },
-    {
-      "name": "xDetail",
-      "type": "time",
-      "range": "width",
-      "domain": [{"signal": "min_date"}, {"signal": "max_date"}]
-    },
-    {
-      "name": "yDetail",
-      "type": "linear",
-      "range": [390, 0],
-      "domain": {"data": "sp500", "field": "price"},
-      "nice": true, "zero": true
+      "name": "detailDomain"
     }
   ],
 
@@ -124,6 +28,22 @@
           "width": {"value": 720}
         }
       },
+      "scales": [
+        {
+          "name": "xDetail",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "sp500", "field": "date"},
+          "domainRaw": {"signal": "detailDomain"}
+        },
+        {
+          "name": "yDetail",
+          "type": "linear",
+          "range": [390, 0],
+          "domain": {"data": "sp500", "field": "price"},
+          "nice": true, "zero": true
+        }
+      ],
       "axes": [
         {"orient": "bottom", "scale": "xDetail"},
         {"orient": "left", "scale": "yDetail"}
@@ -168,6 +88,67 @@
           "fill": {"value": "transparent"}
         }
       },
+      "signals": [
+        {
+          "name": "brush", "value": 0,
+          "on": [
+            {
+              "events": "@overview:mousedown",
+              "update": "[x(), x()]"
+            },
+            {
+              "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
+              "update": "[brush[0], clamp(x(), 0, width)]"
+            },
+            {
+              "events": {"signal": "delta"},
+              "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+            }
+          ]
+        },
+        {
+          "name": "anchor", "value": null,
+          "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+        },
+        {
+          "name": "xdown", "value": 0,
+          "on": [{"events": "@brush:mousedown", "update": "x()"}]
+        },
+        {
+          "name": "delta", "value": 0,
+          "on": [
+            {
+              "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
+              "update": "x() - xdown"
+            }
+          ]
+        },
+        {
+          "name": "detailDomain",
+          "push": "outer",
+          "on": [
+            {
+              "events": {"signal": "brush"},
+              "update": "span(brush) ? invert('xOverview', brush) : null"
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "xOverview",
+          "type": "time",
+          "range": "width",
+          "domain": {"data": "sp500", "field": "date"}
+        },
+        {
+          "name": "yOverview",
+          "type": "linear",
+          "range": [70, 0],
+          "domain": {"data": "sp500", "field": "price"},
+          "nice": true, "zero": true
+        }
+      ],
       "axes": [
         {"orient": "bottom", "scale": "xOverview"}
       ],
