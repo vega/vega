@@ -21,15 +21,15 @@
   "signals": [
     {
       "name": "rangeStep", "value": 20,
-      "bind": {"type": "range", "min": 5, "max": 50, "step": 1}
+      "bind": {"input": "range", "min": 5, "max": 50, "step": 1}
     },
     {
       "name": "innerPadding", "value": 0.1,
-      "bind": {"type": "range", "min": 0, "max": 1}
+      "bind": {"input": "range", "min": 0, "max": 1}
     },
     {
       "name": "outerPadding", "value": 0.2,
-      "bind": {"type": "range", "min": 0, "max": 1}
+      "bind": {"input": "range", "min": 0, "max": 1}
     },
     {
       "name": "height",

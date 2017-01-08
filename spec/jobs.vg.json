@@ -7,7 +7,7 @@
   "signals": [
     {
       "name": "sex", "value": "all",
-      "bind": {"type": "radio", "options": ["men", "women", "all"]}
+      "bind": {"input": "radio", "options": ["men", "women", "all"]}
     },
     {
       "name": "query", "value": "",
@@ -15,7 +15,7 @@
         {"events": "area:click!", "update": "datum.job"},
         {"events": "dblclick!", "update": "''"}
       ],
-      "bind": {"type": "text", "placeholder": "search", "autocomplete": "off"}
+      "bind": {"input": "text", "placeholder": "search", "autocomplete": "off"}
     }
   ],
 

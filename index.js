@@ -52,6 +52,7 @@ export {
 
 export {
   parse,
+  expressionFunction,
   formatLocale,
   timeFormatLocale
 } from 'vega-parser';

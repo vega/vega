@@ -7,24 +7,24 @@
   "signals": [
     {
       "name": "labels", "value": true,
-      "bind": {"type": "checkbox"}
+      "bind": {"input": "checkbox"}
     },
     {
       "name": "radius", "value": 330,
-      "bind": {"type": "range", "min": 20, "max": 600}
+      "bind": {"input": "range", "min": 20, "max": 600}
     },
     {
       "name": "angle", "value": 360,
-      "bind": {"type": "range", "min": 0, "max": 360, "step": 1}
+      "bind": {"input": "range", "min": 0, "max": 360, "step": 1}
     },
     {
       "name": "layout", "value": "tidy",
-      "bind": {"type": "radio", "options": ["tidy", "cluster"]}
+      "bind": {"input": "radio", "options": ["tidy", "cluster"]}
     },
     {
       "name": "links", "value": "line",
       "bind": {
-        "type": "radio",
+        "input": "radio",
         "options": ["line", "curve", "diagonal", "orthogonal"]
       }
     },

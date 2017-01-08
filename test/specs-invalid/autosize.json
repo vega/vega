@@ -1,0 +1,7 @@
+[
+  {"autosize": null},
+  {"autosize": false},
+  {"autosize": "foo"},
+  {"autosize": {}},
+  {"autosize": 100}
+]

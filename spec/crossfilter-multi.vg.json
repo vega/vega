@@ -11,11 +11,11 @@
     { "name": "timeExtent", "value": [0, 24] },
     { "name": "distExtent", "value": [0, 2400] },
     { "name": "delayStep", "value": 10,
-      "bind": {"type": "range", "min": 2, "max": 20, "step": 1} },
+      "bind": {"input": "range", "min": 2, "max": 20, "step": 1} },
     { "name": "timeStep", "value": 1,
-      "bind": {"type": "range", "min": 0.25, "max": 2, "step": 0.25} },
+      "bind": {"input": "range", "min": 0.25, "max": 2, "step": 0.25} },
     { "name": "distStep", "value": 100,
-      "bind": {"type": "range", "min": 50, "max": 200, "step": 50} },
+      "bind": {"input": "range", "min": 50, "max": 200, "step": 50} },
     { "name": "delayRange", "value": [-60, 58],
       "on": [
         {
