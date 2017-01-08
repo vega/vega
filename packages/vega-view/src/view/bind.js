@@ -55,7 +55,7 @@ function generate(bind, el, param, value) {
   el.appendChild(div);
 
   var input = form;
-  switch (param.type) {
+  switch (param.input) {
     case 'checkbox': input = checkbox; break;
     case 'select':   input = select; break;
     case 'radio':    input = radio; break;
