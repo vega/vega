@@ -8,7 +8,7 @@
     {
       "name": "palette", "value": "Plasma",
       "bind": {
-        "type": "select",
+        "input": "select",
         "options": [
           "Viridis",
           "Magma",
@@ -48,7 +48,7 @@
       }
     },
     {
-      "name": "reverse", "value": false, "bind": {"type": "checkbox"}
+      "name": "reverse", "value": false, "bind": {"input": "checkbox"}
     }
   ],
 

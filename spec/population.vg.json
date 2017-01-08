@@ -8,7 +8,7 @@
     { "name": "chartPad", "value": 20 },
     { "name": "width", "update": "2 * chartWidth + chartPad" },
     { "name": "year", "value": 2000,
-      "bind": {"type": "range", "min": 1850, "max": 2000, "step": 10} }
+      "bind": {"input": "range", "min": 1850, "max": 2000, "step": 10} }
   ],
 
   "data": [

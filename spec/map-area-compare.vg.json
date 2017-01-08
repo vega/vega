@@ -9,7 +9,7 @@
       "name": "baseProjection",
       "value": "azimuthalEqualArea",
       "bind": {
-        "type": "select",
+        "input": "select",
         "options": [
           "albers",
           "albersUsa",
@@ -31,7 +31,7 @@
       "name": "altProjection",
       "value": "mercator",
       "bind": {
-        "type": "select",
+        "input": "select",
         "options": [
           "albers",
           "albersUsa",
@@ -52,22 +52,22 @@
     {
       "name": "baseColor",
       "value": "#bb8800",
-      "bind": {"type": "color"}
+      "bind": {"input": "color"}
     },
     {
       "name": "altColor",
       "value": "#0088bb",
-      "bind": {"type": "color"}
+      "bind": {"input": "color"}
     },
     {
       "name": "opacity",
       "value": 0.15,
-      "bind": {"type": "range", "min": 0, "max": 1, "step": 0.05}
+      "bind": {"input": "range", "min": 0, "max": 1, "step": 0.05}
     },
     {
       "name": "scaleFactor",
       "value": 1,
-      "bind": {"type": "range", "min": 0.05, "max": 2, "step": 0.05}
+      "bind": {"input": "range", "min": 0.05, "max": 2, "step": 0.05}
     }
   ],
 

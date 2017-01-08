@@ -26,12 +26,12 @@
     {
       "name": "sortop",
       "value": "count",
-      "bind": {"type": "radio", "options": ["count", "min"]}
+      "bind": {"input": "radio", "options": ["count", "min"]}
     },
     {
       "name": "sortorder",
       "value": "descending",
-      "bind": {"type": "radio", "options": ["ascending", "descending"]}
+      "bind": {"input": "radio", "options": ["ascending", "descending"]}
     }
   ],
 

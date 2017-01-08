@@ -8,11 +8,11 @@
   "signals": [
     { "name": "cx", "update": "width / 2" },
     { "name": "cy", "update": "height / 2" },
-    { "name": "radius", "value": 8, "bind": {"type": "range", "min": 2, "max": 15, "step": 1} },
-    { "name": "collide", "value": 1, "bind": {"type": "range", "min": 1, "max": 10, "step": 1} },
-    { "name": "gravityX", "value": 0.2, "bind": {"type": "range", "min": 0, "max": 1} },
-    { "name": "gravityY", "value": 0.1, "bind": {"type": "range", "min": 0, "max": 1} },
-    { "name": "static", "value": true, "bind": {"type": "checkbox"} }
+    { "name": "radius", "value": 8, "bind": {"input": "range", "min": 2, "max": 15, "step": 1} },
+    { "name": "collide", "value": 1, "bind": {"input": "range", "min": 1, "max": 10, "step": 1} },
+    { "name": "gravityX", "value": 0.2, "bind": {"input": "range", "min": 0, "max": 1} },
+    { "name": "gravityY", "value": 0.1, "bind": {"input": "range", "min": 0, "max": 1} },
+    { "name": "static", "value": true, "bind": {"input": "checkbox"} }
   ],
 
   "data": [
