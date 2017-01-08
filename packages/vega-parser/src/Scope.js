@@ -290,7 +290,7 @@ prototype.property = function(spec) {
 };
 
 prototype.addBinding = function(name, bind) {
-  if (!this.bindings) error('Nested signals do not support binding.');
+  if (!this.bindings) error('Nested signals do not support binding: ' + name);
   this.bindings.push(extend({signal: name}, bind));
 };
 

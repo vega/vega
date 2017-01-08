@@ -10,39 +10,39 @@ export default {
         {
           "type": "object",
           "properties": {
-            "type": {"enum": ["checkbox"]},
+            "input": {"enum": ["checkbox"]},
             "element": {"$ref": "#/refs/element"}
           },
-          "required": ["type"]
+          "required": ["input"]
         },
         {
           "type": "object",
           "properties": {
-            "type": {"enum": ["radio", "select"]},
+            "input": {"enum": ["radio", "select"]},
             "element": {"$ref": "#/refs/element"},
             "options": {
               "type": "array"
             }
           },
           "additionalProperties": false,
-          "required": ["type", "options"]
+          "required": ["input", "options"]
         },
         {
           "type": "object",
           "properties": {
-            "type": {"enum": ["range"]},
+            "input": {"enum": ["range"]},
             "element": {"$ref": "#/refs/element"},
             "min": {"type": "number"},
             "max": {"type": "number"},
             "step": {"type": "number"}
           },
           "additionalProperties": false,
-          "required": ["type"]
+          "required": ["input"]
         },
         {
           "type": "object",
           "properties": {
-            "type": {
+            "input": {
               "not": {"enum": ["checkbox", "radio", "range", "select"]}
             },
             "element": {"$ref": "#/refs/element"}
