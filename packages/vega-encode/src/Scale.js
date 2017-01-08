@@ -68,6 +68,9 @@ function createScale(type, scheme, reverse) {
 }
 
 function configureDomain(scale, _) {
+  var raw = rawDomain(scale, _.domainRaw);
+  if (raw > -1) return raw;
+
   var domain = _.domain,
       zero = _.zero || (_.zero === undefined && INCLUDE_ZERO[scale.type]),
       n;
@@ -87,6 +90,10 @@ function configureDomain(scale, _) {
   scale.domain(domain);
   if (_.nice && scale.nice) scale.nice((_.nice !== true && +_.nice) || null);
   return domain.length;
+}
+
+function rawDomain(scale, raw) {
+  return raw ? (scale.domain(raw), raw.length) : -1;
 }
 
 function configureRange(scale, _, count) {
