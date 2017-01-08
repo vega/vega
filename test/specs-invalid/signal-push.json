@@ -9,7 +9,7 @@
         "signals": [
           {
             "name": "foo",
-            "outer": true,
+            "push": "outer",
             "value": 2
           }
         ]
@@ -26,7 +26,7 @@
         "signals": [
           {
             "name": "foo",
-            "outer": true,
+            "push": "outer",
             "update": "2"
           }
         ]
@@ -43,7 +43,7 @@
         "signals": [
           {
             "name": "foo",
-            "outer": true,
+            "push": "outer",
             "bind": {"type": "text"}
           }
         ]
@@ -60,7 +60,7 @@
         "signals": [
           {
             "name": "foo",
-            "outer": true,
+            "push": "outer",
             "react": false
           }
         ]
