@@ -178,6 +178,13 @@ export default {
                 {"$ref": "#/refs/signal"}
               ]
             },
+            "domainRaw": {
+              "oneOf": [
+                {"type": "null"},
+                {"type": "array"},
+                {"$ref": "#/refs/signal"}
+              ]
+            },
             "reverse": {
               "oneOf": [
                 {"type": "boolean"},
