@@ -25,7 +25,7 @@ export default {
   "defs": {
     "signal": {
       "oneOf": [
-        {"$ref": "#/defs/signalOuter"},
+        {"$ref": "#/defs/signalPush"},
         {"$ref": "#/defs/signalNew"}
       ]
     },
@@ -47,16 +47,16 @@ export default {
       "additionalProperties": false,
       "required": ["name"]
     },
-    "signalOuter": {
+    "signalPush": {
       "type": "object",
       "properties": {
         "name": {"$ref": "#/defs/signalName"},
-        "outer": {"enum": [true]},
+        "push": {"enum": ["outer"]},
         "description": {"type": "string"},
         "on": {"$ref": "#/defs/onEvents"}
       },
       "additionalProperties": false,
-      "required": ["name", "outer"]
+      "required": ["name", "push"]
     }
   }
 };
