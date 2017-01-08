@@ -14,6 +14,7 @@ var SKIP = {
   'domain': 1,
   'domainMin': 1,
   'domainMax': 1,
+  'domainRaw': 1,
   'nice': 1,
   'zero': 1,
 
