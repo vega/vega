@@ -6,9 +6,9 @@ export function encoder(_) {
   return isObject(_) ? _ : {value: _};
 }
 
-export function extendEncode(encode, extra) {
+export function extendEncode(encode, extra, skip) {
   for (var name in extra) {
-    if (name === 'interactive') continue;
+    if (skip && skip.hasOwnProperty(name)) continue;
     encode[name] = extend(encode[name] || {}, extra[name]);
   }
   return encode;
