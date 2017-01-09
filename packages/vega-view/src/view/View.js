@@ -46,6 +46,7 @@ export default function View(spec, options) {
   this._handler = new CanvasHandler().scene(root);
   this._queue = null;
   this._eventListeners = [];
+  this._preventDefault = true;
 
   // initialize dataflow graph
   var ctx = runtime(this, spec, options.functions);
@@ -182,6 +183,10 @@ prototype.removeSignalListener = function(name, handler) {
             return u && u.handler === handler;
           });
   if (h.length) t.remove(h[0]);
+};
+
+prototype.preventDefault = function(_) {
+  return arguments.length ? this._preventDefault : (this._preventDefault = _, this);
 };
 
 prototype.events = events;
