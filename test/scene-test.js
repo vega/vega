@@ -7,8 +7,7 @@ var GENERATE_SCENES = false, // flag to generate test scenes
     loader = vega.loader({baseURL: './web/'}),
     specs = require('./specs-valid.json').filter(function(name) {
       // remove wordcloud due to random layout
-      // remove map-area-compare due to cross-version node.js issue
-      return name !== 'wordcloud' && name !== 'map-area-compare';
+      return name !== 'wordcloud';
     });
 
 // Standardize font metrics to suppress cross-platform variance.
