@@ -18,7 +18,7 @@ export default function(source, type, filter) {
       sources;
 
   if (source === 'view') {
-    view._handler.on(type, send);
+    view.addEventListener(type, send);
     return s;
   }
 
