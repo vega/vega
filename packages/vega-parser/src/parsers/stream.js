@@ -1,5 +1,5 @@
 import parseExpression from './expression';
-import {array, error} from 'vega-util';
+import {array, error, stringValue} from 'vega-util';
 
 var VIEW = 'view',
     SCOPE = 'scope';
@@ -18,7 +18,7 @@ function parseStream(stream, scope) {
   var method = stream.merge ? mergeStream
     : stream.stream ? nestedStream
     : stream.type ? eventStream
-    : error('Invalid stream specification: ' + JSON.stringify(stream));
+    : error('Invalid stream specification: ' + stringValue(stream));
 
   return method(stream, scope);
 }
@@ -50,7 +50,7 @@ function streamParameters(entry, stream, scope) {
 
   if (param) {
     if (param.length !== 2) {
-      error('Stream between parameter must have 2 entries.');
+      error('Stream "between" parameter must have 2 entries: ' + stringValue(stream));
     }
     entry.between = [
       parseStream(param[0], scope),
@@ -59,9 +59,9 @@ function streamParameters(entry, stream, scope) {
   }
 
   param = stream.filter ? array(stream.filter) : [];
-  if (stream.marktype || stream.markname) {
-    // add filter for mark type and/or mark name
-    param.push(filterMark(stream.marktype, stream.markname));
+  if (stream.marktype || stream.markname || stream.markrole) {
+    // add filter for mark type, name and/or role
+    param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
   }
   if (stream.source === SCOPE) {
     // add filter to limit events from sub-scope only
@@ -86,9 +86,10 @@ function streamParameters(entry, stream, scope) {
   return entry;
 }
 
-function filterMark(type, name) {
+function filterMark(type, name, role) {
   var item = 'event.item';
   return item
     + (type && type !== '*' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
+    + (role ? '&&' + item + '.mark.role===\'' + role + '\'' : '')
     + (name ? '&&' + item + '.mark.name===\'' + name + '\'' : '');
 }

@@ -9,14 +9,15 @@ export default function(selector, source) {
   return parseMerge(selector.trim()).map(parseSelector);
 }
 
-var VIEW = 'view',
+var VIEW   = 'view',
     LBRACK = '[',
     RBRACK = ']',
     LBRACE = '{',
     RBRACE = '}',
     COLON  = ':',
     COMMA  = ',',
-    GT = '>';
+    NAME   = '@',
+    GT     = '>';
 
 var ILLEGAL = /[\[\]\{\}]/,
     DEFAULT_SOURCE;
@@ -122,7 +123,7 @@ function parseStream(s) {
   if (!n) throw s;
 
   // set name flag based on first char
-  if (s[0] === '@') markname = ++i;
+  if (s[0] === NAME) markname = ++i;
 
   // extract first part of multi-part stream selector
   j = find(s, i, COLON);
