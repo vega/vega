@@ -169,14 +169,14 @@
         {
           "type": "rect",
           "name": "brush",
-          "encode":{
-            "enter":{
+          "encode": {
+            "enter": {
               "y": {"value": 0},
-              "height": {"value":70},
+              "height": {"value": 70},
               "fill": {"value": "#333"},
-              "fillOpacity": {"value":0.2}
+              "fillOpacity": {"value": 0.2}
             },
-            "update":{
+            "update": {
               "x": {"signal": "brush[0]"},
               "x2": {"signal": "brush[1]"}
             }
@@ -185,14 +185,14 @@
         {
           "type": "rect",
           "interactive": false,
-          "encode":{
-            "enter":{
+          "encode": {
+            "enter": {
               "y": {"value": 0},
-              "height": {"value":70},
+              "height": {"value": 70},
               "width": {"value": 1},
               "fill": {"value": "firebrick"}
             },
-            "update":{
+            "update": {
               "x": {"signal": "brush[0]"}
             }
           }
@@ -200,14 +200,14 @@
         {
           "type": "rect",
           "interactive": false,
-          "encode":{
-            "enter":{
+          "encode": {
+            "enter": {
               "y": {"value": 0},
-              "height": {"value":70},
+              "height": {"value": 70},
               "width": {"value": 1},
               "fill": {"value": "firebrick"}
             },
-            "update":{
+            "update": {
               "x": {"signal": "brush[1]"}
             }
           }
