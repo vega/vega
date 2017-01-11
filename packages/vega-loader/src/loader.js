@@ -1,4 +1,4 @@
-import {extend, stringValue} from 'vega-util';
+import {extend, isFunction, stringValue} from 'vega-util';
 import {request} from 'd3-request';
 
 // Matches absolute URLs with optional protocol
@@ -156,7 +156,8 @@ function file(filename) {
 }
 
 function fs() {
-  return typeof require === 'function' && require('fs');
+  var fs = typeof require === 'function' && require('fs');
+  return fs && isFunction(fs.readFile) ? fs : null;
 }
 
 function startsWith(string, query) {
