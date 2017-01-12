@@ -233,9 +233,10 @@ view.<b>state</b>([<i>state</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/view/state.js "Source")
 
 Gets or sets the state of signals in the dataflow graph. If no arguments are
-specified, returns an object of name-value mappings for **all** signals in the
-dataflow. If the *state* argument is provided, this method updates the value
-of all signals included in the input *state* object, invokes the
+specified, returns an object containing both signal values and any modified
+data sets for this view. If a *state* argument is provided, it should be an
+object returned by a previous call to this method. When a new *state* is set,
+this method updates all implicated signals and data sets, invokes the
 [run](#view_run) method, and returns this view instance.
 
 <a name="view_addSignalListener" href="#view_addSignalListener">#</a>
