@@ -17,8 +17,7 @@ import {open, screen, windowsize} from './window';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import {geoArea, geoBounds, geoCentroid} from './geo';
-import {tuples, tuplesVisitor} from './tuples';
-import {indata, indataVisitor} from './indata';
+import {data, indata, dataVisitor, indataVisitor} from './data';
 import inrange from './inrange';
 import encode from './encode';
 import modify from './modify';
@@ -55,9 +54,7 @@ export var functionContext = {
   bandspace: bandspace,
   inrange: inrange,
   encode: encode,
-  modify: modify,
-  vlPoint: vlPoint,
-  vlInterval: vlInterval
+  modify: modify
 };
 
 var eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
@@ -94,7 +91,9 @@ expressionFunction('geoArea', geoArea, scaleVisitor);
 expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
-expressionFunction('tuples', tuples, tuplesVisitor);
+expressionFunction('data', data, dataVisitor);
+expressionFunction('vlPoint', vlPoint, dataVisitor);
+expressionFunction('vlInterval', vlInterval, dataVisitor);
 
 // Build expression function registry
 function buildFunctions(codegen) {
