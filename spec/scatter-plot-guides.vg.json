@@ -166,7 +166,7 @@
             "fill": {"value": "transparent"},
             "strokeWidth": {"value": 2},
             "opacity": [
-              {"test": "!length(tuples('selected')) || indata('selected', 'value', datum.value)", "value": 0.5},
+              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.5},
               {"value": 0.15}
             ],
             "size": {"value": 64}
@@ -177,7 +177,7 @@
           "interactive": true,
           "update": {
             "opacity": [
-              {"test": "!length(tuples('selected')) || indata('selected', 'value', datum.value)", "value": 1},
+              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 1},
               {"value": 0.25}
             ]
           }
@@ -231,11 +231,11 @@
           "shape": {"value": "circle"},
           "strokeWidth": {"value": 2},
           "opacity": [
-            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(tuples('selected')) || indata('selected', 'value', datum.Origin))", "value": 0.5 },
+            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))", "value": 0.5 },
             {"value": 0.15}
           ],
           "stroke": [
-            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(tuples('selected')) || indata('selected', 'value', datum.Origin))", "scale": "color", "field": "Origin"},
+            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))", "scale": "color", "field": "Origin"},
             {"value": "#ccc"}
           ],
           "fill": {"value": "transparent"}

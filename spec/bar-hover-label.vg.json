@@ -6,11 +6,15 @@
 
   "signals": [
     {
+      "name": "blank",
+      "value": {"x": 0, "y": 0}
+    },
+    {
       "name": "label",
-      "value": {"x": 0, "y": 0},
+      "update": "blank",
       "on": [
         {"events": "rect:mouseover", "update": "datum"},
-        {"events": "rect:mouseout", "update": "{x:0, y:0}"}
+        {"events": "rect:mouseout", "update": "blank"}
       ]
     }
   ],
@@ -85,7 +89,7 @@
           "y": {"scale": "yscale", "signal": "label.y", "offset": -5},
           "text": {"signal": "label.y"},
           "fillOpacity": [
-            {"test": "!label._id", "value": 0},
+            {"test": "label === blank", "value": 0},
             {"value": 1}
           ]
         }

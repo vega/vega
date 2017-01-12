@@ -99,7 +99,7 @@
         },
         "update": {
           "fill": [
-            {"test": "indata('selected', '_id', datum._id)", "value": "steelblue"},
+            {"test": "indata('selected', 'x', datum.x)", "value": "steelblue"},
             {"value": "#ccc"}
           ]
         }
