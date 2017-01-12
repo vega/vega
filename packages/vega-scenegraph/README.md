@@ -6,7 +6,7 @@ Renderers and event handlers for Vega's mark-based scenegraph. This module
 supports both pixel-based (canvas) and vector graphics (SVG) output. Renderers
 can either (re-)draw a complete scene or perform incremental re-rendering for
 a set of provided "dirty" items. A fast SVG string renderer is also provided
-to generate static SVG outside the browser environment.
+to generate static SVG for export.
 
 The [node-canvas](https://github.com/Automattic/node-canvas) library is used
 for server-side canvas rendering and bounds calculation. Node-canvas requires
@@ -14,10 +14,10 @@ the native Cairo graphics library and attempts to compile native code as part
 of the installation process. In some instances this may result in installation
 hiccups. Should you run into issues, you are likely to resolve them more
 quickly if you first search for help regarding node-canvas (as opposed to
-vega-scenegraph) installation. However, node-canvas is an option dependency,
+vega-scenegraph) installation. However, node-canvas is an optional dependency,
 and is not needed for SVG rendering. Bounds calculation can be performed
 without node-canvas, though in the case of text marks the resulting bounds
-may be slightly inaccurate due to font metric approximations.
+may be slightly inaccurate due to approximate text size calculations.
 
 ## Scenegraph Definition
 
@@ -44,9 +44,7 @@ gridlines or rules (`rule`). Each item has a set of supported properties (`x`,
 `y`, `width`, `fill`, and so on) appropriate to the mark type.
 
 Scenegraphs may also contain `group` marks, which serve as containers for
-other marks. Groups may also include specialized subsets for axes and legends.
-
-For example, a top-level group mark may look like:
+other marks. For example, a top-level group mark may look like:
 ```
 {
   "marktype": "group",
@@ -56,14 +54,14 @@ For example, a top-level group mark may look like:
       "y": 0,
       "width": 200,
       "height": 200,
-      "items": [...], // array of contained mark instances
+      "items": [...] // array of contained mark instances
     }
   ]
 }
 ```
 
 In this example, the group *mark* contains only a single group *item*. In
-practice a group mark may contain any number of group items, for example to
+practice, a group mark may contain any number of group items, for example to
 describe a scene with multiple layers or sub-plots.
 
 For more information regarding supported mark properties, please see the
