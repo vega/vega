@@ -13,31 +13,43 @@ import {
 } from 'd3-shape';
 
 var lookup = {
-  basis: { curve: curveBasis },
-  bundle: {
+  'basis': {
+    curve: curveBasis
+  },
+  'bundle': {
     curve: curveBundle,
     tension: 'beta',
     value: 0.85
   },
-  cardinal: {
+  'cardinal': {
     curve: curveCardinal,
     tension: 'tension',
     value: 0
   },
-  catmullRom: {
+  'catmull-rom': {
     curve: curveCatmullRom,
     tension: 'alpha',
     value: 0.5
   },
-  linear: { curve: curveLinear },
-  monotone: {
+  'linear': {
+    curve: curveLinear
+  },
+  'monotone': {
     horizontal: curveMonotoneY,
     vertical:   curveMonotoneX
   },
-  natural: { curve: curveNatural },
-  step: { curve: curveStep },
-  stepAfter: { curve: curveStepAfter },
-  stepBefore: { curve: curveStepBefore }
+  'natural': {
+    curve: curveNatural
+  },
+  'step': {
+    curve: curveStep
+  },
+  'step-after': {
+    curve: curveStepAfter
+  },
+  'step-before': {
+    curve: curveStepBefore
+  }
 };
 
 export default function curves(type, orientation, tension) {
