@@ -4,6 +4,26 @@
   "height": 200,
   "padding": 5,
 
+  "signals": [
+    {
+      "name": "curve", "value": "monotone",
+      "bind": {
+        "input": "select",
+        "options": [
+          "basis",
+          "cardinal",
+          "catmull-rom",
+          "linear",
+          "monotone",
+          "natural",
+          "step",
+          "step-after",
+          "step-before"
+        ]
+      }
+    }
+  ],
+
   "data": [
     {
       "name": "table",
@@ -51,13 +71,13 @@
       "from": {"data": "table"},
       "encode": {
         "enter": {
-          "interpolate": {"value": "monotone"},
           "x": {"scale": "xscale", "field": "u"},
           "y": {"scale": "yscale", "field": "v"},
           "y2": {"scale": "yscale", "value": 0},
           "fill": {"value": "steelblue"}
         },
         "update": {
+          "interpolate": {"signal": "curve"},
           "fillOpacity": {"value": 1}
         },
         "hover": {
