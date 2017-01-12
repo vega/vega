@@ -1,6 +1,9 @@
 import eventExtend from './events-extend';
 import {EventStream} from 'vega-dataflow';
 
+var VIEW = 'view',
+    WINDOW = 'window';
+
 /**
  * Create a new event stream from an event source.
  * @param {object} source - The event source to monitor.
@@ -12,17 +15,20 @@ export default function(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
+        if (view.preventDefault() && source === VIEW) {
+          event.preventDefault();
+        }
         s.receive(eventExtend(view, e, item));
         view.run();
       },
       sources;
 
-  if (source === 'view') {
+  if (source === VIEW) {
     view.addEventListener(type, send);
     return s;
   }
 
-  if (source === 'window') {
+  if (source === WINDOW) {
     if (typeof window !== 'undefined') sources = [window];
   } else if (typeof document !== 'undefined') {
     sources = document.querySelectorAll(source);
