@@ -24,6 +24,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The `"band"` property now accepts an interpolation fraction between 0 and 1 for placing elements within a scale band, and can now be used in conjunction with a field-based scale mapping. For example, the following encoding places an item at the midpoint of the appropriate scale band: `{"scale": "xscale", "field": "foo", "band": 0.5}`.
 
+- The `"interpolate"` property now accepts lowerCamelCaseStrings (e.g., `"stepAfter"`) instead of dash-separated-strings (e.g., `"step-after"`). 
+
 - The `rule` mark type now supports arbitrary line segments, and reliably draws a line from point `"x"`, `"y"` to point `"x2"`, `"y2"`.
 
 - Mark definitions no longer allow embedded data transforms (e.g., `{"type": "rect", "from": {"data": "table, "transform": [...]}}`). Instead, *all* derived data sources must now be defined within a `"data"` definition block. However, as of Vega 3, `"data"` blocks are no longer constrained to only the top-level of a spec: they can be defined within `group` marks as well! For example, this flexibility allows creation of derived data sets *within* a faceted group.
