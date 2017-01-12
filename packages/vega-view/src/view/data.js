@@ -16,19 +16,15 @@ export function change(name, changes) {
   if (!isChangeSet(changes)) {
     this.error('Second argument to changes must be a changeset.');
   }
-  return this.pulse(dataref(this, name).input, changes);
+  var dataset = dataref(this, name);
+  dataset.modified = true;
+  return this.pulse(dataset.input, changes);
 }
 
 export function insert(name, _) {
-  return this.pulse(
-    dataref(this, name).input,
-    changeset().insert(_)
-  );
+  return change(name, changeset().insert(_));
 }
 
 export function remove(name, _) {
-  return this.pulse(
-    dataref(this, name).input,
-    changeset().remove(_)
-  );
+  return change(name, changeset().remove(_));
 }
