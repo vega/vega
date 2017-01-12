@@ -1,6 +1,24 @@
 import {Literal} from './ast';
-import {indexPrefix} from './prefixes';
+import {dataPrefix, indexPrefix} from './prefixes';
 import {error} from 'vega-util';
+
+export function data(name) {
+  var data = this.context.data[name];
+  return data ? data.values.value : [];
+}
+
+export function dataVisitor(name, args, scope, params) {
+  if (args[0].type !== Literal) {
+    error('First argument to data functions must be a string literal.');
+  }
+
+  var data = args[0].value,
+      dataName = dataPrefix + data;
+
+  if (!params.hasOwnProperty(dataName)) {
+    params[dataName] = scope.getData(data).tuplesRef();
+  }
+}
 
 export function indata(name, field, value) {
   var index = this.context.data[name]['index:' + field],
