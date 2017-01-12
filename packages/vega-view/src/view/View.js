@@ -186,7 +186,7 @@ prototype.removeSignalListener = function(name, handler) {
 };
 
 prototype.preventDefault = function(_) {
-  return arguments.length ? this._preventDefault : (this._preventDefault = _, this);
+  return arguments.length ? (this._preventDefault = _, this) : this._preventDefault;
 };
 
 prototype.events = events;
