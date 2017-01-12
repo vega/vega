@@ -3,7 +3,7 @@ import {isArray, truthy} from 'vega-util';
 function removePredicate(props) {
   return function(_) {
     for (var key in props) {
-      if (_[key] !== props[key]) return false;
+      if (key !== '_id' && _[key] !== props[key]) return false;
     }
     return true;
   };
@@ -17,7 +17,7 @@ export default function(name, insert, remove, toggle, modify, values) {
       stamp = df.stamp(),
       predicate, key;
 
-  if (!(input.value.length || insert || toggle)) {
+  if (df._trigger === false || !(input.value.length || insert || toggle)) {
     // nothing to do!
     return 0;
   }
@@ -26,6 +26,7 @@ export default function(name, insert, remove, toggle, modify, values) {
     data.changes = (changes = df.changeset());
     changes.stamp = stamp;
     df.runAfter(function() {
+      data.modified = true;
       df.pulse(input, changes).run();
     });
   }
@@ -43,7 +44,7 @@ export default function(name, insert, remove, toggle, modify, values) {
 
   if (toggle) {
     predicate = removePredicate(toggle);
-    if (input.value.filter(predicate).length) {
+    if (input.value.some(predicate)) {
       changes.remove(predicate);
     } else {
       changes.insert(toggle);
