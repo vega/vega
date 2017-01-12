@@ -15,7 +15,7 @@ export default function(signal, scope) {
     if (!scope.signals[name]) outerError('No prior signal definition', name);
     // signal push must not use properties reserved for standard definition
     OUTER_INVALID.forEach(function(prop) {
-      if (signal[prop] !== undefined) outerError('Invalid property ' + stringValue(prop), name);
+      if (signal[prop] !== undefined) outerError('Invalid property ', prop);
     });
   } else {
     // define a new signal in the current scope
