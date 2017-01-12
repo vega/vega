@@ -20,13 +20,13 @@
       "on": [
         {
           "events": "[text:mousedown, window:mouseup] > text:mouseover",
-          "update": "src._id != null ? datum : dest"
+          "update": "src.name != null ? datum : dest"
         },
         {"events": "text:mouseout", "update": "{}"}
       ]
     },
     {"name": "destOrder", "update": "dest.order"},
-    {"name": "dragging",  "update": "src._id && dest._id"}
+    {"name": "dragging",  "update": "src.name && dest.name"}
   ],
 
   "data": [
