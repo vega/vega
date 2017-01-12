@@ -40,10 +40,6 @@ export default function(view, event, item) {
     p[1] -= translate[1];
   }
 
-  if (view.preventDefault()) {
-    event.preventDefault();
-  }
-
   return event.vega = extension(view, item, p), event.item = item, event;
 }
 
