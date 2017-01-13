@@ -12,10 +12,6 @@ export default function Parameters() {
 
 var prototype = Parameters.prototype;
 
-function key(name, index) {
-  return (index != null && index >= 0 ? index + ':' : '') + name;
-}
-
 /**
  * Set a parameter value. If the parameter value changes, the parameter
  * will be recorded as modified.
@@ -35,15 +31,12 @@ prototype.set = function(name, index, value, force) {
   if (index != null && index >= 0) {
     if (v[index] !== value || force) {
       v[index] = value;
-      mod[key(name, index)] = 1;
-      mod[name] = 1;
+      mod[index + ':' + name] = -1;
+      mod[name] = -1;
     }
   } else if (v !== value || force) {
     o[name] = value;
-    mod[name] = 1;
-    if (isArray(value)) value.forEach(function(v, i) {
-      mod[key(name, i)] = 1;
-    });
+    mod[name] = isArray(value) ? value.length : -1;
   }
 
   return o;
@@ -70,7 +63,9 @@ prototype.modified = function(name, index) {
     }
     return false;
   }
-  return !!mod[key(name, index)];
+  return (index != null && index >= 0)
+    ? (index < mod[name] || !!mod[index + ':' + name])
+    : !!mod[name];
 };
 
 /**
