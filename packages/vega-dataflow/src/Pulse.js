@@ -313,7 +313,7 @@ prototype.visit = function(flags, visitor) {
 
   if ((flags & REFLOW) && (src = this.source)) {
     sum = this.add.length + this.mod.length;
-    if (sum === src) {
+    if (sum === src.length) {
       // do nothing
     } else if (sum) {
       visitArray(src, filter(this, ADD_MOD), v);
