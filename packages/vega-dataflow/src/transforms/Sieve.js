@@ -4,6 +4,7 @@ import {inherits} from 'vega-util';
 /**
  * Propagates a new pulse without any tuples so long as the input
  * pulse contains some added, removed or modified tuples.
+ * @param {object} params - The parameters for this operator.
  * @constructor
  */
 export default function Sieve(params) {
