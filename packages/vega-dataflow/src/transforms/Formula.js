@@ -7,6 +7,8 @@ import {inherits} from 'vega-util';
  * @param {object} params - The parameters for this operator.
  * @param {function(object): *} params.expr - The formula function to invoke for each tuple.
  * @param {string} params.as - The field name under which to save the result.
+ * @param {boolean} [params.initonly=false] - If true, the formula is applied to
+ *   added tuples only, and does not update in response to modifications.
  */
 export default function Formula(params) {
   Transform.call(this, null, params);
@@ -17,19 +19,20 @@ var prototype = inherits(Formula, Transform);
 prototype.transform = function(_, pulse) {
   var func = _.expr,
       as = _.as,
-      mod;
+      mod = _.modified(),
+      flag = _.initonly ? pulse.ADD
+      : mod ? pulse.SOURCE
+      : pulse.modified(func.fields) ? pulse.ADD_MOD
+      : pulse.ADD;
 
   function set(t) {
     t[as] = func(t, _);
   }
 
-  if (_.modified()) {
+  if (mod) {
     // parameters updated, need to reflow
-    pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
-  } else {
-    mod = pulse.modified(func.fields);
-    pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
+    pulse = pulse.materialize().reflow(true);
   }
 
-  return pulse.modifies(as);
+  return pulse.visit(flag, set).modifies(as);
 };
