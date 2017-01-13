@@ -22,11 +22,16 @@ prototype.transform = function(_, pulse) {
       flow = _.subflow,
       field = _.field;
 
-  if (_.modified('field') || field && pulse.modified(field.fields)) {
+  if (_.modified('field')) {
     error('PreFacet does not support field modification.');
   }
 
   this._targets.active = 0; // reset list of active subflows
+
+  pulse.visit(pulse.MOD, function(t) {
+    var sf = self.subflow(t._id, flow, pulse, t);
+    field ? field(t).forEach(function(_) { sf.mod(_); }) : sf.mod(t);
+  });
 
   pulse.visit(pulse.ADD, function(t) {
     var sf = self.subflow(t._id, flow, pulse, t);
