@@ -46,7 +46,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month"},
+    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b"},
     {
       "orient": "left", "scale": "row", "domain": false, "title": "Hour",
       "tickSize": 0,

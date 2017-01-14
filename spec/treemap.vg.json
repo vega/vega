@@ -5,6 +5,24 @@
   "padding": 2.5,
   "autosize": "none",
 
+  "signals": [
+    {
+      "name": "layout", "value": "squarify",
+      "bind": {
+        "input": "select",
+        "options": [
+          "squarify",
+          "binary",
+          "slicedice"
+        ]
+      }
+    },
+    {
+      "name": "aspectRatio", "value": 1.6,
+      "bind": {"input": "range", "min": 0.2, "max": 5, "step": 0.1}
+    }
+  ],
+
   "data": [
     {
       "name": "tree",
@@ -20,6 +38,8 @@
           "field": "size",
           "sort": {"field": "value"},
           "round": true,
+          "method": {"signal": "layout"},
+          "ratio": {"signal": "aspectRatio"},
           "size": [{"signal": "width"}, {"signal": "height"}]
         }
       ]
@@ -68,11 +88,13 @@
       "interactive": false,
       "encode": {
         "enter": {
+          "fill": {"scale": "color", "field": "name"}
+        },
+        "update": {
           "x": {"field": "x0"},
           "y": {"field": "y0"},
           "x2": {"field": "x1"},
-          "y2": {"field": "y1"},
-          "fill": {"scale": "color", "field": "name"}
+          "y2": {"field": "y1"}
         }
       }
     },
@@ -81,13 +103,13 @@
       "from": {"data": "leaves"},
       "encode": {
         "enter": {
+          "stroke": {"value": "#fff"}
+        },
+        "update": {
           "x": {"field": "x0"},
           "y": {"field": "y0"},
           "x2": {"field": "x1"},
           "y2": {"field": "y1"},
-          "stroke": {"value": "#fff"}
-        },
-        "update": {
           "fill": {"value": "transparent"}
         },
         "hover": {
@@ -101,8 +123,6 @@
       "interactive": false,
       "encode": {
         "enter": {
-          "x": {"signal": "0.5 * (datum.x0 + datum.x1)"},
-          "y": {"signal": "0.5 * (datum.y0 + datum.y1)"},
           "font": {"value": "Helvetica Neue"},
           "align": {"value": "center"},
           "baseline": {"value": "middle"},
@@ -110,6 +130,10 @@
           "text": {"field": "name"},
           "fontSize": {"scale": "size", "field": "depth"},
           "fillOpacity": {"scale": "opacity", "field": "depth"}
+        },
+        "update": {
+          "x": {"signal": "0.5 * (datum.x0 + datum.x1)"},
+          "y": {"signal": "0.5 * (datum.y0 + datum.y1)"}
         }
       }
     }
