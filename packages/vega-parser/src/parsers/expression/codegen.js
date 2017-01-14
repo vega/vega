@@ -18,6 +18,7 @@ import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import {geoArea, geoBounds, geoCentroid} from './geo';
 import {data, indata, dataVisitor, indataVisitor} from './data';
+import {treePath, treeAncestors} from './tree';
 import inrange from './inrange';
 import encode from './encode';
 import modify from './modify';
@@ -94,6 +95,8 @@ expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('vlPoint', vlPoint, dataVisitor);
 expressionFunction('vlInterval', vlInterval, dataVisitor);
+expressionFunction('treePath', treePath, dataVisitor);
+expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 
 // Build expression function registry
 function buildFunctions(codegen) {
