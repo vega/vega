@@ -1,6 +1,6 @@
 {
   "name": "vega-hierarchy",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Hierarchical layout transforms for Vega dataflows.",
   "keywords": [
     "vega",
