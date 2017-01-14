@@ -31,7 +31,7 @@ prototype.transform = function(_, pulse) {
   if (run) {
     tree = stratify().id(_.key).parentId(_.parentKey)(pulse.source);
     map = tree.lookup = {};
-    tree.each(function(node) { map[node.data._id] = node; });
+    tree.each(function(node) { map[_.key(node.data)] = node; });
     this.value = tree;
   }
 
