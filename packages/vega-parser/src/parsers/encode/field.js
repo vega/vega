@@ -29,7 +29,7 @@ function resolve(ref, scope, params, fields) {
     object = 'datum';
     field = ref.datum;
   } else {
-    error('Invalid field reference: ' + JSON.stringify(ref));
+    error('Invalid field reference: ' + stringValue(ref));
   }
 
   if (!ref.signal) {

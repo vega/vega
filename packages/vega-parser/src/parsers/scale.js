@@ -26,7 +26,7 @@ export default function(spec, scope) {
       params, key;
 
   if (!allTypes.hasOwnProperty(type)) {
-    error('Unrecognized scale type: ' + type);
+    error('Unrecognized scale type: ' + stringValue(type));
   }
 
   params = {
@@ -56,7 +56,7 @@ function parseLiteral(v, scope) {
 }
 
 function dataLookupError(name) {
-  error('Can not find data set: ' + name);
+  error('Can not find data set: ' + stringValue(name));
 }
 
 // -- SCALE DOMAIN ----
@@ -193,12 +193,12 @@ function parseScaleRange(spec, scope) {
         ? [0, {signal: 'height'}]
         : [{signal: 'height'}, 0]
     } else {
-      error('Unrecognized scale range value: ' + range);
+      error('Unrecognized scale range value: ' + stringValue(range));
     }
   } else if (isOrdinal(spec.type) && !isArray(range)) {
     return parseScaleDomain(range, spec, scope);
   } else if (!isArray(range)) {
-    error('Unsupported range type: ' + range);
+    error('Unsupported range type: ' + stringValue(range));
   }
 
   return range.map(function(v) {

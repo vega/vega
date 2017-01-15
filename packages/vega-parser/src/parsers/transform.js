@@ -2,14 +2,14 @@ import parseExpression from './expression';
 import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
 import {Params} from '../transforms';
 import {definition} from 'vega-dataflow';
-import {array, error, extend, isArray, isString} from 'vega-util';
+import {array, error, extend, isArray, isString, stringValue} from 'vega-util';
 
 /**
  * Parse a data transform specification.
  */
 export default function(spec, scope) {
   var def = definition(spec.type);
-  if (!def) error('Unrecognized transform type: ' + spec.type);
+  if (!def) error('Unrecognized transform type: ' + stringValue(spec.type));
 
   var t = entry(def.type, null, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
@@ -44,7 +44,8 @@ function parseParameter(def, spec, scope) {
     value = spec[def.name];
     if (value === undefined) {
       if (def.required) {
-        error('Missing required ' + spec.type + ' parameter: ' + def.name);
+        error('Missing required ' + stringValue(spec.type)
+          + ' parameter: ' + stringValue(def.name));
       }
       return;
     }
@@ -96,7 +97,7 @@ function parseSubParameters(def, spec, scope) {
 
   if (def.array) {
     if (!isArray(value)) { // signals not allowed!
-      error('Expected an array of sub-parameters. Instead: ' + value);
+      error('Expected an array of sub-parameters. Instead: ' + stringValue(value));
     }
     return value.map(function(v) {
       return parseSubParameter(def, v, scope);
@@ -121,7 +122,7 @@ function parseSubParameter(def, value, scope) {
     if (pdef) break;
   }
   // raise error if matching key not found
-  if (!pdef) error('Unsupported parameter: ' + JSON.stringify(value));
+  if (!pdef) error('Unsupported parameter: ' + stringValue(value));
 
   // parse params, create Params transform, return ref
   params = extend(parseParameters(pdef, value, scope), pdef.key);
