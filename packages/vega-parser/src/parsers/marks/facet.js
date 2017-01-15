@@ -2,7 +2,7 @@ import parseSpec from '../spec';
 import DataScope from '../../DataScope';
 import {ref} from '../../util';
 import {Collect, Facet, PreFacet, Sieve} from '../../transforms';
-import {error} from 'vega-util';
+import {error, stringValue} from 'vega-util';
 
 export default function(spec, scope, group) {
   var facet = spec.from.facet,
@@ -11,10 +11,10 @@ export default function(spec, scope, group) {
       subscope, source, values, op;
 
   if (!facet.name) {
-    error('Facet must have a name: ' + JSON.stringify(facet));
+    error('Facet must have a name: ' + stringValue(facet));
   }
   if (!facet.data) {
-    error('Facet must reference a data set: ' + JSON.stringify(facet));
+    error('Facet must reference a data set: ' + stringValue(facet));
   }
 
   if (facet.field) {
@@ -25,11 +25,11 @@ export default function(spec, scope, group) {
   } else if (facet.groupby) {
     op = scope.add(Facet({
       key:   scope.keyRef(facet.groupby),
-      group: scope.proxy(group.parent),
+      group: ref(scope.proxy(group.parent)),
       pulse: data
     }));
   } else {
-    error('Facet must specify groupby or field: ' + JSON.stringify(facet));
+    error('Facet must specify groupby or field: ' + stringValue(facet));
   }
 
   // initialize facet subscope
