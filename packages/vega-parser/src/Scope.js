@@ -5,7 +5,7 @@ import {
 } from './util';
 import parseExpression from './parsers/expression';
 import {Compare, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
-import {array, error, extend, isString, peek} from 'vega-util';
+import {array, error, extend, isString, peek, stringValue} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
@@ -172,7 +172,7 @@ prototype.markpath = function() {
 prototype.fieldRef = function(field, name) {
   if (isString(field)) return fieldRef(field, name);
   if (!field.signal) {
-    error('Unsupported field reference: ' + JSON.stringify(field));
+    error('Unsupported field reference: ' + stringValue(field));
   }
 
   var s = field.signal,
@@ -252,7 +252,7 @@ prototype.event = function(source, type) {
 
 prototype.addSignal = function(name, value) {
   if (this.signals.hasOwnProperty(name)) {
-    error('Duplicate signal name: ' + name);
+    error('Duplicate signal name: ' + stringValue(name));
   }
   var op = value instanceof Entry ? value : this.add(operator(value));
   return this.signals[name] = op;
@@ -260,7 +260,7 @@ prototype.addSignal = function(name, value) {
 
 prototype.getSignal = function(name) {
   if (!this.signals[name]) {
-    error('Unrecognized signal name: ' + name);
+    error('Unrecognized signal name: ' + stringValue(name));
   }
   return this.signals[name];
 };
@@ -290,7 +290,9 @@ prototype.property = function(spec) {
 };
 
 prototype.addBinding = function(name, bind) {
-  if (!this.bindings) error('Nested signals do not support binding: ' + name);
+  if (!this.bindings) {
+    error('Nested signals do not support binding: ' + stringValue(name));
+  }
   this.bindings.push(extend({signal: name}, bind));
 };
 
@@ -298,7 +300,7 @@ prototype.addBinding = function(name, bind) {
 
 prototype.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
-    error('Duplicate scale or projection name: ' + name);
+    error('Duplicate scale or projection name: ' + stringValue(name));
   }
   this.scales[name] = this.add(transform);
 }
@@ -313,7 +315,7 @@ prototype.addProjection = function(name, params) {
 
 prototype.getScale = function(name) {
   if (!this.scales[name]) {
-    error('Unrecognized scale name: ' + name);
+    error('Unrecognized scale name: ' + stringValue(name));
   }
   return this.scales[name];
 };
@@ -332,21 +334,21 @@ prototype.scaleType = function(name) {
 
 prototype.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
-    error('Duplicate data set name: ' + name);
+    error('Duplicate data set name: ' + stringValue(name));
   }
   this.data[name] = dataScope;
 };
 
 prototype.getData = function(name) {
   if (!this.data[name]) {
-    error('Undefined data set name: ' + name);
+    error('Undefined data set name: ' + stringValue(name));
   }
   return this.data[name];
 };
 
 prototype.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
-    error('Duplicate data set name: ' + name);
+    error('Duplicate data set name: ' + stringValue(name));
   }
   this.addData(name, DataScope.fromEntries(this, entries));
 };
