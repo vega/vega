@@ -32,7 +32,7 @@ export default function(from, group, scope) {
         op.params.pulse = ref(scope.getData(facet.data).output);
         dataRef = parent = ref(scope.add(op));
       } else {
-        parent = scope.getData(from.data).aggregate;
+        parent = ref(scope.getData(from.data).aggregate);
       }
     }
   }
