@@ -1,5 +1,5 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 400,
   "height": 200,
   "padding": 5,
