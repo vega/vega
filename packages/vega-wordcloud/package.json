@@ -1,6 +1,6 @@
 {
   "name": "vega-wordcloud",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Wordcloud layout transform for Vega dataflows.",
   "keywords": [
     "vega",
