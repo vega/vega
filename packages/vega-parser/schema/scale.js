@@ -1,6 +1,15 @@
 var rangeDef = [
   {
-    "enum": ["width", "height", "shapes", "category"]
+    "enum": [
+      "width",
+      "height",
+      "shapes",
+      "category",
+      "ordinal",
+      "ramp",
+      "diverging",
+      "heatmap"
+    ]
   },
   {
     "type": "array",
@@ -11,6 +20,14 @@ var rangeDef = [
         {"$ref": "#/refs/signal"}
       ]
     }
+  },
+  {
+    "type": "object",
+    "properties": {
+      "scheme": {"$ref": "#/refs/scaleScheme"},
+      "extent": {"$ref": "#/refs/scaleSchemeExtent"}
+    },
+    "required": ["scheme"]
   },
   {"$ref": "#/refs/signal"}
 ];
@@ -33,6 +50,21 @@ export default {
       "oneOf": [
         {"type": "string"},
         {"$ref": "#/refs/signal", "additionalProperties": false}
+      ]
+    },
+    "scaleSchemeExtent": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {"type": "number"},
+              {"$ref": "#/refs/signal"}
+            ]
+          },
+          "numItems": 2
+        },
+        {"$ref": "#/refs/signal"}
       ]
     },
     "scaleData": {
@@ -178,6 +210,12 @@ export default {
                 {"$ref": "#/refs/signal"}
               ]
             },
+            "domainMid": {
+              "oneOf": [
+                {"type": "number"},
+                {"$ref": "#/refs/signal"}
+              ]
+            },
             "domainRaw": {
               "oneOf": [
                 {"type": "null"},
@@ -207,8 +245,7 @@ export default {
                 "type": {"enum": ["ordinal"]},
                 "range": {
                   "oneOf": rangeDef.concat({"$ref": "#/refs/scaleData"})
-                },
-                "scheme": {"$ref": "#/refs/scaleScheme"}
+                }
               },
               "required": ["type"]
             },
@@ -283,13 +320,13 @@ export default {
             {
               "properties": {
                 "type": {"enum": ["sequential"]},
-                "scheme": {"$ref": "#/refs/scaleScheme"},
+                "range": {"oneOf": rangeDef},
                 "clamp": {
                   "oneOf": [
                     {"type": "boolean"},
                     {"$ref": "#/refs/signal"}
                   ]
-                },
+                }
               },
               "required": ["type"]
             },
@@ -349,6 +386,30 @@ export default {
               },
               "properties": {
                 "range": {"oneOf": rangeDef},
+                "interpolate": {
+                  "oneOf": [
+                    {"type": "string"},
+                    {"$ref": "#/refs/signal"},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "oneOf": [
+                            {"type": "string"},
+                            {"$ref": "#/refs/signal"}
+                          ]
+                        },
+                        "gamma": {
+                          "oneOf": [
+                            {"type": "number"},
+                            {"$ref": "#/refs/signal"}
+                          ]
+                        }
+                      },
+                      "required": ["type"]
+                    }
+                  ]
+                },
                 "clamp": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -403,32 +464,11 @@ export default {
               "required": ["type"]
             },
             {
-              "allOf": [
-                {
-                  "properties": {
-                    "type": {"enum": ["index"]},
-                    "clamp": {
-                      "oneOf": [
-                        {"type": "boolean"},
-                        {"$ref": "#/refs/signal"}
-                      ]
-                    }
-                  },
-                  "required": ["type", "scheme"]
-                },
-                {
-                  "oneOf": [
-                    {
-                      "properties": {"range": {"oneOf": rangeDef}},
-                      "required": ["range"]
-                    },
-                    {
-                      "properties": {"scheme": {"$ref": "#/refs/scaleScheme"}},
-                      "required": ["scheme"]
-                    }
-                  ]
-                }
-              ]
+              "properties": {
+                  "type": {"enum": ["index"]},
+                  "range": {"oneOf": rangeDef}
+              },
+              "required": ["type"]
             }
           ]
         }
