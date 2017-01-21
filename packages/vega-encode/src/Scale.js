@@ -12,8 +12,7 @@ import {
 import {
   interpolate,
   interpolateRgbBasis,
-  interpolateRound,
-  quantize
+  interpolateRound
 } from 'd3-interpolate';
 
 var BAND = 'band',
