@@ -1,72 +1,48 @@
-import {changeset} from 'vega-dataflow';
-import {truthy} from 'vega-util';
-
-var SKIP = {skip: true};
+import {transforms} from 'vega-dataflow';
+import {isArray} from 'vega-util';
 
 /**
- * Get or set the current view state. If no argument is provided,
- * returns an object containing all current signal values and modified
- * data sets. If an argument is provided, it should be a state object
- * returned by a previous call to this method.
- * @param {object} [state] - The state object to set.
- * @return {object|View} - If invoked with arguments, returns the
- *   current signal state. Otherwise returns this View instance.
+ * Get the current view state, consisting of signal values and/or data sets.
+ * @param {object} [options] - Options flags indicating which state to export.
+ *   If unspecified, all signals and data sets will be exported.
+ * @param {function(string, Operator):boolean} [options.signals] - Optional
+ *   predicate function for testing if a signal should be included in the
+ *   exported state. If unspecified, all signals will be included, except for
+ *   those named 'parent' or those which refer to a Transform value.
+ * @param {function(string, object):boolean} [options.data] - Optional
+ *   predicate function for testing if a data set's input should be included
+ *   in the exported state. If unspecified, all data sets that have been
+ *   explicitly modified will be included.
+ * @param {boolean} [options.recurse=true] - Flag indicating if the exported
+ *   state should recursively include state from group mark sub-contexts.
+ * @return {object} - An object containing the exported state values.
  */
-export default function(state) {
-  if (arguments.length) {
-    this._trigger = false;
-    setState(this._runtime, state);
-    this.run();
-    this._trigger = true;
-    return this;
-  } else {
-    return getState(this._runtime);
-  }
+export function getState(options) {
+  return this._runtime.getState(options || {
+    data:    dataTest,
+    signals: signalTest,
+    recurse: true
+  });
 }
 
-function getState(context) {
-  var signals = {},
-      data = {},
-      state = {signals: signals, data: data};
-
-  Object.keys(context.signals).forEach(function(key) {
-    if (key !== 'root' && key !== 'parent') {
-      signals[key] = context.signals[key].value;
-    }
-  });
-
-  Object.keys(context.data).forEach(function(key) {
-    var dataset = context.data[key];
-    if (dataset.modified) {
-      data[key] = dataset.input.value;
-    }
-  });
-
-  if (context.subcontext) {
-    state.subcontext = context.subcontext.map(getState);
-  }
-
-  return state;
+function dataTest(name, dataset) {
+  return dataset.modified && isArray(dataset.input.value);
 }
 
-function setState(context, state) {
-  var df = context.dataflow,
-      signals = state.signals,
-      data = state.data;
+function signalTest(name, op) {
+  return !(name === 'parent' || op instanceof transforms.Proxy);
+}
 
-  Object.keys(signals || {}).forEach(function(key) {
-    df.update(context.signals[key], signals[key], SKIP);
-  });
-
-  Object.keys(data || {}).forEach(function(key) {
-    df.pulse(
-      context.data[key].input,
-      changeset().remove(truthy).insert(data[key])
-    );
-  });
-
-  (state.subcontext || []).forEach(function(substate, i) {
-    var ctx = context.subcontext[i];
-    if (ctx) setState(ctx, substate);
-  });
+/**
+ * Sets the current view state and updates the view by invoking run.
+ * @param {object} state - A state object containing signal and/or
+ *   data set values, following the format used by the getState method.
+ * @return {View} - This view instance.
+ */
+export function setState(state) {
+  var view = this;
+  view._trigger = false;
+  view._runtime.setState(state);
+  view.run().runAfter(function() { view._trigger = true; });
+  return this;
 }

@@ -10,7 +10,7 @@ import renderToSVG from './render-to-svg';
 import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {autosize, resizer} from './size';
-import state from './state';
+import {getState, setState} from './state';
 
 import {Dataflow} from 'vega-dataflow';
 import {inherits, stringValue} from 'vega-util';
@@ -211,4 +211,5 @@ prototype.toCanvas = renderToCanvas;
 prototype.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype.state = state;
+prototype.getState = getState;
+prototype.setState = setState;
