@@ -10,3 +10,12 @@ export var Perc   = 'perc';
 export var Size   = 'size';
 export var Total  = 'total';
 export var Value  = 'value';
+
+export var LegendScales = [
+  'shape',
+  'size',
+  'fill',
+  'stroke',
+  'strokeDash',
+  'opacity'
+];
