@@ -31,24 +31,23 @@ function defaults() {
 
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
-    mark: {
-      arc: { fill: 'steelblue' },
-      area: { fill: 'steelblue' },
-      image: null,
-      line: { stroke: 'steelblue' },
-      path: { stroke: 'steelblue' },
-      rect: { fill: 'steelblue' },
-      rule: { stroke: '#000' },
-      shape: { stroke: 'steelblue' },
-      symbol: {
-        fill: 'steelblue',
-        size: 64
-      },
-      text: {
-        fill: '#000',
-        font: 'sans-serif',
-        fontSize: 11
-      }
+    mark: null,
+    arc: { fill: 'steelblue' },
+    area: { fill: 'steelblue' },
+    image: null,
+    line: { stroke: 'steelblue' },
+    path: { stroke: 'steelblue' },
+    rect: { fill: 'steelblue' },
+    rule: { stroke: '#000' },
+    shape: { stroke: 'steelblue' },
+    symbol: {
+      fill: 'steelblue',
+      size: 64
+    },
+    text: {
+      fill: '#000',
+      font: 'sans-serif',
+      fontSize: 11
     },
 
     // defaults for axes
@@ -56,20 +55,20 @@ function defaults() {
       minExtent: 0,
       maxExtent: 200,
       bandPosition: 0.5,
-      domainDefault: true,
+      domain: true,
       domainWidth: 1,
       domainColor: '#000',
-      gridDefault: false,
+      grid: false,
       gridWidth: 1,
       gridColor: '#ddd',
       gridDash: [],
       gridOpacity: 1,
-      labelDefault: true,
+      label: true,
       labelColor: '#000',
       labelFont: 'sans-serif',
       labelFontSize: 10,
       labelPadding: 2,
-      tickDefault: true,
+      tick: true,
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
@@ -115,18 +114,23 @@ function defaults() {
 
     // defaults for scale ranges
     range: {
-      category: [
-        '#1f77b4',
-        '#ff7f0e',
-        '#2ca02c',
-        '#d62728',
-        '#9467bd',
-        '#8c564b',
-        '#e377c2',
-        '#7f7f7f',
-        '#bcbd22',
-        '#17becf'
-      ],
+      category: {
+        scheme: 'category10'
+      },
+      ordinal: {
+        scheme: 'blues',
+        extent: [0.2, 1]
+      },
+      heatmap: {
+        scheme: 'plasma'
+      },
+      ramp: {
+        scheme: 'greens',
+        extent: [0.2, 1]
+      },
+      diverging: {
+        scheme: 'purpleorange'
+      },
       symbol: [
         'circle',
         'square',

@@ -21,10 +21,10 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    tick:   spec.tick != null ? !!spec.tick : config.tickDefault,
-    label:  spec.label != null ? !!spec.label : config.labelDefault,
-    grid:   spec.grid != null ? !!spec.grid : config.gridDefault,
-    domain: spec.domain != null ? !!spec.domain : config.domainDefault,
+    tick:   spec.tick   != null ? !!spec.tick   : config.tick,
+    label:  spec.label  != null ? !!spec.label  : config.label,
+    grid:   spec.grid   != null ? !!spec.grid   : config.grid,
+    domain: spec.domain != null ? !!spec.domain : config.domain,
     title:  spec.title
   };
   dataRef = ref(scope.add(Collect({}, [datum])));

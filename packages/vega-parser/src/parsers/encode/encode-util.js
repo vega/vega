@@ -31,9 +31,9 @@ export function encoders(encode, type, role, scope, params) {
 function applyDefaults(encode, type, role, config) {
   var enter, key, skip;
 
-  config = config && (role === FrameRole ? config.group
-    : role === MarkRole ? config.mark && config.mark[type]
-    : null);
+  config = role === FrameRole ? config.group
+    : role === MarkRole ? extend({}, config.mark, config[type])
+    : null;
 
   if (config) {
     enter = {};
