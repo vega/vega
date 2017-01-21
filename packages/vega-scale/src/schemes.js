@@ -1,6 +1,8 @@
 import * as $ from 'd3-scale';
 import * as _ from 'd3-scale-chromatic';
 
+var discrete = {};
+
 var schemes = {
   // d3 built-in categorical palettes
   category10:  $.schemeCategory10,
@@ -26,71 +28,55 @@ var schemes = {
   viridis:     $.interpolateViridis,
   magma:       $.interpolateMagma,
   inferno:     $.interpolateInferno,
-  plasma:      $.interpolatePlasma,
-
-  // diverging
-  brbg:        _.interpolateBrBG,
-  prgn:        _.interpolatePRGn,
-  piyg:        _.interpolatePiYG,
-  puor:        _.interpolatePuOr,
-  rdbu:        _.interpolateRdBu,
-  rdgy:        _.interpolateRdGy,
-  rdylbu:      _.interpolateRdYlBu,
-  rdylgn:      _.interpolateRdYlGn,
-  spectral:    _.interpolateSpectral,
-
-  // repeat with friendlier names
-  brownbluegreen:  _.interpolateBrBG,
-  purplegreen:     _.interpolatePRGn,
-  pinkyellowgreen: _.interpolatePiYG,
-  purpleorange:    _.interpolatePuOr,
-  redblue:         _.interpolateRdBu,
-  redgrey:         _.interpolateRdGy,
-  redyellowblue:   _.interpolateRdYlBu,
-  redyellowgreen:  _.interpolateRdYlGn,
-
-  // sequential multi-hue
-  bugn:        _.interpolateBuGn,
-  bupu:        _.interpolateBuPu,
-  gnbu:        _.interpolateGnBu,
-  orrd:        _.interpolateOrRd,
-  pubugn:      _.interpolatePuBuGn,
-  pubu:        _.interpolatePuBu,
-  purd:        _.interpolatePuRd,
-  rdpu:        _.interpolateRdPu,
-  ylgnbu:      _.interpolateYlGnBu,
-  ylgn:        _.interpolateYlGn,
-  ylorbr:      _.interpolateYlOrBr,
-  ylorrd:      _.interpolateYlOrRd,
-
-  // repeat with friendlier names
-  bluegreen:         _.interpolateBuGn,
-  bluepurple:        _.interpolateBuPu,
-  greenblue:         _.interpolateGnBu,
-  orangered:         _.interpolateOrRd,
-  purplebluegreen:   _.interpolatePuBuGn,
-  purpleblue:        _.interpolatePuBu,
-  purplered:         _.interpolatePuRd,
-  redpurple:         _.interpolateRdPu,
-  yellowgreenblue:   _.interpolateYlGnBu,
-  yellowgreen:       _.interpolateYlGn,
-  yelloworangebrown: _.interpolateYlOrBr,
-  yelloworangered:   _.interpolateYlOrRd,
-
-  // sequential single-hue
-  blues:       _.interpolateBlues,
-  greens:      _.interpolateGreens,
-  greys:       _.interpolateGreys,
-  purples:     _.interpolatePurples,
-  reds:        _.interpolateReds,
-  oranges:     _.interpolateOranges
+  plasma:      $.interpolatePlasma
 };
 
-export function reverseInterpolator(interpolator) {
-  return function(i) { return interpolator(1 - i); };
+function add(name, suffix) {
+  schemes[name] = _['interpolate' + suffix];
+  discrete[name] = _['scheme' + suffix];
 }
 
+// sequential single-hue
+add('blues',    'Blues');
+add('greens',   'Greens');
+add('greys',    'Greys');
+add('purples',  'Purples');
+add('reds',     'Reds');
+add('oranges',  'Oranges');
+
+// diverging
+add('brownbluegreen',    'BrBG');
+add('purplegreen',       'PRGn');
+add('pinkyellowgreen',   'PiYG');
+add('purpleorange',      'PuOr');
+add('redblue',           'RdBu');
+add('redgrey',           'RdGy');
+add('redyellowblue',     'RdYlBu');
+add('redyellowgreen',    'RdYlGn');
+add('spectral',          'Spectral');
+
+// sequential multi-hue
+add('bluegreen',         'BuGn');
+add('bluepurple',        'BuPu');
+add('greenblue',         'GnBu');
+add('orangered',         'OrRd');
+add('purplebluegreen',   'PuBuGn');
+add('purpleblue',        'PuBu');
+add('purplered',         'PuRd');
+add('redpurple',         'RdPu');
+add('yellowgreenblue',   'YlGnBu');
+add('yellowgreen',       'YlGn');
+add('yelloworangebrown', 'YlOrBr');
+add('yelloworangered',   'YlOrRd');
+
 export default function(name, scheme) {
-  return arguments.length > 1 ? (schemes[name] = scheme, this)
-    : schemes.hasOwnProperty(name) ? schemes[name] : null;
+  if (arguments.length > 1) return (schemes[name] = scheme, this);
+
+  var part = name.split('-');
+  name = part[0];
+  part = +part[1] + 1;
+
+  return part && discrete.hasOwnProperty(name) ? discrete[name][part-1]
+    : !part && schemes.hasOwnProperty(name) ? schemes[name]
+    : undefined;
 }

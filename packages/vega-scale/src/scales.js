@@ -1,30 +1,16 @@
-import {default as scaleBand, point as scalePoint} from './band';
-import scaleIndex from './index';
 import invertRange from './invertRange';
 import invertRangeExtent from './invertRangeExtent';
-import {default as getScheme, reverseInterpolator} from './schemes';
-import {error, isFunction} from 'vega-util';
+import {default as scaleBand, point as scalePoint} from './scaleBand';
+import scaleSequential from './scaleSequential';
+
 import * as $ from 'd3-scale';
 
 /**
  * Augment scales with their type and needed inverse methods.
  */
 function create(type, constructor) {
-  return function scale(scheme, reverse) {
-    if (scheme) {
-      if (!(scheme = getScheme(scheme))) {
-        error('Unrecognized scale scheme: ' + scheme)
-      }
-      if (reverse) {
-        scheme = isFunction(scheme)
-          ? reverseInterpolator(scheme)
-          : scheme.slice().reverse();
-      }
-    }
-
-    var s = constructor(scheme);
-
-    s.type = type;
+  return function scale() {
+    var s = constructor();
 
     if (!s.invertRange) {
       s.invertRange = s.invert ? invertRange(s)
@@ -32,13 +18,13 @@ function create(type, constructor) {
         : undefined;
     }
 
-    return s;
+    return s.type = type, s;
   };
 }
 
 export default function scale(type, scale) {
   return arguments.length > 1 ? (scales[type] = create(type, scale), this)
-    : scales.hasOwnProperty(type) ? scales[type] : null;
+    : scales.hasOwnProperty(type) ? scales[type] : undefined;
 }
 
 var scales = {
@@ -54,12 +40,11 @@ var scales = {
   threshold:   $.scaleThreshold,
   time:        $.scaleTime,
   utc:         $.scaleUtc,
-  sequential:  $.scaleSequential,
 
   // extended scale types
   band:        scaleBand,
   point:       scalePoint,
-  index:       scaleIndex
+  sequential:  scaleSequential
 };
 
 for (var key in scales) {
