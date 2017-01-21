@@ -25,6 +25,7 @@ export default {
         },
         "orient": {
           "enum": [
+            "none",
             "left",
             "right",
             "top-left",
