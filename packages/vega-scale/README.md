@@ -7,11 +7,11 @@ managing scale mappings and color schemes. By default, the scale and
 scheme registries include all scale types and color schemes provided
 by the D3 4.0 [d3-scale](https://github.com/d3/d3-scale) and
 [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic) modules.
-In addition, this module provides a new `'index'` scale type for
-supporting mappings from a sorted ordinal domain to a continuous range.
-Internally, an index scale maps an ordinal domain to a range of
-consecutive integer values, which in turn can map to a continuous
-output range such as a color ramp or sequential color scheme.
+
+This module also provides augmented implementations of `'band'`, `'point'`,
+and `'sequential'` scales in order to provide improved layout and
+inversion support for band/point scales, and multi-domain and color range
+array support for sequential scales.
 
 ## API Reference
 
@@ -34,11 +34,6 @@ or `invertExtent` method are augmented with an additional `invertRange`
 function that returns an array of corresponding domain values for a given
 interval in the scale's output range.
 
-Scale constructors returned by this method accept two optional parameters:
-a *scheme* string, indicating a valid [scheme](#scheme) name applicable to
-either `'ordinal'` or `'sequential'` scales; and a *reverse* boolean,
-indicating if a sequential color scheme should be reversed.
-
 ```js
 // linear scale
 var linear = vega.scale('linear');
@@ -55,18 +50,15 @@ var scale1 = ordinal().domain(['a', 'b', 'c']).range([0, 1, 2]);
 scale1.type; // 'ordinal'
 
 // ordinal scale with range set to the 'category20' color palette
-var scale2 = ordinal(vega.scheme('category20'));
+var scale2 = ordinal().range(vega.scheme('category20'));
 ```
 
 ```js
 var seq = vega.scale('sequential');
 
 // sequential scale, using the plasma color palette
-var scale1 = seq(vega.scheme('plasma'));
+var scale1 = seq().interpolator(vega.scheme('plasma'));
 scale1.type; // 'sequential'
-
-// sequential scale, using a reversed viridis color palette
-var scale2 = seq(vega.scheme('viridis'), true);
 ```
 
 <a name="scheme" href="#scheme">#</a>
@@ -84,7 +76,42 @@ to add to the registry under the given *name*.
 By default, the scheme registry includes entries for all scheme types
 provided by D3 4.0's [d3-scale](https://github.com/d3/d3-scale) and
 [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic) module.
-Valid schemes are either arrays of color values (applicable to
+Valid schemes are either arrays of color values (e.g., applicable to
 `'ordinal'` scales) or
 [interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
-functions (applicable to `'sequential'` scales.)
+functions (e.g., applicable to `'sequential'` scales.)
+
+<a name="interpolate" href="#interpolate">#</a>
+vega.<b>interpolate</b>(<i>name</i>[, <i>gamma</i>])
+[<>](https://github.com/vega/vega-scale/blob/master/src/interpolate.js "Source")
+
+Returns the D3 interpolator factory with the given *name* and optional
+*gamma*. All interpolator types provided by the
+[d3-interpolate](https://github.com/d3/d3-interpolate) module are supported.
+However, Vega uses hyphenated rather than camelCase names.
+
+```js
+var rgbBasis = vega.interpolate('rgb-basis'); // d3.interpolateRgbBasis
+var rgbGamma = vega.interpolate('rgb', 2.2);  // d3.interpolateRgb.gamma(2.2)
+```
+
+<a name="interpolateRange" href="#interpolateRange">#</a>
+vega.<b>interpolateRange</b>(<i>interpolator</i>, <i>range</i>])
+[<>](https://github.com/vega/vega-scale/blob/master/src/interpolate.js "Source")
+
+Given a D3 *interpolator* instance, return a new interpolator with a modified
+interpolation *range*. The *range* argument should be a two element array
+whose entries lie in the range [0, 1]. This method is convenient for
+transforming the range of values over which interpolation is performed.
+
+```js
+var number = d3.interpolateNumber(0, 10);
+number(0);   // 0
+number(0.5); // 5
+number(1);   // 1
+
+var range = vega.interpolateRange(number, [0.2, 0.8]);
+range(0);   // 2
+range(0.5); // 5
+range(1);   // 8
+```

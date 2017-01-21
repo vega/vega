@@ -1,6 +1,6 @@
 {
   "name": "vega-scale",
-  "version": "1.1.1",
+  "version": "2.0.0-beta.0",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
     "vega",
@@ -22,15 +22,16 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-scale.js -c -m -o build/vega-scale.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-scale:d3,d3-scale-chromatic:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,d3-scale-chromatic:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-scale.zip -- LICENSE README.md build/vega-scale.js build/vega-scale.min.js"
   },
   "dependencies": {
     "d3-array": "1",
+    "d3-interpolate": "1",
     "d3-scale": "1",
-    "d3-scale-chromatic": "1",
+    "d3-scale-chromatic": "^1.1",
     "vega-util": "1"
   },
   "devDependencies": {
