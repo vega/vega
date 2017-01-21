@@ -56,6 +56,25 @@ are defined within blocks with names matching a valid mark type (e.g.,
 `"area"`, `"line"`, `"rect"`). The valid properties within each block consist
 of the legal mark properties (e.g., `"fill"`, `"stroke"`, `"size"`, `"font"`).
 
+For example, to set default fill color and size for symbol marks:
+```json
+"symbol": {
+  "fill": "steelblue",
+  "size": 64
+}
+```
+
+Defaults for fill or stroke color will _only_ be applied if neither the
+`"fill"` not `"stroke"` properties are defined.
+
+In addition, global defaults for **all** mark types can be set using
+the `"mark"` config property. For example, to set a global opacity value:
+```json
+"mark": {
+  "opacity": 0.8
+}
+```
+
 ### Axis Properties
 
 Properties defining default settings for axes. These properties are defined
@@ -70,19 +89,19 @@ orientation-based options, which in turn take precedence over general options.
 - *minExtent*: The minimum extent (in pixels) that axis ticks and labels should use. This determines a minimum offset value for axis titles.
 - *maxExtent*: The maximum extent (in pixels) that axist ticks and labels should use. This determines a maximum offset value for axis titles.
 - *bandPosition*: An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands.
-- *domainDefault*: Boolean flag indicating if axis domain line should be included by default.
+- *domain*: Boolean flag indicating if axis domain line should be included by default.
 - *domainColor*: Color of axis domain line.
 - *domainWidth*: Stroke width of axis domain line.
-- *gridDefault*: Boolean flag indicating if axis grid lines should be included by default.
+- *grid*: Boolean flag indicating if axis grid lines should be included by default.
 - *gridWidth*: Stroke width of axis grid lines.
 - *gridColor*: Color of axis grid lines.
 - *gridDash*: Stroke dash of axis grid lines (or `[]` for solid lines).
 - *gridOpacity*: Opacity of axis grid lines.
-- *labelDefault*: Boolean flag indicating if axis tick labels should be included by default.
+- *label*: Boolean flag indicating if axis tick labels should be included by default.
 - *labelColor*: Text color for axis tick labels.
 - *labelFont*: Font name for axis tick labels.
 - *labelFontSize*: Font size for axis tick labels.
-- *tickDefault*: Boolean flag indicating if axis tick marks should be included by default.
+- *tick*: Boolean flag indicating if axis tick marks should be included by default.
 - *tickColor*: Color for axis ticks.
 - *tickExtra*: Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
 - *tickRound*: Boolean flag indicating if pixel position values should be rounded to the nearest integer.
@@ -135,5 +154,9 @@ Properties defining named range arrays that can be used within scale
 range definitions (such as `{"type": "ordinal", "range": "category"}`).
 These properties are defined within a `"range"` block.
 
-- *category*: Array of colors for the default categorical palette.
+- *category*: Default color scheme for categorical data.
+- *ordinal*: Default color scheme for rank-ordered data.
+- *ramp*: Default color scheme for sequential quantitative ramps.
+- *diverging*: Default color scheme for diverging quantitative ramps.
+- *heatmap*: Default color scheme for quantitative heatmaps.
 - *symbol*: Array of symbol names for the default shape palette.

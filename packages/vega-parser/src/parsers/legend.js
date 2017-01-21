@@ -21,7 +21,8 @@ export default function(spec, scope) {
       legendEncode, entryEncode, children;
 
   // resolve 'canonical' scale name
-  var scale = spec.size || spec.shape || spec.fill || spec.stroke || spec.opacity;
+  var scale = spec.size || spec.shape || spec.fill || spec.stroke
+           || spec.strokeDash || spec.opacity;
 
   if (!scale) {
     error('Missing valid scale for legend.');
