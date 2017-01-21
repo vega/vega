@@ -4,6 +4,7 @@ import {constant, inherits, isFunction, truthy} from 'vega-util';
 import {scale} from 'vega-scale';
 
 var output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+var params = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
 
 export default function Wordcloud(params) {
   Transform.call(this, cloud(), params);
@@ -12,16 +13,13 @@ export default function Wordcloud(params) {
 var prototype = inherits(Wordcloud, Transform);
 
 prototype.transform = function(_, pulse) {
-  var mod = _.modified(),
-      run = mod
-        || pulse.changed(pulse.ADD_REM)
-        || isFunction(_.text) && pulse.modified(_.text.fields)
-        || isFunction(_.font) && pulse.modified(_.font.fields)
-        || isFunction(_.rotate) && pulse.modified(_.rotate.fields)
-        || isFunction(_.fontSize) && pulse.modified(_.fontSize.fields)
-        || isFunction(_.fontStyle) && pulse.modified(_.fontStyle.fields)
-        || isFunction(_.fontWeight) && pulse.modified(_.fontWeight.fields);
-  if (!run) return;
+  function modp(param) {
+    var p = _[param];
+    return isFunction(p) && pulse.modified(p.fields);
+  }
+
+  var mod = _.modified();
+  if (!(mod || pulse.changed(pulse.ADD_REM) || params.some(modp))) return;
 
   var layout = this.value,
       as = _.as || output,
