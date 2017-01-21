@@ -1,33 +1,36 @@
 import {Transform} from 'vega-dataflow';
-import {scale as getScale, bandSpace} from 'vega-scale';
 import {error, inherits, isFunction, toSet} from 'vega-util';
-import {interpolate, interpolateRound} from 'd3-interpolate';
 
-var SKIP = {
-  'set': 1,
-  'modified': 1,
-  'clear': 1,
+import {
+  bandSpace,
+  interpolateRange,
+  interpolate as getInterpolate,
+  scale as getScale,
+  scheme as getScheme
+} from 'vega-scale';
 
-  'type': 1,
-  'scheme': 1,
-
-  'domain': 1,
-  'domainMin': 1,
-  'domainMax': 1,
-  'domainRaw': 1,
-  'nice': 1,
-  'zero': 1,
-
-  'range': 1,
-  'rangeStep': 1,
-  'round': 1,
-  'reverse': 1
-};
+import {
+  interpolate,
+  interpolateRgbBasis,
+  interpolateRound,
+  quantize
+} from 'd3-interpolate';
 
 var BAND = 'band',
-    POINT = 'point';
+    POINT = 'point',
+    QUANTILE = 'quantile',
+    QUANTIZE = 'quantize',
+    THRESHOLD = 'threshold',
+    SEQUENTIAL = 'sequential',
+    DEFAULT_QUANTUM_COUNT = 7;
 
 var INCLUDE_ZERO = toSet(['linear', 'pow', 'sqrt']);
+
+var SKIP = toSet([
+  'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent',
+  'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'nice', 'zero',
+  'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
+]);
 
 /**
  * Maintains a scale function mapping data values to visual channels.
@@ -42,54 +45,62 @@ export default function Scale(params) {
 var prototype = inherits(Scale, Transform);
 
 prototype.transform = function(_, pulse) {
-  var scale = this.value, prop,
-      create = !scale
-            || _.modified('type')
-            || _.modified('scheme')
-            || _.scheme && _.modified('reverse');
+  var df = pulse.dataflow,
+      scale = this.value,
+      prop;
 
-  if (create) {
-    this.value = (scale = createScale(_.type, _.scheme, _.reverse));
+  if (!scale || _.modified('type')) {
+    this.value = scale = getScale((_.type || 'linear').toLowerCase())();
   }
 
   for (prop in _) if (!SKIP[prop]) {
     isFunction(scale[prop])
       ? scale[prop](_[prop])
-      : pulse.dataflow.warn('Unsupported scale property: ' + prop);
+      : df.warn('Unsupported scale property: ' + prop);
   }
 
-  configureRange(scale, _, configureDomain(scale, _));
+  configureRange(scale, _, configureDomain(scale, _), df);
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
-function createScale(type, scheme, reverse) {
-  var scale = getScale((type || 'linear').toLowerCase());
-  return scale(scheme && scheme.toLowerCase(), reverse);
-}
-
-function configureDomain(scale, _) {
+function configureDomain(scale, _, df) {
+  // check raw domain, if provided use that and exit early
   var raw = rawDomain(scale, _.domainRaw);
   if (raw > -1) return raw;
 
   var domain = _.domain,
       zero = _.zero || (_.zero === undefined && INCLUDE_ZERO[scale.type]),
-      n;
+      n, mid;
 
   if (!domain) return 0;
 
-  if (zero || _.domainMin != null || _.domainMax != null) {
-    n = (domain = domain.slice()).length - 1;
+  // adjust domain based on zero, min, max settings
+  if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
+    n = ((domain = domain.slice()).length - 1) || 1;
     if (zero) {
       if (domain[0] > 0) domain[0] = 0;
       if (domain[n] < 0) domain[n] = 0;
     }
     if (_.domainMin != null) domain[0] = _.domainMin;
     if (_.domainMax != null) domain[n] = _.domainMax;
+
+    if (_.domainMid != null) {
+      mid = _.domainMid;
+      if (mid < domain[0] || mid > domain[n]) {
+        df.warn('Scale domainMid exceeds domain min or max.', mid);
+      }
+      domain.splice(n, 0, mid);
+    }
   }
 
+  // set the scale domain
   scale.domain(domain);
+
+  // perform 'nice' adjustment as requested
   if (_.nice && scale.nice) scale.nice((_.nice !== true && +_.nice) || null);
+
+  // return the cardinality of the domain
   return domain.length;
 }
 
@@ -98,32 +109,84 @@ function rawDomain(scale, raw) {
 }
 
 function configureRange(scale, _, count) {
-  var type = scale.type,
-      round = _.round || false,
+  var round = _.round || false,
       range = _.range;
 
-  // configure rounding
-  if (isFunction(scale.round)) {
+  // if range step specified, calculate full range extent
+  if (_.rangeStep != null) {
+    range = configureRangeStep(scale.type, _, count);
+  }
+
+  // else if a range scheme is defined, use that
+  else if (_.scheme) {
+    range = configureScheme(scale.type, _, count);
+    if (isFunction(range)) return scale.interpolator(range);
+  }
+
+  // given a range array for a sequential scale, convert to interpolator
+  else if (range && scale.type === SEQUENTIAL) {
+    return scale.interpolator(interpolateRgbBasis(flip(range, _.reverse)));
+  }
+
+  // configure rounding / interpolation
+  if (range && _.interpolate && scale.interpolate) {
+    scale.interpolate(getInterpolate(_.interpolate, _.interpolateGamma));
+  } else if (isFunction(scale.round)) {
     scale.round(round);
   } else if (isFunction(scale.rangeRound)) {
     scale.interpolate(round ? interpolateRound : interpolate);
   }
 
-  // if range step specified, calculate full range extent
-  if (_.rangeStep != null) {
-    if (type !== BAND && type !== POINT) {
-      error('Only band and point scales support rangeStep.');
-    }
+  if (range) scale.range(flip(range, _.reverse));
+}
 
-    // calculate full range based on requested step size and padding
-    var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-        inner = type === POINT ? 1
-              : ((_.paddingInner != null ? _.paddingInner : _.padding) || 0);
-    range = [0, _.rangeStep * bandSpace(count, inner, outer)];
+function configureRangeStep(type, _, count) {
+  if (type !== BAND && type !== POINT) {
+    error('Only band and point scales support rangeStep.');
   }
 
-  if (range) {
-    if (_.reverse) range = range.slice().reverse();
-    scale.range(range);
+  // calculate full range based on requested step size and padding
+  var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
+      inner = type === POINT ? 1
+            : ((_.paddingInner != null ? _.paddingInner : _.padding) || 0);
+  return [0, _.rangeStep * bandSpace(count, inner, outer)];
+}
+
+function configureScheme(type, _, count) {
+  var name = _.scheme.toLowerCase(),
+      scheme = getScheme(name),
+      extent = _.schemeExtent,
+      discrete;
+
+  if (!scheme) {
+    error('Unrecognized scheme name: ' + _.scheme);
   }
+
+  // determine size for potential discrete range
+  count = (type === THRESHOLD) ? count + 1
+    : (type === QUANTILE || type === QUANTIZE) ? DEFAULT_QUANTUM_COUNT
+    : count;
+
+  // adjust and/or quantize scheme as appropriate
+  return type === SEQUENTIAL ? adjustScheme(scheme, extent, _.reverse)
+    : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
+    : isFunction(scheme) ? quantize(adjustScheme(scheme, extent), count)
+    : scheme;
+}
+
+function adjustScheme(scheme, extent, reverse) {
+  return (isFunction(scheme) && (extent || reverse))
+    ? interpolateRange(scheme, flip(extent || [0, 1], reverse))
+    : scheme;
+}
+
+function flip(array, reverse) {
+  return reverse ? array.slice().reverse() : array;
+}
+
+function quantize(interpolator, count) {
+  var samples = new Array(count),
+      n = (count - 1) || 1;
+  for (var i = 0; i < count; ++i) samples[i] = interpolator(i / n);
+  return samples;
 }
