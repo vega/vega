@@ -1,3 +1,5 @@
+import {getState, setState} from './state';
+
 /**
  * Context objects store the current parse state.
  * Enables lookup of parsed operators, event streams, accessors, etc.
@@ -105,5 +107,7 @@ Context.prototype = ContextFork.prototype = {
   },
   update: function(spec, stream, target, update, params) {
     this.dataflow.on(stream, target, update, params, spec.options);
-  }
+  },
+  getState: getState,
+  setState: setState
 };
