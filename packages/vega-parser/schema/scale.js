@@ -25,7 +25,8 @@ var rangeDef = [
     "type": "object",
     "properties": {
       "scheme": {"$ref": "#/refs/scaleScheme"},
-      "extent": {"$ref": "#/refs/scaleSchemeExtent"}
+      "extent": {"$ref": "#/refs/scaleSchemeExtent"},
+      "count": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
     },
     "required": ["scheme"]
   },
