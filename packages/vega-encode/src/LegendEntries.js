@@ -1,7 +1,8 @@
 import {Transform, ingest} from 'vega-dataflow';
 import {scaleFraction} from 'vega-scale';
 import {constant, inherits, isFunction, peek} from 'vega-util';
-import {tickValues, tickFormat} from './ticks';
+import {labelValues, labelFormat} from './labels';
+import {tickFormat} from './ticks';
 
 /**
  * Generates legend entries for visualizing a scale.
@@ -37,8 +38,9 @@ prototype.transform = function(_, pulse) {
       scale = _.scale,
       count = _.count == null ? 5 : _.count,
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
-      values = _.values || (grad ? scale.domain() : tickValues(scale, count));
+      values = _.values || labelValues(scale, count, grad);
 
+  format = labelFormat(scale, format);
   if (items) out.rem = items;
 
   if (grad) {
@@ -62,7 +64,12 @@ prototype.transform = function(_, pulse) {
   }
 
   items = values.map(function(value, index) {
-    var t = ingest({index: index, label: format(value), value: value});
+    var t = ingest({
+      index: index,
+      label: format(value, index, values),
+      value: value
+    });
+
     if (grad) {
       t.perc = fraction(value);
     } else {
