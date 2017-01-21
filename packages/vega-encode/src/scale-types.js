@@ -1,0 +1,11 @@
+export var Log = 'log';
+export var Pow = 'pow';
+export var Sqrt = 'sqrt';
+export var Band = 'band';
+export var Point = 'point';
+export var Linear = 'linear';
+export var Ordinal = 'ordinal';
+export var Quantile = 'quantile';
+export var Quantize = 'quantize';
+export var Threshold = 'threshold';
+export var Sequential = 'sequential';

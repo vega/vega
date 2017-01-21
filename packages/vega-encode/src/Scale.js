@@ -2,6 +2,12 @@ import {Transform} from 'vega-dataflow';
 import {error, inherits, isFunction, toSet} from 'vega-util';
 
 import {
+  Ordinal, Band, Point,
+  Linear, Pow, Sqrt, Sequential,
+  Quantile, Quantize, Threshold
+} from './scale-types';
+
+import {
   bandSpace,
   interpolateRange,
   interpolate as getInterpolate,
@@ -15,18 +21,12 @@ import {
   interpolateRound
 } from 'd3-interpolate';
 
-var BAND = 'band',
-    POINT = 'point',
-    QUANTILE = 'quantile',
-    QUANTIZE = 'quantize',
-    THRESHOLD = 'threshold',
-    SEQUENTIAL = 'sequential',
-    DEFAULT_QUANTUM_COUNT = 7;
+var DEFAULT_COUNT = 5;
 
-var INCLUDE_ZERO = toSet(['linear', 'pow', 'sqrt']);
+var INCLUDE_ZERO = toSet([Linear, Pow, Sqrt]);
 
 var SKIP = toSet([
-  'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent',
+  'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
   'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'nice', 'zero',
   'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
 ]);
@@ -49,7 +49,7 @@ prototype.transform = function(_, pulse) {
       prop;
 
   if (!scale || _.modified('type')) {
-    this.value = scale = getScale((_.type || 'linear').toLowerCase())();
+    this.value = scale = getScale((_.type || Linear).toLowerCase())();
   }
 
   for (prop in _) if (!SKIP[prop]) {
@@ -123,7 +123,7 @@ function configureRange(scale, _, count) {
   }
 
   // given a range array for a sequential scale, convert to interpolator
-  else if (range && scale.type === SEQUENTIAL) {
+  else if (range && scale.type === Sequential) {
     return scale.interpolator(interpolateRgbBasis(flip(range, _.reverse)));
   }
 
@@ -140,13 +140,13 @@ function configureRange(scale, _, count) {
 }
 
 function configureRangeStep(type, _, count) {
-  if (type !== BAND && type !== POINT) {
+  if (type !== Band && type !== Point) {
     error('Only band and point scales support rangeStep.');
   }
 
   // calculate full range based on requested step size and padding
   var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-      inner = type === POINT ? 1
+      inner = type === Point ? 1
             : ((_.paddingInner != null ? _.paddingInner : _.padding) || 0);
   return [0, _.rangeStep * bandSpace(count, inner, outer)];
 }
@@ -162,15 +162,15 @@ function configureScheme(type, _, count) {
   }
 
   // determine size for potential discrete range
-  count = (type === THRESHOLD) ? count + 1
-    : (type === QUANTILE || type === QUANTIZE) ? DEFAULT_QUANTUM_COUNT
+  count = (type === Threshold) ? count + 1
+    : (type === Quantile || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
     : count;
 
   // adjust and/or quantize scheme as appropriate
-  return type === SEQUENTIAL ? adjustScheme(scheme, extent, _.reverse)
+  return type === Sequential ? adjustScheme(scheme, extent, _.reverse)
     : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
     : isFunction(scheme) ? quantize(adjustScheme(scheme, extent), count)
-    : scheme;
+    : type === Ordinal ? scheme : scheme.slice(0, count);
 }
 
 function adjustScheme(scheme, extent, reverse) {

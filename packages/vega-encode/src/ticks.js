@@ -1,3 +1,5 @@
+import {Log} from './scale-types';
+
 import {
   format as numberFormat,
   formatSpecifier
@@ -35,7 +37,7 @@ export function tickFormat(scale, count, specifier) {
     ? scale.tickFormat(count, specifier)
     : String;
 
-  return (scale.type === 'log')
+  return (scale.type === Log)
     ? filter(format, variablePrecision(specifier))
     : format;
 }
