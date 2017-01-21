@@ -35,7 +35,7 @@
     "d3-time-format": "2",
     "vega-dataflow": ">=2.0.0-beta",
     "vega-expression": "2",
-    "vega-scale": "^1.1",
+    "vega-scale": ">=2.0.0-beta",
     "vega-scenegraph": ">=2.0.0-beta",
     "vega-util": "^1.1"
   },
