@@ -109,7 +109,7 @@ function layoutAxis(axis, width, height) {
 
   // position axis group and title
   switch (orient) {
-    case 'top': {
+    case 'top':
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
@@ -118,8 +118,7 @@ function layoutAxis(axis, width, height) {
         : bounds.union(title.bounds);
       bounds.add(0, -s).add(range, 0);
       break;
-    }
-    case 'left': {
+    case 'left':
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
@@ -128,8 +127,7 @@ function layoutAxis(axis, width, height) {
         : bounds.union(title.bounds);
       bounds.add(-s, 0).add(0, range);
       break;
-    }
-    case 'right': {
+    case 'right':
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
@@ -138,8 +136,7 @@ function layoutAxis(axis, width, height) {
         : bounds.union(title.bounds);
       bounds.add(0, 0).add(s, range);
       break;
-    }
-    case 'bottom': {
+    case 'bottom':
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
@@ -148,7 +145,9 @@ function layoutAxis(axis, width, height) {
         : bounds.union(title.bounds);
       bounds.add(0, 0).add(range, s);
       break;
-    }
+    default:
+      x = item.x;
+      y = item.y;
   }
 
   item.x = x + 0.5;
@@ -201,6 +200,9 @@ function layoutLegend(legend, flow, axisBounds, width, height) {
       x += width - w - offset;
       y += height - h - offset;
       break;
+    default:
+      x = item.x;
+      y = item.y;
   }
 
   // update legend layout
