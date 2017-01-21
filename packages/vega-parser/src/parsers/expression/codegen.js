@@ -1,5 +1,4 @@
 import {codegen, constants, functions} from 'vega-expression';
-import {scaleGradient} from 'vega-scenegraph';
 import {pad, stringValue, truncate} from 'vega-util';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 
@@ -16,6 +15,7 @@ import {pinchDistance, pinchAngle} from './pinch';
 import {open, screen, windowsize} from './window';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
+import scaleGradient from './scale-gradient';
 import {geoArea, geoBounds, geoCentroid} from './geo';
 import {data, indata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
