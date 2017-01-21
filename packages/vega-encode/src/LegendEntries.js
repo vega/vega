@@ -1,5 +1,6 @@
 import {Transform, ingest} from 'vega-dataflow';
-import {constant, inherits, isFunction} from 'vega-util';
+import {scaleFraction} from 'vega-scale';
+import {constant, inherits, isFunction, peek} from 'vega-util';
 import {tickValues, tickFormat} from './ticks';
 
 /**
@@ -42,15 +43,16 @@ prototype.transform = function(_, pulse) {
 
   if (grad) {
     var domain = _.values ? scale.domain() : values,
-        min = domain[0],
-        max = domain[domain.length - 1],
-        fraction = scale.range
-            ? scale.copy().domain([min, max]).range([0, 1])
-            : function(_) { return (_ - min) / (max - min); };
+        fraction = scaleFraction(scale, domain[0], peek(domain));
   } else {
     var size = _.size,
         offset;
     if (isFunction(size)) {
+      // if first value maps to size zero, remove from list (vega#717)
+      if (!_.values && scale(values[0]) === 0) {
+        values = values.slice(1);
+      }
+      // compute size offset for legend entries
       offset = values.reduce(function(max, value) {
         return Math.max(max, size(value, _));
       }, 0);
