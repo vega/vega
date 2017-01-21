@@ -218,6 +218,7 @@ function parseScaleRange(spec, scope, params) {
   } else if (range.scheme) {
     params.scheme = parseLiteral(range.scheme, scope);
     if (range.extent) params.schemeExtent = parseArray(range.extent, scope);
+    if (range.count) params.schemeCount = parseLiteral(range.count, scope);
     return;
   } else if (isOrdinal(spec.type) && !isArray(range)) {
     return parseScaleDomain(range, spec, scope);
