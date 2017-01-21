@@ -1,6 +1,6 @@
 import {ref, keyFieldRef} from '../util';
 import {Collect, Aggregate, MultiExtent, MultiValues, Values} from '../transforms';
-import {error, isArray, isObject, isString, stringValue, toSet} from 'vega-util';
+import {error, extend, isArray, isObject, isString, stringValue, toSet} from 'vega-util';
 
 var types = [
   'identity',
@@ -38,11 +38,15 @@ export default function(spec, scope) {
     if (spec.rangeStep != null) {
       error('Scale range and rangeStep are mutually exclusive.');
     }
-    params.range = parseScaleRange(spec, scope);
+    params.range = parseScaleRange(spec, scope, params);
+  }
+
+  if (spec.interpolate != null) {
+    parseScaleInterpolate(spec.interpolate, params);
   }
 
   for (key in spec) {
-    if (params[key] || key === 'name') continue;
+    if (params.hasOwnProperty(key) || key === 'name') continue;
     params[key] = parseLiteral(spec[key], scope);
   }
 
@@ -53,6 +57,12 @@ function parseLiteral(v, scope) {
   return !isObject(v) ? v
     : v.signal ? scope.signalRef(v.signal)
     : error('Unsupported object: ' + stringValue(v));
+}
+
+function parseArray(v, scope) {
+  return v.signal
+    ? scope.signalRef(v.signal)
+    : v.map(function(v) { return parseLiteral(v, scope); });
 }
 
 function dataLookupError(name) {
@@ -175,9 +185,18 @@ function numericMultipleDomain(domain, scope, fields) {
   return ref(scope.add(MultiExtent({extents: extents})));
 }
 
+// -- SCALE INTERPOLATION -----
+
+function parseScaleInterpolate(interpolate, params) {
+  params.interpolate = parseLiteral(interpolate.type || interpolate);
+  if (interpolate.gamma != null) {
+    params.interpolateGamma = parseLiteral(interpolate.gamma);
+  }
+}
+
 // -- SCALE RANGE -----
 
-function parseScaleRange(spec, scope) {
+function parseScaleRange(spec, scope, params) {
   var range = spec.range,
       config = scope.config.range;
 
@@ -185,7 +204,8 @@ function parseScaleRange(spec, scope) {
     return scope.signalRef(range.signal);
   } else if (isString(range)) {
     if (config && config.hasOwnProperty(range)) {
-      range = config[range];
+      spec = extend({}, spec, {range: config[range]});
+      return parseScaleRange(spec, scope, params);
     } else if (range === 'width') {
       range = [0, {signal: 'width'}]
     } else if (range === 'height') {
@@ -195,6 +215,10 @@ function parseScaleRange(spec, scope) {
     } else {
       error('Unrecognized scale range value: ' + stringValue(range));
     }
+  } else if (range.scheme) {
+    params.scheme = parseLiteral(range.scheme, scope);
+    if (range.extent) params.schemeExtent = parseArray(range.extent, scope);
+    return;
   } else if (isOrdinal(spec.type) && !isArray(range)) {
     return parseScaleDomain(range, spec, scope);
   } else if (!isArray(range)) {
