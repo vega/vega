@@ -84,7 +84,7 @@
     {
       "name": "color",
       "type": "sequential",
-      "scheme": {"signal": "palette"},
+      "range": {"scheme": {"signal": "palette"}},
       "domain": {"data": "temperature", "field": "temp"},
       "reverse": {"signal": "reverse"},
       "zero": false, "nice": false

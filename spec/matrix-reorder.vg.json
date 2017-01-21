@@ -82,7 +82,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "scheme": "category20",
+      "range": {"scheme": "category20"},
       "domain": {"data": "nodes", "field": "group"}
     },
     {

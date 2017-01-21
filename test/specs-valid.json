@@ -28,6 +28,8 @@
   "images",
   "jobs",
   "legends",
+  "legends-ordinal",
+  "legends-quantitative",
   "lifelines",
   "map",
   "map-area-compare",

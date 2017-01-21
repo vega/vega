@@ -44,7 +44,7 @@
       "name": "color",
       "type": "ordinal",
       "domain": {"data": "table", "field": "position"},
-      "scheme": "category20"
+      "range": {"scheme": "category20"}
     }
   ],
 

@@ -72,7 +72,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "scheme": "category10",
+      "range": "category",
       "domain": {"data": "stocks", "field": "symbol"}
     }
   ],

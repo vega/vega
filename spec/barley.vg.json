@@ -43,7 +43,7 @@
     {
       "name": "cscale",
       "type": "ordinal",
-      "scheme": "category10",
+      "range": "category",
       "domain": {"data": "barley", "field": "year"}
     }
   ],

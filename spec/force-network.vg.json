@@ -70,7 +70,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "scheme": "category20c"
+      "range": {"scheme": "category20c"}
     }
   ],
 

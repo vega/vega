@@ -97,7 +97,8 @@
   "scales": [
     {
       "name": "color",
-      "type": "sequential", "scheme": "magma",
+      "type": "sequential",
+      "range": {"scheme": "magma"},
       "domain": {"data": "tree", "field": "depth"},
       "zero": true
     }

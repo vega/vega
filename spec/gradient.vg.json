@@ -8,7 +8,7 @@
     {
       "name": "color",
       "type": "sequential",
-      "scheme": "viridis",
+      "range": {"scheme": "viridis"},
       "domain": [0, 100]
     }
   ],
