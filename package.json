@@ -66,7 +66,7 @@
     "vega-loader": ">=2.0.0-beta.3",
     "vega-parser": ">=1.0.0-beta",
     "vega-runtime": ">=1.0.0-beta",
-    "vega-scale": ">=1.1",
+    "vega-scale": ">=2.0.0-beta",
     "vega-scenegraph": ">=2.0.0-beta.11",
     "vega-statistics": "1",
     "vega-util": "^1.1",

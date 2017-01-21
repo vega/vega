@@ -30,7 +30,9 @@ export {
 
 export {
   scale,
-  scheme
+  scheme,
+  interpolate,
+  interpolateRange
 } from 'vega-scale';
 
 export {
