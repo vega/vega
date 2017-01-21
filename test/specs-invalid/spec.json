@@ -10,9 +10,10 @@
   {"height": true},
   {"height": "foo"},
   {"height": {}},
-  {"schema": null},
-  {"schema": false},
-  {"schema": "3.0"},
+  {"$schema": null},
+  {"$schema": false},
+  {"$schema": 100},
+  {"$schema": {}},
   {"description": null},
   {"description": false},
   {"description": 100}

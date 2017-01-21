@@ -1,5 +1,5 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 300,
   "height": 240,
 
@@ -44,7 +44,7 @@
       "name": "color",
       "type": "ordinal",
       "domain": {"data": "table", "field": "position"},
-      "scheme": "category20"
+      "range": {"scheme": "category20"}
     }
   ],
 

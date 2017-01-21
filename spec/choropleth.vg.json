@@ -1,5 +1,5 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 960,
   "height": 500,
   "autosize": "none",
@@ -33,8 +33,7 @@
       "name": "color",
       "type": "quantize",
       "domain": [0, 0.15],
-      "range": ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6",
-                "#4292c6", "#2171b5", "#08519c", "#08306b"]
+      "range": {"scheme": "blues-9"}
     }
   ],
 

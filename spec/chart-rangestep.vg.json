@@ -1,5 +1,5 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "height": 200,
   "padding": 10,
 
@@ -69,7 +69,7 @@
       "name": "colorScale",
       "type": "ordinal",
       "domain": ["a", "b", "c", "d", "e", "f"],
-      "scheme": "category10"
+      "range": "category"
     },
     {
       "name": "innerScale",

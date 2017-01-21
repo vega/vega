@@ -1,8 +1,28 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 500,
   "height": 200,
   "padding": 5,
+
+  "signals": [
+    {
+      "name": "curve", "value": "monotone",
+      "bind": {
+        "input": "select",
+        "options": [
+          "basis",
+          "cardinal",
+          "catmull-rom",
+          "linear",
+          "monotone",
+          "natural",
+          "step",
+          "step-after",
+          "step-before"
+        ]
+      }
+    }
+  ],
 
   "data": [
     {
@@ -51,13 +71,13 @@
       "from": {"data": "table"},
       "encode": {
         "enter": {
-          "interpolate": {"value": "monotone"},
           "x": {"scale": "xscale", "field": "u"},
           "y": {"scale": "yscale", "field": "v"},
           "y2": {"scale": "yscale", "value": 0},
           "fill": {"value": "steelblue"}
         },
         "update": {
+          "interpolate": {"signal": "curve"},
           "fillOpacity": {"value": 1}
         },
         "hover": {

@@ -1,5 +1,5 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 300,
   "padding": 5,
   "autosize": "pad",
@@ -96,7 +96,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "scheme": "category10",
+      "range": "category",
       "domain": {"data": "trellis", "field": "a"}
     }
   ],

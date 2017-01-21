@@ -1,5 +1,5 @@
 {
-  "schema": {"language": "vega", "version": "3.0"},
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
   "width": 800,
   "height": 500,
   "padding": 5,
@@ -84,7 +84,7 @@
     {
       "name": "color",
       "type": "sequential",
-      "scheme": {"signal": "palette"},
+      "range": {"scheme": {"signal": "palette"}},
       "domain": {"data": "temperature", "field": "temp"},
       "reverse": {"signal": "reverse"},
       "zero": false, "nice": false
@@ -92,7 +92,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month"},
+    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b"},
     {
       "orient": "left", "scale": "y", "domain": false, "title": "Hour",
       "encode": {
