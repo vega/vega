@@ -137,7 +137,7 @@
           "paddingOuter": {"signal": "outerPadding"},
           "round": true,
           "domain": {"data": "faceted_tuples", "field": "b"},
-          "rangeStep": {"signal": "rangeStep"}
+          "range": {"step": {"signal": "rangeStep"}}
         }
       ],
 

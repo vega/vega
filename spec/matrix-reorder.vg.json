@@ -77,7 +77,7 @@
       "name": "position",
       "type": "band",
       "domain": {"data": "nodes", "field": "order", "sort": true},
-      "rangeStep": {"signal": "cellSize"}
+      "range": {"step": {"signal": "cellSize"}}
     },
     {
       "name": "color",
