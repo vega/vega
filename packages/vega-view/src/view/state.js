@@ -25,8 +25,10 @@ export function getState(options) {
   });
 }
 
-function dataTest(name, dataset) {
-  return dataset.modified && isArray(dataset.input.value);
+function dataTest(name, data) {
+  return data.modified
+      && isArray(data.input.value)
+      && name.indexOf('_:vega:_');
 }
 
 function signalTest(name, op) {
