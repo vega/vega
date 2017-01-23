@@ -21,17 +21,41 @@ var rangeDef = [
       ]
     }
   },
+  {"$ref": "#/refs/signal"}
+];
+
+var schemeRangeDef = rangeDef.concat([
   {
     "type": "object",
     "properties": {
-      "scheme": {"$ref": "#/refs/scaleScheme"},
-      "extent": {"$ref": "#/refs/scaleSchemeExtent"},
-      "count": {"oneOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]}
+      "scheme": {"$ref": "#/refs/stringOrSignal"},
+      "count": {"$ref": "#/refs/numberOrSignal"},
+      "extent": {
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {"$ref": "#/refs/numberOrSignal"},
+            "numItems": 2
+          },
+          {"$ref": "#/refs/signal"}
+        ]
+      }
     },
-    "required": ["scheme"]
-  },
-  {"$ref": "#/refs/signal"}
-];
+    "required": ["scheme"],
+    "additionalProperties": false
+  }
+]);
+
+var bandRangeDef = rangeDef.concat([
+  {
+    "type": "object",
+    "properties": {
+      "step": {"$ref": "#/refs/numberOrSignal"}
+    },
+    "required": ["step"],
+    "additionalProperties": false
+  }
+]);
 
 export default {
   "refs": {
@@ -41,33 +65,7 @@ export default {
         {"$ref": "#/refs/signal", "additionalProperties": false}
       ]
     },
-    "scaleField": {
-      "oneOf": [
-        {"type": "string"},
-        {"$ref": "#/refs/signal", "additionalProperties": false}
-      ]
-    },
-    "scaleScheme": {
-      "oneOf": [
-        {"type": "string"},
-        {"$ref": "#/refs/signal", "additionalProperties": false}
-      ]
-    },
-    "scaleSchemeExtent": {
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {"type": "number"},
-              {"$ref": "#/refs/signal"}
-            ]
-          },
-          "numItems": 2
-        },
-        {"$ref": "#/refs/signal"}
-      ]
-    },
+    "scaleField": {"$ref": "#/refs/stringOrSignal"},
     "scaleData": {
       "oneOf": [
         {
@@ -199,24 +197,9 @@ export default {
                 {"$ref": "#/refs/signal"}
               ]
             },
-            "domainMin": {
-              "oneOf": [
-                {"type": "number"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "domainMax": {
-              "oneOf": [
-                {"type": "number"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "domainMid": {
-              "oneOf": [
-                {"type": "number"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
+            "domainMin": {"$ref": "#/refs/numberOrSignal"},
+            "domainMax": {"$ref": "#/refs/numberOrSignal"},
+            "domainMid": {"$ref": "#/refs/numberOrSignal"},
             "domainRaw": {
               "oneOf": [
                 {"type": "null"},
@@ -224,18 +207,8 @@ export default {
                 {"$ref": "#/refs/signal"}
               ]
             },
-            "reverse": {
-              "oneOf": [
-                {"type": "boolean"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "round": {
-              "oneOf": [
-                {"type": "boolean"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
+            "reverse": {"$ref": "#/refs/booleanOrSignal"},
+            "round": {"$ref": "#/refs/booleanOrSignal"}
           },
           "required": ["name"]
         },
@@ -245,7 +218,7 @@ export default {
               "properties": {
                 "type": {"enum": ["ordinal"]},
                 "range": {
-                  "oneOf": rangeDef.concat({"$ref": "#/refs/scaleData"})
+                  "oneOf": schemeRangeDef.concat({"$ref": "#/refs/scaleData"})
                 }
               },
               "required": ["type"]
@@ -253,94 +226,37 @@ export default {
             {
               "properties": {
                 "type": {"enum": ["band"]},
-                "range": {"oneOf": rangeDef},
-                "padding": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "paddingInner": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "paddingOuter": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "align": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "rangeStep": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
+                "range": {"oneOf": bandRangeDef},
+                "padding": {"$ref": "#/refs/numberOrSignal"},
+                "paddingInner": {"$ref": "#/refs/numberOrSignal"},
+                "paddingOuter": {"$ref": "#/refs/numberOrSignal"},
+                "align": {"$ref": "#/refs/numberOrSignal"}
               },
               "required": ["type"]
             },
             {
               "properties": {
                 "type": {"enum": ["point"]},
-                "range": {"oneOf": rangeDef},
-                "padding": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "paddingOuter": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "align": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "rangeStep": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
+                "range": {"oneOf": bandRangeDef},
+                "padding": {"$ref": "#/refs/numberOrSignal"},
+                "paddingOuter": {"$ref": "#/refs/numberOrSignal"},
+                "align": {"$ref": "#/refs/numberOrSignal"}
               },
               "required": ["type"]
             },
             {
               "properties": {
                 "type": {"enum": ["sequential"]},
-                "range": {"oneOf": rangeDef},
-                "clamp": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
+                "range": {"oneOf": schemeRangeDef},
+                "clamp": {"$ref": "#/refs/booleanOrSignal"}
               },
               "required": ["type"]
             },
             {
               "properties": {
                 "type": {"enum": ["time", "utc"]},
-                "range": {"oneOf": rangeDef},
-                "clamp": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
+                "range": {"oneOf": schemeRangeDef},
+                "clamp": {"$ref": "#/refs/booleanOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -354,19 +270,14 @@ export default {
             {
               "properties": {
                 "type": {"enum": ["identity"]},
-                "nice": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
+                "nice": {"$ref": "#/refs/booleanOrSignal"}
               },
               "required": ["type"]
             },
             {
               "properties": {
                 "type": {"enum": ["quantile", "quantize", "threshold"]},
-                "range": {"oneOf": rangeDef}
+                "range": {"oneOf": schemeRangeDef}
               },
               "required": ["type"]
             },
@@ -386,7 +297,7 @@ export default {
                 "required": ["type"]
               },
               "properties": {
-                "range": {"oneOf": rangeDef},
+                "range": {"oneOf": schemeRangeDef},
                 "interpolate": {
                   "oneOf": [
                     {"type": "string"},
@@ -394,29 +305,14 @@ export default {
                     {
                       "type": "object",
                       "properties": {
-                        "type": {
-                          "oneOf": [
-                            {"type": "string"},
-                            {"$ref": "#/refs/signal"}
-                          ]
-                        },
-                        "gamma": {
-                          "oneOf": [
-                            {"type": "number"},
-                            {"$ref": "#/refs/signal"}
-                          ]
-                        }
+                        "type": {"$ref": "#/refs/stringOrSignal"},
+                        "gamma": {"$ref": "#/refs/numberOrSignal"}
                       },
                       "required": ["type"]
                     }
                   ]
                 },
-                "clamp": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
+                "clamp": {"$ref": "#/refs/booleanOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -424,30 +320,15 @@ export default {
                     {"$ref": "#/refs/signal"}
                   ]
                 },
-                "zero": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
+                "zero": {"$ref": "#/refs/booleanOrSignal"}
               }
             },
             {
               "properties": {
                 "type": {"enum": ["pow"]},
-                "range": {"oneOf": rangeDef},
-                "clamp": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "exponent": {
-                  "oneOf": [
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
+                "range": {"oneOf": schemeRangeDef},
+                "clamp": {"$ref": "#/refs/booleanOrSignal"},
+                "exponent": {"$ref": "#/refs/numberOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -455,19 +336,7 @@ export default {
                     {"$ref": "#/refs/signal"}
                   ]
                 },
-                "zero": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                  "type": {"enum": ["index"]},
-                  "range": {"oneOf": rangeDef}
+                "zero": {"$ref": "#/refs/booleanOrSignal"}
               },
               "required": ["type"]
             }
