@@ -48,7 +48,7 @@
     {
       "name": "xscale",
       "type": "band",
-      "rangeStep": 40,
+      "range": {"step": 40},
       "domain": {"data": "values", "field": "x"}
     },
     {

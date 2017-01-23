@@ -55,7 +55,7 @@
     {
       "name": "xscale",
       "type": "band",
-      "rangeStep": {"signal": "step"},
+      "range": {"step": {"signal": "step"}},
       "paddingInner": {"signal": "inner"},
       "paddingOuter": {"signal": "outer"},
       "round": {"signal": "round"},
