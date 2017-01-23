@@ -3,7 +3,7 @@ var rangeDef = [
     "enum": [
       "width",
       "height",
-      "shapes",
+      "symbol",
       "category",
       "ordinal",
       "ramp",
