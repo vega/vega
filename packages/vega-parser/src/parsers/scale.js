@@ -1,6 +1,8 @@
 import {ref, keyFieldRef} from '../util';
-import {Collect, Aggregate, MultiExtent, MultiValues, Values} from '../transforms';
+import {Collect, Aggregate, MultiExtent, MultiValues, Sieve, Values} from '../transforms';
 import {error, extend, isArray, isObject, isString, stringValue, toSet} from 'vega-util';
+
+var FIELD_REF_ID = 0;
 
 var types = [
   'identity',
@@ -76,11 +78,8 @@ function parseScaleDomain(domain, spec, scope) {
     return; // default domain
   }
 
-  if (domain.signal) {
-    return scope.signalRef(domain.signal);
-  }
-
-  return (isArray(domain) ? explicitDomain
+  return domain.signal ? scope.signalRef(domain.signal)
+    : (isArray(domain) ? explicitDomain
     : domain.fields ? multipleDomain
     : singularDomain)(domain, spec, scope);
 }
@@ -104,12 +103,29 @@ function singularDomain(domain, spec, scope) {
 function multipleDomain(domain, spec, scope) {
   var data = domain.data,
       fields = domain.fields.reduce(function(dom, d) {
-        return dom.push(isString(d) ? {data: data, field: d} : d), dom;
+        d = isString(d) ? {data: data, field: d}
+          : (isArray(d) || d.signal) ? fieldRef(d, scope)
+          : d;
+        return dom.push(d), dom;
       }, []);
 
   return (isOrdinal(spec.type) ? ordinalMultipleDomain
     : isQuantile(spec.type) ? quantileMultipleDomain
     : numericMultipleDomain)(domain, scope, fields);
+}
+
+function fieldRef(data, scope) {
+  var name = '_:vega:_' + (FIELD_REF_ID++),
+      coll = Collect({});
+
+  if (isArray(data)) {
+    coll.value = {$ingest: data};
+  } else if (data.signal) {
+    scope.signalRef('modify(' + stringValue(name)
+      + ',' + data.signal + ', true)');
+  }
+  scope.addDataPipeline(name, [coll, Sieve({})]);
+  return {data: name, field: 'data'};
 }
 
 function ordinalMultipleDomain(domain, scope, fields) {

@@ -336,7 +336,7 @@ prototype.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + stringValue(name));
   }
-  this.data[name] = dataScope;
+  return (this.data[name] = dataScope);
 };
 
 prototype.getData = function(name) {
@@ -350,5 +350,5 @@ prototype.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + stringValue(name));
   }
-  this.addData(name, DataScope.fromEntries(this, entries));
+  return this.addData(name, DataScope.fromEntries(this, entries));
 };

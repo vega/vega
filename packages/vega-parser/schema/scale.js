@@ -97,20 +97,7 @@ export default {
             "data": {"type": "string"},
             "fields": {
               "type": "array",
-              "items": {
-                "oneOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "data": {"type": "string"},
-                      "field": {"$ref": "#/refs/scaleField"},
-                    },
-                    "required": ["field"],
-                    "additionalProperties": false
-                  },
-                  {"$ref": "#/refs/scaleField"}
-                ]
-              },
+              "items": {"$ref": "#/refs/scaleField"},
               "minItems": 1
             },
             "sort": {
@@ -145,7 +132,17 @@ export default {
                     "required": ["data", "field"],
                     "additionalProperties": false
                   },
-                  {"$ref": "#/refs/scaleField"}
+                  {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {"type": "string"},
+                        {"type": "number"},
+                        {"type": "boolean"}
+                      ]
+                    }
+                  },
+                  {"$ref": "#/refs/signal"}
                 ]
               },
               "minItems": 1
