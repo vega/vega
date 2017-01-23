@@ -35,9 +35,6 @@ export default function(spec, scope) {
   };
 
   if (spec.range != null) {
-    if (spec.rangeStep != null) {
-      error('Scale range and rangeStep are mutually exclusive.');
-    }
     params.range = parseScaleRange(spec, scope, params);
   }
 
@@ -219,6 +216,9 @@ function parseScaleRange(spec, scope, params) {
     params.scheme = parseLiteral(range.scheme, scope);
     if (range.extent) params.schemeExtent = parseArray(range.extent, scope);
     if (range.count) params.schemeCount = parseLiteral(range.count, scope);
+    return;
+  } else if (range.step) {
+    params.rangeStep = parseLiteral(range.step, scope);
     return;
   } else if (isOrdinal(spec.type) && !isArray(range)) {
     return parseScaleDomain(range, spec, scope);
