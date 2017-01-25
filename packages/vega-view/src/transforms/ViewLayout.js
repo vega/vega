@@ -250,5 +250,5 @@ function layoutSize(view, group, markBounds, viewBounds, _) {
     if (group.height < 0) height = markBounds.height();
   }
 
-  view.autosize(viewWidth, viewHeight, width, height, [left, top]);
+  view.autosize(viewWidth, viewHeight, width, height, [left, top], _.resize);
 }
