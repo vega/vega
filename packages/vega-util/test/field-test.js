@@ -9,7 +9,21 @@ tape('field creates a field accessor', function(test) {
   test.equal(f({x:'foo'}), 'foo');
   test.equal(f({x:0}), 0);
 
+  f = vega.field('x\\.y');
+  test.equal(typeof f, 'function');
+  test.equal(vega.accessorName(f), 'x.y');
+  test.deepEqual(vega.accessorFields(f), ['x.y']);
+  test.equal(f({'x.y':'foo'}), 'foo');
+  test.equal(f({'x.y':0}), 0);
+
   f = vega.field('[x.y]');
+  test.equal(typeof f, 'function');
+  test.equal(vega.accessorName(f), 'x.y');
+  test.deepEqual(vega.accessorFields(f), ['x.y']);
+  test.equal(f({'x.y':'foo'}), 'foo');
+  test.equal(f({'x.y':0}), 0);
+
+  f = vega.field("['x.y']");
   test.equal(typeof f, 'function');
   test.equal(vega.accessorName(f), 'x.y');
   test.deepEqual(vega.accessorFields(f), ['x.y']);
