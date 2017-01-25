@@ -16,18 +16,19 @@ var prototype = inherits(Bound, Transform);
 
 prototype.transform = function(_, pulse) {
   var mark = _.mark,
-      type = Marks[mark.marktype],
-      bound = type.bound,
+      type = mark.marktype,
+      entry = Marks[type],
+      bound = entry.bound,
       markBounds = mark.bounds, rebound;
 
   mark.bounds_prev.clear().union(markBounds);
 
-  if (type.nested) {
+  if (entry.nested) {
     // multi-item marks have a single bounds instance
     boundItem(mark, bound);
   }
 
-  else if (_.modified()) {
+  else if (type === 'group' || _.modified()) {
     // operator parameters modified -> re-bound all items
     // updates group bounds in response to modified group content
     markBounds.clear();
