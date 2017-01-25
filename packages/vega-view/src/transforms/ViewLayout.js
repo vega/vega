@@ -68,7 +68,7 @@ function layoutGroup(view, group, _) {
 
     for (i=0, n=legends.length; i<n; ++i) {
       b = layoutLegend(legends[i], flow, axisBounds, width, height);
-      (_.autosize === Fit)
+      (_.autosize && _.autosize.type === Fit)
         ? viewBounds.add(b.x1, 0).add(b.x2, 0)
         : viewBounds.union(b);
     }
@@ -218,7 +218,8 @@ function layoutLegend(legend, flow, axisBounds, width, height) {
 }
 
 function layoutSize(view, group, markBounds, viewBounds, _) {
-  var type = _.autosize,
+  var type = _.autosize && _.autosize.type,
+      auto = _.autosize && _.autosize.resize,
       viewWidth = view._width,
       viewHeight = view._height;
 
@@ -250,5 +251,5 @@ function layoutSize(view, group, markBounds, viewBounds, _) {
     if (group.height < 0) height = markBounds.height();
   }
 
-  view.autosize(viewWidth, viewHeight, width, height, [left, top], _.resize);
+  view.autosize(viewWidth, viewHeight, width, height, [left, top], auto);
 }
