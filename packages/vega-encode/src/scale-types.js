@@ -8,4 +8,6 @@ export var Ordinal = 'ordinal';
 export var Quantile = 'quantile';
 export var Quantize = 'quantize';
 export var Threshold = 'threshold';
+export var BinLinear = 'bin-linear';
+export var BinOrdinal = 'bin-ordinal';
 export var Sequential = 'sequential';

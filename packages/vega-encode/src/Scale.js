@@ -4,7 +4,7 @@ import {error, inherits, isFunction, toSet} from 'vega-util';
 import {
   Ordinal, Band, Point,
   Linear, Pow, Sqrt, Sequential,
-  Quantile, Quantize, Threshold
+  Quantile, Quantize, Threshold, BinOrdinal
 } from './scale-types';
 
 import {
@@ -163,6 +163,7 @@ function configureScheme(type, _, count) {
 
   // determine size for potential discrete range
   count = (type === Threshold) ? count + 1
+    : (type === BinOrdinal) ? count - 1
     : (type === Quantile || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
     : count;
 
