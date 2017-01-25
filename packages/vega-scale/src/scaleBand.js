@@ -2,7 +2,7 @@ import bandSpace from './bandSpace';
 import {range as sequence, bisectRight} from 'd3-array';
 import {scaleOrdinal as ordinal} from 'd3-scale';
 
-export default function band() {
+export function band() {
   var scale = ordinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range,
