@@ -1,6 +1,13 @@
 import invertRange from './invertRange';
 import invertRangeExtent from './invertRangeExtent';
-import {default as scaleBand, point as scalePoint} from './scaleBand';
+import {
+  band as scaleBand,
+  point as scalePoint
+} from './scaleBand';
+import {
+  binLinear as scaleBinLinear,
+  binOrdinal as scaleBinOrdinal
+} from './scaleBin';
 import scaleSequential from './scaleSequential';
 
 import * as $ from 'd3-scale';
@@ -29,22 +36,24 @@ export default function scale(type, scale) {
 
 var scales = {
   // base scale types
-  identity:    $.scaleIdentity,
-  linear:      $.scaleLinear,
-  log:         $.scaleLog,
-  ordinal:     $.scaleOrdinal,
-  pow:         $.scalePow,
-  sqrt:        $.scaleSqrt,
-  quantile:    $.scaleQuantile,
-  quantize:    $.scaleQuantize,
-  threshold:   $.scaleThreshold,
-  time:        $.scaleTime,
-  utc:         $.scaleUtc,
+  identity:      $.scaleIdentity,
+  linear:        $.scaleLinear,
+  log:           $.scaleLog,
+  ordinal:       $.scaleOrdinal,
+  pow:           $.scalePow,
+  sqrt:          $.scaleSqrt,
+  quantile:      $.scaleQuantile,
+  quantize:      $.scaleQuantize,
+  threshold:     $.scaleThreshold,
+  time:          $.scaleTime,
+  utc:           $.scaleUtc,
 
   // extended scale types
-  band:        scaleBand,
-  point:       scalePoint,
-  sequential:  scaleSequential
+  band:          scaleBand,
+  point:         scalePoint,
+  sequential:    scaleSequential,
+  'bin-linear':  scaleBinLinear,
+  'bin-ordinal': scaleBinOrdinal
 };
 
 for (var key in scales) {
