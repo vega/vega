@@ -1,6 +1,7 @@
 import {codegen, constants, functions} from 'vega-expression';
 import {pad, stringValue, truncate} from 'vega-util';
 import {rgb, lab, hcl, hsl} from 'd3-color';
+import {range as sequence} from 'd3-array';
 
 import {
   format, utcFormat, timeFormat,
@@ -32,6 +33,7 @@ export var functionContext = {
   lab: lab,
   hcl: hcl,
   hsl: hsl,
+  sequence: sequence,
   format: format,
   utcFormat: utcFormat,
   timeFormat: timeFormat,
