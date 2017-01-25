@@ -1,3 +1,4 @@
+import parseAutosize from './autosize';
 import parsePadding from './padding';
 import parseSignal from './signal';
 import parseSpec from './spec';
@@ -12,13 +13,14 @@ import {array, toSet} from 'vega-util';
 var defined = toSet(['width', 'height', 'padding']);
 
 export default function parseView(spec, scope) {
-  var op, input, encode, parent, root;
+  var config = scope.config,
+      op, input, encode, parent, root;
 
-  scope.background = spec.background || scope.config.background;
+  scope.background = spec.background || config.background;
   root = ref(scope.root = scope.add(operator()));
   scope.addSignal('width', spec.width || -1);
   scope.addSignal('height', spec.height || -1);
-  scope.addSignal('padding', parsePadding(spec.padding));
+  scope.addSignal('padding', parsePadding(spec.padding, config));
 
   array(spec.signals).forEach(function(_) {
     if (!defined[_.name]) parseSignal(_, scope);
@@ -39,8 +41,8 @@ export default function parseView(spec, scope) {
 
   // Perform view layout
   parent = scope.add(ViewLayout({
-    legendMargin: scope.config.legendMargin,
-    autosize:     spec.autosize || scope.config.autosize,
+    legendMargin: config.legendMargin,
+    autosize:     parseAutosize(spec.autosize, config),
     mark:         root,
     pulse:        ref(encode)
   }));

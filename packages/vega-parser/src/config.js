@@ -17,7 +17,11 @@ export default function(userConfig) {
  */
 function defaults() {
   return {
-    // default for automatic sizing; options: none, pad, fit
+    // default padding around visualization
+    padding: 0,
+
+    // default for automatic sizing; options: "none", "pad", "fit"
+    // or provide an object (e.g., {"type": "pad", "resize": true})
     autosize: 'pad',
 
     // default view background color
