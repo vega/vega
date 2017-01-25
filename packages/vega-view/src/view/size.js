@@ -11,12 +11,12 @@ export function resizer(view, field) {
   return op.rank = 0, op;
 }
 
-export function autosize(viewWidth, viewHeight, width, height, origin) {
+export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
   this.runAfter(function(view) {
     var rerun = 0;
 
-    // clear autosize flag
-    view._autosize = 0;
+    // reset autosize flag
+    view._autosize = auto ? 1 : 0;
 
     // width value changed: update signal, skip resize op
     if (view.width() !== width) {
