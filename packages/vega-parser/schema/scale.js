@@ -66,6 +66,20 @@ export default {
       ]
     },
     "scaleField": {"$ref": "#/refs/stringOrSignal"},
+    "scaleInterpolate": {
+      "oneOf": [
+        {"type": "string"},
+        {"$ref": "#/refs/signal"},
+        {
+          "type": "object",
+          "properties": {
+            "type": {"$ref": "#/refs/stringOrSignal"},
+            "gamma": {"$ref": "#/refs/numberOrSignal"}
+          },
+          "required": ["type"]
+        }
+      ]
+    },
     "scaleData": {
       "oneOf": [
         {
@@ -273,7 +287,7 @@ export default {
             },
             {
               "properties": {
-                "type": {"enum": ["quantile", "quantize", "threshold"]},
+                "type": {"enum": ["quantile", "quantize", "threshold", "bin-ordinal"]},
                 "range": {"oneOf": schemeRangeDef}
               },
               "required": ["type"]
@@ -284,10 +298,10 @@ export default {
                 "properties": {
                   "type": {
                     "enum": [
-                      "ordinal", "index", "band", "point",
+                      "ordinal", "band", "point",
                       "quantile", "quantize", "threshold",
                       "sequential", "pow", "time", "utc",
-                      "identity"
+                      "identity", "bin-ordinal", "bin-linear"
                     ]
                   }
                 },
@@ -295,20 +309,7 @@ export default {
               },
               "properties": {
                 "range": {"oneOf": schemeRangeDef},
-                "interpolate": {
-                  "oneOf": [
-                    {"type": "string"},
-                    {"$ref": "#/refs/signal"},
-                    {
-                      "type": "object",
-                      "properties": {
-                        "type": {"$ref": "#/refs/stringOrSignal"},
-                        "gamma": {"$ref": "#/refs/numberOrSignal"}
-                      },
-                      "required": ["type"]
-                    }
-                  ]
-                },
+                "interpolate": {"$ref": "#/refs/scaleInterpolate"},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"},
                 "nice": {
                   "oneOf": [
@@ -334,6 +335,14 @@ export default {
                   ]
                 },
                 "zero": {"$ref": "#/refs/booleanOrSignal"}
+              },
+              "required": ["type"]
+            },
+            {
+              "properties": {
+                "type": {"enum": ["bin-linear"]},
+                "range": {"oneOf": schemeRangeDef},
+                "interpolate": {"$ref": "#/refs/scaleInterpolate"}
               },
               "required": ["type"]
             }
