@@ -1,4 +1,4 @@
-import {Quantile, Quantize, Threshold} from './scale-types';
+import {Quantile, Quantize, Threshold, BinLinear, BinOrdinal} from './scale-types';
 import {tickValues} from './ticks';
 import {peek} from 'vega-util';
 
@@ -6,6 +6,8 @@ var discrete = {}
 discrete[Quantile] = quantile;
 discrete[Quantize] = quantize;
 discrete[Threshold] = threshold;
+discrete[BinLinear] = bin;
+discrete[BinOrdinal] = bin;
 
 export function labelValues(scale, count, gradient) {
   if (gradient) return scale.domain();
@@ -35,6 +37,11 @@ function quantile(scale) {
 function threshold(scale) {
   var values = [-Infinity].concat(scale.domain());
   return values.max = +Infinity, values;
+}
+
+function bin(scale) {
+  var values = scale.domain();
+  return values.max = values.pop(), values;
 }
 
 export function labelFormat(scale, format) {
