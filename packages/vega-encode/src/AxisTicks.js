@@ -32,7 +32,7 @@ prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       ticks = this.value,
       scale = _.scale,
-      count = _.count == null ? 10 : _.count,
+      count = _.count,
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
       values = _.values || tickValues(scale, count);
 
