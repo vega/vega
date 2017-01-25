@@ -6,14 +6,15 @@ var FIELD_REF_ID = 0;
 
 var types = [
   'identity',
-  'ordinal', 'band', 'point', 'index',
+  'ordinal', 'band', 'point',
   'linear', 'pow', 'sqrt', 'log', 'sequential',
   'time', 'utc',
-  'quantize', 'quantile', 'threshold'
-]
+  'quantize', 'quantile', 'threshold',
+  'bin-linear', 'bin-ordinal'
+];
 
 var allTypes = toSet(types),
-    ordinalTypes = toSet(types.slice(1, 5));
+    ordinalTypes = toSet(types.slice(1, 4));
 
 export function isOrdinal(type) {
   return ordinalTypes.hasOwnProperty(type);
