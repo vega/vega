@@ -24,7 +24,10 @@ export default function(view, el, binding) {
   var bind = binding.state || (binding.state = {
     elements: null,
     set: null,
-    update: function(value) { view.signal(param.signal, value).run(); },
+    update: function(value) {
+      bind.source = true;
+      view.signal(param.signal, value).run();
+    },
     active: false
   });
 
@@ -33,7 +36,9 @@ export default function(view, el, binding) {
 
   if (!bind.active) {
     view.on(view._signals[param.signal], null, function() {
-      bind.set(view.signal(param.signal));
+      bind.source
+        ? (bind.source = false)
+        : bind.set(view.signal(param.signal));
     });
     bind.active = true;
   }
