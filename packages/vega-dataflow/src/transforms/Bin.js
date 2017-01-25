@@ -40,6 +40,7 @@ prototype._bins = function(_) {
   var field = _.field,
       bins  = bin(_),
       start = bins.start,
+      stop  = bins.stop,
       step  = bins.step;
 
   var f = function(t) {
@@ -48,6 +49,8 @@ prototype._bins = function(_) {
       : start + step * Math.floor((+v - start) / step);
   };
 
+  f.start = start;
+  f.stop = stop;
   f.step = step;
 
   return this.value = accessor(
