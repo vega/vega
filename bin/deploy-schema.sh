@@ -20,7 +20,7 @@ while echo "$prefix" | grep -q '\.'; do
 done
 
 if [ -n "$(git status --porcelain)" ]; then
-    git commit -am"Add Vega-Lite $version"
+    git commit -am"Add Vega $version"
     git push
 else
   echo "Nothing has changed"
