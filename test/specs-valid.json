@@ -42,6 +42,8 @@
   "parallel-coords",
   "playfair",
   "population",
+  "scales-bin",
+  "scales-discretize",
   "scatter-plot",
   "shift-select",
   "splom-inner",
