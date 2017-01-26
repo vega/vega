@@ -26,7 +26,9 @@ prototype.transform = function(_, pulse) {
         : pulse.ADD;
 
   pulse.visit(flag, function(t) {
-    t[b1] = (t[b0] = bins(t)) + step;
+    var v = bins(t);
+    t[b0] = v;
+    t[b1] = v != null ? v + step : null;
   });
 
   return pulse.modifies(as);
