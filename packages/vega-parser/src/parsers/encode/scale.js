@@ -15,7 +15,7 @@ export default function(enc, value, scope, params, fields) {
       : '$[0]+' + interp + '*($[$.length-1]-$[0])') + ')';
   } else {
     // run value through scale and/or pull scale bandwidth
-    value = value != null ? scale + '(' + value + ')' : null;
+    if (value !== undefined) value = scale + '(' + value + ')';
 
     if (enc.band && (flag = hasBandwidth(enc.scale, scope))) {
       func = scale + '.bandwidth';

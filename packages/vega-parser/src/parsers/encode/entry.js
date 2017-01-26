@@ -11,14 +11,18 @@ export default function(channel, enc, scope, params, fields) {
     return gradient(enc, scope, params, fields);
   }
 
-  var value = (enc.color != null) ? color(enc.color, scope, params, fields)
-    : (enc.field != null) ? field(enc.field, scope, params, fields)
-    : (enc.signal != null) ? expression(enc.signal, scope, params, fields)
-    : (enc.value != null) ? stringValue(enc.value)
-    : null;
+  var value = enc.signal ? expression(enc.signal, scope, params, fields)
+    : enc.color ? color(enc.color, scope, params, fields)
+    : enc.field != null ? field(enc.field, scope, params, fields)
+    : enc.value !== undefined ? stringValue(enc.value)
+    : undefined;
 
   if (enc.scale != null) {
     value = scale(enc, value, scope, params, fields);
+  }
+
+  if (value === undefined) {
+    value = null;
   }
 
   if (enc.exponent != null) {
