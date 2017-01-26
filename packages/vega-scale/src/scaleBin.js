@@ -14,8 +14,9 @@ export function binLinear() {
       domain = [];
 
   function scale(x) {
-    var i = Math.max(bisect(domain, x), 1);
-    return linear(domain[i-1]);
+    return x == null || x !== x
+      ? undefined
+      : linear(domain[Math.max(bisect(domain, x), 1)-1]);
   }
 
   function setDomain(_) {
@@ -64,7 +65,9 @@ export function binOrdinal() {
       range = [];
 
   function scale(x) {
-    return range[(bisect(domain, x) - 1) % range.length];
+    return x == null || x !== x
+      ? undefined
+      : range[(bisect(domain, x) - 1) % range.length];
   }
 
   scale.domain = function(_) {
