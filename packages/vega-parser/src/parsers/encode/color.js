@@ -5,8 +5,6 @@ export default function(enc, scope, params, fields) {
     var a = entry(null, x, scope, params, fields),
         b = entry(null, y, scope, params, fields),
         c = entry(null, z, scope, params, fields);
-
-    // TODO put color functions in scope
     return 'this.' + type + '(' + [a, b, c].join(',') + ').toString()';
   }
 
