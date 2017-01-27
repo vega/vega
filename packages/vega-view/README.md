@@ -295,8 +295,8 @@ exist, an error will be raised. If the signal exists but the provided
 
 ### Event Handling
 
-Methods for generating new event streams and registering event listeners.
-See also the [hover](#view_hover) method.
+Methods for generating new event streams, registering event listeners, and
+handling tooltips. See also the [hover](#view_hover) method.
 
 <a name="view_events" href="#view_events">#</a>
 view.<b>events</b>(<i>source</i>, <i>type</i>[, <i>filter</i>])
@@ -347,6 +347,31 @@ view.<b>removeEventListener</b>(<i>type</i>, <i>handler</i>)
 Removes an event listener registered with the
 [addEventListener](#view_addEventListener) method.
 
+<a name="view_tooltipHandler" href="#view_tooltipHandler">#</a>
+view.<b>tooltipHandler</b>(<i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Gets or sets the *handler* function used to handle tooltip display. The
+default handler uses built-in browser mechanisms by setting the `"title"`
+element of the Canvas or SVG element containing the visualization. To use
+custom tooltips, a new handler function can be provided to process tooltip
+events. If *handler* is `null` or `undefined`, the tooltip handler will be
+reset to the built-in default.
+
+The tooltip handler has the method signature `handler(event, item, text)`,
+where *event* is the triggering DOM mouseover or mouseout event, *item*
+is the corresponding scenegraph item, and *text* is the tooltip text to
+display (or `null` to hide tooltips).
+
+```js
+// suppress tooltips over the visualization, print to console instead
+view.tooltipHandler(function(event, item, text) {
+  console.log('TOOLTIP TEXT', text);
+});
+
+// restore the default tooltip handler
+view.tooltipHandler(null);
+```
 
 ### Image Export
 

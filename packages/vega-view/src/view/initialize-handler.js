@@ -6,6 +6,7 @@ export default function(view, prevHandler, el, constructor) {
     .initialize(el, offset(view), view);
 
   if (prevHandler) {
+    handler.handleTooltip = prevHandler.handleTooltip;
     prevHandler.handlers().forEach(function(h) {
       handler.on(h.type, h.handler);
     });
