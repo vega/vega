@@ -15,7 +15,7 @@ import {getState, setState} from './state';
 import {Dataflow} from 'vega-dataflow';
 import {inherits, stringValue} from 'vega-util';
 import {
-  CanvasHandler, Scenegraph,
+  Handler, CanvasHandler, Scenegraph,
   renderModule, RenderType
 } from 'vega-scenegraph';
 
@@ -41,10 +41,12 @@ export default function View(spec, options) {
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
-  // initialize renderer and handler
+  // initialize renderer and render queue
   this._renderer = null;
-  this._handler = new CanvasHandler().scene(root);
   this._queue = null;
+
+  // initialize handler and event management
+  this._handler = new CanvasHandler().scene(root);
   this._eventListeners = [];
   this._preventDefault = true;
 
@@ -187,6 +189,12 @@ prototype.removeSignalListener = function(name, handler) {
 
 prototype.preventDefault = function(_) {
   return arguments.length ? (this._preventDefault = _, this) : this._preventDefault;
+};
+
+prototype.tooltipHandler = function(_) {
+  var h = this._handler;
+  return !arguments.length ? h.handleTooltip
+    : (h.handleTooltip = (_ || Handler.prototype.handleTooltip), this);
 };
 
 prototype.events = events;
