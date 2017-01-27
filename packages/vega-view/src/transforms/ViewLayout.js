@@ -48,7 +48,7 @@ function layoutGroup(view, group, _) {
     mark = items[i];
     switch (mark.role) {
       case AxisRole:
-        axisBounds.union(layoutAxis(mark, width, height));
+        axisBounds.union(layoutAxis(view, mark, width, height));
         break;
       case LegendRole:
         legends.push(mark); break;
@@ -67,7 +67,7 @@ function layoutGroup(view, group, _) {
     axisBounds.union(viewBounds); // see vega/vega#694
 
     for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(legends[i], flow, axisBounds, width, height);
+      b = layoutLegend(view, legends[i], flow, axisBounds, width, height);
       (_.autosize && _.autosize.type === Fit)
         ? viewBounds.add(b.x1, 0).add(b.x2, 0)
         : viewBounds.union(b);
@@ -87,7 +87,7 @@ function axisIndices(datum) {
   ];
 }
 
-function layoutAxis(axis, width, height) {
+function layoutAxis(view, axis, width, height) {
   var item = axis.items[0],
       datum = item.datum,
       orient = datum.orient,
@@ -150,8 +150,9 @@ function layoutAxis(axis, width, height) {
       y = item.y;
   }
 
-  item.x = x + 0.5;
-  item.y = y + 0.5;
+  if (set(item, 'x', x + 0.5) | set(item, 'y', y + 0.5)) {
+    view.enqueue([item]);
+  }
 
   // update bounds
   boundStroke(bounds.translate(x, y), item);
@@ -159,7 +160,12 @@ function layoutAxis(axis, width, height) {
   return bounds;
 }
 
-function layoutLegend(legend, flow, axisBounds, width, height) {
+function set(item, property, value) {
+  return item[property] === value ? 0
+    : (item[property] = value, 1);
+}
+
+function layoutLegend(view, legend, flow, axisBounds, width, height) {
   var item = legend.items[0],
       datum = item.datum,
       orient = datum.orient,
@@ -206,10 +212,10 @@ function layoutLegend(legend, flow, axisBounds, width, height) {
   }
 
   // update legend layout
-  item.x = x;
-  item.y = y;
-  item.width = w;
-  item.height = h;
+  if (set(item, 'x', x) | set(item, 'width', w) |
+      set(item, 'y', y) | set(item, 'height', h)) {
+    view.enqueue([item]);
+  }
 
   // update bounds
   boundStroke(bounds.set(x, y, x + w, y + h), item);
