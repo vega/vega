@@ -50,7 +50,7 @@ prototype.eventName = function(name) {
   return i < 0 ? name : name.slice(0,i);
 };
 
-prototype.handleHref = function(event, href) {
+prototype.handleHref = function(event, item, href) {
   this._loader
     .sanitize(href, {context:'href'})
     .then(function(opt) {
@@ -60,4 +60,8 @@ prototype.handleHref = function(event, href) {
       a.dispatchEvent(e);
     })
     .catch(function() { /* do nothing */ });
+};
+
+prototype.handleTooltip = function(event, item, tooltipText) {
+  this._el.setAttribute('title', tooltipText || '');
 };

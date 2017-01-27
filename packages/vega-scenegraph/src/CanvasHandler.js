@@ -142,7 +142,9 @@ prototype.fire = function(type, evt, touch) {
 
   // if hyperlinked, handle link first
   if (type === 'click' && a && a.href) {
-    this.handleHref(evt, a.href);
+    this.handleHref(evt, a, a.href);
+  } else if ((type === 'mouseover' || type === 'mouseout') && a && a.tooltip) {
+    this.handleTooltip(evt, a, type === 'mouseover' ? a.tooltip : null);
   }
 
   // invoke all registered handlers
