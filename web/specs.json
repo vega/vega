@@ -37,6 +37,8 @@
   "matrix-reorder",
   "movies-sort",
   "nested-plot",
+  "nulls-histogram",
+  "nulls-scatter-plot",
   "overview-detail",
   "panzoom",
   "parallel-coords",
