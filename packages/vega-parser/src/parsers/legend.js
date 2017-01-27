@@ -31,7 +31,7 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: value(spec.orient, config.orient),
-    title:  spec.title
+    title:  spec.title != null
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
 

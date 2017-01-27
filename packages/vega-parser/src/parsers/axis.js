@@ -25,7 +25,7 @@ export default function(spec, scope) {
     label:  spec.label  != null ? !!spec.label  : config.label,
     grid:   spec.grid   != null ? !!spec.grid   : config.grid,
     domain: spec.domain != null ? !!spec.domain : config.domain,
-    title:  spec.title
+    title:  spec.title  != null
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 

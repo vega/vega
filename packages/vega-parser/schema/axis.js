@@ -6,7 +6,7 @@ export default {
         "orient": {"enum": ["none", "top", "bottom", "left", "right"]},
         "name": {"type": "string"},
         "scale": {"type": "string"},
-        "title": {"type": "string"},
+        "title": {"$ref": "#/refs/stringOrSignal"},
         "zindex": {"type": "number"},
         "interactive": {"type": "boolean"},
         "tick": {"type": "boolean"},
@@ -17,18 +17,8 @@ export default {
         "tickSize": {"type": "number"},
         "labelPadding": {"type": "number"},
 
-        "tickCount": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/signal"}
-          ]
-        },
-        "format": {
-          "oneOf": [
-            {"type": "string"},
-            {"$ref": "#/refs/signal"}
-          ]
-        },
+        "tickCount": {"$ref": "#/refs/numberOrSignal"},
+        "format": {"$ref": "#/refs/stringOrSignal"},
         "values": {
           "oneOf": [
             {"type": "array"},

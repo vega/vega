@@ -6,6 +6,7 @@ import {AxisTitleRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
+      title = spec.title,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       encode = {}, update, titlePos;
@@ -25,7 +26,7 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.update = update = {
     opacity: {value: 1},
-    text: {field: 'title'}
+    text: title && title.signal ? {signal: title.signal} : {value: title + ''}
   };
 
   titlePos = {
