@@ -6,16 +6,30 @@ export default function SVGHandler(loader) {
   Handler.call(this, loader);
   var h = this;
   h._hrefHandler = listener(h, function(evt, item) {
-    if (item && item.href) h.handleHref(evt, item.href);
+    if (item && item.href) h.handleHref(evt, item, item.href);
+  });
+  h._tooltipHandler = listener(h, function(evt, item) {
+    if (item && item.tooltip) {
+      h.handleTooltip(evt, item, evt.type === 'mouseover' ? item.tooltip : null);
+    }
   });
 }
 
 var prototype = inherits(SVGHandler, Handler);
 
 prototype.initialize = function(el, origin, obj) {
-  if (this._svg) this._svg.removeEventListener('click', this._hrefHandler);
-  this._svg = el && domFind(el, 'svg');
-  if (this._svg) this._svg.addEventListener('click', this._hrefHandler);
+  var svg = this._svg;
+  if (svg) {
+    svg.removeEventListener('click', this._hrefHandler);
+    svg.removeEventListener('mouseover', this._tooltipHandler);
+    svg.removeEventListener('mouseout', this._tooltipHandler);
+  }
+  this._svg = svg = el && domFind(el, 'svg');
+  if (svg) {
+    svg.addEventListener('click', this._hrefHandler);
+    svg.addEventListener('mouseover', this._tooltipHandler);
+    svg.addEventListener('mouseout', this._tooltipHandler);
+  }
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
