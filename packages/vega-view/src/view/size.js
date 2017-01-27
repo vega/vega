@@ -16,7 +16,7 @@ export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
     var rerun = 0;
 
     // reset autosize flag
-    view._autosize = auto ? 1 : 0;
+    view._autosize = 0;
 
     // width value changed: update signal, skip resize op
     if (view.width() !== width) {
@@ -52,5 +52,6 @@ export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
 
     // run dataflow on width/height signal change
     if (rerun) view.run('enter');
+    if (auto) view.runAfter(function() { view._autosize = 1; });
   });
 }
