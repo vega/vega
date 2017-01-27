@@ -35,7 +35,7 @@ export default {
           ],
           "default": "right"
         },
-        "title": {"type": "string"},
+        "title": {"$ref": "#/refs/stringOrSignal"},
         "zindex": {"type": "number"},
         "interactive": {"type": "boolean"},
 
@@ -64,18 +64,8 @@ export default {
           ]
         },
 
-        "tickCount": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/signal"}
-          ]
-        },
-        "format": {
-          "oneOf": [
-            {"type": "string"},
-            {"$ref": "#/refs/signal"}
-          ]
-        },
+        "tickCount": {"$ref": "#/refs/numberOrSignal"},
+        "format": {"$ref": "#/refs/stringOrSignal"},
         "values": {
           "oneOf": [
             {"type": "array"},

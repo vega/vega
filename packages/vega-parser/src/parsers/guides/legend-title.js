@@ -4,6 +4,7 @@ import {LegendTitleRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
+      title = spec.title,
       encode = {};
 
   encode.enter = {
@@ -24,7 +25,7 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.update = {
     opacity: {value: 1},
-    text: {field: 'title'}
+    text: title && title.signal ? {signal: title.signal} : {value: title + ''}
   };
 
   return guideMark(TextMark, LegendTitleRole, null, dataRef, encode, userEncode);
