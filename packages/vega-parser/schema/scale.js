@@ -197,6 +197,7 @@ export default {
                   "type": "array",
                   "items": {
                     "oneOf": [
+                      {"type": "null"},
                       {"type": "string"},
                       {"type": "number"},
                       {"type": "boolean"},
