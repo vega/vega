@@ -11,17 +11,17 @@ import {
   line as d3_line
 } from 'd3-shape';
 
-function x(item)     { return item.x || 0; }
-function y(item)     { return item.y || 0; }
-function w(item)     { return item.width || 0; }
-function wh(item)    { return item.width || item.height || 1; }
-function h(item)     { return item.height || 0; }
-function xw(item)    { return (item.x || 0) + (item.width || 0); }
-function yh(item)    { return (item.y || 0) + (item.height || 0); }
-function cr(item)    { return item.cornerRadius || 0; }
-function pa(item)    { return item.padAngle || 0; }
-function def(item)   { return !(item.defined === false); }
-function size(item)  { return item.size == null ? 64 : item.size; }
+function x(item)    { return item.x || 0; }
+function y(item)    { return item.y || 0; }
+function w(item)    { return item.width || 0; }
+function wh(item)   { return item.width || item.height || 1; }
+function h(item)    { return item.height || 0; }
+function xw(item)   { return (item.x || 0) + (item.width || 0); }
+function yh(item)   { return (item.y || 0) + (item.height || 0); }
+function cr(item)   { return item.cornerRadius || 0; }
+function pa(item)   { return item.padAngle || 0; }
+function def(item)  { return !(item.defined === false); }
+function size(item) { return item.size == null ? 64 : item.size; }
 function type(item) { return symbols(item.shape || 'circle'); }
 
 var arcShape    = d3_arc().cornerRadius(cr).padAngle(pa),
@@ -45,11 +45,6 @@ export function area(context, items) {
   ).context(context)(items);
 }
 
-export function shape(context, item) {
-  return (item.mark.shape || item.shape)
-    .context(context)(item);
-}
-
 export function line(context, items) {
   var item = items[0],
       interp = item.interpolate || 'linear';
@@ -59,6 +54,11 @@ export function line(context, items) {
 
 export function rectangle(context, item, x, y) {
   return rectShape.context(context)(item, x, y);
+}
+
+export function shape(context, item) {
+  return (item.mark.shape || item.shape)
+    .context(context)(item);
 }
 
 export function symbol(context, item) {
