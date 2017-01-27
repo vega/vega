@@ -16,7 +16,7 @@ export default function(source, type, filter) {
       s = new EventStream(filter),
       send = function(e, item) {
         if (view.preventDefault() && source === VIEW) {
-          event.preventDefault();
+          e.preventDefault();
         }
         s.receive(eventExtend(view, e, item));
         view.run();
