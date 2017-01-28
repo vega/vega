@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "1.0.0-beta.23",
+  "version": "1.0.0-beta.24",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
