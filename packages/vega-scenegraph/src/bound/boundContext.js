@@ -59,17 +59,23 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
   update(sa);
   update(ea);
 
-  if (ea < sa) {
-    ccw = !ccw; // flip direction
-    s = sa; sa = ea; ea = s; // swap end-points
-  }
+  if (ea !== sa) {
+    sa = sa % tau; if (sa < 0) sa += tau;
+    ea = ea % tau; if (ea < 0) ea += tau;
 
-  if (ccw) {
-    s = ea - (ea % halfPi);
-    for (i=0; i<3 && s>sa; ++i, s-=halfPi) update(s);
-  } else {
-    s = sa - (sa % halfPi) + halfPi;
-    for (i=0; i<3 && s<ea; ++i, s+=halfPi) update(s);
+    if (ea < sa) {
+      ccw = !ccw; // flip direction
+      s = sa; sa = ea; ea = s; // swap end-points
+    }
+
+    if (ccw) {
+      ea -= tau;
+      s = sa - (sa % halfPi);
+      for (i=0; i<3 && s>ea; ++i, s-=halfPi) update(s);
+    } else {
+      s = sa - (sa % halfPi) + halfPi;
+      for (i=0; i<3 && s<ea; ++i, s=s+halfPi) update(s);
+    }
   }
 
   add(cx + xmin, cy + ymin);
