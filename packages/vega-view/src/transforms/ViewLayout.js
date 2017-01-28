@@ -81,9 +81,9 @@ function layoutGroup(view, group, _) {
 function axisIndices(datum) {
   var index = +datum.grid;
   return [
-    datum.tick ? index++ : -1,  // tick index
-    datum.label ? index++ : -1, // label index
-    index + (+datum.domain)     // title index
+    datum.ticks  ? index++ : -1, // ticks index
+    datum.labels ? index++ : -1, // labels index
+    index + (+datum.domain)      // title index
   ];
 }
 
