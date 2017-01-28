@@ -97,11 +97,11 @@ orientation-based options, which in turn take precedence over general options.
 - *gridColor*: Color of axis grid lines.
 - *gridDash*: Stroke dash of axis grid lines (or `[]` for solid lines).
 - *gridOpacity*: Opacity of axis grid lines.
-- *label*: Boolean flag indicating if axis tick labels should be included by default.
+- *labels*: Boolean flag indicating if axis tick labels should be included by default.
 - *labelColor*: Text color for axis tick labels.
 - *labelFont*: Font name for axis tick labels.
 - *labelFontSize*: Font size for axis tick labels.
-- *tick*: Boolean flag indicating if axis tick marks should be included by default.
+- *ticks*: Boolean flag indicating if axis tick marks should be included by default.
 - *tickColor*: Color for axis ticks.
 - *tickExtra*: Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
 - *tickRound*: Boolean flag indicating if pixel position values should be rounded to the nearest integer.

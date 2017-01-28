@@ -21,8 +21,8 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    tick:   spec.tick   != null ? !!spec.tick   : config.tick,
-    label:  spec.label  != null ? !!spec.label  : config.label,
+    ticks:  spec.ticks  != null ? !!spec.ticks  : config.ticks,
+    labels: spec.labels != null ? !!spec.labels : config.labels,
     grid:   spec.grid   != null ? !!spec.grid   : config.grid,
     domain: spec.domain != null ? !!spec.domain : config.domain,
     title:  spec.title  != null
@@ -59,13 +59,13 @@ export default function(spec, scope) {
   }
 
   // include axis ticks if requested
-  if (datum.tick) {
+  if (datum.ticks) {
     size = spec.tickSize != null ? spec.tickSize : config.tickSize;
     children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
   }
 
   // include axis labels if requested
-  if (datum.label) {
+  if (datum.labels) {
     size = datum.tick ? size : 0;
     children.push(axisLabels(spec, config, encode.labels, ticksRef, size));
   }
