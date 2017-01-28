@@ -66,7 +66,7 @@ export default function(spec, scope) {
 
   // include axis labels if requested
   if (datum.labels) {
-    size = datum.tick ? size : 0;
+    size = datum.ticks ? size : 0;
     children.push(axisLabels(spec, config, encode.labels, ticksRef, size));
   }
 
