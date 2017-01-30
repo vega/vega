@@ -38,8 +38,7 @@ function layoutGroup(view, group, _) {
       width = Math.max(0, group.width || 0),
       height = Math.max(0, group.height || 0),
       viewBounds = new Bounds().set(0, 0, width, height),
-      markBounds = viewBounds.clone(),
-      axisBounds = markBounds.clone(),
+      axisBounds = viewBounds.clone(),
       legends = [],
       mark, flow, b, i, n;
 
@@ -48,23 +47,22 @@ function layoutGroup(view, group, _) {
     mark = items[i];
     switch (mark.role) {
       case AxisRole:
-        axisBounds.union(layoutAxis(view, mark, width, height));
+        b = layoutAxis(view, mark, width, height);
+        (isYAxis(mark) ? axisBounds : viewBounds).union(b);
         break;
       case LegendRole:
         legends.push(mark); break;
       case FrameRole:
       case ScopeRole:
-        viewBounds.union(mark.bounds); // break omitted
+        axisBounds.union(mark.bounds); break;
       default:
-        markBounds.union(mark.bounds);
+        viewBounds.union(mark.bounds);
     }
   }
-  viewBounds.union(axisBounds);
 
   // layout legends, extending viewBounds
   if (legends.length) {
     flow = {left: 0, right: 0, margin: _.legendMargin || 8};
-    axisBounds.union(viewBounds); // see vega/vega#694
 
     for (i=0, n=legends.length; i<n; ++i) {
       b = layoutLegend(view, legends[i], flow, axisBounds, width, height);
@@ -75,7 +73,12 @@ function layoutGroup(view, group, _) {
   }
 
   // perform size adjustment
-  layoutSize(view, group, markBounds, viewBounds.union(markBounds), _);
+  layoutSize(view, group, viewBounds.union(axisBounds), _);
+}
+
+function isYAxis(axisMark) {
+  var orient = axisMark.items[0].datum.orient;
+  return orient === 'left' || orient === 'right';
 }
 
 function axisIndices(datum) {
@@ -223,7 +226,7 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
   return bounds;
 }
 
-function layoutSize(view, group, markBounds, viewBounds, _) {
+function layoutSize(view, group, viewBounds, _) {
   var type = _.autosize && _.autosize.type,
       auto = _.autosize && _.autosize.resize,
       viewWidth = view._width,
@@ -253,8 +256,6 @@ function layoutSize(view, group, markBounds, viewBounds, _) {
   else if (type === Pad) {
     viewWidth = width + left + right;
     viewHeight = height + top + bottom;
-    if (group.width  < 0) width = markBounds.width();
-    if (group.height < 0) height = markBounds.height();
   }
 
   view.autosize(viewWidth, viewHeight, width, height, [left, top], auto);
