@@ -7,6 +7,6 @@ import {RenderType} from 'vega-scenegraph';
  * @return {Promise} - A promise that resolves to a Canvas instance.
  */
 export default function() {
-  return renderHeadless(this, RenderType.CANVAS)
+  return renderHeadless(this, RenderType.Canvas)
     .then(function(renderer) { return renderer.canvas(); });
 }
