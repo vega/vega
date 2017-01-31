@@ -77,6 +77,8 @@ function sanitize(uri, options) {
       return;
     }
 
+    hasProtocol = protocol_re.test(uri);
+
     // if relative url (no protocol/host), prepend baseURL
     if ((base = options.baseURL) && !hasProtocol) {
       // Ensure that there is a slash between the baseURL (e.g. hostname) and url
@@ -86,11 +88,8 @@ function sanitize(uri, options) {
       uri = base + uri;
     }
 
-    isFile = startsWith(uri, fileProtocol);
-    hasProtocol = protocol_re.test(uri);
-
     // should we load from file system?
-    loadFile = isFile
+    loadFile = (isFile = startsWith(uri, fileProtocol))
       || options.mode === 'file'
       || options.mode !== 'http' && !hasProtocol && fs();
 
