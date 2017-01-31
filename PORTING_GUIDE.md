@@ -203,7 +203,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 ## View API
 
-- The Vega View API has been updated and streamlined. To create a Vega visualization, the Vega spec must first be parsed, the resulting *runtime specification* can then be passed as an argument to the `View` constructor. Unlike Vega 2.x, this process does *not* require asynchronous callbacks. For example:
+- The [Vega View API](https://github.com/vega/vega-view) has been updated and streamlined. To create a Vega visualization, the Vega spec must first be parsed, the resulting *runtime specification* can then be passed as an argument to the `View` constructor. Unlike Vega 2.x, this process does *not* require asynchronous callbacks. For example:
   ```js
   var runtime = vega.parse(spec); // may throw an Error if parsing fails
   var view = new vega.View(runtime)
@@ -214,6 +214,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
     .run(); // update and render the view
   ```
 
-- Instead of `view.update`, the `view.run` method now invokes dataflow pulse propagation and re-rendering.
+- Instead of `view.update`, the [`view.run`](https://github.com/vega/vega-view#view_run) method now invokes dataflow pulse propagation and re-rendering.
+
+- Instead of `view.destroy`, the [`view.finalize`](https://github.com/vega/vega-view#view_finalize) method should be called to prepare the view to be removed from a web page.
 
 - The underlying View API and dataflow system have been extensively overhauled. A Vega `View` instance is now a direct subclass of a Vega `Dataflow`, and manages all reactive processing, streaming data input, and rendering. In addition to the [View API Reference](https://github.com/vega/vega-view), comprehensive JSDoc comments are included in the source code of the [vega-view](https://github.com/vega/vega-view) and [vega-dataflow](https://github.com/vega/vega-dataflow) repositories.
