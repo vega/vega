@@ -32,7 +32,7 @@ function applyDefaults(encode, type, role, config) {
   var enter, key, skip;
 
   config = role === FrameRole ? config.group
-    : role === MarkRole ? extend({}, config.mark, config[type])
+    : (role === MarkRole || config[type = role]) ? extend({}, config.mark, config[type])
     : null;
 
   if (config) {
