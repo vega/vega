@@ -34,7 +34,7 @@ export function scaleVisitor(name, args, scope, params) {
 
 export function range(name, group) {
   var s = getScale(name, (group || this).context);
-  return s && s.range ? s.range() : [0, 0];
+  return s && s.range ? s.range() : [];
 }
 
 export function domain(name, group) {
