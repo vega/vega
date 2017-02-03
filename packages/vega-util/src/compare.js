@@ -4,17 +4,20 @@ import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
 export default function(fields, orders) {
-  if (fields == null) return null;
-  fields = array(fields);
-
-  var cmp = fields.map(function(f) {
-        return splitAccessPath(f).map(stringValue).join('][');
+  var idx = [],
+      cmp = (fields = array(fields)).map(function(f, i) {
+        return f == null ? null
+          : (idx.push(i), splitAccessPath(f).map(stringValue).join(']['));
       }),
+      n = idx.length - 1,
       ord = array(orders),
-      n = cmp.length - 1,
-      code = 'var u,v;return ', i, f, u, v, d, lt, gt;
+      code = 'var u,v;return ',
+      i, j, f, u, v, d, lt, gt;
 
-  for (i=0; i<=n; ++i) {
+  if (n < 0) return null;
+
+  for (j=0; j<=n; ++j) {
+    i = idx[j];
     f = cmp[i];
     u = '(u=a['+f+'])';
     v = '(v=b['+f+'])';
@@ -26,5 +29,9 @@ export default function(fields, orders) {
       + ':v!==v&&u===u?' + gt
       + (i < n ? ':' : ':0');
   }
-  return accessor(Function('a', 'b', code + ';'), fields);
+
+  return accessor(
+    Function('a', 'b', code + ';'),
+    fields.filter(function(_) { return _ != null; })
+  );
 }
