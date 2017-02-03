@@ -1,8 +1,8 @@
 import parseExpression from './expression';
-import {entry, compareRef, fieldRef, isSignal, ref} from '../util';
+import {entry, fieldRef, isSignal, ref} from '../util';
 import {Params} from '../transforms';
 import {definition} from 'vega-dataflow';
-import {array, error, extend, isArray, isString, stringValue} from 'vega-util';
+import {error, extend, isArray, isString, stringValue} from 'vega-util';
 
 /**
  * Parse a data transform specification.
@@ -74,7 +74,7 @@ function parameterValue(def, value, scope) {
          : isExpr(type) ? parseExpression(value, scope)
          : isData(type) ? ref(scope.getData(value).values)
          : isField(type) ? fieldRef(value)
-         : isCompare(type) ? compareRef(array(value.field), array(value.order))
+         : isCompare(type) ? scope.compareRef(value)
          : value;
   }
 }
