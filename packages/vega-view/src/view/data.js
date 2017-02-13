@@ -22,9 +22,9 @@ export function change(name, changes) {
 }
 
 export function insert(name, _) {
-  return change(name, changeset().insert(_));
+  return change.call(this, name, changeset().insert(_));
 }
 
 export function remove(name, _) {
-  return change(name, changeset().remove(_));
+  return change.call(this, name, changeset().remove(_));
 }
