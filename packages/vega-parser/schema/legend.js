@@ -3,6 +3,7 @@ export default {
     "guideEncode": {
       "type": "object",
       "properties": {
+        "name": {"type": "string"},
         "interactive": {"type": "boolean", "default": false}
       },
       "patternProperties": {
@@ -13,12 +14,13 @@ export default {
     "legend": {
       "type": "object",
       "properties": {
-        "name":    {"type": "string"},
-        "size":    {"type": "string"},
-        "shape":   {"type": "string"},
-        "fill":    {"type": "string"},
-        "stroke":  {"type": "string"},
-        "opacity": {"type": "string"},
+        "name":      {"type": "string"},
+        "size":       {"type": "string"},
+        "shape":      {"type": "string"},
+        "fill":       {"type": "string"},
+        "stroke":     {"type": "string"},
+        "opacity":    {"type": "string"},
+        "strokeDash": {"type": "string"},
         "type": {
           "enum": ["gradient", "symbol"],
           "default": "symbol"
@@ -91,7 +93,8 @@ export default {
         {"required": ["shape"]},
         {"required": ["fill"]},
         {"required": ["stroke"]},
-        {"required": ["opacity"]}
+        {"required": ["opacity"]},
+        {"required": ["strokeDash"]}
       ]
     }
   }
