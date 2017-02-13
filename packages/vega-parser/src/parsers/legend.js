@@ -76,7 +76,7 @@ export default function(spec, scope) {
       scale:  scope.scaleRef(scale),
       count:  scope.property(spec.tickCount),
       values: scope.property(spec.values),
-      formatSpecifier: scope.property(spec.formatSpecifier)
+      formatSpecifier: scope.property(spec.format)
     })));
 
     children = [
