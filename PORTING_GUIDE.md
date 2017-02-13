@@ -152,6 +152,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Scale domains involving multiple data fields from the same table must now be listed under the `"fields"` property, not `"field"`. For example, `"domain": {"data": "table", "fields": ["fieldA", "fieldB"]}`.
 
+- `domainMin`, `domainMax`, `rangeMin`, `rangeMax` are no longer supported.  Please simply use `domain` and `range`.
+
 ## Data Transforms
 
 - Vega 3 also introduces a number of new transforms, and modifications to previous transforms (including a dramatically improved `"force"` transform and improved hierarchical layout support). Web-based documentation is still forthcoming. However, most of these transforms are demonstrated in the example specifications included in this repo. In addition, the parameters accepted by each transform are documented via JSDoc comments in the source code. Please consult the appropriate Vega module repositories for further information.
