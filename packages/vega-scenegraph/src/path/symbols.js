@@ -101,7 +101,7 @@ function customSymbol(path) {
     var parsed = pathParse(path);
     custom[path] = {
       draw: function(context, size) {
-        pathRender(context, parsed, 0, 0, Math.sqrt(size));
+        pathRender(context, parsed, 0, 0, Math.sqrt(size) / 2);
       }
     };
   }
