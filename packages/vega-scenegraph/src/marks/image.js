@@ -26,8 +26,9 @@ function attr(emit, item, renderer) {
   var image = getImage(item, renderer),
       x = item.x || 0,
       y = item.y || 0,
-      w = item.width || image.width || 0,
-      h = item.height || image.height || 0;
+      w = (item.width != null ? item.width : image.width) || 0,
+      h = (item.height != null ? item.height : image.height) || 0,
+      a = item.aspect === false ? 'none' : 'xMidYMid';
 
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
@@ -36,14 +37,15 @@ function attr(emit, item, renderer) {
   emit('transform', translate(x, y));
   emit('width', w);
   emit('height', h);
+  emit('preserveAspectRatio', a);
 }
 
 function bound(bounds, item) {
   var image = item.image,
       x = item.x || 0,
       y = item.y || 0,
-      w = item.width || (image && image.width) || 0,
-      h = item.height || (image && image.height) || 0;
+      w = (item.width != null ? item.width : (image && image.width)) || 0,
+      h = (item.height != null ? item.height : (image && image.height)) || 0;
 
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
@@ -60,12 +62,28 @@ function draw(context, scene, bounds) {
     var image = getImage(item, renderer),
         x = item.x || 0,
         y = item.y || 0,
-        w = item.width || image.width || 0,
-        h = item.height || image.height || 0,
-        opacity;
+        w = (item.width != null ? item.width : image.width) || 0,
+        h = (item.height != null ? item.height : image.height) || 0,
+        opacity, ar0, ar1, t;
 
     x -= imageXOffset(item.align, w);
     y -= imageYOffset(item.baseline, h);
+
+    if (item.aspect !== false) {
+      ar0 = image.width / image.height;
+      ar1 = item.width / item.height;
+      if (ar0 === ar0 && ar1 === ar1 && ar0 !== ar1) {
+        if (ar1 < ar0) {
+          t = w / ar0;
+          y += (h - t) / 2;
+          h = t;
+        } else {
+          t = h * ar0;
+          x += (w - t) / 2;
+          w = t;
+        }
+      }
+    }
 
     if (image.loaded) {
       context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
