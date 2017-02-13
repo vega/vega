@@ -17,7 +17,7 @@ var ForceMap = {
 var Forces = 'forces',
     ForceParams = [
       'alpha', 'alphaMin', 'alphaTarget',
-      'velocityDecay', 'drag', 'forces'
+      'velocityDecay', 'forces'
     ],
     ForceConfig = ['static', 'iterations'],
     ForceOutput = ['x', 'y', 'vx', 'vy'];
