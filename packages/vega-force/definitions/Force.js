@@ -8,7 +8,7 @@ export default {
     { "name": "alpha", "type": "number", "default": 1 },
     { "name": "alphaMin", "type": "number", "default": 0.001 },
     { "name": "alphaTarget", "type": "number", "default": 0 },
-    { "name": "drag", "type": "number", "default": 0.6 },
+    { "name": "velocityDecay", "type": "number", "default": 0.4 },
     { "name": "forces", "type": "param", "array": true,
       "params": [
         {
