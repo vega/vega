@@ -52,7 +52,7 @@ function clipToBounds(g, items) {
       b.union(translate(item.bounds_prev, group));
     }
   }
-  b.round();
+  b.expand(1).round();
 
   g.beginPath();
   g.rect(b.x1, b.y1, b.width(), b.height());
