@@ -24,7 +24,7 @@ prototype.transform = function(_, pulse) {
   var layout = this.value,
       as = _.as || output,
       fontSize = _.fontSize || 14,
-      range, fsize, sizeScale, words;
+      range;
 
   isFunction(fontSize)
     ? (range = _.fontSizeRange)
@@ -32,8 +32,10 @@ prototype.transform = function(_, pulse) {
 
   // create font size scaling function as needed
   if (range) {
-    fsize = fontSize;
-    sizeScale = scale('sqrt')().domain(extent(fsize, pulse)).range(range);
+    var fsize = fontSize,
+        sizeScale = scale('sqrt')()
+          .domain(extent(fsize, pulse))
+          .range(range);
     fontSize = function(x) { return sizeScale(fsize(x)); };
   }
 
@@ -45,7 +47,7 @@ prototype.transform = function(_, pulse) {
   });
 
   // configure layout
-  words = layout
+  var words = layout
     .words(data)
     .text(_.text)
     .size(_.size || [500, 500])
