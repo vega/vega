@@ -3,7 +3,7 @@ export default {
     "axis": {
       "type": "object",
       "properties": {
-        "orient": {"enum": ["none", "top", "bottom", "left", "right"]},
+        "orient": {"enum": ["top", "bottom", "left", "right"]},
         "name": {"type": "string"},
         "scale": {"type": "string"},
         "title": {"$ref": "#/refs/stringOrSignal"},
