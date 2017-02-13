@@ -9,6 +9,7 @@ import rule from './rule';
 import shape from './shape';
 import symbol from './symbol';
 import text from './text';
+import trail from './trail';
 
 export default {
   arc:     arc,
@@ -21,5 +22,6 @@ export default {
   rule:    rule,
   shape:   shape,
   symbol:  symbol,
-  text:    text
+  text:    text,
+  trail:   trail
 };

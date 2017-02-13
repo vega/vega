@@ -299,8 +299,8 @@ tape('CanvasRenderer should render area mark with breaks', function(test) {
   test.end();
 });
 
-tape('CanvasRenderer should render trail area mark', function(test) {
-  var image = render(marks['area-trail'], 500, 500);
+tape('CanvasRenderer should render trail mark', function(test) {
+  var image = render(marks['trail'], 500, 500);
   generate('png/marks-area-trail.png', image);
   var file = load('png/marks-area-trail.png');
   test.equal(image+'', file);

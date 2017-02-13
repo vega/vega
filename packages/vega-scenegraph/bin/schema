@@ -183,8 +183,7 @@ var AREA_INTERPOLATE = [
   'natural',
   'step',
   'stepAfter',
-  'stepBefore',
-  'trail'
+  'stepBefore'
 ];
 
 var LINE_INTERPOLATE = [
@@ -302,6 +301,12 @@ var MARKS = {
         "enum": [ "normal", "small-caps" ],
         "default": "normal"
       }
+    }
+  },
+  "trail": {
+    "properties": {
+      "defined": { "type": "boolean" },
+      "size": { "type": "number", "default": 1 }
     }
   }
 };
