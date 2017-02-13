@@ -1,6 +1,6 @@
 {
   "name": "vega-force",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
     "vega",
