@@ -1,3 +1,4 @@
+import element from './element';
 import {isString} from 'vega-util';
 import {tickStep} from 'd3-array';
 
@@ -121,8 +122,8 @@ function select(bind, el, param, value) {
 
   param.options.forEach(function(option) {
     var attr = {value: option};
-    if (option === value) attr.selected = true;
-    node.appendChild(element('option', attr, option));
+    if (valuesEqual(option, value)) attr.selected = true;
+    node.appendChild(element('option', attr, option+''));
   });
 
   el.appendChild(node);
@@ -133,7 +134,11 @@ function select(bind, el, param, value) {
 
   bind.elements = [node];
   bind.set = function(value) {
-    node.selectedIndex = param.options.indexOf(value);
+    for (var i=0, n=param.options.length; i<n; ++i) {
+      if (valuesEqual(param.options[i], value)) {
+        node.selectedIndex = i; return;
+      }
+    }
   };
 }
 
@@ -154,7 +159,7 @@ function radio(bind, el, param, value) {
       name:  param.signal,
       value: option
     };
-    if (option === value) attr.checked = true;
+    if (valuesEqual(option, value)) attr.checked = true;
 
     var input = element('input', attr);
 
@@ -163,7 +168,7 @@ function radio(bind, el, param, value) {
     });
 
     group.appendChild(input);
-    group.appendChild(element('label', {'for': id}, option));
+    group.appendChild(element('label', {'for': id}, option+''));
 
     return input;
   });
@@ -173,7 +178,7 @@ function radio(bind, el, param, value) {
         i = 0,
         n = nodes.length;
     for (; i<n; ++i) {
-      if (nodes[i].value === value) nodes[i].checked = true;
+      if (valuesEqual(nodes[i].value, value)) nodes[i].checked = true;
     }
   };
 }
@@ -214,9 +219,6 @@ function range(bind, el, param, value) {
   };
 }
 
-function element(tag, attr, text) {
-  var el = document.createElement(tag);
-  for (var key in attr) el.setAttribute(key, attr[key]);
-  if (text != null) el.textContent = text;
-  return el;
+function valuesEqual(a, b) {
+  return a === b || (a+'' === b+'');
 }
