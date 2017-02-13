@@ -300,8 +300,8 @@ tape('SVGRenderer should render area mark with breaks', function(test) {
   test.end();
 });
 
-tape('SVGRenderer should render trail area mark', function(test) {
-  var svg = render(marks['area-trail'], 500, 500);
+tape('SVGRenderer should render trail mark', function(test) {
+  var svg = render(marks['trail'], 500, 500);
   var file = load('svg/marks-area-trail.svg');
   test.equal(svg, file);
   test.end();

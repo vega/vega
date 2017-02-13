@@ -14,7 +14,7 @@ import {
 function x(item)    { return item.x || 0; }
 function y(item)    { return item.y || 0; }
 function w(item)    { return item.width || 0; }
-function wh(item)   { return item.width || item.height || 1; }
+function ts(item)   { return item.size || 1; }
 function h(item)    { return item.height || 0; }
 function xw(item)   { return (item.x || 0) + (item.width || 0); }
 function yh(item)   { return (item.y || 0) + (item.height || 0); }
@@ -28,9 +28,9 @@ var arcShape    = d3_arc().cornerRadius(cr).padAngle(pa),
     areavShape  = d3_area().x(x).y1(y).y0(yh).defined(def),
     areahShape  = d3_area().y(y).x1(x).x0(xw).defined(def),
     lineShape   = d3_line().x(x).y(y).defined(def),
-    trailShape  = vg_trail().x(x).y(y).defined(def).size(wh),
     rectShape   = vg_rect().x(x).y(y).width(w).height(h).cornerRadius(cr),
-    symbolShape = d3_symbol().type(type).size(size);
+    symbolShape = d3_symbol().type(type).size(size),
+    trailShape  = vg_trail().x(x).y(y).defined(def).size(ts);
 
 export function arc(context, item) {
   return arcShape.context(context)(item);
@@ -39,10 +39,9 @@ export function arc(context, item) {
 export function area(context, items) {
   var item = items[0],
       interp = item.interpolate || 'linear';
-  return (interp === 'trail' ? trailShape
-    : (item.orient === 'horizontal' ? areahShape : areavShape)
-        .curve(curves(interp, item.orient, item.tension))
-  ).context(context)(items);
+  return (item.orient === 'horizontal' ? areahShape : areavShape)
+    .curve(curves(interp, item.orient, item.tension))
+    .context(context)(items);
 }
 
 export function line(context, items) {
@@ -63,4 +62,8 @@ export function shape(context, item) {
 
 export function symbol(context, item) {
   return symbolShape.context(context)(item);
+}
+
+export function trail(context, items) {
+  return trailShape.context(context)(items);
 }
