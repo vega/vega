@@ -6,7 +6,7 @@ import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
-import {encoder, extendEncode} from './encode/encode-util';
+import {addEncode, encoder, extendEncode} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
@@ -36,7 +36,9 @@ export default function(spec, scope) {
   dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
+
   legendEncode = extendEncode({
+    enter: legendEnter(config),
     update: {
       offset:        encoder(value(spec.offset, config.offset)),
       padding:       encoder(value(spec.padding, config.padding)),
@@ -113,7 +115,7 @@ function value(value, defaultValue) {
 }
 
 function sizeExpression(spec, config, encode) {
-  // TODO get override for symbolSize...
+  // TODO get override for symbolSize?
   var symbolSize = +config.symbolSize, fontSize;
   fontSize = encode && encode.update && encode.update.fontSize;
   if (!fontSize) fontSize = encode && encode.enter && encode.enter.fontSize;
@@ -123,4 +125,14 @@ function sizeExpression(spec, config, encode) {
   return spec.size
     ? {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'}
     : Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
+}
+
+function legendEnter(config) {
+  var enter = {},
+      count = addEncode(enter, 'fill', config.fillColor)
+            + addEncode(enter, 'stroke', config.strokeColor)
+            + addEncode(enter, 'strokeWidth', config.strokeWidth)
+            + addEncode(enter, 'strokeDash', config.strokeDash)
+            + addEncode(enter, 'cornerRadius', config.cornerRadius)
+  return count ? enter : undefined;
 }

@@ -2,7 +2,7 @@ import {Top, Bottom, Left, Right, Value, Label} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
-import {encoder} from '../encode/encode-util';
+import {addEncode, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
@@ -13,11 +13,13 @@ export default function(spec, config, userEncode, dataRef, size) {
 
   encode.enter = enter = {
     opacity: zero,
-    fill: {value: config.labelColor},
-    font: {value: config.labelFont},
-    fontSize: {value: config.labelFontSize},
     text: {field: Label}
   };
+
+  addEncode(enter, 'fill', config.labelColor);
+  addEncode(enter, 'font', config.labelFont);
+  addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'labelAngle', config.labelAngle);
 
   encode.exit = exit = {
     opacity: zero
@@ -41,13 +43,13 @@ export default function(spec, config, userEncode, dataRef, size) {
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
-    update.align = {value: 'center'};
-    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+    addEncode(update, 'align', 'center');
+    addEncode(update, 'baseline', orient === Top ? 'bottom' : 'top');
   } else {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
-    update.align = {value: orient === Right ? 'left' : 'right'};
-    update.baseline = {value: 'middle'};
+    addEncode(update, 'align', orient === Right ? 'left' : 'right');
+    addEncode(update, 'baseline', 'middle');
   }
 
   return guideMark(TextMark, AxisLabelRole, Label, dataRef, encode, userEncode);

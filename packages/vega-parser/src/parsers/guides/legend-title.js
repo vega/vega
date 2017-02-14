@@ -1,23 +1,24 @@
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
       title = spec.title,
-      encode = {};
+      encode = {}, enter;
 
-  encode.enter = {
+  encode.enter = enter = {
     x: {field: {group: 'padding'}},
     y: {field: {group: 'padding'}},
-    opacity: zero,
-    fill: {value: config.titleColor},
-    font: {value: config.titleFont},
-    fontSize: {value: config.titleFontSize},
-    fontWeight: {value: config.titleFontWeight},
-    align: {value: config.titleAlign},
-    baseline: {value: config.titleBaseline}
+    opacity: zero
   };
+  addEncode(enter, 'fill', config.titleColor);
+  addEncode(enter, 'font', config.titleFont);
+  addEncode(enter, 'fontSize', config.titleFontSize);
+  addEncode(enter, 'fontWeight', config.titleFontWeight);
+  addEncode(enter, 'align', config.titleAlign);
+  addEncode(enter, 'baseline', config.titleBaseline);
 
   encode.exit = {
     opacity: zero

@@ -68,6 +68,7 @@ function defaults() {
       gridDash: [],
       gridOpacity: 1,
       labels: true,
+      labelAngle: 0,
       labelColor: '#000',
       labelFont: 'sans-serif',
       labelFontSize: 10,

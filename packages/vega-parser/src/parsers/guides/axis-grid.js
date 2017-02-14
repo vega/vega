@@ -2,6 +2,7 @@ import {Left, Top, Bottom, Value} from './constants';
 import guideMark from './guide-mark';
 import {RuleMark} from '../marks/marktypes';
 import {AxisGridRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
@@ -12,19 +13,18 @@ export default function(spec, config, userEncode, dataRef) {
       encode = {}, enter, exit, update, tickPos, u, v, v2, s;
 
   encode.enter = enter = {
-    opacity: zero,
-    stroke: {value: config.gridColor},
-    strokeWidth: {value: config.gridWidth},
-    strokeDash: {value: config.gridDash}
+    opacity: zero
   };
+  addEncode(enter, 'stroke', config.gridColor);
+  addEncode(enter, 'strokeWidth', config.gridWidth);
+  addEncode(enter, 'strokeDash', config.gridDash);
 
   encode.exit = exit = {
     opacity: zero
   };
 
-  encode.update = update = {
-    opacity: {value: config.gridOpacity}
-  };
+  encode.update = update = {};
+  addEncode(update, 'opacity', config.gridOpacity);
 
   tickPos = {
     scale:  spec.scale,

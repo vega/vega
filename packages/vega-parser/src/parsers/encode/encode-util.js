@@ -6,6 +6,10 @@ export function encoder(_) {
   return isObject(_) ? _ : {value: _};
 }
 
+export function addEncode(object, name, value) {
+  return value != null ? (object[name] = {value: value}, 1) : 0;
+}
+
 export function extendEncode(encode, extra, skip) {
   for (var name in extra) {
     if (skip && skip.hasOwnProperty(name)) continue;

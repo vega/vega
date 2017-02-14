@@ -2,6 +2,7 @@ import {Index, Label, Offset, Size, Total} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
@@ -9,13 +10,13 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.enter = enter = {
     opacity: zero,
-    fill: {value: config.labelColor},
-    text: {field: Label},
-    font: {value: config.labelFont},
-    fontSize: {value: config.labelFontSize},
-    align: {value: config.labelAlign},
-    baseline: {value: config.labelBaseline}
+    text: {field: Label}
   };
+  addEncode(enter, 'fill', config.labelColor);
+  addEncode(enter, 'font', config.labelFont);
+  addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'align', config.labelAlign);
+  addEncode(enter, 'baseline', config.labelBaseline);
 
   encode.exit = {
     opacity: zero

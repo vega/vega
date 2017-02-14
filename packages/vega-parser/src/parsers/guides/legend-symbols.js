@@ -2,21 +2,19 @@ import {Index, Label, Offset, Size, Total, Value, LegendScales} from './constant
 import guideMark from './guide-mark';
 import {SymbolMark} from '../marks/marktypes';
 import {LegendSymbolRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
       encode = {}, enter, update;
 
   encode.enter = enter = {
-    opacity: zero,
-    shape: {value: config.symbolType},
-    size: {value: config.symbolSize},
-    strokeWidth: {value: config.symbolStrokeWidth}
+    opacity: zero
   };
-
-  if (!spec.fill) {
-    enter.stroke = {value: config.symbolColor};
-  }
+  addEncode(enter, 'shape', config.symbolType);
+  addEncode(enter, 'size', config.symbolSize);
+  addEncode(enter, 'strokeWidth', config.symbolStrokeWidth);
+  if (!spec.fill) addEncode(enter, 'stroke', config.symbolColor);
 
   encode.exit = {
     opacity: zero
