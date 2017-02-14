@@ -2,6 +2,7 @@ import {Perc, Label} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 var alignExpr = 'datum.' + Perc + '<=0?"left"'
   + ':datum.' + Perc + '>=1?"right":"center"';
@@ -12,12 +13,12 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.enter = enter = {
     opacity: zero,
-    text: {field: Label},
-    fill: {value: config.labelColor},
-    font: {value: config.labelFont},
-    fontSize: {value: config.labelFontSize},
-    baseline: {value: config.gradientLabelBaseline}
+    text: {field: Label}
   };
+  addEncode(enter, 'fill', config.labelColor);
+  addEncode(enter, 'font', config.labelFont);
+  addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'baseline', config.gradientLabelBaseline);
 
   encode.exit = {
     opacity: zero

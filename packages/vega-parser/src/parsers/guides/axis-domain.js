@@ -2,6 +2,7 @@ import {Top, Bottom} from './constants';
 import guideMark from './guide-mark';
 import {RuleMark} from '../marks/marktypes';
 import {AxisDomainRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
@@ -9,10 +10,10 @@ export default function(spec, config, userEncode, dataRef) {
       encode = {}, enter, update, u, u2, v;
 
   encode.enter = enter = {
-    opacity: zero,
-    stroke: {value: config.tickColor},
-    strokeWidth: {value: config.tickWidth}
+    opacity: zero
   };
+  addEncode(enter, 'stroke', config.tickColor);
+  addEncode(enter, 'strokeWidth', config.tickWidth);
 
   encode.exit = {
     opacity: zero

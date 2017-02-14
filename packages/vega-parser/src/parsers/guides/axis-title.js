@@ -3,22 +3,23 @@ import guideMark from './guide-mark';
 import {has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
+import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       title = spec.title,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
-      encode = {}, update, titlePos;
+      encode = {}, enter, update, titlePos;
 
-  encode.enter = {
-    opacity: {value: 0},
-    fill: {value: config.titleColor},
-    font: {value: config.titleFont},
-    fontSize: {value: config.titleFontSize},
-    fontWeight: {value: config.titleFontWeight},
-    align: {value: config.titleAlign}
+  encode.enter = enter = {
+    opacity: {value: 0}
   };
+  addEncode(enter, 'fill', config.titleColor);
+  addEncode(enter, 'font', config.titleFont);
+  addEncode(enter, 'fontSize', config.titleFontSize);
+  addEncode(enter, 'fontWeight', config.titleFontWeight);
+  addEncode(enter, 'align', config.titleAlign);
 
   encode.exit = {
     opacity: {value: 0}
@@ -44,25 +45,16 @@ export default function(spec, config, userEncode, dataRef) {
     update.baseline = {value: 'bottom'};
   }
 
-  if (config.titleAngle != null) {
-    update.angle = {value: config.titleAngle};
-  }
+  addEncode(update, 'angle', config.titleAngle);
+  addEncode(update, 'baseline', config.titleBaseline);
 
-  if (config.titleBaseline != null) {
-    update.baseline = {value: config.titleBaseline};
-  }
+  !addEncode(update, 'x', config.titleX)
+    && horizontal && !has(userEncode, 'x')
+    && (encode.enter.auto = {value: true});
 
-  if (config.titleX != null) {
-    update.x = {value: config.titleX};
-  } else if (horizontal && !has(userEncode, 'x')) {
-    encode.enter.auto = {value: true}
-  }
-
-  if (config.titleY != null) {
-    update.y = {value: config.titleY};
-  } else if (!horizontal && !has(userEncode, 'y')) {
-    encode.enter.auto = {value: true}
-  }
+  !addEncode(update, 'y', config.titleY)
+    && !horizontal && !has(userEncode, 'y')
+    && (encode.enter.auto = {value: true});
 
   return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
 }
