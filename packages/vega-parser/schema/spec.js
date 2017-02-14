@@ -8,6 +8,7 @@ export default {
         {
           "properties": {
             "$schema": {"type": "string", "format": "uri"},
+            "config": {"type": "object"},
             "description": {"type": "string"},
             "width": {"type": "number"},
             "height": {"type": "number"},
