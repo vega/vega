@@ -37,6 +37,24 @@
     }
   ],
 
+  "legends": [
+    {
+      "fill": "color",
+      "orient": "bottom-right",
+      "title": "Unemployment",
+      "format": "0.1%",
+      "encode": {
+        "symbols": {
+          "update": {
+            "shape": {"value": "square"},
+            "stroke": {"value": "#ccc"},
+            "strokeWidth": {"value": 0.2}
+          }
+        }
+      }
+    }
+  ],
+
   "marks": [
     {
       "type": "shape",

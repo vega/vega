@@ -39,7 +39,8 @@
       "name": "cell_stroke",
       "value": null,
       "on": [
-        {"events": "dblclick", "update": "cell_stroke ? null : 'brown'"}
+        {"events": "dblclick", "update": "cell_stroke ? null : 'brown'"},
+        {"events": "mousedown!", "update": "cell_stroke"}
       ]
     }
   ],
