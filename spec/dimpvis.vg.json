@@ -368,7 +368,7 @@
               "test": "datum.country==timeline.country || indata('trackCountries', 'country', datum.country)",
               "value": 1
             },
-            {"value": 0.5}
+            {"value": 0.7}
           ]
         }
       }

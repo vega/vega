@@ -130,7 +130,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "range": "category",
+      "range": {"scheme": "category10"},
       "domain": {"data": "source", "field": "Origin"}
     }
   ],
@@ -166,7 +166,7 @@
             "fill": {"value": "transparent"},
             "strokeWidth": {"value": 2},
             "opacity": [
-              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.5},
+              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.7},
               {"value": 0.15}
             ],
             "size": {"value": 64}
@@ -231,7 +231,7 @@
           "shape": {"value": "circle"},
           "strokeWidth": {"value": 2},
           "opacity": [
-            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))", "value": 0.5 },
+            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))", "value": 0.7 },
             {"value": 0.15}
           ],
           "stroke": [

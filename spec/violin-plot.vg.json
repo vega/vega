@@ -52,7 +52,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "range": {"scheme": "category20"}
+      "range": "category"
     }
   ],
 
