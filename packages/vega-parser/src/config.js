@@ -10,6 +10,11 @@ export default function(userConfig) {
   return config;
 }
 
+var defaultColor = '#4c78a8',
+    black = "#000",
+    gray = '#888',
+    lightGray = '#ddd';
+
 /**
  * Standard configuration defaults for Vega specification parsing.
  * Users can provide their own (sub-)set of these default values
@@ -36,20 +41,20 @@ function defaults() {
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
-    arc: { fill: 'steelblue' },
-    area: { fill: 'steelblue' },
+    arc: { fill: defaultColor },
+    area: { fill: defaultColor },
     image: null,
-    line: { stroke: 'steelblue' },
-    path: { stroke: 'steelblue' },
-    rect: { fill: 'steelblue' },
-    rule: { stroke: '#000' },
-    shape: { stroke: 'steelblue' },
+    line: { stroke: defaultColor },
+    path: { stroke: defaultColor },
+    rect: { fill: defaultColor },
+    rule: { stroke: black },
+    shape: { stroke: defaultColor },
     symbol: {
-      fill: 'steelblue',
+      fill: defaultColor,
       size: 64
     },
     text: {
-      fill: '#000',
+      fill: black,
       font: 'sans-serif',
       fontSize: 11
     },
@@ -61,15 +66,15 @@ function defaults() {
       bandPosition: 0.5,
       domain: true,
       domainWidth: 1,
-      domainColor: '#000',
+      domainColor: black,
       grid: false,
       gridWidth: 1,
-      gridColor: '#ddd',
+      gridColor: lightGray,
       gridDash: [],
       gridOpacity: 1,
       labels: true,
       labelAngle: 0,
-      labelColor: '#000',
+      labelColor: black,
       labelFont: 'sans-serif',
       labelFontSize: 10,
       labelPadding: 2,
@@ -77,10 +82,10 @@ function defaults() {
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      tickColor: '#000',
+      tickColor: black,
       titleAlign: 'center',
       titlePadding: 2,
-      titleColor: '#000',
+      titleColor: black,
       titleFont: 'sans-serif',
       titleFontSize: 11,
       titleFontWeight: 'bold'
@@ -95,11 +100,11 @@ function defaults() {
       titlePadding: 5,
       gradientWidth: 100,
       gradientHeight: 20,
-      gradientStrokeColor: '#ddd',
+      gradientStrokeColor: lightGray,
       gradientStrokeWidth: 0,
       gradientLabelBaseline: 'top',
       gradientLabelOffset: 2,
-      labelColor: '#000',
+      labelColor: black,
       labelFontSize: 10,
       labelFont: 'sans-serif',
       labelAlign: 'left',
@@ -107,9 +112,9 @@ function defaults() {
       labelOffset: 8,
       symbolType: 'circle',
       symbolSize: 100,
-      symbolColor: '#888',
+      symbolColor: gray,
       symbolStrokeWidth: 1.5,
-      titleColor: '#000',
+      titleColor: black,
       titleFont: 'sans-serif',
       titleFontSize: 11,
       titleFontWeight: 'bold',
@@ -120,21 +125,21 @@ function defaults() {
     // defaults for scale ranges
     range: {
       category: {
-        scheme: 'category10'
+        scheme: 'tableau10'
       },
       ordinal: {
         scheme: 'blues',
         extent: [0.2, 1]
       },
       heatmap: {
-        scheme: 'plasma'
+        scheme: 'viridis'
       },
       ramp: {
-        scheme: 'greens',
+        scheme: 'blues',
         extent: [0.2, 1]
       },
       diverging: {
-        scheme: 'purpleorange'
+        scheme: 'blueorange'
       },
       symbol: [
         'circle',
