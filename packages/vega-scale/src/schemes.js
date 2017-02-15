@@ -1,7 +1,12 @@
+import {tableau10, tableau20, blueOrange} from './palettes';
 import * as $ from 'd3-scale';
 import * as _ from 'd3-scale-chromatic';
+import {interpolateRgbBasis} from 'd3-interpolate';
+import {peek} from 'vega-util';
 
-var discrete = {};
+var discrete = {
+  blueorange:  blueOrange
+};
 
 var schemes = {
   // d3 built-in categorical palettes
@@ -19,16 +24,17 @@ var schemes = {
   set1:        _.schemeSet1,
   set2:        _.schemeSet2,
   set3:        _.schemeSet3,
+  tableau10:   tableau10,
+  tableau20:   tableau20,
 
   // d3 built-in interpolators
-  cubehelix:   $.interpolateCubehelixDefault,
-  rainbow:     $.interpolateRainbow,
-  warm:        $.interpolateWarm,
-  cool:        $.interpolateCool,
   viridis:     $.interpolateViridis,
   magma:       $.interpolateMagma,
   inferno:     $.interpolateInferno,
-  plasma:      $.interpolatePlasma
+  plasma:      $.interpolatePlasma,
+
+  // extended interpolators
+  blueorange:  interpolateRgbBasis(peek(blueOrange))
 };
 
 function add(name, suffix) {
