@@ -6,7 +6,7 @@
 
   "signals": [
     {
-      "name": "palette", "value": "Plasma",
+      "name": "palette", "value": "Viridis",
       "bind": {
         "input": "select",
         "options": [
@@ -14,16 +14,13 @@
           "Magma",
           "Inferno",
           "Plasma",
-          "Cubehelix",
-          "Rainbow",
-          "Warm",
-          "Cool",
           "Blues",
           "Greens",
           "Greys",
           "Purples",
           "Reds",
           "Oranges",
+          "BlueOrange",
           "BrownBlueGreen",
           "PurpleGreen",
           "PinkYellowGreen",

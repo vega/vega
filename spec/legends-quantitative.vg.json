@@ -10,7 +10,7 @@
   },
 
   "signals": [
-    {"name": "seqScheme", "value": "greens"},
+    {"name": "seqScheme", "value": "blues"},
     {"name": "linearRange", "value": ["purple", "orange"]}
   ],
 

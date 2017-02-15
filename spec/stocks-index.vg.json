@@ -147,7 +147,7 @@
           "x": {"scale": "x", "signal": "indexDate", "offset": 0.5},
           "y": {"value": 0},
           "y2": {"field": {"group": "height"}},
-          "stroke": {"value": "red"}
+          "stroke": {"value": "firebrick"}
         }
       }
     },
@@ -159,7 +159,7 @@
           "y2": {"field": {"group": "height"}, "offset": 15},
           "align": {"value": "center"},
           "text": {"signal": "timeFormat(indexDate, '%b %Y')"},
-          "fill": {"value": "red"}
+          "fill": {"value": "firebrick"}
         }
       }
     }
