@@ -12,11 +12,11 @@ export default function(spec, config, userEncode, dataRef) {
     opacity: zero,
     text: {field: Label}
   };
+  addEncode(enter, 'align', config.labelAlign);
+  addEncode(enter, 'baseline', config.labelBaseline);
   addEncode(enter, 'fill', config.labelColor);
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
-  addEncode(enter, 'align', config.labelAlign);
-  addEncode(enter, 'baseline', config.labelBaseline);
 
   encode.exit = {
     opacity: zero
