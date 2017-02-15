@@ -13,12 +13,12 @@ export default function(spec, config, userEncode, dataRef) {
     y: {field: {group: 'padding'}},
     opacity: zero
   };
+  addEncode(enter, 'align', config.titleAlign);
+  addEncode(enter, 'baseline', config.titleBaseline);
   addEncode(enter, 'fill', config.titleColor);
   addEncode(enter, 'font', config.titleFont);
   addEncode(enter, 'fontSize', config.titleFontSize);
   addEncode(enter, 'fontWeight', config.titleFontWeight);
-  addEncode(enter, 'align', config.titleAlign);
-  addEncode(enter, 'baseline', config.titleBaseline);
 
   encode.exit = {
     opacity: zero

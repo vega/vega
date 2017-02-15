@@ -15,11 +15,10 @@ export default function(spec, config, userEncode, dataRef, size) {
     opacity: zero,
     text: {field: Label}
   };
-
+  addEncode(enter, 'angle', config.labelAngle);
   addEncode(enter, 'fill', config.labelColor);
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
-  addEncode(enter, 'labelAngle', config.labelAngle);
 
   encode.exit = exit = {
     opacity: zero

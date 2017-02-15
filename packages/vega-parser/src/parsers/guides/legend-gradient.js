@@ -10,11 +10,7 @@ export default function(scale, config, userEncode) {
   encode.enter = enter = {
     opacity: zero,
     x: zero,
-    y: zero,
-    width: {value: config.gradientWidth},
-    height: {value: config.gradientHeight},
-    stroke: {value: config.gradientStrokeColor},
-    strokeWidth: {value: config.gradientStrokeWidth}
+    y: zero
   };
   addEncode(enter, 'width', config.gradientWidth);
   addEncode(enter, 'height', config.gradientHeight);

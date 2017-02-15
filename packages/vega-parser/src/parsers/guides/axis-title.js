@@ -15,11 +15,11 @@ export default function(spec, config, userEncode, dataRef) {
   encode.enter = enter = {
     opacity: {value: 0}
   };
+  addEncode(enter, 'align', config.titleAlign);
   addEncode(enter, 'fill', config.titleColor);
   addEncode(enter, 'font', config.titleFont);
   addEncode(enter, 'fontSize', config.titleFontSize);
   addEncode(enter, 'fontWeight', config.titleFontWeight);
-  addEncode(enter, 'align', config.titleAlign);
 
   encode.exit = {
     opacity: {value: 0}
