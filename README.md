@@ -1,9 +1,9 @@
 # Vega: A Visualization Grammar
 
-**Vega** is a *visualization grammar*, a declarative format for creating and
-saving interactive visualization designs. With Vega you can describe data
-visualizations in a JSON format, and generate interactive views using either
-HTML5 Canvas or SVG.
+**Vega** is a *visualization grammar*, a declarative format for creating,
+saving, and sharing interactive visualization designs.
+With Vega you can describe data visualizations in a JSON format,
+and generate interactive views using either HTML5 Canvas or SVG.
 
 This repository houses ongoing **Vega 3.0** development. While still a work
 in progress, Vega 3 has matured to a fully functional beta version with a
@@ -35,7 +35,8 @@ Once installation is complete, use `npm run test` to run tests and
 
 This repo (`vega`) includes web-based demos within the `web` folder. To run
 these, launch a local webserver in the top-level directory for the repo
-(e.g., `python -m SimpleHTTPServer 8000` for Python 2, `python -m http.server 8000` for Python 3) and then point your browser to right
+(e.g., `python -m SimpleHTTPServer 8000` for Python 2,
+`python -m http.server 8000` for Python 3) and then point your browser to right
 place (e.g., `http://localhost:8000/web/spec.html`).
 
 ## Development Setup
