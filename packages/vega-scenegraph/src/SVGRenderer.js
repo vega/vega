@@ -341,7 +341,7 @@ var mark_extras = {
     }
   },
   text: function(mdef, el, item) {
-    var str = textValue(item.text);
+    var str = textValue(item);
     if (str !== values.text) {
       el.textContent = str;
       values.text = str;

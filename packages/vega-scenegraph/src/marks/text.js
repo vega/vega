@@ -76,7 +76,7 @@ function draw(context, scene, bounds) {
   visit(scene, function(item) {
     var opacity, x, y, r, t, str;
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
-    if (!(str = textValue(item.text))) return; // get text string
+    if (!(str = textValue(item))) return; // get text string
 
     opacity = item.opacity == null ? 1 : item.opacity;
     if (opacity === 0) return;
