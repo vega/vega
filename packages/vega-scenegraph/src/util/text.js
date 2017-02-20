@@ -1,16 +1,25 @@
 import Canvas from './canvas/canvas';
 
-var context;
+var context,
+    fontHeight,
+    ellipsis = '\u2026';
 
+// make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
-  // make dumb, simple estimate if no canvas is available
-  return ~~(0.8 * textValue(item).length * height(item));
+  return fontHeight = height(item), estimate(textValue(item));
 }
 
+function estimate(text) {
+  return ~~(0.8 * text.length * fontHeight);
+}
+
+// measure text width if canvas is available
 function measureWidth(item) {
-  // measure text width if canvas is available
-  context.font = font(item);
-  return context.measureText(textValue(item.text)).width;
+  return context.font = font(item), measure(textValue(item));
+}
+
+function measure(text) {
+  return context.measureText(text).width;
 }
 
 function height(item) {
@@ -26,8 +35,31 @@ export var textMetrics = {
     : estimateWidth
 };
 
-export function textValue(s) {
-  return s != null ? String(s) : '';
+export function textValue(item) {
+  var s = item.text;
+  return s == null ? '' : item.limit > 0 ? truncate(item) : s + '';
+}
+
+// TODO: RTL support, any other i18n
+export function truncate(item) {
+  var width = context
+        ? (context.font = font(item), measure)
+        : (fontHeight = height(item), estimate),
+      limit = +item.limit,
+      text = item.text + '',
+      lo = 0,
+      hi = text.length;
+
+  if (width(text) < limit) return text;
+  limit -= width(ellipsis);
+
+  while (lo < hi) {
+    var mid = 1 + (lo + hi >>> 1);
+    if (width(text.slice(0, mid)) < limit) lo = mid;
+    else hi = mid - 1;
+  }
+
+  return text.slice(0, lo) + ellipsis;
 }
 
 export function font(item, quote) {

@@ -173,7 +173,7 @@ prototype.mark = function(scene) {
     str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
     if (tag === 'text') {
-      str += escape_text(textValue(item.text));
+      str += escape_text(textValue(item));
     } else if (tag === 'g') {
       str += openTag('path',
         renderer.attributes(mdef.background, item),

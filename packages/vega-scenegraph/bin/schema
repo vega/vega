@@ -271,6 +271,7 @@ var MARKS = {
   "text": {
     "properties": {
       "text": { "type": "string" },
+      "limit": { "type": "number", "default": 0 },
       "align": {
         "enum": [ "left", "center", "right" ],
         "default": "left"
