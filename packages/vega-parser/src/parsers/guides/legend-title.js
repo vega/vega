@@ -19,6 +19,7 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'font', config.titleFont);
   addEncode(enter, 'fontSize', config.titleFontSize);
   addEncode(enter, 'fontWeight', config.titleFontWeight);
+  addEncode(enter, 'limit', config.titleLimit);
 
   encode.exit = {
     opacity: zero

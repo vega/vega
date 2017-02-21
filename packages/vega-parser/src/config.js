@@ -78,6 +78,7 @@ function defaults() {
       labelFont: 'sans-serif',
       labelFontSize: 10,
       labelPadding: 2,
+      labelLimit: 180,
       ticks: true,
       tickRound: true,
       tickSize: 5,
@@ -110,6 +111,7 @@ function defaults() {
       labelAlign: 'left',
       labelBaseline: 'middle',
       labelOffset: 8,
+      labelLimit: 160,
       symbolType: 'circle',
       symbolSize: 100,
       symbolColor: gray,
@@ -119,7 +121,8 @@ function defaults() {
       titleFontSize: 11,
       titleFontWeight: 'bold',
       titleAlign: 'left',
-      titleBaseline: 'top'
+      titleBaseline: 'top',
+      titleLimit: 180
     },
 
     // defaults for scale ranges

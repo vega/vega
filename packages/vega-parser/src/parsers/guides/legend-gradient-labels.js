@@ -19,6 +19,7 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
   addEncode(enter, 'baseline', config.gradientLabelBaseline);
+  addEncode(enter, 'limit', config.gradientLabelLimit);
 
   encode.exit = {
     opacity: zero

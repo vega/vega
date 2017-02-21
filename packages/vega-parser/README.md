@@ -101,6 +101,7 @@ orientation-based options, which in turn take precedence over general options.
 - *labelColor*: Text color for axis tick labels.
 - *labelFont*: Font name for axis tick labels.
 - *labelFontSize*: Font size for axis tick labels.
+- *labelLimit*: Maximum allowed pixel width of axis tick labels.
 - *ticks*: Boolean flag indicating if axis tick marks should be included by default.
 - *tickColor*: Color for axis ticks.
 - *tickExtra*: Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
@@ -112,7 +113,8 @@ orientation-based options, which in turn take precedence over general options.
 - *titleFont*: Font name for axis titles.
 - *titleFontSize*: Font size for axis titles.
 - *titleFontWeight*: Font weight for axis titles.
-- *titleAlign*: Horizontal text alignment for legend titles.
+- *titleAlign*: Horizontal text alignment for axis titles.
+- *titleLimit*: Maximum allowed pixel width of axis titles.
 - *titlePadding*: Padding (in pixels) between axis tick labels and titles.
 
 ### Legend Properties
@@ -129,12 +131,14 @@ within a `"legend"` property block.
 - *gradientStrokeColor*: Stroke color for color ramp gradient borders.
 - *gradientStrokeWidth*: Stroke width for color ramp gradient borders.
 - *gradientLabelBaseline*: Text baseline for color ramp gradient labels.
+- *gradientLabelLimit*: Maximum allowed pixel width of gradient labels.
 - *gradientLabelOffset*: Vertical offset (in pixels) for color ramp gradient labels.
 - *labelColor*: Text color for legend labels.
 - *labelFont*: Font name for legend labels.
 - *labelFontSize*: Font size (in pixels) for legend labels.
 - *labelAlign*: Horizontal text alignment for legend labels.
 - *labelBaseline*: Vertical text baseline for legend labels.
+- *labelLimit*: Maximum allowed pixel width of legend labels.
 - *labelOffset*: Horizontal offset (in pixels) between legend symbols and labels.
 - *symbolType*: Default shape type (such as `"circle"`) for legend symbols.
 - *symbolSize*: Default symbol area size (in pixels<sup>2</sup>).
@@ -146,6 +150,7 @@ within a `"legend"` property block.
 - *titleFontWeight*: Font weight for legend titles.
 - *titleAlign*: Horizontal text alignment for legend titles.
 - *titleBaseline*: Vertical text baseline for legend titles.
+- *titleLimit*: Maximum allowed pixel width of the legend title.
 - *titlePadding*: Padding (in pixels) between the legend title and entries.
 
 ### Scale Range Properties
