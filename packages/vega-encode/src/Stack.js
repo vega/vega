@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {inherits, one} from 'vega-util';
 
 var Center = 'center',
     Normalize = 'normalize';
@@ -23,7 +23,7 @@ prototype.transform = function(_, pulse) {
   var as = _.as || ['y0', 'y1'],
       y0 = as[0],
       y1 = as[1],
-      field = _.field,
+      field = _.field || one,
       offset = _.offset,
       groups, group, i, j, n, m,
       max, off, scale, t, a, b, v;
@@ -34,8 +34,8 @@ prototype.transform = function(_, pulse) {
   // compute stack layouts per group
   for (i=0, n=groups.length, max=groups.max; i<n; ++i) {
     group = groups[i];
-    off = offset===Center ? (max - group.sum)/2 : 0;
-    scale = offset===Normalize ? (1/group.sum) : 1;
+    off = offset === Center ? (max - group.sum)/2 : 0;
+    scale = offset === Normalize ? (1/group.sum) : 1;
 
     // set stack coordinates for each datum in group
     for (b=off, v=0, j=0, m=group.length; j<m; ++j) {
