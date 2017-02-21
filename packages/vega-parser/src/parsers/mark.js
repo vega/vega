@@ -11,7 +11,7 @@ import parseTransform from './transform';
 import parseTrigger from './trigger';
 import parseSpec from './spec';
 import DataScope from '../DataScope';
-import {ref} from '../util';
+import {fieldRef, ref} from '../util';
 import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from '../transforms';
 
@@ -28,7 +28,7 @@ export default function(spec, scope) {
 
   // data join to map tuples to visual items
   op = scope.add(DataJoin({
-    key:   input.key,
+    key:   input.key || (spec.key ? fieldRef(spec.key) : undefined),
     pulse: input.pulse,
     clean: !group
   }));
