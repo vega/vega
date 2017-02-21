@@ -42,6 +42,7 @@ export default {
       "values": ["pdf", "cdf"] },
     { "name": "distribution", "type": "param",
       "params": distributions.concat(mixture) },
-    { "name": "as", "type": "string", "array": true }
+    { "name": "as", "type": "string", "array": true,
+      "default": ["value", "density"] }
   ]
 };
