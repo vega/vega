@@ -17,6 +17,7 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'fill', config.labelColor);
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'limit', config.labelLimit);
 
   encode.exit = {
     opacity: zero

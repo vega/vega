@@ -277,6 +277,7 @@ export default {
 
         // Text-mark properties
         "text": {"$ref": "#/refs/stringValue"},
+        "limit": {"$ref": "#/refs/numberValue"},
         "dx": {"$ref": "#/refs/numberValue"},
         "dy": {"$ref": "#/refs/numberValue"},
         "radius":{"$ref": "#/refs/numberValue"},
