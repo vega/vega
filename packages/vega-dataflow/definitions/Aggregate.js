@@ -7,9 +7,10 @@ export default {
     { "name": "ops", "type": "enum", "array": true,
       "values": [
         "count", "valid", "missing", "distinct",
-        "sum", "mean", "average", "variance", "variancep", "stdev",
-        "stdevp", "median", "q1", "q3", "modeskew", "min", "max",
-        "argmin", "argmax" ] },
+        "sum", "mean", "average",
+        "variance", "variancep", "stdev", "stdevp", "stderr",
+        "median", "q1", "q3", "ci0", "ci1",
+        "min", "max", "argmin", "argmax" ] },
     { "name": "as", "type": "string", "array": true },
     { "name": "drop", "type": "boolean", "default": true },
     { "name": "key", "type": "field" }
