@@ -15,6 +15,8 @@ var rangeDef = [
     "type": "array",
     "items": {
       "oneOf": [
+        {"type": "null"},
+        {"type": "boolean"},
         {"type": "string"},
         {"type": "number"},
         {"$ref": "#/refs/signal"}
@@ -120,7 +122,8 @@ export default {
                 {
                   "type": "object",
                   "properties": {
-                    "op": {"enum": ["count"]}
+                    "op": {"enum": ["count"]},
+                    "order": {"$ref": "#/refs/sortOrder"}
                   },
                   "additionalProperties": false,
                 }
@@ -167,7 +170,8 @@ export default {
                 {
                   "type": "object",
                   "properties": {
-                    "op": {"enum": ["count"]}
+                    "op": {"enum": ["count"]},
+                    "order": {"$ref": "#/refs/sortOrder"}
                   },
                   "additionalProperties": false,
                 }
@@ -262,7 +266,7 @@ export default {
                 "range": {"oneOf": schemeRangeDef},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"}
               },
-              "required": ["type"]
+              "required": ["type", "range"]
             },
             {
               "properties": {
@@ -287,9 +291,18 @@ export default {
               "required": ["type"]
             },
             {
+              "description": "Discretizing scales",
               "properties": {
                 "type": {"enum": ["quantile", "quantize", "threshold", "bin-ordinal"]},
-                "range": {"oneOf": schemeRangeDef}
+                "range": {"oneOf": schemeRangeDef},
+                "nice": {
+                  "oneOf": [
+                    {"type": "boolean"},
+                    {"type": "number"},
+                    {"$ref": "#/refs/signal"}
+                  ]
+                },
+                "zero": {"$ref": "#/refs/booleanOrSignal"}
               },
               "required": ["type"]
             },
@@ -301,7 +314,7 @@ export default {
                     "enum": [
                       "ordinal", "band", "point",
                       "quantile", "quantize", "threshold",
-                      "sequential", "pow", "time", "utc",
+                      "sequential", "pow", "log", "time", "utc",
                       "identity", "bin-ordinal", "bin-linear"
                     ]
                   }
@@ -324,8 +337,27 @@ export default {
             },
             {
               "properties": {
+                "type": {"enum": ["log"]},
+                "range": {"oneOf": schemeRangeDef},
+                "interpolate": {"$ref": "#/refs/scaleInterpolate"},
+                "base": {"$ref": "#/refs/numberOrSignal"},
+                "clamp": {"$ref": "#/refs/booleanOrSignal"},
+                "nice": {
+                  "oneOf": [
+                    {"type": "boolean"},
+                    {"type": "number"},
+                    {"$ref": "#/refs/signal"}
+                  ]
+                },
+                "zero": {"$ref": "#/refs/booleanOrSignal"}
+              },
+              "required": ["type"]
+            },
+            {
+              "properties": {
                 "type": {"enum": ["pow"]},
                 "range": {"oneOf": schemeRangeDef},
+                "interpolate": {"$ref": "#/refs/scaleInterpolate"},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"},
                 "exponent": {"$ref": "#/refs/numberOrSignal"},
                 "nice": {

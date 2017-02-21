@@ -37,7 +37,7 @@ export default {
     },
     "signalName": {
       "type": "string",
-      "not": {"enum": ["parent"]}
+      "not": {"enum": ["parent", "datum", "event"]}
     },
     "signalNew": {
       "type": "object",

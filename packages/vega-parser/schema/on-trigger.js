@@ -13,6 +13,7 @@ export default {
               {"$ref": "#/refs/exprString"}
             ]
           },
+          "toggle": {"$ref": "#/refs/exprString"},
           "modify": {"$ref": "#/refs/exprString"},
           "values": {"$ref": "#/refs/exprString"}
         },
