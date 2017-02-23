@@ -11,7 +11,7 @@ export default function(array, samples, alpha, f) {
     for (a=0, i=0; i<n; ++i) {
       a += values[~~(Math.random() * n)];
     }
-    mu[i] = a / n;
+    mu[j] = a / n;
   }
 
   return [
