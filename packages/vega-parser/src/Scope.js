@@ -149,8 +149,8 @@ prototype.pushState = function(encode, parent) {
 };
 
 prototype.popState = function() {
-  this._parent.pop();
   this._encode.pop();
+  this._parent.pop();
   this._markpath.pop();
 };
 

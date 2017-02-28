@@ -87,14 +87,21 @@ export default function(spec, scope) {
   bound = scope.add(Bound({mark: markRef, pulse: ref(op)}));
   boundRef = ref(bound);
 
-  // if non-faceted / non-layout group, recurse here
   if (group && !facet && !layout) {
-    scope.pushState(encodeRef, boundRef);
-    // if a normal group mark, we must generate dynamic subflows
-    // otherwise, we know the group is a guide with only one group item
-    // in that case we can simplify the dataflow
-    (role === MarkRole ? parseSubflow(spec, scope, input) : parseSpec(spec, scope));
-    scope.popState();
+    if (role === MarkRole) {
+      // if a normal group mark, we must generate nested subflows
+      scope.operators.pop();
+      scope.pushState(encodeRef, boundRef);
+      parseSubflow(spec, scope, input);
+      scope.popState();
+      scope.operators.push(bound);
+    } else {
+      // otherwise, we know the group is a guide with only one group item
+      // as a result we can simplify the dataflow to avoid nested scopes
+      scope.pushState(encodeRef, boundRef);
+      parseSpec(spec, scope);
+      scope.popState();
+    }
   }
 
   // render / sieve items
