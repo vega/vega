@@ -58,6 +58,7 @@ prototype.transform = function(_, pulse) {
         x = map.get(k);
 
     if (x) {
+      x.datum = t;
       out.mod.push(x);
     }
   });
