@@ -175,10 +175,12 @@ prototype.mark = function(scene) {
     if (tag === 'text') {
       str += escape_text(textValue(item));
     } else if (tag === 'g') {
-      str += openTag('path',
-        renderer.attributes(mdef.background, item),
+      str += openTag('path', renderer.attributes(mdef.background, item),
         applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
-      str += renderer.markGroup(item);
+
+      str += openTag('g', renderer.attributes(mdef.foreground, item))
+        + renderer.markGroup(item)
+        + closeTag('g');
     }
 
     str += closeTag(tag);
