@@ -10,12 +10,12 @@ export default function(userConfig) {
   return config;
 }
 
-var defaultColor = '#4c78a8',
+var defaultSymbolSize = 30,
+    defaultStrokeWidth = 2,
+    defaultColor = '#4c78a8',
     black = "#000",
     gray = '#888',
-    lightGray = '#ddd',
-    symbolSize = 30,
-    strokeWidth = 2;
+    lightGray = '#ddd';
 
 /**
  * Standard configuration defaults for Vega specification parsing.
@@ -48,7 +48,7 @@ function defaults() {
     image: null,
     line: {
       stroke: defaultColor,
-      strokeWidth: strokeWidth
+      strokeWidth: defaultStrokeWidth
     },
     path: { stroke: defaultColor },
     rect: { fill: defaultColor },
@@ -66,19 +66,18 @@ function defaults() {
 
     // defaults for marks using special roles
     point: {
-      size: symbolSize,
-      strokeWidth: strokeWidth,
+      size: defaultSymbolSize,
+      strokeWidth: defaultStrokeWidth,
       shape: 'circle'
     },
     circle: {
-      size: symbolSize,
-      strokeWidth: strokeWidth
+      size: defaultSymbolSize,
+      strokeWidth: defaultStrokeWidth
     },
     square: {
-      size: symbolSize,
-      strokeWidth: strokeWidth
+      size: defaultSymbolSize,
+      strokeWidth: defaultStrokeWidth
     },
-
 
     // defaults for axes
     axis: {

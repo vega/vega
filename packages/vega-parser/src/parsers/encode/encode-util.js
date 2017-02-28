@@ -35,24 +35,27 @@ export function encoders(encode, type, role, scope, params) {
 function applyDefaults(encode, type, role, config) {
   var enter, key, skip;
 
+  // ignore legend and axis
+  if (role == 'legend' || String(role).indexOf('axis') === 0) {
+    role = null;
+  }
+
   config = role === FrameRole ? config.group
     : (role === MarkRole || config[type = role]) ? extend({}, config.mark, config[type])
-    : null;
+    : {};
 
-  if (config) {
-    enter = {};
-    for (key in config) {
-      // do not apply defaults if relevant fields are defined
-      skip = has(key, encode)
-        || (key === 'fill' || key === 'stroke')
-        && (has('fill', encode) || has('stroke', encode));
+  enter = {};
+  for (key in config) {
+    // do not apply defaults if relevant fields are defined
+    skip = has(key, encode)
+      || (key === 'fill' || key === 'stroke')
+      && (has('fill', encode) || has('stroke', encode));
 
-      if (!skip) enter[key] = {value: config[key]};
-    }
-
-    encode = extend({}, encode); // defensive copy
-    encode.enter = extend(enter, encode.enter);
+    if (!skip) enter[key] = {value: config[key]};
   }
+
+  encode = extend({}, encode); // defensive copy
+  encode.enter = extend(enter, encode.enter);
 
   return encode;
 }
