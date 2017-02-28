@@ -1,9 +1,17 @@
 import Canvas from './canvas/canvas';
 
-var context = Canvas(1, 1),
+var context,
     fontHeight;
 
-if (context) context = context.getContext('2d');
+export var textMetrics = {
+  height: height,
+  measureWidth: measureWidth,
+  estimateWidth: estimateWidth,
+  width: estimateWidth,
+  canvas: canvas
+};
+
+canvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
@@ -27,12 +35,12 @@ function height(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
 
-export var textMetrics = {
-  height: height,
-  measureWidth: measureWidth,
-  estimateWidth: estimateWidth,
-  width: context ? measureWidth : estimateWidth
-};
+function canvas(_) {
+  context = _
+    ? (context = Canvas(1,1)) ? context.getContext('2d') : null
+    : null;
+  textMetrics.width = context ? measureWidth : estimateWidth
+}
 
 export function textValue(item) {
   var s = item.text;
