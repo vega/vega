@@ -277,8 +277,8 @@ prototype.draw = function(el, scene, prev) {
 
 // Recursively process group contents.
 function recurse(renderer, el, group) {
-  var prev = el.firstChild, // group background
-      idx = 0;
+  el = el.lastChild;
+  var prev, idx = 0;
 
   visit(group, function(item) {
     prev = renderer.draw(el, item, prev);
@@ -304,12 +304,16 @@ function bind(item, el, sibling, tag) {
       node.__data__ = item;
       node.__values__ = {fill: 'default'};
 
-      // create background element
+      // if group, create background and foreground elements
       if (tag === 'g') {
         var bg = domCreate(doc, 'path', ns);
         bg.setAttribute('class', 'background');
         node.appendChild(bg);
         bg.__data__ = item;
+
+        var fg = domCreate(doc, 'g', ns);
+        node.appendChild(fg);
+        fg.__data__ = item;
       }
     }
   }
@@ -330,8 +334,12 @@ var element = null, // temp var for current SVG element
 // Extra configuration for certain mark types
 var mark_extras = {
   group: function(mdef, el, item) {
-    element = el.childNodes[0];
     values = el.__values__; // use parent's values hash
+
+    element = el.childNodes[1];
+    mdef.foreground(emit, item, this);
+
+    element = el.childNodes[0];
     mdef.background(emit, item, this);
 
     var value = item.mark.interactive === false ? 'none' : null;
@@ -365,7 +373,7 @@ prototype._update = function(mdef, el, item) {
 
   // some marks need special treatment
   var extra = mark_extras[mdef.type];
-  if (extra) extra(mdef, el, item);
+  if (extra) extra.call(this, mdef, el, item);
 
   // apply svg css styles
   // note: element may be modified by 'extra' method

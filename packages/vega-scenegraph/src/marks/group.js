@@ -5,26 +5,25 @@ import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
 import translateItem from '../util/svg/translateItem';
 
-function attr(emit, item, renderer) {
-  var id = null, defs, c;
-
+function attr(emit, item) {
   emit('transform', translateItem(item));
-
-  if (item.clip) {
-    defs = renderer._defs;
-    id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++);
-    c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-    c.width = item.width || 0;
-    c.height = item.height || 0;
-  }
-
-  emit('clip-path', id ? ('url(#' + id + ')') : null);
 }
 
 function background(emit, item) {
   var offset = item.stroke ? 0.5 : 0;
   emit('class', 'background');
   emit('d', rectangle(null, item, offset, offset));
+}
+
+function foreground(emit, item, renderer) {
+  if (item.clip) {
+    var defs = renderer._defs,
+        id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
+        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+    c.width = item.width || 0;
+    c.height = item.height || 0;
+  }
+  emit('clip-path', id ? ('url(#' + id + ')') : null);
 }
 
 function bound(bounds, group) {
@@ -147,5 +146,6 @@ export default {
   bound:      bound,
   draw:       draw,
   pick:       pick,
-  background: background
+  background: background,
+  foreground: foreground
 };
