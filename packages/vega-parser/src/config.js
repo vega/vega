@@ -14,8 +14,8 @@ var defaultColor = '#4c78a8',
     black = "#000",
     gray = '#888',
     lightGray = '#ddd',
-    vlDefaultSymbolSize = 30,
-    vlDefaultSymbolStrokeWidth = 2;
+    symbolSize = 30,
+    strokeWidth = 2;
 
 /**
  * Standard configuration defaults for Vega specification parsing.
@@ -46,7 +46,10 @@ function defaults() {
     arc: { fill: defaultColor },
     area: { fill: defaultColor },
     image: null,
-    line: { stroke: defaultColor },
+    line: {
+      stroke: defaultColor,
+      strokeWidth: strokeWidth
+    },
     path: { stroke: defaultColor },
     rect: { fill: defaultColor },
     rule: { stroke: black },
@@ -60,13 +63,23 @@ function defaults() {
       font: 'sans-serif',
       fontSize: 11
     },
-    
-    // role defaults for special mark types in Vega-Lite
-    point: { size: vlDefaultSymbolSize, strokeWidth: vlDefaultSymbolStrokeWidth, shape: 'circle' },
-    circle: { size: vlDefaultSymbolSize, strokeWidth: vlDefaultSymbolStrokeWidth },
-    square: { size: vlDefaultSymbolSize, strokeWidth: vlDefaultSymbolStrokeWidth },
-    
-    
+
+    // defaults for marks using special roles
+    point: {
+      size: symbolSize,
+      strokeWidth: strokeWidth,
+      shape: 'circle'
+    },
+    circle: {
+      size: symbolSize,
+      strokeWidth: strokeWidth
+    },
+    square: {
+      size: symbolSize,
+      strokeWidth: strokeWidth
+    },
+
+
     // defaults for axes
     axis: {
       minExtent: 0,
