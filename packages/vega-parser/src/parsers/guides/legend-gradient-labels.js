@@ -41,5 +41,5 @@ export default function(spec, config, userEncode, dataRef) {
 
   enter.align = update.align = {signal: alignExpr};
 
-  return guideMark(TextMark, LegendLabelRole, Label, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendLabelRole, Perc, dataRef, encode, userEncode);
 }
