@@ -13,7 +13,9 @@ export default function(userConfig) {
 var defaultColor = '#4c78a8',
     black = "#000",
     gray = '#888',
-    lightGray = '#ddd';
+    lightGray = '#ddd',
+    vlDefaultSymbolSize = 30,
+    vlDefaultSymbolStrokeWidth = 2;
 
 /**
  * Standard configuration defaults for Vega specification parsing.
@@ -58,7 +60,13 @@ function defaults() {
       font: 'sans-serif',
       fontSize: 11
     },
-
+    
+    // role defaults for special mark types in Vega-Lite
+    point: { size: vlDefaultSymbolSize, strokeWidth: vlDefaultSymbolStrokeWidth, shape: 'circle' },
+    circle: { size: vlDefaultSymbolSize, strokeWidth: vlDefaultSymbolStrokeWidth },
+    square: { size: vlDefaultSymbolSize, strokeWidth: vlDefaultSymbolStrokeWidth },
+    
+    
     // defaults for axes
     axis: {
       minExtent: 0,
