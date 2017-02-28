@@ -1,8 +1,9 @@
 import Canvas from './canvas/canvas';
 
-var context,
-    fontHeight,
-    ellipsis = '\u2026';
+var context = Canvas(1, 1),
+    fontHeight;
+
+if (context) context = context.getContext('2d');
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
@@ -30,9 +31,7 @@ export var textMetrics = {
   height: height,
   measureWidth: measureWidth,
   estimateWidth: estimateWidth,
-  width: (context = Canvas(1, 1))
-    ? (context = context.getContext('2d'), measureWidth)
-    : estimateWidth
+  width: context ? measureWidth : estimateWidth
 };
 
 export function textValue(item) {
@@ -40,27 +39,39 @@ export function textValue(item) {
   return s == null ? '' : item.limit > 0 ? truncate(item) : s + '';
 }
 
-// TODO: RTL support, any other i18n
 export function truncate(item) {
-  var width = context
-        ? (context.font = font(item), measure)
-        : (fontHeight = height(item), estimate),
-      limit = +item.limit,
+  var limit = +item.limit,
       text = item.text + '',
-      lo = 0,
-      hi = text.length;
+      width = context
+        ? (context.font = font(item), measure)
+        : (fontHeight = height(item), estimate);
 
   if (width(text) < limit) return text;
+
+  var ellipsis = item.ellipsis || '\u2026',
+      rtl = item.dir === 'rtl',
+      lo = 0,
+      hi = text.length, mid;
+
   limit -= width(ellipsis);
 
-  while (lo < hi) {
-    var mid = 1 + (lo + hi >>> 1);
-    if (width(text.slice(0, mid)) < limit) lo = mid;
-    else hi = mid - 1;
+  if (rtl) {
+    while (lo < hi) {
+      mid = (lo + hi >>> 1);
+      if (width(text.slice(mid)) > limit) lo = mid + 1;
+      else hi = mid;
+    }
+    return ellipsis + text.slice(lo);
+  } else {
+    while (lo < hi) {
+      mid = 1 + (lo + hi >>> 1);
+      if (width(text.slice(0, mid)) < limit) lo = mid;
+      else hi = mid - 1;
+    }
+    return text.slice(0, lo) + ellipsis;
   }
-
-  return text.slice(0, lo) + ellipsis;
 }
+
 
 export function font(item, quote) {
   var font = item.font;

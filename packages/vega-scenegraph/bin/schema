@@ -272,6 +272,8 @@ var MARKS = {
     "properties": {
       "text": { "type": "string" },
       "limit": { "type": "number", "default": 0 },
+      "dir": { "type": "string", "default": "ltr" },
+      "ellipsis": { "type": "string", "default": '\u2026' },
       "align": {
         "enum": [ "left", "center", "right" ],
         "default": "left"
