@@ -11,7 +11,7 @@ var GENERATE_SCENES = false, // flag to generate test scenes
     });
 
 // Standardize font metrics to suppress cross-platform variance.
-vega.textMetrics.width = vega.textMetrics.estimateWidth;
+vega.textMetrics.canvas(false);
 
 tape('Vega generates scenegraphs for specifications', function(test) {
   var count = specs.length;
