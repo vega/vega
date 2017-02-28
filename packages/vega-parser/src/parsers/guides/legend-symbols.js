@@ -1,4 +1,4 @@
-import {Index, Label, Offset, Size, Total, Value, LegendScales} from './constants';
+import {Index, Offset, Size, Total, Value, LegendScales} from './constants';
 import guideMark from './guide-mark';
 import {SymbolMark} from '../marks/marktypes';
 import {LegendSymbolRole} from '../marks/roles';
@@ -47,5 +47,5 @@ export default function(spec, config, userEncode, dataRef) {
     }
   });
 
-  return guideMark(SymbolMark, LegendSymbolRole, Label, dataRef, encode, userEncode);
+  return guideMark(SymbolMark, LegendSymbolRole, Value, dataRef, encode, userEncode);
 }

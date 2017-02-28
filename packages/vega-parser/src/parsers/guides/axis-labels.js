@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, Right, Value, Label} from './constants';
+import {Top, Bottom, Left, Right, Label, Value} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
@@ -52,5 +52,5 @@ export default function(spec, config, userEncode, dataRef, size) {
     addEncode(update, 'baseline', 'middle');
   }
 
-  return guideMark(TextMark, AxisLabelRole, Label, dataRef, encode, userEncode);
+  return guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
 }

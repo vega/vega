@@ -1,4 +1,4 @@
-import {Top, Left, Bottom, Value, Label} from './constants';
+import {Top, Left, Bottom, Value} from './constants';
 import guideMark from './guide-mark';
 import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
@@ -45,5 +45,5 @@ export default function(spec, config, userEncode, dataRef, size) {
     update.y = enter.y = exit.y = tickPos;
   }
 
-  return guideMark(RuleMark, AxisTickRole, Label, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisTickRole, Value, dataRef, encode, userEncode);
 }
