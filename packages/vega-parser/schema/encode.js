@@ -277,6 +277,8 @@ export default {
 
         // Text-mark properties
         "text": {"$ref": "#/refs/stringValue"},
+        "dir": {"$ref": "#/refs/stringValue"},
+        "ellipsis": {"$ref": "#/refs/stringValue"},
         "limit": {"$ref": "#/refs/numberValue"},
         "dx": {"$ref": "#/refs/numberValue"},
         "dy": {"$ref": "#/refs/numberValue"},
