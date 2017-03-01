@@ -21,36 +21,13 @@ prototype.toJSON = function(indent) {
   return sceneToJSON(this.root, indent || 0);
 };
 
-prototype.mark = function(scenepath, markdef) {
-  var markpath = scenepath.marks,
-      itempath = scenepath.items,
-      item = this.root.items[0],
-      mark, index, i, n;
-
-  try {
-    for (i=0, n=markpath.length; i<n; ++i) {
-      mark = item.items[markpath[i]];
-      if (!mark) break;
-      index = itempath[i] || 0;
-      item = mark.items[index] || mark.items[mark.items.length-1];
-    }
-
-    if (!mark) {
-      mark = createMark(markdef, item);
-      item.items[markpath[i]] = mark;
-      if (mark.zindex) mark.group.zdirty = true;
-      return mark;
-    }
-
-    throw n;
-  } catch (err) {
-    error('Invalid scenegraph path: ' + scenepath.marks + ' : ' + scenepath.items);
-  }
+prototype.mark = function(markdef, group, index) {
+  group = group || this.root.items[0];
+  var mark = createMark(markdef, group);
+  group.items[index] = mark;
+  if (mark.zindex) mark.group.zdirty = true;
+  return mark;
 };
-
-function error(msg) {
-  throw Error(msg);
-}
 
 function createMark(def, group) {
   return {
