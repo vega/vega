@@ -32,6 +32,7 @@ prototype.transform = function(_, pulse) {
   if (!map) {
     pulse = pulse.addAll();
     this.value = map = fastmap().test(isExit);
+    map.lookup = function(t) { return map.get(key(t)); };
   }
 
   if (_.modified('key') || pulse.modified(key)) {
