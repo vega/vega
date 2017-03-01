@@ -18,14 +18,13 @@ function Context(df, transforms, functions) {
   this.nodes = {};
   this.data = {};
   this.fn = {};
-  this.itempath = [];
   if (functions) {
     this.functions = Object.create(functions);
     this.functions.context = this;
   }
 }
 
-function ContextFork(ctx, index) {
+function ContextFork(ctx) {
   this.dataflow = ctx.dataflow;
   this.transforms = ctx.transforms;
   this.functions = ctx.functions;
@@ -35,7 +34,6 @@ function ContextFork(ctx, index) {
   this.nodes = Object.create(ctx.nodes);
   this.data = Object.create(ctx.data);
   this.fn = Object.create(ctx.fn);
-  this.itempath = ctx.itempath.concat(index);
   if (ctx.functions) {
     this.functions = Object.create(ctx.functions);
     this.functions.context = this;
@@ -43,8 +41,8 @@ function ContextFork(ctx, index) {
 }
 
 Context.prototype = ContextFork.prototype = {
-  fork: function(index) {
-    var ctx = new ContextFork(this, index);
+  fork: function() {
+    var ctx = new ContextFork(this);
     (this.subcontext || (this.subcontext = [])).push(ctx);
     return ctx;
   },

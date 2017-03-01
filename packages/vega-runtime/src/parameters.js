@@ -47,8 +47,8 @@ var PARSERS = [
   {key: '$field',    parse: getField},
   {key: '$encode',   parse: getEncode},
   {key: '$compare',  parse: getCompare},
-  {key: '$subflow',  parse: getSubflow},
-  {key: '$itempath', parse: getItemPath}
+  {key: '$context',  parse: getContext},
+  {key: '$subflow',  parse: getSubflow}
 ];
 
 /**
@@ -107,26 +107,22 @@ function getEncode(_, ctx) {
 }
 
 /**
+ * Resolve an context reference.
+ */
+function getContext(_, ctx) {
+  return ctx;
+}
+
+/**
  * Resolve a recursive subflow specification.
  */
 function getSubflow(_, ctx) {
   var spec = _.$subflow;
-  return function(dataflow, key, index, parent) {
-    var subctx = parseDataflow(spec, ctx.fork(index)),
+  return function(dataflow, key, parent) {
+    var subctx = parseDataflow(spec, ctx.fork()),
         op = subctx.get(spec.operators[0].id),
         p = subctx.signals.parent;
     if (p) p.set(parent);
     return op;
-  };
-}
-
-/**
- * Resolve an iteration index reference.
- */
-function getItemPath(_, ctx) {
-  return {
-    marks:   _.$itempath,
-    items:   ctx.itempath,
-    context: ctx
   };
 }
