@@ -47,8 +47,8 @@
   },
   "scripts": {
     "prebuild": "rm -rf build && mkdir build && json2module package.json > build/package.js",
-    "build": "bin/rollup && bin/schema > build/vega-schema.json",
-    "postbuild": "uglifyjs build/vega.js -c -m -o build/vega.min.js",
+    "build": "bin/rollup && bin/rollup -e && bin/schema > build/vega-schema.json",
+    "postbuild": "uglifyjs build/vega.js -c -m -o build/vega.min.js && uglifyjs build/vega-core.js -c -m -o build/vega-core.min.js",
     "pretest": "npm run build",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run test && npm run build",
