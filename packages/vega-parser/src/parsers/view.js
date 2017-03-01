@@ -48,7 +48,7 @@ export default function parseView(spec, scope) {
   }));
 
   // Parse remainder of specification
-  scope.pushState(ref(encode), ref(parent));
+  scope.pushState(ref(encode), ref(parent), null);
   parseSpec(spec, scope, true);
 
   // Bound / render / sieve root item
