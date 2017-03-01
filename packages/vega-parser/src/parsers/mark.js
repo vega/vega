@@ -20,8 +20,9 @@ export default function(spec, scope) {
       group = spec.type === GroupMark,
       facet = spec.from && spec.from.facet,
       layout = role === ScopeRole || role === FrameRole,
-      op, input, store, bound, render, sieve, name,
-      markRef, encodeRef, boundRef;
+      nested = role === MarkRole || layout || facet,
+      ops, op, input, store, bound, render, sieve, name,
+      joinRef, markRef, encodeRef, layoutRef, boundRef;
 
   // resolve input data
   input = parseData(spec.from, group, scope);
@@ -32,14 +33,18 @@ export default function(spec, scope) {
     pulse: input.pulse,
     clean: !group
   }));
+  joinRef = ref(op);
 
   // collect visual items
-  op = store = scope.add(Collect({pulse: ref(op)}));
+  op = store = scope.add(Collect({pulse: joinRef}));
 
   // connect visual items to scenegraph
   op = scope.add(Mark({
     markdef:   definition(spec),
-    scenepath: {$itempath: scope.markpath()},
+    context:   {$context: true},
+    groups:    scope.lookup(),
+    parent:    scope.signals.parent ? scope.signalRef('parent') : null,
+    index:     scope.markpath(),
     pulse:     ref(op)
   }));
   markRef = ref(op);
@@ -66,42 +71,32 @@ export default function(spec, scope) {
 
   encodeRef = ref(op);
 
-  // if group is faceted or requires view layout, recurse here
+  // add view layout operator if needed
   if (facet || layout) {
-    op = scope.add(ViewLayout({
+    layout = scope.add(ViewLayout({
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
     }));
-
-    // we juggle the layout operator as we want it in our scope state,
-    // but we also want it to be run *after* any faceting transforms
-    scope.operators.pop();
-    scope.pushState(encodeRef, ref(op));
-    (facet ? parseFacet(spec, scope, input) : parseSubflow(spec, scope, input));
-    scope.popState();
-    scope.operators.push(op);
+    layoutRef = ref(layout);
   }
 
   // compute bounding boxes
-  bound = scope.add(Bound({mark: markRef, pulse: ref(op)}));
+  bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}));
   boundRef = ref(bound);
 
-  if (group && !facet && !layout) {
-    if (role === MarkRole) {
-      // if a normal group mark, we must generate nested subflows
-      scope.operators.pop();
-      scope.pushState(encodeRef, boundRef);
-      parseSubflow(spec, scope, input);
-      scope.popState();
-      scope.operators.push(bound);
-    } else {
-      // otherwise, we know the group is a guide with only one group item
-      // as a result we can simplify the dataflow to avoid nested scopes
-      scope.pushState(encodeRef, boundRef);
-      parseSpec(spec, scope);
-      scope.popState();
-    }
+  // if group mark, recurse to parse nested content
+  if (group) {
+    // juggle layout & bounds to ensure they run *after* any faceting transforms
+    if (nested) { ops = scope.operators; ops.pop(); if (layout) ops.pop(); }
+
+    scope.pushState(encodeRef, layoutRef || boundRef, joinRef);
+    facet ? parseFacet(spec, scope, input)          // explicit facet
+        : nested ? parseSubflow(spec, scope, input) // standard mark group
+        : parseSpec(spec, scope); // guide group, we can avoid nested scopes
+    scope.popState();
+
+    if (nested) { if (layout) ops.push(layout); ops.push(bound); }
   }
 
   // render / sieve items

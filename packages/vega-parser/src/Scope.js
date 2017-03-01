@@ -29,6 +29,7 @@ export default function Scope(config) {
 
   this._parent = [];
   this._encode = [];
+  this._lookup = [];
   this._markpath = [];
 }
 
@@ -52,6 +53,7 @@ function Subscope(scope) {
 
   this._parent = scope._parent.slice();
   this._encode = scope._encode.slice();
+  this._lookup = scope._lookup.slice();
   this._markpath = scope._markpath;
 }
 
@@ -142,15 +144,17 @@ prototype.finish = function() {
 
 // ----
 
-prototype.pushState = function(encode, parent) {
+prototype.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve({pulse: encode}))));
   this._parent.push(parent);
+  this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
 prototype.popState = function() {
   this._encode.pop();
   this._parent.pop();
+  this._lookup.pop();
   this._markpath.pop();
 };
 
@@ -162,9 +166,13 @@ prototype.encode = function() {
   return peek(this._encode);
 };
 
+prototype.lookup = function() {
+  return peek(this._lookup);
+};
+
 prototype.markpath = function() {
   var p = this._markpath;
-  return ++p[p.length-1], p.slice();
+  return ++p[p.length-1];
 };
 
 // ----
