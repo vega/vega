@@ -20,17 +20,15 @@ export default function Mark(params) {
 var prototype = inherits(Mark, Transform);
 
 prototype.transform = function(_, pulse) {
-  var mark = this.value, group, context;
+  var mark = this.value;
 
   // acquire mark on first invocation, bind context and group
   if (!mark) {
-    mark = pulse.dataflow.scenegraph().mark(_.scenepath, _.markdef);
+    mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup(_), _.index);
+    mark.group.context = _.context;
+    if (!_.context.group) _.context.group = mark.group;
     mark.source = this;
     this.value = mark;
-    context = _.scenepath.context;
-    group = mark.group;
-    group.context = context;
-    if (!context.group) context.group = group;
   }
 
   // initialize entering items
@@ -40,3 +38,10 @@ prototype.transform = function(_, pulse) {
   // bind items array to scenegraph mark
   return (mark.items = pulse.source, pulse);
 };
+
+function lookup(_) {
+  var g = _.groups, p = _.parent;
+  return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
+    : g && p ? g.lookup(p)
+    : null;
+}
