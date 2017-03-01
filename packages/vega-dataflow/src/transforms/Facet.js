@@ -13,7 +13,6 @@ import {fastmap, inherits} from 'vega-util';
 export default function Facet(params) {
   Transform.call(this, {}, params);
   this._keys = fastmap(); // cache previously calculated key values
-  this._count = 0; // count of subflows
 
   // keep track of active subflows, use as targets array for listeners
   // this allows us to limit propagation to only updated subflows
@@ -39,7 +38,7 @@ prototype.subflow = function(key, flow, pulse, parent) {
     p = parent || (p = this._group[key]) && p.tuple;
     df = pulse.dataflow;
     sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
-      .connect(flow(df, key, this._count++, p));
+      .connect(flow(df, key, p));
     flows[key] = sf;
     this.activate(sf);
   } else if (sf.value.stamp < pulse.stamp) {
