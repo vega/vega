@@ -3,31 +3,40 @@
 var rollup = require('rollup'),
     nodeResolve = require('rollup-plugin-node-resolve'),
     externals = process.argv[2] === '-e',
-    output = externals ? 'vega.ext.js' : 'vega.js';
+    output = externals ? 'vega-core.js' : 'vega.js';
 
 var modules = !externals ? [] : [
+  'd3',
   'd3-array',
-  'd3-cloud',
   'd3-collection',
   'd3-color',
+  'd3-dispatch',
   'd3-dsv',
   'd3-force',
   'd3-format',
   'd3-geo',
+  'd3-geo-projection',
   'd3-hierarchy',
+  'd3-interpolate',
   'd3-path',
+  'd3-quadtree',
+  'd3-queue',
   'd3-request',
   'd3-scale',
   'd3-scale-chromatic',
   'd3-shape',
+  'd3-time',
   'd3-time-format',
-  'd3-voronoi'
+  'd3-timer',
+  'd3-voronoi',
+  'topojson'
 ];
 
 var module_globals = modules.reduce(
   function(map, _) { return map[_] = 'd3', map; },
   {}
 );
+module_globals.topojson = 'topojson';
 
 rollup.rollup({
   entry: 'index.js',
