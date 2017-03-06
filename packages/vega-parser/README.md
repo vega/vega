@@ -98,9 +98,11 @@ orientation-based options, which in turn take precedence over general options.
 - *gridDash*: Stroke dash of axis grid lines (or `[]` for solid lines).
 - *gridOpacity*: Opacity of axis grid lines.
 - *labels*: Boolean flag indicating if axis tick labels should be included by default.
+- *labelAngle*: Text labels angle.
 - *labelColor*: Text color for axis tick labels.
 - *labelFont*: Font name for axis tick labels.
 - *labelFontSize*: Font size for axis tick labels.
+- *labelPadding*: Padding (in pixels) between ticks and text labels. Defaults to 2.
 - *labelLimit*: Maximum allowed pixel width of axis tick labels.
 - *ticks*: Boolean flag indicating if axis tick marks should be included by default.
 - *tickColor*: Color for axis ticks.
