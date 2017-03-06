@@ -14,7 +14,7 @@ export default {
     "legend": {
       "type": "object",
       "properties": {
-        "name":      {"type": "string"},
+        "name":       {"type": "string"},
         "size":       {"type": "string"},
         "shape":      {"type": "string"},
         "fill":       {"type": "string"},
