@@ -52,10 +52,9 @@
     "pretest": "npm run build",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run test && npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js && bin/deploy-schema.sh"
+    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh"
   },
   "dependencies": {
-    "d3-color": "1",
     "vega-crossfilter": ">=1.0.0-beta",
     "vega-dataflow": ">=2.0.0-beta",
     "vega-encode": ">=1.0.0-beta",
