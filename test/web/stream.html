@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Streaming Data Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+var runtimeSpec = vega.parse({
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "count", "value": 0 },
+    { "name": "size", "value": 0 }
+  ],
+
+  "data": [
+    {
+      "name": "table"
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "domain": {"data": "table", "field": "v"},
+      "zero": true,
+      "nice": true
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale"},
+    {"orient": "left", "scale": "yscale"}
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "update": {
+          "x": {"scale": "xscale", "field": "u", "offset": 1},
+          "width": {"scale": "xscale", "band": 1, "offset": -1},
+          "y": {"scale": "yscale", "field": "v"},
+          "y2": {"scale": "yscale", "value": 0},
+          "fill": {"value": "steelblue"}
+        },
+        "hover": {
+          "fill": {"value": "red"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": -2},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "black"}
+        },
+        "update": {
+          "text": {"signal": "'Count: ' + count + ', Size: ' + size"}
+        }
+      }
+    }
+  ]
+});
+
+var key = 0;
+function generate(n) {
+  var data = [];
+  for (var i=0; i<n; ++i) {
+    data.push({u: 1 + (key++ % 100), v: 5 + ~~(90 * Math.random())});
+  }
+  return data;
+}
+
+var view = new vega.View(runtimeSpec)
+  .initialize(document.querySelector('#view'))
+  .renderer('svg')
+  .hover()
+  .insert('table', generate(20))
+  .signal('count', 20)
+  .run();
+
+// clean caches once they fit 500 empty slots
+view.cleanThreshold = 500;
+
+setInterval(function() {
+  view.change('table', vega.changeset()
+      .remove(view.data('table')[0])
+      .insert(generate(1)))
+    .signal('count', view.signal('count') + 1) // tuples so far
+    .signal('size', view._runtime.nodes[82].value.size) // datajoin map size
+    .run();
+}, 20);
+    </script>
+  </body>
+</html>

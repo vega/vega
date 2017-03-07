@@ -47,6 +47,7 @@
   "scales-bin",
   "scales-discretize",
   "scatter-plot",
+  "scatter-plot-guides",
   "shift-select",
   "splom-inner",
   "splom-outer",

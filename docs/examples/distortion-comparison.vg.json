@@ -1,0 +1,191 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 900,
+  "height": 500,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "baseProjection",
+      "value": "azimuthalEqualArea",
+      "bind": {
+        "input": "select",
+        "options": [
+          "albers",
+          "albersUsa",
+          "azimuthalEqualArea",
+          "azimuthalEquidistant",
+          "conicConformal",
+          "conicEqualArea",
+          "conicEquidistant",
+          "equirectangular",
+          "gnomonic",
+          "mercator",
+          "orthographic",
+          "stereographic",
+          "transverseMercator"
+        ]
+      }
+    },
+    {
+      "name": "altProjection",
+      "value": "mercator",
+      "bind": {
+        "input": "select",
+        "options": [
+          "albers",
+          "albersUsa",
+          "azimuthalEqualArea",
+          "azimuthalEquidistant",
+          "conicConformal",
+          "conicEqualArea",
+          "conicEquidistant",
+          "equirectangular",
+          "gnomonic",
+          "mercator",
+          "orthographic",
+          "stereographic",
+          "transverseMercator"
+        ]
+      }
+    },
+    {
+      "name": "baseColor",
+      "value": "#bb8800",
+      "bind": {"input": "color"}
+    },
+    {
+      "name": "altColor",
+      "value": "#0088bb",
+      "bind": {"input": "color"}
+    },
+    {
+      "name": "opacity",
+      "value": 0.15,
+      "bind": {"input": "range", "min": 0, "max": 1, "step": 0.05}
+    },
+    {
+      "name": "scaleFactor",
+      "value": 1,
+      "bind": {"input": "range", "min": 0.05, "max": 2, "step": 0.05}
+    }
+  ],
+
+  "projections": [
+    {
+      "name": "projection1",
+      "type": {"signal": "baseProjection"},
+      "scale": 150,
+      "rotate": [0, 0, 0],
+      "center": [0, 0],
+      "translate": [
+        {"signal": "width / 2"},
+        {"signal": "height / 2"}
+      ]
+    },
+    {
+      "name": "projection2",
+      "type": {"signal": "altProjection"},
+      "scale": 150,
+      "rotate": [0, 0, 0],
+      "center": [0, 0],
+      "translate": [
+        {"signal": "width / 2"},
+        {"signal": "height / 2"}
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "world",
+      "url": "data/world-110m.json",
+      "format": {
+        "type": "topojson",
+        "feature": "countries"
+      },
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "geoCentroid('projection1', datum)",
+          "as": "centroid"
+        },
+        {
+          "type": "formula",
+          "expr": "geoArea('projection1', datum)",
+          "as": "area1"
+        },
+        {
+          "type": "formula",
+          "expr": "geoArea('projection2', datum)",
+          "as": "area2"
+        }
+      ]
+    },
+    {
+      "name": "graticule",
+      "transform": [
+        { "type": "graticule" }
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "shape",
+      "from": {"data": "graticule"},
+      "encode": {
+        "update": {
+          "strokeWidth": {"value": 1},
+          "stroke": {"value": "#ddd"},
+          "fill": {"value": null}
+        }
+      },
+      "transform": [
+        { "type": "geoshape", "projection": "projection1" }
+      ]
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "world"},
+      "encode": {
+        "update": {
+          "strokeWidth": {"value": 1},
+          "stroke": {"value": "#bbb"},
+          "fill": {"signal": "altColor"},
+          "fillOpacity": {"signal": "opacity"},
+          "zindex": {"value": 0},
+          "x": {"field": "centroid[0]"},
+          "y": {"field": "centroid[1]"},
+          "size": {"field": "area2", "mult": {"signal": "scaleFactor"}}
+        },
+        "hover": {
+          "strokeWidth": {"value": 2},
+          "stroke": {"value": "firebrick"},
+          "zindex": {"value": 1}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "world"},
+      "encode": {
+        "update": {
+          "strokeWidth": {"value": 1},
+          "stroke": {"value": "#bbb"},
+          "fill": {"signal": "baseColor"},
+          "fillOpacity": {"signal": "opacity"},
+          "zindex": {"value": 0},
+          "x": {"field": "centroid[0]"},
+          "y": {"field": "centroid[1]"},
+          "size": {"field": "area1", "mult": {"signal": "scaleFactor"}}
+        },
+        "hover": {
+          "strokeWidth": {"value": 2},
+          "stroke": {"value": "firebrick"},
+          "zindex": {"value": 1}
+        }
+      }
+    }
+  ]
+}

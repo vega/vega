@@ -1,0 +1,100 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    {
+      "name": "defined", "value": true,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "interpolate", "value": "linear",
+      "bind": {
+        "input": "select",
+        "options": [
+          "basis",
+          "bundle",
+          "cardinal",
+          "catmull-rom",
+          "linear",
+          "monotone",
+          "natural",
+          "step",
+          "step-after",
+          "step-before"
+        ]
+      }
+    },
+    {
+      "name": "tension", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 1, "step": 0.05}
+    },
+    { "name": "strokeWidth", "value": 4,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 0.5} },
+    { "name": "strokeCap", "value": "butt",
+      "bind": {"input": "select", "options": ["butt", "round", "square"]} },
+    { "name": "strokeDash", "value": [1,0],
+      "bind": {
+        "input": "select",
+        "options": [[1,0], [8,8], [8,4], [4,4], [4,2], [2,1], [1,1]]
+      }
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"u": 1, "v": 28}, {"u": 2, "v": 55},
+        {"u": 3, "v": 42}, {"u": 4, "v": 34},
+        {"u": 5, "v": 36}, {"u": 6, "v": 48}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "linear",
+      "range": "width",
+      "zero": false,
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": false,
+      "domain": {"data": "table", "field": "v"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "line",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#652c90"}
+        },
+        "update": {
+          "x": {"scale": "xscale", "field": "u"},
+          "y": {"scale": "yscale", "field": "v"},
+          "defined": {"signal": "defined || datum.u !== 3"},
+          "interpolate": {"signal": "interpolate"},
+          "tension": {"signal": "tension"},
+          "strokeWidth": {"signal": "strokeWidth"},
+          "strokeDash": {"signal": "strokeDash"},
+          "strokeCap": {"signal": "strokeCap"},
+          "opacity": {"value": 1}
+        },
+        "hover": {
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}

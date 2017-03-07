@@ -1,0 +1,87 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 100,
+  "padding": 5,
+
+  "signals": [
+    { "name": "method", "value": "tidy",
+      "bind": {"input": "select", "options": ["tidy", "cluster"]} }
+  ],
+
+  "data": [
+    {
+      "name": "tree",
+      "values": [
+        {"id": "A", "parent": null},
+        {"id": "B", "parent": "A"},
+        {"id": "C", "parent": "A"},
+        {"id": "D", "parent": "C"},
+        {"id": "E", "parent": "C"}
+      ],
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "tree",
+          "method": {"signal": "method"},
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    },
+    {
+      "name": "links",
+      "source": "tree",
+      "transform": [
+        {
+          "type": "treelinks",
+          "key": "id"
+        },
+        {
+          "type": "linkpath"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": {"scheme": "category20"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "links"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#ccc"}
+        },
+        "update": {
+          "path": {"field": "path"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "id"},
+          "stroke": {"value": "white"},
+          "size": {"value": 400}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"}
+        }
+      }
+    }
+  ]
+}

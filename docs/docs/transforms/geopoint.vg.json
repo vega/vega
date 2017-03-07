@@ -1,0 +1,123 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 450,
+  "height": 280,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "selected", "value": null,
+      "on": [
+        {"events": "symbol:mouseover", "update": "datum"},
+        {"events": "symbol:mouseout", "update": "null"}
+      ]
+    }
+  ],
+
+  "projections": [
+    {
+      "name": "projection",
+      "type": "albersUsa",
+      "scale": 600,
+      "translate": [{"signal": "width / 2"}, {"signal": "height / 2"}]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "states",
+      "url": "data/us-10m.json",
+      "format": {"type": "topojson", "feature": "states"},
+      "transform": [
+        {
+          "type": "geopath",
+          "projection": "projection"
+        }
+      ]
+    },
+    {
+      "name": "capitals",
+      "url": "data/us-state-capitals.json",
+      "transform": [
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["lon", "lat"]
+        }
+      ]
+    },
+    {
+      "name": "selected",
+      "source": "capitals",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum === selected"
+        }
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "states"},
+      "encode": {
+        "enter": {
+          "strokeWidth": {"value": "1"},
+          "stroke": {"value": "#fff"},
+          "fill": {"value": "#ddd"},
+          "path": {"field": "path"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "interactive": false,
+      "from": {"data": "capitals"},
+      "encode": {
+        "enter": {
+          "shape": {"value": "M0,.5L.6,.8L.5,.1L1,-.3L.3,-.4L0,-1L-.3,-.4L-1,-.3L-.5,.1L-.6,.8L0,.5Z"},
+          "fill": {"value": "#639"}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "capitals"},
+      "encode": {
+        "enter": {
+          "shape": "circle",
+          "size": {"value": 200},
+          "fill": {"value": "transparent"}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "selected"},
+      "encode": {
+        "enter": {
+          "fill": {"value": "#639"},
+          "fontSize": {"value": 9},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "text": {"field": "city"}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y", "offset": -5}
+        }
+      }
+    }
+  ]
+}

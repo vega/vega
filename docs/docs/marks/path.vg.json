@@ -1,0 +1,43 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "path", "value": "M-50,-50 L50,50 V-50 L-50,50 Z",
+      "bind": {"input": "text", "placeholder": "SVG Path String"} },
+    { "name": "x", "value": 100,
+      "bind": {"input": "range", "min": 10, "max": 190, "step": 1} },
+    { "name": "y", "value": 100,
+      "bind": {"input": "range", "min": 10, "max": 190, "step": 1} },
+    { "name": "strokeWidth", "value": 4,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 0.5} },
+    { "name": "color", "value": "both",
+      "bind": {"input": "radio", "options": ["fill", "stroke", "both"]} }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "encode": {
+        "enter": {
+          "fill": {"value": "#939597"},
+          "stroke": {"value": "#652c90"}
+        },
+        "update": {
+          "x": {"signal": "x"},
+          "y": {"signal": "y"},
+          "path": {"signal": "path"},
+          "opacity": {"value": 1},
+          "strokeWidth": {"signal": "strokeWidth"},
+          "fillOpacity": {"signal": "color === 'fill' || color === 'both' ? 1 : 0"},
+          "strokeOpacity": {"signal": "color === 'stroke' || color === 'both' ? 1 : 0"}
+        },
+        "hover": {
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}

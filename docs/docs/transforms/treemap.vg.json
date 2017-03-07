@@ -1,0 +1,75 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 100,
+  "padding": 5,
+
+  "signals": [
+    { "name": "method", "value": "squarify",
+      "bind": {"input": "select", "options": ["squarify", "resquarify", "binary", "dice", "slice", "slicedice"]} },
+    { "name": "ratio", "value": 1.6108,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 0.01} },
+    { "name": "paddingInner", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 1} },
+    { "name": "paddingOuter", "value": 5,
+      "bind": {"input": "range", "min": 0, "max": 15, "step": 1} },
+    { "name": "round", "value": false, "bind": {"input": "checkbox"} }
+  ],
+
+  "data": [
+    {
+      "name": "tree",
+      "values": [
+        {"id": "A", "parent": null, "value": 0},
+        {"id": "B", "parent": "A", "value": 1},
+        {"id": "C", "parent": "A", "value": 0},
+        {"id": "D", "parent": "C", "value": 2},
+        {"id": "E", "parent": "C", "value": 1},
+        {"id": "F", "parent": "C", "value": 1}
+      ],
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "treemap",
+          "field": "value",
+          "method": {"signal": "method"},
+          "ratio": {"signal": "ratio"},
+          "paddingInner": {"signal": "paddingInner"},
+          "paddingOuter": {"signal": "paddingOuter"},
+          "round": {"signal": "round"},
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": {"scheme": "category20"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "id"}
+        },
+        "update": {
+          "x": {"field": "x0"},
+          "x2": {"field": "x1"},
+          "y": {"field": "y0"},
+          "y2": {"field": "y1"}
+        }
+      }
+    }
+  ]
+}

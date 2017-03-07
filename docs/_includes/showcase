@@ -1,0 +1,46 @@
+<div id="showcase"><div class="examples"></div></div>
+<script>
+function capitalize(name) {
+  return name.split('-')
+    .map(function(_) { return _[0].toUpperCase() + _.slice(1); })
+    .join(' ');
+}
+
+function addExample(name) {
+  var a = document.createElement('a');
+  a.setAttribute('class', 'preview');
+  a.setAttribute('title', capitalize(name));
+  a.setAttribute('href', 'examples/' + name);
+  a.style.backgroundImage = 'url(examples/img/' + name + '.png)';
+  document.querySelector('#showcase .examples').appendChild(a);
+}
+
+[
+  'scatter-plot-null-values',
+  'radial-tree-layout',
+  'world-map',
+  'histogram-null-values',
+  'violin-plot',
+  'parallel-coordinates',
+  'word-cloud',
+  'falkensee-population',
+
+  'barley-trellis-plot',
+  'connected-scatter-plot',
+  'population-pyramid',
+  'crossfilter-flights',
+  'beeswarm-plot',
+  'weekly-temperature',
+  'job-voyager',
+  'interactive-legend',
+
+  'brushing-scatter-plots',
+  'distortion-comparison',
+  'county-unemployment',
+  'edge-bundling',
+  'force-directed-layout',
+  'reorderable-matrix',
+  'stock-index-chart',
+  'airport-connections'
+].forEach(addExample);
+</script>

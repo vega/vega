@@ -1,0 +1,63 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 100,
+  "padding": 5,
+
+  "signals": [
+    { "name": " padding", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 0.1} }
+  ],
+
+  "data": [
+    {
+      "name": "tree",
+      "values": [
+        {"id": "A", "parent": null, "value": 0},
+        {"id": "B", "parent": "A", "value": 1},
+        {"id": "C", "parent": "A", "value": 0},
+        {"id": "D", "parent": "C", "value": 1},
+        {"id": "E", "parent": "C", "value": 1}
+      ],
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "pack",
+          "field": "value",
+          "padding": {"signal": " padding"},
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": {"scheme": "category20"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "id"},
+          "stroke": {"value": "white"}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "size": {"signal": "4 * datum.r * datum.r"}
+        }
+      }
+    }
+  ]
+}

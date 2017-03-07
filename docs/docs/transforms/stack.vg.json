@@ -1,0 +1,113 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 300,
+  "height": 200,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "offset", "value": "zero",
+      "bind": {"input": "select", "options": ["zero", "center", "normalize"]}
+    },
+    {
+      "name": "sortField", "value": null,
+      "bind": {"input": "radio", "options": [null, "value"]}
+    },
+    {
+      "name": "sortOrder", "value": "ascending",
+      "bind": {"input": "radio", "options": ["ascending", "descending"]}
+    },
+    {
+      "name": "add", "value": null,
+      "on": [
+        {
+          "events": "mousedown![!event.shiftKey]",
+          "update": "{key: invert('xscale', x()), value: ~~(1 + 9 * random())}"
+        }
+      ]
+    },
+    {
+      "name": "rem", "value": null,
+      "on": [
+        {
+          "events": "rect:mousedown![event.shiftKey]",
+          "update": "datum"
+        }
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"key": "a", "value": 5},
+        {"key": "a", "value": 8},
+        {"key": "a", "value": 3},
+        {"key": "b", "value": 2},
+        {"key": "b", "value": 7},
+        {"key": "b", "value": 4},
+        {"key": "c", "value": 1},
+        {"key": "c", "value": 4},
+        {"key": "c", "value": 6}
+      ],
+      "transform": [
+        {
+          "type": "stack",
+          "field": "value",
+          "groupby": ["key"],
+          "offset": {"signal": "offset"},
+          "sort": {
+            "field": {"signal": "sortField"},
+            "order": {"signal": "sortOrder"}
+          }
+        }
+      ],
+      "on": [
+        {"trigger": "add", "insert": "add"},
+        {"trigger": "rem", "remove": "rem"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "domain": ["a", "b", "c"],
+      "range": "width"
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "domain": {"data": "table", "field": "y1"},
+      "range": "height",
+      "round": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": {"scheme": "category10"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "key"},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"value": 1},
+          "x": {"scale": "xscale", "field": "key", "offset": 0.5},
+          "width": {"scale": "xscale", "band": 1}
+        },
+        "update": {
+          "y": {"scale": "yscale", "field": "y0", "offset": 0.5},
+          "y2": {"scale": "yscale", "field": "y1", "offset": 0.5}
+        }
+      }
+    }
+  ]
+}

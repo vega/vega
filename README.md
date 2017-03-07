@@ -12,18 +12,15 @@ reproduce all standard Vega 2 examples, and much more! [Contributions, feature
 requests and bug reports](https://github.com/vega/vega/issues) are
 most appreciated.
 
+For documentation, see the [Vega website](https://vega.github.io/vega).
 For a partial description of changes from Vega 2.x, please refer to the
-[Vega 3 Porting Guide](https://github.com/vega/vega/blob/master/PORTING_GUIDE.md).
-The Vega wiki associated with this repo contains documentation for version 2.6.
-
-Beyond the porting guide, more detailed documentation for aspects of Vega 3
-can be found in the associated modules listed below. For example, the
-[Vega View API](https://github.com/vega/vega-view) and
-[configuration options](https://github.com/vega/vega-parser).
-Full Vega 3 documentation is a work-in-progress and will be added shortly.
+[Vega 3 Porting Guide](https://vega.github.io/vega/docs/porting-guide/).
+Additional API documentation for Vega 3 can be found in the associated
+modules listed below.
 
 Not ready to live on the edge? Looking for the latest stable release? Please
-see [Vega 2.6](https://github.com/vega/vega/tree/v2.x).
+see [Vega 2.6](https://github.com/vega/vega/tree/v2.x). The Vega wiki
+associated with this repo contains documentation for version 2.6.
 
 ## Basic Setup
 
@@ -33,11 +30,11 @@ clone `https://github.com/vega/vega` and run `npm install`.
 Once installation is complete, use `npm run test` to run tests and
 `npm run build` to build output files.
 
-This repo (`vega`) includes web-based demos within the `web` folder. To run
+This repo (`vega`) includes web-based demos within the `test` folder. To run
 these, launch a local webserver in the top-level directory for the repo
 (e.g., `python -m SimpleHTTPServer 8000` for Python 2,
 `python -m http.server 8000` for Python 3) and then point your browser to
-the right place (e.g., `http://localhost:8000/web/spec.html`).
+the right place (e.g., `http://localhost:8000/test/`).
 
 ## Development Setup
 

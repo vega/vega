@@ -1,10 +1,10 @@
 var GENERATE_SCENES = false, // flag to generate test scenes
-    specdir = process.cwd() + '/spec/',
+    specdir = process.cwd() + '/test/specs-valid/',
     testdir = process.cwd() + '/test/scenegraphs/',
     fs = require('fs'),
     tape = require('tape'),
     vega = require('../'),
-    loader = vega.loader({baseURL: './web/'}),
+    loader = vega.loader({baseURL: 'test/'}),
     specs = require('./specs-valid.json').filter(function(name) {
       // remove wordcloud due to random layout
       return name !== 'wordcloud';

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "x", "value": 100,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "y", "value": 100,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "dx", "value": 0,
+      "bind": {"input": "range", "min": -20, "max": 20, "step": 1} },
+    { "name": "angle", "value": 0,
+      "bind": {"input": "range", "min": -180, "max": 180, "step": 1} },
+    { "name": "fontSize", "value": 18,
+      "bind": {"input": "range", "min": 1, "max": 36, "step": 1} },
+    { "name": "limit", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 150, "step": 1} },
+    { "name": "align", "value": "left",
+      "bind": {"input": "select", "options": ["left", "center", "right"]} },
+    { "name": "baseline", "value": "alphabetic",
+      "bind": {"input": "select", "options": ["alphabetic", "top", "middle", "bottom"]} },
+    { "name": "font", "value": "sans-serif",
+      "bind": {"input": "select", "options": ["sans-serif", "serif", "monospace"]} },
+    { "name": "fontWeight", "value": "normal",
+      "bind": {"input": "select", "options": ["normal", "bold"]} },
+    { "name": "fontStyle", "value": "normal",
+      "bind": {"input": "select", "options": ["normal", "italic"]} }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fill": {"value": "firebrick"},
+          "size": {"value": 25}
+        },
+        "update": {
+          "x": {"signal": "x"},
+          "y": {"signal": "y"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "fill": {"value": "#000"},
+          "text": {"value": "Text Label"}
+        },
+        "update": {
+          "opacity": {"value": 1},
+          "x": {"signal": "x"},
+          "y": {"signal": "y"},
+          "dx": {"signal": "dx"},
+          "angle": {"signal": "angle"},
+          "align": {"signal": "align"},
+          "baseline": {"signal": "baseline"},
+          "font": {"signal": "font"},
+          "fontSize": {"signal": "fontSize"},
+          "fontStyle": {"signal": "fontStyle"},
+          "fontWeight": {"signal": "fontWeight"},
+          "limit": {"signal": "limit"}
+        },
+        "hover": {
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}

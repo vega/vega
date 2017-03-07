@@ -1,0 +1,23 @@
+# Jekyll Site Settings
+title: Vega
+description: Vega - A Visualization Grammar.
+  Vega is a visualization grammar, a declarative format for creating,
+  saving, and sharing interactive visualization designs.
+  With Vega, you can describe the visual appearance and interactive
+  behavior of a visualization in a JSON format, and generate web-based
+  views using Canvas or SVG.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  auto_id_stripping: true
+
+exclude:
+  - Gemfile
+  - Gemfile.lock

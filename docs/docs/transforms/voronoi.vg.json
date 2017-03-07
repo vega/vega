@@ -1,0 +1,92 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 500,
+  "height": 200,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "addPoint",
+      "on": [
+        {
+          "events": "click[!event.shiftKey], mousemove[event.buttons && !event.shiftKey]{20}",
+          "update": "{u: invert('xscale', x()), v: invert('yscale', y())}"
+        }
+      ]
+    },
+    {
+      "name": "remPoint",
+      "on": [
+        {
+          "events": "path:click[event.shiftKey], path:mousemove[event.buttons && event.shiftKey]{20}",
+          "update": "datum.datum"
+        }
+      ]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"u": 0.1, "v": 0.1},
+        {"u": 0.9, "v": 0.1},
+        {"u": 0.1, "v": 0.9},
+        {"u": 0.9, "v": 0.9},
+        {"u": 0.5, "v": 0.5}
+      ],
+      "on": [
+        {"trigger": "addPoint", "insert": "addPoint"},
+        {"trigger": "remPoint", "remove": "remPoint"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "domain": [0, 1],
+      "range": "width"
+    },
+    {
+      "name": "yscale",
+      "domain": [0, 1],
+      "range": "height"
+    }
+  ],
+
+  "marks": [
+    {
+      "name": "points",
+      "type": "symbol",
+      "zindex": 1,
+      "from": {"data": "table"},
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fill": {"value": "black"},
+          "size": {"value": 36},
+          "x": {"scale": "xscale", "field": "u"},
+          "y": {"scale": "yscale", "field": "v"}
+        }
+      }
+    },
+    {
+      "type": "path",
+      "from": {"data": "points"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "firebrick"},
+          "fill": {"value": "transparent"}
+        }
+      },
+      "transform": [
+        {
+          "type": "voronoi",
+          "x": "datum.x", "y": "datum.y",
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    }
+  ]
+}

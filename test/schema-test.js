@@ -11,7 +11,7 @@ function validate(spec) {
 }
 
 tape('JSON schema recognizes valid specifications', function(test) {
-  var dir = process.cwd() + '/spec/';
+  var dir = process.cwd() + '/test/specs-valid/';
   validSpecs.forEach(function(file) {
     var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json'));
     test.ok(validate(spec),

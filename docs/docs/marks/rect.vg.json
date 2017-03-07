@@ -1,0 +1,49 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "x", "value": 50,
+      "bind": {"input": "range", "min": 1, "max": 100, "step": 1} },
+    { "name": "y", "value": 50,
+      "bind": {"input": "range", "min": 1, "max": 100, "step": 1} },
+    { "name": "w", "value": 100,
+      "bind": {"input": "range", "min": 1, "max": 100, "step": 1} },
+    { "name": "h", "value": 100,
+      "bind": {"input": "range", "min": 1, "max": 100, "step": 1} },
+    { "name": "cornerRadius", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 50, "step": 1} },
+    { "name": "strokeWidth", "value": 4,
+      "bind": {"input": "range", "min": 0, "max": 10} },
+    { "name": "color", "value": "both",
+      "bind": {"input": "radio", "options": ["fill", "stroke", "both"]} }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "fill": {"value": "#939597"},
+          "stroke": {"value": "#652c90"}
+        },
+        "update": {
+          "x": {"signal": "x"},
+          "y": {"signal": "y"},
+          "width": {"signal": "w"},
+          "height": {"signal": "h"},
+          "opacity": {"value": 1},
+          "cornerRadius": {"signal": "cornerRadius"},
+          "strokeWidth": {"signal": "strokeWidth"},
+          "fillOpacity": {"signal": "color === 'fill' || color === 'both' ? 1 : 0"},
+          "strokeOpacity": {"signal": "color === 'stroke' || color === 'both' ? 1 : 0"}
+        },
+        "hover": {
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}

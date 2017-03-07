@@ -1,0 +1,10 @@
+<div class="example">
+{% include embed spec=include.spec %}
+</div>
+
+### Vega JSON Specification <a class="source" title="View Source" href="../{{ include.spec }}.vg.json">&lt;&gt;</a>
+
+{: .example-spec}
+```json
+{% include_relative {{ include.spec }}.vg.json %}
+```

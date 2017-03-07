@@ -1,0 +1,28 @@
+---
+layout: base
+base: /
+---
+{% assign url = page.url | remove:'index.html' %}
+<div class="page-centered page-main">
+  {% if layout.sidebar %}
+  <aside class="page-sidebar">
+    <ul class="sidebar-nav">{% for entry in layout.sidebar %}
+      {% assign link = layout.base | append:entry.page | downcase | replace:' ','-' | append:'/' | replace:'//','/' %}
+      <li class="sidebar-nav-item">
+        <a {% if link == url %}class="active"{% endif %} href="{{ site.baseurl }}{{ link }}">{% if entry.text %}{{ entry.text }}{% else %}{{ entry.page }}{% endif %}</a>
+      </li>
+      {% if layout.parent == entry.page %}
+      <ul class="sub-menu-nav">{% for sub in layout.submenu %}
+        {% assign link = layout.base | append:layout.parent | append:'/' | append:sub.page | downcase | append:'/' | replace:'//','/' %}
+        <li class="sidebar-nav-item sub-item">
+          <a {% if link == url %}class="active"{% endif %} href="{{ site.baseurl }}{{ link }}">{{ sub.page }}</a>
+        </li>{% endfor %}
+      </ul>
+      {% endif %}{% endfor %}
+    </ul>
+  </aside>{% endif %}
+  <section class="page-content">
+    <h1>{{ page.title }}</h1>
+    {{ content }}
+  </section>
+</div>

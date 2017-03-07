@@ -1,0 +1,47 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "x", "value": 75,
+      "bind": {"input": "range", "min": 0, "max": 100, "step": 1} },
+    { "name": "y", "value": 75,
+      "bind": {"input": "range", "min": 0, "max": 100, "step": 1} },
+    { "name": "w", "value": 50,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "h", "value": 50,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "aspect", "value": true,
+      "bind": {"input": "checkbox"} },
+    { "name": "align", "value": "left",
+      "bind": {"input": "select", "options": ["left", "center", "right"]} },
+    { "name": "baseline", "value": "top",
+      "bind": {"input": "select", "options": ["top", "middle", "bottom"]} }
+  ],
+
+  "marks": [
+    {
+      "type": "image",
+      "encode": {
+        "enter": {
+          "url": {"value": "https://vega.github.io/images/idl-logo.png"}
+        },
+        "update": {
+          "opacity": {"value": 1},
+          "x": {"signal": "x"},
+          "y": {"signal": "y"},
+          "width": {"signal": "w"},
+          "height": {"signal": "h"},
+          "aspect": {"signal": "aspect"},
+          "align": {"signal": "align"},
+          "baseline": {"signal": "baseline"}
+        },
+        "hover": {
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}

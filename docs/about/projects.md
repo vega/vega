@@ -1,0 +1,21 @@
+---
+layout: about
+title: Projects Using Vega
+permalink: /about/projects/index.html
+---
+
+A number of research projects and open source tools build upon Vega.
+
+[**Vega-Lite**](https://vega.github.io/vega-lite/) is a concise language for rapidly creating interactive visualizations, and compiles down to full-blown Vega specifications. Though expressive and performant, Vega can still require verbose specifications: while _control flow_ is handled by the model, the _logic_ of event and data processing must be explicitly provided. As a result, Vega is not an ideal language for people to quickly author interactive plots in the midst of an analysis session. Vega-Lite focuses on making common graphics faster, and Vega-Lite specifications are typically an order-of-magnitude smaller than corresponding Vega specifications. Compared to existing high-level grammars, Vega-Lite provides novel constructs for interaction techniques and multi-view displays.
+
+[**Altair**](https://altair-viz.github.io/) is a Python API based on Vega-Lite, and is useful for rapidly creating statistical graphics within Jupyter notebooks. For more, read [Dan Saber's tour through Altair](https://dansaber.wordpress.com/2016/10/02/a-dramatic-tour-through-pythons-data-visualization-landscape-including-ggplot-and-altair/) and other Python plotting tools.
+
+[**Lyra**](http://idl.cs.washington.edu/projects/lyra/) is a graphical interface for creating custom visualization designs without writing code, built on Vega and Vega-Lite. Lyra is more expressive than interactive systems like Tableau, allowing designers to create custom visualizations more comparable to hand-coded designs built with D3 or Processing. The resulting visualizations are realized as Vega specifications that can then be easily published and reused on the Web.
+
+[**Voyager**](http://idl.cs.washington.edu/papers/voyager2/) is a visual analysis tool that combines both manual specification and automatic chart recommendation. Similar to other tools, Voyager users can specify charts manually by assigning data fields to visual encoding channels. However, in addition, Voyager suggests relevant visualizations based on a user's current focus. Underneath the hood, the [**CompassQL**](https://github.com/vega/compassql) visualization query language searches over thousands of potential Vega-Lite charts, ranks them using both statistical and perceptual measures, and presents the top-ranked examples in a recommendation gallery. In studies of early-stage data analysis, we found that this mode of exploration significantly increases data coverage compared to state-of-the-art tool designs. By leveraging the Vega tool stack, any visualization in Voyager can be exported for further editing, including design customization within Lyra.
+
+[**GraphScape**](http://idl.cs.washington.edu/papers/graphscape/) provides a formal model of the relationships among Vega-Lite visualizations. GrpahScape is a directed graph model, where nodes represent Vega-Lite charts and edges represent specification edits that turn one chart into another. GraphScape edges are weighted by an estimated "cost" of the effort needed to interpret one chart having seen another. This model enables applications such as automatic sequence generation for presentations and automatic search for design alternatives. For example, given an initial visualization design (such as a scatter plot), GraphScape can be used to find similar designs that better scale to large data volumes (e.g., binned aggregation or sampling). In controlled studies we have found that GraphScape sequence recommendations closely align with human judgments.
+
+The [**MediaWiki Graph Extension**](https://www.mediawiki.org/wiki/Extension:Graph) allows Vega specifications to be included within MediaWiki pages, and is used to add Vega charts to [Wikipedia](https://www.wikipedia.org/) articles.
+
+By enabling these systems and others, it is our hope that Vega will support a new generation of higher-level tools that promote more effective visualization and productive data analysis.

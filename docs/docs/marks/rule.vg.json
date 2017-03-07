@@ -1,0 +1,51 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "x", "value": 50,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "y", "value": 50,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "x2", "value": 150,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "y2", "value": 150,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
+    { "name": "strokeWidth", "value": 4,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 0.5} },
+    { "name": "strokeCap", "value": "butt",
+      "bind": {"input": "select", "options": ["butt", "round", "square"]} },
+    { "name": "strokeDash", "value": [1,0],
+      "bind": {
+        "input": "select",
+        "options": [[1,0], [8,8], [8,4], [4,4], [4,2], [2,1], [1,1]]
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rule",
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#652c90"}
+        },
+        "update": {
+          "x": {"signal": "x"},
+          "y": {"signal": "y"},
+          "x2": {"signal": "x2"},
+          "y2": {"signal": "y2"},
+          "strokeWidth": {"signal": "strokeWidth"},
+          "strokeDash": {"signal": "strokeDash"},
+          "strokeCap": {"signal": "strokeCap"},
+          "opacity": {"value": 1}
+        },
+        "hover": {
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}
