@@ -36,7 +36,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 - Mark definitions no longer allow embedded data transforms (e.g., `{"type": "rect", "from": {"data": "table, "transform": [...]}}`). Instead, *all* derived data sources must now be defined within a `"data"` definition block. However, as of Vega 3, `"data"` blocks are no longer constrained to only the top-level of a spec: they can be defined within `group` marks as well! For example, this flexibility allows creation of derived data sets *within* a faceted group.
 
 - The `"facet"` transform is no longer supported. Instead, a new `"facet"` directive can be applied within a mark `"from"` block to enable multiple forms of faceting support. For example, the `barley.vg.json` example facets a group mark like so:
-  ```js
+
+  {:.suppress-error}
+  ```json
   "from": {
     "facet": {
       "name": "sites",
@@ -46,7 +48,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
   },
   ```
   Child marks can visualize the faceted data by name: `"from": {"data": "sites"}`. The `"facet"` block also accepts the same parameters as an `"aggregate"` transform to apply when generating data elements for `group` mark items. In addition, Vega 3 now supports pre-faceted data, in which a data tuple may contain a nested a set of records. This oft-requested feature allows data to be grouped offline and passed directly to Vega, like so:
-  ```js
+
+  {:.suppress-error}
+  ```json
   "from": {
     "facet": {
       "name":  "facets",
@@ -58,7 +62,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
   In this case, each datum in `input` will back a `group` mark item, and each corresponding group will contain the data tuples referenced by the `"children"` field.
 
 - In addition to the `"encode"` (formerly `"properties"`) blocks, mark definitions now support *post-encoding transforms*: data transforms that are run after the `"encode"` block, and which read and write scenegraph item properties directly. For example, one can run layout algorithms (force-directed layout, wordcloud layout, tree layout, *etc*.) to directly set the visual properties of items, rather than write them to an intermediate data tuple and then copy them over (as done in Vega 2). Only transforms that do not filter or generate new tuples can be used as post-encoding transforms. Here is an example excerpt from `wordcloud.vg.json`:
-  ```js
+
+  {:.suppress-error}
+  ```json
   "marks": [{
     "type": "text",
     "from": {"data": "table"},
@@ -129,7 +135,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 - Custom visual properties for axes and legends now reside under an `"encode"` block and use `"enter"`, `"update"`, and `"exit"` sub-blocks. If unsure of which to use, a good default is to define an `"update"` block to ensure all properties are updated.
 
 - In addition, the custom `"encode"` block for an axis or legend can include a boolean `"interactive"` value to control if specific axis or legend items should be subject to input events. For example, to enable interaction for legend symbols:
-  ```js
+
+  {:.suppress-error}
+  ```json
   "legends": [
     {
       "fill": "colorScale",
@@ -187,7 +195,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 - For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
 
 - The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operations. In Vega 3, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output field names:
-  ```js
+
+  {:.suppress-error}
+  ```json
   {
     "type": "aggregate",
     "groupby": ["category1", "category2"],
@@ -235,6 +245,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 ## <a name="view"></a>View API
 
 - The [Vega View API](../api/view) has been updated and streamlined. To create a Vega visualization, the Vega spec must first be parsed, the resulting *runtime specification* can then be passed as an argument to the `View` constructor. Unlike Vega 2.x, this process does *not* require asynchronous callbacks. For example:
+
+  {:.suppress-error}
   ```js
   var runtime = vega.parse(spec); // may throw an Error if parsing fails
   var view = new vega.View(runtime)
