@@ -38,7 +38,7 @@ Vega also provides a **JavaScript runtime API**, responsible for parsing JSON sp
 | :----------------------------- | :------------------ |
 | [Parser](api/parser)           | Parse Vega JSON specifications to dataflow descriptions. |
 | [View](api/view)               | Create interactive views from dataflow descriptions. |
-| [Extensibility](api/extensibility | Extend Vega with new projections, scales, color schemes, or data transforms. |
+| [Extensibility](api/extensibility) | Extend Vega with new projections, scales, color schemes, or data transforms. |
 | [Statistics](api/statistics)   | Statistical methods used by Vega. |
 | [Util](api/util)               | General JavaScript utilities. |
 | [Debugging](api/debugging)     | A guide to debugging Vega visualizations at runtime. |
