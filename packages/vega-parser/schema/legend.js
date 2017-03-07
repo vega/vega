@@ -7,7 +7,7 @@ export default {
         "interactive": {"type": "boolean", "default": false}
       },
       "patternProperties": {
-        "^(?!interactive).+$": {"$ref": "#/defs/encodeEntry"},
+        "^(?!interactive|name).+$": {"$ref": "#/defs/encodeEntry"},
       },
       "additionalProperties": false
     },
