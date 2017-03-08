@@ -1,6 +1,6 @@
 ---
 layout: tutorials
-title: "Tutorial: Mapping Airport Connections"
+title: "Mapping Airport Connections Tutorial"
 permalink: /tutorials/airports/index.html
 ---
 

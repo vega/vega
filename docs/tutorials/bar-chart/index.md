@@ -1,6 +1,6 @@
 ---
 layout: tutorials
-title: "Tutorial: Let's Make A Bar Chart"
+title: "Let's Make A Bar Chart Tutorial"
 permalink: /tutorials/bar-chart/index.html
 ---
 
