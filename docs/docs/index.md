@@ -33,7 +33,7 @@ A **Vega specification** is a [JSON](http://en.wikipedia.org/wiki/JSON) object t
 
 ## <a name="api"></a>Vega API Reference
 
-Vega also provides a **JavaScript runtime API**, responsible for parsing JSON specifications to produce interative views backed by a reactive dataflow graph of data processing operators. For more on deploying Vega, see the [usage instructions](../usage).
+Vega also provides a **JavaScript runtime API**, responsible for parsing JSON specifications to produce interactive views backed by a reactive dataflow graph of data processing operators. For more on deploying Vega, see the [usage instructions](../usage).
 
 | :----------------------------- | :------------------ |
 | [Parser](api/parser)           | Parse Vega JSON specifications to dataflow descriptions. |
