@@ -200,7 +200,7 @@ prototype._dirtyCheck = function(items) {
         if (o._svg) this._update(mdef, o._svg, o);
       } else if (item._svg) {
         // otherwise remove from DOM
-        item._svg.remove();
+        item._svg.parentNode.removeChild(item._svg);
       }
       item._svg = null;
       continue;
