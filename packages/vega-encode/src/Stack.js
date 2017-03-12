@@ -24,32 +24,65 @@ prototype.transform = function(_, pulse) {
       y0 = as[0],
       y1 = as[1],
       field = _.field || one,
-      offset = _.offset,
-      groups, group, i, j, n, m,
-      max, off, scale, t, a, b, v;
+      stack = _.offset === Center ? stackCenter
+            : _.offset === Normalize ? stackNormalize
+            : stackZero,
+      groups, i, n, max;
 
   // partition, sum, and sort the stack groups
   groups = partition(pulse.source, _.groupby, _.sort, field);
 
   // compute stack layouts per group
   for (i=0, n=groups.length, max=groups.max; i<n; ++i) {
-    group = groups[i];
-    off = offset === Center ? (max - group.sum)/2 : 0;
-    scale = offset === Normalize ? (1/group.sum) : 1;
-
-    // set stack coordinates for each datum in group
-    for (b=off, v=0, j=0, m=group.length; j<m; ++j) {
-      t = group[j];
-      a = b; // use previous value for start point
-      v += field(t);
-      b = scale * v + off; // compute end point
-      t[y0] = a;
-      t[y1] = b;
-    }
+    stack(groups[i], max, field, y0, y1);
   }
 
   return pulse.reflow(_.modified()).modifies(as);
 };
+
+function stackCenter(group, max, field, y0, y1) {
+  var last = (max - group.sum) / 2,
+      m = group.length,
+      j = 0, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    t[y0] = last;
+    t[y1] = (last += Math.abs(field(t)));
+  }
+}
+
+function stackNormalize(group, max, field, y0, y1) {
+  var scale = 1 / group.sum,
+      last = 0,
+      m = group.length,
+      j = 0, v = 0, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    t[y0] = last;
+    t[y1] = last = scale * (v += Math.abs(field(t)));
+  }
+}
+
+function stackZero(group, max, field, y0, y1) {
+  var lastPos = 0,
+      lastNeg = 0,
+      m = group.length,
+      j = 0, v, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    v = field(t);
+    if (v < 0) {
+      t[y0] = lastNeg;
+      t[y1] = (lastNeg += v);
+    } else {
+      t[y0] = lastPos;
+      t[y1] = (lastPos += v);
+    }
+  }
+}
 
 function partition(data, groupby, sort, field) {
   var groups = [],
@@ -72,7 +105,7 @@ function partition(data, groupby, sort, field) {
   for (k=0, max=0, m=groups.length; k<m; ++k) {
     g = groups[k];
     for (i=0, s=0, n=g.length; i<n; ++i) {
-      s += field(g[i]);
+      s += Math.abs(field(g[i]));
     }
     g.sum = s;
     if (s > max) max = s;
