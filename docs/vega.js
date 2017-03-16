@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.25";
+var version = "3.0.0-beta.26";
 
 function bin$1(_) {
   // determine range
@@ -3960,6 +3960,94 @@ function curveBasis(context) {
   return new Basis(context);
 }
 
+function BasisClosed(context) {
+  this._context = context;
+}
+
+BasisClosed.prototype = {
+  areaStart: noop$2,
+  areaEnd: noop$2,
+  lineStart: function() {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 =
+    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function() {
+    switch (this._point) {
+      case 1: {
+        this._context.moveTo(this._x2, this._y2);
+        this._context.closePath();
+        break;
+      }
+      case 2: {
+        this._context.moveTo((this._x2 + 2 * this._x3) / 3, (this._y2 + 2 * this._y3) / 3);
+        this._context.lineTo((this._x3 + 2 * this._x2) / 3, (this._y3 + 2 * this._y2) / 3);
+        this._context.closePath();
+        break;
+      }
+      case 3: {
+        this.point(this._x2, this._y2);
+        this.point(this._x3, this._y3);
+        this.point(this._x4, this._y4);
+        break;
+      }
+    }
+  },
+  point: function(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0: this._point = 1; this._x2 = x, this._y2 = y; break;
+      case 1: this._point = 2; this._x3 = x, this._y3 = y; break;
+      case 2: this._point = 3; this._x4 = x, this._y4 = y; this._context.moveTo((this._x0 + 4 * this._x1 + x) / 6, (this._y0 + 4 * this._y1 + y) / 6); break;
+      default: point(this, x, y); break;
+    }
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+  }
+};
+
+function curveBasisClosed(context) {
+  return new BasisClosed(context);
+}
+
+function BasisOpen(context) {
+  this._context = context;
+}
+
+BasisOpen.prototype = {
+  areaStart: function() {
+    this._line = 0;
+  },
+  areaEnd: function() {
+    this._line = NaN;
+  },
+  lineStart: function() {
+    this._x0 = this._x1 =
+    this._y0 = this._y1 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function() {
+    if (this._line || (this._line !== 0 && this._point === 3)) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0: this._point = 1; break;
+      case 1: this._point = 2; break;
+      case 2: this._point = 3; var x0 = (this._x0 + 4 * this._x1 + x) / 6, y0 = (this._y0 + 4 * this._y1 + y) / 6; this._line ? this._context.lineTo(x0, y0) : this._context.moveTo(x0, y0); break;
+      case 3: this._point = 4; // proceed
+      default: point(this, x, y); break;
+    }
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+  }
+};
+
+function curveBasisOpen(context) {
+  return new BasisOpen(context);
+}
+
 function Bundle(context, beta) {
   this._basis = new Basis(context);
   this._beta = beta;
@@ -4123,7 +4211,7 @@ CardinalClosed.prototype = {
   }
 };
 
-(function custom(tension) {
+var curveCardinalClosed = (function custom(tension) {
 
   function cardinal(context) {
     return new CardinalClosed(context, tension);
@@ -4171,7 +4259,7 @@ CardinalOpen.prototype = {
   }
 };
 
-(function custom(tension) {
+var curveCardinalOpen = (function custom(tension) {
 
   function cardinal(context) {
     return new CardinalOpen(context, tension);
@@ -4328,7 +4416,7 @@ CatmullRomClosed.prototype = {
   }
 };
 
-(function custom(alpha) {
+var curveCatmullRomClosed = (function custom(alpha) {
 
   function catmullRom(context) {
     return alpha ? new CatmullRomClosed(context, alpha) : new CardinalClosed(context, 0);
@@ -4388,7 +4476,7 @@ CatmullRomOpen.prototype = {
   }
 };
 
-(function custom(alpha) {
+var curveCatmullRomOpen = (function custom(alpha) {
 
   function catmullRom(context) {
     return alpha ? new CatmullRomOpen(context, alpha) : new CardinalOpen(context, 0);
@@ -4400,6 +4488,30 @@ CatmullRomOpen.prototype = {
 
   return catmullRom;
 })(0.5);
+
+function LinearClosed(context) {
+  this._context = context;
+}
+
+LinearClosed.prototype = {
+  areaStart: noop$2,
+  areaEnd: noop$2,
+  lineStart: function() {
+    this._point = 0;
+  },
+  lineEnd: function() {
+    if (this._point) this._context.closePath();
+  },
+  point: function(x, y) {
+    x = +x, y = +y;
+    if (this._point) this._context.lineTo(x, y);
+    else this._point = 1, this._context.moveTo(x, y);
+  }
+};
+
+function curveLinearClosed(context) {
+  return new LinearClosed(context);
+}
 
 function sign(x) {
   return x < 0 ? -1 : 1;
@@ -4630,6 +4742,12 @@ var lookup = {
   'basis': {
     curve: curveBasis
   },
+  'basis-closed': {
+    curve: curveBasisClosed
+  },
+  'basis-open': {
+    curve: curveBasisOpen
+  },
   'bundle': {
     curve: curveBundle,
     tension: 'beta',
@@ -4640,13 +4758,36 @@ var lookup = {
     tension: 'tension',
     value: 0
   },
+  'cardinal-open': {
+    curve: curveCardinalOpen,
+    tension: 'tension',
+    value: 0
+  },
+  'cardinal-closed': {
+    curve: curveCardinalClosed,
+    tension: 'tension',
+    value: 0
+  },
   'catmull-rom': {
     curve: curveCatmullRom,
     tension: 'alpha',
     value: 0.5
   },
+  'catmull-rom-closed': {
+    curve: curveCatmullRomClosed,
+    tension: 'alpha',
+    value: 0.5
+  },
+  'catmull-rom-open': {
+    curve: curveCatmullRomOpen,
+    tension: 'alpha',
+    value: 0.5
+  },
   'linear': {
     curve: curveLinear
+  },
+  'linear-closed': {
+    curve: curveLinearClosed
   },
   'monotone': {
     horizontal: monotoneY,
@@ -7497,7 +7638,7 @@ prototype$8._dirtyCheck = function(items) {
         if (o._svg) this._update(mdef, o._svg, o);
       } else if (item._svg) {
         // otherwise remove from DOM
-        item._svg.remove();
+        item._svg.parentNode.removeChild(item._svg);
       }
       item._svg = null;
       continue;
@@ -18775,32 +18916,65 @@ prototype$55.transform = function(_, pulse) {
       y0 = as[0],
       y1 = as[1],
       field = _.field || one,
-      offset = _.offset,
-      groups, group, i, j, n, m,
-      max, off, scale, t, a, b, v;
+      stack = _.offset === Center ? stackCenter
+            : _.offset === Normalize ? stackNormalize
+            : stackZero,
+      groups, i, n, max;
 
   // partition, sum, and sort the stack groups
   groups = partition$1(pulse.source, _.groupby, _.sort, field);
 
   // compute stack layouts per group
   for (i=0, n=groups.length, max=groups.max; i<n; ++i) {
-    group = groups[i];
-    off = offset === Center ? (max - group.sum)/2 : 0;
-    scale = offset === Normalize ? (1/group.sum) : 1;
-
-    // set stack coordinates for each datum in group
-    for (b=off, v=0, j=0, m=group.length; j<m; ++j) {
-      t = group[j];
-      a = b; // use previous value for start point
-      v += field(t);
-      b = scale * v + off; // compute end point
-      t[y0] = a;
-      t[y1] = b;
-    }
+    stack(groups[i], max, field, y0, y1);
   }
 
   return pulse.reflow(_.modified()).modifies(as);
 };
+
+function stackCenter(group, max, field, y0, y1) {
+  var last = (max - group.sum) / 2,
+      m = group.length,
+      j = 0, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    t[y0] = last;
+    t[y1] = (last += Math.abs(field(t)));
+  }
+}
+
+function stackNormalize(group, max, field, y0, y1) {
+  var scale = 1 / group.sum,
+      last = 0,
+      m = group.length,
+      j = 0, v = 0, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    t[y0] = last;
+    t[y1] = last = scale * (v += Math.abs(field(t)));
+  }
+}
+
+function stackZero(group, max, field, y0, y1) {
+  var lastPos = 0,
+      lastNeg = 0,
+      m = group.length,
+      j = 0, v, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    v = field(t);
+    if (v < 0) {
+      t[y0] = lastNeg;
+      t[y1] = (lastNeg += v);
+    } else {
+      t[y0] = lastPos;
+      t[y1] = (lastPos += v);
+    }
+  }
+}
 
 function partition$1(data, groupby, sort, field) {
   var groups = [],
@@ -18823,7 +18997,7 @@ function partition$1(data, groupby, sort, field) {
   for (k=0, max=0, m=groups.length; k<m; ++k) {
     g = groups[k];
     for (i=0, s=0, n=g.length; i<n; ++i) {
-      s += field(g[i]);
+      s += Math.abs(field(g[i]));
     }
     g.sum = s;
     if (s > max) max = s;
@@ -27464,51 +27638,139 @@ function parseExpression(expr, scope, preamble) {
   };
 }
 
-var GroupMark = 'group';
-var RectMark = 'rect';
-var RuleMark = 'rule';
-var SymbolMark = 'symbol';
-var TextMark = 'text';
+var VIEW$1 = 'view';
+var SCOPE = 'scope';
+function parseStream(stream, scope) {
+  return stream.signal
+    ? scope.getSignal(stream.signal).id
+    : parseStream$1(stream, scope);
+}
 
-var marktypes = toSet([
-  '*',
-  'arc',
-  'area',
-  'group',
-  'image',
-  'line',
-  'path',
-  'rect',
-  'rule',
-  'shape',
-  'symbol',
-  'text'
-]);
+function eventSource(source) {
+   return source === SCOPE ? VIEW$1 : (source || VIEW$1);
+}
 
-function isMarkType(type) {
-  return marktypes.hasOwnProperty(type);
+function parseStream$1(stream, scope) {
+  var method = stream.merge ? mergeStream
+    : stream.stream ? nestedStream
+    : stream.type ? eventStream
+    : error('Invalid stream specification: ' + $(stream));
+
+  return method(stream, scope);
+}
+
+function mergeStream(stream, scope) {
+  var list = stream.merge.map(function(s) {
+    return parseStream$1(s, scope);
+  });
+
+  var entry = streamParameters({merge: list}, stream, scope);
+  return scope.addStream(entry).id;
+}
+
+function nestedStream(stream, scope) {
+  var id = parseStream$1(stream.stream, scope),
+      entry = streamParameters({stream: id}, stream, scope);
+  return scope.addStream(entry).id;
+}
+
+function eventStream(stream, scope) {
+  var id = scope.event(eventSource(stream.source), stream.type),
+      entry = streamParameters({stream: id}, stream, scope);
+  return Object.keys(entry).length === 1 ? id
+    : scope.addStream(entry).id;
+}
+
+function streamParameters(entry, stream, scope) {
+  var param = stream.between;
+
+  if (param) {
+    if (param.length !== 2) {
+      error('Stream "between" parameter must have 2 entries: ' + $(stream));
+    }
+    entry.between = [
+      parseStream$1(param[0], scope),
+      parseStream$1(param[1], scope)
+    ];
+  }
+
+  param = stream.filter ? array$1(stream.filter) : [];
+  if (stream.marktype || stream.markname || stream.markrole) {
+    // add filter for mark type, name and/or role
+    param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
+  }
+  if (stream.source === SCOPE) {
+    // add filter to limit events from sub-scope only
+    param.push('inScope(event.item)');
+  }
+  if (param.length) {
+    entry.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
+  }
+
+  if ((param = stream.throttle) != null) {
+    entry.throttle = +param;
+  }
+
+  if ((param = stream.debounce) != null) {
+    entry.debounce = +param;
+  }
+
+  if (stream.consume) {
+    entry.consume = true;
+  }
+
+  return entry;
+}
+
+function filterMark(type, name, role) {
+  var item = 'event.item';
+  return item
+    + (type && type !== '*' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
+    + (role ? '&&' + item + '.mark.role===\'' + role + '\'' : '')
+    + (name ? '&&' + item + '.mark.name===\'' + name + '\'' : '');
 }
 
 /**
  * Parse an event selector string.
  * Returns an array of event stream definitions.
  */
-function parseSelector(selector, source) {
-  DEFAULT_SOURCE = source || VIEW$1;
-  return parseMerge(selector.trim()).map(parseSelector$1);
+function selector(selector, source, marks) {
+  DEFAULT_SOURCE = source || VIEW$2;
+  MARKS = marks || DEFAULT_MARKS;
+  return parseMerge(selector.trim()).map(parseSelector);
 }
 
-var VIEW$1   = 'view';
-var LBRACK = '[';
-var RBRACK = ']';
-var LBRACE = '{';
-var RBRACE = '}';
-var COLON  = ':';
-var COMMA  = ',';
-var NAME   = '@';
-var GT     = '>';
+var VIEW$2    = 'view';
+var LBRACK  = '[';
+var RBRACK  = ']';
+var LBRACE  = '{';
+var RBRACE  = '}';
+var COLON   = ':';
+var COMMA   = ',';
+var NAME    = '@';
+var GT      = '>';
 var ILLEGAL$1 = /[\[\]\{\}]/;
 var DEFAULT_SOURCE;
+var MARKS;
+var DEFAULT_MARKS = {
+      '*': 1,
+      arc: 1,
+      area: 1,
+      group: 1,
+      image: 1,
+      line: 1,
+      path: 1,
+      rect: 1,
+      rule: 1,
+      shape: 1,
+      symbol: 1,
+      text: 1,
+      trail: 1
+    };
+function isMarkType(type) {
+  return MARKS.hasOwnProperty(type);
+}
+
 function find$1(s, i, endChar, pushChar, popChar) {
   var count = 0,
       n = s.length,
@@ -27540,15 +27802,14 @@ function parseMerge(s) {
   return output;
 }
 
-function parseSelector$1(s) {
+function parseSelector(s) {
   return s[0] === '['
     ? parseBetween(s)
-    : parseStream(s);
+    : parseStream$2(s);
 }
 
 function parseBetween(s) {
-  var start = 1,
-      n = s.length,
+  var n = s.length,
       i = 1,
       b, stream;
 
@@ -27557,7 +27818,7 @@ function parseBetween(s) {
     throw 'Empty between selector: ' + s;
   }
 
-  b = parseMerge(s.substring(start, i));
+  b = parseMerge(s.substring(1, i));
   if (b.length !== 2) {
     throw 'Between selector must have two elements: ' + s;
   }
@@ -27567,9 +27828,9 @@ function parseBetween(s) {
     throw 'Expected \'>\' after between selector: ' + s;
   }
 
-  b = b.map(parseSelector$1);
+  b = b.map(parseSelector);
 
-  stream = parseSelector$1(s.slice(1).trim());
+  stream = parseSelector(s.slice(1).trim());
   if (stream.between) {
     return {
       between: b,
@@ -27582,7 +27843,7 @@ function parseBetween(s) {
   return stream;
 }
 
-function parseStream(s) {
+function parseStream$2(s) {
   var stream = {source: DEFAULT_SOURCE},
       source = [],
       throttle = [0, 0],
@@ -27677,98 +27938,6 @@ function parseThrottle(s) {
   });
 }
 
-var VIEW$2 = 'view';
-var SCOPE = 'scope';
-function parseStream$1(stream, scope) {
-  return stream.signal
-    ? scope.getSignal(stream.signal).id
-    : parseStream$2(stream, scope);
-}
-
-function eventSource(source) {
-   return source === SCOPE ? VIEW$2 : (source || VIEW$2);
-}
-
-function parseStream$2(stream, scope) {
-  var method = stream.merge ? mergeStream
-    : stream.stream ? nestedStream
-    : stream.type ? eventStream
-    : error('Invalid stream specification: ' + $(stream));
-
-  return method(stream, scope);
-}
-
-function mergeStream(stream, scope) {
-  var list = stream.merge.map(function(s) {
-    return parseStream$2(s, scope);
-  });
-
-  var entry = streamParameters({merge: list}, stream, scope);
-  return scope.addStream(entry).id;
-}
-
-function nestedStream(stream, scope) {
-  var id = parseStream$2(stream.stream, scope),
-      entry = streamParameters({stream: id}, stream, scope);
-  return scope.addStream(entry).id;
-}
-
-function eventStream(stream, scope) {
-  var id = scope.event(eventSource(stream.source), stream.type),
-      entry = streamParameters({stream: id}, stream, scope);
-  return Object.keys(entry).length === 1 ? id
-    : scope.addStream(entry).id;
-}
-
-function streamParameters(entry, stream, scope) {
-  var param = stream.between;
-
-  if (param) {
-    if (param.length !== 2) {
-      error('Stream "between" parameter must have 2 entries: ' + $(stream));
-    }
-    entry.between = [
-      parseStream$2(param[0], scope),
-      parseStream$2(param[1], scope)
-    ];
-  }
-
-  param = stream.filter ? array$1(stream.filter) : [];
-  if (stream.marktype || stream.markname || stream.markrole) {
-    // add filter for mark type, name and/or role
-    param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
-  }
-  if (stream.source === SCOPE) {
-    // add filter to limit events from sub-scope only
-    param.push('inScope(event.item)');
-  }
-  if (param.length) {
-    entry.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
-  }
-
-  if ((param = stream.throttle) != null) {
-    entry.throttle = +param;
-  }
-
-  if ((param = stream.debounce) != null) {
-    entry.debounce = +param;
-  }
-
-  if (stream.consume) {
-    entry.consume = true;
-  }
-
-  return entry;
-}
-
-function filterMark(type, name, role) {
-  var item = 'event.item';
-  return item
-    + (type && type !== '*' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
-    + (role ? '&&' + item + '.mark.role===\'' + role + '\'' : '')
-    + (name ? '&&' + item + '.mark.name===\'' + name + '\'' : '');
-}
-
 var preamble = 'var datum=event.item&&event.item.datum;';
 
 function parseUpdate(spec, scope, target) {
@@ -27784,7 +27953,7 @@ function parseUpdate(spec, scope, target) {
 
   // interpret as an event selector string
   if (isString(events)) {
-    events = parseSelector(events);
+    events = selector(events);
   }
 
   // separate event streams from signal updates
@@ -27822,7 +27991,7 @@ function parseUpdate(spec, scope, target) {
   }
 
   sources.forEach(function(source) {
-    source = {source: parseStream$1(source, scope)};
+    source = {source: parseStream(source, scope)};
     scope.addUpdate(extend(source, entry));
   });
 }
@@ -28233,6 +28402,12 @@ function guideMark(type, role, key, dataRef, encode, extras) {
     encode: extendEncode(encode, extras, skip)
   };
 }
+
+var GroupMark = 'group';
+var RectMark = 'rect';
+var RuleMark = 'rule';
+var SymbolMark = 'symbol';
+var TextMark = 'text';
 
 function legendGradient(scale, config, userEncode) {
   var zero = {value: 0},

@@ -1056,7 +1056,7 @@
         }
       },
       "patternProperties": {
-        "^(?!interactive).+$": {
+        "^(?!interactive|name).+$": {
           "$ref": "#/defs/encodeEntry"
         }
       },
