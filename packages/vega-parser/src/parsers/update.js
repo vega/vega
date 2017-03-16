@@ -1,6 +1,6 @@
 import parseExpression from './expression';
-import parseSelector from './event-selector';
 import parseStream from './stream';
+import {selector} from 'vega-event-selector';
 import {array, error, extend, isString, stringValue} from 'vega-util';
 
 var preamble = 'var datum=event.item&&event.item.datum;';
@@ -18,7 +18,7 @@ export default function(spec, scope, target) {
 
   // interpret as an event selector string
   if (isString(events)) {
-    events = parseSelector(events);
+    events = selector(events);
   }
 
   // separate event streams from signal updates

@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
-    "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,d3-format:d3,d3-time-format:d3,vega-dataflow:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
+    "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,d3-format:d3,d3-time-format:d3,vega-dataflow:vega,vega-event-selector:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
     "schema": "rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega.schema -o build/vega-schema.js -- schema/index.js",
     "pretest": "rm -rf build && mkdir build && npm run rollup && npm run schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
@@ -35,6 +35,7 @@
     "d3-format": "1",
     "d3-time-format": "2",
     "vega-dataflow": ">=2.0.0-beta",
+    "vega-event-selector": ">=2.0.0-beta",
     "vega-expression": "2",
     "vega-scale": ">=2.0.0-beta",
     "vega-scenegraph": ">=2.0.0-beta",
