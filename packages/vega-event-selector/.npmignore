@@ -1,6 +1,3 @@
-.DS_Store
-coverage
-output
-temp
-test
-events.test.js
+*.sublime-*
+build/*.zip
+test/

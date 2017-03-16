@@ -1,30 +1,46 @@
 {
   "name": "vega-event-selector",
-  "version": "1.1.0",
+  "version": "2.0.0-beta",
   "description": "A CSS-inspired language to select, sequence, and compose DOM events.",
   "keywords": [
     "vega",
-    "events",
-    "selectors"
+    "event",
+    "selector"
   ],
-  "author": {
-    "name": "Arvind Satyanarayan",
-    "url": "http://arvindsatya.com"
-  },
   "license": "BSD-3-Clause",
+  "author": {
+    "name": "UW Interactive Data Lab",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "contributors": [
+    {
+      "name": "Jeffrey Heer",
+      "url": "http://idl.cs.washington.edu"
+    },
+    {
+      "name": "Arvind Satyanarayan",
+      "url": "http://arvindsatya.com"
+    }
+  ],
+  "main": "build/vega-event-selector.js",
+  "module": "index",
+  "jsnext:main": "index",
   "repository": {
     "type": "git",
-    "url": "http://github.com/vega/vega-event-selector.git"
-  },
-  "main": "index.js",
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "datalib": "^1.6.1",
-    "mocha": "^2.4.5",
-    "pegjs": "^0.9.0"
+    "url": "https://github.com/vega/vega-event-selector.git"
   },
   "scripts": {
-    "build": "pegjs selector.pegjs index.js",
-    "test": "mocha events.test.js"
+    "build": "npm run test && uglifyjs build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
+    "rollup": "rollup -f umd -n vega -o build/vega-event-selector.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && npm run rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-event-selector.zip -- LICENSE README.md build/vega-event-selector.js build/vega-event-selector.min.js"
+  },
+  "devDependencies": {
+    "eslint": "2",
+    "rollup": "0.36",
+    "tape": "4",
+    "uglify-js": "2"
   }
 }
