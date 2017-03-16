@@ -531,3 +531,46 @@ ul.column-set, .column-set ul {
   margin: 1em 0em;
   border: 1px solid #ddd;
 }
+
+/* Media queries */
+@media (max-width:768px) {
+  body {
+    font-size: 12px;
+  }
+  nav {
+    line-height: 40px;
+  }
+  nav a {
+    padding-right: 1em;
+  }
+  h1 {
+    font-size: 2.0em;
+  }
+  .vega-title {
+    font-size: 1.2em;
+    line-height: 40px;
+  }
+  aside.page-sidebar {
+    display: none;
+  }
+  .page-main {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .page-centered, .page-content {
+    max-width: 100%;
+    min-width: 100px;
+  }
+  .lead-columns {
+    flex-direction: column;
+  }
+  .lead-columns span:first-child {
+    margin-right: 0px;
+  }
+  .lead-buttons a {
+    width: inherit;
+  }
+  .highlight {
+    overflow-x: auto;
+  }
+}
