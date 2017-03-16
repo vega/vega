@@ -27,16 +27,6 @@
           "field": "y"
         }
       ]
-    },
-    {
-      "name": "stats",
-      "source": "table",
-      "transform": [
-        {
-          "type": "aggregate",
-          "groupby": ["x"], "fields": ["y"], "ops": ["sum"]
-        }
-      ]
     }
   ],
 
@@ -52,7 +42,7 @@
       "type": "linear",
       "range": "height",
       "nice": true, "zero": true,
-      "domain": {"data": "stats", "field": "sum_y"}
+      "domain": {"data": "table", "field": "y1"}
     },
     {
       "name": "color",

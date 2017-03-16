@@ -51,17 +51,6 @@
           "as": ["sum", "argmax"]
         }
       ]
-    },
-    {
-      "name": "years",
-      "source": "jobs",
-      "transform": [
-        {
-          "type": "aggregate",
-          "groupby": ["year"],
-          "fields": ["perc"], "ops": ["sum"], "as": ["sum"]
-        }
-      ]
     }
   ],
 
@@ -77,7 +66,7 @@
       "name": "y",
       "type": "linear",
       "range": "height", "round": true, "zero": true,
-      "domain": {"data": "years", "field": "sum"}
+      "domain": {"data": "jobs", "field": "y1"}
     },
     {
       "name": "color",
