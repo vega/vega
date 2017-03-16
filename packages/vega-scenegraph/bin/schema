@@ -177,26 +177,33 @@ var ITEM_BASE = {
 var AREA_INTERPOLATE = [
   'basis',
   'cardinal',
-  'catmullRom',
+  'catmull-rom',
   'linear',
   'monotone',
   'natural',
   'step',
-  'stepAfter',
-  'stepBefore'
+  'step-after',
+  'step-before'
 ];
 
 var LINE_INTERPOLATE = [
   'basis',
+  'basis-closed',
+  'basis-open',
   'bundle',
   'cardinal',
-  'catmullRom',
+  'cardinal-closed',
+  'cardinal-open',
+  'catmull-rom',
+  'catmull-rom-closed',
+  'catmull-rom-open',
   'linear',
+  'linear-closed',
   'monotone',
   'natural',
   'step',
-  'stepAfter',
-  'stepBefore'
+  'step-after',
+  'step-before'
 ];
 
 var MARKS = {
