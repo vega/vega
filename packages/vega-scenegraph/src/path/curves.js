@@ -1,9 +1,16 @@
 import {
   curveBasis,
+  curveBasisClosed,
+  curveBasisOpen,
   curveBundle,
   curveCardinal,
+  curveCardinalClosed,
+  curveCardinalOpen,
   curveCatmullRom,
+  curveCatmullRomClosed,
+  curveCatmullRomOpen,
   curveLinear,
+  curveLinearClosed,
   curveMonotoneX,
   curveMonotoneY,
   curveNatural,
@@ -16,6 +23,12 @@ var lookup = {
   'basis': {
     curve: curveBasis
   },
+  'basis-closed': {
+    curve: curveBasisClosed
+  },
+  'basis-open': {
+    curve: curveBasisOpen
+  },
   'bundle': {
     curve: curveBundle,
     tension: 'beta',
@@ -26,13 +39,36 @@ var lookup = {
     tension: 'tension',
     value: 0
   },
+  'cardinal-open': {
+    curve: curveCardinalOpen,
+    tension: 'tension',
+    value: 0
+  },
+  'cardinal-closed': {
+    curve: curveCardinalClosed,
+    tension: 'tension',
+    value: 0
+  },
   'catmull-rom': {
     curve: curveCatmullRom,
     tension: 'alpha',
     value: 0.5
   },
+  'catmull-rom-closed': {
+    curve: curveCatmullRomClosed,
+    tension: 'alpha',
+    value: 0.5
+  },
+  'catmull-rom-open': {
+    curve: curveCatmullRomOpen,
+    tension: 'alpha',
+    value: 0.5
+  },
   'linear': {
     curve: curveLinear
+  },
+  'linear-closed': {
+    curve: curveLinearClosed
   },
   'monotone': {
     horizontal: curveMonotoneY,
