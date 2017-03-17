@@ -168,7 +168,7 @@
           "text": {"field": "datum.name"},
           "align": {"value": "center"},
           "fill": {"value": "black"},
-          "font": {"value": "Helvetica Neue"},
+          "font": {"value": "Helvetica Neue, Arial"},
           "fontSize": {"value": 10},
           "fontStyle": {"value": "italic"}
         }

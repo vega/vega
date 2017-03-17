@@ -88,7 +88,6 @@
           "angle": {"value": -25},
           "fill": {"value": "#000"},
           "text": {"field": "name"},
-          "font": {"value": "Helvetica Neue"},
           "fontSize": {"value": 10}
         }
       }
@@ -115,7 +114,6 @@
           "y": {"scale": "yscale", "field": "label", "offset": -3},
           "fill": {"value": "#000"},
           "text": {"field": "label"},
-          "font": {"value": "Helvetica Neue"},
           "fontSize": {"value": 10}
         }
       }
