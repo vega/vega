@@ -53,7 +53,7 @@
           "type": "wordcloud",
           "size": [{"signal": "width"}, {"signal": "height"}],
           "text": {"field": "text"},
-          "font": "Helvetica Neue",
+          "font": "Helvetica Neue, Arial",
           "fontSize": {"field": "count"},
           "fontWeight": {"field": "weight"},
           "fontSizeRange": [{"signal": "fontSizeRange0"}, {"signal": "fontSizeRange1"}],
@@ -82,7 +82,7 @@
           "align": {"value": "center"},
           "baseline": {"value": "alphabetic"},
           "fill": {"scale": "color", "field": "text"},
-          "font": {"value": "Helvetica Neue"},
+          "font": {"value": "Helvetica Neue, Arial"},
           "fontWeight": {"field": "weight"}
         },
         "update": {

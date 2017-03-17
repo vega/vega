@@ -192,7 +192,7 @@
       "offset": {"signal": "xoffset"},
       "encode": {
         "labels": {
-          "enter": {"font": {"value": "Monaco"}}
+          "enter": {"font": {"value": "Monaco, Courier New"}}
         }
       }
     },
@@ -203,7 +203,7 @@
       "offset": {"signal": "yoffset"},
       "encode": {
         "labels": {
-          "enter": {"font": {"value": "Monaco"}}
+          "enter": {"font": {"value": "Monaco, Courier New"}}
         }
       }
     }

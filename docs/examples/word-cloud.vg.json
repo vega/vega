@@ -65,7 +65,7 @@
           "size": [800, 400],
           "text": {"field": "text"},
           "rotate": {"field": "datum.angle"},
-          "font": "Helvetica Neue",
+          "font": "Helvetica Neue, Arial",
           "fontSize": {"field": "datum.count"},
           "fontWeight": {"field": "datum.weight"},
           "fontSizeRange": [12, 56],

@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.26";
+var version = "3.0.0-beta.27";
 
 function bin$1(_) {
   // determine range
@@ -25114,10 +25114,15 @@ function range$1(bind, el, param, value) {
   el.appendChild(node);
   el.appendChild(label);
 
-  node.addEventListener('input', function() {
+  function update() {
     label.textContent = node.value;
     bind.update(+node.value);
-  });
+  }
+
+  // subscribe to both input and change
+  // signal updates halt redundant values, maintaining performance
+  node.addEventListener('input', update);
+  node.addEventListener('change', update);
 
   bind.elements = [node];
   bind.set = function(value) {

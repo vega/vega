@@ -187,7 +187,6 @@ nav a:hover {
 
 /* Special classes */
 .page-centered {
-  /* 1000px - 20px = 960px */
   max-width: 1000px;
   min-width: 720px;
   margin: 0 auto;
@@ -195,8 +194,7 @@ nav a:hover {
 }
 .page-main {
   display: flex;
-  flex-direction: column;
-  flex-flow: initial;
+  flex-direction: row;
 }
 .page-content {
   padding-bottom: 3em;
@@ -214,11 +212,6 @@ nav a:hover {
   padding: 0;
   margin: 0;
 }
-/*
-.sidebar-nav > li:first-child {
-  font-weight: bold;
-}
-*/
 
 .sidebar-nav-item {
   display: block;
@@ -335,17 +328,6 @@ nav a:hover {
   text-decoration: none;
   background-color: #285e8e;
 }
-/*
-.lead-buttons a:last-child {
-  color: #333;
-  background-color: #fff;
-  border-color: #ccc;
-}
-.lead-buttons a:last-child:hover {
-  text-decoration: none;
-  background-color: #ebebeb;
-}
-*/
 .note-line {
   font-size: 0.9em !important;
   margin-top: 8px;
@@ -471,9 +453,10 @@ ul.column-set, .column-set ul {
 }
 .view .vega-bind-name {
   display: inline-block;
-  width: 100px;
+  width: 105px;
 }
 .view .vega-bind input[type="range"] {
+  padding: 0;
   width: 100px;
 }
 .view .vega-bind select {
