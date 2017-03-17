@@ -207,10 +207,15 @@ function range(bind, el, param, value) {
   el.appendChild(node);
   el.appendChild(label);
 
-  node.addEventListener('input', function() {
+  function update() {
     label.textContent = node.value;
     bind.update(+node.value);
-  });
+  }
+
+  // subscribe to both input and change
+  // signal updates halt redundant values, maintaining performance
+  node.addEventListener('input', update);
+  node.addEventListener('change', update);
 
   bind.elements = [node];
   bind.set = function(value) {
