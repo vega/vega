@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-beta.26";
+var version = "3.0.0-beta.27";
 
 function bin$1(_) {
   // determine range
@@ -13402,10 +13402,15 @@ function range$1(bind, el, param, value) {
   el.appendChild(node);
   el.appendChild(label);
 
-  node.addEventListener('input', function() {
+  function update() {
     label.textContent = node.value;
     bind.update(+node.value);
-  });
+  }
+
+  // subscribe to both input and change
+  // signal updates halt redundant values, maintaining performance
+  node.addEventListener('input', update);
+  node.addEventListener('change', update);
 
   bind.elements = [node];
   bind.set = function(value) {
