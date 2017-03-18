@@ -75,7 +75,7 @@ Each legend symbol and label instance is backed by a data object with the follow
 - `value` - the data value
 - `size` - the symbol size (for symbol legends only)
 
-The following example shows how to set custom fonts and a border on a legend for a fill color encoding. The `labels` encoding block also make legend labels reponsive to input events, and changes the text color on mouse hover.
+The following example shows how to set custom fonts and a border on a legend for a fill color encoding. The `labels` encoding block also make legend labels responsive to input events, and changes the text color on mouse hover.
 
 {: .suppress-error}
 ```json
