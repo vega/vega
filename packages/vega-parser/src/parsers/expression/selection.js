@@ -28,6 +28,7 @@ function testInterval(datum, entry) {
 
   for (; i<n; ++i) {
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
+    if (ivals[i].extent[0] === ivals[i].extent[1]) return true;
     if (!inrange(getter(datum), ivals[i].extent)) return false;
   }
   return true;
