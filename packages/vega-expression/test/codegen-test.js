@@ -257,6 +257,9 @@ tape('Evaluate expressions with white list', function(test) {
   test.throws(evaluate.fn('if(datum.a > 1, 1)'));
   test.throws(evaluate.fn('if(datum.a > 1, 1, 2, 3)'));
 
+  // "if" should be isolated from surrounding expression
+  test.equal(evaluate('0 * if(datum.a > 1, 1, 2)'), 0);
+
   // should not eval undefined functions
   test.throws(evaluate.fn('Array()'));
   test.throws(evaluate.fn('Function()'));

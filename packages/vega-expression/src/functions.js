@@ -99,7 +99,7 @@ export default function(codegen) {
         if (args.length < 3) error('Missing arguments to if function.');
         if (args.length > 3) error('Too many arguments to if function.');
         var a = args.map(codegen);
-        return a[0]+'?'+a[1]+':'+a[2];
+        return '('+a[0]+'?'+a[1]+':'+a[2]+')';
       }
   };
 }
