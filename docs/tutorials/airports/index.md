@@ -6,7 +6,7 @@ permalink: /tutorials/airports/index.html
 
 From massive hubs to small local outposts, the United States air traffic system consists of a rich set of connections among hundeds of airports. In this tutorial, we will visualize this system of airports and connections, based on data from the year 2008. Our goal will be to create our own version of [Mike Bostock's D3.js airports map](https://mbostock.github.io/d3/talk/20111116/airports.html).
 
-{% include embed spec="airports" %}
+{% include embed spec="airports" dir="." %}
 
 In the process, we will touch upon many of the features supported by Vega: transforming data, combining multiple data sets, handling user input, mapping geographic data, and plotting both tabular and network data. Here's the steps we will follow:
 
@@ -175,7 +175,7 @@ Once we've generated outline paths for each state, plotting them is straightforw
 
 Here we add a definition for a `path` mark to the `marks` array. In the `enter` block we set the `fill` color to light grey, and set the `stroke` color to white. In the `update` block we use the `path` property for the path outline. (We place the `path` encoding in the `update` block to ensure that the map outlines update if we change the size of the visualization or modify other aspects.)
 
-{% include embed spec="airports-map" %}
+{% include embed spec="airports-map" dir="." %}
 
 Et voil&agrave;! Our visualization now contains a base map. If you are feeling adventurous, try experimenting with changing the map projection, adjusting the projection parameters, and modifying the visualization size!
 
@@ -243,7 +243,7 @@ To visualize the airports, we add a new `symbol` mark entry to the `marks` array
 
 The symbol mark type defaults to circles if no `shape` property is provided. We position each airport according to the `x` and `y` coordinates set by the `geopoint` transform. We also set a number of constant values for the size, fill and stroke.
 
-{% include embed spec="airports-all" %}
+{% include embed spec="airports-all" dir="." %}
 
 The result is a map of all airports in the United States. That's a lot of airports!
 
@@ -307,7 +307,7 @@ Here the `airports` data is our primary dataset and the `traffic` data is used a
 
 We also add a new `filter` transform to remove airports for which we fail to find a match in the traffic dataset (indicated by a `null` value). This step filters out all the airports for which we observe no originating flights in 2008. Though we could combine the filter criteria into a single filter instance, here we filter out the extraneous airports up front so that we don't waste time needlessly computing geo-coordinates.
 
-{% include embed spec="airports-filtered" %}
+{% include embed spec="airports-filtered" dir="." %}
 
 We now see only those airports that are included in the `flights-airport.csv` data.
 
@@ -354,7 +354,7 @@ Here we define a linear scale that maps from the `domain` of flight counts to a 
 
 Here we modify our airport `symbol` marks. The `size` property is now set by running `traffic.flights` through our size scale. We also set `fillOpacity` to create a transparency effect and increase the `strokeWidth`.
 
-{% include embed spec="airports-sized" %}
+{% include embed spec="airports-sized" dir="." %}
 
 We can now see the massive hubs, the local outposts, and everything in-between!
 
@@ -422,7 +422,7 @@ Unfortunately, there is still a problem: we positioned the text at the top-right
 
 To fix the problem, we can add `25` pixels of padding to the `top` of the visualization.
 
-{% include embed spec="airports-hover" %}
+{% include embed spec="airports-hover" dir="." %}
 
 Now we can mouse over each airport to see more information.
 
@@ -469,7 +469,7 @@ Notice any problems with our visualization? Take a look at Chicago: O'Hare compl
 
 We now add a `collect` transform to the `airports` data: this operation collects all the object in a data stream, allowing us to sort them. We include a `sort` parameter that indicates we should sort by the flight counts data `field` in a descending sort `order`. This sorting causes larger points to be drawn before smaller points.
 
-{% include embed spec="airports-sort" %}
+{% include embed spec="airports-sort" dir="." %}
 
 That's better!
 
@@ -530,7 +530,7 @@ Now we can add a new `path` mark to the `marks` array to visualize the routes:
 
 We set the `interactive` property false to prevent the links from interfering with mouse events from the airport symbols. As there may be many links with lots of overlap, we also set the `strokeOpacity` to a low value (`0.15`).
 
-{% include embed spec="airports-connect-all" %}
+{% include embed spec="airports-connect-all" dir="." %}
 
 What a mess! Let's filter the connections and use interaction to show details-on-demand.
 
@@ -559,7 +559,7 @@ Adding hover-sensitive filtering is now quite easy:
 
 We already have a `hover` signal set up to track the data associated with the currently selected airport. We just need to add a `filter` transform to our `routes` data: the new `filter` at the beginning of the transform list keeps only those routes whose `origin` matches the selected airport. In addition, we increase the path `strokeOpacity` to `0.35` to be a bit more opaque.
 
-{% include embed spec="airports-connect-hover" %}
+{% include embed spec="airports-connect-hover" dir="." %}
 
 Now we can interactively explore the network of routes!
 
@@ -632,7 +632,7 @@ Finally, we update our `hover` signal to respond to mouse events on the Voronoi 
 
 Here we simply replace `symbol:` with `@cell:`. The `@name` pattern selects only events originating from a mark with the provided name.
 
-{% include embed spec="airports-voronoi" %}
+{% include embed spec="airports-voronoi" dir="." %}
 
 Now we have much improved, user-friendly mouse selection!
 

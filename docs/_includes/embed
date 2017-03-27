@@ -1,7 +1,7 @@
 {% assign id = include.spec | replace:'/','-' %}
 <div class="embed">
   <div id="{{id}}" class="view"></div>
-  <a href="../{{ include.spec }}.vg.json">View Source</a>
+  <a href="{% if include.dir %}{{ include.dir }}{% else %}..{% endif %}/{{ include.spec }}.vg.json">View Source</a>
   <a id="{{id}}-png" href="#">Export PNG</a>
   <a id="{{id}}-svg" href="#">Export SVG</a>
 </div>

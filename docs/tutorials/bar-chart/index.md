@@ -8,7 +8,7 @@ This tutorial introduces the basics of Vega. We'll look at a bar chart with tool
 
 Here is one of the most basic (but also most useful!) forms of visualization, the humble bar chart:
 
-{% include embed spec="bar-chart" %}
+{% include embed spec="bar-chart" dir="." %}
 
 Here is the Vega specification that defines this bar chart. First read through the full definition. We'll then examine each part in turn.
 
@@ -146,7 +146,7 @@ Now let's look at how we might further customize the axes:
 
 Here we've adjusted the Y-axis in multiple ways, resulting in the modified chart below. By setting `"tickCount": 5`, we've requested that the axis show roughly five tick marks, rather than the ten or so shown previously. By setting `"orient": "right"`, we've requested that the axis be placed on the right side of the chart, rather than the previous left position. Finally, setting `"offset": 6` adjusts the axis position, in this case moving it to the right by 6 pixels. Here's the modified visualization:
 
-{% include embed spec="bar-chart-axes" %}
+{% include embed spec="bar-chart-axes" dir="." %}
 
 For more details, see the [axes](../../docs/axes) documentation.
 
