@@ -1,6 +1,5 @@
 import {Literal, Identifier} from './ast';
 import {scalePrefix} from './prefixes';
-import {ASTNode} from 'vega-expression';
 import {bandSpace} from 'vega-scale';
 import {isArray, isObject, isString} from 'vega-util';
 
@@ -11,24 +10,27 @@ export function getScale(name, ctx) {
   return s && s.value;
 }
 
-export function scaleVisitor(name, args, scope, params) {
-  if (args[0].type === Literal) { // scale dependency
-    name = args[0].value;
-    var scaleName = scalePrefix + name;
-
-    if (!params.hasOwnProperty(scaleName)) {
-      try {
-        params[scaleName] = scope.scaleRef(name);
-      } catch (err) {
-        // TODO: error handling? warning?
-      }
+function addScaleDependency(scope, params, name) {
+  var scaleName = scalePrefix + name;
+  if (!params.hasOwnProperty(scaleName)) {
+    try {
+      params[scaleName] = scope.scaleRef(name);
+    } catch (err) {
+      // TODO: error handling? warning?
     }
   }
+}
 
-  else if (args[0].type === Identifier) { // forward reference to signal
-    name = args[0].name;
-    args[0] = new ASTNode(Literal);
-    args[0].raw = '{signal:"' + name + '"}';
+export function scaleVisitor(name, args, scope, params) {
+  if (args[0].type === Literal) {
+    // add scale dependency
+    addScaleDependency(scope, params, args[0].value);
+  }
+  else if (args[0].type === Identifier) {
+    // indirect scale lookup; add all scales as parameters
+    for (name in scope.scales) {
+      addScaleDependency(scope, params, name);
+    }
   }
 }
 
