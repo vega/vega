@@ -75,8 +75,8 @@ The [vega-embed](https://github.com/vega/vega-embed) module provides a convenien
 
 ```html
 <head>
-  <script source="https://vega.github.io/vega/vega.min.js"></script>
-  <script source="https://vega.github.io/vega-embed/vega-embed.min.js"></script>
+  <script src="https://vega.github.io/vega/vega.min.js"></script>
+  <script src="https://vega.github.io/vega-embed/vega-embed.min.js"></script>
 </head>
 <body>
 <div id="vis"></div>
@@ -97,8 +97,8 @@ For example, one can use the [promise-polyfill](https://github.com/taylorhakes/p
 
 ```html
 <head>
-  <script source="https://vega.github.io/vega/assets/promise.min.js"></script>
-  <script source="https://vega.github.io/vega/vega.min.js"></script>
+  <script src="https://vega.github.io/vega/assets/promise.min.js"></script>
+  <script src="https://vega.github.io/vega/vega.min.js"></script>
 </head>
 ```
 
