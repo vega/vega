@@ -28,7 +28,7 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 
 ```html
 <head>
-  <script source="https://vega.github.io/vega/vega.min.js"></script>
+  <script src="https://vega.github.io/vega/vega.min.js"></script>
 </head>
 ```
 
@@ -37,11 +37,11 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 ```html
 <head>
   <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script source="https://vega.github.io/vega/vega-core.min.js"></script>
+  <script src="https://vega.github.io/vega/vega-core.min.js"></script>
 </head>
 ```
 
-**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on the CloudFlare CDN:
+**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on the [CloudFlare CDN](https://cdnjs.com/libraries/vega):
 
 ```html
 <head>
