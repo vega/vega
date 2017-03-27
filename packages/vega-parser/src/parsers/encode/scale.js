@@ -1,3 +1,4 @@
+import expression from './expression';
 import field from './field';
 import {scalePrefix} from '../expression/prefixes';
 import {isString, stringValue} from 'vega-util';
@@ -61,7 +62,9 @@ export function getScale(name, scope, params, fields) {
       params[scalePrefix + scaleName] = scope.scaleRef(scaleName);
     }
     scaleName = stringValue(scalePrefix) + '+'
-      + field(name, scope, params, fields);
+      + (name.signal
+        ? '(' + expression(name.signal, scope, params, fields) + ')'
+        : field(name, scope, params, fields));
   }
 
   return '_[' + scaleName + ']';
