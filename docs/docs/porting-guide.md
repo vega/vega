@@ -112,6 +112,8 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 ## <a name="layout"></a>View Layout
 
+- The Vega 2.x top-level `"viewport"` property has been removed. Instead, the same behavior can be specified directly by using `width`/`height`/`overflow` CSS directives on the DOM element container for the Vega view.
+
 - The chart `"width"` and `"height"` are automatically bound to signals with the same name. The top-level `"width"` and `"height"` properties can be omitted from the definition and instead replaced by signal definitions whose `"update"` function dynamically sets the width and/or height value.
 
 - Vega 3 adds a new top-level `"autosize"` property to set the layout mode. The legal values are:
