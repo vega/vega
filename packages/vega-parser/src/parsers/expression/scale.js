@@ -1,13 +1,13 @@
 import {Literal, Identifier} from './ast';
 import {scalePrefix} from './prefixes';
 import {bandSpace} from 'vega-scale';
-import {isArray, isObject, isString} from 'vega-util';
+import {isArray, isFunction, isString} from 'vega-util';
 
 export function getScale(name, ctx) {
-  var s = isString(name) ? ctx.scales[name]
-    : isObject(name) && name.signal ? ctx.signals[name.signal]
+  var s;
+  return isFunction(name) ? name
+    : isString(name) ? (s = ctx.scales[name]) && s.value
     : undefined;
-  return s && s.value;
 }
 
 function addScaleDependency(scope, params, name) {
