@@ -96,8 +96,8 @@ function load(name) {
 
 function visualize(spec) {
   if (view) view.finalize(); // finalize existing view
-  view = new vega.View(runtime = vega.parse(spec))
-    .logLevel(vega.Warn)
+  view = new vega.View(runtime = vega.parse(spec));
+  view.logLevel(vega.Warn)
     .renderer(renderType)
     .initialize(container)
     .hover()
