@@ -32,11 +32,11 @@ As you work through the tutorial, we encourage you to build up and experiment wi
 
 Let's begin by examining our raw ingredients. We will build the visualization from three data sets; each resides in the `data` subfolder and are available within the [Vega Editor](http://vega.github.io/vega-editor).
 
-**[us-10m.json](../static/data/us-10m.json)**
+**[us-10m.json](../../data/us-10m.json)**
 
 This is a [TopoJSON](https://github.com/mbostock/topojson) file that contains the boundaries of U.S. states at a scale of 1:10,000,000. We will use this file to draw a map of U.S. states as the base layer of our visualization. If you are interested in generating your own TopoJSON data, check out the [U.S. Atlas TopoJSON tools](https://github.com/mbostock/us-atlas).
 
-**[airports.csv](../static/data/airports.csv)**
+**[airports.csv](../../data/airports.csv)**
 
 This data set contains a list of U.S. airports in CSV (comma-separated value) format. The first column (`iata`) contains a unique identifier provided by the International Air Transport Association. Subsequent columns describe the name and location of the airport, including `latitude` and `longitude` coordinates. We will use these coordinates to plot the airports.
 
@@ -48,7 +48,7 @@ iata,name,city,state,country,latitude,longitude
 01G,Perry-Warsaw,Perry,NY,USA,42.74134667,-78.05208056
 ```
 
-**[flights-airport.csv](../static/data/flights-airport.csv)**
+**[flights-airport.csv](../../data/flights-airport.csv)**
 
 This data set contains flight information for the year 2008. Each record consists of an `origin` airport (identified by IATA id), a `destination` airport, and the `count` of flights along this route. We will use this dataset to compute per-airport traffic and to plot connections among airports.
 
@@ -384,7 +384,7 @@ While we can see differences between airports, it would be nice to see their nam
 ],
 ```
 
-_Signals_ are variables that can change dynamically in response to user input. Each signal consists of a name, an initial value, and an optional set of one or more update rules. The update rules are defined as a set of handlers for input `events` that `update` the signal value. To learn more about expressions, see the [expression language documentation](../docs/expressions).
+_Signals_ are variables that can change dynamically in response to user input. Each signal consists of a name, an initial value, and an optional set of one or more update rules. The update rules are defined as a set of handlers for input `events` that `update` the signal value. To learn more about expressions, see the [expression language documentation](../../docs/expressions).
 
 The `hover` signal contains the current airport record (or `datum`) under the mouse cursor, or `null` if no airport is being hovered over. The `on` entries state that upon `mousover` of a `symbol` mark, set the signal value to the current `datum`. Upon a `mouseout` event, set the signal value to `null`. In short, this signal tracks the data of the currently hovered symbol.
 
