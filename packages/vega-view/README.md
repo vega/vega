@@ -34,8 +34,7 @@ Constructor that creates a new View instance for the provided
 If provided, the *options* argument should be an object with one or more
 of the following properties:
 
-- *loadOptions*: Default options for loading data files or images. See the
-[load](https://github.com/vega/vega-loader#load) method.
+- *loader*: Default [loader](https://github.com/vega/vega-loader#loader) instance to use for data files and images.
 - *logLevel*: Initial log level to use. See the [logLevel](#view_logLevel)
 method.
 - *renderer*: The type of renderer to use (`'canvas'` or `'svg'`). See the
@@ -81,6 +80,15 @@ elements (such as Canvas or SVG HTML elements) will be added to the web page
 under this containing element. If *container* is not provided, the view
 will operate in *headless* mode, and can still generate static visualization
 images using the [image export](#image-export) methods.
+
+<a name="view_loader" href="#view_loader">#</a>
+view.<b>loader</b>([<i>loader</i>])
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Get or set the [loader](https://github.com/vega/vega-loader#loader) instance
+to use for data files and images. If the loader is updated _after_
+[initialize](#view_initialize) has been invoked, the visualization will be
+reinitialized.
 
 <a name="view_logLevel" href="#view_logLevel">#</a>
 view.<b>logLevel</b>(<i>level</i>)
