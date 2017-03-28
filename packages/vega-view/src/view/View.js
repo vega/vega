@@ -161,6 +161,18 @@ prototype.renderer = function(type) {
   return this;
 };
 
+prototype.loader = function(loader) {
+  if (!arguments.length) return this._loader;
+  if (loader !== this._loader) {
+    Dataflow.prototype.loader.call(this, loader);
+    if (this._renderer) {
+      this._renderer = this._queue = null;
+      this.initialize(this._el);
+    }
+  }
+  return this;
+};
+
 // -- EVENT HANDLING ----
 
 prototype.addEventListener = function(type, handler) {
