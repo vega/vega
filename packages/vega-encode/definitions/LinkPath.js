@@ -9,7 +9,7 @@ export default {
     { "name": "orient", "type": "enum", "default": "vertical",
       "values": ["horizontal", "vertical", "radial"] },
     { "name": "shape", "type": "enum", "default": "line",
-      "values": ["line", "curve", "diagonal", "orthogonal"] },
+      "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
     { "name": "as", "type": "string", "default": "path" }
   ]
 };
