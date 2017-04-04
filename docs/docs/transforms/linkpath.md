@@ -19,7 +19,7 @@ The **linkpath** transform is used to route a visual link between two nodes. The
 | targetX  | {% include type t="Field" %}   | The data field for the target x-coordinate. The default is `target.x`.|
 | targetY  | {% include type t="Field" %}   | The data field for the target y-coordinate. The default is `target.y`.|
 | orient   | {% include type t="String" %}  | The orientation of the link path. One of `vertical` (default), `horizontal` or `radial`. If a `radial` orientation is specified, x and y coordinate parameters will instead be interpreted as an angle (in radians) and radius, respectively.|
-| shape    | {% include type t="String" %}  | The shape of the link path. One of `line` (default), `curve`, `diagonal`, or `orthogonal`.|
+| shape    | {% include type t="String" %}  | The shape of the link path. One of `line` (default), `arc`, `curve`, `diagonal`, or `orthogonal`.|
 | as       | {% include type t="String" %}  | The output field for the link path. The default is `"path"`.|
 
 
