@@ -4,6 +4,8 @@ import {error, fastmap, inherits} from 'vega-util';
 var Paths = fastmap({
   'line': line,
   'line-radial': lineR,
+  'arc': arc,
+  'arc-radial': arcR,
   'curve': curve,
   'curve-radial': curveR,
   'orthogonal-horizontal': orthoX,
@@ -41,7 +43,8 @@ prototype.transform = function(_, pulse) {
       path = Paths.get(shape + '-' + orient) || Paths.get(shape);
 
   if (!path) {
-    error('LinkPath unsupported type: ' + _.shape + '-' + _.orient);
+    error('LinkPath unsupported type: ' + _.shape
+      + (_.orient ? '-' + _.orient : ''));
   }
 
   pulse.visit(pulse.SOURCE, function(t) {
@@ -60,6 +63,24 @@ function line(sx, sy, tx, ty) {
 
 function lineR(sa, sr, ta, tr) {
   return line(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
+}
+
+function arc(sx, sy, tx, ty) {
+  var dx = tx - sx,
+      dy = ty - sy,
+      rr = Math.sqrt(dx * dx + dy * dy) / 2,
+      ra = 180 * Math.atan2(dy, dx) / Math.PI;
+  return 'M' + sx + ',' + sy +
+         'A' + rr + ',' + rr +
+         ' ' + ra + ' 0 1' +
+         ' ' + tx + ',' + ty;
+}
+
+function arcR(sa, sr, ta, tr) {
+  return arc(
     sr * Math.cos(sa), sr * Math.sin(sa),
     tr * Math.cos(ta), tr * Math.sin(ta)
   );
