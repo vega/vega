@@ -422,9 +422,17 @@ Formats a (zero-based) _month_ number as an abbreviated month name, according to
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `timeFormat(timestamp, '%A')`.
 
+<a name="timeParse" href="#timeParse">#</a>
+<b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
+Parses a _string_ value to a Date object, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `timeParse('June 30, 2015', '%B %d, %Y')`.
+
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `utcFormat(timestamp, '%A')`.
+
+<a name="utcParse" href="#utcParse">#</a>
+<b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>
+Parses a _string_ value to a Date object, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `utcParse('June 30, 2015', '%B %d, %Y')`.
 
 [Back to Top](#reference)
 
