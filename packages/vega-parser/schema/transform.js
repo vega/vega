@@ -47,7 +47,8 @@ function parameterSchema(param) {
       p = {
         "oneOf": [
           {"$ref": "#/refs/scaleField"},
-          {"$ref": "#/refs/paramField"}
+          {"$ref": "#/refs/paramField"},
+          {"$ref": "#/refs/expr"}
         ]
       };
       break;
