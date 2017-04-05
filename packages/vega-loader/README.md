@@ -123,7 +123,8 @@ The `'date'` data type also accepts an optional format string
 generate date-time parsers for a date format string. If *dateParse* is
 unspecified, the [d3-time-format](https://github.com/d3/d3-time-format)
 library is used by default. Date-time format strings may be quoted
-(`date:'%A'`), but quoting is not required.
+(`date:'%A'`), but quoting is not required. In addition, parsing of
+date-time format strings to UTC time is supported (`'utc:format'`).
 
 ```js
 // read loaded csv data, automatically infer value types

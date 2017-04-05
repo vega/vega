@@ -1,7 +1,7 @@
 import {inferTypes, typeParsers} from './type';
 import formats from './formats/index';
 import {error} from 'vega-util';
-import {timeParse} from 'd3-time-format';
+import {timeParse, utcParse} from 'd3-time-format';
 
 export default function(data, schema, dateParse) {
   schema = schema || {};
@@ -29,7 +29,7 @@ function parse(data, types, dateParse) {
     var type = types[field],
         parts, pattern;
 
-    if (type && type.indexOf('date:') === 0) {
+    if (type && (type.indexOf('date:') === 0 || type.indexOf('utc:') === 0)) {
       parts = type.split(/:(.+)?/, 2);  // split on first :
       pattern = parts[1];
 
@@ -38,7 +38,7 @@ function parse(data, types, dateParse) {
         pattern = pattern.slice(1, -1);
       }
 
-      return dateParse(pattern);
+      return parts[0] === 'utc' ? utcParse(pattern) : dateParse(pattern);
     }
 
     if (!typeParsers[type]) {

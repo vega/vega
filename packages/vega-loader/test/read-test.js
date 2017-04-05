@@ -146,6 +146,66 @@ tape('JSON reader should parse date with custom parse function', function(test) 
   test.end();
 });
 
+tape('JSON reader should parse UTC date with format %d.%m.%Y', function(test) {
+  var expected = function() { return [{foo: new Date(Date.UTC(1990, 6, 18))}]; },
+      input = function() { return [{foo: '18.07.1990'}]; },
+      types;
+
+  // unquoted pattern
+  types = {foo: 'utc:%d.%m.%Y'};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  // single quoted pattern
+  types = {foo: "utc:'%d.%m.%Y'"};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  // double quoted pattern
+  types = {foo: 'utc:"%d.%m.%Y"'};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  test.end();
+});
+
+tape('JSON reader should parse UTC date with format %m.%d.%Y', function(test) {
+  var expected = function() { return [{foo: new Date(Date.UTC(1990, 6, 18))}]; },
+      input = function() { return [{foo: '07.18.1990'}]; },
+      types;
+
+  // unquoted pattern
+  types = {foo: 'utc:%m.%d.%Y'};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  // single quoted pattern
+  types = {foo: "utc:'%m.%d.%Y'"};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  // double quoted pattern
+  types = {foo: 'utc:"%m.%d.%Y"'};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  test.end();
+});
+
+tape('JSON reader should parse UTC time with format %H:%M', function(test) {
+  var expected = function() { return [{foo: new Date(Date.UTC(1900, 0, 1, 13, 15))}]; },
+      input = function() { return [{foo: '13:15'}]; },
+      types;
+
+  // unquoted pattern
+  types = {foo: 'utc:%H:%M'};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  // single quoted pattern
+  types = {foo: "utc:'%H:%M'"};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  // double quoted pattern
+  types = {foo: 'utc:"%H:%M"'};
+  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+
+  test.end();
+});
+
 tape('JSON reader should throw error if format is unrecognized', function(test) {
   var input = [{foo: '18.07.1990'}],
       types = {foo: 'notAFormat'};
