@@ -64,6 +64,7 @@ menu: examples
 {% include preview spec="edge-bundling" %}
 {% include preview spec="force-directed-layout" %}
 {% include preview spec="reorderable-matrix" %}
+{% include preview spec="arc-diagram" %}
 {% include preview spec="airport-connections" %}
 
 ## Other Chart Types
