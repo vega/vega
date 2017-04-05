@@ -22,7 +22,7 @@ The following example defines a new data set with transforms to filter values an
 }
 ```
 
-All transforms require a _type_ property, specifying the name of the transform. The supported transform types are listed below In addition, many transform also acc
+All transforms require a _type_ property, specifying the name of the transform. Transforms that produce a value as a side-effect (in particular, the [bin](bin), [extent](extent), and [crossfilter](crossfilter) transforms) can include a _signal_ property to specify a unique signal name to which to bind the transform's state value.
 
 ## Basic Transforms
 

@@ -3121,6 +3121,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -3141,6 +3144,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -3230,6 +3236,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         }
@@ -3257,6 +3266,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -3504,6 +3516,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -3764,6 +3779,9 @@
                     },
                     {
                       "$ref": "#/refs/paramField"
+                    },
+                    {
+                      "$ref": "#/refs/expr"
                     }
                   ]
                 },
@@ -3882,6 +3900,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         }
@@ -3935,6 +3956,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -4037,6 +4061,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -4051,6 +4078,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -4071,6 +4101,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -4126,6 +4159,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -4140,6 +4176,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -4198,6 +4237,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -4327,6 +4369,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -4373,6 +4418,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -4439,6 +4487,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ],
           "default": "datum"
@@ -4620,6 +4671,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ],
           "default": "source.x"
@@ -4631,6 +4685,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ],
           "default": "source.y"
@@ -4642,6 +4699,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ],
           "default": "target.x"
@@ -4653,6 +4713,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ],
           "default": "target.y"
@@ -4677,6 +4740,7 @@
             {
               "enum": [
                 "line",
+                "arc",
                 "curve",
                 "diagonal",
                 "orthogonal"
@@ -4723,6 +4787,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -4807,6 +4874,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -4821,6 +4891,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -5173,6 +5246,9 @@
                       },
                       {
                         "$ref": "#/refs/paramField"
+                      },
+                      {
+                        "$ref": "#/refs/expr"
                       }
                     ]
                   },
@@ -5252,6 +5328,9 @@
                       },
                       {
                         "$ref": "#/refs/paramField"
+                      },
+                      {
+                        "$ref": "#/refs/expr"
                       }
                     ]
                   }
@@ -5287,6 +5366,9 @@
                       },
                       {
                         "$ref": "#/refs/paramField"
+                      },
+                      {
+                        "$ref": "#/refs/expr"
                       }
                     ]
                   }
@@ -5353,6 +5435,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }
@@ -5369,6 +5454,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         }
@@ -5396,6 +5484,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -5406,6 +5497,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         }
@@ -5435,6 +5529,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         }
@@ -5462,6 +5559,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -5528,6 +5628,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -5606,6 +5709,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -5751,6 +5857,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -5910,6 +6019,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -6144,6 +6256,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -6154,6 +6269,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -6372,6 +6490,9 @@
             },
             {
               "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
             }
           ]
         },
@@ -6460,6 +6581,9 @@
                   },
                   {
                     "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
                   }
                 ]
               }

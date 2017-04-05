@@ -11,7 +11,7 @@
     },
     {
       "name": "shape", "value": "diagonal",
-      "bind": {"input": "select", "options": ["line", "curve", "diagonal", "orthogonal"]}
+      "bind": {"input": "select", "options": ["line", "arc", "curve", "diagonal", "orthogonal"]}
     }
   ],
 

@@ -12,6 +12,7 @@ The **crossfilter** transform maintains a filter mask for multiple dimensional q
 | :------------------ | :-----------------------------: | :------------ |
 | fields              | {% include type t="Field[]" %}  | {% include required %} An array of data fields to filter. The same field may be included more than once to specify multiple queries.|
 | queries             | {% include type t="Array[]" %}  | {% include required %} An array of per-field range queries. Each entry must resolve to a two-element number array, indicating the minimum (inclusive) and maximum (exclusive) values that should pass through the filter.|
+| signal              | {% include type t="String" %}   | If defined, binds the computed filter mask to a signal with the given name.|
 
 This transform writes to the property `_index` on each input data object. If other transforms overwrite this property, the resulting behavior is undefined.
 

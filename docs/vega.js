@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.27";
+var version = "3.0.0-beta.28";
 
 function bin$1(_) {
   // determine range
@@ -1455,7 +1455,7 @@ function inferColumns(rows) {
 }
 
 function dsvFormat(delimiter) {
-  var reFormat = new RegExp("[\"" + delimiter + "\n\r]"),
+  var reFormat = new RegExp("[\"" + delimiter + "\n]"),
       delimiterCode = delimiter.charCodeAt(0);
 
   function parse(text, f) {
@@ -2872,9 +2872,9 @@ function formatLiteralPercent() {
 
 var locale;
 var d3_timeFormat;
-var timeParse;
+var d3_timeParse;
 var d3_utcFormat;
-var utcParse;
+var d3_utcParse;
 
 defaultLocale({
   dateTime: "%x, %X",
@@ -2890,9 +2890,9 @@ defaultLocale({
 function defaultLocale(definition) {
   locale = formatLocale(definition);
   d3_timeFormat = locale.format;
-  timeParse = locale.parse;
+  d3_timeParse = locale.parse;
   d3_utcFormat = locale.utcFormat;
-  utcParse = locale.utcParse;
+  d3_utcParse = locale.utcParse;
   return locale;
 }
 
@@ -2913,7 +2913,7 @@ function parseIsoNative(string) {
 
 var parseIso = +new Date("2000-01-01T00:00:00.000Z")
     ? parseIsoNative
-    : utcParse(isoSpecifier);
+    : d3_utcParse(isoSpecifier);
 
 function read(data, schema, dateParse) {
   schema = schema || {};
@@ -2929,7 +2929,7 @@ function read(data, schema, dateParse) {
 }
 
 function parse(data, types, dateParse) {
-  dateParse = dateParse || timeParse;
+  dateParse = dateParse || d3_timeParse;
 
   var fields = data.columns || Object.keys(data[0]),
       parsers, datum, field, i, j, n, m;
@@ -2941,7 +2941,7 @@ function parse(data, types, dateParse) {
     var type = types[field],
         parts, pattern;
 
-    if (type && type.indexOf('date:') === 0) {
+    if (type && (type.indexOf('date:') === 0 || type.indexOf('utc:') === 0)) {
       parts = type.split(/:(.+)?/, 2);  // split on first :
       pattern = parts[1];
 
@@ -2950,7 +2950,7 @@ function parse(data, types, dateParse) {
         pattern = pattern.slice(1, -1);
       }
 
-      return dateParse(pattern);
+      return parts[0] === 'utc' ? d3_utcParse(pattern) : dateParse(pattern);
     }
 
     if (!typeParsers[type]) {
@@ -18548,6 +18548,8 @@ prototype$51.transform = function(_, pulse) {
 var Paths = fastmap({
   'line': line$3,
   'line-radial': lineR,
+  'arc': arc$2,
+  'arc-radial': arcR,
   'curve': curve,
   'curve-radial': curveR,
   'orthogonal-horizontal': orthoX,
@@ -18585,7 +18587,8 @@ prototype$52.transform = function(_, pulse) {
       path = Paths.get(shape + '-' + orient) || Paths.get(shape);
 
   if (!path) {
-    error('LinkPath unsupported type: ' + _.shape + '-' + _.orient);
+    error('LinkPath unsupported type: ' + _.shape
+      + (_.orient ? '-' + _.orient : ''));
   }
 
   pulse.visit(pulse.SOURCE, function(t) {
@@ -18604,6 +18607,24 @@ function line$3(sx, sy, tx, ty) {
 
 function lineR(sa, sr, ta, tr) {
   return line$3(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
+}
+
+function arc$2(sx, sy, tx, ty) {
+  var dx = tx - sx,
+      dy = ty - sy,
+      rr = Math.sqrt(dx * dx + dy * dy) / 2,
+      ra = 180 * Math.atan2(dy, dx) / Math.PI;
+  return 'M' + sx + ',' + sy +
+         'A' + rr + ',' + rr +
+         ' ' + ra + ' 0 1' +
+         ' ' + tx + ',' + ty;
+}
+
+function arcR(sa, sr, ta, tr) {
+  return arc$2(
     sr * Math.cos(sa), sr * Math.sin(sa),
     tr * Math.cos(ta), tr * Math.sin(ta)
   );
@@ -19019,7 +19040,7 @@ var LinkPathDefinition = {
     { "name": "orient", "type": "enum", "default": "vertical",
       "values": ["horizontal", "vertical", "radial"] },
     { "name": "shape", "type": "enum", "default": "line",
-      "values": ["line", "curve", "diagonal", "orthogonal"] },
+      "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
     { "name": "as", "type": "string", "default": "path" }
   ]
 };
@@ -27056,6 +27077,9 @@ var format = formatter(d3_format);
 var utcFormat = formatter(d3_utcFormat);
 var timeFormat = formatter(d3_timeFormat);
 
+var utcParse = formatter(d3_utcParse);
+var timeParse = formatter(d3_timeParse);
+
 var dateObj = new Date(2000, 0, 1);
 
 function time(month, day, specifier) {
@@ -27192,30 +27216,33 @@ var scalePrefix  = '%';
 var dataPrefix   = ':';
 
 function getScale(name, ctx) {
-  var s = isString(name) ? ctx.scales[name]
-    : isObject(name) && name.signal ? ctx.signals[name.signal]
+  var s;
+  return isFunction(name) ? name
+    : isString(name) ? (s = ctx.scales[name]) && s.value
     : undefined;
-  return s && s.value;
+}
+
+function addScaleDependency(scope, params, name) {
+  var scaleName = scalePrefix + name;
+  if (!params.hasOwnProperty(scaleName)) {
+    try {
+      params[scaleName] = scope.scaleRef(name);
+    } catch (err) {
+      // TODO: error handling? warning?
+    }
+  }
 }
 
 function scaleVisitor(name, args, scope, params) {
-  if (args[0].type === Literal) { // scale dependency
-    name = args[0].value;
-    var scaleName = scalePrefix + name;
-
-    if (!params.hasOwnProperty(scaleName)) {
-      try {
-        params[scaleName] = scope.scaleRef(name);
-      } catch (err) {
-        // TODO: error handling? warning?
-      }
-    }
+  if (args[0].type === Literal) {
+    // add scale dependency
+    addScaleDependency(scope, params, args[0].value);
   }
-
-  else if (args[0].type === Identifier) { // forward reference to signal
-    name = args[0].name;
-    args[0] = new ASTNode(Literal);
-    args[0].raw = '{signal:"' + name + '"}';
+  else if (args[0].type === Identifier) {
+    // indirect scale lookup; add all scales as parameters
+    for (name in scope.scales) {
+      addScaleDependency(scope, params, name);
+    }
   }
 }
 
@@ -27445,6 +27472,7 @@ function testInterval(datum, entry) {
 
   for (; i<n; ++i) {
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
+    if (ivals[i].extent[0] === ivals[i].extent[1]) return true;
     if (!inrange(getter(datum), ivals[i].extent)) return false;
   }
   return true;
@@ -27518,7 +27546,9 @@ var functionContext = {
   sequence: sequence,
   format: format,
   utcFormat: utcFormat,
+  utcParse: utcParse,
   timeFormat: timeFormat,
+  timeParse: timeParse,
   monthFormat: monthFormat,
   monthAbbrevFormat: monthAbbrevFormat,
   dayFormat: dayFormat,
@@ -28211,7 +28241,9 @@ function getScale$1(name, scope, params, fields) {
       params[scalePrefix + scaleName] = scope.scaleRef(scaleName);
     }
     scaleName = $(scalePrefix) + '+'
-      + field$1(name, scope, params, fields);
+      + (name.signal
+        ? '(' + expression(name.signal, scope, params, fields) + ')'
+        : field$1(name, scope, params, fields));
   }
 
   return '_[' + scaleName + ']';
@@ -31371,6 +31403,18 @@ prototype$69.renderer = function(type) {
   if (!renderModule(type)) this.error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
     this._renderType = type;
+    if (this._renderer) {
+      this._renderer = this._queue = null;
+      this.initialize(this._el);
+    }
+  }
+  return this;
+};
+
+prototype$69.loader = function(loader) {
+  if (!arguments.length) return this._loader;
+  if (loader !== this._loader) {
+    Dataflow.prototype.loader.call(this, loader);
     if (this._renderer) {
       this._renderer = this._queue = null;
       this.initialize(this._el);
