@@ -4,7 +4,7 @@ import {rgb, lab, hcl, hsl} from 'd3-color';
 import {range as sequence} from 'd3-array';
 
 import {
-  format, utcFormat, timeFormat,
+  format, utcFormat, timeFormat, utcParse, timeParse,
   monthFormat, monthAbbrevFormat,
   dayFormat, dayAbbrevFormat
 } from './format';
@@ -36,7 +36,9 @@ export var functionContext = {
   sequence: sequence,
   format: format,
   utcFormat: utcFormat,
+  utcParse: utcParse,
   timeFormat: timeFormat,
+  timeParse: timeParse,
   monthFormat: monthFormat,
   monthAbbrevFormat: monthAbbrevFormat,
   dayFormat: dayFormat,
