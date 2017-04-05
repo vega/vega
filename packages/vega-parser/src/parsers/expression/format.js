@@ -1,5 +1,10 @@
 import {format as d3_format} from 'd3-format';
-import {timeFormat as d3_timeFormat, utcFormat as d3_utcFormat} from 'd3-time-format';
+import {
+  timeFormat as d3_timeFormat,
+  timeParse as d3_timeParse,
+  utcFormat as d3_utcFormat,
+  utcParse as d3_utcParse
+} from 'd3-time-format';
 
 function formatter(method) {
   var cache = {};
@@ -12,6 +17,9 @@ function formatter(method) {
 export var format = formatter(d3_format);
 export var utcFormat = formatter(d3_utcFormat);
 export var timeFormat = formatter(d3_timeFormat);
+
+export var utcParse = formatter(d3_utcParse);
+export var timeParse = formatter(d3_timeParse);
 
 var dateObj = new Date(2000, 0, 1);
 
