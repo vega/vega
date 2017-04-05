@@ -76,6 +76,7 @@ The [vega-embed](https://github.com/vega/vega-embed) module provides a convenien
 ```html
 <head>
   <script src="https://vega.github.io/vega/vega.min.js"></script>
+  <script src="https://vega.github.io/vega-lite/vega-lite.min.js"></script>
   <script src="https://vega.github.io/vega-embed/vega-embed.min.js"></script>
 </head>
 <body>
