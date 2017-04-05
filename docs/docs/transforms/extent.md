@@ -8,9 +8,10 @@ The **extent** transform computes the minimum and maximum values for a data fiel
 
 ## Transform Parameters
 
-| Property            | Type                         | Description   |
-| :------------------ | :--------------------------: | :------------ |
-| field               | {% include type t="Field" %} | {% include required %} The data field for which to compute the extent.|
+| Property            | Type                          | Description   |
+| :------------------ | :---------------------------: | :------------ |
+| field               | {% include type t="Field" %}  | {% include required %} The data field for which to compute the extent.|
+| signal              | {% include type t="String" %} | If defined, binds the computed extent array to a signal with the given name.|
 
 ## Usage
 

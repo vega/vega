@@ -19,6 +19,7 @@ The **bin** transform discretizes numeric values into a set of bins. A common us
 | minstep             | {% include type t="Number" %}   | The minimim allowed bin step size (default `0`).|
 | divide              | {% include type t="Number[]" %} | Allowable bin step sub-divisions. The default value is `[5, 2]`, which indicates that for base 10 numbers (the default base) automatic bin determination can consider dividing bin step sizes by 5 and/or 2.|
 | nice                | {% include type t="Boolean" %}  | If `true` (the default), attempts to make the bin boundaries use human-friendly boundaries, such as multiples of ten.|
+| signal              | {% include type t="String" %}   | If defined, binds the computed binning specification (an object with _start_, _stop_ and _step_ properties) to a signal with the given name.|
 | as                  | {% include type t="String[]" %} | The output fields at which to write the start and end bin values. The default is `["bin0", "bin1"]`.|
 
 ## Usage
