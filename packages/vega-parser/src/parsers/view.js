@@ -41,15 +41,18 @@ export default function parseView(spec, scope) {
 
   // Perform view layout
   parent = scope.add(ViewLayout({
+    layout:       spec.layout || undefined,
     legendMargin: config.legendMargin,
     autosize:     parseAutosize(spec.autosize, config),
     mark:         root,
     pulse:        ref(encode)
   }));
+  scope.operators.pop();
 
   // Parse remainder of specification
   scope.pushState(ref(encode), ref(parent), null);
   parseSpec(spec, scope, true);
+  scope.operators.push(parent);
 
   // Bound / render / sieve root item
   op = scope.add(Bound({mark: root, pulse: ref(parent)}));
