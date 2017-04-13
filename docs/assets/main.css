@@ -11,6 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   max-width: 100%;
+  text-decoration-skip: ink;
 }
 header {
   background-color: #325;
