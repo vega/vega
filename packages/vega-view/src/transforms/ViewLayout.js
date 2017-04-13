@@ -1,3 +1,4 @@
+import {gridLayout} from './gridLayout';
 import {Transform} from 'vega-dataflow';
 import {Bounds, boundStroke} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
@@ -9,7 +10,11 @@ var Fit = 'fit',
 var AxisRole = 'axis',
     FrameRole = 'frame',
     LegendRole = 'legend',
-    ScopeRole = 'scope';
+    ScopeRole = 'scope',
+    RowHeader = 'row-header',
+    RowFooter = 'row-footer',
+    ColHeader = 'column-header',
+    ColFooter = 'column-footer';
 
 /**
  * Layout view elements such as axes and legends.
@@ -28,6 +33,7 @@ prototype.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
+    if (_.layout) gridLayout(view, group, _.layout);
     layoutGroup(view, group, _);
   });
   return pulse;
@@ -54,6 +60,10 @@ function layoutGroup(view, group, _) {
         legends.push(mark); break;
       case FrameRole:
       case ScopeRole:
+      case RowHeader:
+      case RowFooter:
+      case ColHeader:
+      case ColFooter:
         axisBounds.union(mark.bounds); break;
       default:
         viewBounds.union(mark.bounds);
