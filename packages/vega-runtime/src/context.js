@@ -75,8 +75,16 @@ Context.prototype = ContextFork.prototype = {
 
     if (spec.parent) {
       var p = ctx.get(spec.parent.$ref);
-      df.connect(p, [op]);
-      op.targets().add(p);
+      if (p) {
+        df.connect(p, [op]);
+        op.targets().add(p);
+      } else {
+        (ctx.unresolved = ctx.unresolved || []).push(function() {
+          p = ctx.get(spec.parent.$ref);
+          df.connect(p, [op]);
+          op.targets().add(p);
+        });
+      }
     }
 
     if (spec.signal) {
@@ -93,6 +101,11 @@ Context.prototype = ContextFork.prototype = {
         spec.data[name].forEach(function(role) { data[role] = op; });
       }
     }
+  },
+  resolve: function() {
+    (this.unresolved || []).forEach(function(fn) { fn(); });
+    delete this.unresolved;
+    return this;
   },
   operator: function(spec, update, params) {
     this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
