@@ -33,5 +33,5 @@ export default function(spec, ctx) {
     parseUpdate(entry, ctx);
   });
 
-  return ctx;
+  return ctx.resolve();
 }
