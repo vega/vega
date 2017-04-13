@@ -6,7 +6,7 @@ export default function(spec) {
     interactive: spec.interactive === false ? false : true,
     marktype:    spec.type,
     name:        spec.name || undefined,
-    role:        role(spec),
+    role:        spec.role || role(spec),
     zindex:      +spec.zindex || undefined
   };
 }

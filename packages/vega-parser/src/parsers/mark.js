@@ -12,14 +12,14 @@ import parseTrigger from './trigger';
 import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {fieldRef, ref} from '../util';
-import {error} from 'vega-util';
+import {error, isObject} from 'vega-util';
 import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
   var role = getRole(spec),
       group = spec.type === GroupMark,
       facet = spec.from && spec.from.facet,
-      layout = role === ScopeRole || role === FrameRole,
+      layout = spec.layout || role === ScopeRole || role === FrameRole,
       nested = role === MarkRole || layout || facet,
       ops, op, input, store, bound, render, sieve, name,
       joinRef, markRef, encodeRef, layoutRef, boundRef;
@@ -74,6 +74,7 @@ export default function(spec, scope) {
   // add view layout operator if needed
   if (facet || layout) {
     layout = scope.add(ViewLayout({
+      layout:       isObject(layout) ? layout : undefined,
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
