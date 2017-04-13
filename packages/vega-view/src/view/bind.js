@@ -84,7 +84,7 @@ function form(bind, el, param, value) {
     }
   }
   node.setAttribute('name', param.signal);
-  node.setAttribute('value', value);
+  node.value = value;
 
   el.appendChild(node);
 
@@ -156,9 +156,9 @@ function radio(bind, el, param, value) {
     var attr = {
       id:    id,
       type:  'radio',
-      name:  param.signal,
-      value: option
+      name:  param.signal
     };
+    attr.value = value;
     if (valuesEqual(option, value)) attr.checked = true;
 
     var input = element('input', attr);
@@ -195,12 +195,12 @@ function range(bind, el, param, value) {
 
   var node = element('input', {
     type:  'range',
-    value: value,
     name:  param.signal,
     min:   min,
     max:   max,
     step:  step
   });
+  node.value = value;
 
   var label = element('label', {}, +value);
 
