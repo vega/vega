@@ -12,8 +12,7 @@ export default function(spec, config, userEncode, dataRef, size) {
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
-    opacity: zero,
-    text: {field: Label}
+    opacity: zero
   };
   addEncode(enter, 'angle', config.labelAngle);
   addEncode(enter, 'fill', config.labelColor);
@@ -26,7 +25,8 @@ export default function(spec, config, userEncode, dataRef, size) {
   };
 
   encode.update = update = {
-    opacity: {value: 1}
+    opacity: {value: 1},
+    text: {field: Label}
   };
 
   tickSize = encoder(size);
