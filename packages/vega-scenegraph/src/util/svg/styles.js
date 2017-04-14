@@ -5,8 +5,10 @@ export var styles = {
   'strokeWidth':      'stroke-width',
   'strokeOpacity':    'stroke-opacity',
   'strokeCap':        'stroke-linecap',
+  'strokeJoin':       'stroke-linejoin',
   'strokeDash':       'stroke-dasharray',
   'strokeDashOffset': 'stroke-dashoffset',
+  'strokeMiterLimit': 'stroke-miterlimit',
   'opacity':          'opacity'
 };
 
