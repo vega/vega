@@ -4,6 +4,7 @@ import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
 import {visit} from './util/visit';
+import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 import {inherits} from 'vega-util';
@@ -250,6 +251,9 @@ prototype.draw = function(el, scene, prev) {
   parent.setAttribute('class', cssClass(scene));
   if (!isGroup && events) {
     parent.style.setProperty('pointer-events', events);
+  }
+  if (scene.clip) {
+    parent.setAttribute('clip-path', clip(renderer, scene));
   }
 
   function process(item) {
