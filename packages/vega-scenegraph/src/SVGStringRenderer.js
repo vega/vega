@@ -4,6 +4,7 @@ import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {font, textValue} from './util/text';
 import {visit} from './util/visit';
+import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
 import {inherits} from 'vega-util';
@@ -161,7 +162,8 @@ prototype.mark = function(scene) {
 
   // render opening group tag
   str += openTag('g', {
-    'class': cssClass(scene)
+    'class': cssClass(scene),
+    'clip-path': scene.clip ? clip(renderer, scene) : null
   }, style);
 
   // render contained elements

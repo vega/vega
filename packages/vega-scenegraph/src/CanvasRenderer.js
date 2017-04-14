@@ -3,6 +3,7 @@ import Bounds from './Bounds';
 import marks from './marks/index';
 
 import {domClear} from './util/dom';
+import clip from './util/canvas/clip';
 import Canvas from './util/canvas/canvas';
 import resize from './util/canvas/resize';
 import {inherits} from 'vega-util';
@@ -95,7 +96,9 @@ prototype._render = function(scene, items) {
 
 prototype.draw = function(ctx, scene, bounds) {
   var mark = marks[scene.marktype];
+  if (scene.clip) clip(ctx, scene);
   mark.draw.call(this, ctx, scene, bounds);
+  if (scene.clip) ctx.restore();
 };
 
 prototype.clear = function(x, y, w, h) {
