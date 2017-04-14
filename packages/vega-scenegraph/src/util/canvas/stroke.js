@@ -3,8 +3,7 @@ import color from './color';
 var Empty = [];
 
 export default function(context, item, opacity) {
-  var lw = (lw = item.strokeWidth) != null ? lw : 1,
-      lc, lj, ml;
+  var lw = (lw = item.strokeWidth) != null ? lw : 1;
 
   if (lw <= 0) return false;
 
