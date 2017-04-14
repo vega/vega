@@ -415,8 +415,7 @@ ul.column-set, .column-set ul {
   box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
 }
 #showcase .examples {
-  position: absolute;
-  left: -30px;
+  margin: 0 auto;
   height: 300px;
   width: 1440px;
   line-height: 0;
