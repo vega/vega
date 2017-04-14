@@ -5,7 +5,7 @@ import {
 } from './util';
 import parseExpression from './parsers/expression';
 import {Compare, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
-import {array, error, extend, isString, peek, stringValue} from 'vega-util';
+import {array, error, extend, isString, isObject, peek, stringValue} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
@@ -296,6 +296,27 @@ prototype.parseLambdas = function() {
 prototype.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
+
+prototype.objectProperty = function(spec) {
+  return (!spec || !isObject(spec)) ? spec
+    : this.signalRef(spec.signal || objectLambda(spec));
+};
+
+function objectLambda(obj) {
+  var code = '{',
+      i = 0,
+      key, value;
+
+  for (key in obj) {
+    value = obj[key];
+    code += (++i > 1 ? ',' : '')
+      + stringValue(key) + ':'
+      + (isObject(value)
+        ? (value.signal || objectLambda(value))
+        : stringValue(value));
+  }
+  return code + '}';
+}
 
 prototype.addBinding = function(name, bind) {
   if (!this.bindings) {

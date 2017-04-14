@@ -41,7 +41,7 @@ export default function parseView(spec, scope) {
 
   // Perform view layout
   parent = scope.add(ViewLayout({
-    layout:       spec.layout || undefined,
+    layout:       scope.objectProperty(spec.layout),
     legendMargin: config.legendMargin,
     autosize:     parseAutosize(spec.autosize, config),
     mark:         root,
