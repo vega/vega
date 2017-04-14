@@ -30,7 +30,6 @@ export default function(spec, scope, preprocessed) {
   signals.forEach(function(_) {
     parseSignalUpdates(_, scope);
   });
-  scope.parseLambdas();
 
   array(spec.axes).forEach(function(_) {
     parseAxis(_, scope);
@@ -44,5 +43,5 @@ export default function(spec, scope, preprocessed) {
     parseLegend(_, scope);
   });
 
-  return scope;
+  return scope.parseLambdas(), scope;
 }

@@ -12,7 +12,7 @@ import parseTrigger from './trigger';
 import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {fieldRef, ref} from '../util';
-import {error, isObject} from 'vega-util';
+import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
@@ -74,7 +74,7 @@ export default function(spec, scope) {
   // add view layout operator if needed
   if (facet || layout) {
     layout = scope.add(ViewLayout({
-      layout:       isObject(layout) ? layout : undefined,
+      layout:       scope.objectProperty(spec.layout),
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
