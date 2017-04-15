@@ -1,4 +1,4 @@
-import {field, isFunction, isObject} from 'vega-util';
+import {field, identity, isFunction, isObject} from 'vega-util';
 
 function isBuffer(_) {
   return (typeof Buffer === 'function' && isFunction(Buffer.isBuffer))
@@ -6,8 +6,14 @@ function isBuffer(_) {
 }
 
 export default function(data, format) {
-  data = isObject(data) && !isBuffer(data) ? data : JSON.parse(data);
-  return (format && format.property)
-    ? field(format.property)(data)
+  var prop = (format && format.property) ? field(format.property) : identity;
+  return isObject(data) && !isBuffer(data)
+    ? parseJSON(prop(data))
+    : prop(JSON.parse(data));
+}
+
+function parseJSON(data, format) {
+  return (format && format.copy)
+    ? JSON.parse(JSON.stringify(data))
     : data;
 }
