@@ -2,7 +2,7 @@
 
 [Vega](http://github.com/vega/vega) expression parser and code generator.
 
-Parses a [limited subset](https://github.com/vega/vega/wiki/Expressions) of
+Parses a [limited subset](https://vega.github.io/vega/docs/expressions/) of
 JavaScript expressions into an abstract syntax tree, and provides code
 generation utilities for generating `eval`'able output code. The parser
 recognizes basic JavaScript expressions, but does not allow assignment

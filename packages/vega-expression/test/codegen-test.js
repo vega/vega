@@ -250,6 +250,36 @@ tape('Evaluate expressions with white list', function(test) {
   test.equal(evaluate('utc(2009,9,1,10)'), u);
   test.equal(evaluate('utchours(utc(2009,9,1,10))'), new Date(u).getUTCHours());
 
+  // should evaluate type checking functions
+  test.equal(evaluate('isArray([])'), true);
+  test.equal(evaluate('isArray({})'), false);
+  test.equal(evaluate('isArray("a")'), false);
+  test.equal(evaluate('isBoolean(true)'), true);
+  test.equal(evaluate('isBoolean(false)'), true);
+  test.equal(evaluate('isBoolean({})'), false);
+  test.equal(evaluate('isBoolean("a")'), false);
+  test.equal(evaluate('isBoolean(0)'), false);
+  test.equal(evaluate('isNumber(0)'), true);
+  test.equal(evaluate('isNumber(1e5)'), true);
+  test.equal(evaluate('isNumber(null)'), false);
+  test.equal(evaluate('isObject({})'), true);
+  test.equal(evaluate('isObject([])'), true);
+  test.equal(evaluate('isObject(null)'), true);
+  test.equal(evaluate('isObject(0)'), false);
+  test.equal(evaluate('isObject("a")'), false);
+  test.equal(evaluate('isObject(true)'), false);
+  test.equal(evaluate('isString("")'), true);
+  test.equal(evaluate('isString("a")'), true);
+  test.equal(evaluate('isString([])'), false);
+  test.equal(evaluate('isString(0)'), false);
+  test.equal(evaluate('isDate(datetime())'), true);
+  test.equal(evaluate('isDate(now())'), false);
+  test.equal(evaluate('isDate({})'), false);
+  test.equal(evaluate('isDate([])'), false);
+  test.equal(evaluate('isRegExp(regexp("grep+"))'), true);
+  test.equal(evaluate('isRegExp(null)'), false);
+  test.equal(evaluate('isRegExp("a")'), false);
+
   // should evaluate if statements
   test.equal(evaluate('if(datum.a > 1, 1, 2)'), 1);
   test.equal(evaluate('if(event.type === "mousedown", 1, 2)'), 2);

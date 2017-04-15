@@ -19,6 +19,21 @@ export default function(codegen) {
     };
   }
 
+  function typeOf(type) {
+    return function(args) {
+      return '('
+        + 'typeof ' + codegen(args[0]) + '==="' + type + '"'
+        + ')';
+    };
+  }
+
+  function typeString(type) {
+    return function(args) {
+      return '(Object.prototype.toString.call('
+        + codegen(args[0]) + ')==="[object ' + type + ']")';
+    };
+  }
+
   var DATE = 'new Date',
       STRING = 'String',
       REGEXP = 'RegExp';
@@ -93,6 +108,15 @@ export default function(codegen) {
     // REGEXP functions
     regexp:  REGEXP,
     test:    fn('test', REGEXP),
+
+    // Type Checking functions
+    isArray:    'Array.isArray',
+    isBoolean:  typeOf('boolean'),
+    isNumber:   typeOf('number'),
+    isObject:   typeOf('object'),
+    isString:   typeOf('string'),
+    isDate:     typeString('Date'),
+    isRegExp:   typeString(REGEXP),
 
     // Control Flow functions
     if: function(args) {
