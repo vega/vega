@@ -12,6 +12,7 @@ The **bin** transform discretizes numeric values into a set of bins. A common us
 | :------------------ | :-----------------------------: | :------------ |
 | field               | {% include type t="Field" %}    | {% include required %} The data field to bin.|
 | extent              | {% include type t="Number[]" %} | {% include required %} A two-element array with the minimum and maximum values of the bin range.|
+| anchor              | {% include type t="Number" %}   | A value in the binned domain at which to anchor the bins, shifting the bin boundaries if necessary to ensure that a boundary aligns with the anchor value. By default, the minimum bin extent value serves as the anchor.|
 | maxbins             | {% include type t="Number" %}   | The maximum number of bins to create (default `20`).|
 | base                | {% include type t="Number" %}   | The number base to use for automatic bin determination (default `10`).|
 | step                | {% include type t="Number" %}   | An exact step size to use between bins. If provided, options such as _maxbins_ will be ignored.|
