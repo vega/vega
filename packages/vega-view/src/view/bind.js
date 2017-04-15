@@ -156,9 +156,9 @@ function radio(bind, el, param, value) {
     var attr = {
       id:    id,
       type:  'radio',
-      name:  param.signal
+      name:  param.signal,
+      value: option
     };
-    attr.value = value;
     if (valuesEqual(option, value)) attr.checked = true;
 
     var input = element('input', attr);
