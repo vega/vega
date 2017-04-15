@@ -43,12 +43,20 @@ prototype._bins = function(_) {
       bins  = bin(_),
       start = bins.start,
       stop  = bins.stop,
-      step  = bins.step;
+      step  = bins.step,
+      a, d;
+
+  if ((a = _.anchor) != null) {
+    d = a - (start + step * Math.floor((a - start) / step));
+    start += d;
+    stop += d;
+  }
 
   var f = function(t) {
     var v = field(t);
     return v == null ? null
-      : start + step * Math.floor((+v - start) / step);
+      : (v = Math.max(start, Math.min(+v, stop - step)),
+         start + step * Math.floor((v - start) / step));
   };
 
   f.start = start;

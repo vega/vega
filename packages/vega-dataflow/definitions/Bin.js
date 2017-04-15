@@ -3,6 +3,7 @@ export default {
   "metadata": {"modifies": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
+    { "name": "anchor", "type": "number" },
     { "name": "maxbins", "type": "number", "default": 20 },
     { "name": "base", "type": "number", "default": 10 },
     { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
