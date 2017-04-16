@@ -8,6 +8,7 @@ messages, and additional utilities for Object, Array and String values.
 
 * [Functions](#functions)
 * [Type Checkers](#type-checkers)
+* [Type Coercion](#type-coercion)
 * [Objects](#objects)
 * [Arrays](#arrays)
 * [Logging](#logging)
@@ -150,7 +151,6 @@ vega.<b>falsy</b>()
 
 An accessor function that simply returns the boolean `false` value.
 
-
 ### Type Checkers
 
 Functions for checking the type of JavaScript values.
@@ -160,6 +160,18 @@ vega.<b>isArray</b>(<i>value</i>)
 [<>](https://github.com/vega/vega-util/blob/master/src/isArray.js "Source")
 
 Returns `true` if the input *value* is an Array instance, `false` otherwise.
+
+<a name="isBoolean" href="#isBoolean">#</a>
+vega.<b>isBoolean</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isBoolean.js "Source")
+
+Returns `true` if the input *value* is a boolean instance, `false` otherwise.
+
+<a name="isDate" href="#isDate">#</a>
+vega.<b>isDate</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isDate.js "Source")
+
+Returns `true` if the input *value* is a Date instance, `false` otherwise.
 
 <a name="isFunction" href="#isFunction">#</a>
 vega.<b>isFunction</b>(<i>value</i>)
@@ -179,12 +191,51 @@ vega.<b>isObject</b>(<i>value</i>)
 
 Returns `true` if the input *value* is an Object instance, `false` otherwise.
 
+<a name="isRegExp" href="#isRegExp">#</a>
+vega.<b>isRegExp</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/isRegExp.js "Source")
+
+Returns `true` if the input *value* is a RegExp instance, `false` otherwise.
+
 <a name="isString" href="#isString">#</a>
 vega.<b>isString</b>(<i>value</i>)
 [<>](https://github.com/vega/vega-util/blob/master/src/isString.js "Source")
 
 Returns `true` if the input *value* is a String instance, `false` otherwise.
 
+### Type Coercion
+
+Functions for coercing values to a desired type.
+
+<a name="toBoolean" href="#toBoolean">#</a>
+vega.<b>toBoolean</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/toBoolean.js "Source")
+
+Coerces the input _value_ to a string. Null values and empty strings are mapped
+to `null`.
+
+<a name="toDate" href="#toDate">#</a>
+vega.<b>toDate</b>(<i>value</i>[, <i>parser</i>])
+[<>](https://github.com/vega/vega-util/blob/master/src/toDate.js "Source")
+
+Coerces the input _value_ to a Date instance. Null values and empty strings
+are mapped to `null`. If an optional _parser_ function is provided, it is used
+to perform date parsing, otherwise `Date.parse` is used. Be aware that
+`Date.parse` has different implementations across browsers!
+
+<a name="toNumber" href="#toNumber">#</a>
+vega.<b>toNumber</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/toNumber.js "Source")
+
+Coerces the input _value_ to a number. Null values and empty strings are mapped
+to `null`.
+
+<a name="toString" href="#toString">#</a>
+vega.<b>toString</b>(<i>value</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/toString.js "Source")
+
+Coerces the input _value_ to a string. Null values and empty strings are mapped
+to `null`.
 
 ### Objects
 
