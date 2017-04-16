@@ -165,7 +165,7 @@ Returns `true` if the input *value* is an Array instance, `false` otherwise.
 vega.<b>isBoolean</b>(<i>value</i>)
 [<>](https://github.com/vega/vega-util/blob/master/src/isBoolean.js "Source")
 
-Returns `true` if the input *value* is a boolean instance, `false` otherwise.
+Returns `true` if the input *value* is a Boolean instance, `false` otherwise.
 
 <a name="isDate" href="#isDate">#</a>
 vega.<b>isDate</b>(<i>value</i>)
