@@ -1,5 +1,9 @@
 import {codegen, constants, functions} from 'vega-expression';
-import {pad, stringValue, truncate} from 'vega-util';
+import {
+  isArray, isBoolean, isDate, isNumber, isObject, isString,
+  toBoolean, toDate, toNumber, toString,
+  pad, stringValue, truncate
+} from 'vega-util';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 import {range as sequence} from 'd3-array';
 
@@ -27,6 +31,17 @@ import {vlPoint, vlInterval} from './selection';
 
 // Expression function context object
 export var functionContext = {
+  isArray: isArray,
+  isBoolean: isBoolean,
+  isDate: isDate,
+  isNumber: isNumber,
+  isObject: isObject,
+  isRegExp: isRegExp,
+  isString: isString,
+  toBoolean: toBoolean,
+  toDate: toDate,
+  toNumber: toNumber,
+  toString: toString,
   pad: pad,
   truncate: truncate,
   rgb: rgb,
@@ -113,7 +128,7 @@ function buildFunctions(codegen) {
 // Export code generator and parameters
 export var codegenParams = {
   blacklist:  ['_'],
-  whitelist:  ['datum', 'event'],
+  whitelist:  ['datum', 'event', 'item'],
   fieldvar:   'datum',
   globalvar:  function(id) { return '_[' + stringValue('$' + id) + ']'; },
   functions:  buildFunctions,

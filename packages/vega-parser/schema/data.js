@@ -41,7 +41,8 @@ export default {
                   "properties": {
                     "type": {"enum": ["json"]},
                     "parse": parseDef,
-                    "property": {"type": "string"}
+                    "property": {"type": "string"},
+                    "copy": {"type": "boolean"}
                   },
                   "additionalProperties": false
                 },
