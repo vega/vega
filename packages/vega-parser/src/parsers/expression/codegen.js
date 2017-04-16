@@ -1,6 +1,6 @@
 import {codegen, constants, functions} from 'vega-expression';
 import {
-  isArray, isBoolean, isDate, isNumber, isObject, isString,
+  isArray, isBoolean, isDate, isNumber, isObject, isRegExp, isString,
   toBoolean, toDate, toNumber, toString,
   pad, stringValue, truncate
 } from 'vega-util';
