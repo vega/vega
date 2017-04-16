@@ -1,3 +1,5 @@
+import {toBoolean, toDate, toNumber, toString} from 'vega-util';
+
 export var typeParsers = {
   boolean: toBoolean,
   integer: toNumber,
@@ -40,25 +42,6 @@ export function inferTypes(data, fields) {
   return fields.reduce(function(types, field) {
     return types[field] = inferType(data, field), types;
   }, {});
-}
-
-// -- Type Coercion ----
-
-function toNumber(_) {
-  return _ == null || _ === '' ? null : +_;
-}
-
-function toBoolean(_) {
-  return _ == null || _ === '' ? null : !_ || _ === 'false' ? false : !!_;
-}
-
-function toDate(_, parser) {
-  return _ == null || _ === '' ? null
-    : (parser ? parser(_) : Date.parse(_));
-}
-
-function toString(_) {
-  return _ == null || _ === '' ? null : _ + '';
 }
 
 // -- Type Checks ----
