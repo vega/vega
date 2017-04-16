@@ -17,7 +17,8 @@ This page documents the expression language. If you are interested in implementa
 
 - [Bound Variables](#bound-variables)
 - [Constants](#constants)
-- [Type Checking Function](#type-checking-functions)
+- [Type Checking Functions](#type-checking-functions)
+- [Type Coercion Functions](#type-coercion-functions)
 - [Control Flow Functions](#control-flow-functions)
 - [Math Functions](#math-functions)
 - [Date/Time Functions](#datetime-functions)
@@ -128,6 +129,31 @@ Returns true if _value_ is an object, false otherwise. Following JavaScript `typ
 <a name="isRegExp" href="#isRegExp">#</a>
 <b>isRegExp</b>(<i>value</i>)<br/>
 Returns true if _value_ is a RegExp (regular expression) object, false otherwise.
+
+<a name="isString" href="#isString">#</a>
+<b>isString</b>(<i>value</i>)<br/>
+Returns true if _value_ is a string, false otherwise.
+
+
+## <a name="type-coercion-functions"></a>Type Coercion Functions
+
+Functions for coercing values to a desired type.
+
+<a name="toBoolean" href="#toBoolean">#</a>
+<b>toBoolean</b>(<i>value</i>)<br/>
+Coerces the input _value_ to a string. Null values and empty strings are mapped to `null`.
+
+<a name="toDate" href="#toDate">#</a>
+<b>toDate</b>(<i>value</i>)<br/>
+Coerces the input _value_ to a Date instance. Null values and empty strings are mapped to `null`. If an optional _parser_ function is provided, it is used to perform date parsing, otherwise `Date.parse` is used. Be aware that `Date.parse` has different implementations across browsers!
+
+<a name="toNumber" href="#toNumber">#</a>
+<b>toNumber</b>(<i>value</i>)<br/>
+Coerces the input _value_ to a number. Null values and empty strings are mapped to `null`.
+
+<a name="toString" href="#toString">#</a>
+<b>toString</b>(<i>value</i>)<br/>
+Coerces the input _value_ to a string. Null values and empty strings are mapped to `null`.
 
 
 ## <a name="control-flow-functions"></a>Control Flow Functions
