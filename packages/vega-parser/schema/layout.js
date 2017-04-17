@@ -12,16 +12,14 @@ export default {
         {
           "type": "object",
           "properties": {
-            "columns": {"#/refs/numberOrSignal"},
-            "padding": {
+            "align": {
               "oneOf": [
-                {"#/refs/numberOrSignal"},
+                align,
                 {
                   "type": "object",
                   "properties": {
-                    "row": {"#/refs/numberOrSignal"},
-                    "column": {"#/refs/numberOrSignal"},
-                    "header": {"#/refs/numberOrSignal"}
+                    "row": align,
+                    "column": align
                   }
                 }
               ]
@@ -32,14 +30,31 @@ export default {
                 {"$ref": "#/refs/signal", "additionalProperties": false}
               ]
             },
-            "align": {
+            "columns": {"#/refs/numberOrSignal"},
+            "padding": {
               "oneOf": [
-                align,
+                {"#/refs/numberOrSignal"},
                 {
                   "type": "object",
                   "properties": {
-                    "row": align,
-                    "column": align
+                    "row": {"#/refs/numberOrSignal"},
+                    "column": {"#/refs/numberOrSignal"}
+                  }
+                }
+              ]
+            },
+            "offset": {
+              "oneOf": [
+                {"#/refs/numberOrSignal"},
+                {
+                  "type": "object",
+                  "properties": {
+                    "rowHeader": {"#/refs/numberOrSignal"},
+                    "rowFooter": {"#/refs/numberOrSignal"},
+                    "rowTitle": {"#/refs/numberOrSignal"},
+                    "columnHeader": {"#/refs/numberOrSignal"},
+                    "columnFooter": {"#/refs/numberOrSignal"},
+                    "columnTitle": {"#/refs/numberOrSignal"}
                   }
                 }
               ]
