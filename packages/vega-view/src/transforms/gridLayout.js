@@ -1,24 +1,28 @@
 import {isObject} from 'vega-util';
+import {Bounds} from 'vega-scenegraph';
 
 var AxisRole = 'axis',
     LegendRole = 'legend',
     RowHeader = 'row-header',
     RowFooter = 'row-footer',
+    RowTitle  = 'row-title',
     ColHeader = 'column-header',
-    ColFooter = 'column-footer';
+    ColFooter = 'column-footer',
+    ColTitle  = 'column-title';
 
 function extractGroups(group) {
-  var marks = [],
-      groups = group.items,
+  var groups = group.items,
       n = groups.length,
       i = 0, mark, items;
 
   var views = {
-    marks: marks,
+    marks:      [],
     rowheaders: [],
     rowfooters: [],
     colheaders: [],
-    colfooters: []
+    colfooters: [],
+    rowtitle: null,
+    coltitle: null
   };
 
   // layout axes, gather legends, collect bounds
@@ -30,16 +34,24 @@ function extractGroups(group) {
         case AxisRole:
         case LegendRole:
           break;
-        case RowHeader: views.rowheaders.push(items); break;
-        case RowFooter: views.rowfooters.push(items); break;
-        case ColHeader: views.colheaders.push(items); break;
-        case ColFooter: views.colfooters.push(items); break;
-        default: items.forEach(function(_) { marks.push(_); });
+        case RowHeader: addAll(items, views.rowheaders); break;
+        case RowFooter: addAll(items, views.rowfooters); break;
+        case ColHeader: addAll(items, views.colheaders); break;
+        case ColFooter: addAll(items, views.colfooters); break;
+        case RowTitle:  views.rowtitle = items[0]; break;
+        case ColTitle:  views.coltitle = items[0]; break;
+        default:        addAll(items, views.marks);
       }
     }
   }
 
   return views;
+}
+
+function addAll(items, array) {
+  for (var i=0, n=items.length; i<n; ++i) {
+    array.push(items[i]);
+  }
 }
 
 function bboxFlush(item) {
@@ -59,28 +71,36 @@ function boundFull(item, field) {
   return item.bounds[field];
 }
 
+function get(opt, key, d) {
+  return (isObject(opt) ? opt[key] : opt) || d || 0;
+}
+
 export function gridLayout(view, group, opt) {
   var views = extractGroups(group, opt),
       groups = views.marks,
       flush = opt.bounds === 'flush',
       bbox = flush ? bboxFlush : bboxFull,
-      alignCol = isObject(opt.align) ? opt.align.column : opt.align,
-      alignRow = isObject(opt.align) ? opt.align.row : opt.align,
-      padCol = (isObject(opt.padding) ? opt.padding.column : opt.padding) || 0,
-      padRow = (isObject(opt.padding) ? opt.padding.row : opt.padding) || 0,
+      bounds = new Bounds(0, 0, 0, 0),
+      alignCol = get(opt.align, 'column'),
+      alignRow = get(opt.align, 'row'),
+      padCol = get(opt.padding, 'column'),
+      padRow = get(opt.padding, 'row'),
+      off = opt.offset,
       ncols = opt.columns || groups.length,
       nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      cells = nrows * ncols,
       xOffset = [], xInit = 0,
       yOffset = [], yInit = 0,
-      n = groups.length, m, i, j, offset;
+      n = groups.length,
+      m, i, j, b, g, px, py, x, y, band, offset;
 
   // determine offsets for each group
   for (i=0; i<n; ++i) {
-    var b = bbox(groups[i]),
-        px = i % ncols === 0 ? 0 : Math.ceil(bbox(groups[i-1]).x2),
-        py = i < ncols ? 0 : Math.ceil(bbox(groups[i-ncols]).y2),
-        x = (b.x1 < 0 ? Math.ceil(-b.x1) : 0) + px,
-        y = (b.y1 < 0 ? Math.ceil(-b.y1) : 0) + py;
+    b = bbox(groups[i]);
+    px = i % ncols === 0 ? 0 : Math.ceil(bbox(groups[i-1]).x2);
+    py = i < ncols ? 0 : Math.ceil(bbox(groups[i-ncols]).y2);
+    x = (b.x1 < 0 ? Math.ceil(-b.x1) : 0) + px;
+    y = (b.y1 < 0 ? Math.ceil(-b.y1) : 0) + py;
     xOffset.push(x + padCol);
     yOffset.push(y + padRow);
   }
@@ -129,74 +149,130 @@ export function gridLayout(view, group, opt) {
     }
   }
 
-  // perform horizontal layout
+  // perform horizontal grid layout
   for (x=0, i=0; i<n; ++i) {
-    px = groups[i].x || 0;
-    groups[i].x = (x = xOffset[i] + (i % ncols ? x : 0));
-    groups[i].bounds.translate(x - px, 0);
+    g = groups[i];
+    px = g.x || 0;
+    g.x = (x = xOffset[i] + (i % ncols ? x : 0));
+    bounds.union(g.bounds.translate(x - px, 0));
   }
 
-  // perform vertical layout
+  // perform vertical grid layout
   for (j=0; j<ncols; ++j) {
     for (y=0, i=j; i<n; i += ncols) {
-      py = groups[i].y || 0;
-      groups[i].y = (y += yOffset[i]);
-      groups[i].bounds.translate(0, y - py);
+      g = groups[i];
+      py = g.y || 0;
+      g.y = (y += yOffset[i]);
+      bounds.union(g.bounds.translate(0, y - py));
     }
   }
 
-  // ensure groups are re-rendered
-  // TODO: add only when necessary
+  // queue groups for redraw
   view.enqueue(groups);
 
   // update mark bounds
   for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
   for (i=0; i<n; ++i) groups[i].mark.bounds.union(groups[i].bounds);
 
-  // grid headers
-  var pad = (isObject(opt.padding) ? opt.padding.header : opt.padding) || 0;
-  var bound = flush ? boundFlush : boundFull;
+  // -- layout grid headers and footers --
+
+  // aggregation functions for grid margin determination
   function min(a, b) { return Math.floor(Math.min(a, b)); }
   function max(a, b) { return Math.ceil(Math.max(a, b)); }
-  layoutHeaders(view, views.rowheaders, groups, ncols, -pad, min, 0, bound, 'x1', 0, ncols);
-  layoutHeaders(view, views.rowfooters, groups, ncols, +pad, max, 0, bound, 'x2', ncols-1, ncols);
-  layoutHeaders(view, views.colheaders, groups, ncols, -pad, min, 1, bound, 'y1', 0, 1);
-  layoutHeaders(view, views.colfooters, groups, ncols, +pad, max, 1, bound, 'y2', n-ncols, 1);
+
+  // bounding box calculation methods
+  bbox = flush ? boundFlush : boundFull;
+
+  // perform header layout
+  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1);
+  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols);
+
+  // perform footer layout
+  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1);
+  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols);
+
+  // perform row title layout
+  if (views.rowtitle) {
+    offset = x - get(off, 'rowTitle');
+    band = get(opt.titleBand, 'row', 0.5);
+    layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
+  }
+
+  // perform column title layout
+  if (views.coltitle) {
+    offset = y - get(off, 'columnTitle');
+    band = get(opt.titleBand, 'column', 0.5);
+    layoutTitle(view, views.coltitle, offset, 1, bounds, band);
+  }
 }
 
-function layoutHeaders(view, headers, groups, ncols, pad, agg, isX, bound, bf, start, stride) {
-  if (!headers.length) return;
-
+function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back) {
   var n = groups.length,
-      m = headers.length,
       init = 0,
-      i, j, k, b, h, px, py, x, y;
+      edge = 0,
+      i, j, k, m, b, h, g, x, y;
 
   // compute margin
   for (i=start; i<n; i+=stride) {
-    init = agg(init, bound(groups[i], bf));
+    if (groups[i]) init = agg(init, bound(groups[i], bf));
   }
-  init += pad;
 
-  // layout consecutive headers
-  for (j=0; j<m; ++j) {
+  // if no headers, return margin calculation
+  if (!headers.length) return init;
+
+  // check if number of headers exceeds number of rows or columns
+  if (headers.length > limit) {
+    view.warn('Grid headers exceed limit: ' + limit);
+    headers = headers.slice(0, limit);
+  }
+
+  // apply offset
+  init += offset;
+
+  // clear mark bounds for all headers
+  for (j=0, m=headers.length; j<m; ++j) {
+    headers[j].mark.bounds.clear();
+  }
+
+  // layout each header
+  for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
     h = headers[j];
-    b = h[0].mark.bounds.clear();
+    b = h.mark.bounds;
 
-    for (k=0, i=start; k<h.length; ++k, i+=stride) {
-      px = h[k].x || 0;
-      py = h[k].y || 0;
-      if (isX) {
-        h[k].x = x = groups[i].x;
-        h[k].y = y = init;
-      } else {
-        h[k].x = x = init;
-        h[k].y = y = groups[i].y;
-      }
-      b.union(h[k].bounds.translate(x - px, y - py));
-    }
+    // search for nearest group to align to
+    // necessary if table has empty cells
+    for (k=i; (g = groups[k]) == null; k-=back);
 
-    view.enqueue(h);
-    init = b[bf];
+    // assign coordinates and update bounds
+    isX ? (x = g.x, y = init) : (x = init, y = g.y);
+    b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+    h.x = x;
+    h.y = y;
+
+    // update current edge of layout bounds
+    edge = agg(edge, b[bf]);
   }
+
+  // queue headers for redraw
+  view.enqueue(headers);
+  return edge;
+}
+
+function layoutTitle(view, g, offset, isX, bounds, band) {
+  if (!g) return;
+
+  // compute title coordinates
+  var x = offset, y = offset;
+  isX
+    ? (x = Math.round(bounds.x1 + band * bounds.width()))
+    : (y = Math.round(bounds.y1 + band * bounds.height()));
+
+  // assign coordinates and update bounds
+  g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+  g.mark.bounds.clear().union(g.bounds);
+  g.x = x;
+  g.y = y;
+
+  // queue title for redraw
+  view.enqueue(g.mark.items);
 }
