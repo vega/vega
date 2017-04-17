@@ -34,11 +34,11 @@ export default function(spec, scope) {
 function buildTitle(spec, config, userEncode, dataRef) {
   var title = spec.text,
       orient = spec.orient || config.orient,
-      pos = spec.position || config.position,
+      anchor = spec.anchor || config.anchor,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       extent = {group: (horizontal ? 'width' : 'height')},
-      encode = {}, enter, update, opp, mult, align;
+      encode = {}, enter, update, pos, opp, mult, align;
 
   encode.enter = enter = {
     opacity: {value: 0}
@@ -58,8 +58,8 @@ function buildTitle(spec, config, userEncode, dataRef) {
     offset: encoder(spec.offset || 0)
   };
 
-  (pos === 'start') ? (mult = 0, align = 'left')
-    : (pos === 'end') ? (mult = 1, align = 'right')
+  (anchor === 'start') ? (mult = 0, align = 'left')
+    : (anchor === 'end') ? (mult = 1, align = 'right')
     : (mult = 0.5, align = 'center');
 
   pos = {field: extent, mult: mult};
