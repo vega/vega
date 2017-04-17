@@ -114,7 +114,7 @@ function pick(context, scene, x, y, gx, gy) {
     dy = gy - dy;
 
     hit = pickVisit(group, function(mark) {
-      return (mark.interactive !== false || mark.marktype === 'group')
+      return pickMark(mark, dx, dy)
         ? handler.pick(mark, x, y, dx, dy)
         : null;
     });
@@ -131,6 +131,11 @@ function pick(context, scene, x, y, gx, gy) {
 
     return hit ? group : null;
   });
+}
+
+function pickMark(mark, x, y) {
+  return (mark.interactive !== false || mark.marktype === 'group')
+    && mark.bounds && mark.bounds.contains(x, y);
 }
 
 export default {
