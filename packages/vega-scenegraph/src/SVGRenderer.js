@@ -253,7 +253,7 @@ prototype.draw = function(el, scene, prev) {
     parent.style.setProperty('pointer-events', events);
   }
   if (scene.clip) {
-    parent.setAttribute('clip-path', clip(renderer, scene));
+    parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
   }
 
   function process(item) {

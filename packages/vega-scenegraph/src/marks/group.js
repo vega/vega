@@ -3,6 +3,7 @@ import boundStroke from '../bound/boundStroke';
 import {visit, pickVisit} from '../util/visit';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
+import clip from '../util/svg/clip';
 import translateItem from '../util/svg/translateItem';
 
 function attr(emit, item) {
@@ -16,25 +17,19 @@ function background(emit, item) {
 }
 
 function foreground(emit, item, renderer) {
-  // if (item.clip) {
-  //   var defs = renderer._defs,
-  //       id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
-  //       c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-  //   c.width = item.width || 0;
-  //   c.height = item.height || 0;
-  // }
-  // emit('clip-path', id ? ('url(#' + id + ')') : null);
+  var url = item.clip ? clip(renderer, item, item) : null;
+  emit('clip-path', url);
 }
 
 function bound(bounds, group) {
-  if (/*!group.clip &&*/ group.items) {
+  if (!group.clip && group.items) {
     var items = group.items;
     for (var j=0, m=items.length; j<m; ++j) {
       bounds.union(items[j].bounds);
     }
   }
 
-  if (/*group.clip ||*/ group.width || group.height) {
+  if (group.clip || group.width || group.height) {
     boundStroke(
       bounds.add(0, 0).add(group.width || 0, group.height || 0),
       group
@@ -75,11 +70,11 @@ function draw(context, scene, bounds) {
     }
 
     // set clip and bounds
-    // if (group.clip) {
-    //   context.beginPath();
-    //   context.rect(0, 0, w, h);
-    //   context.clip();
-    // }
+    if (group.clip) {
+      context.beginPath();
+      context.rect(0, 0, w, h);
+      context.clip();
+    }
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents

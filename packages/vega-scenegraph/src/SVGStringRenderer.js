@@ -163,7 +163,7 @@ prototype.mark = function(scene) {
   // render opening group tag
   str += openTag('g', {
     'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene) : null
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
   }, style);
 
   // render contained elements

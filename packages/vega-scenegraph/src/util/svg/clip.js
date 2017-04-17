@@ -1,8 +1,8 @@
-export default function(renderer, scene) {
+export default function(renderer, item, size) {
   var defs = renderer._defs,
-      id = scene.clip_id || (scene.clip_id = 'clip' + defs.clip_id++),
+      id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
       c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-  c.width = scene.group.width || 0;
-  c.height = scene.group.height || 0;
+  c.width = size.width || 0;
+  c.height = size.height || 0;
   return 'url(#' + id + ')';
 }
