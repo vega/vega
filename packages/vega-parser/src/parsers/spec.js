@@ -3,6 +3,7 @@ import parseProjection from './projection';
 import parseLegend from './legend';
 import parseSignal from './signal';
 import parseScale from './scale';
+import parseTitle from './title';
 import parseData from './data';
 import parseMark from './mark';
 import parseAxis from './axis';
@@ -42,6 +43,10 @@ export default function(spec, scope, preprocessed) {
   array(spec.legends).forEach(function(_) {
     parseLegend(_, scope);
   });
+
+  if (spec.title) {
+    parseTitle(spec.title, scope);
+  }
 
   return scope.parseLambdas(), scope;
 }
