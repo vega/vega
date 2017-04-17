@@ -8,6 +8,7 @@ var Fit = 'fit',
     None = 'none';
 
 var AxisRole = 'axis',
+    TitleRole = 'title',
     FrameRole = 'frame',
     LegendRole = 'legend',
     ScopeRole = 'scope',
@@ -45,7 +46,8 @@ function layoutGroup(view, group, _) {
       height = Math.max(0, group.height || 0),
       viewBounds = new Bounds().set(0, 0, width, height),
       axisBounds = viewBounds.clone(),
-      legends = [],
+      legendBounds = viewBounds.clone(),
+      legends = [], title,
       mark, flow, b, i, n;
 
   // layout axes, gather legends, collect bounds
@@ -53,9 +55,11 @@ function layoutGroup(view, group, _) {
     mark = items[i];
     switch (mark.role) {
       case AxisRole:
-        b = layoutAxis(view, mark, width, height);
-        (isYAxis(mark) ? axisBounds : viewBounds).union(b);
+        axisBounds.union(b = layoutAxis(view, mark, width, height));
+        if (isYAxis(mark)) legendBounds.union(b);
         break;
+      case TitleRole:
+        title = mark; break;
       case LegendRole:
         legends.push(mark); break;
       case FrameRole:
@@ -64,18 +68,25 @@ function layoutGroup(view, group, _) {
       case RowFooter:
       case ColHeader:
       case ColFooter:
-        axisBounds.union(mark.bounds); break;
+        legendBounds.union(mark.bounds);
+        break;
       default:
         viewBounds.union(mark.bounds);
     }
   }
 
-  // layout legends, extending viewBounds
+  // layout title, adjust bounds
+  if (title) {
+    axisBounds.union(b = layoutTitle(view, title, axisBounds));
+    if (isYAxis(title)) legendBounds.union(b);
+  }
+
+  // layout legends, adjust viewBounds
   if (legends.length) {
     flow = {left: 0, right: 0, margin: _.legendMargin || 8};
 
     for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(view, legends[i], flow, axisBounds, width, height);
+      b = layoutLegend(view, legends[i], flow, legendBounds, width, height);
       (_.autosize && _.autosize.type === Fit)
         ? viewBounds.add(b.x1, 0).add(b.x2, 0)
         : viewBounds.union(b);
@@ -83,11 +94,16 @@ function layoutGroup(view, group, _) {
   }
 
   // perform size adjustment
-  layoutSize(view, group, viewBounds.union(axisBounds), _);
+  layoutSize(view, group, viewBounds.union(legendBounds).union(axisBounds), _);
 }
 
-function isYAxis(axisMark) {
-  var orient = axisMark.items[0].datum.orient;
+function set(item, property, value) {
+  return item[property] === value ? 0
+    : (item[property] = value, 1);
+}
+
+function isYAxis(mark) {
+  var orient = mark.items[0].datum.orient;
   return orient === 'left' || orient === 'right';
 }
 
@@ -169,13 +185,47 @@ function layoutAxis(view, axis, width, height) {
 
   // update bounds
   boundStroke(bounds.translate(x, y), item);
-  item.mark.bounds.clear().union(bounds);
-  return bounds;
+  return item.mark.bounds.clear().union(bounds);
 }
 
-function set(item, property, value) {
-  return item[property] === value ? 0
-    : (item[property] = value, 1);
+function layoutTitle(view, title, axisBounds) {
+  var item = title.items[0],
+      datum = item.datum,
+      orient = datum.orient,
+      offset = item.offset,
+      bounds = item.bounds,
+      x = 0, y = 0;
+
+  // position axis group and title
+  switch (orient) {
+    case 'top':
+      x = item.x;
+      y = axisBounds.y1 - offset;
+      break;
+    case 'left':
+      x = axisBounds.x1 - offset;
+      y = item.y;
+      break;
+    case 'right':
+      x = axisBounds.x2 + offset;
+      y = item.y;
+      break;
+    case 'bottom':
+      x = item.x;
+      y = axisBounds.y2 + offset;
+      break;
+    default:
+      x = item.x;
+      y = item.y;
+  }
+
+  bounds.translate(x - item.x, y - item.y);
+  if (set(item, 'x', x) | set(item, 'y', y)) {
+    view.enqueue([item]);
+  }
+
+  // update bounds
+  return title.bounds.clear().union(bounds);
 }
 
 function layoutLegend(view, legend, flow, axisBounds, width, height) {
@@ -232,8 +282,7 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
 
   // update bounds
   boundStroke(bounds.set(x, y, x + w, y + h), item);
-  item.mark.bounds.clear().union(bounds);
-  return bounds;
+  return item.mark.bounds.clear().union(bounds);
 }
 
 function layoutSize(view, group, viewBounds, _) {
