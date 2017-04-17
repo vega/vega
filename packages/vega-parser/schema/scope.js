@@ -4,6 +4,7 @@ export default {
       "type": "object",
       "properties": {
         "encode": {"$ref": "#/defs/encode"},
+        "layout": {"$ref": "#/defs/layout"},
         "signals": {
           "type": "array",
           "items": {"$ref": "#/defs/signal"}
@@ -28,6 +29,7 @@ export default {
           "type": "array",
           "items": {"$ref": "#/defs/legend"}
         },
+        "title": {"$ref": "#/defs/title"},
         "marks": {
           "type": "array",
           "items": {
