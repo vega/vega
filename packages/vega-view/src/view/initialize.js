@@ -29,6 +29,10 @@ export default function(el, elBind) {
       : el.appendChild(element('div', {'class': 'vega-bindings'}));
 
     view._bind.forEach(function(_) {
+      if (_.param.element) lookup(view, _.param.element);
+    });
+
+    view._bind.forEach(function(_) {
       bind(view, _.param.element || elBind, _);
     });
   }
