@@ -148,7 +148,7 @@ function defaults() {
     // defaults for group title
     title: {
       orient: 'top',
-      position: 'center',
+      anchor: 'center',
       offset: 2,
       color: black,
       font: 'sans-serif',
