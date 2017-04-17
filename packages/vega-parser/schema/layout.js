@@ -20,7 +20,8 @@ export default {
                   "properties": {
                     "row": align,
                     "column": align
-                  }
+                  },
+                  "additionalProperties": false
                 }
               ]
             },
@@ -30,32 +31,47 @@ export default {
                 {"$ref": "#/refs/signal", "additionalProperties": false}
               ]
             },
-            "columns": {"#/refs/numberOrSignal"},
+            "columns": {"$ref": "#/refs/numberOrSignal"},
             "padding": {
               "oneOf": [
-                {"#/refs/numberOrSignal"},
+                {"$ref": "#/refs/numberOrSignal"},
                 {
                   "type": "object",
                   "properties": {
-                    "row": {"#/refs/numberOrSignal"},
-                    "column": {"#/refs/numberOrSignal"}
-                  }
+                    "row": {"$ref": "#/refs/numberOrSignal"},
+                    "column": {"$ref": "#/refs/numberOrSignal"}
+                  },
+                  "additionalProperties": false
                 }
               ]
             },
             "offset": {
               "oneOf": [
-                {"#/refs/numberOrSignal"},
+                {"$ref": "#/refs/numberOrSignal"},
                 {
                   "type": "object",
                   "properties": {
-                    "rowHeader": {"#/refs/numberOrSignal"},
-                    "rowFooter": {"#/refs/numberOrSignal"},
-                    "rowTitle": {"#/refs/numberOrSignal"},
-                    "columnHeader": {"#/refs/numberOrSignal"},
-                    "columnFooter": {"#/refs/numberOrSignal"},
-                    "columnTitle": {"#/refs/numberOrSignal"}
-                  }
+                    "rowHeader": {"$ref": "#/refs/numberOrSignal"},
+                    "rowFooter": {"$ref": "#/refs/numberOrSignal"},
+                    "rowTitle": {"$ref": "#/refs/numberOrSignal"},
+                    "columnHeader": {"$ref": "#/refs/numberOrSignal"},
+                    "columnFooter": {"$ref": "#/refs/numberOrSignal"},
+                    "columnTitle": {"$ref": "#/refs/numberOrSignal"}
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "titleBand": {
+              "oneOf": [
+                {"$ref": "#/refs/numberOrSignal"},
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {"$ref": "#/refs/numberOrSignal"},
+                    "column": {"$ref": "#/refs/numberOrSignal"}
+                  },
+                  "additionalProperties": false
                 }
               ]
             }

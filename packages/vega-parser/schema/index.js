@@ -5,6 +5,7 @@ import bind from './bind';
 import data from './data';
 import encode from './encode';
 import expr from './expr';
+import layout from './layout';
 import legend from './legend';
 import mark from './mark';
 import marktype from './marktype';
@@ -18,6 +19,7 @@ import selector from './selector';
 import signal from './signal';
 import spec from './spec';
 import stream from './stream';
+import title from './title';
 import transform from './transform';
 
 function extend(target, source) {
@@ -48,6 +50,7 @@ export default function(definitions) {
     data,
     encode,
     expr,
+    layout,
     legend,
     mark,
     marktype,
@@ -61,6 +64,7 @@ export default function(definitions) {
     signal,
     spec,
     stream,
+    title,
     transform(definitions)
   ].forEach(function(module) {
     addModule(schema, module);
