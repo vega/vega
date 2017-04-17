@@ -145,6 +145,17 @@ function defaults() {
       titleLimit: 180
     },
 
+    // defaults for group title
+    title: {
+      orient: 'top',
+      position: 'center',
+      offset: 2,
+      color: black,
+      font: 'sans-serif',
+      fontSize: 13,
+      fontWeight: 'bold'
+    },
+
     // defaults for scale ranges
     range: {
       category: {

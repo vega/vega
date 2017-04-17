@@ -15,3 +15,5 @@ export var LegendGradientRole = 'legend-gradient';
 export var LegendLabelRole = 'legend-label';
 export var LegendSymbolRole = 'legend-symbol';
 export var LegendTitleRole = 'legend-title';
+
+export var TitleRole = 'title';
