@@ -90,6 +90,14 @@ prototype.union = function(b) {
   return this;
 };
 
+prototype.intersect = function(b) {
+  if (b.x1 > this.x1) this.x1 = b.x1;
+  if (b.y1 > this.y1) this.y1 = b.y1;
+  if (b.x2 < this.x2) this.x2 = b.x2;
+  if (b.y2 < this.y2) this.y2 = b.y2;
+  return this;
+};
+
 prototype.encloses = function(b) {
   return b && (
     this.x1 <= b.x1 &&
