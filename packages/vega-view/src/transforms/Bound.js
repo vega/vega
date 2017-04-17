@@ -25,7 +25,11 @@ prototype.transform = function(_, pulse) {
 
   if (entry.nested) {
     // multi-item marks have a single bounds instance
-    boundItem(mark, bound);
+    markBounds = boundItem(mark, bound);
+    mark.items.forEach(function(item) {
+      item.bounds_prev.clear().union(item.bounds);
+      item.bounds.clear().union(markBounds);
+    });
   }
 
   else if (type === 'group' || _.modified()) {
