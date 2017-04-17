@@ -13,7 +13,7 @@ import {autosize, resizer} from './size';
 import {getState, setState} from './state';
 
 import {Dataflow} from 'vega-dataflow';
-import {inherits, stringValue} from 'vega-util';
+import {extend, inherits, stringValue} from 'vega-util';
 import {
   Handler, CanvasHandler, Scenegraph,
   renderModule, RenderType
@@ -54,8 +54,12 @@ export default function View(spec, options) {
   var ctx = runtime(this, spec, options.functions);
   this._runtime = ctx;
   this._signals = ctx.signals;
-  this._bind = (spec.bindings || [])
-    .map(function(_) { return {state: null, param: _}; });
+  this._bind = (spec.bindings || []).map(function(_) {
+    return {
+      state: null,
+      param: extend({}, _)
+    };
+  });
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
