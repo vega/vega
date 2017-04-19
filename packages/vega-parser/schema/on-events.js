@@ -38,10 +38,7 @@ export default {
                   "update": {
                     "oneOf": [
                       {"$ref": "#/refs/exprString"},
-                      {
-                        "$ref": "#/refs/expr",
-                        "additionalProperties": false
-                      },
+                      {"$ref": "#/refs/expr"},
                       {"$ref": "#/refs/signal"},
                       {
                         "type": "object",

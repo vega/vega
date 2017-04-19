@@ -1,7 +1,7 @@
 var align = {
   "oneOf": [
     {"enum": ["all", "each", "none"]},
-    {"$ref": "#/refs/signal", "additionalProperties": false}
+    {"$ref": "#/refs/signal"}
   ]
 };
 
@@ -28,7 +28,7 @@ export default {
             "bounds": {
               "oneOf": [
                 {"enum": ["full", "flush"]},
-                {"$ref": "#/refs/signal", "additionalProperties": false}
+                {"$ref": "#/refs/signal"}
               ]
             },
             "columns": {"$ref": "#/refs/numberOrSignal"},
@@ -77,7 +77,7 @@ export default {
             }
           }
         },
-        {"$ref": "#/refs/signal", "additionalProperties": false}
+        {"$ref": "#/refs/signal"}
       ]
     }
   }

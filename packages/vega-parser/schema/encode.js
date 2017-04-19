@@ -13,10 +13,7 @@ function valueSchema(type) {
         "anyOf": [
           {
             "oneOf": [
-              {
-                "$ref": "#/refs/signal",
-                "required": ["signal"]
-              },
+              { "$ref": "#/refs/signal" },
               {
                 "properties": {"value": {}},
                 "required": ["value"]
@@ -67,7 +64,7 @@ export default {
         {"type": "string"},
         {
           "oneOf": [
-            {"$ref": "#/refs/signal"},
+            { "$ref": "#/refs/signal" },
             {
               "type": "object",
               "properties": {
@@ -100,7 +97,6 @@ export default {
     },
 
     "scale": {
-      "title": "ScaleRef",
       "$ref": "#/refs/field"
     },
 
