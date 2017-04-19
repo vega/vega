@@ -2,7 +2,7 @@ export default {
   "refs": {
     "element": {
       "type": "string"
-    },
+    }
   },
   "defs": {
     "bind": {

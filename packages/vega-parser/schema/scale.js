@@ -64,7 +64,7 @@ export default {
     "sortOrder": {
       "oneOf": [
         {"enum": ["ascending", "descending"]},
-        {"$ref": "#/refs/signal", "additionalProperties": false}
+        {"$ref": "#/refs/signal"}
       ]
     },
     "scaleField": {"$ref": "#/refs/stringOrSignal"},

@@ -17,7 +17,6 @@ import scale from './scale';
 import scope from './scope';
 import selector from './selector';
 import signal from './signal';
-import spec from './spec';
 import stream from './stream';
 import title from './title';
 import transform from './transform';
@@ -39,7 +38,22 @@ export default function(definitions) {
     "title": "Vega 3.0 Visualization Specification Language",
     "defs": {},
     "refs": {},
-    "$ref": "#/defs/spec"
+    "type": "object",
+    "allOf": [
+      {"$ref": "#/defs/scope"},
+      {
+        "properties": {
+          "$schema": {"type": "string", "format": "uri"},
+          "config": {"type": "object"},
+          "description": {"type": "string"},
+          "width": {"type": "number"},
+          "height": {"type": "number"},
+          "padding": {"$ref": "#/defs/padding"},
+          "autosize": {"$ref": "#/defs/autosize"},
+          "background": {"$ref": "#/defs/background"}
+        }
+      }
+    ]
   };
 
   [
@@ -62,7 +76,6 @@ export default function(definitions) {
     scope,
     selector,
     signal,
-    spec,
     stream,
     title,
     transform(definitions)

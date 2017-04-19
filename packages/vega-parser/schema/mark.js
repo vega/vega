@@ -60,8 +60,10 @@ export default {
       "type": "object",
       "properties": {
         "type": {"$ref": "#/refs/marktype"},
+        "role": {"type": "string"},
         "name": {"type": "string"},
         "key": {"type": "string"},
+        "clip": {"type": "boolean"},
         "interactive": {"type": "boolean"},
         "encode": {"$ref": "#/defs/encode"},
         "transform": {
