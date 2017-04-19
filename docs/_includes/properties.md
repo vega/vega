@@ -8,7 +8,7 @@
 | width             | {% include type t="Number" %} | The width of the mark in pixels, if supported.|
 | y                 | {% include type t="Number" %} | The primary y-coordinate in pixels.|
 | y2                | {% include type t="Number" %} | The secondary y-coordinate in pixels.|
-| yc                | {% include type t="Number" %} | The center y-coordinate. Incompatible with `x` and `x2`.|
+| yc                | {% include type t="Number" %} | The center y-coordinate. Incompatible with `y` and `y2`.|
 | height            | {% include type t="Number" %} | The height of the mark in pixels, if supported.|
 | opacity           | {% include type t="Number" %} | The mark opacity from 0 (transparent) to 1 (opaque).|
 | fill              | {% include type t="Color" %}  | The fill color.|
