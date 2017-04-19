@@ -11,19 +11,19 @@ export default {
     "booleanOrSignal": {
       "oneOf": [
         {"type": "boolean"},
-        {"$ref": "#/refs/signal", "additionalProperties": false}
+        {"$ref": "#/refs/signal"}
       ]
     },
     "numberOrSignal": {
       "oneOf": [
         {"type": "number"},
-        {"$ref": "#/refs/signal", "additionalProperties": false}
+        {"$ref": "#/refs/signal"}
       ]
     },
     "stringOrSignal": {
       "oneOf": [
         {"type": "string"},
-        {"$ref": "#/refs/signal", "additionalProperties": false}
+        {"$ref": "#/refs/signal"}
       ]
     }
   },
