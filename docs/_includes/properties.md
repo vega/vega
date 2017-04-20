@@ -14,11 +14,13 @@
 | fill              | {% include type t="Color" %}  | The fill color.|
 | fillOpacity       | {% include type t="Number" %} | The fill opacity from 0 (transparent) to 1 (opaque).|
 | stroke            | {% include type t="Color" %}  | The stroke color.|
-| strokeWidth       | {% include type t="Number" %} | The stroke width in pixels.|
 | strokeOpacity     | {% include type t="Number" %} | The stroke opacity from 0 (transparent) to 1 (opaque).|
-| strokeCap         | {% include type t="String" %} | The stroke cap for line ending style. One of `butt`, `round` or `square`.|
+| strokeWidth       | {% include type t="Number" %} | The stroke width in pixels.|
+| strokeCap         | {% include type t="String" %} | The stroke cap for line ending style. One of `butt` (default), `round` or `square`.|
 | strokeDash        | {% include type t="Number[]" %} | An array of [stroke, space] lengths for creating dashed or dotted lines.|
 | strokeDashOffset  | {% include type t="Number" %} | The pixel offset at which to start the stroke dash array.|
+| strokeJoin        | {% include type t="String" %} | The stroke line join method. One of `miter` (default), `round` or `bevel`.|
+| strokeMiterLimit  | {% include type t="Number" %} | The miter limit at which to bevel a line join.|
 | cursor            | {% include type t="String" %} | The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.|
 | href              | {% include type t="URL" %}    | A URL to load upon mouse click. If defined, the mark acts as a hyperlink.|
 | tooltip           | {% include type t="String" %} | The tooltip text to show upon mouse hover.|

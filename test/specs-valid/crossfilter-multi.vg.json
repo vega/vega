@@ -137,11 +137,6 @@
       "url": "data/flights-200k.json",
       "transform": [
         {
-          "type": "formula",
-          "expr": "datum.delay === 180 ? 179.99 : datum.delay",
-          "as": "delay"
-        },
-        {
           "type": "bin", "field": "delay",
           "extent": {"signal": "delayExtent"},
           "step": {"signal": "delayStep"},
