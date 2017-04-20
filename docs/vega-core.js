@@ -683,8 +683,20 @@ function inherits(child, parent) {
   return proto;
 }
 
+function isBoolean(_) {
+  return typeof _ === 'boolean';
+}
+
+function isDate(_) {
+  return Object.prototype.toString.call(_) === '[object Date]';
+}
+
 function isNumber(_) {
   return typeof _ === 'number';
+}
+
+function isRegExp(_) {
+  return Object.prototype.toString.call(_) === '[object RegExp]';
 }
 
 function key(fields) {
@@ -744,6 +756,22 @@ function pad(str, length, padchar, align) {
 
 function peek(array) {
   return array[array.length - 1];
+}
+
+function toBoolean(_) {
+  return _ == null || _ === '' ? null : !_ || _ === 'false' ? false : !!_;
+}
+
+function toDate(_, parser) {
+  return _ == null || _ === '' ? null : (parser ? parser(_) : Date.parse(_));
+}
+
+function toNumber(_) {
+  return _ == null || _ === '' ? null : +_;
+}
+
+function toString(_) {
+  return _ == null || _ === '' ? null : _ + '';
 }
 
 function toSet(_) {
@@ -947,10 +975,10 @@ var typeParsers = {
 };
 
 var typeTests = [
-  isBoolean,
+  isBoolean$1,
   isInteger,
   isNumber$1,
-  isDate
+  isDate$1
 ];
 
 var typeList = [
@@ -982,36 +1010,17 @@ function inferTypes(data, fields) {
   }, {});
 }
 
-// -- Type Coercion ----
-
-function toNumber(_) {
-  return _ == null || _ === '' ? null : +_;
-}
-
-function toBoolean(_) {
-  return _ == null || _ === '' ? null : !_ || _ === 'false' ? false : !!_;
-}
-
-function toDate(_, parser) {
-  return _ == null || _ === '' ? null
-    : (parser ? parser(_) : Date.parse(_));
-}
-
-function toString(_) {
-  return _ == null || _ === '' ? null : _ + '';
-}
-
 // -- Type Checks ----
 
 function isValid(_) {
   return _ != null && _ === _;
 }
 
-function isBoolean(_) {
+function isBoolean$1(_) {
   return _ === 'true' || _ === 'false' || _ === true || _ === false;
 }
 
-function isDate(_) {
+function isDate$1(_) {
   return !isNaN(Date.parse(_));
 }
 
@@ -1045,9 +1054,15 @@ function isBuffer(_) {
 }
 
 function json(data, format) {
-  data = isObject(data) && !isBuffer(data) ? data : JSON.parse(data);
-  return (format && format.property)
-    ? field(format.property)(data)
+  var prop = (format && format.property) ? field(format.property) : identity;
+  return isObject(data) && !isBuffer(data)
+    ? parseJSON(prop(data))
+    : prop(JSON.parse(data));
+}
+
+function parseJSON(data, format) {
+  return (format && format.copy)
+    ? JSON.parse(JSON.stringify(data))
     : data;
 }
 
@@ -1226,6 +1241,14 @@ prototype.union = function(b) {
   if (b.y1 < this.y1) this.y1 = b.y1;
   if (b.x2 > this.x2) this.x2 = b.x2;
   if (b.y2 > this.y2) this.y2 = b.y2;
+  return this;
+};
+
+prototype.intersect = function(b) {
+  if (b.x1 > this.x1) this.x1 = b.x1;
+  if (b.y1 > this.y1) this.y1 = b.y1;
+  if (b.x2 < this.x2) this.x2 = b.x2;
+  if (b.y2 < this.y2) this.y2 = b.y2;
   return this;
 };
 
@@ -2446,15 +2469,20 @@ function fill(context, item, opacity) {
 var Empty = [];
 
 function stroke(context, item, opacity) {
-  var lw = (lw = item.strokeWidth) != null ? lw : 1, lc;
+  var lw = (lw = item.strokeWidth) != null ? lw : 1;
+
   if (lw <= 0) return false;
 
   opacity *= (item.strokeOpacity==null ? 1 : item.strokeOpacity);
   if (opacity > 0) {
     context.globalAlpha = opacity;
     context.strokeStyle = color(context, item, item.stroke);
+
     context.lineWidth = lw;
-    context.lineCap = (lc = item.strokeCap) != null ? lc : 'butt';
+    context.lineCap = item.strokeCap || 'butt';
+    context.lineJoin = item.strokeJoin || 'miter';
+    context.miterLimit = item.strokeMiterLimit || 10;
+
     if (context.setLineDash) {
       context.setLineDash(item.strokeDash || Empty);
       context.lineDashOffset = item.strokeDashOffset || 0;
@@ -2695,6 +2723,15 @@ function markMultiItemPath(type, shape) {
 
 var area$2 = markMultiItemPath('area', area$1);
 
+function clip(renderer, item, size) {
+  var defs = renderer._defs,
+      id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
+      c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+  c.width = size.width || 0;
+  c.height = size.height || 0;
+  return 'url(#' + id + ')';
+}
+
 function attr(emit, item) {
   emit('transform', translateItem(item));
 }
@@ -2706,14 +2743,8 @@ function background(emit, item) {
 }
 
 function foreground(emit, item, renderer) {
-  if (item.clip) {
-    var defs = renderer._defs,
-        id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
-        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-    c.width = item.width || 0;
-    c.height = item.height || 0;
-  }
-  emit('clip-path', id ? ('url(#' + id + ')') : null);
+  var url = item.clip ? clip(renderer, item, item) : null;
+  emit('clip-path', url);
 }
 
 function bound(bounds, group) {
@@ -2809,7 +2840,7 @@ function pick$1(context, scene, x, y, gx, gy) {
     dy = gy - dy;
 
     hit = pickVisit(group, function(mark) {
-      return (mark.interactive !== false || mark.marktype === 'group')
+      return pickMark(mark, dx, dy)
         ? handler.pick(mark, x, y, dx, dy)
         : null;
     });
@@ -2826,6 +2857,11 @@ function pick$1(context, scene, x, y, gx, gy) {
 
     return hit ? group : null;
   });
+}
+
+function pickMark(mark, x, y) {
+  return (mark.interactive !== false || mark.marktype === 'group')
+    && mark.bounds && mark.bounds.contains(x, y);
 }
 
 var group = {
@@ -3894,6 +3930,14 @@ prototype$5.pick = function(scene, x, y, gx, gy) {
   return mark.pick.call(this, g, scene, x, y, gx, gy);
 };
 
+function clip$1(context, scene) {
+  var group = scene.group;
+  context.save();
+  context.beginPath();
+  context.rect(0, 0, group.width || 0, group.height || 0);
+  context.clip();
+}
+
 var devicePixelRatio = typeof window !== 'undefined'
   ? window.devicePixelRatio || 1 : 1;
 
@@ -4010,7 +4054,9 @@ prototype$6._render = function(scene, items) {
 
 prototype$6.draw = function(ctx, scene, bounds) {
   var mark = Marks[scene.marktype];
+  if (scene.clip) clip$1(ctx, scene);
   mark.draw.call(this, ctx, scene, bounds);
+  if (scene.clip) ctx.restore();
 };
 
 prototype$6.clear = function(x, y, w, h) {
@@ -4144,8 +4190,10 @@ var styles = {
   'strokeWidth':      'stroke-width',
   'strokeOpacity':    'stroke-opacity',
   'strokeCap':        'stroke-linecap',
+  'strokeJoin':       'stroke-linejoin',
   'strokeDash':       'stroke-dasharray',
   'strokeDashOffset': 'stroke-dashoffset',
+  'strokeMiterLimit': 'stroke-miterlimit',
   'opacity':          'opacity'
 };
 
@@ -4393,6 +4441,9 @@ prototype$8.draw = function(el, scene, prev) {
   parent.setAttribute('class', cssClass(scene));
   if (!isGroup && events) {
     parent.style.setProperty('pointer-events', events);
+  }
+  if (scene.clip) {
+    parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
   }
 
   function process(item) {
@@ -4734,7 +4785,8 @@ prototype$9.mark = function(scene) {
 
   // render opening group tag
   str += openTag('g', {
-    'class': cssClass(scene)
+    'class': cssClass(scene),
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
   }, style);
 
   // render contained elements
@@ -7302,12 +7354,20 @@ prototype$20._bins = function(_) {
       bins  = bin$1(_),
       start = bins.start,
       stop  = bins.stop,
-      step  = bins.step;
+      step  = bins.step,
+      a, d;
+
+  if ((a = _.anchor) != null) {
+    d = a - (start + step * Math.floor((a - start) / step));
+    start += d;
+    stop += d;
+  }
 
   var f = function(t) {
     var v = field(t);
     return v == null ? null
-      : start + step * Math.floor((+v - start) / step);
+      : (v = Math.max(start, Math.min(+v, stop - step)),
+         start + step * Math.floor((v - start) / step));
   };
 
   f.start = start;
@@ -8734,6 +8794,7 @@ var BinDefinition = {
   "metadata": {"modifies": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
+    { "name": "anchor", "type": "number" },
     { "name": "maxbins", "type": "number", "default": 20 },
     { "name": "base", "type": "number", "default": 10 },
     { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
@@ -12548,19 +12609,24 @@ function Bound(params) {
 }
 
 var prototype$65 = inherits(Bound, Transform);
-
+var temp$1 = new Bounds();
 prototype$65.transform = function(_, pulse) {
   var mark = _.mark,
       type = mark.marktype,
       entry = Marks[type],
       bound = entry.bound,
+      clip = mark.clip,
       markBounds = mark.bounds, rebound;
 
   mark.bounds_prev.clear().union(markBounds);
 
   if (entry.nested) {
     // multi-item marks have a single bounds instance
-    boundItem$1(mark, bound);
+    markBounds = boundItem$1(mark, bound);
+    mark.items.forEach(function(item) {
+      item.bounds_prev.clear().union(item.bounds);
+      item.bounds.clear().union(markBounds);
+    });
   }
 
   else if (type === 'group' || _.modified()) {
@@ -12585,10 +12651,14 @@ prototype$65.transform = function(_, pulse) {
       markBounds.union(boundItem$1(item, bound));
     });
 
-    if (rebound) {
+    if (rebound && !clip) {
       markBounds.clear();
       mark.items.forEach(function(item) { markBounds.union(item.bounds); });
     }
+  }
+
+  if (clip) {
+    markBounds.intersect(temp$1.set(0, 0, mark.group.width, mark.group.height));
   }
 
   return pulse.modifies('bounds');
@@ -12675,13 +12745,293 @@ prototype$67.transform = function(_, pulse) {
   }
 };
 
+var AxisRole$1 = 'axis';
+var LegendRole$1 = 'legend';
+var RowHeader$1 = 'row-header';
+var RowFooter$1 = 'row-footer';
+var RowTitle  = 'row-title';
+var ColHeader$1 = 'column-header';
+var ColFooter$1 = 'column-footer';
+var ColTitle  = 'column-title';
+function extractGroups(group) {
+  var groups = group.items,
+      n = groups.length,
+      i = 0, mark, items;
+
+  var views = {
+    marks:      [],
+    rowheaders: [],
+    rowfooters: [],
+    colheaders: [],
+    colfooters: [],
+    rowtitle: null,
+    coltitle: null
+  };
+
+  // layout axes, gather legends, collect bounds
+  for (; i<n; ++i) {
+    mark = groups[i];
+    items = mark.items;
+    if (mark.marktype === 'group') {
+      switch (mark.role) {
+        case AxisRole$1:
+        case LegendRole$1:
+          break;
+        case RowHeader$1: addAll(items, views.rowheaders); break;
+        case RowFooter$1: addAll(items, views.rowfooters); break;
+        case ColHeader$1: addAll(items, views.colheaders); break;
+        case ColFooter$1: addAll(items, views.colfooters); break;
+        case RowTitle:  views.rowtitle = items[0]; break;
+        case ColTitle:  views.coltitle = items[0]; break;
+        default:        addAll(items, views.marks);
+      }
+    }
+  }
+
+  return views;
+}
+
+function addAll(items, array) {
+  for (var i=0, n=items.length; i<n; ++i) {
+    array.push(items[i]);
+  }
+}
+
+function bboxFlush(item) {
+  return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
+}
+
+function bboxFull(item) {
+  return item.bounds.clone().translate(-(item.x||0), -(item.y||0));
+}
+
+function boundFlush(item, field) {
+  var b = {x1: item.x, y1: item.y, x2: item.x + item.width, y2: item.y + item.height};
+  return b[field];
+}
+
+function boundFull(item, field) {
+  return item.bounds[field];
+}
+
+function get(opt, key, d) {
+  return (isObject(opt) ? opt[key] : opt) || d || 0;
+}
+
+function gridLayout(view, group, opt) {
+  var views = extractGroups(group, opt),
+      groups = views.marks,
+      flush = opt.bounds === 'flush',
+      bbox = flush ? bboxFlush : bboxFull,
+      bounds = new Bounds(0, 0, 0, 0),
+      alignCol = get(opt.align, 'column'),
+      alignRow = get(opt.align, 'row'),
+      padCol = get(opt.padding, 'column'),
+      padRow = get(opt.padding, 'row'),
+      off = opt.offset,
+      ncols = opt.columns || groups.length,
+      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      cells = nrows * ncols,
+      xOffset = [], xInit = 0,
+      yOffset = [], yInit = 0,
+      n = groups.length,
+      m, i, j, b, g, px, py, x, y, band, offset;
+
+  // determine offsets for each group
+  for (i=0; i<n; ++i) {
+    b = bbox(groups[i]);
+    px = i % ncols === 0 ? 0 : Math.ceil(bbox(groups[i-1]).x2);
+    py = i < ncols ? 0 : Math.ceil(bbox(groups[i-ncols]).y2);
+    x = (b.x1 < 0 ? Math.ceil(-b.x1) : 0) + px;
+    y = (b.y1 < 0 ? Math.ceil(-b.y1) : 0) + py;
+    xOffset.push(x + padCol);
+    yOffset.push(y + padRow);
+  }
+
+  // set initial alignment offsets
+  for (i=0; i<n; ++i) {
+    if (i % ncols === 0) xOffset[i] = xInit;
+    if (i < ncols) yOffset[i] = yInit;
+  }
+
+  // enforce column alignment constraints
+  if (alignCol === 'each') {
+    for (j=1; j<ncols; ++j) {
+      for (offset=0, i=j; i<n; i += ncols) {
+        if (offset < xOffset[i]) offset = xOffset[i];
+      }
+      for (i=j; i<n; i += ncols) {
+        xOffset[i] = offset;
+      }
+    }
+  } else if (alignCol === 'all') {
+    for (offset=0, i=0; i<n; ++i) {
+      if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
+    }
+    for (i=0; i<n; ++i) {
+      if (i % ncols) xOffset[i] = offset;
+    }
+  }
+
+  // enforce row alignment constraints
+  if (alignRow === 'each') {
+    for (j=1; j<nrows; ++j) {
+      for (offset=0, i=j*ncols, m=i+ncols; i<m; ++i) {
+        if (offset < yOffset[i]) offset = yOffset[i];
+      }
+      for (i=j*ncols; i<m; ++i) {
+        yOffset[i] = offset;
+      }
+    }
+  } else if (alignRow === 'all') {
+    for (offset=0, i=ncols; i<n; ++i) {
+      if (offset < yOffset[i]) offset = yOffset[i];
+    }
+    for (i=ncols; i<n; ++i) {
+      yOffset[i] = offset;
+    }
+  }
+
+  // perform horizontal grid layout
+  for (x=0, i=0; i<n; ++i) {
+    g = groups[i];
+    px = g.x || 0;
+    g.x = (x = xOffset[i] + (i % ncols ? x : 0));
+    bounds.union(g.bounds.translate(x - px, 0));
+  }
+
+  // perform vertical grid layout
+  for (j=0; j<ncols; ++j) {
+    for (y=0, i=j; i<n; i += ncols) {
+      g = groups[i];
+      py = g.y || 0;
+      g.y = (y += yOffset[i]);
+      bounds.union(g.bounds.translate(0, y - py));
+    }
+  }
+
+  // queue groups for redraw
+  view.enqueue(groups);
+
+  // update mark bounds
+  for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
+  for (i=0; i<n; ++i) groups[i].mark.bounds.union(groups[i].bounds);
+
+  // -- layout grid headers and footers --
+
+  // aggregation functions for grid margin determination
+  function min(a, b) { return Math.floor(Math.min(a, b)); }
+  function max(a, b) { return Math.ceil(Math.max(a, b)); }
+
+  // bounding box calculation methods
+  bbox = flush ? boundFlush : boundFull;
+
+  // perform header layout
+  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1);
+  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols);
+
+  // perform footer layout
+  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1);
+  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols);
+
+  // perform row title layout
+  if (views.rowtitle) {
+    offset = x - get(off, 'rowTitle');
+    band = get(opt.titleBand, 'row', 0.5);
+    layoutTitle$1(view, views.rowtitle, offset, 0, bounds, band);
+  }
+
+  // perform column title layout
+  if (views.coltitle) {
+    offset = y - get(off, 'columnTitle');
+    band = get(opt.titleBand, 'column', 0.5);
+    layoutTitle$1(view, views.coltitle, offset, 1, bounds, band);
+  }
+}
+
+function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back) {
+  var n = groups.length,
+      init = 0,
+      edge = 0,
+      i, j, k, m, b, h, g, x, y;
+
+  // compute margin
+  for (i=start; i<n; i+=stride) {
+    if (groups[i]) init = agg(init, bound(groups[i], bf));
+  }
+
+  // if no headers, return margin calculation
+  if (!headers.length) return init;
+
+  // check if number of headers exceeds number of rows or columns
+  if (headers.length > limit) {
+    view.warn('Grid headers exceed limit: ' + limit);
+    headers = headers.slice(0, limit);
+  }
+
+  // apply offset
+  init += offset;
+
+  // clear mark bounds for all headers
+  for (j=0, m=headers.length; j<m; ++j) {
+    headers[j].mark.bounds.clear();
+  }
+
+  // layout each header
+  for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
+    h = headers[j];
+    b = h.mark.bounds;
+
+    // search for nearest group to align to
+    // necessary if table has empty cells
+    for (k=i; (g = groups[k]) == null; k-=back);
+
+    // assign coordinates and update bounds
+    isX ? (x = g.x, y = init) : (x = init, y = g.y);
+    b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+    h.x = x;
+    h.y = y;
+
+    // update current edge of layout bounds
+    edge = agg(edge, b[bf]);
+  }
+
+  // queue headers for redraw
+  view.enqueue(headers);
+  return edge;
+}
+
+function layoutTitle$1(view, g, offset, isX, bounds, band) {
+  if (!g) return;
+
+  // compute title coordinates
+  var x = offset, y = offset;
+  isX
+    ? (x = Math.round(bounds.x1 + band * bounds.width()))
+    : (y = Math.round(bounds.y1 + band * bounds.height()));
+
+  // assign coordinates and update bounds
+  g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+  g.mark.bounds.clear().union(g.bounds);
+  g.x = x;
+  g.y = y;
+
+  // queue title for redraw
+  view.enqueue(g.mark.items);
+}
+
 var Fit = 'fit';
 var Pad = 'pad';
 var None$2 = 'none';
 var AxisRole = 'axis';
+var TitleRole = 'title';
 var FrameRole = 'frame';
 var LegendRole = 'legend';
 var ScopeRole = 'scope';
+var RowHeader = 'row-header';
+var RowFooter = 'row-footer';
+var ColHeader = 'column-header';
+var ColFooter = 'column-footer';
 /**
  * Layout view elements such as axes and legends.
  * Also performs size adjustments.
@@ -12699,6 +13049,7 @@ prototype$68.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
+    if (_.layout) gridLayout(view, group, _.layout);
     layoutGroup(view, group, _);
   });
   return pulse;
@@ -12710,7 +13061,8 @@ function layoutGroup(view, group, _) {
       height = Math.max(0, group.height || 0),
       viewBounds = new Bounds().set(0, 0, width, height),
       axisBounds = viewBounds.clone(),
-      legends = [],
+      legendBounds = viewBounds.clone(),
+      legends = [], title,
       mark, flow, b, i, n;
 
   // layout axes, gather legends, collect bounds
@@ -12718,25 +13070,38 @@ function layoutGroup(view, group, _) {
     mark = items[i];
     switch (mark.role) {
       case AxisRole:
-        b = layoutAxis(view, mark, width, height);
-        (isYAxis(mark) ? axisBounds : viewBounds).union(b);
+        axisBounds.union(b = layoutAxis(view, mark, width, height));
+        if (isYAxis(mark)) legendBounds.union(b);
         break;
+      case TitleRole:
+        title = mark; break;
       case LegendRole:
         legends.push(mark); break;
       case FrameRole:
       case ScopeRole:
-        axisBounds.union(mark.bounds); break;
+      case RowHeader:
+      case RowFooter:
+      case ColHeader:
+      case ColFooter:
+        legendBounds.union(mark.bounds);
+        break;
       default:
         viewBounds.union(mark.bounds);
     }
   }
 
-  // layout legends, extending viewBounds
+  // layout title, adjust bounds
+  if (title) {
+    axisBounds.union(b = layoutTitle(view, title, axisBounds));
+    if (isYAxis(title)) legendBounds.union(b);
+  }
+
+  // layout legends, adjust viewBounds
   if (legends.length) {
     flow = {left: 0, right: 0, margin: _.legendMargin || 8};
 
     for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(view, legends[i], flow, axisBounds, width, height);
+      b = layoutLegend(view, legends[i], flow, legendBounds, width, height);
       (_.autosize && _.autosize.type === Fit)
         ? viewBounds.add(b.x1, 0).add(b.x2, 0)
         : viewBounds.union(b);
@@ -12744,11 +13109,16 @@ function layoutGroup(view, group, _) {
   }
 
   // perform size adjustment
-  layoutSize(view, group, viewBounds.union(axisBounds), _);
+  layoutSize(view, group, viewBounds.union(legendBounds).union(axisBounds), _);
 }
 
-function isYAxis(axisMark) {
-  var orient = axisMark.items[0].datum.orient;
+function set$1(item, property, value) {
+  return item[property] === value ? 0
+    : (item[property] = value, 1);
+}
+
+function isYAxis(mark) {
+  var orient = mark.items[0].datum.orient;
   return orient === 'left' || orient === 'right';
 }
 
@@ -12830,13 +13200,47 @@ function layoutAxis(view, axis, width, height) {
 
   // update bounds
   boundStroke(bounds.translate(x, y), item);
-  item.mark.bounds.clear().union(bounds);
-  return bounds;
+  return item.mark.bounds.clear().union(bounds);
 }
 
-function set$1(item, property, value) {
-  return item[property] === value ? 0
-    : (item[property] = value, 1);
+function layoutTitle(view, title, axisBounds) {
+  var item = title.items[0],
+      datum = item.datum,
+      orient = datum.orient,
+      offset = item.offset,
+      bounds = item.bounds,
+      x = 0, y = 0;
+
+  // position axis group and title
+  switch (orient) {
+    case 'top':
+      x = item.x;
+      y = axisBounds.y1 - offset;
+      break;
+    case 'left':
+      x = axisBounds.x1 - offset;
+      y = item.y;
+      break;
+    case 'right':
+      x = axisBounds.x2 + offset;
+      y = item.y;
+      break;
+    case 'bottom':
+      x = item.x;
+      y = axisBounds.y2 + offset;
+      break;
+    default:
+      x = item.x;
+      y = item.y;
+  }
+
+  bounds.translate(x - item.x, y - item.y);
+  if (set$1(item, 'x', x) | set$1(item, 'y', y)) {
+    view.enqueue([item]);
+  }
+
+  // update bounds
+  return title.bounds.clear().union(bounds);
 }
 
 function layoutLegend(view, legend, flow, axisBounds, width, height) {
@@ -12893,8 +13297,7 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
 
   // update bounds
   boundStroke(bounds.set(x, y, x + w, y + h), item);
-  item.mark.bounds.clear().union(bounds);
-  return bounds;
+  return item.mark.bounds.clear().union(bounds);
 }
 
 function layoutSize(view, group, viewBounds, _) {
@@ -13300,7 +13703,7 @@ function form(bind, el, param, value) {
     }
   }
   node.setAttribute('name', param.signal);
-  node.setAttribute('value', value);
+  node.value = value;
 
   el.appendChild(node);
 
@@ -13411,12 +13814,12 @@ function range$1(bind, el, param, value) {
 
   var node = element$1('input', {
     type:  'range',
-    value: value,
     name:  param.signal,
     min:   min,
     max:   max,
     step:  step
   });
+  node.value = value;
 
   var label = element$1('label', {}, +value);
 
@@ -13489,6 +13892,10 @@ function initialize$1(el, elBind) {
   if (el) {
     elBind = elBind ? lookup$2(view, elBind)
       : el.appendChild(element$1('div', {'class': 'vega-bindings'}));
+
+    view._bind.forEach(function(_) {
+      if (_.param.element) lookup$2(view, _.param.element);
+    });
 
     view._bind.forEach(function(_) {
       bind$1(view, _.param.element || elBind, _);
@@ -15235,7 +15642,7 @@ function Functions(codegen) {
         if (args.length < 3) error('Missing arguments to if function.');
         if (args.length > 3) error('Too many arguments to if function.');
         var a = args.map(codegen);
-        return a[0]+'?'+a[1]+':'+a[2];
+        return '('+a[0]+'?'+a[1]+':'+a[2]+')';
       }
   };
 }
@@ -15825,6 +16232,17 @@ function vlInterval(name, unit, datum, op, scope) {
 
 // Expression function context object
 var functionContext = {
+  isArray: isArray,
+  isBoolean: isBoolean,
+  isDate: isDate,
+  isNumber: isNumber,
+  isObject: isObject,
+  isRegExp: isRegExp,
+  isString: isString,
+  toBoolean: toBoolean,
+  toDate: toDate,
+  toNumber: toNumber,
+  toString: toString,
   pad: pad,
   truncate: truncate,
   rgb: d3Color.rgb,
@@ -15912,7 +16330,7 @@ function buildFunctions(codegen) {
 // Export code generator and parameters
 var codegenParams = {
   blacklist:  ['_'],
-  whitelist:  ['datum', 'event'],
+  whitelist:  ['datum', 'event', 'item'],
   fieldvar:   'datum',
   globalvar:  function(id) { return '_[' + $$2('$' + id) + ']'; },
   functions:  buildFunctions,
@@ -16637,19 +17055,21 @@ var MarkRole = 'mark';
 var FrameRole$1 = 'frame';
 var ScopeRole$1 = 'scope';
 
-var AxisRole$1 = 'axis';
+var AxisRole$2 = 'axis';
 var AxisDomainRole = 'axis-domain';
 var AxisGridRole = 'axis-grid';
 var AxisLabelRole = 'axis-label';
 var AxisTickRole = 'axis-tick';
 var AxisTitleRole = 'axis-title';
 
-var LegendRole$1 = 'legend';
+var LegendRole$2 = 'legend';
 var LegendEntryRole = 'legend-entry';
 var LegendGradientRole = 'legend-gradient';
 var LegendLabelRole = 'legend-label';
 var LegendSymbolRole = 'legend-symbol';
 var LegendTitleRole = 'legend-title';
+
+var TitleRole$1 = 'title';
 
 function encoder(_) {
   return isObject(_) ? _ : {value: _};
@@ -16958,10 +17378,10 @@ function guideGroup(role, name, dataRef, interactive, encode, marks) {
 }
 
 function role(spec) {
-  return spec.role ||
-    (spec.type === GroupMark && (spec.legends || spec.axes)
-      ? ScopeRole$1
-      : MarkRole);
+  var role = spec.role || '';
+  return (!role.indexOf('axis') || !role.indexOf('legend'))
+    ? role
+    : spec.type === GroupMark ? ScopeRole$1 : (role || MarkRole);
 }
 
 function definition$1(spec) {
@@ -16970,7 +17390,7 @@ function definition$1(spec) {
     interactive: spec.interactive === false ? false : true,
     marktype:    spec.type,
     name:        spec.name || undefined,
-    role:        role(spec),
+    role:        spec.role || role(spec),
     zindex:      +spec.zindex || undefined
   };
 }
@@ -17482,7 +17902,7 @@ function parseMark(spec, scope) {
   var role$$ = role(spec),
       group = spec.type === GroupMark,
       facet = spec.from && spec.from.facet,
-      layout = role$$ === ScopeRole$1 || role$$ === FrameRole$1,
+      layout = spec.layout || role$$ === ScopeRole$1 || role$$ === FrameRole$1,
       nested = role$$ === MarkRole || layout || facet,
       ops, op, input, store, bound, render, sieve, name,
       joinRef, markRef, encodeRef, layoutRef, boundRef;
@@ -17537,6 +17957,7 @@ function parseMark(spec, scope) {
   // add view layout operator if needed
   if (facet || layout) {
     layout = scope.add(ViewLayout$1({
+      layout:       scope.objectProperty(spec.layout),
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
@@ -17672,7 +18093,7 @@ function parseLegend(spec, scope) {
   }
 
   // build legend specification
-  group = guideGroup(LegendRole$1, name, dataRef, interactive, legendEncode, children);
+  group = guideGroup(LegendRole$2, name, dataRef, interactive, legendEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse legend specification
@@ -17711,14 +18132,14 @@ var FIELD_REF_ID = 0;
 var types = [
   'identity',
   'ordinal', 'band', 'point',
+  'bin-linear', 'bin-ordinal',
   'linear', 'pow', 'sqrt', 'log', 'sequential',
   'time', 'utc',
-  'quantize', 'quantile', 'threshold',
-  'bin-linear', 'bin-ordinal'
+  'quantize', 'quantile', 'threshold'
 ];
 
 var allTypes = toSet(types);
-var ordinalTypes = toSet(types.slice(1, 4));
+var ordinalTypes = toSet(types.slice(1, 6));
 function isOrdinal(type) {
   return ordinalTypes.hasOwnProperty(type);
 }
@@ -17951,6 +18372,87 @@ function parseScaleRange(spec, scope, params) {
   });
 }
 
+function parseTitle(spec, scope) {
+  spec = isString(spec) ? {text: spec} : spec;
+
+  var config = scope.config.title,
+      encode = extend({}, spec.encode),
+      datum, dataRef, title;
+
+  // single-element data source for group title
+  datum = {
+    orient: spec.orient != null ? spec.orient : config.orient
+  };
+  dataRef = ref(scope.add(Collect$1(null, [datum])));
+
+  // build title specification
+  encode.name = spec.name;
+  encode.interactive = spec.interactive;
+  title = buildTitle(spec, config, encode, dataRef);
+  if (spec.zindex) title.zindex = spec.zindex;
+
+  // parse title specification
+  return parseMark(title, scope);
+}
+
+function buildTitle(spec, config, userEncode, dataRef) {
+  var title = spec.text,
+      orient = spec.orient || config.orient,
+      anchor = spec.anchor || config.anchor,
+      sign = (orient === Left || orient === Top) ? -1 : 1,
+      horizontal = (orient === Top || orient === Bottom),
+      extent = {group: (horizontal ? 'width' : 'height')},
+      encode = {}, enter, update, pos, opp, mult, align;
+
+  encode.enter = enter = {
+    opacity: {value: 0}
+  };
+  addEncode(enter, 'fill', config.color);
+  addEncode(enter, 'font', config.font);
+  addEncode(enter, 'fontSize', config.fontSize);
+  addEncode(enter, 'fontWeight', config.fontWeight);
+
+  encode.exit = {
+    opacity: {value: 0}
+  };
+
+  encode.update = update = {
+    opacity: {value: 1},
+    text: isObject(title) ? title : {value: title + ''},
+    offset: encoder(spec.offset || 0)
+  };
+
+  (anchor === 'start') ? (mult = 0, align = 'left')
+    : (anchor === 'end') ? (mult = 1, align = 'right')
+    : (mult = 0.5, align = 'center');
+
+  pos = {field: extent, mult: mult};
+
+  opp = sign < 0 ? {value: 0}
+    : horizontal ? {field: {group: 'height'}}
+    : {field: {group: 'width'}};
+
+  if (horizontal) {
+    update.x = pos;
+    update.y = opp;
+    update.angle = {value: 0};
+    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+  } else {
+    update.x = opp;
+    update.y = pos;
+    update.angle = {value: sign * 90};
+    update.baseline = {value: 'bottom'};
+  }
+  update.align = {value: align};
+  update.limit = {field: extent};
+
+  addEncode(update, 'angle', config.angle);
+  addEncode(update, 'baseline', config.baseline);
+  addEncode(update, 'limit', config.limit);
+
+  return guideMark(TextMark, TitleRole$1, null, dataRef, encode, userEncode);
+}
+
 function parseData$1(data, scope) {
   var transforms = [];
 
@@ -18175,8 +18677,7 @@ function axisLabels(spec, config, userEncode, dataRef, size) {
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
-    opacity: zero,
-    text: {field: Label}
+    opacity: zero
   };
   addEncode(enter, 'angle', config.labelAngle);
   addEncode(enter, 'fill', config.labelColor);
@@ -18189,7 +18690,8 @@ function axisLabels(spec, config, userEncode, dataRef, size) {
   };
 
   encode.update = update = {
-    opacity: {value: 1}
+    opacity: {value: 1},
+    text: {field: Label}
   };
 
   tickSize = encoder(size);
@@ -18343,7 +18845,7 @@ function parseAxis(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup(AxisRole$1, name, dataRef, interactive, axisEncode, children);
+  group = guideGroup(AxisRole$2, name, dataRef, interactive, axisEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification
@@ -18372,7 +18874,6 @@ function parseSpec(spec, scope, preprocessed) {
   signals.forEach(function(_) {
     parseSignalUpdates(_, scope);
   });
-  scope.parseLambdas();
 
   array(spec.axes).forEach(function(_) {
     parseAxis(_, scope);
@@ -18386,7 +18887,11 @@ function parseSpec(spec, scope, preprocessed) {
     parseLegend(_, scope);
   });
 
-  return scope;
+  if (spec.title) {
+    parseTitle(spec.title, scope);
+  }
+
+  return scope.parseLambdas(), scope;
 }
 
 var defined = toSet(['width', 'height', 'padding']);
@@ -18420,15 +18925,18 @@ function parseView(spec, scope) {
 
   // Perform view layout
   parent = scope.add(ViewLayout$1({
+    layout:       scope.objectProperty(spec.layout),
     legendMargin: config.legendMargin,
     autosize:     parseAutosize(spec.autosize, config),
     mark:         root,
     pulse:        ref(encode)
   }));
+  scope.operators.pop();
 
   // Parse remainder of specification
   scope.pushState(ref(encode), ref(parent), null);
   parseSpec(spec, scope, true);
+  scope.operators.push(parent);
 
   // Bound / render / sieve root item
   op = scope.add(Bound$1({mark: root, pulse: ref(parent)}));
@@ -18731,6 +19239,27 @@ prototype$71.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
+prototype$71.objectProperty = function(spec) {
+  return (!spec || !isObject(spec)) ? spec
+    : this.signalRef(spec.signal || objectLambda(spec));
+};
+
+function objectLambda(obj) {
+  var code = '{',
+      i = 0,
+      key, value;
+
+  for (key in obj) {
+    value = obj[key];
+    code += (++i > 1 ? ',' : '')
+      + $$2(key) + ':'
+      + (isObject(value)
+        ? (value.signal || objectLambda(value))
+        : $$2(value));
+  }
+  return code + '}';
+}
+
 prototype$71.addBinding = function(name, bind) {
   if (!this.bindings) {
     error('Nested signals do not support binding: ' + $$2(name));
@@ -18937,6 +19466,17 @@ function defaults$1() {
       titleAlign: 'left',
       titleBaseline: 'top',
       titleLimit: 180
+    },
+
+    // defaults for group title
+    title: {
+      orient: 'top',
+      anchor: 'center',
+      offset: 2,
+      color: black,
+      font: 'sans-serif',
+      fontSize: 13,
+      fontWeight: 'bold'
     },
 
     // defaults for scale ranges
@@ -19275,7 +19815,7 @@ function parseDataflow(spec, ctx) {
     parseUpdate$1(entry, ctx);
   });
 
-  return ctx;
+  return ctx.resolve();
 }
 
 var SKIP$3 = {skip: true};
@@ -19411,8 +19951,16 @@ Context.prototype = ContextFork.prototype = {
 
     if (spec.parent) {
       var p = ctx.get(spec.parent.$ref);
-      df.connect(p, [op]);
-      op.targets().add(p);
+      if (p) {
+        df.connect(p, [op]);
+        op.targets().add(p);
+      } else {
+        (ctx.unresolved = ctx.unresolved || []).push(function() {
+          p = ctx.get(spec.parent.$ref);
+          df.connect(p, [op]);
+          op.targets().add(p);
+        });
+      }
     }
 
     if (spec.signal) {
@@ -19429,6 +19977,11 @@ Context.prototype = ContextFork.prototype = {
         spec.data[name].forEach(function(role) { data[role] = op; });
       }
     }
+  },
+  resolve: function() {
+    (this.unresolved || []).forEach(function(fn) { fn(); });
+    delete this.unresolved;
+    return this;
   },
   operator: function(spec, update, params) {
     this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
@@ -19592,8 +20145,12 @@ function View(spec, options) {
   var ctx = runtime(this, spec, options.functions);
   this._runtime = ctx;
   this._signals = ctx.signals;
-  this._bind = (spec.bindings || [])
-    .map(function(_) { return {state: null, param: _}; });
+  this._bind = (spec.bindings || []).map(function(_) {
+    return {
+      state: null,
+      param: extend({}, _)
+    };
+  });
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
@@ -19839,9 +20396,12 @@ exports.fastmap = fastmap;
 exports.field = field;
 exports.inherits = inherits;
 exports.isArray = isArray;
+exports.isBoolean = isBoolean;
+exports.isDate = isDate;
 exports.isFunction = isFunction;
 exports.isNumber = isNumber;
 exports.isObject = isObject;
+exports.isRegExp = isRegExp;
 exports.isString = isString;
 exports.key = key;
 exports.merge = merge;
@@ -19850,6 +20410,10 @@ exports.peek = peek;
 exports.repeat = repeat;
 exports.splitAccessPath = splitAccessPath;
 exports.stringValue = $$2;
+exports.toBoolean = toBoolean;
+exports.toDate = toDate;
+exports.toNumber = toNumber;
+exports.toString = toString;
 exports.toSet = toSet;
 exports.truncate = truncate;
 exports.visitArray = visitArray;

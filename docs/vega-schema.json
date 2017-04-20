@@ -314,6 +314,9 @@
                     },
                     "property": {
                       "type": "string"
+                    },
+                    "copy": {
+                      "type": "boolean"
                     }
                   },
                   "additionalProperties": false
@@ -590,10 +593,7 @@
                           {
                             "oneOf": [
                               {
-                                "$ref": "#/refs/signal",
-                                "required": [
-                                  "signal"
-                                ]
+                                "$ref": "#/refs/signal"
                               },
                               {
                                 "properties": {
@@ -656,10 +656,7 @@
                     {
                       "oneOf": [
                         {
-                          "$ref": "#/refs/signal",
-                          "required": [
-                            "signal"
-                          ]
+                          "$ref": "#/refs/signal"
                         },
                         {
                           "properties": {
@@ -733,10 +730,7 @@
                           {
                             "oneOf": [
                               {
-                                "$ref": "#/refs/signal",
-                                "required": [
-                                  "signal"
-                                ]
+                                "$ref": "#/refs/signal"
                               },
                               {
                                 "properties": {
@@ -799,10 +793,7 @@
                     {
                       "oneOf": [
                         {
-                          "$ref": "#/refs/signal",
-                          "required": [
-                            "signal"
-                          ]
+                          "$ref": "#/refs/signal"
                         },
                         {
                           "properties": {
@@ -873,10 +864,7 @@
                           {
                             "oneOf": [
                               {
-                                "$ref": "#/refs/signal",
-                                "required": [
-                                  "signal"
-                                ]
+                                "$ref": "#/refs/signal"
                               },
                               {
                                 "properties": {
@@ -939,10 +927,7 @@
                     {
                       "oneOf": [
                         {
-                          "$ref": "#/refs/signal",
-                          "required": [
-                            "signal"
-                          ]
+                          "$ref": "#/refs/signal"
                         },
                         {
                           "properties": {
@@ -1043,6 +1028,155 @@
         }
       },
       "additionalProperties": false
+    },
+    "layout": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "align": {
+              "oneOf": [
+                {
+                  "oneOf": [
+                    {
+                      "enum": [
+                        "all",
+                        "each",
+                        "none"
+                      ]
+                    },
+                    {
+                      "$ref": "#/refs/signal"
+                    }
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "all",
+                            "each",
+                            "none"
+                          ]
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    },
+                    "column": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "all",
+                            "each",
+                            "none"
+                          ]
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "bounds": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "full",
+                    "flush"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "columns": {
+              "$ref": "#/refs/numberOrSignal"
+            },
+            "padding": {
+              "oneOf": [
+                {
+                  "$ref": "#/refs/numberOrSignal"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "column": {
+                      "$ref": "#/refs/numberOrSignal"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "offset": {
+              "oneOf": [
+                {
+                  "$ref": "#/refs/numberOrSignal"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "rowHeader": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "rowFooter": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "rowTitle": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "columnHeader": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "columnFooter": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "columnTitle": {
+                      "$ref": "#/refs/numberOrSignal"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "titleBand": {
+              "oneOf": [
+                {
+                  "$ref": "#/refs/numberOrSignal"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "column": {
+                      "$ref": "#/refs/numberOrSignal"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        {
+          "$ref": "#/refs/signal"
+        }
+      ]
     },
     "guideEncode": {
       "type": "object",
@@ -1232,11 +1366,17 @@
         "type": {
           "$ref": "#/refs/marktype"
         },
+        "role": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
         "key": {
           "type": "string"
+        },
+        "clip": {
+          "type": "boolean"
         },
         "interactive": {
           "type": "boolean"
@@ -1378,8 +1518,7 @@
                         "$ref": "#/refs/exprString"
                       },
                       {
-                        "$ref": "#/refs/expr",
-                        "additionalProperties": false
+                        "$ref": "#/refs/expr"
                       },
                       {
                         "$ref": "#/refs/signal"
@@ -2662,6 +2801,9 @@
         "encode": {
           "$ref": "#/defs/encode"
         },
+        "layout": {
+          "$ref": "#/defs/layout"
+        },
         "signals": {
           "type": "array",
           "items": {
@@ -2698,6 +2840,9 @@
             "$ref": "#/defs/legend"
           }
         },
+        "title": {
+          "$ref": "#/defs/title"
+        },
         "marks": {
           "type": "array",
           "items": {
@@ -2729,7 +2874,8 @@
         "enum": [
           "parent",
           "datum",
-          "event"
+          "event",
+          "item"
         ]
       }
     },
@@ -2784,44 +2930,6 @@
       "required": [
         "name",
         "push"
-      ]
-    },
-    "spec": {
-      "title": "Vega visualization specification",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/defs/scope"
-        },
-        {
-          "properties": {
-            "$schema": {
-              "type": "string",
-              "format": "uri"
-            },
-            "config": {
-              "type": "object"
-            },
-            "description": {
-              "type": "string"
-            },
-            "width": {
-              "type": "number"
-            },
-            "height": {
-              "type": "number"
-            },
-            "padding": {
-              "$ref": "#/defs/padding"
-            },
-            "autosize": {
-              "$ref": "#/defs/autosize"
-            },
-            "background": {
-              "$ref": "#/defs/background"
-            }
-          }
-        }
       ]
     },
     "streamParams": {
@@ -2917,6 +3025,74 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    "titleEncode": {
+      "type": "object",
+      "patternProperties": {
+        "^(?!interactive|name).+$": {
+          "$ref": "#/defs/encodeEntry"
+        }
+      },
+      "additionalProperties": false
+    },
+    "title": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "orient": {
+              "enum": [
+                "none",
+                "left",
+                "right",
+                "top",
+                "bottom"
+              ],
+              "default": "top"
+            },
+            "anchor": {
+              "enum": [
+                "start",
+                "middle",
+                "end"
+              ],
+              "default": "middle"
+            },
+            "text": {
+              "$ref": "#/refs/stringOrSignal"
+            },
+            "zindex": {
+              "type": "number"
+            },
+            "interactive": {
+              "type": "boolean"
+            },
+            "offset": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "encode": {
+              "$ref": "#/defs/titleEncode"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -3269,6 +3445,16 @@
             },
             {
               "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "anchor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
             }
           ]
         },
@@ -6717,7 +6903,6 @@
       ]
     },
     "scale": {
-      "title": "ScaleRef",
       "$ref": "#/refs/field"
     },
     "stringModifiers": {
@@ -6797,10 +6982,7 @@
                       {
                         "oneOf": [
                           {
-                            "$ref": "#/refs/signal",
-                            "required": [
-                              "signal"
-                            ]
+                            "$ref": "#/refs/signal"
                           },
                           {
                             "properties": {
@@ -6863,10 +7045,7 @@
                 {
                   "oneOf": [
                     {
-                      "$ref": "#/refs/signal",
-                      "required": [
-                        "signal"
-                      ]
+                      "$ref": "#/refs/signal"
                     },
                     {
                       "properties": {
@@ -6937,10 +7116,7 @@
                       {
                         "oneOf": [
                           {
-                            "$ref": "#/refs/signal",
-                            "required": [
-                              "signal"
-                            ]
+                            "$ref": "#/refs/signal"
                           },
                           {
                             "properties": {
@@ -7003,10 +7179,7 @@
                 {
                   "oneOf": [
                     {
-                      "$ref": "#/refs/signal",
-                      "required": [
-                        "signal"
-                      ]
+                      "$ref": "#/refs/signal"
                     },
                     {
                       "properties": {
@@ -7077,10 +7250,7 @@
                       {
                         "oneOf": [
                           {
-                            "$ref": "#/refs/signal",
-                            "required": [
-                              "signal"
-                            ]
+                            "$ref": "#/refs/signal"
                           },
                           {
                             "properties": {
@@ -7143,10 +7313,7 @@
                 {
                   "oneOf": [
                     {
-                      "$ref": "#/refs/signal",
-                      "required": [
-                        "signal"
-                      ]
+                      "$ref": "#/refs/signal"
                     },
                     {
                       "properties": {
@@ -7217,10 +7384,7 @@
                       {
                         "oneOf": [
                           {
-                            "$ref": "#/refs/signal",
-                            "required": [
-                              "signal"
-                            ]
+                            "$ref": "#/refs/signal"
                           },
                           {
                             "properties": {
@@ -7283,10 +7447,7 @@
                 {
                   "oneOf": [
                     {
-                      "$ref": "#/refs/signal",
-                      "required": [
-                        "signal"
-                      ]
+                      "$ref": "#/refs/signal"
                     },
                     {
                       "properties": {
@@ -7357,10 +7518,7 @@
                       {
                         "oneOf": [
                           {
-                            "$ref": "#/refs/signal",
-                            "required": [
-                              "signal"
-                            ]
+                            "$ref": "#/refs/signal"
                           },
                           {
                             "properties": {
@@ -7423,10 +7581,7 @@
                 {
                   "oneOf": [
                     {
-                      "$ref": "#/refs/signal",
-                      "required": [
-                        "signal"
-                      ]
+                      "$ref": "#/refs/signal"
                     },
                     {
                       "properties": {
@@ -7725,8 +7880,7 @@
           ]
         },
         {
-          "$ref": "#/refs/signal",
-          "additionalProperties": false
+          "$ref": "#/refs/signal"
         }
       ]
     },
@@ -7935,8 +8089,7 @@
           "type": "boolean"
         },
         {
-          "$ref": "#/refs/signal",
-          "additionalProperties": false
+          "$ref": "#/refs/signal"
         }
       ]
     },
@@ -7946,8 +8099,7 @@
           "type": "number"
         },
         {
-          "$ref": "#/refs/signal",
-          "additionalProperties": false
+          "$ref": "#/refs/signal"
         }
       ]
     },
@@ -7957,11 +8109,44 @@
           "type": "string"
         },
         {
-          "$ref": "#/refs/signal",
-          "additionalProperties": false
+          "$ref": "#/refs/signal"
         }
       ]
     }
   },
-  "$ref": "#/defs/spec"
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/defs/scope"
+    },
+    {
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "format": "uri"
+        },
+        "config": {
+          "type": "object"
+        },
+        "description": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "padding": {
+          "$ref": "#/defs/padding"
+        },
+        "autosize": {
+          "$ref": "#/defs/autosize"
+        },
+        "background": {
+          "$ref": "#/defs/background"
+        }
+      }
+    }
+  ]
 }

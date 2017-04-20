@@ -121,62 +121,74 @@ function number$1(x) {
   return x === null ? NaN : +x;
 }
 
-function variance(array, f) {
-  var n = array.length,
+function variance(values, valueof) {
+  var n = values.length,
       m = 0,
-      a,
-      d,
-      s = 0,
       i = -1,
-      j = 0;
+      mean = 0,
+      value,
+      delta,
+      sum = 0;
 
-  if (f == null) {
+  if (valueof == null) {
     while (++i < n) {
-      if (!isNaN(a = number$1(array[i]))) {
-        d = a - m;
-        m += d / ++j;
-        s += d * (a - m);
+      if (!isNaN(value = number$1(values[i]))) {
+        delta = value - mean;
+        mean += delta / ++m;
+        sum += delta * (value - mean);
       }
     }
   }
 
   else {
     while (++i < n) {
-      if (!isNaN(a = number$1(f(array[i], i, array)))) {
-        d = a - m;
-        m += d / ++j;
-        s += d * (a - m);
+      if (!isNaN(value = number$1(valueof(values[i], i, values)))) {
+        delta = value - mean;
+        mean += delta / ++m;
+        sum += delta * (value - mean);
       }
     }
   }
 
-  if (j > 1) return s / (j - 1);
+  if (m > 1) return sum / (m - 1);
 }
 
-function extent(array, f) {
-  var i = -1,
-      n = array.length,
-      a,
-      b,
-      c;
+function extent(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min,
+      max;
 
-  if (f == null) {
-    while (++i < n) if ((b = array[i]) != null && b >= b) { a = c = b; break; }
-    while (++i < n) if ((b = array[i]) != null) {
-      if (a > b) a = b;
-      if (c < b) c = b;
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
     }
   }
 
   else {
-    while (++i < n) if ((b = f(array[i], i, array)) != null && b >= b) { a = c = b; break; }
-    while (++i < n) if ((b = f(array[i], i, array)) != null) {
-      if (a > b) a = b;
-      if (c < b) c = b;
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
     }
   }
 
-  return [a, c];
+  return [min, max];
 }
 
 function sequence(start, stop, step) {
@@ -197,12 +209,40 @@ var e10 = Math.sqrt(50);
 var e5 = Math.sqrt(10);
 var e2 = Math.sqrt(2);
 function ticks(start, stop, count) {
-  var step = tickStep(start, stop, count);
-  return sequence(
-    Math.ceil(start / step) * step,
-    Math.floor(stop / step) * step + step / 2, // inclusive
-    step
-  );
+  var reverse = stop < start,
+      i = -1,
+      n,
+      ticks,
+      step;
+
+  if (reverse) n = start, start = stop, stop = n;
+
+  if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+
+  if (step > 0) {
+    start = Math.ceil(start / step);
+    stop = Math.floor(stop / step);
+    ticks = new Array(n = Math.ceil(stop - start + 1));
+    while (++i < n) ticks[i] = (start + i) * step;
+  } else {
+    start = Math.floor(start * step);
+    stop = Math.ceil(stop * step);
+    ticks = new Array(n = Math.ceil(start - stop + 1));
+    while (++i < n) ticks[i] = (start - i) / step;
+  }
+
+  if (reverse) ticks.reverse();
+
+  return ticks;
+}
+
+function tickIncrement(start, stop, count) {
+  var step = (stop - start) / Math.max(0, count),
+      power = Math.floor(Math.log(step) / Math.LN10),
+      error = step / Math.pow(10, power);
+  return power >= 0
+      ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+      : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
 }
 
 function tickStep(start, stop, count) {
@@ -215,68 +255,98 @@ function tickStep(start, stop, count) {
   return stop < start ? -step1 : step1;
 }
 
-function threshold(array, p, f) {
-  if (f == null) f = number$1;
-  if (!(n = array.length)) return;
-  if ((p = +p) <= 0 || n < 2) return +f(array[0], 0, array);
-  if (p >= 1) return +f(array[n - 1], n - 1, array);
+function threshold(values, p, valueof) {
+  if (valueof == null) valueof = number$1;
+  if (!(n = values.length)) return;
+  if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
   var n,
-      h = (n - 1) * p,
-      i = Math.floor(h),
-      a = +f(array[i], i, array),
-      b = +f(array[i + 1], i + 1, array);
-  return a + (b - a) * (h - i);
+      i = (n - 1) * p,
+      i0 = Math.floor(i),
+      value0 = +valueof(values[i0], i0, values),
+      value1 = +valueof(values[i0 + 1], i0 + 1, values);
+  return value0 + (value1 - value0) * (i - i0);
 }
 
-function max(array, f) {
-  var i = -1,
-      n = array.length,
-      a,
-      b;
-
-  if (f == null) {
-    while (++i < n) if ((b = array[i]) != null && b >= b) { a = b; break; }
-    while (++i < n) if ((b = array[i]) != null && b > a) a = b;
-  }
-
-  else {
-    while (++i < n) if ((b = f(array[i], i, array)) != null && b >= b) { a = b; break; }
-    while (++i < n) if ((b = f(array[i], i, array)) != null && b > a) a = b;
-  }
-
-  return a;
-}
-
-function mean(array, f) {
-  var s = 0,
-      n = array.length,
-      a,
+function max(values, valueof) {
+  var n = values.length,
       i = -1,
-      j = n;
+      value,
+      max;
 
-  if (f == null) {
-    while (++i < n) if (!isNaN(a = number$1(array[i]))) s += a; else --j;
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null && value > max) {
+            max = value;
+          }
+        }
+      }
+    }
   }
 
   else {
-    while (++i < n) if (!isNaN(a = number$1(f(array[i], i, array)))) s += a; else --j;
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && value > max) {
+            max = value;
+          }
+        }
+      }
+    }
   }
 
-  if (j) return s / j;
+  return max;
 }
 
-function median(array, f) {
-  var numbers = [],
-      n = array.length,
-      a,
-      i = -1;
+function mean(values, valueof) {
+  var n = values.length,
+      m = n,
+      i = -1,
+      value,
+      sum = 0;
 
-  if (f == null) {
-    while (++i < n) if (!isNaN(a = number$1(array[i]))) numbers.push(a);
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = number$1(values[i]))) sum += value;
+      else --m;
+    }
   }
 
   else {
-    while (++i < n) if (!isNaN(a = number$1(f(array[i], i, array)))) numbers.push(a);
+    while (++i < n) {
+      if (!isNaN(value = number$1(valueof(values[i], i, values)))) sum += value;
+      else --m;
+    }
+  }
+
+  if (m) return sum / m;
+}
+
+function median(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      numbers = [];
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = number$1(values[i]))) {
+        numbers.push(value);
+      }
+    }
+  }
+
+  else {
+    while (++i < n) {
+      if (!isNaN(value = number$1(valueof(values[i], i, values)))) {
+        numbers.push(value);
+      }
+    }
   }
 
   return threshold(numbers.sort(ascending), 0.5);
@@ -304,23 +374,39 @@ function merge(arrays) {
   return merged;
 }
 
-function min(array, f) {
-  var i = -1,
-      n = array.length,
-      a,
-      b;
+function min(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min;
 
-  if (f == null) {
-    while (++i < n) if ((b = array[i]) != null && b >= b) { a = b; break; }
-    while (++i < n) if ((b = array[i]) != null && a > b) a = b;
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
   }
 
   else {
-    while (++i < n) if ((b = f(array[i], i, array)) != null && b >= b) { a = b; break; }
-    while (++i < n) if ((b = f(array[i], i, array)) != null && a > b) a = b;
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
   }
 
-  return a;
+  return min;
 }
 
 function permute(array, indexes) {
@@ -329,21 +415,25 @@ function permute(array, indexes) {
   return permutes;
 }
 
-function sum(array, f) {
-  var s = 0,
-      n = array.length,
-      a,
-      i = -1;
+function sum(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      sum = 0;
 
-  if (f == null) {
-    while (++i < n) if (a = +array[i]) s += a; // Note: zero and null are equivalent.
+  if (valueof == null) {
+    while (++i < n) {
+      if (value = +values[i]) sum += value; // Note: zero and null are equivalent.
+    }
   }
 
   else {
-    while (++i < n) if (a = +f(array[i], i, array)) s += a;
+    while (++i < n) {
+      if (value = +valueof(values[i], i, values)) sum += value;
+    }
   }
 
-  return s;
+  return sum;
 }
 
 function bootstrapCI(array, samples, alpha, f) {
@@ -952,8 +1042,20 @@ function inherits(child, parent) {
   return proto;
 }
 
+function isBoolean(_) {
+  return typeof _ === 'boolean';
+}
+
+function isDate(_) {
+  return Object.prototype.toString.call(_) === '[object Date]';
+}
+
 function isNumber(_) {
   return typeof _ === 'number';
+}
+
+function isRegExp(_) {
+  return Object.prototype.toString.call(_) === '[object RegExp]';
 }
 
 function key(fields) {
@@ -1013,6 +1115,22 @@ function pad(str, length, padchar, align) {
 
 function peek(array) {
   return array[array.length - 1];
+}
+
+function toBoolean(_) {
+  return _ == null || _ === '' ? null : !_ || _ === 'false' ? false : !!_;
+}
+
+function toDate(_, parser) {
+  return _ == null || _ === '' ? null : (parser ? parser(_) : Date.parse(_));
+}
+
+function toNumber(_) {
+  return _ == null || _ === '' ? null : +_;
+}
+
+function toString(_) {
+  return _ == null || _ === '' ? null : _ + '';
 }
 
 function toSet(_) {
@@ -1455,7 +1573,7 @@ function inferColumns(rows) {
 }
 
 function dsvFormat(delimiter) {
-  var reFormat = new RegExp("[\"" + delimiter + "\n]"),
+  var reFormat = new RegExp("[\"" + delimiter + "\n\r]"),
       delimiterCode = delimiter.charCodeAt(0);
 
   function parse(text, f) {
@@ -1735,10 +1853,10 @@ var typeParsers = {
 };
 
 var typeTests = [
-  isBoolean,
+  isBoolean$1,
   isInteger,
   isNumber$1,
-  isDate
+  isDate$1
 ];
 
 var typeList = [
@@ -1770,36 +1888,17 @@ function inferTypes(data, fields) {
   }, {});
 }
 
-// -- Type Coercion ----
-
-function toNumber(_) {
-  return _ == null || _ === '' ? null : +_;
-}
-
-function toBoolean(_) {
-  return _ == null || _ === '' ? null : !_ || _ === 'false' ? false : !!_;
-}
-
-function toDate(_, parser) {
-  return _ == null || _ === '' ? null
-    : (parser ? parser(_) : Date.parse(_));
-}
-
-function toString(_) {
-  return _ == null || _ === '' ? null : _ + '';
-}
-
 // -- Type Checks ----
 
 function isValid(_) {
   return _ != null && _ === _;
 }
 
-function isBoolean(_) {
+function isBoolean$1(_) {
   return _ === 'true' || _ === 'false' || _ === true || _ === false;
 }
 
-function isDate(_) {
+function isDate$1(_) {
   return !isNaN(Date.parse(_));
 }
 
@@ -1833,9 +1932,15 @@ function isBuffer(_) {
 }
 
 function json$1(data, format) {
-  data = isObject(data) && !isBuffer(data) ? data : JSON.parse(data);
-  return (format && format.property)
-    ? field(format.property)(data)
+  var prop = (format && format.property) ? field(format.property) : identity$1;
+  return isObject(data) && !isBuffer(data)
+    ? parseJSON(prop(data))
+    : prop(JSON.parse(data));
+}
+
+function parseJSON(data, format) {
+  return (format && format.copy)
+    ? JSON.parse(JSON.stringify(data))
     : data;
 }
 
@@ -3061,6 +3166,14 @@ prototype.union = function(b) {
   return this;
 };
 
+prototype.intersect = function(b) {
+  if (b.x1 > this.x1) this.x1 = b.x1;
+  if (b.y1 > this.y1) this.y1 = b.y1;
+  if (b.x2 < this.x2) this.x2 = b.x2;
+  if (b.y2 < this.y2) this.y2 = b.y2;
+  return this;
+};
+
 prototype.encloses = function(b) {
   return b && (
     this.x1 <= b.x1 &&
@@ -3382,14 +3495,16 @@ Path.prototype = path.prototype = {
     // Is this arc empty? We’re done.
     if (!r) return;
 
+    // Does the angle go the wrong way? Flip the direction.
+    if (da < 0) da = da % tau + tau;
+
     // Is this a complete circle? Draw two arcs to complete the circle.
     if (da > tauEpsilon) {
       this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
     }
 
-    // Otherwise, draw an arc!
-    else {
-      if (da < 0) da = da % tau + tau;
+    // Is this arc non-empty? Draw an arc!
+    else if (da > epsilon) {
       this._ += "A" + r + "," + r + ",0," + (+(da >= pi)) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
     }
   },
@@ -3407,10 +3522,26 @@ function constant$2(x) {
   };
 }
 
+var abs = Math.abs;
+var atan2 = Math.atan2;
+var cos = Math.cos;
+var max$1 = Math.max;
+var min$1 = Math.min;
+var sin = Math.sin;
+var sqrt = Math.sqrt;
+
 var epsilon$1 = 1e-12;
 var pi$1 = Math.PI;
 var halfPi = pi$1 / 2;
 var tau$1 = 2 * pi$1;
+
+function acos(x) {
+  return x > 1 ? 0 : x < -1 ? pi$1 : Math.acos(x);
+}
+
+function asin(x) {
+  return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
+}
 
 function arcInnerRadius(d) {
   return d.innerRadius;
@@ -3432,10 +3563,6 @@ function arcPadAngle(d) {
   return d && d.padAngle; // Note: optional!
 }
 
-function asin(x) {
-  return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
-}
-
 function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
   var x10 = x1 - x0, y10 = y1 - y0,
       x32 = x3 - x2, y32 = y3 - y2,
@@ -3448,7 +3575,7 @@ function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
 function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
   var x01 = x0 - x1,
       y01 = y0 - y1,
-      lo = (cw ? rc : -rc) / Math.sqrt(x01 * x01 + y01 * y01),
+      lo = (cw ? rc : -rc) / sqrt(x01 * x01 + y01 * y01),
       ox = lo * y01,
       oy = -lo * x01,
       x11 = x0 + ox,
@@ -3462,7 +3589,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       d2 = dx * dx + dy * dy,
       r = r1 - rc,
       D = x11 * y10 - x10 * y11,
-      d = (dy < 0 ? -1 : 1) * Math.sqrt(Math.max(0, r * r * d2 - D * D)),
+      d = (dy < 0 ? -1 : 1) * sqrt(max$1(0, r * r * d2 - D * D)),
       cx0 = (D * dy - dx * d) / d2,
       cy0 = (-D * dx - dy * d) / d2,
       cx1 = (D * dy + dx * d) / d2,
@@ -3503,7 +3630,7 @@ function d3_arc() {
         r1 = +outerRadius.apply(this, arguments),
         a0 = startAngle.apply(this, arguments) - halfPi,
         a1 = endAngle.apply(this, arguments) - halfPi,
-        da = Math.abs(a1 - a0),
+        da = abs(a1 - a0),
         cw = a1 > a0;
 
     if (!context) context = buffer = path();
@@ -3516,10 +3643,10 @@ function d3_arc() {
 
     // Or is it a circle or annulus?
     else if (da > tau$1 - epsilon$1) {
-      context.moveTo(r1 * Math.cos(a0), r1 * Math.sin(a0));
+      context.moveTo(r1 * cos(a0), r1 * sin(a0));
       context.arc(0, 0, r1, a0, a1, !cw);
       if (r0 > epsilon$1) {
-        context.moveTo(r0 * Math.cos(a1), r0 * Math.sin(a1));
+        context.moveTo(r0 * cos(a1), r0 * sin(a1));
         context.arc(0, 0, r0, a1, a0, cw);
       }
     }
@@ -3533,8 +3660,8 @@ function d3_arc() {
           da0 = da,
           da1 = da,
           ap = padAngle.apply(this, arguments) / 2,
-          rp = (ap > epsilon$1) && (padRadius ? +padRadius.apply(this, arguments) : Math.sqrt(r0 * r0 + r1 * r1)),
-          rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
+          rp = (ap > epsilon$1) && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
+          rc = min$1(abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
           rc0 = rc,
           rc1 = rc,
           t0,
@@ -3542,25 +3669,25 @@ function d3_arc() {
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon$1) {
-        var p0 = asin(rp / r0 * Math.sin(ap)),
-            p1 = asin(rp / r1 * Math.sin(ap));
+        var p0 = asin(rp / r0 * sin(ap)),
+            p1 = asin(rp / r1 * sin(ap));
         if ((da0 -= p0 * 2) > epsilon$1) p0 *= (cw ? 1 : -1), a00 += p0, a10 -= p0;
         else da0 = 0, a00 = a10 = (a0 + a1) / 2;
         if ((da1 -= p1 * 2) > epsilon$1) p1 *= (cw ? 1 : -1), a01 += p1, a11 -= p1;
         else da1 = 0, a01 = a11 = (a0 + a1) / 2;
       }
 
-      var x01 = r1 * Math.cos(a01),
-          y01 = r1 * Math.sin(a01),
-          x10 = r0 * Math.cos(a10),
-          y10 = r0 * Math.sin(a10);
+      var x01 = r1 * cos(a01),
+          y01 = r1 * sin(a01),
+          x10 = r0 * cos(a10),
+          y10 = r0 * sin(a10);
 
       // Apply rounded corners?
       if (rc > epsilon$1) {
-        var x11 = r1 * Math.cos(a11),
-            y11 = r1 * Math.sin(a11),
-            x00 = r0 * Math.cos(a00),
-            y00 = r0 * Math.sin(a00);
+        var x11 = r1 * cos(a11),
+            y11 = r1 * sin(a11),
+            x00 = r0 * cos(a00),
+            y00 = r0 * sin(a00);
 
         // Restrict the corner radius according to the sector angle.
         if (da < pi$1) {
@@ -3569,10 +3696,10 @@ function d3_arc() {
               ay = y01 - oc[1],
               bx = x11 - oc[0],
               by = y11 - oc[1],
-              kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2),
-              lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-          rc0 = Math.min(rc, (r0 - lc) / (kc - 1));
-          rc1 = Math.min(rc, (r1 - lc) / (kc + 1));
+              kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2),
+              lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+          rc0 = min$1(rc, (r0 - lc) / (kc - 1));
+          rc1 = min$1(rc, (r1 - lc) / (kc + 1));
         }
       }
 
@@ -3587,13 +3714,13 @@ function d3_arc() {
         context.moveTo(t0.cx + t0.x01, t0.cy + t0.y01);
 
         // Have the corners merged?
-        if (rc1 < rc) context.arc(t0.cx, t0.cy, rc1, Math.atan2(t0.y01, t0.x01), Math.atan2(t1.y01, t1.x01), !cw);
+        if (rc1 < rc) context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw);
 
         // Otherwise, draw the two corners and the ring.
         else {
-          context.arc(t0.cx, t0.cy, rc1, Math.atan2(t0.y01, t0.x01), Math.atan2(t0.y11, t0.x11), !cw);
-          context.arc(0, 0, r1, Math.atan2(t0.cy + t0.y11, t0.cx + t0.x11), Math.atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw);
-          context.arc(t1.cx, t1.cy, rc1, Math.atan2(t1.y11, t1.x11), Math.atan2(t1.y01, t1.x01), !cw);
+          context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw);
+          context.arc(0, 0, r1, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw);
+          context.arc(t1.cx, t1.cy, rc1, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw);
         }
       }
 
@@ -3612,13 +3739,13 @@ function d3_arc() {
         context.lineTo(t0.cx + t0.x01, t0.cy + t0.y01);
 
         // Have the corners merged?
-        if (rc0 < rc) context.arc(t0.cx, t0.cy, rc0, Math.atan2(t0.y01, t0.x01), Math.atan2(t1.y01, t1.x01), !cw);
+        if (rc0 < rc) context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw);
 
         // Otherwise, draw the two corners and the ring.
         else {
-          context.arc(t0.cx, t0.cy, rc0, Math.atan2(t0.y01, t0.x01), Math.atan2(t0.y11, t0.x11), !cw);
-          context.arc(0, 0, r0, Math.atan2(t0.cy + t0.y11, t0.cx + t0.x11), Math.atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw);
-          context.arc(t1.cx, t1.cy, rc0, Math.atan2(t1.y11, t1.x11), Math.atan2(t1.y01, t1.x01), !cw);
+          context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw);
+          context.arc(0, 0, r0, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw);
+          context.arc(t1.cx, t1.cy, rc0, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw);
         }
       }
 
@@ -3634,7 +3761,7 @@ function d3_arc() {
   arc.centroid = function() {
     var r = (+innerRadius.apply(this, arguments) + +outerRadius.apply(this, arguments)) / 2,
         a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - pi$1 / 2;
-    return [Math.cos(a) * r, Math.sin(a) * r];
+    return [cos(a) * r, sin(a) * r];
   };
 
   arc.innerRadius = function(_) {
@@ -5741,15 +5868,20 @@ function fill(context, item, opacity) {
 var Empty = [];
 
 function stroke(context, item, opacity) {
-  var lw = (lw = item.strokeWidth) != null ? lw : 1, lc;
+  var lw = (lw = item.strokeWidth) != null ? lw : 1;
+
   if (lw <= 0) return false;
 
   opacity *= (item.strokeOpacity==null ? 1 : item.strokeOpacity);
   if (opacity > 0) {
     context.globalAlpha = opacity;
     context.strokeStyle = color(context, item, item.stroke);
+
     context.lineWidth = lw;
-    context.lineCap = (lc = item.strokeCap) != null ? lc : 'butt';
+    context.lineCap = item.strokeCap || 'butt';
+    context.lineJoin = item.strokeJoin || 'miter';
+    context.miterLimit = item.strokeMiterLimit || 10;
+
     if (context.setLineDash) {
       context.setLineDash(item.strokeDash || Empty);
       context.lineDashOffset = item.strokeDashOffset || 0;
@@ -5990,6 +6122,15 @@ function markMultiItemPath(type, shape) {
 
 var area$2 = markMultiItemPath('area', area);
 
+function clip(renderer, item, size) {
+  var defs = renderer._defs,
+      id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
+      c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+  c.width = size.width || 0;
+  c.height = size.height || 0;
+  return 'url(#' + id + ')';
+}
+
 function attr(emit, item) {
   emit('transform', translateItem(item));
 }
@@ -6001,14 +6142,8 @@ function background(emit, item) {
 }
 
 function foreground(emit, item, renderer) {
-  if (item.clip) {
-    var defs = renderer._defs,
-        id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
-        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-    c.width = item.width || 0;
-    c.height = item.height || 0;
-  }
-  emit('clip-path', id ? ('url(#' + id + ')') : null);
+  var url = item.clip ? clip(renderer, item, item) : null;
+  emit('clip-path', url);
 }
 
 function bound(bounds, group) {
@@ -6104,7 +6239,7 @@ function pick$1(context, scene, x, y, gx, gy) {
     dy = gy - dy;
 
     hit = pickVisit(group, function(mark) {
-      return (mark.interactive !== false || mark.marktype === 'group')
+      return pickMark(mark, dx, dy)
         ? handler.pick(mark, x, y, dx, dy)
         : null;
     });
@@ -6121,6 +6256,11 @@ function pick$1(context, scene, x, y, gx, gy) {
 
     return hit ? group : null;
   });
+}
+
+function pickMark(mark, x, y) {
+  return (mark.interactive !== false || mark.marktype === 'group')
+    && mark.bounds && mark.bounds.contains(x, y);
 }
 
 var group = {
@@ -7189,6 +7329,14 @@ prototype$5.pick = function(scene, x, y, gx, gy) {
   return mark.pick.call(this, g, scene, x, y, gx, gy);
 };
 
+function clip$1(context, scene) {
+  var group = scene.group;
+  context.save();
+  context.beginPath();
+  context.rect(0, 0, group.width || 0, group.height || 0);
+  context.clip();
+}
+
 var devicePixelRatio = typeof window !== 'undefined'
   ? window.devicePixelRatio || 1 : 1;
 
@@ -7305,7 +7453,9 @@ prototype$6._render = function(scene, items) {
 
 prototype$6.draw = function(ctx, scene, bounds) {
   var mark = Marks[scene.marktype];
+  if (scene.clip) clip$1(ctx, scene);
   mark.draw.call(this, ctx, scene, bounds);
+  if (scene.clip) ctx.restore();
 };
 
 prototype$6.clear = function(x, y, w, h) {
@@ -7439,8 +7589,10 @@ var styles = {
   'strokeWidth':      'stroke-width',
   'strokeOpacity':    'stroke-opacity',
   'strokeCap':        'stroke-linecap',
+  'strokeJoin':       'stroke-linejoin',
   'strokeDash':       'stroke-dasharray',
   'strokeDashOffset': 'stroke-dashoffset',
+  'strokeMiterLimit': 'stroke-miterlimit',
   'opacity':          'opacity'
 };
 
@@ -7688,6 +7840,9 @@ prototype$8.draw = function(el, scene, prev) {
   parent.setAttribute('class', cssClass(scene));
   if (!isGroup && events) {
     parent.style.setProperty('pointer-events', events);
+  }
+  if (scene.clip) {
+    parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
   }
 
   function process(item) {
@@ -8029,7 +8184,8 @@ prototype$9.mark = function(scene) {
 
   // render opening group tag
   str += openTag('g', {
-    'class': cssClass(scene)
+    'class': cssClass(scene),
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
   }, style);
 
   // render contained elements
@@ -10597,12 +10753,20 @@ prototype$20._bins = function(_) {
       bins  = bin$1(_),
       start = bins.start,
       stop  = bins.stop,
-      step  = bins.step;
+      step  = bins.step,
+      a, d;
+
+  if ((a = _.anchor) != null) {
+    d = a - (start + step * Math.floor((a - start) / step));
+    start += d;
+    stop += d;
+  }
 
   var f = function(t) {
     var v = field(t);
     return v == null ? null
-      : start + step * Math.floor((+v - start) / step);
+      : (v = Math.max(start, Math.min(+v, stop - step)),
+         start + step * Math.floor((v - start) / step));
   };
 
   f.start = start;
@@ -12029,6 +12193,7 @@ var BinDefinition = {
   "metadata": {"modifies": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
+    { "name": "anchor", "type": "number" },
     { "name": "maxbins", "type": "number", "default": 20 },
     { "name": "base", "type": "number", "default": 10 },
     { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
@@ -13666,7 +13831,8 @@ function formatLocale$1(locale) {
   var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$5,
       currency = locale.currency,
       decimal = locale.decimal,
-      numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$5;
+      numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$5,
+      percent = locale.percent || "%";
 
   function newFormat(specifier) {
     specifier = formatSpecifier(specifier);
@@ -13684,7 +13850,7 @@ function formatLocale$1(locale) {
     // Compute the prefix and suffix.
     // For SI-prefix, the suffix is lazily computed.
     var prefix = symbol === "$" ? currency[0] : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
-        suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? "%" : "";
+        suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? percent : "";
 
     // What format function should we use?
     // Is this an integer type?
@@ -14076,7 +14242,7 @@ function pow() {
   return linearish(scale);
 }
 
-function sqrt() {
+function sqrt$1() {
   return pow().exponent(0.5);
 }
 
@@ -14656,7 +14822,7 @@ var scales = {
   log:           log$1,
   ordinal:       ordinal,
   pow:           pow,
-  sqrt:          sqrt,
+  sqrt:          sqrt$1,
   quantile:      quantile,
   quantize:      quantize$1,
   threshold:     threshold$1,
@@ -15423,20 +15589,20 @@ var tau$4 = pi$3 * 2;
 var degrees$1 = 180 / pi$3;
 var radians = pi$3 / 180;
 
-var abs = Math.abs;
+var abs$1 = Math.abs;
 var atan = Math.atan;
-var atan2 = Math.atan2;
-var cos = Math.cos;
+var atan2$1 = Math.atan2;
+var cos$1 = Math.cos;
 var ceil = Math.ceil;
 var exp = Math.exp;
 var log$2 = Math.log;
 var pow$1 = Math.pow;
-var sin = Math.sin;
+var sin$1 = Math.sin;
 var sign$1 = Math.sign || function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; };
-var sqrt$1 = Math.sqrt;
+var sqrt$2 = Math.sqrt;
 var tan = Math.tan;
 
-function acos(x) {
+function acos$1(x) {
   return x > 1 ? 0 : x < -1 ? pi$3 : Math.acos(x);
 }
 
@@ -15555,7 +15721,7 @@ function areaPointFirst(lambda, phi) {
   areaStream.point = areaPoint;
   lambda00 = lambda, phi00 = phi;
   lambda *= radians, phi *= radians;
-  lambda0 = lambda, cosPhi0 = cos(phi = phi / 2 + quarterPi), sinPhi0 = sin(phi);
+  lambda0 = lambda, cosPhi0 = cos$1(phi = phi / 2 + quarterPi), sinPhi0 = sin$1(phi);
 }
 
 function areaPoint(lambda, phi) {
@@ -15568,24 +15734,24 @@ function areaPoint(lambda, phi) {
   var dLambda = lambda - lambda0,
       sdLambda = dLambda >= 0 ? 1 : -1,
       adLambda = sdLambda * dLambda,
-      cosPhi = cos(phi),
-      sinPhi = sin(phi),
+      cosPhi = cos$1(phi),
+      sinPhi = sin$1(phi),
       k = sinPhi0 * sinPhi,
-      u = cosPhi0 * cosPhi + k * cos(adLambda),
-      v = k * sdLambda * sin(adLambda);
-  areaRingSum.add(atan2(v, u));
+      u = cosPhi0 * cosPhi + k * cos$1(adLambda),
+      v = k * sdLambda * sin$1(adLambda);
+  areaRingSum.add(atan2$1(v, u));
 
   // Advance the previous points.
   lambda0 = lambda, cosPhi0 = cosPhi, sinPhi0 = sinPhi;
 }
 
 function spherical(cartesian) {
-  return [atan2(cartesian[1], cartesian[0]), asin$1(cartesian[2])];
+  return [atan2$1(cartesian[1], cartesian[0]), asin$1(cartesian[2])];
 }
 
 function cartesian(spherical) {
-  var lambda = spherical[0], phi = spherical[1], cosPhi = cos(phi);
-  return [cosPhi * cos(lambda), cosPhi * sin(lambda), sin(phi)];
+  var lambda = spherical[0], phi = spherical[1], cosPhi = cos$1(phi);
+  return [cosPhi * cos$1(lambda), cosPhi * sin$1(lambda), sin$1(phi)];
 }
 
 function cartesianDot(a, b) {
@@ -15607,7 +15773,7 @@ function cartesianScale(vector, k) {
 
 // TODO return d
 function cartesianNormalizeInPlace(d) {
-  var l = sqrt$1(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+  var l = sqrt$2(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
   d[0] /= l, d[1] /= l, d[2] /= l;
 }
 
@@ -15663,7 +15829,7 @@ function linePoint(lambda, phi) {
         sign = delta > 0 ? 1 : -1,
         lambdai = inflection[0] * degrees$1 * sign,
         phii,
-        antimeridian = abs(delta) > 180;
+        antimeridian = abs$1(delta) > 180;
     if (antimeridian ^ (sign * lambda2 < lambdai && lambdai < sign * lambda)) {
       phii = inflection[1] * degrees$1;
       if (phii > phi1) phi1 = phii;
@@ -15713,7 +15879,7 @@ function boundsLineEnd() {
 function boundsRingPoint(lambda, phi) {
   if (p0) {
     var delta = lambda - lambda2;
-    deltaSum.add(abs(delta) > 180 ? delta + (delta > 0 ? 360 : -360) : delta);
+    deltaSum.add(abs$1(delta) > 180 ? delta + (delta > 0 ? 360 : -360) : delta);
   } else {
     lambda00$1 = lambda, phi00$1 = phi;
   }
@@ -15728,7 +15894,7 @@ function boundsRingStart() {
 function boundsRingEnd() {
   boundsRingPoint(lambda00$1, phi00$1);
   areaStream.lineEnd();
-  if (abs(deltaSum) > epsilon$2) lambda0$1 = -(lambda1 = 180);
+  if (abs$1(deltaSum) > epsilon$2) lambda0$1 = -(lambda1 = 180);
   range[0] = lambda0$1, range[1] = lambda1;
   p0 = null;
 }
@@ -15776,8 +15942,8 @@ var centroidStream = {
 // Arithmetic mean of Cartesian vectors.
 function centroidPoint(lambda, phi) {
   lambda *= radians, phi *= radians;
-  var cosPhi = cos(phi);
-  centroidPointCartesian(cosPhi * cos(lambda), cosPhi * sin(lambda), sin(phi));
+  var cosPhi = cos$1(phi);
+  centroidPointCartesian(cosPhi * cos$1(lambda), cosPhi * sin$1(lambda), sin$1(phi));
 }
 
 function centroidPointCartesian(x, y, z) {
@@ -15793,21 +15959,21 @@ function centroidLineStart() {
 
 function centroidLinePointFirst(lambda, phi) {
   lambda *= radians, phi *= radians;
-  var cosPhi = cos(phi);
-  x0 = cosPhi * cos(lambda);
-  y0 = cosPhi * sin(lambda);
-  z0 = sin(phi);
+  var cosPhi = cos$1(phi);
+  x0 = cosPhi * cos$1(lambda);
+  y0 = cosPhi * sin$1(lambda);
+  z0 = sin$1(phi);
   centroidStream.point = centroidLinePoint;
   centroidPointCartesian(x0, y0, z0);
 }
 
 function centroidLinePoint(lambda, phi) {
   lambda *= radians, phi *= radians;
-  var cosPhi = cos(phi),
-      x = cosPhi * cos(lambda),
-      y = cosPhi * sin(lambda),
-      z = sin(phi),
-      w = atan2(sqrt$1((w = y0 * z - z0 * y) * w + (w = z0 * x - x0 * z) * w + (w = x0 * y - y0 * x) * w), x0 * x + y0 * y + z0 * z);
+  var cosPhi = cos$1(phi),
+      x = cosPhi * cos$1(lambda),
+      y = cosPhi * sin$1(lambda),
+      z = sin$1(phi),
+      w = atan2$1(sqrt$2((w = y0 * z - z0 * y) * w + (w = z0 * x - x0 * z) * w + (w = x0 * y - y0 * x) * w), x0 * x + y0 * y + z0 * z);
   W1 += w;
   X1 += w * (x0 + (x0 = x));
   Y1 += w * (y0 + (y0 = y));
@@ -15834,23 +16000,23 @@ function centroidRingPointFirst(lambda, phi) {
   lambda00$2 = lambda, phi00$2 = phi;
   lambda *= radians, phi *= radians;
   centroidStream.point = centroidRingPoint;
-  var cosPhi = cos(phi);
-  x0 = cosPhi * cos(lambda);
-  y0 = cosPhi * sin(lambda);
-  z0 = sin(phi);
+  var cosPhi = cos$1(phi);
+  x0 = cosPhi * cos$1(lambda);
+  y0 = cosPhi * sin$1(lambda);
+  z0 = sin$1(phi);
   centroidPointCartesian(x0, y0, z0);
 }
 
 function centroidRingPoint(lambda, phi) {
   lambda *= radians, phi *= radians;
-  var cosPhi = cos(phi),
-      x = cosPhi * cos(lambda),
-      y = cosPhi * sin(lambda),
-      z = sin(phi),
+  var cosPhi = cos$1(phi),
+      x = cosPhi * cos$1(lambda),
+      y = cosPhi * sin$1(lambda),
+      z = sin$1(phi),
       cx = y0 * z - z0 * y,
       cy = z0 * x - x0 * z,
       cz = x0 * y - y0 * x,
-      m = sqrt$1(cx * cx + cy * cy + cz * cz),
+      m = sqrt$2(cx * cx + cy * cy + cz * cz),
       w = asin$1(m), // line weight = angle
       v = m && -w / m; // area weight multiplier
   X2 += v * cx;
@@ -15902,31 +16068,31 @@ function rotationLambda(deltaLambda) {
 }
 
 function rotationPhiGamma(deltaPhi, deltaGamma) {
-  var cosDeltaPhi = cos(deltaPhi),
-      sinDeltaPhi = sin(deltaPhi),
-      cosDeltaGamma = cos(deltaGamma),
-      sinDeltaGamma = sin(deltaGamma);
+  var cosDeltaPhi = cos$1(deltaPhi),
+      sinDeltaPhi = sin$1(deltaPhi),
+      cosDeltaGamma = cos$1(deltaGamma),
+      sinDeltaGamma = sin$1(deltaGamma);
 
   function rotation(lambda, phi) {
-    var cosPhi = cos(phi),
-        x = cos(lambda) * cosPhi,
-        y = sin(lambda) * cosPhi,
-        z = sin(phi),
+    var cosPhi = cos$1(phi),
+        x = cos$1(lambda) * cosPhi,
+        y = sin$1(lambda) * cosPhi,
+        z = sin$1(phi),
         k = z * cosDeltaPhi + x * sinDeltaPhi;
     return [
-      atan2(y * cosDeltaGamma - k * sinDeltaGamma, x * cosDeltaPhi - z * sinDeltaPhi),
+      atan2$1(y * cosDeltaGamma - k * sinDeltaGamma, x * cosDeltaPhi - z * sinDeltaPhi),
       asin$1(k * cosDeltaGamma + y * sinDeltaGamma)
     ];
   }
 
   rotation.invert = function(lambda, phi) {
-    var cosPhi = cos(phi),
-        x = cos(lambda) * cosPhi,
-        y = sin(lambda) * cosPhi,
-        z = sin(phi),
+    var cosPhi = cos$1(phi),
+        x = cos$1(lambda) * cosPhi,
+        y = sin$1(lambda) * cosPhi,
+        z = sin$1(phi),
         k = z * cosDeltaGamma - y * sinDeltaGamma;
     return [
-      atan2(y * cosDeltaGamma + z * sinDeltaGamma, x * cosDeltaPhi + k * sinDeltaPhi),
+      atan2$1(y * cosDeltaGamma + z * sinDeltaGamma, x * cosDeltaPhi + k * sinDeltaPhi),
       asin$1(k * cosDeltaPhi - x * sinDeltaPhi)
     ];
   };
@@ -15934,11 +16100,27 @@ function rotationPhiGamma(deltaPhi, deltaGamma) {
   return rotation;
 }
 
+function rotation(rotate) {
+  rotate = rotateRadians(rotate[0] * radians, rotate[1] * radians, rotate.length > 2 ? rotate[2] * radians : 0);
+
+  function forward(coordinates) {
+    coordinates = rotate(coordinates[0] * radians, coordinates[1] * radians);
+    return coordinates[0] *= degrees$1, coordinates[1] *= degrees$1, coordinates;
+  }
+
+  forward.invert = function(coordinates) {
+    coordinates = rotate.invert(coordinates[0] * radians, coordinates[1] * radians);
+    return coordinates[0] *= degrees$1, coordinates[1] *= degrees$1, coordinates;
+  };
+
+  return forward;
+}
+
 // Generates a circle centered at [0°, 0°], with a given radius and precision.
 function circleStream(stream, radius, delta, direction, t0, t1) {
   if (!delta) return;
-  var cosRadius = cos(radius),
-      sinRadius = sin(radius),
+  var cosRadius = cos$1(radius),
+      sinRadius = sin$1(radius),
       step = direction * delta;
   if (t0 == null) {
     t0 = radius + direction * tau$4;
@@ -15949,7 +16131,7 @@ function circleStream(stream, radius, delta, direction, t0, t1) {
     if (direction > 0 ? t0 < t1 : t0 > t1) t0 += direction * tau$4;
   }
   for (var point, t = t0; direction > 0 ? t > t1 : t < t1; t -= step) {
-    point = spherical([cosRadius, -sinRadius * cos(t), -sinRadius * sin(t)]);
+    point = spherical([cosRadius, -sinRadius * cos$1(t), -sinRadius * sin$1(t)]);
     stream.point(point[0], point[1]);
   }
 }
@@ -15958,7 +16140,7 @@ function circleStream(stream, radius, delta, direction, t0, t1) {
 function circleRadius(cosRadius, point) {
   point = cartesian(point), point[0] -= cosRadius;
   cartesianNormalizeInPlace(point);
-  var radius = acos(-point[1]);
+  var radius = acos$1(-point[1]);
   return ((-point[2] < 0 ? -radius : radius) + tau$4 - epsilon$2) % tau$4;
 }
 
@@ -16046,7 +16228,7 @@ function clipLine(a, b, x0, y0, x1, y1) {
 }
 
 function pointEqual(a, b) {
-  return abs(a[0] - b[0]) < epsilon$2 && abs(a[1] - b[1]) < epsilon$2;
+  return abs$1(a[0] - b[0]) < epsilon$2 && abs$1(a[1] - b[1]) < epsilon$2;
 }
 
 function Intersection(point, points, other, entry) {
@@ -16173,9 +16355,9 @@ function clipExtent(x0, y0, x1, y1) {
   }
 
   function corner(p, direction) {
-    return abs(p[0] - x0) < epsilon$2 ? direction > 0 ? 0 : 3
-        : abs(p[0] - x1) < epsilon$2 ? direction > 0 ? 2 : 1
-        : abs(p[1] - y0) < epsilon$2 ? direction > 0 ? 1 : 0
+    return abs$1(p[0] - x0) < epsilon$2 ? direction > 0 ? 0 : 3
+        : abs$1(p[0] - x1) < epsilon$2 ? direction > 0 ? 2 : 1
+        : abs$1(p[1] - y0) < epsilon$2 ? direction > 0 ? 1 : 0
         : direction > 0 ? 3 : 2; // abs(p[1] - y1) < epsilon
   }
 
@@ -16317,7 +16499,7 @@ var sum$2 = adder();
 function polygonContains(polygon, point) {
   var lambda = point[0],
       phi = point[1],
-      normal = [sin(lambda), -cos(lambda), 0],
+      normal = [sin$1(lambda), -cos$1(lambda), 0],
       angle = 0,
       winding = 0;
 
@@ -16330,22 +16512,22 @@ function polygonContains(polygon, point) {
         point0 = ring[m - 1],
         lambda0 = point0[0],
         phi0 = point0[1] / 2 + quarterPi,
-        sinPhi0 = sin(phi0),
-        cosPhi0 = cos(phi0);
+        sinPhi0 = sin$1(phi0),
+        cosPhi0 = cos$1(phi0);
 
     for (var j = 0; j < m; ++j, lambda0 = lambda1, sinPhi0 = sinPhi1, cosPhi0 = cosPhi1, point0 = point1) {
       var point1 = ring[j],
           lambda1 = point1[0],
           phi1 = point1[1] / 2 + quarterPi,
-          sinPhi1 = sin(phi1),
-          cosPhi1 = cos(phi1),
+          sinPhi1 = sin$1(phi1),
+          cosPhi1 = cos$1(phi1),
           delta = lambda1 - lambda0,
           sign = delta >= 0 ? 1 : -1,
           absDelta = sign * delta,
           antimeridian = absDelta > pi$3,
           k = sinPhi0 * sinPhi1;
 
-      sum$2.add(atan2(k * sign * sin(absDelta), cosPhi0 * cosPhi1 + k * cos(absDelta)));
+      sum$2.add(atan2$1(k * sign * sin$1(absDelta), cosPhi0 * cosPhi1 + k * cos$1(absDelta)));
       angle += antimeridian ? delta + sign * tau$4 : delta;
 
       // Are the longitudes either side of the point’s meridian (lambda),
@@ -16401,21 +16583,21 @@ function lengthLineEnd() {
 
 function lengthPointFirst(lambda, phi) {
   lambda *= radians, phi *= radians;
-  lambda0$2 = lambda, sinPhi0$1 = sin(phi), cosPhi0$1 = cos(phi);
+  lambda0$2 = lambda, sinPhi0$1 = sin$1(phi), cosPhi0$1 = cos$1(phi);
   lengthStream.point = lengthPoint;
 }
 
 function lengthPoint(lambda, phi) {
   lambda *= radians, phi *= radians;
-  var sinPhi = sin(phi),
-      cosPhi = cos(phi),
-      delta = abs(lambda - lambda0$2),
-      cosDelta = cos(delta),
-      sinDelta = sin(delta),
+  var sinPhi = sin$1(phi),
+      cosPhi = cos$1(phi),
+      delta = abs$1(lambda - lambda0$2),
+      cosDelta = cos$1(delta),
+      sinDelta = sin$1(delta),
       x = cosPhi * sinDelta,
       y = cosPhi0$1 * sinPhi - sinPhi0$1 * cosPhi * cosDelta,
       z = sinPhi0$1 * sinPhi + cosPhi0$1 * cosPhi * cosDelta;
-  lengthSum.add(atan2(sqrt$1(x * x + y * y), z));
+  lengthSum.add(atan2$1(sqrt$2(x * x + y * y), z));
   lambda0$2 = lambda, sinPhi0$1 = sinPhi, cosPhi0$1 = cosPhi;
 }
 
@@ -16443,8 +16625,8 @@ function graticule() {
   function lines() {
     return sequence(ceil(X0 / DX) * DX, X1, DX).map(X)
         .concat(sequence(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
-        .concat(sequence(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs(x % DX) > epsilon$2; }).map(x))
-        .concat(sequence(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs(y % DY) > epsilon$2; }).map(y));
+        .concat(sequence(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$2; }).map(x))
+        .concat(sequence(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$2; }).map(y));
   }
 
   graticule.lines = function() {
@@ -16538,7 +16720,7 @@ var areaStream$1 = {
   },
   polygonEnd: function() {
     areaStream$1.lineStart = areaStream$1.lineEnd = areaStream$1.point = noop$4;
-    areaSum$1.add(abs(areaRingSum$1));
+    areaSum$1.add(abs$1(areaRingSum$1));
     areaRingSum$1.reset();
   },
   result: function() {
@@ -16644,7 +16826,7 @@ function centroidPointFirstLine(x, y) {
 }
 
 function centroidPointLine(x, y) {
-  var dx = x - x0$3, dy = y - y0$3, z = sqrt$1(dx * dx + dy * dy);
+  var dx = x - x0$3, dy = y - y0$3, z = sqrt$2(dx * dx + dy * dy);
   X1$1 += z * (x0$3 + x) / 2;
   Y1$1 += z * (y0$3 + y) / 2;
   Z1$1 += z;
@@ -16671,7 +16853,7 @@ function centroidPointFirstRing(x, y) {
 function centroidPointRing(x, y) {
   var dx = x - x0$3,
       dy = y - y0$3,
-      z = sqrt$1(dx * dx + dy * dy);
+      z = sqrt$2(dx * dx + dy * dy);
 
   X1$1 += z * (x0$3 + x) / 2;
   Y1$1 += z * (y0$3 + y) / 2;
@@ -16762,7 +16944,7 @@ function lengthPointFirst$1(x, y) {
 
 function lengthPoint$1(x, y) {
   x0$4 -= x, y0$4 -= y;
-  lengthSum$1.add(sqrt$1(x0$4 * x0$4 + y0$4 * y0$4));
+  lengthSum$1.add(sqrt$2(x0$4 * x0$4 + y0$4 * y0$4));
   x0$4 = x, y0$4 = y;
 }
 
@@ -16874,7 +17056,7 @@ function geoPath(projection, context) {
   return path.projection(projection).context(context);
 }
 
-function clip(pointVisible, clipLine, interpolate, start) {
+function clip$2(pointVisible, clipLine, interpolate, start) {
   return function(rotate, sink) {
     var line = clipLine(sink),
         rotatedStart = rotate.invert(start[0], start[1]),
@@ -17004,7 +17186,7 @@ function compareIntersection(a, b) {
        - ((b = b.x)[0] < 0 ? b[1] - halfPi$2 - epsilon$2 : halfPi$2 - b[1]);
 }
 
-var clipAntimeridian = clip(
+var clipAntimeridian = clip$2(
   function() { return true; },
   clipAntimeridianLine,
   clipAntimeridianInterpolate,
@@ -17027,8 +17209,8 @@ function clipAntimeridianLine(stream) {
     },
     point: function(lambda1, phi1) {
       var sign1 = lambda1 > 0 ? pi$3 : -pi$3,
-          delta = abs(lambda1 - lambda0);
-      if (abs(delta - pi$3) < epsilon$2) { // line crosses a pole
+          delta = abs$1(lambda1 - lambda0);
+      if (abs$1(delta - pi$3) < epsilon$2) { // line crosses a pole
         stream.point(lambda0, phi0 = (phi0 + phi1) / 2 > 0 ? halfPi$2 : -halfPi$2);
         stream.point(sign0, phi0);
         stream.lineEnd();
@@ -17037,8 +17219,8 @@ function clipAntimeridianLine(stream) {
         stream.point(lambda1, phi0);
         clean = 0;
       } else if (sign0 !== sign1 && delta >= pi$3) { // line crosses antimeridian
-        if (abs(lambda0 - sign0) < epsilon$2) lambda0 -= sign0 * epsilon$2; // handle degeneracies
-        if (abs(lambda1 - sign1) < epsilon$2) lambda1 -= sign1 * epsilon$2;
+        if (abs$1(lambda0 - sign0) < epsilon$2) lambda0 -= sign0 * epsilon$2; // handle degeneracies
+        if (abs$1(lambda1 - sign1) < epsilon$2) lambda1 -= sign1 * epsilon$2;
         phi0 = clipAntimeridianIntersect(lambda0, phi0, lambda1, phi1);
         stream.point(sign0, phi0);
         stream.lineEnd();
@@ -17062,10 +17244,10 @@ function clipAntimeridianLine(stream) {
 function clipAntimeridianIntersect(lambda0, phi0, lambda1, phi1) {
   var cosPhi0,
       cosPhi1,
-      sinLambda0Lambda1 = sin(lambda0 - lambda1);
-  return abs(sinLambda0Lambda1) > epsilon$2
-      ? atan((sin(phi0) * (cosPhi1 = cos(phi1)) * sin(lambda1)
-          - sin(phi1) * (cosPhi0 = cos(phi0)) * sin(lambda0))
+      sinLambda0Lambda1 = sin$1(lambda0 - lambda1);
+  return abs$1(sinLambda0Lambda1) > epsilon$2
+      ? atan((sin$1(phi0) * (cosPhi1 = cos$1(phi1)) * sin$1(lambda1)
+          - sin$1(phi1) * (cosPhi0 = cos$1(phi0)) * sin$1(lambda0))
           / (cosPhi0 * cosPhi1 * sinLambda0Lambda1))
       : (phi0 + phi1) / 2;
 }
@@ -17083,7 +17265,7 @@ function clipAntimeridianInterpolate(from, to, direction, stream) {
     stream.point(-pi$3, -phi);
     stream.point(-pi$3, 0);
     stream.point(-pi$3, phi);
-  } else if (abs(from[0] - to[0]) > epsilon$2) {
+  } else if (abs$1(from[0] - to[0]) > epsilon$2) {
     var lambda = from[0] < to[0] ? pi$3 : -pi$3;
     phi = direction * lambda / 2;
     stream.point(-lambda, phi);
@@ -17095,16 +17277,16 @@ function clipAntimeridianInterpolate(from, to, direction, stream) {
 }
 
 function clipCircle(radius, delta) {
-  var cr = cos(radius),
+  var cr = cos$1(radius),
       smallRadius = cr > 0,
-      notHemisphere = abs(cr) > epsilon$2; // TODO optimise for this common case
+      notHemisphere = abs$1(cr) > epsilon$2; // TODO optimise for this common case
 
   function interpolate(from, to, direction, stream) {
     circleStream(stream, radius, delta, direction, from, to);
   }
 
   function visible(lambda, phi) {
-    return cos(lambda) * cos(phi) > cr;
+    return cos$1(lambda) * cos$1(phi) > cr;
   }
 
   // Takes a line and cuts into visible segments. Return values used for polygon
@@ -17221,7 +17403,7 @@ function clipCircle(radius, delta) {
 
     if (t2 < 0) return;
 
-    var t = sqrt$1(t2),
+    var t = sqrt$2(t2),
         q = cartesianScale(u, (-w - t) / uu);
     cartesianAddInPlace(q, A);
     q = spherical(q);
@@ -17238,7 +17420,7 @@ function clipCircle(radius, delta) {
     if (lambda1 < lambda0) z = lambda0, lambda0 = lambda1, lambda1 = z;
 
     var delta = lambda1 - lambda0,
-        polar = abs(delta - pi$3) < epsilon$2,
+        polar = abs$1(delta - pi$3) < epsilon$2,
         meridian = polar || delta < epsilon$2;
 
     if (!polar && phi1 < phi0) z = phi0, phi0 = phi1, phi1 = z;
@@ -17246,7 +17428,7 @@ function clipCircle(radius, delta) {
     // Check that the first point is between a and b.
     if (meridian
         ? polar
-          ? phi0 + phi1 > 0 ^ q[1] < (abs(q[0] - lambda0) < epsilon$2 ? phi0 : phi1)
+          ? phi0 + phi1 > 0 ^ q[1] < (abs$1(q[0] - lambda0) < epsilon$2 ? phi0 : phi1)
           : phi0 <= q[1] && q[1] <= phi1
         : delta > pi$3 ^ (lambda0 <= q[0] && q[0] <= lambda1)) {
       var q1 = cartesianScale(u, (-w + t) / uu);
@@ -17267,7 +17449,7 @@ function clipCircle(radius, delta) {
     return code;
   }
 
-  return clip(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi$3, radius - pi$3]);
+  return clip$2(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi$3, radius - pi$3]);
 }
 
 function transformer(methods) {
@@ -17321,7 +17503,7 @@ function fitSize(projection, size, object) {
 }
 
 var maxDepth = 16;
-var cosMinDistance = cos(30 * radians);
+var cosMinDistance = cos$1(30 * radians);
 // cos(minimum angular distance)
 
 function resample(project, delta2) {
@@ -17347,9 +17529,9 @@ function resample$1(project, delta2) {
       var a = a0 + a1,
           b = b0 + b1,
           c = c0 + c1,
-          m = sqrt$1(a * a + b * b + c * c),
+          m = sqrt$2(a * a + b * b + c * c),
           phi2 = asin$1(c /= m),
-          lambda2 = abs(abs(c) - 1) < epsilon$2 || abs(lambda0 - lambda1) < epsilon$2 ? (lambda0 + lambda1) / 2 : atan2(b, a),
+          lambda2 = abs$1(abs$1(c) - 1) < epsilon$2 || abs$1(lambda0 - lambda1) < epsilon$2 ? (lambda0 + lambda1) / 2 : atan2$1(b, a),
           p = project(lambda2, phi2),
           x2 = p[0],
           y2 = p[1],
@@ -17357,7 +17539,7 @@ function resample$1(project, delta2) {
           dy2 = y2 - y0,
           dz = dy * dx2 - dx * dy2;
       if (dz * dz / d2 > delta2 // perpendicular projected distance
-          || abs((dx * dx2 + dy * dy2) / d2 - 0.5) > 0.3 // midpoint close to an end
+          || abs$1((dx * dx2 + dy * dy2) / d2 - 0.5) > 0.3 // midpoint close to an end
           || a0 * a1 + b0 * b1 + c0 * c1 < cosMinDistance) { // angular distance
         resampleLineTo(x0, y0, lambda0, a0, b0, c0, x2, y2, lambda2, a /= m, b /= m, c, depth, stream);
         stream.point(x2, y2);
@@ -17485,7 +17667,7 @@ function projectionMutator(projectAt) {
   };
 
   projection.precision = function(_) {
-    return arguments.length ? (projectResample = resample(projectTransform, delta2 = _ * _), reset()) : sqrt$1(delta2);
+    return arguments.length ? (projectResample = resample(projectTransform, delta2 = _ * _), reset()) : sqrt$2(delta2);
   };
 
   projection.fitExtent = function(extent, object) {
@@ -17530,10 +17712,10 @@ function conicProjection(projectAt) {
 }
 
 function cylindricalEqualAreaRaw(phi0) {
-  var cosPhi0 = cos(phi0);
+  var cosPhi0 = cos$1(phi0);
 
   function forward(lambda, phi) {
-    return [lambda * cosPhi0, sin(phi) / cosPhi0];
+    return [lambda * cosPhi0, sin$1(phi) / cosPhi0];
   }
 
   forward.invert = function(x, y) {
@@ -17544,21 +17726,21 @@ function cylindricalEqualAreaRaw(phi0) {
 }
 
 function conicEqualAreaRaw(y0, y1) {
-  var sy0 = sin(y0), n = (sy0 + sin(y1)) / 2;
+  var sy0 = sin$1(y0), n = (sy0 + sin$1(y1)) / 2;
 
   // Are the parallels symmetrical around the Equator?
-  if (abs(n) < epsilon$2) return cylindricalEqualAreaRaw(y0);
+  if (abs$1(n) < epsilon$2) return cylindricalEqualAreaRaw(y0);
 
-  var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt$1(c) / n;
+  var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt$2(c) / n;
 
   function project(x, y) {
-    var r = sqrt$1(c - 2 * n * sin(y)) / n;
-    return [r * sin(x *= n), r0 - r * cos(x)];
+    var r = sqrt$2(c - 2 * n * sin$1(y)) / n;
+    return [r * sin$1(x *= n), r0 - r * cos$1(x)];
   }
 
   project.invert = function(x, y) {
     var r0y = r0 - y;
-    return [atan2(x, abs(r0y)) / n * sign$1(r0y), asin$1((c - (x * x + r0y * r0y) * n * n) / (2 * n))];
+    return [atan2$1(x, abs$1(r0y)) / n * sign$1(r0y), asin$1((c - (x * x + r0y * r0y) * n * n) / (2 * n))];
   };
 
   return project;
@@ -17680,31 +17862,31 @@ function geoAlbersUsa() {
 
 function azimuthalRaw(scale) {
   return function(x, y) {
-    var cx = cos(x),
-        cy = cos(y),
+    var cx = cos$1(x),
+        cy = cos$1(y),
         k = scale(cx * cy);
     return [
-      k * cy * sin(x),
-      k * sin(y)
+      k * cy * sin$1(x),
+      k * sin$1(y)
     ];
   }
 }
 
 function azimuthalInvert(angle) {
   return function(x, y) {
-    var z = sqrt$1(x * x + y * y),
+    var z = sqrt$2(x * x + y * y),
         c = angle(z),
-        sc = sin(c),
-        cc = cos(c);
+        sc = sin$1(c),
+        cc = cos$1(c);
     return [
-      atan2(x * sc, z * cc),
+      atan2$1(x * sc, z * cc),
       asin$1(z && y * sc / z)
     ];
   }
 }
 
 var azimuthalEqualAreaRaw = azimuthalRaw(function(cxcy) {
-  return sqrt$1(2 / (1 + cxcy));
+  return sqrt$2(2 / (1 + cxcy));
 });
 
 azimuthalEqualAreaRaw.invert = azimuthalInvert(function(z) {
@@ -17718,7 +17900,7 @@ function geoAzimuthalEqualArea() {
 }
 
 var azimuthalEquidistantRaw = azimuthalRaw(function(c) {
-  return (c = acos(c)) && c / sin(c);
+  return (c = acos$1(c)) && c / sin$1(c);
 });
 
 azimuthalEquidistantRaw.invert = azimuthalInvert(function(z) {
@@ -17746,31 +17928,38 @@ function geoMercator() {
 
 function mercatorProjection(project) {
   var m = projection(project),
+      center = m.center,
       scale = m.scale,
       translate = m.translate,
       clipExtent = m.clipExtent,
-      clipAuto;
+      x0 = null, y0, x1, y1; // clip extent
 
   m.scale = function(_) {
-    return arguments.length ? (scale(_), clipAuto && m.clipExtent(null), m) : scale();
+    return arguments.length ? (scale(_), reclip()) : scale();
   };
 
   m.translate = function(_) {
-    return arguments.length ? (translate(_), clipAuto && m.clipExtent(null), m) : translate();
+    return arguments.length ? (translate(_), reclip()) : translate();
+  };
+
+  m.center = function(_) {
+    return arguments.length ? (center(_), reclip()) : center();
   };
 
   m.clipExtent = function(_) {
-    if (!arguments.length) return clipAuto ? null : clipExtent();
-    if (clipAuto = _ == null) {
-      var k = pi$3 * scale(),
-          t = translate();
-      _ = [[t[0] - k, t[1] - k], [t[0] + k, t[1] + k]];
-    }
-    clipExtent(_);
-    return m;
+    return arguments.length ? ((_ == null ? x0 = y0 = x1 = y1 = null : (x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1])), reclip()) : x0 == null ? null : [[x0, y0], [x1, y1]];
   };
 
-  return m.clipExtent(null);
+  function reclip() {
+    var k = pi$3 * scale(),
+        t = m(rotation(m.rotate()).invert([0, 0]));
+    return clipExtent(x0 == null
+        ? [[t[0] - k, t[1] - k], [t[0] + k, t[1] + k]] : project === mercatorRaw
+        ? [[Math.max(t[0] - k, x0), y0], [Math.min(t[0] + k, x1), y1]]
+        : [[x0, Math.max(t[1] - k, y0)], [x1, Math.min(t[1] + k, y1)]]);
+  }
+
+  return reclip();
 }
 
 function tany(y) {
@@ -17778,8 +17967,8 @@ function tany(y) {
 }
 
 function conicConformalRaw(y0, y1) {
-  var cy0 = cos(y0),
-      n = y0 === y1 ? sin(y0) : log$2(cy0 / cos(y1)) / log$2(tany(y1) / tany(y0)),
+  var cy0 = cos$1(y0),
+      n = y0 === y1 ? sin$1(y0) : log$2(cy0 / cos$1(y1)) / log$2(tany(y1) / tany(y0)),
       f = cy0 * pow$1(tany(y0), n) / n;
 
   if (!n) return mercatorRaw;
@@ -17788,12 +17977,12 @@ function conicConformalRaw(y0, y1) {
     if (f > 0) { if (y < -halfPi$2 + epsilon$2) y = -halfPi$2 + epsilon$2; }
     else { if (y > halfPi$2 - epsilon$2) y = halfPi$2 - epsilon$2; }
     var r = f / pow$1(tany(y), n);
-    return [r * sin(n * x), f - r * cos(n * x)];
+    return [r * sin$1(n * x), f - r * cos$1(n * x)];
   }
 
   project.invert = function(x, y) {
-    var fy = f - y, r = sign$1(n) * sqrt$1(x * x + fy * fy);
-    return [atan2(x, abs(fy)) / n * sign$1(fy), 2 * atan(pow$1(f / r, 1 / n)) - halfPi$2];
+    var fy = f - y, r = sign$1(n) * sqrt$2(x * x + fy * fy);
+    return [atan2$1(x, abs$1(fy)) / n * sign$1(fy), 2 * atan(pow$1(f / r, 1 / n)) - halfPi$2];
   };
 
   return project;
@@ -17817,20 +18006,20 @@ function geoEquirectangular() {
 }
 
 function conicEquidistantRaw(y0, y1) {
-  var cy0 = cos(y0),
-      n = y0 === y1 ? sin(y0) : (cy0 - cos(y1)) / (y1 - y0),
+  var cy0 = cos$1(y0),
+      n = y0 === y1 ? sin$1(y0) : (cy0 - cos$1(y1)) / (y1 - y0),
       g = cy0 / n + y0;
 
-  if (abs(n) < epsilon$2) return equirectangularRaw;
+  if (abs$1(n) < epsilon$2) return equirectangularRaw;
 
   function project(x, y) {
     var gy = g - y, nx = n * x;
-    return [gy * sin(nx), g - gy * cos(nx)];
+    return [gy * sin$1(nx), g - gy * cos$1(nx)];
   }
 
   project.invert = function(x, y) {
     var gy = g - y;
-    return [atan2(x, abs(gy)) / n * sign$1(gy), g - sign$1(n) * sqrt$1(x * x + gy * gy)];
+    return [atan2$1(x, abs$1(gy)) / n * sign$1(gy), g - sign$1(n) * sqrt$2(x * x + gy * gy)];
   };
 
   return project;
@@ -17843,8 +18032,8 @@ function geoConicEquidistant() {
 }
 
 function gnomonicRaw(x, y) {
-  var cy = cos(y), k = cos(x) * cy;
-  return [cy * sin(x) / k, sin(y) / k];
+  var cy = cos$1(y), k = cos$1(x) * cy;
+  return [cy * sin$1(x) / k, sin$1(y) / k];
 }
 
 gnomonicRaw.invert = azimuthalInvert(atan);
@@ -17856,7 +18045,7 @@ function geoGnomonic() {
 }
 
 function orthographicRaw(x, y) {
-  return [cos(y) * sin(x), sin(y)];
+  return [cos$1(y) * sin$1(x), sin$1(y)];
 }
 
 orthographicRaw.invert = azimuthalInvert(asin$1);
@@ -17868,8 +18057,8 @@ function geoOrthographic() {
 }
 
 function stereographicRaw(x, y) {
-  var cy = cos(y), k = 1 + cos(x) * cy;
-  return [cy * sin(x) / k, sin(y) / k];
+  var cy = cos$1(y), k = 1 + cos$1(x) * cy;
+  return [cy * sin$1(x) / k, sin$1(y) / k];
 }
 
 stereographicRaw.invert = azimuthalInvert(function(z) {
@@ -20837,12 +21026,6 @@ function intersects(a, b) {
   return dr * dr - 1e-6 > dx * dx + dy * dy;
 }
 
-function distance1(a, b) {
-  var l = a._.r;
-  while (a !== b) l += 2 * (a = a.next)._.r;
-  return l - b._.r;
-}
-
 function distance2(node, x, y) {
   var a = node._,
       b = node.next._,
@@ -20900,15 +21083,13 @@ function packEnclose(circles) {
     do {
       if (sj <= sk) {
         if (intersects(j._, c._)) {
-          if (sj + a._.r + b._.r > distance1(j, b)) a = j; else b = j;
-          a.next = b, b.previous = a, --i;
+          b = j, a.next = b, b.previous = a, --i;
           continue pack;
         }
         sj += j._.r, j = j.next;
       } else {
         if (intersects(k._, c._)) {
-          if (distance1(a, k) > sk + a._.r + b._.r) a = k; else b = k;
-          a.next = b, b.previous = a, --i;
+          a = k, a.next = b, b.previous = a, --i;
           continue pack;
         }
         sk += k._.r, k = k.previous;
@@ -21610,17 +21791,19 @@ function treemapBinary(parent, x0, y0, x1, y1) {
       else hi = mid;
     }
 
+    if ((valueTarget - sums[k - 1]) < (sums[k] - valueTarget) && i + 1 < k) --k;
+
     var valueLeft = sums[k] - valueOffset,
         valueRight = value - valueLeft;
 
-    if ((y1 - y0) > (x1 - x0)) {
-      var yk = (y0 * valueRight + y1 * valueLeft) / value;
-      partition(i, k, valueLeft, x0, y0, x1, yk);
-      partition(k, j, valueRight, x0, yk, x1, y1);
-    } else {
+    if ((x1 - x0) > (y1 - y0)) {
       var xk = (x0 * valueRight + x1 * valueLeft) / value;
       partition(i, k, valueLeft, x0, y0, xk, y1);
       partition(k, j, valueRight, xk, y0, x1, y1);
+    } else {
+      var yk = (y0 * valueRight + y1 * valueLeft) / value;
+      partition(i, k, valueLeft, x0, y0, x1, yk);
+      partition(k, j, valueRight, x0, yk, x1, y1);
     }
   }
 }
@@ -24260,19 +24443,24 @@ function Bound(params) {
 }
 
 var prototype$65 = inherits(Bound, Transform);
-
+var temp$2 = new Bounds();
 prototype$65.transform = function(_, pulse) {
   var mark = _.mark,
       type = mark.marktype,
       entry = Marks[type],
       bound = entry.bound,
+      clip = mark.clip,
       markBounds = mark.bounds, rebound;
 
   mark.bounds_prev.clear().union(markBounds);
 
   if (entry.nested) {
     // multi-item marks have a single bounds instance
-    boundItem$1(mark, bound);
+    markBounds = boundItem$1(mark, bound);
+    mark.items.forEach(function(item) {
+      item.bounds_prev.clear().union(item.bounds);
+      item.bounds.clear().union(markBounds);
+    });
   }
 
   else if (type === 'group' || _.modified()) {
@@ -24297,10 +24485,14 @@ prototype$65.transform = function(_, pulse) {
       markBounds.union(boundItem$1(item, bound));
     });
 
-    if (rebound) {
+    if (rebound && !clip) {
       markBounds.clear();
       mark.items.forEach(function(item) { markBounds.union(item.bounds); });
     }
+  }
+
+  if (clip) {
+    markBounds.intersect(temp$2.set(0, 0, mark.group.width, mark.group.height));
   }
 
   return pulse.modifies('bounds');
@@ -24387,13 +24579,293 @@ prototype$67.transform = function(_, pulse) {
   }
 };
 
+var AxisRole$1 = 'axis';
+var LegendRole$1 = 'legend';
+var RowHeader$1 = 'row-header';
+var RowFooter$1 = 'row-footer';
+var RowTitle  = 'row-title';
+var ColHeader$1 = 'column-header';
+var ColFooter$1 = 'column-footer';
+var ColTitle  = 'column-title';
+function extractGroups(group) {
+  var groups = group.items,
+      n = groups.length,
+      i = 0, mark, items;
+
+  var views = {
+    marks:      [],
+    rowheaders: [],
+    rowfooters: [],
+    colheaders: [],
+    colfooters: [],
+    rowtitle: null,
+    coltitle: null
+  };
+
+  // layout axes, gather legends, collect bounds
+  for (; i<n; ++i) {
+    mark = groups[i];
+    items = mark.items;
+    if (mark.marktype === 'group') {
+      switch (mark.role) {
+        case AxisRole$1:
+        case LegendRole$1:
+          break;
+        case RowHeader$1: addAll$1(items, views.rowheaders); break;
+        case RowFooter$1: addAll$1(items, views.rowfooters); break;
+        case ColHeader$1: addAll$1(items, views.colheaders); break;
+        case ColFooter$1: addAll$1(items, views.colfooters); break;
+        case RowTitle:  views.rowtitle = items[0]; break;
+        case ColTitle:  views.coltitle = items[0]; break;
+        default:        addAll$1(items, views.marks);
+      }
+    }
+  }
+
+  return views;
+}
+
+function addAll$1(items, array) {
+  for (var i=0, n=items.length; i<n; ++i) {
+    array.push(items[i]);
+  }
+}
+
+function bboxFlush(item) {
+  return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
+}
+
+function bboxFull(item) {
+  return item.bounds.clone().translate(-(item.x||0), -(item.y||0));
+}
+
+function boundFlush(item, field) {
+  var b = {x1: item.x, y1: item.y, x2: item.x + item.width, y2: item.y + item.height};
+  return b[field];
+}
+
+function boundFull(item, field) {
+  return item.bounds[field];
+}
+
+function get$1(opt, key, d) {
+  return (isObject(opt) ? opt[key] : opt) || d || 0;
+}
+
+function gridLayout(view, group, opt) {
+  var views = extractGroups(group, opt),
+      groups = views.marks,
+      flush = opt.bounds === 'flush',
+      bbox = flush ? bboxFlush : bboxFull,
+      bounds = new Bounds(0, 0, 0, 0),
+      alignCol = get$1(opt.align, 'column'),
+      alignRow = get$1(opt.align, 'row'),
+      padCol = get$1(opt.padding, 'column'),
+      padRow = get$1(opt.padding, 'row'),
+      off = opt.offset,
+      ncols = opt.columns || groups.length,
+      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      cells = nrows * ncols,
+      xOffset = [], xInit = 0,
+      yOffset = [], yInit = 0,
+      n = groups.length,
+      m, i, j, b, g, px, py, x, y, band, offset;
+
+  // determine offsets for each group
+  for (i=0; i<n; ++i) {
+    b = bbox(groups[i]);
+    px = i % ncols === 0 ? 0 : Math.ceil(bbox(groups[i-1]).x2);
+    py = i < ncols ? 0 : Math.ceil(bbox(groups[i-ncols]).y2);
+    x = (b.x1 < 0 ? Math.ceil(-b.x1) : 0) + px;
+    y = (b.y1 < 0 ? Math.ceil(-b.y1) : 0) + py;
+    xOffset.push(x + padCol);
+    yOffset.push(y + padRow);
+  }
+
+  // set initial alignment offsets
+  for (i=0; i<n; ++i) {
+    if (i % ncols === 0) xOffset[i] = xInit;
+    if (i < ncols) yOffset[i] = yInit;
+  }
+
+  // enforce column alignment constraints
+  if (alignCol === 'each') {
+    for (j=1; j<ncols; ++j) {
+      for (offset=0, i=j; i<n; i += ncols) {
+        if (offset < xOffset[i]) offset = xOffset[i];
+      }
+      for (i=j; i<n; i += ncols) {
+        xOffset[i] = offset;
+      }
+    }
+  } else if (alignCol === 'all') {
+    for (offset=0, i=0; i<n; ++i) {
+      if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
+    }
+    for (i=0; i<n; ++i) {
+      if (i % ncols) xOffset[i] = offset;
+    }
+  }
+
+  // enforce row alignment constraints
+  if (alignRow === 'each') {
+    for (j=1; j<nrows; ++j) {
+      for (offset=0, i=j*ncols, m=i+ncols; i<m; ++i) {
+        if (offset < yOffset[i]) offset = yOffset[i];
+      }
+      for (i=j*ncols; i<m; ++i) {
+        yOffset[i] = offset;
+      }
+    }
+  } else if (alignRow === 'all') {
+    for (offset=0, i=ncols; i<n; ++i) {
+      if (offset < yOffset[i]) offset = yOffset[i];
+    }
+    for (i=ncols; i<n; ++i) {
+      yOffset[i] = offset;
+    }
+  }
+
+  // perform horizontal grid layout
+  for (x=0, i=0; i<n; ++i) {
+    g = groups[i];
+    px = g.x || 0;
+    g.x = (x = xOffset[i] + (i % ncols ? x : 0));
+    bounds.union(g.bounds.translate(x - px, 0));
+  }
+
+  // perform vertical grid layout
+  for (j=0; j<ncols; ++j) {
+    for (y=0, i=j; i<n; i += ncols) {
+      g = groups[i];
+      py = g.y || 0;
+      g.y = (y += yOffset[i]);
+      bounds.union(g.bounds.translate(0, y - py));
+    }
+  }
+
+  // queue groups for redraw
+  view.enqueue(groups);
+
+  // update mark bounds
+  for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
+  for (i=0; i<n; ++i) groups[i].mark.bounds.union(groups[i].bounds);
+
+  // -- layout grid headers and footers --
+
+  // aggregation functions for grid margin determination
+  function min(a, b) { return Math.floor(Math.min(a, b)); }
+  function max(a, b) { return Math.ceil(Math.max(a, b)); }
+
+  // bounding box calculation methods
+  bbox = flush ? boundFlush : boundFull;
+
+  // perform header layout
+  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get$1(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1);
+  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get$1(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols);
+
+  // perform footer layout
+  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get$1(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1);
+  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get$1(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols);
+
+  // perform row title layout
+  if (views.rowtitle) {
+    offset = x - get$1(off, 'rowTitle');
+    band = get$1(opt.titleBand, 'row', 0.5);
+    layoutTitle$1(view, views.rowtitle, offset, 0, bounds, band);
+  }
+
+  // perform column title layout
+  if (views.coltitle) {
+    offset = y - get$1(off, 'columnTitle');
+    band = get$1(opt.titleBand, 'column', 0.5);
+    layoutTitle$1(view, views.coltitle, offset, 1, bounds, band);
+  }
+}
+
+function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back) {
+  var n = groups.length,
+      init = 0,
+      edge = 0,
+      i, j, k, m, b, h, g, x, y;
+
+  // compute margin
+  for (i=start; i<n; i+=stride) {
+    if (groups[i]) init = agg(init, bound(groups[i], bf));
+  }
+
+  // if no headers, return margin calculation
+  if (!headers.length) return init;
+
+  // check if number of headers exceeds number of rows or columns
+  if (headers.length > limit) {
+    view.warn('Grid headers exceed limit: ' + limit);
+    headers = headers.slice(0, limit);
+  }
+
+  // apply offset
+  init += offset;
+
+  // clear mark bounds for all headers
+  for (j=0, m=headers.length; j<m; ++j) {
+    headers[j].mark.bounds.clear();
+  }
+
+  // layout each header
+  for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
+    h = headers[j];
+    b = h.mark.bounds;
+
+    // search for nearest group to align to
+    // necessary if table has empty cells
+    for (k=i; (g = groups[k]) == null; k-=back);
+
+    // assign coordinates and update bounds
+    isX ? (x = g.x, y = init) : (x = init, y = g.y);
+    b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+    h.x = x;
+    h.y = y;
+
+    // update current edge of layout bounds
+    edge = agg(edge, b[bf]);
+  }
+
+  // queue headers for redraw
+  view.enqueue(headers);
+  return edge;
+}
+
+function layoutTitle$1(view, g, offset, isX, bounds, band) {
+  if (!g) return;
+
+  // compute title coordinates
+  var x = offset, y = offset;
+  isX
+    ? (x = Math.round(bounds.x1 + band * bounds.width()))
+    : (y = Math.round(bounds.y1 + band * bounds.height()));
+
+  // assign coordinates and update bounds
+  g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+  g.mark.bounds.clear().union(g.bounds);
+  g.x = x;
+  g.y = y;
+
+  // queue title for redraw
+  view.enqueue(g.mark.items);
+}
+
 var Fit = 'fit';
 var Pad = 'pad';
 var None$2 = 'none';
 var AxisRole = 'axis';
+var TitleRole = 'title';
 var FrameRole = 'frame';
 var LegendRole = 'legend';
 var ScopeRole = 'scope';
+var RowHeader = 'row-header';
+var RowFooter = 'row-footer';
+var ColHeader = 'column-header';
+var ColFooter = 'column-footer';
 /**
  * Layout view elements such as axes and legends.
  * Also performs size adjustments.
@@ -24411,6 +24883,7 @@ prototype$68.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
+    if (_.layout) gridLayout(view, group, _.layout);
     layoutGroup(view, group, _);
   });
   return pulse;
@@ -24422,7 +24895,8 @@ function layoutGroup(view, group, _) {
       height = Math.max(0, group.height || 0),
       viewBounds = new Bounds().set(0, 0, width, height),
       axisBounds = viewBounds.clone(),
-      legends = [],
+      legendBounds = viewBounds.clone(),
+      legends = [], title,
       mark, flow, b, i, n;
 
   // layout axes, gather legends, collect bounds
@@ -24430,25 +24904,38 @@ function layoutGroup(view, group, _) {
     mark = items[i];
     switch (mark.role) {
       case AxisRole:
-        b = layoutAxis(view, mark, width, height);
-        (isYAxis(mark) ? axisBounds : viewBounds).union(b);
+        axisBounds.union(b = layoutAxis(view, mark, width, height));
+        if (isYAxis(mark)) legendBounds.union(b);
         break;
+      case TitleRole:
+        title = mark; break;
       case LegendRole:
         legends.push(mark); break;
       case FrameRole:
       case ScopeRole:
-        axisBounds.union(mark.bounds); break;
+      case RowHeader:
+      case RowFooter:
+      case ColHeader:
+      case ColFooter:
+        legendBounds.union(mark.bounds);
+        break;
       default:
         viewBounds.union(mark.bounds);
     }
   }
 
-  // layout legends, extending viewBounds
+  // layout title, adjust bounds
+  if (title) {
+    axisBounds.union(b = layoutTitle(view, title, axisBounds));
+    if (isYAxis(title)) legendBounds.union(b);
+  }
+
+  // layout legends, adjust viewBounds
   if (legends.length) {
     flow = {left: 0, right: 0, margin: _.legendMargin || 8};
 
     for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(view, legends[i], flow, axisBounds, width, height);
+      b = layoutLegend(view, legends[i], flow, legendBounds, width, height);
       (_.autosize && _.autosize.type === Fit)
         ? viewBounds.add(b.x1, 0).add(b.x2, 0)
         : viewBounds.union(b);
@@ -24456,11 +24943,16 @@ function layoutGroup(view, group, _) {
   }
 
   // perform size adjustment
-  layoutSize(view, group, viewBounds.union(axisBounds), _);
+  layoutSize(view, group, viewBounds.union(legendBounds).union(axisBounds), _);
 }
 
-function isYAxis(axisMark) {
-  var orient = axisMark.items[0].datum.orient;
+function set$3(item, property, value) {
+  return item[property] === value ? 0
+    : (item[property] = value, 1);
+}
+
+function isYAxis(mark) {
+  var orient = mark.items[0].datum.orient;
   return orient === 'left' || orient === 'right';
 }
 
@@ -24542,13 +25034,47 @@ function layoutAxis(view, axis, width, height) {
 
   // update bounds
   boundStroke(bounds.translate(x, y), item);
-  item.mark.bounds.clear().union(bounds);
-  return bounds;
+  return item.mark.bounds.clear().union(bounds);
 }
 
-function set$3(item, property, value) {
-  return item[property] === value ? 0
-    : (item[property] = value, 1);
+function layoutTitle(view, title, axisBounds) {
+  var item = title.items[0],
+      datum = item.datum,
+      orient = datum.orient,
+      offset = item.offset,
+      bounds = item.bounds,
+      x = 0, y = 0;
+
+  // position axis group and title
+  switch (orient) {
+    case 'top':
+      x = item.x;
+      y = axisBounds.y1 - offset;
+      break;
+    case 'left':
+      x = axisBounds.x1 - offset;
+      y = item.y;
+      break;
+    case 'right':
+      x = axisBounds.x2 + offset;
+      y = item.y;
+      break;
+    case 'bottom':
+      x = item.x;
+      y = axisBounds.y2 + offset;
+      break;
+    default:
+      x = item.x;
+      y = item.y;
+  }
+
+  bounds.translate(x - item.x, y - item.y);
+  if (set$3(item, 'x', x) | set$3(item, 'y', y)) {
+    view.enqueue([item]);
+  }
+
+  // update bounds
+  return title.bounds.clear().union(bounds);
 }
 
 function layoutLegend(view, legend, flow, axisBounds, width, height) {
@@ -24605,8 +25131,7 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
 
   // update bounds
   boundStroke(bounds.set(x, y, x + w, y + h), item);
-  item.mark.bounds.clear().union(bounds);
-  return bounds;
+  return item.mark.bounds.clear().union(bounds);
 }
 
 function layoutSize(view, group, viewBounds, _) {
@@ -25012,7 +25537,7 @@ function form(bind, el, param, value) {
     }
   }
   node.setAttribute('name', param.signal);
-  node.setAttribute('value', value);
+  node.value = value;
 
   el.appendChild(node);
 
@@ -25123,12 +25648,12 @@ function range$1(bind, el, param, value) {
 
   var node = element$1('input', {
     type:  'range',
-    value: value,
     name:  param.signal,
     min:   min,
     max:   max,
     step:  step
   });
+  node.value = value;
 
   var label = element$1('label', {}, +value);
 
@@ -25201,6 +25726,10 @@ function initialize$1(el, elBind) {
   if (el) {
     elBind = elBind ? lookup$2(view, elBind)
       : el.appendChild(element$1('div', {'class': 'vega-bindings'}));
+
+    view._bind.forEach(function(_) {
+      if (_.param.element) lookup$2(view, _.param.element);
+    });
 
     view._bind.forEach(function(_) {
       bind$1(view, _.param.element || elBind, _);
@@ -26947,7 +27476,7 @@ function Functions(codegen) {
         if (args.length < 3) error('Missing arguments to if function.');
         if (args.length > 3) error('Too many arguments to if function.');
         var a = args.map(codegen);
-        return a[0]+'?'+a[1]+':'+a[2];
+        return '('+a[0]+'?'+a[1]+':'+a[2]+')';
       }
   };
 }
@@ -27537,6 +28066,17 @@ function vlInterval(name, unit, datum, op, scope) {
 
 // Expression function context object
 var functionContext = {
+  isArray: isArray,
+  isBoolean: isBoolean,
+  isDate: isDate,
+  isNumber: isNumber,
+  isObject: isObject,
+  isRegExp: isRegExp,
+  isString: isString,
+  toBoolean: toBoolean,
+  toDate: toDate,
+  toNumber: toNumber,
+  toString: toString,
   pad: pad,
   truncate: truncate,
   rgb: rgb,
@@ -27624,7 +28164,7 @@ function buildFunctions(codegen) {
 // Export code generator and parameters
 var codegenParams = {
   blacklist:  ['_'],
-  whitelist:  ['datum', 'event'],
+  whitelist:  ['datum', 'event', 'item'],
   fieldvar:   'datum',
   globalvar:  function(id) { return '_[' + $('$' + id) + ']'; },
   functions:  buildFunctions,
@@ -28349,19 +28889,21 @@ var MarkRole = 'mark';
 var FrameRole$1 = 'frame';
 var ScopeRole$1 = 'scope';
 
-var AxisRole$1 = 'axis';
+var AxisRole$2 = 'axis';
 var AxisDomainRole = 'axis-domain';
 var AxisGridRole = 'axis-grid';
 var AxisLabelRole = 'axis-label';
 var AxisTickRole = 'axis-tick';
 var AxisTitleRole = 'axis-title';
 
-var LegendRole$1 = 'legend';
+var LegendRole$2 = 'legend';
 var LegendEntryRole = 'legend-entry';
 var LegendGradientRole = 'legend-gradient';
 var LegendLabelRole = 'legend-label';
 var LegendSymbolRole = 'legend-symbol';
 var LegendTitleRole = 'legend-title';
+
+var TitleRole$1 = 'title';
 
 function encoder(_) {
   return isObject(_) ? _ : {value: _};
@@ -28670,10 +29212,10 @@ function guideGroup(role, name, dataRef, interactive, encode, marks) {
 }
 
 function role(spec) {
-  return spec.role ||
-    (spec.type === GroupMark && (spec.legends || spec.axes)
-      ? ScopeRole$1
-      : MarkRole);
+  var role = spec.role || '';
+  return (!role.indexOf('axis') || !role.indexOf('legend'))
+    ? role
+    : spec.type === GroupMark ? ScopeRole$1 : (role || MarkRole);
 }
 
 function definition$1(spec) {
@@ -28682,7 +29224,7 @@ function definition$1(spec) {
     interactive: spec.interactive === false ? false : true,
     marktype:    spec.type,
     name:        spec.name || undefined,
-    role:        role(spec),
+    role:        spec.role || role(spec),
     zindex:      +spec.zindex || undefined
   };
 }
@@ -29194,7 +29736,7 @@ function parseMark(spec, scope) {
   var role$$ = role(spec),
       group = spec.type === GroupMark,
       facet = spec.from && spec.from.facet,
-      layout = role$$ === ScopeRole$1 || role$$ === FrameRole$1,
+      layout = spec.layout || role$$ === ScopeRole$1 || role$$ === FrameRole$1,
       nested = role$$ === MarkRole || layout || facet,
       ops, op, input, store, bound, render, sieve, name,
       joinRef, markRef, encodeRef, layoutRef, boundRef;
@@ -29249,6 +29791,7 @@ function parseMark(spec, scope) {
   // add view layout operator if needed
   if (facet || layout) {
     layout = scope.add(ViewLayout$1({
+      layout:       scope.objectProperty(spec.layout),
       legendMargin: scope.config.legendMargin,
       mark:         markRef,
       pulse:        encodeRef
@@ -29384,7 +29927,7 @@ function parseLegend(spec, scope) {
   }
 
   // build legend specification
-  group = guideGroup(LegendRole$1, name, dataRef, interactive, legendEncode, children);
+  group = guideGroup(LegendRole$2, name, dataRef, interactive, legendEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse legend specification
@@ -29423,14 +29966,14 @@ var FIELD_REF_ID = 0;
 var types = [
   'identity',
   'ordinal', 'band', 'point',
+  'bin-linear', 'bin-ordinal',
   'linear', 'pow', 'sqrt', 'log', 'sequential',
   'time', 'utc',
-  'quantize', 'quantile', 'threshold',
-  'bin-linear', 'bin-ordinal'
+  'quantize', 'quantile', 'threshold'
 ];
 
 var allTypes = toSet(types);
-var ordinalTypes = toSet(types.slice(1, 4));
+var ordinalTypes = toSet(types.slice(1, 6));
 function isOrdinal(type) {
   return ordinalTypes.hasOwnProperty(type);
 }
@@ -29663,6 +30206,87 @@ function parseScaleRange(spec, scope, params) {
   });
 }
 
+function parseTitle(spec, scope) {
+  spec = isString(spec) ? {text: spec} : spec;
+
+  var config = scope.config.title,
+      encode = extend({}, spec.encode),
+      datum, dataRef, title;
+
+  // single-element data source for group title
+  datum = {
+    orient: spec.orient != null ? spec.orient : config.orient
+  };
+  dataRef = ref(scope.add(Collect$1(null, [datum])));
+
+  // build title specification
+  encode.name = spec.name;
+  encode.interactive = spec.interactive;
+  title = buildTitle(spec, config, encode, dataRef);
+  if (spec.zindex) title.zindex = spec.zindex;
+
+  // parse title specification
+  return parseMark(title, scope);
+}
+
+function buildTitle(spec, config, userEncode, dataRef) {
+  var title = spec.text,
+      orient = spec.orient || config.orient,
+      anchor = spec.anchor || config.anchor,
+      sign = (orient === Left || orient === Top) ? -1 : 1,
+      horizontal = (orient === Top || orient === Bottom),
+      extent = {group: (horizontal ? 'width' : 'height')},
+      encode = {}, enter, update, pos, opp, mult, align;
+
+  encode.enter = enter = {
+    opacity: {value: 0}
+  };
+  addEncode(enter, 'fill', config.color);
+  addEncode(enter, 'font', config.font);
+  addEncode(enter, 'fontSize', config.fontSize);
+  addEncode(enter, 'fontWeight', config.fontWeight);
+
+  encode.exit = {
+    opacity: {value: 0}
+  };
+
+  encode.update = update = {
+    opacity: {value: 1},
+    text: isObject(title) ? title : {value: title + ''},
+    offset: encoder(spec.offset || 0)
+  };
+
+  (anchor === 'start') ? (mult = 0, align = 'left')
+    : (anchor === 'end') ? (mult = 1, align = 'right')
+    : (mult = 0.5, align = 'center');
+
+  pos = {field: extent, mult: mult};
+
+  opp = sign < 0 ? {value: 0}
+    : horizontal ? {field: {group: 'height'}}
+    : {field: {group: 'width'}};
+
+  if (horizontal) {
+    update.x = pos;
+    update.y = opp;
+    update.angle = {value: 0};
+    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+  } else {
+    update.x = opp;
+    update.y = pos;
+    update.angle = {value: sign * 90};
+    update.baseline = {value: 'bottom'};
+  }
+  update.align = {value: align};
+  update.limit = {field: extent};
+
+  addEncode(update, 'angle', config.angle);
+  addEncode(update, 'baseline', config.baseline);
+  addEncode(update, 'limit', config.limit);
+
+  return guideMark(TextMark, TitleRole$1, null, dataRef, encode, userEncode);
+}
+
 function parseData$1(data, scope) {
   var transforms = [];
 
@@ -29887,8 +30511,7 @@ function axisLabels(spec, config, userEncode, dataRef, size) {
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
-    opacity: zero,
-    text: {field: Label}
+    opacity: zero
   };
   addEncode(enter, 'angle', config.labelAngle);
   addEncode(enter, 'fill', config.labelColor);
@@ -29901,7 +30524,8 @@ function axisLabels(spec, config, userEncode, dataRef, size) {
   };
 
   encode.update = update = {
-    opacity: {value: 1}
+    opacity: {value: 1},
+    text: {field: Label}
   };
 
   tickSize = encoder(size);
@@ -30055,7 +30679,7 @@ function parseAxis(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup(AxisRole$1, name, dataRef, interactive, axisEncode, children);
+  group = guideGroup(AxisRole$2, name, dataRef, interactive, axisEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification
@@ -30084,7 +30708,6 @@ function parseSpec(spec, scope, preprocessed) {
   signals.forEach(function(_) {
     parseSignalUpdates(_, scope);
   });
-  scope.parseLambdas();
 
   array$1(spec.axes).forEach(function(_) {
     parseAxis(_, scope);
@@ -30098,7 +30721,11 @@ function parseSpec(spec, scope, preprocessed) {
     parseLegend(_, scope);
   });
 
-  return scope;
+  if (spec.title) {
+    parseTitle(spec.title, scope);
+  }
+
+  return scope.parseLambdas(), scope;
 }
 
 var defined = toSet(['width', 'height', 'padding']);
@@ -30132,15 +30759,18 @@ function parseView(spec, scope) {
 
   // Perform view layout
   parent = scope.add(ViewLayout$1({
+    layout:       scope.objectProperty(spec.layout),
     legendMargin: config.legendMargin,
     autosize:     parseAutosize(spec.autosize, config),
     mark:         root,
     pulse:        ref(encode)
   }));
+  scope.operators.pop();
 
   // Parse remainder of specification
   scope.pushState(ref(encode), ref(parent), null);
   parseSpec(spec, scope, true);
+  scope.operators.push(parent);
 
   // Bound / render / sieve root item
   op = scope.add(Bound$1({mark: root, pulse: ref(parent)}));
@@ -30443,6 +31073,27 @@ prototype$71.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
+prototype$71.objectProperty = function(spec) {
+  return (!spec || !isObject(spec)) ? spec
+    : this.signalRef(spec.signal || objectLambda(spec));
+};
+
+function objectLambda(obj) {
+  var code = '{',
+      i = 0,
+      key, value;
+
+  for (key in obj) {
+    value = obj[key];
+    code += (++i > 1 ? ',' : '')
+      + $(key) + ':'
+      + (isObject(value)
+        ? (value.signal || objectLambda(value))
+        : $(value));
+  }
+  return code + '}';
+}
+
 prototype$71.addBinding = function(name, bind) {
   if (!this.bindings) {
     error('Nested signals do not support binding: ' + $(name));
@@ -30649,6 +31300,17 @@ function defaults$1() {
       titleAlign: 'left',
       titleBaseline: 'top',
       titleLimit: 180
+    },
+
+    // defaults for group title
+    title: {
+      orient: 'top',
+      anchor: 'center',
+      offset: 2,
+      color: black,
+      font: 'sans-serif',
+      fontSize: 13,
+      fontWeight: 'bold'
     },
 
     // defaults for scale ranges
@@ -30987,7 +31649,7 @@ function parseDataflow(spec, ctx) {
     parseUpdate$1(entry, ctx);
   });
 
-  return ctx;
+  return ctx.resolve();
 }
 
 var SKIP$3 = {skip: true};
@@ -31123,8 +31785,16 @@ Context.prototype = ContextFork.prototype = {
 
     if (spec.parent) {
       var p = ctx.get(spec.parent.$ref);
-      df.connect(p, [op]);
-      op.targets().add(p);
+      if (p) {
+        df.connect(p, [op]);
+        op.targets().add(p);
+      } else {
+        (ctx.unresolved = ctx.unresolved || []).push(function() {
+          p = ctx.get(spec.parent.$ref);
+          df.connect(p, [op]);
+          op.targets().add(p);
+        });
+      }
     }
 
     if (spec.signal) {
@@ -31141,6 +31811,11 @@ Context.prototype = ContextFork.prototype = {
         spec.data[name].forEach(function(role) { data[role] = op; });
       }
     }
+  },
+  resolve: function() {
+    (this.unresolved || []).forEach(function(fn) { fn(); });
+    delete this.unresolved;
+    return this;
   },
   operator: function(spec, update, params) {
     this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
@@ -31304,8 +31979,12 @@ function View(spec, options) {
   var ctx = runtime(this, spec, options.functions);
   this._runtime = ctx;
   this._signals = ctx.signals;
-  this._bind = (spec.bindings || [])
-    .map(function(_) { return {state: null, param: _}; });
+  this._bind = (spec.bindings || []).map(function(_) {
+    return {
+      state: null,
+      param: extend({}, _)
+    };
+  });
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
@@ -31551,9 +32230,12 @@ exports.fastmap = fastmap;
 exports.field = field;
 exports.inherits = inherits;
 exports.isArray = isArray;
+exports.isBoolean = isBoolean;
+exports.isDate = isDate;
 exports.isFunction = isFunction;
 exports.isNumber = isNumber;
 exports.isObject = isObject;
+exports.isRegExp = isRegExp;
 exports.isString = isString;
 exports.key = key;
 exports.merge = merge$1;
@@ -31562,6 +32244,10 @@ exports.peek = peek;
 exports.repeat = repeat;
 exports.splitAccessPath = splitAccessPath;
 exports.stringValue = $;
+exports.toBoolean = toBoolean;
+exports.toDate = toDate;
+exports.toNumber = toNumber;
+exports.toString = toString;
 exports.toSet = toSet;
 exports.truncate = truncate;
 exports.visitArray = visitArray;
