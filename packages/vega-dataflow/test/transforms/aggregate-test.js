@@ -173,3 +173,89 @@ tape('Aggregate handles distinct aggregates', function(test) {
 
   test.end();
 });
+
+tape('Aggregate handles cross-product', function(test) {
+  var data = [
+    {a: 0, b: 2},
+    {a: 1, b: 3}
+  ];
+
+  var a = util.field('a'),
+      b = util.field('b'),
+      df = new vega.Dataflow(),
+      col = df.add(tx.Collect),
+      agg = df.add(tx.Aggregate, {
+        groupby: [a, b],
+        cross: true,
+        pulse: col
+      }),
+      out = df.add(tx.Collect, {
+        sort: function(u, v) { return (u.a - v.a) || (u.b - v.b); },
+        pulse: agg
+      });
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  test.equal(d.length, 4);
+  test.equal(d[0].a, 0);
+  test.equal(d[0].b, 2);
+  test.equal(d[0].count, 1);
+  test.equal(d[1].a, 0);
+  test.equal(d[1].b, 3);
+  test.equal(d[1].count, 0);
+  test.equal(d[2].a, 1);
+  test.equal(d[2].b, 2);
+  test.equal(d[2].count, 0);
+  test.equal(d[3].a, 1);
+  test.equal(d[3].b, 3);
+  test.equal(d[3].count, 1);
+
+  // -- test mod
+  df.pulse(col, changeset().modify(data[0], 'b', 4)).run();
+  d = out.value;
+  test.equal(d.length, 6);
+  test.equal(d[0].a, 0);
+  test.equal(d[0].b, 2);
+  test.equal(d[0].count, 0);
+  test.equal(d[1].a, 0);
+  test.equal(d[1].b, 3);
+  test.equal(d[1].count, 0);
+  test.equal(d[2].a, 0);
+  test.equal(d[2].b, 4);
+  test.equal(d[2].count, 1);
+  test.equal(d[3].a, 1);
+  test.equal(d[3].b, 2);
+  test.equal(d[3].count, 0);
+  test.equal(d[4].a, 1);
+  test.equal(d[4].b, 3);
+  test.equal(d[4].count, 1);
+  test.equal(d[5].a, 1);
+  test.equal(d[5].b, 4);
+  test.equal(d[5].count, 0);
+
+  // -- test rem
+  df.pulse(col, changeset().remove(data)).run();
+  d = out.value;
+  test.equal(d.length, 6);
+  test.equal(d[0].a, 0);
+  test.equal(d[0].b, 2);
+  test.equal(d[0].count, 0);
+  test.equal(d[1].a, 0);
+  test.equal(d[1].b, 3);
+  test.equal(d[1].count, 0);
+  test.equal(d[2].a, 0);
+  test.equal(d[2].b, 4);
+  test.equal(d[2].count, 0);
+  test.equal(d[3].a, 1);
+  test.equal(d[3].b, 2);
+  test.equal(d[3].count, 0);
+  test.equal(d[4].a, 1);
+  test.equal(d[4].b, 3);
+  test.equal(d[4].count, 0);
+  test.equal(d[5].a, 1);
+  test.equal(d[5].b, 4);
+  test.equal(d[5].count, 0);
+
+  test.end();
+});

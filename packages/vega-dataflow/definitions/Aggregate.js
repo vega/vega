@@ -13,6 +13,7 @@ export default {
         "min", "max", "argmin", "argmax" ] },
     { "name": "as", "type": "string", "array": true },
     { "name": "drop", "type": "boolean", "default": true },
+    { "name": "cross", "type": "boolean", "default": false },
     { "name": "key", "type": "field" }
   ]
 };
