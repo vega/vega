@@ -53,40 +53,7 @@ function parameterSchema(param) {
       };
       break;
     case 'compare':
-      p = {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "field": {
-                "oneOf": [
-                  {"type": "string"},
-                  {"$ref": "#/refs/signal"}
-                ]
-              },
-              "order": {"$ref": "#/refs/sortOrder"}
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
-              "field": {
-                "type": "array",
-                "items": {
-                  "anyOf": [
-                    {"type": "string"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
-              },
-              "order": {
-                "type": "array",
-                "items": {"$ref": "#/refs/sortOrder"}
-              }
-            }
-          }
-        ]
-      };
+      p = {"$ref": "#/refs/compare"};
       break;
     case 'enum':
       p = {

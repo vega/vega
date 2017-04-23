@@ -1,5 +1,39 @@
 export default {
   "refs": {
+    "compare": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "field": {
+              "oneOf": [
+                {"type": "string"},
+                {"$ref": "#/refs/signal"}
+              ]
+            },
+            "order": {"$ref": "#/refs/sortOrder"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {"type": "string"},
+                  {"$ref": "#/refs/signal"}
+                ]
+              }
+            },
+            "order": {
+              "type": "array",
+              "items": {"$ref": "#/refs/sortOrder"}
+            }
+          }
+        }
+      ]
+    },
     "from": {
       "type": "object",
       "properties": {
@@ -65,6 +99,7 @@ export default {
         "name": {"type": "string"},
         "key": {"type": "string"},
         "clip": {"type": "boolean"},
+        "sort": {"$ref": "#/refs/compare"},
         "interactive": {"type": "boolean"},
         "encode": {"$ref": "#/defs/encode"},
         "transform": {
