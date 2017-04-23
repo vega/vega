@@ -40,6 +40,10 @@ export function binLinear() {
     return arguments.length ? (linear.interpolate(_), scale) : linear.interpolate();
   };
 
+  scale.invert = function(_) {
+    return linear.invert(_);
+  };
+
   scale.ticks = function(count) {
     var n = domain.length,
         stride = ~~(n / (count || n));
