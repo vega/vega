@@ -28,7 +28,8 @@ export default function Aggregate(params) {
   this._mods = []; // array of modified output tuples
   this._alen = 0;  // number of active added tuples
   this._mlen = 0;  // number of active modified tuples
-  this._drop = true; // should empty aggregation cells be removed
+  this._drop = true;   // should empty aggregation cells be removed
+  this._cross = false; // produce full cross-product of group-by values
 
   this._dims = [];   // group-by dimension accessors
   this._dnames = []; // group-by dimension names
@@ -64,8 +65,53 @@ prototype.transform = function(_, pulse) {
   // Indicate output fields and return aggregate tuples.
   out.modifies(this._outputs);
 
+  // Should empty cells be dropped?
   aggr._drop = _.drop !== false;
+
+  // If domain cross-product requested, generate empty cells as needed
+  // and ensure that empty cells are not dropped
+  if (_.cross && aggr._dims.length > 1) {
+    aggr._drop = false;
+    this.cross();
+  }
+
   return aggr.changes(out);
+};
+
+prototype.cross = function() {
+  var aggr = this,
+      curr = aggr.value,
+      dims = aggr._dnames,
+      vals = dims.map(function() { return {}; }),
+      n = dims.length;
+
+  // collect all group-by domain values
+  function collect(cells) {
+    var key, i, t, v;
+    for (key in cells) {
+      t = cells[key].tuple;
+      for (i=0; i<n; ++i) {
+        vals[i][(v = t[dims[i]])] = v;
+      }
+    }
+  }
+  collect(aggr._prev);
+  collect(curr);
+
+  // iterate over key cross-product, create cells as needed
+  function generate(base, tuple, index) {
+    var name = dims[index],
+        v = vals[index++],
+        k, key;
+
+    for (k in v) {
+      tuple[name] = v[k];
+      key = base ? base + '|' + k : k;
+      if (index < n) generate(key, tuple, index);
+      else if (!curr[key]) aggr.cell(key, tuple);
+    }
+  }
+  generate('', {}, 0);
 };
 
 prototype.init = function(_) {
