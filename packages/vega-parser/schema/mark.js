@@ -38,6 +38,7 @@ export default {
                 "aggregate": {
                   "type": "object",
                   "properties": {
+                    "cross": {"type": "boolean"},
                     "fields": {"type": "array", "items": {"type": "string"}},
                     "ops": {"type": "array", "items": {"type": "string"}},
                     "as": {"type": "array", "items": {"type": "string"}}
