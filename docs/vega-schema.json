@@ -1378,6 +1378,9 @@
         "clip": {
           "type": "boolean"
         },
+        "sort": {
+          "$ref": "#/refs/compare"
+        },
         "interactive": {
           "type": "boolean"
         },
@@ -3141,7 +3144,7 @@
           "$ref": "#/defs/sampleTransform"
         },
         {
-          "$ref": "#/defs/rangeTransform"
+          "$ref": "#/defs/sequenceTransform"
         },
         {
           "$ref": "#/defs/geopathTransform"
@@ -3405,6 +3408,16 @@
           ],
           "default": true
         },
+        "cross": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
         "key": {
           "oneOf": [
             {
@@ -3633,50 +3646,7 @@
           "type": "string"
         },
         "sort": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/refs/signal"
-                    }
-                  ]
-                },
-                "order": {
-                  "$ref": "#/refs/sortOrder"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "array",
-                  "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
-                  }
-                },
-                "order": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/refs/sortOrder"
-                  }
-                }
-              }
-            }
-          ]
+          "$ref": "#/refs/compare"
         }
       },
       "additionalProperties": false,
@@ -4484,12 +4454,12 @@
         "type"
       ]
     },
-    "rangeTransform": {
+    "sequenceTransform": {
       "type": "object",
       "properties": {
         "type": {
           "enum": [
-            "range"
+            "sequence"
           ]
         },
         "signal": {
@@ -5090,50 +5060,7 @@
           ]
         },
         "sort": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/refs/signal"
-                    }
-                  ]
-                },
-                "order": {
-                  "$ref": "#/refs/sortOrder"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "array",
-                  "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
-                  }
-                },
-                "order": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/refs/sortOrder"
-                  }
-                }
-              }
-            }
-          ]
+          "$ref": "#/refs/compare"
         },
         "offset": {
           "anyOf": [
@@ -5752,50 +5679,7 @@
           ]
         },
         "sort": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/refs/signal"
-                    }
-                  ]
-                },
-                "order": {
-                  "$ref": "#/refs/sortOrder"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "array",
-                  "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
-                  }
-                },
-                "order": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/refs/sortOrder"
-                  }
-                }
-              }
-            }
-          ]
+          "$ref": "#/refs/compare"
         },
         "padding": {
           "anyOf": [
@@ -5902,50 +5786,7 @@
           ]
         },
         "sort": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/refs/signal"
-                    }
-                  ]
-                },
-                "order": {
-                  "$ref": "#/refs/sortOrder"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "array",
-                  "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
-                  }
-                },
-                "order": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/refs/sortOrder"
-                  }
-                }
-              }
-            }
-          ]
+          "$ref": "#/refs/compare"
         },
         "padding": {
           "anyOf": [
@@ -6050,50 +5891,7 @@
           ]
         },
         "sort": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/refs/signal"
-                    }
-                  ]
-                },
-                "order": {
-                  "$ref": "#/refs/sortOrder"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "array",
-                  "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
-                  }
-                },
-                "order": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/refs/sortOrder"
-                  }
-                }
-              }
-            }
-          ]
+          "$ref": "#/refs/compare"
         },
         "method": {
           "anyOf": [
@@ -6212,50 +6010,7 @@
           ]
         },
         "sort": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "$ref": "#/refs/signal"
-                    }
-                  ]
-                },
-                "order": {
-                  "$ref": "#/refs/sortOrder"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "field": {
-                  "type": "array",
-                  "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
-                  }
-                },
-                "order": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/refs/sortOrder"
-                  }
-                }
-              }
-            }
-          ]
+          "$ref": "#/refs/compare"
         },
         "method": {
           "anyOf": [
@@ -7769,6 +7524,52 @@
       "title": "Expression String",
       "type": "string"
     },
+    "compare": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "field": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "order": {
+              "$ref": "#/refs/sortOrder"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            "order": {
+              "type": "array",
+              "items": {
+                "$ref": "#/refs/sortOrder"
+              }
+            }
+          }
+        }
+      ]
+    },
     "from": {
       "type": "object",
       "properties": {
@@ -7831,6 +7632,9 @@
                 "aggregate": {
                   "type": "object",
                   "properties": {
+                    "cross": {
+                      "type": "boolean"
+                    },
                     "fields": {
                       "type": "array",
                       "items": {
