@@ -154,7 +154,7 @@ export function gridLayout(view, group, opt) {
     g = groups[i];
     px = g.x || 0;
     g.x = (x = xOffset[i] + (i % ncols ? x : 0));
-    bounds.union(g.bounds.translate(x - px, 0));
+    g.bounds.translate(x - px, 0);
   }
 
   // perform vertical grid layout
@@ -163,7 +163,7 @@ export function gridLayout(view, group, opt) {
       g = groups[i];
       py = g.y || 0;
       g.y = (y += yOffset[i]);
-      bounds.union(g.bounds.translate(0, y - py));
+      g.bounds.translate(0, y - py);
     }
   }
 
@@ -172,7 +172,10 @@ export function gridLayout(view, group, opt) {
 
   // update mark bounds
   for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
-  for (i=0; i<n; ++i) groups[i].mark.bounds.union(groups[i].bounds);
+  for (i=0; i<n; ++i) {
+    g = groups[i];
+    bounds.union(g.mark.bounds.union(g.bounds));
+  }
 
   // -- layout grid headers and footers --
 
