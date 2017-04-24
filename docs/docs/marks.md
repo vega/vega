@@ -57,6 +57,7 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | type          | {% include type t="String" %}  | {% include required %} The graphical mark type. Must be one of the [supported mark types](#types).|
+| clip          | {% include type t="Boolean" %} | Indicates if the marks should be clipped to the enclosing group's width and height (default `false`).|
 | description   | {% include type t="String" %}  | An optional description of this mark. Can be used as a comment.|
 | encode        | [Encode](#encode)              | An object containing a set of visual encoding rules for mark properties.|
 | from          | [From](#from)                  | An object describing the data this mark set should visualize. If undefined, a single element data set containing an empty object is assumed. The _from_ property can either specify a data set to use (e.g., `{"data": "table"}`) or provide a faceting directive to subdivide a data set across a set of [`group` marks](../marks/group).|
@@ -64,8 +65,9 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | key           | {% include type t="Field" %}   | A data field to use as a unique key for data binding. When a visualization's data is updated, the key value will be used to match data elements to existing mark instances. Use a key field to enable object constancy for transitions over dynamic data.|
 | name          | {% include type t="String" %}  | A unique name for the mark. This name can be used to refer to these marks within an [event stream definition](../event-streams). SVG renderers will add this name value as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances.|
 | on            | {% include array t="[Trigger](../triggers)" %} | A set of triggers for modifying mark properties in response to signal changes. |
+| sort          | {% include type t="Compare" %} | A comparator for sorting mark items. The sort order will determine the default rendering order. The comparator is defined over generated scenegraph items and sorting is performed after encodings are computed, allowing items to be sorted by size or position. To sort by underlying data properties in addition to mark item properties, use field names such as `"datum.field"`.|
 | transform     | {% include array t="[Transform](../transforms)" %} | A set of post-encoding transforms, applied after any _encode_ blocks, that operate directly on mark scenegraph items (not backing data objects). These can be useful for performing layout with transforms that can set `x`, `y`, `width`, `height`, _etc._ properties. Only data transforms that do not generate or filter data objects may be used.|
-| role          | {% include type t="String" %}  | A metadata string indicating the role of the mark. SVG renderers will add this role value (prepended with the prefix `role-`) as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances.|
+| role          | {% include type t="String" %}  | A metadata string indicating the role of the mark. SVG renderers will add this role value (prepended with the prefix `role-`) as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances. Roles are used internally by Vega to perform custom processing and layout, do not set this property unless you know which layout effect you are trying to achieve.|
 
 ## <a name="from"></a>Mark Data Sources (`from`)
 
