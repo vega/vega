@@ -12,19 +12,18 @@ import {range} from 'd3-array';
  * @param {number} [params.step=1] - The step size between numbers in the sequence.
  */
 export default function Sequence(params) {
-  Transform.call(this, [], params);
+  Transform.call(this, null, params);
 }
 
 var prototype = inherits(Sequence, Transform);
 
 prototype.transform = function(_, pulse) {
-  if (!_.modified()) return;
+  if (this.value && !_.modified()) return;
 
   var out = pulse.materialize().fork(pulse.MOD);
 
-  out.rem = pulse.rem.concat(this.value);
-  out.source = this.value = range(_.start, _.stop, _.step).map(ingest);
+  out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
+  out.source = this.value = range(_.start, _.stop, _.step || 1).map(ingest);
   out.add = pulse.add.concat(this.value);
-
   return out;
 };
