@@ -7,6 +7,7 @@ import LegendEntries from './src/LegendEntries';
 import LinkPath from './src/LinkPath';
 import Pie from './src/Pie';
 import Scale from './src/Scale';
+import SortItems from './src/SortItems';
 import Stack from './src/Stack';
 
 import LinkPathDefinition from './definitions/LinkPath';
@@ -22,6 +23,7 @@ transform('DataJoin', DataJoin);
 transform('Encode', Encode);
 transform('LegendEntries', LegendEntries);
 transform('Scale', Scale);
+transform('SortItems', SortItems);
 
 export {transform, definition} from 'vega-dataflow';
 export {scale, scheme} from 'vega-scale';
