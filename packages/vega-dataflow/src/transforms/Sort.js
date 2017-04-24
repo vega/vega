@@ -15,9 +15,12 @@ export default function Sort(params) {
 var prototype = inherits(Sort, Transform);
 
 prototype.transform = function(_, pulse) {
-  this.modified(_.modified('sort') || pulse.changed()
-    ? (pulse.source.sort(_.sort), true)
-    : false);
+  var mod = _.modified('sort')
+         || pulse.changed(pulse.ADD)
+         || pulse.modified(_.sort.fields);
 
+  if (mod) pulse.source.sort(_.sort);
+
+  this.modified(mod);
   return pulse;
 };
