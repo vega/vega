@@ -29,6 +29,6 @@ export var Relay = transform('Relay');
 export var Render = transform('Render');
 export var Scale = transform('Scale');
 export var Sieve = transform('Sieve');
-export var Sort = transform('Sort');
+export var SortItems = transform('SortItems');
 export var ViewLayout = transform('ViewLayout');
 export var Values = transform('Values');

@@ -13,7 +13,7 @@ import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {fieldRef, ref} from '../util';
 import {error} from 'vega-util';
-import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, Sort, ViewLayout} from '../transforms';
+import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
   var role = getRole(spec),
@@ -71,7 +71,7 @@ export default function(spec, scope) {
 
   // if item sort specified, perform post-encoding
   if (spec.sort) {
-    op = scope.add(Sort({
+    op = scope.add(SortItems({
       sort:  scope.compareRef(spec.sort),
       pulse: ref(op)
     }));
