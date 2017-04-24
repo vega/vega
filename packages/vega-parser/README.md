@@ -154,6 +154,22 @@ within a `"legend"` property block.
 - *titleLimit*: Maximum allowed pixel width of the legend title.
 - *titlePadding*: Padding (in pixels) between the legend title and entries.
 
+### Title Properties
+
+Properties defining default settings for titles. These properties are defined
+within a `"title"` property block.
+
+- *orient*: Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`).
+- *offset*: Offset (in pixels) of the title from the chart body and axes.
+- *anchor*: Title anchor position (`"start"`, `"middle"`, or `"end"`).
+- *color*: Text color of title text.
+- *font*: Font name for title text.
+- *fontSize*: Font size (in pixels) of title text.
+- *fontWeight*: Font weight of title text.
+- *angle*: Angle in degrees of title text.
+- *baseline*: Vertical text baseline for title.
+- *limit*: Maximum allowed pixel width of title text.
+
 ### Scale Range Properties
 
 Properties defining named range arrays that can be used within scale
