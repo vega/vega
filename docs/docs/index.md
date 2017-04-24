@@ -24,10 +24,12 @@ A **Vega specification** is a [JSON](http://en.wikipedia.org/wiki/JSON) object t
 | [Schemes](schemes)             | Color schemes that can server as scale ranges.|
 | [Axes](axes)                   | Visualize scale mappings for spatial encodings using co-ordinate axes.|
 | [Legends](legends)             | Visualize scale mappings for color, shape and size encodings.|
+| [Title](title)                 | Specify a chart title for a visualization.|
 | [Marks](marks)                 | Visually encode data with graphical marks such as rectangles, lines, and symbols.|
 | [Signals](signals)             | Dynamic variables that can drive interactive updates.|
 | [Event Streams](event-streams) | Define input event streams to specify interactions.|
 | [Expressions](expressions)     | Express custom calculations over data and signals.|
+| [Layout](layout)               | Perform grid layout for a collection of group marks.|
 | [Types](types)                 | Documentation of recurring parameter types.|
 
 
