@@ -71,13 +71,34 @@ There is also a special group mark type (`group`) that can contain other marks, 
 
 ## <a name="from"></a>Mark Data Sources (`from`)
 
-TODO: data, facet.
+The `from` property indicates the data source for a set of marks.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| data          | {% include type t="String" %}  | The name of the data set to draw from.|
+| facet         | [Facet](#facet)                | An option facet definition for partitioning data across multiple group marks. Only [`group` mark](group) definitions may use the facet directive.|
+
+### <a name="facet"></a>Faceting
+
+The `facet` directive splits up a data source among multiple group mark items. Each group mark is backed by an aggregate data value representing the entire group, and then instantiated with its own named data source that contains a local partition of the data. Facets can either be _data-driven_, in which partitions are determined by grouping data values according to specified attributes, or _pre-faceted_, such that a source data value already contains within it an array of sub-values.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| name          | {% include type t="String" %}  | {% include required %} The name of the generated facet data source. Marks defined with the faceted group mark can reference this data source to visualize the local data partition.|
+| data          | {% include type t="String" %}  | {% include required %} The name of the source data set from which the facet partitions are generated.|
+| field         | {% include type t="Field" %}  | For pre-faceted data, the name of the data field containing an array of data values to use as the local partition. This property is **required** if using pre-faceted data. |
+| groupby       | {% include type t="Field|Field[]" %}  | For data-driven facets, an array of field names by which to partition the data. This property is **required** if using data-driven facets. |
+| aggregate     | {% include type t="Object" %}  | For data-driven facets, an optional object containing [aggregate transform parameters](../transforms/aggregate) for the aggregate data values generated for each facet group item. The supported parameters are `fields`, `ops`, `as`, and `cross`.|
+
+When generating data-driven facets, by default new aggregate data values are generated to serve as the data backing each group mark item. However, if _both_ the `data` and `facet` properties are defined in the `from` object, pre-existing aggregate values will be pulled from the named `data` source. In such cases it is **critical** that the aggregate and facet `groupby` domains match. If they do not match, the behavior of the resulting visualization is undefined.
 
 ## <a name="encode"></a>Mark Encoding Sets
 
-TODO: say more, examples.
-
 All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property. The value should be a [_value reference_](#valueref) or [_production rule_](#production-rule), as defined below.
+
+The `enter` set is invoked when a mark item is first instantiated and also when a visualization is resized. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
+
+Custom encoding sets with arbitrary names are also allowed. To invoke a custom encoding set (e.g., instead of the `update` set), either pass the encoding set name to the [Vega View run method](../api/view/#view_run) or define a [signal event handler with an `"encode"` directive](../signals/#handlers).
 
 ## <a name="valueref"></a>Value References
 
