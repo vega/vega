@@ -38,6 +38,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 - [Mark Properties](#mark)
 - [Axis Properties](#axes)
 - [Legend Properties](#legends)
+- [Title Properties](#title)
 - [Scale Range Properties](#scale-range)
 {: .column-list }
 
@@ -136,7 +137,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleColor      | {% include type t="Color" %}    | Text color of axis titles. |
 | titleFont       | {% include type t="String" %}   | Font name for axis titles. |
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
-| titleFontWeight | {% include type t="Number" %}   | Font weight of axis titles. |
+| titleFontWeight | {% include type t="String" %}   | Font weight of axis titles. |
 | titleLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis titles. |
 | titlePadding    | {% include type t="Number" %}   | Padding in pixels between axis tick labels and titles. |
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
@@ -191,7 +192,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleColor            | {% include type t="Color" %}    | Text color for legend titles. |
 | titleFont             | {% include type t="String" %}   | Font name for legend titles. |
 | titleFontSize         | {% include type t="Number" %}   | Font size in pixels for legend titles. |
-| titleFontWeight       | {% include type t="Number" %}   | Font weight for legend titles. |
+| titleFontWeight       | {% include type t="String" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
 | strokeColor           | {% include type t="Color" %}    | Border stroke color for the full legend. |
@@ -212,6 +213,39 @@ This example gives every legend a 10 pixel padding and a light gray border.
     "padding": 10,
     "legendStrokeColor": "#ccc",
     "legendStrokeWidth": 1
+  }
+}
+```
+
+[Back to Top](#reference)
+
+
+## <a name="title"></a>Title Properties
+
+Properties defining default settings for titles. These properties are defined under the `"title"` property within the config object.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| anchor                | {% include type t="String" %}   | Title anchor position (`"start"`, `"middle"`, or `"end"`). |
+| angle                 | {% include type t="Number" %}   | Angle in degrees of title text. |
+| baseline              | {% include type t="String" %}   | Vertical text baseline for title text. |
+| color                 | {% include type t="Color" %}    | Text color for title text. |
+| font                  | {% include type t="String" %}   | Font name for title text. |
+| fontSize              | {% include type t="Number" %}   | Font size in pixels for title text. |
+| fontWeight            | {% include type t="String" %}   | Font weight for title text. |
+| limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
+| offset                | {% include type t="Number" %}   | Offset in pixels of the title from the chart body and axes. |
+| orient                | {% include type t="String" %}   | Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`). |
+
+### Usage
+
+This example gives every title a 10 pixel offset and a font size of 18 pixels.
+
+```json
+{
+  "title": {
+    "offset": 10,
+    "fontSize": 18
   }
 }
 ```
