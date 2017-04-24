@@ -1,5 +1,5 @@
 export default {
-  "type": "Range",
+  "type": "Sequence",
   "metadata": {"generates": true, "source": true},
   "params": [
     { "name": "start", "type": "number", "required": true },
