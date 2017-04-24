@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "2.0.0-beta.17",
+  "version": "2.0.0-beta.18",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
