@@ -1,4 +1,4 @@
-import {field, isDate} from 'vega-util';
+import {field} from 'vega-util';
 import inrange from './inrange';
 
 var UNION = 'union',
@@ -94,96 +94,92 @@ export function vlInterval(name, unit, datum, op, scope) {
 /**
  * Materializes a point selection as a scale domain. With point selections,
  * we assume that they are projected over a single field or encoding channel.
- * @param   {string} name - The name of the dataset representing the selection.
- * @param   {string} [encoding] - A particular encoding channel to materialize.
- * @param   {string} [field] - A particular field to materialize.
- * @param   {string} [op='intersect'] - The set operation for combining selections.
+ * @param {string} name - The name of the dataset representing the selection.
+ * @param {string} [encoding] - A particular encoding channel to materialize.
+ * @param {string} [field] - A particular field to materialize.
+ * @param {string} [op='intersect'] - The set operation for combining selections.
  * One of 'intersect' (default) or 'union'.
  * @returns {array} An array of values to serve as a scale domain.
  */
 export function vlPointDomain(name, encoding, field, op) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
-      units = [], values = {}, domain = [],
+      units = {}, count = 0,
+      values = {}, domain = [],
       i = 0, n = entries.length,
-      entry, value, unit;
+      entry, unit, v, key;
 
   for (; i<n; ++i) {
     entry = entries[i];
     unit  = entry.unit;
-    value = entry.values[0];
+    key   = entry.values[0];
 
-    if (units.indexOf(unit) < 0) units.push(unit);
+    if (!units[unit]) units[unit] = ++count;
+
     if ((encoding && entry.encodings[0] === encoding) ||
-        (field && entry.fields[0] === field)) {
-      values[value] = values[value] || {value: value, units: []};
-      if (values[value].units.indexOf(unit) < 0) values[value].units.push(unit);
+        (field && entry.fields[0] === field))
+    {
+      if (!(v = values[key])) {
+        values[key] = v = {value: key, units: {}, count: 0};
+      }
+      if (!v.units[unit]) v.units[unit] = ++v.count;
     }
   }
 
-  for (var key in values) {
-    value = values[key];
-    if (op !== UNION && value.units.length !== units.length) continue;
-    domain.push(value.value);
+  for (key in values) {
+    if (op !== UNION && (v = values[key]).count !== count) continue;
+    domain.push(v.value);
   }
 
   return domain.length ? domain : undefined;
 }
 
-function asc(a, b) { return a-b; }
-
-function enclosesInterval(a, b) { return a[0] <= b[0] && a[1] >= b[1]; }
-
-function unionInterval(a, b) {
-  return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
-}
-
-function intersectInterval(a, b) {
-  if (a[0] > b[0]) b[0] = a[0];
-  if (a[1] < b[1]) b[1] = a[1];
-  return b;
-}
-
 /**
  * Materializes an interval selection as a scale domain.
- * @param   {string} name - The name of the dataset representing the selection.
- * @param   {string} [encoding] - A particular encoding channel to materialize.
- * @param   {string} [field] - A particular field to materialize.
- * @param   {string} [op='intersect'] - The set operation for combining selections.
+ * @param {string} name - The name of the dataset representing the selection.
+ * @param {string} [encoding] - A particular encoding channel to materialize.
+ * @param {string} [field] - A particular field to materialize.
+ * @param {string} [op='intersect'] - The set operation for combining selections.
  * One of 'intersect' (default) or 'union'.
  * @returns {array} An array of values to serve as a scale domain.
  */
 export function vlIntervalDomain(name, encoding, field, op) {
-  var data = this.context.data[name],
+  var merge = op === UNION ? unionInterval : intersectInterval,
+      data = this.context.data[name],
       entries = data ? data.values.value : [],
       i = 0, n = entries.length,
-      extents = [],
-      entry, m, j, interval;
+      entry, m, j, interval, extent, domain, lo, hi;
 
   for (; i<n; ++i) {
-    entry = entries[i];
+    entry = entries[i].intervals;
 
-    for (j=0, m=entry.intervals.length; j<m; ++j) {
-      interval = entry.intervals[j];
+    for (j=0, m=entry.length; j<m; ++j) {
+      interval = entry[j];
       if ((encoding && interval.encoding === encoding) ||
-        (field && interval.field === field)) {
-        extents.push(interval.extent.slice(0).sort(asc));
+          (field && interval.field === field))
+      {
+        extent = interval.extent, lo = extent[0], hi = extent[1];
+        if (lo > hi) hi = extent[1], lo = extent[0];
+        domain = domain ? merge(domain, lo, hi) : [lo, hi];
       }
     }
   }
 
-  var domain = extents.reduce(function(domain, ext) {
-    if (!domain.length) return ext;
-    if (op === UNION) {
-      return unionInterval(ext, domain);
-    } else {
-      return enclosesInterval(ext, domain) ? intersectInterval(domain, ext) :
-        enclosesInterval(domain, ext) ? intersectInterval(ext, domain) : [];
-    }
-  }, []);
+  return domain.length && (+domain[0] !== +domain[1]) ? domain : undefined;
+}
 
-  return domain.length &&
-    (isDate(domain[0]) ?
-      domain[0].getTime() !== domain[1].getTime() :
-      domain[0] !== domain[1]) ? domain : undefined;
+function unionInterval(domain, lo, hi) {
+  if (domain[0] > lo) domain[0] = lo;
+  if (domain[1] < hi) domain[1] = hi;
+  return domain;
+}
+
+function intersectInterval(domain, lo, hi) {
+  if (hi < domain[0] || domain[1] < lo) {
+    return [];
+  } else {
+    if (domain[0] < lo) domain[0] = lo;
+    if (domain[1] > hi) domain[1] = hi;
+  }
+  return domain;
 }
