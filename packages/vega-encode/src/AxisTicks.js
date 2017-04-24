@@ -19,13 +19,13 @@ import {tickValues, tickFormat} from './ticks';
  *   If provided, the formatSpecifier argument is ignored.
  */
 export default function AxisTicks(params) {
-  Transform.call(this, [], params);
+  Transform.call(this, null, params);
 }
 
 var prototype = inherits(AxisTicks, Transform);
 
 prototype.transform = function(_, pulse) {
-  if (this.value != null && !_.modified()) {
+  if (this.value && !_.modified()) {
     return pulse.StopPropagation;
   }
 
