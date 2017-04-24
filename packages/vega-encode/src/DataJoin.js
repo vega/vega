@@ -75,6 +75,8 @@ prototype.transform = function(_, pulse) {
     }
   });
 
+  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
+
   if (_.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
 
   return out;
