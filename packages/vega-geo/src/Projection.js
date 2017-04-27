@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {error, inherits, isFunction} from 'vega-util';
+import {error, inherits, isArray, isFunction} from 'vega-util';
 import {projection, properties} from './projections';
 
 /**
@@ -29,7 +29,20 @@ prototype.transform = function(_) {
   }
 
   if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
+  if (_.fit) fit(proj, _);
 };
+
+function fit(proj, _) {
+  var data = geoJSON(_.fit);
+  _.extent ? proj.fitExtent(_.extent, data)
+    : _.size ? proj.fitSize(_.size, data) : 0;
+}
+
+function geoJSON(data) {
+  return !isArray(data) ? data
+    : data.length > 1 ? {type: 'FeatureCollection', features: data}
+    : data[0];
+}
 
 function create(type) {
   var constructor = projection((type || 'mercator').toLowerCase());
