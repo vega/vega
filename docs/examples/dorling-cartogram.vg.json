@@ -35,8 +35,7 @@
           "expr": "geoCentroid('projection', datum.geo)"
         }
       ]
-    },
-
+    }
   ],
 
   "projections": [
