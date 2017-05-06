@@ -82,7 +82,7 @@ The [vega-embed](https://github.com/vega/vega-embed) module provides a convenien
 <body>
 <div id="vis"></div>
 <script>
-  vega.embed('#vis', 'https://vega.github.io/vega/spec/bar.vg.json');
+  vega.embed('#vis', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
 </script>
 </body>
 ```
