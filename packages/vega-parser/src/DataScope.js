@@ -3,7 +3,7 @@ import {Aggregate, Collect} from './transforms';
 import {isString} from 'vega-util';
 
 export default function DataScope(scope, input, output, values, aggr) {
-  this.scope = scope; // parent scope object
+  this.scope = scope;   // parent scope object
   this.input = input;   // first operator in pipeline (tuple input)
   this.output = output; // last operator in pipeline (tuple output)
   this.values = values; // operator for accessing tuples (but not tuple flow)

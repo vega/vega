@@ -32,28 +32,26 @@ function parseParameters(def, spec, scope) {
  * Parse a data transform parameter.
  */
 function parseParameter(def, spec, scope) {
-  var type = def.type, value;
+  var type = def.type,
+      value = spec[def.name];
 
   if (type === 'index') {
     return parseIndexParameter(def, spec, scope);
+  } else if (value === undefined) {
+    if (def.required) {
+      error('Missing required ' + stringValue(spec.type)
+          + ' parameter: ' + stringValue(def.name));
+    }
+    return;
   } else if (type === 'param') {
     return parseSubParameters(def, spec, scope);
   } else if (type === 'projection') {
     return scope.projectionRef(spec[def.name]);
-  } else {
-    value = spec[def.name];
-    if (value === undefined) {
-      if (def.required) {
-        error('Missing required ' + stringValue(spec.type)
-          + ' parameter: ' + stringValue(def.name));
-      }
-      return;
-    }
-
-    return def.array && !isSignal(value)
-      ? value.map(function(v) { return parameterValue(def, v, scope); })
-      : parameterValue(def, value, scope);
   }
+
+  return def.array && !isSignal(value)
+    ? value.map(function(v) { return parameterValue(def, v, scope); })
+    : parameterValue(def, value, scope);
 }
 
 /**
