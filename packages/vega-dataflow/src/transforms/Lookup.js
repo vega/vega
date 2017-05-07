@@ -1,5 +1,5 @@
 import Transform from '../Transform';
-import {inherits} from 'vega-util';
+import {accessorName, error, inherits} from 'vega-util';
 
 /**
  * Extend tuples by joining them with values from a lookup table.
@@ -21,21 +21,38 @@ prototype.transform = function(_, pulse) {
       as = _.as,
       keys = _.fields,
       index = _.index,
+      values = _.values,
       defaultValue = _.default==null ? null : _.default,
       reset = _.modified(),
-      flag = pulse.ADD,
-      set, key, field, mods;
+      flag = reset ? pulse.SOURCE : pulse.ADD,
+      n = keys.length,
+      set, m, mods;
 
-  if (keys.length === 1) {
-    key = keys[0];
-    field = as[0];
+  if (values) {
+    m = values.length;
+
+    if (n > 1 && !as) {
+      error('Multi-field lookup requires explicit "as" parameter.');
+    }
+    if (as && as.length !== n * m) {
+      error('The "as" parameter has too few output field names.');
+    }
+    as = as || values.map(accessorName);
+
     set = function(t) {
-      var v = index.get(key(t));
-      t[field] = v==null ? defaultValue : v;
+      for (var i=0, k=0, j, v; i<n; ++i) {
+        v = index.get(keys[i](t));
+        if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
+        else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
+      }
     };
   } else {
+    if (!as) {
+      error('Missing output field names.');
+    }
+
     set = function(t) {
-      for (var i=0, n=keys.length, v; i<n; ++i) {
+      for (var i=0, v; i<n; ++i) {
         v = index.get(keys[i](t));
         t[as[i]] = v==null ? defaultValue : v;
       }
@@ -43,7 +60,6 @@ prototype.transform = function(_, pulse) {
   }
 
   if (reset) {
-    flag = pulse.SOURCE;
     out = pulse.reflow(true);
   } else {
     mods = keys.some(function(k) { return pulse.modified(k.fields); });
