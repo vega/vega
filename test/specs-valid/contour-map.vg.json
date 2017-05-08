@@ -1,0 +1,141 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 900,
+  "height": 560,
+  "padding": 10,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "thresholds", "value": 10,
+      "bind": {"input": "select", "options": [1, 5, 10, 20]}
+    }
+  ],
+
+  "title": {
+    "text": "Density of U.S. Airports, 2008",
+    "encode": {"update": {"dy": {"value": 12}}}
+  },
+
+  "data": [
+    {
+      "name": "states",
+      "url": "data/us-10m.json",
+      "format": {"type": "topojson", "feature": "states"},
+      "transform": [
+        {
+          "type": "geopath",
+          "projection": "projection"
+        }
+      ]
+    },
+    {
+      "name": "airports",
+      "url": "data/airports.csv",
+      "format": {"type": "csv","parse": "auto"
+      },
+      "transform": [
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"]
+        },
+        {
+          "type": "filter",
+          "expr": "datum.x != null && datum.y != null"
+        }
+      ]
+    }
+  ],
+
+  "projections": [
+    {
+      "name": "projection",
+      "type": "albers",
+      "scale": 1150,
+      "translate": [{"signal": "width / 2"}, {"signal": "height / 2"}]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "states"},
+      "encode": {
+        "enter": {
+          "fill": {"value": "#dedede"},
+          "stroke": {"value": "white"}
+        },
+        "update": {
+          "path": {"field": "path"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "airports"},
+      "encode": {
+        "enter": {
+          "size": {"value": 10},
+          "fill": {"value": "steelblue"},
+          "fillOpacity": {"value": 0.8},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"value": 0.5}
+        },
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"}
+        }
+      }
+    },
+    {
+      "type": "group",
+      "clip": true,
+      "data": [
+        {
+          "name": "contours",
+          "source": "airports",
+          "transform": [
+            {
+              "type": "contour",
+              "x": "x",
+              "y": "y",
+              "size": [{"signal": "width"}, {"signal": "height"}],
+              "thresholds": {"signal": "thresholds"}
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "color",
+          "type": "sequential",
+          "domain": {"data": "contours", "field": "value"},
+          "range": {"scheme": "viridis"}
+        }
+      ],
+      "marks": [
+        {
+          "type": "shape",
+          "from": {"data": "contours"},
+          "encode": {
+            "enter": {
+              "stroke": {"value": "firebrick"},
+              "fill": {"scale": "color", "field": "value"},
+              "fillOpacity": {"value": 0.3}
+            },
+            "update": {
+              "strokeWidth": {"value": 1}
+            },
+            "hover": {
+              "strokeWidth": {"value": 3}
+            }
+          },
+          "transform": [
+            { "type": "geoshape", "field": "datum" }
+          ]
+        }
+      ]
+    }
+  ]
+}
