@@ -18,6 +18,7 @@ Cartographic **projections** map _(longitude, latitude)_ pairs to projected _(x,
 
 | Property      | Type          | Description    |
 | :------------ |:-------------:| :------------- |
+| name          | {% include type t="String" %}  | {% include required %} A unique name for the projection. Projections and [scales](../scales) share the same namespace; names must be unique across both.|
 | [type](#projection-types) | {% include type t="String" %} | The cartographic projection to use. The default is `"mercator"`. This value is case-insensitive, for example `"albers"` and `"Albers"` indicate the same projection type. |
 | [clipAngle](https://github.com/d3/d3-geo#projection_clipAngle) | {% include type t="Number" %} | Sets the projection’s clipping circle radius to the specified angle in degrees. If `null`, switches to [antimeridian](http://bl.ocks.org/mbostock/3788999) cutting rather than small-circle clipping.|
 | [clipExtent](https://github.com/d3/d3-geo#projection_clipExtent) | {% include type t="Array" %} | Sets the projection’s viewport clip extent to the specified bounds in pixels. The extent bounds are specified as an array [[x0, y0], [x1, y1]], where x0 is the left-side of the viewport, y0 is the top, x1 is the right and y1 is the bottom. If `null`, no viewport clipping is performed. |
@@ -26,6 +27,9 @@ Cartographic **projections** map _(longitude, latitude)_ pairs to projected _(x,
 | [center](https://github.com/d3/d3-geo#projection_center) | {% include type t="Number[]" %} | Sets the projection’s center to the specified center, a two-element array of longitude and latitude in degrees. The default value is `[0, 0]`.|
 | [rotate](https://github.com/d3/d3-geo#projection_rotate) | {% include type t="Number[]" %} | Sets the projection’s three-axis rotation to the specified angles, which must be a two- or three-element array of numbers [_lambda_, _phi_, _gamma_] specifying the rotation angles in degrees about each spherical axis. (These correspond to yaw, pitch and roll.) The default value is `[0, 0, 0]`.|
 | [precision](https://github.com/d3/d3-geo#projection_precision) | {% include type t="String" %} | Sets the threshold for the projection’s [adaptive resampling](http://bl.ocks.org/mbostock/3795544) to the specified value in pixels. This value corresponds to the [Douglas–Peucker](http://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm) distance. If precision is not specified, returns the projection’s current resampling precision which defaults to √0.5 ≅ 0.70710...|
+| fit | {% include type t="Object|Array" %} | GeoJSON data to which the projection should attempt to automatically fit the _translate_ and _scale_ parameters. |
+| extent | {% include type t="Array[]" %} | Used in conjunction with _fit_, provides the pixel area to which the projection should be automatically fit. The extent bounds are specified as an array `[[x0, y0], [x1, y1]]`, where x0 is the left side of the extent, y0 is the top, x1 is the right and y1 is the bottom.|
+| size | {% include type t="Number[]" %} | Used in conjunction with _fit_, provides the width and height in pixels of the area to which the projection should be automatically fit. This parameter is equivalent to an _extent_ of `[[0,0], size]`. |
 
 In addition to the shared properties above, the following properties are supported for specific projection types in the [d3-geo-projection](https://github.com/d3/d3-geo-projection) library:
 [`coefficient`](https://github.com/d3/d3-geo-projection#hammer_coefficient),
