@@ -80,9 +80,9 @@ The [vega-embed](https://github.com/vega/vega-embed) module provides a convenien
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/{{ site.data.versions.vega-embed }}/vega-embed.js"></script>
 </head>
 <body>
-<div id="vis"></div>
+<div id="view"></div>
 <script>
-  vega.embed('#vis', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
+  vega.embed('#view', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
 </script>
 </body>
 ```
