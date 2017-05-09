@@ -42,6 +42,8 @@ menu: examples
 {% include preview spec="probability-density" %}
 {% include preview spec="box-plot" %}
 {% include preview spec="violin-plot" %}
+{% include preview spec="binned-scatter-plot" %}
+{% include preview spec="contour-plot" %}
 
 ## Geographic Maps
 
