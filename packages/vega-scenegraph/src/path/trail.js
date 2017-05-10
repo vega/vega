@@ -14,20 +14,25 @@ export default function() {
     var r2 = w2 / 2;
 
     if (ready) {
-      // get normal vector
       var ux = y1 - y2,
-          uy = x2 - x1,
-          ud = Math.sqrt(ux * ux + uy * uy),
-          rx = (ux /= ud) * r1,
-          ry = (uy /= ud) * r1,
-          t = Math.atan2(uy, ux);
+          uy = x2 - x1;
 
-      // draw segment
-      context.moveTo(x1 - rx, y1 - ry);
-      context.lineTo(x2 - ux * r2, y2 - uy * r2);
-      context.arc(x2, y2, r2, t - pi, t);
-      context.lineTo(x1 + rx, y1 + ry);
-      context.arc(x1, y1, r1, t, t + pi);
+      if (ux || uy) {
+        // get normal vector
+        var ud = Math.sqrt(ux * ux + uy * uy),
+            rx = (ux /= ud) * r1,
+            ry = (uy /= ud) * r1,
+            t = Math.atan2(uy, ux);
+
+        // draw segment
+        context.moveTo(x1 - rx, y1 - ry);
+        context.lineTo(x2 - ux * r2, y2 - uy * r2);
+        context.arc(x2, y2, r2, t - pi, t);
+        context.lineTo(x1 + rx, y1 + ry);
+        context.arc(x1, y1, r1, t, t + pi);
+      } else {
+        context.arc(x2, y2, r2, 0, 2*pi);
+      }
       context.closePath();
     } else {
       ready = 1;
