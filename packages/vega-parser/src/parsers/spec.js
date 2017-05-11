@@ -1,8 +1,8 @@
 import parseSignalUpdates from './signal-updates';
+import {initScale, parseScale} from './scale';
 import parseProjection from './projection';
 import parseLegend from './legend';
 import parseSignal from './signal';
-import parseScale from './scale';
 import parseTitle from './title';
 import parseData from './data';
 import parseMark from './mark';
@@ -10,7 +10,8 @@ import parseAxis from './axis';
 import {array} from 'vega-util';
 
 export default function(spec, scope, preprocessed) {
-  var signals = array(spec.signals);
+  var signals = array(spec.signals),
+      scales = array(spec.scales);
 
   if (!preprocessed) signals.forEach(function(_) {
     parseSignal(_, scope);
@@ -20,11 +21,15 @@ export default function(spec, scope, preprocessed) {
     parseProjection(_, scope);
   });
 
+  scales.forEach(function(_) {
+    initScale(_, scope);
+  });
+
   array(spec.data).forEach(function(_) {
     parseData(_, scope);
   });
 
-  array(spec.scales).forEach(function(_) {
+  scales.forEach(function(_) {
     parseScale(_, scope);
   });
 

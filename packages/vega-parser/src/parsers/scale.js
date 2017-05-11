@@ -24,18 +24,24 @@ export function isQuantile(type) {
   return type === 'quantile';
 }
 
-export default function(spec, scope) {
-  var type = spec.type || 'linear',
-      params, key;
+export function initScale(spec, scope) {
+  var type = spec.type || 'linear';
 
   if (!allTypes.hasOwnProperty(type)) {
     error('Unrecognized scale type: ' + stringValue(type));
   }
 
-  params = {
+  scope.addScale(spec.name, {
     type:   type,
-    domain: parseScaleDomain(spec.domain, spec, scope)
-  };
+    domain: undefined
+  });
+}
+
+export function parseScale(spec, scope) {
+  var params = scope.getScale(spec.name).params,
+      key;
+
+  params.domain = parseScaleDomain(spec.domain, spec, scope);
 
   if (spec.range != null) {
     params.range = parseScaleRange(spec, scope, params);
@@ -49,8 +55,6 @@ export default function(spec, scope) {
     if (params.hasOwnProperty(key) || key === 'name') continue;
     params[key] = parseLiteral(spec[key], scope);
   }
-
-  scope.addScale(spec.name, params);
 }
 
 function parseLiteral(v, scope) {
