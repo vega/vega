@@ -28,7 +28,7 @@ This example generates 10 levels of contours for the 2D kernel density estimate 
 {
   "type": "contour",
   "x": "x_value",
-  "y": "y_value,
+  "y": "y_value",
   "size": [{"signal": "width"}, {"signal": "height"}],
   "thresholds": 10
 }
