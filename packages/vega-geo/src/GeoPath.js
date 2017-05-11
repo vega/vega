@@ -1,3 +1,4 @@
+import {getPath} from './projections';
 import {Transform} from 'vega-dataflow';
 import {inherits, identity} from 'vega-util';
 
@@ -29,7 +30,7 @@ prototype.transform = function(_, pulse) {
 
   if (!path || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = path = _.projection.path;
+    this.value = path = getPath(_.projection);
     out.materialize().reflow().visit(out.SOURCE, set);
   } else {
     mod = field === identity || pulse.modified(field.fields);

@@ -15,6 +15,8 @@ import {
   geoPath
 } from 'd3-geo';
 
+var defaultPath = geoPath();
+
 export var properties = [
   // standard properties in d3-geo
   'clipAngle',
@@ -65,6 +67,10 @@ function create(type, constructor) {
 export function projection(type, proj) {
   return arguments.length > 1 ? (projections[type] = create(type, proj), this)
     : projections.hasOwnProperty(type) ? projections[type] : null;
+}
+
+export function getPath(proj) {
+  return (proj && proj.path) || defaultPath;
 }
 
 var projections = {
