@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.30";
+var version = "3.0.0-beta.31";
 
 function bin$1(_) {
   // determine range
@@ -253,6 +253,10 @@ function tickStep(start, stop, count) {
   else if (error >= e5) step1 *= 5;
   else if (error >= e2) step1 *= 2;
   return stop < start ? -step1 : step1;
+}
+
+function thresholdSturges(values) {
+  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
 }
 
 function threshold(values, p, valueof) {
@@ -5620,20 +5624,25 @@ function vg_trail() {
     var r2 = w2 / 2;
 
     if (ready) {
-      // get normal vector
       var ux = y1 - y2,
-          uy = x2 - x1,
-          ud = Math.sqrt(ux * ux + uy * uy),
-          rx = (ux /= ud) * r1,
-          ry = (uy /= ud) * r1,
-          t = Math.atan2(uy, ux);
+          uy = x2 - x1;
 
-      // draw segment
-      context.moveTo(x1 - rx, y1 - ry);
-      context.lineTo(x2 - ux * r2, y2 - uy * r2);
-      context.arc(x2, y2, r2, t - pi$2, t);
-      context.lineTo(x1 + rx, y1 + ry);
-      context.arc(x1, y1, r1, t, t + pi$2);
+      if (ux || uy) {
+        // get normal vector
+        var ud = Math.sqrt(ux * ux + uy * uy),
+            rx = (ux /= ud) * r1,
+            ry = (uy /= ud) * r1,
+            t = Math.atan2(uy, ux);
+
+        // draw segment
+        context.moveTo(x1 - rx, y1 - ry);
+        context.lineTo(x2 - ux * r2, y2 - uy * r2);
+        context.arc(x2, y2, r2, t - pi$2, t);
+        context.lineTo(x1 + rx, y1 + ry);
+        context.arc(x1, y1, r1, t, t + pi$2);
+      } else {
+        context.arc(x2, y2, r2, 0, 2*pi$2);
+      }
       context.closePath();
     } else {
       ready = 1;
@@ -11755,21 +11764,38 @@ prototype$33.transform = function(_, pulse) {
       as = _.as,
       keys = _.fields,
       index = _.index,
+      values = _.values,
       defaultValue = _.default==null ? null : _.default,
       reset = _.modified(),
-      flag = pulse.ADD,
-      set, key, field, mods;
+      flag = reset ? pulse.SOURCE : pulse.ADD,
+      n = keys.length,
+      set, m, mods;
 
-  if (keys.length === 1) {
-    key = keys[0];
-    field = as[0];
+  if (values) {
+    m = values.length;
+
+    if (n > 1 && !as) {
+      error('Multi-field lookup requires explicit "as" parameter.');
+    }
+    if (as && as.length !== n * m) {
+      error('The "as" parameter has too few output field names.');
+    }
+    as = as || values.map(accessorName);
+
     set = function(t) {
-      var v = index.get(key(t));
-      t[field] = v==null ? defaultValue : v;
+      for (var i=0, k=0, j, v; i<n; ++i) {
+        v = index.get(keys[i](t));
+        if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
+        else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
+      }
     };
   } else {
+    if (!as) {
+      error('Missing output field names.');
+    }
+
     set = function(t) {
-      for (var i=0, n=keys.length, v; i<n; ++i) {
+      for (var i=0, v; i<n; ++i) {
         v = index.get(keys[i](t));
         t[as[i]] = v==null ? defaultValue : v;
       }
@@ -11777,7 +11803,6 @@ prototype$33.transform = function(_, pulse) {
   }
 
   if (reset) {
-    flag = pulse.SOURCE;
     out = pulse.reflow(true);
   } else {
     mods = keys.some(function(k) { return pulse.modified(k.fields); });
@@ -12387,8 +12412,9 @@ var LookupDefinition = {
         {"name": "from", "type": "data", "required": true },
         {"name": "key", "type": "field", "required": true }
       ] },
+    { "name": "values", "type": "field", "array": true },
     { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "as", "type": "string", "array": true, "required": true },
+    { "name": "as", "type": "string", "array": true },
     { "name": "default", "default": null }
   ]
 };
@@ -15466,128 +15492,464 @@ function method(type) {
     .join('');
 }
 
+var array$3 = Array.prototype;
+
+var slice$4 = array$3.slice;
+
+function ascending$2(a, b) {
+  return a - b;
+}
+
+function area$3(ring) {
+  var i = 0, n = ring.length, area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
+  while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
+  return area;
+}
+
+function constant$6(x) {
+  return function() {
+    return x;
+  };
+}
+
+function contains(ring, hole) {
+  var i = -1, n = hole.length, c;
+  while (++i < n) if (c = ringContains(ring, hole[i])) return c;
+  return 0;
+}
+
+function ringContains(ring, point) {
+  var x = point[0], y = point[1], contains = -1;
+  for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
+    var pi = ring[i], xi = pi[0], yi = pi[1], pj = ring[j], xj = pj[0], yj = pj[1];
+    if (segmentContains(pi, pj, point)) return 0;
+    if (((yi > y) !== (yj > y)) && ((x < (xj - xi) * (y - yi) / (yj - yi) + xi))) contains = -contains;
+  }
+  return contains;
+}
+
+function segmentContains(a, b, c) {
+  var i; return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
+}
+
+function collinear(a, b, c) {
+  return (b[0] - a[0]) * (c[1] - a[1]) === (c[0] - a[0]) * (b[1] - a[1]);
+}
+
+function within(p, q, r) {
+  return p <= q && q <= r || r <= q && q <= p;
+}
+
+function noop$4() {}
+
+var cases = [
+  [],
+  [[[1,1.5],[0.5,1]]],
+  [[[1.5,1],[1,1.5]]],
+  [[[1.5,1],[0.5,1]]],
+  [[[1,0.5],[1.5,1]]],
+  [[[1,0.5],[0.5,1]],[[1,1.5],[1.5,1]]],
+  [[[1,0.5],[1,1.5]]],
+  [[[1,0.5],[0.5,1]]],
+  [[[0.5,1],[1,0.5]]],
+  [[[1,1.5],[1,0.5]]],
+  [[[0.5,1],[1,1.5]],[[1.5,1],[1,0.5]]],
+  [[[1.5,1],[1,0.5]]],
+  [[[0.5,1],[1.5,1]]],
+  [[[1,1.5],[1.5,1]]],
+  [[[0.5,1],[1,1.5]]],
+  []
+];
+
+function contours() {
+  var dx = 1,
+      dy = 1,
+      threshold = thresholdSturges,
+      smooth = smoothLinear;
+
+  function contours(values) {
+    var tz = threshold(values);
+
+    // Convert number of thresholds into uniform thresholds.
+    if (!Array.isArray(tz)) {
+      var domain = extent(values), start = domain[0], stop = domain[1];
+      tz = tickStep(start, stop, tz);
+      tz = sequence(Math.floor(start / tz) * tz, Math.floor(stop / tz) * tz, tz);
+    } else {
+      tz = tz.slice().sort(ascending$2);
+    }
+
+    // Accumulate, smooth contour rings, assign holes to exterior rings.
+    // Based on https://github.com/mbostock/shapefile/blob/v0.6.2/shp/polygon.js
+    var layers = tz.map(function(value) {
+      var polygons = [],
+          holes = [];
+
+      isorings(values, value, function(ring) {
+        smooth(ring, values, value);
+        if (area$3(ring) > 0) polygons.push([ring]);
+        else holes.push(ring);
+      });
+
+      holes.forEach(function(hole) {
+        for (var i = 0, n = polygons.length, polygon; i < n; ++i) {
+          if (contains((polygon = polygons[i])[0], hole)) {
+            polygon.push(hole);
+            return;
+          }
+        }
+      });
+
+      return polygons;
+    });
+
+    return layers.map(function(polygons, i) {
+      return {
+        type: "MultiPolygon",
+        value: tz[i],
+        coordinates: polygons
+      };
+    });
+  }
+
+  // Marching squares with isolines stitched into rings.
+  // Based on https://github.com/topojson/topojson-client/blob/v3.0.0/src/stitch.js
+  function isorings(values, value, callback) {
+    var fragmentByStart = new Array,
+        fragmentByEnd = new Array,
+        x, y, t0, t1, t2, t3;
+
+    // Special case for the first row (y = -1, t2 = t3 = 0).
+    x = y = -1;
+    t1 = values[0] >= value;
+    cases[t1 << 1].forEach(stitch);
+    while (++x < dx - 1) {
+      t0 = t1, t1 = values[x + 1] >= value;
+      cases[t0 | t1 << 1].forEach(stitch);
+    }
+    cases[t1 << 0].forEach(stitch);
+
+    // General case for the intermediate rows.
+    while (++y < dy - 1) {
+      x = -1;
+      t1 = values[y * dx + dx] >= value;
+      t2 = values[y * dx] >= value;
+      cases[t1 << 1 | t2 << 2].forEach(stitch);
+      while (++x < dx - 1) {
+        t0 = t1, t1 = values[y * dx + dx + x + 1] >= value;
+        t3 = t2, t2 = values[y * dx + x + 1] >= value;
+        cases[t0 | t1 << 1 | t2 << 2 | t3 << 3].forEach(stitch);
+      }
+      cases[t1 | t2 << 3].forEach(stitch);
+    }
+
+    // Special case for the last row (y = dy - 1, t0 = t1 = 0).
+    x = -1;
+    t2 = values[y * dx] >= value;
+    cases[t2 << 2].forEach(stitch);
+    while (++x < dx - 1) {
+      t3 = t2, t2 = values[y * dx + x + 1] >= value;
+      cases[t2 << 2 | t3 << 3].forEach(stitch);
+    }
+    cases[t2 << 3].forEach(stitch);
+
+    function stitch(line) {
+      var start = [line[0][0] + x, line[0][1] + y],
+          end = [line[1][0] + x, line[1][1] + y],
+          startIndex = index(start),
+          endIndex = index(end),
+          f, g;
+      if (f = fragmentByEnd[startIndex]) {
+        if (g = fragmentByStart[endIndex]) {
+          delete fragmentByEnd[f.end];
+          delete fragmentByStart[g.start];
+          if (f === g) {
+            f.ring.push(end);
+            callback(f.ring);
+          } else {
+            fragmentByStart[f.start] = fragmentByEnd[g.end] = {start: f.start, end: g.end, ring: f.ring.concat(g.ring)};
+          }
+        } else {
+          delete fragmentByEnd[f.end];
+          f.ring.push(end);
+          fragmentByEnd[f.end = endIndex] = f;
+        }
+      } else if (f = fragmentByStart[endIndex]) {
+        if (g = fragmentByEnd[startIndex]) {
+          delete fragmentByStart[f.start];
+          delete fragmentByEnd[g.end];
+          if (f === g) {
+            f.ring.push(end);
+            callback(f.ring);
+          } else {
+            fragmentByStart[g.start] = fragmentByEnd[f.end] = {start: g.start, end: f.end, ring: g.ring.concat(f.ring)};
+          }
+        } else {
+          delete fragmentByStart[f.start];
+          f.ring.unshift(start);
+          fragmentByStart[f.start = startIndex] = f;
+        }
+      } else {
+        fragmentByStart[startIndex] = fragmentByEnd[endIndex] = {start: startIndex, end: endIndex, ring: [start, end]};
+      }
+    }
+  }
+
+  function index(point) {
+    return point[0] * 2 + point[1] * (dx + 1) * 4;
+  }
+
+  function smoothLinear(ring, values, value) {
+    ring.forEach(function(point) {
+      var x = point[0],
+          y = point[1],
+          xt = x | 0,
+          yt = y | 0,
+          v0,
+          v1 = values[yt * dx + xt];
+      if (x > 0 && x < dx && xt === x) {
+        v0 = values[yt * dx + xt - 1];
+        point[0] = x + (value - v0) / (v1 - v0) - 0.5;
+      }
+      if (y > 0 && y < dy && yt === y) {
+        v0 = values[(yt - 1) * dx + xt];
+        point[1] = y + (value - v0) / (v1 - v0) - 0.5;
+      }
+    });
+  }
+
+  contours.size = function(_) {
+    if (!arguments.length) return [dx, dy];
+    var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
+    if (!(_0 > 0) || !(_1 > 0)) throw new Error("invalid size");
+    return dx = _0, dy = _1, contours;
+  };
+
+  contours.thresholds = function(_) {
+    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant$6(slice$4.call(_)) : constant$6(_), contours) : threshold;
+  };
+
+  contours.smooth = function(_) {
+    return arguments.length ? (smooth = _ ? smoothLinear : noop$4, contours) : smooth === smoothLinear;
+  };
+
+  return contours;
+}
+
+// TODO Optimize edge cases.
+// TODO Optimize index calculation.
+// TODO Optimize arguments.
+function blurX(source, target, r) {
+  var n = source.width,
+      m = source.height,
+      w = (r << 1) + 1;
+  for (var j = 0; j < m; ++j) {
+    for (var i = 0, sr = 0; i < n + r; ++i) {
+      if (i < n) {
+        sr += source.data[i + j * n];
+      }
+      if (i >= r) {
+        if (i >= w) {
+          sr -= source.data[i - w + j * n];
+        }
+        target.data[i - r + j * n] = sr / Math.min(i + 1, n - 1 + w - i, w);
+      }
+    }
+  }
+}
+
+// TODO Optimize edge cases.
+// TODO Optimize index calculation.
+// TODO Optimize arguments.
+function blurY(source, target, r) {
+  var n = source.width,
+      m = source.height,
+      w = (r << 1) + 1;
+  for (var i = 0; i < n; ++i) {
+    for (var j = 0, sr = 0; j < m + r; ++j) {
+      if (j < m) {
+        sr += source.data[i + j * n];
+      }
+      if (j >= r) {
+        if (j >= w) {
+          sr -= source.data[i + (j - w) * n];
+        }
+        target.data[i + (j - r) * n] = sr / Math.min(j + 1, m - 1 + w - j, w);
+      }
+    }
+  }
+}
+
+function defaultX(d) {
+  return d[0];
+}
+
+function defaultY(d) {
+  return d[1];
+}
+
+function contourDensity() {
+  var x = defaultX,
+      y = defaultY,
+      dx = 960,
+      dy = 500,
+      r = 20, // blur radius
+      k = 2, // log2(grid cell size)
+      o = r * 3, // grid offset, to pad for blur
+      n = (dx + o * 2) >> k, // grid width
+      m = (dy + o * 2) >> k, // grid height
+      threshold = constant$6(20);
+
+  function density(data) {
+    var values0 = new Float32Array(n * m),
+        values1 = new Float32Array(n * m);
+
+    data.forEach(function(d, i, data) {
+      var xi = (x(d, i, data) + o) >> k,
+          yi = (y(d, i, data) + o) >> k;
+      if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
+        ++values0[xi + yi * n];
+      }
+    });
+
+    // TODO Optimize.
+    blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
+    blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
+    blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
+    blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
+    blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
+    blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
+
+    var tz = threshold(values0);
+
+    // Convert number of thresholds into uniform thresholds.
+    if (!Array.isArray(tz)) {
+      var stop = max(values0);
+      tz = tickStep(0, stop, tz);
+      tz = sequence(0, Math.floor(stop / tz) * tz, tz);
+      tz.shift();
+    }
+
+    return contours()
+        .thresholds(tz)
+        .size([n, m])
+      (values0)
+        .map(transform);
+  }
+
+  function transform(geometry) {
+    geometry.value *= Math.pow(2, -2 * k); // Density in points per square pixel.
+    geometry.coordinates.forEach(transformPolygon);
+    return geometry;
+  }
+
+  function transformPolygon(coordinates) {
+    coordinates.forEach(transformRing);
+  }
+
+  function transformRing(coordinates) {
+    coordinates.forEach(transformPoint);
+  }
+
+  // TODO Optimize.
+  function transformPoint(coordinates) {
+    coordinates[0] = coordinates[0] * Math.pow(2, k) - o;
+    coordinates[1] = coordinates[1] * Math.pow(2, k) - o;
+  }
+
+  function resize() {
+    o = r * 3;
+    n = (dx + o * 2) >> k;
+    m = (dy + o * 2) >> k;
+    return density;
+  }
+
+  density.x = function(_) {
+    return arguments.length ? (x = typeof _ === "function" ? _ : constant$6(+_), density) : x;
+  };
+
+  density.y = function(_) {
+    return arguments.length ? (y = typeof _ === "function" ? _ : constant$6(+_), density) : y;
+  };
+
+  density.size = function(_) {
+    if (!arguments.length) return [dx, dy];
+    var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
+    if (!(_0 >= 0) && !(_0 >= 0)) throw new Error("invalid size");
+    return dx = _0, dy = _1, resize();
+  };
+
+  density.cellSize = function(_) {
+    if (!arguments.length) return 1 << k;
+    if (!((_ = +_) >= 1)) throw new Error("invalid cell size");
+    return k = Math.floor(Math.log(_) / Math.LN2), resize();
+  };
+
+  density.thresholds = function(_) {
+    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant$6(slice$4.call(_)) : constant$6(_), density) : threshold;
+  };
+
+  density.bandwidth = function(_) {
+    if (!arguments.length) return Math.sqrt(r * (r + 1));
+    if (!((_ = +_) >= 0)) throw new Error("invalid bandwidth");
+    return r = Math.round((Math.sqrt(4 * _ * _ + 1) - 1) / 2), resize();
+  };
+
+  return density;
+}
+
+var CONTOUR_PARAMS = ['values', 'size', 'thresholds'];
+var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth', 'thresholds'];
+
 /**
- * Map GeoJSON data to an SVG path string.
+ * Generate contours based on kernel-density estimation of point data.
  * @constructor
  * @param {object} params - The parameters for this operator.
- * @param {function(number, number): *} params.projection - The cartographic
- *   projection to apply.
- * @param {function(object): *} [params.field] - The field with GeoJSON data,
- *   or null if the tuple itself is a GeoJSON feature.
- * @param {string} [params.as='path'] - The output field in which to store
- *   the generated path data (default 'path').
+ * @param {Array<number>} params.size - The dimensions [width, height] over which to compute contours.
+ *  If the values parameter is provided, this must be the dimensions of the input data.
+ *  If density estimation is performed, this is the output view dimensions in pixels.
+ * @param {Array<number>} [params.values] - An array of numeric values representing an
+ *  width x height grid of values over which to compute contours. If unspecified, this
+ *  transform will instead attempt to compute contours for the kernel density estimate
+ *  using values drawn from data tuples in the input pulse.
+ * @param {function(object): number} [params.x] - The pixel x-coordinate accessor for density estimation.
+ * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
+ * @param {number} [params.cellSize] - Contour density calculation cell size.
+ * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
+ * @param {number} [params.thresholds] - Contour threshold array or desired number of contours.
  */
-function GeoPath(params) {
+function Contour(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$43 = inherits(GeoPath, Transform);
+var prototype$43 = inherits(Contour, Transform);
 
 prototype$43.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      path = this.value,
-      field = _.field || identity$1,
-      as = _.as || 'path',
-      mod;
+  if (this.value && !pulse.changed() && !_.modified())
+    return pulse.StopPropagation;
 
-  function set(t) { t[as] = path(field(t)); }
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      contour, params, values;
 
-  if (!path || _.modified()) {
-    // parameters updated, reset and reflow
-    this.value = path = _.projection.path;
-    out.materialize().reflow().visit(out.SOURCE, set);
+  if (_.values) {
+    contour = contours();
+    params = CONTOUR_PARAMS;
+    values = _.values;
   } else {
-    mod = field === identity$1 || pulse.modified(field.fields);
-    out.visit(mod ? out.ADD_MOD : out.ADD, set);
+    contour = contourDensity();
+    params = DENSITY_PARAMS;
+    values = pulse.materialize(pulse.SOURCE).source;
   }
 
-  return out.modifies(as);
+  params.forEach(function(param) {
+    if (_[param] != null) contour[param](_[param]);
+  });
+
+  if (this.value) out.rem = this.value;
+  this.value = out.source = out.add = contour(values).map(ingest);
+
+  return out;
 };
-
-/**
- * Geo-code a longitude/latitude point to an x/y coordinate.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(number, number): *} params.projection - The cartographic
- *   projection to apply.
- * @param {Array<function(object): *>} params.fields - A two-element array of
- *   field accessors for the longitude and latitude values.
- * @param {Array<string>} [params.as] - A two-element array of field names
- *   under which to store the result. Defaults to ['x','y'].
- */
-function GeoPoint(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$44 = inherits(GeoPoint, Transform);
-
-prototype$44.transform = function(_, pulse) {
-  var proj = _.projection,
-      lon = _.fields[0],
-      lat = _.fields[1],
-      as = _.as || ['x', 'y'],
-      x = as[0],
-      y = as[1],
-      mod;
-
-  function set(t) {
-    var xy = proj([lon(t), lat(t)]);
-    if (xy) t[x] = xy[0], t[y] = xy[1];
-    else t[x] = undefined, t[y] = undefined;
-  }
-
-  if (_.modified()) {
-    // parameters updated, reflow
-    pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
-  } else {
-    mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
-    pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
-  }
-
-  return pulse.modifies(as);
-};
-
-/**
- * Annotate items with a geopath shape generator.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(number, number): *} params.projection - The cartographic
- *   projection to apply.
- * @param {function(object): *} [params.field] - The field with GeoJSON data,
- *   or null if the tuple itself is a GeoJSON feature.
- * @param {string} [params.as='path'] - The output field in which to store
- *   the generated path data (default 'path').
- */
-function GeoShape(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$45 = inherits(GeoShape, Transform);
-
-prototype$45.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      shape = this.value,
-      datum = _.field || field('datum'),
-      as = _.as || 'shape',
-      flag = out.ADD_MOD;
-
-  if (!shape || _.modified()) {
-    // parameters updated, reset and reflow
-    this.value = shape = shapeGenerator(_.projection.path, datum);
-    out.materialize().reflow();
-    flag = out.SOURCE;
-  }
-
-  out.visit(flag, function(t) { t[as] = shape; });
-
-  return out.modifies(as);
-};
-
-function shapeGenerator(path, field) {
-  var shape = function(_) { return path(field(_)); };
-  shape.context = function(_) { return path.context(_), shape; };
-  return shape;
-}
 
 // Adds floating point numbers with twice the normal precision.
 // Reference: J. R. Shewchuk, Adaptive Precision Floating-Point Arithmetic and
@@ -15660,7 +16022,7 @@ function asin$1(x) {
   return x > 1 ? halfPi$2 : x < -1 ? -halfPi$2 : Math.asin(x);
 }
 
-function noop$4() {}
+function noop$5() {}
 
 function streamGeometry(geometry, stream) {
   if (geometry && streamGeometryType.hasOwnProperty(geometry.type)) {
@@ -15741,9 +16103,9 @@ var lambda0;
 var cosPhi0;
 var sinPhi0;
 var areaStream = {
-  point: noop$4,
-  lineStart: noop$4,
-  lineEnd: noop$4,
+  point: noop$5,
+  lineStart: noop$5,
+  lineEnd: noop$5,
   polygonStart: function() {
     areaRingSum.reset();
     areaStream.lineStart = areaRingStart;
@@ -15752,7 +16114,7 @@ var areaStream = {
   polygonEnd: function() {
     var areaRing = +areaRingSum;
     areaSum.add(areaRing < 0 ? tau$4 + areaRing : areaRing);
-    this.lineStart = this.lineEnd = this.point = noop$4;
+    this.lineStart = this.lineEnd = this.point = noop$5;
   },
   sphere: function() {
     areaSum.add(tau$4);
@@ -15975,7 +16337,7 @@ var z0;
 // previous point
 
 var centroidStream = {
-  sphere: noop$4,
+  sphere: noop$5,
   point: centroidPoint,
   lineStart: centroidLineStart,
   lineEnd: centroidLineEnd,
@@ -16204,7 +16566,7 @@ function clipBuffer() {
     lineStart: function() {
       lines.push(line = []);
     },
-    lineEnd: noop$4,
+    lineEnd: noop$5,
     rejoin: function() {
       if (lines.length > 1) lines.push(lines.pop().concat(lines.shift()));
     },
@@ -16614,12 +16976,12 @@ var lambda0$2;
 var sinPhi0$1;
 var cosPhi0$1;
 var lengthStream = {
-  sphere: noop$4,
-  point: noop$4,
+  sphere: noop$5,
+  point: noop$5,
   lineStart: lengthLineStart,
-  lineEnd: noop$4,
-  polygonStart: noop$4,
-  polygonEnd: noop$4
+  lineEnd: noop$5,
+  polygonStart: noop$5,
+  polygonEnd: noop$5
 };
 
 function lengthLineStart() {
@@ -16628,7 +16990,7 @@ function lengthLineStart() {
 }
 
 function lengthLineEnd() {
-  lengthStream.point = lengthStream.lineEnd = noop$4;
+  lengthStream.point = lengthStream.lineEnd = noop$5;
 }
 
 function lengthPointFirst(lambda, phi) {
@@ -16761,15 +17123,15 @@ var y00;
 var x0$1;
 var y0$1;
 var areaStream$1 = {
-  point: noop$4,
-  lineStart: noop$4,
-  lineEnd: noop$4,
+  point: noop$5,
+  lineStart: noop$5,
+  lineEnd: noop$5,
   polygonStart: function() {
     areaStream$1.lineStart = areaRingStart$1;
     areaStream$1.lineEnd = areaRingEnd$1;
   },
   polygonEnd: function() {
-    areaStream$1.lineStart = areaStream$1.lineEnd = areaStream$1.point = noop$4;
+    areaStream$1.lineStart = areaStream$1.lineEnd = areaStream$1.point = noop$5;
     areaSum$1.add(abs$1(areaRingSum$1));
     areaRingSum$1.reset();
   },
@@ -16804,10 +17166,10 @@ var x1 = -x0$2;
 var y1 = x1;
 var boundsStream$1 = {
   point: boundsPoint$1,
-  lineStart: noop$4,
-  lineEnd: noop$4,
-  polygonStart: noop$4,
-  polygonEnd: noop$4,
+  lineStart: noop$5,
+  lineEnd: noop$5,
+  polygonStart: noop$5,
+  polygonEnd: noop$5,
   result: function() {
     var bounds = [[x0$2, y0$2], [x1, y1]];
     x1 = y1 = -(y0$2 = x0$2 = Infinity);
@@ -16956,7 +17318,7 @@ PathContext.prototype = {
       }
     }
   },
-  result: noop$4
+  result: noop$5
 };
 
 var lengthSum$1 = adder();
@@ -16966,13 +17328,13 @@ var y00$2;
 var x0$4;
 var y0$4;
 var lengthStream$1 = {
-  point: noop$4,
+  point: noop$5,
   lineStart: function() {
     lengthStream$1.point = lengthPointFirst$1;
   },
   lineEnd: function() {
     if (lengthRing) lengthPoint$1(x00$2, y00$2);
-    lengthStream$1.point = noop$4;
+    lengthStream$1.point = noop$5;
   },
   polygonStart: function() {
     lengthRing = true;
@@ -17658,7 +18020,7 @@ var transformRadians = transformer({
   }
 });
 
-function projection(project) {
+function projection$1(project) {
   return projectionMutator(function() { return project; })();
 }
 
@@ -17796,14 +18158,14 @@ function conicEqualAreaRaw(y0, y1) {
   return project;
 }
 
-function geoConicEqualArea() {
+function conicEqualArea() {
   return conicProjection(conicEqualAreaRaw)
       .scale(155.424)
       .center([0, 33.6442]);
 }
 
-function geoAlbers() {
-  return geoConicEqualArea()
+function albers() {
+  return conicEqualArea()
       .parallels([29.5, 45.5])
       .scale(1070)
       .translate([480, 250])
@@ -17833,9 +18195,9 @@ function multiplex(streams) {
 function geoAlbersUsa() {
   var cache,
       cacheStream,
-      lower48 = geoAlbers(), lower48Point,
-      alaska = geoConicEqualArea().rotate([154, 0]).center([-2, 58.5]).parallels([55, 65]), alaskaPoint, // EPSG:3338
-      hawaii = geoConicEqualArea().rotate([157, 0]).center([-3, 19.9]).parallels([8, 18]), hawaiiPoint, // ESRI:102007
+      lower48 = albers(), lower48Point,
+      alaska = conicEqualArea().rotate([154, 0]).center([-2, 58.5]).parallels([55, 65]), alaskaPoint, // EPSG:3338
+      hawaii = conicEqualArea().rotate([157, 0]).center([-3, 19.9]).parallels([8, 18]), hawaiiPoint, // ESRI:102007
       point, pointStream = {point: function(x, y) { point = [x, y]; }};
 
   function albersUsa(coordinates) {
@@ -17944,7 +18306,7 @@ azimuthalEqualAreaRaw.invert = azimuthalInvert(function(z) {
 });
 
 function geoAzimuthalEqualArea() {
-  return projection(azimuthalEqualAreaRaw)
+  return projection$1(azimuthalEqualAreaRaw)
       .scale(124.75)
       .clipAngle(180 - 1e-3);
 }
@@ -17958,7 +18320,7 @@ azimuthalEquidistantRaw.invert = azimuthalInvert(function(z) {
 });
 
 function geoAzimuthalEquidistant() {
-  return projection(azimuthalEquidistantRaw)
+  return projection$1(azimuthalEquidistantRaw)
       .scale(79.4188)
       .clipAngle(180 - 1e-3);
 }
@@ -17977,7 +18339,7 @@ function geoMercator() {
 }
 
 function mercatorProjection(project) {
-  var m = projection(project),
+  var m = projection$1(project),
       center = m.center,
       scale = m.scale,
       translate = m.translate,
@@ -18051,7 +18413,7 @@ function equirectangularRaw(lambda, phi) {
 equirectangularRaw.invert = equirectangularRaw;
 
 function geoEquirectangular() {
-  return projection(equirectangularRaw)
+  return projection$1(equirectangularRaw)
       .scale(152.63);
 }
 
@@ -18089,7 +18451,7 @@ function gnomonicRaw(x, y) {
 gnomonicRaw.invert = azimuthalInvert(atan);
 
 function geoGnomonic() {
-  return projection(gnomonicRaw)
+  return projection$1(gnomonicRaw)
       .scale(144.049)
       .clipAngle(60);
 }
@@ -18101,7 +18463,7 @@ function orthographicRaw(x, y) {
 orthographicRaw.invert = azimuthalInvert(asin$1);
 
 function geoOrthographic() {
-  return projection(orthographicRaw)
+  return projection$1(orthographicRaw)
       .scale(249.5)
       .clipAngle(90 + epsilon$2);
 }
@@ -18116,7 +18478,7 @@ stereographicRaw.invert = azimuthalInvert(function(z) {
 });
 
 function geoStereographic() {
-  return projection(stereographicRaw)
+  return projection$1(stereographicRaw)
       .scale(250)
       .clipAngle(142);
 }
@@ -18146,41 +18508,7 @@ function geoTransverseMercator() {
       .scale(159.155);
 }
 
-/**
- * GeoJSON feature generator for creating graticules.
- * @constructor
- */
-function Graticule(params) {
-  Transform.call(this, [], params);
-  this.generator = graticule();
-}
-
-var prototype$46 = inherits(Graticule, Transform);
-
-prototype$46.transform = function(_, pulse) {
-  var out = pulse.fork(),
-      src = this.value,
-      gen = this.generator, t;
-
-  if (!src.length || _.modified()) {
-    for (var prop in _) {
-      if (isFunction(gen[prop])) {
-        gen[prop](_[prop]);
-      }
-    }
-  }
-
-  t = gen();
-  if (src.length) {
-    t._id = src[0]._id;
-    out.mod.push(t);
-  } else {
-    out.add.push(ingest(t));
-  }
-  src[0] = t;
-
-  return out.source = src, out;
-};
+var defaultPath = geoPath();
 
 var properties = [
   // standard properties in d3-geo
@@ -18208,7 +18536,7 @@ var properties = [
 /**
  * Augment projections with their type and a copy method.
  */
-function create$2(type, constructor) {
+function create$1(type, constructor) {
   return function projection() {
     var p = constructor();
 
@@ -18229,19 +18557,23 @@ function create$2(type, constructor) {
   };
 }
 
-function projection$1(type, proj) {
-  return arguments.length > 1 ? (projections[type] = create$2(type, proj), this)
+function projection(type, proj) {
+  return arguments.length > 1 ? (projections[type] = create$1(type, proj), this)
     : projections.hasOwnProperty(type) ? projections[type] : null;
+}
+
+function getPath(proj) {
+  return (proj && proj.path) || defaultPath;
 }
 
 var projections = {
   // base d3-geo projection types
-  albers:               geoAlbers,
+  albers:               albers,
   albersusa:            geoAlbersUsa,
   azimuthalequalarea:   geoAzimuthalEqualArea,
   azimuthalequidistant: geoAzimuthalEquidistant,
   conicconformal:       geoConicConformal,
-  conicequalarea:       geoConicEqualArea,
+  conicequalarea:       conicEqualArea,
   conicequidistant:     geoConicEquidistant,
   equirectangular:      geoEquirectangular,
   gnomonic:             geoGnomonic,
@@ -18252,8 +18584,167 @@ var projections = {
 };
 
 for (var key$2 in projections) {
-  projection$1(key$2, projections[key$2]);
+  projection(key$2, projections[key$2]);
 }
+
+/**
+ * Map GeoJSON data to an SVG path string.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(number, number): *} params.projection - The cartographic
+ *   projection to apply.
+ * @param {function(object): *} [params.field] - The field with GeoJSON data,
+ *   or null if the tuple itself is a GeoJSON feature.
+ * @param {string} [params.as='path'] - The output field in which to store
+ *   the generated path data (default 'path').
+ */
+function GeoPath(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$44 = inherits(GeoPath, Transform);
+
+prototype$44.transform = function(_, pulse) {
+  var out = pulse.fork(pulse.ALL),
+      path = this.value,
+      field = _.field || identity$1,
+      as = _.as || 'path',
+      mod;
+
+  function set(t) { t[as] = path(field(t)); }
+
+  if (!path || _.modified()) {
+    // parameters updated, reset and reflow
+    this.value = path = getPath(_.projection);
+    out.materialize().reflow().visit(out.SOURCE, set);
+  } else {
+    mod = field === identity$1 || pulse.modified(field.fields);
+    out.visit(mod ? out.ADD_MOD : out.ADD, set);
+  }
+
+  return out.modifies(as);
+};
+
+/**
+ * Geo-code a longitude/latitude point to an x/y coordinate.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(number, number): *} params.projection - The cartographic
+ *   projection to apply.
+ * @param {Array<function(object): *>} params.fields - A two-element array of
+ *   field accessors for the longitude and latitude values.
+ * @param {Array<string>} [params.as] - A two-element array of field names
+ *   under which to store the result. Defaults to ['x','y'].
+ */
+function GeoPoint(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$45 = inherits(GeoPoint, Transform);
+
+prototype$45.transform = function(_, pulse) {
+  var proj = _.projection,
+      lon = _.fields[0],
+      lat = _.fields[1],
+      as = _.as || ['x', 'y'],
+      x = as[0],
+      y = as[1],
+      mod;
+
+  function set(t) {
+    var xy = proj([lon(t), lat(t)]);
+    if (xy) t[x] = xy[0], t[y] = xy[1];
+    else t[x] = undefined, t[y] = undefined;
+  }
+
+  if (_.modified()) {
+    // parameters updated, reflow
+    pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
+  } else {
+    mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
+    pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
+  }
+
+  return pulse.modifies(as);
+};
+
+/**
+ * Annotate items with a geopath shape generator.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(number, number): *} params.projection - The cartographic
+ *   projection to apply.
+ * @param {function(object): *} [params.field] - The field with GeoJSON data,
+ *   or null if the tuple itself is a GeoJSON feature.
+ * @param {string} [params.as='shape'] - The output field in which to store
+ *   the generated path data (default 'shape').
+ */
+function GeoShape(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$46 = inherits(GeoShape, Transform);
+
+prototype$46.transform = function(_, pulse) {
+  var out = pulse.fork(pulse.ALL),
+      shape = this.value,
+      datum = _.field || field('datum'),
+      as = _.as || 'shape',
+      flag = out.ADD_MOD;
+
+  if (!shape || _.modified()) {
+    // parameters updated, reset and reflow
+    this.value = shape = shapeGenerator(getPath(_.projection), datum);
+    out.materialize().reflow();
+    flag = out.SOURCE;
+  }
+
+  out.visit(flag, function(t) { t[as] = shape; });
+
+  return out.modifies(as);
+};
+
+function shapeGenerator(path, field) {
+  var shape = function(_) { return path(field(_)); };
+  shape.context = function(_) { return path.context(_), shape; };
+  return shape;
+}
+
+/**
+ * GeoJSON feature generator for creating graticules.
+ * @constructor
+ */
+function Graticule(params) {
+  Transform.call(this, [], params);
+  this.generator = graticule();
+}
+
+var prototype$47 = inherits(Graticule, Transform);
+
+prototype$47.transform = function(_, pulse) {
+  var out = pulse.fork(),
+      src = this.value,
+      gen = this.generator, t;
+
+  if (!src.length || _.modified()) {
+    for (var prop in _) {
+      if (isFunction(gen[prop])) {
+        gen[prop](_[prop]);
+      }
+    }
+  }
+
+  t = gen();
+  if (src.length) {
+    t._id = src[0]._id;
+    out.mod.push(t);
+  } else {
+    out.add.push(ingest(t));
+  }
+  src[0] = t;
+
+  return out.source = src, out;
+};
 
 /**
  * Maintains a cartographic projection.
@@ -18265,13 +18756,13 @@ function Projection(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$47 = inherits(Projection, Transform);
+var prototype$48 = inherits(Projection, Transform);
 
-prototype$47.transform = function(_) {
+prototype$48.transform = function(_) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
-    this.value = (proj = create$1(_.type));
+    this.value = (proj = create$2(_.type));
     properties.forEach(function(prop) {
       if (_[prop] != null) set$2(proj, prop, _[prop]);
     });
@@ -18282,10 +18773,23 @@ prototype$47.transform = function(_) {
   }
 
   if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
+  if (_.fit) fit(proj, _);
 };
 
-function create$1(type) {
-  var constructor = projection$1((type || 'mercator').toLowerCase());
+function fit(proj, _) {
+  var data = geoJSON(_.fit);
+  _.extent ? proj.fitExtent(_.extent, data)
+    : _.size ? proj.fitSize(_.size, data) : 0;
+}
+
+function geoJSON(data) {
+  return !isArray(data) ? data
+    : data.length > 1 ? {type: 'FeatureCollection', features: data}
+    : data[0];
+}
+
+function create$2(type) {
+  var constructor = projection((type || 'mercator').toLowerCase());
   if (!constructor) error('Unrecognized projection type: ' + type);
   return constructor();
 }
@@ -18294,11 +18798,25 @@ function set$2(proj, key, value) {
    if (isFunction(proj[key])) proj[key](value);
 }
 
+var ContourDefinition = {
+  "type": "Contour",
+  "metadata": {"generates": true, "source": true},
+  "params": [
+    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
+    { "name": "values", "type": "number", "array": true },
+    { "name": "x", "type": "field" },
+    { "name": "y", "type": "field" },
+    { "name": "cellSize", "type": "number" },
+    { "name": "bandwidth", "type": "number" },
+    { "name": "thresholds", "type": "number" }
+  ]
+}
+
 var GeoPathDefinition = {
   "type": "GeoPath",
   "metadata": {"modifies": true},
   "params": [
-    { "name": "projection", "type": "projection", "required": true },
+    { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field" },
     { "name": "as", "type": "string", "default": "path" }
   ]
@@ -18318,7 +18836,7 @@ var GeoShapeDefinition = {
   "type": "GeoShape",
   "metadata": {"modifies": true},
   "params": [
-    { "name": "projection", "type": "projection", "required": true },
+    { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field", "default": "datum" },
     { "name": "as", "type": "string", "default": "shape" }
   ]
@@ -18341,6 +18859,7 @@ var GraticuleDefinition = {
   ]
 }
 
+register(ContourDefinition, Contour);
 register(GeoPathDefinition, GeoPath);
 register(GeoPointDefinition, GeoPoint);
 register(GeoShapeDefinition, GeoShape);
@@ -18468,9 +18987,9 @@ function AxisTicks(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$48 = inherits(AxisTicks, Transform);
+var prototype$49 = inherits(AxisTicks, Transform);
 
-prototype$48.transform = function(_, pulse) {
+prototype$49.transform = function(_, pulse) {
   if (this.value && !_.modified()) {
     return pulse.StopPropagation;
   }
@@ -18511,7 +19030,7 @@ function DataJoin(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$49 = inherits(DataJoin, Transform);
+var prototype$50 = inherits(DataJoin, Transform);
 
 function defaultItemCreate() {
   return ingest({});
@@ -18521,7 +19040,7 @@ function isExit(t) {
   return t.exit;
 }
 
-prototype$49.transform = function(_, pulse) {
+prototype$50.transform = function(_, pulse) {
   var df = pulse.dataflow,
       out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       item = _.item || defaultItemCreate,
@@ -18595,9 +19114,9 @@ function Encode(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$50 = inherits(Encode, Transform);
+var prototype$51 = inherits(Encode, Transform);
 
-prototype$50.transform = function(_, pulse) {
+prototype$51.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
       encode = pulse.encode,
       reenter = encode === 'enter',
@@ -18726,9 +19245,9 @@ function LegendEntries(params) {
   Transform.call(this, [], params);
 }
 
-var prototype$51 = inherits(LegendEntries, Transform);
+var prototype$52 = inherits(LegendEntries, Transform);
 
-prototype$51.transform = function(_, pulse) {
+prototype$52.transform = function(_, pulse) {
   if (this.value != null && !_.modified()) {
     return pulse.StopPropagation;
   }
@@ -18815,9 +19334,9 @@ function LinkPath(params) {
   Transform.call(this, {}, params);
 }
 
-var prototype$52 = inherits(LinkPath, Transform);
+var prototype$53 = inherits(LinkPath, Transform);
 
-prototype$52.transform = function(_, pulse) {
+prototype$53.transform = function(_, pulse) {
   var sx = _.sourceX || sourceX,
       sy = _.sourceY || sourceY,
       tx = _.targetX || targetX,
@@ -18952,9 +19471,9 @@ function Pie(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$53 = inherits(Pie, Transform);
+var prototype$54 = inherits(Pie, Transform);
 
-prototype$53.transform = function(_, pulse) {
+prototype$54.transform = function(_, pulse) {
   var as = _.as || ['startAngle', 'endAngle'],
       startAngle = as[0],
       endAngle = as[1],
@@ -19006,9 +19525,9 @@ function Scale(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$54 = inherits(Scale, Transform);
+var prototype$55 = inherits(Scale, Transform);
 
-prototype$54.transform = function(_, pulse) {
+prototype$55.transform = function(_, pulse) {
   var df = pulse.dataflow,
       scale = this.value,
       prop;
@@ -19167,9 +19686,9 @@ function SortItems(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$55 = inherits(SortItems, Transform);
+var prototype$56 = inherits(SortItems, Transform);
 
-prototype$55.transform = function(_, pulse) {
+prototype$56.transform = function(_, pulse) {
   var mod = _.modified('sort')
          || pulse.changed(pulse.ADD)
          || pulse.modified(_.sort.fields)
@@ -19196,9 +19715,9 @@ function Stack(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$56 = inherits(Stack, Transform);
+var prototype$57 = inherits(Stack, Transform);
 
-prototype$56.transform = function(_, pulse) {
+prototype$57.transform = function(_, pulse) {
   var as = _.as || ['y0', 'y1'],
       y0 = as[0],
       y1 = as[1],
@@ -19383,7 +19902,7 @@ function forceCenter(x, y) {
   return force;
 }
 
-function constant$7(x) {
+function constant$8(x) {
   return function() {
     return x;
   };
@@ -19739,7 +20258,7 @@ function tree_visitAfter(callback) {
   return this;
 }
 
-function defaultX(d) {
+function defaultX$1(d) {
   return d[0];
 }
 
@@ -19747,7 +20266,7 @@ function tree_x(_) {
   return arguments.length ? (this._x = _, this) : this._x;
 }
 
-function defaultY(d) {
+function defaultY$1(d) {
   return d[1];
 }
 
@@ -19756,7 +20275,7 @@ function tree_y(_) {
 }
 
 function quadtree(nodes, x, y) {
-  var tree = new Quadtree(x == null ? defaultX : x, y == null ? defaultY : y, NaN, NaN, NaN, NaN);
+  var tree = new Quadtree(x == null ? defaultX$1 : x, y == null ? defaultY$1 : y, NaN, NaN, NaN, NaN);
   return nodes == null ? tree : tree.addAll(nodes);
 }
 
@@ -19830,7 +20349,7 @@ function forceCollide(radius) {
       strength = 1,
       iterations = 1;
 
-  if (typeof radius !== "function") radius = constant$7(radius == null ? 1 : +radius);
+  if (typeof radius !== "function") radius = constant$8(radius == null ? 1 : +radius);
 
   function force() {
     var i, n = nodes.length,
@@ -19905,7 +20424,7 @@ function forceCollide(radius) {
   };
 
   force.radius = function(_) {
-    return arguments.length ? (radius = typeof _ === "function" ? _ : constant$7(+_), initialize(), force) : radius;
+    return arguments.length ? (radius = typeof _ === "function" ? _ : constant$8(+_), initialize(), force) : radius;
   };
 
   return force;
@@ -19925,7 +20444,7 @@ function forceLink(links) {
   var id = index,
       strength = defaultStrength,
       strengths,
-      distance = constant$7(30),
+      distance = constant$8(30),
       distances,
       nodes,
       count,
@@ -20014,11 +20533,11 @@ function forceLink(links) {
   };
 
   force.strength = function(_) {
-    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$7(+_), initializeStrength(), force) : strength;
+    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$8(+_), initializeStrength(), force) : strength;
   };
 
   force.distance = function(_) {
-    return arguments.length ? (distance = typeof _ === "function" ? _ : constant$7(+_), initializeDistance(), force) : distance;
+    return arguments.length ? (distance = typeof _ === "function" ? _ : constant$8(+_), initializeDistance(), force) : distance;
   };
 
   return force;
@@ -20277,7 +20796,7 @@ function forceManyBody() {
   var nodes,
       node,
       alpha,
-      strength = constant$7(-30),
+      strength = constant$8(-30),
       strengths,
       distanceMin2 = 1,
       distanceMax2 = Infinity,
@@ -20365,7 +20884,7 @@ function forceManyBody() {
   };
 
   force.strength = function(_) {
-    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$7(+_), initialize(), force) : strength;
+    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$8(+_), initialize(), force) : strength;
   };
 
   force.distanceMin = function(_) {
@@ -20384,12 +20903,12 @@ function forceManyBody() {
 }
 
 function forceX(x) {
-  var strength = constant$7(0.1),
+  var strength = constant$8(0.1),
       nodes,
       strengths,
       xz;
 
-  if (typeof x !== "function") x = constant$7(x == null ? 0 : +x);
+  if (typeof x !== "function") x = constant$8(x == null ? 0 : +x);
 
   function force(alpha) {
     for (var i = 0, n = nodes.length, node; i < n; ++i) {
@@ -20413,23 +20932,23 @@ function forceX(x) {
   };
 
   force.strength = function(_) {
-    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$7(+_), initialize(), force) : strength;
+    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$8(+_), initialize(), force) : strength;
   };
 
   force.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : constant$7(+_), initialize(), force) : x;
+    return arguments.length ? (x = typeof _ === "function" ? _ : constant$8(+_), initialize(), force) : x;
   };
 
   return force;
 }
 
 function forceY(y) {
-  var strength = constant$7(0.1),
+  var strength = constant$8(0.1),
       nodes,
       strengths,
       yz;
 
-  if (typeof y !== "function") y = constant$7(y == null ? 0 : +y);
+  if (typeof y !== "function") y = constant$8(y == null ? 0 : +y);
 
   function force(alpha) {
     for (var i = 0, n = nodes.length, node; i < n; ++i) {
@@ -20453,11 +20972,11 @@ function forceY(y) {
   };
 
   force.strength = function(_) {
-    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$7(+_), initialize(), force) : strength;
+    return arguments.length ? (strength = typeof _ === "function" ? _ : constant$8(+_), initialize(), force) : strength;
   };
 
   force.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : constant$7(+_), initialize(), force) : y;
+    return arguments.length ? (y = typeof _ === "function" ? _ : constant$8(+_), initialize(), force) : y;
   };
 
   return force;
@@ -20489,9 +21008,9 @@ function Force(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$57 = inherits(Force, Transform);
+var prototype$58 = inherits(Force, Transform);
 
-prototype$57.transform = function(_, pulse) {
+prototype$58.transform = function(_, pulse) {
   var sim = this.value,
       change = pulse.changed(pulse.ADD_REM),
       params = _.modified(ForceParams),
@@ -20526,7 +21045,7 @@ prototype$57.transform = function(_, pulse) {
   return this.finish(_, pulse);
 };
 
-prototype$57.finish = function(_, pulse) {
+prototype$58.finish = function(_, pulse) {
   var dataflow = pulse.dataflow;
 
   // inspect dependencies, touch link source data
@@ -21214,7 +21733,7 @@ function constantZero() {
   return 0;
 }
 
-function constant$8(x) {
+function constant$9(x) {
   return function() {
     return x;
   };
@@ -21254,7 +21773,7 @@ function pack$1() {
   };
 
   pack.padding = function(x) {
-    return arguments.length ? (padding = typeof x === "function" ? x : constant$8(+x), pack) : padding;
+    return arguments.length ? (padding = typeof x === "function" ? x : constant$9(+x), pack) : padding;
   };
 
   return pack;
@@ -21813,7 +22332,7 @@ function treemap() {
   };
 
   treemap.paddingInner = function(x) {
-    return arguments.length ? (paddingInner = typeof x === "function" ? x : constant$8(+x), treemap) : paddingInner;
+    return arguments.length ? (paddingInner = typeof x === "function" ? x : constant$9(+x), treemap) : paddingInner;
   };
 
   treemap.paddingOuter = function(x) {
@@ -21821,19 +22340,19 @@ function treemap() {
   };
 
   treemap.paddingTop = function(x) {
-    return arguments.length ? (paddingTop = typeof x === "function" ? x : constant$8(+x), treemap) : paddingTop;
+    return arguments.length ? (paddingTop = typeof x === "function" ? x : constant$9(+x), treemap) : paddingTop;
   };
 
   treemap.paddingRight = function(x) {
-    return arguments.length ? (paddingRight = typeof x === "function" ? x : constant$8(+x), treemap) : paddingRight;
+    return arguments.length ? (paddingRight = typeof x === "function" ? x : constant$9(+x), treemap) : paddingRight;
   };
 
   treemap.paddingBottom = function(x) {
-    return arguments.length ? (paddingBottom = typeof x === "function" ? x : constant$8(+x), treemap) : paddingBottom;
+    return arguments.length ? (paddingBottom = typeof x === "function" ? x : constant$9(+x), treemap) : paddingBottom;
   };
 
   treemap.paddingLeft = function(x) {
-    return arguments.length ? (paddingLeft = typeof x === "function" ? x : constant$8(+x), treemap) : paddingLeft;
+    return arguments.length ? (paddingLeft = typeof x === "function" ? x : constant$9(+x), treemap) : paddingLeft;
   };
 
   return treemap;
@@ -21935,13 +22454,13 @@ function Nest(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$58 = inherits(Nest, Transform);
+var prototype$59 = inherits(Nest, Transform);
 
 function children(n) {
   return n.values;
 }
 
-prototype$58.transform = function(_, pulse) {
+prototype$59.transform = function(_, pulse) {
   if (!pulse.source) {
     error('Nest transform requires an upstream data source.');
   }
@@ -21977,9 +22496,9 @@ function Stratify(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$59 = inherits(Stratify, Transform);
+var prototype$60 = inherits(Stratify, Transform);
 
-prototype$59.transform = function(_, pulse) {
+prototype$60.transform = function(_, pulse) {
   if (!pulse.source) {
     error('Stratify transform requires an upstream data source.');
   }
@@ -22015,7 +22534,7 @@ function TreeLinks(params) {
   Transform.call(this, {}, params);
 }
 
-var prototype$60 = inherits(TreeLinks, Transform);
+var prototype$61 = inherits(TreeLinks, Transform);
 
 function parentTuple(node) {
   var p;
@@ -22024,7 +22543,7 @@ function parentTuple(node) {
       && (tupleid(p) != null) && p;
 }
 
-prototype$60.transform = function(_, pulse) {
+prototype$61.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error('TreeLinks transform requires a backing tree data source.');
   }
@@ -22122,9 +22641,9 @@ function HierarchyLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$61 = inherits(HierarchyLayout, Transform);
+var prototype$62 = inherits(HierarchyLayout, Transform);
 
-prototype$61.transform = function(_, pulse) {
+prototype$62.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error(this.constructor.name
       + ' transform requires a backing tree data source.');
@@ -22319,7 +22838,7 @@ register(PartitionDefinition, Partition);
 register(TreeDefinition, Tree);
 register(TreemapDefinition, Treemap);
 
-function constant$9(x) {
+function constant$10(x) {
   return function() {
     return x;
   };
@@ -23288,11 +23807,11 @@ function voronoi() {
   };
 
   voronoi.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : constant$9(+_), voronoi) : x;
+    return arguments.length ? (x = typeof _ === "function" ? _ : constant$10(+_), voronoi) : x;
   };
 
   voronoi.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : constant$9(+_), voronoi) : y;
+    return arguments.length ? (y = typeof _ === "function" ? _ : constant$10(+_), voronoi) : y;
   };
 
   voronoi.extent = function(_) {
@@ -23310,11 +23829,11 @@ function Voronoi(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$62 = inherits(Voronoi, Transform);
+var prototype$63 = inherits(Voronoi, Transform);
 
 var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
-prototype$62.transform = function(_, pulse) {
+prototype$63.transform = function(_, pulse) {
   var as = _.as || 'path',
       data = pulse.source,
       diagram, polygons, i, n;
@@ -23710,9 +24229,9 @@ function Wordcloud(params) {
   Transform.call(this, cloud(), params);
 }
 
-var prototype$63 = inherits(Wordcloud, Transform);
+var prototype$64 = inherits(Wordcloud, Transform);
 
-prototype$63.transform = function(_, pulse) {
+prototype$64.transform = function(_, pulse) {
   function modp(param) {
     var p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
@@ -23823,8 +24342,8 @@ function Bitmaps() {
   var width = 8,
       data = [],
       seen = array32(0),
-      curr = array$3(0, width),
-      prev = array$3(0, width);
+      curr = array$4(0, width),
+      prev = array$4(0, width);
 
   return {
 
@@ -23892,8 +24411,8 @@ function Bitmaps() {
       var k = curr.length;
       if (n > k || m > width) {
         width = Math.max(m, width);
-        curr = array$3(n, width, curr);
-        prev = array$3(n, width);
+        curr = array$4(n, width, curr);
+        prev = array$4(n, width);
       }
     }
   };
@@ -23906,7 +24425,7 @@ function lengthen(array, length, copy) {
   return copy;
 }
 
-function array$3(n, m, array) {
+function array$4(n, m, array) {
   var copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
   if (array) copy.set(array);
   return copy;
@@ -24069,9 +24588,9 @@ function CrossFilter(params) {
   this._dims = null;
 }
 
-var prototype$64 = inherits(CrossFilter, Transform);
+var prototype$65 = inherits(CrossFilter, Transform);
 
-prototype$64.transform = function(_, pulse) {
+prototype$65.transform = function(_, pulse) {
   if (!this._dims) {
     return this.init(_, pulse);
   } else {
@@ -24084,7 +24603,7 @@ prototype$64.transform = function(_, pulse) {
   }
 };
 
-prototype$64.init = function(_, pulse) {
+prototype$65.init = function(_, pulse) {
   var fields = _.fields,
       query = _.query,
       indices = this._indices = {},
@@ -24102,7 +24621,7 @@ prototype$64.init = function(_, pulse) {
   return this.eval(_, pulse);
 };
 
-prototype$64.reinit = function(_, pulse) {
+prototype$65.reinit = function(_, pulse) {
   var output = pulse.materialize().fork(),
       fields = _.fields,
       query = _.query,
@@ -24169,7 +24688,7 @@ prototype$64.reinit = function(_, pulse) {
   return output;
 };
 
-prototype$64.eval = function(_, pulse) {
+prototype$65.eval = function(_, pulse) {
   var output = pulse.materialize().fork(),
       m = this._dims.length,
       mask = 0;
@@ -24197,7 +24716,7 @@ prototype$64.eval = function(_, pulse) {
   return output;
 };
 
-prototype$64.insert = function(_, pulse, output) {
+prototype$65.insert = function(_, pulse, output) {
   var tuples = pulse.add,
       bits = this.value,
       dims = this._dims,
@@ -24231,7 +24750,7 @@ prototype$64.insert = function(_, pulse, output) {
   }
 };
 
-prototype$64.modify = function(pulse, output) {
+prototype$65.modify = function(pulse, output) {
   var out = output.mod,
       bits = this.value,
       curr = bits.curr(),
@@ -24245,7 +24764,7 @@ prototype$64.modify = function(pulse, output) {
   }
 };
 
-prototype$64.remove = function(_, pulse, output) {
+prototype$65.remove = function(_, pulse, output) {
   var indices = this._indices,
       bits = this.value,
       curr = bits.curr(),
@@ -24274,7 +24793,7 @@ prototype$64.remove = function(_, pulse, output) {
 };
 
 // reindex filters and indices after propagation completes
-prototype$64.reindex = function(pulse, num, map) {
+prototype$65.reindex = function(pulse, num, map) {
   var indices = this._indices,
       bits = this.value;
 
@@ -24284,7 +24803,7 @@ prototype$64.reindex = function(pulse, num, map) {
   });
 };
 
-prototype$64.update = function(_, pulse, output) {
+prototype$65.update = function(_, pulse, output) {
   var dims = this._dims,
       query = _.query,
       stamp = pulse.stamp,
@@ -24314,7 +24833,7 @@ prototype$64.update = function(_, pulse, output) {
   return mask;
 };
 
-prototype$64.incrementAll = function(dim, query, stamp, out) {
+prototype$65.incrementAll = function(dim, query, stamp, out) {
   var bits = this.value,
       seen = bits.seen(),
       curr = bits.curr(),
@@ -24378,7 +24897,7 @@ prototype$64.incrementAll = function(dim, query, stamp, out) {
   dim.range = query.slice();
 };
 
-prototype$64.incrementOne = function(dim, query, add, rem) {
+prototype$65.incrementOne = function(dim, query, add, rem) {
   var bits = this.value,
       curr = bits.curr(),
       index = dim.index(),
@@ -24447,9 +24966,9 @@ function ResolveFilter(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$65 = inherits(ResolveFilter, Transform);
+var prototype$66 = inherits(ResolveFilter, Transform);
 
-prototype$65.transform = function(_, pulse) {
+prototype$66.transform = function(_, pulse) {
   var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
       bitmap = _.filter,
       mask = bitmap.mask;
@@ -24520,9 +25039,9 @@ function Bound(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$66 = inherits(Bound, Transform);
+var prototype$67 = inherits(Bound, Transform);
 var temp$2 = new Bounds();
-prototype$66.transform = function(_, pulse) {
+prototype$67.transform = function(_, pulse) {
   var mark = _.mark,
       type = mark.marktype,
       entry = Marks[type],
@@ -24596,9 +25115,9 @@ function Mark(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$67 = inherits(Mark, Transform);
+var prototype$68 = inherits(Mark, Transform);
 
-prototype$67.transform = function(_, pulse) {
+prototype$68.transform = function(_, pulse) {
   var mark = this.value;
 
   // acquire mark on first invocation, bind context and group
@@ -24633,9 +25152,9 @@ function Render(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$68 = inherits(Render, Transform);
+var prototype$69 = inherits(Render, Transform);
 
-prototype$68.transform = function(_, pulse) {
+prototype$69.transform = function(_, pulse) {
   var view = pulse.dataflow;
 
   if (pulse.changed(pulse.REM)) {
@@ -24958,9 +25477,9 @@ function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$69 = inherits(ViewLayout, Transform);
+var prototype$70 = inherits(ViewLayout, Transform);
 
-prototype$69.transform = function(_, pulse) {
+prototype$70.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
@@ -28219,7 +28738,9 @@ function vlIntervalDomain(name, encoding, field, op) {
     }
   }
 
-  return domain.length && (+domain[0] !== +domain[1]) ? domain : undefined;
+  return domain && domain.length && (+domain[0] !== +domain[1])
+    ? domain
+    : undefined;
 }
 
 function unionInterval(domain, lo, hi) {
@@ -29532,28 +30053,26 @@ function parseParameters(def, spec, scope) {
  * Parse a data transform parameter.
  */
 function parseParameter$1(def, spec, scope) {
-  var type = def.type, value;
+  var type = def.type,
+      value = spec[def.name];
 
   if (type === 'index') {
     return parseIndexParameter(def, spec, scope);
+  } else if (value === undefined) {
+    if (def.required) {
+      error('Missing required ' + $(spec.type)
+          + ' parameter: ' + $(def.name));
+    }
+    return;
   } else if (type === 'param') {
     return parseSubParameters(def, spec, scope);
   } else if (type === 'projection') {
     return scope.projectionRef(spec[def.name]);
-  } else {
-    value = spec[def.name];
-    if (value === undefined) {
-      if (def.required) {
-        error('Missing required ' + $(spec.type)
-          + ' parameter: ' + $(def.name));
-      }
-      return;
-    }
-
-    return def.array && !isSignal(value)
-      ? value.map(function(v) { return parameterValue(def, v, scope); })
-      : parameterValue(def, value, scope);
   }
+
+  return def.array && !isSignal(value)
+    ? value.map(function(v) { return parameterValue(def, v, scope); })
+    : parameterValue(def, value, scope);
 }
 
 /**
@@ -29703,7 +30222,7 @@ function parseData(from, group, scope) {
 }
 
 function DataScope(scope, input, output, values, aggr) {
-  this.scope = scope; // parent scope object
+  this.scope = scope;   // parent scope object
   this.input = input;   // first operator in pipeline (tuple input)
   this.output = output; // last operator in pipeline (tuple output)
   this.values = values; // operator for accessing tuples (but not tuple flow)
@@ -29734,9 +30253,9 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype$71 = DataScope.prototype;
+var prototype$72 = DataScope.prototype;
 
-prototype$71.countsRef = function(scope, field, sort) {
+prototype$72.countsRef = function(scope, field, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       k = fieldKey(field), v, a, p;
@@ -29810,27 +30329,27 @@ function cache(scope, ds, name, optype, field, counts, index) {
   return v;
 }
 
-prototype$71.tuplesRef = function() {
+prototype$72.tuplesRef = function() {
   return ref(this.values);
 };
 
-prototype$71.extentRef = function(scope, field) {
+prototype$72.extentRef = function(scope, field) {
   return cache(scope, this, 'extent', 'Extent', field, false);
 };
 
-prototype$71.domainRef = function(scope, field) {
+prototype$72.domainRef = function(scope, field) {
   return cache(scope, this, 'domain', 'Values', field, false);
 };
 
-prototype$71.valuesRef = function(scope, field, sort) {
+prototype$72.valuesRef = function(scope, field, sort) {
   return cache(scope, this, 'vals', 'Values', field, sort || true);
 };
 
-prototype$71.lookupRef = function(scope, field) {
+prototype$72.lookupRef = function(scope, field) {
   return cache(scope, this, 'lookup', 'TupleIndex', field, false);
 };
 
-prototype$71.indataRef = function(scope, field) {
+prototype$72.indataRef = function(scope, field) {
   return cache(scope, this, 'indata', 'TupleIndex', field, true, true);
 };
 
@@ -31018,15 +31537,15 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$72 = Scope.prototype = Subscope.prototype;
+var prototype$73 = Scope.prototype = Subscope.prototype;
 
 // ----
 
-prototype$72.fork = function() {
+prototype$73.fork = function() {
   return new Subscope(this);
 };
 
-prototype$72.toRuntime = function() {
+prototype$73.toRuntime = function() {
   return this.finish(), {
     background: this.background,
     operators:  this.operators,
@@ -31036,11 +31555,11 @@ prototype$72.toRuntime = function() {
   };
 };
 
-prototype$72.id = function() {
+prototype$73.id = function() {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype$72.add = function(op) {
+prototype$73.add = function(op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
@@ -31051,21 +31570,21 @@ prototype$72.add = function(op) {
   return op;
 };
 
-prototype$72.proxy = function(op) {
+prototype$73.proxy = function(op) {
   var vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy$1({value: vref}));
 };
 
-prototype$72.addStream = function(stream) {
+prototype$73.addStream = function(stream) {
   return this.streams.push(stream), stream.id = this.id(), stream;
 };
 
-prototype$72.addUpdate = function(update) {
+prototype$73.addUpdate = function(update) {
   return this.updates.push(update), update;
 };
 
 // Apply metadata
-prototype$72.finish = function() {
+prototype$73.finish = function() {
   var name, ds;
 
   // annotate root
@@ -31105,40 +31624,40 @@ prototype$72.finish = function() {
 
 // ----
 
-prototype$72.pushState = function(encode, parent, lookup) {
+prototype$73.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype$72.popState = function() {
+prototype$73.popState = function() {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype$72.parent = function() {
+prototype$73.parent = function() {
   return peek(this._parent);
 };
 
-prototype$72.encode = function() {
+prototype$73.encode = function() {
   return peek(this._encode);
 };
 
-prototype$72.lookup = function() {
+prototype$73.lookup = function() {
   return peek(this._lookup);
 };
 
-prototype$72.markpath = function() {
+prototype$73.markpath = function() {
   var p = this._markpath;
   return ++p[p.length-1];
 };
 
 // ----
 
-prototype$72.fieldRef = function(field, name) {
+prototype$73.fieldRef = function(field, name) {
   if (isString(field)) return fieldRef(field, name);
   if (!field.signal) {
     error('Unsupported field reference: ' + $(field));
@@ -31156,7 +31675,7 @@ prototype$72.fieldRef = function(field, name) {
   return f;
 };
 
-prototype$72.compareRef = function(cmp) {
+prototype$73.compareRef = function(cmp) {
   function check(_) {
     return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
   }
@@ -31171,7 +31690,7 @@ prototype$72.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype$72.keyRef = function(fields) {
+prototype$73.keyRef = function(fields) {
   function check(_) {
     return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
   }
@@ -31185,7 +31704,7 @@ prototype$72.keyRef = function(fields) {
     : keyRef(fields);
 };
 
-prototype$72.sortRef = function(sort) {
+prototype$73.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
@@ -31203,7 +31722,7 @@ prototype$72.sortRef = function(sort) {
 
 // ----
 
-prototype$72.event = function(source, type) {
+prototype$73.event = function(source, type) {
   var key = source + ':' + type;
   if (!this.events[key]) {
     var id = this.id();
@@ -31219,7 +31738,7 @@ prototype$72.event = function(source, type) {
 
 // ----
 
-prototype$72.addSignal = function(name, value) {
+prototype$73.addSignal = function(name, value) {
   if (this.signals.hasOwnProperty(name)) {
     error('Duplicate signal name: ' + $(name));
   }
@@ -31227,14 +31746,14 @@ prototype$72.addSignal = function(name, value) {
   return this.signals[name] = op;
 };
 
-prototype$72.getSignal = function(name) {
+prototype$73.getSignal = function(name) {
   if (!this.signals[name]) {
     error('Unrecognized signal name: ' + $(name));
   }
   return this.signals[name];
 };
 
-prototype$72.signalRef = function(s) {
+prototype$73.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
   } else if (!this.lambdas[s]) {
@@ -31243,7 +31762,7 @@ prototype$72.signalRef = function(s) {
   return ref(this.lambdas[s]);
 };
 
-prototype$72.parseLambdas = function() {
+prototype$73.parseLambdas = function() {
   var code = Object.keys(this.lambdas);
   for (var i=0, n=code.length; i<n; ++i) {
     var s = code[i],
@@ -31254,11 +31773,11 @@ prototype$72.parseLambdas = function() {
   }
 };
 
-prototype$72.property = function(spec) {
+prototype$73.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype$72.objectProperty = function(spec) {
+prototype$73.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
     : this.signalRef(spec.signal || objectLambda(spec));
 };
@@ -31279,7 +31798,7 @@ function objectLambda(obj) {
   return code + '}';
 }
 
-prototype$72.addBinding = function(name, bind) {
+prototype$73.addBinding = function(name, bind) {
   if (!this.bindings) {
     error('Nested signals do not support binding: ' + $(name));
   }
@@ -31288,55 +31807,55 @@ prototype$72.addBinding = function(name, bind) {
 
 // ----
 
-prototype$72.addScaleProj = function(name, transform) {
+prototype$73.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error('Duplicate scale or projection name: ' + $(name));
   }
   this.scales[name] = this.add(transform);
 }
 
-prototype$72.addScale = function(name, params) {
+prototype$73.addScale = function(name, params) {
   this.addScaleProj(name, Scale$1(params));
 };
 
-prototype$72.addProjection = function(name, params) {
+prototype$73.addProjection = function(name, params) {
   this.addScaleProj(name, Projection$1(params));
 };
 
-prototype$72.getScale = function(name) {
+prototype$73.getScale = function(name) {
   if (!this.scales[name]) {
     error('Unrecognized scale name: ' + $(name));
   }
   return this.scales[name];
 };
 
-prototype$72.projectionRef =
-prototype$72.scaleRef = function(name) {
+prototype$73.projectionRef =
+prototype$73.scaleRef = function(name) {
   return ref(this.getScale(name));
 };
 
-prototype$72.projectionType =
-prototype$72.scaleType = function(name) {
+prototype$73.projectionType =
+prototype$73.scaleType = function(name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype$72.addData = function(name, dataScope) {
+prototype$73.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + $(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype$72.getData = function(name) {
+prototype$73.getData = function(name) {
   if (!this.data[name]) {
     error('Undefined data set name: ' + $(name));
   }
   return this.data[name];
 };
 
-prototype$72.addDataPipeline = function(name, entries) {
+prototype$73.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + $(name));
   }
@@ -32197,11 +32716,11 @@ function View(spec, options) {
   cursor(this);
 }
 
-var prototype$70 = inherits(View, Dataflow);
+var prototype$71 = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype$70.run = function(encode) {
+prototype$71.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
 
   var q = this._queue;
@@ -32213,7 +32732,7 @@ prototype$70.run = function(encode) {
   return this;
 };
 
-prototype$70.render = function(update) {
+prototype$71.render = function(update) {
   if (this._renderer) {
     if (this._resize) this._resize = 0, resizeRenderer(this);
     this._renderer.render(this._scenegraph.root, update);
@@ -32221,7 +32740,7 @@ prototype$70.render = function(update) {
   return this;
 };
 
-prototype$70.enqueue = function(items) {
+prototype$71.enqueue = function(items) {
   if (this._queue && items && items.length) {
     this._queue = this._queue.concat(items);
   }
@@ -32235,34 +32754,34 @@ function lookupSignal(view, name) {
     : view.error('Unrecognized signal name: ' + $(name));
 }
 
-prototype$70.signal = function(name, value, options) {
+prototype$71.signal = function(name, value, options) {
   var op = lookupSignal(this, name);
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
 };
 
-prototype$70.scenegraph = function() {
+prototype$71.scenegraph = function() {
   return this._scenegraph;
 };
 
-prototype$70.background = function(_) {
+prototype$71.background = function(_) {
   return arguments.length ? (this._background = _, this._resize = 1, this) : this._background;
 };
 
-prototype$70.width = function(_) {
+prototype$71.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype$70.height = function(_) {
+prototype$71.height = function(_) {
   return arguments.length ? this.signal('height', _) : this.signal('height');
 };
 
-prototype$70.padding = function(_) {
+prototype$71.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
-prototype$70.renderer = function(type) {
+prototype$71.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) this.error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -32275,7 +32794,7 @@ prototype$70.renderer = function(type) {
   return this;
 };
 
-prototype$70.loader = function(loader) {
+prototype$71.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -32289,21 +32808,21 @@ prototype$70.loader = function(loader) {
 
 // -- EVENT HANDLING ----
 
-prototype$70.addEventListener = function(type, handler) {
+prototype$71.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
 };
 
-prototype$70.removeEventListener = function(type, handler) {
+prototype$71.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
 };
 
-prototype$70.addSignalListener = function(name, handler) {
+prototype$71.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   this.on(s, null, (h.handler = handler, h));
 };
 
-prototype$70.removeSignalListener = function(name, handler) {
+prototype$71.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       t = s._targets || [],
       h = t.filter(function(op) {
@@ -32313,40 +32832,40 @@ prototype$70.removeSignalListener = function(name, handler) {
   if (h.length) t.remove(h[0]);
 };
 
-prototype$70.preventDefault = function(_) {
+prototype$71.preventDefault = function(_) {
   return arguments.length ? (this._preventDefault = _, this) : this._preventDefault;
 };
 
-prototype$70.tooltipHandler = function(_) {
+prototype$71.tooltipHandler = function(_) {
   var h = this._handler;
   return !arguments.length ? h.handleTooltip
     : (h.handleTooltip = (_ || Handler.prototype.handleTooltip), this);
 };
 
-prototype$70.events = events$1;
-prototype$70.finalize = finalize;
-prototype$70.hover = hover;
+prototype$71.events = events$1;
+prototype$71.finalize = finalize;
+prototype$71.hover = hover;
 
 // -- SIZING ----
-prototype$70.autosize = autosize;
+prototype$71.autosize = autosize;
 
 // -- DATA ----
-prototype$70.data = data;
-prototype$70.change = change;
-prototype$70.insert = insert;
-prototype$70.remove = remove;
+prototype$71.data = data;
+prototype$71.change = change;
+prototype$71.insert = insert;
+prototype$71.remove = remove;
 
 // -- INITIALIZATION ----
-prototype$70.initialize = initialize$1;
+prototype$71.initialize = initialize$1;
 
 // -- HEADLESS RENDERING ----
-prototype$70.toImageURL = renderToImageURL;
-prototype$70.toCanvas = renderToCanvas;
-prototype$70.toSVG = renderToSVG;
+prototype$71.toImageURL = renderToImageURL;
+prototype$71.toCanvas = renderToCanvas;
+prototype$71.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype$70.getState = getState$1;
-prototype$70.setState = setState$1;
+prototype$71.getState = getState$1;
+prototype$71.setState = setState$1;
 
 transform('Bound', Bound);
 transform('Mark', Mark);
@@ -32375,7 +32894,7 @@ exports.scale = scale$1;
 exports.scheme = getScheme;
 exports.interpolate = getInterpolate;
 exports.interpolateRange = interpolateRange;
-exports.projection = projection$1;
+exports.projection = projection;
 exports.View = View;
 exports.parse = parse$2;
 exports.expressionFunction = expressionFunction;

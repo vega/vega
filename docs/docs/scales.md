@@ -22,7 +22,7 @@ Properties shared across scale types.
 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
-| name          | {% include type t="String" %}  | {% include required %} A unique name for the scale.|
+| name          | {% include type t="String" %}  | {% include required %} A unique name for the scale. Scales and [projections](../projections) share the same namespace; names must be unique across both.|
 | type          | {% include type t="String" %}  | The type of scale (default `linear`). See the  [scale type reference](#types) for more.|
 | domain        | [Domain](#domain)              | The domain of input data values for the scale. For quantitative data, this can take the form of a two-element array with minimum and maximum values. For ordinal or categorical data, this may be an array of valid input values. The domain may also be specified as a reference to a data source. See the [scale domain reference](#domain) for more.|
 | domainMax     | {% include type t="Number" %}  | Sets the maximum value in the scale domain, overriding the _domain_ property. The _domainMax_ property is only intended for use with scales having continuous domains.|
