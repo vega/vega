@@ -21,7 +21,8 @@ export function rerank(op) {
     this.rank(cur = queue.pop());
     if (list = cur._targets) {
       for (i=list.length; --i >= 0;) {
-        queue.push(list[i]);
+        queue.push(cur = list[i]);
+        if (cur === op) this.error('Cycle detected in dataflow graph.');
       }
     }
   }
