@@ -6,9 +6,7 @@ permalink: /docs/transforms/contour/index.html
 
 The **contour** transform models a spatial distribution of data values using a set of discrete levels. Each [contour line](https://en.wikipedia.org/wiki/Contour_line) is an isoline of constant value. A common use case is to convey density estimates for 2D point data, as these can provide a more scalable representation for large numbers of data points.
 
-The contour transform generates a new stream of [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) geometry data as output. These shapes can then be visualized using either the [geoshape](../geoshape) or [geopath](../geopath) transform. For a complete example, see the [contour plot example visualization](../../../examples/contour-plot).
-
-This transform provides the functionality of both the [contours](https://github.com/d3/d3-contour/#contours) and [densityContour](https://github.com/d3/d3-contour/#densityContour) methods of the [d3-contour](https://github.com/d3/d3-contour) module.
+The contour transform generates a new stream of [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) geometry data as output. These shapes can then be visualized using either the [geoshape](../geoshape) or [geopath](../geopath) transform. For a complete example, see the [contour plot example visualization](../../../examples/contour-plot). This transform provides the functionality of both the [contours](https://github.com/d3/d3-contour/#contours) and [densityContour](https://github.com/d3/d3-contour/#densityContour) methods of the [d3-contour](https://github.com/d3/d3-contour) module.
 
 ## Transform Parameters
 
