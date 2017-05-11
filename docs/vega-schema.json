@@ -1739,6 +1739,58 @@
         },
         "pointRadius": {
           "$ref": "#/refs/numberOrSignal"
+        },
+        "fit": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array"
+            }
+          ]
+        },
+        "extent": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/signal"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/signal"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                ]
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "size": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/signal"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/refs/numberOrSignal"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
         }
       },
       "additionalProperties": true,
@@ -3147,6 +3199,9 @@
           "$ref": "#/defs/sequenceTransform"
         },
         {
+          "$ref": "#/defs/contourTransform"
+        },
+        {
           "$ref": "#/defs/geopathTransform"
         },
         {
@@ -4321,6 +4376,29 @@
             }
           ]
         },
+        "values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
         "fields": {
           "oneOf": [
             {
@@ -4371,8 +4449,7 @@
         "type",
         "from",
         "key",
-        "fields",
-        "as"
+        "fields"
       ]
     },
     "rankTransform": {
@@ -4504,6 +4581,122 @@
         "stop"
       ]
     },
+    "contourTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "contour"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "size": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "values": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "x": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "y": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "cellSize": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "bandwidth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "thresholds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "size"
+      ]
+    },
     "geopathTransform": {
       "type": "object",
       "properties": {
@@ -4545,8 +4738,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "type",
-        "projection"
+        "type"
       ]
     },
     "geopointTransform": {
@@ -4664,8 +4856,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "type",
-        "projection"
+        "type"
       ]
     },
     "graticuleTransform": {
