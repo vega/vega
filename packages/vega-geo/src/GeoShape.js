@@ -1,3 +1,4 @@
+import {getPath} from './projections';
 import {Transform} from 'vega-dataflow';
 import {inherits, field} from 'vega-util';
 
@@ -9,8 +10,8 @@ import {inherits, field} from 'vega-util';
  *   projection to apply.
  * @param {function(object): *} [params.field] - The field with GeoJSON data,
  *   or null if the tuple itself is a GeoJSON feature.
- * @param {string} [params.as='path'] - The output field in which to store
- *   the generated path data (default 'path').
+ * @param {string} [params.as='shape'] - The output field in which to store
+ *   the generated path data (default 'shape').
  */
 export default function GeoShape(params) {
   Transform.call(this, null, params);
@@ -27,7 +28,7 @@ prototype.transform = function(_, pulse) {
 
   if (!shape || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = shape = shapeGenerator(_.projection.path, datum);
+    this.value = shape = shapeGenerator(getPath(_.projection), datum);
     out.materialize().reflow();
     flag = out.SOURCE;
   }
