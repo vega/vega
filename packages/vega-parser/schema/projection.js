@@ -50,7 +50,30 @@ export default {
           "maxItems": 2
         }),
         "precision": {"$ref": "#/refs/numberOrSignal"},
-        "pointRadius": {"$ref": "#/refs/numberOrSignal"}
+        "pointRadius": {"$ref": "#/refs/numberOrSignal"},
+        "fit": {
+          "oneOf": [
+            {"type": "object"},
+            {"type": "array"}
+          ]
+        },
+        "extent": orSignal({
+          "type": "array",
+          "items": orSignal({
+            "type": "array",
+            "items": {"$ref": "#/refs/numberOrSignal"},
+            "minItems": 2,
+            "maxItems": 2
+          }),
+          "minItems": 2,
+          "maxItems": 2
+        }),
+        "size": orSignal({
+          "type": "array",
+          "items": {"$ref": "#/refs/numberOrSignal"},
+          "minItems": 2,
+          "maxItems": 2
+        })
       },
       "additionalProperties": true,
       "required": ["name", "type"]
