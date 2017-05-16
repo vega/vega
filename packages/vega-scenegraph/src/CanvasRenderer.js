@@ -41,7 +41,7 @@ prototype.context = function() {
   return this._canvas ? this._canvas.getContext('2d') : null;
 };
 
-function clipToBounds(g, items) {
+function clipToBounds(g, origin, items) {
   var b = new Bounds(), i, n, item, mark, group;
   for (i=0, n=items.length; i<n; ++i) {
     item = items[i];
@@ -54,6 +54,7 @@ function clipToBounds(g, items) {
     }
   }
   b.expand(1).round();
+  b.translate(-(origin[0] % 1), -(origin[1] % 1));
 
   g.beginPath();
   g.rect(b.x1, b.y1, b.width(), b.height());
@@ -82,7 +83,8 @@ prototype._render = function(scene, items) {
   g.save();
   b = (!items || this._redraw)
     ? (this._redraw = false, null)
-    : clipToBounds(g, items);
+    : clipToBounds(g, o, items);
+
   this.clear(-o[0], -o[1], w, h);
 
   // render
