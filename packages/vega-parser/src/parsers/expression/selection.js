@@ -1,4 +1,4 @@
-import {field} from 'vega-util';
+import {field, isNumber, isString} from 'vega-util';
 import inrange from './inrange';
 
 var UNION = 'union',
@@ -24,13 +24,17 @@ function testInterval(datum, entry) {
   var ivals = entry.intervals,
       n = ivals.length,
       i = 0,
-      getter;
+      getter, extent, value;
 
   for (; i<n; ++i) {
+    extent = ivals[i].extent;
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
-    if (ivals[i].extent[0] === ivals[i].extent[1]) return true;
-    if (!inrange(getter(datum), ivals[i].extent)) return false;
+    value = getter(datum);
+    if (!extent || extent[0] === extent[1]) return true;
+    if (isNumber(extent[0]) && !inrange(value, extent)) return false;
+    else if (isString(extent[0]) && extent.indexOf(value) < 0) return false;
   }
+
   return true;
 }
 
