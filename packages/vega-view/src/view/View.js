@@ -41,11 +41,9 @@ export default function View(spec, options) {
   this._scenegraph = new Scenegraph();
   var root = this._scenegraph.root;
 
-  // initialize renderer and render queue
+  // initialize renderer, handler and event management
   this._renderer = null;
-  this._queue = null;
-
-  // initialize handler and event management
+  this._redraw = true;
   this._handler = new CanvasHandler().scene(root);
   this._eventListeners = [];
   this._preventDefault = true;
@@ -93,28 +91,22 @@ var prototype = inherits(View, Dataflow);
 
 prototype.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
-
-  var q = this._queue;
-  if (this._resize || !q || q.length) {
-    this.render(q);
-    this._queue = [];
-  }
-
+  if (this._redraw || this._resize) this.render();
   return this;
 };
 
-prototype.render = function(update) {
+prototype.render = function() {
   if (this._renderer) {
     if (this._resize) this._resize = 0, resizeRenderer(this);
-    this._renderer.render(this._scenegraph.root, update);
+    this._renderer.render(this._scenegraph.root);
   }
+  this._redraw = false;
   return this;
 };
 
-prototype.enqueue = function(items) {
-  if (this._queue && items && items.length) {
-    this._queue = this._queue.concat(items);
-  }
+prototype.dirty = function(item) {
+  this._redraw = true;
+  this._renderer && this._renderer.dirty(item);
 };
 
 // -- GET / SET ----
@@ -158,7 +150,7 @@ prototype.renderer = function(type) {
   if (type !== this._renderType) {
     this._renderType = type;
     if (this._renderer) {
-      this._renderer = this._queue = null;
+      this._renderer = null;
       this.initialize(this._el);
     }
   }
@@ -170,7 +162,7 @@ prototype.loader = function(loader) {
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
     if (this._renderer) {
-      this._renderer = this._queue = null;
+      this._renderer = null;
       this.initialize(this._el);
     }
   }
