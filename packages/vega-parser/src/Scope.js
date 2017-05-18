@@ -5,7 +5,7 @@ import {
 } from './util';
 import parseExpression from './parsers/expression';
 import {Compare, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
-import {array, error, extend, isString, isObject, peek, stringValue} from 'vega-util';
+import {array, error, extend, isArray, isString, isObject, peek, stringValue} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
@@ -299,8 +299,28 @@ prototype.property = function(spec) {
 
 prototype.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
-    : this.signalRef(spec.signal || objectLambda(spec));
+    : this.signalRef(spec.signal || propertyLambda(spec));
 };
+
+function propertyLambda(spec) {
+  return (isArray(spec) ? arrayLambda : objectLambda)(spec);
+}
+
+function arrayLambda(array) {
+  var code = '[',
+      i = 0,
+      n = array.length,
+      value;
+
+  for (; i<n; ++i) {
+    value = array[i];
+    code += (i > 0 ? ',' : '')
+      + (isObject(value)
+        ? (value.signal || propertyLambda(value))
+        : stringValue(value));
+  }
+  return code + ']';
+}
 
 function objectLambda(obj) {
   var code = '{',
@@ -312,7 +332,7 @@ function objectLambda(obj) {
     code += (++i > 1 ? ',' : '')
       + stringValue(key) + ':'
       + (isObject(value)
-        ? (value.signal || objectLambda(value))
+        ? (value.signal || propertyLambda(value))
         : stringValue(value));
   }
   return code + '}';
