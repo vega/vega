@@ -3,7 +3,8 @@
   "padding": 10,
   "config": {
     "axis": {
-      "tickColor": "#ccc"
+      "tickColor": "#ccc",
+      "domainColor": "#ccc"
     }
   },
 
