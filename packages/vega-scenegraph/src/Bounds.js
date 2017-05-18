@@ -18,11 +18,12 @@ prototype.clear = function() {
 };
 
 prototype.empty = function() {
-  return
+  return (
     this.x1 === +Number.MAX_VALUE &&
     this.y1 === +Number.MAX_VALUE &&
     this.x2 === -Number.MAX_VALUE &&
-    this.y2 === -Number.MAX_VALUE;
+    this.y2 === -Number.MAX_VALUE
+  );
 }
 
 prototype.set = function(x1, y1, x2, y2) {
