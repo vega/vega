@@ -30,9 +30,10 @@ prototype.transform = function(_, pulse) {
 
   if (!path || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = path = getPath(_.projection);
+    this.value = path = getPath(_.projection).context(null);
     out.materialize().reflow().visit(out.SOURCE, set);
   } else {
+    path.context(null);
     mod = field === identity || pulse.modified(field.fields);
     out.visit(mod ? out.ADD_MOD : out.ADD, set);
   }
