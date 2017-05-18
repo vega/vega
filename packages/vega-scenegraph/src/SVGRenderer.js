@@ -13,7 +13,8 @@ var ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
-  this._dirtyID = 0;
+  this._dirtyID = 1;
+  this._dirty = [];
   this._svg = null;
   this._root = null;
   this._defs = null;
@@ -62,6 +63,8 @@ prototype.resize = function(width, height, origin) {
     this._root.setAttribute('transform', 'translate(' + this._origin + ')');
   }
 
+  this._dirty = [];
+
   return this;
 };
 
@@ -84,15 +87,19 @@ prototype.svg = function() {
 
 // -- Render entry point --
 
-prototype._render = function(scene, items) {
+prototype._render = function(scene) {
   // perform spot updates and re-render markup
-  if (this._dirtyCheck(items)) {
+  if (this._dirtyCheck()) {
     if (this._dirtyAll) this._resetDefs();
     this.draw(this._root, scene);
     domClear(this._root, 1);
   }
 
   this.updateDefs();
+
+  this._dirty = [];
+  ++this._dirtyID;
+
   return this;
 };
 
@@ -165,15 +172,23 @@ prototype._resetDefs = function() {
 
 // -- Manage rendering of items marked as dirty --
 
+prototype.dirty = function(item) {
+  if (item.dirty !== this._dirtyID) {
+    item.dirty = this._dirtyID;
+    this._dirty.push(item);
+  }
+};
+
 prototype.isDirty = function(item) {
   return this._dirtyAll
     || !item._svg
     || item.dirty === this._dirtyID;
 };
 
-prototype._dirtyCheck = function(items) {
+prototype._dirtyCheck = function() {
   this._dirtyAll = true;
-  if (!items) return true;
+  var items = this._dirty;
+  if (!items.length) return true;
 
   var id = ++this._dirtyID,
       item, mark, type, mdef, i, n, o;
