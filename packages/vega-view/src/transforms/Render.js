@@ -14,17 +14,7 @@ var prototype = inherits(Render, Transform);
 prototype.transform = function(_, pulse) {
   var view = pulse.dataflow;
 
-  if (pulse.changed(pulse.REM)) {
-    view.enqueue(pulse.materialize(pulse.REM).rem);
-  }
-
-  if (pulse.changed(pulse.ADD)) {
-    view.enqueue(pulse.materialize(pulse.ADD).add);
-  }
-
-  if (pulse.changed(pulse.MOD)) {
-    view.enqueue(pulse.materialize(pulse.MOD).mod);
-  }
+  pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
 
   // set z-index dirty flag as needed
   if (pulse.fields && pulse.fields['zindex']) {

@@ -103,6 +103,7 @@ export function gridLayout(view, group, opt) {
     y = (b.y1 < 0 ? Math.ceil(-b.y1) : 0) + py;
     xOffset.push(x + padCol);
     yOffset.push(y + padRow);
+    view.dirty(groups[i]);
   }
 
   // set initial alignment offsets
@@ -167,13 +168,11 @@ export function gridLayout(view, group, opt) {
     }
   }
 
-  // queue groups for redraw
-  view.enqueue(groups);
-
-  // update mark bounds
+  // update mark bounds, mark dirty
   for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
   for (i=0; i<n; ++i) {
     g = groups[i];
+    view.dirty(g);
     bounds.union(g.mark.bounds.union(g.bounds));
   }
 
@@ -234,6 +233,7 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
 
   // clear mark bounds for all headers
   for (j=0, m=headers.length; j<m; ++j) {
+    view.dirty(headers[j]);
     headers[j].mark.bounds.clear();
   }
 
@@ -251,18 +251,18 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
     b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
     h.x = x;
     h.y = y;
+    view.dirty(h);
 
     // update current edge of layout bounds
     edge = agg(edge, b[bf]);
   }
 
-  // queue headers for redraw
-  view.enqueue(headers);
   return edge;
 }
 
 function layoutTitle(view, g, offset, isX, bounds, band) {
   if (!g) return;
+  view.dirty(g);
 
   // compute title coordinates
   var x = offset, y = offset;
@@ -277,5 +277,5 @@ function layoutTitle(view, g, offset, isX, bounds, band) {
   g.y = y;
 
   // queue title for redraw
-  view.enqueue(g.mark.items);
+  view.dirty(g);
 }

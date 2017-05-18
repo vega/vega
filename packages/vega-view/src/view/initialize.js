@@ -22,6 +22,7 @@ export default function(el, elBind) {
   view._renderer = !Renderer ? null
     : initializeRenderer(view, view._renderer, el, Renderer);
   view._handler = initializeHandler(view, view._handler, el, Handler);
+  view._redraw = true;
 
   // initialize signal bindings
   if (el) {

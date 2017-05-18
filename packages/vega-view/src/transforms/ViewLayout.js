@@ -17,6 +17,8 @@ var AxisRole = 'axis',
     ColHeader = 'column-header',
     ColFooter = 'column-footer';
 
+var tempBounds = new Bounds();
+
 /**
  * Layout view elements such as axes and legends.
  * Also performs size adjustments.
@@ -128,10 +130,10 @@ function layoutAxis(view, axis, width, height) {
       maxExtent = item.maxExtent,
       title = datum.title && item.items[indices[2]].items[0],
       titlePadding = item.titlePadding,
-      titleSize = title ? title.fontSize + titlePadding : 0,
       bounds = item.bounds,
       x = 0, y = 0, i, s;
 
+  tempBounds.clear().union(bounds);
   bounds.clear();
   if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
   if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
@@ -143,7 +145,7 @@ function layoutAxis(view, axis, width, height) {
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
       if (title) title.auto
-        ? (title.y = -(titlePadding + s), s += titleSize)
+        ? (title.y = -(s += titlePadding), s += title.bounds.height())
         : bounds.union(title.bounds);
       bounds.add(0, -s).add(range, 0);
       break;
@@ -152,7 +154,7 @@ function layoutAxis(view, axis, width, height) {
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
       if (title) title.auto
-        ? (title.x = -(titlePadding + s), s += titleSize)
+        ? (title.x = -(s += titlePadding), s += title.bounds.width())
         : bounds.union(title.bounds);
       bounds.add(-s, 0).add(0, range);
       break;
@@ -161,7 +163,7 @@ function layoutAxis(view, axis, width, height) {
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
       if (title) title.auto
-        ? (title.x = titlePadding + s, s += titleSize)
+        ? (title.x = (s += titlePadding), s += title.bounds.width())
         : bounds.union(title.bounds);
       bounds.add(0, 0).add(s, range);
       break;
@@ -170,7 +172,7 @@ function layoutAxis(view, axis, width, height) {
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
       if (title) title.auto
-        ? (title.y = titlePadding + s, s += titleSize)
+        ? (title.y = (s += titlePadding), s += title.bounds.height())
         : bounds.union(title.bounds);
       bounds.add(0, 0).add(range, s);
       break;
@@ -179,12 +181,16 @@ function layoutAxis(view, axis, width, height) {
       y = item.y;
   }
 
-  if (set(item, 'x', x + 0.5) | set(item, 'y', y + 0.5)) {
-    view.enqueue([item]);
-  }
-
   // update bounds
   boundStroke(bounds.translate(x, y), item);
+
+  if (set(item, 'x', x + 0.5) | set(item, 'y', y + 0.5)) {
+    item.bounds = tempBounds;
+    view.dirty(item);
+    item.bounds = bounds;
+    view.dirty(item);
+  }
+
   return item.mark.bounds.clear().union(bounds);
 }
 
@@ -195,6 +201,8 @@ function layoutTitle(view, title, axisBounds) {
       offset = item.offset,
       bounds = item.bounds,
       x = 0, y = 0;
+
+  tempBounds.clear().union(bounds);
 
   // position axis group and title
   switch (orient) {
@@ -221,7 +229,10 @@ function layoutTitle(view, title, axisBounds) {
 
   bounds.translate(x - item.x, y - item.y);
   if (set(item, 'x', x) | set(item, 'y', y)) {
-    view.enqueue([item]);
+    item.bounds = tempBounds;
+    view.dirty(item);
+    item.bounds = bounds;
+    view.dirty(item);
   }
 
   // update bounds
@@ -233,10 +244,13 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
       datum = item.datum,
       orient = datum.orient,
       offset = item.offset,
-      bounds = item.bounds.clear(),
+      bounds = item.bounds,
       x = 0,
       y = (flow[orient] || 0),
       w, h;
+
+  tempBounds.clear().union(bounds);
+  bounds.clear();
 
   // aggregate bounds to determine size
   // shave off 1 pixel because it looks better...
@@ -274,14 +288,18 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
       y = item.y;
   }
 
+  // update bounds
+  boundStroke(bounds.set(x, y, x + w, y + h), item);
+
   // update legend layout
   if (set(item, 'x', x) | set(item, 'width', w) |
       set(item, 'y', y) | set(item, 'height', h)) {
-    view.enqueue([item]);
+    item.bounds = tempBounds;
+    view.dirty(item);
+    item.bounds = bounds;
+    view.dirty(item);
   }
 
-  // update bounds
-  boundStroke(bounds.set(x, y, x + w, y + h), item);
   return item.mark.bounds.clear().union(bounds);
 }
 
