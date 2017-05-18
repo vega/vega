@@ -46,7 +46,7 @@ export default function(spec, scope) {
     scale:  scope.scaleRef(spec.scale),
     extra:  config.tickExtra,
     count:  scope.property(spec.tickCount),
-    values: scope.property(spec.values),
+    values: scope.objectProperty(spec.values),
     formatSpecifier: scope.property(spec.format)
   })));
 

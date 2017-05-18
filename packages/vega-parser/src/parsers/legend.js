@@ -61,7 +61,7 @@ export default function(spec, scope) {
       type:   'gradient',
       scale:  scope.scaleRef(scale),
       count:  scope.property(spec.tickCount),
-      values: scope.property(spec.values),
+      values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
 
