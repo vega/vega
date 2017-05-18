@@ -11,6 +11,7 @@ import {inherits} from 'vega-util';
 export default function CanvasRenderer(loader) {
   Renderer.call(this, loader);
   this._redraw = false;
+  this._dirty = new Bounds();
 }
 
 var prototype = inherits(CanvasRenderer, Renderer),
@@ -41,21 +42,19 @@ prototype.context = function() {
   return this._canvas ? this._canvas.getContext('2d') : null;
 };
 
-function clipToBounds(g, origin, items) {
-  var b = new Bounds(), i, n, item, mark, group;
-  for (i=0, n=items.length; i<n; ++i) {
-    item = items[i];
-    mark = item.mark;
-    group = mark.group;
-    item = marks[mark.marktype].nested ? mark : item;
-    b.union(translate(item.bounds, group));
-    if (item.bounds_prev) {
-      b.union(translate(item.bounds_prev, group));
-    }
-  }
+prototype.dirty = function(item) {
+  var b = translate(item.bounds, item.mark.group);
+  this._dirty.union(b);
+};
+
+function clipToBounds(g, b, origin) {
+  // expand bounds by 1 pixel, then round to pixel boundaries
   b.expand(1).round();
+
+  // to avoid artifacts translate if origin has fractional pixels
   b.translate(-(origin[0] % 1), -(origin[1] % 1));
 
+  // set clipping path
   g.beginPath();
   g.rect(b.x1, b.y1, b.width(), b.height());
   g.clip();
@@ -72,18 +71,18 @@ function translate(bounds, group) {
   return b;
 }
 
-prototype._render = function(scene, items) {
+prototype._render = function(scene) {
   var g = this.context(),
       o = this._origin,
       w = this._width,
       h = this._height,
-      b;
+      b = this._dirty;
 
   // setup
   g.save();
-  b = (!items || this._redraw)
+  b = (this._redraw || b.empty())
     ? (this._redraw = false, null)
-    : clipToBounds(g, o, items);
+    : clipToBounds(g, b, o);
 
   this.clear(-o[0], -o[1], w, h);
 
@@ -93,6 +92,7 @@ prototype._render = function(scene, items) {
   // takedown
   g.restore();
 
+  this._dirty.clear();
   return this;
 };
 

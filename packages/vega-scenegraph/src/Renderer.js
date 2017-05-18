@@ -71,6 +71,15 @@ prototype.resize = function(width, height, origin) {
 };
 
 /**
+ * Report a dirty item whose bounds should be redrawn.
+ * This base class method does nothing. Subclasses that perform
+ * incremental should implement this method.
+ * @param {Item} item - The dirty item whose bounds should be redrawn.
+ */
+prototype.dirty = function(/*item*/) {
+};
+
+/**
  * Render an input scenegraph, potentially with a set of dirty items.
  * This method will perform an immediate rendering with available resources.
  * The renderer may also need to perform image loading to perform a complete
