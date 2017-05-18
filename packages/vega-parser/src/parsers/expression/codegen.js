@@ -17,7 +17,7 @@ import {warn, info, debug} from './log';
 import inScope from './inscope';
 import clampRange from './clamp-range';
 import {pinchDistance, pinchAngle} from './pinch';
-import {open, screen, windowsize} from './window';
+import {screen, windowsize} from './window';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import scaleGradient from './scale-gradient';
@@ -67,7 +67,6 @@ export var functionContext = {
   clampRange: clampRange,
   pinchDistance: pinchDistance,
   pinchAngle: pinchAngle,
-  open: open,
   screen: screen,
   windowsize: windowsize,
   span: span,
