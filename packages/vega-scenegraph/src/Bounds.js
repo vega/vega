@@ -17,6 +17,14 @@ prototype.clear = function() {
   return this;
 };
 
+prototype.empty = function() {
+  return
+    this.x1 === +Number.MAX_VALUE &&
+    this.y1 === +Number.MAX_VALUE &&
+    this.x2 === -Number.MAX_VALUE &&
+    this.y2 === -Number.MAX_VALUE;
+}
+
 prototype.set = function(x1, y1, x2, y2) {
   if (x2 < x1) {
     this.x2 = x1;
