@@ -87,16 +87,14 @@ prototype.dirty = function(/*item*/) {
  * after this method returns. To receive notification when rendering is
  * complete, use the renderAsync method instead.
  * @param {object} scene - The root mark of a scenegraph to render.
- * @param {Array<object>} [items] - An optional array of dirty items.
- *   If provided, the renderer may optimize the redraw of these items.
  * @return {Renderer} - This renderer instance.
  */
-prototype.render = function(scene, items) {
+prototype.render = function(scene) {
   var r = this;
 
   // bind arguments into a render call, and cache it
   // this function may be subsequently called for async redraw
-  r._call = function() { r._render(scene, items); };
+  r._call = function() { r._render(scene); };
 
   // invoke the renderer
   r._call();
@@ -112,10 +110,8 @@ prototype.render = function(scene, items) {
  * Internal rendering method. Renderer subclasses should override this
  * method to actually perform rendering.
  * @param {object} scene - The root mark of a scenegraph to render.
- * @param {Array<object>} [items] - An optional array of dirty items.
- *   If provided, the renderer may optimize the redraw of these items.
  */
-prototype._render = function(/*scene, items*/) {
+prototype._render = function(/*scene*/) {
   // subclasses to override
 };
 
@@ -125,12 +121,10 @@ prototype._render = function(/*scene, items*/) {
  * perform image loading to get a complete rendering. The returned
  * Promise will not resolve until this process completes.
  * @param {object} scene - The root mark of a scenegraph to render.
- * @param {Array<object>} [items] - An optional array of dirty items.
- *   If provided, the renderer may optimize the redraw of these items.
  * @return {Promise} - A Promise that resolves when rendering is complete.
  */
-prototype.renderAsync = function(scene, items) {
-  var r = this.render(scene, items);
+prototype.renderAsync = function(scene) {
+  var r = this.render(scene);
   return this._ready
     ? this._ready.then(function() { return r; })
     : Promise.resolve(r);
