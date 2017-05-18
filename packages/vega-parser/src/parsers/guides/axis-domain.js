@@ -12,8 +12,8 @@ export default function(spec, config, userEncode, dataRef) {
   encode.enter = enter = {
     opacity: zero
   };
-  addEncode(enter, 'stroke', config.tickColor);
-  addEncode(enter, 'strokeWidth', config.tickWidth);
+  addEncode(enter, 'stroke', config.domainColor);
+  addEncode(enter, 'strokeWidth', config.domainWidth);
 
   encode.exit = {
     opacity: zero
