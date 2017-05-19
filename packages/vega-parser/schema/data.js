@@ -4,7 +4,15 @@ var parseDef = {
     {
       "type": "object",
       "additionalProperties": {
-        "enum": ["number", "boolean", "date", "string"]
+        "oneOf": [
+          {
+            "enum": ["boolean", "number", "date", "string"]
+          },
+          {
+            "type": "string",
+            "pattern": "^(date|utc):.*$"
+          }
+        ]
       }
     }
   ]
