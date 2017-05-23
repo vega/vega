@@ -18,8 +18,14 @@
     {
       "name": "cars",
       "url": "data/cars.json",
+      "format": {
+        "type": "json",
+        "parse": {"Year": "date:%Y-%m-%d"}
+      },
       "transform": [
-        {"type": "filter", "expr": "datum.Horsepower && datum.Miles_per_Gallon"}
+        { "type": "filter", "expr": "datum.Horsepower && datum.Miles_per_Gallon" },
+        { "type": "formula", "as": "Year",
+          "expr": "isNumber(datum.year) ? datum.year : year(datum.Year)" }
       ]
     },
     {
