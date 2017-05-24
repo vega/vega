@@ -1606,6 +1606,10 @@ vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.4:
     vega-statistics "1"
     vega-util "^1.1"
 
+vega-datasets@vega/vega-datasets#gh-pages:
+  version "1.8.0"
+  resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/34d749afe9a1c733004e6253ee6b6f367e5b856b"
+
 vega-encode@>=1.0.0-beta:
   version "1.0.0-beta.18"
   resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.0-beta.18.tgz#1f747e3fdd4eac28da1293ee4198ee6ba4d193b2"
