@@ -52,6 +52,6 @@ export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
 
     // run dataflow on width/height signal change
     if (rerun) view.run('enter');
-    if (auto) view.runAfter(function() { view._autosize = 1; });
+    if (auto) view.runAfter(function() { view.resize(); });
   });
 }
