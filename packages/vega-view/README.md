@@ -171,6 +171,14 @@ padding and returns this view instance. This method does not force an immediate
 update to the view: invoke the [run](#view_run) method when ready. This method
 is equivalent to `view.signal('padding'[, padding])`.
 
+<a name="view_resize" href="#view_resize">#</a>
+view.<b>resize</b>()
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Sets a flag indicating that layout auto-size calculations should be re-run
+on the next pulse propagation cycle. If an autosize method of `"pad"` or
+`"fit"` is being used, calling this method will cause the chart bounds layout
+to be recomputed the next time the [run](#view_run) method is invoked.
 
 ### Dataflow and Rendering
 
@@ -206,11 +214,11 @@ During normal execution, this method is automatically invoked by the
 [run](#view_run) method. However, clients may explicitly call this method to
 (re-)render the scene on demand (for example, to aid debugging).
 
-<a name="view_enqueue" href="#view_enqueue">#</a>
-view.<b>enqueue</b>(<i>items</i>)
+<a name="view_dirty" href="#view_dirty">#</a>
+view.<b>dirty</b>(<i>item</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
-Enqueues "dirty" scenegraph items to be re-drawn the next time dataflow
+Reports a "dirty" scenegraph item to be re-drawn the next time dataflow
 evaluation completes. This method is typically invoked by dataflow operators
 directly to populate a dirty list for incremental rendering.
 
