@@ -169,6 +169,10 @@ prototype.loader = function(loader) {
   return this;
 };
 
+prototype.resize = function() {
+  return this._autosize = 1, this;
+};
+
 // -- EVENT HANDLING ----
 
 prototype.addEventListener = function(type, handler) {
