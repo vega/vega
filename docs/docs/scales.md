@@ -309,8 +309,8 @@ The trickiest part of using binned ordinal scales is retrieving the correct set 
 
 Scale domains can be specified in multiple ways:
 
-- As an [array](../parameter-types/#array) literal of domain values. For example, `[0, 500]` or `['a', 'b', 'c']`. Array literals may include signal references as elements.
-- A [signal reference](../parameter-types/#signal) that resolves to a domain value array. For example, `{"signal": "myDomain"}`.
+- As an [array](../types/#Array) literal of domain values. For example, `[0, 500]` or `['a', 'b', 'c']`. Array literals may include signal references as elements.
+- A [signal reference](../types/#Signal) that resolves to a domain value array. For example, `{"signal": "myDomain"}`.
 - A [data reference](#dataref) object that specifies field values in one or more data sets.
 
 ### <a name="dataref"></a>Basic Data Reference
@@ -394,8 +394,8 @@ This example sorts a multi-field domain in descending order based on the counts 
 
 Scale ranges can be specified in multiple ways:
 
-- As an [array](../parameter-types/#array) literal of range values. For example, `[0, 500]` or `['a', 'b', 'c']`. Array literals may include signal references as elements.
-- A [signal reference](../parameter-types/#signal) that resolves to a range value array. For example, `{"signal": "myRange"}`.
+- As an [array](../types/#Array) literal of range values. For example, `[0, 500]` or `['a', 'b', 'c']`. Array literals may include signal references as elements.
+- A [signal reference](../types/#Signal) that resolves to a range value array. For example, `{"signal": "myRange"}`.
 - A [color scheme reference](../schemes) for a color palette. For example, `{"scheme": "blueorange"}`.
 - For [`ordinal`](#ordinal) scales only, a [data reference](#dataref) for a set of distinct field values. For example, `{"data": "table", "field": "value"}`.
 - For [`band`](#band) and [`point`](#point) scales only, a [step size](#band) for each range band. For example, `{"step": 20}`.
