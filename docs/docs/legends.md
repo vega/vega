@@ -66,7 +66,7 @@ Custom mark properties can be set for all legend elements using the _encode_ par
 - `symbols` for legend [symbol](../marks/symbol) marks, and
 - `gradient` for a gradient-filled [rect](../marks/rect) mark.
 
-Each element accepts a set of visual encoding directives grouped into `enter`, `update`, `exit`, _etc._ objects as described in the [Marks](../marks) documentation. Mark properties can be styled using standard [value references](../parameter-types/#value). In addition, each encode block may include a string-valued `name` property to assign a unique name to the mark set, and a boolean-valued `interactive` property to enable input event handling.
+Each element accepts a set of visual encoding directives grouped into `enter`, `update`, `exit`, _etc._ objects as described in the [Marks](../marks) documentation. Mark properties can be styled using standard [value references](../types/#Value). In addition, each encode block may include a string-valued `name` property to assign a unique name to the mark set, and a boolean-valued `interactive` property to enable input event handling.
 
 Each legend symbol and label instance is backed by a data object with the following fields, which may be accessed as part of a custom visual encoding rule:
 

@@ -215,7 +215,7 @@ This example initiates a drag upon mousedown on a `rect` mark, then tracks the d
 
 ## <a name="signal"></a>Signal References
 
-Event stream definitions can also be simple [signal references](../parameter-types/#signal):
+Event stream definitions can also be simple [signal references](../types/#Signal):
 
 {: .suppress-error}
 ```json
