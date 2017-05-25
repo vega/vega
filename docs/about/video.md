@@ -6,6 +6,12 @@ permalink: /about/video/index.html
 
 Videos of presentations about Vega and related topics.
 
+### Vega-Lite: A Grammar of Interactive Graphics
+
+OpenVis Conference 2017 talk by Kanit ("Ham") Wongsuphasawat, Dominik Moritz, and Arvind Satyanarayan.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/9uaHRWj04D4" frameborder="0" allowfullscreen></iframe>
+
 ### Reactive Building Blocks: Interactive Visualizations with Vega
 
 OpenVis Conference 2016 talk by Arvind Satyanarayan.
