@@ -53,7 +53,8 @@
     "pretest": "npm run prebuild && npm run rollup",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run test && npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh"
+    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh",
+    "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
   },
   "dependencies": {
     "vega-crossfilter": ">=1.0.0-beta",
@@ -73,6 +74,7 @@
     "vega-view": ">=1.0.0-beta",
     "vega-voronoi": ">=1.0.0-beta",
     "vega-wordcloud": ">=1.0.0-beta",
+    "vega-datasets": "vega/vega-datasets#gh-pages",
     "yargs": "4"
   },
   "devDependencies": {
