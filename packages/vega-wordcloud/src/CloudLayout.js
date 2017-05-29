@@ -366,9 +366,10 @@ function zeroArray(n) {
 
 function cloudCanvas() {
   try {
-    return typeof document !== 'undefined' && document.createElement
+    var canvas = typeof document !== 'undefined' && document.createElement
       ? document.createElement('canvas')
-      : new (require('canvas'))();
+      : 0;
+    return canvas && canvas.getContext ? canvas : new (require('canvas'))();
   } catch (e) {
     error('Canvas unavailable. Run in browser or install node-canvas.');
   }
