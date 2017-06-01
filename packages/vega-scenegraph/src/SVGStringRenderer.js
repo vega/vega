@@ -21,7 +21,6 @@ export default function SVGStringRenderer(loader) {
   };
 
   this._defs = {
-    clip_id:  1,
     gradient: {},
     clipping: {}
   };
@@ -62,11 +61,6 @@ prototype.svg = function() {
 prototype._render = function(scene) {
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
-  return this;
-};
-
-prototype.reset = function() {
-  this._defs.clip_id = 0;
   return this;
 };
 

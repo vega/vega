@@ -35,7 +35,6 @@ prototype.initialize = function(el, width, height, padding) {
 
   // create the svg definitions cache
   this._defs = {
-    clip_id:  1,
     gradient: {},
     clipping: {}
   };
@@ -164,7 +163,6 @@ function updateClipping(el, clip, index) {
 
 prototype._resetDefs = function() {
   var def = this._defs;
-  def.clip_id = 1;
   def.gradient = {};
   def.clipping = {};
 };

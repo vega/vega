@@ -24,6 +24,7 @@ function loadScene(file) {
 }
 
 function render(scene, w, h) {
+  vega.resetSVGClipId();
   return new Renderer()
     .initialize(null, w, h)
     .render(scene)
@@ -31,6 +32,7 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
+  vega.resetSVGClipId();
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
@@ -39,7 +41,7 @@ function renderAsync(scene, w, h, callback) {
 
 tape('SVGStringRenderer should build empty group for item-less area mark', function(test) {
   var r = new Renderer();
-  var str = r.reset().mark({marktype: 'area', items:[]});
+  var str = r.mark({marktype: 'area', items:[]});
   generate('svg/marks-itemless-area.svg', str);
   var file = load('svg/marks-itemless-area.svg');
   test.equal(str, file);
@@ -48,7 +50,7 @@ tape('SVGStringRenderer should build empty group for item-less area mark', funct
 
 tape('SVGStringRenderer should build empty group for item-less line mark', function(test) {
   var r = new Renderer();
-  var str = r.reset().mark({marktype: 'line', items:[]});
+  var str = r.mark({marktype: 'line', items:[]});
   generate('svg/marks-itemless-line.svg', str);
   var file = load('svg/marks-itemless-line.svg');
   test.equal(str, file);
@@ -92,6 +94,8 @@ tape('SVGStringRenderer should support axes, legends and sub-groups', function(t
 });
 
 tape('SVGStringRenderer should support full redraw', function(test) {
+  vega.resetSVGClipId();
+
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -122,6 +126,8 @@ tape('SVGStringRenderer should support full redraw', function(test) {
 });
 
 tape('SVGStringRenderer should support enter-item redraw', function(test) {
+  vega.resetSVGClipId();
+
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -149,6 +155,8 @@ tape('SVGStringRenderer should support enter-item redraw', function(test) {
 });
 
 tape('SVGStringRenderer should support exit-item redraw', function(test) {
+  vega.resetSVGClipId();
+
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -168,6 +176,8 @@ tape('SVGStringRenderer should support exit-item redraw', function(test) {
 });
 
 tape('SVGStringRenderer should support single-item redraw', function(test) {
+  vega.resetSVGClipId();
+
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -188,6 +198,8 @@ tape('SVGStringRenderer should support single-item redraw', function(test) {
 });
 
 tape('SVGStringRenderer should support multi-item redraw', function(test) {
+  vega.resetSVGClipId();
+
   var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
     .initialize(null, 400, 400)
@@ -208,6 +220,8 @@ tape('SVGStringRenderer should support multi-item redraw', function(test) {
 });
 
 tape('SVGStringRenderer should support enter-group redraw', function(test) {
+  vega.resetSVGClipId();
+
   var scene = loadScene('scenegraph-barley.json');
   var r = new Renderer()
     .initialize(null, 500, 600)
