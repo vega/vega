@@ -86,7 +86,7 @@ The following example shows how to set custom colors, thickness, text angle, and
       "labels": {
         "interactive": true,
         "update": {
-          "text": {"signal": "format(datum.data, '+,')"},
+          "text": {"signal": "format(datum.value, '+,')"},
           "fill": {"value": "steelblue"},
           "angle": {"value": 50},
           "fontSize": {"value": 14},
