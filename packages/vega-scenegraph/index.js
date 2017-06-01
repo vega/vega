@@ -33,6 +33,7 @@ export {default as canvas} from './src/util/canvas/canvas';
 export {domCreate, domFind, domChild, domClear} from './src/util/dom';
 export {openTag, closeTag} from './src/util/tags';
 export {font, textMetrics} from './src/util/text';
+export {resetSVGClipId} from './src/util/svg/clip';
 
 export {sceneEqual, pathEqual} from './src/util/equal';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize';
