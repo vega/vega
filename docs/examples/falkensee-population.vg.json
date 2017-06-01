@@ -3,6 +3,15 @@
   "width": 500,
   "height": 250,
   "padding": 5,
+  "config": {
+    "title": {
+      "fontSize": 16
+    }
+  },
+
+  "title": {
+    "text": {"signal": "'Population of Falkensee from ' + years[0] + ' to ' + years[1]"}
+  },
 
   "data": [
     {
@@ -46,16 +55,12 @@
         {"year": 2012, "population": 40905},
         {"year": 2013, "population": 41258},
         {"year": 2014, "population": 41777}
-      ]
-    },
-    {
-      "name": "summary",
-      "source": "table",
+      ],
       "transform": [
         {
-          "type": "aggregate",
-          "fields": ["year", "year"],
-          "ops": ["min", "max"]
+          "type": "extent",
+          "field": "year",
+          "signal": "years"
         }
       ]
     },
@@ -156,21 +161,6 @@
           "strokeWidth": {"value": 1.5},
           "fill": {"value": "white"},
           "size": {"value": 30}
-        }
-      }
-    },
-    {
-      "type": "text",
-      "from": {"data": "summary"},
-      "encode": {
-        "enter": {
-          "x": {"signal": "width", "mult": 0.5},
-          "y": {"value": -10},
-          "text": {"signal": "'Population of Falkensee from ' + datum.min_year + ' to ' + datum.max_year"},
-          "fill": {"value": "black"},
-          "fontSize": {"value": 16},
-          "align": {"value": "center"},
-          "fontWeight": {"value": "bold"}
         }
       }
     }
