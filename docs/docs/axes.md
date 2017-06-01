@@ -86,7 +86,7 @@ The following example shows how to set custom colors, thickness, text angle, and
       "labels": {
         "interactive": true,
         "update": {
-          "text": {"template": "{{datum.data|number:'+,'}}"},
+          "text": {"signal": "format(datum.data, '+,')"},
           "fill": {"value": "steelblue"},
           "angle": {"value": 50},
           "fontSize": {"value": 14},
