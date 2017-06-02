@@ -335,7 +335,7 @@ function bind(item, el, sibling, tag) {
     }
   }
 
-  if (doc || node.previousSibling !== sibling) {
+  if (doc || node.previousSibling !== sibling || !sibling) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
