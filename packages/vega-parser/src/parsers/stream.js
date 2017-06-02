@@ -5,8 +5,8 @@ var VIEW = 'view',
     SCOPE = 'scope';
 
 export default function(stream, scope) {
-  return stream.signal
-    ? scope.getSignal(stream.signal).id
+  return stream.signal ? scope.getSignal(stream.signal).id
+    : stream.scale ? scope.getScale(stream.scale).id
     : parseStream(stream, scope);
 }
 

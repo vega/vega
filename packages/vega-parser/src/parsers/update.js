@@ -23,7 +23,7 @@ export default function(spec, scope, target) {
 
   // separate event streams from signal updates
   events = array(events).filter(function(stream) {
-    return stream.signal ? (sources.push(stream), 0) : 1;
+    return stream.signal || stream.scale ? (sources.push(stream), 0) : 1;
   });
 
   // merge event streams, include as source

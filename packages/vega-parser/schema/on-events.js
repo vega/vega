@@ -11,6 +11,13 @@ export default {
                 "oneOf": [
                   {"$ref": "#/refs/selector"},
                   {"$ref": "#/refs/signal"},
+                  {
+                    "type": "object",
+                    "properties": {
+                      "scale": {"type": "string"}
+                    },
+                    "required": ["scale"]
+                  },
                   {"$ref": "#/defs/stream"},
                   {
                     "type": "array",
