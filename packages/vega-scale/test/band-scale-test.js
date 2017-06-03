@@ -51,6 +51,15 @@ tape('band.invert inverts single value', function(test) {
 tape('band.invertRange inverts value range', function(test) {
   var s = bandScale().domain(['foo', 'bar']);
 
+  // empty and invalid ranges should fail
+  test.deepEqual(s.invertRange([]), undefined);
+  test.deepEqual(s.invertRange([0, NaN]), undefined);
+  test.deepEqual(s.invertRange([0, undefined]), undefined);
+  test.deepEqual(s.invertRange([0, null]), undefined);
+  test.deepEqual(s.invertRange([NaN, 1]), undefined);
+  test.deepEqual(s.invertRange([undefined, 1]), undefined);
+  test.deepEqual(s.invertRange([null, 1]), undefined);
+
   // ascending range
   s.range([0, 2]);
   test.deepEqual(s.invertRange([-2, -1]), undefined);
