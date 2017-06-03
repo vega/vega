@@ -1,6 +1,6 @@
 {
   "name": "vega-parser",
-  "version": "1.0.0-beta.55",
+  "version": "1.0.0-beta.56",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
     "vega",
