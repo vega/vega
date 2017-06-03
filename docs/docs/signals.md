@@ -130,12 +130,14 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 | :------------------ | :----------------------------: | :------------|
 | input               | {% include type t="String" %}  | {% include required %} The type of input element to use. The valid values are `checkbox`, `radio`, `range`, `select`, and any other legal [HTML form input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).|
 | element             | {% include type t="String" %}  | An optional CSS selector string indicating the parent element to which the input element should be added. By default, all input elements are added within the parent container of the Vega view.|
+| debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
 
 ### Radio and Select Input Properties
 
 | Property            | Type                           | Description  |
 | :------------------ | :----------------------------: | :------------|
 | options             | {% include type t="Array" %}   | {% include required %} An array of options to select from.|
+| debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
 
 ### Range Input Properties
 
@@ -144,6 +146,7 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 | max                 | {% include type t="Number" %}  | For `range` inputs, sets the maximum slider value. Defaults to the larger of the signal value and `100`.|
 | min                 | {% include type t="Number" %}  | For `range` inputs, sets the minimum slider value. Defaults to the smaller of the signal value and `0`.|
 | step                | {% include type t="Number" %}  | For `range` inputs, sets the minimum slider increment. If undefined, the step size will be automatically determined based on the _min_ and _max_ values.|
+| debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
 
 ### Other Input Types
 
