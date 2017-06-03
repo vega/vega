@@ -40,7 +40,10 @@ export default function(view, event, item) {
     p[1] -= translate[1];
   }
 
-  return event.vega = extension(view, item, p), event.item = item, event;
+  event.dataflow = view;
+  event.vega = extension(view, item, p);
+  event.item = item;
+  return event;
 }
 
 function extension(view, item, point) {
