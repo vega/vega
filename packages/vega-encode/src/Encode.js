@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {inherits, falsy} from 'vega-util';
+import {falsy, inherits, isArray} from 'vega-util';
 
 /**
  * Invokes encoding functions for visual items.
@@ -19,12 +19,26 @@ var prototype = inherits(Encode, Transform);
 
 prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
-      encode = pulse.encode,
-      reenter = encode === 'enter',
-      update = _.encoders.update || falsy,
-      enter = _.encoders.enter || falsy,
-      exit = _.encoders.exit || falsy,
-      set = (encode && !reenter ? _.encoders[encode] : update) || falsy;
+      encoders = _.encoders,
+      encode = pulse.encode;
+
+  // if an array, the encode directive includes additional sets
+  // that must be defined in order for the primary set to be invoked
+  // e.g., only run the update set if the hover set is defined
+  if (isArray(encode)) {
+    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+      encode = encode[0];
+    } else {
+      return pulse.StopPropagation;
+    }
+  }
+
+  // marshall encoder functions
+  var reenter = encode === 'enter',
+      update = encoders.update || falsy,
+      enter = encoders.enter || falsy,
+      exit = encoders.exit || falsy,
+      set = (encode && !reenter ? encoders[encode] : update) || falsy;
 
   if (pulse.changed(pulse.ADD)) {
     pulse.visit(pulse.ADD, function(t) {
@@ -58,5 +72,5 @@ prototype.transform = function(_, pulse) {
     if (out.mod.length) out.modifies(set.output);
   }
 
-  return out;
+  return out.changed() ? out : pulse.StopPropagation;
 };
