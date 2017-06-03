@@ -72,15 +72,21 @@ export function band() {
   };
 
   scale.invertRange = function(_) {
+    // bail if range has null or undefined values
+    if (_[0] == null || _[1] == null) return;
+
     var lo = +_[0],
         hi = +_[1],
         reverse = range[1] < range[0],
         values = reverse ? ordinalRange().reverse() : ordinalRange(),
         n = values.length - 1, a, b, t;
 
+    // bail if either range endpoint is invalid
+    if (lo !== lo || hi !== hi) return;
+
     // order range inputs, bail if outside of scale range
     if (hi < lo) t = lo, lo = hi, hi = t;
-    if (hi < values[0] || lo > range[1-reverse]) return undefined;
+    if (hi < values[0] || lo > range[1-reverse]) return;
 
     // binary search to index into scale range
     a = Math.max(0, bisectRight(values, lo) - 1);
