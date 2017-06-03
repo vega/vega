@@ -24,6 +24,7 @@ export {
 export {default as array} from './src/array';
 export {default as compare} from './src/compare';
 export {default as constant} from './src/constant';
+export {default as debounce} from './src/debounce';
 export {default as error} from './src/error';
 export {default as extend} from './src/extend';
 export {default as extentIndex} from './src/extentIndex';

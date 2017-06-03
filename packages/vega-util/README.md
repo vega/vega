@@ -73,6 +73,15 @@ vega.<b>constant</b>(<i>value</i>)
 Given an input *value*, returns a function that simply returns that value.
 If the input *value* is itself a function, that function is returned directly.
 
+<a name="debounce" href="#debounce">#</a>
+vega.<b>debounce</b>(<i>delay</i>, <i>func</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/debounce.js "Source")
+
+Generates a "debounced" function that delays invoking *func* until after
+*delay* milliseconds have elapsed since the last time the debounced function
+was invoked. Invocation passes up to one argument from the debounced function
+to *func* and does not preserve the *this* context.
+
 <a name="field" href="#field">#</a>
 vega.<b>field</b>(<i>field</i>[, <i>name</i>])
 [<>](https://github.com/vega/vega-util/blob/master/src/field.js "Source")
@@ -211,17 +220,20 @@ Functions for coercing values to a desired type.
 vega.<b>toBoolean</b>(<i>value</i>)
 [<>](https://github.com/vega/vega-util/blob/master/src/toBoolean.js "Source")
 
-Coerces the input _value_ to a string. Null values and empty strings are mapped
-to `null`.
+Coerces the input _value_ to a boolean. The strings `"true"` and `"1"` map to
+`true`; the strings `"false"` and `"0"` map to `false`. Null values and empty
+strings are mapped to `null`.
 
 <a name="toDate" href="#toDate">#</a>
 vega.<b>toDate</b>(<i>value</i>[, <i>parser</i>])
 [<>](https://github.com/vega/vega-util/blob/master/src/toDate.js "Source")
 
-Coerces the input _value_ to a Date instance. Null values and empty strings
-are mapped to `null`. If an optional _parser_ function is provided, it is used
-to perform date parsing, otherwise `Date.parse` is used. Be aware that
-`Date.parse` has different implementations across browsers!
+Coerces the input _value_ to a Date timestamp. Null values and empty strings
+are mapped to `null`. Date objects are passed through unchanged. If an
+optional _parser_ function is provided, it is used to perform date parsing.
+By default, numbers (timestamps) are passed through unchanged and otherwise
+`Date.parse` is used. Be aware that `Date.parse` has different
+implementations across browsers!
 
 <a name="toNumber" href="#toNumber">#</a>
 vega.<b>toNumber</b>(<i>value</i>)
