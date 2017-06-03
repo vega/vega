@@ -17,18 +17,21 @@ function invoke(name) {
 }
 
 export default function(hoverSet, leaveSet) {
+  hoverSet = hoverSet || 'hover';
+  leaveSet = [leaveSet || 'update', hoverSet];
+
   // invoke hover set upon mouseover
   this.on(
     this.events('view', 'mouseover', itemFilter),
     markTarget,
-    invoke(hoverSet || 'hover')
+    invoke(hoverSet)
   );
 
   // invoke leave set upon mouseout
   this.on(
     this.events('view', 'mouseout', itemFilter),
     markTarget,
-    invoke(leaveSet || 'update')
+    invoke(leaveSet)
   );
 
   return this;
