@@ -1,5 +1,5 @@
 import UniqueList from './util/UniqueList';
-import {id, identity, truthy} from 'vega-util';
+import {debounce, id, identity, truthy} from 'vega-util';
 
 var STREAM_ID = 0;
 
@@ -95,20 +95,15 @@ prototype.throttle = function(pause) {
 };
 
 prototype.debounce = function(delay) {
-  var s = stream(), evt = null, tid = null;
+  var s = stream();
 
-  function callback() {
-    var df = evt.dataflow;
-    s.receive(evt);
-    evt = null; tid = null;
-    if (df && df.run) df.run();
-  }
-
-  this.targets().add(stream(null, null, function(e) {
-    evt = e;
-    if (tid) clearTimeout(tid);
-    tid = setTimeout(callback, delay);
-  }));
+  this.targets().add(stream(null, null,
+    debounce(delay, function(e) {
+      var df = e.dataflow;
+      s.receive(e);
+      if (df && df.run) df.run();
+    })
+  ));
 
   return s;
 };
