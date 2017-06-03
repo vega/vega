@@ -105,10 +105,6 @@ buffer-equal@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/buffer-equal/-/buffer-equal-0.0.1.tgz#91bc74b11ea405bc916bc6aa908faafa5b4aac4b"
 
-buffer-shims@~1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/buffer-shims/-/buffer-shims-1.0.0.tgz#9978ce317388c649ad8793028c3477ef044a8b51"
-
 builtin-modules@^1.0.0, builtin-modules@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
@@ -466,8 +462,8 @@ es-to-primitive@^1.1.1:
     is-symbol "^1.0.1"
 
 es5-ext@^0.10.14, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.21"
-  resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.21.tgz#19a725f9e51d0300bbc1e8e821109fd9daf55925"
+  version "0.10.22"
+  resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.22.tgz#1876c51f990769c112c781ea3ebe89f84fd39071"
   dependencies:
     es6-iterator "2"
     es6-symbol "~3.1"
@@ -1200,14 +1196,14 @@ read-pkg@^1.0.0:
     path-type "^1.0.0"
 
 readable-stream@^2.1.5, readable-stream@^2.2.2:
-  version "2.2.9"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.9.tgz#cf78ec6f4a6d1eb43d26488cac97f042e74b7fc8"
+  version "2.2.10"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.10.tgz#effe72bb7c884c0dd335e2379d526196d9d011ee"
   dependencies:
-    buffer-shims "~1.0.0"
     core-util-is "~1.0.0"
     inherits "~2.0.1"
     isarray "~1.0.0"
     process-nextick-args "~1.0.6"
+    safe-buffer "^5.0.1"
     string_decoder "~1.0.0"
     util-deprecate "~1.0.1"
 
@@ -1324,8 +1320,8 @@ rx-lite@^3.1.2:
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-3.1.2.tgz#19ce502ca572665f3b647b10939f97fd1615f102"
 
 safe-buffer@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.0.tgz#fe4c8460397f9eaaaa58e73be46273408a45e223"
 
 "semver@2 || 3 || 4 || 5":
   version "5.3.0"
@@ -1598,8 +1594,8 @@ vega-crossfilter@>=1.0.0-beta:
     vega-util "1"
 
 vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.4:
-  version "2.0.0-beta.22"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.22.tgz#7d59659c9c79896ffdcf8ba44e24cd5aba9bf241"
+  version "2.0.0-beta.23"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.23.tgz#70aa86c74f08274eb3083985ad9520b9ef06fa2a"
   dependencies:
     d3-array "1"
     vega-loader ">=2.0.0-beta"
@@ -1608,11 +1604,11 @@ vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.4:
 
 vega-datasets@vega/vega-datasets#gh-pages:
   version "1.8.0"
-  resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/34d749afe9a1c733004e6253ee6b6f367e5b856b"
+  resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/26bddc53d6112cff239436cdc85f56249c39e9e0"
 
 vega-encode@>=1.0.0-beta:
-  version "1.0.0-beta.18"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.0-beta.18.tgz#1f747e3fdd4eac28da1293ee4198ee6ba4d193b2"
+  version "1.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.0-beta.19.tgz#e68a1ac45f9bdfe8cfe510e378e85282b8042985"
   dependencies:
     d3-array "1"
     d3-format "1"
@@ -1668,8 +1664,8 @@ vega-loader@>=2.0.0-beta, vega-loader@>=2.0.0-beta.5:
     vega-util "1"
 
 vega-parser@>=1.0.0-beta:
-  version "1.0.0-beta.54"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.0.0-beta.54.tgz#465b621607242aae2de8e7c0bdb493a3c0bfe8c4"
+  version "1.0.0-beta.56"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.0.0-beta.56.tgz#c8aee3646e237542dd07efc5a22b8ad0fc2283ce"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1689,8 +1685,8 @@ vega-runtime@>=1.0.0-beta:
     vega-util "1"
 
 vega-scale@>=2.0.0-beta:
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.0.0-beta.4.tgz#a8fa1b1337e61cc3005e1e02929de0d72e953d85"
+  version "2.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.0.0-beta.5.tgz#1376c108619afa3d60536d8ccb078b5adf6a1852"
   dependencies:
     d3-array "1"
     d3-interpolate "1"
@@ -1699,8 +1695,8 @@ vega-scale@>=2.0.0-beta:
     vega-util "1"
 
 vega-scenegraph@>=2.0.0-beta, vega-scenegraph@>=2.0.0-beta.11:
-  version "2.0.0-beta.29"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.0.0-beta.29.tgz#cd4fb21d52c89164ff75353d297bd8d466970c15"
+  version "2.0.0-beta.32"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.0.0-beta.32.tgz#65be6582142a4985d1c8ceb195cb7e3f43022f9a"
   dependencies:
     d3-path "1"
     d3-shape "1"
@@ -1716,12 +1712,12 @@ vega-statistics@1:
     d3-array "1"
 
 vega-util@1, vega-util@^1.1, vega-util@^1.2:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.2.0.tgz#797a3bb460754edacc81a4d7cdf5657d9437b6b8"
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.3.0.tgz#cf338e0d8210b9d369ce8cfa6727c39a89d4fe9f"
 
 vega-view@>=1.0.0-beta:
-  version "1.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.0.0-beta.32.tgz#4c7b88943ba7bda520588e3a0c93d69365ab667c"
+  version "1.0.0-beta.35"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.0.0-beta.35.tgz#871f2873e5c8306b50eadbd939a03d9b6ec390d4"
   dependencies:
     d3-array "1"
     vega-dataflow ">=2.0.0-beta"
@@ -1740,8 +1736,8 @@ vega-voronoi@>=1.0.0-beta:
     vega-util "1"
 
 vega-wordcloud@>=1.0.0-beta:
-  version "1.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/vega-wordcloud/-/vega-wordcloud-1.0.0-beta.4.tgz#9cc2d8f26894bf87bd42bf23cb9d18b7ff49010f"
+  version "1.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/vega-wordcloud/-/vega-wordcloud-1.0.0-beta.5.tgz#675c05dc1d721afea164792e8a768c1acae7a9a3"
   dependencies:
     vega-dataflow ">=2.0.0-beta.4"
     vega-scale ">=2.0.0-beta"
