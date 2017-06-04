@@ -1,9 +1,27 @@
 import {Log} from './scale-types';
-
+import {peek} from 'vega-util';
 import {
   format as numberFormat,
   formatSpecifier
 } from 'd3-format';
+
+/**
+ * Filter a set of candidate tick values, ensuring that only tick values
+ * that lie within the scale range are included.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {Array<*>} ticks - The candidate tick values.
+ * @return {Array<*>} - The filtered tick values.
+ */
+export function validTicks(scale, ticks) {
+  var range = scale.range(),
+      lo = range[0],
+      hi = peek(range);
+  if (lo > hi) range = hi, hi = lo, lo = range;
+
+  return ticks.filter(function(v) {
+    return !((v = scale(v)) < lo || v > hi)
+  });
+}
 
 /**
  * Generate tick values for the given scale and approximate tick count or
