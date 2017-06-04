@@ -17,6 +17,7 @@ var prototype = inherits(Bin, Transform);
 
 prototype.transform = function(_, pulse) {
   var bins = this._bins(_),
+      start = bins.start,
       step = bins.step,
       as = _.as || ['bin0', 'bin1'],
       b0 = as[0],
@@ -27,8 +28,12 @@ prototype.transform = function(_, pulse) {
 
   pulse.visit(flag, function(t) {
     var v = bins(t);
+    // minimum bin value (inclusive)
     t[b0] = v;
-    t[b1] = v != null ? v + step : null;
+    // maximum bin value (exclusive)
+    // use convoluted math for better floating point agreement
+    // see https://github.com/vega/vega/issues/830
+    t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
   });
 
   return pulse.modifies(as);
