@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-beta.32";
+var version = "3.0.0-beta.33";
 
 function bin$1(_) {
   // determine range
@@ -579,6 +579,21 @@ function constant(_) {
   return isFunction(_) ? _ : function() { return _; };
 }
 
+function debounce(delay, handler) {
+  var tid, evt;
+
+  function callback() {
+    handler(evt);
+    tid = evt = null;
+  }
+
+  return function(e) {
+    evt = e;
+    if (tid) clearTimeout(tid);
+    tid = setTimeout(callback, delay);
+  };
+}
+
 function extend(_) {
   for (var x, k, i=1, len=arguments.length; i<len; ++i) {
     x = arguments[i];
@@ -759,11 +774,16 @@ function peek(array) {
 }
 
 function toBoolean(_) {
-  return _ == null || _ === '' ? null : !_ || _ === 'false' ? false : !!_;
+  return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
+}
+
+function defaultParser(_) {
+  return isNumber(_) ? _ : isDate(_) ? _ : Date.parse(_);
 }
 
 function toDate(_, parser) {
-  return _ == null || _ === '' ? null : (parser ? parser(_) : Date.parse(_));
+  parser = parser || defaultParser;
+  return _ == null || _ === '' ? null : parser(_);
 }
 
 function toNumber(_) {
@@ -1387,11 +1407,15 @@ try { Canvas = require('canvas'); } catch (e) { Canvas = null; }
 
 function Canvas$1(w, h) {
   var canvas = domCreate(null, 'canvas');
-  if (canvas) {
+  if (canvas && canvas.getContext) {
     canvas.width = w;
     canvas.height = h;
   } else if (Canvas) {
-    canvas = new Canvas(w, h);
+    try {
+      canvas = new Canvas(w, h);
+    } catch (e) {
+      canvas = null;
+    }
   }
   return canvas;
 }
@@ -2736,9 +2760,15 @@ function markMultiItemPath(type, shape) {
 
 var area$2 = markMultiItemPath('area', area$1);
 
+var clip_id = 1;
+
+function resetSVGClipId() {
+  clip_id = 1;
+}
+
 function clip(renderer, item, size) {
   var defs = renderer._defs,
-      id = item.clip_id || (item.clip_id = 'clip' + defs.clip_id++),
+      id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
       c = defs.clipping[id] || (defs.clipping[id] = {id: id});
   c.width = size.width || 0;
   c.height = size.height || 0;
@@ -4229,7 +4259,6 @@ prototype$8.initialize = function(el, width, height, padding) {
 
   // create the svg definitions cache
   this._defs = {
-    clip_id:  1,
     gradient: {},
     clipping: {}
   };
@@ -4358,7 +4387,6 @@ function updateClipping(el, clip, index) {
 
 prototype$8._resetDefs = function() {
   var def = this._defs;
-  def.clip_id = 1;
   def.gradient = {};
   def.clipping = {};
 };
@@ -4531,7 +4559,7 @@ function bind(item, el, sibling, tag) {
     }
   }
 
-  if (doc || node.previousSibling !== sibling) {
+  if (doc || node.previousSibling !== sibling || !sibling) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
@@ -4663,7 +4691,6 @@ function SVGStringRenderer(loader) {
   };
 
   this._defs = {
-    clip_id:  1,
     gradient: {},
     clipping: {}
   };
@@ -4704,11 +4731,6 @@ prototype$9.svg = function() {
 prototype$9._render = function(scene) {
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
-  return this;
-};
-
-prototype$9.reset = function() {
-  this._defs.clip_id = 0;
   return this;
 };
 
@@ -5565,20 +5587,15 @@ prototype$13.throttle = function(pause) {
 };
 
 prototype$13.debounce = function(delay) {
-  var s = stream(), evt = null, tid = null;
+  var s = stream();
 
-  function callback() {
-    var df = evt.dataflow;
-    s.receive(evt);
-    evt = null; tid = null;
-    if (df && df.run) df.run();
-  }
-
-  this.targets().add(stream(null, null, function(e) {
-    evt = e;
-    if (tid) clearTimeout(tid);
-    tid = setTimeout(callback, delay);
-  }));
+  this.targets().add(stream(null, null,
+    debounce(delay, function(e) {
+      var df = e.dataflow;
+      s.receive(e);
+      if (df && df.run) df.run();
+    })
+  ));
 
   return s;
 };
@@ -7394,6 +7411,7 @@ var prototype$20 = inherits(Bin, Transform);
 
 prototype$20.transform = function(_, pulse) {
   var bins = this._bins(_),
+      start = bins.start,
       step = bins.step,
       as = _.as || ['bin0', 'bin1'],
       b0 = as[0],
@@ -7404,8 +7422,12 @@ prototype$20.transform = function(_, pulse) {
 
   pulse.visit(flag, function(t) {
     var v = bins(t);
+    // minimum bin value (inclusive)
     t[b0] = v;
-    t[b1] = v != null ? v + step : null;
+    // maximum bin value (exclusive)
+    // use convoluted math for better floating point agreement
+    // see https://github.com/vega/vega/issues/830
+    t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
   });
 
   return pulse.modifies(as);
@@ -9211,15 +9233,21 @@ function band() {
   };
 
   scale.invertRange = function(_) {
+    // bail if range has null or undefined values
+    if (_[0] == null || _[1] == null) return;
+
     var lo = +_[0],
         hi = +_[1],
         reverse = range[1] < range[0],
         values = reverse ? ordinalRange().reverse() : ordinalRange(),
         n = values.length - 1, a, b, t;
 
+    // bail if either range endpoint is invalid
+    if (lo !== lo || hi !== hi) return;
+
     // order range inputs, bail if outside of scale range
     if (hi < lo) t = lo, lo = hi, hi = t;
-    if (hi < values[0] || lo > range[1-reverse]) return undefined;
+    if (hi < values[0] || lo > range[1-reverse]) return;
 
     // binary search to index into scale range
     a = Math.max(0, d3Array.bisectRight(values, lo) - 1);
@@ -9278,9 +9306,7 @@ function binLinear() {
       domain = [];
 
   function scale(x) {
-    return x == null || x !== x
-      ? undefined
-      : linear(domain[Math.max(d3Array.bisect(domain, x), 1)-1]);
+    return linear(x);
   }
 
   function setDomain(_) {
@@ -10423,6 +10449,24 @@ var BinOrdinal = 'bin-ordinal';
 var Sequential = 'sequential';
 
 /**
+ * Filter a set of candidate tick values, ensuring that only tick values
+ * that lie within the scale range are included.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {Array<*>} ticks - The candidate tick values.
+ * @return {Array<*>} - The filtered tick values.
+ */
+function validTicks(scale, ticks) {
+  var range = scale.range(),
+      lo = range[0],
+      hi = peek(range);
+  if (lo > hi) range = hi, hi = lo, lo = range;
+
+  return ticks.filter(function(v) {
+    return !((v = scale(v)) < lo || v > hi)
+  });
+}
+
+/**
  * Generate tick values for the given scale and approximate tick count or
  * interval value. If the scale has a 'ticks' method, it will be used to
  * generate the ticks, with the count argument passed as a parameter. If the
@@ -10540,7 +10584,7 @@ prototype$49.transform = function(_, pulse) {
       scale = _.scale,
       count = _.count,
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
-      values = _.values || tickValues(scale, count);
+      values = _.values ? validTicks(scale, _.values) : tickValues(scale, count);
 
   if (ticks) out.rem = ticks;
 
@@ -10659,12 +10703,26 @@ var prototype$51 = inherits(Encode, Transform);
 
 prototype$51.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
-      encode = pulse.encode,
-      reenter = encode === 'enter',
-      update = _.encoders.update || falsy,
-      enter = _.encoders.enter || falsy,
-      exit = _.encoders.exit || falsy,
-      set = (encode && !reenter ? _.encoders[encode] : update) || falsy;
+      encoders = _.encoders,
+      encode = pulse.encode;
+
+  // if an array, the encode directive includes additional sets
+  // that must be defined in order for the primary set to be invoked
+  // e.g., only run the update set if the hover set is defined
+  if (isArray(encode)) {
+    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+      encode = encode[0];
+    } else {
+      return pulse.StopPropagation;
+    }
+  }
+
+  // marshall encoder functions
+  var reenter = encode === 'enter',
+      update = encoders.update || falsy,
+      enter = encoders.enter || falsy,
+      exit = encoders.exit || falsy,
+      set = (encode && !reenter ? encoders[encode] : update) || falsy;
 
   if (pulse.changed(pulse.ADD)) {
     pulse.visit(pulse.ADD, function(t) {
@@ -10698,7 +10756,7 @@ prototype$51.transform = function(_, pulse) {
     if (out.mod.length) out.modifies(set.output);
   }
 
-  return out;
+  return out.changed() ? out : pulse.StopPropagation;
 };
 
 var discrete$1 = {}
@@ -12383,9 +12441,10 @@ function zeroArray(n) {
 
 function cloudCanvas() {
   try {
-    return typeof document !== 'undefined' && document.createElement
+    var canvas = typeof document !== 'undefined' && document.createElement
       ? document.createElement('canvas')
-      : new (require('canvas'))();
+      : 0;
+    return canvas && canvas.getContext ? canvas : new (require('canvas'))();
   } catch (e) {
     error('Canvas unavailable. Run in browser or install node-canvas.');
   }
@@ -14094,7 +14153,10 @@ function eventExtend(view, event, item) {
     p[1] -= translate[1];
   }
 
-  return event.vega = extension(view, item, p), event.item = item, event;
+  event.dataflow = view;
+  event.vega = extension(view, item, p);
+  event.item = item;
+  return event;
 }
 
 function extension(view, item, point) {
@@ -14202,18 +14264,21 @@ function invoke(name) {
 }
 
 function hover(hoverSet, leaveSet) {
+  hoverSet = hoverSet || 'hover';
+  leaveSet = [leaveSet || 'update', hoverSet];
+
   // invoke hover set upon mouseover
   this.on(
     this.events('view', 'mouseover', itemFilter),
     markTarget,
-    invoke(hoverSet || 'hover')
+    invoke(hoverSet)
   );
 
   // invoke leave set upon mouseout
   this.on(
     this.events('view', 'mouseout', itemFilter),
     markTarget,
-    invoke(leaveSet || 'update')
+    invoke(leaveSet)
   );
 
   return this;
@@ -14260,16 +14325,23 @@ var OptionClass = 'vega-option-';
  * @return {View} - This view instance.
  */
 function bind$1(view, el, binding) {
-  var param = binding.param;
-  var bind = binding.state || (binding.state = {
-    elements: null,
-    set: null,
-    update: function(value) {
-      bind.source = true;
-      view.signal(param.signal, value).run();
-    },
-    active: false
-  });
+  var param = binding.param,
+      bind = binding.state;
+
+  if (!bind) {
+    bind = binding.state = {
+      elements: null,
+      active: false,
+      set: null,
+      update: function(value) {
+        bind.source = true;
+        view.signal(param.signal, value).run();
+      }
+    };
+    if (param.debounce) {
+      bind.update = debounce(param.debounce, bind.update);
+    }
+  }
 
   if (isString(el)) el = document.querySelector(el);
   generate(bind, el, param, view.signal(param.signal));
@@ -17092,8 +17164,8 @@ function parseExpression(expr, scope, preamble) {
 var VIEW$1 = 'view';
 var SCOPE = 'scope';
 function parseStream(stream, scope) {
-  return stream.signal
-    ? scope.getSignal(stream.signal).id
+  return stream.signal ? scope.getSignal(stream.signal).id
+    : stream.scale ? scope.getScale(stream.scale).id
     : parseStream$1(stream, scope);
 }
 
@@ -17409,7 +17481,7 @@ function parseUpdate(spec, scope, target) {
 
   // separate event streams from signal updates
   events = array(events).filter(function(stream) {
-    return stream.signal ? (sources.push(stream), 0) : 1;
+    return stream.signal || stream.scale ? (sources.push(stream), 0) : 1;
   });
 
   // merge event streams, include as source
@@ -20805,7 +20877,7 @@ function autosize(viewWidth, viewHeight, width, height, origin, auto) {
 
     // run dataflow on width/height signal change
     if (rerun) view.run('enter');
-    if (auto) view.runAfter(function() { view._autosize = 1; });
+    if (auto) view.runAfter(function() { view.resize(); });
   });
 }
 
@@ -21007,6 +21079,10 @@ prototype$71.loader = function(loader) {
   return this;
 };
 
+prototype$71.resize = function() {
+  return this._autosize = 1, this;
+};
+
 // -- EVENT HANDLING ----
 
 prototype$71.addEventListener = function(type, handler) {
@@ -21128,6 +21204,7 @@ exports.Debug = Debug;
 exports.array = array;
 exports.compare = compare;
 exports.constant = constant;
+exports.debounce = debounce;
 exports.error = error;
 exports.extend = extend;
 exports.extentIndex = extentIndex;
@@ -21198,6 +21275,7 @@ exports.openTag = openTag;
 exports.closeTag = closeTag;
 exports.font = font;
 exports.textMetrics = textMetrics;
+exports.resetSVGClipId = resetSVGClipId;
 exports.sceneEqual = sceneEqual;
 exports.pathEqual = pathEqual;
 exports.sceneToJSON = sceneToJSON;

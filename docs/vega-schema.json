@@ -189,6 +189,9 @@
             },
             "element": {
               "$ref": "#/refs/element"
+            },
+            "debounce": {
+              "type": "number"
             }
           },
           "required": [
@@ -209,6 +212,9 @@
             },
             "options": {
               "type": "array"
+            },
+            "debounce": {
+              "type": "number"
             }
           },
           "additionalProperties": false,
@@ -236,6 +242,9 @@
             },
             "step": {
               "type": "number"
+            },
+            "debounce": {
+              "type": "number"
             }
           },
           "additionalProperties": false,
@@ -258,6 +267,9 @@
             },
             "element": {
               "$ref": "#/refs/element"
+            },
+            "debounce": {
+              "type": "number"
             }
           },
           "additionalProperties": true
@@ -1502,6 +1514,17 @@
                   },
                   {
                     "$ref": "#/refs/signal"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "scale": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "scale"
+                    ]
                   },
                   {
                     "$ref": "#/defs/stream"
