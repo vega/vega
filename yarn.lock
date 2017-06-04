@@ -1123,10 +1123,6 @@ path-is-inside@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/path-is-inside/-/path-is-inside-1.0.2.tgz#365417dede44430d1c11af61027facf074bdfc53"
 
-path-parse@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
-
 path-type@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-1.1.0.tgz#59c44f7ee491da704da415da5a4070ba4f8fe441"
@@ -1256,15 +1252,9 @@ resolve-from@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-1.0.1.tgz#26cbfe935d1aeeeabb29bc3fe5aeb01e93d44226"
 
-resolve@1.1.7, resolve@~1.1.7:
+resolve@1.1.7, resolve@^1.1.5, resolve@^1.1.6, resolve@~1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
-
-resolve@^1.1.5, resolve@^1.1.6:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.3.3.tgz#655907c3469a8680dc2de3a275a8fdd69691f0e5"
-  dependencies:
-    path-parse "^1.0.5"
 
 restore-cursor@^1.0.1:
   version "1.0.1"
@@ -1545,8 +1535,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 uglify-js@2:
-  version "2.8.27"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.27.tgz#47787f912b0f242e5b984343be8e35e95f694c9c"
+  version "2.8.28"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.28.tgz#e335032df9bb20dcb918f164589d5af47f38834a"
   dependencies:
     source-map "~0.5.1"
     yargs "~3.10.0"
@@ -1594,8 +1584,8 @@ vega-crossfilter@>=1.0.0-beta:
     vega-util "1"
 
 vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.4:
-  version "2.0.0-beta.23"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.23.tgz#70aa86c74f08274eb3083985ad9520b9ef06fa2a"
+  version "2.0.0-beta.24"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.24.tgz#0e57a240c74fb0a7e8c65668c6b6dd4bca428806"
   dependencies:
     d3-array "1"
     vega-loader ">=2.0.0-beta"
@@ -1607,8 +1597,8 @@ vega-datasets@vega/vega-datasets#gh-pages:
   resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/26bddc53d6112cff239436cdc85f56249c39e9e0"
 
 vega-encode@>=1.0.0-beta:
-  version "1.0.0-beta.19"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.0-beta.19.tgz#e68a1ac45f9bdfe8cfe510e378e85282b8042985"
+  version "1.0.0-beta.20"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.0-beta.20.tgz#bd36dea9fbceabac6a5bd00bf02599d1745363d6"
   dependencies:
     d3-array "1"
     d3-format "1"
@@ -1685,8 +1675,8 @@ vega-runtime@>=1.0.0-beta:
     vega-util "1"
 
 vega-scale@>=2.0.0-beta:
-  version "2.0.0-beta.5"
-  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.0.0-beta.5.tgz#1376c108619afa3d60536d8ccb078b5adf6a1852"
+  version "2.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.0.0-beta.6.tgz#eecd6676f9652764f84218e7a68c18a4fc8476a0"
   dependencies:
     d3-array "1"
     d3-interpolate "1"
