@@ -1,6 +1,6 @@
 import {Transform, ingest} from 'vega-dataflow';
 import {inherits} from 'vega-util';
-import {tickValues, tickFormat} from './ticks';
+import {tickValues, tickFormat, validTicks} from './ticks';
 
 /**
  * Generates axis ticks for visualizing a spatial scale.
@@ -34,7 +34,7 @@ prototype.transform = function(_, pulse) {
       scale = _.scale,
       count = _.count,
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
-      values = _.values || tickValues(scale, count);
+      values = _.values ? validTicks(scale, _.values) : tickValues(scale, count);
 
   if (ticks) out.rem = ticks;
 
