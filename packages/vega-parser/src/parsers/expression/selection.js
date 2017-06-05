@@ -1,4 +1,4 @@
-import {field, isNumber, isString} from 'vega-util';
+import {field, isNumber, isString, isDate, toNumber} from 'vega-util';
 import inrange from './inrange';
 
 var UNION = 'union',
@@ -10,11 +10,14 @@ function testPoint(datum, entry) {
       values = entry.values,
       getter = entry.getter || (entry.getter = []),
       n = fields.length,
-      i = 0;
+      i = 0, dval;
 
   for (; i<n; ++i) {
     getter[i] = getter[i] || field(fields[i]);
-    if (getter[i](datum) !== values[i]) return false;
+    dval = getter[i](datum);
+    if (isDate(dval)) dval = toNumber(dval);
+    if (isDate(values[i])) values[i] = toNumber(values[i]);
+    if (dval !== values[i]) return false;
   }
 
   return true;
@@ -31,6 +34,8 @@ function testInterval(datum, entry) {
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
     value = getter(datum);
     if (!extent || extent[0] === extent[1]) return true;
+    if (isDate(value)) value = toNumber(value);
+    if (isDate(extent[0])) extent = ivals[i].extent = extent.map(toNumber);
     if (isNumber(extent[0]) && !inrange(value, extent)) return false;
     else if (isString(extent[0]) && extent.indexOf(value) < 0) return false;
   }
@@ -159,10 +164,13 @@ export function vlIntervalDomain(name, encoding, field, op) {
 
     for (j=0, m=entry.length; j<m; ++j) {
       interval = entry[j];
-      if ((encoding && interval.encoding === encoding) ||
+      if (interval.extent &&
+          (encoding && interval.encoding === encoding) ||
           (field && interval.field === field))
       {
-        extent = interval.extent, lo = extent[0], hi = extent[1];
+        extent = interval.extent;
+        if (isDate(extent[0])) extent = interval.extent = extent.map(toNumber);
+        lo = extent[0], hi = extent[1];
         if (lo > hi) hi = extent[1], lo = extent[0];
         domain = domain ? merge(domain, lo, hi) : [lo, hi];
       }
