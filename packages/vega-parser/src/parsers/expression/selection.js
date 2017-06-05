@@ -23,6 +23,9 @@ function testPoint(datum, entry) {
   return true;
 }
 
+// TODO: revisit date coercion?
+// have selections populate with consistent types upon write?
+
 function testInterval(datum, entry) {
   var ivals = entry.intervals,
       n = ivals.length,
