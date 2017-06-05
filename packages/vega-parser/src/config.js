@@ -1,13 +1,16 @@
 import {extend, isObject} from 'vega-util';
 
-export default function(userConfig) {
-  var config = defaults(), key;
-  for (key in userConfig) {
-    config[key] = isObject(config[key])
-      ? extend(config[key], userConfig[key])
-      : config[key] = userConfig[key];
-  }
-  return config;
+export default function(configs) {
+  var output = defaults();
+  (configs || []).forEach(function(config) {
+    var key;
+    if (config) for (key in config) {
+      output[key] = isObject(output[key])
+        ? extend(output[key], config[key])
+        : output[key] = config[key];
+    }
+  });
+  return output;
 }
 
 var defaultSymbolSize = 30,
