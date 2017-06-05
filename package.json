@@ -32,6 +32,10 @@
     {
       "name": "Emily Gu",
       "url": "https://github.com/emilygu"
+    },
+    {
+      "name": "Dominik Moritz",
+      "url": "https://www.domoritz.de"
     }
   ],
   "main": "build/vega.js",
