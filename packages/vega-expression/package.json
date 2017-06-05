@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -16,6 +16,10 @@
     {
       "name": "Ryan Russell",
       "url": "https://github.com/RussellSprouts"
+    },
+    {
+      "name": "Arvind Satyanarayan",
+      "url": "http://arvindsatya.com"
     }
   ],
   "license": "BSD-3-Clause",
