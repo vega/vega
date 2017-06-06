@@ -9,6 +9,7 @@ function testPoint(datum, entry) {
   var fields = entry.fields,
       values = entry.values,
       getter = entry.getter || (entry.getter = []),
+      bins = entry.bins,
       n = fields.length,
       i = 0, dval;
 
@@ -17,7 +18,12 @@ function testPoint(datum, entry) {
     dval = getter[i](datum);
     if (isDate(dval)) dval = toNumber(dval);
     if (isDate(values[i])) values[i] = toNumber(values[i]);
-    if (dval !== values[i]) return false;
+    if (bins && bins[fields[i]]) {
+      if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
+      if (!inrange(dval, values[i])) return false;
+    } else if (dval !== values[i]) {
+      return false;
+    }
   }
 
   return true;
@@ -92,7 +98,7 @@ function vlSelection(name, unit, datum, op, scope, test) {
 }
 
 // Assumes point selection tuples are of the form:
-// {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, }
+// {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
 export function vlPoint(name, unit, datum, op, scope) {
   return vlSelection.call(this, name, unit, datum, op, scope, testPoint);
 }
