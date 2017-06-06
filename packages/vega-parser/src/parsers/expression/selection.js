@@ -110,8 +110,7 @@ export function vlInterval(name, unit, datum, op, scope) {
 }
 
 /**
- * Materializes a point selection as a scale domain. With point selections,
- * we assume that they are projected over a single field or encoding channel.
+ * Materializes a point selection as a scale domain.
  * @param {string} name - The name of the dataset representing the selection.
  * @param {string} [encoding] - A particular encoding channel to materialize.
  * @param {string} [field] - A particular field to materialize.
@@ -122,34 +121,25 @@ export function vlInterval(name, unit, datum, op, scope) {
 export function vlPointDomain(name, encoding, field, op) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
-      units = {}, count = 0,
-      values = {}, domain = [],
-      i = 0, n = entries.length,
-      entry, unit, v, key;
+      entry = entries[0],
+      i = 0, n, index, values, continuous;
 
-  for (; i<n; ++i) {
-    entry = entries[i];
-    unit  = entry.unit;
-    key   = entry.values[0];
+  if (!entry) return undefined;
 
-    if (!units[unit]) units[unit] = ++count;
-
-    if ((encoding && entry.encodings[0] === encoding) ||
-        (field && entry.fields[0] === field))
-    {
-      if (!(v = values[key])) {
-        values[key] = v = {value: key, units: {}, count: 0};
-      }
-      if (!v.units[unit]) v.units[unit] = ++v.count;
+  for (n = encoding ? entry.encodings.length : entry.fields.length; i<n; ++i) {
+    if ((encoding && entry.encodings[i] === encoding) ||
+        (field && entry.fields[i] === field)) {
+      index = i;
+      continuous = entry.bins && entry.bins[entry.fields[i]];
+      break;
     }
   }
 
-  for (key in values) {
-    if (op !== UNION && (v = values[key]).count !== count) continue;
-    domain.push(v.value);
-  }
+  values = entries.reduce(function(acc, entry) {
+    return (acc.push({unit: entry.unit, value: entry.values[index]}), acc);
+  }, []);
 
-  return domain.length ? domain : undefined;
+  return continuous ? continuousDomain(values, op) : discreteDomain(values, op);
 }
 
 /**
@@ -162,28 +152,74 @@ export function vlPointDomain(name, encoding, field, op) {
  * @returns {array} An array of values to serve as a scale domain.
  */
 export function vlIntervalDomain(name, encoding, field, op) {
-  var merge = op === UNION ? unionInterval : intersectInterval,
-      data = this.context.data[name],
+  var data = this.context.data[name],
       entries = data ? data.values.value : [],
+      entry = entries[0],
+      i = 0, n, interval, index, values, discrete;
+
+   if (!entry) return undefined;
+
+   for (n = entry.intervals.length; i<n; ++i) {
+    interval = entry.intervals[i];
+     if ((encoding && interval.encoding === encoding) ||
+         (field && interval.field === field)) {
+       index = i;
+       discrete = interval.extent.length > 2;
+       break;
+     }
+   }
+
+   values = entries.reduce(function(acc, entry) {
+    var extent = entry.intervals[index].extent,
+      value = discrete ?
+        extent.map(function(d) { return {unit: entry.unit, value: d}; }) :
+        {unit: entry.unit, value: extent};
+
+    return discrete ? (acc.push.apply(acc, value), acc) : (acc.push(value), acc);
+   }, []);
+
+
+   return discrete ? discreteDomain(values, op) : continuousDomain(values, op);
+}
+
+function discreteDomain(entries, op) {
+  var units = {}, count = 0,
+      values = {}, domain = [],
       i = 0, n = entries.length,
-      entry, m, j, interval, extent, domain, lo, hi;
+      entry, unit, v, key;
 
   for (; i<n; ++i) {
-    entry = entries[i].intervals;
+    entry = entries[i];
+    unit  = entry.unit;
+    key   = entry.value;
 
-    for (j=0, m=entry.length; j<m; ++j) {
-      interval = entry[j];
-      if (interval.extent &&
-          (encoding && interval.encoding === encoding) ||
-          (field && interval.field === field))
-      {
-        extent = interval.extent;
-        if (isDate(extent[0])) extent = interval.extent = extent.map(toNumber);
-        lo = extent[0], hi = extent[1];
-        if (lo > hi) hi = extent[1], lo = extent[0];
-        domain = domain ? merge(domain, lo, hi) : [lo, hi];
-      }
+    if (!units[unit]) units[unit] = ++count;
+    if (!(v = values[key])) {
+      values[key] = v = {value: key, units: {}, count: 0};
     }
+    if (!v.units[unit]) v.units[unit] = ++v.count;
+  }
+
+  for (key in values) {
+    v = values[key];
+    if (op !== UNION && v.count !== count) continue;
+    domain.push(v.value);
+  }
+
+  return domain.length ? domain : undefined;
+}
+
+function continuousDomain(entries, op) {
+  var merge = op === UNION ? unionInterval : intersectInterval,
+      i = 0, n = entries.length,
+      extent, domain, lo, hi;
+
+  for (; i<n; ++i) {
+    extent = entries[i].value;
+    if (isDate(extent[0])) extent = extent.map(toNumber);
+    lo = extent[0], hi = extent[1];
+    if (lo > hi) hi = extent[1], lo = extent[0];
+    domain = domain ? merge(domain, lo, hi) : [lo, hi];
   }
 
   return domain && domain.length && (+domain[0] !== +domain[1])
