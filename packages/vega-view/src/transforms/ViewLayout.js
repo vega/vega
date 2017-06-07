@@ -17,7 +17,8 @@ var AxisRole = 'axis',
     ColHeader = 'column-header',
     ColFooter = 'column-footer';
 
-var tempBounds = new Bounds();
+var AxisOffset = 0.5,
+    tempBounds = new Bounds();
 
 /**
  * Layout view elements such as axes and legends.
@@ -184,7 +185,7 @@ function layoutAxis(view, axis, width, height) {
   // update bounds
   boundStroke(bounds.translate(x, y), item);
 
-  if (set(item, 'x', x + 0.5) | set(item, 'y', y + 0.5)) {
+  if (set(item, 'x', x + AxisOffset) | set(item, 'y', y + AxisOffset)) {
     item.bounds = tempBounds;
     view.dirty(item);
     item.bounds = bounds;
