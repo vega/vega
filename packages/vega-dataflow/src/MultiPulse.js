@@ -75,13 +75,22 @@ prototype.materialize = function() {
 };
 
 prototype.visit = function(flags, visitor) {
-  var pulses = this.pulses, i, n;
+  var p = this,
+      pulses = p.pulses,
+      n = pulses.length,
+      i = 0;
 
-  for (i=0, n=pulses.length; i<n; ++i) {
-    if (pulses[i].stamp === this.stamp) {
+  if (flags & p.SOURCE) {
+    for (; i<n; ++i) {
       pulses[i].visit(flags, visitor);
+    }
+  } else {
+    for (; i<n; ++i) {
+      if (pulses[i].stamp === p.stamp) {
+        pulses[i].visit(flags, visitor);
+      }
     }
   }
 
-  return this;
+  return p;
 };
