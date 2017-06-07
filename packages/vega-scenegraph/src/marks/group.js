@@ -6,12 +6,14 @@ import fill from '../util/canvas/fill';
 import clip from '../util/svg/clip';
 import translateItem from '../util/svg/translateItem';
 
+var StrokeOffset = 0.5;
+
 function attr(emit, item) {
   emit('transform', translateItem(item));
 }
 
 function background(emit, item) {
-  var offset = item.stroke ? 0.5 : 0;
+  var offset = item.stroke ? StrokeOffset : 0;
   emit('class', 'background');
   emit('d', rectangle(null, item, offset, offset));
 }
@@ -58,7 +60,7 @@ function draw(context, scene, bounds) {
       opacity = group.opacity == null ? 1 : group.opacity;
       if (opacity > 0) {
         context.beginPath();
-        offset = group.stroke ? 0.5 : 0;
+        offset = group.stroke ? StrokeOffset : 0;
         rectangle(context, group, offset, offset);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();
