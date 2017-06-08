@@ -17,19 +17,6 @@ function tupleid(t) {
 }
 
 /**
- * Copy the values of one tuple to another (ignoring id and prev fields).
- * @param {Tuple} t - The tuple to copy from.
- * @param {Tuple} c - The tuple to write to.
- * @return The re-written tuple, same as the argument 'c'.
- */
-function copy(t, c) {
-  for (var k in t) {
-    if (k !== '_id') c[k] = t[k];
-  }
-  return c;
-}
-
-/**
  * Ingest an object or value as a data tuple.
  * If the input value is an object, an id field will be added to it. For
  * efficiency, the input object is modified directly. A copy is not made.
@@ -50,7 +37,7 @@ function ingest(datum) {
  * @return {object} The derived tuple.
  */
 function derive(t) {
-  return ingest(copy(t, {}));
+  return ingest(rederive(t, {}));
 }
 
 /**
@@ -60,7 +47,10 @@ function derive(t) {
  * @return {object} The derived tuple.
  */
 function rederive(t, d) {
-  return copy(t, d);
+  for (var k in t) {
+    if (k !== '_id') d[k] = t[k];
+  }
+  return d;
 }
 
 /**
