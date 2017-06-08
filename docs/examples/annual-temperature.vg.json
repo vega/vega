@@ -3,6 +3,15 @@
   "width": 800,
   "padding": 5,
 
+  "config": {
+    "title": {"fontSize": 14}
+  },
+
+  "title": {
+    "text": "Seattle Annual Temperatures",
+    "anchor": "start", "offset": 4
+  },
+
   "signals": [
     {"name": "rangeStep", "value": 25},
     {"name": "height", "update": "rangeStep * 24"}
@@ -91,20 +100,6 @@
           }
         }
       ]
-    },
-    {
-      "type": "text",
-      "encode": {
-        "enter": {
-          "x": {"value": 0},
-          "y": {"value": -4},
-          "text": {"value": "Seattle Annual Temperatures"},
-          "baseline": {"value": "bottom"},
-          "fontSize": {"value": 14},
-          "fontWeight": {"value": "bold"},
-          "fill": {"value": "black"}
-        }
-      }
     }
   ]
 }

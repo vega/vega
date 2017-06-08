@@ -49,7 +49,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale"}
+    {"orient": "bottom", "scale": "xscale", "zindex": 1}
   ],
 
   "legends": [

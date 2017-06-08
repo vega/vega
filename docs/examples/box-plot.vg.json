@@ -6,7 +6,8 @@
   "config": {
     "axisBand": {
       "bandPosition": 1,
-      "tickExtra": true
+      "tickExtra": true,
+      "tickOffset": 0
     }
   },
 
