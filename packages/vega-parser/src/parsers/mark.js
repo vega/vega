@@ -13,7 +13,7 @@ import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {fieldRef, ref} from '../util';
 import {error} from 'vega-util';
-import {Bound, Collect, DataJoin, Mark, Encode, Render, Sieve, SortItems, ViewLayout} from '../transforms';
+import {Bound, Collect, DataJoin, Mark, Encode, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
   var role = getRole(spec),
@@ -106,6 +106,13 @@ export default function(spec, scope) {
     scope.popState();
 
     if (nested) { if (layout) ops.push(layout); ops.push(bound); }
+  }
+
+  if (spec.overlap) {
+    boundRef = ref(scope.add(Overlap({
+      method: spec.overlap === true ? 'parity' : spec.overlap,
+      pulse:  boundRef
+    })));
   }
 
   // render / sieve items

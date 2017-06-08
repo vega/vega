@@ -6,6 +6,7 @@ import {addEncode, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
+      overlap = spec.labelOverlap,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       pad = spec.labelPadding != null ? spec.labelPadding : config.labelPadding,
       zero = {value: 0},
@@ -53,5 +54,7 @@ export default function(spec, config, userEncode, dataRef, size) {
     addEncode(update, 'baseline', 'middle');
   }
 
-  return guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
+  spec = guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
+  spec.overlap = overlap || config.labelOverlap;
+  return spec;
 }

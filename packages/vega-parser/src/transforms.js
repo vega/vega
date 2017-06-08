@@ -21,6 +21,7 @@ export var LegendEntries = transform('LegendEntries');
 export var Mark = transform('Mark');
 export var MultiExtent = transform('MultiExtent');
 export var MultiValues = transform('MultiValues');
+export var Overlap = transform('Overlap');
 export var Params = transform('Params');
 export var PreFacet = transform('PreFacet');
 export var Projection = transform('Projection');
