@@ -108,7 +108,8 @@
 
   "axes": [
     {
-      "orient": "bottom", "scale": "x", "format": "d", "tickCount": 15
+      "orient": "bottom", "scale": "x", "format": "d",
+      "tickCount": 15, "zindex": 1
     },
     {
       "orient": "right", "scale": "y", "format": "%",

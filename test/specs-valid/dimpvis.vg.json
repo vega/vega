@@ -259,14 +259,24 @@
 
   "axes": [
     {
+      "orient": "bottom", "scale": "x",
+      "domain": false, "ticks": false, "labels": false,
+      "grid": true, "tickCount": 5, "zindex": 0
+    },
+    {
+      "domain": false, "ticks": false, "labels": false,
+      "orient": "left", "scale": "y",
+      "grid": true, "tickCount": 5, "zindex": 0
+    },
+    {
       "title": "Fertility",
       "orient": "bottom", "scale": "x",
-      "grid": true, "tickCount": 5
+      "tickCount": 5, "zindex": 1
     },
     {
       "title": "Life Expectancy",
       "orient": "left", "scale": "y",
-      "grid": true, "tickCount": 5
+      "tickCount": 5, "zindex": 1
     }
   ],
 

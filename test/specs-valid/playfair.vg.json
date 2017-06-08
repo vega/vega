@@ -57,7 +57,8 @@
       "orient": "bottom",
       "scale": "x",
       "tickCount": 5,
-      "format": "04d"
+      "format": "04d",
+      "zindex": 1
     },
     {
       "orient": "right",

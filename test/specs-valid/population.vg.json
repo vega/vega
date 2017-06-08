@@ -99,7 +99,7 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "x", "format": "s"}
+        {"orient": "bottom", "scale": "x", "format": "s", "zindex": 1}
       ],
 
       "marks": [
@@ -140,7 +140,7 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "x", "format": "s"}
+        {"orient": "bottom", "scale": "x", "format": "s", "zindex": 1}
       ],
 
       "marks": [

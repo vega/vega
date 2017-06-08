@@ -9,7 +9,7 @@
     "axisBand": {
       "bandPosition": 0,
       "labelPadding": 5,
-      "tickExtra": false
+      "tickOffset": 0
     }
   },
 

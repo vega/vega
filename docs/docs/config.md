@@ -128,6 +128,7 @@ Additional property blocks can target more specific axis types based on the orie
 | ticks           | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick marks should be included by default. |
 | tickColor       | {% include type t="Color" %}    | Color of axis ticks. |
 | tickExtra       | {% include type t="Boolean" %}  | Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`. |
+| tickOffset      | {% include type t="Number" %}   | Position offset in pixels to apply to ticks, labels, and gridlines. |
 | tickRound       | {% include type t="Boolean" %}  | Boolean flag indicating if pixel position values should be rounded to the nearest integer. |
 | tickSize        | {% include type t="Number" %}   | Size, or length, in pixels of axis ticks. |
 | tickWidth       | {% include type t="Number" %}   | Width in pixels of axis ticks. |

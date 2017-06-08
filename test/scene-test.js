@@ -7,8 +7,7 @@ var GENERATE_SCENES = false, // flag to generate test scenes
     loader = vega.loader({baseURL: 'test/'}),
     specs = require('./specs-valid.json').filter(function(name) {
       // remove wordcloud due to random layout
-      // skip contour scatter due to node version discrepancy
-      return name !== 'wordcloud';// && name !== 'contour-scatter';
+      return name !== 'wordcloud';
     });
 
 // Standardize font metrics to suppress cross-platform variance.

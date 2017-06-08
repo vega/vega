@@ -83,8 +83,8 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis"},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis"}
+        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
+        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
       ],
 
       "title": {
@@ -130,8 +130,8 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis"},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis"}
+        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
+        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
       ],
 
       "title": {
@@ -177,8 +177,8 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis"},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis"}
+        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
+        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
       ],
 
       "title": {
@@ -224,8 +224,8 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis"},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis"}
+        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
+        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
       ],
 
       "title": {

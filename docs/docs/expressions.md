@@ -87,6 +87,14 @@ The transcendental number _e_. Same as JavaScript's `Math.E`.
 <b>LOG10E</b>
 <br/>The base 10 logarithm _e_. Same as JavaScript's `Math.LOG10E`.
 
+<a name="MAX_VALUE" href="#MAX_VALUE">#</a>
+<b>MAX_VALUE</b>
+<br/>The largest positive numeric value. Same as JavaScript's `Number.MAX_VALUE`.
+
+<a name="MIN_VALUE" href="#MIN_VALUE">#</a>
+<b>MIN_VALUE</b>
+<br/>The smallest positive numeric value. Same as JavaScript's `Number.MIN_VALUE`.
+
 <a name="PI" href="#PI">#</a>
 <b>PI</b>
 <br/>The transcendental number _&pi;_. Same as JavaScript's `Math.PI`.

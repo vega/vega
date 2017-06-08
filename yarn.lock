@@ -367,8 +367,8 @@ d3-time@1:
   resolved "https://registry.yarnpkg.com/d3-time/-/d3-time-1.0.6.tgz#a55b13d7d15d3a160ae91708232e0835f1d5e945"
 
 d3-timer@1:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/d3-timer/-/d3-timer-1.0.5.tgz#b266d476c71b0d269e7ac5f352b410a3b6fe6ef0"
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/d3-timer/-/d3-timer-1.0.6.tgz#4044bf15d7025c06ce7d1149f73cd07b54dbd784"
 
 d3-voronoi@1:
   version "1.1.2"
@@ -462,8 +462,8 @@ es-to-primitive@^1.1.1:
     is-symbol "^1.0.1"
 
 es5-ext@^0.10.14, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.22"
-  resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.22.tgz#1876c51f990769c112c781ea3ebe89f84fd39071"
+  version "0.10.23"
+  resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.23.tgz#7578b51be974207a5487821b56538c224e4e7b38"
   dependencies:
     es6-iterator "2"
     es6-symbol "~3.1"
@@ -731,8 +731,8 @@ glob@^7.0.3, glob@^7.0.5, glob@~7.1.1:
     path-is-absolute "^1.0.0"
 
 globals@^9.2.0:
-  version "9.17.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-9.17.0.tgz#0c0ca696d9b9bb694d2e5470bd37777caad50286"
+  version "9.18.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-9.18.0.tgz#aa3896b3e69b487f17e31ed2143d69a8e30c2d8a"
 
 globby@^5.0.0:
   version "5.0.0"
@@ -1123,6 +1123,10 @@ path-is-inside@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/path-is-inside/-/path-is-inside-1.0.2.tgz#365417dede44430d1c11af61027facf074bdfc53"
 
+path-parse@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
+
 path-type@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-1.1.0.tgz#59c44f7ee491da704da415da5a4070ba4f8fe441"
@@ -1192,14 +1196,14 @@ read-pkg@^1.0.0:
     path-type "^1.0.0"
 
 readable-stream@^2.1.5, readable-stream@^2.2.2:
-  version "2.2.10"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.10.tgz#effe72bb7c884c0dd335e2379d526196d9d011ee"
+  version "2.2.11"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.11.tgz#0796b31f8d7688007ff0b93a8088d34aa17c0f72"
   dependencies:
     core-util-is "~1.0.0"
     inherits "~2.0.1"
     isarray "~1.0.0"
     process-nextick-args "~1.0.6"
-    safe-buffer "^5.0.1"
+    safe-buffer "~5.0.1"
     string_decoder "~1.0.0"
     util-deprecate "~1.0.1"
 
@@ -1252,9 +1256,15 @@ resolve-from@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-1.0.1.tgz#26cbfe935d1aeeeabb29bc3fe5aeb01e93d44226"
 
-resolve@1.1.7, resolve@^1.1.5, resolve@^1.1.6, resolve@~1.1.7:
+resolve@1.1.7, resolve@~1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
+
+resolve@^1.1.5, resolve@^1.1.6:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.3.3.tgz#655907c3469a8680dc2de3a275a8fdd69691f0e5"
+  dependencies:
+    path-parse "^1.0.5"
 
 restore-cursor@^1.0.1:
   version "1.0.1"
@@ -1309,9 +1319,9 @@ rx-lite@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-3.1.2.tgz#19ce502ca572665f3b647b10939f97fd1615f102"
 
-safe-buffer@^5.0.1:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.0.tgz#fe4c8460397f9eaaaa58e73be46273408a45e223"
+safe-buffer@~5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
 
 "semver@2 || 3 || 4 || 5":
   version "5.3.0"
@@ -1425,10 +1435,10 @@ string_decoder@~0.10.x:
   resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
 
 string_decoder@~1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.0.1.tgz#62e200f039955a6810d8df0a33ffc0f013662d98"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.0.2.tgz#b29e1f4e1125fa97a10382b8a533737b7491e179"
   dependencies:
-    safe-buffer "^5.0.1"
+    safe-buffer "~5.0.1"
 
 strip-ansi@^3.0.0, strip-ansi@^3.0.1:
   version "3.0.1"
@@ -1584,8 +1594,8 @@ vega-crossfilter@>=1.0.0-beta:
     vega-util "1"
 
 vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.4:
-  version "2.0.0-beta.24"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.24.tgz#0e57a240c74fb0a7e8c65668c6b6dd4bca428806"
+  version "2.0.0-beta.26"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.26.tgz#ddc249e3129301306b778567c68ea0b1dbc115a2"
   dependencies:
     d3-array "1"
     vega-loader ">=2.0.0-beta"
@@ -1612,8 +1622,8 @@ vega-event-selector@>=2.0.0-beta:
   resolved "https://registry.yarnpkg.com/vega-event-selector/-/vega-event-selector-2.0.0-beta.tgz#7937d06479943e66c3e853f2055db1202c481dc2"
 
 vega-expression@2:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/vega-expression/-/vega-expression-2.2.0.tgz#c6d2ce7d9e4461d93b47b8f89e61583ef4c20bdc"
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/vega-expression/-/vega-expression-2.3.0.tgz#45ddd4de1a765433b04d07ade269f4f3df9c37e6"
   dependencies:
     vega-util "1"
 
@@ -1654,8 +1664,8 @@ vega-loader@>=2.0.0-beta, vega-loader@>=2.0.0-beta.5:
     vega-util "1"
 
 vega-parser@>=1.0.0-beta:
-  version "1.0.0-beta.56"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.0.0-beta.56.tgz#c8aee3646e237542dd07efc5a22b8ad0fc2283ce"
+  version "1.0.0-beta.59"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.0.0-beta.59.tgz#db8688829f81637eae0f58d12ad91d8267f0a6b6"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1685,8 +1695,8 @@ vega-scale@>=2.0.0-beta:
     vega-util "1"
 
 vega-scenegraph@>=2.0.0-beta, vega-scenegraph@>=2.0.0-beta.11:
-  version "2.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.0.0-beta.32.tgz#65be6582142a4985d1c8ceb195cb7e3f43022f9a"
+  version "2.0.0-beta.34"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.0.0-beta.34.tgz#a10b7d85abacda05fae268381305a852590bb59d"
   dependencies:
     d3-path "1"
     d3-shape "1"
@@ -1706,8 +1716,8 @@ vega-util@1, vega-util@^1.1, vega-util@^1.2:
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.3.0.tgz#cf338e0d8210b9d369ce8cfa6727c39a89d4fe9f"
 
 vega-view@>=1.0.0-beta:
-  version "1.0.0-beta.35"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.0.0-beta.35.tgz#871f2873e5c8306b50eadbd939a03d9b6ec390d4"
+  version "1.0.0-beta.36"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.0.0-beta.36.tgz#083bbedd1b5b358875f9d2d0f1a4fb86f5e53d9d"
   dependencies:
     d3-array "1"
     vega-dataflow ">=2.0.0-beta"

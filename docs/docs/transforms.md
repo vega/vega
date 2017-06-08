@@ -39,6 +39,7 @@ Transforms for processing streams of data objects.
 - [`fold`](fold) - Collapse selected data fields into _key_ and _value_ properties.
 - [`formula`](formula) - Extend data objects with derived fields using a formula expression.
 - [`impute`](impute) - Perform imputation of missing values.
+- [`joinaggregate`](joinaggregate) - Extend data objects with calculated aggregate values.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
 - [`rank`](rank) - Assign increasing rank-order scores to data objects.
 - [`sample`](sample) - Randomly sample data objects in a stream.

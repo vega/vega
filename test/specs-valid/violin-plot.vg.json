@@ -6,7 +6,8 @@
   "config": {
     "axisBand": {
       "bandPosition": 1,
-      "tickExtra": true
+      "tickExtra": true,
+      "tickOffset": 0
     }
   },
 
@@ -151,7 +152,7 @@
               "width": {"value": 1}
             },
             "update": {
-              "xc": {"signal": "plotWidth / 2", "offset": -0.5},
+              "xc": {"signal": "plotWidth / 2"},
               "y": {"scale": "yscale", "field": "q1"},
               "y2": {"scale": "yscale", "field": "q3"}
             }
@@ -163,13 +164,12 @@
           "encode": {
             "enter": {
               "fill": {"value": "black"},
-
-              "height": {"value": 2}
+              "height": {"value": 1}
             },
             "update": {
-              "xc": {"signal": "plotWidth / 2"},
+              "xc": {"signal": "plotWidth / 2", "offset": 0.5},
               "width": {"value": 8},
-              "y": {"scale": "yscale", "field": "median"}
+              "y": {"scale": "yscale", "field": "median", "round": true}
             }
           }
         }
