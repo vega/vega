@@ -69,7 +69,7 @@ function bound(bounds, item, noRotate) {
   if (item.angle && !noRotate) {
     bounds.rotate(item.angle*Math.PI/180, x, y);
   }
-  return bounds.expand(noRotate ? 0 : 1);
+  return bounds.expand(noRotate || !w ? 0 : 1);
 }
 
 function draw(context, scene, bounds) {
