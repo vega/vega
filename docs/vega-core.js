@@ -4,7 +4,7 @@
   (factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-beta.33";
+var version = "3.0.0-beta.34";
 
 function bin$1(_) {
   // determine range
@@ -2775,12 +2775,14 @@ function clip(renderer, item, size) {
   return 'url(#' + id + ')';
 }
 
+var StrokeOffset = 0.5;
+
 function attr(emit, item) {
   emit('transform', translateItem(item));
 }
 
 function background(emit, item) {
-  var offset = item.stroke ? 0.5 : 0;
+  var offset = item.stroke ? StrokeOffset : 0;
   emit('class', 'background');
   emit('d', rectangle(null, item, offset, offset));
 }
@@ -2827,7 +2829,7 @@ function draw(context, scene, bounds) {
       opacity = group.opacity == null ? 1 : group.opacity;
       if (opacity > 0) {
         context.beginPath();
-        offset = group.stroke ? 0.5 : 0;
+        offset = group.stroke ? StrokeOffset : 0;
         rectangle(context, group, offset, offset);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();
@@ -3314,7 +3316,7 @@ function bound$5(bounds, item, noRotate) {
   if (item.angle && !noRotate) {
     bounds.rotate(item.angle*Math.PI/180, x, y);
   }
-  return bounds.expand(noRotate ? 0 : 1);
+  return bounds.expand(noRotate || !w ? 0 : 1);
 }
 
 function draw$4(context, scene, bounds) {
@@ -5025,19 +5027,6 @@ function tupleid(t) {
 }
 
 /**
- * Copy the values of one tuple to another (ignoring id and prev fields).
- * @param {Tuple} t - The tuple to copy from.
- * @param {Tuple} c - The tuple to write to.
- * @return The re-written tuple, same as the argument 'c'.
- */
-function copy(t, c) {
-  for (var k in t) {
-    if (k !== '_id') c[k] = t[k];
-  }
-  return c;
-}
-
-/**
  * Ingest an object or value as a data tuple.
  * If the input value is an object, an id field will be added to it. For
  * efficiency, the input object is modified directly. A copy is not made.
@@ -5058,7 +5047,7 @@ function ingest(datum) {
  * @return {object} The derived tuple.
  */
 function derive(t) {
-  return ingest(copy(t, {}));
+  return ingest(rederive(t, {}));
 }
 
 /**
@@ -5068,7 +5057,10 @@ function derive(t) {
  * @return {object} The derived tuple.
  */
 function rederive(t, d) {
-  return copy(t, d);
+  for (var k in t) {
+    if (k !== '_id') d[k] = t[k];
+  }
+  return d;
 }
 
 /**
@@ -6271,15 +6263,24 @@ prototype$15.materialize = function() {
 };
 
 prototype$15.visit = function(flags, visitor) {
-  var pulses = this.pulses, i, n;
+  var p = this,
+      pulses = p.pulses,
+      n = pulses.length,
+      i = 0;
 
-  for (i=0, n=pulses.length; i<n; ++i) {
-    if (pulses[i].stamp === this.stamp) {
+  if (flags & p.SOURCE) {
+    for (; i<n; ++i) {
       pulses[i].visit(flags, visitor);
+    }
+  } else {
+    for (; i<n; ++i) {
+      if (pulses[i].stamp === p.stamp) {
+        pulses[i].visit(flags, visitor);
+      }
     }
   }
 
-  return this;
+  return p;
 };
 
 /**
@@ -8363,6 +8364,61 @@ function partition$1(data, groupby, orderby) {
 }
 
 /**
+ * Extend input tuples with aggregate values.
+ * Calcuates aggregate values and joins them with the input stream.
+ * @constructor
+ */
+function JoinAggregate(params) {
+  Aggregate.call(this, params);
+}
+
+var prototype$33 = inherits(JoinAggregate, Aggregate);
+
+prototype$33.transform = function(_, pulse) {
+  var aggr = this,
+      mod = _.modified(),
+      cells;
+
+  // process all input tuples to calculate aggregates
+  if (aggr.value && (mod || pulse.modified(aggr._inputs))) {
+    cells = aggr.value = mod ? aggr.init(_) : {};
+    pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
+  } else {
+    cells = aggr.value = aggr.value || this.init(_);
+    pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
+    pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
+  }
+
+  // update aggregation cells
+  aggr.changes();
+
+  // write aggregate values to input tuples
+  pulse.visit(pulse.SOURCE, function(t) {
+    rederive(cells[aggr.cellkey(t)].tuple, t);
+  });
+
+  return pulse.reflow(mod).modifies(this._outputs);
+};
+
+prototype$33.changes = function() {
+  var adds = this._adds,
+      mods = this._mods,
+      i, n;
+
+  for (i=0, n=this._alen; i<n; ++i) {
+    this.celltuple(adds[i]);
+    adds[i] = null; // for garbage collection
+  }
+
+  for (i=0, n=this._mlen; i<n; ++i) {
+    this.celltuple(mods[i]);
+    mods[i] = null; // for garbage collection
+  }
+
+  this._alen = this._mlen = 0; // reset list of active cells
+};
+
+/**
  * Generates a key function.
  * @constructor
  * @param {object} params - The parameters for this operator.
@@ -8391,9 +8447,9 @@ function Lookup(params) {
   Transform.call(this, {}, params);
 }
 
-var prototype$33 = inherits(Lookup, Transform);
+var prototype$34 = inherits(Lookup, Transform);
 
-prototype$33.transform = function(_, pulse) {
+prototype$34.transform = function(_, pulse) {
   var out = pulse,
       as = _.as,
       keys = _.fields,
@@ -8526,9 +8582,9 @@ function PreFacet(params) {
   Facet.call(this, params);
 }
 
-var prototype$34 = inherits(PreFacet, Facet);
+var prototype$35 = inherits(PreFacet, Facet);
 
-prototype$34.transform = function(_, pulse) {
+prototype$35.transform = function(_, pulse) {
   var self = this,
       flow = _.subflow,
       field = _.field;
@@ -8568,9 +8624,9 @@ function Proxy(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$35 = inherits(Proxy, Transform);
+var prototype$36 = inherits(Proxy, Transform);
 
-prototype$35.transform = function(_, pulse) {
+prototype$36.transform = function(_, pulse) {
   this.value = _.value;
   return _.modified('value')
     ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
@@ -8590,9 +8646,9 @@ function Rank(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$36 = inherits(Rank, Transform);
+var prototype$37 = inherits(Rank, Transform);
 
-prototype$36.transform = function(_, pulse) {
+prototype$37.transform = function(_, pulse) {
   if (!pulse.source) {
     error('Rank transform requires an upstream data source.');
   }
@@ -8640,9 +8696,9 @@ function Relay(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$37 = inherits(Relay, Transform);
+var prototype$38 = inherits(Relay, Transform);
 
-prototype$37.transform = function(_, pulse) {
+prototype$38.transform = function(_, pulse) {
   var out,
       lut = this.value || (out = pulse = pulse.addAll(), this.value = {});
 
@@ -8680,9 +8736,9 @@ function Sample(params) {
   this.count = 0;
 }
 
-var prototype$38 = inherits(Sample, Transform);
+var prototype$39 = inherits(Sample, Transform);
 
-prototype$38.transform = function(_, pulse) {
+prototype$39.transform = function(_, pulse) {
   var out = pulse.fork(),
       mod = _.modified('size'),
       num = _.size,
@@ -8774,9 +8830,9 @@ function Sequence(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$39 = inherits(Sequence, Transform);
+var prototype$40 = inherits(Sequence, Transform);
 
-prototype$39.transform = function(_, pulse) {
+prototype$40.transform = function(_, pulse) {
   if (this.value && !_.modified()) return;
 
   var out = pulse.materialize().fork(pulse.MOD);
@@ -8798,9 +8854,9 @@ function Sieve(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$40 = inherits(Sieve, Transform);
+var prototype$41 = inherits(Sieve, Transform);
 
-prototype$40.transform = function(_, pulse) {
+prototype$41.transform = function(_, pulse) {
   this.value = pulse.source;
   return pulse.changed()
     ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
@@ -8818,9 +8874,9 @@ function TupleIndex(params) {
   Transform.call(this, fastmap(), params);
 }
 
-var prototype$41 = inherits(TupleIndex, Transform);
+var prototype$42 = inherits(TupleIndex, Transform);
 
-prototype$41.transform = function(_, pulse) {
+prototype$42.transform = function(_, pulse) {
   var df = pulse.dataflow,
       field = _.field,
       index = this.value,
@@ -8857,9 +8913,9 @@ function Values(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$42 = inherits(Values, Transform);
+var prototype$43 = inherits(Values, Transform);
 
-prototype$42.transform = function(_, pulse) {
+prototype$43.transform = function(_, pulse) {
   var run = !this.value
     || _.modified('field')
     || _.modified('sort')
@@ -9038,6 +9094,24 @@ var ImputeDefinition = {
   ]
 };
 
+var JoinAggregateDefinition = {
+  "type": "JoinAggregate",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "groupby", "type": "field", "array": true },
+    { "name": "fields", "type": "field", "array": true },
+    { "name": "ops", "type": "enum", "array": true,
+      "values": [
+        "count", "valid", "missing", "distinct",
+        "sum", "mean", "average",
+        "variance", "variancep", "stdev", "stdevp", "stderr",
+        "median", "q1", "q3", "ci0", "ci1",
+        "min", "max", "argmin", "argmax" ] },
+    { "name": "as", "type": "string", "array": true },
+    { "name": "key", "type": "field" }
+  ]
+};
+
 var LookupDefinition = {
   "type": "Lookup",
   "metadata": {"modifies": true},
@@ -9094,6 +9168,7 @@ register(FilterDefinition, Filter);
 register(FoldDefinition, Fold);
 register(FormulaDefinition, Formula);
 register(ImputeDefinition, Impute);
+register(JoinAggregateDefinition, JoinAggregate);
 register(LookupDefinition, Lookup);
 register(RankDefinition, Rank);
 register(SampleDefinition, Sample);
@@ -10045,9 +10120,9 @@ function Contour(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$43 = inherits(Contour, Transform);
+var prototype$44 = inherits(Contour, Transform);
 
-prototype$43.transform = function(_, pulse) {
+prototype$44.transform = function(_, pulse) {
   if (this.value && !pulse.changed() && !_.modified())
     return pulse.StopPropagation;
 
@@ -10168,9 +10243,9 @@ function GeoPath(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$44 = inherits(GeoPath, Transform);
+var prototype$45 = inherits(GeoPath, Transform);
 
-prototype$44.transform = function(_, pulse) {
+prototype$45.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       path = this.value,
       field = _.field || identity,
@@ -10207,9 +10282,9 @@ function GeoPoint(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$45 = inherits(GeoPoint, Transform);
+var prototype$46 = inherits(GeoPoint, Transform);
 
-prototype$45.transform = function(_, pulse) {
+prototype$46.transform = function(_, pulse) {
   var proj = _.projection,
       lon = _.fields[0],
       lat = _.fields[1],
@@ -10250,9 +10325,9 @@ function GeoShape(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$46 = inherits(GeoShape, Transform);
+var prototype$47 = inherits(GeoShape, Transform);
 
-prototype$46.transform = function(_, pulse) {
+prototype$47.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       shape = this.value,
       datum = _.field || field('datum'),
@@ -10286,9 +10361,9 @@ function Graticule(params) {
   this.generator = d3Geo.geoGraticule();
 }
 
-var prototype$47 = inherits(Graticule, Transform);
+var prototype$48 = inherits(Graticule, Transform);
 
-prototype$47.transform = function(_, pulse) {
+prototype$48.transform = function(_, pulse) {
   var out = pulse.fork(),
       src = this.value,
       gen = this.generator, t;
@@ -10323,9 +10398,9 @@ function Projection(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$48 = inherits(Projection, Transform);
+var prototype$49 = inherits(Projection, Transform);
 
-prototype$48.transform = function(_) {
+prototype$49.transform = function(_) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
@@ -10572,9 +10647,9 @@ function AxisTicks(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$49 = inherits(AxisTicks, Transform);
+var prototype$50 = inherits(AxisTicks, Transform);
 
-prototype$49.transform = function(_, pulse) {
+prototype$50.transform = function(_, pulse) {
   if (this.value && !_.modified()) {
     return pulse.StopPropagation;
   }
@@ -10615,7 +10690,7 @@ function DataJoin(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$50 = inherits(DataJoin, Transform);
+var prototype$51 = inherits(DataJoin, Transform);
 
 function defaultItemCreate() {
   return ingest({});
@@ -10625,7 +10700,7 @@ function isExit(t) {
   return t.exit;
 }
 
-prototype$50.transform = function(_, pulse) {
+prototype$51.transform = function(_, pulse) {
   var df = pulse.dataflow,
       out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       item = _.item || defaultItemCreate,
@@ -10699,9 +10774,9 @@ function Encode(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$51 = inherits(Encode, Transform);
+var prototype$52 = inherits(Encode, Transform);
 
-prototype$51.transform = function(_, pulse) {
+prototype$52.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
       encoders = _.encoders,
       encode = pulse.encode;
@@ -10844,9 +10919,9 @@ function LegendEntries(params) {
   Transform.call(this, [], params);
 }
 
-var prototype$52 = inherits(LegendEntries, Transform);
+var prototype$53 = inherits(LegendEntries, Transform);
 
-prototype$52.transform = function(_, pulse) {
+prototype$53.transform = function(_, pulse) {
   if (this.value != null && !_.modified()) {
     return pulse.StopPropagation;
   }
@@ -10933,9 +11008,9 @@ function LinkPath(params) {
   Transform.call(this, {}, params);
 }
 
-var prototype$53 = inherits(LinkPath, Transform);
+var prototype$54 = inherits(LinkPath, Transform);
 
-prototype$53.transform = function(_, pulse) {
+prototype$54.transform = function(_, pulse) {
   var sx = _.sourceX || sourceX,
       sy = _.sourceY || sourceY,
       tx = _.targetX || targetX,
@@ -11070,9 +11145,9 @@ function Pie(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$54 = inherits(Pie, Transform);
+var prototype$55 = inherits(Pie, Transform);
 
-prototype$54.transform = function(_, pulse) {
+prototype$55.transform = function(_, pulse) {
   var as = _.as || ['startAngle', 'endAngle'],
       startAngle = as[0],
       endAngle = as[1],
@@ -11124,9 +11199,9 @@ function Scale(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$55 = inherits(Scale, Transform);
+var prototype$56 = inherits(Scale, Transform);
 
-prototype$55.transform = function(_, pulse) {
+prototype$56.transform = function(_, pulse) {
   var df = pulse.dataflow,
       scale = this.value,
       prop;
@@ -11285,9 +11360,9 @@ function SortItems(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$56 = inherits(SortItems, Transform);
+var prototype$57 = inherits(SortItems, Transform);
 
-prototype$56.transform = function(_, pulse) {
+prototype$57.transform = function(_, pulse) {
   var mod = _.modified('sort')
          || pulse.changed(pulse.ADD)
          || pulse.modified(_.sort.fields)
@@ -11314,9 +11389,9 @@ function Stack(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$57 = inherits(Stack, Transform);
+var prototype$58 = inherits(Stack, Transform);
 
-prototype$57.transform = function(_, pulse) {
+prototype$58.transform = function(_, pulse) {
   var as = _.as || ['y0', 'y1'],
       y0 = as[0],
       y1 = as[1],
@@ -11490,9 +11565,9 @@ function Force(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$58 = inherits(Force, Transform);
+var prototype$59 = inherits(Force, Transform);
 
-prototype$58.transform = function(_, pulse) {
+prototype$59.transform = function(_, pulse) {
   var sim = this.value,
       change = pulse.changed(pulse.ADD_REM),
       params = _.modified(ForceParams),
@@ -11527,7 +11602,7 @@ prototype$58.transform = function(_, pulse) {
   return this.finish(_, pulse);
 };
 
-prototype$58.finish = function(_, pulse) {
+prototype$59.finish = function(_, pulse) {
   var dataflow = pulse.dataflow;
 
   // inspect dependencies, touch link source data
@@ -11677,13 +11752,13 @@ function Nest(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$59 = inherits(Nest, Transform);
+var prototype$60 = inherits(Nest, Transform);
 
 function children(n) {
   return n.values;
 }
 
-prototype$59.transform = function(_, pulse) {
+prototype$60.transform = function(_, pulse) {
   if (!pulse.source) {
     error('Nest transform requires an upstream data source.');
   }
@@ -11719,9 +11794,9 @@ function Stratify(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$60 = inherits(Stratify, Transform);
+var prototype$61 = inherits(Stratify, Transform);
 
-prototype$60.transform = function(_, pulse) {
+prototype$61.transform = function(_, pulse) {
   if (!pulse.source) {
     error('Stratify transform requires an upstream data source.');
   }
@@ -11757,7 +11832,7 @@ function TreeLinks(params) {
   Transform.call(this, {}, params);
 }
 
-var prototype$61 = inherits(TreeLinks, Transform);
+var prototype$62 = inherits(TreeLinks, Transform);
 
 function parentTuple(node) {
   var p;
@@ -11766,7 +11841,7 @@ function parentTuple(node) {
       && (tupleid(p) != null) && p;
 }
 
-prototype$61.transform = function(_, pulse) {
+prototype$62.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error('TreeLinks transform requires a backing tree data source.');
   }
@@ -11864,9 +11939,9 @@ function HierarchyLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$62 = inherits(HierarchyLayout, Transform);
+var prototype$63 = inherits(HierarchyLayout, Transform);
 
-prototype$62.transform = function(_, pulse) {
+prototype$63.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error(this.constructor.name
       + ' transform requires a backing tree data source.');
@@ -12065,11 +12140,11 @@ function Voronoi(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$63 = inherits(Voronoi, Transform);
+var prototype$64 = inherits(Voronoi, Transform);
 
 var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
-prototype$63.transform = function(_, pulse) {
+prototype$64.transform = function(_, pulse) {
   var as = _.as || 'path',
       data = pulse.source,
       diagram, polygons, i, n;
@@ -12466,9 +12541,9 @@ function Wordcloud(params) {
   Transform.call(this, cloud(), params);
 }
 
-var prototype$64 = inherits(Wordcloud, Transform);
+var prototype$65 = inherits(Wordcloud, Transform);
 
-prototype$64.transform = function(_, pulse) {
+prototype$65.transform = function(_, pulse) {
   function modp(param) {
     var p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
@@ -12825,9 +12900,9 @@ function CrossFilter(params) {
   this._dims = null;
 }
 
-var prototype$65 = inherits(CrossFilter, Transform);
+var prototype$66 = inherits(CrossFilter, Transform);
 
-prototype$65.transform = function(_, pulse) {
+prototype$66.transform = function(_, pulse) {
   if (!this._dims) {
     return this.init(_, pulse);
   } else {
@@ -12840,7 +12915,7 @@ prototype$65.transform = function(_, pulse) {
   }
 };
 
-prototype$65.init = function(_, pulse) {
+prototype$66.init = function(_, pulse) {
   var fields = _.fields,
       query = _.query,
       indices = this._indices = {},
@@ -12858,7 +12933,7 @@ prototype$65.init = function(_, pulse) {
   return this.eval(_, pulse);
 };
 
-prototype$65.reinit = function(_, pulse) {
+prototype$66.reinit = function(_, pulse) {
   var output = pulse.materialize().fork(),
       fields = _.fields,
       query = _.query,
@@ -12925,7 +13000,7 @@ prototype$65.reinit = function(_, pulse) {
   return output;
 };
 
-prototype$65.eval = function(_, pulse) {
+prototype$66.eval = function(_, pulse) {
   var output = pulse.materialize().fork(),
       m = this._dims.length,
       mask = 0;
@@ -12953,7 +13028,7 @@ prototype$65.eval = function(_, pulse) {
   return output;
 };
 
-prototype$65.insert = function(_, pulse, output) {
+prototype$66.insert = function(_, pulse, output) {
   var tuples = pulse.add,
       bits = this.value,
       dims = this._dims,
@@ -12987,7 +13062,7 @@ prototype$65.insert = function(_, pulse, output) {
   }
 };
 
-prototype$65.modify = function(pulse, output) {
+prototype$66.modify = function(pulse, output) {
   var out = output.mod,
       bits = this.value,
       curr = bits.curr(),
@@ -13001,7 +13076,7 @@ prototype$65.modify = function(pulse, output) {
   }
 };
 
-prototype$65.remove = function(_, pulse, output) {
+prototype$66.remove = function(_, pulse, output) {
   var indices = this._indices,
       bits = this.value,
       curr = bits.curr(),
@@ -13030,7 +13105,7 @@ prototype$65.remove = function(_, pulse, output) {
 };
 
 // reindex filters and indices after propagation completes
-prototype$65.reindex = function(pulse, num, map) {
+prototype$66.reindex = function(pulse, num, map) {
   var indices = this._indices,
       bits = this.value;
 
@@ -13040,7 +13115,7 @@ prototype$65.reindex = function(pulse, num, map) {
   });
 };
 
-prototype$65.update = function(_, pulse, output) {
+prototype$66.update = function(_, pulse, output) {
   var dims = this._dims,
       query = _.query,
       stamp = pulse.stamp,
@@ -13070,7 +13145,7 @@ prototype$65.update = function(_, pulse, output) {
   return mask;
 };
 
-prototype$65.incrementAll = function(dim, query, stamp, out) {
+prototype$66.incrementAll = function(dim, query, stamp, out) {
   var bits = this.value,
       seen = bits.seen(),
       curr = bits.curr(),
@@ -13134,7 +13209,7 @@ prototype$65.incrementAll = function(dim, query, stamp, out) {
   dim.range = query.slice();
 };
 
-prototype$65.incrementOne = function(dim, query, add, rem) {
+prototype$66.incrementOne = function(dim, query, add, rem) {
   var bits = this.value,
       curr = bits.curr(),
       index = dim.index(),
@@ -13203,9 +13278,9 @@ function ResolveFilter(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$66 = inherits(ResolveFilter, Transform);
+var prototype$67 = inherits(ResolveFilter, Transform);
 
-prototype$66.transform = function(_, pulse) {
+prototype$67.transform = function(_, pulse) {
   var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
       bitmap = _.filter,
       mask = bitmap.mask;
@@ -13276,9 +13351,9 @@ function Bound(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$67 = inherits(Bound, Transform);
+var prototype$68 = inherits(Bound, Transform);
 var temp$1 = new Bounds();
-prototype$67.transform = function(_, pulse) {
+prototype$68.transform = function(_, pulse) {
   var view = pulse.dataflow,
       mark = _.mark,
       type = mark.marktype,
@@ -13352,9 +13427,9 @@ function Mark(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$68 = inherits(Mark, Transform);
+var prototype$69 = inherits(Mark, Transform);
 
-prototype$68.transform = function(_, pulse) {
+prototype$69.transform = function(_, pulse) {
   var mark = this.value;
 
   // acquire mark on first invocation, bind context and group
@@ -13382,6 +13457,83 @@ function lookup$1(_) {
 }
 
 /**
+ * Analyze items for overlap, changing opacity to hide items with
+ * overlapping bounding boxes. This transform will preserve at least
+ * two items (e.g., first and last) even if overlap persists.
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.method - The overlap removal method to apply.
+ *   One of 'parity' (default, hide every other item until there is no
+ *   more overlap) or 'greedy' (sequentially scan and hide and items that
+ *   overlap with the last visible item).
+ * @constructor
+ */
+function Overlap(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$70 = inherits(Overlap, Transform);
+
+var methods = {
+  parity: function(items) {
+    return items.filter(function(item, i) {
+      return i % 2 ? (item.opacity = 0) : 1;
+    });
+  },
+  greedy: function(items) {
+    var a;
+    return items.filter(function(b, i) {
+      return i && intersect(a.bounds, b.bounds) ? (b.opacity = 0) : (a = b, 1);
+    });
+  }
+};
+
+// compute bounding box intersection
+// allow 1 pixel of overlap tolerance
+function intersect(a, b) {
+  return !(
+    a.x2 - 1 < b.x1 ||
+    a.x1 + 1 > b.x2 ||
+    a.y2 - 1 < b.y1 ||
+    a.y1 + 1 > b.y2
+  );
+}
+
+function hasOverlap(items) {
+  for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
+    if (intersect(a, b = items[i].bounds)) return true;
+  }
+}
+
+function hasBounds(item) {
+  var b = item.bounds;
+  return b.width() > 1 && b.height() > 1;
+}
+
+prototype$70.transform = function(_, pulse) {
+  var reduce = methods[_.method] || methods.parity,
+      source = pulse.materialize(pulse.SOURCE).source,
+      items  = source;
+
+  if (_.method === 'greedy') {
+    items = source = source.filter(hasBounds);
+  }
+
+  if (items.length >= 3 && hasOverlap(items)) {
+    pulse = pulse.reflow(_.modified()).modifies('opacity');
+    do {
+      items = reduce(items);
+    } while (items.length >= 3 && hasOverlap(items));
+
+    if (items.length < 3 && !peek(source).opacity) {
+      if (items.length > 1) peek(items).opacity = 0;
+      peek(source).opacity = 1;
+    }
+  }
+
+  return pulse;
+};
+
+/**
  * Queue modified scenegraph items for rendering.
  * @constructor
  */
@@ -13389,9 +13541,9 @@ function Render(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$69 = inherits(Render, Transform);
+var prototype$71 = inherits(Render, Transform);
 
-prototype$69.transform = function(_, pulse) {
+prototype$71.transform = function(_, pulse) {
   var view = pulse.dataflow;
 
   pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
@@ -13693,8 +13845,8 @@ var RowHeader = 'row-header';
 var RowFooter = 'row-footer';
 var ColHeader = 'column-header';
 var ColFooter = 'column-footer';
+var AxisOffset = 0.5;
 var tempBounds$2 = new Bounds();
-
 /**
  * Layout view elements such as axes and legends.
  * Also performs size adjustments.
@@ -13706,9 +13858,9 @@ function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$70 = inherits(ViewLayout, Transform);
+var prototype$72 = inherits(ViewLayout, Transform);
 
-prototype$70.transform = function(_, pulse) {
+prototype$72.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
@@ -13860,7 +14012,7 @@ function layoutAxis(view, axis, width, height) {
   // update bounds
   boundStroke(bounds.translate(x, y), item);
 
-  if (set$1(item, 'x', x + 0.5) | set$1(item, 'y', y + 0.5)) {
+  if (set$1(item, 'x', x + AxisOffset) | set$1(item, 'y', y + AxisOffset)) {
     item.bounds = tempBounds$2;
     view.dirty(item);
     item.bounds = bounds;
@@ -16642,7 +16794,7 @@ function bandspace(count, paddingInner, paddingOuter) {
   return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
 }
 
-function copy$1(name, group) {
+function copy(name, group) {
   var s = getScale(name, (group || this).context);
   return s ? s.copy() : undefined;
 }
@@ -16830,16 +16982,28 @@ function testPoint(datum, entry) {
   var fields = entry.fields,
       values = entry.values,
       getter = entry.getter || (entry.getter = []),
+      bins = entry.bins,
       n = fields.length,
-      i = 0;
+      i = 0, dval;
 
   for (; i<n; ++i) {
     getter[i] = getter[i] || field(fields[i]);
-    if (getter[i](datum) !== values[i]) return false;
+    dval = getter[i](datum);
+    if (isDate(dval)) dval = toNumber(dval);
+    if (isDate(values[i])) values[i] = toNumber(values[i]);
+    if (bins && bins[fields[i]]) {
+      if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
+      if (!inrange(dval, values[i])) return false;
+    } else if (dval !== values[i]) {
+      return false;
+    }
   }
 
   return true;
 }
+
+// TODO: revisit date coercion?
+// have selections populate with consistent types upon write?
 
 function testInterval(datum, entry) {
   var ivals = entry.intervals,
@@ -16852,6 +17016,8 @@ function testInterval(datum, entry) {
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
     value = getter(datum);
     if (!extent || extent[0] === extent[1]) return true;
+    if (isDate(value)) value = toNumber(value);
+    if (isDate(extent[0])) extent = ivals[i].extent = extent.map(toNumber);
     if (isNumber(extent[0]) && !inrange(value, extent)) return false;
     else if (isString(extent[0]) && extent.indexOf(value) < 0) return false;
   }
@@ -16905,7 +17071,7 @@ function vlSelection(name, unit, datum, op, scope, test) {
 }
 
 // Assumes point selection tuples are of the form:
-// {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, }
+// {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
 function vlPoint(name, unit, datum, op, scope) {
   return vlSelection.call(this, name, unit, datum, op, scope, testPoint);
 }
@@ -16917,8 +17083,7 @@ function vlInterval(name, unit, datum, op, scope) {
 }
 
 /**
- * Materializes a point selection as a scale domain. With point selections,
- * we assume that they are projected over a single field or encoding channel.
+ * Materializes a point selection as a scale domain.
  * @param {string} name - The name of the dataset representing the selection.
  * @param {string} [encoding] - A particular encoding channel to materialize.
  * @param {string} [field] - A particular field to materialize.
@@ -16929,34 +17094,25 @@ function vlInterval(name, unit, datum, op, scope) {
 function vlPointDomain(name, encoding, field, op) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
-      units = {}, count = 0,
-      values = {}, domain = [],
-      i = 0, n = entries.length,
-      entry, unit, v, key;
+      entry = entries[0],
+      i = 0, n, index, values, continuous;
 
-  for (; i<n; ++i) {
-    entry = entries[i];
-    unit  = entry.unit;
-    key   = entry.values[0];
+  if (!entry) return undefined;
 
-    if (!units[unit]) units[unit] = ++count;
-
-    if ((encoding && entry.encodings[0] === encoding) ||
-        (field && entry.fields[0] === field))
-    {
-      if (!(v = values[key])) {
-        values[key] = v = {value: key, units: {}, count: 0};
-      }
-      if (!v.units[unit]) v.units[unit] = ++v.count;
+  for (n = encoding ? entry.encodings.length : entry.fields.length; i<n; ++i) {
+    if ((encoding && entry.encodings[i] === encoding) ||
+        (field && entry.fields[i] === field)) {
+      index = i;
+      continuous = entry.bins && entry.bins[entry.fields[i]];
+      break;
     }
   }
 
-  for (key in values) {
-    if (op !== UNION && (v = values[key]).count !== count) continue;
-    domain.push(v.value);
-  }
+  values = entries.reduce(function(acc, entry) {
+    return (acc.push({unit: entry.unit, value: entry.values[index]}), acc);
+  }, []);
 
-  return domain.length ? domain : undefined;
+  return continuous ? continuousDomain(values, op) : discreteDomain(values, op);
 }
 
 /**
@@ -16969,25 +17125,74 @@ function vlPointDomain(name, encoding, field, op) {
  * @returns {array} An array of values to serve as a scale domain.
  */
 function vlIntervalDomain(name, encoding, field, op) {
-  var merge = op === UNION ? unionInterval : intersectInterval,
-      data = this.context.data[name],
+  var data = this.context.data[name],
       entries = data ? data.values.value : [],
+      entry = entries[0],
+      i = 0, n, interval, index, values, discrete;
+
+   if (!entry) return undefined;
+
+   for (n = entry.intervals.length; i<n; ++i) {
+    interval = entry.intervals[i];
+     if ((encoding && interval.encoding === encoding) ||
+         (field && interval.field === field)) {
+       index = i;
+       discrete = interval.extent.length > 2;
+       break;
+     }
+   }
+
+   values = entries.reduce(function(acc, entry) {
+    var extent = entry.intervals[index].extent,
+      value = discrete ?
+        extent.map(function(d) { return {unit: entry.unit, value: d}; }) :
+        {unit: entry.unit, value: extent};
+
+    return discrete ? (acc.push.apply(acc, value), acc) : (acc.push(value), acc);
+   }, []);
+
+
+   return discrete ? discreteDomain(values, op) : continuousDomain(values, op);
+}
+
+function discreteDomain(entries, op) {
+  var units = {}, count = 0,
+      values = {}, domain = [],
       i = 0, n = entries.length,
-      entry, m, j, interval, extent, domain, lo, hi;
+      entry, unit, v, key;
 
   for (; i<n; ++i) {
-    entry = entries[i].intervals;
+    entry = entries[i];
+    unit  = entry.unit;
+    key   = entry.value;
 
-    for (j=0, m=entry.length; j<m; ++j) {
-      interval = entry[j];
-      if ((encoding && interval.encoding === encoding) ||
-          (field && interval.field === field))
-      {
-        extent = interval.extent, lo = extent[0], hi = extent[1];
-        if (lo > hi) hi = extent[1], lo = extent[0];
-        domain = domain ? merge(domain, lo, hi) : [lo, hi];
-      }
+    if (!units[unit]) units[unit] = ++count;
+    if (!(v = values[key])) {
+      values[key] = v = {value: key, units: {}, count: 0};
     }
+    if (!v.units[unit]) v.units[unit] = ++v.count;
+  }
+
+  for (key in values) {
+    v = values[key];
+    if (op !== UNION && v.count !== count) continue;
+    domain.push(v.value);
+  }
+
+  return domain.length ? domain : undefined;
+}
+
+function continuousDomain(entries, op) {
+  var merge = op === UNION ? unionInterval : intersectInterval,
+      i = 0, n = entries.length,
+      extent, domain, lo, hi;
+
+  for (; i<n; ++i) {
+    extent = entries[i].value;
+    if (isDate(extent[0])) extent = extent.map(toNumber);
+    lo = extent[0], hi = extent[1];
+    if (lo > hi) hi = extent[1], lo = extent[0];
+    domain = domain ? merge(domain, lo, hi) : [lo, hi];
   }
 
   return domain && domain.length && (+domain[0] !== +domain[1])
@@ -17083,7 +17288,7 @@ function expressionFunction(name, fn, visitor) {
 
 // register expression functions with ast visitors
 expressionFunction('bandwidth', bandwidth, scaleVisitor);
-expressionFunction('copy', copy$1, scaleVisitor);
+expressionFunction('copy', copy, scaleVisitor);
 expressionFunction('domain', domain, scaleVisitor);
 expressionFunction('range', range$2, scaleVisitor);
 expressionFunction('invert', invert, scaleVisitor);
@@ -17618,6 +17823,7 @@ var LegendEntries$1 = transform$1('LegendEntries');
 var Mark$1 = transform$1('Mark');
 var MultiExtent$1 = transform$1('MultiExtent');
 var MultiValues$1 = transform$1('MultiValues');
+var Overlap$1 = transform$1('Overlap');
 var Params$1 = transform$1('Params');
 var PreFacet$1 = transform$1('PreFacet');
 var Projection$1 = transform$1('Projection');
@@ -18753,9 +18959,9 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype$72 = DataScope.prototype;
+var prototype$74 = DataScope.prototype;
 
-prototype$72.countsRef = function(scope, field, sort) {
+prototype$74.countsRef = function(scope, field, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       k = fieldKey(field), v, a, p;
@@ -18829,27 +19035,27 @@ function cache(scope, ds, name, optype, field, counts, index) {
   return v;
 }
 
-prototype$72.tuplesRef = function() {
+prototype$74.tuplesRef = function() {
   return ref(this.values);
 };
 
-prototype$72.extentRef = function(scope, field) {
+prototype$74.extentRef = function(scope, field) {
   return cache(scope, this, 'extent', 'Extent', field, false);
 };
 
-prototype$72.domainRef = function(scope, field) {
+prototype$74.domainRef = function(scope, field) {
   return cache(scope, this, 'domain', 'Values', field, false);
 };
 
-prototype$72.valuesRef = function(scope, field, sort) {
+prototype$74.valuesRef = function(scope, field, sort) {
   return cache(scope, this, 'vals', 'Values', field, sort || true);
 };
 
-prototype$72.lookupRef = function(scope, field) {
+prototype$74.lookupRef = function(scope, field) {
   return cache(scope, this, 'lookup', 'TupleIndex', field, false);
 };
 
-prototype$72.indataRef = function(scope, field) {
+prototype$74.indataRef = function(scope, field) {
   return cache(scope, this, 'indata', 'TupleIndex', field, true, true);
 };
 
@@ -19019,6 +19225,13 @@ function parseMark(spec, scope) {
     scope.popState();
 
     if (nested) { if (layout) ops.push(layout); ops.push(bound); }
+  }
+
+  if (spec.overlap) {
+    boundRef = ref(scope.add(Overlap$1({
+      method: spec.overlap === true ? 'parity' : spec.overlap,
+      pulse:  boundRef
+    })));
   }
 
   // render / sieve items
@@ -19212,7 +19425,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
   encode.update = update = {
     opacity: {value: 1},
     text: isObject(title) ? title : {value: title + ''},
-    offset: encoder(spec.offset || 0)
+    offset: encoder((spec.offset != null ? spec.offset : config.offset) || 0)
   };
 
   (anchor === 'start') ? (mult = 0, align = 'left')
@@ -19397,7 +19610,8 @@ function axisGrid(spec, config, userEncode, dataRef) {
     field:  Value,
     band:   config.bandPosition,
     round:  config.tickRound,
-    extra:  config.tickExtra
+    extra:  config.tickExtra,
+    offset: config.tickOffset
   };
 
   (orient === Top || orient === Bottom)
@@ -19446,7 +19660,8 @@ function axisTicks(spec, config, userEncode, dataRef, size) {
     field:  Value,
     band:   config.bandPosition,
     round:  config.tickRound,
-    extra:  config.tickExtra
+    extra:  config.tickExtra,
+    offset: config.tickOffset
   };
 
   if (orient === Top || orient === Bottom) {
@@ -19464,6 +19679,7 @@ function axisTicks(spec, config, userEncode, dataRef, size) {
 
 function axisLabels(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
+      overlap = spec.labelOverlap,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       pad = spec.labelPadding != null ? spec.labelPadding : config.labelPadding,
       zero = {value: 0},
@@ -19493,9 +19709,10 @@ function axisLabels(spec, config, userEncode, dataRef, size) {
   tickSize.offset.mult = sign;
 
   tickPos = {
-    scale: spec.scale,
-    field: Value,
-    band: 0.5
+    scale:  spec.scale,
+    field:  Value,
+    band:   0.5,
+    offset: config.tickOffset
   };
 
   if (orient === Top || orient === Bottom) {
@@ -19510,7 +19727,9 @@ function axisLabels(spec, config, userEncode, dataRef, size) {
     addEncode(update, 'baseline', 'middle');
   }
 
-  return guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
+  spec = guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
+  spec.overlap = overlap || config.labelOverlap;
+  return spec;
 }
 
 function axisTitle(spec, config, userEncode, dataRef) {
@@ -19797,15 +20016,15 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$73 = Scope.prototype = Subscope.prototype;
+var prototype$75 = Scope.prototype = Subscope.prototype;
 
 // ----
 
-prototype$73.fork = function() {
+prototype$75.fork = function() {
   return new Subscope(this);
 };
 
-prototype$73.toRuntime = function() {
+prototype$75.toRuntime = function() {
   return this.finish(), {
     background: this.background,
     operators:  this.operators,
@@ -19815,11 +20034,11 @@ prototype$73.toRuntime = function() {
   };
 };
 
-prototype$73.id = function() {
+prototype$75.id = function() {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype$73.add = function(op) {
+prototype$75.add = function(op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
@@ -19830,21 +20049,21 @@ prototype$73.add = function(op) {
   return op;
 };
 
-prototype$73.proxy = function(op) {
+prototype$75.proxy = function(op) {
   var vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy$1({value: vref}));
 };
 
-prototype$73.addStream = function(stream) {
+prototype$75.addStream = function(stream) {
   return this.streams.push(stream), stream.id = this.id(), stream;
 };
 
-prototype$73.addUpdate = function(update) {
+prototype$75.addUpdate = function(update) {
   return this.updates.push(update), update;
 };
 
 // Apply metadata
-prototype$73.finish = function() {
+prototype$75.finish = function() {
   var name, ds;
 
   // annotate root
@@ -19884,40 +20103,40 @@ prototype$73.finish = function() {
 
 // ----
 
-prototype$73.pushState = function(encode, parent, lookup) {
+prototype$75.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype$73.popState = function() {
+prototype$75.popState = function() {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype$73.parent = function() {
+prototype$75.parent = function() {
   return peek(this._parent);
 };
 
-prototype$73.encode = function() {
+prototype$75.encode = function() {
   return peek(this._encode);
 };
 
-prototype$73.lookup = function() {
+prototype$75.lookup = function() {
   return peek(this._lookup);
 };
 
-prototype$73.markpath = function() {
+prototype$75.markpath = function() {
   var p = this._markpath;
   return ++p[p.length-1];
 };
 
 // ----
 
-prototype$73.fieldRef = function(field, name) {
+prototype$75.fieldRef = function(field, name) {
   if (isString(field)) return fieldRef$1(field, name);
   if (!field.signal) {
     error('Unsupported field reference: ' + $$2(field));
@@ -19935,7 +20154,7 @@ prototype$73.fieldRef = function(field, name) {
   return f;
 };
 
-prototype$73.compareRef = function(cmp) {
+prototype$75.compareRef = function(cmp) {
   function check(_) {
     return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
   }
@@ -19950,7 +20169,7 @@ prototype$73.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype$73.keyRef = function(fields) {
+prototype$75.keyRef = function(fields) {
   function check(_) {
     return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
   }
@@ -19964,7 +20183,7 @@ prototype$73.keyRef = function(fields) {
     : keyRef(fields);
 };
 
-prototype$73.sortRef = function(sort) {
+prototype$75.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
@@ -19982,7 +20201,7 @@ prototype$73.sortRef = function(sort) {
 
 // ----
 
-prototype$73.event = function(source, type) {
+prototype$75.event = function(source, type) {
   var key = source + ':' + type;
   if (!this.events[key]) {
     var id = this.id();
@@ -19998,7 +20217,7 @@ prototype$73.event = function(source, type) {
 
 // ----
 
-prototype$73.addSignal = function(name, value) {
+prototype$75.addSignal = function(name, value) {
   if (this.signals.hasOwnProperty(name)) {
     error('Duplicate signal name: ' + $$2(name));
   }
@@ -20006,23 +20225,23 @@ prototype$73.addSignal = function(name, value) {
   return this.signals[name] = op;
 };
 
-prototype$73.getSignal = function(name) {
+prototype$75.getSignal = function(name) {
   if (!this.signals[name]) {
     error('Unrecognized signal name: ' + $$2(name));
   }
   return this.signals[name];
 };
 
-prototype$73.signalRef = function(s) {
+prototype$75.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
-  } else if (!this.lambdas[s]) {
+  } else if (!this.lambdas.hasOwnProperty(s)) {  
     this.lambdas[s] = this.add(operator(null));
   }
   return ref(this.lambdas[s]);
 };
 
-prototype$73.parseLambdas = function() {
+prototype$75.parseLambdas = function() {
   var code = Object.keys(this.lambdas);
   for (var i=0, n=code.length; i<n; ++i) {
     var s = code[i],
@@ -20033,11 +20252,11 @@ prototype$73.parseLambdas = function() {
   }
 };
 
-prototype$73.property = function(spec) {
+prototype$75.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype$73.objectProperty = function(spec) {
+prototype$75.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
     : this.signalRef(spec.signal || propertyLambda(spec));
 };
@@ -20078,7 +20297,7 @@ function objectLambda(obj) {
   return code + '}';
 }
 
-prototype$73.addBinding = function(name, bind) {
+prototype$75.addBinding = function(name, bind) {
   if (!this.bindings) {
     error('Nested signals do not support binding: ' + $$2(name));
   }
@@ -20087,69 +20306,72 @@ prototype$73.addBinding = function(name, bind) {
 
 // ----
 
-prototype$73.addScaleProj = function(name, transform) {
+prototype$75.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error('Duplicate scale or projection name: ' + $$2(name));
   }
   this.scales[name] = this.add(transform);
 }
 
-prototype$73.addScale = function(name, params) {
+prototype$75.addScale = function(name, params) {
   this.addScaleProj(name, Scale$1(params));
 };
 
-prototype$73.addProjection = function(name, params) {
+prototype$75.addProjection = function(name, params) {
   this.addScaleProj(name, Projection$1(params));
 };
 
-prototype$73.getScale = function(name) {
+prototype$75.getScale = function(name) {
   if (!this.scales[name]) {
     error('Unrecognized scale name: ' + $$2(name));
   }
   return this.scales[name];
 };
 
-prototype$73.projectionRef =
-prototype$73.scaleRef = function(name) {
+prototype$75.projectionRef =
+prototype$75.scaleRef = function(name) {
   return ref(this.getScale(name));
 };
 
-prototype$73.projectionType =
-prototype$73.scaleType = function(name) {
+prototype$75.projectionType =
+prototype$75.scaleType = function(name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype$73.addData = function(name, dataScope) {
+prototype$75.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + $$2(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype$73.getData = function(name) {
+prototype$75.getData = function(name) {
   if (!this.data[name]) {
     error('Undefined data set name: ' + $$2(name));
   }
   return this.data[name];
 };
 
-prototype$73.addDataPipeline = function(name, entries) {
+prototype$75.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + $$2(name));
   }
   return this.addData(name, DataScope.fromEntries(this, entries));
 };
 
-function defaults(userConfig) {
-  var config = defaults$1(), key;
-  for (key in userConfig) {
-    config[key] = isObject(config[key])
-      ? extend(config[key], userConfig[key])
-      : config[key] = userConfig[key];
-  }
-  return config;
+function defaults(configs) {
+  var output = defaults$1();
+  (configs || []).forEach(function(config) {
+    var key;
+    if (config) for (key in config) {
+      output[key] = isObject(output[key])
+        ? extend(output[key], config[key])
+        : output[key] = config[key];
+    }
+  });
+  return output;
 }
 
 var defaultSymbolSize = 30;
@@ -20238,19 +20460,25 @@ function defaults$1() {
       labelColor: black,
       labelFont: 'sans-serif',
       labelFontSize: 10,
-      labelPadding: 2,
       labelLimit: 180,
+      labelPadding: 2,
       ticks: true,
+      tickColor: black,
+      tickOffset: 0,
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      tickColor: black,
       titleAlign: 'center',
       titlePadding: 2,
       titleColor: black,
       titleFont: 'sans-serif',
       titleFontSize: 11,
       titleFontWeight: 'bold'
+    },
+
+    // correction for centering bias
+    axisBand: {
+      tickOffset: -1
     },
 
     // defaults for legends
@@ -20332,7 +20560,7 @@ function defaults$1() {
 
 function parse$2(spec, config) {
   if (!isObject(spec)) error('Input Vega specification must be an object.');
-  return parseView(spec, new Scope(defaults(config || spec.config)))
+  return parseView(spec, new Scope(defaults([config, spec.config])))
     .toRuntime();
 }
 
@@ -20995,17 +21223,17 @@ function View(spec, options) {
   cursor(this);
 }
 
-var prototype$71 = inherits(View, Dataflow);
+var prototype$73 = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype$71.run = function(encode) {
+prototype$73.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
   if (this._redraw || this._resize) this.render();
   return this;
 };
 
-prototype$71.render = function() {
+prototype$73.render = function() {
   if (this._renderer) {
     if (this._resize) this._resize = 0, resizeRenderer(this);
     this._renderer.render(this._scenegraph.root);
@@ -21014,7 +21242,7 @@ prototype$71.render = function() {
   return this;
 };
 
-prototype$71.dirty = function(item) {
+prototype$73.dirty = function(item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);
 };
@@ -21027,34 +21255,34 @@ function lookupSignal(view, name) {
     : view.error('Unrecognized signal name: ' + $$2(name));
 }
 
-prototype$71.signal = function(name, value, options) {
+prototype$73.signal = function(name, value, options) {
   var op = lookupSignal(this, name);
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
 };
 
-prototype$71.scenegraph = function() {
+prototype$73.scenegraph = function() {
   return this._scenegraph;
 };
 
-prototype$71.background = function(_) {
+prototype$73.background = function(_) {
   return arguments.length ? (this._background = _, this._resize = 1, this) : this._background;
 };
 
-prototype$71.width = function(_) {
+prototype$73.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype$71.height = function(_) {
+prototype$73.height = function(_) {
   return arguments.length ? this.signal('height', _) : this.signal('height');
 };
 
-prototype$71.padding = function(_) {
+prototype$73.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
-prototype$71.renderer = function(type) {
+prototype$73.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) this.error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -21067,7 +21295,7 @@ prototype$71.renderer = function(type) {
   return this;
 };
 
-prototype$71.loader = function(loader) {
+prototype$73.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -21079,27 +21307,27 @@ prototype$71.loader = function(loader) {
   return this;
 };
 
-prototype$71.resize = function() {
+prototype$73.resize = function() {
   return this._autosize = 1, this;
 };
 
 // -- EVENT HANDLING ----
 
-prototype$71.addEventListener = function(type, handler) {
+prototype$73.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
 };
 
-prototype$71.removeEventListener = function(type, handler) {
+prototype$73.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
 };
 
-prototype$71.addSignalListener = function(name, handler) {
+prototype$73.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   this.on(s, null, (h.handler = handler, h));
 };
 
-prototype$71.removeSignalListener = function(name, handler) {
+prototype$73.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       t = s._targets || [],
       h = t.filter(function(op) {
@@ -21109,43 +21337,44 @@ prototype$71.removeSignalListener = function(name, handler) {
   if (h.length) t.remove(h[0]);
 };
 
-prototype$71.preventDefault = function(_) {
+prototype$73.preventDefault = function(_) {
   return arguments.length ? (this._preventDefault = _, this) : this._preventDefault;
 };
 
-prototype$71.tooltipHandler = function(_) {
+prototype$73.tooltipHandler = function(_) {
   var h = this._handler;
   return !arguments.length ? h.handleTooltip
     : (h.handleTooltip = (_ || Handler.prototype.handleTooltip), this);
 };
 
-prototype$71.events = events$1;
-prototype$71.finalize = finalize;
-prototype$71.hover = hover;
+prototype$73.events = events$1;
+prototype$73.finalize = finalize;
+prototype$73.hover = hover;
 
 // -- SIZING ----
-prototype$71.autosize = autosize;
+prototype$73.autosize = autosize;
 
 // -- DATA ----
-prototype$71.data = data;
-prototype$71.change = change;
-prototype$71.insert = insert;
-prototype$71.remove = remove;
+prototype$73.data = data;
+prototype$73.change = change;
+prototype$73.insert = insert;
+prototype$73.remove = remove;
 
 // -- INITIALIZATION ----
-prototype$71.initialize = initialize$1;
+prototype$73.initialize = initialize$1;
 
 // -- HEADLESS RENDERING ----
-prototype$71.toImageURL = renderToImageURL;
-prototype$71.toCanvas = renderToCanvas;
-prototype$71.toSVG = renderToSVG;
+prototype$73.toImageURL = renderToImageURL;
+prototype$73.toCanvas = renderToCanvas;
+prototype$73.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype$71.getState = getState$1;
-prototype$71.setState = setState$1;
+prototype$73.getState = getState$1;
+prototype$73.setState = setState$1;
 
 transform('Bound', Bound);
 transform('Mark', Mark);
+transform('Overlap', Overlap);
 transform('Render', Render);
 transform('ViewLayout', ViewLayout);
 

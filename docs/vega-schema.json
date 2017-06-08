@@ -3234,6 +3234,9 @@
           "$ref": "#/defs/imputeTransform"
         },
         {
+          "$ref": "#/defs/joinaggregateTransform"
+        },
+        {
           "$ref": "#/defs/lookupTransform"
         },
         {
@@ -3320,6 +3323,9 @@
         },
         {
           "$ref": "#/defs/formulaTransform"
+        },
+        {
+          "$ref": "#/defs/joinaggregateTransform"
         },
         {
           "$ref": "#/defs/lookupTransform"
@@ -4394,6 +4400,144 @@
       "required": [
         "type",
         "field"
+      ]
+    },
+    "joinaggregateTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "joinaggregate"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "groupby": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "fields": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "ops": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "count",
+                      "valid",
+                      "missing",
+                      "distinct",
+                      "sum",
+                      "mean",
+                      "average",
+                      "variance",
+                      "variancep",
+                      "stdev",
+                      "stdevp",
+                      "stderr",
+                      "median",
+                      "q1",
+                      "q3",
+                      "ci0",
+                      "ci1",
+                      "min",
+                      "max",
+                      "argmin",
+                      "argmax"
+                    ]
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "key": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type"
       ]
     },
     "lookupTransform": {
