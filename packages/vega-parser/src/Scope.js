@@ -276,7 +276,7 @@ prototype.getSignal = function(name) {
 prototype.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
-  } else if (!this.lambdas[s]) {
+  } else if (!this.lambdas.hasOwnProperty(s)) {  
     this.lambdas[s] = this.add(operator(null));
   }
   return ref(this.lambdas[s]);
