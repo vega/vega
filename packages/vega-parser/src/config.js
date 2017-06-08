@@ -103,16 +103,22 @@ function defaults() {
       labelPadding: 2,
       labelLimit: 180,
       ticks: true,
+      tickColor: black,
+      tickOffset: 0,
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      tickColor: black,
       titleAlign: 'center',
       titlePadding: 2,
       titleColor: black,
       titleFont: 'sans-serif',
       titleFontSize: 11,
       titleFontWeight: 'bold'
+    },
+
+    // correction for centering bias
+    axisBand: {
+      tickOffset: -1
     },
 
     // defaults for legends

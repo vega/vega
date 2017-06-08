@@ -31,7 +31,8 @@ export default function(spec, config, userEncode, dataRef) {
     field:  Value,
     band:   config.bandPosition,
     round:  config.tickRound,
-    extra:  config.tickExtra
+    extra:  config.tickExtra,
+    offset: config.tickOffset
   };
 
   (orient === Top || orient === Bottom)

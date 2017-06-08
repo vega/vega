@@ -35,9 +35,10 @@ export default function(spec, config, userEncode, dataRef, size) {
   tickSize.offset.mult = sign;
 
   tickPos = {
-    scale: spec.scale,
-    field: Value,
-    band: 0.5
+    scale:  spec.scale,
+    field:  Value,
+    band:   0.5,
+    offset: config.tickOffset
   };
 
   if (orient === Top || orient === Bottom) {
