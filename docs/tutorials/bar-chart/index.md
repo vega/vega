@@ -97,7 +97,9 @@ Scale functions map data values to visual values, such as pixel positions or col
       "name": "xscale",
       "type": "band",
       "domain": {"data": "table", "field": "category"},
-      "range": "width"
+      "range": "width",
+      "padding": 0.05,
+      "round": true
     },
     {
       "name": "yscale",
@@ -116,7 +118,7 @@ The `range` settings of `"width"` and `"height"` are conveniences provided by Ve
 
 The `domain` property determines the input domain for the scale. The domain can be defined directly as an array of values (a quantitative range or list of ordinal values) or determined dynamically from the data. In the example above, the domain consists of the minimum and maximum values of the `amount` field in the `table` data set. By default, quantitative scales automatically include the zero value. To disable this feature, include the property `"zero": false` in the scale definition.
 
-Notice that `yscale` includes the property `"nice": true`. This optional property tells Vega that the scale domain can be made "nice" so that it is more human-friendly and readable. For example, if the raw data domain is `[0, 94.345]` it is made "nicer" as `[0, 100]`.
+The `xscale` definition also includes a fractional `padding` to add spacing between bars and a `round` parameter to make sure the bars snap to pixel boundaries. Notice that `yscale` includes the property `"nice": true`. This optional property tells Vega that the scale domain can be made "nice" so that it is more human-friendly and readable. For example, if the raw data domain is `[0, 94.345]` it is made "nicer" as `[0, 100]`.
 
 For more details, see the [scales](../../docs/scales) documentation.
 
@@ -164,8 +166,8 @@ Every mark must have a `type` property, which determines which kind of mark (`re
       "from": {"data":"table"},
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "category", "offset": 1},
-          "width": {"scale": "xscale", "band": 1, "offset": -1},
+          "x": {"scale": "xscale", "field": "category"},
+          "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "amount"},
           "y2": {"scale": "yscale", "value": 0}
         },
@@ -185,15 +187,15 @@ Now let's take a closer look at the specific mark definitions in the `enter` set
 
 {: .suppress-error}
 ```json
-          "x": {"scale": "xscale", "field": "category", "offset": 1},
-          "width": {"scale": "xscale", "band": 1, "offset": -1},
+          "x": {"scale": "xscale", "field": "category"},
+          "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "amount"},
           "y2": {"scale": "yscale", "value": 0}
 ```
 
-The first two properties (`x` and `width`) set the horizontal position and width of the bar. The `x` mark property (the leftmost edge of the bar) is set to the value obtained by applying the scale named `"xscale"` (defined in `scales` above) to the data field `category`. The `"offset": 1` entry pushes the bar over by one pixel, in accordance with the reduced width below.
+The first two properties (`x` and `width`) set the horizontal position and width of the bar. The `x` mark property (the leftmost edge of the bar) is set to the value obtained by applying the scale named `"xscale"` (defined in `scales` above) to the data field `category`.
 
-The `width` property is set to a value provided by the band scale `xscale`. Band scales chop up a spatial range into a set of uniformly sized "bands". Including `"band": 1` retrieves the full size of the band for the scale. The `1` value indicates what fraction of the band size to include; using `"band": 0.5` would use half of the band. In addition, `"offset": -1` reduces the width by one pixel, to enforce one pixel of spacing between bars.
+The `width` property is set to a value provided by the band scale `xscale`. Band scales chop up a spatial range into a set of uniformly sized "bands". Including `"band": 1` retrieves the full size of the band for the scale. The `1` value indicates what fraction of the band size to include; using `"band": 0.5` would use half of the band.
 
 The second two properties (`y` and `y2`) determine the vertical position and height of the bars. Similar to `x` and `width`, one _could_ use `y` and `height` properties. However, here it is easier to specify the bar heights using two end points: one for the top of the bar (`y`) and one for the bottom of the bar (`y2`). We hardwire the value `0` and pass it through the linear `yscale` to ensure that one edge of each bar is always at zero. It actually does not matter which of `y` or `y2` is greater than the other; Vega will set the positions correctly. You can similarly use `x` and `x2`, which can be useful for creating visualizations such as horizontal bar charts and timelines.
 

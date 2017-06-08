@@ -159,7 +159,7 @@
       "name": "layout",
       "type": "band",
       "domain": ["delay", "time", "distance"],
-      "range": [0, {"signal": "height"}]
+      "range": "height"
     },
     {
       "name": "delayScale",
