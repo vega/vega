@@ -181,21 +181,21 @@
       "type": "linear",
       "round": true,
       "domain": {"signal": "delayExtent"},
-      "range": [0, {"signal": "width"}]
+      "range": "width"
     },
     {
       "name": "timeScale",
       "type": "linear",
       "round": true,
       "domain": {"signal": "timeExtent"},
-      "range": [0, {"signal": "width"}]
+      "range": "width"
     },
     {
       "name": "distScale",
       "type": "linear",
       "round": true,
       "domain": {"signal": "distExtent"},
-      "range": [0, {"signal": "width"}]
+      "range": "width"
     }
   ],
 

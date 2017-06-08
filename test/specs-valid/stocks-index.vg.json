@@ -134,7 +134,7 @@
         "update": {
           "x": {"field": {"group": "x"}},
           "x2": {"field": {"group": "width"}},
-          "y": {"scale": "y", "value": 0, "offset": 0.5},
+          "y": {"value": 0.5, "offset": {"scale": "y", "value": 0, "round": true}},
           "stroke": {"value": "black"},
           "strokeWidth": {"value": 1}
         }

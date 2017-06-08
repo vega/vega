@@ -98,9 +98,9 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "tickCount": 10},
-    {"orient": "bottom", "scale": "xscale-null"},
-    {"orient": "left", "scale": "yscale", "tickCount": 5, "offset": 5}
+    {"orient": "bottom", "scale": "xscale", "tickCount": 10, "zindex": 1},
+    {"orient": "bottom", "scale": "xscale-null", "zindex": 1},
+    {"orient": "left", "scale": "yscale", "tickCount": 5, "offset": 5, "zindex": 1}
   ],
 
   "marks": [

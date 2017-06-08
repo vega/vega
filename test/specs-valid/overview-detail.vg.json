@@ -45,8 +45,8 @@
         }
       ],
       "axes": [
-        {"orient": "bottom", "scale": "xDetail"},
-        {"orient": "left", "scale": "yDetail"}
+        {"orient": "bottom", "scale": "xDetail", "zindex": 1},
+        {"orient": "left", "scale": "yDetail", "zindex": 1}
       ],
       "marks": [
         {
@@ -150,7 +150,7 @@
         }
       ],
       "axes": [
-        {"orient": "bottom", "scale": "xOverview"}
+        {"orient": "bottom", "scale": "xOverview", "zindex": 1}
       ],
       "marks": [
         {

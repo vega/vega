@@ -42,6 +42,8 @@
       "name": "xscale",
       "type": "band",
       "range": "width",
+      "padding": 0.05,
+      "round": true,
       "domain": {"data": "table", "field": "x"}
     },
     {
@@ -54,8 +56,8 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale"},
-    {"orient": "left", "scale": "yscale"}
+    {"orient": "bottom", "scale": "xscale", "zindex": 1},
+    {"orient": "left", "scale": "yscale", "zindex": 1}
   ],
 
   "marks": [
@@ -64,8 +66,8 @@
       "from": {"data": "table"},
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "x", "offset":1},
-          "width": {"scale": "xscale", "band": 1, "offset":-1},
+          "x": {"scale": "xscale", "field": "x"},
+          "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "y"},
           "y2": {"scale": "yscale", "value": 0}
         },

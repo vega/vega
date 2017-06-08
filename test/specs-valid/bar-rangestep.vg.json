@@ -72,7 +72,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "offset": 2},
+    {"orient": "bottom", "scale": "xscale", "offset": 4},
     {"orient": "left", "scale": "yscale", "offset": 4}
   ],
 

@@ -61,8 +61,8 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "tickCount": 20},
-    {"orient": "left", "scale": "yscale"}
+    {"orient": "bottom", "scale": "xscale", "tickCount": 20, "zindex": 1},
+    {"orient": "left", "scale": "yscale", "zindex": 1}
   ],
 
   "marks": [
