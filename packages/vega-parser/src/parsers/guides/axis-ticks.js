@@ -32,7 +32,8 @@ export default function(spec, config, userEncode, dataRef, size) {
     field:  Value,
     band:   config.bandPosition,
     round:  config.tickRound,
-    extra:  config.tickExtra
+    extra:  config.tickExtra,
+    offset: config.tickOffset
   };
 
   if (orient === Top || orient === Bottom) {
