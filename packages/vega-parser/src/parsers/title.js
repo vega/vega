@@ -55,7 +55,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
   encode.update = update = {
     opacity: {value: 1},
     text: isObject(title) ? title : {value: title + ''},
-    offset: encoder(spec.offset || 0)
+    offset: encoder((spec.offset != null ? spec.offset : config.offset) || 0)
   };
 
   (anchor === 'start') ? (mult = 0, align = 'left')
