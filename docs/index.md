@@ -10,7 +10,7 @@ title: A Visualization Grammar
 {:.lead-buttons .float-right}
 [Version {{ site.data.versions.vega }}](https://github.com/vega/vega/releases/tag/v{{ site.data.versions.vega }})
 
-Vega provides basic building blocks for a wide variety of visualization designs: [data loading](docs/data) and [transformation](docs/transforms), [scales](docs/scales), [map projections](docs/projections), [axes](docs/axes), [legends](docs/legends), and [graphical marks](docs/marks) such as rectangles, lines, plotting symbols, _etc_. Interaction techniques can be specified using [reactive signals](docs/signals) that dynamically modify a visualization in response to [input event streams](docs/streams).
+Vega provides basic building blocks for a wide variety of visualization designs: [data loading](docs/data) and [transformation](docs/transforms), [scales](docs/scales), [map projections](docs/projections), [axes](docs/axes), [legends](docs/legends), and [graphical marks](docs/marks) such as rectangles, lines, plotting symbols, _etc_. Interaction techniques can be specified using [reactive signals](docs/signals) that dynamically modify a visualization in response to [input event streams](docs/event-streams).
 
 A Vega _specification_ defines an interactive visualization in a [JSON](http://en.wikipedia.org/wiki/JSON) format. Specifications are parsed by Vega's JavaScript _runtime_ to generate both static images or interactive web-based views. Vega provides a convenient representation for computational generation of visualizations, and can serve as a foundation for new APIs and visual analysis tools.
 
