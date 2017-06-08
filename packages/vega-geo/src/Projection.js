@@ -14,7 +14,7 @@ export default function Projection(params) {
 
 var prototype = inherits(Projection, Transform);
 
-prototype.transform = function(_) {
+prototype.transform = function(_, pulse) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
@@ -30,6 +30,8 @@ prototype.transform = function(_) {
 
   if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
   if (_.fit) fit(proj, _);
+
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
 function fit(proj, _) {
