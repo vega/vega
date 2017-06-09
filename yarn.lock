@@ -1593,9 +1593,9 @@ vega-crossfilter@>=1.0.0-beta:
     vega-dataflow ">=2.0.0-beta"
     vega-util "1"
 
-vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.4:
-  version "2.0.0-beta.26"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.26.tgz#ddc249e3129301306b778567c68ea0b1dbc115a2"
+vega-dataflow@>=2.0.0-beta, vega-dataflow@>=2.0.0-beta.27, vega-dataflow@>=2.0.0-beta.4:
+  version "2.0.0-beta.27"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.0-beta.27.tgz#5d15255484f35db3f824eb0b5eb655accc70eb16"
   dependencies:
     d3-array "1"
     vega-loader ">=2.0.0-beta"
@@ -1628,16 +1628,16 @@ vega-expression@2:
     vega-util "1"
 
 vega-force@>=1.0.0-beta:
-  version "1.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/vega-force/-/vega-force-1.0.0-beta.2.tgz#b00f55af8653a1471d26d172c7c29edf87b826ea"
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/vega-force/-/vega-force-1.0.0-beta.3.tgz#67cfa0145574d4162d69db07c2b26ff29bd3667d"
   dependencies:
     d3-force "1"
-    vega-dataflow ">=2.0.0-beta.4"
+    vega-dataflow ">=2.0.0-beta.27"
     vega-util "1"
 
 vega-geo@>=1.0.0-beta:
-  version "1.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.0.0-beta.4.tgz#5ad104d893da309a9976bb091b2c067d2d8ba61e"
+  version "1.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.0.0-beta.5.tgz#e4dd6026fec09d41749a6837894e5bf6f96b0c52"
   dependencies:
     d3-contour "1"
     d3-geo "1"
