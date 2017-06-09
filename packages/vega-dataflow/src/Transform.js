@@ -17,6 +17,21 @@ var prototype = inherits(Transform, Operator);
 
 /**
  * Overrides {@link Operator.evaluate} for transform operators.
+ * Internally, this method calls {@link evaluate} to perform processing.
+ * If {@link evaluate} returns a falsy value, the input pulse is returned.
+ * This method should NOT be overridden, instead overrride {@link evaluate}.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return the output pulse for this operator (or StopPropagation)
+ */
+prototype.run = function(pulse) {
+  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+  var rv = (this.skip() ? (this.skip(false), 0) : this.evaluate(pulse)) || pulse;
+  if (rv !== pulse.StopPropagation) this.pulse = rv;
+  return this.stamp = pulse.stamp, rv;
+};
+
+/**
+ * Overrides {@link Operator.evaluate} for transform operators.
  * Marshalls parameter values and then invokes {@link transform}.
  * @param {Pulse} pulse - the current dataflow pulse.
  * @return {Pulse} The output pulse (or StopPropagation). A falsy return
