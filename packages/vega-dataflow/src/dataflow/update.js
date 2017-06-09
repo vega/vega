@@ -17,8 +17,10 @@ var NO_OPT = {skip: false, force: false};
 export function touch(op, options) {
   var opt = options || NO_OPT;
   if (this._pulse) {
+    // if in midst of propagation, add to priority queue
     this._enqueue(op);
   } else {
+    // otherwise, queue for next propagation
     this._touched.add(op);
   }
   if (opt.skip) op.skip(true);
@@ -59,8 +61,11 @@ export function update(op, value, options) {
  * @return {Dataflow}
  */
 export function pulse(op, changeset, options) {
+  this.touch(op, options || NO_OPT);
+
   var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1));
   p.target = op;
   this._pulses[op.id] = changeset.pulse(p, op.value);
-  return this.touch(op, options || NO_OPT);
+
+  return this;
 }
