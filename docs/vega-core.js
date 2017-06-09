@@ -5083,7 +5083,8 @@ function changeset() {
       rem = [],  // remove tuples
       mod = [],  // modify tuples
       remp = [], // remove by predicate
-      modp = []; // modify by predicate
+      modp = [], // modify by predicate
+      reflow = false;
 
   return {
     constructor: changeset,
@@ -5105,7 +5106,12 @@ function changeset() {
       return this;
     },
     encode: function(t, set) {
-      mod.push({tuple: t, field: set});
+      if (isFunction(t)) modp.push({filter: t, field: set});
+      else mod.push({tuple: t, field: set});
+      return this;
+    },
+    reflow: function() {
+      reflow = true;
       return this;
     },
     pulse: function(pulse, tuples) {
@@ -5132,7 +5138,7 @@ function changeset() {
       // modify
       function modify(t, f, v) {
         if (v) t[f] = v(t); else pulse.encode = f;
-        out[t._id] = t;
+        if (!reflow) out[t._id] = t;
       }
       for (out={}, i=0, n=mod.length; i<n; ++i) {
         m = mod[i];
@@ -5147,7 +5153,15 @@ function changeset() {
         });
         pulse.modifies(m.field);
       }
-      for (id in out) pulse.mod.push(out[id]);
+
+      // reflow?
+      if (reflow) {
+        pulse.mod = rem.length || remp.length
+          ? tuples.filter(function(t) { return out.hasOwnProperty(t._id); })
+          : tuples.slice();
+      } else {
+        for (id in out) pulse.mod.push(out[id]);
+      }
 
       return pulse;
     }
@@ -6091,8 +6105,10 @@ var NO_OPT = {skip: false, force: false};
 function touch(op, options) {
   var opt = options || NO_OPT;
   if (this._pulse) {
+    // if in midst of propagation, add to priority queue
     this._enqueue(op);
   } else {
+    // otherwise, queue for next propagation
     this._touched.add(op);
   }
   if (opt.skip) op.skip(true);
@@ -6133,10 +6149,13 @@ function update(op, value, options) {
  * @return {Dataflow}
  */
 function pulse(op, changeset, options) {
+  this.touch(op, options || NO_OPT);
+
   var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1));
   p.target = op;
   this._pulses[op.id] = changeset.pulse(p, op.value);
-  return this.touch(op, options || NO_OPT);
+
+  return this;
 }
 
 function ingest$1(target, data, format) {
@@ -6686,6 +6705,21 @@ function Transform(init, params) {
 }
 
 var prototype$17 = inherits(Transform, Operator);
+
+/**
+ * Overrides {@link Operator.evaluate} for transform operators.
+ * Internally, this method calls {@link evaluate} to perform processing.
+ * If {@link evaluate} returns a falsy value, the input pulse is returned.
+ * This method should NOT be overridden, instead overrride {@link evaluate}.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return the output pulse for this operator (or StopPropagation)
+ */
+prototype$17.run = function(pulse) {
+  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+  var rv = (this.skip() ? (this.skip(false), 0) : this.evaluate(pulse)) || pulse;
+  if (rv !== pulse.StopPropagation) this.pulse = rv;
+  return this.stamp = pulse.stamp, rv;
+};
 
 /**
  * Overrides {@link Operator.evaluate} for transform operators.
@@ -10400,7 +10434,7 @@ function Projection(params) {
 
 var prototype$49 = inherits(Projection, Transform);
 
-prototype$49.transform = function(_) {
+prototype$49.transform = function(_, pulse) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
@@ -10416,6 +10450,8 @@ prototype$49.transform = function(_) {
 
   if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
   if (_.fit) fit(proj, _);
+
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
 function fit(proj, _) {
@@ -11613,7 +11649,8 @@ prototype$59.finish = function(_, pulse) {
     }
     for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
       if (ops[i].name === 'links' && (op = ops[i].op.source)) {
-        dataflow.touch(op); break;
+        dataflow.pulse(op, dataflow.changeset().reflow());
+        break;
       }
     }
   }

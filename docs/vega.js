@@ -8472,7 +8472,8 @@ function changeset() {
       rem = [],  // remove tuples
       mod = [],  // modify tuples
       remp = [], // remove by predicate
-      modp = []; // modify by predicate
+      modp = [], // modify by predicate
+      reflow = false;
 
   return {
     constructor: changeset,
@@ -8494,7 +8495,12 @@ function changeset() {
       return this;
     },
     encode: function(t, set) {
-      mod.push({tuple: t, field: set});
+      if (isFunction(t)) modp.push({filter: t, field: set});
+      else mod.push({tuple: t, field: set});
+      return this;
+    },
+    reflow: function() {
+      reflow = true;
       return this;
     },
     pulse: function(pulse, tuples) {
@@ -8521,7 +8527,7 @@ function changeset() {
       // modify
       function modify(t, f, v) {
         if (v) t[f] = v(t); else pulse.encode = f;
-        out[t._id] = t;
+        if (!reflow) out[t._id] = t;
       }
       for (out={}, i=0, n=mod.length; i<n; ++i) {
         m = mod[i];
@@ -8536,7 +8542,15 @@ function changeset() {
         });
         pulse.modifies(m.field);
       }
-      for (id in out) pulse.mod.push(out[id]);
+
+      // reflow?
+      if (reflow) {
+        pulse.mod = rem.length || remp.length
+          ? tuples.filter(function(t) { return out.hasOwnProperty(t._id); })
+          : tuples.slice();
+      } else {
+        for (id in out) pulse.mod.push(out[id]);
+      }
 
       return pulse;
     }
@@ -9480,8 +9494,10 @@ var NO_OPT = {skip: false, force: false};
 function touch(op, options) {
   var opt = options || NO_OPT;
   if (this._pulse) {
+    // if in midst of propagation, add to priority queue
     this._enqueue(op);
   } else {
+    // otherwise, queue for next propagation
     this._touched.add(op);
   }
   if (opt.skip) op.skip(true);
@@ -9522,10 +9538,13 @@ function update(op, value, options) {
  * @return {Dataflow}
  */
 function pulse(op, changeset, options) {
+  this.touch(op, options || NO_OPT);
+
   var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1));
   p.target = op;
   this._pulses[op.id] = changeset.pulse(p, op.value);
-  return this.touch(op, options || NO_OPT);
+
+  return this;
 }
 
 function ingest$1(target, data, format) {
@@ -10075,6 +10094,21 @@ function Transform(init, params) {
 }
 
 var prototype$17 = inherits(Transform, Operator);
+
+/**
+ * Overrides {@link Operator.evaluate} for transform operators.
+ * Internally, this method calls {@link evaluate} to perform processing.
+ * If {@link evaluate} returns a falsy value, the input pulse is returned.
+ * This method should NOT be overridden, instead overrride {@link evaluate}.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return the output pulse for this operator (or StopPropagation)
+ */
+prototype$17.run = function(pulse) {
+  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+  var rv = (this.skip() ? (this.skip(false), 0) : this.evaluate(pulse)) || pulse;
+  if (rv !== pulse.StopPropagation) this.pulse = rv;
+  return this.stamp = pulse.stamp, rv;
+};
 
 /**
  * Overrides {@link Operator.evaluate} for transform operators.
@@ -16131,8 +16165,8 @@ function streamGeometry(geometry, stream) {
 }
 
 var streamObjectType = {
-  Feature: function(object, stream) {
-    streamGeometry(object.geometry, stream);
+  Feature: function(feature, stream) {
+    streamGeometry(feature.geometry, stream);
   },
   FeatureCollection: function(object, stream) {
     var features = object.features, i = -1, n = features.length;
@@ -16371,10 +16405,8 @@ function linePoint(lambda, phi) {
       }
     }
   } else {
-    ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+    boundsPoint(lambda, phi);
   }
-  if (phi < phi0) phi0 = phi;
-  if (phi > phi1) phi1 = phi;
   p0 = p, lambda2 = lambda;
 }
 
@@ -16529,8 +16561,9 @@ function centroidRingPoint(lambda, phi) {
       cy = z0 * x - x0 * z,
       cz = x0 * y - y0 * x,
       m = sqrt$1(cx * cx + cy * cy + cz * cz),
-      w = asin$1(m), // line weight = angle
-      v = m && -w / m; // area weight multiplier
+      u = x0 * x + y0 * y + z0 * z,
+      v = m && -acos(u) / m, // area weight
+      w = atan2(m, u); // line weight
   X2 += v * cx;
   Y2 += v * cy;
   Z2 += v * cz;
@@ -16610,22 +16643,6 @@ function rotationPhiGamma(deltaPhi, deltaGamma) {
   };
 
   return rotation;
-}
-
-function rotation(rotate) {
-  rotate = rotateRadians(rotate[0] * radians, rotate[1] * radians, rotate.length > 2 ? rotate[2] * radians : 0);
-
-  function forward(coordinates) {
-    coordinates = rotate(coordinates[0] * radians, coordinates[1] * radians);
-    return coordinates[0] *= degrees$1, coordinates[1] *= degrees$1, coordinates;
-  }
-
-  forward.invert = function(coordinates) {
-    coordinates = rotate.invert(coordinates[0] * radians, coordinates[1] * radians);
-    return coordinates[0] *= degrees$1, coordinates[1] *= degrees$1, coordinates;
-  };
-
-  return forward;
 }
 
 // Generates a circle centered at [0°, 0°], with a given radius and precision.
@@ -17006,71 +17023,6 @@ function clipExtent(x0, y0, x1, y1) {
   };
 }
 
-var sum$2 = adder();
-
-function polygonContains(polygon, point) {
-  var lambda = point[0],
-      phi = point[1],
-      normal = [sin(lambda), -cos(lambda), 0],
-      angle = 0,
-      winding = 0;
-
-  sum$2.reset();
-
-  for (var i = 0, n = polygon.length; i < n; ++i) {
-    if (!(m = (ring = polygon[i]).length)) continue;
-    var ring,
-        m,
-        point0 = ring[m - 1],
-        lambda0 = point0[0],
-        phi0 = point0[1] / 2 + quarterPi,
-        sinPhi0 = sin(phi0),
-        cosPhi0 = cos(phi0);
-
-    for (var j = 0; j < m; ++j, lambda0 = lambda1, sinPhi0 = sinPhi1, cosPhi0 = cosPhi1, point0 = point1) {
-      var point1 = ring[j],
-          lambda1 = point1[0],
-          phi1 = point1[1] / 2 + quarterPi,
-          sinPhi1 = sin(phi1),
-          cosPhi1 = cos(phi1),
-          delta = lambda1 - lambda0,
-          sign = delta >= 0 ? 1 : -1,
-          absDelta = sign * delta,
-          antimeridian = absDelta > pi$3,
-          k = sinPhi0 * sinPhi1;
-
-      sum$2.add(atan2(k * sign * sin(absDelta), cosPhi0 * cosPhi1 + k * cos(absDelta)));
-      angle += antimeridian ? delta + sign * tau$4 : delta;
-
-      // Are the longitudes either side of the point’s meridian (lambda),
-      // and are the latitudes smaller than the parallel (phi)?
-      if (antimeridian ^ lambda0 >= lambda ^ lambda1 >= lambda) {
-        var arc = cartesianCross(cartesian(point0), cartesian(point1));
-        cartesianNormalizeInPlace(arc);
-        var intersection = cartesianCross(normal, arc);
-        cartesianNormalizeInPlace(intersection);
-        var phiArc = (antimeridian ^ delta >= 0 ? -1 : 1) * asin$1(intersection[2]);
-        if (phi > phiArc || phi === phiArc && (arc[0] || arc[1])) {
-          winding += antimeridian ^ delta >= 0 ? 1 : -1;
-        }
-      }
-    }
-  }
-
-  // First, determine whether the South pole is inside or outside:
-  //
-  // It is inside if:
-  // * the polygon winds around it in a clockwise direction.
-  // * the polygon does not (cumulatively) wind around it, but has a negative
-  //   (counter-clockwise) area.
-  //
-  // Second, count the (signed) number of times a segment crosses a lambda
-  // from the point to the South pole.  If it is zero, then the point is the
-  // same side as the South pole.
-
-  return (angle < -epsilon$2 || angle < epsilon$2 && sum$2 < -epsilon$2) ^ (winding & 1);
-}
-
 var lengthSum = adder();
 var lambda0$2;
 var sinPhi0$1;
@@ -17123,7 +17075,7 @@ function graticuleY(x0, x1, dx) {
   return function(y) { return x.map(function(x) { return [x, y]; }); };
 }
 
-function graticule() {
+function geoGraticule() {
   var x1, x0, X1, X0,
       y1, y0, Y1, Y0,
       dx = 10, dy = dx, DX = 90, DY = 360,
@@ -17421,55 +17373,14 @@ PathContext.prototype = {
   result: noop$5
 };
 
-var lengthSum$1 = adder();
-var lengthRing;
-var x00$2;
-var y00$2;
-var x0$4;
-var y0$4;
-var lengthStream$1 = {
-  point: noop$5,
-  lineStart: function() {
-    lengthStream$1.point = lengthPointFirst$1;
-  },
-  lineEnd: function() {
-    if (lengthRing) lengthPoint$1(x00$2, y00$2);
-    lengthStream$1.point = noop$5;
-  },
-  polygonStart: function() {
-    lengthRing = true;
-  },
-  polygonEnd: function() {
-    lengthRing = null;
-  },
-  result: function() {
-    var length = +lengthSum$1;
-    lengthSum$1.reset();
-    return length;
-  }
-};
-
-function lengthPointFirst$1(x, y) {
-  lengthStream$1.point = lengthPoint$1;
-  x00$2 = x0$4 = x, y00$2 = y0$4 = y;
-}
-
-function lengthPoint$1(x, y) {
-  x0$4 -= x, y0$4 -= y;
-  lengthSum$1.add(sqrt$1(x0$4 * x0$4 + y0$4 * y0$4));
-  x0$4 = x, y0$4 = y;
-}
-
 function PathString() {
   this._string = [];
 }
 
 PathString.prototype = {
-  _radius: 4.5,
   _circle: circle$2(4.5),
   pointRadius: function(_) {
-    if ((_ = +_) !== this._radius) this._radius = _, this._circle = null;
-    return this;
+    return this._circle = circle$2(_), this;
   },
   polygonStart: function() {
     this._line = 0;
@@ -17496,7 +17407,6 @@ PathString.prototype = {
         break;
       }
       default: {
-        if (this._circle == null) this._circle = circle$2(this._radius);
         this._string.push("M", x, ",", y, this._circle);
         break;
       }
@@ -17507,8 +17417,6 @@ PathString.prototype = {
       var result = this._string.join("");
       this._string = [];
       return result;
-    } else {
-      return null;
     }
   }
 };
@@ -17520,9 +17428,11 @@ function circle$2(radius) {
       + "z";
 }
 
-function geoPath(projection, context) {
+function geoPath() {
   var pointRadius = 4.5,
+      projection,
       projectionStream,
+      context,
       contextStream;
 
   function path(object) {
@@ -17538,11 +17448,6 @@ function geoPath(projection, context) {
     return areaStream$1.result();
   };
 
-  path.measure = function(object) {
-    geoStream(object, projectionStream(lengthStream$1));
-    return lengthStream$1.result();
-  };
-
   path.bounds = function(object) {
     geoStream(object, projectionStream(boundsStream$1));
     return boundsStream$1.result();
@@ -17554,12 +17459,12 @@ function geoPath(projection, context) {
   };
 
   path.projection = function(_) {
-    return arguments.length ? (projectionStream = _ == null ? (projection = null, identity$6) : (projection = _).stream, path) : projection;
+    return arguments.length ? (projectionStream = (projection = _) == null ? identity$6 : _.stream, path) : projection;
   };
 
   path.context = function(_) {
     if (!arguments.length) return context;
-    contextStream = _ == null ? (context = null, new PathString) : new PathContext(context = _);
+    contextStream = (context = _) == null ? new PathString : new PathContext(_);
     if (typeof pointRadius !== "function") contextStream.pointRadius(pointRadius);
     return path;
   };
@@ -17570,7 +17475,72 @@ function geoPath(projection, context) {
     return path;
   };
 
-  return path.projection(projection).context(context);
+  return path.projection(null).context(null);
+}
+
+var sum$2 = adder();
+
+function polygonContains(polygon, point) {
+  var lambda = point[0],
+      phi = point[1],
+      normal = [sin(lambda), -cos(lambda), 0],
+      angle = 0,
+      winding = 0;
+
+  sum$2.reset();
+
+  for (var i = 0, n = polygon.length; i < n; ++i) {
+    if (!(m = (ring = polygon[i]).length)) continue;
+    var ring,
+        m,
+        point0 = ring[m - 1],
+        lambda0 = point0[0],
+        phi0 = point0[1] / 2 + quarterPi,
+        sinPhi0 = sin(phi0),
+        cosPhi0 = cos(phi0);
+
+    for (var j = 0; j < m; ++j, lambda0 = lambda1, sinPhi0 = sinPhi1, cosPhi0 = cosPhi1, point0 = point1) {
+      var point1 = ring[j],
+          lambda1 = point1[0],
+          phi1 = point1[1] / 2 + quarterPi,
+          sinPhi1 = sin(phi1),
+          cosPhi1 = cos(phi1),
+          delta = lambda1 - lambda0,
+          sign = delta >= 0 ? 1 : -1,
+          absDelta = sign * delta,
+          antimeridian = absDelta > pi$3,
+          k = sinPhi0 * sinPhi1;
+
+      sum$2.add(atan2(k * sign * sin(absDelta), cosPhi0 * cosPhi1 + k * cos(absDelta)));
+      angle += antimeridian ? delta + sign * tau$4 : delta;
+
+      // Are the longitudes either side of the point’s meridian (lambda),
+      // and are the latitudes smaller than the parallel (phi)?
+      if (antimeridian ^ lambda0 >= lambda ^ lambda1 >= lambda) {
+        var arc = cartesianCross(cartesian(point0), cartesian(point1));
+        cartesianNormalizeInPlace(arc);
+        var intersection = cartesianCross(normal, arc);
+        cartesianNormalizeInPlace(intersection);
+        var phiArc = (antimeridian ^ delta >= 0 ? -1 : 1) * asin$1(intersection[2]);
+        if (phi > phiArc || phi === phiArc && (arc[0] || arc[1])) {
+          winding += antimeridian ^ delta >= 0 ? 1 : -1;
+        }
+      }
+    }
+  }
+
+  // First, determine whether the South pole is inside or outside:
+  //
+  // It is inside if:
+  // * the polygon winds around it in a clockwise direction.
+  // * the polygon does not (cumulatively) wind around it, but has a negative
+  //   (counter-clockwise) area.
+  //
+  // Second, count the (signed) number of times a segment crosses a lambda
+  // from the point to the South pole.  If it is zero, then the point is the
+  // same side as the South pole.
+
+  return (angle < -epsilon$2 || angle < epsilon$2 && sum$2 < -epsilon$2) ^ (winding & 1);
 }
 
 function clip$2(pointVisible, clipLine, interpolate, start) {
@@ -17833,7 +17803,7 @@ function clipCircle(radius, delta) {
         // TODO ignore if not clipping polygons.
         if (v !== v0) {
           point2 = intersect(point0, point1);
-          if (!point2 || pointEqual(point0, point2) || pointEqual(point1, point2)) {
+          if (pointEqual(point0, point2) || pointEqual(point1, point2)) {
             point1[0] += epsilon$2;
             point1[1] += epsilon$2;
             v = visible(point1[0], point1[1]);
@@ -17969,19 +17939,20 @@ function clipCircle(radius, delta) {
   return clip$2(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi$3, radius - pi$3]);
 }
 
-function transformer(methods) {
+function transform$2(prototype) {
+  function T() {}
+  var p = T.prototype = Object.create(Transform$1.prototype);
+  for (var k in prototype) p[k] = prototype[k];
   return function(stream) {
-    var s = new TransformStream;
-    for (var key in methods) s[key] = methods[key];
-    s.stream = stream;
-    return s;
+    var t = new T;
+    t.stream = stream;
+    return t;
   };
 }
 
-function TransformStream() {}
+function Transform$1() {}
 
-TransformStream.prototype = {
-  constructor: TransformStream,
+Transform$1.prototype = {
   point: function(x, y) { this.stream.point(x, y); },
   sphere: function() { this.stream.sphere(); },
   lineStart: function() { this.stream.lineStart(); },
@@ -17990,33 +17961,41 @@ TransformStream.prototype = {
   polygonEnd: function() { this.stream.polygonEnd(); }
 };
 
-function fitExtent(projection, extent, object) {
+function fit(project, extent, object) {
   var w = extent[1][0] - extent[0][0],
       h = extent[1][1] - extent[0][1],
-      clip = projection.clipExtent && projection.clipExtent();
+      clip = project.clipExtent && project.clipExtent();
 
-  projection
+  project
       .scale(150)
       .translate([0, 0]);
 
-  if (clip != null) projection.clipExtent(null);
+  if (clip != null) project.clipExtent(null);
 
-  geoStream(object, projection.stream(boundsStream$1));
+  geoStream(object, project.stream(boundsStream$1));
 
   var b = boundsStream$1.result(),
       k = Math.min(w / (b[1][0] - b[0][0]), h / (b[1][1] - b[0][1])),
       x = +extent[0][0] + (w - k * (b[1][0] + b[0][0])) / 2,
       y = +extent[0][1] + (h - k * (b[1][1] + b[0][1])) / 2;
 
-  if (clip != null) projection.clipExtent(clip);
+  if (clip != null) project.clipExtent(clip);
 
-  return projection
+  return project
       .scale(k * 150)
       .translate([x, y]);
 }
 
-function fitSize(projection, size, object) {
-  return fitExtent(projection, [[0, 0], size], object);
+function fitSize(project) {
+  return function(size, object) {
+    return fit(project, [[0, 0], size], object);
+  };
+}
+
+function fitExtent(project) {
+  return function(extent, object) {
+    return fit(project, extent, object);
+  };
 }
 
 var maxDepth = 16;
@@ -18028,7 +18007,7 @@ function resample(project, delta2) {
 }
 
 function resampleNone(project) {
-  return transformer({
+  return transform$2({
     point: function(x, y) {
       x = project(x, y);
       this.stream.point(x[0], x[1]);
@@ -18119,7 +18098,7 @@ function resample$1(project, delta2) {
   };
 }
 
-var transformRadians = transformer({
+var transformRadians = transform$2({
   point: function(x, y) {
     this.stream.point(x * radians, y * radians);
   }
@@ -18187,13 +18166,9 @@ function projectionMutator(projectAt) {
     return arguments.length ? (projectResample = resample(projectTransform, delta2 = _ * _), reset()) : sqrt$1(delta2);
   };
 
-  projection.fitExtent = function(extent, object) {
-    return fitExtent(projection, extent, object);
-  };
+  projection.fitExtent = fitExtent(projection);
 
-  projection.fitSize = function(size, object) {
-    return fitSize(projection, size, object);
-  };
+  projection.fitSize = fitSize(projection);
 
   function recenter() {
     projectRotate = compose(rotate = rotateRadians(deltaLambda, deltaPhi, deltaGamma), project);
@@ -18228,27 +18203,11 @@ function conicProjection(projectAt) {
   return p;
 }
 
-function cylindricalEqualAreaRaw(phi0) {
-  var cosPhi0 = cos(phi0);
-
-  function forward(lambda, phi) {
-    return [lambda * cosPhi0, sin(phi) / cosPhi0];
-  }
-
-  forward.invert = function(x, y) {
-    return [x / cosPhi0, asin$1(y * cosPhi0)];
-  };
-
-  return forward;
-}
-
 function conicEqualAreaRaw(y0, y1) {
-  var sy0 = sin(y0), n = (sy0 + sin(y1)) / 2;
-
-  // Are the parallels symmetrical around the Equator?
-  if (abs(n) < epsilon$2) return cylindricalEqualAreaRaw(y0);
-
-  var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt$1(c) / n;
+  var sy0 = sin(y0),
+      n = (sy0 + sin(y1)) / 2,
+      c = 1 + sy0 * (2 * n - sy0),
+      r0 = sqrt$1(c) / n;
 
   function project(x, y) {
     var r = sqrt$1(c - 2 * n * sin(y)) / n;
@@ -18257,7 +18216,7 @@ function conicEqualAreaRaw(y0, y1) {
 
   project.invert = function(x, y) {
     var r0y = r0 - y;
-    return [atan2(x, abs(r0y)) / n * sign$1(r0y), asin$1((c - (x * x + r0y * r0y) * n * n) / (2 * n))];
+    return [atan2(x, r0y) / n, asin$1((c - (x * x + r0y * r0y) * n * n) / (2 * n))];
   };
 
   return project;
@@ -18361,13 +18320,9 @@ function geoAlbersUsa() {
     return reset();
   };
 
-  albersUsa.fitExtent = function(extent, object) {
-    return fitExtent(albersUsa, extent, object);
-  };
+  albersUsa.fitExtent = fitExtent(albersUsa);
 
-  albersUsa.fitSize = function(size, object) {
-    return fitSize(albersUsa, size, object);
-  };
+  albersUsa.fitSize = fitSize(albersUsa);
 
   function reset() {
     cache = cacheStream = null;
@@ -18445,38 +18400,31 @@ function geoMercator() {
 
 function mercatorProjection(project) {
   var m = projection$1(project),
-      center = m.center,
       scale = m.scale,
       translate = m.translate,
       clipExtent = m.clipExtent,
-      x0 = null, y0, x1, y1; // clip extent
+      clipAuto;
 
   m.scale = function(_) {
-    return arguments.length ? (scale(_), reclip()) : scale();
+    return arguments.length ? (scale(_), clipAuto && m.clipExtent(null), m) : scale();
   };
 
   m.translate = function(_) {
-    return arguments.length ? (translate(_), reclip()) : translate();
-  };
-
-  m.center = function(_) {
-    return arguments.length ? (center(_), reclip()) : center();
+    return arguments.length ? (translate(_), clipAuto && m.clipExtent(null), m) : translate();
   };
 
   m.clipExtent = function(_) {
-    return arguments.length ? ((_ == null ? x0 = y0 = x1 = y1 = null : (x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1])), reclip()) : x0 == null ? null : [[x0, y0], [x1, y1]];
+    if (!arguments.length) return clipAuto ? null : clipExtent();
+    if (clipAuto = _ == null) {
+      var k = pi$3 * scale(),
+          t = translate();
+      _ = [[t[0] - k, t[1] - k], [t[0] + k, t[1] + k]];
+    }
+    clipExtent(_);
+    return m;
   };
 
-  function reclip() {
-    var k = pi$3 * scale(),
-        t = m(rotation(m.rotate()).invert([0, 0]));
-    return clipExtent(x0 == null
-        ? [[t[0] - k, t[1] - k], [t[0] + k, t[1] + k]] : project === mercatorRaw
-        ? [[Math.max(t[0] - k, x0), y0], [Math.min(t[0] + k, x1), y1]]
-        : [[x0, Math.max(t[1] - k, y0)], [x1, Math.min(t[1] + k, y1)]]);
-  }
-
-  return reclip();
+  return m.clipExtent(null);
 }
 
 function tany(y) {
@@ -18499,7 +18447,7 @@ function conicConformalRaw(y0, y1) {
 
   project.invert = function(x, y) {
     var fy = f - y, r = sign$1(n) * sqrt$1(x * x + fy * fy);
-    return [atan2(x, abs(fy)) / n * sign$1(fy), 2 * atan(pow$1(f / r, 1 / n)) - halfPi$2];
+    return [atan2(x, fy) / n, 2 * atan(pow$1(f / r, 1 / n)) - halfPi$2];
   };
 
   return project;
@@ -18536,7 +18484,7 @@ function conicEquidistantRaw(y0, y1) {
 
   project.invert = function(x, y) {
     var gy = g - y;
-    return [atan2(x, abs(gy)) / n * sign$1(gy), g - sign$1(n) * sqrt$1(x * x + gy * gy)];
+    return [atan2(x, gy) / n, g - sign$1(n) * sqrt$1(x * x + gy * gy)];
   };
 
   return project;
@@ -18822,7 +18770,7 @@ function shapeGenerator(path, field) {
  */
 function Graticule(params) {
   Transform.call(this, [], params);
-  this.generator = graticule();
+  this.generator = geoGraticule();
 }
 
 var prototype$48 = inherits(Graticule, Transform);
@@ -18864,7 +18812,7 @@ function Projection(params) {
 
 var prototype$49 = inherits(Projection, Transform);
 
-prototype$49.transform = function(_) {
+prototype$49.transform = function(_, pulse) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
@@ -18879,10 +18827,12 @@ prototype$49.transform = function(_) {
   }
 
   if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
-  if (_.fit) fit(proj, _);
+  if (_.fit) fit$1(proj, _);
+
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
-function fit(proj, _) {
+function fit$1(proj, _) {
   var data = geoJSON(_.fit);
   _.extent ? proj.fitExtent(_.extent, data)
     : _.size ? proj.fitSize(_.size, data) : 0;
@@ -20691,7 +20641,7 @@ var clockLast = 0;
 var clockNow = 0;
 var clockSkew = 0;
 var clock = typeof performance === "object" && performance.now ? performance : Date;
-var setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) { setTimeout(f, 17); };
+var setFrame = typeof requestAnimationFrame === "function" ? requestAnimationFrame : function(f) { setTimeout(f, 17); };
 function now() {
   return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
 }
@@ -21194,7 +21144,8 @@ prototype$59.finish = function(_, pulse) {
     }
     for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
       if (ops[i].name === 'links' && (op = ops[i].op.source)) {
-        dataflow.touch(op); break;
+        dataflow.pulse(op, dataflow.changeset().reflow());
+        break;
       }
     }
   }
@@ -29630,38 +29581,38 @@ function isSignal(_) {
   return _ && _.signal;
 }
 
-function transform$2(name) {
+function transform$3(name) {
   return function(params, value, parent) {
     return entry(name, value, params || undefined, parent);
   };
 }
 
-var Aggregate$1 = transform$2('Aggregate');
-var AxisTicks$1 = transform$2('AxisTicks');
-var Bound$1 = transform$2('Bound');
-var Collect$1 = transform$2('Collect');
-var Compare$1 = transform$2('Compare');
-var DataJoin$1 = transform$2('DataJoin');
-var Encode$1 = transform$2('Encode');
-var Facet$1 = transform$2('Facet');
-var Field$1 = transform$2('Field');
-var Key$1 = transform$2('Key');
-var LegendEntries$1 = transform$2('LegendEntries');
-var Mark$1 = transform$2('Mark');
-var MultiExtent$1 = transform$2('MultiExtent');
-var MultiValues$1 = transform$2('MultiValues');
-var Overlap$1 = transform$2('Overlap');
-var Params$1 = transform$2('Params');
-var PreFacet$1 = transform$2('PreFacet');
-var Projection$1 = transform$2('Projection');
-var Proxy$1 = transform$2('Proxy');
-var Relay$1 = transform$2('Relay');
-var Render$1 = transform$2('Render');
-var Scale$1 = transform$2('Scale');
-var Sieve$1 = transform$2('Sieve');
-var SortItems$1 = transform$2('SortItems');
-var ViewLayout$1 = transform$2('ViewLayout');
-var Values$1 = transform$2('Values');
+var Aggregate$1 = transform$3('Aggregate');
+var AxisTicks$1 = transform$3('AxisTicks');
+var Bound$1 = transform$3('Bound');
+var Collect$1 = transform$3('Collect');
+var Compare$1 = transform$3('Compare');
+var DataJoin$1 = transform$3('DataJoin');
+var Encode$1 = transform$3('Encode');
+var Facet$1 = transform$3('Facet');
+var Field$1 = transform$3('Field');
+var Key$1 = transform$3('Key');
+var LegendEntries$1 = transform$3('LegendEntries');
+var Mark$1 = transform$3('Mark');
+var MultiExtent$1 = transform$3('MultiExtent');
+var MultiValues$1 = transform$3('MultiValues');
+var Overlap$1 = transform$3('Overlap');
+var Params$1 = transform$3('Params');
+var PreFacet$1 = transform$3('PreFacet');
+var Projection$1 = transform$3('Projection');
+var Proxy$1 = transform$3('Proxy');
+var Relay$1 = transform$3('Relay');
+var Render$1 = transform$3('Render');
+var Scale$1 = transform$3('Scale');
+var Sieve$1 = transform$3('Sieve');
+var SortItems$1 = transform$3('SortItems');
+var ViewLayout$1 = transform$3('ViewLayout');
+var Values$1 = transform$3('Values');
 
 var FIELD_REF_ID = 0;
 
