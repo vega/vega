@@ -80,7 +80,8 @@ prototype.finish = function(_, pulse) {
     }
     for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
       if (ops[i].name === 'links' && (op = ops[i].op.source)) {
-        dataflow.touch(op); break;
+        dataflow.pulse(op, dataflow.changeset().reflow());
+        break;
       }
     }
   }
