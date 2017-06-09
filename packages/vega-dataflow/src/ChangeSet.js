@@ -10,7 +10,8 @@ export default function changeset() {
       rem = [],  // remove tuples
       mod = [],  // modify tuples
       remp = [], // remove by predicate
-      modp = []; // modify by predicate
+      modp = [], // modify by predicate
+      reflow = false;
 
   return {
     constructor: changeset,
@@ -32,7 +33,12 @@ export default function changeset() {
       return this;
     },
     encode: function(t, set) {
-      mod.push({tuple: t, field: set});
+      if (isFunction(t)) modp.push({filter: t, field: set});
+      else mod.push({tuple: t, field: set});
+      return this;
+    },
+    reflow: function() {
+      reflow = true;
       return this;
     },
     pulse: function(pulse, tuples) {
@@ -59,7 +65,7 @@ export default function changeset() {
       // modify
       function modify(t, f, v) {
         if (v) t[f] = v(t); else pulse.encode = f;
-        out[t._id] = t;
+        if (!reflow) out[t._id] = t;
       }
       for (out={}, i=0, n=mod.length; i<n; ++i) {
         m = mod[i];
@@ -74,7 +80,15 @@ export default function changeset() {
         });
         pulse.modifies(m.field);
       }
-      for (id in out) pulse.mod.push(out[id]);
+
+      // reflow?
+      if (reflow) {
+        pulse.mod = rem.length || remp.length
+          ? tuples.filter(function(t) { return out.hasOwnProperty(t._id); })
+          : tuples.slice();
+      } else {
+        for (id in out) pulse.mod.push(out[id]);
+      }
 
       return pulse;
     }
