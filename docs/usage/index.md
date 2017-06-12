@@ -45,7 +45,7 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 
 ```html
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.min.js"></script>"
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.min.js"></script>
 </head>
 ```
 
@@ -157,7 +157,7 @@ bin/vg2svg spec/arc.vg.json | svg2pdf > arc.pdf
 
 To include Vega in a node project, first install it from the command line using npm (`npm install vega`) or by including `"vega"` among the installed dependencies in your package.json file. In your node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
 
-<a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas project](https://github.com/Automattic/node-canvas) &ndash; an optional dependency of Vega &ndash; must be installed. However, be aware that some system configurations may initially run into errors while installing and compiling node-canvas, please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/wiki/_pages) if installation fails. That said, in most case Vega can be used without node-canvas to generate static SVG files.
+<a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas project](https://github.com/Automattic/node-canvas) &ndash; an optional dependency of Vega &ndash; must be installed. However, be aware that some system configurations may initially run into errors while installing and compiling node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/wiki/_pages) if installation fails. That said, in most cases Vega can be used without node-canvas to generate static SVG files.
 
 ### Example
 
