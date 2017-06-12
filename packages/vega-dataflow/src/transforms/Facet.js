@@ -64,16 +64,18 @@ prototype.transform = function(_, pulse) {
   this._group = _.group || {};
   this._targets.active = 0; // reset list of active subflows
 
+  pulse.visit(pulse.REM, function(t) {
+    var k = cache.get(t._id);
+    if (k !== undefined) {
+      cache.delete(t._id);
+      subflow(k).rem(t);
+    }
+  });
+
   pulse.visit(pulse.ADD, function(t) {
     var k = key(t);
     cache.set(t._id, k);
     subflow(k).add(t);
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var k = cache.get(t._id);
-    cache.delete(t._id);
-    subflow(k).rem(t);
   });
 
   if (rekey || pulse.modified(key.fields)) {
