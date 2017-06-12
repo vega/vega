@@ -1,11 +1,12 @@
 import {isArray} from 'vega-util';
 
-function valueSchema(type) {
+function valueSchema(type, nullable) {
   type = isArray(type) ? {"enum": type} : {"type": type};
 
-  var modType = type.type === "number" ? "number" : "string";
+  var modType = type.type === "number" ? "number" : "string",
+      valueType = nullable ? {"oneOf": [type, {"type": "null"}]} : type;
 
-  var valueRef  = {
+  var valueRef = {
     "type": "object",
     "allOf": [
       { "$ref": "#/refs/" + modType + "Modifiers" },
@@ -15,7 +16,7 @@ function valueSchema(type) {
             "oneOf": [
               { "$ref": "#/refs/signal" },
               {
-                "properties": {"value": {}},
+                "properties": {"value": valueType},
                 "required": ["value"]
               },
               {
@@ -29,7 +30,10 @@ function valueSchema(type) {
             ]
           },
           {
-            "required": ["band"]
+            "required": ["scale", "value"]
+          },
+          {
+            "required": ["scale", "band"]
           },
           {
             "required": ["offset"]
@@ -138,6 +142,7 @@ export default {
     "stringValue": valueSchema("string"),
     "booleanValue": valueSchema("boolean"),
     "arrayValue": valueSchema("array"),
+    "nullableStringValue": valueSchema("string", true),
 
     "colorRGB": {
       "type": "object",
@@ -182,7 +187,7 @@ export default {
     "colorValue": {
       "title": "ColorRef",
       "oneOf": [
-        {"$ref": "#/refs/stringValue"},
+        {"$ref": "#/refs/nullableStringValue"},
         {
           "type": "object",
           "properties": {
@@ -283,7 +288,7 @@ export default {
         "angle": {"$ref": "#/refs/numberValue"},
         "font": {"$ref": "#/refs/stringValue"},
         "fontSize": {"$ref": "#/refs/numberValue"},
-        "fontWeight": {"$ref": "#/refs/stringValue"},
+        "fontWeight": {"$ref": "#/refs/nullableStringValue"},
         "fontStyle": {"$ref": "#/refs/stringValue"}
       },
       "additionalProperties": true
