@@ -4,4 +4,5 @@ _site
 .jekyll-metadata
 build/*.zip
 docs/
+!docs/examples/*.vg.json
 test/
