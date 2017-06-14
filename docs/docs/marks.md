@@ -50,7 +50,7 @@ There are three primary property sets: _enter_, _update_, _exit_. The _enter_ pr
 
 In addition, an optional _hover_ set determines visual properties when the mouse cursor hovers over a mark instance. Upon mouse out, the _update_ set is applied.
 
-There is also a special group mark type (`group`) that can contain other marks, as well as local data, signal, scale, axis and legend definitions. Groups can be used to create visualizations consisting of grouped or repeated elements; examples include stacked graphs (each stack is a separate group containing a series of data values) and small multiples displays (each plot is contained in its own group). See the [[Group Marks]] page for more.
+There is also a special group mark type (`group`) that can contain other marks, as well as local data, signal, scale, axis and legend definitions. Groups can be used to create visualizations consisting of grouped or repeated elements; examples include stacked graphs (each stack is a separate group containing a series of data values) and small multiples displays (each plot is contained in its own group). See the [Group Marks](../marks/group) page for more.
 
 ## Top-Level Mark Properties
 
