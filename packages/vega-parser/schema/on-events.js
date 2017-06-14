@@ -1,5 +1,19 @@
 export default {
   "defs": {
+    "listener": {
+      "oneOf": [
+        {"$ref": "#/refs/signal"},
+        {
+          "type": "object",
+          "properties": {
+            "scale": {"type": "string"}
+          },
+          "required": ["scale"]
+        },
+        {"$ref": "#/defs/stream"}
+      ]
+    },
+
     "onEvents": {
       "type": "array",
       "items": {
@@ -10,19 +24,11 @@ export default {
               "events": {
                 "oneOf": [
                   {"$ref": "#/refs/selector"},
-                  {"$ref": "#/refs/signal"},
-                  {
-                    "type": "object",
-                    "properties": {
-                      "scale": {"type": "string"}
-                    },
-                    "required": ["scale"]
-                  },
-                  {"$ref": "#/defs/stream"},
+                  {"$ref": "#/defs/listener"},
                   {
                     "type": "array",
                     "minItems": 1,
-                    "items": {"$ref": "#/defs/stream"}
+                    "items": {"$ref": "#/defs/listener"}
                   }
                 ]
               },
