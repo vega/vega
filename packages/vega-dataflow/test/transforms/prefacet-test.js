@@ -77,3 +77,30 @@ tape('PreFacet partitions pre-faceted tuple sets', function(test) {
 
   test.end();
 });
+
+tape('PreFacet raises error if tuple sets are modified', function(test) {
+  var data = [
+    {"id": "a", "tuples": [{x:1},{x:2}]},
+    {"id": "b", "tuples": [{x:3},{x:4}]},
+    {"id": "c", "tuples": [{x:5},{x:6}]}
+  ];
+
+  function subflow(df) {
+    return df.add(Collect);
+  }
+
+  var tuples = util.field('tuples'),
+      df = new vega.Dataflow(),
+      source = df.add(Collect);
+  df.add(PreFacet, {subflow:subflow, field:tuples, pulse:source});
+
+  // -- add
+  df.pulse(source, changeset().insert(data)).run();
+
+  // -- test mod contents
+  test.throws(function() {
+    df.pulse(source, changeset().modify(data[0], 'tuples', [])).run();
+  });
+
+  test.end();
+});

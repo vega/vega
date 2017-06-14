@@ -1,6 +1,6 @@
 import Facet from './Facet';
 import {ingest} from '../Tuple';
-import {error, inherits} from 'vega-util';
+import {accessorFields, error, inherits} from 'vega-util';
 
 /**
  * Partitions pre-faceted data into tuple subflows.
@@ -22,7 +22,7 @@ prototype.transform = function(_, pulse) {
       flow = _.subflow,
       field = _.field;
 
-  if (_.modified('field')) {
+  if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
     error('PreFacet does not support field modification.');
   }
 
