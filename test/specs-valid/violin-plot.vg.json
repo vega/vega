@@ -149,7 +149,7 @@
           "encode": {
             "enter": {
               "fill": {"value": "black"},
-              "width": {"value": 1}
+              "width": {"value": 2}
             },
             "update": {
               "xc": {"signal": "plotWidth / 2"},
@@ -164,11 +164,11 @@
           "encode": {
             "enter": {
               "fill": {"value": "black"},
-              "height": {"value": 1}
+              "height": {"value": 2},
+              "width": {"value": 8}
             },
             "update": {
-              "xc": {"signal": "plotWidth / 2", "offset": 0.5},
-              "width": {"value": 8},
+              "xc": {"signal": "plotWidth / 2"},
               "y": {"scale": "yscale", "field": "median", "round": true}
             }
           }
