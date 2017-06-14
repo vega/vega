@@ -12,7 +12,7 @@ Vega can be deployed for interactive visualizations within a web browser, or to 
 - [Web Deployment](#web)
   - [Import Vega JavaScript](#import)
   - [Using the Vega View API](#view)
-  - [Using the vega-embed Module](#embed)
+  - [Using the Vega-Embed Module](#embed)
   - [Supporting Internet Explorer](#ie)
 - [Command Line Utilities](#cli)
 - [Server-Side Deployment](#node)
@@ -20,7 +20,7 @@ Vega can be deployed for interactive visualizations within a web browser, or to 
 
 ## <a name="web"></a>Web Deployment
 
-To deploy Vega on the web, first [import](#import) the requisite JavaScript libraries. Then, use the [Vega View API](#view) or the convenient [vega-embed](#embed) helper module to parse Vega specifications and add interactive visualizations to a web page.
+To deploy Vega on the web, first [import](#import) the requisite JavaScript libraries. Then, use the [Vega View API](#view) or the convenient [Vega-Embed](#embed) helper module to parse Vega specifications and add interactive visualizations to a web page.
 
 ### <a name="import"></a>Import Vega JavaScript
 
@@ -69,9 +69,9 @@ Vega visualizations will be added to a parent DOM element. This element must be 
 [Back to reference](#reference)
 
 
-### <a name="embed"></a>Using the vega-embed Module
+### <a name="embed"></a>Using the Vega-Embed Module
 
-The [vega-embed](https://github.com/vega/vega-embed) module provides a convenient method for adding either Vega or Vega-Lite visualizations to a web page. This module will take care of steps such as loading specification files from a URL and generating views with standard configuration options. In addition, you can include accompanying links to export images and view source. For more, see the [vega-embed repository](https://github.com/vega/vega-embed).
+The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenient method for adding either Vega or Vega-Lite visualizations to a web page. This module will take care of steps such as loading specification files from a URL and generating views with standard configuration options. In addition, you can include accompanying links to export images and view source. For more, see the [Vega-Embed repository](https://github.com/vega/vega-embed).
 
 ```html
 <head>
