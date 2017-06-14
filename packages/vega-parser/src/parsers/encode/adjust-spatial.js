@@ -22,11 +22,7 @@ export default function(encode, marktype) {
   }
 
   if (encode.xc) {
-    if (encode.width) {
-      code += 'o.x=o.xc-o.width/2;';
-    } else {
-      code += 'o.x=o.xc;';
-    }
+    code += 'o.x=o.xc-(o.width||0)/2;';
   }
 
   if (encode.y2) {
@@ -43,11 +39,7 @@ export default function(encode, marktype) {
   }
 
   if (encode.yc) {
-    if (encode.height) {
-      code += 'o.y=o.yc-o.height/2;';
-    } else {
-      code += 'o.y=o.yc;';
-    }
+    code += 'o.y=o.yc-(o.height||0)/2;';
   }
 
   return code;
