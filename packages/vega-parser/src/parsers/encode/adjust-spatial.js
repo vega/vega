@@ -14,10 +14,8 @@ export default function(encode, marktype) {
         code += 'if(o.x>o.x2)$=o.x,o.x=o.x2,o.x2=$;';
       }
       code += 'o.width=o.x2-o.x;';
-    } else if (encode.width) {
-      code += 'o.x=o.x2-o.width;';
     } else {
-      code += 'o.x=o.x2;';
+      code += 'o.x=o.x2-(o.width||0);';
     }
   }
 
@@ -31,10 +29,8 @@ export default function(encode, marktype) {
         code += 'if(o.y>o.y2)$=o.y,o.y=o.y2,o.y2=$;';
       }
       code += 'o.height=o.y2-o.y;';
-    } else if (encode.height) {
-      code += 'o.y=o.y2-o.height;';
     } else {
-      code += 'o.y=o.y2;';
+      code += 'o.y=o.y2-(o.height||0);';
     }
   }
 
