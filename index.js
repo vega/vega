@@ -1,6 +1,6 @@
 export {
   version
-} from './build/package';
+} from './package.json';
 
 export * from 'vega-statistics';
 

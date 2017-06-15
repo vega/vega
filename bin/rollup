@@ -3,7 +3,8 @@
 var rollup = require('rollup'),
     nodeResolve = require('rollup-plugin-node-resolve'),
     externals = process.argv[2] === '-e',
-    output = externals ? 'vega-core.js' : 'vega.js';
+    output = externals ? 'vega-core.js' : 'vega.js'
+    json = require('rollup-plugin-json');
 
 var modules = !externals ? [] : [
   'd3',
@@ -45,7 +46,8 @@ rollup.rollup({
     resolveCache(nodeResolve({
       jsnext: true,
       skip: ['yargs']
-    }))
+    })),
+    json()
   ]
 }).then(function(bundle) {
   return bundle.write({

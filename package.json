@@ -51,7 +51,7 @@
   },
   "scripts": {
     "rollup": "bin/rollup && bin/schema > build/vega-schema.json",
-    "prebuild": "rm -rf build && mkdir build && json2module package.json > build/package.js",
+    "prebuild": "rm -rf build && mkdir build",
     "build": "npm run rollup && bin/rollup -e",
     "postbuild": "uglifyjs build/vega.js -c -m -o build/vega.min.js && uglifyjs build/vega-core.js -c -m -o build/vega-core.min.js",
     "pretest": "npm run prebuild && npm run rollup",
@@ -83,8 +83,8 @@
   },
   "devDependencies": {
     "eslint": "2",
-    "json2module": "0.0",
     "rollup": "0.34",
+    "rollup-plugin-json": "2.3",
     "rollup-plugin-node-resolve": "2",
     "tape": "4",
     "tv4": "1",
