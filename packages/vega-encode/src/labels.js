@@ -2,7 +2,7 @@ import {Quantile, Quantize, Threshold, BinLinear, BinOrdinal} from './scale-type
 import {tickValues} from './ticks';
 import {peek} from 'vega-util';
 
-var discrete = {}
+var discrete = {};
 discrete[Quantile] = quantile;
 discrete[Quantize] = quantize;
 discrete[Threshold] = threshold;
