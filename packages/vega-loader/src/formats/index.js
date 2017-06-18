@@ -11,6 +11,10 @@ var formats = {
 };
 
 export default function(name, format) {
-  return arguments.length > 1 ? (formats[name] = format, this)
-    : formats.hasOwnProperty(name) ? formats[name] : null;
+  if (arguments.length > 1) {
+    formats[name] = format;
+    return this;
+  } else {
+    return formats.hasOwnProperty(name) ? formats[name] : null;
+  }
 }
