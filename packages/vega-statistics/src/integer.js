@@ -8,15 +8,23 @@ export default function(min, max) {
       a, b, d;
 
   dist.min = function(_) {
-    return arguments.length
-      ? (a = _ || 0, d = b - a, dist)
-      : a;
+    if (arguments.length) {
+      a = _ || 0;
+      d = b - a;
+      return dist;
+    } else {
+      return a;
+    }
   };
 
   dist.max = function(_) {
-    return arguments.length
-      ? (b = _ || 0, d = b - a, dist)
-      : b;
+    if (arguments.length) {
+      b = _ || 0;
+      d = b - a;
+      return dist;
+    } else {
+      return b;
+    }
   };
 
   dist.sample = function() {
