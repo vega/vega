@@ -35,7 +35,7 @@ tape('Handler should parse event names', function(test) {
 });
 
 tape('Handler should return array of handlers', function(test) {
-  var obj = {}
+  var obj = {};
   var h = new Handler();
   test.deepEqual(h.handlers(), []);
   h._handlers = {'click':[obj]};

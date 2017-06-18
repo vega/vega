@@ -24,7 +24,7 @@ prototype.empty = function() {
     this.x2 === -Number.MAX_VALUE &&
     this.y2 === -Number.MAX_VALUE
   );
-}
+};
 
 prototype.set = function(x1, y1, x2, y2) {
   if (x2 < x1) {
