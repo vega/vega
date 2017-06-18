@@ -18,17 +18,31 @@ export default function(p) {
 
   for (i=j=0; j<n; ++j) {
     c = p[j];
-    if (c === '\\') s += p.substring(i, j), i = ++j;
-    else if (c === q) push(), q = null, b = -1;
-    else if (q) continue;
-    else if (i === b && c === '"') i = j + 1, q = c;
-    else if (i === b && c === "'") i = j + 1, q = c;
-    else if (c === '.' && !b) (j > i) ? push() : (i = j + 1);
-    else if (c === '[') {
+    if (c === '\\') {
+      s += p.substring(i, j);
+      i = ++j;
+    } else if (c === q) {
+      push();
+      q = null;
+      b = -1;
+    } else if (q) {
+      continue;
+    } else if (i === b && c === '"') {
+      i = j + 1;
+      q = c;
+    } else if (i === b && c === "'") {
+      i = j + 1;
+      q = c;
+    } else if (c === '.' && !b) {
+      if (j > i) {
+        push();
+      } else {
+        i = j + 1;
+      }
+    } else if (c === '[') {
       if (j > i) push();
       b = i = j + 1;
-    }
-    else if (c === ']') {
+    } else if (c === ']') {
       if (!b) error('Access path missing open bracket: ' + p);
       if (b > 0) push();
       b = 0;
@@ -38,6 +52,11 @@ export default function(p) {
 
   if (b) error('Access path missing closing bracket: ' + p);
   if (q) error('Access path missing closing quote: ' + p);
-  if (j > i) ++j, push();
+
+  if (j > i) {
+    j++;
+    push();
+  }
+
   return path;
 }

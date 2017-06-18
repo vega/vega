@@ -27,7 +27,7 @@ tape('stringValue maps values', function(test) {
   // should handle quotes in strings
   var tests = ["'hello'", '"hello"'];
   tests.forEach(function(s) {
-    test.equal(s, (1,eval)(vega.stringValue(s)));
+    test.equal(s, eval(vega.stringValue(s)));
   });
 
   // should handle special characters in strings
@@ -37,7 +37,7 @@ tape('stringValue maps values', function(test) {
     '\u2029' // paragraph separator
   ];
   tests.forEach(function(s) {
-    test.equal(s, (1,eval)(vega.stringValue(s)));
+    test.equal(s, eval(vega.stringValue(s)));
   });
 
   test.end();

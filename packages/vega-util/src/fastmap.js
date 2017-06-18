@@ -38,7 +38,12 @@ export default function(input) {
       map.object = obj = {};
     },
     test: function(_) {
-      return arguments.length ? (test = _, map) : test;
+      if (arguments.length) {
+        test = _;
+        return map;
+      } else {
+        return test;
+      }
     },
     clean: function() {
       var next = {},
