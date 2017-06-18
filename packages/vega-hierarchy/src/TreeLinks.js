@@ -37,7 +37,10 @@ prototype.transform = function(_, pulse) {
 
   function modify(id) {
     var link = links[id];
-    if (link) mods[id] = 1, out.mod.push(link);
+    if (link) {
+      mods[id] = 1;
+      out.mod.push(link);
+    }
   }
 
   // process removed tuples
@@ -45,7 +48,10 @@ prototype.transform = function(_, pulse) {
   pulse.visit(pulse.REM, function(t) {
     var id = key(t),
         link = links[id];
-    if (link) delete links[id], out.rem.push(link);
+    if (link) {
+      delete links[id];
+      out.rem.push(link);
+    }
   });
 
   // create new link instances for added nodes with valid parents
