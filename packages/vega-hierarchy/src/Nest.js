@@ -31,12 +31,17 @@ prototype.transform = function(_, pulse) {
 
   if (!this.value || (mod = _.modified()) || pulse.changed()) {
     root = array(_.keys)
-      .reduce(function(n, k) { return (n.key(k), n)}, nest())
+      .reduce(function(n, k) {
+        n.key(k);
+        return n;
+      }, nest())
       .entries(pulse.source);
     tree = hierarchy({values: root}, children);
     map = tree.lookup = {};
     tree.each(function(node) {
-      if (tupleid(node.data) != null) map[key(node.data)] = node;
+      if (tupleid(node.data) != null) {
+        map[key(node.data)] = node;
+      }
     });
     this.value = tree;
   }
