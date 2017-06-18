@@ -9,9 +9,13 @@ export default function(support, bandwidth) {
       n = 0;
 
   dist.data = function(_) {
-    return arguments.length
-      ? (support = _, (n = _?_.length:0), dist.bandwidth(bandwidth))
-      : support;
+    if (arguments.length) {
+      support = _;
+      n = _ ? _.length : 0;
+      return dist.bandwidth(bandwidth);
+    } else {
+      return support;
+    }
   };
 
   dist.bandwidth = function(_) {

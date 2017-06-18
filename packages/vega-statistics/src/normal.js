@@ -5,21 +5,31 @@ export default function(mean, stdev) {
       dist = {};
 
   dist.mean = function(_) {
-    return arguments.length
-      ? (mu = _ || 0, next = NaN, dist)
-      : mu;
+    if (arguments.length) {
+      mu = _ || 0;
+      next = NaN;
+      return dist;
+    } else {
+      return mu;
+    }
   };
 
   dist.stdev = function(_) {
-    return arguments.length
-      ? (sigma = (_==null ? 1 : _), next = NaN, dist)
-      : sigma;
+    if (arguments.length) {
+      sigma = _ == null ? 1 : _;
+      next = NaN;
+      return dist;
+    } else {
+      return sigma;
+    }
   };
 
   dist.sample = function() {
     var x = 0, y = 0, rds, c;
     if (next === next) {
-      return x = next, next = NaN, x;
+      x = next;
+      next = NaN;
+      return x;
     }
     do {
       x = Math.random() * 2 - 1;
