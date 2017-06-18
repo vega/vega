@@ -44,7 +44,12 @@ prototype.transform = function(_, pulse) {
         x = map.get(k);
 
     if (x) {
-      (x.exit ? (--map.empty, out.add) : out.mod).push(x);
+      if (x.exit) {
+        map.empty--;
+        out.add.push(x);
+      } else {
+        out.mod.push(x);
+      }
     } else {
       map.set(k, (x = item(t)));
       out.add.push(x);

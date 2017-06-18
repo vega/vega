@@ -96,7 +96,12 @@ function partition(data, groupby, sort, field) {
     for (map={}, i=0, n=data.length; i<n; ++i) {
       t = data[i];
       k = groupby.map(get);
-      g = map[k] || (groups.push(map[k] = []), map[k]);
+      g = map[k];
+      if (!g) {
+        g = [];
+        map[k] = g;
+        groups.push(g);
+      }
       g.push(t);
     }
   }

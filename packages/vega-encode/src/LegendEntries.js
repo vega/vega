@@ -81,5 +81,9 @@ prototype.transform = function(_, pulse) {
     return t;
   });
 
-  return (out.source = out.add = this.value = items), out;
+  out.source = items;
+  out.add = items;
+  this.value = items;
+
+  return out;
 };
