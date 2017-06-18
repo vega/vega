@@ -65,8 +65,12 @@ function create(type, constructor) {
 }
 
 export function projection(type, proj) {
-  return arguments.length > 1 ? (projections[type] = create(type, proj), this)
-    : projections.hasOwnProperty(type) ? projections[type] : null;
+  if (arguments.length > 1) {
+    projections[type] = create(type, proj);
+    return this;
+  } else {
+    return projections.hasOwnProperty(type) ? projections[type] : null;
+  }
 }
 
 export function getPath(proj) {

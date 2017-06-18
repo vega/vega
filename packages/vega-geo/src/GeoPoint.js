@@ -29,8 +29,13 @@ prototype.transform = function(_, pulse) {
 
   function set(t) {
     var xy = proj([lon(t), lat(t)]);
-    if (xy) t[x] = xy[0], t[y] = xy[1];
-    else t[x] = undefined, t[y] = undefined;
+    if (xy) {
+      t[x] = xy[0];
+      t[y] = xy[1];
+    } else {
+      t[x] = undefined;
+      t[y] = undefined;
+    }
   }
 
   if (_.modified()) {
