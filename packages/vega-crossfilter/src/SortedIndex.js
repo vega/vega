@@ -69,7 +69,13 @@ export default function SortedIndex() {
   }
 
   function bisect(range, array) {
-    var n = array ? array.length : (array = value, size);
+    var n;
+    if (array) {
+      n = array.length;
+    } else {
+      array = value;
+      n = size;
+    }
     return [
       bisectLeft(array, range[0], 0, n),
       bisectRight(array, range[1], 0, n)

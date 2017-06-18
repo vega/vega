@@ -54,7 +54,8 @@ export default function Bitmaps() {
         curr[i] = 0; // clear unused bits
       }
 
-      return (data = copy, reindex);
+      data = copy;
+      return reindex;
     },
 
     size: function() { return data.length; },

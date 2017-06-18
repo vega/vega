@@ -218,7 +218,8 @@ prototype.remove = function(_, pulse, output) {
     indices[k].remove(n, map);
   }
 
-  return (this.reindex(pulse, n, map), map);
+  this.reindex(pulse, n, map);
+  return map;
 };
 
 // reindex filters and indices after propagation completes
