@@ -95,7 +95,7 @@ export default function() {
     }
 
     return tags;
-  }
+  };
 
   function getContext(canvas) {
     canvas.width = canvas.height = 1;
@@ -160,47 +160,102 @@ export default function() {
   }
 
   cloud.words = function(_) {
-    return arguments.length ? (words = _, cloud) : words;
+    if (arguments.length) {
+      words = _;
+      return cloud;
+    } else {
+      return words;
+    }
   };
 
   cloud.size = function(_) {
-    return arguments.length ? (size = [+_[0], +_[1]], cloud) : size;
+    if (arguments.length) {
+      size = [+_[0], +_[1]];
+      return cloud;
+    } else {
+      return size;
+    }
   };
 
   cloud.font = function(_) {
-    return arguments.length ? (font = functor(_), cloud) : font;
+    if (arguments.length) {
+      font = functor(_);
+      return cloud;
+    } else {
+      return font;
+    }
   };
 
   cloud.fontStyle = function(_) {
-    return arguments.length ? (fontStyle = functor(_), cloud) : fontStyle;
+    if (arguments.length) {
+      fontStyle = functor(_);
+      return cloud;
+    } else {
+      return fontStyle;
+    }
   };
 
   cloud.fontWeight = function(_) {
-    return arguments.length ? (fontWeight = functor(_), cloud) : fontWeight;
+    if (arguments.length) {
+      fontWeight = functor(_);
+      return cloud;
+    } else {
+      return fontWeight;
+    }
   };
 
   cloud.rotate = function(_) {
-    return arguments.length ? (rotate = functor(_), cloud) : rotate;
+    if (arguments.length) {
+      rotate = functor(_);
+      return cloud;
+    } else {
+      return rotate;
+    }
   };
 
   cloud.text = function(_) {
-    return arguments.length ? (text = functor(_), cloud) : text;
+    if (arguments.length) {
+      text = functor(_);
+      return cloud;
+    } else {
+      return text;
+    }
   };
 
   cloud.spiral = function(_) {
-    return arguments.length ? (spiral = spirals[_] || _, cloud) : spiral;
+    if (arguments.length) {
+      spiral = spirals[_] || _;
+      return cloud;
+    } else {
+      return spiral;
+    }
   };
 
   cloud.fontSize = function(_) {
-    return arguments.length ? (fontSize = functor(_), cloud) : fontSize;
+    if (arguments.length) {
+      fontSize = functor(_);
+      return cloud;
+    } else {
+      return fontSize;
+    }
   };
 
   cloud.padding = function(_) {
-    return arguments.length ? (padding = functor(_), cloud) : padding;
+    if (arguments.length) {
+      padding = functor(_);
+      return cloud;
+    } else {
+      return padding;
+    }
   };
 
   cloud.random = function(_) {
-    return arguments.length ? (random = _, cloud) : random;
+    if (arguments.length) {
+      random = _;
+      return cloud;
+    } else {
+      return random;
+    }
   };
 
   return cloud;
@@ -248,7 +303,10 @@ function cloudSprite(contextAndRatio, d, data, di) {
     c.translate((x + (w >> 1)) / ratio, (y + (h >> 1)) / ratio);
     if (d.rotate) c.rotate(d.rotate * cloudRadians);
     c.fillText(d.text, 0, 0);
-    if (d.padding) c.lineWidth = 2 * d.padding, c.strokeText(d.text, 0, 0);
+    if (d.padding) {
+      c.lineWidth = 2 * d.padding;
+      c.strokeText(d.text, 0, 0);
+    }
     c.restore();
     d.width = w;
     d.height = h;
