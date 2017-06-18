@@ -1,9 +1,7 @@
 export default function(fn, fields, name) {
-  return (
-    fn.fields = fields || [],
-    fn.fname = name,
-    fn
-  );
+  fn.fields = fields || [];
+  fn.fname = name;
+  return fn;
 }
 
 export function accessorName(fn) {

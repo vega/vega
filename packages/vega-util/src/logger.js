@@ -12,7 +12,12 @@ export default function(_) {
   var level = _ || None;
   return {
     level: function(_) {
-      return arguments.length ? (level = +_, this) : level;
+      if (arguments.length) {
+        level = +_;
+        return this;
+      } else {
+        return level;
+      }
     },
     warn: function() {
       if (level >= Warn) log('warn', 'WARN', arguments);

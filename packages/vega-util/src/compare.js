@@ -6,8 +6,12 @@ import stringValue from './stringValue';
 export default function(fields, orders) {
   var idx = [],
       cmp = (fields = array(fields)).map(function(f, i) {
-        return f == null ? null
-          : (idx.push(i), splitAccessPath(f).map(stringValue).join(']['));
+        if (f == null) {
+          return null;
+        } else {
+          idx.push(i);
+          return splitAccessPath(f).map(stringValue).join('][');
+        }
       }),
       n = idx.length - 1,
       ord = array(orders),
@@ -22,7 +26,13 @@ export default function(fields, orders) {
     u = '(u=a['+f+'])';
     v = '(v=b['+f+'])';
     d = '((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))';
-    lt = ord[i] !== 'descending' ? (gt=1, -1) : (gt=-1, 1);
+    if (ord[i] !== 'descending') {
+      gt = 1;
+      lt = -1;
+    } else {
+      gt = -1;
+      lt = 1;
+    }
     code += '(' + u+'<'+v+'||u==null)&&v!=null?' + lt
       + ':(u>v||v==null)&&u!=null?' + gt
       + ':'+d+'!==u&&v===v?' + lt
