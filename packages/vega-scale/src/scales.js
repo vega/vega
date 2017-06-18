@@ -25,7 +25,8 @@ function create(type, constructor) {
         : undefined;
     }
 
-    return s.type = type, s;
+    s.type = type;
+    return s;
   };
 }
 
