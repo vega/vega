@@ -104,7 +104,12 @@ function configureDomain(scale, _, df) {
 }
 
 function rawDomain(scale, raw) {
-  return raw ? (scale.domain(raw), raw.length) : -1;
+  if (raw) {
+    scale.domain(raw);
+    return raw.length;
+  } else {
+    return -1;
+  }
 }
 
 function configureRange(scale, _, count) {

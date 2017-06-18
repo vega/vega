@@ -16,7 +16,11 @@ export function validTicks(scale, ticks) {
   var range = scale.range(),
       lo = range[0],
       hi = peek(range);
-  if (lo > hi) range = hi, hi = lo, lo = range;
+  if (lo > hi) {
+    range = hi;
+    hi = lo;
+    lo = range;
+  }
 
   return ticks.filter(function(v) {
     return !((v = scale(v)) < lo || v > hi)

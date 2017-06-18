@@ -25,23 +25,31 @@ function quantize(scale) {
 
   values[0] = x0;
   while (++i < n) values[i] = (i * x1 - (i - n) * x0) / n;
-  return values.max = x1, values;
+  values.max = x1;
+
+  return values;
 }
 
 function quantile(scale) {
   var domain = scale.domain(),
       values = [domain[0]].concat(scale.quantiles());
-  return values.max = peek(domain), values;
+  values.max = peek(domain);
+
+  return values;
 }
 
 function threshold(scale) {
   var values = [-Infinity].concat(scale.domain());
-  return values.max = +Infinity, values;
+  values.max = +Infinity;
+
+  return values;
 }
 
 function bin(scale) {
   var values = scale.domain();
-  return values.max = values.pop(), values;
+  values.max = values.pop();
+
+  return values;
 }
 
 export function labelFormat(scale, format) {

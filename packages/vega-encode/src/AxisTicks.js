@@ -51,5 +51,9 @@ prototype.transform = function(_, pulse) {
     }));
   }
 
-  return (out.source = out.add = this.value = ticks), out;
+  out.source = ticks;
+  out.add = ticks;
+  this.value = ticks;
+
+  return out;
 };
