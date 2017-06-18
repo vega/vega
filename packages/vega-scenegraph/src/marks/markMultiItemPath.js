@@ -12,8 +12,12 @@ export default function(type, shape) {
 
   function bound(bounds, mark) {
     var items = mark.items;
-    return items.length === 0 ? bounds
-      : (shape(context(bounds), items), boundStroke(bounds, items[0]));
+    if (items.length === 0) {
+      return bounds;
+    } else {
+      shape(context(bounds), items);
+      return boundStroke(bounds, items[0]);
+    }
   }
 
   function draw(context, items) {

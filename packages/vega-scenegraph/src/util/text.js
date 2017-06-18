@@ -15,7 +15,8 @@ canvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
-  return fontHeight = height(item), estimate(textValue(item));
+  height(item);
+  return fontHeight = estimate(textValue(item));
 }
 
 function estimate(text) {
@@ -24,7 +25,8 @@ function estimate(text) {
 
 // measure text width if canvas is available
 function measureWidth(item) {
-  return context.font = font(item), measure(textValue(item));
+  font(item);
+  return context.font = measure(textValue(item));
 }
 
 function measure(text) {
@@ -44,15 +46,25 @@ function canvas(_) {
 
 export function textValue(item) {
   var s = item.text;
-  return s == null ? '' : item.limit > 0 ? truncate(item) : s + '';
+  if (s == null) {
+    return '';
+  } else {
+    return item.limit > 0 ? truncate(item) : s + '';
+  }
 }
 
 export function truncate(item) {
   var limit = +item.limit,
       text = item.text + '',
-      width = context
-        ? (context.font = font(item), measure)
-        : (fontHeight = height(item), estimate);
+      width;
+
+  if (context) {
+    context.font = font(item);
+    width = measure;
+  } else {
+    fontHeight = height(item);
+    width = estimate;
+  }
 
   if (width(text) < limit) return text;
 

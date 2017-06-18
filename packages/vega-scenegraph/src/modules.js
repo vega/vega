@@ -34,5 +34,10 @@ modules[None] = {};
 
 export function renderModule(name, _) {
   name = String(name || '').toLowerCase();
-  return arguments.length > 1 ? (modules[name] = _, this) : modules[name];
+  if (arguments.length > 1) {
+    modules[name] = _;
+    return this;
+  } else {
+    return modules[name];
+  }
 }
