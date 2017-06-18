@@ -22,25 +22,43 @@ export function band() {
         start = range[reverse - 0],
         stop = range[1 - reverse],
         space = bandSpace(n, paddingInner, paddingOuter);
+
     step = (stop - start) / (space || 1);
-    if (round) step = Math.floor(step);
+    if (round) {
+      step = Math.floor(step);
+    }
     start += (stop - start - step * (n - paddingInner)) * align;
     bandwidth = step * (1 - paddingInner);
-    if (round) start = Math.round(start), bandwidth = Math.round(bandwidth);
+    if (round) {
+      start = Math.round(start);
+      bandwidth = Math.round(bandwidth);
+    }
     var values = sequence(n).map(function(i) { return start + step * i; });
     return ordinalRange(reverse ? values.reverse() : values);
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (domain(_), rescale()) : domain();
+    if (arguments.length) {
+      domain(_);
+      return rescale();
+    } else {
+      return domain();
+    }
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = [+_[0], +_[1]], rescale()) : range.slice();
+    if (arguments.length) {
+      range = [+_[0], +_[1]];
+      return rescale();
+    } else {
+      return range.slice();
+    }
   };
 
   scale.rangeRound = function(_) {
-    return range = [+_[0], +_[1]], round = true, rescale();
+    range = [+_[0], +_[1]];
+    round = true;
+    return rescale();
   };
 
   scale.bandwidth = function() {
@@ -52,23 +70,49 @@ export function band() {
   };
 
   scale.round = function(_) {
-    return arguments.length ? (round = !!_, rescale()) : round;
+    if (arguments.length) {
+      round = !!_;
+      return rescale();
+    } else {
+      return round;
+    }
   };
 
   scale.padding = function(_) {
-    return arguments.length ? (paddingInner = paddingOuter = Math.max(0, Math.min(1, _)), rescale()) : paddingInner;
+    if (arguments.length) {
+      paddingOuter = Math.max(0, Math.min(1, _));
+      paddingInner = paddingOuter;
+      return rescale();
+    } else {
+      return paddingInner;
+    }
   };
 
   scale.paddingInner = function(_) {
-    return arguments.length ? (paddingInner = Math.max(0, Math.min(1, _)), rescale()) : paddingInner;
+    if (arguments.length) {
+      paddingInner = Math.max(0, Math.min(1, _));
+      return rescale();
+    } else {
+      return paddingInner;
+    }
   };
 
   scale.paddingOuter = function(_) {
-    return arguments.length ? (paddingOuter = Math.max(0, Math.min(1, _)), rescale()) : paddingOuter;
+    if (arguments.length) {
+      paddingOuter = Math.max(0, Math.min(1, _));
+      return rescale();
+    } else {
+      return paddingOuter;
+    }
   };
 
   scale.align = function(_) {
-    return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
+    if (arguments.length) {
+      align = Math.max(0, Math.min(1, _));
+      return rescale();
+    } else {
+      return align;
+    }
   };
 
   scale.invertRange = function(_) {
@@ -85,7 +129,11 @@ export function band() {
     if (lo !== lo || hi !== hi) return;
 
     // order range inputs, bail if outside of scale range
-    if (hi < lo) t = lo, lo = hi, hi = t;
+    if (hi < lo) {
+      t = lo;
+      lo = hi;
+      hi = t;
+    }
     if (hi < values[0] || lo > range[1-reverse]) return;
 
     // binary search to index into scale range
@@ -95,7 +143,12 @@ export function band() {
     // increment index a if lo is within padding gap
     if (lo - values[a] > bandwidth + 1e-10) ++a;
 
-    if (reverse) t = a, a = n - b, b = n - t; // map + swap
+    if (reverse) {
+      // map + swap
+      t = a;
+      a = n - b;
+      b = n - t;
+    }
     return (a > b) ? undefined : domain().slice(a, b+1);
   };
 
