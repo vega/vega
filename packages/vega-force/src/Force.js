@@ -44,10 +44,16 @@ prototype.transform = function(_, pulse) {
   if (!sim) {
     this.value = sim = simulation(pulse.source, _);
     sim.on('tick', rerun(pulse.dataflow, this));
-    if (!_.static) change = true, sim.tick(); // ensure we run on init
+    if (!_.static) {
+      change = true;
+      sim.tick(); // ensure we run on init
+    }
     pulse.modifies('index');
   } else {
-    if (change) pulse.modifies('index'), sim.nodes(pulse.source);
+    if (change) {
+      pulse.modifies('index');
+      sim.nodes(pulse.source);
+    }
     if (params) setup(sim, _);
   }
 
@@ -100,9 +106,17 @@ function simulation(nodes, _) {
       stop = sim.stop,
       restart = sim.restart;
 
-  sim.stopped = function() { return stopped; };
-  sim.restart = function() { return stopped = false, restart(); };
-  sim.stop = function() { return stopped = true, stop(); };
+  sim.stopped = function() {
+    return stopped;
+  };
+  sim.restart = function() {
+    stopped = false;
+    return restart();
+  };
+  sim.stop = function() {
+    stopped = true;
+    return stop();
+  };
 
   return setup(sim, _, true).on('end', function() { stopped = true; });
 }
@@ -124,15 +138,23 @@ function setup(sim, _, init) {
     sim.force(Forces + i, null); // remove
   }
 
-  return sim.numForces = f.length, sim;
+  sim.numForces = f.length;
+  return sim;
 }
 
 function getForce(_) {
   var f, p;
+
   if (!ForceMap.hasOwnProperty(_.force)) {
     error('Unrecognized force: ' + _.force);
   }
   f = ForceMap[_.force]();
-  for (p in _) if (isFunction(f[p])) f[p](_[p]);
+
+  for (p in _) {
+    if (isFunction(f[p])) {
+      f[p](_[p]);
+    }
+  }
+
   return f;
 }
