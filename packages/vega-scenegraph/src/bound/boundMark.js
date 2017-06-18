@@ -12,7 +12,13 @@ export default function(mark, bounds, opt) {
       i, n, item, b;
 
   if (type.nested) {
-    item = hasItems ? items[0] : (DUMMY.mark = mark, DUMMY); // no items, fake it
+    if (hasItems) {
+      item = items[0];
+    } else {
+      // no items, fake it
+      DUMMY.mark = mark;
+      item = DUMMY;
+    }
     b = boundItem(item, bound, opt);
     bounds = bounds && bounds.union(b) || b;
     return bounds;

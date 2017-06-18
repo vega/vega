@@ -37,7 +37,9 @@ export default function() {
     } else {
       ready = 1;
     }
-    x1 = x2, y1 = y2, r1 = r2;
+    x1 = x2;
+    y1 = y2;
+    r1 = r2;
   }
 
   function trail(data) {
@@ -56,27 +58,59 @@ export default function() {
       if (defined0) point(+x(d, i, data), +y(d, i, data), +size(d, i, data));
     }
 
-    if (buffer) return context = null, buffer + '' || null;
+    if (buffer) {
+      context = null;
+      return buffer + '' || null;
+    }
   }
 
   trail.x = function(_) {
-    return arguments.length ? (x = _, trail) : x;
+    if (arguments.length) {
+      x = _;
+      return trail;
+    } else {
+      return x;
+    }
   };
 
   trail.y = function(_) {
-    return arguments.length ? (y = _, trail) : y;
+    if (arguments.length) {
+      y = _;
+      return trail;
+    } else {
+      return y;
+    }
   };
 
   trail.size = function(_) {
-    return arguments.length ? (size = _, trail) : size;
+    if (arguments.length) {
+      size = _;
+      return trail;
+    } else {
+      return size;
+    }
   };
 
   trail.defined = function(_) {
-    return arguments.length ? (defined = _, trail) : defined;
+    if (arguments.length) {
+      defined = _;
+      return trail;
+    } else {
+      return defined;
+    }
   };
 
   trail.context = function(_) {
-    return arguments.length ? (_ == null ? context = null : context = _, trail) : context;
+    if (arguments.length) {
+      if (_ == null) {
+        context = null;
+      } else {
+        context = _;
+      }
+      return trail;
+    } else {
+      return context;
+    }
   };
 
   return trail;

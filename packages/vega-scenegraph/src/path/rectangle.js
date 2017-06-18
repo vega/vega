@@ -55,31 +55,64 @@ export default function() {
       context.closePath();
     }
 
-    if (buffer) return context = null, buffer + '' || null;
+    if (buffer) {
+      context = null;
+      return buffer + '' || null;
+    }
   }
 
   rectangle.x = function(_) {
-    return arguments.length ? (x = typeof _ === 'function' ? _ : constant(+_), rectangle) : x;
+    if (arguments.length) {
+      x = typeof _ === 'function' ? _ : constant(+_);
+      return rectangle;
+    } else {
+      return x;
+    }
   };
 
   rectangle.y = function(_) {
-    return arguments.length ? (y = typeof _ === 'function' ? _ : constant(+_), rectangle) : y;
+    if (arguments.length) {
+      y = typeof _ === 'function' ? _ : constant(+_);
+      return rectangle;
+    } else {
+      return y;
+    }
   };
 
   rectangle.width = function(_) {
-    return arguments.length ? (width = typeof _ === 'function' ? _ : constant(+_), rectangle) : width;
+    if (arguments.length) {
+      width = typeof _ === 'function' ? _ : constant(+_);
+      return rectangle;
+    } else {
+      return width;
+    }
   };
 
   rectangle.height = function(_) {
-    return arguments.length ? (height = typeof _ === 'function' ? _ : constant(+_), rectangle) : height;
+    if (arguments.length) {
+      height = typeof _ === 'function' ? _ : constant(+_);
+      return rectangle;
+    } else {
+      return height;
+    }
   };
 
   rectangle.cornerRadius = function(_) {
-    return arguments.length ? (cornerRadius = typeof _ === 'function' ? _ : constant(+_), rectangle) : cornerRadius;
+    if (arguments.length) {
+      cornerRadius = typeof _ === 'function' ? _ : constant(+_);
+      return rectangle;
+    } else {
+      return cornerRadius;
+    }
   };
 
   rectangle.context = function(_) {
-    return arguments.length ? (context = _ == null ? null : _, rectangle) : context;
+    if (arguments.length) {
+      context = _ == null ? null : _;
+      return rectangle;
+    } else {
+      return context;
+    }
   };
 
   return rectangle;

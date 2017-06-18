@@ -4,7 +4,8 @@ var bounds,
     circleThreshold = tau - 1e-8;
 
 export default function context(_) {
-  return bounds = _, context;
+  bounds = _;
+  return context;
 }
 
 function noop() {}

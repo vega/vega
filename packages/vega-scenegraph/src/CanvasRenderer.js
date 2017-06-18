@@ -31,7 +31,8 @@ prototype.initialize = function(el, width, height, origin) {
 prototype.resize = function(width, height, origin) {
   base.resize.call(this, width, height, origin);
   resize(this._canvas, this._width, this._height, this._origin);
-  return this._redraw = true, this;
+  this._redraw = true;
+  return this;
 };
 
 prototype.canvas = function() {
@@ -80,9 +81,12 @@ prototype._render = function(scene) {
 
   // setup
   g.save();
-  b = (this._redraw || b.empty())
-    ? (this._redraw = false, null)
-    : clipToBounds(g, b, o);
+  if (this._redraw || b.empty()) {
+    this._redraw = false;
+    b = null;
+  } else {
+    b = clipToBounds(g, b, o);
+  }
 
   this.clear(-o[0], -o[1], w, h);
 
