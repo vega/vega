@@ -39,7 +39,13 @@ prototype.transform = function(_, pulse) {
 };
 
 function shapeGenerator(path, field) {
-  var shape = function(_) { return path(field(_)); };
-  shape.context = function(_) { return path.context(_), shape; };
+  var shape = function(_) {
+    return path(field(_));
+  };
+  shape.context = function(_) {
+    path.context(_);
+    return shape;
+  };
+
   return shape;
 }

@@ -34,6 +34,7 @@ prototype.transform = function(_, pulse) {
     out.add.push(ingest(t));
   }
   src[0] = t;
+  out.source = src;
 
-  return out.source = src, out;
+  return out;
 };
