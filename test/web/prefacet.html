@@ -11,7 +11,12 @@
   <body>
     <div id="view"></div>
     <script>
-function xy(d) { return d.x = Math.random(), d.y = Math.random(), d; }
+
+function xy(d) {
+  d.x = Math.random();
+  d.y = Math.random();
+  return d;
+}
 var data = [
   { cat: 'a', tuples: [
     {'cat':'a'}
