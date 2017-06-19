@@ -16,6 +16,12 @@ export default {
         "gridScale": {"type": "string"},
         "tickSize": {"type": "number"},
         "labelPadding": {"type": "number"},
+        "labelOverlap": {
+          "oneOf": [
+            {"type": "boolean"},
+            {"enum": ["parity", "greedy"], "type": "string"}
+          ]
+        },
 
         "tickCount": {"$ref": "#/refs/numberOrSignal"},
         "format": {"$ref": "#/refs/stringOrSignal"},
