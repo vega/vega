@@ -159,7 +159,7 @@ Vega supports the following color spaces:
 
 ## <a name="production-rule"></a>Production Rules
 
-Visual properties can also be set by evaluating an `if-then-else` style chain of _production rules_. Rules consist of an array of _ValueRef_ objects, each of which must contain an additional `test` property. A single ValueRef, without a `test` property, can be specified as the final element within the rule to serve as the `else` condition. The value of this property should be a predicate [expression](Expressions), that evaluates to `true` or `false`. The visual property is set to the ValueRef corresponding to the first predicate that evaluates to `true` within the rule. If none do, the property is set to the final, predicate-less, ValueRef if one is specified. For example, the following specification sets a mark's fill colour using a production rule:
+Visual properties can also be set by evaluating an `if-then-else` style chain of _production rules_. Rules consist of an array of _ValueRef_ objects, each of which must contain an additional `test` property. A single ValueRef, without a `test` property, can be specified as the final element within the rule to serve as the `else` condition. The value of this property should be a predicate [expression](https://vega.github.io/vega/docs/expressions/), that evaluates to `true` or `false`. The visual property is set to the ValueRef corresponding to the first predicate that evaluates to `true` within the rule. If none do, the property is set to the final, predicate-less, ValueRef if one is specified. For example, the following specification sets a mark's fill colour using a production rule:
 
 ```json
 "fill": [
@@ -172,4 +172,4 @@ Visual properties can also be set by evaluating an `if-then-else` style chain of
 ]
 ```
 
-Here, if the ID of a particular data point [is found](https://github.com/vega/vega/wiki/Expressions#predicate-and-encoding-functions) is the `selectedPoints` data source, the fill color is determined by a scale transform. Otherwise, the mark instance is filled grey.
+Here, if the ID of a particular data point [is found](https://vega.github.io/vega/docs/expressions/#indata) is the `selectedPoints` data source, the fill color is determined by a scale transform. Otherwise, the mark instance is filled grey.
