@@ -177,16 +177,19 @@ prototype.resize = function() {
 
 prototype.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
+  return this;
 };
 
 prototype.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
+  return this;
 };
 
 prototype.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   this.on(s, null, (h.handler = handler, h));
+  return this;
 };
 
 prototype.removeSignalListener = function(name, handler) {
@@ -197,6 +200,7 @@ prototype.removeSignalListener = function(name, handler) {
             return u && u.handler === handler;
           });
   if (h.length) t.remove(h[0]);
+  return this;
 };
 
 prototype.preventDefault = function(_) {
