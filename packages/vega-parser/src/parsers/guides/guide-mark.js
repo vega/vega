@@ -1,6 +1,5 @@
+import {Skip} from './constants';
 import {extendEncode} from '../encode/encode-util';
-
-var skip = {name: 1, interactive: 1};
 
 export default function(type, role, key, dataRef, encode, extras) {
   return {
@@ -10,6 +9,6 @@ export default function(type, role, key, dataRef, encode, extras) {
     key:  key,
     from: dataRef,
     interactive: !!(extras && extras.interactive),
-    encode: extendEncode(encode, extras, skip)
+    encode: extendEncode(encode, extras, Skip)
   };
 }

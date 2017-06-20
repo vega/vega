@@ -19,3 +19,8 @@ export var LegendScales = [
   'strokeDash',
   'opacity'
 ];
+
+export var Skip = {
+  name: 1,
+  interactive: 1
+};
