@@ -66,6 +66,7 @@ export default {
         "encode": {
           "type": "object",
           "properties": {
+            "axis": {"$ref": "#/defs/guideEncode"},
             "ticks": {"$ref": "#/defs/guideEncode"},
             "labels": {"$ref": "#/defs/guideEncode"},
             "title": {"$ref": "#/defs/guideEncode"},
