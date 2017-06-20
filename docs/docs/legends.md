@@ -24,8 +24,6 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom legend styling. Supports encoding blocks for `legend`, `title`, `labels`, `symbols` and `gradient`. See [custom legend encodings](#custom). |
 | entryPadding  | {% include type t="Number|Value" %} | The padding between entries in a symbol legend.|
 | format        | {% include type t="String" %}  | The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values,  must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
-| interactive   | {% include type t="Boolean" %} | A boolean flag indicating if axis elements should respond to input events such as mouse hover.|
-| name          | {% include type t="String" %}  | A [mark name](../marks) property to apply to the legend group.|
 | offset        | {% include type t="Number|Value" %} | The offset in pixels by which to displace the legend from the data rectangle and axes.|
 | padding       | {% include type t="Number|Value" %} | The padding between the border and content of the legend group.|
 | tickCount     | {% include type t="Number" %}  | The desired number of tick values for quantitative legends.|
