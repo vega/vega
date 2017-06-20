@@ -1,10 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.vega = global.vega || {})));
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.34";
+var version = "3.0.0-beta.35";
 
 function bin$1(_) {
   // determine range
@@ -2254,7 +2254,13 @@ function newInterval(floori, offseti, count, field) {
     return newInterval(function(date) {
       if (date >= date) while (floori(date), !test(date)) date.setTime(date - 1);
     }, function(date, step) {
-      if (date >= date) while (--step >= 0) while (offseti(date, 1), !test(date)) {} // eslint-disable-line no-empty
+      if (date >= date) {
+        if (step < 0) while (++step <= 0) {
+          while (offseti(date, -1), !test(date)) {} // eslint-disable-line no-empty
+        } else while (--step >= 0) {
+          while (offseti(date, +1), !test(date)) {} // eslint-disable-line no-empty
+        }
+      }
     });
   };
 
@@ -11406,16 +11412,18 @@ prototype$26.transform = function(_, pulse) {
   this._group = _.group || {};
   this._targets.active = 0; // reset list of active subflows
 
+  pulse.visit(pulse.REM, function(t) {
+    var k = cache.get(t._id);
+    if (k !== undefined) {
+      cache.delete(t._id);
+      subflow(k).rem(t);
+    }
+  });
+
   pulse.visit(pulse.ADD, function(t) {
     var k = key(t);
     cache.set(t._id, k);
     subflow(k).add(t);
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var k = cache.get(t._id);
-    cache.delete(t._id);
-    subflow(k).rem(t);
   });
 
   if (rekey || pulse.modified(key.fields)) {
@@ -12026,7 +12034,7 @@ prototype$35.transform = function(_, pulse) {
       flow = _.subflow,
       field = _.field;
 
-  if (_.modified('field')) {
+  if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
     error('PreFacet does not support field modification.');
   }
 
@@ -21686,83 +21694,92 @@ Node.prototype = hierarchy.prototype = {
   copy: node_copy
 };
 
-function Node$2(value) {
-  this._ = value;
-  this.next = null;
-}
+var slice$5 = Array.prototype.slice;
 
 function shuffle$1(array) {
-  var i,
-      n = (array = array.slice()).length,
-      head = null,
-      node = head;
+  var m = array.length,
+      t,
+      i;
 
-  while (n) {
-    var next = new Node$2(array[n - 1]);
-    if (node) node = node.next = next;
-    else node = head = next;
-    array[i] = array[--n];
+  while (m) {
+    i = Math.random() * m-- | 0;
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
   }
 
-  return {
-    head: head,
-    tail: node
-  };
+  return array;
 }
 
 function enclose(circles) {
-  return encloseN(shuffle$1(circles), []);
-}
+  var i = 0, n = (circles = shuffle$1(slice$5.call(circles))).length, B = [], p, e;
 
-function encloses(a, b) {
-  var dx = b.x - a.x,
-      dy = b.y - a.y,
-      dr = a.r - b.r;
-  return dr * dr + 1e-6 > dx * dx + dy * dy;
-}
-
-// Returns the smallest circle that contains circles L and intersects circles B.
-function encloseN(L, B) {
-  var circle,
-      l0 = null,
-      l1 = L.head,
-      l2,
-      p1;
-
-  switch (B.length) {
-    case 1: circle = enclose1(B[0]); break;
-    case 2: circle = enclose2(B[0], B[1]); break;
-    case 3: circle = enclose3(B[0], B[1], B[2]); break;
+  while (i < n) {
+    p = circles[i];
+    if (e && enclosesWeak(e, p)) ++i;
+    else e = encloseBasis(B = extendBasis(B, p)), i = 0;
   }
 
-  while (l1) {
-    p1 = l1._, l2 = l1.next;
-    if (!circle || !encloses(circle, p1)) {
+  return e;
+}
 
-      // Temporarily truncate L before l1.
-      if (l0) L.tail = l0, l0.next = null;
-      else L.head = L.tail = null;
+function extendBasis(B, p) {
+  var i, j;
 
-      B.push(p1);
-      circle = encloseN(L, B); // Note: reorders L!
-      B.pop();
+  if (enclosesWeakAll(p, B)) return [p];
 
-      // Move l1 to the front of L and reconnect the truncated list L.
-      if (L.head) l1.next = L.head, L.head = l1;
-      else l1.next = null, L.head = L.tail = l1;
-      l0 = L.tail, l0.next = l2;
-
-    } else {
-      l0 = l1;
+  // If we get here then B must have at least one element.
+  for (i = 0; i < B.length; ++i) {
+    if (enclosesNot(p, B[i])
+        && enclosesWeakAll(encloseBasis2(B[i], p), B)) {
+      return [B[i], p];
     }
-    l1 = l2;
   }
 
-  L.tail = l0;
-  return circle;
+  // If we get here then B must have at least two elements.
+  for (i = 0; i < B.length - 1; ++i) {
+    for (j = i + 1; j < B.length; ++j) {
+      if (enclosesNot(encloseBasis2(B[i], B[j]), p)
+          && enclosesNot(encloseBasis2(B[i], p), B[j])
+          && enclosesNot(encloseBasis2(B[j], p), B[i])
+          && enclosesWeakAll(encloseBasis3(B[i], B[j], p), B)) {
+        return [B[i], B[j], p];
+      }
+    }
+  }
+
+  // If we get here then something is very wrong.
+  throw new Error;
 }
 
-function enclose1(a) {
+function enclosesNot(a, b) {
+  var dr = a.r - b.r, dx = b.x - a.x, dy = b.y - a.y;
+  return dr < 0 || dr * dr < dx * dx + dy * dy;
+}
+
+function enclosesWeak(a, b) {
+  var dr = a.r - b.r + 1e-6, dx = b.x - a.x, dy = b.y - a.y;
+  return dr > 0 && dr * dr > dx * dx + dy * dy;
+}
+
+function enclosesWeakAll(a, B) {
+  for (var i = 0; i < B.length; ++i) {
+    if (!enclosesWeak(a, B[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function encloseBasis(B) {
+  switch (B.length) {
+    case 1: return encloseBasis1(B[0]);
+    case 2: return encloseBasis2(B[0], B[1]);
+    case 3: return encloseBasis3(B[0], B[1], B[2]);
+  }
+}
+
+function encloseBasis1(a) {
   return {
     x: a.x,
     y: a.y,
@@ -21770,7 +21787,7 @@ function enclose1(a) {
   };
 }
 
-function enclose2(a, b) {
+function encloseBasis2(a, b) {
   var x1 = a.x, y1 = a.y, r1 = a.r,
       x2 = b.x, y2 = b.y, r2 = b.r,
       x21 = x2 - x1, y21 = y2 - y1, r21 = r2 - r1,
@@ -21782,30 +21799,31 @@ function enclose2(a, b) {
   };
 }
 
-function enclose3(a, b, c) {
+function encloseBasis3(a, b, c) {
   var x1 = a.x, y1 = a.y, r1 = a.r,
       x2 = b.x, y2 = b.y, r2 = b.r,
       x3 = c.x, y3 = c.y, r3 = c.r,
-      a2 = 2 * (x1 - x2),
-      b2 = 2 * (y1 - y2),
-      c2 = 2 * (r2 - r1),
-      d2 = x1 * x1 + y1 * y1 - r1 * r1 - x2 * x2 - y2 * y2 + r2 * r2,
-      a3 = 2 * (x1 - x3),
-      b3 = 2 * (y1 - y3),
-      c3 = 2 * (r3 - r1),
-      d3 = x1 * x1 + y1 * y1 - r1 * r1 - x3 * x3 - y3 * y3 + r3 * r3,
+      a2 = x1 - x2,
+      a3 = x1 - x3,
+      b2 = y1 - y2,
+      b3 = y1 - y3,
+      c2 = r2 - r1,
+      c3 = r3 - r1,
+      d1 = x1 * x1 + y1 * y1 - r1 * r1,
+      d2 = d1 - x2 * x2 - y2 * y2 + r2 * r2,
+      d3 = d1 - x3 * x3 - y3 * y3 + r3 * r3,
       ab = a3 * b2 - a2 * b3,
-      xa = (b2 * d3 - b3 * d2) / ab - x1,
+      xa = (b2 * d3 - b3 * d2) / (ab * 2) - x1,
       xb = (b3 * c2 - b2 * c3) / ab,
-      ya = (a3 * d2 - a2 * d3) / ab - y1,
+      ya = (a3 * d2 - a2 * d3) / (ab * 2) - y1,
       yb = (a2 * c3 - a3 * c2) / ab,
       A = xb * xb + yb * yb - 1,
-      B = 2 * (xa * xb + ya * yb + r1),
+      B = 2 * (r1 + xa * xb + ya * yb),
       C = xa * xa + ya * ya - r1 * r1,
-      r = (-B - Math.sqrt(B * B - 4 * A * C)) / (2 * A);
+      r = -(A ? (B + Math.sqrt(B * B - 4 * A * C)) / (2 * A) : C / B);
   return {
-    x: xa + xb * r + x1,
-    y: ya + yb * r + y1,
+    x: x1 + xa + xb * r,
+    y: y1 + ya + yb * r,
     r: r
   };
 }
@@ -21836,12 +21854,12 @@ function intersects(a, b) {
   return dr * dr - 1e-6 > dx * dx + dy * dy;
 }
 
-function distance2(node, x, y) {
+function score(node) {
   var a = node._,
       b = node.next._,
       ab = a.r + b.r,
-      dx = (a.x * b.r + b.x * a.r) / ab - x,
-      dy = (a.y * b.r + b.y * a.r) / ab - y;
+      dx = (a.x * b.r + b.x * a.r) / ab,
+      dy = (a.y * b.r + b.y * a.r) / ab;
   return dx * dx + dy * dy;
 }
 
@@ -21854,7 +21872,7 @@ function Node$1(circle) {
 function packEnclose(circles) {
   if (!(n = circles.length)) return 0;
 
-  var a, b, c, n;
+  var a, b, c, n, aa, ca, i, j, k, sj, sk;
 
   // Place the first circle.
   a = circles[0], a.x = 0, a.y = 0;
@@ -21866,15 +21884,6 @@ function packEnclose(circles) {
 
   // Place the third circle.
   place(b, a, c = circles[2]);
-
-  // Initialize the weighted centroid.
-  var aa = a.r * a.r,
-      ba = b.r * b.r,
-      ca = c.r * c.r,
-      oa = aa + ba + ca,
-      ox = aa * a.x + ba * b.x + ca * c.x,
-      oy = aa * a.y + ba * b.y + ca * c.y,
-      cx, cy, i, j, k, sj, sk;
 
   // Initialize the front-chain using the first three circles a, b and c.
   a = new Node$1(a), b = new Node$1(b), c = new Node$1(c);
@@ -21909,15 +21918,10 @@ function packEnclose(circles) {
     // Success! Insert the new circle c between a and b.
     c.previous = a, c.next = b, a.next = b.previous = b = c;
 
-    // Update the weighted centroid.
-    oa += ca = c._.r * c._.r;
-    ox += ca * c._.x;
-    oy += ca * c._.y;
-
     // Compute the new closest circle pair to the centroid.
-    aa = distance2(a, cx = ox / oa, cy = oy / oa);
+    aa = score(a);
     while ((c = c.next) !== b) {
-      if ((ca = distance2(c, cx, cy)) < aa) {
+      if ((ca = score(c)) < aa) {
         a = c, aa = ca;
       }
     }
@@ -28279,17 +28283,15 @@ function parse$3(code) {
 }
 
 var Constants = {
-  NaN:       'NaN',
-  E:         'Math.E',
-  LN2:       'Math.LN2',
-  LN10:      'Math.LN10',
-  LOG2E:     'Math.LOG2E',
-  LOG10E:    'Math.LOG10E',
-  PI:        'Math.PI',
-  SQRT1_2:   'Math.SQRT1_2',
-  SQRT2:     'Math.SQRT2',
-  MIN_VALUE: 'Number.MIN_VALUE',
-  MAX_VALUE: 'Number.MAX_VALUE'
+  NaN:     'NaN',
+  E:       'Math.E',
+  LN2:     'Math.LN2',
+  LN10:    'Math.LN10',
+  LOG2E:   'Math.LOG2E',
+  LOG10E:  'Math.LOG10E',
+  PI:      'Math.PI',
+  SQRT1_2: 'Math.SQRT1_2',
+  SQRT2:   'Math.SQRT2'
 };
 
 function Functions(codegen) {
@@ -28611,18 +28613,19 @@ function clampRange(range, min, max) {
       ];
 }
 
-function pinchDistance() {
-  return 'Math.sqrt('
-    + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
-    + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2)'
-    + ')';
+function pinchDistance(event) {
+  var t = event.touches,
+      dx = t[0].clientX - t[1].clientX,
+      dy = t[0].clientY - t[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
-function pinchAngle() {
-  return 'Math.atan2('
-    + 'event.touches[1].clientY - event.touches[0].clientY,'
-    + 'event.touches[1].clientX - event.touches[0].clientX'
-    + ')';
+function pinchAngle(event) {
+  var t = event.touches;
+  return Math.atan2(
+    t[0].clientY - t[1].clientY,
+    t[0].clientX - t[1].clientX
+  );
 }
 
 var _window = (typeof window !== 'undefined' && window) || null;
@@ -30020,19 +30023,13 @@ function adjustSpatial(encode, marktype) {
         code += 'if(o.x>o.x2)$=o.x,o.x=o.x2,o.x2=$;';
       }
       code += 'o.width=o.x2-o.x;';
-    } else if (encode.width) {
-      code += 'o.x=o.x2-o.width;';
     } else {
-      code += 'o.x=o.x2;';
+      code += 'o.x=o.x2-(o.width||0);';
     }
   }
 
   if (encode.xc) {
-    if (encode.width) {
-      code += 'o.x=o.xc-o.width/2;';
-    } else {
-      code += 'o.x=o.xc;';
-    }
+    code += 'o.x=o.xc-(o.width||0)/2;';
   }
 
   if (encode.y2) {
@@ -30041,19 +30038,13 @@ function adjustSpatial(encode, marktype) {
         code += 'if(o.y>o.y2)$=o.y,o.y=o.y2,o.y2=$;';
       }
       code += 'o.height=o.y2-o.y;';
-    } else if (encode.height) {
-      code += 'o.y=o.y2-o.height;';
     } else {
-      code += 'o.y=o.y2;';
+      code += 'o.y=o.y2-(o.height||0);';
     }
   }
 
   if (encode.yc) {
-    if (encode.height) {
-      code += 'o.y=o.yc-o.height/2;';
-    } else {
-      code += 'o.y=o.yc;';
-    }
+    code += 'o.y=o.yc-(o.height||0)/2;';
   }
 
   return code;
@@ -33219,16 +33210,19 @@ prototype$73.resize = function() {
 
 prototype$73.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
+  return this;
 };
 
 prototype$73.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
+  return this;
 };
 
 prototype$73.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   this.on(s, null, (h.handler = handler, h));
+  return this;
 };
 
 prototype$73.removeSignalListener = function(name, handler) {
@@ -33239,6 +33233,7 @@ prototype$73.removeSignalListener = function(name, handler) {
             return u && u.handler === handler;
           });
   if (h.length) t.remove(h[0]);
+  return this;
 };
 
 prototype$73.preventDefault = function(_) {

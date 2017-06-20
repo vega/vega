@@ -1,10 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-array'), require('d3-request'), require('d3-dsv'), require('topojson'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-scale-chromatic'), require('d3-interpolate'), require('d3-geo'), require('d3-format'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'd3-array', 'd3-request', 'd3-dsv', 'topojson', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-scale-chromatic', 'd3-interpolate', 'd3-geo', 'd3-format', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color'], factory) :
-  (factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-array'), require('d3-request'), require('d3-dsv'), require('topojson'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-scale-chromatic'), require('d3-interpolate'), require('d3-geo'), require('d3-format'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'd3-array', 'd3-request', 'd3-dsv', 'topojson', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-scale-chromatic', 'd3-interpolate', 'd3-geo', 'd3-format', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color'], factory) :
+	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-beta.34";
+var version = "3.0.0-beta.35";
 
 function bin$1(_) {
   // determine range
@@ -8003,16 +8003,18 @@ prototype$26.transform = function(_, pulse) {
   this._group = _.group || {};
   this._targets.active = 0; // reset list of active subflows
 
+  pulse.visit(pulse.REM, function(t) {
+    var k = cache.get(t._id);
+    if (k !== undefined) {
+      cache.delete(t._id);
+      subflow(k).rem(t);
+    }
+  });
+
   pulse.visit(pulse.ADD, function(t) {
     var k = key(t);
     cache.set(t._id, k);
     subflow(k).add(t);
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var k = cache.get(t._id);
-    cache.delete(t._id);
-    subflow(k).rem(t);
   });
 
   if (rekey || pulse.modified(key.fields)) {
@@ -8623,7 +8625,7 @@ prototype$35.transform = function(_, pulse) {
       flow = _.subflow,
       field = _.field;
 
-  if (_.modified('field')) {
+  if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
     error('PreFacet does not support field modification.');
   }
 
@@ -16414,17 +16416,15 @@ function parse$3(code) {
 }
 
 var Constants = {
-  NaN:       'NaN',
-  E:         'Math.E',
-  LN2:       'Math.LN2',
-  LN10:      'Math.LN10',
-  LOG2E:     'Math.LOG2E',
-  LOG10E:    'Math.LOG10E',
-  PI:        'Math.PI',
-  SQRT1_2:   'Math.SQRT1_2',
-  SQRT2:     'Math.SQRT2',
-  MIN_VALUE: 'Number.MIN_VALUE',
-  MAX_VALUE: 'Number.MAX_VALUE'
+  NaN:     'NaN',
+  E:       'Math.E',
+  LN2:     'Math.LN2',
+  LN10:    'Math.LN10',
+  LOG2E:   'Math.LOG2E',
+  LOG10E:  'Math.LOG10E',
+  PI:      'Math.PI',
+  SQRT1_2: 'Math.SQRT1_2',
+  SQRT2:   'Math.SQRT2'
 };
 
 function Functions(codegen) {
@@ -16746,18 +16746,19 @@ function clampRange(range, min, max) {
       ];
 }
 
-function pinchDistance() {
-  return 'Math.sqrt('
-    + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
-    + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2)'
-    + ')';
+function pinchDistance(event) {
+  var t = event.touches,
+      dx = t[0].clientX - t[1].clientX,
+      dy = t[0].clientY - t[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
-function pinchAngle() {
-  return 'Math.atan2('
-    + 'event.touches[1].clientY - event.touches[0].clientY,'
-    + 'event.touches[1].clientX - event.touches[0].clientX'
-    + ')';
+function pinchAngle(event) {
+  var t = event.touches;
+  return Math.atan2(
+    t[0].clientY - t[1].clientY,
+    t[0].clientX - t[1].clientX
+  );
 }
 
 var _window = (typeof window !== 'undefined' && window) || null;
@@ -18155,19 +18156,13 @@ function adjustSpatial(encode, marktype) {
         code += 'if(o.x>o.x2)$=o.x,o.x=o.x2,o.x2=$;';
       }
       code += 'o.width=o.x2-o.x;';
-    } else if (encode.width) {
-      code += 'o.x=o.x2-o.width;';
     } else {
-      code += 'o.x=o.x2;';
+      code += 'o.x=o.x2-(o.width||0);';
     }
   }
 
   if (encode.xc) {
-    if (encode.width) {
-      code += 'o.x=o.xc-o.width/2;';
-    } else {
-      code += 'o.x=o.xc;';
-    }
+    code += 'o.x=o.xc-(o.width||0)/2;';
   }
 
   if (encode.y2) {
@@ -18176,19 +18171,13 @@ function adjustSpatial(encode, marktype) {
         code += 'if(o.y>o.y2)$=o.y,o.y=o.y2,o.y2=$;';
       }
       code += 'o.height=o.y2-o.y;';
-    } else if (encode.height) {
-      code += 'o.y=o.y2-o.height;';
     } else {
-      code += 'o.y=o.y2;';
+      code += 'o.y=o.y2-(o.height||0);';
     }
   }
 
   if (encode.yc) {
-    if (encode.height) {
-      code += 'o.y=o.yc-o.height/2;';
-    } else {
-      code += 'o.y=o.yc;';
-    }
+    code += 'o.y=o.yc-(o.height||0)/2;';
   }
 
   return code;
@@ -21354,16 +21343,19 @@ prototype$73.resize = function() {
 
 prototype$73.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
+  return this;
 };
 
 prototype$73.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
+  return this;
 };
 
 prototype$73.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   this.on(s, null, (h.handler = handler, h));
+  return this;
 };
 
 prototype$73.removeSignalListener = function(name, handler) {
@@ -21374,6 +21366,7 @@ prototype$73.removeSignalListener = function(name, handler) {
             return u && u.handler === handler;
           });
   if (h.length) t.remove(h[0]);
+  return this;
 };
 
 prototype$73.preventDefault = function(_) {
