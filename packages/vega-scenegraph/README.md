@@ -17,7 +17,7 @@ quickly if you first search for help regarding node-canvas (as opposed to
 vega-scenegraph) installation. However, node-canvas is an optional dependency,
 and is not needed for SVG rendering. Bounds calculation can be performed
 without node-canvas, though in the case of text marks the resulting bounds
-may be slightly inaccurate due to approximate text size calculations.
+may be inaccurate due to approximate text size calculations.
 
 ## Scenegraph Definition
 
@@ -65,7 +65,7 @@ practice, a group mark may contain any number of group items, for example to
 describe a scene with multiple layers or sub-plots.
 
 For more information regarding supported mark properties, please see the
-[Vega marks documentation](https://github.com/vega/vega/wiki/Marks).
+[Vega marks documentation](https://vega.github.io/vega/docs/marks/).
 
 ## Scenegraph Serialization
 
@@ -77,3 +77,15 @@ have a `mark` property pointing to it's parent mark, and each mark will have a
 `group` property pointing to it's parent group (if any). The `toJSON` method
 maps a scenegraph instance to a JSON string, stripping any parent pointers or
 other non-standard properties.
+
+## Test Suite
+
+The vega-scengraph test suite compares rendered output for both Canvas (PNG)
+and SVG (text) renderers. Due to differences among platforms, pixel-level
+rendering by node-canvas can differ across operating systems.
+As a result, some test cases may break when running on a system other than
+Mac OS X (our standard platform for testing). If you are running on Linux or
+Windows and experience test failures, it does not necessarily indicate an
+issue with vega-scenegraph. In such cases, we recommend running the
+node-canvas test-server (`npm run test-server` from the node-canvas
+repository) to compare server-side and client-side rendering.
