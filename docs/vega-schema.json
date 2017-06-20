@@ -44,9 +44,6 @@
             "right"
           ]
         },
-        "name": {
-          "type": "string"
-        },
         "scale": {
           "type": "string"
         },
@@ -55,9 +52,6 @@
         },
         "zindex": {
           "type": "number"
-        },
-        "interactive": {
-          "type": "boolean"
         },
         "ticks": {
           "type": "boolean"
@@ -1330,9 +1324,6 @@
     "legend": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "size": {
           "type": "string"
         },
@@ -1375,9 +1366,6 @@
         },
         "zindex": {
           "type": "number"
-        },
-        "interactive": {
-          "type": "boolean"
         },
         "offset": {
           "oneOf": [
@@ -1438,13 +1426,13 @@
         "encode": {
           "type": "object",
           "properties": {
-            "legend": {
-              "$ref": "#/defs/guideEncode"
-            },
             "title": {
               "$ref": "#/defs/guideEncode"
             },
             "labels": {
+              "$ref": "#/defs/guideEncode"
+            },
+            "legend": {
               "$ref": "#/defs/guideEncode"
             },
             "symbols": {
