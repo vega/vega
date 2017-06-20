@@ -51,7 +51,7 @@ Valid settings for the axis _orient_ parameter.
 | `bottom`       | Place an x-axis along the bottom edge of the chart.|
 
 
-## Custom Axis Encodings
+## <a name="custom"></a>Custom Axis Encodings
 
 Custom mark properties can be set for all axis elements using the _encode_ parameter. The addressable elements are:
 
