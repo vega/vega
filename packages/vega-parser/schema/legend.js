@@ -78,6 +78,7 @@ export default {
         "encode": {
           "type": "object",
           "properties": {
+            "legend": {"$ref": "#/defs/guideEncode"},
             "title": {"$ref": "#/defs/guideEncode"},
             "labels": {"$ref": "#/defs/guideEncode"},
             "legend": {"$ref": "#/defs/guideEncode"},
