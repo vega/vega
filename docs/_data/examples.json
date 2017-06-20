@@ -32,7 +32,8 @@
         {"name": "box-plot"},
         {"name": "violin-plot"},
         {"name": "binned-scatter-plot"},
-        {"name": "contour-plot"}
+        {"name": "contour-plot"},
+        {"name": "wheat-plot"}
     ],
     "Geographic Maps": [
         {"name": "county-unemployment"},
