@@ -195,7 +195,8 @@
         "enter": {
           "x": {"value": 0},
           "height": {"value": 35},
-          "fill": {"value": "transparent"}
+          "fill": {"value": "transparent"},
+          "cursor": {"value": "ew-resize"}
         },
         "update": {
           "y": {"signal": "height"},
