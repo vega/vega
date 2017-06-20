@@ -568,11 +568,11 @@ Returns the x coordinate for the current event. If no arguments are provided, th
 Returns the y coordinate for the current event. If no arguments are provided, the top-level coordinate space of the view is used. If a scenegraph _item_ (or string group name) is provided, the coordinate space of the group item is used.
 
 <a name="pinchDistance" href="#pinchDistance">#</a>
-<b>pinchDistance</b>()<br/>
+<b>pinchDistance</b>(<i>event</i>)<br/>
 Returns the pixel distance between the first two touch points of a multi-touch event.
 
 <a name="pinchAngle" href="#pinchAngle">#</a>
-<b>pinchAngle</b>()<br/>
+<b>pinchAngle</b>(<i>event</i>)<br/>
 Returns the angle of the line connecting the first two touch points of a multi-touch event.
 
 <a name="inScope" href="#inScope">#</a>

@@ -148,10 +148,10 @@
           "encode": {
             "enter": {
               "fill": {"value": "black"},
-              "height": {"value": 1}
+              "height": {"value": 2}
             },
             "update": {
-              "yc": {"signal": "plotWidth / 2", "offset": -0.5},
+              "yc": {"signal": "plotWidth / 2"},
               "x": {"scale": "xscale", "field": "q1"},
               "x2": {"scale": "xscale", "field": "q3"}
             }
@@ -163,11 +163,11 @@
           "encode": {
             "enter": {
               "fill": {"value": "black"},
-              "width": {"value": 2}
+              "width": {"value": 2},
+              "height": {"value": 8}
             },
             "update": {
               "yc": {"signal": "plotWidth / 2"},
-              "height": {"value": 8},
               "x": {"scale": "xscale", "field": "median"}
             }
           }
