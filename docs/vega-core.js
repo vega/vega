@@ -4,7 +4,7 @@
 	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-beta.35";
+var version = "3.0.0-beta.36";
 
 function bin$1(_) {
   // determine range
@@ -8224,9 +8224,9 @@ prototype$30.transform = function(_, pulse) {
       as = _.as,
       mod = _.modified(),
       flag = _.initonly ? pulse.ADD
-      : mod ? pulse.SOURCE
-      : pulse.modified(func.fields) ? pulse.ADD_MOD
-      : pulse.ADD;
+        : mod ? pulse.SOURCE
+        : pulse.modified(func.fields) ? pulse.ADD_MOD
+        : pulse.ADD;
 
   function set(t) {
     t[as] = func(t, _);
@@ -8237,7 +8237,11 @@ prototype$30.transform = function(_, pulse) {
     pulse = pulse.materialize().reflow(true);
   }
 
-  return pulse.visit(flag, set).modifies(as);
+  if (!_.initonly) {
+    pulse.modifies(as);
+  }
+
+  return pulse.visit(flag, set);
 };
 
 /**
@@ -18143,12 +18147,39 @@ function parseParameter(_, scope) {
     : error('Unsupported parameter object: ' + $$2(_));
 }
 
-var Skip = toSet(['rule']);
+var Top = 'top';
+var Left = 'left';
+var Right = 'right';
+var Bottom = 'bottom';
+
+var Index  = 'index';
+var Label  = 'label';
+var Offset = 'offset';
+var Perc   = 'perc';
+var Size   = 'size';
+var Total  = 'total';
+var Value  = 'value';
+
+var LegendScales = [
+  'shape',
+  'size',
+  'fill',
+  'stroke',
+  'strokeDash',
+  'opacity'
+];
+
+var Skip = {
+  name: 1,
+  interactive: 1
+};
+
+var Skip$1 = toSet(['rule']);
 var Swap = toSet(['group', 'image', 'rect']);
 function adjustSpatial(encode, marktype) {
   var code = '';
 
-  if (Skip[marktype]) return code;
+  if (Skip$1[marktype]) return code;
 
   if (encode.x2) {
     if (encode.x) {
@@ -18494,8 +18525,6 @@ function has(key, encode) {
     || (encode.update && encode.update[key]);
 }
 
-var skip = {name: 1, interactive: 1};
-
 function guideMark(type, role, key, dataRef, encode, extras) {
   return {
     type: type,
@@ -18504,7 +18533,7 @@ function guideMark(type, role, key, dataRef, encode, extras) {
     key:  key,
     from: dataRef,
     interactive: !!(extras && extras.interactive),
-    encode: extendEncode(encode, extras, skip)
+    encode: extendEncode(encode, extras, Skip)
   };
 }
 
@@ -18543,28 +18572,6 @@ function legendGradient(scale, config, userEncode) {
 
   return guideMark(RectMark, LegendGradientRole, undefined, undefined, encode, userEncode);
 }
-
-var Top = 'top';
-var Left = 'left';
-var Right = 'right';
-var Bottom = 'bottom';
-
-var Index  = 'index';
-var Label  = 'label';
-var Offset = 'offset';
-var Perc   = 'perc';
-var Size   = 'size';
-var Total  = 'total';
-var Value  = 'value';
-
-var LegendScales = [
-  'shape',
-  'size',
-  'fill',
-  'stroke',
-  'strokeDash',
-  'opacity'
-];
 
 var alignExpr = 'datum.' + Perc + '<=0?"left"'
   + ':datum.' + Perc + '>=1?"right":"center"';
@@ -19283,11 +19290,12 @@ function parseMark(spec, scope) {
 function parseLegend(spec, scope) {
   var type = spec.type || 'symbol',
       config = scope.config.legend,
-      name = spec.name || undefined,
       encode = spec.encode || {},
-      interactive = !!spec.interactive,
+      legendEncode = encode.legend || {},
+      name = legendEncode.name || undefined,
+      interactive = !!legendEncode.interactive,
       datum, dataRef, entryRef, group, title,
-      legendEncode, entryEncode, children;
+      entryEncode, children;
 
   // resolve 'canonical' scale name
   var scale = spec.size || spec.shape || spec.fill || spec.stroke
@@ -19313,7 +19321,7 @@ function parseLegend(spec, scope) {
       padding:       encoder(value(spec.padding, config.padding)),
       titlePadding:  encoder(value(spec.titlePadding, config.titlePadding))
     }
-  }, encode.legend);
+  }, legendEncode, Skip);
 
   // encoding properties for legend entry sub-group
   entryEncode = {
@@ -19817,10 +19825,11 @@ function axisTitle(spec, config, userEncode, dataRef) {
 
 function parseAxis(spec, scope) {
   var config = axisConfig(spec, scope),
-      name = spec.name || undefined,
       encode = spec.encode || {},
-      interactive = !!spec.interactive,
-      datum, dataRef, ticksRef, size, group, axisEncode, children;
+      axisEncode = encode.axis || {},
+      name = axisEncode.name || undefined,
+      interactive = !!axisEncode.interactive,
+      datum, dataRef, ticksRef, size, group, children;
 
   // single-element data source for axis group
   datum = {
@@ -19843,7 +19852,7 @@ function parseAxis(spec, scope) {
       minExtent:    encoder(spec.minExtent || config.minExtent),
       maxExtent:    encoder(spec.maxExtent || config.maxExtent)
     }
-  }, encode.axis);
+  }, encode.axis, Skip);
 
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks$1({

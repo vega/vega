@@ -163,6 +163,9 @@
         "encode": {
           "type": "object",
           "properties": {
+            "axis": {
+              "$ref": "#/defs/guideEncode"
+            },
             "ticks": {
               "$ref": "#/defs/guideEncode"
             },
@@ -1435,13 +1438,13 @@
         "encode": {
           "type": "object",
           "properties": {
+            "legend": {
+              "$ref": "#/defs/guideEncode"
+            },
             "title": {
               "$ref": "#/defs/guideEncode"
             },
             "labels": {
-              "$ref": "#/defs/guideEncode"
-            },
-            "legend": {
               "$ref": "#/defs/guideEncode"
             },
             "symbols": {
