@@ -194,11 +194,11 @@
     {
       "shape": "innerScale",
       "orient": "bottom-right",
-      "interactive": true,
       "offset": 6,
       "padding": 4,
       "encode": {
         "legend": {
+          "interactive": true,
           "enter": {
             "fill": {"value": "#fff"},
             "fillOpacity": {"value": 0.5},
