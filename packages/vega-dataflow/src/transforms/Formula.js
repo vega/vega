@@ -21,9 +21,9 @@ prototype.transform = function(_, pulse) {
       as = _.as,
       mod = _.modified(),
       flag = _.initonly ? pulse.ADD
-      : mod ? pulse.SOURCE
-      : pulse.modified(func.fields) ? pulse.ADD_MOD
-      : pulse.ADD;
+        : mod ? pulse.SOURCE
+        : pulse.modified(func.fields) ? pulse.ADD_MOD
+        : pulse.ADD;
 
   function set(t) {
     t[as] = func(t, _);
@@ -34,5 +34,9 @@ prototype.transform = function(_, pulse) {
     pulse = pulse.materialize().reflow(true);
   }
 
-  return pulse.visit(flag, set).modifies(as);
+  if (!_.initonly) {
+    pulse.modifies(as);
+  }
+
+  return pulse.visit(flag, set);
 };
