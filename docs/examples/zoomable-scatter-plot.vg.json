@@ -112,7 +112,7 @@
       "on": [
         {
           "events": {"type": "touchstart", "filter": "event.touches.length===2"},
-          "update": "pinchDistance()"
+          "update": "pinchDistance(event)"
         },
         {
           "events": {"signal": "dist2"},
@@ -124,7 +124,7 @@
       "name": "dist2", "value": 0,
       "on": [{
         "events": {"type": "touchmove", "consume": true, "filter": "event.touches.length===2"},
-        "update": "pinchDistance()"
+        "update": "pinchDistance(event)"
       }]
     },
 
