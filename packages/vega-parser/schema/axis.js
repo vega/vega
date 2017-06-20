@@ -4,11 +4,9 @@ export default {
       "type": "object",
       "properties": {
         "orient": {"enum": ["top", "bottom", "left", "right"]},
-        "name": {"type": "string"},
         "scale": {"type": "string"},
         "title": {"$ref": "#/refs/stringOrSignal"},
         "zindex": {"type": "number"},
-        "interactive": {"type": "boolean"},
         "ticks": {"type": "boolean"},
         "labels": {"type": "boolean"},
         "domain": {"type": "boolean"},

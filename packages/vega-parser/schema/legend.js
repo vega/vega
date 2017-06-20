@@ -14,7 +14,6 @@ export default {
     "legend": {
       "type": "object",
       "properties": {
-        "name":       {"type": "string"},
         "size":       {"type": "string"},
         "shape":      {"type": "string"},
         "fill":       {"type": "string"},
@@ -39,7 +38,6 @@ export default {
         },
         "title": {"$ref": "#/refs/stringOrSignal"},
         "zindex": {"type": "number"},
-        "interactive": {"type": "boolean"},
 
         "offset": {
           "oneOf": [
@@ -78,7 +76,6 @@ export default {
         "encode": {
           "type": "object",
           "properties": {
-            "legend": {"$ref": "#/defs/guideEncode"},
             "title": {"$ref": "#/defs/guideEncode"},
             "labels": {"$ref": "#/defs/guideEncode"},
             "legend": {"$ref": "#/defs/guideEncode"},
