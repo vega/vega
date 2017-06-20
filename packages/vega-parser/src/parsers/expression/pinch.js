@@ -1,13 +1,14 @@
-export function pinchDistance() {
-  return 'Math.sqrt('
-    + 'Math.pow(event.touches[0].clientX - event.touches[1].clientX, 2) + '
-    + 'Math.pow(event.touches[0].clientY - event.touches[1].clientY, 2)'
-    + ')';
+export function pinchDistance(event) {
+  var t = event.touches,
+      dx = t[0].clientX - t[1].clientX,
+      dy = t[0].clientY - t[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
-export function pinchAngle() {
-  return 'Math.atan2('
-    + 'event.touches[1].clientY - event.touches[0].clientY,'
-    + 'event.touches[1].clientX - event.touches[0].clientX'
-    + ')';
+export function pinchAngle(event) {
+  var t = event.touches;
+  return Math.atan2(
+    t[0].clientY - t[1].clientY,
+    t[0].clientX - t[1].clientX
+  );
 }
