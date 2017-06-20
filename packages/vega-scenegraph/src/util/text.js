@@ -15,8 +15,8 @@ canvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
-  height(item);
-  return fontHeight = estimate(textValue(item));
+  fontHeight = height(item)
+  return estimate(textValue(item));
 }
 
 function estimate(text) {
@@ -25,8 +25,8 @@ function estimate(text) {
 
 // measure text width if canvas is available
 function measureWidth(item) {
-  font(item);
-  return context.font = measure(textValue(item));
+  context.font = font(item);
+  return measure(textValue(item));
 }
 
 function measure(text) {
