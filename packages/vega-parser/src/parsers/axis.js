@@ -8,15 +8,17 @@ import guideGroup from './guides/guide-group';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
+import {Skip} from './guides/constants';
 import {ref} from '../util';
 import {Collect, AxisTicks} from '../transforms';
 
 export default function(spec, scope) {
   var config = axisConfig(spec, scope),
-      name = spec.name || undefined,
       encode = spec.encode || {},
-      interactive = !!spec.interactive,
-      datum, dataRef, ticksRef, size, group, axisEncode, children;
+      axisEncode = encode.axis || {},
+      name = axisEncode.name || undefined,
+      interactive = !!axisEncode.interactive,
+      datum, dataRef, ticksRef, size, group, children;
 
   // single-element data source for axis group
   datum = {
@@ -39,7 +41,7 @@ export default function(spec, scope) {
       minExtent:    encoder(spec.minExtent || config.minExtent),
       maxExtent:    encoder(spec.maxExtent || config.maxExtent)
     }
-  }, encode.axis);
+  }, encode.axis, Skip);
 
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks({

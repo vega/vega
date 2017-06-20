@@ -7,6 +7,7 @@ import guideGroup from './guides/guide-group';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
 import {addEncode, encoder, extendEncode} from './encode/encode-util';
+import {Skip} from './guides/constants';
 import {ref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
@@ -14,11 +15,12 @@ import {error} from 'vega-util';
 export default function(spec, scope) {
   var type = spec.type || 'symbol',
       config = scope.config.legend,
-      name = spec.name || undefined,
       encode = spec.encode || {},
-      interactive = !!spec.interactive,
+      legendEncode = encode.legend || {},
+      name = legendEncode.name || undefined,
+      interactive = !!legendEncode.interactive,
       datum, dataRef, entryRef, group, title,
-      legendEncode, entryEncode, children;
+      entryEncode, children;
 
   // resolve 'canonical' scale name
   var scale = spec.size || spec.shape || spec.fill || spec.stroke
@@ -44,7 +46,7 @@ export default function(spec, scope) {
       padding:       encoder(value(spec.padding, config.padding)),
       titlePadding:  encoder(value(spec.titlePadding, config.titlePadding))
     }
-  }, encode.legend);
+  }, legendEncode, Skip);
 
   // encoding properties for legend entry sub-group
   entryEncode = {
