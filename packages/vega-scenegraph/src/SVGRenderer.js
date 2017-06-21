@@ -451,5 +451,8 @@ prototype.style = function(el, o) {
 };
 
 function href() {
-  return typeof window !== 'undefined' ? window.location.href : '';
+  var loc;
+  return typeof window === 'undefined' ? ''
+    : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length)
+    : loc.href;
 }
