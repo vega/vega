@@ -4,7 +4,7 @@
 	(factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.37";
+var version = "3.0.0-beta.38";
 
 function bin$1(_) {
   // determine range
@@ -8087,7 +8087,10 @@ prototype$8.style = function(el, o) {
 };
 
 function href() {
-  return typeof window !== 'undefined' ? window.location.href : '';
+  var loc;
+  return typeof window === 'undefined' ? ''
+    : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length)
+    : loc.href;
 }
 
 function SVGStringRenderer(loader) {

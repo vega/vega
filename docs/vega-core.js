@@ -4,7 +4,7 @@
 	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-beta.37";
+var version = "3.0.0-beta.38";
 
 function bin$1(_) {
   // determine range
@@ -4678,7 +4678,10 @@ prototype$8.style = function(el, o) {
 };
 
 function href() {
-  return typeof window !== 'undefined' ? window.location.href : '';
+  var loc;
+  return typeof window === 'undefined' ? ''
+    : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length)
+    : loc.href;
 }
 
 function SVGStringRenderer(loader) {
