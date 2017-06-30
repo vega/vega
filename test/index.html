@@ -72,7 +72,10 @@ loader.load('specs-valid.json')
 
 function load(name) {
   if (!name) {
-    if (view) view.finalize(), container.innerHTML = '';
+    if (view) {
+      view.finalize();
+      container.innerHTML = '';
+    }
     return;
   }
 
