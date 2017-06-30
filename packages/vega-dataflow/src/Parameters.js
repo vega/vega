@@ -36,7 +36,7 @@ prototype.set = function(name, index, value, force) {
     }
   } else if (v !== value || force) {
     o[name] = value;
-    mod[name] = isArray(value) ? value.length : -1;
+    mod[name] = isArray(value) ? 1 + value.length : -1;
   }
 
   return o;
@@ -64,7 +64,7 @@ prototype.modified = function(name, index) {
     return false;
   }
   return (index != null && index >= 0)
-    ? (index < mod[name] || !!mod[index + ':' + name])
+    ? (index + 1 < mod[name] || !!mod[index + ':' + name])
     : !!mod[name];
 };
 
