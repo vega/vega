@@ -21,6 +21,7 @@ import {screen, windowsize} from './window';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import scaleGradient from './scale-gradient';
+import {panLinear, panLog, panPow, zoomLinear, zoomLog, zoomPow} from './scale-transform';
 import {geoArea, geoBounds, geoCentroid} from './geo';
 import {data, indata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
@@ -72,6 +73,12 @@ export var functionContext = {
   span: span,
   bandspace: bandspace,
   inrange: inrange,
+  panLinear: panLinear,
+  panLog: panLog,
+  panPow: panPow,
+  zoomLinear: zoomLinear,
+  zoomLog: zoomLog,
+  zoomPow: zoomPow,
   encode: encode,
   modify: modify
 };
