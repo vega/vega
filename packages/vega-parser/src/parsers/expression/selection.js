@@ -161,25 +161,23 @@ export function vlIntervalDomain(name, encoding, field, op) {
       entry = entries[0],
       i = 0, n, interval, index, values, discrete;
 
-   if (!entry) return undefined;
+  if (!entry) return undefined;
 
-   for (n = entry.intervals.length; i<n; ++i) {
+  for (n = entry.intervals.length; i<n; ++i) {
     interval = entry.intervals[i];
-     if ((encoding && interval.encoding === encoding) ||
-         (field && interval.field === field)) {
-       index = i;
-       discrete = interval.extent.length > 2;
-       break;
-     }
-   }
+    if ((encoding && interval.encoding === encoding) ||
+        (field && interval.field === field)) {
+      index = i;
+      discrete = interval.extent.length > 2;
+      break;
+    }
+  }
 
-   values = entries.reduce(function(acc, entry) {
-     var extent = entry.intervals[index].extent,
-       value = discrete ?
-         extent.map(function (d) {
-           return {unit: entry.unit, value: d};
-         }) :
-         {unit: entry.unit, value: extent};
+  values = entries.reduce(function(acc, entry) {
+  var extent = entry.intervals[index].extent,
+      value = discrete
+         ? extent.map(function (d) { return {unit: entry.unit, value: d}; })
+         : {unit: entry.unit, value: extent};
 
      if (discrete) {
        acc.push.apply(acc, value);
@@ -188,10 +186,10 @@ export function vlIntervalDomain(name, encoding, field, op) {
        acc.push(value);
        return acc;
      }
-   }, []);
+  }, []);
 
 
-   return discrete ? discreteDomain(values, op) : continuousDomain(values, op);
+  return discrete ? discreteDomain(values, op) : continuousDomain(values, op);
 }
 
 function discreteDomain(entries, op) {
