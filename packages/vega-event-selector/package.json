@@ -1,6 +1,6 @@
 {
   "name": "vega-event-selector",
-  "version": "2.0.0-beta",
+  "version": "2.0.0",
   "description": "A CSS-inspired language to select, sequence, and compose DOM events.",
   "keywords": [
     "vega",
@@ -38,9 +38,9 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-event-selector.zip -- LICENSE README.md build/vega-event-selector.js build/vega-event-selector.min.js"
   },
   "devDependencies": {
-    "eslint": "2",
-    "rollup": "0.36",
+    "eslint": "4",
+    "rollup": "0.43",
     "tape": "4",
-    "uglify-js": "2"
+    "uglify-js": "3"
   }
 }
