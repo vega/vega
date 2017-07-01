@@ -155,7 +155,7 @@ tape('Parser should allow binary expressions', function(test) {
     operator: '+',
     left: {type: 'Literal', value: 1, raw: '1'},
     right: {type: 'Literal', value: 2, raw: '2'}
-  })
+  });
   test.doesNotThrow(parse('1-2'));
   test.doesNotThrow(parse('1*2'));
   test.doesNotThrow(parse('1/2'));

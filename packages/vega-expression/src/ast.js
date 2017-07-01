@@ -10,7 +10,7 @@ ASTNode.prototype.visit = function(visitor) {
   for (c=children(node), i=0, n=c.length; i<n; ++i) {
     if (c[i].visit(visitor)) return 1;
   }
-}
+};
 
 function children(node) {
   switch (node.type) {
