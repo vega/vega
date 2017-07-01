@@ -20,12 +20,11 @@ prototype.transform = function(_, pulse) {
       mod = pulse.changed(),
       sort = _.sort,
       data = this.value,
-      push = function(t) { data.push(t); },
-      n = 0, map;
+      map;
 
   if (out.rem.length) { // build id map and filter data array
     map = {};
-    out.visit(out.REM, function(t) { map[t._id] = 1; ++n; });
+    out.visit(out.REM, function(t) { map[t._id] = 1; });
     data = data.filter(function(t) { return !map[t._id]; });
   }
 
@@ -41,7 +40,7 @@ prototype.transform = function(_, pulse) {
     }
   } else if (add) {
     // no sort, so simply add new tuples
-    out.visit(out.ADD, push);
+    out.visit(out.ADD, function(t) { data.push(t); });
   }
 
   this.modified(mod);
