@@ -48,10 +48,9 @@ function onStream(df, stream, target, update, params, options) {
   } else if (isFunction(update)) {
     op = new Operator(null, update, params, false);
     func = function(e) {
-      var t = target(e);
+      var v, t = target(e);
       op.evaluate(e);
-      var v = op.value;
-      isChangeSet(v) ? df.pulse(t, v, options) : df.update(t, v, opt);
+      isChangeSet(v = op.value) ? df.pulse(t, v, options) : df.update(t, v, opt);
     };
   } else {
     func = function(e) {
