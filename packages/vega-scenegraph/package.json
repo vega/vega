@@ -41,12 +41,12 @@
     "canvas": "^1.6"
   },
   "devDependencies": {
-    "eslint": "2",
-    "jsdom": "9",
-    "rollup": "0.36",
+    "eslint": "4",
+    "jsdom": "11",
+    "rollup": "0.43",
     "tape": "4",
     "tv4": "1",
-    "uglify-js": "2"
+    "uglify-js": "3"
   },
   "browser": {
     "canvas": false
