@@ -98,8 +98,7 @@ function partition(data, groupby, sort, field) {
       k = groupby.map(get);
       g = map[k];
       if (!g) {
-        g = [];
-        map[k] = g;
+        map[k] = (g = []);
         groups.push(g);
       }
       g.push(t);
