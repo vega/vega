@@ -28,8 +28,13 @@ export default function changeset() {
     },
     modify: function(t, field, value) {
       var m = {field: field, value: constant(value)};
-      if (isFunction(t)) m.filter = t, modp.push(m);
-      else m.tuple = t, mod.push(m);
+      if (isFunction(t)) {
+        m.filter = t;
+        modp.push(m);
+      } else {
+        m.tuple = t;
+        mod.push(m);
+      }
       return this;
     },
     encode: function(t, set) {

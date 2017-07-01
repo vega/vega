@@ -19,13 +19,24 @@ import {isFunction} from 'vega-util';
  */
 export default function(init, update, params, react) {
   var shift = 1,
-      op = (init instanceof Operator) ? init
-        : init && init.prototype instanceof Operator ? new init()
-        : isFunction(init) ? new Operator(null, init)
-        : (shift = 0, new Operator(init, update));
+    op;
+
+  if (init instanceof Operator) {
+    op = init;
+  } else if (init && init.prototype instanceof Operator) {
+    op = new init();
+  } else if (isFunction(init)) {
+    op = new Operator(null, init);
+  } else {
+    shift = 0;
+    op = new Operator(init, update);
+  }
 
   this.rank(op);
-  if (shift) react = params, params = update;
+  if (shift) {
+    react = params;
+    params = update;
+  }
   if (params) this.connect(op, op.parameters(params, react));
   this.touch(op);
 

@@ -152,7 +152,10 @@ function resolve(agg, stream) {
   }
   var map = agg.reduce(
     collect,
-    agg.reduce(function(m, a) { return (m[a.name] = a, m); }, {})
+    agg.reduce(function(m, a) {
+      m[a.name] = a;
+      return m;
+    }, {})
   );
   var values = [], key;
   for (key in map) values.push(map[key]);

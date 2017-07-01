@@ -133,8 +133,10 @@ prototype.init = function(_) {
   // initialize group-by dimensions
   this._dims = array(_.groupby);
   this._dnames = this._dims.map(function(d) {
-    var dname = accessorName(d)
-    return (inputVisit(d), outputs.push(dname), dname);
+    var dname = accessorName(d);
+    inputVisit(d);
+    outputs.push(dname);
+    return dname;
   });
   this.cellkey = _.key ? _.key
     : this._dims.length === 0 ? function() { return ''; }

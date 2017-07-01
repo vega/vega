@@ -33,7 +33,8 @@ prototype.transform = function(_, pulse) {
     out.mod = data;
   }
 
-  return out.source = this.value, out.modifies(as);
+  out.source = this.value;
+  return out.modifies(as);
 };
 
 function cross(input, a, b, filter) {

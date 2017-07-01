@@ -25,7 +25,7 @@ function loadPending(df) {
         }
       });
     }
-  }
+  };
 
   return (df._pending = pending);
 }

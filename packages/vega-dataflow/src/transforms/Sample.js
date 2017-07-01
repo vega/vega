@@ -22,7 +22,10 @@ prototype.transform = function(_, pulse) {
       res = this.value,
       cnt = this.count,
       cap = 0,
-      map = res.reduce(function(m, t) { return (m[t._id] = 1, m); }, {});
+      map = res.reduce(function(m, t) {
+        m[t._id] = 1;
+        return m;
+      }, {});
 
   // sample reservoir update function
   function update(t) {

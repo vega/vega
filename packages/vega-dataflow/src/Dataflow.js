@@ -58,7 +58,12 @@ prototype.stamp = function() {
  *   the current loader instance. Otherwise returns this Dataflow instance.
  */
 prototype.loader = function(_) {
-  return arguments.length ? (this._loader = _, this) : this._loader;
+  if (arguments.length) {
+    this._loader = _;
+    return this;
+  } else {
+    return this._loader;
+  }
 };
 
 /**

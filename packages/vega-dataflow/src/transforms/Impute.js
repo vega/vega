@@ -114,5 +114,6 @@ function partition(data, groupby, orderby) {
     group[j-1] = t;
   }
 
-  return (groups.domain = domain, groups);
+  groups.domain = domain;
+  return groups;
 }
