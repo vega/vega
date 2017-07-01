@@ -1,7 +1,7 @@
 import {toSet} from 'vega-util';
 
 var Skip = toSet(['rule']),
-    Swap = toSet(['group', 'image', 'rect'])
+    Swap = toSet(['group', 'image', 'rect']);
 
 export default function(encode, marktype) {
   var code = '';

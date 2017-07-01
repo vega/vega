@@ -7,7 +7,12 @@ export function encoder(_) {
 }
 
 export function addEncode(object, name, value) {
-  return value != null ? (object[name] = {value: value}, 1) : 0;
+  if (value != null) {
+    object[name] = {value: value};
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 export function extendEncode(encode, extra, skip) {

@@ -136,7 +136,11 @@ export function vlPointDomain(name, encoding, field, op) {
   }
 
   values = entries.reduce(function(acc, entry) {
-    return (acc.push({unit: entry.unit, value: entry.values[index]}), acc);
+    acc.push({
+      unit: entry.unit,
+      value: entry.values[index]
+    });
+    return acc;
   }, []);
 
   return continuous ? continuousDomain(values, op) : discreteDomain(values, op);
@@ -170,12 +174,20 @@ export function vlIntervalDomain(name, encoding, field, op) {
    }
 
    values = entries.reduce(function(acc, entry) {
-    var extent = entry.intervals[index].extent,
-      value = discrete ?
-        extent.map(function(d) { return {unit: entry.unit, value: d}; }) :
-        {unit: entry.unit, value: extent};
+     var extent = entry.intervals[index].extent,
+       value = discrete ?
+         extent.map(function (d) {
+           return {unit: entry.unit, value: d};
+         }) :
+         {unit: entry.unit, value: extent};
 
-    return discrete ? (acc.push.apply(acc, value), acc) : (acc.push(value), acc);
+     if (discrete) {
+       acc.push.apply(acc, value);
+       return acc;
+     } else {
+       acc.push(value);
+       return acc;
+     }
    }, []);
 
 
@@ -217,8 +229,12 @@ function continuousDomain(entries, op) {
   for (; i<n; ++i) {
     extent = entries[i].value;
     if (isDate(extent[0])) extent = extent.map(toNumber);
-    lo = extent[0], hi = extent[1];
-    if (lo > hi) hi = extent[1], lo = extent[0];
+    lo = extent[0];
+    hi = extent[1];
+    if (lo > hi) {
+      hi = extent[1];
+      lo = extent[0];
+    }
     domain = domain ? merge(domain, lo, hi) : [lo, hi];
   }
 

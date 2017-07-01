@@ -58,9 +58,18 @@ function buildTitle(spec, config, userEncode, dataRef) {
     offset: encoder((spec.offset != null ? spec.offset : config.offset) || 0)
   };
 
-  (anchor === 'start') ? (mult = 0, align = 'left')
-    : (anchor === 'end') ? (mult = 1, align = 'right')
-    : (mult = 0.5, align = 'center');
+  if (anchor === 'start') {
+    mult = 0;
+    align = 'left';
+  } else {
+    if (anchor === 'end') {
+      mult = 1;
+      align = 'right';
+    } else {
+      mult = 0.5;
+      align = 'center';
+    }
+  }
 
   pos = {field: extent, mult: mult};
 

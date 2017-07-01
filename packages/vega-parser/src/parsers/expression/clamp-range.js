@@ -10,7 +10,11 @@ export default function(range, min, max) {
       hi = range[1],
       span;
 
-  if (hi < lo) span = hi, hi = lo, lo = span;
+  if (hi < lo) {
+    span = hi;
+    hi = lo;
+    lo = span;
+  }
   span = hi - lo;
 
   return span >= (max - min)

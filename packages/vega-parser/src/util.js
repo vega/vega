@@ -1,7 +1,7 @@
 import {isObject} from 'vega-util';
 
 export function Entry(type, value, params, parent) {
-  this.id = -1,
+  this.id = -1;
   this.type = type;
   this.value = value;
   this.params = params;
