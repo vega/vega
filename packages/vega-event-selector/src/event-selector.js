@@ -17,7 +17,7 @@ var VIEW    = 'view',
     COMMA   = ',',
     NAME    = '@',
     GT      = '>',
-    ILLEGAL = /[\[\]\{\}]/,
+    ILLEGAL = /[[\]{}]/,
     DEFAULT_SOURCE,
     MARKS,
     DEFAULT_MARKS = {
