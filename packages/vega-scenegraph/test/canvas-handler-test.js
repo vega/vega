@@ -5,8 +5,8 @@ var tape = require('tape'),
     Renderer = vega.CanvasRenderer,
     Handler = vega.CanvasHandler,
     jsdom = require('jsdom'),
-    doc = jsdom.jsdom(),
-    win = doc.defaultView;
+    win = (new jsdom.JSDOM()).window,
+    doc = win.document;
 
 var res = './test/resources/';
 

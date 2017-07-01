@@ -5,7 +5,7 @@ var tape = require('tape'),
     Bounds = vega.Bounds,
     Renderer = vega.SVGRenderer,
     jsdom = require('jsdom'),
-    doc = jsdom.jsdom();
+    doc = (new jsdom.JSDOM()).window.document;
 
 var res = './test/resources/';
 

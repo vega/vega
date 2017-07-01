@@ -53,8 +53,8 @@ tape('CanvasRenderer should support argument free constructor', function(test) {
 });
 
 tape('CanvasRenderer should use DOM if available', function(test) {
-  var jsdom = require('jsdom').jsdom();
-  global.document = jsdom;
+  var jsdom = require('jsdom')
+  global.document = (new jsdom.JSDOM()).window.document;
 
   var r = new Renderer().initialize(document.body, 100, 100);
   test.strictEqual(r.element(), document.body);
