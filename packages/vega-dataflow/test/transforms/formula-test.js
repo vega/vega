@@ -24,7 +24,7 @@ tape('Formula extends tuples', function(test) {
   // add data
   df.pulse(c0, changeset().insert(data)).run();
   test.equal(fb.pulse.add.length, 3);
-  test.deepEqual(c0.value.map(x), [2, 6, 10]),
+  test.deepEqual(c0.value.map(x), [2, 6, 10]);
   test.deepEqual(c0.value.map(y), ['f', 'b', 'b']);
 
   // modify data
@@ -33,7 +33,7 @@ tape('Formula extends tuples', function(test) {
     .modify(data[0], 'id', '2'))
     .run();
   test.equal(fb.pulse.mod.length, 1);
-  test.deepEqual(c0.value.map(x), [4, 6, 10]),
+  test.deepEqual(c0.value.map(x), [4, 6, 10]);
   test.deepEqual(c0.value.map(y), ['d', 'b', 'b']);
 
   test.end();

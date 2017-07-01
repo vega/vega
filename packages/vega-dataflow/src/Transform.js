@@ -25,9 +25,21 @@ var prototype = inherits(Transform, Operator);
  */
 prototype.run = function(pulse) {
   if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
-  var rv = (this.skip() ? (this.skip(false), 0) : this.evaluate(pulse)) || pulse;
+
+  var rv;
+
+  if (this.skip()) {
+    this.skip(false);
+    rv = 0;
+  } else {
+    rv = this.evaluate(pulse);
+  }
+
+  if (!rv) rv = pulse;
   if (rv !== pulse.StopPropagation) this.pulse = rv;
-  return this.stamp = pulse.stamp, rv;
+  this.stamp = pulse.stamp;
+
+  return rv;
 };
 
 /**

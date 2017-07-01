@@ -10,11 +10,19 @@ export function register(def, constructor) {
 
 export function definition(type, def) {
   type = type && type.toLowerCase();
-  return arguments.length > 1 ? (definitions[type] = def, this)
-    : definitions.hasOwnProperty(type) ? definitions[type] : null;
+  if (arguments.length > 1) {
+    definitions[type] = def;
+    return this;
+  } else {
+    return definitions.hasOwnProperty(type) ? definitions[type] : null;
+  }
 }
 
 export function transform(type, constructor) {
-  return arguments.length > 1 ? (transforms[type] = constructor, this)
-    : transforms.hasOwnProperty(type) ? transforms[type] : null;
+  if (arguments.length > 1) {
+    transforms[type] = constructor;
+    return this;
+  } else {
+    return transforms.hasOwnProperty(type) ? transforms[type] : null;
+  }
 }

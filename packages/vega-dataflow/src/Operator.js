@@ -59,7 +59,12 @@ prototype.targets = function() {
  *   according to strict equality, returns 0 otherwise.
  */
 prototype.set = function(value) {
-  return this.value !== value ? (this.value = value, 1) : 0;
+  if (this.value !== value) {
+    this.value = value;
+    return 1;
+  } else {
+    return 0;
+  }
 };
 
 function flag(bit) {
@@ -204,6 +209,14 @@ prototype.evaluate = function(pulse) {
  */
 prototype.run = function(pulse) {
   if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
-  var rv = this.skip() ? (this.skip(false), 0) : this.evaluate(pulse);
-  return this.stamp = pulse.stamp, this.pulse = rv || pulse;
+  var rv;
+  if (this.skip()) {
+    this.skip(false);
+    rv = 0;
+  } else {
+    rv = this.evaluate(pulse);
+  }
+  this.stamp = pulse.stamp;
+  this.pulse = rv;
+  return rv || pulse;
 };

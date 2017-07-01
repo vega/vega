@@ -22,9 +22,14 @@ prototype.transform = function(_, pulse) {
       as = _.as || ['bin0', 'bin1'],
       b0 = as[0],
       b1 = as[1],
-      flag = _.modified() ? (pulse = pulse.reflow(true), pulse.SOURCE)
-        : pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD
-        : pulse.ADD;
+      flag;
+
+  if (_.modified()) {
+    pulse = pulse.reflow(true);
+    flag = pulse.SOURCE;
+  } else {
+    flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
+  }
 
   pulse.visit(flag, function(t) {
     var v = bins(t);
@@ -59,9 +64,12 @@ prototype._bins = function(_) {
 
   var f = function(t) {
     var v = field(t);
-    return v == null ? null
-      : (v = Math.max(start, Math.min(+v, stop - step)),
-         start + step * Math.floor((v - start) / step));
+    if (v == null) {
+      return null;
+    } else {
+      v = Math.max(start, Math.min(+v, stop - step));
+      return start + step * Math.floor((v - start) / step);
+    }
   };
 
   f.start = start;

@@ -32,7 +32,8 @@ var SKIP = {skip: true};
  */
 export default function(source, target, update, params, options) {
   var fn = source instanceof Operator ? onOperator : onStream;
-  return fn(this, source, target, update, params, options), this;
+  fn(this, source, target, update, params, options);
+  return this;
 }
 
 function onStream(df, stream, target, update, params, options) {
@@ -47,8 +48,9 @@ function onStream(df, stream, target, update, params, options) {
   } else if (isFunction(update)) {
     op = new Operator(null, update, params, false);
     func = function(e) {
-      var t = target(e),
-          v = (op.evaluate(e), op.value);
+      var t = target(e);
+      op.evaluate(e);
+      var v = op.value;
       isChangeSet(v) ? df.pulse(t, v, options) : df.update(t, v, opt);
     };
   } else {

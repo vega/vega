@@ -73,5 +73,6 @@ prototype.modified = function(name, index) {
  * all parameters are considered unmodified.
  */
 prototype.clear = function() {
-  return this[CACHE] = {}, this;
+  this[CACHE] = {};
+  return this;
 };

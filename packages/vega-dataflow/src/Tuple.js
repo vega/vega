@@ -61,7 +61,8 @@ function rederive(t, d) {
  * @return {object} The new tuple.
  */
 function replace(t, d) {
-  return d._id = t._id, d;
+  d._id = t._id;
+  return d;
 }
 
 export {

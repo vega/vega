@@ -73,7 +73,7 @@ prototype._parameterCheck = function(_, pulse) {
 
   if (init) this._counts = {};
   return init;
-}
+};
 
 prototype._finish = function(pulse, as) {
   var counts = this._counts,

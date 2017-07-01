@@ -46,7 +46,8 @@ prototype.targets = function() {
 
 prototype.consume = function(_) {
   if (!arguments.length) return !!this._consume;
-  return (this._consume = !!_, this);
+  this._consume = !!_;
+  return this;
 };
 
 prototype.receive = function(evt) {
@@ -67,12 +68,14 @@ prototype.receive = function(evt) {
 
 prototype.filter = function(filter) {
   var s = stream(filter);
-  return (this.targets().add(s), s);
+  this.targets().add(s);
+  return s;
 };
 
 prototype.apply = function(apply) {
   var s = stream(null, apply);
-  return (this.targets().add(s), s);
+  this.targets().add(s);
+  return s;
 };
 
 prototype.merge = function() {
@@ -90,7 +93,12 @@ prototype.throttle = function(pause) {
   var t = -1;
   return this.filter(function() {
     var now = Date.now();
-    return (now - t) > pause ? (t = now, 1) : 0;
+    if ((now - t) > pause) {
+      t = now;
+      return 1;
+    } else {
+      return 0;
+    }
   });
 };
 

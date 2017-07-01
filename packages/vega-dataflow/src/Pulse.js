@@ -138,8 +138,13 @@ prototype.fork = function(flags) {
  */
 prototype.addAll = function() {
   var p = this;
-  return (!this.source || this.source.length === this.add.length) ? p
-    : (p = new Pulse(this.dataflow).init(this), p.add = p.source, p);
+  if (!this.source || this.source.length === this.add.length) {
+    return p;
+  } else {
+    p = new Pulse(this.dataflow).init(this);
+    p.add = p.source;
+    return p;
+  }
 };
 
 /**
@@ -159,13 +164,41 @@ prototype.init = function(src, flags) {
   var p = this;
   p.stamp = src.stamp;
   p.encode = src.encode;
+
   if (src.fields && !(flags & NO_FIELDS)) p.fields = src.fields;
-  p.add = (flags & ADD) ? (p.addF = src.addF, src.add) : (p.addF = null, []);
-  p.rem = (flags & REM) ? (p.remF = src.remF, src.rem) : (p.remF = null, []);
-  p.mod = (flags & MOD) ? (p.modF = src.modF, src.mod) : (p.modF = null, []);
-  p.source = (flags & NO_SOURCE)
-    ? (p.srcF = null, null)
-    : (p.srcF = src.srcF, src.source);
+
+  if (flags & ADD) {
+    p.addF = src.addF;
+    p.add = src.add;
+  } else {
+    p.addF = null;
+    p.add = [];
+  }
+
+  if (flags & REM) {
+    p.remF = src.remF;
+    p.rem = src.rem;
+  } else {
+    p.remF = null;
+    p.rem = [];
+  }
+
+  if (flags & MOD) {
+    p.modF = src.modF;
+    p.mod = src.mod;
+  } else {
+    p.modF = null;
+    p.mod = [];
+  }
+
+  if (flags & NO_SOURCE) {
+    p.srcF = null;
+    p.source = null;
+  } else {
+    p.srcF = src.srcF;
+    p.source = src.source;
+  }
+
   return p;
 };
 
