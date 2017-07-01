@@ -27,15 +27,13 @@ prototype.run = function(pulse) {
   if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
 
   var rv;
-
   if (this.skip()) {
     this.skip(false);
-    rv = 0;
   } else {
     rv = this.evaluate(pulse);
   }
+  rv = rv || pulse;
 
-  if (!rv) rv = pulse;
   if (rv !== pulse.StopPropagation) this.pulse = rv;
   this.stamp = pulse.stamp;
 

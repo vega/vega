@@ -19,8 +19,7 @@ export default function Relay(params) {
 var prototype = inherits(Relay, Transform);
 
 prototype.transform = function(_, pulse) {
-  var out;
-  var lut;
+  var out, lut;
 
   if (this.value) {
     lut = this.value;
