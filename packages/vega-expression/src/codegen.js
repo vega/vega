@@ -32,13 +32,20 @@ export default function(opt) {
       },
 
     Identifier: function(n) {
-        var id = n.name;
-        return memberDepth > 0 ? id
-          : blacklist.hasOwnProperty(id) ? error('Illegal identifier: ' + id)
-          : constants.hasOwnProperty(id) ? constants[id]
-          : whitelist.hasOwnProperty(id) ? id
-          : (globals[id] = 1, outputGlobal(id));
-      },
+      var id = n.name;
+      if (memberDepth > 0) {
+        return id;
+      } else if (blacklist.hasOwnProperty(id)) {
+        return error('Illegal identifier: ' + id);
+      } else if (constants.hasOwnProperty(id)) {
+        return constants[id];
+      } else if (whitelist.hasOwnProperty(id)) {
+        return id;
+      } else {
+        globals[id] = 1;
+        return outputGlobal(id);
+      }
+    },
 
     MemberExpression: function(n) {
         var d = !n.computed;
