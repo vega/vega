@@ -15,7 +15,7 @@ canvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
-  fontHeight = height(item)
+  fontHeight = height(item);
   return estimate(textValue(item));
 }
 
@@ -37,11 +37,9 @@ function height(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
 
-function canvas(_) {
-  context = _
-    ? (context = Canvas(1,1)) ? context.getContext('2d') : null
-    : null;
-  textMetrics.width = context ? measureWidth : estimateWidth
+function canvas(use) {
+  context = use && (context = Canvas(1,1)) ? context.getContext('2d') : null;
+  textMetrics.width = context ? measureWidth : estimateWidth;
 }
 
 export function textValue(item) {
@@ -96,7 +94,7 @@ export function truncate(item) {
 export function font(item, quote) {
   var font = item.font;
   if (quote && font) {
-    font = String(font).replace(/\"/g, '\'');
+    font = String(font).replace(/"/g, '\'');
   }
   return '' +
     (item.fontStyle ? item.fontStyle + ' ' : '') +
