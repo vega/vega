@@ -13,7 +13,9 @@ export default function(spec, scope) {
 
   var t = entry(def.type, null, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
-  return t.metadata = def.metadata || {}, t;
+  t.metadata = def.metadata || {};
+
+  return t;
 }
 
 /**

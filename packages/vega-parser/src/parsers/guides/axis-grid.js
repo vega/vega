@@ -35,10 +35,16 @@ export default function(spec, config, userEncode, dataRef) {
     offset: config.tickOffset
   };
 
-  (orient === Top || orient === Bottom)
-    ? (u = 'x', v = 'y', s = 'height')
-    : (u = 'y', v = 'x', s = 'width');
-  v2 = v + '2',
+  if (orient === Top || orient === Bottom) {
+    u = 'x';
+    v = 'y';
+    s = 'height';
+  } else {
+    u = 'y';
+    v = 'x';
+    s = 'width';
+  }
+  v2 = v + '2';
 
   update[u] = enter[u] = exit[u] = tickPos;
 

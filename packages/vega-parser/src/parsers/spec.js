@@ -53,5 +53,6 @@ export default function(spec, scope, preprocessed) {
     parseTitle(spec.title, scope);
   }
 
-  return scope.parseLambdas(), scope;
+  scope.parseLambdas();
+  return scope;
 }

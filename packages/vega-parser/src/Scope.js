@@ -66,7 +66,8 @@ prototype.fork = function() {
 };
 
 prototype.toRuntime = function() {
-  return this.finish(), {
+  this.finish();
+  return {
     background: this.background,
     operators:  this.operators,
     streams:    this.streams,
@@ -96,11 +97,14 @@ prototype.proxy = function(op) {
 };
 
 prototype.addStream = function(stream) {
-  return this.streams.push(stream), stream.id = this.id(), stream;
+  this.streams.push(stream);
+  stream.id = this.id();
+  return stream;
 };
 
 prototype.addUpdate = function(update) {
-  return this.updates.push(update), update;
+  this.updates.push(update);
+  return update;
 };
 
 // Apply metadata
@@ -188,7 +192,7 @@ prototype.fieldRef = function(field, name) {
       params;
 
   if (!f) { // TODO: replace with update signalRef?
-    params = {name: this.signalRef(s)}
+    params = {name: this.signalRef(s)};
     if (name) params.as = name;
     this.field[s] = f = ref(this.add(Field(params)));
   }
@@ -197,7 +201,12 @@ prototype.fieldRef = function(field, name) {
 
 prototype.compareRef = function(cmp) {
   function check(_) {
-    return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
+    if (isSignal(_)) {
+      signal = true;
+      return ref(sig[_.signal]);
+    } else {
+      return _;
+    }
   }
 
   var sig = this.signals,
@@ -212,7 +221,12 @@ prototype.compareRef = function(cmp) {
 
 prototype.keyRef = function(fields) {
   function check(_) {
-    return isSignal(_) ? (signal = true, ref(sig[_.signal])) : _;
+    if (isSignal(_)) {
+      signal = true;
+      return ref(sig[_.signal]);
+    } else {
+      return _;
+    }
   }
 
   var sig = this.signals,
@@ -276,7 +290,7 @@ prototype.getSignal = function(name) {
 prototype.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
-  } else if (!this.lambdas.hasOwnProperty(s)) {  
+  } else if (!this.lambdas.hasOwnProperty(s)) {
     this.lambdas[s] = this.add(operator(null));
   }
   return ref(this.lambdas[s]);
@@ -352,7 +366,7 @@ prototype.addScaleProj = function(name, transform) {
     error('Duplicate scale or projection name: ' + stringValue(name));
   }
   this.scales[name] = this.add(transform);
-}
+};
 
 prototype.addScale = function(name, params) {
   this.addScaleProj(name, Scale(params));

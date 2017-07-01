@@ -135,6 +135,6 @@ function legendEnter(config) {
             + addEncode(enter, 'stroke', config.strokeColor)
             + addEncode(enter, 'strokeWidth', config.strokeWidth)
             + addEncode(enter, 'strokeDash', config.strokeDash)
-            + addEncode(enter, 'cornerRadius', config.cornerRadius)
+            + addEncode(enter, 'cornerRadius', config.cornerRadius);
   return count ? enter : undefined;
 }

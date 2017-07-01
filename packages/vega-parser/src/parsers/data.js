@@ -77,5 +77,6 @@ function analyze(data, scope, ops) {
 
 function collect(values) {
   var s = Collect({}, values);
-  return s.metadata = {source: true}, s;
+  s.metadata = {source: true};
+  return s;
 }

@@ -23,10 +23,14 @@ export default function(spec, config, userEncode, dataRef) {
     opacity: {value: 1}
   };
 
-  (orient === Top || orient === Bottom)
-    ? (u = 'x', v = 'y')
-    : (u = 'y', v = 'x');
-  u2 = u + '2',
+  if (orient === Top || orient === Bottom) {
+    u = 'x';
+    v = 'y';
+  } else {
+    u = 'y';
+    v = 'x';
+  }
+  u2 = u + '2';
 
   enter[v] = zero;
   update[u] = enter[u] = position(spec, 0);

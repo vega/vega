@@ -111,7 +111,8 @@ function multipleDomain(domain, spec, scope) {
         d = isString(d) ? {data: data, field: d}
           : (isArray(d) || d.signal) ? fieldRef(d, scope)
           : d;
-        return dom.push(d), dom;
+        dom.push(d);
+        return dom;
       }, []);
 
   return (isOrdinal(spec.type) ? ordinalMultipleDomain
