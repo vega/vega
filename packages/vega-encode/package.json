@@ -32,13 +32,13 @@
     "d3-format": "1",
     "d3-interpolate": "1",
     "vega-dataflow": ">=2.0.0-beta.4",
-    "vega-scale": ">=2.0.0-beta",
+    "vega-scale": "2",
     "vega-util": "^1.1"
   },
   "devDependencies": {
-    "eslint": "2",
-    "rollup": "0.36",
+    "eslint": "4",
+    "rollup": "0.43",
     "tape": "4",
-    "uglify-js": "2"
+    "uglify-js": "3"
   }
 }
