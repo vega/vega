@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -30,13 +30,13 @@
   "dependencies": {
     "d3-contour": "1",
     "d3-geo": "1",
-    "vega-dataflow": ">=2.0.0-beta.4",
+    "vega-dataflow": "2",
     "vega-util": "1"
   },
   "devDependencies": {
-    "eslint": "2",
-    "rollup": "0.36",
+    "eslint": "4",
+    "rollup": "0.43",
     "tape": "4",
-    "uglify-js": "2"
+    "uglify-js": "3"
   }
 }
