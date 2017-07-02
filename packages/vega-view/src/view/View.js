@@ -97,7 +97,10 @@ prototype.run = function(encode) {
 
 prototype.render = function() {
   if (this._renderer) {
-    if (this._resize) this._resize = 0, resizeRenderer(this);
+    if (this._resize) {
+      this._resize = 0;
+      resizeRenderer(this);
+    }
     this._renderer.render(this._scenegraph.root);
   }
   this._redraw = false;
@@ -129,7 +132,13 @@ prototype.scenegraph = function() {
 };
 
 prototype.background = function(_) {
-  return arguments.length ? (this._background = _, this._resize = 1, this) : this._background;
+  if (arguments.length) {
+    this._background = _;
+    this._resize = 1;
+    return this;
+  } else {
+    return this._background;
+  }
 };
 
 prototype.width = function(_) {
@@ -170,7 +179,8 @@ prototype.loader = function(loader) {
 };
 
 prototype.resize = function() {
-  return this._autosize = 1, this;
+  this._autosize = 1;
+  return this;
 };
 
 // -- EVENT HANDLING ----
@@ -188,7 +198,8 @@ prototype.removeEventListener = function(type, handler) {
 prototype.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
-  this.on(s, null, (h.handler = handler, h));
+  h.handler = handler;
+  this.on(s, null, h);
   return this;
 };
 
@@ -204,13 +215,22 @@ prototype.removeSignalListener = function(name, handler) {
 };
 
 prototype.preventDefault = function(_) {
-  return arguments.length ? (this._preventDefault = _, this) : this._preventDefault;
+  if (arguments.length) {
+    this._preventDefault = _;
+    return this;
+  } else {
+    return this._preventDefault;
+  }
 };
 
 prototype.tooltipHandler = function(_) {
   var h = this._handler;
-  return !arguments.length ? h.handleTooltip
-    : (h.handleTooltip = (_ || Handler.prototype.handleTooltip), this);
+  if (!arguments.length) {
+    return h.handleTooltip;
+  } else {
+    h.handleTooltip = _ || Handler.prototype.handleTooltip;
+    return this;
+  }
 };
 
 prototype.events = events;

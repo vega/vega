@@ -101,8 +101,12 @@ function layoutGroup(view, group, _) {
 }
 
 function set(item, property, value) {
-  return item[property] === value ? 0
-    : (item[property] = value, 1);
+  if (item[property] === value) {
+    return 0;
+  } else {
+    item[property] = value;
+    return 1;
+  }
 }
 
 function isYAxis(mark) {
@@ -145,36 +149,58 @@ function layoutAxis(view, axis, width, height) {
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) title.auto
-        ? (title.y = -(s += titlePadding), s += title.bounds.height())
-        : bounds.union(title.bounds);
+      if (title) {
+        if (title.auto) {
+          s += titlePadding;
+          title.y = -s;
+          s += title.bounds.height();
+        } else {
+          bounds.union(title.bounds);
+        }
+      }
       bounds.add(0, -s).add(range, 0);
       break;
     case 'left':
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) title.auto
-        ? (title.x = -(s += titlePadding), s += title.bounds.width())
-        : bounds.union(title.bounds);
+      if (title) {
+        if (title.auto) {
+          s += titlePadding;
+          title.x = -s;
+          s += title.bounds.width();
+        } else {
+          bounds.union(title.bounds);
+        }
+      }
       bounds.add(-s, 0).add(0, range);
       break;
     case 'right':
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) title.auto
-        ? (title.x = (s += titlePadding), s += title.bounds.width())
-        : bounds.union(title.bounds);
+      if (title) {
+        if (title.auto) {
+          s += titlePadding;
+          title.x = s;
+          s += title.bounds.width();
+        } else {
+          bounds.union(title.bounds);
+        }
+      }
       bounds.add(0, 0).add(s, range);
       break;
     case 'bottom':
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) title.auto
-        ? (title.y = (s += titlePadding), s += title.bounds.height())
-        : bounds.union(title.bounds);
+      if (title) if (title.auto) {
+        s += titlePadding;
+        title.y = s;
+        s += title.bounds.height();
+      } else {
+        bounds.union(title.bounds);
+      }
       bounds.add(0, 0).add(range, s);
       break;
     default:

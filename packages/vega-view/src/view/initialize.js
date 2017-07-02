@@ -43,9 +43,12 @@ export default function(el, elBind) {
 
 function lookup(view, el) {
   if (typeof el === 'string') {
-    el = typeof document !== 'undefined'
-      ? document.querySelector(el)
-      : view.error('DOM document instance not found.');
+    if (typeof document !== 'undefined') {
+      el = document.querySelector(el);
+    } else {
+      view.error('DOM document instance not found.');
+    }
   }
-  return el.innerHTML = '', el;
+  el.innerHTML = '';
+  return el;
 }

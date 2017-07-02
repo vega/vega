@@ -247,7 +247,13 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
     for (k=i; (g = groups[k]) == null; k-=back);
 
     // assign coordinates and update bounds
-    isX ? (x = g.x, y = init) : (x = init, y = g.y);
+    if (isX) {
+      x = g.x;
+      y = init;
+    } else {
+      x = init;
+      y = g.y;
+    }
     b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
     h.x = x;
     h.y = y;
