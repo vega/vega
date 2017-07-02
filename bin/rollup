@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 var rollup = require('rollup'),
+    json = require('rollup-plugin-json'),
     nodeResolve = require('rollup-plugin-node-resolve'),
     externals = process.argv[2] === '-e',
-    output = externals ? 'vega-core.js' : 'vega.js'
-    json = require('rollup-plugin-json');
+    output = externals ? 'vega-core.js' : 'vega.js';
 
-var modules = !externals ? [] : [
+var modules = ['yargs'].concat(!externals ? [] : [
   'd3',
   'd3-array',
   'd3-collection',
@@ -31,7 +31,7 @@ var modules = !externals ? [] : [
   'd3-timer',
   'd3-voronoi',
   'topojson'
-];
+]);
 
 var module_globals = modules.reduce(
   function(map, _) { return map[_] = 'd3', map; },
@@ -43,10 +43,7 @@ rollup.rollup({
   entry: 'index.js',
   external: modules,
   plugins: [
-    resolveCache(nodeResolve({
-      jsnext: true,
-      skip: ['yargs']
-    })),
+    resolveCache(nodeResolve({module: true, jsnext: true})),
     json()
   ]
 }).then(function(bundle) {
@@ -68,6 +65,7 @@ function abort(error) {
  * Rollup plugin that caches node_modules resolutions. This ensures
  * only one version of each module is included in the output bundle,
  * BUT assumes that all shared dependencies are of the same version.
+ * This plugin is handy to avoid import issues when using npm link.
  */
 function resolveCache(_) {
   var cache = {};
