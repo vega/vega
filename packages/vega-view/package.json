@@ -28,17 +28,17 @@
   },
   "dependencies": {
     "d3-array": "1",
-    "vega-dataflow": ">=2.0.0-beta",
-    "vega-loader": ">=2.0.0-beta",
+    "vega-dataflow": "2",
+    "vega-loader": "2",
     "vega-parser": ">=1.0.0-beta",
-    "vega-runtime": ">=1.0.0-beta",
-    "vega-scenegraph": ">=2.0.0-beta",
+    "vega-runtime": "1",
+    "vega-scenegraph": "2",
     "vega-util": "1"
   },
   "devDependencies": {
-    "eslint": "2",
-    "rollup": "0.36",
+    "eslint": "4",
+    "rollup": "0.43",
     "tape": "4",
-    "uglify-js": "2"
+    "uglify-js": "3"
   }
 }
