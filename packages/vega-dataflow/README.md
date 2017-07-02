@@ -18,3 +18,6 @@ and/or modified tuples.
 This module contains a library of `Operator` types for data stream query
 processing, including data generation, sampling, filtering, binning,
 group-by aggregation, and cross-stream lookup operations.
+
+For more information about data stream transforms, see the
+[Vega transform documentation](https://vega.github.io/vega/docs/transforms/).
