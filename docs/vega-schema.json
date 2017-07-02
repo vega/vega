@@ -4421,30 +4421,31 @@
             }
           ]
         },
-        "groupby": {
+        "key": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "keyvals": {
           "oneOf": [
             {
               "type": "array",
-              "items": {
-                "oneOf": [
-                  {
-                    "$ref": "#/refs/scaleField"
-                  },
-                  {
-                    "$ref": "#/refs/paramField"
-                  },
-                  {
-                    "$ref": "#/refs/expr"
-                  }
-                ]
-              }
+              "items": {}
             },
             {
               "$ref": "#/refs/signal"
             }
           ]
         },
-        "orderby": {
+        "groupby": {
           "oneOf": [
             {
               "type": "array",
@@ -4489,7 +4490,8 @@
       "additionalProperties": false,
       "required": [
         "type",
-        "field"
+        "field",
+        "key"
       ]
     },
     "joinaggregateTransform": {
