@@ -1,6 +1,6 @@
 {
   "name": "vega-force",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -27,13 +27,13 @@
   },
   "dependencies": {
     "d3-force": "1",
-    "vega-dataflow": ">=2.0.0-beta.27",
+    "vega-dataflow": "2",
     "vega-util": "1"
   },
   "devDependencies": {
-    "eslint": "2",
-    "rollup": "0.36",
+    "eslint": "4",
+    "rollup": "0.43",
     "tape": "4",
-    "uglify-js": "2"
+    "uglify-js": "3"
   }
 }
