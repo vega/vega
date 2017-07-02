@@ -36,7 +36,8 @@ prototype.transform = function(_, pulse) {
   pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
 
   // bind items array to scenegraph mark
-  return (mark.items = pulse.source, pulse);
+  mark.items = pulse.source;
+  return pulse;
 };
 
 function lookup(_) {

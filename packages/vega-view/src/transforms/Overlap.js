@@ -27,7 +27,12 @@ var methods = {
   greedy: function(items) {
     var a;
     return items.filter(function(b, i) {
-      return i && intersect(a.bounds, b.bounds) ? (b.opacity = 0) : (a = b, 1);
+      if (!i || !intersect(a.bounds, b.bounds)) {
+        a = b;
+        return 1;
+      } else {
+        return b.opacity = 0;
+      }
     });
   }
 };

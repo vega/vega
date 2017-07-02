@@ -8,7 +8,8 @@ export function resizer(view, field) {
   );
   // set rank to ensure operator runs as soon as possible
   // size parameters should be reset prior to view layout
-  return op.rank = 0, op;
+  op.rank = 0;
+  return op;
 }
 
 export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
