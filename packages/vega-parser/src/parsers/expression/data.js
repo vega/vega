@@ -1,6 +1,6 @@
 import {Literal} from './ast';
 import {dataPrefix, indexPrefix} from './prefixes';
-import {error} from 'vega-util';
+import {error, truthy} from 'vega-util';
 
 export function data(name) {
   var data = this.context.data[name];
@@ -37,4 +37,13 @@ export function indataVisitor(name, args, scope, params) {
   if (!params.hasOwnProperty(indexName)) {
     params[indexName] = scope.getData(data).indataRef(scope, field);
   }
+}
+
+export function setdata(name, tuples) {
+  var df = this.context.dataflow,
+      data = this.context.data[name],
+      input = data.input;
+
+  df.pulse(input, df.changeset().remove(truthy).insert(tuples));
+  return 1;
 }
