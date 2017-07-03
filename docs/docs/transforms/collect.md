@@ -32,7 +32,7 @@ To sort data objects according to multiple criteria:
 {
   "type": "collect",
   "sort": {
-    "field": ["a", "b"]
+    "field": ["a", "b"],
     "order": ["ascending", "descending"]
   }
 }
