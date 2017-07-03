@@ -29,6 +29,8 @@ export default {
             "none",
             "left",
             "right",
+            "top",
+            "bottom",
             "top-left",
             "top-right",
             "bottom-left",
