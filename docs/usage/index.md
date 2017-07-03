@@ -41,11 +41,19 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 </head>
 ```
 
-**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on the [CloudFlare CDN](https://cdnjs.com/libraries/vega):
+**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on [cdnjs](https://cdnjs.com/libraries/vega):
 
 ```html
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.min.js"></script>
+</head>
+```
+
+If you have already imported d3 and want to use a smaller Vega bundle without d3, load `vega-core`.
+
+```html
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega-core.min.js"></script>
 </head>
 ```
 
