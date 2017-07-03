@@ -23,7 +23,7 @@ import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} 
 import scaleGradient from './scale-gradient';
 import {panLinear, panLog, panPow, zoomLinear, zoomLog, zoomPow} from './scale-transform';
 import {geoArea, geoBounds, geoCentroid} from './geo';
-import {data, indata, dataVisitor, indataVisitor} from './data';
+import {data, indata, setdata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
 import inrange from './inrange';
 import encode from './encode';
@@ -73,6 +73,7 @@ export var functionContext = {
   span: span,
   bandspace: bandspace,
   inrange: inrange,
+  setdata: setdata,
   panLinear: panLinear,
   panLog: panLog,
   panPow: panPow,
