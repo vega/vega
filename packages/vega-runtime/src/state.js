@@ -53,7 +53,7 @@ export function setState(state) {
   });
 
   (state.subcontext  || []).forEach(function(substate, i) {
-    var ctx = ctx.subcontext[i];
-    if (ctx) ctx.setState(substate);
+    var subctx = ctx.subcontext[i];
+    if (subctx) subctx.setState(substate);
   });
 }
