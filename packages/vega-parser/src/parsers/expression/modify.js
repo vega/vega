@@ -1,9 +1,22 @@
 import {isArray, truthy} from 'vega-util';
 
+function equal(a, b) {
+  return a === b || a !== a && b !== b ? true
+    : isArray(a) && isArray(b) && a.length === b.length ? equalArray(a, b)
+    : false;
+}
+
+function equalArray(a, b) {
+  for (var i=0, n=a.length; i<n; ++i) {
+    if (!equal(a[i], b[i])) return false;
+  }
+  return true;
+}
+
 function removePredicate(props) {
   return function(_) {
     for (var key in props) {
-      if (key !== '_id' && _[key] !== props[key]) return false;
+      if (key !== '_id' && !equal(_[key], props[key])) return false;
     }
     return true;
   };
