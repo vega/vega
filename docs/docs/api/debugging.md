@@ -4,7 +4,7 @@ title: Debugging Guide
 permalink: /docs/api/debugging/index.html
 ---
 
-A collection of methods for **debugging** Vega visualizations at runtime. All examples below assume that the [Vega View](../view) instance to debug has been bound to the `view` variable.
+A collection of methods for **debugging** Vega visualizations at runtime. All examples below assume that the [Vega View](../view) instance to debug has been bound to the `view` variable. To access the view in the [online editor](https://vega.github.io/editor), open the debug console and use `VEGA_DEBUG.view`.
 
 
 ## Debugging Methods
