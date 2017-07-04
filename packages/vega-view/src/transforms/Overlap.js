@@ -64,6 +64,8 @@ prototype.transform = function(_, pulse) {
       source = pulse.materialize(pulse.SOURCE).source,
       items  = source;
 
+  if (!items) return;
+
   if (_.method === 'greedy') {
     items = source = source.filter(hasBounds);
   }
