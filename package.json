@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "3.0.0-beta.39",
+  "version": "3.0.0-rc1",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -69,13 +69,13 @@
     "vega-geo": "1",
     "vega-hierarchy": "1",
     "vega-loader": "2",
-    "vega-parser": ">=1.0.0-beta",
+    "vega-parser": "1",
     "vega-runtime": "1",
     "vega-scale": "2",
     "vega-scenegraph": "2",
     "vega-statistics": "1",
     "vega-util": "^1.2",
-    "vega-view": ">=1.0.0-beta",
+    "vega-view": "1",
     "vega-voronoi": "1",
     "vega-wordcloud": "1",
     "vega-datasets": "vega/vega-datasets#gh-pages",

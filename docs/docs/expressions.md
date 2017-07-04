@@ -633,6 +633,30 @@ Returns the number of steps needed within a band scale, based on the _count_ of 
 <b>gradient</b>(<i>name</i>, <i>p0</i>, <i>p1</i>[, <i>count</i>])<br/>
 Returns a linear color gradient for the named scale and starting and ending points _p0_ and _p1_ (each an _[x, y]_ array). The optional _count_ argument indicates a desired target number of color stops to use in the gradient.
 
+<a name="panLinear" href="#panLinear">#</a>
+<b>panLinear</b>(<i>domain</i>, <i>delta</i>)<br/>
+Given a linear scale _domain_ array with numeric or datetime values, returns a new two-element domain array that is the result of panning the domain by a fractional _delta_. The _delta_ value represents fractional units of the scale range; for example, `0.5` indicates panning the scale domain to the right by half the scale range.
+
+<a name="panLog" href="#panLog">#</a>
+<b>panLog</b>(<i>domain</i>, <i>delta</i>)<br/>
+Given a log scale _domain_ array with numeric or datetime values, returns a new two-element domain array that is the result of panning the domain by a fractional _delta_. The _delta_ value represents fractional units of the scale range; for example, `0.5` indicates panning the scale domain to the right by half the scale range.
+
+<a name="panPow" href="#panPow">#</a>
+<b>panPow</b>(<i>domain</i>, <i>delta</i>, <i>exponent</i>)<br/>
+Given a power scale _domain_ array with numeric or datetime values and the given _exponent_, returns a new two-element domain array that is the result of panning the domain by a fractional _delta_. The _delta_ value represents fractional units of the scale range; for example, `0.5` indicates panning the scale domain to the right by half the scale range.
+
+<a name="zoomLinear" href="#zoomLinear">#</a>
+<b>zoomLinear</b>(<i>domain</i>, <i>anchor</i>, <i>scaleFactor</i>)<br/>
+Given a linear scale _domain_ array with numeric or datetime values, returns a new two-element domain array that is the result of zooming the domain by a _scaleFactor_, centered at the provided fractional _anchor_. The _anchor_ value represents the zoom position in terms of fractional units of the scale range; for example, `0.5` indicates a zoom centered on the mid-point of the scale range.
+
+<a name="zoomLog" href="#zoomLog">#</a>
+<b>zoomLog</b>(<i>domain</i>, <i>anchor</i>, <i>scaleFactor</i>)<br/>
+Given a log scale _domain_ array with numeric or datetime values, returns a new two-element domain array that is the result of zooming the domain by a _scaleFactor_, centered at the provided fractional _anchor_. The _anchor_ value represents the zoom position in terms of fractional units of the scale range; for example, `0.5` indicates a zoom centered on the mid-point of the scale range.
+
+<a name="zoomPow" href="#zoomPow">#</a>
+<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scaleFactor</i>, <i>exponent</i>)<br/>
+Given a power scale _domain_ array with numeric or datetime values and the given _exponent_, returns a new two-element domain array that is the result of zooming the domain by a _scaleFactor_, centered at the provided fractional _anchor_. The _anchor_ value represents the zoom position in terms of fractional units of the scale range; for example, `0.5` indicates a zoom centered on the mid-point of the scale range.
+
 [Back to Top](#reference)
 
 
