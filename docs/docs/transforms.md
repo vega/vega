@@ -38,6 +38,7 @@ Transforms for processing streams of data objects.
 - [`filter`](filter) - Filter a data stream using a predicate expression.
 - [`fold`](fold) - Collapse selected data fields into _key_ and _value_ properties.
 - [`formula`](formula) - Extend data objects with derived fields using a formula expression.
+- [`identifier`](identifier) - Assign unique key values to data objects.
 - [`impute`](impute) - Perform imputation of missing values.
 - [`joinaggregate`](joinaggregate) - Extend data objects with calculated aggregate values.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
