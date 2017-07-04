@@ -1354,6 +1354,8 @@
             "none",
             "left",
             "right",
+            "top",
+            "bottom",
             "top-left",
             "top-right",
             "bottom-left",
@@ -3397,6 +3399,9 @@
         },
         {
           "$ref": "#/defs/resolvefilterTransform"
+        },
+        {
+          "$ref": "#/defs/identifierTransform"
         }
       ]
     },
@@ -3473,6 +3478,9 @@
         },
         {
           "$ref": "#/defs/resolvefilterTransform"
+        },
+        {
+          "$ref": "#/defs/identifierTransform"
         }
       ]
     },
@@ -7055,6 +7063,34 @@
         "type",
         "ignore",
         "filter"
+      ]
+    },
+    "identifierTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "identifier"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "as"
       ]
     }
   },

@@ -4,7 +4,7 @@
 	(factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-beta.39";
+var version = "3.0.0-rc1";
 
 var bin$1 = function(_) {
   // determine range
@@ -10074,19 +10074,24 @@ prototype$15.visit = function(flags, visitor) {
  *   the vega-encode module.
  */
 function run(encode) {
-  if (!this._touched.length) {
-    return 0; // nothing to do!
-  }
-
-  if (this._pending) {
-    this.info('Awaiting requests, delaying dataflow run.');
-    return 0;
-  }
-
   var df = this,
       count = 0,
       level = df.logLevel(),
-      op, next, dt;
+      op, next, dt, error$$1;
+
+  if (df._pulse) {
+    df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
+  }
+
+  if (!df._touched.length) {
+    df.info('Dataflow invoked, but nothing to do.');
+    return 0;
+  }
+
+  if (df._pending) {
+    df.info('Awaiting requests, delaying dataflow run.');
+    return 0;
+  }
 
   df._pulse = new Pulse(df, ++df._clock, encode);
 
@@ -10123,7 +10128,7 @@ function run(encode) {
       ++count;
     }
   } catch (err) {
-    df.error(err);
+    error$$1 = err;
   }
 
   // reset pulse map
@@ -10133,6 +10138,11 @@ function run(encode) {
   if (level >= Info) {
     dt = Date.now() - dt;
     df.info('> Pulse ' + df._clock + ': ' + count + ' operators; ' + dt + 'ms');
+  }
+
+  if (error$$1) {
+    df._postrun = [];
+    df.error(error$$1);
   }
 
   // invoke callbacks queued via runAfter
@@ -25783,6 +25793,46 @@ function boundItem$1(item, bound, opt) {
   return bound(item.bounds.clear(), item, opt);
 }
 
+var COUNTER_NAME = ':vega_identifier:';
+
+/**
+ * Adds a unique identifier to all added tuples.
+ * This transform creates a new signal that serves as an id counter.
+ * As a result, the id counter is shared across all instances of this
+ * transform, generating unique ids across multiple data streams. In
+ * addition, this signal value can be included in a snapshot of the
+ * dataflow state, enabling correct resumption of id allocation.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {string} params.as - The field name for the generated identifier.
+ */
+function Identifier(params) {
+  Transform.call(this, 0, params);
+}
+
+var prototype$69 = inherits(Identifier, Transform);
+
+prototype$69.transform = function(_, pulse) {
+  var counter = getCounter(pulse.dataflow),
+      id$$1 = counter.value,
+      as = _.as;
+
+  pulse.visit(pulse.ADD, function(t) {
+    if (!t[as]) t[as] = ++id$$1;
+  });
+
+  counter.set(this.value = id$$1);
+  return pulse;
+};
+
+function getCounter(view) {
+  var counter = view._signals[COUNTER_NAME];
+  if (!counter) {
+    view._signals[COUNTER_NAME] = (counter = view.add(0));
+  }
+  return counter;
+}
+
 /**
  * Bind scenegraph items to a scenegraph mark instance.
  * @constructor
@@ -25798,9 +25848,9 @@ function Mark(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$69 = inherits(Mark, Transform);
+var prototype$70 = inherits(Mark, Transform);
 
-prototype$69.transform = function(_, pulse) {
+prototype$70.transform = function(_, pulse) {
   var mark = this.value;
 
   // acquire mark on first invocation, bind context and group
@@ -25843,7 +25893,7 @@ function Overlap(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$70 = inherits(Overlap, Transform);
+var prototype$71 = inherits(Overlap, Transform);
 
 var methods = {
   parity: function(items) {
@@ -25886,10 +25936,12 @@ function hasBounds(item) {
   return b.width() > 1 && b.height() > 1;
 }
 
-prototype$70.transform = function(_, pulse) {
+prototype$71.transform = function(_, pulse) {
   var reduce = methods[_.method] || methods.parity,
       source = pulse.materialize(pulse.SOURCE).source,
       items  = source;
+
+  if (!items) return;
 
   if (_.method === 'greedy') {
     items = source = source.filter(hasBounds);
@@ -25918,9 +25970,9 @@ function Render(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$71 = inherits(Render, Transform);
+var prototype$72 = inherits(Render, Transform);
 
-prototype$71.transform = function(_, pulse) {
+prototype$72.transform = function(_, pulse) {
   var view = pulse.dataflow;
 
   pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
@@ -26245,9 +26297,9 @@ function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$72 = inherits(ViewLayout, Transform);
+var prototype$73 = inherits(ViewLayout, Transform);
 
-prototype$72.transform = function(_, pulse) {
+prototype$73.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
@@ -26263,7 +26315,8 @@ function layoutGroup(view, group, _) {
       height = Math.max(0, group.height || 0),
       viewBounds = new Bounds().set(0, 0, width, height),
       axisBounds = viewBounds.clone(),
-      legendBounds = viewBounds.clone(),
+      xBounds = viewBounds.clone(),
+      yBounds = viewBounds.clone(),
       legends = [], title,
       mark, flow, b, i, n;
 
@@ -26273,7 +26326,7 @@ function layoutGroup(view, group, _) {
     switch (mark.role) {
       case AxisRole:
         axisBounds.union(b = layoutAxis(view, mark, width, height));
-        if (isYAxis(mark)) legendBounds.union(b);
+        (isYAxis(mark) ? xBounds : yBounds).union(b);
         break;
       case TitleRole:
         title = mark; break;
@@ -26285,7 +26338,8 @@ function layoutGroup(view, group, _) {
       case RowFooter:
       case ColHeader:
       case ColFooter:
-        legendBounds.union(mark.bounds);
+        xBounds.union(mark.bounds);
+        yBounds.union(mark.bounds);
         break;
       default:
         viewBounds.union(mark.bounds);
@@ -26295,15 +26349,15 @@ function layoutGroup(view, group, _) {
   // layout title, adjust bounds
   if (title) {
     axisBounds.union(b = layoutTitle(view, title, axisBounds));
-    if (isYAxis(title)) legendBounds.union(b);
+    (isYAxis(title) ? xBounds : yBounds).union(b);
   }
 
   // layout legends, adjust viewBounds
   if (legends.length) {
-    flow = {left: 0, right: 0, margin: _.legendMargin || 8};
+    flow = {left: 0, right: 0, top: 0, bottom: 0, margin: _.legendMargin || 8};
 
     for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(view, legends[i], flow, legendBounds, width, height);
+      b = layoutLegend(view, legends[i], flow, xBounds, yBounds, width, height);
       (_.autosize && _.autosize.type === Fit)
         ? viewBounds.add(b.x1, 0).add(b.x2, 0)
         : viewBounds.union(b);
@@ -26311,7 +26365,8 @@ function layoutGroup(view, group, _) {
   }
 
   // perform size adjustment
-  layoutSize(view, group, viewBounds.union(legendBounds).union(axisBounds), _);
+  viewBounds.union(xBounds).union(yBounds).union(axisBounds);
+  layoutSize(view, group, viewBounds, _);
 }
 
 function set$4(item, property, value) {
@@ -26480,15 +26535,23 @@ function layoutTitle(view, title, axisBounds) {
   return title.bounds.clear().union(bounds);
 }
 
-function layoutLegend(view, legend, flow, axisBounds, width, height) {
+function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
   var item = legend.items[0],
       datum = item.datum,
       orient = datum.orient,
       offset = item.offset,
       bounds = item.bounds,
       x = 0,
-      y = (flow[orient] || 0),
-      w, h;
+      y = 0,
+      w, h, axisBounds;
+
+  if (orient === 'top' || orient === 'bottom') {
+    axisBounds = yBounds,
+    x = flow[orient];
+  } else if (orient === 'left' || orient === 'right') {
+    axisBounds = xBounds;
+    y = flow[orient];
+  }
 
   tempBounds$2.clear().union(bounds);
   bounds.clear();
@@ -26507,6 +26570,14 @@ function layoutLegend(view, legend, flow, axisBounds, width, height) {
     case 'right':
       x += offset + Math.ceil(axisBounds.x2);
       flow.right += h + flow.margin;
+      break;
+    case 'top':
+      y -= h + offset - Math.floor(axisBounds.y1);
+      flow.top += w + flow.margin;
+      break;
+    case 'bottom':
+      y += offset + Math.ceil(axisBounds.y2);
+      flow.bottom += w + flow.margin;
       break;
     case 'top-left':
       x += offset;
@@ -26578,6 +26649,14 @@ function layoutSize(view, group, viewBounds, _) {
 
   view.autosize(viewWidth, viewHeight, width, height, [left, top], auto);
 }
+
+var IdentifierDefinition = {
+  "type": "Identifier",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "as", "type": "string", "required": true }
+  ]
+};
 
 var Default = 'default';
 
@@ -29187,7 +29266,7 @@ var span = function(array) {
 };
 
 var Literal = 'Literal';
-var Identifier = 'Identifier';
+var Identifier$1 = 'Identifier';
 
 var indexPrefix  = '@';
 var scalePrefix  = '%';
@@ -29216,7 +29295,7 @@ function scaleVisitor(name, args, scope, params) {
     // add scale dependency
     addScaleDependency(scope, params, args[0].value);
   }
-  else if (args[0].type === Identifier) {
+  else if (args[0].type === Identifier$1) {
     // indirect scale lookup; add all scales as parameters
     for (name in scope.scales) {
       addScaleDependency(scope, params, name);
@@ -29390,6 +29469,15 @@ function indataVisitor(name, args, scope, params) {
   }
 }
 
+function setdata(name, tuples) {
+  var df = this.context.dataflow,
+      data = this.context.data[name],
+      input = data.input;
+
+  df.pulse(input, df.changeset().remove(truthy).insert(tuples));
+  return 1;
+}
+
 var EMPTY = {};
 
 function datum(d) { return d.data; }
@@ -29430,10 +29518,23 @@ var encode = function(item, name, retval) {
   return retval !== undefined ? retval : item;
 };
 
+function equal(a, b) {
+  return a === b || a !== a && b !== b ? true
+    : isArray(a) && isArray(b) && a.length === b.length ? equalArray(a, b)
+    : false;
+}
+
+function equalArray(a, b) {
+  for (var i=0, n=a.length; i<n; ++i) {
+    if (!equal(a[i], b[i])) return false;
+  }
+  return true;
+}
+
 function removePredicate(props) {
   return function(_) {
     for (var key$$1 in props) {
-      if (key$$1 !== '_id' && _[key$$1] !== props[key$$1]) return false;
+      if (key$$1 !== '_id' && !equal(_[key$$1], props[key$$1])) return false;
     }
     return true;
   };
@@ -29789,6 +29890,7 @@ var functionContext = {
   span: span,
   bandspace: bandspace,
   inrange: inrange,
+  setdata: setdata,
   panLinear: panLinear,
   panLog: panLog,
   panPow: panPow,
@@ -30504,8 +30606,7 @@ function fieldRef(data, scope) {
   if (isArray(data)) {
     coll.value = {$ingest: data};
   } else if (data.signal) {
-    scope.signalRef('modify(' + $(name)
-      + ',' + data.signal + ', true)');
+    scope.signalRef('setdata(' + $(name) + ',' + data.signal + ')');
   }
   scope.addDataPipeline(name, [coll, Sieve$1({})]);
   return {data: name, field: 'data'};
@@ -31503,9 +31604,9 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype$74 = DataScope.prototype;
+var prototype$75 = DataScope.prototype;
 
-prototype$74.countsRef = function(scope, field$$1, sort) {
+prototype$75.countsRef = function(scope, field$$1, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       k = fieldKey(field$$1), v, a, p;
@@ -31579,27 +31680,27 @@ function cache(scope, ds, name, optype, field$$1, counts, index) {
   return v;
 }
 
-prototype$74.tuplesRef = function() {
+prototype$75.tuplesRef = function() {
   return ref(this.values);
 };
 
-prototype$74.extentRef = function(scope, field$$1) {
+prototype$75.extentRef = function(scope, field$$1) {
   return cache(scope, this, 'extent', 'Extent', field$$1, false);
 };
 
-prototype$74.domainRef = function(scope, field$$1) {
+prototype$75.domainRef = function(scope, field$$1) {
   return cache(scope, this, 'domain', 'Values', field$$1, false);
 };
 
-prototype$74.valuesRef = function(scope, field$$1, sort) {
+prototype$75.valuesRef = function(scope, field$$1, sort) {
   return cache(scope, this, 'vals', 'Values', field$$1, sort || true);
 };
 
-prototype$74.lookupRef = function(scope, field$$1) {
+prototype$75.lookupRef = function(scope, field$$1) {
   return cache(scope, this, 'lookup', 'TupleIndex', field$$1, false);
 };
 
-prototype$74.indataRef = function(scope, field$$1) {
+prototype$75.indataRef = function(scope, field$$1) {
   return cache(scope, this, 'indata', 'TupleIndex', field$$1, true, true);
 };
 
@@ -32583,15 +32684,15 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$75 = Scope.prototype = Subscope.prototype;
+var prototype$76 = Scope.prototype = Subscope.prototype;
 
 // ----
 
-prototype$75.fork = function() {
+prototype$76.fork = function() {
   return new Subscope(this);
 };
 
-prototype$75.toRuntime = function() {
+prototype$76.toRuntime = function() {
   this.finish();
   return {
     background: this.background,
@@ -32602,11 +32703,11 @@ prototype$75.toRuntime = function() {
   };
 };
 
-prototype$75.id = function() {
+prototype$76.id = function() {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype$75.add = function(op) {
+prototype$76.add = function(op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
@@ -32617,24 +32718,24 @@ prototype$75.add = function(op) {
   return op;
 };
 
-prototype$75.proxy = function(op) {
+prototype$76.proxy = function(op) {
   var vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy$1({value: vref}));
 };
 
-prototype$75.addStream = function(stream) {
+prototype$76.addStream = function(stream) {
   this.streams.push(stream);
   stream.id = this.id();
   return stream;
 };
 
-prototype$75.addUpdate = function(update) {
+prototype$76.addUpdate = function(update) {
   this.updates.push(update);
   return update;
 };
 
 // Apply metadata
-prototype$75.finish = function() {
+prototype$76.finish = function() {
   var name, ds;
 
   // annotate root
@@ -32674,40 +32775,40 @@ prototype$75.finish = function() {
 
 // ----
 
-prototype$75.pushState = function(encode, parent, lookup) {
+prototype$76.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype$75.popState = function() {
+prototype$76.popState = function() {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype$75.parent = function() {
+prototype$76.parent = function() {
   return peek(this._parent);
 };
 
-prototype$75.encode = function() {
+prototype$76.encode = function() {
   return peek(this._encode);
 };
 
-prototype$75.lookup = function() {
+prototype$76.lookup = function() {
   return peek(this._lookup);
 };
 
-prototype$75.markpath = function() {
+prototype$76.markpath = function() {
   var p = this._markpath;
   return ++p[p.length-1];
 };
 
 // ----
 
-prototype$75.fieldRef = function(field$$1, name) {
+prototype$76.fieldRef = function(field$$1, name) {
   if (isString(field$$1)) return fieldRef$1(field$$1, name);
   if (!field$$1.signal) {
     error('Unsupported field reference: ' + $(field$$1));
@@ -32725,7 +32826,7 @@ prototype$75.fieldRef = function(field$$1, name) {
   return f;
 };
 
-prototype$75.compareRef = function(cmp) {
+prototype$76.compareRef = function(cmp) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -32745,7 +32846,7 @@ prototype$75.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype$75.keyRef = function(fields) {
+prototype$76.keyRef = function(fields) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -32764,7 +32865,7 @@ prototype$75.keyRef = function(fields) {
     : keyRef(fields);
 };
 
-prototype$75.sortRef = function(sort) {
+prototype$76.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
@@ -32782,7 +32883,7 @@ prototype$75.sortRef = function(sort) {
 
 // ----
 
-prototype$75.event = function(source, type) {
+prototype$76.event = function(source, type) {
   var key$$1 = source + ':' + type;
   if (!this.events[key$$1]) {
     var id$$1 = this.id();
@@ -32798,7 +32899,7 @@ prototype$75.event = function(source, type) {
 
 // ----
 
-prototype$75.addSignal = function(name, value) {
+prototype$76.addSignal = function(name, value) {
   if (this.signals.hasOwnProperty(name)) {
     error('Duplicate signal name: ' + $(name));
   }
@@ -32806,14 +32907,14 @@ prototype$75.addSignal = function(name, value) {
   return this.signals[name] = op;
 };
 
-prototype$75.getSignal = function(name) {
+prototype$76.getSignal = function(name) {
   if (!this.signals[name]) {
     error('Unrecognized signal name: ' + $(name));
   }
   return this.signals[name];
 };
 
-prototype$75.signalRef = function(s) {
+prototype$76.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
   } else if (!this.lambdas.hasOwnProperty(s)) {
@@ -32822,7 +32923,7 @@ prototype$75.signalRef = function(s) {
   return ref(this.lambdas[s]);
 };
 
-prototype$75.parseLambdas = function() {
+prototype$76.parseLambdas = function() {
   var code = Object.keys(this.lambdas);
   for (var i=0, n=code.length; i<n; ++i) {
     var s = code[i],
@@ -32833,11 +32934,11 @@ prototype$75.parseLambdas = function() {
   }
 };
 
-prototype$75.property = function(spec) {
+prototype$76.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype$75.objectProperty = function(spec) {
+prototype$76.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
     : this.signalRef(spec.signal || propertyLambda(spec));
 };
@@ -32878,7 +32979,7 @@ function objectLambda(obj) {
   return code + '}';
 }
 
-prototype$75.addBinding = function(name, bind) {
+prototype$76.addBinding = function(name, bind) {
   if (!this.bindings) {
     error('Nested signals do not support binding: ' + $(name));
   }
@@ -32887,55 +32988,55 @@ prototype$75.addBinding = function(name, bind) {
 
 // ----
 
-prototype$75.addScaleProj = function(name, transform) {
+prototype$76.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error('Duplicate scale or projection name: ' + $(name));
   }
   this.scales[name] = this.add(transform);
 };
 
-prototype$75.addScale = function(name, params) {
+prototype$76.addScale = function(name, params) {
   this.addScaleProj(name, Scale$1(params));
 };
 
-prototype$75.addProjection = function(name, params) {
+prototype$76.addProjection = function(name, params) {
   this.addScaleProj(name, Projection$1(params));
 };
 
-prototype$75.getScale = function(name) {
+prototype$76.getScale = function(name) {
   if (!this.scales[name]) {
     error('Unrecognized scale name: ' + $(name));
   }
   return this.scales[name];
 };
 
-prototype$75.projectionRef =
-prototype$75.scaleRef = function(name) {
+prototype$76.projectionRef =
+prototype$76.scaleRef = function(name) {
   return ref(this.getScale(name));
 };
 
-prototype$75.projectionType =
-prototype$75.scaleType = function(name) {
+prototype$76.projectionType =
+prototype$76.scaleType = function(name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype$75.addData = function(name, dataScope) {
+prototype$76.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + $(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype$75.getData = function(name) {
+prototype$76.getData = function(name) {
   if (!this.data[name]) {
     error('Undefined data set name: ' + $(name));
   }
   return this.data[name];
 };
 
-prototype$75.addDataPipeline = function(name, entries) {
+prototype$76.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error('Duplicate data set name: ' + $(name));
   }
@@ -33500,8 +33601,8 @@ function setState(state) {
   });
 
   (state.subcontext  || []).forEach(function(substate, i) {
-    var ctx = ctx.subcontext[i];
-    if (ctx) ctx.setState(substate);
+    var subctx = ctx.subcontext[i];
+    if (subctx) subctx.setState(substate);
   });
 }
 
@@ -33806,17 +33907,17 @@ function View(spec, options) {
   cursor(this);
 }
 
-var prototype$73 = inherits(View, Dataflow);
+var prototype$74 = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype$73.run = function(encode) {
+prototype$74.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
   if (this._redraw || this._resize) this.render();
   return this;
 };
 
-prototype$73.render = function() {
+prototype$74.render = function() {
   if (this._renderer) {
     if (this._resize) {
       this._resize = 0;
@@ -33828,7 +33929,7 @@ prototype$73.render = function() {
   return this;
 };
 
-prototype$73.dirty = function(item) {
+prototype$74.dirty = function(item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);
 };
@@ -33841,18 +33942,18 @@ function lookupSignal(view, name) {
     : view.error('Unrecognized signal name: ' + $(name));
 }
 
-prototype$73.signal = function(name, value, options) {
+prototype$74.signal = function(name, value, options) {
   var op = lookupSignal(this, name);
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
 };
 
-prototype$73.scenegraph = function() {
+prototype$74.scenegraph = function() {
   return this._scenegraph;
 };
 
-prototype$73.background = function(_) {
+prototype$74.background = function(_) {
   if (arguments.length) {
     this._background = _;
     this._resize = 1;
@@ -33862,19 +33963,19 @@ prototype$73.background = function(_) {
   }
 };
 
-prototype$73.width = function(_) {
+prototype$74.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype$73.height = function(_) {
+prototype$74.height = function(_) {
   return arguments.length ? this.signal('height', _) : this.signal('height');
 };
 
-prototype$73.padding = function(_) {
+prototype$74.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
-prototype$73.renderer = function(type) {
+prototype$74.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) this.error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -33887,7 +33988,7 @@ prototype$73.renderer = function(type) {
   return this;
 };
 
-prototype$73.loader = function(loader) {
+prototype$74.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -33899,24 +34000,24 @@ prototype$73.loader = function(loader) {
   return this;
 };
 
-prototype$73.resize = function() {
+prototype$74.resize = function() {
   this._autosize = 1;
   return this;
 };
 
 // -- EVENT HANDLING ----
 
-prototype$73.addEventListener = function(type, handler) {
+prototype$74.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
   return this;
 };
 
-prototype$73.removeEventListener = function(type, handler) {
+prototype$74.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
   return this;
 };
 
-prototype$73.addSignalListener = function(name, handler) {
+prototype$74.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   h.handler = handler;
@@ -33924,7 +34025,7 @@ prototype$73.addSignalListener = function(name, handler) {
   return this;
 };
 
-prototype$73.removeSignalListener = function(name, handler) {
+prototype$74.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       t = s._targets || [],
       h = t.filter(function(op) {
@@ -33935,7 +34036,7 @@ prototype$73.removeSignalListener = function(name, handler) {
   return this;
 };
 
-prototype$73.preventDefault = function(_) {
+prototype$74.preventDefault = function(_) {
   if (arguments.length) {
     this._preventDefault = _;
     return this;
@@ -33944,7 +34045,7 @@ prototype$73.preventDefault = function(_) {
   }
 };
 
-prototype$73.tooltipHandler = function(_) {
+prototype$74.tooltipHandler = function(_) {
   var h = this._handler;
   if (!arguments.length) {
     return h.handleTooltip;
@@ -33954,30 +34055,32 @@ prototype$73.tooltipHandler = function(_) {
   }
 };
 
-prototype$73.events = events$1;
-prototype$73.finalize = finalize;
-prototype$73.hover = hover;
+prototype$74.events = events$1;
+prototype$74.finalize = finalize;
+prototype$74.hover = hover;
 
 // -- SIZING ----
-prototype$73.autosize = autosize;
+prototype$74.autosize = autosize;
 
 // -- DATA ----
-prototype$73.data = data;
-prototype$73.change = change;
-prototype$73.insert = insert;
-prototype$73.remove = remove;
+prototype$74.data = data;
+prototype$74.change = change;
+prototype$74.insert = insert;
+prototype$74.remove = remove;
 
 // -- INITIALIZATION ----
-prototype$73.initialize = initialize$1;
+prototype$74.initialize = initialize$1;
 
 // -- HEADLESS RENDERING ----
-prototype$73.toImageURL = renderToImageURL;
-prototype$73.toCanvas = renderToCanvas;
-prototype$73.toSVG = renderToSVG;
+prototype$74.toImageURL = renderToImageURL;
+prototype$74.toCanvas = renderToCanvas;
+prototype$74.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype$73.getState = getState$1;
-prototype$73.setState = setState$1;
+prototype$74.getState = getState$1;
+prototype$74.setState = setState$1;
+
+register(IdentifierDefinition, Identifier);
 
 transform('Bound', Bound);
 transform('Mark', Mark);
