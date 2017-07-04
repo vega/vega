@@ -18,19 +18,24 @@ import {id, isArray, Info, Debug} from 'vega-util';
  *   the vega-encode module.
  */
 export function run(encode) {
-  if (!this._touched.length) {
-    return 0; // nothing to do!
-  }
-
-  if (this._pending) {
-    this.info('Awaiting requests, delaying dataflow run.');
-    return 0;
-  }
-
   var df = this,
       count = 0,
       level = df.logLevel(),
       op, next, dt;
+
+  if (df._pulse) {
+    df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
+  }
+
+  if (!df._touched.length) {
+    df.info('Dataflow invoked, but nothing to do.');
+    return 0;
+  }
+
+  if (df._pending) {
+    df.info('Awaiting requests, delaying dataflow run.');
+    return 0;
+  }
 
   df._pulse = new Pulse(df, ++df._clock, encode);
 
