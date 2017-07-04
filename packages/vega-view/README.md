@@ -201,6 +201,15 @@ Internally, this method invokes the `run` method of the
 [Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/Dataflow.js)
 parent class, and then additionally performs rendering.
 
+<a name="view_runAfter" href="#view_run">#</a>
+view.<b>runAfter</b>(<i>callback</i>)
+[<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/run.js "Source")
+
+Schedules a *callback* function to be invoked after the current dataflow
+evaluation completes. The callback function will be invoked with this view
+instance provided as the sole parameter. If dataflow evaluation is not
+currently occurring, the callback function is invoked immediately.
+
 <a name="view_render" href="#view_render">#</a>
 view.<b>render</b>([<i>update</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
@@ -289,8 +298,17 @@ of the signal and the new signal *value*. Listeners will be invoked when
 the signal value *changes* during pulse propagation (e.g., after
 [view.run()](#view_run) is called).
 
+Signal listeners are invoked immediately upon signal update, in the midst
+of dataflow evaluation. As a result, other signal updates and data transforms
+may have yet to update. If you wish to access the values of other signals,
+or update signal values and re-run the dataflow, use the
+[runAfter](#view_runAfter) method to schedule a callback that performs the
+desired actions _after_ dataflow evaluation completes. Attempting to call
+the [run](#view_run) method from within a signal listener will result in an
+error, as recursive invocation is not allowed.
+
 To remove a listener, use the
-[removeSignalListener](view_removeSignalListener) method.
+[removeSignalListener](#view_removeSignalListener) method.
 
 ```js
 view.addSignalListener('width', function(name, value) {
