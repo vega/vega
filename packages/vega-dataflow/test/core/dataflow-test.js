@@ -29,3 +29,22 @@ tape('Dataflow propagates values', function(test) {
 
   test.end();
 });
+
+tape('Dataflow handles errors', function(test) {
+  var df = new vega.Dataflow(),
+      error = 0;
+
+  df.add(function() { throw Error('!!!') });
+
+  try {
+    df.run();
+  } catch (err) {
+    error = 1;
+  }
+
+  test.equal(error, 1);
+  test.equal(df._pulse, null);
+  test.equal(Object.keys(df._pulses).length, 0);
+  test.equal(df._postrun.length, 0);
+  test.end();
+});

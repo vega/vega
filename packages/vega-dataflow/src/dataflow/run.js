@@ -21,7 +21,7 @@ export function run(encode) {
   var df = this,
       count = 0,
       level = df.logLevel(),
-      op, next, dt;
+      op, next, dt, error;
 
   if (df._pulse) {
     df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
@@ -72,7 +72,7 @@ export function run(encode) {
       ++count;
     }
   } catch (err) {
-    df.error(err);
+    error = err;
   }
 
   // reset pulse map
@@ -82,6 +82,11 @@ export function run(encode) {
   if (level >= Info) {
     dt = Date.now() - dt;
     df.info('> Pulse ' + df._clock + ': ' + count + ' operators; ' + dt + 'ms');
+  }
+
+  if (error) {
+    df._postrun = [];
+    df.error(error);
   }
 
   // invoke callbacks queued via runAfter
