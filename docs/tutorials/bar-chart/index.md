@@ -258,7 +258,7 @@ Signals can be applied throughout a specification. For example, they can be used
 
 ## <a name="next-steps"></a>Next Steps
 
-We've now worked through a full Vega visualization! Next, we recommend experimenting with and modifying this example. Copy & paste the full specification above into the online **[Vega Editor](http://vega.github.io/new-editor/)** or fork [our example Block](https://bl.ocks.org/domoritz/cd636b15fa0e187b51b73fc60b4d3014).
+We've now worked through a full Vega visualization! Next, we recommend experimenting with and modifying this example. Copy & paste the full specification above into the online **[Vega Editor](https://vega.github.io/editor)** or fork [our example Block](https://bl.ocks.org/domoritz/cd636b15fa0e187b51b73fc60b4d3014).
 
 - Can you adjust the scales and axes?
 - Can you change the chart from a vertical bar chart to a horizontal bar chart?

@@ -23,14 +23,14 @@ In the process, we will touch upon many of the features supported by Vega: trans
 11. [Add Mouse Acceleration via Voronoi Cells](#add-voronoi-cells)
 12. [One Last Thing...](#one-last-thing)
 
-As you work through the tutorial, we encourage you to build up and experiment with each step in the [online Vega Editor](http://vega.github.io/new-editor).
+As you work through the tutorial, we encourage you to build up and experiment with each step in the [online Vega Editor](https://vega.github.io/editor).
 
 
 <a name="meet-the-data"></a>
 
 ## Step 1: Meet the Data
 
-Let's begin by examining our raw ingredients. We will build the visualization from three data sets; each resides in the `data` subfolder and are available within the [Vega Editor](http://vega.github.io/new-editor).
+Let's begin by examining our raw ingredients. We will build the visualization from three data sets; each resides in the `data` subfolder and are available within the [Vega Editor](https://vega.github.io/editor).
 
 **[us-10m.json](../../data/us-10m.json)**
 
