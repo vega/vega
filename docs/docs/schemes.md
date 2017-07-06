@@ -306,7 +306,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="blues" href="#blues">#</a> <strong>blues</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-blues">
       <stop offset="0%" stop-color="rgb(247, 251, 255)"></stop>
       <stop offset="10%" stop-color="rgb(227, 238, 249)"></stop>
       <stop offset="20%" stop-color="rgb(207, 225, 242)"></stop>
@@ -320,7 +320,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(8, 48, 107)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-blues)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>blues-3</strong>
@@ -391,7 +391,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="greens" href="#greens">#</a> <strong>greens</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-greens">
       <stop offset="0%" stop-color="rgb(247, 252, 245)"></stop>
       <stop offset="10%" stop-color="rgb(232, 246, 227)"></stop>
       <stop offset="20%" stop-color="rgb(211, 238, 205)"></stop>
@@ -405,7 +405,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(0, 68, 27)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-greens)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>greens-3</strong>
@@ -476,7 +476,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="greys" href="#greys">#</a> <strong>greys</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-greys">
       <stop offset="0%" stop-color="rgb(255, 255, 255)"></stop>
       <stop offset="10%" stop-color="rgb(242, 242, 242)"></stop>
       <stop offset="20%" stop-color="rgb(226, 226, 226)"></stop>
@@ -490,7 +490,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(0, 0, 0)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-greys)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>greys-3</strong>
@@ -561,7 +561,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="purples" href="#purples">#</a> <strong>purples</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-purples">
       <stop offset="0%" stop-color="rgb(252, 251, 253)"></stop>
       <stop offset="10%" stop-color="rgb(241, 239, 246)"></stop>
       <stop offset="20%" stop-color="rgb(226, 225, 239)"></stop>
@@ -575,7 +575,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(63, 0, 125)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-purples)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>purples-3</strong>
@@ -646,7 +646,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="reds" href="#reds">#</a> <strong>reds</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-reds">
       <stop offset="0%" stop-color="rgb(255, 245, 240)"></stop>
       <stop offset="10%" stop-color="rgb(254, 227, 214)"></stop>
       <stop offset="20%" stop-color="rgb(253, 201, 180)"></stop>
@@ -660,7 +660,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(103, 0, 13)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-reds)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>reds-3</strong>
@@ -731,7 +731,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="oranges" href="#oranges">#</a> <strong>oranges</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-oranges">
       <stop offset="0%" stop-color="rgb(255, 245, 235)"></stop>
       <stop offset="10%" stop-color="rgb(254, 232, 211)"></stop>
       <stop offset="20%" stop-color="rgb(253, 216, 179)"></stop>
@@ -745,7 +745,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(127, 39, 4)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-oranges)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>oranges-3</strong>
@@ -821,7 +821,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="viridis" href="#viridis">#</a> <strong>viridis</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-viridis">
       <stop offset="0%" stop-color="#440154"></stop>
       <stop offset="10%" stop-color="#482475"></stop>
       <stop offset="20%" stop-color="#414487"></stop>
@@ -835,7 +835,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="#fde725"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-viridis)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 </div>
 
@@ -843,7 +843,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="inferno" href="#inferno">#</a> <strong>inferno</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-inferno">
       <stop offset="0%" stop-color="#000004"></stop>
       <stop offset="10%" stop-color="#160b39"></stop>
       <stop offset="20%" stop-color="#420a68"></stop>
@@ -857,7 +857,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="#fcffa4"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-inferno)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 </div>
 
@@ -865,7 +865,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="magma" href="#magma">#</a> <strong>magma</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-magma">
       <stop offset="0%" stop-color="#000004"></stop>
       <stop offset="10%" stop-color="#140e36"></stop>
       <stop offset="20%" stop-color="#3b0f70"></stop>
@@ -879,7 +879,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="#fcfdbf"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-magma)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 </div>
 
@@ -887,7 +887,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="plasma" href="#plasma">#</a> <strong>plasma</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-plasma">
       <stop offset="0%" stop-color="#0d0887"></stop>
       <stop offset="10%" stop-color="#41049d"></stop>
       <stop offset="20%" stop-color="#6a00a8"></stop>
@@ -901,7 +901,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="#f0f921"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-plasma)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 </div>
 
@@ -909,7 +909,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="bluegreen" href="#bluegreen">#</a> <strong>bluegreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-bluegreen">
       <stop offset="0%" stop-color="rgb(247, 252, 253)"></stop>
       <stop offset="10%" stop-color="rgb(232, 246, 249)"></stop>
       <stop offset="20%" stop-color="rgb(213, 239, 237)"></stop>
@@ -923,7 +923,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(0, 68, 27)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-bluegreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>bluegreen-3</strong>
@@ -992,7 +992,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="bluepurple" href="#bluepurple">#</a> <strong>bluepurple</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-bluepurple">
       <stop offset="0%" stop-color="rgb(247, 252, 253)"></stop>
       <stop offset="10%" stop-color="rgb(228, 238, 245)"></stop>
       <stop offset="20%" stop-color="rgb(204, 221, 236)"></stop>
@@ -1006,7 +1006,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(77, 0, 75)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-bluepurple)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>bluepurple-3</strong>
@@ -1077,7 +1077,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="greenblue" href="#greenblue">#</a> <strong>greenblue</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-greenblue">
       <stop offset="0%" stop-color="rgb(247, 252, 240)"></stop>
       <stop offset="10%" stop-color="rgb(229, 245, 223)"></stop>
       <stop offset="20%" stop-color="rgb(211, 238, 206)"></stop>
@@ -1091,7 +1091,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(8, 64, 129)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-greenblue)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>greenblue-3</strong>
@@ -1162,7 +1162,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="orangered" href="#orangered">#</a> <strong>orangered</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-orangered">
       <stop offset="0%" stop-color="rgb(255, 247, 236)"></stop>
       <stop offset="10%" stop-color="rgb(254, 235, 207)"></stop>
       <stop offset="20%" stop-color="rgb(253, 220, 175)"></stop>
@@ -1176,7 +1176,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(127, 0, 0)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-orangered)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>orangered-3</strong>
@@ -1247,7 +1247,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="purplebluegreen" href="#purplebluegreen">#</a> <strong>purplebluegreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-purplebluegreen">
       <stop offset="0%" stop-color="rgb(255, 247, 251)"></stop>
       <stop offset="10%" stop-color="rgb(239, 231, 242)"></stop>
       <stop offset="20%" stop-color="rgb(219, 216, 234)"></stop>
@@ -1261,7 +1261,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(1, 70, 54)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-purplebluegreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>purplebluegreen-3</strong>
@@ -1332,7 +1332,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="purpleblue" href="#purpleblue">#</a> <strong>purpleblue</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-purpleblue">
       <stop offset="0%" stop-color="rgb(255, 247, 251)"></stop>
       <stop offset="10%" stop-color="rgb(239, 234, 244)"></stop>
       <stop offset="20%" stop-color="rgb(219, 218, 235)"></stop>
@@ -1346,7 +1346,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(2, 56, 88)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-purpleblue)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>purpleblue-3</strong>
@@ -1417,7 +1417,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="purplered" href="#purplered">#</a> <strong>purplered</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-purplered">
       <stop offset="0%" stop-color="rgb(247, 244, 249)"></stop>
       <stop offset="10%" stop-color="rgb(234, 227, 240)"></stop>
       <stop offset="20%" stop-color="rgb(220, 201, 226)"></stop>
@@ -1431,7 +1431,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(103, 0, 31)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-purplered)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>purplered-3</strong>
@@ -1502,7 +1502,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="redpurple" href="#redpurple">#</a> <strong>redpurple</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-redpurple">
       <stop offset="0%" stop-color="rgb(255, 247, 243)"></stop>
       <stop offset="10%" stop-color="rgb(253, 228, 225)"></stop>
       <stop offset="20%" stop-color="rgb(252, 207, 204)"></stop>
@@ -1516,7 +1516,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(73, 0, 106)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-redpurple)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>redpurple-3</strong>
@@ -1587,7 +1587,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="yellowgreenblue" href="#yellowgreenblue">#</a> <strong>yellowgreenblue</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-yellowgreenblue">
       <stop offset="0%" stop-color="rgb(255, 255, 217)"></stop>
       <stop offset="10%" stop-color="rgb(239, 249, 189)"></stop>
       <stop offset="20%" stop-color="rgb(213, 238, 179)"></stop>
@@ -1601,7 +1601,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(8, 29, 88)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-yellowgreenblue)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>yellowgreenblue-3</strong>
@@ -1672,7 +1672,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="yellowgreen" href="#yellowgreen">#</a> <strong>yellowgreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-yellowgreen">
       <stop offset="0%" stop-color="rgb(255, 255, 229)"></stop>
       <stop offset="10%" stop-color="rgb(247, 252, 196)"></stop>
       <stop offset="20%" stop-color="rgb(228, 244, 172)"></stop>
@@ -1686,7 +1686,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(0, 69, 41)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-yellowgreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>yellowgreen-3</strong>
@@ -1757,7 +1757,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="yelloworangebrown" href="#yelloworangebrown">#</a> <strong>yelloworangebrown</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-yelloworangebrown">
       <stop offset="0%" stop-color="rgb(255, 255, 229)"></stop>
       <stop offset="10%" stop-color="rgb(255, 248, 196)"></stop>
       <stop offset="20%" stop-color="rgb(254, 234, 161)"></stop>
@@ -1771,7 +1771,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(102, 37, 6)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-yelloworangebrown)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>yelloworangebrown-3</strong>
@@ -1842,7 +1842,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 <a name="yelloworangered" href="#yelloworangered">#</a> <strong>yelloworangered</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-yelloworangered">
       <stop offset="0%" stop-color="rgb(255, 255, 204)"></stop>
       <stop offset="10%" stop-color="rgb(255, 240, 169)"></stop>
       <stop offset="20%" stop-color="rgb(254, 224, 135)"></stop>
@@ -1856,7 +1856,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
       <stop offset="100%" stop-color="rgb(128, 0, 38)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-yelloworangered)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>yelloworangered-3</strong>
@@ -1932,7 +1932,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="blueorange" href="#blueorange">#</a> <strong>blueorange</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-blueorange">
       <stop offset="0%" stop-color="rgb(5, 48, 97)"></stop>
       <stop offset="10%" stop-color="rgb(34, 101, 163)"></stop>
       <stop offset="20%" stop-color="rgb(75, 148, 196)"></stop>
@@ -1946,7 +1946,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(127, 59, 8)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-blueorange)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>blueorange-3</strong>
@@ -2055,7 +2055,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="brownbluegreen" href="#brownbluegreen">#</a> <strong>brownbluegreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-brownbluegreen">
       <stop offset="0%" stop-color="rgb(84, 48, 5)"></stop>
       <stop offset="10%" stop-color="rgb(139, 84, 15)"></stop>
       <stop offset="20%" stop-color="rgb(188, 132, 53)"></stop>
@@ -2069,7 +2069,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(0, 60, 48)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-brownbluegreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>brownbluegreen-3</strong>
@@ -2178,7 +2178,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="purplegreen" href="#purplegreen">#</a> <strong>purplegreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-purplegreen">
       <stop offset="0%" stop-color="rgb(64, 0, 75)"></stop>
       <stop offset="10%" stop-color="rgb(115, 47, 128)"></stop>
       <stop offset="20%" stop-color="rgb(154, 109, 170)"></stop>
@@ -2192,7 +2192,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(0, 68, 27)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-purplegreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>purplegreen-3</strong>
@@ -2301,7 +2301,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="pinkyellowgreen" href="#pinkyellowgreen">#</a> <strong>pinkyellowgreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-pinkyellowgreen">
       <stop offset="0%" stop-color="rgb(142, 1, 82)"></stop>
       <stop offset="10%" stop-color="rgb(192, 38, 126)"></stop>
       <stop offset="20%" stop-color="rgb(221, 114, 173)"></stop>
@@ -2315,7 +2315,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(39, 100, 25)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-pinkyellowgreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>pinkyellowgreen-3</strong>
@@ -2424,7 +2424,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="purpleorange" href="#purpleorange">#</a> <strong>purpleorange</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-purpleorange">
       <stop offset="0%" stop-color="rgb(45, 0, 75)"></stop>
       <stop offset="10%" stop-color="rgb(85, 45, 132)"></stop>
       <stop offset="20%" stop-color="rgb(129, 112, 172)"></stop>
@@ -2438,7 +2438,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(127, 59, 8)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-purpleorange)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>purpleorange-3</strong>
@@ -2547,7 +2547,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="redblue" href="#redblue">#</a> <strong>redblue</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-redblue">
       <stop offset="0%" stop-color="rgb(103, 0, 31)"></stop>
       <stop offset="10%" stop-color="rgb(172, 32, 47)"></stop>
       <stop offset="20%" stop-color="rgb(213, 96, 80)"></stop>
@@ -2561,7 +2561,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(5, 48, 97)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-redblue)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>redblue-3</strong>
@@ -2670,7 +2670,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="redgrey" href="#redgrey">#</a> <strong>redgrey</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-redgrey">
       <stop offset="0%" stop-color="rgb(103, 0, 31)"></stop>
       <stop offset="10%" stop-color="rgb(172, 32, 47)"></stop>
       <stop offset="20%" stop-color="rgb(213, 96, 80)"></stop>
@@ -2684,7 +2684,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(26, 26, 26)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-redgrey)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>redgrey-3</strong>
@@ -2793,7 +2793,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="redyellowblue" href="#redyellowblue">#</a> <strong>redyellowblue</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-redyellowblue">
       <stop offset="0%" stop-color="rgb(165, 0, 38)"></stop>
       <stop offset="10%" stop-color="rgb(212, 50, 44)"></stop>
       <stop offset="20%" stop-color="rgb(241, 110, 67)"></stop>
@@ -2807,7 +2807,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(49, 54, 149)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-redyellowblue)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>redyellowblue-3</strong>
@@ -2916,7 +2916,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="redyellowgreen" href="#redyellowgreen">#</a> <strong>redyellowgreen</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-redyellowgreen">
       <stop offset="0%" stop-color="rgb(165, 0, 38)"></stop>
       <stop offset="10%" stop-color="rgb(212, 50, 44)"></stop>
       <stop offset="20%" stop-color="rgb(241, 110, 67)"></stop>
@@ -2930,7 +2930,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(0, 104, 55)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-redyellowgreen)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>redyellowgreen-3</strong>
@@ -3039,7 +3039,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 <a name="spectral" href="#spectral">#</a> <strong>spectral</strong>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
-    <linearGradient id="gradient">
+    <linearGradient id="gradient-spectral">
       <stop offset="0%" stop-color="rgb(158, 1, 66)"></stop>
       <stop offset="10%" stop-color="rgb(209, 60, 75)"></stop>
       <stop offset="20%" stop-color="rgb(240, 112, 74)"></stop>
@@ -3053,7 +3053,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
       <stop offset="100%" stop-color="rgb(94, 79, 162)"></stop>
     </linearGradient>
   </defs>
-  <rect fill="url(#gradient)" x="0" y="0" width="1" height="1"></rect>
+  <rect fill="url(#gradient-spectral)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 <div class="swatch">
   <strong>spectral-3</strong>
