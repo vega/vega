@@ -76,7 +76,10 @@ add('yelloworangebrown', 'YlOrBr');
 add('yelloworangered',   'YlOrRd');
 
 export default function(name, scheme) {
-  if (arguments.length > 1) return (schemes[name] = scheme, this);
+  if (arguments.length > 1) {
+    schemes[name] = scheme;
+    return this;
+  }
 
   var part = name.split('-');
   name = part[0];

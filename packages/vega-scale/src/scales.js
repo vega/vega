@@ -31,8 +31,12 @@ function create(type, constructor) {
 }
 
 export default function scale(type, scale) {
-  return arguments.length > 1 ? (scales[type] = create(type, scale), this)
-    : scales.hasOwnProperty(type) ? scales[type] : undefined;
+  if (arguments.length > 1) {
+    scales[type] = create(type, scale);
+    return this;
+  } else {
+    return scales.hasOwnProperty(type) ? scales[type] : undefined;
+  }
 }
 
 var scales = {

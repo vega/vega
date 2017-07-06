@@ -19,7 +19,12 @@ export default function sequential(interpolator) {
   }
 
   scale.clamp = function(_) {
-    return arguments.length ? (clamp = !!_, scale) : clamp;
+    if (arguments.length) {
+      clamp = !!_;
+      return scale;
+    } else {
+      return clamp;
+    }
   };
 
   scale.domain = function(_) {
@@ -27,7 +32,12 @@ export default function sequential(interpolator) {
   };
 
   scale.interpolator = function(_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
+    if (arguments.length) {
+      interpolator = _;
+      return scale;
+    } else {
+      return interpolator;
+    }
   };
 
   scale.copy = function() {

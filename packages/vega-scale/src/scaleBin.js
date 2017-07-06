@@ -73,11 +73,21 @@ export function binOrdinal() {
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (domain = numbers(_), scale) : domain.slice();
+    if (arguments.length) {
+      domain = numbers(_);
+      return scale;
+    } else {
+      return domain.slice();
+    }
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = slice.call(_), scale) : range.slice();
+    if (arguments.length) {
+      range = slice.call(_);
+      return scale;
+    } else {
+      return range.slice();
+    }
   };
 
   scale.copy = function() {
