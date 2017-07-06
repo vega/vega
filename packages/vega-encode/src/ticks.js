@@ -23,7 +23,8 @@ export function validTicks(scale, ticks) {
   }
 
   return ticks.filter(function(v) {
-    return !((v = scale(v)) < lo || v > hi)
+    v = scale(v);
+    return !(v < lo || v > hi)
   });
 }
 
