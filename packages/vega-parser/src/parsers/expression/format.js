@@ -6,20 +6,36 @@ import {
   utcParse as d3_utcParse
 } from 'd3-time-format';
 
-function formatter(method) {
-  var cache = {};
-  return function(_, specifier) {
-    var f = cache[specifier] || (cache[specifier] = method(specifier));
-    return f(_);
-  };
+var formatCache = {};
+
+function formatter(type, method, specifier) {
+  var k = type + ':' + specifier,
+      e = formatCache[k];
+  if (!e || e[0] !== method) {
+    formatCache[k] = (e = [method, method(specifier)]);
+  }
+  return e[1];
 }
 
-export var format = formatter(d3_format);
-export var utcFormat = formatter(d3_utcFormat);
-export var timeFormat = formatter(d3_timeFormat);
+export function format(_, specifier) {
+  return formatter('format', d3_format, specifier)(_);
+}
 
-export var utcParse = formatter(d3_utcParse);
-export var timeParse = formatter(d3_timeParse);
+export function timeFormat(_, specifier) {
+  return formatter('timeFormat', d3_timeFormat, specifier)(_);
+}
+
+export function utcFormat(_, specifier) {
+  return formatter('utcFormat', d3_utcFormat, specifier)(_);
+}
+
+export function timeParse(_, specifier) {
+  return formatter('timeParse', d3_timeParse, specifier)(_);
+}
+
+export function utcParse(_, specifier) {
+  return formatter('utcParse', d3_utcParse, specifier)(_);
+}
 
 var dateObj = new Date(2000, 0, 1);
 
