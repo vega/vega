@@ -23,17 +23,17 @@ export function run(encode) {
       level = df.logLevel(),
       op, next, dt, error;
 
+  if (df._pending) {
+    df.info('Awaiting requests, delaying dataflow run.');
+    return 0;
+  }
+
   if (df._pulse) {
     df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
   }
 
   if (!df._touched.length) {
     df.info('Dataflow invoked, but nothing to do.');
-    return 0;
-  }
-
-  if (df._pending) {
-    df.info('Awaiting requests, delaying dataflow run.');
     return 0;
   }
 
