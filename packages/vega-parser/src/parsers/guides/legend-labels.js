@@ -9,8 +9,7 @@ export default function(spec, config, userEncode, dataRef) {
       encode = {}, enter, update;
 
   encode.enter = enter = {
-    opacity: zero,
-    text: {field: Label}
+    opacity: zero
   };
   addEncode(enter, 'align', config.labelAlign);
   addEncode(enter, 'baseline', config.labelBaseline);
@@ -24,7 +23,8 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   encode.update = update = {
-    opacity: {value: 1}
+    opacity: {value: 1},
+    text: {field: Label}
   };
 
   enter.x = update.x = {
