@@ -282,7 +282,7 @@
           }
         },
         "labels": {
-          "enter": {
+          "update": {
             "text": {"scale": "label", "field": "value"}
           }
         }
