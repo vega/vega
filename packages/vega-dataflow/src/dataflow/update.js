@@ -63,9 +63,10 @@ export function update(op, value, options) {
 export function pulse(op, changeset, options) {
   this.touch(op, options || NO_OPT);
 
-  var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1));
+  var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
+      t = op.pulse && op.pulse.source || [];
   p.target = op;
-  this._pulses[op.id] = changeset.pulse(p, op.value);
+  this._pulses[op.id] = changeset.pulse(p, t);
 
   return this;
 }
