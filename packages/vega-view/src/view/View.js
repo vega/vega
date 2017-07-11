@@ -114,6 +114,14 @@ prototype.dirty = function(item) {
 
 // -- GET / SET ----
 
+prototype.container = function() {
+  return this._el;
+};
+
+prototype.scenegraph = function() {
+  return this._scenegraph;
+};
+
 function lookupSignal(view, name) {
   return view._signals.hasOwnProperty(name)
     ? view._signals[name]
@@ -125,10 +133,6 @@ prototype.signal = function(name, value, options) {
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
-};
-
-prototype.scenegraph = function() {
-  return this._scenegraph;
 };
 
 prototype.background = function(_) {

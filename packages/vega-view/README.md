@@ -234,6 +234,12 @@ Reports a "dirty" scenegraph item to be re-drawn the next time dataflow
 evaluation completes. This method is typically invoked by dataflow operators
 directly to populate a dirty list for incremental rendering.
 
+<a name="view_container" href="#view_container">#</a>
+view.<b>container</b>()
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Returns the DOM container element for this view, if it exists.
+
 <a name="view_scenegraph" href="#view_scenegraph">#</a>
 view.<b>scenegraph</b>()
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
