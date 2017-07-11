@@ -486,27 +486,35 @@ vega.<b>None</b>
 Constant value indicating a log level of 'None'. If set as the log level of
 a [logger](#logger) instance, all log messages will be suppressed.
 
+<a name="Error" href="#Error">#</a>
+vega.<b>Error</b>
+[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+
+Constant value indicating a log level of 'Error'. If set as the log level of
+a [logger](#logger) instance, only error messages will be presented.
+
 <a name="Warn" href="#Warn">#</a>
 vega.<b>Warn</b>
 [<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
 
 Constant value indicating a log level of 'Warn'. If set as the log level of
-a [logger](#logger) instance, only warning messages will be presented.
+a [logger](#logger) instance, both error and warning messages will be presented.
 
 <a name="Info" href="#Info">#</a>
 vega.<b>Info</b>
 [<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
 
 Constant value indicating a log level of 'Info'. If set as the log level of
-a [logger](#logger) instance, both warning and info messages will be presented.
+a [logger](#logger) instance, error, warning and info messages will be
+presented.
 
 <a name="Debug" href="#Debug">#</a>
 vega.<b>Debug</b>
 [<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
 
 Constant value indicating a log level of 'Debug'. If set as the log level of
-a [logger](#logger) instance, all log messages (warning, info and debug)
-will be presented.
+a [logger](#logger) instance, all log messages (error, warning, info and
+debug) will be presented.
 
 
 ### Errors

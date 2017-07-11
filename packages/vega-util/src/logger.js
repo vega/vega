@@ -4,9 +4,10 @@ function log(method, level, input) {
 }
 
 export var None  = 0;
-export var Warn  = 1;
-export var Info  = 2;
-export var Debug = 3;
+export var Error = 1;
+export var Warn  = 2;
+export var Info  = 3;
+export var Debug = 4;
 
 export default function(_) {
   var level = _ || None;
@@ -18,6 +19,10 @@ export default function(_) {
       } else {
         return level;
       }
+    },
+    error: function() {
+      if (level >= Error) log('error', 'ERROR', arguments);
+      return this;
     },
     warn: function() {
       if (level >= Warn) log('warn', 'WARN', arguments);
