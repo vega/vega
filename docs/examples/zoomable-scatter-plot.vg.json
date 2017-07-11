@@ -10,6 +10,15 @@
   },
   "autosize": "none",
 
+  "config": {
+    "axis": {
+      "domain": false,
+      "tickSize": 3,
+      "tickColor": "#888",
+      "labelFont": "Monaco, Courier New"
+    }
+  },
+
   "signals": [
     {
       "name": "margin",
@@ -188,24 +197,12 @@
     {
       "scale": "xscale",
       "orient": "top",
-      "domain": false,
-      "offset": {"signal": "xoffset"},
-      "encode": {
-        "labels": {
-          "enter": {"font": {"value": "Monaco, Courier New"}}
-        }
-      }
+      "offset": {"signal": "xoffset"}
     },
     {
       "scale": "yscale",
       "orient": "right",
-      "domain": false,
-      "offset": {"signal": "yoffset"},
-      "encode": {
-        "labels": {
-          "enter": {"font": {"value": "Monaco, Courier New"}}
-        }
-      }
+      "offset": {"signal": "yoffset"}
     }
   ],
 
