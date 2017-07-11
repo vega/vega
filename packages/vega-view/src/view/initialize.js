@@ -47,6 +47,7 @@ function lookup(view, el) {
       el = document.querySelector(el);
     } else {
       view.error('DOM document instance not found.');
+      return null;
     }
   }
   el.innerHTML = '';

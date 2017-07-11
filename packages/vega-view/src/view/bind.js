@@ -21,6 +21,8 @@ var BindClass = 'vega-bind',
  * @return {View} - This view instance.
  */
 export default function(view, el, binding) {
+  if (!el) return;
+
   var param = binding.param,
       bind = binding.state;
 
