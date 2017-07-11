@@ -43,9 +43,9 @@ export function request(target, url, format) {
         df.ingest(target, data, format);
       },
       function(error) {
-        df.warn('Loading failed: ' + url, error);
+        df.error('Loading failed: ' + url, error);
         pending.done();
       })
     .then(pending.done)
-    .catch(function(error) { df.warn(error); });
+    .catch(function(error) { df.error(error); });
 }

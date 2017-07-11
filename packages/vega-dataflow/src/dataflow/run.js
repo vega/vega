@@ -30,6 +30,7 @@ export function run(encode) {
 
   if (df._pulse) {
     df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
+    return 0;
   }
 
   if (!df._touched.length) {

@@ -17,8 +17,13 @@ export default function(source, type, filter, apply) {
       s = stream(filter, apply),
       send = function(e) {
         e.dataflow = df;
-        s.receive(e);
-        df.run();
+        try {
+          s.receive(e);
+        } catch (error) {
+          df.error(error);
+        } finally {
+          df.run();
+        }
       },
       sources;
 
