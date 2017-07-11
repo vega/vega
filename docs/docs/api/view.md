@@ -71,7 +71,7 @@ always) invoked immediately after the View constructor, prior to the first
 invocation of the [run](#view_run) method.
 
 <a name="view_initialize" href="#view_initialize">#</a>
-view.<b>initialize</b>([<i>container</i>])
+view.<b>initialize</b>([<i>container</i>, <i>bindContainer</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/view/initialize.js "Source")
 
 Initializes internal rendering and event handling, then returns this view
@@ -79,7 +79,10 @@ instance. If the DOM element *container* is provided, visualization
 elements (such as Canvas or SVG HTML elements) will be added to the web page
 under this containing element. If *container* is not provided, the view
 will operate in *headless* mode, and can still generate static visualization
-images using the [image export](#image-export) methods.
+images using the [image export](#image-export) methods. The optional DOM
+element (or unique CSS selector) *bindContainer* indicates the element that
+should contain any input elements bound to signals; if not specified the
+same container element as the visualization will be used.
 
 <a name="view_loader" href="#view_loader">#</a>
 view.<b>loader</b>([<i>loader</i>])
