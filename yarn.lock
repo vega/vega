@@ -1782,8 +1782,8 @@ vega-datasets@vega/vega-datasets#gh-pages:
   resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/26bddc53d6112cff239436cdc85f56249c39e9e0"
 
 vega-encode@1:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.0.tgz#0c9edf2d12253c2b93e87580fb48f4b62b745e42"
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-1.0.1.tgz#1373a71fa683fe35e3243b5531b4b5d70ecd1969"
   dependencies:
     d3-array "1"
     d3-format "1"
@@ -1860,8 +1860,8 @@ vega-runtime@1:
     vega-util "1"
 
 vega-scale@2:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.0.0.tgz#bfc95de8f7efc120dd1d934ce39e7466f973b6a7"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.0.1.tgz#e214c346e1ef6914947572b00995734e37f5bed4"
   dependencies:
     d3-array "1"
     d3-interpolate "1"
@@ -1887,8 +1887,8 @@ vega-statistics@1:
     d3-array "1"
 
 vega-util@1, vega-util@^1.1, vega-util@^1.2, vega-util@^1.4:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.4.0.tgz#8758d5bb00d8d5d8c683294ac4eea825cae64af5"
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.4.1.tgz#3c5bea971aecec552786c190421f87e42165d666"
 
 vega-view@1:
   version "1.0.1"
