@@ -16,6 +16,7 @@ export {
 export {
   default as logger,
   None,
+  Error,
   Warn,
   Info,
   Debug
