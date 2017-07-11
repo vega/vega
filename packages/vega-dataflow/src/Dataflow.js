@@ -108,6 +108,13 @@ function logMethod(method) {
 }
 
 /**
+ * Logs an error message. By default, logged messages are written to console
+ * output. The message will only be logged if the current log level is high
+ * enough to permit error messages.
+ */
+prototype.error = logMethod('error');
+
+/**
  * Logs a warning message. By default, logged messages are written to console
  * output. The message will only be logged if the current log level is high
  * enough to permit warning messages.
@@ -135,11 +142,3 @@ prototype.debug = logMethod('debug');
  * @return {number} - The current log level.
  */
 prototype.logLevel = logMethod('level');
-
-/**
- * Handle an error. By default, this method re-throws the input error.
- * This method can be overridden for custom error handling.
- */
-prototype.error = function(err) {
-  throw err;
-};

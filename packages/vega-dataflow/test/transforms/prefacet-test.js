@@ -92,6 +92,8 @@ tape('PreFacet raises error if tuple sets are modified', function(test) {
   var tuples = util.field('tuples'),
       df = new vega.Dataflow(),
       source = df.add(Collect);
+
+  df.error = function(e) { throw e; };
   df.add(PreFacet, {subflow:subflow, field:tuples, pulse:source});
 
   // -- add

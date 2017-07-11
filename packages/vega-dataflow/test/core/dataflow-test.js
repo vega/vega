@@ -34,13 +34,10 @@ tape('Dataflow handles errors', function(test) {
   var df = new vega.Dataflow(),
       error = 0;
 
+  df.error = function() { error = 1; };
   df.add(function() { throw Error('!!!') });
 
-  try {
-    df.run();
-  } catch (err) {
-    error = 1;
-  }
+  df.run();
 
   test.equal(error, 1);
   test.equal(df._pulse, null);
