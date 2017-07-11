@@ -18,8 +18,13 @@ export default function(source, type, filter) {
         if (view.preventDefault() && source === VIEW) {
           e.preventDefault();
         }
-        s.receive(eventExtend(view, e, item));
-        view.run();
+        try {
+          s.receive(eventExtend(view, e, item));
+        } catch (error) {
+          view.error(error);
+        } finally {
+          view.run();
+        }
       },
       sources;
 

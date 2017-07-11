@@ -13,7 +13,7 @@ import {autosize, resizer} from './size';
 import {getState, setState} from './state';
 
 import {Dataflow} from 'vega-dataflow';
-import {extend, inherits, stringValue} from 'vega-util';
+import {error, extend, inherits, stringValue} from 'vega-util';
 import {
   Handler, CanvasHandler, Scenegraph,
   renderModule, RenderType
@@ -117,7 +117,7 @@ prototype.dirty = function(item) {
 function lookupSignal(view, name) {
   return view._signals.hasOwnProperty(name)
     ? view._signals[name]
-    : view.error('Unrecognized signal name: ' + stringValue(name));
+    : error('Unrecognized signal name: ' + stringValue(name));
 }
 
 prototype.signal = function(name, value, options) {
@@ -155,7 +155,7 @@ prototype.padding = function(_) {
 
 prototype.renderer = function(type) {
   if (!arguments.length) return this._renderType;
-  if (!renderModule(type)) this.error('Unrecognized renderer type: ' + type);
+  if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
     this._renderType = type;
     if (this._renderer) {
