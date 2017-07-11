@@ -39,10 +39,11 @@ prototype.loadImage = function(uri) {
   var loader = this;
   increment(loader);
 
-  return loader._loader.sanitize(uri, {context:'image'})
+  return loader._loader
+    .sanitize(uri, {context:'image'})
     .then(function(opt) {
       var url = opt.href;
-      if (!url || !Image) throw 'Image unsupported.';
+      if (!url || !Image) throw {url: url};
 
       var image = new Image();
 
@@ -59,9 +60,9 @@ prototype.loadImage = function(uri) {
       image.src = url;
       return image;
     })
-    .catch(function() {
+    .catch(function(e) {
       decrement(loader);
-      return {loaded: false, width: 0, height: 0};
+      return {loaded: false, width: 0, height: 0, src: e && e.url || ''};
     });
 };
 
