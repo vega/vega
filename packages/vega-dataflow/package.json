@@ -32,7 +32,7 @@
     "d3-array": "1",
     "vega-loader": "2",
     "vega-statistics": "1",
-    "vega-util": "^1.1"
+    "vega-util": "^1.4"
   },
   "devDependencies": {
     "eslint": "4",
