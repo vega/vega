@@ -51,8 +51,8 @@ function load(uri, options) {
   return loader.sanitize(uri, options)
     .then(function(opt) {
       var url = opt.href;
-      return (startsWith(url, fileProtocol))
-        ? loader.file(url.slice(fileProtocol.length))
+      return opt.localFile
+        ? loader.file(url)
         : loader.http(url, options);
     });
 }
@@ -70,7 +70,8 @@ function load(uri, options) {
 function sanitize(uri, options) {
   options = marshall(this, options);
   return new Promise(function(accept, reject) {
-    var isFile, hasProtocol, loadFile, base;
+    var result = {href: null},
+        isFile, hasProtocol, loadFile, base;
 
     if (uri == null || typeof uri !== 'string') {
       reject('Sanitize failure, invalid URI: ' + stringValue(uri));
@@ -93,15 +94,26 @@ function sanitize(uri, options) {
       || options.mode === 'file'
       || options.mode !== 'http' && !hasProtocol && fs();
 
-    if (loadFile) {
-      // prepend file protocol, if not already present
-      uri = (isFile ? '' : fileProtocol) + uri;
+    if (isFile) {
+      // strip file protocol
+      uri = uri.slice(fileProtocol.length);
     } else if (startsWith(uri, '//')) {
-      // if relative protocol (starts with '//'), prepend default protocol
-      uri = (options.defaultProtocol || 'http') + ':' + uri;
+      if (options.defaultProtocol === 'file') {
+        // if is file, strip protocol and set loadFile flag
+        uri = uri.slice(2);
+        loadFile = true;
+      } else {
+        // if relative protocol (starts with '//'), prepend default protocol
+        uri = (options.defaultProtocol || 'http') + ':' + uri;
+      }
     }
 
-    accept({href: uri});
+    // set non-enumerable mode flag to indicate local file load
+    Object.defineProperty(result, 'localFile', {value: !!loadFile});
+
+    // set uri and return
+    result.href = uri;
+    accept(result);
   });
 }
 
