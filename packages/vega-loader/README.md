@@ -63,11 +63,14 @@ loader.<b>sanitize</b>(<i>uri</i>, <i>options</i>)
 [<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
 URI sanitizer function, which takes a *uri* and *options* object as input,
-and returns a Promise that resolves to a URL. This method is used internally by
+and returns a Promise that resolves to a return object that includes a
+sanitized URL under the *href* property. This method is used internally by
 [load](#load) to ensure the URL is valid and to add additional protocol and
 hostname information, if needed. This method accepts the same *options* object
 accepted by [load](#load) and returns a Promise. If sanitization is successful,
-the Promise resolves to the final URL string. The Promise rejects if the *uri*
+the Promise resolves to a return object containing the URL string as (_href_),
+along with a non-enumerable boolean _localFile_ flag, indicating if the file
+should be loaded from the local filesystem. The Promise rejects if the *uri*
 is invalid or disallowed. This method is over-writable for clients who wish to
 implement custom sanitization.
 
