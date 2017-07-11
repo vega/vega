@@ -26,7 +26,7 @@ function sanityTest(test, uri, options, result) {
 
 tape('loader should sanitize url', function(test) {
   Promise.all([
-      sanityTest(test, 'a.txt', {mode: 'file'}, 'file://a.txt'),
+      sanityTest(test, 'a.txt', {mode: 'file'}, 'a.txt'),
       sanityTest(test, 'a.txt', {mode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
       sanityTest(test, 'a.txt', {mode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
       sanityTest(test, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
