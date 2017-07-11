@@ -15,18 +15,18 @@
     },
     {
       "name": "width",
-      "update": "(windowsize()[0] || 500) - padding.left - padding.right - margin",
+      "update": "(windowSize()[0] || 500) - padding.left - padding.right - margin",
       "on": [{
         "events": {"source": "window", "type": "resize"},
-        "update": "windowsize()[0] - padding.left - padding.right - margin"
+        "update": "windowSize()[0] - padding.left - padding.right - margin"
       }]
     },
     {
       "name": "height",
-      "update": "(windowsize()[1] || 500) - padding.top - padding.bottom - 3 * margin",
+      "update": "(windowSize()[1] || 500) - padding.top - padding.bottom - 3 * margin",
       "on": [{
         "events": {"source": "window", "type": "resize"},
-        "update": "windowsize()[1] - padding.top - padding.bottom - 3 * margin"
+        "update": "windowSize()[1] - padding.top - padding.bottom - 3 * margin"
       }]
     },
     {
