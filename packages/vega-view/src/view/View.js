@@ -91,7 +91,13 @@ var prototype = inherits(View, Dataflow);
 
 prototype.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
-  if (this._redraw || this._resize) this.render();
+  if (this._redraw || this._resize) {
+    try {
+      this.render();
+    } catch (e) {
+      this.error(e);
+    }
+  }
   return this;
 };
 
