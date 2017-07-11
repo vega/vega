@@ -17,7 +17,6 @@ export default function(type) {
         return type === Type.SVG
           ? toBlobURL(renderer.svg(), 'image/svg+xml')
           : renderer.canvas().toDataURL('image/png');
-
       });
 }
 
