@@ -230,8 +230,8 @@ function continuousDomain(entries, op) {
     lo = extent[0];
     hi = extent[1];
     if (lo > hi) {
-      hi = extent[1];
-      lo = extent[0];
+      hi = extent[0];
+      lo = extent[1];
     }
     domain = domain ? merge(domain, lo, hi) : [lo, hi];
   }
