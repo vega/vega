@@ -12,6 +12,19 @@ tape('Parser parses event selector strings', function(test) {
     marktype: 'rect'
   });
 
+  events = vega.selector('rect:mousedown, rect:touchstart');
+  test.equal(events.length, 2);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'mousedown',
+    marktype: 'rect'
+  });
+  test.deepEqual(events[1], {
+    source: 'view',
+    type: 'touchstart',
+    marktype: 'rect'
+  });
+
   events = vega.selector('rect:mousedown!');
   test.equal(events.length, 1);
   test.deepEqual(events[0], {
@@ -90,6 +103,36 @@ tape('Parser parses event selector strings', function(test) {
     source: 'view',
     type: 'mousedown',
     filter: ['event.x>10', 'event.metaKey']
+  });
+
+  events = vega.selector('wheel![event.shiftKey]');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'wheel',
+    consume: true,
+    filter: ['event.shiftKey']
+  });
+
+  events = vega.selector('wheel![event.shiftKey]{200}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'wheel',
+    consume: true,
+    filter: ['event.shiftKey'],
+    throttle: 200
+  });
+
+  events = vega.selector('path:wheel![event.shiftKey]{200}');
+  test.equal(events.length, 1);
+  test.deepEqual(events[0], {
+    source: 'view',
+    type: 'wheel',
+    marktype: 'path',
+    consume: true,
+    filter: ['event.shiftKey'],
+    throttle: 200
   });
 
   events = vega.selector('[mousedown, mouseup] > window:mousemove');
