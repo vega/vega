@@ -1,9 +1,10 @@
 import {ingest, Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
+import {extent} from 'd3-array';
 import {contours, contourDensity} from 'd3-contour';
 
-var CONTOUR_PARAMS = ['values', 'size', 'thresholds'];
-var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth', 'thresholds'];
+var CONTOUR_PARAMS = ['values', 'size'];
+var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
 
 /**
  * Generate contours based on kernel-density estimation of point data.
@@ -20,7 +21,14 @@ var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth', 'thresholds'];
  * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
  * @param {number} [params.cellSize] - Contour density calculation cell size.
  * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
- * @param {number} [params.thresholds] - Contour threshold array or desired number of contours.
+ * @param {Array<number>} [params.thresholds] - Contour threshold array. If
+ *   this parameter is set, the thresholdCount and thresholdNice parameters
+ *   will be ignored.
+ * @param {number} [params.count] - The desired number of contours.
+ * @param {boolean} [params.nice] - Boolean flag indicating if the contour
+ *   threshold values should be automatically aligned to "nice"
+ *   human-friendly values. Setting this flag may cause the number of
+ *   thresholds to deviate from the specified count.
  */
 export default function Contour(params) {
   Transform.call(this, null, params);
@@ -33,6 +41,7 @@ prototype.transform = function(_, pulse) {
     return pulse.StopPropagation;
 
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      count = _.count || 10,
       contour, params, values;
 
   if (_.values) {
@@ -45,6 +54,10 @@ prototype.transform = function(_, pulse) {
     values = pulse.materialize(pulse.SOURCE).source;
   }
 
+  // set threshold parameter
+  contour.thresholds(_.thresholds || (_.nice ? count : quantize(count)));
+
+  // set all other parameters
   params.forEach(function(param) {
     if (_[param] != null) contour[param](_[param]);
   });
@@ -54,3 +67,12 @@ prototype.transform = function(_, pulse) {
 
   return out;
 };
+
+function quantize(k) {
+  return function(values) {
+    var ex = extent(values), x0 = ex[0], dx = ex[1] - x0,
+        t = [], i = 1;
+    for (; i<=k; ++i) t.push(x0 + dx * i / (k + 1));
+    return t;
+  };
+}
