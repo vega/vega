@@ -8,6 +8,8 @@ export default {
     { "name": "y", "type": "field" },
     { "name": "cellSize", "type": "number" },
     { "name": "bandwidth", "type": "number" },
-    { "name": "thresholds", "type": "number" }
+    { "name": "count", "type": "number" },
+    { "name": "nice", "type": "number", "default": false },
+    { "name": "thresholds", "type": "number", "array": true }
   ]
 }
