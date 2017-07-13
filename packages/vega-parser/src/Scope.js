@@ -22,6 +22,7 @@ export default function Scope(config) {
   this.updates = [];
   this.operators = [];
   this.background = null;
+  this.eventConfig = null;
 
   this._id = 0;
   this._subid = 0;
@@ -68,11 +69,12 @@ prototype.fork = function() {
 prototype.toRuntime = function() {
   this.finish();
   return {
-    background: this.background,
-    operators:  this.operators,
-    streams:    this.streams,
-    updates:    this.updates,
-    bindings:   this.bindings
+    background:  this.background,
+    operators:   this.operators,
+    streams:     this.streams,
+    updates:     this.updates,
+    bindings:    this.bindings,
+    eventConfig: this.eventConfig
   };
 };
 

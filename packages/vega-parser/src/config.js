@@ -38,6 +38,12 @@ function defaults() {
     // covers the entire view component
     background: null,
 
+    // default event handling configuration
+    // preventDefault for view-sourced event types except 'wheel'
+    events: {
+      defaults: {allow: ['wheel']}
+    },
+
     // defaults for top-level group marks
     // accepts mark properties (fill, stroke, etc)
     // covers the data rectangle within group width/height
