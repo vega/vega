@@ -7,8 +7,8 @@
 
   "signals": [
     {
-      "name": "thresholds", "value": 10,
-      "bind": {"input": "select", "options": [1, 5, 10, 20]}
+      "name": "count", "value": 5,
+      "bind": {"input": "select", "options": [1, 2, 3, 4, 5, 10]}
     }
   ],
 
@@ -79,7 +79,7 @@
               "x": {"expr": "scale('x', datum.Horsepower)"},
               "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
               "size": [{"signal": "width"}, {"signal": "height"}],
-              "thresholds": {"signal": "thresholds"}
+              "count": {"signal": "count"}
             }
           ]
         }
