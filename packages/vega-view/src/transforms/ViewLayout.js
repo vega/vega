@@ -5,7 +5,8 @@ import {inherits} from 'vega-util';
 
 var Fit = 'fit',
     Pad = 'pad',
-    None = 'none';
+    None = 'none',
+    Padding = 'padding';
 
 var AxisRole = 'axis',
     TitleRole = 'title',
@@ -350,10 +351,11 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
 }
 
 function layoutSize(view, group, viewBounds, _) {
-  var type = _.autosize && _.autosize.type,
-      auto = _.autosize && _.autosize.resize,
+  var auto = _.autosize || {},
+      type = auto.type,
       viewWidth = view._width,
-      viewHeight = view._height;
+      viewHeight = view._height,
+      padding = view.padding();
 
   if (view._autosize < 1 || !type) return;
 
@@ -364,11 +366,16 @@ function layoutSize(view, group, viewBounds, _) {
       top    = Math.max(0, Math.ceil(-viewBounds.y1)),
       bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
+  if (auto.contains === Padding) {
+    viewWidth -= padding.left + padding.right;
+    viewHeight -= padding.top + padding.bottom;
+  }
+
   if (type === None) {
-    viewWidth = width;
-    viewHeight = height;
     left = 0;
     top = 0;
+    width = viewWidth;
+    height = viewHeight;
   }
 
   else if (type === Fit) {
@@ -381,5 +388,5 @@ function layoutSize(view, group, viewBounds, _) {
     viewHeight = height + top + bottom;
   }
 
-  view.autosize(viewWidth, viewHeight, width, height, [left, top], auto);
+  view.resize(viewWidth, viewHeight, width, height, [left, top], auto.resize);
 }

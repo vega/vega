@@ -1,11 +1,11 @@
 export function width(view) {
   var padding = view.padding();
-  return Math.max(0, view._width + padding.left + padding.right);
+  return Math.max(0, view._viewWidth + padding.left + padding.right);
 }
 
 export function height(view) {
   var padding = view.padding();
-  return Math.max(0, view._height + padding.top + padding.bottom);
+  return Math.max(0, view._viewHeight + padding.top + padding.bottom);
 }
 
 export function offset(view) {

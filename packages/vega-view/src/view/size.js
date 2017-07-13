@@ -1,18 +1,56 @@
-export function resizer(view, field) {
-  var op = view.add(null,
-    function(_) {
-      view['_' + field] = _.size;
-      view._autosize = view._resize = 1;
-    },
-    {size: view._signals[field]}
-  );
-  // set rank to ensure operator runs as soon as possible
-  // size parameters should be reset prior to view layout
-  op.rank = 0;
-  return op;
+var Padding = 'padding';
+
+export function viewWidth(view, width) {
+  var a = view.autosize(),
+      p = view.padding();
+  return width - (a && a.contains === Padding ? p.left + p.right : 0);
 }
 
-export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
+export function viewHeight(view, height) {
+  var a = view.autosize(),
+      p = view.padding();
+  return height - (a && a.contains === Padding ? p.top + p.bottom : 0);
+}
+
+export function initializeResize(view) {
+  function resetSize() {
+    view._autosize = view._resize = 1;
+  }
+
+  // respond to width signal
+  view._resizeWidth = view.add(null,
+    function(_) {
+      view._width = _.size;
+      view._viewWidth = viewWidth(view, _.size);
+      resetSize();
+    },
+    {size: view._signals.width}
+  );
+
+  // respond to height signal
+  view._resizeHeight = view.add(null,
+    function(_) {
+      view._height = _.size;
+      view._viewHeight = viewHeight(view, _.size);
+      resetSize();
+    },
+    {size: view._signals.height}
+  );
+
+  // respond to padding signal
+  var resizePadding = view.add(null,
+    resetSize,
+    {pad: view._signals.padding}
+  );
+
+  // set rank to ensure operators run as soon as possible
+  // size parameters should be reset prior to view layout
+  view._resizeWidth.rank = 0;
+  view._resizeHeight.rank = 0;
+  resizePadding.rank = 0;
+}
+
+export function resize(viewWidth, viewHeight, width, height, origin, auto) {
   this.runAfter(function(view) {
     var rerun = 0;
 
@@ -34,15 +72,15 @@ export function autosize(viewWidth, viewHeight, width, height, origin, auto) {
     }
 
     // view width changed: update view property, set resize flag
-    if (view._width !== viewWidth) {
+    if (view._viewWidth !== viewWidth) {
       view._resize = 1;
-      view._width = viewWidth;
+      view._viewWidth = viewWidth;
     }
 
     // view height changed: update view property, set resize flag
-    if (view._height !== viewHeight) {
+    if (view._viewHeight !== viewHeight) {
       view._resize = 1;
-      view._height = viewHeight;
+      view._viewHeight = viewHeight;
     }
 
     // origin changed: update view property, set resize flag
