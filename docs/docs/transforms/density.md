@@ -4,7 +4,7 @@ title: Density Transform
 permalink: /docs/transforms/density/index.html
 ---
 
-The **density** transform generates a new data stream of uniformly-spaced samples drawn from a [probability density function (pdf)](https://en.wikipedia.org/wiki/Probability_density_function) or [cumulative distribution function (cdf)](https://en.wikipedia.org/wiki/Cumulative_distribution_function). This transform is useful for representing probability distributions and generating continuous distributions from discrete samples using [kernel density estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation).
+The **density** transform generates a new data stream of uniformly-spaced samples drawn from a one-dimensional [probability density function (pdf)](https://en.wikipedia.org/wiki/Probability_density_function) or [cumulative distribution function (cdf)](https://en.wikipedia.org/wiki/Cumulative_distribution_function). This transform is useful for representing probability distributions and generating continuous distributions from discrete samples using [kernel density estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation).
 
 ## Transform Parameters
 
@@ -13,7 +13,7 @@ The **density** transform generates a new data stream of uniformly-spaced sample
 | distribution        | [Distribution](#distributions)  | {% include required %} An object describing the distribution type and parameters. See the  [distribution reference](#distributions) for more.|
 | extent              | {% include type t="Number[]" %} | A _[min, max]_ domain from which to sample the distribution. This argument is required in most cases, but can be omitted in the case of distributions (namely, `kde`) that can deduce their own extent.|
 | method              | {% include type t="String" %}   | The type of distribution to generate. One of `pdf` (default) or `cdf`.|
-| steps               | {% include type t="Number" %}   | The number of uniformly spaced samples to draw along the _extent_ domain (default `100`).|
+| steps               | {% include type t="Number" %}   | The number of uniformly spaced steps to take along the _extent_ domain (default `100`). A total of _steps + 1_ uniformly-spaced samples are drawn from the distribution.|
 | as                  | {% include type t="String[]" %} | The output fields for the sample value and associated probability. The default is `["value", "density"]`.|
 
 
@@ -71,7 +71,7 @@ Represents a (weighted) mixture of probability distributions. The _distributions
 
 ```json
 {
-  "transform": "density",
+  "type": "density",
   "extent": [0, 10],
   "distribution": {
     "function": "normal",
@@ -85,7 +85,7 @@ Generates a data stream of data objects drawn from a normal distribution with me
 
 ```json
 {
-  "transform": "density",
+  "type": "density",
   "steps": 200,
   "distribution": {
     "function": "kde",
