@@ -18,7 +18,10 @@ The contour transform generates a new stream of [GeoJSON](https://en.wikipedia.o
 | y                   | {% include type t="Field" %}    | The pixel y-coordinate field for density estimation.|
 | cellSize            | {% include type t="Number" %}   | Contour density calculation cell size. |
 | bandwidth           | {% include type t="Number" %}   | Kernel density estimation bandwidth.|
-| thresholds          | {% include type t="Number|Number[]" %} | The desired number of contours or a threshold array of explicit contour boundaries.|
+| thresholds          | {% include type t="Number[]" %} | A threshold array of explicit contour boundaries. If this parameter is set, the _count_ and _nice_ parameters will be ignored.|
+| count               | {% include type t="Number" %}   | The desired number of contours. This parameter is ignored if the _thresholds_ parameter is provided.|
+| nice                | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating if the contour threshold values should be automatically aligned to "nice", human-friendly values. Setting this flag may cause the number of thresholds to deviate from the exact _count_.|
+
 
 ## Usage
 
@@ -30,6 +33,6 @@ This example generates 10 levels of contours for the 2D kernel density estimate 
   "x": "x_value",
   "y": "y_value",
   "size": [{"signal": "width"}, {"signal": "height"}],
-  "thresholds": 10
+  "count": 10
 }
 ```

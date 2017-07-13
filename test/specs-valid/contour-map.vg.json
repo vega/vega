@@ -7,7 +7,7 @@
 
   "signals": [
     {
-      "name": "thresholds", "value": 10,
+      "name": "count", "value": 10,
       "bind": {"input": "select", "options": [1, 5, 10, 20]}
     }
   ],
@@ -101,7 +101,7 @@
               "x": "x",
               "y": "y",
               "size": [{"signal": "width"}, {"signal": "height"}],
-              "thresholds": {"signal": "thresholds"}
+              "count": {"signal": "count"}
             }
           ]
         }
