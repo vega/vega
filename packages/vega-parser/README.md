@@ -45,6 +45,10 @@ Properties defined in the top-level scope of the configuration object.
 
 - *autosize*: Default automatic sizing setting. Options: `"none"`, `"pad"`, `"fit"`.
 - *background*: Background color of the view component, or `null` for transparent.
+- *events*: Event handling configuration. Options:
+`{"defaults": {"prevent": true}}` to preventDefault for view-sourced events, or
+providing an array of event types that should be consumed. Alternatively, one
+can use `{"defaults": {"allow": [...]}}` to whitelist events.
 - *group*: Object containing default properties for the top-level group mark
 representing the data rectangle of a chart. Valid properties of this object
 are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`.
