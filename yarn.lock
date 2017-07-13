@@ -1811,9 +1811,10 @@ vega-force@1:
     vega-util "1"
 
 vega-geo@1:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.0.0.tgz#7ef400e327551b5830d39fb82e93aa80553217bc"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.1.0.tgz#5df2897c8e1ec29d3bb2a9237bdec29ead88c527"
   dependencies:
+    d3-array "1"
     d3-contour "1"
     d3-geo "1"
     vega-dataflow "2"
