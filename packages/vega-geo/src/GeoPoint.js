@@ -40,11 +40,10 @@ prototype.transform = function(_, pulse) {
 
   if (_.modified()) {
     // parameters updated, reflow
-    pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
-  } else {
-    mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
-    pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
+    return pulse.materialize().reflow(true).visit(pulse.SOURCE, set).modifies(as);
   }
 
+  mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
+  pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
   return pulse.modifies(as);
 };
