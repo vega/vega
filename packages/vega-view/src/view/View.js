@@ -1,6 +1,6 @@
 import cursor from './cursor';
 import {data, change, insert, remove} from './data';
-import events from './events';
+import {initializeEventConfig, events} from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
@@ -47,7 +47,7 @@ export default function View(spec, options) {
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
   view._eventListeners = [];
-  view._preventDefault = true;
+  view._preventDefault = false;
 
   // initialize dataflow graph
   var ctx = runtime(view, spec, options.functions);
@@ -70,6 +70,9 @@ export default function View(spec, options) {
 
   // initialize background color
   view._background = ctx.background || null;
+
+  // initialize event configuration
+  view._eventConfig = initializeEventConfig(ctx.eventConfig);
 
   // initialize view size
   view._width = view.width();
