@@ -9,7 +9,7 @@ import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
 import {resizeRenderer} from './render-size';
 import runtime from './runtime';
-import {autosize, resizer} from './size';
+import {resize, initializeResize, viewWidth, viewHeight} from './size';
 import {getState, setState} from './state';
 
 import {Dataflow} from 'vega-dataflow';
@@ -30,29 +30,30 @@ import {
  * @param {object} spec - The Vega dataflow runtime specification.
  */
 export default function View(spec, options) {
+  var view = this;
   options = options || {};
 
-  Dataflow.call(this);
-  this.loader(options.loader || this._loader);
-  this.logLevel(options.logLevel || 0);
+  Dataflow.call(view);
+  view.loader(options.loader || view._loader);
+  view.logLevel(options.logLevel || 0);
 
-  this._el = null;
-  this._renderType = options.renderer || RenderType.Canvas;
-  this._scenegraph = new Scenegraph();
-  var root = this._scenegraph.root;
+  view._el = null;
+  view._renderType = options.renderer || RenderType.Canvas;
+  view._scenegraph = new Scenegraph();
+  var root = view._scenegraph.root;
 
   // initialize renderer, handler and event management
-  this._renderer = null;
-  this._redraw = true;
-  this._handler = new CanvasHandler().scene(root);
-  this._eventListeners = [];
-  this._preventDefault = true;
+  view._renderer = null;
+  view._redraw = true;
+  view._handler = new CanvasHandler().scene(root);
+  view._eventListeners = [];
+  view._preventDefault = true;
 
   // initialize dataflow graph
-  var ctx = runtime(this, spec, options.functions);
-  this._runtime = ctx;
-  this._signals = ctx.signals;
-  this._bind = (spec.bindings || []).map(function(_) {
+  var ctx = runtime(view, spec, options.functions);
+  view._runtime = ctx;
+  view._signals = ctx.signals;
+  view._bind = (spec.bindings || []).map(function(_) {
     return {
       state: null,
       param: extend({}, _)
@@ -62,27 +63,26 @@ export default function View(spec, options) {
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
   root.source = ctx.data.root.input;
-  this.pulse(
+  view.pulse(
     ctx.data.root.input,
-    this.changeset().insert(root.items)
+    view.changeset().insert(root.items)
   );
 
   // initialize background color
-  this._background = ctx.background || null;
+  view._background = ctx.background || null;
 
   // initialize view size
-  this._width = this.width();
-  this._height = this.height();
-  this._origin = [0, 0];
-  this._resize = 0;
-  this._autosize = 1;
-
-  // initialize resize operators
-  this._resizeWidth = resizer(this, 'width');
-  this._resizeHeight = resizer(this, 'height');
+  view._width = view.width();
+  view._height = view.height();
+  view._viewWidth = viewWidth(view, view._width);
+  view._viewHeight = viewHeight(view, view._height);
+  view._origin = [0, 0];
+  view._resize = 0;
+  view._autosize = 1;
+  initializeResize(view);
 
   // initialize cursor
-  cursor(this);
+  cursor(view);
 }
 
 var prototype = inherits(View, Dataflow);
@@ -161,6 +161,10 @@ prototype.height = function(_) {
 
 prototype.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
+};
+
+prototype.autosize = function(_) {
+  return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
 };
 
 prototype.renderer = function(type) {
@@ -248,7 +252,7 @@ prototype.finalize = finalize;
 prototype.hover = hover;
 
 // -- SIZING ----
-prototype.autosize = autosize;
+prototype.resize = resize;
 
 // -- DATA ----
 prototype.data = data;
