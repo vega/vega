@@ -13,6 +13,11 @@ export default function(spec, ctx) {
     ctx.background = spec.background;
   }
 
+  // parse event configuration
+  if (spec.eventConfig) {
+    ctx.eventConfig = spec.eventConfig;
+  }
+
   // parse operators
   operators.forEach(function(entry) {
     parseOperator(entry, ctx);
