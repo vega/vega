@@ -9,7 +9,8 @@ export default {
           "type": "object",
           "properties": {
             "type": types,
-            "resize": {"type": "boolean"}
+            "resize": {"type": "boolean"},
+            "contains": {"enum": ["content", "padding"]}
           },
           "required": ["type"],
           "additionalProperties": false

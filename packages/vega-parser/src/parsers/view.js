@@ -10,7 +10,7 @@ import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
 import {array, toSet} from 'vega-util';
 
-var defined = toSet(['width', 'height', 'padding']);
+var defined = toSet(['width', 'height', 'padding', 'autosize']);
 
 export default function parseView(spec, scope) {
   var config = scope.config,
@@ -21,6 +21,7 @@ export default function parseView(spec, scope) {
   scope.addSignal('width', spec.width || -1);
   scope.addSignal('height', spec.height || -1);
   scope.addSignal('padding', parsePadding(spec.padding, config));
+  scope.addSignal('autosize', parseAutosize(spec.autosize, config));
 
   array(spec.signals).forEach(function(_) {
     if (!defined[_.name]) parseSignal(_, scope);
@@ -43,7 +44,7 @@ export default function parseView(spec, scope) {
   parent = scope.add(ViewLayout({
     layout:       scope.objectProperty(spec.layout),
     legendMargin: config.legendMargin,
-    autosize:     parseAutosize(spec.autosize, config),
+    autosize:     scope.signalRef('autosize'),
     mark:         root,
     pulse:        ref(encode)
   }));
