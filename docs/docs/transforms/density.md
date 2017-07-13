@@ -71,7 +71,7 @@ Represents a (weighted) mixture of probability distributions. The _distributions
 
 ```json
 {
-  "transform": "density",
+  "type": "density",
   "extent": [0, 10],
   "distribution": {
     "function": "normal",
@@ -85,7 +85,7 @@ Generates a data stream of data objects drawn from a normal distribution with me
 
 ```json
 {
-  "transform": "density",
+  "type": "density",
   "steps": 200,
   "distribution": {
     "function": "kde",
