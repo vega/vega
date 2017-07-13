@@ -1769,8 +1769,8 @@ vega-crossfilter@1:
     vega-util "1"
 
 vega-dataflow@2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.3.tgz#c52cd10975603992faf2c10f1f948896419f7253"
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.4.tgz#42486486f2c0f5b85b023d77392674c3cbaf0ab4"
   dependencies:
     d3-array "1"
     vega-loader "2"
@@ -1811,8 +1811,8 @@ vega-force@1:
     vega-util "1"
 
 vega-geo@1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.1.0.tgz#5df2897c8e1ec29d3bb2a9237bdec29ead88c527"
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.1.1.tgz#14e9d2a814310dca3e6a75eb0b0c072fe0ac4c7e"
   dependencies:
     d3-array "1"
     d3-contour "1"
@@ -1840,8 +1840,8 @@ vega-loader@2:
     vega-util "1"
 
 vega-parser@1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.1.0.tgz#1f096a7986e6eb2b96656cf66ff2d4acd9d332e4"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.2.0.tgz#7944247e1d05ca650b1adba136da2a3818063812"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1855,8 +1855,8 @@ vega-parser@1:
     vega-util "1"
 
 vega-runtime@1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-1.0.1.tgz#9c493c1668be5ad7a61917688051e796bc7f558b"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-1.0.2.tgz#d2ece26b8700d794babd0460e7ba397ed82b8d56"
   dependencies:
     vega-util "1"
 
@@ -1892,8 +1892,8 @@ vega-util@1, vega-util@^1.1, vega-util@^1.2, vega-util@^1.4:
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.4.1.tgz#3c5bea971aecec552786c190421f87e42165d666"
 
 vega-view@1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.1.0.tgz#dc85d39af665c4e2ffa3057512e1547251747457"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.2.0.tgz#86a80c10c17741179cfcfde709249a7d2b0959d0"
   dependencies:
     d3-array "1"
     vega-dataflow "2"
