@@ -22,8 +22,7 @@ var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
  * @param {number} [params.cellSize] - Contour density calculation cell size.
  * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
  * @param {Array<number>} [params.thresholds] - Contour threshold array. If
- *   this parameter is set, the thresholdCount and thresholdNice parameters
- *   will be ignored.
+ *   this parameter is set, the count and nice parameters will be ignored.
  * @param {number} [params.count] - The desired number of contours.
  * @param {boolean} [params.nice] - Boolean flag indicating if the contour
  *   threshold values should be automatically aligned to "nice"
