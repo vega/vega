@@ -30,7 +30,12 @@ prototype.transform = function(_, pulse) {
 
   if (_.derive) {
     out = pulse.fork();
-
+    
+    pulse.visit(pulse.REM, function(t) {
+      out.rem.push(lut[t._id]);
+      lut[t._id] = null;
+    });
+    
     pulse.visit(pulse.ADD, function(t) {
       var dt = derive(t);
       lut[t._id] = dt;
@@ -39,11 +44,6 @@ prototype.transform = function(_, pulse) {
 
     pulse.visit(pulse.MOD, function(t) {
       out.mod.push(rederive(t, lut[t._id]));
-    });
-
-    pulse.visit(pulse.REM, function(t) {
-      out.rem.push(lut[t._id]);
-      lut[t._id] = null;
     });
   }
 
