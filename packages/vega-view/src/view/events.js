@@ -1,8 +1,42 @@
 import eventExtend from './events-extend';
 import {EventStream} from 'vega-dataflow';
+import {extend, isArray, toSet} from 'vega-util';
 
 var VIEW = 'view',
     WINDOW = 'window';
+
+/**
+ * Initialize event handling configuration.
+ * @param {object} config - The configuration settings.
+ * @return {object}
+ */
+export function initializeEventConfig(config) {
+  config = extend({}, config);
+
+  var def = config.defaults;
+  if (def) {
+    if (isArray(def.prevent)) {
+      def.prevent = toSet(def.prevent);
+    }
+    if (isArray(def.allow)) {
+      def.allow = toSet(def.allow);
+    }
+  }
+
+  return config;
+}
+
+function prevent(view, type) {
+  var def = view._eventConfig.defaults,
+      prevent = def && def.prevent,
+      allow = def && def.allow;
+
+  return prevent === false || allow === true ? false
+    : prevent === true || allow === false ? true
+    : prevent ? prevent[type]
+    : allow ? !allow[type]
+    : view.preventDefault();
+}
 
 /**
  * Create a new event stream from an event source.
@@ -11,11 +45,11 @@ var VIEW = 'view',
  * @param {function(object): boolean} [filter] - Event filter function.
  * @return {EventStream}
  */
-export default function(source, type, filter) {
+export function events(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        if (view.preventDefault() && source === VIEW) {
+        if (source === VIEW && prevent(view, type)) {
           e.preventDefault();
         }
         try {
