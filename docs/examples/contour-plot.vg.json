@@ -22,6 +22,19 @@
           "expr": "datum['Horsepower'] != null && datum['Miles_per_Gallon'] != null"
         }
       ]
+    },
+    {
+      "name": "contours",
+      "source": "source",
+      "transform": [
+        {
+          "type": "contour",
+          "x": {"expr": "scale('x', datum.Horsepower)"},
+          "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
+          "size": [{"signal": "width"}, {"signal": "height"}],
+          "thresholds": {"signal": "thresholds"}
+        }
+      ]
     }
   ],
 
@@ -31,7 +44,7 @@
       "type": "linear",
       "round": true,
       "nice": true,
-      "zero": true,
+      "zero": false,
       "domain": {"data": "source", "field": "Horsepower"},
       "range": "width"
     },
@@ -40,9 +53,15 @@
       "type": "linear",
       "round": true,
       "nice": true,
-      "zero": true,
+      "zero": false,
       "domain": {"data": "source", "field": "Miles_per_Gallon"},
       "range": "height"
+    },
+    {
+      "name": "color",
+      "type": "sequential",
+      "domain": {"data": "contours", "field": "value"},
+      "range": "ramp"
     }
   ],
 
@@ -52,7 +71,6 @@
       "grid": true,
       "domain": false,
       "orient": "bottom",
-      "tickCount": 5,
       "title": "Horsepower"
     },
     {
@@ -60,54 +78,24 @@
       "grid": true,
       "domain": false,
       "orient": "left",
-      "titlePadding": 5,
       "title": "Miles_per_Gallon"
     }
   ],
 
   "marks": [
     {
-      "type": "group",
-      "clip": true,
-      "data": [
-        {
-          "name": "contours",
-          "source": "source",
-          "transform": [
-            {
-              "type": "contour",
-              "x": {"expr": "scale('x', datum.Horsepower)"},
-              "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
-              "size": [{"signal": "width"}, {"signal": "height"}],
-              "thresholds": {"signal": "thresholds"}
-            }
-          ]
+      "type": "path",
+      "from": {"data": "contours"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#888"},
+          "strokeWidth": {"value": 1},
+          "fill": {"scale": "color", "field": "value"},
+          "fillOpacity": {"value": 0.35}
         }
-      ],
-      "scales": [
-        {
-          "name": "color",
-          "type": "sequential",
-          "domain": {"data": "contours", "field": "value"},
-          "range": "ramp"
-        }
-      ],
-      "marks": [
-        {
-          "type": "path",
-          "from": {"data": "contours"},
-          "encode": {
-            "enter": {
-              "stroke": {"value": "#888"},
-              "strokeWidth": {"value": 1},
-              "fill": {"scale": "color", "field": "value"},
-              "fillOpacity": {"value": 0.35}
-            }
-          },
-          "transform": [
-            { "type": "geopath", "field": "datum" }
-          ]
-        }
+      },
+      "transform": [
+        { "type": "geopath", "field": "datum" }
       ]
     },
     {
