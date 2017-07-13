@@ -4,6 +4,7 @@ import background from './background';
 import bind from './bind';
 import data from './data';
 import encode from './encode';
+import events from './events';
 import expr from './expr';
 import layout from './layout';
 import legend from './legend';
@@ -50,7 +51,8 @@ export default function(definitions) {
           "height": {"type": "number"},
           "padding": {"$ref": "#/defs/padding"},
           "autosize": {"$ref": "#/defs/autosize"},
-          "background": {"$ref": "#/defs/background"}
+          "background": {"$ref": "#/defs/background"},
+          "events": {"$ref": "#/defs/events"}
         }
       }
     ]
@@ -63,6 +65,7 @@ export default function(definitions) {
     bind,
     data,
     encode,
+    events,
     expr,
     layout,
     legend,
