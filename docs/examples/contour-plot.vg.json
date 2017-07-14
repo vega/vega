@@ -9,6 +9,10 @@
     {
       "name": "thresholds", "value": 10,
       "bind": {"input": "select", "options": [1, 5, 10, 20]}
+    },
+    {
+      "name": "show_points", "value": true,
+      "bind": {"input": "checkbox"}
     }
   ],
 
@@ -82,6 +86,11 @@
     }
   ],
 
+  "legends": [{
+    "fill": "color",
+    "type": "gradient"
+  }],
+
   "marks": [
     {
       "type": "path",
@@ -107,7 +116,10 @@
           "x": {"scale": "x", "field": "Horsepower"},
           "y": {"scale": "y", "field": "Miles_per_Gallon"},
           "size": {"value": 4},
-          "fill": {"value": "black"}
+          "fill": [
+            {"test": "show_points", "value": "black"},
+            {"value": "transparent"}
+          ]
         }
       }
     }
