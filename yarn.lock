@@ -1840,8 +1840,8 @@ vega-loader@2:
     vega-util "1"
 
 vega-parser@1:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.2.0.tgz#7944247e1d05ca650b1adba136da2a3818063812"
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.2.1.tgz#ad2f5814fb7d888132fef8fdbd13a3f2c905f043"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1892,8 +1892,8 @@ vega-util@1, vega-util@^1.1, vega-util@^1.2, vega-util@^1.4:
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.4.1.tgz#3c5bea971aecec552786c190421f87e42165d666"
 
 vega-view@1:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.2.0.tgz#86a80c10c17741179cfcfde709249a7d2b0959d0"
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.2.1.tgz#71730c1eef0ba0935a9c32038bcd8d7ef18147f6"
   dependencies:
     d3-array "1"
     vega-dataflow "2"
