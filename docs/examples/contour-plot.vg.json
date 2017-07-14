@@ -36,7 +36,7 @@
           "x": {"expr": "scale('x', datum.Horsepower)"},
           "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
           "size": [{"signal": "width"}, {"signal": "height"}],
-          "count": {"signal": "thresholds"}
+          "count": {"signal": "count"}
         }
       ]
     }
@@ -64,6 +64,7 @@
     {
       "name": "color",
       "type": "sequential",
+      "zero": true,
       "domain": {"data": "contours", "field": "value"},
       "range": "heatmap"
     }
