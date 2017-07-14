@@ -1,7 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v3.0.json",
-  "width": 200,
-  "height": 200,
+  "width": 500,
+  "height": 400,
   "padding": 5,
   "autosize": "pad",
 
@@ -61,7 +61,7 @@
       "name": "color",
       "type": "sequential",
       "domain": {"data": "contours", "field": "value"},
-      "range": "ramp"
+      "range": "heatmap"
     }
   ],
 
@@ -111,5 +111,11 @@
         }
       }
     }
-  ]
+  ],
+
+  "config": {
+    "range": {
+      "heatmap": {"scheme": "greenblue"}
+    }
+  }
 }
