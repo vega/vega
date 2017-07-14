@@ -337,7 +337,8 @@ prototype.changes = function(out) {
       cell, key, i, n;
 
   if (prev) for (key in prev) {
-    rem.push(prev[key].tuple);
+    cell = prev[key];
+    if (!drop || cell.num) rem.push(cell.tuple);
   }
 
   for (i=0, n=this._alen; i<n; ++i) {
