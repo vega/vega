@@ -388,5 +388,10 @@ function layoutSize(view, group, viewBounds, _) {
     viewHeight = height + top + bottom;
   }
 
-  view.resize(viewWidth, viewHeight, width, height, [left, top], auto.resize);
+  view._resizeView(
+    viewWidth, viewHeight,
+    width, height,
+    [left, top],
+    auto.resize
+  );
 }

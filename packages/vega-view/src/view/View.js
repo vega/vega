@@ -9,7 +9,7 @@ import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
 import {resizeRenderer} from './render-size';
 import runtime from './runtime';
-import {resize, initializeResize, viewWidth, viewHeight} from './size';
+import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
 import {getState, setState} from './state';
 
 import {Dataflow} from 'vega-dataflow';
@@ -200,6 +200,9 @@ prototype.resize = function() {
   return this;
 };
 
+// -- SIZING ----
+prototype._resizeView = resizeView;
+
 // -- EVENT HANDLING ----
 
 prototype.addEventListener = function(type, handler) {
@@ -253,9 +256,6 @@ prototype.tooltipHandler = function(_) {
 prototype.events = events;
 prototype.finalize = finalize;
 prototype.hover = hover;
-
-// -- SIZING ----
-prototype.resize = resize;
 
 // -- DATA ----
 prototype.data = data;
