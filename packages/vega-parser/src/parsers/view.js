@@ -17,7 +17,7 @@ export default function parseView(spec, scope) {
       op, input, encode, parent, root;
 
   scope.background = spec.background || config.background;
-  scope.eventConfig = spec.events || config.events;
+  scope.eventConfig = config.events;
   root = ref(scope.root = scope.add(operator()));
   scope.addSignal('width', spec.width || -1);
   scope.addSignal('height', spec.height || -1);

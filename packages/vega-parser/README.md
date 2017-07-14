@@ -34,6 +34,7 @@ used to "theme" charts with a customized look and feel. A configuration file is
 simply a JavaScript object with a set of named properties, grouped by type.
 
 - [Top-Level Properties](#top-level-properties)
+- [Event Properties](#event-properties)
 - [Mark Properties](#mark-properties)
 - [Axis Properties](#axis-properties)
 - [Legend Properties](#legend-properties)
@@ -45,13 +46,24 @@ Properties defined in the top-level scope of the configuration object.
 
 - *autosize*: Default automatic sizing setting. Options: `"none"`, `"pad"`, `"fit"`.
 - *background*: Background color of the view component, or `null` for transparent.
-- *events*: Event handling configuration. Options:
-`{"defaults": {"prevent": true}}` to preventDefault for view-sourced events, or
-providing an array of event types that should be consumed. Alternatively, one
-can use `{"defaults": {"allow": [...]}}` to whitelist events.
 - *group*: Object containing default properties for the top-level group mark
 representing the data rectangle of a chart. Valid properties of this object
 are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`.
+
+### Event Properties
+
+Properties for event handling configuration, defined within an `"events"` property block.
+
+- *defaults*: An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.
+
+For example, to prevent the default behavior for all events originating within a Vega view except for `wheel` events:
+```json
+"events": {
+  "defaults": {
+    "allow": ["wheel"]
+  }
+}
+```
 
 ### Mark Properties
 
