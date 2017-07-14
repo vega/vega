@@ -1,14 +1,18 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v3.0.json",
-  "width": 200,
-  "height": 200,
+  "width": 500,
+  "height": 400,
   "padding": 5,
   "autosize": "pad",
 
   "signals": [
     {
-      "name": "count", "value": 5,
-      "bind": {"input": "select", "options": [1, 2, 3, 4, 5, 10]}
+      "name": "count", "value": 10,
+      "bind": {"input": "select", "options": [1, 5, 10, 20]}
+    },
+    {
+      "name": "points", "value": true,
+      "bind": {"input": "checkbox"}
     }
   ],
 
@@ -22,6 +26,19 @@
           "expr": "datum['Horsepower'] != null && datum['Miles_per_Gallon'] != null"
         }
       ]
+    },
+    {
+      "name": "contours",
+      "source": "source",
+      "transform": [
+        {
+          "type": "contour",
+          "x": {"expr": "scale('x', datum.Horsepower)"},
+          "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
+          "size": [{"signal": "width"}, {"signal": "height"}],
+          "count": {"signal": "thresholds"}
+        }
+      ]
     }
   ],
 
@@ -31,7 +48,7 @@
       "type": "linear",
       "round": true,
       "nice": true,
-      "zero": true,
+      "zero": false,
       "domain": {"data": "source", "field": "Horsepower"},
       "range": "width"
     },
@@ -40,9 +57,15 @@
       "type": "linear",
       "round": true,
       "nice": true,
-      "zero": true,
+      "zero": false,
       "domain": {"data": "source", "field": "Miles_per_Gallon"},
       "range": "height"
+    },
+    {
+      "name": "color",
+      "type": "sequential",
+      "domain": {"data": "contours", "field": "value"},
+      "range": "heatmap"
     }
   ],
 
@@ -52,7 +75,6 @@
       "grid": true,
       "domain": false,
       "orient": "bottom",
-      "tickCount": 5,
       "title": "Horsepower"
     },
     {
@@ -60,54 +82,29 @@
       "grid": true,
       "domain": false,
       "orient": "left",
-      "titlePadding": 5,
       "title": "Miles_per_Gallon"
     }
   ],
 
+  "legends": [{
+    "fill": "color",
+    "type": "gradient"
+  }],
+
   "marks": [
     {
-      "type": "group",
-      "clip": true,
-      "data": [
-        {
-          "name": "contours",
-          "source": "source",
-          "transform": [
-            {
-              "type": "contour",
-              "x": {"expr": "scale('x', datum.Horsepower)"},
-              "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
-              "size": [{"signal": "width"}, {"signal": "height"}],
-              "count": {"signal": "count"}
-            }
-          ]
+      "type": "path",
+      "from": {"data": "contours"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#888"},
+          "strokeWidth": {"value": 1},
+          "fill": {"scale": "color", "field": "value"},
+          "fillOpacity": {"value": 0.35}
         }
-      ],
-      "scales": [
-        {
-          "name": "color",
-          "type": "sequential",
-          "domain": {"data": "contours", "field": "value"},
-          "range": "ramp"
-        }
-      ],
-      "marks": [
-        {
-          "type": "path",
-          "from": {"data": "contours"},
-          "encode": {
-            "enter": {
-              "stroke": {"value": "#888"},
-              "strokeWidth": {"value": 1},
-              "fill": {"scale": "color", "field": "value"},
-              "fillOpacity": {"value": 0.35}
-            }
-          },
-          "transform": [
-            { "type": "geopath", "field": "datum" }
-          ]
-        }
+      },
+      "transform": [
+        { "type": "geopath", "field": "datum" }
       ]
     },
     {
@@ -119,9 +116,18 @@
           "x": {"scale": "x", "field": "Horsepower"},
           "y": {"scale": "y", "field": "Miles_per_Gallon"},
           "size": {"value": 4},
-          "fill": {"value": "black"}
+          "fill": [
+            {"test": "show_points", "value": "black"},
+            {"value": "transparent"}
+          ]
         }
       }
     }
-  ]
+  ],
+
+  "config": {
+    "range": {
+      "heatmap": {"scheme": "greenblue"}
+    }
+  }
 }
