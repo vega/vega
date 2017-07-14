@@ -1,4 +1,4 @@
-import {peek} from 'vega-util';
+import {constant, peek} from 'vega-util';
 import * as $ from 'd3-interpolate';
 
 export function interpolateRange(interpolator, range) {
@@ -8,9 +8,11 @@ export function interpolateRange(interpolator, range) {
 }
 
 export function scaleFraction(scale, min, max) {
-  return scale.type === 'linear' || scale.type === 'sequential'
-    ? function(_) { return (_ - min) / (max - min); }
-    : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
+  var delta = max - min;
+  return !delta ? constant(0)
+    : scale.type === 'linear' || scale.type === 'sequential'
+      ? function(_) { return (_ - min) / delta; }
+      : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
 }
 
 function lerp(a, b) {
