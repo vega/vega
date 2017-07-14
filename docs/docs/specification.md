@@ -55,8 +55,6 @@ Below is a basic outline of a Vega specification. Complete specifications includ
 Vega views can be sized (and resized) in various ways.
 If an object, the value should have the format `{"type": "pad", "resize": true}`, where `type` is one of the autosize strings and resize is a boolean indicating if autosize layout should be re-calculated on every update.
 
-The format object describes the data format and additional parsing instructions.
-
 | Name          | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
 | type          | {% include type t="String" %} | {% include required %} The sizing format type. One of `"pad"` (default), `"fit"` or `"none"`. See the [autosize types](#autosize-types) documentation for descriptions of each.|
