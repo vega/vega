@@ -131,6 +131,48 @@ tape('Aggregate handles count aggregates', function(test) {
   test.end();
 });
 
+
+tape('Aggregate properly handles empty aggregation cells', function(test) {
+  var data = [
+    {k:'a', v:1}, {k:'b', v:3},
+    {k:'a', v:2}, {k:'b', v:4}
+  ];
+
+  var key = util.field('k'),
+      val = util.field('v'),
+      df = new vega.Dataflow(),
+      col = df.add(tx.Collect),
+      agg = df.add(tx.Aggregate, {
+        groupby: [key],
+        fields: [val, val, val, val],
+        ops: ['count', 'sum', 'min', 'max'],
+        pulse: col
+      }),
+      out = df.add(tx.Collect, {pulse: agg});
+
+  // -- add data
+  df.pulse(col, changeset().insert(data)).run();
+  test.equal(out.value.length, 2);
+
+  // -- remove category 'b'
+  df.pulse(col, changeset()
+    .remove(function(d) { return d.k === 'b'; })).run();
+  test.equal(out.value.length, 1);
+
+  // -- modify tuple
+  df.pulse(col, changeset().modify(data[0], 'v', 2)).run();
+
+  var d = out.value;
+  test.equal(d.length, 1);
+  test.equal(d[0].k, 'a');
+  test.equal(d[0].count_v, 2);
+  test.equal(d[0].sum_v, 4);
+  test.equal(d[0].min_v, 2);
+  test.equal(d[0].max_v, 2);
+
+  test.end();
+});
+
 tape('Aggregate handles distinct aggregates', function(test) {
   var data = [
     {foo:null},
