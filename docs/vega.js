@@ -4,7 +4,7 @@
 	(factory((global.vega = global.vega || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "3.0.0-rc2";
+var version = "3.0.0-rc3";
 
 var bin$1 = function(_) {
   // determine range
@@ -1905,8 +1905,8 @@ function load(uri, options) {
   return loader.sanitize(uri, options)
     .then(function(opt) {
       var url = opt.href;
-      return (startsWith(url, fileProtocol))
-        ? loader.file(url.slice(fileProtocol.length))
+      return opt.localFile
+        ? loader.file(url)
         : loader.http(url, options);
     });
 }
@@ -1924,7 +1924,8 @@ function load(uri, options) {
 function sanitize(uri, options) {
   options = marshall(this, options);
   return new Promise(function(accept, reject) {
-    var isFile, hasProtocol, loadFile, base;
+    var result = {href: null},
+        isFile, hasProtocol, loadFile, base;
 
     if (uri == null || typeof uri !== 'string') {
       reject('Sanitize failure, invalid URI: ' + $(uri));
@@ -1947,15 +1948,26 @@ function sanitize(uri, options) {
       || options.mode === 'file'
       || options.mode !== 'http' && !hasProtocol && fs();
 
-    if (loadFile) {
-      // prepend file protocol, if not already present
-      uri = (isFile ? '' : fileProtocol) + uri;
+    if (isFile) {
+      // strip file protocol
+      uri = uri.slice(fileProtocol.length);
     } else if (startsWith(uri, '//')) {
-      // if relative protocol (starts with '//'), prepend default protocol
-      uri = (options.defaultProtocol || 'http') + ':' + uri;
+      if (options.defaultProtocol === 'file') {
+        // if is file, strip protocol and set loadFile flag
+        uri = uri.slice(2);
+        loadFile = true;
+      } else {
+        // if relative protocol (starts with '//'), prepend default protocol
+        uri = (options.defaultProtocol || 'http') + ':' + uri;
+      }
     }
 
-    accept({href: uri});
+    // set non-enumerable mode flag to indicate local file load
+    Object.defineProperty(result, 'localFile', {value: !!loadFile});
+
+    // set uri and return
+    result.href = uri;
+    accept(result);
   });
 }
 
@@ -3569,10 +3581,11 @@ prototype$1.loadImage = function(uri) {
   var loader$$1 = this;
   increment(loader$$1);
 
-  return loader$$1._loader.sanitize(uri, {context:'image'})
+  return loader$$1._loader
+    .sanitize(uri, {context:'image'})
     .then(function(opt) {
       var url = opt.href;
-      if (!url || !Image$1) throw 'Image unsupported.';
+      if (!url || !Image$1) throw {url: url};
 
       var image = new Image$1();
 
@@ -3589,9 +3602,9 @@ prototype$1.loadImage = function(uri) {
       image.src = url;
       return image;
     })
-    .catch(function() {
+    .catch(function(e) {
       decrement(loader$$1);
-      return {loaded: false, width: 0, height: 0};
+      return {loaded: false, width: 0, height: 0, src: e && e.url || ''};
     });
 };
 
@@ -12573,7 +12586,12 @@ prototype$38.transform = function(_, pulse) {
 
   if (_.derive) {
     out = pulse.fork();
-
+    
+    pulse.visit(pulse.REM, function(t) {
+      out.rem.push(lut[t._id]);
+      lut[t._id] = null;
+    });
+    
     pulse.visit(pulse.ADD, function(t) {
       var dt = derive(t);
       lut[t._id] = dt;
@@ -12582,11 +12600,6 @@ prototype$38.transform = function(_, pulse) {
 
     pulse.visit(pulse.MOD, function(t) {
       out.mod.push(rederive(t, lut[t._id]));
-    });
-
-    pulse.visit(pulse.REM, function(t) {
-      out.rem.push(lut[t._id]);
-      lut[t._id] = null;
     });
   }
 
@@ -16604,8 +16617,8 @@ var contourDensity = function() {
   return density;
 };
 
-var CONTOUR_PARAMS = ['values', 'size', 'thresholds'];
-var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth', 'thresholds'];
+var CONTOUR_PARAMS = ['values', 'size'];
+var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
 
 /**
  * Generate contours based on kernel-density estimation of point data.
@@ -16622,7 +16635,13 @@ var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth', 'thresholds'];
  * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
  * @param {number} [params.cellSize] - Contour density calculation cell size.
  * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
- * @param {number} [params.thresholds] - Contour threshold array or desired number of contours.
+ * @param {Array<number>} [params.thresholds] - Contour threshold array. If
+ *   this parameter is set, the count and nice parameters will be ignored.
+ * @param {number} [params.count] - The desired number of contours.
+ * @param {boolean} [params.nice] - Boolean flag indicating if the contour
+ *   threshold values should be automatically aligned to "nice"
+ *   human-friendly values. Setting this flag may cause the number of
+ *   thresholds to deviate from the specified count.
  */
 function Contour(params) {
   Transform.call(this, null, params);
@@ -16635,6 +16654,7 @@ prototype$44.transform = function(_, pulse) {
     return pulse.StopPropagation;
 
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      count = _.count || 10,
       contour, params, values;
 
   if (_.values) {
@@ -16647,6 +16667,10 @@ prototype$44.transform = function(_, pulse) {
     values = pulse.materialize(pulse.SOURCE).source;
   }
 
+  // set threshold parameter
+  contour.thresholds(_.thresholds || (_.nice ? count : quantize$2(count)));
+
+  // set all other parameters
   params.forEach(function(param) {
     if (_[param] != null) contour[param](_[param]);
   });
@@ -16656,6 +16680,15 @@ prototype$44.transform = function(_, pulse) {
 
   return out;
 };
+
+function quantize$2(k) {
+  return function(values) {
+    var ex = extent(values), x0 = ex[0], dx = ex[1] - x0,
+        t = [], i = 1;
+    for (; i<=k; ++i) t.push(x0 + dx * i / (k + 1));
+    return t;
+  };
+}
 
 // Adds floating point numbers with twice the normal precision.
 // Reference: J. R. Shewchuk, Adaptive Precision Floating-Point Arithmetic and
@@ -19179,7 +19212,7 @@ prototype$46.transform = function(_, pulse) {
 
   if (_.modified()) {
     // parameters updated, reflow
-    pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
+    pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
   } else {
     mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
     pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
@@ -19337,7 +19370,9 @@ var ContourDefinition = {
     { "name": "y", "type": "field" },
     { "name": "cellSize", "type": "number" },
     { "name": "bandwidth", "type": "number" },
-    { "name": "thresholds", "type": "number" }
+    { "name": "count", "type": "number" },
+    { "name": "nice", "type": "number", "default": false },
+    { "name": "thresholds", "type": "number", "array": true }
   ]
 };
 
@@ -19737,7 +19772,7 @@ prototype$52.transform = function(_, pulse) {
 
 var discrete$1 = {};
 discrete$1[Quantile] = quantile$1;
-discrete$1[Quantize] = quantize$2;
+discrete$1[Quantize] = quantize$3;
 discrete$1[Threshold] = threshold$2;
 discrete$1[BinLinear] = bin$2;
 discrete$1[BinOrdinal] = bin$2;
@@ -19748,7 +19783,7 @@ function labelValues(scale, count, gradient) {
   return values ? values(scale) : tickValues(scale, count);
 }
 
-function quantize$2(scale) {
+function quantize$3(scale) {
   var domain = scale.domain(),
       x0 = domain[0],
       x1 = peek(domain),
@@ -20246,7 +20281,7 @@ function configureScheme(type, _, count) {
   // adjust and/or quantize scheme as appropriate
   return type === Sequential ? adjustScheme(scheme, extent, _.reverse)
     : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
-    : isFunction(scheme) ? quantize$3(adjustScheme(scheme, extent), count)
+    : isFunction(scheme) ? quantize$4(adjustScheme(scheme, extent), count)
     : type === Ordinal ? scheme : scheme.slice(0, count);
 }
 
@@ -20260,7 +20295,7 @@ function flip(array, reverse) {
   return reverse ? array.slice().reverse() : array;
 }
 
-function quantize$3(interpolator, count) {
+function quantize$4(interpolator, count) {
   var samples = new Array(count),
       n = (count - 1) || 1;
   for (var i = 0; i < count; ++i) samples[i] = interpolator(i / n);
@@ -26311,6 +26346,7 @@ function layoutTitle$1(view, g, offset, isX, bounds, band) {
 var Fit = 'fit';
 var Pad = 'pad';
 var None$2 = 'none';
+var Padding = 'padding';
 
 var AxisRole = 'axis';
 var TitleRole = 'title';
@@ -26655,10 +26691,11 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
 }
 
 function layoutSize(view, group, viewBounds, _) {
-  var type = _.autosize && _.autosize.type,
-      auto = _.autosize && _.autosize.resize,
+  var auto = _.autosize || {},
+      type = auto.type,
       viewWidth = view._width,
-      viewHeight = view._height;
+      viewHeight = view._height,
+      padding = view.padding();
 
   if (view._autosize < 1 || !type) return;
 
@@ -26669,11 +26706,16 @@ function layoutSize(view, group, viewBounds, _) {
       top    = Math.max(0, Math.ceil(-viewBounds.y1)),
       bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
+  if (auto.contains === Padding) {
+    viewWidth -= padding.left + padding.right;
+    viewHeight -= padding.top + padding.bottom;
+  }
+
   if (type === None$2) {
-    viewWidth = width;
-    viewHeight = height;
     left = 0;
     top = 0;
+    width = viewWidth;
+    height = viewHeight;
   }
 
   else if (type === Fit) {
@@ -26686,7 +26728,12 @@ function layoutSize(view, group, viewBounds, _) {
     viewHeight = height + top + bottom;
   }
 
-  view.autosize(viewWidth, viewHeight, width, height, [left, top], auto);
+  view._resizeView(
+    viewWidth, viewHeight,
+    width, height,
+    [left, top],
+    auto.resize
+  );
 }
 
 var IdentifierDefinition = {
@@ -26774,12 +26821,12 @@ function remove(name, _) {
 
 function width(view) {
   var padding = view.padding();
-  return Math.max(0, view._width + padding.left + padding.right);
+  return Math.max(0, view._viewWidth + padding.left + padding.right);
 }
 
 function height$1(view) {
   var padding = view.padding();
-  return Math.max(0, view._height + padding.top + padding.bottom);
+  return Math.max(0, view._viewHeight + padding.top + padding.bottom);
 }
 
 function offset$1(view) {
@@ -26882,17 +26929,50 @@ var VIEW = 'view';
 var WINDOW = 'window';
 
 /**
+ * Initialize event handling configuration.
+ * @param {object} config - The configuration settings.
+ * @return {object}
+ */
+function initializeEventConfig(config) {
+  config = extend({}, config);
+
+  var def = config.defaults;
+  if (def) {
+    if (isArray(def.prevent)) {
+      def.prevent = toSet(def.prevent);
+    }
+    if (isArray(def.allow)) {
+      def.allow = toSet(def.allow);
+    }
+  }
+
+  return config;
+}
+
+function prevent(view, type) {
+  var def = view._eventConfig.defaults,
+      prevent = def && def.prevent,
+      allow = def && def.allow;
+
+  return prevent === false || allow === true ? false
+    : prevent === true || allow === false ? true
+    : prevent ? prevent[type]
+    : allow ? !allow[type]
+    : view.preventDefault();
+}
+
+/**
  * Create a new event stream from an event source.
  * @param {object} source - The event source to monitor.
  * @param {string} type - The event type.
  * @param {function(object): boolean} [filter] - Event filter function.
  * @return {EventStream}
  */
-var events$1 = function(source, type, filter) {
+function events$1(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        if (view.preventDefault() && source === VIEW) {
+        if (source === VIEW && prevent(view, type)) {
           e.preventDefault();
         }
         try {
@@ -26932,7 +27012,7 @@ var events$1 = function(source, type, filter) {
   });
 
   return s;
-};
+}
 
 function itemFilter(event) {
   return event.item;
@@ -27334,7 +27414,6 @@ var renderToImageURL = function(type) {
         return type === RenderType.SVG
           ? toBlobURL(renderer.svg(), 'image/svg+xml')
           : renderer.canvas().toDataURL('image/png');
-
       });
 };
 
@@ -29318,9 +29397,17 @@ function screen() {
   return _window ? _window.screen : {};
 }
 
-function windowsize() {
+function windowSize() {
   return _window
     ? [_window.innerWidth, _window.innerHeight]
+    : [undefined, undefined];
+}
+
+function containerSize() {
+  var view = this.context.dataflow,
+      el = view.container && view.container();
+  return el
+    ? [el.clientWidth, el.clientHeight]
     : [undefined, undefined];
 }
 
@@ -29883,8 +29970,8 @@ function continuousDomain(entries, op) {
     lo = extent[0];
     hi = extent[1];
     if (lo > hi) {
-      hi = extent[1];
-      lo = extent[0];
+      hi = extent[0];
+      lo = extent[1];
     }
     domain = domain ? merge(domain, lo, hi) : [lo, hi];
   }
@@ -29949,7 +30036,8 @@ var functionContext = {
   pinchDistance: pinchDistance,
   pinchAngle: pinchAngle,
   screen: screen,
-  windowsize: windowsize,
+  containerSize: containerSize,
+  windowSize: windowSize,
   span: span,
   bandspace: bandspace,
   inrange: inrange,
@@ -32642,17 +32730,19 @@ var parseSpec = function(spec, scope, preprocessed) {
   return scope;
 };
 
-var defined = toSet(['width', 'height', 'padding']);
+var defined = toSet(['width', 'height', 'padding', 'autosize']);
 
 function parseView(spec, scope) {
   var config = scope.config,
       op, input, encode, parent, root;
 
   scope.background = spec.background || config.background;
+  scope.eventConfig = config.events;
   root = ref(scope.root = scope.add(operator()));
   scope.addSignal('width', spec.width || -1);
   scope.addSignal('height', spec.height || -1);
   scope.addSignal('padding', parsePadding(spec.padding, config));
+  scope.addSignal('autosize', parseAutosize(spec.autosize, config));
 
   array$1(spec.signals).forEach(function(_) {
     if (!defined[_.name]) parseSignal(_, scope);
@@ -32675,7 +32765,7 @@ function parseView(spec, scope) {
   parent = scope.add(ViewLayout$1({
     layout:       scope.objectProperty(spec.layout),
     legendMargin: config.legendMargin,
-    autosize:     parseAutosize(spec.autosize, config),
+    autosize:     scope.signalRef('autosize'),
     mark:         root,
     pulse:        ref(encode)
   }));
@@ -32712,6 +32802,7 @@ function Scope(config) {
   this.updates = [];
   this.operators = [];
   this.background = null;
+  this.eventConfig = null;
 
   this._id = 0;
   this._subid = 0;
@@ -32758,11 +32849,12 @@ prototype$76.fork = function() {
 prototype$76.toRuntime = function() {
   this.finish();
   return {
-    background: this.background,
-    operators:  this.operators,
-    streams:    this.streams,
-    updates:    this.updates,
-    bindings:   this.bindings
+    background:  this.background,
+    operators:   this.operators,
+    streams:     this.streams,
+    updates:     this.updates,
+    bindings:    this.bindings,
+    eventConfig: this.eventConfig
   };
 };
 
@@ -33143,6 +33235,12 @@ function defaults$1() {
     // default view background color
     // covers the entire view component
     background: null,
+
+    // default event handling configuration
+    // preventDefault for view-sourced event types except 'wheel'
+    events: {
+      defaults: {allow: ['wheel']}
+    },
 
     // defaults for top-level group marks
     // accepts mark properties (fill, stroke, etc)
@@ -33588,6 +33686,11 @@ var parseDataflow = function(spec, ctx) {
     ctx.background = spec.background;
   }
 
+  // parse event configuration
+  if (spec.eventConfig) {
+    ctx.eventConfig = spec.eventConfig;
+  }
+
   // parse operators
   operators.forEach(function(entry) {
     parseOperator(entry, ctx);
@@ -33797,21 +33900,60 @@ var runtime = function(view, spec, functions) {
   return parseDataflow(spec, context$2(view, transforms, fn));
 };
 
-function resizer(view, field) {
-  var op = view.add(null,
-    function(_) {
-      view['_' + field] = _.size;
-      view._autosize = view._resize = 1;
-    },
-    {size: view._signals[field]}
-  );
-  // set rank to ensure operator runs as soon as possible
-  // size parameters should be reset prior to view layout
-  op.rank = 0;
-  return op;
+var Padding$1 = 'padding';
+
+function viewWidth(view, width) {
+  var a = view.autosize(),
+      p = view.padding();
+  return width - (a && a.contains === Padding$1 ? p.left + p.right : 0);
 }
 
-function autosize(viewWidth, viewHeight, width, height, origin, auto) {
+function viewHeight(view, height) {
+  var a = view.autosize(),
+      p = view.padding();
+  return height - (a && a.contains === Padding$1 ? p.top + p.bottom : 0);
+}
+
+function initializeResize(view) {
+  var s = view._signals,
+      w = s.width,
+      h = s.height,
+      p = s.padding;
+
+  function resetSize() {
+    view._autosize = view._resize = 1;
+  }
+
+  // respond to width signal
+  view._resizeWidth = view.add(null,
+    function(_) {
+      view._width = _.size;
+      view._viewWidth = viewWidth(view, _.size);
+      resetSize();
+    },
+    {size: w}
+  );
+
+  // respond to height signal
+  view._resizeHeight = view.add(null,
+    function(_) {
+      view._height = _.size;
+      view._viewHeight = viewHeight(view, _.size);
+      resetSize();
+    },
+    {size: h}
+  );
+
+  // respond to padding signal
+  var resizePadding = view.add(null, resetSize, {pad: p});
+
+  // set rank to run immediately after source signal
+  view._resizeWidth.rank = w.rank + 1;
+  view._resizeHeight.rank = h.rank + 1;
+  resizePadding.rank = p.rank + 1;
+}
+
+function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
   this.runAfter(function(view) {
     var rerun = 0;
 
@@ -33833,15 +33975,15 @@ function autosize(viewWidth, viewHeight, width, height, origin, auto) {
     }
 
     // view width changed: update view property, set resize flag
-    if (view._width !== viewWidth) {
+    if (view._viewWidth !== viewWidth) {
       view._resize = 1;
-      view._width = viewWidth;
+      view._viewWidth = viewWidth;
     }
 
     // view height changed: update view property, set resize flag
-    if (view._height !== viewHeight) {
+    if (view._viewHeight !== viewHeight) {
       view._resize = 1;
-      view._height = viewHeight;
+      view._viewHeight = viewHeight;
     }
 
     // origin changed: update view property, set resize flag
@@ -33915,29 +34057,30 @@ function setState$1(state) {
  * @param {object} spec - The Vega dataflow runtime specification.
  */
 function View(spec, options) {
+  var view = this;
   options = options || {};
 
-  Dataflow.call(this);
-  this.loader(options.loader || this._loader);
-  this.logLevel(options.logLevel || 0);
+  Dataflow.call(view);
+  view.loader(options.loader || view._loader);
+  view.logLevel(options.logLevel || 0);
 
-  this._el = null;
-  this._renderType = options.renderer || RenderType.Canvas;
-  this._scenegraph = new Scenegraph();
-  var root = this._scenegraph.root;
+  view._el = null;
+  view._renderType = options.renderer || RenderType.Canvas;
+  view._scenegraph = new Scenegraph();
+  var root = view._scenegraph.root;
 
   // initialize renderer, handler and event management
-  this._renderer = null;
-  this._redraw = true;
-  this._handler = new CanvasHandler().scene(root);
-  this._eventListeners = [];
-  this._preventDefault = true;
+  view._renderer = null;
+  view._redraw = true;
+  view._handler = new CanvasHandler().scene(root);
+  view._eventListeners = [];
+  view._preventDefault = false;
 
   // initialize dataflow graph
-  var ctx = runtime(this, spec, options.functions);
-  this._runtime = ctx;
-  this._signals = ctx.signals;
-  this._bind = (spec.bindings || []).map(function(_) {
+  var ctx = runtime(view, spec, options.functions);
+  view._runtime = ctx;
+  view._signals = ctx.signals;
+  view._bind = (spec.bindings || []).map(function(_) {
     return {
       state: null,
       param: extend({}, _)
@@ -33947,27 +34090,29 @@ function View(spec, options) {
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
   root.source = ctx.data.root.input;
-  this.pulse(
+  view.pulse(
     ctx.data.root.input,
-    this.changeset().insert(root.items)
+    view.changeset().insert(root.items)
   );
 
   // initialize background color
-  this._background = ctx.background || null;
+  view._background = ctx.background || null;
+
+  // initialize event configuration
+  view._eventConfig = initializeEventConfig(ctx.eventConfig);
 
   // initialize view size
-  this._width = this.width();
-  this._height = this.height();
-  this._origin = [0, 0];
-  this._resize = 0;
-  this._autosize = 1;
-
-  // initialize resize operators
-  this._resizeWidth = resizer(this, 'width');
-  this._resizeHeight = resizer(this, 'height');
+  view._width = view.width();
+  view._height = view.height();
+  view._viewWidth = viewWidth(view, view._width);
+  view._viewHeight = viewHeight(view, view._height);
+  view._origin = [0, 0];
+  view._resize = 0;
+  view._autosize = 1;
+  initializeResize(view);
 
   // initialize cursor
-  cursor(this);
+  cursor(view);
 }
 
 var prototype$74 = inherits(View, Dataflow);
@@ -33976,7 +34121,13 @@ var prototype$74 = inherits(View, Dataflow);
 
 prototype$74.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
-  if (this._redraw || this._resize) this.render();
+  if (this._redraw || this._resize) {
+    try {
+      this.render();
+    } catch (e) {
+      this.error(e);
+    }
+  }
   return this;
 };
 
@@ -33999,6 +34150,14 @@ prototype$74.dirty = function(item) {
 
 // -- GET / SET ----
 
+prototype$74.container = function() {
+  return this._el;
+};
+
+prototype$74.scenegraph = function() {
+  return this._scenegraph;
+};
+
 function lookupSignal(view, name) {
   return view._signals.hasOwnProperty(name)
     ? view._signals[name]
@@ -34010,10 +34169,6 @@ prototype$74.signal = function(name, value, options) {
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
-};
-
-prototype$74.scenegraph = function() {
-  return this._scenegraph;
 };
 
 prototype$74.background = function(_) {
@@ -34036,6 +34191,10 @@ prototype$74.height = function(_) {
 
 prototype$74.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
+};
+
+prototype$74.autosize = function(_) {
+  return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
 };
 
 prototype$74.renderer = function(type) {
@@ -34067,6 +34226,9 @@ prototype$74.resize = function() {
   this._autosize = 1;
   return this;
 };
+
+// -- SIZING ----
+prototype$74._resizeView = resizeView;
 
 // -- EVENT HANDLING ----
 
@@ -34121,9 +34283,6 @@ prototype$74.tooltipHandler = function(_) {
 prototype$74.events = events$1;
 prototype$74.finalize = finalize;
 prototype$74.hover = hover;
-
-// -- SIZING ----
-prototype$74.autosize = autosize;
 
 // -- DATA ----
 prototype$74.data = data;

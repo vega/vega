@@ -23,6 +23,12 @@
             },
             "resize": {
               "type": "boolean"
+            },
+            "contains": {
+              "enum": [
+                "content",
+                "padding"
+              ]
             }
           },
           "required": [
@@ -4971,10 +4977,40 @@
             }
           ]
         },
-        "thresholds": {
+        "count": {
           "anyOf": [
             {
               "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "nice": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "thresholds": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
             },
             {
               "$ref": "#/refs/signal"
