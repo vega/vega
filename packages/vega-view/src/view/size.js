@@ -13,6 +13,11 @@ export function viewHeight(view, height) {
 }
 
 export function initializeResize(view) {
+  var s = view._signals,
+      w = s.width,
+      h = s.height,
+      p = s.padding;
+
   function resetSize() {
     view._autosize = view._resize = 1;
   }
@@ -24,7 +29,7 @@ export function initializeResize(view) {
       view._viewWidth = viewWidth(view, _.size);
       resetSize();
     },
-    {size: view._signals.width}
+    {size: w}
   );
 
   // respond to height signal
@@ -34,23 +39,19 @@ export function initializeResize(view) {
       view._viewHeight = viewHeight(view, _.size);
       resetSize();
     },
-    {size: view._signals.height}
+    {size: h}
   );
 
   // respond to padding signal
-  var resizePadding = view.add(null,
-    resetSize,
-    {pad: view._signals.padding}
-  );
+  var resizePadding = view.add(null, resetSize, {pad: p});
 
-  // set rank to ensure operators run as soon as possible
-  // size parameters should be reset prior to view layout
-  view._resizeWidth.rank = 0;
-  view._resizeHeight.rank = 0;
-  resizePadding.rank = 0;
+  // set rank to run immediately after source signal
+  view._resizeWidth.rank = w.rank + 1;
+  view._resizeHeight.rank = h.rank + 1;
+  resizePadding.rank = p.rank + 1;
 }
 
-export function resize(viewWidth, viewHeight, width, height, origin, auto) {
+export function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
   this.runAfter(function(view) {
     var rerun = 0;
 
