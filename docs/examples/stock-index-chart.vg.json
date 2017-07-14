@@ -3,7 +3,7 @@
   "width": 650,
   "height": 300,
   "padding": 5,
-  "autosize": "fit",
+  "autosize": {"type": "fit", "contains": "padding"},
 
   "signals": [
     {

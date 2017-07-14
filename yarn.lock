@@ -8,15 +8,11 @@ acorn-jsx@^3.0.0:
   dependencies:
     acorn "^3.0.4"
 
-acorn@^1.0.3:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-1.2.2.tgz#c8ce27de0acc76d896d2b1fad3df588d9e82f014"
-
 acorn@^3.0.4:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
 
-acorn@^5.0.1:
+acorn@^5.0.0, acorn@^5.0.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.1.1.tgz#53fe161111f912ab999ee887a90a0bc52822fd75"
 
@@ -234,7 +230,11 @@ color-name@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.2.tgz#5c8ab72b64bd2215d617ae9559ebb148475cf98d"
 
-commander@2, commander@~2.9.0:
+commander@2:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
+
+commander@~2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
   dependencies:
@@ -649,11 +649,11 @@ extglob@^0.3.1:
   dependencies:
     is-extglob "^1.0.0"
 
-falafel@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/falafel/-/falafel-1.2.0.tgz#c18d24ef5091174a497f318cd24b026a25cddab4"
+falafel@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/falafel/-/falafel-2.1.0.tgz#96bb17761daba94f46d001738b3cedf3a67fe06c"
   dependencies:
-    acorn "^1.0.3"
+    acorn "^5.0.0"
     foreach "^2.0.5"
     isarray "0.0.1"
     object-keys "^1.0.6"
@@ -1561,13 +1561,13 @@ static-eval@~0.2.0:
     escodegen "~0.0.24"
 
 static-module@^1.1.0:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/static-module/-/static-module-1.3.2.tgz#329fb9f223a566266bda71843b7d932c767174f3"
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/static-module/-/static-module-1.4.0.tgz#bef0d9b6f89585f6f2359b8161beeab06055dbd2"
   dependencies:
     concat-stream "~1.6.0"
     duplexer2 "~0.0.2"
     escodegen "~1.3.2"
-    falafel "^1.0.0"
+    falafel "^2.1.0"
     has "^1.0.0"
     object-inspect "~0.4.0"
     quote-stream "~0.0.0"
@@ -1769,8 +1769,8 @@ vega-crossfilter@1:
     vega-util "1"
 
 vega-dataflow@2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.3.tgz#c52cd10975603992faf2c10f1f948896419f7253"
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.4.tgz#42486486f2c0f5b85b023d77392674c3cbaf0ab4"
   dependencies:
     d3-array "1"
     vega-loader "2"
@@ -1811,9 +1811,10 @@ vega-force@1:
     vega-util "1"
 
 vega-geo@1:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.0.0.tgz#7ef400e327551b5830d39fb82e93aa80553217bc"
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.1.1.tgz#14e9d2a814310dca3e6a75eb0b0c072fe0ac4c7e"
   dependencies:
+    d3-array "1"
     d3-contour "1"
     d3-geo "1"
     vega-dataflow "2"
@@ -1829,8 +1830,8 @@ vega-hierarchy@1:
     vega-util "1"
 
 vega-loader@2:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-2.0.0.tgz#a8a552df342727ac2e687a647b5a422d56556d8c"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-2.0.1.tgz#a9870fe01a0620a89a1af486d877521eda76bda3"
   dependencies:
     d3-dsv "1"
     d3-request "1"
@@ -1839,8 +1840,8 @@ vega-loader@2:
     vega-util "1"
 
 vega-parser@1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.0.1.tgz#1c74554c393931b724e21178cbd7ca0162ecd912"
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.2.1.tgz#ad2f5814fb7d888132fef8fdbd13a3f2c905f043"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1851,11 +1852,11 @@ vega-parser@1:
     vega-expression "2"
     vega-scale "2"
     vega-scenegraph "2"
-    vega-util "^1.1"
+    vega-util "1"
 
 vega-runtime@1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-1.0.1.tgz#9c493c1668be5ad7a61917688051e796bc7f558b"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-1.0.2.tgz#d2ece26b8700d794babd0460e7ba397ed82b8d56"
   dependencies:
     vega-util "1"
 
@@ -1870,8 +1871,8 @@ vega-scale@2:
     vega-util "1"
 
 vega-scenegraph@2:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.0.0.tgz#4fb3a9c57961c8afd1fc4f0e01ba815e9853f3a1"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.0.1.tgz#243dfd89dd85e4539309403baf995db9b6b98efd"
   dependencies:
     d3-path "1"
     d3-shape "1"
@@ -1891,8 +1892,8 @@ vega-util@1, vega-util@^1.1, vega-util@^1.2, vega-util@^1.4:
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.4.1.tgz#3c5bea971aecec552786c190421f87e42165d666"
 
 vega-view@1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.0.1.tgz#f73a187f3e6cfbb1b21694cfaa2d05d14ce48663"
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-1.2.1.tgz#71730c1eef0ba0935a9c32038bcd8d7ef18147f6"
   dependencies:
     d3-array "1"
     vega-dataflow "2"

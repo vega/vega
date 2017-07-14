@@ -22,15 +22,12 @@ var args = require('yargs')
   .demand(0)
   .string('b').alias('b', 'base')
   .describe('b', 'Base directory for data loading.')
+  .help()
+  .version()
   .argv;
 
 // set baseURL if provided on command line
-var base = 'file://' + process.cwd() + path.sep;
-if (args.b) {
-  // if no protocol, assume files, relative to current dir
-  base = /^[A-Za-z]+\:\/\//.test(args.b) ? args.b + path.sep
-    : 'file://' + process.cwd() + path.sep + args.b + path.sep;
-}
+var base = args.b ? args.b + path.sep : null;
 
 // input / output files
 var specFile = args._[0] || '/dev/stdin',

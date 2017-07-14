@@ -698,16 +698,16 @@ For the hierarchy data set with the given _name_, returns the array of ancestors
 
 Functions for accessing web browser facilities.
 
-<a name="open" href="#open">#</a>
-<b>open</b>(<i>uri[, name]</i>)<br/>
-Opens the given _uri_ in the browser by invoking [`window.open`](https://developer.mozilla.org/en-US/docs/Web/API/Window/open). The optional _name_ parameter indicates the window name in which to open the link. This function will raise an error if Vega is not running in a browser environment.
+<a name="containerSize" href="#containerSize">#</a>
+<b>containerSize</b>()<br/>
+Returns the current CSS box size (`[el.clientWidth, el.clientHeight]`) of the parent DOM element that contains the Vega view. If there is no container element, returns `[undefined, undefined]`.
 
 <a name="screen" href="#screen">#</a>
 <b>screen</b>()<br/>
 Returns the [`window.screen`](https://developer.mozilla.org/en-US/docs/Web/API/Window/screen) object, or `{}` if Vega is not running in a browser environment.
 
-<a name="windowsize" href="#windowsize">#</a>
-<b>windowsize</b>()<br/>
+<a name="windowSize" href="#windowSize">#</a>
+<b>windowSize</b>()<br/>
 Returns the current window size (`[window.innerWidth, window.innerHeight]`) or `[undefined, undefined]` if Vega is not running in a browser environment.
 
 [Back to Top](#reference)

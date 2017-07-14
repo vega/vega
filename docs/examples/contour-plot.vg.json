@@ -7,11 +7,11 @@
 
   "signals": [
     {
-      "name": "thresholds", "value": 10,
+      "name": "count", "value": 10,
       "bind": {"input": "select", "options": [1, 5, 10, 20]}
     },
     {
-      "name": "show_points", "value": true,
+      "name": "points", "value": true,
       "bind": {"input": "checkbox"}
     }
   ],
@@ -36,7 +36,7 @@
           "x": {"expr": "scale('x', datum.Horsepower)"},
           "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
           "size": [{"signal": "width"}, {"signal": "height"}],
-          "thresholds": {"signal": "thresholds"}
+          "count": {"signal": "thresholds"}
         }
       ]
     }

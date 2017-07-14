@@ -28,15 +28,12 @@ var args = require('yargs')
   .describe('b', 'Base directory for data loading.')
   .boolean('h').alias('h', 'header')
   .describe('h', 'Include XML header and SVG doctype.')
+  .help()
+  .version()
   .argv;
 
 // set baseURL if provided on command line
-var base = 'file://' + process.cwd() + path.sep;
-if (args.b) {
-  // if no protocol, assume files, relative to current dir
-  base = /^[A-Za-z]+\:\/\//.test(args.b) ? args.b + path.sep
-    : 'file://' + process.cwd() + path.sep + args.b + path.sep;
-}
+var base = args.b ? args.b + path.sep : null;
 
 // input / output files
 var header = args.h ? svgHeader : '',
