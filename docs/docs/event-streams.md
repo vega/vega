@@ -68,7 +68,7 @@ Any event stream object may also include the following properties for filtering 
 | Property    | Type                               | Description   |
 | :---------- | :--------------------------------: | :------------ |
 | between     | {% include array t="[EventStream](#object)" %} | A two-element array of event stream objects, indicating sentinel starting and ending events. Only events that occur between these two events will be captured.|
-| consume     | {% include type t="Boolean" %}     | A boolean flag (default `false`) indicating if this stream should consume the event by invoking [`event.preventDefault()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). |
+| consume     | {% include type t="Boolean" %}     | A boolean flag (default `false`) indicating if this stream should consume the event by invoking [`event.preventDefault()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). To control event consumption more globally, see the [event handling configuration](../config/#events).|
 | filter      | [Expression](../expressions){% include or %}{% include array t="[Expression](../expressions)" %} | One or more filter expressions, each of which must evaluate to a truthy value in order for the event to be captured. These expressions may **not** reference signal values, only event properties.|
 | debounce    | {% include type t="Number" %}      | The minimum time to wait between event occurrence and processing. If a new event arrives during a debouncing window, the debounce timer will restart and only the new event will be captured.|
 | markname    | {% include type t="String" %}      | The unique name of a mark set for which to monitor input events. Events originating from other marks will be ignored.|
