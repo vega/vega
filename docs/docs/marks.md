@@ -67,7 +67,7 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | on            | {% include array t="[Trigger](../triggers)" %} | A set of triggers for modifying mark properties in response to signal changes. |
 | sort          | {% include type t="Compare" %} | A comparator for sorting mark items. The sort order will determine the default rendering order. The comparator is defined over generated scenegraph items and sorting is performed after encodings are computed, allowing items to be sorted by size or position. To sort by underlying data properties in addition to mark item properties, use field names such as `"datum.field"`.|
 | transform     | {% include array t="[Transform](../transforms)" %} | A set of post-encoding transforms, applied after any _encode_ blocks, that operate directly on mark scenegraph items (not backing data objects). These can be useful for performing layout with transforms that can set `x`, `y`, `width`, `height`, _etc._ properties. Only data transforms that do not generate or filter data objects may be used.|
-| role          | {% include type t="String" %}  | A metadata string indicating the role of the mark. SVG renderers will add this role value (prepended with the prefix `role-`) as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances. Roles are used internally by Vega to perform custom processing and layout, do not set this property unless you know which layout effect you are trying to achieve.|
+| role          | {% include type t="String" %}  | A metadata string indicating the role of the mark. SVG renderers will add this role value (prepended with the prefix `role-`) as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances. Roles are used internally by Vega to perform custom processing and layout; do not set this property unless you know which layout effect you are trying to achieve!|
 
 ## <a name="from"></a>Mark Data Sources (`from`)
 
@@ -76,7 +76,7 @@ The `from` property indicates the data source for a set of marks.
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | data          | {% include type t="String" %}  | The name of the data set to draw from.|
-| facet         | [Facet](#facet)                | An option facet definition for partitioning data across multiple group marks. Only [`group` mark](group) definitions may use the facet directive.|
+| facet         | [Facet](#facet)                | An optional facet definition for partitioning data across multiple group marks. Only [`group` mark](group) definitions may use the facet directive.|
 
 ### <a name="facet"></a>Faceting
 
