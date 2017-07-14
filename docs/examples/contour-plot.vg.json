@@ -117,7 +117,7 @@
           "y": {"scale": "y", "field": "Miles_per_Gallon"},
           "size": {"value": 4},
           "fill": [
-            {"test": "show_points", "value": "black"},
+            {"test": "points", "value": "black"},
             {"value": "transparent"}
           ]
         }
