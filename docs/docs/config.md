@@ -35,6 +35,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 ## <a name="reference"></a>Config Reference
 
 - [View Properties](#view)
+- [Event Properties](#event)
 - [Mark Properties](#mark)
 - [Axis Properties](#axes)
 - [Legend Properties](#legends)
@@ -48,11 +49,9 @@ Properties defined in the top-level scope of the configuration object.
 
 | Property      | Type                                 | Description    |
 | :------------ | :----------------------------------: | :------------- |
-| autosize      | {% include type t="String|Object" %} | Default automatic sizing setting. Valid string values are `"pad"`, `"fit"` or `"none"`. See the [specification documentation](../specification) for more. |
+| autosize      | {% include type t="String|Object" %} | Default automatic sizing setting. Valid string values are `"pad"`, `"fit"` or `"none"`. See the [autosize documentation](../specification/#autosize) for more. |
 | background    | {% include type t="Color" %}         | Background color of the view component, or `null` for transparent. |
 | group         | {% include type t="Object" %}        | Default properties for the top-level group mark representing the data rectangle of a chart. Valid properties of this object are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`. |
-
-[Back to Top](#reference)
 
 ### Usage
 
@@ -66,6 +65,43 @@ Set default view background and chart plotting area background colors:
   }
 }
 ```
+
+[Back to Top](#reference)
+
+
+## <a name="events"></a> Event Properties
+
+Properties for event handling configuration, defined within an `"events"` property block.
+
+| Property      | Type                                 | Description    |
+| :------------ | :----------------------------------: | :------------- |
+| defaults      | {% include type t="Object" %}        | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
+
+### Usage
+
+To prevent the default behavior for all events originating within a Vega view:
+
+```json
+"events": {
+  "defaults": {
+    "prevent": true
+  }
+}
+```
+
+
+To prevent the default behavior for all events originating within a Vega view, except for `wheel` events:
+
+```json
+"events": {
+  "defaults": {
+    "allow": ["wheel"]
+  }
+}
+```
+
+[Back to Top](#reference)
+
 
 ## <a name="mark"></a> Mark Properties
 
