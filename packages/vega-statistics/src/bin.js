@@ -41,7 +41,8 @@ export default function(_) {
   precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
   eps = Math.pow(base, -precision - 1);
   if (_.nice || _.nice === undefined) {
-    min = Math.min(min, Math.floor(min / step + eps) * step);
+    v = Math.floor(min / step + eps) * step;
+    min = min < v ? v - step : v;
     max = Math.ceil(max / step) * step;
   }
 
