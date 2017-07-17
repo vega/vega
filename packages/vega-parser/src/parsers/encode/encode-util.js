@@ -66,6 +66,8 @@ function applyDefaults(encode, type, role, config) {
 }
 
 export function has(key, encode) {
-  return (encode.enter && encode.enter[key])
-    || (encode.update && encode.update[key]);
+  return encode && (
+    (encode.enter && encode.enter[key]) ||
+    (encode.update && encode.update[key])
+  );
 }
