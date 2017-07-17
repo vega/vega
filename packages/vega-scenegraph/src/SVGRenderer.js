@@ -214,7 +214,8 @@ prototype._dirtyCheck = function() {
         if (o._svg) this._update(mdef, o._svg, o);
       } else if (item._svg) {
         // otherwise remove from DOM
-        item._svg.parentNode.removeChild(item._svg);
+        o = item._svg.parentNode;
+        if (o) o.removeChild(item._svg);
       }
       item._svg = null;
       continue;
