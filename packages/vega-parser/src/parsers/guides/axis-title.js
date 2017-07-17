@@ -50,11 +50,11 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(update, 'baseline', config.titleBaseline);
 
   !addEncode(update, 'x', config.titleX)
-    && horizontal && !has(userEncode, 'x')
+    && horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
   !addEncode(update, 'y', config.titleY)
-    && !horizontal && !has(userEncode, 'y')
+    && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
   return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
