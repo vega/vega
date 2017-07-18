@@ -8,6 +8,11 @@ var Fit = 'fit',
     None = 'none',
     Padding = 'padding';
 
+var Top = 'top',
+    Left = 'left',
+    Right = 'right',
+    Bottom = 'bottom';
+
 var AxisRole = 'axis',
     TitleRole = 'title',
     FrameRole = 'frame',
@@ -98,9 +103,9 @@ function layoutGroup(view, group, _) {
         // legends that overrun the chart area will then be clipped
         // otherwise the chart area gets reduced to nothing!
         var orient = legends[i].items[0].datum.orient;
-        if (orient === 'left' || orient === 'right') {
+        if (orient === Left || orient === Right) {
           viewBounds.add(b.x1, 0).add(b.x2, 0);
-        } else if (orient === 'top' || orient === 'bottom') {
+        } else if (orient === Top || orient === Bottom) {
           viewBounds.add(0, b.y1).add(0, b.y2);
         }
       } else {
@@ -125,7 +130,7 @@ function set(item, property, value) {
 
 function isYAxis(mark) {
   var orient = mark.items[0].datum.orient;
-  return orient === 'left' || orient === 'right';
+  return orient === Left || orient === Right;
 }
 
 function axisIndices(datum) {
@@ -159,7 +164,7 @@ function layoutAxis(view, axis, width, height) {
 
   // position axis group and title
   switch (orient) {
-    case 'top':
+    case Top:
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
@@ -174,7 +179,7 @@ function layoutAxis(view, axis, width, height) {
       }
       bounds.add(0, -s).add(range, 0);
       break;
-    case 'left':
+    case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
@@ -189,7 +194,7 @@ function layoutAxis(view, axis, width, height) {
       }
       bounds.add(-s, 0).add(0, range);
       break;
-    case 'right':
+    case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
@@ -204,7 +209,7 @@ function layoutAxis(view, axis, width, height) {
       }
       bounds.add(0, 0).add(s, range);
       break;
-    case 'bottom':
+    case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
@@ -247,19 +252,19 @@ function layoutTitle(view, title, axisBounds) {
 
   // position axis group and title
   switch (orient) {
-    case 'top':
+    case Top:
       x = item.x;
       y = axisBounds.y1 - offset;
       break;
-    case 'left':
+    case Left:
       x = axisBounds.x1 - offset;
       y = item.y;
       break;
-    case 'right':
+    case Right:
       x = axisBounds.x2 + offset;
       y = item.y;
       break;
-    case 'bottom':
+    case Bottom:
       x = item.x;
       y = axisBounds.y2 + offset;
       break;
@@ -290,10 +295,10 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
       y = 0,
       w, h, axisBounds;
 
-  if (orient === 'top' || orient === 'bottom') {
+  if (orient === Top || orient === Bottom) {
     axisBounds = yBounds,
     x = flow[orient];
-  } else if (orient === 'left' || orient === 'right') {
+  } else if (orient === Left || orient === Right) {
     axisBounds = xBounds;
     y = flow[orient];
   }
@@ -308,19 +313,19 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
   h = Math.round(bounds.height()) + 2 * item.padding - 1;
 
   switch (orient) {
-    case 'left':
+    case Left:
       x -= w + offset - Math.floor(axisBounds.x1);
       flow.left += h + flow.margin;
       break;
-    case 'right':
+    case Right:
       x += offset + Math.ceil(axisBounds.x2);
       flow.right += h + flow.margin;
       break;
-    case 'top':
+    case Top:
       y -= h + offset - Math.floor(axisBounds.y1);
       flow.top += w + flow.margin;
       break;
-    case 'bottom':
+    case Bottom:
       y += offset + Math.ceil(axisBounds.y2);
       flow.bottom += w + flow.margin;
       break;
