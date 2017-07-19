@@ -167,6 +167,7 @@ export function vlIntervalDomain(name, encoding, field, op) {
     interval = entry.intervals[i];
     if ((encoding && interval.encoding === encoding) ||
         (field && interval.field === field)) {
+      if (!interval.extent) return undefined;
       index = i;
       discrete = interval.extent.length > 2;
       break;
