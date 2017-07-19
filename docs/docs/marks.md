@@ -139,7 +139,9 @@ These properties can be arbitrarily nested in order to perform _indirect_ field 
 ### <a name="colorref"></a>Color References
 
 Typically color values are specified as a single value indicating an RGB color. However, sometimes a designer may wish to target specific color fields or use a different color space. In this case a special Value Reference format can be used. In the following example, we can set the red and blue channels of an RGB color as constants, and determine the green channel from a scale transform.
-```
+
+{: .suppress-error}
+```json
 "fill": {
  "r": {"value": 255},
  "g": {"scale": "green", "field": "g"},
@@ -161,10 +163,11 @@ Vega supports the following color spaces:
 
 Visual properties can also be set by evaluating an `if-then-else` style chain of _production rules_. Rules consist of an array of _ValueRef_ objects, each of which must contain an additional `test` property. A single ValueRef, without a `test` property, can be specified as the final element within the rule to serve as the `else` condition. The value of this property should be a predicate [expression](https://vega.github.io/vega/docs/expressions/), that evaluates to `true` or `false`. The visual property is set to the ValueRef corresponding to the first predicate that evaluates to `true` within the rule. If none do, the property is set to the final, predicate-less, ValueRef if one is specified. For example, the following specification sets a mark's fill colour using a production rule:
 
+{: .suppress-error}
 ```json
 "fill": [
   {
-    "test": "indata('selectedPoints', datum._id, 'id')",
+    "test": "indata('selectedPoints', 'key', datum.key)",
     "scale": "c",
     "field": "species"
   },
