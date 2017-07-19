@@ -90,6 +90,10 @@ export function run(encode) {
     df.error(error);
   }
 
+  if (df._onrun) {
+    try { df._onrun(df, count, error); } catch (err) { df.error(err); }
+  }
+
   // invoke callbacks queued via runAfter
   if (df._postrun.length) {
     var postrun = df._postrun;
