@@ -6,8 +6,8 @@ description: Vega - A Visualization Grammar.
   With Vega, you can describe the visual appearance and interactive
   behavior of a visualization in a JSON format, and generate web-based
   views using Canvas or SVG.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site
+baseurl: "/vega" # the subpath of your site, e.g. /blog
+url: "https://vega.github.io" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown
