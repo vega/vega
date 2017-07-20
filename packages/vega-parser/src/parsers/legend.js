@@ -8,7 +8,7 @@ import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
 import {addEncode, encoder, extendEncode} from './encode/encode-util';
 import {Skip} from './guides/constants';
-import {ref} from '../util';
+import {ref, value} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
 
@@ -110,10 +110,6 @@ export default function(spec, scope) {
 
   // parse legend specification
   return parseMark(group, scope);
-}
-
-function value(value, defaultValue) {
-  return value != null ? value : defaultValue;
 }
 
 function sizeExpression(spec, config, encode) {

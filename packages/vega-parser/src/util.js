@@ -62,3 +62,7 @@ export function aggrField(op, field) {
 export function isSignal(_) {
   return _ && _.signal;
 }
+
+export function value(specValue, defaultValue) {
+  return specValue != null ? specValue : defaultValue;
+}

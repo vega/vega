@@ -9,7 +9,7 @@ import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
 import {Skip} from './guides/constants';
-import {ref} from '../util';
+import {ref, value} from '../util';
 import {Collect, AxisTicks} from '../transforms';
 
 export default function(spec, scope) {
@@ -23,11 +23,11 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    ticks:  spec.ticks  != null ? !!spec.ticks  : config.ticks,
-    labels: spec.labels != null ? !!spec.labels : config.labels,
-    grid:   spec.grid   != null ? !!spec.grid   : config.grid,
-    domain: spec.domain != null ? !!spec.domain : config.domain,
-    title:  spec.title  != null
+    ticks:  !!value(spec.ticks, config.ticks),
+    labels: !!value(spec.labels, config.labels),
+    grid:   !!value(spec.grid, config.grid),
+    domain: !!value(spec.domain, config.domain),
+    title:  !!value(spec.title, false)
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
@@ -35,11 +35,11 @@ export default function(spec, scope) {
   axisEncode = extendEncode({
     update: {
       range:        {signal: 'abs(span(range("' + spec.scale + '")))'},
-      offset:       encoder(spec.offset || 0),
-      position:     encoder(spec.position || 0),
-      titlePadding: encoder(spec.titlePadding || config.titlePadding),
-      minExtent:    encoder(spec.minExtent || config.minExtent),
-      maxExtent:    encoder(spec.maxExtent || config.maxExtent)
+      offset:       encoder(value(spec.offset, 0)),
+      position:     encoder(value(spec.position, 0)),
+      titlePadding: encoder(value(spec.titlePadding, config.titlePadding)),
+      minExtent:    encoder(value(spec.minExtent, config.minExtent)),
+      maxExtent:    encoder(value(spec.maxExtent, config.maxExtent))
     }
   }, encode.axis, Skip);
 
@@ -62,7 +62,7 @@ export default function(spec, scope) {
 
   // include axis ticks if requested
   if (datum.ticks) {
-    size = spec.tickSize != null ? spec.tickSize : config.tickSize;
+    size = value(spec.tickSize, config.tickSize);
     children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
   }
 
