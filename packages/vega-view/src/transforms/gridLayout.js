@@ -72,7 +72,8 @@ function boundFull(item, field) {
 }
 
 function get(opt, key, d) {
-  return (isObject(opt) ? opt[key] : opt) || d || 0;
+  var v = isObject(opt) ? opt[key] : opt;
+  return v != null ? v : (d !== undefined ? d : 0);
 }
 
 export function gridLayout(view, group, opt) {
@@ -185,13 +186,21 @@ export function gridLayout(view, group, opt) {
   // bounding box calculation methods
   bbox = flush ? boundFlush : boundFull;
 
-  // perform header layout
-  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1);
-  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols);
+  // perform row header layout
+  band = get(opt.headerBand, 'row', null);
+  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1, band);
 
-  // perform footer layout
-  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1);
-  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols);
+  // perform column header layout
+  band = get(opt.headerBand, 'column', null);
+  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols, band);
+
+  // perform row footer layout
+  band = get(opt.footerBand, 'row', null);
+  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+
+  // perform column footer layout
+  band = get(opt.footerBand, 'column', null);
+  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
 
   // perform row title layout
   if (views.rowtitle) {
@@ -208,7 +217,7 @@ export function gridLayout(view, group, opt) {
   }
 }
 
-function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back) {
+function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
   var n = groups.length,
       init = 0,
       edge = 0,
@@ -248,11 +257,11 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
 
     // assign coordinates and update bounds
     if (isX) {
-      x = g.x;
+      x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
       y = init;
     } else {
       x = init;
-      y = g.y;
+      y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
     }
     b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
     h.x = x;
