@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {array, error, inherits, isFunction} from 'vega-util';
+import {accessorFields, array, error, inherits, isFunction} from 'vega-util';
 import {
   forceSimulation, forceCenter, forceCollide,
   forceManyBody, forceLink, forceX, forceY
@@ -54,7 +54,9 @@ prototype.transform = function(_, pulse) {
       pulse.modifies('index');
       sim.nodes(pulse.source);
     }
-    if (params) setup(sim, _);
+    if (params || pulse.changed(pulse.MOD)) {
+      setup(sim, _, 0, pulse);
+    }
   }
 
   // run simulation
@@ -121,8 +123,8 @@ function simulation(nodes, _) {
   return setup(sim, _, true).on('end', function() { stopped = true; });
 }
 
-function setup(sim, _, init) {
-  var f = array(_.forces), i, n, p;
+function setup(sim, _, init, pulse) {
+  var f = array(_.forces), i, n, p, name;
 
   for (i=0, n=ForceParams.length; i<n; ++i) {
     p = ForceParams[i];
@@ -130,16 +132,28 @@ function setup(sim, _, init) {
   }
 
   for (i=0, n=f.length; i<n; ++i) {
-    if (init || _.modified(Forces, i)) {
-      sim.force(Forces + i, getForce(f[i]));
-    }
+    name = Forces + i;
+    p = init || _.modified(Forces, i) ? getForce(f[i])
+      : pulse && modified(f[i], pulse) ? sim.force(name)
+      : null;
+    if (p) sim.force(name, p);
   }
+
   for (n=(sim.numForces || 0); i<n; ++i) {
     sim.force(Forces + i, null); // remove
   }
 
   sim.numForces = f.length;
   return sim;
+}
+
+function modified(f, pulse) {
+  var k, v;
+  for (k in f) {
+    if (isFunction(v = f[k]) && pulse.modified(accessorFields(v)))
+      return 1;
+  }
+  return 0;
 }
 
 function getForce(_) {
