@@ -39,13 +39,9 @@ export function request(target, url, format) {
   df.loader()
     .load(url, {context:'dataflow'})
     .then(
-      function(data) {
-        df.ingest(target, data, format);
-      },
-      function(error) {
-        df.error('Loading failed: ' + url, error);
-        pending.done();
-      })
-    .then(pending.done)
-    .catch(function(error) { df.error(error); });
+      function(data) { df.ingest(target, data, format); },
+      function(error) { df.error('Loading failed', url, error); })
+    .catch(
+      function(error) { df.error('Data ingestion failed', url, error); })
+    .then(pending.done, pending.done);
 }
