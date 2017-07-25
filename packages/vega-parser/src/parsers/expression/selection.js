@@ -42,7 +42,7 @@ function testInterval(datum, entry) {
     extent = ivals[i].extent;
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
     value = getter(datum);
-    if (!extent || extent[0] === extent[1]) return true;
+    if (!extent || extent[0] === extent[1]) return false;
     if (isDate(value)) value = toNumber(value);
     if (isDate(extent[0])) extent = ivals[i].extent = extent.map(toNumber);
     if (isNumber(extent[0]) && !inrange(value, extent)) return false;
@@ -93,8 +93,8 @@ function vlSelection(name, unit, datum, op, scope, test) {
 
   // if intersecting and we made it here, then we saw no misses
   // if not intersecting, then we saw no matches
-  // if no active selections, return true
-  return !n || intersect;
+  // if no active selections, return false
+  return n && intersect;
 }
 
 // Assumes point selection tuples are of the form:
