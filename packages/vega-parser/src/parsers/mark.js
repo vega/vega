@@ -117,7 +117,7 @@ export default function(spec, scope) {
 
   // render / sieve items
   render = scope.add(Render({pulse: boundRef}));
-  sieve = scope.add(Sieve({pulse: boundRef}, undefined, scope.parent()));
+  sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
 
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
