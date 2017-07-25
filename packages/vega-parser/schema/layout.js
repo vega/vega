@@ -5,6 +5,21 @@ var align = {
   ]
 };
 
+var band = {
+  "oneOf": [
+    {"$ref": "#/refs/numberOrSignal"},
+    {"type": "null"},
+    {
+      "type": "object",
+      "properties": {
+        "row": {"$ref": "#/refs/numberOrSignal"},
+        "column": {"$ref": "#/refs/numberOrSignal"}
+      },
+      "additionalProperties": false
+    }
+  ]
+};
+
 export default {
   "defs": {
     "layout": {
@@ -62,19 +77,9 @@ export default {
                 }
               ]
             },
-            "titleBand": {
-              "oneOf": [
-                {"$ref": "#/refs/numberOrSignal"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "row": {"$ref": "#/refs/numberOrSignal"},
-                    "column": {"$ref": "#/refs/numberOrSignal"}
-                  },
-                  "additionalProperties": false
-                }
-              ]
-            }
+            "headerBand": band,
+            "footerBand": band,
+            "titleBand": band
           }
         },
         {"$ref": "#/refs/signal"}
