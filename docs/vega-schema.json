@@ -1283,10 +1283,57 @@
                 }
               ]
             },
+            "headerBand": {
+              "oneOf": [
+                {
+                  "$ref": "#/refs/numberOrSignal"
+                },
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "column": {
+                      "$ref": "#/refs/numberOrSignal"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "footerBand": {
+              "oneOf": [
+                {
+                  "$ref": "#/refs/numberOrSignal"
+                },
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "column": {
+                      "$ref": "#/refs/numberOrSignal"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
             "titleBand": {
               "oneOf": [
                 {
                   "$ref": "#/refs/numberOrSignal"
+                },
+                {
+                  "type": "null"
                 },
                 {
                   "type": "object",

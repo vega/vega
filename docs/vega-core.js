@@ -4,7 +4,7 @@
 	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
 }(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
-var version = "3.0.0-rc3";
+var version = "3.0.0-rc4";
 
 var bin$1 = function(_$$1) {
   // determine range
@@ -49,7 +49,8 @@ var bin$1 = function(_$$1) {
   precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
   eps = Math.pow(base, -precision - 1);
   if (_$$1.nice || _$$1.nice === undefined) {
-    min$$1 = Math.min(min$$1, Math.floor(min$$1 / step + eps) * step);
+    v = Math.floor(min$$1 / step + eps) * step;
+    min$$1 = min$$1 < v ? v - step : v;
     max$$1 = Math.ceil(max$$1 / step) * step;
   }
 
@@ -4658,7 +4659,8 @@ prototype$8._dirtyCheck = function() {
         if (o._svg) this._update(mdef, o._svg, o);
       } else if (item._svg) {
         // otherwise remove from DOM
-        item._svg.parentNode.removeChild(item._svg);
+        o = item._svg.parentNode;
+        if (o) o.removeChild(item._svg);
       }
       item._svg = null;
       continue;
@@ -6503,15 +6505,11 @@ function request$1(target, url, format$$1) {
   df.loader()
     .load(url, {context:'dataflow'})
     .then(
-      function(data) {
-        df.ingest(target, data, format$$1);
-      },
-      function(error) {
-        df.error('Loading failed: ' + url, error);
-        pending.done();
-      })
-    .then(pending.done)
-    .catch(function(error) { df.error(error); });
+      function(data) { df.ingest(target, data, format$$1); },
+      function(error) { df.error('Loading failed', url, error); })
+    .catch(
+      function(error) { df.error('Data ingestion failed', url, error); })
+    .then(pending.done, pending.done);
 }
 
 /**
@@ -6693,6 +6691,10 @@ function run(encode) {
   if (error) {
     df._postrun = [];
     df.error(error);
+  }
+
+  if (df._onrun) {
+    try { df._onrun(df, count, error); } catch (err) { df.error(err); }
   }
 
   // invoke callbacks queued via runAfter
@@ -7757,7 +7759,8 @@ prototype$18.changes = function(out) {
       cell, key$$1, i, n;
 
   if (prev) for (key$$1 in prev) {
-    rem.push(prev[key$$1].tuple);
+    cell = prev[key$$1];
+    if (!drop || cell.num) rem.push(cell.tuple);
   }
 
   for (i=0, n=this._alen; i<n; ++i) {
@@ -10168,9 +10171,11 @@ function interpolateRange(interpolator, range$$1) {
 }
 
 function scaleFraction(scale, min$$1, max$$1) {
-  return scale.type === 'linear' || scale.type === 'sequential'
-    ? function(_$$1) { return (_$$1 - min$$1) / (max$$1 - min$$1); }
-    : scale.copy().domain([min$$1, max$$1]).range([0, 1]).interpolate(lerp);
+  var delta = max$$1 - min$$1;
+  return !delta ? constant(0)
+    : scale.type === 'linear' || scale.type === 'sequential'
+      ? function(_$$1) { return (_$$1 - min$$1) / delta; }
+      : scale.copy().domain([min$$1, max$$1]).range([0, 1]).interpolate(lerp);
 }
 
 function lerp(a, b) {
@@ -12166,7 +12171,9 @@ prototype$59.transform = function(_$$1, pulse) {
       pulse.modifies('index');
       sim.nodes(pulse.source);
     }
-    if (params) setup(sim, _$$1);
+    if (params || pulse.changed(pulse.MOD)) {
+      setup(sim, _$$1, 0, pulse);
+    }
   }
 
   // run simulation
@@ -12233,8 +12240,8 @@ function simulation(nodes, _$$1) {
   return setup(sim, _$$1, true).on('end', function() { stopped = true; });
 }
 
-function setup(sim, _$$1, init) {
-  var f = array(_$$1.forces), i, n, p;
+function setup(sim, _$$1, init, pulse) {
+  var f = array(_$$1.forces), i, n, p, name;
 
   for (i=0, n=ForceParams.length; i<n; ++i) {
     p = ForceParams[i];
@@ -12242,16 +12249,28 @@ function setup(sim, _$$1, init) {
   }
 
   for (i=0, n=f.length; i<n; ++i) {
-    if (init || _$$1.modified(Forces, i)) {
-      sim.force(Forces + i, getForce(f[i]));
-    }
+    name = Forces + i;
+    p = init || _$$1.modified(Forces, i) ? getForce(f[i])
+      : pulse && modified(f[i], pulse) ? sim.force(name)
+      : null;
+    if (p) sim.force(name, p);
   }
+
   for (n=(sim.numForces || 0); i<n; ++i) {
     sim.force(Forces + i, null); // remove
   }
 
   sim.numForces = f.length;
   return sim;
+}
+
+function modified(f, pulse) {
+  var k, v;
+  for (k in f) {
+    if (isFunction(v = f[k]) && pulse.modified(accessorFields(v)))
+      return 1;
+  }
+  return 0;
 }
 
 function getForce(_$$1) {
@@ -14387,7 +14406,8 @@ function boundFull(item, field$$1) {
 }
 
 function get(opt, key$$1, d) {
-  return (isObject(opt) ? opt[key$$1] : opt) || d || 0;
+  var v = isObject(opt) ? opt[key$$1] : opt;
+  return v != null ? v : (d !== undefined ? d : 0);
 }
 
 function gridLayout(view, group, opt) {
@@ -14500,13 +14520,21 @@ function gridLayout(view, group, opt) {
   // bounding box calculation methods
   bbox = flush ? boundFlush : boundFull;
 
-  // perform header layout
-  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min$$1, 0, bbox, 'x1', 0, ncols, 1);
-  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min$$1, 1, bbox, 'y1', 0, 1, ncols);
+  // perform row header layout
+  band = get(opt.headerBand, 'row', null);
+  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min$$1, 0, bbox, 'x1', 0, ncols, 1, band);
 
-  // perform footer layout
-  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max$$1, 0, bbox, 'x2', ncols-1, ncols, 1);
-  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max$$1, 1, bbox, 'y2', cells-ncols, 1, ncols);
+  // perform column header layout
+  band = get(opt.headerBand, 'column', null);
+  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min$$1, 1, bbox, 'y1', 0, 1, ncols, band);
+
+  // perform row footer layout
+  band = get(opt.footerBand, 'row', null);
+  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max$$1, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+
+  // perform column footer layout
+  band = get(opt.footerBand, 'column', null);
+  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max$$1, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
 
   // perform row title layout
   if (views.rowtitle) {
@@ -14523,7 +14551,7 @@ function gridLayout(view, group, opt) {
   }
 }
 
-function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back) {
+function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
   var n = groups.length,
       init = 0,
       edge = 0,
@@ -14563,11 +14591,11 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
 
     // assign coordinates and update bounds
     if (isX) {
-      x = g.x;
+      x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
       y = init;
     } else {
       x = init;
-      y = g.y;
+      y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
     }
     b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
     h.x = x;
@@ -14605,6 +14633,11 @@ var Fit = 'fit';
 var Pad = 'pad';
 var None$2 = 'none';
 var Padding = 'padding';
+
+var Top = 'top';
+var Left = 'left';
+var Right = 'right';
+var Bottom = 'bottom';
 
 var AxisRole = 'axis';
 var TitleRole = 'title';
@@ -14691,9 +14724,19 @@ function layoutGroup(view, group, _$$1) {
 
     for (i=0, n=legends.length; i<n; ++i) {
       b = layoutLegend(view, legends[i], flow, xBounds, yBounds, width, height);
-      (_$$1.autosize && _$$1.autosize.type === Fit)
-        ? viewBounds.add(b.x1, 0).add(b.x2, 0)
-        : viewBounds.union(b);
+      if (_$$1.autosize && _$$1.autosize.type === Fit) {
+        // for autosize fit, incorporate the orthogonal dimension only
+        // legends that overrun the chart area will then be clipped
+        // otherwise the chart area gets reduced to nothing!
+        var orient = legends[i].items[0].datum.orient;
+        if (orient === Left || orient === Right) {
+          viewBounds.add(b.x1, 0).add(b.x2, 0);
+        } else if (orient === Top || orient === Bottom) {
+          viewBounds.add(0, b.y1).add(0, b.y2);
+        }
+      } else {
+        viewBounds.union(b);
+      }
     }
   }
 
@@ -14713,7 +14756,7 @@ function set$1(item, property, value) {
 
 function isYAxis(mark) {
   var orient = mark.items[0].datum.orient;
-  return orient === 'left' || orient === 'right';
+  return orient === Left || orient === Right;
 }
 
 function axisIndices(datum) {
@@ -14747,7 +14790,7 @@ function layoutAxis(view, axis, width, height) {
 
   // position axis group and title
   switch (orient) {
-    case 'top':
+    case Top:
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
@@ -14762,7 +14805,7 @@ function layoutAxis(view, axis, width, height) {
       }
       bounds.add(0, -s).add(range$$1, 0);
       break;
-    case 'left':
+    case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
@@ -14777,7 +14820,7 @@ function layoutAxis(view, axis, width, height) {
       }
       bounds.add(-s, 0).add(0, range$$1);
       break;
-    case 'right':
+    case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
@@ -14792,7 +14835,7 @@ function layoutAxis(view, axis, width, height) {
       }
       bounds.add(0, 0).add(s, range$$1);
       break;
-    case 'bottom':
+    case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
@@ -14835,19 +14878,19 @@ function layoutTitle(view, title, axisBounds) {
 
   // position axis group and title
   switch (orient) {
-    case 'top':
+    case Top:
       x = item.x;
       y = axisBounds.y1 - offset;
       break;
-    case 'left':
+    case Left:
       x = axisBounds.x1 - offset;
       y = item.y;
       break;
-    case 'right':
+    case Right:
       x = axisBounds.x2 + offset;
       y = item.y;
       break;
-    case 'bottom':
+    case Bottom:
       x = item.x;
       y = axisBounds.y2 + offset;
       break;
@@ -14878,10 +14921,10 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
       y = 0,
       w, h, axisBounds;
 
-  if (orient === 'top' || orient === 'bottom') {
+  if (orient === Top || orient === Bottom) {
     axisBounds = yBounds,
     x = flow[orient];
-  } else if (orient === 'left' || orient === 'right') {
+  } else if (orient === Left || orient === Right) {
     axisBounds = xBounds;
     y = flow[orient];
   }
@@ -14896,19 +14939,19 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
   h = Math.round(bounds.height()) + 2 * item.padding - 1;
 
   switch (orient) {
-    case 'left':
+    case Left:
       x -= w + offset - Math.floor(axisBounds.x1);
       flow.left += h + flow.margin;
       break;
-    case 'right':
+    case Right:
       x += offset + Math.ceil(axisBounds.x2);
       flow.right += h + flow.margin;
       break;
-    case 'top':
+    case Top:
       y -= h + offset - Math.floor(axisBounds.y1);
       flow.top += w + flow.margin;
       break;
-    case 'bottom':
+    case Bottom:
       y += offset + Math.ceil(axisBounds.y2);
       flow.bottom += w + flow.margin;
       break;
@@ -15130,7 +15173,7 @@ function resizeRenderer(view) {
  * @return {Event} - The extended input event.
  */
 var eventExtend = function(view, event, item) {
-  var el = view._renderer.element(),
+  var el = view._renderer.scene(),
       p, e, translate;
 
   if (el) {
@@ -18040,7 +18083,7 @@ function testInterval(datum, entry) {
     extent$$1 = ivals[i].extent;
     getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
     value = getter(datum);
-    if (!extent$$1 || extent$$1[0] === extent$$1[1]) return true;
+    if (!extent$$1 || extent$$1[0] === extent$$1[1]) return false;
     if (isDate(value)) value = toNumber(value);
     if (isDate(extent$$1[0])) extent$$1 = ivals[i].extent = extent$$1.map(toNumber);
     if (isNumber(extent$$1[0]) && !inrange(value, extent$$1)) return false;
@@ -18091,8 +18134,8 @@ function vlSelection(name, unit, datum, op, scope, test) {
 
   // if intersecting and we made it here, then we saw no misses
   // if not intersecting, then we saw no matches
-  // if no active selections, return true
-  return !n || intersect;
+  // if no active selections, return false
+  return n && intersect;
 }
 
 // Assumes point selection tuples are of the form:
@@ -18165,6 +18208,7 @@ function vlIntervalDomain(name, encoding, field$$1, op) {
     interval = entry.intervals[i];
     if ((encoding && interval.encoding === encoding) ||
         (field$$1 && interval.field === field$$1)) {
+      if (!interval.extent) return undefined;
       index = i;
       discrete = interval.extent.length > 2;
       break;
@@ -18856,9 +18900,13 @@ function isSignal(_$$1) {
   return _$$1 && _$$1.signal;
 }
 
+function value(specValue, defaultValue) {
+  return specValue != null ? specValue : defaultValue;
+}
+
 function transform$1(name) {
-  return function(params, value, parent) {
-    return entry(name, value, params || undefined, parent);
+  return function(params, value$$1, parent) {
+    return entry(name, value$$1, params || undefined, parent);
   };
 }
 
@@ -19158,10 +19206,10 @@ function parseParameter(_$$1, scope) {
     : error$1('Unsupported parameter object: ' + $$2(_$$1));
 }
 
-var Top = 'top';
-var Left = 'left';
-var Right = 'right';
-var Bottom = 'bottom';
+var Top$1 = 'top';
+var Left$1 = 'left';
+var Right$1 = 'right';
+var Bottom$1 = 'bottom';
 
 var Index  = 'index';
 var Label  = 'label';
@@ -19538,8 +19586,10 @@ function applyDefaults(encode, type, role, config) {
 }
 
 function has(key$$1, encode) {
-  return (encode.enter && encode.enter[key$$1])
-    || (encode.update && encode.update[key$$1]);
+  return encode && (
+    (encode.enter && encode.enter[key$$1]) ||
+    (encode.update && encode.update[key$$1])
+  );
 }
 
 var guideMark = function(type, role, key, dataRef, encode, extras) {
@@ -19683,7 +19733,9 @@ var legendSymbols = function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'shape', config.symbolType);
   addEncode(enter, 'size', config.symbolSize);
   addEncode(enter, 'strokeWidth', config.symbolStrokeWidth);
-  if (!spec.fill) addEncode(enter, 'stroke', config.symbolColor);
+  if (!(spec.fill || has('fill', userEncode))) {
+    addEncode(enter, 'stroke', config.symbolColor);
+  }
 
   encode.exit = {
     opacity: zero
@@ -19814,11 +19866,11 @@ function parseParameters(def, spec, scope) {
  */
 function parseParameter$1(def, spec, scope) {
   var type = def.type,
-      value = spec[def.name];
+      value$$1 = spec[def.name];
 
   if (type === 'index') {
     return parseIndexParameter(def, spec, scope);
-  } else if (value === undefined) {
+  } else if (value$$1 === undefined) {
     if (def.required) {
       error$1('Missing required ' + $$2(spec.type)
           + ' parameter: ' + $$2(def.name));
@@ -19830,31 +19882,31 @@ function parseParameter$1(def, spec, scope) {
     return scope.projectionRef(spec[def.name]);
   }
 
-  return def.array && !isSignal(value)
-    ? value.map(function(v) { return parameterValue(def, v, scope); })
-    : parameterValue(def, value, scope);
+  return def.array && !isSignal(value$$1)
+    ? value$$1.map(function(v) { return parameterValue(def, v, scope); })
+    : parameterValue(def, value$$1, scope);
 }
 
 /**
  * Parse a single parameter value.
  */
-function parameterValue(def, value, scope) {
+function parameterValue(def, value$$1, scope) {
   var type = def.type;
 
-  if (isSignal(value)) {
+  if (isSignal(value$$1)) {
     return isExpr(type) ? error$1('Expression references can not be signals.')
-         : isField(type) ? scope.fieldRef(value)
-         : isCompare(type) ? scope.compareRef(value)
-         : scope.signalRef(value.signal);
+         : isField(type) ? scope.fieldRef(value$$1)
+         : isCompare(type) ? scope.compareRef(value$$1)
+         : scope.signalRef(value$$1.signal);
   } else {
     var expr = def.expr || isField(type);
-    return expr && outerExpr(value) ? parseExpression(value.expr, scope)
-         : expr && outerField(value) ? fieldRef$1(value.field)
-         : isExpr(type) ? parseExpression(value, scope)
-         : isData(type) ? ref(scope.getData(value).values)
-         : isField(type) ? fieldRef$1(value)
-         : isCompare(type) ? scope.compareRef(value)
-         : value;
+    return expr && outerExpr(value$$1) ? parseExpression(value$$1.expr, scope)
+         : expr && outerField(value$$1) ? fieldRef$1(value$$1.field)
+         : isExpr(type) ? parseExpression(value$$1, scope)
+         : isData(type) ? ref(scope.getData(value$$1).values)
+         : isField(type) ? fieldRef$1(value$$1)
+         : isCompare(type) ? scope.compareRef(value$$1)
+         : value$$1;
   }
 }
 
@@ -19872,39 +19924,39 @@ function parseIndexParameter(def, spec, scope) {
  * Parse a parameter that contains one or more sub-parameter objects.
  */
 function parseSubParameters(def, spec, scope) {
-  var value = spec[def.name];
+  var value$$1 = spec[def.name];
 
   if (def.array) {
-    if (!isArray(value)) { // signals not allowed!
-      error$1('Expected an array of sub-parameters. Instead: ' + $$2(value));
+    if (!isArray(value$$1)) { // signals not allowed!
+      error$1('Expected an array of sub-parameters. Instead: ' + $$2(value$$1));
     }
-    return value.map(function(v) {
+    return value$$1.map(function(v) {
       return parseSubParameter(def, v, scope);
     });
   } else {
-    return parseSubParameter(def, value, scope);
+    return parseSubParameter(def, value$$1, scope);
   }
 }
 
 /**
  * Parse a sub-parameter object.
  */
-function parseSubParameter(def, value, scope) {
+function parseSubParameter(def, value$$1, scope) {
   var params, pdef, k, i, n;
 
   // loop over defs to find matching key
   for (i=0, n=def.params.length; i<n; ++i) {
     pdef = def.params[i];
     for (k in pdef.key) {
-      if (pdef.key[k] !== value[k]) { pdef = null; break; }
+      if (pdef.key[k] !== value$$1[k]) { pdef = null; break; }
     }
     if (pdef) break;
   }
   // raise error if matching key not found
-  if (!pdef) error$1('Unsupported parameter: ' + $$2(value));
+  if (!pdef) error$1('Unsupported parameter: ' + $$2(value$$1));
 
   // parse params, create Params transform, return ref
-  params = extend(parseParameters(pdef, value, scope), pdef.key);
+  params = extend(parseParameters(pdef, value$$1, scope), pdef.key);
   return ref(scope.add(Params$1(params)));
 }
 
@@ -20290,7 +20342,7 @@ var parseMark = function(spec, scope) {
 
   // render / sieve items
   render = scope.add(Render$1({pulse: boundRef}));
-  sieve = scope.add(Sieve$1({pulse: boundRef}, undefined, scope.parent()));
+  sieve = scope.add(Sieve$1({pulse: ref(render)}, undefined, scope.parent()));
 
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
@@ -20406,10 +20458,6 @@ var parseLegend = function(spec, scope) {
   return parseMark(group, scope);
 };
 
-function value(value, defaultValue) {
-  return value != null ? value : defaultValue;
-}
-
 function sizeExpression(spec, config, encode) {
   // TODO get override for symbolSize?
   var symbolSize = +config.symbolSize, fontSize;
@@ -20460,8 +20508,8 @@ function buildTitle(spec, config, userEncode, dataRef) {
   var title = spec.text,
       orient = spec.orient || config.orient,
       anchor = spec.anchor || config.anchor,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      horizontal = (orient === Top || orient === Bottom),
+      sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
+      horizontal = (orient === Top$1 || orient === Bottom$1),
       extent$$1 = {group: (horizontal ? 'width' : 'height')},
       encode = {}, enter, update, pos, opp, mult, align;
 
@@ -20506,7 +20554,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
     update.x = pos;
     update.y = opp;
     update.angle = {value: 0};
-    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+    update.baseline = {value: orient === Top$1 ? 'bottom' : 'top'};
   } else {
     update.x = opp;
     update.y = pos;
@@ -20604,7 +20652,7 @@ function collect(values) {
 var axisConfig = function(spec, scope) {
   var config = scope.config,
       orient = spec.orient,
-      xy = (orient === Top || orient === Bottom) ? config.axisX : config.axisY,
+      xy = (orient === Top$1 || orient === Bottom$1) ? config.axisX : config.axisY,
       or = config['axis' + orient[0].toUpperCase() + orient.slice(1)],
       band = scope.scaleType(spec.scale) === 'band' && config.axisBand;
 
@@ -20632,7 +20680,7 @@ var axisDomain = function(spec, config, userEncode, dataRef) {
     opacity: {value: 1}
   };
 
-  if (orient === Top || orient === Bottom) {
+  if (orient === Top$1 || orient === Bottom$1) {
     u = 'x';
     v = 'y';
   } else {
@@ -20655,7 +20703,7 @@ function position(spec, pos) {
 var axisGrid = function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       vscale = spec.gridScale,
-      sign = (orient === Left || orient === Top) ? 1 : -1,
+      sign = (orient === Left$1 || orient === Top$1) ? 1 : -1,
       offset = sign * spec.offset || 0,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickPos, u, v, v2, s;
@@ -20683,7 +20731,7 @@ var axisGrid = function(spec, config, userEncode, dataRef) {
     offset: config.tickOffset
   };
 
-  if (orient === Top || orient === Bottom) {
+  if (orient === Top$1 || orient === Bottom$1) {
     u = 'x';
     v = 'y';
     s = 'height';
@@ -20709,7 +20757,7 @@ var axisGrid = function(spec, config, userEncode, dataRef) {
 
 var axisTicks = function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
+      sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
@@ -20739,7 +20787,7 @@ var axisTicks = function(spec, config, userEncode, dataRef, size) {
     offset: config.tickOffset
   };
 
-  if (orient === Top || orient === Bottom) {
+  if (orient === Top$1 || orient === Bottom$1) {
     update.y = enter.y = zero;
     update.y2 = enter.y2 = tickSize;
     update.x = enter.x = exit.x = tickPos;
@@ -20755,7 +20803,7 @@ var axisTicks = function(spec, config, userEncode, dataRef, size) {
 var axisLabels = function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       overlap = spec.labelOverlap,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
+      sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
       pad = spec.labelPadding != null ? spec.labelPadding : config.labelPadding,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
@@ -20790,15 +20838,15 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
     offset: config.tickOffset
   };
 
-  if (orient === Top || orient === Bottom) {
+  if (orient === Top$1 || orient === Bottom$1) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
     addEncode(update, 'align', 'center');
-    addEncode(update, 'baseline', orient === Top ? 'bottom' : 'top');
+    addEncode(update, 'baseline', orient === Top$1 ? 'bottom' : 'top');
   } else {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
-    addEncode(update, 'align', orient === Right ? 'left' : 'right');
+    addEncode(update, 'align', orient === Right$1 ? 'left' : 'right');
     addEncode(update, 'baseline', 'middle');
   }
 
@@ -20810,8 +20858,8 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
 var axisTitle = function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       title = spec.title,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      horizontal = (orient === Top || orient === Bottom),
+      sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
+      horizontal = (orient === Top$1 || orient === Bottom$1),
       encode = {}, enter, update, titlePos;
 
   encode.enter = enter = {
@@ -20841,7 +20889,7 @@ var axisTitle = function(spec, config, userEncode, dataRef) {
   if (horizontal) {
     update.x = titlePos;
     update.angle = {value: 0};
-    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+    update.baseline = {value: orient === Top$1 ? 'bottom' : 'top'};
   } else {
     update.y = titlePos;
     update.angle = {value: sign * 90};
@@ -20852,11 +20900,11 @@ var axisTitle = function(spec, config, userEncode, dataRef) {
   addEncode(update, 'baseline', config.titleBaseline);
 
   !addEncode(update, 'x', config.titleX)
-    && horizontal && !has(userEncode, 'x')
+    && horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
   !addEncode(update, 'y', config.titleY)
-    && !horizontal && !has(userEncode, 'y')
+    && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
   return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
@@ -20873,11 +20921,11 @@ var parseAxis = function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    ticks:  spec.ticks  != null ? !!spec.ticks  : config.ticks,
-    labels: spec.labels != null ? !!spec.labels : config.labels,
-    grid:   spec.grid   != null ? !!spec.grid   : config.grid,
-    domain: spec.domain != null ? !!spec.domain : config.domain,
-    title:  spec.title  != null
+    ticks:  !!value(spec.ticks, config.ticks),
+    labels: !!value(spec.labels, config.labels),
+    grid:   !!value(spec.grid, config.grid),
+    domain: !!value(spec.domain, config.domain),
+    title:  !!value(spec.title, false)
   };
   dataRef = ref(scope.add(Collect$1({}, [datum])));
 
@@ -20885,11 +20933,11 @@ var parseAxis = function(spec, scope) {
   axisEncode = extendEncode({
     update: {
       range:        {signal: 'abs(span(range("' + spec.scale + '")))'},
-      offset:       encoder(spec.offset || 0),
-      position:     encoder(spec.position || 0),
-      titlePadding: encoder(spec.titlePadding || config.titlePadding),
-      minExtent:    encoder(spec.minExtent || config.minExtent),
-      maxExtent:    encoder(spec.maxExtent || config.maxExtent)
+      offset:       encoder(value(spec.offset, 0)),
+      position:     encoder(value(spec.position, 0)),
+      titlePadding: encoder(value(spec.titlePadding, config.titlePadding)),
+      minExtent:    encoder(value(spec.minExtent, config.minExtent)),
+      maxExtent:    encoder(value(spec.maxExtent, config.maxExtent))
     }
   }, encode.axis, Skip);
 
@@ -20912,7 +20960,7 @@ var parseAxis = function(spec, scope) {
 
   // include axis ticks if requested
   if (datum.ticks) {
-    size = spec.tickSize != null ? spec.tickSize : config.tickSize;
+    size = value(spec.tickSize, config.tickSize);
     children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
   }
 
@@ -21312,11 +21360,11 @@ prototype$76.event = function(source, type) {
 
 // ----
 
-prototype$76.addSignal = function(name, value) {
+prototype$76.addSignal = function(name, value$$1) {
   if (this.signals.hasOwnProperty(name)) {
     error$1('Duplicate signal name: ' + $$2(name));
   }
-  var op = value instanceof Entry ? value : this.add(operator(value));
+  var op = value$$1 instanceof Entry ? value$$1 : this.add(operator(value$$1));
   return this.signals[name] = op;
 };
 
@@ -21364,14 +21412,14 @@ function arrayLambda(array$$1) {
   var code = '[',
       i = 0,
       n = array$$1.length,
-      value;
+      value$$1;
 
   for (; i<n; ++i) {
-    value = array$$1[i];
+    value$$1 = array$$1[i];
     code += (i > 0 ? ',' : '')
-      + (isObject(value)
-        ? (value.signal || propertyLambda(value))
-        : $$2(value));
+      + (isObject(value$$1)
+        ? (value$$1.signal || propertyLambda(value$$1))
+        : $$2(value$$1));
   }
   return code + ']';
 }
@@ -21379,15 +21427,15 @@ function arrayLambda(array$$1) {
 function objectLambda(obj) {
   var code = '{',
       i = 0,
-      key$$1, value;
+      key$$1, value$$1;
 
   for (key$$1 in obj) {
-    value = obj[key$$1];
+    value$$1 = obj[key$$1];
     code += (++i > 1 ? ',' : '')
       + $$2(key$$1) + ':'
-      + (isObject(value)
-        ? (value.signal || propertyLambda(value))
-        : $$2(value));
+      + (isObject(value$$1)
+        ? (value$$1.signal || propertyLambda(value$$1))
+        : $$2(value$$1));
   }
   return code + '}';
 }
