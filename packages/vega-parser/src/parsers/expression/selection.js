@@ -55,10 +55,10 @@ function testInterval(datum, entry) {
 /**
  * Tests if a tuple is contained within an interactive selection.
  * @param {string} name - The name of the data set representing the selection.
- * @param {*} unit - A unique key value indicating the current unit chart.
  * @param {object} datum - The tuple to test for inclusion.
  * @param {string} op - The set operation for combining selections.
  *   One of 'intersect' (default) or 'union'.
+ * @param {*} unit - A unique key value indicating the current unit chart.
  * @param {string} scope - The scope within which to resolve the selection.
  *   One of 'all' (default, resolve against active selections across all unit charts),
  *   'unit' (consider only selections in the current unit chart),
@@ -67,7 +67,7 @@ function testInterval(datum, entry) {
  *   predicate for determining selection status within a single unit chart.
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
-function vlSelection(name, unit, datum, op, scope, test) {
+function vlSelection(name, datum, op, unit, scope, test) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
       intersect = op !== UNION,
@@ -99,14 +99,14 @@ function vlSelection(name, unit, datum, op, scope, test) {
 
 // Assumes point selection tuples are of the form:
 // {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
-export function vlPoint(name, unit, datum, op, scope) {
-  return vlSelection.call(this, name, unit, datum, op, scope, testPoint);
+export function vlPoint(name, datum, op, unit, scope) {
+  return vlSelection.call(this, name, datum, op, unit, scope, testPoint);
 }
 
 // Assumes interval selection typles are of the form:
 // {unit: string, intervals: array<{encoding: string, field:string, extent:array<number>}>}
-export function vlInterval(name, unit, datum, op, scope) {
-  return vlSelection.call(this, name, unit, datum, op, scope, testInterval);
+export function vlInterval(name, datum, op, unit, scope) {
+  return vlSelection.call(this, name, datum, op, unit, scope, testInterval);
 }
 
 /**
