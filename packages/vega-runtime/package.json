@@ -22,12 +22,13 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-runtime.zip -- LICENSE README.md build/vega-runtime.js build/vega-runtime.min.js"
   },
   "dependencies": {
+    "vega-dataflow": "2",
     "vega-util": "1"
   },
   "devDependencies": {
@@ -35,7 +36,6 @@
     "rollup": "0.43",
     "tape": "4",
     "uglify-js": "3",
-    "vega-dataflow": "2",
     "vega-encode": "1"
   }
 }
