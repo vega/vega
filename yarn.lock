@@ -1433,7 +1433,13 @@ resolve@1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
 
-resolve@^1.1.5, resolve@^1.1.6, resolve@~1.3.3:
+resolve@^1.1.5, resolve@^1.1.6:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.4.0.tgz#a75be01c53da25d934a98ebd0e4c4a7312f92a86"
+  dependencies:
+    path-parse "^1.0.5"
+
+resolve@~1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.3.3.tgz#655907c3469a8680dc2de3a275a8fdd69691f0e5"
   dependencies:
@@ -1799,8 +1805,8 @@ vega-crossfilter@1:
     vega-util "1"
 
 vega-dataflow@2:
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.0.7.tgz#1e27639789bbfd8110fcc4695fe04aacb33e54ff"
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-2.1.0.tgz#cacdc33f47651e03bb7cdd34d8c1ed7d7e1e71e7"
   dependencies:
     d3-array "1"
     vega-loader "2"
@@ -1841,8 +1847,8 @@ vega-force@1:
     vega-util "1"
 
 vega-geo@1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.1.1.tgz#14e9d2a814310dca3e6a75eb0b0c072fe0ac4c7e"
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/vega-geo/-/vega-geo-1.1.2.tgz#8b2be82cfca3fba766dc14006972c58016420dc7"
   dependencies:
     d3-array "1"
     d3-contour "1"
@@ -1870,8 +1876,8 @@ vega-loader@2:
     vega-util "1"
 
 vega-parser@1:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.2.6.tgz#1c5d2bf8d103e764a0f3d101e59f0bd5f657d384"
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-1.3.0.tgz#bde985cee7265e41a83a68e98bfec93dbf7b3200"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1885,9 +1891,10 @@ vega-parser@1:
     vega-util "1"
 
 vega-runtime@1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-1.0.2.tgz#d2ece26b8700d794babd0460e7ba397ed82b8d56"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-1.0.3.tgz#422d1cb17a042c32a9ee83d199b98873a49e7a6f"
   dependencies:
+    vega-dataflow "2"
     vega-util "1"
 
 vega-scale@2:
@@ -1918,8 +1925,8 @@ vega-statistics@1:
     d3-array "1"
 
 vega-util@1, vega-util@^1.1, vega-util@^1.2, vega-util@^1.4:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.4.1.tgz#3c5bea971aecec552786c190421f87e42165d666"
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.5.0.tgz#05fcec83557be38de5328b54ad2a7a0597740cc0"
 
 vega-view@1:
   version "1.2.4"
