@@ -1,3 +1,4 @@
+import {tupleid} from '../Tuple';
 import Transform from '../Transform';
 import {fastmap, inherits} from 'vega-util';
 
@@ -25,23 +26,25 @@ prototype.transform = function(_, pulse) {
       isMod = true;
 
   pulse.visit(pulse.REM, function(t) {
-    if (!cache.has(t._id)) rem.push(t);
-    else cache.delete(t._id);
+    var id = tupleid(t);
+    if (!cache.has(id)) rem.push(t);
+    else cache.delete(id);
   });
 
   pulse.visit(pulse.ADD, function(t) {
     if (test(t, _)) add.push(t);
-    else cache.set(t._id, 1);
+    else cache.set(tupleid(t), 1);
   });
 
   function revisit(t) {
-    var b = test(t, _),
-        s = cache.get(t._id);
+    var id = tupleid(t),
+        b = test(t, _),
+        s = cache.get(id);
     if (b && s) {
-      cache.delete(t._id);
+      cache.delete(id);
       add.push(t);
     } else if (!b && !s) {
-      cache.set(t._id, 1);
+      cache.set(id, 1);
       rem.push(t);
     } else if (isMod && b && !s) {
       mod.push(t);

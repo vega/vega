@@ -104,7 +104,7 @@ tape('Aggregate handles count aggregates', function(test) {
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
   test.equal(d.length, 1);
-  test.equal(Object.keys(d[0]).length, 4); // outputs + id
+  test.equal(Object.keys(d[0]).length, 3); // outputs
   test.equal(d[0].count, 3);
   test.equal(d[0].count_foo, 3);
   test.equal(d[0].count_bar, 3);
@@ -122,7 +122,7 @@ tape('Aggregate handles count aggregates', function(test) {
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
   test.equal(d.length, 1);
-  test.equal(Object.keys(d[0]).length, 5); // outputs + id
+  test.equal(Object.keys(d[0]).length, 4); // outputs
   test.equal(d[0].count, 3);
   test.equal(d[0].sum_foo, 6);
   test.equal(d[0].sum_bar, 9);

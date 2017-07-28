@@ -10,7 +10,7 @@ export {default as Pulse} from './src/Pulse';
 export {default as MultiPulse} from './src/MultiPulse';
 export {default as Operator} from './src/Operator';
 export {default as Transform} from './src/Transform';
-export {ingest, tupleid} from './src/Tuple';
+export {ingest, isTuple, replace, tupleid} from './src/Tuple';
 
 // Transform Registry
 export {

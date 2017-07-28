@@ -1,3 +1,4 @@
+import {tupleid} from './Tuple';
 import {array, isArray, visitArray} from 'vega-util';
 
 /**
@@ -320,8 +321,8 @@ prototype.materialize = function(flags) {
 
 function filter(pulse, flags) {
   var map = {};
-  pulse.visit(flags, function(t) { map[t._id] = 1; });
-  return function(t) { return map[t._id] ? null : t; };
+  pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
+  return function(t) { return map[tupleid(t)] ? null : t; };
 }
 
 /**

@@ -118,7 +118,7 @@ tape('JoinAggregate handles count aggregates', function(test) {
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
   test.equal(d.length, 3);
-  test.equal(Object.keys(d[0]).length, 6); // fields + outputs + id
+  test.equal(Object.keys(d[0]).length, 5); // fields + outputs
   test.equal(d[0].foo, 0);
   test.equal(d[0].bar, 1);
   test.equal(d[0].count, 3);
@@ -154,7 +154,7 @@ tape('JoinAggregate handles count aggregates', function(test) {
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
   test.equal(d.length, 3);
-  test.equal(Object.keys(d[0]).length, 7); // fields + outputs + id
+  test.equal(Object.keys(d[0]).length, 6); // fields + outputs
   test.equal(d[0].foo, 0);
   test.equal(d[0].bar, 1);
   test.equal(d[0].count, 3);

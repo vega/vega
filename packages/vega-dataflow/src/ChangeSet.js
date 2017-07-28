@@ -1,4 +1,4 @@
-import {ingest} from './Tuple';
+import {ingest, tupleid} from './Tuple';
 import {array, constant, isFunction} from 'vega-util';
 
 export function isChangeSet(v) {
@@ -57,12 +57,12 @@ export default function changeset() {
       // remove
       for (out={}, i=0, n=rem.length; i<n; ++i) {
         t = rem[i];
-        out[t._id] = t;
+        out[tupleid(t)] = t;
       }
       for (i=0, n=remp.length; i<n; ++i) {
         f = remp[i];
         tuples.forEach(function(t) {
-          if (f(t)) out[t._id] = t;
+          if (f(t)) out[tupleid(t)] = t;
         });
       }
       for (id in out) pulse.rem.push(out[id]);
@@ -70,7 +70,7 @@ export default function changeset() {
       // modify
       function modify(t, f, v) {
         if (v) t[f] = v(t); else pulse.encode = f;
-        if (!reflow) out[t._id] = t;
+        if (!reflow) out[tupleid(t)] = t;
       }
       for (out={}, i=0, n=mod.length; i<n; ++i) {
         m = mod[i];
@@ -89,7 +89,7 @@ export default function changeset() {
       // reflow?
       if (reflow) {
         pulse.mod = rem.length || remp.length
-          ? tuples.filter(function(t) { return out.hasOwnProperty(t._id); })
+          ? tuples.filter(function(t) { return out.hasOwnProperty(tupleid(t)); })
           : tuples.slice();
       } else {
         for (id in out) pulse.mod.push(out[id]);
