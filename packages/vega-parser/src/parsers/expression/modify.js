@@ -1,3 +1,4 @@
+import {isTuple} from 'vega-dataflow';
 import {isArray, truthy} from 'vega-util';
 
 function equal(a, b) {
@@ -16,7 +17,7 @@ function equalArray(a, b) {
 function removePredicate(props) {
   return function(_) {
     for (var key in props) {
-      if (key !== '_id' && !equal(_[key], props[key])) return false;
+      if (!equal(_[key], props[key])) return false;
     }
     return true;
   };
@@ -46,7 +47,7 @@ export default function(name, insert, remove, toggle, modify, values) {
 
   if (remove) {
     predicate = remove === true ? truthy
-      : (isArray(remove) || remove._id != null) ? remove
+      : (isArray(remove) || isTuple(remove)) ? remove
       : removePredicate(remove);
     changes.remove(predicate);
   }
