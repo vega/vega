@@ -1,3 +1,4 @@
+import {isTuple} from 'vega-dataflow';
 import {codegen, constants, functions} from 'vega-expression';
 import {
   isArray, isBoolean, isDate, isNumber, isObject, isRegExp, isString,
@@ -39,6 +40,7 @@ export var functionContext = {
   isObject: isObject,
   isRegExp: isRegExp,
   isString: isString,
+  isTuple: isTuple,
   toBoolean: toBoolean,
   toDate: toDate,
   toNumber: toNumber,
