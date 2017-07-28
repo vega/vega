@@ -1,7 +1,7 @@
 import DataScope from './DataScope';
 import {
   aggrField, Ascending, compareRef, Entry,
-  fieldRef, keyRef, isSignal, operator, ref
+  fieldRef, keyRef, tupleidRef, isSignal, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
 import {Compare, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
@@ -244,8 +244,7 @@ prototype.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
-  // TODO review? enable multi-field sorts?
-  var a = [aggrField(sort.op, sort.field), '_id'],
+  var a = [aggrField(sort.op, sort.field), tupleidRef],
       o = sort.order || Ascending;
 
   return o.signal
