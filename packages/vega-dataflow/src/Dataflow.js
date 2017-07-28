@@ -10,7 +10,7 @@ import changeset from './ChangeSet';
 import Heap from './util/Heap';
 import UniqueList from './util/UniqueList';
 import {loader} from 'vega-loader';
-import {id, logger} from 'vega-util';
+import {id, logger, Error} from 'vega-util';
 
 /**
  * A dataflow graph for reactive processing of data streams.
@@ -18,6 +18,7 @@ import {id, logger} from 'vega-util';
  */
 export default function Dataflow() {
   this._log = logger();
+  this.logLevel(Error);
 
   this._clock = 0;
   this._rank = 0;
