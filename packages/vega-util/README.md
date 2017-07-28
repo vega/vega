@@ -344,7 +344,7 @@ method is a convenient shorthand for `array[array.length - 1]`.
 
 <a name="merge" href="#merge">#</a>
 vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
+[<>](https://github.com/vega/vega-util/blob/master/src/merge.js "Source")
 
 Merge two sorted arrays into a single sorted array. The input *compare*
 function is a comparator for sorting elements and should correspond to the
