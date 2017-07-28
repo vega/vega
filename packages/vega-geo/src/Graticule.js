@@ -1,4 +1,4 @@
-import {Transform, ingest} from 'vega-dataflow';
+import {Transform, ingest, replace} from 'vega-dataflow';
 import {inherits, isFunction} from 'vega-util';
 import {geoGraticule} from 'd3-geo';
 
@@ -28,8 +28,7 @@ prototype.transform = function(_, pulse) {
 
   t = gen();
   if (src.length) {
-    t._id = src[0]._id;
-    out.mod.push(t);
+    out.mod.push(replace(src[0], t));
   } else {
     out.add.push(ingest(t));
   }
