@@ -1,3 +1,4 @@
+import {tupleid} from '../Tuple';
 import Transform from '../Transform';
 import {inherits} from 'vega-util';
 
@@ -23,7 +24,7 @@ prototype.transform = function(_, pulse) {
       cnt = this.count,
       cap = 0,
       map = res.reduce(function(m, t) {
-        m[t._id] = 1;
+        m[tupleid(t)] = 1;
         return m;
       }, {});
 
@@ -37,7 +38,7 @@ prototype.transform = function(_, pulse) {
       idx = ~~(cnt * Math.random());
       if (idx < res.length && idx >= cap) {
         p = res[idx];
-        if (map[p._id]) out.rem.push(p); // eviction
+        if (map[tupleid(p)]) out.rem.push(p); // eviction
         res[idx] = t;
       }
     }
@@ -47,15 +48,16 @@ prototype.transform = function(_, pulse) {
   if (pulse.rem.length) {
     // find all tuples that should be removed, add to output
     pulse.visit(pulse.REM, function(t) {
-      if (map[t._id]) {
-        map[t._id] = -1;
+      var id = tupleid(t);
+      if (map[id]) {
+        map[id] = -1;
         out.rem.push(t);
       }
       --cnt;
     });
 
     // filter removed tuples out of the sample reservoir
-    res = res.filter(function(t) { return map[t._id] !== -1; });
+    res = res.filter(function(t) { return map[tupleid(t)] !== -1; });
   }
 
   if ((pulse.rem.length || mod) && res.length < num && pulse.source) {
@@ -63,14 +65,14 @@ prototype.transform = function(_, pulse) {
     cap = cnt = res.length;
     pulse.visit(pulse.SOURCE, function(t) {
       // update, but skip previously sampled tuples
-      if (!map[t._id]) update(t);
+      if (!map[tupleid(t)]) update(t);
     });
     cap = -1;
   }
 
   if (mod && res.length > num) {
     for (var i=0, n=res.length-num; i<n; ++i) {
-      map[res[i]._id] = -1;
+      map[tupleid(res[i])] = -1;
       out.rem.push(res[i]);
     }
     res = res.slice(n);
@@ -79,7 +81,7 @@ prototype.transform = function(_, pulse) {
   if (pulse.mod.length) {
     // propagate modified tuples in the sample reservoir
     pulse.visit(pulse.MOD, function(t) {
-      if (map[t._id]) out.mod.push(t);
+      if (map[tupleid(t)]) out.mod.push(t);
     });
   }
 
@@ -90,7 +92,7 @@ prototype.transform = function(_, pulse) {
 
   if (pulse.add.length || cap < 0) {
     // output newly added tuples
-    out.add = res.filter(function(t) { return !map[t._id]; });
+    out.add = res.filter(function(t) { return !map[tupleid(t)]; });
   }
 
   this.count = cnt;

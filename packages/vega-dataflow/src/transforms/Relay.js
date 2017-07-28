@@ -1,3 +1,4 @@
+import {tupleid} from '../Tuple';
 import Transform from '../Transform';
 import {derive, rederive} from '../Tuple';
 import {inherits} from 'vega-util';
@@ -32,18 +33,19 @@ prototype.transform = function(_, pulse) {
     out = pulse.fork();
     
     pulse.visit(pulse.REM, function(t) {
-      out.rem.push(lut[t._id]);
-      lut[t._id] = null;
+      var id = tupleid(t);
+      out.rem.push(lut[id]);
+      lut[id] = null;
     });
     
     pulse.visit(pulse.ADD, function(t) {
       var dt = derive(t);
-      lut[t._id] = dt;
+      lut[tupleid(t)] = dt;
       out.add.push(dt);
     });
 
     pulse.visit(pulse.MOD, function(t) {
-      out.mod.push(rederive(t, lut[t._id]));
+      out.mod.push(rederive(t, lut[tupleid(t)]));
     });
   }
 

@@ -1,3 +1,4 @@
+import {tupleid} from '../Tuple';
 import Transform from '../Transform';
 import Subflow from './Subflow';
 import {fastmap, inherits} from 'vega-util';
@@ -65,43 +66,46 @@ prototype.transform = function(_, pulse) {
   this._targets.active = 0; // reset list of active subflows
 
   pulse.visit(pulse.REM, function(t) {
-    var k = cache.get(t._id);
+    var id = tupleid(t),
+        k = cache.get(id);
     if (k !== undefined) {
-      cache.delete(t._id);
+      cache.delete(id);
       subflow(k).rem(t);
     }
   });
 
   pulse.visit(pulse.ADD, function(t) {
     var k = key(t);
-    cache.set(t._id, k);
+    cache.set(tupleid(t), k);
     subflow(k).add(t);
   });
 
   if (rekey || pulse.modified(key.fields)) {
     pulse.visit(pulse.MOD, function(t) {
-      var k0 = cache.get(t._id),
+      var id = tupleid(t),
+          k0 = cache.get(id),
           k1 = key(t);
       if (k0 === k1) {
         subflow(k1).mod(t);
       } else {
-        cache.set(t._id, k1);
+        cache.set(id, k1);
         subflow(k0).rem(t);
         subflow(k1).add(t);
       }
     });
   } else if (pulse.changed(pulse.MOD)) {
     pulse.visit(pulse.MOD, function(t) {
-      subflow(cache.get(t._id)).mod(t);
+      subflow(cache.get(tupleid(t))).mod(t);
     });
   }
 
   if (rekey) {
     pulse.visit(pulse.REFLOW, function(t) {
-      var k0 = cache.get(t._id),
+      var id = tupleid(t),
+          k0 = cache.get(id),
           k1 = key(t);
       if (k0 !== k1) {
-        cache.set(t._id, k1);
+        cache.set(id, k1);
         subflow(k0).rem(t);
         subflow(k1).add(t);
       }

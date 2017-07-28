@@ -1,8 +1,9 @@
-import {extentIndex} from 'vega-util';
+import {tupleid} from '../../Tuple';
+import {extentIndex, field} from 'vega-util';
 import {bootstrapCI, quartiles} from 'vega-statistics';
 
 export default function TupleStore(key) {
-  this._key = key || '_id';
+  this._key = key ? field(key) : tupleid;
   this._add = [];
   this._rem = [];
   this._ext = null;
@@ -34,11 +35,11 @@ prototype.values = function() {
 
   // use unique key field to clear removed values
   for (i=0; i<m; ++i) {
-    map[r[i][k]] = 1;
+    map[k(r[i])] = 1;
   }
   for (i=0, j=0; i<n; ++i) {
-    if (map[(v = a[i])[k]]) {
-      map[v[k]] = 0;
+    if (map[k(v = a[i])]) {
+      map[k(v)] = 0;
     } else {
       x[j++] = v;
     }

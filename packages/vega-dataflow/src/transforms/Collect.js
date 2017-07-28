@@ -1,3 +1,4 @@
+import {tupleid} from '../Tuple';
 import Transform from '../Transform';
 import {inherits, merge} from 'vega-util';
 
@@ -24,8 +25,8 @@ prototype.transform = function(_, pulse) {
 
   if (out.rem.length) { // build id map and filter data array
     map = {};
-    out.visit(out.REM, function(t) { map[t._id] = 1; });
-    data = data.filter(function(t) { return !map[t._id]; });
+    out.visit(out.REM, function(t) { map[tupleid(t)] = 1; });
+    data = data.filter(function(t) { return !map[tupleid(t)]; });
   }
 
   if (sort) {

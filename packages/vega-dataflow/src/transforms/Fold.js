@@ -1,5 +1,5 @@
 import Transform from '../Transform';
-import {derive, rederive} from '../Tuple';
+import {derive, rederive, tupleid} from '../Tuple';
 import {inherits} from 'vega-util';
 
 /**
@@ -34,7 +34,7 @@ prototype.transform = function(_, pulse) {
       i = 0, mask = 0, id;
 
   function add(t) {
-    var f = (cache[t._id] = Array(n)); // create cache of folded tuples
+    var f = (cache[tupleid(t)] = Array(n)); // create cache of folded tuples
     for (var i=0, ft; i<n; ++i) { // for each key, derive folds
       ft = (f[i] = derive(t));
       ft[key] = keys[i];
@@ -44,7 +44,7 @@ prototype.transform = function(_, pulse) {
   }
 
   function mod(t) {
-    var f = cache[t._id]; // get cache of folded tuples
+    var f = cache[tupleid(t)]; // get cache of folded tuples
     for (var i=0, ft; i<n; ++i) { // for each key, rederive folds
       if (!(mask & (1 << i))) continue; // field is unchanged
       ft = rederive(t, f[i], stamp);
@@ -68,8 +68,9 @@ prototype.transform = function(_, pulse) {
     if (mask) pulse.visit(pulse.MOD, mod);
 
     pulse.visit(pulse.REM, function(t) {
-      out.rem.push.apply(out.rem, cache[t._id]);
-      cache[t._id] = null;
+      var id = tupleid(t);
+      out.rem.push.apply(out.rem, cache[id]);
+      cache[id] = null;
     });
   }
 

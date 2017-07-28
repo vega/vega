@@ -1,6 +1,7 @@
 var tape = require('tape'),
     vega = require('../../'),
     changeset = vega.changeset,
+    tupleid = vega.tupleid,
     Collect = vega.transforms.Collect,
     Sample = vega.transforms.Sample;
 
@@ -22,13 +23,13 @@ tape('Sample samples tuples without backing source', function(test) {
   test.notDeepEqual(s.value.length, data.slice(0, ns));
 
   // -- modify tuple in and out sample, check propagation
-  s.value.forEach(function(t) { map[t._id] = 1; });
+  s.value.forEach(function(t) { map[tupleid(t)] = 1; });
   var inTuple = s.value[0];
   var outTuple = null;
 
   for (i=0; i<n; ++i) {
     t = data[i];
-    if (!map[t._id]) { outTuple = t; break; }
+    if (!map[tupleid(t)]) { outTuple = t; break; }
   }
 
   df.pulse(s, changeset()
@@ -40,10 +41,10 @@ tape('Sample samples tuples without backing source', function(test) {
   // -- remove half of sample, no backing source
   map = {};
   var rems = s.value.slice(0, 10);
-  rems.forEach(function(t) { map[t._id] = 1; });
+  rems.forEach(function(t) { map[tupleid(t)] = 1; });
   df.pulse(s, changeset().remove(rems)).run();
   test.equal(s.value.length, ns - 10);
-  test.equal(s.value.some(function(t) { return map[t._id]; }), false);
+  test.equal(s.value.some(function(t) { return map[tupleid(t)]; }), false);
 
   test.end();
 });
@@ -67,13 +68,13 @@ tape('Sample samples tuples with backing source', function(test) {
   test.notDeepEqual(s.value.length, data.slice(0, ns));
 
   // -- modify tuple in and out sample, check propagation
-  s.value.forEach(function(t) { map[t._id] = 1; });
+  s.value.forEach(function(t) { map[tupleid(t)] = 1; });
   var inTuple = s.value[0];
   var outTuple = null;
 
   for (i=0; i<n; ++i) {
     t = data[i];
-    if (!map[t._id]) { outTuple = t; break; }
+    if (!map[tupleid(t)]) { outTuple = t; break; }
   }
 
   df.pulse(c, changeset()
