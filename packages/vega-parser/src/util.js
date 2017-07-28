@@ -25,6 +25,11 @@ export function ref(op) {
   return ref;
 }
 
+export var tupleidRef = {
+  $tupleid: 1,
+  toString: function() { return ':_tupleid_:'; }
+};
+
 export function fieldRef(field, name) {
   return name ? {$field: field, $name: name} : {$field: field};
 }
