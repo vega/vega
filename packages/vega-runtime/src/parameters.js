@@ -1,6 +1,7 @@
 import parseDataflow from './dataflow';
 import {parameterExpression, encodeExpression} from './expression';
-import {accessor, compare, error, field, isArray, isObject, key} from 'vega-util';
+import {tupleid} from 'vega-dataflow';
+import {accessor, array, compare, error, field, isArray, isObject, key} from 'vega-util';
 
 /**
  * Parse a set of operator parameters.
@@ -48,7 +49,8 @@ var PARSERS = [
   {key: '$encode',   parse: getEncode},
   {key: '$compare',  parse: getCompare},
   {key: '$context',  parse: getContext},
-  {key: '$subflow',  parse: getSubflow}
+  {key: '$subflow',  parse: getSubflow},
+  {key: '$tupleid',  parse: getTupleId}
 ];
 
 /**
@@ -87,8 +89,11 @@ function getField(_, ctx) {
  * Resolve a comparator function reference.
  */
 function getCompare(_, ctx) {
-  var k = 'c:' + _.$compare + '_' + _.$order;
-  return ctx.fn[k] || (ctx.fn[k] = compare(_.$compare, _.$order));
+  var k = 'c:' + _.$compare + '_' + _.$order,
+      c = array(_.$compare).map(function(_) {
+        return (_ && _.$tupleid) ? tupleid : _;
+      });
+  return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order));
 }
 
 /**
@@ -125,4 +130,11 @@ function getSubflow(_, ctx) {
     if (p) p.set(parent);
     return op;
   };
+}
+
+/**
+ * Resolve a tuple id reference.
+ */
+function getTupleId() {
+  return tupleid;
 }
