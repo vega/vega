@@ -56,15 +56,15 @@ vega.<b>compare</b>(<i>fields</i>[, <i>orders</i>])
 
 Generates a comparator function for sorting data values, based on the given
 set of *fields* and optional sort *orders*. The *fields* argument must be
-either a string or an array of strings, indicating the name of object
-properties to sort by, in precedence order. Field strings may include
-nested properties (e.g., `foo.bar.baz`). The *orders* argument must be
-either a string or an array of strings; the valid string values are
-`'ascending'` (for ascending sort order of the corresponding field) or
-`'descending'` (for descending sort order of the corresponding field).
-If the *orders* argument is omitted, is shorter than the *fields* array,
-or includes values other than  `'ascending'` or `'descending'`,
-corresponding fields will default to ascending order.
+either a string, an accessor function, or an array of either. Strings
+indicate the name of object properties to sort by, in precedence order.
+Field strings may include nested properties (e.g., `foo.bar.baz`). The
+*orders* argument must be either a string or an array of strings; the valid
+string values are `'ascending'` (for ascending sort order of the
+corresponding field) or `'descending'` (for descending sort order of the
+corresponding field). If the *orders* argument is omitted, is shorter than
+the *fields* array, or includes values other than  `'ascending'` or
+`'descending'`, corresponding fields will default to ascending order.
 
 <a name="constant" href="#constant">#</a>
 vega.<b>constant</b>(<i>value</i>)

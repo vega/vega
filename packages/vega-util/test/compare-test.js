@@ -86,3 +86,16 @@ tape('compare supports nested comparison', function(test) {
   test.deepEqual(vega.accessorFields(c), ['x', 'y']);
   test.end();
 });
+
+tape('compare supports accessor functions', function(test) {
+  var fx = vega.field('x'),
+      fy = vega.field('y'),
+      c = vega.compare([fx, fy], ['descending', 'ascending']);
+  test.equal(c({x:1,y:0}, {x:0,y:1}), -1);
+  test.equal(c({x:0,y:1}, {x:1,y:0}), 1);
+  test.equal(c({x:0,y:0}, {x:0,y:1}), -1);
+  test.equal(c({x:0,y:1}, {x:0,y:0}), 1);
+  test.equal(c({x:0,y:0}, {x:0,y:0}), 0);
+  test.deepEqual(vega.accessorFields(c), ['x', 'y']);
+  test.end();
+});
