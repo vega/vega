@@ -1,7 +1,8 @@
 import {field, isNumber, isString, isDate, toNumber} from 'vega-util';
 import inrange from './inrange';
 
-var UNION = 'union',
+var BIN = 'bin_',
+    UNION = 'union',
     UNIT = 'unit',
     OTHERS = 'others';
 
@@ -9,7 +10,6 @@ function testPoint(datum, entry) {
   var fields = entry.fields,
       values = entry.values,
       getter = entry.getter || (entry.getter = []),
-      bins = entry.bins,
       n = fields.length,
       i = 0, dval;
 
@@ -18,7 +18,7 @@ function testPoint(datum, entry) {
     dval = getter[i](datum);
     if (isDate(dval)) dval = toNumber(dval);
     if (isDate(values[i])) values[i] = toNumber(values[i]);
-    if (bins && bins[fields[i]]) {
+    if (entry[BIN + fields[i]]) {
       if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
       if (!inrange(dval, values[i], true, false)) return false;
     } else if (dval !== values[i]) {
@@ -130,7 +130,7 @@ export function vlPointDomain(name, encoding, field, op) {
     if ((encoding && entry.encodings[i] === encoding) ||
         (field && entry.fields[i] === field)) {
       index = i;
-      continuous = entry.bins && entry.bins[entry.fields[i]];
+      continuous = entry[BIN + entry.fields[i]];
       break;
     }
   }
