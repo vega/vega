@@ -20,7 +20,7 @@ function testPoint(datum, entry) {
     if (isDate(values[i])) values[i] = toNumber(values[i]);
     if (bins && bins[fields[i]]) {
       if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
-      if (!inrange(dval, values[i])) return false;
+      if (!inrange(dval, values[i], true, false)) return false;
     } else if (dval !== values[i]) {
       return false;
     }
