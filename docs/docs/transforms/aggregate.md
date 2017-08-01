@@ -44,6 +44,7 @@ All valid aggregate operations.
 | max       | The maximum field value.|
 | argmin    | An input data object containing the minimum field value.|
 | argmax    | An input data object containing the maximum field value.|
+| modeskew  | The mode skewness of values in a group.|
 
 ## Usage
 
