@@ -2,7 +2,7 @@ import {field, isNumber, isString, isDate, toNumber} from 'vega-util';
 import inrange from './inrange';
 
 var BIN = 'bin_',
-    UNION = 'union',
+    INTERSECT = 'intersect',
     UNIT = 'unit',
     OTHERS = 'others';
 
@@ -57,7 +57,7 @@ function testInterval(datum, entry) {
  * @param {string} name - The name of the data set representing the selection.
  * @param {object} datum - The tuple to test for inclusion.
  * @param {string} op - The set operation for combining selections.
- *   One of 'intersect' (default) or 'union'.
+ *   One of 'intersect' or 'union' (default).
  * @param {*} unit - A unique key value indicating the current unit chart.
  * @param {string} scope - The scope within which to resolve the selection.
  *   One of 'all' (default, resolve against active selections across all unit charts),
@@ -70,7 +70,7 @@ function testInterval(datum, entry) {
 function vlSelection(name, datum, op, unit, scope, test) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
-      intersect = op !== UNION,
+      intersect = op === INTERSECT,
       n = entries.length,
       i = 0,
       entry, b;
@@ -151,8 +151,8 @@ export function vlPointDomain(name, encoding, field, op) {
  * @param {string} name - The name of the dataset representing the selection.
  * @param {string} [encoding] - A particular encoding channel to materialize.
  * @param {string} [field] - A particular field to materialize.
- * @param {string} [op='intersect'] - The set operation for combining selections.
- * One of 'intersect' (default) or 'union'.
+ * @param {string} [op='union'] - The set operation for combining selections.
+ * One of 'intersect' or 'union' (default).
  * @returns {array} An array of values to serve as a scale domain.
  */
 export function vlIntervalDomain(name, encoding, field, op) {
@@ -213,7 +213,7 @@ function discreteDomain(entries, op) {
 
   for (key in values) {
     v = values[key];
-    if (op !== UNION && v.count !== count) continue;
+    if (op === INTERSECT && v.count !== count) continue;
     domain.push(v.value);
   }
 
@@ -221,7 +221,7 @@ function discreteDomain(entries, op) {
 }
 
 function continuousDomain(entries, op) {
-  var merge = op === UNION ? unionInterval : intersectInterval,
+  var merge = op === INTERSECT ? intersectInterval : unionInterval,
       i = 0, n = entries.length,
       extent, domain, lo, hi;
 
