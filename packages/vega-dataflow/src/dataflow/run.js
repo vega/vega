@@ -125,9 +125,13 @@ export function runAsync() {
  * @param {function(Dataflow)} callback - The callback function to run.
  *   The callback will be invoked with this Dataflow instance as its
  *   sole argument.
+ * @param {boolean} enqueue - A boolean flag indicating that the
+ *   callback should be queued up to run after the next propagation
+ *   cycle, suppressing immediate invovation when propagation is not
+ *   currently occurring.
  */
-export function runAfter(callback) {
-  if (this._pulse) {
+export function runAfter(callback, enqueue) {
+  if (this._pulse || enqueue) {
     // pulse propagation is currently running, queue to run after
     this._postrun.push(callback);
   } else {
