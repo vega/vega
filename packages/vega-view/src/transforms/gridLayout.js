@@ -59,12 +59,18 @@ function bboxFlush(item) {
 }
 
 function bboxFull(item) {
-  return item.bounds.clone().translate(-(item.x||0), -(item.y||0));
+  var b = item.bounds.clone();
+  return b.empty()
+    ? b.set(0, 0, 0, 0)
+    : b.translate(-(item.x||0), -(item.y||0));
 }
 
 function boundFlush(item, field) {
-  var b = {x1: item.x, y1: item.y, x2: item.x + item.width, y2: item.y + item.height};
-  return b[field];
+  return field === 'x1' ? (item.x || 0)
+    : field === 'y1' ? (item.y || 0)
+    : field === 'x2' ? (item.x || 0) + (item.width || 0)
+    : field === 'y2' ? (item.y || 0) + (item.height || 0)
+    : undefined;
 }
 
 function boundFull(item, field) {
@@ -74,6 +80,10 @@ function boundFull(item, field) {
 function get(opt, key, d) {
   var v = isObject(opt) ? opt[key] : opt;
   return v != null ? v : (d !== undefined ? d : 0);
+}
+
+function offsetValue(v) {
+  return v < 0 ? Math.ceil(-v) : 0;
 }
 
 export function gridLayout(view, group, opt) {
@@ -90,20 +100,29 @@ export function gridLayout(view, group, opt) {
       ncols = opt.columns || groups.length,
       nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
       cells = nrows * ncols,
-      xOffset = [], xInit = 0,
-      yOffset = [], yInit = 0,
+      xOffset = [], xExtent = [], xInit = 0,
+      yOffset = [], yExtent = [], yInit = 0,
       n = groups.length,
-      m, i, j, b, g, px, py, x, y, band, offset;
+      m, i, c, r, b, g, px, py, x, y, band, extent, offset;
+
+  for (i=0; i<ncols; ++i) {
+    xExtent[i] = 0;
+  }
+  for (i=0; i<nrows; ++i) {
+    yExtent[i] = 0;
+  }
 
   // determine offsets for each group
   for (i=0; i<n; ++i) {
     b = bbox(groups[i]);
-    px = i % ncols === 0 ? 0 : Math.ceil(bbox(groups[i-1]).x2);
-    py = i < ncols ? 0 : Math.ceil(bbox(groups[i-ncols]).y2);
-    x = (b.x1 < 0 ? Math.ceil(-b.x1) : 0) + px;
-    y = (b.y1 < 0 ? Math.ceil(-b.y1) : 0) + py;
-    xOffset.push(x + padCol);
-    yOffset.push(y + padRow);
+    c = i % ncols;
+    r = ~~(i / ncols);
+    px = c ? Math.ceil(bbox(groups[i-1]).x2): 0;
+    py = r ? Math.ceil(bbox(groups[i-ncols]).y2): 0;
+    xExtent[c] = Math.max(xExtent[c], px);
+    yExtent[r] = Math.max(yExtent[r], py);
+    xOffset.push(padCol + offsetValue(b.x1));
+    yOffset.push(padRow + offsetValue(b.y1));
     view.dirty(groups[i]);
   }
 
@@ -115,39 +134,57 @@ export function gridLayout(view, group, opt) {
 
   // enforce column alignment constraints
   if (alignCol === 'each') {
-    for (j=1; j<ncols; ++j) {
-      for (offset=0, i=j; i<n; i += ncols) {
+    for (c=1; c<ncols; ++c) {
+      for (offset=0, i=c; i<n; i += ncols) {
         if (offset < xOffset[i]) offset = xOffset[i];
       }
-      for (i=j; i<n; i += ncols) {
-        xOffset[i] = offset;
+      for (i=c; i<n; i += ncols) {
+        xOffset[i] = offset + xExtent[c];
       }
     }
   } else if (alignCol === 'all') {
+    for (extent=0, c=1; c<ncols; ++c) {
+      if (extent < xExtent[c]) extent = xExtent[c];
+    }
     for (offset=0, i=0; i<n; ++i) {
       if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
     }
     for (i=0; i<n; ++i) {
-      if (i % ncols) xOffset[i] = offset;
+      if (i % ncols) xOffset[i] = offset + extent;
+    }
+  } else {
+    for (c=1; c<ncols; ++c) {
+      for (i=c; i<n; i += ncols) {
+        xOffset[i] += xExtent[c];
+      }
     }
   }
 
   // enforce row alignment constraints
   if (alignRow === 'each') {
-    for (j=1; j<nrows; ++j) {
-      for (offset=0, i=j*ncols, m=i+ncols; i<m; ++i) {
+    for (r=1; r<nrows; ++r) {
+      for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
         if (offset < yOffset[i]) offset = yOffset[i];
       }
-      for (i=j*ncols; i<m; ++i) {
-        yOffset[i] = offset;
+      for (i=r*ncols; i<m; ++i) {
+        yOffset[i] = offset + yExtent[r];
       }
     }
   } else if (alignRow === 'all') {
+    for (extent=0, r=1; r<nrows; ++r) {
+      if (extent < yExtent[r]) extent = yExtent[r];
+    }
     for (offset=0, i=ncols; i<n; ++i) {
       if (offset < yOffset[i]) offset = yOffset[i];
     }
     for (i=ncols; i<n; ++i) {
-      yOffset[i] = offset;
+      yOffset[i] = offset + extent;
+    }
+  } else {
+    for (r=1; r<nrows; ++r) {
+      for (i=r*ncols, m=i+ncols; i<m; ++i) {
+        yOffset[i] += yExtent[r];
+      }
     }
   }
 
@@ -160,8 +197,8 @@ export function gridLayout(view, group, opt) {
   }
 
   // perform vertical grid layout
-  for (j=0; j<ncols; ++j) {
-    for (y=0, i=j; i<n; i += ncols) {
+  for (c=0; c<ncols; ++c) {
+    for (y=0, i=c; i<n; i += ncols) {
       g = groups[i];
       py = g.y || 0;
       g.y = (y += yOffset[i]);
