@@ -97,7 +97,7 @@ export function gridLayout(view, group, opt) {
       padCol = get(opt.padding, 'column'),
       padRow = get(opt.padding, 'row'),
       off = opt.offset,
-      ncols = opt.columns || groups.length,
+      ncols = group.columns || opt.columns || groups.length,
       nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
       cells = nrows * ncols,
       xOffset = [], xExtent = [], xInit = 0,
