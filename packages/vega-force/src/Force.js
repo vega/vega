@@ -165,10 +165,12 @@ function getForce(_) {
   f = ForceMap[_.force]();
 
   for (p in _) {
-    if (isFunction(f[p])) {
-      f[p](_[p]);
-    }
+    if (isFunction(f[p])) setForceParam(f[p], _[p], _);
   }
 
   return f;
+}
+
+function setForceParam(f, v, _) {
+  f(isFunction(v) ? function(d) { return v(d, _); } : v);
 }
