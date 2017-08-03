@@ -36,7 +36,7 @@
       "format": {"type": "json", "property": "nodes"},
       "transform": [
         { "type": "collect", "sort": {"field": "group"} },
-        { "type": "rank", "as": "order" },
+        { "type": "window", "ops": ["rank"], "as": ["order"] },
         {
           "type": "formula", "as": "order",
           "expr": "dragging && datum === dest ? src.order : datum.order"

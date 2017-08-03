@@ -20,6 +20,7 @@ export {
   Transform,
   changeset,
   ingest,
+  isTuple,
   register,
   definition,
   definitions,

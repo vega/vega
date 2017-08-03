@@ -6,25 +6,15 @@ permalink: /docs/data/index.html
 
 **Data** set definitions and transforms define the data to load and how to process it.
 
-The basic data model used by Vega is _tabular_ data, similar to a spreadsheet or database table. Individual data sets are assumed to contain a collection of records (or "rows"), which may contain any number of named data attributes (fields, or "columns"). Records are modeled using standard JavaScript objects. Upon ingest, Vega assigns each data object a unique `_id` field.
+The basic data model used by Vega is _tabular_ data, similar to a spreadsheet or database table. Individual data sets are assumed to contain a collection of records (or "rows"), which may contain any number of named data attributes (fields, or "columns"). Records are modeled using standard JavaScript objects.
 
-For example, if a Vega spec loads input JSON data like this:
-
-```json
-[ {"x":0, "y":3}, {"x":1, "y":5} ]
-```
-the input data is then loaded into data objects like this:
+If the input data is simply an array of primitive values, Vega maps each value to the `data` property of a new object. For example `[5, 3, 8, 1]` is loaded as:
 
 ```json
-[ {"_id":0, "x":0, "y":3}, {"_id":1, "x":1, "y":5} ]
+[ {"data": 5}, {"data": 3}, {"data": 8}, {"data": 1} ]
 ```
 
-If the input JSON is simply an array of primitive values, Vega maps each value to the `data` property of a new object with a unique `_id`. For example `[5, 3, 8, 1]` is loaded as:
-
-```json
-[ {"_id": 0, "data": 5}, {"_id": 1, "data": 3},
-  {"_id": 2, "data": 8}, {"_id": 3, "data": 1} ]
-```
+Upon ingest, Vega also assigns each data object a unique id property, accessible via a custom [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol). As a result, the id property is not accessible via a string key and is not enumerable, though you can observe the id value when inspecting data objects in a JavaScript console.
 
 Data sets can be specified directly by defining data inline or providing a URL from which to load the data. Alternatively, data can be bound dynamically at runtime by using the [View API](../view) to provide data when a chart is instantiated or issue streaming updates. Loading data from a URL will be subject to the policies of your runtime environment (e.g., [cross-origin request rules](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)).
 

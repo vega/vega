@@ -100,18 +100,19 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
 
 ### <a name="ie"></a>Supporting Internet Explorer
 
-Vega is compatible with Internet Explorer versions 10 and 11, with one notable caveat: Internet Explorer does not natively support the [ES6 Promise object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), which Vega uses for asynchronous tasks such as data and image loading. For Vega to work correctly, deployments intended to support Internet Explorer should include a [polyfill](https://en.wikipedia.org/wiki/Polyfill) that adds Promise support.
+Vega is compatible with Internet Explorer versions 10 and 11, with one notable caveat: Internet Explorer does not natively support ES6 [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) or [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Vega uses Symbols to add unique identifiers to data objects, and uses Promises for asynchronous tasks such as data and image loading. For Vega to work correctly, deployments intended to support Internet Explorer should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol and Promise support.
 
 For example, one can use the [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) library. Web pages should first import the polyfill script, then import Vega:
 
 ```html
 <head>
   <script src="https://vega.github.io/vega/assets/promise.min.js"></script>
+  <script src="https://vega.github.io/vega/assets/symbol.min.js"></script>
   <script src="https://vega.github.io/vega/vega.min.js"></script>
 </head>
 ```
 
-Note that a polyfill is necessary only for Internet Explorer support. Recent versions of other browsers &ndash; including Edge (Internet Explorer's successor), Chrome, Safari, Firefox and Opera &ndash; all have native Promise support.
+Note that a polyfill is necessary only for Internet Explorer support. Recent versions of other browsers &ndash; including Edge (Internet Explorer's successor), Chrome, Safari, Firefox and Opera &ndash; all have native Symbol and Promise support.
 
 [Back to reference](#reference)
 

@@ -82,7 +82,7 @@ In Vega specifications, data can be:
 
 Only _one_ of the `values`, `url` or `source` properties may be defined.
 
-When a data set is loaded into Vega, a unique `_id` field is added to each input datum. Data sets in Vega can be modified using a collection of [transforms](../../docs/transforms) such as filtering, aggregation and layout operations. Transformations are specified using the `transform` property, which takes an array of transform definitions.
+Data sets in Vega can be modified using a collection of [transforms](../../docs/transforms) such as filtering, aggregation and layout operations. Transformations are specified using the `transform` property, which takes an array of transform definitions.
 
 For more details, see the [data](../../docs/data) and [transform](../../docs/transforms) documentation.
 

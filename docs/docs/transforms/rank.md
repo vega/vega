@@ -6,6 +6,8 @@ permalink: /docs/transforms/rank/index.html
 
 The **rank** transform computes an ascending rank score for data objects based on their observed order and any key fields.
 
+**NOTE: The rank transform is _deprecated_ and will be removed prior to Vega v3.0.0. Instead, use the [window](../window) transform. For example: `{"type": "window", "ops": ["rank"], "as": ["order"]}`.**
+
 ## Transform Parameters
 
 | Property            | Type                           | Description   |

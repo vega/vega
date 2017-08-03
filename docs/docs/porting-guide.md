@@ -97,7 +97,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Events are no longer consumed (e.g., subject to `event.preventDefault()`) by default. To have Vega consume an event (and thereby suppress event propagation and default browser behavior), include an exclamation mark at the end of an event name within an event selector (e.g., `{"events": "window:mousemove!"}`).
 
-- The `"verbose"` flag has been renamed to `"force"`, and must now be set on individual elements of the `"on"` array. For example, the signal definition `{"name": "clickedPoint", "verbose": true, "streams": [{"type": "click", "expr": "datum._id"}]}` should now be written as `{"name": "clickedPoint", "on": [{"events": "click", "update": "datum._id", "force": true}]}`.
+- The `"verbose"` flag has been renamed to `"force"`, and must now be set on individual elements of the `"on"` array. For example, the signal definition `{"name": "clickedPoint", "verbose": true, "streams": [{"type": "click", "expr": "datum.key"}]}` should now be written as `{"name": "clickedPoint", "on": [{"events": "click", "update": "datum.key", "force": true}]}`.
 
 - Instead of `"init"`, the `"value"` and `"update"` properties can be used to initialize a signal using a literal value or expression, respectively.
 

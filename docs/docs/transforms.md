@@ -45,6 +45,7 @@ Transforms for processing streams of data objects.
 - [`rank`](rank) - Assign increasing rank-order scores to data objects.
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
+- [`window`](window) - Calculate over ordered groups, including ranking and running totals.
 
 ## Geographic Transforms
 

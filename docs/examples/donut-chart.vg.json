@@ -35,12 +35,12 @@
     {
       "name": "table",
       "values": [
-        {"field": 4},
-        {"field": 6},
-        {"field": 10},
-        {"field": 3},
-        {"field": 7},
-        {"field": 8}
+        {"id": 1, "field": 4},
+        {"id": 2, "field": 6},
+        {"id": 3, "field": 10},
+        {"id": 4, "field": 3},
+        {"id": 5, "field": 7},
+        {"id": 6, "field": 8}
       ],
       "transform": [
         {
@@ -68,7 +68,7 @@
       "from": {"data": "table"},
       "encode": {
         "enter": {
-          "fill": {"scale": "color", "field": "_id"},
+          "fill": {"scale": "color", "field": "id"},
           "x": {"signal": "width / 2"},
           "y": {"signal": "height / 2"}
         },
