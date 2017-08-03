@@ -3394,6 +3394,9 @@
           "$ref": "#/defs/sequenceTransform"
         },
         {
+          "$ref": "#/defs/windowTransform"
+        },
+        {
           "$ref": "#/defs/contourTransform"
         },
         {
@@ -3480,6 +3483,9 @@
         },
         {
           "$ref": "#/defs/rankTransform"
+        },
+        {
+          "$ref": "#/defs/windowTransform"
         },
         {
           "$ref": "#/defs/geopathTransform"
@@ -3602,10 +3608,15 @@
                 "anyOf": [
                   {
                     "enum": [
+                      "values",
                       "count",
                       "valid",
                       "missing",
                       "distinct",
+                      "min",
+                      "max",
+                      "argmin",
+                      "argmax",
                       "sum",
                       "mean",
                       "average",
@@ -3618,11 +3629,7 @@
                       "q1",
                       "q3",
                       "ci0",
-                      "ci1",
-                      "min",
-                      "max",
-                      "argmin",
-                      "argmax"
+                      "ci1"
                     ]
                   },
                   {
@@ -4923,6 +4930,206 @@
         "type",
         "start",
         "stop"
+      ]
+    },
+    "windowTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "window"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "sort": {
+          "$ref": "#/refs/compare"
+        },
+        "frame": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "default": [
+            null,
+            0
+          ]
+        },
+        "frameType": {
+          "anyOf": [
+            {
+              "enum": [
+                "range",
+                "rows"
+              ]
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "range"
+        },
+        "groupby": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "ops": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "row_number",
+                      "rank",
+                      "dense_rank",
+                      "percent_rank",
+                      "cume_dist",
+                      "ntile",
+                      "lag",
+                      "lead",
+                      "first_value",
+                      "last_value",
+                      "nth_value",
+                      "values",
+                      "count",
+                      "valid",
+                      "missing",
+                      "distinct",
+                      "min",
+                      "max",
+                      "argmin",
+                      "argmax",
+                      "sum",
+                      "mean",
+                      "average",
+                      "variance",
+                      "variancep",
+                      "stdev",
+                      "stdevp",
+                      "stderr",
+                      "median",
+                      "q1",
+                      "q3",
+                      "ci0",
+                      "ci1"
+                    ]
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "fields": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type"
       ]
     },
     "contourTransform": {
