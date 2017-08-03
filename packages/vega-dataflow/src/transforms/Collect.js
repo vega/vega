@@ -1,6 +1,7 @@
 import {tupleid} from '../Tuple';
 import Transform from '../Transform';
-import {inherits, merge} from 'vega-util';
+import SortedList from '../util/SortedList';
+import {inherits} from 'vega-util';
 
 /**
  * Collects all data tuples that pass through this operator.
@@ -17,34 +18,14 @@ var prototype = inherits(Collect, Transform);
 
 prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
-      add = pulse.changed(pulse.ADD),
-      mod = pulse.changed(),
+      list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
       sort = _.sort,
-      data = this.value,
-      map;
+      mod = pulse.changed() || (sort &&
+            (_.modified('sort') || pulse.modified(sort.fields)));
 
-  if (out.rem.length) { // build id map and filter data array
-    map = {};
-    out.visit(out.REM, function(t) { map[tupleid(t)] = 1; });
-    data = data.filter(function(t) { return !map[tupleid(t)]; });
-  }
-
-  if (sort) {
-    // if sort criteria change, re-sort the full data array
-    if (_.modified('sort') || pulse.modified(sort.fields)) {
-      data.sort(sort);
-      mod = true;
-    }
-    // if added tuples, sort them in place and then merge
-    if (add) {
-      data = merge(sort, data, out.add.sort(sort));
-    }
-  } else if (add) {
-    // no sort, so simply add new tuples
-    out.visit(out.ADD, function(t) { data.push(t); });
-  }
+  out.visit(out.REM, list.remove);
 
   this.modified(mod);
-  this.value = out.source = data;
+  this.value = out.source = list.data(sort, mod);
   return out;
 };

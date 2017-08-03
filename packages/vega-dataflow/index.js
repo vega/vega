@@ -55,6 +55,7 @@ import Sieve from './src/transforms/Sieve';
 import Subflow from './src/transforms/Subflow';
 import TupleIndex from './src/transforms/TupleIndex';
 import Values from './src/transforms/Values';
+import Window from './src/transforms/aggregate/Window';
 
 import AggregateDefinition from './definitions/Aggregate';
 import BinDefinition from './definitions/Bin';
@@ -72,6 +73,7 @@ import LookupDefinition from './definitions/Lookup';
 import RankDefinition from './definitions/Rank';
 import SampleDefinition from './definitions/Sample';
 import SequenceDefinition from './definitions/Sequence';
+import WindowDefinition from './definitions/Window';
 
 register(AggregateDefinition, Aggregate);
 register(BinDefinition, Bin);
@@ -89,6 +91,7 @@ register(LookupDefinition, Lookup);
 register(RankDefinition, Rank);
 register(SampleDefinition, Sample);
 register(SequenceDefinition, Sequence);
+register(WindowDefinition, Window);
 
 transform('Compare', Compare);
 transform('Facet', Facet);
