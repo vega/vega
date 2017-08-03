@@ -1,10 +1,12 @@
 import Transform from '../../Transform';
-import TupleStore from './TupleStore';
 import {createMeasure, compileMeasures} from './Measures';
+import {groupkey} from './groupkey';
+import measureName from './measureName';
+import TupleStore from './TupleStore';
 import {ingest, replace} from '../../Tuple';
-import {accessorName, array, error, inherits} from 'vega-util';
+import {accessorFields, accessorName, array, error, inherits} from 'vega-util';
 
-export var ValidAggregates = [
+export var ValidAggregateOps = [
   'values', 'count', 'valid', 'missing', 'distinct',
   'min', 'max', 'argmin', 'argmax', 'sum', 'mean', 'average',
   'variance', 'variancep', 'stdev', 'stdevp', 'stderr',
@@ -15,10 +17,13 @@ export var ValidAggregates = [
  * Group-by aggregation operator.
  * @constructor
  * @param {object} params - The parameters for this operator.
- * @param {Array<function(object): *>} params.groupby - An array of accessors to groupby.
- * @param {Array<function(object): *>} params.fields - An array of accessors to aggregate.
- * @param {Array<string>} params.ops - An array of strings indicating aggregation operations.
+ * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+ * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
+ * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
  * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
+ * @param {boolean} [params.cross=false] - A flag indicating that the full
+ *   cross-product of groupby values should be generated, including empty cells.
+ *   If true, the drop parameter is ignored and empty cells are retained.
  * @param {boolean} [params.drop=true] - A flag indicating if empty cells should be removed.
  */
 export default function Aggregate(params) {
@@ -121,7 +126,8 @@ prototype.init = function(_) {
       inputMap = {};
 
   function inputVisit(get) {
-    var fields = get.fields, i = 0, n = fields.length, f;
+    var fields = array(accessorFields(get)),
+        i = 0, n = fields.length, f;
     for (; i<n; ++i) {
       if (!inputMap[f=fields[i]]) {
         inputMap[f] = 1;
@@ -138,10 +144,7 @@ prototype.init = function(_) {
     outputs.push(dname);
     return dname;
   });
-  this.cellkey = _.key ? _.key
-    : this._dims.length === 0 ? function() { return ''; }
-    : this._dims.length === 1 ? this._dims[0]
-    : cellkey;
+  this.cellkey = _.key ? _.key : groupkey(this._dims);
 
   // initialize aggregate measures
   this._countOnly = true;
@@ -194,25 +197,9 @@ prototype.init = function(_) {
   return {}; // aggregation cells (this.value)
 };
 
-function measureName(op, mname, as) {
-  return as || (op + (!mname ? '' : '_' + mname));
-}
-
 // -- Cell Management -----
 
-function cellkey(x) {
-  var d = this._dims,
-      n = d.length, i,
-      k = String(d[0](x));
-
-  for (i=1; i<n; ++i) {
-    k += '|' + d[i](x);
-  }
-
-  return k;
-}
-
-prototype.cellkey = cellkey;
+prototype.cellkey = groupkey();
 
 prototype.cell = function(key, t) {
   var cell = this.value[key];
@@ -245,7 +232,7 @@ prototype.newcell = function(key, t) {
 
     cell.agg = Array(n);
     for (i=0; i<n; ++i) {
-      cell.agg[i] = new measures[i](cell, cell.tuple);
+      cell.agg[i] = new measures[i](cell);
     }
   }
 
@@ -319,7 +306,7 @@ prototype.celltuple = function(cell) {
   if (!this._countOnly) {
     agg = cell.agg;
     for (i=0, n=agg.length; i<n; ++i) {
-      agg[i].set();
+      agg[i].set(tuple);
     }
   }
 

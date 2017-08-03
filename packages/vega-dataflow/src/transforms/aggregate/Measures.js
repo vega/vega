@@ -97,6 +97,7 @@ export var Aggregates = {
   }),
   'argmin': measure({
     name: 'argmin',
+    init: 'this.argmin = null;',
     add:  'if (v < this.min) this.argmin = t;',
     rem:  'if (v <= this.min) this.argmin = null;',
     set:  'this.argmin || cell.data.argmin(this.get)',
@@ -104,6 +105,7 @@ export var Aggregates = {
   }),
   'argmax': measure({
     name: 'argmax',
+    init: 'this.argmax = null;',
     add:  'if (v > this.max) this.argmax = t;',
     rem:  'if (v >= this.max) this.argmax = null;',
     set:  'this.argmax || cell.data.argmax(this.get)',
@@ -165,31 +167,27 @@ function resolve(agg, stream) {
 export function compileMeasures(agg, field) {
   var get = field || identity,
       all = resolve(agg, true), // assume streaming removes may occur
-      ctr = 'this.cell = cell; this.tuple = t; this.valid = 0; this.missing = 0;',
+      init = 'var cell = this.cell; this.valid = 0; this.missing = 0;',
+      ctr = 'this.cell = cell; this.init();',
       add = 'if(v==null){++this.missing; return;} if(v!==v) return; ++this.valid;',
       rem = 'if(v==null){--this.missing; return;} if(v!==v) return; --this.valid;',
-      set = 'var t = this.tuple; var cell = this.cell;';
+      set = 'var cell = this.cell;';
 
   all.forEach(function(a) {
-    if (a.idx < 0) {
-      ctr = a.init + ctr;
-      add = a.add + add;
-      rem = a.rem + rem;
-    } else {
-      ctr += a.init;
-      add += a.add;
-      rem += a.rem;
-    }
+    init += a.init;
+    add += a.add;
+    rem += a.rem;
   });
   agg.slice().sort(compareIndex).forEach(function(a) {
     set += 't[\'' + a.out + '\']=' + a.set + ';';
   });
   set += 'return t;';
 
-  ctr = Function('cell', 't', ctr);
+  ctr = Function('cell', ctr);
+  ctr.prototype.init = Function(init);
   ctr.prototype.add = Function('v', 't', add);
   ctr.prototype.rem = Function('v', 't', rem);
-  ctr.prototype.set = Function(set);
+  ctr.prototype.set = Function('t', set);
   ctr.prototype.get = get;
   ctr.fields = agg.map(function(_) { return _.out; });
   return ctr;

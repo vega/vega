@@ -4,14 +4,18 @@ import {bootstrapCI, quartiles} from 'vega-statistics';
 
 export default function TupleStore(key) {
   this._key = key ? field(key) : tupleid;
+  this.reset();
+}
+
+var prototype = TupleStore.prototype;
+
+prototype.reset = function() {
   this._add = [];
   this._rem = [];
   this._ext = null;
   this._get = null;
   this._q = null;
-}
-
-var prototype = TupleStore.prototype;
+};
 
 prototype.add = function(v) {
   this._add.push(v);

@@ -1,6 +1,5 @@
 import Aggregate from './Aggregate';
-import {rederive} from '../../Tuple';
-import {inherits} from 'vega-util';
+import {extend, inherits} from 'vega-util';
 
 /**
  * Extend input tuples with aggregate values.
@@ -33,7 +32,7 @@ prototype.transform = function(_, pulse) {
 
   // write aggregate values to input tuples
   pulse.visit(pulse.SOURCE, function(t) {
-    rederive(cells[aggr.cellkey(t)].tuple, t);
+    extend(t, cells[aggr.cellkey(t)].tuple);
   });
 
   return pulse.reflow(mod).modifies(this._outputs);
