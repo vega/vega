@@ -2,9 +2,7 @@ import {field, isNumber, isString, isDate, toNumber} from 'vega-util';
 import inrange from './inrange';
 
 var BIN = 'bin_',
-    INTERSECT = 'intersect',
-    UNIT = 'unit',
-    OTHERS = 'others';
+    INTERSECT = 'intersect';
 
 function testPoint(datum, entry) {
   var fields = entry.fields,
@@ -58,16 +56,11 @@ function testInterval(datum, entry) {
  * @param {object} datum - The tuple to test for inclusion.
  * @param {string} op - The set operation for combining selections.
  *   One of 'intersect' or 'union' (default).
- * @param {*} unit - A unique key value indicating the current unit chart.
- * @param {string} scope - The scope within which to resolve the selection.
- *   One of 'all' (default, resolve against active selections across all unit charts),
- *   'unit' (consider only selections in the current unit chart),
- *   'others' (resolve against all units *except* the current unit).
  * @param {function(object,object):boolean} test - A boolean-valued test
  *   predicate for determining selection status within a single unit chart.
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
-function vlSelection(name, datum, op, unit, scope, test) {
+function vlSelection(name, datum, op, test) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
       intersect = op === INTERSECT,
@@ -77,18 +70,11 @@ function vlSelection(name, datum, op, unit, scope, test) {
 
   for (; i<n; ++i) {
     entry = entries[i];
+    b = test(datum, entry);
 
-    // is the selection entry from the current unit?
-    b = unit === entry.unit;
-
-    // perform test if source unit is a valid selection source
-    if (!(scope === OTHERS && b || scope === UNIT && !b)) {
-      b = test(datum, entry);
-
-      // if we find a match and we don't require intersection return true
-      // if we find a miss and we do require intersection return false
-      if (intersect ^ b) return b;
-    }
+    // if we find a match and we don't require intersection return true
+    // if we find a miss and we do require intersection return false
+    if (intersect ^ b) return b;
   }
 
   // if intersecting and we made it here, then we saw no misses
@@ -99,14 +85,14 @@ function vlSelection(name, datum, op, unit, scope, test) {
 
 // Assumes point selection tuples are of the form:
 // {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
-export function vlPoint(name, datum, op, unit, scope) {
-  return vlSelection.call(this, name, datum, op, unit, scope, testPoint);
+export function vlPoint(name, datum, op) {
+  return vlSelection.call(this, name, datum, op, testPoint);
 }
 
 // Assumes interval selection typles are of the form:
 // {unit: string, intervals: array<{encoding: string, field:string, extent:array<number>}>}
-export function vlInterval(name, datum, op, unit, scope) {
-  return vlSelection.call(this, name, datum, op, unit, scope, testInterval);
+export function vlInterval(name, datum, op) {
+  return vlSelection.call(this, name, datum, op, testInterval);
 }
 
 /**
