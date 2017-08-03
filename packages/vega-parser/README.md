@@ -159,7 +159,8 @@ within a `"legend"` property block.
 - *labelOffset*: Horizontal offset (in pixels) between legend symbols and labels.
 - *symbolType*: Default shape type (such as `"circle"`) for legend symbols.
 - *symbolSize*: Default symbol area size (in pixels<sup>2</sup>).
-- *symbolColor*: Default legend symbol color.
+- *symbolFillColor*: Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
+- *symbolStrokeColor*: Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
 - *symbolStrokeWidth*: Default legend symbol stroke width.
 - *titleColor*: Text color for legend titles.
 - *titleFont*: Font name for legend titles.
