@@ -1,8 +1,13 @@
-import {field, isNumber, isString, isDate, toNumber} from 'vega-util';
+import {Literal} from './ast';
+import {dataVisitor} from './data';
 import inrange from './inrange';
+import {indexPrefix} from './prefixes';
+import {error, field, isNumber, isString, isDate, toNumber} from 'vega-util';
 
 var BIN = 'bin_',
-    INTERSECT = 'intersect';
+    INTERSECT = 'intersect',
+    UNION = 'union',
+    UNIT_INDEX = 'index:unit';
 
 function testPoint(datum, entry) {
   var fields = entry.fields,
@@ -63,18 +68,37 @@ function testInterval(datum, entry) {
 function vlSelection(name, datum, op, test) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
+      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
       intersect = op === INTERSECT,
       n = entries.length,
       i = 0,
-      entry, b;
+      entry, miss, count, unit, b;
 
   for (; i<n; ++i) {
     entry = entries[i];
-    b = test(datum, entry);
 
-    // if we find a match and we don't require intersection return true
-    // if we find a miss and we do require intersection return false
-    if (intersect ^ b) return b;
+    if (unitIdx && intersect) {
+      // multi selections union within the same unit and intersect across units.
+      miss = miss || {};
+      count = miss[unit=entry.unit] || 0;
+
+      // if we've already matched this unit, skip.
+      if (count === -1) continue;
+
+      b = test(datum, entry);
+      miss[unit] = b ? -1 : ++count;
+
+      // if we match and there are no other units return true
+      // if we've missed against all tuples in this unit return false
+      if (b && unitIdx.size === 1) return true;
+      if (!b && count === unitIdx.get(unit).count) return false;
+    } else {
+      b = test(datum, entry);
+
+      // if we find a miss and we do require intersection return false
+      // if we find a match and we don't require intersection return true
+      if (intersect ^ b) return b;
+    }
   }
 
   // if intersecting and we made it here, then we saw no misses
@@ -95,6 +119,22 @@ export function vlInterval(name, datum, op) {
   return vlSelection.call(this, name, datum, op, testInterval);
 }
 
+export function vlMultiVisitor(name, args, scope, params) {
+  if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
+
+  var data = args[0].value,
+      // vlMulti, vlMultiDomain have different # of params, but op is always last.
+      op = args.length >= 2 && args[args.length-1].value,
+      field = 'unit',
+      indexName = indexPrefix + field;
+
+  if (op === INTERSECT && !params.hasOwnProperty(indexName)) {
+    params[indexName] = scope.getData(data).indataRef(scope, field);
+  }
+
+  dataVisitor(name, args, scope, params);
+}
+
 /**
  * Materializes a point selection as a scale domain.
  * @param {string} name - The name of the dataset representing the selection.
@@ -107,8 +147,9 @@ export function vlInterval(name, datum, op) {
 export function vlPointDomain(name, encoding, field, op) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
+      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
       entry = entries[0],
-      i = 0, n, index, values, continuous;
+      i = 0, n, index, values, continuous, units;
 
   if (!entry) return undefined;
 
@@ -121,13 +162,31 @@ export function vlPointDomain(name, encoding, field, op) {
     }
   }
 
-  values = entries.reduce(function(acc, entry) {
-    acc.push({
-      unit: entry.unit,
-      value: entry.values[index]
+  // multi selections union within the same unit and intersect across units.
+  // if we've got only one unit, enforce union for more efficient materialization.
+  if (unitIdx && unitIdx.size === 1) {
+    op = UNION;
+  }
+
+  if (unitIdx && op === INTERSECT) {
+    units = entries.reduce(function(acc, entry) {
+      var u = acc[entry.unit] || (acc[entry.unit] = []);
+      u.push({unit: entry.unit, value: entry.values[index]});
+      return acc;
+    }, {});
+
+    values = Object.keys(units).map(function(unit) {
+       return {
+        unit: unit,
+        value: continuous ? continuousDomain(units[unit], UNION) :
+          discreteDomain(units[unit], UNION)
+      };
     });
-    return acc;
-  }, []);
+  } else {
+    values = entries.map(function(entry) {
+      return {unit: entry.unit, value: entry.values[index]};
+    });
+  }
 
   return continuous ? continuousDomain(values, op) : discreteDomain(values, op);
 }
