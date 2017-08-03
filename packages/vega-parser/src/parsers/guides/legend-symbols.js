@@ -15,7 +15,8 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'size', config.symbolSize);
   addEncode(enter, 'strokeWidth', config.symbolStrokeWidth);
   if (!spec.fill) {
-    addEncode(enter, 'stroke', config.symbolColor);
+    addEncode(enter, 'fill', config.symbolFillColor);
+    addEncode(enter, 'stroke', config.symbolStrokeColor);
   }
 
   encode.exit = {
