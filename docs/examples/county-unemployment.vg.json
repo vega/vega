@@ -15,8 +15,8 @@
       "url": "data/us-10m.json",
       "format": {"type": "topojson", "feature": "counties"},
       "transform": [
-        { "type": "lookup", "from": "unemp", "key": "id", "fields": ["id"], "as": ["unemp"] },
-        { "type": "filter", "expr": "datum.unemp != null" }
+        { "type": "lookup", "from": "unemp", "key": "id", "fields": ["id"], "values": ["rate"] },
+        { "type": "filter", "expr": "datum.rate != null" }
       ]
     }
   ],
@@ -60,8 +60,8 @@
       "type": "shape",
       "from": {"data": "counties"},
       "encode": {
-        "enter": { "tooltip": {"signal": "format(datum.unemp.rate, '0.1%')"}},
-        "update": { "fill": {"scale": "color", "field": "unemp.rate"} },
+        "enter": { "tooltip": {"signal": "format(datum.rate, '0.1%')"}},
+        "update": { "fill": {"scale": "color", "field": "rate"} },
         "hover": { "fill": {"value": "red"} }
       },
       "transform": [
