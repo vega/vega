@@ -32,8 +32,7 @@
     {
       "name": "color",
       "type": "quantize",
-      "domain": {"data":"counties", "field": "rate"},
-      "domainMax": 0.22,
+      "domain": [0, 0.15],
       "range": {"scheme": "blues-9"}
     }
   ],
