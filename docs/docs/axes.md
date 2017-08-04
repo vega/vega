@@ -60,7 +60,9 @@ Custom mark properties can be set for all axis elements using the _encode_ param
 - `title` for the title [text](../marks/text) mark, and
 - `domain` for the axis domain [rule](../marks/rule) mark.
 
-Each element accepts a set of visual encoding directives grouped into `enter`, `update`, `exit`, _etc._ objects as described in the [Marks](../marks) documentation. Mark properties can be styled using standard [value references](../types/#Value). In addition, each encode block may include a string-valued `name` property to assign a unique name to the mark set, and a boolean-valued `interactive` property to enable input event handling.
+Each element accepts a set of visual encoding directives grouped into `enter`, `update`, `exit`, _etc._ objects as described in the [Marks](../marks) documentation. Mark properties can be styled using standard [value references](../types/#Value).
+
+In addition, each encode block may include a string-valued `name` property to assign a unique name to the mark set, a boolean-valued `interactive` property to enable input event handling, and a string-valued (or array-valued) `style` property to apply default property values. Unless otherwise specified, title elements use a default style of `"guide-title"` and labels elements use a default style of `"guide-label"`.
 
 Each axis tick, grid line, and label instance is backed by a data object with the following fields, which may be accessed as part of a custom visual encoding rule.
 
