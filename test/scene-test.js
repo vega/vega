@@ -30,6 +30,11 @@ tape('Vega generates scenegraphs for specifications', function(test) {
       } else {
         var expect = fs.readFileSync(path) + '';
         test.ok(vega.sceneEqual(JSON.parse(actual), JSON.parse(expect)), 'scene: ' + name);
+
+        // if (!vega.sceneEqual(JSON.parse(actual), JSON.parse(expect))) {
+        //   fs.writeFileSync(name + '-actual.json', JSON.stringify(JSON.parse(actual), 0, 2));
+        //   fs.writeFileSync(name + '-expect.json', JSON.stringify(JSON.parse(expect), 0, 2));
+        // }
       }
     }).catch(function(err) {
       // eslint-disable-next-line no-console

@@ -37,6 +37,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 - [View Properties](#view)
 - [Event Properties](#event)
 - [Mark Properties](#mark)
+- [Style Properties](#style)
 - [Axis Properties](#axes)
 - [Legend Properties](#legends)
 - [Title Properties](#title)
@@ -131,6 +132,28 @@ To set a global opacity value for all mark types:
   }
 }
 ```
+
+[Back to Top](#reference)
+
+
+## <a name="style"></a>Style Properties
+
+In addition to the default mark properties above, default values can be further customized using named _styles_ defined under the `style` block
+in the config. Styles can then be invoked by including a `style` directive within a mark definition.
+
+For example, to set a default shape and stroke width for symbol marks with a style named `"square"`:
+
+{: .suppress-error}
+```json
+"style": {
+  "square": {
+    "shape": "square",
+    "strokeWidth": 2
+  }
+}
+```
+
+Style settings take precedence over default mark settings, but are overridden by the axis, legend, and title properties described below.
 
 [Back to Top](#reference)
 
@@ -237,7 +260,8 @@ Properties defining default settings for legends. These properties are defined u
 | strokeWidth           | {% include type t="Number" %}   | Border stroke width for the full legend. |
 | symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
 | symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
-| symbolColor           | {% include type t="Color" %}    | Default legend symbol color. |
+| symbolFillColor       | {% include type t="Color" %}    | Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
+| symbolStrokeColor     | {% include type t="Color" %}    | Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
 
 ### Usage

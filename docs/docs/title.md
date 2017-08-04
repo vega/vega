@@ -18,6 +18,7 @@ Properties for specifying a title.
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom title styling. This is a standard encode block for text marks, and may contain `enter`, `exit`, `update`, and `hover` property sets. To set a custom font, font size, _etc._ for a title, one can either use custom encode blocks or update the title [config](../config).|
 | interactive   | {% include type t="Boolean" %} | A boolean flag indicating if the title element should respond to input events such as mouse hover.|
 | name          | {% include type t="String" %}  | A [mark name](../marks) property to apply to the title text mark.|
+| style         | {% include type t="String|String[]" %}  | A [mark style](../marks) property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied.|
 | offset        | {% include type t="Number|Value" %} | The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the title group relative to other axis, mark and legend groups. The default value is `0`.|
 
