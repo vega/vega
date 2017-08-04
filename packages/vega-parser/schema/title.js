@@ -3,7 +3,7 @@ export default {
     "titleEncode": {
       "type": "object",
       "patternProperties": {
-        "^(?!interactive|name).+$": {"$ref": "#/defs/encodeEntry"},
+        "^(?!interactive|name|style).+$": {"$ref": "#/defs/encodeEntry"},
       },
       "additionalProperties": false
     },
@@ -32,6 +32,7 @@ export default {
               ],
               "default": "middle"
             },
+            "style": {"$ref": "#/refs/style"},
             "text": {"$ref": "#/refs/stringOrSignal"},
             "zindex": {"type": "number"},
             "interactive": {"type": "boolean"},

@@ -87,6 +87,19 @@ export default {
       },
       "additionalProperties": false,
       "required": ["facet"]
+    },
+    "style": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
     }
   },
 
@@ -97,6 +110,7 @@ export default {
         "type": {"$ref": "#/refs/marktype"},
         "role": {"type": "string"},
         "name": {"type": "string"},
+        "style": {"$ref": "#/refs/style"},
         "key": {"type": "string"},
         "clip": {"type": "boolean"},
         "sort": {"$ref": "#/refs/compare"},

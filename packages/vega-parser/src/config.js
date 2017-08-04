@@ -13,7 +13,8 @@ export default function(configs) {
   return output;
 }
 
-var defaultSymbolSize = 30,
+var defaultFont = 'sans-serif',
+    defaultSymbolSize = 30,
     defaultStrokeWidth = 2,
     defaultColor = '#4c78a8',
     black = "#000",
@@ -69,23 +70,47 @@ function defaults() {
     },
     text: {
       fill: black,
-      font: 'sans-serif',
+      font: defaultFont,
       fontSize: 11
     },
 
-    // defaults for marks using special roles
-    point: {
-      size: defaultSymbolSize,
-      strokeWidth: defaultStrokeWidth,
-      shape: 'circle'
-    },
-    circle: {
-      size: defaultSymbolSize,
-      strokeWidth: defaultStrokeWidth
-    },
-    square: {
-      size: defaultSymbolSize,
-      strokeWidth: defaultStrokeWidth
+    // style definitions
+    style: {
+      // axis & legend labels
+      "guide-label": {
+        fill: black,
+        font: defaultFont,
+        fontSize: 10
+      },
+      // axis & legend titles
+      "guide-title": {
+        fill: black,
+        font: defaultFont,
+        fontSize: 11,
+        fontWeight: 'bold'
+      },
+      // headers, including chart title
+      "group-title": {
+        fill: black,
+        font: defaultFont,
+        fontSize: 13,
+        fontWeight: 'bold'
+      },
+      // defaults for styled point marks
+      point: {
+        size: defaultSymbolSize,
+        strokeWidth: defaultStrokeWidth,
+        shape: 'circle'
+      },
+      circle: {
+        size: defaultSymbolSize,
+        strokeWidth: defaultStrokeWidth
+      },
+      square: {
+        size: defaultSymbolSize,
+        strokeWidth: defaultStrokeWidth,
+        shape: 'square'
+      }
     },
 
     // defaults for axes
@@ -103,9 +128,6 @@ function defaults() {
       gridOpacity: 1,
       labels: true,
       labelAngle: 0,
-      labelColor: black,
-      labelFont: 'sans-serif',
-      labelFontSize: 10,
       labelLimit: 180,
       labelPadding: 2,
       ticks: true,
@@ -115,11 +137,7 @@ function defaults() {
       tickSize: 5,
       tickWidth: 1,
       titleAlign: 'center',
-      titlePadding: 2,
-      titleColor: black,
-      titleFont: 'sans-serif',
-      titleFontSize: 11,
-      titleFontWeight: 'bold'
+      titlePadding: 2
     },
 
     // correction for centering bias
@@ -140,9 +158,6 @@ function defaults() {
       gradientStrokeWidth: 0,
       gradientLabelBaseline: 'top',
       gradientLabelOffset: 2,
-      labelColor: black,
-      labelFontSize: 10,
-      labelFont: 'sans-serif',
       labelAlign: 'left',
       labelBaseline: 'middle',
       labelOffset: 8,
@@ -152,10 +167,6 @@ function defaults() {
       symbolFillColor: 'transparent',
       symbolStrokeColor: gray,
       symbolStrokeWidth: 1.5,
-      titleColor: black,
-      titleFont: 'sans-serif',
-      titleFontSize: 11,
-      titleFontWeight: 'bold',
       titleAlign: 'left',
       titleBaseline: 'top',
       titleLimit: 180
@@ -165,11 +176,7 @@ function defaults() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 2,
-      color: black,
-      font: 'sans-serif',
-      fontSize: 13,
-      fontWeight: 'bold'
+      offset: 2
     },
 
     // defaults for scale ranges

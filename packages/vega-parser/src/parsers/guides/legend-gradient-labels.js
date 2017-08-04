@@ -1,4 +1,4 @@
-import {Perc, Label} from './constants';
+import {Perc, Label, GuideLabelStyle} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
@@ -41,5 +41,5 @@ export default function(spec, config, userEncode, dataRef) {
 
   enter.align = update.align = {signal: alignExpr};
 
-  return guideMark(TextMark, LegendLabelRole, Perc, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Perc, dataRef, encode, userEncode);
 }

@@ -1,6 +1,6 @@
 import parseEncode from '../encode';
 import {FrameRole, MarkRole} from '../marks/roles';
-import {extend, isObject} from 'vega-util';
+import {array, extend, isObject} from 'vega-util';
 
 export function encoder(_) {
   return isObject(_) ? _ : {value: _};
@@ -23,12 +23,12 @@ export function extendEncode(encode, extra, skip) {
   return encode;
 }
 
-export function encoders(encode, type, role, scope, params) {
+export function encoders(encode, type, role, style, scope, params) {
   var enc, key;
   params = params || {};
   params.encoders = {$encode: (enc = {})};
 
-  encode = applyDefaults(encode, type, role, scope.config);
+  encode = applyDefaults(encode, type, role, style, scope.config);
 
   for (key in encode) {
     enc[key] = parseEncode(encode[key], type, params, scope);
@@ -37,27 +37,37 @@ export function encoders(encode, type, role, scope, params) {
   return params;
 }
 
-function applyDefaults(encode, type, role, config) {
-  var enter, key, skip;
+function applyDefaults(encode, type, role, style, config) {
+  var enter = {}, key, skip, props;
 
   // ignore legend and axis
   if (role == 'legend' || String(role).indexOf('axis') === 0) {
     role = null;
   }
 
-  config = role === FrameRole ? config.group
-    : (role === MarkRole || config[type = role]) ? extend({}, config.mark, config[type])
-    : {};
+  // resolve mark config
+  props = role === FrameRole ? config.group
+    : (role === MarkRole) ? extend({}, config.mark, config[type])
+    : null;
 
-  enter = {};
-  for (key in config) {
+  for (key in props) {
     // do not apply defaults if relevant fields are defined
     skip = has(key, encode)
       || (key === 'fill' || key === 'stroke')
       && (has('fill', encode) || has('stroke', encode));
 
-    if (!skip) enter[key] = {value: config[key]};
+    if (!skip) enter[key] = {value: props[key]};
   }
+
+  // resolve styles, apply with increasing precedence
+  array(style).forEach(function(name) {
+    var props = config.style && config.style[name];
+    for (var key in props) {
+      if (!has(key, encode)) {
+        enter[key] = {value: props[key]};
+      }
+    }
+  });
 
   encode = extend({}, encode); // defensive copy
   encode.enter = extend(enter, encode.enter);

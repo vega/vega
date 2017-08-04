@@ -38,7 +38,7 @@ export default function parseView(spec, scope) {
   }, spec.encode);
 
   encode = scope.add(Encode(
-    encoders(encode, GroupMark, FrameRole, scope, {pulse: ref(input)}))
+    encoders(encode, GroupMark, FrameRole, null, scope, {pulse: ref(input)}))
   );
 
   // Perform view layout

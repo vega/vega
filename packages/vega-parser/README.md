@@ -36,6 +36,7 @@ simply a JavaScript object with a set of named properties, grouped by type.
 - [Top-Level Properties](#top-level-properties)
 - [Event Properties](#event-properties)
 - [Mark Properties](#mark-properties)
+- [Style Properties](#style-properties)
 - [Axis Properties](#axis-properties)
 - [Legend Properties](#legend-properties)
 - [Scale Range Properties](#scale-range-properties)
@@ -57,6 +58,7 @@ Properties for event handling configuration, defined within an `"events"` proper
 - *defaults*: An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.
 
 For example, to prevent the default behavior for all events originating within a Vega view except for `wheel` events:
+
 ```json
 "events": {
   "defaults": {
@@ -73,6 +75,7 @@ are defined within blocks with names matching a valid mark type (e.g.,
 of the legal mark properties (e.g., `"fill"`, `"stroke"`, `"size"`, `"font"`).
 
 For example, to set default fill color and size for symbol marks:
+
 ```json
 "symbol": {
   "fill": "steelblue",
@@ -85,11 +88,34 @@ Defaults for fill or stroke color will _only_ be applied if neither the
 
 In addition, global defaults for **all** mark types can be set using
 the `"mark"` config property. For example, to set a global opacity value:
+
 ```json
 "mark": {
   "opacity": 0.8
 }
 ```
+
+### Style Properties
+
+In addition to the default mark properties above, default values can be
+further customized using named _styles_ defined under the `style` block
+in the config. Styles can then be invoked by including a `style`
+directive within a mark definition.
+
+For example, to set a default shape and stroke width for symbol marks
+with a style named `"square"`:
+
+```json
+"style": {
+  "square": {
+    "shape": "square",
+    "strokeWidth": 2
+  }
+}
+```
+
+Style settings take precedence over default mark settings, but are
+overridden by the axis, legend, and title properties described below.
 
 ### Axis Properties
 

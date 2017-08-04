@@ -1,3 +1,4 @@
+import {GuideTitleStyle} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
@@ -30,5 +31,5 @@ export default function(spec, config, userEncode, dataRef) {
     text: title && title.signal ? {signal: title.signal} : {value: title + ''}
   };
 
-  return guideMark(TextMark, LegendTitleRole, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 }

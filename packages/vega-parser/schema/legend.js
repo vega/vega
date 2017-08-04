@@ -4,10 +4,11 @@ export default {
       "type": "object",
       "properties": {
         "name": {"type": "string"},
-        "interactive": {"type": "boolean", "default": false}
+        "interactive": {"type": "boolean", "default": false},
+        "style": {"$ref": "#/refs/style"}
       },
       "patternProperties": {
-        "^(?!interactive|name).+$": {"$ref": "#/defs/encodeEntry"},
+        "^(?!interactive|name|style).+$": {"$ref": "#/defs/encodeEntry"},
       },
       "additionalProperties": false
     },

@@ -18,6 +18,7 @@ export default function(spec, scope) {
       axisEncode = encode.axis || {},
       name = axisEncode.name || undefined,
       interactive = !!axisEncode.interactive,
+      style = axisEncode.style,
       datum, dataRef, ticksRef, size, group, children;
 
   // single-element data source for axis group
@@ -83,7 +84,7 @@ export default function(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup(AxisRole, name, dataRef, interactive, axisEncode, children);
+  group = guideGroup(AxisRole, style, name, dataRef, interactive, axisEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification

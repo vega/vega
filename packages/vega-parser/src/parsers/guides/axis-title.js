@@ -1,4 +1,4 @@
-import {Top, Bottom, Left} from './constants';
+import {Top, Bottom, Left, GuideTitleStyle} from './constants';
 import guideMark from './guide-mark';
 import {has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
@@ -57,5 +57,5 @@ export default function(spec, config, userEncode, dataRef) {
     && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
-  return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 }

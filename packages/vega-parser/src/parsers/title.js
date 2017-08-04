@@ -1,4 +1,4 @@
-import {Top, Bottom, Left} from './guides/constants';
+import {Top, Bottom, Left, GroupTitleStyle} from './guides/constants';
 import guideMark from './guides/guide-mark';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
@@ -95,5 +95,5 @@ function buildTitle(spec, config, userEncode, dataRef) {
   addEncode(update, 'baseline', config.baseline);
   addEncode(update, 'limit', config.limit);
 
-  return guideMark(TextMark, TitleRole, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, TitleRole, spec.style || GroupTitleStyle, null, dataRef, encode, userEncode);
 }

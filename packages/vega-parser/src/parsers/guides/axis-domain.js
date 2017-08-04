@@ -36,7 +36,7 @@ export default function(spec, config, userEncode, dataRef) {
   update[u] = enter[u] = position(spec, 0);
   update[u2] = enter[u2] = position(spec, 1);
 
-  return guideMark(RuleMark, AxisDomainRole, null, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisDomainRole, null, null, dataRef, encode, userEncode);
 }
 
 function position(spec, pos) {
