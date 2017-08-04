@@ -56,5 +56,5 @@ export default function(spec, config, userEncode, dataRef) {
     update[v2] = enter[v2] = {signal: s, mult: sign, offset: offset};
   }
 
-  return guideMark(RuleMark, AxisGridRole, Value, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisGridRole, null, Value, dataRef, encode, userEncode);
 }

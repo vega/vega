@@ -3,7 +3,7 @@ import {RectMark} from '../marks/marktypes';
 import {LegendGradientRole} from '../marks/roles';
 import {addEncode} from '../encode/encode-util';
 
-export default function(scale, config, userEncode) {
+export default function(spec, scale, config, userEncode) {
   var zero = {value: 0},
       encode = {}, enter, update;
 
@@ -30,5 +30,5 @@ export default function(scale, config, userEncode) {
   addEncode(update, 'width', config.gradientWidth);
   addEncode(update, 'height', config.gradientHeight);
 
-  return guideMark(RectMark, LegendGradientRole, undefined, undefined, encode, userEncode);
+  return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
 }

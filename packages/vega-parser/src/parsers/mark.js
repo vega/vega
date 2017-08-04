@@ -51,7 +51,7 @@ export default function(spec, scope) {
 
   // add visual encoders
   op = scope.add(Encode(
-    encoders(spec.encode, spec.type, role, scope, {pulse: markRef})
+    encoders(spec.encode, spec.type, role, spec.style, scope, {pulse: markRef})
   ));
 
   // monitor parent marks to propagate changes

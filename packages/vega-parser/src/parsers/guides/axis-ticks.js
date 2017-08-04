@@ -46,5 +46,5 @@ export default function(spec, config, userEncode, dataRef, size) {
     update.y = enter.y = exit.y = tickPos;
   }
 
-  return guideMark(RuleMark, AxisTickRole, Value, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisTickRole, null, Value, dataRef, encode, userEncode);
 }

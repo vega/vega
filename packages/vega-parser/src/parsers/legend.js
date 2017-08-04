@@ -7,7 +7,7 @@ import guideGroup from './guides/guide-group';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
 import {addEncode, encoder, extendEncode} from './encode/encode-util';
-import {Skip} from './guides/constants';
+import {GuideLabelStyle, GuideTitleStyle, Skip} from './guides/constants';
 import {ref, value} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
@@ -19,8 +19,9 @@ export default function(spec, scope) {
       legendEncode = encode.legend || {},
       name = legendEncode.name || undefined,
       interactive = !!legendEncode.interactive,
+      style = legendEncode.style,
       datum, dataRef, entryRef, group, title,
-      entryEncode, children;
+      entryEncode, params, children;
 
   // resolve 'canonical' scale name
   var scale = spec.size || spec.shape || spec.fill || spec.stroke
@@ -68,15 +69,14 @@ export default function(spec, scope) {
     })));
 
     children = [
-      legendGradient(scale, config, encode.gradient),
+      legendGradient(spec, scale, config, encode.gradient),
       legendGradientLabels(spec, config, encode.labels, entryRef)
     ];
   }
 
   else {
     // data source for legend entries
-    entryRef = ref(scope.add(LegendEntries({
-      size:   sizeExpression(spec, config, encode.labels),
+    entryRef = ref(scope.add(LegendEntries(params = {
       scale:  scope.scaleRef(scale),
       count:  scope.property(spec.tickCount),
       values: scope.property(spec.values),
@@ -87,11 +87,13 @@ export default function(spec, scope) {
       legendSymbols(spec, config, encode.symbols, entryRef),
       legendLabels(spec, config, encode.labels, entryRef)
     ];
+
+    params.size = sizeExpression(spec, scope, children);
   }
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, null, dataRef, interactive, entryEncode, children)
+    guideGroup(LegendEntryRole, null, null, dataRef, interactive, entryEncode, children)
   ];
 
   // include legend title if defined
@@ -99,30 +101,27 @@ export default function(spec, scope) {
     title = legendTitle(spec, config, encode.title, dataRef);
     entryEncode.update.y.offset = {
       field: {group: 'titlePadding'},
-      offset: title.encode.update.fontSize || title.encode.enter.fontSize
+      offset: getValue(scope, title.encode, 'fontSize', GuideTitleStyle)
     };
     children.push(title);
   }
 
   // build legend specification
-  group = guideGroup(LegendRole, name, dataRef, interactive, legendEncode, children);
+  group = guideGroup(LegendRole, style, name, dataRef, interactive, legendEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse legend specification
   return parseMark(group, scope);
 }
 
-function sizeExpression(spec, config, encode) {
-  // TODO get override for symbolSize?
-  var symbolSize = +config.symbolSize, fontSize;
-  fontSize = encode && encode.update && encode.update.fontSize;
-  if (!fontSize) fontSize = encode && encode.enter && encode.enter.fontSize;
-  if (fontSize) fontSize = fontSize.value; // TODO support signal?
-  if (!fontSize) fontSize = +config.labelFontSize;
-
-  return spec.size
-    ? {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'}
-    : Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
+function sizeExpression(spec, scope, marks) {
+  var fontSize = getValue(scope, marks[1].encode, 'fontSize', GuideLabelStyle);
+  if (spec.size) {
+    return {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'};
+  } else {
+    var symbolSize = getValue(scope, marks[0].encode, 'size');
+    return Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
+  }
 }
 
 function legendEnter(config) {
@@ -133,4 +132,13 @@ function legendEnter(config) {
             + addEncode(enter, 'strokeDash', config.strokeDash)
             + addEncode(enter, 'cornerRadius', config.cornerRadius);
   return count ? enter : undefined;
+}
+
+function getValue(scope, encode, name, style) {
+  var v = encode && (
+    (encode.update && encode.update[name]) ||
+    (encode.enter && encode.enter[name])
+  );
+  return +(v ? v.value // TODO support signal?
+    : (style && (v = scope.config.style[style]) && v[name]));
 }

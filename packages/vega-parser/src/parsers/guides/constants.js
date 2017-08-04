@@ -11,6 +11,10 @@ export var Size   = 'size';
 export var Total  = 'total';
 export var Value  = 'value';
 
+export var GuideLabelStyle = 'guide-label';
+export var GuideTitleStyle = 'guide-title';
+export var GroupTitleStyle = 'group-title';
+
 export var LegendScales = [
   'shape',
   'size',

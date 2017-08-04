@@ -50,5 +50,5 @@ export default function(spec, config, userEncode, dataRef) {
     }
   });
 
-  return guideMark(SymbolMark, LegendSymbolRole, Value, dataRef, encode, userEncode);
+  return guideMark(SymbolMark, LegendSymbolRole, null, Value, dataRef, encode, userEncode);
 }

@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, Right, Label, Value} from './constants';
+import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle} from './constants';
 import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
@@ -54,7 +54,7 @@ export default function(spec, config, userEncode, dataRef, size) {
     addEncode(update, 'baseline', 'middle');
   }
 
-  spec = guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
+  spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
   spec.overlap = overlap || config.labelOverlap;
   return spec;
 }
