@@ -1,0 +1,40 @@
+{
+  "name": "vega-view-transforms",
+  "version": "1.0.0",
+  "description": "View-specific transforms for Vega dataflows.",
+  "keywords": [
+    "vega",
+    "view",
+    "layout"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-view-transforms.js",
+  "module": "index",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vega/vega-view-transforms.git"
+  },
+  "scripts": {
+    "build": "npm run test && uglifyjs build/vega-view-transforms.js -c -m -o build/vega-view-transforms.min.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g vega-dataflow:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-view-transforms.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-view-transforms.zip -- LICENSE README.md build/vega-view-transforms.js build/vega-view-transforms.min.js"
+  },
+  "dependencies": {
+    "vega-dataflow": "3",
+    "vega-scenegraph": "2",
+    "vega-util": "1"
+  },
+  "devDependencies": {
+    "eslint": "4",
+    "rollup": "0.43",
+    "tape": "4",
+    "uglify-js": "3"
+  }
+}
