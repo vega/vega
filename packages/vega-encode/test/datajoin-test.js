@@ -3,14 +3,8 @@ var tape = require('tape'),
     vega = require('vega-dataflow'),
     encode = require('../'),
     changeset = vega.changeset,
-    Collect = vega.transforms.Collect,
-    DataJoin = vega.transforms.DataJoin;
-
-tape('DataJoin registers transforms', function(test) {
-  test.equal(encode.transform, vega.transform);
-  test.equal(encode.definition, vega.definition);
-  test.end();
-});
+    Collect = require('vega-transforms').collect,
+    DataJoin = encode.datajoin;
 
 tape('DataJoin joins tuples and items', function(test) {
   var data = [
