@@ -1,13 +1,8 @@
 var tape = require('tape'),
     util = require('vega-util'),
     vega = require('vega-dataflow'),
-    wordcloud = require('../');
-
-tape('Wordcloud registers transforms', function(test) {
-  test.equal(wordcloud.transform, vega.transform);
-  test.equal(wordcloud.definition, vega.definition);
-  test.end();
-});
+    Collect = require('vega-transforms').collect,
+    Wordcloud = require('../').wordcloud;
 
 tape('Wordcloud generates wordcloud layout', function(test) {
   var data = [
@@ -21,8 +16,8 @@ tape('Wordcloud generates wordcloud layout', function(test) {
       size = util.field('size'),
       df = new vega.Dataflow(),
       rot = df.add(null),
-      c0 = df.add(vega.transforms.Collect),
-      wc = df.add(vega.transforms.Wordcloud, {
+      c0 = df.add(Collect),
+      wc = df.add(Wordcloud, {
         size: [500, 500],
         text: text,
         fontSize: size,
