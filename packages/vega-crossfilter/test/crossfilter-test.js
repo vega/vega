@@ -3,15 +3,9 @@ var tape = require('tape'),
     vega = require('vega-dataflow'),
     xf = require('../'),
     changeset = vega.changeset,
-    Collect = vega.transforms.Collect,
-    CrossFilter = vega.transforms.CrossFilter,
-    ResolveFilter = vega.transforms.ResolveFilter;
-
-tape('Crossfilter registers transforms', function(test) {
-  test.equal(xf.transform, vega.transform);
-  test.equal(xf.definition, vega.definition);
-  test.end();
-});
+    Collect = require('vega-transforms').collect,
+    CrossFilter = xf.crossfilter,
+    ResolveFilter = xf.resolvefilter;
 
 tape('Crossfilter filters tuples', function(test) {
   var data = [
