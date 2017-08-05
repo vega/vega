@@ -1,5 +1,5 @@
-import {getPath} from './projections';
 import {Transform} from 'vega-dataflow';
+import {getProjectionPath} from 'vega-projection';
 import {inherits, field} from 'vega-util';
 
 /**
@@ -17,6 +17,16 @@ export default function GeoShape(params) {
   Transform.call(this, null, params);
 }
 
+GeoShape.Definition = {
+  "type": "GeoShape",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "projection", "type": "projection" },
+    { "name": "field", "type": "field", "default": "datum" },
+    { "name": "as", "type": "string", "default": "shape" }
+  ]
+};
+
 var prototype = inherits(GeoShape, Transform);
 
 prototype.transform = function(_, pulse) {
@@ -28,7 +38,8 @@ prototype.transform = function(_, pulse) {
 
   if (!shape || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = shape = shapeGenerator(getPath(_.projection), datum);
+    this.value = shape = shapeGenerator(
+      getProjectionPath(_.projection), datum);
     out.materialize().reflow();
     flag = out.SOURCE;
   }

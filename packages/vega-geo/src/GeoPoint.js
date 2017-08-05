@@ -16,6 +16,16 @@ export default function GeoPoint(params) {
   Transform.call(this, null, params);
 }
 
+GeoPoint.Definition = {
+  "type": "GeoPoint",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "projection", "type": "projection", "required": true },
+    { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
+  ]
+};
+
 var prototype = inherits(GeoPoint, Transform);
 
 prototype.transform = function(_, pulse) {
