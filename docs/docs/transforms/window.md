@@ -6,6 +6,12 @@ permalink: /docs/transforms/window/index.html
 
 The **window** transform performs calculations over sorted groups of data objects. These calculations including ranking, lead/lag analysis, and aggregates such as running sums and averages. Calculated values are written back to the input data stream.
 
+## Example
+
+{% include embed spec="window" %}
+
+Explore the effects of using different frames and windowed aggregation functions.
+
 ## Transform Parameters
 
 | Property            | Type                            | Description   |
