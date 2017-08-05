@@ -176,10 +176,11 @@ export function vlPointDomain(name, encoding, field, op) {
     }, {});
 
     values = Object.keys(units).map(function(unit) {
-       return {
+      return {
         unit: unit,
-        value: continuous ? continuousDomain(units[unit], UNION) :
-          discreteDomain(units[unit], UNION)
+        value: continuous
+          ? continuousDomain(units[unit], UNION)
+          : discreteDomain(units[unit], UNION)
       };
     });
   } else {
@@ -220,18 +221,17 @@ export function vlIntervalDomain(name, encoding, field, op) {
   }
 
   values = entries.reduce(function(acc, entry) {
-  var extent = entry.intervals[index].extent,
-      value = discrete
-         ? extent.map(function (d) { return {unit: entry.unit, value: d}; })
-         : {unit: entry.unit, value: extent};
+    var extent = entry.intervals[index].extent,
+        value = discrete
+           ? extent.map(function (d) { return {unit: entry.unit, value: d}; })
+           : {unit: entry.unit, value: extent};
 
-     if (discrete) {
-       acc.push.apply(acc, value);
-       return acc;
-     } else {
-       acc.push(value);
-       return acc;
-     }
+    if (discrete) {
+      acc.push.apply(acc, value);
+    } else {
+      acc.push(value);
+    }
+    return acc;
   }, []);
 
 
