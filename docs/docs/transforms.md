@@ -42,7 +42,6 @@ Transforms for processing streams of data objects.
 - [`impute`](impute) - Perform imputation of missing values.
 - [`joinaggregate`](joinaggregate) - Extend data objects with calculated aggregate values.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
-- [`rank`](rank) - Assign increasing rank-order scores to data objects.
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
 - [`window`](window) - Calculate over ordered groups, including ranking and running totals.
