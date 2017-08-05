@@ -3,7 +3,7 @@ import {codegen, constants, functions} from 'vega-expression';
 import {
   isArray, isBoolean, isDate, isNumber, isObject, isRegExp, isString,
   toBoolean, toDate, toNumber, toString,
-  pad, stringValue, truncate
+  pad, peek, stringValue, truncate
 } from 'vega-util';
 import {rgb, lab, hcl, hsl} from 'd3-color';
 import {range as sequence} from 'd3-array';
@@ -46,6 +46,7 @@ export var functionContext = {
   toNumber: toNumber,
   toString: toString,
   pad: pad,
+  peek: peek,
   truncate: truncate,
   rgb: rgb,
   lab: lab,
