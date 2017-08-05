@@ -13,7 +13,7 @@ export function entry(type, value, params, parent) {
 }
 
 export function operator(value, params) {
-  return entry('Operator', value, params);
+  return entry('operator', value, params);
 }
 
 // -----

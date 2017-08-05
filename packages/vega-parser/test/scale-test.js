@@ -56,13 +56,13 @@ tape('Parser parses Vega specs with scales', function(test) {
 
   test.equal(dfs.operators.length, 26);
   test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
-    ['Operator', 'Operator', 'Operator', 'Operator', 'Operator',
-     'Operator', 'Operator', 'Operator',
-     'Collect', 'Encode', 'Sieve',
-     'Scale', 'Scale', 'Scale',
-     'Collect', 'Sieve',
-     'Field', 'Aggregate', 'Collect', 'Compare', 'Values',
-     'Extent', 'ViewLayout', 'Bound', 'Render', 'Sieve']);
+    ['operator', 'operator', 'operator', 'operator', 'operator',
+     'operator', 'operator', 'operator',
+     'collect', 'encode', 'sieve',
+     'scale', 'scale', 'scale',
+     'collect', 'sieve',
+     'field', 'aggregate', 'collect', 'compare', 'values',
+     'extent', 'viewlayout', 'bound', 'render', 'sieve']);
 
   test.end();
 });
@@ -130,14 +130,14 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
 
   test.equal(dfs.operators.length, 32);
   test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
-    ['Operator', 'Operator', 'Operator', 'Operator', 'Operator',
-     'Collect', 'Encode', 'Sieve',
-     'Scale', 'Scale', 'Scale', 'Scale',
-     'Collect', 'Sieve', 'Aggregate', 'Collect', 'Aggregate', 'Collect',
-     'Aggregate', 'Collect', 'Values',
-     'Aggregate', 'Collect', 'Values',
-     'Extent', 'Extent', 'MultiExtent', 'MultiExtent',
-     'ViewLayout', 'Bound', 'Render', 'Sieve']);
+    ['operator', 'operator', 'operator', 'operator', 'operator',
+     'collect', 'encode', 'sieve',
+     'scale', 'scale', 'scale', 'scale',
+     'collect', 'sieve', 'aggregate', 'collect', 'aggregate', 'collect',
+     'aggregate', 'collect', 'values',
+     'aggregate', 'collect', 'values',
+     'extent', 'extent', 'multiextent', 'multiextent',
+     'viewlayout', 'bound', 'render', 'sieve']);
 
   test.end();
 });

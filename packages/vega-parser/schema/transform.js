@@ -78,14 +78,13 @@ function parameterSchema(param) {
   }
 
   if (param.expr) {
-    var expr = {"$ref": "#/refs/expr"},
-        field = {"$ref": "#/refs/paramField"};
-    if (p.anyOf) {
-      p.anyOf.push(expr);
-      p.anyOf.push(field);
-    } else {
-      p = {"oneOf": [p, expr, field]};
-    }
+    (p.anyOf || p.oneOf || (p = {"oneOf": [p]}).oneOf)
+      .push({"$ref": "#/refs/expr"}, {"$ref": "#/refs/paramField"});
+  }
+
+  if (param.null) {
+    (p.anyOf || p.oneOf || (p = {"oneOf": [p]}).oneOf)
+      .push({"type": "null"});
   }
 
   if (param.array) {
@@ -98,7 +97,7 @@ function parameterSchema(param) {
     if (param.length != null) {
       p.minItems = p.maxItems = param.length;
     }
-    if (param.null) {
+    if (param.array === "nullable") {
       p.oneOf.push({"type": "null"});
     }
   }
@@ -143,12 +142,14 @@ export default function(definitions) {
         transformMark: {"oneOf": marks}
       };
 
-  for (var name in definitions) {
-    var key = name + 'Transform',
+  for (var i=0, n=definitions.length; i<n; ++i) {
+    var def = definitions[i],
+        name = def.type.toLowerCase(),
+        key = name + 'Transform',
         ref = {"$ref": "#/defs/" + key},
-        md = definitions[name].metadata;
+        md = def.metadata;
 
-    defs[key] = transformSchema(name, definitions[name]);
+    defs[key] = transformSchema(name, def);
     if (!(md.generates || md.changes)) marks.push(ref);
     transforms.push(ref);
   }

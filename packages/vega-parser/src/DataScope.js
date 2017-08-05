@@ -28,7 +28,7 @@ DataScope.fromEntries = function(scope, entries) {
   for (; i<n; ++i) {
     entries[i].params.pulse = ref(entries[i-1]);
     scope.add(entries[i]);
-    if (entries[i].type === 'Aggregate') aggr = entries[i];
+    if (entries[i].type === 'aggregate') aggr = entries[i];
   }
 
   return new DataScope(scope, input, output, values, aggr);
@@ -115,21 +115,21 @@ prototype.tuplesRef = function() {
 };
 
 prototype.extentRef = function(scope, field) {
-  return cache(scope, this, 'extent', 'Extent', field, false);
+  return cache(scope, this, 'extent', 'extent', field, false);
 };
 
 prototype.domainRef = function(scope, field) {
-  return cache(scope, this, 'domain', 'Values', field, false);
+  return cache(scope, this, 'domain', 'values', field, false);
 };
 
 prototype.valuesRef = function(scope, field, sort) {
-  return cache(scope, this, 'vals', 'Values', field, sort || true);
+  return cache(scope, this, 'vals', 'values', field, sort || true);
 };
 
 prototype.lookupRef = function(scope, field) {
-  return cache(scope, this, 'lookup', 'TupleIndex', field, false);
+  return cache(scope, this, 'lookup', 'tupleindex', field, false);
 };
 
 prototype.indataRef = function(scope, field) {
-  return cache(scope, this, 'indata', 'TupleIndex', field, true, true);
+  return cache(scope, this, 'indata', 'tupleindex', field, true, true);
 };

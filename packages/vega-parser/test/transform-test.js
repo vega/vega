@@ -1,5 +1,9 @@
 var tape = require('tape'),
+    util = require('vega-util'),
+    vega = require('vega-dataflow'),
     parse = require('../').parse;
+
+util.extend(vega.transforms, require('vega-transforms'));
 
 tape('Parser parses Vega specs with data transforms', function(test) {
   var spec = {
@@ -35,7 +39,7 @@ tape('Parser parses Vega specs with data transforms', function(test) {
         "name": "data3",
         "source": "data0",
         "transform": [
-          { "type": "rank", "field": "v" }
+          { "type": "window", "ops": ["rank"], "sort": {"field": "v"} }
         ]
       }
     ]
