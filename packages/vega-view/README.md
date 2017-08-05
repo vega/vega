@@ -1,11 +1,11 @@
 # vega-view
 
-View component and transforms for Vega visualizations. A **View** instantiates
+View component for Vega visualizations. A **View** instantiates
 an underlying dataflow graph and provides a component for rendering and
 interacting with a visualization. When initialized with a container DOM
 element, the View adds a Canvas or SVG-based visualization to a web page.
-Alternatively, a View can be used either client-side or server-side to export
-static SVG or PNG (Canvas) images.
+Alternatively, a View can be used either client-side or server-side to
+export static SVG or PNG (Canvas) images.
 
 ## View API Reference
 
