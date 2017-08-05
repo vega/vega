@@ -280,7 +280,7 @@ prototype.modified = function(_) {
  * filter functions can serve as value transformers: unlike standard predicate
  * function (which return boolean values), Pulse filters should return the
  * actual tuple value to process. If a tuple set is already filtered, the
- * new filter value will be appended into a conjuntive ('and') query.
+ * new filter function will be appended into a conjuntive ('and') query.
  * @param {number} flags - Flags indicating the tuple set(s) to filter.
  * @param {function(*):object} filter - Filter function that will be applied
  *   to the tuple set array, and should return a data tuple if the value
@@ -310,14 +310,30 @@ function addFilter(a, b) {
 prototype.materialize = function(flags) {
   flags = flags || ALL;
   var p = this;
-  if ((flags & ADD) && p.addF) { p.add = p.add.filter(p.addF); p.addF = null; }
-  if ((flags & REM) && p.remF) { p.rem = p.rem.filter(p.remF); p.remF = null; }
-  if ((flags & MOD) && p.modF) { p.mod = p.mod.filter(p.modF); p.modF = null; }
+  if ((flags & ADD) && p.addF) {
+    p.add = materialize(p.add, p.addF);
+    p.addF = null;
+  }
+  if ((flags & REM) && p.remF) {
+    p.rem = materialize(p.rem, p.remF);
+    p.remF = null;
+  }
+  if ((flags & MOD) && p.modF) {
+    p.mod = materialize(p.mod, p.modF);
+    p.modF = null;
+  }
   if ((flags & SOURCE) && p.srcF) {
-    p.source = p.source.filter(p.srcF); p.srcF = null;
+    p.source = p.source.filter(p.srcF);
+    p.srcF = null;
   }
   return p;
 };
+
+function materialize(data, filter) {
+  var out = [];
+  visitArray(data, filter, function(_) { out.push(_); });
+  return out;
+}
 
 function filter(pulse, flags) {
   var map = {};
@@ -334,28 +350,28 @@ function filter(pulse, flags) {
  * @return {Pulse} - Returns this pulse instance.
  */
 prototype.visit = function(flags, visitor) {
-  var v = visitor, src, sum;
+  var p = this, v = visitor, src, sum;
 
   if (flags & SOURCE) {
-    visitArray(this.source, this.srcF, v);
-    return this;
+    visitArray(p.source, p.srcF, v);
+    return p;
   }
 
-  if (flags & ADD) visitArray(this.add, this.addF, v);
-  if (flags & REM) visitArray(this.rem, this.remF, v);
-  if (flags & MOD) visitArray(this.mod, this.modF, v);
+  if (flags & ADD) visitArray(p.add, p.addF, v);
+  if (flags & REM) visitArray(p.rem, p.remF, v);
+  if (flags & MOD) visitArray(p.mod, p.modF, v);
 
-  if ((flags & REFLOW) && (src = this.source)) {
-    sum = this.add.length + this.mod.length;
+  if ((flags & REFLOW) && (src = p.source)) {
+    sum = p.add.length + p.mod.length;
     if (sum === src.length) {
       // do nothing
     } else if (sum) {
-      visitArray(src, filter(this, ADD_MOD), v);
+      visitArray(src, filter(p, ADD_MOD), v);
     } else {
       // if no add/rem/mod tuples, visit source
-      visitArray(src, this.srcF, v);
+      visitArray(src, p.srcF, v);
     }
   }
 
-  return this;
+  return p;
 };

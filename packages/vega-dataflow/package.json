@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -23,16 +23,14 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-dataflow.js -c -m -o build/vega-dataflow.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,vega-loader:vega,vega-statistics:vega,vega-util:vega -f umd -n vega -o build/vega-dataflow.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g vega-loader:vega,vega-util:vega -f umd -n vega -o build/vega-dataflow.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-dataflow.zip -- LICENSE README.md build/vega-dataflow.js build/vega-dataflow.min.js"
   },
   "dependencies": {
-    "d3-array": "1",
     "vega-loader": "2",
-    "vega-statistics": "1",
-    "vega-util": "^1.4"
+    "vega-util": "1"
   },
   "devDependencies": {
     "eslint": "4",
