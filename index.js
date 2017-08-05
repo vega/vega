@@ -1,3 +1,21 @@
+// -- Transforms -----
+
+import {extend} from 'vega-util';
+import {transforms} from 'vega-dataflow';
+import * as tx from 'vega-transforms';
+import * as vtx from 'vega-view-transforms';
+import * as encode from 'vega-encode';
+import * as geo from 'vega-geo';
+import * as force from 'vega-force';
+import * as tree from 'vega-hierarchy';
+import * as voronoi from 'vega-voronoi';
+import * as wordcloud from 'vega-wordcloud';
+import * as xf from 'vega-crossfilter';
+extend(transforms, tx, vtx, encode, geo, force, tree, voronoi, wordcloud, xf);
+
+
+// -- Exports -----
+
 export {
   version
 } from './package.json';
@@ -21,9 +39,7 @@ export {
   changeset,
   ingest,
   isTuple,
-  register,
   definition,
-  definitions,
   transform,
   transforms,
   tupleid
@@ -38,16 +54,7 @@ export {
 
 export {
   projection
-} from 'vega-geo';
-
-/* eslint-disable no-unused-vars */
-import * as encode from 'vega-encode';
-import * as force from 'vega-force';
-import * as hierarchy from 'vega-hierarchy';
-import * as voronoi from 'vega-voronoi';
-import * as wordcloud from 'vega-wordcloud';
-import * as xfilter from 'vega-crossfilter';
-/* eslint-enable */
+} from 'vega-projection';
 
 export {
   View
