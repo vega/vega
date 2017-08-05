@@ -23,17 +23,16 @@ function quantize(scale) {
       values = new Array(n),
       i = 0;
 
-  values[0] = x0;
+  values[0] = -Infinity;
   while (++i < n) values[i] = (i * x1 - (i - n) * x0) / n;
-  values.max = x1;
+  values.max = +Infinity;
 
   return values;
 }
 
 function quantile(scale) {
-  var domain = scale.domain(),
-      values = [domain[0]].concat(scale.quantiles());
-  values.max = peek(domain);
+  var values = [-Infinity].concat(scale.quantiles());
+  values.max = +Infinity;
 
   return values;
 }
