@@ -387,6 +387,10 @@ Returns the last index of _value_ in the input _array_.
 <b>length</b>(<i>array</i>)<br/>
 Returns the length of the input _array_.
 
+<a name="peek" href="#peek">#</a>
+<b>peek</b>(<i>array</i>)<br/>
+Returns the last element in the input _array_. Similar to the built-in `Array.pop` method, except that it does not remove the last element. This method is a convenient shorthand for `array[array.length - 1]`.
+
 <a name="sequence" href="#sequence">#</a>
 <b>sequence</b>([<i>start</i>, ]<i>stop</i>[, <i>step</i>])<br/>
 Returns an array containing an arithmetic sequence of numbers. If _step_ is omitted, it defaults to 1. If _start_ is omitted, it defaults to 0. The _stop_ value is exclusive; it is not included in the result. If _step_ is positive, the last element is the largest _start + i * step_ less than _stop_; if _step_ is negative, the last element is the smallest _start + i * step_ greater than _stop_. If the returned array would contain an infinite number of values, an empty range is returned. The arguments are not required to be integers.
