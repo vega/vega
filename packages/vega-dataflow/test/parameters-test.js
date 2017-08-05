@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    vega = require('../../');
+    vega = require('../');
 
 tape('Parameters handles parameter values', function(test) {
   var p = new vega.Parameters;

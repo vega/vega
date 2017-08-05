@@ -1,14 +1,14 @@
-import add from './dataflow/add';
-import connect from './dataflow/connect';
-import events from './dataflow/events';
-import on from './dataflow/on';
-import {rank, rerank} from './dataflow/rank';
-import {pulse, touch, update} from './dataflow/update';
-import {ingest, request} from './dataflow/load';
-import {run, runAsync, runAfter, enqueue, getPulse} from './dataflow/run';
-import changeset from './ChangeSet';
-import Heap from './util/Heap';
-import UniqueList from './util/UniqueList';
+import add from './add';
+import connect from './connect';
+import events from './events';
+import {ingest, request} from './load';
+import on from './on';
+import {rank, rerank} from './rank';
+import {run, runAsync, runAfter, enqueue, getPulse} from './run';
+import {pulse, touch, update} from './update';
+import changeset from '../ChangeSet';
+import Heap from '../util/Heap';
+import UniqueList from '../util/UniqueList';
 import {loader} from 'vega-loader';
 import {id, logger, Error} from 'vega-util';
 

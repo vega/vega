@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    vega = require('../../');
+    vega = require('../');
 
 tape('Dataflow propagates values', function(test) {
   var df = new vega.Dataflow(),

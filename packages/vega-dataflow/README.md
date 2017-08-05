@@ -15,9 +15,10 @@ propagated through the graph in topological order. `Pulse` objects propagate
 from operators to their dependencies, and carry queues of added, removed
 and/or modified tuples.
 
-This module contains a library of `Operator` types for data stream query
+This module contains only the core reactive dataflow processing engine.
+Other modules provide a library of `Operator` types for data stream query
 processing, including data generation, sampling, filtering, binning,
-group-by aggregation, and cross-stream lookup operations.
+aggregation, cross-stream lookup, visual encoding, and spatial layout.
 
 For more information about data stream transforms, see the
 [Vega transform documentation](https://vega.github.io/vega/docs/transforms/).
