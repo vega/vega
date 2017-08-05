@@ -17,6 +17,16 @@ export default function CrossFilter(params) {
   this._dims = null;
 }
 
+CrossFilter.Definition = {
+  "type": "CrossFilter",
+  "metadata": {},
+  "params": [
+    { "name": "fields", "type": "field", "array": true, "required": true },
+    { "name": "query", "type": "array", "array": true, "required": true,
+      "content": {"type": "number", "array": true, "length": 2} }
+  ]
+};
+
 var prototype = inherits(CrossFilter, Transform);
 
 prototype.transform = function(_, pulse) {
