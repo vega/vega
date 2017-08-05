@@ -1,6 +1,6 @@
 {
   "name": "vega-force",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -20,14 +20,14 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-force.js -c -m -o build/vega-force.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-force:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega -o build/vega-force.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-force:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-force.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-force.zip -- LICENSE README.md build/vega-force.js build/vega-force.min.js"
   },
   "dependencies": {
     "d3-force": "1",
-    "vega-dataflow": "2",
+    "vega-dataflow": "3",
     "vega-util": "1"
   },
   "devDependencies": {
